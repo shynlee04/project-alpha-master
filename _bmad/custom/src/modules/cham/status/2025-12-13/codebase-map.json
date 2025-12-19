@@ -1,0 +1,81 @@
+{
+  "scope": {
+    "target": "spikes/project-alpha/src",
+    "note": "Project Alpha audit. Repo-root src/ is out-of-scope for implementation but may be referenced for drift detection."
+  },
+  "stats": {
+    "file_count": 62,
+    "ext_counts": {
+      ".css": 1,
+      ".svg": 1,
+      ".ts": 33,
+      ".tsx": 27
+    },
+    "approx_code_loc": 9602,
+    "large_files_threshold": 250,
+    "large_files_count": 14
+  },
+  "largest_files_top": [
+    {
+      "path": "lib/filesystem/local-fs-adapter.ts",
+      "loc": 840
+    },
+    {
+      "path": "components/ide/FileTree/FileTree.tsx",
+      "loc": 566
+    },
+    {
+      "path": "lib/filesystem/sync-manager.ts",
+      "loc": 531
+    },
+    {
+      "path": "components/layout/IDELayout.tsx",
+      "loc": 434
+    },
+    {
+      "path": "lib/filesystem/__tests__/local-fs-adapter.test.ts",
+      "loc": 423
+    },
+    {
+      "path": "lib/workspace/WorkspaceContext.tsx",
+      "loc": 389
+    },
+    {
+      "path": "lib/filesystem/__tests__/local-fs-adapter.integration.test.ts",
+      "loc": 364
+    },
+    {
+      "path": "lib/workspace/project-store.ts",
+      "loc": 359
+    },
+    {
+      "path": "lib/webcontainer/process-manager.ts",
+      "loc": 337
+    },
+    {
+      "path": "routes/index.tsx",
+      "loc": 297
+    },
+    {
+      "path": "lib/webcontainer/terminal-adapter.ts",
+      "loc": 279
+    },
+    {
+      "path": "lib/workspace/project-store.test.ts",
+      "loc": 278
+    },
+    {
+      "path": "lib/webcontainer/manager.ts",
+      "loc": 262
+    },
+    {
+      "path": "routeTree.gen.ts",
+      "loc": 261
+    }
+  ],
+  "import_metrics": {
+    "relative_imports": 61,
+    "alias_imports": 3,
+    "external_imports": 72
+  }
+}

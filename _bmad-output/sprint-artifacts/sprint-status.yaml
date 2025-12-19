@@ -1,0 +1,381 @@
+# generated: 2025-12-20T02:48:00+07:00
+# project: project-alpha
+# project_key: project-alpha-master
+# tracking_system: file-system
+# story_location: "{project-root}/_bmad-output/sprint-artifacts"
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Mark epic as 'in-progress' when starting work on its first story
+# - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
+
+generated: 2025-12-20T02:48:00+07:00
+project: project-alpha
+project_key: project-alpha-master
+tracking_system: file-system
+story_location: "_bmad-output/sprint-artifacts"
+
+current_sprint:
+  name: "Sprint 13 - Terminal & Sync Stability"
+  start_date: 2025-12-20
+  priority_epic: 13
+  notes: "Epic 13 is P0 priority - critical bug fixes blocking 14-step validation sequence"
+
+development_status:
+  # =============================================================================
+  # EPIC 1: Project Foundation & IDE Shell [DONE]
+  # =============================================================================
+  epic-1: done
+  1-1-initialize-tanstack-start-project: done
+  1-2-configure-core-dependencies: done
+  1-3-create-route-structure: done
+  1-4-implement-ide-layout-shell: done
+  1-5-configure-coop-coep-headers: done
+  epic-1-retrospective: done
+
+  # =============================================================================
+  # EPIC 2: WebContainers Integration [DONE]
+  # =============================================================================
+  epic-2: done
+  2-1-create-webcontainers-manager: done
+  2-2-implement-terminal-adapter: done
+  2-3-create-xterminal-component: done
+  2-4-implement-process-management: done
+  epic-2-retrospective: done
+
+  # =============================================================================
+  # EPIC 3: File System Access Layer [DONE] (8 stories including hotfix)
+  # =============================================================================
+  epic-3: done
+  3-1-implement-local-fs-adapter: done
+  3-2-implement-filetree-component: done
+  3-3-implement-sync-manager: done
+  3-4-handle-directory-permission-lifecycle: done
+  3-5-implement-folder-switching: done
+  3-6-implement-sync-status-ui: done
+  3-7-implement-project-metadata-persistence: done
+  3-8-implement-workspace-context: done
+  epic-3-retrospective: done
+
+  # =============================================================================
+  # EPIC 4: IDE Components [DONE]
+  # =============================================================================
+  epic-4: done
+  4-0-2-wire-dashboard-to-projectstore: done
+  4-1-implement-monaco-editor-component: done
+  4-2-wire-editor-to-sync-manager: done
+  4-3-implement-preview-panel: done
+  4-4-implement-chat-panel-shell: done
+  epic-4-retrospective: done
+
+  # =============================================================================
+  # EPIC 5: Persistence Layer [DONE]
+  # =============================================================================
+  epic-5: done
+  5-1-set-up-indexeddb-schema: done
+  5-2-implement-project-store: done
+  5-3-implement-conversation-store: done
+  5-4-implement-ide-state-store: done
+  epic-5-retrospective: done
+
+  # =============================================================================
+  # EPIC 10: Event Bus Architecture [DONE]
+  # =============================================================================
+  epic-10: done
+  10-1-create-event-bus-infrastructure: done
+  10-2-refactor-syncmanager-to-emit-events: done
+  10-3-add-manual-sync-toggle: done
+  10-4-implement-per-file-sync-status: done
+  10-5-create-sync-exclusion-configuration: done
+  epic-10-retrospective: done
+
+  # =============================================================================
+  # EPIC 13: Terminal & Sync Stability [P0 - IN PROGRESS]
+  # =============================================================================
+  # Priority: P0 - Highest (Blocks 14-step validation)
+  # Added: Course Correction v5 (2025-12-20)
+  # Updated: 2025-12-20 - Added Story 13-6 per manual testing
+  # =============================================================================
+  epic-13: in-progress
+  13-1-fix-terminal-working-directory: done
+  13-2-fix-auto-sync-on-project-load: backlog
+  13-3-add-sync-progress-indicator: backlog
+  13-4-preserve-file-tree-state: backlog
+  13-5-improve-permission-restoration: backlog
+  13-6-fix-preview-in-new-tab: backlog  # NEW: Added from manual testing 2025-12-20
+  epic-13-retrospective: optional
+
+  # =============================================================================
+  # EPIC 11: Code Splitting & Module Refactor [IN_PROGRESS - PAUSED FOR EPIC 13]
+  # =============================================================================
+  epic-11: in-progress
+  11-1-extract-pathguard-module: done
+  11-2-extract-directorywalker-module: done
+  11-3-extract-syncplanner-module: done
+  11-4-extract-syncexecutor-module: done
+  11-5-create-layoutshell-component: backlog
+  11-6-extract-usexterminal-hook: backlog
+  11-7-extract-filetreedatasource: backlog
+  epic-11-retrospective: optional
+
+  # =============================================================================
+  # EPIC 12: AI Tool Interface Layer [P1 - BACKLOG]
+  # =============================================================================
+  # Prerequisite for Epic 6 (AI Agent Integration)
+  # =============================================================================
+  epic-12: backlog
+  12-1-create-agentfiletools-facade: backlog
+  12-2-create-agentterminaltools-facade: backlog
+  12-3-create-agentsynctools-facade: backlog
+  12-4-create-agentgittools-facade-stub: backlog
+  12-5-wire-facades-to-tanstack-ai-tools: backlog
+  epic-12-retrospective: optional
+
+  # =============================================================================
+  # EPIC 6: AI Agent Integration [P1 - BACKLOG]
+  # Blocked by: Epic 12 (Agent Tool Interface Layer)
+  # =============================================================================
+  epic-6: backlog
+  6-1-set-up-tanstack-ai-chat-endpoint: backlog
+  6-2-implement-useagentchat-hook: backlog
+  6-3-implement-file-tools: backlog
+  6-4-implement-terminal-tool: backlog
+  6-5-wire-tool-execution-to-ui: backlog
+  epic-6-retrospective: optional
+
+  # =============================================================================
+  # EPIC 7: Git Integration [P2 - BACKLOG]
+  # =============================================================================
+  epic-7: backlog
+  7-1-implement-fsa-git-adapter: backlog
+  7-2-implement-git-status-display: backlog
+  7-3-implement-git-stage-commit: backlog
+  7-4-implement-git-agent-tools: backlog
+  epic-7-retrospective: optional
+
+  # =============================================================================
+  # EPIC 8: Validation & Polish [P3 - BACKLOG]
+  # =============================================================================
+  epic-8: backlog
+  8-1-implement-dashboard-ui: backlog
+  8-2-implement-api-key-setup: backlog
+  8-3-execute-14-step-validation: backlog
+  8-4-performance-optimization: backlog
+  8-5-error-handling-polish: backlog
+  8-6-fix-xterminal-fit-lifecycle-console-error: backlog
+  8-7-fix-vitest-shutdown-hanging-handles: backlog
+  8-8-create-project-alpha-e2e-verification-checklist: backlog
+  epic-8-retrospective: optional
+
+  # =============================================================================
+  # EPIC 4.5: Project Fugu Enhancements [P3 - BACKLOG]
+  # =============================================================================
+  epic-4-5: backlog
+  4-5-1-enhanced-fsa-permission-persistence: backlog
+  4-5-2-file-watcher-polling-implementation: backlog
+  4-5-3-async-clipboard-with-syntax-highlighting: backlog
+  4-5-4-build-status-badging: backlog
+  4-5-5-local-font-selection: backlog
+  4-5-6-project-snippet-sharing: backlog
+  epic-4-5-retrospective: optional
+
+  # =============================================================================
+  # EPIC 9: Multi-Root Workspace Support [P4 - POST-MVP]
+  # =============================================================================
+  epic-9: backlog
+  9-1-implement-workspace-file-format: backlog
+  9-2-implement-multi-root-filetree: backlog
+  9-3-implement-multi-root-sync-manager: backlog
+  9-4-implement-multi-git-repository-support: backlog
+  9-5-handle-git-submodules: backlog
+  9-6-implement-workspace-state-synchronization: backlog
+  9-7-implement-workspace-aware-agent-tools: backlog
+  epic-9-retrospective: optional
+
+  # =============================================================================
+  # EPIC 14: IDE Theming & Accessibility [P3 - BACKLOG]
+  # Transformed from legacy Epic 12 (Course Correction v6)
+  # =============================================================================
+  epic-14: backlog
+  14-1-implement-dark-light-theme-toggle: backlog
+  14-2-add-high-contrast-accessibility-theme: backlog
+  14-3-implement-keyboard-navigation-map: backlog
+  14-4-add-screen-reader-announcements: backlog
+  14-5-implement-reduced-motion-mode: backlog
+  epic-14-retrospective: optional
+
+  # =============================================================================
+  # EPIC 15: Performance & Optimization [P3 - BACKLOG]
+  # Transformed from legacy Epic 13 (Course Correction v6)
+  # =============================================================================
+  epic-15: backlog
+  15-1-lazy-load-monaco-editor: backlog
+  15-2-implement-virtual-scrolling-for-file-tree: backlog
+  15-3-add-service-worker-for-asset-caching: backlog
+  15-4-implement-performance-metrics-dashboard: backlog
+  15-5-webcontainer-memory-management: backlog
+  epic-15-retrospective: optional
+
+  # =============================================================================
+  # EPIC 16: Test Framework & Quality Gates [P2 - BACKLOG]
+  # Transformed from legacy Epic 14 (Course Correction v6)
+  # =============================================================================
+  epic-16: backlog
+  16-1-formalize-vitest-unit-test-patterns: backlog
+  16-2-create-localfsadapter-mock: backlog
+  16-3-implement-playwright-e2e-for-validation-sequence: backlog
+  16-4-create-webcontainer-boot-benchmark: backlog
+  16-5-add-lighthouse-ci-for-accessibility: backlog
+  epic-16-retrospective: optional
+
+  # =============================================================================
+  # EPIC 17: Open-Source Documentation [P3 - BACKLOG]
+  # Transformed from legacy Epic 15 (Course Correction v6)
+  # =============================================================================
+  epic-17: backlog
+  17-1-create-contributing-md: backlog
+  17-2-generate-tsdoc-api-documentation: backlog
+  17-3-create-architecture-diagram-in-readme: backlog
+  17-4-add-storybook-for-ui-components: backlog
+  17-5-create-interactive-tutorial: backlog
+  epic-17-retrospective: optional
+
+  # =============================================================================
+  # EPIC 18: Static Deployment & PWA [P2 - BACKLOG]
+  # Transformed from legacy Epic 16 (Course Correction v6)
+  # =============================================================================
+  epic-18: backlog
+  18-1-configure-production-build: backlog
+  18-2-add-github-actions-for-deployment: backlog
+  18-3-implement-pwa-manifest: backlog
+  18-4-add-client-side-error-logging: backlog
+  18-5-create-coop-coep-header-guide: backlog
+  epic-18-retrospective: optional
+
+  # =============================================================================
+  # EPIC 19: Client-Side Security [P2 - BACKLOG]
+  # Transformed from legacy Epic 17 (Course Correction v6)
+  # =============================================================================
+  epic-19: backlog
+  19-1-implement-secure-api-key-storage: backlog
+  19-2-configure-content-security-policy: backlog
+  19-3-create-fsa-permission-audit-trail: backlog
+  19-4-implement-secrets-detection-before-commit: backlog
+  19-5-add-security-headers-verification-in-ci: backlog
+  epic-19-retrospective: optional
+
+  # =============================================================================
+  # EPIC 20: Advanced IDE Features [P4 - BACKLOG]
+  # Transformed from legacy Epic 18 (Course Correction v6)
+  # =============================================================================
+  epic-20: backlog
+  20-1-implement-offline-mode-with-indexeddb-fallback: backlog
+  20-2-create-extension-plugin-system-architecture: backlog
+  20-3-add-workspace-snapshots-time-travel: backlog
+  20-4-implement-multi-cursor-column-selection: backlog
+  20-5-add-command-palette-history-favorites: backlog
+  epic-20-retrospective: optional
+
+  # =============================================================================
+  # EPIC 7+: Git Integration Extended [P3 - BACKLOG]
+  # Merged from legacy Epic 19 (Course Correction v6)
+  # =============================================================================
+  epic-7-extended: backlog
+  7-5-implement-git-branch-switching-ui: backlog
+  7-6-add-visual-merge-conflict-resolution: backlog
+  7-7-implement-git-history-timeline-view: backlog
+  7-8-add-github-pr-preview: backlog
+  epic-7-extended-retrospective: optional
+
+# =============================================================================
+# SUMMARY METRICS
+# =============================================================================
+summary:
+  total_epics: 22
+  total_stories: 117
+  epics_done: 6
+  epics_in_progress: 1
+  epics_backlog: 15
+  stories_done: 35
+  stories_in_progress: 0
+  stories_backlog: 82
+  
+  priority_breakdown:
+    p0: 1  # Epic 13 (Terminal & Sync Stability)
+    p1: 2  # Epics 12, 6
+    p2: 5  # Epics 7, 11, 16, 18, 19
+    p3: 7  # Epics 8, 4.5, 14, 15, 17, 7+
+    p4: 2  # Epics 9, 20
+
+# =============================================================================
+# IMPLEMENTATION ORDER (Recommended)
+# =============================================================================
+implementation_order:
+  phase_1_stability:
+    - epic-13  # Terminal & Sync Stability [P0] ← CURRENT
+    - epic-10  # Event Bus Architecture [DONE]
+  
+  phase_2_ai_enablement:
+    - epic-12  # AI Tool Interface Layer [P1]
+    - epic-6   # AI Agent Integration [P1]
+  
+  phase_3_quality_deployment:
+    - epic-16  # Test Framework [P2]
+    - epic-18  # Static Deployment [P2]  
+    - epic-19  # Client-Side Security [P2]
+  
+  phase_4_full_workflow:
+    - epic-7           # Git Integration [P2]
+    - epic-7-extended  # Git Extensions [P3]
+    - epic-11          # Code Splitting [P2] - can resume after Epic 13
+  
+  phase_5_polish:
+    - epic-14  # Theming & Accessibility [P3]
+    - epic-15  # Performance [P3]
+    - epic-17  # Documentation [P3]
+    - epic-8   # Validation & Polish [P3]
+    - epic-4-5 # Project Fugu [P3]
+    - epic-9   # Multi-Root Workspaces [P4]
+  
+  phase_6_advanced:
+    - epic-20  # Advanced IDE Features [P4]
+
+# =============================================================================
+# NEXT ACTIONS
+# =============================================================================
+next_actions:
+  immediate:
+    - action: "Create Story 13-1 (Fix Terminal Working Directory)"
+      command: "/bmad-bmm-workflows-create-story"
+      agent: "sm"
+      priority: P0
+      
+    - action: "Implement Story 13-1"
+      command: "/bmad-bmm-workflows-dev-story"
+      agent: "dev"
+      priority: P0
+
+  then:
+    - action: "Create Story 13-2 (Fix Auto-Sync on Project Load)"
+      command: "/bmad-bmm-workflows-create-story"
+      agent: "sm"
+      priority: P0

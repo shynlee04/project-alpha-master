@@ -1,0 +1,52 @@
+# CHAM Module Configuration
+
+module_name: cham
+module_display_name: Codebase Health Audit Module
+version: 1.0.0
+
+# Target Platforms
+target_platforms:
+  - kilocode
+  - windsurf
+  - claude
+  - bmad
+  - cursor
+  - gemini
+  - agent
+
+# Audit Configuration
+audit:
+  depth: advanced  # basic | advanced
+  auto_remediate: false
+  test_validation: true
+  max_iterations: 3
+
+# Phase Configuration
+phases:
+  discovery:
+    enabled: true
+    timeout_minutes: 60
+  scanning:
+    enabled: true
+    parallel: true
+    timeout_minutes: 120
+  synthesis:
+    enabled: true
+    timeout_minutes: 30
+  remediation:
+    enabled: true
+    interactive: true
+    require_approval: true
+  validation:
+    enabled: true
+    timeout_minutes: 30
+
+# Status Tracking
+status:
+  location: .bmad/custom/src/modules/cham/status
+  update_frequency: realtime  # realtime | phase | manual
+
+# Output Configuration
+outputs:
+  reports_location: .bmad/custom/src/modules/cham/status
+  documentation_location: .bmad/custom/src/modules/cham/docs

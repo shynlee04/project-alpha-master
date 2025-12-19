@@ -1,0 +1,14 @@
+# Cursor Platform Configuration
+
+platform: cursor
+enabled: true
+
+rules:
+  location: .cursor/rules/bmad/cham
+  format: mdc
+  agents_location: .cursor/rules/bmad/cham/agents
+  workflows_location: .cursor/rules/bmad/cham/workflows
+
+integration:
+  rule_activation: true
+  agent_reference: true

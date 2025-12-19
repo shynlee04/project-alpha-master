@@ -1,0 +1,13 @@
+# Gemini Studio Platform Configuration
+
+platform: gemini
+enabled: true
+
+configs:
+  location: .gemini/cham
+  format: toml
+  phase_configs: true
+
+integration:
+  prompt_configuration: true
+  phase_orchestration: true

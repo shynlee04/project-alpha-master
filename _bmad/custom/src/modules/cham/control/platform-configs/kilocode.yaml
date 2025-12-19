@@ -1,0 +1,13 @@
+# KiloCode Platform Configuration
+
+platform: kilocode
+enabled: true
+
+workflows:
+  location: .kilocode/workflows/cham-audit
+  format: markdown
+  step_files: true
+
+integration:
+  task_system: true
+  status_tracking: true

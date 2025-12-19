@@ -1,0 +1,18 @@
+{
+  "date": "2025-12-13",
+  "scope": "spikes/project-alpha/src",
+  "scanner": "ux",
+  "issue_count": 1,
+  "issues": [
+    {
+      "severity": "medium",
+      "title": "Native prompt/confirm/alert used in UI",
+      "file": "components/ide/FileTree/FileTree.tsx",
+      "evidence": "Found prompt/confirm/alert",
+      "recommendation": "Replace with app modal/toast for consistent UX and accessibility.",
+      "tags": [
+        "ux"
+      ]
+    }
+  ]
+}

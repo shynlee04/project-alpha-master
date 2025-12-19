@@ -1,0 +1,126 @@
+# CHAM Pattern Analysis - via-gent
+# Generated: 2025-12-09T13:20:00Z
+# Audit ID: cham-via-gent-2025-12-09-v2
+
+stated_architecture:
+  source: agent-os/product/tech-stack.md
+  patterns:
+    - name: Domain-Driven Design
+      description: IDE, Agent, Project, LLM, Memory domains with event-driven integration
+    - name: Tier 2 Architecture
+      description: Browser + Local File System via File System Access API
+    - name: Dual File System
+      description: WebContainers (runtime) + Local FS (persistence) with bidirectional sync
+    - name: Zero-knowledge BYOK
+      description: All external AI and Git providers use user-supplied keys
+    - name: Type-safe end-to-end
+      description: TypeScript and Zod validation throughout
+
+actual_patterns:
+  domain_structure:
+    compliance: PARTIAL
+    findings:
+      - pattern: Domain folder structure
+        expected: "domains/{name}/api/, domains/{name}/core/, domains/{name}/index.ts"
+        actual: COMPLIANT
+        notes: All 5 domains follow this structure
+      
+      - pattern: Public API exports
+        expected: "Only export from index.ts, internal modules hidden"
+        actual: PARTIAL
+        violations:
+          - "RootStore imports from domains/*/core/* directly"
+          - "Some components import from domains/*/core/* instead of index.ts"
+      
+      - pattern: Event-driven integration
+        expected: "Cross-domain communication via EventBus only"
+        actual: COMPLIANT
+        notes: EventBus properly used, schemas defined in eventSchemas.ts
+
+  tanstack_patterns:
+    compliance: PARTIAL
+    findings:
+      - pattern: TanStack Start routing
+        expected: "File-based routing with _layout routes, search param validation"
+        actual: PARTIAL
+        violations:
+          - "Duplicate route structures (_workspace/ide vs routes/ide)"
+          - "Search schema not using zodValidator adapter consistently"
+          - "Missing proper Link search prop typing"
+      
+      - pattern: TanStack Store
+        expected: "Domain stores using TanStack Store pattern"
+        actual: MIXED
+        notes: "Some stores use TanStack Store, others use Zustand-like patterns"
+      
+      - pattern: TanStack AI
+        expected: "useChat with tools, streaming, agentic cycles"
+        actual: INCOMPLETE
+        violations:
+          - "useAgentChat doesn't use @tanstack/ai-react useChat"
+          - "Tool definitions not using TanStack AI tool() pattern"
+          - "No streaming implementation via fetchServerSentEvents"
+
+  file_system_patterns:
+    compliance: GOOD
+    findings:
+      - pattern: Dual File System
+        expected: "DualFileSystem bridging WebContainers and Local FS"
+        actual: COMPLIANT
+        location: src/infrastructure/file-systems/DualFileSystem.ts
+      
+      - pattern: Permission Manager
+        expected: "File System Access API permission handling"
+        actual: COMPLIANT
+        location: src/infrastructure/permissions/PermissionManager.ts
+
+anti_patterns_detected:
+  - name: Scattered Tests
+    severity: MEDIUM
+    description: Tests spread across 16 different __tests__ directories plus inline .test.tsx files
+    locations:
+      - src/components/ide/*.test.tsx
+      - src/lib/*.test.ts
+    recommendation: Consolidate to src/__tests__/** mirroring source structure
+
+  - name: Mixed Import Paths
+    severity: LOW
+    description: Using @/ alias consistently (good), but some relative imports exist
+    recommendation: Enforce @/ alias for all cross-module imports
+
+  - name: Duplicate Route Structures
+    severity: HIGH
+    description: Both _workspace/ide/ and routes/ide/ exist
+    recommendation: Remove routes/ide/, use _workspace/ide/ only
+
+  - name: Legacy Store Patterns
+    severity: MEDIUM
+    description: lib/app-store.ts uses different pattern than domain stores
+    recommendation: Migrate to domain store pattern or remove
+
+  - name: Incomplete TanStack AI Integration
+    severity: HIGH
+    description: Custom useAgentChat instead of @tanstack/ai-react useChat
+    recommendation: Refactor to use official TanStack AI patterns
+
+pattern_compliance_score:
+  domain_architecture: 75
+  tanstack_integration: 55
+  file_system: 90
+  testing: 40
+  overall: 65
+
+priority_fixes:
+  critical:
+    - Refactor useAgentChat to use @tanstack/ai-react useChat
+    - Remove duplicate routes/ide/ structure
+  
+  high:
+    - Consolidate test files to src/__tests__/
+    - Fix RootStore to use domain public APIs
+    - Add zodValidator to route search params
+  
+  medium:
+    - Remove legacy app-store.ts
+    - Clean up empty directories (storybook, data)
+    - Standardize import paths

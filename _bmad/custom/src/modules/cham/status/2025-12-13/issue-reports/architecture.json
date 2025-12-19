@@ -1,0 +1,19 @@
+{
+  "date": "2025-12-13",
+  "scope": "spikes/project-alpha/src",
+  "scanner": "architecture",
+  "issue_count": 1,
+  "issues": [
+    {
+      "severity": "high",
+      "title": "Oversized module (>800 LOC)",
+      "file": "lib/filesystem/local-fs-adapter.ts",
+      "evidence": "840 LOC",
+      "recommendation": "Split into smaller modules (PathGuard/DirectoryWalker/etc).",
+      "tags": [
+        "quality",
+        "epic-11"
+      ]
+    }
+  ]
+}

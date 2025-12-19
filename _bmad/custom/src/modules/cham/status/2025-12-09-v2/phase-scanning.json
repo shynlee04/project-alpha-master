@@ -1,0 +1,52 @@
+{
+  "phase": "scanning",
+  "status": "completed",
+  "startedAt": "2025-12-09T13:30:00Z",
+  "completedAt": "2025-12-09T14:00:00Z",
+  "agents": {
+    "architecture-compliance": {
+      "status": "completed",
+      "report": "./issue-reports/architecture.json",
+      "summary": {
+        "totalViolations": 6,
+        "critical": 2,
+        "high": 2,
+        "medium": 2,
+        "low": 0
+      }
+    },
+    "dependency-hygiene": {
+      "status": "not_run"
+    },
+    "type-safety": {
+      "status": "not_run"
+    },
+    "state-management": {
+      "status": "not_run"
+    },
+    "performance": {
+      "status": "not_run"
+    },
+    "test-coverage": {
+      "status": "not_run"
+    },
+    "ux-consistency": {
+      "status": "not_run"
+    },
+    "security-data-flow": {
+      "status": "not_run"
+    }
+  },
+  "metrics": {
+    "issuesFound": 6,
+    "critical": 2,
+    "high": 2,
+    "medium": 2,
+    "low": 0
+  },
+  "links": {
+    "codebaseMap": "./codebase-map.json",
+    "patternsDetected": "./patterns-detected.yaml",
+    "remediationRoadmap": "./remediation-roadmap.md"
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "generatedAt": "2025-12-09T13:20:00Z",
+  "auditId": "cham-via-gent-2025-12-09-v2",
+  "summary": {
+    "totalFiles": 177,
+    "totalTestFiles": 35,
+    "testLocations": 16,
+    "orphanedFiles": 5,
+    "circularDependencies": 0,
+    "crossDomainViolations": 12
+  },
+  "layers": {
+    "domains": {
+      "path": "src/domains",
+      "files": 37,
+      "domains": ["agent", "ide", "llm", "memory", "project"],
+      "structure": "COMPLIANT - each domain has api/, core/, index.ts, README.md",
+      "issues": []
+    },
+    "core": {
+      "path": "src/core",
+      "files": 9,
+      "modules": ["events", "state", "types"],
+      "structure": "COMPLIANT - EventBus, RootStore, Contracts",
+      "issues": ["RootStore imports from domains directly - should use domain APIs"]
+    },
+    "app": {
+      "path": "src/app",
+      "files": 12,
+      "modules": ["hooks", "providers", "use-cases", "workflows"],
+      "structure": "COMPLIANT - orchestration layer",
+      "issues": []
+    },
+    "components": {
+      "path": "src/components",
+      "files": 32,
+      "modules": ["ide", "layout", "onboarding", "project", "ui"],
+      "structure": "PARTIAL - ide/ has dashboard/, but tests scattered",
+      "issues": [
+        "FileTree.test.tsx in components/ide/ - should be in __tests__",
+        "MonacoEditor.test.tsx in components/ide/ - should be in __tests__",
+        "XTerminal.test.tsx in components/ide/ - should be in __tests__"
+      ]
+    },
+    "infrastructure": {
+      "path": "src/infrastructure",
+      "files": 14,
+      "modules": ["ai", "database", "file-systems", "permissions"],
+      "structure": "COMPLIANT",
+      "issues": []
+    },
+    "lib": {
+      "path": "src/lib",
+      "files": 21,
+      "purpose": "Shared utilities, stores, managers",
+      "structure": "MIXED - contains both utilities and business logic",
+      "issues": [
+        "webcontainer-manager.test.ts in lib/ - should be in __tests__",
+        "agent-api.test.ts in lib/ - should be in __tests__",
+        "coordinator-agent.ts - unclear if this belongs in lib or domains/agent"
+      ]
+    },
+    "routes": {
+      "path": "src/routes",
+      "files": 12,
+      "structure": "NEEDS REVIEW",
+      "issues": [
+        "_workspace/ide/ vs routes/ide/ - duplicate structure",
+        "routes/ide/__tests__ exists but is empty",
+        "_workspace/ops/ - unclear purpose"
+      ]
+    },
+    "integrations": {
+      "path": "src/integrations",
+      "files": 5,
+      "modules": ["tanstack-query", "trpc"],
+      "structure": "COMPLIANT",
+      "issues": []
+    }
+  },
+  "testDistribution": {
+    "centralizedTests": {
+      "path": "src/__tests__",
+      "count": 11,
+      "types": ["e2e", "integration", "routes/ide"]
+    },
+    "scatteredTests": {
+      "locations": [
+        "src/domains/ide/core/__tests__",
+        "src/domains/ide/__tests__",
+        "src/domains/llm/__tests__",
+        "src/domains/agent/core/__tests__",
+        "src/domains/agent/__tests__",
+        "src/domains/project/core/__tests__",
+        "src/domains/project/__tests__",
+        "src/core/state/__tests__",
+        "src/core/__tests__",
+        "src/app/__tests__",
+        "src/app/hooks/__tests__",
+        "src/components/ide/dashboard/__tests__",
+        "src/lib/errors/__tests__",
+        "src/infrastructure/__tests__",
+        "src/routes/ide/__tests__"
+      ],
+      "inlineTests": [
+        "src/components/ide/FileTree.test.tsx",
+        "src/components/ide/MonacoEditor.test.tsx",
+        "src/components/ide/XTerminal.test.tsx",
+        "src/lib/webcontainer-manager.test.ts",
+        "src/lib/agent-api.test.ts"
+      ]
+    },
+    "recommendation": "CONSOLIDATE - Move all tests to src/__tests__/** mirroring source structure"
+  },
+  "orphanedFiles": {
+    "detected": [
+      {
+        "file": "src/components/storybook/",
+        "reason": "Empty directory - storybook components moved to routes/_workspace/ops"
+      },
+      {
+        "file": "src/data/",
+        "reason": "Empty directory - demo data removed"
+      },
+      {
+        "file": "src/routes/ide/__tests__/",
+        "reason": "Empty directory - tests moved to src/__tests__/routes/ide"
+      }
+    ],
+    "potentialOrphans": [
+      {
+        "file": "src/lib/coordinator-agent.ts",
+        "reason": "Not imported by any route or component - verify usage"
+      },
+      {
+        "file": "src/lib/gemini-client.ts",
+        "reason": "May be superseded by infrastructure/ai/GeminiAdapter.ts"
+      }
+    ]
+  },
+  "dependencyGraph": {
+    "entryPoints": [
+      "src/routes/__root.tsx",
+      "src/router.tsx"
+    ],
+    "domainAPIs": {
+      "agent": "src/domains/agent/index.ts → exports createAgentAPI, AgentAPI",
+      "ide": "src/domains/ide/index.ts → exports createIDEAPI, IDEAPI, getIDEStore, useIDEStore",
+      "llm": "src/domains/llm/index.ts → exports getLLMAPI, getLLMStore, getLLMService",
+      "memory": "src/domains/memory/index.ts → exports createMemoryAPI, MemoryAPI",
+      "project": "src/domains/project/index.ts → exports createProjectAPI, ProjectAPI, getProjectStore"
+    },
+    "crossDomainImports": [
+      {
+        "from": "src/core/types/DomainEvents.ts",
+        "imports": ["@/domains/ide/api/events", "@/domains/llm/api/events"],
+        "severity": "LOW",
+        "reason": "Core aggregating domain event types - acceptable"
+      },
+      {
+        "from": "src/core/state/RootStore.ts",
+        "imports": ["@/domains/ide/core/IDEStore", "@/domains/project/core/ProjectStore", "@/domains/llm", "@/domains/memory"],
+        "severity": "HIGH",
+        "reason": "RootStore imports internal domain stores directly - should use public APIs"
+      },
+      {
+        "from": "src/core/events/eventSchemas.ts",
+        "imports": ["@/domains/ide/api/events", "@/domains/agent/api/events", "@/domains/project/api/events", "@/domains/llm/api/events", "@/domains/memory/api/events"],
+        "severity": "LOW",
+        "reason": "Event schema aggregation - acceptable"
+      }
+    ]
+  },
+  "routingAnalysis": {
+    "pattern": "TanStack Start file-based routing",
+    "rootRoute": "src/routes/__root.tsx",
+    "layoutRoutes": [
+      {
+        "path": "src/routes/_workspace.tsx",
+        "children": ["_workspace/ide/", "_workspace/ops/"],
+        "searchParams": "projectId required"
+      }
+    ],
+    "issues": [
+      {
+        "issue": "Duplicate IDE route structure",
+        "paths": ["src/routes/_workspace/ide/", "src/routes/ide/"],
+        "recommendation": "Remove src/routes/ide/ - use _workspace/ide/ only"
+      },
+      {
+        "issue": "Search params schema location",
+        "current": "Inline in route files",
+        "recommendation": "Extract to src/lib/ide-search.ts (already exists)"
+      }
+    ]
+  },
+  "stateManagement": {
+    "patterns": [
+      {
+        "type": "TanStack Store",
+        "locations": ["src/domains/*/core/*Store.ts"],
+        "usage": "Domain-specific stores"
+      },
+      {
+        "type": "Zustand-like",
+        "locations": ["src/lib/app-store.ts"],
+        "usage": "Legacy app state"
+      }
+    ],
+    "issues": [
+      {
+        "issue": "Duplicate state patterns",
+        "example": "IDEStore in domains/ide vs ideStore pattern in lib/",
+        "recommendation": "Consolidate to domain stores only"
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "date": "2025-12-13",
+  "scope": "spikes/project-alpha/src",
+  "scanner": "performance",
+  "issue_count": 3,
+  "issues": [
+    {
+      "severity": "medium",
+      "title": "Large file may indicate performance/maintainability risk",
+      "file": "lib/filesystem/local-fs-adapter.ts",
+      "evidence": "840 LOC",
+      "recommendation": "Split/optimize hot paths, reduce re-renders and heavy computations in React components.",
+      "tags": [
+        "perf",
+        "maintainability"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Large file may indicate performance/maintainability risk",
+      "file": "components/ide/FileTree/FileTree.tsx",
+      "evidence": "566 LOC",
+      "recommendation": "Split/optimize hot paths, reduce re-renders and heavy computations in React components.",
+      "tags": [
+        "perf",
+        "maintainability"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Large file may indicate performance/maintainability risk",
+      "file": "lib/filesystem/sync-manager.ts",
+      "evidence": "531 LOC",
+      "recommendation": "Split/optimize hot paths, reduce re-renders and heavy computations in React components.",
+      "tags": [
+        "perf",
+        "maintainability"
+      ]
+    }
+  ]
+}

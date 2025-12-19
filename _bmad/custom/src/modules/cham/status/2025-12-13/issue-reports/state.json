@@ -1,0 +1,18 @@
+{
+  "date": "2025-12-13",
+  "scope": "spikes/project-alpha/src",
+  "scanner": "state",
+  "issue_count": 0,
+  "issues": [
+    {
+      "severity": "info",
+      "title": "WorkspaceContext wiring present in IDELayout and FileTree",
+      "file": null,
+      "evidence": "Both components import/use useWorkspace()",
+      "recommendation": "Continue migration: remove remaining legacy prop-drill or local singletons as they appear.",
+      "tags": [
+        "state"
+      ]
+    }
+  ]
+}

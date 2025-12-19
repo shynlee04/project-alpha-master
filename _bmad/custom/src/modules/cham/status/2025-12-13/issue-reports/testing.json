@@ -1,0 +1,18 @@
+{
+  "date": "2025-12-13",
+  "scope": "spikes/project-alpha/src",
+  "scanner": "testing",
+  "issue_count": 0,
+  "issues": [
+    {
+      "severity": "info",
+      "title": "Baseline tests detected for FS + workspace",
+      "file": null,
+      "evidence": "8 test files",
+      "recommendation": "Expand toward end-to-end flows (open folder -> edit -> sync -> preview).",
+      "tags": [
+        "tests"
+      ]
+    }
+  ]
+}

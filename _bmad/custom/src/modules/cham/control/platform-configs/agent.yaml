@@ -1,0 +1,17 @@
+# Agent Platform Configuration
+
+platform: agent
+enabled: true
+
+rules:
+  agents_location: .agent/rules/agents
+  commands_location: .agent/rules/commands
+  format: markdown
+
+workflows:
+  location: .agent/workflows/cham
+  format: markdown
+
+integration:
+  rule_system: true
+  workflow_orchestration: true

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="13-1-fix-terminal-working-directory" created="2025-12-20T02:58:00+07:00">
+  
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/layout/TerminalPanel.tsx">
+      <notes>BROKEN: Renders XTerminal without projectPath prop on line 71</notes>
+      <content><![CDATA[
+{activeTab === 'terminal' ? (
+    <XTerminal />  // <-- BUG: Missing projectPath prop!
+) : (
+    <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+        {activeTab === 'output'
+            ? 'Output (coming soon)'
+            : 'Problems (coming soon)'}
+    </div>
+)}
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/XTerminal.tsx">
+      <notes>READY: Accepts projectPath prop and passes to adapter.startShell()</notes>
+      <content><![CDATA[
+interface XTerminalProps {
+    className?: string;
+    projectPath?: string;  // <-- Already supports this!
+}
+
+export function XTerminal({ className, projectPath }: XTerminalProps) {
+    // ...
+    await adapter.startShell(projectPath);  // <-- Already wired!
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/webcontainer/terminal-adapter.ts">
+      <notes>READY: startShell() supports projectPath with SpawnOptions.cwd</notes>
+      <content><![CDATA[
+async function startShell(projectPath?: string): Promise<void> {
+    const spawnOptions: Parameters<typeof spawn>[2] = {
+        terminal: {
+            cols: terminal.cols,
+            rows: terminal.rows,
+        },
+    };
+    
+    if (projectPath) {
+        spawnOptions.cwd = projectPath;  // <-- Already implemented!
+    }
+    
+    shellProcess = await spawn('jsh', [], spawnOptions);
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/filesystem/sync-manager.ts">
+      <notes>FILES MOUNT AT ROOT: mount(tree) mounts at container root /</notes>
+      <content><![CDATA[
+// Line 162: Files mount at WebContainer root
+await mount(tree);  // No mountPoint specified = mounts at /
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="WebContainer spawn cwd terminal">
+      SpawnOptions supports cwd for setting working directory. 
+      Shell spawns at specified cwd or container root / by default.
+    </finding>
+    <finding source="codebase" query="sync-manager mount">
+      Files mount at WebContainer root / via mount(tree) with no mountPoint.
+      Therefore projectPath should be "/" or undefined to start at project root.
+    </finding>
+    <finding source="codebase" query="XTerminal props">
+      XTerminal already accepts optional projectPath prop and passes it to 
+      adapter.startShell(projectPath). The wiring is complete except for
+      the parent component (TerminalPanel.tsx).
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="context-consumption" source="architecture.md">
+      UI components consume WorkspaceContext via useWorkspace() hook.
+      WorkspaceProvider wraps workspace route, providing project state.
+    </pattern>
+    <pattern name="prop-drilling" source="architecture.md">
+      Pass props through component hierarchy: Layout -> Panel -> Component.
+      Avoid prop drilling more than 2 levels; use context for deeper access.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Since files mount at root /, projectPath should be "/" to ensure
+      terminal starts where package.json exists. Can also pass undefined
+      since mount() doesn't specify a mountPoint.
+    </note>
+    <note priority="medium">
+      TerminalPanel is rendered by a parent component (likely in layout/).
+      May need to check if parent has access to WorkspaceContext or needs
+      projectPath passed down the chain.
+    </note>
+    <note priority="low">
+      The fix is a one-line change in TerminalPanel.tsx:
+      Change: &lt;XTerminal /&gt;
+      To: &lt;XTerminal projectPath="/" /&gt;
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@webcontainer/api" version="1.6.1" />
+    <dependency name="@xterm/xterm" version="5.5.0" />
+    <dependency name="@xterm/addon-fit" version="0.10.0" />
+  </dependencies>
+  
+</context>

@@ -1,0 +1,110 @@
+# Revised Epic Priorities - Full-Scale IDE Implementation
+
+**Date:** 2025-12-13  
+**Source:** CHAM Audit CHAM-2025-12-13-ADVANCED  
+**Goal:** Logical epic ordering for full-scale IDE with AI agents + local sync
+
+---
+
+## Recommended Epic Order
+
+```yaml
+# Phase 1: Foundation Completion (Current Sprint)
+phase_1:
+  name: "Foundation Completion"
+  duration: "3-4 days"
+  epics:
+    - epic: 4
+      focus: "Complete 4-0-1 Dashboard Recent Projects"
+      stories_remaining: 1
+    - epic: 5
+      focus: "Persistence Layer (5-2 to 5-4)"
+      stories_remaining: 3
+
+# Phase 2: AI Enablement (Next Sprint)
+phase_2:
+  name: "AI Enablement"  
+  duration: "5-7 days"
+  epics:
+    - epic: 10
+      focus: "Event Bus for AI Observability"
+      stories: 5
+      reason: "Required for AI to observe file/terminal events"
+    - epic: 12
+      focus: "AI Tool Facades"
+      stories: 5
+      reason: "Exposes subsystems to AI agents"
+    - epic: 6
+      focus: "AI Agent Integration"
+      stories: 5
+      reason: "TanStack AI + Gemini integration"
+
+# Phase 3: Full Workflow
+phase_3:
+  name: "Full Workflow"
+  duration: "3-4 days"
+  epics:
+    - epic: 7
+      focus: "Git Integration via isomorphic-git"
+      stories: 4
+      reason: "Complete developer workflow"
+
+# Phase 4: Optimization (Parallel Track)
+phase_4:
+  name: "Code Optimization"
+  duration: "3-5 days"
+  parallel: true
+  epics:
+    - epic: 11
+      focus: "Code Splitting"
+      stories: 7
+      reason: "Reduce file sizes to ≤250 lines"
+
+# Phase 5: Advanced Features
+phase_5:
+  name: "Advanced Enhancements"
+  duration: "TBD"
+  epics:
+    - epic: 4.5
+      focus: "Project Fugu (Chrome 122+)"
+      stories: 6
+      prerequisites: ["Epic 3 complete"]
+    - epic: 9
+      focus: "Multi-Root Workspaces"
+      stories: TBD
+      prerequisites: ["Epic 10", "Epic 11"]
+    - epic: 8
+      focus: "Validation & Polish"
+      stories: 5
+      prerequisites: ["All core epics"]
+
+---
+
+# Rationale
+
+## Why Event Bus (Epic 10) Before AI (Epic 6)?
+
+AI agents need to observe IDE events:
+- `file:created` - AI knows when files are added
+- `file:modified` - AI can track changes
+- `terminal:output` - AI can read command results
+- `sync:completed` - AI knows when sync is done
+
+Without Event Bus, AI operates blind.
+
+## Why Tool Facades (Epic 12) Before AI (Epic 6)?
+
+AI tools need clean interfaces:
+- AgentFileTools → wraps LocalFSAdapter + SyncManager
+- AgentTerminalTools → wraps ProcessManager
+- AgentSyncTools → wraps SyncManager events
+
+These facades isolate AI from implementation details.
+
+## Why Code Splitting (Epic 11) is Parallel?
+
+- Doesn't block functionality
+- Can be done incrementally
+- Each file split is independent
+- Improves maintainability, not features
+```

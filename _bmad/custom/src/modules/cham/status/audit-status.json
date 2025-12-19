@@ -1,0 +1,37 @@
+{
+  "auditId": "cham-via-gent-2025-12-13",
+  "status": "in_progress",
+  "currentPhase": "remediation",
+  "startedAt": "2025-12-13T00:00:00+00:00",
+  "latestStatusFolder": "./2025-12-13/",
+  "phases": {
+    "discovery": {
+      "status": "completed",
+      "startedAt": "2025-12-13T00:00:00+00:00",
+      "completedAt": "2025-12-13T00:00:00+00:00",
+      "artifacts": {
+        "codebaseMap": "./2025-12-13/codebase-map.json",
+        "patternsDetected": "./2025-12-13/patterns-detected.yaml",
+        "phaseSummary": "./2025-12-13/phase-discovery.json"
+      }
+    },
+    "scanning": {
+      "status": "completed",
+      "phaseSummary": "./2025-12-13/phase-scanning.json"
+    },
+    "synthesis": {
+      "status": "completed",
+      "phaseSummary": "./2025-12-13/phase-synthesis.json",
+      "report": "./2025-12-13/remediation-roadmap.md"
+    },
+    "remediation": {
+      "status": "pending"
+    },
+    "validation": {
+      "status": "pending"
+    }
+  },
+  "overallScore": 59,
+  "criticalIssues": 0,
+  "highIssues": 1
+}

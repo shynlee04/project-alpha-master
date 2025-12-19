@@ -1,0 +1,17 @@
+# Windsurf Platform Configuration
+
+platform: windsurf
+enabled: true
+
+rules:
+  agents_location: .windsurf/rules/agents
+  commands_location: .windsurf/rules/commands
+  format: markdown
+
+workflows:
+  location: .windsurf/workflows/cham
+  format: markdown
+
+integration:
+  trigger_system: true
+  command_shortcuts: true

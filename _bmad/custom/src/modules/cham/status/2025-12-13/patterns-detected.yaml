@@ -1,0 +1,33 @@
+date: 2025-12-13
+scope: spikes/project-alpha/src
+patterns:
+  - name: TanStack Start SPA mode
+    evidence:
+      - spikes/project-alpha/src/routes/workspace/$projectId.tsx uses ssr: false
+  - name: WorkspaceContext as orchestration point
+    evidence:
+      - spikes/project-alpha/src/lib/workspace/WorkspaceContext.tsx provides openFolder/switchFolder/syncNow + refs
+      - spikes/project-alpha/src/components/layout/IDELayout.tsx consumes useWorkspace()
+      - spikes/project-alpha/src/components/ide/FileTree/FileTree.tsx consumes useWorkspace()
+  - name: Dual-write sync model
+    evidence:
+      - spikes/project-alpha/src/lib/filesystem/sync-manager.ts writeFile() writes LocalFS first then WebContainer fs
+anti_patterns:
+  - name: any-casts present
+    note: Prefer typed APIs / adapter setters instead of mutation through any-casts.
+    files:
+      - routeTree.gen.ts
+      - lib/filesystem/sync-manager.test.ts
+      - lib/filesystem/local-fs-adapter.ts
+      - lib/filesystem/permission-lifecycle.test.ts
+      - lib/filesystem/__tests__/local-fs-adapter.integration.test.ts
+      - lib/filesystem/__tests__/local-fs-adapter.test.ts
+      - components/ide/FileTree/FileTree.tsx
+  - name: oversized modules (>400 LOC)
+    note: CHAM quality bar suggests <=250 LOC; consider splitting into facades/modules (Epic 11).
+    files:
+      - {'path': 'lib/filesystem/local-fs-adapter.ts', 'loc': 840}
+      - {'path': 'components/ide/FileTree/FileTree.tsx', 'loc': 566}
+      - {'path': 'lib/filesystem/sync-manager.ts', 'loc': 531}
+      - {'path': 'components/layout/IDELayout.tsx', 'loc': 434}
+      - {'path': 'lib/filesystem/__tests__/local-fs-adapter.test.ts', 'loc': 423}

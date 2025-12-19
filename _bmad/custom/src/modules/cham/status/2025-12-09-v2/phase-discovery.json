@@ -1,0 +1,56 @@
+{
+  "phase": "discovery",
+  "status": "completed",
+  "startedAt": "2025-12-09T13:15:00Z",
+  "completedAt": "2025-12-09T13:25:00Z",
+  "agents": {
+    "cartographer": {
+      "status": "completed",
+      "output": "codebase-map.json",
+      "findings": {
+        "totalFiles": 177,
+        "layers": 8,
+        "domains": 5,
+        "orphanedFiles": 5,
+        "testLocations": 16
+      }
+    },
+    "pattern-analyzer": {
+      "status": "completed",
+      "output": "patterns-detected.yaml",
+      "findings": {
+        "statedPatterns": 5,
+        "complianceScore": 65,
+        "antiPatterns": 5,
+        "criticalFixes": 2,
+        "highFixes": 3
+      }
+    }
+  },
+  "artifacts": {
+    "codebaseMap": "./codebase-map.json",
+    "patternsDetected": "./patterns-detected.yaml"
+  },
+  "summary": {
+    "architectureHealth": "PARTIAL",
+    "domainCompliance": "75%",
+    "tanstackIntegration": "55%",
+    "testOrganization": "40%",
+    "overallScore": 65,
+    "readyForScanning": true
+  },
+  "nextPhase": {
+    "name": "scanning",
+    "agents": [
+      "architecture-compliance",
+      "dependency-hygiene",
+      "type-safety",
+      "state-management",
+      "performance",
+      "test-coverage",
+      "ux-consistency",
+      "security-data-flow"
+    ],
+    "parallelExecution": true
+  }
+}

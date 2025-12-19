@@ -1,0 +1,15 @@
+{
+  "phase": "discovery",
+  "startedAt": "2025-12-13T00:00:00+00:00",
+  "completedAt": "2025-12-13T00:00:00+00:00",
+  "artifacts": {
+    "codebaseMap": "2025-12-13/codebase-map.json",
+    "patternsDetected": "2025-12-13/patterns-detected.yaml"
+  },
+  "summary": {
+    "file_count": 62,
+    "approx_code_loc": 9602,
+    "large_files_count": 14,
+    "as_any_files_count": 7
+  }
+}

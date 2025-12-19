@@ -1,0 +1,21 @@
+{
+  "phase": "scanning",
+  "startedAt": "2025-12-13T00:00:00+00:00",
+  "completedAt": "2025-12-13T00:00:00+00:00",
+  "issueReports": {
+    "architecture": "2025-12-13/issue-reports/architecture.json",
+    "dependencies": "2025-12-13/issue-reports/dependencies.json",
+    "type-safety": "2025-12-13/issue-reports/type-safety.json",
+    "state": "2025-12-13/issue-reports/state.json",
+    "performance": "2025-12-13/issue-reports/performance.json",
+    "testing": "2025-12-13/issue-reports/testing.json",
+    "ux": "2025-12-13/issue-reports/ux.json",
+    "security": "2025-12-13/issue-reports/security.json"
+  },
+  "summary": {
+    "critical": 0,
+    "high": 1,
+    "medium": 11,
+    "total": 12
+  }
+}

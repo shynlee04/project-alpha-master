@@ -1,0 +1,78 @@
+{
+  "date": "2025-12-13",
+  "scope": "spikes/project-alpha/src",
+  "scanner": "type-safety",
+  "issue_count": 7,
+  "issues": [
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "routeTree.gen.ts",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "lib/filesystem/sync-manager.test.ts",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "lib/filesystem/local-fs-adapter.ts",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "lib/filesystem/permission-lifecycle.test.ts",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "lib/filesystem/__tests__/local-fs-adapter.integration.test.ts",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "lib/filesystem/__tests__/local-fs-adapter.test.ts",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Type escape hatch (any-cast) used",
+      "file": "components/ide/FileTree/FileTree.tsx",
+      "evidence": "Found `as any` usage",
+      "recommendation": "Replace with typed setter APIs or proper adapter methods.",
+      "tags": [
+        "types"
+      ]
+    }
+  ]
+}

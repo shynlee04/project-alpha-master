@@ -1,0 +1,340 @@
+{
+  "date": "2025-12-12",
+  "phase": "scanning",
+  "scope": {
+    "epics": ["1", "2", "3", "4", "7", "9"],
+    "stories_focus": ["1-3", "1-4", "2-1", "2-2", "2-3", "2-4", "3-1", "3-2", "3-3", "3-4", "3-7", "3-8", "3-5", "3-6", "4-1", "4-2", "4-3"],
+    "domains": ["filesystem", "workspace", "ide-shell", "webcontainer-process"]
+  },
+  "files": {
+    "local-fs-adapter.ts": {
+      "path": "spikes/project-alpha/src/lib/filesystem/local-fs-adapter.ts",
+      "approx_loc": 840,
+      "domains": ["filesystem-core", "security", "path-handling"],
+      "stories": ["3-1", "3-3", "7-1", "5-x (future reuse)"],
+      "responsibilities": [
+        "Wrap File System Access API (FSA) for directory + file operations",
+        "Centralized path validation and traversal protection",
+        "CRUD for files and directories with multi-segment support",
+        "Binary vs text read/write handling",
+        "Error classification into FileSystemError / PermissionDeniedError"
+      ],
+      "candidate_splits": [
+        "PathGuard module for validatePath / traversal rules (used by adapter + tests)",
+        "DirectoryWalker for walkDirectorySegments / directory navigation",
+        "FileIO shim focused purely on read/write/create/delete using already validated handles",
+        "ErrorMapping utilities shared with SyncManager and higher-level services"
+      ],
+      "notes": [
+        "Length is high but responsibilities are still focused on the FS domain.",
+        "Most cross-domain coupling is through callers (SyncManager, Git, etc.), not embedded here.",
+        "Primary smell is size + mixed concerns (validation, navigation, IO) rather than foreign domains."
+      ]
+    },
+    "sync-manager.ts": {
+      "path": "spikes/project-alpha/src/lib/filesystem/sync-manager.ts",
+      "approx_loc": 530,
+      "domains": ["filesystem-sync", "webcontainer-bridge"],
+      "stories": ["3-3", "3-5 (indirect via folder switching)", "3-6 (sync status)", "4-2", "9-x (future multi-root)"],
+      "responsibilities": [
+        "Initial sync Local FS → WebContainers via mount(FileSystemTree)",
+        "Dual-write on save (writeFile / delete / directory operations)",
+        "Exclusion patterns (.git, node_modules, system files)",
+        "Progress reporting (onProgress callbacks) and error reporting (SyncError)",
+        "Binary vs text content routing via BINARY_EXTENSIONS",
+        "Construction of FileSystemTree from LocalFSAdapter entries"
+      ],
+      "candidate_splits": [
+        "SyncPlanner: scan LocalFS, decide what to sync (pure, testable)",
+        "SyncExecutor: perform writes to WebContainers + wrap boot/mount/getFileSystem integration",
+        "SyncEvents: thin layer exposing progress / status events instead of directly embedding callbacks",
+        "ExclusionPolicy: encapsulate pattern matching into reusable component",
+        "Future: RootSyncState to model per-root sync once Epic 9 introduces multi-root"
+      ],
+      "notes": [
+        "Strong coupling between planning, execution, and status in one class makes it hard to reuse for multi-root.",
+        "WebContainer boot/mount logic is embedded here; architecturally ok for now but should be isolated when multi-root + multiple containers are considered.",
+        "Clear mapping to Story 3-3 ACs; later stories (3-6, 4-2, 9-x) depend on exposing status in a more structured way."
+      ]
+    },
+    "project-store.ts": {
+      "path": "spikes/project-alpha/src/lib/workspace/project-store.ts",
+      "approx_loc": 355,
+      "domains": ["workspace-persistence", "indexeddb"],
+      "stories": ["3-7"],
+      "responsibilities": [
+        "Define ProjectMetadata and LayoutConfig for dashboard + future IDE restore",
+        "Open and manage a singleton IndexedDB database (via-gent-projects)",
+        "CRUD operations: saveProject, getProject, listProjects, deleteProject",
+        "Derived utilities: listProjectsWithPermission, updateProjectLastOpened, clearAllProjects, getProjectCount, checkProjectPermission",
+        "Permission-state enrichment using getPermissionState(FSA handle)"
+      ],
+      "candidate_splits": [
+        "Schema + migrations module for ViaGentDB and object store/index definitions",
+        "ProjectRepository facade exposing typed operations (save/list/delete/get) without IndexedDB details",
+        "PermissionEnrichment helper to join ProjectMetadata with permission state (can be reused for dashboard)",
+        "Test-only helpers (clearAllProjects, getProjectCount) in a dedicated testing utility file"
+      ],
+      "notes": [
+        "Well-scoped to Story 3-7; aligns with ACs for recent projects and permission indicators.",
+        "Current design assumes single-root projects; Epic 9 will require WorkspaceStore on top, but this file can remain focused on per-root metadata.",
+        "Separation between schema (DB) and repository (API) would make future migrations easier."
+      ]
+    },
+    "WorkspaceContext.tsx": {
+      "path": "spikes/project-alpha/src/lib/workspace/WorkspaceContext.tsx",
+      "approx_loc": 360,
+      "domains": ["workspace-runtime", "ide-shell-integration"],
+      "stories": ["3-8", "3-5", "3-6", "4-1", "4-2", "4-3"],
+      "responsibilities": [
+        "Maintain workspace state: projectId, ProjectMetadata, directoryHandle, permissionState, syncStatus, syncProgress, lastSyncTime, syncError, isOpeningFolder",
+        "Expose workspace actions: openFolder, switchFolder, syncNow, closeProject",
+        "Wire LocalFSAdapter + SyncManager via refs (localAdapterRef, syncManagerRef)",
+        "Integrate with ProjectStore (saveProject, generateProjectId) and permission-lifecycle helpers",
+        "Navigate between dashboard and /workspace/$projectId via TanStack Router",
+        "Orchestrate sync (performSync) including error handling and toast-friendly status fields"
+      ],
+      "candidate_splits": [
+        "WorkspaceStateReducer: pure state machine for WorkspaceState + actions (no side effects)",
+        "WorkspaceEffects: side-effect layer handling FSA calls, SyncManager usage, and navigation",
+        "WorkspaceAdapterRefs: small module managing LocalFSAdapter / SyncManager lifecycle, shared by IDELayout once IDE fully defers to context",
+        "RouteBoundary integration: later, a separate workspace route loader can provide initialProject/initialState"
+      ],
+      "notes": [
+        "This file is currently the central integration point for many domains (FS, sync, routing, persistence).",
+        "There is overlap with legacy IDELayout logic; long-term, IDELayout should become mostly a consumer of this context, not a parallel controller.",
+        "Splitting reducer/effects would allow unit-testing workspace behavior without React environment."
+      ]
+    },
+    "FileTree.tsx": {
+      "path": "spikes/project-alpha/src/components/ide/FileTree/FileTree.tsx",
+      "approx_loc": 430,
+      "domains": ["ide-shell-ui", "filesystem-view"],
+      "stories": ["3-2", "3-5", "4-1"],
+      "responsibilities": [
+        "Render hierarchical tree of files/folders with lazy loading and keyboard navigation",
+        "Maintain UI state: rootNodes, focusedPath, error, loading, context menu state",
+        "Bridge to LocalFSAdapter by mutating adapterRef.directoryHandle and calling listDirectory",
+        "Surface CRUD operations via context menu and callbacks",
+        "Display permission or generic errors when FS operations fail"
+      ],
+      "candidate_splits": [
+        "FileTreeDataSource hook/service that owns LocalFSAdapter usage and converts DirectoryEntry → TreeNode",
+        "FileTreeView component focused purely on rendering + keyboard handling given a TreeNode graph",
+        "ErrorBoundary/StatusBar subcomponent for error/loading/empty states"
+      ],
+      "notes": [
+        "Main smell: UI + FS adapter wiring mixed (use of (adapter as any).directoryHandle).",
+        "Splitting data/source vs view would satisfy Epic 4 testability and reduce coupling to LocalFSAdapter internals."
+      ]
+    },
+    "IDELayout.tsx": {
+      "path": "spikes/project-alpha/src/components/layout/IDELayout.tsx",
+      "approx_loc": 480,
+      "domains": ["ide-shell-layout", "workspace-bootstrap", "webcontainer-preview"],
+      "stories": ["1-4", "2-1..2-4", "3-4", "3-5", "3-6", "4-1", "4-2", "4-3"],
+      "responsibilities": [
+        "Panel layout composition (FileTree, MonacoEditor, PreviewPanel, XTerminal, Chat)",
+        "Boot WebContainer and listen for dev-server readiness (onServerReady) to set preview URL/port",
+        "Restore FSA handle for a given projectId via permission-lifecycle and set permissionState",
+        "Instantiate LocalFSAdapter + SyncManager refs and coordinate initial sync + dual writes",
+        "Manage open files and activeFilePath for Monaco",
+        "Control FileTree refresh cycles and handle folder open/switch flows (legacy, to be superseded by WorkspaceContext)"
+      ],
+      "candidate_splits": [
+        "LayoutShell component concerned only with panel structure and visual chrome",
+        "RuntimeOrchestrator (or useWorkspace) to own boot + restore + sync logic, eventually replacing most state here",
+        "PreviewBootstrap helper that subscribes to onServerReady and feeds PreviewPanel via context/props",
+        "FileTabsState hook for openFiles/activeFilePath separate from FS and WebContainer concerns"
+      ],
+      "notes": [
+        "This file currently mixes layout, workspace lifecycle, and WebContainer bootstrap; high value target for delegating to WorkspaceContext.",
+        "Some folder-open logic is redundant with WorkspaceContext plan (3-8); care needed to avoid two sources of truth during refactor."
+      ]
+    },
+    "process-manager.ts": {
+      "path": "spikes/project-alpha/src/lib/webcontainer/process-manager.ts",
+      "approx_loc": 338,
+      "domains": ["webcontainer-process"],
+      "stories": ["2-4", "4-3", "6-x (agent terminal tools)"],
+      "responsibilities": [
+        "Run processes in WebContainers (npm install, npm run dev, etc.)",
+        "Track ProcessInfo (status, exitCode, start/end times)",
+        "Expose killProcess/killAllProcesses/getProcess/getActiveProcesses/getAllProcesses/isProcessRunning",
+        "Provide lifecycle callbacks (onOutput, onExit, onError)"
+      ],
+      "candidate_splits": [
+        "Metrics/Telemetry adapter to separate logging/console output from process registry",
+        "Optional: ProcessRegistry module that can be shared with agent tools without importing WebContainer types directly"
+      ],
+      "notes": [
+        "Despite length, concerns are cohesive and solidly within WebContainer domain.",
+        "No major cross-domain leakage detected; can likely remain single-file with better documentation references to stories."
+      ]
+    },
+    "routes/__root.tsx": {
+      "path": "spikes/project-alpha/src/routes/__root.tsx",
+      "approx_loc": 59,
+      "domains": ["ide-shell-header", "routing-shell"],
+      "stories": ["1-3", "4-x (global UX shell)"],
+      "responsibilities": [
+        "Provide root HTML document shell via TanStack Router createRootRoute",
+        "Render global Header across all routes",
+        "Wire TanStack Devtools and Router Devtools for debugging"
+      ],
+      "candidate_splits": [
+        "Keep as single file; header itself is already in a separate component",
+        "Future: extract devtools wiring into a development-only wrapper to keep production shell lean"
+      ],
+      "notes": [
+        "Concise file focused on shell concerns; no cross-domain business logic present.",
+        "No refactor required beyond possible dev/prod split for devtools."
+      ]
+    },
+    "routes/index.tsx": {
+      "path": "spikes/project-alpha/src/routes/index.tsx",
+      "approx_loc": 276,
+      "domains": ["dashboard-route", "workspace-entry", "project-selection"],
+      "stories": ["1-3", "3-7", "4-0-2"],
+      "responsibilities": [
+        "Render dashboard with list of recent projects from ProjectStore via listProjectsWithPermission",
+        "Handle open-folder flow using LocalFSAdapter.requestDirectoryAccess and saveProject",
+        "Navigate into workspace/$projectId route after creating or selecting a project",
+        "Surface permission state to user via icons and badges and basic error messaging"
+      ],
+      "candidate_splits": [
+        "RecentProjectsData hook/service that encapsulates listProjectsWithPermission, deleteProject, and permission badge logic",
+        "DashboardView presentational component that only receives projects and callbacks",
+        "FolderOpenController helper that bridges FSA adapter, ProjectStore, and navigation so WorkspaceContext can later own this behavior"
+      ],
+      "notes": [
+        "Mixes UI layout, FSA interactions, and ProjectStore wiring in a single component; good candidate for extracting a data/controller layer.",
+        "Clearly aligned with Story 3-7 and 4-0-2; Story 1-3 route structure is satisfied via the createFileRoute('/') definition."
+      ]
+    },
+    "workspace/$projectId.tsx": {
+      "path": "spikes/project-alpha/src/routes/workspace/$projectId.tsx",
+      "approx_loc": 30,
+      "domains": ["workspace-route", "context-bootstrap"],
+      "stories": ["1-3", "1-4", "3-8", "4-1", "4-2", "4-3"],
+      "responsibilities": [
+        "Define workspace route with ssr: false for WebContainers compatibility",
+        "Load project metadata from ProjectStore via getProject in the route loader",
+        "Provide WorkspaceProvider with projectId and initialProject, wrapping IDELayout and Toast system"
+      ],
+      "candidate_splits": [
+        "RouteLoader helper that encapsulates getProject lookup and not-found redirect behavior",
+        "WorkspaceShell route component that can later support multi-root or multi-workspace scenarios while keeping WorkspaceProvider boundary stable"
+      ],
+      "notes": [
+        "Route is thin and primarily composes providers; good alignment with Epic 1 route structure and Story 3-8 WorkspaceContext plan.",
+        "Future multi-root/Epic 9 work will likely extend loader and provider props without changing this basic pattern."
+      ]
+    },
+    "webcontainer/index.ts": {
+      "path": "spikes/project-alpha/src/lib/webcontainer/index.ts",
+      "approx_loc": 74,
+      "domains": ["webcontainer-facade"],
+      "stories": ["2-1", "2-2", "2-3", "2-4", "4-3"],
+      "responsibilities": [
+        "Expose WebContainer manager API (boot, mount, spawn, getFileSystem, getInstance, isBooted, onServerReady)",
+        "Re-export core WebContainer types used across the IDE (WebContainer, FileSystemTree, WebContainerProcess, SpawnOptions, WebContainerManagerOptions)",
+        "Aggregate terminal adapter and process-manager exports behind a single lib/webcontainer entrypoint"
+      ],
+      "candidate_splits": [
+        "Maintain as a focused facade module; no further splitting required at current size",
+        "Consider adding a higher-level WebContainerFacade type alias for future multi-root container orchestration"
+      ],
+      "notes": [
+        "Acts as the canonical import surface for WebContainer functionality; keeps callers decoupled from internal file layout.",
+        "Important integration point for Epics 2 and 4 as well as future Epic 9 multi-root containers."
+      ]
+    },
+    "webcontainer/manager.ts": {
+      "path": "spikes/project-alpha/src/lib/webcontainer/manager.ts",
+      "approx_loc": 263,
+      "domains": ["webcontainer-lifecycle", "webcontainer-fs", "webcontainer-spawn"],
+      "stories": ["2-1", "2-4", "4-3", "9-x (multi-root containers)",],
+      "responsibilities": [
+        "Implement singleton WebContainer boot() with COOP/COEP and workdir configuration",
+        "Provide mount() for FileSystemTree into the running WebContainer instance",
+        "Expose getFileSystem() for direct fs operations inside the container",
+        "Provide spawn() wrapper with centralized error handling and logging",
+        "Expose getInstance(), isBooted(), and onServerReady() subscription for dev-server preview wiring"
+      ],
+      "candidate_splits": [
+        "BootManager module focused purely on singleton boot lifecycle and coep/workdir options",
+        "FileSystemFacade module wrapping mount() and getFileSystem() concerns for readability and future multi-root mounts",
+        "ServerReadyEvents helper that encapsulates onServerReady subscription and can be reused by preview panel without pulling in full manager logic"
+      ],
+      "notes": [
+        "Core of Epic 2; responsibilities are cohesive but span lifecycle, filesystem, and process spawn orchestration.",
+        "Design is compatible with current single-root spike; Epic 9 may require a higher-level orchestrator on top rather than splitting this module aggressively."
+      ]
+    },
+    "webcontainer/terminal-adapter.ts": {
+      "path": "spikes/project-alpha/src/lib/webcontainer/terminal-adapter.ts",
+      "approx_loc": 280,
+      "domains": ["webcontainer-terminal-adapter"],
+      "stories": ["2-2", "2-3", "4-3", "6-x (agent terminal tools)"],
+      "responsibilities": [
+        "Define TerminalAdapterOptions and TerminalAdapter interfaces for xterm ↔ WebContainers binding",
+        "Spawn jsh shell via WebContainer manager and bind stdout/stderr to xterm Terminal output",
+        "Stream terminal input to shell stdin via WritableStream writer",
+        "Track terminal resize events and integrate optional FitAddon for responsive sizing",
+        "Provide disposal logic that tears down event handlers, writers, and shell process"
+      ],
+      "candidate_splits": [
+        "Extract testable IO binding helpers (shell ↔ terminal streams) into small pure functions",
+        "Introduce a MultiTerminalSession abstraction if multiple concurrent terminals become a requirement in later epics"
+      ],
+      "notes": [
+        "Cohesive adapter that cleanly separates xterm concerns from WebContainer spawn logic via manager imports.",
+        "Key bridge for terminal UX (Epic 2 & 4) and for future agent terminal tooling in Epic 6+."
+      ]
+    },
+    "XTerminal.tsx": {
+      "path": "spikes/project-alpha/src/components/ide/XTerminal.tsx",
+      "approx_loc": 128,
+      "domains": ["ide-shell-terminal-ui", "webcontainer-terminal"],
+      "stories": ["2-3", "4-3", "6-x (agent tools integration)"],
+      "responsibilities": [
+        "Render xterm.js Terminal with FitAddon and custom theme inside React component",
+        "Initialize terminal only once in React Strict Mode using an initializedRef guard",
+        "Create terminal adapter and call boot() to ensure WebContainer is ready before starting shell",
+        "Handle ResizeObserver events to keep terminal dimensions in sync with container size",
+        "Dispose of adapter and terminal resources on unmount"
+      ],
+      "candidate_splits": [
+        "Extract a useXTerminal hook that encapsulates initialization, resize, and cleanup logic, leaving XTerminal as a thin view component",
+        "Introduce a higher-level TerminalPanel component that composes XTerminal with surrounding chrome and process controls for preview/agent tools"
+      ],
+      "notes": [
+        "Mixes presentational concerns (styling, layout) with boot/adapter wiring; good candidate for a hook-based separation in future refactors.",
+        "Well aligned with Story 2-3; interactions with process-manager and WorkspaceContext are currently minimal but will grow with future epics."
+      ]
+    },
+    "local-fs-adapter.tests": {
+      "unit_path": "spikes/project-alpha/src/lib/filesystem/__tests__/local-fs-adapter.test.ts",
+      "integration_path": "spikes/project-alpha/src/lib/filesystem/__tests__/local-fs-adapter.integration.test.ts",
+      "approx_loc_unit": 420,
+      "approx_loc_integration": 365,
+      "domains": ["filesystem-testing"],
+      "stories": ["3-1", "3-3", "security regression tests"],
+      "responsibilities": [
+        "Mock FSA API and verify requestDirectoryAccess, path validation, CRUD operations, rename and delete flows",
+        "Exercise full create→read→update→delete workflow and binary read path",
+        "Verify security behavior (traversal rejection, dot handling)",
+        "Check browser support detection (LocalFSAdapter.isSupported)"
+      ],
+      "candidate_splits": [
+        "Extract shared FSA mocks into a reusable test util module",
+        "Tag tests by story ID in comments or names for easier traceability from epics/sprint artifacts"
+      ],
+      "notes": [
+        "Tests are long but focused; no immediate functional refactor required.",
+        "Main improvement is traceability and sharing mocks across filesystem-related tests (including future Git adapter tests)."
+      ]
+    }
+  }
+}

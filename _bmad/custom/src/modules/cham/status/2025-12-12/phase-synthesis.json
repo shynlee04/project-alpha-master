@@ -1,0 +1,221 @@
+{
+  "date": "2025-12-12",
+  "phase": "synthesis",
+  "inputs": {
+    "epics": "docs/epics.md#Epic-3-hotfix-block",
+    "stories": [
+      "docs/sprint-artifacts/3-7-project-metadata-persistence.md",
+      "docs/sprint-artifacts/3-8-implement-workspace-context.md"
+    ],
+    "change_proposal": "docs/sprint-artifacts/sprint-change-proposal-2025-12-12.md",
+    "scan_output": ".bmad/custom/src/modules/cham/status/2025-12-12/phase-scanning.json"
+  },
+  "stories": {
+    "1-3": {
+      "doc_status": "defined_in_epics",
+      "implementation_status": "implemented",
+      "code_paths": [
+        "spikes/project-alpha/src/routes/__root.tsx",
+        "spikes/project-alpha/src/routes/index.tsx",
+        "spikes/project-alpha/src/routes/workspace/$projectId.tsx"
+      ],
+      "ac_alignment": {
+        "routes_defined": "met (index and workspace/$projectId routes exist as specified in Story 1-3)",
+        "workspace_ssr_false": "met (workspace route configured with ssr: false for WebContainers)",
+        "navigation": "met (dashboard uses navigate() to workspace/$projectId and back)"
+      },
+      "notes": [
+        "Route structure matches Epic 1 Story 1-3: index.tsx as dashboard and workspace/$projectId.tsx as workspace route.",
+        "Workspace route delegates into WorkspaceProvider and IDELayout, preparing for WorkspaceContext-based orchestration.",
+        "Root shell in __root.tsx provides header and global devtools; kept separate from workspace-specific concerns."
+      ]
+    },
+    "1-4": {
+      "doc_status": "defined_in_epics",
+      "implementation_status": "implemented_but_coupled",
+      "code_paths": [
+        "spikes/project-alpha/src/components/layout/IDELayout.tsx"
+      ],
+      "ac_alignment": {
+        "panel_layout": "met (FileTree, MonacoEditor, PreviewPanel, XTerminal, Chat arranged as multi-panel layout)",
+        "resizable_panels": "met (layout uses react-resizable-panels for draggable dividers)",
+        "state_ownership": "needs_refactor (IDELayout still owns workspace + sync state that should move to WorkspaceContext)"
+      },
+      "notes": [
+        "IDELayout satisfies Story 1-4 layout goals but mixes layout, workspace lifecycle, and WebContainer bootstrap.",
+        "Course-correction and WorkspaceContext story 3-8 both call for moving workspace state and side effects out of IDELayout."
+      ]
+    },
+    "2-1": {
+      "doc_status": "defined_in_epics",
+      "implementation_status": "implemented",
+      "code_paths": [
+        "spikes/project-alpha/src/lib/webcontainer/index.ts",
+        "spikes/project-alpha/src/lib/webcontainer/manager.ts"
+      ],
+      "ac_alignment": {
+        "boot": "met (boot() singleton with COOP/COEP and workdir options)",
+        "mount": "met (mount(FileSystemTree, mountPoint?) implemented with error mapping)",
+        "getFileSystem": "met (getFileSystem() exposes fs API guarded by NOT_BOOTED errors)",
+        "spawn": "met (spawn(command, args, options) wraps WebContainer.spawn with logging and error mapping)",
+        "boot_performance": "not_validated_in_tests (5s SLA not yet measured in automated tests)"
+      },
+      "notes": [
+        "Manager + facade match Story 2-1 contract and are reused across XTerminal, process-manager, and IDELayout preview wiring.",
+        "Design is compatible with single-root spike; Epic 9 will layer multi-root orchestration above this API."
+      ]
+    },
+    "2-2": {
+      "doc_status": "defined_in_epics",
+      "implementation_status": "implemented",
+      "code_paths": [
+        "spikes/project-alpha/src/lib/webcontainer/terminal-adapter.ts"
+      ],
+      "ac_alignment": {
+        "shell_binding": "met (jsh shell spawned via manager; stdin/stdout/stderr wired to xterm Terminal)",
+        "resize_handling": "met (terminal resize events tracked; FitAddon support wired when provided)",
+        "error_handling": "met (TerminalAdapterError codes and onError callbacks)",
+        "history": "delegated (command history behavior provided by jsh shell itself, not adapter code)"
+      },
+      "notes": [
+        "Terminal adapter cleanly separates xterm concerns from WebContainer spawn logic via manager imports.",
+        "Ready to be reused for additional tabs or agent terminals in later epics."
+      ]
+    },
+    "2-3": {
+      "doc_status": "defined_in_epics",
+      "implementation_status": "implemented_with_gaps",
+      "code_paths": [
+        "spikes/project-alpha/src/components/ide/XTerminal.tsx"
+      ],
+      "ac_alignment": {
+        "rendering": "met (xterm rendered with theme and FitAddon in React component)",
+        "lifecycle": "met (StrictMode-safe init flag, ResizeObserver, cleanup on unmount)",
+        "multi_tab_support": "not_implemented (current spike exposes single terminal; multiple tabs require higher-level tab manager)"
+      },
+      "notes": [
+        "XTerminal handles xterm + adapter initialization plus ResizeObserver integration.",
+        "Multi-terminal/tab support is left to future layout or tab components; Story 2-3 AC for multiple tabs is not yet realized in UI."
+      ]
+    },
+    "2-4": {
+      "doc_status": "defined_in_epics",
+      "implementation_status": "implemented_library_only",
+      "code_paths": [
+        "spikes/project-alpha/src/lib/webcontainer/process-manager.ts",
+        "spikes/project-alpha/src/hooks/useProcessManager.ts"
+      ],
+      "ac_alignment": {
+        "run_npm_install": "available_via_API (runProcess('npm', ['install']) implemented; no dedicated UI yet)",
+        "run_npm_run_dev": "available_via_API (runProcess('npm', ['run', 'dev']) implemented; preview story 4-3 not yet wired to it)",
+        "status_tracking": "met (ProcessInfo registry with status, exitCode, timestamps, and getActiveProcesses/getAllProcesses)",
+        "cleanup": "met (useProcessManager kills child processes on unmount)"
+      },
+      "notes": [
+        "ProcessManager + useProcessManager establish a solid base for command execution inside WebContainers.",
+        "No concrete IDE UI yet for running commands beyond the raw XTerminal shell; Epic 4/6 should define panels/buttons that call runCommand()."
+      ]
+    },
+    "3-7": {
+      "doc_status": "review",
+      "implementation_status": "implemented",
+      "code_paths": [
+        "spikes/project-alpha/src/lib/workspace/project-store.ts",
+        "spikes/project-alpha/src/components/layout/IDELayout.tsx",
+        "spikes/project-alpha/src/routes/index.tsx",
+        "spikes/project-alpha/src/lib/workspace/project-store.test.ts"
+      ],
+      "ac_alignment": {
+        "AC-3-7-1": "met",
+        "AC-3-7-2": "met",
+        "AC-3-7-3": "partially_met_ui_pending_final_design",
+        "AC-3-7-4": "planned_via_permission-lifecycle_and_dashboard_click_flow",
+        "AC-3-7-5": "met_in_store_API_deleteProject; dashboard wiring implemented per story notes"
+      },
+      "notes": [
+        "ProjectMetadata schema in project-store.ts matches story and epics definitions (id, name, folderPath, fsaHandle, lastOpened, optional layoutState).",
+        "IndexedDB store via ViaGentDB + projects object store is aligned with architecture.md and story technical context.",
+        "Dashboard migration from mock recentProjects to listProjects()/listProjectsWithPermission is implemented per story dev record.",
+        "Permission-state indicators and remove-from-recents behavior are present at API level; final UX polish will be handled under Epic 4/UX stories."
+      ]
+    },
+    "3-8": {
+      "doc_status": "drafted",
+      "implementation_status": "partially_implemented",
+      "code_paths": [
+        "spikes/project-alpha/src/lib/workspace/WorkspaceContext.tsx",
+        "spikes/project-alpha/src/components/layout/IDELayout.tsx",
+        "spikes/project-alpha/src/components/ide/FileTree/FileTree.tsx",
+        "spikes/project-alpha/src/routes/workspace/$projectId.tsx (planned route loader)"
+      ],
+      "ac_alignment": {
+        "AC-3-8-1": "met (WorkspaceState matches required shape plus extra isOpeningFolder)",
+        "AC-3-8-2": "met (WorkspaceActions implemented: openFolder, switchFolder, syncNow, closeProject)",
+        "AC-3-8-3": "not_met (IDELayout still owns local directoryHandle/permission/sync state and does not consume WorkspaceContext)",
+        "AC-3-8-4": "not_met (FileTree still receives directoryHandle prop and wires LocalFSAdapter directly)",
+        "AC-3-8-5": "not_met (workspace route does not yet wrap content in WorkspaceProvider with loader-sourced initialProject)"
+      },
+      "dependencies": {
+        "blocks": ["3-5", "3-6"],
+        "blocked_by": ["3-7"],
+        "epic4_integration": ["4-1", "4-2", "4-3"]
+      },
+      "notes": [
+        "WorkspaceContext.tsx centralizes workspace state and actions exactly as specified in story 3-8 and epics hotfix block.",
+        "Current implementation focuses on single-root workspace; multi-root behavior will be introduced in Epic 9 without changing this contract.",
+        "Key gap is integration: IDELayout and FileTree continue to use legacy props/state; refactor is required to avoid dual sources of truth."
+      ]
+    },
+    "3-5": {
+      "doc_status": "hotfix_defined_in_epics",
+      "implementation_status": "not_implemented_yet",
+      "dependencies": {
+        "blocked_by": ["3-7", "3-8"],
+        "uses": ["WorkspaceContext.switchFolder", "ProjectStore"]
+      },
+      "alignment_summary": "Design is coherent with ProjectStore and WorkspaceContext plan; no production code wired to new Open Different Folder UX yet.",
+      "notes": [
+        "IDELayout currently exposes a single handleOpenFolder; there is no dedicated 'Open Different Folder' CTA as required by AC-3-5-1.",
+        "WorkspaceContext.switchFolder() implements the desired behavior (new projectId, new handle, save to ProjectStore, navigate), but UI and route integration are still pending.",
+        "No tests exist yet for folder-switch flow across IDELayout + WorkspaceContext + dashboard navigation."
+      ]
+    },
+    "3-6": {
+      "doc_status": "hotfix_defined_in_epics",
+      "implementation_status": "not_implemented_yet",
+      "dependencies": {
+        "blocked_by": ["3-8"],
+        "uses": ["WorkspaceContext.syncStatus", "SyncManager", "ProjectStore (lastSyncTime)"]
+      },
+      "alignment_summary": "SyncManager already exposes callbacks and internal status, but there is no dedicated SyncStatusIndicator UI wired through WorkspaceContext as specified.",
+      "notes": [
+        "IDELayout top bar currently shows simple permission + syncError strings; there is no explicit SyncStatusIndicator component nor manual 'Sync Now' trigger wired to context.",
+        "SyncManager.onProgress/onComplete are used in IDELayout and WorkspaceContext.performSync, but not yet surfaced via a reusable status component within the FileTree header.",
+        "Indexing lastSyncTime into ProjectStore for dashboard-level status is defined in stories but not fully surfaced at the UX specification level yet."
+      ]
+    }
+  },
+  "drift_and_fragmentation": {
+    "code_without_story": [
+      "Some legacy IDELayout folder-open logic now overlaps with WorkspaceContext.openFolder/switchFolder and should be treated as legacy path pending refactor."
+    ],
+    "story_without_code": [
+      "3-5 ACs about explicit 'Open Different Folder' button and WebContainer remount are not yet backed by UI + integration tests.",
+      "3-6 ACs about a visual SyncStatusIndicator component and manual sync button are not yet implemented."
+    ]
+  },
+  "decisions": {
+    "keep_as_is": [
+      "ProjectStore schema and basic CRUD API for single-root projects (Epic 3/5)."
+    ],
+    "refactor_required": [
+      "Refactor IDELayout to consume WorkspaceContext for all workspace-related state and actions (directory handle, permission, sync status/progress, sync errors).",
+      "Refactor FileTree to obtain directory handle and sync-related info from WorkspaceContext instead of owning LocalFSAdapter wiring directly.",
+      "Introduce dedicated SyncStatusIndicator and 'Sync Now' controls wired via WorkspaceContext and backed by SyncManager signals."
+    ],
+    "doc_updates": [
+      "Mark Story 3-8 as partially implemented in sprint-status.yaml and bmm-workflow-status.yaml until IDELayout/FileTree integration is complete.",
+      "Ensure UX design spec explicitly references SyncStatusIndicator states and dashboard permission badges as validated patterns, linked to stories 3-6 and 3-7."
+    ]
+  }
+}

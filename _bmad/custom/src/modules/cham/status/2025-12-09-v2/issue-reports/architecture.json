@@ -1,0 +1,68 @@
+{
+  "agent": "architecture-compliance",
+  "generatedAt": "2025-12-09T14:00:00Z",
+  "auditId": "cham-via-gent-2025-12-09-v2",
+  "summary": {
+    "totalViolations": 6,
+    "critical": 2,
+    "high": 2,
+    "medium": 2,
+    "low": 0
+  },
+  "violations": [
+    {
+      "id": "ARCH-001",
+      "severity": "critical",
+      "category": "routing",
+      "file": "src/routes/_workspace/ide/index.tsx",
+      "description": "IDE shell is defined under _workspace/ide/, but a legacy routes/ide/ structure also exists, creating duplicate entry points and confusing navigation.",
+      "recommendation": "Remove legacy src/routes/ide/ and keep _workspace/ide/ as the single source of truth for the IDE shell.",
+      "cluster": "Cluster 2: Route Structure Consolidation"
+    },
+    {
+      "id": "ARCH-002",
+      "severity": "critical",
+      "category": "ai-orchestration",
+      "file": "src/app/hooks/useAgentChat.ts",
+      "description": "Custom useAgentChat hook implements ad‑hoc orchestration instead of TanStack AI useChat and tool architecture, making it hard to reason about and extend agent flows.",
+      "recommendation": "Refactor useAgentChat to use @tanstack/ai-react useChat with proper tools and streaming configuration.",
+      "cluster": "Cluster 1: TanStack AI Integration"
+    },
+    {
+      "id": "ARCH-003",
+      "severity": "high",
+      "category": "domain-boundaries",
+      "file": "src/core/state/RootStore.ts",
+      "description": "RootStore imports internal domain stores from domains/*/core/* instead of using public domain APIs, bypassing intended boundaries.",
+      "recommendation": "Change imports to use domain index.ts exports (e.g. getIDEStore, useIDEStore) and treat core stores as internal implementation details.",
+      "cluster": "Cluster 4: Domain API Enforcement"
+    },
+    {
+      "id": "ARCH-004",
+      "severity": "high",
+      "category": "tests-organization",
+      "file": "src/components/ide/FileTree.test.tsx",
+      "description": "Component tests live next to implementation files instead of in a centralized src/__tests__ tree, leading to scattered coverage and harder maintenance.",
+      "recommendation": "Move all *.test.ts(x) under src/__tests__/** mirroring the source structure and delete empty per-package __tests__ folders.",
+      "cluster": "Cluster 3: Test Consolidation"
+    },
+    {
+      "id": "ARCH-005",
+      "severity": "medium",
+      "category": "legacy-apis",
+      "file": "src/lib/app-store.ts",
+      "description": "Legacy app store pattern coexists with newer domain-specific stores, increasing cognitive load and risking divergent state sources.",
+      "recommendation": "Either migrate app-store.ts to the domain store pattern or remove it if unused.",
+      "cluster": "Cluster 4: Domain API Enforcement"
+    },
+    {
+      "id": "ARCH-006",
+      "severity": "medium",
+      "category": "imports",
+      "file": "multiple",
+      "description": "Mix of relative imports and @/ alias imports across the codebase causes inconsistent module resolution and complicates refactors.",
+      "recommendation": "Standardize on @/ alias for all cross-module imports and keep relative imports only for same-folder siblings.",
+      "cluster": "Cluster 5: Cleanup & Hygiene"
+    }
+  ]
+}

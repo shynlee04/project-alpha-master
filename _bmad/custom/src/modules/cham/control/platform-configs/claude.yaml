@@ -1,0 +1,21 @@
+# Claude Code Platform Configuration
+
+platform: claude
+enabled: true
+
+commands:
+  location: .claude/commands
+  format: markdown
+  prefix: cham
+
+agents:
+  location: .claude/agents/cham
+  format: markdown
+
+skills:
+  location: .claude/skills/cham
+  format: markdown
+
+integration:
+  command_activation: true
+  agent_specifications: true
