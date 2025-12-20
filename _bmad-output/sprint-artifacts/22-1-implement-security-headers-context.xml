@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="22-1-implement-security-headers" created="2025-12-20T19:20:00+07:00">
+  
+  <!-- Current Code State -->
+  <files>
+    <file path="vite.config.ts">
+      <content><![CDATA[
+import { defineConfig } from 'vite'
+import type { Plugin } from 'vite'
+import { devtools } from '@tanstack/devtools-vite'
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import viteReact from '@vitejs/plugin-react'
+import viteTsConfigPaths from 'vite-tsconfig-paths'
+import tailwindcss from '@tailwindcss/vite'
+import { nitro } from 'nitro/vite'
+
+const crossOriginIsolationPlugin: Plugin = {
+  name: 'configure-response-headers',
+  configureServer(server) {
+    server.middlewares.use((_req, res, next) => {
+      res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
+      res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+      next()
+    })
+  },
+}
+
+const config = defineConfig({
+  plugins: [
+    crossOriginIsolationPlugin,
+    devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
+    nitro(),
+    viteTsConfigPaths({ projects: ['./tsconfig.json'] }),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+  ],
+})
+      ]]></content>
+    </file>
+    
+    <file path="public/_headers">
+      <content><![CDATA[
+# Netlify Headers Configuration
+# Cross-Origin Isolation for WebContainers
+
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research Notes from MCP Tools -->
+  <research_notes>
+    <finding source="research-epic-22-tech-stack.md" query="vite-plugin-csp-guard">
+      Package: vite-plugin-csp-guard
+      Configuration: algorithm: "sha256", dev: { run: true }, policy: {...}
+      Monaco needs: style-src 'unsafe-inline'
+      WebContainer needs: frame-src https://*.webcontainer.io
+    </finding>
+    
+    <finding source="exa" query="vite-plugin-csp-guard CSP configuration">
+      Pattern: csp({ algorithm: "sha256", dev: { run: true }, policy: {...} })
+      Supports: SHA-256 hashing for inline scripts
+      SSR compatible with outlierSupport option
+    </finding>
+    
+    <finding source="existing-code" query="current headers">
+      Already has: COOP, COEP, CORP for WebContainers
+      Missing: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture Patterns -->
+  <architecture_patterns>
+    <pattern name="security-headers-middleware" source="vite.config.ts">
+      Use Vite middleware plugin for dev server headers.
+      Plugin name convention: 'configure-{feature}-headers'
+      Middleware signature: (req, res, next) => { res.setHeader(...); next(); }
+    </pattern>
+    
+    <pattern name="netlify-headers" source="public/_headers">
+      Netlify uses public/_headers file for production.
+      Format: path followed by indented headers.
+      All routes: /* for global headers.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical Notes -->
+  <technical_notes>
+    <note priority="high">
+      Monaco Editor requires 'unsafe-inline' for style-src due to dynamic CSS injection.
+      Do NOT use strict CSP for styles - Monaco will break.
+    </note>
+    
+    <note priority="high">
+      WebContainer preview frames are served from *.webcontainer.io
+      frame-src must include: https://*.webcontainer.io
+    </note>
+    
+    <note priority="high">
+      Gemini API endpoints for connect-src:
+      - https://generativelanguage.googleapis.com
+      - https://*.googleapis.com (broader allowlist)
+    </note>
+    
+    <note priority="medium">
+      Existing crossOriginIsolationPlugin should be MERGED with new security headers.
+      Keep all headers in ONE plugin for maintainability.
+    </note>
+    
+    <note priority="medium">
+      vite-plugin-csp-guard handles CSP meta tag injection.
+      Additional headers (HSTS, X-Frame-Options) must be added to middleware.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="vite-plugin-csp-guard" version="latest" action="install" />
+  </dependencies>
+  
+  <!-- Target CSP Policy -->
+  <target_csp_policy>
+    <directive name="default-src">'self'</directive>
+    <directive name="script-src">'self'</directive>
+    <directive name="style-src">'self' 'unsafe-inline'</directive>
+    <directive name="img-src">'self' data: https:</directive>
+    <directive name="font-src">'self' data:</directive>
+    <directive name="connect-src">'self' https://*.googleapis.com wss://*.webcontainer.io https://*.stackblitz.io</directive>
+    <directive name="frame-src">https://*.webcontainer.io https://*.stackblitz.io</directive>
+    <directive name="worker-src">'self' blob:</directive>
+  </target_csp_policy>
+  
+  <!-- Target Additional Headers -->
+  <target_headers>
+    <header name="Strict-Transport-Security">max-age=31536000; includeSubDomains</header>
+    <header name="X-Frame-Options">DENY</header>
+    <header name="X-Content-Type-Options">nosniff</header>
+    <header name="Referrer-Policy">strict-origin-when-cross-origin</header>
+    <header name="Permissions-Policy">camera=(), microphone=(), geolocation=()</header>
+  </target_headers>
+  
+</context>

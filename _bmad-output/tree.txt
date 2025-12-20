@@ -1,0 +1,56 @@
+.
+├── architecture.md
+├── bmm-workflow-status.yaml
+├── component-inventory.md
+├── development-guide.md
+├── documentation-consolidation-validation.md
+├── epics.md
+├── index.md
+├── parallel-execution-strategy.md
+├── prd.md
+├── project-context.md
+├── project-overview.md
+├── project-scan-report.json
+├── research-epic-22-tech-stack.md
+├── research-report.md
+├── shadcn-ui-mcp-server-guide.md
+├── source-tree-analysis.md
+├── sprint-artifacts
+│   ├── 13-1-fix-terminal-working-directory-context.xml
+│   ├── 13-1-fix-terminal-working-directory.md
+│   ├── 13-2-fix-auto-sync-on-project-load-context.xml
+│   ├── 13-2-fix-auto-sync-on-project-load.md
+│   ├── 13-3-add-sync-progress-indicator-context.xml
+│   ├── 13-3-add-sync-progress-indicator.md
+│   ├── 13-4-preserve-file-tree-state-context.xml
+│   ├── 13-4-preserve-file-tree-state.md
+│   ├── 13-5-improve-permission-restoration-context.xml
+│   ├── 13-5-improve-permission-restoration.md
+│   ├── 13-6-fix-preview-in-new-tab-context.xml
+│   ├── 13-6-fix-preview-in-new-tab.md
+│   ├── 21-1-locale-aware-routing-and-html-lang-context.xml
+│   ├── 21-1-locale-aware-routing-and-html-lang.md
+│   ├── 21-3-language-switcher-and-persistence-context.xml
+│   ├── 21-3-language-switcher-and-persistence.md
+│   ├── 21-5-ui-migration-wave-2-ide-surfaces-context.xml
+│   ├── 21-5-ui-migration-wave-2-ide-surfaces.md
+│   ├── 21-8-complete-localization-coverage.md
+│   ├── epic-1-retrospective.md
+│   ├── epic-10-retrospective.md
+│   ├── epic-13-retrospective.md
+│   ├── epic-2-retrospective.md
+│   ├── epic-3-code-review.md
+│   ├── epic-3-retrospective.md
+│   ├── epic-4-retrospective.md
+│   ├── epic-5-retrospective.md
+│   ├── production-readiness-epic-13-report.md
+│   ├── sprint-status.yaml
+│   ├── tech-spec-branding-overhaul-context.xml
+│   └── tech-spec-branding-overhaul.md
+├── sprint-change-proposal-v5-2025-12-20.md
+├── sprint-change-proposal-v6-2025-12-20.md
+├── state-management.md
+├── tree.txt
+└── ux-design.md
+
+2 directories, 52 files

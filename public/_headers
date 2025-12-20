@@ -1,8 +1,23 @@
 # Netlify Headers Configuration
-# Cross-Origin Isolation for WebContainers
-# Required for SharedArrayBuffer support
-# @see https://webcontainers.io/guides/configuring-headers
+# Comprehensive Security Headers for Via-Gent
+# @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+# @see https://owasp.org/www-project-secure-headers/
 
 /*
+  # Cross-Origin Isolation (required for WebContainers/SharedArrayBuffer)
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: cross-origin
+  
+  # Security Headers
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  
+  # HSTS - Enable strict transport security (1 year)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  
+  # Content Security Policy
+  # Note: Uses unsafe-inline for styles (Monaco Editor requirement)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.googleapis.com wss://*.webcontainer.io https://*.stackblitz.io; frame-src https://*.webcontainer.io https://*.stackblitz.io; worker-src 'self' blob:; child-src 'self' blob:

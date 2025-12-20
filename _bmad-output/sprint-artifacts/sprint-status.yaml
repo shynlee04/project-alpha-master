@@ -135,7 +135,7 @@ development_status:
   # Trigger: production-readiness-epic-13-report.md
   # =============================================================================
   epic-22: ready
-  22-1-implement-security-headers: backlog
+  22-1-implement-security-headers: in-progress
   22-2-create-cicd-pipeline: backlog
   22-3-add-integration-tests: backlog
   22-4-configure-error-monitoring: backlog
