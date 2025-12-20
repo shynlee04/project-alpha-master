@@ -1,0 +1,28 @@
+<context_xml>
+    <story_id>13-6</story_id>
+    <description>Fix Preview in New Tab</description>
+    <analysis>
+        <problem>
+            <description>
+                Opening the WebContainer preview in a new tab fails with "Cannot GET /webcontainer/connect/..." because WebContainer runtime context is isolated to the original IDE tab.
+            </description>
+            <root_cause>
+                WebContainer's `forwardPreviewErrors: true` option proxies preview URLs through the parent origin, but the proxy target path requires the WebContainer instance which doesn't exist in a new blank tab.
+            </description>
+        </problem>
+        <solution>
+            <description>
+                Implemented a catch-all route `/webcontainer/$` that catches these requests and displays a helpful "Not Supported" page guiding the user back to the IDE. Added toast notification to the Preview Panel.
+            </description>
+            <files_modified>
+                <file path="src/routes/webcontainer.$.tsx" action="NEW" description="Catch-all route with informative WebContainerConnectPage component" />
+                <file path="src/components/ide/PreviewPanel/PreviewPanel.tsx" action="MODIFY" description="Added toast notification and useToast hook" />
+                <file path="src/i18n/en.json" action="MODIFY" description="Added EN translations for preview feature" />
+                <file path="src/i18n/vi.json" action="MODIFY" description="Added VI translations for preview feature" />
+            </files_modified>
+        </solution>
+    </analysis>
+    <artifacts>
+        <artifact path="_bmad-output/sprint-artifacts/13-6-fix-preview-in-new-tab.md" type="story" description="Story definition and implementation record" />
+    </artifacts>
+</context_xml>

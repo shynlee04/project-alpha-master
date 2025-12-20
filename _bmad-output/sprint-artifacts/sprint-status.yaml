@@ -121,8 +121,11 @@ development_status:
   13-3-add-sync-progress-indicator: done
   13-4-preserve-file-tree-state: done
   13-5-improve-permission-restoration: done
-  13-6-fix-preview-in-new-tab: backlog  # NEW: Added from manual testing 2025-12-20
-  epic-13-retrospective: optional
+  13-6-fix-preview-in-new-tab: done
+    context: _bmad-output/sprint-artifacts/13-6-fix-preview-in-new-tab-context.xml
+    story: _bmad-output/sprint-artifacts/13-6-fix-preview-in-new-tab.md
+  epic-13-retrospective: done
+    artifact: _bmad-output/sprint-artifacts/epic-13-retrospective.md
 
   # =============================================================================
   # EPIC 11: Code Splitting & Module Refactor [IN_PROGRESS - PAUSED FOR EPIC 13]
