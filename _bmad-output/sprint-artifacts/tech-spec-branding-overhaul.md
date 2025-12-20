@@ -57,14 +57,17 @@ The current application retains branding from the template ("TanStack Start Star
     - Add keys for Onboarding/Pitch to `src/i18n/en.json` and `vi.json`.
     - Include contact info keys.
 
-- [x] **Task 4: Interactive Onboarding Component**
-    - Create `src/components/dashboard/Onboarding.tsx`.
-    - Features:
-        - Nested/Stacked cards or interactive board.
-        - "About Via-gent" section.
-        - "Contact: Linh Nguyen" section.
-        - Project links (Github).
-    - Styling: Glassmorphism/Premium/Dark mode aesthetic.
+- [x] **Task 4: Interactive Pitch Deck**
+    - Create `src/components/dashboard/PitchDeck.tsx` (Interactive Modal with animations).
+    - Create `src/components/dashboard/Onboarding.tsx` (Trigger Modal).
+    - Content derived from `docs/specify.md` covering:
+        - Intro/Overview
+        - Privacy (100% Client-Side)
+        - AI Agents (Orchestration)
+        - Multi-Department Workflows
+        - Roadmap
+        - Contact
+    - Styling: High-end Cyberpunk/Glassmorphism with CSS animations.
 
 - [x] **Task 5: Dashboard Integration**
     - Modify `src/routes/index.tsx` to include `Onboarding` component (conditionally show or always present above projects).
