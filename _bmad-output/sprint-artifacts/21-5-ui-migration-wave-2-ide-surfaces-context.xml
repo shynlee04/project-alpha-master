@@ -1,102 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<context story="21-5-ui-migration-wave-2-ide-surfaces" created="2025-12-20T09:25:00+07:00">
-  <!-- Current code state -->
+<context story="21-5-ui-migration-wave-2-ide-surfaces" created="2025-12-20T11:45:00+07:00">
   <files>
-    <file path="src/routes/workspace/$projectId.tsx">
-      <description>Workspace route wiring IDELayout with Toast/WorkspaceProvider.</description>
-      <content><![CDATA[
-export const Route = createFileRoute('/workspace/$projectId')({
-    ssr: false,
-    component: Workspace,
-    loader: async ({ params }) => {
-        const project = await getProject(params.projectId)
-        return { project }
-    },
-})
-]]></content>
-    </file>
-    <file path="src/components/layout/IDELayout.tsx">
-      <description>Main IDE shell: headers, chat toggle, terminal panel, preview, file tree. Contains user-facing strings for sync, chat, terminal tabs, empty states, and toast usage.</description>
-      <content><![CDATA[
-import { IDEHeaderBar } from './IDEHeaderBar';
-import { TerminalPanel } from './TerminalPanel';
-import { ChatPanelWrapper } from './ChatPanelWrapper';
-import { FileTree } from '../ide/FileTree';
-import { MonacoEditor } from '../ide/MonacoEditor';
-import { PreviewPanel } from '../ide/PreviewPanel';
-...
-const [isChatVisible, setIsChatVisible] = useState(true);
-const [terminalTab, setTerminalTab] = useState<TerminalTab>('terminal');
-const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
-const { toast } = useToast();
-]]></content>
-    </file>
-    <file path="src/components/layout/IDEHeaderBar.tsx">
-      <description>Header controls: auto-sync, sync now, switch folder, hide chat, agent chat, plus indicators/icons.</description>
-      <content><![CDATA[
-// TODO: translate labels/tooltips (Auto-sync, Sync Now, Switch Folder, Hide Chat, Agent Chat)
-]]></content>
-    </file>
-    <file path="src/components/layout/TerminalPanel.tsx">
-      <description>Terminal panel tabs, empty/waiting messages.</description>
-      <content><![CDATA[
-// TODO: translate terminal tab labels, empty state copy
-]]></content>
-    </file>
-    <file path="src/components/ide/FileTree/index.tsx">
-      <description>File tree UI; already has expandedPaths work; may have tooltips/empty labels to translate.</description>
-      <content><![CDATA[
-// TODO: audit user-facing strings for FileTree panel (empty state, errors)
-]]></content>
-    </file>
-    <file path="src/components/ide/PreviewPanel.tsx">
-      <description>Preview panel shows waiting-for-dev-server text; needs translation.</description>
-      <content><![CDATA[
-// Waiting for dev server... Run npm run dev
-]]></content>
-    </file>
-    <file path="src/components/ide/MonacoEditor.tsx">
-      <description>Editor empty states / tabs; check for user-facing strings.</description>
-      <content><![CDATA[
-// TODO: translate "No file open" or tab labels if present.
-]]></content>
-    </file>
+    <file path="src/components/ide/SyncStatusIndicator.tsx" />
+    <file path="src/components/ide/XTerminal.tsx" />
+    <file path="src/components/ide/FileTree/FileTree.tsx" />
+    <file path="src/components/ide/PreviewPanel/PreviewPanel.tsx" />
   </files>
-
-  <!-- Research findings -->
-  <research_notes>
-    <finding source="architecture.md" query="Localization">
-      Cross-cutting #6: client-only EN/VI, set html lang/og:locale via LocaleProvider; lazy bundles; avoid SSR coupling.
-    </finding>
-    <finding source="deepwiki" repo="TanStack/router">
-      Head management via head() + <HeadContent/>; client locale state acceptable; ClientOnly for hydration-sensitive UI.
-    </finding>
-    <finding source="codebase" query="Workspace strings">
-      Workspace route uses IDELayout with many hardcoded labels in layout/IDEHeaderBar, TerminalPanel, PreviewPanel, FileTree. No translations applied yet.
-    </finding>
-  </research_notes>
-
-  <!-- Architecture patterns to follow -->
-  <architecture_patterns>
-    <pattern name="Localization client-only" source="architecture.md">
-      Maintain locale state client-side; update html lang and og:locale; translation resources in JSON; lazy if needed.
-    </pattern>
-    <pattern name="Hook composition">
-      Reuse LocaleProvider/useTranslation; keep routeTree.gen.ts untouched; avoid SSR.
-    </pattern>
-  </architecture_patterns>
-
-  <!-- Technical notes for developer -->
   <technical_notes>
-    <note priority="high">Translate workspace chrome: auto-sync, sync now, switch folder, hide chat, agent chat.</note>
-    <note priority="high">Translate sync/permission prompts, toasts, terminal/preview/empty states (“No file open”, “Waiting for dev server…”).</note>
-    <note priority="medium">Keep technical logs untouched; only user-facing UI strings through i18n.</note>
-    <note priority="medium">If hydration warnings surface, wrap dynamic client-only bits with ClientOnly (TanStack Router).</note>
+    <note priority="high">Use `t('key', 'default')` pattern.</note>
+    <note priority="medium">Run scanner after instrumentation.</note>
   </technical_notes>
-
-  <!-- Dependencies -->
-  <dependencies>
-    <dependency name="react-i18next" version="15.7.4" />
-    <dependency name="i18next" version="23.16.8" />
-  </dependencies>
 </context>

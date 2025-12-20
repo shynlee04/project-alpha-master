@@ -3,6 +3,7 @@ import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 import { createTerminalAdapter, boot } from '../../lib/webcontainer';
+import { useTranslation } from 'react-i18next';
 
 interface XTerminalProps {
     /**
@@ -21,6 +22,7 @@ export function XTerminal({ className, projectPath }: XTerminalProps) {
     const fitAddonRef = useRef<FitAddon | null>(null);
     const adapterRef = useRef<ReturnType<typeof createTerminalAdapter> | null>(null);
     const initializedRef = useRef(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         // Strict Mode protection: don't double init
@@ -98,10 +100,10 @@ export function XTerminal({ className, projectPath }: XTerminalProps) {
             terminal: term,
             fitAddon,
             onExit: (code) => {
-                term.write(`\r\n\x1b[33mShell exited with code ${code}\x1b[0m\r\n`);
+                term.write(`\r\n\x1b[33m${t('terminal.shellExited', { code })}\x1b[0m\r\n`);
             },
             onError: (err) => {
-                term.write(`\r\n\x1b[31mTerminal Error: ${err.message}\x1b[0m\r\n`);
+                term.write(`\r\n\x1b[31m${t('terminal.error', { error: err.message })}\x1b[0m\r\n`);
             }
         });
         adapterRef.current = adapter;
@@ -119,41 +121,44 @@ export function XTerminal({ className, projectPath }: XTerminalProps) {
             })
             .catch((err: any) => {
                 if (disposed) return;
-                term.write(`\r\n\x1b[31mFailed to boot WebContainer: ${err.message}\x1b[0m\r\n`);
-            });
+            .catch ((err: any) => {
+                    if (disposed) return;
+                    term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
+                });
+    });
 
-        // 4. Resize observer
-        const resizeObserver = new ResizeObserver(() => {
-            if (disposed) return;
-            if (fitAddonRef.current) {
-                scheduleFit();
-            }
-        });
-        resizeObserver.observe(containerRef.current);
+    // 4. Resize observer
+    const resizeObserver = new ResizeObserver(() => {
+        if (disposed) return;
+        if (fitAddonRef.current) {
+            scheduleFit();
+        }
+    });
+    resizeObserver.observe(containerRef.current);
 
-        // Cleanup
-        return () => {
-            console.log('[XTerminal] Disposing...');
-            disposed = true;
-            resizeObserver.disconnect();
-            if (adapterRef.current) {
-                adapterRef.current.dispose();
-            }
-            if (terminalRef.current) {
-                terminalRef.current.dispose();
-            }
+    // Cleanup
+    return () => {
+        console.log('[XTerminal] Disposing...');
+        disposed = true;
+        resizeObserver.disconnect();
+        if (adapterRef.current) {
+            adapterRef.current.dispose();
+        }
+        if (terminalRef.current) {
+            terminalRef.current.dispose();
+        }
 
-            adapterRef.current = null;
-            fitAddonRef.current = null;
-            terminalRef.current = null;
-            initializedRef.current = false;
-        };
-    }, []);
+        adapterRef.current = null;
+        fitAddonRef.current = null;
+        terminalRef.current = null;
+        initializedRef.current = false;
+    };
+}, []);
 
-    return (
-        <div
-            ref={containerRef}
-            className={`h-full w-full overflow-hidden ${className || ''}`}
-        />
-    );
+return (
+    <div
+        ref={containerRef}
+        className={`h-full w-full overflow-hidden ${className || ''}`}
+    />
+);
 }

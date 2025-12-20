@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bot, Send, User } from 'lucide-react';
+import { Bot, Send, User, Eraser, Sparkles, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
 
 type Message = {
@@ -15,10 +16,11 @@ interface AgentChatPanelProps {
 }
 
 export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChatPanelProps) {
+    const { t } = useTranslation();
     const createWelcomeMessage = (): Message => ({
         id: 'welcome',
         role: 'assistant',
-        content: `Hi! I'm your AI coding assistant for ${projectName}. What would you like to work on?`,
+        content: t('agent.welcome.subtitle'),
         timestamp: Date.now(),
     });
 
@@ -134,15 +136,16 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         <Bot className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
-                        Agent Chat
+                        {t('agent.title')}
                     </span>
                 </div>
                 <button
                     type="button"
                     onClick={handleClear}
+                    title={t('agent.clear')}
                     className="text-xs text-slate-500 hover:text-slate-200 transition-colors"
                 >
-                    Clear
+                    {t('agent.clear')}
                 </button>
             </div>
 
@@ -153,11 +156,10 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
                     >
                         <div
-                            className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center ${
-                                message.role === 'assistant'
+                            className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center ${message.role === 'assistant'
                                     ? 'bg-gradient-to-br from-cyan-500 to-fuchsia-500'
                                     : 'bg-slate-800'
-                            }`}
+                                }`}
                         >
                             {message.role === 'assistant' ? (
                                 <Bot className="w-4 h-4 text-white" />
@@ -166,11 +168,10 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                             )}
                         </div>
                         <div
-                            className={`flex-1 max-w-[85%] px-3 py-2 rounded-lg text-sm ${
-                                message.role === 'assistant'
+                            className={`flex-1 max-w-[85%] px-3 py-2 rounded-lg text-sm ${message.role === 'assistant'
                                     ? 'bg-slate-950 text-slate-200'
                                     : 'bg-cyan-500/10 text-slate-200'
-                            }`}
+                                }`}
                         >
                             {message.content}
                         </div>
@@ -186,7 +187,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Ask the agent… (⌘K)"
+                        placeholder={t('agent.placeholder')}
                         rows={1}
                         className="w-full px-3 py-2 pr-12 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 resize-none min-h-[44px] max-h-[120px]"
                     />

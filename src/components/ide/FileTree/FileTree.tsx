@@ -26,6 +26,7 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useStore } from '@tanstack/react-store';
 import { FolderOpen, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Internal components
 import { FileTreeItemList } from './FileTreeItem';
@@ -99,6 +100,8 @@ export function FileTree({
     syncManagerRef,
     exclusionPatterns,
   } = useWorkspace();
+
+  const { t } = useTranslation();
 
   // Sync counts for status display
   const fileSyncCounts = useStore(fileSyncCountsStore, (state) => state);
@@ -206,9 +209,9 @@ export function FileTree({
     return (
       <div className={`h-full flex flex-col items-center justify-center text-slate-500 p-4 ${className}`}>
         <FolderOpen size={32} className="mb-2 text-slate-600" />
-        <p className="text-sm text-center">No folder selected</p>
+        <p className="text-sm text-center">{t('ide.noFolderSelected')}</p>
         <p className="text-xs text-slate-600 text-center mt-1">
-          Open a folder to view files
+          {t('ide.openFolderToView')}
         </p>
       </div>
     );
@@ -228,7 +231,7 @@ export function FileTree({
   if (isLoading) {
     return (
       <div className={`h-full flex items-center justify-center text-slate-500 ${className}`}>
-        <p className="text-sm">Loading...</p>
+        <p className="text-sm">{t('ide.loading')}</p>
       </div>
     );
   }
@@ -244,14 +247,14 @@ export function FileTree({
         <div className="flex items-center gap-2 text-xs text-slate-400">
           {fileSyncCounts.total > 0 && (
             <>
-              <span title="Pending files" className="text-amber-400">
-                {fileSyncCounts.pending} pending
+              <span title={t('status.pendingFiles')} className="text-amber-400">
+                {fileSyncCounts.pending} {t('status.pending')}
               </span>
-              <span title="Files with errors" className="text-red-400">
-                {fileSyncCounts.error} error
+              <span title={t('status.errorFiles')} className="text-red-400">
+                {fileSyncCounts.error} {t('status.error')}
               </span>
-              <span title="Synced files" className="text-emerald-400">
-                {fileSyncCounts.synced} synced
+              <span title={t('status.syncedFiles')} className="text-emerald-400">
+                {fileSyncCounts.synced} {t('status.synced')}
               </span>
             </>
           )}
@@ -269,7 +272,7 @@ export function FileTree({
       <div
         ref={treeRef}
         role="tree"
-        aria-label="File explorer"
+        aria-label={t('ide.fileExplorer')}
         tabIndex={0}
         className="flex-1 overflow-auto focus:outline-none min-h-0"
         onKeyDown={handleKeyDown}

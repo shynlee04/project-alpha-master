@@ -12,6 +12,7 @@
 import React, { useState, useEffect } from 'react'
 import { Check, Loader2, AlertTriangle } from 'lucide-react'
 import type { SyncProgress } from '../../lib/filesystem'
+import { useTranslation } from 'react-i18next'
 
 // ============================================================================
 // Types
@@ -39,19 +40,19 @@ export interface SyncStatusIndicatorProps {
 /**
  * Format a date as relative time string (e.g., "2m ago", "Just now")
  */
-function formatRelativeTime(date: Date): string {
+function formatRelativeTime(date: Date, t: any): string {
   const now = Date.now()
   const seconds = Math.floor((now - date.getTime()) / 1000)
 
-  if (seconds < 0) return 'Just now' // Handle edge case of future dates
-  if (seconds < 10) return 'Just now'
-  if (seconds < 60) return `${seconds}s ago`
+  if (seconds < 0) return t('time.justNow') // Handle edge case of future dates
+  if (seconds < 10) return t('time.justNow')
+  if (seconds < 60) return t('time.agoSeconds', { count: seconds })
 
   const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 60) return t('time.agoMinutes', { count: minutes })
 
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return t('time.agoHours', { count: hours })
 
   // For older times, show date
   return date.toLocaleDateString()
@@ -68,6 +69,7 @@ export function SyncStatusIndicator({
   errorMessage,
   onRetry,
 }: SyncStatusIndicatorProps): React.JSX.Element {
+  const { t } = useTranslation()
   // Force re-render every 60 seconds to update relative time
   const [, setTick] = useState(0)
 
@@ -90,13 +92,13 @@ export function SyncStatusIndicator({
           className="flex items-center gap-1 text-xs text-cyan-400"
           title={
             progress?.currentFile
-              ? `Syncing: ${progress.currentFile}`
-              : 'Syncing files to WebContainer...'
+              ? t('status.syncingFile', { file: progress.currentFile })
+              : t('status.syncing')
           }
         >
           <Loader2 className="w-3 h-3 animate-spin" />
           <span>
-            Syncing
+            {t('status.syncing')}
             {progress && progress.totalFiles > 0
               ? ` ${progress.syncedFiles}/${progress.totalFiles}`
               : '...'}
@@ -109,10 +111,10 @@ export function SyncStatusIndicator({
         <button
           onClick={onRetry}
           className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
-          title={errorMessage || 'Sync error - click to retry'}
+          title={errorMessage || t('errors.syncRetry')}
         >
           <AlertTriangle className="w-3 h-3" />
-          <span>Sync error</span>
+          <span>{t('status.error')}</span>
         </button>
       )
 
@@ -123,7 +125,7 @@ export function SyncStatusIndicator({
         return (
           <span className="flex items-center gap-1 text-xs text-slate-500">
             <Check className="w-3 h-3" />
-            <span>Not synced</span>
+            <span>{t('status.notSynced')}</span>
           </span>
         )
       }
@@ -131,10 +133,10 @@ export function SyncStatusIndicator({
       return (
         <span
           className="flex items-center gap-1 text-xs text-emerald-400"
-          title={`Last synced: ${lastSyncTime.toLocaleString()}`}
+          title={`${t('status.lastSynced')}: ${lastSyncTime.toLocaleString()}`}
         >
           <Check className="w-3 h-3" />
-          <span>{formatRelativeTime(lastSyncTime)}</span>
+          <span>{formatRelativeTime(lastSyncTime, t)}</span>
         </span>
       )
   }

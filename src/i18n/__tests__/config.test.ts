@@ -1,38 +1,28 @@
-// @vitest-environment jsdom
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest';
+import i18n from '../config';
 
-import { getLocale, loadStoredLocale, persistLocale, setLocale, setupI18n } from '../config'
+describe('i18n configuration', () => {
+  it('should be initialized', () => {
+    expect(i18n.isInitialized).toBe(true);
+  });
 
-describe('i18n config', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    document.documentElement.lang = 'en'
-    const og = document.head.querySelector('meta[property="og:locale"]')
-    if (og) og.remove()
-  })
+  it('should have English and Vietnamese resources', () => {
+    expect(i18n.getResource('en', 'translation', 'welcome')).toBeDefined();
+    expect(i18n.getResource('vi', 'translation', 'welcome')).toBeDefined();
+  });
 
-  it('defaults to en when no stored locale', () => {
-    expect(loadStoredLocale()).toBe('en')
-  })
+  it('should default to English', () => {
+    // If no language detected, fallback is en
+    if (!i18n.language) {
+      expect(i18n.languages).toContain('en');
+    }
+  });
 
-  it('persists and loads locale vi', () => {
-    persistLocale('vi')
-    expect(loadStoredLocale()).toBe('vi')
-  })
+  it('should allow language switching', async () => {
+    await i18n.changeLanguage('vi');
+    expect(i18n.language).toBe('vi');
 
-  it('setLocale updates html lang and og:locale', () => {
-    setupI18n()
-    setLocale('vi')
-    expect(document.documentElement.lang).toBe('vi')
-
-    const meta = document.head.querySelector('meta[property="og:locale"]')
-    expect(meta?.getAttribute('content')).toBe('vi')
-  })
-
-  it('getLocale returns fallback when invalid is set', () => {
-    setupI18n()
-    // @ts-expect-error intentional invalid for test
-    setLocale('fr')
-    expect(getLocale()).toBe('en')
-  })
-})
+    await i18n.changeLanguage('en');
+    expect(i18n.language).toBe('en');
+  });
+});

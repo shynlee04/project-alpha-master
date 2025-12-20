@@ -263,7 +263,7 @@ export function MonacoEditor({
                     onMount={handleEditorMount}
                     loading={
                         <div className="h-full flex items-center justify-center text-slate-500">
-                            <span className="animate-pulse">Loading editor...</span>
+                            <span className="animate-pulse">{t('editor.loading')}</span>
                         </div>
                     }
                     options={{

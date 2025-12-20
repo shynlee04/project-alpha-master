@@ -11,20 +11,14 @@ import {
   StickyNote,
   X,
 } from 'lucide-react'
-import { useLocalePreference } from '../i18n/LocaleProvider'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 export default function Header() {
   const { t } = useTranslation()
-  const { locale, setLocale } = useLocalePreference()
   const [isOpen, setIsOpen] = useState(false)
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
-
-  const toggleLocale = () => {
-    const next = locale === 'en' ? 'vi' : 'en'
-    setLocale(next)
-  }
 
   return (
     <>
@@ -46,20 +40,13 @@ export default function Header() {
           </Link>
         </h1>
         <div className="ml-auto">
-          <button
-            onClick={toggleLocale}
-            className="px-3 py-2 rounded-md bg-slate-700 hover:bg-slate-600 text-sm transition-colors"
-            aria-label="Toggle language"
-          >
-            {t('actions.toggleLanguage', { code: locale.toUpperCase() })}
-          </button>
+          <LanguageSwitcher />
         </div>
       </header>
 
       <aside
-        className={`fixed top-0 left-0 h-full w-80 bg-gray-900 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 h-full w-80 bg-gray-900 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 className="text-xl font-bold">{t('navigation.title')}</h2>

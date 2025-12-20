@@ -1,111 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<context story="21-3-language-switcher-and-persistence" created="2025-12-20T09:12:00+07:00">
-  <!-- Current code state -->
+<context story="21-3-language-switcher-and-persistence" created="2025-12-20T11:30:00+07:00">
   <files>
-    <file path="src/routes/index.tsx">
-      <description>Dashboard / Recent Projects UI (untranslated strings for headings, buttons, toasts/errors).</description>
-      <content><![CDATA[
-// Snippet: headings/buttons currently hardcoded
-return (
-  <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
-    <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur">
-      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-cyan-400 font-bold text-xl tracking-tight">via-gent</span>
-]]></content>
-    </file>
     <file path="src/i18n/config.ts">
-      <description>I18n setup with EN/VI resources, localStorage persistence, html lang + og:locale update.</description>
       <content><![CDATA[
-export function setLocale(locale: SupportedLocale) {
-  if (!supportedLocales.includes(locale)) {
-    locale = DEFAULT_LOCALE
-  }
-  persistLocale(locale)
-  i18n.changeLanguage(locale)
-  const html = document.querySelector('html')
-  if (html) {
-    html.setAttribute('lang', locale)
-  }
-  let ogLocale = document.querySelector('meta[property="og:locale"]')
-  if (!ogLocale) {
-    ogLocale = document.createElement('meta')
-    ogLocale.setAttribute('property', 'og:locale')
-    document.head.appendChild(ogLocale)
-  }
-  ogLocale.setAttribute('content', locale)
-}
-]]></content>
-    </file>
-    <file path="src/i18n/en.json">
-      <description>Current EN keys (navigation/actions only).</description>
-      <content><![CDATA[
-{
-  "appName": "via-gent",
-  "navigation": { "title": "Navigation", "home": "Home", "startServerFunctions": "Start - Server Functions", "startApiRequest": "Start - API Request", "startSsrDemos": "Start - SSR Demos", "startSpaMode": "SPA Mode", "startFullSsr": "Full SSR", "startDataOnly": "Data Only" },
-  "actions": { "toggleLanguage": "Language: {{code}}" }
-}
-]]></content>
-    </file>
-    <file path="src/i18n/vi.json">
-      <description>Current VI keys (navigation/actions only).</description>
-      <content><![CDATA[
-{
-  "appName": "via-gent",
-  "navigation": { "title": "Điều hướng", "home": "Trang chủ", "startServerFunctions": "Start - Hàm máy chủ", "startApiRequest": "Start - Yêu cầu API", "startSsrDemos": "Start - Bản demo SSR", "startSpaMode": "Chế độ SPA", "startFullSsr": "SSR đầy đủ", "startDataOnly": "Chỉ dữ liệu" },
-  "actions": { "toggleLanguage": "Ngôn ngữ: {{code}}" }
-}
-]]></content>
+// ... existing config with detector ...
+      ]]></content>
     </file>
     <file path="src/i18n/LocaleProvider.tsx">
-      <description>Locale context/hook, sets html lang and og:locale on change.</description>
       <content><![CDATA[
-export function LocaleProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
-  const [locale, setLocaleState] = useState<SupportedLocale>(() => loadStoredLocale())
-  const value = useMemo<LocaleContextValue>(() => ({ locale, setLocale: (next) => { setLocaleState(next); applyLocale(next) } }), [locale])
-  useEffect(() => { applyLocale(locale) }, [locale])
-  const { i18n } = useTranslation()
-  useEffect(() => { const handler = (lng: string) => { if (lng === 'en' || lng === 'vi') setLocaleState(lng as SupportedLocale) }; i18n.on('languageChanged', handler); return () => i18n.off('languageChanged', handler) }, [i18n])
-  useEffect(() => { const current = getLocale(); applyLocale(current); setLocaleState(current) }, [])
-  return <I18nextProvider i18n={i18nInstance}><LocaleContext.Provider value={value}>{children}</LocaleContext.Provider></I18nextProvider>
-}
-]]></content>
+// ... existing provider ...
+      ]]></content>
+    </file>
+    <file path="src/components/Header.tsx">
+      <content><![CDATA[
+// ... need to see this file to fetch correct insertion point ...
+      ]]></content>
     </file>
   </files>
-
-  <!-- Research findings -->
+  
   <research_notes>
-    <finding source="deepwiki" repo="TanStack/router">
-      TanStack Router head management uses head() with <HeadContent/>; client-side locale can update html lang and og:locale; URL segments not required.
-    </finding>
-    <finding source="architecture.md" query="Localization">
-      Cross-cutting #6: client-only i18n EN/VI, lazy bundles, set html lang per locale, avoid SSR coupling.
-    </finding>
-    <finding source="codebase" query="Existing i18n keys">
-      Only navigation/actions keys exist; dashboard/workspace strings remain hardcoded in routes and components.
+    <finding source="exa" query="accessible language switcher react">
+      Best practice: Use a button or select with aria-label.
+      Persistence: Already handled by i18next-browser-languagedetector (localStorage).
     </finding>
   </research_notes>
-
-  <!-- Architecture patterns to follow -->
-  <architecture_patterns>
-    <pattern name="Localization client-only" source="architecture.md">
-      Maintain locale in client state; set html lang/og:locale; lazy-load translation bundles; fallback EN.
-    </pattern>
-    <pattern name="Hook composition">
-      Use existing LocaleProvider/useLocalePreference for toggle; avoid SSR/routeTree.gen.ts edits.
-    </pattern>
-  </architecture_patterns>
-
-  <!-- Technical notes for developer -->
+  
   <technical_notes>
-    <note priority="high">Translate dashboard strings in src/routes/index.tsx (headings, buttons, empty/waiting states, errors/toasts).</note>
-    <note priority="high">Add EN/VI keys for dashboard + status/toast messages; reuse setLocale for html lang + og:locale.</note>
-    <note priority="medium">Consider ClientOnly wrappers if any hydration-sensitive pieces appear; current app is SPA.</note>
+    <note priority="high">Use `useTranslation().i18n.changeLanguage()` to switch.</note>
+    <note priority="medium">Style with Tailwind to match Header.</note>
   </technical_notes>
-
-  <!-- Dependencies -->
-  <dependencies>
-    <dependency name="react-i18next" version="15.7.4" />
-    <dependency name="i18next" version="23.16.8" />
-  </dependencies>
 </context>

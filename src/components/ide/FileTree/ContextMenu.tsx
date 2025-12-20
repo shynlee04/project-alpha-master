@@ -5,6 +5,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { FilePlus, FolderPlus, Pencil, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { ContextMenuAction, TreeNode } from './types';
 
 interface ContextMenuProps {
@@ -69,16 +70,18 @@ export function ContextMenu({
         return null;
     }
 
+    const { t } = useTranslation();
+
     const menuItems: Array<{
         action: ContextMenuAction;
         label: string;
         icon: React.ReactNode;
         destructive?: boolean;
     }> = [
-            { action: 'new-file', label: 'New File', icon: <FilePlus size={14} /> },
-            { action: 'new-folder', label: 'New Folder', icon: <FolderPlus size={14} /> },
-            { action: 'rename', label: 'Rename', icon: <Pencil size={14} /> },
-            { action: 'delete', label: 'Delete', icon: <Trash2 size={14} />, destructive: true },
+            { action: 'new-file', label: t('contextMenu.newFile'), icon: <FilePlus size={14} /> },
+            { action: 'new-folder', label: t('contextMenu.newFolder'), icon: <FolderPlus size={14} /> },
+            { action: 'rename', label: t('contextMenu.rename'), icon: <Pencil size={14} /> },
+            { action: 'delete', label: t('contextMenu.delete'), icon: <Trash2 size={14} />, destructive: true },
         ];
 
     // Only show new file/folder for directories

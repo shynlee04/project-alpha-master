@@ -9,6 +9,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { AlertTriangle, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // ============================================================================
 // Types
@@ -36,6 +37,7 @@ export function SyncEditWarning({
     onDismiss,
     autoDismissMs = 5000,
 }: SyncEditWarningProps): React.JSX.Element | null {
+    const { t } = useTranslation()
     const [visible, setVisible] = useState(isVisible)
 
     // Sync visibility with prop
@@ -63,14 +65,14 @@ export function SyncEditWarning({
             role="alert"
         >
             <AlertTriangle className="h-4 w-4 flex-shrink-0 text-amber-400" />
-            <span>Editing during sync may cause conflicts</span>
+            <span>{t('editor.input.syncWarning')}</span>
             <button
                 onClick={() => {
                     setVisible(false)
                     onDismiss()
                 }}
                 className="ml-2 rounded-sm p-1 text-amber-400 hover:bg-amber-800/50 hover:text-amber-200 transition-colors"
-                aria-label="Dismiss warning"
+                aria-label={t('common.dismiss')}
             >
                 <X className="h-3 w-3" />
             </button>
