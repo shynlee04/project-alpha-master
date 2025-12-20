@@ -1,15 +1,15 @@
-# Story 21-1: Locale-Aware Routing & HTML Lang
+# Story 21-1: Client-Side Localization Foundation & HTML Lang
 
-**Epic:** 21 - Client-Side Localization (EN/VI)  
-**Sprint:** 13 (parallel track)  
-**Status:** done  
-**Priority:** P2  
+**Epic:** 21 - Client-Side Localization (EN/VI)
+**Sprint:** 13 (parallel track)
+**Status:** done
+**Priority:** P2
 
 ---
 
 ## User Story
-As a **user**,  
-I want **to toggle language (EN/VI) client-side without URL changes**,  
+As a **user**,
+I want **to toggle language (EN/VI) client-side without URL changes**,
 So that **the UI and metadata reflect my language choice**.
 
 ---
