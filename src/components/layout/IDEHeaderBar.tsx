@@ -59,7 +59,6 @@ export function IDEHeaderBar({
         directoryHandle,
         permissionState,
         syncStatus,
-        syncProgress,
         syncError,
         autoSync,
         isOpeningFolder,
@@ -88,8 +87,6 @@ export function IDEHeaderBar({
                         autoSync={autoSync}
                         isDisabled={isDisabled}
                         isSyncing={isSyncing}
-                        isOpeningFolder={isOpeningFolder}
-                        syncProgress={syncProgress}
                         onSyncNow={syncNow}
                         onSwitchFolder={switchFolder}
                         onSetAutoSync={setAutoSync}
@@ -98,7 +95,6 @@ export function IDEHeaderBar({
                 ) : (
                     <OpenFolderButton
                         isDisabled={isDisabled}
-                        isOpeningFolder={isOpeningFolder}
                         onOpenFolder={openFolder}
                         t={t}
                     />
@@ -161,8 +157,6 @@ interface FolderOpenedControlsProps {
     autoSync: boolean;
     isDisabled: boolean;
     isSyncing: boolean;
-    isOpeningFolder: boolean;
-    syncProgress: { syncedFiles: number } | null;
     onSyncNow: () => void;
     onSwitchFolder: () => void;
     onSetAutoSync: (enabled: boolean) => Promise<void>;
@@ -220,7 +214,7 @@ function FolderOpenedControls({
             </label>
 
             {!autoSync && (
-                <span className="text-xs text-amber-400">Auto-sync off</span>
+                <span className="text-xs text-amber-400">{t('ide.autoSyncOff')}</span>
             )}
 
             <button

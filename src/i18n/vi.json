@@ -47,6 +47,7 @@
     "openFolder": "Mở thư mục",
     "hideChat": "Ẩn Chat",
     "showChat": "Hiện Chat",
+    "autoSyncOff": "Tự động đồng bộ đang tắt",
     "reAuthorize": "Cấp lại quyền",
     "fsDenied": "Từ chối truy cập thư mục cục bộ – dùng workspace ảo",
     "syncError": "Lỗi đồng bộ",
@@ -60,7 +61,13 @@
     "waitingDevServer": "Đang chờ dev server...",
     "runDevCommand": "Chạy npm run dev trong terminal",
     "agentChat": "Agent Chat",
-    "toggleChatShortcut": "Bật/tắt Chat (⌘K)"
+    "toggleChatShortcut": "Bật/tắt Chat (⌘K)",
+    "preview": "Preview",
+    "refreshPreview": "Làm mới preview",
+    "openInNewTab": "Mở trong tab mới",
+    "deviceDesktop": "Desktop",
+    "deviceTablet": "Tablet",
+    "deviceMobile": "Mobile"
   },
   "time": {
     "justNow": "vừa xong",
