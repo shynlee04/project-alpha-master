@@ -81,5 +81,38 @@
   "contextMenu.newFile": "New File",
   "contextMenu.newFolder": "New Folder",
   "contextMenu.rename": "Rename",
-  "contextMenu.delete": "Delete"
+  "contextMenu.delete": "Delete",
+  "common": {
+    "dismiss": "Dismiss"
+  },
+  "agent": {
+    "title": "Agent Chat",
+    "clear": "Clear",
+    "welcome": {
+      "title": "Welcome to the Agent Chat!",
+      "subtitle": "Ask me anything about your project..."
+    },
+    "welcome_message": "Hi! I'm your AI coding assistant for {{projectName}}. What would you like to work on?",
+    "demo_response": "I'm a demo assistant. Wire me to TanStack AI in Epic 6 for real streaming responses.",
+    "placeholder": "Ask the agent… (⌘K)",
+    "status": {
+      "thinking": "Agent is thinking..."
+    }
+  },
+  "editor": {
+    "loading": "Loading editor...",
+    "noFile": {
+      "title": "No file open",
+      "subtitle": "Select a file to edit"
+    },
+    "input": {
+      "syncWarning": "Editing during sync may cause conflicts"
+    }
+  },
+  "terminal": {
+    "ariaLabel": "Terminal",
+    "shellExited": "Shell exited with code {{code}}",
+    "error": "Terminal Error: {{error}}",
+    "bootFailed": "Failed to boot WebContainer: {{error}}"
+  }
 }

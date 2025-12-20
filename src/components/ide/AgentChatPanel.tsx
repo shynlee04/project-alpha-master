@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bot, Send, User, Eraser, Sparkles, Loader2 } from 'lucide-react';
+import { Bot, Send, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
 
@@ -20,7 +20,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     const createWelcomeMessage = (): Message => ({
         id: 'welcome',
         role: 'assistant',
-        content: t('agent.welcome.subtitle'),
+        content: t('agent.welcome_message', { projectName }),
         timestamp: Date.now(),
     });
 
@@ -95,7 +95,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         const assistantMessage: Message = {
             id: `msg_${Date.now()}_assistant`,
             role: 'assistant',
-            content: "I'm a demo assistant. Wire me to TanStack AI in Epic 6 for real streaming responses.",
+            content: t('agent.demo_response'),
             timestamp: Date.now(),
         };
 
@@ -157,8 +157,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     >
                         <div
                             className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center ${message.role === 'assistant'
-                                    ? 'bg-gradient-to-br from-cyan-500 to-fuchsia-500'
-                                    : 'bg-slate-800'
+                                ? 'bg-gradient-to-br from-cyan-500 to-fuchsia-500'
+                                : 'bg-slate-800'
                                 }`}
                         >
                             {message.role === 'assistant' ? (
@@ -169,8 +169,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         </div>
                         <div
                             className={`flex-1 max-w-[85%] px-3 py-2 rounded-lg text-sm ${message.role === 'assistant'
-                                    ? 'bg-slate-950 text-slate-200'
-                                    : 'bg-cyan-500/10 text-slate-200'
+                                ? 'bg-slate-950 text-slate-200'
+                                : 'bg-cyan-500/10 text-slate-200'
                                 }`}
                         >
                             {message.content}

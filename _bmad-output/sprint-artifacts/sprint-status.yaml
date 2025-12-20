@@ -309,6 +309,7 @@ development_status:
   21-5-ui-migration-wave-2-ide-surfaces: done
   21-6-formatting-and-rtl-readiness: backlog
   21-7-tests-and-lint-guardrails: backlog
+  21-8-complete-localization-coverage: done
   epic-21-retrospective: optional
 
   # =============================================================================

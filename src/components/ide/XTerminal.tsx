@@ -121,44 +121,41 @@ export function XTerminal({ className, projectPath }: XTerminalProps) {
             })
             .catch((err: any) => {
                 if (disposed) return;
-            .catch ((err: any) => {
-                    if (disposed) return;
-                    term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
-                });
-    });
+                term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
+            });
 
-    // 4. Resize observer
-    const resizeObserver = new ResizeObserver(() => {
-        if (disposed) return;
-        if (fitAddonRef.current) {
-            scheduleFit();
-        }
-    });
-    resizeObserver.observe(containerRef.current);
+        // 4. Resize observer
+        const resizeObserver = new ResizeObserver(() => {
+            if (disposed) return;
+            if (fitAddonRef.current) {
+                scheduleFit();
+            }
+        });
+        resizeObserver.observe(containerRef.current);
 
-    // Cleanup
-    return () => {
-        console.log('[XTerminal] Disposing...');
-        disposed = true;
-        resizeObserver.disconnect();
-        if (adapterRef.current) {
-            adapterRef.current.dispose();
-        }
-        if (terminalRef.current) {
-            terminalRef.current.dispose();
-        }
+        // Cleanup
+        return () => {
+            console.log('[XTerminal] Disposing...');
+            disposed = true;
+            resizeObserver.disconnect();
+            if (adapterRef.current) {
+                adapterRef.current.dispose();
+            }
+            if (terminalRef.current) {
+                terminalRef.current.dispose();
+            }
 
-        adapterRef.current = null;
-        fitAddonRef.current = null;
-        terminalRef.current = null;
-        initializedRef.current = false;
-    };
-}, []);
+            adapterRef.current = null;
+            fitAddonRef.current = null;
+            terminalRef.current = null;
+            initializedRef.current = false;
+        };
+    }, []);
 
-return (
-    <div
-        ref={containerRef}
-        className={`h-full w-full overflow-hidden ${className || ''}`}
-    />
-);
+    return (
+        <div
+            ref={containerRef}
+            className={`h-full w-full overflow-hidden ${className || ''}`}
+        />
+    );
 }

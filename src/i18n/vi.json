@@ -81,5 +81,38 @@
   "contextMenu.newFile": "Tập tin mới",
   "contextMenu.newFolder": "Thư mục mới",
   "contextMenu.rename": "Đổi tên",
-  "contextMenu.delete": "Xóa"
+  "contextMenu.delete": "Xóa",
+  "common": {
+    "dismiss": "Bỏ qua"
+  },
+  "agent": {
+    "title": "Trợ lý AI",
+    "clear": "Xóa trắng",
+    "welcome": {
+      "title": "Chào mừng đến với Trợ lý AI!",
+      "subtitle": "Hỏi tôi bất cứ điều gì về dự án của bạn..."
+    },
+    "welcome_message": "Xin chào! Tôi là trợ lý AI cho dự án {{projectName}}. Bạn muốn làm gì hôm nay?",
+    "demo_response": "Tôi là trợ lý demo. Hãy kết nối tôi với TanStack AI trong Epic 6 để có phản hồi thực tế.",
+    "placeholder": "Hỏi trợ lý… (⌘K)",
+    "status": {
+      "thinking": "Trợ lý đang suy nghĩ..."
+    }
+  },
+  "editor": {
+    "loading": "Đang tải bộ soạn thảo...",
+    "noFile": {
+      "title": "Chưa mở tệp tin",
+      "subtitle": "Chọn một tệp tin để chỉnh sửa"
+    },
+    "input": {
+      "syncWarning": "Chỉnh sửa trong khi đồng bộ hóa có thể gây xung đột"
+    }
+  },
+  "terminal": {
+    "ariaLabel": "Terminal",
+    "shellExited": "Shell đã thoát với mã {{code}}",
+    "error": "Lỗi Terminal: {{error}}",
+    "bootFailed": "Không thể khởi động WebContainer: {{error}}"
+  }
 }
