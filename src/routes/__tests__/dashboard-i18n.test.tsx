@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import { setLocale } from '../../i18n/config'
+import i18n from '../../i18n/config'
 import { Dashboard, formatRelativeDate } from '../index'
 import { LocaleProvider } from '../../i18n/LocaleProvider'
 
@@ -48,7 +48,8 @@ describe('Dashboard localization', () => {
     const enTitle = await screen.findByText('Dashboard')
     expect(enTitle).toBeTruthy()
 
-    setLocale('vi')
+    // Use i18n.changeLanguage instead of setLocale
+    await i18n.changeLanguage('vi')
 
     await waitFor(() => {
       expect(screen.getByText('Bảng điều khiển')).toBeTruthy()
