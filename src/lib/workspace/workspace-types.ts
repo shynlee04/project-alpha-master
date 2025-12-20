@@ -32,6 +32,10 @@ export interface WorkspaceState {
     isOpeningFolder: boolean;
     /** Current exclusion patterns (default + custom) */
     exclusionPatterns: string[];
+    /** Whether WebContainer has completed booting - Story 13-2 */
+    isWebContainerBooted: boolean;
+    /** Whether initial sync has completed - Story 13-2 */
+    initialSyncCompleted: boolean;
 }
 
 export interface WorkspaceActions {
@@ -46,6 +50,8 @@ export interface WorkspaceActions {
     setExclusionPatterns(patterns: string[]): Promise<void>;
     /** Clear state and navigate to dashboard */
     closeProject(): void;
+    /** Story 13-2: Set WebContainer boot status for auto-sync */
+    setIsWebContainerBooted(booted: boolean): void;
 }
 
 export type WorkspaceContextValue = WorkspaceState & WorkspaceActions & {

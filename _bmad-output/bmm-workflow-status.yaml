@@ -10,7 +10,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-20T06:45:00+07:00"
+last_updated: "2025-12-20T07:25:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 
@@ -207,9 +207,9 @@ epic_status:
   - id: 13
     name: "Terminal & Sync Stability"
     status: "IN_PROGRESS"
-    stories: "1/6"  # Story 13-1 done, 13-6 added
+    stories: "2/6"  # Story 13-1 done, Story 13-2 done
     priority: "P0"
-    notes: "Story 13-1 completed 2025-12-20. Story 13-6 added per manual testing."
+    notes: "Stories 13-1 and 13-2 completed 2025-12-20. Next: Story 13-3."
     
   - id: 12
     name: "AI Tool Interface Layer"
@@ -302,24 +302,24 @@ next_actions:
       date: "2025-12-20"
       notes: "Generated with 22 epics, 117 stories via sprint-planning workflow"
       
+    - action: "Create Story 13-2 (Auto-Sync)"
+      status: "DONE"
+      date: "2025-12-20"
+      notes: "Story file and context XML created"
+      
+    - action: "Implement Story 13-2"
+      status: "DONE"
+      date: "2025-12-20"
+      notes: "Fixed auto-sync trigger, 160 tests pass"
+      
   immediate:
-    - action: "Create Story 13-1 (Terminal CWD)"
+    - action: "Create Story 13-3 (Sync Progress)"
       command: "create-story workflow"
       agent: "sm"
-      priority: "P0"
-      
-    - action: "Implement Story 13-1"
-      command: "dev-story workflow"
-      agent: "dev"
       priority: "P0"
       
   then:
-    - action: "Create Story 13-2 (Auto-Sync)"
-      command: "create-story workflow"
-      agent: "sm"
-      priority: "P0"
-      
-    - action: "Implement Story 13-2"
+    - action: "Implement Story 13-3"
       command: "dev-story workflow"
       agent: "dev"
       priority: "P0"

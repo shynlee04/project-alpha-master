@@ -67,6 +67,7 @@ export function IDELayout(): React.JSX.Element {
     localAdapterRef,
     syncManagerRef,
     eventBus,
+    setIsWebContainerBooted,  // Story 13-2: Notify context when boot completes
   } = useWorkspace();
 
   // UI state
@@ -252,6 +253,11 @@ export function IDELayout(): React.JSX.Element {
   useEffect(() => {
     boot()
       .then(() => {
+        // Story 13-2: Notify WorkspaceContext that boot is complete
+        // This enables useInitialSync to trigger auto-sync
+        setIsWebContainerBooted(true);
+        console.log('[IDE] WebContainer booted, auto-sync can now proceed');
+
         if (isBooted()) {
           const unsubscribe = onServerReady((port, url) => {
             console.log(`[IDE] Server ready on port ${port}: ${url}`);
@@ -261,8 +267,11 @@ export function IDELayout(): React.JSX.Element {
           return unsubscribe;
         }
       })
-      .catch(console.error);
-  }, []);
+      .catch((error) => {
+        console.error('[IDE] WebContainer boot failed:', error);
+        // Don't set booted on failure - sync won't attempt
+      });
+  }, [setIsWebContainerBooted]);
 
   // ============================================================================
   // File Handlers

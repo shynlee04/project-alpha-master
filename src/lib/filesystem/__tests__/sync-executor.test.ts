@@ -4,6 +4,7 @@ import type { LocalFSAdapter } from '../local-fs-adapter';
 import type { SyncConfig, SyncPlan } from '../sync-types';
 import { createWorkspaceEventBus } from '../../events';
 import * as WebContainerModule from '../../webcontainer';
+import type { FileSystemAPI } from '@webcontainer/api';
 
 // Mock WebContainer
 vi.mock('../../webcontainer', () => ({
@@ -16,7 +17,7 @@ describe('SyncExecutor', () => {
     let mockAdapter: LocalFSAdapter;
     let mockConfig: SyncConfig;
     let mockEventBus: ReturnType<typeof createWorkspaceEventBus>;
-    let mockFs: { writeFile: any; rm: any; mkdir: any };
+    let mockFs: FileSystemAPI;
 
     beforeEach(() => {
         // Reset mocks
@@ -49,7 +50,7 @@ describe('SyncExecutor', () => {
             readFile: vi.fn(),
             rename: vi.fn(),
             watch: vi.fn()
-        } as any;
+        } as unknown as FileSystemAPI;
 
         vi.mocked(WebContainerModule.isBooted).mockReturnValue(true);
         vi.mocked(WebContainerModule.getFileSystem).mockReturnValue(mockFs);

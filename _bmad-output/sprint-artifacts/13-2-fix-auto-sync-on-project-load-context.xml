@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="13-2-fix-auto-sync-on-project-load" created="2025-12-20T07:00:00+07:00">
+  
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/workspace/hooks/useInitialSync.ts">
+      <notes>BUG: Condition !syncManagerRef.current prevents re-sync after first creation</notes>
+      <content><![CDATA[
+export function useInitialSync(
+    state: WorkspaceStateReturn['state'],
+    setters: WorkspaceStateReturn['setters'],
+    refs: WorkspaceStateReturn['refs'],
+    syncOperations: SyncOperationsReturn
+) {
+    const { directoryHandle, syncStatus, autoSync } = state;
+    const { setPermissionState } = setters;
+    const { syncManagerRef } = refs;
+    const { performSync } = syncOperations;
+
+    useEffect(() => {
+        // BUG: !syncManagerRef.current means sync only fires ONCE
+        if (directoryHandle && !syncManagerRef.current && syncStatus === 'idle') {
+            const initSync = async () => {
+                const updatedState = await getPermissionState(directoryHandle, 'readwrite');
+                setPermissionState(updatedState);
+
+                if (updatedState === 'granted') {
+                    await performSync(directoryHandle, { fullSync: autoSync });
+                } else {
+                    console.log('[Workspace] Permission needed for initial sync');
+                }
+            };
+            initSync();
+        }
+    }, [directoryHandle, syncStatus, autoSync, performSync, setPermissionState, syncManagerRef]);
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/workspace/hooks/useSyncOperations.ts">
+      <notes>performSync creates syncManager if not exists, sets syncStatus</notes>
+      <content><![CDATA[
+const performSync = useCallback(
+    async (
+        handle: FileSystemDirectoryHandle,
+        options?: { fullSync?: boolean, autoSync?: boolean }
+    ): Promise<boolean> => {
+        const fullSync = options?.fullSync ?? true;
+
+        try {
+            let adapter = localAdapterRef.current;
+            let syncManager = syncManagerRef.current;
+
+            if (!adapter || !syncManager) {
+                adapter = new LocalFSAdapter();
+                adapter.setDirectoryHandle(handle);
+
+                syncManager = new SyncManager(adapter, { ... }, eventBusRef.current);
+
+                localAdapterRef.current = adapter;
+                syncManagerRef.current = syncManager;  // <-- Once set, useInitialSync won't run again
+            }
+            // ...rest of sync logic
+        }
+    },
+    [...]
+);
+      ]]></content>
+    </file>
+    
+    <file path="src/components/layout/IDELayout.tsx">
+      <notes>Separate boot() call with no state tracking for completion</notes>
+      <content><![CDATA[
+// Lines 252-265: WebContainer boot happens here, but no context state update
+useEffect(() => {
+    boot()
+      .then(() => {
+        if (isBooted()) {
+          const unsubscribe = onServerReady((port, url) => {
+            console.log(`[IDE] Server ready on port ${port}: ${url}`);
+            setPreviewUrl(url);
+            setPreviewPort(port);
+          });
+          return unsubscribe;
+        }
+      })
+      .catch(console.error);
+  }, []);
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/filesystem/sync-manager.ts">
+      <notes>syncToWebContainer() handles boot internally if not booted</notes>
+      <content><![CDATA[
+// Lines 127-130: Boot is called internally during sync
+async syncToWebContainer(): Promise<SyncResult> {
+    if (this._status === 'syncing') {
+        console.warn('[SyncManager] Sync already in progress, skipping request');
+        return { success: false, ... };
+    }
+
+    this._status = 'syncing';
+
+    try {
+        // Ensure WebContainer is booted
+        if (!isBooted()) {
+            await boot();  // <-- Boot happens here when sync is called
+        }
+
+        // ... rest of sync logic
+    }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/webcontainer/manager.ts">
+      <notes>isBooted() function available for checking boot status</notes>
+      <content><![CDATA[
+// Singleton instance
+let instance: WebContainer | null = null;
+let bootPromise: Promise<WebContainer> | null = null;
+
+export function isBooted(): boolean {
+    return instance !== null;
+}
+
+export async function boot(options: WebContainerManagerOptions = {}): Promise<WebContainer> {
+    // Return existing instance if already booted
+    if (instance) {
+        return instance;
+    }
+
+    // If boot is in progress, return the same promise
+    if (bootPromise) {
+        return bootPromise;
+    }
+    
+    // ... boot logic
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="codebase" query="useInitialSync implementation">
+      The condition `!syncManagerRef.current` in line 25 ensures sync only runs ONCE.
+      After syncManagerRef is populated by performSync(), the effect never triggers again
+      even if directoryHandle changes or sync failed.
+    </finding>
+    <finding source="codebase" query="sync-manager boot handling">
+      sync-manager.ts line 128-130 calls boot() internally before mount().
+      This means sync CAN happen without prior explicit boot, but the timing is hidden.
+    </finding>
+    <finding source="codebase" query="IDELayout boot">
+      Lines 252-265 call boot() in a separate useEffect. This happens in parallel
+      with workspace initialization but doesn't communicate completion to WorkspaceContext.
+    </finding>
+    <finding source="pattern" query="React effect dependencies">
+      React effects only re-run when dependencies change.
+      Since syncManagerRef is a ref (not state), its changes don't trigger re-renders.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="state-driven-sync" source="architecture.md">
+      Sync should be triggered by state changes, not ref mutations.
+      Track WebContainer boot status and initial sync completion as state.
+    </pattern>
+    <pattern name="workspace-context" source="architecture.md">
+      WorkspaceContext provides centralized state. Add boot status here
+      so all components can react to WebContainer readiness.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      FIX APPROACH: Replace ref-based condition with state-based tracking.
+      Add `initialSyncCompleted` boolean state that is set to true after first sync.
+      Change condition from `!syncManagerRef.current` to `!initialSyncCompleted`.
+    </note>
+    <note priority="high">
+      ADD: `isWebContainerBooted` state that is set when boot() completes.
+      useInitialSync should wait for this to be true before attempting sync.
+    </note>
+    <note priority="medium">
+      The current code works sometimes because sync-manager calls boot() internally.
+      But this creates timing issues - user sees stale state during hidden boot.
+    </note>
+    <note priority="low">
+      Consider debouncing to prevent multiple sync attempts if handle changes rapidly.
+    </note>
+  </technical_notes>
+  
+  <!-- Proposed solution -->
+  <proposed_changes>
+    <change file="src/lib/workspace/hooks/useWorkspaceState.ts">
+      <description>Add new state: isWebContainerBooted, initialSyncCompleted</description>
+      <code><![CDATA[
+// Add to state initialization:
+const [isWebContainerBooted, setIsWebContainerBooted] = useState(false);
+const [initialSyncCompleted, setInitialSyncCompleted] = useState(false);
+
+// Export via state object
+return {
+    state: {
+        // ...existing
+        isWebContainerBooted,
+        initialSyncCompleted,
+    },
+    setters: {
+        // ...existing
+        setIsWebContainerBooted,
+        setInitialSyncCompleted,
+    },
+    // ...refs
+};
+      ]]></code>
+    </change>
+    
+    <change file="src/lib/workspace/hooks/useInitialSync.ts">
+      <description>Fix sync trigger condition to use state instead of ref</description>
+      <code><![CDATA[
+export function useInitialSync(...) {
+    const { directoryHandle, syncStatus, autoSync, isWebContainerBooted, initialSyncCompleted } = state;
+    const { setPermissionState, setInitialSyncCompleted } = setters;
+    const { performSync } = syncOperations;
+
+    useEffect(() => {
+        // NEW: Check isWebContainerBooted and !initialSyncCompleted
+        if (
+            directoryHandle &&
+            isWebContainerBooted &&  // Wait for boot
+            !initialSyncCompleted && // Only sync once
+            syncStatus === 'idle' &&
+            autoSync
+        ) {
+            const initSync = async () => {
+                const updatedState = await getPermissionState(directoryHandle, 'readwrite');
+                setPermissionState(updatedState);
+
+                if (updatedState === 'granted') {
+                    await performSync(directoryHandle, { fullSync: true });
+                    setInitialSyncCompleted(true);  // Mark as done
+                }
+            };
+            initSync();
+        }
+    }, [directoryHandle, isWebContainerBooted, initialSyncCompleted, syncStatus, autoSync, performSync, setPermissionState, setInitialSyncCompleted]);
+}
+      ]]></code>
+    </change>
+    
+    <change file="src/components/layout/IDELayout.tsx">
+      <description>Set isWebContainerBooted when boot completes</description>
+      <code><![CDATA[
+// Import setIsWebContainerBooted from context
+const { setIsWebContainerBooted } = useWorkspace();
+
+useEffect(() => {
+    boot()
+      .then(() => {
+        setIsWebContainerBooted(true);  // NEW: Notify context of boot completion
+        if (isBooted()) {
+          const unsubscribe = onServerReady((port, url) => {
+            console.log(`[IDE] Server ready on port ${port}: ${url}`);
+            setPreviewUrl(url);
+            setPreviewPort(port);
+          });
+          return unsubscribe;
+        }
+      })
+      .catch(console.error);
+  }, [setIsWebContainerBooted]);
+      ]]></code>
+    </change>
+  </proposed_changes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@webcontainer/api" version="1.6.1" />
+    <dependency name="react" version="18.2.0" />
+  </dependencies>
+  
+</context>

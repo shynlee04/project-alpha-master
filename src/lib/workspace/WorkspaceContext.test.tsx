@@ -160,10 +160,11 @@ describe('WorkspaceContext', () => {
             expect(result.current.autoSync).toBe(false);
         });
 
-        it('should trigger sync if permission is already granted', async () => {
-            const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        it('should not trigger sync when isWebContainerBooted is false (Story 13-2)', async () => {
+            const consoleError = vi.spyOn(console, 'error').mockImplementation(() => { });
+            const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => { });
 
-            // Mock SyncManager to verify instantiation
+            // Import mocked modules
             const { SyncManager } = await import('../filesystem');
             const { getPermissionState } = await import('../filesystem/permission-lifecycle');
 
@@ -180,23 +181,30 @@ describe('WorkspaceContext', () => {
                 lastOpened: new Date(),
             };
 
-            renderHook(() => useWorkspace(), {
+            const { result } = renderHook(() => useWorkspace(), {
                 wrapper: createWrapper({
                     projectId: 'project-autostart',
                     initialProject,
                 }),
             });
 
-            await waitFor(() => {
-                expect(getPermissionState).toHaveBeenCalled();
-                expect(SyncManager).toHaveBeenCalled();
-            });
+            // Story 13-2: Sync should NOT trigger because isWebContainerBooted is initially false
+            // Wait a short time to ensure the effect had time to run (if it was going to)
+            await new Promise(resolve => setTimeout(resolve, 100));
 
+            // SyncManager should NOT have been called since WebContainer is not booted
+            expect(result.current.isWebContainerBooted).toBe(false);
+            expect(result.current.initialSyncCompleted).toBe(false);
+            // Note: Previous behavior would call SyncManager, new behavior waits for boot
+            expect(SyncManager).not.toHaveBeenCalled();
+
+            consoleLog.mockRestore();
             consoleError.mockRestore();
         });
 
-        it('should not run full sync on mount when autoSync is disabled', async () => {
-            const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        it('should not run sync when autoSync is disabled (Story 13-2)', async () => {
+            const consoleError = vi.spyOn(console, 'error').mockImplementation(() => { });
+            const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => { });
 
             const { SyncManager } = await import('../filesystem');
             const { getPermissionState } = await import('../filesystem/permission-lifecycle');
@@ -222,17 +230,71 @@ describe('WorkspaceContext', () => {
                 }),
             });
 
+            // Story 13-2: Sync should not run for two reasons:
+            // 1. isWebContainerBooted is false
+            // 2. autoSync is false (even if boot was complete)
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            expect(result.current.autoSync).toBe(false);
+            expect(result.current.isWebContainerBooted).toBe(false);
+            expect(result.current.initialSyncCompleted).toBe(false);
+            expect(result.current.syncStatus).toBe('idle');
+            expect(result.current.lastSyncTime).toBeNull();
+            expect(result.current.syncProgress).toBeNull();
+
+            // SyncManager should not be instantiated since conditions not met
+            expect(SyncManager).not.toHaveBeenCalled();
+            expect(result.current.syncManagerRef.current).toBeNull();
+
+            consoleLog.mockRestore();
+            consoleError.mockRestore();
+        });
+
+        it('should trigger sync after setIsWebContainerBooted is called', async () => {
+            const consoleError = vi.spyOn(console, 'error').mockImplementation(() => { });
+            const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => { });
+
+            const { SyncManager } = await import('../filesystem');
+            const { getPermissionState } = await import('../filesystem/permission-lifecycle');
+
+            (getPermissionState as unknown as { mockResolvedValue: (v: unknown) => void }).mockResolvedValue(
+                'granted'
+            );
+
+            const mockHandle = createMockHandle('my-project');
+            const initialProject: ProjectMetadata = {
+                id: 'project-boot-test',
+                name: 'Boot Test Project',
+                folderPath: 'boot-test',
+                fsaHandle: mockHandle,
+                lastOpened: new Date(),
+                autoSync: true,
+            };
+
+            const { result } = renderHook(() => useWorkspace(), {
+                wrapper: createWrapper({
+                    projectId: 'project-boot-test',
+                    initialProject,
+                }),
+            });
+
+            // Initially, sync should not have been called
+            expect(result.current.isWebContainerBooted).toBe(false);
+            expect(SyncManager).not.toHaveBeenCalled();
+
+            // Simulate WebContainer boot completion
+            await act(async () => {
+                result.current.setIsWebContainerBooted(true);
+            });
+
+            // Now sync should trigger
             await waitFor(() => {
+                expect(result.current.isWebContainerBooted).toBe(true);
                 expect(getPermissionState).toHaveBeenCalled();
                 expect(SyncManager).toHaveBeenCalled();
             });
 
-            expect(result.current.autoSync).toBe(false);
-            expect(result.current.syncStatus).toBe('idle');
-            expect(result.current.lastSyncTime).toBeNull();
-            expect(result.current.syncProgress).toBeNull();
-            expect(result.current.syncManagerRef.current).not.toBeNull();
-
+            consoleLog.mockRestore();
             consoleError.mockRestore();
         });
     });

@@ -29,6 +29,10 @@ export function useWorkspaceState(initialProject: ProjectMetadata | null = null)
         initialProject?.exclusionPatterns ?? [...EXTENDED_DEFAULT_PATTERNS]
     );
 
+    // Story 13-2: Add state for auto-sync fix
+    const [isWebContainerBooted, setIsWebContainerBooted] = useState(false);
+    const [initialSyncCompleted, setInitialSyncCompleted] = useState(false);
+
     // Refs for adapters
     const localAdapterRef = useRef<LocalFSAdapter | null>(null);
     const syncManagerRef = useRef<SyncManager | null>(null);
@@ -47,6 +51,8 @@ export function useWorkspaceState(initialProject: ProjectMetadata | null = null)
             autoSync,
             isOpeningFolder,
             exclusionPatterns,
+            isWebContainerBooted,
+            initialSyncCompleted,
         },
         setters: {
             setProjectMetadata,
@@ -59,6 +65,8 @@ export function useWorkspaceState(initialProject: ProjectMetadata | null = null)
             setAutoSyncState,
             setIsOpeningFolder,
             setExclusionPatterns,
+            setIsWebContainerBooted,
+            setInitialSyncCompleted,
         },
         refs: {
             localAdapterRef,

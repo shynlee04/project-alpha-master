@@ -86,6 +86,8 @@ export function WorkspaceProvider({
         // Actions
         ...actions,
         syncNow: wrappedSyncNow,
+        // Story 13-2: Expose setIsWebContainerBooted for IDELayout
+        setIsWebContainerBooted: setters.setIsWebContainerBooted,
         // Refs
         localAdapterRef: refs.localAdapterRef,
         syncManagerRef: refs.syncManagerRef,

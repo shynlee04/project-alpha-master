@@ -117,7 +117,7 @@ development_status:
   # =============================================================================
   epic-13: in-progress
   13-1-fix-terminal-working-directory: done
-  13-2-fix-auto-sync-on-project-load: backlog
+  13-2-fix-auto-sync-on-project-load: done
   13-3-add-sync-progress-indicator: backlog
   13-4-preserve-file-tree-state: backlog
   13-5-improve-permission-restoration: backlog
@@ -363,19 +363,24 @@ implementation_order:
 # NEXT ACTIONS
 # =============================================================================
 next_actions:
+  completed:
+    - action: "Story 13-1 (Fix Terminal Working Directory)"
+      status: done
+      date: "2025-12-20"
+      
+    - action: "Story 13-2 (Fix Auto-Sync on Project Load)"
+      status: done
+      date: "2025-12-20"
+      notes: "Fixed auto-sync trigger, 160 tests pass"
+      
   immediate:
-    - action: "Create Story 13-1 (Fix Terminal Working Directory)"
+    - action: "Create Story 13-3 (Add Sync Progress Indicator)"
       command: "/bmad-bmm-workflows-create-story"
       agent: "sm"
-      priority: P0
-      
-    - action: "Implement Story 13-1"
-      command: "/bmad-bmm-workflows-dev-story"
-      agent: "dev"
       priority: P0
 
   then:
-    - action: "Create Story 13-2 (Fix Auto-Sync on Project Load)"
-      command: "/bmad-bmm-workflows-create-story"
-      agent: "sm"
+    - action: "Implement Story 13-3"
+      command: "/bmad-bmm-workflows-dev-story"
+      agent: "dev"
       priority: P0
