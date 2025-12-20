@@ -116,20 +116,45 @@
     "bootFailed": "Failed to boot WebContainer: {{error}}"
   },
   "onboarding": {
-    "title": "Via-gent",
-    "subtitle": "Your Intelligent Local Dev Environment",
-    "about": {
-      "title": "About Project",
-      "description": "An open-source, AI-first IDE built for autonomy and speed. No more copy-pasting code."
+    "launch": "Launch Interactive Tour",
+    "slides": {
+      "intro": {
+        "title": "Via-gent",
+        "subtitle": "Your Intelligent Local Dev Environment",
+        "desc": "Experience the future of browser-based development. Zero setup. 100% Privacy."
+      },
+      "privacy": {
+        "title": "Complete Privacy",
+        "subtitle": "100% Client-Side",
+        "desc": "No servers. No data tracking. Your code never leaves your browser."
+      },
+      "agents": {
+        "title": "AI-Powered Teams",
+        "subtitle": "Multi-Agent Orchestration",
+        "desc": "Orchestrator, Planner, Coder, and Validator agents working in unison to build your vision."
+      },
+      "workflows": {
+        "title": "Workflow for Every Department",
+        "subtitle": "Unified Process",
+        "desc": "Seamlessly bridge Research, Design, Coding, and Deployment in one workspace."
+      },
+      "roadmap": {
+        "title": "The Future",
+        "subtitle": "Roadmap",
+        "desc": "Collaborative Editing, Mobile Support, and Plugin Architecture coming soon."
+      },
+      "contact": {
+        "title": "Join the Revolution",
+        "subtitle": "Connect with Creator",
+        "roles": "Creator & Maintainer",
+        "name": "Linh Nguyen"
+      }
     },
-    "contact": {
-      "title": "Connect",
-      "name": "Linh Nguyen",
-      "role": "Creator & Maintainer"
-    },
-    "cta": {
-      "github": "Star on GitHub",
-      "contact": "Contact Me"
+    "controls": {
+      "next": "Next",
+      "prev": "Previous",
+      "close": "Close Pitch",
+      "restart": "Replay"
     }
   }
 }

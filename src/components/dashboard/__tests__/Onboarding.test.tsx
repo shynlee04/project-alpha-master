@@ -2,14 +2,13 @@ import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { Onboarding } from '../Onboarding'
 
-// Mock translation
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string) => {
             const translations: Record<string, string> = {
-                'onboarding.title': 'Via-gent',
-                'onboarding.subtitle': 'Your Intelligent Local Dev Environment',
-                'onboarding.contact.name': 'Linh Nguyen'
+                'onboarding.slides.intro.title': 'Via-gent',
+                'onboarding.slides.intro.desc': 'Your Intelligent Local Dev Environment',
+                'onboarding.launch': 'Launch Interactive Tour'
             }
             return translations[key] || key
         },
@@ -23,9 +22,9 @@ describe('Onboarding', () => {
         expect(screen.getByText('Your Intelligent Local Dev Environment')).toBeDefined()
     })
 
-    it('renders contact information', () => {
+    it('renders launch button', () => {
         render(<Onboarding />)
-        const elements = screen.getAllByText('Linh Nguyen')
+        const elements = screen.getAllByText('Launch Interactive Tour')
         expect(elements.length).toBeGreaterThanOrEqual(1)
     })
 })

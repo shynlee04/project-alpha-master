@@ -116,20 +116,45 @@
     "bootFailed": "Không thể khởi động WebContainer: {{error}}"
   },
   "onboarding": {
-    "title": "Via-gent",
-    "subtitle": "Môi trường phát triển cục bộ thông minh của bạn",
-    "about": {
-      "title": "Giới thiệu",
-      "description": "Một IDE mã nguồn hướng AI được xây dựng cho sự tự chủ và tốc độ. Không còn việc copy-paste code thủ công."
+    "launch": "Khám phá Tour Tương tác",
+    "slides": {
+      "intro": {
+        "title": "Via-gent",
+        "subtitle": "Môi trường phát triển cục bộ thông minh của bạn",
+        "desc": "Trải nghiệm tương lai của lập trình trên trình duyệt. Không cần cài đặt. Bảo mật 100%."
+      },
+      "privacy": {
+        "title": "Bảo mật Tuyệt đối",
+        "subtitle": "100% Client-Side",
+        "desc": "Không máy chủ. Không theo dõi dữ liệu. Mã nguồn của bạn không bao giờ rời khỏi trình duyệt."
+      },
+      "agents": {
+        "title": "Đội ngũ AI Hùng hậu",
+        "subtitle": "Điều phối Đa tác vụ",
+        "desc": "Các agent Điều phối, Lên kế hoạch, Lập trình và Kiểm thử cùng làm việc để hiện thực hóa ý tưởng của bạn."
+      },
+      "workflows": {
+        "title": "Quy trình cho Mọi phòng ban",
+        "subtitle": "Quy trình Thống nhất",
+        "desc": "Kết nối liền mạch các khâu Nghiên cứu, Thiết kế, Lập trình và Triển khai trong một không gian làm việc."
+      },
+      "roadmap": {
+        "title": "Tương lai",
+        "subtitle": "Lộ trình phát triển",
+        "desc": "Chỉnh sửa cộng tác, Hỗ trợ di động và Kiến trúc Plugin sắp ra mắt."
+      },
+      "contact": {
+        "title": "Tham gia Cách mạng",
+        "subtitle": "Kết nối với Tác giả",
+        "roles": "Tác giả & Duy trì",
+        "name": "Linh Nguyễn"
+      }
     },
-    "contact": {
-      "title": "Kết nối",
-      "name": "Linh Nguyễn",
-      "role": "Tác giả & Duy trì"
-    },
-    "cta": {
-      "github": "Đánh sao trên GitHub",
-      "contact": "Liên hệ"
+    "controls": {
+      "next": "Tiếp theo",
+      "prev": "Quay lại",
+      "close": "Đóng Pitch",
+      "restart": "Xem lại"
     }
   }
 }

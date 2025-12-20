@@ -1,83 +1,53 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Github, Mail, Sparkles, User, Phone } from 'lucide-react'
+import { Sparkles, PlayCircle } from 'lucide-react'
+import { PitchDeck } from './PitchDeck'
 
 export function Onboarding() {
     const { t } = useTranslation()
+    const [showPitch, setShowPitch] = useState(false)
 
     return (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-8 mb-8 shadow-2xl">
-            {/* Background Effects */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <>
+            <div className="relative group overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 p-8 mb-8 shadow-2xl transition-all hover:border-cyan-500/30 hover:shadow-cyan-500/10">
+                {/* Background Effects */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity duration-700 opacity-70" />
+                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
 
-            <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
-                {/* Left: Pitch */}
-                <div className="space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/30 border border-cyan-500/30 text-cyan-400 text-xs font-medium">
-                        <Sparkles size={14} />
-                        <span>v0.1.0 Alpha</span>
-                    </div>
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="space-y-4 text-center md:text-left">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/50 border border-cyan-500/30 text-cyan-400 text-sm font-medium animate-fade-in-up">
+                            <Sparkles size={14} className="animate-pulse" />
+                            <span>v0.1.0 Alpha Release</span>
+                        </div>
 
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-                        {t('onboarding.title')}
-                    </h1>
-                    <p className="text-xl text-slate-400 font-light">
-                        {t('onboarding.subtitle')}
-                    </p>
-
-                    <div className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                        <h3 className="text-lg font-medium text-white mb-2">{t('onboarding.about.title')}</h3>
-                        <p className="text-slate-400 leading-relaxed">
-                            {t('onboarding.about.description')}
+                        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight">
+                            {t('onboarding.slides.intro.title')}
+                        </h1>
+                        <p className="text-xl text-slate-400 font-light max-w-xl leading-relaxed">
+                            {t('onboarding.slides.intro.desc')}
                         </p>
+
+                        <button
+                            onClick={() => setShowPitch(true)}
+                            className="group/btn inline-flex items-center gap-3 px-8 py-4 bg-white text-slate-950 rounded-full font-bold text-lg hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] transition-all duration-300"
+                        >
+                            {t('onboarding.launch')}
+                            <PlayCircle size={24} className="group-hover/btn:fill-slate-950 group-hover/btn:text-white transition-colors" />
+                        </button>
                     </div>
 
-                    <div className="flex flex-wrap gap-4">
-                        <a href="https://github.com/shynlee04/project-alpha-master" target="_blank" rel="noreferrer"
-                            className="flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-lg font-semibold hover:bg-cyan-50 transition-colors shadow-lg shadow-cyan-500/10">
-                            <Github size={20} />
-                            {t('onboarding.cta.github')}
-                        </a>
-                        <a href="mailto:shynlee04@gmail.com"
-                            className="flex items-center gap-2 px-6 py-3 bg-slate-800 text-white rounded-lg font-medium border border-slate-700 hover:bg-slate-700 transition-colors">
-                            <Mail size={20} />
-                            {t('onboarding.cta.contact')}
-                        </a>
-                    </div>
-                </div>
-
-                {/* Right: Creator Card */}
-                <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-2xl blur opacity-20 transform rotate-3 scale-105" />
-                    <div className="relative p-8 rounded-2xl bg-slate-900/90 border border-slate-700/50 backdrop-blur-md">
-                        <div className="flex items-start justify-between mb-8">
-                            <div>
-                                <h4 className="text-sm font-medium text-slate-400 uppercase tracking-widest mb-1">{t('onboarding.contact.title')}</h4>
-                                <h2 className="text-2xl font-bold text-white">{t('onboarding.contact.name')}</h2>
-                                <p className="text-cyan-400 text-sm mt-1">{t('onboarding.contact.role')}</p>
-                            </div>
-                            <div className="p-3 bg-slate-800 rounded-full border border-slate-700">
-                                <User size={32} className="text-slate-400" />
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
-                                <Github size={18} className="text-slate-400" />
-                                <a href="https://github.com/shynlee04" target="_blank" rel="noreferrer" className="text-slate-300 hover:text-white transition-colors text-sm">github.com/shynlee04</a>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
-                                <Mail size={18} className="text-slate-400" />
-                                <a href="mailto:shynlee04@gmail.com" className="text-slate-300 hover:text-white transition-colors text-sm">shynlee04@gmail.com</a>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
-                                <Phone size={18} className="text-slate-400" />
-                                <span className="text-slate-300 text-sm">+84 896-444-691</span>
-                            </div>
-                        </div>
+                    {/* Visual Graphic */}
+                    <div className="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0 animate-float">
+                        <img src="/via-gent-logo.svg" alt="Via-gent" className="w-full h-full drop-shadow-[0_0_50px_rgba(6,182,212,0.3)]" />
+                        {/* Decorative Rings */}
+                        <div className="absolute inset-0 border border-cyan-500/20 rounded-full scale-110 animate-spin-slow-reverse" />
+                        <div className="absolute inset-0 border border-violet-500/20 rounded-full scale-150 animate-spin-slow" />
                     </div>
                 </div>
             </div>
-        </div>
+
+            <PitchDeck isOpen={showPitch} onClose={() => setShowPitch(false)} />
+        </>
     )
 }
