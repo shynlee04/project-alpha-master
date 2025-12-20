@@ -17,3 +17,4 @@ export * from './tabs';
 export * from './textarea';
 export * from './sonner';
 export * from './dialog';
+export * from './resizable';

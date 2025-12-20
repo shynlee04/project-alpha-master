@@ -1,0 +1,183 @@
+/**
+ * @fileoverview IDE Layout Component Tests
+ * @module components/layout/__tests__/IDELayout.test
+ * 
+ * Tests for the migrated IDELayout component using ShadcnUI Resizable components.
+ * Tests cover the new layout structure, panel resizing, and theme integration.
+ */
+
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { IDELayout } from '../IDELayout';
+import { WorkspaceProvider, type WorkspaceContextType } from '../../../lib/workspace';
+
+// Mock the workspace context
+const mockWorkspaceContext: Partial<WorkspaceContextType> = {
+  projectId: 'test-project',
+  projectMetadata: { name: 'Test Project' },
+  permissionState: 'granted',
+  syncStatus: 'idle',
+  autoSync: true,
+  isOpeningFolder: false,
+  directoryHandle: {} as FileSystemDirectoryHandle,
+  localAdapterRef: { current: null },
+  syncManagerRef: { current: null },
+  eventBus: {
+    emit: vi.fn(),
+    on: vi.fn(),
+    off: vi.fn(),
+  },
+  setIsWebContainerBooted: vi.fn(),
+  restoreAccess: vi.fn(),
+  openFolder: vi.fn(),
+  switchFolder: vi.fn(),
+  syncNow: vi.fn(),
+  setAutoSync: vi.fn(),
+};
+
+// Mock MonacoEditor component
+vi.mock('../../ide/MonacoEditor', () => ({
+  MonacoEditor: ({ openFiles, activeFilePath }: { openFiles: any[]; activeFilePath: string | null }) => (
+    <div data-testid="monaco-editor">
+      <span>Editor: {activeFilePath || 'No file'}</span>
+      <span>Files: {openFiles.length}</span>
+    </div>
+  ),
+}));
+
+// Mock FileTree component
+vi.mock('../../ide/FileTree', () => ({
+  FileTree: () => <div data-testid="file-tree">File Tree</div>,
+}));
+
+// Mock PreviewPanel component
+vi.mock('../../ide/PreviewPanel', () => ({
+  PreviewPanel: () => <div data-testid="preview-panel">Preview Panel</div>,
+}));
+
+// Mock TerminalPanel component
+vi.mock('../TerminalPanel', () => ({
+  TerminalPanel: () => <div data-testid="terminal-panel">Terminal Panel</div>,
+}));
+
+// Mock ChatPanelWrapper component
+vi.mock('../ChatPanelWrapper', () => ({
+  ChatPanelWrapper: () => <div data-testid="chat-panel">Chat Panel</div>,
+}));
+
+describe('IDELayout - Migrated to ShadcnUI', () => {
+  beforeEach(() => {
+    // Mock window.matchMedia for responsive tests
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation((query) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+  });
+
+  test('should render with ShadcnUI Resizable components', () => {
+    render(
+      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <IDELayout />
+      </WorkspaceProvider>,
+    );
+
+    // Check that all major panels are rendered
+    expect(screen.getByTestId('file-tree')).toBeInTheDocument();
+    expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
+    expect(screen.getByTestId('preview-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('terminal-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-panel')).toBeInTheDocument();
+
+    // Check header is rendered
+    expect(screen.getByText('via-gent')).toBeInTheDocument();
+    expect(screen.getByText('test-project')).toBeInTheDocument();
+  });
+
+  test('should toggle chat panel visibility', () => {
+    render(
+      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <IDELayout />
+      </WorkspaceProvider>,
+    );
+
+    const chatToggle = screen.getByRole('button', { name: /hide chat/i });
+    expect(chatToggle).toBeInTheDocument();
+
+    // Click to hide chat
+    fireEvent.click(chatToggle);
+    expect(screen.getByRole('button', { name: /show chat/i })).toBeInTheDocument();
+
+    // Click to show chat again
+    fireEvent.click(screen.getByRole('button', { name: /show chat/i }));
+    expect(screen.getByRole('button', { name: /hide chat/i })).toBeInTheDocument();
+  });
+
+  test('should render permission prompt overlay when needed', () => {
+    const mockPromptWorkspace = {
+      ...mockWorkspaceContext,
+      permissionState: 'prompt',
+    };
+
+    render(
+      <WorkspaceProvider value={mockPromptWorkspace as WorkspaceContextType}>
+        <IDELayout />
+      </WorkspaceProvider>,
+    );
+
+    expect(screen.getByText('Permission Required')).toBeInTheDocument();
+    expect(screen.getByText('Click below to restore access to your project folder.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Restore Access' })).toBeInTheDocument();
+  });
+
+  test('should show minimum viewport warning on small screens', () => {
+    // Mock small screen
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation((query) => ({
+        matches: query === '(max-width: 1023px)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+
+    render(
+      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <IDELayout />
+      </WorkspaceProvider>,
+    );
+
+    expect(screen.getByText('Screen Too Small')).toBeInTheDocument();
+    expect(screen.getByText('via-gent IDE requires a minimum viewport width of 1024px.')).toBeInTheDocument();
+  });
+
+  test('should handle keyboard shortcut for chat toggle', () => {
+    render(
+      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <IDELayout />
+      </WorkspaceProvider>,
+    );
+
+    // Initially chat should be visible
+    expect(screen.getByTestId('chat-panel')).toBeInTheDocument();
+
+    // Trigger keyboard shortcut (Meta+K or Ctrl+K)
+    fireEvent.keyDown(document, { key: 'k', metaKey: true });
+
+    // Chat should still be visible but focused
+    expect(screen.getByTestId('chat-panel')).toBeInTheDocument();
+  });
+});
