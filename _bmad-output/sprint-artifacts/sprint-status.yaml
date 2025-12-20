@@ -157,7 +157,7 @@ development_status:
   23-1-install-tailwindcss-4: done
     story: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4.md
     context: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4-context.xml
-  23-2-initialize-shadcnui: ready-for-dev
+  23-2-initialize-shadcnui: in-progress
     story: _bmad-output/sprint-artifacts/23-2-initialize-shadcnui.md
     context: _bmad-output/sprint-artifacts/23-2-initialize-shadcnui-context.xml
   23-3-migrate-layout-components: backlog
