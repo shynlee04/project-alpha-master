@@ -119,7 +119,7 @@ development_status:
   13-1-fix-terminal-working-directory: done
   13-2-fix-auto-sync-on-project-load: done
   13-3-add-sync-progress-indicator: done
-  13-4-preserve-file-tree-state: ready-for-dev
+  13-4-preserve-file-tree-state: done
   13-5-improve-permission-restoration: backlog
   13-6-fix-preview-in-new-tab: backlog  # NEW: Added from manual testing 2025-12-20
   epic-13-retrospective: optional
@@ -298,8 +298,8 @@ development_status:
   # =============================================================================
   # EPIC 21: Client-Side Localization (EN/VI) [P2 - BACKLOG]
   # =============================================================================
-  epic-21: backlog
-  21-1-locale-aware-routing-and-html-lang: in-progress
+  epic-21: in-progress
+  21-1-locale-aware-routing-and-html-lang: done
   21-2-i18n-infrastructure-and-bundles: backlog
   21-3-language-switcher-and-persistence: backlog
   21-4-ui-migration-wave-1-navigation-shell: backlog
@@ -326,11 +326,11 @@ summary:
   total_epics: 23
   total_stories: 124
   epics_done: 6
-  epics_in_progress: 1
-  epics_backlog: 16
-  stories_done: 36
-  stories_in_progress: 1
-  stories_backlog: 87
+  epics_in_progress: 2
+  epics_backlog: 15
+  stories_done: 37
+  stories_in_progress: 0
+  stories_backlog: 86
   
   priority_breakdown:
     p0: 1  # Epic 13 (Terminal & Sync Stability)
@@ -391,10 +391,6 @@ next_actions:
       command: "/bmad-bmm-workflows-create-story"
       agent: "sm"
       priority: P1
-    - action: "Implement Story 21-1 (Locale-Aware Routing & HTML Lang)"
-      command: "/bmad-bmm-workflows-dev-story"
-      agent: "dev"
-      priority: P2
 
   then:
     - action: "Implement Story 13-3"

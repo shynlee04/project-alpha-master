@@ -56,10 +56,13 @@ export function setLocale(locale: SupportedLocale) {
   if (html) {
     html.setAttribute('lang', locale)
   }
-  const ogLocale = document.querySelector('meta[property="og:locale"]')
-  if (ogLocale) {
-    ogLocale.setAttribute('content', locale)
+  let ogLocale = document.querySelector('meta[property="og:locale"]')
+  if (!ogLocale) {
+    ogLocale = document.createElement('meta')
+    ogLocale.setAttribute('property', 'og:locale')
+    document.head.appendChild(ogLocale)
   }
+  ogLocale.setAttribute('content', locale)
 }
 
 export function getLocale(): SupportedLocale {

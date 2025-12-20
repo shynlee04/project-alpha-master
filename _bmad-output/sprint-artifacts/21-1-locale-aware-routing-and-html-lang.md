@@ -2,7 +2,7 @@
 
 **Epic:** 21 - Client-Side Localization (EN/VI)  
 **Sprint:** 13 (parallel track)  
-**Status:** drafted  
+**Status:** done  
 **Priority:** P2  
 
 ---
@@ -24,13 +24,13 @@ So that **the UI and metadata reflect my language choice**.
 ---
 
 ## Tasks
-- [ ] **T0 Research**: Review architecture/state docs; confirm client-only i18n guidance.  
-- [ ] **T1 I18n provider**: Add react-i18next (or equivalent) with EN/VI bundles; lazy-load; fallback EN.  
-- [ ] **T2 Locale state**: Implement locale context/hook (useLocalePreference) with localStorage persistence and validation (en|vi).  
-- [ ] **T3 UI toggle**: Add Header toggle to switch locale; propagates to provider.  
-- [ ] **T4 Head/HTML lang**: Update `<html lang>` and head meta (e.g., og:locale) on locale change.  
-- [ ] **T5 Tests/QA**: Unit tests for fallback, toggle, persistence, head/lang update.  
-- [ ] **T6 Docs**: Update sprint-status and bmm-workflow-status after implementation.
+- [x] **T0 Research**: Review architecture/state docs; confirm client-only i18n guidance.  
+- [x] **T1 I18n provider**: Add react-i18next (or equivalent) with EN/VI bundles; lazy-load; fallback EN.  
+- [x] **T2 Locale state**: Implement locale context/hook (useLocalePreference) with localStorage persistence and validation (en|vi).  
+- [x] **T3 UI toggle**: Add Header toggle to switch locale; propagates to provider.  
+- [x] **T4 Head/HTML lang**: Update `<html lang>` and head meta (e.g., og:locale) on locale change.  
+- [x] **T5 Tests/QA**: Unit tests for fallback, toggle, persistence, head/lang update.  
+- [x] **T6 Docs**: Update sprint-status and bmm-workflow-status after implementation.
 
 ---
 
@@ -57,10 +57,14 @@ So that **the UI and metadata reflect my language choice**.
 ---
 
 ## Dev Agent Record
-- Agent: _(set in dev phase)_  
-- Session: _(set in dev phase)_  
-- Files changed: _(set in dev phase)_  
-- Tests: _(set in dev phase)_  
+- Agent: Cascade  
+- Session: 2025-12-20  
+- Files changed:  
+  - `src/i18n/en.json`, `src/i18n/vi.json`, `src/i18n/config.ts`, `src/i18n/LocaleProvider.tsx`  
+  - `src/routes/__root.tsx`, `src/components/Header.tsx`  
+  - `package.json` (added i18n deps)  
+  - `src/i18n/__tests__/config.test.ts`  
+- Tests: `pnpm test src/i18n/__tests__/config.test.ts`; `pnpm test` (all 186 passing)  
 
 ---
 
