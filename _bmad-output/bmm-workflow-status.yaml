@@ -224,10 +224,10 @@ epic_status:
   - id: 22
     name: "Production Hardening"
     status: "IN_PROGRESS"
-    stories: "2/8"
+    stories: "1/8"
     priority: "P0"
     platform: "A (Antigravity)"
-    notes: "Story 22-1 + 22-2 DONE. Platform A continues 22-3 → 22-8."
+    notes: "Story 22-1 DONE (Security Headers). Platform A continues 22-2 → 22-8."
     
   - id: 23
     name: "UX/UI Modernization"
