@@ -14,17 +14,28 @@
  * ```
  */
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type TerminalTab } from '../../lib/workspace';
 
 /**
- * Lazy-load XTerminal to avoid bundling @xterm/xterm into SSR.
- * @xterm/xterm is a browser-only package that requires DOM APIs.
+ * SSR-safe lazy import for XTerminal.
+ * 
+ * CRITICAL: @xterm/xterm is a browser-only CommonJS package that crashes
+ * when bundled into SSR (Node.js can't import CommonJS named exports as ESM).
+ * 
+ * Using import.meta.env.SSR to completely exclude the import from SSR bundle.
+ * Vite statically replaces this during build, enabling tree-shaking.
  */
-const XTerminal = lazy(() =>
-    import('../ide/XTerminal').then(module => ({ default: module.XTerminal }))
-);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let XTerminal: ComponentType<any> | null = null;
+
+if (!import.meta.env.SSR) {
+    // Only define the lazy import on client-side
+    XTerminal = lazy(() =>
+        import('../ide/XTerminal').then(module => ({ default: module.XTerminal }))
+    );
+}
 
 /**
  * Props for the TerminalPanel component.
@@ -82,13 +93,19 @@ export function TerminalPanel({
             {/* Tab Content */}
             <div className="flex-1 bg-slate-950 min-h-0 relative">
                 {activeTab === 'terminal' ? (
-                    <Suspense fallback={
+                    XTerminal ? (
+                        <Suspense fallback={
+                            <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                                {t('terminal.loading', 'Loading terminal...')}
+                            </div>
+                        }>
+                            <XTerminal projectPath={projectPath} />
+                        </Suspense>
+                    ) : (
                         <div className="h-full flex items-center justify-center text-slate-500 text-sm">
                             {t('terminal.loading', 'Loading terminal...')}
                         </div>
-                    }>
-                        <XTerminal projectPath={projectPath} />
-                    </Suspense>
+                    )
                 ) : (
                     <div className="h-full flex items-center justify-center text-slate-500 text-sm">
                         {activeTab === 'output'
