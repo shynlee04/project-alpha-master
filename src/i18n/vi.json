@@ -69,6 +69,17 @@
     "deviceTablet": "Tablet",
     "deviceMobile": "Mobile"
   },
+  "preview": {
+    "newTabNotSupported": "Preview Không Khả Dụng Trong Tab Mới",
+    "newTabExplanation": "Preview WebContainer chạy trong IDE và không thể mở trong tab trình duyệt riêng. Điều này vì WebContainer duy trì ngữ cảnh runtime trong tab gốc.",
+    "whatYouCanDo": "Bạn có thể:",
+    "useIframePreview": "Sử dụng bảng preview có thể thay đổi kích thước trong IDE",
+    "resizePanels": "Thay đổi kích thước bảng preview để xem rộng hơn",
+    "useDeviceFrames": "Sử dụng các tùy chọn khung thiết bị (desktop/tablet/mobile) trong thanh công cụ preview",
+    "closeTab": "Đóng Tab Này",
+    "goHome": "Về Trang Chủ",
+    "newTabInfo": "Preview sẽ mở trong tab mới (có thể hiển thị trang thông tin)"
+  },
   "time": {
     "justNow": "vừa xong",
     "minutesAgo": "{{count}} phút trước",

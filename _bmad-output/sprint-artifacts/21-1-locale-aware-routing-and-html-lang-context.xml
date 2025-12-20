@@ -64,8 +64,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   </files>
 
   <research_notes>
-    <finding source="deepwiki" repo="TanStack/router">
-      Optional path parameter {-$locale} pattern: validate in beforeLoad; return context { locale, isDefaultLocale }; redirect invalid locale; use head() to set html lang and meta.
+    <finding source="react-i18next">
+      Client-side only localization using react-i18next with locale persistence in localStorage, dynamic language switching without URL changes, and HTML lang attribute updates.
     </finding>
   </research_notes>
 

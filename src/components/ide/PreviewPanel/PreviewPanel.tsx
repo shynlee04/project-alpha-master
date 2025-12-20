@@ -10,6 +10,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw, ExternalLink, Monitor, Tablet, Smartphone } from 'lucide-react';
+import { useToast } from '../../ui/Toast';
 import { type PreviewPanelProps, type DeviceFrame, DEVICE_FRAMES } from './types';
 
 /**
@@ -31,11 +32,14 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
         setRefreshKey(prev => prev + 1);
     }, []);
 
+    const { toast } = useToast();
+
     const handleOpenInNewTab = useCallback(() => {
         if (previewUrl) {
             window.open(previewUrl, '_blank');
+            toast(t('preview.newTabInfo'), 'info');
         }
-    }, [previewUrl]);
+    }, [previewUrl, t, toast]);
 
     const frameWidth = DEVICE_FRAMES[deviceFrame].width;
 

@@ -69,6 +69,17 @@
     "deviceTablet": "Tablet",
     "deviceMobile": "Mobile"
   },
+  "preview": {
+    "newTabNotSupported": "Preview Not Available in New Tab",
+    "newTabExplanation": "The WebContainer preview runs within the IDE and cannot be opened in a separate browser tab. This is because WebContainer maintains its runtime context within the original tab.",
+    "whatYouCanDo": "What you can do:",
+    "useIframePreview": "Use the resizable preview panel in the IDE",
+    "resizePanels": "Resize the preview panel for a larger view",
+    "useDeviceFrames": "Use device frame options (desktop/tablet/mobile) in the preview toolbar",
+    "closeTab": "Close This Tab",
+    "goHome": "Go to Dashboard",
+    "newTabInfo": "Preview will open in a new tab (may show an informational page)"
+  },
   "time": {
     "justNow": "just now",
     "minutesAgo": "{{count}} minute ago",
