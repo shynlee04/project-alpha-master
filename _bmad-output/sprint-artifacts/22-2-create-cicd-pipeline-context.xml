@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="22-2-create-cicd-pipeline" created="2025-12-20T19:58:00+07:00">
+  
+  <!-- Current Project State -->
+  <files>
+    <file path="package.json">
+      <content><![CDATA[
+{
+  "name": "project-alpha",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "i18n:extract": "i18next-scanner --config i18next-scanner.config.cjs"
+  },
+  "dependencies": {
+    "@webcontainer/api": "^1.6.1",
+    "vite": "^7.3.0",
+    "vitest": "^3.2.4"
+  }
+}
+      ]]></content>
+      <notes>Missing: "typecheck" script for CI. Add "typecheck": "tsc --noEmit"</notes>
+    </file>
+    
+    <file path=".github/workflows/" exists="false">
+      <notes>Directory does not exist. Create with ci.yml and deploy.yml</notes>
+    </file>
+    
+    <file path="public/_headers">
+      <content><![CDATA[
+# Already configured from Story 22-1 with security headers
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: cross-origin
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research Findings from MCP Tools -->
+  <research_notes>
+    <finding source="context7" query="pnpm github actions continuous integration">
+      Latest pattern from pnpm.io docs uses pnpm/action-setup@v4 with version: 10.
+      CRITICAL: Set run_install: false to leverage actions/setup-node caching.
+      Node matrix should use node-version: [20] for LTS.
+      Runs-on: ubuntu-22.04 for current LTS runner.
+    </finding>
+    
+    <finding source="deepwiki" repo="pnpm/action-setup">
+      Recommended pattern (2025):
+      - pnpm/action-setup@v4 with version: 10, run_install: false
+      - actions/setup-node@v4 with cache: 'pnpm'
+      - Manual pnpm install step
+      Action automatically prunes store in post-job cleanup.
+    </finding>
+    
+    <finding source="exa" query="netlify github actions deploy">
+      Two patterns available:
+      1. netlify-cli: `npm install -g netlify-cli && netlify deploy --prod`
+      2. nwtgck/actions-netlify@v3.0: Preferred, supports PR comments
+      Use NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID secrets.
+      Preview deploys on PRs with github-token: ${{ secrets.GITHUB_TOKEN }}
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture Patterns to Follow -->
+  <architecture_patterns>
+    <pattern name="ci-workflow" source="research">
+      GitHub Actions CI should:
+      - Trigger on push and pull_request
+      - Run on ubuntu-22.04
+      - Use pnpm caching for faster installs
+      - Run typecheck, test, build in sequence
+      - Fail fast on first error
+    </pattern>
+    
+    <pattern name="deploy-workflow" source="research">
+      Netlify deployment should:
+      - Trigger only on push to main
+      - Depend on CI success (needs: build)
+      - Use environment secrets for Netlify auth
+      - Output deploy URL to job summary
+    </pattern>
+    
+    <pattern name="preview-deploys" source="netlify-best-practices">
+      PR preview deploys should:
+      - Use nwtgck/actions-netlify for comment integration
+      - Set production-deploy: false
+      - Include deploy-message with commit SHA
+      - Enable PR comment for preview URL
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical Notes for Developer -->
+  <technical_notes>
+    <note priority="high">
+      Add "typecheck": "tsc --noEmit" script to package.json before implementing CI.
+      This enables TypeScript validation without emitting files.
+    </note>
+    
+    <note priority="high">
+      The build output is in ./dist directory (vite default).
+      Netlify publish-dir should be set to './dist'.
+    </note>
+    
+    <note priority="medium">
+      actions/checkout@v4 is required first step.
+      Do NOT use @v3 or @master - use specific version tags.
+    </note>
+    
+    <note priority="medium">
+      pnpm version 10 is current stable (2025).
+      Use exact version number, not 'latest' for reproducibility.
+    </note>
+    
+    <note priority="low">
+      Consider adding concurrency groups to cancel in-flight deploys on new pushes.
+      Pattern: concurrency: { group: deploy-${{ github.ref }}, cancel-in-progress: true }
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and Tooling -->
+  <dependencies>
+    <dependency name="pnpm" version="10" note="action-setup version" />
+    <dependency name="node" version="20" note="LTS" />
+    <dependency name="actions/checkout" version="v4" />
+    <dependency name="actions/setup-node" version="v4" />
+    <dependency name="pnpm/action-setup" version="v4" />
+    <dependency name="nwtgck/actions-netlify" version="v3.0" note="for deploy" />
+  </dependencies>
+  
+  <!-- Workflow Templates -->
+  <workflow_templates>
+    <template name="ci.yml">
+      <![CDATA[
+name: CI
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: TypeScript check
+        run: pnpm exec tsc --noEmit
+      
+      - name: Run tests
+        run: pnpm test
+      
+      - name: Build
+        run: pnpm build
+      ]]>
+    </template>
+    
+    <template name="deploy.yml">
+      <![CDATA[
+name: Deploy
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to Netlify
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build
+        run: pnpm build
+      
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './dist'
+          production-branch: main
+          production-deploy: ${{ github.ref == 'refs/heads/main' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from ${{ github.sha }}'
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      ]]>
+    </template>
+  </workflow_templates>
+  
+</context>
