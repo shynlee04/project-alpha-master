@@ -9,6 +9,10 @@ on:
     branches: [dev]
   workflow_dispatch:
 
+# Required for pushing to main branch
+permissions:
+  contents: write
+
 jobs:
   sync:
     name: Sync to Main (Exclude Agent Files)
