@@ -153,6 +153,166 @@ Files mount at WebContainer root `/` via `mount(tree)`. The sync happens in `syn
 - Unit Tests: ✅ 160 tests pass
 - WorkspaceContext tests: 11/11 pass (including 3 Story 13-2 specific tests)
 
+<think>
+We are given a set of changes that are currently unstaged. We need to generate a conventional commit message.
+
+Looking at the changes:
+
+1. Updated workflow status files (YAML) to mark Story 13-2 as done and update next actions.
+2. Modified `IDELayout.tsx` to set a flag when the WebContainer boots, which is used to trigger auto-sync.
+3. Updated tests for `sync-executor` and `WorkspaceContext` to reflect the changes in the auto-sync logic.
+4. Modified `WorkspaceContext.tsx` to expose a new setter for the booted state.
+5. Updated `useInitialSync.ts` to change the auto-sync trigger logic to depend on the booted state and initial sync completion state.
+6. Updated `useWorkspaceState.ts` to add two new state variables: `isWebContainerBooted` and `initialSyncCompleted`.
+7. Updated `workspace-types.ts` to include the new state and setter in the context.
+8. Added two new untracked files for story 13-2: a context XML and a markdown file.
+
+The changes are primarily focused on implementing a fix for auto-sync on project load (Story 13-2). The main issue was that the auto-sync was being triggered before the WebContainer was fully booted. The fix involves:
+
+- Adding state to track if the WebContainer has booted.
+- Only triggering the initial auto-sync after the boot is complete and if auto-sync is enabled.
+
+This is a bug fix (since it corrects the behavior of auto-sync) and also includes test updates and documentation.
+
+Given that, the primary type is `fix`.
+
+The scope can be determined by the main area of change: the workspace context and auto-sync logic. The files are in `src/lib/workspace` and `src/components/layout`. However, the most significant changes are in the workspace context and hooks. We can use the scope `workspace`.
+
+The description should be concise and describe the fix: "auto-sync trigger on project load".
+
+Additionally, we note that there are two new files added (untracked) that are part of the story documentation. Since they are documentation for the story, we can consider them as part of the fix.
+
+We also note that the commit message should not exceed 50 characters for the subject. Our subject: `fix(workspace): auto-sync trigger on project load` is 45 characters, which is acceptable.
+
+For the body, we can explain the changes:
+
+- Added state to track WebContainer boot status and initial sync completion.
+- Modified auto-sync trigger to wait until WebContainer is booted.
+- Updated tests to verify the new behavior.
+
+We also have a footer that references the story: `Story: 13-2`.
+
+However, note that the conventional commit specification does not require a footer for story references, but it is common to include issue references. We can use: `Closes #13-2` or `Story: 13-2`. Since the project uses a specific story format, we can use `Story: 13-2`.
+
+But note: the user's context does not specify how to reference stories. We can use a footer without a specific keyword.
+
+Alternatively, we can use the body to mention the story.
+
+Given the above, we can write:
+
+fix(workspace): auto-sync trigger on project load
+
+- Added state variables to track WebContainer boot status and initial sync completion
+- Modified useInitialSync to trigger auto-sync only after boot
+- Updated tests to cover new behavior
+- Added story documentation artifacts
+
+Story: 13-2
+
+However, note that the user's instructions say: "ONLY Generate a clean conventional commit message as specified below". The specification allows for a body and footers.
+
+But also note: the user's change summary includes:
+
+Modified (unstaged): ... (several files)
+Untracked (unstaged): ... (two new files)
+
+We are including the new files in the commit? They are untracked, so we must add them. But the commit message should focus on the changes.
+
+Alternatively, we can break down the changes:
+
+- The changes to the YAML files are updates to the workflow status to reflect the completion of the story. They are part of the project management and not code. But they are in the repository. We can consider them as documentation updates? However, the primary change is the code fix.
+
+Given that the entire set of changes is for the story 13-2, we can group them under one commit.
+
+But note: the commit message should be based on the code changes. The YAML updates are supporting the fact that the story is done.
+
+We can mention in the body that we updated the workflow status.
+
+However, the body is getting long. We can try to be concise.
+
+Alternatively, we can have:
+
+fix(workspace): auto-sync trigger on project load
+
+Updated auto-sync logic to wait for WebContainer boot. Added state variables 
+`isWebContainerBooted` and `initialSyncCompleted` to WorkspaceContext. 
+Modified the `useInitialSync` hook to trigger auto-sync only when the container 
+is booted and auto-sync is enabled. Updated tests to verify the new behavior.
+
+Also updated workflow status files to reflect completion of story 13-2 and added 
+story documentation.
+
+Story: 13-2
+
+But note the line wrap: the body should be wrapped at 72 characters.
+
+Let me format:
+
+fix(workspace): auto-sync trigger on project load
+
+Updated auto-sync logic to wait for WebContainer boot. Added state variables 
+`isWebContainerBooted` and `initialSyncCompleted` to WorkspaceContext. Modified 
+the `useInitialSync` hook to trigger auto-sync only when the container is booted 
+and auto-sync is enabled. Updated tests to verify the new behavior.
+
+Also updated workflow status files to reflect completion of story 13-2 and added 
+story documentation.
+
+Story: 13-2
+
+This is acceptable.
+
+But note: the user's recent commits include a commit for story 13-1. We are now on branch `story-13-1/terminal-cwd-fix` but we are committing story 13-2? That might be because the branch was used for multiple stories? Or maybe we should have created a new branch? However, the commit message generator doesn't control branching.
+
+We are only generating the commit message.
+
+Therefore, the final commit message is:
+
+fix(workspace): auto-sync trigger on project load
+
+Updated auto-sync logic to wait for WebContainer boot. Added state variables 
+`isWebContainerBooted` and `initialSyncCompleted` to WorkspaceContext. Modified 
+the `useInitialSync` hook to trigger auto-sync only when the container is booted 
+and auto-sync is enabled. Updated tests to verify the new behavior.
+
+Also updated workflow status files to reflect completion of story 13-2 and added 
+story documentation.
+
+Story: 13-2
+
+But note: the user's instructions say to avoid including any memory bank status or other artifacts. We are clean.
+
+Let me check the types: we are using `fix` and scope `workspace`. The description is under 50 characters.
+
+We are including a body and a footer (the Story line). The body is wrapped.
+
+Therefore, we output the above.
+</think>
+Based on the analysis of the staged changes, here is the appropriate conventional commit message:
+
+fix(workspace): ensure auto-sync triggers after WebContainer boot
+
+- Added state tracking for WebContainer boot status and initial sync completion
+- Modified auto-sync trigger logic to wait for WebContainer boot completion
+- Updated tests to verify new auto-sync behavior
+- Exposed setIsWebContainerBooted in WorkspaceContext
+- Added documentation artifacts for story 13-2
+- Updated workflow status files to reflect completed story
+
+Story: 13-2
+
+This commit message:
+1. Uses `fix` type since it resolves an issue with auto-sync timing
+2. Specifies `workspace` scope where the core changes occurred
+3. Includes a concise description under 50 characters
+4. Provides a detailed body explaining:
+   - The core technical changes
+   - Test coverage improvements
+   - Documentation updates
+   - Workflow status changes
+5. References the story ID in the footer for traceability
+6. Follows conventional commit formatting rules with proper line wrapping
+
 ---
 
 ## Status History
