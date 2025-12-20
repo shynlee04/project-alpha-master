@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story_context>
+  <metadata>
+    <id>13-3</id>
+    <name>Add Sync Progress Indicator</name>
+    <epic>13 - Terminal &amp; Sync Stability</epic>
+    <status>ready-for-dev</status>
+    <created>2025-12-20</created>
+  </metadata>
+
+  <summary>
+    Enhance SyncStatusIndicator to show current file being synced and warn users 
+    about editing during active sync operations.
+  </summary>
+
+  <research_findings>
+    <finding id="RF-01" source="workspace-events.ts">
+      <topic>sync:progress Event Type</topic>
+      <details>
+        Already defined in WorkspaceEvents interface:
+        'sync:progress': [{ current: number; total: number; currentFile: string }]
+      </details>
+    </finding>
+    
+    <finding id="RF-02" source="sync-operations.ts">
+      <topic>Progress Event Emission</topic>
+      <details>
+        buildFileSystemTree() emits progress events during file iteration:
+        eventBus?.emit('sync:progress', { current, total, currentFile: entryPath })
+      </details>
+    </finding>
+    
+    <finding id="RF-03" source="SyncStatusIndicator.tsx">
+      <topic>Current Display</topic>
+      <details>
+        Shows "Syncing X/Y" via progress.syncedFiles/totalFiles props.
+        No tooltip for currentFile. No edit warning.
+      </details>
+    </finding>
+    
+    <finding id="RF-04" source="sync-manager.test.ts">
+      <topic>Test Coverage</topic>
+      <details>
+        sync:progress event emission tested in "nested directory recursion" test.
+        Verifies currentFile matches expected path.
+      </details>
+    </finding>
+    
+    <finding id="RF-05" source="use-workspace-event.ts">
+      <topic>Event Hook Pattern</topic>
+      <details>
+        useWorkspaceEvent(eventBus, 'sync:progress', handler) provides 
+        automatic cleanup on unmount.
+      </details>
+    </finding>
+  </research_findings>
+
+  <implementation_plan>
+    <phase name="UI Enhancement">
+      <task id="T1" priority="high">
+        <description>Add currentFile tooltip to SyncStatusIndicator</description>
+        <file>src/components/ide/SyncStatusIndicator.tsx</file>
+        <changes>
+          - Add title attribute showing progress.currentFile during syncing state
+          - Truncate long file paths for display
+        </changes>
+      </task>
+      
+      <task id="T2" priority="medium">
+        <description>Create SyncEditWarning toast component</description>
+        <file>src/components/ide/SyncEditWarning.tsx</file>
+        <changes>
+          - Create dismissible toast warning
+          - Style with amber/warning colors
+          - Include "Editing during sync may cause conflicts" message
+        </changes>
+      </task>
+    </phase>
+    
+    <phase name="Integration">
+      <task id="T3" priority="medium">
+        <description>Wire warning to editor focus during sync</description>
+        <file>src/components/ide/MonacoEditor.tsx</file>
+        <changes>
+          - Subscribe to sync status from WorkspaceContext
+          - Show toast on first keystroke during active sync
+          - Throttle to show only once per sync operation
+        </changes>
+      </task>
+    </phase>
+    
+    <phase name="Testing">
+      <task id="T4" priority="high">
+        <description>Add unit tests for progress display</description>
+        <file>src/components/ide/__tests__/SyncStatusIndicator.test.tsx</file>
+        <changes>
+          - Test tooltip shows currentFile
+          - Test progress count updates
+          - Test relative time formatting
+        </changes>
+      </task>
+    </phase>
+  </implementation_plan>
+
+  <files_to_modify>
+    <file path="src/components/ide/SyncStatusIndicator.tsx">
+      Add title/tooltip for currentFile during syncing status
+    </file>
+    <file path="src/components/ide/SyncEditWarning.tsx" action="create">
+      New toast component for edit warning during sync
+    </file>
+    <file path="src/components/ide/MonacoEditor.tsx">
+      Add sync status subscription and warning trigger
+    </file>
+    <file path="src/components/ide/__tests__/SyncStatusIndicator.test.tsx" action="create">
+      New test file for indicator component
+    </file>
+  </files_to_modify>
+
+  <dependencies>
+    <dependency>Story 13-2 complete (auto-sync working)</dependency>
+    <dependency>Event bus infrastructure (Epic 10)</dependency>
+    <dependency>WorkspaceContext providing syncStatus</dependency>
+  </dependencies>
+
+  <test_commands>
+    <command>pnpm exec tsc --noEmit</command>
+    <command>pnpm test</command>
+    <command>pnpm test src/components/ide/__tests__/SyncStatusIndicator.test.tsx</command>
+  </test_commands>
+</story_context>

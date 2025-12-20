@@ -180,6 +180,7 @@ This document provides the complete epic and story breakdown for Via-Gent's **Fo
 12. **Epic 8: Validation & Polish** - End-to-end testing, performance validation, and UX polish
 13. **Epic 9: Multi-Root Workspaces** - VS Code-style multi-root workspace support *(POST-MVP)*
 14. **Epic 13: Terminal & Sync Stability** - Critical bug fixes for terminal CWD, auto-sync, and UX *(NEW - Course Correction v5)*
+15. **Epic 21: Client-Side Localization (EN/VI)** - Add UI-level localization with language switcher and bundles *(NEW)*
 
 ### Epic Status Summary (Updated 2025-12-20)
 
@@ -199,6 +200,7 @@ This document provides the complete epic and story breakdown for Via-Gent's **Fo
 | Epic 8 | ⏳ Backlog | 0/8 | - | P3 | Validation & Polish |
 | Epic 9 | ⏳ Backlog | 0/7 | - | P4 | Multi-Root (post-MVP) |
 | **Epic 13** | **⏳ Ready** | **0/5** | - | **P0** | **Terminal/Sync Bugs (v5)** |
+| Epic 21 | ⏳ Backlog | 0/7 | - | P2 | Client-side localization EN/VI |
 
 ### Recommended Implementation Order (CHAM Audit 2025-12-13)
 

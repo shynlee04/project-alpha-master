@@ -86,7 +86,14 @@ export function SyncStatusIndicator({
   switch (status) {
     case 'syncing':
       return (
-        <span className="flex items-center gap-1 text-xs text-cyan-400">
+        <span
+          className="flex items-center gap-1 text-xs text-cyan-400"
+          title={
+            progress?.currentFile
+              ? `Syncing: ${progress.currentFile}`
+              : 'Syncing files to WebContainer...'
+          }
+        >
           <Loader2 className="w-3 h-3 animate-spin" />
           <span>
             Syncing

@@ -10,7 +10,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-20T07:25:00+07:00"
+last_updated: "2025-12-20T08:17:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 
@@ -207,9 +207,9 @@ epic_status:
   - id: 13
     name: "Terminal & Sync Stability"
     status: "IN_PROGRESS"
-    stories: "2/6"  # Story 13-1 done, Story 13-2 done
+    stories: "3/6"  # Stories 13-1, 13-2, 13-3 done
     priority: "P0"
-    notes: "Stories 13-1 and 13-2 completed 2025-12-20. Next: Story 13-3."
+    notes: "Stories 13-1, 13-2, 13-3 completed. Next: Story 13-4."
     
   - id: 12
     name: "AI Tool Interface Layer"
@@ -248,9 +248,10 @@ bugs:
   - id: "BUG-03"
     name: "Sync Status Opacity"
     severity: "MEDIUM"
-    status: "FIX_PROPOSED"
+    status: "FIXED"  # Story 13-3 completed 2025-12-20
     epic: 13
     story: "13-3"
+    fixed_date: "2025-12-20"
     
   - id: "BUG-04"
     name: "Permission Persistence"
@@ -313,10 +314,10 @@ next_actions:
       notes: "Fixed auto-sync trigger, 160 tests pass"
       
   immediate:
-    - action: "Create Story 13-3 (Sync Progress)"
+    - action: "Create Story 13-4 (Preserve File Tree State)"
       command: "create-story workflow"
       agent: "sm"
-      priority: "P0"
+      priority: "P1"
       
   then:
     - action: "Implement Story 13-3"

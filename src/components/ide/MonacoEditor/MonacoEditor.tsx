@@ -3,11 +3,13 @@
  * @module components/ide/MonacoEditor
  */
 
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 import Editor, { type OnMount, type OnChange } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { getLanguageFromPath } from '../../../lib/editor/language-utils';
 import { EditorTabBar, type OpenFile } from './EditorTabBar';
+import { useWorkspace } from '../../../lib/workspace';
+import { SyncEditWarning } from '../SyncEditWarning';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -60,6 +62,18 @@ export function MonacoEditor({
     const pendingChangesRef = useRef<Map<string, string>>(new Map());
 
     const activeFile = openFiles.find(f => f.path === activeFilePath);
+
+    // Story 13-3: Sync edit warning state
+    const { syncStatus } = useWorkspace();
+    const [showSyncWarning, setShowSyncWarning] = useState(false);
+    const syncWarningShownRef = useRef(false);
+
+    // Reset warning state when sync completes
+    useEffect(() => {
+        if (syncStatus !== 'syncing') {
+            syncWarningShownRef.current = false;
+        }
+    }, [syncStatus]);
 
     // Cleanup debounce timeout on unmount
     useEffect(() => {
@@ -158,6 +172,12 @@ export function MonacoEditor({
     const handleEditorChange: OnChange = useCallback((value) => {
         if (!activeFilePath || value === undefined) return;
 
+        // Story 13-3: Show warning on first edit during sync
+        if (syncStatus === 'syncing' && !syncWarningShownRef.current) {
+            syncWarningShownRef.current = true;
+            setShowSyncWarning(true);
+        }
+
         // Store pending change
         pendingChangesRef.current.set(activeFilePath, value);
 
@@ -177,7 +197,7 @@ export function MonacoEditor({
                 pendingChangesRef.current.delete(activeFilePath);
             }
         }, AUTO_SAVE_DELAY_MS);
-    }, [activeFilePath, onContentChange, onSave]);
+    }, [activeFilePath, onContentChange, onSave, syncStatus]);
 
     const handleTabClick = useCallback((path: string) => {
         // Save current view state before switching
@@ -265,6 +285,11 @@ export function MonacoEditor({
                     }}
                 />
             </div>
+            {/* Story 13-3: Sync edit warning toast */}
+            <SyncEditWarning
+                isVisible={showSyncWarning}
+                onDismiss={() => setShowSyncWarning(false)}
+            />
         </div>
     );
 }

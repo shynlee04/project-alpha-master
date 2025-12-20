@@ -118,7 +118,7 @@ development_status:
   epic-13: in-progress
   13-1-fix-terminal-working-directory: done
   13-2-fix-auto-sync-on-project-load: done
-  13-3-add-sync-progress-indicator: backlog
+  13-3-add-sync-progress-indicator: done
   13-4-preserve-file-tree-state: backlog
   13-5-improve-permission-restoration: backlog
   13-6-fix-preview-in-new-tab: backlog  # NEW: Added from manual testing 2025-12-20
@@ -315,9 +315,9 @@ summary:
   epics_done: 6
   epics_in_progress: 1
   epics_backlog: 15
-  stories_done: 35
+  stories_done: 36
   stories_in_progress: 0
-  stories_backlog: 82
+  stories_backlog: 81
   
   priority_breakdown:
     p0: 1  # Epic 13 (Terminal & Sync Stability)
@@ -368,16 +368,16 @@ next_actions:
       status: done
       date: "2025-12-20"
       
-    - action: "Story 13-2 (Fix Auto-Sync on Project Load)"
+    - action: "Story 13-3 (Add Sync Progress Indicator)"
       status: done
       date: "2025-12-20"
-      notes: "Fixed auto-sync trigger, 160 tests pass"
+      notes: "Tooltip, toast warning, 11 new tests"
       
   immediate:
-    - action: "Create Story 13-3 (Add Sync Progress Indicator)"
+    - action: "Create Story 13-4 (Preserve File Tree State)"
       command: "/bmad-bmm-workflows-create-story"
       agent: "sm"
-      priority: P0
+      priority: P1
 
   then:
     - action: "Implement Story 13-3"
