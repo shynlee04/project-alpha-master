@@ -12,6 +12,8 @@ import {
 } from '../lib/workspace'
 import { ensureReadWritePermission } from '../lib/filesystem/permission-lifecycle'
 import { LocalFSAdapter } from '../lib/filesystem'
+import { Onboarding } from '../components/dashboard/Onboarding'
+
 
 export const Route = createFileRoute('/')({ component: Dashboard })
 
@@ -206,6 +208,7 @@ export function Dashboard() {
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-12">
+        <Onboarding />
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-semibold text-white">{t('dashboard.title')}</h1>
           <button

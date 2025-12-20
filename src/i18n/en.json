@@ -114,5 +114,22 @@
     "shellExited": "Shell exited with code {{code}}",
     "error": "Terminal Error: {{error}}",
     "bootFailed": "Failed to boot WebContainer: {{error}}"
+  },
+  "onboarding": {
+    "title": "Via-gent",
+    "subtitle": "Your Intelligent Local Dev Environment",
+    "about": {
+      "title": "About Project",
+      "description": "An open-source, AI-first IDE built for autonomy and speed. No more copy-pasting code."
+    },
+    "contact": {
+      "title": "Connect",
+      "name": "Linh Nguyen",
+      "role": "Creator & Maintainer"
+    },
+    "cta": {
+      "github": "Star on GitHub",
+      "contact": "Contact Me"
+    }
   }
 }

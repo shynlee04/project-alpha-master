@@ -114,5 +114,22 @@
     "shellExited": "Shell đã thoát với mã {{code}}",
     "error": "Lỗi Terminal: {{error}}",
     "bootFailed": "Không thể khởi động WebContainer: {{error}}"
+  },
+  "onboarding": {
+    "title": "Via-gent",
+    "subtitle": "Môi trường phát triển cục bộ thông minh của bạn",
+    "about": {
+      "title": "Giới thiệu",
+      "description": "Một IDE mã nguồn hướng AI được xây dựng cho sự tự chủ và tốc độ. Không còn việc copy-paste code thủ công."
+    },
+    "contact": {
+      "title": "Kết nối",
+      "name": "Linh Nguyễn",
+      "role": "Tác giả & Duy trì"
+    },
+    "cta": {
+      "github": "Đánh sao trên GitHub",
+      "contact": "Liên hệ"
+    }
   }
 }
