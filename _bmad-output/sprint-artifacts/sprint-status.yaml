@@ -157,7 +157,7 @@ development_status:
   23-1-install-tailwindcss-4: done
     story: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4.md
     context: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4-context.xml
-  23-2-initialize-shadcnui: review
+  23-2-initialize-shadcnui: done
     story: _bmad-output/sprint-artifacts/23-2-initialize-shadcnui.md
     context: _bmad-output/sprint-artifacts/23-2-initialize-shadcnui-context.xml
     completed_at: "2025-12-20"
@@ -166,10 +166,18 @@ development_status:
       theme_system: "dark-mode-default"
       files_changed: 18
       tests_passing: 196
+    review:
+      status: approved
+      reviewer: "code-reviewer"
+      date: "2025-12-20T19:26:00+07:00"
+      issues_found: 0
+      recommendations: 5
   23-3-migrate-layout-components: in-progress
     story: _bmad-output/sprint-artifacts/23-3-migrate-layout-components.md
     context: _bmad-output/sprint-artifacts/23-3-migrate-layout-components-context.xml
     started_at: "2025-12-20"
+    assigned_to: "dev"
+    assignment_date: "2025-12-20T19:35:00+07:00"
   23-4-migrate-ide-panel-components: backlog
   23-5-implement-theme-toggle: backlog
   23-6-migrate-form-dialog-components: backlog
@@ -376,15 +384,15 @@ development_status:
 # SUMMARY METRICS
 # =============================================================================
 summary:
-  total_epics: 25
-  total_stories: 140
-  epics_done: 7
-  epics_in_progress: 1
-  epics_ready: 2  # Epic 22, Epic 23
-  epics_backlog: 15
-  stories_done: 40
-  stories_in_progress: 0
-  stories_backlog: 98
+total_epics: 25
+total_stories: 140
+epics_done: 7
+epics_in_progress: 1
+epics_ready: 2  # Epic 22, Epic 23
+epics_backlog: 15
+stories_done: 41
+stories_in_progress: 0
+stories_backlog: 97
   
   priority_breakdown:
     p0: 1  # Epic 22 (Production Hardening) - CURRENT

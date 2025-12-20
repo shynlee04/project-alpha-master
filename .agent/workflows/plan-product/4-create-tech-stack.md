@@ -1,3 +1,7 @@
+---
+description: The final part of our product planning process is to document this product's tech stack in `agent-os/product/tech-stack.md`.  Follow these instructions to do so:
+---
+
 The final part of our product planning process is to document this product's tech stack in `agent-os/product/tech-stack.md`.  Follow these instructions to do so:
 
 Create `agent-os/product/tech-stack.md` with a list of all tech stack choices that cover all aspects of this product's codebase.

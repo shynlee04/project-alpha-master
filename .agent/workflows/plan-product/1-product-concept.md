@@ -1,3 +1,7 @@
+---
+description: The FIRST STEP is to confirm the product details by following these instructions:
+---
+
 This begins a multi-step process for planning and documenting the mission and roadmap for the current product.
 
 The FIRST STEP is to confirm the product details by following these instructions:

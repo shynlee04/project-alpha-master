@@ -1,3 +1,7 @@
+---
+description: Now that you've gathered information about this product, use that info to create the mission document in `agent-os/product/mission.md` by following these instructions:
+---
+
 Now that you've gathered information about this product, use that info to create the mission document in `agent-os/product/mission.md` by following these instructions:
 
 Create `agent-os/product/mission.md` with comprehensive product definition following this structure for its' content:

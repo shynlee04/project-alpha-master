@@ -1,3 +1,7 @@
+---
+description: Now that you've created this product's mission.md, use that to guide your creation of the roadmap in `agent-os/product/roadmap.md` by following these instructions:
+---
+
 Now that you've created this product's mission.md, use that to guide your creation of the roadmap in `agent-os/product/roadmap.md` by following these instructions:
 
 Generate `agent-os/product/roadmap.md` with an ordered feature checklist:
