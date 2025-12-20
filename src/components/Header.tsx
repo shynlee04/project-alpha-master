@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   ChevronDown,
   ChevronRight,
@@ -11,12 +11,20 @@ import {
   StickyNote,
   X,
 } from 'lucide-react'
+import { useLocalePreference } from '../i18n/LocaleProvider'
 
 export default function Header() {
+  const { t } = useTranslation()
+  const { locale, setLocale } = useLocalePreference()
   const [isOpen, setIsOpen] = useState(false)
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
+
+  const toggleLocale = () => {
+    const next = locale === 'en' ? 'vi' : 'en'
+    setLocale(next)
+  }
 
   return (
     <>
@@ -37,6 +45,15 @@ export default function Header() {
             />
           </Link>
         </h1>
+        <div className="ml-auto">
+          <button
+            onClick={toggleLocale}
+            className="px-3 py-2 rounded-md bg-slate-700 hover:bg-slate-600 text-sm transition-colors"
+            aria-label="Toggle language"
+          >
+            {t('actions.toggleLanguage', { code: locale.toUpperCase() })}
+          </button>
+        </div>
       </header>
 
       <aside
@@ -45,7 +62,7 @@ export default function Header() {
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          <h2 className="text-xl font-bold">Navigation</h2>
+          <h2 className="text-xl font-bold">{t('navigation.title')}</h2>
           <button
             onClick={() => setIsOpen(false)}
             className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
@@ -66,7 +83,7 @@ export default function Header() {
             }}
           >
             <Home size={20} />
-            <span className="font-medium">Home</span>
+            <span className="font-medium">{t('navigation.home')}</span>
           </Link>
 
           {/* Demo Links Start */}
@@ -81,7 +98,7 @@ export default function Header() {
             }}
           >
             <SquareFunction size={20} />
-            <span className="font-medium">Start - Server Functions</span>
+            <span className="font-medium">{t('navigation.startServerFunctions')}</span>
           </Link>
 
           <Link
@@ -94,7 +111,7 @@ export default function Header() {
             }}
           >
             <Network size={20} />
-            <span className="font-medium">Start - API Request</span>
+            <span className="font-medium">{t('navigation.startApiRequest')}</span>
           </Link>
 
           <div className="flex flex-row justify-between">
@@ -108,7 +125,7 @@ export default function Header() {
               }}
             >
               <StickyNote size={20} />
-              <span className="font-medium">Start - SSR Demos</span>
+              <span className="font-medium">{t('navigation.startSsrDemos')}</span>
             </Link>
             <button
               className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
@@ -138,7 +155,7 @@ export default function Header() {
                 }}
               >
                 <StickyNote size={20} />
-                <span className="font-medium">SPA Mode</span>
+                <span className="font-medium">{t('navigation.startSpaMode')}</span>
               </Link>
 
               <Link
@@ -151,7 +168,7 @@ export default function Header() {
                 }}
               >
                 <StickyNote size={20} />
-                <span className="font-medium">Full SSR</span>
+                <span className="font-medium">{t('navigation.startFullSsr')}</span>
               </Link>
 
               <Link
@@ -164,7 +181,7 @@ export default function Header() {
                 }}
               >
                 <StickyNote size={20} />
-                <span className="font-medium">Data Only</span>
+                <span className="font-medium">{t('navigation.startDataOnly')}</span>
               </Link>
             </div>
           )}

@@ -50,3 +50,38 @@ export function updateNodeByPath(
         return n;
     });
 }
+
+/**
+ * Restore expanded state to tree nodes based on saved paths.
+ * 
+ * @param nodes - Array of tree nodes to update
+ * @param expandedPaths - Set of paths that should be expanded
+ * @returns Updated array with expanded state restored
+ */
+export function restoreExpandedState(
+    nodes: TreeNode[],
+    expandedPaths: Set<string>,
+): TreeNode[] {
+    return nodes.map((node) => ({
+        ...node,
+        expanded: node.type === 'directory' && expandedPaths.has(node.path),
+        children: node.children
+            ? restoreExpandedState(node.children, expandedPaths)
+            : undefined,
+    }));
+}
+
+/**
+ * Get all ancestor paths for a given path.
+ * 
+ * @param path - Path to get ancestors for (e.g., "src/components/Foo.tsx")
+ * @returns Array of ancestor paths (e.g., ["src", "src/components"])
+ */
+export function getAncestorPaths(path: string): string[] {
+    const parts = path.split('/');
+    const ancestors: string[] = [];
+    for (let i = 1; i < parts.length; i++) {
+        ancestors.push(parts.slice(0, i).join('/'));
+    }
+    return ancestors;
+}

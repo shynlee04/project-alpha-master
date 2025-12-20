@@ -5,7 +5,7 @@ import {
     PermissionDeniedError,
 } from '../../../../lib/filesystem/local-fs-adapter';
 import type { TreeNode } from '../types';
-import { buildTreeNode, updateNodeByPath } from '../utils';
+import { buildTreeNode, updateNodeByPath, restoreExpandedState } from '../utils';
 
 /**
  * Options for the useFileTreeActions hook.
@@ -21,6 +21,10 @@ export interface UseFileTreeActionsOptions {
     setError: React.Dispatch<React.SetStateAction<string | null>>;
     /** Set loading */
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    /** Expanded paths for state preservation */
+    expandedPaths: Set<string>;
+    /** Set expanded paths */
+    setExpandedPaths: React.Dispatch<React.SetStateAction<Set<string>>>;
     /** Local adapter ref from workspace */
     localAdapterRef: React.RefObject<LocalFSAdapter | null>;
     /** Sync manager ref from workspace */
@@ -56,6 +60,8 @@ export function useFileTreeActions(
         setRootNodes,
         setError,
         setIsLoading,
+        expandedPaths,
+        setExpandedPaths,
         localAdapterRef,
         syncManagerRef,
     } = options;
@@ -79,7 +85,10 @@ export function useFileTreeActions(
 
             const entries = await adapter.listDirectory('');
             const nodes = entries.map((entry) => buildTreeNode(entry, ''));
-            setRootNodes(nodes);
+
+            // Restore expanded state from saved paths
+            const restoredNodes = restoreExpandedState(nodes, expandedPaths);
+            setRootNodes(restoredNodes);
         } catch (err) {
             if (err instanceof PermissionDeniedError) {
                 setError('Permission required to access this folder.');
@@ -93,7 +102,7 @@ export function useFileTreeActions(
         } finally {
             setIsLoading(false);
         }
-    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading]);
+    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths]);
 
     /**
      * Load children of a directory node.
@@ -124,7 +133,12 @@ export function useFileTreeActions(
             if (node.type !== 'directory') return;
 
             if (node.expanded) {
-                // Collapse
+                // Collapse - remove from expandedPaths
+                setExpandedPaths((prev) => {
+                    const next = new Set(prev);
+                    next.delete(node.path);
+                    return next;
+                });
                 setRootNodes((prev) =>
                     updateNodeByPath(prev, node.path, (n) => ({
                         ...n,
@@ -132,7 +146,10 @@ export function useFileTreeActions(
                     })),
                 );
             } else {
-                // Expand - load children if needed
+                // Expand - add to expandedPaths
+                setExpandedPaths((prev) => new Set(prev).add(node.path));
+
+                // Load children if needed
                 if (!node.children) {
                     // Set loading
                     setRootNodes((prev) =>
@@ -162,7 +179,7 @@ export function useFileTreeActions(
                 }
             }
         },
-        [loadChildren, setRootNodes],
+        [loadChildren, setRootNodes, setExpandedPaths],
     );
 
     /**

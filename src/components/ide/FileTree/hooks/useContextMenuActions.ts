@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import type { LocalFSAdapter } from '../../../../lib/filesystem/local-fs-adapter';
 import type { TreeNode, ContextMenuState, ContextMenuAction } from '../types';
+import { getAncestorPaths } from '../utils';
 
 /**
  * Options for the useContextMenuActions hook.
@@ -18,6 +19,10 @@ export interface UseContextMenuActionsOptions {
     handleToggle: (node: TreeNode) => Promise<void>;
     /** Load root directory for refresh */
     loadRootDirectory: () => Promise<void>;
+    /** Set expanded paths for state preservation */
+    setExpandedPaths: React.Dispatch<React.SetStateAction<Set<string>>>;
+    /** Set focused path for auto-selection */
+    setFocusedPath: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 /**
@@ -46,8 +51,9 @@ export function useContextMenuActions(
         setContextMenu,
         directoryHandle,
         getAdapter,
-        handleToggle,
         loadRootDirectory,
+        setExpandedPaths,
+        setFocusedPath,
     } = options;
 
     /**
@@ -89,40 +95,59 @@ export function useContextMenuActions(
                     case 'new-file': {
                         const name = prompt('Enter file name:');
                         if (name) {
-                            const path =
+                            const newPath =
                                 targetNode.type === 'directory'
                                     ? `${targetNode.path}/${name}`
                                     : name;
-                            await adapter.createFile(path, '');
-                            if (targetNode.type === 'directory') {
-                                handleToggle({ ...targetNode, expanded: false, children: undefined });
-                                setTimeout(
-                                    () => handleToggle({ ...targetNode, expanded: false, children: undefined }),
-                                    100,
-                                );
-                            } else {
-                                loadRootDirectory();
+                            await adapter.createFile(newPath, '');
+
+                            // Expand parent paths for visibility
+                            const parentPath = targetNode.type === 'directory'
+                                ? targetNode.path
+                                : undefined;
+                            if (parentPath) {
+                                setExpandedPaths((prev) => {
+                                    const next = new Set(prev);
+                                    // Add parent and all ancestors
+                                    next.add(parentPath);
+                                    getAncestorPaths(parentPath).forEach((p) => next.add(p));
+                                    return next;
+                                });
                             }
+
+                            // Auto-select the new file after tree reload
+                            setFocusedPath(newPath);
+
+                            // Reload tree (will restore expanded state)
+                            await loadRootDirectory();
                         }
                         break;
                     }
                     case 'new-folder': {
                         const name = prompt('Enter folder name:');
                         if (name) {
-                            const path =
+                            const newPath =
                                 targetNode.type === 'directory'
                                     ? `${targetNode.path}/${name}`
                                     : name;
-                            await adapter.createDirectory(path);
-                            if (targetNode.type === 'directory') {
-                                handleToggle({ ...targetNode, expanded: false, children: undefined });
-                                setTimeout(
-                                    () => handleToggle({ ...targetNode, expanded: false, children: undefined }),
-                                    100,
-                                );
-                            } else {
-                                loadRootDirectory();
+                            await adapter.createDirectory(newPath);
+
+                            // Expand parent paths for visibility
+                            const parentPath = targetNode.type === 'directory'
+                                ? targetNode.path
+                                : undefined;
+                            if (parentPath) {
+                                setExpandedPaths((prev) => {
+                                    const next = new Set(prev);
+                                    // Add parent and all ancestors
+                                    next.add(parentPath);
+                                    getAncestorPaths(parentPath).forEach((p) => next.add(p));
+                                    return next;
+                                });
                             }
+
+                            // Reload tree (will restore expanded state)
+                            await loadRootDirectory();
                         }
                         break;
                     }
@@ -160,7 +185,7 @@ export function useContextMenuActions(
                 );
             }
         },
-        [contextMenu.targetNode, directoryHandle, getAdapter, handleToggle, loadRootDirectory],
+        [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, setExpandedPaths, setFocusedPath],
     );
 
     return {

@@ -115,6 +115,8 @@ export function FileTree({
     setRootNodes,
     focusedPath,
     setFocusedPath,
+    expandedPaths,
+    setExpandedPaths,
     error,
     setError,
     isLoading,
@@ -138,6 +140,8 @@ export function FileTree({
     setRootNodes,
     setError,
     setIsLoading,
+    expandedPaths,
+    setExpandedPaths,
     localAdapterRef,
     syncManagerRef,
   });
@@ -168,6 +172,8 @@ export function FileTree({
     getAdapter,
     handleToggle,
     loadRootDirectory,
+    setExpandedPaths,
+    setFocusedPath,
   });
 
   // ============================================================================

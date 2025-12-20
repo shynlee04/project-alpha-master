@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="21-1-locale-aware-routing-and-html-lang" created="2025-12-20T08:46:00+07:00">
+  <files>
+    <file path="src/router.tsx">
+      <content><![CDATA[
+import { createRouter } from '@tanstack/react-router'
+
+import { routeTree } from './routeTree.gen'
+
+export const getRouter = () => {
+  const router = createRouter({
+    routeTree,
+    scrollRestoration: true,
+    defaultPreloadStaleTime: 0,
+  })
+
+  return router
+}
+      ]]></content>
+    </file>
+    <file path="src/routes/__root.tsx">
+      <content><![CDATA[
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+
+import Header from '../components/Header'
+
+import appCss from '../styles.css?url'
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'TanStack Start Starter' },
+    ],
+    links: [{ rel: 'stylesheet', href: appCss }],
+  }),
+
+  shellComponent: RootDocument,
+})
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <Header />
+        {children}
+        <TanStackDevtools
+          config={{ position: 'bottom-right' }}
+          plugins={[{ name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> }]}
+        />
+        <Scripts />
+      </body>
+    </html>
+  )
+}
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="deepwiki" repo="TanStack/router">
+      Optional path parameter {-$locale} pattern: validate in beforeLoad; return context { locale, isDefaultLocale }; redirect invalid locale; use head() to set html lang and meta.
+    </finding>
+  </research_notes>
+
+  <architecture_patterns>
+    <pattern name="Localization (client-only)" source="architecture.md">
+      Client-only i18n with locale-aware routing, dynamic bundle loading, and &lt;html lang&gt; per locale; fallback to en; avoid SSR/hydration coupling.
+    </pattern>
+  </architecture_patterns>
+
+  <technical_notes>
+    <note priority="high">Default locale is en; omit /en prefix. Validate locales (en|vi) in beforeLoad; redirect unknown to default.</note>
+    <note priority="medium">Expose locale + isDefaultLocale via route context for nested routes.</note>
+    <note priority="medium">Set html lang and og:locale in head(); ensure shell uses dynamic lang.</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="@tanstack/react-router" version="existing" />
+  </dependencies>
+</context>

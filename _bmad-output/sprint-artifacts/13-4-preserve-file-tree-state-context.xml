@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="13-4-preserve-file-tree-state" created="2025-12-20T08:49:00+07:00">
+  
+  <!-- Current code state - files to modify -->
+  <files>
+    <file path="src/components/ide/FileTree/hooks/useFileTreeState.ts">
+      <description>Hook managing FileTree state including rootNodes, focusedPath, error, isLoading, contextMenu. NEEDS: expandedPaths state to track which folders are expanded independently of tree structure.</description>
+      <content><![CDATA[
+// Current state exports (lines 79-92):
+return {
+    rootNodes,
+    setRootNodes,
+    focusedPath,
+    setFocusedPath,
+    error,
+    setError,
+    isLoading,
+    setIsLoading,
+    contextMenu,
+    setContextMenu,
+    adapterRef,
+    getAdapter,
+};
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/FileTree/hooks/useFileTreeActions.ts">
+      <description>Hook for tree actions: loadRootDirectory, loadChildren, handleToggle, handleRetryFile. NEEDS: sync expandedPaths when toggles happen.</description>
+      <content><![CDATA[
+// handleToggle function (lines 122-166):
+const handleToggle = useCallback(
+    async (node: TreeNode) => {
+        if (node.type !== 'directory') return;
+
+        if (node.expanded) {
+            // Collapse
+            setRootNodes((prev) =>
+                updateNodeByPath(prev, node.path, (n) => ({
+                    ...n,
+                    expanded: false,
+                })),
+            );
+        } else {
+            // Expand - load children if needed
+            // ... expands and sets expanded: true
+        }
+    },
+    [loadChildren, setRootNodes],
+);
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/FileTree/hooks/useContextMenuActions.ts">
+      <description>Hook for context menu: new-file, new-folder, rename, delete. ROOT CAUSE OF BUG: calls loadRootDirectory() after operations, resetting tree.</description>
+      <content><![CDATA[
+// After file creation (lines 96-106):
+case 'new-file': {
+    const name = prompt('Enter file name:');
+    if (name) {
+        const path = targetNode.type === 'directory'
+            ? `${targetNode.path}/${name}`
+            : name;
+        await adapter.createFile(path, '');
+        if (targetNode.type === 'directory') {
+            // Problem: This resets expanded state
+            handleToggle({ ...targetNode, expanded: false, children: undefined });
+            setTimeout(
+                () => handleToggle({ ...targetNode, expanded: false, children: undefined }),
+                100,
+            );
+        } else {
+            loadRootDirectory(); // Problem: Loses all expanded state
+        }
+    }
+    break;
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/FileTree/utils.ts">
+      <description>Utility functions: buildTreeNode, updateNodeByPath. NEEDS: new helper to restore expanded state.</description>
+      <content><![CDATA[
+// Existing updateNodeByPath function:
+export function updateNodeByPath(
+    nodes: TreeNode[],
+    path: string,
+    updater: (node: TreeNode) => TreeNode
+): TreeNode[] {
+    // Recursively finds and updates node at path
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/FileTree/types.ts">
+      <description>Type definitions including TreeNode with expanded?: boolean property.</description>
+      <content><![CDATA[
+export interface TreeNode {
+    name: string;
+    path: string;
+    type: 'file' | 'directory';
+    handle: FileSystemHandle;
+    children?: TreeNode[];
+    expanded?: boolean;
+    loading?: boolean;
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings -->
+  <research_notes>
+    <finding source="codebase-analysis" query="FileTree expanded state">
+      Root cause: useContextMenuActions calls loadRootDirectory() after CRUD operations (lines 104, 124, 137, 151), which replaces rootNodes and loses expanded state.
+    </finding>
+    <finding source="codebase-analysis" query="TreeNode type">
+      TreeNode already has expanded?: boolean property. Currently not persisted - stored only in component tree state.
+    </finding>
+    <finding source="project-context.md" query="testing patterns">
+      Tests co-located with source: src/lib/filesystem/__tests__/ pattern. Use Vitest with fake-indexeddb for mocking.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Hook Composition" source="FileTree/hooks/">
+      FileTree uses 4 composed hooks: useFileTreeState, useFileTreeActions, useContextMenuActions, useKeyboardNavigation. Changes should follow this separation.
+    </pattern>
+    <pattern name="State Updates" source="useFileTreeActions.ts">
+      Use updateNodeByPath() helper for immutable tree updates. Create similar helper for expanded state restoration.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Solution: Add expandedPaths: Set&lt;string&gt; to useFileTreeState that tracks expanded folders independently. On tree reload, iterate rootNodes and restore expanded state by matching paths.
+    </note>
+    <note priority="high">
+      After loadRootDirectory() completes, call new restoreExpandedState() function that recursively marks nodes as expanded if their path is in expandedPaths set.
+    </note>
+    <note priority="medium">
+      For new file auto-selection: After file creation, compute the new file path and call onSelect/setFocusedPath with it.
+    </note>
+    <note priority="medium">
+      Parent auto-expand: When creating file at nested path like "src/components/Foo.tsx", add "src" and "src/components" to expandedPaths.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="react" version="19.2.3" />
+    <dependency name="@tanstack/react-store" version="0.8.0" />
+    <dependency name="vitest" version="latest" note="For unit tests" />
+  </dependencies>
+  
+</context>

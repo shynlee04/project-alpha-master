@@ -1,0 +1,16 @@
+{
+  "appName": "via-gent",
+  "navigation": {
+    "title": "Điều hướng",
+    "home": "Trang chủ",
+    "startServerFunctions": "Start - Hàm máy chủ",
+    "startApiRequest": "Start - Yêu cầu API",
+    "startSsrDemos": "Start - Bản demo SSR",
+    "startSpaMode": "Chế độ SPA",
+    "startFullSsr": "SSR đầy đủ",
+    "startDataOnly": "Chỉ dữ liệu"
+  },
+  "actions": {
+    "toggleLanguage": "Ngôn ngữ: {{code}}"
+  }
+}

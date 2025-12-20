@@ -1,0 +1,16 @@
+{
+  "appName": "via-gent",
+  "navigation": {
+    "title": "Navigation",
+    "home": "Home",
+    "startServerFunctions": "Start - Server Functions",
+    "startApiRequest": "Start - API Request",
+    "startSsrDemos": "Start - SSR Demos",
+    "startSpaMode": "SPA Mode",
+    "startFullSsr": "Full SSR",
+    "startDataOnly": "Data Only"
+  },
+  "actions": {
+    "toggleLanguage": "Language: {{code}}"
+  }
+}

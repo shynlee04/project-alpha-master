@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
+import { LocaleProvider } from '../i18n/LocaleProvider'
 
 import appCss from '../styles.css?url'
 
@@ -18,6 +19,10 @@ export const Route = createRootRoute({
       },
       {
         title: 'TanStack Start Starter',
+      },
+      {
+        property: 'og:locale',
+        content: 'en',
       },
     ],
     links: [
@@ -38,19 +43,21 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <Header />
-        {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <LocaleProvider>
+          <Header />
+          {children}
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        </LocaleProvider>
         <Scripts />
       </body>
     </html>

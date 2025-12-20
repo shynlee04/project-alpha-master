@@ -24,6 +24,10 @@ export interface UseFileTreeStateResult {
     focusedPath: string | undefined;
     /** Set focused path */
     setFocusedPath: React.Dispatch<React.SetStateAction<string | undefined>>;
+    /** Paths of expanded folders (for state preservation) */
+    expandedPaths: Set<string>;
+    /** Set expanded paths */
+    setExpandedPaths: React.Dispatch<React.SetStateAction<Set<string>>>;
     /** Error message if any */
     error: string | null;
     /** Set error */
@@ -55,6 +59,7 @@ export function useFileTreeState(
 
     const [rootNodes, setRootNodes] = useState<TreeNode[]>([]);
     const [focusedPath, setFocusedPath] = useState<string | undefined>();
+    const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [contextMenu, setContextMenu] = useState<ContextMenuState>({
@@ -81,6 +86,8 @@ export function useFileTreeState(
         setRootNodes,
         focusedPath,
         setFocusedPath,
+        expandedPaths,
+        setExpandedPaths,
         error,
         setError,
         isLoading,
