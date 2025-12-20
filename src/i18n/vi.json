@@ -11,6 +11,43 @@
     "startDataOnly": "Chỉ dữ liệu"
   },
   "actions": {
-    "toggleLanguage": "Ngôn ngữ: {{code}}"
+    "toggleLanguage": "Ngôn ngữ: {{code}}",
+    "openLocalFolder": "Mở thư mục local",
+    "openWorkspace": "Mở Workspace",
+    "dismiss": "Đóng"
+  },
+  "dashboard": {
+    "title": "Dự án gần đây",
+    "loading": "Đang tải dự án gần đây...",
+    "emptyTitle": "Chưa có dự án gần đây",
+    "emptySubtitle": "Nhấn \"Mở thư mục local\" để bắt đầu",
+    "removeTooltip": "Xóa khỏi danh sách gần đây"
+  },
+  "errors": {
+    "loadProjects": "Tải dự án gần đây thất bại",
+    "openFolder": "Mở thư mục thất bại. Vui lòng thử lại.",
+    "fsNotSupported": "Trình duyệt không hỗ trợ File System Access API.",
+    "permissionDenied": "Từ chối quyền cho \"{{name}}\". Vui lòng chọn lại thư mục.",
+    "accessDenied": "Truy cập \"{{name}}\" bị từ chối. Vui lòng mở lại bằng \"Mở thư mục local\".",
+    "generic": "Không thể truy cập \"{{name}}\". Vui lòng chọn lại thư mục."
+  },
+  "badges": {
+    "clickToReauthorize": "Nhấn để cấp lại quyền",
+    "accessDenied": "Bị từ chối"
+  },
+  "status": {
+    "authorizing": "Đang cấp quyền…",
+    "opening": "Đang mở…",
+    "lastOpened": "Mở lần cuối {{relative}}"
+  },
+  "time": {
+    "justNow": "vừa xong",
+    "minutesAgo": "{{count}} phút trước",
+    "minutesAgo_plural": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "hoursAgo_plural": "{{count}} giờ trước",
+    "yesterday": "hôm qua",
+    "daysAgo": "{{count}} ngày trước",
+    "daysAgo_plural": "{{count}} ngày trước"
   }
 }

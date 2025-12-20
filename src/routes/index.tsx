@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Folder, Plus, Clock, Trash2, AlertCircle, CheckCircle, HelpCircle, Loader2 } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   listProjectsWithPermission,
   deleteProject,
@@ -15,6 +16,7 @@ import { LocalFSAdapter } from '../lib/filesystem'
 export const Route = createFileRoute('/')({ component: Dashboard })
 
 function Dashboard() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [projects, setProjects] = useState<ProjectWithPermission[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -47,7 +49,7 @@ function Dashboard() {
       setProjects(loadedProjects)
     } catch (err) {
       console.error('[Dashboard] Failed to load projects:', err)
-      setError('Failed to load recent projects')
+      setError(t('errors.loadProjects'))
     } finally {
       setIsLoading(false)
     }
@@ -90,13 +92,13 @@ function Dashboard() {
 
           navigate({ to: '/workspace/$projectId', params: { projectId: project.id } })
         } else {
-          setError(`Permission denied for "${project.name}". Please re-select the folder.`)
+          setError(t('errors.permissionDenied', { name: project.name }))
           setOpeningProjectId(null)
           setOpeningPhase(null)
         }
       } catch (err) {
         console.error('[Dashboard] Permission request failed:', err)
-        setError(`Could not access "${project.name}". Please re-select the folder.`)
+        setError(t('errors.generic', { name: project.name }))
         setOpeningProjectId(null)
         setOpeningPhase(null)
       }
@@ -104,7 +106,7 @@ function Dashboard() {
     }
 
     // Permission denied - user needs to re-select folder
-    setError(`Access to "${project.name}" was denied. Please open the folder again using "Open Local Folder".`)
+    setError(t('errors.accessDenied', { name: project.name }))
     setOpeningProjectId(null)
     setOpeningPhase(null)
   }, [navigate])
@@ -119,14 +121,14 @@ function Dashboard() {
       setProjects(prev => prev.filter(p => p.id !== projectId))
     } catch (err) {
       console.error('[Dashboard] Failed to delete project:', err)
-      setError('Failed to remove project from recents')
+      setError(t('errors.generic', { name: '' }))
     }
   }, [])
 
   // Handle open local folder
   const handleOpenFolder = useCallback(async () => {
     if (!LocalFSAdapter.isSupported()) {
-      setError('File System Access API is not supported in this browser.')
+      setError(t('errors.fsNotSupported'))
       return
     }
 
@@ -152,7 +154,7 @@ function Dashboard() {
       navigate({ to: '/workspace/$projectId', params: { projectId } })
     } catch (err) {
       console.error('[Dashboard] Failed to open folder:', err)
-      setError('Failed to open folder. Please try again.')
+      setError(t('errors.openFolder'))
     }
   }, [navigate])
 
@@ -178,13 +180,13 @@ function Dashboard() {
       case 'prompt':
         return (
           <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded">
-            Click to re-authorize
+            {t('badges.clickToReauthorize')}
           </span>
         )
       case 'denied':
         return (
           <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">
-            Access denied
+            {t('badges.accessDenied')}
           </span>
         )
       default:
@@ -205,13 +207,13 @@ function Dashboard() {
 
       <main className="max-w-5xl mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-semibold text-white">Recent Projects</h1>
+          <h1 className="text-2xl font-semibold text-white">{t('dashboard.title')}</h1>
           <button
             onClick={handleOpenFolder}
             className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Open Local Folder
+            {t('actions.openLocalFolder')}
           </button>
         </div>
 
@@ -225,7 +227,7 @@ function Dashboard() {
                 onClick={() => setError(null)}
                 className="text-red-300 hover:text-white underline mt-1"
               >
-                Dismiss
+                {t('actions.dismiss')}
               </button>
             </div>
           </div>
@@ -235,7 +237,7 @@ function Dashboard() {
         {isLoading && (
           <div className="text-center py-20">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyan-400"></div>
-            <p className="text-slate-500 mt-4">Loading recent projects...</p>
+            <p className="text-slate-500 mt-4">{t('dashboard.loading')}</p>
           </div>
         )}
 
@@ -262,7 +264,7 @@ function Dashboard() {
                     </div>
                     <p className="text-sm text-slate-500 flex items-center gap-1.5 mt-0.5">
                       <Clock className="w-3.5 h-3.5" />
-                      Last opened {formatRelativeDate(project.lastOpened)}
+                      {t('status.lastOpened', { relative: formatRelativeDate(project.lastOpened, t) })}
                     </p>
                   </div>
                 </div>
@@ -270,20 +272,18 @@ function Dashboard() {
                   <button
                     onClick={(e) => handleDelete(e, project.id)}
                     className="text-slate-500 hover:text-red-400 transition-colors p-2 opacity-0 group-hover:opacity-100"
-                    title="Remove from recents"
+                    title={t('dashboard.removeTooltip')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                   {openingProjectId === project.id ? (
                     <div className="flex items-center gap-2 text-xs text-cyan-400">
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>
-                        {openingPhase === 'authorizing' ? 'Authorizing…' : 'Opening…'}
-                      </span>
+                      <span>{openingPhase === 'authorizing' ? t('status.authorizing') : t('status.opening')}</span>
                     </div>
                   ) : (
                     <div className="text-slate-500 text-sm group-hover:text-white transition-colors">
-                      Open Workspace →
+                      {t('actions.openWorkspace')} →
                     </div>
                   )}
                 </div>
@@ -293,10 +293,8 @@ function Dashboard() {
             {projects.length === 0 && (
               <div className="text-center py-20 border-2 border-dashed border-slate-800 rounded-xl">
                 <Folder className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                <p className="text-slate-500 mb-2">No recent projects found</p>
-                <p className="text-slate-600 text-sm">
-                  Click "Open Local Folder" to get started
-                </p>
+                <p className="text-slate-500 mb-2">{t('dashboard.emptyTitle')}</p>
+                <p className="text-slate-600 text-sm">{t('dashboard.emptySubtitle')}</p>
               </div>
             )}
           </div>
@@ -309,7 +307,7 @@ function Dashboard() {
 /**
  * Format date as relative string (e.g., "2 hours ago", "yesterday")
  */
-function formatRelativeDate(date: Date): string {
+export function formatRelativeDate(date: Date, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const now = new Date()
   const then = new Date(date)
   const diffMs = now.getTime() - then.getTime()
@@ -317,11 +315,11 @@ function formatRelativeDate(date: Date): string {
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
 
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`
-  if (diffDays === 1) return 'yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffMins < 1) return t('time.justNow')
+  if (diffMins < 60) return t(diffMins === 1 ? 'time.minutesAgo' : 'time.minutesAgo_plural', { count: diffMins })
+  if (diffHours < 24) return t(diffHours === 1 ? 'time.hoursAgo' : 'time.hoursAgo_plural', { count: diffHours })
+  if (diffDays === 1) return t('time.yesterday')
+  if (diffDays < 7) return t(diffDays === 1 ? 'time.daysAgo' : 'time.daysAgo_plural', { count: diffDays })
 
   return then.toLocaleDateString()
 }

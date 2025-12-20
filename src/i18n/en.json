@@ -11,6 +11,43 @@
     "startDataOnly": "Data Only"
   },
   "actions": {
-    "toggleLanguage": "Language: {{code}}"
+    "toggleLanguage": "Language: {{code}}",
+    "openLocalFolder": "Open Local Folder",
+    "openWorkspace": "Open Workspace",
+    "dismiss": "Dismiss"
+  },
+  "dashboard": {
+    "title": "Recent Projects",
+    "loading": "Loading recent projects...",
+    "emptyTitle": "No recent projects found",
+    "emptySubtitle": "Click \"Open Local Folder\" to get started",
+    "removeTooltip": "Remove from recents"
+  },
+  "errors": {
+    "loadProjects": "Failed to load recent projects",
+    "openFolder": "Failed to open folder. Please try again.",
+    "fsNotSupported": "File System Access API is not supported in this browser.",
+    "permissionDenied": "Permission denied for \"{{name}}\". Please re-select the folder.",
+    "accessDenied": "Access to \"{{name}}\" was denied. Please open the folder again using \"Open Local Folder\".",
+    "generic": "Could not access \"{{name}}\". Please re-select the folder."
+  },
+  "badges": {
+    "clickToReauthorize": "Click to re-authorize",
+    "accessDenied": "Access denied"
+  },
+  "status": {
+    "authorizing": "Authorizing…",
+    "opening": "Opening…",
+    "lastOpened": "Last opened {{relative}}"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}} minute ago",
+    "minutesAgo_plural": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hour ago",
+    "hoursAgo_plural": "{{count}} hours ago",
+    "yesterday": "yesterday",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago"
   }
 }
