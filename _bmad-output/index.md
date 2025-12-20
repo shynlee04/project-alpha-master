@@ -27,6 +27,7 @@
 | Frontend Framework | TanStack Start + React 19 |
 | Routing | TanStack Router (file-based) |
 | State Management | TanStack Store + React Context |
+| Styling | TailwindCSS 4.x + ShadcnUI |
 | Editor | Monaco Editor 0.55.1 |
 | Terminal | xterm.js 5.5.0 |
 | Sandboxing | WebContainers API 1.6.1 |

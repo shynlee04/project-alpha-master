@@ -1,12 +1,22 @@
 .
 ├── components
 │   ├── Header.tsx
+│   ├── LanguageSwitcher.tsx
+│   ├── __tests__
+│   │   └── workspace-i18n.test.tsx
+│   ├── dashboard
+│   │   ├── Onboarding.tsx
+│   │   ├── PitchDeck.tsx
+│   │   └── __tests__
+│   │       └── Onboarding.test.tsx
 │   ├── ide
 │   │   ├── AgentChatPanel.tsx
 │   │   ├── FileTree
 │   │   │   ├── ContextMenu.tsx
 │   │   │   ├── FileTree.tsx
 │   │   │   ├── FileTreeItem.tsx
+│   │   │   ├── __tests__
+│   │   │   │   └── FileTree.test.ts
 │   │   │   ├── hooks
 │   │   │   │   ├── useContextMenuActions.ts
 │   │   │   │   ├── useFileTreeActions.ts
@@ -25,8 +35,11 @@
 │   │   │   ├── PreviewPanel.tsx
 │   │   │   ├── index.ts
 │   │   │   └── types.ts
+│   │   ├── SyncEditWarning.tsx
 │   │   ├── SyncStatusIndicator.tsx
-│   │   └── XTerminal.tsx
+│   │   ├── XTerminal.tsx
+│   │   └── __tests__
+│   │       └── SyncStatusIndicator.test.tsx
 │   ├── layout
 │   │   ├── ChatPanelWrapper.tsx
 │   │   ├── IDEHeaderBar.tsx
@@ -43,6 +56,13 @@
 ├── hooks
 │   ├── useIdeStatePersistence.ts
 │   └── useProcessManager.ts
+├── i18n
+│   ├── LocaleProvider.tsx
+│   ├── __tests__
+│   │   └── config.test.ts
+│   ├── config.ts
+│   ├── en.json
+│   └── vi.json
 ├── lib
 │   ├── editor
 │   │   ├── __tests__
@@ -119,6 +139,8 @@
 ├── router.tsx
 ├── routes
 │   ├── __root.tsx
+│   ├── __tests__
+│   │   └── dashboard-i18n.test.tsx
 │   ├── demo
 │   │   ├── api.names.ts
 │   │   ├── start.api-request.tsx
@@ -129,9 +151,10 @@
 │   │   └── start.ssr.spa-mode.tsx
 │   ├── index.tsx
 │   ├── test-fs-adapter.tsx
+│   ├── webcontainer.$.tsx
 │   └── workspace
 │       └── $projectId.tsx
 ├── styles.css
 └── tree.txt
 
-27 directories, 108 files
+35 directories, 123 files

@@ -209,10 +209,10 @@ epic_status:
     
   - id: 13
     name: "Terminal & Sync Stability"
-    status: "IN_PROGRESS"
-    stories: "5/6"  # Stories 13-1, 13-2, 13-3, 13-4, 13-5 done
+    status: "DONE"
+    stories: "6/6"
     priority: "P0"
-    notes: "Stories 13-1 to 13-5 completed. Next: Story 13-6."
+    notes: "All stories complete. Focus Mode enhancement delivered. Retrospective done."
   
   - id: 21
     name: "Client-Side Localization (EN/VI)"
@@ -220,6 +220,20 @@ epic_status:
     stories: "1/7"
     priority: "P2"
     notes: "UI localization epic (client-side toggle, i18n bundles, switcher, tests). Story 21-1 in progress."
+    
+  - id: 22
+    name: "Production Hardening"
+    status: "READY"
+    stories: "0/8"
+    priority: "P0"
+    notes: "Course Correction v6 - Addresses security, CI/CD, testing, monitoring gaps."
+    
+  - id: 23
+    name: "UX/UI Modernization"
+    status: "READY"
+    stories: "0/8"
+    priority: "P1"
+    notes: "ShadcnUI + TailwindCSS 4.x migration. Dark/light theme toggle."
     
   - id: 12
     name: "AI Tool Interface Layer"

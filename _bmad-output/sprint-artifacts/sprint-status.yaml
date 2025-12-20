@@ -115,7 +115,7 @@ development_status:
   # Added: Course Correction v5 (2025-12-20)
   # Updated: 2025-12-20 - Added Story 13-6 per manual testing
   # =============================================================================
-  epic-13: in-progress
+  epic-13: done
   13-1-fix-terminal-working-directory: done
   13-2-fix-auto-sync-on-project-load: done
   13-3-add-sync-progress-indicator: done
@@ -126,6 +126,40 @@ development_status:
     story: _bmad-output/sprint-artifacts/13-6-fix-preview-in-new-tab.md
   epic-13-retrospective: done
     artifact: _bmad-output/sprint-artifacts/epic-13-retrospective.md
+
+  # =============================================================================
+  # EPIC 22: Production Hardening [P0 - READY]
+  # =============================================================================
+  # Priority: P0 - Highest (Addresses production-readiness gaps)
+  # Added: Course Correction v6 (2025-12-20)
+  # Trigger: production-readiness-epic-13-report.md
+  # =============================================================================
+  epic-22: ready
+  22-1-implement-security-headers: backlog
+  22-2-create-cicd-pipeline: backlog
+  22-3-add-integration-tests: backlog
+  22-4-configure-error-monitoring: backlog
+  22-5-create-deployment-docs: backlog
+  22-6-establish-performance-benchmarks: backlog
+  22-7-enable-typescript-strict: backlog
+  22-8-add-eslint-prettier: backlog
+
+  # =============================================================================
+  # EPIC 23: UX/UI Modernization [P1 - READY]
+  # =============================================================================
+  # Priority: P1 - High (User experience improvement)
+  # Added: Course Correction v6 (2025-12-20)
+  # Tech: ShadcnUI + TailwindCSS 4.x + Dark/Light toggle
+  # =============================================================================
+  epic-23: ready
+  23-1-install-tailwindcss-4: backlog
+  23-2-initialize-shadcnui: backlog
+  23-3-migrate-layout-components: backlog
+  23-4-migrate-ide-panel-components: backlog
+  23-5-implement-theme-toggle: backlog
+  23-6-migrate-form-dialog-components: backlog
+  23-7-accessibility-audit: backlog
+  23-8-component-documentation: backlog
 
   # =============================================================================
   # EPIC 11: Code Splitting & Module Refactor [IN_PROGRESS - PAUSED FOR EPIC 13]
@@ -327,18 +361,19 @@ development_status:
 # SUMMARY METRICS
 # =============================================================================
 summary:
-  total_epics: 23
-  total_stories: 124
-  epics_done: 6
-  epics_in_progress: 2
+  total_epics: 25
+  total_stories: 140
+  epics_done: 7
+  epics_in_progress: 1
+  epics_ready: 2  # Epic 22, Epic 23
   epics_backlog: 15
   stories_done: 39
   stories_in_progress: 0
-  stories_backlog: 84
+  stories_backlog: 100
   
   priority_breakdown:
-    p0: 1  # Epic 13 (Terminal & Sync Stability)
-    p1: 2  # Epics 12, 6
+    p0: 1  # Epic 22 (Production Hardening) - CURRENT
+    p1: 3  # Epics 12, 6, 23 (UX Modernization)
     p2: 6  # Epics 7, 11, 16, 18, 19, 21
     p3: 7  # Epics 8, 4.5, 14, 15, 17, 7+
     p4: 2  # Epics 9, 20
