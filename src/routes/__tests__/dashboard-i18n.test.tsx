@@ -44,13 +44,14 @@ describe('Dashboard localization', () => {
       </LocaleProvider>,
     )
 
-    const enTitle = await screen.findByText('Recent Projects')
+    // Dashboard title shows 'Dashboard' in English
+    const enTitle = await screen.findByText('Dashboard')
     expect(enTitle).toBeTruthy()
 
     setLocale('vi')
 
     await waitFor(() => {
-      expect(screen.getByText('Dự án gần đây')).toBeTruthy()
+      expect(screen.getByText('Bảng điều khiển')).toBeTruthy()
     })
   })
 

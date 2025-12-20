@@ -154,8 +154,9 @@ development_status:
   # Note: Parallel execution with Epic 22
   # =============================================================================
   epic-23: in-progress
-  23-1-install-tailwindcss-4: drafted
+  23-1-install-tailwindcss-4: ready-for-dev
     story: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4.md
+    context: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4-context.xml
   23-2-initialize-shadcnui: backlog
   23-3-migrate-layout-components: backlog
   23-4-migrate-ide-panel-components: backlog

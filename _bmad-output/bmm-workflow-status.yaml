@@ -232,10 +232,10 @@ epic_status:
   - id: 23
     name: "UX/UI Modernization"
     status: "IN_PROGRESS"
-    stories: "0/8"
+    stories: "1/8"
     priority: "P1"
     platform: "B (Second Agent)"
-    notes: "Platform B can start Story 23-1 (TailwindCSS 4.x). Parallel execution approved."
+    notes: "Story 23-1 ready-for-dev (TailwindCSS 4.x verification). Platform B executing."
     
   - id: 12
     name: "AI Tool Interface Layer"
@@ -342,26 +342,35 @@ next_actions:
       notes: "Fixed auto-sync trigger, 160 tests pass"
       
   immediate:
+    - action: "Develop Story 23-1 (Install TailwindCSS 4.x + Vite Plugin)"
+      status: "READY_FOR_DEV"
+      command: "dev-story workflow"
+      agent: "dev"
+      priority: "P1"
+      platform: "B"
     - action: "Develop Story 13-6 (Fix Preview in New Tab)"
       status: "READY_FOR_DEV"
       command: "dev-story workflow"
       agent: "dev"
       priority: "P1"
-    - action: "Create Story 21-1 (Locale-Aware Routing & HTML Lang)"
-      status: "DONE"
-      command: "create-story workflow"
-      agent: "sm"
-      priority: "P2"
+      platform: "A"
       
   then:
+    - action: "Implement Story 23-1"
+      command: "dev-story workflow"
+      agent: "dev"
+      priority: "P1"
+      platform: "B"
     - action: "Implement Story 13-3"
       command: "dev-story workflow"
       agent: "dev"
       priority: "P0"
+      platform: "A"
     - action: "Implement Story 21-1"
       command: "dev-story workflow"
       agent: "dev"
       priority: "P2"
+      platform: "A"
 
 # =============================================================================
 # WORKFLOW COMMANDS
