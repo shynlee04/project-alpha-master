@@ -8,6 +8,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw, ExternalLink, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { type PreviewPanelProps, type DeviceFrame, DEVICE_FRAMES } from './types';
 
@@ -24,6 +25,7 @@ import { type PreviewPanelProps, type DeviceFrame, DEVICE_FRAMES } from './types
 export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
     const [refreshKey, setRefreshKey] = useState(0);
     const [deviceFrame, setDeviceFrame] = useState<DeviceFrame>('desktop');
+    const { t } = useTranslation();
 
     const handleRefresh = useCallback(() => {
         setRefreshKey(prev => prev + 1);
@@ -43,7 +45,7 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
             <div className="h-9 px-3 flex items-center justify-between border-b border-slate-800/50 bg-slate-900/50">
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
-                        Preview
+                        {t('ide.preview')}
                     </span>
                     {port && (
                         <span className="text-xs text-slate-500">
@@ -70,7 +72,13 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                                             ? 'text-cyan-400 bg-slate-800'
                                             : 'text-slate-500 hover:text-slate-300'
                                             }`}
-                                        title={DEVICE_FRAMES[frame].label}
+                                        title={
+                                            frame === 'desktop'
+                                                ? t('ide.deviceDesktop')
+                                                : frame === 'tablet'
+                                                    ? t('ide.deviceTablet')
+                                                    : t('ide.deviceMobile')
+                                        }
                                     >
                                         <Icon className="w-3.5 h-3.5" />
                                     </button>
@@ -84,7 +92,7 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                         onClick={handleRefresh}
                         disabled={!previewUrl}
                         className="p-1 text-slate-500 hover:text-slate-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                        title="Refresh preview"
+                        title={t('ide.refreshPreview')}
                     >
                         <RefreshCw className="w-3.5 h-3.5" />
                     </button>
@@ -94,7 +102,7 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                         onClick={handleOpenInNewTab}
                         disabled={!previewUrl}
                         className="p-1 text-slate-500 hover:text-slate-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                        title="Open in new tab"
+                        title={t('ide.openInNewTab')}
                     >
                         <ExternalLink className="w-3.5 h-3.5" />
                     </button>
@@ -122,10 +130,12 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                 ) : (
                     <div className="text-center px-6">
                         <div className="text-slate-500 text-sm mb-2">
-                            Waiting for dev server...
+                            {t('ide.waitingDevServer')}
                         </div>
                         <div className="text-slate-600 text-xs">
-                            Run <code className="px-1.5 py-0.5 bg-slate-800 rounded text-cyan-400">npm run dev</code> in the terminal
+                            {t('ide.runDevCommand').split('npm run dev')[0]}
+                            <code className="px-1.5 py-0.5 bg-slate-800 rounded text-cyan-400">npm run dev</code>
+                            {t('ide.runDevCommand').split('npm run dev')[1] ?? ''}
                         </div>
                     </div>
                 )}

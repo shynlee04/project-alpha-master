@@ -14,6 +14,7 @@
  * ```
  */
 
+import { useTranslation } from 'react-i18next';
 import { type TerminalTab } from '../../lib/workspace';
 import { XTerminal } from '../ide/XTerminal';
 
@@ -47,22 +48,24 @@ export function TerminalPanel({
     onTabChange,
     projectPath,
 }: TerminalPanelProps): React.JSX.Element {
+    const { t } = useTranslation();
+
     return (
         <div className="h-full flex flex-col border-t border-slate-800">
             {/* Tab Bar */}
             <div className="h-8 px-4 flex items-center gap-6 border-b border-slate-800/50">
                 <TabButton
-                    label="Terminal"
+                    label={t('ide.terminal')}
                     isActive={activeTab === 'terminal'}
                     onClick={() => onTabChange('terminal')}
                 />
                 <TabButton
-                    label="Output"
+                    label={t('ide.output')}
                     isActive={activeTab === 'output'}
                     onClick={() => onTabChange('output')}
                 />
                 <TabButton
-                    label="Problems"
+                    label={t('ide.problems')}
                     isActive={activeTab === 'problems'}
                     onClick={() => onTabChange('problems')}
                 />
@@ -75,8 +78,8 @@ export function TerminalPanel({
                 ) : (
                     <div className="h-full flex items-center justify-center text-slate-500 text-sm">
                         {activeTab === 'output'
-                            ? 'Output (coming soon)'
-                            : 'Problems (coming soon)'}
+                            ? t('ide.outputSoon')
+                            : t('ide.problemsSoon')}
                     </div>
                 )}
             </div>

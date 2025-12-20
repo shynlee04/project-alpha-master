@@ -303,7 +303,7 @@ development_status:
   21-2-i18n-infrastructure-and-bundles: backlog
   21-3-language-switcher-and-persistence: done
   21-4-ui-migration-wave-1-navigation-shell: backlog
-  21-5-ui-migration-wave-2-ide-surfaces: backlog
+  21-5-ui-migration-wave-2-ide-surfaces: done
   21-6-formatting-and-rtl-readiness: backlog
   21-7-tests-and-lint-guardrails: backlog
   epic-21-retrospective: optional
@@ -328,9 +328,9 @@ summary:
   epics_done: 6
   epics_in_progress: 2
   epics_backlog: 15
-  stories_done: 38
+  stories_done: 39
   stories_in_progress: 0
-  stories_backlog: 85
+  stories_backlog: 84
   
   priority_breakdown:
     p0: 1  # Epic 13 (Terminal & Sync Stability)

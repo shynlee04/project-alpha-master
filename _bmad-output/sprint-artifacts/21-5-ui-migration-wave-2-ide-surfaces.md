@@ -2,7 +2,7 @@
 
 **Epic:** 21 - Client-Side Localization (EN/VI)  
 **Sprint:** 13 (parallel track)  
-**Status:** drafted  
+**Status:** done  
 **Priority:** P2  
 
 ---
@@ -23,13 +23,13 @@ So that **all in-app surfaces read in my selected language without changing URLs
 ---
 
 ## Tasks
-- [ ] **T0 Research**: Review architecture.md (localization cross-cutting); reference 21-1/21-3 findings; confirm client-only approach.  
-- [ ] **T1 Strings Inventory**: Identify user-facing strings in workspace route/components (sync indicators, toasts, permission prompts, empty states).  
-- [ ] **T2 Resource Keys**: Add EN/VI keys for workspace/IDE strings to `src/i18n/en.json`/`vi.json`.  
-- [ ] **T3 Wire t()**: Replace hardcoded strings in workspace UI components; ensure locale toggle applies.  
-- [ ] **T4 Meta/Head check**: Ensure html lang/og:locale remain aligned after toggle (reuse LocaleProvider).  
-- [ ] **T5 Tests**: Add/extend tests for at least one workspace label per locale and fallback behavior.  
-- [ ] **T6 Docs/Governance**: Update sprint-status.yaml and bmm-workflow-status.yaml when promoted.  
+- [x] **T0 Research**: Review architecture.md (localization cross-cutting); reference 21-1/21-3 findings; confirm client-only approach.  
+- [x] **T1 Strings Inventory**: Identify user-facing strings in workspace route/components (sync indicators, toasts, permission prompts, empty states).  
+- [x] **T2 Resource Keys**: Add EN/VI keys for workspace/IDE strings to `src/i18n/en.json`/`vi.json`.  
+- [x] **T3 Wire t()**: Replace hardcoded strings in workspace UI components; ensure locale toggle applies.  
+- [x] **T4 Meta/Head check**: Ensure html lang/og:locale remain aligned after toggle (reuse LocaleProvider).  
+- [x] **T5 Tests**: Add/extend tests for at least one workspace label per locale and fallback behavior.  
+- [x] **T6 Docs/Governance**: Update sprint-status.yaml and bmm-workflow-status.yaml when promoted.  
 
 ---
 
@@ -55,10 +55,16 @@ So that **all in-app surfaces read in my selected language without changing URLs
 ---
 
 ## Dev Agent Record
-- Agent: _(set in dev phase)_  
-- Session: _(set in dev phase)_  
-- Files changed: _(set in dev phase)_  
-- Tests: _(set in dev phase)_  
+- Agent: Cascade  
+- Session: 2025-12-20  
+- Files changed:  
+  - `src/i18n/en.json`, `src/i18n/vi.json` (IDE keys: header controls, terminal, preview, empty states)  
+  - `src/components/layout/IDEHeaderBar.tsx` (translated labels/tooltips)  
+  - `src/components/layout/TerminalPanel.tsx` (translated tabs/coming soon)  
+  - `src/components/ide/PreviewPanel/PreviewPanel.tsx` (translated toolbar/waiting text)  
+  - `src/components/ide/MonacoEditor/MonacoEditor.tsx` (empty state strings)  
+  - `src/components/__tests__/workspace-i18n.test.tsx` (locale toggle coverage for preview/editor/terminal)  
+- Tests: `pnpm test src/components/__tests__/workspace-i18n.test.tsx` (pass)  
 
 ---
 
