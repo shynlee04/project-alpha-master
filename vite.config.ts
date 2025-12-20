@@ -6,16 +6,22 @@ import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
-import csp from 'vite-plugin-csp-guard'
 
 const devtoolsEventBusPort = Number(process.env.TANSTACK_DEVTOOLS_EVENT_BUS_PORT ?? 42071)
 
 /**
  * Security Headers Plugin
- * Configures comprehensive security headers for the dev server:
+ * Configures security headers for the dev server:
  * - Cross-Origin Isolation (required for WebContainers/SharedArrayBuffer)
- * - HSTS, X-Frame-Options, X-Content-Type-Options
+ * - X-Frame-Options, X-Content-Type-Options
  * - Referrer-Policy, Permissions-Policy
+ * 
+ * Note: CSP is NOT set in dev server because it blocks:
+ * - IndexedDB operations (idb persistence)
+ * - File System Access API (local file sync)
+ * - WebContainer internal operations
+ * 
+ * CSP is configured in public/_headers for production only.
  * 
  * @see https://webcontainers.io/guides/configuring-headers
  * @see https://owasp.org/www-project-secure-headers/
@@ -29,14 +35,14 @@ const securityHeadersPlugin: Plugin = {
       res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
       res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
 
-      // Security Headers
+      // Security Headers (CSP omitted in dev - see note above)
       res.setHeader('X-Frame-Options', 'DENY')
       res.setHeader('X-Content-Type-Options', 'nosniff')
       res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
       res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
 
       // Note: HSTS is only meaningful over HTTPS, skip in dev
-      // It will be set via Netlify _headers in production
+      // CSP is only in production (public/_headers) - too restrictive for dev
 
       next()
     })
@@ -46,31 +52,6 @@ const securityHeadersPlugin: Plugin = {
 const config = defineConfig({
   plugins: [
     securityHeadersPlugin, // Security headers (COOP/COEP + X-Frame-Options + etc.)
-    csp({
-      algorithm: 'sha256',
-      dev: {
-        run: true,
-      },
-      policy: {
-        'default-src': ["'self'"],
-        'script-src': ["'self'"],
-        'style-src': ["'self'", "'unsafe-inline'"], // Monaco Editor requires unsafe-inline
-        'img-src': ["'self'", 'data:', 'https:'],
-        'font-src': ["'self'", 'data:'],
-        'connect-src': [
-          "'self'",
-          'https://*.googleapis.com', // Gemini API
-          'wss://*.webcontainer.io',  // WebContainer WebSocket
-          'https://*.stackblitz.io',  // StackBlitz CDN
-        ],
-        'frame-src': [
-          'https://*.webcontainer.io', // WebContainer preview
-          'https://*.stackblitz.io',
-        ],
-        'worker-src': ["'self'", 'blob:'],
-        'child-src': ["'self'", 'blob:'],
-      },
-    }),
     devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
     nitro(),
     viteTsConfigPaths({
@@ -83,3 +64,4 @@ const config = defineConfig({
 })
 
 export default config
+
