@@ -69,3 +69,64 @@ Implemented an informative "Not Supported" page via a generic catch-all route fo
 **Issue:** Route had placeholder text "Hello '/webcontainer/$'!" instead of informative page  
 **Fix:** Implemented branded error page with i18n support, warning icon, explanation, and dashboard navigation
 
+---
+# Walkthrough: Fix Preview in New Tab (Story 13-6)
+
+## Issue
+
+Users clicking "Open in New Tab" in the Preview Panel were seeing a broken experience:
+1. WebContainer's proxy URL opened in a new tab
+2. StackBlitz showed "Connect to Project" prompt
+3. After connecting, only placeholder text `Hello '/webcontainer/$'!` was displayed
+
+````carousel
+![Issue: Connect to Project Page](/Users/apple/.gemini/antigravity/brain/7f2a3b58-b4d4-494f-9bcb-0d735cffedf6/uploaded_image_0_1766215848572.png)
+<!-- slide -->
+![Issue: Placeholder text displayed](/Users/apple/.gemini/antigravity/brain/7f2a3b58-b4d4-494f-9bcb-0d735cffedf6/uploaded_image_1_1766215848572.png)
+````
+
+---
+
+## Root Cause
+
+The catch-all route [webcontainer.$.tsx](file:///Users/apple/Documents/coding-projects/project-alpha-master/src/routes/webcontainer.$.tsx) had only a placeholder implementation:
+```tsx
+function RouteComponent() {
+  return <div>Hello "/webcontainer/$"!</div>
+}
+```
+
+---
+
+## Solution
+
+Implemented a branded, informative error page with:
+- **Amber warning icon** indicating a limitation
+- **Title/subtitle** explaining the WebContainer limitation
+- **Description** of why previews can't work in separate tabs
+- **Back to Dashboard button** for easy navigation
+- **i18n support** for English and Vietnamese
+
+---
+
+## Files Changed
+
+| File | Change |
+|------|--------|
+| [webcontainer.$.tsx](file:///Users/apple/Documents/coding-projects/project-alpha-master/src/routes/webcontainer.$.tsx) | Replaced placeholder with full error page |
+| [en.json](file:///Users/apple/Documents/coding-projects/project-alpha-master/src/i18n/en.json) | Added `webcontainer.notSupported.*` keys |
+| [vi.json](file:///Users/apple/Documents/coding-projects/project-alpha-master/src/i18n/vi.json) | Added Vietnamese translations |
+
+---
+
+## Verification
+
+![Fixed Error Page](/Users/apple/.gemini/antigravity/brain/7f2a3b58-b4d4-494f-9bcb-0d735cffedf6/preview_error_page_1766216366444.png)
+
+**Tested:**
+- ✅ Navigation to `/webcontainer/connect/*` shows informative page
+- ✅ Title, subtitle, description all display correctly
+- ✅ "Back to Dashboard" button navigates to `/`
+- ✅ No "Cannot GET" errors
+
+![Browser Recording](/Users/apple/.gemini/antigravity/brain/7f2a3b58-b4d4-494f-9bcb-0d735cffedf6/webcontainer_error_page_1766216351212.webp)
