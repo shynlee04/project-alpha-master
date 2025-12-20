@@ -62,6 +62,19 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  // SSR Configuration: Externalize client-only packages from server bundle
+  // These packages require browser APIs (DOM, Canvas, etc.) and cannot run on Node.js
+  ssr: {
+    external: [
+      '@xterm/xterm',         // Terminal emulator (DOM)
+      '@xterm/addon-fit',     // Terminal fit addon (DOM)
+      '@monaco-editor/react', // Monaco editor (DOM, Web Worker)
+      'monaco-editor',        // Monaco core (DOM, Web Worker)
+      '@webcontainer/api',    // WebContainers (browser-only)
+    ],
+    // Mark packages that should NOT be bundled into SSR server
+    noExternal: [],
+  },
 })
 
 export default config
