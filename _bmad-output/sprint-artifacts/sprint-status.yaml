@@ -166,7 +166,10 @@ development_status:
       theme_system: "dark-mode-default"
       files_changed: 18
       tests_passing: 196
-  23-3-migrate-layout-components: backlog
+  23-3-migrate-layout-components: in-progress
+    story: _bmad-output/sprint-artifacts/23-3-migrate-layout-components.md
+    context: _bmad-output/sprint-artifacts/23-3-migrate-layout-components-context.xml
+    started_at: "2025-12-20"
   23-4-migrate-ide-panel-components: backlog
   23-5-implement-theme-toggle: backlog
   23-6-migrate-form-dialog-components: backlog
