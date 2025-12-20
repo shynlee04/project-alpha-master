@@ -2,7 +2,7 @@
 
 **Epic:** 21 - Client-Side Localization (EN/VI)  
 **Sprint:** 13 (parallel track)  
-**Status:** drafted  
+**Status:** done  
 **Priority:** P2  
 
 ---
@@ -23,13 +23,13 @@ So that **all dashboard labels, actions, and empty states read in my selected la
 ---
 
 ## Tasks
-- [ ] **T0 Research**: Load architecture.md (cross-cutting #6 localization); gather patterns from deepwiki/context7 for client-only i18n and head updates.  
-- [ ] **T1 Strings Inventory**: Identify all user-facing strings in dashboard route (`src/routes/index.tsx`) and related helpers/toasts.  
-- [ ] **T2 Resource Keys**: Add EN/VI keys for dashboard + toasts/errors/empty/loader texts to `src/i18n/en.json`/`vi.json`.  
-- [ ] **T3 Wire t()**: Replace hardcoded dashboard strings with `t(...)`; ensure locale toggle from Header is applied.  
-- [ ] **T4 Meta/Head check**: Verify `html lang` and `og:locale` update after toggle; adjust if route head needs awareness.  
-- [ ] **T5 Tests**: Add/extend tests covering persistence fallback and at least one dashboard string in each locale (happy path + fallback).  
-- [ ] **T6 Docs/Governance**: Update sprint-status.yaml and bmm-workflow-status.yaml when promoted.  
+- [x] **T0 Research**: Load architecture.md (cross-cutting #6 localization); gather patterns from deepwiki/context7 for client-only i18n and head updates.  
+- [x] **T1 Strings Inventory**: Identify all user-facing strings in dashboard route (`src/routes/index.tsx`) and related helpers/toasts.  
+- [x] **T2 Resource Keys**: Add EN/VI keys for dashboard + toasts/errors/empty/loader texts to `src/i18n/en.json`/`vi.json`.  
+- [x] **T3 Wire t()**: Replace hardcoded dashboard strings with `t(...)`; ensure locale toggle from Header is applied.  
+- [x] **T4 Meta/Head check**: Verify `html lang` and `og:locale` update after toggle; adjust if route head needs awareness.  
+- [x] **T5 Tests**: Add/extend tests covering persistence fallback and at least one dashboard string in each locale (happy path + fallback).  
+- [x] **T6 Docs/Governance**: Update sprint-status.yaml and bmm-workflow-status.yaml when promoted.  
 
 ---
 
@@ -55,10 +55,13 @@ So that **all dashboard labels, actions, and empty states read in my selected la
 ---
 
 ## Dev Agent Record
-- Agent: _(set in dev phase)_  
-- Session: _(set in dev phase)_  
-- Files changed: _(set in dev phase)_  
-- Tests: _(set in dev phase)_  
+- Agent: Cascade  
+- Session: 2025-12-20  
+- Files changed:  
+  - `src/i18n/en.json`, `src/i18n/vi.json` (dashboard/action/error/time keys)  
+  - `src/routes/index.tsx` (dashboard translations wired, relative time uses t)  
+  - `src/routes/__tests__/dashboard-i18n.test.tsx` (locale render + relative time)  
+- Tests: `pnpm test src/routes/__tests__/dashboard-i18n.test.tsx` (pass)  
 
 ---
 

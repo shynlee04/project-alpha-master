@@ -210,9 +210,9 @@ epic_status:
   - id: 13
     name: "Terminal & Sync Stability"
     status: "IN_PROGRESS"
-    stories: "3/6"  # Stories 13-1, 13-2, 13-3 done
+    stories: "4/6"  # Stories 13-1, 13-2, 13-3, 13-4 done
     priority: "P0"
-    notes: "Stories 13-1, 13-2, 13-3 completed. Next: Story 13-4."
+    notes: "Stories 13-1, 13-2, 13-3, 13-4 completed. Next: Story 13-5."
   
   - id: 21
     name: "Client-Side Localization (EN/VI)"
@@ -273,9 +273,10 @@ bugs:
   - id: "BUG-05"
     name: "File Tree State Reset"
     severity: "MEDIUM"
-    status: "FIX_PROPOSED"
+    status: "FIXED"  # Story 13-4 completed 2025-12-20
     epic: 13
     story: "13-4"
+    fixed_date: "2025-12-20"
     
   - id: "BUG-06"
     name: "No Reverse Sync"
@@ -324,10 +325,10 @@ next_actions:
       notes: "Fixed auto-sync trigger, 160 tests pass"
       
   immediate:
-    - action: "Create Story 13-4 (Preserve File Tree State)"
-      status: "PENDING"
-      command: "create-story workflow"
-      agent: "sm"
+    - action: "Develop Story 13-5 (Improve Permission Restoration)"
+      status: "READY_FOR_DEV"
+      command: "dev-story workflow"
+      agent: "dev"
       priority: "P1"
     - action: "Create Story 21-1 (Locale-Aware Routing & HTML Lang)"
       status: "DONE"

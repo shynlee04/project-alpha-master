@@ -40,6 +40,28 @@
     "opening": "Opening…",
     "lastOpened": "Last opened {{relative}}"
   },
+  "ide": {
+    "autoSync": "Auto-sync",
+    "syncNow": "Sync Now",
+    "switchFolder": "Switch Folder",
+    "openFolder": "Open Folder",
+    "hideChat": "Hide Chat",
+    "showChat": "Show Chat",
+    "reAuthorize": "Re-authorize",
+    "fsDenied": "Local folder access denied – using virtual workspace",
+    "syncError": "Sync error",
+    "terminal": "Terminal",
+    "output": "Output",
+    "problems": "Problems",
+    "outputSoon": "Output (coming soon)",
+    "problemsSoon": "Problems (coming soon)",
+    "noFileOpen": "No file open",
+    "selectFile": "Select a file from the explorer to start editing",
+    "waitingDevServer": "Waiting for dev server...",
+    "runDevCommand": "Run npm run dev in the terminal",
+    "agentChat": "Agent Chat",
+    "toggleChatShortcut": "Toggle Chat (⌘K)"
+  },
   "time": {
     "justNow": "just now",
     "minutesAgo": "{{count}} minute ago",

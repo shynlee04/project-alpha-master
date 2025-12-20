@@ -120,7 +120,7 @@ development_status:
   13-2-fix-auto-sync-on-project-load: done
   13-3-add-sync-progress-indicator: done
   13-4-preserve-file-tree-state: done
-  13-5-improve-permission-restoration: backlog
+  13-5-improve-permission-restoration: ready-for-dev
   13-6-fix-preview-in-new-tab: backlog  # NEW: Added from manual testing 2025-12-20
   epic-13-retrospective: optional
 
@@ -301,7 +301,7 @@ development_status:
   epic-21: in-progress
   21-1-locale-aware-routing-and-html-lang: done
   21-2-i18n-infrastructure-and-bundles: backlog
-  21-3-language-switcher-and-persistence: backlog
+  21-3-language-switcher-and-persistence: done
   21-4-ui-migration-wave-1-navigation-shell: backlog
   21-5-ui-migration-wave-2-ide-surfaces: backlog
   21-6-formatting-and-rtl-readiness: backlog
@@ -328,9 +328,9 @@ summary:
   epics_done: 6
   epics_in_progress: 2
   epics_backlog: 15
-  stories_done: 37
+  stories_done: 38
   stories_in_progress: 0
-  stories_backlog: 86
+  stories_backlog: 85
   
   priority_breakdown:
     p0: 1  # Epic 13 (Terminal & Sync Stability)

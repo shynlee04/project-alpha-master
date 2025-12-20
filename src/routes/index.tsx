@@ -15,7 +15,7 @@ import { LocalFSAdapter } from '../lib/filesystem'
 
 export const Route = createFileRoute('/')({ component: Dashboard })
 
-function Dashboard() {
+export function Dashboard() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [projects, setProjects] = useState<ProjectWithPermission[]>([])

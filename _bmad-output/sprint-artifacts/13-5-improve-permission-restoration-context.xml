@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="13-5-improve-permission-restoration" created="2025-12-20T09:25:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/filesystem/permission-lifecycle.ts">
+      <summary>
+        Permission lifecycle helper (159 lines). Provides:
+        - saveDirectoryHandleReference() - saves handle to IndexedDB
+        - loadDirectoryHandleReference() - loads handle from IndexedDB  
+        - getPermissionState() - queries current permission state
+        - ensureReadWritePermission() - requests permission if needed
+        
+        Key types:
+        - FsaPermissionState = 'unknown' | 'granted' | 'prompt' | 'denied'
+        - PermissionCapableHandle interface for queryPermission/requestPermission
+      </summary>
+      <content><![CDATA[
+export type FsaPermissionState = 'unknown' | 'granted' | 'prompt' | 'denied';
+
+export async function getPermissionState(
+  handle: FileSystemDirectoryHandle,
+  mode: 'read' | 'readwrite' = 'readwrite',
+): Promise<FsaPermissionState> {
+  const permissionHandle = handle as PermissionCapableHandle;
+  if (!permissionHandle || typeof permissionHandle.queryPermission !== 'function') {
+    return 'denied';
+  }
+  try {
+    const state = await permissionHandle.queryPermission({ mode });
+    if (state === 'granted' || state === 'prompt' || state === 'denied') {
+      return state;
+    }
+    return 'denied';
+  } catch {
+    return 'denied';
+  }
+}
+
+export async function ensureReadWritePermission(
+  handle: FileSystemDirectoryHandle,
+): Promise<'granted' | 'denied'> {
+  const current = await getPermissionState(handle, 'readwrite');
+  if (current === 'granted') return 'granted';
+
+  const permissionHandle = handle as PermissionCapableHandle;
+  if (!permissionHandle || typeof permissionHandle.requestPermission !== 'function') {
+    return 'denied';
+  }
+
+  try {
+    const next = await permissionHandle.requestPermission({ mode: 'readwrite' });
+    return next === 'granted' ? 'granted' : 'denied';
+  } catch {
+    return 'denied';
+  }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/workspace/project-store.ts">
+      <summary>
+        Project Store (364 lines). Provides CRUD for ProjectMetadata:
+        - saveProject(), getProject(), listProjects(), deleteProject()
+        - listProjectsWithPermission() - adds permissionState to listings
+        - checkProjectPermission() - queries permission for a project
+        
+        Key types:
+        - ProjectMetadata { id, name, folderPath, fsaHandle, lastOpened, layoutState }
+        - ProjectWithPermission extends ProjectMetadata { permissionState }
+      </summary>
+      <content><![CDATA[
+export interface ProjectMetadata {
+    id: string;
+    name: string;
+    folderPath: string;
+    fsaHandle: FileSystemDirectoryHandle;
+    lastOpened: Date;
+    autoSync?: boolean;
+    layoutState?: LayoutConfig;
+    exclusionPatterns?: string[];
+}
+
+export interface ProjectWithPermission extends ProjectMetadata {
+    permissionState: FsaPermissionState;
+}
+
+export async function listProjectsWithPermission(): Promise<ProjectWithPermission[]> {
+    const projects = await listProjects();
+    const projectsWithPermission = await Promise.all(
+        projects.map(async (project) => {
+            try {
+                const permissionState = await getPermissionState(project.fsaHandle, 'readwrite');
+                return { ...project, permissionState };
+            } catch {
+                return { ...project, permissionState: 'denied' as FsaPermissionState };
+            }
+        })
+    );
+    return projectsWithPermission;
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/workspace/WorkspaceContext.tsx">
+      <summary>
+        WorkspaceContext provider. Manages workspace state including:
+        - directoryHandle, permissionState, syncStatus
+        - openFolder(), switchFolder(), syncNow(), closeProject()
+        
+        MODIFICATION NEEDED: Add permission check on mount and 
+        "restore access" flow for prompt state.
+      </summary>
+    </file>
+    
+    <file path="src/components/ide/IDELayout.tsx">
+      <summary>
+        Main IDE layout component. Uses WorkspaceContext.
+        
+        MODIFICATION NEEDED: Add "Restore Access" button overlay
+        when permissionState is 'prompt'.
+      </summary>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="web_search" query="Chrome 122 persistent File System Access API">
+      Chrome 122+ features new three-way permission prompt:
+      - "Allow this time" (session only)
+      - "Allow on every visit" (persistent)
+      - "Block"
+      
+      No developer API changes needed. Browser handles persistence automatically.
+      Store FileSystemHandle in IndexedDB, call requestPermission() on next visit.
+    </finding>
+    
+    <finding source="permission-lifecycle.test.ts" query="existing tests">
+      5 existing tests covering:
+      - queryPermission state mapping (granted/prompt/denied)
+      - denied when queryPermission missing or throws
+      - ensureReadWritePermission returns granted when already granted
+      - ensureReadWritePermission requests permission when needed
+      - ensureReadWritePermission fallback to denied
+      
+      NEW TESTS NEEDED:
+      - Feature detection for persistent permissions
+      - Permission state persistence in ProjectMetadata
+      - Restore access flow
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Permission State Management" source="architecture.md">
+      WorkspaceContext manages permissionState as part of workspace state.
+      Use getPermissionState() on mount to check current state.
+      Show appropriate UI based on state (granted, prompt, denied).
+    </pattern>
+    
+    <pattern name="Feature Detection" source="project-fugu">
+      Check browser capabilities before using advanced APIs.
+      Provide fallback for unsupported browsers.
+      Pattern: `typeof navigator.permissions?.query === 'function'`
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Chrome 122+ persistent permissions require NO code changes to FSA API.
+      The browser automatically shows three-way prompt when available.
+      Our job: detect support, show appropriate UI for prompt state.
+    </note>
+    
+    <note priority="high">
+      For AC-13-5-2: When permissionState is 'prompt', show "Restore Access"
+      button instead of immediately calling requestPermission(). This gives
+      user control over when the permission prompt appears.
+    </note>
+    
+    <note priority="medium">
+      Feature detection for Chrome 122+: Check for `navigator.permissions.query`
+      with `{ name: 'file-system' }` - this is available in Chrome 122+.
+      Fallback: Always show one-time permission prompt.
+    </note>
+    
+    <note priority="medium">
+      ProjectMetadata already has permissionState via ProjectWithPermission.
+      Consider storing the last known state in the base ProjectMetadata
+      to avoid re-querying on every dashboard load.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="idb" version="latest" usage="IndexedDB wrapper for project storage" />
+  </dependencies>
+</context>
