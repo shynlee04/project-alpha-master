@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="23-1-install-tailwindcss-4" created="2025-12-20T14:22:00Z">
+  <!-- Epic 23-1: Install TailwindCSS 4.x + Vite Plugin -->
+  <!-- Platform B: UX/UI Modernization (Parallel to Epic 22) -->
+  
+  <files>
+    <!-- Current project files that will be modified -->
+    <file path="vite.config.ts">
+      <content><![CDATA[
+import { defineConfig } from 'vite'
+import type { Plugin } from 'vite'
+import { devtools } from '@tanstack/devtools-vite'
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import viteReact from '@vitejs/plugin-react'
+import viteTsConfigPaths from 'vite-tsconfig-paths'
+import tailwindcss from '@tailwindcss/vite'  // ← Already installed!
+import { nitro } from 'nitro/vite'
+
+// ... existing config
+const config = defineConfig({
+  plugins: [
+    securityHeadersPlugin,
+    devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
+    nitro(),
+    viteTsConfigPaths({ projects: ['./tsconfig.json'] }),
+    tailwindcss(),  // ← Already configured!
+    tanstackStart(),
+    viteReact(),
+  ],
+})
+      ]]></content>
+    </file>
+    
+    <file path="package.json">
+      <content><![CDATA[
+{
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",  // ← Already installed!
+    "tailwindcss": "^4.1.18",        // ← Already installed!
+    // ... other dependencies
+  }
+}
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="context7" query="TailwindCSS 4.x installation using vite">
+      <summary>TailwindCSS 4.x Vite Plugin Setup</summary>
+      <details>
+        Installation Command:
+        npm install tailwindcss @tailwindcss/vite
+        
+        Vite Configuration (vite.config.ts):
+        import tailwindcss from '@tailwindcss/vite'
+        
+        export default defineConfig({
+          plugins: [
+            tailwindcss(),
+          ],
+        })
+        
+        Key Points:
+        - No tailwind.config.js required for basic setup
+        - No postcss.config.js required (Vite plugin handles everything)
+        - CSS file with @tailwind directives is optional but recommended
+        - Plugin must be included in Vite plugins array
+      </details>
+    </finding>
+
+    <finding source="context7" query="TanStack Start TailwindCSS integration">
+      <summary>TanStack Start + TailwindCSS 4.x</summary>
+      <details>
+        TanStack Start Vite Plugin Order:
+        1. securityHeadersPlugin (if custom)
+        2. devtools
+        3. nitro()
+        4. viteTsConfigPaths()
+        5. tailwindcss()  ← Add here
+        6. tanstackStart()
+        7. viteReact()
+        
+        The tailwindcss() plugin should be placed before tanstackStart() 
+        to ensure CSS is processed before the framework plugin.
+      </details>
+    </finding>
+
+    <finding source="context7" query="TailwindCSS 4.x main CSS file setup">
+      <summary>Main CSS File Setup (Optional but Recommended)</summary>
+      <details>
+        File: src/styles.css or src/index.css
+        
+        Content:
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+        
+        Import in main entry point:
+        - src/routes/__root.tsx
+        - src/main.tsx
+        - Or via Vite config
+        
+        Note: TailwindCSS 4.x can work without this file, but it's 
+        recommended for full control over CSS layers.
+      </details>
+    </finding>
+
+    <finding source="context7" query="ShadcnUI TailwindCSS 4.x integration">
+      <summary>ShadcnUI + TailwindCSS 4.x Compatibility</summary>
+      <details>
+        ShadcnUI Compatibility:
+        - ShadcnUI works with TailwindCSS 4.x
+        - Components use standard Tailwind utility classes
+        - No special configuration needed beyond TailwindCSS setup
+        - Theme customization via CSS variables (as per UX design spec)
+        
+        Integration Pattern:
+        1. Install TailwindCSS 4.x with Vite plugin
+        2. Configure CSS variables for theming
+        3. Copy ShadcnUI components as needed
+        4. Use Tailwind classes directly in components
+      </details>
+    </finding>
+
+    <finding source="deepwiki" query="TailwindCSS 4.x ShadcnUI Vite integration patterns">
+      <summary>ShadcnUI + TailwindCSS 4.x Integration Patterns</summary>
+      <details>
+        Current Project Status:
+        - TailwindCSS 4.x: Already installed (v4.1.18)
+        - @tailwindcss/vite: Already installed (v4.1.18)
+        - Vite config: Already configured with tailwindcss() plugin
+        
+        What's Already Working:
+        ✓ TailwindCSS 4.x installed in package.json
+        ✓ Vite plugin configured in vite.config.ts
+        ✓ Cross-origin isolation headers for WebContainers
+        ✓ TanStack Start + React 19 + TypeScript setup
+        
+        What Needs Verification:
+        - CSS file with @tailwind directives
+        - ShadcnUI component integration
+        - Theme customization via CSS variables
+        - Component styling tests
+        
+        Recommended Next Steps:
+        1. Verify current setup works (dev server)
+        2. Create main CSS file with directives
+        3. Test Tailwind classes in a component
+        4. Integrate ShadcnUI components
+        5. Apply theme customization
+      </details>
+    </finding>
+  </research_notes>
+
+  <architecture_patterns>
+    <pattern name="TailwindCSS 4.x Vite Integration" source="TailwindCSS docs">
+      <description>
+        Modern TailwindCSS 4.x integration uses a Vite plugin that handles 
+        all configuration automatically. No separate config files needed.
+      </description>
+      <implementation>
+        1. Install: npm install tailwindcss @tailwindcss/vite
+        2. Configure: Add tailwindcss() to Vite plugins
+        3. Use: Apply Tailwind classes in components
+        4. Optional: Create CSS file with @tailwind directives
+      </implementation>
+    </pattern>
+
+    <pattern name="ShadcnUI Theme Customization" source="UX Design Spec">
+      <description>
+        ShadcnUI uses CSS variables for theming, integrated with TailwindCSS.
+        Colors are defined in HSL format for dynamic theming.
+      </description>
+      <implementation>
+        :root {
+          --background: 0 0% 100%;
+          --foreground: 222.2 84% 4.9%;
+          --primary: 221.2 83.2% 53.3%;
+          /* ... more variables */
+        }
+        
+        .dark {
+          --background: 222.2 84% 4.9%;
+          --foreground: 210 40% 98%;
+          /* ... dark mode variables */
+        }
+      </implementation>
+    </pattern>
+  </architecture_patterns>
+
+  <technical_notes>
+    <note priority="high">
+      Current project ALREADY has TailwindCSS 4.x installed and configured!
+      - package.json: tailwindcss@4.1.18, @tailwindcss/vite@4.1.18
+      - vite.config.ts: tailwindcss() plugin configured
+      - Story acceptance criteria may need updating to reflect this
+    </note>
+    
+    <note priority="high">
+      Story 23-1 focus should be on:
+      1. Verification of current setup
+      2. Creating main CSS file with @tailwind directives
+      3. Testing Tailwind classes in components
+      4. Documentation of setup process
+    </note>
+    
+    <note priority="medium">
+      No additional dependencies needed for basic TailwindCSS setup.
+      PostCSS and autoprefixer are handled by the Vite plugin.
+    </note>
+    
+    <note priority="medium">
+      For ShadcnUI integration, follow the existing UX design spec:
+      - Use CSS variables for theming
+      - Dark mode support via .dark class
+      - Typography: Inter for UI, JetBrains Mono for code
+    </note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="tailwindcss" version="^4.1.18" status="installed" />
+    <dependency name="@tailwindcss/vite" version="^4.1.18" status="installed" />
+    <dependency name="postcss" version="N/A" status="not-required" note="Handled by Vite plugin" />
+    <dependency name="autoprefixer" version="N/A" status="not-required" note="Handled by Vite plugin" />
+  </dependencies>
+
+  <implementation_tasks>
+    <task id="T1" description="Verify current TailwindCSS setup" status="pending" />
+    <task id="T2" description="Create main CSS file with @tailwind directives" status="pending" />
+    <task id="T3" description="Import CSS in main application entry" status="pending" />
+    <task id="T4" description="Test Tailwind classes in a sample component" status="pending" />
+    <task id="T5" description="Update story ACs to reflect current state" status="pending" />
+    <task id="T6" description="Document setup process" status="pending" />
+  </implementation_tasks>
+
+  <acceptance_criteria_updates>
+    <update reason="TailwindCSS already installed">
+      Original AC-1 (Install TailwindCSS) is already complete.
+      New focus: Verification and testing of existing setup.
+    </update>
+    <update reason="Configuration already complete">
+      Original AC-2 (Configuration) is already complete.
+      New focus: Documentation and validation.
+    </update>
+    <update reason="CSS integration needed">
+      AC-3 remains relevant: Create and import main CSS file.
+    </update>
+  </acceptance_criteria_updates>
+
+  <references>
+    <reference type="ux-design">_bmad-output/ux-design.md</reference>
+    <reference type="epics">_bmad-output/epics.md</reference>
+    <reference type="architecture">_bmad-output/architecture.md</reference>
+    <reference type="current-story">_bmad-output/sprint-artifacts/23-1-install-tailwindcss-4.md</reference>
+    <reference type="sprint-status">_bmad-output/sprint-artifacts/sprint-status.yaml</reference>
+  </references>
+
+  <notes>
+    This story represents Platform B execution per parallel-execution-strategy.md.
+    Platform A continues Epic 22 (Production Hardening) stories 22-2 → 22-8.
+    Platform B starts Epic 23 (UX/UI Modernization) Story 23-1.
+    Both epics are independent and can run in parallel.
+  </notes>
+</context>
