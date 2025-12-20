@@ -36,11 +36,13 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          NITRO_PRESET: netlify
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
-          publish-dir: './dist'
+          publish-dir: './.output/public'
           production-branch: main
           production-deploy: ${{ github.ref == 'refs/heads/main' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
