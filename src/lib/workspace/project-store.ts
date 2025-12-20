@@ -52,6 +52,8 @@ export interface ProjectMetadata {
     layoutState?: LayoutConfig;
     /** Custom exclusion patterns for sync (glob syntax) */
     exclusionPatterns?: string[];
+    /** Story 13-5: Last known permission state for faster dashboard load */
+    lastKnownPermissionState?: FsaPermissionState;
 }
 
 /**

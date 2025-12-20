@@ -210,9 +210,9 @@ epic_status:
   - id: 13
     name: "Terminal & Sync Stability"
     status: "IN_PROGRESS"
-    stories: "4/6"  # Stories 13-1, 13-2, 13-3, 13-4 done
+    stories: "5/6"  # Stories 13-1, 13-2, 13-3, 13-4, 13-5 done
     priority: "P0"
-    notes: "Stories 13-1, 13-2, 13-3, 13-4 completed. Next: Story 13-5."
+    notes: "Stories 13-1 to 13-5 completed. Next: Story 13-6."
   
   - id: 21
     name: "Client-Side Localization (EN/VI)"
@@ -266,9 +266,10 @@ bugs:
   - id: "BUG-04"
     name: "Permission Persistence"
     severity: "MEDIUM"
-    status: "FIX_PROPOSED"
+    status: "FIXED"  # Story 13-5 completed 2025-12-20
     epic: 13
     story: "13-5"
+    fixed_date: "2025-12-20"
     
   - id: "BUG-05"
     name: "File Tree State Reset"
@@ -325,7 +326,7 @@ next_actions:
       notes: "Fixed auto-sync trigger, 160 tests pass"
       
   immediate:
-    - action: "Develop Story 13-5 (Improve Permission Restoration)"
+    - action: "Develop Story 13-6 (Fix Preview in New Tab)"
       status: "READY_FOR_DEV"
       command: "dev-story workflow"
       agent: "dev"

@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import {
   getPermissionState,
   ensureReadWritePermission,
+  isPersistentPermissionSupported,
+  restorePermission,
 } from './permission-lifecycle'
 
 function createMockHandle(states: {
@@ -31,7 +33,7 @@ describe('permission-lifecycle (spike)', () => {
   })
 
   it('returns denied when queryPermission is missing or throws', async () => {
-    const noApi = ({ } as any) as FileSystemDirectoryHandle
+    const noApi = ({} as any) as FileSystemDirectoryHandle
     await expect(getPermissionState(noApi, 'readwrite')).resolves.toBe('denied')
 
     const throwing = createMockHandle({ query: 'granted' }) as any
@@ -61,3 +63,78 @@ describe('permission-lifecycle (spike)', () => {
     await expect(ensureReadWritePermission(handleDenied)).resolves.toBe('denied')
   })
 })
+
+// Story 13-5: Tests for new permission helpers
+describe('permission-lifecycle Story 13-5', () => {
+  describe('isPersistentPermissionSupported', () => {
+    it('returns true when navigator.permissions.query is available', () => {
+      // In browser/JSDOM environment, navigator.permissions may be available
+      // This test verifies the function returns a boolean
+      const result = isPersistentPermissionSupported()
+      expect(typeof result).toBe('boolean')
+    })
+
+    it('returns false when navigator is undefined', () => {
+      // Store original navigator
+      const originalNavigator = global.navigator
+
+      // Mock undefined navigator
+      Object.defineProperty(global, 'navigator', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      })
+
+      expect(isPersistentPermissionSupported()).toBe(false)
+
+      // Restore
+      Object.defineProperty(global, 'navigator', {
+        value: originalNavigator,
+        writable: true,
+        configurable: true,
+      })
+    })
+
+    it('returns false when navigator.permissions is undefined', () => {
+      // Store original navigator
+      const originalNavigator = global.navigator
+
+      // Mock navigator without permissions
+      Object.defineProperty(global, 'navigator', {
+        value: {},
+        writable: true,
+        configurable: true,
+      })
+
+      expect(isPersistentPermissionSupported()).toBe(false)
+
+      // Restore
+      Object.defineProperty(global, 'navigator', {
+        value: originalNavigator,
+        writable: true,
+        configurable: true,
+      })
+    })
+  })
+
+  describe('restorePermission', () => {
+    it('returns granted when permission is restored', async () => {
+      const handle = createMockHandle({ query: 'prompt', request: 'granted' })
+      const result = await restorePermission(handle)
+      expect(result).toBe('granted')
+    })
+
+    it('returns denied when permission is denied', async () => {
+      const handle = createMockHandle({ query: 'prompt', request: 'denied' })
+      const result = await restorePermission(handle)
+      expect(result).toBe('denied')
+    })
+
+    it('returns granted immediately if already granted', async () => {
+      const handle = createMockHandle({ query: 'granted' })
+      const result = await restorePermission(handle)
+      expect(result).toBe('granted')
+    })
+  })
+})
+

@@ -156,3 +156,43 @@ export async function ensureReadWritePermission(
     return 'denied';
   }
 }
+
+/**
+ * Story 13-5: Detect Chrome 122+ persistent permission support.
+ * 
+ * Chrome 122+ shows three-way permission prompt:
+ * - "Allow this time" (session only)
+ * - "Allow on every visit" (persistent)  
+ * - "Block"
+ * 
+ * No developer API changes needed - the browser handles persistence automatically
+ * when the user selects "Allow on every visit".
+ * 
+ * @returns true if browser supports persistent File System Access permissions
+ */
+export function isPersistentPermissionSupported(): boolean {
+  // Feature detection: navigator.permissions.query is available in Chrome 122+
+  // This doesn't directly detect persistent permissions, but it's a good proxy
+  // for modern browsers that support the three-way permission prompt
+  if (typeof navigator === 'undefined') return false;
+  if (typeof navigator.permissions === 'undefined') return false;
+  return typeof navigator.permissions.query === 'function';
+}
+
+/**
+ * Story 13-5: Restore permission for a previously granted handle.
+ * 
+ * This is called when user clicks "Restore Access" button instead of
+ * automatically prompting on load. This gives users control over when
+ * the permission dialog appears.
+ * 
+ * @param handle - The stored FileSystemDirectoryHandle
+ * @returns The new permission state after restoration attempt
+ */
+export async function restorePermission(
+  handle: FileSystemDirectoryHandle,
+): Promise<FsaPermissionState> {
+  const result = await ensureReadWritePermission(handle);
+  return result;
+}
+

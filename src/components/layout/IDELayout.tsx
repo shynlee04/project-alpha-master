@@ -68,6 +68,7 @@ export function IDELayout(): React.JSX.Element {
     syncManagerRef,
     eventBus,
     setIsWebContainerBooted,  // Story 13-2: Notify context when boot completes
+    restoreAccess,  // Story 13-5: Restore permission for prompt state
   } = useWorkspace();
 
   // UI state
@@ -354,6 +355,36 @@ export function IDELayout(): React.JSX.Element {
 
   return (
     <div className="h-screen w-screen bg-slate-950 text-slate-200 overflow-hidden flex flex-col">
+      {/* Story 13-5: Restore Access Overlay */}
+      {permissionState === 'prompt' && (
+        <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center z-50">
+          <div className="bg-slate-800 p-8 rounded-lg text-center max-w-md border border-slate-700 shadow-2xl">
+            <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/20 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Permission Required
+            </h3>
+            <p className="text-slate-400 text-sm mb-6">
+              Click below to restore access to your project folder.
+              {projectMetadata?.name && (
+                <span className="block mt-1 text-slate-300 font-medium">
+                  {projectMetadata.name}
+                </span>
+              )}
+            </p>
+            <button
+              onClick={restoreAccess}
+              className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-medium transition-colors"
+            >
+              Restore Access
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <IDEHeaderBar
         projectId={projectId}

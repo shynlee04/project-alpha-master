@@ -13,7 +13,8 @@ import {
 import {
     getPermissionState,
     ensureReadWritePermission,
-    saveDirectoryHandleReference
+    saveDirectoryHandleReference,
+    restorePermission,
 } from '../../filesystem/permission-lifecycle';
 import type { useWorkspaceState } from './useWorkspaceState';
 import type { useSyncOperations } from './useSyncOperations';
@@ -217,11 +218,42 @@ export function useWorkspaceActions(
         navigate({ to: '/' });
     }, [navigate, localAdapterRef, syncManagerRef]);
 
+    /**
+     * Story 13-5: Restore access to a project folder.
+     * Called when user clicks "Restore Access" button for handles with 'prompt' state.
+     * This gives users control over when the permission dialog appears.
+     */
+    const restoreAccess = useCallback(async (): Promise<void> => {
+        if (!directoryHandle) {
+            console.warn('[Workspace] No directory handle to restore');
+            return;
+        }
+
+        const result = await restorePermission(directoryHandle);
+        setPermissionState(result);
+
+        // Persist the new state to ProjectStore
+        if (projectMetadata) {
+            const updatedProject: ProjectMetadata = {
+                ...projectMetadata,
+                lastKnownPermissionState: result,
+            };
+            await saveProject(updatedProject);
+            setProjectMetadata(updatedProject);
+        }
+
+        // If granted, trigger sync
+        if (result === 'granted') {
+            await performSync(directoryHandle, { fullSync: autoSync });
+        }
+    }, [directoryHandle, projectMetadata, autoSync, performSync, setPermissionState, setProjectMetadata]);
+
     return {
         openFolder,
         switchFolder,
         setAutoSync,
         setExclusionPatterns,
-        closeProject
+        closeProject,
+        restoreAccess,  // Story 13-5
     };
 }

@@ -10,6 +10,7 @@ import { getLanguageFromPath } from '../../../lib/editor/language-utils';
 import { EditorTabBar, type OpenFile } from './EditorTabBar';
 import { useWorkspace } from '../../../lib/workspace';
 import { SyncEditWarning } from '../SyncEditWarning';
+import { useTranslation } from 'react-i18next';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -46,7 +47,8 @@ export function MonacoEditor({
     onContentChange,
     initialScrollTop,
     onScrollTopChange,
-}: MonacoEditorProps) {
+}: MonacoEditorProps): React.JSX.Element {
+    const { t } = useTranslation();
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
     const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -232,9 +234,9 @@ export function MonacoEditor({
                 />
                 <div className="flex-1 flex items-center justify-center text-slate-500">
                     <div className="text-center">
-                        <p className="text-sm">No file open</p>
+                        <p className="text-sm">{t('ide.noFileOpen')}</p>
                         <p className="text-xs text-slate-600 mt-1">
-                            Select a file from the Explorer to start editing
+                            {t('ide.selectFile')}
                         </p>
                     </div>
                 </div>

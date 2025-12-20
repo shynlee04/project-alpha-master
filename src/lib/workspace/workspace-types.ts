@@ -52,6 +52,8 @@ export interface WorkspaceActions {
     closeProject(): void;
     /** Story 13-2: Set WebContainer boot status for auto-sync */
     setIsWebContainerBooted(booted: boolean): void;
+    /** Story 13-5: Restore permission for 'prompt' state handles */
+    restoreAccess(): Promise<void>;
 }
 
 export type WorkspaceContextValue = WorkspaceState & WorkspaceActions & {

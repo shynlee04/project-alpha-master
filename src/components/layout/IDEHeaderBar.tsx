@@ -17,6 +17,7 @@
  */
 
 import { MessageSquare, FolderOpen, Loader2, RefreshCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';
 
 /**
@@ -53,6 +54,7 @@ export function IDEHeaderBar({
     isChatVisible,
     onToggleChat,
 }: IDEHeaderBarProps): React.JSX.Element {
+    const { t } = useTranslation();
     const {
         directoryHandle,
         permissionState,
@@ -91,12 +93,14 @@ export function IDEHeaderBar({
                         onSyncNow={syncNow}
                         onSwitchFolder={switchFolder}
                         onSetAutoSync={setAutoSync}
+                        t={t}
                     />
                 ) : (
                     <OpenFolderButton
                         isDisabled={isDisabled}
                         isOpeningFolder={isOpeningFolder}
                         onOpenFolder={openFolder}
+                        t={t}
                     />
                 )}
 
@@ -112,26 +116,23 @@ export function IDEHeaderBar({
                     <button
                         onClick={openFolder}
                         className="text-xs text-cyan-400 hover:text-cyan-200 underline"
-                        title="Re-authorize folder access"
+                        title={t('ide.reAuthorize')}
                     >
-                        Re-authorize
+                        {t('ide.reAuthorize')}
                     </button>
                 )}
 
                 {/* Permission denied warning */}
                 {permissionState === 'denied' && (
                     <span className="text-xs text-amber-400">
-                        Local folder access denied – using virtual workspace
+                        {t('ide.fsDenied')}
                     </span>
                 )}
 
                 {/* Sync error indicator */}
                 {syncError && (
                     <span className="text-xs text-amber-400" title={syncError}>
-                        ⚠️{' '}
-                        {syncError.length > 25
-                            ? syncError.slice(0, 25) + '...'
-                            : syncError}
+                        ⚠️ {t('ide.syncError')}
                     </span>
                 )}
 
@@ -139,10 +140,10 @@ export function IDEHeaderBar({
                 <button
                     onClick={onToggleChat}
                     className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
-                    title="Toggle Chat (⌘K)"
+                    title={t('ide.toggleChatShortcut')}
                 >
                     <MessageSquare className="w-4 h-4" />
-                    {isChatVisible ? 'Hide Chat' : 'Show Chat'}
+                    {isChatVisible ? t('ide.hideChat') : t('ide.showChat')}
                 </button>
 
                 {/* Version indicator */}
@@ -165,6 +166,7 @@ interface FolderOpenedControlsProps {
     onSyncNow: () => void;
     onSwitchFolder: () => void;
     onSetAutoSync: (enabled: boolean) => Promise<void>;
+    t: (key: string) => string;
 }
 
 /**
@@ -175,11 +177,10 @@ function FolderOpenedControls({
     autoSync,
     isDisabled,
     isSyncing,
-    isOpeningFolder,
-    syncProgress,
     onSyncNow,
     onSwitchFolder,
     onSetAutoSync,
+    t,
 }: FolderOpenedControlsProps): React.JSX.Element {
     return (
         <>
@@ -190,8 +191,8 @@ function FolderOpenedControls({
                     }`}
                 title={
                     autoSync
-                        ? 'Disable automatic sync on project open'
-                        : 'Enable automatic sync on project open'
+                        ? t('ide.autoSync')
+                        : t('ide.autoSync')
                 }
             >
                 <input
@@ -215,7 +216,7 @@ function FolderOpenedControls({
                         }
                     />
                 </span>
-                Auto-sync
+                {t('ide.autoSync')}
             </label>
 
             {!autoSync && (
@@ -223,32 +224,35 @@ function FolderOpenedControls({
             )}
 
             <button
+                type="button"
                 onClick={onSyncNow}
                 disabled={isDisabled}
-                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-50"
-                title="Sync files to WebContainer"
+                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+                    }`}
+                title={t('ide.syncNow')}
             >
                 {isSyncing ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {t('ide.syncNow')}
+                    </>
                 ) : (
-                    <RefreshCw className="w-4 h-4" />
+                    <>
+                        <RefreshCw className="w-4 h-4" />
+                        {t('ide.syncNow')}
+                    </>
                 )}
-                {isSyncing
-                    ? `Syncing${syncProgress ? ` (${syncProgress.syncedFiles} files)` : '...'}`
-                    : 'Sync Now'}
             </button>
             <button
+                type="button"
                 onClick={onSwitchFolder}
                 disabled={isDisabled}
-                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-50"
-                title="Open a different project folder"
+                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+                    }`}
+                title={t('ide.switchFolder')}
             >
-                {isOpeningFolder ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                    <FolderOpen className="w-4 h-4" />
-                )}
-                {isOpeningFolder ? 'Switching...' : 'Switch Folder'}
+                <FolderOpen className="w-4 h-4" />
+                {t('ide.switchFolder')}
             </button>
         </>
     );
@@ -256,8 +260,8 @@ function FolderOpenedControls({
 
 interface OpenFolderButtonProps {
     isDisabled: boolean;
-    isOpeningFolder: boolean;
     onOpenFolder: () => void;
+    t: (key: string) => string;
 }
 
 /**
@@ -265,22 +269,20 @@ interface OpenFolderButtonProps {
  */
 function OpenFolderButton({
     isDisabled,
-    isOpeningFolder,
     onOpenFolder,
+    t,
 }: OpenFolderButtonProps): React.JSX.Element {
     return (
         <button
+            type="button"
             onClick={onOpenFolder}
             disabled={isDisabled}
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-50"
-            title="Open a project folder"
+            className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+                }`}
+            title={t('ide.openFolder')}
         >
-            {isOpeningFolder ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-                <FolderOpen className="w-4 h-4" />
-            )}
-            {isOpeningFolder ? 'Opening...' : 'Open Folder'}
+            <FolderOpen className="w-4 h-4" />
+            {t('ide.openFolder')}
         </button>
     );
 }

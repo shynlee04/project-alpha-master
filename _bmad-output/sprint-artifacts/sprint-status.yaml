@@ -120,7 +120,7 @@ development_status:
   13-2-fix-auto-sync-on-project-load: done
   13-3-add-sync-progress-indicator: done
   13-4-preserve-file-tree-state: done
-  13-5-improve-permission-restoration: ready-for-dev
+  13-5-improve-permission-restoration: done
   13-6-fix-preview-in-new-tab: backlog  # NEW: Added from manual testing 2025-12-20
   epic-13-retrospective: optional
 

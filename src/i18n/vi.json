@@ -40,6 +40,28 @@
     "opening": "Đang mở…",
     "lastOpened": "Mở lần cuối {{relative}}"
   },
+  "ide": {
+    "autoSync": "Tự động đồng bộ",
+    "syncNow": "Đồng bộ ngay",
+    "switchFolder": "Đổi thư mục",
+    "openFolder": "Mở thư mục",
+    "hideChat": "Ẩn Chat",
+    "showChat": "Hiện Chat",
+    "reAuthorize": "Cấp lại quyền",
+    "fsDenied": "Từ chối truy cập thư mục cục bộ – dùng workspace ảo",
+    "syncError": "Lỗi đồng bộ",
+    "terminal": "Terminal",
+    "output": "Output",
+    "problems": "Problems",
+    "outputSoon": "Output (sắp ra mắt)",
+    "problemsSoon": "Problems (sắp ra mắt)",
+    "noFileOpen": "Chưa mở file",
+    "selectFile": "Chọn file từ explorer để bắt đầu chỉnh sửa",
+    "waitingDevServer": "Đang chờ dev server...",
+    "runDevCommand": "Chạy npm run dev trong terminal",
+    "agentChat": "Agent Chat",
+    "toggleChatShortcut": "Bật/tắt Chat (⌘K)"
+  },
   "time": {
     "justNow": "vừa xong",
     "minutesAgo": "{{count}} phút trước",
