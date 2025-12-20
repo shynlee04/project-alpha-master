@@ -1,18 +1,19 @@
 # Netlify Configuration for TanStack Start + Nitro
 # 
-# This configures Netlify to deploy the Nitro-built SSR app correctly.
-# Build outputs to .output/public (static) and .output/server (SSR functions)
+# Build outputs:
+# - Static files: dist/
+# - SSR Functions: .netlify/functions-internal/ (auto-detected by Nitro netlify preset)
 
 [build]
   command = "pnpm run build"
-  publish = ".output/public"
-  functions = ".output/server"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
   NITRO_PRESET = "netlify"
 
 # Required headers for WebContainer support
+# Note: Also defined in dist/_headers which Netlify reads automatically
 [[headers]]
   for = "/*"
   [headers.values]
@@ -20,8 +21,9 @@
     Cross-Origin-Embedder-Policy = "require-corp"
     Cross-Origin-Resource-Policy = "cross-origin"
 
-# SPA fallback for client-side routing
+# SPA fallback for client-side routing (handled by Nitro SSR, but kept for static routes)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
