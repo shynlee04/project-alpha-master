@@ -216,84 +216,73 @@ Phase 5: Enhancements    → Epic 4.5, 8, 9
 
 ## Epic 21: Client-Side Localization (EN/VI)
 
-**Goal:** Add client-side localization with English as default and Vietnamese as secondary, including routing, resource loading, and UI migration.
+**Goal:** Add client-side localization with English as default and Vietnamese as secondary, using automation for string extraction and client-side state for persistence (no URL routing).
 
 **Priority:** P2 (can run in parallel to ongoing P0 work)
 
-### Story 21-1: Locale-Aware Routing & HTML Lang
+### Story 21-1: Client-Side Localization Foundation & Automation Setup
 
-As a **user**,  
-I want **the app to respect my selected locale in URLs and document language**,  
-So that **navigation and SEO metadata align with my language choice**.
+As a **developer/user**,
+I want **a robust client-side localization infrastructure with automated key extraction**,
+So that **I can easily translate the app without manual JSON management or URL routing changes**.
 
 **Acceptance Criteria:**
-- Optional locale param `{-$locale}` added at root; default omits prefix.
-- beforeLoad validates `en`/`vi` and redirects unknown locales to default.
-- `<html lang>` and `head` meta reflect active locale.
+- `react-i18next` configured with client-side detector (localStorage/navigator).
+- `i18next-scanner` pipeline set up for automated key extraction.
+- `<html lang>` updates dynamically.
+- No URL path modifications.
 
 ### Story 21-2: I18n Infrastructure & Bundles
 
-As a **developer**,  
-I want **an i18n provider with lazy-loaded locale bundles**,  
-So that **translations are organized and loaded on demand without SSR**.
-
-**Acceptance Criteria:**
-- react-i18next (or equivalent) wired with fallback `en`.
-- Bundles stored at `src/i18n/{locale}.json`; lazy-loaded per locale.
-- Suspense-safe loading state handled without hydration issues.
+*(Merged into 21-1 for simplicity)*
 
 ### Story 21-3: Language Switcher & Persistence
 
-As a **user**,  
-I want **a language switcher that remembers my choice**,  
-So that **my preference persists across sessions**.
+As a **user**,
+I want **to switch languages via a UI toggle and have my preference saved**,
+So that **the interface immediately updates and remembers my choice on next visit**.
 
 **Acceptance Criteria:**
-- Switcher in Header; updates route locale param.
-- Choice persisted in localStorage; default uses stored value or `en`.
-- Switching updates `<html lang>` and rerenders strings.
+- UI Toggle in Header switches language immediately.
+- Preference persisted in `localStorage`.
+- No page reload or URL change on switch.
 
 ### Story 21-4: UI Migration Wave 1 (Navigation & Shell)
 
-As a **user**,  
-I want **navigation and shell chrome translated**,  
-So that **top-level UI respects my language**.
+*(Merged into 21-5 for broad IDE automation approach)*
+
+### Story 21-5: UI Migration & Bulk Automation
+
+As a **developer**,
+I want **to bulk-migrate hardcoded strings to i18n keys using automation**,
+So that **I can rapidly localize the IDE surfaces with minimal manual error**.
 
 **Acceptance Criteria:**
-- Header, nav labels, common buttons use `t()` keys.
-- English and Vietnamese strings present; no hardcoded English in migrated areas.
-
-### Story 21-5: UI Migration Wave 2 (IDE Surfaces)
-
-As a **user**,  
-I want **IDE surface strings localized**,  
-So that **editor, terminal, sync, and toasts show my language**.
-
-**Acceptance Criteria:**
-- File tree, sync status, toasts, dialogs localized via `t()`.
-- Error messages use translation keys; defaults to English if missing.
+- All core IDE strings (Header, Sidebar, Editor, Terminal) extracted to `en.json`.
+- `vi.json` generated with baseline translations.
+- UI verified in both languages.
 
 ### Story 21-6: Formatting & RTL Readiness
 
-As a **user**,  
-I want **dates/numbers formatted per locale and UI tolerant of RTL**,  
+As a **user**,
+I want **dates/numbers formatted per locale**,
 So that **content looks correct in my language**.
 
 **Acceptance Criteria:**
-- Intl-based helpers for date/number; locale-aware formats.
-- Basic RTL-safe styles verified (even if RTL locales not enabled).
+- Intl-based helpers for date/number.
+- RTL-safe styles verified.
 
 ### Story 21-7: Tests & Lint Guardrails
 
-As a **developer**,  
-I want **tests and lint rules preventing new hardcoded strings**,  
+As a **developer**,
+I want **tests and lint rules preventing new hardcoded strings**,
 So that **localization quality stays high**.
 
 **Acceptance Criteria:**
-- Tests for locale switching, fallback, and sample components.
-- Lint/check disallows new user-facing hardcoded strings (allow exceptions for technical logs).
+- Tests for locale switching.
+- CI check for unextracted strings (using scanner or strict lint rule).
 
-**Rationale:** Event Bus (Epic 10) must come before AI Agent (Epic 6) because AI agents need to observe file/sync/terminal events. AI Tool Facades (Epic 12) abstracts subsystems for AI consumption.
+**Rationale:** Client-side only approach avoids complex routing changes and allows for rapid iteration using automation tools.
 
 
 ---

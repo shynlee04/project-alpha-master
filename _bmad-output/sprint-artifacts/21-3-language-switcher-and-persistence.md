@@ -1,71 +1,46 @@
-# Story 21-3: Project Management UI Localization
+# Story 21-3: Language Switcher & Persistence
 
 **Epic:** 21 - Client-Side Localization (EN/VI)  
 **Sprint:** 13 (parallel track)  
-**Status:** done  
+**Status:** drafted  
 **Priority:** P2  
 
 ---
 
 ## User Story
 As a **user**,  
-I want **the dashboard/project management UI to honor my language choice (EN/VI) without URL changes**,  
-So that **all dashboard labels, actions, and empty states read in my selected language**.
+I want **to switch languages via a UI toggle and have my preference saved**,  
+So that **the interface immediately updates and remembers my choice on next visit**.
 
 ---
 
 ## Acceptance Criteria
-- **AC-21-3-1**: Dashboard headings, buttons, and CTAs (e.g., “Recent Projects”, “Open Local Folder”, “Open Workspace”) render in the selected locale (EN/VI).  
-- **AC-21-3-2**: All dashboard toasts/errors/empty states (e.g., permission denied, failed to load projects, “No file open”, “Waiting for dev server…”) render in the selected locale.  
-- **AC-21-3-3**: Locale choice persists via localStorage and is restored on reload with fallback to EN on invalid/missing values.  
-- **AC-21-3-4**: `html lang` and `og:locale` reflect the selected locale after toggle (client-only).  
+- **AC-21-3-1**: Header contains a language toggle (EN/VI) that immediately switches the UI language.
+- **AC-21-3-2**: Selection is persisted to `localStorage` key `i18nextLng` (or configured key).
+- **AC-21-3-3**: App initializes with the persisted language or browser default if none.
+- **AC-21-3-4**: Switching language DOES NOT reload the page or change the URL.
 
 ---
 
 ## Tasks
-- [x] **T0 Research**: Load architecture.md (cross-cutting #6 localization); gather patterns from deepwiki/context7 for client-only i18n and head updates.  
-- [x] **T1 Strings Inventory**: Identify all user-facing strings in dashboard route (`src/routes/index.tsx`) and related helpers/toasts.  
-- [x] **T2 Resource Keys**: Add EN/VI keys for dashboard + toasts/errors/empty/loader texts to `src/i18n/en.json`/`vi.json`.  
-- [x] **T3 Wire t()**: Replace hardcoded dashboard strings with `t(...)`; ensure locale toggle from Header is applied.  
-- [x] **T4 Meta/Head check**: Verify `html lang` and `og:locale` update after toggle; adjust if route head needs awareness.  
-- [x] **T5 Tests**: Add/extend tests covering persistence fallback and at least one dashboard string in each locale (happy path + fallback).  
-- [x] **T6 Docs/Governance**: Update sprint-status.yaml and bmm-workflow-status.yaml when promoted.  
+- [ ] **T0 Research**: Check existing Header component structure.
+- [ ] **T1 Components**: Create `LanguageSwitcher` component (dropdown/toggle).
+- [ ] **T2 Integration**: Add switcher to `Header.tsx`.
+- [ ] **T3 State Connection**: Wire switcher to `react-i18next`'s `changeLanguage`.
+- [ ] **T4 Validation**: specific tests for switching and persistence.
 
 ---
 
 ## Research Requirements
-- Read `_bmad-output/architecture.md` (Localization: client-only, html lang, lazy bundles).  
-- Use DeepWiki/Context7 for client-only i18n patterns with TanStack Router head management (no URL segments).  
-- Confirm no SSR coupling needed; rely on client-only locale state.  
+- Verify `react-i18next` `useTranslation` hook re-renders triggered by language change.
 
 ---
 
 ## Dev Notes
-- Follow hook composition; avoid touching routeTree.gen.ts.  
-- Keep LocaleProvider single source of locale; reuse existing `setLocale` to update html lang + og:locale.  
-- Ensure toasts/errors routed through i18n keys; avoid hardcoded strings.  
+- Keep it simple.
+- Ensure accessible UI (aria-labels).
 
 ---
 
 ## References
-- `_bmad-output/architecture.md` (Localization cross-cutting #6)  
-- `src/routes/index.tsx` (Dashboard)  
-- `src/i18n/config.ts`, `src/i18n/LocaleProvider.tsx`, `src/i18n/en.json`, `src/i18n/vi.json`  
-
----
-
-## Dev Agent Record
-- Agent: Cascade  
-- Session: 2025-12-20  
-- Files changed:  
-  - `src/i18n/en.json`, `src/i18n/vi.json` (dashboard/action/error/time keys)  
-  - `src/routes/index.tsx` (dashboard translations wired, relative time uses t)  
-  - `src/routes/__tests__/dashboard-i18n.test.tsx` (locale render + relative time)  
-- Tests: `pnpm test src/routes/__tests__/dashboard-i18n.test.tsx` (pass)  
-
----
-
-## Status History
-| Date | Status | Notes |
-|------|--------|-------|
-| 2025-12-20 | drafted | Story created for dashboard localization |
+- Story 21-1 (Foundation)

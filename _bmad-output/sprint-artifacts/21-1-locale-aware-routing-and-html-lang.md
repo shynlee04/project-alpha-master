@@ -1,74 +1,53 @@
-# Story 21-1: Client-Side Localization Foundation & HTML Lang
+# Story 21-1: Client-Side Localization Foundation & Automation Setup
 
 **Epic:** 21 - Client-Side Localization (EN/VI)
 **Sprint:** 13 (parallel track)
-**Status:** done
-**Priority:** P2
+**Status:** drafted
+**Priority:** P1
 
 ---
 
 ## User Story
-As a **user**,
-I want **to toggle language (EN/VI) client-side without URL changes**,
-So that **the UI and metadata reflect my language choice**.
+As a **developer/user**,
+I want **a robust client-side localization infrastructure with automated key extraction**,
+So that **I can easily translate the app without manual JSON management or URL routing changes**.
 
 ---
 
 ## Acceptance Criteria
-- **AC-21-1-1**: Language toggle switches UI strings between EN and VI without altering routes/URLs.  
-- **AC-21-1-2**: Locale choice persists (localStorage) and is restored on reload; defaults to EN.  
-- **AC-21-1-3**: `<html lang>` and head metadata update to the active locale on toggle.  
-- **AC-21-1-4**: Locale is exposed via context/store hook for any component to read.  
-- **AC-21-1-5**: Fallback: if stored/unknown locale, app gracefully falls back to EN and resets invalid value.
+- **AC-21-1-1**: `react-i18next` is configured with `initReactI18next` and a client-side language detector (localStorage/navigator).
+- **AC-21-1-2**: `i18next-scanner` (or equivalent) is configured to automatically scan code for `t('key')` and update `en.json`/`vi.json`.
+- **AC-21-1-3**: `<html lang>` and document head metadata update dynamically based on the current locale.
+- **AC-21-1-4**: No URL path changes occur when switching languages (pure client-side state).
+- **AC-21-1-5**: Helper scripts (e.g., `pnpm i18n:extract`) exist to run the extraction tool.
 
 ---
 
 ## Tasks
-- [x] **T0 Research**: Review architecture/state docs; confirm client-only i18n guidance.  
-- [x] **T1 I18n provider**: Add react-i18next (or equivalent) with EN/VI bundles; lazy-load; fallback EN.  
-- [x] **T2 Locale state**: Implement locale context/hook (useLocalePreference) with localStorage persistence and validation (en|vi).  
-- [x] **T3 UI toggle**: Add Header toggle to switch locale; propagates to provider.  
-- [x] **T4 Head/HTML lang**: Update `<html lang>` and head meta (e.g., og:locale) on locale change.  
-- [x] **T5 Tests/QA**: Unit tests for fallback, toggle, persistence, head/lang update.  
-- [x] **T6 Docs**: Update sprint-status and bmm-workflow-status after implementation.
+- [ ] **T0 Research**: Validate `i18next-scanner` config for TypeScript/React.
+- [ ] **T1 Dependencies**: Install `react-i18next`, `i18next`, `i18next-browser-languagedetector`, `i18next-scanner`.
+- [ ] **T2 I18n Config**: Implement `src/i18n/config.ts` with detector and React plugin.
+- [ ] **T3 Automation Setup**: Create `i18next-scanner.config.js` and add `i18n:extract` script to `package.json`.
+- [ ] **T4 Locale Provider**: Create `LocaleProvider` context (wrapping `I18nextProvider` if needed, or just managing global sync).
+- [ ] **T5 Head Updates**: Implement distinct logic (effect) to update `<html lang>` on locale change.
+- [ ] **T6 Tests**: Unit test the configuration and detector fallback logic.
+- [ ] **T7 Docs**: Document the extraction workflow in `development-guide.md`.
 
 ---
 
 ## Research Requirements
-- Read `_bmad-output/architecture.md` (cross-cutting: localization client-only, lazy bundles, `<html lang>`).  
-- Read `_bmad-output/state-management.md` (planned `useLocalePreference` hook).  
-- Use DeepWiki/Context7 for client-side i18n patterns and head/lang updates (no routing changes).  
+- Confirm `i18next-scanner` support for dynamic keys/defaults.
+- Ensure `i18next-browser-languagedetector` order: `['localStorage', 'navigator']`.
 
 ---
 
 ## Dev Notes
-- Client-only SPA (no SSR); lazy-load locale resources.  
-- No URL changes; keep current routes.  
-- Update `<html lang>` and head meta on toggle.  
-- Validate `en` | `vi`; fallback to `en` on invalid stored value.  
+- **NO ROUTING CHANGES**. Do not implement locale subpaths.
+- Use `en` as the source of truth/default.
+- Automation should sort keys for consistent diffs.
 
 ---
 
 ## References
-- `_bmad-output/architecture.md` (cross-cutting concern #6)  
-- `_bmad-output/state-management.md` (planned `useLocalePreference` hook)  
-- `_bmad-output/epics.md` Epic 21  
-
----
-
-## Dev Agent Record
-- Agent: Cascade  
-- Session: 2025-12-20  
-- Files changed:  
-  - `src/i18n/en.json`, `src/i18n/vi.json`, `src/i18n/config.ts`, `src/i18n/LocaleProvider.tsx`  
-  - `src/routes/__root.tsx`, `src/components/Header.tsx`  
-  - `package.json` (added i18n deps)  
-  - `src/i18n/__tests__/config.test.ts`  
-- Tests: `pnpm test src/i18n/__tests__/config.test.ts`; `pnpm test` (all 186 passing)  
-
----
-
-## Status History
-| Date | Status | Notes |
-|------|--------|-------|
-| 2025-12-20 | drafted | Story created for localization routing/lang |
+- Epic 21
+- `_bmad-output/architecture.md`
