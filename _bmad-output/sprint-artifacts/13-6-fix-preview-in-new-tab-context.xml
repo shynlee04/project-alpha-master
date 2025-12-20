@@ -1,6 +1,6 @@
 <context_xml>
     <story_id>13-6</story_id>
-    <description>Fix Preview in New Tab</description>
+    <description>Fix Preview in New Tab + Focus Mode Enhancement</description>
     <analysis>
         <problem>
             <description>
@@ -8,21 +8,27 @@
             </description>
             <root_cause>
                 WebContainer's `forwardPreviewErrors: true` option proxies preview URLs through the parent origin, but the proxy target path requires the WebContainer instance which doesn't exist in a new blank tab.
-            </description>
+            </root_cause>
         </problem>
         <solution>
             <description>
-                Implemented a catch-all route `/webcontainer/$` that catches these requests and displays a helpful "Not Supported" page guiding the user back to the IDE. Added toast notification to the Preview Panel.
+                1. Implemented a catch-all route `/webcontainer/$` with branded error page explaining the limitation
+                2. Added Focus Mode - a 95% viewport modal overlay for near-fullscreen preview within the IDE window context
             </description>
             <files_modified>
-                <file path="src/routes/webcontainer.$.tsx" action="NEW" description="Catch-all route with informative WebContainerConnectPage component" />
-                <file path="src/components/ide/PreviewPanel/PreviewPanel.tsx" action="MODIFY" description="Added toast notification and useToast hook" />
-                <file path="src/i18n/en.json" action="MODIFY" description="Added EN translations for preview feature" />
-                <file path="src/i18n/vi.json" action="MODIFY" description="Added VI translations for preview feature" />
+                <file path="src/routes/webcontainer.$.tsx" action="MODIFY" description="Catch-all route with branded WebContainerNotSupported component" />
+                <file path="src/components/ide/PreviewPanel/PreviewPanel.tsx" action="MODIFY" description="Added Focus Mode modal with ESC key handling, device selector, body scroll lock" />
+                <file path="src/i18n/en.json" action="MODIFY" description="Added webcontainer.notSupported.* and preview.focusMode.* keys" />
+                <file path="src/i18n/vi.json" action="MODIFY" description="Added Vietnamese translations" />
             </files_modified>
         </solution>
     </analysis>
+    <research_notes>
+        <finding source="context7" query="WebContainer forwardPreviewErrors">
+            forwardPreviewErrors option causes WebContainer to proxy preview URLs. New tabs cannot access the WebContainer instance.
+        </finding>
+    </research_notes>
     <artifacts>
-        <artifact path="_bmad-output/sprint-artifacts/13-6-fix-preview-in-new-tab.md" type="story" description="Story definition and implementation record" />
+        <artifact path="_bmad-output/sprint-artifacts/13-6-fix-preview-in-new-tab.md" type="story" description="Story definition with Focus Mode enhancement" />
     </artifacts>
 </context_xml>

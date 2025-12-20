@@ -3,7 +3,7 @@
 **Epic:** 13 - Terminal & Sync Stability  
 **Sprint:** 13 - Terminal & Sync Stability  
 **Priority:** P1  
-**Story Points:** 2  
+**Story Points:** 3 (updated for Focus Mode enhancement)  
 **Status:** done
 
 ---
@@ -11,8 +11,8 @@
 ## User Story
 
 As a **user**,  
-I want **to know why the preview might not work in a new tab**,  
-So that **I can use the supported preview methods instead of seeing an error**.
+I want **to know why the preview might not work in a new tab AND have an alternative for fullscreen preview**,  
+So that **I can use supported preview methods instead of seeing an error**.
 
 ---
 
@@ -35,6 +35,13 @@ So that **I can use the supported preview methods instead of seeing an error**.
 **When** the page loads  
 **Then** no 404 or "Cannot GET" error is shown
 
+### AC-13-6-4: Focus Mode for fullscreen preview (NEW)
+**Given** the preview panel has a loaded dev server  
+**When** the user clicks the "Focus Mode" (Maximize) button  
+**Then** a 95% viewport modal overlay appears with the preview  
+**And** the modal includes device selector and refresh controls  
+**And** pressing ESC exits focus mode
+
 ---
 
 ## Implementation Tasks
@@ -44,6 +51,9 @@ So that **I can use the supported preview methods instead of seeing an error**.
 - [x] T3: Add toast notification to PreviewPanel
 - [x] T4: Add translations for English and Vietnamese
 - [x] T5: Manual verification
+- [x] T6: Implement Focus Mode modal (NEW)
+- [x] T7: Add ESC key handling and body scroll lock (NEW)
+- [x] T8: Add Focus Mode i18n keys (NEW)
 
 ---
 
@@ -53,12 +63,14 @@ So that **I can use the supported preview methods instead of seeing an error**.
 WebContainer's `forwardPreviewErrors: true` option causes it to proxy preview URLs through the parent origin. However, WebContainers must be booted in the specific window context to function. A new tab cannot serve the preview content.
 
 ### Solution
-Implemented an informative "Not Supported" page via a generic catch-all route for `/webcontainer/*` to guide users back to the IDE.
+1. Implemented an informative "Not Supported" page via catch-all route for `/webcontainer/*`
+2. **Added Focus Mode** - a 95% viewport modal that keeps preview in the same window context
 
 ### Files Modified
-- `src/routes/webcontainer.$.tsx` (MODIFIED - replaced placeholder with branded error page)
-- `src/i18n/en.json` (MODIFIED - added `webcontainer.notSupported.*` keys)
-- `src/i18n/vi.json` (MODIFIED - added Vietnamese translations)
+- `src/routes/webcontainer.$.tsx` (MODIFIED - branded error page)
+- `src/components/ide/PreviewPanel/PreviewPanel.tsx` (MODIFIED - Focus Mode modal)
+- `src/i18n/en.json` (MODIFIED - webcontainer.notSupported.* and preview.focusMode.* keys)
+- `src/i18n/vi.json` (MODIFIED - Vietnamese translations)
 
 ---
 
@@ -66,8 +78,8 @@ Implemented an informative "Not Supported" page via a generic catch-all route fo
 
 **Agent:** Antigravity  
 **Date:** 2025-12-20  
-**Issue:** Route had placeholder text "Hello '/webcontainer/$'!" instead of informative page  
-**Fix:** Implemented branded error page with i18n support, warning icon, explanation, and dashboard navigation
+**Session 1:** Fixed placeholder route with branded error page  
+**Session 2:** Added Focus Mode enhancement with modal overlay, ESC handling, device selector
 
 ---
 # Walkthrough: Fix Preview in New Tab (Story 13-6)
