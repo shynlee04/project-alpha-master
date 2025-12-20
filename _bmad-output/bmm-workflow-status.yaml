@@ -136,6 +136,9 @@ implementation:
     path: "_bmad-output/sprint-artifacts/sprint-status.yaml"
     completed: "2025-12-20"
     notes: "Generated with 22 epics, 117 stories. Epic 13 (P0) ready for implementation."
+    updates:
+      - "Added Epic 21: Client-Side Localization (EN/VI) to epics.md and sprint-status.yaml (P2)"
+      - "Story-dev-cycle can start either Epic 13 stories or Epic 21 stories in parallel"
     
   course_corrections:
     - version: "v1"
@@ -210,6 +213,13 @@ epic_status:
     stories: "3/6"  # Stories 13-1, 13-2, 13-3 done
     priority: "P0"
     notes: "Stories 13-1, 13-2, 13-3 completed. Next: Story 13-4."
+  
+  - id: 21
+    name: "Client-Side Localization (EN/VI)"
+    status: "BACKLOG"
+    stories: "0/7"
+    priority: "P2"
+    notes: "UI localization epic (routing, i18n bundles, switcher, migrations, tests)"
     
   - id: 12
     name: "AI Tool Interface Layer"
@@ -315,15 +325,25 @@ next_actions:
       
   immediate:
     - action: "Create Story 13-4 (Preserve File Tree State)"
+      status: "PENDING"
       command: "create-story workflow"
       agent: "sm"
       priority: "P1"
+    - action: "Create Story 21-1 (Locale-Aware Routing & HTML Lang)"
+      status: "PENDING"
+      command: "create-story workflow"
+      agent: "sm"
+      priority: "P2"
       
   then:
     - action: "Implement Story 13-3"
       command: "dev-story workflow"
       agent: "dev"
       priority: "P0"
+    - action: "Implement Story 21-1"
+      command: "dev-story workflow"
+      agent: "dev"
+      priority: "P2"
 
 # =============================================================================
 # WORKFLOW COMMANDS

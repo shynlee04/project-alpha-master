@@ -212,6 +212,87 @@ Phase 4: Optimization    → Epic 11 (Code Splitting) - can run parallel
 Phase 5: Enhancements    → Epic 4.5, 8, 9
 ```
 
+---
+
+## Epic 21: Client-Side Localization (EN/VI)
+
+**Goal:** Add client-side localization with English as default and Vietnamese as secondary, including routing, resource loading, and UI migration.
+
+**Priority:** P2 (can run in parallel to ongoing P0 work)
+
+### Story 21-1: Locale-Aware Routing & HTML Lang
+
+As a **user**,  
+I want **the app to respect my selected locale in URLs and document language**,  
+So that **navigation and SEO metadata align with my language choice**.
+
+**Acceptance Criteria:**
+- Optional locale param `{-$locale}` added at root; default omits prefix.
+- beforeLoad validates `en`/`vi` and redirects unknown locales to default.
+- `<html lang>` and `head` meta reflect active locale.
+
+### Story 21-2: I18n Infrastructure & Bundles
+
+As a **developer**,  
+I want **an i18n provider with lazy-loaded locale bundles**,  
+So that **translations are organized and loaded on demand without SSR**.
+
+**Acceptance Criteria:**
+- react-i18next (or equivalent) wired with fallback `en`.
+- Bundles stored at `src/i18n/{locale}.json`; lazy-loaded per locale.
+- Suspense-safe loading state handled without hydration issues.
+
+### Story 21-3: Language Switcher & Persistence
+
+As a **user**,  
+I want **a language switcher that remembers my choice**,  
+So that **my preference persists across sessions**.
+
+**Acceptance Criteria:**
+- Switcher in Header; updates route locale param.
+- Choice persisted in localStorage; default uses stored value or `en`.
+- Switching updates `<html lang>` and rerenders strings.
+
+### Story 21-4: UI Migration Wave 1 (Navigation & Shell)
+
+As a **user**,  
+I want **navigation and shell chrome translated**,  
+So that **top-level UI respects my language**.
+
+**Acceptance Criteria:**
+- Header, nav labels, common buttons use `t()` keys.
+- English and Vietnamese strings present; no hardcoded English in migrated areas.
+
+### Story 21-5: UI Migration Wave 2 (IDE Surfaces)
+
+As a **user**,  
+I want **IDE surface strings localized**,  
+So that **editor, terminal, sync, and toasts show my language**.
+
+**Acceptance Criteria:**
+- File tree, sync status, toasts, dialogs localized via `t()`.
+- Error messages use translation keys; defaults to English if missing.
+
+### Story 21-6: Formatting & RTL Readiness
+
+As a **user**,  
+I want **dates/numbers formatted per locale and UI tolerant of RTL**,  
+So that **content looks correct in my language**.
+
+**Acceptance Criteria:**
+- Intl-based helpers for date/number; locale-aware formats.
+- Basic RTL-safe styles verified (even if RTL locales not enabled).
+
+### Story 21-7: Tests & Lint Guardrails
+
+As a **developer**,  
+I want **tests and lint rules preventing new hardcoded strings**,  
+So that **localization quality stays high**.
+
+**Acceptance Criteria:**
+- Tests for locale switching, fallback, and sample components.
+- Lint/check disallows new user-facing hardcoded strings (allow exceptions for technical logs).
+
 **Rationale:** Event Bus (Epic 10) must come before AI Agent (Epic 6) because AI agents need to observe file/sync/terminal events. AI Tool Facades (Epic 12) abstracts subsystems for AI consumption.
 
 

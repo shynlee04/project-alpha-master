@@ -77,6 +77,7 @@ The PRD defines **35+ functional requirements** across 7 domains:
 3. **Error Recovery**: Graceful handling of permission denial, sync failures, Git errors
 4. **Session Restoration**: Full state restoration from IndexedDB + FSA handles
 5. **Performance Boundaries**: Excluding `node_modules` from disk sync
+6. **Localization (EN/VI)**: Client-only i18n with locale-aware routing, dynamic bundle loading, and `<html lang>` set per locale; avoid SSR/hydration coupling by lazy-loading translation resources and defaulting to `en` fallback.
 
 ---
 

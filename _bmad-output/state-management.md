@@ -88,6 +88,7 @@ interface WorkspaceActions {
 | `useEventBusEffects()` | Subscribe to event bus |
 | `useInitialSync()` | Trigger sync on project load |
 | `useWorkspaceActions()` | Get workspace actions |
+| `useLocalePreference()` | (Planned) Read/write UI locale with localStorage fallback and route param |
 
 ---
 
