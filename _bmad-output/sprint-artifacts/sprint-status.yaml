@@ -157,7 +157,9 @@ development_status:
   23-1-install-tailwindcss-4: done
     story: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4.md
     context: _bmad-output/sprint-artifacts/23-1-install-tailwindcss-4-context.xml
-  23-2-initialize-shadcnui: backlog
+  23-2-initialize-shadcnui: ready-for-dev
+    story: _bmad-output/sprint-artifacts/23-2-initialize-shadcnui.md
+    context: _bmad-output/sprint-artifacts/23-2-initialize-shadcnui-context.xml
   23-3-migrate-layout-components: backlog
   23-4-migrate-ide-panel-components: backlog
   23-5-implement-theme-toggle: backlog
@@ -373,7 +375,7 @@ summary:
   epics_backlog: 15
   stories_done: 40
   stories_in_progress: 0
-  stories_backlog: 99
+  stories_backlog: 98
   
   priority_breakdown:
     p0: 1  # Epic 22 (Production Hardening) - CURRENT

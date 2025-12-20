@@ -14,9 +14,17 @@
  * ```
  */
 
+import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type TerminalTab } from '../../lib/workspace';
-import { XTerminal } from '../ide/XTerminal';
+
+/**
+ * Lazy-load XTerminal to avoid bundling @xterm/xterm into SSR.
+ * @xterm/xterm is a browser-only package that requires DOM APIs.
+ */
+const XTerminal = lazy(() =>
+    import('../ide/XTerminal').then(module => ({ default: module.XTerminal }))
+);
 
 /**
  * Props for the TerminalPanel component.
@@ -74,7 +82,13 @@ export function TerminalPanel({
             {/* Tab Content */}
             <div className="flex-1 bg-slate-950 min-h-0 relative">
                 {activeTab === 'terminal' ? (
-                    <XTerminal projectPath={projectPath} />
+                    <Suspense fallback={
+                        <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                            {t('terminal.loading', 'Loading terminal...')}
+                        </div>
+                    }>
+                        <XTerminal projectPath={projectPath} />
+                    </Suspense>
                 ) : (
                     <div className="h-full flex items-center justify-center text-slate-500 text-sm">
                         {activeTab === 'output'

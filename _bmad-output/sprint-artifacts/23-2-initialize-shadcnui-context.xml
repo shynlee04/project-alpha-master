@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="23-2-initialize-shadcnui" created="2025-12-20T16:28:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/ui/TailwindTest.tsx">
+      <content><![CDATA[
+import React from 'react';
+
+export const TailwindTest: React.FC = () => {
+  return (
+    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        TailwindCSS 4.x Test Component
+      </h2>
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
+            Primary Button
+          </button>
+          <button className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors">
+            Secondary Button
+          </button>
+          <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors">
+            Success Button
+          </button>
+        </div>
+        <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm">
+          <p className="text-gray-700 dark:text-gray-200">
+            This component tests TailwindCSS 4.x functionality including:
+          </p>
+          <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mt-2">
+            <li>Dark mode support</li>
+            <li>Responsive design</li>
+            <li>Color palette</li>
+            <li>Hover states</li>
+            <li>Transitions</li>
+          </ul>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100">Card 1</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Responsive grid layout</p>
+          </div>
+          <div className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100">Card 2</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Dark mode compatible</p>
+          </div>
+          <div className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100">Card 3</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">TailwindCSS 4.x</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+]]></content>
+    </file>
+    <file path="src/components/ui/index.ts">
+      <content><![CDATA[
+// Existing exports
+export * from './TailwindTest';
+]]></content>
+    </file>
+    <file path="vite.config.ts">
+      <content><![CDATA[
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 3000,
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
+    },
+  },
+});
+]]></content>
+    </file>
+    <file path="src/styles.css">
+      <content><![CDATA[
+@import "tailwindcss";
+]]></content>
+    </file>
+  </files>
+
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="shadcn-mcp" query="get_project_registries">
+      <![CDATA[
+        Found @shadcn registry with 438+ components available
+        Components include: button, card, dialog, dropdown-menu, tabs, scroll-area, resizable, tooltip, toast, sidebar, context-menu, input, label, separator, sonner, spinner
+      ]]>
+    </finding>
+    <finding source="shadcn-mcp" query="get_add_command_for_items">
+      <![CDATA[
+        Add command for priority components:
+        pnpm dlx shadcn@latest add @shadcn/button @shadcn/card @shadcn/dialog @shadcn/dropdown-menu @shadcn/tabs @shadcn/scroll-area @shadcn/resizable @shadcn/tooltip @shadcn/toast @shadcn/sidebar @shadcn/context-menu @shadcn/input @shadcn/label @shadcn/separator @shadcn/sonner @shadcn/spinner
+      ]]>
+    </finding>
+    <finding source="context7" query="shadcn/ui Vite React integration">
+      <![CDATA[
+        Theme Provider Integration:
+        import { ThemeProvider } from "@/components/theme-provider"
+        function App() {
+          return (
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+              {children}
+            </ThemeProvider>
+          )
+        }
+
+        Theme Toggle Component:
+        import { Moon, Sun } from "lucide-react"
+        import { Button } from "@/components/ui/button"
+        import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+        import { useTheme } from "@/components/theme-provider"
+
+        Theme Provider Context:
+        Creates React context for theme management with localStorage persistence
+        Supports dark/light/system modes with automatic system detection
+      ]]>
+    </finding>
+    <finding source="context7" query="shadcn/ui installation">
+      <![CDATA[
+        Installation steps:
+        1. Run: pnpm dlx shadcn@latest init
+        2. Configure components.json
+        3. Set up @/components/ui directory structure
+        4. Install Radix UI dependencies automatically
+
+        Vite configuration already includes:
+        - TailwindCSS plugin
+        - Path aliases (@/ → ./src)
+        - React plugin
+      ]]>
+    </finding>
+  </research_notes>
+
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Component Structure" source="architecture.md">
+      <![CDATA[
+        Components organized by feature: ide/, ui/, layout/
+        Each component directory has index.ts barrel exports
+        TypeScript interfaces for props (not type aliases)
+        Follow import order convention: React → third-party → internal → relative
+      ]]>
+    </pattern>
+    <pattern name="ShadcnUI Integration" source="epics.md">
+      <![CDATA[
+        Initialize ShadcnUI with dark mode as default
+        Configure theme provider with localStorage persistence
+        Install priority components for IDE: button, card, dialog, dropdown-menu, tabs, scroll-area, resizable, tooltip, toast, sidebar, context-menu, input, label, separator, sonner, spinner
+        Create test component demonstrating all installed components
+      ]]>
+    </pattern>
+    <pattern name="Theme Configuration" source="ux-design.md">
+      <![CDATA[
+        Dark mode as default (matches UX specification)
+        Light mode toggle functionality
+        CSS variables for theming
+        System theme detection and auto-switching
+      ]]>
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      <![CDATA[
+        ShadcnUI uses Radix UI primitives under the hood
+        Components are unstyled by default, styled via TailwindCSS
+        Dark mode implementation should use CSS variables for easy theming
+        Ensure WebContainer compatibility (no server-side rendering requirements)
+      ]]>
+    </note>
+    <note priority="high">
+      <![CDATA[
+        TailwindCSS 4.x is already installed and configured
+        Vite plugin is properly set up in vite.config.ts
+        Path aliases are configured (@/ → ./src)
+        COOP/COEP headers are configured for WebContainer compatibility
+      ]]>
+    </note>
+    <note priority="medium">
+      <![CDATA[
+        ShadcnUI initialization steps:
+        1. Run init command: pnpm dlx shadcn@latest init
+        2. Configure components.json with project settings
+        3. Install priority components using add command
+        4. Set up theme provider and toggle component
+        5. Create test component to verify all components work
+      ]]>
+    </note>
+    <note priority="medium">
+      <![CDATA[
+        Component testing requirements:
+        - All components should render correctly with proper styling
+        - Dark/light theme switching should work
+        - No console errors or warnings
+        - Basic functionality should be verified (buttons clickable, dialogs open/close)
+      ]]>
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@radix-ui/react-dropdown-menu" version="latest" />
+    <dependency name="@radix-ui/react-dialog" version="latest" />
+    <dependency name="@radix-ui/react-tooltip" version="latest" />
+    <dependency name="@radix-ui/react-toast" version="latest" />
+    <dependency name="class-variance-authority" version="latest" />
+    <dependency name="clsx" version="latest" />
+    <dependency name="tailwind-merge" version="latest" />
+    <dependency name="lucide-react" version="latest" />
+  </dependencies>
+
+  <!-- Current project state -->
+  <project_state>
+    <tailwindcss>installed and configured (v4.x)</tailwindcss>
+    <vite>configured with TailwindCSS plugin and path aliases</vite>
+    <react>version 19 with TypeScript</react>
+    <components>
+      <existing>TailwindTest.tsx (test component)</existing>
+      <required>ShadcnUI components (to be installed)</required>
+    </components>
+    <theme>dark mode by default (per UX specification)</theme>
+  </project_state>
+
+  <!-- Implementation checklist -->
+  <implementation_checklist>
+    <item status="pending">Run ShadcnUI init command</item>
+    <item status="pending">Configure components.json</item>
+    <item status="pending">Install priority components</item>
+    <item status="pending">Set up theme provider</item>
+    <item status="pending">Create theme toggle component</item>
+    <item status="pending">Create ShadcnTest component</item>
+    <item status="pending">Update barrel exports</item>
+    <item status="pending">Test all components</item>
+  </implementation_checklist>
+</context>
