@@ -10,6 +10,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { IDELayout } from '../IDELayout';
 import { WorkspaceProvider, type WorkspaceContextType } from '../../../lib/workspace';
+import { ToastProvider } from '../../ui/Toast';
 
 // Mock the workspace context
 const mockWorkspaceContext: Partial<WorkspaceContextType> = {
@@ -85,9 +86,11 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
 
   test('should render with ShadcnUI Resizable components', () => {
     render(
-      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
-        <IDELayout />
-      </WorkspaceProvider>,
+      <ToastProvider>
+        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+          <IDELayout />
+        </WorkspaceProvider>
+      </ToastProvider>,
     );
 
     // Check that all major panels are rendered
@@ -99,26 +102,34 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
 
     // Check header is rendered
     expect(screen.getByText('via-gent')).toBeInTheDocument();
-    expect(screen.getByText('test-project')).toBeInTheDocument();
+    // Check that projectId is rendered - the span should contain the projectId
+    const projectIdSpan = screen.getByText('via-gent').nextSibling;
+    expect(projectIdSpan).toHaveTextContent('/');
+    const projectIdElement = projectIdSpan.nextSibling;
+    expect(projectIdElement).toHaveTextContent('test-project');
   });
 
   test('should toggle chat panel visibility', () => {
     render(
-      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
-        <IDELayout />
-      </WorkspaceProvider>,
+      <ToastProvider>
+        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+          <IDELayout />
+        </WorkspaceProvider>
+      </ToastProvider>,
     );
 
-    const chatToggle = screen.getByRole('button', { name: /hide chat/i });
+    // Find the chat toggle button by its title (translation key)
+    const chatToggle = screen.getByRole('button', { name: 'ide.hideChat' });
     expect(chatToggle).toBeInTheDocument();
 
     // Click to hide chat
     fireEvent.click(chatToggle);
-    expect(screen.getByRole('button', { name: /show chat/i })).toBeInTheDocument();
+    // After clicking, the button should show "show chat" translation key
+    expect(screen.getByRole('button', { name: 'ide.showChat' })).toBeInTheDocument();
 
     // Click to show chat again
-    fireEvent.click(screen.getByRole('button', { name: /show chat/i }));
-    expect(screen.getByRole('button', { name: /hide chat/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'ide.showChat' }));
+    expect(screen.getByRole('button', { name: 'ide.hideChat' })).toBeInTheDocument();
   });
 
   test('should render permission prompt overlay when needed', () => {
@@ -128,9 +139,11 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     };
 
     render(
-      <WorkspaceProvider value={mockPromptWorkspace as WorkspaceContextType}>
-        <IDELayout />
-      </WorkspaceProvider>,
+      <ToastProvider>
+        <WorkspaceProvider value={mockPromptWorkspace as WorkspaceContextType}>
+          <IDELayout />
+        </WorkspaceProvider>
+      </ToastProvider>,
     );
 
     expect(screen.getByText('Permission Required')).toBeInTheDocument();
@@ -155,9 +168,11 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     });
 
     render(
-      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
-        <IDELayout />
-      </WorkspaceProvider>,
+      <ToastProvider>
+        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+          <IDELayout />
+        </WorkspaceProvider>
+      </ToastProvider>,
     );
 
     expect(screen.getByText('Screen Too Small')).toBeInTheDocument();
@@ -166,9 +181,11 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
 
   test('should handle keyboard shortcut for chat toggle', () => {
     render(
-      <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
-        <IDELayout />
-      </WorkspaceProvider>,
+      <ToastProvider>
+        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+          <IDELayout />
+        </WorkspaceProvider>
+      </ToastProvider>,
     );
 
     // Initially chat should be visible

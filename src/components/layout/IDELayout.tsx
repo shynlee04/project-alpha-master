@@ -19,11 +19,11 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import {
-  Panel,
-  PanelGroup,
-  PanelResizeHandle,
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
   type ImperativePanelGroupHandle,
-} from 'react-resizable-panels';
+} from '@/components/ui/resizable';
 
 // Layout sub-components
 import { IDEHeaderBar } from './IDEHeaderBar';
@@ -393,14 +393,14 @@ export function IDELayout(): React.JSX.Element {
       />
 
       {/* Main Resizable Layout */}
-      <PanelGroup
+      <ResizablePanelGroup
         ref={mainPanelGroupRef}
         direction="horizontal"
         className="flex-1"
         onLayout={(layout) => handlePanelLayoutChange('main', layout)}
       >
         {/* Left Sidebar - FileTree */}
-        <Panel
+        <ResizablePanel
           order={1}
           defaultSize={20}
           minSize={10}
@@ -419,26 +419,26 @@ export function IDELayout(): React.JSX.Element {
               />
             </div>
           </div>
-        </Panel>
+        </ResizablePanel>
 
-        <PanelResizeHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
+        <ResizableHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
 
         {/* Center Area - Editor + Terminal */}
-        <Panel order={2} minSize={30}>
-          <PanelGroup
+        <ResizablePanel order={2} minSize={30}>
+          <ResizablePanelGroup
             ref={centerPanelGroupRef}
             direction="vertical"
             onLayout={(layout) => handlePanelLayoutChange('center', layout)}
           >
             {/* Editor + Preview */}
-            <Panel defaultSize={70} minSize={30}>
-              <PanelGroup
+            <ResizablePanel defaultSize={70} minSize={30}>
+              <ResizablePanelGroup
                 ref={editorPanelGroupRef}
                 direction="horizontal"
                 onLayout={(layout) => handlePanelLayoutChange('editor', layout)}
               >
                 {/* Editor */}
-                <Panel defaultSize={60} minSize={30} className="bg-slate-950">
+                <ResizablePanel defaultSize={60} minSize={30} className="bg-slate-950">
                   <MonacoEditor
                     openFiles={openFiles}
                     activeFilePath={activeFilePath}
@@ -456,31 +456,31 @@ export function IDELayout(): React.JSX.Element {
                       scheduleIdeStatePersistence(400);
                     }}
                   />
-                </Panel>
+                </ResizablePanel>
 
-                <PanelResizeHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
+                <ResizableHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
 
                 {/* Preview */}
-                <Panel defaultSize={40} minSize={15} className="bg-slate-900/30">
+                <ResizablePanel defaultSize={40} minSize={15} className="bg-slate-900/30">
                   <PreviewPanel previewUrl={previewUrl} port={previewPort} />
-                </Panel>
-              </PanelGroup>
-            </Panel>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
 
-            <PanelResizeHandle className="h-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-row-resize" />
+            <ResizableHandle className="h-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-row-resize" />
 
             {/* Terminal */}
-            <Panel defaultSize={30} minSize={10} maxSize={50} className="bg-slate-900">
+            <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-slate-900">
               <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} projectPath="/" />
-            </Panel>
-          </PanelGroup>
-        </Panel>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
 
         {/* Right Sidebar - Chat */}
         {isChatVisible && (
           <>
-            <PanelResizeHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
-            <Panel
+            <ResizableHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
+            <ResizablePanel
               order={3}
               defaultSize={25}
               minSize={15}
@@ -492,10 +492,10 @@ export function IDELayout(): React.JSX.Element {
                 projectName={projectMetadata?.name ?? projectId ?? 'Project'}
                 onClose={() => setIsChatVisible(false)}
               />
-            </Panel>
+            </ResizablePanel>
           </>
         )}
-      </PanelGroup>
+      </ResizablePanelGroup>
 
       {/* Minimum Viewport Warning */}
       <MinViewportWarning />
