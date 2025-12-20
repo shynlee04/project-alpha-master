@@ -4,7 +4,7 @@
 **Sprint:** 13 - Terminal & Sync Stability  
 **Priority:** P1  
 **Story Points:** 2  
-**Status:** in-progress
+**Status:** done
 
 ---
 
@@ -43,7 +43,7 @@ So that **I can use the supported preview methods instead of seeing an error**.
 - [x] T2: Implement informative page component with i18n
 - [x] T3: Add toast notification to PreviewPanel
 - [x] T4: Add translations for English and Vietnamese
-- [ ] T5: Manual verification
+- [x] T5: Manual verification
 
 ---
 
@@ -56,14 +56,16 @@ WebContainer's `forwardPreviewErrors: true` option causes it to proxy preview UR
 Implemented an informative "Not Supported" page via a generic catch-all route for `/webcontainer/*` to guide users back to the IDE.
 
 ### Files Modified
-- `src/routes/webcontainer.$.tsx` (NEW)
-- `src/components/ide/PreviewPanel/PreviewPanel.tsx` (Toast notification)
-- `src/i18n/en.json`
-- `src/i18n/vi.json`
+- `src/routes/webcontainer.$.tsx` (MODIFIED - replaced placeholder with branded error page)
+- `src/i18n/en.json` (MODIFIED - added `webcontainer.notSupported.*` keys)
+- `src/i18n/vi.json` (MODIFIED - added Vietnamese translations)
 
 ---
 
 ## Dev Agent Record
 
 **Agent:** Antigravity  
-**Date:** 2025-12-20
+**Date:** 2025-12-20  
+**Issue:** Route had placeholder text "Hello '/webcontainer/$'!" instead of informative page  
+**Fix:** Implemented branded error page with i18n support, warning icon, explanation, and dashboard navigation
+

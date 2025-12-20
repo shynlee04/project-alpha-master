@@ -156,5 +156,14 @@
       "close": "Đóng Pitch",
       "restart": "Xem lại"
     }
+  },
+  "webcontainer": {
+    "notSupported": {
+      "title": "Xem trước không khả dụng",
+      "subtitle": "Giới hạn của WebContainer",
+      "description": "Phần xem trước này được liên kết với tab IDE nơi WebContainer được khởi tạo. Không thể xem trong tab trình duyệt riêng.",
+      "explanation": "WebContainer chạy môi trường Node.js đầy đủ trong trình duyệt của bạn. Vì lý do bảo mật và quản lý tài nguyên, phần xem trước phải nằm trong phiên IDE.",
+      "backToDashboard": "Quay lại Bảng điều khiển"
+    }
   }
 }

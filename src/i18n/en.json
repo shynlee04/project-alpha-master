@@ -156,5 +156,14 @@
       "close": "Close Pitch",
       "restart": "Replay"
     }
+  },
+  "webcontainer": {
+    "notSupported": {
+      "title": "Preview Not Available",
+      "subtitle": "WebContainer Preview Limitation",
+      "description": "This preview is bound to the IDE tab where WebContainer was initialized. Preview cannot be viewed in a separate browser tab.",
+      "explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within the IDE session.",
+      "backToDashboard": "Back to Dashboard"
+    }
   }
 }
