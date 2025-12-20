@@ -36,13 +36,12 @@ jobs:
 
       - name: Build
         run: pnpm build
-        env:
-          NITRO_PRESET: netlify
+        # Note: NITRO_PRESET not needed - handled by @netlify/vite-plugin-tanstack-start
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
-          publish-dir: './dist'
+          publish-dir: './dist/client'
           production-branch: main
           production-deploy: ${{ github.ref == 'refs/heads/main' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

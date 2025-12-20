@@ -5,7 +5,8 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
-import { nitro } from 'nitro/vite'
+import netlify from '@netlify/vite-plugin-tanstack-start'
+
 
 const devtoolsEventBusPort = Number(process.env.TANSTACK_DEVTOOLS_EVENT_BUS_PORT ?? 42071)
 
@@ -53,7 +54,7 @@ const config = defineConfig({
   plugins: [
     securityHeadersPlugin, // Security headers (COOP/COEP + X-Frame-Options + etc.)
     devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
-    nitro(),
+    netlify(), // Replaces nitro() for Netlify deployment with proper SSR header support
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),

@@ -1,16 +1,17 @@
-# Netlify Configuration for TanStack Start + Nitro
+# Netlify Configuration for TanStack Start
 # 
 # Build outputs:
-# - Static files: dist/
-# - SSR Functions: .netlify/functions-internal/ (auto-detected by Nitro netlify preset)
+# - Static files: dist/client/
+# - SSR Functions: auto-configured by @netlify/vite-plugin-tanstack-start
 
 [build]
   command = "pnpm run build"
-  publish = "dist"
+  publish = "dist/client"
 
 [build.environment]
   NODE_VERSION = "20"
-  NITRO_PRESET = "netlify"
+  # NITRO_PRESET not needed - handled by @netlify/vite-plugin-tanstack-start
+
 
 # Required headers for WebContainer support
 # Note: Also defined in dist/_headers which Netlify reads automatically
