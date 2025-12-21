@@ -429,7 +429,11 @@ export function IDELayout(): React.JSX.Element {
           </Card>
         </ResizablePanel>
 
-        <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+        <ResizableHandle
+          withHandle
+          orientation="vertical"
+          className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize"
+        />
 
         {/* Center Area - Editor + Terminal */}
         <ResizablePanel order={2} minSize={30}>
@@ -475,7 +479,11 @@ export function IDELayout(): React.JSX.Element {
                   </Card>
                 </ResizablePanel>
 
-                <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                <ResizableHandle
+                  withHandle
+                  orientation="vertical"
+                  className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize"
+                />
 
                 {/* Preview */}
                 <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
@@ -493,7 +501,11 @@ export function IDELayout(): React.JSX.Element {
               </ResizablePanelGroup>
             </ResizablePanel>
 
-            <ResizableHandle withHandle className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
+            <ResizableHandle
+              withHandle
+              orientation="horizontal"
+              className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize"
+            />
 
             {/* Terminal */}
             <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
@@ -557,7 +569,7 @@ export function IDELayout(): React.JSX.Element {
  * 
  * @returns Warning overlay JSX element
  */
-function MinViewportWarning(): React.JSX.Element {
+export function MinViewportWarning(): React.JSX.Element {
   return (
     <div className="fixed inset-0 bg-slate-950/95 z-50 hidden min-[1024px]:hidden items-center justify-center p-8 text-center max-[1023px]:flex">
       <div>

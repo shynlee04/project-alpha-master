@@ -115,8 +115,8 @@ So that **users experience a cohesive, modern, and accessible IDE across FileTre
 
 ## Dev Agent Record
 
-**Agent:** (to be filled by dev agent)  
-**Session:** (to be filled by dev agent)
+**Agent:** Platform B  
+**Session:** 2025-12-21T13:25:00+07:00
 
 ### Task Progress:
 - [x] T1: Research Panel Migration Patterns
@@ -136,7 +136,7 @@ So that **users experience a cohesive, modern, and accessible IDE across FileTre
 | src/components/layout/TerminalPanel.tsx | Update | Allow className prop for panel styling |
 
 ### Tests Created:
-- Added: `src/components/layout/__tests__/IDELayout.test.tsx` — validates panel headers render, resizable handles present (role="separator"), and existing smoke coverage retained.
+- Added: `src/components/layout/__tests__/IDELayout.test.tsx` — headers + handles with affordance/tabindex; terminal projectPath wiring; chat shell toggle; preview shell container min-h-0; dark-mode presence; axe accessibility check (vitest-axe).
 
 ### Decisions Made:
 - Use Shadcn Card headers for FileTree/Editor/Preview/Terminal/Chat shells

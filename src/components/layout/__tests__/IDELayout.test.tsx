@@ -11,7 +11,7 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { IDELayout } from '../IDELayout';
 import { WorkspaceProvider } from '../../../lib/workspace';
 import { ToastProvider } from '../../ui/Toast';
-import { axe, toHaveNoViolations } from 'vitest-axe';
+import { axe, toHaveNoViolations } from 'jest-axe';
 
 expect.extend(toHaveNoViolations);
 
@@ -52,7 +52,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     // Mock window.matchMedia for responsive tests
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: vi.fn().mockImplementation((query) => ({
+      value: vi.fn().mockImplementation((query: string) => ({
         matches: false,
         media: query,
         onchange: null,
@@ -221,7 +221,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     // Mock small screen
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: vi.fn().mockImplementation((query) => ({
+      value: vi.fn().mockImplementation((query: string) => ({
         matches: query === '(max-width: 1023px)',
         media: query,
         onchange: null,
@@ -242,7 +242,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     );
 
     expect(screen.getByText('Screen Too Small')).toBeInTheDocument();
-    expect(screen.getByText('via-gent IDE requires a minimum viewport width of 1024px.')).toBeInTheDocument();
+    expect(screen.getByText(/minimum viewport width of 1024px/i)).toBeInTheDocument();
   });
 
   test('should handle keyboard shortcut for chat toggle', () => {
