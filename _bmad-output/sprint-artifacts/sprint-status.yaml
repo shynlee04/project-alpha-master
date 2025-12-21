@@ -147,7 +147,15 @@ development_status:
   22-2-create-cicd-pipeline: done
     story: _bmad-output/sprint-artifacts/22-2-create-cicd-pipeline.md
     context: _bmad-output/sprint-artifacts/22-2-create-cicd-pipeline-context.xml
-  22-3-add-integration-tests: backlog
+  22-3-add-integration-tests: review
+    story: _bmad-output/sprint-artifacts/22-3-add-integration-tests.md
+    context: _bmad-output/sprint-artifacts/22-3-add-integration-tests-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-21T12:20:00+07:00"
+    ready_at: "2025-12-21T12:25:00+07:00"
+    dev_started_at: "2025-12-21T12:25:00+07:00"
+    dev_completed_at: "2025-12-21T12:45:00+07:00"
+    tests_added: 30
   22-4-configure-error-monitoring: backlog
   22-5-create-deployment-docs: backlog
   22-6-establish-performance-benchmarks: backlog
@@ -503,7 +511,7 @@ implementation_order:
     - epic-20  # Advanced IDE Features [P4]
 
 # =============================================================================
-# NEXT ACTIONS
+# NEXT ACTIONS (Updated 2025-12-21)
 # =============================================================================
 next_actions:
   completed:
@@ -516,14 +524,67 @@ next_actions:
       date: "2025-12-20"
       notes: "Tooltip, toast warning, 11 new tests"
       
+    - action: "Governance Documents Overhaul"
+      status: done
+      date: "2025-12-21"
+      notes: |
+        - Sharded architecture.md (23 files → _bmad-output/architecture/)
+        - Sharded epics.md (37 files → _bmad-output/epics/)
+        - Sharded & renamed ux-specification (10 files → _bmad-output/ux-specification/)
+        - Updated all 15 standards files (frontend/, global/, backend/, testing/)
+        - Added Epic 10 stories 10-6, 10-7 (event wiring)
+        - Added Epics 24, 25, 26 (Smart Sync, AI Foundation, Agent Dashboard)
+        - Created mcp-research.md protocol document
+        - Updated AGENTS.md with mandatory MCP research callout
+      
   immediate:
-    - action: "Create Story 13-4 (Preserve File Tree State)"
-      command: "/bmad-bmm-workflows-create-story"
-      agent: "sm"
-      priority: P1
-
-  then:
-    - action: "Implement Story 13-3"
+    - action: "Continue Epic 22 (Production Hardening)"
       command: "/bmad-bmm-workflows-dev-story"
-      agent: "dev"
       priority: P0
+      story: "22-2"
+      notes: "CI/CD Pipeline - Platform A"
+      
+    - action: "Continue Epic 23 (UX Modernization)"
+      command: "/bmad-bmm-workflows-dev-story"
+      priority: P1
+      story: "23-3"
+      notes: "Theme Provider Enhancement - Platform B"
+      
+  then:
+    - action: "Complete Epic 10 Event Wiring"
+      command: "/bmad-bmm-workflows-dev-story"
+      priority: P1
+      notes: "Stories 10-6, 10-7 - Make events actually emit"
+      
+    - action: "Start Epic 25 (AI Foundation Sprint)"
+      command: "/bmad-bmm-workflows-create-story"
+      priority: P0
+      notes: "Core AI integration - highest value"
+
+# =============================================================================
+# GOVERNANCE DOCUMENT SHARDING (2025-12-21)
+# =============================================================================
+document_sharding:
+  enabled: true
+  tool: "@kayvan/markdown-tree-parser"
+  
+  architecture:
+    original: "_bmad-output/archive/architecture.md"
+    sharded_to: "_bmad-output/architecture/"
+    index: "_bmad-output/architecture/index.md"
+    files: 23
+    sections: 22
+    
+  epics:
+    original: "_bmad-output/archive/epics.md"
+    sharded_to: "_bmad-output/epics/"
+    index: "_bmad-output/epics/index.md"
+    files: 37
+    sections: 36
+    
+  ux_specification:
+    original: "_bmad-output/proposal/ux-specification-2025-12-21.md"
+    sharded_to: "_bmad-output/ux-specification/"
+    index: "_bmad-output/ux-specification/index.md"
+    files: 10
+    sections: 9

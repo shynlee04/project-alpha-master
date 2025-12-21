@@ -10,9 +10,15 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-20T22:29:00+07:00"
+last_updated: "2025-12-21T12:20:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
+current_story:
+  key: "22-3-add-integration-tests"
+  epic: 22
+  status: "drafted"
+  platform: "Platform A"
+  started_at: "2025-12-21T12:20:00+07:00"
 
 # =============================================================================
 # GOVERNANCE DOCUMENT VALIDATION
@@ -22,29 +28,43 @@ governance_docs:
     path: "_bmad-output/prd.md"
     legacy_path: "docs/legacy-unfiltered/prd-via-gent-foundational-architectural-slice-2025-12-10.md"
     status: "VALID"
-    date: "2025-12-20"
-    notes: "Complete PRD with 14-step validation sequence. Migrated from legacy."
+    date: "2025-12-21"
+    notes: "Complete PRD with 14-step validation sequence."
     
   architecture:
-    path: "_bmad-output/architecture.md"
-    legacy_path: "docs/legacy-unfiltered/architecture.md"
+    path: "_bmad-output/architecture/index.md"  # SHARDED - 23 files
+    original_archived: "_bmad-output/archive/architecture.md"
     status: "VALID"
-    date: "2025-12-20"
-    notes: "Updated with Terminal Integration (Epic 13). Migrated from legacy."
+    date: "2025-12-21"
+    notes: "Sharded 2025-12-21. v2.0 with security headers, MCP protocol, lessons learned."
+    sharding:
+      enabled: true
+      tool: "@kayvan/markdown-tree-parser"
+      sections: 22
+      files: 23
     
   ux_design:
-    path: "_bmad-output/ux-design.md"
-    legacy_path: "docs/legacy-unfiltered/ux-design-specification.md"
+    path: "_bmad-output/ux-specification.md"  # RENAMED from proposal/
+    sharded_path: "_bmad-output/ux-specification/index.md"  # SHARDED - 10 files
+    original: "_bmad-output/proposal/ux-specification-2025-12-21.md"
     status: "VALID"
-    date: "2025-12-20"
-    notes: "Complete UX spec. Migrated from legacy."
+    date: "2025-12-21"
+    notes: "Consolidated from proposal. Agent Management Dashboard + IDE enhancements."
+    sharding:
+      enabled: true
+      sections: 9
+      files: 10
     
   epics:
-    path: "_bmad-output/epics.md"
-    legacy_path: "docs/legacy-unfiltered/epics.md"
+    path: "_bmad-output/epics/index.md"  # SHARDED - 37 files
+    original_archived: "_bmad-output/archive/epics.md"
     status: "VALID"
-    date: "2025-12-20"
-    notes: "Epic 13 added per Course Correction v5. Migrated from legacy."
+    date: "2025-12-21"
+    notes: "Sharded 2025-12-21. Epics 24-26 added. 26 total epics."
+    sharding:
+      enabled: true
+      sections: 36
+      files: 37
 
 # =============================================================================
 # BROWNFIELD DOCUMENTATION (Phase 0 - Prerequisite)
