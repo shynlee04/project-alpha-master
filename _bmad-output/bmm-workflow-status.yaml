@@ -16,7 +16,7 @@ current_workflow: "story-dev-cycle"
 current_story:
   key: "22-4-configure-error-monitoring"
   epic: 22
-  status: "ready-for-dev"
+  status: "review"
   platform: "Platform A"
   started_at: "2025-12-21T13:06:00+07:00"
 

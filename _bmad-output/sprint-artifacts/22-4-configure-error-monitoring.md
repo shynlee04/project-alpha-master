@@ -135,19 +135,36 @@ VITE_SENTRY_SAMPLE_RATE=1.0
 
 ## Dev Agent Record
 
-**Agent:** -  
-**Session:** -
+**Agent:** Platform A (Antigravity - Gemini 2.5 Pro)  
+**Session:** 2025-12-21T13:08:00+07:00
 
 ### Task Progress:
-- [ ] All tasks pending
+- [x] T0.1: Read existing error-handling.md standards
+- [x] T0.2: Research @sentry/react latest patterns (Context7)
+- [x] T0.3: Review TanStack Start client initialization patterns
+- [x] T1: Install `@sentry/react` package (v10.32.1)
+- [x] T2: Create `src/lib/monitoring/sentry.ts` initialization module
+- [x] T3: Create `src/components/common/AppErrorBoundary.tsx`
+- [x] T4: Update root layout to wrap app with error boundary
+- [x] T5: Add environment variables to `.env.example`
+- [x] T6: Add i18n translation keys (en.json, vi.json)
+- [x] T7: Verify TypeScript compilation (no Sentry-related errors)
 
 ### Files Changed:
 | File | Action | Lines |
 |------|--------|-------|
-| - | - | - |
+| `src/lib/monitoring/sentry.ts` | Created | 150 |
+| `src/components/common/AppErrorBoundary.tsx` | Created | 120 |
+| `src/routes/__root.tsx` | Modified | +8 |
+| `src/i18n/en.json` | Modified | +6 |
+| `src/i18n/vi.json` | Modified | +6 |
+| `.env.example` | Created | 26 |
 
 ### Decisions Made:
-- None yet
+- Used `toError()` helper to handle Sentry's `unknown` error type
+- Wrapped only `Header` and `children` in ErrorBoundary (not DevTools)
+- Sentry disabled by default in non-production (can force enable via env)
+- Added session replay with privacy defaults (maskAllText, blockAllMedia)
 
 ---
 
@@ -177,5 +194,8 @@ VITE_SENTRY_SAMPLE_RATE=1.0
 |------|--------|-------|
 | 2025-12-21 | `drafted` | Story file created by Platform A |
 | 2025-12-21 | `ready-for-dev` | Context XML created, research complete |
+| 2025-12-21 | `in-progress` | Development started |
+| 2025-12-21 | `review` | Implementation complete, ready for code review |
 
-**Current Status:** `ready-for-dev`
+**Current Status:** `review`
+

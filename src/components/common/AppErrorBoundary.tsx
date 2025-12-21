@@ -85,6 +85,15 @@ function ErrorFallback({ error, resetError }: FallbackProps) {
 }
 
 /**
+ * Convert unknown error to Error object
+ */
+function toError(error: unknown): Error {
+    if (error instanceof Error) return error
+    if (typeof error === 'string') return new Error(error)
+    return new Error('An unknown error occurred')
+}
+
+/**
  * Application Error Boundary wrapper
  * 
  * Wraps children with Sentry's ErrorBoundary to catch and report errors.
@@ -98,7 +107,9 @@ function ErrorFallback({ error, resetError }: FallbackProps) {
 export function AppErrorBoundary({ children }: { children: React.ReactNode }) {
     return (
         <Sentry.ErrorBoundary
-            fallback={(props) => <ErrorFallback {...props} />}
+            fallback={({ error, resetError }) => (
+                <ErrorFallback error={toError(error)} componentStack={null} resetError={resetError} />
+            )}
             showDialog={import.meta.env.PROD}
             onError={(error, componentStack) => {
                 console.error('[AppErrorBoundary] Caught error:', error)
@@ -113,3 +124,4 @@ export function AppErrorBoundary({ children }: { children: React.ReactNode }) {
 }
 
 export default AppErrorBoundary
+

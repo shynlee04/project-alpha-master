@@ -103,7 +103,7 @@ export function initSentry(): boolean {
  * Check if Sentry is currently initialized
  */
 export function isSentryEnabled(): boolean {
-    return isBrowser && Sentry.getCurrentHub?.()?.getClient?.() !== undefined
+    return isBrowser && Sentry.getClient() !== undefined
 }
 
 /**
