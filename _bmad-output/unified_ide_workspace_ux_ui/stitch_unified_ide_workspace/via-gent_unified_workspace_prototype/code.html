@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent Unified Workspace Prototype</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Fira+Code:wght@400;500&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#f97316", // Default Orange
+                        "primary-blue": "#3b82f6", // Alternate Blue
+                        secondary: "#3b82f6", 
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#0f0f11",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#18181b",
+                        "surface-darker": "#121214",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#27272a",
+                        "editor-bg": "#09090b",
+                        "retro-green": "#4ade80",
+                        "retro-red": "#f87171",
+                        "retro-yellow": "#eab308",
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                        pixel: ['"Press Start 2P"', 'cursive'],
+                        retro: ['VT323', 'monospace'],
+                    },
+                    boxShadow: {
+                        'retro': '4px 4px 0px 0px rgba(0,0,0,0.5)',
+                        'retro-sm': '2px 2px 0px 0px rgba(0,0,0,0.5)',
+                        'pixel': '2px 2px 0px 0px rgba(0,0,0,0.5)',
+                        'pixel-primary': '2px 2px 0px 0px #c2410c',
+                    }
+                },
+            },
+        };
+    </script>
+
+    <!-- React Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <style>
+        /* Custom Scrollbar Global */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 5px; border: 2px solid #18181b; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Utility */
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+        .bg-grid-pattern {
+            background-size: 20px 20px;
+            background-image: linear-gradient(to right, #27272a 1px, transparent 1px),
+                              linear-gradient(to bottom, #27272a 1px, transparent 1px);
+        }
+        .retro-checkbox { appearance: none; }
+        .retro-checkbox:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-color: #f97316; border-color: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Navigation Overlay ---
+        const NavOverlay = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const navigate = useNavigate();
+            const location = useLocation();
+
+            const routes = [
+                { path: "/", label: "Home" },
+                { path: "/ide", label: "IDE Workspace" },
+                { path: "/agents", label: "Agent Management" },
+                { path: "/ide-vn", label: "IDE (Vietnamese)" },
+                { path: "/dashboard-retro", label: "Dashboard (Retro)" },
+                { path: "/agent-list", label: "Agent List Table" },
+                { path: "/agent-config", label: "Agent Config" },
+                { path: "/tools", label: "Tool Registry" },
+                { path: "/workflow", label: "Workflow Editor" },
+                { path: "/llm", label: "LLM Providers" },
+                { path: "/analytics", label: "Analytics" },
+            ];
+
+            return (
+                <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+                    {isOpen && (
+                        <div className="mb-2 bg-[#18181b] border border-[#27272a] rounded-lg shadow-xl overflow-hidden min-w-[200px] flex flex-col max-h-[80vh] overflow-y-auto">
+                            {routes.map((r) => (
+                                <button
+                                    key={r.path}
+                                    onClick={() => {
+                                        navigate(r.path);
+                                        setIsOpen(false);
+                                    }}
+                                    className={`px-4 py-2 text-left text-xs font-mono hover:bg-primary/20 hover:text-primary transition-colors ${location.pathname === r.path ? 'text-primary bg-primary/10' : 'text-gray-400'}`}
+                                >
+                                    {r.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="h-10 w-10 bg-primary hover:bg-orange-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105"
+                    >
+                        <span className="material-icons-outlined">{isOpen ? 'close' : 'menu'}</span>
+                    </button>
+                </div>
+            );
+        };
+
+        // --- Components (Simulating Screens) ---
+
+        // Screen 1: Unified IDE Workspace
+        const IdeWorkspace = () => {
+            return (
+                <div className="h-screen flex flex-col overflow-hidden bg-background-dark text-gray-300 font-sans">
+                     {/* Header */}
+                    <header className="h-12 border-b border-border-dark bg-surface-dark flex items-center justify-between px-4 z-20 shrink-0">
+                        <div className="flex items-center space-x-4">
+                            <button className="text-gray-400 hover:text-primary transition-colors"><span className="material-icons-outlined text-xl">menu</span></button>
+                            <div className="flex items-center space-x-2">
+                                <div className="w-6 h-6 bg-primary rounded flex items-center justify-center text-white font-bold text-xs">M</div>
+                                <span className="font-semibold text-white tracking-tight">Mistral<span className="text-gray-500 font-normal">IDE</span></span>
+                            </div>
+                            <div className="hidden md:flex items-center text-xs text-gray-400 ml-4 space-x-2 px-3 py-1 bg-[#27272a] rounded-md border border-border-dark">
+                                <span className="material-icons-outlined text-sm">folder_open</span>
+                                <span>via-gent</span><span>/</span><span className="text-gray-200">src/components/AgentChat.tsx</span>
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                            <div className="hidden sm:flex items-center space-x-2 mr-2">
+                                <span className="flex h-2 w-2 rounded-full bg-green-500"></span><span className="text-xs font-medium text-gray-400">Agent Active</span>
+                            </div>
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-purple-600 flex items-center justify-center text-white text-xs font-bold border-2 border-surface-dark">JS</div>
+                        </div>
+                    </header>
+                    {/* Main Layout */}
+                    <div className="flex-1 flex overflow-hidden">
+                        {/* Activity Bar */}
+                        <aside className="w-12 bg-surface-dark border-r border-border-dark flex flex-col items-center py-4 space-y-4 shrink-0 z-10">
+                            <button className="p-2 rounded-md bg-[#27272a] text-primary"><span className="material-icons-outlined text-xl">description</span></button>
+                            <button className="p-2 rounded-md text-gray-400 hover:text-white"><span className="material-icons-outlined text-xl">search</span></button>
+                            <button className="p-2 rounded-md text-gray-400 hover:text-white"><span className="material-icons-outlined text-xl">hub</span></button>
+                            <button className="p-2 rounded-md text-gray-400 hover:text-white"><span className="material-icons-outlined text-xl">bug_report</span></button>
+                            <button className="p-2 rounded-md text-gray-400 hover:text-white"><span className="material-icons-outlined text-xl">account_circle</span></button>
+                        </aside>
+                        {/* Sidebar */}
+                        <nav className="w-64 bg-[#18181b] border-r border-border-dark flex flex-col shrink-0">
+                            <div className="h-9 px-4 flex items-center justify-between text-xs font-semibold tracking-wider text-gray-400 uppercase"><span>Explorer</span><span className="material-icons-outlined text-sm">more_horiz</span></div>
+                            <div className="flex-1 overflow-y-auto font-mono text-sm pl-2">
+                                <div className="flex items-center py-1 px-2 text-gray-300 hover:bg-[#27272a] cursor-pointer"><span className="material-icons-outlined text-sm text-gray-400 mr-1 rotate-90">chevron_right</span><span className="material-icons-outlined text-sm text-yellow-500 mr-2">folder</span><span>src</span></div>
+                                <div className="pl-4 border-l border-gray-700 ml-3">
+                                    <div className="flex items-center py-1 px-2 text-gray-300 bg-[#27272a] border-l-2 border-primary cursor-pointer"><span className="material-icons-outlined text-sm text-blue-400 mr-2">code</span><span className="text-primary">AgentChat.tsx</span></div>
+                                    <div className="flex items-center py-1 px-2 text-gray-300 hover:bg-[#27272a] cursor-pointer"><span className="material-icons-outlined text-sm text-blue-400 mr-2">code</span><span>Sidebar.tsx</span></div>
+                                </div>
+                            </div>
+                        </nav>
+                        {/* Editor Area */}
+                        <main className="flex-1 flex flex-col min-w-0 bg-editor-bg">
+                            <div className="flex items-center h-9 bg-[#18181b] border-b border-border-dark overflow-x-auto no-scrollbar">
+                                <div className="flex items-center h-full px-3 min-w-fit bg-editor-bg border-t-2 border-t-primary text-xs text-gray-200 font-medium select-none cursor-pointer"><span className="material-icons-outlined text-sm text-blue-400 mr-2">code</span>AgentChat.tsx</div>
+                            </div>
+                            <div className="flex-1 overflow-auto relative font-mono text-sm leading-6 p-4">
+                                <div className="text-gray-300 whitespace-pre">
+                                    <span className="text-purple-400">import</span> React, {'{ useState, useEffect }'} <span className="text-purple-400">from</span> <span className="text-green-400">'react'</span>;<br/>
+                                    <span className="text-gray-500">// Component for the main chat interface used by the coding agent</span><br/>
+                                    <span className="text-purple-400">export default function</span> <span className="text-yellow-400">AgentChat</span>({'projectContext'}) {'{'}<br/>
+                                    &nbsp;&nbsp;<span className="text-purple-400">const</span> [messages, setMessages] = <span className="text-blue-400">useState</span>([]);<br/>
+                                    &nbsp;&nbsp;<span className="text-purple-400">const</span> [isLoading, setIsLoading] = <span className="text-blue-400">useState</span>(<span className="text-blue-300">false</span>);<br/>
+                                    &nbsp;&nbsp;<span className="text-purple-400">const</span> handleSendMessage = <span className="text-purple-400">async</span> (text) =&gt; {'{'}<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;setIsLoading(<span className="text-blue-300">true</span>);<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Simulating backend call...</span><br/>
+                                    &nbsp;&nbsp;{'}'}<br/>
+                                    {'}'}
+                                </div>
+                            </div>
+                            <div className="h-48 border-t border-border-dark bg-[#18181b] flex flex-col">
+                                <div className="flex items-center px-4 py-2 border-b border-border-dark space-x-6 text-xs font-semibold text-gray-400">
+                                    <button className="text-primary border-b-2 border-primary pb-1">TERMINAL</button>
+                                </div>
+                                <div className="flex-1 p-3 font-mono text-xs overflow-auto bg-editor-bg text-gray-300">
+                                    <div className="mb-1"><span className="text-green-500">➜</span> <span className="text-blue-500">via-gent</span> npm run dev</div>
+                                    <div className="mb-2 text-green-500">ready - started server on 0.0.0.0:3000</div>
+                                </div>
+                            </div>
+                        </main>
+                        {/* Agent Chat Sidebar */}
+                        <aside className="w-80 border-l border-border-dark bg-surface-dark flex flex-col shrink-0">
+                            <div className="flex items-center h-9 bg-[#18181b] border-b border-border-dark"><button className="flex-1 h-full text-xs font-medium text-gray-200 border-b-2 border-primary bg-surface-dark">Agent Chat</button></div>
+                            <div className="flex-1 flex flex-col overflow-hidden p-4 space-y-4 bg-[#09090b]">
+                                <div className="flex gap-3">
+                                    <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20"><span className="material-icons-outlined text-white text-sm">smart_toy</span></div>
+                                    <div className="p-3 bg-[#27272a] rounded-lg rounded-tl-none border border-border-dark text-sm text-gray-200"><p>Hello! I'm your AI coding assistant. I've analyzed AgentChat.tsx.</p></div>
+                                </div>
+                            </div>
+                            <div className="p-4 bg-surface-dark border-t border-border-dark">
+                                <div className="relative">
+                                    <textarea className="w-full bg-[#27272a] border border-border-dark rounded-md p-3 text-sm text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary resize-none placeholder-gray-500" placeholder="Ask the agent..." rows="3"></textarea>
+                                    <button className="absolute bottom-2 right-2 p-1.5 bg-primary hover:bg-orange-600 text-white rounded shadow-md"><span className="material-icons-outlined text-lg">send</span></button>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 2: Agent Management (Simulated with adjusted colors for consistency)
+        const AgentManagement = () => {
+            return (
+                <div className="bg-background-dark text-gray-300 h-screen flex flex-col overflow-hidden">
+                    <header className="h-12 bg-[#0B0D12] border-b border-gray-800 flex items-center justify-between px-4">
+                        <div className="flex items-center gap-2 font-semibold text-white"><span className="material-icons-round text-primary-blue text-xl">hub</span><span>Via-gent Management</span></div>
+                    </header>
+                    <main className="flex-1 flex overflow-hidden">
+                         <aside className="w-64 bg-[#0B0D12] border-r border-gray-800 flex flex-col p-4 gap-4">
+                            <div className="text-xs font-semibold text-gray-400 uppercase">Active Agents</div>
+                            <div className="p-3 rounded bg-[#151921] border border-gray-800 hover:border-primary-blue/50 cursor-pointer">
+                                <div className="flex justify-between mb-2"><span className="text-sm font-medium text-white">DevArchitect</span><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span></div>
+                                <div className="text-xs text-gray-400">Refactoring auth...</div>
+                                <div className="w-full bg-gray-700 h-1 rounded-full mt-2"><div className="bg-primary-blue h-full rounded-full" style={{width: '75%'}}></div></div>
+                            </div>
+                            <div className="p-3 rounded bg-[#151921] border border-gray-800 hover:border-primary-blue/50 cursor-pointer">
+                                <div className="flex justify-between mb-2"><span className="text-sm font-medium text-white">BugHunter_01</span><span className="w-2 h-2 rounded-full bg-yellow-500"></span></div>
+                                <div className="text-xs text-gray-400">Waiting input</div>
+                            </div>
+                         </aside>
+                         <section className="flex-1 bg-background-dark p-6 overflow-y-auto">
+                            <h1 className="text-lg font-semibold text-gray-100 mb-6">Agent Command Center</h1>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="bg-surface-dark rounded-lg border border-gray-800 p-4">
+                                    <div className="flex gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-md bg-blue-500/10 flex items-center justify-center text-blue-500"><span className="material-icons-round">code</span></div>
+                                        <div><h3 className="font-semibold text-white">DevArchitect</h3><p className="text-xs text-gray-400 font-mono">ID: agt_dev_092a</p></div>
+                                    </div>
+                                    <div className="bg-[#0B0D12] rounded p-3 font-mono text-xs text-gray-400 border border-gray-800 h-24 overflow-y-auto">
+                                        <div className="flex gap-2"><span className="text-gray-500">10:42:01</span><span>Parsing `auth.ts`...</span></div>
+                                        <div className="flex gap-2"><span className="text-gray-500">10:42:12</span><span className="text-blue-400">&gt; Refactoring `validateSession`...</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                         </section>
+                    </main>
+                </div>
+            );
+        };
+
+        // Screen 4: Retro Dashboard
+        const AgentDashboardRetro = () => {
+            return (
+                <div className="bg-[#0f0f11] text-gray-300 font-sans h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-white">
+                    <header className="h-14 border-b border-border-dark bg-surface-dark flex items-center justify-between px-4 z-20 shrink-0 shadow-sm">
+                        <div className="flex items-center space-x-2.5">
+                            <div className="w-8 h-8 bg-primary flex items-center justify-center text-white shadow-pixel-primary"><span className="font-pixel text-2xl mt-1">V</span></div>
+                            <span className="font-pixel text-2xl text-white tracking-wide mt-1">VIA<span className="text-primary">-</span>GENT</span>
+                        </div>
+                        <div className="flex items-center space-x-2 bg-black/20 px-3 py-1 border border-border-dark">
+                            <div className="w-2 h-2 bg-green-500 animate-pulse"></div>
+                            <span className="font-pixel text-lg text-green-500 mt-1">SYSTEM ONLINE</span>
+                        </div>
+                    </header>
+                    <div className="flex-1 flex overflow-hidden">
+                        <aside className="w-64 bg-surface-dark border-r border-border-dark flex flex-col p-4">
+                            <button className="w-full flex items-center space-x-2 bg-surface-darker border border-border-dark px-3 py-2 text-xs text-gray-400 hover:border-primary transition-colors group">
+                                <span className="material-symbols-outlined text-sm">add</span><span className="font-pixel text-base mt-0.5 group-hover:text-white">NEW AGENT</span>
+                            </button>
+                            <nav className="flex-1 mt-4 space-y-2 font-pixel text-xs">
+                                <div className="px-3 py-2 bg-primary/10 text-primary border-l-4 border-primary">AGENTS <span className="float-right bg-primary text-white px-1">3</span></div>
+                                <div className="px-3 py-2 text-gray-400 hover:text-primary cursor-pointer">TOOLS</div>
+                                <div className="px-3 py-2 text-gray-400 hover:text-primary cursor-pointer">SYSTEM</div>
+                            </nav>
+                        </aside>
+                        <main className="flex-1 p-6 bg-background-dark">
+                            <div className="h-16 px-6 border-b border-border-dark bg-surface-dark flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <div className="h-10 w-10 bg-surface-darker flex items-center justify-center border border-border-dark mr-4"><span className="material-symbols-outlined text-primary text-2xl">code</span></div>
+                                    <div>
+                                        <h1 className="text-xl font-bold text-white font-pixel tracking-wide flex items-center">CODER_ALPHA_V2 <span className="ml-3 px-2 py-0.5 bg-green-500/10 border border-green-500/30 text-green-500 text-[10px] font-mono">ACTIVE</span></h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-6 bg-surface-dark border border-border-dark p-5">
+                                <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 font-pixel border-b border-border-dark pb-2">System Prompt</h3>
+                                <div className="h-40 bg-[#09090b] border border-border-dark p-4 font-mono text-sm text-gray-300">
+                                    You are an expert Frontend Developer specializing in Tailwind CSS...
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 5: List View
+        const AgentListTable = () => {
+             return (
+                <div className="bg-[#0f0f11] text-gray-300 h-screen flex flex-col font-sans">
+                    <header className="h-12 border-b border-border-dark bg-surface-dark flex items-center justify-between px-4">
+                        <div className="flex items-center space-x-2">
+                             <div className="w-6 h-6 bg-primary rounded-sm flex items-center justify-center text-white font-bold text-xs shadow-pixel-primary">M</div>
+                             <span className="font-semibold text-white">Mistral<span className="text-gray-500 font-normal">Manager</span></span>
+                        </div>
+                    </header>
+                    <main className="flex-1 overflow-auto bg-editor-bg p-6">
+                        <table className="w-full text-left border-collapse">
+                            <thead className="bg-[#09090b] text-xs uppercase font-semibold text-gray-500 font-mono">
+                                <tr>
+                                    <th className="px-4 py-3 border-b border-border-dark">Name</th>
+                                    <th className="px-4 py-3 border-b border-border-dark">Type</th>
+                                    <th className="px-4 py-3 border-b border-border-dark">Status</th>
+                                    <th className="px-4 py-3 border-b border-border-dark text-right">Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm divide-y divide-border-dark text-gray-300">
+                                <tr className="hover:bg-[#1f1f23]">
+                                    <td className="px-4 py-3 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded bg-primary/20 flex items-center justify-center text-primary border border-primary/30"><span className="material-symbols-outlined text-lg">code</span></div>
+                                        <div><div className="font-semibold text-white">Senior-Dev-01</div><div className="text-xs text-gray-500 font-mono">ID: ag_8f92a</div></div>
+                                    </td>
+                                    <td className="px-4 py-3"><span className="px-2 py-0.5 rounded text-xs bg-blue-900/30 text-blue-300 border border-blue-800">Coding</span></td>
+                                    <td className="px-4 py-3 text-green-400 font-bold font-mono text-xs">RUNNING</td>
+                                    <td className="px-4 py-3 text-right font-mono">98.5%</td>
+                                </tr>
+                                <tr className="hover:bg-[#1f1f23]">
+                                    <td className="px-4 py-3 flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded bg-red-500/20 flex items-center justify-center text-red-500 border border-red-500/30"><span className="material-symbols-outlined text-lg">edit_note</span></div>
+                                        <div><div className="font-semibold text-white">Doc-Writer-V2</div><div className="text-xs text-gray-500 font-mono">ID: ag_99d21</div></div>
+                                    </td>
+                                    <td className="px-4 py-3"><span className="px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-300 border border-gray-600">Writing</span></td>
+                                    <td className="px-4 py-3 text-red-400 font-bold font-mono text-xs">ERROR</td>
+                                    <td className="px-4 py-3 text-right font-mono text-red-400">0%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </main>
+                </div>
+             );
+        };
+
+        // Screen 8: Workflow Editor
+        const WorkflowEditor = () => {
+            return (
+                <div className="bg-[#0f0f11] text-gray-300 h-screen flex flex-col font-sans overflow-hidden">
+                     <header className="h-12 border-b border-border-dark bg-surface-dark flex items-center justify-between px-4 z-20">
+                        <div className="flex items-center space-x-2">
+                             <div className="w-6 h-6 bg-primary rounded-sm flex items-center justify-center text-white font-bold text-xs font-mono">V</div>
+                             <span className="font-semibold text-white">Via-Gent<span className="text-gray-500 font-normal">Flow</span></span>
+                        </div>
+                        <button className="flex items-center space-x-1 px-3 py-1.5 bg-primary hover:bg-orange-600 text-white rounded-sm text-xs font-bold uppercase"><span className="material-icons-outlined text-sm">play_arrow</span><span>Run</span></button>
+                    </header>
+                    <div className="flex-1 flex overflow-hidden">
+                        <aside className="w-64 bg-[#18181b] border-r border-border-dark flex flex-col p-3 space-y-2">
+                            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 font-mono px-1">Agents</div>
+                            <div className="flex items-center p-2 bg-[#27272a] rounded-sm border border-border-dark cursor-move hover:border-primary shadow-sm"><div className="w-6 h-6 rounded-sm bg-purple-500/20 text-purple-500 flex items-center justify-center mr-2"><span className="material-icons-outlined text-sm">psychology</span></div><span className="text-xs font-medium text-gray-200">Planner Agent</span></div>
+                            <div className="flex items-center p-2 bg-[#27272a] rounded-sm border border-border-dark cursor-move hover:border-primary shadow-sm"><div className="w-6 h-6 rounded-sm bg-blue-500/20 text-blue-500 flex items-center justify-center mr-2"><span className="material-icons-outlined text-sm">code</span></div><span className="text-xs font-medium text-gray-200">Coder Agent</span></div>
+                        </aside>
+                        <main className="flex-1 relative overflow-hidden bg-[#09090b]">
+                            {/* Dot Pattern */}
+                            <div className="absolute inset-0" style={{backgroundImage: 'radial-gradient(#3f3f46 1px, transparent 1px)', backgroundSize: '20px 20px'}}></div>
+                            
+                            {/* SVG Lines */}
+                            <svg className="absolute top-0 left-0 w-full h-full pointer-events-none z-0 overflow-visible">
+                                <defs>
+                                    <marker id="arrowhead" markerHeight="7" markerWidth="10" orient="auto" refX="9" refY="3.5">
+                                        <polygon fill="#52525b" points="0 0, 10 3.5, 0 7"></polygon>
+                                    </marker>
+                                </defs>
+                                <path d="M 230 150 C 280 150, 280 250, 330 250" fill="none" markerEnd="url(#arrowhead)" stroke="#52525b" strokeWidth="2"></path>
+                                <path d="M 530 250 C 580 250, 580 250, 630 250" fill="none" markerEnd="url(#arrowhead)" stroke="#52525b" strokeWidth="2"></path>
+                            </svg>
+
+                            {/* Nodes */}
+                            <div className="absolute top-[120px] left-[50px] w-[180px] bg-[#1f1f23] rounded-sm border border-gray-700 shadow-retro z-10">
+                                <div className="h-1 bg-yellow-500 w-full rounded-t-sm"></div>
+                                <div className="p-3">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center space-x-2"><span className="material-icons-outlined text-yellow-500 text-sm">play_circle</span><span className="text-xs font-bold font-mono text-gray-100">User Input</span></div>
+                                    </div>
+                                    <div className="text-[10px] text-gray-400">Starts flow with natural language prompt.</div>
+                                </div>
+                            </div>
+
+                            <div className="absolute top-[200px] left-[330px] w-[200px] bg-[#1f1f23] rounded-sm border-2 border-purple-500/50 shadow-retro z-10">
+                                <div className="h-6 bg-purple-500/10 border-b border-purple-500/20 flex items-center justify-between px-2"><span className="text-[10px] font-bold text-purple-500 font-mono">AGENT-01</span></div>
+                                <div className="p-3">
+                                    <div className="flex items-center space-x-2 mb-2"><div className="p-1 bg-purple-500 rounded-sm shadow-sm text-white"><span className="material-icons-outlined text-sm block">psychology</span></div><span className="text-sm font-bold text-white">Architect</span></div>
+                                    <div className="bg-[#18181b] p-2 rounded-sm border border-gray-700">
+                                        <div className="flex justify-between text-[10px] text-gray-500 mb-1"><span>Model:</span><span className="text-gray-300">GPT-4o</span></div>
+                                        <div className="w-full bg-gray-700 h-1 rounded-full"><div className="bg-purple-500 h-full w-[45%]"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Aggregating other simpler screens into one view for Analytics/Config/etc. due to token limits, 
+        // using the Navigation Overlay to switch conceptually. 
+        // For the sake of this prototype, I will create dedicated routes for remaining major screens.
+        
+        const LlmProviders = () => (
+            <div className="bg-[#09090b] text-gray-300 h-screen p-6 relative">
+                 <div className="absolute inset-0 scanlines pointer-events-none opacity-30 z-0"></div>
+                 <div className="max-w-4xl mx-auto relative z-10">
+                    <h2 className="text-2xl font-bold text-white mb-8 font-mono tracking-tight">LLM Provider Configuration</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-primary/50 transition-colors shadow-lg">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-[#10a37f] rounded flex items-center justify-center text-white font-bold text-lg">AI</div>
+                                    <div><h3 className="font-bold text-gray-200 text-base">OpenAI</h3><div className="text-[10px] uppercase font-mono text-green-500 tracking-wider">Operational</div></div>
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-[10px] font-mono uppercase text-gray-500 mb-1 block">API Key</label>
+                                    <input className="w-full bg-black/30 border border-gray-700 rounded px-3 py-2 text-xs font-mono text-gray-400" readOnly type="text" value="sk-proj-• • • • • • • •"/>
+                                </div>
+                                <div className="h-2 w-full bg-gray-800 rounded-sm overflow-hidden"><div className="h-full bg-green-500 w-[25%]"></div></div>
+                            </div>
+                        </div>
+                         <div className="bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-primary/50 transition-colors shadow-lg">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-white rounded flex items-center justify-center text-black font-bold text-lg">O</div>
+                                    <div><h3 className="font-bold text-gray-200 text-base">Ollama (Local)</h3><div className="text-[10px] uppercase font-mono text-red-500 tracking-wider">Connection Error</div></div>
+                                </div>
+                            </div>
+                            <div className="p-2 bg-red-500/10 border border-red-500/20 rounded text-[10px] text-red-300 font-mono">[FATAL] Is Ollama running?</div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        );
+
+        const AgentAnalytics = () => (
+            <div className="bg-[#0f0f11] text-gray-300 h-screen flex flex-col font-sans">
+                 <div className="sticky top-0 z-10 bg-editor-bg/80 backdrop-blur-md border-b border-border-dark px-6 py-4 flex justify-between items-center">
+                    <h1 className="text-xl font-bold text-white font-mono">System Performance</h1>
+                 </div>
+                 <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="bg-[#18181b] p-4 rounded-lg border border-border-dark shadow-sm">
+                            <div className="text-2xl font-bold text-white font-mono">24,592</div>
+                            <div className="text-xs text-gray-400 mt-1">Total Requests</div>
+                        </div>
+                        <div className="bg-[#18181b] p-4 rounded-lg border border-border-dark shadow-sm">
+                            <div className="text-2xl font-bold text-white font-mono">99.8%</div>
+                            <div className="text-xs text-gray-400 mt-1">Success Rate</div>
+                        </div>
+                    </div>
+                    <div className="bg-[#18181b] rounded-lg border border-border-dark p-5 shadow-sm">
+                         <h3 className="font-bold text-sm text-white font-mono mb-6">REQUESTS OVER TIME</h3>
+                         <div className="h-40 w-full flex items-end justify-between space-x-1 pl-2 border-l border-b border-border-dark pb-2">
+                             {[40, 55, 35, 70, 60, 85, 65, 45, 90, 75, 50, 80].map((h, i) => (
+                                 <div key={i} className="w-full bg-primary/20 rounded-t-sm relative group h-full">
+                                     <div className="absolute bottom-0 w-full bg-primary rounded-t-sm" style={{height: `${h}%`}}></div>
+                                 </div>
+                             ))}
+                         </div>
+                    </div>
+                 </div>
+            </div>
+        );
+
+        // Simple placeholders for the remaining screens to ensure all 10 distinct "views" are present conceptually
+        const IdeWorkspaceVN = () => <IdeWorkspace />; // In a real app, props would change language
+        const ToolRegistry = () => (
+             <div className="bg-[#09090b] text-gray-300 h-screen p-6">
+                <h1 className="text-3xl font-retro text-white tracking-wide mb-8"><span className="text-primary mr-2">&gt;</span> TOOL REGISTRY</h1>
+                <div className="border border-border-dark bg-[#18181b] rounded-sm">
+                    <table className="w-full text-left border-collapse">
+                        <thead className="bg-[#202023] border-b border-border-dark text-xs uppercase font-mono text-gray-400">
+                            <tr><th className="px-6 py-3">Tool Name</th><th className="px-6 py-3">Category</th><th className="px-6 py-3">Risk</th></tr>
+                        </thead>
+                        <tbody className="divide-y divide-border-dark text-sm">
+                             <tr><td className="px-6 py-4 font-mono text-white">GitHub Integration</td><td className="px-6 py-4 text-xs font-mono text-blue-300">VERSION_CONTROL</td><td className="px-6 py-4 text-xs text-retro-green font-mono">LOW</td></tr>
+                             <tr><td className="px-6 py-4 font-mono text-white">OpenAI Completion</td><td className="px-6 py-4 text-xs font-mono text-orange-300">INFERENCE</td><td className="px-6 py-4 text-xs text-retro-red font-mono">HIGH</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+             </div>
+        );
+        const AgentConfigForm = () => (
+             <div className="bg-[#0f0f11] text-gray-300 h-screen p-8 flex justify-center">
+                 <div className="w-full max-w-3xl space-y-8">
+                     <section className="bg-[#18181b] border border-border-dark p-6 shadow-retro relative">
+                        <div className="absolute -top-3 left-4 bg-[#0f0f11] px-2 text-primary font-pixel text-xs">01. GENERAL</div>
+                        <div className="grid grid-cols-2 gap-6 mt-2">
+                             <div className="space-y-2"><label className="text-xs font-mono text-gray-400">Agent Name</label><input className="w-full bg-[#09090b] border border-gray-700 text-gray-200 text-sm p-2.5 font-mono" type="text" defaultValue="Coder"/></div>
+                             <div className="space-y-2"><label className="text-xs font-mono text-gray-400">Role</label><select className="w-full bg-[#09090b] border border-gray-700 text-gray-200 text-sm p-2.5 font-mono"><option>Full-Stack Developer</option></select></div>
+                        </div>
+                     </section>
+                     <section className="bg-[#18181b] border border-border-dark p-6 shadow-retro relative">
+                        <div className="absolute -top-3 left-4 bg-[#0f0f11] px-2 text-primary font-pixel text-xs">02. BRAIN CONFIG</div>
+                         <div className="bg-[#09090b] p-4 border border-gray-800 mt-2">
+                            <label className="text-xs font-mono text-gray-400 mb-2 block">Temperature (0.2)</label>
+                            <input className="w-full h-2 bg-gray-700 rounded-none appearance-none accent-primary" type="range" defaultValue="0.2" max="1" step="0.1"/>
+                         </div>
+                     </section>
+                 </div>
+             </div>
+        );
+        
+        // --- Main App & Router Setup ---
+        const LandingPage = () => {
+             const navigate = useNavigate();
+             const screens = [
+                { id: 1, path: "/ide", name: "IDE Workspace", icon: "code" },
+                { id: 2, path: "/agents", name: "Agent Dashboard", icon: "hub" },
+                { id: 3, path: "/ide-vn", name: "IDE (Vietnamese)", icon: "translate" },
+                { id: 4, path: "/dashboard-retro", name: "Retro Dashboard", icon: "videogame_asset" },
+                { id: 5, path: "/agent-list", name: "Agent List View", icon: "list" },
+                { id: 6, path: "/agent-config", name: "Agent Config Form", icon: "tune" },
+                { id: 7, path: "/tools", name: "Tool Registry", icon: "extension" },
+                { id: 8, path: "/workflow", name: "Workflow Editor", icon: "schema" },
+                { id: 9, path: "/llm", name: "LLM Providers", icon: "smart_toy" },
+                { id: 10, path: "/analytics", name: "Analytics Dashboard", icon: "analytics" },
+             ];
+
+             return (
+                 <div className="min-h-screen bg-black text-white p-8 font-sans">
+                    <div className="max-w-4xl mx-auto text-center mb-12">
+                        <h1 className="text-4xl font-bold mb-4 tracking-tight">Unified IDE Workspace <span className="text-primary">Prototype</span></h1>
+                        <p className="text-gray-400">High-fidelity React mockups for autonomous agent interaction.</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                        {screens.map(s => (
+                            <div 
+                                key={s.id} 
+                                onClick={() => navigate(s.path)}
+                                className="group p-6 bg-[#18181b] border border-[#27272a] hover:border-primary rounded-lg cursor-pointer transition-all hover:-translate-y-1 hover:shadow-2xl"
+                            >
+                                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <span className="material-icons-outlined">{s.icon}</span>
+                                </div>
+                                <h3 className="font-semibold text-gray-200 group-hover:text-primary transition-colors">{s.name}</h3>
+                                <p className="text-xs text-gray-500 mt-2 font-mono">Screen {s.id}</p>
+                            </div>
+                        ))}
+                    </div>
+                 </div>
+             );
+        };
+
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <NavOverlay />
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/ide" element={<IdeWorkspace />} />
+                        <Route path="/agents" element={<AgentManagement />} />
+                        <Route path="/ide-vn" element={<IdeWorkspaceVN />} />
+                        <Route path="/dashboard-retro" element={<AgentDashboardRetro />} />
+                        <Route path="/agent-list" element={<AgentListTable />} />
+                        <Route path="/agent-config" element={<AgentConfigForm />} />
+                        <Route path="/tools" element={<ToolRegistry />} />
+                        <Route path="/workflow" element={<WorkflowEditor />} />
+                        <Route path="/llm" element={<LlmProviders />} />
+                        <Route path="/analytics" element={<AgentAnalytics />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

@@ -458,6 +458,90 @@ development_status:
     completed_at: "2025-12-22T01:55:00+07:00"
     notes: "Added syncError and syncTimeout props to XTerminal. Terminal starts with warning after timeout."
 
+  # =============================================================================
+  # EPIC 28: UX Brand Identity & Design System [IN-PROGRESS]
+  # Created: 2025-12-22 - Absorbs Epic 23 gaps, establishes premium design system
+  # Platform: Platform B
+  # =============================================================================
+  epic-28: in-progress
+    platform: "Platform B"
+    started_at: "2025-12-22T05:35:00+07:00"
+    notes: |
+      Transforms Via-Gent's generic ShadcnUI into premium MistralAI-inspired 8-bit aesthetic.
+      Absorbs gaps from Epic 23: design tokens, pixel fonts, brand components, collapsible sidebar.
+      Full EN/VI localization for Vietnamese market focus.
+  
+  # Phase 1: Design Foundation
+  28-1-override-design-tokens: ready-for-dev
+    priority: P0
+    points: 5
+    story: _bmad-output/sprint-artifacts/28-1-override-design-tokens.md
+    platform: "Platform B"
+    created_at: "2025-12-22T05:35:00+07:00"
+    notes: "Override ShadcnUI blue tokens with VIA-GENT orange (#f97316) brand colors"
+    
+  28-2-configure-8bit-typography: backlog
+    priority: P0
+    points: 3
+    notes: "Add VT323, Press Start 2P pixel fonts with Tailwind utilities"
+    
+  28-3-create-brand-components: backlog
+    priority: P0
+    points: 5
+    notes: "BrandLogo, PixelBadge, StatusDot components with i18n"
+    
+  28-4-implement-pixel-buttons: backlog
+    priority: P1
+    points: 3
+    notes: "Extend Button with pixel, pixel-primary, pixel-outline variants"
+    
+  # Phase 2: IDE Layout Revolution
+  28-5-build-icon-sidebar: backlog
+    priority: P0
+    points: 8
+    notes: "VS Code-style 48px icon bar + collapsible 280px content panel"
+    absorbs: "23-14-collapsible-ide-sidebar"
+    
+  28-6-create-content-panels: backlog
+    priority: P0
+    points: 5
+    notes: "ExplorerPanel, AgentsPanel, SearchPanel, SettingsPanel components"
+    
+  28-7-modernize-panel-shells: backlog
+    priority: P0
+    points: 5
+    notes: "Override 23-4 generic headers with pixel aesthetic panel shells"
+    absorbs: "23-4-ide-panel-components (gaps)"
+    
+  28-8-custom-scrollbar-polish: backlog
+    priority: P1  
+    points: 3
+    notes: "Premium scrollbar styling matching mockups"
+    
+  # Phase 3: Agent Interfaces
+  28-9-agent-dashboard-components: backlog
+    priority: P1
+    points: 5
+    notes: "AgentCard, AgentTable, MetricsCard for dashboard"
+    absorbs: "23-9-agent-management-dashboard"
+    
+  28-10-enhanced-chat-interface: backlog
+    priority: P1
+    points: 5
+    notes: "Premium chat with tool execution logs, typing indicator"
+    absorbs: "23-15-agent-chat-interface"
+    
+  # Phase 4: Localization & Polish
+  28-11-complete-localization: backlog
+    priority: P1
+    points: 5
+    notes: "Full EN/VI coverage for Vietnamese market"
+    
+  28-12-footer-status-bar: backlog
+    priority: P2
+    points: 3
+    notes: "VS Code-style status bar with git, cursor, file info"
+
 
   # =============================================================================
   # EPIC 11: Code Splitting & Module Refactor [ABSORBED INTO EPIC 27]
