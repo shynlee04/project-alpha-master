@@ -519,7 +519,6 @@ export function IDELayout(): React.JSX.Element {
                   <TerminalPanel
                     activeTab={terminalTab}
                     onTabChange={setTerminalTab}
-                    projectPath={projectMetadata?.folderPath ?? '/'}
                     className="border-0"
                   />
                 </CardContent>
