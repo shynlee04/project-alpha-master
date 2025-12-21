@@ -22,8 +22,8 @@ import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
-  type ImperativePanelGroupHandle,
 } from '@/components/ui/resizable';
+import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
 import {
   Card,
   CardHeader,

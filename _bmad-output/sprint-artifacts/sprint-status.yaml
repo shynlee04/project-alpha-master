@@ -158,7 +158,7 @@ development_status:
     review_completed_at: "2025-12-21T13:05:00+07:00"
     tests_added: 30
     reviewer: "Platform A"
-  22-4-configure-error-monitoring: review
+  22-4-configure-error-monitoring: done
     story: _bmad-output/sprint-artifacts/22-4-configure-error-monitoring.md
     context: _bmad-output/sprint-artifacts/22-4-configure-error-monitoring-context.xml
     platform: "Platform A"
@@ -166,6 +166,8 @@ development_status:
     ready_at: "2025-12-21T13:18:00+07:00"
     dev_started_at: "2025-12-21T13:08:00+07:00"
     review_submitted_at: "2025-12-21T13:25:00+07:00"
+    review_completed_at: "2025-12-21T13:28:00+07:00"
+    reviewer: "Platform A"
   22-5-create-deployment-docs: backlog
   22-6-establish-performance-benchmarks: backlog
   22-7-enable-typescript-strict: backlog
