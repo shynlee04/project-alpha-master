@@ -1,37 +1,51 @@
 /**
- * @fileoverview IDE State Persistence Hook
+ * @fileoverview IDE State Persistence Hook (Zustand Migration)
  * @module hooks/useIdeStatePersistence
  * 
- * Custom hook for managing IDE state persistence including:
- * - Panel layouts
- * - Open files
- * - Active file and scroll position
- * - Terminal tab state
- * - Chat visibility
+ * Story 27-1b: Component Migration to Zustand + Dexie.js
+ * 
+ * BEFORE: Complex ref-based persistence with direct IndexedDB access
+ * AFTER: Simple wrapper around Zustand store with automatic persistence
+ * 
+ * The Zustand store (`useIDEStore`) handles all persistence automatically
+ * via its persist middleware connected to Dexie.js.
+ * 
+ * This hook is maintained for backward compatibility with existing components.
+ * New components should use `useIDEStore` directly.
  * 
  * @example
  * ```tsx
- * const {
- *   restoredIdeState,
- *   panelLayoutsRef,
- *   scheduleIdeStatePersistence,
- *   handlePanelLayoutChange,
- * } = useIdeStatePersistence({ projectId });
+ * // Legacy usage (still works)
+ * const { handlePanelLayoutChange } = useIdeStatePersistence({ projectId });
+ * 
+ * // Preferred new usage
+ * import { useIDEStore } from '@/lib/state';
+ * const setPanelLayout = useIDEStore(s => s.setPanelLayout);
  * ```
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import {
-    getIdeState,
-    saveIdeState,
-    type IdeState,
-    type TerminalTab,
-} from '../lib/workspace';
+import { useEffect, useRef, useCallback } from 'react';
+import { useIDEStore, type TerminalTab } from '@/lib/state';
+
+// ============================================================================
+// Types (maintained for backward compatibility)
+// ============================================================================
+
+/**
+ * IDE State interface (derived from store state)
+ */
+export interface IdeState {
+    projectId: string;
+    panelLayouts?: Record<string, number[]>;
+    openFiles?: string[];
+    activeFile?: string | null;
+    activeFileScrollTop?: number;
+    terminalTab?: TerminalTab;
+    chatVisible?: boolean;
+}
 
 /**
  * Options for the useIdeStatePersistence hook.
- * 
- * @interface UseIdeStatePersistenceOptions
  */
 export interface UseIdeStatePersistenceOptions {
     /** Current project ID */
@@ -40,13 +54,12 @@ export interface UseIdeStatePersistenceOptions {
 
 /**
  * Return type for the useIdeStatePersistence hook.
- * 
- * @interface UseIdeStatePersistenceResult
+ * Simplified from original - refs replaced with Zustand selectors.
  */
 export interface UseIdeStatePersistenceResult {
-    /** Restored IDE state from storage */
+    /** Restored IDE state from storage (now derived from Zustand store) */
     restoredIdeState: IdeState | null;
-    /** Reference to panel layouts */
+    /** Reference to panel layouts (legacy compatibility) */
     panelLayoutsRef: React.MutableRefObject<Record<string, number[]>>;
     /** Reference to set of applied panel groups */
     appliedPanelGroupsRef: React.MutableRefObject<Set<string>>;
@@ -62,123 +75,107 @@ export interface UseIdeStatePersistenceResult {
     terminalTabRef: React.MutableRefObject<TerminalTab>;
     /** Reference to chat visibility */
     chatVisibleRef: React.MutableRefObject<boolean>;
-    /** Schedule state persistence with debouncing */
+    /** Schedule state persistence (now no-op, Zustand auto-persists) */
     scheduleIdeStatePersistence: (delayMs?: number) => void;
     /** Handle panel layout change */
     handlePanelLayoutChange: (groupId: string, layout: number[]) => void;
 }
 
+// ============================================================================
+// Hook Implementation
+// ============================================================================
+
 /**
- * Custom hook for IDE state persistence.
+ * IDE State Persistence Hook
  * 
- * Handles loading and saving of IDE state including panel layouts,
- * open files, scroll positions, and UI visibility states.
+ * Now delegates to Zustand store for all state management.
+ * The store's persist middleware handles IndexedDB via Dexie.js.
  * 
  * @param options - Hook options
- * @returns IDE state persistence utilities and refs
+ * @returns IDE state persistence utilities
  */
 export function useIdeStatePersistence({
     projectId,
 }: UseIdeStatePersistenceOptions): UseIdeStatePersistenceResult {
-    const [restoredIdeState, setRestoredIdeState] = useState<IdeState | null>(null);
+    // Get state and actions from Zustand store
+    const openFiles = useIDEStore(s => s.openFiles);
+    const activeFile = useIDEStore(s => s.activeFile);
+    const panelLayouts = useIDEStore(s => s.panelLayouts);
+    const terminalTab = useIDEStore(s => s.terminalTab);
+    const chatVisible = useIDEStore(s => s.chatVisible);
+    const activeFileScrollTop = useIDEStore(s => s.activeFileScrollTop);
+    const setProjectId = useIDEStore(s => s.setProjectId);
+    const setPanelLayout = useIDEStore(s => s.setPanelLayout);
 
-    // Refs for mutable state
-    const panelLayoutsRef = useRef<Record<string, number[]>>({});
+    // Legacy refs for backward compatibility with consumers
+    // These sync with Zustand state automatically
+    const panelLayoutsRef = useRef<Record<string, number[]>>(panelLayouts);
     const appliedPanelGroupsRef = useRef<Set<string>>(new Set());
     const didRestoreOpenFilesRef = useRef(false);
-    const activeFileScrollTopRef = useRef<number | undefined>(undefined);
-    const persistenceSuppressedRef = useRef(true);
-    const persistTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const openFilePathsRef = useRef<string[]>([]);
-    const activeFilePathRef = useRef<string | null>(null);
-    const terminalTabRef = useRef<TerminalTab>('terminal');
-    const chatVisibleRef = useRef(true);
+    const activeFileScrollTopRef = useRef<number | undefined>(activeFileScrollTop);
+    const openFilePathsRef = useRef<string[]>(openFiles);
+    const activeFilePathRef = useRef<string | null>(activeFile);
+    const terminalTabRef = useRef<TerminalTab>(terminalTab);
+    const chatVisibleRef = useRef(chatVisible);
+
+    // Keep refs in sync with store state
+    useEffect(() => {
+        panelLayoutsRef.current = panelLayouts;
+        openFilePathsRef.current = openFiles;
+        activeFilePathRef.current = activeFile;
+        activeFileScrollTopRef.current = activeFileScrollTop;
+        terminalTabRef.current = terminalTab;
+        chatVisibleRef.current = chatVisible;
+    }, [panelLayouts, openFiles, activeFile, activeFileScrollTop, terminalTab, chatVisible]);
+
+    // Set project ID in store when it changes
+    useEffect(() => {
+        setProjectId(projectId);
+        // Reset restoration flags on project change
+        appliedPanelGroupsRef.current = new Set();
+        didRestoreOpenFilesRef.current = false;
+
+        // Mark files as restored after Zustand rehydrates
+        if (projectId && openFiles.length > 0) {
+            didRestoreOpenFilesRef.current = true;
+        }
+    }, [projectId, setProjectId, openFiles.length]);
 
     /**
-     * Schedule IDE state persistence with debouncing.
-     * 
-     * @param delayMs - Delay in milliseconds before persisting (default: 250)
+     * Schedule state persistence (now a no-op)
+     * Zustand's persist middleware handles this automatically.
      */
     const scheduleIdeStatePersistence = useCallback(
-        (delayMs = 250) => {
-            if (!projectId || persistenceSuppressedRef.current) return;
-
-            if (persistTimeoutRef.current) {
-                clearTimeout(persistTimeoutRef.current);
-            }
-
-            persistTimeoutRef.current = setTimeout(() => {
-                void saveIdeState({
-                    projectId,
-                    panelLayouts: panelLayoutsRef.current,
-                    openFiles: openFilePathsRef.current,
-                    activeFile: activeFilePathRef.current,
-                    activeFileScrollTop: activeFileScrollTopRef.current,
-                    terminalTab: terminalTabRef.current,
-                    chatVisible: chatVisibleRef.current,
-                }).catch((error) => {
-                    console.warn('[IDE] Failed to persist IDE state:', error);
-                });
-            }, delayMs);
+        (_delayMs = 250) => {
+            // No-op: Zustand persist middleware auto-saves on every state change
+            // This function is kept for backward compatibility only
         },
-        [projectId],
+        [],
     );
 
     /**
-     * Handle panel layout change event.
-     * 
-     * @param groupId - Panel group identifier
-     * @param layout - New layout sizes array
+     * Handle panel layout change.
+     * Delegates to Zustand store action.
      */
     const handlePanelLayoutChange = useCallback(
         (groupId: string, layout: number[]) => {
-            panelLayoutsRef.current[groupId] = layout;
-            scheduleIdeStatePersistence(400);
+            setPanelLayout(groupId, layout);
         },
-        [scheduleIdeStatePersistence],
+        [setPanelLayout],
     );
 
-    // Cleanup timeout on unmount
-    useEffect(() => {
-        return () => {
-            if (persistTimeoutRef.current) {
-                clearTimeout(persistTimeoutRef.current);
-            }
-        };
-    }, []);
-
-    // Load IDE state when project ID changes
-    useEffect(() => {
-        let cancelled = false;
-        appliedPanelGroupsRef.current = new Set();
-        didRestoreOpenFilesRef.current = false;
-        persistenceSuppressedRef.current = true;
-        setRestoredIdeState(null);
-
-        const load = async () => {
-            if (!projectId) {
-                persistenceSuppressedRef.current = false;
-                return;
-            }
-
-            const saved = await getIdeState(projectId);
-            if (cancelled) return;
-
-            setRestoredIdeState(saved);
-
-            if (saved) {
-                panelLayoutsRef.current = saved.panelLayouts ?? {};
-            }
-
-            persistenceSuppressedRef.current = false;
-        };
-
-        void load();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [projectId]);
+    // Build restored state from Zustand (for backward compatibility)
+    const restoredIdeState: IdeState | null = projectId
+        ? {
+            projectId,
+            panelLayouts,
+            openFiles,
+            activeFile,
+            activeFileScrollTop,
+            terminalTab,
+            chatVisible,
+        }
+        : null;
 
     return {
         restoredIdeState,

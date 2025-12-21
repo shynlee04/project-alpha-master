@@ -1,5 +1,11 @@
 # Epic 24: Smart Dependency Sync (NEW - 2025-12-21)
 
+> [!IMPORTANT]
+> **Depends on Epic 27 Story 27-1c**  
+> This epic requires ProjectStore to store sync configuration.
+> Wait for Story 27-1c (idb→Dexie.js) before starting Story 24-1.
+> Add schema updates in Dexie version(3).
+
 **Goal:** Persist node_modules to local filesystem for instant session restoration and faster reloads.
 
 **Priority:** 🟠 P1 | **Stories:** 5 | **Points:** 21 | **Duration:** 1 week  
@@ -85,4 +91,4 @@ So that **new dependencies are saved without manual action**.
 - Trigger dependency sync automatically (if enabled)
 
 ---
-
+

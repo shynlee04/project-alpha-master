@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="27-1b-component-migration-zustand-dexie" created="2025-12-21T17:50:00+07:00">
+  
+  <!-- Prerequisites: Story 27-1 infrastructure complete -->
+  <prerequisites>
+    <story id="27-1" status="done">
+      Created src/lib/state/ with:
+      - dexie-db.ts (137 lines) - Dexie database schema
+      - dexie-storage.ts (118 lines) - Zustand storage adapter
+      - ide-store.ts (288 lines) - Main Zustand store
+      - index.ts (44 lines) - Public API
+      
+      Dependencies added: zustand, dexie 4.2.1, dexie-react-hooks
+    </story>
+  </prerequisites>
+  
+  <!-- Files to migrate -->
+  <files>
+    <file path="src/hooks/useIdeStatePersistence.ts" action="REWRITE">
+      <summary>197 lines with 10+ useRef calls. Complex persistence logic. Will simplify to ~50 lines using Zustand selectors.</summary>
+    </file>
+    
+    <file path="src/lib/workspace/WorkspaceContext.tsx" action="MODIFY">
+      <summary>Context provider that holds state. Will derive values from Zustand store instead.</summary>
+    </file>
+    
+    <file path="src/lib/workspace/project-store.ts" action="MODIFY">
+      <summary>366 lines using idb for project CRUD. Must migrate to Dexie.js from src/lib/state/dexie-db.ts.</summary>
+    </file>
+    
+    <file path="src/lib/persistence/db.ts" action="DELETE_AFTER_MIGRATION">
+      <summary>Old idb-based persistence. Keep temporarily for data migration, then delete.</summary>
+    </file>
+    
+    <file path="src/components/ide/FileTree/FileTree.tsx" action="MODIFY">
+      <summary>306 lines. Uses fileSyncStatusStore (TanStack Store). Must migrate to Zustand.</summary>
+      <current_import>import { useStore } from '@tanstack/react-store';</current_import>
+    </file>
+    
+    <file path="src/components/ide/FileTree/FileTreeItem.tsx" action="MODIFY">
+      <summary>Uses fileSyncStatusStore for sync status icons. Must migrate to Zustand.</summary>
+      <current_import>import { useStore } from '@tanstack/react-store';</current_import>
+    </file>
+    
+    <file path="src/components/layout/IDELayout.tsx" action="MODIFY">
+      <summary>Main layout component. Simplify state management after migrations.</summary>
+    </file>
+  </files>
+  
+  <!-- Research notes from 27-1 -->
+  <research_notes>
+    <finding source="context7" query="zustand persist middleware">
+      Pattern: create&lt;State&gt;()(persist((set, get) =&gt; ({ ... }), { name: 'key', storage: customStorage }))
+      Key: Use createJSONStorage() for custom adapters
+      Key: partialize option to select which state to persist
+    </finding>
+    
+    <finding source="context7" query="dexie live query react">
+      Pattern: useLiveQuery(() =&gt; db.table.toArray(), [deps])
+      Key: Returns undefined while loading
+      Key: Auto-re-renders when data changes
+    </finding>
+    
+    <finding source="governance-analysis" query="epic conflicts">
+      Epic 5: SUPERSEDED - Stories 5.1-5.4 replaced by Dexie.js
+      Epic 10: fileSyncStatusStore needs migration to Zustand
+      Epic 23: Coordinate with Platform B on context changes
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="State Unification" source="architectural-stabilization-proposal-v1">
+      BEFORE: TanStack Store + React Context + IndexedDB (idb)
+      AFTER: Zustand Store with Dexie.js persistence middleware
+      
+      Components use: useIDEStore(selector)
+      WorkspaceContext: Read-only derivation for backward compatibility
+    </pattern>
+    
+    <pattern name="Sync Status Migration" source="epic-10">
+      Current: fileSyncStatusStore uses @tanstack/react-store Store class
+      Target: Add sync status slice to useIDEStore
+      
+      Steps:
+      1. Add syncStatus state to IDEState interface
+      2. Add setSyncStatus action
+      3. Update FileTree/FileTreeItem to use useIDEStore
+    </pattern>
+    
+    <pattern name="Project Store Migration" source="epic-5">
+      Current: Direct idb API calls in project-store.ts
+      Target: Use db.projects from src/lib/state/dexie-db.ts
+      
+      Most CRUD operations map 1:1 to Dexie equivalents.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      CRITICAL: Run TypeScript check after each file migration to catch type errors early.
+      Command: pnpm exec tsc --noEmit
+    </note>
+    <note priority="high">
+      Keep WorkspaceContext interface stable for backward compatibility.
+      Other components depend on it.
+    </note>
+    <note priority="medium">
+      fileSyncStatusStore uses Store&lt;{ files: Map&lt;string, SyncStatus&gt; }&gt;
+      Zustand doesn't have native Map support in persist, use Object or custom serializer.
+    </note>
+    <note priority="medium">
+      Data migration from old idb schema to new Dexie schema handled by
+      version(2).upgrade() in dexie-db.ts.
+    </note>
+    <note priority="low">
+      Pre-existing TypeScript errors in test files (i18n, webcontainer mock, setup.ts)
+      are not related to this story.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="zustand" installed="true" action="KEEP" />
+    <dependency name="dexie" version="4.2.1" installed="true" action="KEEP" />
+    <dependency name="dexie-react-hooks" installed="true" action="KEEP" />
+    <dependency name="@tanstack/react-store" installed="true" action="REMOVE" />
+    <dependency name="idb" installed="true" action="REMOVE" />
+  </dependencies>
+  
+</context>

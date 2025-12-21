@@ -3,19 +3,17 @@
  *
  * Story 3-7: Implement Project Metadata Persistence
  * Story 5-1: Set Up IndexedDB Schema (unified DB)
+ * Story 27-1c: Migrated to Dexie.js
  *
  * This module provides CRUD operations for storing and retrieving project
  * metadata including FSA directory handles for permission restoration.
  *
- * NOTE: This is scoped to spikes/project-alpha and is not part of the
- * main src/ infrastructure.
+ * @governance EPIC-27-1c
  */
 
-import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import {
     getPersistenceDB,
     _resetPersistenceDBForTesting,
-    type ViaGentPersistenceDB,
 } from '../persistence';
 import { getPermissionState, type FsaPermissionState } from '../filesystem/permission-lifecycle';
 
@@ -67,54 +65,66 @@ export interface ProjectWithPermission extends ProjectMetadata {
 // Legacy Migration (Story 5-1)
 // ============================================================================
 
-interface LegacyProjectsDB extends DBSchema {
-    projects: {
-        key: string;
-        value: ProjectMetadata;
-        indexes: {
-            'by-last-opened': Date;
-        };
-    };
-}
-
 const LEGACY_DB_NAME = 'via-gent-projects';
-const LEGACY_STORE_NAME = 'projects';
 const STORE_NAME = 'projects' as const;
 
 let legacyMigrationAttempted = false;
 
-async function migrateLegacyProjectsIfNeeded(
-    db: IDBPDatabase<ViaGentPersistenceDB>
-): Promise<void> {
+/**
+ * Migrate from legacy 'via-gent-projects' DB to unified DB.
+ * Uses native IndexedDB API since we no longer have idb dependency.
+ */
+async function migrateLegacyProjectsIfNeeded(): Promise<void> {
     if (legacyMigrationAttempted) return;
     legacyMigrationAttempted = true;
 
+    const db = await getPersistenceDB();
+    if (!db) return;
+
     try {
+        // Check if we have any projects in new DB
         const existingCount = await db.count(STORE_NAME);
         if (existingCount > 0) return;
 
-        const legacyDb = await openDB<LegacyProjectsDB>(LEGACY_DB_NAME);
-        if (!legacyDb.objectStoreNames.contains(LEGACY_STORE_NAME)) {
-            legacyDb.close();
-            return;
-        }
+        // Try to open legacy database using native IndexedDB
+        const legacyProjects = await new Promise<ProjectMetadata[]>((resolve) => {
+            const request = indexedDB.open(LEGACY_DB_NAME);
 
-        const legacyProjects = await legacyDb.getAll(LEGACY_STORE_NAME);
-        legacyDb.close();
+            request.onerror = () => resolve([]);
+            request.onsuccess = () => {
+                const legacyDb = request.result;
+
+                if (!legacyDb.objectStoreNames.contains('projects')) {
+                    legacyDb.close();
+                    resolve([]);
+                    return;
+                }
+
+                const tx = legacyDb.transaction('projects', 'readonly');
+                const store = tx.objectStore('projects');
+                const getAllRequest = store.getAll();
+
+                getAllRequest.onsuccess = () => {
+                    legacyDb.close();
+                    resolve(getAllRequest.result as ProjectMetadata[]);
+                };
+                getAllRequest.onerror = () => {
+                    legacyDb.close();
+                    resolve([]);
+                };
+            };
+        });
 
         if (legacyProjects.length === 0) return;
 
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        await Promise.all(
-            legacyProjects.map((project) =>
-                tx.store.put({
-                    ...project,
-                    lastOpened: new Date(project.lastOpened),
-                    autoSync: project.autoSync ?? true,
-                })
-            )
-        );
-        await tx.done;
+        // Migrate each project
+        for (const project of legacyProjects) {
+            await db.put(STORE_NAME, {
+                ...project,
+                lastOpened: new Date(project.lastOpened),
+                autoSync: project.autoSync ?? true,
+            });
+        }
 
         console.log('[ProjectStore] Migrated legacy projects:', legacyProjects.length);
     } catch (error) {
@@ -126,11 +136,11 @@ async function migrateLegacyProjectsIfNeeded(
 // Database Connection
 // ============================================================================
 
-async function getDB(): Promise<IDBPDatabase<ViaGentPersistenceDB> | null> {
+async function getDB() {
     const db = await getPersistenceDB();
     if (!db) return null;
 
-    await migrateLegacyProjectsIfNeeded(db);
+    await migrateLegacyProjectsIfNeeded();
     return db;
 }
 
@@ -210,7 +220,7 @@ export async function getProject(id: string): Promise<ProjectMetadata | null> {
     if (!db) return null;
 
     try {
-        const project = await db.get(STORE_NAME, id);
+        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
         return project ?? null;
     } catch (error) {
         console.error('[ProjectStore] Failed to get project:', id, error);
@@ -228,7 +238,7 @@ export async function listProjects(): Promise<ProjectMetadata[]> {
     if (!db) return [];
 
     try {
-        const projects = await db.getAll(STORE_NAME);
+        const projects = await db.getAll<ProjectMetadata>(STORE_NAME);
         return projects.sort(
             (a, b) => new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime()
         );
@@ -293,7 +303,7 @@ export async function updateProjectLastOpened(id: string): Promise<boolean> {
     if (!db) return false;
 
     try {
-        const project = await db.get(STORE_NAME, id);
+        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
         if (!project) {
             console.warn('[ProjectStore] Project not found for update:', id);
             return false;

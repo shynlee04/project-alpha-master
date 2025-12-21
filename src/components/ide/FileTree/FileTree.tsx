@@ -24,7 +24,6 @@
  */
 
 import React, { useEffect, useCallback, useRef } from 'react';
-import { useStore } from '@tanstack/react-store';
 import { FolderOpen, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +41,8 @@ import {
 } from './hooks';
 
 // State and types
-import { fileSyncCountsStore, useWorkspace } from '../../../lib/workspace';
+// Story 27-1b: Migrated to Zustand
+import { useSyncStatusStore, useWorkspace } from '../../../lib/workspace';
 import type { TreeNode } from './types';
 
 // ============================================================================
@@ -103,8 +103,8 @@ export function FileTree({
 
   const { t } = useTranslation();
 
-  // Sync counts for status display
-  const fileSyncCounts = useStore(fileSyncCountsStore, (state) => state);
+  // Sync counts for status display (Story 27-1b: Migrated to Zustand)
+  const fileSyncCounts = useSyncStatusStore((s) => s.counts);
 
   // Container ref for focus management
   const treeRef = useRef<HTMLDivElement>(null);

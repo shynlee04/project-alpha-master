@@ -1,5 +1,11 @@
 # Epic 5: Persistence Layer
 
+> [!IMPORTANT]
+> **SUPERSEDED by Epic 27 (State Architecture Stabilization)**  
+> Stories 5.1-5.4 were implemented with `idb` library. Epic 27 replaces this with Dexie.js
+> providing enhanced functionality including live queries and better migration support.
+> See: [Epic 27](file:///c:/Users/Admin/Documents/coding-project/project-alpha-master/project-alpha-master/_bmad-output/epics/epic-27-state-architecture-stabilization.md)
+
 **Goal:** Implement IndexedDB-based persistence for projects, conversations, and IDE state.
 
 **Requirements Covered:** FR-PERSIST-01 to FR-PERSIST-05, NFR-REL-02
@@ -73,4 +79,4 @@ So that **panel sizes and open files restore on reload**.
 **And** terminal tab state restores
 
 ---
-
+

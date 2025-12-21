@@ -4,11 +4,10 @@
  */
 
 import React, { useState } from 'react';
-import { useStore } from '@tanstack/react-store'
 import { ChevronRight, ChevronDown, Loader2, Check, Clock, AlertTriangle } from 'lucide-react';
 import { FileIcon } from './icons';
 import type { FileTreeItemProps } from './types';
-import { fileSyncStatusStore } from '../../../lib/workspace'
+import { useSyncStatusStore } from '../../../lib/workspace'
 import { isPathExcluded } from '../../../lib/filesystem/exclusion-config'
 
 /**
@@ -33,7 +32,8 @@ export function FileTreeItem({
     const isLoading = node.loading ?? false;
 
     const [isErrorDetailsOpen, setIsErrorDetailsOpen] = useState(false)
-    const fileSyncStatus = useStore(fileSyncStatusStore, (map) => map.get(node.path))
+    // Story 27-1b: Migrated from TanStack Store to Zustand
+    const fileSyncStatus = useSyncStatusStore((s) => s.statuses[node.path])
 
     const isError = !isDirectory && fileSyncStatus?.state === 'error'
     const isPending = !isDirectory && fileSyncStatus?.state === 'pending'

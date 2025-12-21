@@ -1,3 +1,26 @@
+/**
+ * IDE State Store - Legacy Compatibility Layer
+ * 
+ * @module lib/workspace/ide-state-store
+ * @governance EPIC-27-1c
+ * @deprecated Use @/lib/state/ide-store.ts instead
+ * 
+ * Story 27-1c: Migrated to use Dexie.js-based persistence layer
+ * 
+ * This module provides backward compatibility for legacy code.
+ * New code should use the Zustand store directly:
+ * 
+ * @example
+ * ```tsx
+ * // OLD (deprecated):
+ * import { getIdeState, saveIdeState } from '@/lib/workspace/ide-state-store';
+ * 
+ * // NEW (preferred):
+ * import { useIDEStore } from '@/lib/state';
+ * const { openFiles, activeFile } = useIDEStore(s => s);
+ * ```
+ */
+
 import { getPersistenceDB, type IdeStateRecord } from '../persistence'
 
 export type TerminalTab = 'terminal' | 'output' | 'problems'
@@ -38,7 +61,7 @@ export async function getIdeState(projectId: string): Promise<IdeState | null> {
   const db = await getPersistenceDB()
   if (!db) return null
 
-  const record = await db.get('ideState', projectId)
+  const record = await db.get<IdeStateRecord>('ideState', projectId)
   if (!record) return null
 
   return toIdeState(record)
@@ -73,10 +96,8 @@ export async function updateIdeState(
   const db = await getPersistenceDB()
   if (!db) return false
 
-  const tx = db.transaction('ideState', 'readwrite')
-  const store = tx.store
-
-  const existing = await store.get(projectId)
+  // Get existing state
+  const existing = await db.get<IdeStateRecord>('ideState', projectId)
 
   const next: IdeStateRecord = {
     ...(existing ?? { projectId, updatedAt: new Date() }),
@@ -85,8 +106,7 @@ export async function updateIdeState(
     updatedAt: new Date(),
   }
 
-  await store.put(next)
-  await tx.done
+  await db.put('ideState', next)
   return true
 }
 
@@ -102,16 +122,11 @@ export async function listRecentIdeStates(limit = 20): Promise<IdeState[]> {
   const db = await getPersistenceDB()
   if (!db) return []
 
-  const tx = db.transaction('ideState', 'readonly')
-  const index = tx.store.index('by-updated-at')
+  // Get all and sort (Dexie compat - no iterator)
+  const all = await db.getAll<IdeStateRecord>('ideState')
 
-  const out: IdeState[] = []
-  for await (const cursor of index.iterate(null, 'prev')) {
-    out.push(toIdeState(cursor.value))
-    if (out.length >= limit) break
-  }
-
-  await tx.done
-  return out
+  return all
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, limit)
+    .map(toIdeState)
 }
-

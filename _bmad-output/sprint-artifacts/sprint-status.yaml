@@ -271,6 +271,43 @@ development_status:
   23-8-component-documentation: backlog
 
   # =============================================================================
+  # EPIC 27: State Architecture Stabilization [P0 - IN_PROGRESS]
+  # =============================================================================
+  # Priority: P0 - CRITICAL (Technical debt blocking AI Foundation)
+  # Added: 2025-12-21 - Per tech-debt-architecture-gaps-report.md
+  # Depends on: None
+  # Blocks: Epic 25 (AI Foundation), Epic 24 (Smart Dependency Sync)
+  # =============================================================================
+  epic-27: in-progress
+  27-1-migrate-state-zustand-dexie: done
+    story: _bmad-output/sprint-artifacts/27-1-migrate-state-zustand-dexie.md
+    platform: "Platform A"
+    completed_at: "2025-12-21T17:45:00+07:00"
+    notes: "Infrastructure complete. Created Zustand store + Dexie.js schema v1"
+  27-1b-component-migration-zustand-dexie: done
+    story: _bmad-output/sprint-artifacts/27-1b-component-migration-zustand-dexie.md
+    platform: "Platform A"
+    completed_at: "2025-12-21T18:00:00+07:00"
+    notes: "Removed @tanstack/react-store. Components migrated to Zustand."
+  27-1c-persistence-migration-dexie: in-progress
+    story: _bmad-output/sprint-artifacts/27-1c-persistence-migration-dexie.md
+    context: _bmad-output/sprint-artifacts/27-1c-persistence-migration-dexie-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-21T18:30:00+07:00"
+    dev_started_at: "2025-12-21T19:00:00+07:00"
+    notes: |
+      Core migration done: idb → Dexie.js. 
+      AI Foundation tables added (taskContexts, toolExecutions).
+      AI-observable selectors added.
+      IdbCompatWrapper created for backward compatibility.
+      TypeScript compiles for all core files.
+      Remaining: remove idb dependency (blocked by legacy migration), tests.
+  27-2-event-bus-integration: backlog
+  27-3-fix-tailwindcss-z-index: backlog
+  27-4-fix-terminal-pnpm-version: backlog
+  27-5-fix-production-ssr-entry: backlog
+
+  # =============================================================================
   # EPIC 11: Code Splitting & Module Refactor [IN_PROGRESS - PAUSED FOR EPIC 13]
   # =============================================================================
   epic-11: in-progress

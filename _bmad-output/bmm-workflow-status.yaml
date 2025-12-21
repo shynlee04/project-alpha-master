@@ -14,15 +14,20 @@ last_updated: "2025-12-21T16:35:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 current_story:
-  key: "23-6-migrate-form-dialog-components"
-  epic: 23
-  status: "completed"
-  platform: "Platform B"
-  drafted_at: "2025-12-21T14:00:00+07:00"
-  ready_at: "2025-12-21T16:19:00+07:00"
-  completed_at: "2025-12-21T16:54:00+07:00"
+  key: "27-1c-persistence-migration-dexie"
+  epic: 27
+  status: "in-progress"
+  platform: "Platform A"
+  drafted_at: "2025-12-21T18:30:00+07:00"
+  ready_at: "2025-12-21T19:00:00+07:00"
+  dev_started_at: "2025-12-21T19:00:00+07:00"
   assigned_to: "dev"
-  handoff: "_bmad-output/handoffs/dev-epic-23-story-23-6-2025-12-21-1615.md"
+  notes: |
+    Core migration complete: idb → Dexie.js.
+    AI Foundation tables added (taskContexts, toolExecutions).
+    AI-observable selectors added.
+    Remaining: remove idb, tests, build verification.
+  handoff: "Ready for next conversation /story-dev-cycle"
 
 # =============================================================================
 # GOVERNANCE DOCUMENT VALIDATION
@@ -277,6 +282,21 @@ epic_status:
     name: "Git Integration"
     status: "BACKLOG"
     priority: "P2"
+    
+  - id: 27
+    name: "State Architecture Stabilization"
+    status: "IN_PROGRESS"
+    stories: "2/7"
+    priority: "P0"
+    platform: "A (Antigravity)"
+    started_at: "2025-12-21T17:00:00+07:00"
+    completed: ["27-1", "27-1b"]
+    in_progress: ["27-1c"]
+    notes: |
+      Story 27-1 (done): Zustand + Dexie.js infrastructure
+      Story 27-1b (done): Component migration, removed @tanstack/react-store
+      Story 27-1c (in-progress): idb → Dexie migration + AI Foundation prep
+      Blocks: Epic 25 (AI Foundation), Epic 24 (Smart Dependency Sync)
 
 # =============================================================================
 # CRITICAL BUGS TRACKED

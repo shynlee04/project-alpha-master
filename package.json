@@ -30,7 +30,6 @@
     "@tanstack/react-router-devtools": "^1.141.8",
     "@tanstack/react-router-ssr-query": "^1.141.8",
     "@tanstack/react-start": "^1.142.0",
-    "@tanstack/react-store": "^0.8.0",
     "@tanstack/router-plugin": "^1.142.0",
     "@tanstack/store": "^0.8.0",
     "@webcontainer/api": "^1.6.1",
@@ -38,6 +37,8 @@
     "@xterm/xterm": "^5.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dexie": "^4.2.1",
+    "dexie-react-hooks": "^4.2.0",
     "eventemitter3": "^5.0.1",
     "i18next": "^23.10.1",
     "i18next-browser-languagedetector": "^8.2.0",
@@ -54,7 +55,8 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
     "vite-tsconfig-paths": "^5.1.4",
-    "zod": "^4.2.1"
+    "zod": "^4.2.1",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.19.0",

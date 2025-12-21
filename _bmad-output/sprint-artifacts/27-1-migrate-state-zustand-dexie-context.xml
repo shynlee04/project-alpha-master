@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="27-1-migrate-state-zustand-dexie" created="2025-12-21T17:30:00+07:00">
+  
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/persistence/db.ts" action="TO_REPLACE">
+      <summary>Current idb-based persistence layer - will be replaced with Dexie.js</summary>
+      <content><![CDATA[
+/**
+ * Persistence DB - Unified IndexedDB schema for Project Alpha spike.
+ * Uses idb library with ViaGentPersistenceDB schema.
+ * WILL BE REPLACED BY: src/lib/state/dexie-db.ts
+ */
+import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+
+export interface IdeStateRecord {
+    projectId: string;
+    panelLayouts?: Record<string, number[]>;
+    openFiles?: string[];
+    activeFile?: string | null;
+    updatedAt: Date;
+}
+
+const DB_NAME = 'via-gent-persistence';
+const DB_VERSION = 1;
+      ]]></content>
+    </file>
+    
+    <file path="src/hooks/useIdeStatePersistence.ts" action="TO_SIMPLIFY">
+      <summary>Currently 197 lines, complex ref management. Will simplify to ~50 lines using Zustand.</summary>
+      <content><![CDATA[
+// Current: 197 lines with 10+ useRef calls
+// Problem: State scattered across refs, not properly synced
+// Solution: Replace with Zustand store selectors
+
+export function useIdeStatePersistence({
+    projectId,
+}: UseIdeStatePersistenceOptions): UseIdeStatePersistenceResult {
+    const [restoredIdeState, setRestoredIdeState] = useState<IdeState | null>(null);
+    // ... 10+ refs ...
+    // ... complex persistence logic ...
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/workspace/WorkspaceContext.tsx" action="TO_MODIFY">
+      <summary>Context provider that spreads state. Will derive from Zustand instead.</summary>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="zustand persist middleware">
+      Pattern: create<State>()(persist((set, get) => ({ ... }), { name: 'key', storage: customStorage }))
+      Key: Use createJSONStorage() for custom adapters
+      Key: partialize option to select which state to persist
+    </finding>
+    
+    <finding source="context7" query="dexie live query react">
+      Pattern: useLiveQuery(() => db.table.toArray(), [deps])
+      Key: Returns undefined while loading
+      Key: Auto-re-renders when data changes
+      Key: Use dexie-react-hooks package
+    </finding>
+    
+    <finding source="tech-debt-report" section="State Management Fragmentation">
+      Root cause: 3 competing state solutions (TanStack Store, Context, IndexedDB)
+      Same data lives in multiple places = desync bugs
+      Solution: Single source of truth with derived contexts
+    </finding>
+    
+    <finding source="stack-enhancement-report" section="Category 3: State Management">
+      Recommendation: Replace @tanstack/react-store with Zustand
+      Zustand benefits: Simpler API, better DevTools, smaller bundle (2.5KB vs 8KB)
+      Add @tanstack/react-query for AI/async state (later)
+    </finding>
+    
+    <finding source="stack-enhancement-report" section="Category 4: IndexedDB">
+      Recommendation: Upgrade idb to Dexie.js 4.x
+      Dexie benefits: 14x faster queries, schema versioning, observable queries
+      Key: useLiveQuery for reactive UI updates
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Single Source of Truth" source="architecture.md">
+      ┌─────────────────────────────────────────────┐
+      │         Zustand Store (Global State)        │
+      ├─────────────────────────────────────────────┤
+      │   React Context (derived, read-only views)  │
+      ├─────────────────────────────────────────────┤
+      │  Dexie.js (persistence middleware only)     │
+      └─────────────────────────────────────────────┘
+      Event Bus coordinates updates across layers
+    </pattern>
+    
+    <pattern name="Persist Middleware" source="zustand-docs">
+      Use Zustand's persist middleware with custom Dexie storage adapter.
+      This ensures state auto-saves on every change.
+    </pattern>
+    
+    <pattern name="Migration Safety" source="dexie-docs">
+      Dexie schema versioning allows safe migrations.
+      Use version(N).stores({...}).upgrade(tx => {...})
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      CRITICAL: Persist expandedPaths as Array, not Set (JSON.stringify doesn't handle Sets)
+    </note>
+    <note priority="high">
+      Use Zustand's partialize option to exclude functions from persistence
+    </note>
+    <note priority="medium">
+      Consider skipHydration for SSR compatibility (but we're client-only)
+    </note>
+    <note priority="medium">
+      Dexie database name should be 'via-gent' (matching existing IndexedDB)
+    </note>
+    <note priority="low">
+      Add version number to Dexie schema for future migrations
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="zustand" version="^5.0.0" action="ADD" />
+    <dependency name="dexie" version="^4.0.0" action="ADD" />
+    <dependency name="dexie-react-hooks" version="^1.0.0" action="ADD" />
+    <dependency name="@tanstack/react-store" version="^0.8.0" action="REMOVE" />
+    <dependency name="idb" version="^8.0.3" action="REMOVE" />
+  </dependencies>
+  
+</context>
