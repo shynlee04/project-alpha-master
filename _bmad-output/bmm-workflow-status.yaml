@@ -14,31 +14,29 @@ last_updated: "2025-12-21T23:15:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 
-# GOVERNANCE UPDATE: 2025-12-22T02:32:00+07:00
-# Story 27-5a IN PROGRESS - Epic 27 Phase 2 started
-# Skipping 27-3/27-4 validation to proceed with code organization
+# GOVERNANCE UPDATE: 2025-12-22T02:50:00+07:00
+# Story 27-5a COMPLETE - Epic 27 Phase 2 Code Organization
+# IDELayout.tsx refactored: 590→174 lines
 current_story:
-  key: "27-5a-refactor-idelayout"
+  key: "27-5b-refactor-sync-manager"
   epic: 27
-  status: "in-progress"
+  status: "backlog"
   platform: "Platform A"
-  started_at: "2025-12-22T02:32:00+07:00"
   notes: |
-    Phase 2 started. Refactoring IDELayout.tsx (590→<150 lines).
-    Extracting 4 hooks + 2 components per implementation plan.
+    Story 27-5a complete. IDELayout.tsx refactored (590→174 lines).
+    Next: Refactor sync-manager.ts (405→<250 lines)
 
 last_completed_story:
-  key: "27-I-complete-state-integration"
+  key: "27-5a-refactor-idelayout"
   epic: 27
-  completed_at: "2025-12-22T02:25:00+07:00"
+  completed_at: "2025-12-22T02:50:00+07:00"
   status: "done"
   platform: "Platform A"
-  tests_passing: 24
-  tests_total: 27
+  tests_passing: 9
+  tests_total: 11
   notes: |
-    All 16 tasks complete. Code review APPROVED.
-    0 legacy patterns (@tanstack/react-store, idb).
-    XTerminal sync-fail warning implemented.
+    IDELayout.tsx refactored from 590 to 174 lines.
+    5 hooks/components extracted. 2 pre-existing test failures.
 
 
 # =============================================================================

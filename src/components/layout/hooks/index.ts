@@ -8,3 +8,4 @@
 export { useIDEKeyboardShortcuts } from './useIDEKeyboardShortcuts';
 export { useWebContainerBoot } from './useWebContainerBoot';
 export { useIDEFileHandlers } from './useIDEFileHandlers';
+export { useIDEStateRestoration } from './useIDEStateRestoration';

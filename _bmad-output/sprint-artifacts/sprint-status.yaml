@@ -416,7 +416,7 @@ development_status:
   # EPIC 27 Phase 2: Code Organization (Absorbed from Epic 11)
   # Per master plan: implementation_plan.md Phase 2
   # =============================================================================
-  27-5a-refactor-idelayout: in-progress
+  27-5a-refactor-idelayout: done
     priority: P1
     points: 5
     story: _bmad-output/sprint-artifacts/27-5a-refactor-idelayout.md
@@ -424,7 +424,8 @@ development_status:
     platform: "Platform A"
     drafted_at: "2025-12-22T02:31:00+07:00"
     started_at: "2025-12-22T02:32:00+07:00"
-    notes: "Refactor IDELayout.tsx from 590 lines to <150 lines by extracting hooks and components"
+    completed_at: "2025-12-22T02:50:00+07:00"
+    notes: "IDELayout.tsx refactored from 590→174 lines. 5 hooks/components extracted."
     source: "Epic 11-5 (absorbed)"
     
   27-5b-refactor-sync-manager: backlog
