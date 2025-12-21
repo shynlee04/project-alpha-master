@@ -1,3 +1,5 @@
+"use client"
+
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

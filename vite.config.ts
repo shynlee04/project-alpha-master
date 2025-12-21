@@ -5,8 +5,10 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
-import netlify from '@netlify/vite-plugin-tanstack-start'
 
+// Conditional import for deployment platform
+// Use DEPLOY_TARGET env var: 'cloudflare' | 'netlify' | 'node'
+const DEPLOY_TARGET = process.env.DEPLOY_TARGET || 'cloudflare'
 
 const devtoolsEventBusPort = Number(process.env.TANSTACK_DEVTOOLS_EVENT_BUS_PORT ?? 42071)
 
@@ -22,7 +24,7 @@ const devtoolsEventBusPort = Number(process.env.TANSTACK_DEVTOOLS_EVENT_BUS_PORT
  * - File System Access API (local file sync)
  * - WebContainer internal operations
  * 
- * CSP is configured in public/_headers for production only.
+ * Production headers are handled by server/middleware/security-headers.ts
  * 
  * @see https://webcontainers.io/guides/configuring-headers
  * @see https://owasp.org/www-project-secure-headers/
@@ -42,40 +44,54 @@ const securityHeadersPlugin: Plugin = {
       res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
       res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
 
-      // Note: HSTS is only meaningful over HTTPS, skip in dev
-      // CSP is only in production (public/_headers) - too restrictive for dev
-
       next()
     })
   },
 }
 
-const config = defineConfig({
-  plugins: [
-    securityHeadersPlugin, // Security headers (COOP/COEP + X-Frame-Options + etc.)
-    devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
-    netlify(), // Replaces nitro() for Netlify deployment with proper SSR header support
-    viteTsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
-  // SSR Configuration: Externalize client-only packages from server bundle
-  // These packages require browser APIs (DOM, Canvas, etc.) and cannot run on Node.js
-  ssr: {
-    external: [
-      '@xterm/xterm',         // Terminal emulator (DOM)
-      '@xterm/addon-fit',     // Terminal fit addon (DOM)
-      '@monaco-editor/react', // Monaco editor (DOM, Web Worker)
-      'monaco-editor',        // Monaco core (DOM, Web Worker)
-      '@webcontainer/api',    // WebContainers (browser-only)
+// Dynamic plugin loading based on deployment target
+async function getDeploymentPlugin() {
+  if (DEPLOY_TARGET === 'cloudflare') {
+    const { cloudflare } = await import('@cloudflare/vite-plugin')
+    return cloudflare({ viteEnvironment: { name: 'ssr' } })
+  } else if (DEPLOY_TARGET === 'netlify') {
+    const netlify = (await import('@netlify/vite-plugin-tanstack-start')).default
+    return netlify()
+  }
+  // For 'node' or other targets, no additional plugin needed
+  return null
+}
+
+const config = defineConfig(async () => {
+  const deployPlugin = await getDeploymentPlugin()
+
+  return {
+    plugins: [
+      securityHeadersPlugin,
+      devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
+      ...(deployPlugin ? [deployPlugin] : []),
+      viteTsConfigPaths({
+        projects: ['./tsconfig.json'],
+      }),
+      tailwindcss(),
+      tanstackStart(),
+      viteReact(),
     ],
-    // Mark packages that should NOT be bundled into SSR server
-    noExternal: [],
-  },
+    // SSR Configuration
+    // Cloudflare plugin handles externals/bundling automatically
+    ssr: DEPLOY_TARGET === 'cloudflare'
+      ? { noExternal: true } // Bundle everything for Cloudflare
+      : {
+        external: [
+          '@xterm/xterm',
+          '@xterm/addon-fit',
+          '@monaco-editor/react',
+          'monaco-editor',
+          '@webcontainer/api',
+        ],
+        noExternal: [],
+      },
+  }
 })
 
 export default config
-
