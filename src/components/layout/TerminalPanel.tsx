@@ -16,6 +16,8 @@
 
 import { Suspense, lazy, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { cn } from '../../lib/utils';
 import { type TerminalTab } from '../../lib/workspace';
 
 /**
@@ -49,6 +51,8 @@ export interface TerminalPanelProps {
     onTabChange: (tab: TerminalTab) => void;
     /** Project path for terminal working directory */
     projectPath?: string;
+    /** Optional className for outer container */
+    className?: string;
 }
 
 /**
@@ -66,11 +70,12 @@ export function TerminalPanel({
     activeTab,
     onTabChange,
     projectPath,
+    className,
 }: TerminalPanelProps): React.JSX.Element {
     const { t } = useTranslation();
 
     return (
-        <div className="h-full flex flex-col border-t border-slate-800">
+        <div className={cn("h-full flex flex-col border-t border-slate-800", className)}>
             {/* Tab Bar */}
             <div className="h-8 px-4 flex items-center gap-6 border-b border-slate-800/50">
                 <TabButton

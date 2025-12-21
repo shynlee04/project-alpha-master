@@ -168,5 +168,12 @@
       "explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within the IDE session.",
       "backToDashboard": "Back to Dashboard"
     }
+  },
+  "error": {
+    "something_went_wrong": "Something went wrong",
+    "unexpected_error_description": "We're sorry, but an unexpected error has occurred.",
+    "technical_details": "Technical Details",
+    "try_again": "Try Again",
+    "reload_page": "Reload Page"
   }
 }

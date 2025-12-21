@@ -147,7 +147,7 @@ development_status:
   22-2-create-cicd-pipeline: done
     story: _bmad-output/sprint-artifacts/22-2-create-cicd-pipeline.md
     context: _bmad-output/sprint-artifacts/22-2-create-cicd-pipeline-context.xml
-  22-3-add-integration-tests: review
+  22-3-add-integration-tests: done
     story: _bmad-output/sprint-artifacts/22-3-add-integration-tests.md
     context: _bmad-output/sprint-artifacts/22-3-add-integration-tests-context.xml
     platform: "Platform A"
@@ -155,8 +155,16 @@ development_status:
     ready_at: "2025-12-21T12:25:00+07:00"
     dev_started_at: "2025-12-21T12:25:00+07:00"
     dev_completed_at: "2025-12-21T12:45:00+07:00"
+    review_completed_at: "2025-12-21T13:05:00+07:00"
     tests_added: 30
-  22-4-configure-error-monitoring: backlog
+    reviewer: "Platform A"
+  22-4-configure-error-monitoring: in-progress
+    story: _bmad-output/sprint-artifacts/22-4-configure-error-monitoring.md
+    context: _bmad-output/sprint-artifacts/22-4-configure-error-monitoring-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-21T13:15:00+07:00"
+    ready_at: "2025-12-21T13:18:00+07:00"
+    dev_started_at: "2025-12-21T13:08:00+07:00"
   22-5-create-deployment-docs: backlog
   22-6-establish-performance-benchmarks: backlog
   22-7-enable-typescript-strict: backlog
@@ -195,7 +203,12 @@ development_status:
     completed_at: "2025-12-21T02:52:00+07:00"
     assigned_to: "dev"
     assignment_date: "2025-12-20T19:35:00+07:00"
-  23-4-migrate-ide-panel-components: backlog
+  23-4-migrate-ide-panel-components: in-progress
+    story: _bmad-output/sprint-artifacts/23-4-migrate-ide-panel-components.md
+    context: _bmad-output/sprint-artifacts/23-4-migrate-ide-panel-components-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-21T12:54:00+07:00"
+    started_at: "2025-12-21T13:05:00+07:00"
   23-5-implement-theme-toggle: backlog
   23-6-migrate-form-dialog-components: backlog
   23-7-accessibility-audit: backlog

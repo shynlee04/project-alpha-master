@@ -24,6 +24,12 @@ import {
   ResizableHandle,
   type ImperativePanelGroupHandle,
 } from '@/components/ui/resizable';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from '@/components/ui/card';
 
 // Layout sub-components
 import { IDEHeaderBar } from './IDEHeaderBar';
@@ -405,23 +411,25 @@ export function IDELayout(): React.JSX.Element {
           defaultSize={20}
           minSize={10}
           maxSize={30}
-          className="bg-slate-900/50"
+          className="bg-background"
         >
-          <div className="h-full flex flex-col border-r border-slate-800">
-            <div className="h-9 px-4 flex items-center text-xs font-semibold text-slate-400 tracking-wider uppercase border-b border-slate-800/50">
-              Explorer
-            </div>
-            <div className="flex-1 min-h-0">
+          <Card className="h-full rounded-none border-0 border-r bg-background">
+            <CardHeader className="h-9 px-4 py-2 border-b">
+              <CardTitle className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                Explorer
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex-1 min-h-0">
               <FileTree
                 selectedPath={selectedFilePath}
                 onFileSelect={handleFileSelect}
                 refreshKey={fileTreeRefreshKey}
               />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </ResizablePanel>
 
-        <ResizableHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
+        <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
 
         {/* Center Area - Editor + Terminal */}
         <ResizablePanel order={2} minSize={30}>
@@ -438,40 +446,72 @@ export function IDELayout(): React.JSX.Element {
                 onLayout={(layout) => handlePanelLayoutChange('editor', layout)}
               >
                 {/* Editor */}
-                <ResizablePanel defaultSize={60} minSize={30} className="bg-slate-950">
-                  <MonacoEditor
-                    openFiles={openFiles}
-                    activeFilePath={activeFilePath}
-                    onSave={handleSave}
-                    onActiveFileChange={setActiveFilePath}
-                    onTabClose={handleTabClose}
-                    onContentChange={handleContentChange}
-                    initialScrollTop={
-                      activeFilePath && activeFilePath === restoredIdeState?.activeFile
-                        ? restoredIdeState.activeFileScrollTop
-                        : undefined
-                    }
-                    onScrollTopChange={(_path, scrollTop) => {
-                      activeFileScrollTopRef.current = scrollTop;
-                      scheduleIdeStatePersistence(400);
-                    }}
-                  />
+                <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
+                  <Card className="h-full rounded-none border-0 bg-background">
+                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                      <CardTitle className="text-sm font-semibold text-foreground">
+                        Editor
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 flex-1 min-h-0">
+                      <MonacoEditor
+                        openFiles={openFiles}
+                        activeFilePath={activeFilePath}
+                        onSave={handleSave}
+                        onActiveFileChange={setActiveFilePath}
+                        onTabClose={handleTabClose}
+                        onContentChange={handleContentChange}
+                        initialScrollTop={
+                          activeFilePath && activeFilePath === restoredIdeState?.activeFile
+                            ? restoredIdeState.activeFileScrollTop
+                            : undefined
+                        }
+                        onScrollTopChange={(_path, scrollTop) => {
+                          activeFileScrollTopRef.current = scrollTop;
+                          scheduleIdeStatePersistence(400);
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
                 </ResizablePanel>
 
-                <ResizableHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
+                <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
 
                 {/* Preview */}
-                <ResizablePanel defaultSize={40} minSize={15} className="bg-slate-900/30">
-                  <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
+                  <Card className="h-full rounded-none border-0 bg-background">
+                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                      <CardTitle className="text-sm font-semibold text-foreground">
+                        Preview
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 flex-1 min-h-0">
+                      <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                    </CardContent>
+                  </Card>
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
 
-            <ResizableHandle className="h-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-row-resize" />
+            <ResizableHandle withHandle className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
 
             {/* Terminal */}
-            <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-slate-900">
-              <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} projectPath="/" />
+            <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
+              <Card className="h-full rounded-none border-0 bg-background">
+                <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                  <CardTitle className="text-sm font-semibold text-foreground">
+                    Terminal
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 flex-1 min-h-0">
+                  <TerminalPanel
+                    activeTab={terminalTab}
+                    onTabChange={setTerminalTab}
+                    projectPath="/"
+                    className="border-0"
+                  />
+                </CardContent>
+              </Card>
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
@@ -479,19 +519,28 @@ export function IDELayout(): React.JSX.Element {
         {/* Right Sidebar - Chat */}
         {isChatVisible && (
           <>
-            <ResizableHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
+            <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
             <ResizablePanel
               order={3}
               defaultSize={25}
               minSize={15}
               maxSize={40}
-              className="bg-slate-900/50"
+              className="bg-background"
             >
-              <ChatPanelWrapper
-                projectId={projectId}
-                projectName={projectMetadata?.name ?? projectId ?? 'Project'}
-                onClose={() => setIsChatVisible(false)}
-              />
+              <Card className="h-full rounded-none border-0 bg-background">
+                <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                  <CardTitle className="text-sm font-semibold text-foreground">
+                    Chat
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 flex-1 min-h-0">
+                  <ChatPanelWrapper
+                    projectId={projectId}
+                    projectName={projectMetadata?.name ?? projectId ?? 'Project'}
+                    onClose={() => setIsChatVisible(false)}
+                  />
+                </CardContent>
+              </Card>
             </ResizablePanel>
           </>
         )}

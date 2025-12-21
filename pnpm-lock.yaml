@@ -35,6 +35,9 @@ importers:
       '@radix-ui/react-tabs':
         specifier: ^1.1.13
         version: 1.1.13(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@sentry/react':
+        specifier: ^10.32.1
+        version: 10.32.1(react@19.2.3)
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2))
@@ -1618,6 +1621,36 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@sentry-internal/browser-utils@10.32.1':
+    resolution: {integrity: sha512-sjLLep1es3rTkbtAdTtdpc/a6g7v7bK5YJiZJsUigoJ4NTiFeMI5uIDCxbH/tjJ1q23YE1LzVn7T96I+qBRjHA==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/feedback@10.32.1':
+    resolution: {integrity: sha512-O24G8jxbfBY1RE/v2qFikPJISVMOrd/zk8FKyl+oUVYdOxU2Ucjk2cR3EQruBFlc7irnL6rT3GPfRZ/kBgLkmQ==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/replay-canvas@10.32.1':
+    resolution: {integrity: sha512-/XGTzWNWVc+B691fIVekV2KeoHFEDA5KftrLFAhEAW7uWOwk/xy3aQX4TYM0LcPm2PBKvoumlAD+Sd/aXk63oA==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/replay@10.32.1':
+    resolution: {integrity: sha512-KKmLUgIaLRM0VjrMA1ByQTawZyRDYSkG2evvEOVpEtR9F0sumidAQdi7UY71QEKE1RYe/Jcp/3WoaqsMh8tbnQ==}
+    engines: {node: '>=18'}
+
+  '@sentry/browser@10.32.1':
+    resolution: {integrity: sha512-NPNCXTZ05ZGTFyJdKNqjykpFm+urem0ebosILQiw3C4BxNVNGH4vfYZexyl6prRhmg91oB6GjVNiVDuJiap1gg==}
+    engines: {node: '>=18'}
+
+  '@sentry/core@10.32.1':
+    resolution: {integrity: sha512-PH2ldpSJlhqsMj2vCTyU0BI2Fx1oIDhm7Izo5xFALvjVCS0gmlqHt1udu6YlKn8BtpGH6bGzssvv5APrk+OdPQ==}
+    engines: {node: '>=18'}
+
+  '@sentry/react@10.32.1':
+    resolution: {integrity: sha512-/tX0HeACbAmVP57x8txTrGk/U3fa9pDBaoAtlOrnPv5VS/aC5SGkehXWeTGSAa+ahlOWwp3IF8ILVXRiOoG/Vg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
+
   '@so-ric/colorspace@1.1.6':
     resolution: {integrity: sha512-/KiKkpHNOBgkFJwu9sh48LkHSMYGyuTcSFK/qMBdnOAlrRJzRSXAOFB5qwzaVQuDl8wAvHVMkaASQDReTahxuw==}
 
@@ -3172,6 +3205,9 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
   hosted-git-info@7.0.2:
     resolution: {integrity: sha512-puUZAUKT5m8Zzvs72XWy3HtvVbTWljRE66cP60bxJzAqf2DgICo7lYTY2IHUmLnNpjYvw5bvmoHvPc0QO2a62w==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -4017,6 +4053,9 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  react-is@16.13.1:
+    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -6464,6 +6503,41 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.53.5':
     optional: true
 
+  '@sentry-internal/browser-utils@10.32.1':
+    dependencies:
+      '@sentry/core': 10.32.1
+
+  '@sentry-internal/feedback@10.32.1':
+    dependencies:
+      '@sentry/core': 10.32.1
+
+  '@sentry-internal/replay-canvas@10.32.1':
+    dependencies:
+      '@sentry-internal/replay': 10.32.1
+      '@sentry/core': 10.32.1
+
+  '@sentry-internal/replay@10.32.1':
+    dependencies:
+      '@sentry-internal/browser-utils': 10.32.1
+      '@sentry/core': 10.32.1
+
+  '@sentry/browser@10.32.1':
+    dependencies:
+      '@sentry-internal/browser-utils': 10.32.1
+      '@sentry-internal/feedback': 10.32.1
+      '@sentry-internal/replay': 10.32.1
+      '@sentry-internal/replay-canvas': 10.32.1
+      '@sentry/core': 10.32.1
+
+  '@sentry/core@10.32.1': {}
+
+  '@sentry/react@10.32.1(react@19.2.3)':
+    dependencies:
+      '@sentry/browser': 10.32.1
+      '@sentry/core': 10.32.1
+      hoist-non-react-statics: 3.3.2
+      react: 19.2.3
+
   '@so-ric/colorspace@1.1.6':
     dependencies:
       color: 5.0.3
@@ -8214,6 +8288,10 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
+
   hosted-git-info@7.0.2:
     dependencies:
       lru-cache: 10.4.3
@@ -9032,6 +9110,8 @@ snapshots:
     optionalDependencies:
       react-dom: 19.2.3(react@19.2.3)
       typescript: 5.9.3
+
+  react-is@16.13.1: {}
 
   react-is@17.0.2: {}
 

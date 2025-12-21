@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="22-4-configure-error-monitoring" created="2025-12-21T13:15:00+07:00" platform="Platform A">
+  <!-- Current code state -->
+  <files>
+    <file path="src/routes/__root.tsx" purpose="Root route - wrap with ErrorBoundary here">
+      <content><![CDATA[
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+
+import Header from '../components/Header'
+import { LocaleProvider } from '../i18n/LocaleProvider'
+import appCss from '../styles.css?url'
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [/* ... */],
+    links: [{ rel: 'stylesheet', href: appCss }],
+  }),
+  shellComponent: RootDocument,
+})
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head><HeadContent /></head>
+      <body>
+        <LocaleProvider>
+          <Header />
+          {children}
+          {process.env.NODE_ENV === 'development' && (<TanStackDevtools ... />)}
+        </LocaleProvider>
+        <Scripts />
+      </body>
+    </html>
+  )
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/router.tsx" purpose="Router factory - initialize Sentry before router creation">
+      <content><![CDATA[
+import { createRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
+
+export const getRouter = () => {
+  const router = createRouter({
+    routeTree,
+    scrollRestoration: true,
+    defaultPreloadStaleTime: 0,
+  })
+  return router
+}
+      ]]></content>
+    </file>
+    
+    <file path="agent-os/standards/global/error-handling.md" purpose="Error handling standards">
+      <summary>
+        - Custom error classes: SyncError, PermissionDeniedError, FileNotFoundError
+        - Toast notification patterns with localized messages and actions
+        - Pattern: User-friendly messages, fail fast, specific exceptions
+      </summary>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="@sentry/react initialization patterns">
+      Pattern: Sentry.ErrorBoundary wraps component tree with fallback UI and showDialog option.
+      Uses: import * as Sentry from "@sentry/react"
+    </finding>
+    
+    <finding source="context7" query="Sentry TanStack start">
+      For React Router: Sentry.captureException in error boundary, wrapCreateBrowserRouter for tracing.
+      Client initialization in entry file with integrations: [Sentry.reactRouterTracingIntegration()]
+    </finding>
+    
+    <finding source="exa" query="Sentry React integration 2024 2025">
+      Modern pattern uses createRoot handlers:
+      - onUncaughtError: Sentry.reactErrorHandler()
+      - onCaughtError: Sentry.reactErrorHandler()
+      - onRecoverableError: Sentry.reactErrorHandler()
+    </finding>
+    
+    <finding source="sentry-docs" query="error boundary configuration">
+      Advanced config: &lt;Sentry.ErrorBoundary fallback={myFallback} showDialog&gt;
+      FallbackComponent receives error props for custom UI
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Client-Only Initialization" source="architecture.md">
+      Check typeof window !== 'undefined' before browser-only code.
+      WebContainer pattern from manager.ts applies.
+    </pattern>
+    
+    <pattern name="Error Class Convention" source="error-handling.md">
+      Use custom error classes with code property: new SyncError(message, code)
+      Pattern for graceful degradation with fallback UI.
+    </pattern>
+    
+    <pattern name="Environment Configuration" source="Vite convention">
+      Use VITE_ prefix for client-exposed env vars.
+      Access via import.meta.env.VITE_SENTRY_DSN
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Sentry must initialize BEFORE React renders. Add to router.tsx or create dedicated init file.
+    </note>
+    <note priority="high">
+      Do NOT call Sentry.init() during SSR - check window exists first.
+    </note>
+    <note priority="medium">
+      Use environment variable for DSN, gracefully skip init if missing.
+    </note>
+    <note priority="medium">
+      ErrorBoundary should wrap children in RootDocument, inside LocaleProvider for i18n access.
+    </note>
+    <note priority="low">
+      Consider adding Sentry.setUser() after auth if user context exists.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@sentry/react" version="^8.x" action="install" />
+    <dependency name="@tanstack/react-router" version="existing" notes="Already installed" />
+  </dependencies>
+  
+  <!-- Proposed file structure -->
+  <new_files>
+    <file path="src/lib/monitoring/sentry.ts">
+      Sentry initialization module with initSentry() function
+    </file>
+    <file path="src/components/common/AppErrorBoundary.tsx">
+      Styled error fallback component using Sentry.ErrorBoundary
+    </file>
+  </new_files>
+</context>

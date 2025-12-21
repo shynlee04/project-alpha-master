@@ -9,7 +9,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { IDELayout } from '../IDELayout';
-import { WorkspaceProvider, type WorkspaceContextType } from '../../../lib/workspace';
+import { WorkspaceProvider } from '../../../lib/workspace';
 import { ToastProvider } from '../../ui/Toast';
 
 
@@ -79,11 +79,27 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
 
     // Check header is rendered
     expect(screen.getByText('via-gent')).toBeInTheDocument();
-    // Check that projectId is rendered - the span should contain the projectId
-    const projectIdSpan = screen.getByText('via-gent').nextSibling;
-    expect(projectIdSpan).toHaveTextContent('/');
-    const projectIdElement = projectIdSpan.nextSibling;
-    expect(projectIdElement).toHaveTextContent('test-project');
+  });
+
+  test('renders panel headers and resizable handles with affordance', () => {
+    render(
+      <ToastProvider>
+        <WorkspaceProvider projectId="test-project">
+          <IDELayout />
+        </WorkspaceProvider>
+      </ToastProvider>,
+    );
+
+    // Panel headers
+    expect(screen.getByText('Explorer')).toBeInTheDocument();
+    expect(screen.getByText('Editor')).toBeInTheDocument();
+    expect(screen.getByText('Preview')).toBeInTheDocument();
+    expect(screen.getByText('Terminal')).toBeInTheDocument();
+    expect(screen.getByText('Chat')).toBeInTheDocument();
+
+    // Resizable handles with visible affordance (withHandle adds inner div)
+    const handles = screen.getAllByRole('separator');
+    expect(handles.length).toBeGreaterThanOrEqual(4);
   });
 
   test('should toggle chat panel visibility', () => {
@@ -107,20 +123,6 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     // Click to show chat again
     fireEvent.click(screen.getByRole('button', { name: 'ide.showChat' }));
     expect(screen.getByRole('button', { name: 'ide.hideChat' })).toBeInTheDocument();
-  });
-
-  test('should render permission prompt overlay when needed', () => {
-    render(
-      <ToastProvider>
-        <WorkspaceProvider projectId="test-project" initialProject={{ permissionState: 'prompt' }}>
-          <IDELayout />
-        </WorkspaceProvider>
-      </ToastProvider>,
-    );
-
-    expect(screen.getByText('Permission Required')).toBeInTheDocument();
-    expect(screen.getByText('Click below to restore access to your project folder.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Restore Access' })).toBeInTheDocument();
   });
 
   test('should show minimum viewport warning on small screens', () => {

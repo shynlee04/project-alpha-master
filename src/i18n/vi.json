@@ -168,5 +168,12 @@
       "explanation": "WebContainer chạy môi trường Node.js đầy đủ trong trình duyệt của bạn. Vì lý do bảo mật và quản lý tài nguyên, phần xem trước phải nằm trong phiên IDE.",
       "backToDashboard": "Quay lại Bảng điều khiển"
     }
+  },
+  "error": {
+    "something_went_wrong": "Đã xảy ra lỗi",
+    "unexpected_error_description": "Xin lỗi, đã có lỗi không mong muốn xảy ra.",
+    "technical_details": "Chi tiết kỹ thuật",
+    "try_again": "Thử lại",
+    "reload_page": "Tải lại trang"
   }
 }

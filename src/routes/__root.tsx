@@ -2,11 +2,17 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
-
 import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
+import { AppErrorBoundary } from '../components/common/AppErrorBoundary'
+import { initSentry } from '../lib/monitoring/sentry'
 
 import appCss from '../styles.css?url'
+
+// Initialize Sentry before React renders (client-only)
+if (typeof window !== 'undefined') {
+  initSentry()
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -45,8 +51,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <LocaleProvider>
-          <Header />
-          {children}
+          <AppErrorBoundary>
+            <Header />
+            {children}
+          </AppErrorBoundary>
           {process.env.NODE_ENV === 'development' && (
             <TanStackDevtools
               config={{
@@ -66,3 +74,4 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   )
 }
+
