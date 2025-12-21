@@ -19,9 +19,19 @@ interface XTerminalProps {
      * Permission state for file system access
      */
     permissionState?: 'prompt' | 'granted' | 'denied';
+    /**
+     * Whether sync has encountered an error (Story 27-I)
+     * If true, terminal will start with warning message
+     */
+    syncError?: boolean;
+    /**
+     * Maximum time to wait for sync before starting terminal anyway (ms)
+     * Default: 30000 (30 seconds)
+     */
+    syncTimeout?: number;
 }
 
-export function XTerminal({ className, initialSyncCompleted = false, permissionState }: XTerminalProps) {
+export function XTerminal({ className, initialSyncCompleted = false, permissionState, syncError = false, syncTimeout = 30000 }: XTerminalProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const terminalRef = useRef<Terminal | null>(null);
     const fitAddonRef = useRef<FitAddon | null>(null);
@@ -147,32 +157,75 @@ export function XTerminal({ className, initialSyncCompleted = false, permissionS
         };
     }, [t]);
 
-    // Start shell ONLY when sync completes
+    // Start shell when sync completes OR after timeout/error (Story 27-I)
     useEffect(() => {
         if (!isReady) return;
-        if (!initialSyncCompleted) return;
         if (shellStartedRef.current) return;
         if (!adapterRef.current) return;
 
         const adapter = adapterRef.current;
         const term = terminalRef.current;
 
-        shellStartedRef.current = true;
+        // Start immediately if sync completed
+        if (initialSyncCompleted) {
+            shellStartedRef.current = true;
+            console.log('[XTerminal] Sync completed, starting shell...');
+            boot()
+                .then(async () => {
+                    if (!isBooted()) return;
+                    await adapter.startShell();
+                })
+                .catch((err: Error) => {
+                    if (term) {
+                        term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
+                    }
+                });
+            return;
+        }
 
-        console.log('[XTerminal] Sync completed, starting shell...');
+        // Start with warning if sync has error
+        if (syncError) {
+            shellStartedRef.current = true;
+            console.log('[XTerminal] Sync error, starting shell with warning...');
+            if (term) {
+                term.write(`\r\n\x1b[33mWarning: File sync incomplete. Some files may not be available.\x1b[0m\r\n`);
+            }
+            boot()
+                .then(async () => {
+                    if (!isBooted()) return;
+                    await adapter.startShell();
+                })
+                .catch((err: Error) => {
+                    if (term) {
+                        term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
+                    }
+                });
+            return;
+        }
 
-        // Boot WebContainer and start shell
-        boot()
-            .then(async () => {
-                if (!isBooted()) return;
-                await adapter.startShell();
-            })
-            .catch((err: Error) => {
-                if (term) {
-                    term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
-                }
-            });
-    }, [isReady, initialSyncCompleted, t]);
+        // Set timeout to start shell after syncTimeout ms
+        const timeoutId = setTimeout(() => {
+            if (shellStartedRef.current) return;
+            shellStartedRef.current = true;
+            console.log('[XTerminal] Sync timeout, starting shell with warning...');
+            if (term) {
+                term.write(`\r\n\x1b[33mWarning: Sync is taking too long. Starting terminal anyway.\x1b[0m\r\n`);
+            }
+            boot()
+                .then(async () => {
+                    if (!isBooted()) return;
+                    await adapter.startShell();
+                })
+                .catch((err: Error) => {
+                    if (term) {
+                        term.write(`\r\n\x1b[31m${t('terminal.bootFailed', { error: err.message })}\x1b[0m\r\n`);
+                    }
+                });
+        }, syncTimeout);
+
+        return () => clearTimeout(timeoutId);
+    }, [isReady, initialSyncCompleted, syncError, syncTimeout, t]);
+
 
     // Determine overlay message
     const showOverlay = !initialSyncCompleted;
@@ -187,29 +240,29 @@ export function XTerminal({ className, initialSyncCompleted = false, permissionS
                 ref={containerRef}
                 className={`h-full w-full ${showOverlay ? 'opacity-30' : ''}`}
             />
-            
+
             {/* Sync waiting overlay */}
             {showOverlay && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
                     <div className="flex items-center gap-3 text-muted-foreground">
                         {/* Loading spinner */}
-                        <svg 
-                            className="h-5 w-5 animate-spin" 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            fill="none" 
+                        <svg
+                            className="h-5 w-5 animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
                             viewBox="0 0 24 24"
                         >
-                            <circle 
-                                className="opacity-25" 
-                                cx="12" 
-                                cy="12" 
-                                r="10" 
-                                stroke="currentColor" 
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
                                 strokeWidth="4"
                             />
-                            <path 
-                                className="opacity-75" 
-                                fill="currentColor" 
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             />
                         </svg>

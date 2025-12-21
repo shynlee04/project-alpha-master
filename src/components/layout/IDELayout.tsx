@@ -1,14 +1,10 @@
 /**
  * @fileoverview IDE Layout Component
  * @module components/layout/IDELayout
- * 
+ *
  * Main IDE layout component that orchestrates all IDE panels.
- * Uses react-resizable-panels for a VS Code-like layout with:
- * - Left sidebar (FileTree)
- * - Center area (Editor + Preview)
- * - Bottom panel (Terminal)
- * - Right sidebar (Agent Chat)
- * 
+ * Uses react-resizable-panels for a VS Code-like layout.
+ *
  * @example
  * ```tsx
  * <WorkspaceProvider projectId="my-project">
@@ -17,49 +13,44 @@
  * ```
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from '@/components/ui/resizable';
 import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Layout sub-components
 import { IDEHeaderBar } from './IDEHeaderBar';
 import { TerminalPanel } from './TerminalPanel';
 import { ChatPanelWrapper } from './ChatPanelWrapper';
+import { PermissionOverlay } from './PermissionOverlay';
+import { MinViewportWarning } from './MinViewportWarning';
 
 // IDE components
 import { FileTree } from '../ide/FileTree';
 import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
 import { PreviewPanel } from '../ide/PreviewPanel';
 
-// Hooks and context
+// Hooks
 import { useIdeStatePersistence } from '../../hooks/useIdeStatePersistence';
 import { useWorkspace, type TerminalTab } from '../../lib/workspace';
-import { boot, onServerReady, isBooted } from '../../lib/webcontainer';
 import { useToast } from '../ui/Toast';
+import {
+  useIDEKeyboardShortcuts,
+  useWebContainerBoot,
+  useIDEFileHandlers,
+} from './hooks';
 
 /**
- * IDELayout - Main IDE layout component.
- * 
- * Consumes WorkspaceContext for project state and provides:
+ * IDELayout - Main IDE layout orchestrator.
+ *
+ * Consumes WorkspaceContext and coordinates:
  * - Resizable panel layout
- * - File tree navigation
- * - Monaco editor with tabs
- * - Preview panel for dev server
- * - Terminal panel
- * - Agent chat panel
+ * - File tree, editor, preview, terminal, chat panels
  * - IDE state persistence
- * 
- * @returns IDE layout JSX element
  */
 export function IDELayout(): React.JSX.Element {
   const { toast } = useToast();
@@ -74,8 +65,8 @@ export function IDELayout(): React.JSX.Element {
     localAdapterRef,
     syncManagerRef,
     eventBus,
-    setIsWebContainerBooted,  // Story 13-2: Notify context when boot completes
-    restoreAccess,  // Story 13-5: Restore permission for prompt state
+    setIsWebContainerBooted,
+    restoreAccess,
   } = useWorkspace();
 
   // UI state
@@ -87,10 +78,6 @@ export function IDELayout(): React.JSX.Element {
   // Editor state
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
-
-  // Preview state
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewPort, setPreviewPort] = useState<number | null>(null);
 
   // Panel refs
   const mainPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
@@ -111,41 +98,29 @@ export function IDELayout(): React.JSX.Element {
     handlePanelLayoutChange,
   } = useIdeStatePersistence({ projectId });
 
+  // Extracted hooks
+  useIDEKeyboardShortcuts({
+    onChatToggle: () => setIsChatVisible(true),
+  });
 
-  // ============================================================================
-  // Keyboard Shortcuts
-  // ============================================================================
+  const { previewUrl, previewPort } = useWebContainerBoot({
+    onBooted: () => setIsWebContainerBooted(true),
+  });
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const isModifierPressed = event.metaKey || event.ctrlKey;
-      if (!isModifierPressed || event.key.toLowerCase() !== 'k') return;
+  const { handleFileSelect, handleSave, handleContentChange, handleTabClose } =
+    useIDEFileHandlers({
+      openFiles,
+      setOpenFiles,
+      activeFilePath,
+      setActiveFilePath,
+      setSelectedFilePath,
+      setFileTreeRefreshKey,
+      syncManagerRef,
+      eventBus,
+      toast,
+    });
 
-      const target = event.target;
-      if (target instanceof HTMLElement) {
-        const tagName = target.tagName?.toLowerCase();
-        const isEditable =
-          tagName === 'input' ||
-          tagName === 'textarea' ||
-          target.isContentEditable ||
-          Boolean(target.closest('.monaco-editor'));
-
-        if (isEditable) return;
-      }
-
-      event.preventDefault();
-      setIsChatVisible(true);
-      window.dispatchEvent(new CustomEvent('ide.chat.focus'));
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // ============================================================================
-  // State Sync with Refs
-  // ============================================================================
-
+  // State sync with refs
   const openFilePathsKey = openFiles.map((f) => f.path).join('\0');
 
   useEffect(() => {
@@ -168,11 +143,7 @@ export function IDELayout(): React.JSX.Element {
     scheduleIdeStatePersistence(250);
   }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, isChatVisible]);
 
-  // ============================================================================
-  // State Restoration
-  // ============================================================================
-
-  // Restore UI state from saved state
+  // State restoration
   useEffect(() => {
     if (!restoredIdeState) return;
     setIsChatVisible(restoredIdeState.chatVisible);
@@ -195,7 +166,6 @@ export function IDELayout(): React.JSX.Element {
       const layout = layouts[groupKey];
       if (!ref || !layout) return;
       if (expectedLength !== undefined && layout.length !== expectedLength) return;
-
       ref.setLayout(layout);
       appliedPanelGroupsRef.current.add(groupKey);
     };
@@ -207,8 +177,7 @@ export function IDELayout(): React.JSX.Element {
 
   // Restore open files
   useEffect(() => {
-    if (didRestoreOpenFilesRef.current) return;
-    if (!restoredIdeState) return;
+    if (didRestoreOpenFilesRef.current || !restoredIdeState) return;
     if (openFiles.length > 0) {
       didRestoreOpenFilesRef.current = true;
       return;
@@ -217,8 +186,7 @@ export function IDELayout(): React.JSX.Element {
       didRestoreOpenFilesRef.current = true;
       return;
     }
-    if (permissionState !== 'granted') return;
-    if (syncStatus === 'syncing') return;
+    if (permissionState !== 'granted' || syncStatus === 'syncing') return;
 
     const adapter = localAdapterRef.current;
     if (!adapter) return;
@@ -227,7 +195,6 @@ export function IDELayout(): React.JSX.Element {
 
     void (async () => {
       const restoredFiles: OpenFile[] = [];
-
       for (const path of restoredIdeState.openFiles) {
         try {
           const result = await adapter.readFile(path);
@@ -238,225 +205,47 @@ export function IDELayout(): React.JSX.Element {
           console.warn('[IDE] Failed to restore tab:', path, error);
         }
       }
-
       if (restoredFiles.length === 0) return;
-
       setOpenFiles(restoredFiles);
-
       const preferredActive =
         restoredIdeState.activeFile &&
           restoredFiles.some((f) => f.path === restoredIdeState.activeFile)
           ? restoredIdeState.activeFile
           : restoredFiles[0].path;
-
       setActiveFilePath(preferredActive);
       setSelectedFilePath(preferredActive);
     })();
   }, [restoredIdeState, openFiles.length, permissionState, syncStatus, localAdapterRef, didRestoreOpenFilesRef]);
 
-  // ============================================================================
-  // WebContainer Initialization
-  // ============================================================================
-
-  useEffect(() => {
-    boot()
-      .then(() => {
-        // Story 13-2: Notify WorkspaceContext that boot is complete
-        // This enables useInitialSync to trigger auto-sync
-        setIsWebContainerBooted(true);
-        console.log('[IDE] WebContainer booted, auto-sync can now proceed');
-
-        if (isBooted()) {
-          const unsubscribe = onServerReady((port, url) => {
-            console.log(`[IDE] Server ready on port ${port}: ${url}`);
-            setPreviewUrl(url);
-            setPreviewPort(port);
-          });
-          return unsubscribe;
-        }
-      })
-      .catch((error) => {
-        console.error('[IDE] WebContainer boot failed:', error);
-        // Don't set booted on failure - sync won't attempt
-      });
-  }, [setIsWebContainerBooted]);
-
-  // ============================================================================
-  // File Handlers
-  // ============================================================================
-
-  const handleFileSelect = useCallback(
-    async (path: string, handle: FileSystemFileHandle) => {
-      setSelectedFilePath(path);
-      console.log('[IDE] File selected:', path);
-
-      const existingFile = openFiles.find((f) => f.path === path);
-      if (existingFile) {
-        setActiveFilePath(path);
-        return;
-      }
-
-      try {
-        const file = await handle.getFile();
-        const content = await file.text();
-        setOpenFiles((prev) => [...prev, { path, content, isDirty: false }]);
-        setActiveFilePath(path);
-      } catch (error) {
-        console.error('[IDE] Failed to read file:', path, error);
-      }
-    },
-    [openFiles],
-  );
-
-  const handleSave = useCallback(
-    async (path: string, content: string) => {
-      console.log('[IDE] Saving file:', path);
-      try {
-        if (syncManagerRef.current) {
-          await syncManagerRef.current.writeFile(path, content);
-          setOpenFiles((prev) =>
-            prev.map((f) =>
-              f.path === path ? { ...f, content, isDirty: false } : f,
-            ),
-          );
-          console.log('[IDE] File saved successfully:', path);
-          setFileTreeRefreshKey((prev) => prev + 1);
-        } else {
-          console.warn('[IDE] No SyncManager available for save');
-          toast('No project folder open - save skipped', 'warning');
-        }
-      } catch (error) {
-        console.error('[IDE] Failed to save file:', path, error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        toast(`Failed to save ${path.split('/').pop()}: ${errorMessage}`, 'error');
-      }
-    },
-    [toast, syncManagerRef],
-  );
-
-  const handleContentChange = useCallback(
-    (path: string, content: string) => {
-      setOpenFiles((prev) =>
-        prev.map((f) =>
-          f.path === path ? { ...f, content, isDirty: true } : f,
-        ),
-      );
-      eventBus.emit('file:modified', { path, source: 'editor', content });
-    },
-    [eventBus],
-  );
-
-  const handleTabClose = useCallback(
-    (path: string) => {
-      setOpenFiles((prev) => prev.filter((f) => f.path !== path));
-      if (activeFilePath === path) {
-        setActiveFilePath(openFiles.find((f) => f.path !== path)?.path ?? null);
-      }
-    },
-    [activeFilePath, openFiles],
-  );
-
-  // ============================================================================
-  // Render
-  // ============================================================================
-
   return (
     <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
-      {/* Story 13-5: Restore Access Overlay */}
       {permissionState === 'prompt' && (
-        <div className="absolute inset-0 bg-background/90 z-50 flex items-center justify-center">
-          <div className="bg-card p-8 rounded-lg text-center max-w-md border border-border shadow-2xl">
-            <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/15 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              Permission Required
-            </h3>
-            <p className="text-muted-foreground text-sm mb-6">
-              Click below to restore access to your project folder.
-              {projectMetadata?.name && (
-                <span className="block mt-1 text-foreground font-medium">
-                  {projectMetadata.name}
-                </span>
-              )}
-            </p>
-            <button
-              onClick={restoreAccess}
-              className="px-6 py-2 bg-primary hover:brightness-110 text-primary-foreground rounded-lg font-medium transition-colors"
-            >
-              Restore Access
-            </button>
-          </div>
-        </div>
+        <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />
       )}
+      <IDEHeaderBar projectId={projectId} isChatVisible={isChatVisible} onToggleChat={() => setIsChatVisible(!isChatVisible)} />
 
-      {/* Header */}
-      <IDEHeaderBar
-        projectId={projectId}
-        isChatVisible={isChatVisible}
-        onToggleChat={() => setIsChatVisible(!isChatVisible)}
-      />
-
-      {/* Main Resizable Layout */}
-      <ResizablePanelGroup
-        ref={mainPanelGroupRef}
-        direction="horizontal"
-        className="flex-1"
-        onLayout={(layout) => handlePanelLayoutChange('main', layout)}
-      >
-        {/* Left Sidebar - FileTree */}
-        <ResizablePanel
-          order={1}
-          defaultSize={20}
-          minSize={10}
-          maxSize={30}
-          className="bg-background"
-        >
+      <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
+        <ResizablePanel order={1} defaultSize={20} minSize={10} maxSize={30} className="bg-background">
           <Card className="h-full rounded-none border-0 border-r bg-background">
             <CardHeader className="h-9 px-4 py-2 border-b bg-card">
-              <CardTitle className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                Explorer
-              </CardTitle>
+              <CardTitle className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">Explorer</CardTitle>
             </CardHeader>
             <CardContent className="p-0 flex-1 min-h-0">
-              <FileTree
-                selectedPath={selectedFilePath}
-                onFileSelect={handleFileSelect}
-                refreshKey={fileTreeRefreshKey}
-              />
+              <FileTree selectedPath={selectedFilePath} onFileSelect={handleFileSelect} refreshKey={fileTreeRefreshKey} />
             </CardContent>
           </Card>
         </ResizablePanel>
 
-        <ResizableHandle
-          withHandle
-          orientation="vertical"
-          className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize"
-        />
+        <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
 
-        {/* Center Area - Editor + Terminal */}
         <ResizablePanel order={2} minSize={30}>
-          <ResizablePanelGroup
-            ref={centerPanelGroupRef}
-            direction="vertical"
-            onLayout={(layout) => handlePanelLayoutChange('center', layout)}
-          >
-            {/* Editor + Preview */}
+          <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
             <ResizablePanel defaultSize={70} minSize={30}>
-              <ResizablePanelGroup
-                ref={editorPanelGroupRef}
-                direction="horizontal"
-                onLayout={(layout) => handlePanelLayoutChange('editor', layout)}
-              >
-                {/* Editor */}
+              <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
                 <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
                     <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-sm font-semibold text-foreground">
-                        Editor
-                      </CardTitle>
+                      <CardTitle className="text-sm font-semibold text-foreground">Editor</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
                       <MonacoEditor
@@ -466,33 +255,17 @@ export function IDELayout(): React.JSX.Element {
                         onActiveFileChange={setActiveFilePath}
                         onTabClose={handleTabClose}
                         onContentChange={handleContentChange}
-                        initialScrollTop={
-                          activeFilePath && activeFilePath === restoredIdeState?.activeFile
-                            ? restoredIdeState.activeFileScrollTop
-                            : undefined
-                        }
-                        onScrollTopChange={(_path, scrollTop) => {
-                          activeFileScrollTopRef.current = scrollTop;
-                          scheduleIdeStatePersistence(400);
-                        }}
+                        initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                        onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
                       />
                     </CardContent>
                   </Card>
                 </ResizablePanel>
-
-                <ResizableHandle
-                  withHandle
-                  orientation="vertical"
-                  className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize"
-                />
-
-                {/* Preview */}
+                <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
                 <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
                     <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-sm font-semibold text-foreground">
-                        Preview
-                      </CardTitle>
+                      <CardTitle className="text-sm font-semibold text-foreground">Preview</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
                       <PreviewPanel previewUrl={previewUrl} port={previewPort} />
@@ -501,58 +274,30 @@ export function IDELayout(): React.JSX.Element {
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
-
-            <ResizableHandle
-              withHandle
-              orientation="horizontal"
-              className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize"
-            />
-
-            {/* Terminal */}
+            <ResizableHandle withHandle orientation="horizontal" className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
             <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
               <Card className="h-full rounded-none border-0 bg-background">
                 <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                  <CardTitle className="text-sm font-semibold text-foreground">
-                    Terminal
-                  </CardTitle>
+                  <CardTitle className="text-sm font-semibold text-foreground">Terminal</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0 flex-1 min-h-0">
-                  <TerminalPanel
-                    activeTab={terminalTab}
-                    onTabChange={setTerminalTab}
-                    initialSyncCompleted={initialSyncCompleted}
-                    permissionState={permissionState}
-                    className="border-0"
-                  />
+                  <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
                 </CardContent>
               </Card>
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
 
-        {/* Right Sidebar - Chat */}
         {isChatVisible && (
           <>
             <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
-            <ResizablePanel
-              order={3}
-              defaultSize={25}
-              minSize={15}
-              maxSize={40}
-              className="bg-background"
-            >
+            <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
               <Card className="h-full rounded-none border-0 bg-background">
                 <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                  <CardTitle className="text-sm font-semibold text-foreground">
-                    Chat
-                  </CardTitle>
+                  <CardTitle className="text-sm font-semibold text-foreground">Chat</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0 flex-1 min-h-0">
-                  <ChatPanelWrapper
-                    projectId={projectId}
-                    projectName={projectMetadata?.name ?? projectId ?? 'Project'}
-                    onClose={() => setIsChatVisible(false)}
-                  />
+                  <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
                 </CardContent>
               </Card>
             </ResizablePanel>
@@ -560,30 +305,7 @@ export function IDELayout(): React.JSX.Element {
         )}
       </ResizablePanelGroup>
 
-      {/* Minimum Viewport Warning */}
       <MinViewportWarning />
-    </div>
-  );
-}
-
-/**
- * MinViewportWarning - Shown when viewport is too small.
- * 
- * @returns Warning overlay JSX element
- */
-export function MinViewportWarning(): React.JSX.Element {
-  return (
-    <div className="fixed inset-0 bg-background/95 z-50 hidden min-[1024px]:hidden items-center justify-center p-8 text-center max-[1023px]:flex">
-      <div>
-        <h2 className="text-xl font-semibold text-foreground mb-2">
-          Screen Too Small
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          via-gent IDE requires a minimum viewport width of 1024px.
-          <br />
-          Please resize your browser window or use a larger screen.
-        </p>
-      </div>
     </div>
   );
 }

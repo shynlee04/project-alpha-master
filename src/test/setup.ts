@@ -1,3 +1,7 @@
+// Import fake-indexeddb BEFORE any code that uses IndexedDB/Dexie
+// This provides a mock IndexedDB implementation for tests
+import 'fake-indexeddb/auto';
+
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 

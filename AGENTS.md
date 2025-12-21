@@ -32,187 +32,128 @@ pnpm i18n:extract
 ```
 
 ## Dependencies Github repos and docs links:
+Based on my research, here's a comprehensive list of official documentation and GitHub repository links for your stack dependencies:
 
-```
-Here is a concise list of runtime dependencies with official docs roots and GitHub repos where applicable.
+## Core UI & Component Libraries
 
-## React core
+### @radix-ui (Dialog, Dropdown Menu, Label, Select, Separator, Slot, Switch, Tabs)
+- **Docs**: [https://www.radix-ui.com/primitives](https://www.radix-ui.com/primitives)[1]
+- **GitHub**: [https://github.com/radix-ui/primitives](https://github.com/radix-ui/primitives)[2]
 
-- **react**  
-  - Docs: https://react.dev[1]
-  - GitHub: https://github.com/facebook/react[1]
-- **react-dom**  
-  - Docs: https://react.dev/reference/react-dom[1]
-  - GitHub: https://github.com/facebook/react[1]
+### @monaco-editor/react
+- **Docs**: [https://github.com/suren-atoyan/monaco-react](https://github.com/suren-atoyan/monaco-react)[3]
+- **GitHub**: [https://github.com/suren-atoyan/monaco-react](https://github.com/suren-atoyan/monaco-react)[3]
 
-## Styling / UI
+### monaco-editor
+- **Docs**: [https://microsoft.github.io/monaco-editor/](https://microsoft.github.io/monaco-editor/)[4]
+- **GitHub**: [https://github.com/microsoft/monaco-editor](https://github.com/microsoft/monaco-editor)[5]
 
-- **tailwindcss**  
-  - Docs: https://tailwindcss.com/docs[1]
-  - GitHub: https://github.com/tailwindlabs/tailwindcss[1]
-- **@tailwindcss/vite**  
-  - Docs: https://tailwindcss.com/docs/installation/tailwind-vite[1]
-  - GitHub: https://github.com/tailwindlabs/tailwindcss/tree/master/packages/%40tailwindcss/vite[1]
-- **tailwind-merge**  
-  - Docs: https://www.npmjs.com/package/tailwind-merge[1]
-  - GitHub: https://github.com/dcastil/tailwind-merge[1]
-- **class-variance-authority**  
-  - Docs: https://cva.style[2]
-  - GitHub: https://github.com/joe-bell/cva[2]
-- **clsx**  
-  - Docs: https://www.npmjs.com/package/clsx[1]
-  - GitHub: https://github.com/lukeed/clsx[1]
-- **lucide-react**  
-  - Docs: https://lucide.dev/guide/packages/lucide-react[1]
-  - GitHub: https://github.com/lucide-icons/lucide[1]
-- **sonner**  
-  - Docs: https://sonner.emilkowal.ski[1]
-  - GitHub: https://github.com/emilkowalski/sonner[1]
-- **next-themes**  
-  - Docs: https://github.com/pacocoursey/next-themes#readme[1]
-  - GitHub: https://github.com/pacocoursey/next-themes[1]
+### lucide-react
+- **Docs**: [https://lucide.dev](https://lucide.dev)[6]
+- **GitHub**: [https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide)[7]
 
-## Radix UI primitives
+## Styling & Theming
 
-- **@radix-ui/react-dialog**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/dialog[3]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/dialog[4]
-- **@radix-ui/react-dropdown-menu**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/dropdown-menu[1]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/dropdown-menu[1]
-- **@radix-ui/react-label**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/label[1]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/label[1]
-- **@radix-ui/react-select**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/select[5]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/select[6]
-- **@radix-ui/react-separator**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/separator[1]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/separator[1]
-- **@radix-ui/react-slot**  
-  - Docs: https://www.radix-ui.com/primitives/docs/utilities/slot[1]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/slot[1]
-- **@radix-ui/react-switch**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/switch[1]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/switch[1]
-- **@radix-ui/react-tabs**  
-  - Docs: https://www.radix-ui.com/primitives/docs/components/tabs[1]
-  - GitHub: https://github.com/radix-ui/primitives/tree/main/packages/react/tabs[1]
+### tailwindcss & @tailwindcss/vite
+- **Docs**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)[8]
+- **GitHub**: [https://github.com/tailwindlabs/tailwindcss.com](https://github.com/tailwindlabs/tailwindcss.com)[9]
 
-## TanStack ecosystem
+### class-variance-authority
+- **Docs**: [https://cva.style](https://cva.style)[10]
+- **GitHub**: [https://github.com/joe-bell/cva](https://github.com/joe-bell/cva)[10]
 
-- **@tanstack/ai**  
-  - Docs: https://tanstack.com/ai[7]
-  - GitHub: https://github.com/TanStack/ai[8]
-- **@tanstack/ai-gemini**  
-  - Docs: https://tanstack.com/ai/latest/docs/frameworks/gemini (adapter section)[7]
-  - GitHub: https://github.com/TanStack/ai/tree/main/packages/ai-gemini[8]
-- **@tanstack/ai-react**  
-  - Docs: https://tanstack.com/ai/latest/docs/frameworks/react[7]
-  - GitHub: https://github.com/TanStack/ai/tree/main/packages/ai-react[8]
-- **@tanstack/react-router**  
-  - Docs: https://tanstack.com/router[9]
-  - GitHub: https://github.com/TanStack/router[9]
-- **@tanstack/react-router-devtools**  
-  - Docs: https://tanstack.com/router/latest/docs/framework/react/devtools[10]
-  - GitHub: https://github.com/TanStack/router/tree/main/packages/react-router-devtools[9]
-- **@tanstack/react-router-ssr-query**  
-  - Docs: https://tanstack.com/router/latest/docs/framework/react/guide/ssr[10]
-  - GitHub: https://github.com/TanStack/router/tree/main/packages/react-router-ssr-query[9]
-- **@tanstack/react-start**  
-  - Docs: https://tanstack.com/start/latest/docs/framework/react[10]
-  - GitHub: https://github.com/TanStack/tanstack-start[10]
-- **@tanstack/router-plugin**  
-  - Docs: https://tanstack.com/router/latest/docs/framework/react/guide/file-based-routing[10]
-  - GitHub: https://github.com/TanStack/router/tree/main/packages/router-plugin[9]
-- **@tanstack/store**  
-  - Docs: https://tanstack.com/store/latest/docs/framework/react/overview[1]
-  - GitHub: https://github.com/TanStack/store[1]
-- **@tanstack/react-devtools**  
-  - Docs: https://tanstack.com/devtools/latest/docs/framework/react/overview[1]
-  - GitHub: https://github.com/TanStack/devtools[1]
+### next-themes
+- **Docs**: [https://github.com/pacocoursey/next-themes](https://github.com/pacocoursey/next-themes)[11]
+- **GitHub**: [https://github.com/pacocoursey/next-themes](https://github.com/pacocoursey/next-themes)[11]
 
-## Monaco, xterm, editor tooling
+### clsx & tailwind-merge
+- **clsx GitHub**: [https://github.com/lukeed/clsx](https://github.com/lukeed/clsx)
+- **tailwind-merge GitHub**: [https://github.com/dcastil/tailwind-merge](https://github.com/dcastil/tailwind-merge)
 
-- **monaco-editor**  
-  - Docs: https://microsoft.github.io/monaco-editor[1]
-  - GitHub: https://github.com/microsoft/monaco-editor[1]
-- **@monaco-editor/react**  
-  - Docs: https://github.com/suren-atoyan/monaco-react#readme[1]
-  - GitHub: https://github.com/suren-atoyan/monaco-react[1]
-- **@xterm/xterm**  
-  - Docs: https://xtermjs.org/docs[11]
-  - GitHub: https://github.com/xtermjs/xterm.js[11]
-- **@xterm/addon-fit**  
-  - Docs: https://xtermjs.org/docs/api/addons/fit[11]
-  - GitHub: https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-fit[11]
-- **@webcontainer/api**  
-  - Docs: https://webcontainers.io/api[12]
-  - GitHub: https://github.com/stackblitz/webcontainer-core[13]
+## TanStack Ecosystem
 
-## State, data, events
+### @tanstack/react-router, @tanstack/react-router-devtools, @tanstack/react-router-ssr-query, @tanstack/react-start, @tanstack/router-plugin
+- **Docs**: [https://tanstack.com/router](https://tanstack.com/router)[12]
+- **GitHub**: [https://github.com/TanStack/router](https://github.com/TanStack/router)[13]
 
-- **zustand**  
-  - Docs: https://docs.pmnd.rs/zustand/getting-started/introduction[1]
-  - GitHub: https://github.com/pmndrs/zustand[1]
-- **dexie**  
-  - Docs: https://dexie.org/docs[1]
-  - GitHub: https://github.com/dexie/Dexie.js[1]
-- **dexie-react-hooks**  
-  - Docs: https://dexie.org/docs/React[1]
-  - GitHub: https://github.com/dexie/Dexie.js/tree/master/addons/dexie-react-hooks[1]
-- **idb**  
-  - Docs: https://github.com/jakearchibald/idb#readme[1]
-  - GitHub: https://github.com/jakearchibald/idb[1]
-- **eventemitter3**  
-  - Docs: https://github.com/primus/eventemitter3#readme[1]
-  - GitHub: https://github.com/primus/eventemitter3[1]
+### @tanstack/ai, @tanstack/ai-gemini, @tanstack/ai-react
+- **Docs**: [https://tanstack.com/ai](https://tanstack.com/ai)[14]
+- **GitHub**: [https://github.com/TanStack/ai](https://github.com/TanStack/ai)[15]
 
-## i18n
+### @tanstack/store
+- **Docs**: [https://tanstack.com](https://tanstack.com)[16]
+- **GitHub**: [https://github.com/TanStack](https://github.com/TanStack)
 
-- **i18next**  
-  - Docs: https://www.i18next.com[1]
-  - GitHub: https://github.com/i18next/i18next[1]
-- **i18next-browser-languagedetector**  
-  - Docs: https://github.com/i18next/i18next-browser-languageDetector#readme[1]
-  - GitHub: https://github.com/i18next/i18next-browser-languageDetector[1]
-- **react-i18next**  
-  - Docs: https://react.i18next.com[1]
-  - GitHub: https://github.com/i18next/react-i18next[1]
+### @tanstack/react-devtools
+- **Docs**: [https://tanstack.com](https://tanstack.com)[16]
+- **GitHub**: [https://github.com/TanStack](https://github.com/TanStack)
 
-## Routing / theming extras
+## Data & State Management
 
-- **react-resizable-panels**  
-  - Docs: https://www.npmjs.com/package/react-resizable-panels[1]
-  - GitHub: https://github.com/bvaughn/react-resizable-panels[1]
-- **next-themes** (already listed under styling but relevant for theming with routing)[1]
+### zustand
+- **Docs**: [https://zustand.docs.pmnd.rs](https://zustand.docs.pmnd.rs)[17]
+- **GitHub**: [https://github.com/pmndrs/zustand](https://github.com/pmndrs/zustand)[18]
 
-## Validation / schema
+### dexie & dexie-react-hooks
+- **Docs**: [https://dexie.org](https://dexie.org)[19]
+- **GitHub**: [https://github.com/dexie/Dexie.js](https://github.com/dexie/Dexie.js)[20]
 
-- **zod**  
-  - Docs: https://zod.dev[1]
-  - GitHub: https://github.com/colinhacks/zod[1]
+### idb
+- **Docs**: [https://github.com/jakearchibald/idb](https://github.com/jakearchibald/idb)[21]
+- **GitHub**: [https://github.com/jakearchibald/idb](https://github.com/jakearchibald/idb)[21]
 
-## Error monitoring
+### zod
+- **Docs**: [https://zod.dev](https://zod.dev)[22]
+- **GitHub**: [https://github.com/colinhacks/zod](https://github.com/colinhacks/zod)[23]
 
-- **@sentry/react**  
-  - Docs: https://docs.sentry.io/platforms/javascript/guides/react[14]
-  - GitHub: https://github.com/getsentry/sentry-javascript/tree/master/packages/react[15]
+## Development Tools & Utilities
 
-## Git, WebContainers integration
+### @webcontainer/api
+- **Docs**: [https://developer.stackblitz.com/platform/api/webcontainer-api](https://developer.stackblitz.com/platform/api/webcontainer-api)[24]
+- **GitHub**: [https://github.com/stackblitz/webcontainer-docs](https://github.com/stackblitz/webcontainer-docs)[25]
 
-- **isomorphic-git**  
-  - Docs: https://isomorphic-git.org/docs/en[1]
-  - GitHub: https://github.com/isomorphic-git/isomorphic-git[1]
+### @xterm/xterm & @xterm/addon-fit
+- **Docs**: [http://xtermjs.org](http://xtermjs.org)[26]
+- **GitHub**: [https://github.com/xtermjs/xterm.js](https://github.com/xtermjs/xterm.js)[27]
 
-## Build / tooling in runtime deps
+### isomorphic-git
+- **Docs**: [https://isomorphic-git.org](https://isomorphic-git.org)[28]
+- **GitHub**: [https://github.com/isomorphic-git/isomorphic-git](https://github.com/isomorphic-git/isomorphic-git)[29]
 
-- **vite-tsconfig-paths**  
-  - Docs: https://github.com/aleclarson/vite-tsconfig-paths#readme[1]
-  - GitHub: https://github.com/aleclarson/vite-tsconfig-paths[1]
+## Internationalization
 
-```
+### i18next, i18next-browser-languagedetector, react-i18next
+- **Docs**: [https://www.i18next.com](https://www.i18next.com)[30]
+- **GitHub**: [https://github.com/i18next/i18next](https://github.com/i18next/i18next)[31]
 
+## UI Utilities
+
+### react-resizable-panels
+- **Docs**: [https://react-resizable-panels.vercel.app](https://react-resizable-panels.vercel.app)[32]
+- **GitHub**: [https://github.com/bvaughn/react-resizable-panels](https://github.com/bvaughn/react-resizable-panels)[33]
+
+### sonner
+- **Docs**: [https://sonner.emilkowal.ski](https://sonner.emilkowal.ski)
+- **GitHub**: [https://github.com/emilkowalski/sonner](https://github.com/emilkowalski/sonner)
+
+### eventemitter3
+- **Docs**: [http://nodejs.org/api/events.html](http://nodejs.org/api/events.html)[34]
+- **GitHub**: [https://github.com/primus/eventemitter3](https://github.com/primus/eventemitter3)[34]
+
+## Observability
+
+### @sentry/react
+- **Docs**: [https://docs.sentry.io/platforms/javascript/guides/react/](https://docs.sentry.io/platforms/javascript/guides/react/)[35]
+- **GitHub**: [https://github.com/getsentry/sentry-javascript](https://github.com/getsentry/sentry-javascript)[36]
+
+## React Core
+
+### react & react-dom
+- **Docs**: [https://react.dev](https://react.dev)
+- **GitHub**: [https://github.com/facebook/react](https://github.com/facebook/react)
+
+### vite-tsconfig-paths
+- **GitHub**: [https://github.com/aleclarson/vite-tsconfig-paths](https://github.com/aleclarson/vite-tsconfig-paths)
 
 
 ## Key Directories & Files

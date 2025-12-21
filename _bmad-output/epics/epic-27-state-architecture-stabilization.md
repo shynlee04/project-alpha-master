@@ -23,19 +23,34 @@ See: [Architectural Stabilization Proposal](file:///c:/Users/Admin/Documents/cod
 
 ## Stories
 
+### Phase 1: State Integration (Original Epic 27)
+
 | Story | Title | Priority | Points | Status |
 |-------|-------|----------|--------|--------|
-| 27-1 | Migrate State to Zustand + Dexie.js (Infrastructure) | P0 | 5 | ⚠️ infra-done, integration-pending |
-| 27-1b | Component Migration to Zustand + Dexie.js | P0 | 8 | ⚠️ infra-done, integration-pending |
-| 27-1c | Persistence Layer Migration (idb → Dexie) | P0 | 5 | ⚠️ infra-done, integration-pending |
-| 27-2 | Event Bus Integration Across Components | P0 | 5 | ⚠️ infra-done, integration-pending |
+| 27-1 | Migrate State to Zustand + Dexie.js (Infrastructure) | P0 | 5 | ✅ done |
+| 27-1b | Component Migration to Zustand + Dexie.js | P0 | 8 | ✅ done |
+| 27-1c | Persistence Layer Migration (idb → Dexie) | P0 | 5 | ✅ done |
+| 27-2 | Event Bus Integration Across Components | P0 | 5 | ✅ done |
+| **27-I** | **Complete State Integration (Meta-Story)** | **P0** | **3** | **🔄 in-progress** |
 | 27-3 | Fix TailwindCSS 4.x CSS Z-Index Stacking | P1 | 3 | ⚠️ needs-validation |
 | 27-4 | Fix Terminal pnpm Version Handling | P1 | 3 | ⚠️ needs-validation |
 | 27-5 | ~~Fix Production SSR Entry Error~~ | ~~P0~~ | ~~5~~ | ❌ INVALID |
 
-**Total:** 6 active stories, 29 points
+### Phase 2: Code Organization (Absorbed from Epic 11)
 
-> ⚠️ **CRITICAL:** Stories 27-1 through 27-2 created infrastructure but full integration with Epic 3, 4, 5, 10 components was NOT validated. See: [epic-27-integration-impact-report-2025-12-21.md](file:///c:/Users/Admin/Documents/coding-project/project-alpha-master/project-alpha-master/_bmad-output/handoffs/epic-27-integration-impact-report-2025-12-21.md)
+| Story | Title | Priority | Points | Status |
+|-------|-------|----------|--------|--------|
+| 27-5a | Refactor IDELayout.tsx (526→<250 lines) | P1 | 5 | 📋 backlog |
+| 27-5b | Refactor sync-manager.ts (405→<250 lines) | P1 | 3 | 📋 backlog |
+| 27-5c | Refactor project-store.ts (326→<250 lines) | P1 | 3 | 📋 backlog |
+| 27-6 | Reorganize lib/filesystem (27→grouped) | P1 | 5 | 📋 backlog |
+| 27-7 | Reorganize lib/workspace (16→grouped) | P1 | 3 | 📋 backlog |
+| 27-8 | Terminal sync-fail warning | P0 | 2 | ✅ done |
+
+**Total:** 13 stories (6 done, 1 in-progress, 5 backlog, 1 invalid)
+
+> **Phase 1 Progress:** Story 27-I in progress - sync-executor fix done, XTerminal sync-fail warning done.
+> **Phase 2 Goals:** Fix code organization violations per coding-style.md (250 line limit, 4 children limit).
 
 ---
 

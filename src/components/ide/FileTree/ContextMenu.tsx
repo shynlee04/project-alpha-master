@@ -30,6 +30,10 @@ export function ContextMenu({
 }: ContextMenuProps): React.JSX.Element | null {
     const menuRef = useRef<HTMLDivElement>(null);
 
+    // FIX: Move useTranslation() BEFORE any conditional returns
+    // React Rules of Hooks: hooks must be called in the same order every render
+    const { t } = useTranslation();
+
     // Close on outside click
     useEffect(() => {
         if (!visible) return;
@@ -69,8 +73,6 @@ export function ContextMenu({
     if (!visible || !targetNode) {
         return null;
     }
-
-    const { t } = useTranslation();
 
     const menuItems: Array<{
         action: ContextMenuAction;

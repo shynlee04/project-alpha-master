@@ -159,18 +159,13 @@ async function processItem(
 
     // Handle File Operations (add/modify)
     if (operation === 'add' || operation === 'modify') {
-        // Read from source (LocalFS)
-        // Check if binary? For now assuming string or generic read.
-        // LocalFSAdapter might return string or ArrayBuffer.
-        // We'll trust readFile handles it or we need to check extension.
-        // Assuming text for now as per previous SimpleFileSync.
-        // Wait, typical LocalFSAdapter might return text by default.
-        // Let's assume we read as UTF-8 for now.
-        // Binary support might need `readBinaryFile` or options.
-        // Looking at `sync-manager.ts` context, it didn't explicitly show `readFile` logic inside `buildFileSystemTree`, it hid it in `sync-operations`.
-
         try {
-            const content = await adapter.readFile(path);
+            // Read file from LocalFS - returns FileReadResult { content, encoding }
+            const result = await adapter.readFile(path);
+
+            // FIX: Extract content from FileReadResult object
+            // readFile returns { content: string, encoding: 'utf-8' }
+            const content = 'content' in result ? result.content : String(result);
 
             // Ensure parent dir exists (just in case order wasn't perfect)
             const segments = path.split('/');

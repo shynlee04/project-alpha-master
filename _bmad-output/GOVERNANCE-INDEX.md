@@ -56,10 +56,10 @@
 | EPIC-21 | Localization | 🔄 IN-PROGRESS | 4/8 | - | Platform A |
 | EPIC-22 | Production Hardening | 🔄 IN-PROGRESS | 4/8 | - | Platform A |
 | EPIC-23 | UX/UI Modernization | 🔄 IN-PROGRESS | 5/8 | - | Platform B |
-| EPIC-24 | Smart Dependency Sync | 🔄 BLOCKED | 0 | EPIC-27-1c | Waiting for Dexie migration |
-| EPIC-25 | AI Foundation Sprint | 🔄 BLOCKED | 0 | EPIC-27 | Critical path |
+| EPIC-24 | Smart Dependency Sync | 🔄 BLOCKED | 0 | EPIC-27 | Waiting for Epic 27 completion |
+| EPIC-25 | AI Foundation Sprint | 🔄 UNBLOCKED | 0 | EPIC-27 | **Unblocked** - Epic 27 integration complete |
 | EPIC-26 | Agent Dashboard | 🔄 BLOCKED | 0 | EPIC-25 | Waiting for AI Foundation |
-| EPIC-27 | State Architecture | 🔄 IN-PROGRESS | 2/7 | - | **CURRENT FOCUS** |
+| EPIC-27 | State Architecture | 🔄 IN_PROGRESS | 4/7 | - | Story 27-I in progress - terminal/sync fixes |
 | EPIC-45 | Project Fugu | 🔄 FUTURE | 0 | - | Enhancement layer |
 
 ---
