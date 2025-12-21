@@ -27,7 +27,7 @@ See: [Architectural Stabilization Proposal](file:///c:/Users/Admin/Documents/cod
 |-------|-------|----------|--------|--------|
 | 27-1 | Migrate State to Zustand + Dexie.js (Infrastructure) | P0 | 5 | ✅ done |
 | 27-1b | Component Migration to Zustand + Dexie.js | P0 | 8 | ✅ done |
-| 27-1c | Persistence Layer Migration (idb → Dexie) | P0 | 5 | 🔄 in-progress |
+| 27-1c | Persistence Layer Migration (idb → Dexie) | P0 | 5 | ✅ done |
 | 27-2 | Event Bus Integration Across Components | P0 | 5 | backlog |
 | 27-3 | Fix TailwindCSS 4.x CSS Z-Index Stacking | P1 | 3 | backlog |
 | 27-4 | Fix Terminal pnpm Version Handling | P1 | 3 | backlog |
@@ -103,7 +103,7 @@ src/components/layout/IDELayout.tsx # Simplify state management
 |-------|--------|----------------|
 | 27-1 | ✅ Done | Zustand + Dexie.js infrastructure |
 | 27-1b | ✅ Done | Component migration, removed @tanstack/react-store |
-| 27-1c | 🔄 In-Progress | idb → Dexie migration + AI Foundation |
+| 27-1c | ✅ Done | idb → Dexie migration + AI Foundation + tests |
 | 27-2 | 📋 Backlog | Event Bus integration |
 | 27-3 | 📋 Backlog | TailwindCSS z-index fix |
 | 27-4 | 📋 Backlog | Terminal pnpm handling |

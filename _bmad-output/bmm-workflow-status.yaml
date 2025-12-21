@@ -14,20 +14,23 @@ last_updated: "2025-12-21T16:35:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 current_story:
+  key: "27-2-event-bus-integration"
+  epic: 27
+  status: "backlog"
+  platform: "Platform A"
+  notes: "Next in Epic 27 queue. Story 27-1c completed successfully."
+
+last_completed_story:
   key: "27-1c-persistence-migration-dexie"
   epic: 27
-  status: "in-progress"
+  status: "done"
   platform: "Platform A"
-  drafted_at: "2025-12-21T18:30:00+07:00"
-  ready_at: "2025-12-21T19:00:00+07:00"
-  dev_started_at: "2025-12-21T19:00:00+07:00"
-  assigned_to: "dev"
+  completed_at: "2025-12-21T20:52:00+07:00"
+  tests_added: 12
   notes: |
     Core migration complete: idb → Dexie.js.
-    AI Foundation tables added (taskContexts, toolExecutions).
-    AI-observable selectors added.
-    Remaining: remove idb, tests, build verification.
-  handoff: "Ready for next conversation /story-dev-cycle"
+    AI Foundation tables added. db.test.ts updated.
+    Build verified. Unblocks Epic 25 (AI Foundation).
 
 # =============================================================================
 # GOVERNANCE DOCUMENT VALIDATION
@@ -286,12 +289,12 @@ epic_status:
   - id: 27
     name: "State Architecture Stabilization"
     status: "IN_PROGRESS"
-    stories: "2/7"
+    stories: "3/7"
     priority: "P0"
     platform: "A (Antigravity)"
     started_at: "2025-12-21T17:00:00+07:00"
-    completed: ["27-1", "27-1b"]
-    in_progress: ["27-1c"]
+    completed: ["27-1", "27-1b", "27-1c"]
+    in_progress: []
     notes: |
       Story 27-1 (done): Zustand + Dexie.js infrastructure
       Story 27-1b (done): Component migration, removed @tanstack/react-store

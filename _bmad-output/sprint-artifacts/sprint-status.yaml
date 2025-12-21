@@ -289,19 +289,20 @@ development_status:
     platform: "Platform A"
     completed_at: "2025-12-21T18:00:00+07:00"
     notes: "Removed @tanstack/react-store. Components migrated to Zustand."
-  27-1c-persistence-migration-dexie: in-progress
+  27-1c-persistence-migration-dexie: done
     story: _bmad-output/sprint-artifacts/27-1c-persistence-migration-dexie.md
     context: _bmad-output/sprint-artifacts/27-1c-persistence-migration-dexie-context.xml
     platform: "Platform A"
     drafted_at: "2025-12-21T18:30:00+07:00"
     dev_started_at: "2025-12-21T19:00:00+07:00"
+    completed_at: "2025-12-21T20:52:00+07:00"
+    tests_added: 12
     notes: |
-      Core migration done: idb → Dexie.js. 
+      Core migration complete: idb → Dexie.js.
       AI Foundation tables added (taskContexts, toolExecutions).
       AI-observable selectors added.
-      IdbCompatWrapper created for backward compatibility.
-      TypeScript compiles for all core files.
-      Remaining: remove idb dependency (blocked by legacy migration), tests.
+      IdbCompatWrapper for backward compatibility.
+      db.test.ts updated (12 tests). Build verified.
   27-2-event-bus-integration: backlog
   27-3-fix-tailwindcss-z-index: backlog
   27-4-fix-terminal-pnpm-version: backlog
