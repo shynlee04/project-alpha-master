@@ -259,11 +259,14 @@ development_status:
     tests_added: 1
     review_completed_at: "2025-12-21T14:00:00+07:00"
     reviewer: "Platform B"
-  23-6-migrate-form-dialog-components: ready-for-dev
+  23-6-migrate-form-dialog-components: in-progress
     story: _bmad-output/sprint-artifacts/23-6-migrate-form-dialog-components.md
     context: _bmad-output/sprint-artifacts/23-6-migrate-form-dialog-components-context.xml
     platform: "Platform B"
     created_at: "2025-12-21T14:00:00+07:00"
+    assigned_to: "dev"
+    assigned_at: "2025-12-21T16:19:00+07:00"
+    handoff: "_bmad-output/handoffs/dev-epic-23-story-23-6-2025-12-21-1615.md"
   23-7-accessibility-audit: backlog
   23-8-component-documentation: backlog
 

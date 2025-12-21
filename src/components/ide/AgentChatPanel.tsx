@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Bot, Send, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
+import { Textarea } from '@/components/ui/textarea';
 
 type Message = {
     id: string;
@@ -182,14 +183,14 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
             <form onSubmit={handleSubmit} className="p-4 border-t border-border/50">
                 <div className="relative">
-                    <textarea
+                    <Textarea
                         ref={inputRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={t('agent.placeholder')}
                         rows={1}
-                        className="w-full px-3 py-2 pr-12 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none min-h-[44px] max-h-[120px]"
+                        className="w-full pr-12 resize-none min-h-[44px] max-h-[120px]"
                     />
                     <button
                         type="submit"

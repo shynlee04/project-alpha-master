@@ -10,16 +10,19 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-21T13:52:00+07:00"
+last_updated: "2025-12-21T16:35:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 current_story:
-  key: "23-5-implement-theme-toggle"
+  key: "23-6-migrate-form-dialog-components"
   epic: 23
-  status: "ready-for-dev"
+  status: "completed"
   platform: "Platform B"
-  drafted_at: "2025-12-21T13:45:00+07:00"
-  ready_at: "2025-12-21T13:52:00+07:00"
+  drafted_at: "2025-12-21T14:00:00+07:00"
+  ready_at: "2025-12-21T16:19:00+07:00"
+  completed_at: "2025-12-21T16:54:00+07:00"
+  assigned_to: "dev"
+  handoff: "_bmad-output/handoffs/dev-epic-23-story-23-6-2025-12-21-1615.md"
 
 # =============================================================================
 # GOVERNANCE DOCUMENT VALIDATION
@@ -255,10 +258,10 @@ epic_status:
   - id: 23
     name: "UX/UI Modernization"
     status: "IN_PROGRESS"
-    stories: "2/8"
+    stories: "3/8"
     priority: "P1"
     platform: "B (Second Agent)"
-    notes: "Stories 23-1 and 23-2 DONE (TailwindCSS 4.x + ShadcnUI initialized). Ready for Story 23-3. Platform B awaiting next assignment."
+    notes: "Stories 23-1, 23-2, and 23-6 DONE (TailwindCSS 4.x + ShadcnUI initialized + form/dialog migration). Ready for Story 23-7. Platform B awaiting next assignment."
     
   - id: 12
     name: "AI Tool Interface Layer"
@@ -332,6 +335,26 @@ bugs:
     story: "13-6"
     notes: "WebContainer connect route missing. Added 2025-12-20 from manual testing."
 
+  - id: "BUG-08"
+    name: "Terminal-Sync Race Condition"
+    severity: "HIGH"
+    status: "FIXED"
+    epic: null
+    story: null
+    notes: "Terminal shell started before files synced to WebContainer. Fixed with 'Waiting for sync...' overlay."
+    fixed_date: "2025-12-21"
+    platform: "A"
+
+  - id: "BUG-09"
+    name: "Cloudflare COOP/COEP Headers Missing"
+    severity: "CRITICAL"
+    status: "FIXED"
+    epic: 22
+    story: null
+    notes: "WebContainers failed on Cloudflare due to missing Cross-Origin-Isolation headers. Fixed with custom server entry."
+    fixed_date: "2025-12-21"
+    platform: "A"
+
 # =============================================================================
 # NEXT ACTIONS
 # =============================================================================
@@ -380,12 +403,14 @@ next_actions:
       notes: "ShadcnUI initialized with 14 components, theme system with dark mode default, all tests pass (196/196)"
       
   immediate:
-    - action: "Code review Story 23-1"
-      status: "READY_FOR_REVIEW"
-      command: "code_review"
-      agent: "code-reviewer"
+    - action: "Develop Story 23-6 (Migrate Form & Dialog Components)"
+      status: "DONE"
+      command: "dev-story workflow"
+      agent: "dev"
       priority: "P1"
       platform: "B"
+      handoff: "_bmad-output/handoffs/dev-epic-23-story-23-6-2025-12-21-1615.md"
+      completed_at: "2025-12-21T16:54:00+07:00"
     - action: "Develop Story 13-6 (Fix Preview in New Tab)"
       status: "READY_FOR_DEV"
       command: "dev-story workflow"
@@ -394,6 +419,16 @@ next_actions:
       platform: "A"
       
   then:
+    - action: "Implement Story 23-7 (Accessibility Audit)"
+      command: "dev-story workflow"
+      agent: "dev"
+      priority: "P1"
+      platform: "B"
+    - action: "Implement Story 23-8 (Component Documentation)"
+      command: "dev-story workflow"
+      agent: "tech-writer"
+      priority: "P2"
+      platform: "B"
     - action: "Implement Story 13-3"
       command: "dev-story workflow"
       agent: "dev"

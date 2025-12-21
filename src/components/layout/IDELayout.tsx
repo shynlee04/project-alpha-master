@@ -70,6 +70,7 @@ export function IDELayout(): React.JSX.Element {
     projectMetadata,
     permissionState,
     syncStatus,
+    initialSyncCompleted,
     localAdapterRef,
     syncManagerRef,
     eventBus,
@@ -519,6 +520,8 @@ export function IDELayout(): React.JSX.Element {
                   <TerminalPanel
                     activeTab={terminalTab}
                     onTabChange={setTerminalTab}
+                    initialSyncCompleted={initialSyncCompleted}
+                    permissionState={permissionState}
                     className="border-0"
                   />
                 </CardContent>

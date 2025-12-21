@@ -116,7 +116,11 @@
     "ariaLabel": "Terminal",
     "shellExited": "Shell exited with code {{code}}",
     "error": "Terminal Error: {{error}}",
-    "bootFailed": "Failed to boot WebContainer: {{error}}"
+    "bootFailed": "Failed to boot WebContainer: {{error}}",
+    "loading": "Loading terminal...",
+    "waitingForSync": "Waiting for project sync...",
+    "syncRequired": "Project sync required",
+    "grantPermission": "Grant file access to enable terminal"
   },
   "onboarding": {
     "launch": "Launch Interactive Tour",

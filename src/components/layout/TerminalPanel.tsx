@@ -49,8 +49,10 @@ export interface TerminalPanelProps {
     activeTab: TerminalTab;
     /** Callback when tab changes */
     onTabChange: (tab: TerminalTab) => void;
-    /** Project path for terminal working directory */
-    projectPath?: string;
+    /** Whether initial sync has completed */
+    initialSyncCompleted?: boolean;
+    /** Permission state for file system access */
+    permissionState?: 'prompt' | 'granted' | 'denied';
     /** Optional className for outer container */
     className?: string;
 }
@@ -69,7 +71,8 @@ export interface TerminalPanelProps {
 export function TerminalPanel({
     activeTab,
     onTabChange,
-    projectPath,
+    initialSyncCompleted,
+    permissionState,
     className,
 }: TerminalPanelProps): React.JSX.Element {
     const { t } = useTranslation();
@@ -104,7 +107,10 @@ export function TerminalPanel({
                                 {t('terminal.loading', 'Loading terminal...')}
                             </div>
                         }>
-                            <XTerminal projectPath={projectPath} />
+                            <XTerminal
+                                initialSyncCompleted={initialSyncCompleted}
+                                permissionState={permissionState}
+                            />
                         </Suspense>
                     ) : (
                         <div className="h-full flex items-center justify-center text-muted-foreground text-sm">

@@ -116,7 +116,11 @@
     "ariaLabel": "Terminal",
     "shellExited": "Shell đã thoát với mã {{code}}",
     "error": "Lỗi Terminal: {{error}}",
-    "bootFailed": "Không thể khởi động WebContainer: {{error}}"
+    "bootFailed": "Không thể khởi động WebContainer: {{error}}",
+    "loading": "Đang tải terminal...",
+    "waitingForSync": "Đang chờ đồng bộ dự án...",
+    "syncRequired": "Cần đồng bộ dự án",
+    "grantPermission": "Cấp quyền truy cập file để sử dụng terminal"
   },
   "onboarding": {
     "launch": "Khám phá Tour Tương tác",
