@@ -41,12 +41,14 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Build
+      - name: Build for Cloudflare
         run: pnpm build
+        env:
+          DEPLOY_TARGET: cloudflare
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: cloudflare-build
+          path: .output/
           retention-days: 7

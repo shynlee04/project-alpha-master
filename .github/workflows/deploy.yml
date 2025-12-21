@@ -1,10 +1,9 @@
-name: Deploy
+name: Deploy to Cloudflare
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -12,7 +11,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to Netlify
+    name: Deploy to Cloudflare Workers
     runs-on: ubuntu-22.04
     
     steps:
@@ -34,22 +33,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
+      - name: Build for Cloudflare
         run: pnpm build
-        # Note: NITRO_PRESET not needed - handled by @netlify/vite-plugin-tanstack-start
-
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist/client'
-          production-branch: main
-          production-deploy: ${{ github.ref == 'refs/heads/main' }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy from ${{ github.sha }}'
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 5
+          DEPLOY_TARGET: cloudflare
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
