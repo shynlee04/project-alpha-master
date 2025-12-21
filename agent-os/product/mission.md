@@ -87,7 +87,9 @@ Once loaded, critical features work without internet:
 - Local code preview (for locally-runnable projects)
 - Version control (local commits)
 
----
+### Smart Dependency Sync
+
+Unlike cloud IDEs that lose your `node_modules` when the session ends, Via-Gent can **persist dependencies to your local filesystem**. Next session loads instantly—no `pnpm install` required. You control what syncs: source files (auto), dependencies (with permission), or build outputs (never).
 
 ## Key Features
 

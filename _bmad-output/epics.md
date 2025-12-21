@@ -1517,10 +1517,11 @@ Workspace
 **Goal:** Transform sync layer from callback-based to event-driven architecture for AI agent observability and future multi-root support.
 
 **Prerequisites:** Epic 3 hotfix stories complete  
-**Status:** PROPOSED (Course Correction v3)  
-**Priority:** P1
+**Status:** IN PROGRESS (Infrastructure complete, wiring incomplete)  
+**Priority:** P1  
+**Gap Analysis (2025-12-21):** Event bus types exist (`workspace-events.ts`) but no `.emit()` calls found in codebase
 
-### Story 10.1: Create Event Bus Infrastructure
+### Story 10.1: Create Event Bus Infrastructure ✅ DONE
 
 As a **developer**,
 I want **a typed event bus for workspace-wide events**,
@@ -1528,19 +1529,21 @@ So that **components can observe state changes without direct coupling**.
 
 **Acceptance Criteria:**
 
-- **AC-10-1-1:** `WorkspaceEvents` interface defines all event types with typed payloads
-- **AC-10-1-2:** `createWorkspaceEventBus()` returns typed EventEmitter3 instance
-- **AC-10-1-3:** `useWorkspaceEvent()` React hook with automatic cleanup
+- **AC-10-1-1:** `WorkspaceEvents` interface defines all event types with typed payloads ✅
+- **AC-10-1-2:** `createWorkspaceEventBus()` returns typed EventEmitter3 instance ✅
+- **AC-10-1-3:** `useWorkspaceEvent()` React hook with automatic cleanup ✅
 - **AC-10-1-4:** Event bus instance accessible via WorkspaceContext
 - **AC-10-1-5:** Unit tests for event subscription/emission
 
 ---
 
-### Story 10.2: Refactor SyncManager to Emit Events
+### Story 10.2: Refactor SyncManager to Emit Events ⏳ BACKLOG
 
 As a **developer**,
 I want **SyncManager to emit progress and status events**,
 So that **UI components and AI agents can observe sync activity**.
+
+**Gap Analysis:** Marked done but grep shows NO .emit() calls in SyncManager
 
 **Acceptance Criteria:**
 
@@ -1552,7 +1555,7 @@ So that **UI components and AI agents can observe sync activity**.
 
 ---
 
-### Story 10.3: Add Manual Sync Toggle
+### Story 10.3: Add Manual Sync Toggle ⏳ BACKLOG
 
 As a **user**,
 I want **to enable/disable auto-sync and trigger manual sync**,
@@ -1568,7 +1571,7 @@ So that **I control when files are synchronized**.
 
 ---
 
-### Story 10.4: Implement Per-File Sync Status
+### Story 10.4: Implement Per-File Sync Status ⏳ BACKLOG
 
 As a **user**,
 I want **to see which files are synced, pending, or have errors**,
@@ -1584,7 +1587,7 @@ So that **I know the exact state of my project files**.
 
 ---
 
-### Story 10.5: Create Sync Exclusion Configuration
+### Story 10.5: Create Sync Exclusion Configuration ✅ DONE
 
 As a **user**,
 I want **to configure which files/folders are excluded from sync**,
@@ -1592,11 +1595,61 @@ So that **I can customize sync behavior beyond defaults**.
 
 **Acceptance Criteria:**
 
-- **AC-10-5-1:** Default exclusions: `.git`, `node_modules`, `.DS_Store`
+- **AC-10-5-1:** Default exclusions: `.git`, `node_modules`, `.DS_Store` ✅
 - **AC-10-5-2:** Settings panel allows adding custom exclusion patterns
-- **AC-10-5-3:** Exclusion patterns use glob syntax
+- **AC-10-5-3:** Exclusion patterns use glob syntax ✅
 - **AC-10-5-4:** Exclusions persisted in ProjectStore per project
 - **AC-10-5-5:** Excluded files shown differently in FileTree (greyed out)
+
+---
+
+### Story 10-6: Wire SyncManager Event Emissions (NEW)
+
+**Added:** 2025-12-21 (Gap Analysis)  
+**Priority:** P0  
+**Story Points:** 3
+
+As a **developer**,
+I want **SyncManager to actually emit events using the event bus**,
+So that **the infrastructure created in Story 10-1 is functional**.
+
+**Acceptance Criteria:**
+
+- **AC-10-6-1:** Import `eventBus` instance in SyncManager
+- **AC-10-6-2:** Emit `sync:started` at beginning of `syncToWebContainer()`
+- **AC-10-6-3:** Emit `sync:progress` after each file processed
+- **AC-10-6-4:** Emit `sync:completed` on success, `sync:error` on failure
+- **AC-10-6-5:** Existing functionality unchanged (events are additive)
+- **AC-10-6-6:** Unit tests verify events are emitted
+
+**Files to Modify:**
+- `src/lib/filesystem/sync-manager.ts`
+- `src/lib/filesystem/sync-executor.ts`
+
+---
+
+### Story 10-7: Wire UI Components to Event Bus (NEW)
+
+**Added:** 2025-12-21 (Gap Analysis)  
+**Priority:** P1  
+**Story Points:** 3
+
+As a **developer**,
+I want **UI components to subscribe to event bus events**,
+So that **UI updates reactively when sync/file operations occur**.
+
+**Acceptance Criteria:**
+
+- **AC-10-7-1:** `SyncStatusIndicator` subscribes to `sync:started`, `sync:progress`, `sync:completed`
+- **AC-10-7-2:** `FileTree` subscribes to `file:created`, `file:modified`, `file:deleted`
+- **AC-10-7-3:** Monaco editor subscribes to `file:modified` for external changes
+- **AC-10-7-4:** Use `useWorkspaceEvent()` hook for automatic cleanup
+- **AC-10-7-5:** Event subscriptions tested in component tests
+
+**Files to Modify:**
+- `src/components/ide/SyncStatusIndicator.tsx`
+- `src/components/ide/FileTree/index.tsx`
+- `src/components/ide/MonacoEditor/MonacoEditor.tsx`
 
 ---
 
@@ -2907,15 +2960,377 @@ pnpm dlx shadcn@latest add --all
 
 ---
 
+## Epic 24: Smart Dependency Sync (NEW - 2025-12-21)
+
+**Goal:** Persist node_modules to local filesystem for instant session restoration and faster reloads.
+
+**Priority:** 🟠 P1 | **Stories:** 5 | **Points:** 21 | **Duration:** 1 week  
+**Source:** node-module-sync-2025-12-21.md analysis
+
+### Rationale
+
+Unlike cloud IDEs that lose dependencies on session end, Via-Gent can persist `node_modules` to the user's local filesystem. Next session loads instantly—no `pnpm install` required.
+
+### Stories
+
+| Story | Title | Points |
+|-------|-------|--------|
+| 24-1 | Create Sync Configuration Layer | 3 |
+| 24-2 | Implement Dependency Analysis Engine | 5 |
+| 24-3 | Batched Sync with Progress UI | 5 |
+| 24-4 | User Permission Dialog Flow | 3 |
+| 24-5 | Terminal Integration (detect pnpm install) | 5 |
+
+### Story 24-1: Create Sync Configuration Layer
+
+As a **developer**,
+I want **a configuration system for sync behavior**,
+So that **users can control what gets synced to disk**.
+
+**Acceptance Criteria:**
+- Sync layers: `source` (auto), `dependencies` (ask), `build` (never)
+- Config persisted in ProjectStore per project
+- UI settings panel for sync preferences
+
+---
+
+### Story 24-2: Implement Dependency Analysis Engine
+
+As a **developer**,
+I want **intelligent analysis of which node_modules to sync**,
+So that **large dependencies don't overwhelm local storage**.
+
+**Acceptance Criteria:**
+- Detect production vs dev dependencies
+- Estimate size before sync
+- Exclude known large/transient packages
+- Show breakdown in UI
+
+---
+
+### Story 24-3: Batched Sync with Progress UI
+
+As a **user**,
+I want **to see progress when syncing dependencies**,
+So that **I know the operation is working and how long it will take**.
+
+**Acceptance Criteria:**
+- Batch files in groups of 100
+- Show progress: "Syncing dependencies (1500/3200 files)"
+- Cancel button stops sync safely
+- Resume support for interrupted syncs
+
+---
+
+### Story 24-4: User Permission Dialog Flow
+
+As a **user**,
+I want **to approve before large syncs happen**,
+So that **I'm not surprised by disk usage**.
+
+**Acceptance Criteria:**
+- Dialog shows estimated size: "Would you like to persist 1.2GB of dependencies?"
+- Options: "Persist", "Skip", "Always persist for this project"
+- Preference saved in ProjectStore
+
+---
+
+### Story 24-5: Terminal Integration
+
+As a **developer**,
+I want **automatic sync after npm/pnpm install**,
+So that **new dependencies are saved without manual action**.
+
+**Acceptance Criteria:**
+- Detect `pnpm install`, `npm install`, `yarn install` commands
+- Emit event on install completion
+- Trigger dependency sync automatically (if enabled)
+
+---
+
+## Epic 25: AI Foundation Sprint (NEW - 2025-12-21)
+
+**Goal:** Implement core AI agent capabilities with TanStack AI 0.1.0 and 3 essential tools.
+
+**Priority:** 🔴 P0 - CRITICAL | **Stories:** 6 | **Points:** 34 | **Duration:** 2 weeks  
+**Source:** tech-debt-architecture-gaps-report-2025-12-21.md
+
+### Rationale
+
+AI integration is the core value proposition and is currently at 0% implementation. TanStack AI 0.1.0 was released December 2025 with stable APIs, making integration straightforward.
+
+### Dependencies
+
+- Epic 10: Event Bus (completed for infrastructure, Stories 10-6/10-7 for wiring)
+- Package: `@tanstack/ai@0.1.0` (already installed)
+
+### Stories
+
+| Story | Title | Points |
+|-------|-------|--------|
+| 25-1 | TanStack AI Integration Setup | 5 |
+| 25-2 | Implement File Tools (read, write, list) | 8 |
+| 25-3 | Implement Terminal Tool (execute_command) | 5 |
+| 25-4 | Wire Tool Execution to Event Bus | 5 |
+| 25-5 | Implement Approval Flow UI | 5 |
+| 25-6 | Integrate AI DevTools | 3 |
+
+### Story 25-1: TanStack AI Integration Setup
+
+As a **developer**,
+I want **TanStack AI configured with Gemini adapter**,
+So that **the chat panel can communicate with AI**.
+
+**Acceptance Criteria:**
+- Create `/api/chat` endpoint using `AIStream`
+- Configure Gemini adapter with BYOK pattern
+- Wire `useChat` hook in AgentChatPanel
+- Streaming responses working
+- Error handling for API failures
+
+**Files to Create:**
+- `src/routes/api/chat.ts`
+- `src/hooks/useAgentChat.ts`
+
+---
+
+### Story 25-2: Implement File Tools
+
+As a **developer**,
+I want **client-side tools for file operations**,
+So that **AI can read and write project files**.
+
+**Acceptance Criteria:**
+- `read_file(path)` returns file content
+- `write_file(path, content)` creates/updates file
+- `list_files(path)` returns directory listing
+- Tools emit file events via event bus
+- Tool results visible in chat
+
+**Files to Create:**
+- `src/lib/agent/file-tools.ts`
+
+---
+
+### Story 25-3: Implement Terminal Tool
+
+As a **developer**,
+I want **a tool for running commands in WebContainers**,
+So that **AI can execute npm commands and scripts**.
+
+**Acceptance Criteria:**
+- `execute_command(command, args?)` runs in WebContainer
+- Output streams to terminal in real-time
+- Returns exit code and output summary
+- Timeout option for long-running commands
+
+**Files to Create:**
+- `src/lib/agent/terminal-tools.ts`
+
+---
+
+### Story 25-4: Wire Tool Execution to Event Bus
+
+As a **developer**,
+I want **tool executions to emit events**,
+So that **UI updates automatically when AI makes changes**.
+
+**Acceptance Criteria:**
+- File write → `file:modified` event → Monaco refreshes
+- File create → `file:created` event → FileTree updates
+- Command run → `process:started`/`process:exited` events
+- All tools use consistent event emission pattern
+
+---
+
+### Story 25-5: Implement Approval Flow UI
+
+As a **user**,
+I want **to approve before AI makes changes**,
+So that **I stay in control of my codebase**.
+
+**Acceptance Criteria:**
+- AI proposes changes before execution
+- UI shows diff preview for file changes
+- "Approve", "Modify", "Reject" actions
+- Keyboard shortcuts (Enter = approve, Esc = reject)
+
+---
+
+### Story 25-6: Integrate AI DevTools
+
+As a **developer**,
+I want **visibility into AI tool execution**,
+So that **I can debug agent behavior**.
+
+**Acceptance Criteria:**
+- Install `@tanstack/ai-devtools@alpha`
+- DevTools panel shows tool calls and results
+- Message trace visible in development
+- Can be disabled in production
+
+---
+
+## Epic 26: Agent Management Dashboard (NEW - 2025-12-21)
+
+**Goal:** Central hub for configuring, monitoring, and managing AI agents.
+
+**Priority:** 🟠 P1 | **Stories:** 6 | **Points:** 34 | **Duration:** 2 weeks  
+**Source:** ux-specification-2025-12-21.md
+
+### Rationale
+
+As AI becomes central to the IDE, users need visibility and control over agent behavior, LLM providers, and multi-agent workflows.
+
+### Dependencies
+
+- Epic 25: AI Foundation Sprint
+
+### Stories
+
+| Story | Title | Points |
+|-------|-------|--------|
+| 26-1 | Dashboard Layout and Navigation | 5 |
+| 26-2 | Agent List & Configuration Forms | 5 |
+| 26-3 | Tool Registry UI | 5 |
+| 26-4 | Workflow Visual Editor | 8 |
+| 26-5 | LLM Provider Management | 5 |
+| 26-6 | Analytics Dashboard | 5 |
+
+### Story 26-1: Dashboard Layout and Navigation
+
+As a **user**,
+I want **a dedicated agent management interface**,
+So that **I can configure and monitor AI helpers**.
+
+**Acceptance Criteria:**
+- `/agents` route with sidebar navigation
+- Sections: Overview, Agents, Tools, Workflows, Providers, Analytics
+- Breadcrumb navigation
+- Responsive layout (1024px+)
+
+---
+
+### Story 26-2: Agent List & Configuration Forms
+
+As a **user**,
+I want **to view and configure available agents**,
+So that **I can customize their behavior**.
+
+**Acceptance Criteria:**
+- List view of agents (Orchestrator, Coder, Validator, etc.)
+- Click to expand configuration form
+- Edit system prompts, temperatures, token limits
+- Save configuration to IndexedDB
+
+---
+
+### Story 26-3: Tool Registry UI
+
+As a **user**,
+I want **to see and manage available tools**,
+So that **I know what agents can do**.
+
+**Acceptance Criteria:**
+- Grid view of tools with icons
+- Tool detail: name, description, parameters, permissions
+- Toggle to enable/disable tools per agent
+- Search and filter tools
+
+---
+
+### Story 26-4: Workflow Visual Editor
+
+As a **user**,
+I want **to create multi-agent workflows visually**,
+So that **I can orchestrate complex development tasks**.
+
+**Acceptance Criteria:**
+- Canvas with drag-and-drop nodes
+- Node types: Start, Agent, Condition, Merge, End
+- Connect nodes with edges
+- Save/load workflow definitions
+- Execute workflow button
+
+---
+
+### Story 26-5: LLM Provider Management
+
+As a **user**,
+I want **to configure multiple LLM providers**,
+So that **I can switch between models or use different ones for different tasks**.
+
+**Acceptance Criteria:**
+- Add provider: Gemini, OpenAI, Anthropic (connectors)
+- BYOK: Enter and validate API keys
+- Set default provider per agent type
+- API key encryption in IndexedDB
+
+---
+
+### Story 26-6: Analytics Dashboard
+
+As a **user**,
+I want **to see AI usage statistics**,
+So that **I can understand costs and effectiveness**.
+
+**Acceptance Criteria:**
+- Token usage over time (chart)
+- Tool execution counts
+- Success/failure rate per agent
+- Time to completion metrics
+
+---
+
+## Recommended Implementation Order (Updated 2025-12-21)
+
+```
+Phase 1: Stability ✅ MOSTLY COMPLETE
+├── Epic 13: Terminal & Sync Stability [DONE]
+├── Epic 22: Production Hardening [IN PROGRESS]
+└── Epic 23: UX Modernization [IN PROGRESS]
+
+Phase 2: Event Wiring
+└── Epic 10: Complete wiring (Stories 10-6, 10-7) [READY]
+
+Phase 3: AI Foundation 🔴 PRIORITY
+├── Epic 25: AI Foundation Sprint [P0 - NEW]
+├── Epic 12: AI Tool Interface Layer [P1]
+└── Epic 6: AI Agent Integration [P1]
+
+Phase 4: Productivity
+├── Epic 24: Smart Dependency Sync [P1 - NEW]
+└── Epic 26: Agent Management Dashboard [P1 - NEW]
+
+Phase 5: Full Workflow
+├── Epic 7: Git Integration [P2]
+├── Epic 7+: Git Extensions [P3]
+└── Epic 11: Code Splitting [P2]
+
+Phase 6: Quality
+├── Epic 16: Test Framework [P2]
+├── Epic 18: Static Deployment [P2]  
+└── Epic 19: Client-Side Security [P2]
+
+Phase 7: Polish
+├── Epic 14: Theming & Accessibility [P3]
+├── Epic 15: Performance [P3]
+├── Epic 17: Documentation [P3]
+├── Epic 8: Validation & Polish [P3]
+└── Epic 4.5: Project Fugu [P3]
+
+Phase 8: Advanced
+├── Epic 9: Multi-Root Workspaces [P4]
+└── Epic 20: Advanced IDE Features [P4]
+```
+
+---
+
 **Document Updated** ✅
 
 *Generated via BMAD Create Epics and Stories Workflow*  
-*Updated: 2025-12-20 - Added Epic 22: Production Hardening, Epic 23: UX/UI Modernization*  
+*Updated: 2025-12-21 - Gap Analysis corrections, Added Epics 24-26*  
 *Project: Via-Gent Foundational Architectural Slice (Project Alpha)*
-
-
-
-
 
 
 

@@ -45,12 +45,34 @@
 │   │   ├── IDEHeaderBar.tsx
 │   │   ├── IDELayout.tsx
 │   │   ├── TerminalPanel.tsx
+│   │   ├── __tests__
+│   │   │   └── IDELayout.test.tsx
 │   │   └── index.ts
 │   └── ui
-│       └── Toast
-│           ├── Toast.tsx
-│           ├── ToastContext.tsx
-│           └── index.ts
+│       ├── ShadcnTest.tsx
+│       ├── TailwindTest.tsx
+│       ├── ThemeProvider.tsx
+│       ├── ThemeToggle.tsx
+│       ├── Toast
+│       │   ├── Toast.tsx
+│       │   ├── ToastContext.tsx
+│       │   └── index.ts
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── dialog.tsx
+│       ├── dropdown-menu.tsx
+│       ├── index.ts
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── resizable.tsx
+│       ├── select.tsx
+│       ├── separator.tsx
+│       ├── sheet.tsx
+│       ├── skeleton.tsx
+│       ├── sonner.tsx
+│       ├── switch.tsx
+│       ├── tabs.tsx
+│       └── textarea.tsx
 ├── data
 │   └── demo.punk-songs.ts
 ├── hooks
@@ -110,6 +132,7 @@
 │   │   │   └── db.test.ts
 │   │   ├── db.ts
 │   │   └── index.ts
+│   ├── utils.ts
 │   ├── webcontainer
 │   │   ├── index.ts
 │   │   ├── manager.ts
@@ -155,6 +178,8 @@
 │   └── workspace
 │       └── $projectId.tsx
 ├── styles.css
+├── test
+│   └── setup.ts
 └── tree.txt
 
-35 directories, 123 files
+37 directories, 146 files
