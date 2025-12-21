@@ -2,32 +2,40 @@
 
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+
 import { Button } from "./button"
 
 export function ThemeToggle() {
-  const [theme, setTheme] = React.useState<"light" | "dark">("dark")
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light"
-    setTheme(newTheme)
-    document.documentElement.classList.toggle("dark", newTheme === "dark")
-    localStorage.setItem("theme", newTheme)
-  }
+  const { resolvedTheme, setTheme, theme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-      document.documentElement.classList.toggle("dark", savedTheme === "dark")
-    }
+    setMounted(true)
   }, [])
 
+  if (!mounted) return null
+
+  const currentTheme = resolvedTheme ?? theme ?? "system"
+  const isDark = currentTheme === "dark"
+
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark")
+  }
+
   return (
-    <Button variant="outline" size="icon" onClick={toggleTheme}>
-      {theme === "light" ? (
-        <Moon className="h-[1.2rem] w-[1.2rem]" />
-      ) : (
+    <Button
+      variant="outline"
+      size="icon"
+      aria-label="Toggle theme"
+      aria-pressed={isDark}
+      data-testid="theme-toggle"
+      onClick={toggleTheme}
+    >
+      {isDark ? (
         <Sun className="h-[1.2rem] w-[1.2rem]" />
+      ) : (
+        <Moon className="h-[1.2rem] w-[1.2rem]" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

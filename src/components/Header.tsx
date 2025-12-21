@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { ThemeToggle } from './ui'
 
 export default function Header() {
   const { t } = useTranslation()
@@ -22,10 +23,10 @@ export default function Header() {
 
   return (
     <>
-      <header className="p-4 flex items-center bg-gray-800 text-white shadow-lg">
+      <header className="p-4 flex items-center bg-background text-foreground border-b border-border">
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-2 hover:bg-muted rounded-lg transition-colors"
           aria-label="Open menu"
         >
           <Menu size={24} />
@@ -39,7 +40,8 @@ export default function Header() {
             />
           </Link>
         </h1>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          <ThemeToggle />
           <LanguageSwitcher />
         </div>
       </header>

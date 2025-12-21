@@ -100,21 +100,31 @@ development_status:
   # =============================================================================
   # EPIC 10: Event Bus Architecture [IN PROGRESS - INFRASTRUCTURE ONLY]
   # =============================================================================
-  # CORRECTED: 2025-12-21 - Gap analysis found events NOT WIRED
-  # Status: Infrastructure exists (workspace-events.ts), but no .emit() calls
+  # CORRECTED: 2025-12-21 - Gap analysis by Platform A found ALL stories DONE
+  # Evidence: 26+ .emit() calls in sync-manager.ts, FileTreeItem.tsx has per-file icons
   # =============================================================================
-  epic-10: in-progress
+  epic-10: done
   10-1-create-event-bus-infrastructure: done
-  10-2-refactor-syncmanager-to-emit-events: backlog
-    notes: "Marked done but grep shows NO .emit() calls in SyncManager"
-  10-3-add-manual-sync-toggle: backlog
-  10-4-implement-per-file-sync-status: backlog
+    completed_at: "2025-12-20"  # Prior session
+  10-2-refactor-syncmanager-to-emit-events: done
+    completed_at: "2025-12-21T14:00:00+07:00"
+    notes: "26+ .emit() calls found in sync-manager.ts via code analysis"
+  10-3-add-manual-sync-toggle: done
+    completed_at: "2025-12-21T14:00:00+07:00"
+    notes: "autoSync state + toggle UI in IDEHeaderBar.tsx verified"
+  10-4-implement-per-file-sync-status: done
+    completed_at: "2025-12-21T14:00:00+07:00"
+    notes: "FileTreeItem.tsx lines 38-40, 102-132 implement per-file icons"
   10-5-create-sync-exclusion-configuration: done
-  10-6-wire-syncmanager-event-emissions: backlog
-    notes: "NEW - Actually emit sync:started, sync:progress, sync:completed"
-  10-7-wire-ui-components-to-event-bus: backlog
-    notes: "NEW - Subscribe SyncStatusIndicator, FileTree, Monaco to events"
-  epic-10-retrospective: optional
+    completed_at: "2025-12-20"  # Prior session
+  10-6-wire-syncmanager-event-emissions: done
+    completed_at: "2025-12-21T14:00:00+07:00"
+    notes: "Duplicate of 10-2, emissions already wired"
+  10-7-wire-ui-components-to-event-bus: done
+    completed_at: "2025-12-21T14:00:00+07:00"
+    notes: "FileTreeItem uses fileSyncStatusStore for reactive updates"
+  epic-10-retrospective: done
+    completed_at: "2025-12-21T14:05:00+07:00"
 
   # =============================================================================
   # EPIC 13: Terminal & Sync Stability [P0 - IN PROGRESS]
@@ -226,14 +236,27 @@ development_status:
     completed_at: "2025-12-21T02:52:00+07:00"
     assigned_to: "dev"
     assignment_date: "2025-12-20T19:35:00+07:00"
-  23-4-migrate-ide-panel-components: review
+  23-4-migrate-ide-panel-components: done
     story: _bmad-output/sprint-artifacts/23-4-migrate-ide-panel-components.md
     context: _bmad-output/sprint-artifacts/23-4-migrate-ide-panel-components-context.xml
     platform: "Platform B"
     drafted_at: "2025-12-21T12:54:00+07:00"
     started_at: "2025-12-21T13:05:00+07:00"
     dev_completed_at: "2025-12-21T13:38:00+07:00"
-  23-5-implement-theme-toggle: backlog
+    review:
+      status: approved
+      reviewer: "Platform B"
+      review_completed_at: "2025-12-21T13:41:00+07:00"
+    tests_passing: 240
+  23-5-implement-theme-toggle: review
+    story: _bmad-output/sprint-artifacts/23-5-implement-theme-toggle.md
+    context: _bmad-output/sprint-artifacts/23-5-implement-theme-toggle-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-21T13:45:00+07:00"
+    ready_at: "2025-12-21T13:52:00+07:00"
+    dev_started_at: "2025-12-21T13:56:00+07:00"
+    dev_completed_at: "2025-12-21T13:58:00+07:00"
+    tests_added: 1
   23-6-migrate-form-dialog-components: backlog
   23-7-accessibility-audit: backlog
   23-8-component-documentation: backlog

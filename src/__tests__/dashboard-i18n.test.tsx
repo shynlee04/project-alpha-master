@@ -1,11 +1,12 @@
+/// <reference types="vitest" />
 // @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import i18n from '../../i18n/config'
-import { Dashboard, formatRelativeDate } from '../index'
-import { LocaleProvider } from '../../i18n/LocaleProvider'
+import i18n from '../i18n/config'
+import { Dashboard, formatRelativeDate } from '../routes/index'
+import { LocaleProvider } from '../i18n/LocaleProvider'
 
-vi.mock('../../lib/workspace', () => ({
+vi.mock('../lib/workspace', () => ({
   listProjectsWithPermission: vi.fn().mockResolvedValue([]),
   deleteProject: vi.fn(),
   saveProject: vi.fn(),
@@ -13,11 +14,11 @@ vi.mock('../../lib/workspace', () => ({
   updateProjectLastOpened: vi.fn(),
 }))
 
-vi.mock('../../lib/filesystem/permission-lifecycle', () => ({
+vi.mock('../lib/filesystem/permission-lifecycle', () => ({
   ensureReadWritePermission: vi.fn(),
 }))
 
-vi.mock('../../lib/filesystem', () => ({
+vi.mock('../lib/filesystem', () => ({
   LocalFSAdapter: class {
     static isSupported() {
       return true
@@ -44,11 +45,9 @@ describe('Dashboard localization', () => {
       </LocaleProvider>,
     )
 
-    // Dashboard title shows 'Dashboard' in English
     const enTitle = await screen.findByText('Dashboard')
     expect(enTitle).toBeTruthy()
 
-    // Use i18n.changeLanguage instead of setLocale
     await i18n.changeLanguage('vi')
 
     await waitFor(() => {

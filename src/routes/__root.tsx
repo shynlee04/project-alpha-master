@@ -6,6 +6,7 @@ import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '../components/common/AppErrorBoundary'
 import { initSentry } from '../lib/monitoring/sentry'
+import { ThemeProvider } from '../components/ui/ThemeProvider'
 
 import appCss from '../styles.css?url'
 
@@ -50,25 +51,27 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <LocaleProvider>
-          <AppErrorBoundary>
-            <Header />
-            {children}
-          </AppErrorBoundary>
-          {process.env.NODE_ENV === 'development' && (
-            <TanStackDevtools
-              config={{
-                position: 'bottom-right',
-              }}
-              plugins={[
-                {
-                  name: 'Tanstack Router',
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-              ]}
-            />
-          )}
-        </LocaleProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <LocaleProvider>
+            <AppErrorBoundary>
+              <Header />
+              {children}
+            </AppErrorBoundary>
+            {process.env.NODE_ENV === 'development' && (
+              <TanStackDevtools
+                config={{
+                  position: 'bottom-right',
+                }}
+                plugins={[
+                  {
+                    name: 'Tanstack Router',
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
+                ]}
+              />
+            )}
+          </LocaleProvider>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>
