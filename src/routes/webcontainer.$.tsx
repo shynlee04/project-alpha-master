@@ -33,15 +33,15 @@ function WebContainerNotSupported() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
       <div className="max-w-lg text-center">
         {/* Icon */}
-        <div className="w-20 h-20 mx-auto mb-6 bg-amber-500/10 rounded-2xl flex items-center justify-center">
+        <div className="w-20 h-20 mx-auto mb-6 bg-amber-500/10 rounded-none flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]">
           <AlertTriangle className="w-10 h-10 text-amber-500" />
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-white mb-2">
+        <h1 className="text-2xl font-pixel text-foreground mb-2">
           {t('webcontainer.notSupported.title')}
         </h1>
 
@@ -51,27 +51,27 @@ function WebContainerNotSupported() {
         </p>
 
         {/* Description */}
-        <p className="text-slate-400 mb-4">
+        <p className="text-muted-foreground mb-4">
           {t('webcontainer.notSupported.description')}
         </p>
 
         {/* Explanation */}
-        <p className="text-sm text-slate-500 mb-8 px-4">
+        <p className="text-sm text-muted-foreground/70 mb-8 px-4">
           {t('webcontainer.notSupported.explanation')}
         </p>
 
         {/* Action Button */}
         <button
           onClick={handleBackToDashboard}
-          className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-none font-medium transition-colors shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]"
         >
           <ArrowLeft className="w-4 h-4" />
           {t('webcontainer.notSupported.backToDashboard')}
         </button>
 
         {/* Brand footer */}
-        <div className="mt-12 text-slate-600 text-sm">
-          <span className="text-cyan-500 font-semibold">via-gent</span>
+        <div className="mt-12 text-muted-foreground text-sm">
+          <span className="text-primary font-pixel">VIA-GENT</span>
           <span className="mx-2">•</span>
           <span>Intelligent Local Dev</span>
         </div>
@@ -79,3 +79,4 @@ function WebContainerNotSupported() {
     </div>
   )
 }
+
