@@ -30,10 +30,23 @@ import type {
     WebContainerManagerOptions
 } from './types';
 import { WebContainerError } from './types';
+import type { WorkspaceEventEmitter } from '../events';
 
 // Singleton instance
 let instance: WebContainer | null = null;
 let bootPromise: Promise<WebContainer> | null = null;
+
+// Event bus for emitting container lifecycle events (Story 27-2)
+let eventBus: WorkspaceEventEmitter | null = null;
+
+/**
+ * Set the event bus for container lifecycle events.
+ * Must be called before boot() to receive container:booted event.
+ * @param bus - WorkspaceEventEmitter instance
+ */
+export function setEventBus(bus: WorkspaceEventEmitter): void {
+    eventBus = bus;
+}
 
 /**
  * Boot a WebContainer instance with singleton pattern.
@@ -82,14 +95,22 @@ export async function boot(
             const bootTime = Math.round(performance.now() - startTime);
             console.log(`[WebContainer] Booted successfully in ${bootTime}ms`);
 
+            // Emit container:booted event (Story 27-2)
+            eventBus?.emit('container:booted', { bootTime });
+
             return instance;
         } catch (error) {
             bootPromise = null; // Reset for retry
             const message = error instanceof Error ? error.message : 'Unknown boot error';
-            throw new WebContainerError(
+            const bootError = new WebContainerError(
                 `Failed to boot WebContainer: ${message}`,
                 'BOOT_FAILED'
             );
+
+            // Emit container:error event (Story 27-2)
+            eventBus?.emit('container:error', { error: bootError });
+
+            throw bootError;
         }
     })();
 
@@ -130,12 +151,21 @@ export async function mount(
         console.log('[WebContainer] Mounting files...');
         await instance.mount(files, { mountPoint });
         console.log('[WebContainer] Files mounted successfully');
+
+        // Emit container:mounted event (Story 27-2)
+        // Note: We don't have file count here, would need to count tree
+        eventBus?.emit('container:mounted', { fileCount: -1 }); // -1 = unknown
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown mount error';
-        throw new WebContainerError(
+        const mountError = new WebContainerError(
             `Failed to mount files: ${message}`,
             'MOUNT_FAILED'
         );
+
+        // Emit container:error event (Story 27-2)
+        eventBus?.emit('container:error', { error: mountError });
+
+        throw mountError;
     }
 }
 

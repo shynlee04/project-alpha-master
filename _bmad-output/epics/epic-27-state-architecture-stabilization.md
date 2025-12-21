@@ -25,15 +25,17 @@ See: [Architectural Stabilization Proposal](file:///c:/Users/Admin/Documents/cod
 
 | Story | Title | Priority | Points | Status |
 |-------|-------|----------|--------|--------|
-| 27-1 | Migrate State to Zustand + Dexie.js (Infrastructure) | P0 | 5 | ✅ done |
-| 27-1b | Component Migration to Zustand + Dexie.js | P0 | 8 | ✅ done |
-| 27-1c | Persistence Layer Migration (idb → Dexie) | P0 | 5 | ✅ done |
-| 27-2 | Event Bus Integration Across Components | P0 | 5 | backlog |
-| 27-3 | Fix TailwindCSS 4.x CSS Z-Index Stacking | P1 | 3 | backlog |
-| 27-4 | Fix Terminal pnpm Version Handling | P1 | 3 | backlog |
-| 27-5 | Fix Production SSR Entry Error | P0 | 5 | backlog |
+| 27-1 | Migrate State to Zustand + Dexie.js (Infrastructure) | P0 | 5 | ⚠️ infra-done, integration-pending |
+| 27-1b | Component Migration to Zustand + Dexie.js | P0 | 8 | ⚠️ infra-done, integration-pending |
+| 27-1c | Persistence Layer Migration (idb → Dexie) | P0 | 5 | ⚠️ infra-done, integration-pending |
+| 27-2 | Event Bus Integration Across Components | P0 | 5 | ⚠️ infra-done, integration-pending |
+| 27-3 | Fix TailwindCSS 4.x CSS Z-Index Stacking | P1 | 3 | ⚠️ needs-validation |
+| 27-4 | Fix Terminal pnpm Version Handling | P1 | 3 | ⚠️ needs-validation |
+| 27-5 | ~~Fix Production SSR Entry Error~~ | ~~P0~~ | ~~5~~ | ❌ INVALID |
 
-**Total:** 7 stories, 34 points
+**Total:** 6 active stories, 29 points
+
+> ⚠️ **CRITICAL:** Stories 27-1 through 27-2 created infrastructure but full integration with Epic 3, 4, 5, 10 components was NOT validated. See: [epic-27-integration-impact-report-2025-12-21.md](file:///c:/Users/Admin/Documents/coding-project/project-alpha-master/project-alpha-master/_bmad-output/handoffs/epic-27-integration-impact-report-2025-12-21.md)
 
 ---
 

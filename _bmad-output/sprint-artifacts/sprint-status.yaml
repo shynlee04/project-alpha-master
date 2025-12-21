@@ -269,27 +269,105 @@ development_status:
     handoff: "_bmad-output/handoffs/dev-epic-23-story-23-6-2025-12-21-1615.md"
   23-7-accessibility-audit: backlog
   23-8-component-documentation: backlog
-
   # =============================================================================
-  # EPIC 27: State Architecture Stabilization [P0 - IN_PROGRESS]
+  # EPIC 23: UX/UI Modernization [COURSE CORRECTION v7 - EXTENDED]
+  # Date: 2025-12-21
+  # Reason: Extended per UX Specification v2.0 to cover Agent Management Dashboard,
+  #         Enhanced Project UI, Collapsible IDE Sidebar, and Agent Chat Interface
+  # Platform: B (Second Agent)
+  # Total Stories: 16 (8 existing + 8 new)
+  # =============================================================================
+  
+  # NEW STORIES - Phase 1: Foundation (Stories 23-9, 23-10, 23-14)
+  23-9-agent-management-dashboard: backlog
+    story: _bmad-output/sprint-artifacts/23-9-agent-management-dashboard.md
+    context: _bmad-output/sprint-artifacts/23-9-agent-management-dashboard-context.xml
+    platform: "Platform B"
+    priority: "P1"
+    points: 5
+    notes: "Agent Dashboard Layout with sidebar navigation and list view"
+    
+  23-10-agent-configuration-forms: backlog
+    story: _bmad-output/sprint-artifacts/23-10-agent-configuration-forms.md
+    context: _bmad-output/sprint-artifacts/23-10-agent-configuration-forms-context.xml
+    platform: "Platform B"
+    priority: "P1"
+    points: 5
+    notes: "Agent configuration with LLM provider, tools, and safety settings"
+    
+  23-14-collapsible-ide-sidebar: backlog
+    story: _bmad-output/sprint-artifacts/23-14-collapsible-ide-sidebar.md
+    context: _bmad-output/sprint-artifacts/23-14-collapsible-ide-sidebar-context.xml
+    platform: "Platform B"
+    priority: "P1"
+    points: 5
+    notes: "Icon-based sidebar with dynamic content panels"
+    
+  # NEW STORIES - Phase 2: Advanced Features (Stories 23-11, 23-12, 23-15)
+  23-11-tool-registry-workflow-editor: backlog
+    story: _bmad-output/sprint-artifacts/23-11-tool-registry-workflow-editor.md
+    context: _bmad-output/sprint-artifacts/23-11-tool-registry-workflow-editor-context.xml
+    platform: "Platform B"
+    priority: "P1"
+    points: 8
+    notes: "Tool Registry and Visual Workflow Editor (Waits for Epic 25)"
+    
+  23-12-llm-provider-analytics: backlog
+    story: _bmad-output/sprint-artifacts/23-12-llm-provider-analytics.md
+    context: _bmad-output/sprint-artifacts/23-12-llm-provider-analytics-context.xml
+    platform: "Platform B"
+    priority: "P1"
+    points: 5
+    notes: "Provider management and analytics dashboard"
+    
+  23-15-agent-chat-interface: backlog
+    story: _bmad-output/sprint-artifacts/23-15-agent-chat-interface.md
+    context: _bmad-output/sprint-artifacts/23-15-agent-chat-interface-context.xml
+    platform: "Platform B"
+    priority: "P1"
+    points: 8
+    notes: "Robust chat with plan approval and tool execution logs (Waits for Epic 25)"
+    
+  # NEW STORIES - Phase 3: Polish & Integration (Stories 23-13, 23-16)
+  23-13-enhanced-project-dashboard: backlog
+    story: _bmad-output/sprint-artifacts/23-13-enhanced-project-dashboard.md
+    context: _bmad-output/sprint-artifacts/23-13-enhanced-project-dashboard-context.xml
+    platform: "Platform B"
+    priority: "P2"
+    points: 3
+    notes: "Enhanced project cards with activity metrics and agent indicators"
+    
+  23-16-component-library-design-system: backlog
+    story: _bmad-output/sprint-artifacts/23-16-component-library-design-system.md
+    context: _bmad-output/sprint-artifacts/23-16-component-library-design-system-context.xml
+    platform: "Platform B"
+    priority: "P2"
+    points: 5
+    notes: "Complete design system with colors, typography, and i18n guide"
+
   # =============================================================================
   # Priority: P0 - CRITICAL (Technical debt blocking AI Foundation)
   # Added: 2025-12-21 - Per tech-debt-architecture-gaps-report.md
   # Depends on: None
   # Blocks: Epic 25 (AI Foundation), Epic 24 (Smart Dependency Sync)
+  # GOVERNANCE UPDATE: 2025-12-21T23:15:00+07:00 - Statuses corrected per integration audit
   # =============================================================================
   epic-27: in-progress
-  27-1-migrate-state-zustand-dexie: done
+  27-1-migrate-state-zustand-dexie: integration-pending
     story: _bmad-output/sprint-artifacts/27-1-migrate-state-zustand-dexie.md
     platform: "Platform A"
     completed_at: "2025-12-21T17:45:00+07:00"
-    notes: "Infrastructure complete. Created Zustand store + Dexie.js schema v1"
-  27-1b-component-migration-zustand-dexie: done
+    notes: |
+      Infrastructure complete. Zustand store + Dexie.js schema v1 created.
+      ⚠️ INTEGRATION PENDING: Not all consumers verified to use new stores.
+  27-1b-component-migration-zustand-dexie: integration-pending
     story: _bmad-output/sprint-artifacts/27-1b-component-migration-zustand-dexie.md
     platform: "Platform A"
     completed_at: "2025-12-21T18:00:00+07:00"
-    notes: "Removed @tanstack/react-store. Components migrated to Zustand."
-  27-1c-persistence-migration-dexie: done
+    notes: |
+      Removed @tanstack/react-store from package.json.
+      ⚠️ INTEGRATION PENDING: Need to verify all components use new stores.
+  27-1c-persistence-migration-dexie: integration-pending
     story: _bmad-output/sprint-artifacts/27-1c-persistence-migration-dexie.md
     context: _bmad-output/sprint-artifacts/27-1c-persistence-migration-dexie-context.xml
     platform: "Platform A"
@@ -300,13 +378,32 @@ development_status:
     notes: |
       Core migration complete: idb → Dexie.js.
       AI Foundation tables added (taskContexts, toolExecutions).
-      AI-observable selectors added.
-      IdbCompatWrapper for backward compatibility.
-      db.test.ts updated (12 tests). Build verified.
-  27-2-event-bus-integration: backlog
-  27-3-fix-tailwindcss-z-index: backlog
-  27-4-fix-terminal-pnpm-version: backlog
-  27-5-fix-production-ssr-entry: backlog
+      ⚠️ INTEGRATION PENDING: Old idb usage may still exist in some files.
+  27-2-event-bus-integration: integration-pending
+    story: _bmad-output/sprint-artifacts/27-2-event-bus-integration.md
+    context: _bmad-output/sprint-artifacts/27-2-event-bus-integration-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-21T22:00:00+07:00"
+    ready_for_dev_at: "2025-12-21T22:00:00+07:00"
+    completed_at: "2025-12-21T22:15:00+07:00"
+    notes: |
+      Event emissions added to WebContainer manager and terminal adapter.
+      ⚠️ INTEGRATION PENDING: Subscriptions not verified end-to-end.
+  27-3-fix-tailwindcss-z-index: needs-validation
+    notes: "Underlying bug not verified"
+  27-4-fix-terminal-pnpm-version: needs-validation
+    notes: "Underlying bug not verified"
+  27-5-fix-production-ssr-entry: INVALID
+    notes: "Bug does not exist - production works correctly"
+  # NEW: Integration story to complete Epic 27
+  27-I-complete-state-integration: in-progress
+    story: _bmad-output/sprint-artifacts/27-I-complete-state-integration.md
+    platform: "Platform A"
+    created_at: "2025-12-21T23:15:00+07:00"
+    priority: P0
+    notes: |
+      Meta-story to complete all integration work for Epic 27.
+      Includes: dead code removal, component wiring verification, TDD testing.
 
   # =============================================================================
   # EPIC 11: Code Splitting & Module Refactor [IN_PROGRESS - PAUSED FOR EPIC 13]

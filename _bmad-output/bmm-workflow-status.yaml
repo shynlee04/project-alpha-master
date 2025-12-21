@@ -10,27 +10,32 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-21T16:35:00+07:00"
+last_updated: "2025-12-21T23:15:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
+
+# GOVERNANCE UPDATE: 2025-12-21T23:15:00+07:00
+# Epic 27 integration audit revealed incomplete wiring
+# Stories 27-1 through 27-2 have infrastructure but not full integration
 current_story:
-  key: "27-2-event-bus-integration"
+  key: "27-I-complete-state-integration"
   epic: 27
-  status: "backlog"
+  status: "in-progress"
   platform: "Platform A"
-  notes: "Next in Epic 27 queue. Story 27-1c completed successfully."
+  notes: |
+    Meta-story to complete Epic 27 integration.
+    All prior Epic 27 stories created infrastructure but integration was not verified.
+    This story completes: dead code removal, component wiring, TDD testing.
 
 last_completed_story:
-  key: "27-1c-persistence-migration-dexie"
+  key: "27-2-event-bus-integration"
   epic: 27
-  status: "done"
+  completed_at: "2025-12-21T22:15:00+07:00"
+  status: "integration-pending"
   platform: "Platform A"
-  completed_at: "2025-12-21T20:52:00+07:00"
-  tests_added: 12
   notes: |
-    Core migration complete: idb → Dexie.js.
-    AI Foundation tables added. db.test.ts updated.
-    Build verified. Unblocks Epic 25 (AI Foundation).
+    Event emissions added but subscriptions not verified end-to-end.
+    Marked integration-pending per governance audit 2025-12-21.
 
 # =============================================================================
 # GOVERNANCE DOCUMENT VALIDATION
@@ -186,16 +191,28 @@ implementation:
       date: "2025-12-16"
       notes: "Terminal CWD fix (superseded)"
     - version: "v5"
-      date: "2025-12-20"
-      status: "CURRENT"
-      path: "_bmad-output/sprint-change-proposal-v5-2025-12-20.md"
-      description: "Epic 13 - Terminal & Sync Stability"
-      epics_added:
-        - id: 13
-          name: "Terminal & Sync Stability"
-          priority: "P0"
-          stories: 6  # Updated: Story 13-6 added
-          points: 14  # Updated
+        date: "2025-12-20"
+        status: "CURRENT"
+        path: "_bmad-output/sprint-change-proposal-v5-2025-12-20.md"
+        description: "Epic 13 - Terminal & Sync Stability"
+        epics_added:
+          - id: 13
+            name: "Terminal & Sync Stability"
+            priority: "P0"
+            stories: 6  # Updated: Story 13-6 added
+            points: 14  # Updated
+      - version: "v7"
+        date: "2025-12-21"
+        status: "EXECUTING"
+        path: "_bmad-output/course-correction-epic-23-ux-modernization-2025-12-21.md"
+        description: "Epic 23 - UX/UI Modernization Extension (8 new stories)"
+        epics_extended:
+          - id: 23
+            name: "UX/UI Modernization"
+            priority: "P1"
+            stories_added: 8
+            total_stories: 16
+            reason: "Extended per UX Specification v2.0 to cover Agent Management Dashboard, Enhanced Project UI, Collapsible IDE Sidebar, and Agent Chat Interface"
 
 # =============================================================================
 # EPIC STATUS SUMMARY
@@ -266,10 +283,16 @@ epic_status:
   - id: 23
     name: "UX/UI Modernization"
     status: "IN_PROGRESS"
-    stories: "3/8"
+    stories: "3/16"
     priority: "P1"
     platform: "B (Second Agent)"
-    notes: "Stories 23-1, 23-2, and 23-6 DONE (TailwindCSS 4.x + ShadcnUI initialized + form/dialog migration). Ready for Story 23-7. Platform B awaiting next assignment."
+    notes: |
+      COURSE CORRECTION v7: Extended from 8 to 16 stories per UX Specification v2.0
+      Completed: 23-1 (TailwindCSS), 23-2 (ShadcnUI), 23-4 (IDE panels), 23-5 (Theme toggle)
+      In Review: 23-3 (Layout components)
+      In Progress: 23-6 (Form/Dialog migration)
+      Next: 23-9 through 23-16 (Agent Dashboard, Chat, Design System)
+      Platform B capacity: 2-3 stories/week
     
   - id: 12
     name: "AI Tool Interface Layer"

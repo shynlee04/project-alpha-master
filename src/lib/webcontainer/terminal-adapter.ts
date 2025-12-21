@@ -22,6 +22,7 @@ import type { Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import type { WebContainerProcess } from '@webcontainer/api';
 import { spawn, isBooted } from './manager';
+import type { WorkspaceEventEmitter } from '../events';
 
 /**
  * Options for creating a terminal adapter
@@ -35,6 +36,8 @@ export interface TerminalAdapterOptions {
     onExit?: (exitCode: number) => void;
     /** Callback when an error occurs */
     onError?: (error: Error) => void;
+    /** Event bus for process lifecycle events (Story 27-2) */
+    eventBus?: WorkspaceEventEmitter;
 }
 
 /**
@@ -86,7 +89,7 @@ export class TerminalAdapterError extends Error {
  * ```
  */
 export function createTerminalAdapter(options: TerminalAdapterOptions): TerminalAdapter {
-    const { terminal, fitAddon, onExit, onError } = options;
+    const { terminal, fitAddon, onExit, onError, eventBus } = options;
 
     // Internal state
     let shellProcess: WebContainerProcess | null = null;
@@ -94,6 +97,9 @@ export function createTerminalAdapter(options: TerminalAdapterOptions): Terminal
     let disposed = false;
     let dataDisposable: { dispose: () => void } | null = null;
     let resizeDisposable: { dispose: () => void } | null = null;
+
+    // Generate unique PID for event tracking (Story 27-2)
+    let currentPid: string | null = null;
 
     /**
      * Start an interactive shell session.
@@ -141,6 +147,16 @@ export function createTerminalAdapter(options: TerminalAdapterOptions): Terminal
             // Spawn jsh shell with options
             shellProcess = await spawn('jsh', [], spawnOptions);
 
+            // Generate PID for event tracking (Story 27-2)
+            currentPid = `jsh-${Date.now()}`;
+
+            // Emit process:started event (Story 27-2)
+            eventBus?.emit('process:started', {
+                pid: currentPid,
+                command: 'jsh',
+                args: [],
+            });
+
             console.log(`[TerminalAdapter] Shell started with dimensions ${terminal.cols}x${terminal.rows}${projectPath ? ` at ${projectPath}` : ''}`);
 
 
@@ -149,6 +165,15 @@ export function createTerminalAdapter(options: TerminalAdapterOptions): Terminal
                 new WritableStream({
                     write(data) {
                         terminal.write(data);
+                        // Emit process:output event (Story 27-2)
+                        // Note: This can be high-frequency, consider throttling in consumers
+                        if (currentPid) {
+                            eventBus?.emit('process:output', {
+                                pid: currentPid,
+                                data,
+                                type: 'stdout',
+                            });
+                        }
                     },
                 })
             ).catch((error) => {
@@ -179,7 +204,17 @@ export function createTerminalAdapter(options: TerminalAdapterOptions): Terminal
             // Handle shell exit
             shellProcess.exit.then((exitCode) => {
                 console.log(`[TerminalAdapter] Shell exited with code ${exitCode}`);
+
+                // Emit process:exited event (Story 27-2)
+                if (currentPid) {
+                    eventBus?.emit('process:exited', {
+                        pid: currentPid,
+                        exitCode,
+                    });
+                }
+
                 shellProcess = null;
+                currentPid = null;
                 if (onExit && !disposed) {
                     onExit(exitCode);
                 }
