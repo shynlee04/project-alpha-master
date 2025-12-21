@@ -3,47 +3,130 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* =============================================================================
+   VIA-GENT Typography System
+   - Body: Inter (clean sans-serif)
+   - Pixel: VT323 (lightweight 8-bit)
+   - Pixel Heavy: Press Start 2P (chunky 8-bit)
+   - Code: JetBrains Mono (developer-focused)
+   ============================================================================= */
+
 body {
   @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas,
+    'Courier New', monospace;
+}
+
+/* Pixel Font Utility Classes */
+.font-pixel {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.05em;
+}
+
+.font-pixel-heavy {
+  font-family: 'Press Start 2P', 'VT323', monospace;
+  letter-spacing: 0.1em;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Pixel text sizes - optimized for VT323 readability */
+.text-pixel-xs {
+  font-family: 'VT323', monospace;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-pixel-sm {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-pixel-base {
+  font-family: 'VT323', monospace;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-pixel-lg {
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-pixel-xl {
+  font-family: 'VT323', monospace;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-pixel-2xl {
+  font-family: 'VT323', monospace;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 .demo-start-server-funcs-bg {
-  background-image: radial-gradient(
-    50% 50% at 20% 60%,
-    #23272a 0%,
-    #18181b 50%,
-    #000000 100%
-  );
+  background-image: radial-gradient(50% 50% at 20% 60%,
+      #23272a 0%,
+      #18181b 50%,
+      #000000 100%);
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spin-slow-reverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
 }
 
 @keyframes pulse-slow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 .animate-float {
@@ -70,116 +153,189 @@ code {
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Color mappings - wrap HSL values with hsl() for Tailwind utilities */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* VIA-GENT Brand Extensions */
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-info: hsl(var(--info));
+  --color-editor-bg: hsl(var(--editor-bg));
+
+  /* Pixel Shadow Utilities */
+  --shadow-pixel: var(--shadow-pixel);
+  --shadow-pixel-primary: var(--shadow-pixel-primary);
+  --shadow-pixel-sm: var(--shadow-pixel-sm);
 }
 
 :root {
-  --radius: 0.625rem;
-  /* Light palette: Clean, high-contrast design system */
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.55 0.18 250);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.96 0.005 250);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.96 0.005 250);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.96 0.005 250);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.55 0.22 27);
-  --border: oklch(0.91 0.005 250);
-  --input: oklch(0.91 0.005 250);
-  --ring: oklch(0.55 0.18 250);
-  --chart-1: oklch(0.6 0.16 250);
-  --chart-2: oklch(0.56 0.12 190);
-  --chart-3: oklch(0.48 0.1 140);
-  --chart-4: oklch(0.74 0.18 100);
-  --chart-5: oklch(0.68 0.16 60);
-  --sidebar: oklch(0.98 0.005 250);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.55 0.18 250);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.96 0.005 250);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.91 0.005 250);
-  --sidebar-ring: oklch(0.55 0.18 250);
+  /* VIA-GENT Brand Design System
+   * Primary: Orange (#f97316) - MistralAI inspired
+   * Dark theme default with 8-bit aesthetic */
+
+  --radius: 0rem;
+  /* Squared corners - 8-bit aesthetic */
+
+  /* ===== Core Brand Colors ===== */
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange accent */
+  --primary-foreground: 0 0% 100%;
+  /* White */
+
+  /* ===== Surface Colors (Dark Default) ===== */
+  --background: 240 6% 4%;
+  /* #0f0f11 - Deep black */
+  --foreground: 0 0% 95%;
+  /* Near white text */
+
+  --card: 240 4% 10%;
+  /* #18181b - Card/panel background */
+  --card-foreground: 0 0% 95%;
+
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+
+  --secondary: 240 4% 16%;
+  /* #27272a - Secondary surfaces */
+  --secondary-foreground: 0 0% 90%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+
+  --destructive: 0 84% 60%;
+  /* Red for errors */
+
+  --border: 240 4% 16%;
+  /* #27272a - Borders */
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  /* Orange focus ring */
+
+  /* ===== Chart Colors ===== */
+  --chart-1: 24.6 95% 53.1%;
+  /* Primary orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+
+  /* ===== Sidebar Specific ===== */
+  --sidebar: 240 6% 6%;
+  /* Slightly darker sidebar */
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
+
+  /* ===== Semantic Colors ===== */
+  --success: 142 71% 45%;
+  /* #22c55e - Green */
+  --warning: 38 92% 50%;
+  /* #f59e0b - Amber */
+  --info: 217 91% 60%;
+  /* #3b82f6 - Blue */
+
+  /* ===== 8-Bit Aesthetic ===== */
+  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
+  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+
+  /* ===== Editor Specific ===== */
+  --editor-bg: 240 6% 3.5%;
+  /* #09090b - Deep code background */
 }
 
 .dark {
-  /* Dark palette: Rich contrast with blue-tinted neutrals */
-  --background: oklch(0.13 0.005 250);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.17 0.005 250);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.17 0.005 250);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.65 0.18 250);
-  --primary-foreground: oklch(0.13 0 0);
-  --secondary: oklch(0.22 0.005 250);
-  --secondary-foreground: oklch(0.92 0 0);
-  --muted: oklch(0.22 0.005 250);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.25 0.01 250);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.55 0.22 27);
-  --border: oklch(0.28 0.005 250);
-  --input: oklch(0.28 0.005 250);
-  --ring: oklch(0.65 0.18 250);
-  --chart-1: oklch(0.66 0.16 250);
-  --chart-2: oklch(0.6 0.12 190);
-  --chart-3: oklch(0.52 0.1 140);
-  --chart-4: oklch(0.7 0.2 330);
-  --chart-5: oklch(0.64 0.18 60);
-  --sidebar: oklch(0.15 0.005 250);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.65 0.18 250);
-  --sidebar-primary-foreground: oklch(0.13 0 0);
-  --sidebar-accent: oklch(0.25 0.01 250);
-  --sidebar-accent-foreground: oklch(0.92 0 0);
-  --sidebar-border: oklch(0.28 0.005 250);
-  --sidebar-ring: oklch(0.65 0.18 250);
+  /* VIA-GENT Dark Theme (Primary - Matches :root since dark is default)
+   * Kept for explicit .dark class compatibility with next-themes */
+  --background: 240 6% 4%;
+  /* #0f0f11 */
+  --foreground: 0 0% 95%;
+  --card: 240 4% 10%;
+  /* #18181b */
+  --card-foreground: 0 0% 95%;
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 90%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+  --destructive: 0 84% 60%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  --chart-1: 24.6 95% 53.1%;
+  /* Orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+  --sidebar: 240 6% 6%;
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
-

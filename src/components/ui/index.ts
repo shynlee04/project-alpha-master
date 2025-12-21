@@ -18,3 +18,8 @@ export * from './textarea';
 export * from './sonner';
 export * from './dialog';
 export * from './resizable';
+
+// VIA-GENT Brand Components
+export { BrandLogo } from './brand-logo';
+export { PixelBadge } from './pixel-badge';
+export { StatusDot } from './status-dot';

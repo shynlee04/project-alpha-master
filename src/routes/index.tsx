@@ -13,6 +13,7 @@ import {
 import { ensureReadWritePermission } from '../lib/filesystem/permission-lifecycle'
 import { LocalFSAdapter } from '../lib/filesystem'
 import { Onboarding } from '../components/dashboard/Onboarding'
+import { BrandLogo, PixelBadge } from '../components/ui'
 
 
 export const Route = createFileRoute('/')({ component: Dashboard })
@@ -200,9 +201,9 @@ export function Dashboard() {
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
       <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-cyan-400 font-bold text-xl tracking-tight">via-gent</span>
-            <span className="bg-slate-800 text-xs px-2 py-0.5 rounded text-slate-400">alpha</span>
+          <div className="flex items-center gap-3">
+            <BrandLogo size="sm" />
+            <PixelBadge variant="muted" size="sm">ALPHA</PixelBadge>
           </div>
         </div>
       </header>
@@ -210,10 +211,10 @@ export function Dashboard() {
       <main className="max-w-5xl mx-auto px-6 py-12">
         <Onboarding />
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-semibold text-white">{t('dashboard.title')}</h1>
+          <h1 className="text-2xl font-pixel text-white">{t('dashboard.title')}</h1>
           <button
             onClick={handleOpenFolder}
-            className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-none font-medium transition-colors shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]"
           >
             <Plus className="w-4 h-4" />
             {t('actions.openLocalFolder')}
@@ -239,7 +240,7 @@ export function Dashboard() {
         {/* Loading state */}
         {isLoading && (
           <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-cyan-400"></div>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-primary"></div>
             <p className="text-slate-500 mt-4">{t('dashboard.loading')}</p>
           </div>
         )}
@@ -251,15 +252,15 @@ export function Dashboard() {
               <div
                 key={project.id}
                 onClick={() => handleProjectClick(project)}
-                className="group flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-cyan-500/50 hover:bg-slate-800/80 transition-all cursor-pointer"
+                className="group flex items-center justify-between p-4 bg-card border border-border rounded-none hover:border-primary/50 hover:bg-secondary transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-4">
                   <div className="bg-slate-800 group-hover:bg-slate-700 p-3 rounded-lg transition-colors">
-                    <Folder className="w-6 h-6 text-cyan-400" />
+                    <Folder className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-white group-hover:text-cyan-300 transition-colors">
+                      <h3 className="font-medium text-white group-hover:text-primary transition-colors">
                         {project.name}
                       </h3>
                       <PermissionIcon state={project.permissionState} />
@@ -280,7 +281,7 @@ export function Dashboard() {
                     <Trash2 className="w-4 h-4" />
                   </button>
                   {openingProjectId === project.id ? (
-                    <div className="flex items-center gap-2 text-xs text-cyan-400">
+                    <div className="flex items-center gap-2 text-xs text-primary">
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       <span>{openingPhase === 'authorizing' ? t('status.authorizing') : t('status.opening')}</span>
                     </div>

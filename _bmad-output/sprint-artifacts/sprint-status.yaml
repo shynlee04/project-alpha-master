@@ -472,23 +472,46 @@ development_status:
       Full EN/VI localization for Vietnamese market focus.
   
   # Phase 1: Design Foundation
-  28-1-override-design-tokens: ready-for-dev
+  28-1-override-design-tokens: done
     priority: P0
     points: 5
     story: _bmad-output/sprint-artifacts/28-1-override-design-tokens.md
     platform: "Platform B"
     created_at: "2025-12-22T05:35:00+07:00"
-    notes: "Override ShadcnUI blue tokens with VIA-GENT orange (#f97316) brand colors"
+    started_at: "2025-12-22T05:45:00+07:00"
+    completed_at: "2025-12-22T06:00:00+07:00"
+    notes: |
+      Created design-tokens.css (~170 lines) with VIA-GENT orange brand.
+      Updated styles.css with hsl() wrapped color variables for Tailwind 4.x.
+      Migrated index.tsx and Onboarding.tsx from cyan to primary colors.
+      Browser verified: orange logo, buttons, accents rendering correctly.
     
-  28-2-configure-8bit-typography: backlog
+  28-2-configure-8bit-typography: done
     priority: P0
     points: 3
-    notes: "Add VT323, Press Start 2P pixel fonts with Tailwind utilities"
+    story: _bmad-output/sprint-artifacts/28-2-configure-8bit-typography.md
+    platform: "Platform B"
+    created_at: "2025-12-22T05:50:00+07:00"
+    started_at: "2025-12-22T05:51:00+07:00"
+    completed_at: "2025-12-22T05:55:00+07:00"
+    notes: |
+      Added Google Fonts: VT323, Press Start 2P, Inter, JetBrains Mono.
+      Created .font-pixel, .font-pixel-heavy, .text-pixel-* utility classes.
+      Applied pixel fonts to VIA-GENT logo and dashboard title.
+      Browser verified: VT323 rendering correctly on all brand elements.
     
-  28-3-create-brand-components: backlog
+  28-3-create-brand-components: done
     priority: P0
     points: 5
-    notes: "BrandLogo, PixelBadge, StatusDot components with i18n"
+    story: _bmad-output/sprint-artifacts/28-3-create-brand-components.md
+    platform: "Platform B"
+    completed_at: "2025-12-22T06:05:00+07:00"
+    notes: |
+      Created BrandLogo with pixel "V" icon and size variants.
+      Created PixelBadge with 6 color variants and pixel shadows.
+      Created StatusDot with pulse animation for agent status.
+      Updated dashboard to use brand components.
+      Browser verified: all components rendering correctly.
     
   28-4-implement-pixel-buttons: backlog
     priority: P1
