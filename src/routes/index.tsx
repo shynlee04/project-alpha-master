@@ -198,8 +198,8 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur">
+    <div className="min-h-screen bg-background text-foreground font-sans">
+      <header className="border-b border-border bg-card/50 backdrop-blur">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <BrandLogo size="sm" />
@@ -211,10 +211,10 @@ export function Dashboard() {
       <main className="max-w-5xl mx-auto px-6 py-12">
         <Onboarding />
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-pixel text-white">{t('dashboard.title')}</h1>
+          <h1 className="text-2xl font-pixel text-foreground">{t('dashboard.title')}</h1>
           <button
             onClick={handleOpenFolder}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-none font-medium transition-colors shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-none font-medium transition-colors shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]"
           >
             <Plus className="w-4 h-4" />
             {t('actions.openLocalFolder')}
@@ -223,13 +223,13 @@ export function Dashboard() {
 
         {/* Error message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm flex items-start gap-3">
+          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-none text-destructive text-sm flex items-start gap-3">
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
             <div>
               <p>{error}</p>
               <button
                 onClick={() => setError(null)}
-                className="text-red-300 hover:text-white underline mt-1"
+                className="text-destructive/80 hover:text-foreground underline mt-1"
               >
                 {t('actions.dismiss')}
               </button>
@@ -240,8 +240,8 @@ export function Dashboard() {
         {/* Loading state */}
         {isLoading && (
           <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-primary"></div>
-            <p className="text-slate-500 mt-4">{t('dashboard.loading')}</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-muted border-t-primary"></div>
+            <p className="text-muted-foreground mt-4">{t('dashboard.loading')}</p>
           </div>
         )}
 
@@ -255,18 +255,18 @@ export function Dashboard() {
                 className="group flex items-center justify-between p-4 bg-card border border-border rounded-none hover:border-primary/50 hover:bg-secondary transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-4">
-                  <div className="bg-slate-800 group-hover:bg-slate-700 p-3 rounded-lg transition-colors">
+                  <div className="bg-secondary group-hover:bg-accent p-3 rounded-none transition-colors">
                     <Folder className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-white group-hover:text-primary transition-colors">
+                      <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
                         {project.name}
                       </h3>
                       <PermissionIcon state={project.permissionState} />
                       {getPermissionBadge(project.permissionState)}
                     </div>
-                    <p className="text-sm text-slate-500 flex items-center gap-1.5 mt-0.5">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
                       <Clock className="w-3.5 h-3.5" />
                       {t('status.lastOpened', { relative: formatRelativeDate(project.lastOpened, t) })}
                     </p>
@@ -275,7 +275,7 @@ export function Dashboard() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={(e) => handleDelete(e, project.id)}
-                    className="text-slate-500 hover:text-red-400 transition-colors p-2 opacity-0 group-hover:opacity-100"
+                    className="text-muted-foreground hover:text-destructive transition-colors p-2 opacity-0 group-hover:opacity-100"
                     title={t('dashboard.removeTooltip')}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -286,7 +286,7 @@ export function Dashboard() {
                       <span>{openingPhase === 'authorizing' ? t('status.authorizing') : t('status.opening')}</span>
                     </div>
                   ) : (
-                    <div className="text-slate-500 text-sm group-hover:text-white transition-colors">
+                    <div className="text-muted-foreground text-sm group-hover:text-foreground transition-colors">
                       {t('actions.openWorkspace')} →
                     </div>
                   )}
@@ -295,10 +295,10 @@ export function Dashboard() {
             ))}
 
             {projects.length === 0 && (
-              <div className="text-center py-20 border-2 border-dashed border-slate-800 rounded-xl">
-                <Folder className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                <p className="text-slate-500 mb-2">{t('dashboard.emptyTitle')}</p>
-                <p className="text-slate-600 text-sm">{t('dashboard.emptySubtitle')}</p>
+              <div className="text-center py-20 border-2 border-dashed border-border rounded-none">
+                <Folder className="w-12 h-12 text-muted mx-auto mb-4" />
+                <p className="text-muted-foreground mb-2">{t('dashboard.emptyTitle')}</p>
+                <p className="text-muted-foreground/70 text-sm">{t('dashboard.emptySubtitle')}</p>
               </div>
             )}
           </div>
