@@ -225,17 +225,17 @@ export function MonacoEditor({
     // Show empty state if no files are open
     if (!activeFile) {
         return (
-            <div className="h-full flex flex-col bg-slate-950">
+            <div className="h-full flex flex-col bg-background">
                 <EditorTabBar
                     openFiles={openFiles}
                     activeFilePath={activeFilePath}
                     onTabClick={handleTabClick}
                     onTabClose={handleTabClose}
                 />
-                <div className="flex-1 flex items-center justify-center text-slate-500">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
                     <div className="text-center">
                         <p className="text-sm">{t('ide.noFileOpen')}</p>
-                        <p className="text-xs text-slate-600 mt-1">
+                        <p className="text-xs text-muted-foreground/70 mt-1">
                             {t('ide.selectFile')}
                         </p>
                     </div>
@@ -245,7 +245,7 @@ export function MonacoEditor({
     }
 
     return (
-        <div className="h-full flex flex-col bg-slate-950">
+        <div className="h-full flex flex-col bg-background">
             <EditorTabBar
                 openFiles={openFiles}
                 activeFilePath={activeFilePath}

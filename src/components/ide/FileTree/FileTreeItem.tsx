@@ -67,10 +67,10 @@ export function FileTreeItem({
             <div
                 className={`
         flex items-center gap-1 h-7 cursor-pointer select-none
-        text-sm hover:bg-slate-800/50
-        ${isExcluded ? 'text-slate-500 opacity-60' : 'text-slate-300'}
-        ${isSelected ? 'bg-cyan-500/20 text-cyan-200' : ''}
-        ${isFocused ? 'outline outline-1 outline-cyan-500/50 outline-offset-[-1px]' : ''}
+        text-sm hover:bg-accent/50
+        ${isExcluded ? 'text-muted-foreground opacity-60' : 'text-foreground'}
+        ${isSelected ? 'bg-primary/20 text-primary' : ''}
+        ${isFocused ? 'outline outline-1 outline-primary/50 outline-offset-[-1px]' : ''}
         transition-colors duration-75
       `}
                 title={isExcluded ? 'Excluded from sync' : undefined}
@@ -79,11 +79,11 @@ export function FileTreeItem({
                 <div className="w-4 h-4 flex items-center justify-center shrink-0">
                     {isDirectory && (
                         isLoading ? (
-                            <Loader2 size={12} className="text-slate-500 animate-spin" />
+                            <Loader2 size={12} className="text-muted-foreground animate-spin" />
                         ) : isExpanded ? (
-                            <ChevronDown size={12} className="text-slate-500" />
+                            <ChevronDown size={12} className="text-muted-foreground" />
                         ) : (
-                            <ChevronRight size={12} className="text-slate-500" />
+                            <ChevronRight size={12} className="text-muted-foreground" />
                         )
                     )}
                 </div>
@@ -134,7 +134,7 @@ export function FileTreeItem({
 
             {isError && isErrorDetailsOpen && (
                 <div
-                    className="pl-10 pr-3 py-2 text-xs text-slate-200 bg-slate-900/60 border-b border-slate-800/40"
+                    className="pl-10 pr-3 py-2 text-xs text-foreground bg-card/60 border-b border-border/40"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="text-red-300 break-words">
@@ -143,7 +143,7 @@ export function FileTreeItem({
                     <div className="mt-2 flex items-center gap-2">
                         <button
                             type="button"
-                            className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200"
+                            className="px-2 py-1 rounded bg-accent hover:bg-accent/80 text-foreground"
                             onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
@@ -154,7 +154,7 @@ export function FileTreeItem({
                         </button>
                         <button
                             type="button"
-                            className="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300"
+                            className="px-2 py-1 rounded bg-muted hover:bg-muted/80 text-muted-foreground"
                             onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()

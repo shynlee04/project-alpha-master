@@ -360,30 +360,30 @@ export function IDELayout(): React.JSX.Element {
   // ============================================================================
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-slate-200 overflow-hidden flex flex-col">
+    <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
       {/* Story 13-5: Restore Access Overlay */}
       {permissionState === 'prompt' && (
-        <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-8 rounded-lg text-center max-w-md border border-slate-700 shadow-2xl">
-            <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/20 rounded-full flex items-center justify-center">
+        <div className="absolute inset-0 bg-background/90 z-50 flex items-center justify-center">
+          <div className="bg-card p-8 rounded-lg text-center max-w-md border border-border shadow-2xl">
+            <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/15 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
               Permission Required
             </h3>
-            <p className="text-slate-400 text-sm mb-6">
+            <p className="text-muted-foreground text-sm mb-6">
               Click below to restore access to your project folder.
               {projectMetadata?.name && (
-                <span className="block mt-1 text-slate-300 font-medium">
+                <span className="block mt-1 text-foreground font-medium">
                   {projectMetadata.name}
                 </span>
               )}
             </p>
             <button
               onClick={restoreAccess}
-              className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-medium transition-colors"
+              className="px-6 py-2 bg-primary hover:brightness-110 text-primary-foreground rounded-lg font-medium transition-colors"
             >
               Restore Access
             </button>
@@ -414,7 +414,7 @@ export function IDELayout(): React.JSX.Element {
           className="bg-background"
         >
           <Card className="h-full rounded-none border-0 border-r bg-background">
-            <CardHeader className="h-9 px-4 py-2 border-b">
+            <CardHeader className="h-9 px-4 py-2 border-b bg-card">
               <CardTitle className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                 Explorer
               </CardTitle>
@@ -452,7 +452,7 @@ export function IDELayout(): React.JSX.Element {
                 {/* Editor */}
                 <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
                       <CardTitle className="text-sm font-semibold text-foreground">
                         Editor
                       </CardTitle>
@@ -488,7 +488,7 @@ export function IDELayout(): React.JSX.Element {
                 {/* Preview */}
                 <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
                       <CardTitle className="text-sm font-semibold text-foreground">
                         Preview
                       </CardTitle>
@@ -510,7 +510,7 @@ export function IDELayout(): React.JSX.Element {
             {/* Terminal */}
             <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
               <Card className="h-full rounded-none border-0 bg-background">
-                <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
                   <CardTitle className="text-sm font-semibold text-foreground">
                     Terminal
                   </CardTitle>
@@ -540,7 +540,7 @@ export function IDELayout(): React.JSX.Element {
               className="bg-background"
             >
               <Card className="h-full rounded-none border-0 bg-background">
-                <CardHeader className="h-10 px-4 py-2 border-b flex items-center">
+                <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
                   <CardTitle className="text-sm font-semibold text-foreground">
                     Chat
                   </CardTitle>
@@ -571,12 +571,12 @@ export function IDELayout(): React.JSX.Element {
  */
 export function MinViewportWarning(): React.JSX.Element {
   return (
-    <div className="fixed inset-0 bg-slate-950/95 z-50 hidden min-[1024px]:hidden items-center justify-center p-8 text-center max-[1023px]:flex">
+    <div className="fixed inset-0 bg-background/95 z-50 hidden min-[1024px]:hidden items-center justify-center p-8 text-center max-[1023px]:flex">
       <div>
-        <h2 className="text-xl font-semibold text-white mb-2">
+        <h2 className="text-xl font-semibold text-foreground mb-2">
           Screen Too Small
         </h2>
-        <p className="text-slate-400 text-sm">
+        <p className="text-muted-foreground text-sm">
           via-gent IDE requires a minimum viewport width of 1024px.
           <br />
           Please resize your browser window or use a larger screen.

@@ -75,9 +75,9 @@ export function TerminalPanel({
     const { t } = useTranslation();
 
     return (
-        <div className={cn("h-full flex flex-col border-t border-slate-800", className)}>
+        <div className={cn("h-full flex flex-col border-t border-border", className)}>
             {/* Tab Bar */}
-            <div className="h-8 px-4 flex items-center gap-6 border-b border-slate-800/50">
+            <div className="h-8 px-4 flex items-center gap-6 border-b border-border/50">
                 <TabButton
                     label={t('ide.terminal')}
                     isActive={activeTab === 'terminal'}
@@ -96,23 +96,23 @@ export function TerminalPanel({
             </div>
 
             {/* Tab Content */}
-            <div className="flex-1 bg-slate-950 min-h-0 relative">
+            <div className="flex-1 bg-background min-h-0 relative">
                 {activeTab === 'terminal' ? (
                     XTerminal ? (
                         <Suspense fallback={
-                            <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                            <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                                 {t('terminal.loading', 'Loading terminal...')}
                             </div>
                         }>
                             <XTerminal projectPath={projectPath} />
                         </Suspense>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                        <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                             {t('terminal.loading', 'Loading terminal...')}
                         </div>
                     )
                 ) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                    <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                         {activeTab === 'output'
                             ? t('ide.outputSoon')
                             : t('ide.problemsSoon')}
@@ -147,8 +147,8 @@ function TabButton({
             onClick={onClick}
             className={
                 isActive
-                    ? 'text-xs font-medium text-cyan-400 border-b-2 border-cyan-400 h-full flex items-center'
-                    : 'text-xs font-medium text-slate-500 hover:text-slate-300 h-full flex items-center'
+                    ? 'text-xs font-medium text-primary border-b-2 border-primary h-full flex items-center'
+                    : 'text-xs font-medium text-muted-foreground hover:text-foreground h-full flex items-center'
             }
         >
             {label}

@@ -5,8 +5,8 @@
     "compatibility_flags": [
         "nodejs_compat"
     ],
-    // TanStack Start's built-in server entry point for Cloudflare Workers
-    "main": "@tanstack/react-start/server-entry",
+    // Custom server entry that injects COOP/COEP headers for WebContainer support
+    "main": "./src/server.ts",
     // Enable Workers development
     "workers_dev": true
 }

@@ -25,12 +25,13 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="outline"
+      variant="secondary"
       size="icon"
       aria-label="Toggle theme"
       aria-pressed={isDark}
       data-testid="theme-toggle"
       onClick={toggleTheme}
+      className="text-foreground border-border"
     >
       {isDark ? (
         <Sun className="h-[1.2rem] w-[1.2rem]" />

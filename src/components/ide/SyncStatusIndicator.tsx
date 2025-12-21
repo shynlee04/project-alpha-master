@@ -89,7 +89,7 @@ export function SyncStatusIndicator({
     case 'syncing':
       return (
         <span
-          className="flex items-center gap-1 text-xs text-cyan-400"
+          className="flex items-center gap-1 text-xs text-primary"
           title={
             progress?.currentFile
               ? t('status.syncingFile', { file: progress.currentFile })
@@ -123,7 +123,7 @@ export function SyncStatusIndicator({
       // If never synced, don't show indicator
       if (!lastSyncTime) {
         return (
-          <span className="flex items-center gap-1 text-xs text-slate-500">
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Check className="w-3 h-3" />
             <span>{t('status.notSynced')}</span>
           </span>

@@ -17,7 +17,7 @@ const variantStyles: Record<ToastVariant, string> = {
     success: 'bg-emerald-900/90 border-emerald-500/50 text-emerald-100',
     error: 'bg-red-900/90 border-red-500/50 text-red-100',
     warning: 'bg-amber-900/90 border-amber-500/50 text-amber-100',
-    info: 'bg-slate-800/90 border-slate-600/50 text-slate-100',
+    info: 'bg-card/90 border-border/50 text-card-foreground',
 };
 
 const variantIcons: Record<ToastVariant, typeof CheckCircle> = {

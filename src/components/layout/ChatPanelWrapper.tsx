@@ -48,15 +48,15 @@ export function ChatPanelWrapper({
     onClose,
 }: ChatPanelWrapperProps): React.JSX.Element {
     return (
-        <div className="h-full flex flex-col border-l border-slate-800">
+        <div className="h-full flex flex-col border-l border-border">
             {/* Header */}
-            <div className="h-9 px-4 flex items-center justify-between border-b border-slate-800/50">
-                <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+            <div className="h-9 px-4 flex items-center justify-between border-b border-border/50">
+                <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase">
                     Agent Chat
                 </span>
                 <button
                     onClick={onClose}
-                    className="text-slate-500 hover:text-slate-300 transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
                     title="Close chat panel"
                 >
                     <X className="w-4 h-4" />

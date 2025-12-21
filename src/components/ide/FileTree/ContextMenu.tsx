@@ -99,7 +99,7 @@ export function ContextMenu({
             ref={menuRef}
             role="menu"
             tabIndex={-1}
-            className="fixed z-50 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 min-w-[160px]"
+            className="fixed z-50 bg-popover border border-border rounded-lg shadow-xl py-1 min-w-[160px]"
             style={{
                 left: `${x}px`,
                 top: `${y}px`,
@@ -114,8 +114,8 @@ export function ContextMenu({
                     className={`
             w-full px-3 py-1.5 text-left text-sm flex items-center gap-2
             ${item.destructive
-                            ? 'text-red-400 hover:bg-red-500/20'
-                            : 'text-slate-300 hover:bg-slate-700/50'
+                            ? 'text-destructive hover:bg-destructive/20'
+                            : 'text-popover-foreground hover:bg-accent/50'
                         }
             ${index === 0 ? '' : ''}
             transition-colors

@@ -207,10 +207,10 @@ export function FileTree({
   // Empty state - no directory
   if (!directoryHandle) {
     return (
-      <div className={`h-full flex flex-col items-center justify-center text-slate-500 p-4 ${className}`}>
-        <FolderOpen size={32} className="mb-2 text-slate-600" />
+      <div className={`h-full flex flex-col items-center justify-center text-muted-foreground p-4 ${className}`}>
+        <FolderOpen size={32} className="mb-2 text-muted-foreground/70" />
         <p className="text-sm text-center">{t('ide.noFolderSelected')}</p>
-        <p className="text-xs text-slate-600 text-center mt-1">
+        <p className="text-xs text-muted-foreground/70 text-center mt-1">
           {t('ide.openFolderToView')}
         </p>
       </div>
@@ -230,7 +230,7 @@ export function FileTree({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`h-full flex items-center justify-center text-slate-500 ${className}`}>
+      <div className={`h-full flex items-center justify-center text-muted-foreground ${className}`}>
         <p className="text-sm">{t('ide.loading')}</p>
       </div>
     );
@@ -243,8 +243,8 @@ export function FileTree({
   return (
     <div className={`h-full flex flex-col ${className}`}>
       {/* Sync Status Header */}
-      <div className="h-7 px-3 flex items-center justify-between border-b border-slate-800/30 bg-slate-900/30 shrink-0">
-        <div className="flex items-center gap-2 text-xs text-slate-400">
+      <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {fileSyncCounts.total > 0 && (
             <>
               <span title={t('status.pendingFiles')} className="text-amber-400">

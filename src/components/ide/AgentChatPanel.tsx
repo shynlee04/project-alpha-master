@@ -129,13 +129,13 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-900/30">
-            <div className="h-9 px-4 flex items-center justify-between border-b border-slate-800/50">
+        <div className="flex flex-col h-full bg-card/30">
+            <div className="h-9 px-4 flex items-center justify-between border-b border-border/50">
                 <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-fuchsia-500 flex items-center justify-center">
                         <Bot className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+                    <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase">
                         {t('agent.title')}
                     </span>
                 </div>
@@ -143,7 +143,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     type="button"
                     onClick={handleClear}
                     title={t('agent.clear')}
-                    className="text-xs text-slate-500 hover:text-slate-200 transition-colors"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                     {t('agent.clear')}
                 </button>
@@ -157,20 +157,20 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     >
                         <div
                             className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center ${message.role === 'assistant'
-                                ? 'bg-gradient-to-br from-cyan-500 to-fuchsia-500'
-                                : 'bg-slate-800'
+                                ? 'bg-gradient-to-br from-primary to-purple-500'
+                                : 'bg-accent'
                                 }`}
                         >
                             {message.role === 'assistant' ? (
                                 <Bot className="w-4 h-4 text-white" />
                             ) : (
-                                <User className="w-4 h-4 text-slate-200" />
+                                <User className="w-4 h-4 text-foreground" />
                             )}
                         </div>
                         <div
                             className={`flex-1 max-w-[85%] px-3 py-2 rounded-lg text-sm ${message.role === 'assistant'
-                                ? 'bg-slate-950 text-slate-200'
-                                : 'bg-cyan-500/10 text-slate-200'
+                                ? 'bg-muted text-foreground'
+                                : 'bg-primary/10 text-foreground'
                                 }`}
                         >
                             {message.content}
@@ -180,7 +180,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={handleSubmit} className="p-4 border-t border-slate-800/50">
+            <form onSubmit={handleSubmit} className="p-4 border-t border-border/50">
                 <div className="relative">
                     <textarea
                         ref={inputRef}
@@ -189,13 +189,13 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         onKeyDown={handleKeyDown}
                         placeholder={t('agent.placeholder')}
                         rows={1}
-                        className="w-full px-3 py-2 pr-12 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 resize-none min-h-[44px] max-h-[120px]"
+                        className="w-full px-3 py-2 pr-12 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 resize-none min-h-[44px] max-h-[120px]"
                     />
                     <button
                         type="submit"
                         disabled={!input.trim()}
                         aria-label="Send message"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-cyan-400 hover:text-cyan-200 disabled:text-slate-600 transition-colors"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:text-primary/80 disabled:text-muted-foreground/50 transition-colors"
                     >
                         <Send className="w-4 h-4" />
                     </button>
