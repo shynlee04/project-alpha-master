@@ -208,6 +208,18 @@ The repository already has comprehensive guidance in `AGENTS.md` covering:
 - Prioritize iteration, insertion, updates on single-source of truth
 - When generating new files, isolate with new folders and date-time-stamp marking
 
+> ⚠️ **MANDATORY MCP RESEARCH PROTOCOL (2025-12-21)**
+>
+> Before implementing unfamiliar patterns or using libraries for the first time:
+>
+> 1. **Context7**: Query library documentation for API signatures
+> 2. **Deepwiki**: Check repo wikis for architecture decisions
+> 3. **Tavily/Exa**: Search for 2025 best practices
+> 4. **Repomix**: Analyze current codebase structure
+>
+> See `agent-os/standards/global/mcp-research.md` for full protocol.
+> **Never assume. Always verify. Document findings.**
+
 ### BMAD Method Integration
 
 The project includes BMAD (Business Model & Agile Development) method rules in `.cursor/rules/bmad/`:

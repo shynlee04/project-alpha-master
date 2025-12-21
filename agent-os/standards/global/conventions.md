@@ -1,11 +1,71 @@
-## General development conventions
+# Development Conventions
 
-- **Consistent Project Structure**: Organize files and directories in a predictable, logical structure that team members can navigate easily
-- **Clear Documentation**: Maintain up-to-date README files with setup instructions, architecture overview, and contribution guidelines
-- **Version Control Best Practices**: Use clear commit messages, feature branches, and meaningful pull/merge requests with descriptions
-- **Environment Configuration**: Use environment variables for configuration; never commit secrets or API keys to version control
-- **Dependency Management**: Keep dependencies up-to-date and minimal; document why major dependencies are used
-- **Code Review Process**: Establish a consistent code review process with clear expectations for reviewers and authors
-- **Testing Requirements**: Define what level of testing is required before merging (unit tests, integration tests, etc.)
-- **Feature Flags**: Use feature flags for incomplete features rather than long-lived feature branches
-- **Changelog Maintenance**: Keep a changelog or release notes to track significant changes and improvements
+> **Last Updated:** 2025-12-21  
+> **Applies to:** Via-Gent (Project Alpha)
+
+---
+
+## Project Structure
+
+```
+project-alpha-master/
+├── src/                    # Application source
+│   ├── components/         # React components (ide/, ui/, layout/)
+│   ├── lib/               # Core logic (filesystem/, webcontainer/, agent/)
+│   ├── routes/            # TanStack Router files
+│   ├── i18n/              # Translation files (en.json, vi.json)
+│   └── types/             # Shared TypeScript types
+├── _bmad-output/          # BMAD workflow artifacts
+├── agent-os/              # Agent OS configuration
+│   ├── product/           # Mission, roadmap, tech-stack
+│   └── standards/         # These standards documents
+└── tests/                 # Test files
+```
+
+---
+
+## Git Workflow
+
+### Commit Message Format
+
+```bash
+# Story completion
+feat(epic-13): Story 13-1 - Fix Terminal Working Directory
+
+# Bug fix
+fix(epic-13): Story 13-2 - Fix Auto-Sync on Project Load
+
+# Documentation
+docs(governance): Update sprint-status.yaml with Epic 24-26
+
+# Chore
+chore(bmad): Course correction - Add Story 13-6
+```
+
+### Branch Strategy
+
+- Epic branches created after retrospective, not per-story
+- Branch naming: `epic-N/descriptive-name`
+- Main branch protected
+
+---
+
+## Environment Configuration
+
+```env
+# .env.local (never commit)
+VITE_GEMINI_API_KEY=your-key
+VITE_SENTRY_DSN=your-dsn
+```
+
+---
+
+## General Practices
+
+- **Consistent Structure**: Follow directory organization exactly
+- **Clear Documentation**: Keep AGENTS.md updated
+- **Version Control**: Meaningful commits per story
+- **Dependency Management**: Use pnpm, document why deps added
+- **Code Review**: Use `/code-review` workflow
+- **Feature Flags**: Not needed (client-side only)
+- **Changelog**: Updated in sprint-status.yaml

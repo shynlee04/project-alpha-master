@@ -20,10 +20,11 @@ completedAt: '2025-12-10T18:35:00+07:00'
 # Architecture Decision Document
 ## Via-Gent: Foundational Architectural Slice (Project Alpha)
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Author:** Apple  
-**Date:** 2025-12-10  
-**Status:** Complete ✅
+**Date:** 2025-12-21 (Updated from 2025-12-10)  
+**Status:** Complete ✅  
+**Gap Analysis:** 2025-12-21 - State management updated, security section added
 
 ---
 
@@ -194,8 +195,8 @@ interface ConversationState {
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| **State Management** | TanStack Store + TanStack Query | Unified state pattern |
-| **Component Library** | Shadcn/ui | Customizable, accessible |
+| **State Management** | Zustand 5.x + TanStack Query | ⬆️ Simpler API, better DevTools (changed from TanStack Store) |
+| **Component Library** | Shadcn/ui + TailwindCSS 4.x | Customizable, accessible, utility-first styling |
 | **Editor** | Monaco Editor | Industry standard, TypeScript support |
 | **Terminal** | xterm.js | WebContainers compatibility |
 | **Layout** | Resizable panels | IDE-standard UX |
@@ -204,10 +205,71 @@ interface ConversationState {
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| **Hosting** | Static hosting (Vercel/Netlify) | No server requirements |
-| **Build** | Vite SSG/SPA output | Optimal for static deployment |
-| **Headers** | `Cross-Origin-Opener-Policy: same-origin` | WebContainers requirement |
-| **Headers** | `Cross-Origin-Embedder-Policy: require-corp` | SharedArrayBuffer requirement |
+| **Hosting** | Netlify (Static + SSR) | Native TanStack Start support, Edge Functions |
+| **Build** | Vite + Nitro (NITRO_PRESET=netlify) | SSR + static hybrid output |
+| **Headers** | Netlify Edge Functions | COOP/COEP injection for SSR compatibility |
+| **Publish Dir** | `.output/public` | Nitro output structure |
+| **Functions Dir** | `.output/server` | SSR functions location |
+
+> **Lesson Learned (2025-12-20):** Headers via Edge Functions avoid SSR/hydration issues that occur with static `headers` in `netlify.toml`.
+
+### Required Security Headers
+
+| Header | Value | Requirement |
+|--------|-------|-------------|
+| `Cross-Origin-Opener-Policy` | `same-origin` | WebContainers (SharedArrayBuffer) |
+| `Cross-Origin-Embedder-Policy` | `require-corp` | WebContainers (SharedArrayBuffer) |
+| `Content-Security-Policy` | See below | Recommended for production |
+
+**CSP Configuration (via `vite-plugin-csp-guard`):**
+```typescript
+// vite.config.ts
+import csp from 'vite-plugin-csp-guard';
+
+export default defineConfig({
+  plugins: [
+    csp({
+      algorithm: 'sha256',
+      dev: {
+        run: true,
+        outlierSupport: ['react'],
+      },
+    }),
+  ],
+});
+```
+
+**Netlify Edge Function (Header Injection):**
+```typescript
+// netlify/edge-functions/inject-headers.ts
+export default async (request: Request, context: Context) => {
+  const response = await context.next();
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+  response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+  return response;
+};
+```
+
+### SSR Externalization (Client-Only Packages)
+
+> **Lesson Learned (2025-12-20):** Packages like `@xterm/xterm` and `monaco-editor` cause SSR build failures if bundled.
+
+**Solution:** Dynamic imports in components:
+```typescript
+// src/components/ide/XTerminal.tsx
+const Terminal = dynamic(
+  () => import('@xterm/xterm').then(m => m.Terminal),
+  { ssr: false }
+);
+```
+
+**Alternative:** Vite ssr.external configuration:
+```typescript
+// vite.config.ts
+ssr: {
+  external: ['@xterm/xterm', 'monaco-editor'],
+}
+```
 
 ---
 
@@ -1842,13 +1904,75 @@ done
 |------|-------------------|---------|
 | 2025-12-12 | v3 | Event Bus, AI Tool Facades, WorkspaceOrchestrator, Code Quality |
 | 2025-12-20 | v5 | Terminal Integration, Sync Behavior, Known Issues (Epic 13) |
+| 2025-12-21 | Gap Analysis | State management (Zustand), Security headers, Deployment patterns |
 
-**Next Phase:** Execute Epic 13 (Terminal & Sync Stability) to unblock 14-step validation.
+---
+
+## Lessons Learned (Retrospectives Synthesis)
+
+### Epic 3: File System Access Layer
+
+| Learning | Detail |
+|----------|--------|
+| **FSA Permissions Don't Persist** | `queryPermission()` returns `prompt` not `granted` on tab reload |
+| **User Gesture Required** | `requestPermission()` needs user click; can't auto-restore |
+| **Path Traversal Protection** | Block `..` and absolute paths from day 1 |
+| **WorkspaceContext Centralizes State** | Don't spread FSA state across IDELayout and FileTree |
+
+### Epic 5: Persistence Layer
+
+| Learning | Detail |
+|----------|--------|
+| **Await Transaction Completion** | Always `await tx.done` before continuing |
+| **Async vs Sync UI APIs** | Some libs (react-resizable-panels) are sync; use imperative APIs for restore |
+| **Vitest Handle Leaks** | Open IndexedDB connections cause timeout warnings |
+
+### Epic 13: Terminal & Sync Stability
+
+| Learning | Detail |
+|----------|--------|
+| **WebContainers are Window-Bound** | Cannot share across tabs; new tab = new container |
+| **Fail Gracefully, Then Innovate** | Provide fallback UI first, then creative solutions (Focus Mode) |
+| **User Feedback is Critical** | Invisible processes need visible indicators (Sync Progress) |
+| **i18n From Day One** | Ship all new features with translations immediately |
+
+### SSR & Deployment Sessions (2025-12-20)
+
+| Learning | Detail |
+|----------|--------|
+| **COOP/COEP via Edge Functions** | Static headers in `netlify.toml` cause hydration issues |
+| **Client-Only Externalization** | xterm, monaco must use dynamic imports or ssr.external |
+| **Nitro Preset Required** | Set `NITRO_PRESET=netlify` for correct output structure |
+| **Publish Dir** | Use `.output/public`, not `dist` |
+
+---
+
+## MCP Research Protocol (Mandatory)
+
+> All AI agents developing this project MUST use MCP research tools before implementing unfamiliar patterns.
+
+### Required Research Steps
+
+1. **Context7**: Query documentation for libraries (TanStack, WebContainers, isomorphic-git)
+2. **Deepwiki**: Check GitHub repo wikis for implementation patterns
+3. **Tavily/Exa**: Search for recent (2025) best practices
+4. **Repomix**: Analyze current codebase structure before changes
+
+### Example: Before Implementing New Feature
+
+```bash
+# Step 1: Check library docs
+mcp_context7_get-library-docs --id "/tanstack/ai" --topic "client tools"
+
+# Step 2: Search for patterns
+mcp_exa_get_code_context_exa --query "TanStack AI client-side tool callbacks 2025"
+
+# Step 3: Check current implementation
+mcp_repomix_pack_codebase --directory "src/lib/agent" --style xml
+```
 
 ---
 
 *Generated via BMAD Architecture Workflow*  
 *Project: Via-Gent Foundational Architectural Slice (Project Alpha)*  
-*Last Updated: 2025-12-20T02:40:00+07:00*
-
-
+*Last Updated: 2025-12-21T11:45:00+07:00*
