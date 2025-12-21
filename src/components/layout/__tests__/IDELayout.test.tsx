@@ -12,29 +12,6 @@ import { IDELayout } from '../IDELayout';
 import { WorkspaceProvider, type WorkspaceContextType } from '../../../lib/workspace';
 import { ToastProvider } from '../../ui/Toast';
 
-// Mock the workspace context
-const mockWorkspaceContext: Partial<WorkspaceContextType> = {
-  projectId: 'test-project',
-  projectMetadata: { name: 'Test Project' },
-  permissionState: 'granted',
-  syncStatus: 'idle',
-  autoSync: true,
-  isOpeningFolder: false,
-  directoryHandle: {} as FileSystemDirectoryHandle,
-  localAdapterRef: { current: null },
-  syncManagerRef: { current: null },
-  eventBus: {
-    emit: vi.fn(),
-    on: vi.fn(),
-    off: vi.fn(),
-  },
-  setIsWebContainerBooted: vi.fn(),
-  restoreAccess: vi.fn(),
-  openFolder: vi.fn(),
-  switchFolder: vi.fn(),
-  syncNow: vi.fn(),
-  setAutoSync: vi.fn(),
-};
 
 // Mock MonacoEditor component
 vi.mock('../../ide/MonacoEditor', () => ({
@@ -87,7 +64,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
   test('should render with ShadcnUI Resizable components', () => {
     render(
       <ToastProvider>
-        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <WorkspaceProvider projectId="test-project">
           <IDELayout />
         </WorkspaceProvider>
       </ToastProvider>,
@@ -112,7 +89,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
   test('should toggle chat panel visibility', () => {
     render(
       <ToastProvider>
-        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <WorkspaceProvider projectId="test-project">
           <IDELayout />
         </WorkspaceProvider>
       </ToastProvider>,
@@ -133,14 +110,9 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
   });
 
   test('should render permission prompt overlay when needed', () => {
-    const mockPromptWorkspace = {
-      ...mockWorkspaceContext,
-      permissionState: 'prompt',
-    };
-
     render(
       <ToastProvider>
-        <WorkspaceProvider value={mockPromptWorkspace as WorkspaceContextType}>
+        <WorkspaceProvider projectId="test-project" initialProject={{ permissionState: 'prompt' }}>
           <IDELayout />
         </WorkspaceProvider>
       </ToastProvider>,
@@ -169,7 +141,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
 
     render(
       <ToastProvider>
-        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <WorkspaceProvider projectId="test-project">
           <IDELayout />
         </WorkspaceProvider>
       </ToastProvider>,
@@ -182,7 +154,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
   test('should handle keyboard shortcut for chat toggle', () => {
     render(
       <ToastProvider>
-        <WorkspaceProvider value={mockWorkspaceContext as WorkspaceContextType}>
+        <WorkspaceProvider projectId="test-project">
           <IDELayout />
         </WorkspaceProvider>
       </ToastProvider>,

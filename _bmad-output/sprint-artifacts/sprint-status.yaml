@@ -172,10 +172,11 @@ development_status:
       date: "2025-12-20T19:26:00+07:00"
       issues_found: 0
       recommendations: 5
-  23-3-migrate-layout-components: in-progress
+  23-3-migrate-layout-components: review
     story: _bmad-output/sprint-artifacts/23-3-migrate-layout-components.md
     context: _bmad-output/sprint-artifacts/23-3-migrate-layout-components-context.xml
     started_at: "2025-12-20"
+    completed_at: "2025-12-21T02:52:00+07:00"
     assigned_to: "dev"
     assignment_date: "2025-12-20T19:35:00+07:00"
   23-4-migrate-ide-panel-components: backlog
