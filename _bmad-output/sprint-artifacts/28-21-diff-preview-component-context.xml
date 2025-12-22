@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-21-diff-preview-component" created="2025-12-22T22:59:00+07:00">
+  
+  <!-- Current code state for DiffPreview development -->
+  <files>
+    
+    <!-- CodeBlock - completed in 28-20, syntax highlighting reference -->
+    <file path="src/components/chat/CodeBlock.tsx">
+      <summary>
+        CodeBlock component (315 lines) completed in Story 28-20.
+        Provides syntax highlighting with CSS token classes.
+        DiffPreview should reuse tokenizeLine() pattern for diff content.
+      </summary>
+    </file>
+    
+    <!-- Existing index.ts for exports -->
+    <file path="src/components/chat/index.ts">
+      <summary>
+        Barrel export for chat components.
+        Exports ToolCallBadge, ToolCallBadgeGroup, CodeBlock.
+        Will need to add DiffPreview export.
+      </summary>
+    </file>
+    
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="exa" query="React diff preview component">
+      Popular libraries: react-diff-viewer, react-diff-view
+      Patterns: unified view, split view, line-by-line coloring
+      For Phase 6: implement simple line-based diff without external lib
+    </finding>
+    <finding source="epic-28-analysis" query="Coder agent UI">
+      Coder agent needs: "Code generation, diff preview"
+      DiffPreview shows proposed changes before user approval
+      Integrates with ApprovalOverlay (28-22)
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Line-based diff" source="Phase 6 simplicity">
+      Use simple line comparison instead of character-level diff.
+      Compare oldText.split('\n') with newText.split('\n').
+      Epic 27+ can integrate myers diff or jsdiff library.
+    </pattern>
+    <pattern name="Unified diff format" source="git conventions">
+      + prefix for additions (green)
+      - prefix for deletions (red)
+      No prefix for unchanged (muted)
+      Line numbers: old | new
+    </pattern>
+    <pattern name="Pixel aesthetic" source="28-19, 28-20">
+      rounded-none, font-mono, shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]
+      bg-green-500/10, bg-red-500/10 for diff backgrounds
+      border-l-2 for left indicator
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Implement LCS-based diff algorithm for accurate line matching.
+      Simple approach: compare lines sequentially, mark differences.
+    </note>
+    <note priority="medium">
+      Collapse unchanged regions when > 3 consecutive unchanged lines.
+      This improves readability for large files.
+    </note>
+    <note priority="medium">
+      Language detection from file extension for syntax highlighting.
+      Reuse getLanguageLabel() pattern from CodeBlock.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="react" version="^19.2.3" />
+    <dependency name="react-i18next" version="^15.3.0" />
+    <dependency name="lucide-react" version="^0.544.0" />
+    <dependency name="clsx" version="^2.1.1" />
+  </dependencies>
+  
+  <!-- Test commands -->
+  <test_commands>
+    <command purpose="Run single test file">pnpm test src/components/chat/__tests__/DiffPreview.test.tsx</command>
+    <command purpose="Run all tests">pnpm test</command>
+    <command purpose="TypeScript check">pnpm exec tsc --noEmit</command>
+  </test_commands>
+  
+</context>

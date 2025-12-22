@@ -23,26 +23,26 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "28-20-chat-code-block-with-actions"
+  key: "28-21-diff-preview-component"
   epic: 28
   status: "drafted"
   platform: "Platform B"
   notes: |
-    Phase 6 Tier 1: CodeBlock with Accept/Reject actions.
-    Integrates with ToolCallBadge from 28-19.
+    Phase 6 Tier 1: DiffPreview component for file changes.
+    Shows additions/deletions with syntax highlighting.
 
 
 last_completed_story:
-  key: "28-19-chat-tool-call-badge"
+  key: "28-20-chat-code-block-with-actions"
   epic: 28
-  completed_at: "2025-12-22T22:40:00+07:00"
+  completed_at: "2025-12-22T22:53:00+07:00"
   status: "done"
   platform: "Platform B"
-  tests_passing: 18
-  tests_total: 18
+  tests_passing: 20
+  tests_total: 20
   notes: |
-    ToolCallBadge + ToolCallBadgeGroup components complete.
-    18/18 tests pass. Tooltip component added. AC-5 deferred to 28-20.
+    CodeBlock with syntax highlighting, copy to clipboard,
+    and Accept/Reject actions. 20/20 tests pass.
 
 
 # =============================================================================
