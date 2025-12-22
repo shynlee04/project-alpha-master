@@ -4,11 +4,25 @@
 - **ID:** 28
 - **Title:** UX Brand Identity & Design System
 - **Priority:** P0
-- **Total Points:** 45
-- **Stories:** 12
+- **Total Points:** 106 (original 45 + Phase 6 expansion 61)
+- **Stories:** 30 (original 12 + Phase 6 expansion 18)
 - **Platform:** Platform B
 - **Created:** 2025-12-22
+- **Updated:** 2025-12-22T21:35:00+07:00
 - **Status:** in-progress
+
+## Scope Expansion (2025-12-22 Course Correction)
+
+> **Critical Update:** Epic 28 scope expanded to prepare for AI Foundation integration (Epic 25).
+> Analysis: `_bmad-output/analysis/epic-28-holistic-integration-analysis.md`
+
+### Phase 6 Additions (18 stories, 61 points)
+| Tier | Focus | Stories | Points |
+|------|-------|---------|--------|
+| Tier 1 | Chat + Tool Visibility | 6 | 26 |
+| Tier 2 | Event Bus Subscriptions | 3 | 9 |
+| Tier 3 | Multi-Agent UX | 3 | 11 |
+| Tier 4 | Multi-Interface Skeletons | 5 | 15 |
 
 ## Overview
 

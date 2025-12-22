@@ -1,9 +1,38 @@
 /**
  * AgentConfigDialog - Agent Configuration Form Dialog
  * 
+ * Allows users to create new AI agents with provider/model selection.
+ * Currently uses mock state (useAgents hook) - will be wired to 
+ * IndexedDB persistence and API validation in future epics.
+ * 
  * @epic Epic-28 Story 28-16
- * @roadmap Replace mock submission with TanStack Query in Epic 25 (Story 25-2)
- * @see _bmad-output/epics/shards/epic-25-ai-foundation.md
+ * 
+ * @integrates Epic-25 Story 25-1 (TanStack AI Integration)
+ *   - Provider selection will validate API key connectivity
+ *   - Model selection will query available models from provider
+ *   - Roadmap: Replace mock addAgent with TanStack Query mutation
+ * 
+ * @integrates Epic-26 Story 26-2 (Agent Configuration Forms)
+ *   - This component is the UI foundation for agent CRUD
+ *   - Will be enhanced with temperature, max tokens, system prompt
+ *   - Roadmap: Add to /agents dashboard route
+ * 
+ * @integrates Epic-26 Story 26-5 (LLM Provider Management)
+ *   - Provider dropdown will show only configured providers
+ *   - BYOK: API key validation before agent creation
+ *   - Roadmap: Show connection status indicator per provider
+ * 
+ * @integrates Epic-5 (Persistence Layer)
+ *   - Agent config will persist to IndexedDB via Dexie
+ *   - Roadmap: useLiveQuery for reactive agent list
+ * 
+ * @persistence
+ *   Current: In-memory state via useAgents hook
+ *   Future: IndexedDB via Dexie (db.agents.add())
+ * 
+ * @see _bmad-output/epics/epic-25-ai-foundation-sprint-new-2025-12-21.md
+ * @see _bmad-output/epics/epic-26-agent-management-dashboard-new-2025-12-21.md
+ * @see _bmad-output/analysis/epic-28-holistic-integration-analysis.md
  */
 
 import { useState, useCallback, useMemo } from 'react'

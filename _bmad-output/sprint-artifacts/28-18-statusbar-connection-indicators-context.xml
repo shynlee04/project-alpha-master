@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-18-statusbar-connection-indicators" created="2025-12-22T21:45:00+07:00">
+  <metadata>
+    <epic>28</epic>
+    <phase>6 - AI Foundation Integration Readiness</phase>
+    <priority>P0</priority>
+    <platform>Platform B</platform>
+    <workflow>story-dev-cycle</workflow>
+  </metadata>
+
+  <!-- Existing relevant code for reference -->
+  <files>
+    <file path="src/lib/state/ide-store.ts" relevance="high">
+      <description>Zustand store pattern with Dexie persistence - use as template</description>
+      <content><![CDATA[
+// Pattern to follow for statusbar-store.ts
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { dexieStorage } from './dexie-storage';
+
+export interface IDEState {
+    openFiles: string[];
+    activeFile: string | null;
+    // ... state fields
+    
+    // Actions
+    addOpenFile: (path: string) => void;
+    setActiveFile: (path: string | null) => void;
+}
+
+export const useIDEStore = create<IDEState>()(
+  persist(
+    (set, get) => ({
+      openFiles: [],
+      activeFile: null,
+      addOpenFile: (path) => set((state) => ({
+        openFiles: state.openFiles.includes(path) 
+          ? state.openFiles 
+          : [...state.openFiles, path]
+      })),
+      // ... more actions
+    }),
+    {
+      name: 'ide-state',
+      storage: createJSONStorage(() => dexieStorage as any),
+    }
+  )
+);
+
+// Selector for AI context
+export const selectForAIContext = (state: IDEState) => ({
+    projectId: state.projectId,
+    activeFile: state.activeFile,
+    openFiles: state.openFiles,
+});
+      ]]></content>
+    </file>
+
+    <file path="src/components/ide/SyncStatusIndicator.tsx" relevance="high">
+      <description>Existing sync status indicator - consolidate into StatusBar</description>
+      <content><![CDATA[
+export function SyncStatusIndicator({
+  status,
+  progress,
+  lastSyncTime,
+  errorMessage,
+  onRetry,
+}: SyncStatusIndicatorProps): React.JSX.Element {
+  const { t } = useTranslation()
+  
+  // Status-based rendering
+  switch (status) {
+    case 'error':
+      return (/* error state */);
+    case 'syncing':
+      return (/* syncing state with progress */);
+    case 'idle':
+      return (/* idle with last sync time */);
+  }
+}
+      ]]></content>
+    </file>
+
+    <file path="src/components/ui/status-dot.tsx" relevance="medium">
+      <description>StatusDot component for visual status indicators</description>
+      <content><![CDATA[
+const dotVariants = cva(
+  'inline-block rounded-full',
+  {
+    variants: {
+      status: {
+        online: 'bg-emerald-500',
+        offline: 'bg-zinc-500',
+        active: 'bg-orange-500',
+        error: 'bg-red-500',
+        pending: 'bg-yellow-500',
+      },
+      size: { sm: 'w-1.5 h-1.5', md: 'w-2 h-2', lg: 'w-3 h-3' },
+      pulse: { true: 'animate-pulse', false: '' },
+    },
+  }
+);
+
+export function StatusDot({ status, size, pulse, ...props }: StatusDotProps) {
+  const shouldPulse = pulse ?? (status === 'online' || status === 'active');
+  return <span className={cn(dotVariants({ status, size, pulse: shouldPulse }), className)} {...props} />;
+}
+      ]]></content>
+    </file>
+
+    <file path="src/components/layout/IDELayout.tsx" relevance="high">
+      <description>Main layout - StatusBar will be added here</description>
+      <content><![CDATA[
+// IDELayout structure (simplified)
+return (
+  <div className="flex flex-col h-screen ...">
+    <IDEHeaderBar ... />
+    <div className="flex flex-1 min-h-0">
+      {/* IconSidebar */}
+      {/* Main content panels */}
+    </div>
+    {/* StatusBar will go here */}
+  </div>
+);
+      ]]></content>
+    </file>
+
+    <file path="src/lib/webcontainer/manager.ts" relevance="medium">
+      <description>WebContainer boot state - subscribe to status changes</description>
+      <content><![CDATA[
+let webContainerInstance: WebContainer | null = null;
+let bootPromise: Promise<WebContainer> | null = null;
+let bootStatus: 'idle' | 'booting' | 'ready' | 'error' = 'idle';
+
+export async function boot(): Promise<WebContainer> {
+  if (webContainerInstance) return webContainerInstance;
+  if (bootPromise) return bootPromise;
+  
+  bootStatus = 'booting';
+  // ... boot logic
+  bootStatus = 'ready';
+}
+
+export function getBootStatus() {
+  return bootStatus;
+}
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="zustand create store subscribe selector">
+      Pattern: Create Zustand store with `create()`, use selectors for optimized re-renders.
+      Store should have state fields and action methods.
+      External access via `useStore.getState()` and `useStore.subscribe()`.
+    </finding>
+    <finding source="codebase_search" query="StatusBar component">
+      No existing StatusBar component in project.
+      Found SyncStatusIndicator which shows sync state.
+      Found StatusDot for visual indicators.
+      IDEHeaderBar currently has status indicators that should be consolidated.
+    </finding>
+    <finding source="project-context.md">
+      Use @/ path alias for imports.
+      Tests co-located with source in __tests__/ folders.
+      Use interface for props (not type alias).
+      Follow import order: React → Third-party → Internal → Relative.
+    </finding>
+  </research_notes>
+
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Zustand Store" source="ide-store.ts">
+      Use `create()` with persist middleware for state that needs persistence.
+      Export typed hook (useStatusBarStore).
+      Add selector functions for AI context.
+    </pattern>
+    <pattern name="Component with i18n" source="SyncStatusIndicator.tsx">
+      Use `useTranslation()` hook from react-i18next.
+      All user-facing strings via `t('key')`.
+      Add EN and VI translations.
+    </pattern>
+    <pattern name="Pixel Aesthetic" source="epic-28">
+      Use squared corners (rounded-none).
+      Use font-mono or font-pixel for text.
+      Orange primary color (#f97316).
+      Dark backgrounds.
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">StatusBar height should be exactly 24px (h-6) like VS Code</note>
+    <note priority="high">Use primary color background for full-width bar</note>
+    <note priority="high">Add JSDoc with @epic, @integrates tags for cross-epic tracking</note>
+    <note priority="medium">Mock provider status - will be wired in Epic 26</note>
+    <note priority="medium">Create statusbar/ subdirectory for segment components</note>
+    <note priority="low">Consider keyboard shortcut to toggle StatusBar visibility (future)</note>
+  </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="zustand" version="^4.5.0" use="State management for StatusBar" />
+    <dependency name="react-i18next" version="^14.0.0" use="Localization" />
+    <dependency name="lucide-react" version="^0.544.0" use="Icons for status indicators" />
+    <dependency name="class-variance-authority" version="^0.7.1" use="Variant styling" />
+  </dependencies>
+
+  <!-- Cross-epic integration documentation -->
+  <integrations>
+    <integration epic="10" story="10-7" type="subscriber">
+      StatusBar subscribes to sync:progress, sync:error events from EventBus.
+      Wire in Task 6.2.
+    </integration>
+    <integration epic="25" story="25-1" type="future">
+      StatusBar will display agent status (idle/thinking/executing).
+      Add AgentStatusSegment component.
+      Wire to TanStack AI useChat hook.
+    </integration>
+    <integration epic="26" story="26-5" type="future">
+      ProviderStatus segment will show real API key validation.
+      Currently mocked - wire when Epic 26 implements LLM provider management.
+    </integration>
+  </integrations>
+</context>

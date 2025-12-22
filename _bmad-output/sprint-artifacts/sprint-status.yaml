@@ -659,20 +659,145 @@ development_status:
       Browser verified: agents_panel_verification_1766407350312.png
       JSDoc references Epic 25 for future backend replacement.
     
-  28-16-agent-config-flow: ready-for-dev
+  28-16-agent-config-flow: done
     story: _bmad-output/sprint-artifacts/28-16-agent-config-flow.md
     context: _bmad-output/sprint-artifacts/28-16-agent-config-flow-context.xml
     platform: "Platform B"
     drafted_at: "2025-12-22T20:30:00+07:00"
+    dev_started_at: "2025-12-22T20:35:00+07:00"
+    dev_completed_at: "2025-12-22T20:50:00+07:00"
     priority: P1
     points: 5
-    notes: "Agent configuration dialog with provider/model selection, mock submission"
+    tests_passing: 5
+    files_changed: 4
+    notes: |
+      AgentConfigDialog with provider/model selection, form validation.
+      Pixel aesthetic (squared corners, orange buttons).
+      Full EN/VI i18n coverage.
+      Browser verified with screenshot proof.
     
   28-17-visual-verification-report: backlog
     priority: P0
     points: 3
     notes: "Screenshots + grep proof + before/after comparison"
+  
+  # Phase 6: AI Foundation Integration Readiness (Course Correction 2025-12-22)
+  # Tier 1: Critical Chat + Tool Visibility (Required for Epic 25 integration)
+  28-18-statusbar-connection-indicators: ready-for-dev
+    priority: P0
+    points: 3
+    story: _bmad-output/sprint-artifacts/28-18-statusbar-connection-indicators.md
+    context: _bmad-output/sprint-artifacts/28-18-statusbar-connection-indicators-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-22T21:45:00+07:00"
+    notes: "StatusBar with WebContainer/Provider/Sync status indicators"
+    integrates: "Epic 10, Epic 25, Epic 26"
+    analysis: "_bmad-output/analysis/epic-28-holistic-integration-analysis.md"
+    
+  28-19-chat-tool-call-badge: backlog
+    priority: P0
+    points: 5
+    notes: "ToolCallBadge component showing [read_file] [write_file] [execute_command] in chat"
+    integrates: "Epic 6, Epic 12"
+    
+  28-20-chat-code-block-with-actions: backlog
+    priority: P0
+    points: 5
+    notes: "CodeBlock component with Accept/Reject buttons for AI-generated code"
+    integrates: "Epic 6, Epic 25-5"
+    
+  28-21-diff-preview-component: backlog
+    priority: P0
+    points: 5
+    notes: "DiffPreview showing file changes with syntax highlighting"
+    integrates: "Epic 6, Epic 25-5"
+    
+  28-22-approval-overlay-component: backlog
+    priority: P0
+    points: 5
+    notes: "ApprovalOverlay for user confirmation before AI writes files (needsApproval: true)"
+    integrates: "Epic 25-5"
+    
+  28-23-streaming-message-container: backlog
+    priority: P0
+    points: 3
+    notes: "StreamingMessage component for token-by-token AI response display"
+    integrates: "Epic 6, Epic 25-1"
+  
+  # Tier 2: Event Bus Subscriptions (Required for Tool→UI sync)
+  28-24-filetree-event-subscriptions: backlog
+    priority: P1
+    points: 3
+    notes: "FileTree subscribes to file:created, file:deleted, file:moved events"
+    integrates: "Epic 10, Epic 6"
+    
+  28-25-monaco-event-subscriptions: backlog
+    priority: P1
+    points: 3
+    notes: "Monaco refreshes on file:modified events"
+    integrates: "Epic 10, Epic 6"
+    
+  28-26-terminal-event-subscriptions: backlog
+    priority: P1
+    points: 3
+    notes: "Terminal subscribes to process:output, process:exit events"
+    integrates: "Epic 10, Epic 6"
+  
+  # Tier 3: Multi-Agent UX (Required for LangGraph orchestration)
+  28-28-agent-status-indicator: backlog
+    priority: P1
+    points: 3
+    notes: "AgentStatusIndicator showing which agent is active (Orchestrator/Planner/Coder/Validator)"
+    integrates: "Epic 25-1, Epic 26-4"
+    
+  28-29-workflow-progress-indicator: backlog
+    priority: P1
+    points: 3
+    notes: "WorkflowProgress showing visual progress through agent chain"
+    integrates: "Epic 26-4"
+    
+  28-30-agent-conversation-thread: backlog
+    priority: P1
+    points: 5
+    notes: "AgentConversationThread with messages grouped by agent"
+    integrates: "Epic 26-4"
+  
+  # Tier 4: Multi-Interface Skeleton Containers
+  28-31-role-selector-component: backlog
+    priority: P2
+    points: 3
+    notes: "RoleSelector to switch between PM/Designer/Dev/QA modes"
+    integrates: "Epic 26"
+    
+  28-32-workflow-canvas-skeleton: backlog
+    priority: P2
+    points: 3
+    notes: "WorkflowCanvas skeleton for future visual agent pipeline editor"
+    integrates: "Epic 26-4"
+    
+  28-33-settings-layout-skeleton: backlog
+    priority: P2
+    points: 3
+    notes: "SettingsLayout skeleton for /settings route (LLM providers, preferences)"
+    integrates: "Epic 26-5"
+    
+  28-34-provider-status-panel: backlog
+    priority: P2
+    points: 3
+    notes: "ProviderStatusPanel showing API key configuration status per provider"
+    integrates: "Epic 25, Epic 26-5"
+    
+  28-35-asset-panel-skeleton: backlog
+    priority: P2
+    points: 3
+    notes: "AssetPanel skeleton for future Asset Studio integration"
+    integrates: "Epic 36"
+  
+  epic-28-retrospective: optional
+    notes: "Run after Epic 28 completion - Phase 6 expanded scope for AI Foundation"
+
   epic-11: absorbed
+
     absorbed_into: epic-27
     absorbed_at: "2025-12-22T02:00:00+07:00"
     notes: "Stories 11-5, 11-6, 11-7 moved to Epic 27 Phase 2 as 27-5a, 27-5b, 27-5c"

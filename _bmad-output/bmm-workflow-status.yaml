@@ -10,21 +10,27 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-22T09:00:00+07:00"
+last_updated: "2025-12-22T21:35:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 
-# GOVERNANCE UPDATE: 2025-12-22T02:50:00+07:00
-# Story 27-5a COMPLETE - Epic 27 Phase 2 Code Organization
-# IDELayout.tsx refactored: 590→174 lines
+# GOVERNANCE UPDATE: 2025-12-22T21:35:00+07:00
+# Epic 28 SCOPE EXPANSION - AI Foundation Integration Readiness
+# Added 18 new stories (28-18 through 28-35) in 4 tiers:
+#   - Tier 1: Chat + Tool Visibility (6 stories, 26 points) P0
+#   - Tier 2: Event Bus Subscriptions (3 stories, 9 points) P1
+#   - Tier 3: Multi-Agent UX (3 stories, 11 points) P1
+#   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
+# Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "27-5b-refactor-sync-manager"
-  epic: 27
+  key: "28-18-statusbar-connection-indicators"
+  epic: 28
   status: "backlog"
-  platform: "Platform A"
+  platform: "Platform B"
   notes: |
-    Story 27-5a complete. IDELayout.tsx refactored (590→174 lines).
-    Next: Refactor sync-manager.ts (405→<250 lines)
+    Epic 28 Phase 6 starts. First story: StatusBar with connection indicators.
+    Required for AI Foundation integration (Epic 25).
+
 
 last_completed_story:
   key: "27-5a-refactor-idelayout"
