@@ -309,6 +309,13 @@
       "reject": "Reject",
       "accepted": "Accepted",
       "lines": "{{count}} lines"
+    },
+    "diff": {
+      "additions": "{{count}} additions",
+      "deletions": "{{count}} deletions",
+      "linesHidden": "{{count}} lines hidden",
+      "expand": "Show hidden lines",
+      "collapse": "Hide lines"
     }
   }
 }

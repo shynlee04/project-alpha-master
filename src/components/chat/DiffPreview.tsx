@@ -307,6 +307,49 @@ export function DiffPreview({
         });
     }, []);
 
+    const renderLineItem = (line: DiffLine, key: string) => {
+        const prefix = line.type === 'add' ? '+' : line.type === 'remove' ? '-' : ' ';
+        return (
+            <div
+                key={key}
+                className={cn(
+                    'flex',
+                    LINE_STYLES[line.type]
+                )}
+            >
+                {/* Line numbers */}
+                {showLineNumbers && (
+                    <div className="flex-shrink-0 w-16 flex text-[10px] text-muted-foreground/40 select-none border-r border-border/50">
+                        <span className="w-8 text-right pr-1">
+                            {line.oldLineNumber ?? ''}
+                        </span>
+                        <span className="w-8 text-right pr-1">
+                            {line.newLineNumber ?? ''}
+                        </span>
+                    </div>
+                )}
+
+                {/* Prefix (+/-/space) */}
+                <span className={cn(
+                    'w-4 text-center flex-shrink-0 select-none',
+                    LINE_PREFIX_STYLES[line.type]
+                )}>
+                    {prefix}
+                </span>
+
+                {/* Content */}
+                <span className={cn(
+                    'flex-1 px-2',
+                    line.type === 'add' && 'text-green-300',
+                    line.type === 'remove' && 'text-red-300',
+                    line.type === 'unchanged' && 'text-muted-foreground'
+                )}>
+                    {line.content || ' '}
+                </span>
+            </div>
+        );
+    };
+
     return (
         <div
             className={cn(
@@ -352,66 +395,32 @@ export function DiffPreview({
                             if ('type' in item && item.type === 'collapsed') {
                                 const isExpanded = collapsedSections.has(item.startIdx);
                                 return (
-                                    <button
-                                        key={`collapse-${idx}`}
-                                        type="button"
-                                        onClick={() => toggleCollapse(item.startIdx)}
-                                        className="w-full flex items-center justify-center gap-2 py-1 text-xs text-muted-foreground hover:bg-muted/50 transition-colors"
-                                    >
-                                        {isExpanded ? (
-                                            <ChevronDown className="w-3 h-3" />
-                                        ) : (
-                                            <ChevronRight className="w-3 h-3" />
+                                    <div key={`collapse-${idx}`} className="flex flex-col">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleCollapse(item.startIdx)}
+                                            className="w-full flex items-center justify-center gap-2 py-1 text-xs text-muted-foreground hover:bg-muted/50 transition-colors bg-muted/20"
+                                        >
+                                            {isExpanded ? (
+                                                <ChevronDown className="w-3 h-3" />
+                                            ) : (
+                                                <ChevronRight className="w-3 h-3" />
+                                            )}
+                                            <span>
+                                                {isExpanded
+                                                    ? t('chat.diff.collapse', 'Hide lines')
+                                                    : t('chat.diff.linesHidden', { count: item.count, defaultValue: `${item.count} lines hidden` })}
+                                            </span>
+                                        </button>
+
+                                        {isExpanded && diffLines.slice(item.startIdx, item.startIdx + item.count).map((line, subIdx) =>
+                                            renderLineItem(line, `expanded-${idx}-${subIdx}`)
                                         )}
-                                        <span>
-                                            {t('chat.diff.linesHidden', { count: item.count, defaultValue: `${item.count} lines hidden` })}
-                                        </span>
-                                    </button>
+                                    </div>
                                 );
                             }
 
-                            const line = item as DiffLine;
-                            const prefix = line.type === 'add' ? '+' : line.type === 'remove' ? '-' : ' ';
-
-                            return (
-                                <div
-                                    key={`line-${idx}`}
-                                    className={cn(
-                                        'flex',
-                                        LINE_STYLES[line.type]
-                                    )}
-                                >
-                                    {/* Line numbers */}
-                                    {showLineNumbers && (
-                                        <div className="flex-shrink-0 w-16 flex text-[10px] text-muted-foreground/40 select-none border-r border-border/50">
-                                            <span className="w-8 text-right pr-1">
-                                                {line.oldLineNumber ?? ''}
-                                            </span>
-                                            <span className="w-8 text-right pr-1">
-                                                {line.newLineNumber ?? ''}
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {/* Prefix (+/-/space) */}
-                                    <span className={cn(
-                                        'w-4 text-center flex-shrink-0 select-none',
-                                        LINE_PREFIX_STYLES[line.type]
-                                    )}>
-                                        {prefix}
-                                    </span>
-
-                                    {/* Content */}
-                                    <span className={cn(
-                                        'flex-1 px-2',
-                                        line.type === 'add' && 'text-green-300',
-                                        line.type === 'remove' && 'text-red-300',
-                                        line.type === 'unchanged' && 'text-muted-foreground'
-                                    )}>
-                                        {line.content || ' '}
-                                    </span>
-                                </div>
-                            );
+                            return renderLineItem(item as DiffLine, `line-${idx}`);
                         })}
                     </code>
                 </pre>

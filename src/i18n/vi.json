@@ -309,6 +309,13 @@
       "reject": "Từ chối",
       "accepted": "Đã chấp nhận",
       "lines": "{{count}} dòng"
+    },
+    "diff": {
+      "additions": "{{count}} thêm",
+      "deletions": "{{count}} xóa",
+      "linesHidden": "{{count}} dòng ẩn",
+      "expand": "Hiện dòng ẩn",
+      "collapse": "Ẩn dòng"
     }
   }
 }

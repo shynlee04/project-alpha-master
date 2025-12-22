@@ -12,3 +12,6 @@ export type { ToolCallBadgeProps, ToolCallBadgeGroupProps } from './ToolCallBadg
 
 export { CodeBlock } from './CodeBlock';
 export type { CodeBlockProps } from './CodeBlock';
+
+export { DiffPreview } from './DiffPreview';
+export type { DiffPreviewProps } from './DiffPreview';
