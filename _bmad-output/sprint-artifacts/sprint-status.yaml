@@ -746,11 +746,18 @@ development_status:
     notes: "ApprovalOverlay with mock trigger integrated. 19/19 tests pass. Includes fix for inline mode bug."
     integrates: "Epic 25-5"
     
-  28-23-streaming-message-container: backlog
+  28-23-streaming-message-container: done
     priority: P0
     points: 3
-    notes: "StreamingMessage component for token-by-token AI response display"
-    integrates: "Epic 6, Epic 25-1"
+    story: _bmad-output/sprint-artifacts/28-23-streaming-message-container.md
+    context: _bmad-output/sprint-artifacts/28-23-streaming-message-container-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-23T02:05:00+07:00"
+    completed_at: "2025-12-23T02:10:00+07:00"
+    tests_count: 12
+    tests_passing: 12
+    notes: "StreamingMessage with token-by-token display, markdown parsing, CodeBlock integration. 12/12 tests pass."
+    integrates: "Epic 6, Epic 25-1, Story 28-19, Story 28-20"
   
   # Tier 2: Event Bus Subscriptions (Required for Tool→UI sync)
   28-24-filetree-event-subscriptions: backlog

@@ -1,0 +1,44 @@
+<context story="28-23-streaming-message-container" created="2025-12-23T02:10:00+07:00">
+  <files>
+    <file path="src/components/ide/EnhancedChatInterface.tsx">
+      <content><![CDATA[
+// ... existing content (omitted for brevity, but developer agent should access it)
+// Critical integration point: MessageContent custom component
+      ]]></content>
+    </file>
+    <file path="src/components/chat/CodeBlock.tsx">
+      <content><![CDATA[
+// CodeBlock component definition
+// Needs to be used by markdown renderer
+      ]]></content>
+    </file>
+    <file path="src/components/chat/ToolCallBadge.tsx">
+      <content><![CDATA[
+// ToolCallBadge component definition
+// Needs to be rendered when tool calls appear in stream
+      ]]></content>
+    </file>
+  </files>
+  
+  <research_notes>
+    <finding source="knowledge" query="react markdown streaming">
+      React-markdown is standard but requires careful configuration for streaming to avoid flickering.
+      'memo' usage is critical for performance.
+    </finding>
+    <finding source="architect" query="pixel aesthetic">
+      Must use shadcn tokens but with 0px rounded corners and specific shadow patterns.
+    </finding>
+  </research_notes>
+  
+  <technical_notes>
+    <note priority="high">Use `react-markdown` with `rehype-highlight` or similar.</note>
+    <note priority="medium">Ensure `CodeBlock` is passed as a custom component to the markdown renderer.</note>
+    <note priority="medium">ToolCalls might arrive as distinct events or embedded in the stream depending on the AI implementation. Assume they are embedded or separate blocks.</note>
+  </technical_notes>
+  
+  <dependencies>
+    <dependency name="react-markdown" version="latest" />
+    <dependency name="rehype-raw" version="latest" />
+    <dependency name="rehype-sanitize" version="latest" />
+  </dependencies>
+</context>
