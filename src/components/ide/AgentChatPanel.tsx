@@ -1,35 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
-import { Bot, Send, User } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { Bot, Wand2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
-import { Textarea } from '@/components/ui/textarea';
+import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
+import { ApprovalOverlay } from '../chat/ApprovalOverlay';
+import { Button } from '@/components/ui/button';
 
-type Message = {
-    id: string;
-    role: 'user' | 'assistant' | 'system';
-    content: string;
-    timestamp: number;
-};
-
-interface AgentChatPanelProps {
-    projectId: string | null;
-    projectName?: string;
-}
-
-export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChatPanelProps) {
+export function AgentChatPanel({ projectId, projectName = 'Project' }: { projectId: string | null; projectName?: string }) {
     const { t } = useTranslation();
-    const createWelcomeMessage = (): Message => ({
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [approvalRequest, setApprovalRequest] = useState<{
+        isOpen: boolean;
+        toolName: string;
+        description: string;
+        code?: string;
+        oldCode?: string;
+        newCode?: string;
+    }>({
+        isOpen: false,
+        toolName: '',
+        description: ''
+    });
+
+    // Create welcome message
+    const createWelcomeMessage = useCallback((): ChatMessage => ({
         id: 'welcome',
         role: 'assistant',
         content: t('agent.welcome_message', { projectName }),
-        timestamp: Date.now(),
-    });
+        timestamp: new Date(),
+    }), [projectName, t]);
 
-    const [messages, setMessages] = useState<Message[]>([createWelcomeMessage()]);
-    const [input, setInput] = useState('');
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLTextAreaElement>(null);
-
+    // Load conversation
     useEffect(() => {
         let isCancelled = false;
 
@@ -44,7 +45,12 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 if (isCancelled) return;
 
                 if (convo && convo.messages.length > 0) {
-                    setMessages(convo.messages as Message[]);
+                    // Map legacy messages to ChatMessage type if needed
+                    const mappedMessages = convo.messages.map((m: any) => ({
+                        ...m,
+                        timestamp: new Date(m.timestamp)
+                    }));
+                    setMessages(mappedMessages);
                 } else {
                     setMessages([createWelcomeMessage()]);
                 }
@@ -55,153 +61,150 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         };
 
         load();
+        return () => { isCancelled = true; };
+    }, [projectId, projectName, createWelcomeMessage]);
 
-        return () => {
-            isCancelled = true;
-        };
-    }, [projectId, projectName]);
-
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-
-    useEffect(() => {
-        const handleFocus = () => {
-            inputRef.current?.focus();
-        };
-
-        window.addEventListener('ide.chat.focus', handleFocus);
-        return () => window.removeEventListener('ide.chat.focus', handleFocus);
-    }, []);
-
-    const send = () => {
-        const trimmed = input.trim();
-        if (!trimmed) return;
-
-        const userMessage: Message = {
+    // Handle sending messages
+    const handleSendMessage = async (content: string) => {
+        const userMessage: ChatMessage = {
             id: `msg_${Date.now()}`,
             role: 'user',
-            content: trimmed,
-            timestamp: Date.now(),
+            content,
+            timestamp: new Date(),
         };
 
         setMessages((prev) => [...prev, userMessage]);
         if (projectId) {
-            appendConversationMessage(projectId, userMessage).catch((err) => {
-                console.warn('[AgentChatPanel] Failed to persist user message:', err);
-            });
+            await appendConversationMessage(projectId, { ...userMessage, timestamp: userMessage.timestamp.getTime() });
         }
-        setInput('');
 
-        const assistantMessage: Message = {
-            id: `msg_${Date.now()}_assistant`,
-            role: 'assistant',
-            content: t('agent.demo_response'),
-            timestamp: Date.now(),
-        };
+        // Simulating Agent Response
+        window.setTimeout(async () => {
+            const assistantMessage: ChatMessage = {
+                id: `msg_${Date.now()}_assistant`,
+                role: 'assistant',
+                content: t('agent.demo_response'),
+                timestamp: new Date(),
+            };
 
-        window.setTimeout(() => {
             setMessages((prev) => [...prev, assistantMessage]);
             if (projectId) {
-                appendConversationMessage(projectId, assistantMessage).catch((err) => {
-                    console.warn('[AgentChatPanel] Failed to persist assistant message:', err);
-                });
+                await appendConversationMessage(projectId, { ...assistantMessage, timestamp: assistantMessage.timestamp.getTime() });
             }
         }, 300);
     };
 
+    // MOCK: Trigger tool approval for development verification
+    const triggerMockApproval = () => {
+        setApprovalRequest({
+            isOpen: true,
+            toolName: 'write_file',
+            description: 'Creating new component: src/components/TestComponent.tsx',
+            code: `export const TestComponent = () => {\n  return <div>Hello Validation</div>;\n};`,
+            oldCode: `// Old content`,
+            newCode: `export const TestComponent = () => {\n  return <div>Hello Validation</div>;\n};`
+        });
+    };
+
+    const handleApprove = () => {
+        setApprovalRequest(prev => ({ ...prev, isOpen: false }));
+        // TODO(Epic 25): Replace mock with real EventBus subscription to handle actual tool approval
+        // This will likely involve listening for 'tool:approval_required' and emitting 'tool:approved'
+        console.log('[AgentChatPanel] Tool Approved');
+
+        const approvalMsg: ChatMessage = {
+            id: `msg_${Date.now()}_system`,
+            role: 'assistant',
+            content: 'Tool execution approved. File created successfully.',
+            timestamp: new Date(),
+            toolExecutions: [{
+                id: 'exec_1',
+                name: 'write_file',
+                status: 'success',
+                duration: 450
+            }]
+        };
+        setMessages(prev => [...prev, approvalMsg]);
+    };
+
+    const handleReject = () => {
+        setApprovalRequest(prev => ({ ...prev, isOpen: false }));
+        console.log('[AgentChatPanel] Tool Rejected');
+
+        const rejectMsg: ChatMessage = {
+            id: `msg_${Date.now()}_system`,
+            role: 'assistant',
+            content: 'Tool execution rejected by user.',
+            timestamp: new Date(),
+            toolExecutions: [{
+                id: 'exec_1',
+                name: 'write_file',
+                status: 'error'
+            }]
+        };
+        setMessages(prev => [...prev, rejectMsg]);
+    };
+
     const handleClear = async () => {
-        if (projectId) {
-            await clearConversation(projectId);
-        }
+        if (projectId) await clearConversation(projectId);
         setMessages([createWelcomeMessage()]);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        send();
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            send();
-        }
-    };
-
     return (
-        <div className="flex flex-col h-full bg-card/30">
-            <div className="h-9 px-4 flex items-center justify-between border-b border-border/50">
+        <div className="flex flex-col h-full bg-surface-dark relative">
+            {/* Header */}
+            <div className="h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
                 <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-fuchsia-500 flex items-center justify-center">
-                        <Bot className="w-4 h-4 text-white" />
+                    <div className="w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30">
+                        <Bot className="w-3.5 h-3.5 text-primary" />
                     </div>
-                    <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase">
+                    <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel">
                         {t('agent.title')}
                     </span>
                 </div>
-                <button
-                    type="button"
-                    onClick={handleClear}
-                    title={t('agent.clear')}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                    {t('agent.clear')}
-                </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
-                    <div
-                        key={message.id}
-                        className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+                <div className="flex items-center gap-2">
+                    {/* DEV ONLY: Mock Trigger */}
+                    <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={triggerMockApproval}
+                        title="[DEV] Trigger Mock Approval"
+                        className="text-xs h-6 w-6 opacity-30 hover:opacity-100"
                     >
-                        <div
-                            className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center ${message.role === 'assistant'
-                                ? 'bg-gradient-to-br from-primary to-purple-500'
-                                : 'bg-accent'
-                                }`}
-                        >
-                            {message.role === 'assistant' ? (
-                                <Bot className="w-4 h-4 text-white" />
-                            ) : (
-                                <User className="w-4 h-4 text-foreground" />
-                            )}
-                        </div>
-                        <div
-                            className={`flex-1 max-w-[85%] px-3 py-2 rounded-lg text-sm ${message.role === 'assistant'
-                                ? 'bg-muted text-foreground'
-                                : 'bg-primary/10 text-foreground'
-                                }`}
-                        >
-                            {message.content}
-                        </div>
-                    </div>
-                ))}
-                <div ref={messagesEndRef} />
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-4 border-t border-border/50">
-                <div className="relative">
-                    <Textarea
-                        ref={inputRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder={t('agent.placeholder')}
-                        rows={1}
-                        className="w-full pr-12 resize-none min-h-[44px] max-h-[120px]"
-                    />
+                        <Wand2 className="w-3.5 h-3.5" />
+                    </Button>
                     <button
-                        type="submit"
-                        disabled={!input.trim()}
-                        aria-label="Send message"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:text-primary/80 disabled:text-muted-foreground/50 transition-colors"
+                        onClick={handleClear}
+                        title={t('agent.clear')}
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
                     >
-                        <Send className="w-4 h-4" />
+                        {t('agent.clear')}
                     </button>
                 </div>
-            </form>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-hidden">
+                <EnhancedChatInterface
+                    messages={messages}
+                    onSendMessage={handleSendMessage}
+                    isTyping={false}
+                />
+            </div>
+
+            {/* Approval Overlay */}
+            <ApprovalOverlay
+                isOpen={approvalRequest.isOpen}
+                onApprove={handleApprove}
+                onReject={handleReject}
+                toolName={approvalRequest.toolName}
+                description={approvalRequest.description}
+                code={approvalRequest.code}
+                oldCode={approvalRequest.oldCode}
+                newCode={approvalRequest.newCode}
+                mode="inline"
+                riskLevel="medium"
+            />
         </div>
     );
 }

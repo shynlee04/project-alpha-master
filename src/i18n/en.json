@@ -316,6 +316,25 @@
       "linesHidden": "{{count}} lines hidden",
       "expand": "Show hidden lines",
       "collapse": "Hide lines"
+    },
+    "approvalOverlay": {
+      "title": "Approve Changes",
+      "description": "The agent is requesting to modify files in your project.",
+      "codePreview": "File Content Preview",
+      "changesPreview": "Proposed Changes",
+      "warning": {
+        "title": "Action Required",
+        "message": "Please review the changes above carefully before approving. This action cannot be undone."
+      },
+      "reject": "Reject Changes",
+      "approve": "Approve Changes",
+      "processing": "Processing...",
+      "close": "Close",
+      "risk": {
+        "high": "High Risk",
+        "medium": "Medium Risk",
+        "low": "Low Risk"
+      }
     }
   }
 }

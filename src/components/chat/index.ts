@@ -1,7 +1,7 @@
 /**
  * Chat Components Export
  *
- * @epic Epic-28 Story 28-19, 28-20
+ * @epic Epic-28 Story 28-19, 28-20, 28-21, 28-22
  * @description
  * Barrel export for chat-related components.
  * These components are used in the agent chat interface.
@@ -15,3 +15,6 @@ export type { CodeBlockProps } from './CodeBlock';
 
 export { DiffPreview } from './DiffPreview';
 export type { DiffPreviewProps } from './DiffPreview';
+
+export { ApprovalOverlay } from './ApprovalOverlay';
+export type { ApprovalOverlayProps } from './ApprovalOverlay';

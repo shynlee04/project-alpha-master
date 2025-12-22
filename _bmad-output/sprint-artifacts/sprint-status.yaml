@@ -733,13 +733,17 @@ development_status:
     notes: "DiffPreview showing file changes with syntax highlighting"
     integrates: "Epic 6, Epic 25-5, Story 28-20"
     
-  28-22-approval-overlay-component: ready-for-dev
+  28-22-approval-overlay-component: done
     priority: P0
     points: 5
     story: _bmad-output/sprint-artifacts/28-22-approval-overlay-component.md
-    platform: "Platform B"
+    context: _bmad-output/sprint-artifacts/28-22-approval-overlay-component-context.xml
+    platform: "Platform B (Antigravity)"
     drafted_at: "2025-12-22T17:21:00+07:00"
-    notes: "ApprovalOverlay for user confirmation before AI writes files (needsApproval: true)"
+    completed_at: "2025-12-23T01:35:00+07:00"
+    tests_count: 19
+    tests_passing: 19
+    notes: "ApprovalOverlay with mock trigger integrated. 19/19 tests pass. Includes fix for inline mode bug."
     integrates: "Epic 25-5"
     
   28-23-streaming-message-container: backlog

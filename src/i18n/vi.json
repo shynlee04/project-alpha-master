@@ -316,6 +316,25 @@
       "linesHidden": "{{count}} dòng ẩn",
       "expand": "Hiện dòng ẩn",
       "collapse": "Ẩn dòng"
+    },
+    "approvalOverlay": {
+      "title": "Phê Duyệt Thay Đổi",
+      "description": "Trợ lý AI đang yêu cầu sửa đổi tập tin trong dự án của bạn.",
+      "codePreview": "Xem trước Nội dung",
+      "changesPreview": "Thay đổi Đề xuất",
+      "warning": {
+        "title": "Cần Hành Động",
+        "message": "Vui lòng xem xét kỹ các thay đổi trước khi phê duyệt. Hành động này không thể hoàn tác."
+      },
+      "reject": "Từ Chối",
+      "approve": "Phê Duyệt",
+      "processing": "Đang xử lý...",
+      "close": "Đóng",
+      "risk": {
+        "high": "Rủi ro Cao",
+        "medium": "Rủi ro Trung bình",
+        "low": "Rủi ro Thấp"
+      }
     }
   }
 }

@@ -23,26 +23,28 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "28-21-diff-preview-component"
+  key: "28-22-approval-overlay-component"
   epic: 28
-  status: "drafted"
+  status: "done"
   platform: "Platform B"
   notes: |
-    Phase 6 Tier 1: DiffPreview component for file changes.
-    Shows additions/deletions with syntax highlighting.
+    Phase 6 Tier 1: Approval overlay component for AI agent tool execution.
+    Shows diff preview with Accept/Reject buttons, integrated with EnhancedChatInterface via mock trigger.
+    Part of AI Foundation integration (Epic 25-5).
 
 
 last_completed_story:
-  key: "28-20-chat-code-block-with-actions"
+  key: "28-21-diff-preview-component"
   epic: 28
   completed_at: "2025-12-22T22:53:00+07:00"
   status: "done"
   platform: "Platform B"
-  tests_passing: 20
-  tests_total: 20
+  tests_passing: 18
+  tests_total: 18
   notes: |
-    CodeBlock with syntax highlighting, copy to clipboard,
-    and Accept/Reject actions. 20/20 tests pass.
+    DiffPreview component for file changes with syntax highlighting.
+    Shows additions/deletions with line-by-line diff view.
+    18/18 tests pass.
 
 
 # =============================================================================
