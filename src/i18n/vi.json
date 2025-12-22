@@ -221,13 +221,26 @@
       "lastActive": "Hoạt động Cuối"
     },
     "config": {
-      "title": "Cấu hình Trợ lý AI",
-      "provider": "Nhà cung cấp",
-      "model": "Mô hình",
-      "name": "Tên Trợ lý",
-      "description": "Mô tả",
-      "save": "Lưu Trợ lý",
-      "cancel": "Hủy"
+      "title": "Cấu Hình Trợ Lý Mới",
+      "subtitle": "Cấu hình một trợ lý AI mới cho quy trình của bạn",
+      "provider": "Nhà Cung Cấp LLM",
+      "providerPlaceholder": "Chọn nhà cung cấp...",
+      "model": "Mô Hình",
+      "modelPlaceholder": "Chọn mô hình...",
+      "selectProviderFirst": "Vui lòng chọn nhà cung cấp trước",
+      "name": "Tên Trợ Lý",
+      "namePlaceholder": "Nhập tên trợ lý...",
+      "role": "Vai Trò",
+      "rolePlaceholder": "VD: Lập trình viên Frontend",
+      "description": "Mô Tả",
+      "save": "Tạo Trợ Lý",
+      "cancel": "Hủy",
+      "successToast": "Đã tạo trợ lý '{{name}}' thành công!",
+      "validation": {
+        "nameRequired": "Tên trợ lý là bắt buộc",
+        "providerRequired": "Vui lòng chọn nhà cung cấp",
+        "modelRequired": "Vui lòng chọn mô hình"
+      }
     }
   },
   "actions": {

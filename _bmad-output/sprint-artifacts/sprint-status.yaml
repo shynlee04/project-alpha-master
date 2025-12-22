@@ -659,10 +659,14 @@ development_status:
       Browser verified: agents_panel_verification_1766407350312.png
       JSDoc references Epic 25 for future backend replacement.
     
-  28-16-agent-config-flow: backlog
+  28-16-agent-config-flow: ready-for-dev
+    story: _bmad-output/sprint-artifacts/28-16-agent-config-flow.md
+    context: _bmad-output/sprint-artifacts/28-16-agent-config-flow-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-22T20:30:00+07:00"
     priority: P1
     points: 5
-    notes: "Agent configuration form with mock submission"
+    notes: "Agent configuration dialog with provider/model selection, mock submission"
     
   28-17-visual-verification-report: backlog
     priority: P0

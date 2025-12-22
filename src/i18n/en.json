@@ -221,13 +221,26 @@
       "lastActive": "Last Active"
     },
     "config": {
-      "title": "Agent Configuration",
-      "provider": "Provider",
+      "title": "New Agent Configuration",
+      "subtitle": "Configure a new AI agent for your workflow",
+      "provider": "LLM Provider",
+      "providerPlaceholder": "Select provider...",
       "model": "Model",
+      "modelPlaceholder": "Select model...",
+      "selectProviderFirst": "Select a provider first",
       "name": "Agent Name",
+      "namePlaceholder": "Enter agent name...",
+      "role": "Role",
+      "rolePlaceholder": "e.g., Frontend Developer",
       "description": "Description",
-      "save": "Save Agent",
-      "cancel": "Cancel"
+      "save": "Create Agent",
+      "cancel": "Cancel",
+      "successToast": "Agent '{{name}}' created successfully!",
+      "validation": {
+        "nameRequired": "Agent name is required",
+        "providerRequired": "Please select a provider",
+        "modelRequired": "Please select a model"
+      }
     }
   },
   "actions": {

@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react'
 import { SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
 import { Bot, Plus, RefreshCw, Loader2 } from 'lucide-react'
@@ -5,12 +6,13 @@ import { Button } from '@/components/ui/button'
 import { StatusDot } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgents } from '@/hooks/useAgents'
+import { AgentConfigDialog } from '@/components/agent/AgentConfigDialog'
 import type { Agent } from '@/mocks/agents'
 
 /**
  * AgentsPanel - Agent management sidebar panel
  * 
- * @epic Epic-28 Story 28-15
+ * @epic Epic-28 Story 28-15, 28-16
  * @integration Uses useAgents hook with mock data
  * @roadmap Replace mock with TanStack Query in Epic 25
  * 
@@ -24,12 +26,14 @@ export function AgentsPanel({
     onSelectAgent?: (agent: Agent) => void
 }) {
     const { t } = useTranslation()
-    const { agents, isLoading, refreshAgents } = useAgents()
+    const { agents, isLoading, refreshAgents, addAgent } = useAgents()
 
-    const handleAddAgent = () => {
-        // TODO: Epic 28-16 - Open agent config modal/route
-        console.log('Add agent clicked - implement in Story 28-16')
-    }
+    // Dialog state for agent configuration
+    const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false)
+
+    const handleAddAgent = useCallback(() => {
+        setIsConfigDialogOpen(true)
+    }, [])
 
     return (
         <div className="flex flex-col h-full">
@@ -94,6 +98,13 @@ export function AgentsPanel({
                     </div>
                 )}
             </div>
+
+            {/* Agent Configuration Dialog */}
+            <AgentConfigDialog
+                open={isConfigDialogOpen}
+                onOpenChange={setIsConfigDialogOpen}
+                onSubmit={addAgent}
+            />
         </div>
     )
 }
