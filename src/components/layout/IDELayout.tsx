@@ -29,6 +29,7 @@ import { MinViewportWarning } from './MinViewportWarning';
 import { FileTree } from '../ide/FileTree';
 import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
 import { PreviewPanel } from '../ide/PreviewPanel';
+import { StatusBar } from '../ide/StatusBar';
 
 // NEW: IconSidebar integration (Story 28-5 → 28-14)
 import {
@@ -203,6 +204,9 @@ export function IDELayout(): React.JSX.Element {
             )}
           </ResizablePanelGroup>
         </div>
+        {/* VS Code-style footer StatusBar (Story 28-18) */}
+        <StatusBar />
+
         <MinViewportWarning />
       </div>
     </SidebarProvider>

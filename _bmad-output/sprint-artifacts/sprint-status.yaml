@@ -683,28 +683,40 @@ development_status:
   
   # Phase 6: AI Foundation Integration Readiness (Course Correction 2025-12-22)
   # Tier 1: Critical Chat + Tool Visibility (Required for Epic 25 integration)
-  28-18-statusbar-connection-indicators: ready-for-dev
+  28-18-statusbar-connection-indicators: done
     priority: P0
     points: 3
     story: _bmad-output/sprint-artifacts/28-18-statusbar-connection-indicators.md
     context: _bmad-output/sprint-artifacts/28-18-statusbar-connection-indicators-context.xml
     platform: "Platform B"
     drafted_at: "2025-12-22T21:45:00+07:00"
-    notes: "StatusBar with WebContainer/Provider/Sync status indicators"
+    completed_at: "2025-12-22T22:20:00+07:00"
+    notes: "StatusBar with WebContainer/Provider/Sync status indicators. Fixed infinite loop bug."
     integrates: "Epic 10, Epic 25, Epic 26"
     analysis: "_bmad-output/analysis/epic-28-holistic-integration-analysis.md"
     
-  28-19-chat-tool-call-badge: backlog
+  28-19-chat-tool-call-badge: done
     priority: P0
     points: 5
-    notes: "ToolCallBadge component showing [read_file] [write_file] [execute_command] in chat"
-    integrates: "Epic 6, Epic 12"
+    story: _bmad-output/sprint-artifacts/28-19-chat-tool-call-badge.md
+    context: _bmad-output/sprint-artifacts/28-19-chat-tool-call-badge-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-22T22:35:00+07:00"
+    completed_at: "2025-12-22T22:40:00+07:00"
+    tests_pass: 18
+    tests_total: 18
+    notes: "ToolCallBadge + ToolCallBadgeGroup. Tooltip component created. AC-5 deferred to 28-20."
+    integrates: "Epic 6, Epic 12, Epic 25"
     
-  28-20-chat-code-block-with-actions: backlog
+  28-20-chat-code-block-with-actions: drafted
     priority: P0
     points: 5
+    story: _bmad-output/sprint-artifacts/28-20-chat-code-block-with-actions.md
+    context: _bmad-output/sprint-artifacts/28-20-chat-code-block-with-actions-context.xml
+    platform: "Platform B"
+    drafted_at: "2025-12-22T22:45:00+07:00"
     notes: "CodeBlock component with Accept/Reject buttons for AI-generated code"
-    integrates: "Epic 6, Epic 25-5"
+    integrates: "Epic 6, Epic 25-5, Story 28-19"
     
   28-21-diff-preview-component: backlog
     priority: P0

@@ -11,7 +11,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Check, RefreshCw, AlertTriangle, CloudOff } from 'lucide-react';
-import { useStatusBarStore, selectSyncState } from '@/lib/state/statusbar-store';
+import { useStatusBarStore } from '@/lib/state/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 
 // ============================================================================
@@ -38,7 +38,10 @@ interface SyncStatusSegmentProps {
  */
 export function SyncStatusSegment({ onRetry }: SyncStatusSegmentProps) {
     const { t } = useTranslation();
-    const { status, progress, error } = useStatusBarStore(selectSyncState);
+    // Select individual primitives to avoid re-render loops
+    const status = useStatusBarStore((s) => s.syncStatus);
+    const progress = useStatusBarStore((s) => s.syncProgress);
+    const error = useStatusBarStore((s) => s.syncError);
 
     const handleClick = () => {
         if (status === 'error' && onRetry) {

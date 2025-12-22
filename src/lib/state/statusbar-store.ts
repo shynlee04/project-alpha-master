@@ -185,31 +185,18 @@ export const useStatusBarStore = create<StatusBarState>()((set) => ({
 }));
 
 // ============================================================================
-// Selectors
+// Selectors - IMPORTANT: Select individual primitives to avoid re-render loops
 // ============================================================================
 
-/**
- * Select sync-related state for SyncStatusSegment
- */
-export const selectSyncState = (state: StatusBarState) => ({
-    status: state.syncStatus,
-    progress: state.syncProgress,
-    lastSyncTime: state.lastSyncTime,
-    error: state.syncError,
-});
+// NOTE: Do NOT use object-returning selectors like:
+//   const { fileType, encoding } = useStatusBarStore(selectEditorInfo); // BAD - causes infinite loops
+// Instead, select individual values:
+//   const fileType = useStatusBarStore((s) => s.fileType); // GOOD
+//   const encoding = useStatusBarStore((s) => s.encoding); // GOOD
 
 /**
- * Select cursor and file info for right-side segments
- */
-export const selectEditorInfo = (state: StatusBarState) => ({
-    cursorPosition: state.cursorPosition,
-    fileType: state.fileType,
-    encoding: state.encoding,
-});
-
-/**
- * Select connection statuses for status overview
- * @ai-observable - Useful for AI context
+ * Select connection statuses for status overview (external/AI use only)
+ * @ai-observable - Useful for AI context, NOT for React components
  */
 export const selectConnectionStatus = (state: StatusBarState) => ({
     webContainer: state.webContainerStatus,

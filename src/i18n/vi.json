@@ -277,5 +277,38 @@
         "extensions": "Tiện ích"
       }
     }
+  },
+  "statusBar": {
+    "wcBooting": "WC: Đang khởi động...",
+    "wcReady": "WC: Sẵn sàng",
+    "wcError": "WC: Lỗi",
+    "syncing": "Đồng bộ: {{current}}/{{total}}",
+    "synced": "Đã đồng bộ",
+    "syncError": "Lỗi đồng bộ",
+    "notConfigured": "Chưa cấu hình",
+    "connected": "Đã kết nối",
+    "cursorPosition": "Dòng {{line}}, Cột {{column}}",
+    "encoding": "UTF-8"
+  },
+  "chat": {
+    "startConversation": "Bắt đầu cuộc trò chuyện",
+    "placeholder": "Nhập tin nhắn...",
+    "toolsUsed": "công cụ đã dùng",
+    "tools": {
+      "pending": "Đang chờ thực thi...",
+      "running": "Đang thực thi...",
+      "success": "Hoàn thành",
+      "error": "Thất bại",
+      "arguments": "Tham số",
+      "noArguments": "Không có tham số"
+    },
+    "codeBlock": {
+      "copy": "Sao chép",
+      "copied": "Đã sao chép!",
+      "accept": "Chấp nhận",
+      "reject": "Từ chối",
+      "accepted": "Đã chấp nhận",
+      "lines": "{{count}} dòng"
+    }
   }
 }

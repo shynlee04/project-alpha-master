@@ -7,7 +7,7 @@
  * Displays current file type/language based on file extension.
  */
 
-import { useStatusBarStore, selectEditorInfo } from '@/lib/state/statusbar-store';
+import { useStatusBarStore } from '@/lib/state/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 
 // ============================================================================
@@ -61,7 +61,9 @@ function getLanguageFromType(fileType: string): string {
  * Displays language name based on file extension.
  */
 export function FileTypeIndicator() {
-    const { fileType, encoding } = useStatusBarStore(selectEditorInfo);
+    // Select individual primitives to avoid re-render loops
+    const fileType = useStatusBarStore((s) => s.fileType);
+    const encoding = useStatusBarStore((s) => s.encoding);
 
     if (!fileType) {
         return null;

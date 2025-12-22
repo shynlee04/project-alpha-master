@@ -23,26 +23,26 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "28-18-statusbar-connection-indicators"
+  key: "28-20-chat-code-block-with-actions"
   epic: 28
-  status: "backlog"
+  status: "drafted"
   platform: "Platform B"
   notes: |
-    Epic 28 Phase 6 starts. First story: StatusBar with connection indicators.
-    Required for AI Foundation integration (Epic 25).
+    Phase 6 Tier 1: CodeBlock with Accept/Reject actions.
+    Integrates with ToolCallBadge from 28-19.
 
 
 last_completed_story:
-  key: "27-5a-refactor-idelayout"
-  epic: 27
-  completed_at: "2025-12-22T02:50:00+07:00"
+  key: "28-19-chat-tool-call-badge"
+  epic: 28
+  completed_at: "2025-12-22T22:40:00+07:00"
   status: "done"
-  platform: "Platform A"
-  tests_passing: 9
-  tests_total: 11
+  platform: "Platform B"
+  tests_passing: 18
+  tests_total: 18
   notes: |
-    IDELayout.tsx refactored from 590 to 174 lines.
-    5 hooks/components extracted. 2 pre-existing test failures.
+    ToolCallBadge + ToolCallBadgeGroup components complete.
+    18/18 tests pass. Tooltip component added. AC-5 deferred to 28-20.
 
 
 # =============================================================================

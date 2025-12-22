@@ -9,7 +9,7 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import { useStatusBarStore, selectEditorInfo } from '@/lib/state/statusbar-store';
+import { useStatusBarStore } from '@/lib/state/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 
 // ============================================================================
@@ -23,7 +23,8 @@ import { StatusBarSegment } from './StatusBarSegment';
  */
 export function CursorPosition() {
     const { t } = useTranslation();
-    const { cursorPosition } = useStatusBarStore(selectEditorInfo);
+    // Select individual primitives to avoid re-render loops
+    const cursorPosition = useStatusBarStore((s) => s.cursorPosition);
 
     return (
         <StatusBarSegment region="right">

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-20-chat-code-block-with-actions" created="2025-12-22T22:45:00+07:00">
+  
+  <!-- Current code state for CodeBlock development -->
+  <files>
+    
+    <!-- ToolCallBadge - completed in 28-19 -->
+    <file path="src/components/chat/ToolCallBadge.tsx">
+      <summary>
+        ToolCallBadge component (255 lines) completed in Story 28-19.
+        Provides inline tool call indicators with status variants.
+        CodeBlock should integrate with this for tool-generated code.
+      </summary>
+    </file>
+    
+    <!-- Existing index.ts for exports -->
+    <file path="src/components/chat/index.ts">
+      <summary>
+        Barrel export for chat components.
+        Exports ToolCallBadge, ToolCallBadgeGroup.
+        Will need to add CodeBlock export.
+      </summary>
+      <content><![CDATA[
+export { ToolCallBadge, ToolCallBadgeGroup } from './ToolCallBadge';
+export type { ToolCallBadgeProps, ToolCallBadgeGroupProps } from './ToolCallBadge';
+      ]]></content>
+    </file>
+    
+    <!-- EnhancedChatInterface for integration reference -->
+    <file path="src/components/ide/EnhancedChatInterface.tsx">
+      <summary>
+        Premium chat interface (230 lines).
+        Has ChatMessageBubble component that will use CodeBlock.
+        Currently has ToolExecutionLog for showing tool executions.
+      </summary>
+    </file>
+    
+    <!-- Sonner toast for copy feedback -->
+    <file path="src/components/ui/sonner.tsx">
+      <summary>
+        Toast notification component using sonner library.
+        Use for copy success/error feedback.
+      </summary>
+    </file>
+    
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI streaming">
+      Code blocks stream as part of content chunks.
+      Content type is "content" with delta containing code.
+      Language can be extracted from markdown fence (```typescript).
+    </finding>
+    <finding source="existing code" query="Pixel aesthetic patterns">
+      Use rounded-none for squared corners.
+      shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)] for pixel shadow.
+      font-mono for code content.
+      Use status colors: text-primary, text-green-500, text-red-500.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Component with JSDoc integration comments" source="28-19">
+      All Phase 6 components must include JSDoc with:
+      - @epic Epic-28 Story 28-XX
+      - @integrates [Epic-X Story X-Y] - [Why]
+      - @listens [event:name] (if applicable)
+    </pattern>
+    <pattern name="i18n Pattern" source="existing components">
+      - Import { useTranslation } from 'react-i18next'
+      - const { t } = useTranslation()
+      - All visible strings use t('namespace.key')
+    </pattern>
+    <pattern name="Action Button Pattern" source="ToolCallBadge">
+      - Use button type="button"
+      - onClick callback for actions
+      - aria-label for accessibility
+      - Lucide icons (Check, X, ClipboardCopy)
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Keep syntax highlighting simple for Phase 6. Use CSS classes for basic
+      token coloring (keywords, strings, comments). Monaco/Shiki can be
+      integrated in Epic 27+ for full highlighting.
+    </note>
+    <note priority="high">
+      Accept/Reject buttons should be conditional (only show when props provided).
+      This allows CodeBlock to be used for display-only or interactive modes.
+    </note>
+    <note priority="medium">
+      Copy to clipboard uses navigator.clipboard.writeText().
+      Handle fallback for older browsers with document.execCommand.
+    </note>
+    <note priority="medium">
+      Language detection: Parse from markdown fence or accept as prop.
+      Common languages: typescript, javascript, tsx, jsx, css, json, html, bash.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="react" version="^19.2.3" />
+    <dependency name="react-i18next" version="^15.3.0" />
+    <dependency name="lucide-react" version="^0.544.0" />
+    <dependency name="sonner" version="^2.0.7" />
+    <dependency name="clsx" version="^2.1.1" />
+  </dependencies>
+  
+  <!-- Test commands -->
+  <test_commands>
+    <command purpose="Run single test file">pnpm test src/components/chat/__tests__/CodeBlock.test.tsx</command>
+    <command purpose="Run all tests">pnpm test</command>
+    <command purpose="TypeScript check">pnpm exec tsc --noEmit</command>
+  </test_commands>
+  
+</context>

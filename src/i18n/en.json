@@ -289,5 +289,26 @@
     "connected": "Connected",
     "cursorPosition": "Ln {{line}}, Col {{column}}",
     "encoding": "UTF-8"
+  },
+  "chat": {
+    "startConversation": "Start a conversation",
+    "placeholder": "Type a message...",
+    "toolsUsed": "tools used",
+    "tools": {
+      "pending": "Waiting to execute...",
+      "running": "Executing...",
+      "success": "Completed",
+      "error": "Failed",
+      "arguments": "Arguments",
+      "noArguments": "No arguments"
+    },
+    "codeBlock": {
+      "copy": "Copy",
+      "copied": "Copied!",
+      "accept": "Accept",
+      "reject": "Reject",
+      "accepted": "Accepted",
+      "lines": "{{count}} lines"
+    }
   }
 }
