@@ -277,5 +277,17 @@
         "extensions": "Extensions"
       }
     }
+  },
+  "statusBar": {
+    "wcBooting": "WC: Booting...",
+    "wcReady": "WC: Ready",
+    "wcError": "WC: Error",
+    "syncing": "Syncing: {{current}}/{{total}}",
+    "synced": "Synced",
+    "syncError": "Sync Error",
+    "notConfigured": "Not Configured",
+    "connected": "Connected",
+    "cursorPosition": "Ln {{line}}, Col {{column}}",
+    "encoding": "UTF-8"
   }
 }

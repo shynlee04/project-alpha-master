@@ -7,7 +7,6 @@
  * Displays current file type/language based on file extension.
  */
 
-import * as React from 'react';
 import { useStatusBarStore, selectEditorInfo } from '@/lib/state/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 

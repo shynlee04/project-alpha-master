@@ -8,7 +8,6 @@
  * Displays WebContainer boot status in StatusBar.
  */
 
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { useStatusBarStore } from '@/lib/state/statusbar-store';

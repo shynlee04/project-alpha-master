@@ -13,9 +13,8 @@
  * - Epic 26-5: Show provider selection dropdown on click
  */
 
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Cpu, CpuIcon } from 'lucide-react';
+import { Cpu } from 'lucide-react';
 import { useStatusBarStore } from '@/lib/state/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 

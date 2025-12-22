@@ -8,7 +8,6 @@
  * Displays cursor line and column position in StatusBar.
  */
 
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStatusBarStore, selectEditorInfo } from '@/lib/state/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';

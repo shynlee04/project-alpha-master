@@ -9,7 +9,6 @@
  * Displays file sync status in StatusBar with progress during active sync.
  */
 
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, RefreshCw, AlertTriangle, CloudOff } from 'lucide-react';
 import { useStatusBarStore, selectSyncState } from '@/lib/state/statusbar-store';
