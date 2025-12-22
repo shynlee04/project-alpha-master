@@ -121,6 +121,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: { project
                 id: 'exec_1',
                 name: 'write_file',
                 status: 'success',
+                input: JSON.stringify({ path: 'src/components/TestComponent.tsx', content: '...' }),
                 duration: 450
             }]
         };

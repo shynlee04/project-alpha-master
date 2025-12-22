@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, Loader2, Code, CheckCircle, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { Bot, User, Send, ChevronDown, ChevronUp, Code } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CodeBlock } from '@/components/chat/CodeBlock'
+import { ToolCallBadge } from '@/components/chat/ToolCallBadge'
 import { useTranslation } from 'react-i18next'
 
 /**
@@ -18,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 interface ToolExecution {
     id: string
     name: string
-    status: 'running' | 'success' | 'error'
+    status: 'pending' | 'running' | 'success' | 'error'
     input?: string
     output?: string
     duration?: number
@@ -135,13 +137,14 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
                 "flex-1 max-w-[80%]",
                 isUser && "flex flex-col items-end"
             )}>
+                {/* Message Text with Code Block Support */}
                 <div className={cn(
-                    "px-4 py-2 rounded-none",
+                    "rounded-none overflow-hidden",
                     isUser
                         ? "bg-primary text-primary-foreground shadow-[2px_2px_0px_0px_rgba(194,65,12,0.5)]"
                         : "bg-secondary text-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]"
                 )}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <MessageContent content={message.content} isUser={isUser} />
                 </div>
 
                 {/* Tool executions */}
@@ -158,6 +161,40 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
     )
 }
 
+function MessageContent({ content, isUser }: { content: string, isUser: boolean }) {
+    // Simple regex to split by code blocks
+    // Captures: 1=language, 2=code
+    const parts = content.split(/(```[\w-]*\n[\s\S]*?```)/g)
+
+    return (
+        <div className={cn("text-sm", isUser ? "p-3" : "py-1")}>
+            {parts.map((part, index) => {
+                const codeMatch = part.match(/^```([\w-]*)\n([\s\S]*?)```$/)
+                if (codeMatch) {
+                    const [, language, code] = codeMatch
+                    return (
+                        <div key={index} className="my-2 first:mt-0 last:mb-0">
+                            <CodeBlock
+                                code={code.trim()}
+                                language={language || 'text'}
+                                showLineNumbers
+                                className="max-w-full"
+                            />
+                        </div>
+                    )
+                }
+                // Regular text
+                if (!part.trim()) return null
+                return (
+                    <p key={index} className={cn("whitespace-pre-wrap px-3 py-1", isUser ? "" : "mb-1 last:mb-0")}>
+                        {part}
+                    </p>
+                )
+            })}
+        </div>
+    )
+}
+
 function ToolExecutionLog({ executions }: { executions: ToolExecution[] }) {
     const [isExpanded, setExpanded] = useState(false)
     const { t } = useTranslation()
@@ -166,7 +203,7 @@ function ToolExecutionLog({ executions }: { executions: ToolExecution[] }) {
         <div className="mt-2 w-full">
             <button
                 onClick={() => setExpanded(!isExpanded)}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground mb-2"
             >
                 <Code className="w-3 h-3" />
                 {executions.length} {t('chat.toolsUsed', 'tools used')}
@@ -178,26 +215,15 @@ function ToolExecutionLog({ executions }: { executions: ToolExecution[] }) {
             </button>
 
             {isExpanded && (
-                <div className="mt-2 space-y-1 pl-5">
+                <div className="flex flex-wrap gap-2 pl-1">
                     {executions.map((exec) => (
-                        <div
+                        <ToolCallBadge
                             key={exec.id}
-                            className="flex items-center gap-2 text-xs py-1 px-2 bg-secondary/50 rounded-none"
-                        >
-                            {exec.status === 'running' && (
-                                <Loader2 className="w-3 h-3 animate-spin text-primary" />
-                            )}
-                            {exec.status === 'success' && (
-                                <CheckCircle className="w-3 h-3 text-green-500" />
-                            )}
-                            {exec.status === 'error' && (
-                                <AlertCircle className="w-3 h-3 text-red-500" />
-                            )}
-                            <span className="text-muted-foreground font-mono">{exec.name}</span>
-                            {exec.duration && (
-                                <span className="text-muted-foreground/70">{exec.duration}ms</span>
-                            )}
-                        </div>
+                            name={exec.name}
+                            status={exec.status}
+                            arguments={exec.input ? JSON.parse(exec.input || '{}') : undefined}
+                            duration={exec.duration}
+                        />
                     ))}
                 </div>
             )}
