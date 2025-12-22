@@ -624,11 +624,50 @@ development_status:
     priority: P2
     points: 3
     notes: "VS Code-style status bar with git, cursor, file info"
-
-
-  # =============================================================================
-  # EPIC 11: Code Splitting & Module Refactor [ABSORBED INTO EPIC 27]
-  # =============================================================================
+    
+  # Phase 5: Integration Enforcement (Course Correction)
+  28-13-full-ui-integration-audit: done
+    priority: P0
+    points: 8
+    platform: "Platform B"
+    completed_at: "2025-12-22T19:30:00+07:00"
+    notes: |
+      Grep audit confirmed no banned colors in routes.
+      All bg-slate, text-slate, bg-cyan, text-cyan removed.
+      
+  28-14-wire-icon-sidebar: done
+    priority: P0
+    points: 5
+    platform: "Platform B"
+    completed_at: "2025-12-22T19:40:00+07:00"
+    notes: |
+      CRITICAL INTEGRATION: IconSidebar now wired into IDELayout.
+      SidebarProvider, ActivityBar (48px), SidebarContent (280px) integrated.
+      SidebarPanelRenderer switches between Explorer/Agents/Search/Settings.
+      Ctrl+B toggle verified working in browser.
+      Screenshot proof: ide_new_layout_verification_1766407086711.png
+      
+  28-15-mock-agent-states: done
+    priority: P0
+    points: 5
+    platform: "Platform B"
+    completed_at: "2025-12-22T19:55:00+07:00"
+    notes: |
+      Created src/mocks/agents.ts with 6 mock agents.
+      Created src/hooks/useAgents.ts with CRUD operations.
+      Wired useAgents to AgentsPanel - shows 6 agents.
+      Browser verified: agents_panel_verification_1766407350312.png
+      JSDoc references Epic 25 for future backend replacement.
+    
+  28-16-agent-config-flow: backlog
+    priority: P1
+    points: 5
+    notes: "Agent configuration form with mock submission"
+    
+  28-17-visual-verification-report: backlog
+    priority: P0
+    points: 3
+    notes: "Screenshots + grep proof + before/after comparison"
   epic-11: absorbed
     absorbed_into: epic-27
     absorbed_at: "2025-12-22T02:00:00+07:00"

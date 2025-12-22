@@ -1,36 +1,35 @@
 import { SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
-import { Bot, Plus, RefreshCw, Circle } from 'lucide-react'
+import { Bot, Plus, RefreshCw, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusDot } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useAgents } from '@/hooks/useAgents'
+import type { Agent } from '@/mocks/agents'
 
 /**
  * AgentsPanel - Agent management sidebar panel
+ * 
+ * @epic Epic-28 Story 28-15
+ * @integration Uses useAgents hook with mock data
+ * @roadmap Replace mock with TanStack Query in Epic 25
  * 
  * Shows when 'agents' is active in the activity bar.
  * Displays available agents and their status.
  */
 
-interface Agent {
-    id: string
-    name: string
-    status: 'online' | 'offline' | 'busy' | 'error'
-    description?: string
-}
-
 export function AgentsPanel({
-    agents = [],
-    onAddAgent,
-    onRefresh,
     onSelectAgent
 }: {
-    agents?: Agent[]
-    onAddAgent?: () => void
-    onRefresh?: () => void
     onSelectAgent?: (agent: Agent) => void
 }) {
     const { t } = useTranslation()
+    const { agents, isLoading, refreshAgents } = useAgents()
+
+    const handleAddAgent = () => {
+        // TODO: Epic 28-16 - Open agent config modal/route
+        console.log('Add agent clicked - implement in Story 28-16')
+    }
 
     return (
         <div className="flex flex-col h-full">
@@ -41,7 +40,7 @@ export function AgentsPanel({
                         <Button
                             variant="ghost"
                             size="icon-sm"
-                            onClick={onAddAgent}
+                            onClick={handleAddAgent}
                             title={t('actions.addAgent', 'Add Agent')}
                         >
                             <Plus className="w-4 h-4" />
@@ -49,16 +48,25 @@ export function AgentsPanel({
                         <Button
                             variant="ghost"
                             size="icon-sm"
-                            onClick={onRefresh}
+                            onClick={refreshAgents}
+                            disabled={isLoading}
                             title={t('actions.refresh', 'Refresh')}
                         >
-                            <RefreshCw className="w-4 h-4" />
+                            {isLoading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <RefreshCw className="w-4 h-4" />
+                            )}
                         </Button>
                     </>
                 }
             />
-            <div className="flex-1 overflow-auto">
-                {agents.length === 0 ? (
+            <div className="flex-1 overflow-auto scrollbar-thin">
+                {isLoading && agents.length === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                    </div>
+                ) : agents.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center p-4">
                         <Bot className="w-12 h-12 text-muted-foreground/50 mb-4" />
                         <p className="text-sm text-muted-foreground">
@@ -68,14 +76,14 @@ export function AgentsPanel({
                             variant="pixel-outline"
                             size="sm"
                             className="mt-4"
-                            onClick={onAddAgent}
+                            onClick={handleAddAgent}
                         >
                             <Plus className="w-4 h-4" />
                             {t('actions.addAgent', 'Add Agent')}
                         </Button>
                     </div>
                 ) : (
-                    <div className="p-1">
+                    <div className="p-1 space-y-0.5">
                         {agents.map((agent) => (
                             <AgentItem
                                 key={agent.id}
@@ -117,14 +125,13 @@ function AgentItem({
                 <p className="text-sm font-medium text-foreground truncate">
                     {agent.name}
                 </p>
-                {agent.description && (
-                    <p className="text-xs text-muted-foreground truncate">
-                        {agent.description}
-                    </p>
-                )}
+                <p className="text-xs text-muted-foreground truncate">
+                    {agent.role} • {agent.model}
+                </p>
             </div>
         </button>
     )
 }
 
 export type { Agent }
+

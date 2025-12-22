@@ -4,6 +4,9 @@
  *
  * Main IDE layout component that orchestrates all IDE panels.
  * Uses react-resizable-panels for a VS Code-like layout.
+ * 
+ * @epic Epic-28 Story 28-14
+ * @integration Wires IconSidebar (Story 28-5) into actual layout
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -27,6 +30,18 @@ import { FileTree } from '../ide/FileTree';
 import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
 import { PreviewPanel } from '../ide/PreviewPanel';
 
+// NEW: IconSidebar integration (Story 28-5 → 28-14)
+import {
+  SidebarProvider,
+  ActivityBar,
+  SidebarContent,
+  useSidebar
+} from '../ide/IconSidebar';
+import { ExplorerPanel } from '../ide/ExplorerPanel';
+import { AgentsPanel } from '../ide/AgentsPanel';
+import { SearchPanel } from '../ide/SearchPanel';
+import { SettingsPanel } from '../ide/SettingsPanel';
+
 // Hooks
 import { useIdeStatePersistence } from '../../hooks/useIdeStatePersistence';
 import { useWorkspace, type TerminalTab } from '../../lib/workspace';
@@ -37,6 +52,7 @@ import {
   useIDEFileHandlers,
   useIDEStateRestoration,
 } from './hooks';
+
 
 /**
  * IDELayout - Main IDE layout orchestrator.
@@ -100,92 +116,143 @@ export function IDELayout(): React.JSX.Element {
   useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, isChatVisible]);
 
   return (
-    <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
-      {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
-      <IDEHeaderBar projectId={projectId} isChatVisible={isChatVisible} onToggleChat={() => setIsChatVisible(!isChatVisible)} />
+    <SidebarProvider defaultPanel="explorer">
+      <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+        {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
+        <IDEHeaderBar projectId={projectId} isChatVisible={isChatVisible} onToggleChat={() => setIsChatVisible(!isChatVisible)} />
 
-      <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
-        {/* File Explorer Panel */}
-        <ResizablePanel order={1} defaultSize={20} minSize={10} maxSize={30} className="bg-background">
-          <Card className="h-full rounded-none border-0 border-r bg-background">
-            <CardHeader className="h-9 px-4 py-2 border-b bg-card">
-              <CardTitle className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">Explorer</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 flex-1 min-h-0">
-              <FileTree selectedPath={selectedFilePath} onFileSelect={handleFileSelect} refreshKey={fileTreeRefreshKey} />
-            </CardContent>
-          </Card>
-        </ResizablePanel>
+        <div className="flex-1 flex overflow-hidden">
+          {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}
+          <ActivityBar />
+          <SidebarContent>
+            <SidebarPanelRenderer
+              selectedFilePath={selectedFilePath}
+              onFileSelect={handleFileSelect}
+              fileTreeRefreshKey={fileTreeRefreshKey}
+            />
+          </SidebarContent>
 
-        <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+          {/* Main Resizable Panel Group */}
+          <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
 
-        {/* Center Panel (Editor + Preview + Terminal) */}
-        <ResizablePanel order={2} minSize={30}>
-          <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
-            {/* Editor + Preview */}
-            <ResizablePanel defaultSize={70} minSize={30}>
-              <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
-                <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
-                  <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-sm font-semibold text-foreground">Editor</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 flex-1 min-h-0">
-                      <MonacoEditor
-                        openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
-                        onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
-                        initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
-                        onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
-                      />
-                    </CardContent>
-                  </Card>
+
+            {/* Center Panel (Editor + Preview + Terminal) */}
+            <ResizablePanel order={2} minSize={30}>
+              <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
+                {/* Editor + Preview */}
+                <ResizablePanel defaultSize={70} minSize={30}>
+                  <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
+                    <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
+                      <Card className="h-full rounded-none border-0 bg-background">
+                        <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
+                          <CardTitle className="text-sm font-semibold text-foreground">Editor</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 min-h-0">
+                          <MonacoEditor
+                            openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
+                            onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
+                            initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                            onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
+                          />
+                        </CardContent>
+                      </Card>
+                    </ResizablePanel>
+                    <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                    <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
+                      <Card className="h-full rounded-none border-0 bg-background">
+                        <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
+                          <CardTitle className="text-sm font-semibold text-foreground">Preview</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 min-h-0">
+                          <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                        </CardContent>
+                      </Card>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
                 </ResizablePanel>
-                <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
-                <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
+                <ResizableHandle withHandle orientation="horizontal" className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
+                {/* Terminal Panel */}
+                <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
                     <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-sm font-semibold text-foreground">Preview</CardTitle>
+                      <CardTitle className="text-sm font-semibold text-foreground">Terminal</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
-                      <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                      <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
                     </CardContent>
                   </Card>
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
-            <ResizableHandle withHandle orientation="horizontal" className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
-            {/* Terminal Panel */}
-            <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
-              <Card className="h-full rounded-none border-0 bg-background">
-                <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                  <CardTitle className="text-sm font-semibold text-foreground">Terminal</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0 flex-1 min-h-0">
-                  <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
-                </CardContent>
-              </Card>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </ResizablePanel>
 
-        {/* Chat Panel */}
-        {isChatVisible && (
-          <>
-            <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
-            <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
-              <Card className="h-full rounded-none border-0 bg-background">
-                <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                  <CardTitle className="text-sm font-semibold text-foreground">Chat</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0 flex-1 min-h-0">
-                  <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
-                </CardContent>
-              </Card>
-            </ResizablePanel>
-          </>
-        )}
-      </ResizablePanelGroup>
-      <MinViewportWarning />
-    </div>
+            {/* Chat Panel */}
+            {isChatVisible && (
+              <>
+                <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
+                  <Card className="h-full rounded-none border-0 bg-background">
+                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
+                      <CardTitle className="text-sm font-semibold text-foreground">Chat</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 flex-1 min-h-0">
+                      <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
+                    </CardContent>
+                  </Card>
+                </ResizablePanel>
+              </>
+            )}
+          </ResizablePanelGroup>
+        </div>
+        <MinViewportWarning />
+      </div>
+    </SidebarProvider>
   );
 }
+
+/**
+ * SidebarPanelRenderer - Renders the active sidebar panel content
+ * 
+ * @epic Epic-28 Story 28-14
+ * Uses useSidebar hook to determine which panel to show
+ */
+function SidebarPanelRenderer({
+  selectedFilePath,
+  onFileSelect,
+  fileTreeRefreshKey,
+}: {
+  selectedFilePath?: string;
+  onFileSelect: (path: string, handle: FileSystemFileHandle) => void;
+  fileTreeRefreshKey: number;
+}) {
+  const { activePanel } = useSidebar();
+
+  switch (activePanel) {
+    case 'explorer':
+      return (
+        <ExplorerPanel>
+          <FileTree
+            selectedPath={selectedFilePath}
+            onFileSelect={onFileSelect}
+            refreshKey={fileTreeRefreshKey}
+          />
+        </ExplorerPanel>
+      );
+    case 'agents':
+      return <AgentsPanel />;
+    case 'search':
+      return <SearchPanel />;
+    case 'settings':
+      return <SettingsPanel />;
+    default:
+      return (
+        <ExplorerPanel>
+          <FileTree
+            selectedPath={selectedFilePath}
+            onFileSelect={onFileSelect}
+            refreshKey={fileTreeRefreshKey}
+          />
+        </ExplorerPanel>
+      );
+  }
+}
+
