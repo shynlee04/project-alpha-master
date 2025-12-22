@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="12-1-create-agentfiletools-facade" created="2025-12-23T03:30:00+07:00">
+  
+  <!-- Current code state - files to wrap -->
+  <files>
+    <file path="src/lib/filesystem/local-fs-adapter.ts">
+      <summary>
+        LocalFSAdapter class wrapping File System Access API.
+        Methods: readFile, writeFile, createFile, deleteFile, listDirectory, createDirectory, deleteDirectory, rename
+        Singleton export: localFS
+      </summary>
+      <key_methods><![CDATA[
+async readFile(path: string, options?: { encoding?: 'utf-8' }): Promise<FileReadResult>;
+async writeFile(path: string, content: string): Promise<void>;
+async createFile(path: string, content = ''): Promise<void>;
+async deleteFile(path: string): Promise<void>;
+async listDirectory(path: string = ''): Promise<DirectoryEntry[]>;
+async createDirectory(path: string): Promise<void>;
+async deleteDirectory(path: string): Promise<void>;
+async rename(oldPath: string, newPath: string): Promise<void>;
+      ]]></key_methods>
+    </file>
+    
+    <file path="src/lib/filesystem/sync-manager.ts">
+      <summary>
+        SyncManager class for dual-write to LocalFS + WebContainer.
+        Takes localAdapter and optional eventBus in constructor.
+        Already emits events on file operations.
+      </summary>
+      <key_methods><![CDATA[
+constructor(localAdapter: LocalFSAdapter, config: Partial<SyncConfig> = {}, eventBus?: WorkspaceEventEmitter)
+async writeFile(path: string, content: string): Promise<void>  // dual-write
+async deleteFile(path: string): Promise<void>
+async createDirectory(path: string): Promise<void>
+async deleteDirectory(path: string): Promise<void>
+      ]]></key_methods>
+    </file>
+    
+    <file path="src/lib/events/workspace-events.ts">
+      <summary>
+        WorkspaceEvents interface defining all event types.
+        WorkspaceEventEmitter type alias.
+        createWorkspaceEventBus() factory function.
+      </summary>
+      <key_events><![CDATA[
+'file:created': [{ path: string; source: 'local' | 'editor' | 'agent' }]
+'file:modified': [{ path: string; source: 'local' | 'editor' | 'agent'; content?: string }]
+'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent' }]
+'directory:created': [{ path: string }]
+'directory:deleted': [{ path: string }]
+      ]]></key_events>
+    </file>
+    
+    <file path="src/lib/filesystem/fs-types.ts">
+      <summary>Types used by LocalFSAdapter</summary>
+      <content><![CDATA[
+export interface DirectoryEntry {
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+}
+
+export interface FileReadResult {
+  content: string;
+  path: string;
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI toolDefinition client-side tools zod schema">
+      Pattern: toolDefinition({ name, description, inputSchema, outputSchema }).client(async (params) => { ... })
+      - inputSchema uses Zod for validation
+      - outputSchema optional but recommended
+      - Client tools run in browser, server tools run on server
+    </finding>
+    
+    <finding source="codebase" query="LocalFSAdapter interface">
+      LocalFSAdapter is a class that wraps File System Access API.
+      Methods: readFile, writeFile, createFile, deleteFile, listDirectory, createDirectory, deleteDirectory, rename.
+      Requires directoryHandle to be set before operations.
+      Exports singleton: localFS
+    </finding>
+    
+    <finding source="codebase" query="SyncManager dual-write pattern">
+      SyncManager performs dual-write to LocalFS first (source of truth), then WebContainer.
+      Already accepts eventBus in constructor and emits events on sync operations.
+      Uses file:modified, file:created events with source: 'local' | 'editor'.
+    </finding>
+    
+    <finding source="codebase" query="WorkspaceEvents interface">
+      WorkspaceEventEmitter is EventEmitter<WorkspaceEvents>.
+      Events have source field: 'local' | 'editor' | 'agent'.
+      Agent source is predefined but not yet used.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Facade Pattern" source="epic-12-agent-tool-interface-layer.md">
+      Interface defines stable contract, implementation wraps infrastructure.
+      Interface should expose only what AI agents need.
+      Implementation can change without breaking consumers.
+    </pattern>
+    
+    <pattern name="Dependency Injection" source="sync-manager.ts">
+      Pass dependencies via constructor, not global imports.
+      Enables testing with mocks.
+      Example: SyncManager(localAdapter, config, eventBus)
+    </pattern>
+    
+    <pattern name="Event Emission" source="workspace-events.ts">
+      All file operations emit events for UI reactivity.
+      Use source: 'agent' for AI-initiated operations.
+      Enables FileTree/Monaco to update automatically.
+    </pattern>
+    
+    <pattern name="Path Validation" source="security-best-practices">
+      Reject path traversal (../)
+      Reject absolute paths
+      Normalize paths before operations
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Facade must use SyncManager for write operations (not LocalFSAdapter directly) 
+      to ensure dual-write to WebContainer.
+    </note>
+    <note priority="high">
+      For read operations, use LocalFSAdapter directly since reads don't need sync.
+    </note>
+    <note priority="medium">
+      searchFiles is not yet implemented in LocalFSAdapter - implement as recursive 
+      listDirectory with filename filtering.
+    </note>
+    <note priority="medium">
+      Keep implementation ≤150 lines per Epic 12 AC-12-1-5.
+    </note>
+    <note priority="low">
+      Future: AgentGitTools (Story 12-4) will be a stub until Epic 7.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="eventemitter3" version="^5.0.1" />
+    <dependency name="@tanstack/ai" version="^0.1.0" note="For future tool integration" />
+    <dependency name="zod" version="^4.2.1" note="For future tool schema validation" />
+  </dependencies>
+  
+  <!-- Target file structure -->
+  <target_files>
+    <file path="src/lib/agent/facades/file-tools.ts" action="CREATE">
+      Interface definition: AgentFileTools
+    </file>
+    <file path="src/lib/agent/facades/file-tools-impl.ts" action="CREATE">
+      Implementation: FileToolsFacade
+    </file>
+    <file path="src/lib/agent/facades/index.ts" action="CREATE">
+      Public API exports
+    </file>
+    <file path="src/lib/agent/facades/__tests__/file-tools.test.ts" action="CREATE">
+      Unit tests
+    </file>
+  </target_files>
+  
+</context>

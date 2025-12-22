@@ -412,7 +412,7 @@ Why Faster: Alpha 2 has 90% of primitives built-in
     - 3 tools: read_file, write_file, execute_command
     - Wire to existing IDE components
     - Enable TanStack AI DevTools
-    - Test with Gemini 2.0 Flash
+    - Test with Gemini 3.0 Flash
 
 Phase 3B: Multi-Agent (2 weeks, not 6)
 Why Faster: Same TanStack AI primitives, different system prompts

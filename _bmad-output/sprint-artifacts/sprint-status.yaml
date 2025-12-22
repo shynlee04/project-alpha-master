@@ -855,12 +855,11 @@ development_status:
   # Prerequisite for Epic 6 (AI Agent Integration)
   # =============================================================================
   epic-12: backlog
-  12-1-create-agentfiletools-facade: backlog
+  12-1-create-agentfiletools-facade: done
   12-2-create-agentterminaltools-facade: backlog
   12-3-create-agentsynctools-facade: backlog
   12-4-create-agentgittools-facade-stub: backlog
   12-5-wire-facades-to-tanstack-ai-tools: backlog
-  epic-12-retrospective: optional
 
   # =============================================================================
   # EPIC 6: AI Agent Integration [P1 - BACKLOG]
