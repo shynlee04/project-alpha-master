@@ -179,5 +179,90 @@
     "technical_details": "Technical Details",
     "try_again": "Try Again",
     "reload_page": "Reload Page"
+  },
+  "sidebar": {
+    "explorer": "Explorer",
+    "agents": "Agents",
+    "search": "Search",
+    "settings": "Settings",
+    "terminal": "Terminal",
+    "git": "Git",
+    "collapse": "Collapse Sidebar",
+    "expand": "Expand Sidebar",
+    "noAgents": "No agents configured",
+    "noResults": "No results found",
+    "recentSearches": "Recent Searches",
+    "clearRecent": "Clear Recent",
+    "toggleSidebar": "Toggle Sidebar (Ctrl+B)"
+  },
+  "agents": {
+    "panel": {
+      "title": "Agent Management",
+      "subtitle": "Configure and manage AI agents"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "busy": "Busy",
+      "error": "Error"
+    },
+    "roles": {
+      "frontendDev": "Frontend Developer",
+      "systemArchitect": "System Architect",
+      "qaEngineer": "QA Engineer",
+      "techWriter": "Technical Writer",
+      "testEngineer": "Test Engineer",
+      "debugger": "Debugger"
+    },
+    "metrics": {
+      "tasksCompleted": "Tasks Completed",
+      "successRate": "Success Rate",
+      "tokensUsed": "Tokens Used",
+      "lastActive": "Last Active"
+    },
+    "config": {
+      "title": "Agent Configuration",
+      "provider": "Provider",
+      "model": "Model",
+      "name": "Agent Name",
+      "description": "Description",
+      "save": "Save Agent",
+      "cancel": "Cancel"
+    }
+  },
+  "actions": {
+    "addAgent": "Add Agent",
+    "refresh": "Refresh",
+    "configure": "Configure",
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart",
+    "delete": "Delete",
+    "viewLogs": "View Logs",
+    "search": "Search",
+    "searchPlaceholder": "Search workspace..."
+  },
+  "panels": {
+    "explorer": {
+      "title": "Explorer",
+      "openEditors": "Open Editors",
+      "noOpenFiles": "No open files"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search files...",
+      "matchCase": "Match Case",
+      "wholeWord": "Whole Word",
+      "regex": "Use Regular Expression"
+    },
+    "settings": {
+      "title": "Settings",
+      "categories": {
+        "editor": "Editor",
+        "appearance": "Appearance",
+        "keybindings": "Keybindings",
+        "extensions": "Extensions"
+      }
+    }
   }
 }

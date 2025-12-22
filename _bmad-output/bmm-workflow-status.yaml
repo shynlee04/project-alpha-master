@@ -338,6 +338,33 @@ epic_status:
       Story 27-I complete - all validation passed
       Next: Validate 27-3, 27-4 or start Phase 2
 
+  - id: 28
+    name: "UX Brand Identity & Design System"
+    status: "IN_PROGRESS"
+    stories: "15/17"
+    priority: "P1"
+    platform: "B (Antigravity)"
+    started_at: "2025-12-22"
+    phases:
+      - phase: 1-4
+        status: "DONE"
+        stories: ["28-1", "28-2", "28-3", "28-4", "28-5", "28-6", "28-7", "28-8", "28-9", "28-10", "28-11", "28-12"]
+        notes: "Component creation (NOT integrated)"
+      - phase: 5
+        status: "IN_PROGRESS"
+        name: "Integration Enforcement (Course Correction)"
+        stories: ["28-13", "28-14", "28-15", "28-16", "28-17"]
+        completed: ["28-13", "28-14", "28-15"]
+        notes: |
+          Course Correction to fix orphaned components.
+          28-14: IconSidebar wired into IDELayout ✅
+          28-15: Mock agents data + useAgents hook ✅
+          i18n keys added for en/vi ✅
+    notes: |
+      CRITICAL FIX: Previous work created components but didn't integrate them.
+      Phase 5 is "Integration Enforcement" - wiring components into routes.
+      Browser verification screenshots captured as proof-of-work.
+
 
 
 

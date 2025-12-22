@@ -179,5 +179,90 @@
     "technical_details": "Chi tiết kỹ thuật",
     "try_again": "Thử lại",
     "reload_page": "Tải lại trang"
+  },
+  "sidebar": {
+    "explorer": "Trình duyệt tệp",
+    "agents": "Trợ lý AI",
+    "search": "Tìm kiếm",
+    "settings": "Cài đặt",
+    "terminal": "Terminal",
+    "git": "Git",
+    "collapse": "Thu gọn thanh bên",
+    "expand": "Mở rộng thanh bên",
+    "noAgents": "Chưa cấu hình trợ lý AI",
+    "noResults": "Không tìm thấy kết quả",
+    "recentSearches": "Tìm kiếm gần đây",
+    "clearRecent": "Xóa gần đây",
+    "toggleSidebar": "Bật/Tắt thanh bên (Ctrl+B)"
+  },
+  "agents": {
+    "panel": {
+      "title": "Quản lý Trợ lý AI",
+      "subtitle": "Cấu hình và quản lý các agent AI"
+    },
+    "status": {
+      "online": "Trực tuyến",
+      "offline": "Ngoại tuyến",
+      "busy": "Đang bận",
+      "error": "Lỗi"
+    },
+    "roles": {
+      "frontendDev": "Lập trình viên Frontend",
+      "systemArchitect": "Kiến trúc sư Hệ thống",
+      "qaEngineer": "Kỹ sư QA",
+      "techWriter": "Biên tập Kỹ thuật",
+      "testEngineer": "Kỹ sư Kiểm thử",
+      "debugger": "Chuyên gia Gỡ lỗi"
+    },
+    "metrics": {
+      "tasksCompleted": "Nhiệm vụ Hoàn thành",
+      "successRate": "Tỷ lệ Thành công",
+      "tokensUsed": "Token Đã dùng",
+      "lastActive": "Hoạt động Cuối"
+    },
+    "config": {
+      "title": "Cấu hình Trợ lý AI",
+      "provider": "Nhà cung cấp",
+      "model": "Mô hình",
+      "name": "Tên Trợ lý",
+      "description": "Mô tả",
+      "save": "Lưu Trợ lý",
+      "cancel": "Hủy"
+    }
+  },
+  "actions": {
+    "addAgent": "Thêm Trợ lý",
+    "refresh": "Làm mới",
+    "configure": "Cấu hình",
+    "start": "Bắt đầu",
+    "stop": "Dừng",
+    "restart": "Khởi động lại",
+    "delete": "Xóa",
+    "viewLogs": "Xem Nhật ký",
+    "search": "Tìm kiếm",
+    "searchPlaceholder": "Tìm trong dự án..."
+  },
+  "panels": {
+    "explorer": {
+      "title": "Trình duyệt",
+      "openEditors": "Tệp đang mở",
+      "noOpenFiles": "Không có tệp mở"
+    },
+    "search": {
+      "title": "Tìm kiếm",
+      "placeholder": "Tìm tệp...",
+      "matchCase": "Phân biệt hoa thường",
+      "wholeWord": "Toàn từ",
+      "regex": "Dùng biểu thức chính quy"
+    },
+    "settings": {
+      "title": "Cài đặt",
+      "categories": {
+        "editor": "Trình soạn thảo",
+        "appearance": "Giao diện",
+        "keybindings": "Phím tắt",
+        "extensions": "Tiện ích"
+      }
+    }
   }
 }
