@@ -7,6 +7,20 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock TanStack AI - capture the server handler
+let capturedHandler: ((args: unknown) => Promise<any>) | null = null;
+vi.mock('@tanstack/ai', () => ({
+    toolDefinition: vi.fn(() => ({
+        name: 'list_files',
+        description: 'List files',
+        server: vi.fn((handler: (args: unknown) => Promise<any>) => {
+            capturedHandler = handler;
+            return handler;
+        }),
+    })),
+}));
+
 import { listFilesDef, createListFilesTool } from '../list-files-tool';
 import type { AgentFileTools } from '../../facades';
 

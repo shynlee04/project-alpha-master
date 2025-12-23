@@ -892,11 +892,13 @@ development_status:
     tests_passing: 26
     notes: "ProviderAdapterFactory + CredentialVault + ModelRegistry. Dexie v4 credentials table."
   25-1-tanstack-ai-integration-setup: backlog
-  25-2-implement-file-tools: ready-for-dev
+  25-2-implement-file-tools: done
     story: _bmad-output/sprint-artifacts/25-2-implement-file-tools.md
     context: _bmad-output/sprint-artifacts/25-2-implement-file-tools-context.xml
     created_at: "2025-12-23T20:05:00+07:00"
-    notes: "TanStack AI toolDefinition pattern. File tools: read, write, list."
+    completed_at: "2025-12-23T20:30:00+07:00"
+    tests_passing: 17
+    notes: "TanStack AI toolDefinition + createXTool factories. read_file, write_file (needsApproval), list_files."
   25-3-implement-terminal-tools: backlog
   25-4-wire-tool-execution-to-ui: backlog
   25-5-implement-approval-flow: backlog

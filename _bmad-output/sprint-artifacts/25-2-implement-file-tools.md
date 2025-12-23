@@ -1,10 +1,11 @@
 # Story 25-2: Implement File Tools
 
 **Epic:** [25 - AI Foundation Sprint](../epics/epic-25-ai-foundation-sprint.md)  
-**Status:** `ready-for-dev`  
+**Status:** `done`  
 **Priority:** P0 (enables agent file operations)  
 **Points:** 5  
-**Created:** 2025-12-23T20:05:00+07:00
+**Created:** 2025-12-23T20:05:00+07:00  
+**Completed:** 2025-12-23T20:30:00+07:00
 
 ---
 
@@ -162,10 +163,22 @@ vi.mock('@/lib/agent/facades', () => ({
 ## Dev Agent Record
 
 ### Agent Model Used
-
+Gemini 2.5 Pro + Antigravity Agent
 
 ### Completion Notes List
-
+1. Created factory pattern (`createReadFileTool`, `createWriteFileTool`, `createListFilesTool`) for DI
+2. Used TanStack AI `toolDefinition().server()` pattern - correct for TanStack Start SSR
+3. Added `needsApproval: true` config for write_file tool (Story 25-5 integration)
+4. Zod schemas for input validation (ReadFileInputSchema, WriteFileInputSchema, ListFilesInputSchema)
+5. Uses `listDirectory` method from AgentFileTools (not `listFiles`)
+6. 17 unit tests across 3 test files using TanStack AI mocks
 
 ### File List
-
+- `src/lib/agent/tools/types.ts` (NEW) - 100 lines
+- `src/lib/agent/tools/read-file-tool.ts` (NEW) - 76 lines  
+- `src/lib/agent/tools/write-file-tool.ts` (NEW) - 58 lines
+- `src/lib/agent/tools/list-files-tool.ts` (NEW) - 64 lines
+- `src/lib/agent/tools/index.ts` (NEW) - 34 lines
+- `src/lib/agent/tools/__tests__/read-file-tool.test.ts` (NEW)
+- `src/lib/agent/tools/__tests__/write-file-tool.test.ts` (NEW)
+- `src/lib/agent/tools/__tests__/list-files-tool.test.ts` (NEW)

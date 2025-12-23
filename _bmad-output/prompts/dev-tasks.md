@@ -152,3 +152,20 @@ docs\2025-12-23\tech-context.md
 - also make sure to keep packages at latest compatible versions (especial the Tanstack AI packages ; and their ecosystem packages which are all at alpha stages so versions update are quite frequent)
 
 ## DO NOT USE YOUR INNATE IMPLEMENTATION PLAN - USE BMAD FRAMEWORK AND UPDATE ON WHAT I HAVE PROVIDED ABOVE
+
+---
+
+## in-depth Tanstack AI knowledge regarding tools, agentic loops etc (use @web and MCP servers' tools as Context7, Deepwiki, Tavily, Exa, Repomix to fetch these knowledge)
+
+- https://tanstack.com/ai/latest/docs/guides/client-tools
+
+- https://tanstack.com/ai/latest/docs/guides/server-tools
+
+- https://tanstack.com/ai/latest/docs/guides/tool-architecture
+
+- https://tanstack.com/ai/latest/docs/guides/tool-approval 
+
+- https://tanstack.com/ai/latest/docs/guides/agentic-cycle
+
+
+- https://tanstack.com/ai/latest/docs/guides/connection-adapters 

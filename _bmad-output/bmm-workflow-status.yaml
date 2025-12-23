@@ -23,28 +23,27 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "25-2-implement-file-tools"
+  key: "25-3-implement-terminal-tools"
   epic: 25
-  status: "ready-for-dev"
+  status: "backlog"
   platform: "Platform A"
   notes: |
-    Story file created per BMAD create-story workflow.
-    TanStack AI toolDefinition pattern with read_file, write_file, list_files.
-    Ready for Dev Agent implementation.
+    Next story in Epic 25 execution order.
+    Story 25-2 (Implement File Tools) completed, enabling file operations.
 
 
 last_completed_story:
-  key: "25-0-create-provideradapterfactory"
+  key: "25-2-implement-file-tools"
   epic: 25
-  completed_at: "2025-12-23T19:55:00+07:00"
+  completed_at: "2025-12-23T20:30:00+07:00"
   status: "done"
   platform: "Platform A"
   tests_passing: 26
   tests_total: 26
   notes: |
-    ProviderAdapterFactory with OpenRouter + CredentialVault + ModelRegistry.
-    Dexie v4 schema with credentials table for encrypted API keys.
-    5 new modules in src/lib/agent/providers/.
+    TanStack AI toolDefinition + createXTool factories.
+    read_file, write_file (needsApproval), list_files tools.
+    17 unit tests passing.
 
 
 # =============================================================================
