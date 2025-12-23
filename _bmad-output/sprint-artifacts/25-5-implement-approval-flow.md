@@ -2,7 +2,7 @@
 
 **Epic**: 25 - AI Foundation Sprint  
 **Story ID**: 25-5  
-**Status**: review  
+**Status**: done  
 **Priority**: P0 (Security Requirement)  
 **Story Points**: 5
 

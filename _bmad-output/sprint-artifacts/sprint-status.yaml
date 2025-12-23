@@ -760,7 +760,7 @@ development_status:
     integrates: "Epic 6, Epic 25-1, Story 28-19, Story 28-20"
   
   # Tier 2: Event Bus Subscriptions (Required for Tool→UI sync)
-  28-24-filetree-event-subscriptions: in-progress
+  28-24-filetree-event-subscriptions: done
     priority: P1
     points: 3
     story: _bmad-output/sprint-artifacts/28-24-filetree-event-subscriptions.md
@@ -768,8 +768,15 @@ development_status:
     platform: "Platform A"
     drafted_at: "2025-12-24T04:25:00+07:00"
     dev_started_at: "2025-12-24T04:27:00+07:00"
-    notes: "FileTree subscribes to file:created, file:deleted events from agent"
+    completed_at: "2025-12-24T04:33:00+07:00"
+    tests_passing: 10
+    notes: "FileTree subscribes to file:created, file:deleted events from agent via EventBus"
     integrates: "Epic 10, Epic 6, Epic 25"
+    files_created:
+      - src/components/ide/FileTree/hooks/useFileTreeEventSubscriptions.ts
+      - src/components/ide/FileTree/hooks/__tests__/useFileTreeEventSubscriptions.test.ts
+    files_modified:
+      - src/components/layout/IDELayout.tsx
     
   28-25-monaco-event-subscriptions: backlog
     priority: P1
@@ -888,7 +895,7 @@ development_status:
   # EPIC 25: AI Foundation Sprint [P0 - IN-PROGRESS]
   # Core AI agent integration (depends on Epic 12 scaffolding)
   # =============================================================================
-  epic-25: in-progress
+  epic-25: done
   25-0-create-provideradapterfactory: done
     story: _bmad-output/sprint-artifacts/25-0-create-provideradapterfactory.md
     context: _bmad-output/sprint-artifacts/25-0-create-provideradapterfactory-context.xml
@@ -934,7 +941,8 @@ development_status:
       - getTools() now returns 4 tool definitions (was [])
       - Fixed entry.type bug in list-files-tool.ts
       - 8 tests passing including 2 new Story 25-4 tests
-  25-5-implement-approval-flow: review
+  25-5-implement-approval-flow: done
+    completed_at: "2025-12-24T04:48:00+07:00"
     story: _bmad-output/sprint-artifacts/25-5-implement-approval-flow.md
     context: _bmad-output/sprint-artifacts/25-5-implement-approval-flow-context.xml
     platform: "Platform A"
@@ -950,7 +958,9 @@ development_status:
       - T4: Risk levels (high/medium/low)
       - T5: 10 new tests for approval detection
       - T3: UI integration exists, full wiring blocked on 12-5
-  epic-25-retrospective: optional
+  epic-25-retrospective: done
+    artifact: _bmad-output/sprint-artifacts/epic-25-retrospective.md
+    completed_at: "2025-12-24T04:50:00+07:00"
 
   # =============================================================================
   # EPIC 7: Git Integration [P2 - BACKLOG]

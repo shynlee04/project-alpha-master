@@ -2,7 +2,6 @@
 trigger: always_on
 ---
 
-
 ## Project Overview
 
 **Via-gent** is a browser-based IDE that runs code locally using WebContainers. It provides:
@@ -172,5 +171,37 @@ Based on my research, here's a comprehensive list of official documentation and 
 > 1. **Context7**: Query library documentation for API signatures
 > 2. **Deepwiki**: Check repo wikis for architecture decisions
 > 3. **Tavily/Exa**: Search for 2025 best practices
+
+
+## Advanced Method to Use Deepwiki MCP Server's Tools to ask semantic questions of a particular dependency repo
+- condition: provide correct link to Github's repo of the stack/dependency and/or (try both) direct link to Deepwiki page of it 
+- Then start to ask semantic questions as long or as complex but only for the concepts of the dependency/repo. 
+- The bellow are the collection of our frequently used and core dependencies used for this project. 
+
+- **Tanstack AI:** https://github.com/TanStack/ai/ ; https://deepwiki.com/TanStack/ai
+
+- **Tanstack Devtools:** https://github.com/TanStack/devtools ; https://deepwiki.com/TanStack/devtools
+
+- **Webcontainer Core:** https://github.com/stackblitz/webcontainer-core ; https://deepwiki.com/stackblitz/webcontainer-core
+
+- **Webcontainer documentation:** https://deepwiki.com/stackblitz/webcontainer-docs ; https://github.com/stackblitz/webcontainer-docs
+
+- **Webcontainer API:** https://deepwiki.com/stackblitz/webcontainer-api ; https://github.com/stackblitz/webcontainer-api
+
+- **Dexie.js:** https://deepwiki.com/dexie/dexie.js ; https://github.com/dexie/Dexie.js
+
+- **Xterm.js:** https://deepwiki.com/xtermjs/xterm.js ; https://github.com/xtermjs/xterm.js
+
+- **Monaco Editor:** https://deepwiki.com/microsoft/monaco-editor ; https://github.com/microsoft/monaco-editor
+
+- **Rehype Raw:** https://deepwiki.com/rehypejs/rehype-raw ; https://github.com/rehypejs/rehype-raw
+
+- **Rehype Sanitize:** https://deepwiki.com/rehypejs/rehype-sanitize ; https://github.com/rehypejs/rehype-sanitize
+
+- **Zustand:** https://deepwiki.com/pmndrs/zustand ; https://github.com/pmndrs/zustand
+
+- **EventEmitter3:** https://deepwiki.com/primus/eventemitter3 ; https://github.com/primus/eventemitter3 
+
+
 > 4. **Repomix**: Analyze current codebase structure
 >
