@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context story="25-2-implement-file-tools" created="2025-12-23T20:05:00+07:00">
+  
+  <research-findings>
+    <source name="Context7 TanStack AI" date="2025-12-23">
+      <finding type="pattern">
+        toolDefinition() creates tool with name, description, inputSchema using Zod
+      </finding>
+      <finding type="pattern">
+        .server() method creates server-side implementation
+      </finding>
+      <finding type="pattern">
+        Tools passed to chat() as array
+      </finding>
+      <finding type="version">
+        TanStack AI 0.2.0 - December 2025
+      </finding>
+    </source>
+  </research-findings>
+
+  <code-state>
+    <existing-file path="src/lib/agent/facades/file-tools.ts">
+      AgentFileTools interface with readFile, writeFile, listFiles, createFile, deleteFile
+    </existing-file>
+    <existing-file path="src/lib/agent/facades/file-tools-impl.ts">
+      FileToolsFacade implementation with FileLock integration
+    </existing-file>
+    <existing-file path="src/lib/agent/facades/file-lock.ts">
+      FileLock class for concurrent access control
+    </existing-file>
+    <existing-file path="src/lib/agent/providers/provider-adapter.ts">
+      ProviderAdapterFactory for TanStack AI adapters
+    </existing-file>
+    <new-directory path="src/lib/agent/tools/">
+      New directory for TanStack AI tool definitions
+    </new-directory>
+  </code-state>
+
+  <architecture-patterns>
+    <pattern name="Tool Definition">
+      <description>Each tool uses TanStack AI toolDefinition with Zod schema</description>
+      <code-example>
+        const readFileDef = toolDefinition({
+          name: 'read_file',
+          inputSchema: z.object({ path: z.string() }),
+        });
+        const readFile = readFileDef.server(async ({ path }) => {...});
+      </code-example>
+    </pattern>
+    <pattern name="Facade Integration">
+      <description>Tools delegate to AgentFileTools facade, not direct FS access</description>
+    </pattern>
+    <pattern name="Approval Flag">
+      <description>Write operations marked with needsApproval for Story 25-5</description>
+    </pattern>
+  </architecture-patterns>
+
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^0.2.0" />
+    <dependency name="zod" version="^3.23.8" />
+    <dependency name="AgentFileTools" path="src/lib/agent/facades" />
+  </dependencies>
+
+  <test-strategy>
+    <approach>Mock AgentFileTools facade methods</approach>
+    <coverage>80% minimum per AC-25-2-5</coverage>
+    <pattern>
+      vi.mock for fileToolsFacade
+      Test success, error, edge cases for each tool
+    </pattern>
+  </test-strategy>
+
+</story-context>

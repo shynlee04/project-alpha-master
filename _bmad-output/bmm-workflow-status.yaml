@@ -23,13 +23,14 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "25-1-tanstack-ai-integration-setup"
+  key: "25-2-implement-file-tools"
   epic: 25
-  status: "ready"
+  status: "ready-for-dev"
   platform: "Platform A"
   notes: |
-    Next story in Epic 25 execution order.
-    Story 25-0 (ProviderAdapterFactory) completed, enabling provider abstraction.
+    Story file created per BMAD create-story workflow.
+    TanStack AI toolDefinition pattern with read_file, write_file, list_files.
+    Ready for Dev Agent implementation.
 
 
 last_completed_story:
