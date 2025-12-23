@@ -12,6 +12,9 @@ export type { AgentFileTools, FileEntry, FileReadResult } from './file-tools';
 export { validatePath, PathValidationError } from './file-tools';
 export { FileToolsFacade, createFileToolsFacade } from './file-tools-impl';
 
+// File Lock (Story 12-1B)
+export { FileLock, FileLockTimeoutError, fileLock, createFileLock } from './file-lock';
+
 // Terminal Tools (Story 12-2 - TBD)
 // export type { AgentTerminalTools } from './terminal-tools';
 // export { TerminalToolsFacade, createTerminalToolsFacade } from './terminal-tools-impl';

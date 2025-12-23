@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="12-1b-add-concurrency-control" created="2025-12-23T18:54:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/agent/facades/file-tools-impl.ts">
+      <description>Current FileToolsFacade implementation without concurrency control</description>
+      <content><![CDATA[
+export class FileToolsFacade implements AgentFileTools {
+    constructor(
+        private readonly localFS: LocalFSAdapter,
+        private readonly syncManager: SyncManager,
+        private readonly eventBus: WorkspaceEventEmitter
+    ) { }
+
+    async writeFile(path: string, content: string): Promise<void> {
+        validatePath(path);
+        await this.syncManager.writeFile(path, content);
+        this.eventBus.emit('file:modified', { path, source: 'agent', content });
+    }
+
+    async createFile(path: string, content = ''): Promise<void> {
+        validatePath(path);
+        await this.syncManager.writeFile(path, content);
+        this.eventBus.emit('file:created', { path, source: 'agent' });
+    }
+
+    async deleteFile(path: string): Promise<void> {
+        validatePath(path);
+        await this.syncManager.deleteFile(path);
+        this.eventBus.emit('file:deleted', { path, source: 'agent' });
+    }
+}
+      ]]></content>
+    </file>
+    <file path="src/lib/agent/facades/file-tools.ts">
+      <description>AgentFileTools interface definition</description>
+      <key_types><![CDATA[
+export interface AgentFileTools {
+    readFile(path: string): Promise<string | null>;
+    writeFile(path: string, content: string): Promise<void>;
+    listDirectory(path: string, recursive?: boolean): Promise<FileEntry[]>;
+    createFile(path: string, content?: string): Promise<void>;
+    deleteFile(path: string): Promise<void>;
+    searchFiles(query: string, basePath?: string): Promise<FileEntry[]>;
+}
+
+export class PathValidationError extends Error { ... }
+export function validatePath(path: string): void { ... }
+      ]]></key_types>
+    </file>
+    <file path="src/lib/events/workspace-events.ts">
+      <description>Event emitter with typed events</description>
+      <relevant_events><![CDATA[
+// Events that need lockAcquired/lockReleased fields
+'file:modified' - emitted by writeFile
+'file:created' - emitted by createFile
+'file:deleted' - emitted by deleteFile
+      ]]></relevant_events>
+    </file>
+  </files>
+
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="master-plan" query="concurrent edit handling">
+      Research identified concurrent edits as Critical severity.
+      Mitigation: File-level mutex lock with 30s timeout.
+    </finding>
+    <finding source="architecture.md" query="event-driven pattern">
+      All events should be typed via WorkspaceEventEmitter.
+      Events provide observability for AI agent operations.
+    </finding>
+    <finding source="code-analysis" query="write operations">
+      3 methods need locking: writeFile, createFile, deleteFile.
+      All currently emit events with { path, source: 'agent' }.
+    </finding>
+  </research_notes>
+
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="FileLock class" source="epic-25-research-findings">
+      Use Map<string, Promise> for per-file locks.
+      acquire() waits for existing lock or times out.
+      release() resolves the promise and removes from map.
+      30-second timeout is the default.
+    </pattern>
+    <pattern name="try/finally for lock release" source="best-practices">
+      Always wrap locked operations in try/finally.
+      Lock must be released even on exception.
+      Error should be re-thrown after release.
+    </pattern>
+    <pattern name="Event payload extension" source="story-12-1B-ACs">
+      Add lockAcquired and lockReleased timestamps.
+      Both are number (Date.now() values).
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      FileLock should be a singleton or injected dependency.
+      Consider exporting a shared instance from file-lock.ts.
+    </note>
+    <note priority="high">
+      FileLockTimeoutError should include path and timeout.
+      Use it to provide actionable error messages.
+    </note>
+    <note priority="medium">
+      Tests should verify concurrent writes wait for lock.
+      Use setTimeout to simulate slow operations.
+    </note>
+    <note priority="medium">
+      Event types in workspace-events.ts may need updating
+      to include lockAcquired/lockReleased optional fields.
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@/lib/agent/facades/file-tools" usage="interface" />
+    <dependency name="@/lib/agent/facades/file-tools-impl" usage="implementation" />
+    <dependency name="@/lib/events/workspace-events" usage="event types" />
+  </dependencies>
+
+  <!-- New files to create -->
+  <new_files>
+    <file path="src/lib/agent/facades/file-lock.ts" action="create">
+      <purpose>FileLock class and FileLockTimeoutError</purpose>
+    </file>
+    <file path="src/lib/agent/facades/__tests__/file-lock.test.ts" action="create">
+      <purpose>Unit tests for FileLock</purpose>
+    </file>
+  </new_files>
+</context>

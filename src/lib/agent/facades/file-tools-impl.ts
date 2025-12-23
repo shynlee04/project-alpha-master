@@ -4,13 +4,16 @@
  * 
  * Implementation of AgentFileTools interface.
  * Wraps LocalFSAdapter + SyncManager with event emission.
+ * Includes file-level locking for concurrent operation safety.
  * 
  * @epic 12 - Agent Tool Interface Layer
  * @story 12-1 - Create AgentFileTools Facade
+ * @story 12-1B - Add Concurrency Control to FileToolsFacade
  */
 
 import type { AgentFileTools, FileEntry } from './file-tools';
 import { validatePath, PathValidationError } from './file-tools';
+import { FileLock, fileLock as defaultFileLock } from './file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
@@ -23,18 +26,21 @@ export { PathValidationError };
  * Wraps LocalFSAdapter (reads) and SyncManager (writes) to provide
  * a stable API for AI agent file operations.
  * 
- * All write operations emit events via EventBus with source: 'agent'.
- * All paths are validated for safety before operations.
+ * All write operations:
+ * - Acquire file-level lock before operation
+ * - Emit events via EventBus with source: 'agent' and lock timestamps
+ * - Release lock in finally block (even on error)
  */
 export class FileToolsFacade implements AgentFileTools {
     constructor(
         private readonly localFS: LocalFSAdapter,
         private readonly syncManager: SyncManager,
-        private readonly eventBus: WorkspaceEventEmitter
+        private readonly eventBus: WorkspaceEventEmitter,
+        private readonly fileLock: FileLock = defaultFileLock
     ) { }
 
     /**
-     * Read a file's content
+     * Read a file's content (no lock required for reads)
      */
     async readFile(path: string): Promise<string | null> {
         validatePath(path);
@@ -54,15 +60,28 @@ export class FileToolsFacade implements AgentFileTools {
     /**
      * Write content to a file (creates if doesn't exist)
      * Uses SyncManager for dual-write to LocalFS + WebContainer
+     * @story 12-1B - Now includes file-level locking
      */
     async writeFile(path: string, content: string): Promise<void> {
         validatePath(path);
-        await this.syncManager.writeFile(path, content);
-        this.eventBus.emit('file:modified', { path, source: 'agent', content });
+        const lockAcquired = await this.fileLock.acquire(path);
+        try {
+            await this.syncManager.writeFile(path, content);
+            const lockReleased = Date.now();
+            this.eventBus.emit('file:modified', {
+                path,
+                source: 'agent',
+                content,
+                lockAcquired,
+                lockReleased
+            });
+        } finally {
+            this.fileLock.release(path);
+        }
     }
 
     /**
-     * List contents of a directory
+     * List contents of a directory (no lock required for reads)
      */
     async listDirectory(path: string = '', recursive = false): Promise<FileEntry[]> {
         validatePath(path);
@@ -85,24 +104,48 @@ export class FileToolsFacade implements AgentFileTools {
 
     /**
      * Create a new file
+     * @story 12-1B - Now includes file-level locking
      */
     async createFile(path: string, content = ''): Promise<void> {
         validatePath(path);
-        await this.syncManager.writeFile(path, content);
-        this.eventBus.emit('file:created', { path, source: 'agent' });
+        const lockAcquired = await this.fileLock.acquire(path);
+        try {
+            await this.syncManager.writeFile(path, content);
+            const lockReleased = Date.now();
+            this.eventBus.emit('file:created', {
+                path,
+                source: 'agent',
+                lockAcquired,
+                lockReleased
+            });
+        } finally {
+            this.fileLock.release(path);
+        }
     }
 
     /**
      * Delete a file
+     * @story 12-1B - Now includes file-level locking
      */
     async deleteFile(path: string): Promise<void> {
         validatePath(path);
-        await this.syncManager.deleteFile(path);
-        this.eventBus.emit('file:deleted', { path, source: 'agent' });
+        const lockAcquired = await this.fileLock.acquire(path);
+        try {
+            await this.syncManager.deleteFile(path);
+            const lockReleased = Date.now();
+            this.eventBus.emit('file:deleted', {
+                path,
+                source: 'agent',
+                lockAcquired,
+                lockReleased
+            });
+        } finally {
+            this.fileLock.release(path);
+        }
     }
 
     /**
-     * Search for files by name pattern
+     * Search for files by name pattern (no lock required for reads)
      */
     async searchFiles(query: string, basePath = ''): Promise<FileEntry[]> {
         validatePath(basePath);
@@ -120,7 +163,9 @@ export class FileToolsFacade implements AgentFileTools {
 export function createFileToolsFacade(
     localFS: LocalFSAdapter,
     syncManager: SyncManager,
-    eventBus: WorkspaceEventEmitter
+    eventBus: WorkspaceEventEmitter,
+    fileLock: FileLock = defaultFileLock
 ): AgentFileTools {
-    return new FileToolsFacade(localFS, syncManager, eventBus);
+    return new FileToolsFacade(localFS, syncManager, eventBus, fileLock);
 }
+

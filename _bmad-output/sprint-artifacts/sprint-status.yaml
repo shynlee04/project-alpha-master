@@ -854,8 +854,9 @@ development_status:
   # =============================================================================
   # Prerequisite for Epic 6 (AI Agent Integration)
   # =============================================================================
-  epic-12: backlog
+  epic-12: in-progress
   12-1-create-agentfiletools-facade: done
+  12-1b-add-concurrency-control: ready-for-dev
   12-2-create-agentterminaltools-facade: backlog
   12-3-create-agentsynctools-facade: backlog
   12-4-create-agentgittools-facade-stub: backlog

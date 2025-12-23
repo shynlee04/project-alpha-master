@@ -2,11 +2,12 @@ import EventEmitter from 'eventemitter3'
 
 export interface WorkspaceEvents {
   // File System Events
-  'file:created': [{ path: string; source: 'local' | 'editor' | 'agent' }]
+  // Lock timestamps (lockAcquired, lockReleased) added in Story 12-1B for agent concurrency tracking
+  'file:created': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
   'file:modified': [
-    { path: string; source: 'local' | 'editor' | 'agent'; content?: string },
+    { path: string; source: 'local' | 'editor' | 'agent'; content?: string; lockAcquired?: number; lockReleased?: number },
   ]
-  'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent' }]
+  'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
   'directory:created': [{ path: string }]
   'directory:deleted': [{ path: string }]
 
