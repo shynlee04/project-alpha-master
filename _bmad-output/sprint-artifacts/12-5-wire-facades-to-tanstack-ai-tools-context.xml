@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="12-5-wire-facades-to-tanstack-ai-tools" created="2025-12-24T05:21:00+07:00">
+  
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/agent/factory.ts">
+      <content><![CDATA[
+// Key function: createAgentClientTools
+export function createAgentClientTools(options: ToolFactoryOptions) {
+    const fileTools = createClientFileTools(options);
+    const terminalTools = createClientTerminalTools(options);
+
+    return {
+        fileTools,
+        terminalTools,
+        all: [
+            fileTools.readFile,
+            fileTools.writeFile,
+            fileTools.listFiles,
+            terminalTools.executeCommand,
+        ],
+        getClientTools() {
+            return clientTools(
+                fileTools.readFile,
+                fileTools.writeFile,
+                fileTools.listFiles,
+                terminalTools.executeCommand
+            );
+        },
+    };
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/hooks/use-agent-chat-with-tools.ts">
+      <content><![CDATA[
+// Tool integration in hook
+const agentTools = useMemo(() => {
+    if (!toolsAvailable) return null;
+    return createAgentClientTools(toolFactoryOptions);
+}, [toolsAvailable, toolFactoryOptions]);
+
+const chatOptions = useMemo(() => {
+    if (agentTools) {
+        return createChatClientOptions({
+            connection,
+            tools: agentTools.getClientTools(),
+        });
+    }
+    return { connection };
+}, [connection, agentTools]);
+
+const chatResult = useChat(chatOptions);
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings -->
+  <research_notes>
+    <finding source="tanstack-docs" query="client tools pattern">
+      toolDefinition().client((input) => {...}) creates browser-executable tools.
+      clientTools() helper creates type-safe tool arrays for createChatClientOptions.
+    </finding>
+    <finding source="codebase" file="read-file-tool.ts">
+      createReadFileClientTool() pattern uses readFileDef.client() 
+      with facade provider for lazy initialization.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns -->
+  <architecture_patterns>
+    <pattern name="Facade Provider Pattern" source="factory.ts">
+      getFileTools: () => AgentFileTools | null
+      Allows lazy initialization and null check for workspace not loaded.
+    </pattern>
+    <pattern name="Event Emission Pattern" source="factory.ts">
+      Tools emit events after operations:
+      - eventBus?.emit('file:modified', { path, source: 'agent', content })
+      - eventBus?.emit('process:exited', { pid, exitCode })
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes -->
+  <technical_notes>
+    <note priority="high">
+      Implementation was completed as part of Story 25-4.
+      This story validates and documents the wiring.
+    </note>
+    <note priority="medium">
+      TanStack AI clientTools() returns typed array for type inference.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^0.2.0" />
+    <dependency name="@tanstack/ai-client" version="^0.2.0" />
+    <dependency name="@tanstack/ai-react" version="^0.2.0" />
+  </dependencies>
+</context>

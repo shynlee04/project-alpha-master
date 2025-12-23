@@ -127,6 +127,46 @@ development_status:
     completed_at: "2025-12-21T14:05:00+07:00"
 
   # =============================================================================
+  # EPIC 12: Tool Interface Layer [DONE]
+  # =============================================================================
+  # Stories for AI agent file/terminal operation facades
+  # Part of AI Foundation Phase (Epic 25/12/28 integration)
+  # =============================================================================
+  epic-12: done
+  12-1-create-agentfiletools-facade: done
+    story: _bmad-output/sprint-artifacts/12-1-create-agentfiletools-facade.md
+    context: _bmad-output/sprint-artifacts/12-1-create-agentfiletools-facade-context.xml
+    platform: "Platform A"
+    tests_passing: 14
+    notes: "FileToolsFacade with event emission"
+
+  12-1b-add-concurrency-control: done
+    story: _bmad-output/sprint-artifacts/12-1b-add-concurrency-control.md
+    context: _bmad-output/sprint-artifacts/12-1b-add-concurrency-control-context.xml
+    platform: "Platform A"
+    tests_passing: 28
+    notes: "File-level mutex locks with 30s timeout"
+
+  12-2-create-agentterminaltools-facade: done
+    story: _bmad-output/sprint-artifacts/12-2-create-agentterminaltools-facade.md
+    context: _bmad-output/sprint-artifacts/12-2-create-agentterminaltools-facade-context.xml
+    platform: "Platform A"
+    tests_passing: 14
+    notes: "TerminalToolsFacade with shell sessions"
+
+  12-5-wire-facades-to-tanstack-ai-tools: done
+    story: _bmad-output/sprint-artifacts/12-5-wire-facades-to-tanstack-ai-tools.md
+    context: _bmad-output/sprint-artifacts/12-5-wire-facades-to-tanstack-ai-tools-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-24T05:21:00+07:00"
+    completed_at: "2025-12-24T05:21:00+07:00"
+    tests_passing: 48
+    notes: "createAgentClientTools + getClientTools() wiring complete"
+    files_created:
+      - src/lib/agent/factory.ts
+      - src/lib/agent/hooks/use-agent-chat-with-tools.ts
+
+  # =============================================================================
   # EPIC 13: Terminal & Sync Stability [P0 - IN PROGRESS]
   # =============================================================================
   # Priority: P0 - Highest (Blocks 14-step validation)
@@ -778,17 +818,34 @@ development_status:
     files_modified:
       - src/components/layout/IDELayout.tsx
     
-  28-25-monaco-event-subscriptions: backlog
+  28-25-monaco-event-subscriptions: done
     priority: P1
     points: 3
-    notes: "Monaco refreshes on file:modified events"
+    story: _bmad-output/sprint-artifacts/28-25-monaco-event-subscriptions.md
+    context: _bmad-output/sprint-artifacts/28-25-monaco-event-subscriptions-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-24T05:05:00+07:00"
+    completed_at: "2025-12-24T05:10:00+07:00"
+    tests_passing: 10
+    notes: "useMonacoEventSubscriptions hook: agent file:modified events with activeFilePath filter"
     integrates: "Epic 10, Epic 6"
+    files_created:
+      - src/components/ide/MonacoEditor/hooks/useMonacoEventSubscriptions.ts
+      - src/components/ide/MonacoEditor/hooks/__tests__/useMonacoEventSubscriptions.test.ts
     
-  28-26-terminal-event-subscriptions: backlog
+  28-26-terminal-event-subscriptions: done
     priority: P1
     points: 3
-    notes: "Terminal subscribes to process:output, process:exit events"
+    story: _bmad-output/sprint-artifacts/28-26-terminal-event-subscriptions.md
+    platform: "Platform A"
+    drafted_at: "2025-12-24T05:12:00+07:00"
+    completed_at: "2025-12-24T05:14:00+07:00"
+    tests_passing: 8
+    notes: "useTerminalEventSubscriptions hook: process:output and process:exited events"
     integrates: "Epic 10, Epic 6"
+    files_created:
+      - src/components/ide/XTerminal/hooks/useTerminalEventSubscriptions.ts
+      - src/components/ide/XTerminal/hooks/__tests__/useTerminalEventSubscriptions.test.ts
   
   # Tier 3: Multi-Agent UX (Required for LangGraph orchestration)
   28-28-agent-status-indicator: backlog

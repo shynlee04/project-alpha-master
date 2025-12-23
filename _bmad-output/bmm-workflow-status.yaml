@@ -23,31 +23,24 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "25-5-implement-approval-flow"
-  epic: 25
-  status: "review"
+  key: "12-5-wire-facades-to-tanstack-ai-tools"
+  epic: 12
+  status: "backlog"
   platform: "Platform A"
-  tests_passing: 10
-  total_agent_tests: 125
   notes: |
-    Story 25-5: Implement Approval Flow (P0 Security).
-    ✅ T1: needsApproval added to write_file + execute_command
-    ✅ T2: PendingApprovalInfo + pendingApprovals extraction in hook
-    ✅ T4: Risk levels (high/medium/low) implemented
-    ✅ T5: 10 new tests for approval detection
-    ⏸️ T3: UI wiring exists, full integration blocked on Story 12-5
-    Code review PASSED 2025-12-24
+    Next story in AI Foundation Phase.
+    Prerequisite: Stories 28-24, 28-25, 28-26 all DONE.
     
 last_completed_story:
-  key: "25-4-wire-tool-execution-to-ui"
-  epic: 25
-  completed_at: "2025-12-24T03:30:00+07:00"
+  key: "28-26-terminal-event-subscriptions"
+  epic: 28
+  completed_at: "2025-12-24T05:14:00+07:00"
   status: "done"
   platform: "Platform A"
   tests_passing: 8
   notes: |
-    getTools() now returns 4 tool definitions.
-    Client tool factories added. All tests passing.
+    useTerminalEventSubscriptions hook for process:output and process:exited events.
+    Part of Tier 2 Event Bus Subscriptions.
 
 
 last_completed_story:

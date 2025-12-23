@@ -127,10 +127,47 @@ export function useMonacoEventSubscriptions(
 
 ## Dev Agent Record
 
-_To be filled during development_
+**Agent:** Platform A (Antigravity - Gemini 2.5 Pro)  
+**Session:** 2025-12-24T05:05:00+07:00
+
+### Task Progress
+- [x] T0: Review existing `useFileTreeEventSubscriptions` pattern
+- [x] T1: Review EventBus event types in `workspace-events.ts`
+- [x] T2: Create `useMonacoEventSubscriptions.ts` hook
+- [x] T3: Create unit tests for hook (10 tests)
+- [ ] T4: Integrate hook into MonacoEditor component (optional - deferred)
+- [x] T5: Update sprint-status.yaml
+- [x] T6: Update bmm-workflow-status.yaml
+
+### Research Executed
+- Context7: TanStack AI tool patterns reviewed
+- Codebase: `useFileTreeEventSubscriptions.ts` pattern followed
+- Codebase: `workspace-events.ts` event types reviewed
+
+### Files Changed
+| File | Action | Lines |
+|------|--------|-------|
+| `src/components/ide/MonacoEditor/hooks/useMonacoEventSubscriptions.ts` | Created | 115 |
+| `src/components/ide/MonacoEditor/hooks/__tests__/useMonacoEventSubscriptions.test.ts` | Created | 195 |
+
+### Tests Created
+- `useMonacoEventSubscriptions.test.ts`: 10 tests
+  - Subscription lifecycle: 3 tests
+  - Agent source filtering: 3 tests
+  - ActiveFilePath filtering: 2 tests
+  - Debouncing: 1 test
+  - Content handling: 1 test
+
+### Decisions Made
+- Followed exact pattern from `useFileTreeEventSubscriptions` for consistency
+- Used refs for callback stability to avoid stale closures
+- Content filtering added (undefined content = no trigger)
 
 ## Status History
 
 | Date | Status | Agent | Notes |
 |------|--------|-------|-------|
 | 2025-12-24T05:05:00 | drafted | SM (Platform A) | Story created per story-dev-cycle |
+| 2025-12-24T05:08:00 | ready-for-dev | SM (Platform A) | Context XML created |
+| 2025-12-24T05:09:00 | in-progress | Dev (Platform A) | Implementation started |
+| 2025-12-24T05:10:00 | review | Dev (Platform A) | 10/10 tests passing |
