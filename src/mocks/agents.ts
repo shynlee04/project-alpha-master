@@ -11,7 +11,7 @@ export interface Agent {
     name: string
     role: string
     status: 'online' | 'offline' | 'busy' | 'error'
-    provider: 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google'
+    provider: 'OpenRouter' | 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google'
     model: string
     description?: string
     tasksCompleted: number

@@ -240,7 +240,27 @@
         "nameRequired": "Tên trợ lý là bắt buộc",
         "providerRequired": "Vui lòng chọn nhà cung cấp",
         "modelRequired": "Vui lòng chọn mô hình"
-      }
+      },
+      "apiKey": {
+        "label": "Khóa API",
+        "placeholder": "Nhập khóa API...",
+        "save": "Lưu",
+        "saved": "Đã lưu khóa API an toàn",
+        "saveFailed": "Không thể lưu khóa API",
+        "stored": "Đã lưu khóa",
+        "change": "Đổi khóa",
+        "checking": "Đang kiểm tra...",
+        "required": "Cần nhập khóa API",
+        "openrouterNote": "Mô hình miễn phí hoạt động mà không cần khóa API. Thêm khóa cho mô hình cao cấp."
+      },
+      "testConnection": "Kiểm tra kết nối",
+      "testConnection.noKey": "Chưa có khóa API",
+      "testConnection.success": "Kết nối thành công! ({{latency}}ms)",
+      "testConnection.failed": "Kết nối thất bại: {{error}}",
+      "testConnection.error": "Lỗi kiểm tra kết nối",
+      "freeModels": "(Có mô hình miễn phí)",
+      "modelFree": "(Miễn phí)",
+      "modelLoading": "Đang tải mô hình..."
     }
   },
   "actions": {

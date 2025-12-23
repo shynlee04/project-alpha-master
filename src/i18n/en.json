@@ -240,7 +240,27 @@
         "nameRequired": "Agent name is required",
         "providerRequired": "Please select a provider",
         "modelRequired": "Please select a model"
-      }
+      },
+      "apiKey": {
+        "label": "API Key",
+        "placeholder": "Enter API key...",
+        "save": "Save",
+        "saved": "API key saved securely",
+        "saveFailed": "Failed to save API key",
+        "stored": "Key stored",
+        "change": "Change Key",
+        "checking": "Checking...",
+        "required": "API key is required",
+        "openrouterNote": "Free models work without API key. Add key for premium models."
+      },
+      "testConnection": "Test Connection",
+      "testConnection.noKey": "No API key stored",
+      "testConnection.success": "Connection successful! ({{latency}}ms)",
+      "testConnection.failed": "Connection failed: {{error}}",
+      "testConnection.error": "Connection test error",
+      "freeModels": "(Free models available)",
+      "modelFree": "(Free)",
+      "modelLoading": "Loading models..."
     }
   },
   "actions": {

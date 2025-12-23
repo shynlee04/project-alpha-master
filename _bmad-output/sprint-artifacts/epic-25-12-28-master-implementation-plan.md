@@ -107,34 +107,61 @@ src/lib/agent/providers/
 
 ---
 
-## Current Progress (Updated: 2025-12-24T03:40)
+## Current Progress (Updated: 2025-12-24T05:40)
 
-### ✅ Epic 12 - Tool Interface Layer
+> [!IMPORTANT]
+> **Audit Results (2025-12-24):** Event subscriptions DONE. Story 28-16 uses MOCK providers - needs Story 25-6 to wire to Epic 25.
+
+### ✅ Epic 12 - Tool Interface Layer (PARTIAL - 4/6)
 | Story | Status | Tests | Notes |
 |-------|--------|-------|-------|
 | 12-1: AgentFileTools Facade | ✅ DONE | 14 | File operations with event emission |
 | 12-1B: Concurrency Control | ✅ DONE | 28 | File-level mutex lock |
 | 12-2: AgentTerminalTools Facade | ✅ DONE | 14 | Terminal operations + shell sessions |
-| 12-5: Wire Facades to Tools | ⏳ BACKLOG | - | Depends on 25-4 review |
+| 12-3: AgentSyncTools Facade | ⏸️ DEFERRED | - | Not needed for E2E |
+| 12-4: AgentGitTools Stub | ⏸️ DEFERRED | - | Blocked by Epic 7 |
+| 12-5: Wire Facades to Tools | ✅ DONE | 48 | `createAgentClientTools()` + factory.ts |
 
-### ✅ Epic 25 - AI Foundation Sprint
+### ✅ Epic 25 - AI Foundation Sprint (PARTIAL - 6/8)
 | Story | Status | Tests | Notes |
 |-------|--------|-------|-------|
 | 25-0: ProviderAdapterFactory | ✅ DONE | 26 | OpenRouter + encrypted credentials |
 | 25-1: TanStack AI Integration | ✅ DONE | 13 | /api/chat + useAgentChat hook |
 | 25-2: File Tools | ✅ DONE | 17 | read_file, write_file, list_files |
 | 25-3: Terminal Tools | ✅ DONE | 7 | execute_command with 2-min timeout |
-| **25-4: Wire Tool Execution** | 🔍 REVIEW | 8 | **CRITICAL FIX: getTools() now returns 4 tools** |
-| 25-5: Approval Flow | ⏳ BACKLOG | - | Security requirement |
+| 25-4: Wire Tool Execution | ✅ DONE | 8 | `getTools()` returns 4 tools |
+| 25-5: Approval Flow | ⏸️ BACKLOG | - | ApprovalOverlay exists, needs wiring |
+| **25-6: Wire UI to Providers** | 🆕 TODO | - | Connect 28-16 to credentialVault/modelRegistry |
+| **25-7: Wire Approval to Tools** | 🆕 TODO | - | Connect ApprovalOverlay to tool exec |
 
-### ⏳ Epic 28 - Event Subscriptions (P0 Blockers)
+### ✅ Epic 27 - State Architecture (DONE - 6/9)
 | Story | Status | Notes |
 |-------|--------|-------|
-| 28-24: FileTree Event Subscription | ⏳ BACKLOG | file:created/deleted/renamed |
-| 28-25: Monaco Event Subscription | ⏳ BACKLOG | file:modified from agent |
-| 28-26: Terminal Event Subscription | ⏳ BACKLOG | process:output/exited |
+| 27-1: Zustand Migration | ✅ DONE | Zustand stores created |
+| 27-1B: Component Migration | ✅ DONE | TanStack Store removed |
+| 27-1C: Dexie Persistence | ✅ DONE | idb → Dexie complete |
+| 27-2: Event Bus Integration | ✅ DONE | EventEmitter3 wired |
+| 27-5A: Refactor IDELayout | ✅ DONE | 590→174 lines |
+| 27-I: Integration Verification | ✅ DONE | 24/27 tests (2 pre-existing) |
+| 27-5B/5C/6/7 | ⏸️ BACKLOG | Code organization (deferred) |
+
+### ✅ Epic 28 - Event Subscriptions (DONE - 9/9)
+| Story | Status | Tests | Notes |
+|-------|--------|-------|-------|
+| 28-16: Agent Config Dialog | ✅ DONE | 5 | **MOCK only** - needs 25-6 |
+| 28-18: StatusBar Indicators | ✅ DONE | - | Connection status |
+| 28-19: ToolCallBadge | ✅ DONE | 18 | Tool call display |
+| 28-20: CodeBlock | ✅ DONE | 20 | Syntax highlighting |
+| 28-21: DiffPreview | ✅ DONE | 10 | File diff display |
+| 28-22: ApprovalOverlay | ✅ DONE | 19 | Needs wiring (25-7) |
+| 28-23: StreamingMessage | ✅ DONE | 12 | Token streaming |
+| 28-24: FileTree Events | ✅ DONE | 10 | file:created/deleted/renamed |
+| 28-25: Monaco Events | ✅ DONE | 10 | file:modified from agent |
+| 28-26: Terminal Events | ✅ DONE | 8 | process:output/exited |
 
 ---
+
+## 🆕 New Stories Required (from Audit)
 
 ## Proposed Changes
 

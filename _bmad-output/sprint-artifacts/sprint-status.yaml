@@ -127,12 +127,13 @@ development_status:
     completed_at: "2025-12-21T14:05:00+07:00"
 
   # =============================================================================
-  # EPIC 12: Tool Interface Layer [DONE]
+  # EPIC 12: Tool Interface Layer [PARTIAL - 4/6 DONE]
   # =============================================================================
   # Stories for AI agent file/terminal operation facades
   # Part of AI Foundation Phase (Epic 25/12/28 integration)
+  # Note: Stories 12-3 and 12-4 deferred (not required for E2E)
   # =============================================================================
-  epic-12: done
+  epic-12: partial
   12-1-create-agentfiletools-facade: done
     story: _bmad-output/sprint-artifacts/12-1-create-agentfiletools-facade.md
     context: _bmad-output/sprint-artifacts/12-1-create-agentfiletools-facade-context.xml
@@ -153,6 +154,22 @@ development_status:
     platform: "Platform A"
     tests_passing: 14
     notes: "TerminalToolsFacade with shell sessions"
+
+  12-3-create-agentsynctools-facade: deferred
+    priority: P2
+    points: 2
+    notes: |
+      DEFERRED: Not required for E2E testing per master implementation plan.
+      Epic definition: getSyncStatus, triggerSync, setAutoSync, getSyncConfig, updateSyncConfig
+      Will implement if needed during Epic 27 state verification.
+
+  12-4-create-agentgittools-facade: deferred
+    priority: P3
+    points: 2
+    notes: |
+      DEFERRED: Blocked by Epic 7 (Git Integration).
+      Epic definition: Stub only - throw "Not implemented" per AC-12-4-2.
+      Will implement when Epic 7 begins.
 
   12-5-wire-facades-to-tanstack-ai-tools: done
     story: _bmad-output/sprint-artifacts/12-5-wire-facades-to-tanstack-ai-tools.md
