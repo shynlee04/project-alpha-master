@@ -118,7 +118,11 @@ Practice best coding, using @web and MCP servers' tools to improve your workflow
 
 ---
 
-ok so /bmad-core-agents-bmad-master coordinate /bmad-bmm-agents-sm and /bmad-bmm-agents-dev to /bmad-bmm-workflows-sprint-planning update /bmad-bmm-workflows-sprint-status to start the next sequence of /story-dev-cycle 
+ok so /bmad-core-agents-bmad-master coordinate /bmad-bmm-agents-sm and /bmad-bmm-agents-dev to /bmad-bmm-workflows-sprint-planning update /bmad-bmm-workflows-sprint-status to start the next sequence of /story-dev-cycle  
+
+--
+to iterate , validate, review using BMAD workflows and loop till 100% passed as instructed in /story-dev-cycle  with inter-connected tassks to update these 2 status files ```_bmad-output\sprint-artifacts\sprint-status.yaml
+_bmad-output\bmm-workflow-status.yaml```
 
 ## Master plan, research guidance (use @web and MCP tools as needed during and in between the iterations as needed) , route accordingly 
 

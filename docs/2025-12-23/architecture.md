@@ -1,642 +1,935 @@
 # Via-gent Architecture Documentation
 
-**Analysis Date:** 2025-12-23  
-**Project:** Via-gent - Browser-based IDE with WebContainers  
-**Repository:** project-alpha-master
+**Document ID:** `docs/2025-12-23/architecture.md`  
+**Version:** 1.0  
+**Date:** 2025-12-23  
+**Classification:** Internal  
+**Target Audience:** Technical Leadership, Architects, Senior Engineers
 
 ---
 
-## Executive Summary
+## Table of Contents
 
-Via-gent is a single-page React application that provides a browser-based IDE experience using WebContainers for local code execution. The architecture follows a client-side SPA pattern with no server-side rendering, enabling direct browser access to local file systems and WebContainer sandboxes.
-
-**Key Architectural Characteristics:**
-- **100% Client-Side:** No SSR, all rendering happens in browser
-- **Local FS as Source of Truth:** File System Access API for direct local file access
-- **WebContainer Mirror:** One-way sync from local FS to WebContainer sandbox
-- **Event-Driven:** Decoupled communication via EventEmitter3-based event bus
-- **State Management:** React Context + TanStack Store + IndexedDB (Dexie)
-- **Multi-Agent Ready:** Agent tool facades for AI integration (Epic 12, 25)
+1. [Introduction](#introduction)
+2. [System Overview](#system-overview)
+3. [Architectural Principles](#architectural-principles)
+4. [Component Architecture](#component-architecture)
+5. [Data Flow Architecture](#data-flow-architecture)
+6. [State Management Architecture](#state-management-architecture)
+7. [Persistence Architecture](#persistence-architecture)
+8. [Event-Driven Architecture](#event-driven-architecture)
+9. [Security Architecture](#security-architecture)
+10. [Performance Architecture](#performance-architecture)
+11. [Deployment Architecture](#deployment-architecture)
+12. [Key Architectural Decisions](#key-architectural-decisions)
 
 ---
 
-## C4 Context Diagram
+## Introduction
 
-```mermaid
-C4Context
-    title Via-gent System Context
-    
-    Person(user, "Developer", "Uses browser-based IDE")
-    
-    System(boundary, "Via-gent Application", "Browser-based IDE") {
-        System(web_app, "Via-gent SPA", "React 19 + Vite application")
-    }
-    
-    System_Ext(webcontainer, "WebContainer API", "StackBlitz WebContainers")
-    System_Ext(local_fs, "Local File System", "File System Access API")
-    System_Ext(indexeddb, "IndexedDB", "Browser storage for persistence")
-    System_Ext(sentry, "Sentry", "Error monitoring")
-    
-    Rel(user, web_app, "Opens folder, edits code, runs commands")
-    Rel(web_app, local_fs, "Read/Write files via FSA")
-    Rel(web_app, webcontainer, "Mount files, spawn processes")
-    Rel(web_app, indexeddb, "Persist projects, IDE state, AI tasks")
-    Rel(web_app, sentry, "Report errors")
+Via-gent is a browser-based Integrated Development Environment (IDE) that enables developers to write, run, and debug code entirely within the browser using WebContainers technology. This document provides a comprehensive overview of the system architecture, including design principles, component interactions, data flows, and key architectural decisions.
+
+### Architecture Goals
+
+| Goal | Description |
+|------|-------------|
+| **Local-First** | User's code resides on their local machine |
+| **Privacy** | All code execution happens locally in browser sandbox |
+| **Performance** | Sub-second response times for common operations |
+| **Extensibility** | Plugin architecture for future enhancements |
+| **Reliability** | Graceful degradation and error recovery |
+
+### Non-Functional Requirements
+
+| Requirement | Target |
+|-------------|--------|
+| **Availability** | 99.9% (client-side) |
+| **Performance** | < 2s page load, < 3s WebContainer boot |
+| **Scalability** | Stateless client-side architecture |
+| **Security** | No code leaves user's browser |
+| **Compatibility** | Chrome/Edge with File System Access API |
+
+---
+
+## System Overview
+
+### High-Level Architecture
+
+Via-gent follows a layered architecture pattern with clear separation of concerns:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Presentation Layer                             │
+│  (React Components, Routing, UI State)                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                        Application Layer                              │
+│  (Business Logic, State Management, Event Coordination)               │
+├─────────────────────────────────────────────────────────────────────┤
+│                        Domain Layer                                   │
+│  (File System Operations, WebContainer Management, Sync Logic)        │
+├─────────────────────────────────────────────────────────────────────┤
+│                        Infrastructure Layer                            │
+│  (Browser APIs, IndexedDB, WebContainer API, File System Access API)  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Technology Stack Summary
+
+| Layer | Technology |
+|-------|------------|
+| **Presentation** | React 19, TanStack Router, Monaco Editor, xterm.js |
+| **Application** | TanStack Store, React Context, EventEmitter3 |
+| **Domain** | LocalFSAdapter, SyncManager, WebContainer Manager |
+| **Infrastructure** | File System Access API, IndexedDB (Dexie.js), WebContainer API |
+
+---
+
+## Architectural Principles
+
+### 1. Local-First Design
+
+**Principle:** User's code is the source of truth and resides on their local machine.
+
+**Implementation:**
+- All file operations go through [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1) to File System Access API
+- WebContainer mirrors local files but does not modify them
+- Project metadata persisted in browser's IndexedDB
+
+**Benefits:**
+- User owns their data
+- Works offline (with limitations)
+- No server-side storage costs
+
+**Trade-offs:**
+- Browser compatibility constraints (File System Access API)
+- IndexedDB quota limitations
+- No automatic cloud backup
+
+### 2. Event-Driven Communication
+
+**Principle:** Components communicate through events rather than direct coupling.
+
+**Implementation:**
+- [`WorkspaceEventEmitter`](../src/lib/events/workspace-events.ts:47) for all workspace events
+- Typed event contracts in [`workspace-events.ts`](../src/lib/events/workspace-events.ts:1)
+- Event emission at domain boundaries
+
+**Benefits:**
+- Loose coupling between components
+- Easy to add new event consumers
+- Clear audit trail for operations
+
+**Trade-offs:**
+- Debugging complexity with event flow
+- Potential for event storm in large applications
+
+### 3. Single Source of Truth
+
+**Principle:** Each piece of data has a single authoritative source.
+
+**Implementation:**
+- Local file system is source of truth for file content
+- IndexedDB is source of truth for project metadata
+- WebContainer is derived state (mirror of local files)
+
+**Benefits:**
+- No data inconsistency
+- Clear data ownership
+- Simpler state management
+
+**Trade-offs:**
+- No reverse sync from WebContainer to local FS
+- Manual sync required for WebContainer changes
+
+### 4. Layer Violation Prevention
+
+**Principle:** Components only interact with adjacent layers.
+
+**Implementation:**
+- UI components only use [`useWorkspace()`](../src/lib/workspace/WorkspaceContext.tsx:38) hook
+- Application layer coordinates domain operations
+- Domain layer only uses infrastructure APIs
+
+**Benefits:**
+- Clear separation of concerns
+- Easier testing
+- Better maintainability
+
+**Trade-offs:**
+- Additional abstraction layers
+- More boilerplate code
+
+---
+
+## Component Architecture
+
+### Presentation Layer
+
+#### IDE Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`MonacoEditor`](../src/components/ide/) | Code editing with syntax highlighting | `src/components/ide/` |
+| [`XTerminal`](../src/components/ide/) | Terminal emulation | `src/components/ide/` |
+| [`FileTree`](../src/components/ide/) | File browser | `src/components/ide/` |
+| [`PreviewPanel`](../src/components/ide/) | Web preview | `src/components/ide/` |
+| [`AgentChatPanel`](../src/components/ide/) | AI chat interface | `src/components/ide/` |
+
+#### Layout Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`IDELayout`](../src/components/layout/) | Main IDE layout with resizable panels | `src/components/layout/` |
+| [`IDEHeaderBar`](../src/components/layout/) | Top navigation bar | `src/components/layout/` |
+
+#### UI Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`Toast`](../src/components/ui/) | Toast notifications | `src/components/ui/` |
+
+### Application Layer
+
+#### State Management
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1) | Centralized workspace state | `src/lib/workspace/` |
+| [`useWorkspaceState`](../src/lib/workspace/hooks/useWorkspaceState.ts:1) | Workspace state hook | `src/lib/workspace/hooks/` |
+| [`useWorkspaceActions`](../src/lib/workspace/hooks/useWorkspaceActions.ts:1) | Workspace actions hook | `src/lib/workspace/hooks/` |
+| [`useSyncOperations`](../src/lib/workspace/hooks/useSyncOperations.ts:1) | Sync operations hook | `src/lib/workspace/hooks/` |
+
+#### Event Coordination
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`WorkspaceEventEmitter`](../src/lib/events/workspace-events.ts:47) | Event bus | `src/lib/events/` |
+| [`useEventBusEffects`](../src/lib/workspace/hooks/useEventBusEffects.ts:1) | Event side effects | `src/lib/workspace/hooks/` |
+
+### Domain Layer
+
+#### File System
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1) | File System Access API wrapper | `src/lib/filesystem/` |
+| [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71) | File sync coordination | `src/lib/filesystem/` |
+| [`FileToolsFacade`](../src/lib/agent/facades/file-tools-impl.ts:34) | Agent file operations API | `src/lib/agent/facades/` |
+
+#### WebContainer
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`WebContainer Manager`](../src/lib/webcontainer/manager.ts:1) | WebContainer lifecycle | `src/lib/webcontainer/` |
+| [`boot()`](../src/lib/webcontainer/manager.ts:65) | Initialize WebContainer | `src/lib/webcontainer/manager.ts` |
+| [`mount()`](../src/lib/webcontainer/manager.ts:139) | Mount file system | `src/lib/webcontainer/manager.ts` |
+| [`spawn()`](../src/lib/webcontainer/manager.ts:218) | Spawn processes | `src/lib/webcontainer/manager.ts` |
+
+### Infrastructure Layer
+
+#### Persistence
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| [`Dexie Database`](../src/lib/state/dexie-db.ts:133) | IndexedDB wrapper | `src/lib/state/` |
+| [`ProjectStore`](../src/lib/workspace/project-store.ts:1) | Project metadata operations | `src/lib/workspace/` |
+
+#### Browser APIs
+
+| API | Purpose |
+|-----|---------|
+| **File System Access API** | Local file system access |
+| **IndexedDB** | Client-side persistence |
+| **WebContainer API** | Code execution sandbox |
+
+---
+
+## Data Flow Architecture
+
+### File Sync Flow
+
+```
+User Action (e.g., Save File)
+        │
+        ▼
+┌─────────────────┐
+│  Monaco Editor  │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  WorkspaceContext│
+│  (useWorkspace) │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  SyncManager    │
+│  .writeFile()   │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌────────┐ ┌─────────────┐
+│ Local  │ │ WebContainer│
+│   FS   │ │     FS      │
+└────────┘ └─────────────┘
+    │         │
+    └────┬────┘
+         │
+         ▼
+┌─────────────────┐
+│  EventEmitter  │
+│  file:modified  │
+└─────────────────┘
+```
+
+### Project Open Flow
+
+```
+User Clicks "Open Folder"
+        │
+        ▼
+┌─────────────────┐
+│  WorkspaceContext│
+│  .openFolder()   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  window.show    │
+│  DirectoryPicker│
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  LocalFSAdapter │
+│  .requestAccess │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  ProjectStore   │
+│  .saveProject() │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  SyncManager    │
+│  .syncToWC()    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  WebContainer   │
+│  .mount()       │
+└─────────────────┘
+```
+
+### Event Flow
+
+```
+Domain Event (e.g., file:modified)
+        │
+        ▼
+┌─────────────────┐
+│  EventEmitter   │
+│  .emit()        │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌────────┐ ┌─────────────┐
+│ UI     │ │ SyncManager │
+│ Update │ │  Listener   │
+└────────┘ └─────────────┘
 ```
 
 ---
 
-## C4 Container Diagram
+## State Management Architecture
 
-```mermaid
-C4Container
-    title Via-gent Container Architecture
-    
-    Person(user, "Developer")
-    
-    Container_Boundary(spa, "Via-gent SPA") {
-        Container(router, "TanStack Router", "File-based routing, SSR disabled")
-        Container(workspace_ctx, "WorkspaceContext", "Central state management")
-        Container(sync_manager, "SyncManager", "File sync orchestration")
-        Container(wc_manager, "WebContainer Manager", "Container lifecycle")
-        Container(event_bus, "Event Bus", "EventEmitter3-based")
-        Container(db, "Dexie Database", "IndexedDB wrapper")
-        
-        Container(ui, "UI Components", "React components organized by feature") {
-            Component(ide_layout, "IDELayout", "Main layout")
-            Component(editor, "Monaco Editor", "Code editing")
-            Component(terminal, "XTerminal", "Terminal integration")
-            Component(file_tree, "FileTree", "File explorer")
-            Component(chat_panel, "AgentChatPanel", "AI chat interface")
-        }
-    }
-    
-    System_Ext(webcontainer, "WebContainer API")
-    System_Ext(local_fs, "Local File System")
-    System_Ext(indexeddb, "IndexedDB")
-    
-    Rel(user, router, "Navigates")
-    Rel(router, workspace_ctx, "Provides projectId")
-    Rel(workspace_ctx, sync_manager, "Triggers sync")
-    Rel(sync_manager, local_fs, "Read/Write via LocalFSAdapter")
-    Rel(sync_manager, webcontainer, "Mount files")
-    Rel(workspace_ctx, wc_manager, "Boots container")
-    Rel(wc_manager, webcontainer, "Spawn processes")
-    Rel(workspace_ctx, db, "Persist/Load state")
-    Rel(sync_manager, event_bus, "Emit sync events")
-    Rel(wc_manager, event_bus, "Emit container events")
-    Rel(ui, workspace_ctx, "useWorkspace() hook")
-    Rel(ui, event_bus, "Subscribe to events")
-```
+### Current State Management
 
----
-
-## C4 Component Diagram - Workspace Domain
-
-```mermaid
-C4Component
-    title Workspace Domain Components
-    
-    Container_Boundary(workspace, "Workspace Domain") {
-        Component(workspace_ctx, "WorkspaceContext", "React Context Provider", "Central state + actions")
-        Component(workspace_state, "useWorkspaceState", "Custom Hook", "State initialization")
-        Component(sync_ops, "useSyncOperations", "Custom Hook", "Sync orchestration")
-        Component(workspace_actions, "useWorkspaceActions", "Custom Hook", "Action handlers")
-        Component(event_effects, "useEventBusEffects", "Custom Hook", "Event subscriptions")
-        Component(initial_sync, "useInitialSync", "Custom Hook", "Auto-sync on load")
-        
-        Component(local_adapter, "LocalFSAdapter", "Class", "FSA wrapper")
-        Component(sync_mgr, "SyncManager", "Class", "Sync orchestration")
-        Component(wc_mgr, "WebContainerManager", "Module", "Container singleton")
-        Component(event_bus, "EventEmitter3", "Class", "Event bus")
-    }
-    
-    Rel(workspace_ctx, workspace_state, "Uses")
-    Rel(workspace_ctx, sync_ops, "Uses")
-    Rel(workspace_ctx, workspace_actions, "Uses")
-    Rel(workspace_ctx, event_effects, "Uses")
-    Rel(workspace_ctx, initial_sync, "Uses")
-    
-    Rel(sync_ops, local_adapter, "Creates")
-    Rel(sync_ops, sync_mgr, "Creates")
-    Rel(sync_ops, event_bus, "Emits events")
-    
-    Rel(workspace_actions, local_adapter, "Uses")
-    Rel(workspace_actions, sync_mgr, "Uses")
-    Rel(workspace_actions, wc_mgr, "Uses")
-    
-    Rel(event_effects, event_bus, "Subscribes")
-    Rel(initial_sync, sync_mgr, "Triggers")
-    Rel(initial_sync, wc_mgr, "Checks booted")
-```
-
----
-
-## C4 Component Diagram - Filesystem Domain
-
-```mermaid
-C4Component
-    title Filesystem Domain Components
-    
-    Container_Boundary(filesystem, "Filesystem Domain") {
-        Component(sync_mgr, "SyncManager", "Class", "Sync orchestration")
-        Component(local_adapter, "LocalFSAdapter", "Class", "FSA wrapper")
-        Component(sync_planner, "SyncPlanner", "Function", "Build sync plan")
-        Component(sync_executor, "SyncExecutor", "Function", "Execute sync operations")
-        Component(sync_ops, "SyncOperations", "Module", "Sync utilities")
-        Component(dir_walker, "DirectoryWalker", "Function", "Recursive traversal")
-        Component(exclusion, "ExclusionConfig", "Module", "Pattern matching")
-        Component(path_guard, "PathGuard", "Class", "Path validation")
-        Component(perm_lifecycle, "PermissionLifecycle", "Module", "Permission management")
-    }
-    
-    Rel(sync_mgr, local_adapter, "Uses for file ops")
-    Rel(sync_mgr, sync_planner, "Plans sync")
-    Rel(sync_mgr, sync_executor, "Executes sync")
-    Rel(sync_mgr, sync_ops, "Utility functions")
-    Rel(sync_planner, dir_walker, "Traverses directory")
-    Rel(sync_planner, exclusion, "Filters files")
-    Rel(sync_executor, local_adapter, "Read/Write files")
-    Rel(local_adapter, path_guard, "Validates paths")
-    Rel(local_adapter, perm_lifecycle, "Manages permissions")
-    Rel(dir_walker, exclusion, "Filters during traversal")
-    Rel(exclusion, path_guard, "Validates patterns")
-```
-
----
-
-## C4 Component Diagram - WebContainer Domain
-
-```mermaid
-C4Component
-    title WebContainer Domain Components
-    
-    Container_Boundary(webcontainer, "WebContainer Domain") {
-        Component(wc_manager, "WebContainerManager", "Module", "Singleton lifecycle")
-        Component(process_mgr, "ProcessManager", "Class", "Process tracking")
-        Component(term_adapter, "TerminalAdapter", "Class", "xterm.js integration")
-        Component(wc_types, "Types", "Module", "Type definitions")
-    }
-    
-    System_Ext(webcontainer_api, "WebContainer API")
-    
-    Rel(wc_manager, webcontainer_api, "Boots, mounts, spawns")
-    Rel(wc_manager, process_mgr, "Tracks processes")
-    Rel(wc_manager, term_adapter, "Creates terminals")
-    Rel(process_mgr, webcontainer_api, "Spawns processes")
-    Rel(term_adapter, webcontainer_api, "Connects output")
-    Rel(term_adapter, process_mgr, "Associates with process")
-```
-
----
-
-## C4 Component Diagram - Agent Tool Domain
-
-```mermaid
-C4Component
-    title Agent Tool Domain (Epic 12, 25)
-    
-    Container_Boundary(agent_tools, "Agent Tool Domain") {
-        Component(file_tools_iface, "AgentFileTools", "Interface", "Stable contract")
-        Component(file_tools_impl, "FileToolsImpl", "Class", "Implementation")
-        Component(path_validator, "validatePath", "Function", "Path validation")
-        Component(task_context, "TaskContextRecord", "Interface", "AI task tracking")
-        Component(tool_exec, "ToolExecutionRecord", "Interface", "Tool audit trail")
-    }
-    
-    Container_Boundary(filesystem, "Filesystem Domain") {
-        Component(local_adapter, "LocalFSAdapter", "Class")
-        Component(sync_mgr, "SyncManager", "Class")
-    }
-    
-    Container_Boundary(events, "Event System") {
-        Component(event_bus, "EventEmitter3", "Class")
-    }
-    
-    Rel(file_tools_impl, local_adapter, "Wraps for file ops")
-    Rel(file_tools_impl, sync_mgr, "Wraps for sync")
-    Rel(file_tools_impl, event_bus, "Emits events")
-    Rel(file_tools_impl, path_validator, "Validates paths")
-    Rel(file_tools_impl, file_tools_iface, "Implements")
-    Rel(task_context, "db", "Stored in Dexie")
-    Rel(tool_exec, "db", "Stored in Dexie")
-```
-
----
-
-## Layer Architecture
+Via-gent currently uses a hybrid approach combining React Context and TanStack Store:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Presentation Layer                        │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  UI Components (React 19)                                   │ │
-│  │  - IDE Components (editor, terminal, file tree, chat)      │ │
-│  │  - Layout Components (IDELayout, HeaderBar, PanelShell)    │ │
-│  │  - UI Components (shadcn/ui primitives)                    │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│                    WorkspaceContext Provider                      │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                    useWorkspaceState()                        ││
+│  │  - 13 state variables (useState)                            ││
+│  │  - 4 refs (useRef)                                          ││
+│  └─────────────────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                   useWorkspaceActions()                       ││
+│  │  - 7 action functions (useCallback)                        ││
+│  └─────────────────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                    useSyncOperations()                       ││
+│  │  - Sync logic                                               ││
+│  └─────────────────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                   useEventBusEffects()                       ││
+│  │  - Event listeners                                          ││
+│  └─────────────────────────────────────────────────────────────┘│
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                    useInitialSync()                          ││
+│  │  - Initial sync logic                                       ││
+│  └─────────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────────┘
-                              ↓
+         │
+         │ Context Value (13 state + 7 actions + 3 refs + eventBus)
+         ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Application Layer                        │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  WorkspaceContext (React Context)                           │ │
-│  │  - State management (useWorkspaceState)                    │ │
-│  │  - Actions (useWorkspaceActions)                           │ │
-│  │  - Sync operations (useSyncOperations)                     │ │
-│  │  - Event effects (useEventBusEffects)                      │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Routing (TanStack Router)                                  │ │
-│  │  - File-based routes (SSR disabled)                        │ │
-│  │  - Navigation hooks                                         │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│                    Consumers (useWorkspace())                    │
+│  - IDELayout                                                   │
+│  - MonacoEditor                                                │
+│  - XTerminal                                                   │
+│  - FileTree                                                    │
+│  - etc.                                                        │
 └─────────────────────────────────────────────────────────────────┘
-                              ↓
+```
+
+### State Variables
+
+| State | Type | Purpose |
+|-------|------|---------|
+| `projectMetadata` | `ProjectMetadata \| null` | Current project information |
+| `directoryHandle` | `FileSystemDirectoryHandle \| null` | FSA handle for directory access |
+| `permissionState` | `FsaPermissionState` | Current permission state |
+| `syncStatus` | `SyncStatus` | Current sync status |
+| `syncProgress` | `SyncProgress \| null` | Sync progress information |
+| `lastSyncTime` | `Date \| null` | Last successful sync timestamp |
+| `syncError` | `string \| null` | Last sync error message |
+| `autoSync` | `boolean` | Auto-sync enabled flag |
+| `isOpeningFolder` | `boolean` | Folder open in progress |
+| `exclusionPatterns` | `string[]` | File sync exclusion patterns |
+| `isWebContainerBooted` | `boolean` | WebContainer boot status |
+| `initialSyncCompleted` | `boolean` | Initial sync completion flag |
+
+### Planned Migration (Epic 27)
+
+Via-gent plans to migrate to Zustand with sliced stores:
+
+```
 ┌─────────────────────────────────────────────────────────────────┐
-│                          Domain Layer                            │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Filesystem Domain                                          │ │
-│  │  - LocalFSAdapter (FSA wrapper)                            │ │
-│  │  - SyncManager (sync orchestration)                         │ │
-│  │  - SyncPlanner, SyncExecutor                                │ │
-│  │  - DirectoryWalker, ExclusionConfig                         │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  WebContainer Domain                                        │ │
-│  │  - WebContainerManager (singleton)                          │ │
-│  │  - ProcessManager (process tracking)                        │ │
-│  │  - TerminalAdapter (xterm.js integration)                   │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Agent Tool Domain (Epic 12, 25)                            │ │
-│  │  - AgentFileTools (interface)                              │ │
-│  │  - FileToolsImpl (implementation)                           │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│                    Zustand Stores                                 │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌────────────────┐ │
+│  │  useWorkspaceStore│  │  useSyncStore     │  │  usePermission │ │
+│  │  - project       │  │  - status         │  │    Store       │ │
+│  │  - handle        │  │  - progress       │  │  - state        │ │
+│  │  - patterns      │  │  - lastSync       │  │  - history      │ │
+│  └──────────────────┘  └──────────────────┘  └────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
-                              ↓
+         │                    │                    │
+         └────────────────────┴────────────────────┘
+                              │
+                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                       Infrastructure Layer                       │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Event System (EventEmitter3)                               │ │
-│  │  - WorkspaceEventEmitter (typed events)                     │ │
-│  │  - Event bus for decoupled communication                   │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Persistence (Dexie.js)                                     │ │
-│  │  - ProjectRecord, IDEStateRecord                           │ │
-│  │  - ConversationRecord, TaskContextRecord                    │ │
-│  │  - ToolExecutionRecord                                      │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  External APIs                                              │ │
-│  │  - File System Access API (local FS)                       │ │
-│  │  - WebContainer API (StackBlitz)                            │ │
-│  │  - IndexedDB (browser storage)                             │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│                    Persistence Middleware                          │
+│  - Sync to IndexedDB on state change                            │
+│  - Load from IndexedDB on initialization                        │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Persistence Architecture
+
+### IndexedDB Schema
+
+Via-gent uses Dexie.js for type-safe IndexedDB operations:
+
+```typescript
+// Schema Version 3
+class ViaGentDatabase extends Dexie {
+    projects!: Table<ProjectRecord, string>;
+    ideState!: Table<IDEStateRecord, string>;
+    conversations!: Table<ConversationRecord, string>;
+    taskContexts!: Table<TaskContextRecord, string>;      // Epic 25 prep
+    toolExecutions!: Table<ToolExecutionRecord, string>;  // Epic 25 prep
+}
+```
+
+### Data Models
+
+#### ProjectRecord
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique project identifier |
+| `name` | `string` | Project display name |
+| `path` | `string` | Display path (not actual path) |
+| `lastOpened` | `Date` | Last opened timestamp |
+| `createdAt` | `Date` | Creation timestamp |
+
+#### IDEStateRecord
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `projectId` | `string` | Associated project ID |
+| `openFiles` | `string[]` | List of open files |
+| `activeFile` | `string \| null` | Currently active file |
+| `expandedPaths` | `string[]` | Expanded directory paths |
+| `panelLayouts` | `Record<string, number[]>` | Panel size configurations |
+| `terminalTab` | `'terminal' \| 'output' \| 'problems'` | Active terminal tab |
+| `chatVisible` | `boolean` | Chat panel visibility |
+| `updatedAt` | `Date` | Last update timestamp |
+
+#### ConversationRecord
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique conversation ID |
+| `projectId` | `string` | Associated project ID |
+| `messages` | `unknown[]` | Chat messages |
+| `toolResults` | `unknown[]` | Tool execution results |
+| `createdAt` | `Date` | Creation timestamp |
+| `updatedAt` | `Date` | Last update timestamp |
+
+#### TaskContextRecord (Epic 25)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique task ID |
+| `projectId` | `string` | Associated project ID |
+| `agentId` | `string` | Executing agent ID |
+| `status` | `TaskStatus` | Task status |
+| `description` | `string` | Task description |
+| `targetFiles` | `string[]` | Files being worked on |
+| `checkpoint` | `unknown` | LangGraph checkpoint data |
+| `createdAt` | `Date` | Creation timestamp |
+| `updatedAt` | `Date` | Last update timestamp |
+
+#### ToolExecutionRecord (Epic 25)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique execution ID |
+| `taskId` | `string` | Associated task ID |
+| `toolName` | `string` | Tool name |
+| `input` | `unknown` | Tool input parameters |
+| `output` | `unknown` | Tool output |
+| `status` | `'pending' \| 'success' \| 'error'` | Execution status |
+| `duration` | `number` | Execution time (ms) |
+| `createdAt` | `Date` | Creation timestamp |
+
+### Migration Strategy
+
+Via-gent is migrating from legacy idb-based persistence to Dexie.js:
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| **Phase 1** | Create Dexie schema | ✅ Complete |
+| **Phase 2** | Migrate ProjectStore operations | 🚧 In Progress |
+| **Phase 3** | Remove legacy idb implementation | ⏳ Pending |
+| **Phase 4** | Data migration from legacy DB | ⏳ Pending |
+
+---
+
+## Event-Driven Architecture
+
+### Event Types
+
+Via-gent defines typed events in [`workspace-events.ts`](../src/lib/events/workspace-events.ts:1):
+
+#### File System Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `file:created` | `{ path, source, lockAcquired?, lockReleased? }` | File created |
+| `file:modified` | `{ path, source, content?, lockAcquired?, lockReleased? }` | File modified |
+| `file:deleted` | `{ path, source, lockAcquired?, lockReleased? }` | File deleted |
+| `directory:created` | `{ path }` | Directory created |
+| `directory:deleted` | `{ path }` | Directory deleted |
+
+#### Sync Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `sync:started` | `{ fileCount, direction }` | Sync started |
+| `sync:progress` | `{ current, total, currentFile }` | Sync progress |
+| `sync:completed` | `{ success, timestamp, filesProcessed }` | Sync completed |
+| `sync:error` | `{ error, file? }` | Sync error |
+| `sync:paused` | `{ reason }` | Sync paused |
+| `sync:resumed` | - | Sync resumed |
+
+#### WebContainer Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `container:booted` | `{ bootTime }` | WebContainer booted |
+| `container:mounted` | `{ fileCount }` | Files mounted |
+| `container:error` | `{ error }` | WebContainer error |
+
+#### Terminal/Process Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `process:started` | `{ pid, command, args }` | Process started |
+| `process:output` | `{ pid, data, type }` | Process output |
+| `process:exited` | `{ pid, exitCode }` | Process exited |
+| `terminal:input` | `{ data }` | Terminal input |
+
+#### Permission Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `permission:requested` | `{ handle }` | Permission requested |
+| `permission:granted` | `{ handle, projectId }` | Permission granted |
+| `permission:denied` | `{ handle, reason }` | Permission denied |
+| `permission:expired` | `{ projectId }` | Permission expired |
+
+#### Project Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `project:opened` | `{ projectId, name }` | Project opened |
+| `project:closed` | `{ projectId }` | Project closed |
+| `project:switched` | `{ fromId, toId }` | Project switched |
+
+### Event Flow
+
+```
+┌─────────────┐
+│  Domain     │
+│  Operation  │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Event      │
+│  Emission   │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────────────────────────┐
+│         WorkspaceEventEmitter               │
+│  (Typed event contracts)                   │
+└──────┬──────────────────────────────────────┘
+       │
+   ┌───┴───┬──────────────┬──────────────┐
+   │       │              │              │
+   ▼       ▼              ▼              ▼
+┌─────┐ ┌─────┐      ┌─────┐      ┌─────┐
+│ UI  │ │ Sync │      │ WC  │      │ Log │
+│ Upd ││ List │      │ List│      │ ger │
+└─────┘ └─────┘      └─────┘      └─────┘
+```
+
+---
+
+## Security Architecture
+
+### Security Principles
+
+| Principle | Implementation |
+|-----------|----------------|
+| **Local-First** | Code never leaves user's browser |
+| **Sandboxed Execution** | WebContainer provides isolated environment |
+| **Permission-Based Access** | File System Access API requires user consent |
+| **Cross-Origin Isolation** | COOP/COEP headers for SharedArrayBuffer |
+
+### Browser Security
+
+#### Cross-Origin Isolation Headers
+
+```typescript
+// vite.config.ts
+res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+```
+
+**Purpose:** Enable SharedArrayBuffer for WebContainer performance.
+
+#### File System Access API
+
+```typescript
+// Permission states
+type FsaPermissionState = 'granted' | 'denied' | 'prompt' | 'unknown';
+
+// Permission request
+const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+```
+
+**Purpose:** User grants explicit permission to access local files.
+
+### WebContainer Security
+
+WebContainer provides a sandboxed environment for code execution:
+
+| Security Feature | Description |
+|------------------|-------------|
+| **Isolated File System** | Cannot access host file system |
+| **Network Restrictions** | Limited network access |
+| **Resource Limits** | CPU/memory constraints |
+| **No Persistent State** | Clean slate on reload |
+
+### Data Privacy
+
+| Data Type | Storage | Privacy |
+|-----------|---------|---------|
+| **Source Code** | Local FS | User-controlled |
+| **Project Metadata** | IndexedDB | Browser-local |
+| **Chat History** | IndexedDB | Browser-local |
+| **Execution Logs** | In-memory | Not persisted |
+
+---
+
+## Performance Architecture
+
+### Performance Targets
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Initial Page Load** | < 2s | Lighthouse |
+| **Time to Interactive** | < 5s | Lighthouse |
+| **WebContainer Boot** | < 3s | Custom logging |
+| **File Sync (100 files)** | < 3s | Custom logging |
+| **File Write** | < 500ms | Custom logging |
+
+### Performance Optimizations
+
+#### 1. Code Splitting
+
+```typescript
+// TanStack Router file-based routing
+// src/routes/workspace/$projectId.tsx
+// src/routes/dashboard.tsx
+// Each route is automatically code-split
+```
+
+#### 2. Lazy Loading
+
+```typescript
+// Monaco Editor loads languages on-demand
+import { loader } from '@monaco-editor/react';
+loader.config().then(/* ... */);
+```
+
+#### 3. Debounced Sync
+
+```typescript
+// File sync uses debounced batch operations
+const debouncedSync = debounce(() => {
+    syncManager.syncToWebContainer();
+}, 500);
+```
+
+#### 4. Exclusion Patterns
+
+```typescript
+// Large directories excluded from sync
+const EXTENDED_DEFAULT_PATTERNS = [
+    '.git',
+    'node_modules',
+    '.DS_Store',
+    'Thumbs.db',
+    'dist',
+    'build',
+];
+```
+
+### Performance Monitoring
+
+| Metric | Collection Method |
+|--------|------------------|
+| **WebContainer Boot Time** | `container:booted` event |
+| **Sync Duration** | `sync:completed` event |
+| **File Write Duration** | Custom logging in `SyncManager` |
+| **Page Load Time** | Lighthouse CI |
+
+---
+
+## Deployment Architecture
+
+### Static Hosting
+
+Via-gent is deployed as a static site:
+
+```
+┌─────────────┐
+│   GitHub    │
+│  Repository │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  GitHub     │
+│  Actions    │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│   Vite      │
+│   Build     │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│   Netlify   │
+│   Deploy    │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│   Global    │
+│   CDN       │
+└─────────────┘
+```
+
+### Deployment Pipeline
+
+1. **Push to GitHub** → Triggers GitHub Actions
+2. **Run Tests** → `pnpm test`
+3. **Build** → `pnpm build`
+4. **Deploy** → Netlify CLI
+5. **Cache Invalidation** → Netlify CDN
+
+### Edge Functions
+
+Netlify edge functions provide security headers:
+
+```typescript
+// netlify/edge-functions/add-headers.ts
+export default async (request: Request) => {
+  const response = await fetch(request);
+  const newResponse = new Response(response.body, response);
+  newResponse.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+  newResponse.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+  return newResponse;
+};
 ```
 
 ---
 
 ## Key Architectural Decisions
 
-### 1. Local FS as Source of Truth
+### Decision 1: Client-Side Only Architecture
 
-**Decision:** Local file system (via File System Access API) is the authoritative source. WebContainers mirror local files with one-way sync.
-
-**Rationale:**
-- User expects local files to persist
-- WebContainer is ephemeral sandbox
-- Avoids sync conflicts from bidirectional sync
-- Simplifies permission handling
-
-**Trade-offs:**
-- Changes in WebContainer (e.g., `npm install`) don't sync back
-- Requires explicit sync triggers for WebContainer changes
-
-**Location:** [`src/lib/filesystem/sync-manager.ts`](src/lib/filesystem/sync-manager.ts:8-11)
-
-### 2. Singleton WebContainer
-
-**Decision:** Only one WebContainer instance per page via singleton pattern.
+**Context:** Via-gent runs entirely in the browser with no backend server.
 
 **Rationale:**
-- WebContainer API limitation: only one instance per page
-- Simplifies state management
-- Reduces resource usage
+- Zero infrastructure costs
+- User privacy (code never leaves browser)
+- Simplified deployment (static hosting)
+- No server maintenance
 
 **Trade-offs:**
-- Cannot run multiple projects simultaneously
-- Requires project switching workflow
+- Limited to browser capabilities
+- No server-side processing
+- IndexedDB quota limitations
+- No automatic cloud backup
 
-**Location:** [`src/lib/webcontainer/manager.ts`](src/lib/webcontainer/manager.ts:35-37)
+**Alternatives Considered:**
+- Server-side rendering (rejected - incompatible with WebContainers)
+- Hybrid architecture (rejected - adds complexity)
 
-### 3. Event-Driven Architecture
+### Decision 2: Local FS as Source of Truth
 
-**Decision:** Decoupled communication via EventEmitter3-based event bus.
+**Context:** User's local file system is the authoritative source for code.
 
 **Rationale:**
-- Enables loose coupling between domains
-- Supports multiple subscribers to same events
-- Facilitates observability and debugging
-- Supports AI agent event consumption (Epic 25)
+- User owns their data
+- Works offline (with limitations)
+- Familiar mental model for developers
+- No vendor lock-in
 
 **Trade-offs:**
-- Event flow can be harder to trace
-- Requires careful event naming conventions
+- No reverse sync from WebContainer
+- Manual sync required for WebContainer changes
+- Browser compatibility constraints
 
-**Location:** [`src/lib/events/workspace-events.ts`](src/lib/events/workspace-events.ts:1-50)
+**Alternatives Considered:**
+- Cloud storage (rejected - privacy concerns)
+- WebContainer as source of truth (rejected - no persistence)
 
-### 4. React Context + TanStack Store
+### Decision 3: WebContainer for Code Execution
 
-**Decision:** Hybrid state management with React Context for global state and TanStack Store for reactive state.
+**Context:** WebContainer API provides Node.js execution in browser.
 
 **Rationale:**
-- Context provides simple global state access
-- TanStack Store offers fine-grained reactivity
-- Fits React 19 patterns
+- No server required
+- Isolated execution environment
+- Fast startup (compared to VMs)
+- Native Node.js compatibility
 
 **Trade-offs:**
-- Two state systems to understand
-- Potential duplication of state
+- Browser compatibility (Chrome/Edge only)
+- Requires cross-origin isolation headers
+- Limited to Node.js ecosystem
 
-**Location:** [`src/lib/workspace/WorkspaceContext.tsx`](src/lib/workspace/WorkspaceContext.tsx:1-102)
+**Alternatives Considered:**
+- Server-side execution (rejected - requires backend)
+- WebAssembly (rejected - limited Node.js support)
 
-### 5. Agent Tool Facade Pattern
+### Decision 4: React Context for State Management
 
-**Decision:** Stable interface layer for AI agent file operations (Epic 12).
+**Context:** Using React Context + TanStack Store for state management.
 
 **Rationale:**
-- Decouples agents from implementation details
-- Enables safe agent operations with validation
-- Provides event emission for observability
-- Supports future agent implementations
+- Familiar to React developers
+- Built-in React integration
+- Simple for small to medium apps
+- Good TypeScript support
 
 **Trade-offs:**
-- Additional abstraction layer
-- Requires maintaining interface contracts
+- Performance issues with large contexts
+- Prop drilling for nested components
+- Re-renders on context value changes
 
-**Location:** [`src/lib/agent/facades/file-tools.ts`](src/lib/agent/facades/file-tools.ts:1-112)
+**Alternatives Considered:**
+- Redux (rejected - overkill for this use case)
+- Zustand (selected for future migration - Epic 27)
 
-### 6. IndexedDB via Dexie.js
+### Decision 5: IndexedDB for Persistence
 
-**Decision:** Use Dexie.js wrapper for IndexedDB persistence (Epic 27-1c).
+**Context:** Using IndexedDB for project metadata persistence.
 
 **Rationale:**
-- Type-safe database API
-- Automatic schema versioning
-- Live query support with hooks
-- Better DX than raw IndexedDB
+- Browser-native storage
+- Large storage capacity (hundreds of MB)
+- Asynchronous API
+- Works offline
 
 **Trade-offs:**
-- Additional dependency
-- Learning curve for Dexie API
+- Quota limitations
+- Not portable across devices
+- No automatic cloud backup
 
-**Location:** [`src/lib/state/dexie-db.ts`](src/lib/state/dexie-db.ts:1-243)
-
-### 7. No Server-Side Rendering
-
-**Decision:** Disable SSR in TanStack Router for WebContainer compatibility.
-
-**Rationale:**
-- WebContainers require cross-origin isolation headers
-- SSR conflicts with File System Access API
-- Simplifies deployment (static hosting)
-
-**Trade-offs:**
-- No SEO benefits
-- Slower initial page load
-- No server-side data fetching
-
-**Location:** [`src/routes/__root.tsx`](src/routes/__root.tsx:1-95)
+**Alternatives Considered:**
+- LocalStorage (rejected - too small, synchronous)
+- Cloud storage (rejected - privacy concerns)
 
 ---
 
-## Integration Surfaces
+## Conclusion
 
-### File System Access API Integration
+Via-gent's architecture prioritizes local-first design, user privacy, and browser-native capabilities. The layered architecture provides clear separation of concerns, while the event-driven communication pattern enables loose coupling between components.
 
-**Purpose:** Direct access to local file system from browser
+The system is currently in active development with several migration efforts underway (state management to Zustand, persistence to Dexie.js). These migrations aim to improve performance, type safety, and maintainability.
 
-**Entry Point:** [`src/lib/filesystem/local-fs-adapter.ts`](src/lib/filesystem/local-fs-adapter.ts:1)
-
-**Key Operations:**
-- `requestDirectoryAccess()` - Request folder picker
-- `readFile()` - Read file content
-- `writeFile()` - Write file content
-- `listDirectory()` - List directory contents
-- `createDirectory()` - Create directory
-- `deleteFile()` - Delete file
-- `deleteDirectory()` - Delete directory
-
-**Permission Handling:** [`src/lib/filesystem/permission-lifecycle.ts`](src/lib/filesystem/permission-lifecycle.ts:1)
-
-### WebContainer API Integration
-
-**Purpose:** Run code in browser sandbox
-
-**Entry Point:** [`src/lib/webcontainer/manager.ts`](src/lib/webcontainer/manager.ts:1)
-
-**Key Operations:**
-- `boot()` - Boot WebContainer (singleton)
-- `mount()` - Mount file system tree
-- `spawn()` - Spawn process
-- `getFileSystem()` - Get FS API
-- `onServerReady()` - Subscribe to server events
-
-**Terminal Integration:** [`src/lib/webcontainer/terminal-adapter.ts`](src/lib/webcontainer/terminal-adapter.ts:1)
-
-### IndexedDB Integration
-
-**Purpose:** Persist projects, IDE state, AI tasks
-
-**Entry Point:** [`src/lib/state/dexie-db.ts`](src/lib/state/dexie-db.ts:1)
-
-**Tables:**
-- `projects` - Project metadata
-- `ideState` - IDE state per project
-- `conversations` - AI chat history
-- `taskContexts` - AI agent task tracking (Epic 25)
-- `toolExecutions` - Tool execution audit trail (Epic 25)
-
-### TanStack Router Integration
-
-**Purpose:** Client-side routing
-
-**Entry Point:** [`src/router.tsx`](src/router.tsx:1)
-
-**Configuration:**
-- SSR disabled
-- File-based routes
-- Route tree auto-generated
+The architecture is designed to be extensible, with clear integration points for future features such as AI agent orchestration (Epic 25) and advanced collaboration capabilities.
 
 ---
 
-## Cross-Cutting Concerns
+## Document References
 
-### Error Handling
-
-**Strategy:** Custom error classes with error codes
-
-**Error Types:**
-- `SyncError` ([`src/lib/filesystem/sync-types.ts`](src/lib/filesystem/sync-types.ts:43))
-- `WebContainerError` ([`src/lib/webcontainer/types.ts`](src/lib/webcontainer/types.ts:1))
-- `PathValidationError` ([`src/lib/agent/facades/file-tools.ts`](src/lib/agent/facades/file-tools.ts:93))
-
-**Error Monitoring:** Sentry integration ([`src/lib/monitoring/sentry.ts`](src/lib/monitoring/sentry.ts:1))
-
-### Internationalization
-
-**Strategy:** i18next with browser language detection
-
-**Configuration:** [`src/i18n/config.ts`](src/i18n/config.ts:1)
-
-**Languages:** English (en), Vietnamese (vi)
-
-**Key Extraction:** `pnpm i18n:extract`
-
-### Theming
-
-**Strategy:** next-themes with Tailwind CSS
-
-**Provider:** [`src/components/ui/ThemeProvider.tsx`](src/components/ui/ThemeProvider.tsx:1)
-
-**Theme Toggle:** [`src/components/ui/ThemeToggle.tsx`](src/components/ui/ThemeToggle.tsx:1)
-
-### Observability
-
-**Strategy:** Event bus + Sentry
-
-**Event Bus:** [`src/lib/events/workspace-events.ts`](src/lib/events/workspace-events.ts:1)
-
-**Sentry:** [`src/lib/monitoring/sentry.ts`](src/lib/monitoring/sentry.ts:1)
-
-**Key Events:**
-- `sync:*` - Sync lifecycle events
-- `container:*` - WebContainer lifecycle events
-- `file:*` - File operation events
-- `process:*` - Process events
-- `permission:*` - Permission events
+| Document | Location |
+|----------|----------|
+| **Project Overview** | [`project-overview.md`](./project-overview.md) |
+| **Data & Contracts** | [`data-and-contracts.md`](./data-and-contracts.md) |
+| **Tech Context** | [`tech-context.md`](./tech-context.md) |
+| **Tech Debt** | [`tech-debt.md`](./tech-debt.md) |
+| **Improvement Opportunities** | [`improvement-opportunities.md`](./improvement-opportunities.md) |
+| **Roadmap** | [`roadmap-and-planning.md`](./roadmap-and-planning.md) |
 
 ---
 
-## Performance Considerations
-
-### WebContainer Boot
-
-**Cost:** ~3-5 seconds
-
-**Mitigation:**
-- Singleton pattern (boot once per page)
-- Emit `container:booted` event for coordination
-- Show loading state during boot
-
-**Location:** [`src/lib/webcontainer/manager.ts`](src/lib/webcontainer/manager.ts:65-118)
-
-### File Sync Performance
-
-**Target:** <3s for 100 files, <500ms for single file write
-
-**Mitigation:**
-- Lazy directory traversal
-- Debounced batch operations
-- Exclude `node_modules` and `.git`
-- Pre-scan for accurate progress
-
-**Location:** [`src/lib/filesystem/sync-manager.ts`](src/lib/filesystem/sync-manager.ts:167-171)
-
-### Monaco Editor Performance
-
-**Strategy:** On-demand language loading
-
-**Location:** [`src/components/ide/MonacoEditor/`](src/components/ide/MonacoEditor/)
-
----
-
-## Security Considerations
-
-### Cross-Origin Isolation
-
-**Requirement:** WebContainers require COOP/COEP headers
-
-**Implementation:** [`vite.config.ts`](vite.config.ts:1)
-
-**Headers:**
-```
-Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: require-corp
-Cross-Origin-Resource-Policy: cross-origin
-```
-
-### Path Traversal Protection
-
-**Implementation:** [`src/lib/agent/facades/file-tools.ts`](src/lib/agent/facades/file-tools.ts:105-112)
-
-**Validation:**
-- No `..` in paths
-- No absolute paths
-- Relative paths only
-
-### Permission Handling
-
-**Strategy:** Ephemeral permissions with restoration
-
-**Implementation:** [`src/lib/filesystem/permission-lifecycle.ts`](src/lib/filesystem/permission-lifecycle.ts:1)
-
----
-
-## Deployment Architecture
-
-### Deployment Targets
-
-**Primary:** Netlify (static hosting)
-
-**Alternative:** Cloudflare Workers
-
-**Configuration:**
-- [`netlify.toml`](netlify.toml:1)
-- [`wrangler.jsonc`](wrangler.jsonc:1)
-
-### Build Process
-
-**Tool:** Vite 7.3.0
-
-**Scripts:**
-- `pnpm dev` - Development server (port 3000)
-- `pnpm build` - Production build
-- `pnpm preview` - Preview production build
-
-**Output:** Static assets for CDN deployment
-
----
-
-## Technology Stack Summary
-
-| Layer | Technology | Version | Purpose |
-|-------|-----------|---------|---------|
-| Frontend | React | 19.2.3 | UI framework |
-| Routing | TanStack Router | 1.141.8 | Client-side routing |
-| State | TanStack Store, Context API | 0.8.0 | State management |
-| Persistence | Dexie.js | 4.2.1 | IndexedDB wrapper |
-| Container | WebContainer API | 1.6.1 | Code execution sandbox |
-| Editor | Monaco Editor | 0.55.1 | Code editor |
-| Terminal | xterm.js | 5.5.0 | Terminal emulation |
-| Events | EventEmitter3 | 5.0.1 | Event bus |
-| i18n | i18next | 23.10.1 | Internationalization |
-| Styling | Tailwind CSS | 4.1.18 | Utility-first CSS |
-| Build | Vite | 7.3.0 | Build tool |
-| Testing | Vitest | 3.2.4 | Test framework |
-| Monitoring | Sentry | 10.32.1 | Error tracking |
-
----
-
-**Document Metadata**
-- **Created:** 2025-12-23
-- **Author:** BMAD Architect Mode
-- **Status:** Phase 2 Complete
-- **Related Artifacts:** 
-  - [`structure-map.md`](structure-map.md:1)
-  - [`data-and-contracts.md`](data-and-contracts.md:1)
-  - [`flows-and-workflows.md`](flows-and-workflows.md:1)
-  - [`tech-context.md`](tech-context.md:1)
+**Document Owners:** Architecture Team  
+**Review Cycle:** Quarterly  
+**Next Review:** 2025-03-23

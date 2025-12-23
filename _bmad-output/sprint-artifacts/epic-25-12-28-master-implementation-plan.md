@@ -153,7 +153,7 @@ flowchart TD
 |-------|--------|-------|
 | 12-1: AgentFileTools Facade | ✅ DONE | `facades/file-tools.ts`, `file-tools-impl.ts` |
 | **12-1B: Concurrency Control** | ✅ DONE | `facades/file-lock.ts` (28 tests) |
-| 12-2: AgentTerminalTools Facade | Backlog | `facades/terminal-tools.ts`, `terminal-tools-impl.ts` |
+| 12-2: AgentTerminalTools Facade | ✅ DONE | `facades/terminal-tools.ts`, `terminal-tools-impl.ts` (14 tests) |
 | 12-3: AgentSyncTools Facade | Backlog | Optional |
 | 12-4: AgentGitTools Stub | Backlog | Stub only |
 
@@ -358,7 +358,7 @@ const stream = chat({
 
 **Story Execution Order:**
 ```
-12-1 ✅ → 12-1B → 12-2 → 25-0 → 25-2 → 25-3 → 25-1 → 25-4/28-24/25/26 → 25-5
+12-1 ✅ → 12-1B ✅ → 12-2 ✅ → 25-0 → 25-2 → 25-3 → 25-1 → 25-4/28-24/25/26 → 25-5
 ```
 
 ---

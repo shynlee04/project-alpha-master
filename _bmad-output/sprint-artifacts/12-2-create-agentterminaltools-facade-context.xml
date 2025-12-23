@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="12-2-create-agentterminaltools-facade" created="2025-12-23T19:20:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/webcontainer/manager.ts">
+      <purpose>WebContainer singleton with boot(), spawn(), mount() functions</purpose>
+      <content><![CDATA[
+export async function spawn(
+    command: string,
+    args: string[] = [],
+    options?: SpawnOptions
+): Promise<WebContainerProcess> {
+    if (!instance) {
+        throw new WebContainerError(
+            'WebContainer not booted. Call boot() first.',
+            'NOT_BOOTED'
+        );
+    }
+    return await instance.spawn(command, args, options);
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/webcontainer/terminal-adapter.ts">
+      <purpose>Binds xterm.js to WebContainers shell with event emission</purpose>
+      <content><![CDATA[
+// Event emission pattern (Story 27-2)
+currentPid = `jsh-${Date.now()}`;
+
+eventBus?.emit('process:started', {
+    pid: currentPid,
+    command: 'jsh',
+    args: [],
+});
+
+eventBus?.emit('process:output', {
+    pid: currentPid,
+    data,
+    type: 'stdout',
+});
+
+eventBus?.emit('process:exited', {
+    pid: currentPid,
+    exitCode,
+});
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/events/workspace-events.ts">
+      <purpose>TypeScript event types for WorkspaceEventEmitter</purpose>
+      <content><![CDATA[
+// Terminal/Process Events
+'process:started': [{ pid: string; command: string; args: string[] }]
+'process:output': [{ pid: string; data: string; type: 'stdout' | 'stderr' }]
+'process:exited': [{ pid: string; exitCode: number }]
+'terminal:input': [{ data: string }]
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/facades/file-tools.ts">
+      <purpose>Reference: AgentFileTools interface pattern</purpose>
+      <content><![CDATA[
+// Follow this pattern for AgentTerminalTools
+export interface AgentFileTools {
+    readFile(path: string): Promise<string | null>;
+    writeFile(path: string, content: string): Promise<void>;
+    // ...
+}
+
+export class PathValidationError extends Error { ... }
+export function validatePath(path: string): void { ... }
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/facades/file-tools-impl.ts">
+      <purpose>Reference: FileToolsFacade implementation pattern</purpose>
+      <content><![CDATA[
+// Follow this pattern for TerminalToolsFacade
+export class FileToolsFacade implements AgentFileTools {
+    constructor(
+        private readonly localFS: LocalFSAdapter,
+        private readonly syncManager: SyncManager,
+        private readonly eventBus: WorkspaceEventEmitter,
+        private readonly fileLock: FileLock = defaultFileLock
+    ) {}
+    
+    async writeFile(path: string, content: string): Promise<void> {
+        validatePath(path);
+        const lockAcquired = await this.fileLock.acquire(path);
+        try {
+            await this.syncManager.writeFile(path, content);
+            const lockReleased = this.fileLock.release(path);
+            this.eventBus.emit('file:modified', { path, source: 'agent', ... });
+        } finally {
+            this.fileLock.release(path);
+        }
+    }
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings -->
+  <research_notes>
+    <finding source="codebase" query="WebContainer spawn">
+      spawn(command, args, options) returns WebContainerProcess.
+      Process has .output (ReadableStream) and .exit (Promise<number>).
+      Must handle stream piping for stdout capture.
+    </finding>
+    <finding source="codebase" query="terminal-adapter events">
+      Uses unique PID format: `jsh-${Date.now()}`.
+      Emits process:started, process:output, process:exited.
+      Output type is always 'stdout' (no stderr in jsh).
+    </finding>
+    <finding source="codebase" query="WorkspaceEvents types">
+      Process events already fully defined in workspace-events.ts.
+      No new event types needed - just reuse existing.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns -->
+  <architecture_patterns>
+    <pattern name="Facade" source="architecture.md">
+      Stable interface decoupled from internal implementation.
+      Injectable dependencies for testability.
+    </pattern>
+    <pattern name="Event Emission" source="flows-and-workflows.md">
+      All operations emit events via WorkspaceEventEmitter.
+      Use source field to distinguish agent vs user actions.
+    </pattern>
+    <pattern name="Async Stream Capture" source="terminal-adapter.ts">
+      Use WritableStream to capture process.output.
+      Accumulate data for final result.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes -->
+  <technical_notes>
+    <note priority="high">
+      executeCommand must capture ALL stdout before returning.
+      Use WritableStream with internal buffer, wait for process.exit.
+    </note>
+    <note priority="high">
+      No FileLock needed for terminal (no file contention).
+      Each command gets unique PID for tracking.
+    </note>
+    <note priority="medium">
+      WebContainer must be booted before spawn().
+      Facade should check isBooted() and throw clear error.
+    </note>
+    <note priority="medium">
+      Consider timeout option for long-running commands.
+      Default: 30s matching file lock timeout.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@webcontainer/api" version="1.1.9" />
+    <dependency name="eventemitter3" version="5.0.1" />
+  </dependencies>
+</context>

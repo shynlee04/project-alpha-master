@@ -857,7 +857,12 @@ development_status:
   epic-12: in-progress
   12-1-create-agentfiletools-facade: done
   12-1b-add-concurrency-control: done
-  12-2-create-agentterminaltools-facade: backlog
+  12-2-create-agentterminaltools-facade: done
+    story: _bmad-output/sprint-artifacts/12-2-create-agentterminaltools-facade.md
+    context: _bmad-output/sprint-artifacts/12-2-create-agentterminaltools-facade-context.xml
+    completed_at: "2025-12-23T19:25:00+07:00"
+    tests_passing: 14
+    notes: "TerminalToolsFacade with executeCommand, startShell, killProcess. Events: process:started/output/exited."
   12-3-create-agentsynctools-facade: backlog
   12-4-create-agentgittools-facade-stub: backlog
   12-5-wire-facades-to-tanstack-ai-tools: backlog

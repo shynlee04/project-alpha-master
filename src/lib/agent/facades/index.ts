@@ -15,9 +15,15 @@ export { FileToolsFacade, createFileToolsFacade } from './file-tools-impl';
 // File Lock (Story 12-1B)
 export { FileLock, FileLockTimeoutError, fileLock, createFileLock } from './file-lock';
 
-// Terminal Tools (Story 12-2 - TBD)
-// export type { AgentTerminalTools } from './terminal-tools';
-// export { TerminalToolsFacade, createTerminalToolsFacade } from './terminal-tools-impl';
+// Terminal Tools (Story 12-2)
+export type {
+    AgentTerminalTools,
+    CommandOptions,
+    CommandResult,
+    ShellSession,
+} from './terminal-tools';
+export { TerminalToolsError } from './terminal-tools';
+export { TerminalToolsFacade, createTerminalToolsFacade } from './terminal-tools-impl';
 
 // Sync Tools (Story 12-3 - TBD)
 // export type { AgentSyncTools } from './sync-tools';

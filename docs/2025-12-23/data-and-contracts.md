@@ -1,288 +1,323 @@
-# Data and Contracts
+# Via-gent Data and Contracts Documentation
 
-**Analysis Date:** 2025-12-23  
-**Project:** Via-gent Browser-Based IDE  
-**Purpose:** Canonical view of data models, schemas, and contracts
+**Document ID:** `docs/2025-12-23/data-and-contracts.md`  
+**Version:** 1.0  
+**Date:** 2025-12-23  
+**Classification:** Internal  
+**Target Audience:** Technical Leadership, Architects, Developers
 
 ---
 
 ## Table of Contents
 
-1. [Data Models](#data-models)
-2. [IndexedDB Schema](#indexeddb-schema)
-3. [Type Definitions](#type-definitions)
-4. [API Contracts](#api-contracts)
-5. [Event Contracts](#event-contracts)
-6. [Validation Rules](#validation-rules)
+1. [Introduction](#introduction)
+2. [Data Models](#data-models)
+3. [IndexedDB Schema](#indexeddb-schema)
+4. [Type Definitions](#type-definitions)
+5. [API Contracts](#api-contracts)
+6. [Event Contracts](#event-contracts)
+7. [Validation Rules](#validation-rules)
+8. [Data Flow Diagrams](#data-flow-diagrams)
+
+---
+
+## Introduction
+
+This document provides a canonical view of all data models, schemas, type definitions, API contracts, and event contracts in the Via-gent system. It serves as the single source of truth for data structures and their relationships.
+
+### Document Scope
+
+| Category | Scope |
+|----------|-------|
+| **Data Models** | TypeScript interfaces for domain entities |
+| **IndexedDB Schema** | Database schema (version 3) |
+| **Type Definitions** | Shared types and utilities |
+| **API Contracts** | File System Access API, WebContainer API |
+| **Event Contracts** | Typed event payloads |
+| **Validation Rules** | Zod schemas for validation |
 
 ---
 
 ## Data Models
 
-### ProjectMetadata
-
-**Location:** [`src/lib/workspace/project-store.ts`](../src/lib/workspace/project-store.ts:37)
-
-**Purpose:** Core project metadata stored in IndexedDB for project persistence and permission restoration.
+### Project Metadata
 
 ```typescript
 interface ProjectMetadata {
-    /** UUID v4 or generated ID */
-    id: string;
-    /** Display name (typically folder name) */
-    name: string;
-    /** Display path for UI (not actual path due to FSA security) */
-    folderPath: string;
-    /** FSA handle for directory access restoration */
-    fsaHandle: FileSystemDirectoryHandle;
-    /** Last time project was opened */
-    lastOpened: Date;
-    /** Auto-sync enabled flag */
-    autoSync?: boolean;
-    /** Optional layout state for IDE restoration */
-    layoutState?: LayoutConfig;
-    /** Custom exclusion patterns for sync (glob syntax) */
-    exclusionPatterns?: string[];
-    /** Last known permission state for faster dashboard load */
-    lastKnownPermissionState?: FsaPermissionState;
+  id: string;
+  name: string;
+  path: string;
+  lastOpened: Date;
+  createdAt: Date;
 }
 ```
 
+**Purpose:** Stores project information for persistence and display.
+
 **Constraints:**
-- `id` must be unique (UUID v4 or timestamp-based fallback)
-- `fsaHandle` is a browser File System Access API handle (cannot be serialized)
-- `lastOpened` is used for sorting projects in dashboard
+- `id`: UUID v4 format
+- `name`: Non-empty string, max 255 characters
+- `path`: Display path only (not actual file system path)
+- `lastOpened`, `createdAt`: ISO 8601 date strings
 
 ---
 
-### WorkspaceState
-
-**Location:** [`src/lib/workspace/workspace-types.ts`](../src/lib/workspace/workspace-types.ts:13)
-
-**Purpose:** Runtime state for the IDE workspace context.
+### Workspace State
 
 ```typescript
 interface WorkspaceState {
-    /** Current project ID from route */
-    projectId: string | null;
-    /** Project metadata from IndexedDB */
-    projectMetadata: ProjectMetadata | null;
-    /** FSA directory handle for local folder */
-    directoryHandle: FileSystemDirectoryHandle | null;
-    /** Current permission state for the handle */
-    permissionState: FsaPermissionState;
-    /** Current sync status */
-    syncStatus: SyncStatus;
-    /** Progress during sync operation */
-    syncProgress: SyncProgress | null;
-    /** Timestamp of last successful sync */
-    lastSyncTime: Date | null;
-    /** Error message from last sync attempt */
-    syncError: string | null;
-    autoSync: boolean;
-    /** Whether folder is currently being opened */
-    isOpeningFolder: boolean;
-    /** Current exclusion patterns (default + custom) */
-    exclusionPatterns: string[];
-    /** Whether WebContainer has completed booting */
-    isWebContainerBooted: boolean;
-    /** Whether initial sync has completed */
-    initialSyncCompleted: boolean;
+  projectMetadata: ProjectMetadata | null;
+  directoryHandle: FileSystemDirectoryHandle | null;
+  permissionState: FsaPermissionState;
+  syncStatus: SyncStatus;
+  syncProgress: SyncProgress | null;
+  lastSyncTime: Date | null;
+  syncError: string | null;
+  autoSync: boolean;
+  isOpeningFolder: boolean;
+  exclusionPatterns: string[];
+  isWebContainerBooted: boolean;
+  initialSyncCompleted: boolean;
 }
 ```
 
-**State Transitions:**
-- `syncStatus`: `'idle'` → `'syncing'` → `'idle'` (or `'error'`)
-- `permissionState`: `'unknown'` → `'granted'` | `'prompt'` | `'denied'`
+**Purpose:** Central workspace state managed by [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1).
+
+**Constraints:**
+- `projectMetadata`: Null when no project is open
+- `permissionState`: One of `'granted' | 'denied' | 'prompt' | 'unknown'`
+- `syncStatus`: One of `'idle' | 'syncing' | 'paused' | 'error'`
 
 ---
 
-### LayoutConfig
-
-**Location:** [`src/lib/workspace/project-store.ts`](../src/lib/workspace/project-store.ts:28)
-
-**Purpose:** IDE layout state persisted per project.
+### Layout Configuration
 
 ```typescript
 interface LayoutConfig {
-    panelSizes?: number[];
-    openFiles?: string[];
-    activeFile?: string | null;
+  openFiles: string[];
+  activeFile: string | null;
+  expandedPaths: string[];
+  panelLayouts: Record<string, number[]>;
+  terminalTab: 'terminal' | 'output' | 'problems';
+  chatVisible: boolean;
 }
 ```
+
+**Purpose:** Stores IDE layout and UI state.
+
+**Constraints:**
+- `openFiles`: Array of file paths relative to project root
+- `activeFile`: Must be in `openFiles` if not null
+- `panelLayouts`: Key-value pairs for resizable panel sizes
+
+---
+
+### Sync Progress
+
+```typescript
+interface SyncProgress {
+  current: number;
+  total: number;
+  currentFile: string;
+  direction: 'toWebContainer' | 'fromWebContainer';
+}
+```
+
+**Purpose:** Tracks file sync progress for UI display.
+
+**Constraints:**
+- `current`: 0 ≤ current ≤ total
+- `direction`: Indicates sync direction
 
 ---
 
 ## IndexedDB Schema
 
-### Database: `via-gent-persistence` (Version 3)
+### Database Definition
 
-**Location:** [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts)
-
-### Table: `projects`
-
-**Primary Key:** `id` (string)
-
-**Indexes:**
-- `by-last-opened` → `lastOpened` (Date)
-
-**Schema:**
 ```typescript
-interface ProjectRecord {
-    id: string;
-    name: string;
-    folderPath: string;
-    fsaHandle: FileSystemDirectoryHandle;
-    lastOpened: Date;
-    autoSync: boolean;
-    layoutState?: LayoutConfig;
-    exclusionPatterns?: string[];
-    lastKnownPermissionState?: FsaPermissionState;
+class ViaGentDatabase extends Dexie {
+  constructor() {
+    super('ViaGentDB');
+    this.version(3).stores({
+      projects: 'id, name, lastOpened, createdAt',
+      ideState: 'projectId, updatedAt',
+      conversations: 'id, projectId, createdAt, updatedAt',
+      taskContexts: 'id, projectId, agentId, status, createdAt, updatedAt',
+      toolExecutions: 'id, taskId, status, createdAt',
+    });
+  }
 }
 ```
 
-**Purpose:** Store project metadata for dashboard and permission restoration.
+**Database Name:** `ViaGentDB`  
+**Current Version:** 3
 
 ---
 
-### Table: `conversations`
+### Table: projects
 
-**Primary Key:** `id` (string)
+| Field | Type | Index | Constraints |
+|-------|------|-------|-------------|
+| `id` | `string` | Primary | UUID v4 |
+| `name` | `string` | Indexed | Max 255 chars |
+| `path` | `string` | - | Display path |
+| `lastOpened` | `Date` | Indexed | ISO 8601 |
+| `createdAt` | `Date` | Indexed | ISO 8601 |
+
+**Purpose:** Stores project metadata for persistence.
 
 **Indexes:**
-- `by-project-id` → `projectId` (string)
-- `by-updated-at` → `updatedAt` (Date)
+- Primary: `id`
+- Secondary: `name`, `lastOpened`, `createdAt`
 
-**Schema:**
+**Queries:**
 ```typescript
-interface ConversationRecord {
-    id: string;
-    projectId: string;
-    messages: unknown[];
-    toolResults?: unknown[];
-    updatedAt: Date;
-}
-```
+// Get all projects sorted by last opened
+db.projects.orderBy('lastOpened').reverse().toArray();
 
-**Purpose:** Store AI agent conversation history (Epic 25 prep).
+// Get project by ID
+db.projects.get(projectId);
+
+// Search projects by name
+db.projects.where('name').equals(name).first();
+```
 
 ---
 
-### Table: `ideState`
+### Table: ideState
 
-**Primary Key:** `projectId` (string)
+| Field | Type | Index | Constraints |
+|-------|------|-------|-------------|
+| `projectId` | `string` | Primary | Foreign key to projects.id |
+| `openFiles` | `string[]` | - | Array of file paths |
+| `activeFile` | `string \| null` | - | Currently active file |
+| `expandedPaths` | `string[]` | - | Expanded directories |
+| `panelLayouts` | `Record<string, number[]>` | - | Panel configurations |
+| `terminalTab` | `string` | - | `'terminal' \| 'output' \| 'problems'` |
+| `chatVisible` | `boolean` | - | Chat panel visibility |
+| `updatedAt` | `Date` | Indexed | ISO 8601 |
+
+**Purpose:** Stores IDE layout state per project.
 
 **Indexes:**
-- `by-project-id` → `projectId` (string)
-- `by-updated-at` → `updatedAt` (Date)
+- Primary: `projectId`
+- Secondary: `updatedAt`
 
-**Schema:**
+**Queries:**
 ```typescript
-interface IdeStateRecord {
-    projectId: string;
-    panelLayouts?: Record<string, number[]>;
-    panelSizes?: number[];
-    openFiles?: string[];
-    activeFile?: string | null;
-    activeFileScrollTop?: number;
-    terminalTab?: 'terminal' | 'output' | 'problems';
-    chatVisible?: boolean;
-    updatedAt: Date;
-}
-```
+// Get IDE state for project
+db.ideState.get(projectId);
 
-**Purpose:** Store IDE-specific state (panel layouts, open files, etc.).
+// Update IDE state
+db.ideState.put({ projectId, ...state });
+```
 
 ---
 
-### Table: `taskContexts`
+### Table: conversations
 
-**Primary Key:** `id` (string)
+| Field | Type | Index | Constraints |
+|-------|------|-------|-------------|
+| `id` | `string` | Primary | UUID v4 |
+| `projectId` | `string` | Indexed | Foreign key to projects.id |
+| `messages` | `unknown[]` | - | Chat messages |
+| `toolResults` | `unknown[]` | - | Tool execution results |
+| `createdAt` | `Date` | Indexed | ISO 8601 |
+| `updatedAt` | `Date` | Indexed | ISO 8601 |
+
+**Purpose:** Stores AI chat conversation history.
 
 **Indexes:**
-- `by-project-id` → `projectId` (string)
+- Primary: `id`
+- Secondary: `projectId`, `createdAt`, `updatedAt`
 
-**Schema:**
+**Queries:**
 ```typescript
-interface TaskContextRecord {
-    id: string;
-    projectId: string;
-    context: unknown;
-    createdAt: Date;
-    updatedAt: Date;
-}
-```
+// Get conversations for project
+db.conversations.where('projectId').equals(projectId).toArray();
 
-**Purpose:** Store AI agent task context (Epic 25 prep).
+// Get conversation by ID
+db.conversations.get(conversationId);
+```
 
 ---
 
-### Table: `toolExecutions`
+### Table: taskContexts (Epic 25)
 
-**Primary Key:** `id` (string)
+| Field | Type | Index | Constraints |
+|-------|------|-------|-------------|
+| `id` | `string` | Primary | UUID v4 |
+| `projectId` | `string` | Indexed | Foreign key to projects.id |
+| `agentId` | `string` | Indexed | Executing agent ID |
+| `status` | `TaskStatus` | Indexed | Task status |
+| `description` | `string` | - | Task description |
+| `targetFiles` | `string[]` | - | Files being worked on |
+| `checkpoint` | `unknown` | - | LangGraph checkpoint |
+| `createdAt` | `Date` | Indexed | ISO 8601 |
+| `updatedAt` | `Date` | Indexed | ISO 8601 |
+
+**Purpose:** Stores AI agent task context for LangGraph orchestration.
 
 **Indexes:**
-- `by-project-id` → `projectId` (string)
-- `by-conversation-id` → `conversationId` (string)
+- Primary: `id`
+- Secondary: `projectId`, `agentId`, `status`, `createdAt`, `updatedAt`
 
-**Schema:**
+**TaskStatus Enum:**
 ```typescript
-interface ToolExecutionRecord {
-    id: string;
-    projectId: string;
-    conversationId?: string;
-    toolName: string;
-    input: unknown;
-    output: unknown;
-    status: 'pending' | 'success' | 'error';
-    error?: string;
-    startedAt: Date;
-    completedAt?: Date;
-}
+type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
 ```
 
-**Purpose:** Store AI agent tool execution history (Epic 25 prep).
+---
+
+### Table: toolExecutions (Epic 25)
+
+| Field | Type | Index | Constraints |
+|-------|------|-------|-------------|
+| `id` | `string` | Primary | UUID v4 |
+| `taskId` | `string` | Indexed | Foreign key to taskContexts.id |
+| `toolName` | `string` | - | Tool name |
+| `input` | `unknown` | - | Tool input parameters |
+| `output` | `unknown` | - | Tool output |
+| `status` | `ExecutionStatus` | Indexed | Execution status |
+| `duration` | `number` | - | Execution time (ms) |
+| `createdAt` | `Date` | Indexed | ISO 8601 |
+
+**Purpose:** Records tool execution history for debugging and auditing.
+
+**Indexes:**
+- Primary: `id`
+- Secondary: `taskId`, `status`, `createdAt`
+
+**ExecutionStatus Enum:**
+```typescript
+type ExecutionStatus = 'pending' | 'success' | 'error';
+```
 
 ---
 
 ## Type Definitions
 
-### File System Types
-
-**Location:** [`src/lib/filesystem/fs-types.ts`](../src/lib/filesystem/fs-types.ts)
-
-#### DirectoryEntry
+### Permission Types
 
 ```typescript
-interface DirectoryEntry {
-    /** Name of the file or directory (basename, not full path) */
-    name: string;
-    /** Type of entry */
-    type: 'file' | 'directory';
-    /** Native File System Access API handle */
-    handle: FileSystemHandle;
+type FsaPermissionState = 'granted' | 'denied' | 'prompt' | 'unknown';
+
+interface PermissionRequest {
+  handle: FileSystemDirectoryHandle;
+  projectId: string;
 }
-```
 
-#### FileReadResult
-
-```typescript
-interface FileReadResult {
-    /** File content as UTF-8 string */
-    content: string;
-    /** Encoding used */
-    encoding: 'utf-8';
+interface PermissionGranted {
+  handle: FileSystemDirectoryHandle;
+  projectId: string;
+  timestamp: Date;
 }
-```
 
-#### FileReadBinaryResult
-
-```typescript
-interface FileReadBinaryResult {
-    /** Raw binary data as ArrayBuffer */
-    data: ArrayBuffer;
-    /** MIME type of the file */
-    mimeType?: string;
+interface PermissionDenied {
+  handle: FileSystemDirectoryHandle;
+  reason: string;
+  timestamp: Date;
 }
 ```
 
@@ -290,143 +325,76 @@ interface FileReadBinaryResult {
 
 ### Sync Types
 
-**Location:** [`src/lib/filesystem/sync-types.ts`](../src/lib/filesystem/sync-types.ts)
-
-#### SyncStatus
-
 ```typescript
-type SyncStatus = 'idle' | 'syncing' | 'error';
-```
+type SyncStatus = 'idle' | 'syncing' | 'paused' | 'error';
 
-#### SyncErrorCode
+type SyncDirection = 'toWebContainer' | 'fromWebContainer';
 
-```typescript
-type SyncErrorCode =
-    | 'PERMISSION_DENIED'
-    | 'FILE_NOT_FOUND'
-    | 'FILE_READ_FAILED'
-    | 'FILE_WRITE_FAILED'
-    | 'DISK_FULL'
-    | 'WEBCONTAINER_ERROR'
-    | 'WEBCONTAINER_NOT_BOOTED'
-    | 'ENCODING_ERROR'
-    | 'SYNC_FAILED'
-    | 'UNKNOWN';
-```
-
-#### SyncProgress
-
-```typescript
 interface SyncProgress {
-    /** Total number of files/directories processed */
-    totalFiles: number;
-    /** Number of files successfully synced */
-    syncedFiles: number;
-    /** Current file being processed */
-    currentFile: string;
-    /** Percentage complete (0-100) */
-    percentage: number;
+  current: number;
+  total: number;
+  currentFile: string;
+  direction: SyncDirection;
 }
-```
 
-#### SyncResult
-
-```typescript
 interface SyncResult {
-    /** Whether sync completed without critical errors */
-    success: boolean;
-    /** Total number of files/directories encountered */
-    totalFiles: number;
-    /** Number of files successfully synced */
-    syncedFiles: number;
-    /** List of file paths that failed to sync */
-    failedFiles: string[];
-    /** Total duration in milliseconds */
-    duration: number;
+  success: boolean;
+  filesProcessed: number;
+  errors: string[];
+  timestamp: Date;
 }
-```
-
-#### SyncConfig
-
-```typescript
-interface SyncConfig {
-    /** Patterns to exclude from sync */
-    excludePatterns: string[];
-    /** Callback for progress updates */
-    onProgress?: (progress: SyncProgress) => void;
-    /** Callback for individual file errors */
-    onError?: (error: SyncError) => void;
-    /** Callback when sync completes */
-    onComplete?: (result: SyncResult) => void;
-    /** Pre-scan to compute accurate file count */
-    preScanFileCount?: boolean;
-}
-```
-
-**Default Exclusions:**
-```typescript
-const DEFAULT_SYNC_CONFIG: SyncConfig = {
-    excludePatterns: [
-        '.git',
-        'node_modules',
-        '.DS_Store',
-        'Thumbs.db',
-        '*.swp',
-        '*.swo',
-        '.env.local',
-        '.env.*.local',
-    ],
-    preScanFileCount: true,
-};
 ```
 
 ---
 
-### Permission Types
-
-**Location:** [`src/lib/filesystem/permission-lifecycle.ts`](../src/lib/filesystem/permission-lifecycle.ts)
-
-#### FsaPermissionState
-
-```typescript
-type FsaPermissionState = 'unknown' | 'granted' | 'prompt' | 'denied';
-```
-
-**State Meanings:**
-- `'unknown'`: Permission state not yet queried
-- `'granted'`: Permission granted (can access files)
-- `'prompt'`: Permission available but needs user confirmation
-- `'denied'`: Permission denied
-
----
-
-### Agent Tool Types
-
-**Location:** [`src/lib/agent/facades/file-tools.ts`](../src/lib/agent/facades/file-tools.ts)
-
-#### FileEntry
+### File System Types
 
 ```typescript
 interface FileEntry {
-    /** File or directory name */
-    name: string;
-    /** Relative path from project root */
-    path: string;
-    /** Entry type */
-    type: 'file' | 'directory';
-    /** File size in bytes (files only) */
-    size?: number;
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+  size?: number;
+  lastModified?: Date;
+}
+
+interface FileContent {
+  path: string;
+  content: string;
+  encoding?: 'utf-8' | 'binary';
+}
+
+interface FileOperationResult {
+  success: boolean;
+  path: string;
+  error?: string;
 }
 ```
 
-#### FileReadResult (Agent)
+---
+
+### WebContainer Types
 
 ```typescript
-interface FileReadResult {
-    /** File content as string */
-    content: string;
-    /** File path that was read */
-    path: string;
+interface WebContainerInstance {
+  fs: FileSystem;
+  spawn: (command: string, args: string[]) => Promise<Process>;
+  mount: (files: Record<string, string>) => Promise<void>;
+  teardown: () => Promise<void>;
+}
+
+interface Process {
+  pid: number;
+  output: ReadableStream<Uint8Array>;
+  exit: Promise<number>;
+  kill: () => void;
+}
+
+interface FileSystem {
+  readFile: (path: string) => Promise<Uint8Array>;
+  writeFile: (path: string, content: Uint8Array) => Promise<void>;
+  readdir: (path: string) => Promise<string[]>;
+  rm: (path: string, options?: { recursive?: boolean }) => Promise<void>;
 }
 ```
 
@@ -434,375 +402,831 @@ interface FileReadResult {
 
 ## API Contracts
 
-### AgentFileTools Interface
+### File System Access API
 
-**Location:** [`src/lib/agent/facades/file-tools.ts`](../src/lib/agent/facades/file-tools.ts:42)
-
-**Purpose:** Stable contract for AI agent file operations (Epic 12).
+#### Request Directory Access
 
 ```typescript
-interface AgentFileTools {
-    /**
-     * Read a file's content
-     * @param path - Relative path from project root
-     * @returns File content or null if file doesn't exist
-     */
-    readFile(path: string): Promise<string | null>;
-
-    /**
-     * Write content to a file (creates if doesn't exist)
-     * @param path - Relative path from project root
-     * @param content - Content to write
-     * @emits file:modified with source: 'agent'
-     */
-    writeFile(path: string, content: string): Promise<void>;
-
-    /**
-     * List contents of a directory
-     * @param path - Relative path (empty string for root)
-     * @param recursive - Whether to list recursively
-     * @returns Array of file entries
-     */
-    listDirectory(path: string, recursive?: boolean): Promise<FileEntry[]>;
-
-    /**
-     * Create a new file
-     * @param path - Relative path from project root
-     * @param content - Initial content (default: empty string)
-     * @emits file:created with source: 'agent'
-     */
-    createFile(path: string, content?: string): Promise<void>;
-
-    /**
-     * Delete a file
-     * @param path - Relative path from project root
-     * @emits file:deleted with source: 'agent'
-     */
-    deleteFile(path: string): Promise<void>;
-
-    /**
-     * Search for files by name pattern
-     * @param query - Search query (substring match on filename)
-     * @param basePath - Optional base path to search from
-     * @returns Matching file entries
-     */
-    searchFiles(query: string, basePath?: string): Promise<FileEntry[]>;
+async function requestDirectoryAccess(): Promise<FileSystemDirectoryHandle> {
+  const handle = await window.showDirectoryPicker({
+    mode: 'readwrite',
+    startIn: 'documents',
+  });
+  return handle;
 }
 ```
 
-**Path Validation:**
-```typescript
-function validatePath(path: string): void;
-```
-- Rejects paths containing `..` (path traversal)
-- Rejects absolute paths (starting with `/` or drive letters)
+**Parameters:**
+- `mode`: `'read' | 'readwrite'` - Access mode
+- `startIn`: `'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos'` - Starting directory
+
+**Returns:** `Promise<FileSystemDirectoryHandle>`
+
+**Errors:**
+- `AbortError`: User cancelled operation
+- `NotFoundError`: Starting directory not found
+- `SecurityError`: Permission denied
 
 ---
 
-### WorkspaceActions Interface
-
-**Location:** [`src/lib/workspace/workspace-types.ts`](../src/lib/workspace/workspace-types.ts:41)
+#### Read File
 
 ```typescript
-interface WorkspaceActions {
-    /** Open folder via picker, save to ProjectStore */
-    openFolder(): Promise<void>;
-    /** Always show picker, replace current handle */
-    switchFolder(): Promise<void>;
-    /** Trigger manual sync from LocalFS to WebContainer */
-    syncNow(): Promise<void>;
-    setAutoSync(enabled: boolean): Promise<void>;
-    /** Update exclusion patterns and persist to ProjectStore */
-    setExclusionPatterns(patterns: string[]): Promise<void>;
-    /** Clear state and navigate to dashboard */
-    closeProject(): void;
-    /** Set WebContainer boot status for auto-sync */
-    setIsWebContainerBooted(booted: boolean): void;
-    /** Restore permission for 'prompt' state handles */
-    restoreAccess(): Promise<void>;
+async function readFile(
+  handle: FileSystemFileHandle
+): Promise<string> {
+  const file = await handle.getFile();
+  const text = await file.text();
+  return text;
 }
 ```
+
+**Parameters:**
+- `handle`: `FileSystemFileHandle` - File handle
+
+**Returns:** `Promise<string>` - File content as text
+
+**Errors:**
+- `NotFoundError`: File not found
+- `NotReadableError`: File not readable
 
 ---
 
-### LocalFSAdapter Interface
-
-**Location:** [`src/lib/filesystem/local-fs-adapter.ts`](../src/lib/filesystem/local-fs-adapter.ts:30)
+#### Write File
 
 ```typescript
-class LocalFSAdapter {
-    static isSupported(): boolean;
-    async requestDirectoryAccess(): Promise<FileSystemDirectoryHandle>;
-    getDirectoryHandle(): FileSystemDirectoryHandle | null;
-    setDirectoryHandle(handle: FileSystemDirectoryHandle): void;
-    
-    // File Operations
-    async readFile(path: string, options?: { encoding?: 'utf-8' }): Promise<FileReadResult>;
-    async readFile(path: string, options: { encoding: 'binary' }): Promise<FileReadBinaryResult>;
-    async writeFile(path: string, content: string): Promise<void>;
-    async createFile(path: string, content?: string): Promise<void>;
-    async deleteFile(path: string): Promise<void>;
-    
-    // Directory Operations
-    async listDirectory(path?: string): Promise<DirectoryEntry[]>;
-    async createDirectory(path: string): Promise<void>;
-    async deleteDirectory(path: string): Promise<void>;
-    async rename(oldPath: string, newPath: string): Promise<void>;
+async function writeFile(
+  handle: FileSystemFileHandle,
+  content: string
+): Promise<void> {
+  const writable = await handle.createWritable();
+  await writable.write(content);
+  await writable.close();
 }
 ```
+
+**Parameters:**
+- `handle`: `FileSystemFileHandle` - File handle
+- `content`: `string` - Content to write
+
+**Returns:** `Promise<void>`
+
+**Errors:**
+- `NotFoundError`: File not found
+- `NoModificationAllowedError`: File is read-only
 
 ---
 
-### SyncManager Interface
-
-**Location:** [`src/lib/filesystem/sync-manager.ts`](../src/lib/filesystem/sync-manager.ts)
+#### Check Permissions
 
 ```typescript
-class SyncManager {
-    constructor(
-        localAdapter: LocalFSAdapter,
-        webContainer: WebContainer,
-        config?: Partial<SyncConfig>
-    );
-    
-    async syncToWebContainer(options?: { fullSync?: boolean }): Promise<SyncResult>;
-    async writeFile(path: string, content: string): Promise<void>;
-    async deleteFile(path: string): Promise<void>;
-    async createDirectory(path: string): Promise<void>;
-    
-    setExcludePatterns(patterns: string[]): void;
-    getConfig(): SyncConfig;
+async function checkPermission(
+  handle: FileSystemHandle
+): Promise<PermissionState> {
+  const permission = await handle.queryPermission({ mode: 'readwrite' });
+  return permission;
+}
+
+async function requestPermission(
+  handle: FileSystemHandle
+): Promise<PermissionState> {
+  const permission = await handle.requestPermission({ mode: 'readwrite' });
+  return permission;
 }
 ```
+
+**Parameters:**
+- `handle`: `FileSystemHandle` - File or directory handle
+- `mode`: `'read' | 'readwrite'` - Permission mode
+
+**Returns:** `Promise<PermissionState>` - `'granted' | 'denied' | 'prompt'`
+
+---
+
+### WebContainer API
+
+#### Boot WebContainer
+
+```typescript
+async function bootWebContainer(
+  template?: string
+): Promise<WebContainerInstance> {
+  const webcontainer = await WebContainer.boot({
+    template: template || 'node',
+  });
+  return webcontainer;
+}
+```
+
+**Parameters:**
+- `template`: `string` (optional) - Container template (e.g., `'node'`, `'python'`)
+
+**Returns:** `Promise<WebContainerInstance>`
+
+**Errors:**
+- `Error`: WebContainer initialization failed
+
+---
+
+#### Mount File System
+
+```typescript
+async function mountFileSystem(
+  webcontainer: WebContainerInstance,
+  files: Record<string, string>
+): Promise<void> {
+  await webcontainer.mount(files);
+}
+```
+
+**Parameters:**
+- `webcontainer`: `WebContainerInstance` - WebContainer instance
+- `files`: `Record<string, string>` - Files to mount (path → content)
+
+**Returns:** `Promise<void>`
+
+**Errors:**
+- `Error`: Mount operation failed
+
+---
+
+#### Spawn Process
+
+```typescript
+async function spawnProcess(
+  webcontainer: WebContainerInstance,
+  command: string,
+  args: string[],
+  options?: {
+    cwd?: string;
+    env?: Record<string, string>;
+  }
+): Promise<Process> {
+  const process = await webcontainer.spawn(command, args, options);
+  return process;
+}
+```
+
+**Parameters:**
+- `webcontainer`: `WebContainerInstance` - WebContainer instance
+- `command`: `string` - Command to execute
+- `args`: `string[]` - Command arguments
+- `options.cwd`: `string` (optional) - Working directory
+- `options.env`: `Record<string, string>` (optional) - Environment variables
+
+**Returns:** `Promise<Process>`
+
+**Errors:**
+- `Error`: Process spawn failed
 
 ---
 
 ## Event Contracts
 
-### WorkspaceEvents
-
-**Location:** [`src/lib/events/workspace-events.ts`](../src/lib/events/workspace-events.ts:3)
-
-**EventEmitter:** `eventemitter3`
+### Event Emitter Interface
 
 ```typescript
-interface WorkspaceEvents {
-    // File System Events
-    'file:created': [{ path: string; source: 'local' | 'editor' | 'agent' }];
-    'file:modified': [{ path: string; source: 'local' | 'editor' | 'agent'; content?: string }];
-    'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent' }];
-    'directory:created': [{ path: string }];
-    'directory:deleted': [{ path: string }];
-
-    // Sync Events
-    'sync:started': [{ fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional' }];
-    'sync:progress': [{ current: number; total: number; currentFile: string }];
-    'sync:completed': [{ success: boolean; timestamp: Date; filesProcessed: number }];
-    'sync:error': [{ error: Error; file?: string }];
-    'sync:paused': [{ reason: 'user' | 'error' | 'permission' }];
-    'sync:resumed': [];
-
-    // WebContainer Events
-    'container:booted': [{ bootTime: number }];
-    'container:mounted': [{ fileCount: number }];
-    'container:error': [{ error: Error }];
-
-    // Terminal/Process Events
-    'process:started': [{ pid: string; command: string; args: string[] }];
-    'process:output': [{ pid: string; data: string; type: 'stdout' | 'stderr' }];
-    'process:exited': [{ pid: string; exitCode: number }];
-    'terminal:input': [{ data: string }];
-
-    // Permission Events
-    'permission:requested': [{ handle: FileSystemDirectoryHandle }];
-    'permission:granted': [{ handle: FileSystemDirectoryHandle; projectId: string }];
-    'permission:denied': [{ handle: FileSystemDirectoryHandle; reason: string }];
-    'permission:expired': [{ projectId: string }];
-
-    // Project Events
-    'project:opened': [{ projectId: string; name: string }];
-    'project:closed': [{ projectId: string }];
-    'project:switched': [{ fromId: string | null; toId: string }];
+interface WorkspaceEventEmitter {
+  on(event: WorkspaceEvent, listener: (...args: any[]) => void): void;
+  off(event: WorkspaceEvent, listener: (...args: any[]) => void): void;
+  emit(event: WorkspaceEvent, ...args: any[]): void;
 }
 ```
 
-**Event Usage:**
+---
+
+### File System Events
+
+#### file:created
+
 ```typescript
-import { createWorkspaceEventBus } from '@/lib/events';
-
-const eventBus = createWorkspaceEventBus();
-
-// Emit events
-eventBus.emit('file:created', { path: 'src/index.ts', source: 'agent' });
-
-// Listen to events
-eventBus.on('sync:completed', ({ success, filesProcessed }) => {
-    console.log(`Sync ${success ? 'succeeded' : 'failed'}, processed ${filesProcessed} files`);
-});
+interface FileCreatedEvent {
+  path: string;
+  source: 'user' | 'agent' | 'sync';
+  lockAcquired?: boolean;
+  lockReleased?: boolean;
+}
 ```
+
+**Emitted by:** [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1), [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** File tree, SyncManager, Event logger
+
+---
+
+#### file:modified
+
+```typescript
+interface FileModifiedEvent {
+  path: string;
+  source: 'user' | 'agent' | 'sync';
+  content?: string;
+  lockAcquired?: boolean;
+  lockReleased?: boolean;
+}
+```
+
+**Emitted by:** [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1), [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** File tree, SyncManager, Event logger
+
+---
+
+#### file:deleted
+
+```typescript
+interface FileDeletedEvent {
+  path: string;
+  source: 'user' | 'agent' | 'sync';
+  lockAcquired?: boolean;
+  lockReleased?: boolean;
+}
+```
+
+**Emitted by:** [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1), [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** File tree, SyncManager, Event logger
+
+---
+
+#### directory:created
+
+```typescript
+interface DirectoryCreatedEvent {
+  path: string;
+}
+```
+
+**Emitted by:** [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1)
+
+**Listeners:** File tree, SyncManager
+
+---
+
+#### directory:deleted
+
+```typescript
+interface DirectoryDeletedEvent {
+  path: string;
+}
+```
+
+**Emitted by:** [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1)
+
+**Listeners:** File tree, SyncManager
+
+---
+
+### Sync Events
+
+#### sync:started
+
+```typescript
+interface SyncStartedEvent {
+  fileCount: number;
+  direction: 'toWebContainer' | 'fromWebContainer';
+}
+```
+
+**Emitted by:** [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** UI sync indicator, Event logger
+
+---
+
+#### sync:progress
+
+```typescript
+interface SyncProgressEvent {
+  current: number;
+  total: number;
+  currentFile: string;
+}
+```
+
+**Emitted by:** [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** UI sync indicator
+
+---
+
+#### sync:completed
+
+```typescript
+interface SyncCompletedEvent {
+  success: boolean;
+  timestamp: Date;
+  filesProcessed: number;
+}
+```
+
+**Emitted by:** [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** UI sync indicator, Event logger
+
+---
+
+#### sync:error
+
+```typescript
+interface SyncErrorEvent {
+  error: string;
+  file?: string;
+}
+```
+
+**Emitted by:** [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** UI error display, Event logger
+
+---
+
+#### sync:paused
+
+```typescript
+interface SyncPausedEvent {
+  reason: string;
+}
+```
+
+**Emitted by:** [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** UI sync indicator, Event logger
+
+---
+
+#### sync:resumed
+
+```typescript
+interface SyncResumedEvent {}
+```
+
+**Emitted by:** [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71)
+
+**Listeners:** UI sync indicator, Event logger
+
+---
+
+### WebContainer Events
+
+#### container:booted
+
+```typescript
+interface ContainerBootedEvent {
+  bootTime: number; // milliseconds
+}
+```
+
+**Emitted by:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+**Listeners:** UI status indicator, Event logger
+
+---
+
+#### container:mounted
+
+```typescript
+interface ContainerMountedEvent {
+  fileCount: number;
+}
+```
+
+**Emitted by:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+**Listeners:** UI status indicator, Event logger
+
+---
+
+#### container:error
+
+```typescript
+interface ContainerErrorEvent {
+  error: string;
+}
+```
+
+**Emitted by:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+**Listeners:** UI error display, Event logger
+
+---
+
+### Terminal/Process Events
+
+#### process:started
+
+```typescript
+interface ProcessStartedEvent {
+  pid: number;
+  command: string;
+  args: string[];
+}
+```
+
+**Emitted by:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+**Listeners:** Terminal component, Event logger
+
+---
+
+#### process:output
+
+```typescript
+interface ProcessOutputEvent {
+  pid: number;
+  data: string;
+  type: 'stdout' | 'stderr';
+}
+```
+
+**Emitted by:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+**Listeners:** Terminal component
+
+---
+
+#### process:exited
+
+```typescript
+interface ProcessExitedEvent {
+  pid: number;
+  exitCode: number;
+}
+```
+
+**Emitted by:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+**Listeners:** Terminal component, Event logger
+
+---
+
+#### terminal:input
+
+```typescript
+interface TerminalInputEvent {
+  data: string;
+}
+```
+
+**Emitted by:** [`XTerminal`](../src/components/ide/) component
+
+**Listeners:** [`WebContainerManager`](../src/lib/webcontainer/manager.ts:1)
+
+---
+
+### Permission Events
+
+#### permission:requested
+
+```typescript
+interface PermissionRequestedEvent {
+  handle: FileSystemDirectoryHandle;
+}
+```
+
+**Emitted by:** [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+
+**Listeners:** Permission manager, Event logger
+
+---
+
+#### permission:granted
+
+```typescript
+interface PermissionGrantedEvent {
+  handle: FileSystemDirectoryHandle;
+  projectId: string;
+}
+```
+
+**Emitted by:** [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+
+**Listeners:** Permission manager, Event logger
+
+---
+
+#### permission:denied
+
+```typescript
+interface PermissionDeniedEvent {
+  handle: FileSystemDirectoryHandle;
+  reason: string;
+}
+```
+
+**Emitted by:** [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+
+**Listeners:** Permission manager, Event logger
+
+---
+
+#### permission:expired
+
+```typescript
+interface PermissionExpiredEvent {
+  projectId: string;
+}
+```
+
+**Emitted by:** Permission manager
+
+**Listeners:** UI permission display, Event logger
+
+---
+
+### Project Events
+
+#### project:opened
+
+```typescript
+interface ProjectOpenedEvent {
+  projectId: string;
+  name: string;
+}
+```
+
+**Emitted by:** [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+
+**Listeners:** UI navigation, Event logger
+
+---
+
+#### project:closed
+
+```typescript
+interface ProjectClosedEvent {
+  projectId: string;
+}
+```
+
+**Emitted by:** [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+
+**Listeners:** UI navigation, Event logger
+
+---
+
+#### project:switched
+
+```typescript
+interface ProjectSwitchedEvent {
+  fromId: string | null;
+  toId: string;
+}
+```
+
+**Emitted by:** [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+
+**Listeners:** UI navigation, Event logger
 
 ---
 
 ## Validation Rules
 
-### Path Validation
+### Zod Schemas
 
-**Location:** [`src/lib/agent/facades/file-tools.ts`](../src/lib/agent/facades/file-tools.ts:105)
+#### Project Metadata Schema
 
 ```typescript
-function validatePath(path: string): void {
-    if (path.includes('..')) {
-        throw new PathValidationError('Path traversal (..) not allowed');
-    }
-    if (path.startsWith('/') || /^[a-zA-Z]:/.test(path)) {
-        throw new PathValidationError('Absolute paths not allowed');
-    }
-}
-```
+import { z } from 'zod';
 
-**Rules:**
-- No path traversal (`..`)
-- No absolute paths (Unix `/` or Windows drive letters)
-- Only relative paths from project root allowed
+const ProjectMetadataSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1).max(255),
+  path: z.string(),
+  lastOpened: z.coerce.date(),
+  createdAt: z.coerce.date(),
+});
+```
 
 ---
 
-### File System Access API Support
-
-**Location:** [`src/lib/filesystem/local-fs-adapter.ts`](../src/lib/filesystem/local-fs-adapter.ts:37)
+#### Workspace State Schema
 
 ```typescript
-static isSupported(): boolean {
-    return typeof window !== 'undefined' && 'showDirectoryPicker' in window;
-}
+const WorkspaceStateSchema = z.object({
+  projectMetadata: ProjectMetadataSchema.nullable(),
+  directoryHandle: z.any().nullable(), // FileSystemDirectoryHandle
+  permissionState: z.enum(['granted', 'denied', 'prompt', 'unknown']),
+  syncStatus: z.enum(['idle', 'syncing', 'paused', 'error']),
+  syncProgress: z.object({
+    current: z.number().min(0),
+    total: z.number().min(0),
+    currentFile: z.string(),
+    direction: z.enum(['toWebContainer', 'fromWebContainer']),
+  }).nullable(),
+  lastSyncTime: z.coerce.date().nullable(),
+  syncError: z.string().nullable(),
+  autoSync: z.boolean(),
+  isOpeningFolder: z.boolean(),
+  exclusionPatterns: z.array(z.string()),
+  isWebContainerBooted: z.boolean(),
+  initialSyncCompleted: z.boolean(),
+});
 ```
-
-**Browser Support:**
-- Chrome 86+
-- Edge 86+
-- Not supported in Firefox, Safari
 
 ---
 
-### Permission State Detection
-
-**Location:** [`src/lib/filesystem/permission-lifecycle.ts`](../src/lib/filesystem/permission-lifecycle.ts:121)
+#### Layout Configuration Schema
 
 ```typescript
-async function getPermissionState(
-    handle: FileSystemDirectoryHandle,
-    mode: 'read' | 'readwrite' = 'readwrite'
-): Promise<FsaPermissionState>;
+const LayoutConfigSchema = z.object({
+  openFiles: z.array(z.string()),
+  activeFile: z.string().nullable(),
+  expandedPaths: z.array(z.string()),
+  panelLayouts: z.record(z.array(z.number())),
+  terminalTab: z.enum(['terminal', 'output', 'problems']),
+  chatVisible: z.boolean(),
+});
 ```
-
-**Behavior:**
-- Returns `'denied'` if `queryPermission` not available
-- Returns `'denied'` on error
-- Returns actual state otherwise
 
 ---
 
-### Persistent Permission Support
-
-**Location:** [`src/lib/filesystem/permission-lifecycle.ts`](../src/lib/filesystem/permission-lifecycle.ts:173)
+#### Sync Progress Schema
 
 ```typescript
-function isPersistentPermissionSupported(): boolean {
-    if (typeof navigator === 'undefined') return false;
-    if (typeof navigator.permissions === 'undefined') return false;
-    return typeof navigator.permissions.query === 'function';
-}
+const SyncProgressSchema = z.object({
+  current: z.number().min(0),
+  total: z.number().min(0),
+  currentFile: z.string(),
+  direction: z.enum(['toWebContainer', 'fromWebContainer']),
+}).refine(
+  (data) => data.current <= data.total,
+  { message: 'current must be less than or equal to total' }
+);
 ```
-
-**Chrome 122+ Behavior:**
-- Shows three-way permission prompt:
-  - "Allow this time" (session only)
-  - "Allow on every visit" (persistent)
-  - "Block"
-- Browser handles persistence automatically
 
 ---
 
 ## Data Flow Diagrams
 
+### File Write Flow
+
+```
+┌─────────────┐
+│  User saves │
+│  file in    │
+│  Monaco     │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  WorkspaceContext.useWorkspaceActions.writeFile()           │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Validate file path                                   ││
+│  │  2. Acquire file lock (FileLockManager)                ││
+│  │  3. Write to local FS via LocalFSAdapter               ││
+│  │  4. Emit file:modified event                           ││
+│  │  5. Release file lock                                  ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  LocalFSAdapter.writeFile()                                 │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Get file handle                                     ││
+│  │  2. Create writable stream                             ││
+│  │  3. Write content                                      ││
+│  │  4. Close stream                                       ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  SyncManager (auto-sync enabled)                            │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Debounce (500ms)                                    ││
+│  │  2. Read file from local FS                            ││
+│  │  3. Write to WebContainer FS                           ││
+│  │  4. Emit sync:progress event                           ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  WebContainer.writeFile()                                   │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Write to container file system                     ││
+│  │  2. Return success                                     ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ### Project Open Flow
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant WorkspaceContext
-    participant LocalFSAdapter
-    participant ProjectStore
-    participant SyncManager
-    participant WebContainer
-    participant IndexedDB
-
-    User->>UI: Click "Open Folder"
-    UI->>WorkspaceContext: openFolder()
-    WorkspaceContext->>LocalFSAdapter: requestDirectoryAccess()
-    LocalFSAdapter->>User: Show directory picker
-    User->>LocalFSAdapter: Select folder
-    LocalFSAdapter->>WorkspaceContext: Return handle
-    WorkspaceContext->>ProjectStore: saveProject()
-    ProjectStore->>IndexedDB: Store metadata
-    WorkspaceContext->>SyncManager: syncToWebContainer()
-    SyncManager->>LocalFSAdapter: Read files
-    LocalFSAdapter-->>SyncManager: File contents
-    SyncManager->>WebContainer: Write files
-    WebContainer-->>WorkspaceContext: sync:completed
 ```
-
-### File Write Flow (Agent)
-
-```mermaid
-sequenceDiagram
-    participant Agent
-    participant AgentFileTools
-    participant LocalFSAdapter
-    participant SyncManager
-    participant WebContainer
-    participant EventBus
-
-    Agent->>AgentFileTools: writeFile(path, content)
-    AgentFileTools->>AgentFileTools: validatePath(path)
-    AgentFileTools->>LocalFSAdapter: writeFile(path, content)
-    LocalFSAdapter->>LocalFSAdapter: Write to local FS
-    AgentFileTools->>SyncManager: writeFile(path, content)
-    SyncManager->>WebContainer: Write to WebContainer
-    AgentFileTools->>EventBus: emit('file:modified', { path, source: 'agent' })
-    EventBus-->>Agent: Event notification
+┌─────────────┐
+│  User clicks│
+│  "Open      │
+│  Folder"    │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  WorkspaceContext.useWorkspaceActions.openFolder()         │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Call window.showDirectoryPicker()                  ││
+│  │  2. Request readwrite permission                       ││
+│  │  3. Create ProjectMetadata                            ││
+│  │  4. Save to IndexedDB (ProjectStore)                   ││
+│  │  5. Update workspace state                            ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  ProjectStore.saveProject()                                 │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Open IndexedDB transaction                        ││
+│  │  2. Check for existing project                        ││
+│  │  3. Update or insert project record                   ││
+│  │  4. Commit transaction                                ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  SyncManager.syncToWebContainer()                          │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Scan local FS for files                           ││
+│  │  2. Apply exclusion patterns                          ││
+│  │  3. Emit sync:started event                           ││
+│  │  4. Batch write files to WebContainer                 ││
+│  │  5. Emit sync:completed event                         ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  WebContainer.mount()                                       │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  1. Mount files to container FS                       ││
+│  │  2. Emit container:mounted event                      ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Migration History
+### Event Flow
 
-### IndexedDB Schema Versions
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1 | Initial | `projects` table only |
-| 2 | Story 5-1 | Added `conversations`, `ideState` tables |
-| 3 | Epic 27-1c | Added `taskContexts`, `toolExecutions` tables (AI Foundation prep) |
-
-### Legacy Migration
-
-**Location:** [`src/lib/workspace/project-store.ts`](../src/lib/workspace/project-store.ts:77)
-
-- Migrates from `via-gent-projects` DB to unified `via-gent-persistence` DB
-- One-time migration on first load
-- Preserves existing project metadata
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Domain Operation (e.g., file write)                       │
+└──────┬──────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Event Emission                                             │
+│  eventEmitter.emit('file:modified', { path, source })      │
+└──────┬──────────────────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────┐
+│  WorkspaceEventEmitter                                      │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  - Type checking                                        ││
+│  │  - Event routing                                        ││
+│  │  - Error handling                                       ││
+│  └─────────────────────────────────────────────────────────┘│
+└──────┬──────────────────────────────────────────────────────┘
+       │
+   ┌───┴───┬──────────────┬──────────────┐
+   │       │              │              │
+   ▼       ▼              ▼              ▼
+┌─────┐ ┌─────┐      ┌─────┐      ┌─────┐
+│ UI  │ │ Sync │      │ WC  │      │ Log │
+│ Upd ││ List │      │ List│      │ ger │
+└─────┘ └─────┘      └─────┘      └─────┘
+```
 
 ---
 
-## References
+## Conclusion
 
-- **IndexedDB Schema:** [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts)
-- **Project Store:** [`src/lib/workspace/project-store.ts`](../src/lib/workspace/project-store.ts)
-- **Workspace Types:** [`src/lib/workspace/workspace-types.ts`](../src/lib/workspace/workspace-types.ts)
-- **File System Types:** [`src/lib/filesystem/fs-types.ts`](../src/lib/filesystem/fs-types.ts)
-- **Sync Types:** [`src/lib/filesystem/sync-types.ts`](../src/lib/filesystem/sync-types.ts)
-- **Agent Tools:** [`src/lib/agent/facades/file-tools.ts`](../src/lib/agent/facades/file-tools.ts)
-- **Events:** [`src/lib/events/workspace-events.ts`](../src/lib/events/workspace-events.ts)
-- **Permission Lifecycle:** [`src/lib/filesystem/permission-lifecycle.ts`](../src/lib/filesystem/permission-lifecycle.ts)
+This document provides a canonical view of all data models, schemas, type definitions, API contracts, and event contracts in the Via-gent system. It serves as the single source of truth for data structures and their relationships.
+
+All data models are defined in TypeScript with strict typing, and all events are typed with clear payload contracts. The IndexedDB schema is versioned (currently version 3) with clear migration paths.
+
+For implementation details, refer to the source code files referenced throughout this document.
+
+---
+
+## Document References
+
+| Document | Location |
+|----------|----------|
+| **Project Overview** | [`project-overview.md`](./project-overview.md) |
+| **Architecture** | [`architecture.md`](./architecture.md) |
+| **Tech Context** | [`tech-context.md`](./tech-context.md) |
+| **Tech Debt** | [`tech-debt.md`](./tech-debt.md) |
+| **Improvement Opportunities** | [`improvement-opportunities.md`](./improvement-opportunities.md) |
+| **Roadmap** | [`roadmap-and-planning.md`](./roadmap-and-planning.md) |
+
+---
+
+**Document Owners:** Architecture Team  
+**Review Cycle:** Quarterly  
+**Next Review:** 2025-03-23
