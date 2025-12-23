@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Via-gent** is a browser-based IDE that runs code locally using WebContainers. It provides:
+**Via-gent** is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. It provides:
 - Monaco Editor for code editing with tabbed interface
 - xterm.js-based terminal integrated with WebContainers
 - Bidirectional file sync between local File System Access API and WebContainers
+- **AI Agent System** with multi-provider support (OpenRouter, Anthropic, etc.) via TanStack AI
 - Multi-language support (English, Vietnamese) with i18next
 - Project persistence via IndexedDB
 - React 19 + TypeScript + Vite + TanStack Router stack
@@ -29,6 +30,9 @@ pnpm test
 
 # Extract translation keys
 pnpm i18n:extract
+
+# Type checking
+pnpm tsc --noEmit
 ```
 
 ## Key Directories & Files
@@ -36,33 +40,42 @@ pnpm i18n:extract
 ```
 src/
 ├── components/           # React components organized by feature
-│   ├── ide/             # IDE components: editor, terminal, file tree, preview
-│   ├── ui/              # Reusable UI components (Toast, etc.)
+│   ├── agent/           # AI agent configuration and dialogs
+│   ├── chat/            # Chat interface components (ApprovalOverlay, CodeBlock, ToolCallBadge)
+│   ├── ide/             # IDE components: editor, terminal, file tree, preview, agent panels
+│   ├── ui/              # Reusable UI components (Toast, Dialog, etc.)
 │   └── layout/          # Layout components (IDELayout, IDEHeaderBar, etc.)
-├── lib/                 # Core business logic
-│   ├── filesystem/      # File system sync and FSA utilities
-│   ├── webcontainer/    # WebContainer lifecycle and process management
-│   ├── workspace/       # Workspace state and project persistence
-│   ├── editor/          # Monaco editor integration
-│   ├── events/          # Event system
-│   └── persistence/     # Data persistence utilities
+├── lib/
+│   ├── agent/           # AI agent infrastructure (NEW)
+│   │   ├── facades/    # Agent tool facades (FileTools, TerminalTools)
+│   │   ├── providers/  # Provider adapters, model registry, credential vault
+│   │   ├── tools/      # Individual agent tools (read, write, execute)
+│   │   └── hooks/      # React hooks for agent operations
+│   ├── filesystem/     # File system sync and FSA utilities
+│   ├── webcontainer/   # WebContainer lifecycle and process management
+│   ├── workspace/      # Workspace state and project persistence
+│   ├── editor/         # Monaco editor integration
+│   ├── events/         # Event system
+│   ├── state/          # TanStack stores (IDE, statusbar)
+│   └── persistence/    # Data persistence utilities
 ├── routes/              # TanStack Router file-based routes
-├── i18n/                # Internationalization files (en.json, vi.json)
-└── data/                # Demo data and fixtures
+│   └── api/            # API endpoints (NEW: /api/chat)
+├── hooks/              # Custom React hooks
+├── i18n/               # Internationalization files (en.json, vi.json)
+└── types/              # TypeScript type definitions
 
-.cursor/rules/bmad/      # BMAD method agents, workflows, and tools
-vite.config.ts           # Vite config with WebContainer cross-origin plugin
-vitest.config.ts         # Test configuration
-tsconfig.json           # TypeScript config with @/* path alias
+.agent/rules/            # AI agent rules and prompts (NEW: general-rules.md)
+_bmad-output/           # BMAD method artifacts and sprint tracking
+docs/2025-12-23/        # Comprehensive technical documentation (NEW)
 ```
 
 ## Architecture & Key Components
 
 ### Core Architecture
 - **Local FS as Source of Truth**: All file operations go through `LocalFSAdapter` to browser's File System Access API
-- **WebContainer Mirror**: `SyncManager` (`src/lib/filesystem/sync-manager.ts`) syncs files to WebContainer sandbox
-- **State Management**: TanStack Store with React Context (`src/lib/workspace/WorkspaceContext.tsx`)
-- **Project Persistence**: IndexedDB via `ProjectStore` (`src/lib/workspace/project-store.ts`)
+- **WebContainer Mirror**: `SyncManager` syncs files to WebContainer sandbox
+- **State Management**: TanStack Store with React Context for workspace and IDE state
+- **Project Persistence**: IndexedDB via Dexie for project metadata and conversations
 
 ### File System Sync Flow
 ```
@@ -71,16 +84,38 @@ Local FS (FSA) ←→ LocalFSAdapter ←→ SyncManager ←→ WebContainer FS
    IndexedDB (ProjectStore)         File Change Events
 ```
 
-### Key Directories
-- `src/lib/filesystem/` - File system sync and FSA utilities
-- `src/lib/webcontainer/` - WebContainer lifecycle and process management
-- `src/lib/workspace/` - Workspace state and project persistence
-- `src/components/ide/` - Monaco editor, file tree, terminal, preview panel
-- `src/routes/` - TanStack Router file-based routes (SSR disabled for WebContainer compatibility)
-- `src/data/` - Demo data and fixtures
+### AI Agent Architecture (NEW)
+```
+UI Components (AgentChatPanel, AgentConfigDialog)
+         ↓
+useAgentChat Hook (with tools)
+         ↓
+AgentFactory (creates adapters)
+         ↓
+ProviderAdapter (OpenRouter, Anthropic, etc.)
+         ↓
+TanStack AI (chat streaming)
+         ↓
+Agent Tools (FileTools, TerminalTools)
+         ↓
+Facades (abstract over WebContainer/LocalFS)
+```
+
+**Key Components:**
+- **Provider Adapter Factory** (`src/lib/agent/providers/provider-adapter.ts`): Creates adapters for different AI providers
+- **Model Registry** (`src/lib/agent/providers/model-registry.ts`): Manages available AI models
+- **Credential Vault** (`src/lib/agent/providers/credential-vault.ts`): Secure storage of API keys
+- **Agent Tool Facades**: `AgentFileTools` and `AgentTerminalTools` abstract WebContainer operations for agents
+- **Tool Registry**: Individual tools for file operations (`read`, `write`, `list`, `execute`)
+
+### API Routes
+- **GET/POST `/api/chat`** (NEW): AI chat endpoint with SSE streaming
+  - Supports multi-provider AI models
+  - Returns ChatGPT-compatible or OpenAI format
+  - Integrates with provider adapter system
 
 ### Component Structure
-- Components organized by feature: `ide/`, `ui/`, `layout/`
+- Components organized by feature: `agent/`, `chat/`, `ide/`, `ui/`, `layout/`
 - Each component directory has `index.ts` barrel exports
 - TypeScript interfaces for props (not `type` aliases)
 
@@ -120,6 +155,7 @@ The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 - Tests use `vitest` with `jsdom` for React components
 - File System Access API is mocked in tests
 - Test files follow naming pattern `*.test.ts` or `*.test.tsx`
+- Use `vi.mock()` for mocking TanStack AI and providers
 
 ### Internationalization
 - Use `t()` hook or `i18next.t()` function for translations
@@ -129,7 +165,18 @@ The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 ### Route Generation
 - TanStack Router auto-generates `src/routeTree.gen.ts`
 - **DO NOT edit this file manually**
-- VS Code settings (`.vscode/settings.json`) mark it as read-only and exclude from watcher/search
+- VS Code settings (`.vscode/settings.json`) mark it as read-only
+
+### AI Agent Development
+When implementing agent features:
+1. **MCP Research Protocol** (`/update-claudemd/update-claudemd`): Before implementing unfamiliar patterns:
+   - Context7: Query library documentation for API signatures
+   - Deepwiki: Check repo wikis for architecture decisions
+   - Tavily/Exa: Search for 2025 best practices
+   - Repomix: Analyze current codebase structure
+2. **Agent Tools**: Implement in `src/lib/agent/tools/` following the facade pattern
+3. **Provider Adapters**: Use `providerAdapterFactory.createAdapter(providerId, config)`
+4. **Tool Execution**: Wire through `useAgentChatWithTools` hook with approval UI
 
 ### VS Code Settings
 The `.vscode/settings.json` file configures:
@@ -180,6 +227,18 @@ The `.vscode/settings.json` file configures:
 3. Internal modules with `@/` alias
 4. Relative imports
 
+### 8. AI Agent Tool Concurrency (NEW)
+- Agent tools use a file locking mechanism via `FileLock` class
+- Multiple concurrent file operations on the same path are serialized
+- Always await tool results before proceeding
+- Tools validate paths before execution
+
+### 9. TanStack AI Streaming (NEW)
+- Chat responses are Server-Sent Events (SSE) streams
+- Use `Symbol.asyncIterator` to consume streams
+- Handle `done` event types for completion
+- Stream responses require proper error handling
+
 ## Existing Documentation & Guidance
 
 ### AGENTS.md
@@ -191,25 +250,14 @@ The repository already has comprehensive guidance in `AGENTS.md` covering:
 - Code style and conventions
 - Testing structure and patterns
 
-**Key points from AGENTS.md:**
-- Ignore admin route completely (100% client-side project)
-- Terminal working directory must be set with `projectPath` parameter
-- No reverse sync from WebContainer to local FS
-- `.git` and `node_modules` excluded from sync (regenerated in WebContainer)
-- Use BMAD method for development workflows
-
-**Development Tools & Research Guidance (from AGENTS.md):**
-- Use innate search tools, grep, etc. for codebase exploration
-- Use Context7 MCP tools for official documentation (2 sequential steps per turn based on scoring)
-- Use Deepwiki for semantic questions about specific tech stacks (TanStack Router, WebContainer, xterm.js, etc.)
-- Use Tavily and Exa MCP tools for semantic repo search
-- Use Repomix MCP tools for granular codebase analysis
-- Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
-- Prioritize iteration, insertion, updates on single-source of truth
-- When generating new files, isolate with new folders and date-time-stamp marking
+### .agent/rules/general-rules.md (NEW)
+Comprehensive development rules including:
+- **Mandators MCP Research Protocol**: Step-by-step research before implementing unfamiliar patterns
+- **Dependency documentation**: Full list of GitHub repos and official docs for all dependencies
+- **Development tools guidance**: When to use Context7, Deepwiki, Tavily, Exa, Repomix MCP tools
+- **Context preservation**: Document artifact IDs, variables, naming conventions, date stamps
 
 ### BMAD Method Integration
-
 The project includes BMAD (Business Model & Agile Development) method rules in `.cursor/rules/bmad/`:
 
 #### Available Modules
@@ -224,23 +272,22 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - `@bmad/bmm/workflows/code-review` - Code review workflow
 - `@bmad/core/workflows/brainstorming` - Brainstorming facilitation
 
-#### Development Workflow from AGENTS.md
-1. **Story Development Cycle**: After completing a story following the **story-dev-cycle** workflow:
-   - Run tests: `pnpm test`
-   - Stage changes: `git add .`
-   - Commit with story ID: `git commit -m "feat(epic-N): Story N-X - [Story Title]"`
-2. **Branch Strategy**: Feature branches created after epic completion (not per-story)
-   - Branch naming: `epic-N/descriptive-name`
-   - Created after `/bmad-bmm-workflows-retrospective` workflow
-3. **Commit Message Format**:
-   ```
-   feat(epic-13): Story 13-1 - Fix Terminal Working Directory
-   fix(epic-13): Story 13-2 - Fix Auto-Sync on Project Load
-   docs(governance): Update sprint-status.yaml with Story 13-6
-   chore(bmad): Course correction - Add Story 13-6 for Preview in New Tab
-   ```
-
 ## Common Operations
+
+### Adding New Agent Tools
+1. Create tool in `src/lib/agent/tools/`
+2. Add tool schema with `zod` validation
+3. Implement tool handler (read from facade, execute, return result)
+4. Register in `src/lib/agent/tools/index.ts`
+5. Add to agent configuration in `useAgentChatWithTools`
+6. Write tests in `src/lib/agent/tools/__tests__/`
+
+### Adding New AI Providers
+1. Add provider config to `model-registry.ts`
+2. Implement adapter in `provider-adapter.ts` following `ProviderAdapter` interface
+3. Register in `providerAdapterFactory.createAdapter()`
+4. Add to `AgentConfigDialog` provider selector
+5. Test with `/api/chat` endpoint
 
 ### Adding New Features
 1. Create component in appropriate feature directory (`ide/`, `ui/`, `layout/`)
@@ -266,12 +313,24 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - React component tests use `@testing-library/react` with `jsdom`
 - File system tests mock File System Access API
 
+### Agent Testing (NEW)
+- Mock TanStack AI with `vi.mock('@tanstack/ai')`
+- Mock provider adapters for unit tests
+- Facade tests should mock WebContainer operations
+- Use `FileLock` wrapper for concurrency tests
+
 ## Performance Considerations
 
 - WebContainer boot is expensive (≈3-5 seconds)
 - File sync uses debounced batch operations
 - Large `node_modules` directories are excluded from sync (regenerated in WebContainer)
 - Monaco Editor loads languages/features on-demand
+
+### AI Agent Performance (NEW)
+- Tool execution uses non-blocking async patterns
+- Streaming responses reduce perceived latency
+- File operations are debounced and batched
+- Credential vault uses fast IndexedDB lookups
 
 ## Troubleshooting
 
@@ -294,3 +353,69 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 1. Run `pnpm i18n:extract`
 2. Check key is in correct namespace (default: `translation`)
 3. Verify `t()` function usage follows i18next patterns
+
+### Agent Tool Not Executing (NEW)
+1. Verify tool is registered in `tools/index.ts`
+2. Check facade is properly initialized with WebContainer instance
+3. Verify file lock is not held by another operation
+4. Check browser console for tool execution errors
+5. Verify API credentials are set via `AgentConfigDialog`
+
+### Chat API Returning 401 (NEW)
+1. Check if provider has credentials in `credentialVault`
+2. Open `AgentConfigDialog` and configure API keys
+3. Verify provider is supported in `model-registry`
+4. Check `/api/chat` logs for authentication errors
+
+## Recent Updates (Updated: 2025-12-23)
+
+### Major AI Agent Infrastructure (Epic 25)
+- **Provider Adapter System**: Multi-provider support for OpenRouter, Anthropic, etc.
+- **Credential Vault**: Secure storage of API keys in IndexedDB
+- **Model Registry**: Centralized configuration of available AI models
+- **Agent Tools**: `read`, `write`, `list`, `execute` for file and terminal operations
+- **Agent Facades**: Abstract WebContainer operations for safe agent interactions
+- **FileLock**: Concurrency control for file operations
+- **TanStack AI Integration**: Streaming chat with tool support
+- **Chat API**: New `/api/chat` endpoint with SSE streaming
+
+### UI Enhancements (Epic 28)
+- **Chat System Components**: `StreamingMessage`, `ApprovalOverlay`, `CodeBlock`, `ToolCallBadge`, `DiffPreview`
+- **Agent Management**: `AgentConfigDialog`, `AgentsPanel`, `AgentChatPanel`
+- **Status Bar**: Segmented status indicators for sync, WebContainer, cursor, file type
+- **8-bit Design System**: Dark-themed aesthetic with pixel-perfect styling
+
+### Documentation (2025-12-23)
+- **Comprehensive Tech Docs**: `docs/2025-12-23/` with architecture, tech context, data contracts, flows
+- **Development Guidelines**: `.agent/rules/general-rules.md` with MCP research protocol
+- **Sprint Tracking**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **BMAD Artifacts**: Planning documents and sprint workflow status
+
+### Dependency Changes
+- Added `@tanstack/ai`, `@tanstack/ai-gemini`, `@tanstack/ai-react` for AI/chat functionality
+- Updated various UI libraries
+- New utilities for agent and chat features
+
+### Key Files for AI Agent Development
+- `src/lib/agent/providers/provider-adapter.ts`: Provider abstraction layer
+- `src/lib/agent/providers/credential-vault.ts`: Secure credential storage
+- `src/lib/agent/providers/model-registry.ts`: Model configuration
+- `src/lib/agent/tools/`: Individual agent tools
+- `src/lib/agent/facades/`: Agent tool facades
+- `src/lib/agent/hooks/use-agent-chat-with-tools.ts`: Chat with tool integration
+- `src/routes/api/chat.ts`: Chat API endpoint
+
+## Where to Find Things
+
+- **AI Agent System**: `src/lib/agent/`
+- **Chat UI Components**: `src/components/chat/`
+- **Chat API**: `src/routes/api/chat.ts`
+- **Agent Configuration**: `src/components/agent/AgentConfigDialog.tsx`
+- **File System Logic**: `src/lib/filesystem/`
+- **WebContainer Manager**: `src/lib/webcontainer/manager.ts`
+- **Workspace State**: `src/lib/workspace/`
+- **TanStack Stores**: `src/lib/state/`
+- **Translation Keys**: `src/i18n/{en,vi}.json`
+- **BMAD Workflows**: `.cursor/commands/bmad/`
+- **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **Tech Documentation**: `docs/2025-12-23/`
