@@ -109,3 +109,31 @@ export interface ListFilesOutput {
     path: string;
     entries: FileEntry[];
 }
+
+// ============================================================================
+// Terminal Tool Schemas (Zod) - Story 25-3
+// ============================================================================
+
+/**
+ * Schema for execute_command tool input
+ */
+export const ExecuteCommandInputSchema = z.object({
+    command: z.string().describe('Command to run (e.g., npm, node, cat)'),
+    args: z.array(z.string()).optional().describe('Command arguments'),
+    timeout: z.number().optional().describe('Timeout in milliseconds (default: 120000)'),
+    cwd: z.string().optional().describe('Working directory'),
+});
+export type ExecuteCommandInput = z.infer<typeof ExecuteCommandInputSchema>;
+
+// ============================================================================
+// Terminal Tool Output Types - Story 25-3
+// ============================================================================
+
+/**
+ * Output for execute_command tool
+ */
+export interface ExecuteCommandOutput {
+    stdout: string;
+    exitCode: number;
+    pid: string;
+}

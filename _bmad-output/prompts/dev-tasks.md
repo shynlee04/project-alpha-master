@@ -167,5 +167,4 @@ docs\2025-12-23\tech-context.md
 
 - https://tanstack.com/ai/latest/docs/guides/agentic-cycle
 
-
 - https://tanstack.com/ai/latest/docs/guides/connection-adapters 
