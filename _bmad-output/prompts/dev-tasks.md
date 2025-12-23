@@ -129,6 +129,7 @@ _bmad-output\bmm-workflow-status.yaml```
 ```
 _bmad-output\sprint-artifacts\epic-25-12-28-master-implementation-plan.md
 _bmad-output\sprint-artifacts\epic-25-12-28-readiness-analysis.md
+_bmad-output\sprint-artifacts\epic-25-11-06-research-analysis-request.md
 
 ```
 
@@ -168,3 +169,155 @@ docs\2025-12-23\tech-context.md
 - https://tanstack.com/ai/latest/docs/guides/agentic-cycle
 
 - https://tanstack.com/ai/latest/docs/guides/connection-adapters 
+
+- https://tanstack.com/ai/latest/docs/api/ai-client
+
+- https://tanstack.com/ai/latest/docs/api/ai-react 
+
+- https://tanstack.com/ai/latest/docs/reference/functions/
+
+## TANSTACK AI  API, methods, classes, types, interfaces, alias references index
+
+```
+Perfect! I can now extract and organize all the documentation links. Let me create a comprehensive index of all the links organized by category.
+
+Based on the TanStack AI documentation structure, here's a complete index of all documentation links organized by category:
+
+## API
+
+- [@tanstack/ai](https://tanstack.com/ai/latest/docs/api/ai)
+- [@tanstack/ai-client](https://tanstack.com/ai/latest/docs/api/ai-client)
+- [@tanstack/ai-react](https://tanstack.com/ai/latest/docs/api/ai-react)
+- [@tanstack/ai-solid](https://tanstack.com/ai/latest/docs/api/ai-solid)
+
+## ADAPTERS
+
+- [OpenAI](https://tanstack.com/ai/latest/docs/adapters/openai)
+- [Anthropic](https://tanstack.com/ai/latest/docs/adapters/anthropic)
+- [Google Gemini](https://tanstack.com/ai/latest/docs/adapters/gemini)
+- [Ollama](https://tanstack.com/ai/latest/docs/adapters/ollama)
+
+## CLASS REFERENCES
+
+- [BaseAdapter](https://tanstack.com/ai/latest/docs/reference/classes/BaseAdapter)
+- [BatchStrategy](https://tanstack.com/ai/latest/docs/reference/classes/BatchStrategy)
+- [CompositeStrategy](https://tanstack.com/ai/latest/docs/reference/classes/CompositeStrategy)
+- [ImmediateStrategy](https://tanstack.com/ai/latest/docs/reference/classes/ImmediateStrategy)
+- [PartialJSONParser](https://tanstack.com/ai/latest/docs/reference/classes/PartialJSONParser)
+- [PunctuationStrategy](https://tanstack.com/ai/latest/docs/reference/classes/PunctuationStrategy)
+- [StreamProcessor](https://tanstack.com/ai/latest/docs/reference/classes/StreamProcessor)
+- [ToolCallManager](https://tanstack.com/ai/latest/docs/reference/classes/ToolCallManager)
+- [WordBoundaryStrategy](https://tanstack.com/ai/latest/docs/reference/classes/WordBoundaryStrategy)
+
+## FUNCTION REFERENCES
+
+- [text](https://tanstack.com/ai/latest/docs/reference/functions/text)
+- [textOptions](https://tanstack.com/ai/latest/docs/reference/functions/textOptions)
+- [combineStrategies](https://tanstack.com/ai/latest/docs/reference/functions/combineStrategies)
+- [convertMessagesToModelMessages](https://tanstack.com/ai/latest/docs/reference/functions/convertMessagesToModelMessages)
+- [convertZodToJsonSchema](https://tanstack.com/ai/latest/docs/reference/functions/convertZodToJsonSchema)
+- [createReplayStream](https://tanstack.com/ai/latest/docs/reference/functions/createReplayStream)
+- [embedding](https://tanstack.com/ai/latest/docs/reference/functions/embedding)
+- [generateMessageId](https://tanstack.com/ai/latest/docs/reference/functions/generateMessageId)
+- [maxIterations](https://tanstack.com/ai/latest/docs/reference/functions/maxIterations)
+- [messages](https://tanstack.com/ai/latest/docs/reference/functions/messages)
+- [modelMessageToUIMessage](https://tanstack.com/ai/latest/docs/reference/functions/modelMessageToUIMessage)
+- [modelMessagesToUIMessages](https://tanstack.com/ai/latest/docs/reference/functions/modelMessagesToUIMessages)
+- [normalizeToUIMessage](https://tanstack.com/ai/latest/docs/reference/functions/normalizeToUIMessage)
+- [parsePartialJSON](https://tanstack.com/ai/latest/docs/reference/functions/parsePartialJSON)
+- [summarize](https://tanstack.com/ai/latest/docs/reference/functions/summarize)
+- [toServerSentEventsStream](https://tanstack.com/ai/latest/docs/reference/functions/toServerSentEventsStream)
+- [toStreamResponse](https://tanstack.com/ai/latest/docs/reference/functions/toStreamResponse)
+- [toolDefinition](https://tanstack.com/ai/latest/docs/reference/functions/toolDefinition)
+- [uiMessageToModelMessages](https://tanstack.com/ai/latest/docs/reference/functions/uiMessageToModelMessages)
+- [untilFinishReason](https://tanstack.com/ai/latest/docs/reference/functions/untilFinishReason)
+
+## INTERFACE REFERENCES
+
+- [AIAdapter](https://tanstack.com/ai/latest/docs/reference/interfaces/AIAdapter)
+- [AIAdapterConfig](https://tanstack.com/ai/latest/docs/reference/interfaces/AIAdapterConfig)
+- [AgentLoopState](https://tanstack.com/ai/latest/docs/reference/interfaces/AgentLoopState)
+- [ApprovalRequestedStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ApprovalRequestedStreamChunk)
+- [AudioPart](https://tanstack.com/ai/latest/docs/reference/interfaces/AudioPart)
+- [BaseStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/BaseStreamChunk)
+- [TextCompletionChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/TextCompletionChunk)
+- [TextOptions](https://tanstack.com/ai/latest/docs/reference/interfaces/TextOptions)
+- [ChunkRecording](https://tanstack.com/ai/latest/docs/reference/interfaces/ChunkRecording)
+- [ChunkStrategy](https://tanstack.com/ai/latest/docs/reference/interfaces/ChunkStrategy)
+- [ClientTool](https://tanstack.com/ai/latest/docs/reference/interfaces/ClientTool)
+- [ContentPartSource](https://tanstack.com/ai/latest/docs/reference/interfaces/ContentPartSource)
+- [ContentStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ContentStreamChunk)
+- [DefaultMessageMetadataByModality](https://tanstack.com/ai/latest/docs/reference/interfaces/DefaultMessageMetadataByModality)
+- [DocumentPart](https://tanstack.com/ai/latest/docs/reference/interfaces/DocumentPart)
+- [DoneStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/DoneStreamChunk)
+- [EmbeddingOptions](https://tanstack.com/ai/latest/docs/reference/interfaces/EmbeddingOptions)
+- [EmbeddingResult](https://tanstack.com/ai/latest/docs/reference/interfaces/EmbeddingResult)
+- [ErrorStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ErrorStreamChunk)
+- [ImagePart](https://tanstack.com/ai/latest/docs/reference/interfaces/ImagePart)
+- [InternalToolCallState](https://tanstack.com/ai/latest/docs/reference/interfaces/InternalToolCallState)
+- [JSONParser](https://tanstack.com/ai/latest/docs/reference/interfaces/JSONParser)
+- [ModelMessage](https://tanstack.com/ai/latest/docs/reference/interfaces/ModelMessage)
+- [ProcessorResult](https://tanstack.com/ai/latest/docs/reference/interfaces/ProcessorResult)
+- [ProcessorState](https://tanstack.com/ai/latest/docs/reference/interfaces/ProcessorState)
+- [ResponseFormat](https://tanstack.com/ai/latest/docs/reference/interfaces/ResponseFormat)
+- [ServerTool](https://tanstack.com/ai/latest/docs/reference/interfaces/ServerTool)
+- [StreamProcessorEvents](https://tanstack.com/ai/latest/docs/reference/interfaces/StreamProcessorEvents)
+- [StreamProcessorHandlers](https://tanstack.com/ai/latest/docs/reference/interfaces/StreamProcessorHandlers)
+- [StreamProcessorOptions](https://tanstack.com/ai/latest/docs/reference/interfaces/StreamProcessorOptions)
+- [SummarizationOptions](https://tanstack.com/ai/latest/docs/reference/interfaces/SummarizationOptions)
+- [SummarizationResult](https://tanstack.com/ai/latest/docs/reference/interfaces/SummarizationResult)
+- [TextPart](https://tanstack.com/ai/latest/docs/reference/interfaces/TextPart)
+- [ThinkingPart](https://tanstack.com/ai/latest/docs/reference/interfaces/ThinkingPart)
+- [ThinkingStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ThinkingStreamChunk)
+- [Tool](https://tanstack.com/ai/latest/docs/reference/interfaces/Tool)
+- [ToolCall](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolCall)
+- [ToolCallPart](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolCallPart)
+- [ToolCallStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolCallStreamChunk)
+- [ToolConfig](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolConfig)
+- [ToolDefinition](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolDefinition)
+- [ToolDefinitionConfig](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolDefinitionConfig)
+- [ToolDefinitionInstance](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolDefinitionInstance)
+- [ToolInputAvailableStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolInputAvailableStreamChunk)
+- [ToolResultPart](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolResultPart)
+- [ToolResultStreamChunk](https://tanstack.com/ai/latest/docs/reference/interfaces/ToolResultStreamChunk)
+- [UIMessage](https://tanstack.com/ai/latest/docs/reference/interfaces/UIMessage)
+- [VideoPart](https://tanstack.com/ai/latest/docs/reference/interfaces/VideoPart)
+
+## TYPE ALIAS REFERENCES
+
+- [AgentLoopStrategy](https://tanstack.com/ai/latest/docs/reference/type-aliases/AgentLoopStrategy)
+- [AnyClientTool](https://tanstack.com/ai/latest/docs/reference/type-aliases/AnyClientTool)
+- [TextStreamOptionsForModel](https://tanstack.com/ai/latest/docs/reference/type-aliases/TextStreamOptionsForModel)
+- [TextStreamOptionsUnion](https://tanstack.com/ai/latest/docs/reference/type-aliases/TextStreamOptionsUnion)
+- [ConstrainedContent](https://tanstack.com/ai/latest/docs/reference/type-aliases/ConstrainedContent)
+- [ConstrainedModelMessage](https://tanstack.com/ai/latest/docs/reference/type-aliases/ConstrainedModelMessage)
+- [ContentPart](https://tanstack.com/ai/latest/docs/reference/type-aliases/ContentPart)
+- [ContentPartForModalities](https://tanstack.com/ai/latest/docs/reference/type-aliases/ContentPartForModalities)
+- [ExtractModalitiesForModel](https://tanstack.com/ai/latest/docs/reference/type-aliases/ExtractModalitiesForModel)
+- [ExtractModelsFromAdapter](https://tanstack.com/ai/latest/docs/reference/type-aliases/ExtractModelsFromAdapter)
+- [InferToolInput](https://tanstack.com/ai/latest/docs/reference/type-aliases/InferToolInput)
+- [InferToolName](https://tanstack.com/ai/latest/docs/reference/type-aliases/InferToolName)
+- [InferToolOutput](https://tanstack.com/ai/latest/docs/reference/type-aliases/InferToolOutput)
+- [MessagePart](https://tanstack.com/ai/latest/docs/reference/type-aliases/MessagePart)
+- [ModalitiesArrayToUnion](https://tanstack.com/ai/latest/docs/reference/type-aliases/ModalitiesArrayToUnion)
+- [Modality](https://tanstack.com/ai/latest/docs/reference/type-aliases/Modality)
+- [StreamChunk](https://tanstack.com/ai/latest/docs/reference/type-aliases/StreamChunk)
+- [StreamChunkType](https://tanstack.com/ai/latest/docs/reference/type-aliases/StreamChunkType)
+- [ToolCallState](https://tanstack.com/ai/latest/docs/reference/type-aliases/ToolCallState)
+- [ToolResultState](https://tanstack.com/ai/latest/docs/reference/type-aliases/ToolResultState)
+
+## VARIABLE REFERENCES
+
+- [aiEventClient](https://tanstack.com/ai/latest/docs/reference/variables/aiEventClient)
+- [defaultJSONParser](https://tanstack.com/ai/latest/docs/reference/variables/defaultJSONParser)
+
+***
+
+**Summary:** This index contains 126 total documentation links across 7 main categories: 4 API packages, 4 adapters, 9 classes, 20 functions, 48 interfaces, 20 type aliases, and 2 variables. All links follow the pattern `https://tanstack.com/ai/latest/docs/...` and are part of the TanStack AI library documentation.[1]
+
+
+
+## **ULTRA IMPORTANT** notices:
+As this sequence of epics and stories are extremely intricate and mutually complex and due to we need to iterate, on trials and errors, as well as scaffolding these, I highly anticipate you to ultrathink everytime -> to detect flaws, inaccuracy (as cross-dependencies, cross-architectures issues of these rather new stacks when they work together for advanced features such as tools, loops, agentic loops, that AI agents must be able to perform CRUD operations to many other slices of this project - 100% client-side)
+
+- Meaning you must always ready to work cross-stories, cross-epics -> research and investigate as errors, bugs occur. Do not just look at one single story scope.

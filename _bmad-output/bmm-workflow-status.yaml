@@ -23,13 +23,23 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "25-4-wire-tool-execution-to-ui"
+  key: "25-5-implement-approval-flow"
   epic: 25
   status: "backlog"
   platform: "Platform A"
   notes: |
-    Next story per master plan execution order.
-    Story 25-1 completed - wires tools to UI components.
+    Story 25-5: Implement Approval Flow.
+    Builds on 25-4 factory and hook. Needs:
+    - ToolCallPart detection from UIMessage.parts
+    - Approval overlay UI component
+    - Tool call state management
+    
+last_completed_story:
+  key: "25-4-wire-tool-execution-to-ui"
+  epic: 25
+  completed_at: "2025-12-23T22:35:00+07:00"
+  tests_passing: 9
+  notes: "APPROVED with 6 minor issues flagged for 25-5. factory.ts, use-agent-chat-with-tools.ts."
 
 
 last_completed_story:

@@ -912,7 +912,17 @@ development_status:
     completed_at: "2025-12-23T21:25:00+07:00"
     tests_passing: 7
     notes: "TanStack AI execute_command tool with 2-min timeout. Uses AgentTerminalTools facade."
-  25-4-wire-tool-execution-to-ui: backlog
+  25-4-wire-tool-execution-to-ui: done
+    story: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui.md
+    context: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-23T21:45:00+07:00"
+    ready_at: "2025-12-23T21:49:00+07:00"
+    started_at: "2025-12-23T22:01:00+07:00"
+    review_at: "2025-12-23T22:12:00+07:00"
+    completed_at: "2025-12-23T22:35:00+07:00"
+    tests_passing: 9
+    notes: "APPROVED. factory.ts with clientTools, use-agent-chat-with-tools.ts hook. 6 minor issues flagged for 25-5."
   25-5-implement-approval-flow: backlog
   epic-25-retrospective: optional
 
