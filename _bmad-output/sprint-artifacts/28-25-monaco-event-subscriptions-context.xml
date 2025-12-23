@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-25-monaco-event-subscriptions" created="2025-12-24T05:08:00+07:00">
+  
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/events/workspace-events.ts">
+      <content><![CDATA[
+// File event includes source and content for external changes
+'file:modified': [
+  { path: string; source: 'local' | 'editor' | 'agent'; content?: string; lockAcquired?: number; lockReleased?: number },
+]
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/FileTree/hooks/useFileTreeEventSubscriptions.ts">
+      <content><![CDATA[
+// Reference pattern for event subscriptions
+export function useFileTreeEventSubscriptions(
+    eventBus: WorkspaceEventEmitter | undefined,
+    onRefreshNeeded: () => void
+): void {
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const onRefreshNeededRef = useRef(onRefreshNeeded);
+    onRefreshNeededRef.current = onRefreshNeeded;
+
+    const triggerRefresh = useCallback(() => {
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
+        }
+        debounceTimeoutRef.current = setTimeout(() => {
+            onRefreshNeededRef.current();
+        }, DEBOUNCE_MS);
+    }, []);
+
+    useEffect(() => {
+        if (!eventBus) return;
+        
+        const handleFileEvent = (payload: FileEventPayload) => {
+            if (payload.source === 'agent') {
+                triggerRefresh();
+            }
+        };
+        
+        eventBus.on('file:modified', handleFileEvent as any);
+        return () => {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+            eventBus.off('file:modified', handleFileEvent as any);
+        };
+    }, [eventBus, triggerRefresh]);
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/MonacoEditor/MonacoEditor.tsx">
+      <content><![CDATA[
+// Key props we need to support
+interface MonacoEditorProps {
+    openFiles: OpenFile[]
+    activeFilePath: string | null
+    onSave?: (path: string, content: string) => void
+    onActiveFileChange?: (path: string) => void
+    // ... other props
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI tool definition">
+      Pattern: toolDefinition({ ... }).server(async () => { ... }) for server tools
+      Client tools: toolDefinition.client() for browser execution
+    </finding>
+    <finding source="codebase" file="useEventBusEffects.ts">
+      Pattern: useEffect with eventBus.on/off for subscription management
+      Cleanup: return () => eventBus.off() in useEffect
+    </finding>
+    <finding source="codebase" file="useFileTreeEventSubscriptions.ts">
+      Debounce: 300ms DEBOUNCE_MS constant
+      Ref pattern: useRef for callback stability, avoid stale closures
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Event Subscription Hook" source="architecture.md">
+      - Accept eventBus and optional filter props
+      - Guard against undefined eventBus early return
+      - Use useRef for callback stability
+      - Debounce rapid events (300ms)
+      - Cleanup subscriptions in useEffect return
+    </pattern>
+    <pattern name="Agent Source Filter" source="useFileTreeEventSubscriptions.ts">
+      - Only react to source === 'agent' events
+      - Ignores 'local' and 'editor' to prevent update loops
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Monaco Editor uses model.setValue() to update content.
+      Be careful about cursor position - may need to restore after setValue.
+    </note>
+    <note priority="high">
+      Must filter by activeFilePath to only refresh when current file is modified.
+    </note>
+    <note priority="medium">
+      Content is included in file:modified payload - use it directly.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="react" version="^19.0.0" />
+    <dependency name="eventemitter3" version="^5.0.1" />
+  </dependencies>
+</context>
