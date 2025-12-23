@@ -117,6 +117,20 @@ export interface ToolExecutionRecord {
     createdAt: Date;
 }
 
+/**
+ * CredentialRecord for encrypted API key storage
+ * Used by CredentialVault for secure provider credentials.
+ * 
+ * @epic Epic 25 - AI Foundation Sprint
+ * @story 25-0 - ProviderAdapterFactory
+ */
+export interface CredentialRecord {
+    providerId: string;         // Primary key (e.g., 'openrouter', 'openai')
+    encrypted: string;          // Base64-encoded encrypted API key
+    iv: string;                 // Base64-encoded initialization vector
+    createdAt: Date;
+}
+
 // ============================================================================
 // Database Class
 // ============================================================================
@@ -139,6 +153,9 @@ class ViaGentDatabase extends Dexie {
     // AI Foundation tables (Epic 25 prep)
     taskContexts!: Table<TaskContextRecord, string>;
     toolExecutions!: Table<ToolExecutionRecord, string>;
+
+    // Provider credentials (Story 25-0)
+    credentials!: Table<CredentialRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -172,6 +189,20 @@ class ViaGentDatabase extends Dexie {
             toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
         }).upgrade(async () => {
             console.log('[Dexie] Running migration to v3 (AI Foundation tables)');
+        });
+
+        // Schema version 4: Add credentials table (Story 25-0)
+        // For encrypted API key storage in CredentialVault
+        this.version(4).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            // Encrypted API credentials for AI providers
+            credentials: 'providerId, createdAt',
+        }).upgrade(async () => {
+            console.log('[Dexie] Running migration to v4 (credentials table)');
         });
     }
 }

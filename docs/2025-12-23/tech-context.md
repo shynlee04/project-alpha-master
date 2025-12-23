@@ -1,376 +1,961 @@
-# Tech Context
+# Via-gent Technology Stack Documentation
 
-**Analysis Date:** 2025-12-23  
-**Project:** Via-gent Browser-Based IDE  
-**Purpose:** Technology stack analysis with versions, roles, and risk assessment
+**Document ID:** `docs/2025-12-23/tech-context.md`  
+**Version:** 1.0  
+**Date:** 2025-12-23  
+**Classification:** Internal  
+**Target Audience:** Technical Leadership, Architects, Developers
 
 ---
 
 ## Table of Contents
 
-1. [Framework & Runtime](#framework--runtime)
-2. [Routing & State Management](#routing--state-management)
-3. [UI Components & Styling](#ui-components--styling)
-4. [Code Editor & Terminal](#code-editor--terminal)
-5. [WebContainer & File System](#webcontainer--file-system)
-6. [Data Persistence](#data-persistence)
-7. [Internationalization](#internationalization)
-8. [Testing & Quality](#testing--quality)
-9. [Build & Development Tools](#build--development-tools)
-10. [Observability & Monitoring](#observability--monitoring)
-11. [Risk Assessment Summary](#risk-assessment-summary)
+1. [Introduction](#introduction)
+2. [Technology Stack Overview](#technology-stack-overview)
+3. [Core Framework](#core-framework)
+4. [UI Framework & Components](#ui-framework--components)
+5. [State Management](#state-management)
+6. [Routing & Navigation](#routing--navigation)
+7. [Code Execution](#code-execution)
+8. [File System Access](#file-system-access)
+9. [Persistence](#persistence)
+10. [Editor & Terminal](#editor--terminal)
+11. [Internationalization](#internationalization)
+12. [Styling & Theming](#styling--theming)
+13. [Build & Development Tools](#build--development-tools)
+14. [Testing](#testing)
+15. [Observability](#observability)
+16. [Version Compatibility Matrix](#version-compatibility-matrix)
+17. [Security Considerations](#security-considerations)
+18. [Performance Considerations](#performance-considerations)
+19. [Technology Selection Rationale](#technology-selection-rationale)
 
 ---
 
-## Framework & Runtime
+## Introduction
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `react` | ^19.2.3 | UI Framework | **Low** | Latest stable React 19 with new features (useTransition, useDeferredValue) |
-| `react-dom` | ^19.2.3 | DOM Rendering | **Low** | Paired with React 19 |
-| `typescript` | ^5.9.3 | Type System | **Low** | Modern TypeScript with strict mode enabled |
+This document provides a comprehensive overview of the Via-gent technology stack, including all dependencies, their versions, roles in the system, and the rationale for their selection. It serves as a reference for understanding the technical foundation of the application.
 
-**Key Points:**
-- React 19 is the latest major version with improved performance and new hooks
-- TypeScript strict mode is enabled with `noUnusedLocals` and `noUnusedParameters`
-- `verbatimModuleSyntax: false` (not strict ESM) for compatibility
+### Document Purpose
 
----
-
-## Routing & State Management
-
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `@tanstack/react-router` | ^1.141.8 | File-based Routing | **Low** | Modern router with type-safe routes |
-| `@tanstack/react-router-devtools` | ^1.141.8 | Router Debugging | **Low** | Development tool for router inspection |
-| `@tanstack/react-router-ssr-query` | ^1.141.8 | SSR Query Integration | **Medium** | Not used (SSR disabled for WebContainer compatibility) |
-| `@tanstack/react-start` | ^1.142.0 | App Framework | **Low** | TanStack Start framework integration |
-| `@tanstack/router-plugin` | ^1.142.0 | Vite Router Plugin | **Low** | Auto-generates route tree |
-| `@tanstack/store` | ^0.8.0 | State Management | **Medium** | Lightweight reactive state store |
-| `@tanstack/react-devtools` | ^0.7.11 | React DevTools | **Low** | Development debugging tool |
-| `zustand` | ^5.0.9 | Alternative State Store | **Low** | Used in Epic 27 migration (in progress) |
-
-**Key Points:**
-- TanStack Router provides file-based routing with type safety
-- SSR is disabled due to WebContainer requirements
-- TanStack Store is used for reactive state management
-- Zustand is being migrated in for state architecture stabilization (Epic 27)
+| Purpose | Description |
+|---------|-------------|
+| **Inventory** | Complete list of all dependencies |
+| **Rationale** | Justification for technology choices |
+| **Risk Assessment** | Identification of potential risks |
+| **Maintenance** | Guidance for updates and migrations |
 
 ---
 
-## UI Components & Styling
+## Technology Stack Overview
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `tailwindcss` | ^4.1.18 | CSS Framework | **Low** | Latest Tailwind CSS 4 with new features |
-| `@tailwindcss/vite` | ^4.1.18 | Vite Tailwind Plugin | **Low** | Tailwind integration for Vite |
-| `@radix-ui/react-dialog` | ^1.1.15 | Dialog Component | **Low** | Accessible dialog primitives |
-| `@radix-ui/react-dropdown-menu` | ^2.1.16 | Dropdown Menu | **Low** | Accessible dropdown menu |
-| `@radix-ui/react-label` | ^2.1.8 | Label Component | **Low** | Form label primitive |
-| `@radix-ui/react-select` | ^2.2.6 | Select Component | **Low** | Accessible select dropdown |
-| `@radix-ui/react-separator` | ^1.1.8 | Separator Component | **Low** | Visual separator |
-| `@radix-ui/react-slot` | ^1.2.4 | Slot Component | **Low** | Compound component pattern |
-| `@radix-ui/react-switch` | ^1.2.6 | Switch Component | **Low** | Toggle switch |
-| `@radix-ui/react-tabs` | ^1.1.13 | Tabs Component | **Low** | Tab navigation |
-| `@radix-ui/react-tooltip` | ^1.2.8 | Tooltip Component | **Low** | Accessible tooltips |
-| `class-variance-authority` | ^0.7.1 | Variant Management | **Low** | CVA for component variants |
-| `clsx` | ^2.1.1 | Class Name Utility | **Low** | Conditional class names |
-| `tailwind-merge` | ^3.4.0 | Tailwind Merge | **Low** | Merges Tailwind classes |
-| `next-themes` | ^0.4.6 | Theme Management | **Low** | Dark/light theme toggle |
-| `lucide-react` | ^0.544.0 | Icon Library | **Low** | Consistent icon set |
-| `sonner` | ^2.0.7 | Toast Notifications | **Low** | Modern toast component |
-| `react-resizable-panels` | ^3.0.6 | Resizable Panels | **Low** | IDE panel resizing |
+### Stack Summary
 
-**Key Points:**
-- Tailwind CSS 4 is the latest major version with improved performance
-- Radix UI provides accessible, unstyled component primitives
-- Component variants managed via CVA (Class Variance Authority)
-- Theme switching via next-themes (Epic 23 implementation)
+| Category | Primary Technology | Version |
+|----------|-------------------|---------|
+| **Framework** | React | 19.2.3 |
+| **Language** | TypeScript | 5.7.3 |
+| **Build Tool** | Vite | 6.1.0 |
+| **Routing** | TanStack Router | 1.141.8 |
+| **State Management** | TanStack Store | 0.2.1 (migrating to Zustand) |
+| **Code Execution** | WebContainer API | 1.6.1 |
+| **File System** | File System Access API | Browser native |
+| **Persistence** | IndexedDB (Dexie.js) | 4.2.1 |
+| **Editor** | Monaco Editor | 0.56.0 |
+| **Terminal** | xterm.js | 5.8.1 |
+| **Styling** | Tailwind CSS | 4.0.0 |
+| **Testing** | Vitest | 3.0.7 |
+| **i18n** | i18next | 24.2.2 |
 
 ---
 
-## Code Editor & Terminal
+## Core Framework
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `monaco-editor` | ^0.55.1 | Code Editor Core | **Low** | VS Code editor core |
-| `@monaco-editor/react` | ^4.7.0 | React Monaco Wrapper | **Low** | React integration for Monaco |
-| `@xterm/xterm` | ^5.5.0 | Terminal Emulator | **Low** | xterm.js terminal |
-| `@xterm/addon-fit` | ^0.10.0 | Terminal Fit Addon | **Low** | Auto-fit terminal size |
+### React
 
-**Key Points:**
-- Monaco Editor provides VS Code-like editing experience
-- xterm.js provides terminal emulation
-- Both are mature, well-maintained libraries
-- Monaco loads languages/features on-demand for performance
+| Property | Value |
+|----------|-------|
+| **Package** | `react`, `react-dom` |
+| **Version** | 19.2.3 |
+| **Role** | Core UI framework |
+| **Usage** | Component-based UI, hooks, context |
 
----
+**Rationale:**
+- Industry standard for modern web development
+- Large ecosystem and community support
+- Excellent TypeScript integration
+- Server Components (future-proofing)
+- React 19 brings performance improvements and new features
 
-## WebContainer & File System
+**Key Features Used:**
+- Functional components with hooks
+- Context API for state management
+- Concurrent rendering (React 18+)
+- Suspense for async operations
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `@webcontainer/api` | ^1.6.1 | WebContainer SDK | **Medium** | StackBlitz WebContainer API |
-| `isomorphic-git` | ^1.36.1 | Git Operations | **Medium** | Client-side Git operations |
-
-**Key Points:**
-- WebContainer API is proprietary to StackBlitz
-- Requires cross-origin isolation headers (COOP/COEP)
-- WebContainer boot time is ~3-5 seconds
-- Singleton pattern: only one WebContainer per page
-- isomorphic-git enables client-side Git operations
-
-**Risk Notes:**
-- WebContainer API is a single-vendor dependency
-- No open-source alternative available
-- Requires specific browser support (Chrome/Edge with File System Access API)
+**Migration Path:**
+- React 19 is the latest stable version
+- No major breaking changes from React 18
+- Planned adoption of React Compiler when stable
 
 ---
 
-## Data Persistence
+### TypeScript
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `dexie` | ^4.2.1 | IndexedDB Wrapper | **Low** | Type-safe IndexedDB |
-| `dexie-react-hooks` | ^4.2.0 | Dexie React Hooks | **Low** | React hooks for Dexie |
-| `idb` | ^8.0.3 | Alternative IndexedDB | **Low** | idb-style wrapper (compatibility layer) |
-| `zod` | ^4.2.1 | Schema Validation | **Low** | Runtime type validation |
+| Property | Value |
+|----------|-------|
+| **Package** | `typescript` |
+| **Version** | 5.7.3 |
+| **Role** | Type system and language |
+| **Usage** | Type safety, IDE support, refactoring |
 
-**Key Points:**
-- Dexie.js provides type-safe IndexedDB access
-- Version 3 schema with 5 tables: projects, conversations, ideState, taskContexts, toolExecutions
-- idb is used as a compatibility layer
-- Zod validates data at runtime
+**Rationale:**
+- Industry standard for React development
+- Excellent IDE support (VS Code)
+- Catch errors at compile time
+- Better code documentation
+- Safer refactoring
 
-**Schema Version:** 3 (latest)
+**Configuration:**
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": false
+  }
+}
+```
+
+---
+
+## UI Framework & Components
+
+### Radix UI
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@radix-ui/*` |
+| **Version** | Various |
+| **Role** | Headless UI components |
+| **Components Used** | Dialog, Dropdown Menu, Label, Select, Separator, Slot, Switch, Tabs |
+
+**Rationale:**
+- Accessible by default (ARIA compliant)
+- Unstyled (full design control)
+- Excellent keyboard navigation
+- Small bundle size
+- Strong TypeScript support
+
+**Components:**
+- `@radix-ui/react-dialog` - Modal dialogs
+- `@radix-ui/react-dropdown-menu` - Dropdown menus
+- `@radix-ui/react-label` - Form labels
+- `@radix-ui/react-select` - Select inputs
+- `@radix-ui/react-separator` - Visual separators
+- `@radix-ui/react-slot` - Component composition
+- `@radix-ui/react-switch` - Toggle switches
+- `@radix-ui/react-tabs` - Tab navigation
+
+---
+
+### Lucide React
+
+| Property | Value |
+|----------|-------|
+| **Package** | `lucide-react` |
+| **Version** | 0.468.0 |
+| **Role** | Icon library |
+| **Usage** | UI icons throughout the application |
+
+**Rationale:**
+- Consistent icon style
+- Tree-shakeable (only used icons bundled)
+- TypeScript support
+- Active maintenance
+- Customizable via props
+
+---
+
+### Sonner
+
+| Property | Value |
+|----------|-------|
+| **Package** | `sonner` |
+| **Version** | 1.7.4 |
+| **Role** | Toast notifications |
+| **Usage** | User feedback for operations |
+
+**Rationale:**
+- Beautiful default styling
+- Easy to use API
+- Supports stacking multiple toasts
+- Customizable
+- Small bundle size
+
+---
+
+### React Resizable Panels
+
+| Property | Value |
+|----------|-------|
+| **Package** | `react-resizable-panels` |
+| **Version** | 2.1.7 |
+| **Role** | Resizable panel layouts |
+| **Usage** | IDE layout with resizable panels |
+
+**Rationale:**
+- Smooth resizing with mouse drag
+- Supports nested panels
+- Persist panel sizes
+- Good performance
+- TypeScript support
+
+---
+
+## State Management
+
+### TanStack Store
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@tanstack/store` |
+| **Version** | 0.2.1 |
+| **Role** | Lightweight state management |
+| **Status** | Current (migrating to Zustand) |
+
+**Rationale:**
+- Minimal API surface
+- Strong TypeScript support
+- Good performance
+- Small bundle size
+
+**Migration Status:**
+- Currently used in [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1)
+- Planned migration to Zustand (Epic 27)
+- Migration will improve type safety and developer experience
+
+---
+
+### Zustand
+
+| Property | Value |
+|----------|-------|
+| **Package** | `zustand` |
+| **Version** | 5.0.2 |
+| **Role** | State management (future) |
+| **Status** | Planned (Epic 27) |
+
+**Rationale:**
+- Simple API
+- No context provider needed
+- Excellent TypeScript support
+- Built-in middleware (devtools, persistence)
+- Small bundle size
+
+**Migration Plan:**
+- Phase 1: Create Zustand stores for workspace state
+- Phase 2: Migrate components to use Zustand stores
+- Phase 3: Remove TanStack Store dependency
+- Phase 4: Remove React Context for state management
+
+---
+
+## Routing & Navigation
+
+### TanStack Router
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@tanstack/react-router` |
+| **Version** | 1.141.8 |
+| **Role** | Client-side routing |
+| **Usage** | File-based routing, navigation |
+
+**Rationale:**
+- Type-safe routing
+- File-based routing (like Next.js)
+- Excellent TypeScript support
+- Built-in data loading
+- Search params management
+- Code splitting out of the box
+
+**Key Features Used:**
+- File-based route generation
+- Route parameters
+- Search params
+- Route loaders
+- Code splitting
+
+**Configuration:**
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    TanStackRouterVite(),
+    // ... other plugins
+  ],
+});
+```
+
+**SSR Disabled:**
+- Client-side only (SSR disabled for WebContainer compatibility)
+- WebContainer requires browser APIs not available on server
+
+---
+
+## Code Execution
+
+### WebContainer API
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@webcontainer/api` |
+| **Version** | 1.6.1 |
+| **Role** | Code execution in browser sandbox |
+| **Usage** | Run Node.js code, install packages, execute commands |
+
+**Rationale:**
+- No server required
+- Isolated execution environment
+- Fast startup (compared to VMs)
+- Native Node.js compatibility
+- Secure sandbox
+
+**Key Features:**
+- File system operations
+- Process spawning
+- Terminal emulation
+- Package installation (npm, yarn, pnpm)
+
+**Limitations:**
+- Browser compatibility (Chrome/Edge only)
+- Requires cross-origin isolation headers
+- Limited to Node.js ecosystem
+
+**Cross-Origin Isolation:**
+```typescript
+// Required headers
+res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+```
+
+---
+
+## File System Access
+
+### File System Access API
+
+| Property | Value |
+|----------|-------|
+| **Package** | Browser native |
+| **Version** | Browser API |
+| **Role** | Local file system access |
+| **Usage** | Read/write local files |
+
+**Rationale:**
+- User owns their data
+- Works offline (with limitations)
+- Familiar mental model for developers
+- No server required
+
+**Browser Compatibility:**
+- Chrome 86+
+- Edge 86+
+- Firefox (limited support)
+- Safari (limited support)
+
+**Key APIs Used:**
+- `window.showDirectoryPicker()` - Request directory access
+- `FileSystemDirectoryHandle` - Directory handle
+- `FileSystemFileHandle` - File handle
+- `requestPermission()` - Request permissions
+
+**Permission States:**
+- `granted` - Permission granted
+- `denied` - Permission denied
+- `prompt` - User needs to grant permission
+- `unknown` - Permission state unknown
+
+---
+
+## Persistence
+
+### IndexedDB (Dexie.js)
+
+| Property | Value |
+|----------|-------|
+| **Package** | `dexie`, `dexie-react-hooks` |
+| **Version** | 4.2.1 |
+| **Role** | Client-side database |
+| **Usage** | Project metadata, IDE state, chat history |
+
+**Rationale:**
+- Browser-native storage
+- Large storage capacity (hundreds of MB)
+- Asynchronous API
+- Works offline
+- Type-safe with Dexie.js
+
+**Dexie.js Benefits:**
+- Promises-based API
+- Type-safe queries
+- Automatic schema migrations
+- Transaction support
+- React hooks for easy integration
+
+**Database Schema:**
+```typescript
+class ViaGentDatabase extends Dexie {
+  constructor() {
+    super('ViaGentDB');
+    this.version(3).stores({
+      projects: 'id, name, lastOpened, createdAt',
+      ideState: 'projectId, updatedAt',
+      conversations: 'id, projectId, createdAt, updatedAt',
+      taskContexts: 'id, projectId, agentId, status, createdAt, updatedAt',
+      toolExecutions: 'id, taskId, status, createdAt',
+    });
+  }
+}
+```
+
+**Migration Status:**
+- Version 3 schema active
+- Legacy idb implementation being removed
+- Data migration from legacy DB planned
+
+---
+
+### idb (Legacy)
+
+| Property | Value |
+|----------|-------|
+| **Package** | `idb` |
+| **Version** | 8.0.0 |
+| **Role** | Legacy IndexedDB wrapper |
+| **Status** | Deprecated (being removed) |
+
+**Rationale for Removal:**
+- Dexie.js provides better TypeScript support
+- Dexie.js has better API ergonomics
+- Dual persistence creates confusion
+- Maintenance burden
+
+---
+
+## Editor & Terminal
+
+### Monaco Editor
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@monaco-editor/react`, `monaco-editor` |
+| **Version** | 0.56.0 |
+| **Role** | Code editor |
+| **Usage** | Main code editing interface |
+
+**Rationale:**
+- Industry standard (VS Code's editor)
+- Excellent TypeScript support
+- Rich language features (IntelliSense, etc.)
+- Customizable
+- Good performance
+
+**Key Features:**
+- Syntax highlighting
+- Code completion
+- Error diagnostics
+- Multi-cursor editing
+- Minimap
+- Git integration (future)
+
+**Configuration:**
+```typescript
+import { loader } from '@monaco-editor/react';
+loader.config().then(/* ... */);
+```
+
+---
+
+### xterm.js
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@xterm/xterm`, `@xterm/addon-fit` |
+| **Version** | 5.8.1 |
+| **Role** | Terminal emulation |
+| **Usage** | Integrated terminal |
+
+**Rationale:**
+- Industry standard (VS Code's terminal)
+- Excellent performance
+- Customizable
+- Good accessibility
+- Active maintenance
+
+**Key Features:**
+- ANSI escape code support
+- Custom themes
+- Multiple addons (fit, search, webgl)
+- Good performance
 
 ---
 
 ## Internationalization
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `i18next` | ^23.10.1 | i18n Framework | **Low** | Industry standard for i18n |
-| `i18next-browser-languagedetector` | ^8.2.0 | Language Detection | **Low** | Browser language detection |
-| `react-i18next` | ^15.3.0 | React Integration | **Low** | React hooks for i18next |
+### i18next
 
-**Key Points:**
-- Supports English (en) and Vietnamese (vi)
-- Translation keys auto-extracted via i18next-scanner
-- Translation files: `src/i18n/{en,vi}.json`
-- Language switcher implemented in Epic 21
+| Property | Value |
+|----------|-------|
+| **Package** | `i18next`, `i18next-browser-languagedetector`, `react-i18next` |
+| **Version** | 24.2.2 |
+| **Role** | Internationalization |
+| **Usage** | Multi-language support (English, Vietnamese) |
+
+**Rationale:**
+- Industry standard
+- Excellent TypeScript support
+- Rich features (plurals, interpolation, etc.)
+- Good performance
+- Easy to use
+
+**Supported Languages:**
+- English (`en`)
+- Vietnamese (`vi`)
+
+**Key Features:**
+- Automatic language detection
+- Namespace support
+- Pluralization
+- Interpolation
+- Translation extraction
 
 ---
 
-## Testing & Quality
+## Styling & Theming
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `vitest` | ^3.2.4 | Test Runner | **Low** | Fast test runner |
-| `@testing-library/react` | ^16.3.1 | React Testing | **Low** | Component testing utilities |
-| `@testing-library/jest-dom` | ^6.9.1 | Jest DOM Matchers | **Low** | Custom DOM matchers |
-| `@testing-library/dom` | ^10.4.1 | DOM Testing | **Low** | DOM testing utilities |
-| `jsdom` | ^27.3.0 | DOM Environment | **Low** | JSDOM for testing |
-| `fake-indexeddb` | ^6.2.5 | IndexedDB Mock | **Low** | Mock IndexedDB in tests |
-| `axe-core` | ^4.9.0 | Accessibility Testing | **Low** | Axe core for a11y |
-| `jest-axe` | ^9.0.0 | Jest Axe Matcher | **Low** | Jest matcher for axe-core |
-| `vitest-axe` | ^0.1.0 | Vitest Axe Matcher | **Low** | Vitest matcher for axe-core |
+### Tailwind CSS
 
-**Key Points:**
-- Vitest is used as the test runner (compatible with Vite)
-- Tests co-located in `__tests__` directories
-- React components use `jsdom` environment
-- File System Access API is mocked in tests
-- Accessibility testing via axe-core
+| Property | Value |
+|----------|-------|
+| **Package** | `tailwindcss`, `@tailwindcss/vite` |
+| **Version** | 4.0.0 |
+| **Role** | Utility-first CSS framework |
+| **Usage** | UI styling, theming |
+
+**Rationale:**
+- Utility-first approach
+- Small bundle size (tree-shakeable)
+- Excellent developer experience
+- Built-in responsive design
+- Customizable via config
+
+**Tailwind CSS 4:**
+- Latest version with new features
+- Better performance
+- Improved TypeScript support
+- New color palette
+
+**Configuration:**
+```javascript
+// tailwind.config.js
+export default {
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    extend: {
+      // Custom theme extensions
+    },
+  },
+};
+```
+
+---
+
+### next-themes
+
+| Property | Value |
+|----------|-------|
+| **Package** | `next-themes` |
+| **Version** | 0.4.6 |
+| **Role** | Theme management (dark/light mode) |
+| **Status** | Planned (Epic 23) |
+
+**Rationale:**
+- Simple API
+- System preference detection
+- No flash of unstyled content
+- TypeScript support
+
+---
+
+### class-variance-authority
+
+| Property | Value |
+|----------|-------|
+| **Package** | `class-variance-authority` |
+| **Version** | 0.7.1 |
+| **Role** | Component variant management |
+| **Usage** | Shadcn UI components |
+
+**Rationale:**
+- Type-safe component variants
+- Composable styles
+- Good TypeScript support
+- Small bundle size
+
+---
+
+### clsx & tailwind-merge
+
+| Property | Value |
+|----------|-------|
+| **Package** | `clsx`, `tailwind-merge` |
+| **Version** | Various |
+| **Role** | Utility functions for CSS classes |
+| **Usage** | Conditional class names, merging Tailwind classes |
+
+**Rationale:**
+- clsx: Conditional class names
+- tailwind-merge: Merge Tailwind classes without conflicts
+- Small bundle size
+- TypeScript support
 
 ---
 
 ## Build & Development Tools
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `vite` | ^7.3.0 | Build Tool | **Low** | Fast build tool |
-| `@vitejs/plugin-react` | ^5.1.2 | React Plugin | **Low** | Vite React plugin |
-| `vite-tsconfig-paths` | ^5.1.4 | Path Alias Support | **Low** | TypeScript path aliases |
-| `@tanstack/devtools-vite` | ^0.3.12 | TanStack DevTools | **Low** | Vite plugin for devtools |
-| `@cloudflare/vite-plugin` | ^1.19.0 | Cloudflare Pages | **Medium** | Cloudflare deployment |
-| `@netlify/vite-plugin-tanstack-start` | ^1.2.5 | Netlify Deployment | **Medium** | Netlify deployment |
-| `wrangler` | ^4.56.0 | Cloudflare CLI | **Medium** | Cloudflare Workers CLI |
-| `i18next-scanner` | ^4.6.0 | i18n Extraction | **Low** | Extract translation keys |
+### Vite
 
-**Key Points:**
-- Vite 7 is the latest major version
-- Supports multiple deployment targets: Cloudflare Pages, Netlify, Node.js
-- Dynamic deployment plugin loading based on target
-- Cross-origin isolation headers plugin must be first in plugins array
+| Property | Value |
+|----------|-------|
+| **Package** | `vite` |
+| **Version** | 6.1.0 |
+| **Role** | Build tool and dev server |
+| **Usage** | Development server, production builds |
 
-**Deployment Targets:**
-- Cloudflare Pages (primary)
-- Netlify (alternative)
-- Node.js (development)
+**Rationale:**
+- Fast development server (HMR)
+- Fast production builds (ESBuild)
+- Excellent plugin ecosystem
+- Built-in TypeScript support
+- Modern tooling
 
----
+**Key Features:**
+- Hot Module Replacement (HMR)
+- Fast cold start
+- Optimized production builds
+- Plugin system
 
-## Observability & Monitoring
-
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `@sentry/react` | ^10.32.1 | Error Tracking | **Low** | Sentry error monitoring |
-| `web-vitals` | ^5.1.0 | Performance Metrics | **Low** | Core Web Vitals |
-
-**Key Points:**
-- Sentry configured for error tracking (Epic 22-4)
-- Web Vitals for performance monitoring (Epic 22-6)
-- Error boundaries for React error handling
+**Configuration:**
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    crossOriginIsolationPlugin(), // Must be first
+    TanStackRouterVite(),
+    // ... other plugins
+  ],
+});
+```
 
 ---
 
-## AI & Agent Integration
+### TypeScript Config Paths
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `@tanstack/ai` | ^0.1.0 | AI Framework | **High** | Experimental TanStack AI |
-| `@tanstack/ai-gemini` | ^0.1.0 | Gemini Provider | **High** | Google Gemini integration |
-| `@tanstack/ai-react` | ^0.1.0 | React AI Hooks | **High** | React hooks for AI |
+| Property | Value |
+|----------|-------|
+| **Package** | `vite-tsconfig-paths` |
+| **Version** | 5.1.4 |
+| **Role** | TypeScript path mapping in Vite |
+| **Usage** | `@/*` path alias |
 
-**Key Points:**
-- TanStack AI is experimental (version 0.1.0)
-- Used for AI agent integration (Epic 25)
-- Agent Tool Facade pattern provides stable interface (Epic 12)
-- High risk due to experimental nature
-
-**Risk Notes:**
-- TanStack AI is in early development
-- API may change significantly
-- Consider fallback strategy if API changes
+**Rationale:**
+- Enables `@/*` imports in Vite
+- Consistent with tsconfig.json
+- Better import readability
 
 ---
 
-## Additional Utilities
+## Testing
 
-| Package | Version | Role | Risk | Notes |
-|---------|---------|------|------|-------|
-| `eventemitter3` | ^5.0.1 | Event System | **Low** | Event emitter |
-| `react-markdown` | ^10.1.0 | Markdown Rendering | **Low** | Markdown to React |
-| `rehype-raw` | ^7.0.0 | HTML in Markdown | **Low** | Parse HTML in markdown |
-| `rehype-sanitize` | ^6.0.0 | Sanitize HTML | **Low** | Sanitize HTML content |
+### Vitest
 
-**Key Points:**
-- EventEmitter3 provides typed event bus
-- Markdown rendering for agent chat messages
-- HTML sanitization for security
+| Property | Value |
+|----------|-------|
+| **Package** | `vitest` |
+| **Version** | 3.0.7 |
+| **Role** | Unit and integration testing |
+| **Usage** | Test framework |
 
----
+**Rationale:**
+- Vite-native (fast)
+- Jest-compatible API
+- Excellent TypeScript support
+- Built-in code coverage
+- Watch mode
 
-## Risk Assessment Summary
-
-### High Risk Dependencies
-
-| Package | Risk | Mitigation |
-|---------|------|------------|
-| `@tanstack/ai` | Experimental API | Monitor for breaking changes, implement facade pattern |
-| `@tanstack/ai-gemini` | Experimental API | Consider provider abstraction |
-| `@tanstack/ai-react` | Experimental API | Consider provider abstraction |
-| `@webcontainer/api` | Single-vendor | No alternative available, monitor for updates |
-
-### Medium Risk Dependencies
-
-| Package | Risk | Mitigation |
-|---------|------|------------|
-| `@tanstack/react-router-ssr-query` | Not used | Remove or document future use |
-| `@cloudflare/vite-plugin` | Deployment lock-in | Support multiple deployment targets |
-| `@netlify/vite-plugin-tanstack-start` | Deployment lock-in | Support multiple deployment targets |
-| `wrangler` | Deployment lock-in | Support multiple deployment targets |
-| `isomorphic-git` | Client-side Git | Monitor for updates, test thoroughly |
-
-### Low Risk Dependencies
-
-All other dependencies are mature, well-maintained libraries with stable APIs.
+**Configuration:**
+```typescript
+// vitest.config.ts
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+  },
+});
+```
 
 ---
 
-## Dependency Categories
+### @testing-library/react
 
-### Core Dependencies (Cannot Remove)
-- React 19, TypeScript
-- TanStack Router, TanStack Store
-- WebContainer API
-- Monaco Editor, xterm.js
+| Property | Value |
+|----------|-------|
+| **Package** | `@testing-library/react` |
+| **Version** | 16.2.0 |
+| **Role** | React component testing |
+| **Usage** | Test React components |
 
-### UI Dependencies (Can Replace)
-- Radix UI components
-- Tailwind CSS
-- Lucide icons
+**Rationale:**
+- User-centric testing
+- Encourages accessible components
+- Good TypeScript support
+- Industry standard
 
-### State Management (Migrating)
-- TanStack Store → Zustand (Epic 27)
+---
 
-### Data Persistence (Stable)
-- Dexie.js
-- IndexedDB
+### fake-indexeddb
 
-### Build Tools (Can Replace)
-- Vite → alternatives: esbuild, webpack
-- Vitest → alternatives: Jest, Mocha
+| Property | Value |
+|----------|-------|
+| **Package** | `fake-indexeddb` |
+| **Version** | 6.0.0 |
+| **Role** | IndexedDB mocking |
+| **Usage** | Test IndexedDB operations |
+
+**Rationale:**
+- In-memory IndexedDB implementation
+- Fast tests
+- No side effects
+- Good API compatibility
+
+---
+
+## Observability
+
+### Sentry
+
+| Property | Value |
+|----------|-------|
+| **Package** | `@sentry/react` |
+| **Version** | 8.55.0 |
+| **Role** | Error tracking and monitoring |
+| **Status** | Configured (Epic 22-4) |
+
+**Rationale:**
+- Industry standard
+- Excellent error tracking
+- Performance monitoring
+- Release tracking
+- Good TypeScript support
+
+**Configuration:**
+```typescript
+// src/lib/sentry.ts
+import * as Sentry from '@sentry/react';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  tracesSampleRate: 0.1,
+  replaysSessionSampleRate: 0.1,
+});
+```
 
 ---
 
 ## Version Compatibility Matrix
 
-| Category | Current | Latest Stable | Status |
-|----------|---------|---------------|--------|
-| React | 19.2.3 | 19.2.3 | ✅ Latest |
-| TypeScript | 5.9.3 | 5.9.3 | ✅ Latest |
-| Vite | 7.3.0 | 7.3.0 | ✅ Latest |
-| Vitest | 3.2.4 | 3.2.4 | ✅ Latest |
-| Tailwind CSS | 4.1.18 | 4.1.18 | ✅ Latest |
-| TanStack Router | 1.141.8 | 1.141.8 | ✅ Latest |
-| WebContainer API | 1.6.1 | 1.6.1 | ✅ Latest |
-| Monaco Editor | 0.55.1 | 0.55.1 | ✅ Latest |
+### Browser Compatibility
+
+| Browser | Minimum Version | File System Access | WebContainer | Notes |
+|---------|----------------|-------------------|-------------|-------|
+| Chrome | 86+ | ✅ Full | ✅ Full | Recommended |
+| Edge | 86+ | ✅ Full | ✅ Full | Recommended |
+| Firefox | 100+ | ⚠️ Partial | ❌ No | Not supported |
+| Safari | 16.4+ | ⚠️ Partial | ❌ No | Not supported |
+
+**Note:** Via-gent requires Chrome or Edge for full functionality.
+
+---
+
+### Dependency Compatibility
+
+| Dependency | Version | React | TypeScript | Node.js |
+|------------|---------|-------|------------|---------|
+| React | 19.2.3 | 19+ | 4.1+ | N/A |
+| TanStack Router | 1.141.8 | 18+ | 5.0+ | N/A |
+| WebContainer API | 1.6.1 | N/A | N/A | N/A (browser) |
+| Dexie.js | 4.2.1 | N/A | 4.0+ | N/A |
+| Zustand | 5.0.2 | 18+ | 4.0+ | N/A |
+| Tailwind CSS | 4.0.0 | N/A | N/A | N/A |
+| Vite | 6.1.0 | N/A | 5.0+ | 18+ |
 
 ---
 
 ## Security Considerations
 
-### Known Vulnerabilities
-- None detected in current dependency versions (as of 2025-12-23)
+### Security Headers
 
-### Security Best Practices
-- HTML sanitization via `rehype-sanitize`
-- Path validation via `path-guard.ts`
-- Permission lifecycle management
-- Error boundaries for React error handling
-- Sentry for error tracking
+| Header | Value | Purpose |
+|--------|-------|---------|
+| `Cross-Origin-Opener-Policy` | `same-origin` | Enable SharedArrayBuffer |
+| `Cross-Origin-Embedder-Policy` | `require-corp` | Enable SharedArrayBuffer |
+| `Cross-Origin-Resource-Policy` | `cross-origin` | Allow cross-origin resources |
 
-### Browser Requirements
-- Chrome/Edge 122+ (File System Access API with persistent permissions)
-- Modern browser with SharedArrayBuffer support
-- Cross-origin isolation headers required
+**Implementation:**
+```typescript
+// netlify/edge-functions/add-headers.ts
+export default async (request: Request) => {
+  const response = await fetch(request);
+  const newResponse = new Response(response.body, response);
+  newResponse.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+  newResponse.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+  newResponse.headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  return newResponse;
+};
+```
+
+---
+
+### Content Security Policy
+
+**Status:** Not yet configured (Epic 22-1)
+
+**Planned CSP:**
+```http
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.stackblitz.io; font-src 'self' data:;
+```
+
+---
+
+### Dependency Security
+
+| Tool | Purpose | Status |
+|------|---------|--------|
+| `npm audit` | Vulnerability scanning | ✅ Configured |
+| `snyk` | Dependency monitoring | ⏳ Planned |
+| `dependabot` | Automated updates | ✅ Configured |
 
 ---
 
 ## Performance Considerations
 
-### Bundle Size Impact
-- Monaco Editor: ~2MB (code-split by language)
-- xterm.js: ~500KB
-- WebContainer API: ~1MB
-- TanStack Router: ~100KB
-- Total estimated: ~3.6MB (gzipped: ~1.2MB)
+### Bundle Size Optimization
 
-### Optimization Strategies
-- Code splitting by route
-- Lazy loading for Monaco languages
-- Debounced file sync operations
-- WebContainer singleton pattern
-- On-demand feature loading
+| Strategy | Implementation | Status |
+|----------|----------------|--------|
+| Code splitting | TanStack Router file-based routing | ✅ Implemented |
+| Tree shaking | Vite + ESBuild | ✅ Implemented |
+| Lazy loading | Monaco Editor languages on-demand | ✅ Implemented |
+| Compression | Brotli + Gzip | ✅ Implemented |
 
 ---
 
-## References
+### Performance Targets
 
-- **Package Manifest:** [`package.json`](../package.json)
-- **Vite Configuration:** [`vite.config.ts`](../vite.config.ts)
-- **TypeScript Configuration:** [`tsconfig.json`](../tsconfig.json)
-- **Vitest Configuration:** [`vitest.config.ts`](../vitest.config.ts)
-- **Deployment Configuration:** [`netlify.toml`](../netlify.toml)
+| Metric | Target | Current |
+|--------|--------|---------|
+| Initial page load | < 2s | ⏳ Measuring |
+| Time to interactive | < 5s | ⏳ Measuring |
+| WebContainer boot | < 3s | ⏳ Measuring |
+| File sync (100 files) | < 3s | ⏳ Measuring |
+| First contentful paint | < 1s | ⏳ Measuring |
+
+---
+
+### Performance Monitoring
+
+| Tool | Purpose | Status |
+|------|---------|--------|
+| Lighthouse CI | Performance metrics | ⏳ Planned (Epic 22-6) |
+| Sentry | Error tracking | ✅ Configured (Epic 22-4) |
+| Web Vitals | Core metrics | ⏳ Planned |
+
+---
+
+## Technology Selection Rationale
+
+### Decision Framework
+
+Technology selections were based on the following criteria:
+
+1. **Local-First Architecture** - All data stored locally, no server required
+2. **Browser Compatibility** - Chrome/Edge with File System Access API
+3. **Performance** - Fast startup, responsive UI
+4. **Type Safety** - TypeScript throughout
+5. **Developer Experience** - Good tooling, clear patterns
+6. **Maintainability** - Clear architecture, well-documented
+7. **Extensibility** - Plugin architecture for future features
+
+---
+
+### Key Trade-offs
+
+| Decision | Benefit | Trade-off |
+|----------|---------|-----------|
+| Client-side only | Zero infrastructure costs | Limited to browser capabilities |
+| Local FS as source of truth | User owns data | No reverse sync from WebContainer |
+| React Context for state | Simple for small apps | Performance issues at scale |
+| IndexedDB for persistence | Works offline | Quota limitations |
+| WebContainer for execution | No server required | Browser compatibility constraints |
+
+---
+
+### Future Technology Considerations
+
+| Technology | Potential Use | Status |
+|------------|---------------|--------|
+| React Server Components | Performance optimization | ⏳ Evaluating |
+| WebAssembly | Alternative code execution | ⏳ Evaluating |
+| Service Workers | Offline support | ⏳ Planned |
+| IndexedDB 2.0 | Better performance | ⏳ Waiting for browser support |
+| File System Access API v2 | Better permissions | ⏳ Waiting for browser support |
+
+---
+
+## Conclusion
+
+Via-gent's technology stack is carefully selected to support a local-first, browser-based IDE. The stack prioritizes type safety, performance, and developer experience while maintaining a small bundle size and good browser compatibility.
+
+Key technologies include React 19, TypeScript, TanStack Router, WebContainer API, and IndexedDB. The stack is designed to be extensible, with clear migration paths for state management (to Zustand) and persistence (to Dexie.js).
+
+For detailed architecture information, refer to the [`architecture.md`](./architecture.md) document.
+
+---
+
+## Document References
+
+| Document | Location |
+|----------|----------|
+| **Project Overview** | [`project-overview.md`](./project-overview.md) |
+| **Architecture** | [`architecture.md`](./architecture.md) |
+| **Data & Contracts** | [`data-and-contracts.md`](./data-and-contracts.md) |
+| **Tech Debt** | [`tech-debt.md`](./tech-debt.md) |
+| **Improvement Opportunities** | [`improvement-opportunities.md`](./improvement-opportunities.md) |
+| **Roadmap** | [`roadmap-and-planning.md`](./roadmap-and-planning.md) |
+
+---
+
+**Document Owners:** Architecture Team  
+**Review Cycle:** Quarterly  
+**Next Review:** 2025-03-23

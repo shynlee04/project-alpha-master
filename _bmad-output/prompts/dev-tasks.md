@@ -146,3 +146,9 @@ docs\2025-12-23\tech-context.md
 ```
 - Refer to these for quick context 
 - update them when there are changes in any 
+
+## Use development guidelines at @AGENTS.md for development
+
+- also make sure to keep packages at latest compatible versions (especial the Tanstack AI packages ; and their ecosystem packages which are all at alpha stages so versions update are quite frequent)
+
+## DO NOT USE YOUR INNATE IMPLEMENTATION PLAN - USE BMAD FRAMEWORK AND UPDATE ON WHAT I HAVE PROVIDED ABOVE

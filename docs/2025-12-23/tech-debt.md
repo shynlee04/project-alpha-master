@@ -1,614 +1,831 @@
-# Tech Debt and Risk Diagnosis
+# Via-gent Technical Debt Register
 
-**Analysis Date:** 2025-12-23  
-**Project:** Via-gent Browser-Based IDE  
-**Purpose:** Systematic assessment of code-level, architectural, and operational debt
+**Document ID:** `docs/2025-12-23/tech-debt.md`  
+**Version:** 1.0  
+**Date:** 2025-12-23  
+**Classification:** Internal  
+**Target Audience:** Technical Leadership, Architects, Development Team
 
 ---
 
 ## Table of Contents
 
-1. [Architecture Debt](#architecture-debt)
-2. [Code Quality Debt](#code-quality-debt)
-3. [Testing Debt](#testing-debt)
-4. [Infrastructure Debt](#infrastructure-debt)
-5. [Domain Semantics Debt](#domain-semantics-debt)
-6. [Risk Summary](#risk-summary)
+1. [Introduction](#introduction)
+2. [Debt Classification Framework](#debt-classification-framework)
+3. [Architecture Debt](#architecture-debt)
+4. [Code Quality Debt](#code-quality-debt)
+5. [Testing Debt](#testing-debt)
+6. [Infrastructure Debt](#infrastructure-debt)
+7. [Domain Semantics Debt](#domain-semantics-debt)
+8. [Risk Summary](#risk-summary)
+9. [Remediation Roadmap](#remediation-roadmap)
+
+---
+
+## Introduction
+
+This document provides a comprehensive register of technical debt in the Via-gent codebase. Each debt item is categorized, assessed for risk, and includes a remediation strategy. This register serves as a living document to track technical debt and guide prioritization for future development efforts.
+
+### Document Purpose
+
+| Purpose | Description |
+|---------|-------------|
+| **Inventory** | Complete list of technical debt items |
+| **Assessment** | Risk and impact evaluation |
+| **Prioritization** | Guidance for remediation efforts |
+| **Tracking** | Monitor debt reduction over time |
+
+---
+
+## Debt Classification Framework
+
+### Risk Levels
+
+| Level | Color | Description | Action Timeline |
+|-------|-------|-------------|-----------------|
+| **Critical** | 🔴 | Immediate business impact or security risk | Within 1 sprint |
+| **High** | 🟠 | Significant impact on productivity or quality | Within 2-3 sprints |
+| **Medium** | 🟡 | Moderate impact, manageable | Within 3-6 months |
+| **Low** | 🟢 | Minor impact, low priority | Backlog |
+
+### Debt Categories
+
+| Category | Description |
+|----------|-------------|
+| **Architecture** | Structural issues, layer violations, design flaws |
+| **Code Quality** | Duplication, complexity, maintainability issues |
+| **Testing** | Missing tests, low coverage, test quality |
+| **Infrastructure** | Build, deployment, monitoring gaps |
+| **Domain Semantics** | Business logic issues, unclear requirements |
 
 ---
 
 ## Architecture Debt
 
-### ADR-001: State Management Transition Incomplete
+### AD-001: God Context Pattern
 
-**Location:** [`src/lib/workspace/WorkspaceContext.tsx`](../src/lib/workspace/WorkspaceContext.tsx), [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts)
+| Property | Value |
+|----------|-------|
+| **ID** | AD-001 |
+| **Title** | God Context Pattern in WorkspaceContext |
+| **Location** | [`src/lib/workspace/WorkspaceContext.tsx`](../src/lib/workspace/WorkspaceContext.tsx:1) |
+| **Category** | Architecture |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-The project is in the middle of migrating from TanStack Store to Zustand (Epic 27). Currently, both state management systems coexist:
-- [`WorkspaceContext.tsx`](../src/lib/workspace/WorkspaceContext.tsx:82) uses React Context with 13 state variables
-- [`dexie-db.ts`](../src/lib/state/dexie-db.ts:195) provides Dexie-based persistence
-- [`ide-store.ts`](../src/lib/state/ide-store.ts) (inferred) provides Zustand stores
+[`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1) exposes 13 state variables, 7 action functions, 3 refs, and an event bus in a single context value. This creates a "god context" that violates the Single Responsibility Principle and causes unnecessary re-renders.
 
 **Impact:**
-- Increased complexity due to dual state systems
-- Potential for state synchronization bugs
-- Developer confusion about which system to use
-- Increased bundle size (both systems included)
-
-**Risk Level:** **Medium**
+- Performance degradation due to unnecessary re-renders
+- Difficult to test and maintain
+- Tight coupling between components
+- Violates layer separation (UI components directly access domain state)
 
 **Remediation Strategy:**
-1. Complete Epic 27 migration to Zustand
-2. Remove TanStack Store dependencies
-3. Consolidate state management to single source of truth
-4. Update all components to use Zustand hooks
+1. **Phase 1:** Create sliced Zustand stores (Epic 27)
+2. **Phase 2:** Migrate components to use specific stores
+3. **Phase 3:** Remove WorkspaceContext for state management
+4. **Phase 4:** Keep WorkspaceContext only for event bus
+
+**Effort Estimate:** 8-12 story points  
+**Related Epic:** Epic 27 (State Architecture Stabilization)
 
 ---
 
-### ADR-002: Dual Persistence Layers
+### AD-002: God Class - SyncManager
 
-**Location:** [`src/lib/persistence/db.ts`](../src/lib/persistence/db.ts), [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts)
+| Property | Value |
+|----------|-------|
+| **ID** | AD-002 |
+| **Title** | God Class - SyncManager |
+| **Location** | [`src/lib/filesystem/sync-manager.ts`](../src/lib/filesystem/sync-manager.ts:71) |
+| **Category** | Architecture |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Two IndexedDB wrapper libraries are present:
-- `idb` in [`db.ts`](../src/lib/persistence/db.ts) - Legacy compatibility layer
-- `dexie` in [`dexie-db.ts`](../src/lib/state/dexie-db.ts) - New implementation (Epic 27-1c)
-
-Both use the same database name `via-gent-persistence` but have different schemas.
+[`SyncManager`](../src/lib/filesystem/sync-manager.ts:71) is a 463-line class with multiple responsibilities: file scanning, sync coordination, progress tracking, error handling, and event emission. This violates the Single Responsibility Principle.
 
 **Impact:**
-- Schema versioning confusion (idb uses version 3, Dexie uses version 3)
-- Potential data corruption if both write to same DB
-- Increased bundle size
-- Maintenance burden
-
-**Risk Level:** **Medium**
+- Difficult to test individual concerns
+- High cognitive load for developers
+- Increased risk of bugs when making changes
+- Tight coupling between sync concerns
 
 **Remediation Strategy:**
-1. Complete migration to Dexie (Epic 27-1c)
-2. Remove `idb` dependency
-3. Consolidate all persistence operations through Dexie
-4. Add data migration script if needed
+1. Extract file scanning logic to `FileScanner` class
+2. Extract progress tracking to `SyncProgressTracker` class
+3. Extract error handling to `SyncErrorHandler` class
+4. Keep SyncManager as coordinator only
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Future refactoring epic
 
 ---
 
-### ADR-003: Global Singleton Pattern Overuse
+### AD-003: Layer Violation in Components
 
-**Location:** [`src/lib/webcontainer/manager.ts`](../src/lib/webcontainer/manager.ts:36), [`src/lib/events/workspace-events.ts`](../src/lib/events/workspace-events.ts)
+| Property | Value |
+|----------|-------|
+| **ID** | AD-003 |
+| **Title** | Layer Violation in Components |
+| **Location** | Multiple IDE components |
+| **Category** | Architecture |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Multiple global singletons exist:
-- WebContainer instance (module-level variable)
-- Event bus (module-level variable)
-- LocalFSAdapter singleton (exported as `localFS`)
+UI components directly access domain state and perform business logic, violating layer separation. Components should only handle presentation and delegate operations to application layer.
 
 **Impact:**
-- Difficult to test (requires module mocking)
-- No dependency injection
-- Tight coupling between modules
-- Cannot run multiple instances (e.g., for testing)
-
-**Risk Level:** **Low-Medium**
+- Tight coupling between UI and domain
+- Difficult to reuse components
+- Business logic scattered across components
+- Hard to test business logic in isolation
 
 **Remediation Strategy:**
-1. Introduce dependency injection pattern
-2. Pass instances through props or context
-3. Consider using React Context for WebContainer
-4. Add factory functions for testing
+1. Create service layer for business operations
+2. Move business logic from components to services
+3. Components only handle presentation and user interaction
+4. Use hooks to bridge UI and service layer
+
+**Effort Estimate:** 8-12 story points  
+**Related Epic:** Future architecture cleanup
 
 ---
 
-### ADR-004: Layer Violation in WorkspaceContext
+### AD-004: Singleton Pattern - WebContainer Manager
 
-**Location:** [`src/lib/workspace/WorkspaceContext.tsx`](../src/lib/workspace/WorkspaceContext.tsx:82)
+| Property | Value |
+|----------|-------|
+| **ID** | AD-004 |
+| **Title** | Singleton Pattern - WebContainer Manager |
+| **Location** | [`src/lib/webcontainer/manager.ts`](../src/lib/webcontainer/manager.ts:1) |
+| **Category** | Architecture |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-[`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:82) exposes both state and actions, mixing concerns:
-- State: `projectMetadata`, `directoryHandle`, `syncStatus`, etc.
-- Actions: `openFolder`, `switchFolder`, `syncNow`, etc.
-- Refs: `localAdapterRef`, `syncManagerRef`, `eventBus`
+[`WebContainerManager`](../src/lib/webcontainer/manager.ts:1) uses module-level singleton pattern with global variables (`instance`, `bootPromise`). This makes testing difficult and creates implicit dependencies.
 
 **Impact:**
-- Large context value (20+ properties)
-- Difficult to optimize re-renders
-- Violates separation of concerns
-- Testing complexity
-
-**Risk Level:** **Low**
+- Difficult to test in isolation
+- Implicit dependencies across modules
+- Cannot have multiple WebContainer instances
+- Global state management issues
 
 **Remediation Strategy:**
-1. Split into multiple contexts: `WorkspaceStateContext`, `WorkspaceActionsContext`
-2. Use `useMemo` for actions
-3. Consider Zustand for state management (Epic 27)
+1. Convert singleton to dependency injection
+2. Pass WebContainer instance through context
+3. Allow multiple instances for testing
+4. Remove global module variables
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Future refactoring epic
 
 ---
 
-### ADR-005: Event Bus Coupling
+### AD-005: Missing Error Handling Abstraction
 
-**Location:** [`src/lib/events/workspace-events.ts`](../src/lib/events/workspace-events.ts)
+| Property | Value |
+|----------|-------|
+| **ID** | AD-005 |
+| **Title** | Missing Error Handling Abstraction |
+| **Location** | Multiple files |
+| **Category** | Architecture |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-Event bus is tightly coupled to implementation:
-- 20+ event types defined in single file
-- No event schema validation
-- No event versioning
-- Direct emission from multiple modules
+Error handling is inconsistent across the codebase. Some components use try-catch, others rely on event emission, and there's no centralized error handling strategy.
 
 **Impact:**
-- Difficult to track event flow
-- No type safety for event payloads
-- Breaking changes can cascade
-- No event replay capability
-
-**Risk Level:** **Low-Medium**
+- Inconsistent error reporting to users
+- Difficult to track and debug errors
+- No centralized error logging
+- Poor user experience on errors
 
 **Remediation Strategy:**
-1. Add Zod schemas for event payloads
-2. Implement event versioning
-3. Add event logging/middleware
-4. Consider using event sourcing pattern
+1. Create centralized error handler service
+2. Define error handling patterns
+3. Implement error boundary components
+4. Integrate with Sentry for error tracking (Epic 22-4)
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Epic 22-4 (Configure Error Monitoring)
 
 ---
 
 ## Code Quality Debt
 
-### CQD-001: Large Context Hook
+### CQ-001: Duplicate Persistence Implementations
 
-**Location:** [`src/lib/workspace/hooks/useWorkspaceState.ts`](../src/lib/workspace/hooks/useWorkspaceState.ts:13)
+| Property | Value |
+|----------|-------|
+| **ID** | CQ-001 |
+| **Title** | Duplicate Persistence Implementations |
+| **Location** | [`src/lib/workspace/project-store.ts`](../src/lib/workspace/project-store.ts:1) (idb), [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts:133) (Dexie) |
+| **Category** | Code Quality |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-[`useWorkspaceState`](../src/lib/workspace/hooks/useWorkspaceState.ts:13) hook manages 13 state variables and 4 refs in a single hook.
+Two IndexedDB implementations coexist: legacy `idb`-based [`ProjectStore`](../src/lib/workspace/project-store.ts:1) and new Dexie.js-based [`ViaGentDatabase`](../src/lib/state/dexie-db.ts:133). This creates confusion and maintenance burden.
 
 **Impact:**
-- Difficult to understand
-- High coupling
-- Difficult to test individual concerns
-- Re-render optimization challenges
-
-**Risk Level:** **Low**
+- Confusion about which implementation to use
+- Maintenance burden for two implementations
+- Potential data inconsistency
+- Increased bundle size
 
 **Remediation Strategy:**
-1. Split into smaller hooks: `useProjectState`, `useSyncState`, `usePermissionState`
-2. Use Zustand for global state (Epic 27)
-3. Consider React Query for server state
+1. Complete migration to Dexie.js (Epic 27-1c)
+2. Remove legacy idb implementation
+3. Migrate data from legacy DB
+4. Update all references to use Dexie
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Epic 27-1c (Persistence Migration to Dexie)
 
 ---
 
-### CQD-002: Complex Sync Manager
+### CQ-002: Large Hook - useWorkspaceState
 
-**Location:** [`src/lib/filesystem/sync-manager.ts`](../src/lib/filesystem/sync-manager.ts:71)
+| Property | Value |
+|----------|-------|
+| **ID** | CQ-002 |
+| **Title** | Large Hook - useWorkspaceState |
+| **Location** | [`src/lib/workspace/hooks/useWorkspaceState.ts`](../src/lib/workspace/hooks/useWorkspaceState.ts:1) |
+| **Category** | Code Quality |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-[`SyncManager`](../src/lib/filesystem/sync-manager.ts:71) class is 463 lines with multiple responsibilities:
-- File synchronization
-- Error handling
-- Event emission
-- Progress tracking
-- Performance monitoring
+[`useWorkspaceState`](../src/lib/workspace/hooks/useWorkspaceState.ts:1) manages 13 state variables and 4 refs in a single hook, creating high coupling and cognitive load.
 
 **Impact:**
-- Difficult to maintain
-- High cognitive load
-- Difficult to test
+- Difficult to understand and maintain
+- High coupling between state variables
+- Difficult to test individual state concerns
 - Violates Single Responsibility Principle
 
-**Risk Level:** **Medium**
-
 **Remediation Strategy:**
-1. Extract `SyncOrchestrator` for coordination
-2. Extract `SyncExecutor` for file operations
-3. Extract `SyncMonitor` for progress tracking
-4. Use strategy pattern for different sync strategies
+1. Split into smaller, focused hooks
+2. Group related state variables
+3. Create hooks for specific concerns (e.g., `useProjectState`, `useSyncState`)
+4. Migrate to Zustand stores (Epic 27)
+
+**Effort Estimate:** 3-5 story points  
+**Related Epic:** Epic 27 (State Architecture Stabilization)
 
 ---
 
-### CQD-003: Inconsistent Error Handling
+### CQ-003: Untyped Event Payloads
 
-**Location:** Multiple files
+| Property | Value |
+|----------|-------|
+| **ID** | CQ-003 |
+| **Title** | Untyped Event Payloads |
+| **Location** | [`src/lib/events/workspace-events.ts`](../src/lib/events/workspace-events.ts:1) |
+| **Category** | Code Quality |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-Error handling patterns vary across the codebase:
-- Some functions throw custom errors ([`SyncError`](../src/lib/filesystem/sync-types.ts:43))
-- Some functions throw generic `Error`
-- Some functions return error objects
-- Some functions use try/catch with console.error only
+Event payloads are defined as interfaces but the event emitter uses `any` type, losing type safety at runtime.
 
 **Impact:**
-- Inconsistent error messages
-- Difficult to debug
-- No centralized error tracking
-- User experience varies
-
-**Risk Level:** **Medium**
+- No compile-time type checking for event payloads
+- Runtime type errors possible
+- Poor IDE support for event handling
+- Difficult to refactor event contracts
 
 **Remediation Strategy:**
-1. Establish error handling guidelines
-2. Use custom error classes consistently
-3. Implement error boundary components
-4. Add Sentry for error tracking (Epic 22-4)
+1. Create strongly-typed event emitter
+2. Use TypeScript generics for event types
+3. Add runtime type validation (Zod)
+4. Update all event emitters and listeners
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Future type safety improvement
 
 ---
 
-### CQD-004: Missing TypeScript Strict Mode
+### CQ-004: Manual Permission Management
 
-**Location:** [`tsconfig.json`](../tsconfig.json:13)
+| Property | Value |
+|----------|-------|
+| **ID** | CQ-004 |
+| **Title** | Manual Permission Management |
+| **Location** | [`src/lib/filesystem/permission-lifecycle.ts`](../src/lib/filesystem/permission-lifecycle.ts:1) |
+| **Category** | Code Quality |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-`verbatimModuleSyntax` is set to `false`, allowing implicit module syntax.
+Permission lifecycle management is implemented with manual glue code that should be abstracted into a reusable service.
 
 **Impact:**
-- Potential for module resolution bugs
-- Less type safety
-- Harder to catch import errors at compile time
-
-**Risk Level:** **Low**
+- Code duplication across permission handling
+- Difficult to test permission logic
+- Inconsistent permission handling
+- High cognitive load for developers
 
 **Remediation Strategy:**
-1. Enable `verbatimModuleSyntax: true` (Epic 22-7)
-2. Fix any resulting import errors
-3. Use explicit `.js` extensions for imports
+1. Create PermissionManager service
+2. Centralize permission request logic
+3. Implement permission caching
+4. Add permission restoration on page reload
+
+**Effort Estimate:** 3-5 story points  
+**Related Epic:** Future refactoring epic
 
 ---
 
-### CQD-005: Unused Dependencies
+### CQ-005: Missing Validation Layer
 
-**Location:** [`package.json`](../package.json:32)
+| Property | Value |
+|----------|-------|
+| **ID** | CQ-005 |
+| **Title** | Missing Validation Layer |
+| **Location** | Multiple files |
+| **Category** | Code Quality |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Several dependencies may be unused or underutilized:
-- `@tanstack/react-router-ssr-query` - SSR is disabled
-- `idb` - Being replaced by Dexie
-- `isomorphic-git` - No evidence of usage in codebase
+There's no centralized validation layer. Input validation is scattered across components and services, leading to inconsistent validation logic.
 
 **Impact:**
-- Increased bundle size
-- Security surface area
-- Maintenance burden
-
-**Risk Level:** **Low**
+- Inconsistent validation across the application
+- Potential security vulnerabilities
+- Poor user experience on validation errors
+- Difficult to maintain validation rules
 
 **Remediation Strategy:**
-1. Audit all dependencies
-2. Remove unused dependencies
-3. Document purpose of each dependency
+1. Create centralized validation service using Zod
+2. Define validation schemas for all inputs
+3. Implement validation middleware
+4. Add validation error handling
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Future quality improvement
 
 ---
 
 ## Testing Debt
 
-### TD-001: Low Test Coverage
+### T-001: Low Test Coverage
 
-**Location:** [`src/lib/filesystem/__tests__/`](../src/lib/filesystem/__tests__/)
+| Property | Value |
+|----------|-------|
+| **ID** | T-001 |
+| **Title** | Low Test Coverage |
+| **Location** | Multiple files |
+| **Category** | Testing |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-Test coverage is limited:
-- File system module has tests
-- WebContainer module has tests
-- Event system has tests
-- Workspace hooks have NO tests
-- Components have limited tests
+Test coverage is low across the codebase. Many critical components and services lack unit tests, increasing the risk of regressions.
 
 **Impact:**
-- Refactoring risk
-- Regression bugs
-- Low confidence in changes
-
-**Risk Level:** **Medium**
+- High risk of regressions
+- Difficult to refactor with confidence
+- Bugs discovered late in development
+- Poor code quality assurance
 
 **Remediation Strategy:**
-1. Add tests for workspace hooks (Epic 22-3)
-2. Add integration tests for sync flow
-3. Add component tests for IDE components
-4. Set up coverage reporting
+1. Establish coverage targets (80% minimum)
+2. Add tests for critical paths (Epic 22-3)
+3. Implement test-driven development for new features
+4. Add coverage reporting to CI
+
+**Effort Estimate:** 15-20 story points  
+**Related Epic:** Epic 22-3 (Add Integration Tests)
 
 ---
 
-### TD-002: No E2E Tests
+### T-002: Missing Integration Tests
 
-**Location:** N/A
+| Property | Value |
+|----------|-------|
+| **ID** | T-002 |
+| **Title** | Missing Integration Tests |
+| **Location** | N/A |
+| **Category** | Testing |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-No end-to-end tests exist for critical user flows:
-- Project open flow
-- File sync flow
-- Agent tool execution
-- Terminal interaction
+No integration tests exist for critical workflows like project open, file sync, and WebContainer boot. Unit tests don't catch integration issues.
 
 **Impact:**
-- Critical bugs may reach production
-- Difficult to verify complex workflows
-- Manual testing burden
-
-**Risk Level:** **Medium**
+- Integration bugs discovered late
+- No confidence in system behavior
+- Difficult to test cross-component interactions
+- Poor end-to-end quality assurance
 
 **Remediation Strategy:**
-1. Add Playwright for E2E testing
-2. Test critical user flows
-3. Add visual regression testing
-4. Integrate with CI/CD (Epic 22-2)
+1. Add integration tests for project open workflow
+2. Add integration tests for file sync workflow
+3. Add integration tests for WebContainer boot
+4. Implement E2E tests with Playwright (future)
+
+**Effort Estimate:** 10-15 story points  
+**Related Epic:** Epic 22-3 (Add Integration Tests)
 
 ---
 
-### TD-003: Mocking Complexity
+### T-003: No Performance Tests
 
-**Location:** Test files
+| Property | Value |
+|----------|-------|
+| **ID** | T-003 |
+| **Title** | No Performance Tests |
+| **Location** | N/A |
+| **Category** | Testing |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Tests require complex mocking:
-- File System Access API
-- WebContainer API
-- IndexedDB
-- Event bus
+No performance tests exist to ensure performance targets are met. Performance regressions can go undetected.
 
 **Impact:**
-- Brittle tests
-- High maintenance cost
-- Tests may not reflect real behavior
-
-**Risk Level:** **Low-Medium**
+- Performance regressions undetected
+- No automated performance monitoring
+- Difficult to measure performance improvements
+- Poor user experience on performance issues
 
 **Remediation Strategy:**
-1. Create test utilities for common mocks
-2. Use dependency injection for testability
-3. Add integration tests with real APIs
-4. Consider using MSW for API mocking
+1. Define performance targets (Epic 22-6)
+2. Add performance tests for critical operations
+3. Implement Lighthouse CI in CI pipeline
+4. Monitor performance metrics over time
+
+**Effort Estimate:** 8-12 story points  
+**Related Epic:** Epic 22-6 (Establish Performance Benchmarks)
 
 ---
 
 ## Infrastructure Debt
 
-### ID-001: Missing CSP in Development
+### I-001: No CI/CD Pipeline
 
-**Location:** [`vite.config.ts`](../vite.config.ts:32)
+| Property | Value |
+|----------|-------|
+| **ID** | I-001 |
+| **Title** | No CI/CD Pipeline |
+| **Location** | N/A |
+| **Category** | Infrastructure |
+| **Risk Level** | 🔴 Critical |
+| **Status** | Active |
 
 **Description:**
-Content Security Policy is NOT set in dev server because it blocks:
-- IndexedDB operations
-- File System Access API
-- WebContainer internal operations
+No automated CI/CD pipeline exists. All builds and deployments are manual, increasing the risk of human error and slowing down development.
 
 **Impact:**
-- Security risk in development
-- Different behavior between dev and production
-- CSP-related bugs may not be caught
-
-**Risk Level:** **Low-Medium**
+- Manual builds and deployments
+- High risk of human error
+- Slow feedback loop
+- No automated testing on PRs
 
 **Remediation Strategy:**
-1. Add permissive CSP for development
-2. Document CSP requirements
-3. Add CSP testing in CI/CD
-4. Consider using CSP nonce strategy
+1. Set up GitHub Actions workflow (Epic 22-2)
+2. Implement automated builds
+3. Implement automated tests
+4. Implement automated deployments to Netlify
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Epic 22-2 (Create CI/CD Pipeline)
 
 ---
 
-### ID-002: No Performance Monitoring
+### I-002: Missing Security Headers
 
-**Location:** N/A
+| Property | Value |
+|----------|-------|
+| **ID** | I-002 |
+| **Title** | Missing Security Headers |
+| **Location** | Netlify configuration |
+| **Category** | Infrastructure |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-No performance monitoring exists:
-- No Web Vitals tracking (Epic 22-6)
-- No sync performance metrics
-- No WebContainer boot time monitoring
-- No bundle size tracking
+Security headers are not configured in production. This exposes the application to security vulnerabilities.
 
 **Impact:**
-- Performance regressions undetected
-- Difficult to identify bottlenecks
-- Poor user experience
-
-**Risk Level:** **Medium**
+- Exposed to XSS attacks
+- Exposed to clickjacking attacks
+- Poor security posture
+- Compliance issues
 
 **Remediation Strategy:**
-1. Add Web Vitals tracking (Epic 22-6)
-2. Add performance marks for critical paths
-3. Set up bundle size monitoring
-4. Add performance budgets
+1. Implement security headers (Epic 22-1)
+2. Add Content Security Policy
+3. Add X-Frame-Options header
+4. Add X-Content-Type-Options header
+
+**Effort Estimate:** 2-3 story points  
+**Related Epic:** Epic 22-1 (Implement Security Headers)
 
 ---
 
-### ID-003: No Health Checks
+### I-003: No Error Monitoring
 
-**Location:** N/A
+| Property | Value |
+|----------|-------|
+| **ID** | I-003 |
+| **Title** | No Error Monitoring |
+| **Location** | N/A |
+| **Category** | Infrastructure |
+| **Risk Level** | 🟠 High |
+| **Status** | Active |
 
 **Description:**
-No health check endpoints exist:
-- WebContainer health
-- IndexedDB health
-- File system access health
-- Service availability
+No error monitoring is configured. Errors in production are not tracked, making it difficult to debug and fix issues.
 
 **Impact:**
-- Difficult to diagnose issues
-- No monitoring for production
-- Poor observability
-
-**Risk Level:** **Low**
+- No visibility into production errors
+- Difficult to debug production issues
+- Poor user experience on errors
+- No error trend analysis
 
 **Remediation Strategy:**
-1. Add health check endpoint
-2. Monitor critical services
-3. Add uptime monitoring
-4. Add alerting for failures
+1. Configure Sentry (Epic 22-4)
+2. Add error tracking for all components
+3. Add performance monitoring
+4. Set up error alerts
+
+**Effort Estimate:** 3-5 story points  
+**Related Epic:** Epic 22-4 (Configure Error Monitoring)
 
 ---
 
-### ID-004: Ad-hoc Configuration
+### I-004: No Performance Monitoring
 
-**Location:** Multiple files
+| Property | Value |
+|----------|-------|
+| **ID** | I-004 |
+| **Title** | No Performance Monitoring |
+| **Location** | N/A |
+| **Category** | Infrastructure |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Configuration is scattered:
-- Environment variables in multiple files
-- Hardcoded values in code
-- No centralized configuration management
-- No configuration validation
+No performance monitoring is configured. Performance regressions can go undetected in production.
 
 **Impact:**
-- Difficult to change configuration
-- Configuration errors
-- No type safety for config
-
-**Risk Level:** **Low**
+- No visibility into production performance
+- Difficult to identify performance bottlenecks
+- Poor user experience on performance issues
+- No performance trend analysis
 
 **Remediation Strategy:**
-1. Use Zod for configuration validation
-2. Centralize configuration
-3. Add environment variable documentation
-4. Add configuration tests
+1. Add Web Vitals monitoring
+2. Add performance metrics to Sentry
+3. Implement Lighthouse CI
+4. Set up performance alerts
+
+**Effort Estimate:** 5-8 story points  
+**Related Epic:** Epic 22-6 (Establish Performance Benchmarks)
 
 ---
 
 ## Domain Semantics Debt
 
-### DSD-001: Inconsistent Naming
+### DS-001: Unused Dependencies
 
-**Location:** Multiple files
+| Property | Value |
+|----------|-------|
+| **ID** | DS-001 |
+| **Title** | Unused Dependencies |
+| **Location** | [`package.json`](../package.json:1) |
+| **Category** | Domain Semantics |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Naming conventions are inconsistent:
-- Some use `camelCase` for functions
-- Some use `PascalCase` for functions
-- Some use `kebab-case` for files
-- Some use `camelCase` for files
+Several dependencies are installed but not used, increasing bundle size and maintenance burden:
+- `@tanstack/react-router-ssr-query` - SSR disabled
+- `idb` - Replaced by Dexie.js
+- `isomorphic-git` - Not implemented
 
 **Impact:**
-- Confusing for developers
-- Difficult to find code
-- Inconsistent codebase
-
-**Risk Level:** **Low**
+- Increased bundle size
+- Maintenance burden
+- Security vulnerabilities in unused packages
+- Confusion about actual dependencies
 
 **Remediation Strategy:**
-1. Establish naming conventions
-2. Add ESLint rules for naming
-3. Document conventions in AGENTS.md
-4. Rename inconsistent files/functions
+1. Remove unused dependencies
+2. Audit dependencies with `npm audit`
+3. Update package.json
+4. Test after removal
+
+**Effort Estimate:** 1-2 story points  
+**Related Epic:** Future cleanup
 
 ---
 
-### DSD-002: Missing Domain Models
+### DS-002: Inconsistent Naming Conventions
 
-**Location:** N/A
+| Property | Value |
+|----------|-------|
+| **ID** | DS-002 |
+| **Title** | Inconsistent Naming Conventions |
+| **Location** | Multiple files |
+| **Category** | Domain Semantics |
+| **Risk Level** | 🟢 Low |
+| **Status** | Active |
 
 **Description:**
-No explicit domain models exist:
-- Project, File, Directory are just interfaces
-- No domain logic encapsulation
-- No invariants enforcement
-- No domain events
+Naming conventions are inconsistent across the codebase. Some files use kebab-case, others use camelCase, and variable naming is inconsistent.
 
 **Impact:**
-- Business logic scattered
-- Difficult to enforce rules
-- High coupling
-
-**Risk Level:** **Low**
+- Confusing codebase
+- Difficult to navigate
+- Poor code readability
+- Inconsistent mental model
 
 **Remediation Strategy:**
-1. Introduce domain models
-2. Encapsulate business logic
-3. Add invariants enforcement
-4. Consider DDD patterns
+1. Define naming conventions in AGENTS.md
+2. Rename files to follow conventions
+3. Rename variables to follow conventions
+4. Update all references
+
+**Effort Estimate:** 3-5 story points  
+**Related Epic:** Future cleanup
 
 ---
 
-### DSD-003: No Validation Layer
+### DS-003: Missing Documentation
 
-**Location:** [`src/lib/agent/facades/file-tools.ts`](../src/lib/agent/facades/file-tools.ts:105)
+| Property | Value |
+|----------|-------|
+| **ID** | DS-003 |
+| **Title** | Missing Documentation |
+| **Location** | Multiple files |
+| **Category** | Domain Semantics |
+| **Risk Level** | 🟡 Medium |
+| **Status** | Active |
 
 **Description:**
-Validation is minimal:
-- Path validation exists ([`validatePath`](../src/lib/agent/facades/file-tools.ts:105))
-- No input validation for file operations
-- No schema validation for data
-- No sanitization for user input
+Many components and services lack documentation, making it difficult for new developers to understand the codebase.
 
 **Impact:**
-- Security risk
-- Data corruption risk
-- Poor error messages
-
-**Risk Level:** **Medium**
+- Slow onboarding for new developers
+- Difficult to understand complex code
+- Knowledge silos
+- Poor code maintainability
 
 **Remediation Strategy:**
-1. Add Zod schemas for all inputs
-2. Add sanitization layer
-3. Add validation middleware
-4. Add input validation tests
+1. Add JSDoc comments to all public APIs
+2. Add README files to major directories
+3. Document complex algorithms
+4. Create architecture diagrams
+
+**Effort Estimate:** 8-12 story points  
+**Related Epic:** Epic 17 (Open Source Documentation)
 
 ---
 
 ## Risk Summary
 
-### High Risk Items
+### Risk Distribution
 
-| ID | Item | Risk | Priority |
-|----|------|------|----------|
-| CQD-003 | Inconsistent Error Handling | Medium | P1 |
-| DSD-003 | No Validation Layer | Medium | P1 |
+| Risk Level | Count | Percentage |
+|------------|-------|------------|
+| 🔴 Critical | 1 | 6% |
+| 🟠 High | 8 | 47% |
+| 🟡 Medium | 8 | 47% |
+| 🟢 Low | 0 | 0% |
+| **Total** | 17 | 100% |
 
-### Medium Risk Items
+### Risk by Category
 
-| ID | Item | Risk | Priority |
-|----|------|------|----------|
-| ADR-001 | State Management Transition | Medium | P1 |
-| ADR-002 | Dual Persistence Layers | Medium | P1 |
-| TD-001 | Low Test Coverage | Medium | P2 |
-| TD-002 | No E2E Tests | Medium | P2 |
-| ID-002 | No Performance Monitoring | Medium | P2 |
-| CQD-002 | Complex Sync Manager | Medium | P2 |
-| ADR-005 | Event Bus Coupling | Medium | P2 |
-| TD-003 | Mocking Complexity | Medium | P2 |
+| Category | Critical | High | Medium | Low | Total |
+|----------|----------|------|--------|-----|-------|
+| Architecture | 0 | 2 | 3 | 0 | 5 |
+| Code Quality | 0 | 2 | 3 | 0 | 5 |
+| Testing | 0 | 2 | 1 | 0 | 3 |
+| Infrastructure | 1 | 2 | 1 | 0 | 4 |
+| Domain Semantics | 0 | 0 | 2 | 0 | 2 |
 
-### Low Risk Items
+### Top 5 High-Priority Debt Items
 
-| ID | Item | Risk | Priority |
-|----|------|------|----------|
-| ADR-003 | Global Singleton Pattern | Low-Medium | P3 |
-| ADR-004 | Layer Violation in WorkspaceContext | Low | P3 |
-| CQD-001 | Large Context Hook | Low | P3 |
-| CQD-004 | Missing TypeScript Strict Mode | Low | P3 |
-| CQD-005 | Unused Dependencies | Low | P3 |
-| ID-001 | Missing CSP in Development | Low-Medium | P3 |
-| ID-003 | No Health Checks | Low | P3 |
-| ID-004 | Ad-hoc Configuration | Low | P3 |
-| DSD-001 | Inconsistent Naming | Low | P3 |
-| DSD-002 | Missing Domain Models | Low | P3 |
+| Rank | ID | Title | Risk | Effort |
+|------|----|----|------|--------|
+| 1 | I-001 | No CI/CD Pipeline | 🔴 Critical | 5-8 SP |
+| 2 | AD-001 | God Context Pattern | 🟠 High | 8-12 SP |
+| 3 | AD-005 | Missing Error Handling Abstraction | 🟠 High | 5-8 SP |
+| 4 | CQ-001 | Duplicate Persistence Implementations | 🟠 High | 5-8 SP |
+| 5 | CQ-003 | Untyped Event Payloads | 🟠 High | 5-8 SP |
 
 ---
 
 ## Remediation Roadmap
 
-### Phase 1: Critical Fixes (P1)
-- Complete Epic 27 state management migration
-- Complete Epic 27-1c persistence migration
-- Add Zod validation layer
-- Standardize error handling
+### Sprint 1-2: Critical Infrastructure (Epic 22)
 
-### Phase 2: Quality Improvements (P2)
-- Increase test coverage to 80%
-- Add E2E tests for critical flows
-- Add performance monitoring
-- Refactor SyncManager
+| ID | Title | Priority | Effort | Epic |
+|----|----|----------|--------|------|
+| I-001 | No CI/CD Pipeline | P0 | 5-8 SP | Epic 22-2 |
+| I-002 | Missing Security Headers | P0 | 2-3 SP | Epic 22-1 |
+| I-003 | No Error Monitoring | P0 | 3-5 SP | Epic 22-4 |
 
-### Phase 3: Technical Debt (P3)
-- Enable TypeScript strict mode
-- Remove unused dependencies
-- Add health checks
-- Standardize naming conventions
+**Goal:** Establish production-ready infrastructure with CI/CD, security, and monitoring.
 
 ---
 
-## References
+### Sprint 3-4: State Architecture Migration (Epic 27)
 
-- **Workspace Context:** [`src/lib/workspace/WorkspaceContext.tsx`](../src/lib/workspace/WorkspaceContext.tsx)
-- **State Hook:** [`src/lib/workspace/hooks/useWorkspaceState.ts`](../src/lib/workspace/hooks/useWorkspaceState.ts)
-- **Sync Manager:** [`src/lib/filesystem/sync-manager.ts`](../src/lib/filesystem/sync-manager.ts)
-- **Dexie DB:** [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts)
-- **WebContainer Manager:** [`src/lib/webcontainer/manager.ts`](../src/lib/webcontainer/manager.ts)
-- **Event System:** [`src/lib/events/workspace-events.ts`](../src/lib/events/workspace-events.ts)
-- **Vite Config:** [`vite.config.ts`](../vite.config.ts)
-- **TypeScript Config:** [`tsconfig.json`](../tsconfig.json)
-- **Package.json:** [`package.json`](../package.json)
+| ID | Title | Priority | Effort | Epic |
+|----|----|----------|--------|------|
+| AD-001 | God Context Pattern | P0 | 8-12 SP | Epic 27 |
+| CQ-001 | Duplicate Persistence Implementations | P0 | 5-8 SP | Epic 27-1c |
+| CQ-002 | Large Hook - useWorkspaceState | P1 | 3-5 SP | Epic 27 |
+
+**Goal:** Migrate to Zustand-based state management and Dexie.js persistence.
+
+---
+
+### Sprint 5-6: Testing & Quality (Epic 22)
+
+| ID | Title | Priority | Effort | Epic |
+|----|----|----------|--------|------|
+| T-001 | Low Test Coverage | P0 | 15-20 SP | Epic 22-3 |
+| T-002 | Missing Integration Tests | P0 | 10-15 SP | Epic 22-3 |
+| T-003 | No Performance Tests | P1 | 8-12 SP | Epic 22-6 |
+| I-004 | No Performance Monitoring | P1 | 5-8 SP | Epic 22-6 |
+
+**Goal:** Establish comprehensive testing and performance monitoring.
+
+---
+
+### Sprint 7-8: Code Quality Improvements
+
+| ID | Title | Priority | Effort | Epic |
+|----|----|----------|--------|------|
+| AD-005 | Missing Error Handling Abstraction | P1 | 5-8 SP | Future |
+| CQ-003 | Untyped Event Payloads | P1 | 5-8 SP | Future |
+| CQ-004 | Manual Permission Management | P2 | 3-5 SP | Future |
+| CQ-005 | Missing Validation Layer | P2 | 5-8 SP | Future |
+
+**Goal:** Improve code quality and type safety.
+
+---
+
+### Sprint 9-10: Architecture Cleanup
+
+| ID | Title | Priority | Effort | Epic |
+|----|----|----------|--------|------|
+| AD-002 | God Class - SyncManager | P2 | 5-8 SP | Future |
+| AD-003 | Layer Violation in Components | P2 | 8-12 SP | Future |
+| AD-004 | Singleton Pattern - WebContainer Manager | P2 | 5-8 SP | Future |
+
+**Goal:** Refactor architecture to improve maintainability.
+
+---
+
+### Sprint 11-12: Documentation & Cleanup
+
+| ID | Title | Priority | Effort | Epic |
+|----|----|----------|--------|------|
+| DS-001 | Unused Dependencies | P2 | 1-2 SP | Future |
+| DS-002 | Inconsistent Naming Conventions | P3 | 3-5 SP | Future |
+| DS-003 | Missing Documentation | P2 | 8-12 SP | Epic 17 |
+
+**Goal:** Improve codebase documentation and remove technical debt.
+
+---
+
+## Conclusion
+
+This technical debt register identifies 17 debt items across 5 categories, with 1 critical, 8 high, and 8 medium priority items. The highest priority items are related to infrastructure (CI/CD, security, monitoring) and architecture (god context, state management).
+
+The remediation roadmap provides a structured approach to addressing technical debt over 12 sprints, with clear priorities and effort estimates. Regular updates to this register will track progress and ensure technical debt remains manageable.
+
+For detailed improvement opportunities and innovation suggestions, refer to the [`improvement-opportunities.md`](./improvement-opportunities.md) document.
+
+---
+
+## Document References
+
+| Document | Location |
+|----------|----------|
+| **Project Overview** | [`project-overview.md`](./project-overview.md) |
+| **Architecture** | [`architecture.md`](./architecture.md) |
+| **Data & Contracts** | [`data-and-contracts.md`](./data-and-contracts.md) |
+| **Tech Context** | [`tech-context.md`](./tech-context.md) |
+| **Improvement Opportunities** | [`improvement-opportunities.md`](./improvement-opportunities.md) |
+| **Roadmap** | [`roadmap-and-planning.md`](./roadmap-and-planning.md) |
+
+---
+
+**Document Owners:** Architecture Team  
+**Review Cycle:** Monthly  
+**Next Review:** 2025-01-23

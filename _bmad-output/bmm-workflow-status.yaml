@@ -23,31 +23,27 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "epic-25-research-2025-12-23"
+  key: "25-1-tanstack-ai-integration-setup"
   epic: 25
-  status: "research"
+  status: "ready"
   platform: "Platform A"
   notes: |
-    Research workflow executed for 3 concerns:
-    1. Tool complexity and edge cases → Mitigation strategies documented
-    2. OpenRouter integration → Confirmed TanStack AI compatible via baseURL
-    3. Multilingual (en/vi) → Deferred to Phase 5, MVP uses system prompt injection
-    Proposed new stories: 12-1B (concurrency), 25-0 (ProviderAdapterFactory)
-    Output: C:\Users\Admin\.gemini\antigravity\brain\0c680f57-9fd5-450a-aa34-8b9148c25dcf\epic-25-research-findings-2025-12-23.md
+    Next story in Epic 25 execution order.
+    Story 25-0 (ProviderAdapterFactory) completed, enabling provider abstraction.
 
 
 last_completed_story:
-  key: "28-21-diff-preview-component"
-  epic: 28
-  completed_at: "2025-12-22T22:53:00+07:00"
+  key: "25-0-create-provideradapterfactory"
+  epic: 25
+  completed_at: "2025-12-23T19:55:00+07:00"
   status: "done"
-  platform: "Platform B"
-  tests_passing: 18
-  tests_total: 18
+  platform: "Platform A"
+  tests_passing: 26
+  tests_total: 26
   notes: |
-    DiffPreview component for file changes with syntax highlighting.
-    Shows additions/deletions with line-by-line diff view.
-    18/18 tests pass.
+    ProviderAdapterFactory with OpenRouter + CredentialVault + ModelRegistry.
+    Dexie v4 schema with credentials table for encrypted API keys.
+    5 new modules in src/lib/agent/providers/.
 
 
 # =============================================================================
