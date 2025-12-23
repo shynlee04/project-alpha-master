@@ -152,7 +152,7 @@ flowchart TD
 | Story | Status | Files |
 |-------|--------|-------|
 | 12-1: AgentFileTools Facade | ✅ DONE | `facades/file-tools.ts`, `file-tools-impl.ts` |
-| **12-1B: Concurrency Control** | 🆕 NEW | `facades/file-lock.ts` |
+| **12-1B: Concurrency Control** | ✅ DONE | `facades/file-lock.ts` (28 tests) |
 | 12-2: AgentTerminalTools Facade | Backlog | `facades/terminal-tools.ts`, `terminal-tools-impl.ts` |
 | 12-3: AgentSyncTools Facade | Backlog | Optional |
 | 12-4: AgentGitTools Stub | Backlog | Stub only |

@@ -117,6 +117,7 @@ agent-os\standards\testing\test-writing.md
 Practice best coding, using @web and MCP servers' tools to improve your workflow
 
 ---
+
 ok so /bmad-core-agents-bmad-master coordinate /bmad-bmm-agents-sm and /bmad-bmm-agents-dev to /bmad-bmm-workflows-sprint-planning update /bmad-bmm-workflows-sprint-status to start the next sequence of /story-dev-cycle 
 
 ## Master plan, research guidance (use @web and MCP tools as needed during and in between the iterations as needed) , route accordingly 
@@ -137,7 +138,7 @@ docs\2025-12-23\architecture.md
 docs\2025-12-23\data-and-contracts.md
 docs\2025-12-23\flows-and-workflows.md
 docs\2025-12-23\structure-map.md
-
+docs\2025-12-23\tech-context.md
 ```
 - Refer to these for quick context 
 - update them when there are changes in any 

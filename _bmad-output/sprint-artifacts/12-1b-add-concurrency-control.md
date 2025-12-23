@@ -2,7 +2,7 @@
 
 **Epic:** 12 - AI Tool Interface Layer  
 **Priority:** P1  
-**Status:** drafted  
+**Status:** done  
 **Points:** 3  
 **Created:** 2025-12-23T18:54:00+07:00
 
@@ -180,7 +180,35 @@ async writeFile(path: string, content: string): Promise<void> {
 
 ## Dev Agent Record
 
-*(To be filled during implementation)*
+**Agent:** Antigravity (Gemini 2.5)  
+**Session:** 2025-12-23T18:54-19:02
+
+### Task Progress:
+- [x] T1: Create FileLock class in `src/lib/agent/facades/file-lock.ts`
+- [x] T2: Integrate FileLock into FileToolsFacade
+- [x] T3: Extend event payloads with lock timestamps
+- [x] T4: Create FileLockTimeoutError class
+- [x] T5: Write unit tests for FileLock (14 tests)
+- [x] T6: Update file-tools.test.ts for lock integration
+
+### Files Changed:
+| File | Action | Lines |
+|------|--------|-------|
+| `src/lib/agent/facades/file-lock.ts` | Created | 155 |
+| `src/lib/agent/facades/file-tools-impl.ts` | Modified | +40 |
+| `src/lib/agent/facades/index.ts` | Modified | +3 |
+| `src/lib/events/workspace-events.ts` | Modified | +4 |
+| `src/lib/agent/facades/__tests__/file-lock.test.ts` | Created | 156 |
+| `src/lib/agent/facades/__tests__/file-tools.test.ts` | Modified | +25 |
+
+### Tests Created:
+- `file-lock.test.ts`: 14 tests (acquire, release, concurrency, timeout)
+- `file-tools.test.ts`: Updated to include lock verification (14 tests)
+
+### Decisions Made:
+- Used Map-based per-file locking (not third-party async-mutex)
+- Default 30s timeout (configurable via constructor)
+- Lock timestamps added to all file events (optional fields)
 
 ---
 
@@ -189,3 +217,4 @@ async writeFile(path: string, content: string): Promise<void> {
 | Date | Status | Notes |
 |------|--------|-------|
 | 2025-12-23T18:54 | drafted | Story created by SM Agent |
+| 2025-12-23T19:02 | done | All 6 tasks complete, 28 tests pass |

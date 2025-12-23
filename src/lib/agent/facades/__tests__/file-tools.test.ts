@@ -4,11 +4,13 @@
  * 
  * @epic 12 - Agent Tool Interface Layer
  * @story 12-1 - Create AgentFileTools Facade
+ * @story 12-1B - Add Concurrency Control to FileToolsFacade
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FileToolsFacade } from '../file-tools-impl';
 import { validatePath, PathValidationError } from '../file-tools';
+import { FileLock } from '../file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
@@ -58,6 +60,15 @@ function createMockEventBus() {
     } as unknown as WorkspaceEventEmitter;
 }
 
+function createMockFileLock() {
+    return {
+        acquire: vi.fn().mockResolvedValue(Date.now()),
+        release: vi.fn().mockReturnValue(Date.now()),
+        isLocked: vi.fn().mockReturnValue(false),
+        getLockInfo: vi.fn().mockReturnValue(null),
+    } as unknown as FileLock;
+}
+
 describe('validatePath', () => {
     it('should accept valid relative paths', () => {
         expect(() => validatePath('src/file.ts')).not.toThrow();
@@ -81,12 +92,14 @@ describe('FileToolsFacade', () => {
     let mockLocalFS: ReturnType<typeof createMockLocalFS>;
     let mockSyncManager: ReturnType<typeof createMockSyncManager>;
     let mockEventBus: ReturnType<typeof createMockEventBus>;
+    let mockFileLock: ReturnType<typeof createMockFileLock>;
 
     beforeEach(() => {
         mockLocalFS = createMockLocalFS();
         mockSyncManager = createMockSyncManager();
         mockEventBus = createMockEventBus();
-        facade = new FileToolsFacade(mockLocalFS, mockSyncManager, mockEventBus);
+        mockFileLock = createMockFileLock();
+        facade = new FileToolsFacade(mockLocalFS, mockSyncManager, mockEventBus, mockFileLock);
     });
 
     describe('readFile', () => {
@@ -109,18 +122,22 @@ describe('FileToolsFacade', () => {
     });
 
     describe('writeFile', () => {
-        it('should write via SyncManager for dual-write', async () => {
+        it('should acquire lock and write via SyncManager', async () => {
             await facade.writeFile('src/index.ts', 'console.log("hello")');
+            expect(mockFileLock.acquire).toHaveBeenCalledWith('src/index.ts');
             expect(mockSyncManager.writeFile).toHaveBeenCalledWith('src/index.ts', 'console.log("hello")');
+            expect(mockFileLock.release).toHaveBeenCalledWith('src/index.ts');
         });
 
-        it('should emit file:modified event with source agent', async () => {
+        it('should emit file:modified event with lock timestamps', async () => {
             await facade.writeFile('src/index.ts', 'content');
-            expect(mockEventBus.emit).toHaveBeenCalledWith('file:modified', {
+            expect(mockEventBus.emit).toHaveBeenCalledWith('file:modified', expect.objectContaining({
                 path: 'src/index.ts',
                 source: 'agent',
                 content: 'content',
-            });
+                lockAcquired: expect.any(Number),
+                lockReleased: expect.any(Number),
+            }));
         });
     });
 
@@ -134,32 +151,40 @@ describe('FileToolsFacade', () => {
     });
 
     describe('createFile', () => {
-        it('should create file via SyncManager', async () => {
+        it('should acquire lock and create file via SyncManager', async () => {
             await facade.createFile('new-file.ts', 'export const a = 1;');
+            expect(mockFileLock.acquire).toHaveBeenCalledWith('new-file.ts');
             expect(mockSyncManager.writeFile).toHaveBeenCalledWith('new-file.ts', 'export const a = 1;');
+            expect(mockFileLock.release).toHaveBeenCalledWith('new-file.ts');
         });
 
-        it('should emit file:created event with source agent', async () => {
+        it('should emit file:created event with lock timestamps', async () => {
             await facade.createFile('new-file.ts');
-            expect(mockEventBus.emit).toHaveBeenCalledWith('file:created', {
+            expect(mockEventBus.emit).toHaveBeenCalledWith('file:created', expect.objectContaining({
                 path: 'new-file.ts',
                 source: 'agent',
-            });
+                lockAcquired: expect.any(Number),
+                lockReleased: expect.any(Number),
+            }));
         });
     });
 
     describe('deleteFile', () => {
-        it('should delete via SyncManager', async () => {
+        it('should acquire lock and delete via SyncManager', async () => {
             await facade.deleteFile('obsolete.ts');
+            expect(mockFileLock.acquire).toHaveBeenCalledWith('obsolete.ts');
             expect(mockSyncManager.deleteFile).toHaveBeenCalledWith('obsolete.ts');
+            expect(mockFileLock.release).toHaveBeenCalledWith('obsolete.ts');
         });
 
-        it('should emit file:deleted event with source agent', async () => {
+        it('should emit file:deleted event with lock timestamps', async () => {
             await facade.deleteFile('obsolete.ts');
-            expect(mockEventBus.emit).toHaveBeenCalledWith('file:deleted', {
+            expect(mockEventBus.emit).toHaveBeenCalledWith('file:deleted', expect.objectContaining({
                 path: 'obsolete.ts',
                 source: 'agent',
-            });
+                lockAcquired: expect.any(Number),
+                lockReleased: expect.any(Number),
+            }));
         });
     });
 
@@ -177,3 +202,4 @@ describe('FileToolsFacade', () => {
         });
     });
 });
+
