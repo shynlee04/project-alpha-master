@@ -35,8 +35,12 @@ describe('executeCommandDef', () => {
 });
 
 describe('executeCommandToolConfig', () => {
-    it('should not require approval', () => {
-        expect(executeCommandToolConfig.needsApproval).toBe(false);
+    it('should require approval (Story 25-5)', () => {
+        expect(executeCommandToolConfig.needsApproval).toBe(true);
+    });
+
+    it('should have high risk level', () => {
+        expect(executeCommandToolConfig.riskLevel).toBe('high');
     });
 
     it('should have 2-minute timeout', () => {

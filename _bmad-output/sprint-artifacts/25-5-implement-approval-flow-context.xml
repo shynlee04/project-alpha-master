@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="25-5-implement-approval-flow" created="2025-12-24T04:05:00+07:00">
+  
+  <!-- Current Code State -->
+  <files>
+    
+    <!-- ApprovalOverlay Component (Story 28-22) - Already complete -->
+    <file path="src/components/chat/ApprovalOverlay.tsx">
+      <content><![CDATA[
+/**
+ * ApprovalOverlay - Modal overlay for tool execution approval
+ * 
+ * @epic Epic-28 Story 28-22
+ * @integrates Epic-25 Story 25-5 - Tool approval flow
+ */
+
+export interface ApprovalOverlayProps {
+    isOpen: boolean;
+    onApprove: () => void;
+    onReject: () => void;
+    toolName: string;
+    description?: string;
+    code?: string;
+    oldCode?: string;
+    newCode?: string;
+    mode?: 'fullscreen' | 'inline';
+    riskLevel?: 'low' | 'medium' | 'high';
+    className?: string;
+    isLoading?: boolean;
+}
+
+// Component already implemented with 19 tests passing
+]]></content>
+    </file>
+
+    <!-- useAgentChatWithTools Hook - Has approval functions -->
+    <file path="src/lib/agent/hooks/use-agent-chat-with-tools.ts">
+      <content><![CDATA[
+// Lines 63-66: Approval function types
+/** Approve a pending tool call (for needsApproval tools) */
+approveToolCall: (toolCallId: string) => void;
+/** Reject a pending tool call */
+rejectToolCall: (toolCallId: string) => void;
+
+// Lines 220-247: Implementation using addToolApprovalResponse
+const approveToolCall = useCallback((toolCallId: string) => {
+    if (addToolApprovalResponse) {
+        addToolApprovalResponse({ id: toolCallId, approved: true });
+        setToolCalls((prev) =>
+            prev.map((tc) =>
+                tc.id === toolCallId ? { ...tc, status: 'executing' as const } : tc
+            )
+        );
+    }
+}, [addToolApprovalResponse]);
+
+const rejectToolCall = useCallback((toolCallId: string) => {
+    if (addToolApprovalResponse) {
+        addToolApprovalResponse({ id: toolCallId, approved: false });
+        setToolCalls((prev) =>
+            prev.map((tc) =>
+                tc.id === toolCallId
+                    ? { ...tc, status: 'error' as const, error: 'User rejected' }
+                    : tc
+            )
+        );
+    }
+}, [addToolApprovalResponse]);
+]]></content>
+    </file>
+
+    <!-- Write File Tool Definition - Needs needsApproval: true -->
+    <file path="src/lib/agent/tools/write-file-tool.ts">
+      <content><![CDATA[
+export const writeFileDef = toolDefinition({
+    name: 'write_file',
+    description: 'Write content to a file. Creates the file if it does not exist, overwrites if it does. This action requires user approval.',
+    inputSchema: WriteFileInputSchema,
+    // TODO: Add needsApproval: true
+});
+
+export const writeFileToolConfig = {
+    needsApproval: true,
+    riskLevel: 'medium' as const,
+    // ...
+};
+]]></content>
+    </file>
+
+    <!-- Execute Command Tool Definition - Needs needsApproval: true -->
+    <file path="src/lib/agent/tools/execute-command-tool.ts">
+      <content><![CDATA[
+export const executeCommandDef = toolDefinition({
+    name: 'execute_command',
+    description: 'Execute a terminal command and return the output.',
+    inputSchema: ExecuteCommandInputSchema,
+    // TODO: Add needsApproval: true
+});
+
+export const executeCommandToolConfig = {
+    needsApproval: true,
+    riskLevel: 'high' as const,
+    maxTimeout: 120000,
+};
+]]></content>
+    </file>
+
+  </files>
+
+  <!-- Research Notes -->
+  <research_notes>
+    
+    <finding source="context7" query="TanStack AI tool approval needsApproval">
+      Pattern: Set needsApproval: true in toolDefinition config.
+      Tool execution pauses and emits 'approval-requested' state.
+      Use addToolApprovalResponse({ id, approved: true/false }) to continue.
+    </finding>
+
+    <finding source="context7" query="TanStack AI message part states">
+      Tool call parts have state property:
+      - 'pending' - Tool call requested
+      - 'approval-requested' - Waiting for user approval
+      - 'executing' - Tool is running
+      - 'completed' - Tool finished
+      - 'error' - Tool failed
+      
+      Part structure when approval-requested:
+      {
+        type: 'toolCall',
+        tool: { name: 'write_file' },
+        arguments: { path: '...', content: '...' },
+        state: 'approval-requested',
+        approval: { id: 'approval-xxx' }
+      }
+    </finding>
+
+    <finding source="ai-agent-readiness-for-e2e-review.md" query="approval flow gap">
+      - ApprovalOverlay component exists (Story 28-22, 19 tests)
+      - useAgentChatWithTools has approveToolCall/rejectToolCall
+      - NO integration between tool execution and approval UI
+      - Security gap: agents can execute destructive operations unchecked
+    </finding>
+
+  </research_notes>
+
+  <!-- Architecture Patterns -->
+  <architecture_patterns>
+    
+    <pattern name="TanStack AI Approval Flow" source="context7">
+      1. Tool definition includes needsApproval: true
+      2. Server passes tool to chat() - execution pauses at approval
+      3. Stream emits chunk with state: 'approval-requested'
+      4. Client detects and renders ApprovalOverlay
+      5. User action triggers addToolApprovalResponse()
+      6. Stream continues with tool execution or rejection
+    </pattern>
+
+    <pattern name="Hook-UI Wiring" source="architecture.md">
+      - Hooks manage state, not UI
+      - Components render based on hook return values
+      - Approval state exposed via pendingApprovals array
+      - ChatPanel consumes and renders ApprovalOverlay
+    </pattern>
+
+  </architecture_patterns>
+
+  <!-- Technical Notes -->
+  <technical_notes>
+    
+    <note priority="high">
+      Only write_file and execute_command need approval.
+      read_file and list_files are safe (read-only).
+    </note>
+
+    <note priority="high">
+      TanStack AI v0.2.0 uses needsApproval in toolDefinition config.
+      The approval.id from stream chunk is passed to addToolApprovalResponse.
+    </note>
+
+    <note priority="medium">
+      Risk levels for ApprovalOverlay:
+      - execute_command: 'high' (can run any shell command)
+      - write_file: 'medium' (modifies files)
+      - read_file: 'low' (no modification)
+    </note>
+
+    <note priority="medium">
+      ApprovalOverlay supports diff preview via oldCode/newCode props.
+      For write_file, fetch current file content for diff comparison.
+    </note>
+
+  </technical_notes>
+
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^0.2.0" />
+    <dependency name="@tanstack/ai-react" version="^0.2.0" />
+    <dependency name="zod" version="^4.2.1" />
+  </dependencies>
+
+</context>

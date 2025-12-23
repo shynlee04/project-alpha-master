@@ -17,18 +17,22 @@ const DEFAULT_TIMEOUT = 120000;
 
 /**
  * Execute command tool definition
+ * Marked with needsApproval for security (can run arbitrary shell commands)
+ * @story 25-5 - Implement Approval Flow
  */
 export const executeCommandDef = toolDefinition({
     name: 'execute_command',
     description: 'Execute a terminal command and return the output. Use this to run scripts, install packages, or verify code changes.',
     inputSchema: ExecuteCommandInputSchema,
+    needsApproval: true, // Requires user approval - HIGH RISK (Story 25-5)
 });
 
 /**
  * Configuration for execute_command tool
  */
 export const executeCommandToolConfig = {
-    needsApproval: false, // Regular commands don't need approval
+    needsApproval: true, // Sync with toolDefinition
+    riskLevel: 'high' as const, // High risk - can run any shell command
     timeout: DEFAULT_TIMEOUT,
 };
 

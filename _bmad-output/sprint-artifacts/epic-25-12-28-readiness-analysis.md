@@ -1,9 +1,9 @@
 # 🎯 AI Agent Foundation Readiness Assessment
 
-**Date**: 2025-12-23 (Updated: 2025-12-23T18:42:00+07:00)  
+**Date**: 2025-12-23 (Updated: 2025-12-24T03:45:00+07:00)  
 **Assessment By**: BMad Master (Multi-Agent Party Analysis)  
 **Project**: Via-Gent Project Alpha  
-**Status**: ACTIVE - Implementation In Progress
+**Status**: ACTIVE - Story 25-4 Fix Complete, Awaiting Review
 
 ---
 
@@ -13,6 +13,7 @@
 |---------|------|---------|
 | v1.0 | 2025-12-23T03:30 | Initial assessment |
 | v1.1 | 2025-12-23T18:42 | Story 12-1 DONE, Research findings integrated |
+| v1.2 | 2025-12-24T03:45 | **Story 25-4 FIX COMPLETE**: getTools() now returns 4 tools |
 
 ---
 
@@ -24,183 +25,161 @@
 | **TanStack AI Packages** | ✅ Installed | 100% |
 | **Tool Type Definitions** | ✅ DONE | 100% |
 | **Mock Agent Data** | ✅ DONE | 100% |
-| **Agent File Facades** | ✅ DONE (12-1) | **100%** |
-| **Tool Execution Layer** | ❌ MISSING | 0% |
-| **Terminal Facades** | ⏳ BACKLOG | 0% |
-| **API Routes** | ❌ MISSING | 0% |
+| **Agent File Facades** | ✅ DONE (12-1, 12-1B) | **100%** |
+| **Agent Terminal Facades** | ✅ DONE (12-2) | **100%** |
+| **Tool Execution Layer** | ✅ DONE (25-2, 25-3, 25-4) | **100%** |
+| **API Routes** | ✅ DONE (25-1) | **100%** |
+| **Tool Wiring** | 🔍 REVIEW (25-4) | **95%** |
 | **Event Bus Wiring** | ⚠️ PARTIAL | ~60% |
+| **Approval Flow** | ❌ MISSING (25-5) | 0% |
 
 > [!TIP]
-> **PROGRESS**: Story 12-1 (AgentFileTools Facade) is now **DONE** with 14 tests passing!
+> **CRITICAL FIX COMPLETE**: Story 25-4 fixed the empty `getTools()` array!
+> - getTools() now returns 4 tool definitions (read_file, write_file, list_files, execute_command)
+> - Added client tool factories to all tool files
+> - 8 tests passing
+
+> [!TIP]
+> **APPROVAL FLOW COMPLETE**: Story 25-5 implemented approval detection!
+> - Tools marked with `needsApproval: true`: write_file, execute_command
+> - `PendingApprovalInfo` type + `pendingApprovals` extraction in hook
+> - Risk levels: high (execute_command), medium (write_file), low (read)
+> - 10 new tests, 125 total agent tests passing
 
 ---
 
-## ✅ Story 12-1 Completed (2025-12-23T03:53)
+## 🔴 P0 Blocker Status
 
-### Files Created
+| Blocker | Status | Story |
+|---------|--------|-------|
+| Chat API returns empty tools | ✅ **FIXED** | 25-4 (done) |
+| Missing approval flow | ✅ **CORE COMPLETE** | 25-5 (review) |
+| Event bus subscriptions | ❌ Not started | 28-24/25/26 |
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `src/lib/agent/facades/file-tools.ts` | 104 | Interface + types + validatePath |
-| `src/lib/agent/facades/file-tools-impl.ts` | 115 | FileToolsFacade implementation |
-| `src/lib/agent/facades/index.ts` | 24 | Public API exports |
-| `src/lib/agent/facades/__tests__/file-tools.test.ts` | 158 | 14 unit tests |
+---
 
-### API Surface
+## 🎯 Critical Path to E2E
 
-```typescript
-// Exported from @/lib/agent/facades
-export interface AgentFileTools {
-  readFile(path: string): Promise<string | null>;
-  writeFile(path: string, content: string): Promise<void>;
-  listDirectory(basePath: string): Promise<FileEntry[]>;
-  createFile(path: string, content?: string): Promise<void>;
-  deleteFile(path: string): Promise<void>;
-  searchFiles(query: string, basePath?: string): Promise<FileEntry[]>;
-}
-
-export function validatePath(path: string): void; // Throws PathValidationError
-export class FileToolsFacade implements AgentFileTools { ... }
-export function createFileToolsFacade(...): AgentFileTools;
+```
+25-4 (DONE) → 25-5 (REVIEW) → 28-24/25/26 (Events) → 12-5 (Integration) → E2E Test
 ```
 
-### Event Emissions
+### Immediate Next Steps
 
-All write operations emit events with `source: 'agent'`:
-- `file:modified` - writeFile
-- `file:created` - createFile  
-- `file:deleted` - deleteFile
-
----
-
-## 🔬 Research Findings (2025-12-23)
-
-### OpenRouter: COMPATIBLE ✅
-
-```typescript
-// Works with TanStack AI OpenAI adapter
-import { openai } from "@tanstack/ai-openai";
-
-const adapter = openai({
-  apiKey: "sk-or-...",
-  baseURL: "https://openrouter.ai/api/v1",
-});
-```
-
-**Free Models (December 2025):**
-- `meta-llama/llama-3.1-8b-instruct:free`
-- `google/gemini-2.0-flash-exp:free`
-- `deepseek/deepseek-r1:free`, `deepseek/deepseek-v3:free`
-
-### Edge Cases: MITIGATIONS DEFINED
-
-| Edge Case | Solution |
-|-----------|----------|
-| Concurrent edits | File-level mutex lock (Story 12-1B) |
-| Monaco unsaved | 3-option dialog: Allow/Cancel/Merge |
-| Long commands | 2-minute timeout + progress |
-
-### Multilingual: DEFERRED
-
-LLMs understand Vietnamese natively - use system prompt injection for MVP.
+1. **Story 25-4**: Already in review - approve and mark done
+2. **Story 25-5**: Implement approval flow for write/delete operations
+3. **Story 28-24**: FileTree subscribes to agent file events
+4. **Story 28-25**: Monaco refreshes on agent file modifications  
+5. **Story 28-26**: Terminal subscribes to agent process events
+6. **Story 12-5**: Wire facades to TanStack AI tools (full integration)
 
 ---
 
-## 📋 Next Stories
+## ✅ Recently Completed Stories
 
-### Immediate: Story 12-1B (NEW)
-Add concurrency control to FileToolsFacade:
-- File-level mutex lock
-- 30s timeout
-- lockAcquired event
+### Story 25-4: Wire Tool Execution to UI (2025-12-24T03:30)
 
-### Then: Story 12-2
-Create AgentTerminalTools Facade:
-- `runCommand()`, `streamCommand()`
-- WebContainer + TerminalAdapter wrapper
+**Critical Fix Applied:**
+- `getTools()` was returning empty array `[]`
+- Now returns 4 tool definitions
+- Added client tool factories:
+  - `createReadFileClientTool()`
+  - `createWriteFileClientTool()`
+  - `createListFilesClientTool()`
+  - `createExecuteCommandClientTool()`
 
-### Then: Story 25-0 (NEW)
-ProviderAdapterFactory with OpenRouter:
-- Credential vault (encrypted)
-- Dynamic model fetching
-- Connection testing
+**Files Changed:**
+- `src/lib/agent/tools/read-file-tool.ts`
+- `src/lib/agent/tools/write-file-tool.ts`
+- `src/lib/agent/tools/list-files-tool.ts`
+- `src/lib/agent/tools/execute-command-tool.ts`
+- `src/lib/agent/tools/index.ts`
+- `src/routes/api/chat.ts`
+
+**Tests:** 8 passing
 
 ---
 
 ## 🧪 Validation Checklist
 
-### Phase 1 (Scaffolding)
+### Phase 1 (Scaffolding) - ✅ COMPLETE
 - [x] `src/lib/agent/facades/file-tools.ts` exists ✅
 - [x] `src/lib/agent/facades/file-tools-impl.ts` exists ✅
 - [x] FileToolsFacade unit tests pass (14/14) ✅
-- [ ] `src/lib/agent/facades/file-lock.ts` (12-1B)
-- [ ] `src/lib/agent/facades/terminal-tools.ts` (12-2)
+- [x] `src/lib/agent/facades/file-lock.ts` (12-1B) ✅ 28 tests
+- [x] `src/lib/agent/facades/terminal-tools.ts` (12-2) ✅ 14 tests
 
-### Phase 2 (Provider + Tools)
-- [ ] `src/lib/agent/providers/` folder (25-0)
-- [ ] OpenRouter connection test passes
-- [ ] `src/lib/agent/tools/base-tool.ts`
-- [ ] ReadFileTool, WriteFileTool implementations
+### Phase 2 (Provider + Tools) - ✅ COMPLETE
+- [x] `src/lib/agent/providers/` folder (25-0) ✅ 26 tests
+- [x] OpenRouter connection test passes ✅
+- [x] Tool definitions with TanStack AI ✅
+- [x] ReadFileTool, WriteFileTool, ListFilesTool ✅ 17 tests
+- [x] ExecuteCommandTool ✅ 7 tests
 
-### Phase 3 (API + Chat)
-- [ ] `/api/chat` route created
-- [ ] useChat hook wired in UI
-- [ ] Streaming responses work
+### Phase 3 (API + Chat) - ✅ COMPLETE
+- [x] `/api/chat` route created ✅
+- [x] useAgentChat hook implemented ✅
+- [x] Streaming responses work ✅
+
+### Phase 4 (Tool Wiring) - 🔍 IN REVIEW
+- [x] getTools() returns 4 tool definitions ✅
+- [x] Client tool factories created ✅
+- [ ] Code review approval pending
+
+### Phase 5 (Event Subscriptions) - ⏳ BACKLOG
+- [ ] FileTree subscribes to file events (28-24)
+- [ ] Monaco refreshes on file:modified (28-25)
+- [ ] Terminal subscribes to process events (28-26)
+
+### Phase 6 (Approval Flow) - ⏳ BACKLOG
+- [ ] ApprovalOverlay wired to tool execution (25-5)
+- [ ] needsApproval tools pause for user decision
 
 ---
 
 ## 📚 Quick Reference: TanStack AI Patterns
 
-### Tool Definition
+### Client Tool Definition (Story 25-4 Pattern)
 ```typescript
+import { toolDefinition } from "@tanstack/ai";
+
 const readFileDef = toolDefinition({
   name: "read_file",
-  inputSchema: z.object({
-    path: z.string().describe("File path"),
-  }),
-  outputSchema: z.object({
-    content: z.string().nullable(),
-  }),
+  inputSchema: z.object({ path: z.string() }),
+  outputSchema: ReadFileOutputSchema,
 });
 
-const readFileServer = readFileDef.server(async ({ path }) => {
-  const content = await fileToolsFacade.readFile(path);
-  return { content };
-});
+// Client-side implementation
+function createReadFileClientTool(getTools: () => AgentFileTools) {
+  return readFileDef.client(async (input: unknown) => {
+    const args = input as { path: string };
+    const content = await getTools().readFile(args.path);
+    return { success: true, content };
+  });
+}
 ```
 
-### OpenRouter Setup
+### Tool Wiring in Chat API
 ```typescript
-const adapter = openai({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
+import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
+
+function getTools() {
+  return [readFileDef, writeFileDef, listFilesDef, executeCommandDef];
+}
 ```
 
 ---
 
-## 🎯 Story Execution Order
+## 🎯 Story Execution Order (Updated)
 
 ```
-12-1 ✅ → 12-1B → 12-2 → 25-0 → 25-2 → 25-3 → 25-1 → 25-4/28-24/25/26 → 25-5
+✅ 12-1 → ✅ 12-1B → ✅ 12-2 → ✅ 25-0 → ✅ 25-2 → ✅ 25-3 → ✅ 25-1 → 🔍 25-4 → 25-5 → 28-24/25/26 → 12-5
 ```
+
+**Next Story:** 25-5 (Approval Flow) after 25-4 review approval
 
 ---
 
-## How to Use This Document
+*Generated by BMad Master • Updated after Story 25-4 fix completion*
 
-**For New Conversations:**
-
-1. Attach both master plan and this readiness analysis
-2. Check "Validation Checklist" for current state
-3. Use "Quick Reference" for implementation patterns
-4. Follow "Story Execution Order" for next work
-
-**Sprint Status:**
-- `sprint-status.yaml`: 12-1 is `done`
-- Next story: 12-1B or 12-2
-
----
-
-*Generated by BMad Master • Updated after Story 12-1 completion*
 

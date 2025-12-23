@@ -13,6 +13,7 @@
 |---------|------|---------|
 | v1.0 | 2025-12-23T03:30 | Initial draft |
 | v1.1 | 2025-12-23T18:42 | **RESEARCH COMPLETE**: Added OpenRouter, edge cases, multilingual findings |
+| v1.2 | 2025-12-24T03:40 | **Story 25-4 FIX COMPLETE**: Tool wiring implemented, getTools() now returns 4 tools |
 
 ---
 
@@ -106,13 +107,32 @@ src/lib/agent/providers/
 
 ---
 
-## Current Progress
+## Current Progress (Updated: 2025-12-24T03:40)
 
-### ✅ Story 12-1: DONE (2025-12-23T03:53)
-- `src/lib/agent/facades/file-tools.ts` - Interface + types
-- `src/lib/agent/facades/file-tools-impl.ts` - Implementation
-- `src/lib/agent/facades/index.ts` - Public exports
-- **14 tests passing**
+### ✅ Epic 12 - Tool Interface Layer
+| Story | Status | Tests | Notes |
+|-------|--------|-------|-------|
+| 12-1: AgentFileTools Facade | ✅ DONE | 14 | File operations with event emission |
+| 12-1B: Concurrency Control | ✅ DONE | 28 | File-level mutex lock |
+| 12-2: AgentTerminalTools Facade | ✅ DONE | 14 | Terminal operations + shell sessions |
+| 12-5: Wire Facades to Tools | ⏳ BACKLOG | - | Depends on 25-4 review |
+
+### ✅ Epic 25 - AI Foundation Sprint
+| Story | Status | Tests | Notes |
+|-------|--------|-------|-------|
+| 25-0: ProviderAdapterFactory | ✅ DONE | 26 | OpenRouter + encrypted credentials |
+| 25-1: TanStack AI Integration | ✅ DONE | 13 | /api/chat + useAgentChat hook |
+| 25-2: File Tools | ✅ DONE | 17 | read_file, write_file, list_files |
+| 25-3: Terminal Tools | ✅ DONE | 7 | execute_command with 2-min timeout |
+| **25-4: Wire Tool Execution** | 🔍 REVIEW | 8 | **CRITICAL FIX: getTools() now returns 4 tools** |
+| 25-5: Approval Flow | ⏳ BACKLOG | - | Security requirement |
+
+### ⏳ Epic 28 - Event Subscriptions (P0 Blockers)
+| Story | Status | Notes |
+|-------|--------|-------|
+| 28-24: FileTree Event Subscription | ⏳ BACKLOG | file:created/deleted/renamed |
+| 28-25: Monaco Event Subscription | ⏳ BACKLOG | file:modified from agent |
+| 28-26: Terminal Event Subscription | ⏳ BACKLOG | process:output/exited |
 
 ---
 

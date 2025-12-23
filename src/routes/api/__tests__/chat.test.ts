@@ -8,15 +8,6 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { z } from 'zod';
-
-// Mock tool definition helper
-const createMockToolDef = (name: string) => ({
-    name,
-    inputSchema: z.object({ path: z.string() }),
-    client: vi.fn((fn) => ({ type: 'client', name, execute: fn })),
-    server: vi.fn((fn) => ({ type: 'server', name, execute: fn })),
-});
 
 // Mock TanStack AI
 vi.mock('@tanstack/ai', () => ({

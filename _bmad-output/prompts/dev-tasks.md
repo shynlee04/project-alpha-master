@@ -176,6 +176,45 @@ docs\2025-12-23\tech-context.md
 
 - https://tanstack.com/ai/latest/docs/reference/functions/
 
+## Advanced Method to Use Deepwiki MCP Server's Tools to ask semantic questions of a particular dependency repo
+- condition: provide correct link to Github's repo of the stack/dependency and/or (try both) direct link to Deepwiki page of it 
+- Then start to ask semantic questions as long or as complex but only for the concepts of the dependency/repo. 
+- The bellow are the collection of our frequently used and core dependencies used for this project. 
+
+- **Tanstack AI:** https://github.com/TanStack/ai/ ; https://deepwiki.com/TanStack/ai
+
+- **Tanstack Devtools:** https://github.com/TanStack/devtools ; https://deepwiki.com/TanStack/devtools
+
+- **Webcontainer Core:** https://github.com/stackblitz/webcontainer-core ; https://deepwiki.com/stackblitz/webcontainer-core
+
+- **Webcontainer documentation:** https://deepwiki.com/stackblitz/webcontainer-docs ; https://github.com/stackblitz/webcontainer-docs
+
+- **Webcontainer API:** https://deepwiki.com/stackblitz/webcontainer-api ; https://github.com/stackblitz/webcontainer-api
+
+- **Dexie.js:** https://deepwiki.com/dexie/dexie.js ; https://github.com/dexie/Dexie.js
+
+- **Xterm.js:** https://deepwiki.com/xtermjs/xterm.js ; https://github.com/xtermjs/xterm.js
+
+- **Monaco Editor:** https://deepwiki.com/microsoft/monaco-editor ; https://github.com/microsoft/monaco-editor
+
+- **Rehype Raw:** https://deepwiki.com/rehypejs/rehype-raw ; https://github.com/rehypejs/rehype-raw
+
+- **Rehype Sanitize:** https://deepwiki.com/rehypejs/rehype-sanitize ; https://github.com/rehypejs/rehype-sanitize
+
+- **Zustand:** https://deepwiki.com/pmndrs/zustand ; https://github.com/pmndrs/zustand
+
+- **EventEmitter3:** https://deepwiki.com/primus/eventemitter3 ; https://github.com/primus/eventemitter3 
+
+
+
+
+
+## **ULTRA IMPORTANT** notices:
+As this sequence of epics and stories are extremely intricate and mutually complex and due to we need to iterate, on trials and errors, as well as scaffolding these, I highly anticipate you to ultrathink everytime -> to detect flaws, inaccuracy (as cross-dependencies, cross-architectures issues of these rather new stacks when they work together for advanced features such as tools, loops, agentic loops, that AI agents must be able to perform CRUD operations to many other slices of this project - 100% client-side)
+
+- Meaning you must always ready to work cross-stories, cross-epics -> research and investigate as errors, bugs occur. Do not just look at one single story scope.
+---
+
 ## TANSTACK AI  API, methods, classes, types, interfaces, alias references index
 
 ```
@@ -314,10 +353,3 @@ Based on the TanStack AI documentation structure, here's a complete index of all
 ***
 
 **Summary:** This index contains 126 total documentation links across 7 main categories: 4 API packages, 4 adapters, 9 classes, 20 functions, 48 interfaces, 20 type aliases, and 2 variables. All links follow the pattern `https://tanstack.com/ai/latest/docs/...` and are part of the TanStack AI library documentation.[1]
-
-
-
-## **ULTRA IMPORTANT** notices:
-As this sequence of epics and stories are extremely intricate and mutually complex and due to we need to iterate, on trials and errors, as well as scaffolding these, I highly anticipate you to ultrathink everytime -> to detect flaws, inaccuracy (as cross-dependencies, cross-architectures issues of these rather new stacks when they work together for advanced features such as tools, loops, agentic loops, that AI agents must be able to perform CRUD operations to many other slices of this project - 100% client-side)
-
-- Meaning you must always ready to work cross-stories, cross-epics -> research and investigate as errors, bugs occur. Do not just look at one single story scope.

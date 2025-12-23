@@ -39,6 +39,27 @@ export interface UseAgentChatWithToolsOptions {
 }
 
 /**
+ * Information about a tool call pending user approval
+ * @story 25-5 - Implement Approval Flow
+ */
+export interface PendingApprovalInfo {
+    /** Unique ID for this approval request */
+    approvalId: string;
+    /** Tool call ID */
+    toolCallId: string;
+    /** Name of the tool requiring approval */
+    toolName: string;
+    /** Tool arguments (parsed) */
+    toolArgs: Record<string, unknown>;
+    /** Risk level for UI display */
+    riskLevel: 'low' | 'medium' | 'high';
+    /** Description of what the tool will do */
+    description: string;
+    /** For write_file: proposed new content */
+    proposedContent?: string;
+}
+
+/**
  * Return type for useAgentChatWithTools hook
  */
 export interface UseAgentChatWithToolsReturn {
@@ -60,10 +81,12 @@ export interface UseAgentChatWithToolsReturn {
     toolCalls: ToolCallInfo[];
     /** Tools available status */
     toolsAvailable: boolean;
+    /** Tool calls awaiting user approval (Story 25-5) */
+    pendingApprovals: PendingApprovalInfo[];
     /** Approve a pending tool call (for needsApproval tools) */
     approveToolCall: (toolCallId: string) => void;
     /** Reject a pending tool call */
-    rejectToolCall: (toolCallId: string) => void;
+    rejectToolCall: (toolCallId: string, reason?: string) => void;
 }
 
 // Default values
@@ -232,7 +255,7 @@ export function useAgentChatWithTools(
     }, [addToolApprovalResponse]);
 
     // Reject tool call - uses { id, approved } object format
-    const rejectToolCall = useCallback((toolCallId: string) => {
+    const rejectToolCall = useCallback((toolCallId: string, reason?: string) => {
         if (addToolApprovalResponse) {
             addToolApprovalResponse({ id: toolCallId, approved: false });
 
@@ -240,12 +263,81 @@ export function useAgentChatWithTools(
             setToolCalls((prev) =>
                 prev.map((tc) =>
                     tc.id === toolCallId
-                        ? { ...tc, status: 'error' as const, error: 'User rejected' }
+                        ? { ...tc, status: 'error' as const, error: reason || 'User rejected' }
                         : tc
                 )
             );
         }
     }, [addToolApprovalResponse]);
+
+    // Extract pending approvals from TanStack AI message parts (Story 25-5)
+    const pendingApprovals = useMemo((): PendingApprovalInfo[] => {
+        const approvals: PendingApprovalInfo[] = [];
+
+        for (const msg of rawMessages) {
+            const m = msg as { parts?: unknown[] };
+            if (!Array.isArray(m.parts)) continue;
+
+            for (const part of m.parts) {
+                const p = part as {
+                    type?: string;
+                    id?: string;
+                    name?: string;
+                    state?: string;
+                    approval?: { id: string; needsApproval?: boolean };
+                    input?: Record<string, unknown>;
+                    arguments?: string;
+                };
+
+                // Check if this is a tool-call part in approval-requested state
+                if (
+                    p.type === 'tool-call' &&
+                    p.state === 'approval-requested' &&
+                    p.approval?.id
+                ) {
+                    // Determine risk level based on tool name
+                    let riskLevel: 'low' | 'medium' | 'high' = 'medium';
+                    if (p.name === 'execute_command') {
+                        riskLevel = 'high';
+                    } else if (p.name === 'read_file' || p.name === 'list_files') {
+                        riskLevel = 'low';
+                    }
+
+                    // Parse arguments if needed
+                    let toolArgs: Record<string, unknown> = {};
+                    if (p.input) {
+                        toolArgs = p.input;
+                    } else if (p.arguments) {
+                        try {
+                            toolArgs = JSON.parse(p.arguments);
+                        } catch {
+                            toolArgs = { raw: p.arguments };
+                        }
+                    }
+
+                    // Build description
+                    let description = `Execute ${p.name}`;
+                    if (p.name === 'write_file' && toolArgs.path) {
+                        description = `Write to file: ${toolArgs.path}`;
+                    } else if (p.name === 'execute_command' && toolArgs.command) {
+                        description = `Run command: ${toolArgs.command}`;
+                    }
+
+                    approvals.push({
+                        approvalId: p.approval.id,
+                        toolCallId: p.id || '',
+                        toolName: p.name || 'unknown',
+                        toolArgs,
+                        riskLevel,
+                        description,
+                        proposedContent: p.name === 'write_file' ? (toolArgs.content as string | undefined) : undefined,
+                    });
+                }
+            }
+        }
+
+        return approvals;
+    }, [rawMessages]);
 
     return {
         messages,
@@ -257,6 +349,7 @@ export function useAgentChatWithTools(
         modelId,
         toolCalls,
         toolsAvailable,
+        pendingApprovals,
         approveToolCall,
         rejectToolCall,
     };

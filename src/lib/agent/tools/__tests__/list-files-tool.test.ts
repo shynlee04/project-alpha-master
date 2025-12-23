@@ -52,9 +52,9 @@ describe('createListFilesTool', () => {
 
     it('should list directory contents successfully', async () => {
         vi.mocked(mockTools.listDirectory).mockResolvedValue([
-            { name: 'file1.ts', kind: 'file' },
-            { name: 'folder1', kind: 'directory' },
-        ] as any);
+            { name: 'file1.ts', path: 'src/file1.ts', type: 'file' },
+            { name: 'folder1', path: 'src/folder1', type: 'directory' },
+        ]);
 
         const result = await (listFiles as any)({ path: 'src' });
 
@@ -64,10 +64,10 @@ describe('createListFilesTool', () => {
 
     it('should sort directories before files', async () => {
         vi.mocked(mockTools.listDirectory).mockResolvedValue([
-            { name: 'z-file.ts', kind: 'file' },
-            { name: 'a-dir', kind: 'directory' },
-            { name: 'a-file.ts', kind: 'file' },
-        ] as any);
+            { name: 'z-file.ts', path: 'src/z-file.ts', type: 'file' },
+            { name: 'a-dir', path: 'src/a-dir', type: 'directory' },
+            { name: 'a-file.ts', path: 'src/a-file.ts', type: 'file' },
+        ]);
 
         const result = await (listFiles as any)({ path: 'src' });
 
@@ -78,8 +78,8 @@ describe('createListFilesTool', () => {
 
     it('should include correct paths in entries', async () => {
         vi.mocked(mockTools.listDirectory).mockResolvedValue([
-            { name: 'test.ts', kind: 'file' },
-        ] as any);
+            { name: 'test.ts', path: 'src/lib/test.ts', type: 'file' },
+        ]);
 
         const result = await (listFiles as any)({ path: 'src/lib' });
 

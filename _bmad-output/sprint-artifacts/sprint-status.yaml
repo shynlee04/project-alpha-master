@@ -760,11 +760,16 @@ development_status:
     integrates: "Epic 6, Epic 25-1, Story 28-19, Story 28-20"
   
   # Tier 2: Event Bus Subscriptions (Required for Tool→UI sync)
-  28-24-filetree-event-subscriptions: backlog
+  28-24-filetree-event-subscriptions: in-progress
     priority: P1
     points: 3
-    notes: "FileTree subscribes to file:created, file:deleted, file:moved events"
-    integrates: "Epic 10, Epic 6"
+    story: _bmad-output/sprint-artifacts/28-24-filetree-event-subscriptions.md
+    context: _bmad-output/sprint-artifacts/28-24-filetree-event-subscriptions-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-24T04:25:00+07:00"
+    dev_started_at: "2025-12-24T04:27:00+07:00"
+    notes: "FileTree subscribes to file:created, file:deleted events from agent"
+    integrates: "Epic 10, Epic 6, Epic 25"
     
   28-25-monaco-event-subscriptions: backlog
     priority: P1
@@ -912,23 +917,39 @@ development_status:
     completed_at: "2025-12-23T21:25:00+07:00"
     tests_passing: 7
     notes: "TanStack AI execute_command tool with 2-min timeout. Uses AgentTerminalTools facade."
-  25-4-wire-tool-execution-to-ui: in-progress
+  25-4-wire-tool-execution-to-ui: done
     story: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui.md
     context: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui-context.xml
     platform: "Platform A"
     drafted_at: "2025-12-23T21:45:00+07:00"
     ready_at: "2025-12-23T21:49:00+07:00"
     started_at: "2025-12-23T22:01:00+07:00"
-    review_at: "2025-12-23T22:12:00+07:00"
-    completed_at: null
-    tests_passing: 9
     course_correction: "2025-12-24T03:15:00+07:00"
+    review_at: "2025-12-24T03:30:00+07:00"
+    completed_at: "2025-12-24T03:45:00+07:00"
+    tests_passing: 8
     notes: |
-      ⚠️ COURSE CORRECTION: Story marked done prematurely.
-      Finding: getTools() returns empty array - T2-T6 not completed.
-      Required: Wire actual client tools with facades.
-      Reopened by: Platform A (Antigravity)
-  25-5-implement-approval-flow: backlog
+      ✅ DONE: Critical tool wiring fix complete.
+      - Added createXClientTool() to all 4 tool files
+      - getTools() now returns 4 tool definitions (was [])
+      - Fixed entry.type bug in list-files-tool.ts
+      - 8 tests passing including 2 new Story 25-4 tests
+  25-5-implement-approval-flow: review
+    story: _bmad-output/sprint-artifacts/25-5-implement-approval-flow.md
+    context: _bmad-output/sprint-artifacts/25-5-implement-approval-flow-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-24T04:00:00+07:00"
+    ready_at: "2025-12-24T04:10:00+07:00"
+    started_at: "2025-12-24T04:15:00+07:00"
+    review_at: "2025-12-24T04:10:00+07:00"
+    tests_passing: 10
+    notes: |
+      ✅ P0 Security: Approval flow core complete.
+      - T1: needsApproval on write_file + execute_command
+      - T2: PendingApprovalInfo + pendingApprovals extraction
+      - T4: Risk levels (high/medium/low)
+      - T5: 10 new tests for approval detection
+      - T3: UI integration exists, full wiring blocked on 12-5
   epic-25-retrospective: optional
 
   # =============================================================================

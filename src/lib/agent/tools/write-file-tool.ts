@@ -16,11 +16,13 @@ import type { AgentFileTools } from '../facades';
 /**
  * Write file tool definition
  * Note: This tool has needsApproval flag for approval overlay integration
+ * @story 25-5 - Implement Approval Flow
  */
 export const writeFileDef = toolDefinition({
     name: 'write_file',
     description: 'Write content to a file. Creates the file if it does not exist, overwrites if it does. This action requires user approval.',
     inputSchema: WriteFileInputSchema,
+    needsApproval: true, // Requires user approval before execution (Story 25-5)
 });
 
 /**
