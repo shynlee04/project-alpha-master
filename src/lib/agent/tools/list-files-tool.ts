@@ -36,7 +36,7 @@ export function createListFilesTool(getTools: () => AgentFileTools) {
             const entries: FileEntry[] = rawEntries.map((entry) => ({
                 name: entry.name,
                 path: `${path}/${entry.name}`.replace(/\/+/g, '/'),
-                type: entry.kind === 'directory' ? 'directory' : 'file',
+                type: entry.type === 'directory' ? 'directory' : 'file',
             }));
 
             // Sort: directories first, then files, alphabetically
@@ -62,3 +62,47 @@ export function createListFilesTool(getTools: () => AgentFileTools) {
         }
     });
 }
+
+/**
+ * Create a client implementation of list_files tool
+ * Uses TanStack AI .client() pattern for browser-side execution
+ * 
+ * @param getTools - Function to get the file tools facade
+ * @story 25-4 - Wire Tool Execution to UI
+ */
+export function createListFilesClientTool(getTools: () => AgentFileTools) {
+    return listFilesDef.client(async (input: unknown): Promise<ToolResult<ListFilesOutput>> => {
+        const args = input as { path: string; recursive?: boolean };
+        try {
+            const rawEntries = await getTools().listDirectory(args.path, args.recursive);
+
+            // Transform and sort entries
+            const entries: FileEntry[] = rawEntries.map((entry) => ({
+                name: entry.name,
+                path: `${args.path}/${entry.name}`.replace(/\/+/g, '/'),
+                type: entry.type === 'directory' ? 'directory' : 'file',
+            }));
+
+            entries.sort((a, b) => {
+                if (a.type !== b.type) {
+                    return a.type === 'directory' ? -1 : 1;
+                }
+                return a.name.localeCompare(b.name);
+            });
+
+            return {
+                success: true,
+                data: {
+                    path: args.path,
+                    entries,
+                },
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to list files',
+            };
+        }
+    });
+}
+

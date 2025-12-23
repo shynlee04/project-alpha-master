@@ -73,3 +73,59 @@ export function createReadFileTool(getTools: () => AgentFileTools) {
         }
     });
 }
+
+/**
+ * Create a client implementation of read_file tool
+ * Uses TanStack AI .client() pattern for browser-side execution
+ * 
+ * @param getTools - Function to get the file tools facade
+ * @story 25-4 - Wire Tool Execution to UI
+ */
+export function createReadFileClientTool(getTools: () => AgentFileTools) {
+    return readFileDef.client(async (input: unknown): Promise<ToolResult<ReadFileOutput>> => {
+        const args = input as { path: string };
+        try {
+            const content = await getTools().readFile(args.path);
+
+            if (content === null) {
+                return {
+                    success: false,
+                    error: `File not found: ${args.path}`,
+                };
+            }
+
+            // Detect binary content
+            const isBinary = content.includes('\0') || !/^[\x00-\x7F]*$/.test(content.substring(0, 1000));
+
+            if (isBinary) {
+                const encoder = new TextEncoder();
+                const bytes = encoder.encode(content);
+                const base64 = btoa(String.fromCharCode(...bytes));
+
+                return {
+                    success: true,
+                    data: {
+                        content: base64,
+                        encoding: 'base64',
+                        size: bytes.length,
+                    },
+                };
+            }
+
+            return {
+                success: true,
+                data: {
+                    content,
+                    encoding: 'utf-8',
+                    size: content.length,
+                },
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to read file',
+            };
+        }
+    });
+}
+

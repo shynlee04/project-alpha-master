@@ -912,7 +912,7 @@ development_status:
     completed_at: "2025-12-23T21:25:00+07:00"
     tests_passing: 7
     notes: "TanStack AI execute_command tool with 2-min timeout. Uses AgentTerminalTools facade."
-  25-4-wire-tool-execution-to-ui: done
+  25-4-wire-tool-execution-to-ui: in-progress
     story: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui.md
     context: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui-context.xml
     platform: "Platform A"
@@ -920,9 +920,14 @@ development_status:
     ready_at: "2025-12-23T21:49:00+07:00"
     started_at: "2025-12-23T22:01:00+07:00"
     review_at: "2025-12-23T22:12:00+07:00"
-    completed_at: "2025-12-23T22:35:00+07:00"
+    completed_at: null
     tests_passing: 9
-    notes: "APPROVED. factory.ts with clientTools, use-agent-chat-with-tools.ts hook. 6 minor issues flagged for 25-5."
+    course_correction: "2025-12-24T03:15:00+07:00"
+    notes: |
+      ⚠️ COURSE CORRECTION: Story marked done prematurely.
+      Finding: getTools() returns empty array - T2-T6 not completed.
+      Required: Wire actual client tools with facades.
+      Reopened by: Platform A (Antigravity)
   25-5-implement-approval-flow: backlog
   epic-25-retrospective: optional
 

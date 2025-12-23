@@ -56,3 +56,33 @@ export function createWriteFileTool(getTools: () => AgentFileTools) {
         }
     });
 }
+
+/**
+ * Create a client implementation of write_file tool
+ * Uses TanStack AI .client() pattern for browser-side execution
+ * 
+ * @param getTools - Function to get the file tools facade
+ * @story 25-4 - Wire Tool Execution to UI
+ */
+export function createWriteFileClientTool(getTools: () => AgentFileTools) {
+    return writeFileDef.client(async (input: unknown): Promise<ToolResult<WriteFileOutput>> => {
+        const args = input as { path: string; content: string };
+        try {
+            await getTools().writeFile(args.path, args.content);
+
+            return {
+                success: true,
+                data: {
+                    path: args.path,
+                    bytesWritten: args.content.length,
+                },
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to write file',
+            };
+        }
+    });
+}
+

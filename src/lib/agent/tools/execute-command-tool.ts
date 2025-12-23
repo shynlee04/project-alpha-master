@@ -74,3 +74,49 @@ export function createExecuteCommandTool(getTools: () => AgentTerminalTools) {
         }
     });
 }
+
+/**
+ * Create a client implementation of execute_command tool
+ * Uses TanStack AI .client() pattern for browser-side execution
+ * 
+ * @param getTools - Function to get the terminal tools facade
+ * @story 25-4 - Wire Tool Execution to UI
+ */
+export function createExecuteCommandClientTool(getTools: () => AgentTerminalTools) {
+    return executeCommandDef.client(async (input: unknown): Promise<ToolResult<ExecuteCommandOutput>> => {
+        const args = input as {
+            command: string;
+            args?: string[];
+            timeout?: number;
+            cwd?: string;
+        };
+        try {
+            const result = await getTools().executeCommand(
+                args.command,
+                args.args ?? [],
+                {
+                    timeout: args.timeout ?? DEFAULT_TIMEOUT,
+                    cwd: args.cwd,
+                }
+            );
+
+            return {
+                success: result.exitCode === 0,
+                data: {
+                    stdout: result.stdout,
+                    exitCode: result.exitCode,
+                    pid: result.pid,
+                },
+                error: result.exitCode !== 0
+                    ? `Command exited with code ${result.exitCode}`
+                    : undefined,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to execute command',
+            };
+        }
+    });
+}
+

@@ -7,15 +7,14 @@
  * 
  * @epic 25 - AI Foundation Sprint
  * @story 25-1 - TanStack AI Integration Setup
+ * @story 25-4 - Wire Tool Execution to UI
  */
 
 import { json } from '@tanstack/react-start';
 import { chat, toStreamResponse } from '@tanstack/ai';
 import { providerAdapterFactory } from '../../lib/agent/providers';
 import { credentialVault } from '../../lib/agent/providers/credential-vault';
-import { createFileTools, createTerminalTools } from '../../lib/agent/tools';
-import { createFileToolsFacade } from '../../lib/agent/facades';
-import type { AgentFileTools, AgentTerminalTools } from '../../lib/agent/facades';
+import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
 
 // Default model for development
 const DEFAULT_PROVIDER = 'openrouter';
@@ -25,7 +24,7 @@ const DEFAULT_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
  * Request body for chat endpoint
  */
 interface ChatRequest {
-    messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+    messages: Array<{ role: 'user' | 'assistant' | 'tool'; content: string }>;
     providerId?: string;
     modelId?: string;
 }
@@ -39,10 +38,6 @@ function errorResponse(message: string, status: number) {
         { status, headers: { 'Content-Type': 'application/json' } }
     );
 }
-
-// Lazy tool facade instances (created on first request)
-let fileToolsFacade: AgentFileTools | null = null;
-let terminalToolsFacade: AgentTerminalTools | null = null;
 
 /**
  * GET handler - health check
@@ -67,24 +62,26 @@ export async function POST({ request }: { request: Request }) {
         const modelId = body.modelId || DEFAULT_MODEL;
 
         // Get API key from vault
-        const apiKey = await credentialVault.getCredential(providerId);
+        const apiKey = await credentialVault.getCredentials(providerId);
         if (!apiKey) {
             return errorResponse(`No API key configured for provider: ${providerId}`, 401);
         }
 
-        // Create adapter
-        const adapter = providerAdapterFactory.createAdapter(providerId, { apiKey });
+        // Create adapter factory (returns a function that takes modelId)
+        const adapterFactory = providerAdapterFactory.createAdapter(providerId, { apiKey });
 
-        // Get tools (lazy initialization)
-        // Note: In real implementation, facades would be wired with actual WebContainer/LocalFS
-        // For now, we create placeholder tools that will be properly integrated in Story 25-4
+        // Create model-specific adapter
+        // TanStack AI openai() returns a function that creates text adapters
+        const adapter = adapterFactory(modelId);
+
+        // Get tool definitions for LLM context
+        // Note: Actual execution happens client-side via .client() implementations
         const tools = getTools();
 
         // Create streaming chat
         const stream = chat({
             adapter,
             messages: body.messages,
-            model: modelId,
             tools,
         });
 
@@ -101,17 +98,23 @@ export async function POST({ request }: { request: Request }) {
 }
 
 /**
- * Get all tools for the chat (lazy initialization)
+ * Get tool definitions for the chat
+ * 
+ * Returns TanStack AI tool definitions that the LLM can choose to call.
+ * The client-side useAgentChatWithTools hook handles actual execution
+ * using .client() implementations with workspace facades.
+ * 
+ * @story 25-4 - Wire Tool Execution to UI
  */
 function getTools() {
-    // For this story, we return empty array as facades need real WebContainer
-    // Story 25-4 will wire these properly with actual WebContainer/LocalFS
-    // This establishes the pattern for how tools will be integrated
-
-    // TODO (Story 25-4): Wire actual facades when WebContainer is available
-    // const fileTools = createFileTools(() => getFileToolsFacade());
-    // const terminalTools = createTerminalTools(() => getTerminalToolsFacade());
-    // return [...Object.values(fileTools), ...Object.values(terminalTools)];
-
-    return [];
+    // Return tool definitions for LLM context
+    // The LLM will see these tool schemas and can request to call them
+    // Actual execution handled client-side via .client() pattern
+    return [
+        readFileDef,
+        writeFileDef,
+        listFilesDef,
+        executeCommandDef,
+    ];
 }
+
