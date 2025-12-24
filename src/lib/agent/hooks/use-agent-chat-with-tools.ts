@@ -12,7 +12,6 @@
  */
 
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react';
-import { createChatClientOptions } from '@tanstack/ai-client';
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
@@ -189,27 +188,35 @@ export function useAgentChatWithTools(
     // Create connection with dynamic body data using the supported callback pattern
     // This allows the connection to read the latest apiKey at request time without recreating the adapter
     const connection = useMemo(
-        () => fetchServerSentEvents(endpoint, () => {
-            const current = configRef.current;
-            console.log('[useAgentChat] Fetching with key length:', current.apiKey?.length);
-            return {
-                body: {
-                    providerId: current.providerId,
-                    modelId: current.modelId,
-                    apiKey: current.apiKey
-                }
-            };
-        }),
+        () => fetchServerSentEvents(
+            endpoint,
+            () => {
+                const current = configRef.current;
+                console.log('[useAgentChat] Fetching with key length:', current.apiKey?.length);
+                return {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: {
+                        messages: [], // Messages will be managed by useChat
+                        providerId: current.providerId,
+                        modelId: current.modelId,
+                        apiKey: current.apiKey
+                    }
+                };
+            }
+        ),
         [endpoint] // Helper only depends on endpoint, options are dynamic
     );
 
-    // Create chat options using TanStack AI createChatClientOptions
+    // Create chat options using TanStack AI proper pattern
     const chatOptions = useMemo(() => {
         if (agentTools) {
-            return createChatClientOptions({
+            return {
                 connection,
                 tools: agentTools.getClientTools(),
-            });
+            };
         }
         return { connection };
     }, [connection, agentTools]);

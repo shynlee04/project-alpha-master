@@ -35,10 +35,34 @@ tracking_system: file-system
 story_location: "_bmad-output/sprint-artifacts"
 
 current_sprint:
-  name: "Sprint 13 - Terminal & Sync Stability"
-  start_date: 2025-12-20
-  priority_epic: 13
-  notes: "Epic 13 is P0 priority - critical bug fixes blocking 14-step validation sequence"
+  name: "Sprint MVP - AI Coding Agent Vertical Slice"
+  start_date: 2025-12-24
+  priority_epic: "MVP"
+  incident: "INC-2025-12-24-001"
+  notes: |
+    COURSE CORRECTION 2025-12-24: Consolidated Epic 25 + Epic 28 + Epic 12 into MVP epic.
+    Focus: One working E2E flow before expanding.
+    Previous Epic 13 is DONE; Epic 25 stories are now subsumed into MVP stories.
+
+# =============================================================================
+# GOVERNANCE: MANDATORY VERIFICATION GATES (Added 2025-12-24)
+# =============================================================================
+governance:
+  definition_of_done:
+    - "Code implementation complete"
+    - "TypeScript: pnpm build passes"
+    - "Unit tests passing (≥80% coverage)"
+    - "MANDATORY: Manual browser E2E verification"
+    - "Code review approved"
+  verification_gates:
+    - gate: "Story Completion"
+      required: "Manual browser test passed"
+    - gate: "Epic Completion"
+      required: "All integration scenarios verified in browser"
+  incident_prevention:
+    - "Never mark DONE without browser screenshot/recording"
+    - "Integration testing > component existence"
+    - "Mock implementations must be clearly labeled"
 
 development_status:
   # =============================================================================

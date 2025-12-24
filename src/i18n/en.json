@@ -100,7 +100,10 @@
     "placeholder": "Ask the agent… (⌘K)",
     "status": {
       "thinking": "Agent is thinking..."
-    }
+    },
+    "tools_ready": "TOOLS READY",
+    "error_generic": "An error occurred",
+    "key_missing": "API Key missing for {{provider}}. Please configure it in the Agents panel."
   },
   "editor": {
     "loading": "Loading editor...",

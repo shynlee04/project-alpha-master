@@ -21,6 +21,10 @@ import { useAgentChatWithTools, type PendingApprovalInfo } from '../../lib/agent
 import { useAgentSelection } from '@/stores/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
+import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
+import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
+import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';
+import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
 
 // Map agent provider display names to provider IDs
 const PROVIDER_ID_MAP: Record<string, string> = {
@@ -124,8 +128,34 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         };
     }, [providerId]);
 
+    // Get workspace context for tool facades
+    // Story MVP-1: Wire real tool facades to agent
+    const { localAdapterRef, syncManagerRef, eventBus } = useWorkspace();
+
+    // Create tool facades when workspace is ready
+    const fileTools = useMemo(() => {
+        const localAdapter = localAdapterRef.current;
+        const syncManager = syncManagerRef.current;
+        if (localAdapter && syncManager && eventBus) {
+            return createFileToolsFacade(localAdapter, syncManager, eventBus);
+        }
+        return null;
+    }, [localAdapterRef.current, syncManagerRef.current, eventBus]);
+
+    const terminalTools = useMemo(() => {
+        if (eventBus) {
+            return createTerminalToolsFacade(eventBus);
+        }
+        return null;
+    }, [eventBus]);
+
+    // Get system prompt
+    const systemPrompt = useMemo(() => {
+        return getCodingAgentSystemPrompt(`Project: ${projectName}`);
+    }, [projectName]);
+
     // Use the real TanStack AI hook with tools
-    // Story 25-R1: Replace mock setTimeout with real hook
+    // Story MVP-1: Wire real facades and system prompt
     const {
         messages: hookMessages,
         rawMessages,
@@ -139,11 +169,12 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         rejectToolCall,
         modelId,
     } = useAgentChatWithTools({
-        // Pass null for tools initially - they will be wired in a future story
-        // when FileToolsFacade and TerminalToolsFacade are connected
-        fileTools: null,
-        terminalTools: null,
-        eventBus: null,
+        // Wire real tool facades from WorkspaceContext
+        fileTools,
+        terminalTools,
+        eventBus: eventBus || null,
+        // System message for coding agent behavior
+        systemMessage: systemPrompt,
         // Pass provider ID, model ID, and API key
         providerId,
         modelId: activeAgent?.model,

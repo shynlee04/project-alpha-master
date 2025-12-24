@@ -100,7 +100,10 @@
     "placeholder": "Hỏi trợ lý… (⌘K)",
     "status": {
       "thinking": "Trợ lý đang suy nghĩ..."
-    }
+    },
+    "tools_ready": "CÔNG CỤ SẴN SÀNG",
+    "error_generic": "Đã xảy ra lỗi",
+    "key_missing": "Thiếu khóa API cho {{provider}}. Vui lòng cấu hình trong bảng Trợ lý AI."
   },
   "editor": {
     "loading": "Đang tải bộ soạn thảo...",

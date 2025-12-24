@@ -132,6 +132,11 @@ Practice best coding, using @web and MCP servers' tools to improve your workflow
 - Epic 25: [`_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md`](_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md)
 - Epic 28: [`_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md`](_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md)
 
+**Requirements-rescoped-e2e-integration-2025-12-24.md:**
+- [`_bmad-output/requirements-rescoped-e2e-integration-2025-12-24.md`](_bmad-output/requirements-rescoped-e2e-integration-2025-12-24.md)
+
+**e2e-testing-readiness-validation-2025-12-24.md:**
+- [`_bmad-output/e2e-testing-readiness-validation-2025-12-24.md`](_bmad-output/e2e-testing-readiness-validation-2025-12-24.md)
 
 ok so /bmad-core-agents-bmad-master coordinate /bmad-bmm-agents-sm and /bmad-bmm-agents-dev to /bmad-bmm-workflows-sprint-planning update /bmad-bmm-workflows-sprint-status to start the next sequence of /story-dev-cycle  
 

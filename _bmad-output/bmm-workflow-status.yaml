@@ -17,39 +17,25 @@ current_phase: "implementation"
 # CRITICAL INCIDENT: INC-2025-12-24-001 - E2E Validation Failure
 # Date: 2025-12-24T01:15:00+07:00
 # Severity: P0 - Critical
-# Status: ACTIVE - Remediation in progress
+# Status: REMEDIATION - Course Correction Applied
 # Root Cause: _bmad-output/critical-incidents/root-cause-analysis-e2e-validation-failure-2025-12-24.md
 # Requirements: _bmad-output/requirements-rescoped-e2e-integration-2025-12-24.md
 # =============================================================================
-current_workflow: "story-dev-cycle"
+current_workflow: "course-correction"
 
-# GOVERNANCE UPDATE: 2025-12-22T21:35:00+07:00
-# Epic 28 SCOPE EXPANSION - AI Foundation Integration Readiness
-# Added 18 new stories (28-18 through 28-35) in 4 tiers:
-#   - Tier 1: Chat + Tool Visibility (6 stories, 26 points) P0
-#   - Tier 2: Event Bus Subscriptions (3 stories, 9 points) P1
-#   - Tier 3: Multi-Agent UX (3 stories, 11 points) P1
-#   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
-# Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
+# GOVERNANCE UPDATE: 2025-12-24T18:55:00+07:00
+# COURSE CORRECTION: Consolidated Epic 25 + Epic 28 + Epic 12 into epic-MVP-ai-agent
+# Focus: Vertical slice - one working E2E flow before expanding
+# Added: Mandatory browser E2E verification gates
 current_story:
-  key: "25-R1-integrate-useagentchat-to-chatpanel"
-  epic: 25
-  status: "review"
+  key: "MVP-1-agent-configuration"
+  epic: "MVP"
+  status: "ready-for-dev"
   platform: "Platform A"
-  sessions: 3
   notes: |
-    INCIDENT REMEDIATION: INC-2025-12-24-001
-    Phase 1 P0 Integration Fix - Connect useAgentChat hook to AgentChatPanel.
-    
-    SESSION 3 COMPLETE - 2025-12-24T11:15:00+07:00
-    Fixed agent persistence:
-    - Created src/stores/agents-store.ts (Zustand + persist)
-    - Rewrote useAgents.ts to use persistent store
-    - Agents now persist to localStorage
-    - Changed default model to mistralai/devstral-2512:free
-    
-    Tests: 125+ agent pass, 16/16 provider-adapter pass
-    NEXT: Manual E2E verification (Scenario 2)
+    COURSE CORRECTION 2025-12-24: Consolidated MVP approach.
+    Story MVP-1 verifies agent persistence works E2E.
+    Builds on Story 25-R1 Session 3 (agents-store.ts).
     
 last_completed_story:
   key: "25-R1-integrate-useagentchat-to-chatpanel"
