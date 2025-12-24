@@ -17,6 +17,8 @@ import { appendConversationMessage, clearConversation, getConversation } from '.
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
 import { ApprovalOverlay } from '../chat/ApprovalOverlay';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '../../lib/agent/hooks/use-agent-chat-with-tools';
+import { useAgentSelection } from '@/stores/agent-selection-store';
+import { useAgents } from '@/hooks/useAgents';
 
 /**
  * Props for AgentChatPanel component
@@ -43,6 +45,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     const [persistedMessages, setPersistedMessages] = useState<ChatMessage[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
 
+    // Get selected agent from Zustand store
+    const { activeAgentId } = useAgentSelection();
+    const { agents } = useAgents();
+    const activeAgent = agents.find(a => a.id === activeAgentId);
+
     // Use the real TanStack AI hook with tools
     // Story 25-R1: Replace mock setTimeout with real hook
     const {
@@ -63,6 +70,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         fileTools: null,
         terminalTools: null,
         eventBus: null,
+        // Use selected agent's model if available
+        modelId: activeAgent?.model,
     });
 
     // Create welcome message
@@ -72,6 +81,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         content: t('agent.welcome_message', { projectName }),
         timestamp: new Date(),
     }), [projectName, t]);
+
 
     // Load persisted conversation on mount
     useEffect(() => {

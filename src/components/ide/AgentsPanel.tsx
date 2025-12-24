@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react'
 import { SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
-import { Bot, Plus, RefreshCw, Loader2 } from 'lucide-react'
+import { Bot, Plus, RefreshCw, Loader2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusDot } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgents } from '@/hooks/useAgents'
+import { useAgentSelection } from '@/stores/agent-selection-store'
 import { AgentConfigDialog } from '@/components/agent/AgentConfigDialog'
 import type { Agent } from '@/mocks/agents'
 
@@ -27,6 +28,7 @@ export function AgentsPanel({
 }) {
     const { t } = useTranslation()
     const { agents, isLoading, refreshAgents, addAgent } = useAgents()
+    const { activeAgentId, setActiveAgent } = useAgentSelection()
 
     // Dialog state for agent configuration
     const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false)
@@ -92,7 +94,11 @@ export function AgentsPanel({
                             <AgentItem
                                 key={agent.id}
                                 agent={agent}
-                                onClick={() => onSelectAgent?.(agent)}
+                                isSelected={activeAgentId === agent.id}
+                                onClick={() => {
+                                    setActiveAgent(agent.id)
+                                    onSelectAgent?.(agent)
+                                }}
                             />
                         ))}
                     </div>
@@ -111,9 +117,11 @@ export function AgentsPanel({
 
 function AgentItem({
     agent,
+    isSelected,
     onClick
 }: {
     agent: Agent
+    isSelected?: boolean
     onClick?: () => void
 }) {
     return (
@@ -121,11 +129,15 @@ function AgentItem({
             onClick={onClick}
             className={cn(
                 "w-full flex items-center gap-3 px-3 py-2 text-left rounded-none",
-                "hover:bg-secondary transition-colors group"
+                "hover:bg-secondary transition-colors group",
+                isSelected && "bg-primary/10 border-l-2 border-primary"
             )}
         >
             <div className="relative">
-                <Bot className="w-5 h-5 text-muted-foreground group-hover:text-foreground" />
+                <Bot className={cn(
+                    "w-5 h-5",
+                    isSelected ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                )} />
                 <StatusDot
                     status={agent.status}
                     size="sm"
@@ -133,13 +145,19 @@ function AgentItem({
                 />
             </div>
             <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
+                <p className={cn(
+                    "text-sm font-medium truncate",
+                    isSelected ? "text-primary" : "text-foreground"
+                )}>
                     {agent.name}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
                     {agent.role} • {agent.model}
                 </p>
             </div>
+            {isSelected && (
+                <Check className="w-4 h-4 text-primary" />
+            )}
         </button>
     )
 }
