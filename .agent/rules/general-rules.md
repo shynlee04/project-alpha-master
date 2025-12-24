@@ -164,15 +164,180 @@ Based on my research, here's a comprehensive list of official documentation and 
 - Prioritize iteration, insertion, updates on single-source of truth
 - When generating new files, isolate with new folders and date-time-stamp marking
 
-> ⚠️ **MANDATORY MCP RESEARCH PROTOCOL (2025-12-21)**
+> ⚠️ **MANDATORY MCP RESEARCH PROTOCOL (2025-12-24) - ENFORCEABLE**
 >
-> Before implementing unfamiliar patterns or using libraries for the first time:
+> **COMPLIANCE REQUIRED**: Following critical incident INC-2025-12-24-001, this protocol is now strictly enforced. All agents MUST complete the research workflow before implementing unfamiliar patterns or using libraries for the first time.
 >
-> 1. **Context7**: Query library documentation for API signatures
-> 2. **Deepwiki**: Check repo wikis for architecture decisions
-> 3. **Tavily/Exa**: Search for 2025 best practices
-
-> 4. **Repomix**: Analyze current codebase structure
+> ### Enforcement Mechanism
+> - **Pre-Commit Validation**: Research artifacts required for all unfamiliar patterns
+> - **Code Review Requirements**: Reviewers must verify research traceability
+> - **Automated Checks**: Story completion blocked without validated research
+> - **Escalation Path**: Non-compliance results in story blocking and remediation
+>
+> ### Sequential Research Workflow (MANDATORY)
+>
+> 1. **API Research (Context7)**
+>    - Query exact API signatures, parameters, and return types
+>    - Verify function definitions against official documentation
+>    - Document all API usages with source links
+>    - Validation: ✅ Function signatures confirmed | ✅ Parameter types verified
+>
+> 2. **Architecture Understanding (Deepwiki)**
+>    - Analyze repository-specific architectural decisions
+>    - Understand component interactions and design patterns
+>    - Document integration points and constraints
+>    - Validation: ✅ Design patterns understood | ✅ Integration points identified
+>
+> 3. **Best Practices Search (Tavily/Exa)**
+>    - Research 2025 current industry best practices
+>    - Find production-ready examples from authoritative sources
+>    - Compare multiple approaches and select optimal pattern
+>    - Validation: ✅ 2024-2025 sources verified | ✅ Multiple approaches compared
+>
+> 4. **Codebase Analysis (Repomix)**
+>    - Analyze existing patterns in the Via-gent codebase
+>    - Identify naming conventions and file organization
+>    - Find reference implementations for consistency
+>    - Validation: ✅ Existing patterns documented | ✅ Naming conventions identified
+>
+> 5. **Cross-Validation**
+>    - Cross-reference all findings for consistency
+>    - Resolve any conflicts by preferring official sources
+>    - Document validation status and source authority
+>    - Validation: ✅ No conflicts between sources | ✅ Patterns align with codebase
+>
+> 6. **Research Documentation**
+>    - Create research artifact using required template
+>    - Complete all sections with detailed findings
+>    - Include sources, validation status, and implementation decision
+>    - Validation: ✅ Research artifact created | ✅ All sections completed
+>
+> 7. **Approval Workflow**
+>    - Self-validation checklist completed
+>    - Peer review for high-risk implementations
+>    - Approval required before implementation
+>    - Validation: ✅ Checklist completed | ✅ Approval obtained
+>
+> ### Tool Selection Decision Tree
+>
+> Use this decision tree to determine which MCP tool(s) to use:
+>
+> ```
+> flowchart TD
+>     Start["Need to research?"] --> Q1{"What am I<br/>researching?"}
+>
+>     Q1 --> |"API signatures,<br/>function params"| C7["Context7<br/>(Primary)"]
+>     Q1 --> |"Architecture<br/>decisions"| DW["Deepwiki<br/>(Primary)"]
+>     Q1 --> |"Current best<br/>practices"| Tavily["Tavily/Exa<br/>(Primary)"]
+>     Q1 --> |"Existing codebase<br/>patterns"| RM["Repomix<br/>(Primary)"]
+>     Q1 --> |"General<br/>documentation"| Brave["Brave Search<br/>(Primary)"]
+>
+>     C7 --> Q2{"Found what<br/>I needed?"}
+>     DW --> Q2
+>     Tavily --> Q2
+>     RM --> Q2
+>     Brave --> Q2
+>
+>     Q2 --> |"Yes"| Validate["Validate findings<br/>against 2nd source"]
+>     Q2 --> |"No"| Alt["Try alternative<br/>tool from matrix"]
+>
+>     Alt --> Q2
+>
+>     Validate --> Doc["Document<br/>findings"]
+>     Doc --> Implement["Proceed to<br/>implementation"]
+> ```
+>
+> ### Research Artifact Requirements
+>
+> Every implementation involving unfamiliar patterns MUST have an associated research artifact stored in:
+> ```
+> _bmad-output/research/[feature-name]-research-YYYY-MM-DD.md
+> ```
+>
+> **Required Template Sections:**
+> 1. Research Objective
+> 2. MCP Tools Consulted (with queries and results)
+> 3. Detailed Findings (API signatures, architecture, best practices, codebase patterns)
+> 4. Sources (with authority level and verification dates)
+> 5. Validation Status (cross-validation confirmation)
+> 6. Implementation Decision (selected approach with justification)
+> 7. Risks and Uncertainties (with mitigation strategies)
+> 8. Approval (self-validation and peer review status)
+>
+> ### Integration with Sprint Planning
+>
+> **Story Acceptance Criteria Updates:**
+> All stories involving unfamiliar patterns MUST include:
+>
+> ```markdown
+> ### Research Requirements (MANDATORY)
+>
+> **Pre-Implementation Research:**
+> - [ ] MCP research workflow completed
+> - [ ] Research artifact created: `_bmad-output/research/[name].md`
+> - [ ] API signatures verified (Context7)
+> - [ ] Architecture patterns understood (Deepwiki)
+> - [ ] 2025 best practices confirmed (Tavily/Exa)
+> - [ ] Codebase patterns analyzed (Repomix)
+>
+> **Research Validation:**
+> - [ ] Pre-implementation checklist completed
+> - [ ] Cross-validation passed
+> - [ ] Peer review completed (if high-risk)
+> ```
+>
+> ### Quality Gates and Enforcement
+>
+> **Gate 1: Research Completeness**
+> - [ ] All required MCP tools consulted
+> - [ ] Research artifact created with all sections
+> - [ ] Sources documented and verified
+> - **Enforcement:** Cannot proceed to implementation
+>
+> **Gate 2: Validation Passed**
+> - [ ] Pre-implementation checklist completed
+> - [ ] Cross-validation performed
+> - [ ] No unresolved conflicts
+> - **Enforcement:** Cannot proceed to implementation
+>
+> **Gate 3: Implementation Traceability**
+> - [ ] Code references research artifact
+> - [ ] Implementation matches documented patterns
+> - [ ] No undocumented API usages
+> - **Enforcement:** Code review must verify traceability
+>
+> ### Common Pitfalls and Remediation
+>
+> **Pitfall 1: Skipping Research for "Simple" Changes**
+> - **Remediation:** ALWAYS verify API signatures with Context7
+> - **Remediation:** No change is "too simple" for verification
+> - **Remediation:** Document even quick lookups
+>
+> **Pitfall 2: Using Training Data Instead of Current Docs**
+> - **Remediation:** Always query MCP tools, even for "known" libraries
+> - **Remediation:** Check version-specific documentation
+> - **Remediation:** Verify with 2024-2025 dated sources
+>
+> **Pitfall 3: Single-Source Research**
+> - **Remediation:** Use minimum 2 tools for cross-validation
+> - **Remediation:** Context7 + Deepwiki for API work
+> - **Remediation:** Tavily + Repomix for pattern work
+>
+> **Pitfall 4: Not Analyzing Existing Codebase**
+> - **Remediation:** Always run Repomix analysis before new implementations
+> - **Remediation:** Find reference implementations in the codebase
+> - **Remediation:** Follow established conventions
+>
+> **Pitfall 5: Superficial Research Artifacts**
+> - **Remediation:** Research artifacts must have complete sections
+> - **Remediation:** All sources must be linked
+> - **Remediation:** Validation checklist must be completed honestly
+>
+> ### Complete Documentation Reference
+>
+> For detailed guidelines, see: [_bmad-output/guidelines/mcp-research-protocol-2025-12-24.md](file:///Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/guidelines/mcp-research-protocol-2025-12-24.md)
+>
+> **This protocol is MANDATORY and ENFORCEABLE. Non-compliance will result in blocked stories and escalation.**
 
 ## Advanced Method to Use Deepwiki MCP Server's Tools to ask semantic questions of a particular dependency repo
 - condition: provide correct link to Github's repo of the stack/dependency and/or (try both) direct link to Deepwiki page of it 
