@@ -10,7 +10,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-23T18:36:00+07:00"
+last_updated: "2025-12-24T07:00:00+07:00"
 current_phase: "implementation"
 current_workflow: "story-dev-cycle"
 
@@ -23,24 +23,25 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "12-5-wire-facades-to-tanstack-ai-tools"
-  epic: 12
-  status: "backlog"
-  platform: "Platform A"
+  key: "none"
+  epic: null
+  status: "idle"
+  platform: null
   notes: |
-    Next story in AI Foundation Phase.
-    Prerequisite: Stories 28-24, 28-25, 28-26 all DONE.
+    Story 25-6 complete. Epic 25 DONE.
+    Ready for next story or epic retrospective.
     
 last_completed_story:
-  key: "28-26-terminal-event-subscriptions"
-  epic: 28
-  completed_at: "2025-12-24T05:14:00+07:00"
+  key: "25-6-wire-agent-ui-to-providers"
+  epic: 25
+  completed_at: "2025-12-24T07:00:00+07:00"
   status: "done"
   platform: "Platform A"
-  tests_passing: 8
+  tests_passing: 5
   notes: |
-    useTerminalEventSubscriptions hook for process:output and process:exited events.
-    Part of Tier 2 Event Bus Subscriptions.
+    AgentConfigDialog wired to Epic 25 infrastructure.
+    Code review approved - all ACs met.
+    Epic 25 complete (6/6 stories).
 
 
 last_completed_story:
@@ -325,13 +326,24 @@ epic_status:
     
   - id: 12
     name: "AI Tool Interface Layer"
-    status: "BACKLOG"
+    status: "DONE"
+    stories: "4/6"
     priority: "P1"
+    notes: |
+      Stories 12-1, 12-1b, 12-2, 12-5 completed.
+      Stories 12-3, 12-4 deferred (not required for E2E).
+      All required tool facades wired to TanStack AI.
     
   - id: 6
     name: "AI Agent Integration"
-    status: "BACKLOG"
+    status: "IN_PROGRESS"
+    stories: "5/6"
     priority: "P1"
+    notes: |
+      Epic 25 (AI Foundation Sprint) in progress.
+      Stories 25-1 through 25-5 completed.
+      Story 25-6 in review.
+      Provider adapters, credential vault, model registry complete.
     
   - id: 7
     name: "Git Integration"

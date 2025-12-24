@@ -172,6 +172,7 @@ Based on my research, here's a comprehensive list of official documentation and 
 > 2. **Deepwiki**: Check repo wikis for architecture decisions
 > 3. **Tavily/Exa**: Search for 2025 best practices
 
+> 4. **Repomix**: Analyze current codebase structure
 
 ## Advanced Method to Use Deepwiki MCP Server's Tools to ask semantic questions of a particular dependency repo
 - condition: provide correct link to Github's repo of the stack/dependency and/or (try both) direct link to Deepwiki page of it 
@@ -203,5 +204,4 @@ Based on my research, here's a comprehensive list of official documentation and 
 - **EventEmitter3:** https://deepwiki.com/primus/eventemitter3 ; https://github.com/primus/eventemitter3 
 
 
-> 4. **Repomix**: Analyze current codebase structure
 >

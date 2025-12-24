@@ -184,7 +184,81 @@ development_status:
       - src/lib/agent/hooks/use-agent-chat-with-tools.ts
 
   # =============================================================================
-  # EPIC 13: Terminal & Sync Stability [P0 - IN PROGRESS]
+  # EPIC 25: AI Foundation Sprint [P0 - IN PROGRESS]
+  # =============================================================================
+  # Priority: P0 - Critical (Enables AI agent functionality)
+  # Added: 2025-12-21 - Per master implementation plan
+  # Platform: Platform A (Antigravity)
+  # =============================================================================
+  epic-25: done
+    platform: "Platform A"
+    started_at: "2025-12-23T21:35:00+07:00"
+    completed_at: "2025-12-24T07:00:00+07:00"
+    notes: |
+      Multi-provider AI agent infrastructure with TanStack AI.
+      Provider adapters, credential vault, model registry, agent tools.
+      Integrates with Epic 28 (UI) and Epic 12 (Tool facades).
+      All 6 stories complete - Epic 25 DONE ✅
+    
+  25-1-tanstack-ai-integration-setup: done
+    story: _bmad-output/sprint-artifacts/25-1-tanstack-ai-integration-setup.md
+    context: _bmad-output/sprint-artifacts/25-1-tanstack-ai-integration-setup-context.xml
+    platform: "Platform A"
+    completed_at: "2025-12-23T21:35:00+07:00"
+    tests_passing: 13
+    notes: "/api/chat route + useAgentChat hook. SSE streaming with toStreamResponse."
+    
+  25-2-implement-file-tools: done
+    story: _bmad-output/sprint-artifacts/25-2-implement-file-tools.md
+    context: _bmad-output/sprint-artifacts/25-2-implement-file-tools-context.xml
+    platform: "Platform A"
+    completed_at: "2025-12-24T03:15:00+07:00"
+    tests_passing: 14
+    notes: "FileToolsFacade with read, write, list operations. Event emission."
+    
+  25-3-implement-terminal-tools: done
+    story: _bmad-output/sprint-artifacts/25-3-implement-terminal-tools.md
+    context: _bmad-output/sprint-artifacts/25-3-implement-terminal-tools-context.xml
+    platform: "Platform A"
+    completed_at: "2025-12-24T03:45:00+07:00"
+    tests_passing: 14
+    notes: "TerminalToolsFacade with shell session management."
+    
+  25-4-wire-tool-execution-to-ui: done
+    story: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui.md
+    context: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui-context.xml
+    platform: "Platform A"
+    completed_at: "2025-12-24T04:15:00+07:00"
+    tests_passing: 20
+    notes: "Tool execution UI with approval flow. Wired to EnhancedChatInterface."
+    
+  25-5-implement-approval-flow: done
+    story: _bmad-output/sprint-artifacts/25-5-implement-approval-flow.md
+    context: _bmad-output/sprint-artifacts/25-5-implement-approval-flow-context.xml
+    platform: "Platform A"
+    completed_at: "2025-12-24T04:45:00+07:00"
+    tests_passing: 19
+    notes: "ApprovalOverlay with mock trigger. 19/19 tests pass."
+    
+  25-6-wire-agent-ui-to-providers: done
+    story: _bmad-output/sprint-artifacts/25-6-wire-agent-ui-to-providers.md
+    context: _bmad-output/sprint-artifacts/25-6-wire-agent-ui-to-providers-context.xml
+    platform: "Platform A"
+    drafted_at: "2025-12-24T05:53:00+07:00"
+    dev_started_at: "2025-12-24T06:00:00+07:00"
+    dev_completed_at: "2025-12-24T06:40:00+07:00"
+    completed_at: "2025-12-24T07:00:00+07:00"
+    tests_passing: 5
+    notes: |
+      AgentConfigDialog wired to Epic 25 infrastructure.
+      Code review approved - all ACs met.
+      OpenRouter as default provider, credentialVault integration.
+      modelRegistry for dynamic model loading, connection testing.
+      All i18n keys added. TypeScript: No errors.
+      Ready for code review.
+
+  # =============================================================================
+  # EPIC 13: Terminal & Sync Stability [P0 - DONE]
   # =============================================================================
   # Priority: P0 - Highest (Blocks 14-step validation)
   # Added: Course Correction v5 (2025-12-20)
