@@ -72,12 +72,14 @@ interface AgentConfigDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     onSubmit: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => void
+    agent?: Agent
 }
 
 export function AgentConfigDialog({
     open,
     onOpenChange,
     onSubmit,
+    agent
 }: AgentConfigDialogProps) {
     const { t } = useTranslation()
 
@@ -98,6 +100,26 @@ export function AgentConfigDialog({
 
     // Model loading state
     const [models, setModels] = useState<ModelInfo[]>([])
+
+    // Initialize/Reset form when dialog opens
+    useEffect(() => {
+        if (open) {
+            if (agent) {
+                // Edit mode
+                setName(agent.name)
+                setRole(agent.role)
+                const matchingProvider = PROVIDER_OPTIONS.find(p => p.display === agent.provider)
+                setProviderId(matchingProvider?.id || 'openrouter')
+                setModel(agent.model)
+            } else {
+                // Create mode - reset defaults
+                setName('')
+                setRole('')
+                setProviderId('openrouter')
+                setModel('')
+            }
+        }
+    }, [open, agent])
     const [isLoadingModels, setIsLoadingModels] = useState(false)
 
     // Validation state
@@ -175,7 +197,13 @@ export function AgentConfigDialog({
             await credentialVault.storeCredentials(providerId, apiKey.trim())
             setHasStoredKey(true)
             setApiKey('')
-            toast.success(t('agents.config.apiKey.saved', 'API key saved securely'))
+            toast.success(agent
+                ? t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: name.trim() })
+                : t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: name.trim() })
+            )
+
+            // Notify other components (like AgentChatPanel) that credentials changed
+            window.dispatchEvent(new CustomEvent('credentials-updated', { detail: { providerId } }))
 
             // Reload models with new key
             await loadModels(providerId)
@@ -276,7 +304,10 @@ export function AgentConfigDialog({
         })
 
         // Show success toast
-        toast.success(t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: name.trim() }))
+        toast.success(agent
+            ? t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: name.trim() })
+            : t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: name.trim() })
+        )
 
         // Reset form and close
         setName('')
@@ -307,10 +338,16 @@ export function AgentConfigDialog({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 font-pixel text-lg">
                         <Bot className="w-5 h-5 text-primary" />
-                        {t('agents.config.title', 'New Agent Configuration')}
+                        {agent
+                            ? t('agents.config.editTitle', 'Edit Agent Configuration')
+                            : t('agents.config.title', 'New Agent Configuration')
+                        }
                     </DialogTitle>
                     <DialogDescription className="text-muted-foreground text-sm">
-                        {t('agents.config.subtitle', 'Configure a new AI agent for your workflow')}
+                        {agent
+                            ? t('agents.config.editSubtitle', 'Modify your AI agent settings')
+                            : t('agents.config.subtitle', 'Configure a new AI agent for your workflow')
+                        }
                     </DialogDescription>
                 </DialogHeader>
 

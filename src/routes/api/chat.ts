@@ -126,7 +126,7 @@ export const Route = createFileRoute('/api/chat')({
 
                     // Create OpenAI-compatible adapter directly
                     // Using createOpenaiChat with baseURL override for OpenRouter
-                    const adapter = createOpenaiChat(apiKey, {
+                    const adapter = createOpenaiChat(modelId, apiKey, {
                         baseURL,
                         headers: providerId === 'openrouter' ? {
                             'HTTP-Referer': 'https://via-gent.dev',
@@ -140,7 +140,7 @@ export const Route = createFileRoute('/api/chat')({
                     // Create streaming chat with explicit model
                     const stream = chat({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        adapter: adapter(modelId) as any,
+                        adapter: adapter as any,
                         messages: body.messages,
                         tools,
                     });

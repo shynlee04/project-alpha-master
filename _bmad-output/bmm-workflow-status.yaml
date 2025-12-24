@@ -10,7 +10,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-24T11:00:00+07:00"
+last_updated: "2025-12-24T11:15:00+07:00"
 current_phase: "implementation"
 
 # =============================================================================
@@ -36,17 +36,17 @@ current_story:
   epic: 25
   status: "review"
   platform: "Platform A"
-  sessions: 2
+  sessions: 3
   notes: |
     INCIDENT REMEDIATION: INC-2025-12-24-001
     Phase 1 P0 Integration Fix - Connect useAgentChat hook to AgentChatPanel.
     
-    SESSION 2 COMPLETE - 2025-12-24T11:00:00+07:00
-    Fixed 500 error root cause:
-    - credentialVault uses IndexedDB (browser-only API)
-    - Server-side routes cannot access IndexedDB
-    - Solution: Client fetches apiKey, passes in request body
-    - Fixed model selection: adapter(modelId) pattern
+    SESSION 3 COMPLETE - 2025-12-24T11:15:00+07:00
+    Fixed agent persistence:
+    - Created src/stores/agents-store.ts (Zustand + persist)
+    - Rewrote useAgents.ts to use persistent store
+    - Agents now persist to localStorage
+    - Changed default model to mistralai/devstral-2512:free
     
     Tests: 125+ agent pass, 16/16 provider-adapter pass
     NEXT: Manual E2E verification (Scenario 2)
@@ -54,21 +54,24 @@ current_story:
 last_completed_story:
   key: "25-R1-integrate-useagentchat-to-chatpanel"
   epic: 25
-  completed_at: "2025-12-24T11:00:00+07:00"
+  completed_at: "2025-12-24T11:15:00+07:00"
   status: "review"
   platform: "Platform A"
-  sessions: 2
+  sessions: 3
   tests_passing: "125+/125+ (agent), 16/16 (provider-adapter)"
   notes: |
     REMEDIATION STORY: Wire useAgentChatWithTools to AgentChatPanel.
     
-    Session 1 (2025-12-24 09:10-09:25):
-    - Initial hook wiring, pendingApprovals to ApprovalOverlay
+    Session 1 (09:10-09:25): Initial hook wiring
+    Session 2 (10:30-11:00): Fixed 500 error (IndexedDB server-side issue)
+    Session 3 (11:07-11:15): Fixed agent persistence (Zustand store)
     
-    Session 2 (2025-12-24 10:30-11:00):
-    - Fixed 500 error: IndexedDB not available server-side
-    - apiKey passed from client to server in request body
-    - Added apiKeyError warning UI
+    Files created/modified:
+    - src/stores/agents-store.ts (NEW - Zustand + persist)
+    - src/hooks/useAgents.ts (REWRITTEN - uses persistent store)
+    - src/routes/api/chat.ts
+    - src/lib/agent/hooks/use-agent-chat-with-tools.ts
+    - src/components/ide/AgentChatPanel.tsx
     
     NEXT: Manual E2E verification (Scenario 2)
 

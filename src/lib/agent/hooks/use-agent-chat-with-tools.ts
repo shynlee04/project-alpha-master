@@ -13,7 +13,7 @@
 
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react';
 import { createChatClientOptions } from '@tanstack/ai-client';
-import { useCallback, useMemo, useState, useRef } from 'react';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';
@@ -180,13 +180,27 @@ export function useAgentChatWithTools(
         return createAgentClientTools(toolFactoryOptions);
     }, [toolsAvailable, toolFactoryOptions]);
 
-    // Create connection with body data
-    // API key is passed from client since server cannot access IndexedDB
+    // Store latest config in ref to avoid stale closures in dynamic options callback
+    const configRef = useRef({ providerId, modelId, apiKey });
+    useEffect(() => {
+        configRef.current = { providerId, modelId, apiKey };
+    }, [providerId, modelId, apiKey]);
+
+    // Create connection with dynamic body data using the supported callback pattern
+    // This allows the connection to read the latest apiKey at request time without recreating the adapter
     const connection = useMemo(
-        () => fetchServerSentEvents(endpoint, {
-            body: { providerId, modelId, apiKey },
+        () => fetchServerSentEvents(endpoint, () => {
+            const current = configRef.current;
+            console.log('[useAgentChat] Fetching with key length:', current.apiKey?.length);
+            return {
+                body: {
+                    providerId: current.providerId,
+                    modelId: current.modelId,
+                    apiKey: current.apiKey
+                }
+            };
         }),
-        [endpoint, providerId, modelId, apiKey]
+        [endpoint] // Helper only depends on endpoint, options are dynamic
     );
 
     // Create chat options using TanStack AI createChatClientOptions

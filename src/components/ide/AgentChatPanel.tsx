@@ -13,6 +13,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Bot, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
 import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
 import { ApprovalOverlay } from '../chat/ApprovalOverlay';
@@ -75,23 +76,52 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         let isCancelled = false;
 
         async function fetchApiKey() {
+            console.log('[AgentChatPanel] DEBUG START -------------');
+            console.log('[AgentChatPanel] 1. Active Agent:', activeAgent?.name, 'Provider:', activeAgent?.provider);
+            console.log('[AgentChatPanel] 2. Computed providerId:', providerId);
+
             try {
                 await credentialVault.initialize();
-                const key = await credentialVault.getCredentials(providerId);
+                const storedProviders = await credentialVault.getStoredProviders();
+                console.log('[AgentChatPanel] 3. Vault contains keys for:', storedProviders);
+
+                let key = await credentialVault.getCredentials(providerId);
+                console.log('[AgentChatPanel] 4. Retrieval attempt for', providerId, 'Result:', key ? `FOUND (${key.length} chars)` : 'MISSING');
+                console.log('[AgentChatPanel] DEBUG END ---------------');
+
                 if (!isCancelled) {
                     setApiKey(key);
-                    setApiKeyError(key ? null : `No API key configured for ${providerId}`);
+                    if (!key) {
+                        setApiKeyError(`No API key for ${providerId}. Click the settings icon on the agent in the Agents panel to configure it.`);
+                    } else {
+                        setApiKeyError(null);
+                    }
                 }
             } catch (err) {
+                console.error('[AgentChatPanel] Failed to fetch API key:', err);
                 if (!isCancelled) {
-                    console.error('[AgentChatPanel] Failed to fetch API key:', err);
                     setApiKeyError('Failed to fetch API key');
                 }
             }
         }
 
         fetchApiKey();
-        return () => { isCancelled = true; };
+
+        // Listen for credential updates from AgentConfigDialog
+        const handleCredentialsUpdate = (e: Event) => {
+            const customEvent = e as CustomEvent;
+            if (customEvent.detail && customEvent.detail.providerId === providerId) {
+                console.log('[AgentChatPanel] Credentials updated event received, refetching...');
+                fetchApiKey();
+            }
+        };
+
+        window.addEventListener('credentials-updated', handleCredentialsUpdate);
+
+        return () => {
+            isCancelled = true;
+            window.removeEventListener('credentials-updated', handleCredentialsUpdate);
+        };
     }, [providerId]);
 
     // Use the real TanStack AI hook with tools
@@ -321,6 +351,29 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     >
                         {t('agent.clear')}
                     </button>
+                    {/* Debug Button - Temporary for troubleshooting */}
+                    <button
+                        onClick={async () => {
+                            console.log('DEBUG CLICKED');
+                            await credentialVault.initialize();
+                            const providers = await credentialVault.getStoredProviders();
+                            const currentKey = await credentialVault.getCredentials(providerId);
+
+                            const debugInfo = [
+                                `Agent: ${activeAgent?.name}`,
+                                `Provider (UI): ${activeAgent?.provider}`,
+                                `Provider (ID): ${providerId}`,
+                                `Vault Providers: ${JSON.stringify(providers)}`,
+                                `Has Key for '${providerId}'?: ${!!currentKey}`,
+                                `Key Length: ${currentKey?.length || 0}`
+                            ].join('\n');
+
+                            alert('DEBUG INFO:\n' + debugInfo);
+                        }}
+                        className="text-[10px] text-red-500 hover:text-red-400 font-mono px-2"
+                    >
+                        DEBUG
+                    </button>
                 </div>
             </div>
 
@@ -334,12 +387,12 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 </div>
             )}
 
-            {/* API Key Warning */}
-            {apiKeyError && !error && (
+            {/* API Key Missing Warning */}
+            {apiKeyError && (
                 <div className="px-4 py-2 bg-yellow-500/10 border-b border-yellow-500/30 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-yellow-500" />
-                    <span className="text-xs text-yellow-500">
-                        {apiKeyError}. {t('agent.configure_key', 'Configure API key in Agent Settings.')}
+                    <span className="text-xs text-yellow-500 font-medium">
+                        {t('agent.key_missing', `API Key missing for ${providerId}. Please configure it in the Agents panel.`)}
                     </span>
                 </div>
             )}

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
-import { Bot, Plus, RefreshCw, Loader2, Check } from 'lucide-react'
+import { Bot, Plus, RefreshCw, Loader2, Check, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusDot } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -27,15 +27,31 @@ export function AgentsPanel({
     onSelectAgent?: (agent: Agent) => void
 }) {
     const { t } = useTranslation()
-    const { agents, isLoading, refreshAgents, addAgent } = useAgents()
+    const { agents, isLoading, refreshAgents, addAgent, updateAgent } = useAgents()
     const { activeAgentId, setActiveAgent } = useAgentSelection()
 
     // Dialog state for agent configuration
     const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false)
+    const [editingAgent, setEditingAgent] = useState<Agent | undefined>(undefined)
 
     const handleAddAgent = useCallback(() => {
+        setEditingAgent(undefined)
         setIsConfigDialogOpen(true)
     }, [])
+
+    const handleEditAgent = useCallback((agent: Agent, e: React.MouseEvent) => {
+        e.stopPropagation()
+        setEditingAgent(agent)
+        setIsConfigDialogOpen(true)
+    }, [])
+
+    const handleConfigSubmit = useCallback((data: any) => {
+        if (editingAgent) {
+            updateAgent(editingAgent.id, data)
+        } else {
+            addAgent(data)
+        }
+    }, [editingAgent, addAgent, updateAgent])
 
     return (
         <div className="flex flex-col h-full">
@@ -99,6 +115,7 @@ export function AgentsPanel({
                                     setActiveAgent(agent.id)
                                     onSelectAgent?.(agent)
                                 }}
+                                onEdit={(e) => handleEditAgent(agent, e)}
                             />
                         ))}
                     </div>
@@ -109,7 +126,8 @@ export function AgentsPanel({
             <AgentConfigDialog
                 open={isConfigDialogOpen}
                 onOpenChange={setIsConfigDialogOpen}
-                onSubmit={addAgent}
+                onSubmit={handleConfigSubmit}
+                agent={editingAgent}
             />
         </div>
     )
@@ -118,11 +136,13 @@ export function AgentsPanel({
 function AgentItem({
     agent,
     isSelected,
-    onClick
+    onClick,
+    onEdit
 }: {
     agent: Agent
     isSelected?: boolean
     onClick?: () => void
+    onEdit?: (e: React.MouseEvent) => void
 }) {
     return (
         <button
@@ -158,6 +178,16 @@ function AgentItem({
             {isSelected && (
                 <Check className="w-4 h-4 text-primary" />
             )}
+
+            <Button
+                variant="ghost"
+                size="icon-sm"
+                className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                onClick={onEdit}
+                title="Edit Agent"
+            >
+                <Settings className="w-3 h-3" />
+            </Button>
         </button>
     )
 }

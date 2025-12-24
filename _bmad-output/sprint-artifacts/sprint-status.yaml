@@ -273,7 +273,7 @@ development_status:
     priority: P0
     drafted_at: "2025-12-24T09:15:00+07:00"
     dev_started_at: "2025-12-24T09:10:00+07:00"
-    dev_completed_at: "2025-12-24T11:00:00+07:00"
+    dev_completed_at: "2025-12-24T11:15:00+07:00"
     points: 5
     incident: "INC-2025-12-24-001"
     tests_passing: "125+/125+ (agent), 16/16 (provider-adapter)"
@@ -286,8 +286,12 @@ development_status:
         started_at: "2025-12-24T10:30:00+07:00"
         completed_at: "2025-12-24T11:00:00+07:00"
         focus: "500 error fix - IndexedDB server-side issue"
+      - id: 3
+        started_at: "2025-12-24T11:07:00+07:00"
+        completed_at: "2025-12-24T11:15:00+07:00"
+        focus: "Agent persistence fix - Zustand store + localStorage"
     notes: |
-      IMPLEMENTATION COMPLETE - Session 2 completed 2025-12-24T11:00.
+      IMPLEMENTATION COMPLETE - Session 3 completed 2025-12-24T11:15.
       
       Session 1 (09:10-09:25):
       - Wire useAgentChatWithTools to AgentChatPanel
@@ -300,10 +304,11 @@ development_status:
       - Fixed model selection: adapter(modelId) pattern
       - Added apiKeyError warning in UI
       
-      Files changed:
-      - src/routes/api/chat.ts (accept apiKey from body)
-      - src/lib/agent/hooks/use-agent-chat-with-tools.ts (apiKey option)
-      - src/components/ide/AgentChatPanel.tsx (fetch apiKey, pass to hook)
+      Session 3 (11:07-11:15):
+      - CREATED src/stores/agents-store.ts (Zustand + persist)
+      - REWROTE src/hooks/useAgents.ts to use persistent store
+      - Changed DEFAULT_MODEL to mistralai/devstral-2512:free
+      - Agents now persist to localStorage (survive refresh)
       
       NEXT: Manual E2E verification (Scenario 2)
 
