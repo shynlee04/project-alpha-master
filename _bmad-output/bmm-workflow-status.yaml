@@ -39,22 +39,26 @@ current_story:
   notes: |
     INCIDENT REMEDIATION: INC-2025-12-24-001
     Phase 1 P0 Integration Fix - Connect useAgentChat hook to AgentChatPanel.
-    IMPLEMENTATION COMPLETE - Awaiting E2E verification.
-    ACs met: 1-6, T11 (E2E) pending.
+    IMPLEMENTATION COMPLETE - API fix applied 2025-12-24.
+    - TanStack AI API corrected (use-agent-chat.ts)
+    - Provider-adapter tests: 16/16 pass  
+    - Agent tests: 125+ pass (12 test files)
+    - Awaiting manual E2E verification (Scenario 2).
     
 last_completed_story:
   key: "25-R1-integrate-useagentchat-to-chatpanel"
   epic: 25
-  completed_at: "2025-12-24T09:25:00+07:00"
+  completed_at: "2025-12-24T09:55:00+07:00"
   status: "review"
   platform: "Platform A"
-  tests_passing: "10/10 hook, 4/11 component"
+  tests_passing: "125+/125+ (agent)"
   notes: |
     REMEDIATION STORY: Wire useAgentChatWithTools to AgentChatPanel.
     - Mock setTimeout replaced with real hook integration
+    - TanStack AI API fixed: clear(), sendMessage(string)
     - pendingApprovals wired to ApprovalOverlay
     - Error display and model ID added
-    - Awaiting manual E2E verification (Scenario 2)
+    - NEXT: Manual E2E verification (Scenario 2)
 
 
 last_completed_story:
