@@ -9,12 +9,12 @@
  * @story 25-0 - Create ProviderAdapterFactory with OpenRouter
  */
 
-import { openai } from '@tanstack/ai-openai';
+import { createOpenaiChat, type OpenAIChatConfig } from '@tanstack/ai-openai';
 import type { ProviderConfig, AdapterConfig, ConnectionTestResult } from './types';
 import { PROVIDERS } from './types';
 
-// TanStack AI adapter type (inferred from openai function return)
-type OpenAIAdapter = ReturnType<typeof openai>;
+// TanStack AI adapter type
+type OpenAIAdapter = ReturnType<typeof createOpenaiChat>;
 
 /**
  * ProviderAdapterFactory - Creates TanStack AI adapters for various providers
@@ -54,9 +54,7 @@ export class ProviderAdapterFactory {
         provider: ProviderConfig,
         config: AdapterConfig
     ): OpenAIAdapter {
-        const options: Parameters<typeof openai>[0] = {
-            apiKey: config.apiKey,
-        };
+        const options: Partial<OpenAIChatConfig> = {};
 
         // Apply baseURL for OpenRouter or custom override
         if (config.baseURL || provider.baseURL) {
@@ -65,13 +63,13 @@ export class ProviderAdapterFactory {
 
         // Add OpenRouter-specific headers if needed
         if (provider.id === 'openrouter') {
-            options.defaultHeaders = {
+            options.headers = {
                 'HTTP-Referer': 'https://via-gent.dev', // For OpenRouter rankings
                 'X-Title': 'Via-Gent IDE',
             };
         }
 
-        return openai(options);
+        return createOpenaiChat(config.apiKey, options);
     }
 
     /**
