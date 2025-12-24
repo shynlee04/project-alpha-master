@@ -18,7 +18,7 @@
 
 import { json } from '@tanstack/react-start';
 import { createFileRoute } from '@tanstack/react-router';
-import { chat, toStreamResponse } from '@tanstack/ai';
+import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
 import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
 
@@ -125,10 +125,12 @@ export const Route = createFileRoute('/api/chat')({
                     const baseURL = PROVIDER_BASE_URLS[providerId] || PROVIDER_BASE_URLS.openrouter;
 
                     // Create OpenAI-compatible adapter directly
-                    // Using createOpenaiChat with baseURL override for OpenRouter
-                    const adapter = createOpenaiChat(modelId, apiKey, {
+                    // TanStack AI v0.2.0: createOpenaiChat(model, apiKey, config)
+                    // Cast modelId as 'any' to allow arbitrary OpenRouter model strings
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const adapter = createOpenaiChat(modelId as any, apiKey, {
                         baseURL,
-                        headers: providerId === 'openrouter' ? {
+                        defaultHeaders: providerId === 'openrouter' ? {
                             'HTTP-Referer': 'https://via-gent.dev',
                             'X-Title': 'Via-Gent IDE',
                         } : undefined,
@@ -137,7 +139,7 @@ export const Route = createFileRoute('/api/chat')({
                     // Get tool definitions for LLM context
                     const tools = getTools();
 
-                    // Create streaming chat with explicit model
+                    // Create streaming chat with the adapter
                     const stream = chat({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         adapter: adapter as any,
@@ -145,8 +147,18 @@ export const Route = createFileRoute('/api/chat')({
                         tools,
                     });
 
-                    // Return SSE stream
-                    return toStreamResponse(stream);
+                    // Create abort controller for streaming
+                    const abortController = new AbortController();
+
+                    // Return SSE stream using non-deprecated toServerSentEventsStream
+                    const readableStream = toServerSentEventsStream(stream, abortController);
+                    return new Response(readableStream, {
+                        headers: {
+                            'Content-Type': 'text/event-stream',
+                            'Cache-Control': 'no-cache',
+                            'Connection': 'keep-alive',
+                        },
+                    });
 
                 } catch (error) {
                     console.error('[/api/chat] Error:', error);

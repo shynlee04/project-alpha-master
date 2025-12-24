@@ -37,6 +37,8 @@ export interface ProviderConfig {
 export interface AdapterConfig {
     /** API key (decrypted) */
     apiKey: string;
+    /** Optional model ID override */
+    model?: string;
     /** Optional base URL override */
     baseURL?: string;
 }

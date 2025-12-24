@@ -9,7 +9,7 @@
  * @story 25-0 - Create ProviderAdapterFactory with OpenRouter
  */
 
-import { createOpenaiChat, type OpenAIChatConfig } from '@tanstack/ai-openai';
+import { createOpenaiChat, type OpenAITextConfig } from '@tanstack/ai-openai';
 import type { ProviderConfig, AdapterConfig, ConnectionTestResult } from './types';
 import { PROVIDERS } from './types';
 
@@ -49,12 +49,13 @@ export class ProviderAdapterFactory {
 
     /**
      * Create an OpenAI-compatible adapter (works for OpenAI and OpenRouter)
+     * Note: TanStack AI v0.2.0 signature is createOpenaiChat(model, apiKey, config)
      */
     private createOpenAICompatibleAdapter(
         provider: ProviderConfig,
         config: AdapterConfig
     ): OpenAIAdapter {
-        const options: Partial<OpenAIChatConfig> = {};
+        const options: Partial<Omit<OpenAITextConfig, 'apiKey'>> = {};
 
         // Apply baseURL for OpenRouter or custom override
         if (config.baseURL || provider.baseURL) {
@@ -63,13 +64,18 @@ export class ProviderAdapterFactory {
 
         // Add OpenRouter-specific headers if needed
         if (provider.id === 'openrouter') {
-            options.headers = {
+            options.defaultHeaders = {
                 'HTTP-Referer': 'https://via-gent.dev', // For OpenRouter rankings
                 'X-Title': 'Via-Gent IDE',
             };
         }
 
-        return createOpenaiChat(config.apiKey, options);
+        // Use default model if not provided in config
+        const modelId = config.model || provider.defaultModel || 'gpt-4o';
+
+        // Cast modelId as 'any' to allow arbitrary OpenRouter model strings
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return createOpenaiChat(modelId as any, config.apiKey, options);
     }
 
     /**

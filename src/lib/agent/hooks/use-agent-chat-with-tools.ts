@@ -199,19 +199,25 @@ export function useAgentChatWithTools(
 
     // Create connection with dynamic body data using the supported callback pattern
     // This allows the connection to read the latest apiKey at request time without recreating the adapter
+    // IMPORTANT: Messages are passed separately by useChat.connect() - do NOT include in body options!
+    // The body options are merged with the messages by the connection adapter.
     const connection = useMemo(
         () => fetchServerSentEvents(
             endpoint,
             () => {
                 const current = configRef.current;
-                console.log('[useAgentChat] Fetching with key length:', current.apiKey?.length);
+                console.log('[useAgentChat] Fetching with config:', {
+                    providerId: current.providerId,
+                    modelId: current.modelId,
+                    hasApiKey: !!current.apiKey,
+                    apiKeyLength: current.apiKey?.length
+                });
                 return {
-                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    // Only include auth/config data - messages are passed by useChat
                     body: {
-                        messages: [], // Messages will be managed by useChat
                         providerId: current.providerId,
                         modelId: current.modelId,
                         apiKey: current.apiKey
@@ -298,7 +304,7 @@ export function useAgentChatWithTools(
                 const updated = prev.map((tc) =>
                     tc.id === toolCallId ? { ...tc, status: 'executing' as const } : tc
                 );
-                
+
                 // Emit tool started event
                 const toolCall = updated.find(tc => tc.id === toolCallId);
                 if (toolCall && eventBus) {
@@ -309,7 +315,7 @@ export function useAgentChatWithTools(
                     });
                     setAgentStatus('executing');
                 }
-                
+
                 return updated;
             });
         }
@@ -327,7 +333,7 @@ export function useAgentChatWithTools(
                         ? { ...tc, status: 'error' as const, error: reason || 'User rejected' }
                         : tc
                 );
-                
+
                 // Emit tool failed event
                 const toolCall = updated.find(tc => tc.id === toolCallId);
                 if (toolCall && eventBus) {
@@ -337,7 +343,7 @@ export function useAgentChatWithTools(
                         error: reason || 'User rejected',
                     });
                 }
-                
+
                 return updated;
             });
         }

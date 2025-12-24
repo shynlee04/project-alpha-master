@@ -37,6 +37,8 @@ export interface ToolCallInfo {
     id: string;
     name: string;
     input: Record<string, unknown>;
+    /** Alias for input - for compatibility */
+    args?: Record<string, unknown>;
     status: 'pending' | 'executing' | 'completed' | 'error';
     result?: unknown;
     error?: string;
