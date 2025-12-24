@@ -190,17 +190,20 @@ development_status:
   # Added: 2025-12-21 - Per master implementation plan
   # Platform: Platform A (Antigravity)
   # =============================================================================
-  epic-25: done
+  epic-25: in-progress
     platform: "Platform A"
     started_at: "2025-12-23T21:35:00+07:00"
-    completed_at: "2025-12-24T07:00:00+07:00"
     notes: |
       Multi-provider AI agent infrastructure with TanStack AI.
       Provider adapters, credential vault, model registry, agent tools.
       Integrates with Epic 28 (UI) and Epic 12 (Tool facades).
-      All 6 stories complete - Epic 25 DONE ✅
+      ⚠️ CRITICAL INCIDENT INC-2025-12-24-001: E2E validation failure
+      All 6 stories marked DONE but frontend not functional.
+      Stories re-opened for manual E2E verification and integration fixes.
+      Root cause: Component-centric validation, not integration testing.
+      See: _bmad-output/critical-incidents/root-cause-analysis-e2e-validation-failure-2025-12-24.md
     
-  25-1-tanstack-ai-integration-setup: done
+  25-1-tanstack-ai-integration-setup: in-progress
     story: _bmad-output/sprint-artifacts/25-1-tanstack-ai-integration-setup.md
     context: _bmad-output/sprint-artifacts/25-1-tanstack-ai-integration-setup-context.xml
     platform: "Platform A"
@@ -208,7 +211,7 @@ development_status:
     tests_passing: 13
     notes: "/api/chat route + useAgentChat hook. SSE streaming with toStreamResponse."
     
-  25-2-implement-file-tools: done
+  25-2-implement-file-tools: in-progress
     story: _bmad-output/sprint-artifacts/25-2-implement-file-tools.md
     context: _bmad-output/sprint-artifacts/25-2-implement-file-tools-context.xml
     platform: "Platform A"
@@ -216,7 +219,7 @@ development_status:
     tests_passing: 14
     notes: "FileToolsFacade with read, write, list operations. Event emission."
     
-  25-3-implement-terminal-tools: done
+  25-3-implement-terminal-tools: in-progress
     story: _bmad-output/sprint-artifacts/25-3-implement-terminal-tools.md
     context: _bmad-output/sprint-artifacts/25-3-implement-terminal-tools-context.xml
     platform: "Platform A"
@@ -224,7 +227,7 @@ development_status:
     tests_passing: 14
     notes: "TerminalToolsFacade with shell session management."
     
-  25-4-wire-tool-execution-to-ui: done
+  25-4-wire-tool-execution-to-ui: in-progress
     story: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui.md
     context: _bmad-output/sprint-artifacts/25-4-wire-tool-execution-to-ui-context.xml
     platform: "Platform A"
@@ -232,7 +235,7 @@ development_status:
     tests_passing: 20
     notes: "Tool execution UI with approval flow. Wired to EnhancedChatInterface."
     
-  25-5-implement-approval-flow: done
+  25-5-implement-approval-flow: in-progress
     story: _bmad-output/sprint-artifacts/25-5-implement-approval-flow.md
     context: _bmad-output/sprint-artifacts/25-5-implement-approval-flow-context.xml
     platform: "Platform A"
@@ -240,7 +243,7 @@ development_status:
     tests_passing: 19
     notes: "ApprovalOverlay with mock trigger. 19/19 tests pass."
     
-  25-6-wire-agent-ui-to-providers: done
+  25-6-wire-agent-ui-to-providers: in-progress
     story: _bmad-output/sprint-artifacts/25-6-wire-agent-ui-to-providers.md
     context: _bmad-output/sprint-artifacts/25-6-wire-agent-ui-to-providers-context.xml
     platform: "Platform A"
@@ -256,6 +259,26 @@ development_status:
       modelRegistry for dynamic model loading, connection testing.
       All i18n keys added. TypeScript: No errors.
       Ready for code review.
+
+  # =============================================================================
+  # EPIC 25: REMEDIATION STORIES (Incident INC-2025-12-24-001)
+  # =============================================================================
+  # Created: 2025-12-24 - Per requirements-rescoped-e2e-integration-2025-12-24.md
+  # These stories address the integration gaps identified in the root cause analysis
+  # =============================================================================
+  25-R1-integrate-useagentchat-to-chatpanel: in-progress
+    story: _bmad-output/sprint-artifacts/25-R1-integrate-useagentchat-to-chatpanel.md
+    context: _bmad-output/sprint-artifacts/25-R1-integrate-useagentchat-to-chatpanel-context.xml
+    platform: "Platform A"
+    priority: P0
+    drafted_at: "2025-12-24T09:15:00+07:00"
+    dev_started_at: "2025-12-24T09:10:00+07:00"
+    points: 5
+    incident: "INC-2025-12-24-001"
+    notes: |
+      REMEDIATION: Wire useAgentChatWithTools hook to AgentChatPanel.
+      Replace mock setTimeout responses with real TanStack AI streaming.
+      Required for: Scenario 1 (Config) + Scenario 2 (Chat) to pass.
 
   # =============================================================================
   # EPIC 13: Terminal & Sync Stability [P0 - DONE]
@@ -790,7 +813,7 @@ development_status:
       Browser verified: agents_panel_verification_1766407350312.png
       JSDoc references Epic 25 for future backend replacement.
     
-  28-16-agent-config-flow: done
+  28-16-agent-config-flow: in-progress
     story: _bmad-output/sprint-artifacts/28-16-agent-config-flow.md
     context: _bmad-output/sprint-artifacts/28-16-agent-config-flow-context.xml
     platform: "Platform B"
@@ -826,7 +849,7 @@ development_status:
     integrates: "Epic 10, Epic 25, Epic 26"
     analysis: "_bmad-output/analysis/epic-28-holistic-integration-analysis.md"
     
-  28-19-chat-tool-call-badge: done
+  28-19-chat-tool-call-badge: in-progress
     priority: P0
     points: 5
     story: _bmad-output/sprint-artifacts/28-19-chat-tool-call-badge.md
@@ -839,7 +862,7 @@ development_status:
     notes: "ToolCallBadge + ToolCallBadgeGroup. Tooltip component created. AC-5 deferred to 28-20."
     integrates: "Epic 6, Epic 12, Epic 25"
     
-  28-20-chat-code-block-with-actions: done
+  28-20-chat-code-block-with-actions: in-progress
     priority: P0
     points: 5
     story: _bmad-output/sprint-artifacts/28-20-chat-code-block-with-actions.md
@@ -852,7 +875,7 @@ development_status:
     notes: "CodeBlock with syntax highlighting, copy, Accept/Reject actions. Wired into EnhancedChatInterface."
     integrates: "Epic 6, Epic 25-5, Story 28-19"
     
-  28-21-diff-preview-component: done
+  28-21-diff-preview-component: in-progress
     priority: P0
     points: 5
     story: _bmad-output/sprint-artifacts/28-21-diff-preview-component.md
@@ -864,7 +887,7 @@ development_status:
     notes: "DiffPreview showing file changes with syntax highlighting"
     integrates: "Epic 6, Epic 25-5, Story 28-20"
     
-  28-22-approval-overlay-component: done
+  28-22-approval-overlay-component: in-progress
     priority: P0
     points: 5
     story: _bmad-output/sprint-artifacts/28-22-approval-overlay-component.md
@@ -877,7 +900,7 @@ development_status:
     notes: "ApprovalOverlay with mock trigger integrated. 19/19 tests pass. Includes fix for inline mode bug."
     integrates: "Epic 25-5"
     
-  28-23-streaming-message-container: done
+  28-23-streaming-message-container: in-progress
     priority: P0
     points: 3
     story: _bmad-output/sprint-artifacts/28-23-streaming-message-container.md

@@ -131,7 +131,10 @@ _bmad-output\sprint-artifacts\epic-25-12-28-master-implementation-plan.md
 _bmad-output\sprint-artifacts\epic-25-12-28-readiness-analysis.md
 _bmad-output\sprint-artifacts\epic-25-11-06-research-analysis-request.md
 
-```
+
+--
+to iterate , validate, review using BMAD workflows and loop till 100% passed as instructed in /story-dev-cycle  with inter-connected tassks to update these 2 status files ```_bmad-output\sprint-artifacts\sprint-status.yaml
+_bmad-output\bmm-workflow-status.yaml```
 
 @sprint-status.yaml 
 

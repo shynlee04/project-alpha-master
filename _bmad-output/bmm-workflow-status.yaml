@@ -10,8 +10,17 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-24T07:00:00+07:00"
+last_updated: "2025-12-24T09:05:00+07:00"
 current_phase: "implementation"
+
+# =============================================================================
+# CRITICAL INCIDENT: INC-2025-12-24-001 - E2E Validation Failure
+# Date: 2025-12-24T01:15:00+07:00
+# Severity: P0 - Critical
+# Status: ACTIVE - Remediation in progress
+# Root Cause: _bmad-output/critical-incidents/root-cause-analysis-e2e-validation-failure-2025-12-24.md
+# Requirements: _bmad-output/requirements-rescoped-e2e-integration-2025-12-24.md
+# =============================================================================
 current_workflow: "story-dev-cycle"
 
 # GOVERNANCE UPDATE: 2025-12-22T21:35:00+07:00
@@ -23,25 +32,29 @@ current_workflow: "story-dev-cycle"
 #   - Tier 4: Multi-Interface Skeletons (5 stories, 15 points) P2
 # Analysis: _bmad-output/analysis/epic-28-holistic-integration-analysis.md
 current_story:
-  key: "none"
-  epic: null
-  status: "idle"
-  platform: null
+  key: "25-R1-integrate-useagentchat-to-chatpanel"
+  epic: 25
+  status: "ready-for-dev"
+  platform: "Platform A"
   notes: |
-    Story 25-6 complete. Epic 25 DONE.
-    Ready for next story or epic retrospective.
+    INCIDENT REMEDIATION: INC-2025-12-24-001
+    Phase 1 P0 Integration Fix - Connect useAgentChat hook to AgentChatPanel.
+    Replace mock setTimeout responses with real TanStack AI streaming.
+    Required for: Scenario 1 (Config) + Scenario 2 (Chat) to pass.
     
 last_completed_story:
-  key: "25-6-wire-agent-ui-to-providers"
-  epic: 25
-  completed_at: "2025-12-24T07:00:00+07:00"
+  key: "SM-requirements-rescoping"
+  epic: null
+  completed_at: "2025-12-24T09:00:00+07:00"
   status: "done"
   platform: "Platform A"
-  tests_passing: 5
   notes: |
-    AgentConfigDialog wired to Epic 25 infrastructure.
-    Code review approved - all ACs met.
-    Epic 25 complete (6/6 stories).
+    INCIDENT RESPONSE: Requirements re-scoping completed.
+    Created: requirements-rescoped-e2e-integration-2025-12-24.md
+    - Updated Definition of Done with mandatory E2E verification
+    - Updated Code Review Checklist v2.0
+    - Created 6 integration testing scenarios
+    - 3-day remediation timeline defined
 
 
 last_completed_story:
@@ -334,16 +347,19 @@ epic_status:
       Stories 12-3, 12-4 deferred (not required for E2E).
       All required tool facades wired to TanStack AI.
     
-  - id: 6
-    name: "AI Agent Integration"
+  - id: 25
+    name: "AI Foundation Sprint"
     status: "IN_PROGRESS"
-    stories: "5/6"
-    priority: "P1"
+    stories: "0/6"
+    priority: "P0"
+    incident: "INC-2025-12-24-001"
     notes: |
-      Epic 25 (AI Foundation Sprint) in progress.
-      Stories 25-1 through 25-5 completed.
-      Story 25-6 in review.
-      Provider adapters, credential vault, model registry complete.
+      ⚠️ CRITICAL INCIDENT: All 6 stories re-opened.
+      Stories were marked DONE but frontend not functional.
+      Root cause: Component-centric validation, not integration testing.
+      Remediation: 3-day integration fix timeline.
+      Requirements: requirements-rescoped-e2e-integration-2025-12-24.md
+      Next: 25-R1 (Connect useAgentChat to AgentChatPanel)
     
   - id: 7
     name: "Git Integration"

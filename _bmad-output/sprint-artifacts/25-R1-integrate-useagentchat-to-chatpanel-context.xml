@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="25-R1-integrate-useagentchat-to-chatpanel" created="2025-12-24T09:10:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/ide/AgentChatPanel.tsx">
+      <description>Current implementation uses mock setTimeout - needs to use useAgentChatWithTools hook</description>
+      <content><![CDATA[
+// Lines 81-94 - Mock response that needs to be replaced
+window.setTimeout(async () => {
+    const assistantMessage: ChatMessage = {
+        id: `msg_${Date.now()}_assistant`,
+        role: 'assistant',
+        content: t('agent.demo_response'),
+        timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, assistantMessage]);
+}, 300);
+
+// Lines 109-112 - TODO comment confirming integration incomplete
+const handleApprove = () => {
+    setApprovalRequest(prev => ({ ...prev, isOpen: false }));
+    // TODO(Epic 25): Replace mock with real EventBus subscription to handle actual tool approval
+    // This will likely involve listening for 'tool:approval_required' and emitting 'tool:approved'
+};
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/hooks/use-agent-chat-with-tools.ts">
+      <description>The fully implemented hook that needs to be connected to AgentChatPanel</description>
+      <content><![CDATA[
+export interface UseAgentChatWithToolsReturn {
+    messages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }>;
+    sendMessage: (content: string, options?: { body?: any }) => void;
+    isLoading: boolean;
+    error: Error | null;
+    clearMessages: () => void;
+    providerId: string;
+    modelId: string;
+    toolCalls: ToolCallInfo[];
+    toolsAvailable: boolean;
+    pendingApprovals: PendingApprovalInfo[];
+    approveToolCall: (toolCallId: string) => void;
+    rejectToolCall: (toolCallId: string, reason?: string) => void;
+}
+
+export function useAgentChatWithTools(
+    options: UseAgentChatWithToolsOptions = {}
+): UseAgentChatWithToolsReturn
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/hooks/index.ts">
+      <description>Exports from hooks - useAgentChatWithTools available</description>
+      <content><![CDATA[
+export { useAgentChat } from './use-agent-chat';
+export { useAgentChatWithTools } from './use-agent-chat-with-tools';
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from TanStack AI docs -->
+  <research_notes>
+    <finding source="TanStack AI Docs" query="client-tools">
+      Pattern: toolDefinition().client() + clientTools() for typed tool arrays
+      Client implements onToolCall callback for browser-side execution
+    </finding>
+    <finding source="TanStack AI Docs" query="approval-flow">
+      Pattern: needsApproval: true in toolDefinition, part.state === "approval-requested"
+      Handler: addToolApprovalResponse({ id, approved: true/false })
+    </finding>
+    <finding source="TanStack AI Docs" query="agentic-cycle">
+      Multi-step: LLM calls tools → receives results → continues reasoning
+      Tool results sent back to server and added to conversation
+    </finding>
+    <finding source="Codebase" query="useAgentChatWithTools">
+      Hook exists at src/lib/agent/hooks/use-agent-chat-with-tools.ts
+      Returns: messages, sendMessage, isLoading, error, pendingApprovals, approveToolCall, rejectToolCall
+      Tests: 19/19 passing
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Hook Integration" source="architecture.md">
+      Components use custom hooks for state management
+      Hooks abstract TanStack AI complexity from UI components
+    </pattern>
+    <pattern name="Event Bus" source="architecture.md">
+      WorkspaceEventEmitter for file/terminal operations
+      Events trigger UI updates without prop drilling
+    </pattern>
+    <pattern name="Tool Facades" source="Epic 12">
+      FileToolsFacade and TerminalToolsFacade wrap WebContainer operations
+      Passed to useAgentChatWithTools via options
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Import useAgentChatWithTools from '../../lib/agent/hooks'
+      NOT from '@tanstack/ai-react' directly - use our wrapper hook
+    </note>
+    <note priority="high">
+      Message format differs: hook returns { role, content } but EnhancedChatInterface expects ChatMessage { id, role, content, timestamp, toolExecutions? }
+      Need to transform messages before passing to UI
+    </note>
+    <note priority="medium">
+      FileToolsFacade and TerminalToolsFacade instances need to be created or passed as props
+      For now, pass null for tools - provider connection is the priority
+    </note>
+    <note priority="medium">
+      ApprovalOverlay needs to be triggered by pendingApprovals from hook, not local state
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@tanstack/ai-react" version="^0.1.0" />
+    <dependency name="@tanstack/ai-client" version="^0.1.0" />
+  </dependencies>
+</context>
