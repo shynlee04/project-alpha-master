@@ -13,6 +13,7 @@ import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -39,6 +40,11 @@ const WorkspaceProjectIdRoute = WorkspaceProjectIdRouteImport.update({
 const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   id: '/webcontainer/$',
   path: '/webcontainer/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
@@ -80,6 +86,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
+  '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
+  '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
+  '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/test-fs-adapter'
+    | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/demo/api/names'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/test-fs-adapter'
+    | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/demo/api/names'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/test-fs-adapter'
+    | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/demo/api/names'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
+  ApiChatRoute: typeof ApiChatRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/webcontainer/$'
       fullPath: '/webcontainer/$'
       preLoaderRoute: typeof WebcontainerSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/server-funcs': {
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
+  ApiChatRoute: ApiChatRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,

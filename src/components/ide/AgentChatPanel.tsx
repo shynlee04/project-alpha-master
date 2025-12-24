@@ -19,6 +19,16 @@ import { ApprovalOverlay } from '../chat/ApprovalOverlay';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '../../lib/agent/hooks/use-agent-chat-with-tools';
 import { useAgentSelection } from '@/stores/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
+
+// Map agent provider display names to provider IDs
+const PROVIDER_ID_MAP: Record<string, string> = {
+    'OpenRouter': 'openrouter',
+    'OpenAI': 'openai',
+    'Anthropic': 'anthropic',
+    'Google': 'gemini',
+    'Mistral': 'openrouter', // Mistral via OpenRouter
+};
 
 /**
  * Props for AgentChatPanel component
@@ -50,6 +60,40 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     const { agents } = useAgents();
     const activeAgent = agents.find(a => a.id === activeAgentId);
 
+    // API key state - fetched from credentialVault
+    const [apiKey, setApiKey] = useState<string | null>(null);
+    const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+
+    // Get provider ID from agent's provider name
+    const providerId = useMemo(() => {
+        if (!activeAgent?.provider) return 'openrouter';
+        return PROVIDER_ID_MAP[activeAgent.provider] || 'openrouter';
+    }, [activeAgent?.provider]);
+
+    // Fetch API key when agent or provider changes
+    useEffect(() => {
+        let isCancelled = false;
+
+        async function fetchApiKey() {
+            try {
+                await credentialVault.initialize();
+                const key = await credentialVault.getCredentials(providerId);
+                if (!isCancelled) {
+                    setApiKey(key);
+                    setApiKeyError(key ? null : `No API key configured for ${providerId}`);
+                }
+            } catch (err) {
+                if (!isCancelled) {
+                    console.error('[AgentChatPanel] Failed to fetch API key:', err);
+                    setApiKeyError('Failed to fetch API key');
+                }
+            }
+        }
+
+        fetchApiKey();
+        return () => { isCancelled = true; };
+    }, [providerId]);
+
     // Use the real TanStack AI hook with tools
     // Story 25-R1: Replace mock setTimeout with real hook
     const {
@@ -70,8 +114,10 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         fileTools: null,
         terminalTools: null,
         eventBus: null,
-        // Use selected agent's model if available
+        // Pass provider ID, model ID, and API key
+        providerId,
         modelId: activeAgent?.model,
+        apiKey: apiKey || undefined,
     });
 
     // Create welcome message
@@ -284,6 +330,16 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     <AlertCircle className="w-4 h-4 text-destructive" />
                     <span className="text-xs text-destructive">
                         {error.message || t('agent.error_generic', 'An error occurred')}
+                    </span>
+                </div>
+            )}
+
+            {/* API Key Warning */}
+            {apiKeyError && !error && (
+                <div className="px-4 py-2 bg-yellow-500/10 border-b border-yellow-500/30 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-yellow-500" />
+                    <span className="text-xs text-yellow-500">
+                        {apiKeyError}. {t('agent.configure_key', 'Configure API key in Agent Settings.')}
                     </span>
                 </div>
             )}

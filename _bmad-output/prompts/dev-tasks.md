@@ -117,7 +117,7 @@ agent-os\standards\testing\test-writing.md
 Practice best coding, using @web and MCP servers' tools to improve your workflow
 
 ---
-/story-dev-cycle continue@requirements-rescoped-e2e-integration-2025-12-24.md to resolve @e2e-testing-readiness-validation-2025-12-24.md 
+/story-dev-cycle continue @requirements-rescoped-e2e-integration-2025-12-24.md to resolve @e2e-testing-readiness-validation-2025-12-24.md 
 ---
 
 ## References

@@ -26,6 +26,8 @@ export interface UseAgentChatWithToolsOptions {
     providerId?: string;
     /** Model ID (default: free Llama model) */
     modelId?: string;
+    /** API key for the provider (required - from credentialVault) */
+    apiKey?: string;
     /** Custom API endpoint (default: '/api/chat') */
     endpoint?: string;
     /** Initial system message */
@@ -147,6 +149,7 @@ export function useAgentChatWithTools(
     const {
         providerId = DEFAULT_PROVIDER,
         modelId = DEFAULT_MODEL,
+        apiKey,
         endpoint = DEFAULT_ENDPOINT,
         systemMessage,
         fileTools = null,
@@ -178,11 +181,12 @@ export function useAgentChatWithTools(
     }, [toolsAvailable, toolFactoryOptions]);
 
     // Create connection with body data
+    // API key is passed from client since server cannot access IndexedDB
     const connection = useMemo(
         () => fetchServerSentEvents(endpoint, {
-            body: { providerId, modelId },
+            body: { providerId, modelId, apiKey },
         }),
-        [endpoint, providerId, modelId]
+        [endpoint, providerId, modelId, apiKey]
     );
 
     // Create chat options using TanStack AI createChatClientOptions
