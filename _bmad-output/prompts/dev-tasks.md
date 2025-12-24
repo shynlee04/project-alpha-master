@@ -117,25 +117,27 @@ agent-os\standards\testing\test-writing.md
 Practice best coding, using @web and MCP servers' tools to improve your workflow
 
 ---
+/story-dev-cycle continue@requirements-rescoped-e2e-integration-2025-12-24.md to resolve @e2e-testing-readiness-validation-2025-12-24.md 
+---
+
+## References
+
+**Handoff Document:**
+- [`_bmad-output/handoffs/bmad-master-to-pm-requirements-rescoping-2025-12-24.md`](_bmad-output/handoffs/bmad-master-to-pm-requirements-rescoping-2025-12-24.md)
+
+**Root Cause Analysis:**
+- [`_bmad-output/critical-incidents/root-cause-analysis-e2e-validation-failure-2025-12-24.md`](_bmad-output/critical-incidents/root-cause-analysis-e2e-validation-failure-2025-12-24.md)
+
+**Affected Story Documents:**
+- Epic 25: [`_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md`](_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md)
+- Epic 28: [`_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md`](_bmad-output/sprint-artifacts/epic-25-12-28-master-implementation-plan.md)
+
 
 ok so /bmad-core-agents-bmad-master coordinate /bmad-bmm-agents-sm and /bmad-bmm-agents-dev to /bmad-bmm-workflows-sprint-planning update /bmad-bmm-workflows-sprint-status to start the next sequence of /story-dev-cycle  
 
 --
 to iterate , validate, review using BMAD workflows and loop till 100% passed as instructed in /story-dev-cycle  with inter-connected tassks to update these 2 status files ```_bmad-output\sprint-artifacts\sprint-status.yaml
 _bmad-output\bmm-workflow-status.yaml```
-
-## Master plan, research guidance (use @web and MCP tools as needed during and in between the iterations as needed) , route accordingly 
-
-```
-_bmad-output\sprint-artifacts\epic-25-12-28-master-implementation-plan.md
-_bmad-output\sprint-artifacts\epic-25-12-28-readiness-analysis.md
-_bmad-output\sprint-artifacts\epic-25-11-06-research-analysis-request.md
-
-
---
-to iterate , validate, review using BMAD workflows and loop till 100% passed as instructed in /story-dev-cycle  with inter-connected tassks to update these 2 status files ```_bmad-output\sprint-artifacts\sprint-status.yaml
-_bmad-output\bmm-workflow-status.yaml```
-
 @sprint-status.yaml 
 
 ## These are the architecture and structure of the project 
