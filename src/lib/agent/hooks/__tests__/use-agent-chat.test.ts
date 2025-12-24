@@ -18,7 +18,7 @@ vi.mock('@tanstack/ai-react', () => ({
         sendMessage: vi.fn(),
         isLoading: false,
         error: null,
-        clearMessages: vi.fn(),
+        clear: vi.fn(),
     })),
     fetchServerSentEvents: vi.fn((url, opts) => ({
         url,
@@ -74,7 +74,7 @@ describe('useAgentChat', () => {
             sendMessage: vi.fn(),
             isLoading: false,
             error: null,
-            clearMessages: vi.fn(),
+            clear: vi.fn(),
         } as any);
 
         const { result } = renderHook(() => useAgentChat());
@@ -89,7 +89,7 @@ describe('useAgentChat', () => {
             sendMessage: vi.fn(),
             isLoading: false,
             error: null,
-            clearMessages: vi.fn(),
+            clear: vi.fn(),
         } as any);
 
         const { result } = renderHook(() => useAgentChat({
@@ -107,7 +107,7 @@ describe('useAgentChat', () => {
             sendMessage: vi.fn(),
             isLoading: true,
             error: null,
-            clearMessages: vi.fn(),
+            clear: vi.fn(),
         } as any);
 
         const { result } = renderHook(() => useAgentChat());
@@ -122,7 +122,7 @@ describe('useAgentChat', () => {
             sendMessage: vi.fn(),
             isLoading: false,
             error,
-            clearMessages: vi.fn(),
+            clear: vi.fn(),
         } as any);
 
         const { result } = renderHook(() => useAgentChat());
@@ -137,7 +137,7 @@ describe('useAgentChat', () => {
             sendMessage: mockSendMessage,
             isLoading: false,
             error: null,
-            clearMessages: vi.fn(),
+            clear: vi.fn(),
         } as any);
 
         const { result } = renderHook(() => useAgentChat());
@@ -146,9 +146,6 @@ describe('useAgentChat', () => {
             result.current.sendMessage('Test message');
         });
 
-        expect(mockSendMessage).toHaveBeenCalledWith({
-            role: 'user',
-            content: 'Test message',
-        });
+        expect(mockSendMessage).toHaveBeenCalledWith('Test message');
     });
 });

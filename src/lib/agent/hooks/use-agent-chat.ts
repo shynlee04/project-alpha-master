@@ -93,7 +93,7 @@ export function useAgentChat(options: UseAgentChatOptions = {}): UseAgentChatRet
         sendMessage: rawSendMessage,
         isLoading,
         error,
-        clearMessages,
+        clear,
     } = useChat({
         connection,
     });
@@ -109,9 +109,20 @@ export function useAgentChat(options: UseAgentChatOptions = {}): UseAgentChatRet
 
         // Add all chat messages
         for (const msg of rawMessages) {
+            // Extract text content from parts array (UIMessage format)
+            let textContent = '';
+            if (msg.parts && Array.isArray(msg.parts)) {
+                for (const part of msg.parts) {
+                    // TextPart has 'content' property in some versions, 'text' in others
+                    const p = part as { type: string; text?: string; content?: string };
+                    if (p.type === 'text') {
+                        textContent += p.text || p.content || '';
+                    }
+                }
+            }
             result.push({
                 role: msg.role as 'user' | 'assistant' | 'system',
-                content: typeof msg.content === 'string' ? msg.content : '',
+                content: textContent,
             });
         }
 
@@ -120,8 +131,13 @@ export function useAgentChat(options: UseAgentChatOptions = {}): UseAgentChatRet
 
     // Wrap sendMessage to accept simple string
     const sendMessage = useCallback((content: string) => {
-        rawSendMessage({ role: 'user', content });
+        rawSendMessage(content);
     }, [rawSendMessage]);
+
+    // Clear messages wrapper using clear
+    const clearMessages = useCallback(() => {
+        clear();
+    }, [clear]);
 
     return {
         messages,

@@ -10,7 +10,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock @tanstack/ai-openai before importing the module under test
 vi.mock('@tanstack/ai-openai', () => ({
-    openai: vi.fn().mockImplementation((config) => ({
+    createOpenaiChat: vi.fn().mockImplementation((apiKey: string, config: any) => ({
+        _apiKey: apiKey,
         _config: config,
         type: 'openai-adapter',
     })),

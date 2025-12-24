@@ -1,0 +1,1851 @@
+﻿
+> project-alpha@ test C:\Users\Admin\Documents\coding-project\project-alpha-master\project-alpha-master
+> vitest run "--run" "src/components/ide/__tests__/AgentChatPanel.test.tsx"
+
+pnpm.exe : [1m[43m DEPRECATED 
+[49m[22m 
+[33m"environmentMatchGlobs" is 
+deprecated. Use `test.projects` to 
+define different configurations 
+instead.[39m
+At C:\Users\Admin\AppData\Local\pnpm\pn
+pm.ps1:14 char:3
++   & "$basedir/.tools/@pnpm+win-x64/10
+.26.1/node_modules/@pnpm/win-x64 ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpeci 
+   fied: ([1m[43m DEPRE...s instead  
+  .[39m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCo 
+   mmandError
+ 
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/Admin/Documents/coding-project/project-alpha-master/project-alpha-master[39m
+
+ [31mΓ¥»[39m src/components/ide/__tests__/AgentChatPanel.test.tsx [2m([22m[2m11 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 164[2mms[22m[39m
+   [32mΓ£ô[39m AgentChatPanel[2m > [22mrenders correctly with title[32m 58[2mms[22m[39m
+   [32mΓ£ô[39m AgentChatPanel[2m > [22mrenders the enhanced chat interface[32m 9[2mms[22m[39m
+   [32mΓ£ô[39m AgentChatPanel[2m > [22mrenders welcome message when no hook messages[32m 16[2mms[22m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22msends messages via the hook[39m[32m 22[2mms[22m[39m
+[31m     ΓåÆ expected "spy" to be called with arguments: [ 'test message' ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22mshows model ID in header[39m[32m 15[2mms[22m[39m
+[31m     ΓåÆ Unable to find an element with the text: /llama-3.1-8b-instruct/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex flex-col h-full bg-surface-dark relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-bot w-3.5 h-3.5 text-primary"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                [33mheight[31m=[32m"12"[31m
+                [33mrx[31m=[32m"2"[31m
+                [33mwidth[31m=[32m"16"[31m
+                [33mx[31m=[32m"4"[31m
+                [33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-[10px] text-muted-foreground font-mono"[31m
+          [36m>[31m
+            [0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"[31m
+            [33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"enhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[32m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+   [32mΓ£ô[39m AgentChatPanel[2m > [22mshows clear button[32m 6[2mms[22m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22mshows error when hook returns error[39m[32m 7[2mms[22m[39m
+[31m     ΓåÆ Unable to find an element with the text: API key not configured. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex flex-col h-full bg-surface-dark relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-bot w-3.5 h-3.5 text-primary"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                [33mheight[31m=[32m"12"[31m
+                [33mrx[31m=[32m"2"[31m
+                [33mwidth[31m=[32m"16"[31m
+                [33mx[31m=[32m"4"[31m
+                [33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-[10px] text-muted-foreground font-mono"[31m
+          [36m>[31m
+            [0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"[31m
+            [33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"enhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[32m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22mshows approval overlay when pendingApprovals has items[39m[32m 7[2mms[22m[39m
+[31m     ΓåÆ Unable to find an element by: [data-testid="approval-overlay"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex flex-col h-full bg-surface-dark relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-bot w-3.5 h-3.5 text-primary"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                [33mheight[31m=[32m"12"[31m
+                [33mrx[31m=[32m"2"[31m
+                [33mwidth[31m=[32m"16"[31m
+                [33mx[31m=[32m"4"[31m
+                [33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-[10px] text-muted-foreground font-mono"[31m
+          [36m>[31m
+            [0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"[31m
+            [33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"enhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[32m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22mcalls approveToolCall when approve button is clicked[39m[32m 7[2mms[22m[39m
+[31m     ΓåÆ Unable to find an element by: [data-testid="approve-btn"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex flex-col h-full bg-surface-dark relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-bot w-3.5 h-3.5 text-primary"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                [33mheight[31m=[32m"12"[31m
+                [33mrx[31m=[32m"2"[31m
+                [33mwidth[31m=[32m"16"[31m
+                [33mx[31m=[32m"4"[31m
+                [33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-[10px] text-muted-foreground font-mono"[31m
+          [36m>[31m
+            [0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"[31m
+            [33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"enhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[32m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22mcalls rejectToolCall when reject button is clicked[39m[32m 7[2mms[22m[39m
+[31m     ΓåÆ Unable to find an element by: [data-testid="reject-btn"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex flex-col h-full bg-surface-dark relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-bot w-3.5 h-3.5 text-primary"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                [33mheight[31m=[32m"12"[31m
+                [33mrx[31m=[32m"2"[31m
+                [33mwidth[31m=[32m"16"[31m
+                [33mx[31m=[32m"4"[31m
+                [33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-[10px] text-muted-foreground font-mono"[31m
+          [36m>[31m
+            [0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"[31m
+            [33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"enhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[32m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[31m   [31m├ù[31m AgentChatPanel[2m > [22mshows typing indicator when isLoading is true[39m[32m 6[2mms[22m[39m
+[31m     ΓåÆ Unable to find an element by: [data-testid="typing-indicator"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex flex-col h-full bg-surface-dark relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-bot w-3.5 h-3.5 text-primary"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                [33mheight[31m=[32m"12"[31m
+                [33mrx[31m=[32m"2"[31m
+                [33mwidth[31m=[32m"16"[31m
+                [33mx[31m=[32m"4"[31m
+                [33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"text-[10px] text-muted-foreground font-mono"[31m
+          [36m>[31m
+            [0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1"[31m
+            [33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"enhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[32m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m[1m[41
+m Failed Tests 7 [49m[22m[31mΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22msends messages via the hook
+[31m[1mAssertionError[22m: expected 
+"spy" to be called with arguments: [ 
+'test message' ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m16
+7:33[22m[39m
+    [90m165| [39m        
+})[33m;[39m
+    [90m166| [39m
+    [90m167| [39m        [34mexpect
+[39m(mockSendMessage)[33m.[39m[34mto
+HaveBeenCalledWith[39m([32m'test 
+message'[39m)[33m;[39m
+    [90m   | [39m                    
+            [31m^[39m
+    [90m168| [39m    }[33m,[39m 
+[34m10000[39m)[33m;[39m
+    [90m169| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[1/7]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22mshows model ID in header
+[31m[1mTestingLibraryElementError[22
+m: Unable to find an element with the 
+text: /llama-3.1-8b-instruct/. This 
+could be because the text is broken up 
+by multiple elements. In this case, 
+you can provide a function for your 
+text matcher to make your matcher more 
+flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex 
+flex-col h-full bg-surface-dark 
+relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 
+flex items-center justify-between 
+border-b border-border-dark 
+bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 
+h-6 bg-primary/20 flex items-center 
+justify-center border 
+border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              
+[33maria-hidden[31m=[32m"true"[31m
+              
+[33mclass[31m=[32m"lucide 
+lucide-bot w-3.5 h-3.5 
+text-primary"[31m
+              
+[33mfill[31m=[32m"none"[31m
+              
+[33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"cu
+rrentColor"[31m
+              [33mstroke-linecap[31m=
+[32m"round"[31m
+              [33mstroke-linejoin[31m
+=[32m"round"[31m
+              
+[33mstroke-width[31m=[32m"2"[31m
+              
+[33mviewBox[31m=[32m"0 0 24 24"[31m
+              
+[33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"htt
+p://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 
+8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                
+[33mheight[31m=[32m"12"[31m
+                
+[33mrx[31m=[32m"2"[31m
+                
+[33mwidth[31m=[32m"16"[31m
+                
+[33mx[31m=[32m"4"[31m
+                
+[33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 
+13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 
+13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-xs 
+font-bold text-muted-foreground 
+tracking-wider uppercase 
+font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-[10px] 
+text-muted-foreground font-mono"[31m
+          [36m>[31m
+            
+[0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            
+[33mclass[31m=[32m"text-xs 
+text-muted-foreground 
+hover:text-foreground 
+transition-colors px-2 py-1"[31m
+            
+[33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 
+overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"e
+nhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m
+"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[3
+2m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to 
+Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mΓ¥»[22m 
+Object.getElementError node_modules/.pn
+pm/@testing-library+dom@10.4.1/node_mod
+ules/@testing-library/dom/dist/config.j
+s:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m17
+5:23[22m[39m
+    [90m173| [39m        
+})[33m;[39m
+    [90m174| [39m
+    [90m175| [39m        expect(scree
+n.getByText(/llama-3.1-8b-instruct/)).t
+oBeInTheDocΓÇª
+    [90m   | [39m                    
+  [31m^[39m
+    [90m176| [39m    }[33m,[39m 
+[34m10000[39m)[33m;[39m
+    [90m177| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[2/7]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22mshows error when hook returns 
+error
+[31m[1mTestingLibraryElementError[22
+m: Unable to find an element with the 
+text: API key not configured. This 
+could be because the text is broken up 
+by multiple elements. In this case, 
+you can provide a function for your 
+text matcher to make your matcher more 
+flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex 
+flex-col h-full bg-surface-dark 
+relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 
+flex items-center justify-between 
+border-b border-border-dark 
+bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 
+h-6 bg-primary/20 flex items-center 
+justify-center border 
+border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              
+[33maria-hidden[31m=[32m"true"[31m
+              
+[33mclass[31m=[32m"lucide 
+lucide-bot w-3.5 h-3.5 
+text-primary"[31m
+              
+[33mfill[31m=[32m"none"[31m
+              
+[33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"cu
+rrentColor"[31m
+              [33mstroke-linecap[31m=
+[32m"round"[31m
+              [33mstroke-linejoin[31m
+=[32m"round"[31m
+              
+[33mstroke-width[31m=[32m"2"[31m
+              
+[33mviewBox[31m=[32m"0 0 24 24"[31m
+              
+[33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"htt
+p://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 
+8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                
+[33mheight[31m=[32m"12"[31m
+                
+[33mrx[31m=[32m"2"[31m
+                
+[33mwidth[31m=[32m"16"[31m
+                
+[33mx[31m=[32m"4"[31m
+                
+[33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 
+13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 
+13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-xs 
+font-bold text-muted-foreground 
+tracking-wider uppercase 
+font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-[10px] 
+text-muted-foreground font-mono"[31m
+          [36m>[31m
+            
+[0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            
+[33mclass[31m=[32m"text-xs 
+text-muted-foreground 
+hover:text-foreground 
+transition-colors px-2 py-1"[31m
+            
+[33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 
+overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"e
+nhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m
+"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[3
+2m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to 
+Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mΓ¥»[22m 
+Object.getElementError node_modules/.pn
+pm/@testing-library+dom@10.4.1/node_mod
+ules/@testing-library/dom/dist/config.j
+s:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m19
+6:23[22m[39m
+    [90m194| [39m        
+})[33m;[39m
+    [90m195| [39m
+    [90m196| [39m        
+expect(screen.getByText('API key not 
+configured')).toBeInTheDoΓÇª
+    [90m   | [39m                    
+  [31m^[39m
+    [90m197| [39m    }[33m,[39m 
+[34m10000[39m)[33m;[39m
+    [90m198| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[3/7]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22mshows approval overlay when 
+pendingApprovals has items
+[31m[1mTestingLibraryElementError[22
+m: Unable to find an element by: 
+[data-testid="approval-overlay"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex 
+flex-col h-full bg-surface-dark 
+relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 
+flex items-center justify-between 
+border-b border-border-dark 
+bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 
+h-6 bg-primary/20 flex items-center 
+justify-center border 
+border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              
+[33maria-hidden[31m=[32m"true"[31m
+              
+[33mclass[31m=[32m"lucide 
+lucide-bot w-3.5 h-3.5 
+text-primary"[31m
+              
+[33mfill[31m=[32m"none"[31m
+              
+[33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"cu
+rrentColor"[31m
+              [33mstroke-linecap[31m=
+[32m"round"[31m
+              [33mstroke-linejoin[31m
+=[32m"round"[31m
+              
+[33mstroke-width[31m=[32m"2"[31m
+              
+[33mviewBox[31m=[32m"0 0 24 24"[31m
+              
+[33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"htt
+p://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 
+8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                
+[33mheight[31m=[32m"12"[31m
+                
+[33mrx[31m=[32m"2"[31m
+                
+[33mwidth[31m=[32m"16"[31m
+                
+[33mx[31m=[32m"4"[31m
+                
+[33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 
+13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 
+13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-xs 
+font-bold text-muted-foreground 
+tracking-wider uppercase 
+font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-[10px] 
+text-muted-foreground font-mono"[31m
+          [36m>[31m
+            
+[0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            
+[33mclass[31m=[32m"text-xs 
+text-muted-foreground 
+hover:text-foreground 
+transition-colors px-2 py-1"[31m
+            
+[33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 
+overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"e
+nhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m
+"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[3
+2m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to 
+Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mΓ¥»[22m 
+Object.getElementError node_modules/.pn
+pm/@testing-library+dom@10.4.1/node_mod
+ules/@testing-library/dom/dist/config.j
+s:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m21
+8:23[22m[39m
+    [90m216| [39m        
+})[33m;[39m
+    [90m217| [39m
+    [90m218| [39m        expect(scree
+n.getByTestId('approval-overlay')).toBe
+InTheDocumeΓÇª
+    [90m   | [39m                    
+  [31m^[39m
+    [90m219| [39m        expect(scree
+n.getByTestId('tool-name')).toHaveTextC
+ontent('wriΓÇª
+    [90m220| [39m        expect(scree
+n.getByTestId('description')).toHaveTex
+tContent('WΓÇª
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[4/7]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22mcalls approveToolCall when 
+approve button is clicked
+[31m[1mTestingLibraryElementError[22
+m: Unable to find an element by: 
+[data-testid="approve-btn"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex 
+flex-col h-full bg-surface-dark 
+relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 
+flex items-center justify-between 
+border-b border-border-dark 
+bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 
+h-6 bg-primary/20 flex items-center 
+justify-center border 
+border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              
+[33maria-hidden[31m=[32m"true"[31m
+              
+[33mclass[31m=[32m"lucide 
+lucide-bot w-3.5 h-3.5 
+text-primary"[31m
+              
+[33mfill[31m=[32m"none"[31m
+              
+[33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"cu
+rrentColor"[31m
+              [33mstroke-linecap[31m=
+[32m"round"[31m
+              [33mstroke-linejoin[31m
+=[32m"round"[31m
+              
+[33mstroke-width[31m=[32m"2"[31m
+              
+[33mviewBox[31m=[32m"0 0 24 24"[31m
+              
+[33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"htt
+p://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 
+8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                
+[33mheight[31m=[32m"12"[31m
+                
+[33mrx[31m=[32m"2"[31m
+                
+[33mwidth[31m=[32m"16"[31m
+                
+[33mx[31m=[32m"4"[31m
+                
+[33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 
+13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 
+13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-xs 
+font-bold text-muted-foreground 
+tracking-wider uppercase 
+font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-[10px] 
+text-muted-foreground font-mono"[31m
+          [36m>[31m
+            
+[0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            
+[33mclass[31m=[32m"text-xs 
+text-muted-foreground 
+hover:text-foreground 
+transition-colors px-2 py-1"[31m
+            
+[33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 
+overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"e
+nhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m
+"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[3
+2m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to 
+Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mΓ¥»[22m 
+Object.getElementError node_modules/.pn
+pm/@testing-library+dom@10.4.1/node_mod
+ules/@testing-library/dom/dist/config.j
+s:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m24
+1:35[22m[39m
+    [90m239| [39m        
+})[33m;[39m
+    [90m240| [39m
+    [90m241| [39m        
+[35mconst[39m approveBtn [33m=[39m 
+screen[33m.[39m[34mgetByTestId[39m(
+[32m'approve-btn'[39m)[33m;[39m
+    [90m   | [39m                    
+              [31m^[39m
+    [90m242| [39m        
+[35mawait[39m 
+[34mact[39m([35masync[39m () 
+[33m=>[39m {
+    [90m243| [39m            fireEven
+t[33m.[39m[34mclick[39m(approveBtn)
+[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[5/7]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22mcalls rejectToolCall when reject 
+button is clicked
+[31m[1mTestingLibraryElementError[22
+m: Unable to find an element by: 
+[data-testid="reject-btn"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex 
+flex-col h-full bg-surface-dark 
+relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 
+flex items-center justify-between 
+border-b border-border-dark 
+bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 
+h-6 bg-primary/20 flex items-center 
+justify-center border 
+border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              
+[33maria-hidden[31m=[32m"true"[31m
+              
+[33mclass[31m=[32m"lucide 
+lucide-bot w-3.5 h-3.5 
+text-primary"[31m
+              
+[33mfill[31m=[32m"none"[31m
+              
+[33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"cu
+rrentColor"[31m
+              [33mstroke-linecap[31m=
+[32m"round"[31m
+              [33mstroke-linejoin[31m
+=[32m"round"[31m
+              
+[33mstroke-width[31m=[32m"2"[31m
+              
+[33mviewBox[31m=[32m"0 0 24 24"[31m
+              
+[33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"htt
+p://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 
+8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                
+[33mheight[31m=[32m"12"[31m
+                
+[33mrx[31m=[32m"2"[31m
+                
+[33mwidth[31m=[32m"16"[31m
+                
+[33mx[31m=[32m"4"[31m
+                
+[33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 
+13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 
+13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-xs 
+font-bold text-muted-foreground 
+tracking-wider uppercase 
+font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-[10px] 
+text-muted-foreground font-mono"[31m
+          [36m>[31m
+            
+[0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            
+[33mclass[31m=[32m"text-xs 
+text-muted-foreground 
+hover:text-foreground 
+transition-colors px-2 py-1"[31m
+            
+[33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 
+overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"e
+nhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m
+"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[3
+2m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to 
+Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mΓ¥»[22m 
+Object.getElementError node_modules/.pn
+pm/@testing-library+dom@10.4.1/node_mod
+ules/@testing-library/dom/dist/config.j
+s:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m26
+7:34[22m[39m
+    [90m265| [39m        
+})[33m;[39m
+    [90m266| [39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 09:24:03
+[2m   Duration [22m 5.57s[2m (transform 487ms, setup 422ms, collect 1.73s, tests 164ms, environment 2.26s, prepare 302ms)[22m
+
+    [90m267| [39m        
+[35mconst[39m rejectBtn [33m=[39m s
+creen[33m.[39m[34mgetByTestId[39m(
+[32m'reject-btn'[39m)[33m;[39m
+    [90m   | [39m                    
+             [31m^[39m
+    [90m268| [39m        
+[35mawait[39m 
+[34mact[39m([35masync[39m () 
+[33m=>[39m {
+    [90m269| [39m            fireEven
+t[33m.[39m[34mclick[39m(rejectBtn)
+[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[6/7]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/component
+s/ide/__tests__/AgentChatPanel.test.tsx
+[2m > [22mAgentChatPanel[2m > 
+[22mshows typing indicator when 
+isLoading is true
+[31m[1mTestingLibraryElementError[22
+m: Unable to find an element by: 
+[data-testid="typing-indicator"]
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"flex 
+flex-col h-full bg-surface-dark 
+relative"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"h-9 px-4 
+flex items-center justify-between 
+border-b border-border-dark 
+bg-surface-darker"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-6 
+h-6 bg-primary/20 flex items-center 
+justify-center border 
+border-primary/30"[31m
+          [36m>[31m
+            [36m<svg[31m
+              
+[33maria-hidden[31m=[32m"true"[31m
+              
+[33mclass[31m=[32m"lucide 
+lucide-bot w-3.5 h-3.5 
+text-primary"[31m
+              
+[33mfill[31m=[32m"none"[31m
+              
+[33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"cu
+rrentColor"[31m
+              [33mstroke-linecap[31m=
+[32m"round"[31m
+              [33mstroke-linejoin[31m
+=[32m"round"[31m
+              
+[33mstroke-width[31m=[32m"2"[31m
+              
+[33mviewBox[31m=[32m"0 0 24 24"[31m
+              
+[33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"htt
+p://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 
+8V4H8"[31m
+              [36m/>[31m
+              [36m<rect[31m
+                
+[33mheight[31m=[32m"12"[31m
+                
+[33mrx[31m=[32m"2"[31m
+                
+[33mwidth[31m=[32m"16"[31m
+                
+[33mx[31m=[32m"4"[31m
+                
+[33my[31m=[32m"8"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M20 
+14h2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M15 
+13v2"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M9 
+13v2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-xs 
+font-bold text-muted-foreground 
+tracking-wider uppercase 
+font-pixel"[31m
+          [36m>[31m
+            [0mAgent[0m
+          [36m</span>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex 
+items-center gap-2"[31m
+        [36m>[31m
+          [36m<span[31m
+            
+[33mclass[31m=[32m"text-[10px] 
+text-muted-foreground font-mono"[31m
+          [36m>[31m
+            
+[0mllama-3.1-8b-instruc[0m
+          [36m</span>[31m
+          [36m<button[31m
+            
+[33mclass[31m=[32m"text-xs 
+text-muted-foreground 
+hover:text-foreground 
+transition-colors px-2 py-1"[31m
+            
+[33mtitle[31m=[32m"Clear"[31m
+          [36m>[31m
+            [0mClear[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex-1 
+overflow-hidden"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mdata-testid[31m=[32m"e
+nhanced-chat"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mdata-testid[31m=[32m
+"messages"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mdata-testid[31m=[3
+2m"message-assistant"[31m
+            [36m>[31m
+              [0mWelcome to 
+Project[0m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<button>[31m
+            [0mSend Test[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mΓ¥»[22m 
+Object.getElementError node_modules/.pn
+pm/@testing-library+dom@10.4.1/node_mod
+ules/@testing-library/dom/dist/config.j
+s:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m node_modules/.pnpm/@
+testing-library+dom@10.4.1/node_modules
+/@testing-library/dom/dist/query-helper
+s.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/components/ide/_
+_tests__/AgentChatPanel.test.tsx:[2m28
+5:23[22m[39m
+    [90m283| [39m        
+})[33m;[39m
+    [90m284| [39m
+    [90m285| [39m        expect(scree
+n.getByTestId('typing-indicator')).toBe
+InTheDocumeΓÇª
+    [90m   | [39m                    
+  [31m^[39m
+    [90m286| [39m    }[33m,[39m 
+[34m10000[39m)[33m;[39m
+    [90m287| [39m})[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+ΓÄ»[7/7]ΓÄ»[22m[39m
+
+ΓÇëELIFECYCLEΓÇë Test failed. See above for more details.
