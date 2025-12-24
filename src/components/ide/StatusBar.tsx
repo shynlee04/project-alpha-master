@@ -33,6 +33,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { WebContainerStatus } from '@/components/ide/statusbar/WebContainerStatus';
+import { AgentStatusSegment } from '@/components/ide/statusbar/AgentStatusSegment';
 import { SyncStatusSegment } from '@/components/ide/statusbar/SyncStatusSegment';
 import { ProviderStatus } from '@/components/ide/statusbar/ProviderStatus';
 import { CursorPosition } from '@/components/ide/statusbar/CursorPosition';
@@ -58,7 +59,7 @@ interface StatusBarProps extends React.HTMLAttributes<HTMLElement> {
  * Height: 24px (h-6) matching VS Code.
  * 
  * Layout:
- * - Left region: WebContainer, Sync, Provider status
+ * - Left region: WebContainer, Agent, Sync, Provider status
  * - Right region: Cursor position, Encoding, File type
  */
 export function StatusBar({ className, onSyncRetry, ...props }: StatusBarProps) {
@@ -76,6 +77,7 @@ export function StatusBar({ className, onSyncRetry, ...props }: StatusBarProps) 
             {/* Left region - Connection statuses */}
             <div className="flex items-center h-full">
                 <WebContainerStatus />
+                <AgentStatusSegment />
                 <SyncStatusSegment onRetry={onSyncRetry} />
                 <ProviderStatus />
             </div>

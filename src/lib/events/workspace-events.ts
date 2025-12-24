@@ -8,6 +8,7 @@ export interface WorkspaceEvents {
     { path: string; source: 'local' | 'editor' | 'agent'; content?: string; lockAcquired?: number; lockReleased?: number },
   ]
   'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
+  'file:read': [{ path: string; source: 'agent' }] // Agent reading file
   'directory:created': [{ path: string }]
   'directory:deleted': [{ path: string }]
 
@@ -31,6 +32,7 @@ export interface WorkspaceEvents {
   'process:output': [{ pid: string; data: string; type: 'stdout' | 'stderr' }]
   'process:exited': [{ pid: string; exitCode: number }]
   'terminal:input': [{ data: string }]
+  'agent:command:executed': [{ command: string; workingDir?: string; output?: string; exitCode?: number }] // Agent executed command
 
   // Permission Events
   'permission:requested': [{ handle: FileSystemDirectoryHandle }]
@@ -42,6 +44,12 @@ export interface WorkspaceEvents {
   'project:opened': [{ projectId: string; name: string }]
   'project:closed': [{ projectId: string }]
   'project:switched': [{ fromId: string | null; toId: string }]
+
+  // Agent Activity Events
+  'agent:tool:started': [{ toolName: string; toolCallId: string; args: Record<string, unknown> }]
+  'agent:tool:completed': [{ toolName: string; toolCallId: string; success: boolean; result?: unknown }]
+  'agent:tool:failed': [{ toolName: string; toolCallId: string; error: string }]
+  'agent:activity:changed': [{ status: 'idle' | 'thinking' | 'executing' | 'error' }]
 }
 
 export type WorkspaceEventEmitter = EventEmitter<WorkspaceEvents>

@@ -11,6 +11,7 @@
 import { toolDefinition } from '@tanstack/ai';
 import { ExecuteCommandInputSchema, type ExecuteCommandOutput, type ToolResult } from './types';
 import type { AgentTerminalTools } from '../facades';
+import type { WorkspaceEventEmitter } from '../../events/workspace-events';
 
 /** Default timeout: 2 minutes per master plan */
 const DEFAULT_TIMEOUT = 120000;
@@ -40,7 +41,10 @@ export const executeCommandToolConfig = {
  * Create a server implementation of execute_command tool
  * @param getTools - Function to get the terminal tools facade
  */
-export function createExecuteCommandTool(getTools: () => AgentTerminalTools) {
+export function createExecuteCommandTool(
+    getTools: () => AgentTerminalTools,
+    getEventBus?: () => WorkspaceEventEmitter | null
+) {
     return executeCommandDef.server(async (args: unknown): Promise<ToolResult<ExecuteCommandOutput>> => {
         const { command, args: cmdArgs, timeout, cwd } = args as {
             command: string;
@@ -48,6 +52,8 @@ export function createExecuteCommandTool(getTools: () => AgentTerminalTools) {
             timeout?: number;
             cwd?: string;
         };
+
+        const eventBus = getEventBus?.();
 
         try {
             const result = await getTools().executeCommand(
@@ -58,6 +64,16 @@ export function createExecuteCommandTool(getTools: () => AgentTerminalTools) {
                     cwd,
                 }
             );
+
+            // Emit agent:command:executed event
+            if (eventBus) {
+                eventBus.emit('agent:command:executed', {
+                    command,
+                    workingDir: cwd,
+                    output: result.stdout,
+                    exitCode: result.exitCode,
+                });
+            }
 
             return {
                 success: result.exitCode === 0,
@@ -86,7 +102,10 @@ export function createExecuteCommandTool(getTools: () => AgentTerminalTools) {
  * @param getTools - Function to get the terminal tools facade
  * @story 25-4 - Wire Tool Execution to UI
  */
-export function createExecuteCommandClientTool(getTools: () => AgentTerminalTools) {
+export function createExecuteCommandClientTool(
+    getTools: () => AgentTerminalTools,
+    getEventBus?: () => WorkspaceEventEmitter | null
+) {
     return executeCommandDef.client(async (input: unknown): Promise<ToolResult<ExecuteCommandOutput>> => {
         const args = input as {
             command: string;
@@ -94,6 +113,9 @@ export function createExecuteCommandClientTool(getTools: () => AgentTerminalTool
             timeout?: number;
             cwd?: string;
         };
+
+        const eventBus = getEventBus?.();
+
         try {
             const result = await getTools().executeCommand(
                 args.command,
@@ -103,6 +125,16 @@ export function createExecuteCommandClientTool(getTools: () => AgentTerminalTool
                     cwd: args.cwd,
                 }
             );
+
+            // Emit agent:command:executed event
+            if (eventBus) {
+                eventBus.emit('agent:command:executed', {
+                    command: args.command,
+                    workingDir: args.cwd,
+                    output: result.stdout,
+                    exitCode: result.exitCode,
+                });
+            }
 
             return {
                 success: result.exitCode === 0,

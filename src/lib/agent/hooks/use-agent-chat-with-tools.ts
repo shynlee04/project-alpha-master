@@ -161,6 +161,18 @@ export function useAgentChatWithTools(
     const toolCallsRef = useRef(toolCalls);
     toolCallsRef.current = toolCalls;
 
+    // Track agent activity status for event emission
+    const [agentStatus, setAgentStatus] = useState<'idle' | 'thinking' | 'executing' | 'error'>('idle');
+    const agentStatusRef = useRef(agentStatus);
+    agentStatusRef.current = agentStatus;
+
+    // Emit agent activity status changes
+    useEffect(() => {
+        if (eventBus && agentStatus !== agentStatusRef.current) {
+            eventBus.emit('agent:activity:changed', { status: agentStatus });
+        }
+    }, [eventBus, agentStatus]);
+
     // Check if tools are available
     const toolsAvailable = fileTools !== null || terminalTools !== null;
 
@@ -231,6 +243,17 @@ export function useAgentChatWithTools(
     const error = chatResult.error ?? null;
     const addToolApprovalResponse = chatResult.addToolApprovalResponse;
 
+    // Update agent status based on loading state
+    useEffect(() => {
+        if (isLoading) {
+            setAgentStatus('thinking');
+        } else if (error) {
+            setAgentStatus('error');
+        } else {
+            setAgentStatus('idle');
+        }
+    }, [isLoading, error]);
+
     // Transform messages to simple format
     // TanStack AI UIMessage uses 'parts' array, not 'content' string
     const messages = useMemo(() => {
@@ -270,30 +293,55 @@ export function useAgentChatWithTools(
         if (addToolApprovalResponse) {
             addToolApprovalResponse({ id: toolCallId, approved: true });
 
-            // Update tool call status
-            setToolCalls((prev) =>
-                prev.map((tc) =>
+            // Update tool call status and emit event
+            setToolCalls((prev) => {
+                const updated = prev.map((tc) =>
                     tc.id === toolCallId ? { ...tc, status: 'executing' as const } : tc
-                )
-            );
+                );
+                
+                // Emit tool started event
+                const toolCall = updated.find(tc => tc.id === toolCallId);
+                if (toolCall && eventBus) {
+                    eventBus.emit('agent:tool:started', {
+                        toolName: toolCall.name,
+                        toolCallId: toolCall.id,
+                        args: toolCall.args || {},
+                    });
+                    setAgentStatus('executing');
+                }
+                
+                return updated;
+            });
         }
-    }, [addToolApprovalResponse]);
+    }, [addToolApprovalResponse, eventBus]);
 
     // Reject tool call - uses { id, approved } object format
     const rejectToolCall = useCallback((toolCallId: string, reason?: string) => {
         if (addToolApprovalResponse) {
             addToolApprovalResponse({ id: toolCallId, approved: false });
 
-            // Update tool call status
-            setToolCalls((prev) =>
-                prev.map((tc) =>
+            // Update tool call status and emit event
+            setToolCalls((prev) => {
+                const updated = prev.map((tc) =>
                     tc.id === toolCallId
                         ? { ...tc, status: 'error' as const, error: reason || 'User rejected' }
                         : tc
-                )
-            );
+                );
+                
+                // Emit tool failed event
+                const toolCall = updated.find(tc => tc.id === toolCallId);
+                if (toolCall && eventBus) {
+                    eventBus.emit('agent:tool:failed', {
+                        toolName: toolCall.name,
+                        toolCallId: toolCall.id,
+                        error: reason || 'User rejected',
+                    });
+                }
+                
+                return updated;
+            });
         }
-    }, [addToolApprovalResponse]);
+    }, [addToolApprovalResponse, eventBus]);
 
     // Extract pending approvals from TanStack AI message parts (Story 25-5)
     const pendingApprovals = useMemo((): PendingApprovalInfo[] => {

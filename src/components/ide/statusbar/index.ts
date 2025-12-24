@@ -7,7 +7,9 @@
 
 export { StatusBarSegment } from './StatusBarSegment';
 export { WebContainerStatus } from './WebContainerStatus';
+export { AgentStatusSegment } from './AgentStatusSegment';
 export { SyncStatusSegment } from './SyncStatusSegment';
 export { ProviderStatus } from './ProviderStatus';
 export { CursorPosition } from './CursorPosition';
 export { FileTypeIndicator } from './FileTypeIndicator';
+

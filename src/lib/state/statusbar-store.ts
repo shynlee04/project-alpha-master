@@ -65,6 +65,12 @@ export interface SyncProgress {
 }
 
 /**
+ * AI Agent activity states
+ * @story 28-27 - Agent activity in StatusBar
+ */
+export type AgentActivityStatus = 'idle' | 'thinking' | 'executing' | 'error';
+
+/**
  * StatusBar state interface
  */
 export interface StatusBarState {
@@ -99,6 +105,9 @@ export interface StatusBarState {
     /** File encoding (static UTF-8 for now) */
     encoding: string;
 
+    /** AI Agent activity status (Story 28-27) */
+    agentStatus: AgentActivityStatus;
+
     // =========================================================================
     // Actions
     // =========================================================================
@@ -127,6 +136,9 @@ export interface StatusBarState {
     /** Update file type */
     setFileType: (type: string) => void;
 
+    /** Update agent activity status */
+    setAgentStatus: (status: AgentActivityStatus) => void;
+
     /** Reset all status to initial state */
     reset: () => void;
 }
@@ -151,6 +163,7 @@ const initialState = {
     } as CursorPosition,
     fileType: '',
     encoding: 'UTF-8',
+    agentStatus: 'idle' as AgentActivityStatus,
 };
 
 // ============================================================================
@@ -180,6 +193,8 @@ export const useStatusBarStore = create<StatusBarState>()((set) => ({
     setCursorPosition: (position) => set({ cursorPosition: position }),
 
     setFileType: (type) => set({ fileType: type }),
+
+    setAgentStatus: (status) => set({ agentStatus: status }),
 
     reset: () => set(initialState),
 }));
