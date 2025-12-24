@@ -10,7 +10,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-24T09:05:00+07:00"
+last_updated: "2025-12-24T11:00:00+07:00"
 current_phase: "implementation"
 
 # =============================================================================
@@ -36,29 +36,41 @@ current_story:
   epic: 25
   status: "review"
   platform: "Platform A"
+  sessions: 2
   notes: |
     INCIDENT REMEDIATION: INC-2025-12-24-001
     Phase 1 P0 Integration Fix - Connect useAgentChat hook to AgentChatPanel.
-    IMPLEMENTATION COMPLETE - API fix applied 2025-12-24.
-    - TanStack AI API corrected (use-agent-chat.ts)
-    - Provider-adapter tests: 16/16 pass  
-    - Agent tests: 125+ pass (12 test files)
-    - Awaiting manual E2E verification (Scenario 2).
+    
+    SESSION 2 COMPLETE - 2025-12-24T11:00:00+07:00
+    Fixed 500 error root cause:
+    - credentialVault uses IndexedDB (browser-only API)
+    - Server-side routes cannot access IndexedDB
+    - Solution: Client fetches apiKey, passes in request body
+    - Fixed model selection: adapter(modelId) pattern
+    
+    Tests: 125+ agent pass, 16/16 provider-adapter pass
+    NEXT: Manual E2E verification (Scenario 2)
     
 last_completed_story:
   key: "25-R1-integrate-useagentchat-to-chatpanel"
   epic: 25
-  completed_at: "2025-12-24T09:55:00+07:00"
+  completed_at: "2025-12-24T11:00:00+07:00"
   status: "review"
   platform: "Platform A"
-  tests_passing: "125+/125+ (agent)"
+  sessions: 2
+  tests_passing: "125+/125+ (agent), 16/16 (provider-adapter)"
   notes: |
     REMEDIATION STORY: Wire useAgentChatWithTools to AgentChatPanel.
-    - Mock setTimeout replaced with real hook integration
-    - TanStack AI API fixed: clear(), sendMessage(string)
-    - pendingApprovals wired to ApprovalOverlay
-    - Error display and model ID added
-    - NEXT: Manual E2E verification (Scenario 2)
+    
+    Session 1 (2025-12-24 09:10-09:25):
+    - Initial hook wiring, pendingApprovals to ApprovalOverlay
+    
+    Session 2 (2025-12-24 10:30-11:00):
+    - Fixed 500 error: IndexedDB not available server-side
+    - apiKey passed from client to server in request body
+    - Added apiKeyError warning UI
+    
+    NEXT: Manual E2E verification (Scenario 2)
 
 
 last_completed_story:

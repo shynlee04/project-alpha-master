@@ -24,7 +24,7 @@ import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../.
 
 // Default configuration
 const DEFAULT_PROVIDER = 'openrouter';
-const DEFAULT_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+const DEFAULT_MODEL = 'mistralai/devstral-2512:free';
 
 // Provider base URLs
 const PROVIDER_BASE_URLS: Record<string, string> = {

@@ -1,93 +1,108 @@
 /**
- * useAgents Hook - Agent Management State
+ * useAgents Hook - Agent Management State (PERSISTENT)
  * 
- * @epic Epic-28 Story 28-15
- * @roadmap Replace mock with TanStack Query in Epic 25 (Story 25-1)
- * @see _bmad-output/epics/shards/epic-25-ai-foundation.md
+ * @epic Epic-25 - AI Foundation Sprint
+ * @story 25-R1 - E2E Integration Fix
+ * @fix Agents now persist to localStorage via Zustand
  */
 
-import { useState, useCallback } from 'react'
-import { mockAgents, type Agent } from '../mocks/agents'
+import { useCallback } from 'react';
+import { useAgentsStore, useAgentsStoreHydration } from '../stores/agents-store';
+import type { Agent } from '../mocks/agents';
 
 interface UseAgentsReturn {
-    agents: Agent[]
-    isLoading: boolean
-    error: Error | null
-    addAgent: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => void
-    removeAgent: (id: string) => void
-    updateAgentStatus: (id: string, status: Agent['status']) => void
-    refreshAgents: () => void
+    /** List of configured agents */
+    agents: Agent[];
+    /** Whether the store is loading/hydrating */
+    isLoading: boolean;
+    /** Error state (null for now, reserved for future API integration) */
+    error: Error | null;
+    /** Add a new agent */
+    addAgent: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => void;
+    /** Remove an agent */
+    removeAgent: (id: string) => void;
+    /** Update agent status */
+    updateAgentStatus: (id: string, status: Agent['status']) => void;
+    /** Update agent data */
+    updateAgent: (id: string, updates: Partial<Agent>) => void;
+    /** Refresh agents (no-op for now, reserved for future API) */
+    refreshAgents: () => void;
 }
 
 /**
- * Hook for managing agent state
+ * Hook for managing agent state with persistence
  * 
- * TODO: Epic 25 - Replace with:
- *   const { data, isLoading, refetch } = useQuery({
- *     queryKey: ['agents'],
- *     queryFn: () => agentApi.getAll()
- *   })
+ * Agents are stored in localStorage via Zustand persist middleware.
+ * They survive page refresh and browser restarts.
+ * 
+ * @example
+ * ```tsx
+ * const { agents, addAgent, removeAgent } = useAgents();
+ * 
+ * // Add a new agent
+ * addAgent({
+ *     name: 'My Agent',
+ *     role: 'Coder',
+ *     status: 'online',
+ *     provider: 'OpenRouter',
+ *     model: 'mistralai/devstral-2512:free'
+ * });
+ * ```
  */
 export function useAgents(): UseAgentsReturn {
-    const [agents, setAgents] = useState<Agent[]>(mockAgents)
-    const [isLoading, setIsLoading] = useState(false)
-    const [error] = useState<Error | null>(null)
+    // Get persistent state from Zustand store
+    const agents = useAgentsStore((state) => state.agents);
+    const addAgentStore = useAgentsStore((state) => state.addAgent);
+    const removeAgentStore = useAgentsStore((state) => state.removeAgent);
+    const updateAgentStatusStore = useAgentsStore((state) => state.updateAgentStatus);
+    const updateAgentStore = useAgentsStore((state) => state.updateAgent);
 
-    /**
-     * Simulates adding a new agent
-     * TODO: Replace with mutation in Epic 25
-     */
-    const addAgent = useCallback((agentData: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => {
-        const newAgent: Agent = {
-            ...agentData,
-            id: `agt_${Date.now()}`,
-            createdAt: new Date().toISOString(),
-            lastActive: new Date().toISOString(),
-            tasksCompleted: 0,
-            successRate: 0,
-            tokensUsed: 0,
-        }
-        setAgents(prev => [...prev, newAgent])
-    }, [])
+    // Check if store has hydrated from localStorage
+    const hasHydrated = useAgentsStoreHydration();
 
-    /**
-     * Simulates removing an agent
-     * TODO: Replace with mutation in Epic 25
-     */
-    const removeAgent = useCallback((id: string) => {
-        setAgents(prev => prev.filter(a => a.id !== id))
-    }, [])
+    // Wrap store actions with callbacks for stable references
+    const addAgent = useCallback(
+        (agentData: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => {
+            addAgentStore(agentData);
+        },
+        [addAgentStore]
+    );
 
-    /**
-     * Updates agent status locally
-     * TODO: Replace with real-time subscription in Epic 25
-     */
-    const updateAgentStatus = useCallback((id: string, status: Agent['status']) => {
-        setAgents(prev => prev.map(a =>
-            a.id === id ? { ...a, status, lastActive: new Date().toISOString() } : a
-        ))
-    }, [])
+    const removeAgent = useCallback(
+        (id: string) => {
+            removeAgentStore(id);
+        },
+        [removeAgentStore]
+    );
 
-    /**
-     * Simulates refreshing agents from server
-     * TODO: Replace with refetch() in Epic 25
-     */
+    const updateAgentStatus = useCallback(
+        (id: string, status: Agent['status']) => {
+            updateAgentStatusStore(id, status);
+        },
+        [updateAgentStatusStore]
+    );
+
+    const updateAgent = useCallback(
+        (id: string, updates: Partial<Agent>) => {
+            updateAgentStore(id, updates);
+        },
+        [updateAgentStore]
+    );
+
+    // No-op for now, reserved for future API integration
     const refreshAgents = useCallback(() => {
-        setIsLoading(true)
-        // Simulate network delay
-        setTimeout(() => {
-            setAgents([...mockAgents])
-            setIsLoading(false)
-        }, 500)
-    }, [])
+        console.log('[useAgents] refreshAgents called (no-op for localStorage)');
+    }, []);
 
     return {
         agents,
-        isLoading,
-        error,
+        isLoading: !hasHydrated, // Loading until store hydrates
+        error: null,
         addAgent,
         removeAgent,
         updateAgentStatus,
+        updateAgent,
         refreshAgents,
-    }
+    };
 }
+

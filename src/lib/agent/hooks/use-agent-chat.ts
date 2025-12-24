@@ -55,7 +55,7 @@ export interface UseAgentChatReturn {
 
 // Default values
 const DEFAULT_PROVIDER = 'openrouter';
-const DEFAULT_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+const DEFAULT_MODEL = 'mistralai/devstral-2512:free';
 const DEFAULT_ENDPOINT = '/api/chat';
 
 /**
