@@ -4,7 +4,7 @@ export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export { ShadcnTest } from './ShadcnTest';
 export * from './button';
-export { Button } from './button';
+
 export * from './card';
 export * from './dropdown-menu';
 export { Input } from './input';

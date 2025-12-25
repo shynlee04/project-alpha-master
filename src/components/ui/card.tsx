@@ -10,7 +10,7 @@
  */
 
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
 
@@ -65,24 +65,24 @@ const cardVariants = cva(
  * <Card size="sm" variant="success">Success Card</Card>
  * ```
  */
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, size = "md", variant = "default", children, role = "region", ...props }, ref
-) => {
-  const { t } = useTranslation()
+  ) => {
+    const { t } = useTranslation()
 
-  return (
-    <div
-      ref={ref}
-      data-slot="card"
-      role={role}
-      aria-label={t(`card.variant.${variant}`, { defaultValue: variant })}
-      className={cn(cardVariants({ size, variant }), className)}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-})
+    return (
+      <div
+        ref={ref}
+        data-slot="card"
+        role={role}
+        aria-label={t(`card.variant.${variant}`, { defaultValue: variant })}
+        className={cn(cardVariants({ size, variant }), className)}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  })
 Card.displayName = "Card"
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
