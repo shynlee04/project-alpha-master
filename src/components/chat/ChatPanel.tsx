@@ -139,8 +139,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
                     messages: [
                         ...useThreadsStore.getState().threads[activeThreadId]?.messages
                             .filter(m => m.role !== 'system')
-                            .map(m => ({ role: m.role, content: m.content })) || [],
-                        { role: 'user', content }
+                            .map(m => ({ role: m.role, content: m.content })) || []
                     ],
                     provider: selectedAgent.provider.toLowerCase(),
                     model: selectedAgent.model,

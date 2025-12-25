@@ -326,3 +326,57 @@ export function useProjectThreads(projectId: string) {
 export function useThreadsHydration() {
     return useThreadsStore((state) => state._hasHydrated);
 }
+
+// ============================================================================
+// Dexie Sync (Background Persistence for Indexing)
+// ============================================================================
+
+/**
+ * Sync threads to Dexie for persistence and future indexing.
+ * This runs in background after zustand/localStorage handles immediate state.
+ */
+async function syncThreadToDexie(thread: ConversationThread) {
+    try {
+        const { saveThread } = await import('@/lib/workspace/threads-store');
+        await saveThread(thread);
+        console.log('[ThreadsStore] Synced to Dexie:', thread.id);
+    } catch (error) {
+        console.warn('[ThreadsStore] Dexie sync failed:', error);
+    }
+}
+
+async function deleteThreadFromDexie(threadId: string) {
+    try {
+        const { deleteThread } = await import('@/lib/workspace/threads-store');
+        await deleteThread(threadId);
+        console.log('[ThreadsStore] Deleted from Dexie:', threadId);
+    } catch (error) {
+        console.warn('[ThreadsStore] Dexie delete failed:', error);
+    }
+}
+
+// Subscribe to store changes and sync to Dexie
+let lastThreads: Record<string, ConversationThread> = {};
+
+useThreadsStore.subscribe((state) => {
+    const currentThreads = state.threads;
+
+    // Find new or updated threads
+    for (const [id, thread] of Object.entries(currentThreads)) {
+        const lastThread = lastThreads[id];
+        if (!lastThread || lastThread.updatedAt !== thread.updatedAt) {
+            // Thread is new or updated - sync to Dexie
+            syncThreadToDexie(thread);
+        }
+    }
+
+    // Find deleted threads
+    for (const id of Object.keys(lastThreads)) {
+        if (!currentThreads[id]) {
+            // Thread was deleted
+            deleteThreadFromDexie(id);
+        }
+    }
+
+    lastThreads = { ...currentThreads };
+});

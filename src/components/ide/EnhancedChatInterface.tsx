@@ -88,24 +88,41 @@ export function EnhancedChatInterface({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input area */}
+            {/* Input area - auto-expanding textarea */}
             <form
                 onSubmit={handleSubmit}
-                className="shrink-0 border-t border-border p-4 bg-secondary/30"
+                className="shrink-0 border-t border-border p-3 bg-secondary/30"
             >
-                <div className="flex gap-2">
-                    <input
-                        type="text"
+                <div className="flex gap-2 items-end">
+                    <textarea
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => {
+                            setInput(e.target.value)
+                            // Auto-resize textarea
+                            e.target.style.height = 'auto'
+                            e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
+                        }}
+                        onKeyDown={(e) => {
+                            // Submit on Enter (without Shift)
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault()
+                                if (input.trim() && !isTyping) {
+                                    onSendMessage(input.trim())
+                                    setInput('')
+                                    e.currentTarget.style.height = 'auto'
+                                }
+                            }
+                        }}
                         placeholder={t('chat.placeholder', 'Type a message...')}
-                        className="flex-1 h-10 px-4 bg-background border border-border rounded-none text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+                        className="flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto"
                         disabled={isTyping}
+                        rows={1}
                     />
                     <Button
                         type="submit"
                         variant="pixel-primary"
                         size="icon"
+                        className="h-10 w-10 shrink-0"
                         disabled={!input.trim() || isTyping}
                     >
                         <Send className="w-4 h-4" />
