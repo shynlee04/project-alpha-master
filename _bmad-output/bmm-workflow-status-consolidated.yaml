@@ -32,14 +32,14 @@ current_workflow: "consolidated-mvp"
 # Superseded: 3 overlapping epics (12, 25, 28)
 # Backlogged: 6 non-essential epics
 current_story:
-  key: "MVP-2-chat-interface-streaming"
+  key: "MVP-3-tool-execution-files"
   epic: "MVP"
-  status: "ready-for-dev"
+  status: "in-progress"
   platform: "Platform A"
   notes: |
-    MVP-2: Chat Interface with Streaming.
-    Focus: SSE streaming, rich text rendering with diagrams, code blocks.
-    Builds on MVP-1 agent configuration.
+    MVP-3: Tool Execution - File Operations.
+    Focus: read/write tools with approval, diff preview, LocalFS→WebContainer sync.
+    Depends on MVP-2 chat streaming for tool calls.
     Requires browser E2E verification before DONE.
 
 last_completed_story:

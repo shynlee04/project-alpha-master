@@ -193,6 +193,10 @@ function StreamdownRendererComponent({
                             />
                         );
                     },
+                    // Pre element - just pass through children (code block handles rendering)
+                    pre({ children }) {
+                        return <>{children}</>;
+                    },
                     // Enhanced table styling
                     table({ children }) {
                         return (

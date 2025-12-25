@@ -380,3 +380,45 @@ useThreadsStore.subscribe((state) => {
 
     lastThreads = { ...currentThreads };
 });
+
+/**
+ * Force sync all threads to Dexie (used on page close)
+ */
+async function syncAllThreadsToDexie() {
+    const { threads } = useThreadsStore.getState();
+    try {
+        const { bulkSaveThreads } = await import('@/lib/workspace/threads-store');
+        await bulkSaveThreads(Object.values(threads));
+        console.log('[ThreadsStore] Bulk synced', Object.keys(threads).length, 'threads to Dexie');
+    } catch (error) {
+        console.warn('[ThreadsStore] Bulk sync failed:', error);
+    }
+}
+
+// Save all threads on page close/refresh and periodically
+if (typeof window !== 'undefined') {
+    // Save on page unload
+    window.addEventListener('beforeunload', () => {
+        // Use synchronous localStorage as backup (Dexie async may not complete)
+        const { threads } = useThreadsStore.getState();
+        try {
+            localStorage.setItem('via-gent-threads-backup', JSON.stringify({
+                state: { threads },
+                timestamp: Date.now()
+            }));
+            console.log('[ThreadsStore] Saved backup on unload');
+        } catch (e) {
+            console.warn('[ThreadsStore] Backup save failed:', e);
+        }
+        // Trigger async Dexie sync (best effort)
+        syncAllThreadsToDexie();
+    });
+
+    // Periodic sync every 30 seconds as safety net
+    setInterval(() => {
+        const { threads } = useThreadsStore.getState();
+        if (Object.keys(threads).length > 0) {
+            syncAllThreadsToDexie();
+        }
+    }, 30000);
+}

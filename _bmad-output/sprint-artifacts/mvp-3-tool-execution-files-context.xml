@@ -1,0 +1,58 @@
+<context story="mvp-3-tool-execution-files" created="2025-12-25T05:37:00Z">
+  <files>
+    <file path="src/lib/filesystem/sync-manager.ts">
+      <content><![CDATA[
+        // SyncManager keeps Local FS as source of truth, mirrors to WebContainer
+        // Exclusions: .git, node_modules, .DS_Store, Thumbs.db
+        // Emits sync events and tracks status (pending, error, synced)
+      ]]></content>
+    </file>
+    <file path="src/lib/workspace/WorkspaceContext.tsx">
+      <content><![CDATA[
+        // Provides directoryHandle, syncStatus, syncManagerRef, localAdapterRef, eventBus
+        // Used by IDELayout and panels; permission handling for FSA
+      ]]></content>
+    </file>
+    <file path="src/components/layout/IDELayout.tsx">
+      <content><![CDATA[
+        // Panels: FileTree, MonacoEditor, Preview, Terminal, Chat
+        // Hooks into WorkspaceContext; passes permissionState, initialSyncCompleted
+      ]]></content>
+    </file>
+    <file path="src/components/ide/AgentChatPanel.tsx">
+      <content><![CDATA[
+        // Chat UI; currently uses mocked interactions; will need real tool call surface
+        // Replaced textarea with shadcn Textarea; needs approval/diff UI when tools land
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="local instructions" path="_bmad-output/agent-instructions/dependency-libraries-usage.md">
+      Priority: search local deps first, then MCP (Context7/DeepWiki); key TanStack AI files: toolDefinition, useChat patterns; WebContainer FS guides for file ops and processes.
+    </finding>
+    <finding source="exa" query="TanStack AI toolDefinition client server example streaming tools approval">
+      Pattern: toolDefinition with server/client implementations; tool approval documented; useChat supports streaming via fetchServerSentEvents; tool architecture supports parallel tool calls.
+    </finding>
+  </research_notes>
+
+  <architecture_patterns>
+    <pattern name="LocalFS-source-of-truth" source="architecture">Always read/write via LocalFSAdapter; SyncManager mirrors to WebContainer; emit file:created/file:changed events.</pattern>
+    <pattern name="Approval-before-write" source="incident">All writes require approval overlay with diff preview; denial aborts cleanly.</pattern>
+    <pattern name="Monaco-external-update" source="editor">When external writes occur, update model and preserve cursor/selection; handle dirty tabs (prompt/merge/overwrite).</pattern>
+  </architecture_patterns>
+
+  <technical_notes>
+    <note priority="high">Implement read_file/write_file tools as TanStack AI tools with metadata (path, size, encoding, lastModified) and approval hooks.</note>
+    <note priority="high">Handle sync status: wait if syncing; fallback to WebContainer for generated files; respect permissionState.</note>
+    <note priority="medium">Emit events to update FileTree/Monaco; update Dexie/ProjectStore timestamps.</note>
+    <note priority="medium">Approval UI must show diff/preview for writes and content preview for reads.</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="@tanstack/ai" version="latest-compatible" />
+    <dependency name="@tanstack/ai-openai" version="latest-compatible" />
+    <dependency name="webcontainer-core" version="latest" />
+    <dependency name="@monaco-editor/react" version="4.7.0" />
+  </dependencies>
+</context>
