@@ -10,13 +10,15 @@ export interface LabelProps
   /** Size variant */
   size?: "sm" | "md" | "lg"
   /** State variant */
-  variant?: "default" | "error" | "success"
+  variant?: "default" | "error" | "success" | "warning"
   /** Required indicator */
   required?: boolean
   /** Translation key for label text */
   labelKey?: string
   /** Translation namespace */
   namespace?: string
+  /** ID of form element this label is associated with */
+  htmlFor?: string
 }
 
 const labelVariants = {
@@ -29,13 +31,14 @@ const labelVariants = {
     default: "text-neutral-600",
     error: "text-error-500",
     success: "text-success-500",
+    warning: "text-warning-500",
   },
 }
 
 const Label = React.forwardRef<
   HTMLLabelElement,
   LabelProps
->(({ className, size = "md", variant = "default", required, labelKey, namespace, ...props }, ref) => {
+>(({ className, size = "md", variant = "default", required, labelKey, namespace, htmlFor, ...props }, ref) => {
   const { t } = useTranslation(namespace || "translation")
 
   const labelContent = labelKey ? t(labelKey) : props.children
@@ -44,6 +47,7 @@ const Label = React.forwardRef<
     <LabelPrimitive.Root
       ref={ref}
       data-slot="label"
+      htmlFor={htmlFor}
       className={cn(
         "leading-none font-medium select-none",
         labelVariants.size[size],
