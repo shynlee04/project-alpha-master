@@ -82,7 +82,7 @@ export function WelcomeMessage({
     >
       {/* Icon */}
       <div className="mb-6">
-        <div className="w-20 h-20 rounded-none bg-primary/10 flex items-center justify-center shadow-[2px_2px_0px_rgba(194,65,12,0.2)]">
+        <div className="w-20 h-20 rounded-none bg-primary/10 flex items-center justify-center shadow-sm">
           <Sparkles className="w-10 h-10 text-primary" />
         </div>
       </div>
@@ -105,7 +105,7 @@ export function WelcomeMessage({
             "px-8 py-4 rounded-none font-bold text-lg",
             "bg-primary text-primary-foreground",
             "hover:scale-105 transition-transform",
-            "shadow-[2px_2px_0px_rgba(194,65,12,0.2)]",
+            "shadow-sm",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           )}
         >

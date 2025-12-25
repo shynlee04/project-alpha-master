@@ -15,14 +15,16 @@ import '@/styles/design-tokens.css'
 
 /**
  * IconSidebar - VS Code-style activity bar with collapsible content panel
- * 
+ *
  * Features:
- * - 48px activity bar with icons
- * - 280px collapsible content panel
+ * - Responsive activity bar with icons (mobile: 40px, tablet+: 48px)
+ * - Responsive collapsible content panel (mobile: 200px, tablet: 240px, desktop: 280px)
  * - Keyboard shortcut support (Ctrl+B to toggle)
  * - LocalStorage persistence
  * - Smooth animations
  * - 8-bit pixel aesthetic
+ * - Mobile-first responsive design (P1.7)
+ * - Touch-friendly button sizes (minimum 44x44px for mobile)
  */
 
 // Panel IDs
@@ -109,7 +111,7 @@ export function SidebarProvider({
     )
 }
 
-// Activity Bar (48px icon column)
+// Activity Bar (responsive: mobile 40px, tablet+ 48px)
 export function ActivityBar({ className }: { className?: string }) {
     const { t } = useTranslation()
     const { activePanel, setActivePanel, isCollapsed, toggleCollapsed } = useSidebar()
@@ -193,7 +195,10 @@ function ActivityBarItem({
                     ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             )}
-            style={{ width: 'var(--sidebar-activity-bar)', height: '40px' }}
+            style={{
+                width: 'var(--sidebar-activity-bar)',
+                height: 'var(--sidebar-activity-bar-height)'
+            }}
         >
             {/* Active indicator bar */}
             {isActive && (
@@ -204,7 +209,7 @@ function ActivityBarItem({
     )
 }
 
-// Sidebar Content Panel (280px, collapsible)
+// Sidebar Content Panel (responsive: mobile 200px, tablet 240px, desktop 280px, collapsible)
 export function SidebarContent({
     children,
     className
@@ -234,7 +239,7 @@ export function SidebarContent({
     )
 }
 
-// Sidebar Header
+// Sidebar Header (responsive: mobile h-8, tablet+ h-10)
 export function SidebarHeader({
     title,
     actions
@@ -243,8 +248,8 @@ export function SidebarHeader({
     actions?: React.ReactNode
 }) {
     return (
-        <div className="flex items-center justify-between h-10 px-4 border-b border-border bg-secondary/30">
-            <span className="text-xs font-pixel uppercase tracking-wider text-muted-foreground">
+        <div className="flex items-center justify-between h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b border-border bg-secondary/30">
+            <span className="text-xs md:text-sm font-pixel uppercase tracking-wider text-muted-foreground">
                 {title}
             </span>
             {actions && (

@@ -103,10 +103,79 @@
   
   /* Sidebar dimensions */
   --sidebar-activity-bar: 48px;          /* Activity bar width */
+  --sidebar-activity-bar-height: 44px;     /* Touch-friendly button height (mobile: 44px, tablet+: 48px) */
   --sidebar-content-panel: 280px;         /* Sidebar content panel width */
+  --sidebar-content-panel-mobile: 200px;    /* Mobile sidebar width */
+  --sidebar-content-panel-tablet: 240px;  /* Tablet sidebar width */
+  --sidebar-content-panel-lg: 320px;       /* Large desktop sidebar width */
   
   /* Status bar */
   --status-bar-height: 24px;             /* Status bar height (h-6) */
+  
+  /* ===== Responsive Breakpoints ===== */
+  /* Breakpoint definitions for responsive design */
+  --breakpoint-mobile: 640px;            /* Mobile devices */
+  --breakpoint-tablet: 768px;            /* Tablets */
+  --breakpoint-desktop: 1024px;           /* Desktop */
+  --breakpoint-lg: 1280px;                /* Large desktop */
+  
+  /* ===== Responsive Typography ===== */
+  /* Fluid font sizes that scale with viewport */
+  --font-size-mobile: 14px;             /* Mobile base font size */
+  --font-size-tablet: 15px;             /* Tablet base font size */
+  --font-size-desktop: 16px;            /* Desktop base font size */
+  --font-size-lg: 17px;                 /* Large desktop font size */
+  
+  /* ===== Responsive Spacing ===== */
+  /* Adaptive spacing for different screen sizes */
+  --spacing-mobile: 0.5rem;              /* Mobile spacing */
+  --spacing-tablet: 0.75rem;             /* Tablet spacing */
+  --spacing-desktop: 1rem;                 /* Desktop spacing */
+  --spacing-lg: 1.25rem;                  /* Large desktop spacing */
+}
+
+/* =============================================================================
+   RESPONSIVE MEDIA QUERIES (P1.7)
+   ============================================================================= */
+
+/* Mobile breakpoint: < 640px */
+@media (max-width: 639px) {
+  :root {
+     /* Mobile sidebar dimensions */
+     --sidebar-activity-bar: 40px;
+     --sidebar-activity-bar-height: 44px;
+     --sidebar-content-panel: var(--sidebar-content-panel-mobile);
+  }
+}
+
+/* Tablet breakpoint: 640px - 767px */
+@media (min-width: 640px) and (max-width: 767px) {
+  :root {
+     /* Tablet sidebar dimensions */
+     --sidebar-activity-bar: 48px;
+     --sidebar-activity-bar-height: 48px;
+     --sidebar-content-panel: var(--sidebar-content-panel-tablet);
+  }
+}
+
+/* Desktop breakpoint: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+     /* Desktop sidebar dimensions */
+     --sidebar-activity-bar: 48px;
+     --sidebar-activity-bar-height: 48px;
+     --sidebar-content-panel: 280px;
+  }
+}
+
+/* Large desktop breakpoint: >= 1024px */
+@media (min-width: 1024px) {
+  :root {
+     /* Large desktop sidebar dimensions */
+     --sidebar-activity-bar: 48px;
+     --sidebar-activity-bar-height: 48px;
+     --sidebar-content-panel: var(--sidebar-content-panel-lg);
+  }
 }
 
 /* =============================================================================

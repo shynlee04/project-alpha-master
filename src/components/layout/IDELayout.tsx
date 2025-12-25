@@ -167,10 +167,12 @@ export function IDELayout(): React.JSX.Element {
           />
         )}
 
-        <div className="flex-1 flex overflow-hidden">
+        {/* P1.7: Responsive main content area with mobile-first layout */}
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
           {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}
+          {/* P1.7: Hide sidebar on mobile, show on tablet+ */}
           <ActivityBar />
-          <SidebarContent>
+          <SidebarContent className="hidden md:flex">
             <SidebarPanelRenderer
               selectedFilePath={selectedFilePath}
               onFileSelect={handleFileSelect}
@@ -190,8 +192,9 @@ export function IDELayout(): React.JSX.Element {
                   <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
                     <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
                       <Card className="h-full rounded-none border-0 bg-background">
-                        <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                          <CardTitle className="text-sm font-semibold text-foreground">Editor</CardTitle>
+                        {/* P1.7: Responsive header height */}
+                        <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                          <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-1 min-h-0">
                           <MonacoEditor
@@ -204,10 +207,11 @@ export function IDELayout(): React.JSX.Element {
                       </Card>
                     </ResizablePanel>
                     <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                    {/* P1.7: Responsive header height and panel sizing */}
                     <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
                       <Card className="h-full rounded-none border-0 bg-background">
-                        <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                          <CardTitle className="text-sm font-semibold text-foreground">Preview</CardTitle>
+                        <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                          <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Preview</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-1 min-h-0">
                           <PreviewPanel previewUrl={previewUrl} port={previewPort} />
@@ -218,10 +222,11 @@ export function IDELayout(): React.JSX.Element {
                 </ResizablePanel>
                 <ResizableHandle withHandle orientation="horizontal" className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
                 {/* Terminal Panel */}
+                {/* P1.7: Responsive header height and panel sizing */}
                 <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-sm font-semibold text-foreground">Terminal</CardTitle>
+                    <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                      <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Terminal</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
                       <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
@@ -235,10 +240,11 @@ export function IDELayout(): React.JSX.Element {
             {isChatVisible && (
               <>
                 <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                {/* P1.7: Responsive header height and chat panel sizing */}
                 <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-10 px-4 py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-sm font-semibold text-foreground">Chat</CardTitle>
+                    <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                      <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
                       <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
