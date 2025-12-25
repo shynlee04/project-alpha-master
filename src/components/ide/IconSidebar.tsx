@@ -11,6 +11,7 @@ import {
     GitBranch
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import '@/styles/design-tokens.css'
 
 /**
  * IconSidebar - VS Code-style activity bar with collapsible content panel
@@ -128,9 +129,10 @@ export function ActivityBar({ className }: { className?: string }) {
     return (
         <div
             className={cn(
-                "flex flex-col w-12 bg-background border-r border-border h-full",
+                "flex flex-col bg-background border-r border-border h-full",
                 className
             )}
+            style={{ width: 'var(--sidebar-activity-bar)' }}
         >
             {/* Top icons */}
             <div className="flex-1 flex flex-col py-2">
@@ -186,11 +188,12 @@ function ActivityBarItem({
             onClick={onClick}
             title={label}
             className={cn(
-                "relative flex items-center justify-center w-12 h-10 transition-colors group",
+                "relative flex items-center justify-center transition-colors group",
                 isActive
                     ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             )}
+            style={{ width: 'var(--sidebar-activity-bar)', height: '40px' }}
         >
             {/* Active indicator bar */}
             {isActive && (
@@ -215,14 +218,16 @@ export function SidebarContent({
         <div
             className={cn(
                 "bg-card border-r border-border overflow-hidden transition-all duration-300 ease-in-out",
-                isCollapsed ? "w-0" : "w-[280px]",
+                isCollapsed && "w-0",
                 className
             )}
+            style={!isCollapsed ? { width: 'var(--sidebar-content-panel)' } : undefined}
         >
             <div className={cn(
-                "w-[280px] h-full flex flex-col",
+                "h-full flex flex-col",
                 isCollapsed && "invisible"
-            )}>
+            )}
+            style={{ width: 'var(--sidebar-content-panel)' }}>
                 {children}
             </div>
         </div>

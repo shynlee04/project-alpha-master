@@ -1,24 +1,24 @@
 /**
  * @fileoverview IDE StatusBar Component
  * @module components/ide/StatusBar
- * 
- * @epic Epic-28 Story 28-18
+ *
+ * @epic Epic 23 Story P1.1
  * @integrates Epic-10 Story 10-7 - Subscribes to sync events
  * @integrates Epic-25 Story 25-1 - Will display agent status
  * @integrates Epic-26 Story 26-5 - Will show provider connection
- * 
+ *
  * VS Code-style footer status bar displaying:
  * - WebContainer boot status
  * - File sync status with progress
  * - LLM provider connection (mock)
  * - Cursor position (Ln/Col)
  * - File encoding and type
- * 
+ *
  * @roadmap
  * - Epic 25: Add AgentStatusSegment with token counter
  * - Epic 26: Wire ProviderStatus to real API key validation
  * - Epic 28: Add git branch segment when Epic 7 is complete
- * 
+ *
  * @example
  * ```tsx
  * // In IDELayout.tsx
@@ -38,6 +38,7 @@ import { SyncStatusSegment } from '@/components/ide/statusbar/SyncStatusSegment'
 import { ProviderStatus } from '@/components/ide/statusbar/ProviderStatus';
 import { CursorPosition } from '@/components/ide/statusbar/CursorPosition';
 import { FileTypeIndicator } from '@/components/ide/statusbar/FileTypeIndicator';
+import '@/styles/design-tokens.css';
 
 // ============================================================================
 // Types
@@ -54,10 +55,10 @@ interface StatusBarProps extends React.HTMLAttributes<HTMLElement> {
 
 /**
  * StatusBar - VS Code-style footer status bar
- * 
+ *
  * Fixed at bottom of viewport with primary color background.
- * Height: 24px (h-6) matching VS Code.
- * 
+ * Height: 24px (var(--status-bar-height)) matching VS Code.
+ *
  * Layout:
  * - Left region: WebContainer, Agent, Sync, Provider status
  * - Right region: Cursor position, Encoding, File type
@@ -66,10 +67,11 @@ export function StatusBar({ className, onSyncRetry, ...props }: StatusBarProps) 
     return (
         <footer
             className={cn(
-                'h-6 bg-primary flex items-center justify-between',
+                'bg-primary flex items-center justify-between',
                 'select-none shrink-0',
                 className
             )}
+            style={{ height: 'var(--status-bar-height)' }}
             role="status"
             aria-label="IDE Status Bar"
             {...props}

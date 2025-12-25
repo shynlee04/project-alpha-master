@@ -187,7 +187,7 @@ export function AgentConfigDialog({
     const [providerId, setProviderId] = useState<string>('openrouter')
     const [model, setModel] = useState('')
     const [apiKey, setApiKey] = useState('')
-    
+
     // Advanced settings state
     const [customBaseURL, setCustomBaseURL] = useState('')
     const [customModelId, setCustomModelId] = useState('')
@@ -219,6 +219,44 @@ export function AgentConfigDialog({
         credentialVault.initialize().catch(console.error)
     }, [])
 
+    // Load models from provider API or fallback
+    // CC-2025-12-26: Accept optional direct API key to avoid race condition
+    // NOTE: This must be defined BEFORE the useEffect that uses it
+    const loadModels = useCallback(async (provider: string, directApiKey?: string) => {
+        setIsLoadingModels(true)
+        try {
+            // Use direct API key if provided, otherwise fetch from vault
+            const apiKeyVal = directApiKey ?? await credentialVault.getCredentials(provider)
+            console.log('[AgentConfigDialog] loadModels called for', provider, 'hasKey:', !!apiKeyVal)
+
+            if (!apiKeyVal) {
+                console.log('[AgentConfigDialog] No API key, using fallback models')
+                if (provider === 'openrouter') {
+                    const freeModels = modelRegistry.getFreeModels()
+                    setModels(freeModels)
+                } else {
+                    setModels(modelRegistry.getDefaultModels(provider))
+                }
+                return
+            }
+
+            const fetchedModels = await modelRegistry.getModels(provider, apiKeyVal)
+            console.log('[AgentConfigDialog] Fetched', fetchedModels.length, 'models from API')
+            setModels(fetchedModels)
+        } catch (error) {
+            console.warn('[AgentConfigDialog] Failed to fetch models, using fallback:', error)
+            // Fallback to free models for OpenRouter
+            if (provider === 'openrouter') {
+                const freeModels = modelRegistry.getFreeModels()
+                setModels(freeModels)
+            } else {
+                setModels(modelRegistry.getDefaultModels(provider))
+            }
+        } finally {
+            setIsLoadingModels(false)
+        }
+    }, [])
+
     // Check for stored credentials when provider changes
     useEffect(() => {
         if (!open || !providerId) return
@@ -229,7 +267,7 @@ export function AgentConfigDialog({
         credentialVault.hasCredentials(providerId)
             .then(async (hasKey) => {
                 setApiKey(hasKey ? '••••' : '')
-                
+
                 // Load models if we have a key
                 if (hasKey) {
                     await loadModels(providerId)
@@ -245,28 +283,7 @@ export function AgentConfigDialog({
             })
             .catch(console.error)
             .finally(() => setIsCheckingKey(false))
-    }, [providerId, open])
-
-    // Load models from provider API or fallback
-    const loadModels = useCallback(async (provider: string) => {
-        setIsLoadingModels(true)
-        try {
-            const apiKeyVal = await credentialVault.getCredentials(provider)
-            const fetchedModels = await modelRegistry.getModels(provider, apiKeyVal ?? undefined)
-            setModels(fetchedModels)
-        } catch (error) {
-            console.warn('[AgentConfigDialog] Failed to fetch models, using fallback:', error)
-            // Fallback to free models for OpenRouter
-            if (provider === 'openrouter') {
-                const freeModels = modelRegistry.getFreeModels()
-                setModels(freeModels)
-            } else {
-                setModels(modelRegistry.getDefaultModels(provider))
-            }
-        } finally {
-            setIsLoadingModels(false)
-        }
-    }, [])
+    }, [providerId, open, loadModels])
 
     // Validate form
     const validateForm = useCallback((): boolean => {
@@ -297,13 +314,15 @@ export function AgentConfigDialog({
         }
 
         setIsSavingKey(true)
+        const keyToSave = apiKey.trim()
         try {
-            await credentialVault.storeCredentials(providerId, apiKey.trim())
+            await credentialVault.storeCredentials(providerId, keyToSave)
             setApiKey('••••')
             toast.success(t('agents.config.apiKey.saveSuccess', 'API key saved successfully'))
-            
-            // Reload models with new key
-            await loadModels(providerId)
+
+            // Reload models with the key we just saved (avoid race condition)
+            // CC-2025-12-26: Pass API key directly instead of re-fetching from vault
+            await loadModels(providerId, keyToSave)
         } catch (error) {
             console.error('[AgentConfigDialog] Failed to save API key:', error)
             toast.error(t('agents.config.apiKey.saveFailed', 'Failed to save API key'))
@@ -378,7 +397,7 @@ export function AgentConfigDialog({
             return acc
         }, {} as Record<string, string>)
 
-        onSubmit({
+        const agentData = {
             name: name.trim(),
             role: role.trim() || 'Assistant',
             status: 'offline',
@@ -389,7 +408,10 @@ export function AgentConfigDialog({
             customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
             customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
             enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
-        })
+        }
+
+        console.log('[AgentConfigDialog] handleSubmit calling onSubmit with:', agentData)
+        onSubmit(agentData)
 
         // Show success toast
         toast.success(agent
@@ -433,7 +455,7 @@ export function AgentConfigDialog({
         if (!providerConfig) return null
 
         const hasApiKey = apiKey !== '' && apiKey !== '••••'
-        
+
         return (
             <div className="flex items-center gap-2 text-xs">
                 {hasApiKey ? (

@@ -4,12 +4,13 @@
  *
  * Main IDE layout component that orchestrates all IDE panels.
  * Uses react-resizable-panels for a VS Code-like layout.
- * 
- * @epic Epic-28 Story 28-14
- * @integration Wires IconSidebar (Story 28-5) into actual layout
+ *
+ * @epic Epic-23 Story P1.1
+ * @integration Design tokens implementation for consistent styling
  */
 
 import { useState, useEffect, useRef } from 'react';
+import '@/styles/design-tokens.css';
 import {
   ResizablePanelGroup,
   ResizablePanel,

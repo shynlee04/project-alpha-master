@@ -46,9 +46,12 @@ export function AgentsPanel({
     }, [])
 
     const handleConfigSubmit = useCallback((data: any) => {
+        console.log('[AgentsPanel] handleConfigSubmit called with:', data)
         if (editingAgent) {
+            console.log('[AgentsPanel] Updating existing agent:', editingAgent.id)
             updateAgent(editingAgent.id, data)
         } else {
+            console.log('[AgentsPanel] Adding new agent')
             addAgent(data)
         }
     }, [editingAgent, addAgent, updateAgent])

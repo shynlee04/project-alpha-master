@@ -92,6 +92,21 @@
   --chart-3: 142 71% 45%;              /* Green */
   --chart-4: 280 65% 60%;              /* Purple */
   --chart-5: 38 92% 50%;               /* Amber */
+  
+  /* ===== Layout Tokens ===== */
+  /* Panel sizes (percentages for resizable panels) */
+  --panel-editor: 70%;                   /* Main editor panel */
+  --panel-editor-monaco: 60%;            /* Monaco editor within editor */
+  --panel-preview: 40%;                  /* Preview panel */
+  --panel-terminal: 30%;                 /* Terminal panel */
+  --panel-chat: 25%;                    /* Chat panel */
+  
+  /* Sidebar dimensions */
+  --sidebar-activity-bar: 48px;          /* Activity bar width */
+  --sidebar-content-panel: 280px;         /* Sidebar content panel width */
+  
+  /* Status bar */
+  --status-bar-height: 24px;             /* Status bar height (h-6) */
 }
 
 /* =============================================================================
