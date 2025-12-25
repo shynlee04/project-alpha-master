@@ -12,13 +12,12 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { useTranslation } from "react-i18next"
 
 /**
  * Input component props interface
  */
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
     VariantProps<typeof inputVariants> {
   /** Left icon to display */
   leftIcon?: React.ReactNode
@@ -70,7 +69,6 @@ const inputVariants = cva(
  */
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, size, state, leftIcon, rightIcon, type = "text", ...props }, ref) => {
-    const { t } = useTranslation()
 
     return (
       <div className="relative flex items-center w-full">
@@ -88,7 +86,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className
           )}
           ref={ref}
-          {...props}
+          {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
         />
         {rightIcon && (
           <div className="absolute right-3 z-10 flex items-center justify-center text-neutral-500 pointer-events-none">

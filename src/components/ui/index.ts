@@ -31,3 +31,9 @@ export { Breadcrumbs } from './breadcrumbs';
 export { EmptyState } from './empty-state';
 export { ProgressIndicator } from './progress-indicator';
 export { WelcomeMessage } from './welcome-message';
+
+// VIA-GENT Information Architecture Components (P1.3)
+export { ContextTooltip } from './context-tooltip';
+export { CollapsibleSection } from './collapsible-section';
+export { KeyboardShortcutsOverlay } from './keyboard-shortcuts-overlay';
+export { FeatureDiscoveryGuide } from './feature-discovery-guide';
