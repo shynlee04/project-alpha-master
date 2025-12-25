@@ -206,7 +206,13 @@ export function IDELayout(): React.JSX.Element {
                         </CardContent>
                       </Card>
                     </ResizablePanel>
-                    <ResizableHandle withHandle orientation="vertical" className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                    <ResizableHandle
+                      withHandle
+                      orientation="vertical"
+                      className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                      aria-label="Resize editor and preview panels"
+                      aria-orientation="vertical"
+                    />
                     {/* P1.7: Responsive header height and panel sizing */}
                     <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
                       <Card className="h-full rounded-none border-0 bg-background">
@@ -220,7 +226,13 @@ export function IDELayout(): React.JSX.Element {
                     </ResizablePanel>
                   </ResizablePanelGroup>
                 </ResizablePanel>
-                <ResizableHandle withHandle orientation="horizontal" className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize" />
+                <ResizableHandle
+                  withHandle
+                  orientation="horizontal"
+                  className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                  aria-label="Resize editor and terminal panels"
+                  aria-orientation="horizontal"
+                />
                 {/* Terminal Panel */}
                 {/* P1.7: Responsive header height and panel sizing */}
                 <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
@@ -239,7 +251,12 @@ export function IDELayout(): React.JSX.Element {
             {/* Chat Panel */}
             {isChatVisible && (
               <>
-                <ResizableHandle withHandle className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize" />
+                <ResizableHandle
+                  withHandle
+                  className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                  aria-label="Resize chat panel"
+                  aria-orientation="vertical"
+                />
                 {/* P1.7: Responsive header height and chat panel sizing */}
                 <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
                   <Card className="h-full rounded-none border-0 bg-background">

@@ -48,6 +48,32 @@ export function FileTreeItem({
         }
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        e.stopPropagation();
+        switch (e.key) {
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                if (isDirectory) {
+                    onToggle(node);
+                } else {
+                    onSelect(node);
+                }
+                break;
+            case 'ArrowRight':
+            case 'ArrowLeft':
+                if (isDirectory) {
+                    e.preventDefault();
+                    onToggle(node);
+                }
+                break;
+            case 'Home':
+            case 'End':
+                e.preventDefault();
+                break;
+        }
+    };
+
     const handleContextMenuEvent = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -57,12 +83,15 @@ export function FileTreeItem({
     return (
         <div
             role="treeitem"
+            aria-label={`${isDirectory ? 'Folder' : 'File'}: ${node.name}`}
             aria-selected={isSelected}
             aria-expanded={isDirectory ? isExpanded : undefined}
+            aria-level={depth + 1}
             tabIndex={isFocused ? 0 : -1}
             className="outline-none"
             onClick={handleClick}
             onContextMenu={handleContextMenuEvent}
+            onKeyDown={handleKeyDown}
         >
             <div
                 className={`
@@ -117,12 +146,20 @@ export function FileTreeItem({
                         {isError && (
                             <button
                                 type="button"
-                                className="text-red-400 hover:text-red-300 transition-colors"
+                                className="text-red-400 hover:text-red-300 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+                                aria-label={fileSyncStatus.errorMessage || 'Sync error'}
                                 title={fileSyncStatus.errorMessage || 'Sync error'}
                                 onClick={(e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
                                     setIsErrorDetailsOpen((prev) => !prev)
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsErrorDetailsOpen((prev) => !prev);
+                                    }
                                 }}
                             >
                                 <AlertTriangle size={14} />
@@ -134,31 +171,50 @@ export function FileTreeItem({
 
             {isError && isErrorDetailsOpen && (
                 <div
+                    role="alert"
+                    aria-live="polite"
+                    aria-atomic="true"
                     className="pl-10 pr-3 py-2 text-xs text-foreground bg-card/60 border-b border-border/40"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="text-red-300 break-words">
                         {fileSyncStatus?.errorMessage ?? 'Unknown error'}
                     </div>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 flex items-center gap-2" role="group" aria-label="Error actions">
                         <button
                             type="button"
-                            className="px-2 py-1 rounded bg-accent hover:bg-accent/80 text-foreground"
+                            className="px-2 py-1 rounded bg-accent hover:bg-accent/80 text-foreground focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                            aria-label="Retry file sync"
                             onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
                                 onRetryFile?.(node.path)
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onRetryFile?.(node.path);
+                                }
                             }}
                         >
                             Retry
                         </button>
                         <button
                             type="button"
-                            className="px-2 py-1 rounded bg-muted hover:bg-muted/80 text-muted-foreground"
+                            className="px-2 py-1 rounded bg-muted hover:bg-muted/80 text-muted-foreground focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                            aria-label="Close error details"
                             onClick={(e) => {
                                 e.preventDefault()
                                 e.stopPropagation()
                                 setIsErrorDetailsOpen(false)
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setIsErrorDetailsOpen(false);
+                                }
                             }}
                         >
                             Close

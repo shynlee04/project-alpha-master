@@ -188,12 +188,15 @@ function ActivityBarItem({
     return (
         <button
             onClick={onClick}
+            aria-label={label}
+            aria-current={isActive ? 'page' : undefined}
             title={label}
             className={cn(
                 "relative flex items-center justify-center transition-colors group",
                 isActive
                     ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary",
+                "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
             )}
             style={{
                 width: 'var(--sidebar-activity-bar)',
@@ -202,9 +205,9 @@ function ActivityBarItem({
         >
             {/* Active indicator bar */}
             {isActive && (
-                <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-primary" />
+                <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-primary" aria-hidden="true" />
             )}
-            <Icon className="w-5 h-5" />
+            <Icon className="w-5 h-5" aria-hidden="true" />
         </button>
     )
 }
