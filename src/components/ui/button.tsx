@@ -1,71 +1,163 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+/**
+ * Button Component
+ * 
+ * EPIC_ID: Epic-23
+ * STORY_ID: 23-1
+ * CREATED_AT: 2025-12-25T16:27:00Z
+ * 
+ * Production-ready Button component following 8-bit design system.
+ * Implements all variants, sizes, states with accessibility and i18n support.
+ */
 
-import { cn } from "@/lib/utils"
+import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot'
+import { Loader2 } from 'lucide-react'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
+/**
+ * Button component props interface
+ */
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Visual variant of the button */
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive'
+  /** Size variant of the button */
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  /** Icon-only mode (no text content) */
+  iconOnly?: boolean
+  /** Loading state with spinner */
+  loading?: boolean
+  /** Icon to display on the left side */
+  leftIcon?: React.ReactNode
+  /** Icon to display on the right side */
+  rightIcon?: React.ReactNode
+  /** Render as child element (for Link, etc.) */
+  asChild?: boolean
+}
+
+/**
+ * CVA variants for Button component
+ * Uses design tokens from 8-bit design system
+ */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  // Base styles
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-medium transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary-500/50',
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-        // VIA-GENT Pixel Button Variants
-        pixel:
-          "bg-secondary text-secondary-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)] hover:bg-accent hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-pixel",
-        "pixel-primary":
-          "bg-primary text-primary-foreground shadow-[2px_2px_0px_0px_rgba(194,65,12,1)] hover:bg-primary/90 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(194,65,12,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-pixel",
-        "pixel-outline":
-          "border-2 border-primary bg-transparent text-primary shadow-[2px_2px_0px_0px_rgba(194,65,12,0.5)] hover:bg-primary/10 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(194,65,12,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-pixel",
-        "pixel-ghost":
-          "text-muted-foreground hover:text-primary hover:bg-primary/10 font-pixel",
+        primary: 'bg-primary-500 text-neutral-950 hover:bg-primary-600 active:bg-primary-700 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        secondary: 'bg-neutral-800 text-neutral-100 border border-neutral-700 hover:bg-neutral-700 active:bg-neutral-900 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        ghost: 'text-neutral-100 hover:bg-neutral-800 active:bg-neutral-900 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        outline: 'border-2 border-primary-500 text-primary-500 bg-transparent hover:bg-primary-500/10 active:bg-primary-500/20 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        destructive: 'bg-error-500 text-white hover:bg-error-600 active:bg-error-700 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 px-6 has-[>svg]:px-4",
-        icon: "size-9",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
+        sm: 'h-8 px-3 text-sm min-h-[32px]',
+        md: 'h-10 px-4 text-base min-h-[40px]',
+        lg: 'h-12 px-6 text-lg min-h-[48px]',
+        xl: 'h-14 px-8 text-xl min-h-[56px]',
+      },
+      iconOnly: {
+        true: 'w-12 h-12 min-w-[48px] min-h-[48px]',
+        false: '',
       },
     },
     defaultVariants: {
-      variant: "default",
-      size: "default",
+      variant: 'primary',
+      size: 'md',
+      iconOnly: false,
     },
   }
 )
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
+/**
+ * Button Component
+ * 
+ * A production-ready button component following 8-bit design system.
+ * Supports multiple variants, sizes, loading states, and icon positions.
+ * 
+ * @example
+ * ```tsx
+ * <Button variant="primary" size="md">Click me</Button>
+ * <Button variant="secondary" size="lg" leftIcon={<Icon />}>With Icon</Button>
+ * <Button loading>Loading...</Button>
+ * <Button iconOnly aria-label="Close"><X /></Button>
+ * ```
+ */
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant = 'primary',
+      size = 'md',
+      iconOnly = false,
+      loading = false,
+      leftIcon,
+      rightIcon,
+      asChild = false,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    const { t } = useTranslation()
 
-  return (
-    <Comp
-      data-slot="button"
-      data-variant={variant}
-      data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
-}
+    // Get translation key for button text
+    const buttonText = typeof children === 'string' 
+      ? t(`button.${variant}`, { defaultValue: children as string })
+      : children
 
-export { Button, buttonVariants }
+    // Loading spinner animation
+    const Spinner = loading ? (
+      <Loader2 
+        className="animate-spin" 
+        size={size === 'sm' ? 16 : size === 'md' ? 20 : size === 'lg' ? 24 : 28}
+        aria-hidden="true"
+      />
+    ) : null
+
+    // Determine if button should be disabled (loading or explicitly disabled)
+    const isDisabled = disabled || loading
+
+    // Render content based on loading state
+    const buttonContent = loading ? (
+      <span className="flex items-center gap-2">
+        {Spinner}
+        <span>{t('button.loading', { defaultValue: 'Loading...' })}</span>
+      </span>
+    ) : (
+      <span className="flex items-center gap-2">
+        {leftIcon}
+        {buttonText}
+        {rightIcon}
+      </span>
+    )
+
+    // ARIA attributes for icon-only buttons
+    const ariaProps = iconOnly && !loading
+      ? {
+          'aria-label': typeof children === 'string' ? children : 'Button',
+          role: 'button',
+        }
+      : {}
+
+    // Render as child element or button
+    const Comp = asChild ? Slot : 'button'
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, iconOnly }), className)}
+        ref={ref}
+        disabled={isDisabled}
+        {...ariaProps}
+        {...props}
+      >
+        {buttonContent}
+      </Comp>
+    )
+  }
+)
+
+Button.displayName = 'Button'

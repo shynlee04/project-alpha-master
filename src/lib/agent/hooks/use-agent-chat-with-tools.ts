@@ -38,6 +38,11 @@ export interface UseAgentChatWithToolsOptions {
     terminalTools?: AgentTerminalTools | null;
     /** Event bus for emitting tool events */
     eventBus?: WorkspaceEventEmitter | null;
+    // OpenAI Compatible Provider support
+    /** Custom base URL for openai-compatible providers */
+    customBaseURL?: string;
+    /** Custom headers for openai-compatible providers */
+    customHeaders?: Record<string, string>;
 }
 
 /**
@@ -155,6 +160,8 @@ export function useAgentChatWithTools(
         fileTools = null,
         terminalTools = null,
         eventBus = null,
+        customBaseURL,
+        customHeaders,
     } = options;
 
     // Track tool calls
@@ -193,10 +200,10 @@ export function useAgentChatWithTools(
     }, [toolsAvailable, toolFactoryOptions]);
 
     // Store latest config in ref to avoid stale closures in dynamic options callback
-    const configRef = useRef({ providerId, modelId, apiKey });
+    const configRef = useRef({ providerId, modelId, apiKey, customBaseURL, customHeaders });
     useEffect(() => {
-        configRef.current = { providerId, modelId, apiKey };
-    }, [providerId, modelId, apiKey]);
+        configRef.current = { providerId, modelId, apiKey, customBaseURL, customHeaders };
+    }, [providerId, modelId, apiKey, customBaseURL, customHeaders]);
 
     // Create connection with dynamic body data using the supported callback pattern
     // This allows the connection to read the latest apiKey at request time without recreating the adapter
@@ -211,7 +218,9 @@ export function useAgentChatWithTools(
                     providerId: current.providerId,
                     modelId: current.modelId,
                     hasApiKey: !!current.apiKey,
-                    apiKeyLength: current.apiKey?.length
+                    apiKeyLength: current.apiKey?.length,
+                    customBaseURL: current.customBaseURL,
+                    hasCustomHeaders: !!current.customHeaders && Object.keys(current.customHeaders).length > 0,
                 });
                 return {
                     headers: {
@@ -221,7 +230,10 @@ export function useAgentChatWithTools(
                     body: {
                         providerId: current.providerId,
                         modelId: current.modelId,
-                        apiKey: current.apiKey
+                        apiKey: current.apiKey,
+                        // OpenAI Compatible Provider support
+                        customBaseURL: current.customBaseURL,
+                        customHeaders: current.customHeaders,
                     }
                 };
             }

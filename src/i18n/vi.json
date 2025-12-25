@@ -269,7 +269,28 @@
       "testConnection.error": "Lỗi kiểm tra kết nối",
       "freeModels": "(Có mô hình miễn phí)",
       "modelFree": "(Miễn phí)",
-      "modelLoading": "Đang tải mô hình..."
+      "modelLoading": "Đang tải mô hình...",
+      "openaiCompatible": {
+        "title": "Nhà cung cấp tương thích OpenAI",
+        "description": "Kết nối với bất kỳ API tương thích OpenAI",
+        "baseUrl": "URL cơ sở",
+        "baseUrlPlaceholder": "http://localhost:1234/v1",
+        "baseUrlRequired": "URL cơ sở là bắt buộc",
+        "baseUrlHint": "URL điểm cuối API (ví dụ: http://localhost:1234/v1 cho LM Studio)",
+        "headers": "Header tùy chỉnh",
+        "addHeader": "Thêm Header",
+        "removeHeader": "Xóa",
+        "headerKey": "Khóa",
+        "headerValue": "Giá trị",
+        "modelId": "ID mô hình",
+        "modelIdPlaceholder": "ví dụ: llama-3.1-8b hoặc gpt-4o",
+        "fetchModels": "Tải mô hình",
+        "fetchModelsFailed": "Không thể tải mô hình từ điểm cuối",
+        "localProviderNote": "Với nhà cung cấp cục bộ như LM Studio hoặc Ollama, khóa API có thể không cần thiết.",
+        "testEndpoint": "Kiểm tra điểm cuối",
+        "endpointValid": "Điểm cuối có thể truy cập",
+        "endpointInvalid": "Không thể kết nối đến điểm cuối"
+      }
     }
   },
   "actions": {
@@ -383,5 +404,13 @@
     "startChatting": "Bắt đầu trò chuyện với trợ lý AI",
     "typeMessage": "Nhập tin nhắn...",
     "diagramError": "Lỗi Biểu đồ"
+  },
+  "button": {
+    "primary": "Chính",
+    "secondary": "Phụ",
+    "ghost": "Ma",
+    "outline": "Viền",
+    "destructive": "Xóa",
+    "loading": "Đang tải..."
   }
 }

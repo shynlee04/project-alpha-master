@@ -27,6 +27,7 @@ const PROVIDER_ID_MAP: Record<string, string> = {
     'Anthropic': 'anthropic',
     'Google': 'gemini',
     'Mistral': 'openrouter', // Mistral via OpenRouter
+    'OpenAI Compatible': 'openai-compatible', // Custom OpenAI-compatible endpoints
 };
 
 /**
@@ -180,6 +181,9 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         providerId,
         modelId: activeAgent?.model,
         apiKey: apiKey || undefined,
+        // OpenAI Compatible Provider support
+        customBaseURL: activeAgent?.customBaseURL,
+        customHeaders: activeAgent?.customHeaders,
     });
 
     // Create welcome message
