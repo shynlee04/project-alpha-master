@@ -22,6 +22,7 @@ export interface Agent {
     // OpenAI Compatible Provider support
     customBaseURL?: string
     customHeaders?: Record<string, string>
+    enableNativeTools?: boolean
 }
 
 /**

@@ -184,6 +184,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         // OpenAI Compatible Provider support
         customBaseURL: activeAgent?.customBaseURL,
         customHeaders: activeAgent?.customHeaders,
+        enableTools: activeAgent?.enableNativeTools ?? true,
     });
 
     // Create welcome message

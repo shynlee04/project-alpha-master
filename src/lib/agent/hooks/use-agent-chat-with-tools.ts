@@ -43,6 +43,8 @@ export interface UseAgentChatWithToolsOptions {
     customBaseURL?: string;
     /** Custom headers for openai-compatible providers */
     customHeaders?: Record<string, string>;
+    /** Whether to enable native tools (default: true) */
+    enableTools?: boolean;
 }
 
 /**
@@ -162,6 +164,7 @@ export function useAgentChatWithTools(
         eventBus = null,
         customBaseURL,
         customHeaders,
+        enableTools = true,
     } = options;
 
     // Track tool calls
@@ -182,7 +185,7 @@ export function useAgentChatWithTools(
     }, [eventBus, agentStatus]);
 
     // Check if tools are available
-    const toolsAvailable = fileTools !== null || terminalTools !== null;
+    const toolsAvailable = enableTools && (fileTools !== null || terminalTools !== null);
 
     // Create tool factory options
     const toolFactoryOptions = useMemo((): ToolFactoryOptions => ({
@@ -200,10 +203,10 @@ export function useAgentChatWithTools(
     }, [toolsAvailable, toolFactoryOptions]);
 
     // Store latest config in ref to avoid stale closures in dynamic options callback
-    const configRef = useRef({ providerId, modelId, apiKey, customBaseURL, customHeaders });
+    const configRef = useRef({ providerId, modelId, apiKey, customBaseURL, customHeaders, enableTools });
     useEffect(() => {
-        configRef.current = { providerId, modelId, apiKey, customBaseURL, customHeaders };
-    }, [providerId, modelId, apiKey, customBaseURL, customHeaders]);
+        configRef.current = { providerId, modelId, apiKey, customBaseURL, customHeaders, enableTools };
+    }, [providerId, modelId, apiKey, customBaseURL, customHeaders, enableTools]);
 
     // Create connection with dynamic body data using the supported callback pattern
     // This allows the connection to read the latest apiKey at request time without recreating the adapter
@@ -234,6 +237,8 @@ export function useAgentChatWithTools(
                         // OpenAI Compatible Provider support
                         customBaseURL: current.customBaseURL,
                         customHeaders: current.customHeaders,
+                        // Toggle tools support (native function calling)
+                        disableTools: !current.enableTools,
                     }
                 };
             }

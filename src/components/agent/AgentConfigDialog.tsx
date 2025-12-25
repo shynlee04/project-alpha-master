@@ -26,6 +26,8 @@ import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
+import { Switch } from '@/components/ui/switch'
+import { cn } from '@/lib/utils'
 
 import {
     Dialog,
@@ -103,6 +105,7 @@ export function AgentConfigDialog({
     const [customBaseURL, setCustomBaseURL] = useState('')
     const [customHeaders, setCustomHeaders] = useState<{ key: string; value: string }[]>([])
     const [customModelId, setCustomModelId] = useState('')
+    const [enableNativeTools, setEnableNativeTools] = useState(true)
     const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
 
 
@@ -131,10 +134,12 @@ export function AgentConfigDialog({
                     } else {
                         setCustomHeaders([])
                     }
+                    setEnableNativeTools(agent.enableNativeTools ?? true)
                 } else {
                     setCustomBaseURL('')
                     setCustomModelId('')
                     setCustomHeaders([])
+                    setEnableNativeTools(true)
                 }
             } else {
                 // Create mode - reset defaults
@@ -147,6 +152,7 @@ export function AgentConfigDialog({
                 setCustomBaseURL('')
                 setCustomModelId('')
                 setCustomHeaders([])
+                setEnableNativeTools(true)
             }
         }
     }, [open, agent])
@@ -346,6 +352,7 @@ export function AgentConfigDialog({
             // OpenAI Compatible Provider support
             customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
             customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
+            enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
         })
 
         // Show success toast
@@ -362,6 +369,7 @@ export function AgentConfigDialog({
         setCustomBaseURL('')
         setCustomHeaders([])
         setCustomModelId('')
+        setEnableNativeTools(true)
         setErrors({})
         setIsSubmitting(false)
         setConnectionStatus('idle')
@@ -508,37 +516,54 @@ export function AgentConfigDialog({
                                     <Button
                                         variant="outline"
                                         size="sm"
+                                        className="shrink-0 rounded-none w-9 px-0"
+                                        disabled={isLoadingCustomModels || !customBaseURL.trim()}
                                         onClick={async () => {
-                                            if (!customBaseURL) return
                                             setIsLoadingCustomModels(true)
                                             try {
-                                                const fetchedModels = await modelRegistry.getModelsFromCustomEndpoint(
+                                                const models = await modelRegistry.getModelsFromCustomEndpoint(
                                                     customBaseURL,
-                                                    apiKey || undefined,
-                                                    customHeaders.reduce((acc, h) => {
-                                                        if (h.key && h.value) acc[h.key] = h.value
-                                                        return acc
-                                                    }, {} as Record<string, string>)
+                                                    apiKey,
+                                                    customHeaders.reduce((acc, h) => ({ ...acc, [h.key]: h.value }), {})
                                                 )
-                                                setModels(fetchedModels)
-                                                if (fetchedModels.length > 0) {
-                                                    toast.success(`Found ${fetchedModels.length} models`)
+                                                if (models.length > 0) {
+                                                    const modelId = models[0].id
+                                                    setCustomModelId(modelId)
+                                                    toast.success(t('agents.config.openaiCompatible.modelsLoaded', 'Found {{count}} models', { count: models.length }))
                                                 } else {
-                                                    toast.info(t('agents.config.openaiCompatible.fetchModelsFailed', 'Could not fetch models from endpoint'))
+                                                    toast.info(t('agents.config.openaiCompatible.noModels', 'No models found'))
                                                 }
-                                            } catch {
-                                                toast.error(t('agents.config.openaiCompatible.fetchModelsFailed', 'Could not fetch models from endpoint'))
+                                            } catch (err) {
+                                                console.error('Failed to load models:', err)
+                                                toast.error(t('agents.config.openaiCompatible.loadFailed', 'Failed to load models'))
                                             } finally {
                                                 setIsLoadingCustomModels(false)
                                             }
                                         }}
-                                        disabled={!customBaseURL || isLoadingCustomModels}
-                                        className="rounded-none gap-1"
+                                        title={t('agents.config.openaiCompatible.loadModels', 'Refresh Models')}
                                     >
-                                        {isLoadingCustomModels && <Loader2 className="w-3 h-3 animate-spin" />}
-                                        {t('agents.config.openaiCompatible.fetchModels', 'Fetch Models')}
+                                        <RefreshCw className={cn("w-4 h-4", isLoadingCustomModels && "animate-spin")} />
                                     </Button>
                                 </div>
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.openaiCompatible.modelIdHint', 'Enter specific model ID (e.g., local-model) or click refresh to auto-detect')}
+                                </p>
+                            </div>
+
+                            {/* Enable Native Tools Toggle */}
+                            <div className="flex items-center justify-between rounded-lg border border-border p-3 bg-background/50">
+                                <div className="space-y-0.5">
+                                    <Label className="text-sm font-medium">
+                                        {t('agents.config.openaiCompatible.enableTools', 'Enable Native Tools')}
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('agents.config.openaiCompatible.enableToolsDescription', 'Allow agent to use function calling (disable if provider returns 400/404)')}
+                                    </p>
+                                </div>
+                                <Switch
+                                    checked={enableNativeTools}
+                                    onCheckedChange={setEnableNativeTools}
+                                />
                             </div>
 
                             {/* Custom Headers (collapsed by default) */}
