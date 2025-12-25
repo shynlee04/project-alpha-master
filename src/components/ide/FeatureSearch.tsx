@@ -25,7 +25,7 @@ export interface FeatureSearchProps {
   onClose: () => void;
 }
 
-const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
+export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -119,7 +119,7 @@ const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
     const searchLower = search.toLowerCase();
     const titleLower = feature.title.toLowerCase();
     const descLower = feature.description.toLowerCase();
-    
+
     return (
       titleLower.includes(searchLower) ||
       descLower.includes(searchLower)
@@ -129,15 +129,15 @@ const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
   // Handle keyboard navigation
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!isOpen) return;
-    
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex((prev) => 
+      setSelectedIndex((prev) =>
         prev < filteredFeatures.length - 1 ? prev + 1 : prev
       );
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex((prev) => 
+      setSelectedIndex((prev) =>
         prev > 0 ? prev - 1 : prev
       );
     } else if (e.key === 'Enter' && filteredFeatures.length > 0) {
@@ -259,4 +259,4 @@ const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default FeatureSearch;
+// Named export is used above

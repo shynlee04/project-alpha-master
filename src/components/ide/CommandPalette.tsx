@@ -28,7 +28,7 @@ export interface CommandPaletteProps {
   onClose: () => void;
 }
 
-const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
+export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -113,21 +113,21 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
     const searchLower = search.toLowerCase();
     const labelLower = cmd.label.toLowerCase();
     const descLower = cmd.description?.toLowerCase() || '';
-    
+
     // Fuzzy search: check if all search characters appear in order
     let searchIndex = 0;
     let labelIndex = 0;
-    
+
     while (searchIndex < searchLower.length && labelIndex < labelLower.length) {
       if (searchLower[searchIndex] === labelLower[labelIndex]) {
         searchIndex++;
       }
       labelIndex++;
     }
-    
+
     // Also check description
     const matchesDescription = descLower.includes(searchLower);
-    
+
     return searchIndex === searchLower.length || matchesDescription;
   });
 
@@ -219,4 +219,4 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default CommandPalette;
+// Named export is used above

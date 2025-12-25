@@ -6,13 +6,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { 
-  MoreVertical, 
-  FileText, 
-  Terminal, 
-  Settings, 
-  Search, 
-  RefreshCw, 
+import {
+  MoreVertical,
+  FileText,
+  Terminal,
+  Settings,
+  Search,
+  RefreshCw,
   Download,
   Upload,
   Zap,
@@ -45,9 +45,9 @@ export interface QuickActionsMenuProps {
   className?: string;
 }
 
-const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({ 
+export const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
   actions: customActions,
-  className 
+  className
 }) => {
   const { t } = useTranslation();
 
@@ -93,7 +93,7 @@ const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
       id: 'separator-1',
       label: '',
       icon: null,
-      action: () => {},
+      action: () => { },
       separator: true,
     },
     {
@@ -124,7 +124,7 @@ const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
       id: 'separator-2',
       label: '',
       icon: null,
-      action: () => {},
+      action: () => { },
       separator: true,
     },
     {
@@ -172,7 +172,7 @@ const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
           <MoreVertical className="w-4 h-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
+      <DropdownMenuContent
         className="w-56 rounded-lg border border-border bg-card shadow-pixel"
         align="end"
       >
@@ -204,4 +204,4 @@ const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
   );
 };
 
-export default QuickActionsMenu;
+// Named export is used above
