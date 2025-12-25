@@ -29,6 +29,42 @@ export interface ProviderConfig {
     defaultModel?: string;
     /** Whether provider is enabled */
     enabled: boolean;
+    /** Whether this is a user-configurable custom provider */
+    isCustom?: boolean;
+    /** Whether the provider supports native tool calling */
+    supportsNativeTools?: boolean;
+}
+
+/**
+ * OpenAI Compatible Provider Configuration
+ * User-configurable settings for custom endpoints
+ */
+export interface OpenAICompatibleConfig {
+    /** Unique identifier for this custom provider config */
+    id: string;
+    /** Display name for this provider */
+    name: string;
+    /** Base URL for the API (e.g., http://localhost:1234/v1) */
+    baseURL: string;
+    /** API Key (optional for local providers like LM Studio/Ollama) */
+    apiKey?: string;
+    /** Custom headers to send with requests */
+    headers?: Record<string, string>;
+    /** Default model ID */
+    defaultModel?: string;
+    /** Whether this provider supports native tool calling */
+    supportsNativeTools?: boolean;
+    /** Whether the API key is required (false for local providers) */
+    requiresApiKey?: boolean;
+    /** When this config was created */
+    createdAt: string;
+    /** Last connection test result */
+    lastTestResult?: {
+        success: boolean;
+        latencyMs?: number;
+        error?: string;
+        testedAt: string;
+    };
 }
 
 /**
@@ -95,6 +131,7 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         type: 'openai',
         defaultModel: 'gpt-4o',
         enabled: true,
+        supportsNativeTools: true,
     },
     openrouter: {
         id: 'openrouter',
@@ -103,6 +140,15 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         baseURL: 'https://openrouter.ai/api/v1',
         defaultModel: 'meta-llama/llama-3.1-8b-instruct:free',
         enabled: true,
+        supportsNativeTools: true,
+    },
+    'openai-compatible': {
+        id: 'openai-compatible',
+        name: 'OpenAI Compatible',
+        type: 'openai-compatible',
+        enabled: true,
+        isCustom: true,
+        supportsNativeTools: false, // User can override
     },
     anthropic: {
         id: 'anthropic',

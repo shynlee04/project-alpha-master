@@ -7,6 +7,8 @@ BUT There are few things here
 -- that the project sstyle is 8-bit styling inspired by MistralAI, with shadcnUI and Tailwindcss 4.x+ 
 language: eng and vietnamese in client-side translation
 
--- That when your team development should not interfere or block back-end and the MVP-story implementation teasm
+-- That when your team development should not interfere or block back-end and the MVP-story implementation teams
+
+
 
 --

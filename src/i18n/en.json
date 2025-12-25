@@ -266,7 +266,28 @@
       "testConnection.error": "Connection test error",
       "freeModels": "(Free models available)",
       "modelFree": "(Free)",
-      "modelLoading": "Loading models..."
+      "modelLoading": "Loading models...",
+      "openaiCompatible": {
+        "title": "OpenAI Compatible Provider",
+        "description": "Connect to any OpenAI-compatible API endpoint",
+        "baseUrl": "Base URL",
+        "baseUrlPlaceholder": "http://localhost:1234/v1",
+        "baseUrlRequired": "Base URL is required",
+        "baseUrlHint": "The API endpoint URL (e.g., http://localhost:1234/v1 for LM Studio)",
+        "headers": "Custom Headers",
+        "addHeader": "Add Header",
+        "removeHeader": "Remove",
+        "headerKey": "Key",
+        "headerValue": "Value",
+        "modelId": "Model ID",
+        "modelIdPlaceholder": "e.g., llama-3.1-8b or gpt-4o",
+        "fetchModels": "Fetch Models",
+        "fetchModelsFailed": "Could not fetch models from endpoint",
+        "localProviderNote": "For local providers like LM Studio or Ollama, API key may not be required.",
+        "testEndpoint": "Test Endpoint",
+        "endpointValid": "Endpoint is reachable",
+        "endpointInvalid": "Could not connect to endpoint"
+      }
     }
   },
   "actions": {
