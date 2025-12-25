@@ -122,17 +122,26 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // Get workspace context for tool facades
     // Story MVP-1: Wire real tool facades to agent
-    const { localAdapterRef, syncManagerRef, eventBus } = useWorkspace();
+    // CC-2025-12-25-003: Use initialSyncCompleted as dep instead of ref.current (React anti-pattern)
+    const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspace();
 
     // Create tool facades when workspace is ready
+    // IMPORTANT: ref.current in deps doesn't trigger re-renders
+    // Use initialSyncCompleted state which changes when sync completes and refs are populated
     const fileTools = useMemo(() => {
         const localAdapter = localAdapterRef.current;
         const syncManager = syncManagerRef.current;
         if (localAdapter && syncManager && eventBus) {
+            console.log('[AgentChatPanel] fileTools created - workspace ready');
             return createFileToolsFacade(localAdapter, syncManager, eventBus);
         }
+        console.log('[AgentChatPanel] fileTools null - waiting for workspace', {
+            hasLocalAdapter: !!localAdapter,
+            hasSyncManager: !!syncManager,
+            hasEventBus: !!eventBus
+        });
         return null;
-    }, [localAdapterRef.current, syncManagerRef.current, eventBus]);
+    }, [localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted]);
 
     const terminalTools = useMemo(() => {
         if (eventBus) {
