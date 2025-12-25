@@ -29,7 +29,7 @@ const logoVariants = cva(
 )
 
 const iconVariants = cva(
-    'flex items-center justify-center text-white font-pixel shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]',
+    'flex items-center justify-center text-white font-pixel shadow-colored-primary',
     {
         variants: {
             size: {

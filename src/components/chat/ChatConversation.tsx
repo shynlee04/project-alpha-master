@@ -92,7 +92,7 @@ const MessageBubble = memo(function MessageBubble({
                         ? 'bg-blue-900/50 border-blue-600 text-blue-50'
                         : 'bg-slate-800/80 border-slate-600 text-slate-100',
                     // 8-bit shadow
-                    'shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]'
+                    'shadow-md'
                 )}>
                     {isUser ? (
                         <p className="whitespace-pre-wrap font-mono text-sm">
@@ -135,7 +135,7 @@ function TypingIndicator() {
             <div className={cn(
                 'flex items-center gap-1 px-4 py-2 rounded-sm',
                 'bg-slate-800/80 border-2 border-slate-600',
-                'shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]'
+                'shadow-md'
             )}>
                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -349,8 +349,8 @@ export function ChatConversation({
                             'px-4 font-mono',
                             'bg-blue-600 hover:bg-blue-500',
                             'border-2 border-blue-400',
-                            'shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)]',
-                            'hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.4)]',
+                            'shadow-md',
+                            'hover:shadow-sm',
                             'hover:translate-x-[2px] hover:translate-y-[2px]',
                             'transition-all duration-100',
                             'disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0'
@@ -489,8 +489,8 @@ export function ChatConversation({
                         'px-4 font-mono',
                         'bg-blue-600 hover:bg-blue-500',
                         'border-2 border-blue-400',
-                        'shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)]',
-                        'hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.4)]',
+                        'shadow-md',
+                        'hover:shadow-sm',
                         'hover:translate-x-[2px] hover:translate-y-[2px]',
                         'transition-all duration-100',
                         'disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0'

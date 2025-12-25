@@ -357,7 +357,7 @@ export function DiffPreview({
                 'overflow-hidden',
                 'border border-border bg-background/80',
                 'rounded-none',
-                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
+                'shadow-md',
                 className
             )}
         >

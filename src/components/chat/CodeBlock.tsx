@@ -285,7 +285,7 @@ export function CodeBlock({
                 'relative overflow-hidden',
                 'border border-border bg-background/80',
                 'rounded-none',
-                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
+                'shadow-md',
                 'transition-all duration-200',
                 // Accepted state
                 accepted && 'border-green-500/50 bg-green-500/5',
@@ -417,7 +417,7 @@ export function CodeBlock({
                                 'flex items-center gap-1 px-2 py-1',
                                 'text-xs font-mono font-semibold',
                                 'bg-red-500/10 text-red-500 border border-red-500/30',
-                                'rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.2)]',
+                                'rounded-none shadow-sm',
                                 'hover:bg-red-500/20 active:translate-y-[1px] active:shadow-none',
                                 'transition-all duration-150'
                             )}
@@ -435,7 +435,7 @@ export function CodeBlock({
                                 'flex items-center gap-1 px-2 py-1',
                                 'text-xs font-mono font-semibold',
                                 'bg-green-500/10 text-green-500 border border-green-500/30',
-                                'rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.2)]',
+                                'rounded-none shadow-sm',
                                 'hover:bg-green-500/20 active:translate-y-[1px] active:shadow-none',
                                 'transition-all duration-150'
                             )}

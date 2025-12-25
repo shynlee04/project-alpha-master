@@ -35,13 +35,13 @@ interface AgentSelectorProps {
 function getStatusColor(status: Agent['status']): string {
     switch (status) {
         case 'online':
-            return 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]';
+            return 'bg-green-500 shadow-colored-success';
         case 'busy':
-            return 'bg-yellow-500 shadow-[0_0_6px_rgba(234,179,8,0.5)]';
+            return 'bg-yellow-500 shadow-colored-warning';
         case 'offline':
             return 'bg-slate-500';
         case 'error':
-            return 'bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]';
+            return 'bg-red-500 shadow-colored-error';
         default:
             return 'bg-slate-500';
     }
@@ -91,8 +91,8 @@ export function AgentSelector({
                         // 8-bit styling
                         'border-2 border-slate-600 dark:border-slate-500',
                         'bg-slate-800/60 hover:bg-slate-700/80',
-                        'shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)]',
-                        'hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.3)]',
+                        'shadow-md',
+                        'hover:shadow-sm',
                         'hover:translate-x-[2px] hover:translate-y-[2px]',
                         'transition-all duration-100',
                         className
@@ -138,7 +138,7 @@ export function AgentSelector({
                     // 8-bit dropdown styling
                     'border-2 border-slate-600 dark:border-slate-500',
                     'bg-slate-800 dark:bg-slate-900',
-                    'shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)]'
+                    'shadow-lg'
                 )}
             >
                 {sortedAgents.length === 0 ? (

@@ -75,8 +75,8 @@ function ThreadCardComponent({
                 'hover:bg-surface-darker',
                 'transition-all duration-150',
                 // Pixel-art shadow effect matching existing components
-                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]',
-                'hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.2)]',
+                'shadow-md',
+                'hover:shadow-sm',
                 'hover:translate-x-[1px] hover:translate-y-[1px]',
                 // Active state
                 isActive && [

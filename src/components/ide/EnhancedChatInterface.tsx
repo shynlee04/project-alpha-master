@@ -176,8 +176,8 @@ function ChatMessageBubble({
                 <div className={cn(
                     "rounded-none overflow-hidden",
                     isUser
-                        ? "bg-primary text-primary-foreground shadow-[2px_2px_0px_0px_rgba(194,65,12,0.5)]"
-                        : "bg-secondary text-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]"
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : "bg-secondary text-foreground shadow-md"
                 )}>
                     <MessageContent
                         content={message.content}

@@ -156,7 +156,7 @@ export function ToolCallBadge({
                 // Base styles - 8-bit pixel aesthetic
                 'inline-flex items-center gap-1 px-1.5 py-0.5',
                 'font-mono text-[10px] border rounded-none',
-                'shadow-[1px_1px_0px_0px_rgba(0,0,0,0.2)]',
+                'shadow-sm',
                 'transition-all duration-150',
                 'hover:brightness-110 active:translate-y-[1px] active:shadow-none',
                 // Status-based styling
@@ -195,16 +195,16 @@ export function ToolCallBadge({
 
     return (
         <TooltipProvider>
-            <Tooltip delayDuration={300}>
-                <TooltipTrigger asChild>{badge}</TooltipTrigger>
-                <TooltipContent
-                    side="top"
-                    className="bg-popover border-border rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
-                >
-                    {tooltipContent}
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+        <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>{badge}</TooltipTrigger>
+            <TooltipContent
+                side="top"
+                className="bg-popover border-border rounded-none shadow-md"
+            >
+                {tooltipContent}
+            </TooltipContent>
+        </Tooltip>
+    </TooltipProvider>
     );
 }
 

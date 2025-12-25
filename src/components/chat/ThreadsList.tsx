@@ -90,8 +90,8 @@ export function ThreadsList({
                         // 8-bit button styling
                         'bg-green-600 hover:bg-green-500',
                         'border-2 border-green-400',
-                        'shadow-[3px_3px_0px_0px_rgba(0,0,0,0.4)]',
-                        'hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.4)]',
+                        'shadow-md',
+                        'hover:shadow-sm',
                         'hover:translate-x-[2px] hover:translate-y-[2px]',
                         'transition-all duration-100'
                     )}
