@@ -32,10 +32,10 @@ export function createListFilesTool(getTools: () => AgentFileTools) {
             // Uses listDirectory from AgentFileTools interface
             const rawEntries = await getTools().listDirectory(path, recursive);
 
-            // Transform to FileEntry format
+            // Transform to FileEntry format - avoid leading slash when path is empty
             const entries: FileEntry[] = rawEntries.map((entry) => ({
                 name: entry.name,
-                path: `${path}/${entry.name}`.replace(/\/+/g, '/'),
+                path: path ? `${path}/${entry.name}` : entry.name,
                 type: entry.type === 'directory' ? 'directory' : 'file',
             }));
 
@@ -76,10 +76,10 @@ export function createListFilesClientTool(getTools: () => AgentFileTools) {
         try {
             const rawEntries = await getTools().listDirectory(args.path, args.recursive);
 
-            // Transform and sort entries
+            // Transform and sort entries - avoid leading slash when path is empty
             const entries: FileEntry[] = rawEntries.map((entry) => ({
                 name: entry.name,
-                path: `${args.path}/${entry.name}`.replace(/\/+/g, '/'),
+                path: args.path ? `${args.path}/${entry.name}` : entry.name,
                 type: entry.type === 'directory' ? 'directory' : 'file',
             }));
 

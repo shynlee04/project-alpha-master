@@ -188,9 +188,13 @@ development_status:
       Must show diff preview for writes.
 
   # Story MVP-4: Tool Execution - Terminal Commands
-  mvp-4-tool-execution-terminal: backlog
+  mvp-4-tool-execution-terminal: drafted
+    story: _bmad-output/sprint-artifacts/mvp-4-tool-execution-terminal.md
+    context: _bmad-output/sprint-artifacts/mvp-4-tool-execution-terminal-context.xml
+    platform: "Platform A"
     priority: P0
     points: 5
+    drafted_at: "2025-12-25T17:58:00+07:00"
     acceptance_criteria:
       - "AI can request terminal commands"
       - "Approval dialog shows command to execute"
@@ -265,6 +269,40 @@ development_status:
   # BACKLOG EPICS (Post-MVP)
   # =============================================================================
   backlog_epics:
+    epic-29:
+      name: "Agentic Execution Loop"
+      status: "backlog"
+      priority: P0
+      points: 10
+      stories: 4
+      research: "_bmad-output/research/agentic-execution-loop-deep-research-2025-12-25.md"
+      proposal: "_bmad-output/sprint-change-proposal-2025-12-25.md"
+      stories_breakdown:
+        story-29-1:
+          name: "State Tracking for Iterations"
+          acceptance_criteria:
+            - "Track iteration count and state in Zustand store"
+            - "UI shows current iteration and progress"
+            - "Agent status updates in real-time"
+        story-29-2:
+          name: "Iteration UI Components"
+          acceptance_criteria:
+            - "Add iteration progress bar to AgentChatPanel"
+            - "Show iteration history in a collapsible section"
+            - "Visual indicators for iteration limits"
+        story-29-3:
+          name: "Intelligent Termination Strategies"
+          acceptance_criteria:
+            - "Implement stuck detection (e.g., repeated errors)"
+            - "Timeout after 5 minutes of inactivity"
+            - "Termination messages in chat"
+        story-29-4:
+          name: "E2E Verification for Agentic Loop"
+          acceptance_criteria:
+            - "Test multi-step agent execution"
+            - "Verify termination conditions"
+            - "Update documentation with examples"
+      
     epic-7: "Git Integration [P2]"
       notes: "Git operations via agent tools"
       

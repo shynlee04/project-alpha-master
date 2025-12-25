@@ -2,34 +2,165 @@
 trigger: always_on
 ---
 
-## Project Overview
+2. Concise System Instruction
+text
+# BMAD v6 Multi-Agent Orchestration System
 
-**Via-gent** is a browser-based IDE that runs code locally using WebContainers. It provides:
-- Monaco Editor for code editing with tabbed interface
-- xterm.js-based terminal integrated with WebContainers
-- Bidirectional file sync between local File System Access API and WebContainers
-- Multi-language support (English, Vietnamese) with i18next
-- Project persistence via IndexedDB
-- React 19 + TypeScript + Vite + TanStack Router stack
+## Agent Coordination Model
 
-## Essential Development Commands
+You are operating in a **BMAD v6 + Kilocode** multi-agent framework where:
+- **BMAD Master** (`@bmad-core-bmad-master`) = Orchestrator/Coordinator
+- **Specialized Modes** = Context-isolated agents with specific expertise
+- **Handoff Documents** = Structured communication protocol between agents
+- **Workflow Status Files** = Single source of truth for project state
 
-```bash
-# Start development server (port 3000 with cross-origin isolation headers)
-pnpm dev
+## Mode Directory
 
-# Build for production
-pnpm build
+### Core Orchestration
+- `@bmad-core-bmad-master` → Coordinates all agents, updates workflow/sprint status, delegates tasks
 
-# Preview production build
-pnpm preview
+### Implementation (BMM)
+- `@bmad-bmm-analyst` → Requirements analysis, story breakdown
+- `@bmad-bmm-architect` → System design, ADRs, technical specs
+- `@bmad-bmm-dev` → Feature implementation, coding
+- `@bmad-bmm-pm` → Backlog management, sprint planning
+- `@bmad-bmm-sm` → Story creation, sprint tracking, ceremonies
+- `@bmad-bmm-tea` → Test strategy, automation, QA
+- `@bmad-bmm-tech-writer` → Documentation, API refs, guides
+- `@bmad-bmm-ux-designer` → UI/UX design, wireframes, design system
+- `@bmad-bmm-quick-flow-solo-dev` → Fast-track bug fixes & tweaks
 
-# Run tests
-pnpm test
+### Creative/Innovation (CIS)
+- `@bmad-cis-brainstorming-coach` → Ideation facilitation
+- `@bmad-cis-creative-problem-solver` → Complex problem-solving
+- `@bmad-cis-design-thinking-coach` → Design thinking processes
+- `@bmad-cis-innovation-strategist` → Strategic roadmaps
+- `@bmad-cis-presentation-master` → Presentations, pitch decks
+- `@bmad-cis-storyteller` → Feature narratives, announcements
 
-# Extract translation keys
-pnpm i18n:extract
-```
+### Quality
+- `@code-reviewer` → Code review, quality gates
+
+## Handoff Protocol
+
+### When DELEGATING (from BMAD Master):
+Handoff to {Agent Mode}
+Task: {Brief description}
+Context Files: {List relevant files}
+Acceptance Criteria: {What defines done}
+Output Location: _bmad-output/{category}/{artifact-name}-{YYYY-MM-DD}.md
+Return via: Report to @bmad-core-bmad-master with completion summary
+
+text
+
+### When REPORTING BACK (to BMAD Master):
+Completion Report to BMAD Master
+Agent: {Your mode slug}
+Task Completed: {Task description}
+Artifacts Created:
+
+_bmad-output/{path}/{file}
+
+...
+
+Workflow Status Updates:
+
+Updated: bmm-workflow-status.yaml (story {id} → DONE)
+
+Updated: sprint-status.yaml (epic {id} progress)
+
+Next Action: {Suggested next step or handoff}
+
+text
+
+## Workflow Status Management
+
+### Critical Files (Always Update):
+1. **`bmm-workflow-status.yaml`** → Overall project workflow state
+   - Update `current_workflow`, `epic_status`, `next_actions`
+   - Track bugs, course corrections, phase transitions
+
+2. **`_bmad-output/sprint-artifacts/sprint-status.yaml`** → Sprint-level tracking
+   - Update story status, epic progress, velocity metrics
+
+3. **Governance Docs** (Reference, rarely edit):
+   - `epics.md` → Epic definitions (update via Sprint Change Proposals)
+   - `architecture.md` → Technical architecture
+   - `prd.md` → Product requirements
+   - `ux-design.md` → UX specifications
+
+## Development Tools & Research Guidance
+
+### Codebase Exploration
+- **Innate tools:** `search_files_v2`, `execute_python`, grep
+- **Repomix MCP:** Granular codebase analysis
+- **Tavily/Exa MCP:** Semantic repo search
+
+### Documentation Research
+- **Context7 MCP:** Official docs (2 sequential steps/turn, scoring-based)
+- **Deepwiki:** Semantic tech stack queries (TanStack Router, WebContainer, xterm.js)
+
+### Artifact Creation Standards
+- **Location:** `_bmad-output/{category}/{name}-{YYYY-MM-DD-HHmm}.md`
+- **Naming:** Use controlled IDs, variables, timestamps for context preservation
+- **Pattern:** Prioritize iteration on single source of truth over duplication
+- **New Files:** Isolate with date-stamped folders when creating new features
+
+## BMAD Method Reference Pattern
+
+Use `@bmad/{module}/{type}/{name}` to reference agents/workflows/tools:
+- `@bmad/bmm/agents/dev` → Development agent
+- `@bmad/bmm/workflows/code-review` → Code review workflow
+- `@bmad/core/workflows/brainstorming` → Brainstorming facilitation
+- `@bmad/cis/agents/innovation-strategist` → Innovation strategist
+
+### Available Modules
+- **CORE:** Master agent, brainstorming, coordination workflows
+- **BMB:** Builder tools for creating agents, workflows, modules
+- **BMM:** Implementation agents (analyst, architect, dev, pm, sm, tea, etc.) and workflows
+- **CIS:** Creative/strategy agents (innovation, design thinking, storytelling)
+
+## Parallel Execution Strategy
+
+Per [`parallel-execution-strategy.md`]:
+- **Platform A:** Continues Epic 22 (Production Hardening) stories 22-2 → 22-8
+- **Platform B:** Can start Epic 23 (UX/UI Modernization) Story 23-1
+- **No Cross-Epic Dependencies:** Epics 22 and 23 are independent
+- **Sync Point:** Both report to `@bmad-core-bmad-master` for status consolidation
+
+## Mode Switching Commands
+
+To delegate to another agent:
+@{mode-slug}
+
+text
+
+Examples:
+- `@bmad-bmm-dev` → Switch to Dev mode
+- `@bmad-core-bmad-master` → Return to Orchestrator
+- `@code-reviewer` → Handoff for code review
+
+## Exit Protocol
+
+To exit agent persona:
+EXIT_{MODE_NAME}
+
+text
+Example: `EXIT_ORCHESTRATOR`, `EXIT_DEV`
+
+---
+
+**Current Project Status** (from `bmm-workflow-status.yaml`):
+- **Phase:** Implementation
+- **Active Epics:** 13 (DONE), 21 (IN_PROGRESS), 22 (IN_PROGRESS), 23 (IN_PROGRESS)
+- **Next Priority:** Epic 22 (Production Hardening) - P0
+
+**Critical Context Files:**
+- `AGENTS.md` → Project-specific dev patterns
+- `bmm-workflow-status.yaml` → Workflow state
+- `_bmad-output/sprint-artifacts/sprint-status.yaml` → Sprint tracking
+- `epics.md` → Epic definitions
+
 
 ## Dependencies Github repos and docs links:
 Based on my research, here's a comprehensive list of official documentation and GitHub repository links for your stack dependencies:
@@ -162,211 +293,4 @@ Based on my research, here's a comprehensive list of official documentation and 
 - Use Repomix MCP tools for granular codebase analysis
 - Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
 - Prioritize iteration, insertion, updates on single-source of truth
-- When generating new files, isolate with new folders and date-time-stamp marking
-
-> ⚠️ **MANDATORY MCP RESEARCH PROTOCOL (2025-12-24) - ENFORCEABLE**
->
-> **COMPLIANCE REQUIRED**: Following critical incident INC-2025-12-24-001, this protocol is now strictly enforced. All agents MUST complete the research workflow before implementing unfamiliar patterns or using libraries for the first time.
->
-> ### Enforcement Mechanism
-> - **Pre-Commit Validation**: Research artifacts required for all unfamiliar patterns
-> - **Code Review Requirements**: Reviewers must verify research traceability
-> - **Automated Checks**: Story completion blocked without validated research
-> - **Escalation Path**: Non-compliance results in story blocking and remediation
->
-> ### Sequential Research Workflow (MANDATORY)
->
-> 1. **API Research (Context7)**
->    - Query exact API signatures, parameters, and return types
->    - Verify function definitions against official documentation
->    - Document all API usages with source links
->    - Validation: ✅ Function signatures confirmed | ✅ Parameter types verified
->
-> 2. **Architecture Understanding (Deepwiki)**
->    - Analyze repository-specific architectural decisions
->    - Understand component interactions and design patterns
->    - Document integration points and constraints
->    - Validation: ✅ Design patterns understood | ✅ Integration points identified
->
-> 3. **Best Practices Search (Tavily/Exa)**
->    - Research 2025 current industry best practices
->    - Find production-ready examples from authoritative sources
->    - Compare multiple approaches and select optimal pattern
->    - Validation: ✅ 2024-2025 sources verified | ✅ Multiple approaches compared
->
-> 4. **Codebase Analysis (Repomix)**
->    - Analyze existing patterns in the Via-gent codebase
->    - Identify naming conventions and file organization
->    - Find reference implementations for consistency
->    - Validation: ✅ Existing patterns documented | ✅ Naming conventions identified
->
-> 5. **Cross-Validation**
->    - Cross-reference all findings for consistency
->    - Resolve any conflicts by preferring official sources
->    - Document validation status and source authority
->    - Validation: ✅ No conflicts between sources | ✅ Patterns align with codebase
->
-> 6. **Research Documentation**
->    - Create research artifact using required template
->    - Complete all sections with detailed findings
->    - Include sources, validation status, and implementation decision
->    - Validation: ✅ Research artifact created | ✅ All sections completed
->
-> 7. **Approval Workflow**
->    - Self-validation checklist completed
->    - Peer review for high-risk implementations
->    - Approval required before implementation
->    - Validation: ✅ Checklist completed | ✅ Approval obtained
->
-> ### Tool Selection Decision Tree
->
-> Use this decision tree to determine which MCP tool(s) to use:
->
-> ```
-> flowchart TD
->     Start["Need to research?"] --> Q1{"What am I<br/>researching?"}
->
->     Q1 --> |"API signatures,<br/>function params"| C7["Context7<br/>(Primary)"]
->     Q1 --> |"Architecture<br/>decisions"| DW["Deepwiki<br/>(Primary)"]
->     Q1 --> |"Current best<br/>practices"| Tavily["Tavily/Exa<br/>(Primary)"]
->     Q1 --> |"Existing codebase<br/>patterns"| RM["Repomix<br/>(Primary)"]
->     Q1 --> |"General<br/>documentation"| Brave["Brave Search<br/>(Primary)"]
->
->     C7 --> Q2{"Found what<br/>I needed?"}
->     DW --> Q2
->     Tavily --> Q2
->     RM --> Q2
->     Brave --> Q2
->
->     Q2 --> |"Yes"| Validate["Validate findings<br/>against 2nd source"]
->     Q2 --> |"No"| Alt["Try alternative<br/>tool from matrix"]
->
->     Alt --> Q2
->
->     Validate --> Doc["Document<br/>findings"]
->     Doc --> Implement["Proceed to<br/>implementation"]
-> ```
->
-> ### Research Artifact Requirements
->
-> Every implementation involving unfamiliar patterns MUST have an associated research artifact stored in:
-> ```
-> _bmad-output/research/[feature-name]-research-YYYY-MM-DD.md
-> ```
->
-> **Required Template Sections:**
-> 1. Research Objective
-> 2. MCP Tools Consulted (with queries and results)
-> 3. Detailed Findings (API signatures, architecture, best practices, codebase patterns)
-> 4. Sources (with authority level and verification dates)
-> 5. Validation Status (cross-validation confirmation)
-> 6. Implementation Decision (selected approach with justification)
-> 7. Risks and Uncertainties (with mitigation strategies)
-> 8. Approval (self-validation and peer review status)
->
-> ### Integration with Sprint Planning
->
-> **Story Acceptance Criteria Updates:**
-> All stories involving unfamiliar patterns MUST include:
->
-> ```markdown
-> ### Research Requirements (MANDATORY)
->
-> **Pre-Implementation Research:**
-> - [ ] MCP research workflow completed
-> - [ ] Research artifact created: `_bmad-output/research/[name].md`
-> - [ ] API signatures verified (Context7)
-> - [ ] Architecture patterns understood (Deepwiki)
-> - [ ] 2025 best practices confirmed (Tavily/Exa)
-> - [ ] Codebase patterns analyzed (Repomix)
->
-> **Research Validation:**
-> - [ ] Pre-implementation checklist completed
-> - [ ] Cross-validation passed
-> - [ ] Peer review completed (if high-risk)
-> ```
->
-> ### Quality Gates and Enforcement
->
-> **Gate 1: Research Completeness**
-> - [ ] All required MCP tools consulted
-> - [ ] Research artifact created with all sections
-> - [ ] Sources documented and verified
-> - **Enforcement:** Cannot proceed to implementation
->
-> **Gate 2: Validation Passed**
-> - [ ] Pre-implementation checklist completed
-> - [ ] Cross-validation performed
-> - [ ] No unresolved conflicts
-> - **Enforcement:** Cannot proceed to implementation
->
-> **Gate 3: Implementation Traceability**
-> - [ ] Code references research artifact
-> - [ ] Implementation matches documented patterns
-> - [ ] No undocumented API usages
-> - **Enforcement:** Code review must verify traceability
->
-> ### Common Pitfalls and Remediation
->
-> **Pitfall 1: Skipping Research for "Simple" Changes**
-> - **Remediation:** ALWAYS verify API signatures with Context7
-> - **Remediation:** No change is "too simple" for verification
-> - **Remediation:** Document even quick lookups
->
-> **Pitfall 2: Using Training Data Instead of Current Docs**
-> - **Remediation:** Always query MCP tools, even for "known" libraries
-> - **Remediation:** Check version-specific documentation
-> - **Remediation:** Verify with 2024-2025 dated sources
->
-> **Pitfall 3: Single-Source Research**
-> - **Remediation:** Use minimum 2 tools for cross-validation
-> - **Remediation:** Context7 + Deepwiki for API work
-> - **Remediation:** Tavily + Repomix for pattern work
->
-> **Pitfall 4: Not Analyzing Existing Codebase**
-> - **Remediation:** Always run Repomix analysis before new implementations
-> - **Remediation:** Find reference implementations in the codebase
-> - **Remediation:** Follow established conventions
->
-> **Pitfall 5: Superficial Research Artifacts**
-> - **Remediation:** Research artifacts must have complete sections
-> - **Remediation:** All sources must be linked
-> - **Remediation:** Validation checklist must be completed honestly
->
-> ### Complete Documentation Reference
->
-> For detailed guidelines, see: [_bmad-output/guidelines/mcp-research-protocol-2025-12-24.md](file:///Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/guidelines/mcp-research-protocol-2025-12-24.md)
->
-> **This protocol is MANDATORY and ENFORCEABLE. Non-compliance will result in blocked stories and escalation.**
-
-## Advanced Method to Use Deepwiki MCP Server's Tools to ask semantic questions of a particular dependency repo
-- condition: provide correct link to Github's repo of the stack/dependency and/or (try both) direct link to Deepwiki page of it 
-- Then start to ask semantic questions as long or as complex but only for the concepts of the dependency/repo. 
-- The bellow are the collection of our frequently used and core dependencies used for this project. 
-
-- **Tanstack AI:** https://github.com/TanStack/ai/ ; https://deepwiki.com/TanStack/ai
-
-- **Tanstack Devtools:** https://github.com/TanStack/devtools ; https://deepwiki.com/TanStack/devtools
-
-- **Webcontainer Core:** https://github.com/stackblitz/webcontainer-core ; https://deepwiki.com/stackblitz/webcontainer-core
-
-- **Webcontainer documentation:** https://deepwiki.com/stackblitz/webcontainer-docs ; https://github.com/stackblitz/webcontainer-docs
-
-- **Webcontainer API:** https://deepwiki.com/stackblitz/webcontainer-api ; https://github.com/stackblitz/webcontainer-api
-
-- **Dexie.js:** https://deepwiki.com/dexie/dexie.js ; https://github.com/dexie/Dexie.js
-
-- **Xterm.js:** https://deepwiki.com/xtermjs/xterm.js ; https://github.com/xtermjs/xterm.js
-
-- **Monaco Editor:** https://deepwiki.com/microsoft/monaco-editor ; https://github.com/microsoft/monaco-editor
-
-- **Rehype Raw:** https://deepwiki.com/rehypejs/rehype-raw ; https://github.com/rehypejs/rehype-raw
-
-- **Rehype Sanitize:** https://deepwiki.com/rehypejs/rehype-sanitize ; https://github.com/rehypejs/rehype-sanitize
-
-- **Zustand:** https://deepwiki.com/pmndrs/zustand ; https://github.com/pmndrs/zustand
-
-- **EventEmitter3:** https://deepwiki.com/primus/eventemitter3 ; https://github.com/primus/eventemitter3 
-
-
->
+- When generating new files, isolate with new

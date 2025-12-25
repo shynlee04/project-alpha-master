@@ -11,7 +11,7 @@
  * @story 25-4 - Wire Tool Execution to UI
  */
 
-import { useChat, fetchServerSentEvents } from '@tanstack/ai-react';
+import { useChat, fetchServerSentEvents, maxIterations } from '@tanstack/ai-react';
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
@@ -234,9 +234,13 @@ export function useAgentChatWithTools(
             return {
                 connection,
                 tools: agentTools.getClientTools(),
+                agentLoopStrategy: maxIterations(3), // MVP-3: Enable basic agentic loop (max 3 iterations)
             };
         }
-        return { connection };
+        return {
+            connection,
+            agentLoopStrategy: maxIterations(3), // MVP-3: Enable basic agentic loop (max 3 iterations)
+        };
     }, [connection, agentTools]);
 
     // Use TanStack AI chat hook with typed options

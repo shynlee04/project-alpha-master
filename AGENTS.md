@@ -279,6 +279,12 @@ The `.vscode/settings.json` file configures:
 - **No Exceptions**: Stories cannot be marked DONE without browser verification
 - **Definition of Done**: Updated to enforce E2E verification gate
 
+### 12. Agentic Loop Limitation (Temporary MVP Measure)
+- **maxIterations(3)**: Currently enforced as a temporary safety measure during MVP-3/MVP-4 validation
+- **Limited Execution**: Agents will terminate after 3 tool execution iterations to prevent infinite loops
+- **Full Implementation Deferred**: Complete agentic loop with state tracking, iteration UI, and intelligent termination is planned for Epic 29
+- **Reference**: See course correction analysis in [`_bmad-output/course-corrections/read-file-and-agentic-execution-analysis-2025-12-25.md`](_bmad-output/course-corrections/read-file-and-agentic-execution-analysis-2025-12-25.md) and Epic 29 specification in [`_bmad-output/epics/epic-29-agentic-execution-loop.md`](_bmad-output/epics/epic-29-agentic-execution-loop.md)
+
 See [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md) for complete MVP story details.
 
 ## Existing Documentation & Guidance
