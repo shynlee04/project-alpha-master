@@ -1,4 +1,4 @@
-/**
+n/**
  * Security Headers Middleware
  * 
  * Injects COOP/COEP headers required for WebContainers on all SSR responses.

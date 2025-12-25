@@ -189,6 +189,7 @@ const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
                 type="text"
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder={t('featureSearch.placeholder')}
                 className="w-full h-10 pl-10 pr-3 rounded-md border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 placeholder:text-muted-foreground"
                 autoFocus={isOpen}
@@ -254,7 +255,8 @@ const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default FeatureSearch;

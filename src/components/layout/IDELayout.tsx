@@ -46,6 +46,11 @@ import { AgentsPanel } from '../ide/AgentsPanel';
 import { SearchPanel } from '../ide/SearchPanel';
 import { SettingsPanel } from '../ide/SettingsPanel';
 
+// P1.4: Discovery mechanisms
+import { CommandPalette } from '../ide/CommandPalette';
+import { FeatureSearch } from '../ide/FeatureSearch';
+import { QuickActionsMenu } from '../ide/QuickActionsMenu';
+
 // Hooks
 import { useIdeStatePersistence } from '../../hooks/useIdeStatePersistence';
 import { useWorkspace, type TerminalTab } from '../../lib/workspace';
@@ -78,6 +83,10 @@ export function IDELayout(): React.JSX.Element {
   const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>();
   const [terminalTab, setTerminalTab] = useState<TerminalTab>('terminal');
   const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0);
+  
+  // P1.4: Discovery mechanisms state
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isFeatureSearchOpen, setIsFeatureSearchOpen] = useState(false);
 
   // Editor state
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
@@ -96,7 +105,10 @@ export function IDELayout(): React.JSX.Element {
   } = useIdeStatePersistence({ projectId });
 
   // Extracted hooks
-  useIDEKeyboardShortcuts({ onChatToggle: () => setIsChatVisible(true) });
+  useIDEKeyboardShortcuts({
+    onChatToggle: () => setIsChatVisible(true),
+    onCommandPaletteOpen: () => setIsCommandPaletteOpen(true),
+  });
   const { previewUrl, previewPort } = useWebContainerBoot({ onBooted: () => setIsWebContainerBooted(true) });
   const { handleFileSelect, handleSave, handleContentChange, handleTabClose } = useIDEFileHandlers({
     openFiles, setOpenFiles, activeFilePath, setActiveFilePath,
@@ -135,6 +147,25 @@ export function IDELayout(): React.JSX.Element {
       <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
         {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
         <IDEHeaderBar projectId={projectId} isChatVisible={isChatVisible} onToggleChat={() => setIsChatVisible(!isChatVisible)} />
+        
+        {/* P1.4: Discovery mechanisms */}
+        {isCommandPaletteOpen && (
+          <CommandPalette
+            onClose={() => setIsCommandPaletteOpen(false)}
+            onOpenFile={handleFileSelect}
+            onToggleTerminal={() => setTerminalTab(terminalTab === 'terminal' ? 'output' : 'terminal')}
+            onOpenSettings={() => toast({ title: 'Settings', description: 'Settings panel opened' })}
+            onSearchInFiles={() => toast({ title: 'Search', description: 'Search in files' })}
+            onShowShortcuts={() => toast({ title: 'Shortcuts', description: 'Keyboard shortcuts' })}
+            onOpenFeatureSearch={() => setIsFeatureSearchOpen(true)}
+          />
+        )}
+        
+        {isFeatureSearchOpen && (
+          <FeatureSearch
+            onClose={() => setIsFeatureSearchOpen(false)}
+          />
+        )}
 
         <div className="flex-1 flex overflow-hidden">
           {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}

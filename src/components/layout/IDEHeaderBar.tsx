@@ -16,9 +16,10 @@
  * ```
  */
 
-import { MessageSquare, FolderOpen, Loader2, RefreshCw } from 'lucide-react';
+import { MessageSquare, FolderOpen, Loader2, RefreshCw, MoreHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';
+import { QuickActionsMenu } from '../ide/QuickActionsMenu';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -141,6 +142,9 @@ export function IDEHeaderBar({
                     <MessageSquare className="w-4 h-4" />
                     {isChatVisible ? t('ide.hideChat') : t('ide.showChat')}
                 </button>
+
+                {/* Quick actions menu */}
+                <QuickActionsMenu />
 
                 {/* Version indicator */}
                 <span className="text-xs text-muted-foreground">alpha-v0.1</span>
