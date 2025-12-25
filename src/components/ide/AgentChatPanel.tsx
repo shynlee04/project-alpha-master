@@ -12,6 +12,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Bot, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
@@ -343,6 +344,41 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         rejectToolCall(approval.toolCallId, 'User rejected');
     }, [rejectToolCall]);
 
+    // Handle artifact preview
+    const handlePreviewArtifact = useCallback((code: string) => {
+        const blob = new Blob([code], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        toast.info(t('preview.newTabInfo', 'Opened preview in new tab'));
+    }, [t]);
+
+    // Handle artifact save
+    const handleSaveArtifact = useCallback(async (code: string, language: string) => {
+        const extension = language === 'html' ? '.html' :
+            language === 'css' ? '.css' :
+                language === 'javascript' || language === 'js' ? '.js' :
+                    language === 'typescript' || language === 'ts' ? '.ts' :
+                        language === 'json' ? '.json' :
+                            language === 'md' || language === 'markdown' ? '.md' : '.txt';
+
+        const suggestedPath = `artifact-${Date.now()}${extension}`;
+        const path = window.prompt(t('chat.artifact.savePrompt', 'Enter file path'), suggestedPath);
+
+        if (path) {
+            try {
+                if (localAdapterRef.current) {
+                    await localAdapterRef.current.writeFile(path, code);
+                    toast.success(t('chat.codeBlock.saved', 'File saved successfully'));
+                } else {
+                    toast.error(t('errors.fsNotSupported', 'File System access not available'));
+                }
+            } catch (err) {
+                console.error('Failed to save artifact:', err);
+                toast.error(t('errors.generic', 'Failed to save file'));
+            }
+        }
+    }, [localAdapterRef, t]);
+
     // Clear conversation
     const handleClear = useCallback(async () => {
         if (projectId) await clearConversation(projectId);
@@ -434,6 +470,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     messages={allMessages}
                     onSendMessage={handleSendMessage}
                     isTyping={isLoading}
+                    onPreviewArtifact={handlePreviewArtifact}
+                    onSaveArtifact={handleSaveArtifact}
                 />
             </div>
 

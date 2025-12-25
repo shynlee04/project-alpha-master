@@ -331,7 +331,12 @@
       "accept": "Accept",
       "reject": "Reject",
       "accepted": "Accepted",
-      "lines": "{{count}} lines"
+      "lines": "{{count}} lines",
+      "preview": "Preview",
+      "save": "Save to Project"
+    },
+    "artifact": {
+      "savePrompt": "Enter file path"
     },
     "diff": {
       "additions": "{{count}} additions",

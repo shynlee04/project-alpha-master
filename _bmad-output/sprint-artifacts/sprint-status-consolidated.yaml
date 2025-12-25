@@ -145,9 +145,10 @@ development_status:
       2025-12-25: Course correction applied for OpenRouter 401/400 errors.
 
   # Story MVP-2: Chat Interface with Streaming
-  mvp-2-chat-interface-streaming: in-progress
+  mvp-2-chat-interface-streaming: done
     priority: P0
-    points: 5
+    points: 30
+    completed_at: "2025-12-25T13:15:00+07:00"
     acceptance_criteria:
       - "Chat panel opens and displays messages"
       - "Messages send to /api/chat endpoint"
@@ -164,7 +165,8 @@ development_status:
       Must handle streaming errors correctly.
 
   # Story MVP-3: Tool Execution - File Operations
-  mvp-3-tool-execution-files: backlog
+  mvp-3-tool-execution-files: in-progress
+    started_at: "2025-12-25T13:15:00+07:00"
     story: _bmad-output/sprint-artifacts/mvp-3-tool-execution-files.md
     context: _bmad-output/sprint-artifacts/mvp-3-tool-execution-files-context.xml
     priority: P0

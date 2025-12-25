@@ -331,7 +331,12 @@
       "accept": "Chấp nhận",
       "reject": "Từ chối",
       "accepted": "Đã chấp nhận",
-      "lines": "{{count}} dòng"
+      "lines": "{{count}} dòng",
+      "preview": "Xem trước",
+      "save": "Lưu vào dự án"
+    },
+    "artifact": {
+      "savePrompt": "Nhập đường dẫn tập tin"
     },
     "diff": {
       "additions": "{{count}} thêm",

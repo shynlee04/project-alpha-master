@@ -36,6 +36,8 @@ import {
     FileCode,
     ChevronDown,
     ChevronUp,
+    Eye,
+    Save,
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +61,10 @@ export interface CodeBlockProps {
     onAccept?: (code: string) => void;
     /** Callback when Reject button is clicked (makes actions visible) */
     onReject?: () => void;
+    /** Callback when Preview button is clicked (for HTML/SVG) */
+    onPreview?: (code: string) => void;
+    /** Callback when Save button is clicked */
+    onSave?: (code: string, language: string) => void;
     /** Additional CSS classes */
     className?: string;
 }
@@ -216,6 +222,8 @@ export function CodeBlock({
     onCopy,
     onAccept,
     onReject,
+    onPreview,
+    onSave,
     className,
 }: CodeBlockProps) {
     const { t } = useTranslation();
@@ -299,8 +307,34 @@ export function CodeBlock({
                 </div>
 
                 <div className="flex items-center gap-1">
+                    {/* Preview Button (HTML only) */}
+                    {onPreview && (language === 'html' || language === 'svg') && (
+                        <button
+                            type="button"
+                            onClick={() => onPreview(code)}
+                            className="p-1 text-muted-foreground hover:text-foreground transition-all hover:bg-primary/20 active:translate-y-[1px]"
+                            aria-label={t('chat.codeBlock.preview', 'Preview')}
+                            title={t('chat.codeBlock.preview', 'Preview')}
+                        >
+                            <Eye className="w-3.5 h-3.5" />
+                        </button>
+                    )}
+
+                    {/* Save Button */}
+                    {onSave && (
+                        <button
+                            type="button"
+                            onClick={() => onSave(code, language || 'text')}
+                            className="p-1 text-muted-foreground hover:text-foreground transition-all hover:bg-primary/20 active:translate-y-[1px]"
+                            aria-label={t('chat.codeBlock.save', 'Save')}
+                            title={t('chat.codeBlock.save', 'Save')}
+                        >
+                            <Save className="w-3.5 h-3.5" />
+                        </button>
+                    )}
+
                     {/* Line count */}
-                    <span className="text-[9px] font-mono text-muted-foreground/60 mr-2">
+                    <span className="text-[9px] font-mono text-muted-foreground/60 mr-2 ml-1">
                         {t('chat.codeBlock.lines', { count: lines.length, defaultValue: `${lines.length} lines` })}
                     </span>
 

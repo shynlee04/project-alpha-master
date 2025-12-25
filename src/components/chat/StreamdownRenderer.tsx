@@ -29,6 +29,10 @@ interface StreamdownRendererProps {
     isStreaming?: boolean;
     /** Additional CSS class names */
     className?: string;
+    /** Callback for artifact preview */
+    onPreviewArtifact?: (code: string) => void;
+    /** Callback for artifact save */
+    onSaveArtifact?: (code: string, language: string) => void;
 }
 
 /**
@@ -138,6 +142,8 @@ function StreamdownRendererComponent({
     content,
     isStreaming = false,
     className,
+    onPreviewArtifact,
+    onSaveArtifact,
 }: StreamdownRendererProps) {
     if (!content) {
         return null;
@@ -190,6 +196,8 @@ function StreamdownRendererComponent({
                                 code={code}
                                 language={language || 'text'}
                                 showLineNumbers
+                                onPreview={onPreviewArtifact}
+                                onSave={onSaveArtifact}
                             />
                         );
                     },
@@ -211,7 +219,7 @@ function StreamdownRendererComponent({
             >
                 {content}
             </ReactMarkdown>
-        </div>
+        </div >
     );
 }
 
@@ -221,7 +229,9 @@ function StreamdownRendererComponent({
 export const StreamdownRenderer = memo(StreamdownRendererComponent, (prev, next) => {
     return prev.content === next.content &&
         prev.isStreaming === next.isStreaming &&
-        prev.className === next.className;
+        prev.className === next.className &&
+        prev.onPreviewArtifact === next.onPreviewArtifact &&
+        prev.onSaveArtifact === next.onSaveArtifact;
 });
 
 StreamdownRenderer.displayName = 'StreamdownRenderer';

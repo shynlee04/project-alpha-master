@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Bot, User, Send, ChevronDown, ChevronUp, Code } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CodeBlock } from '@/components/chat/CodeBlock'
+
 import { ToolCallBadge } from '@/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/components/chat/StreamdownRenderer'
 import { useTranslation } from 'react-i18next'
@@ -40,13 +40,17 @@ interface EnhancedChatProps {
     isTyping?: boolean
     onSendMessage: (content: string) => void
     className?: string
+    onPreviewArtifact?: (code: string) => void
+    onSaveArtifact?: (code: string, language: string) => void
 }
 
 export function EnhancedChatInterface({
     messages,
     isTyping = false,
     onSendMessage,
-    className
+    className,
+    onPreviewArtifact,
+    onSaveArtifact,
 }: EnhancedChatProps) {
     const { t } = useTranslation()
     const [input, setInput] = useState('')
@@ -78,7 +82,12 @@ export function EnhancedChatInterface({
                     </div>
                 ) : (
                     messages.map((message) => (
-                        <ChatMessageBubble key={message.id} message={message} />
+                        <ChatMessageBubble
+                            key={message.id}
+                            message={message}
+                            onPreviewArtifact={onPreviewArtifact}
+                            onSaveArtifact={onSaveArtifact}
+                        />
                     ))
                 )}
 
@@ -133,7 +142,15 @@ export function EnhancedChatInterface({
     )
 }
 
-function ChatMessageBubble({ message }: { message: ChatMessage }) {
+function ChatMessageBubble({
+    message,
+    onPreviewArtifact,
+    onSaveArtifact
+}: {
+    message: ChatMessage
+    onPreviewArtifact?: (code: string) => void
+    onSaveArtifact?: (code: string, language: string) => void
+}) {
     const isUser = message.role === 'user'
 
     return (
@@ -162,7 +179,12 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
                         ? "bg-primary text-primary-foreground shadow-[2px_2px_0px_0px_rgba(194,65,12,0.5)]"
                         : "bg-secondary text-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]"
                 )}>
-                    <MessageContent content={message.content} isUser={isUser} />
+                    <MessageContent
+                        content={message.content}
+                        isUser={isUser}
+                        onPreviewArtifact={onPreviewArtifact}
+                        onSaveArtifact={onSaveArtifact}
+                    />
                 </div>
 
                 {/* Tool executions */}
@@ -179,7 +201,17 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
     )
 }
 
-function MessageContent({ content, isUser }: { content: string, isUser: boolean }) {
+function MessageContent({
+    content,
+    isUser,
+    onPreviewArtifact,
+    onSaveArtifact
+}: {
+    content: string
+    isUser: boolean
+    onPreviewArtifact?: (code: string) => void
+    onSaveArtifact?: (code: string, language: string) => void
+}) {
     // For user messages, keep simple rendering
     if (isUser) {
         return (
@@ -196,6 +228,8 @@ function MessageContent({ content, isUser }: { content: string, isUser: boolean 
                 content={content}
                 isStreaming={false}
                 className="prose-sm"
+                onPreviewArtifact={onPreviewArtifact}
+                onSaveArtifact={onSaveArtifact}
             />
         </div>
     )
