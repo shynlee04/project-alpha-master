@@ -123,7 +123,7 @@ export function EmptyState({
             "px-6 py-3 rounded-none font-bold",
             "bg-primary text-primary-foreground",
             "hover:scale-105 transition-transform",
-            "shadow-[2px_2px_0px_rgba(0,0,0,0.2)]",
+            "shadow-sm",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           )}
         >

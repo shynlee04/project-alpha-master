@@ -32,7 +32,7 @@ const TooltipContent = React.forwardRef<
                 "rounded-none border border-border",
                 "bg-popover text-popover-foreground",
                 // Pixel shadow
-                "shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]",
+                "shadow-sm",
                 // Animation
                 "animate-in fade-in-0 zoom-in-95",
                 "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",

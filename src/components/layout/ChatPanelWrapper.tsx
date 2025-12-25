@@ -180,7 +180,7 @@ export function ChatPanelWrapper({
                                 'border border-border-dark bg-surface-dark',
                                 'text-xs font-pixel text-green-400 hover:text-green-300',
                                 'hover:bg-surface-darker transition-colors',
-                                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]'
+                                'shadow-md'
                             )}
                         >
                             <MessageSquarePlus className="w-4 h-4" />

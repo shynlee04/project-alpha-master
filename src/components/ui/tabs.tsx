@@ -47,7 +47,7 @@ const tabsTriggerVariants = cva(
       },
       state: {
         default: "text-neutral-500 hover:text-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-500",
-        active: "bg-primary-500 text-white border-primary-500 shadow-[0_2px_0_rgba(94,115,255,0.3)]",
+        active: "bg-primary-500 text-white border-primary-500 shadow-sm",
         disabled: "text-neutral-400 cursor-not-allowed dark:text-neutral-600",
       },
       theme: {

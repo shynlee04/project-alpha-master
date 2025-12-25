@@ -59,7 +59,7 @@ export function AgentCard({
             className={cn(
                 "group relative p-4 bg-card border border-border rounded-none",
                 "hover:border-primary/50 hover:bg-secondary/30 transition-all cursor-pointer",
-                "shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]",
+                "shadow-sm",
                 className
             )}
         >
@@ -167,7 +167,7 @@ export function MetricsCard({
         <div
             className={cn(
                 "p-4 bg-card border border-border rounded-none",
-                "shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]",
+                "shadow-sm",
                 className
             )}
         >
