@@ -2,21 +2,22 @@
  * @fileoverview StreamdownRenderer - Rich Markdown Rendering for AI Streaming
  * @module components/chat/StreamdownRenderer
  * 
- * Uses Vercel's Streamdown library for AI-optimized streaming markdown rendering.
- * Supports:
- * - Incomplete markdown handling during stream
- * - Mermaid diagrams (flowcharts, sequence, class diagrams)
- * - Code blocks with syntax highlighting
+ * Rich markdown renderer supporting:
  * - Full markdown formatting (headers, lists, tables, links)
+ * - Code blocks with syntax highlighting
+ * - Mermaid diagrams (flowcharts, sequence, class diagrams)
+ * - Streaming-safe rendering
  * 
  * @epic MVP - AI Coding Agent Vertical Slice
  * @story MVP-2 - Chat Interface with Rich Streaming
  */
 
-import { memo } from 'react';
-import { Streamdown } from 'streamdown';
+import { memo, useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { CodeBlock } from './CodeBlock';
 
 /**
  * Props for StreamdownRenderer component
@@ -31,75 +32,99 @@ interface StreamdownRendererProps {
 }
 
 /**
- * Mermaid theme configuration for Via-gent IDE
- * Matches the 8-bit pixel aesthetic with modern colors
+ * Mermaid diagram renderer
  */
-const getMermaidConfig = (isDark: boolean) => ({
-    theme: isDark ? 'dark' : 'default',
-    themeVariables: isDark ? {
-        primaryColor: '#3b82f6',      // Blue-500
-        primaryTextColor: '#f8fafc',   // Slate-50
-        primaryBorderColor: '#60a5fa', // Blue-400
-        lineColor: '#94a3b8',          // Slate-400
-        secondaryColor: '#8b5cf6',     // Violet-500
-        tertiaryColor: '#22d3ee',      // Cyan-400
-        background: '#0f172a',         // Slate-900
-        mainBkg: '#1e293b',            // Slate-800
-        nodeBorder: '#475569',         // Slate-600
-        clusterBkg: '#1e293b',
-        clusterBorder: '#334155',
-        titleColor: '#f8fafc',
-        edgeLabelBackground: '#1e293b',
-        nodeTextColor: '#f8fafc',
-    } : {
-        primaryColor: '#2563eb',       // Blue-600
-        primaryTextColor: '#1e293b',   // Slate-800
-        primaryBorderColor: '#3b82f6', // Blue-500
-        lineColor: '#64748b',          // Slate-500
-        secondaryColor: '#7c3aed',     // Violet-600
-        tertiaryColor: '#0d9488',      // Teal-600
-        background: '#ffffff',
-        mainBkg: '#f8fafc',
-        nodeBorder: '#cbd5e1',         // Slate-300
-        clusterBkg: '#f1f5f9',         // Slate-100
-        clusterBorder: '#e2e8f0',
-        titleColor: '#0f172a',
-        edgeLabelBackground: '#f8fafc',
-        nodeTextColor: '#1e293b',
-    }
-});
+function MermaidDiagram({ code }: { code: string }) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [svg, setSvg] = useState<string>('');
+    const [error, setError] = useState<string | null>(null);
+    const { resolvedTheme } = useTheme();
 
-/**
- * Custom error component for failed Mermaid diagrams
- */
-const MermaidError = ({ error, retry }: { error: Error; retry: () => void }) => (
-    <div className="my-4 rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 p-4">
-        <div className="flex items-center gap-2 mb-2">
-            <span className="text-amber-600 dark:text-amber-400 font-semibold text-sm font-mono">
-                ⚠️ Diagram Error
-            </span>
-        </div>
-        <p className="text-amber-700 dark:text-amber-300 text-xs font-mono mb-2">
-            {error.message}
-        </p>
-        <button
-            onClick={retry}
-            className="px-3 py-1 text-xs font-mono bg-amber-100 dark:bg-amber-800 
-                       text-amber-700 dark:text-amber-200 rounded hover:bg-amber-200 
-                       dark:hover:bg-amber-700 transition-colors"
-        >
-            ↻ Retry Render
-        </button>
-    </div>
-);
+    useEffect(() => {
+        let mounted = true;
+
+        async function renderMermaid() {
+            try {
+                // Dynamically import mermaid
+                const mermaid = await import('mermaid');
+
+                mermaid.default.initialize({
+                    startOnLoad: false,
+                    theme: resolvedTheme === 'dark' ? 'dark' : 'default',
+                    securityLevel: 'loose',
+                    fontFamily: 'ui-monospace, monospace',
+                });
+
+                const id = `mermaid-${Date.now()}`;
+                const { svg: renderedSvg } = await mermaid.default.render(id, code);
+
+                if (mounted) {
+                    setSvg(renderedSvg);
+                    setError(null);
+                }
+            } catch (err) {
+                if (mounted) {
+                    setError(err instanceof Error ? err.message : 'Failed to render diagram');
+                }
+            }
+        }
+
+        if (code.trim()) {
+            renderMermaid();
+        }
+
+        return () => {
+            mounted = false;
+        };
+    }, [code, resolvedTheme]);
+
+    if (error) {
+        return (
+            <div className={cn(
+                'my-4 p-4 rounded-sm border-2',
+                'border-amber-600 bg-amber-900/20 text-amber-300',
+                'font-mono text-xs'
+            )}>
+                <div className="font-bold mb-2">⚠️ Diagram Error</div>
+                <pre className="whitespace-pre-wrap">{error}</pre>
+                <pre className="mt-2 p-2 bg-slate-800 rounded text-slate-400 text-[10px]">
+                    {code}
+                </pre>
+            </div>
+        );
+    }
+
+    if (!svg) {
+        return (
+            <div className={cn(
+                'my-4 p-4 rounded-sm border-2 border-slate-600 bg-slate-800/50',
+                'flex items-center justify-center text-slate-400 font-mono text-sm'
+            )}>
+                Loading diagram...
+            </div>
+        );
+    }
+
+    return (
+        <div
+            ref={containerRef}
+            className={cn(
+                'my-4 p-4 rounded-sm border-2 border-slate-600 bg-slate-800/50',
+                'overflow-auto',
+                '[&_svg]:max-w-full [&_svg]:h-auto'
+            )}
+            dangerouslySetInnerHTML={{ __html: svg }}
+        />
+    );
+}
 
 /**
  * StreamdownRenderer - AI-optimized markdown renderer
  * 
- * Uses Vercel's Streamdown for streaming-safe markdown rendering with:
- * - Built-in Mermaid diagram support
- * - Code block syntax highlighting
- * - Handles incomplete markdown during streaming
+ * Uses react-markdown with custom renderers for:
+ * - Code blocks with syntax highlighting
+ * - Mermaid diagrams
+ * - Tables, lists, and other markdown elements
  * 
  * @example
  * ```tsx
@@ -114,9 +139,6 @@ function StreamdownRendererComponent({
     isStreaming = false,
     className,
 }: StreamdownRendererProps) {
-    const { resolvedTheme } = useTheme();
-    const isDark = resolvedTheme === 'dark';
-
     if (!content) {
         return null;
     }
@@ -126,41 +148,71 @@ function StreamdownRendererComponent({
             className={cn(
                 'streamdown-container prose prose-sm dark:prose-invert max-w-none',
                 'prose-headings:font-mono prose-headings:font-bold',
-                'prose-code:font-mono prose-code:text-sm',
-                'prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-700',
-                'prose-a:text-blue-500 prose-a:no-underline hover:prose-a:underline',
-                'prose-table:border-collapse prose-th:border prose-th:border-slate-600',
-                'prose-th:px-3 prose-th:py-2 prose-th:bg-slate-800',
+                'prose-code:font-mono prose-code:text-sm prose-code:bg-slate-800 prose-code:px-1 prose-code:rounded',
+                'prose-pre:bg-transparent prose-pre:p-0',
+                'prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline',
+                'prose-table:border-collapse',
+                'prose-th:border prose-th:border-slate-600 prose-th:px-3 prose-th:py-2 prose-th:bg-slate-800 prose-th:font-mono',
                 'prose-td:border prose-td:border-slate-700 prose-td:px-3 prose-td:py-2',
+                'prose-li:marker:text-slate-500',
+                'prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-slate-800/50 prose-blockquote:px-4 prose-blockquote:py-2',
                 isStreaming && 'animate-pulse-subtle',
                 className
             )}
         >
-            <Streamdown
-                mermaid={{
-                    config: getMermaidConfig(isDark),
-                    errorComponent: MermaidError,
-                }}
-                controls={{
-                    mermaid: {
-                        fullscreen: true,
-                        download: true,
-                        copy: true,
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                    // Custom code block renderer
+                    code({ node, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const language = match ? match[1] : '';
+                        const code = String(children).replace(/\n$/, '');
+
+                        // Check if it's a mermaid diagram
+                        if (language === 'mermaid') {
+                            return <MermaidDiagram code={code} />;
+                        }
+
+                        // Inline code vs code block
+                        const isInline = !className;
+
+                        if (isInline) {
+                            return (
+                                <code className="font-mono text-sm bg-slate-800 px-1 rounded" {...props}>
+                                    {children}
+                                </code>
+                            );
+                        }
+
+                        return (
+                            <CodeBlock
+                                code={code}
+                                language={language || 'text'}
+                                showLineNumbers
+                            />
+                        );
                     },
-                    code: {
-                        copy: true,
+                    // Enhanced table styling
+                    table({ children }) {
+                        return (
+                            <div className="overflow-x-auto my-4">
+                                <table className="min-w-full border-2 border-slate-600">
+                                    {children}
+                                </table>
+                            </div>
+                        );
                     },
                 }}
             >
                 {content}
-            </Streamdown>
+            </ReactMarkdown>
         </div>
     );
 }
 
 /**
  * Memoized StreamdownRenderer to prevent unnecessary re-renders
- * Only re-renders when content or theme changes
  */
 export const StreamdownRenderer = memo(StreamdownRendererComponent, (prev, next) => {
     return prev.content === next.content &&

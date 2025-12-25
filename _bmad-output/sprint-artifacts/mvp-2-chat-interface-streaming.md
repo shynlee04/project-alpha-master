@@ -180,31 +180,31 @@ ChatLayout
 - [x] T0-R2: Query mermaid integration ✅
 
 ### Module 1: Thread Management Store (8 points)
-- [ ] T1.1: Create `ConversationThread` type definition
-- [ ] T1.2: Create `conversation-threads-store.ts` with Zustand persist
+- [x] T1.1: Create `ConversationThread` type definition ✅
+- [x] T1.2: Create `conversation-threads-store.ts` with Zustand persist ✅
 - [ ] T1.3: Extend `conversation-store.ts` for thread-based storage
 - [ ] T1.4: Write unit tests for thread store
 
 ### Module 2: Agent Selection (5 points)
-- [ ] T2.1: Create `AgentSelector.tsx` component
-- [ ] T2.2: Add agent status indicators (online/offline/busy)
-- [ ] T2.3: Wire to `agent-selection-store.ts`
+- [x] T2.1: Create `AgentSelector.tsx` component ✅
+- [x] T2.2: Add agent status indicators (online/offline/busy) ✅
+- [x] T2.3: Wire to `agent-selection-store.ts` ✅
 - [ ] T2.4: Write component tests
 
 ### Module 3: Rich Text Rendering (5 points)
-- [x] T3.1: Install streamdown ✅ (v1.6.10)
-- [x] T3.2: Create `StreamdownRenderer.tsx` ✅
-- [ ] T3.3: Update `EnhancedChatInterface.tsx` to use Streamdown
+- [x] T3.1: Install react-markdown + mermaid ✅
+- [x] T3.2: Create `StreamdownRenderer.tsx` with fallback ✅
+- [x] T3.3: Update `EnhancedChatInterface.tsx` to use Streamdown ✅
 - [ ] T3.4: Add CSS for prose styling
 
 ### Module 4: Conversation UI (8 points)
-- [ ] T4.1: Create `ConversationSidebar.tsx` with thread list
-- [ ] T4.2: Create `ChatLayout.tsx` combining all components
-- [ ] T4.3: Update `AgentChatPanel.tsx` to use ChatLayout
-- [ ] T4.4: Add i18n keys for English/Vietnamese
+- [x] T4.1: Create `ThreadCard.tsx` and `ThreadsList.tsx` (box-card layout) ✅
+- [x] T4.2: Create `ChatPanel.tsx` and `ChatConversation.tsx` ✅
+- [x] T4.3: Update `ChatPanelWrapper.tsx` to wire components ✅
+- [x] T4.4: Add i18n keys for English/Vietnamese (13 keys each) ✅
 
 ### Module 5: Integration & Testing (4 points)
-- [ ] T5.1: Wire all stores together in AgentChatPanel
+- [x] T5.1: Wire all stores together in ChatPanelWrapper ✅
 - [ ] T5.2: Add integration tests
 - [ ] T5.3: Browser E2E verification with screenshots
 - [ ] T5.4: Capture mermaid rendering evidence
@@ -214,25 +214,31 @@ ChatLayout
 ## Key Files
 
 ### New Files
-| File | Purpose |
-|------|---------|
-| `src/stores/conversation-threads-store.ts` | Thread state management |
-| `src/components/chat/AgentSelector.tsx` | Agent dropdown |
-| `src/components/chat/ConversationSidebar.tsx` | Thread list |
-| `src/components/chat/ChatLayout.tsx` | Combined layout |
+| File | Purpose | Status |
+|------|---------|--------|
+| `src/stores/conversation-threads-store.ts` | Thread state management with Zustand persist | ✅ Created |
+| `src/components/chat/ThreadCard.tsx` | Individual thread card (8-bit styled) | ✅ Created |
+| `src/components/chat/ThreadsList.tsx` | Paginated thread grid | ✅ Created |
+| `src/components/chat/AgentSelector.tsx` | Agent dropdown with status | ✅ Created |
+| `src/components/chat/ChatConversation.tsx` | Active conversation view | ✅ Created |
+| `src/components/chat/ChatPanel.tsx` | View orchestrator | ✅ Created |
+| `src/components/chat/StreamdownRenderer.tsx` | react-markdown + mermaid | ✅ Created |
 
 ### Modified Files
-| File | Changes |
-|------|---------|
-| `src/lib/workspace/conversation-store.ts` | Add threadId |
-| `src/components/ide/EnhancedChatInterface.tsx` | Use Streamdown |
-| `src/components/ide/AgentChatPanel.tsx` | Wire layout |
+| File | Changes | Status |
+|------|---------|--------|
+| `src/components/layout/ChatPanelWrapper.tsx` | Wires ThreadsList → AgentChatPanel | ✅ Done |
+| `src/components/ide/EnhancedChatInterface.tsx` | Uses StreamdownRenderer | ✅ Done |
+| `src/i18n/en.json` | +13 chat keys | ✅ Done |
+| `src/i18n/vi.json` | +13 chat keys | ✅ Done |
 
-### Already Ready
-| File | Status |
-|------|--------|
-| `src/components/chat/StreamdownRenderer.tsx` | ✅ Created |
-| `streamdown` package | ✅ Installed v1.6.10 |
+### Packages Added
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `react-markdown` | Latest | Markdown rendering |
+| `remark-gfm` | Latest | GitHub Flavored Markdown |
+| `mermaid` | ^11.x | Diagram rendering |
+
 
 ---
 
@@ -266,6 +272,48 @@ ChatLayout
 - Added conversation sidebar UI
 - Created comprehensive implementation plan
 
+### Session 2: 2025-12-25T11:00:00+07:00
+**Agent**: gemini-2.5-pro (Antigravity)
+**Mode**: EXECUTION → VERIFICATION (story-dev-cycle)
+
+#### Files Created
+```
+src/
+├── stores/
+│   └── conversation-threads-store.ts  # Thread management Zustand store
+├── components/
+│   └── chat/
+│       ├── ThreadCard.tsx              # Individual thread card (8-bit styled)
+│       ├── ThreadsList.tsx             # Paginated thread grid
+│       ├── AgentSelector.tsx           # Agent dropdown with status
+│       ├── ChatConversation.tsx        # Active conversation view
+│       ├── ChatPanel.tsx               # View orchestrator
+│       └── StreamdownRenderer.tsx      # react-markdown + mermaid
+```
+
+#### Files Modified
+```
+src/
+├── components/
+│   ├── layout/
+│   │   └── ChatPanelWrapper.tsx        # Wires ThreadsList → AgentChatPanel flow
+│   └── ide/
+│       └── EnhancedChatInterface.tsx   # Uses StreamdownRenderer for assistant messages
+├── i18n/
+│   ├── en.json                         # +13 chat keys
+│   └── vi.json                         # +13 chat keys
+```
+
+#### Key Decisions
+1. Used `react-markdown` + `mermaid` instead of `streamdown` (type export issues)
+2. Box-card layout for threads instead of sidebar (user preference)
+3. Preserved existing `AgentChatPanel` - new components wire TO it, not replace it
+4. Consistent 8-bit pixel aesthetic across all new components
+
+#### Blockers Resolved
+- Initial attempt replaced working chat → immediately reverted
+- Proper integration: ThreadsList → existing AgentChatPanel
+
 ---
 
 ## Status History
@@ -274,8 +322,9 @@ ChatLayout
 |------|--------|-------|
 | 2025-12-25 10:40 | IN_PROGRESS | Initial story created |
 | 2025-12-25 10:47 | IN_PROGRESS | Scope expanded per user feedback |
+| 2025-12-25 11:48 | IN_PROGRESS | 14/20 tasks complete, pending E2E verification |
 
 ---
 
-**Document Version**: 2.0
-**Last Updated**: 2025-12-25T10:52:00+07:00
+**Document Version**: 3.0
+**Last Updated**: 2025-12-25T11:48:00+07:00

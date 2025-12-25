@@ -4,6 +4,7 @@ import { Bot, User, Send, ChevronDown, ChevronUp, Code } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/chat/CodeBlock'
 import { ToolCallBadge } from '@/components/chat/ToolCallBadge'
+import { StreamdownRenderer } from '@/components/chat/StreamdownRenderer'
 import { useTranslation } from 'react-i18next'
 
 /**
@@ -134,7 +135,7 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
 
             {/* Content */}
             <div className={cn(
-                "flex-1 max-w-[80%]",
+                "flex-1 min-w-0 max-w-[85%]",
                 isUser && "flex flex-col items-end"
             )}>
                 {/* Message Text with Code Block Support */}
@@ -162,35 +163,23 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
 }
 
 function MessageContent({ content, isUser }: { content: string, isUser: boolean }) {
-    // Simple regex to split by code blocks
-    // Captures: 1=language, 2=code
-    const parts = content.split(/(```[\w-]*\n[\s\S]*?```)/g)
+    // For user messages, keep simple rendering
+    if (isUser) {
+        return (
+            <div className="text-sm p-3 whitespace-pre-wrap">
+                {content}
+            </div>
+        )
+    }
 
+    // For assistant messages, use rich markdown rendering with mermaid support
     return (
-        <div className={cn("text-sm", isUser ? "p-3" : "py-1")}>
-            {parts.map((part, index) => {
-                const codeMatch = part.match(/^```([\w-]*)\n([\s\S]*?)```$/)
-                if (codeMatch) {
-                    const [, language, code] = codeMatch
-                    return (
-                        <div key={index} className="my-2 first:mt-0 last:mb-0">
-                            <CodeBlock
-                                code={code.trim()}
-                                language={language || 'text'}
-                                showLineNumbers
-                                className="max-w-full"
-                            />
-                        </div>
-                    )
-                }
-                // Regular text
-                if (!part.trim()) return null
-                return (
-                    <p key={index} className={cn("whitespace-pre-wrap px-3 py-1", isUser ? "" : "mb-1 last:mb-0")}>
-                        {part}
-                    </p>
-                )
-            })}
+        <div className="text-sm py-1 px-3">
+            <StreamdownRenderer
+                content={content}
+                isStreaming={false}
+                className="prose-sm"
+            />
         </div>
     )
 }

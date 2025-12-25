@@ -358,6 +358,19 @@
         "medium": "Rủi ro Trung bình",
         "low": "Rủi ro Thấp"
       }
-    }
+    },
+    "title": "TRỢ LÝ AI",
+    "close": "Đóng bảng chat",
+    "noProject": "Mở dự án để bắt đầu trò chuyện",
+    "conversations": "HỘI THOẠI",
+    "newConversation": "CUỘC TRÒ CHUYỆN MỚI",
+    "noConversations": "Chưa có cuộc trò chuyện nào",
+    "noMessages": "Chưa có tin nhắn",
+    "deleteThreadConfirm": "Xóa cuộc trò chuyện này?",
+    "selectAgent": "Chọn Trợ lý",
+    "noAgents": "Chưa cấu hình trợ lý",
+    "startChatting": "Bắt đầu trò chuyện với trợ lý AI",
+    "typeMessage": "Nhập tin nhắn...",
+    "diagramError": "Lỗi Biểu đồ"
   }
 }

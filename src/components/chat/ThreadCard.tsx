@@ -68,24 +68,24 @@ function ThreadCardComponent({
     return (
         <div
             className={cn(
-                // Base: 8-bit box styling
+                // Base: Match AgentChatPanel styling
                 'group relative cursor-pointer',
-                'border-2 border-slate-600 dark:border-slate-500',
-                'bg-slate-800/50 dark:bg-slate-900/80',
-                'hover:bg-slate-700/60 dark:hover:bg-slate-800/90',
+                'border border-border-dark',
+                'bg-surface-dark',
+                'hover:bg-surface-darker',
                 'transition-all duration-150',
-                // Pixel-art shadow effect
-                'shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]',
-                'hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
-                'hover:translate-x-[2px] hover:translate-y-[2px]',
+                // Pixel-art shadow effect matching existing components
+                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]',
+                'hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.2)]',
+                'hover:translate-x-[1px] hover:translate-y-[1px]',
                 // Active state
                 isActive && [
-                    'border-blue-500 dark:border-blue-400',
-                    'bg-blue-900/30 dark:bg-blue-950/50',
-                    'ring-2 ring-blue-500/30',
+                    'border-primary',
+                    'bg-primary/10',
+                    'ring-1 ring-primary/30',
                 ],
                 // Size
-                'p-3 rounded-sm min-h-[100px]'
+                'p-3 rounded-none min-h-[90px]'
             )}
             onClick={() => onSelect(thread.id)}
             role="button"
@@ -95,9 +95,9 @@ function ThreadCardComponent({
             {/* Header: Title + Delete */}
             <div className="flex items-start justify-between gap-2 mb-2">
                 <h3 className={cn(
-                    'font-mono text-sm font-bold truncate flex-1',
-                    'text-slate-100 dark:text-slate-50',
-                    isActive && 'text-blue-300'
+                    'font-pixel text-xs font-bold truncate flex-1 tracking-wider uppercase',
+                    'text-foreground',
+                    isActive && 'text-primary'
                 )}>
                     {thread.title || t('chat.newConversation', 'New Conversation')}
                 </h3>
@@ -107,43 +107,43 @@ function ThreadCardComponent({
                     variant="ghost"
                     size="icon"
                     className={cn(
-                        'h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity',
-                        'text-red-400 hover:text-red-300 hover:bg-red-900/30'
+                        'h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity',
+                        'text-destructive hover:text-destructive hover:bg-destructive/10'
                     )}
                     onClick={handleDelete}
                 >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-3 w-3" />
                 </Button>
             </div>
 
             {/* Preview text */}
             <p className={cn(
-                'text-xs font-mono text-slate-400 dark:text-slate-500',
-                'line-clamp-2 mb-3'
+                'text-[10px] text-muted-foreground',
+                'line-clamp-2 mb-2'
             )}>
                 {thread.preview || t('chat.noMessages', 'No messages yet')}
             </p>
 
             {/* Footer: Stats */}
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                 {/* Message count */}
-                <div className="flex items-center gap-1 text-slate-500">
+                <div className="flex items-center gap-1">
                     <MessageSquare className="h-3 w-3" />
                     <span className="font-mono">{thread.messageCount}</span>
                 </div>
 
                 {/* Agents used */}
                 {thread.agentsUsed.length > 0 && (
-                    <div className="flex items-center gap-1 text-slate-500">
+                    <div className="flex items-center gap-1">
                         <Bot className="h-3 w-3" />
                         <span className="font-mono">{thread.agentsUsed.length}</span>
                     </div>
                 )}
 
                 {/* Time */}
-                <div className="flex items-center gap-1 text-slate-500">
+                <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    <span className="font-mono text-[10px]">
+                    <span className="font-mono">
                         {formatRelativeTime(thread.updatedAt)}
                     </span>
                 </div>
@@ -152,9 +152,8 @@ function ThreadCardComponent({
             {/* Active indicator - pixel corner */}
             {isActive && (
                 <div className={cn(
-                    'absolute -top-1 -right-1 w-3 h-3',
-                    'bg-blue-500 border border-blue-400',
-                    'shadow-[1px_1px_0px_0px_rgba(0,0,0,0.5)]'
+                    'absolute -top-[2px] -right-[2px] w-2 h-2',
+                    'bg-primary border border-primary-foreground'
                 )} />
             )}
         </div>

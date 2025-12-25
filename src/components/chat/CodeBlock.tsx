@@ -34,6 +34,8 @@ import {
     X,
     CheckCircle,
     FileCode,
+    ChevronDown,
+    ChevronUp,
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -222,7 +224,10 @@ export function CodeBlock({
     const [accepted, setAccepted] = useState(false);
 
     const lines = code.split('\n');
+    const isLarge = lines.length > 15;
+    const [isCollapsed, setIsCollapsed] = useState(isLarge);
     const showActions = onAccept || onReject;
+    const visibleLines = isCollapsed ? lines.slice(0, 10) : lines;
 
     const handleCopy = useCallback(async () => {
         try {
@@ -319,11 +324,15 @@ export function CodeBlock({
                 </div>
             </div>
 
-            {/* Code content */}
-            <div className="overflow-x-auto">
+            {/* Code content - collapsible for large blocks */}
+            <div className={cn(
+                'overflow-x-auto transition-all duration-200',
+                isCollapsed && isLarge ? 'max-h-[240px]' : 'max-h-[500px]',
+                'overflow-y-auto'
+            )}>
                 <pre className="p-3 text-sm font-mono leading-relaxed">
                     <code className="block">
-                        {lines.map((line, idx) => (
+                        {visibleLines.map((line, idx) => (
                             <div key={idx} className="flex">
                                 {showLineNumbers && (
                                     <span className="select-none text-muted-foreground/40 w-8 text-right pr-3 flex-shrink-0">
@@ -336,6 +345,32 @@ export function CodeBlock({
                     </code>
                 </pre>
             </div>
+
+            {/* Expand/Collapse toggle for large blocks */}
+            {isLarge && (
+                <button
+                    type="button"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className={cn(
+                        'w-full flex items-center justify-center gap-1 py-1.5',
+                        'bg-muted/30 border-t border-border',
+                        'text-[10px] font-mono text-muted-foreground hover:text-foreground',
+                        'transition-colors'
+                    )}
+                >
+                    {isCollapsed ? (
+                        <>
+                            <ChevronDown className="w-3 h-3" />
+                            {t('chat.codeBlock.showMore', `Show all ${lines.length} lines`)}
+                        </>
+                    ) : (
+                        <>
+                            <ChevronUp className="w-3 h-3" />
+                            {t('chat.codeBlock.showLess', 'Collapse')}
+                        </>
+                    )}
+                </button>
+            )}
 
             {/* Action buttons */}
             {showActions && !accepted && (
