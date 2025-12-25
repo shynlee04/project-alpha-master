@@ -4,7 +4,7 @@ export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export { ShadcnTest } from './ShadcnTest';
 export * from './button';
-
+ 
 export * from './card';
 export * from './dropdown-menu';
 export { Input } from './input';
@@ -20,8 +20,14 @@ export { Checkbox } from './checkbox';
 export * from './sonner';
 export * from './dialog';
 export * from './resizable';
-
+ 
 // VIA-GENT Brand Components
 export { BrandLogo } from './brand-logo';
 export { PixelBadge } from './pixel-badge';
 export { StatusDot } from './status-dot';
+
+// VIA-GENT Signposting Components
+export { Breadcrumbs } from './breadcrumbs';
+export { EmptyState } from './empty-state';
+export { ProgressIndicator } from './progress-indicator';
+export { WelcomeMessage } from './welcome-message';

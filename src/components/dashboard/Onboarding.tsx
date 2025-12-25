@@ -1,11 +1,37 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Sparkles, PlayCircle } from 'lucide-react'
+import { Sparkles, PlayCircle, X } from 'lucide-react'
 import { PitchDeck } from './PitchDeck'
+
+const ONBOARDING_COMPLETED_KEY = 'via-gent-onboarding-completed'
+const ONBOARDING_SKIPPED_KEY = 'via-gent-onboarding-skipped'
 
 export function Onboarding() {
     const { t } = useTranslation()
     const [showPitch, setShowPitch] = useState(false)
+    const [showOnboarding, setShowOnboarding] = useState(true)
+
+    useEffect(() => {
+        // Check if user has already completed or skipped onboarding
+        const completed = localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true'
+        const skipped = localStorage.getItem(ONBOARDING_SKIPPED_KEY) === 'true'
+        
+        if (completed || skipped) {
+            setShowOnboarding(false)
+        }
+    }, [])
+
+    const handleCompleteOnboarding = () => {
+        localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true')
+        setShowOnboarding(false)
+    }
+
+    const handleSkipOnboarding = () => {
+        localStorage.setItem(ONBOARDING_SKIPPED_KEY, 'true')
+        setShowOnboarding(false)
+    }
+
+    if (!showOnboarding) return null
 
     return (
         <>
@@ -28,13 +54,23 @@ export function Onboarding() {
                             {t('onboarding.slides.intro.desc')}
                         </p>
 
-                        <button
-                            onClick={() => setShowPitch(true)}
-                            className="group/btn inline-flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-none font-bold text-lg hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.3)] transition-all duration-300 shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]"
-                        >
-                            {t('onboarding.launch')}
-                            <PlayCircle size={24} className="group-hover/btn:fill-white group-hover/btn:text-primary transition-colors" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setShowPitch(true)}
+                                className="group/btn inline-flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-none font-bold text-lg hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.3)] transition-all duration-300 shadow-[2px_2px_0px_0px_rgba(194,65,12,1)]"
+                            >
+                                {t('onboarding.launch')}
+                                <PlayCircle size={24} className="group-hover/btn:fill-white group-hover/btn:text-primary transition-colors" />
+                            </button>
+                            <button
+                                onClick={handleSkipOnboarding}
+                                className="inline-flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground rounded-none font-medium hover:bg-accent transition-all border border-border"
+                                title={t('onboarding.skip')}
+                            >
+                                <X size={20} />
+                                <span className="hidden md:inline">{t('onboarding.skip')}</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Visual Graphic */}
@@ -47,7 +83,11 @@ export function Onboarding() {
                 </div>
             </div>
 
-            <PitchDeck isOpen={showPitch} onClose={() => setShowPitch(false)} />
+            <PitchDeck
+                isOpen={showPitch}
+                onClose={() => setShowPitch(false)}
+                onComplete={handleCompleteOnboarding}
+            />
         </>
     )
 }

@@ -167,7 +167,61 @@
       "next": "Next",
       "prev": "Previous",
       "close": "Close Pitch",
-      "restart": "Replay"
+      "restart": "Replay",
+      "skip": "Skip Onboarding",
+      "complete": "Complete Onboarding"
+    },
+    "breadcrumbs": {
+      "home": "Home",
+      "projects": "Projects",
+      "project": "Project",
+      "folder": "Folder",
+      "file": "File"
+      "navigateTo": "Navigate to"
+      "fullPath": "Full path"
+      "back": "Back"
+      "enter": "Enter"
+      "showFullPath": "Show full path"
+    },
+    "emptyState": {
+      "noProjects": {
+        "title": "No Projects Yet",
+        "description": "Create your first project to start coding with AI.",
+        "action": "Create Project"
+      },
+      "noFiles": {
+        "title": "No Files Yet",
+        "description": "Click + to create your first file.",
+        "action": "Create File"
+      },
+      "noAgents": {
+        "title": "No Agents Configured",
+        "description": "Configure an AI agent to get started.",
+        "action": "Configure Agent"
+      },
+      "noChatHistory": {
+        "title": "No Chat History",
+        "description": "Start a conversation with the AI agent.",
+        "action": "Start Chat"
+      },
+      "noSearchResults": {
+        "title": "No Search Results",
+        "description": "Try different search terms.",
+        "action": "Clear Search"
+      },
+      "welcome": {
+        "title": "Welcome to Via-gent",
+        "description": "Your browser-based AI-powered IDE is ready.",
+        "action": "Get Started"
+      }
+    },
+    "progress": {
+      "step": "Step {{current}} of {{total}}",
+      "loading": "Loading...",
+      "syncing": "Syncing files...",
+      "synced": "Synced {{count}}/{{total}} files",
+      "booting": "Booting WebContainer...",
+      "ready": "Ready!"
     }
   },
   "webcontainer": {

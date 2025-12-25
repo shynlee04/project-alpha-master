@@ -170,7 +170,61 @@
       "next": "Tiếp theo",
       "prev": "Quay lại",
       "close": "Đóng Pitch",
-      "restart": "Xem lại"
+      "restart": "Xem lại",
+      "skip": "Bỏ qua Hướng dẫn",
+      "complete": "Hoàn thành Hướng dẫn"
+    },
+    "breadcrumbs": {
+      "home": "Trang chủ",
+      "projects": "Dự án",
+      "project": "Dự án",
+      "folder": "Thư mục",
+      "file": "Tệp",
+      "navigateTo": "Điều hướng đến",
+      "fullPath": "Đường dẫn đầy đủ",
+      "back": "Quay lại",
+      "enter": "Nhập",
+      "showFullPath": "Hiển thị đường dẫn đầy đủ"
+    },
+    "emptyState": {
+      "noProjects": {
+        "title": "Chưa có Dự án",
+        "description": "Tạo dự án đầu tiên để bắt đầu lập trình với AI.",
+        "action": "Tạo Dự án"
+      },
+      "noFiles": {
+        "title": "Chưa có Tệp",
+        "description": "Nhấn + để tạo tệp đầu tiên.",
+        "action": "Tạo Tệp"
+      },
+      "noAgents": {
+        "title": "Chưa cấu hình AI Agent",
+        "description": "Cấu hình AI agent để bắt đầu.",
+        "action": "Cấu hình Agent"
+      },
+      "noChatHistory": {
+        "title": "Chưa có Lịch sử Chat",
+        "description": "Bắt đầu cuộc trò chuyện với AI agent.",
+        "action": "Bắt đầu Chat"
+      },
+      "noSearchResults": {
+        "title": "Không có Kết quả Tìm kiếm",
+        "description": "Thử từ khóa tìm kiếm khác.",
+        "action": "Xóa Tìm kiếm"
+      },
+      "welcome": {
+        "title": "Chào mừng đến Via-gent",
+        "description": "IDE dựa trên trình duyệt với AI đã sẵn sàng.",
+        "action": "Bắt đầu"
+      }
+    },
+    "progress": {
+      "step": "Bước {{current}} trên {{total}}",
+      "loading": "Đang tải...",
+      "syncing": "Đang đồng bộ tệp...",
+      "synced": "Đã đồng bộ {{count}}/{{total}} tệp",
+      "booting": "Đang khởi động WebContainer...",
+      "ready": "Sẵn sàng!"
     }
   },
   "webcontainer": {

@@ -6,9 +6,10 @@ import { createPortal } from 'react-dom'
 interface PitchDeckProps {
     isOpen: boolean
     onClose: () => void
+    onComplete?: () => void
 }
 
-export function PitchDeck({ isOpen, onClose }: PitchDeckProps) {
+export function PitchDeck({ isOpen, onClose, onComplete }: PitchDeckProps) {
     const { t } = useTranslation()
     const [currentSlide, setCurrentSlide] = useState(0)
     const slides = ['intro', 'privacy', 'agents', 'workflows', 'roadmap', 'contact']
@@ -155,9 +156,19 @@ export function PitchDeck({ isOpen, onClose }: PitchDeckProps) {
                                     </a>
                                 </div>
                             </div>
-                            <button onClick={() => setCurrentSlide(0)} className="text-muted-foreground hover:text-primary flex items-center gap-2 mt-8 font-pixel">
-                                <Repeat size={16} /> {t('onboarding.controls.restart')}
-                            </button>
+                            <div className="flex gap-4 mt-8">
+                                <button onClick={() => setCurrentSlide(0)} className="text-muted-foreground hover:text-primary flex items-center gap-2 font-pixel">
+                                    <Repeat size={16} /> {t('onboarding.controls.restart')}
+                                </button>
+                                {onComplete && (
+                                    <button
+                                        onClick={onComplete}
+                                        className="px-6 py-3 bg-primary text-primary-foreground rounded-none font-bold hover:scale-105 transition-transform shadow-[2px_2px_0px_0px_rgba(194,65,12,1)] font-pixel"
+                                    >
+                                        {t('onboarding.controls.complete')}
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </SlideWrapper>
 

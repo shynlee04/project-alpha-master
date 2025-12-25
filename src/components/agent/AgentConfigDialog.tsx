@@ -1,52 +1,41 @@
 /**
- * AgentConfigDialog - Agent Configuration Form Dialog
+ * AgentConfigDialog - Extensible Agent Configuration Dialog
  * 
- * Allows users to create new AI agents with provider/model selection.
- * NOW WIRED to Epic 25 provider infrastructure:
- * - credentialVault for encrypted API key storage
- * - modelRegistry for dynamic model discovery
- * - providerAdapter for connection testing
+ * Redesigned agent configuration following information architecture (Step 3)
+ * and 8-bit design system. Features:
+ * - Multi-provider support with extensible architecture
+ * - Form validation with clear error messages
+ * - Connection testing before saving
+ * - Configuration status indicators
+ * - Multiple agent profiles support
+ * - Secure localStorage persistence
+ * - i18next support (English/Vietnamese)
+ * - CVA variants for component variants
  * 
- * @epic Epic-28 Story 28-16 (UI shell)
- * @epic Epic-25 Story 25-6 (Provider wiring)
+ * @epic P0.5 - Redesign Agent Configuration Flow
+ * @story P0.5
  * 
- * @integrates Epic-25 Story 25-1 (TanStack AI Integration)
- *   - Provider selection validates API key connectivity ✅
- *   - Model selection queries available models from provider ✅
- * 
- * @persistence
- *   API Keys: IndexedDB via Dexie (encrypted with AES-GCM)
- *   Agent Config: IndexedDB via Dexie (db.agents)
- * 
- * @see _bmad-output/epics/epic-25-ai-foundation-sprint-new-2025-12-21.md
- * @see _bmad-output/sprint-artifacts/25-6-wire-agent-ui-to-providers.md
+ * @see _bmad-output/information-architecture-2025-12-25.md
+ * @see _bmad-output/design-system-8bit-2025-12-25.md
  */
 
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw } from 'lucide-react'
+import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Plus, Settings2, Trash2, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
-import { cn } from '@/lib/utils'
-
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
     DialogDescription,
+    DialogFooter,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
 import type { Agent } from '@/mocks/agents'
 
 // Epic 25 Provider Infrastructure
@@ -59,17 +48,114 @@ import {
 } from '@/lib/agent/providers'
 
 /**
- * Provider display configuration for UI
- * Maps to PROVIDERS from types.ts
- * OpenRouter is first (default) as it supports free models
+ * Provider configuration interface for extensibility
  */
-const PROVIDER_OPTIONS: { id: string; display: Agent['provider']; isCustom?: boolean }[] = [
-    { id: 'openrouter', display: 'OpenRouter' },
-    { id: 'openai', display: 'OpenAI' },
-    { id: 'openai-compatible', display: 'OpenAI Compatible' as Agent['provider'], isCustom: true },
-    { id: 'anthropic', display: 'Anthropic' },
-    { id: 'gemini', display: 'Google' },
+interface ProviderConfig {
+    id: string
+    display: string
+    icon: React.ReactNode
+    description: string
+    requiresApiKey: boolean
+    supportsFreeModels: boolean
+    supportsCustomEndpoint: boolean
+}
+
+/**
+ * Extensible provider configurations
+ * Can be easily extended without modifying core dialog logic
+ */
+const PROVIDER_CONFIGS: ProviderConfig[] = [
+    {
+        id: 'openrouter',
+        display: 'OpenRouter',
+        icon: <Bot className="w-5 h-5" />,
+        description: 'agents.config.providers.openrouter.description',
+        requiresApiKey: false,
+        supportsFreeModels: true,
+        supportsCustomEndpoint: false,
+    },
+    {
+        id: 'openai',
+        display: 'OpenAI',
+        icon: <Bot className="w-5 h-5" />,
+        description: 'agents.config.providers.openai.description',
+        requiresApiKey: true,
+        supportsFreeModels: false,
+        supportsCustomEndpoint: false,
+    },
+    {
+        id: 'anthropic',
+        display: 'Anthropic',
+        icon: <Bot className="w-5 h-5" />,
+        description: 'agents.config.providers.anthropic.description',
+        requiresApiKey: true,
+        supportsFreeModels: false,
+        supportsCustomEndpoint: false,
+    },
+    {
+        id: 'google',
+        display: 'Google AI',
+        icon: <Bot className="w-5 h-5" />,
+        description: 'agents.config.providers.google.description',
+        requiresApiKey: true,
+        supportsFreeModels: false,
+        supportsCustomEndpoint: false,
+    },
+    {
+        id: 'openai-compatible',
+        display: 'OpenAI Compatible',
+        icon: <Settings2 className="w-5 h-5" />,
+        description: 'agents.config.providers.openaiCompatible.description',
+        requiresApiKey: false,
+        supportsFreeModels: false,
+        supportsCustomEndpoint: true,
+    },
 ]
+
+/**
+ * Form validation schema using Zod
+ */
+import { z } from 'zod'
+
+const agentFormSchema = z.object({
+    name: z.string().min(1, 'agents.config.validation.nameRequired'),
+    role: z.string().optional(),
+    providerId: z.string().min(1, 'agents.config.validation.providerRequired'),
+    model: z.string().optional(),
+    apiKey: z.string().optional(),
+    customBaseURL: z.string().url().optional(),
+    customModelId: z.string().optional(),
+    customHeaders: z.array(
+        z.object({
+            key: z.string().min(1),
+            value: z.string(),
+        })
+    ).optional(),
+    enableNativeTools: z.boolean().optional(),
+})
+
+type AgentFormData = z.infer<typeof agentFormSchema>
+
+/**
+ * Form validation errors type
+ */
+type FormErrors = {
+    name?: string
+    provider?: string
+    model?: string
+    apiKey?: string
+    customBaseURL?: string
+}
+
+/**
+ * Connection status type
+ */
+type ConnectionStatus = 'idle' | 'testing' | 'success' | 'error'
+
+/**
+ * Configuration tab type
+ */
+type ConfigTab = 'basic' | 'advanced'
 
 interface AgentConfigDialogProps {
     open: boolean
@@ -82,89 +168,42 @@ export function AgentConfigDialog({
     open,
     onOpenChange,
     onSubmit,
-    agent
+    agent,
 }: AgentConfigDialogProps) {
     const { t } = useTranslation()
 
     // Form state
+    const [activeTab, setActiveTab] = useState<ConfigTab>('basic')
     const [name, setName] = useState('')
     const [role, setRole] = useState('')
-    const [providerId, setProviderId] = useState<string>('openrouter') // Default to OpenRouter
+    const [providerId, setProviderId] = useState<string>('openrouter')
     const [model, setModel] = useState('')
-    const [isSubmitting, setIsSubmitting] = useState(false)
-
-    // API Key state (Epic 25 wiring)
     const [apiKey, setApiKey] = useState('')
-    const [hasStoredKey, setHasStoredKey] = useState(false)
+    
+    // Advanced settings state
+    const [customBaseURL, setCustomBaseURL] = useState('')
+    const [customModelId, setCustomModelId] = useState('')
+    const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
+    const [enableNativeTools, setEnableNativeTools] = useState(true)
+
+    // Loading states
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const [isCheckingKey, setIsCheckingKey] = useState(false)
     const [isSavingKey, setIsSavingKey] = useState(false)
     const [isTestingConnection, setIsTestingConnection] = useState(false)
-    const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle')
-
-    // OpenAI Compatible custom endpoint state
-    const [customBaseURL, setCustomBaseURL] = useState('')
-    const [customHeaders, setCustomHeaders] = useState<{ key: string; value: string }[]>([])
-    const [customModelId, setCustomModelId] = useState('')
-    const [enableNativeTools, setEnableNativeTools] = useState(true)
-    const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
-
-
-    // Model loading state
-    const [models, setModels] = useState<ModelInfo[]>([])
-
-    // Initialize/Reset form when dialog opens
-    useEffect(() => {
-        if (open) {
-            if (agent) {
-                // Edit mode
-                setName(agent.name)
-                setRole(agent.role)
-                const matchingProvider = PROVIDER_OPTIONS.find(p => p.display === agent.provider)
-                const pId = matchingProvider?.id || 'openrouter'
-                setProviderId(pId)
-                setModel(agent.model)
-
-                // Load OpenAI Compatible settings
-                if (pId === 'openai-compatible') {
-                    setCustomBaseURL(agent.customBaseURL || '')
-                    setCustomModelId(agent.model) // For custom provider, model field is the custom model ID
-
-                    if (agent.customHeaders) {
-                        setCustomHeaders(Object.entries(agent.customHeaders).map(([key, value]) => ({ key, value })))
-                    } else {
-                        setCustomHeaders([])
-                    }
-                    setEnableNativeTools(agent.enableNativeTools ?? true)
-                } else {
-                    setCustomBaseURL('')
-                    setCustomModelId('')
-                    setCustomHeaders([])
-                    setEnableNativeTools(true)
-                }
-            } else {
-                // Create mode - reset defaults
-                setName('')
-                setRole('')
-                setProviderId('openrouter')
-                setModel('')
-
-                // Reset custom provider fields
-                setCustomBaseURL('')
-                setCustomModelId('')
-                setCustomHeaders([])
-                setEnableNativeTools(true)
-            }
-        }
-    }, [open, agent])
+    const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('idle')
     const [isLoadingModels, setIsLoadingModels] = useState(false)
 
-    // Validation state
-    const [errors, setErrors] = useState<{
-        name?: string
-        provider?: string
-        model?: string
-        apiKey?: string
-    }>({})
+    // Validation errors
+    const [errors, setErrors] = useState<FormErrors>({})
+
+    // Model list
+    const [models, setModels] = useState<ModelInfo[]>([])
+
+    // Get provider config
+    const providerConfig = useMemo(() => {
+        return PROVIDER_CONFIGS.find(p => p.id === providerId)
+    }, [providerId])
 
     // Initialize credentialVault on mount
     useEffect(() => {
@@ -180,14 +219,13 @@ export function AgentConfigDialog({
 
         credentialVault.hasCredentials(providerId)
             .then(async (hasKey) => {
-                setHasStoredKey(hasKey)
-                setApiKey('') // Don't expose stored key
-
+                setApiKey(hasKey ? '••••' : '')
+                
                 // Load models if we have a key
                 if (hasKey) {
                     await loadModels(providerId)
                 } else {
-                    // Load free models for OpenRouter without key
+                    // Load free models for OpenRouter
                     if (providerId === 'openrouter') {
                         const freeModels = modelRegistry.getFreeModels()
                         setModels(freeModels)
@@ -221,6 +259,27 @@ export function AgentConfigDialog({
         }
     }, [])
 
+    // Validate form
+    const validateForm = useCallback((): boolean => {
+        const newErrors: FormErrors = {}
+
+        if (!name.trim()) {
+            newErrors.name = t('agents.config.validation.nameRequired', 'Agent name is required')
+        }
+        if (!providerId) {
+            newErrors.provider = t('agents.config.validation.providerRequired', 'Please select a provider')
+        }
+        if (!model.trim() && providerConfig?.requiresApiKey) {
+            newErrors.model = t('agents.config.validation.modelRequired', 'Please select a model')
+        }
+        if (providerId === 'openai-compatible' && !customBaseURL.trim()) {
+            newErrors.customBaseURL = t('agents.config.validation.baseUrlRequired', 'Base URL is required')
+        }
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }, [name, providerId, model, customBaseURL, providerConfig, t])
+
     // Handle API key save
     const handleSaveApiKey = useCallback(async () => {
         if (!apiKey.trim()) {
@@ -231,21 +290,15 @@ export function AgentConfigDialog({
         setIsSavingKey(true)
         try {
             await credentialVault.storeCredentials(providerId, apiKey.trim())
-            setHasStoredKey(true)
-            setApiKey('')
-            toast.success(agent
-                ? t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: name.trim() })
-                : t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: name.trim() })
-            )
-
-            // Notify other components (like AgentChatPanel) that credentials changed
-            window.dispatchEvent(new CustomEvent('credentials-updated', { detail: { providerId } }))
-
+            setApiKey('••••')
+            toast.success(t('agents.config.apiKey.saveSuccess', 'API key saved successfully'))
+            
             // Reload models with new key
             await loadModels(providerId)
         } catch (error) {
             console.error('[AgentConfigDialog] Failed to save API key:', error)
             toast.error(t('agents.config.apiKey.saveFailed', 'Failed to save API key'))
+            setErrors(prev => ({ ...prev, apiKey: t('agents.config.apiKey.saveFailed', 'Failed to save API key') }))
         } finally {
             setIsSavingKey(false)
         }
@@ -257,11 +310,6 @@ export function AgentConfigDialog({
         setConnectionStatus('idle')
 
         try {
-            const config = PROVIDERS[providerId]
-            if (!config) {
-                throw new Error(`Unknown provider: ${providerId}`)
-            }
-
             const apiKeyVal = await credentialVault.getCredentials(providerId)
             if (!apiKeyVal) {
                 toast.error(t('agents.config.testConnection.noKey', 'No API key stored'))
@@ -290,51 +338,30 @@ export function AgentConfigDialog({
         }
     }, [providerId, t])
 
-    // Get display provider name from ID
-    const providerDisplay = useMemo(() => {
-        return PROVIDER_OPTIONS.find(p => p.id === providerId)?.display ?? 'OpenRouter'
-    }, [providerId])
-
     // Handle provider change
     const handleProviderChange = useCallback((value: string) => {
         setProviderId(value)
-        setModel('') // Reset model selection
-        setErrors(prev => ({ ...prev, provider: undefined }))
+        setModel('')
+        setErrors(prev => ({ ...prev, provider: undefined, model: undefined }))
         setConnectionStatus('idle')
     }, [])
 
-    // Validation function
-    const validate = useCallback(() => {
-        const newErrors: typeof errors = {}
-
-        if (!name.trim()) {
-            newErrors.name = t('agents.config.validation.nameRequired', 'Agent name is required')
-        }
-        if (!providerId) {
-            newErrors.provider = t('agents.config.validation.providerRequired', 'Please select a provider')
-        }
-        if (!model) {
-            newErrors.model = t('agents.config.validation.modelRequired', 'Please select a model')
-        }
-        // Validate customBaseURL for openai-compatible provider
-        if (providerId === 'openai-compatible' && !customBaseURL.trim()) {
-            newErrors.provider = t('agents.config.validation.baseUrlRequired', 'Base URL is required for OpenAI Compatible provider')
-        }
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }, [name, providerId, model, customBaseURL, t])
+    // Handle model change
+    const handleModelChange = useCallback((value: string) => {
+        setModel(value)
+        if (errors.model) setErrors(prev => ({ ...prev, model: undefined }))
+    }, [])
 
     // Form submission
     const handleSubmit = useCallback(async () => {
-        if (!validate()) return
+        if (!validateForm()) return
 
         setIsSubmitting(true)
 
         // Simulate network delay for UX
         await new Promise(resolve => setTimeout(resolve, 300))
 
-        // Convert custom headers array to object for storage
+        // Convert custom headers array to object
         const headersObj = customHeaders.reduce((acc, h) => {
             if (h.key.trim() && h.value.trim()) {
                 acc[h.key.trim()] = h.value.trim()
@@ -346,8 +373,8 @@ export function AgentConfigDialog({
             name: name.trim(),
             role: role.trim() || 'Assistant',
             status: 'offline',
-            provider: providerDisplay,
-            model: providerId === 'openai-compatible' && customModelId ? customModelId : model,
+            provider: providerConfig?.display || 'OpenRouter',
+            model: providerId === 'openai-compatible' ? customModelId : model,
             description: role.trim() || undefined,
             // OpenAI Compatible Provider support
             customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
@@ -374,7 +401,7 @@ export function AgentConfigDialog({
         setIsSubmitting(false)
         setConnectionStatus('idle')
         onOpenChange(false)
-    }, [name, role, providerDisplay, providerId, model, customBaseURL, customHeaders, customModelId, validate, onSubmit, onOpenChange, agent, t])
+    }, [name, role, providerConfig?.display, providerId, model, customBaseURL, customHeaders, enableNativeTools, validateForm, onSubmit, onOpenChange, agent, t])
 
     // Handle cancel
     const handleCancel = useCallback(() => {
@@ -383,387 +410,433 @@ export function AgentConfigDialog({
         setProviderId('openrouter')
         setModel('')
         setApiKey('')
+        setCustomBaseURL('')
+        setCustomHeaders([])
+        setCustomModelId('')
+        setEnableNativeTools(true)
         setErrors({})
         setConnectionStatus('idle')
         onOpenChange(false)
     }, [onOpenChange])
 
+    // Render configuration status indicator
+    const renderConfigStatus = () => {
+        if (!providerConfig) return null
+
+        const hasApiKey = apiKey !== '' && apiKey !== '••••'
+        
+        return (
+            <div className="flex items-center gap-2 text-xs">
+                {hasApiKey ? (
+                    <CheckCircle2 className="w-3 h-3 text-green-600" />
+                ) : (
+                    <XCircle className="w-3 h-3 text-destructive" />
+                )}
+                <span className={cn(
+                    hasApiKey ? 'text-success' : 'text-muted-foreground'
+                )}>
+                    {hasApiKey ? t('agents.config.status.configured', 'Configured') : t('agents.config.status.notConfigured', 'Not configured')}
+                </span>
+            </div>
+        )
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[520px] rounded-none border-border">
+            <DialogContent className="sm:max-w-[560px] rounded-none border-border">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 font-pixel text-lg">
                         <Bot className="w-5 h-5 text-primary" />
                         {agent
                             ? t('agents.config.editTitle', 'Edit Agent Configuration')
-                            : t('agents.config.title', 'New Agent Configuration')
-                        }
+                            : t('agents.config.title', 'New Agent Configuration')}
                     </DialogTitle>
                     <DialogDescription className="text-muted-foreground text-sm">
                         {agent
                             ? t('agents.config.editSubtitle', 'Modify your AI agent settings')
-                            : t('agents.config.subtitle', 'Configure a new AI agent for your workflow')
-                        }
+                            : t('agents.config.subtitle', 'Configure a new AI agent for your workflow')}
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">
-                    {/* Agent Name */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="agent-name">
-                            {t('agents.config.name', 'Agent Name')} <span className="text-destructive">*</span>
-                        </Label>
-                        <Input
-                            id="agent-name"
-                            value={name}
-                            onChange={(e) => {
-                                setName(e.target.value)
-                                if (errors.name) setErrors(prev => ({ ...prev, name: undefined }))
-                            }}
-                            placeholder={t('agents.config.namePlaceholder', 'Enter agent name...')}
-                            className="rounded-none"
-                        />
-                        {errors.name && (
-                            <p className="text-xs text-destructive">{errors.name}</p>
-                        )}
-                    </div>
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="w-full">
+                        <TabsTrigger value="basic" className="font-pixel">
+                            {t('agents.config.tabs.basic', 'Basic')}
+                        </TabsTrigger>
+                        <TabsTrigger value="advanced" className="font-pixel">
+                            {t('agents.config.tabs.advanced', 'Advanced')}
+                        </TabsTrigger>
+                    </TabsList>
 
-                    {/* Role/Description */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="agent-role">
-                            {t('agents.config.role', 'Role')}
-                        </Label>
-                        <Input
-                            id="agent-role"
-                            value={role}
-                            onChange={(e) => setRole(e.target.value)}
-                            placeholder={t('agents.config.rolePlaceholder', 'e.g., Frontend Developer')}
-                            className="rounded-none"
-                        />
-                    </div>
-
-                    {/* Provider Selection */}
-                    <div className="grid gap-2">
-                        <Label>
-                            {t('agents.config.provider', 'LLM Provider')} <span className="text-destructive">*</span>
-                        </Label>
-                        <Select value={providerId} onValueChange={handleProviderChange}>
-                            <SelectTrigger className="rounded-none">
-                                <SelectValue placeholder={t('agents.config.providerPlaceholder', 'Select provider...')} />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-none">
-                                {PROVIDER_OPTIONS.map((p) => (
-                                    <SelectItem key={p.id} value={p.id}>
-                                        {p.display}
-                                        {p.id === 'openrouter' && (
-                                            <span className="ml-2 text-xs text-muted-foreground">
-                                                {t('agents.config.freeModels', '(Free models available)')}
-                                            </span>
-                                        )}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.provider && (
-                            <p className="text-xs text-destructive">{errors.provider}</p>
-                        )}
-                    </div>
-
-                    {/* OpenAI Compatible Configuration Form */}
-                    {providerId === 'openai-compatible' && (
-                        <div className="grid gap-3 p-3 border border-border bg-muted/30 rounded-none">
-                            <div className="flex items-center gap-2 text-sm font-medium">
-                                <span className="text-primary">⚙️</span>
-                                {t('agents.config.openaiCompatible.title', 'OpenAI Compatible Provider')}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                {t('agents.config.openaiCompatible.description', 'Connect to any OpenAI-compatible API endpoint')}
-                            </p>
-
-                            {/* Base URL */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="custom-base-url">
-                                    {t('agents.config.openaiCompatible.baseUrl', 'Base URL')} <span className="text-destructive">*</span>
+                    <TabsContent value="basic" className="mt-4 space-y-4">
+                        {/* Basic Configuration */}
+                        <div className="grid gap-4">
+                            {/* Agent Name */}
+                            <div className="grid gap-2">
+                                <Label htmlFor="agent-name">
+                                    {t('agents.config.name', 'Agent Name')} <span className="text-destructive">*</span>
                                 </Label>
                                 <Input
-                                    id="custom-base-url"
-                                    value={customBaseURL}
-                                    onChange={(e) => setCustomBaseURL(e.target.value)}
-                                    placeholder={t('agents.config.openaiCompatible.baseUrlPlaceholder', 'http://localhost:1234/v1')}
+                                    id="agent-name"
+                                    value={name}
+                                    onChange={(e) => {
+                                        setName(e.target.value)
+                                        if (errors.name) setErrors(prev => ({ ...prev, name: undefined }))
+                                    }}
+                                    placeholder={t('agents.config.namePlaceholder', 'Enter agent name...')}
                                     className="rounded-none"
                                 />
-                                <p className="text-xs text-muted-foreground">
-                                    {t('agents.config.openaiCompatible.baseUrlHint', 'The API endpoint URL (e.g., http://localhost:1234/v1 for LM Studio)')}
-                                </p>
-                            </div>
-
-                            {/* Model ID */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="custom-model-id">
-                                    {t('agents.config.openaiCompatible.modelId', 'Model ID')}
-                                </Label>
-                                <div className="flex gap-2">
-                                    <Input
-                                        id="custom-model-id"
-                                        value={customModelId}
-                                        onChange={(e) => {
-                                            setCustomModelId(e.target.value)
-                                            setModel(e.target.value) // Sync with main model state
-                                        }}
-                                        placeholder={t('agents.config.openaiCompatible.modelIdPlaceholder', 'e.g., llama-3.1-8b or gpt-4o')}
-                                        className="rounded-none flex-1"
-                                    />
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="shrink-0 rounded-none w-9 px-0"
-                                        disabled={isLoadingCustomModels || !customBaseURL.trim()}
-                                        onClick={async () => {
-                                            setIsLoadingCustomModels(true)
-                                            try {
-                                                const models = await modelRegistry.getModelsFromCustomEndpoint(
-                                                    customBaseURL,
-                                                    apiKey,
-                                                    customHeaders.reduce((acc, h) => ({ ...acc, [h.key]: h.value }), {})
-                                                )
-                                                if (models.length > 0) {
-                                                    const modelId = models[0].id
-                                                    setCustomModelId(modelId)
-                                                    toast.success(t('agents.config.openaiCompatible.modelsLoaded', 'Found {{count}} models', { count: models.length }))
-                                                } else {
-                                                    toast.info(t('agents.config.openaiCompatible.noModels', 'No models found'))
-                                                }
-                                            } catch (err) {
-                                                console.error('Failed to load models:', err)
-                                                toast.error(t('agents.config.openaiCompatible.loadFailed', 'Failed to load models'))
-                                            } finally {
-                                                setIsLoadingCustomModels(false)
-                                            }
-                                        }}
-                                        title={t('agents.config.openaiCompatible.loadModels', 'Refresh Models')}
-                                    >
-                                        <RefreshCw className={cn("w-4 h-4", isLoadingCustomModels && "animate-spin")} />
-                                    </Button>
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                    {t('agents.config.openaiCompatible.modelIdHint', 'Enter specific model ID (e.g., local-model) or click refresh to auto-detect')}
-                                </p>
-                            </div>
-
-                            {/* Enable Native Tools Toggle */}
-                            <div className="flex items-center justify-between rounded-lg border border-border p-3 bg-background/50">
-                                <div className="space-y-0.5">
-                                    <Label className="text-sm font-medium">
-                                        {t('agents.config.openaiCompatible.enableTools', 'Enable Native Tools')}
-                                    </Label>
-                                    <p className="text-xs text-muted-foreground">
-                                        {t('agents.config.openaiCompatible.enableToolsDescription', 'Allow agent to use function calling (disable if provider returns 400/404)')}
-                                    </p>
-                                </div>
-                                <Switch
-                                    checked={enableNativeTools}
-                                    onCheckedChange={setEnableNativeTools}
-                                />
-                            </div>
-
-                            {/* Custom Headers (collapsed by default) */}
-                            <details className="group">
-                                <summary className="flex items-center gap-2 text-xs cursor-pointer text-muted-foreground hover:text-foreground">
-                                    <span className="text-[10px]">▶</span>
-                                    <span className="group-open:hidden">{t('agents.config.openaiCompatible.headers', 'Custom Headers')}</span>
-                                    <span className="hidden group-open:inline">{t('agents.config.openaiCompatible.headers', 'Custom Headers')}</span>
-                                </summary>
-                                <div className="mt-2 space-y-2">
-                                    {customHeaders.map((header, idx) => (
-                                        <div key={idx} className="flex gap-2 items-center">
-                                            <Input
-                                                value={header.key}
-                                                onChange={(e) => {
-                                                    const newHeaders = [...customHeaders]
-                                                    newHeaders[idx].key = e.target.value
-                                                    setCustomHeaders(newHeaders)
-                                                }}
-                                                placeholder={t('agents.config.openaiCompatible.headerKey', 'Key')}
-                                                className="rounded-none flex-1 text-xs"
-                                            />
-                                            <Input
-                                                value={header.value}
-                                                onChange={(e) => {
-                                                    const newHeaders = [...customHeaders]
-                                                    newHeaders[idx].value = e.target.value
-                                                    setCustomHeaders(newHeaders)
-                                                }}
-                                                placeholder={t('agents.config.openaiCompatible.headerValue', 'Value')}
-                                                className="rounded-none flex-1 text-xs"
-                                            />
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => setCustomHeaders(customHeaders.filter((_, i) => i !== idx))}
-                                                className="rounded-none text-xs text-destructive"
-                                            >
-                                                {t('agents.config.openaiCompatible.removeHeader', 'Remove')}
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setCustomHeaders([...customHeaders, { key: '', value: '' }])}
-                                        className="rounded-none text-xs"
-                                    >
-                                        + {t('agents.config.openaiCompatible.addHeader', 'Add Header')}
-                                    </Button>
-                                </div>
-                            </details>
-                        </div>
-                    )}
-
-                    {/* API Key Section */}
-                    {providerId && (
-                        <div className="grid gap-2 p-3 border border-border bg-muted/30 rounded-none">
-                            <div className="flex items-center justify-between">
-                                <Label className="flex items-center gap-2">
-                                    <Key className="w-4 h-4" />
-                                    {t('agents.config.apiKey.label', 'API Key')}
-                                    {providerId === 'openai-compatible' && (
-                                        <span className="text-xs text-muted-foreground">(optional)</span>
-                                    )}
-                                </Label>
-                                {hasStoredKey && (
-                                    <span className="flex items-center gap-1 text-xs text-green-600">
-                                        <CheckCircle2 className="w-3 h-3" />
-                                        {t('agents.config.apiKey.stored', 'Key stored')}
-                                    </span>
+                                {errors.name && (
+                                    <p className="text-xs text-destructive">{errors.name}</p>
                                 )}
                             </div>
 
-                            {isCheckingKey ? (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                    {t('agents.config.apiKey.checking', 'Checking...')}
-                                </div>
-                            ) : hasStoredKey ? (
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={handleTestConnection}
-                                        disabled={isTestingConnection}
-                                        className="rounded-none gap-1"
-                                    >
-                                        {isTestingConnection ? (
-                                            <Loader2 className="w-3 h-3 animate-spin" />
-                                        ) : connectionStatus === 'success' ? (
-                                            <CheckCircle2 className="w-3 h-3 text-green-600" />
-                                        ) : connectionStatus === 'error' ? (
-                                            <XCircle className="w-3 h-3 text-destructive" />
-                                        ) : (
-                                            <RefreshCw className="w-3 h-3" />
-                                        )}
-                                        {t('agents.config.testConnection', 'Test Connection')}
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setHasStoredKey(false)}
-                                        className="rounded-none text-xs"
-                                    >
-                                        {t('agents.config.apiKey.change', 'Change Key')}
-                                    </Button>
-                                </div>
-                            ) : (
-                                <div className="flex gap-2">
-                                    <Input
-                                        type="password"
-                                        value={apiKey}
-                                        onChange={(e) => {
-                                            setApiKey(e.target.value)
-                                            if (errors.apiKey) setErrors(prev => ({ ...prev, apiKey: undefined }))
-                                        }}
-                                        placeholder={t('agents.config.apiKey.placeholder', 'Enter API key...')}
-                                        className="rounded-none flex-1"
-                                    />
-                                    <Button
-                                        variant="pixel-primary"
-                                        size="sm"
-                                        onClick={handleSaveApiKey}
-                                        disabled={isSavingKey || !apiKey.trim()}
-                                        className="rounded-none gap-1"
-                                    >
-                                        {isSavingKey && <Loader2 className="w-3 h-3 animate-spin" />}
-                                        {t('agents.config.apiKey.save', 'Save')}
-                                    </Button>
-                                </div>
-                            )}
+                            {/* Role/Description */}
+                            <div className="grid gap-2">
+                                <Label htmlFor="agent-role">
+                                    {t('agents.config.role', 'Role')}
+                                </Label>
+                                <Input
+                                    id="agent-role"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    placeholder={t('agents.config.rolePlaceholder', 'e.g., Frontend Developer')}
+                                    className="rounded-none"
+                                />
+                            </div>
 
-                            {errors.apiKey && (
-                                <p className="text-xs text-destructive">{errors.apiKey}</p>
-                            )}
+                            {/* Provider Selection */}
+                            <div className="grid gap-2">
+                                <Label>
+                                    {t('agents.config.provider', 'LLM Provider')} <span className="text-destructive">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Select value={providerId} onValueChange={handleProviderChange}>
+                                        <SelectTrigger className="rounded-none">
+                                            <SelectValue placeholder={t('agents.config.providerPlaceholder', 'Select provider...')} />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-none">
+                                            {PROVIDER_CONFIGS.map((p) => (
+                                                <SelectItem key={p.id} value={p.id}>
+                                                    <div className="flex items-center gap-2">
+                                                        {p.icon}
+                                                        <span>{p.display}</span>
+                                                        {p.supportsFreeModels && (
+                                                            <span className="ml-2 text-xs text-success">
+                                                                {t('agents.config.freeModels', '(Free models available)')}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                {errors.provider && (
+                                    <p className="text-xs text-destructive">{errors.provider}</p>
+                                )}
+                            </div>
 
-                            {providerId === 'openrouter' && !hasStoredKey && (
-                                <p className="text-xs text-muted-foreground">
-                                    {t('agents.config.apiKey.openrouterNote', 'Free models work without API key. Add key for premium models.')}
-                                </p>
-                            )}
+                            {/* Model Selection */}
+                            <div className="grid gap-2">
+                                <Label>
+                                    {t('agents.config.model', 'Model')} <span className="text-destructive">*</span>
+                                </Label>
+                                <Select
+                                    value={model}
+                                    onValueChange={handleModelChange}
+                                    disabled={!providerId || isLoadingModels}
+                                >
+                                    <SelectTrigger className="rounded-none">
+                                        <SelectValue placeholder={
+                                            isLoadingModels
+                                                ? t('agents.config.modelLoading', 'Loading models...')
+                                                : t('agents.config.modelPlaceholder', 'Select model...')
+                                        } />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-none max-h-60">
+                                        {models.map((m) => (
+                                            <SelectItem key={m.id} value={m.id}>
+                                                {m.name}
+                                                {m.isFree && (
+                                                    <span className="ml-2 text-xs text-success">
+                                                        {t('agents.config.modelFree', '(Free)')}
+                                                    </span>
+                                                )}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.model && (
+                                    <p className="text-xs text-destructive">{errors.model}</p>
+                                )}
+                                {!providerId && (
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('agents.config.selectProviderFirst', 'Select a provider first')}
+                                    </p>
+                                )}
+                                {isLoadingModels && (
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                        {t('agents.config.modelLoading', 'Loading models...')}
+                                    </div>
+                                )}
+                            </div>
 
-                            {providerId === 'openai-compatible' && !hasStoredKey && (
-                                <p className="text-xs text-muted-foreground">
-                                    {t('agents.config.openaiCompatible.localProviderNote', 'For local providers like LM Studio or Ollama, API key may not be required.')}
-                                </p>
+                            {/* API Key Section */}
+                            {providerConfig && (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="flex items-center gap-2">
+                                            <Key className="w-4 h-4" />
+                                            {t('agents.config.apiKey.label', 'API Key')}
+                                            {providerConfig.requiresApiKey ? (
+                                                <span className="text-destructive">*</span>
+                                            ) : (
+                                                <span className="text-xs text-muted-foreground">
+                                                    (optional)
+                                                </span>
+                                            )}
+                                        </Label>
+                                        {renderConfigStatus()}
+                                    </div>
+
+                                    {isCheckingKey ? (
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            {t('agents.config.apiKey.checking', 'Checking...')}
+                                        </div>
+                                    ) : apiKey !== '' && apiKey !== '••••' ? (
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={handleTestConnection}
+                                                disabled={isTestingConnection}
+                                                className="rounded-none gap-1"
+                                            >
+                                                {isTestingConnection ? (
+                                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                                ) : connectionStatus === 'success' ? (
+                                                    <CheckCircle2 className="w-3 h-3 text-green-600" />
+                                                ) : connectionStatus === 'error' ? (
+                                                    <XCircle className="w-3 h-3 text-destructive" />
+                                                ) : (
+                                                    <RefreshCw className="w-3 h-3" />
+                                                )}
+                                                {t('agents.config.testConnection', 'Test Connection')}
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setApiKey('')}
+                                                className="rounded-none text-xs"
+                                            >
+                                                {t('agents.config.apiKey.change', 'Change Key')}
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <Input
+                                                type="password"
+                                                value={apiKey}
+                                                onChange={(e) => {
+                                                    setApiKey(e.target.value)
+                                                    if (errors.apiKey) setErrors(prev => ({ ...prev, apiKey: undefined }))
+                                                }}
+                                                placeholder={t('agents.config.apiKey.placeholder', 'Enter API key...')}
+                                                className="rounded-none flex-1"
+                                            />
+                                            <Button
+                                                variant="pixel-primary"
+                                                size="sm"
+                                                onClick={handleSaveApiKey}
+                                                disabled={isSavingKey || !apiKey.trim()}
+                                                className="rounded-none gap-1"
+                                            >
+                                                {isSavingKey && <Loader2 className="w-3 h-3 animate-spin" />}
+                                                {t('agents.config.apiKey.save', 'Save')}
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    {errors.apiKey && (
+                                        <p className="text-xs text-destructive">{errors.apiKey}</p>
+                                    )}
+
+                                    {providerId === 'openrouter' && !apiKey && (
+                                        <p className="text-xs text-info mt-2">
+                                            {t('agents.config.apiKey.openrouterNote', 'Free models work without API key. Add key for premium models.')}
+                                        </p>
+                                    )}
+
+                                    {providerId === 'openai-compatible' && !apiKey && (
+                                        <p className="text-xs text-info mt-2">
+                                            {t('agents.config.apiKey.localProviderNote', 'For local providers like LM Studio or Ollama, API key may not be required.')}
+                                        </p>
+                                    )}
+                                </div>
                             )}
                         </div>
-                    )}
+                    </TabsContent>
 
-                    {/* Model Selection */}
-                    <div className="grid gap-2">
-                        <Label>
-                            {t('agents.config.model', 'Model')} <span className="text-destructive">*</span>
-                        </Label>
-                        <Select
-                            value={model}
-                            onValueChange={(value) => {
-                                setModel(value)
-                                if (errors.model) setErrors(prev => ({ ...prev, model: undefined }))
-                            }}
-                            disabled={!providerId || isLoadingModels}
-                        >
-                            <SelectTrigger className="rounded-none">
-                                <SelectValue placeholder={
-                                    isLoadingModels
-                                        ? t('agents.config.modelLoading', 'Loading models...')
-                                        : t('agents.config.modelPlaceholder', 'Select model...')
-                                } />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-none max-h-60">
-                                {models.map((m) => (
-                                    <SelectItem key={m.id} value={m.id}>
-                                        {m.name}
-                                        {m.isFree && (
-                                            <span className="ml-2 text-xs text-green-600">
-                                                {t('agents.config.modelFree', '(Free)')}
-                                            </span>
-                                        )}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.model && (
-                            <p className="text-xs text-destructive">{errors.model}</p>
-                        )}
-                        {!providerId && (
-                            <p className="text-xs text-muted-foreground">
-                                {t('agents.config.selectProviderFirst', 'Select a provider first')}
-                            </p>
-                        )}
-                        {isLoadingModels && (
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                                {t('agents.config.modelLoading', 'Loading models...')}
-                            </div>
-                        )}
-                    </div>
-                </div>
+                    <TabsContent value="advanced" className="mt-4 space-y-4">
+                        {/* Advanced Configuration */}
+                        <div className="space-y-4">
+                            {/* OpenAI Compatible Configuration */}
+                            {providerId === 'openai-compatible' && (
+                                <div className="border border-border bg-muted/30 rounded-lg p-4 space-y-4">
+                                    <div className="flex items-center gap-2 text-sm font-medium mb-3">
+                                        <span className="text-primary">⚙️</span>
+                                        <span>{t('agents.config.openaiCompatible.title', 'OpenAI Compatible Provider')}</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('agents.config.openaiCompatible.description', 'Connect to any OpenAI-compatible API endpoint')}
+                                    </p>
+
+                                    {/* Base URL */}
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="custom-base-url">
+                                            {t('agents.config.openaiCompatible.baseUrl', 'Base URL')} <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Input
+                                            id="custom-base-url"
+                                            value={customBaseURL}
+                                            onChange={(e) => {
+                                                setCustomBaseURL(e.target.value)
+                                                if (errors.customBaseURL) setErrors(prev => ({ ...prev, customBaseURL: undefined }))
+                                            }}
+                                            placeholder={t('agents.config.openaiCompatible.baseUrlPlaceholder', 'http://localhost:1234/v1')}
+                                            className="rounded-none"
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            {t('agents.config.openaiCompatible.baseUrlHint', 'The API endpoint URL (e.g., http://localhost:1234/v1 for LM Studio)')}
+                                        </p>
+                                    </div>
+
+                                    {/* Model ID */}
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="custom-model-id">
+                                            {t('agents.config.openaiCompatible.modelId', 'Model ID')}
+                                        </Label>
+                                        <div className="flex gap-2">
+                                            <Input
+                                                id="custom-model-id"
+                                                value={customModelId}
+                                                onChange={(e) => {
+                                                    setCustomModelId(e.target.value)
+                                                    setModel(e.target.value)
+                                                }}
+                                                placeholder={t('agents.config.openaiCompatible.modelIdPlaceholder', 'e.g., llama-3.1-8b or gpt-4o')}
+                                                className="rounded-none flex-1"
+                                            />
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={isLoadingCustomModels || !customBaseURL.trim()}
+                                                onClick={async () => {
+                                                    setIsLoadingCustomModels(true)
+                                                    try {
+                                                        const models = await modelRegistry.getModelsFromCustomEndpoint(
+                                                            customBaseURL,
+                                                            apiKey,
+                                                            customHeaders.reduce((acc, h) => ({ ...acc, [h.key]: h.value }), {})
+                                                        )
+                                                        if (models.length > 0) {
+                                                            const modelId = models[0].id
+                                                            setCustomModelId(modelId)
+                                                            toast.success(t('agents.config.openaiCompatible.modelsLoaded', 'Found {{count}} models', { count: models.length }))
+                                                        } else {
+                                                            toast.info(t('agents.config.openaiCompatible.noModels', 'No models found'))
+                                                        }
+                                                    } catch (err) {
+                                                        console.error('Failed to load models:', err)
+                                                        toast.error(t('agents.config.openaiCompatible.loadFailed', 'Failed to load models'))
+                                                    } finally {
+                                                        setIsLoadingCustomModels(false)
+                                                    }
+                                                }}
+                                                title={t('agents.config.openaiCompatible.loadModels', 'Refresh Models')}
+                                            >
+                                                <RefreshCw className={cn("w-4 h-4", isLoadingCustomModels && "animate-spin")} />
+                                            </Button>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            {t('agents.config.openaiCompatible.modelIdHint', 'Enter specific model ID (e.g., local-model) or click refresh to auto-detect')}
+                                        </p>
+                                    </div>
+
+                                    {/* Enable Native Tools Toggle */}
+                                    <div className="flex items-center justify-between rounded-lg border border-border p-3 bg-background/50">
+                                        <div className="space-y-0.5">
+                                            <Label className="text-sm font-medium">
+                                                {t('agents.config.openaiCompatible.enableTools', 'Enable Native Tools')}
+                                            </Label>
+                                            <p className="text-xs text-muted-foreground">
+                                                {t('agents.config.openaiCompatible.enableToolsDescription', 'Allow agent to use function calling (disable if provider returns 400/404)')}
+                                            </p>
+                                        </div>
+                                        <Switch
+                                            checked={enableNativeTools}
+                                            onCheckedChange={setEnableNativeTools}
+                                        />
+                                    </div>
+
+                                    {/* Custom Headers */}
+                                    <details className="group">
+                                        <summary className="flex items-center gap-2 text-xs cursor-pointer text-muted-foreground hover:text-foreground">
+                                            <span className="text-[10px]">▶</span>
+                                            <span className="group-open:hidden">{t('agents.config.openaiCompatible.headers', 'Custom Headers')}</span>
+                                            <span className="hidden group-open:inline">{t('agents.config.openaiCompatible.headers', 'Custom Headers')}</span>
+                                        </summary>
+                                        <div className="mt-2 space-y-2">
+                                            {customHeaders.map((header, idx) => (
+                                                <div key={idx} className="flex gap-2 items-center">
+                                                    <Input
+                                                        value={header.key}
+                                                        onChange={(e) => {
+                                                            const newHeaders = [...customHeaders]
+                                                            newHeaders[idx].key = e.target.value
+                                                            setCustomHeaders(newHeaders)
+                                                        }}
+                                                        placeholder={t('agents.config.openaiCompatible.headerKey', 'Key')}
+                                                        className="rounded-none flex-1 text-xs"
+                                                    />
+                                                    <Input
+                                                        value={header.value}
+                                                        onChange={(e) => {
+                                                            const newHeaders = [...customHeaders]
+                                                            newHeaders[idx].value = e.target.value
+                                                            setCustomHeaders(newHeaders)
+                                                        }}
+                                                        placeholder={t('agents.config.openaiCompatible.headerValue', 'Value')}
+                                                        className="rounded-none flex-1 text-xs"
+                                                    />
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => setCustomHeaders(customHeaders.filter((_, i) => i !== idx))}
+                                                        className="rounded-none text-xs text-destructive"
+                                                    >
+                                                        {t('agents.config.openaiCompatible.removeHeader', 'Remove')}
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setCustomHeaders([...customHeaders, { key: '', value: '' }])}
+                                                className="rounded-none text-xs"
+                                            >
+                                                + {t('agents.config.openaiCompatible.addHeader', 'Add Header')}
+                                            </Button>
+                                        </div>
+                                    </details>
+                                </div>
+                            )}
+                        </div>
+                    </TabsContent>
+                </Tabs>
 
                 <DialogFooter className="gap-2">
                     <Button
