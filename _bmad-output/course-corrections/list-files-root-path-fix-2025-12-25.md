@@ -41,24 +41,45 @@ listDirectory('.') → ❌ Tries to find subdirectory named '.'
 
 ## 2. Fix Applied
 
-**File:** `src/lib/agent/facades/file-tools-impl.ts` (line 86-91)
+### Part 1: Centralized `normalizePath()` Helper
 
-```diff
- async listDirectory(path: string = '', recursive = false): Promise<FileEntry[]> {
--    validatePath(path);
--    const entries = await this.localFS.listDirectory(path);
-+    // Normalize '.' to '' since '.' means current directory (root)
-+    // The FSA API uses empty string '' for root, not '.'
-+    const normalizedPath = path === '.' ? '' : path;
-+    validatePath(normalizedPath);
-+    const entries = await this.localFS.listDirectory(normalizedPath);
+**File:** `src/lib/agent/facades/file-tools.ts` (lines 114-143)
+
+```typescript
+/**
+ * Normalize a path for FSA API compatibility
+ * LLMs often use Unix conventions (., ./) that FSA doesn't understand
+ */
+export function normalizePath(path: string): string {
+    if (path === '.') return '';           // Current directory = root
+    if (path.startsWith('./')) return path.slice(2);  // Remove ./ prefix
+    if (path.startsWith('.\\')) return path.slice(2); // Windows variant
+    return path;
+}
 ```
+
+### Part 2: Applied to All File Tool Methods
+
+**File:** `src/lib/agent/facades/file-tools-impl.ts`
+
+| Method | Line | Change |
+|--------|------|--------|
+| `readFile` | 45-47 | Added `normalizePath(path)` |
+| `writeFile` | 65-68 | Added `normalizePath(path)` |
+| `listDirectory` | 86-88 | Replaced inline fix with `normalizePath()` |
+| `createFile` | 113-116 | Added `normalizePath(path)` |
+| `deleteFile` | 134-137 | Added `normalizePath(path)` |
+| `searchFiles` | 153-155 | Added `normalizePath(basePath)` |
+
+### Part 3: `execute_command` Analysis
+
+**Result:** No changes needed. The `cwd` parameter is passed to WebContainer which handles `.` correctly.
 
 ---
 
 ## 3. Verification
 
-- [x] `pnpm build` passes (32.41s)
+- [x] `pnpm build` passes (28.95s)
 - [ ] Manual E2E test: Agent can list root directory with `.` path
 - [ ] Integration test: Verify recursive listing works from root
 
