@@ -84,13 +84,19 @@ export function createReadFileTool(getTools: () => AgentFileTools) {
 export function createReadFileClientTool(getTools: () => AgentFileTools) {
     return readFileDef.client(async (input: unknown): Promise<ToolResult<ReadFileOutput>> => {
         const args = input as { path: string };
+        // Normalize path: remove leading slashes, fix separators
+        const normalizedPath = args.path
+            .replace(/\\/g, '/')      // Windows backslashes
+            .replace(/^\/+/, '')      // Leading slashes
+            .replace(/^\.\//, '');    // Leading ./
+
         try {
-            const content = await getTools().readFile(args.path);
+            const content = await getTools().readFile(normalizedPath);
 
             if (content === null) {
                 return {
                     success: false,
-                    error: `File not found: ${args.path}`,
+                    error: `File not found: ${normalizedPath}`,
                 };
             }
 
