@@ -84,8 +84,11 @@ export class FileToolsFacade implements AgentFileTools {
      * List contents of a directory (no lock required for reads)
      */
     async listDirectory(path: string = '', recursive = false): Promise<FileEntry[]> {
-        validatePath(path);
-        const entries = await this.localFS.listDirectory(path);
+        // Normalize '.' to '' since '.' means current directory (root)
+        // The FSA API uses empty string '' for root, not '.'
+        const normalizedPath = path === '.' ? '' : path;
+        validatePath(normalizedPath);
+        const entries = await this.localFS.listDirectory(normalizedPath);
         const result: FileEntry[] = entries.map(e => ({
             name: e.name,
             path: path ? `${path}/${e.name}` : e.name,

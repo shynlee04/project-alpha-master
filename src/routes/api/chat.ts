@@ -41,6 +41,7 @@ interface ChatRequest {
     providerId?: string;
     modelId?: string;
     apiKey?: string; // Client MUST pass API key (from credentialVault)
+    disableTools?: boolean; // CC-2025-12-25-004: Debug flag to test without tools
 }
 
 /**
@@ -139,12 +140,28 @@ export const Route = createFileRoute('/api/chat')({
                     // Get tool definitions for LLM context
                     const tools = getTools();
 
+                    // Debug: Log tool count and model being used
+                    console.log('[/api/chat] Creating stream:', {
+                        modelId,
+                        baseURL,
+                        toolCount: tools.length,
+                        toolNames: tools.map(t => t.name),
+                    });
+
+                    // CC-2025-12-25-004: Debug flag to test without tools
+                    // Set DISABLE_TOOLS=true in request body to test basic chat
+                    const enableTools = !body.disableTools;
+
+                    console.log('[/api/chat] Tools enabled:', enableTools);
+
                     // Create streaming chat with the adapter
+                    // NOTE: Some free models may not support tools
                     const stream = chat({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         adapter: adapter as any,
                         messages: body.messages,
-                        tools,
+                        // Only pass tools if enabled
+                        ...(enableTools && { tools }),
                     });
 
                     // Create abort controller for streaming
