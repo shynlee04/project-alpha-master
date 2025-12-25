@@ -11,7 +11,8 @@
  * @story 25-4 - Wire Tool Execution to UI
  */
 
-import { useChat, fetchServerSentEvents, maxIterations } from '@tanstack/ai-react';
+import { useChat, fetchServerSentEvents } from '@tanstack/ai-react';
+import { maxIterations } from '@tanstack/ai';
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
