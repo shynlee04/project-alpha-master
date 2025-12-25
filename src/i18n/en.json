@@ -128,9 +128,12 @@
   "onboarding": {
     "launch": "Launch Interactive Tour",
     "slides": {
-      "intro": {
-        "title": "Via-gent",
-        "subtitle": "Your Intelligent Local Dev Environment",
+      "agent": {
+        "title": "AI Agent",
+        "enhance_prompt": "Auto-Enhance Prompt",
+        "enhancing": "Enhancing prompt...",
+        "enhance_tooltip": "Automatically improve prompt clarity and context (2-step process)",
+        "welcome_message": "Welcome to {{projectName}}! I'm your AI assistant. How can I help you today?",
         "desc": "Experience the future of browser-based development. Zero setup. 100% Privacy."
       },
       "privacy": {
@@ -263,7 +266,33 @@
       "testConnection.error": "Connection test error",
       "freeModels": "(Free models available)",
       "modelFree": "(Free)",
-      "modelLoading": "Loading models..."
+      "modelLoading": "Loading models...",
+      "openaiCompatible": {
+        "title": "OpenAI Compatible Provider",
+        "description": "Connect to any OpenAI-compatible API endpoint",
+        "baseUrl": "Base URL",
+        "baseUrlPlaceholder": "http://localhost:1234/v1",
+        "baseUrlHint": "The API endpoint URL",
+        "headers": "Custom Headers",
+        "addHeader": "Add Header",
+        "removeHeader": "Remove",
+        "headerKey": "Key",
+        "headerValue": "Value",
+        "modelId": "Model ID",
+        "modelIdPlaceholder": "e.g., local-model",
+        "loadModels": "Refresh Models",
+        "modelsLoaded": "Found {{count}} models",
+        "noModels": "No models found",
+        "loadFailed": "Failed to load models",
+        "enableTools": "Enable Native Tools",
+        "enableToolsDescription": "Allow agent to use function calling (disable if provider returns 400/404)",
+        "fetchModels": "Fetch Models",
+        "fetchModelsFailed": "Could not fetch models from endpoint",
+        "localProviderNote": "For local providers like LM Studio or Ollama, API key may not be required.",
+        "testEndpoint": "Test Endpoint",
+        "endpointValid": "Endpoint is reachable",
+        "endpointInvalid": "Could not connect to endpoint"
+      }
     }
   },
   "actions": {
@@ -331,7 +360,12 @@
       "accept": "Accept",
       "reject": "Reject",
       "accepted": "Accepted",
-      "lines": "{{count}} lines"
+      "lines": "{{count}} lines",
+      "preview": "Preview",
+      "save": "Save to Project"
+    },
+    "artifact": {
+      "savePrompt": "Enter file path"
     },
     "diff": {
       "additions": "{{count}} additions",
@@ -358,6 +392,31 @@
         "medium": "Medium Risk",
         "low": "Low Risk"
       }
-    }
+    },
+    "title": "AI CHAT",
+    "close": "Close chat panel",
+    "noProject": "Open a project to start chatting",
+    "conversations": "CONVERSATIONS",
+    "newConversation": "NEW CHAT",
+    "noConversations": "No conversations yet",
+    "noMessages": "No messages yet",
+    "deleteThreadConfirm": "Delete this conversation?",
+    "selectAgent": "Select Agent",
+    "noAgents": "No agents configured",
+    "startChatting": "Start chatting with the AI agent",
+    "typeMessage": "Type a message...",
+    "diagramError": "Diagram Error"
+  },
+  "label": {
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "button": {
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "ghost": "Ghost",
+    "outline": "Outline",
+    "destructive": "Delete",
+    "loading": "Loading..."
   }
 }

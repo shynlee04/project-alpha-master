@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Bot, User, Send, ChevronDown, ChevronUp, Code } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CodeBlock } from '@/components/chat/CodeBlock'
+
 import { ToolCallBadge } from '@/components/chat/ToolCallBadge'
+import { StreamdownRenderer } from '@/components/chat/StreamdownRenderer'
 import { useTranslation } from 'react-i18next'
 
 /**
@@ -39,13 +40,17 @@ interface EnhancedChatProps {
     isTyping?: boolean
     onSendMessage: (content: string) => void
     className?: string
+    onPreviewArtifact?: (code: string) => void
+    onSaveArtifact?: (code: string, language: string) => void
 }
 
 export function EnhancedChatInterface({
     messages,
     isTyping = false,
     onSendMessage,
-    className
+    className,
+    onPreviewArtifact,
+    onSaveArtifact,
 }: EnhancedChatProps) {
     const { t } = useTranslation()
     const [input, setInput] = useState('')
@@ -77,7 +82,12 @@ export function EnhancedChatInterface({
                     </div>
                 ) : (
                     messages.map((message) => (
-                        <ChatMessageBubble key={message.id} message={message} />
+                        <ChatMessageBubble
+                            key={message.id}
+                            message={message}
+                            onPreviewArtifact={onPreviewArtifact}
+                            onSaveArtifact={onSaveArtifact}
+                        />
                     ))
                 )}
 
@@ -87,24 +97,41 @@ export function EnhancedChatInterface({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input area */}
+            {/* Input area - auto-expanding textarea */}
             <form
                 onSubmit={handleSubmit}
-                className="shrink-0 border-t border-border p-4 bg-secondary/30"
+                className="shrink-0 border-t border-border p-3 bg-secondary/30"
             >
-                <div className="flex gap-2">
-                    <input
-                        type="text"
+                <div className="flex gap-2 items-end">
+                    <textarea
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => {
+                            setInput(e.target.value)
+                            // Auto-resize textarea
+                            e.target.style.height = 'auto'
+                            e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
+                        }}
+                        onKeyDown={(e) => {
+                            // Submit on Enter (without Shift)
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault()
+                                if (input.trim() && !isTyping) {
+                                    onSendMessage(input.trim())
+                                    setInput('')
+                                    e.currentTarget.style.height = 'auto'
+                                }
+                            }
+                        }}
                         placeholder={t('chat.placeholder', 'Type a message...')}
-                        className="flex-1 h-10 px-4 bg-background border border-border rounded-none text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+                        className="flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto"
                         disabled={isTyping}
+                        rows={1}
                     />
                     <Button
                         type="submit"
                         variant="pixel-primary"
                         size="icon"
+                        className="h-10 w-10 shrink-0"
                         disabled={!input.trim() || isTyping}
                     >
                         <Send className="w-4 h-4" />
@@ -115,7 +142,15 @@ export function EnhancedChatInterface({
     )
 }
 
-function ChatMessageBubble({ message }: { message: ChatMessage }) {
+function ChatMessageBubble({
+    message,
+    onPreviewArtifact,
+    onSaveArtifact
+}: {
+    message: ChatMessage
+    onPreviewArtifact?: (code: string) => void
+    onSaveArtifact?: (code: string, language: string) => void
+}) {
     const isUser = message.role === 'user'
 
     return (
@@ -134,7 +169,7 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
 
             {/* Content */}
             <div className={cn(
-                "flex-1 max-w-[80%]",
+                "flex-1 min-w-0 max-w-[85%]",
                 isUser && "flex flex-col items-end"
             )}>
                 {/* Message Text with Code Block Support */}
@@ -144,7 +179,12 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
                         ? "bg-primary text-primary-foreground shadow-[2px_2px_0px_0px_rgba(194,65,12,0.5)]"
                         : "bg-secondary text-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]"
                 )}>
-                    <MessageContent content={message.content} isUser={isUser} />
+                    <MessageContent
+                        content={message.content}
+                        isUser={isUser}
+                        onPreviewArtifact={onPreviewArtifact}
+                        onSaveArtifact={onSaveArtifact}
+                    />
                 </div>
 
                 {/* Tool executions */}
@@ -161,36 +201,36 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
     )
 }
 
-function MessageContent({ content, isUser }: { content: string, isUser: boolean }) {
-    // Simple regex to split by code blocks
-    // Captures: 1=language, 2=code
-    const parts = content.split(/(```[\w-]*\n[\s\S]*?```)/g)
+function MessageContent({
+    content,
+    isUser,
+    onPreviewArtifact,
+    onSaveArtifact
+}: {
+    content: string
+    isUser: boolean
+    onPreviewArtifact?: (code: string) => void
+    onSaveArtifact?: (code: string, language: string) => void
+}) {
+    // For user messages, keep simple rendering
+    if (isUser) {
+        return (
+            <div className="text-sm p-3 whitespace-pre-wrap">
+                {content}
+            </div>
+        )
+    }
 
+    // For assistant messages, use rich markdown rendering with mermaid support
     return (
-        <div className={cn("text-sm", isUser ? "p-3" : "py-1")}>
-            {parts.map((part, index) => {
-                const codeMatch = part.match(/^```([\w-]*)\n([\s\S]*?)```$/)
-                if (codeMatch) {
-                    const [, language, code] = codeMatch
-                    return (
-                        <div key={index} className="my-2 first:mt-0 last:mb-0">
-                            <CodeBlock
-                                code={code.trim()}
-                                language={language || 'text'}
-                                showLineNumbers
-                                className="max-w-full"
-                            />
-                        </div>
-                    )
-                }
-                // Regular text
-                if (!part.trim()) return null
-                return (
-                    <p key={index} className={cn("whitespace-pre-wrap px-3 py-1", isUser ? "" : "mb-1 last:mb-0")}>
-                        {part}
-                    </p>
-                )
-            })}
+        <div className="text-sm py-1 px-3">
+            <StreamdownRenderer
+                content={content}
+                isStreaming={false}
+                className="prose-sm"
+                onPreviewArtifact={onPreviewArtifact}
+                onSaveArtifact={onSaveArtifact}
+            />
         </div>
     )
 }

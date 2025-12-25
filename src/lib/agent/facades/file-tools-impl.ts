@@ -12,7 +12,7 @@
  */
 
 import type { AgentFileTools, FileEntry } from './file-tools';
-import { validatePath, PathValidationError } from './file-tools';
+import { validatePath, normalizePath, PathValidationError } from './file-tools';
 import { FileLock, fileLock as defaultFileLock } from './file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager';
@@ -43,9 +43,10 @@ export class FileToolsFacade implements AgentFileTools {
      * Read a file's content (no lock required for reads)
      */
     async readFile(path: string): Promise<string | null> {
-        validatePath(path);
+        const normalizedPath = normalizePath(path);
+        validatePath(normalizedPath);
         try {
-            const result = await this.localFS.readFile(path);
+            const result = await this.localFS.readFile(normalizedPath);
             return result.content;
         } catch (error) {
             // File not found returns null
@@ -63,10 +64,11 @@ export class FileToolsFacade implements AgentFileTools {
      * @story 12-1B - Now includes file-level locking
      */
     async writeFile(path: string, content: string): Promise<void> {
-        validatePath(path);
-        const lockAcquired = await this.fileLock.acquire(path);
+        const normalizedPath = normalizePath(path);
+        validatePath(normalizedPath);
+        const lockAcquired = await this.fileLock.acquire(normalizedPath);
         try {
-            await this.syncManager.writeFile(path, content);
+            await this.syncManager.writeFile(normalizedPath, content);
             const lockReleased = Date.now();
             this.eventBus.emit('file:modified', {
                 path,
@@ -84,8 +86,10 @@ export class FileToolsFacade implements AgentFileTools {
      * List contents of a directory (no lock required for reads)
      */
     async listDirectory(path: string = '', recursive = false): Promise<FileEntry[]> {
-        validatePath(path);
-        const entries = await this.localFS.listDirectory(path);
+        // Use centralized normalizePath for consistent handling of '.', './', etc.
+        const normalizedPath = normalizePath(path);
+        validatePath(normalizedPath);
+        const entries = await this.localFS.listDirectory(normalizedPath);
         const result: FileEntry[] = entries.map(e => ({
             name: e.name,
             path: path ? `${path}/${e.name}` : e.name,
@@ -107,10 +111,11 @@ export class FileToolsFacade implements AgentFileTools {
      * @story 12-1B - Now includes file-level locking
      */
     async createFile(path: string, content = ''): Promise<void> {
-        validatePath(path);
-        const lockAcquired = await this.fileLock.acquire(path);
+        const normalizedPath = normalizePath(path);
+        validatePath(normalizedPath);
+        const lockAcquired = await this.fileLock.acquire(normalizedPath);
         try {
-            await this.syncManager.writeFile(path, content);
+            await this.syncManager.writeFile(normalizedPath, content);
             const lockReleased = Date.now();
             this.eventBus.emit('file:created', {
                 path,
@@ -128,10 +133,11 @@ export class FileToolsFacade implements AgentFileTools {
      * @story 12-1B - Now includes file-level locking
      */
     async deleteFile(path: string): Promise<void> {
-        validatePath(path);
-        const lockAcquired = await this.fileLock.acquire(path);
+        const normalizedPath = normalizePath(path);
+        validatePath(normalizedPath);
+        const lockAcquired = await this.fileLock.acquire(normalizedPath);
         try {
-            await this.syncManager.deleteFile(path);
+            await this.syncManager.deleteFile(normalizedPath);
             const lockReleased = Date.now();
             this.eventBus.emit('file:deleted', {
                 path,
@@ -148,8 +154,9 @@ export class FileToolsFacade implements AgentFileTools {
      * Search for files by name pattern (no lock required for reads)
      */
     async searchFiles(query: string, basePath = ''): Promise<FileEntry[]> {
-        validatePath(basePath);
-        const allFiles = await this.listDirectory(basePath, true);
+        const normalizedBasePath = normalizePath(basePath);
+        validatePath(normalizedBasePath);
+        const allFiles = await this.listDirectory(normalizedBasePath, true);
         const lowerQuery = query.toLowerCase();
         return allFiles.filter(f =>
             f.type === 'file' && f.name.toLowerCase().includes(lowerQuery)

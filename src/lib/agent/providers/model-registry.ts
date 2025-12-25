@@ -55,6 +55,27 @@ export class ModelRegistry {
     }
 
     /**
+     * Get available models from a custom OpenAI-compatible endpoint
+     * @param baseURL - Custom API base URL
+     * @param apiKey - API key (optional for local providers)
+     * @param headers - Custom headers to include
+     * @returns Array of available models
+     */
+    async getModelsFromCustomEndpoint(
+        baseURL: string,
+        apiKey?: string,
+        headers?: Record<string, string>
+    ): Promise<ModelInfo[]> {
+        try {
+            const models = await this.fetchModelsFromCustomAPI(baseURL, apiKey, headers);
+            return models;
+        } catch (error) {
+            console.warn(`Failed to fetch models from custom endpoint ${baseURL}:`, error);
+            return [];
+        }
+    }
+
+    /**
      * Fetch models from provider API
      */
     private async fetchModelsFromAPI(
@@ -83,6 +104,32 @@ export class ModelRegistry {
 
         const data = await response.json();
         return this.parseModelsResponse(providerId, data);
+    }
+
+    /**
+     * Fetch models from a custom OpenAI-compatible API endpoint
+     */
+    private async fetchModelsFromCustomAPI(
+        baseURL: string,
+        apiKey?: string,
+        headers?: Record<string, string>
+    ): Promise<ModelInfo[]> {
+        const requestHeaders: Record<string, string> = {
+            ...(apiKey && { 'Authorization': `Bearer ${apiKey}` }),
+            ...headers,
+        };
+
+        const response = await fetch(`${baseURL}/models`, {
+            method: 'GET',
+            headers: requestHeaders,
+        });
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return this.parseModelsResponse('openai-compatible', data);
     }
 
     /**

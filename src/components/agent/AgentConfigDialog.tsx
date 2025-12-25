@@ -26,6 +26,8 @@ import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
+import { Switch } from '@/components/ui/switch'
+import { cn } from '@/lib/utils'
 
 import {
     Dialog,
@@ -61,9 +63,10 @@ import {
  * Maps to PROVIDERS from types.ts
  * OpenRouter is first (default) as it supports free models
  */
-const PROVIDER_OPTIONS: { id: string; display: Agent['provider'] }[] = [
+const PROVIDER_OPTIONS: { id: string; display: Agent['provider']; isCustom?: boolean }[] = [
     { id: 'openrouter', display: 'OpenRouter' },
     { id: 'openai', display: 'OpenAI' },
+    { id: 'openai-compatible', display: 'OpenAI Compatible' as Agent['provider'], isCustom: true },
     { id: 'anthropic', display: 'Anthropic' },
     { id: 'gemini', display: 'Google' },
 ]
@@ -98,6 +101,14 @@ export function AgentConfigDialog({
     const [isTestingConnection, setIsTestingConnection] = useState(false)
     const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
+    // OpenAI Compatible custom endpoint state
+    const [customBaseURL, setCustomBaseURL] = useState('')
+    const [customHeaders, setCustomHeaders] = useState<{ key: string; value: string }[]>([])
+    const [customModelId, setCustomModelId] = useState('')
+    const [enableNativeTools, setEnableNativeTools] = useState(true)
+    const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
+
+
     // Model loading state
     const [models, setModels] = useState<ModelInfo[]>([])
 
@@ -109,14 +120,39 @@ export function AgentConfigDialog({
                 setName(agent.name)
                 setRole(agent.role)
                 const matchingProvider = PROVIDER_OPTIONS.find(p => p.display === agent.provider)
-                setProviderId(matchingProvider?.id || 'openrouter')
+                const pId = matchingProvider?.id || 'openrouter'
+                setProviderId(pId)
                 setModel(agent.model)
+
+                // Load OpenAI Compatible settings
+                if (pId === 'openai-compatible') {
+                    setCustomBaseURL(agent.customBaseURL || '')
+                    setCustomModelId(agent.model) // For custom provider, model field is the custom model ID
+
+                    if (agent.customHeaders) {
+                        setCustomHeaders(Object.entries(agent.customHeaders).map(([key, value]) => ({ key, value })))
+                    } else {
+                        setCustomHeaders([])
+                    }
+                    setEnableNativeTools(agent.enableNativeTools ?? true)
+                } else {
+                    setCustomBaseURL('')
+                    setCustomModelId('')
+                    setCustomHeaders([])
+                    setEnableNativeTools(true)
+                }
             } else {
                 // Create mode - reset defaults
                 setName('')
                 setRole('')
                 setProviderId('openrouter')
                 setModel('')
+
+                // Reset custom provider fields
+                setCustomBaseURL('')
+                setCustomModelId('')
+                setCustomHeaders([])
+                setEnableNativeTools(true)
             }
         }
     }, [open, agent])
@@ -280,10 +316,14 @@ export function AgentConfigDialog({
         if (!model) {
             newErrors.model = t('agents.config.validation.modelRequired', 'Please select a model')
         }
+        // Validate customBaseURL for openai-compatible provider
+        if (providerId === 'openai-compatible' && !customBaseURL.trim()) {
+            newErrors.provider = t('agents.config.validation.baseUrlRequired', 'Base URL is required for OpenAI Compatible provider')
+        }
 
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
-    }, [name, providerId, model, t])
+    }, [name, providerId, model, customBaseURL, t])
 
     // Form submission
     const handleSubmit = useCallback(async () => {
@@ -294,13 +334,25 @@ export function AgentConfigDialog({
         // Simulate network delay for UX
         await new Promise(resolve => setTimeout(resolve, 300))
 
+        // Convert custom headers array to object for storage
+        const headersObj = customHeaders.reduce((acc, h) => {
+            if (h.key.trim() && h.value.trim()) {
+                acc[h.key.trim()] = h.value.trim()
+            }
+            return acc
+        }, {} as Record<string, string>)
+
         onSubmit({
             name: name.trim(),
             role: role.trim() || 'Assistant',
             status: 'offline',
             provider: providerDisplay,
-            model,
+            model: providerId === 'openai-compatible' && customModelId ? customModelId : model,
             description: role.trim() || undefined,
+            // OpenAI Compatible Provider support
+            customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
+            customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
+            enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
         })
 
         // Show success toast
@@ -314,11 +366,15 @@ export function AgentConfigDialog({
         setRole('')
         setProviderId('openrouter')
         setModel('')
+        setCustomBaseURL('')
+        setCustomHeaders([])
+        setCustomModelId('')
+        setEnableNativeTools(true)
         setErrors({})
         setIsSubmitting(false)
         setConnectionStatus('idle')
         onOpenChange(false)
-    }, [name, role, providerDisplay, model, validate, onSubmit, onOpenChange, t])
+    }, [name, role, providerDisplay, providerId, model, customBaseURL, customHeaders, customModelId, validate, onSubmit, onOpenChange, agent, t])
 
     // Handle cancel
     const handleCancel = useCallback(() => {
@@ -413,6 +469,156 @@ export function AgentConfigDialog({
                         )}
                     </div>
 
+                    {/* OpenAI Compatible Configuration Form */}
+                    {providerId === 'openai-compatible' && (
+                        <div className="grid gap-3 p-3 border border-border bg-muted/30 rounded-none">
+                            <div className="flex items-center gap-2 text-sm font-medium">
+                                <span className="text-primary">⚙️</span>
+                                {t('agents.config.openaiCompatible.title', 'OpenAI Compatible Provider')}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                {t('agents.config.openaiCompatible.description', 'Connect to any OpenAI-compatible API endpoint')}
+                            </p>
+
+                            {/* Base URL */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="custom-base-url">
+                                    {t('agents.config.openaiCompatible.baseUrl', 'Base URL')} <span className="text-destructive">*</span>
+                                </Label>
+                                <Input
+                                    id="custom-base-url"
+                                    value={customBaseURL}
+                                    onChange={(e) => setCustomBaseURL(e.target.value)}
+                                    placeholder={t('agents.config.openaiCompatible.baseUrlPlaceholder', 'http://localhost:1234/v1')}
+                                    className="rounded-none"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.openaiCompatible.baseUrlHint', 'The API endpoint URL (e.g., http://localhost:1234/v1 for LM Studio)')}
+                                </p>
+                            </div>
+
+                            {/* Model ID */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="custom-model-id">
+                                    {t('agents.config.openaiCompatible.modelId', 'Model ID')}
+                                </Label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        id="custom-model-id"
+                                        value={customModelId}
+                                        onChange={(e) => {
+                                            setCustomModelId(e.target.value)
+                                            setModel(e.target.value) // Sync with main model state
+                                        }}
+                                        placeholder={t('agents.config.openaiCompatible.modelIdPlaceholder', 'e.g., llama-3.1-8b or gpt-4o')}
+                                        className="rounded-none flex-1"
+                                    />
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="shrink-0 rounded-none w-9 px-0"
+                                        disabled={isLoadingCustomModels || !customBaseURL.trim()}
+                                        onClick={async () => {
+                                            setIsLoadingCustomModels(true)
+                                            try {
+                                                const models = await modelRegistry.getModelsFromCustomEndpoint(
+                                                    customBaseURL,
+                                                    apiKey,
+                                                    customHeaders.reduce((acc, h) => ({ ...acc, [h.key]: h.value }), {})
+                                                )
+                                                if (models.length > 0) {
+                                                    const modelId = models[0].id
+                                                    setCustomModelId(modelId)
+                                                    toast.success(t('agents.config.openaiCompatible.modelsLoaded', 'Found {{count}} models', { count: models.length }))
+                                                } else {
+                                                    toast.info(t('agents.config.openaiCompatible.noModels', 'No models found'))
+                                                }
+                                            } catch (err) {
+                                                console.error('Failed to load models:', err)
+                                                toast.error(t('agents.config.openaiCompatible.loadFailed', 'Failed to load models'))
+                                            } finally {
+                                                setIsLoadingCustomModels(false)
+                                            }
+                                        }}
+                                        title={t('agents.config.openaiCompatible.loadModels', 'Refresh Models')}
+                                    >
+                                        <RefreshCw className={cn("w-4 h-4", isLoadingCustomModels && "animate-spin")} />
+                                    </Button>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.openaiCompatible.modelIdHint', 'Enter specific model ID (e.g., local-model) or click refresh to auto-detect')}
+                                </p>
+                            </div>
+
+                            {/* Enable Native Tools Toggle */}
+                            <div className="flex items-center justify-between rounded-lg border border-border p-3 bg-background/50">
+                                <div className="space-y-0.5">
+                                    <Label className="text-sm font-medium">
+                                        {t('agents.config.openaiCompatible.enableTools', 'Enable Native Tools')}
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('agents.config.openaiCompatible.enableToolsDescription', 'Allow agent to use function calling (disable if provider returns 400/404)')}
+                                    </p>
+                                </div>
+                                <Switch
+                                    checked={enableNativeTools}
+                                    onCheckedChange={setEnableNativeTools}
+                                />
+                            </div>
+
+                            {/* Custom Headers (collapsed by default) */}
+                            <details className="group">
+                                <summary className="flex items-center gap-2 text-xs cursor-pointer text-muted-foreground hover:text-foreground">
+                                    <span className="text-[10px]">▶</span>
+                                    <span className="group-open:hidden">{t('agents.config.openaiCompatible.headers', 'Custom Headers')}</span>
+                                    <span className="hidden group-open:inline">{t('agents.config.openaiCompatible.headers', 'Custom Headers')}</span>
+                                </summary>
+                                <div className="mt-2 space-y-2">
+                                    {customHeaders.map((header, idx) => (
+                                        <div key={idx} className="flex gap-2 items-center">
+                                            <Input
+                                                value={header.key}
+                                                onChange={(e) => {
+                                                    const newHeaders = [...customHeaders]
+                                                    newHeaders[idx].key = e.target.value
+                                                    setCustomHeaders(newHeaders)
+                                                }}
+                                                placeholder={t('agents.config.openaiCompatible.headerKey', 'Key')}
+                                                className="rounded-none flex-1 text-xs"
+                                            />
+                                            <Input
+                                                value={header.value}
+                                                onChange={(e) => {
+                                                    const newHeaders = [...customHeaders]
+                                                    newHeaders[idx].value = e.target.value
+                                                    setCustomHeaders(newHeaders)
+                                                }}
+                                                placeholder={t('agents.config.openaiCompatible.headerValue', 'Value')}
+                                                className="rounded-none flex-1 text-xs"
+                                            />
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setCustomHeaders(customHeaders.filter((_, i) => i !== idx))}
+                                                className="rounded-none text-xs text-destructive"
+                                            >
+                                                {t('agents.config.openaiCompatible.removeHeader', 'Remove')}
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setCustomHeaders([...customHeaders, { key: '', value: '' }])}
+                                        className="rounded-none text-xs"
+                                    >
+                                        + {t('agents.config.openaiCompatible.addHeader', 'Add Header')}
+                                    </Button>
+                                </div>
+                            </details>
+                        </div>
+                    )}
+
                     {/* API Key Section */}
                     {providerId && (
                         <div className="grid gap-2 p-3 border border-border bg-muted/30 rounded-none">
@@ -420,6 +626,9 @@ export function AgentConfigDialog({
                                 <Label className="flex items-center gap-2">
                                     <Key className="w-4 h-4" />
                                     {t('agents.config.apiKey.label', 'API Key')}
+                                    {providerId === 'openai-compatible' && (
+                                        <span className="text-xs text-muted-foreground">(optional)</span>
+                                    )}
                                 </Label>
                                 {hasStoredKey && (
                                     <span className="flex items-center gap-1 text-xs text-green-600">
@@ -495,6 +704,12 @@ export function AgentConfigDialog({
                             {providerId === 'openrouter' && !hasStoredKey && (
                                 <p className="text-xs text-muted-foreground">
                                     {t('agents.config.apiKey.openrouterNote', 'Free models work without API key. Add key for premium models.')}
+                                </p>
+                            )}
+
+                            {providerId === 'openai-compatible' && !hasStoredKey && (
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.openaiCompatible.localProviderNote', 'For local providers like LM Studio or Ollama, API key may not be required.')}
                                 </p>
                             )}
                         </div>

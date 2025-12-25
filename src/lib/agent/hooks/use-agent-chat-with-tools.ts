@@ -12,6 +12,7 @@
  */
 
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react';
+import { maxIterations } from '@tanstack/ai';
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
@@ -37,6 +38,13 @@ export interface UseAgentChatWithToolsOptions {
     terminalTools?: AgentTerminalTools | null;
     /** Event bus for emitting tool events */
     eventBus?: WorkspaceEventEmitter | null;
+    // OpenAI Compatible Provider support
+    /** Custom base URL for openai-compatible providers */
+    customBaseURL?: string;
+    /** Custom headers for openai-compatible providers */
+    customHeaders?: Record<string, string>;
+    /** Whether to enable native tools (default: true) */
+    enableTools?: boolean;
 }
 
 /**
@@ -154,6 +162,9 @@ export function useAgentChatWithTools(
         fileTools = null,
         terminalTools = null,
         eventBus = null,
+        customBaseURL,
+        customHeaders,
+        enableTools = true,
     } = options;
 
     // Track tool calls
@@ -174,7 +185,7 @@ export function useAgentChatWithTools(
     }, [eventBus, agentStatus]);
 
     // Check if tools are available
-    const toolsAvailable = fileTools !== null || terminalTools !== null;
+    const toolsAvailable = enableTools && (fileTools !== null || terminalTools !== null);
 
     // Create tool factory options
     const toolFactoryOptions = useMemo((): ToolFactoryOptions => ({
@@ -192,29 +203,42 @@ export function useAgentChatWithTools(
     }, [toolsAvailable, toolFactoryOptions]);
 
     // Store latest config in ref to avoid stale closures in dynamic options callback
-    const configRef = useRef({ providerId, modelId, apiKey });
+    const configRef = useRef({ providerId, modelId, apiKey, customBaseURL, customHeaders, enableTools });
     useEffect(() => {
-        configRef.current = { providerId, modelId, apiKey };
-    }, [providerId, modelId, apiKey]);
+        configRef.current = { providerId, modelId, apiKey, customBaseURL, customHeaders, enableTools };
+    }, [providerId, modelId, apiKey, customBaseURL, customHeaders, enableTools]);
 
     // Create connection with dynamic body data using the supported callback pattern
     // This allows the connection to read the latest apiKey at request time without recreating the adapter
+    // IMPORTANT: Messages are passed separately by useChat.connect() - do NOT include in body options!
+    // The body options are merged with the messages by the connection adapter.
     const connection = useMemo(
         () => fetchServerSentEvents(
             endpoint,
             () => {
                 const current = configRef.current;
-                console.log('[useAgentChat] Fetching with key length:', current.apiKey?.length);
+                console.log('[useAgentChat] Fetching with config:', {
+                    providerId: current.providerId,
+                    modelId: current.modelId,
+                    hasApiKey: !!current.apiKey,
+                    apiKeyLength: current.apiKey?.length,
+                    customBaseURL: current.customBaseURL,
+                    hasCustomHeaders: !!current.customHeaders && Object.keys(current.customHeaders).length > 0,
+                });
                 return {
-                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    // Only include auth/config data - messages are passed by useChat
                     body: {
-                        messages: [], // Messages will be managed by useChat
                         providerId: current.providerId,
                         modelId: current.modelId,
-                        apiKey: current.apiKey
+                        apiKey: current.apiKey,
+                        // OpenAI Compatible Provider support
+                        customBaseURL: current.customBaseURL,
+                        customHeaders: current.customHeaders,
+                        // Toggle tools support (native function calling)
+                        disableTools: !current.enableTools,
                     }
                 };
             }
@@ -228,9 +252,13 @@ export function useAgentChatWithTools(
             return {
                 connection,
                 tools: agentTools.getClientTools(),
+                agentLoopStrategy: maxIterations(3), // MVP-3: Enable basic agentic loop (max 3 iterations)
             };
         }
-        return { connection };
+        return {
+            connection,
+            agentLoopStrategy: maxIterations(3), // MVP-3: Enable basic agentic loop (max 3 iterations)
+        };
     }, [connection, agentTools]);
 
     // Use TanStack AI chat hook with typed options
@@ -298,7 +326,7 @@ export function useAgentChatWithTools(
                 const updated = prev.map((tc) =>
                     tc.id === toolCallId ? { ...tc, status: 'executing' as const } : tc
                 );
-                
+
                 // Emit tool started event
                 const toolCall = updated.find(tc => tc.id === toolCallId);
                 if (toolCall && eventBus) {
@@ -309,7 +337,7 @@ export function useAgentChatWithTools(
                     });
                     setAgentStatus('executing');
                 }
-                
+
                 return updated;
             });
         }
@@ -327,7 +355,7 @@ export function useAgentChatWithTools(
                         ? { ...tc, status: 'error' as const, error: reason || 'User rejected' }
                         : tc
                 );
-                
+
                 // Emit tool failed event
                 const toolCall = updated.find(tc => tc.id === toolCallId);
                 if (toolCall && eventBus) {
@@ -337,7 +365,7 @@ export function useAgentChatWithTools(
                         error: reason || 'User rejected',
                     });
                 }
-                
+
                 return updated;
             });
         }

@@ -132,6 +132,59 @@ export interface CredentialRecord {
 }
 
 // ============================================================================
+// Conversation Threads (MVP-2 Chat Interface)
+// ============================================================================
+
+/**
+ * Tool call record within a thread message
+ * @epic MVP
+ * @story MVP-2 - Chat Interface with Rich Streaming
+ */
+export interface ThreadToolCallRecord {
+    id: string;
+    name: string;
+    status: 'pending' | 'running' | 'success' | 'error';
+    input?: unknown;
+    output?: unknown;
+    duration?: number;
+}
+
+/**
+ * Message within a conversation thread
+ * @epic MVP
+ * @story MVP-2 - Chat Interface with Rich Streaming
+ */
+export interface ThreadMessageRecord {
+    id: string;
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    agentId?: string;
+    agentName?: string;
+    agentModel?: string;
+    timestamp: number;
+    toolCalls?: ThreadToolCallRecord[];
+}
+
+/**
+ * Conversation thread record for Dexie persistence
+ * Enables full-text indexing for search.
+ * 
+ * @epic MVP
+ * @story MVP-2 - Chat Interface with Rich Streaming
+ */
+export interface ConversationThreadRecord {
+    id: string;                 // Primary key
+    projectId: string;          // Index for project-scoped queries
+    title: string;
+    preview: string;            // First 100 chars of last message
+    messages: ThreadMessageRecord[];
+    agentsUsed: string[];       // Agent IDs used in this thread
+    messageCount: number;
+    createdAt: number;
+    updatedAt: number;          // Index for sorting
+}
+
+// ============================================================================
 // Database Class
 // ============================================================================
 
@@ -156,6 +209,9 @@ class ViaGentDatabase extends Dexie {
 
     // Provider credentials (Story 25-0)
     credentials!: Table<CredentialRecord, string>;
+
+    // Conversation threads (MVP-2)
+    threads!: Table<ConversationThreadRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -203,6 +259,21 @@ class ViaGentDatabase extends Dexie {
             credentials: 'providerId, createdAt',
         }).upgrade(async () => {
             console.log('[Dexie] Running migration to v4 (credentials table)');
+        });
+
+        // Schema version 5: Add conversation threads table (MVP-2)
+        // For persistent thread storage with indexing support
+        this.version(5).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            // Conversation threads for chat interface
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+        }).upgrade(async () => {
+            console.log('[Dexie] Running migration to v5 (conversation threads)');
         });
     }
 }

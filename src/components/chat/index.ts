@@ -18,3 +18,11 @@ export type { DiffPreviewProps } from './DiffPreview';
 
 export { ApprovalOverlay } from './ApprovalOverlay';
 export type { ApprovalOverlayProps } from './ApprovalOverlay';
+
+// MVP-2: Chat Platform Components (not wired yet - keep for future use)
+// export { ChatPanel } from './ChatPanel';
+// export { ChatConversation } from './ChatConversation';
+// export { ThreadsList } from './ThreadsList';
+// export { ThreadCard } from './ThreadCard';
+// export { AgentSelector } from './AgentSelector';
+// export { StreamdownRenderer } from './StreamdownRenderer';

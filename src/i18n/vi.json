@@ -90,12 +90,18 @@
   },
   "agent": {
     "title": "Trợ lý AI",
+    "enhance_prompt": "Tự động tối ưu prompt",
+    "enhancing": "Đang tối ưu hóa...",
+    "enhance_tooltip": "Tự động cải thiện độ rõ ràng và ngữ cảnh (quy trình 2 bước)",
     "clear": "Xóa trắng",
+    "enhance_prompt_toggle": "Bật/Tắt tối ưu prompt",
+    "enhance_prompt_on": "Tối ưu prompt: Bật",
+    "enhance_prompt_off": "Tối ưu prompt: Tắt",
     "welcome": {
       "title": "Chào mừng đến với Trợ lý AI!",
       "subtitle": "Hỏi tôi bất cứ điều gì về dự án của bạn..."
     },
-    "welcome_message": "Xin chào! Tôi là trợ lý AI cho dự án {{projectName}}. Bạn muốn làm gì hôm nay?",
+    "welcome_message": "Chào mừng đến với {{projectName}}! Tôi là trợ lý AI của bạn. Tôi có thể giúp gì cho bạn hôm nay?",
     "demo_response": "Tôi là trợ lý demo. Hãy kết nối tôi với TanStack AI trong Epic 6 để có phản hồi thực tế.",
     "placeholder": "Hỏi trợ lý… (⌘K)",
     "status": {
@@ -263,7 +269,33 @@
       "testConnection.error": "Lỗi kiểm tra kết nối",
       "freeModels": "(Có mô hình miễn phí)",
       "modelFree": "(Miễn phí)",
-      "modelLoading": "Đang tải mô hình..."
+      "modelLoading": "Đang tải mô hình...",
+      "openaiCompatible": {
+        "title": "Nhà cung cấp tương thích OpenAI",
+        "description": "Kết nối với bất kỳ điểm cuối API nào tương thích OpenAI",
+        "baseUrl": "URL cơ sở",
+        "baseUrlPlaceholder": "http://localhost:1234/v1",
+        "baseUrlHint": "URL điểm cuối API",
+        "modelId": "ID Mô hình",
+        "modelIdPlaceholder": "ví dụ: local-model",
+        "loadModels": "Làm mới danh sách mô hình",
+        "modelsLoaded": "Tìm thấy {{count}} mô hình",
+        "noModels": "Không tìm thấy mô hình nào",
+        "loadFailed": "Không thể tải danh sách mô hình",
+        "enableTools": "Bật công cụ gốc",
+        "enableToolsDescription": "Cho phép tác nhân sử dụng function calling (tắt nếu nhà cung cấp trả về lỗi 400/404)",
+        "headers": "Header tùy chỉnh",
+        "addHeader": "Thêm Header",
+        "removeHeader": "Xóa",
+        "headerKey": "Khóa",
+        "headerValue": "Giá trị",
+        "fetchModels": "Tải mô hình",
+        "fetchModelsFailed": "Không thể tải mô hình từ điểm cuối",
+        "localProviderNote": "Với nhà cung cấp cục bộ như LM Studio hoặc Ollama, khóa API có thể không cần thiết.",
+        "testEndpoint": "Kiểm tra điểm cuối",
+        "endpointValid": "Điểm cuối có thể truy cập",
+        "endpointInvalid": "Không thể kết nối đến điểm cuối"
+      }
     }
   },
   "actions": {
@@ -331,7 +363,12 @@
       "accept": "Chấp nhận",
       "reject": "Từ chối",
       "accepted": "Đã chấp nhận",
-      "lines": "{{count}} dòng"
+      "lines": "{{count}} dòng",
+      "preview": "Xem trước",
+      "save": "Lưu vào dự án"
+    },
+    "artifact": {
+      "savePrompt": "Nhập đường dẫn tập tin"
     },
     "diff": {
       "additions": "{{count}} thêm",
@@ -358,6 +395,31 @@
         "medium": "Rủi ro Trung bình",
         "low": "Rủi ro Thấp"
       }
-    }
+    },
+    "title": "TRỢ LÝ AI",
+    "close": "Đóng bảng chat",
+    "noProject": "Mở dự án để bắt đầu trò chuyện",
+    "conversations": "HỘI THOẠI",
+    "newConversation": "CUỘC TRÒ CHUYỆN MỚI",
+    "noConversations": "Chưa có cuộc trò chuyện nào",
+    "noMessages": "Chưa có tin nhắn",
+    "deleteThreadConfirm": "Xóa cuộc trò chuyện này?",
+    "selectAgent": "Chọn Trợ lý",
+    "noAgents": "Chưa cấu hình trợ lý",
+    "startChatting": "Bắt đầu trò chuyện với trợ lý AI",
+    "typeMessage": "Nhập tin nhắn...",
+    "diagramError": "Lỗi Biểu đồ"
+  },
+  "label": {
+    "required": "Bắt buộc",
+    "optional": "Tùy chọn"
+  },
+  "button": {
+    "primary": "Chính",
+    "secondary": "Phụ",
+    "ghost": "Ma",
+    "outline": "Viền",
+    "destructive": "Xóa",
+    "loading": "Đang tải..."
   }
 }

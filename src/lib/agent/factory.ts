@@ -37,6 +37,8 @@ export interface ToolCallInfo {
     id: string;
     name: string;
     input: Record<string, unknown>;
+    /** Alias for input - for compatibility */
+    args?: Record<string, unknown>;
     status: 'pending' | 'executing' | 'completed' | 'error';
     result?: unknown;
     error?: string;
@@ -57,7 +59,11 @@ export function createClientFileTools(options: ToolFactoryOptions) {
         const input = args as ReadFileInput;
         const tools = getFileTools();
         if (!tools) {
-            return { success: false, error: 'File tools not available' };
+            return {
+                success: false,
+                error: 'No project folder opened. Please open a folder using the "Open Folder" button before I can access files.',
+                code: 'WORKSPACE_NOT_READY'
+            };
         }
 
         try {
@@ -76,7 +82,11 @@ export function createClientFileTools(options: ToolFactoryOptions) {
         const input = args as WriteFileInput;
         const tools = getFileTools();
         if (!tools) {
-            return { success: false, error: 'File tools not available' };
+            return {
+                success: false,
+                error: 'No project folder opened. Please open a folder using the "Open Folder" button before I can modify files.',
+                code: 'WORKSPACE_NOT_READY'
+            };
         }
 
         try {
@@ -101,7 +111,11 @@ export function createClientFileTools(options: ToolFactoryOptions) {
         const input = args as ListFilesInput;
         const tools = getFileTools();
         if (!tools) {
-            return { success: false, error: 'File tools not available' };
+            return {
+                success: false,
+                error: 'No project folder opened. Please open a folder using the "Open Folder" button before I can list files.',
+                code: 'WORKSPACE_NOT_READY'
+            };
         }
 
         try {

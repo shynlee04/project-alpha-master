@@ -13,6 +13,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Project persistence via IndexedDB
 - React 19 + TypeScript + Vite + TanStack Router stack
 
+**Current Status (2025-12-25)**: The project has undergone a major consolidation (INC-2025-12-24-001 response):
+- Reduced 26+ epics to 1 focused MVP epic (96% reduction)
+- Reduced 124+ stories to 7 sequential stories (94% reduction)
+- Current active story: MVP-1 (Agent Configuration & Persistence) - IN_PROGRESS
+- Platform A (Antigravity) single workstream approach
+- **Mandatory browser E2E verification** for all story completions
+
+**Consolidation Context**: Epics 12 (Tool Interface), 25 (AI Foundation), and 28 (UX Brand) have been consolidated into a single MVP epic to ensure a complete vertical slice of the AI coding agent functionality. See [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md) for details.
+
 ## Essential Development Commands
 
 ```bash
@@ -74,7 +83,7 @@ docs/2025-12-23/        # Comprehensive technical documentation (NEW)
 ### Core Architecture
 - **Local FS as Source of Truth**: All file operations go through `LocalFSAdapter` to browser's File System Access API
 - **WebContainer Mirror**: `SyncManager` syncs files to WebContainer sandbox
-- **State Management**: TanStack Store with React Context for workspace and IDE state
+- **State Management**: Zustand stores with React Context for workspace and IDE state (migration complete - see [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md))
 - **Project Persistence**: IndexedDB via Dexie for project metadata and conversations
 
 ### File System Sync Flow
@@ -145,6 +154,23 @@ The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 - Excludes test files and generated routes
 
 ## Development Workflow
+
+### MVP Story Development Cycle
+The project follows a sequential story approach for the MVP epic. Each story must be completed before starting the next:
+
+1. **MVP-1**: Agent Configuration & Persistence (IN_PROGRESS)
+2. **MVP-2**: Chat Interface with Streaming
+3. **MVP-3**: Tool Execution - File Operations
+4. **MVP-4**: Tool Execution - Terminal Commands
+5. **MVP-5**: Approval Workflow
+6. **MVP-6**: Real-time UI Updates
+7. **MVP-7**: E2E Integration Testing
+
+**Critical Requirements**:
+- Stories must be completed sequentially (no parallel execution)
+- **MANDATORY: Browser E2E verification** required before marking any story DONE
+- Story dependencies must be respected (see [`_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md))
+- Screenshot or recording must be captured for each E2E verification
 
 ### Starting Development
 1. Run `pnpm dev` - starts on port 3000 with required headers
@@ -239,6 +265,28 @@ The `.vscode/settings.json` file configures:
 - Handle `done` event types for completion
 - Stream responses require proper error handling
 
+### 10. MVP Consolidation Approach (NEW)
+- **Single Epic**: All AI agent functionality consolidated into one MVP epic
+- **Sequential Stories**: 7 stories must be completed in order (no parallel execution)
+- **Platform A Only**: Single workstream approach (Platform B not utilized for MVP)
+- **Vertical Slice**: Complete user journey from configuration to E2E validation
+- **Traceability**: All MVP stories trace back to original Epics 12, 25, 28
+
+### 11. Mandatory Browser E2E Verification (NEW)
+- **MANDATORY**: Every story requires manual browser E2E verification before DONE
+- **Screenshot Required**: Capture screenshot or recording of working feature
+- **Full Workflow**: Test complete user journey, not just component existence
+- **No Exceptions**: Stories cannot be marked DONE without browser verification
+- **Definition of Done**: Updated to enforce E2E verification gate
+
+### 12. Agentic Loop Limitation (Temporary MVP Measure)
+- **maxIterations(3)**: Currently enforced as a temporary safety measure during MVP-3/MVP-4 validation
+- **Limited Execution**: Agents will terminate after 3 tool execution iterations to prevent infinite loops
+- **Full Implementation Deferred**: Complete agentic loop with state tracking, iteration UI, and intelligent termination is planned for Epic 29
+- **Reference**: See course correction analysis in [`_bmad-output/course-corrections/read-file-and-agentic-execution-analysis-2025-12-25.md`](_bmad-output/course-corrections/read-file-and-agentic-execution-analysis-2025-12-25.md) and Epic 29 specification in [`_bmad-output/epics/epic-29-agentic-execution-loop.md`](_bmad-output/epics/epic-29-agentic-execution-loop.md)
+
+See [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md) for complete MVP story details.
+
 ## Existing Documentation & Guidance
 
 ### AGENTS.md
@@ -302,9 +350,20 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - Handle permission lifecycle with `permission-lifecycle.ts` utilities
 
 ### State Management
-- Workspace state via `WorkspaceContext` React Context
-- TanStack Store for reactive state
-- Project metadata persisted in IndexedDB
+- All client state uses Zustand stores (6 stores total)
+- No legacy TanStack Store usage (migration complete)
+- IndexedDB operations use Dexie exclusively (no legacy idb)
+- Project metadata persisted in IndexedDB via Dexie
+- Agent configurations persisted in localStorage
+
+**State Architecture**:
+- `useIDEStore` - Main IDE state (open files, active file, panels) - persisted to IndexedDB
+- `useStatusBarStore` - StatusBar state (WC status, sync status, cursor) - ephemeral
+- `useFileSyncStatusStore` - File sync progress and status - ephemeral
+- `useAgentsStore` - Agent configuration and state - persisted to localStorage
+- `useAgentSelectionStore` - Selected agent state - persisted to localStorage
+
+See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md) for complete state architecture details.
 
 ## Testing Notes
 
@@ -367,9 +426,28 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 3. Verify provider is supported in `model-registry`
 4. Check `/api/chat` logs for authentication errors
 
-## Recent Updates (Updated: 2025-12-23)
+## Recent Updates (Updated: 2025-12-25)
 
-### Major AI Agent Infrastructure (Epic 25)
+### MVP Consolidation (INC-2025-12-24-001 Response)
+- **Major Consolidation**: Reduced 26+ epics to 1 focused MVP epic (96% reduction)
+- **Story Reduction**: Reduced 124+ stories to 7 sequential stories (94% reduction)
+- **Single Workstream**: Platform A (Antigravity) only - no parallel execution
+- **Vertical Slice**: Complete AI coding agent workflow from configuration to E2E validation
+- **Traceability Preserved**: All MVP stories trace to original Epics 12, 25, 28
+- **Mandatory E2E Verification**: Browser testing required for all story completions
+
+### Course Corrections (2025-12-25)
+- **OpenRouter 401 Fix**: Fixed provider adapter signature for `createOpenaiChat` (see [`_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md`](_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md))
+- **Chat API Integration**: Resolved authentication and streaming issues
+- **Provider Configuration**: Updated provider adapter factory for correct API calls
+
+### State Management Migration (Complete)
+- **Zustand Migration**: All client state migrated to Zustand (6 stores)
+- **Dexie Migration**: All IndexedDB operations use Dexie (no legacy idb)
+- **TanStack Store Removed**: Zero legacy TanStack Store usage
+- **Audit Complete**: See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md)
+
+### Major AI Agent Infrastructure (Epic 25 - Consolidated into MVP)
 - **Provider Adapter System**: Multi-provider support for OpenRouter, Anthropic, etc.
 - **Credential Vault**: Secure storage of API keys in IndexedDB
 - **Model Registry**: Centralized configuration of available AI models
@@ -379,17 +457,19 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - **TanStack AI Integration**: Streaming chat with tool support
 - **Chat API**: New `/api/chat` endpoint with SSE streaming
 
-### UI Enhancements (Epic 28)
+### UI Enhancements (Epic 28 - Partially absorbed in MVP)
 - **Chat System Components**: `StreamingMessage`, `ApprovalOverlay`, `CodeBlock`, `ToolCallBadge`, `DiffPreview`
 - **Agent Management**: `AgentConfigDialog`, `AgentsPanel`, `AgentChatPanel`
 - **Status Bar**: Segmented status indicators for sync, WebContainer, cursor, file type
 - **8-bit Design System**: Dark-themed aesthetic with pixel-perfect styling
 
-### Documentation (2025-12-23)
+### Documentation (2025-12-25)
+- **MVP Sprint Plan**: [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md)
+- **Story Validation**: [`_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md)
+- **Sprint Status**: [`_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml)
+- **State Audit**: [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md)
 - **Comprehensive Tech Docs**: `docs/2025-12-23/` with architecture, tech context, data contracts, flows
 - **Development Guidelines**: `.agent/rules/general-rules.md` with MCP research protocol
-- **Sprint Tracking**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
-- **BMAD Artifacts**: Planning documents and sprint workflow status
 
 ### Dependency Changes
 - Added `@tanstack/ai`, `@tanstack/ai-gemini`, `@tanstack/ai-react` for AI/chat functionality
@@ -407,6 +487,7 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 
 ## Where to Find Things
 
+### Code Locations
 - **AI Agent System**: `src/lib/agent/`
 - **Chat UI Components**: `src/components/chat/`
 - **Chat API**: `src/routes/api/chat.ts`
@@ -414,8 +495,18 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - **File System Logic**: `src/lib/filesystem/`
 - **WebContainer Manager**: `src/lib/webcontainer/manager.ts`
 - **Workspace State**: `src/lib/workspace/`
-- **TanStack Stores**: `src/lib/state/`
+- **Zustand Stores**: `src/lib/state/`, `src/stores/`
 - **Translation Keys**: `src/i18n/{en,vi}.json`
+
+### BMAD Artifacts
 - **BMAD Workflows**: `.cursor/commands/bmad/`
-- **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`
+- **MVP Sprint Plan**: `_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`
+- **Story Validation**: `_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md`
+- **Workflow Status**: `_bmad-output/bmm-workflow-status-consolidated.yaml`
+
+### Documentation
 - **Tech Documentation**: `docs/2025-12-23/`
+- **State Audit**: `_bmad-output/state-management-audit-2025-12-24.md`
+- **Course Corrections**: `_bmad-output/course-corrections/`
+- **Development Guidelines**: `.agent/rules/general-rules.md`

@@ -16,6 +16,7 @@ export type {
     ModelInfo,
     StoredCredential,
     ConnectionTestResult,
+    OpenAICompatibleConfig,
 } from './types';
 export { PROVIDERS, FREE_MODELS } from './types';
 

@@ -18,7 +18,7 @@
 
 import { json } from '@tanstack/react-start';
 import { createFileRoute } from '@tanstack/react-router';
-import { chat, toStreamResponse } from '@tanstack/ai';
+import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
 import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
 
@@ -41,6 +41,10 @@ interface ChatRequest {
     providerId?: string;
     modelId?: string;
     apiKey?: string; // Client MUST pass API key (from credentialVault)
+    disableTools?: boolean; // CC-2025-12-25-004: Debug flag to test without tools
+    // OpenAI Compatible Provider support
+    customBaseURL?: string; // Custom API base URL for openai-compatible providers
+    customHeaders?: Record<string, string>; // Custom headers for openai-compatible providers
 }
 
 /**
@@ -122,31 +126,77 @@ export const Route = createFileRoute('/api/chat')({
 
                     const providerId = body.providerId || DEFAULT_PROVIDER;
                     const modelId = body.modelId || DEFAULT_MODEL;
-                    const baseURL = PROVIDER_BASE_URLS[providerId] || PROVIDER_BASE_URLS.openrouter;
 
-                    // Create OpenAI-compatible adapter directly
-                    // Using createOpenaiChat with baseURL override for OpenRouter
-                    const adapter = createOpenaiChat(modelId, apiKey, {
-                        baseURL,
-                        headers: providerId === 'openrouter' ? {
+                    // Determine baseURL: prioritize custom URL, then look up by provider
+                    let baseURL: string;
+                    if (body.customBaseURL) {
+                        // OpenAI Compatible provider with custom endpoint
+                        // Strip trailing slashes to avoid double slashes when SDK appends /chat/completions
+                        baseURL = body.customBaseURL.replace(/\/+$/, '');
+                    } else {
+                        baseURL = PROVIDER_BASE_URLS[providerId] || PROVIDER_BASE_URLS.openrouter;
+                    }
+
+                    // Determine headers: custom headers OR OpenRouter defaults
+                    let defaultHeaders: Record<string, string> | undefined;
+                    if (body.customHeaders && Object.keys(body.customHeaders).length > 0) {
+                        defaultHeaders = body.customHeaders;
+                    } else if (providerId === 'openrouter') {
+                        defaultHeaders = {
                             'HTTP-Referer': 'https://via-gent.dev',
                             'X-Title': 'Via-Gent IDE',
-                        } : undefined,
+                        };
+                    }
+
+                    // Create OpenAI-compatible adapter directly
+                    // TanStack AI v0.2.0: createOpenaiChat(model, apiKey, config)
+                    // Cast modelId as 'any' to allow arbitrary model strings
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const adapter = createOpenaiChat(modelId as any, apiKey, {
+                        baseURL,
+                        defaultHeaders,
                     });
 
                     // Get tool definitions for LLM context
                     const tools = getTools();
 
-                    // Create streaming chat with explicit model
+                    // Debug: Log tool count and model being used
+                    console.log('[/api/chat] Creating stream:', {
+                        modelId,
+                        baseURL,
+                        isCustomProvider: !!body.customBaseURL,
+                        toolCount: tools.length,
+                        toolNames: tools.map(t => t.name),
+                    });
+
+                    // CC-2025-12-25-004: Debug flag to test without tools
+                    // Set DISABLE_TOOLS=true in request body to test basic chat
+                    const enableTools = !body.disableTools;
+
+                    console.log('[/api/chat] Tools enabled:', enableTools);
+
+                    // Create streaming chat with the adapter
+                    // NOTE: Some free models may not support tools
                     const stream = chat({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         adapter: adapter as any,
                         messages: body.messages,
-                        tools,
+                        // Only pass tools if enabled
+                        ...(enableTools && { tools }),
                     });
 
-                    // Return SSE stream
-                    return toStreamResponse(stream);
+                    // Create abort controller for streaming
+                    const abortController = new AbortController();
+
+                    // Return SSE stream using non-deprecated toServerSentEventsStream
+                    const readableStream = toServerSentEventsStream(stream, abortController);
+                    return new Response(readableStream, {
+                        headers: {
+                            'Content-Type': 'text/event-stream',
+                            'Cache-Control': 'no-cache',
+                            'Connection': 'keep-alive',
+                        },
+                    });
 
                 } catch (error) {
                     console.error('[/api/chat] Error:', error);

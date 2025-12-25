@@ -110,3 +110,33 @@ export function validatePath(path: string): void {
         throw new PathValidationError('Absolute paths not allowed');
     }
 }
+
+/**
+ * Normalize a path for FSA API compatibility
+ * LLMs often use Unix conventions (., ./) that FSA doesn't understand
+ * 
+ * @param path - Path to normalize
+ * @returns Normalized path suitable for FSA API
+ * 
+ * @example
+ * normalizePath('.')        → ''      // Current directory = root
+ * normalizePath('./src')    → 'src'   // Remove ./ prefix
+ * normalizePath('./file.ts') → 'file.ts'
+ * normalizePath('src/file') → 'src/file' // Already normalized
+ */
+export function normalizePath(path: string): string {
+    // Handle '.' (current directory) → empty string (FSA root)
+    if (path === '.') {
+        return '';
+    }
+    // Handle './' prefix → remove it
+    if (path.startsWith('./')) {
+        return path.slice(2);
+    }
+    // Handle '.\\' prefix (Windows) → remove it
+    if (path.startsWith('.\\')) {
+        return path.slice(2);
+    }
+    return path;
+}
+

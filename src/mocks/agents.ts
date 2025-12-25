@@ -11,7 +11,7 @@ export interface Agent {
     name: string
     role: string
     status: 'online' | 'offline' | 'busy' | 'error'
-    provider: 'OpenRouter' | 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google'
+    provider: 'OpenRouter' | 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google' | 'OpenAI Compatible'
     model: string
     description?: string
     tasksCompleted: number
@@ -19,6 +19,10 @@ export interface Agent {
     tokensUsed: number
     lastActive: string
     createdAt: string
+    // OpenAI Compatible Provider support
+    customBaseURL?: string
+    customHeaders?: Record<string, string>
+    enableNativeTools?: boolean
 }
 
 /**

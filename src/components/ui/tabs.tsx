@@ -1,16 +1,94 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+const tabsVariants = cva(
+  "flex flex-col gap-2",
+  {
+    variants: {
+      orientation: {
+        horizontal: "",
+        vertical: "flex-row",
+      },
+    },
+  }
+)
+
+const tabsListVariants = cva(
+  "inline-flex items-center justify-center p-1 border",
+  {
+    variants: {
+      orientation: {
+        horizontal: "w-fit h-9 rounded-md",
+        vertical: "h-fit w-12 rounded-md",
+      },
+      theme: {
+        dark: "bg-neutral-900 border-neutral-700",
+        light: "bg-neutral-100 border-neutral-300",
+      },
+    },
+  }
+)
+
+const tabsTriggerVariants = cva(
+  "inline-flex items-center justify-center gap-1.5 border border-transparent font-medium whitespace-nowrap transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      orientation: {
+        horizontal: "flex-1 h-[calc(100%-4px)] px-3 py-1.5",
+        vertical: "w-full h-10 px-2 py-2",
+      },
+      size: {
+        sm: "text-xs",
+        md: "text-sm",
+        lg: "text-base",
+      },
+      state: {
+        default: "text-neutral-500 hover:text-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-500",
+        active: "bg-primary-500 text-white border-primary-500 shadow-[0_2px_0_rgba(94,115,255,0.3)]",
+        disabled: "text-neutral-400 cursor-not-allowed dark:text-neutral-600",
+      },
+      theme: {
+        dark: "focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:outline-2 focus-visible:outline-primary-500",
+        light: "focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:outline-2 focus-visible:outline-primary-500",
+      },
+    },
+  }
+)
+
+const tabsContentVariants = cva("flex-1 outline-none")
+
+interface TabsProps extends React.ComponentProps<typeof TabsPrimitive.Root> {
+  orientation?: 'horizontal' | 'vertical'
+  className?: string
+}
+
+interface TabsListProps extends React.ComponentProps<typeof TabsPrimitive.List> {
+  orientation?: 'horizontal' | 'vertical'
+  className?: string
+}
+
+interface TabsTriggerProps extends React.ComponentProps<typeof TabsPrimitive.Trigger> {
+  size?: 'sm' | 'md' | 'lg'
+  orientation?: 'horizontal' | 'vertical'
+  className?: string
+}
+
+interface TabsContentProps extends React.ComponentProps<typeof TabsPrimitive.Content> {
+  className?: string
+}
+
 function Tabs({
   className,
+  orientation = 'horizontal',
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+}: TabsProps) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn(tabsVariants({ orientation }), className)}
       {...props}
     />
   )
@@ -18,15 +96,13 @@ function Tabs({
 
 function TabsList({
   className,
+  orientation = 'horizontal',
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+}: TabsListProps) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn(
-        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
-        className
-      )}
+      className={cn(tabsListVariants({ orientation, theme: 'dark' }), className)}
       {...props}
     />
   )
@@ -34,13 +110,17 @@ function TabsList({
 
 function TabsTrigger({
   className,
+  size = 'md',
+  orientation = 'horizontal',
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+}: TabsTriggerProps) {
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        tabsTriggerVariants({ size, state: 'default', orientation, theme: 'dark' }),
+        "data-[state=active]:" + tabsTriggerVariants({ size, state: 'active', orientation, theme: 'dark' }),
+        "data-[state=disabled]:" + tabsTriggerVariants({ size, state: 'disabled', orientation, theme: 'dark' }),
         className
       )}
       {...props}
@@ -51,11 +131,11 @@ function TabsTrigger({
 function TabsContent({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Content>) {
+}: TabsContentProps) {
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
-      className={cn("flex-1 outline-none", className)}
+      className={cn(tabsContentVariants(), className)}
       {...props}
     />
   )

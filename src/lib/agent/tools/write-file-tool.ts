@@ -69,13 +69,19 @@ export function createWriteFileTool(getTools: () => AgentFileTools) {
 export function createWriteFileClientTool(getTools: () => AgentFileTools) {
     return writeFileDef.client(async (input: unknown): Promise<ToolResult<WriteFileOutput>> => {
         const args = input as { path: string; content: string };
+        // Normalize path: remove leading slashes, fix separators
+        const normalizedPath = args.path
+            .replace(/\\/g, '/')      // Windows backslashes
+            .replace(/^\/+/, '')      // Leading slashes
+            .replace(/^\.\//, '');    // Leading ./
+
         try {
-            await getTools().writeFile(args.path, args.content);
+            await getTools().writeFile(normalizedPath, args.content);
 
             return {
                 success: true,
                 data: {
-                    path: args.path,
+                    path: normalizedPath,
                     bytesWritten: args.content.length,
                 },
             };

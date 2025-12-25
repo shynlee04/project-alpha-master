@@ -7,14 +7,25 @@
  * 
  * @epic 25 - AI Foundation Sprint
  * @story 25-0 - Create ProviderAdapterFactory with OpenRouter
+ * @feature OpenAI Compatible Providers
  */
 
-import { createOpenaiChat, type OpenAIChatConfig } from '@tanstack/ai-openai';
-import type { ProviderConfig, AdapterConfig, ConnectionTestResult } from './types';
+import { createOpenaiChat } from '@tanstack/ai-openai';
+import type { ProviderConfig, AdapterConfig, ConnectionTestResult, OpenAICompatibleConfig } from './types';
 import { PROVIDERS } from './types';
 
 // TanStack AI adapter type
 type OpenAIAdapter = ReturnType<typeof createOpenaiChat>;
+
+/**
+ * Extended adapter config for custom providers
+ */
+export interface CustomAdapterConfig extends AdapterConfig {
+    /** Custom headers to include in requests */
+    headers?: Record<string, string>;
+    /** Whether this is a custom user-configured provider */
+    isCustom?: boolean;
+}
 
 /**
  * ProviderAdapterFactory - Creates TanStack AI adapters for various providers
@@ -28,8 +39,17 @@ export class ProviderAdapterFactory {
      * @param config - Adapter configuration with API key
      * @returns TanStack AI adapter instance
      */
-    createAdapter(providerId: string, config: AdapterConfig): OpenAIAdapter {
+    createAdapter(providerId: string, config: CustomAdapterConfig): OpenAIAdapter {
         const providerConfig = PROVIDERS[providerId];
+
+        // For openai-compatible providers, baseURL is required in config
+        if (providerId === 'openai-compatible') {
+            if (!config.baseURL) {
+                throw new Error('baseURL is required for OpenAI Compatible providers');
+            }
+            return this.createCustomAdapter(config);
+        }
+
         if (!providerConfig) {
             throw new Error(`Unknown provider: ${providerId}`);
         }
@@ -48,13 +68,43 @@ export class ProviderAdapterFactory {
     }
 
     /**
+     * Create an adapter for a custom OpenAI-compatible provider
+     * @param config - Custom adapter configuration with baseURL and optional headers
+     * @returns TanStack AI adapter instance
+     */
+    createCustomAdapter(config: CustomAdapterConfig): OpenAIAdapter {
+        const options: Record<string, unknown> = {};
+
+        // Set custom base URL
+        if (config.baseURL) {
+            options.baseURL = config.baseURL;
+        }
+
+        // Merge custom headers
+        if (config.headers && Object.keys(config.headers).length > 0) {
+            options.defaultHeaders = { ...config.headers };
+        }
+
+        // Use provided model or a default
+        const modelId = config.model || 'gpt-3.5-turbo';
+
+        // API key may be empty for local providers (LM Studio, Ollama)
+        const apiKey = config.apiKey || '';
+
+        // Cast options as any to allow flexible config for TanStack AI
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return createOpenaiChat(modelId as any, apiKey, options as any);
+    }
+
+    /**
      * Create an OpenAI-compatible adapter (works for OpenAI and OpenRouter)
+     * Note: TanStack AI v0.2.0 signature is createOpenaiChat(model, apiKey, config)
      */
     private createOpenAICompatibleAdapter(
         provider: ProviderConfig,
         config: AdapterConfig
     ): OpenAIAdapter {
-        const options: Partial<OpenAIChatConfig> = {};
+        const options: Record<string, unknown> = {};
 
         // Apply baseURL for OpenRouter or custom override
         if (config.baseURL || provider.baseURL) {
@@ -63,13 +113,18 @@ export class ProviderAdapterFactory {
 
         // Add OpenRouter-specific headers if needed
         if (provider.id === 'openrouter') {
-            options.headers = {
+            options.defaultHeaders = {
                 'HTTP-Referer': 'https://via-gent.dev', // For OpenRouter rankings
                 'X-Title': 'Via-Gent IDE',
             };
         }
 
-        return createOpenaiChat(config.apiKey, options);
+        // Use default model if not provided in config
+        const modelId = config.model || provider.defaultModel || 'gpt-4o';
+
+        // Cast modelId as 'any' to allow arbitrary OpenRouter model strings
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return createOpenaiChat(modelId as any, config.apiKey, options as any);
     }
 
     /**
@@ -85,31 +140,39 @@ export class ProviderAdapterFactory {
      * Test connection to a provider
      * @param providerId - Provider ID
      * @param apiKey - API key to test
+     * @param customConfig - Optional custom config for openai-compatible providers
      * @returns Connection test result
      */
     async testConnection(
         providerId: string,
-        apiKey: string
+        apiKey: string,
+        customConfig?: { baseURL?: string; headers?: Record<string, string> }
     ): Promise<ConnectionTestResult> {
         const startTime = Date.now();
 
         try {
-            const config: AdapterConfig = { apiKey };
-            const adapter = this.createAdapter(providerId, config);
-
-            // Make a minimal API call to test the connection
-            // Using models endpoint which is lightweight
             const provider = PROVIDERS[providerId];
-            const baseURL = provider.baseURL || 'https://api.openai.com/v1';
+            let baseURL: string;
+
+            if (providerId === 'openai-compatible' && customConfig?.baseURL) {
+                baseURL = customConfig.baseURL;
+            } else if (provider?.baseURL) {
+                baseURL = provider.baseURL;
+            } else {
+                baseURL = 'https://api.openai.com/v1';
+            }
+
+            const headers: Record<string, string> = {
+                ...(apiKey && { 'Authorization': `Bearer ${apiKey}` }),
+                ...(provider?.id === 'openrouter' && {
+                    'HTTP-Referer': 'https://via-gent.dev',
+                }),
+                ...(customConfig?.headers || {}),
+            };
 
             const response = await fetch(`${baseURL}/models`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    ...(provider.id === 'openrouter' && {
-                        'HTTP-Referer': 'https://via-gent.dev',
-                    }),
-                },
+                headers,
             });
 
             const latencyMs = Date.now() - startTime;
@@ -125,6 +188,24 @@ export class ProviderAdapterFactory {
             const message = error instanceof Error ? error.message : 'Unknown error';
             return { success: false, error: message, latencyMs };
         }
+    }
+
+    /**
+     * Test connection to a custom OpenAI-compatible endpoint
+     * @param customConfig - Custom provider configuration
+     * @returns Connection test result
+     */
+    async testCustomConnection(
+        customConfig: OpenAICompatibleConfig
+    ): Promise<ConnectionTestResult> {
+        return this.testConnection(
+            'openai-compatible',
+            customConfig.apiKey || '',
+            {
+                baseURL: customConfig.baseURL,
+                headers: customConfig.headers,
+            }
+        );
     }
 
     /**
@@ -166,7 +247,8 @@ export const providerAdapterFactory = new ProviderAdapterFactory();
  */
 export function createProviderAdapter(
     providerId: string,
-    config: AdapterConfig
+    config: CustomAdapterConfig
 ): OpenAIAdapter {
     return providerAdapterFactory.createAdapter(providerId, config);
 }
+
