@@ -1,9 +1,11 @@
 # MVP Sprint Plan
-**Date**: 2025-12-24
+**Date**: 2025-12-25 (Updated)
+**Created**: 2025-12-24
 **Project**: Project Alpha - AI Coding Agent Vertical Slice
 **Epic**: MVP (AI Coding Agent Vertical Slice)
 **Platform**: Platform A (Antigravity)
 **Incident Response**: INC-2025-12-24-001 (RESOLVED)
+**Sprint Status**: IN_PROGRESS
 
 ---
 
@@ -36,9 +38,14 @@ Each story adds a layer of functionality that enables the next step in the journ
 ### Week 1: Foundation & Core Interaction
 
 #### Day 1-2: MVP-1 - Agent Configuration & Persistence (5 points)
-**Status**: READY_FOR_DEV
+**Status**: ✅ IN_PROGRESS (Started 2025-12-25)
 **Duration**: 2 days
 **Dependencies**: None
+
+**Progress Notes**:
+- 2025-12-25: Course correction applied for OpenRouter 401 fix
+- Chat API integration issues resolved (see `_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md`)
+- Provider adapter fixed for correct `createOpenaiChat` signature
 
 **Deliverables**:
 - Provider selection UI (OpenRouter/Anthropic)
@@ -55,8 +62,8 @@ Each story adds a layer of functionality that enables the next step in the journ
 - Agent shows "Ready" status
 
 **Acceptance Criteria**:
-- [ ] User can select AI provider (OpenRouter/Anthropic)
-- [ ] API keys stored securely in localStorage
+- [x] User can select AI provider (OpenRouter/Anthropic) - Implemented
+- [x] API keys stored securely in localStorage - Implemented
 - [ ] Model selection from provider catalog
 - [ ] Configuration persists across browser sessions
 - [ ] Connection test passes before saving
@@ -481,12 +488,23 @@ This sprint plan complies with:
 
 ---
 
-**Plan Status**: APPROVED
-**Next Action**: Begin MVP-1 development
+**Plan Status**: IN_PROGRESS
+**Current Story**: MVP-1 (Agent Configuration)
+**Next Action**: Complete MVP-1, prepare MVP-2
+**Last Updated**: 2025-12-25T10:00:00+07:00
 **Review Date**: 2025-12-26
+
+---
+
+## Change Log
+
+| Date | Version | Description |
+|------|---------|-------------|
+| 2025-12-24 | 1.0 | Initial plan creation |
+| 2025-12-25 | 1.1 | Updated MVP-1 to IN_PROGRESS, added course correction notes |
 
 ---
 
 **Document Owner**: Product Manager (@bmad-bmm-pm)
 **Reviewers**: Scrum Master (@bmad-bmm-sm), BMAD Master (@bmad-core-bmad-master)
-**Version**: 1.0
+**Version**: 1.1

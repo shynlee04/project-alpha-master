@@ -11,7 +11,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-24T20:00:00+07:00"
-last_updated: "2025-12-24T20:00:00+07:00"
+last_updated: "2025-12-25T10:40:00+07:00"
 current_phase: "implementation"
 consolidation_date: "2025-12-24"
 
@@ -32,26 +32,27 @@ current_workflow: "consolidated-mvp"
 # Superseded: 3 overlapping epics (12, 25, 28)
 # Backlogged: 6 non-essential epics
 current_story:
-  key: "MVP-1-agent-configuration"
+  key: "MVP-2-chat-interface-streaming"
   epic: "MVP"
   status: "ready-for-dev"
   platform: "Platform A"
   notes: |
-    CONSOLIDATED APPROACH: First story in MVP vertical slice.
-    Focus: Agent configuration with persistence.
-    Builds on agents-store.ts from Epic 25-R1.
+    MVP-2: Chat Interface with Streaming.
+    Focus: SSE streaming, rich text rendering with diagrams, code blocks.
+    Builds on MVP-1 agent configuration.
     Requires browser E2E verification before DONE.
 
 last_completed_story:
-  key: "25-R1-integrate-useagentchat-to-chatpanel"
-  epic: 25 (superseded)
-  completed_at: "2025-12-24T11:15:00+07:00"
-  status: "superseded"
+  key: "MVP-1-agent-configuration"
+  epic: "MVP"
+  completed_at: "2025-12-25T10:35:00+07:00"
+  status: "done"
   platform: "Platform A"
   notes: |
-    Last story before consolidation.
-    Created agents-store.ts with Zustand persistence.
-    Foundation for MVP-1 agent configuration.
+    First story in MVP vertical slice - COMPLETE.
+    E2E verified: Provider selection, API key storage, model selection,
+    cross-session persistence, connection test, status indicator.
+    Browser recording: mvp1_agent_config_e2e_1766632691303.webp
 
 # =============================================================================
 # CONSOLIDATION GOVERNANCE
@@ -115,10 +116,10 @@ implementation:
   started: "2025-12-24"
   stories:
     total: 7
-    completed: 0
-    in_progress: 0
-    ready_for_dev: 1
-    backlog: 6
+    completed: 1
+    in_progress: 1
+    ready_for_dev: 0
+    backlog: 5
 
 # =============================================================================
 # EPIC STATUS - CONSOLIDATED VIEW
@@ -142,7 +143,7 @@ epic_status:
   - id: MVP
     name: "AI Coding Agent Vertical Slice"
     status: "ACTIVE"
-    stories: "0/7"
+    stories: "1/7"
     priority: "P0"
     platform: "Platform A"
     user_journey: "Configure → Chat → Execute → Approve → Iterate"
@@ -191,17 +192,20 @@ commands:
 # =============================================================================
 next_actions:
   immediate:
-    - action: "Develop Story MVP-1 (Agent Configuration)"
-      status: "READY_FOR_DEV"
+    - action: "Develop Story MVP-2 (Chat Interface with Streaming)"
+      status: "IN_PROGRESS"
       command: "dev-story workflow"
       agent: "dev"
       priority: "P0"
       platform: "Platform A"
-      notes: "First story in consolidated MVP"
+      notes: "Rich text rendering with diagrams, SSE streaming"
+      
+  completed:
+    - action: "MVP-1 (Agent Configuration)"
+      completed_at: "2025-12-25T10:35:00+07:00"
+      e2e_verified: true
       
   then:
-    - action: "Develop Story MVP-2 (Chat Interface)"
-      depends_on: "MVP-1"
     - action: "Develop Story MVP-3 (File Tool Execution)"
       depends_on: "MVP-2"
     - action: "Develop Story MVP-4 (Terminal Tool Execution)"

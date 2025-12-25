@@ -1,4 +1,5 @@
-# generated: 2025-12-24T20:00:00+07:00
+# generated: 2025-12-25T10:00:00+07:00 (Updated)
+# created: 2025-12-24T20:00:00+07:00
 # project: project-alpha
 # project_key: project-alpha-master
 # tracking_system: file-system
@@ -29,7 +30,7 @@
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
 # - MANDATORY: Browser E2E verification required before marking DONE (INC-2025-12-24-001)
 
-generated: 2025-12-24T20:00:00+07:00
+generated: 2025-12-25T10:00:00+07:00
 project: project-alpha
 project_key: project-alpha-master
 tracking_system: file-system
@@ -122,12 +123,14 @@ development_status:
       7. Full E2E integration
 
   # Story MVP-1: Agent Configuration & Persistence
-  mvp-1-agent-configuration: ready-for-dev
+  mvp-1-agent-configuration: done
     story: _bmad-output/sprint-artifacts/mvp-1-agent-configuration.md
     context: _bmad-output/sprint-artifacts/mvp-1-agent-configuration-context.xml
     platform: "Platform A"
     priority: P0
     points: 5
+    started_at: "2025-12-25T01:00:00+07:00"
+    course_correction: "_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md"
     acceptance_criteria:
       - "User can select AI provider (OpenRouter/Anthropic)"
       - "API keys stored securely in localStorage"
@@ -139,9 +142,10 @@ development_status:
     notes: |
       Builds on Epic 25-6 (AgentConfigDialog) and Epic 28-10 (Agent forms).
       Must use agents-store.ts for persistence (from 25-R1 Session 3).
+      2025-12-25: Course correction applied for OpenRouter 401/400 errors.
 
   # Story MVP-2: Chat Interface with Streaming
-  mvp-2-chat-interface-streaming: backlog
+  mvp-2-chat-interface-streaming: in-progress
     priority: P0
     points: 5
     acceptance_criteria:
