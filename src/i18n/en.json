@@ -128,9 +128,12 @@
   "onboarding": {
     "launch": "Launch Interactive Tour",
     "slides": {
-      "intro": {
-        "title": "Via-gent",
-        "subtitle": "Your Intelligent Local Dev Environment",
+      "agent": {
+        "title": "AI Agent",
+        "enhance_prompt": "Auto-Enhance Prompt",
+        "enhancing": "Enhancing prompt...",
+        "enhance_tooltip": "Automatically improve prompt clarity and context (2-step process)",
+        "welcome_message": "Welcome to {{projectName}}! I'm your AI assistant. How can I help you today?",
         "desc": "Experience the future of browser-based development. Zero setup. 100% Privacy."
       },
       "privacy": {

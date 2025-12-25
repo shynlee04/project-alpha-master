@@ -29,6 +29,7 @@ import { MinViewportWarning } from './MinViewportWarning';
 import { FileTree } from '../ide/FileTree';
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
+import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
 import { PreviewPanel } from '../ide/PreviewPanel';
 import { StatusBar } from '../ide/StatusBar';
 
@@ -103,6 +104,14 @@ export function IDELayout(): React.JSX.Element {
 
   // Story 28-24: Subscribe FileTree to agent file events via EventBus
   useFileTreeEventSubscriptions(eventBus, () => setFileTreeRefreshKey(k => k + 1));
+
+  // MVP-3: Subscribe MonacoEditor to agent file:modified events
+  useMonacoEditorEventSubscriptions({
+    eventBus,
+    openFiles,
+    activeFilePath,
+    setOpenFiles,
+  });
 
   // State restoration hook
   useIDEStateRestoration({

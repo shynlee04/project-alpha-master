@@ -1,21 +1,12 @@
-/**
- * @fileoverview Agent Chat Panel - AI Chat Interface with Tool Execution
- * @module components/ide/AgentChatPanel
- * 
- * Chat panel component that provides AI agent conversation interface
- * with integrated tool execution, approval flows, and streaming responses.
- * 
- * @epic 25 - AI Foundation Sprint
- * @story 25-R1 - Integrate useAgentChatWithTools to AgentChatPanel
- * @incident INC-2025-12-24-001 - E2E Validation Failure Fix
- */
-
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Bot, AlertCircle } from 'lucide-react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { Bot, AlertCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
-import { appendConversationMessage, clearConversation, getConversation } from '../../lib/workspace';
+import { saveThread, getThreadsForProject } from '../../lib/workspace/threads-store';
+import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
 import { ApprovalOverlay } from '../chat/ApprovalOverlay';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '../../lib/agent/hooks/use-agent-chat-with-tools';
@@ -26,6 +17,8 @@ import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
 import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
 import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';
 import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
+import { usePromptEnhancementStore } from '@/stores/prompt-enhancement-store';
+import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
 
 // Map agent provider display names to provider IDs
 const PROVIDER_ID_MAP: Record<string, string> = {
@@ -58,8 +51,16 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     const { t } = useTranslation();
 
     // Local state for conversation persistence
-    const [persistedMessages, setPersistedMessages] = useState<ChatMessage[]>([]);
+    // initialHistory holds messages loaded on mount (or after clear)
+    const [initialHistory, setInitialHistory] = useState<ChatMessage[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
+
+    // Track the active thread context
+    const [activeThread, setActiveThread] = useState<ConversationThread | null>(null);
+
+    // Prompt Enhancement State
+    const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();
+    const { enhancePrompt, isEnhancing: isEnhancingPrompt } = usePromptEnhancer();
 
     // Get selected agent from Zustand store
     const { activeAgentId } = useAgentSelection();
@@ -81,18 +82,9 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         let isCancelled = false;
 
         async function fetchApiKey() {
-            console.log('[AgentChatPanel] DEBUG START -------------');
-            console.log('[AgentChatPanel] 1. Active Agent:', activeAgent?.name, 'Provider:', activeAgent?.provider);
-            console.log('[AgentChatPanel] 2. Computed providerId:', providerId);
-
             try {
                 await credentialVault.initialize();
-                const storedProviders = await credentialVault.getStoredProviders();
-                console.log('[AgentChatPanel] 3. Vault contains keys for:', storedProviders);
-
                 let key = await credentialVault.getCredentials(providerId);
-                console.log('[AgentChatPanel] 4. Retrieval attempt for', providerId, 'Result:', key ? `FOUND (${key.length} chars)` : 'MISSING');
-                console.log('[AgentChatPanel] DEBUG END ---------------');
 
                 if (!isCancelled) {
                     setApiKey(key);
@@ -116,7 +108,6 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         const handleCredentialsUpdate = (e: Event) => {
             const customEvent = e as CustomEvent;
             if (customEvent.detail && customEvent.detail.providerId === providerId) {
-                console.log('[AgentChatPanel] Credentials updated event received, refetching...');
                 fetchApiKey();
             }
         };
@@ -190,58 +181,9 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         timestamp: new Date(),
     }), [projectName, t]);
 
-
-    // Load persisted conversation on mount
-    useEffect(() => {
-        let isCancelled = false;
-
-        const load = async () => {
-            try {
-                if (!projectId) {
-                    setPersistedMessages([createWelcomeMessage()]);
-                    setIsInitialized(true);
-                    return;
-                }
-
-                const convo = await getConversation(projectId);
-                if (isCancelled) return;
-
-                if (convo && convo.messages.length > 0) {
-                    // Map legacy messages to ChatMessage type if needed
-                    const mappedMessages = convo.messages.map((m: any) => ({
-                        ...m,
-                        timestamp: new Date(m.timestamp)
-                    }));
-                    setPersistedMessages(mappedMessages);
-                } else {
-                    setPersistedMessages([createWelcomeMessage()]);
-                }
-                setIsInitialized(true);
-            } catch {
-                if (isCancelled) return;
-                setPersistedMessages([createWelcomeMessage()]);
-                setIsInitialized(true);
-            }
-        };
-
-        load();
-        return () => { isCancelled = true; };
-    }, [projectId, projectName, createWelcomeMessage]);
-
-    // Combine persisted messages with hook messages
-    // Hook messages are the live conversation, persisted are historical
-    const allMessages = useMemo((): ChatMessage[] => {
-        if (!isInitialized) {
-            return [createWelcomeMessage()];
-        }
-
-        // If no hook messages yet, show persisted messages
-        if (hookMessages.length === 0) {
-            return persistedMessages.length > 0 ? persistedMessages : [createWelcomeMessage()];
-        }
-
-        // Transform hook messages to ChatMessage format
-        const transformedMessages: ChatMessage[] = hookMessages.map((msg, index) => ({
+    // Format hook messages to ChatMessage
+    const currentSessionMessages = useMemo((): ChatMessage[] => {
+        return hookMessages.map((msg, index) => ({
             id: `msg_${index}_${Date.now()}`,
             role: msg.role === 'tool' ? 'assistant' : (msg.role as 'user' | 'assistant'),
             content: msg.content,
@@ -249,15 +191,154 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
             // Add tool executions from current tool calls
             toolExecutions: msg.role === 'assistant' ? extractToolExecutions(rawMessages, index) : undefined,
         }));
+    }, [hookMessages, rawMessages]);
 
-        // Prepend welcome if no persisted messages
-        if (persistedMessages.length === 0) {
-            return [createWelcomeMessage(), ...transformedMessages];
+    // Load persisted conversation (Threads) on mount
+    useEffect(() => {
+        let isCancelled = false;
+
+        const load = async () => {
+            try {
+                if (!projectId) {
+                    setInitialHistory([createWelcomeMessage()]);
+                    setIsInitialized(true);
+                    return;
+                }
+
+                // Load latest thread
+                const threads = await getThreadsForProject(projectId);
+
+                if (isCancelled) return;
+
+                if (threads && threads.length > 0) {
+                    const latestThread = threads[0];
+                    setActiveThread(latestThread);
+
+                    // Map thread messages to ChatMessage
+                    const mappedMessages: ChatMessage[] = latestThread.messages.map(m => ({
+                        id: m.id,
+                        role: m.role as 'user' | 'assistant',
+                        content: m.content,
+                        timestamp: new Date(m.timestamp),
+                        toolExecutions: m.toolCalls?.map(tc => ({
+                            id: tc.id,
+                            name: tc.name,
+                            status: tc.status,
+                            input: typeof tc.input === 'string' ? tc.input : JSON.stringify(tc.input),
+                            output: typeof tc.output === 'string' ? tc.output : JSON.stringify(tc.output),
+                        }))
+                    }));
+                    setInitialHistory(mappedMessages);
+                } else {
+                    // Create new empty thread structure (don't save yet until first message)
+                    const newThreadId = crypto.randomUUID();
+                    setActiveThread({
+                        id: newThreadId,
+                        projectId,
+                        title: 'New Conversation',
+                        preview: '',
+                        messages: [],
+                        agentsUsed: [],
+                        messageCount: 0,
+                        createdAt: Date.now(),
+                        updatedAt: Date.now()
+                    });
+                    setInitialHistory([createWelcomeMessage()]);
+                }
+                setIsInitialized(true);
+            } catch (err) {
+                console.error('[AgentChatPanel] Failed to load threads:', err);
+                if (isCancelled) return;
+                setInitialHistory([createWelcomeMessage()]);
+                setIsInitialized(true);
+            }
+        };
+
+        load();
+        return () => { isCancelled = true; };
+    }, [projectId, createWelcomeMessage]);
+
+    // Persist conversation when messages change or loading finishes
+    useEffect(() => {
+        if (!projectId || !activeThread) return;
+
+        // Skip initial load
+        if (!isInitialized) return;
+
+        // Don't save if no new messages and just initial welcome
+        const hasNewMessages = currentSessionMessages.length > 0;
+        if (!hasNewMessages && initialHistory.length <= 1 && initialHistory[0]?.id === 'welcome') return;
+
+        const persist = async () => {
+            // Combine history + current
+            // Limit history to filter out welcome message if we have real messages now? 
+            // Actually, welcome message is fine to keep or discard. Let's keep it for now.
+            const fullHistory = [...initialHistory, ...currentSessionMessages];
+
+            // Generate preview from last message
+            const lastMsg = fullHistory[fullHistory.length - 1];
+            const preview = lastMsg?.content?.substring(0, 100) || 'New Conversation';
+            const title = fullHistory.find(m => m.role === 'user')?.content?.substring(0, 50) || 'New Conversation';
+
+            // Convert back to ThreadMessage format for storage
+            const threadMessages: ThreadMessage[] = fullHistory.map(m => ({
+                id: m.id,
+                role: m.role,
+                content: m.content,
+                timestamp: m.timestamp.getTime(),
+                agentId: (m.role === 'assistant' && activeAgentId) ? activeAgentId : undefined,
+                agentName: m.role === 'assistant' ? activeAgent?.name : undefined,
+                agentModel: m.role === 'assistant' ? activeAgent?.model : undefined,
+                toolCalls: m.toolExecutions?.map(te => ({
+                    id: te.id,
+                    name: te.name,
+                    status: te.status,
+                    input: te.input ? JSON.parse(te.input) : undefined,
+                    output: te.output ? JSON.parse(te.output) : undefined,
+                }))
+            }));
+
+            // Identify used agents
+            const agentsUsed = Array.from(new Set(
+                threadMessages
+                    .filter(m => m.role === 'assistant' && m.agentId)
+                    .map(m => m.agentId as string)
+            ));
+
+            const updatedThread: ConversationThread = {
+                ...activeThread,
+                title,
+                preview,
+                messages: threadMessages,
+                messageCount: threadMessages.length,
+                agentsUsed,
+                updatedAt: Date.now(),
+            };
+
+            await saveThread(updatedThread);
+
+            // Update active thread ref in case we need it immediately
+            setActiveThread(updatedThread);
+        };
+
+        // Save when loading finishes (response complete) or every few seconds if streaming?
+        // Simpler: Save when isLoading becomes false (response done) OR when user sends message (immediately)
+        // currentSessionMessages updates on every token. We should debounce.
+        // But `isLoading` is the best trigger for "turn complete".
+
+        if (!isLoading && currentSessionMessages.length > 0) {
+            persist();
         }
 
-        // For now, show hook messages (they include the current conversation)
-        return transformedMessages.length > 0 ? transformedMessages : persistedMessages;
-    }, [hookMessages, rawMessages, persistedMessages, isInitialized, createWelcomeMessage]);
+    }, [projectId, initialHistory, currentSessionMessages, isLoading, activeAgentId, activeAgent]);
+
+    // Combine persisted messages with hook messages for display
+    const allMessages = useMemo((): ChatMessage[] => {
+        if (!isInitialized) {
+            return [createWelcomeMessage()];
+        }
+        return [...initialHistory, ...currentSessionMessages];
+    }, [initialHistory, currentSessionMessages, isInitialized, createWelcomeMessage]);
 
     // Extract tool executions from raw messages for display
     function extractToolExecutions(msgs: unknown[], currentIndex: number): ToolExecution[] | undefined {
@@ -312,25 +393,29 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // Handle sending messages - uses real hook now
     const handleSendMessage = useCallback(async (content: string) => {
-        // Add user message to local state for immediate feedback
-        const userMessage: ChatMessage = {
-            id: `msg_${Date.now()}`,
-            role: 'user',
-            content,
-            timestamp: new Date(),
-        };
+        // Prompt Enhancement Logic
+        let messageToSend = content;
 
-        // Persist user message
-        if (projectId) {
-            await appendConversationMessage(projectId, {
-                ...userMessage,
-                timestamp: userMessage.timestamp.getTime()
-            });
+        if (isEnhancementEnabled && !isEnhancingPrompt) {
+            const contextHistory = allMessages.slice(-5).map(m => ({
+                role: m.role,
+                content: m.content || ''
+            }));
+
+            const { enhancedText, wasEnhanced } = await enhancePrompt(content, contextHistory);
+
+            if (wasEnhanced) {
+                // Ideally show a toast or indication that it was enhanced
+                // But since we override the variable, it just sends the enhanced one.
+                // The delay happened during `await enhancePrompt`.
+                messageToSend = enhancedText;
+            }
         }
 
         // Send via TanStack AI hook - this triggers the real API call
-        sendMessage(content);
-    }, [projectId, sendMessage]);
+        sendMessage(messageToSend);
+        // Persistence is handled by effect
+    }, [sendMessage, isEnhancementEnabled, isEnhancingPrompt, allMessages, enhancePrompt]);
 
     // Handle tool approval - Story 25-5 integration
     const handleApprove = useCallback((approval: PendingApprovalInfo) => {
@@ -381,9 +466,29 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // Clear conversation
     const handleClear = useCallback(async () => {
-        if (projectId) await clearConversation(projectId);
-        setPersistedMessages([createWelcomeMessage()]);
-    }, [projectId, createWelcomeMessage]);
+        // Just reset to a new thread, don't delete old ones (preserves history)
+        if (projectId) {
+            const newThreadId = crypto.randomUUID();
+            setActiveThread({
+                id: newThreadId,
+                projectId,
+                title: 'New Conversation',
+                preview: '',
+                messages: [],
+                agentsUsed: [],
+                messageCount: 0,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            });
+            setInitialHistory([createWelcomeMessage()]);
+            // Ideally we should also reset the `useChat` hook state here, but we can't.
+            // A page refresh might be needed or key-based remounting of the component.
+            // For now, we just clear the history we control. The hook messages remain until refreshed.
+            // TO FIX: Force remount of useAgentChatWithTools by changing a key on the provider?
+            // Actually, checking standard patterns, we can't easily clear `useChat` hook state.
+            toast.info(t('agent.clear_tip', 'Conversation cleared. Refresh page to fully reset AI context.'));
+        }
+    }, [projectId, createWelcomeMessage, t]);
 
     // Get the first pending approval for the overlay (if any)
     const currentApproval = pendingApprovals.length > 0 ? pendingApprovals[0] : null;
@@ -391,7 +496,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     return (
         <div className="flex flex-col h-full bg-surface-dark relative">
             {/* Header */}
-            <div className="h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
+            <div className="h-10 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
                 <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30">
                         <Bot className="w-3.5 h-3.5 text-primary" />
@@ -406,7 +511,25 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         </span>
                     )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                    {/* Prompt Enhancement Toggle */}
+                    <div className="flex items-center gap-2 border-r border-border-dark pr-3">
+                        <Switch
+                            id="prompt-enhance"
+                            checked={isEnhancementEnabled}
+                            onCheckedChange={toggleEnhancement}
+                            className="h-4 w-7 data-[state=checked]:bg-primary"
+                        />
+                        <Label
+                            htmlFor="prompt-enhance"
+                            className="text-[10px] cursor-pointer text-muted-foreground flex items-center gap-1"
+                            title={t('agent.enhance_tooltip')}
+                        >
+                            <Sparkles className="w-3 h-3 text-yellow-500" />
+                            {t('agent.enhance_prompt')}
+                        </Label>
+                    </div>
+
                     {/* Model indicator */}
                     <span className="text-[10px] text-muted-foreground font-mono">
                         {modelId.split('/').pop()?.substring(0, 20)}
@@ -419,28 +542,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                         {t('agent.clear')}
                     </button>
                     {/* Debug Button - Temporary for troubleshooting */}
-                    <button
-                        onClick={async () => {
-                            console.log('DEBUG CLICKED');
-                            await credentialVault.initialize();
-                            const providers = await credentialVault.getStoredProviders();
-                            const currentKey = await credentialVault.getCredentials(providerId);
-
-                            const debugInfo = [
-                                `Agent: ${activeAgent?.name}`,
-                                `Provider (UI): ${activeAgent?.provider}`,
-                                `Provider (ID): ${providerId}`,
-                                `Vault Providers: ${JSON.stringify(providers)}`,
-                                `Has Key for '${providerId}'?: ${!!currentKey}`,
-                                `Key Length: ${currentKey?.length || 0}`
-                            ].join('\n');
-
-                            alert('DEBUG INFO:\n' + debugInfo);
-                        }}
-                        className="text-[10px] text-red-500 hover:text-red-400 font-mono px-2"
-                    >
-                        DEBUG
-                    </button>
+                    {/* This button was removed as per the diff */}
                 </div>
             </div>
 
@@ -465,7 +567,17 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
             )}
 
             {/* Content */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden relative">
+                {/* Enhancement Blocking UI */}
+                {isEnhancingPrompt && (
+                    <div className="absolute inset-0 z-20 bg-background/50 backdrop-blur-sm flex flex-col items-center justify-center">
+                        <div className="flex flex-col items-center gap-3 p-4 bg-surface-dark border border-border-dark rounded-lg shadow-xl">
+                            <Sparkles className="w-8 h-8 text-primary animate-pulse" />
+                            <span className="text-sm font-medium text-foreground">{t('agent.enhancing')}</span>
+                        </div>
+                    </div>
+                )}
+
                 <EnhancedChatInterface
                     messages={allMessages}
                     onSendMessage={handleSendMessage}

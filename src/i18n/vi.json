@@ -90,12 +90,18 @@
   },
   "agent": {
     "title": "Trợ lý AI",
+    "enhance_prompt": "Tự động tối ưu prompt",
+    "enhancing": "Đang tối ưu hóa...",
+    "enhance_tooltip": "Tự động cải thiện độ rõ ràng và ngữ cảnh (quy trình 2 bước)",
     "clear": "Xóa trắng",
+    "enhance_prompt_toggle": "Bật/Tắt tối ưu prompt",
+    "enhance_prompt_on": "Tối ưu prompt: Bật",
+    "enhance_prompt_off": "Tối ưu prompt: Tắt",
     "welcome": {
       "title": "Chào mừng đến với Trợ lý AI!",
       "subtitle": "Hỏi tôi bất cứ điều gì về dự án của bạn..."
     },
-    "welcome_message": "Xin chào! Tôi là trợ lý AI cho dự án {{projectName}}. Bạn muốn làm gì hôm nay?",
+    "welcome_message": "Chào mừng đến với {{projectName}}! Tôi là trợ lý AI của bạn. Tôi có thể giúp gì cho bạn hôm nay?",
     "demo_response": "Tôi là trợ lý demo. Hãy kết nối tôi với TanStack AI trong Epic 6 để có phản hồi thực tế.",
     "placeholder": "Hỏi trợ lý… (⌘K)",
     "status": {
