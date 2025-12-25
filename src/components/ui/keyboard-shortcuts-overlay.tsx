@@ -73,8 +73,8 @@ const defaultShortcuts: KeyboardShortcut[] = [
   },
   {
     key: "Ctrl+P / Cmd+P",
-    description: "editor.focusEditor",
-    category: "editor",
+    description: "commandPalette.open",
+    category: "navigation",
   },
   {
     key: "Ctrl+` / Cmd+`",

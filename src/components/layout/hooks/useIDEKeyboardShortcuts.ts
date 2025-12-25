@@ -2,15 +2,17 @@
  * @fileoverview IDE Keyboard Shortcuts Hook
  * @module components/layout/hooks/useIDEKeyboardShortcuts
  *
- * Handles global keyboard shortcuts for the IDE.
+ * Handles global keyboard shortcuts for IDE.
  * Extracted from IDELayout.tsx for code organization.
  */
 
 import { useEffect, useCallback } from 'react';
 
 interface UseIDEKeyboardShortcutsOptions {
-    /** Callback to show/focus the chat panel */
+    /** Callback to show/focus chat panel */
     onChatToggle: () => void;
+    /** Callback to open command palette */
+    onCommandPaletteOpen?: () => void;
 }
 
 /**
@@ -18,14 +20,16 @@ interface UseIDEKeyboardShortcutsOptions {
  *
  * Currently handles:
  * - Ctrl+K / Cmd+K: Focus chat panel
+ * - Ctrl+P / Cmd+P: Open command palette
  */
 export function useIDEKeyboardShortcuts({
     onChatToggle,
+    onCommandPaletteOpen,
 }: UseIDEKeyboardShortcutsOptions): void {
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             const isModifierPressed = event.metaKey || event.ctrlKey;
-            if (!isModifierPressed || event.key.toLowerCase() !== 'k') return;
+            if (!isModifierPressed) return;
 
             const target = event.target;
             if (target instanceof HTMLElement) {
@@ -39,11 +43,22 @@ export function useIDEKeyboardShortcuts({
                 if (isEditable) return;
             }
 
-            event.preventDefault();
-            onChatToggle();
-            window.dispatchEvent(new CustomEvent('ide.chat.focus'));
+            const key = event.key.toLowerCase();
+            
+            // Ctrl+K / Cmd+K: Focus chat panel
+            if (key === 'k') {
+                event.preventDefault();
+                onChatToggle();
+                window.dispatchEvent(new CustomEvent('ide.chat.focus'));
+            }
+            
+            // Ctrl+P / Cmd+P: Open command palette
+            if (key === 'p' && onCommandPaletteOpen) {
+                event.preventDefault();
+                onCommandPaletteOpen();
+            }
         },
-        [onChatToggle],
+        [onChatToggle, onCommandPaletteOpen],
     );
 
     useEffect(() => {
