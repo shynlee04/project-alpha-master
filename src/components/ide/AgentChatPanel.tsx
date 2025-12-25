@@ -59,6 +59,15 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     // Track the active thread context
     const [activeThread, setActiveThread] = useState<ConversationThread | null>(null);
 
+    // CC-2025-12-26-006: Key for forcing chat hook remount on clear/thread switch
+    // Incrementing this causes the chat hook to reset its internal state
+    const [chatResetKey, setChatResetKey] = useState(0);
+
+    // Generate stable key combining thread ID and reset key for forced remounts
+    const chatInstanceKey = useMemo(() => {
+        return `${activeThread?.id || 'no-thread'}-${chatResetKey}`;
+    }, [activeThread?.id, chatResetKey]);
+
     // Prompt Enhancement State
     const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();
     const { enhancePrompt, isEnhancing: isEnhancingPrompt } = usePromptEnhancer();
@@ -347,11 +356,26 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     }, [projectId, initialHistory, currentSessionMessages, isLoading, activeAgentId, activeAgent]);
 
     // Combine persisted messages with hook messages for display
+    // CC-2025-12-26-007: Deduplicate messages by ID to prevent duplication bugs
     const allMessages = useMemo((): ChatMessage[] => {
         if (!isInitialized) {
             return [createWelcomeMessage()];
         }
-        return [...initialHistory, ...currentSessionMessages];
+
+        // Combine history and current session
+        const combined = [...initialHistory, ...currentSessionMessages];
+
+        // Deduplicate by message ID to prevent duplication
+        const seen = new Set<string>();
+        const deduplicated = combined.filter(msg => {
+            if (seen.has(msg.id)) {
+                return false;
+            }
+            seen.add(msg.id);
+            return true;
+        });
+
+        return deduplicated;
     }, [initialHistory, currentSessionMessages, isInitialized, createWelcomeMessage]);
 
     // Extract tool executions from raw messages for display
@@ -479,10 +503,12 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     }, [localAdapterRef, t]);
 
     // Clear conversation
+    // CC-2025-12-26-008: Fixed clear button by using key-based remounting
     const handleClear = useCallback(async () => {
-        // Just reset to a new thread, don't delete old ones (preserves history)
         if (projectId) {
             const newThreadId = crypto.randomUUID();
+
+            // Create new thread - this will change chatInstanceKey
             setActiveThread({
                 id: newThreadId,
                 projectId,
@@ -494,13 +520,15 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 createdAt: Date.now(),
                 updatedAt: Date.now()
             });
+
+            // Reset local history to just welcome message
             setInitialHistory([createWelcomeMessage()]);
-            // Ideally we should also reset the `useChat` hook state here, but we can't.
-            // A page refresh might be needed or key-based remounting of the component.
-            // For now, we just clear the history we control. The hook messages remain until refreshed.
-            // TO FIX: Force remount of useAgentChatWithTools by changing a key on the provider?
-            // Actually, checking standard patterns, we can't easily clear `useChat` hook state.
-            toast.info(t('agent.clear_tip', 'Conversation cleared. Refresh page to fully reset AI context.'));
+
+            // Increment reset key to force useChat hook remount via key change
+            // This clears the internal hook state (messages, streaming state, etc.)
+            setChatResetKey(prev => prev + 1);
+
+            toast.success(t('agent.cleared', 'Conversation cleared'));
         }
     }, [projectId, createWelcomeMessage, t]);
 

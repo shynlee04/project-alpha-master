@@ -21,7 +21,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Plus, Settings2, Trash2, Zap } from 'lucide-react'
+import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Plus, Settings2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
@@ -36,6 +36,14 @@ import {
     DialogDescription,
     DialogFooter,
 } from '@/components/ui/dialog'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 import type { Agent } from '@/mocks/agents'
 
 // Epic 25 Provider Infrastructure
@@ -185,6 +193,7 @@ export function AgentConfigDialog({
     const [customModelId, setCustomModelId] = useState('')
     const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
     const [enableNativeTools, setEnableNativeTools] = useState(true)
+    const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
 
     // Loading states
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -350,7 +359,7 @@ export function AgentConfigDialog({
     const handleModelChange = useCallback((value: string) => {
         setModel(value)
         if (errors.model) setErrors(prev => ({ ...prev, model: undefined }))
-    }, [])
+    }, [errors.model])
 
     // Form submission
     const handleSubmit = useCallback(async () => {

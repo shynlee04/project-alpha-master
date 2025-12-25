@@ -284,16 +284,21 @@ export function useAgentChatWithTools(
 
     // Transform messages to simple format
     // TanStack AI UIMessage uses 'parts' array, not 'content' string
+    // CC-2025-12-26-005: System messages are NOT included in returned messages.
+    // They are passed via the API request body, not displayed in UI.
     const messages = useMemo(() => {
         const result: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }> = [];
 
-        if (systemMessage) {
-            result.push({ role: 'system', content: systemMessage });
-        }
+        // NOTE: Do NOT add systemMessage to result array - it's for API only, not UI display
 
         for (const msg of rawMessages) {
             const m = msg as { role?: string; parts?: unknown; content?: string };
             const role = (m.role || 'user') as 'user' | 'assistant' | 'system' | 'tool';
+
+            // CC-2025-12-26-005: Filter out system messages from UI display
+            if (role === 'system') {
+                continue;
+            }
 
             // Extract content from parts (v0.2.0 format) or fallback to content string
             let content = '';
@@ -309,7 +314,7 @@ export function useAgentChatWithTools(
         }
 
         return result;
-    }, [rawMessages, systemMessage]);
+    }, [rawMessages]);
 
     // Wrap sendMessage for simple string input
     const sendMessage = useCallback((content: string) => {

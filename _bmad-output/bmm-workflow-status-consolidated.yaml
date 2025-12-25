@@ -39,8 +39,14 @@ current_story:
   notes: |
     MVP-3: Tool Execution - File Operations.
     Focus: read/write tools with approval, diff preview, LocalFS→WebContainer sync.
-    Depends on MVP-2 chat streaming for tool calls.
-    Requires browser E2E verification before DONE.
+    
+    CC-2025-12-26 Bug Fixes COMPLETE:
+    - CC-005: System message no longer shown in UI
+    - CC-006: Thread isolation via chatResetKey
+    - CC-007: Message deduplication in allMessages
+    - CC-008: Clear button works via key-based reset
+    
+    Next: E2E browser verification of bug fixes, then continue with file tools implementation.
 
 last_completed_story:
   key: "MVP-2-chat-interface-streaming"

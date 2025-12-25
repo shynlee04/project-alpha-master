@@ -176,11 +176,11 @@
       "projects": "Projects",
       "project": "Project",
       "folder": "Folder",
-      "file": "File"
-      "navigateTo": "Navigate to"
-      "fullPath": "Full path"
-      "back": "Back"
-      "enter": "Enter"
+      "file": "File",
+      "navigateTo": "Navigate to",
+      "fullPath": "Full path",
+      "back": "Back",
+      "enter": "Enter",
       "showFullPath": "Show full path"
     },
     "emptyState": {
