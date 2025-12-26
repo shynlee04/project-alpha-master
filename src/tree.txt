@@ -245,7 +245,8 @@
 │   │   │   └── types.ts
 │   │   ├── routes
 │   │   │   └── __tests__
-│   │   │       └── chat-api.test.ts
+│   │   │       ├── chat-api.test.ts
+│   │   │       └── sse-streaming.test.ts
 │   │   ├── system-prompt.ts
 │   │   └── tools
 │   │       ├── __tests__
@@ -353,10 +354,13 @@
 ├── router.tsx
 ├── routes
 │   ├── __root.tsx
+│   ├── agents.tsx
 │   ├── api
 │   │   └── chat.ts
 │   ├── hub.tsx
 │   ├── index.tsx
+│   ├── knowledge.tsx
+│   ├── settings.tsx
 │   ├── test-fs-adapter.tsx
 │   ├── webcontainer.$.tsx
 │   └── workspace
@@ -383,4 +387,4 @@
     ├── tool-call.ts
     └── vitest-axe.d.ts
 
-73 directories, 311 files
+73 directories, 315 files

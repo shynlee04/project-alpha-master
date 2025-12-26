@@ -12,7 +12,6 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import '@/styles/design-tokens.css';
 import { useIDEStore, selectOpenFiles, selectActiveFile } from '@/lib/state';
 import {
   ResizablePanelGroup,
@@ -98,7 +97,7 @@ export function IDELayout(): React.JSX.Element {
   // Local state (ephemeral, not persisted)
   const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>();
   const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0);
-  
+
   // P1.4: Discovery mechanisms state
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isFeatureSearchOpen, setIsFeatureSearchOpen] = useState(false);
@@ -197,7 +196,7 @@ export function IDELayout(): React.JSX.Element {
       <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
         {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
         <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
-        
+
         {/* P1.4: Discovery mechanisms */}
         {isCommandPaletteOpen && (
           <CommandPalette
@@ -210,7 +209,7 @@ export function IDELayout(): React.JSX.Element {
             onOpenFeatureSearch={() => setIsFeatureSearchOpen(true)}
           />
         )}
-        
+
         {isFeatureSearchOpen && (
           <FeatureSearch
             onClose={() => setIsFeatureSearchOpen(false)}

@@ -12,7 +12,6 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import "@/styles/design-tokens.css";
 
 /**
  * Collapsible section variants using CVA

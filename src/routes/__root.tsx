@@ -7,6 +7,7 @@ import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '../components/common/AppErrorBoundary'
 import { initSentry } from '../lib/monitoring/sentry'
 import { ThemeProvider } from '../components/ui/ThemeProvider'
+import { TooltipProvider } from '../components/ui/tooltip'
 
 import appCss from '../styles.css?url'
 
@@ -34,6 +35,11 @@ export const Route = createRootRoute({
       },
     ],
     links: [
+      // VIA-GENT Main Stylesheet (includes design-tokens and animations)
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
       // Google Fonts preconnect for performance
       {
         rel: 'preconnect',
@@ -61,14 +67,11 @@ export const Route = createRootRoute({
       <body>
         <ThemeProvider>
           <LocaleProvider>
-            <AppErrorBoundary>
-              <Header />
-              {/* DevTools disabled due to SSR duplicate route issue (INC-2025-12-24-001) */}
-              {/* <TanStackRouterDevtoolsPanel /> */}
-              {/* <TanStackDevtools /> */}
-              <hr />
-              <Outlet />
-            </AppErrorBoundary>
+            <TooltipProvider>
+              <AppErrorBoundary>
+                <Outlet />
+              </AppErrorBoundary>
+            </TooltipProvider>
           </LocaleProvider>
         </ThemeProvider>
         <Scripts />

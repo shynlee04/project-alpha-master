@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from '@/hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 
 /**
  * BentoGrid - Discovery interface with bento cards, topics, and interactive documents
@@ -24,6 +24,7 @@ export interface BentoCardProps {
   content?: React.ReactNode;
   topic?: string;
   onClick?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
   className?: string;
 }
 
@@ -166,7 +167,7 @@ export function BentoGrid({
       if (selectedTopic && card.topic !== selectedTopic) {
         return false;
       }
-      
+
       // Filter by search query
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -176,7 +177,7 @@ export function BentoGrid({
           card.topic?.toLowerCase().includes(query)
         );
       }
-      
+
       return true;
     });
   }, [cards, selectedTopic, searchQuery]);
@@ -215,11 +216,10 @@ export function BentoGrid({
         >
           <button
             onClick={() => onTopicSelect?.('')}
-            className={`px-4 py-2 text-sm font-medium transition-all duration-150 ease-out rounded-none border-2 ${
-              !selectedTopic
-                ? 'bg-[#f97316] text-white border-[#f97316] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
-                : 'bg-[#18181b] text-[#f97316] border-[#27272a] hover:border-[#f97316]'
-            }`}
+            className={`px-4 py-2 text-sm font-medium transition-all duration-150 ease-out rounded-none border-2 ${!selectedTopic
+              ? 'bg-[#f97316] text-white border-[#f97316] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
+              : 'bg-[#18181b] text-[#f97316] border-[#27272a] hover:border-[#f97316]'
+              }`}
             aria-label={t('bentoGrid.allTopics')}
             role="tab"
             aria-selected={!selectedTopic ? 'true' : 'false'}
@@ -230,11 +230,10 @@ export function BentoGrid({
             <button
               key={topic}
               onClick={() => onTopicSelect?.(topic)}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-150 ease-out rounded-none border-2 whitespace-nowrap ${
-                selectedTopic === topic
-                  ? 'bg-[#f97316] text-white border-[#f97316] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
-                  : 'bg-[#18181b] text-[#f97316] border-[#27272a] hover:border-[#f97316]'
-              }`}
+              className={`px-4 py-2 text-sm font-medium transition-all duration-150 ease-out rounded-none border-2 whitespace-nowrap ${selectedTopic === topic
+                ? 'bg-[#f97316] text-white border-[#f97316] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
+                : 'bg-[#18181b] text-[#f97316] border-[#27272a] hover:border-[#f97316]'
+                }`}
               aria-label={`${t('bentoGrid.topicFilter', { topic })}`}
               role="tab"
               aria-selected={selectedTopic === topic ? 'true' : 'false'}

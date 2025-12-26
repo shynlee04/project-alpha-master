@@ -14,7 +14,6 @@ export { BentoGrid } from './BentoGrid';
 export { BentoCardPreview } from './BentoCardPreview';
 export { CommandPalette } from './CommandPalette';
 export { FeatureSearch } from './FeatureSearch';
-export { BentoGridExample } from './BentoGridExample';
 
 // Editor Components
 export { ExplorerPanel } from './ExplorerPanel';

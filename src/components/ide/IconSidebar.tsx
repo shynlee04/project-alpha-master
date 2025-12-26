@@ -11,7 +11,6 @@ import {
     GitBranch
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import '@/styles/design-tokens.css'
 
 /**
  * IconSidebar - VS Code-style activity bar with collapsible content panel
@@ -235,7 +234,7 @@ export function SidebarContent({
                 "h-full flex flex-col",
                 isCollapsed && "invisible"
             )}
-            style={{ width: 'var(--sidebar-content-panel)' }}>
+                style={{ width: 'var(--sidebar-content-panel)' }}>
                 {children}
             </div>
         </div>

@@ -12,7 +12,6 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { cn } from "@/lib/utils";
-import "@/styles/design-tokens.css";
 
 /**
  * Tooltip variants using CVA for 8-bit design system

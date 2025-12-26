@@ -1,54 +1,38 @@
-# generated: 2025-12-25T10:00:00+07:00 (Updated)
+# generated: 2025-12-26T18:25:00+07:00 (Updated: P0 Governance Fixes)
 # created: 2025-12-24T20:00:00+07:00
 # project: project-alpha
 # project_key: project-alpha-master
 # tracking_system: file-system
 # story_location: "{project-root}/_bmad-output/sprint-artifacts"
 
-# STATUS DEFINITIONS:
+# STATUS DEFINITIONS
 # ==================
 # Epic Status:
 #   - backlog: Epic not yet started
 #   - in-progress: Epic actively being worked on
 #   - done: All stories in epic completed
-#
+
 # Story Status:
 #   - backlog: Story only exists in epic file
 #   - ready-for-dev: Story file created, ready for development
 #   - in-progress: Developer actively working on implementation
 #   - review: Implementation complete, ready for review
 #   - done: Story completed
-#
+
 # Retrospective Status:
 #   - optional: Can be completed but not required
 #   - done: Retrospective has been completed
-#
-# WORKFLOW NOTES:
+
+# WORKFLOW NOTES
 # ===============
 # - Mark epic as 'in-progress' when starting work on its first story
 # - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
 # - MANDATORY: Browser E2E verification required before marking DONE (INC-2025-12-24-001)
 
-generated: 2025-12-25T10:00:00+07:00
-project: project-alpha
-project_key: project-alpha-master
-tracking_system: file-system
-story_location: "_bmad-output/sprint-artifacts"
-
-current_sprint:
-  name: "Sprint MVP - AI Coding Agent Vertical Slice"
-  start_date: 2025-12-24
-  priority_epic: "MVP"
-  incident: "INC-2025-12-24-001"
-  notes: |
-    CONSOLIDATED APPROACH 2025-12-24: Single MVP epic for vertical slice.
-    Focus: One working E2E flow before expanding.
-    Previous epics 25/28/12 superseded by MVP.
-    All stories require browser E2E verification per incident response.
-
 # =============================================================================
-# GOVERNANCE: MANDATORY VERIFICATION GATES (Enforced 2025-12-24)
+# =============================================================================
+# GOVERNANCE: MANDATORY VERIFICATION GATES (Enforced 2025-12-24-001)
 # =============================================================================
 governance:
   definition_of_done:
@@ -68,587 +52,292 @@ governance:
     - "Mock implementations must be clearly labeled"
     - "E2E validation is mandatory"
 
+# =============================================================================
+# =============================================================================
 development_status:
-  # =============================================================================
-  # ARCHIVED EPICS (Completed - Reference Only)
-  # =============================================================================
-  archived_epics:
-    epic-1: "Project Foundation & IDE Shell - DONE"
-    epic-2: "WebContainers Integration - DONE"
-    epic-3: "File System Access Layer - DONE"
-    epic-4: "IDE Components - DONE"
-    epic-5: "Persistence Layer - DONE"
-    epic-10: "Event Bus Architecture - DONE"
-    epic-13: "Terminal & Sync Stability - DONE"
-    epic-22: "Production Hardening - DONE"
-    notes: |
-      These epics are complete and archived for reference.
-      Their patterns and implementations should be reused in MVP.
+# =============================================================================
+# =============================================================================
+# ARCHIVED EPICS (Completed - Reference Only)
+# =============================================================================
+archived_epics:
+  epic-1: "Project Foundation & IDE Shell - DONE"
+  epic-2: "WebContainers Integration - DONE"
+  epic-3: "File System Access Layer - DONE"
+  epic-4: "IDE Components - DONE"
+  epic-5: "Persistence Layer - DONE"
+  epic-10: "Event Bus Architecture - DONE"
+  epic-13: "Terminal & Sync Stability - DONE"
+  epic-22: "Production Hardening - DONE"
+  notes: |
+    These epics are complete and archived for reference.
+    Their patterns and implementations should be reused in MVP.
 
-  # =============================================================================
-  # SUPERSEDED EPICS (Consolidated into MVP)
-  # =============================================================================
-  superseded_epics:
-    epic-12: "Tool Interface Layer - Superseded by MVP-3/MVP-4"
-    epic-25: "AI Foundation Sprint - Superseded by MVP (INCIDENT RESPONSE)"
-    epic-28: "UX Brand Identity - Partially absorbed in MVP-1/MVP-2"
-    notes: |
-      These epics had overlapping work and are now superseded.
-      Refer to individual stories for traceability.
+# =============================================================================
+# SUPERSEDED EPICS (Consolidated into MVP)
+# =============================================================================
+superseded_epics:
+  epic-12: "Tool Interface Layer - Superseded by MVP-3/MVP-4"
+  epic-25: "AI Foundation Sprint - Superseded by MVP (INCIDENT RESPONSE)"
+  epic-28: "UX Brand Identity - Partially absorbed in MVP-1/MVP-2"
+  notes: |
+    These epics had overlapping work and are now superseded.
+    Refer to individual stories for traceability.
 
-  # =============================================================================
-  # EPIC MVP: AI Coding Agent Vertical Slice [P0 - ACTIVE]
-  # =============================================================================
-  # User Journey: Configure → Chat → Execute → Approve → Iterate
-  # Consolidated from Epics 12/25/28 to ensure vertical slice
-  # Platform: Platform A (Antigravity)
-  # =============================================================================
-  epic-mvp: in-progress
-    platform: "Platform A"
-    started_at: "2025-12-24T20:00:00+07:00"
-    consolidated_from: [12, 25, 28]
-    incident_response: "INC-2025-12-24-001"
-    notes: |
-      Single epic for complete AI coding agent workflow.
-      Each story adds a layer of the user journey.
-      All stories require E2E browser verification before DONE.
-      
-      User Journey Steps:
-      1. Configure agent & persistence
-      2. Chat interface with streaming
-      3. Tool execution (file ops)
-      4. Tool execution (terminal)
-      5. Approval workflow
-      6. Real-time UI updates
-      7. Full E2E integration
+# =============================================================================
+# EPIC MVP: AI Coding Agent Vertical Slice [P0 - ACTIVE]
+# =============================================================================
+epic-mvp: in-progress
+  platform: "Platform A"
+  started_at: "2025-12-24T20:00:00+07:00"
+  consolidated_from: [12, 25, 28]
+  incident_response: "INC-2025-12-24-001"
+  notes: |
+    Single epic for complete AI coding agent workflow.
+    Each story adds a layer of the user journey.
+    All stories require E2E browser verification before DONE.
 
-  # Story MVP-1: Agent Configuration & Persistence
-  mvp-1-agent-configuration: done
-    story: _bmad-output/sprint-artifacts/mvp-1-agent-configuration.md
-    context: _bmad-output/sprint-artifacts/mvp-1-agent-configuration-context.xml
-    platform: "Platform A"
-    priority: P0
+# =============================================================================
+# User Journey: Configure → Chat → Execute → Approve → Iterate
+# =============================================================================
+# =============================================================================
+stories:
+  mvp-1:
+    id: MVP-1
+    name: "Agent Configuration & Persistence"
+    status: "in-progress"
     points: 5
-    started_at: "2025-12-25T01:00:00+07:00"
-    course_correction: "_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md"
-    acceptance_criteria:
-      - "User can select AI provider (OpenRouter/Anthropic)"
-      - "API keys stored securely in localStorage"
-      - "Model selection from provider catalog"
-      - "Configuration persists across browser sessions"
-      - "Connection test passes before saving"
-      - "Agent status shows 'Ready' when configured"
-    traces_to: ["25-6", "28-10"]
-    notes: |
-      Builds on Epic 25-6 (AgentConfigDialog) and Epic 28-10 (Agent forms).
-      Must use agents-store.ts for persistence (from 25-R1 Session 3).
-      2025-12-25: Course correction applied for OpenRouter 401/400 errors.
-
-  # Story MVP-2: Chat Interface with Streaming
-  mvp-2-chat-interface-streaming: done
     priority: P0
-    points: 30
-    completed_at: "2025-12-25T13:15:00+07:00"
-    acceptance_criteria:
-      - "Chat panel opens and displays messages"
-      - "Messages send to /api/chat endpoint"
-      - "Responses stream in real-time using SSE"
-      - "Rich text formatting for responses"
-      - "Code blocks with syntax highlighting"
-      - "Error handling for failed requests"
-      - "Chat history persists in localStorage"
-    traces_to: ["25-1", "25-4"]
-    dependencies: ["MVP-1"]
-    notes: |
-      Implements proper SSE streaming from Epic 25-1.
-      Uses AgentChatPanel from Epic 25-4.
-      Must handle streaming errors correctly.
-
-  # Story MVP-3: Tool Execution - File Operations
-  mvp-3-tool-execution-files: blocked
-    started_at: "2025-12-25T13:15:00+07:00"
-    blocked_at: "2025-12-26T16:05:00+07:00"
-    blocked_reason: "GOVERNANCE BLOCK: MVP-2 E2E verification required before proceeding. See _bmad-output/sprint-artifacts/p0-governance-fixes-2025-12-26.md for details."
-    story: _bmad-output/sprint-artifacts/mvp-3-tool-execution-files.md
-    context: _bmad-output/sprint-artifacts/mvp-3-tool-execution-files-context.xml
-    priority: P0
-    points: 8
-    acceptance_criteria:
-      - "AI can request to read project files"
-      - "Approval dialog shows file path and content preview"
-      - "File read executes in WebContainer"
-      - "AI can request to write/update files"
-      - "Approval dialog shows diff preview for writes"
-      - "File changes sync to local filesystem"
-      - "Monaco editor reflects changes in real-time"
-      - "File tree shows updated status"
-    traces_to: ["12-1", "25-2", "25-5"]
-    dependencies: ["MVP-2"]
-    notes: |
-      Uses AgentFileTools from Epic 12-1.
-      Implements approval flow from Epic 25-5.
-      Must show diff preview for writes.
-
-  # Story MVP-4: Tool Execution - Terminal Commands
-  mvp-4-tool-execution-terminal: drafted
-    story: _bmad-output/sprint-artifacts/mvp-4-tool-execution-terminal.md
-    context: _bmad-output/sprint-artifacts/mvp-4-tool-execution-terminal-context.xml
     platform: "Platform A"
-    priority: P0
+    startedat: "2025-12-25T01:00:00+07:00"
+    devcompletedat: null
+    devstartedat: "2025-12-25T00:00:00+07:00"
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "User can select AI provider (OpenRouter/Anthropic) - Implemented"
+      - "API keys stored securely in localStorage - Implemented"
+      - "Model selection from provider catalog - NOT IMPLEMENTED"
+      - "Configuration persists across browser sessions - NOT IMPLEMENTED"
+      - "Connection test passes before saving - NOT IMPLEMENTED"
+      - "Agent status shows 'Ready' when configured - NOT IMPLEMENTED"
+      - "Configuration dialog accessible from IDE - NOT IMPLEMENTED"
+  mvp-2:
+    id: MVP-2
+    name: "Chat Interface with Streaming"
+    status: "backlog"
     points: 5
-    drafted_at: "2025-12-25T17:58:00+07:00"
-    acceptance_criteria:
-      - "AI can request terminal commands"
-      - "Approval dialog shows command to execute"
-      - "Commands execute in WebContainer terminal"
-      - "Output captured and displayed in real-time"
-      - "Terminal panel shows command history"
-      - "Error handling for failed commands"
-      - "Working directory set correctly"
-    traces_to: ["12-2", "25-3"]
-    dependencies: ["MVP-3"]
-    notes: |
-      Uses AgentTerminalTools from Epic 12-2.
-      Terminal must use project path as CWD.
-      Show both stdout and stderr.
-
-  # Story MVP-5: Approval Workflow
-  mvp-5-approval-workflow: backlog
     priority: P0
-    points: 5
-    acceptance_criteria:
-      - "Tool calls displayed in chat UI"
-      - "Approval overlay shows clear context"
-      - "User can approve or deny each tool call"
-      - "Execution logs show in real-time"
-      - "Error messages clear and actionable"
-      - "Batch approval for multiple operations"
-      - "One-click approval for safe operations"
-    traces_to: ["25-5"]
-    dependencies: ["MVP-4"]
-    notes: |
-      Enhances ApprovalOverlay from Epic 25-5.
-      Must support batch operations.
-      Show tool execution progress.
-
-  # Story MVP-6: Real-time UI Updates
-  mvp-6-realtime-ui-updates: backlog
-    priority: P0
-    points: 3
-    acceptance_criteria:
-      - "File sync status updates in UI"
-      - "Terminal status reflects in chat"
-      - "Agent status updates in real-time"
-      - "No page refreshes required"
-      - "State survives browser refresh"
-      - "All IDE panels stay synchronized"
-    traces_to: ["25-4", "27-1"]
-    dependencies: ["MVP-5"]
-    notes: |
-      Requires event bus integration.
-      Uses Zustand stores from Epic 27-1.
-      Must update all UI components.
-
-  # Story MVP-7: E2E Integration Testing
-  mvp-7-e2e-integration-testing: backlog
-    priority: P0
-    points: 5
-    acceptance_criteria:
-      - "Full workflow test: configure → chat → execute → approve"
-      - "Browser automation test passes"
-      - "Performance benchmarks met"
-      - "Error scenarios tested"
-      - "Documentation complete"
-      - "Demo video recorded"
-    traces_to: ["22-3", "25-R1"]
-    dependencies: ["MVP-6"]
-    notes: |
-      Validates complete user journey.
-      Must include browser automation.
-      Creates demo for stakeholders.
-
-  # =============================================================================
-  # EPIC 23: UX/UI Modernization [P0 - ACTIVE]
-  # =============================================================================
-  epic-23-ux-ui-modernization: in-progress
     platform: "Platform A"
-    started_at: "2025-12-25T21:50:00+07:00"
-    consolidated_from: []
-    incident_response: ""
-    notes: |
-      UX/UI modernization epic with focus on discoverability.
-      Stories improve IDE usability and feature access.
-      
-    user_journey_steps:
-      - "1. Discover IDE features through search and command palette"
-      - "2. Navigate IDE panels efficiently"
-      - "3. Access common actions quickly"
-      - "4. Understand IDE layout and organization"
-      
-    # Story P1.1: Inconsistent Design System Implementation
-    epic-23-p1-1-design-system: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-1-design-system.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-1-design-system-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 8
-      started_at: "2025-12-25T01:00:00+07:00"
-      completed_at: "2025-12-25T10:30:00+07:00"
-      review_submitted_at: "2025-12-25T10:30:00+07:00"
-      acceptance_criteria:
-        - "Design tokens defined in CSS"
-        - "Design token types created"
-        - "All components use design tokens"
-        - "8-bit design system applied"
-        - "Dark theme maintained"
-      traces_to: []
-      dependencies: []
-      notes: |
-        Created comprehensive 8-bit design system with design tokens.
-        Applied dark theme with pixel-perfect styling.
-        All components now use consistent design tokens.
-      
-    # Story P1.2: Missing Component Variants
-    epic-23-p1-2-component-variants: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-2-component-variants.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-2-component-variants-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 8
-      started_at: "2025-12-25T10:30:00+07:00"
-      completed_at: "2025-12-25T13:15:00+07:00"
-      review_submitted_at: "2025-12-25T13:15:00+07:00"
-      acceptance_criteria:
-        - "All components have variants defined"
-        - "CVA patterns implemented"
-        - "Variant naming follows conventions"
-        - "Design tokens used for variants"
-      traces_to: ["P1.1"]
-      dependencies: ["P1.1"]
-      notes: |
-        Added component variants using class-variance-authority.
-        Implemented size, color, and state variants.
-        Used design tokens for variant styling.
-      
-    # Story P1.3: Poor Information Architecture
-    epic-23-p1-3-information-architecture: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-3-information-architecture.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-3-information-architecture-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 8
-      started_at: "2025-12-25T13:15:00+07:00"
-      completed_at: "2025-12-25T20:00:00+07:00"
-      review_submitted_at: "2025-12-25T20:00:00+07:00"
-      acceptance_criteria:
-        - "Context tooltip implemented"
-        - "Collapsible sections created"
-        - "Keyboard shortcuts overlay added"
-        - "Feature discovery guide implemented"
-        - "Information architecture improved"
-      traces_to: ["P1.1", "P1.2"]
-      dependencies: ["P1.2"]
-      notes: |
-        Created context tooltips, collapsible sections, and keyboard shortcuts overlay.
-        Improved information architecture across IDE.
-        Enhanced feature discoverability.
-      
-    # Story P1.4: No Discovery Mechanisms
-    epic-23-p1-4-no-discovery-mechanisms: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-4-no-discovery-mechanisms.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-4-no-discovery-mechanisms-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 8
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-25T21:50:00+07:00"
-      review_submitted_at: "2025-12-25T21:50:00+07:00"
-      acceptance_criteria:
-        - "Command palette component created"
-        - "Feature search component created"
-        - "Quick actions menu created"
-        - "Fuzzy search implemented"
-        - "Keyboard navigation working"
-        - "Keyboard shortcut added (Ctrl+P)"
-        - "Translation keys added"
-        - "Components integrated into IDE layout"
-      traces_to: ["P1.1", "P1.2", "P1.3"]
-      dependencies: ["P1.1", "P1.2", "P1.3"]
-      notes: |
-        Created three discovery mechanisms: CommandPalette, FeatureSearch, QuickActionsMenu.
-        Implemented fuzzy search for commands and features.
-        Added keyboard shortcut (Ctrl+P) to open command palette.
-        Integrated components into IDE layout and header.
-        All components use 8-bit design system styling.
-        Full i18n support for English and Vietnamese.
-        No regressions introduced in existing tests.
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "Chat panel opens and displays messages - NOT IMPLEMENTED"
+      - "Messages send to /api/chat endpoint - NOT IMPLEMENTED"
+      - "Responses stream in real-time using SSE - NOT IMPLEMENTED"
+      - "Rich text formatting for responses - NOT IMPLEMENTED"
+      - "Code blocks with syntax highlighting - NOT IMPLEMENTED"
+      - "Error handling for failed requests - NOT IMPLEMENTED"
+      - "Chat history persists in localStorage - NOT IMPLEMENTED"
+  mvp-3:
+    id: MVP-3
+    name: "Tool Execution - File Operations"
+    status: "backlog"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "AI can request to read project files - NOT IMPLEMENTED"
+      - "Approval dialog shows file path and content preview - NOT IMPLEMENTED"
+      - "AI can request to write/update files - NOT IMPLEMENTED"
+      - "Approval dialog shows diff preview for writes - NOT IMPLEMENTED"
+      - "File changes sync to local filesystem - NOT IMPLEMENTED"
+      - "Monaco editor reflects changes in real-time - NOT IMPLEMENTED"
+      - "File tree shows updated status - NOT IMPLEMENTED"
+      - "File read executes in WebContainer - NOT IMPLEMENTED"
+      - "File write executes in WebContainer - NOT IMPLEMENTED"
+      - "File list tool for directory traversal - NOT IMPLEMENTED"
+      - "Approval flow for file operations - NOT IMPLEMENTED"
+      - "Error handling for file operations - NOT IMPLEMENTED"
+      - "File lock mechanism for concurrency - NOT IMPLEMENTED"
+  mvp-4:
+    id: MVP-4
+    name: "Tool Execution - Terminal Commands"
+    status: "backlog"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "AI can request terminal commands - NOT IMPLEMENTED"
+      - "Approval dialog shows command to execute - NOT IMPLEMENTED"
+      - "Commands execute in WebContainer terminal - NOT IMPLEMENTED"
+      - "Output captured and displayed in real-time - NOT IMPLEMENTED"
+      - "Terminal panel shows command history - NOT IMPLEMENTED"
+      - "Error handling for failed commands - NOT IMPLEMENTED"
+      - "Working directory set correctly - NOT IMPLEMENTED"
+      - "Terminal uses project path as CWD - NOT IMPLEMENTED"
+      - "Both stdout and stderr captured - NOT IMPLEMENTED"
+  mvp-5:
+    id: MVP-5
+    name: "Approval Workflow"
+    status: "backlog"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "Tool calls displayed in chat UI - NOT IMPLEMENTED"
+      - "Approval overlay shows clear context - NOT IMPLEMENTED"
+      - "User can approve or deny each tool call - NOT IMPLEMENTED"
+      - "Execution logs show in real-time - NOT IMPLEMENTED"
+      - "Error messages clear and actionable - NOT IMPLEMENTED"
+      - "Batch approval for multiple operations - NOT IMPLEMENTED"
+      - "One-click approval for safe operations - NOT IMPLEMENTED"
+  mvp-6:
+    id: MVP-6
+    name: "Real-time UI Updates"
+    status: "backlog"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "File sync status updates in UI - NOT IMPLEMENTED"
+      - "Terminal status reflects in chat - NOT IMPLEMENTED"
+      - "Agent status updates in real-time - NOT IMPLEMENTED"
+      - "No page refreshes required - NOT IMPLEMENTED"
+      - "State survives browser refresh - NOT IMPLEMENTED"
+      - "All IDE panels stay synchronized - NOT IMPLEMENTED"
+  mvp-7:
+    id: MVP-7
+    name: "E2E Integration Testing"
+    status: "backlog"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: all
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "Full workflow test: configure → chat → execute → approve - NOT IMPLEMENTED"
+      - "Browser automation test passes - NOT IMPLEMENTED"
+      - "Performance benchmarks met - NOT IMPLEMENTED"
+      - "Error scenarios tested - NOT IMPLEMENTED"
+      - "Documentation complete - NOT IMPLEMENTED"
+      - "Demo video recorded - NOT IMPLEMENTED"
 
-    # Story P1.7: Responsive Design (Mobile-First)
-    epic-23-p1-7-responsive-design: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-7-responsive-design.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-7-responsive-design-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 5
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-26T10:00:00+07:00"
-      acceptance_criteria:
-        - "Mobile-first responsive layout implemented"
-        - "Breakpoints added to IDELayout"
-        - "Responsive classes for IconSidebar"
-        - "Design tokens include responsive panel sizes"
-        - "Mobile navigation works correctly"
-      traces_to: ["P1.1"]
-      dependencies: ["P1.1"]
-      notes: |
-        Implemented responsive design across all IDE components.
-        Added mobile breakpoints and responsive utility classes.
-        Updated design tokens with responsive sizing.
-        IDELayout and IconSidebar now responsive.
-
-    # Story P1.8: Keyboard Navigation & Accessibility
-    epic-23-p1-8-keyboard-navigation: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-8-keyboard-navigation.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-8-keyboard-navigation-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 5
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-26T10:00:00+07:00"
-      acceptance_criteria:
-        - "Enhanced keyboard navigation"
-        - "ARIA support across IDE components"
-        - "Focus management improved"
-        - "Screen reader compatibility"
-        - "Accessibility audit passed"
-      traces_to: ["P1.1", "P1.2"]
-      dependencies: ["P1.1", "P1.2"]
-      notes: |
-        Enhanced keyboard navigation throughout IDE.
-        Added ARIA labels and roles to all interactive components.
-        Improved focus management and tab order.
-        Screen reader compatible components.
-
-    # Story P1.9: Error State UI Components
-    epic-23-p1-9-error-state-ui: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-9-error-state-ui.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-9-error-state-ui-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 5
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-26T10:00:00+07:00"
-      acceptance_criteria:
-        - "ErrorState component created"
-        - "EmptyState component created"
-        - "LoadingState component created"
-        - "SkeletonLoader component created"
-        - "Error utilities implemented"
-      traces_to: ["P1.1"]
-      dependencies: ["P1.1"]
-      notes: |
-        Created comprehensive error state UI components.
-        Implemented ErrorState, EmptyState, LoadingState, SkeletonLoader.
-        Added error utilities in error-handling.ts.
-        Consistent error handling across IDE.
-
-    # Story P1.10: State Management Audit
-    epic-23-p1-10-state-management-audit: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-10-state-management-audit.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-10-state-management-audit-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 3
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-26T10:00:00+07:00"
-      acceptance_criteria:
-        - "State architecture documented"
-        - "P0 issue identified (IDELayout state duplication)"
-        - "Clear separation of state types"
-        - "Recommendations documented"
-        - "Audit report created"
-      traces_to: []
-      dependencies: []
-      notes: |
-        Completed comprehensive state management audit.
-        Identified P0 issue: IDELayout.tsx duplicates IDE state with local useState.
-        Documented clear separation: persisted (IndexedDB), ephemeral (in-memory), agent (localStorage), UI (React Context).
-        Recommended refactoring deferred to avoid MVP-3 interference.
-        Full audit report at _bmad-output/state-management-audit-p1.10-2025-12-26.md.
-
-    # Story P1.11: Icon Library Expansion
-    epic-23-p1-11-icon-library: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-11-icon-library.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-11-icon-library-context.xml
-      platform: "Platform A"
-      priority: P2
-      points: 3
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-26T10:00:00+07:00"
-      acceptance_criteria:
-        - "10 new icon components created"
-        - "All icons follow 8-bit design"
-        - "Icons exported from index.ts"
-        - "Consistent sizing and styling"
-      traces_to: ["P1.1"]
-      dependencies: ["P1.1"]
-      notes: |
-        Created 10 new icon components: AIIcon, ChatIcon, CloseIcon, FileIcon, MenuIcon, PlusIcon, RefreshIcon, SettingsIcon, TerminalIcon.
-        All icons follow 8-bit design system styling.
-        Exported from components/ui/icons/index.ts.
-        Consistent 16x16px sizing with pixel-perfect rendering.
-
-    # Story P1.12: Animation System
-    epic-23-p1-12-animation-system: done
-      story: _bmad-output/sprint-artifacts/epic-23-p1-12-animation-system.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-12-animation-system-context.xml
-      platform: "Platform A"
-      priority: P2
-      points: 2
-      started_at: "2025-12-25T21:50:00+07:00"
-      completed_at: "2025-12-26T10:00:00+07:00"
-      acceptance_criteria:
-        - "animations.css created"
-        - "8-bit themed animations"
-        - "Smooth transitions for UI"
-        - "Performance optimized"
-      traces_to: ["P1.1"]
-      dependencies: ["P1.1"]
-      notes: |
-        Created animations.css with 8-bit themed animations.
-        Includes smooth transitions for panels, buttons, and state changes.
-        CSS-based animations for performance.
-        Used by UI components for consistent motion design.
-       
-    # Story P1.13: Hub-Based Navigation & Vision-Aligned Onboarding
-    epic-23-p1-13-hub-based-navigation:
-      story: _bmad-output/sprint-artifacts/epic-23-p1-13-hub-based-navigation.md
-      context: _bmad-output/sprint-artifacts/epic-23-p1-13-hub-based-navigation-context.xml
-      platform: "Platform A"
-      priority: P1
-      points: 8
-      started_at: "2025-12-26T13:00:00+07:00"
-      completed_at: "2025-12-26T13:20:00+07:00"
-      review_submitted_at: "2025-12-26T13:20:00+07:00"
-      acceptance_criteria:
-        - "HubSidebar component created with collapsible icon-only navigation"
-        - "TopicCard component created with warm gradient styling"
-        - "TopicPortalCard component created for workspace navigation"
-        - "HubHomePage component created with topic-based onboarding"
-        - "NavigationBreadcrumbs component created for signposting"
-        - "HubLayout wrapper component created"
-        - "hub-store created for state management"
-        - "Translation files updated (en.json, vi.json)"
-        - "Tests written for all components"
-        - "TypeScript compilation passes"
-        - "Translation extraction passes"
-        - "All components use 8-bit design system tokens"
-        - "All user-facing text has i18n support (EN + VI)"
-        - "All components are accessible (WCAG AA, keyboard navigation)"
-        - "No hard-coded values (all use CSS variables)"
-        - "All components under 400 lines"
-      traces_to: ["P1.1", "P1.2", "P1.3", "P1.4", "P1.5", "P1.6", "P1.7", "P1.8", "P1.9", "P1.10", "P1.11", "P1.12"]
-      dependencies: ["P1.1", "P1.2", "P1.3", "P1.4", "P1.5", "P1.6", "P1.7", "P1.8", "P1.9", "P1.10", "P1.11", "P1.12"]
-      notes: |
-        Implemented hub-based navigation system with vision-aligned onboarding.
-        Created 6 core components: HubSidebar, TopicCard, TopicPortalCard, HubHomePage, NavigationBreadcrumbs, HubLayout.
-        Created hub-store for state management with localStorage persistence.
-        Updated translation files with English and Vietnamese translations.
-        All components use 8-bit design system tokens and CVA patterns.
-        TypeScript compilation passes, translation extraction passes.
-        Pre-existing test failures are unrelated to hub implementation.
-        Ready for browser E2E verification.
-
-  # =============================================================================
-  # BACKLOG EPICS (Post-MVP)
-  # =============================================================================
-  backlog_epics:
-    epic-29:
-      name: "Agentic Execution Loop"
-      status: "backlog"
-      priority: P0
-      points: 10
-      stories: 4
-      research: "_bmad-output/research/agentic-execution-loop-deep-research-2025-12-25.md"
-      proposal: "_bmad-output/sprint-change-proposal-2025-12-25.md"
-      stories_breakdown:
-        story-29-1:
-          name: "State Tracking for Iterations"
-          acceptance_criteria:
-            - "Track iteration count and state in Zustand store"
-            - "UI shows current iteration and progress"
-            - "Agent status updates in real-time"
-        story-29-2:
-          name: "Iteration UI Components"
-          acceptance_criteria:
-            - "Add iteration progress bar to AgentChatPanel"
-            - "Show iteration history in a collapsible section"
-            - "Visual indicators for iteration limits"
-        story-29-3:
-          name: "Intelligent Termination Strategies"
-          acceptance_criteria:
-            - "Implement stuck detection (e.g., repeated errors)"
-            - "Timeout after 5 minutes of inactivity"
-            - "Termination messages in chat"
-        story-29-4:
-          name: "E2E Verification for Agentic Loop"
-          acceptance_criteria:
-            - "Test multi-step agent execution"
-            - "Verify termination conditions"
-            - "Update documentation with examples"
-      
-    epic-7: "Git Integration [P2]"
-      notes: "Git operations via agent tools"
-      
-    epic-11: "Code Splitting & Module Refactor [P1]"
-      notes: "Code organization improvements"
-      
-    epic-21: "Client-Side Localization [P2]"
-      notes: "EN/VI language support"
-      
-    epic-23: "UX/UI Modernization [P1]"
-      status: "in-progress"
-      notes: "Polish and enhanced components"
-      design_system:
-        created_at: "2025-12-25T15:00:00+07:00"
-        artifact: "_bmad-output/design-system-8bit-2025-12-25.md"
-        description: "Comprehensive 8-bit design system foundation created with complete design tokens, component library, animation system, accessibility guidelines, responsive strategy, theme system, i18n support, and asset guidelines"
-      
-    epic-27: "State Architecture Stabilization [P1]"
-      notes: "Continue Zustand migration"
-      
-    epic-26: "Agent Management Dashboard [P2]"
-      notes: "Advanced agent features"
-
-  # =============================================================================
-  # CRITICAL INCIDENT REMEDIATION
-  # =============================================================================
-  incident_remediation:
-    id: "INC-2025-12-24-001"
-    status: "IN_PROGRESS"
-    root_cause: "Component-centric validation without E2E testing"
-    remediation: |
-      1. Created consolidated MVP epic for vertical slice
-      2. Added mandatory browser E2E verification gates
-      3. All stories require screenshot/recording proof
-      4. Definition of Done updated to prevent recurrence
-      5. Traceability maintained to original stories
-    lessons_learned: |
-      - Integration testing is mandatory
-      - Component completion ≠ feature completion
-      - Always validate end-to-end workflows
-      - Browser verification is non-negotiable
+# =============================================================================
+# BACKLOG EPICS (Post-MVP)
+# =============================================================================
+backlog_epics:
+  epic-29:
+    name: "Agentic Execution Loop"
+    status: "backlog"
+    priority: P0
+    platform: "Platform A"
+    started_at: null
+    completed_at: null
+    notes: "Deferred from MVP to Epic 29. Full implementation with state tracking, iteration UI, intelligent termination."
 
 # =============================================================================
 # METRICS AND TRACKING
 # =============================================================================
 metrics:
-  total_epics: 1 (active) + 8 (archived/superseded) + 6 (backlog)
-  total_stories: 7 (MVP) + 13 (Epic 23)
-  story_points: 36 (MVP) + 61 (Epic 23)
+  total_epics: 1 (active) + 8 (archived) = 9
+  total_stories: 7 (MVP) + 0 (backlog) = 7
+  story_points: 35 (MVP: 7 stories × 5 points = 35)
   epic_23_completion: "13/13 stories complete (100%)"
+  epic_completion: "0% (0/1 epics completed)"
   estimated_duration: "2-3 weeks for MVP"
   next_review: "2025-12-26"
+
+# =============================================================================
+# CRITICAL INCIDENT REMEDIATION (2025-12-26)
+# =============================================================================
+incident_remediation:
+  id: "INC-2025-12-26"
+  status: "IN_PROGRESS"
+  root_cause: "Component-centric validation without E2E testing"
+  remediation: |
+    1. Created consolidated MVP epic for vertical slice
+    2. Added mandatory browser E2E verification gates
+    3. Updated governance documents to reflect accurate status
+    4. Reverted MVP-3 to backlog (dependency violation fixed)
+    5. Created E2E verification infrastructure
+    6. Created MCP research documentation template
+    7. Created handoff validation mechanism
+    8. Updated definition of done to require E2E verification
+    9. Documented enforcement mechanisms
+    10. Created P0 fixes report
+  lessons_learned: |
+      - E2E verification is mandatory, not optional
+      - Component completion ≠ feature completion
+      - Governance integrity is foundation for quality
+      - Sequential story development prevents parallel execution issues
+      - Documentation and validation ensure traceability
+    blocked_stories: |
+      - MVP-3 blocked by MVP-2 E2E verification requirement
+      - MVP-4 blocked by MVP-3 dependency
+      - MVP-5 blocked by MVP-4 dependency
+      - MVP-6 blocked by MVP-5 dependency
+      - MVP-7 blocked by MVP-6 dependency
 
 # =============================================================================
 # END OF FILE

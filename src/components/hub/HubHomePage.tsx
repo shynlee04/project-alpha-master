@@ -1,83 +1,137 @@
 /**
- * Hub Home Page Component
- * 
- * Home page with topic-based onboarding.
- * Centers on project management with quick actions and portal cards.
- * 
+ * Hub Home Page Component (Refactored)
+ *
+ * Home page with topic-based onboarding, real project data from Dexie,
+ * and proper routing.
+ *
  * @file HubHomePage.tsx
- * @created 2025-12-26T12:50:00Z
+ * @created 2025-12-27T00:50:00Z
+ * @refactored Integrated with projectStore, BentoGrid, Router
  */
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHubStore } from '@/lib/state/hub-store';
-import { TopicCard } from './TopicCard';
-import { TopicPortalCard } from './TopicPortalCard';
+import { useNavigate } from '@tanstack/react-router';
+import { useLiveQuery } from 'dexie-react-hooks';
+import {
+  listProjectsWithPermission,
+  saveProject,
+  generateProjectId,
+  type ProjectWithPermission,
+  type ProjectMetadata,
+} from '@/lib/workspace/project-store';
+import { BentoGrid, type BentoCardProps } from '@/components/ide/BentoGrid';
 import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
-import { FolderPlus, Clock, Sparkles } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-// Design tokens from 8-bit design system
-const RADIUS_LG = 'var(--radius-lg)';
-const RADIUS_MD = 'var(--radius-md)';
-const SHADOW_SM = 'var(--shadow-sm)';
-
-interface RecentProject {
-  id: string;
-  name: string;
-  path: string;
-  lastEdited: string;
-}
+import {
+  PlusIcon,
+  FileIcon,
+  SettingsIcon,
+  AIIcon,
+  TerminalIcon,
+} from '@/components/ui/icons';
+import { Sparkles, FolderPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
-  const { setActiveSection } = useHubStore();
+  const navigate = useNavigate();
 
-  // Mock recent projects data
-  const recentProjects: RecentProject[] = [
+  // Real project data from Dexie via useLiveQuery
+  // Note: useLiveQuery requires a function that returns a Promise
+  const projects = useLiveQuery(() => listProjectsWithPermission(), []);
+
+  const isLoading = projects === undefined;
+
+  /**
+   * Handle opening a new folder via File System Access API
+   */
+  const handleOpenFolder = async () => {
+    try {
+      const handle = await window.showDirectoryPicker();
+
+      // Create and save the project
+      const newProject: ProjectMetadata = {
+        id: generateProjectId(),
+        name: handle.name,
+        folderPath: handle.name, // FSA doesn't expose full path
+        fsaHandle: handle,
+        lastOpened: new Date(),
+        autoSync: true,
+      };
+
+      const saved = await saveProject(newProject);
+      if (saved) {
+        navigate({ to: `/workspace/${newProject.id}` });
+      }
+    } catch (err) {
+      // User cancelled or error
+      if ((err as Error).name !== 'AbortError') {
+        console.error('Failed to open folder:', err);
+      }
+    }
+  };
+
+  /**
+   * Handle navigating to a specific project workspace
+   */
+  const handleProjectClick = (projectId: string) => {
+    navigate({ to: `/workspace/${projectId}` });
+  };
+
+  /**
+   * Handle portal card navigation
+   */
+  const handlePortalNavigation = (route: string) => {
+    navigate({ to: route });
+  };
+
+  // Define portal cards using BentoCard structure
+  const portalCards: BentoCardProps[] = [
     {
-      id: '1',
-      name: 'my-app',
-      path: '/Users/apple/projects/my-app',
-      lastEdited: '2 hours ago',
+      id: 'portal-ide',
+      size: 'medium',
+      title: t('hub.portals.ideWorkspace', 'IDE Workspace'),
+      description: t('hub.portals.ideWorkspaceDesc', 'Open your projects in the full IDE'),
+      icon: <TerminalIcon className="text-primary" />,
+      topic: 'Workspace',
+      onClick: () =>
+        projects && projects.length > 0
+          ? handleProjectClick(projects[0].id)
+          : handleOpenFolder(),
     },
     {
-      id: '2',
-      name: 'via-gent-website',
-      path: '/Users/apple/projects/via-gent-website',
-      lastEdited: '1 day ago',
+      id: 'portal-agents',
+      size: 'medium',
+      title: t('hub.portals.agentCenter', 'Agent Center'),
+      description: t('hub.portals.agentCenterDesc', 'Configure and manage AI agents'),
+      icon: <AIIcon className="text-primary" />,
+      topic: 'Agents',
+      onClick: () => handlePortalNavigation('/agents'),
     },
     {
-      id: '3',
-      name: 'api-service',
-      path: '/Users/apple/projects/api-service',
-      lastEdited: '3 days ago',
+      id: 'portal-knowledge',
+      size: 'medium',
+      title: t('hub.portals.knowledgeHub', 'Knowledge Hub'),
+      description: t('hub.portals.knowledgeHubDesc', 'Your knowledge synthesis station'),
+      icon: <Sparkles className="text-primary" />,
+      topic: 'Knowledge',
+      onClick: () => handlePortalNavigation('/knowledge'),
+    },
+    {
+      id: 'portal-settings',
+      size: 'medium',
+      title: t('hub.portals.settings', 'Settings'),
+      description: t('hub.portals.settingsDesc', 'Configure your workspace preferences'),
+      icon: <SettingsIcon className="text-primary" />,
+      topic: 'Settings',
+      onClick: () => handlePortalNavigation('/settings'),
     },
   ];
 
-  const handleNewProject = () => {
-    // TODO: Implement new project creation
-    console.log('Create new project');
-  };
-
-  const handleOpenFolder = () => {
-    // TODO: Implement folder picker
-    console.log('Open folder');
-  };
-
-  const handleTopicAction = (topic: string) => {
-    console.log('Topic action:', topic);
-    // Navigate to appropriate section based on topic
-  };
-
-  const handlePortalClick = (section: string) => {
-    setActiveSection(section as any);
-  };
-
   return (
-    <div className="flex-1 min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]">
-      {/* Main content area - sidebar is rendered by HubLayout */}
+    <div className="flex-1 min-h-screen bg-background text-foreground">
       <main className="flex-1 overflow-y-auto">
         {/* Breadcrumbs */}
         <div className="px-6 py-4">
@@ -90,185 +144,107 @@ export const HubHomePage: React.FC = () => {
           />
         </div>
 
-        {/* Welcome section */}
+        {/* Welcome section with 8-bit styling */}
         <div className="px-6 py-6">
-          <h1 className="text-4xl font-bold mb-2 text-[var(--color-foreground)]">
+          <h1 className="text-4xl font-bold mb-2 text-foreground font-mono tracking-tight">
             {t('welcome')}
           </h1>
-          <p className="text-lg text-[var(--color-muted-foreground)] max-w-3xl">
+          <p className="text-lg text-muted-foreground max-w-3xl">
             {t('onboarding.slides.intro.desc')}
           </p>
         </div>
 
-        {/* Topic-based onboarding cards */}
+        {/* Portal Cards using BentoGrid (8-bit styled) */}
         <div className="px-6 py-8">
-          <h2 className="text-2xl font-semibold mb-6 text-[var(--color-foreground)]">
-            Explore Via-gent
+          <h2 className="text-2xl font-semibold mb-6 text-foreground font-mono">
+            {t('hub.exploreViaGent', 'Explore Via-gent')}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* AI-Powered Development */}
-            <TopicCard
-              gradient="orange"
-              titleKey="aiPoweredDev.title"
-              descriptionKey="aiPoweredDev.description"
-              actionKey="aiPoweredDev.action"
-              icon={<Sparkles size={32} />}
-              onAction={() => handleTopicAction('ide')}
-            />
-
-            {/* Privacy-First Workspace */}
-            <TopicCard
-              gradient="coral"
-              titleKey="privacyFirst.title"
-              descriptionKey="privacyFirst.description"
-              actionKey="privacyFirst.action"
-              icon={<Clock size={32} />}
-              onAction={() => handleTopicAction('settings')}
-            />
-
-            {/* Classroom-Ready IDE */}
-            <TopicCard
-              gradient="teal"
-              titleKey="classroomReady.title"
-              descriptionKey="classroomReady.description"
-              actionKey="classroomReady.action"
-              icon={<Sparkles size={32} />}
-              onAction={() => handleTopicAction('ide')}
-            />
-
-            {/* Knowledge Synthesis Hub */}
-            <TopicCard
-              gradient="purple"
-              titleKey="knowledgeSynthesis.title"
-              descriptionKey="knowledgeSynthesis.description"
-              actionKey="knowledgeSynthesis.action"
-              icon={<Sparkles size={32} />}
-              onAction={() => handleTopicAction('knowledge')}
-            />
-
-            {/* Agent Orchestration Center */}
-            <TopicCard
-              gradient="blue"
-              titleKey="agentOrchestration.title"
-              descriptionKey="agentOrchestration.description"
-              actionKey="agentOrchestration.action"
-              icon={<Sparkles size={32} />}
-              onAction={() => handleTopicAction('agents')}
-            />
-          </div>
+          <BentoGrid
+            cards={portalCards}
+            topics={['Workspace', 'Agents', 'Knowledge', 'Settings']}
+            className="max-w-6xl"
+          />
         </div>
 
-        {/* Recent Projects section */}
+        {/* Recent Projects section (Real Data from Dexie) */}
         <div className="px-6 py-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">
+            <h2 className="text-2xl font-semibold text-foreground font-mono">
               {t('projects.recent')}
             </h2>
-            <button
-              onClick={handleNewProject}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-[var(--radius-md)] font-semibold hover:opacity-90 transition-opacity duration-200"
-              aria-label={t('projects.new')}
+            <Button
+              onClick={handleOpenFolder}
+              className="gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+              aria-label={t('projects.openFolder')}
             >
-              <FolderPlus size={20} />
-              <span>{t('projects.new')}</span>
-            </button>
+              <PlusIcon />
+              <span>{t('projects.openFolder')}</span>
+            </Button>
           </div>
 
-          {/* Recent projects list */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recentProjects.map((project) => (
-              <div
-                key={project.id}
-                className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-4 hover:shadow-sm transition-shadow duration-200 cursor-pointer"
-                onClick={() => console.log('Open project:', project.id)}
-              >
-                <div className="flex items-start gap-3 mb-2">
-                  <FolderPlus className="text-[var(--color-primary)] flex-shrink-0" size={24} />
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold mb-1 text-[var(--color-foreground)] truncate">
-                      {project.name}
-                    </h3>
-                    <p className="text-sm text-[var(--color-muted-foreground)]">
-                      {project.path}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm text-[var(--color-muted-foreground)]">
-                  <span>{t('projects.lastEdited')}: {project.lastEdited}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // TODO: Implement project actions
-                    }}
-                    className="p-2 hover:bg-[var(--color-accent)] rounded-md transition-colors duration-200"
-                    aria-label="Project actions"
-                  >
-                    ...
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Empty state when no projects */}
-          {recentProjects.length === 0 && (
-            <div className="text-center py-12 border border-dashed border-[var(--color-border)] rounded-[var(--radius-lg)]">
-              <FolderPlus className="mx-auto text-[var(--color-muted-foreground)] mb-4" size={48} />
-              <h3 className="text-lg font-semibold text-[var(--color-foreground)] mb-2">
-                {t('dashboard.emptyTitle')}
-              </h3>
-              <p className="text-[var(--color-muted-foreground)] mb-6">
-                {t('dashboard.emptySubtitle')}
-              </p>
-              <button
-                onClick={handleOpenFolder}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-[var(--radius-md)] font-semibold hover:opacity-90 transition-opacity duration-200"
-              >
-                <FolderPlus size={20} />
-                <span>{t('projects.openFolder')}</span>
-              </button>
+          {/* Loading State */}
+          {isLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <SkeletonLoader className="h-32 rounded-none" />
+              <SkeletonLoader className="h-32 rounded-none" />
+              <SkeletonLoader className="h-32 rounded-none" />
             </div>
           )}
-        </div>
 
-        {/* Portal cards section */}
-        <div className="px-6 py-8">
-          <h2 className="text-2xl font-semibold mb-6 text-[var(--color-foreground)]">
-            Quick Access
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* IDE Workspace */}
-            <TopicPortalCard
-              titleKey="ideWorkspace"
-              descriptionKey="ideWorkspaceDesc"
-              icon={<Sparkles size={32} />}
-              onClick={() => handlePortalClick('ide')}
-            />
+          {/* Project List (Real Data) */}
+          {!isLoading && projects && projects.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projects.map((project: ProjectWithPermission) => (
+                <div
+                  key={project.id}
+                  className="bg-card border-2 border-border rounded-none p-4 cursor-pointer
+                    shadow-[2px_2px_0px_rgba(0,0,0,0.5)]
+                    hover:shadow-[4px_4px_0px_rgba(0,0,0,0.7)]
+                    hover:border-primary/50
+                    transition-all duration-150"
+                  onClick={() => handleProjectClick(project.id)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open project ${project.name}`}
+                >
+                  <div className="flex items-start gap-3 mb-2">
+                    <FileIcon className="text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold mb-1 text-foreground truncate font-mono">
+                        {project.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {project.folderPath}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>
+                      {t('projects.lastEdited')}:{' '}
+                      {new Date(project.lastOpened).toLocaleDateString()}
+                    </span>
+                    {project.permissionState === 'prompt' && (
+                      <span className="px-2 py-1 bg-amber-500/20 text-amber-500 text-xs font-medium rounded-none">
+                        {t('projects.needsAccess', 'Needs Access')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-            {/* Agent Center */}
-            <TopicPortalCard
-              titleKey="agentCenter"
-              descriptionKey="agentCenterDesc"
-              icon={<Sparkles size={32} />}
-              onClick={() => handlePortalClick('agents')}
+          {/* Empty State (No Projects) */}
+          {!isLoading && (!projects || projects.length === 0) && (
+            <EmptyState
+              icon={<FolderPlus size={48} className="text-muted-foreground" />}
+              title={t('dashboard.emptyTitle')}
+              message={t('dashboard.emptySubtitle')}
+              variant="no-projects"
+              action="browse"
+              onAction={handleOpenFolder}
             />
-
-            {/* Knowledge Hub */}
-            <TopicPortalCard
-              titleKey="knowledgeHub"
-              descriptionKey="knowledgeHubDesc"
-              icon={<Sparkles size={32} />}
-              onClick={() => handlePortalClick('knowledge')}
-            />
-
-            {/* Settings */}
-            <TopicPortalCard
-              titleKey="settings"
-              descriptionKey="settingsDesc"
-              icon={<Sparkles size={32} />}
-              onClick={() => handlePortalClick('settings')}
-            />
-          </div>
+          )}
         </div>
       </main>
     </div>

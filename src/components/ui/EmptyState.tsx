@@ -47,14 +47,14 @@ export interface EmptyStateProps {
  */
 const emptyStateVariants = cva(
     // Base styles
-    'flex flex-col items-center justify-center gap-4 p-8 rounded-lg border-2 border-dashed border-neutral-700/50',
+    'flex flex-col items-center justify-center gap-4 p-8 rounded-none border-2 border-dashed border-border-200 bg-surface-100',
     {
         variants: {
             variant: {
-                default: 'bg-neutral-900/30',
-                'no-files': 'bg-neutral-900/30',
-                'no-results': 'bg-neutral-900/30',
-                'no-projects': 'bg-neutral-900/30',
+                default: 'border-border-200',
+                'no-files': 'border-border-200',
+                'no-results': 'border-border-200',
+                'no-projects': 'border-border-200',
             },
         },
     }
@@ -84,10 +84,10 @@ export function EmptyState({
     icon,
 }: EmptyStateProps) {
     const { t } = useTranslation()
-    
+
     const emptyMessage = message || t('empty.message', 'Nothing here')
     const emptyTitle = title || t('empty.title', 'Empty')
-    
+
     // Get action icon based on action type
     const getActionIcon = () => {
         switch (action) {
@@ -101,7 +101,7 @@ export function EmptyState({
                 return null
         }
     }
-    
+
     // Get action label based on action type
     const getActionLabel = () => {
         switch (action) {
@@ -115,7 +115,7 @@ export function EmptyState({
                 return ''
         }
     }
-    
+
     // Get variant-specific icon
     const getVariantIcon = () => {
         switch (variant) {
@@ -129,18 +129,18 @@ export function EmptyState({
                 return null
         }
     }
-    
+
     return (
         <div className={cn(emptyStateVariants({ variant }), className)}>
             {/* Icon */}
             {icon || getVariantIcon()}
-            
+
             {/* Title */}
             <h3 className="text-xl font-bold mb-2 text-neutral-100">{emptyTitle}</h3>
-            
+
             {/* Message */}
             <p className="text-sm text-neutral-400 mb-4">{emptyMessage}</p>
-            
+
             {/* Action button */}
             {action && onAction && (
                 <button

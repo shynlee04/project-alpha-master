@@ -38,7 +38,6 @@ import { SyncStatusSegment } from '@/components/ide/statusbar/SyncStatusSegment'
 import { ProviderStatus } from '@/components/ide/statusbar/ProviderStatus';
 import { CursorPosition } from '@/components/ide/statusbar/CursorPosition';
 import { FileTypeIndicator } from '@/components/ide/statusbar/FileTypeIndicator';
-import '@/styles/design-tokens.css';
 
 // ============================================================================
 // Types

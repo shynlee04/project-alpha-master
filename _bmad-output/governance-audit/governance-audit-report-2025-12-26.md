@@ -1,929 +1,706 @@
-# Governance Audit Report
-
-**Audit ID**: GOV-AUD-2025-12-26
-**Date**: 2025-12-26T15:55:00+07:00
-**Auditor**: bmad-bmm-architect
-**Scope**: Comprehensive project governance audit and course correction plan
+# Systematic Governance Audit Report
+**Project**: Via-gent (Project Alpha)
+**Date**: 2025-12-26
+**Auditor**: BMAD Architect Agent (@bmad-bmm-architect)
+**Audit ID**: GOV-2025-12-26-001
 
 ---
 
 ## Executive Summary
 
-**Critical Findings**: 13 issues identified across 6 categories
-- **P0 (Critical)**: 2 issues requiring immediate attention
-- **P1 (High)**: 5 issues requiring urgent attention
-- **P2 (Medium)**: 6 issues requiring attention
+This comprehensive governance audit identifies critical systemic failures that caused complete development shutdown. The audit reveals fundamental governance breakdowns across multiple dimensions: status consistency, implementation completeness, component architecture, state management, MCP research protocol compliance, E2E verification enforcement, and handoff protocol adherence.
 
-**Root Causes**:
-1. Lack of centralized governance enforcement
-2. Incomplete implementation marked as DONE
-3. Scattered documentation without single source of truth
-4. Missing E2E verification enforcement
-5. Status inconsistency between governance documents
+### Critical Findings Summary
+- **Total Issues Identified**: 27 (P0: 6, P1: 12, P2: 9)
+- **Root Cause Categories**: Status inconsistency (3), Implementation gaps (4), Architecture violations (5), Governance failures (7), Documentation issues (4), E2E verification breakdown (4)
+- **Most Critical Issue**: Development server startup failure caused by missing MCP environment file reference and TanStack Router test file conflict
+- **Governance Enforcement Gap**: No centralized mechanism to validate story completion before moving to next story
 
-**Impact**: Development progress blocked, technical debt accumulating, user trust eroding
+### Audit Scope
+The audit covered:
+1. Governance Document Analysis (sprint-status.yaml, bmm-workflow-status.yaml)
+2. Implementation Completeness Audit (MVP stories, E2E verification records)
+3. Handoff Document Review (24 handoff documents analyzed)
+4. Component Architecture Review (wiring, routing, dead code)
+5. State Management Audit (Zustand vs legacy TanStack Store, persistence strategy)
+6. MCP Research Protocol Compliance (agent implementation review)
+7. E2E Verification Enforcement (browser testing requirements)
 
 ---
 
-## 1. Governance Audit Findings
+## Part 1: Governance Document Analysis
 
-### 1.1 Status Inconsistency (P0)
+### 1.1 Status Inconsistency - P0
 
-**Issue**: MVP-3 status conflict between governance documents
-
-**Details**:
-- [`sprint-status-consolidated.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) shows MVP-3 as "in-progress"
-- [`bmm-workflow-status-consolidated.yaml`](_bmad-output/bmm-workflow-status-consolidated.yaml) shows MVP-3 as "in-progress"
-- However, handoff document for MVP-3 indicates it should verify MVP-2 completion before proceeding
-- No evidence of MVP-2 E2E verification completion
+**Issue**: Critical status inconsistency between governance documents
 
 **Evidence**:
-```yaml
-# sprint-status-consolidated.yaml
-mvp-3-tool-execution-files:
-  status: "in-progress"
-  completed_at: null
+- [`sprint-status-consolidated.yaml`](../sprint-artifacts/sprint-status-consolidated.yaml) line 35-37:
+  - `current_story.key: "MVP-2-chat-interface-streaming"`
+  - `current_story.status: "done"`
+  - `last_completed_story.key: "MVP-2-chat-interface-streaming"`
+  - `last_completed_story.status: "done"`
+  - Notes: "MVP-2: Chat Interface with Streaming - COMPLETE. E2E verified: Conversation threads, agent selection, rich text rendering, Mermaid diagrams, SSE streaming, persistence. Browser recording: mvp2_chat_streaming_e2e_1766647700000.webp"
 
-# bmm-workflow-status-consolidated.yaml
-current_story: "MVP-3"
-status: "in-progress"
-```
+- [`bmm-workflow-status-consolidated.yaml`](../bmm-workflow-status-consolidated.yaml) line 129-132:
+  - `current_story.key: "MVP-3-tool-execution-files"`
+  - `current_story.status: "in-progress"`
+  - Notes: "⚠️ CRITICAL STATUS CHECK REQUIRED: Sprint status shows MVP-3 as 'backlog' with dependency on MVP-2. Workflow status shows MVP-3 as 'in-progress'. VERIFY MVP-2 COMPLETION BEFORE PROCEEDING WITH MVP-3."
 
-**Impact**: Development proceeding without proper dependency validation, risking incomplete foundation
+**Root Cause**: No synchronization mechanism between sprint-status.yaml and bmm-workflow-status-consolidated.yaml. When BMAD Master updates one document, the other is not automatically updated.
 
-**Recommended Action**:
-1. Immediately halt MVP-3 development
-2. Verify MVP-2 completion with browser E2E verification
-3. Update both status files with verified status
-4. Establish governance gate to prevent future inconsistencies
+**Impact**: 
+- Confusion about actual story status
+- Risk of proceeding with MVP-3 before MVP-2 is verified
+- Violation of sequential story dependency rule (MVP-2 must be DONE before MVP-3 starts)
 
-**Owner**: bmad-bmm-pm
-**Priority**: P0 - Immediate
+**Remediation**: 
+1. Implement single-source-of-truth mechanism for story status
+2. Create automated sync between governance documents
+3. Add validation gate that checks both documents before allowing story transition
 
----
+### 1.2 Story Dependency Violation - P0
 
-### 1.2 Handoff Document Fragmentation (P1)
-
-**Issue**: 22 handoff documents scattered without indexing or single source of truth
-
-**Details**:
-- Handoffs located in `_bmad-output/handoffs/` directory
-- No master index or governance map
-- Difficult to track workflow transitions
-- No clear ownership or accountability for workflow status
+**Issue**: MVP-3 marked as "in-progress" in workflow status while MVP-2 is still "in-progress" (not "done")
 
 **Evidence**:
-```
-_bmad-output/handoffs/
-├── architect-to-dev-mvp-3-tool-execution-files-2025-12-25.md
-├── architect-to-pm-sprint-planning-mvp-2025-12-24.md
-├── bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md
-├── [20+ additional handoff documents...]
-```
+- [`bmm-workflow-status-consolidated.yaml`](../bmm-workflow-status-consolidated.yaml) line 129-132
+- [`mvp-sprint-plan-2025-12-24.md`](../sprint-artifacts/mvp-sprint-plan-2025-12-24.md) line 77: "MVP-2: 🔄 IN_PROGRESS (Chat Interface with Streaming) - **MUST COMPLETE BEFORE STARTING MVP-3**"
 
-**Impact**: Context poisoning, difficulty tracking progress, no single source of truth
+**Root Cause**: Handoff document created for MVP-3 before MVP-2 completion was verified. No gate preventing premature story start.
 
-**Recommended Action**:
-1. Create `GOVERNANCE-INDEX.md` as single source of truth
-2. Index all handoff documents with:
-   - Source agent
-   - Target agent
-   - Timestamp
-   - Status (pending/accepted/complete)
-   - Related epic/story
-3. Establish handoff protocol with clear acceptance criteria
-4. Implement automated status synchronization
+**Impact**:
+- Violation of sequential story development approach
+- Risk of incomplete MVP-2 work being assumed complete
+- Potential for parallel work on MVP-2 and MVP-3 simultaneously
 
-**Owner**: bmad-bmm-pm
-**Priority**: P1 - Urgent
+**Remediation**:
+1. Implement mandatory completion verification gate before creating handoff for next story
+2. Add workflow status check that validates previous story is "done" before allowing next story to start
+3. Update handoff template to include dependency verification step
 
----
+### 1.3 Unmatched Acceptance Criteria - P1
 
-### 1.3 E2E Verification Enforcement Gap (P0)
-
-**Issue**: Stories marked DONE without browser verification evidence
-
-**Details**:
-- Definition of Done requires mandatory browser E2E verification with screenshot
-- Multiple stories marked DONE without verification artifacts
-- No systematic E2E testing workflow
-- Screenshots/recordings not captured for completed stories
+**Issue**: MVP-1 acceptance criteria show incomplete despite being marked "done"
 
 **Evidence**:
-- 20+ TODO comments in documentation: "**Screenshot**: [TODO - Capture screenshot of...]"
-- No screenshot directories found for completed stories
-- Stories marked DONE without verification gate enforcement
+- [`mvp-sprint-plan-2025-12-24.md`](../sprint-artifacts/mvp-sprint-plan-2025-12-24.md) lines 64-70:
+  ```
+  **Acceptance Criteria**:
+  - [x] User can select AI provider (OpenRouter/Anthropic) - Implemented
+  - [x] API keys stored securely in localStorage - Implemented
+  - [ ] Model selection from provider catalog
+  - [ ] Configuration persists across browser sessions
+  - [ ] Connection test passes before saving
+  - [ ] Agent status shows 'Ready' when configured
+  ```
 
-**Impact**: False sense of progress, incomplete features released, user trust eroding
+**Root Cause**: No validation that all acceptance criteria are met before marking story "done". E2E verification focused on basic functionality but didn't validate all acceptance criteria.
 
-**Recommended Action**:
-1. Implement E2E verification gate in sprint workflow
-2. Create verification checklist for each story:
-   - [ ] Feature implemented
-   - [ ] TypeScript build passes
-   - [ ] Unit tests passing (≥80%)
-   - [ ] **Browser E2E verification completed**
-   - [ ] **Screenshot/recording captured**
-   - [ ] Code review approved
-3. Establish screenshot directory structure: `_bmad-output/e2e-verification/{story-id}/`
-4. Block story DONE status until all verification artifacts submitted
+**Impact**:
+- Incomplete implementation marked as complete
+- Missing features (model selection, persistence, connection test, agent status)
+- User experience gaps
 
-**Owner**: bmad-bmm-pm
-**Priority**: P0 - Immediate
+**Remediation**:
+1. Update Definition of Done to require ALL acceptance criteria checked
+2. Implement acceptance criteria validation checklist in handoff process
+3. Require explicit verification of each acceptance criterion before story completion
 
----
+### 1.4 E2E Verification Evidence Missing - P0
 
-### 1.4 Incomplete Implementation Marked as DONE (P0)
-
-**Issue**: Story 25-4 marked DONE without actual tool wiring implementation
-
-**Details**:
-- [`src/routes/api/chat.ts:106-116`](src/routes/api/chat.ts) contains TODO comment
-- `getTools()` function returns empty array
-- TODO comment indicates work deferred to Story 25-4
-- Story 25-4 marked "done" without actual implementation
-- Entire AI agent system non-functional due to missing tool wiring
+**Issue**: No E2E verification screenshots found for any completed stories
 
 **Evidence**:
-```typescript
-// src/routes/api/chat.ts:106-116
-function getTools() {
-  // TODO (Story 25-4): Wire actual facades when WebContainer is available
-  // const fileTools = createFileTools(() => getFileToolsFacade());
-  return []; // Returns empty array - renders AI agent non-functional
-}
-```
+- [`sprint-status-consolidated.yaml`](../sprint-artifacts/sprint-status-consolidated.yaml) line 114: `e2e_verified: true` for MVP-1
+- [`sprint-status-consolidated.yaml`](../sprint-artifacts/sprint-status-consolidated.yaml) line 62: `e2e_verified: true` for MVP-2
+- [`_bmad-output/e2e-verification/`](../e2e-verification/) directory contains only: `CHECKLIST-TEMPLATE.md`
 
-**Impact**: Critical AI agent functionality completely non-functional
+**Root Cause**: E2E verification requirement exists in Definition of Done but no enforcement mechanism to capture/store screenshots. E2E verification directory exists but is empty.
 
-**Recommended Action**:
-1. Immediately revert Story 25-4 status to IN_PROGRESS
-2. Complete tool wiring implementation:
-   - Wire file tools facades
-   - Wire terminal tools facades
-   - Implement WebContainer facade initialization
-   - Test tool execution end-to-end
-3. Conduct browser E2E verification before marking DONE
-4. Update governance documents with correct status
+**Impact**:
+- **MANDATORY** E2E verification gate is ineffective
+- No evidence that stories were actually tested in browser
+- Violation of "NO EXCEPTIONS" rule in Definition of Done
 
-**Owner**: bmad-bmm-dev
-**Priority**: P0 - Immediate
+**Remediation**:
+1. Create E2E verification directory structure for each story
+2. Implement screenshot capture mechanism (browser screenshot tool)
+3. Add E2E verification checklist to Definition of Done
+4. Store screenshot files in `_bmad-output/e2e-verification/{story-key}/`
+5. Update sprint status to include screenshot file path
 
 ---
 
-### 1.5 TODO Comments in Production Code (P1)
+## Part 2: Implementation Completeness Audit
 
-**Issue**: 38 TODO/FIXME/HACK/XXX comments found in codebase
+### 2.1 Incomplete MVP-1 Implementation - P1
 
-**Details**:
-- 38 TODO comments across codebase
-- TODOs indicate incomplete implementation
-- No tracking or accountability for TODO resolution
-- Production code contains placeholder implementations
+**Issue**: MVP-1 marked "done" but missing 4/7 acceptance criteria
 
 **Evidence**:
-```
-TODO Comments Breakdown:
-- 20+ screenshot TODOs in documentation
-- 3 TODO comments in src/routes/api/chat.ts (lines 87526, 87573, 134038)
-- TODO in MemoryService.ts (IndexedDB persistence not implemented)
-- TODOs in HubHomePage.tsx (new project creation, folder picker, project actions)
-- TODO in use-agent-chat-with-tools.ts (TanStack Query + API replacement)
-```
+- Missing: Model selection from provider catalog
+- Missing: Configuration persistence across browser sessions
+- Missing: Connection test before saving
+- Missing: Agent status shows 'Ready' when configured
 
-**Impact**: Technical debt accumulating, incomplete features in production, unclear development priorities
+**Files to Review**:
+- [`src/components/agent/AgentConfigDialog.tsx`](../src/components/agent/AgentConfigDialog.tsx)
+- [`src/stores/agents.ts`](../src/stores/agents.ts)
+- [`src/lib/agent/providers/model-registry.ts`](../src/lib/agent/providers/model-registry.ts)
 
-**Recommended Action**:
-1. Create TODO tracking system:
-   - Document all TODOs in `_bmad-output/tech-debt/TODO-tracking.md`
-   - Categorize by severity (P0, P1, P2)
-   - Assign ownership and deadlines
-2. Establish TODO resolution policy:
-   - P0 TODOs: Resolve within 1 sprint
-   - P1 TODOs: Resolve within 2 sprints
-   - P2 TODOs: Resolve within 3 sprints
-3. Implement TODO review in sprint retrospectives
-4. Replace TODO comments with GitHub issues or project tracking
+**Remediation**: 
+1. Implement model selection UI with provider catalog
+2. Add connection test functionality
+3. Verify localStorage persistence works across browser refresh
+4. Implement agent status indicator
+5. Re-validate MVP-1 with full acceptance criteria
 
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent
+### 2.2 Incomplete MVP-2 Implementation - P1
 
----
-
-### 1.6 Context Poisoning from Consolidation (P2)
-
-**Issue**: 96% epic reduction (26+ → 1 MVP epic) created context loss
-
-**Details**:
-- Original Epics 12, 25, 28 consolidated into single MVP epic
-- 124+ stories reduced to 7 sequential stories (94% reduction)
-- Traceability preserved but context diluted
-- Original requirements and dependencies lost in consolidation
+**Issue**: MVP-2 marked "done" but acceptance criteria not verified
 
 **Evidence**:
-```
-Consolidation Summary:
-- Before: 26+ epics, 124+ stories
-- After: 1 MVP epic, 7 sequential stories
-- Reduction: 96% epics, 94% stories
-- Traceability: Preserved via story mapping
-```
+- [`mvp-sprint-plan-2025-12-24.md`](../sprint-artifacts/mvp-sprint-plan-2025-12-24.md) lines 94-101 shows all acceptance criteria unchecked
+- No evidence that chat streaming works end-to-end
+- No evidence that rich text formatting works
+- No evidence that code blocks display correctly
+- No evidence that chat history persists
 
-**Impact**: Loss of context, unclear requirements, difficult to trace original decisions
+**Files to Review**:
+- [`src/components/chat/`](../src/components/chat/)
+- [`src/routes/api/chat.ts`](../src/routes/api/chat.ts)
+- [`src/lib/agent/hooks/`](../src/lib/agent/hooks/)
 
-**Recommended Action**:
-1. Create consolidation mapping document:
-   - Map each MVP story to original epic(s)
-   - Document original requirements
-   - Preserve traceability links
-2. Maintain original epic documents for reference
-3. Update sprint planning to include original context
-4. Conduct impact analysis for future consolidations
+**Remediation**:
+1. Conduct browser E2E verification of MVP-2 with full workflow test
+2. Verify all acceptance criteria are met
+3. Capture screenshot evidence
+4. Update sprint status with verification details
 
-**Owner**: bmad-bmm-pm
-**Priority**: P2 - Medium
+### 2.3 Premature MVP-3 Handoff - P0
+
+**Issue**: Handoff document created for MVP-3 before MVP-2 completion
+
+**Evidence**:
+- [`_bmad-output/handoffs/bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md`](../_bmad-output/handoffs/bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md) created 2025-12-25T06:06:00Z
+- Contains warning: "⚠️ CRITICAL STATUS CHECK REQUIRED: Sprint status shows MVP-3 as 'backlog' with dependency on MVP-2. Workflow status shows MVP-3 as 'in-progress'. VERIFY MVP-2 COMPLETION BEFORE PROCEEDING WITH MVP-3."
+- Handoff status: "READY FOR DELEGATION (pending MVP-2 verification)"
+
+**Root Cause**: No gate preventing handoff creation for next story before current story is verified complete.
+
+**Impact**:
+- Violates sequential story dependency rule
+- Encourages parallel work
+- Risk of incomplete work being handed off
+
+**Remediation**:
+1. Implement mandatory completion verification before creating handoff
+2. Add workflow status check in handoff template
+3. Update handoff process to require previous story "done" status confirmation
+
+### 2.4 No E2E Verification for MVP-1 - P0
+
+**Issue**: MVP-1 marked "done" with `e2e_verified: true` but no screenshot evidence
+
+**Evidence**:
+- [`sprint-status-consolidated.yaml`](../sprint-artifacts/sprint-status-consolidated.yaml) line 114: `e2e_verified: true`
+- No screenshot file in `_bmad-output/e2e-verification/mvp-1/`
+- E2E verification directory is empty (only contains template)
+
+**Root Cause**: E2E verification checkbox checked but no mechanism to capture/store screenshot.
+
+**Impact**:
+- False positive on E2E verification
+- No evidence that story was actually tested
+- Violation of "MANDATORY" requirement
+
+**Remediation**:
+1. Implement screenshot capture mechanism
+2. Create E2E verification directory structure
+3. Store screenshot files with timestamps
+4. Update sprint status to include screenshot file path
 
 ---
 
-## 2. Architecture Audit Findings
+## Part 3: Component Architecture Review
 
-### 2.1 State Management Duplication (P1)
+### 3.1 Unwired Components - P2
 
-**Issue**: [`IDELayout.tsx`](src/components/layout/IDELayout.tsx) duplicates IDE state with local `useState`
+**Issue**: Components created but not wired into application
 
-**Details**:
-- IDELayout maintains local state for:
-  - `isChatVisible`
-  - `terminalTab`
-  - `openFiles`
-  - `activeFilePath`
-- [`useIDEStore`](src/lib/state/ide-store.ts) already manages this state
-- Duplicate state synchronization code (lines 142-148)
+**Evidence**:
+- [`src/components/ide/`](../src/components/ide/) contains multiple components that may not be used
+- [`src/components/chat/`](../src/components/chat/) has approval and streaming components
+- Need to verify routing integration in [`src/routes/`](../src/routes/)
+
+**Files to Review**:
+- [`src/components/ide/AgentCard.tsx`](../src/components/ide/AgentCard.tsx)
+- [`src/components/ide/AgentsPanel.tsx`](../src/components/ide/AgentsPanel.tsx)
+- [`src/components/ide/BentoGrid.tsx`](../src/components/ide/BentoGrid.tsx)
+- [`src/components/ide/FeatureSearch.tsx`](../src/components/ide/FeatureSearch.tsx)
+- [`src/components/ide/QuickActionsMenu.tsx`](../src/components/ide/QuickActionsMenu.tsx)
+- [`src/components/ide/EnhancedChatInterface.tsx`](../src/components/ide/EnhancedChatInterface.tsx)
+- [`src/components/ide/UnifiedNavigation.tsx`](../src/components/ide/UnifiedNavigation.tsx)
+
+**Remediation**:
+1. Audit component usage across codebase
+2. Remove unused/dead components
+3. Ensure all components are imported and used
+4. Update routing to include all necessary components
+
+### 3.2 Dead Code and Duplicates - P2
+
+**Issue**: Potential overlapping or conflicting implementations
+
+**Evidence**:
+- Multiple state management approaches (Zustand, legacy TanStack Store, local state)
+- Multiple file system adapters (LocalFSAdapter, potential legacy implementations)
+- Duplicate chat components (AgentChatPanel, ChatPanel, EnhancedChatInterface)
+- Multiple agent configuration approaches
+
+**Files to Review**:
+- [`src/stores/`](../src/stores/)
+- [`src/lib/state/`](../src/lib/state/)
+- [`src/lib/persistence/`](../src/lib/persistence/)
+- [`src/components/chat/ChatPanel.tsx`](../src/components/chat/ChatPanel.tsx)
+- [`src/components/ide/AgentChatPanel.tsx`](../src/components/ide/AgentChatPanel.tsx)
+
+**Remediation**:
+1. Consolidate state management to single approach (Zustand)
+2. Consolidate chat interface to single component
+3. Remove legacy TanStack Store usage
+4. Remove duplicate file system implementations
+5. Establish component ownership and lifecycle
+
+---
+
+## Part 4: State Management Audit
+
+### 4.1 State Duplication in IDELayout - P0 (Previously Identified)
+
+**Issue**: [`IDELayout.tsx`](../src/components/layout/IDELayout.tsx) duplicates IDE state with local `useState` instead of using [`useIDEStore`](../src/lib/state/ide-store.ts)
+
+**Evidence**:
+- [`state-management-audit-p1.10-2025-12-26.md`](../state-management-audit-p1.10-2025-12-26.md) documents this issue
+- Lines 142-148 in IDELayout.tsx show duplicate state synchronization
+
+**Impact**:
 - Violates single source of truth principle
+- State synchronization bugs between local state and Zustand store
+- Potential for state drift and inconsistencies
+- Makes debugging difficult
+
+**Remediation** (Deferred to avoid MVP-3 interference):
+1. Replace duplicated state in IDELayout.tsx with Zustand hooks
+2. Add local fileContentCache Map for ephemeral content
+3. Update useIDEFileHandlers to work with Zustand actions
+4. Remove duplicate state synchronization code
+
+### 4.2 Persistence Strategy Inconsistency - P1
+
+**Issue**: Inconsistent persistence strategy across state management
 
 **Evidence**:
-```typescript
-// src/components/layout/IDELayout.tsx
-const [isChatVisible, setIsChatVisible] = useState(false);
-const [terminalTab, setTerminalTab] = useState<'editor' | 'terminal'>('editor');
-const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
-const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
+- IDE state persisted to IndexedDB via Zustand
+- Agent configurations persisted to localStorage
+- Some state is ephemeral (in-memory)
+- No clear documentation on which state should be persisted vs ephemeral
 
-// Should use:
-// const { chatVisible, setChatVisible, terminalTab, setTerminalTab, ... } = useIDEStore();
-```
+**Files to Review**:
+- [`src/lib/state/ide-store.ts`](../src/lib/state/ide-store.ts)
+- [`src/stores/agents.ts`](../src/stores/agents.ts)
+- [`src/lib/persistence/`](../src/lib/persistence/)
 
-**Impact**: State synchronization bugs, maintenance burden, unclear state ownership
-
-**Recommended Action**:
-1. Refactor IDELayout.tsx to use Zustand store:
-   - Replace local `useState` with `useIDEStore` hooks
-   - Add local `fileContentCache` Map for ephemeral content
-   - Remove duplicate state synchronization code
-2. Update [`useIDEFileHandlers`](src/components/layout/hooks/useIDEFileHandlers.ts) to work with Zustand actions
-3. Test state persistence and restoration
-4. Document state ownership in architecture documentation
-
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent (deferred to avoid MVP-3 interference)
-
-**Reference**: [`_bmad-output/state-management-audit-p1.10-2025-12-26.md`](_bmad-output/state-management-audit-p1.10-2025-12-26.md)
+**Remediation**:
+1. Document persistence strategy for each state property
+2. Create state architecture diagram
+3. Establish clear guidelines for when to use IndexedDB vs localStorage vs ephemeral
+4. Update AGENTS.md with persistence guidelines
 
 ---
 
-### 2.2 Unwired Components (P1)
+## Part 5: MCP Research Protocol Compliance
 
-**Issue**: Components created but not connected to routes or integrated into UI
+### 5.1 Missing MCP Research - P0
 
-**Details**:
-- [`AgentChatPanel`](src/components/ide/AgentChatPanel.tsx) exists but not routed
-- [`ChatPanelWrapper`](src/components/layout/ChatPanelWrapper.tsx) exists but not used
-- [`AgentsPanel`](src/components/ide/AgentsPanel.tsx) exists but not integrated
-- Multiple chat components created but not wired to main application
+**Issue**: No evidence of MCP research before implementing agent infrastructure
 
 **Evidence**:
-```typescript
-// Components imported but not used in routes
-import { IDELayout } from '../../components/layout/IDELayout'; // Used
-import { AgentChatPanel } from '../ide/AgentChatPanel'; // Not routed
-import { ChatPanelWrapper } from './ChatPanelWrapper'; // Not used
-```
+- Agent infrastructure implemented without documented research
+- TanStack AI integration without prior Context7/Deepwiki/Tavily/Exa research
+- WebContainer file operations without documented patterns
+- No research artifacts found in `_bmad-output/`
 
-**Impact**: Dead code accumulation, wasted development effort, unclear component usage
+**Impact**:
+- Superficial understanding of TanStack AI SDK patterns
+- Incorrect assumptions about tool usage and execution
+- Incomplete agentic coding composition understanding
+- Hallucinations on API classes and properties
+- Inferior chat platform design
 
-**Recommended Action**:
-1. Audit all components for routing integration:
-   - Map each component to route file
-   - Identify unwired components
-   - Document intended usage
-2. Create component integration plan:
-   - Wire AgentChatPanel to `/workspace/$projectId/chat` route
-   - Integrate AgentsPanel into IDELayout
-   - Remove or deprecate unused components
-3. Update component documentation with routing information
-4. Implement component usage tracking
+**Remediation**:
+1. Require MCP research artifacts for all unfamiliar implementations
+2. Create research documentation template
+3. Update handoff template to include MCP research step
+4. Block implementation without prior research approval
 
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent
+### 5.2 Incomplete Agent Tool Implementation - P1
 
----
-
-### 2.3 Naming Convention Violations (P2)
-
-**Issue**: Inconsistent naming patterns across codebase
-
-**Details**:
-- Mix of PascalCase, camelCase, kebab-case in file names
-- Inconsistent component naming (e.g., `XTerminal.tsx` vs `MonacoEditor.tsx`)
-- Store naming confusion (`useAgentsStore` vs `agents.ts`)
-- Test file naming inconsistency
+**Issue**: Agent tools may not be fully implemented or tested
 
 **Evidence**:
-```
-Naming Inconsistencies:
-- XTerminal.tsx (X prefix not consistent)
-- useAgentsStore (store in /stores/ directory)
-- agents.ts (store file, not useAgentsStore)
-- Mixed test file extensions (.test.ts vs .test.tsx)
-```
+- Handoff for MVP-3 created but implementation status unknown
+- No evidence of tool testing
+- No evidence of facade integration
 
-**Impact**: Confusion, difficult to locate files, inconsistent mental model
+**Files to Review**:
+- [`src/lib/agent/tools/`](../src/lib/agent/tools/)
+- [`src/lib/agent/facades/`](../src/lib/agent/facades/)
+- [`src/lib/agent/hooks/`](../src/lib/agent/hooks/)
 
-**Recommended Action**:
-1. Establish naming convention guidelines:
-   - Components: PascalCase.tsx
-   - Hooks: camelCase.ts
-   - Stores: camelCase.ts (use prefix)
-   - Tests: *.test.ts (unit), *.test.tsx (component)
-   - Utilities: camelCase.ts
-2. Refactor inconsistent file names
-3. Update documentation with naming guidelines
-4. Implement linting rules for naming conventions
-
-**Owner**: bmad-bmm-dev
-**Priority**: P2 - Medium
+**Remediation**:
+1. Audit agent tool implementation completeness
+2. Verify all tools are registered and tested
+3. Verify facade integration with WebContainer
+4. Create test coverage report for agent tools
 
 ---
 
-### 2.4 Missing Routing Configuration (P1)
+## Part 6: E2E Verification Enforcement
 
-**Issue**: Components not connected to TanStack Router
+### 6.1 Missing E2E Enforcement Mechanism - P0
 
-**Details**:
-- No clear routing strategy for agent features
-- Chat components not routed
-- Agent configuration not accessible via URL
-- File-based routing not fully utilized
+**Issue**: E2E verification is "MANDATORY" but no enforcement mechanism exists
 
 **Evidence**:
-```typescript
-// src/routes/
-├── __root.tsx
-├── hub.tsx
-├── index.tsx
-├── workspace/
-│   └── $projectId.tsx
-└── api/
-    └── chat.ts
+- Definition of Done includes "MANDATORY: Browser E2E Verification" (line 394-398)
+- E2E verification directory exists but is empty
+- No screenshots stored for any completed stories
+- No validation that screenshots were captured
 
-// Missing routes:
-// - /workspace/$projectId/chat (AgentChatPanel)
-// - /workspace/$projectId/agents (AgentsPanel)
-// - /workspace/$projectId/settings (AgentConfigDialog)
-```
+**Impact**:
+- E2E verification gate is ineffective
+- False positives on story completion
+- No evidence stories were actually tested
+- Violation of "NO EXCEPTIONS" rule
 
-**Impact**: Features inaccessible, poor UX, inconsistent navigation
+**Remediation**:
+1. Implement screenshot capture mechanism
+2. Create E2E verification directory structure
+3. Store screenshot files with timestamps
+4. Update sprint status to include screenshot file path
+5. Add E2E verification checklist to Definition of Done
 
-**Recommended Action**:
-1. Design routing strategy:
-   - Map all features to routes
-   - Define route hierarchy
-   - Document routing conventions
-2. Implement missing routes:
-   - Add chat route with AgentChatPanel
-   - Add agents route with AgentsPanel
-   - Add settings route with AgentConfigDialog
-3. Update navigation components with route links
-4. Test routing end-to-end
+### 6.2 No E2E Evidence for Completed Stories - P0
 
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent
-
----
-
-### 2.5 Dead Code and Unused Files (P2)
-
-**Issue**: Unused files and components accumulating in codebase
-
-**Details**:
-- Multiple unused imports found
-- Duplicate implementations (e.g., multiple chat panels)
-- Test files not following conventions
-- Legacy files not cleaned up
+**Issue**: MVP-1 and MVP-2 marked "done" with `e2e_verified: true` but no screenshots
 
 **Evidence**:
-```
-Potential Dead Code:
-- ChatPanel.tsx (not used, replaced by AgentChatPanel)
-- ThreadsList.tsx (not integrated)
-- EnhancedChatInterface.tsx (duplicate functionality)
-- Multiple test files with inconsistent naming
-```
+- [`sprint-status-consolidated.yaml`](../sprint-artifacts/sprint-status-consolidated.yaml) lines 114, 62
+- E2E verification directory is empty (only contains template)
+- No screenshot files found in `_bmad-output/e2e-verification/`
 
-**Impact**: Code bloat, maintenance burden, confusion about which code to use
+**Impact**:
+- False positives on E2E verification
+- No evidence stories were tested
+- Undermines importance of E2E verification requirement
 
-**Recommended Action**:
-1. Conduct dead code audit:
-   - Use static analysis tools (e.g., ts-prune)
-   - Identify unused exports
-   - Find duplicate implementations
-2. Remove or deprecate dead code:
-   - Delete unused files
-   - Document deprecation for transitional code
-   - Update imports
-3. Establish code review checklist:
-   - [ ] No dead code introduced
-   - [ ] No unused imports
-   - [ ] No duplicate implementations
-4. Implement automated dead code detection
-
-**Owner**: bmad-bmm-dev
-**Priority**: P2 - Medium
+**Remediation**:
+1. Conduct actual browser E2E verification for MVP-1 and MVP-2
+2. Capture screenshots for both stories
+3. Store screenshots in `_bmad-output/e2e-verification/mvp-1/` and `_bmad-output/e2e-verification/mvp-2/`
+4. Update sprint status with screenshot file paths
 
 ---
 
-## 3. State Management Review
+## Part 7: Handoff Protocol Adherence
 
-### 3.1 State Architecture Summary
+### 7.1 Handoff Document Fragmentation - P1
 
-**Current State** (from previous audit):
-- **Persisted State** (IndexedDB): [`useIDEStore`](src/lib/state/ide-store.ts)
-- **Ephemeral State** (in-memory): [`useStatusBarStore`](src/lib/state/statusbar-store.ts), [`useFileSyncStatusStore`](src/lib/state/file-sync-status-store.ts)
-- **Agent State** (localStorage): [`useAgentsStore`](src/stores/agents.ts), [`useAgentSelectionStore`](src/stores/agent-selection.ts)
-- **UI State** (React Context): Workspace context, theme context
-
-**Findings**:
-- ✅ Zero legacy TanStack Store usage (migration complete)
-- ✅ Zero duplicate stores (all 6 Zustand stores unique)
-- ❌ 1 P0 issue: IDELayout.tsx duplicates state with local useState
-
-**Key Principle**: Single source of truth - each state property has ONE owner
-
----
-
-### 3.2 State Ownership Violations (P1)
-
-**Issue**: IDELayout.tsx violates single source of truth principle
-
-**Details**:
-- IDELayout maintains local state that should be in useIDEStore
-- State synchronization required between local state and store
-- Creates potential for state inconsistencies
-- Increases maintenance burden
-
-**Recommended Action**:
-1. Refactor IDELayout.tsx (deferred to avoid MVP-3 interference)
-2. Establish state ownership guidelines:
-   - Document which store owns each state property
-   - Enforce single source of truth in code review
-   - Create state ownership matrix
-
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent (deferred)
-
----
-
-### 3.3 Persistence Choice Issues (P2)
-
-**Issue**: Inconsistent persistence strategy across state
-
-**Details**:
-- IDE state persisted to IndexedDB (correct for complex state)
-- Agent state persisted to localStorage (correct for simple config)
-- Some ephemeral state not persisted (correct)
-- No clear guidelines for when to use IndexedDB vs localStorage
-
-**Impact**: Inconsistent user experience, unclear data lifecycle
-
-**Recommended Action**:
-1. Establish persistence guidelines:
-   - IndexedDB: Complex state, large data, offline-first
-   - localStorage: Simple config, user preferences, API keys
-   - In-memory: Ephemeral state, derived state
-2. Document persistence strategy for each store
-3. Implement data migration strategy
-4. Test persistence and restoration
-
-**Owner**: bmad-bmm-dev
-**Priority**: P2 - Medium
-
----
-
-## 4. AI Agent System Audit
-
-### 4.1 Tool Wiring Incomplete (P0)
-
-**Issue**: [`getTools()`](src/routes/api/chat.ts:106) returns empty array
-
-**Details**:
-- Critical TODO comment in chat.ts
-- Function returns empty array
-- Tool facades not wired to WebContainer
-- Entire AI agent system non-functional
+**Issue**: 24 handoff documents created without clear organization
 
 **Evidence**:
-```typescript
-// src/routes/api/chat.ts:106-116
-function getTools() {
-  // TODO (Story 25-4): Wire actual facades when WebContainer is available
-  // const fileTools = createFileTools(() => getFileToolsFacade());
-  return []; // CRITICAL: Returns empty array
-}
-```
+- [`_bmad-output/handoffs/`](../_bmad-output/handoffs/) contains 24 files
+- No index or catalog of handoffs
+- Inconsistent naming conventions
+- No clear handoff workflow or template
 
-**Impact**: AI agent cannot execute any tools, core functionality broken
+**Files to Review**:
+All 24 files in `_bmad-output/handoffs/`
 
-**Recommended Action**:
-1. Complete tool wiring implementation:
-   - Wire file tools facades to WebContainer
-   - Wire terminal tools facades to WebContainer
-   - Implement facade initialization
-   - Test tool execution end-to-end
-2. Remove TODO comment after implementation
-3. Conduct browser E2E verification
-4. Update Story 25-4 status to DONE only after verification
+**Remediation**:
+1. Create handoff index document
+2. Establish handoff naming convention
+3. Create handoff template with required sections
+4. Archive old handoffs by date/epic/story
 
-**Owner**: bmad-bmm-dev
-**Priority**: P0 - Immediate
+### 7.2 Missing Handoff Validation - P0
 
----
-
-### 4.2 Provider Adapter System (P1)
-
-**Issue**: Provider adapter implementation may have issues
-
-**Details**:
-- OpenRouter 401 fix documented in course correction
-- Provider adapter factory may have signature issues
-- Credential vault integration not fully tested
-- Model registry configuration incomplete
+**Issue**: Handoff for MVP-3 created before MVP-2 completion verification
 
 **Evidence**:
-```
-Course Correction Reference:
-- _bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md
-- Fixed provider adapter signature for createOpenaiChat
-- Resolved authentication and streaming issues
-```
+- [`bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md`](../_bmad-output/handoffs/bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md)
+- Contains warning but no validation that MVP-2 is complete
+- No mechanism to prevent premature handoff
 
-**Impact**: Multi-provider support may not work correctly, authentication failures
-
-**Recommended Action**:
-1. Audit provider adapter implementations:
-   - Verify adapter signatures match provider APIs
-   - Test credential vault integration
-   - Validate model registry configuration
-2. Implement provider testing strategy:
-   - Unit tests for each adapter
-   - Integration tests with real providers
-   - Mock tests for error scenarios
-3. Document provider configuration process
-4. Update MCP Research Protocol with provider-specific guidance
-
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent
+**Remediation**:
+1. Implement handoff validation checklist
+2. Require previous story "done" confirmation before creating next handoff
+3. Add workflow status check to handoff process
+4. Update handoff template to include validation step
 
 ---
 
-### 4.3 Agentic Loop Limitation (P2)
+## Part 8: Documentation Issues
 
-**Issue**: maxIterations(3) enforced as temporary safety measure
+### 8.1 Scattered Documentation - P1
 
-**Details**:
-- Agents terminate after 3 tool execution iterations
-- No state tracking for iteration management
-- No iteration UI for user control
-- Full implementation deferred to Epic 29
+**Issue**: Documentation scattered across multiple directories without single source of truth
 
 **Evidence**:
-```
-Agentic Loop Limitation:
-- maxIterations(3) enforced in use-agent-chat-with-tools.ts
-- Temporary safety measure during MVP-3/MVP-4 validation
-- Full implementation planned for Epic 29
-```
+- Documentation in `_bmad-output/`, `docs/`, `.agent/rules/`, `.cursor/rules/`
+- No clear documentation hierarchy or navigation
+- Duplicate information across multiple documents
+- No documentation index or catalog
 
-**Impact**: Limited agent capability, poor user experience, incomplete agentic workflow
+**Files to Review**:
+All documentation directories
 
-**Recommended Action**:
-1. Document current limitation:
-   - Explain why maxIterations(3) is enforced
-   - Document expected behavior
-   - Provide user feedback
-2. Plan Epic 29 implementation:
-   - State tracking for iterations
-   - Iteration UI for user control
-   - Intelligent termination logic
-3. Create migration path from MVP to full implementation
-4. Test agentic loop with various scenarios
-
-**Owner**: bmad-bmm-architect
-**Priority**: P2 - Medium
+**Remediation**:
+1. Create documentation index
+2. Establish documentation hierarchy
+3. Consolidate duplicate information
+4. Create single source of truth for project documentation
 
 ---
 
-### 4.4 TanStack AI Streaming (P1)
+## Severity Classification
 
-**Issue**: SSE streaming implementation may have issues
+### P0 Issues (6) - Critical, Blockers
+1. Status inconsistency between governance documents
+2. Story dependency violation (MVP-3 handoff before MVP-2 complete)
+3. Missing E2E enforcement mechanism
+4. No E2E evidence for completed stories
+5. Missing MCP research before implementation
+6. Missing handoff validation mechanism
 
-**Details**:
-- Chat responses use Server-Sent Events
-- Stream consumption via Symbol.asyncIterator
-- Error handling may be incomplete
-- Done event handling not verified
+### P1 Issues (12) - High Priority
+1. Unmatched acceptance criteria for MVP-1 (4/7 missing)
+2. Incomplete MVP-2 implementation (no E2E verification)
+3. Premature MVP-3 handoff
+4. State duplication in IDELayout (P0 already documented)
+5. Persistence strategy inconsistency
+6. Unwired components
+7. Dead code and duplicates
+8. Missing agent tool implementation
+9. Handoff document fragmentation
+10. Missing handoff validation
 
-**Evidence**:
-```typescript
-// Expected SSE handling
-for await (const chunk of stream) {
-  if (chunk.type === 'done') {
-    // Handle completion
-  } else if (chunk.type === 'error') {
-    // Handle error
-  } else {
-    // Process chunk
-  }
-}
-```
-
-**Impact**: Streaming may fail, poor UX, incomplete responses
-
-**Recommended Action**:
-1. Audit SSE streaming implementation:
-   - Verify Symbol.asyncIterator usage
-   - Test error handling
-   - Validate done event processing
-   - Check timeout handling
-2. Implement streaming tests:
-   - Mock SSE streams
-   - Test error scenarios
-   - Verify completion handling
-3. Add streaming metrics:
-   - Track stream duration
-   - Monitor chunk processing
-   - Log errors
-
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent
+### P2 Issues (9) - Medium Priority
+1. Scattered documentation
+2. Incomplete agent tool testing
+3. Component architecture gaps
+4. Missing model selection in MVP-1
+5. No connection test in MVP-1
+6. No agent status indicator in MVP-1
+7. Missing chat history persistence verification
 
 ---
 
-## 5. Component Architecture Review
+## Root Cause Analysis
 
-### 5.1 Component Routing Map
+### Primary Root Causes
 
-**Current Routing**:
-```
-src/routes/
-├── __root.tsx (root layout)
-├── hub.tsx (hub page)
-├── index.tsx (landing page)
-├── workspace/
-│   └── $projectId.tsx (IDE workspace)
-└── api/
-    └── chat.ts (chat API endpoint)
-```
+1. **No Centralized Governance Enforcement**
+   - No mechanism to validate story completion
+   - No synchronization between governance documents
+   - No gate preventing premature story transitions
+   - No enforcement of E2E verification requirement
 
-**Unwired Components**:
-- [`AgentChatPanel`](src/components/ide/AgentChatPanel.tsx) - Not routed
-- [`AgentsPanel`](src/components/ide/AgentsPanel.tsx) - Not integrated
-- [`ChatPanelWrapper`](src/components/layout/ChatPanelWrapper.tsx) - Not used
-- [`ThreadsList`](src/components/chat/ThreadsList.tsx) - Not integrated
-- [`ThreadCard`](src/components/chat/ThreadCard.tsx) - Not used
+2. **Incomplete Definition of Done**
+   - Acceptance criteria not validated before marking stories complete
+   - E2E verification checkbox checked without evidence
+   - No mechanism to ensure all criteria are met
 
-**Impact**: Features inaccessible, poor UX, wasted development effort
+3. **Missing MCP Research Protocol Enforcement**
+   - MCP research protocol exists but not enforced
+   - No requirement to document research before implementation
+   - Superficial implementations without proper research
 
----
+4. **Handoff Process Gaps**
+   - No validation of previous story completion
+   - No mechanism to prevent premature handoffs
+   - Fragmented handoff documents without organization
 
-### 5.2 Component Integration Issues (P1)
+5. **Component Architecture Gaps**
+   - No component ownership or lifecycle management
+   - Dead code not removed
+   - Unwired components not identified
+   - Duplicate implementations not consolidated
 
-**Issue**: Components created but not integrated into application
+6. **State Management Confusion**
+   - Multiple state management approaches without clear strategy
+   - Duplication between local state and Zustand store
+   - Inconsistent persistence strategies
 
-**Details**:
-- Chat system components exist but not wired
-- Agent management components not accessible
-- Multiple chat panel implementations (confusion)
-- No clear component hierarchy
+### Secondary Contributing Factors
 
-**Recommended Action**:
-1. Create component integration plan:
-   - Map each component to intended route
-   - Define component hierarchy
-   - Document integration dependencies
-2. Implement missing routing:
-   - Add `/workspace/$projectId/chat` route
-   - Add `/workspace/$projectId/agents` route
-   - Integrate components into IDELayout
-3. Remove or deprecate duplicate components
-4. Update navigation with route links
+1. **Context Poisoning**
+   - Too many epics and stories creating distraction
+   - No hierarchy or boundaries for documentation
+   - No master status to control execution
+   - Scattered documentation across multiple directories
 
-**Owner**: bmad-bmm-dev
-**Priority**: P1 - Urgent
+2. **Technical Understanding Gaps**
+   - Superficial knowledge of TanStack AI SDK patterns
+   - Incorrect assumptions about tool usage and execution
+   - Incomplete agentic coding composition understanding
+   - Hallucinations on API classes and properties
 
----
-
-### 5.3 Overlapping UI Implementations (P2)
-
-**Issue**: Multiple components with similar functionality
-
-**Details**:
-- [`ChatPanel`](src/components/chat/ChatPanel.tsx) vs [`AgentChatPanel`](src/components/ide/AgentChatPanel.tsx)
-- [`ThreadsList`](src/components/chat/ThreadsList.tsx) vs conversation management
-- [`EnhancedChatInterface`](src/components/ide/EnhancedChatInterface.tsx) vs chat components
-- Unclear which component to use
-
-**Impact**: Confusion, maintenance burden, potential bugs
-
-**Recommended Action**:
-1. Consolidate overlapping components:
-   - Choose canonical implementation for each feature
-   - Deprecate or remove duplicates
-   - Update all references
-2. Document component usage guidelines:
-   - When to use ChatPanel vs AgentChatPanel
-   - Component hierarchy and relationships
-   - Integration patterns
-3. Implement component deprecation policy:
-   - Mark deprecated components
-   - Set removal timeline
-   - Communicate changes to team
-
-**Owner**: bmad-bmm-dev
-**Priority**: P2 - Medium
+3. **Implementation vs. Design Gap**
+   - Components created but not wired
+   - Overlapping implementations without consolidation
+   - New components replacing legacy without preserving state
 
 ---
 
-## 6. Course Correction Plan
+## Remediation Plan Overview
 
-### 6.1 Immediate Actions (P0 - Complete within 1 day)
+### Immediate Actions (P0 - Week 1)
 
-**1. Halt MVP-3 Development**
-- Action: Stop all MVP-3 work immediately
-- Owner: bmad-bmm-pm
-- Verification: Confirm MVP-2 E2E verification completed
+1. **Fix Status Inconsistency** (1-2 days)
+   - Implement single-source-of-truth mechanism for story status
+   - Create automated sync between sprint-status.yaml and bmm-workflow-status-consolidated.yaml
+   - Add validation gate before allowing story transition
 
-**2. Fix Tool Wiring in chat.ts**
-- Action: Complete getTools() implementation
-- Owner: bmad-bmm-dev
-- Verification: Tool execution works in browser
+2. **Fix E2E Verification** (2-3 days)
+   - Implement screenshot capture mechanism
+   - Create E2E verification directory structure
+   - Conduct actual browser E2E verification for MVP-1 and MVP-2
+   - Store screenshots with timestamps
+   - Update sprint status with screenshot file paths
 
-**3. Establish E2E Verification Gate**
-- Action: Implement verification gate in sprint workflow
-- Owner: bmad-bmm-pm
-- Verification: No story marked DONE without verification
+3. **Fix Handoff Validation** (1-2 days)
+   - Implement handoff validation checklist
+   - Require previous story "done" confirmation
+   - Add workflow status check to handoff process
+   - Update handoff template
 
-**4. Create Governance Index**
-- Action: Create GOVERNANCE-INDEX.md
-- Owner: bmad-bmm-pm
-- Verification: All handoffs indexed and searchable
+4. **Enforce MCP Research Protocol** (3-5 days)
+   - Create MCP research documentation template
+   - Update handoff template to include MCP research step
+   - Block implementation without prior research approval
+   - Audit existing implementations for MCP research compliance
 
----
+### Short-Term Actions (P1 - Week 2)
 
-### 6.2 Urgent Actions (P1 - Complete within 1 week)
+5. **Complete MVP-1 Implementation** (2-3 days)
+   - Implement model selection UI
+   - Add connection test functionality
+   - Verify localStorage persistence
+   - Implement agent status indicator
+   - Re-validate with full acceptance criteria
 
-**1. Refactor IDELayout.tsx State Management**
-- Action: Replace local useState with useIDEStore
-- Owner: bmad-bmm-dev
-- Verification: State persistence works correctly
+6. **Complete MVP-2 Implementation** (2-3 days)
+   - Conduct browser E2E verification
+   - Verify all acceptance criteria
+   - Capture screenshot
+   - Update sprint status
 
-**2. Wire Unwired Components to Routes**
-- Action: Add missing routes for chat and agents
-- Owner: bmad-bmm-dev
-- Verification: All features accessible via navigation
+7. **Consolidate State Management** (3-5 days)
+   - Replace duplicated state in IDELayout.tsx
+   - Document persistence strategy
+   - Create state architecture diagram
+   - Update AGENTS.md with guidelines
 
-**3. Audit Provider Adapter System**
-- Action: Verify all provider adapters work correctly
-- Owner: bmad-bmm-dev
-- Verification: Multi-provider support tested
+8. **Audit Component Architecture** (2-3 days)
+   - Audit component usage across codebase
+   - Remove unused/dead components
+   - Ensure all components are wired
+   - Consolidate duplicate implementations
 
-**4. Create TODO Tracking System**
-- Action: Document all TODOs with ownership and deadlines
-- Owner: bmad-bmm-dev
-- Verification: All TODOs tracked and prioritized
+9. **Consolidate Documentation** (2-3 days)
+   - Create documentation index
+   - Establish documentation hierarchy
+   - Consolidate duplicate information
+   - Create single source of truth
 
-**5. Implement SSE Streaming Tests**
-- Action: Add tests for SSE streaming and error handling
-- Owner: bmad-bmm-dev
-- Verification: All streaming scenarios tested
+### Medium-Term Actions (P2 - Week 3-4)
 
----
+10. **Implement Agent Tool Testing** (3-5 days)
+   - Audit agent tool implementation
+   - Verify all tools are registered and tested
+   - Verify facade integration
+   - Create test coverage report
 
-### 6.3 Medium Priority Actions (P2 - Complete within 2 weeks)
-
-**1. Consolidate Overlapping Components**
-- Action: Remove duplicate chat components
-- Owner: bmad-bmm-dev
-- Verification: Single canonical implementation for each feature
-
-**2. Establish Naming Convention Guidelines**
-- Action: Document and enforce naming conventions
-- Owner: bmad-bmm-dev
-- Verification: All files follow conventions
-
-**3. Remove Dead Code and Unused Files**
-- Action: Audit and remove unused code
-- Owner: bmad-bmm-dev
-- Verification: Static analysis shows no unused exports
-
-**4. Create Consolidation Mapping Document**
-- Action: Map MVP stories to original epics
-- Owner: bmad-bmm-pm
-- Verification: Traceability preserved and accessible
-
-**5. Document Persistence Strategy**
-- Action: Create guidelines for IndexedDB vs localStorage
-- Owner: bmad-bmm-dev
-- Verification: All state follows persistence guidelines
+11. **Establish Governance Infrastructure** (5-7 days)
+   - Implement story completion validation mechanism
+   - Create E2E verification enforcement tool
+   - Implement handoff validation system
+   - Create governance dashboard
+   - Establish documentation review process
 
 ---
 
-### 6.4 Governance Rules to Prevent Recurrence
+## Success Metrics
 
-**1. Single Source of Truth Principle**
-- Rule: Each state property has ONE owner (Zustand, Context, or localStorage)
-- Enforcement: Code review checklist, linting rules
-- Documentation: State ownership matrix
+### Target Metrics
 
-**2. E2E Verification Gate**
-- Rule: No story marked DONE without browser verification
-- Enforcement: Automated gate in sprint workflow
-- Documentation: Verification checklist and screenshot directory
+- **Governance Consistency**: 100% (all documents synchronized)
+- **Story Completion Validation**: 100% (all acceptance criteria verified)
+- **E2E Verification Rate**: 100% (all stories with screenshots)
+- **MCP Research Compliance**: 100% (all implementations with research)
+- **Component Architecture**: 100% (all components wired, no dead code)
+- **State Management**: 100% (single source of truth, no duplication)
+- **Handoff Protocol Adherence**: 100% (all handoffs validated)
 
-**3. Handoff Protocol**
-- Rule: All handoffs indexed in GOVERNANCE-INDEX.md
-- Enforcement: Automated status synchronization
-- Documentation: Handoff acceptance criteria
+### Current Baseline
 
-**4. Status Consistency**
-- Rule: All governance documents must agree on current status
-- Enforcement: Automated validation scripts
-- Documentation: Status update workflow
-
-**5. TODO Management**
-- Rule: All TODOs tracked with ownership and deadlines
-- Enforcement: Sprint retrospective review
-- Documentation: TODO tracking system
-
-**6. Component Integration**
-- Rule: All components must be routed or integrated
-- Enforcement: Code review checklist
-- Documentation: Component routing map
-
-**7. MCP Research Protocol Enforcement**
-- Rule: Mandatory research before implementing unfamiliar patterns
-- Enforcement: Code review checklist, pre-commit hooks
-- Documentation: Research artifact requirements
+- **Governance Consistency**: 0% (status inconsistency between documents)
+- **Story Completion Validation**: 50% (stories marked done without full verification)
+- **E2E Verification Rate**: 0% (no screenshots for completed stories)
+- **MCP Research Compliance**: 0% (no evidence of research)
+- **Component Architecture**: Unknown (not audited)
+- **State Management**: 50% (known duplication issue)
+- **Handoff Protocol Adherence**: 0% (no validation mechanism)
 
 ---
 
-## 7. Acceptance Criteria
+## Governance Recommendations
 
-**Governance Audit Complete When**:
-- [x] All 13 issues documented with severity levels
-- [x] Actionable remediation steps for each finding
-- [x] Clear ownership assignment for each remediation
-- [x] Governance rules established to prevent recurrence
-- [x] E2E verification workflow defined
-- [x] Course correction plan prioritized by severity
+### Immediate Actions Required
 
----
+1. **Halt all MVP story development** until governance issues are resolved
+2. **Implement story completion validation mechanism** before allowing any story to be marked "done"
+3. **Implement E2E verification screenshot capture** before allowing story completion
+4. **Synchronize sprint-status.yaml and bmm-workflow-status-consolidated.yaml** to prevent status conflicts
+5. **Create handoff validation checklist** to prevent premature handoffs
+6. **Establish single source of truth for project documentation**
 
-## 8. Next Steps
+### Long-Term Governance Improvements
 
-1. **Present audit findings to BMAD Master** for review
-2. **Create handoff report** for bmad-bmm-pm (governance fixes)
-3. **Update sprint-status.yaml** with audit findings
-4. **Switch to bmad-bmm-pm** for governance implementation
-5. **Monitor progress** on P0 issues daily
-
----
-
-## 9. References
-
-**Audit Artifacts**:
-- Repomix output ID: 257488e9ffad5cbe
-- Codebase files: 586 files, 1.28M tokens
-- Handoff documents: 22 files in `_bmad-output/handoffs/`
-
-**Related Documents**:
-- [`_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml)
-- [`_bmad-output/bmm-workflow-status-consolidated.yaml`](_bmad-output/bmm-workflow-status-consolidated.yaml)
-- [`_bmad-output/state-management-audit-p1.10-2025-12-26.md`](_bmad-output/state-management-audit-p1.10-2025-12-26.md)
-- [`_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md`](_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md)
-- [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md)
+1. **Implement governance dashboard** for real-time status tracking
+2. **Create automated validation gates** for story transitions
+3. **Establish documentation review process** to maintain accuracy
+4. **Implement MCP research approval workflow** to ensure proper research
+5. **Create component lifecycle management** to prevent dead code accumulation
+6. **Establish state management governance** to prevent duplication
 
 ---
 
-**Audit Completed**: 2025-12-26T15:55:00+07:00
-**Auditor**: bmad-bmm-architect
-**Status**: Ready for review
+## Next Steps
+
+1. **Create detailed remediation plan document** with prioritized actions
+2. **Update sprint status** to reflect governance issues
+3. **Present findings** to BMAD Master for review
+4. **Await approval** to proceed with remediation
+
+---
+
+**Audit Status**: COMPLETE - Preliminary findings documented
+**Next Action**: Create detailed remediation plan and present to BMAD Master
+
+**Document Owner**: BMAD Architect Agent (@bmad-bmm-architect)
+**Version**: 1.0
+**Created**: 2025-12-26T18:07:00+07:00
