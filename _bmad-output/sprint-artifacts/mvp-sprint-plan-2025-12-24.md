@@ -68,11 +68,12 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] Configuration persists across browser sessions
 - [ ] Connection test passes before saving
 - [ ] Agent status shows 'Ready' when configured
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
 #### Day 3-4: MVP-2 - Chat Interface with Streaming (5 points)
-**Status**: BACKLOG
+**Status**: IN_PROGRESS (E2E verification pending)
 **Duration**: 2 days
 **Dependencies**: MVP-1
 
@@ -99,6 +100,7 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] Code blocks with syntax highlighting
 - [ ] Error handling for failed requests
 - [ ] Chat history persists in localStorage
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
@@ -133,6 +135,7 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] File changes sync to local filesystem
 - [ ] Monaco editor reflects changes in real-time
 - [ ] File tree shows updated status
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
@@ -164,6 +167,7 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] Terminal panel shows command history
 - [ ] Error handling for failed commands
 - [ ] Working directory set correctly
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
@@ -195,6 +199,7 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] Error messages clear and actionable
 - [ ] Batch approval for multiple operations
 - [ ] One-click approval for safe operations
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
@@ -227,6 +232,7 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] No page refreshes required
 - [ ] State survives browser refresh
 - [ ] All IDE panels stay synchronized
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
@@ -258,6 +264,7 @@ Each story adds a layer of functionality that enables the next step in the journ
 - [ ] Error scenarios tested
 - [ ] Documentation complete
 - [ ] Demo video recorded
+- [ ] **MANDATORY: Browser E2E verification with screenshot** (see [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 
 ---
 
@@ -481,17 +488,18 @@ After MVP completion, the team will:
 This sprint plan complies with:
 - ✅ Incident INC-2025-12-24-001 response requirements
 - ✅ Consolidation approach (single MVP epic)
-- ✅ Mandatory E2E verification gates
+- ✅ Mandatory E2E verification gates (enforced per [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
 - ✅ Platform A single workstream
-- ✅ Sequential story dependencies
-- ✅ Traceability to original stories (12, 25, 28)
+- ✅ Sequential story dependencies (enforced per [`_bmad-output/governance/status-update-procedure-2025-12-26.md`](_bmad-output/governance/status-update-procedure-2025-12-26.md))
+- ✅ Traceability to original stories (12, 25, 28) (documented in [`_bmad-output/governance/mvp-traceability-matrix-2025-12-26.md`](_bmad-output/governance/mvp-traceability-matrix-2025-12-26.md))
+- ✅ Single source of truth for status tracking ([`_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml))
 
 ---
 
 **Plan Status**: IN_PROGRESS
 **Current Story**: MVP-1 (Agent Configuration)
-**Next Action**: Complete MVP-1, prepare MVP-2
-**Last Updated**: 2025-12-25T10:00:00+07:00
+**Next Action**: Complete MVP-1 E2E verification, prepare MVP-2
+**Last Updated**: 2025-12-26T20:50:00+07:00
 **Review Date**: 2025-12-26
 
 ---
@@ -502,9 +510,10 @@ This sprint plan complies with:
 |------|---------|-------------|
 | 2025-12-24 | 1.0 | Initial plan creation |
 | 2025-12-25 | 1.1 | Updated MVP-1 to IN_PROGRESS, added course correction notes |
+| 2025-12-26 | 1.2 | Added explicit E2E verification gate to all story acceptance criteria, updated governance compliance references |
 
 ---
 
 **Document Owner**: Product Manager (@bmad-bmm-pm)
 **Reviewers**: Scrum Master (@bmad-bmm-sm), BMAD Master (@bmad-core-bmad-master)
-**Version**: 1.1
+**Version**: 1.2

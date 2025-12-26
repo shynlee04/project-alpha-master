@@ -1,7 +1,15 @@
-# BMad Method Workflow Status - CONSOLIDATED
+# ⚠️ DEPRECATED - ARCHIVED FILE
+# ========================================
+# This file is DEPRECATED as of 2025-12-26T20:50:00+07:00
+# Single source of truth: _bmad-output/sprint-artifacts/sprint-status-consolidated.yaml
+# Governance procedures: _bmad-output/governance/status-update-procedure-2025-12-26.md
+# Status correction log: _bmad-output/governance/status-correction-log-2025-12-26.md
+# ========================================
+#
+# BMad Method Workflow Status - CONSOLIDATED (ARCHIVED)
 # Project Alpha - AI Coding Agent Vertical Slice
 # Generated: 2025-12-24
-# Updated: 2025-12-26T18:25:00+07:00 (P0 Governance Fixes)
+# Last Updated: 2025-12-26T18:25:00+07:00 (P0 Governance Fixes)
 # Consolidated from 26+ epics to single MVP epic
 
 project:

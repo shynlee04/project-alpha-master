@@ -129,13 +129,13 @@ stories:
   mvp-2:
     id: MVP-2
     name: "Chat Interface with Streaming"
-    status: "backlog"
+    status: "in-progress"
     points: 5
     priority: P0
     platform: "Platform A"
-    startedat: null
+    startedat: "2025-12-26T20:00:00+07:00"
     devcompletedat: null
-    devstartedat: null
+    devstartedat: "2025-12-26T20:00:00+07:00"
     reviewsubmittedat: null
     reviewcompletedat: null
     testsadded: 0
@@ -143,6 +143,7 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
+    block_reason: "Pending E2E verification - no screenshot evidence"
     acceptance_criteria:
       - "Chat panel opens and displays messages - NOT IMPLEMENTED"
       - "Messages send to /api/chat endpoint - NOT IMPLEMENTED"
@@ -154,7 +155,7 @@ stories:
   mvp-3:
     id: MVP-3
     name: "Tool Execution - File Operations"
-    status: "backlog"
+    status: "blocked"
     points: 5
     priority: P0
     platform: "Platform A"
@@ -168,6 +169,8 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-2 must be DONE first"
+    dependency: "MVP-2"
     acceptance_criteria:
       - "AI can request to read project files - NOT IMPLEMENTED"
       - "Approval dialog shows file path and content preview - NOT IMPLEMENTED"
@@ -185,7 +188,7 @@ stories:
   mvp-4:
     id: MVP-4
     name: "Tool Execution - Terminal Commands"
-    status: "backlog"
+    status: "blocked"
     points: 5
     priority: P0
     platform: "Platform A"
@@ -199,6 +202,8 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-3 must be DONE first"
+    dependency: "MVP-3"
     acceptance_criteria:
       - "AI can request terminal commands - NOT IMPLEMENTED"
       - "Approval dialog shows command to execute - NOT IMPLEMENTED"
@@ -212,7 +217,7 @@ stories:
   mvp-5:
     id: MVP-5
     name: "Approval Workflow"
-    status: "backlog"
+    status: "blocked"
     points: 5
     priority: P0
     platform: "Platform A"
@@ -226,6 +231,8 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-4 must be DONE first"
+    dependency: "MVP-4"
     acceptance_criteria:
       - "Tool calls displayed in chat UI - NOT IMPLEMENTED"
       - "Approval overlay shows clear context - NOT IMPLEMENTED"
@@ -237,7 +244,7 @@ stories:
   mvp-6:
     id: MVP-6
     name: "Real-time UI Updates"
-    status: "backlog"
+    status: "blocked"
     points: 5
     priority: P0
     platform: "Platform A"
@@ -251,6 +258,8 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-5 must be DONE first"
+    dependency: "MVP-5"
     acceptance_criteria:
       - "File sync status updates in UI - NOT IMPLEMENTED"
       - "Terminal status reflects in chat - NOT IMPLEMENTED"
@@ -261,13 +270,13 @@ stories:
   mvp-7:
     id: MVP-7
     name: "E2E Integration Testing"
-    status: "backlog"
+    status: "blocked"
     points: 5
     priority: P0
     platform: "Platform A"
     startedat: null
     devcompletedat: null
-    devstartedat: all
+    devstartedat: null
     reviewsubmittedat: null
     reviewcompletedat: null
     testsadded: 0
@@ -275,6 +284,8 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-6 must be DONE first"
+    dependency: "MVP-6"
     acceptance_criteria:
       - "Full workflow test: configure → chat → execute → approve - NOT IMPLEMENTED"
       - "Browser automation test passes - NOT IMPLEMENTED"
