@@ -970,10 +970,9 @@
     "projects": "Projects",
     "workspace": "Workspace",
     "navigateTo": "Navigate to",
-    "back": "Back",
     "forward": "Forward"
   },
-  "breadcrumbs.home": "__STRING_NOT_TRANSLATED__",
+  "breadcrumb.home": "__STRING_NOT_TRANSLATED__",
   "breadcrumbs.projects": "__STRING_NOT_TRANSLATED__",
   "breadcrumbs.workspace": "__STRING_NOT_TRANSLATED__",
   "projects.recent": "__STRING_NOT_TRANSLATED__",

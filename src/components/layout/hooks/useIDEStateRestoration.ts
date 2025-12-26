@@ -9,16 +9,17 @@
 import { useEffect } from 'react';
 import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
 import type { OpenFile } from '../../ide/MonacoEditor';
-import type { LocalFsAdapter } from '../../../lib/filesystem';
-import type { TerminalTab, FsaPermissionState, SyncStatus } from '../../../lib/workspace';
+import type { LocalFSAdapter } from '../../../lib/filesystem';
+import type { TerminalTab, SyncStatus } from '../../../lib/workspace';
+import type { FsaPermissionState } from '../../../lib/filesystem/permission-lifecycle';
 
 interface RestoredIdeState {
-    chatVisible: boolean;
-    terminalTab: TerminalTab;
-    activeFile: string | null;
-    activeFileScrollTop: number;
-    openFiles: string[];
-    panelLayouts: Record<string, number[]>;
+    chatVisible?: boolean;
+    terminalTab?: TerminalTab;
+    activeFile?: string | null;
+    activeFileScrollTop?: number;
+    openFiles?: string[];
+    panelLayouts?: Record<string, number[]>;
 }
 
 interface UseIDEStateRestorationOptions {
@@ -27,21 +28,21 @@ interface UseIDEStateRestorationOptions {
     openFilesCount: number;
     permissionState: FsaPermissionState;
     syncStatus: SyncStatus;
-    localAdapterRef: React.RefObject<LocalFsAdapter | null>;
+    localAdapterRef: React.RefObject<LocalFSAdapter | null>;
     // Refs from useIdeStatePersistence
     appliedPanelGroupsRef: React.MutableRefObject<Set<string>>;
     didRestoreOpenFilesRef: React.MutableRefObject<boolean>;
-    activeFileScrollTopRef: React.MutableRefObject<number>;
+    activeFileScrollTopRef: React.MutableRefObject<number | undefined>;
     // Panel refs
     mainPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
     centerPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
     editorPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
-    // Setters
-    setIsChatVisible: React.Dispatch<React.SetStateAction<boolean>>;
-    setTerminalTab: React.Dispatch<React.SetStateAction<TerminalTab>>;
-    setActiveFilePath: React.Dispatch<React.SetStateAction<string | null>>;
-    setSelectedFilePath: React.Dispatch<React.SetStateAction<string | undefined>>;
-    setOpenFiles: React.Dispatch<React.SetStateAction<OpenFile[]>>;
+    // Setters - using simpler types compatible with Zustand store actions
+    setChatVisible: (visible: boolean) => void;
+    setTerminalTab: (tab: TerminalTab) => void;
+    setActiveFilePath: (path: string | null) => void;
+    setSelectedFilePath: (path: string | undefined) => void;
+    setOpenFiles: (files: OpenFile[]) => void;
 }
 
 /**
@@ -65,7 +66,7 @@ export function useIDEStateRestoration({
     mainPanelGroupRef,
     centerPanelGroupRef,
     editorPanelGroupRef,
-    setIsChatVisible,
+    setChatVisible,
     setTerminalTab,
     setActiveFilePath,
     setSelectedFilePath,
@@ -74,14 +75,19 @@ export function useIDEStateRestoration({
     // Restore UI state (except activeFilePath - that's set in file restoration effect)
     useEffect(() => {
         if (!restoredIdeState) return;
-        setIsChatVisible(restoredIdeState.chatVisible);
-        setTerminalTab(restoredIdeState.terminalTab);
+        // Only set if values are defined
+        if (restoredIdeState.chatVisible !== undefined) {
+            setChatVisible(restoredIdeState.chatVisible);
+        }
+        if (restoredIdeState.terminalTab !== undefined) {
+            setTerminalTab(restoredIdeState.terminalTab);
+        }
         // NOTE: Do NOT set activeFilePath here!
         // It must be set AFTER files are restored in the file restoration effect below.
         // Setting it here causes the editor to show "no file open" because the openFiles
         // array is still empty when activeFilePath is set.
         activeFileScrollTopRef.current = restoredIdeState.activeFileScrollTop;
-    }, [restoredIdeState, activeFileScrollTopRef, setIsChatVisible, setTerminalTab]);
+    }, [restoredIdeState, activeFileScrollTopRef, setChatVisible, setTerminalTab]);
 
     // Apply panel layouts
     useEffect(() => {
@@ -113,7 +119,8 @@ export function useIDEStateRestoration({
             didRestoreOpenFilesRef.current = true;
             return;
         }
-        if (restoredIdeState.openFiles.length === 0) {
+        const filesToRestore = restoredIdeState.openFiles ?? [];
+        if (filesToRestore.length === 0) {
             didRestoreOpenFilesRef.current = true;
             return;
         }
@@ -126,7 +133,7 @@ export function useIDEStateRestoration({
 
         void (async () => {
             const restoredFiles: OpenFile[] = [];
-            for (const path of restoredIdeState.openFiles) {
+            for (const path of filesToRestore) {
                 try {
                     const result = await adapter.readFile(path);
                     if ('content' in result) {

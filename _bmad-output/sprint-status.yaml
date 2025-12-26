@@ -1,0 +1,207 @@
+# Sprint Status - Via-gent MVP
+# Single Source of Truth
+# Last Updated: 2025-12-27T02:35:00+07:00
+
+project:
+  name: "via-gent"
+  description: "100% client-side AI-powered IDE with WebContainers"
+  phase: "implementation"
+  
+# =============================================================================
+# GOVERNANCE RULES (MANDATORY)
+# =============================================================================
+governance:
+  definition_of_done:
+    - "All acceptance criteria verified in browser"
+    - "Screenshot/recording captured in _bmad-output/e2e-verification/"
+    - "TypeScript build passes (pnpm build)"
+    - "No console errors in browser"
+    - "Code review completed"
+  
+  story_dependencies:
+    - "Stories execute sequentially"
+    - "Previous story must be DONE before next starts"
+    - "No parallel story execution"
+  
+  verification_gates:
+    - "Manual E2E test in browser required"
+    - "Screenshot evidence mandatory"
+    - "All acceptance criteria must be checked"
+
+# =============================================================================
+# MVP EPIC: AI Coding Agent Vertical Slice
+# =============================================================================
+epic:
+  id: "MVP"
+  name: "AI Coding Agent Vertical Slice"
+  status: "in-progress"
+  user_journey: "Configure → Chat → Execute → Approve → Iterate"
+  started: "2025-12-24"
+
+# =============================================================================
+# STORIES
+# =============================================================================
+stories:
+  mvp-1:
+    name: "Agent Configuration & Persistence"
+    status: "in-progress"
+    points: 5
+    priority: "P0"
+    acceptance_criteria:
+      - criteria: "User can select AI provider (OpenRouter/Anthropic)"
+        status: "implemented"
+      - criteria: "API keys stored securely in localStorage"
+        status: "implemented"
+      - criteria: "Model selection from provider catalog"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Configuration persists across browser sessions"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Connection test passes before saving"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Agent status shows 'Ready' when configured"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Configuration dialog accessible from IDE"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+    e2e_evidence: null
+    notes: "2/7 criteria implemented. Blocking all other stories."
+
+  mvp-2:
+    name: "Chat Interface with Streaming"
+    status: "backlog"
+    points: 5
+    priority: "P0"
+    depends_on: "mvp-1"
+    acceptance_criteria:
+      - criteria: "Chat panel opens and displays messages"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Messages send to /api/chat endpoint"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Responses stream in real-time using SSE"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Rich text formatting for responses"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Code blocks with syntax highlighting"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Error handling for failed requests"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Chat history persists in localStorage"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+
+  mvp-3:
+    name: "Tool Execution - File Operations"
+    status: "backlog"
+    points: 5
+    priority: "P0"
+    depends_on: "mvp-2"
+    acceptance_criteria:
+      - criteria: "AI can request to read project files"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Approval dialog shows file path and content preview"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "AI can request to write/update files"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "File changes sync to local filesystem"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Monaco editor reflects changes in real-time"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+
+  mvp-4:
+    name: "Tool Execution - Terminal Commands"
+    status: "backlog"
+    points: 5
+    priority: "P0"
+    depends_on: "mvp-3"
+    acceptance_criteria:
+      - criteria: "AI can request terminal commands"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Commands execute in WebContainer terminal"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Output captured and displayed in real-time"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+
+  mvp-5:
+    name: "Approval Workflow"
+    status: "backlog"
+    points: 5
+    priority: "P0"
+    depends_on: "mvp-4"
+    acceptance_criteria:
+      - criteria: "Tool calls displayed in chat UI"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Approval overlay shows clear context"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "User can approve or deny each tool call"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+
+  mvp-6:
+    name: "Real-time UI Updates"
+    status: "backlog"
+    points: 5
+    priority: "P0"
+    depends_on: "mvp-5"
+    acceptance_criteria:
+      - criteria: "File sync status updates in UI"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "All IDE panels stay synchronized"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "State survives browser refresh"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+
+  mvp-7:
+    name: "E2E Integration Testing"
+    status: "backlog"
+    points: 5
+    priority: "P0"
+    depends_on: "mvp-6"
+    acceptance_criteria:
+      - criteria: "Full workflow test passes"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Browser automation test passes"
+        status: "NOT_IMPLEMENTED"
+      - criteria: "Demo video recorded"
+        status: "NOT_IMPLEMENTED"
+    e2e_verified: false
+
+# =============================================================================
+# COURSE CORRECTION (2025-12-27)
+# =============================================================================
+course_correction:
+  date: "2025-12-27"
+  trigger: "Systemic governance breakdown, context poisoning, implementation gaps"
+  actions:
+    - "Executed TanStack AI SDK research via MCP tools"
+    - "Created knowledge synthesis document"
+    - "Consolidated sprint status to single file"
+    - "Fixed setOpenFiles build error"
+    - "Documented correct TanStack AI patterns"
+  next_actions:
+    - "Complete MVP-1 implementation (5 remaining criteria)"
+    - "Wire AgentChatPanel to useAgentChatWithTools correctly"
+    - "Fix Chat API route configuration"
+    - "Verify E2E workflow with screenshots"
+
+# =============================================================================
+# ARCHIVED EPICS (Reference Only)
+# =============================================================================
+archived_epics:
+  - "Epic 1-5: Project Foundation - DONE"
+  - "Epic 10: Event Bus - DONE"
+  - "Epic 13: Terminal & Sync - DONE"
+  - "Epic 22: Production Hardening - DONE"
+  - "Epic 12, 25, 28: Superseded by MVP"
+
+# =============================================================================
+# METRICS
+# =============================================================================
+metrics:
+  total_stories: 7
+  completed: 0
+  in_progress: 1
+  backlog: 6
+  estimated_completion: "2025-01-03"

@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useIDEStore, selectOpenFiles, selectActiveFile } from '@/lib/state';
+import { useIDEStore } from '@/lib/state';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -51,14 +51,13 @@ import { AgentsPanel } from '../ide/AgentsPanel';
 import { SearchPanel } from '../ide/SearchPanel';
 import { SettingsPanel } from '../ide/SettingsPanel';
 
-// P1.4: Discovery mechanisms
 import { CommandPalette } from '../ide/CommandPalette';
 import { FeatureSearch } from '../ide/FeatureSearch';
-import { QuickActionsMenu } from '../ide/QuickActionsMenu';
+// QuickActionsMenu available but not currently rendered
 
 // Hooks
 import { useIdeStatePersistence } from '../../hooks/useIdeStatePersistence';
-import { useWorkspace, type TerminalTab } from '../../lib/workspace';
+import { useWorkspace } from '../../lib/workspace';
 import { useToast } from '../ui/Toast';
 import {
   useIDEKeyboardShortcuts,
@@ -114,6 +113,35 @@ export function IDELayout(): React.JSX.Element {
       isDirty: false,
     }));
   }, [openFilePaths, fileContentCache]);
+
+  // Callback to update open files from hooks that need to modify file content
+  // This updates both the local content cache and syncs with Zustand paths
+  const setOpenFiles = (filesOrUpdater: OpenFile[] | ((prev: OpenFile[]) => OpenFile[])) => {
+    const newFiles = typeof filesOrUpdater === 'function'
+      ? filesOrUpdater(openFiles)
+      : filesOrUpdater;
+
+    // Update the file content cache
+    setFileContentCache(new Map(newFiles.map((f) => [f.path, f.content] as [string, string])));
+
+    // Sync paths with Zustand if they changed
+    const newPaths = newFiles.map(f => f.path);
+    const currentPathsStr = openFilePaths.join('\0');
+    const newPathsStr = newPaths.join('\0');
+    if (currentPathsStr !== newPathsStr) {
+      // Add new paths and remove old ones
+      newPaths.forEach(path => {
+        if (!openFilePaths.includes(path)) {
+          addOpenFile(path);
+        }
+      });
+      openFilePaths.forEach(path => {
+        if (!newPaths.includes(path)) {
+          removeOpenFile(path);
+        }
+      });
+    }
+  };
 
   // Panel refs
   const mainPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
@@ -200,18 +228,14 @@ export function IDELayout(): React.JSX.Element {
         {/* P1.4: Discovery mechanisms */}
         {isCommandPaletteOpen && (
           <CommandPalette
+            isOpen={isCommandPaletteOpen}
             onClose={() => setIsCommandPaletteOpen(false)}
-            onOpenFile={handleFileSelect}
-            onToggleTerminal={() => setTerminalTab(terminalTab === 'terminal' ? 'output' : 'terminal')}
-            onOpenSettings={() => toast({ title: 'Settings', description: 'Settings panel opened' })}
-            onSearchInFiles={() => toast({ title: 'Search', description: 'Search in files' })}
-            onShowShortcuts={() => toast({ title: 'Shortcuts', description: 'Keyboard shortcuts' })}
-            onOpenFeatureSearch={() => setIsFeatureSearchOpen(true)}
           />
         )}
 
         {isFeatureSearchOpen && (
           <FeatureSearch
+            isOpen={isFeatureSearchOpen}
             onClose={() => setIsFeatureSearchOpen(false)}
           />
         )}
@@ -364,7 +388,7 @@ export function IDELayout(): React.JSX.Element {
                           </div>
                         }
                       >
-                        <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
+                        <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setChatVisible(false)} />
                       </WithErrorBoundary>
                     </CardContent>
                   </Card>

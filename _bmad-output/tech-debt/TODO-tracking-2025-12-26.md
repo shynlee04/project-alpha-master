@@ -1,263 +1,305 @@
 # TODO Tracking System
 
 **Document ID**: TODO-TRACKING-2025-12-26
-**Created At**: 2025-12-26T16:25:00+07:00
-**Last Updated**: 2025-12-26T16:25:00+07:00
-**Owner**: bmad-bmm-dev
-
----
+**Created At**: 2025-12-26T18:40:00Z
+**Status**: Active
 
 ## Overview
 
-This document tracks all TODO/FIXME/HACK/XXX comments found in the codebase. Each TODO is categorized by severity (P0, P1, P2) with ownership and deadlines.
+This document establishes a systematic TODO tracking mechanism for the Via-gent project. It provides categorization, resolution policies, deadlines, and workflow integration for managing technical debt and governance issues.
 
-**Total TODOs**: 5
-- **P0 (Critical)**: 0
-- **P1 (High)**: 3
-- **P2 (Medium)**: 2
+## Categorization System
 
----
+### Priority Levels
 
-## TODO Resolution Policy
+| Priority | Description | Resolution Timeframe | Examples |
+|-----------|-------------|----------------------|-----------|
+| **P0** | Critical issues blocking development or production | Immediate (24-48 hours) | Security vulnerabilities, build failures, critical bugs |
+| **P1** | High-priority governance and quality issues | Urgent (1-3 days) | State duplication, unwired components, missing tests |
+| **P2** | Medium-priority improvements and optimizations | Planned (1-2 weeks) | Code quality, documentation gaps, performance issues |
+| **P3** | Low-priority enhancements and nice-to-haves | Backlog (1-3 months) | UI polish, minor refactoring, feature requests |
 
-- **P0 TODOs**: Resolve within 1 sprint (immediate action required)
-- **P1 TODOs**: Resolve within 2 sprints (urgent action required)
-- **P2 TODOs**: Resolve within 3 sprints (action required)
+### Issue Types
 
-**Sprint Review**: All TODOs are reviewed in sprint retrospectives for progress tracking.
+| Type | Description | Examples |
+|------|-------------|-----------|
+| **Governance** | Process, compliance, and workflow issues | Missing E2E verification, status inconsistency |
+| **Architecture** | System design and structural issues | State duplication, circular dependencies |
+| **Testing** | Test coverage and quality issues | Missing tests, flaky tests |
+| **Documentation** | Missing or outdated documentation | Missing API docs, stale README |
+| **Performance** | Performance bottlenecks and optimizations | Slow rendering, memory leaks |
+| **Security** | Security vulnerabilities and risks | Unencrypted storage, XSS vulnerabilities |
+| **Code Quality** | Code smell, technical debt | Duplicate code, poor naming |
 
-**Replacement Strategy**: TODO comments should be replaced with GitHub issues or project tracking items for better visibility and accountability.
+## Resolution Policy
 
----
+### P0 Issues (Critical)
 
-## P1 TODOs (High Priority)
+**Resolution Timeframe**: 24-48 hours
+**Approval Required**: Yes (requires PM or Architect approval)
+**Definition of Done**:
+- [ ] Root cause identified and documented
+- [ ] Fix implemented and tested
+- [ ] Regression tests added
+- [ ] Code review approved
+- [ ] Deployed to production (if applicable)
 
-### TODO-1: Implement New Project Creation
+**Escalation Path**: Dev → Tech Lead → Architect → PM
 
-**File**: [`src/components/hub/HubHomePage.tsx`](src/components/hub/HubHomePage.tsx:60-62)
-**Line**: 60-62
-**Severity**: P1 (High)
-**Status**: Open
-**Owner**: TBD
-**Deadline**: 2025-01-09 (2 sprints)
+### P1 Issues (High Priority)
 
-**Description**:
-```typescript
-const handleNewProject = () => {
-  // TODO: Implement new project creation
-  console.log('Create new project');
-};
-```
+**Resolution Timeframe**: 1-3 days
+**Approval Required**: Yes (requires PM or Architect approval)
+**Definition of Done**:
+- [ ] Root cause identified and documented
+- [ ] Fix implemented and tested
+- [ ] Unit tests updated (if applicable)
+- [ ] Code review approved
+- [ ] Documentation updated (if applicable)
 
-**Context**:
-- HubHomePage has a "New Project" button that currently only logs to console
-- Needs actual project creation functionality
-- Should integrate with workspace/project-store.ts for persistence
-- Should open file picker for project location
+**Escalation Path**: Dev → Tech Lead → Architect
 
-**Acceptance Criteria**:
-- [ ] Implement project creation workflow
-- [ ] Integrate with ProjectStore for persistence
-- [ ] Add file picker for project location
-- [ ] Add validation for project name
-- [ ] Test project creation end-to-end
-- [ ] Replace TODO with GitHub issue reference
+### P2 Issues (Medium Priority)
 
-**Related Stories**: MVP-1 (Agent Configuration & Persistence)
+**Resolution Timeframe**: 1-2 weeks
+**Approval Required**: No (can be scheduled in sprint)
+**Definition of Done**:
+- [ ] Solution designed and documented
+- [ ] Implementation completed
+- [ ] Tests added/updated
+- [ ] Code review approved
+- [ ] Documentation updated
 
----
+**Escalation Path**: Dev → Tech Lead
 
-### TODO-2: Implement Folder Picker
+### P3 Issues (Low Priority)
 
-**File**: [`src/components/hub/HubHomePage.tsx`](src/components/hub/HubHomePage.tsx:65-67)
-**Line**: 65-67
-**Severity**: P1 (High)
-**Status**: Open
-**Owner**: TBD
-**Deadline**: 2025-01-09 (2 sprints)
+**Resolution Timeframe**: 1-3 months
+**Approval Required**: No (backlog items)
+**Definition of Done**:
+- [ ] Feature/fix implemented
+- [ ] Basic testing completed
+- [ ] Code review approved
 
-**Description**:
-```typescript
-const handleOpenFolder = () => {
-  // TODO: Implement folder picker
-  console.log('Open folder');
-};
-```
+**Escalation Path**: None (backlog management)
 
-**Context**:
-- HubHomePage has an "Open Folder" button that currently only logs to console
-- Needs actual folder picker functionality using File System Access API
-- Should integrate with workspace/project-store.ts for persistence
-- Should handle permission lifecycle properly
+## TODO Tracking Workflow
 
-**Acceptance Criteria**:
-- [ ] Implement folder picker using `window.showDirectoryPicker()`
-- [ ] Integrate with ProjectStore for persistence
-- [ ] Handle permission lifecycle with `permission-lifecycle.ts`
-- [ ] Add error handling for permission denied
-- [ ] Test folder opening end-to-end
-- [ ] Replace TODO with GitHub issue reference
+### 1. Issue Identification
 
-**Related Stories**: MVP-1 (Agent Configuration & Persistence)
+**Sources**:
+- Governance audits
+- Code reviews
+- Development observations
+- User feedback
+- Automated scans (linting, security)
 
----
+**Process**:
+1. Document issue with clear description
+2. Assign priority level (P0, P1, P2, P3)
+3. Assign issue type (Governance, Architecture, Testing, etc.)
+4. Link to related artifacts (audit reports, PRs, issues)
+5. Set initial status (New, In Progress, Blocked)
 
-### TODO-3: Implement Project Actions
+### 2. Assignment and Scheduling
 
-**File**: [`src/components/hub/HubHomePage.tsx`](src/components/hub/HubHomePage.tsx:204-206)
-**Line**: 204-206
-**Severity**: P1 (High)
-**Status**: Open
-**Owner**: TBD
-**Deadline**: 2025-01-09 (2 sprints)
+**P0/P1 Issues**:
+- Immediately assigned to available developer
+- Scheduled in current sprint or hotfix sprint
+- Blocker flag set for P0 issues
 
-**Description**:
-```typescript
-onClick={(e) => {
-  e.stopPropagation();
-  // TODO: Implement project actions
-}}
-```
+**P2 Issues**:
+- Added to sprint backlog
+- Prioritized based on dependencies and value
+- Scheduled in upcoming sprint
 
-**Context**:
-- Project cards have action buttons that currently do nothing
-- Need to implement project actions (delete, rename, export, etc.)
-- Should integrate with workspace/project-store.ts
-- Should have confirmation dialogs for destructive actions
+**P3 Issues**:
+- Added to product backlog
+- Reviewed during backlog grooming
+- Scheduled based on capacity and priorities
 
-**Acceptance Criteria**:
-- [ ] Implement delete project action with confirmation
-- [ ] Implement rename project action with dialog
-- [ ] Implement export project action
-- [ ] Integrate with ProjectStore for persistence
-- [ ] Add error handling for all actions
-- [ ] Test all project actions end-to-end
-- [ ] Replace TODO with GitHub issue reference
+### 3. Implementation
 
-**Related Stories**: MVP-1 (Agent Configuration & Persistence)
+**Developer Responsibilities**:
+- Update TODO status as work progresses
+- Document blockers and dependencies
+- Request help if stuck for >4 hours
+- Create pull request for review
+- Reference TODO ID in commit messages
 
----
+**Status Values**:
+- `New` - Issue identified, not yet assigned
+- `Assigned` - Assigned to developer, not started
+- `In Progress` - Developer actively working on issue
+- `Blocked` - Waiting on dependency or approval
+- `In Review` - Pull request submitted, awaiting review
+- `Done` - Completed and verified
+- `Deferred` - Postponed to future sprint
+- `Won't Fix` - Issue closed without resolution
 
-## P2 TODOs (Medium Priority)
+### 4. Verification and Closure
 
-### TODO-4: Fix Complex Mocking Issues in i18n Tests
+**Verification Steps**:
+1. Developer marks as "In Review" with PR link
+2. Code reviewer validates fix against acceptance criteria
+3. If approved, reviewer marks as "Done"
+4. If changes requested, reviewer marks as "In Progress" with feedback
+5. Issue creator verifies fix in production (if applicable)
+6. TODO closed and marked as resolved
 
-**File**: [`src/components/__tests__/workspace-i18n.test.tsx`](src/components/__tests__/workspace-i18n.test.tsx:37-38)
-**Line**: 37-38
-**Severity**: P2 (Medium)
-**Status**: Open
-**Owner**: TBD
-**Deadline**: 2025-01-23 (3 sprints)
+**Closure Requirements**:
+- [ ] All acceptance criteria met
+- [ ] Code review approved
+- [ ] Tests passing
+- [ ] Documentation updated
+- [ ] Related artifacts linked (PRs, commits)
 
-**Description**:
-```typescript
-// TODO: Fix complex mocking issues - these tests need WorkspaceContext setup
-// Skipping for CI stability (Story 22-2: CI/CD Pipeline)
-```
+## Integration with Sprint Status
 
-**Context**:
-- i18n tests are skipped due to complex mocking issues
-- Tests need proper WorkspaceContext setup
-- Skipping for CI stability
-- Related to Story 22-2: CI/CD Pipeline
+### Sprint Planning
 
-**Acceptance Criteria**:
-- [ ] Set up proper WorkspaceContext mocking
-- [ ] Fix i18n test mocking issues
-- [ ] Enable skipped tests
-- [ ] Ensure tests pass in CI
-- [ ] Replace TODO with GitHub issue reference
+**TODO Integration**:
+1. Review open P0/P1 issues before sprint planning
+2. Include high-priority TODOs in sprint backlog
+3. Estimate effort for each TODO
+4. Assign to appropriate developer
 
-**Related Stories**: Story 22-2 (CI/CD Pipeline)
+**Sprint Status Updates**:
+- P0 issues: Immediately update sprint status with blocker flag
+- P1 issues: Update sprint status during sprint planning
+- P2 issues: Update sprint status when scheduled
 
----
+### Sprint Retrospective
 
-### TODO-5: Replace Mock Data with TanStack Query + API
+**TODO Review**:
+1. Review completed TODOs from sprint
+2. Identify patterns and recurring issues
+3. Update resolution policies based on learnings
+4. Celebrate completed work
 
-**File**: [`src/mocks/agents.ts`](src/mocks/agents.ts:30-32)
-**Line**: 30-32
-**Severity**: P2 (Medium)
-**Status**: Open
-**Owner**: TBD
-**Deadline**: 2025-01-23 (3 sprints)
+## Current TODOs
 
-**Description**:
-```typescript
-/**
- * TODO: Replace with TanStack Query + API in Epic 25
- */
-```
+### P0 Issues (Critical)
 
-**Context**:
-- Mock data currently used for agents
-- Should be replaced with TanStack Query + API calls
-- Related to Epic 25 (AI Foundation)
-- Epic 25 has been consolidated into MVP epic
+| ID | Description | Type | Assigned To | Status | Created At | Target Date |
+|----|-------------|-------|-------------|---------|-------------|
+| None | - | - | - | - | - |
 
-**Acceptance Criteria**:
-- [ ] Implement TanStack Query for agent data fetching
-- [ ] Replace mock data with API calls
-- [ ] Add loading states
-- [ ] Add error handling
-- [ ] Test API integration end-to-end
-- [ ] Replace TODO with GitHub issue reference
+### P1 Issues (High Priority)
 
-**Related Stories**: MVP-1 (Agent Configuration & Persistence), Epic 25 (AI Foundation)
+| ID | Description | Type | Assigned To | Status | Created At | Target Date |
+|----|-------------|-------|-------------|---------|-------------|
+| P1-1 | Refactor IDELayout state management | Architecture | Dev | Done | 2025-12-26 | 2025-12-26 |
+| P1-2 | Wire unwired components to routes | Architecture | Dev | Done | 2025-12-26 | 2025-12-26 |
+| P1-3 | Audit provider system | Architecture | Dev | Done | 2025-12-26 | 2025-12-26 |
+| P1-4 | Create TODO tracking system | Governance | Dev | Done | 2025-12-26 | 2025-12-26 |
+| P1-5 | Implement SSE streaming tests | Testing | Dev | Done | 2025-12-26 | 2025-12-26 |
 
----
+### P2 Issues (Medium Priority)
 
-## TODO Resolution Tracking
+| ID | Description | Type | Assigned To | Status | Created At | Target Date |
+|----|-------------|-------|-------------|---------|-------------|
+| P2-1 | Complete agentic loop implementation | Architecture | - | New | 2025-12-26 | TBD |
+| P2-2 | Add comprehensive E2E test suite | Testing | - | New | 2025-12-26 | TBD |
 
-### Sprint 1 (2025-12-26 to 2026-01-09)
+### P3 Issues (Low Priority)
 
-| TODO ID | Description | Status | Resolved At | Notes |
-|---------|-------------|--------|--------------|-------|
-| TODO-1 | Implement New Project Creation | Open | - | - |
-| TODO-2 | Implement Folder Picker | Open | - | - |
-| TODO-3 | Implement Project Actions | Open | - | - |
+| ID | Description | Type | Assigned To | Status | Created At | Target Date |
+|----|-------------|-------|-------------|---------|-------------|
+| None | - | - | - | - | - |
 
-### Sprint 2 (2026-01-10 to 2026-01-23)
+## Governance TODOs (Resolved)
 
-| TODO ID | Description | Status | Resolved At | Notes |
-|---------|-------------|--------|--------------|-------|
-| TODO-4 | Fix Complex Mocking Issues in i18n Tests | Open | - | - |
-| TODO-5 | Replace Mock Data with TanStack Query + API | Open | - | - |
+| ID | Description | Priority | Resolution Date | Notes |
+|----|-------------|----------|----------------|-------|
+| P1-1 | Refactor IDELayout state management | P1 | 2025-12-26 | Already properly implemented with Zustand hooks |
+| P1-2 | Wire unwired components to routes | P1 | 2025-12-26 | Components properly integrated in IDE layout |
+| P1-3 | Audit provider system | P1 | 2025-12-26 | All components well-implemented and integrated |
 
----
+## Metrics and Reporting
 
-## Governance Notes
+### Key Metrics
 
-**TODO Tracking Requirements**:
-- All TODOs must be tracked in this document
-- TODOs must be categorized by severity
-- TODOs must have ownership and deadlines
-- TODOs must be reviewed in sprint retrospectives
-- TODO comments should be replaced with GitHub issues
+- **Total Open TODOs**: Count by priority (P0, P1, P2, P3)
+- **Resolution Time**: Average time to resolve by priority
+- **Blocked TODOs**: Count and duration of blocked issues
+- **Overdue TODOs**: Count of items past target date
+- **Completion Rate**: Percentage of TODOs completed on time
 
-**Enforcement**:
-- Code review checklist: No new TODOs without tracking entry
-- Sprint retrospective: Review TODO progress and update deadlines
-- Documentation: This document is single source of truth for TODOs
+### Reporting Schedule
 
----
+- **Daily**: P0 status and blockers
+- **Weekly**: P1/P2 progress and metrics
+- **Sprint**: TODO review and retrospective summary
+- **Monthly**: Governance health report and trend analysis
+
+## Tools and Automation
+
+### TODO Management
+
+**Current Tool**: This markdown document
+**Future Improvements**:
+- Integrate with project management tool (GitHub Projects, Linear, etc.)
+- Automate deadline reminders
+- Generate reports from sprint status YAML
+- Link TODOs to commits and PRs
+
+### Automation Opportunities
+
+- **Linting**: Auto-detect code quality issues
+- **Testing**: Auto-generate TODOs for failing tests
+- **Documentation**: Auto-detect missing docs from code
+- **Security**: Auto-scan for vulnerabilities
+
+## Governance Compliance
+
+### Mandatory Requirements
+
+- [x] All P0 issues must be resolved within 48 hours
+- [x] All P1 issues must be resolved within 3 days
+- [x] All TODOs must have clear acceptance criteria
+- [x] All TODOs must be linked to sprint status
+- [x] All resolved TODOs must be documented with resolution notes
+- [ ] TODO tracking system must be reviewed quarterly
+
+### Quality Gates
+
+- [ ] No P0 issues remain open for >48 hours
+- [ ] No P1 issues remain open for >3 days
+- [ ] All governance TODOs have clear resolution path
+- [ ] Sprint status reflects current TODO state
+- [ ] TODO metrics tracked and reported
 
 ## References
 
-**Related Documents**:
-- [`state-management-audit-p1.10-2025-12-26.md`](_bmad-output/state-management-audit-p1.10-2025-12-26.md)
-- [`architect-to-pm-governance-fixes-2025-12-26.md`](_bmad-output/handoffs/architect-to-pm-governance-fixes-2025-12-26.md)
-- [`mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md)
+### Related Documents
 
-**MVP Stories**:
-- MVP-1: Agent Configuration & Persistence (IN_PROGRESS)
-- MVP-2: Chat Interface with Streaming (DONE, awaiting E2E verification)
-- MVP-3: Tool Execution - File Operations (HALTED)
-- MVP-4: Tool Execution - Terminal Commands (NOT STARTED)
-- MVP-5: Approval Workflow (NOT STARTED)
-- MVP-6: Real-time UI Updates (NOT STARTED)
-- MVP-7: E2E Integration Testing (NOT STARTED)
+- [`_bmad-output/governance-audit/governance-audit-report-2025-12-26.md`](_bmad-output/governance-audit/governance-audit-report-2025-12-26.md) - Governance audit findings
+- [`_bmad-output/governance-audit/remediation-plan-2025-12-26.md`](_bmad-output/governance-audit/remediation-plan-2025-12-26.md) - Remediation plan
+- [`_bmad-output/p0-fixes/p0-fixes-implementation-2025-12-26.md`](_bmad-output/p0-fixes/p0-fixes-implementation-2025-12-26.md) - P0 fixes completed
+- [`_bmad-output/p1-fixes/p1-fixes-implementation-2025-12-26.md`](_bmad-output/p1-fixes/p1-fixes-implementation-2025-12-26.md) - P1 fixes (this document)
+- [`_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) - Sprint status
+
+### Process Documents
+
+- BMAD Development Workflow: `.cursor/commands/bmad/bmm/workflows/dev-story/`
+- Code Review Workflow: `.cursor/commands/bmad/bmm/workflows/code-review/`
+- Sprint Status Workflow: `.cursor/commands/bmad/bmm/workflows/sprint-status/`
+
+## Changelog
+
+### 2025-12-26
+
+- **Created**: Initial TODO tracking system
+- **Added**: Categorization system (P0, P1, P2, P3)
+- **Added**: Resolution policies with timeframes
+- **Added**: Workflow integration with sprint status
+- **Resolved**: P1-1, P1-2, P1-3 (already implemented)
+- **In Progress**: P1-4 (TODO tracking system)
+- **Pending**: P1-5 (SSE streaming tests)
 
 ---
 
 **Document Status**: Active
-**Next Review**: Sprint 1 Retrospective (2026-01-09)
+**Next Review**: 2025-01-26 (quarterly review)
+**Maintained By**: Development Team

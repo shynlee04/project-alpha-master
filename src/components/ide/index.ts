@@ -5,7 +5,6 @@
  */
 
 // Agent Components
-export { AgentCard } from './AgentCard';
 export { AgentChatPanel } from './AgentChatPanel';
 export { AgentsPanel } from './AgentsPanel';
 
@@ -17,7 +16,6 @@ export { FeatureSearch } from './FeatureSearch';
 
 // Editor Components
 export { ExplorerPanel } from './ExplorerPanel';
-export { UnifiedNavigation } from './UnifiedNavigation';
 
 // File Tree Components
 export * as FileTree from './FileTree';

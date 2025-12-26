@@ -52,7 +52,7 @@ export interface TerminalPanelProps {
     /** Whether initial sync has completed */
     initialSyncCompleted?: boolean;
     /** Permission state for file system access */
-    permissionState?: 'prompt' | 'granted' | 'denied';
+    permissionState?: 'unknown' | 'prompt' | 'granted' | 'denied';
     /** Optional className for outer container */
     className?: string;
 }

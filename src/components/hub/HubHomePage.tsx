@@ -96,10 +96,7 @@ export const HubHomePage: React.FC = () => {
       description: t('hub.portals.ideWorkspaceDesc', 'Open your projects in the full IDE'),
       icon: <TerminalIcon className="text-primary" />,
       topic: 'Workspace',
-      onClick: () =>
-        projects && projects.length > 0
-          ? handleProjectClick(projects[0].id)
-          : handleOpenFolder(),
+      onClick: () => navigate({ to: '/ide' }),
     },
     {
       id: 'portal-agents',
