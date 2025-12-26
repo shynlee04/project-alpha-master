@@ -907,5 +907,98 @@
   "error.reload": "Reload",
   "error.dismiss": "Dismiss",
   "error.goHome": "Go Home",
-  "error.action": "Action"
+  "error.action": "Action",
+  "hub": {
+    "home": "Home",
+    "ide": "IDE Workspace",
+    "agents": "Agent Management",
+    "knowledge": "Knowledge Hub",
+    "settings": "Settings",
+    "sidebar": {
+      "toggle": "Toggle Sidebar",
+      "expand": "Expand Sidebar",
+      "collapse": "Collapse Sidebar"
+    }
+  },
+  "topic": {
+    "aiPoweredDev": {
+      "title": "AI-Powered Development",
+      "description": "Experience the future of browser-based development. Zero setup. 100% Privacy. AI agents that execute, not just suggest.",
+      "action": "Start Coding"
+    },
+    "privacyFirst": {
+      "title": "Privacy-First Workspace",
+      "description": "No servers. No data tracking. Your code never leaves your browser. Secure, private AI-assisted development for enterprise teams.",
+      "action": "Configure Workspace"
+    },
+    "classroomReady": {
+      "title": "Classroom-Ready IDE",
+      "description": "Teach coding 3x more effectively with AI-assisted learning. Instant classroom setup with no installation required.",
+      "action": "Explore Education"
+    },
+    "knowledgeSynthesis": {
+      "title": "Knowledge Synthesis Hub",
+      "description": "Transform scattered knowledge into living, interactive wisdom. Visual source cards, AI chat with sources, concept mind maps.",
+      "action": "Explore Knowledge"
+    },
+    "agentOrchestration": {
+      "title": "Agent Orchestration Center",
+      "description": "Teams of fully-aware agents orchestrating and managing your work/projects. Personalized workspaces for every workflow.",
+      "action": "Configure Agents"
+    }
+  },
+  "projects": {
+    "recent": "Recent Projects",
+    "new": "New Project",
+    "openFolder": "Open Folder",
+    "lastEdited": "Last edited",
+    "templates": "Project Templates",
+    "starterKits": "Starter Kits"
+  },
+  "portal": {
+    "ideWorkspace": "IDE Workspace",
+    "ideWorkspaceDesc": "Full IDE with editor, terminal, and file tree",
+    "agentCenter": "Agent Management Center",
+    "agentCenterDesc": "Configure and manage AI agents",
+    "knowledgeHub": "Knowledge Synthesis Hub",
+    "knowledgeHubDesc": "Visual knowledge canvas and AI synthesis",
+    "settings": "Settings",
+    "settingsDesc": "Preferences, language, theme, shortcuts"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "projects": "Projects",
+    "workspace": "Workspace",
+    "navigateTo": "Navigate to",
+    "back": "Back",
+    "forward": "Forward"
+  },
+  "breadcrumbs.home": "__STRING_NOT_TRANSLATED__",
+  "breadcrumbs.projects": "__STRING_NOT_TRANSLATED__",
+  "breadcrumbs.workspace": "__STRING_NOT_TRANSLATED__",
+  "projects.recent": "__STRING_NOT_TRANSLATED__",
+  "projects.new": "__STRING_NOT_TRANSLATED__",
+  "projects.lastEdited": "__STRING_NOT_TRANSLATED__",
+  "projects.openFolder": "__STRING_NOT_TRANSLATED__",
+  "home": "__STRING_NOT_TRANSLATED__",
+  "ide": "__STRING_NOT_TRANSLATED__",
+  "knowledge": "__STRING_NOT_TRANSLATED__",
+  "settings": "__STRING_NOT_TRANSLATED__",
+  "sidebar.toggle": "__STRING_NOT_TRANSLATED__",
+  "navigateTo": "__STRING_NOT_TRANSLATED__",
+  "bentoCardPreview.quickStart": "__STRING_NOT_TRANSLATED__",
+  "bentoCard.ariaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchPlaceholder": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilterAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.allTopics": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilter": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.gridAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.noResults": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.tryDifferentSearch": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicGettingStarted": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicAIAgent": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicTerminal": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicSettings": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.title": "__STRING_NOT_TRANSLATED__"
 }

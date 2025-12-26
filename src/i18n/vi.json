@@ -913,5 +913,98 @@
   "error.reload": "Reload",
   "error.dismiss": "Dismiss",
   "error.goHome": "Go Home",
-  "error.action": "Action"
+  "error.action": "Action",
+  "hub": {
+    "home": "Trang chủ",
+    "ide": "Không gian làm việc IDE",
+    "agents": "Quản lý Agent",
+    "knowledge": "Trung tâm Kiến thức",
+    "settings": "Cài đặt",
+    "sidebar": {
+      "toggle": "Bật/Tắt Thanh bên",
+      "expand": "Mở rộng Thanh bên",
+      "collapse": "Thu gọn Thanh bên"
+    }
+  },
+  "topic": {
+    "aiPoweredDev": {
+      "title": "Phát triển được hỗ trợ bởi AI",
+      "description": "Trải nghiệm tương lai của phát triển dựa trên trình duyệt. Không cần cài đặt. 100% Riêng tư. Các agent AI thực thi, không chỉ đề xuất.",
+      "action": "Bắt đầu Lập trình"
+    },
+    "privacyFirst": {
+      "title": "Không gian làm việc Ưu tiên Riêng tư",
+      "description": "Không có máy chủ. Không theo dõi dữ liệu. Mã của bạn không bao giờ rời trình duyệt. Phát triển được hỗ trợ bởi AI và riêng tư cho các nhóm doanh nghiệp.",
+      "action": "Cấu hình Không gian làm việc"
+    },
+    "classroomReady": {
+      "title": "IDE Sẵn sàng cho Lớp học",
+      "description": "Dạy lập trình hiệu quả hơn 3 lần với sự hỗ trợ của AI. Cài đặt lớp học tức thì mà không cần cài đặt.",
+      "action": "Khám phá Giáo dục"
+    },
+    "knowledgeSynthesis": {
+      "title": "Trung tâm Tổng hợp Kiến thức",
+      "description": "Chuyển đổi kiến thức phân tán thành trí tuệ sống, tương tác. Thẻ nguồn trực quan, trò chuyện AI với nguồn, sơ đồ khái niệm.",
+      "action": "Khám phá Kiến thức"
+    },
+    "agentOrchestration": {
+      "title": "Trung tâm Điều phối Agent",
+      "description": "Các đội agent hoàn toàn nhận thức điều phối và quản lý công việc/dự án của bạn. Không gian làm việc được cá nhân hóa cho mọi quy trình.",
+      "action": "Cấu hình Agent"
+    }
+  },
+  "projects": {
+    "recent": "Dự án gần đây",
+    "new": "Dự án mới",
+    "openFolder": "Mở thư mục",
+    "lastEdited": "Chỉnh sửa lần cuối",
+    "templates": "Mẫu dự án",
+    "starterKits": "Bộ khởi đầu"
+  },
+  "portal": {
+    "ideWorkspace": "Không gian làm việc IDE",
+    "ideWorkspaceDesc": "IDE đầy đủ với trình soạn thảo, terminal và cây tệp",
+    "agentCenter": "Trung tâm Quản lý Agent",
+    "agentCenterDesc": "Cấu hình và quản lý các AI agent",
+    "knowledgeHub": "Trung tâm Tổng hợp Kiến thức",
+    "knowledgeHubDesc": "Bảng vẽ kiến thức trực quan và tổng hợp AI",
+    "settings": "Cài đặt",
+    "settingsDesc": "Tùy chọn, ngôn ngữ, chủ đề, phím tắt"
+  },
+  "breadcrumbs": {
+    "home": "Trang chủ",
+    "projects": "Dự án",
+    "workspace": "Không gian làm việc",
+    "navigateTo": "Điều hướng đến",
+    "back": "Quay lại",
+    "forward": "Tiến tới"
+  },
+  "breadcrumbs.home": "__STRING_NOT_TRANSLATED__",
+  "breadcrumbs.projects": "__STRING_NOT_TRANSLATED__",
+  "breadcrumbs.workspace": "__STRING_NOT_TRANSLATED__",
+  "projects.recent": "__STRING_NOT_TRANSLATED__",
+  "projects.new": "__STRING_NOT_TRANSLATED__",
+  "projects.lastEdited": "__STRING_NOT_TRANSLATED__",
+  "projects.openFolder": "__STRING_NOT_TRANSLATED__",
+  "home": "__STRING_NOT_TRANSLATED__",
+  "ide": "__STRING_NOT_TRANSLATED__",
+  "knowledge": "__STRING_NOT_TRANSLATED__",
+  "settings": "__STRING_NOT_TRANSLATED__",
+  "sidebar.toggle": "__STRING_NOT_TRANSLATED__",
+  "navigateTo": "__STRING_NOT_TRANSLATED__",
+  "bentoCardPreview.quickStart": "__STRING_NOT_TRANSLATED__",
+  "bentoCard.ariaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchPlaceholder": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilterAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.allTopics": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilter": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.gridAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.noResults": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.tryDifferentSearch": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicGettingStarted": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicAIAgent": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicTerminal": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicSettings": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.title": "__STRING_NOT_TRANSLATED__"
 }
