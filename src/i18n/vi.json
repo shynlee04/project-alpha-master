@@ -235,11 +235,10 @@
     }
   },
   "error": {
-    "something_went_wrong": "Đã xảy ra lỗi",
-    "unexpected_error_description": "Chúng tôi rất tiếc, nhưng đã xảy ra một lỗi không mong muốn.",
-    "technical_details": "Chi tiết kỹ thuật",
-    "try_again": "Thử lại",
-    "reload_page": "Tải lại Trang"
+    "network": "Lỗi mạng",
+    "timeout": "Hết thời gian yêu cầu",
+    "permission": "Quyền bị từ chối",
+    "unknown": "Lỗi không xác định"
   },
   "sidebar": {
     "explorer": "Trình khám phá",
@@ -844,5 +843,61 @@
   "quickActions.agentChat": "Trò chuyện với tác nhân",
   "quickActions.shortcuts": "Lối tắt bàn phím",
   "quickActions.help": "Trợ giúp",
-  "quickActions.ariaLabel": "Hành động nhanh"
+  "quickActions.ariaLabel": "Hành động nhanh",
+  "errorState": {
+    "title": "Lỗi",
+    "default": "Đã xảy ra lỗi",
+    "critical": "Lỗi nghiêm trọng",
+    "warning": "Cảnh báo",
+    "description": "Đã xảy ra sự cố",
+    "retry": "Thử lại",
+    "reload": "Tải lại",
+    "dismiss": "Bỏ qua",
+    "home": "Về trang chủ",
+    "technicalDetails": "Chi tiết kỹ thuật"
+  },
+  "loadingState": {
+    "default": "Đang tải...",
+    "message": "Vui lòng chờ trong khi chúng tôi tải nội dung của bạn"
+  },
+  "emptyState": {
+    "message": "Không có gì ở đây",
+    "title": "Trống",
+    "action": {
+      "create": "Tạo mới",
+      "refresh": "Làm mới",
+      "browse": "Duyệt tệp"
+    }
+  },
+  "toast": {
+    "error": "Lỗi",
+    "success": "Thành công",
+    "info": "Thông tin",
+    "warning": "Cảnh báo",
+    "loading": "Đang tải..."
+  },
+  "agents.config.openaiCompatible.modelsLoaded_0": "Found {{count}} models",
+  "chat.codeBlock.lines_0": " lines",
+  "chat.diff.linesHidden_0": " lines hidden",
+  "time.agoSeconds_0": "__STRING_NOT_TRANSLATED__",
+  "time.agoMinutes_0": "__STRING_NOT_TRANSLATED__",
+  "time.agoHours_0": "__STRING_NOT_TRANSLATED__",
+  "empty.message": "Nothing here",
+  "empty.title": "Empty",
+  "empty.action.create": "Create New",
+  "empty.action.refresh": "Refresh",
+  "empty.action.browse": "Browse Files",
+  "error.title": "Something went wrong",
+  "error.action.retry": "Retry",
+  "error.action.reload": "Reload",
+  "error.action.dismiss": "Dismiss",
+  "error.action.home": "Go Home",
+  "error.showDetails": "Show technical details",
+  "loading.message": "Loading...",
+  "loading.progress": "Progress",
+  "error.retry": "Retry",
+  "error.reload": "Reload",
+  "error.dismiss": "Dismiss",
+  "error.goHome": "Go Home",
+  "error.action": "Action"
 }

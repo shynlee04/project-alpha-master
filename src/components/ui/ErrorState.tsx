@@ -48,19 +48,13 @@ export interface ErrorStateProps {
  * CVA variants for error state
  */
 const errorStateVariants = cva(
-    [
-        'base',
-        'variant',
-    ],
+    // Base styles
+    'flex flex-col items-center justify-center p-6 rounded-lg border transition-all duration-200',
     {
-        base: [
-            'flex flex-col items-center justify-center p-6 rounded-lg border',
-            'transition-all duration-200',
-        ],
         variants: {
             variant: {
                 default: 'bg-error-500/10 border-error-500/30 text-error-100',
-                critical: 'bg-destructive/10 border-destructive/30 text-destructive',
+                critical: 'bg-destructive/10 border-destructive/30 text-destructive-100',
                 warning: 'bg-warning-500/10 border-warning-500/30 text-warning-100',
             },
         },
@@ -92,99 +86,81 @@ export function ErrorState({
     icon,
 }: ErrorStateProps) {
     const { t } = useTranslation()
-
+    
     const errorTitle = title || t('error.title', 'Something went wrong')
     const isDev = import.meta.env.DEV
-
+    
     // Get action icon based on action type
     const getActionIcon = () => {
         switch (action) {
             case 'retry':
-                return <RefreshCw className="w-4 h-4" />
+                return <RefreshCw className="w-5 h-5" />
             case 'reload':
-                return <RefreshCw className="w-4 h-4" />
+                return <RefreshCw className="w-5 h-5" />
             case 'dismiss':
-                return <X className="w-4 h-4" />
+                return <X className="w-5 h-5" />
             case 'home':
-                return <Home className="w-4 h-4" />
+                return <Home className="w-5 h-5" />
             default:
                 return null
         }
     }
-
-    const getActionText = () => {
+    
+    // Get action label based on action type
+    const getActionLabel = () => {
         switch (action) {
             case 'retry':
-                return t('error.retry', 'Retry')
+                return t('error.action.retry', 'Retry')
             case 'reload':
-                return t('error.reload', 'Reload Page')
+                return t('error.action.reload', 'Reload')
             case 'dismiss':
-                return t('error.dismiss', 'Dismiss')
+                return t('error.action.dismiss', 'Dismiss')
             case 'home':
-                return t('error.goHome', 'Go Home')
+                return t('error.action.home', 'Go Home')
             default:
-                return null
+                return ''
         }
     }
-
-    const handleAction = () => {
-        if (onAction) {
-            onAction()
-        }
-    }
-
+    
     return (
         <div className={cn(errorStateVariants({ variant }), className)}>
-            {/* Error Icon */}
-            <div className="mb-4">
-                {icon || (
-                    <div className="w-16 h-16 rounded-full bg-error-500/20 flex items-center justify-center">
-                        <AlertCircle className="w-8 h-8 text-error-500" />
-                    </div>
-                )}
-            </div>
-
-            {/* Error Title */}
-            <h2 className="text-xl font-semibold mb-2">
-                {errorTitle}
-            </h2>
-
-            {/* Error Message */}
-            <p className="text-sm mb-4 text-center max-w-md">
-                {error}
-            </p>
-
-            {/* Technical Details (Development Only) */}
+            {/* Icon */}
+            {icon || (
+                <div className="mb-4 rounded-full bg-current/10 p-4">
+                    <AlertCircle className="w-12 h-12" />
+                </div>
+            )}
+            
+            {/* Title */}
+            <h3 className="text-xl font-bold mb-2">{errorTitle}</h3>
+            
+            {/* Error message */}
+            <p className="text-sm opacity-90 mb-4">{error}</p>
+            
+            {/* Action button */}
+            {action && onAction && (
+                <button
+                    onClick={onAction}
+                    className="inline-flex items-center gap-2 px-6 py-2 bg-primary-500 text-neutral-950 rounded-none font-medium hover:bg-primary-600 active:bg-primary-700 transition-all hover:scale-105 active:scale-95"
+                >
+                    {getActionIcon()}
+                    <span>{getActionLabel()}</span>
+                </button>
+            )}
+            
+            {/* Technical details (development only) */}
             {isDev && showDetails && (
-                <details className="mb-4 w-full max-w-md">
-                    <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors">
-                        {t('error.technicalDetails', 'Technical Details')}
+                <details className="mt-4 text-xs opacity-70">
+                    <summary className="cursor-pointer hover:opacity-100 transition-opacity">
+                        {t('error.showDetails', 'Show technical details')}
                     </summary>
-                    <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto max-h-32 text-left">
+                    <pre className="mt-2 overflow-auto rounded bg-black/20 p-2">
                         {error}
                     </pre>
                 </details>
-            )}
-
-            {/* Action Button */}
-            {action && onAction && (
-                <button
-                    onClick={handleAction}
-                    className={cn(
-                        'flex items-center gap-2 px-4 py-2 rounded-md',
-                        'bg-primary text-primary-foreground',
-                        'hover:bg-primary/90 transition-colors',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50',
-                        'disabled:opacity-50 disabled:cursor-not-allowed'
-                    )}
-                    type="button"
-                >
-                    {getActionIcon()}
-                    <span>{getActionText()}</span>
-                </button>
             )}
         </div>
     )
 }
 
-export default ErrorState
+export type ErrorStateVariants = VariantProps<typeof errorStateVariants>

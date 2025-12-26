@@ -2,8 +2,8 @@
  * Skeleton Loader Component
  * @module components/ui/SkeletonLoader
  *
- * Skeleton loading patterns for content placeholders with 8-bit design system.
- * Provides visual feedback while content is loading.
+ * Skeleton loading patterns for content placeholders.
+ * Follows 8-bit design system with CVA variants.
  */
 
 import React from 'react'
@@ -11,7 +11,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 /**
- * Skeleton variant type
+ * Skeleton variant
  */
 export type SkeletonVariant = 'text' | 'title' | 'paragraph' | 'avatar' | 'card' | 'list'
 
@@ -23,11 +23,11 @@ export interface SkeletonLoaderProps {
     variant?: SkeletonVariant
     /** Number of lines (for text/paragraph variants) */
     lines?: number
-    /** Width of skeleton */
+    /** Custom width */
     width?: string | number
-    /** Height of skeleton */
+    /** Custom height */
     height?: string | number
-    /** Whether skeleton is animating */
+    /** Enable/disable animation */
     animate?: boolean
     /** Additional CSS classes */
     className?: string
@@ -37,16 +37,17 @@ export interface SkeletonLoaderProps {
  * CVA variants for skeleton loader
  */
 const skeletonVariants = cva(
-    'animate-pulse rounded-md',
+    // Base styles
+    'rounded bg-neutral-800 animate-pulse',
     {
         variants: {
             variant: {
-                text: 'h-4 bg-muted',
-                title: 'h-6 bg-muted',
-                paragraph: 'h-4 bg-muted',
-                avatar: 'h-12 w-12 rounded-full bg-muted',
-                card: 'h-32 bg-muted',
-                list: 'h-12 bg-muted',
+                text: 'h-4 w-full max-w-xs',
+                title: 'h-6 w-48 max-w-xs',
+                paragraph: 'space-y-2 w-full max-w-md',
+                avatar: 'h-12 w-12 rounded-full max-w-xs',
+                card: 'h-32 w-full rounded-lg',
+                list: 'space-y-3 w-full',
             },
         },
     }
@@ -55,13 +56,11 @@ const skeletonVariants = cva(
 /**
  * Skeleton Loader Component
  *
- * Displays skeleton placeholders for various content types.
- * Supports multiple variants for different UI patterns.
+ * Displays skeleton loading patterns for different content types.
+ * Supports multiple variants for different loading contexts.
  *
  * @example
- * <SkeletonLoader variant="text" lines={3} />
- * <SkeletonLoader variant="avatar" />
- * <SkeletonLoader variant="card" />
+ * <SkeletonLoader variant="paragraph" lines={3} />
  */
 export function SkeletonLoader({
     variant = 'text',
@@ -71,103 +70,143 @@ export function SkeletonLoader({
     animate = true,
     className,
 }: SkeletonLoaderProps) {
-    const baseClassName = cn(
-        skeletonVariants({ variant }),
-        !animate && 'animate-none',
-        className
-    )
-
-    const style: React.CSSProperties = {}
-    if (width) style.width = typeof width === 'number' ? `${width}px` : width
-    if (height) style.height = typeof height === 'number' ? `${height}px` : height
-
-    // For text and paragraph variants with multiple lines
-    if ((variant === 'text' || variant === 'paragraph') && lines > 1) {
+    const baseClasses = cn(skeletonVariants({ variant }), className)
+    
+    // Render different skeleton patterns based on variant
+    if (variant === 'text') {
         return (
-            <div className="space-y-2">
+            <div className={baseClasses} style={{ width, height }}>
+                <div className="h-full w-2/3 bg-neutral-700 rounded-sm" />
+            </div>
+        )
+    }
+    
+    if (variant === 'title') {
+        return (
+            <div className={baseClasses} style={{ width, height }}>
+                <div className="h-full w-3/4 bg-neutral-700 rounded-sm" />
+            </div>
+        )
+    }
+    
+    if (variant === 'paragraph') {
+        return (
+            <div className={cn(baseClasses, 'flex flex-col gap-2')}>
                 {Array.from({ length: lines }).map((_, index) => (
                     <div
                         key={index}
-                        className={baseClassName}
-                        style={style}
-                        role="presentation"
-                        aria-label="Loading content"
+                        className="h-4 w-full bg-neutral-800 rounded-sm"
+                        style={{ width: typeof width === 'number' ? `${width}%` : width }}
                     />
                 ))}
             </div>
         )
     }
-
-    return (
-        <div
-            className={baseClassName}
-            style={style}
-            role="presentation"
-            aria-label="Loading content"
-        />
-    )
+    
+    if (variant === 'avatar') {
+        return (
+            <div className={baseClasses} style={{ width, height }}>
+                <div className="h-full w-full bg-neutral-700 rounded-full" />
+            </div>
+        )
+    }
+    
+    if (variant === 'card') {
+        return (
+            <div className={baseClasses} style={{ width, height }}>
+                <div className="space-y-3">
+                    {/* Card header */}
+                    <div className="h-6 w-3/4 bg-neutral-700 rounded-sm mb-3" />
+                    {/* Card body */}
+                    <div className="space-y-2">
+                        <div className="h-4 w-full bg-neutral-800 rounded-sm" />
+                        <div className="h-4 w-full bg-neutral-800 rounded-sm" />
+                        <div className="h-4 w-2/3 bg-neutral-800 rounded-sm" />
+                    </div>
+                    {/* Card footer */}
+                    <div className="h-4 w-1/2 bg-neutral-800 rounded-sm" />
+                </div>
+            </div>
+        )
+    }
+    
+    if (variant === 'list') {
+        return (
+            <div className={cn(baseClasses, 'space-y-3')}>
+                {Array.from({ length: lines || 3 }).map((_, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                        <div className="h-12 w-12 bg-neutral-700 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                            <div className="h-3 w-24 bg-neutral-800 rounded-sm" />
+                            <div className="h-3 w-full bg-neutral-800 rounded-sm" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+    
+    return null
 }
+
+export type SkeletonLoaderVariants = VariantProps<typeof skeletonVariants>
 
 /**
  * Skeleton Card Component
- * A pre-configured skeleton for card content
+ * Pre-configured card skeleton with header and body.
  */
 export interface SkeletonCardProps {
-    /** Whether to show avatar */
-    showAvatar?: boolean
-    /** Number of text lines */
-    lines?: number
+    /** Enable/disable animation */
+    animate?: boolean
     /** Additional CSS classes */
     className?: string
 }
 
-export function SkeletonCard({
-    showAvatar = false,
-    lines = 3,
-    className,
-}: SkeletonCardProps) {
+export function SkeletonCard({ animate = true, className }: SkeletonCardProps) {
     return (
-        <div className={cn('p-4 border rounded-md', className)}>
-            {showAvatar && (
-                <SkeletonLoader variant="avatar" className="mb-3" />
-            )}
-            <SkeletonLoader variant="title" className="mb-2" />
-            <SkeletonLoader variant="paragraph" lines={lines} />
+        <div className={cn('rounded-lg border border-neutral-700 bg-neutral-900/50 p-4', animate && 'animate-pulse', className)}>
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4">
+                <div className="h-12 w-12 bg-neutral-700 rounded-full" />
+                <div className="flex-1 space-y-2">
+                    <div className="h-4 w-32 bg-neutral-800 rounded-sm" />
+                    <div className="h-3 w-48 bg-neutral-800 rounded-sm" />
+                </div>
+            </div>
+            
+            {/* Body */}
+            <div className="space-y-3">
+                <div className="h-4 w-full bg-neutral-800 rounded-sm" />
+                <div className="h-4 w-full bg-neutral-800 rounded-sm" />
+                <div className="h-4 w-2/3 bg-neutral-800 rounded-sm" />
+                <div className="h-4 w-full bg-neutral-800 rounded-sm" />
+            </div>
         </div>
     )
 }
 
 /**
  * Skeleton List Component
- * A pre-configured skeleton for list items
+ * Pre-configured list skeleton with avatar and text.
  */
 export interface SkeletonListProps {
     /** Number of items */
     items?: number
-    /** Whether to show avatar for each item */
-    showAvatar?: boolean
-    /** Number of text lines per item */
-    lines?: number
+    /** Enable/disable animation */
+    animate?: boolean
     /** Additional CSS classes */
     className?: string
 }
 
-export function SkeletonList({
-    items = 5,
-    showAvatar = false,
-    lines = 2,
-    className,
-}: SkeletonListProps) {
+export function SkeletonList({ items = 3, animate = true, className }: SkeletonListProps) {
     return (
         <div className={cn('space-y-3', className)}>
             {Array.from({ length: items }).map((_, index) => (
-                <div key={index} className="flex items-start gap-3">
-                    {showAvatar && (
-                        <SkeletonLoader variant="avatar" />
-                    )}
+                <div key={index} className="flex items-center gap-3">
+                    <div className={cn('h-12 w-12 bg-neutral-700 rounded-full', animate && 'animate-pulse')} />
                     <div className="flex-1 space-y-2">
-                        <SkeletonLoader variant="title" />
-                        <SkeletonLoader variant="paragraph" lines={lines} />
+                        <div className={cn('h-3 w-32 bg-neutral-800 rounded-sm', animate && 'animate-pulse')} />
+                        <div className={cn('h-3 w-full bg-neutral-800 rounded-sm', animate && 'animate-pulse')} />
                     </div>
                 </div>
             ))}
@@ -177,37 +216,45 @@ export function SkeletonList({
 
 /**
  * Skeleton Table Component
- * A pre-configured skeleton for table rows
+ * Pre-configured table skeleton with header and rows.
  */
 export interface SkeletonTableProps {
     /** Number of rows */
     rows?: number
     /** Number of columns */
     columns?: number
+    /** Enable/disable animation */
+    animate?: boolean
     /** Additional CSS classes */
     className?: string
 }
 
-export function SkeletonTable({
-    rows = 5,
-    columns = 4,
-    className,
-}: SkeletonTableProps) {
+export function SkeletonTable({ rows = 3, columns = 4, animate = true, className }: SkeletonTableProps) {
     return (
-        <div className={cn('space-y-2', className)}>
-            {Array.from({ length: rows }).map((_, rowIndex) => (
-                <div key={rowIndex} className="flex gap-2">
-                    {Array.from({ length: columns }).map((_, colIndex) => (
-                        <SkeletonLoader
-                            key={`${rowIndex}-${colIndex}`}
-                            variant="text"
-                            className="flex-1"
-                        />
-                    ))}
-                </div>
-            ))}
+        <div className={cn('w-full overflow-hidden', className)}>
+            {/* Table header */}
+            <div className="flex gap-2 mb-2">
+                {Array.from({ length: columns }).map((_, index) => (
+                    <div
+                        key={`header-${index}`}
+                        className={cn('h-8 w-full bg-neutral-800 rounded-sm', animate && 'animate-pulse')}
+                    />
+                ))}
+            </div>
+            
+            {/* Table rows */}
+            <div className="space-y-2">
+                {Array.from({ length: rows }).map((_, rowIndex) => (
+                    <div key={`row-${rowIndex}`} className="flex gap-2">
+                        {Array.from({ length: columns }).map((_, colIndex) => (
+                            <div
+                                key={`row-${rowIndex}-col-${colIndex}`}
+                                className={cn('h-4 w-full bg-neutral-800/50 rounded-sm', animate && 'animate-pulse')}
+                            />
+                        ))}
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }
-
-export default SkeletonLoader

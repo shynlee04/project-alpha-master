@@ -235,11 +235,10 @@
     }
   },
   "error": {
-    "something_went_wrong": "Something went wrong",
-    "unexpected_error_description": "We're sorry, but an unexpected error has occurred.",
-    "technical_details": "Technical Details",
-    "try_again": "Try Again",
-    "reload_page": "Reload Page"
+    "network": "Network error",
+    "timeout": "Request timeout",
+    "permission": "Permission denied",
+    "unknown": "Unknown error"
   },
   "sidebar": {
     "explorer": "Explorer",
@@ -844,5 +843,55 @@
   "quickActions.agentChat": "Agent Chat",
   "quickActions.shortcuts": "Keyboard Shortcuts",
   "quickActions.help": "Help",
-  "quickActions.ariaLabel": "Quick Actions"
+  "quickActions.ariaLabel": "Quick Actions",
+  "errorState": {
+    "title": "Error",
+    "default": "An error occurred",
+    "critical": "Critical Error",
+    "warning": "Warning",
+    "description": "Something went wrong",
+    "retry": "Retry",
+    "reload": "Reload",
+    "dismiss": "Dismiss",
+    "home": "Go Home",
+    "technicalDetails": "Technical Details"
+  },
+  "loadingState": {
+    "default": "Loading...",
+    "message": "Please wait while we load your content"
+  },
+  "emptyState": {
+    "message": "Nothing here",
+    "title": "Empty",
+    "action": {
+      "create": "Create New",
+      "refresh": "Refresh",
+      "browse": "Browse Files"
+    }
+  },
+  "toast": {
+    "error": "Error",
+    "success": "Success",
+    "info": "Information",
+    "warning": "Warning",
+    "loading": "Loading..."
+  },
+  "empty.message": "Nothing here",
+  "empty.title": "Empty",
+  "empty.action.create": "Create New",
+  "empty.action.refresh": "Refresh",
+  "empty.action.browse": "Browse Files",
+  "error.title": "Something went wrong",
+  "error.action.retry": "Retry",
+  "error.action.reload": "Reload",
+  "error.action.dismiss": "Dismiss",
+  "error.action.home": "Go Home",
+  "error.showDetails": "Show technical details",
+  "loading.message": "Loading...",
+  "loading.progress": "Progress",
+  "error.retry": "Retry",
+  "error.reload": "Reload",
+  "error.dismiss": "Dismiss",
+  "error.goHome": "Go Home",
+  "error.action": "Action"
 }

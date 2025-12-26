@@ -7,6 +7,8 @@
  *
  * @epic Epic-23 Story P1.1
  * @integration Design tokens implementation for consistent styling
+ * @epic Epic-23 Story P1.9
+ * @integration Error boundaries for critical components
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -25,6 +27,9 @@ import { TerminalPanel } from './TerminalPanel';
 import { ChatPanelWrapper } from './ChatPanelWrapper';
 import { PermissionOverlay } from './PermissionOverlay';
 import { MinViewportWarning } from './MinViewportWarning';
+
+// P1.9: Error boundary for critical components
+import { WithErrorBoundary } from '@/components/common/ErrorBoundary';
 
 // IDE components
 import { FileTree } from '../ide/FileTree';
@@ -197,12 +202,25 @@ export function IDELayout(): React.JSX.Element {
                           <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-1 min-h-0">
-                          <MonacoEditor
-                            openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
-                            onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
-                            initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
-                            onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
-                          />
+                          <WithErrorBoundary
+                            fallback={
+                              <div className="h-full flex items-center justify-center text-muted-foreground">
+                                <div className="text-center">
+                                  <p className="text-sm font-medium">Editor Error</p>
+                                  <p className="text-xs text-muted-foreground/70 mt-1">
+                                    The code editor encountered an error. Please refresh the page.
+                                  </p>
+                                </div>
+                              </div>
+                            }
+                          >
+                            <MonacoEditor
+                              openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
+                              onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
+                              initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                              onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
+                            />
+                          </WithErrorBoundary>
                         </CardContent>
                       </Card>
                     </ResizablePanel>
@@ -220,7 +238,20 @@ export function IDELayout(): React.JSX.Element {
                           <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Preview</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-1 min-h-0">
-                          <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                          <WithErrorBoundary
+                            fallback={
+                              <div className="h-full flex items-center justify-center text-muted-foreground">
+                                <div className="text-center">
+                                  <p className="text-sm font-medium">Preview Error</p>
+                                  <p className="text-xs text-muted-foreground/70 mt-1">
+                                    The preview panel encountered an error.
+                                  </p>
+                                </div>
+                              </div>
+                            }
+                          >
+                            <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                          </WithErrorBoundary>
                         </CardContent>
                       </Card>
                     </ResizablePanel>
@@ -241,7 +272,20 @@ export function IDELayout(): React.JSX.Element {
                       <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Terminal</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
-                      <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
+                      <WithErrorBoundary
+                        fallback={
+                          <div className="h-full flex items-center justify-center text-muted-foreground">
+                            <div className="text-center">
+                              <p className="text-sm font-medium">Terminal Error</p>
+                              <p className="text-xs text-muted-foreground/70 mt-1">
+                                The terminal encountered an error. Please refresh the page.
+                              </p>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
+                      </WithErrorBoundary>
                     </CardContent>
                   </Card>
                 </ResizablePanel>
@@ -264,7 +308,20 @@ export function IDELayout(): React.JSX.Element {
                       <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 flex-1 min-h-0">
-                      <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
+                      <WithErrorBoundary
+                        fallback={
+                          <div className="h-full flex items-center justify-center text-muted-foreground">
+                            <div className="text-center">
+                              <p className="text-sm font-medium">Chat Error</p>
+                              <p className="text-xs text-muted-foreground/70 mt-1">
+                                The chat panel encountered an error. Please refresh the page.
+                              </p>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setIsChatVisible(false)} />
+                      </WithErrorBoundary>
                     </CardContent>
                   </Card>
                 </ResizablePanel>
@@ -301,29 +358,100 @@ function SidebarPanelRenderer({
   switch (activePanel) {
     case 'explorer':
       return (
-        <ExplorerPanel>
-          <FileTree
-            selectedPath={selectedFilePath}
-            onFileSelect={onFileSelect}
-            refreshKey={fileTreeRefreshKey}
-          />
-        </ExplorerPanel>
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Explorer Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The file explorer encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <ExplorerPanel>
+            <FileTree
+              selectedPath={selectedFilePath}
+              onFileSelect={onFileSelect}
+              refreshKey={fileTreeRefreshKey}
+            />
+          </ExplorerPanel>
+        </WithErrorBoundary>
       );
     case 'agents':
-      return <AgentsPanel />;
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Agents Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The agents panel encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <AgentsPanel />
+        </WithErrorBoundary>
+      );
     case 'search':
-      return <SearchPanel />;
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Search Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The search panel encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <SearchPanel />
+        </WithErrorBoundary>
+      );
     case 'settings':
-      return <SettingsPanel />;
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Settings Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The settings panel encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <SettingsPanel />
+        </WithErrorBoundary>
+      );
     default:
       return (
-        <ExplorerPanel>
-          <FileTree
-            selectedPath={selectedFilePath}
-            onFileSelect={onFileSelect}
-            refreshKey={fileTreeRefreshKey}
-          />
-        </ExplorerPanel>
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Explorer Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The file explorer encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <ExplorerPanel>
+            <FileTree
+              selectedPath={selectedFilePath}
+              onFileSelect={onFileSelect}
+              refreshKey={fileTreeRefreshKey}
+            />
+          </ExplorerPanel>
+        </WithErrorBoundary>
       );
   }
 }
