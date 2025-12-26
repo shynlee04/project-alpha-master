@@ -1,5 +1,4 @@
-import { IconProps } from './icon'
-import { BaseIcon } from './icon'
+import { IconProps, Icon } from './icon'
 
 /**
  * MinusIcon - 8-bit minus/minimize icon
@@ -11,9 +10,9 @@ import { BaseIcon } from './icon'
  * 
  * Design: 8-bit pixel-perfect horizontal line
  */
-export function MinusIcon({ size = 'md', className = '', color = 'default' }: IconProps) {
+export function MinusIcon({ size = 'md', className = '', variant = 'default' }: IconProps) {
     return (
-        <BaseIcon size={size} className={className} color={color} viewBox="0 0 24 24">
+        <Icon size={size} className={className} variant={variant} viewBox="0 0 24 24">
             {/* 8-bit minus icon - horizontal line with squared ends */}
             <rect
                 x="4"
@@ -23,6 +22,6 @@ export function MinusIcon({ size = 'md', className = '', color = 'default' }: Ic
                 fill="currentColor"
                 shapeRendering="crispEdges"
             />
-        </BaseIcon>
+        </Icon>
     )
 }

@@ -1,5 +1,4 @@
-import { IconProps } from './icon'
-import { BaseIcon } from './icon'
+import { IconProps, Icon } from './icon'
 
 /**
  * SearchIcon - 8-bit search icon
@@ -11,9 +10,9 @@ import { BaseIcon } from './icon'
  * 
  * Design: 8-bit magnifying glass with squared edges
  */
-export function SearchIcon({ size = 'md', className = '', color = 'default' }: IconProps) {
+export function SearchIcon({ size = 'md', className = '', variant = 'default' }: IconProps) {
     return (
-        <BaseIcon size={size} className={className} color={color} viewBox="0 0 24 24">
+        <Icon size={size} className={className} variant={variant} viewBox="0 0 24 24">
             {/* 8-bit search icon - magnifying glass with pixelated lens */}
             <circle
                 cx="11"
@@ -34,6 +33,6 @@ export function SearchIcon({ size = 'md', className = '', color = 'default' }: I
                 fill="currentColor"
                 shapeRendering="crispEdges"
             />
-        </BaseIcon>
+        </Icon>
     )
 }

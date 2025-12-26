@@ -53,6 +53,7 @@
 - [Source Tree Analysis](./source-tree-analysis.md) ✅
 - [Component Inventory](./component-inventory.md) ✅
 - [State Management](./state-management.md) ✅
+- [State Management Audit P1.10](./state-management-audit-p1.10-2025-12-26.md) ✅
 
 ### Development Guides
 
@@ -67,6 +68,51 @@
 | [Epics](./epics.md) | Epic and story breakdown (includes Epic 13) ✅ |
 | [UX Design](./ux-design.md) | UX design specification ✅ |
 | [Workflow Status](./bmm-workflow-status.yaml) | BMAD workflow tracking ✅ |
+| [Sprint Status](./sprint-artifacts/sprint-status-consolidated.yaml) | Consolidated sprint tracking ✅ |
+| [Design System 8-bit](./design-system-8bit-2025-12-25.md) | 8-bit design system foundation ✅ |
+
+### Sprint Artifacts & Retrospectives
+
+| Document | Description |
+|----------|-------------|
+| [Epic 13 Retrospective](./sprint-artifacts/epic-13-retrospective.md) | Terminal & Sync Stability |
+| [Epic 23 Retrospective](./sprint-artifacts/epic-23-retrospective.md) | UX/UI Modernization |
+| [Production Readiness Epic 13](./sprint-artifacts/production-readiness-epic-13-report.md) | Production hardening report |
+
+### Testing & Quality Assurance
+
+The project includes comprehensive test coverage across all major components:
+
+| Category | Test Files | Coverage |
+|----------|------------|----------|
+| **Components** | 14 test files | IDE layout, chat panels, file tree, sync status, agent config |
+| **Agent System** | 12 test files | Factory, providers, tools, facades, hooks |
+| **Events & State** | 3 test files | Event bus, workspace events, state stores |
+| **Filesystem** | 7 test files | FS adapter, sync planner, path guard |
+| **WebContainer** | 2 test files | Manager, terminal adapter |
+| **Internationalization** | 3 test files | i18n config, dashboard, workspace |
+| **Editor** | 1 test file | Language utilities |
+
+**Test Running Instructions:**
+```bash
+# Run all tests
+pnpm test
+
+# Run tests with coverage
+pnpm test --coverage
+
+# Run specific test file
+pnpm test src/components/ide/__tests__/AgentChatPanel.test.tsx
+
+# Run tests in watch mode
+pnpm test --watch
+```
+
+**Test Configuration:**
+- React components: `jsdom` environment
+- Library/unit tests: `node` environment
+- Test files co-located in `__tests__/` directories adjacent to source
+- Mock patterns: `vi.mock()` for external dependencies (TanStack AI, providers)
 
 ### To Be Generated
 
