@@ -365,6 +365,37 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 
 See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md) for complete state architecture details.
 
+### State Management Best Practices (P1.10 - 2025-12-26)
+**Status**: Audit completed - 1 P0 issue documented, refactoring recommended for future iteration
+
+**Audit Findings**:
+- **Zero Legacy State**: No TanStack Store usage found (migration complete)
+- **Zero Duplicate Stores**: All 6 Zustand stores are unique and serve distinct purposes
+- **1 P0 Issue Identified**: [`IDELayout.tsx`](src/components/layout/IDELayout.tsx) duplicates IDE state with local `useState` instead of using [`useIDEStore`](src/lib/state/ide-store.ts)
+
+**Recommended Refactoring** (deferred to avoid MVP-3 interference):
+1. Replace duplicated state in [`IDELayout.tsx`](src/components/layout/IDELayout.tsx) with Zustand hooks:
+   - `isChatVisible` → `useIDEStore(s => s.chatVisible)` + `setChatVisible()`
+   - `terminalTab` → `useIDEStore(s => s.terminalTab)` + `setTerminalTab()`
+   - `openFiles` → Use `useIDEStore` with local file content cache
+   - `activeFilePath` → `useIDEStore(s => s.activeFile)` + `setActiveFile()`
+
+2. Add local `fileContentCache` Map for ephemeral file content (not persisted)
+
+3. Update [`useIDEFileHandlers`](src/components/layout/hooks/useIDEFileHandlers.ts) to work with Zustand actions
+
+4. Remove duplicate state synchronization code (lines 142-148 in [`IDELayout.tsx`](src/components/layout/IDELayout.tsx))
+
+**State Architecture Summary**:
+- **Persisted State** (IndexedDB): [`useIDEStore`](src/lib/state/ide-store.ts) - open files, active file, panels, terminal tab, chat visibility
+- **Ephemeral State** (in-memory): [`useStatusBarStore`](src/lib/state/statusbar-store.ts), [`useFileSyncStatusStore`](src/lib/state/file-sync-status-store.ts)
+- **Agent State** (localStorage): [`useAgentsStore`](src/stores/agents.ts), [`useAgentSelectionStore`](src/stores/agent-selection.ts)
+- **UI State** (React Context): Workspace context, theme context
+
+**Key Principle**: Single source of truth - each state property has ONE owner (either Zustand, Context, or localStorage)
+
+**Reference**: See [`_bmad-output/state-management-audit-p1.10-2025-12-26.md`](_bmad-output/state-management-audit-p1.10-2025-12-26.md) for detailed audit findings and refactoring plan.
+
 ## Testing Notes
 
 - Mock `window.showDirectoryPicker` in tests
