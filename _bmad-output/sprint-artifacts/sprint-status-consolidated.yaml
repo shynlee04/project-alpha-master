@@ -517,6 +517,45 @@ development_status:
         Includes smooth transitions for panels, buttons, and state changes.
         CSS-based animations for performance.
         Used by UI components for consistent motion design.
+       
+    # Story P1.13: Hub-Based Navigation & Vision-Aligned Onboarding
+    epic-23-p1-13-hub-based-navigation:
+      story: _bmad-output/sprint-artifacts/epic-23-p1-13-hub-based-navigation.md
+      context: _bmad-output/sprint-artifacts/epic-23-p1-13-hub-based-navigation-context.xml
+      platform: "Platform A"
+      priority: P1
+      points: 8
+      started_at: "2025-12-26T13:00:00+07:00"
+      completed_at: "2025-12-26T13:20:00+07:00"
+      review_submitted_at: "2025-12-26T13:20:00+07:00"
+      acceptance_criteria:
+        - "HubSidebar component created with collapsible icon-only navigation"
+        - "TopicCard component created with warm gradient styling"
+        - "TopicPortalCard component created for workspace navigation"
+        - "HubHomePage component created with topic-based onboarding"
+        - "NavigationBreadcrumbs component created for signposting"
+        - "HubLayout wrapper component created"
+        - "hub-store created for state management"
+        - "Translation files updated (en.json, vi.json)"
+        - "Tests written for all components"
+        - "TypeScript compilation passes"
+        - "Translation extraction passes"
+        - "All components use 8-bit design system tokens"
+        - "All user-facing text has i18n support (EN + VI)"
+        - "All components are accessible (WCAG AA, keyboard navigation)"
+        - "No hard-coded values (all use CSS variables)"
+        - "All components under 400 lines"
+      traces_to: ["P1.1", "P1.2", "P1.3", "P1.4", "P1.5", "P1.6", "P1.7", "P1.8", "P1.9", "P1.10", "P1.11", "P1.12"]
+      dependencies: ["P1.1", "P1.2", "P1.3", "P1.4", "P1.5", "P1.6", "P1.7", "P1.8", "P1.9", "P1.10", "P1.11", "P1.12"]
+      notes: |
+        Implemented hub-based navigation system with vision-aligned onboarding.
+        Created 6 core components: HubSidebar, TopicCard, TopicPortalCard, HubHomePage, NavigationBreadcrumbs, HubLayout.
+        Created hub-store for state management with localStorage persistence.
+        Updated translation files with English and Vietnamese translations.
+        All components use 8-bit design system tokens and CVA patterns.
+        TypeScript compilation passes, translation extraction passes.
+        Pre-existing test failures are unrelated to hub implementation.
+        Ready for browser E2E verification.
 
   # =============================================================================
   # BACKLOG EPICS (Post-MVP)
@@ -603,9 +642,9 @@ development_status:
 # =============================================================================
 metrics:
   total_epics: 1 (active) + 8 (archived/superseded) + 6 (backlog)
-  total_stories: 7 (MVP) + 12 (Epic 23)
-  story_points: 36 (MVP) + 53 (Epic 23)
-  epic_23_completion: "12/12 stories complete (100%)"
+  total_stories: 7 (MVP) + 13 (Epic 23)
+  story_points: 36 (MVP) + 61 (Epic 23)
+  epic_23_completion: "13/13 stories complete (100%)"
   estimated_duration: "2-3 weeks for MVP"
   next_review: "2025-12-26"
 

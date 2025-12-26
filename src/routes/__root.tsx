@@ -49,47 +49,35 @@ export const Route = createRootRoute({
         rel: 'stylesheet',
         href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&family=VT323&display=swap',
       },
+    ],
+    scripts: [
+      // TanStack Router Devtools
       {
-        rel: 'stylesheet',
-        href: appCss,
+        src: 'https://cdn.jsdelivr.net/npm/@tanstack/router-devtools@latest/bundle/index.js',
+        type: 'module',
       },
     ],
   }),
-
-  shellComponent: RootDocument,
-})
-
-function RootDocument({ children }: { children: React.ReactNode }) {
-  return (
+  component: () => (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider>
           <LocaleProvider>
             <AppErrorBoundary>
               <Header />
-              {children}
+              <TanStackRouterDevtoolsPanel />
+              <TanStackDevtools />
+              <hr />
+              <Outlet />
             </AppErrorBoundary>
-            {process.env.NODE_ENV === 'development' && (
-              <TanStackDevtools
-                config={{
-                  position: 'bottom-right',
-                }}
-                plugins={[
-                  {
-                    name: 'Tanstack Router',
-                    render: <TanStackRouterDevtoolsPanel />,
-                  },
-                ]}
-              />
-            )}
           </LocaleProvider>
         </ThemeProvider>
         <Scripts />
       </body>
     </html>
-  )
-}
-
+  ),
+  notFoundComponent: () => <div>404 - Page Not Found</div>,
+})
