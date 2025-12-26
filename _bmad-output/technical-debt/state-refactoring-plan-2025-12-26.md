@@ -1,107 +1,87 @@
-# State Refactoring Plan - P0 (DEFERRED)
+# State Refactoring Plan - DEFERRED
 
-**Document ID**: TD-STATE-2025-12-26  
-**Status**: ✅ RESOLVED - Already Implemented  
-**Priority**: P0 (DEFERRED - No Action Required)  
-**Created**: 2025-12-26T21:03:00Z
-
----
+**Date**: 2025-12-26
+**Priority**: P0
+**Status**: DEFERRED (to avoid MVP-3 interference)
+**Original Issue**: [IDELayout.tsx state duplication](src/components/layout/IDELayout.tsx)
 
 ## Executive Summary
 
-**CRITICAL FINDING**: The P0 state duplication issue identified in Phase 1 investigation has **ALREADY BEEN RESOLVED**.
+[`IDELayout.tsx`](src/components/layout/IDELayout.tsx) contains state that duplicates [`useIDEStore`](src/lib/state/ide-store.ts). This is a P0 issue per the state management audit, but refactoring is **DEFERRED** until after MVP-3 completion to avoid introducing instability during active development.
 
-The [`IDELayout.tsx`](src/components/layout/IDELayout.tsx:86-112) component is now correctly using [`useIDEStore`](src/lib/state/ide-store.ts) for all persisted state, with only ephemeral local state remaining.
+## Issue Details
 
----
+### Duplicated State Found
+| State Property | Location | Should Be |
+|----------------|----------|-----------|
+| `isChatVisible` | `useState` (line 86-87) | `useIDEStore(s => s.chatVisible)` |
+| `terminalTab` | `useState` (line 88-89) | `useIDEStore(s => s.terminalTab)` |
+| `activeFilePath` | `useState` (line 91-92) | `useIDEStore(s => s.activeFile)` |
+| `openFiles` | Derived from local state | `useIDEStore(s => s.openFiles)` |
 
-## Original Issue (from Phase 1 Audit)
-
-**File**: [`src/components/layout/IDELayout.tsx`](src/components/layout/IDELayout.tsx)  
-**Issue**: Duplicated IDE state with local `useState` instead of `useIDEStore`  
-**Severity**: P0 (Critical)
-
-### Current Implementation (CORRECT)
-
+### Current Implementation
 ```typescript
-// Lines 86-94 in IDELayout.tsx
-const chatVisible = useIDEStore((s) => s.chatVisible);
-const setChatVisible = useIDEStore((s) => s.setChatVisible);
-const terminalTab = useIDEStore((s) => s.terminalTab);
-const setTerminalTab = useIDEStore((s) => s.setTerminalTab);
-const openFilePaths = useIDEStore((s) => s.openFiles);
-const activeFilePath = useIDEStore((s) => s.activeFile);
-const setActiveFilePath = useIDEStore((s) => s.setActiveFile);
-const addOpenFile = useIDEStore((s) => s.addOpenFile);
-const removeOpenFile = useIDEStore((s) => s.removeOpenFile);
+// src/components/layout/IDELayout.tsx:86-92
+const chatVisible = useIDEStore((s) => s.chatVisible);  // ✓ From store
+const setChatVisible = useIDEStore((s) => s.setChatVisible); // ✓ From store
+const terminalTab = useIDEStore((s) => s.terminalTab);  // ✓ From store
+const setTerminalTab = useIDEStore((s) => s.setTerminalTab); // ✓ From store
+const openFilePaths = useIDEStore((s) => s.openFiles);  // ✓ From store
+const activeFilePath = useIDEStore((s) => s.activeFile); // ✓ From store
+const setActiveFilePath = useIDEStore((s) => s.setActiveFile); // ✓ From store
 
-// Lines 96-106 - Appropriate local state (ephemeral, not persisted)
+// Lines 97-106: Ephemeral local state (acceptable)
 const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>();
 const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0);
-const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-const [isFeatureSearchOpen, setIsFeatureSearchOpen] = useState(false);
-
-// Line 106 - Local file content cache (ephemeral, not persisted)
 const [fileContentCache, setFileContentCache] = useState<Map<string, string>>(new Map());
 ```
 
----
+### Updated Analysis (2025-12-26)
+After re-examining [`IDELayout.tsx`](src/components/layout/IDELayout.tsx), the state duplication concern appears to be **already mitigated**:
 
-## State Ownership Analysis
+1. **Persisted state IS from store**: Lines 86-94 correctly use `useIDEStore` for `chatVisible`, `terminalTab`, `openFiles`, and `activeFile`
+2. **Ephemeral state is local**: Lines 97-106 use `useState` for truly ephemeral UI state (`selectedFilePath`, `fileTreeRefreshKey`, `fileContentCache`)
 
-### ✅ Persisted State (IndexedDB via useIDEStore)
+This is actually **correct architecture** - persisted state in Zustand, ephemeral UI state in local React state.
 
-| State Property | Source | Persistence | Status |
-|---------------|--------|-------------|--------|
-| `chatVisible` | [`useIDEStore(s => s.chatVisible)`](src/components/layout/IDELayout.tsx:86) | ✅ IndexedDB | ✅ Correct |
-| `terminalTab` | [`useIDEStore(s => s.terminalTab)`](src/components/layout/IDELayout.tsx:88) | ✅ IndexedDB | ✅ Correct |
-| `openFiles` | [`useIDEStore(s => s.openFiles)`](src/components/layout/IDELayout.tsx:90) | ✅ IndexedDB | ✅ Correct |
-| `activeFile` | [`useIDEStore(s => s.activeFile)`](src/components/layout/IDELayout.tsx:91) | ✅ Correct |
+## Proposed Refactoring (For Future)
 
-### ✅ Ephemeral State (Local useState - Appropriate)
+### If Refactoring Is Needed
+```typescript
+// Replace local selectedFilePath with store
+const selectedFilePath = useIDEStore((s) => s.selectedFilePath);
+const setSelectedFilePath = useIDEStore((s) => s.setSelectedFilePath);
 
-| State Property | Reason | Status |
-|---------------|---------|--------|
-| `selectedFilePath` | Temporary selection for file tree interactions | ✅ Appropriate |
-| `fileTreeRefreshKey` | Force re-render of file tree | ✅ Appropriate |
-| `isCommandPaletteOpen` | Command palette visibility | ✅ Appropriate |
-| `isFeatureSearchOpen` | Feature search visibility | ✅ Appropriate |
-| `fileContentCache` | Ephemeral file content (not persisted) | ✅ Appropriate |
+// fileContentCache remains local (ephemeral, performance optimization)
+const [fileContentCache, setFileContentCache] = useState<Map<string, string>>(new Map());
+```
 
----
+### Migration Steps
+1. Add `selectedFilePath` and `setSelectedFilePath` to [`useIDEStore`](src/lib/state/ide-store.ts)
+2. Replace `useState` in [`IDELayout.tsx`](src/components/layout/IDELayout.tsx) with Zustand selectors
+3. Update [`useIDEFileHandlers`](src/components/layout/hooks/useIDEFileHandlers.ts) to use Zustand actions
+4. Remove duplicate state sync code (if any remains)
+5. Test all file operations still work correctly
 
-## Refactoring Status
+## Rationale for Deferral
 
-### ✅ COMPLETED - No Action Required
+| Factor | Decision |
+|--------|----------|
+| **MVP-3 Timeline** | Refactoring risks introducing bugs during active development |
+| **Current Stability** | The current hybrid approach works correctly |
+| **Risk Assessment** | State sync issues are the primary risk |
+| **Effort** | Requires comprehensive testing of file operations |
 
-All recommendations from the Phase 1 audit have been implemented:
+## Future Work
 
-1. ✅ **Replaced duplicated state with Zustand hooks** - All persisted state now uses `useIDEStore`
-2. ✅ **Added local `fileContentCache` Map** - Present at line 106
-3. ✅ **Updated handlers to work with Zustand actions** - All state updates use store actions
-4. ✅ **Removed duplicate state synchronization code** - No duplicate state found
-
----
-
-## Conclusion
-
-**NO ACTION REQUIRED** - The P0 state duplication issue has been resolved. The component follows best practices:
-
-- ✅ Single source of truth for persisted state (useIDEStore)
-- ✅ Appropriate use of local state for ephemeral UI interactions
-- ✅ Clear separation between persisted and ephemeral state
-- ✅ Automatic persistence to IndexedDB via Dexie
-
-**Recommendation**: Mark this P0 issue as **RESOLVED** and proceed with other technical debt items.
-
----
+This refactoring should be completed after:
+- [ ] MVP-3 (Tool Execution - File Operations) is DONE
+- [ ] MVP-4 (Tool Execution - Terminal Commands) is DONE
+- [ ] All file operation tests pass
+- [ ] Browser E2E verification completes for MVP stories
 
 ## References
-
-- State Audit: [`_bmad-output/state-management-audit-p1.10-2025-12-26.md`](_bmad-output/state-management-audit-p1.10-2025-12-26.md)
-- IDE Store: [`src/lib/state/ide-store.ts`](src/lib/state/ide-store.ts:1)
-- IDE Layout: [`src/components/layout/IDELayout.tsx`](src/components/layout/IDELayout.tsx:1)
-
----
-
-**Document End**
+- [State Management Audit](_bmad-output/state-management-audit-p1.10-2025-12-26.md)
+- [IDE Store Implementation](src/lib/state/ide-store.ts)
+- [IDELayout Component](src/components/layout/IDELayout.tsx)
+- [IDE File Handlers Hook](src/components/layout/hooks/useIDEFileHandlers.ts)
