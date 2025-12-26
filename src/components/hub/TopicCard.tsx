@@ -31,7 +31,7 @@ const topicCardVariants = cva(
         purple: 'bg-gradient-to-br from-[var(--gradient-purple-start)] to-[var(--gradient-purple-end)]',
         blue: 'bg-gradient-to-br from-[var(--gradient-blue-start)] to-[var(--gradient-blue-end)]',
       },
-    hover: {
+      hover: {
         true: 'scale-105 shadow-lg',
         false: 'shadow-sm hover:shadow-md',
       },

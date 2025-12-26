@@ -165,8 +165,10 @@ development_status:
       Must handle streaming errors correctly.
 
   # Story MVP-3: Tool Execution - File Operations
-  mvp-3-tool-execution-files: in-progress
+  mvp-3-tool-execution-files: blocked
     started_at: "2025-12-25T13:15:00+07:00"
+    blocked_at: "2025-12-26T16:05:00+07:00"
+    blocked_reason: "GOVERNANCE BLOCK: MVP-2 E2E verification required before proceeding. See _bmad-output/sprint-artifacts/p0-governance-fixes-2025-12-26.md for details."
     story: _bmad-output/sprint-artifacts/mvp-3-tool-execution-files.md
     context: _bmad-output/sprint-artifacts/mvp-3-tool-execution-files-context.xml
     priority: P0

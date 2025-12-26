@@ -11,8 +11,9 @@
  * @integration Error boundaries for critical components
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import '@/styles/design-tokens.css';
+import { useIDEStore, selectOpenFiles, selectActiveFile } from '@/lib/state';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -83,19 +84,37 @@ export function IDELayout(): React.JSX.Element {
     localAdapterRef, syncManagerRef, eventBus, setIsWebContainerBooted, restoreAccess,
   } = useWorkspace();
 
-  // UI state
-  const [isChatVisible, setIsChatVisible] = useState(true);
+  // Zustand state (persisted to IndexedDB)
+  const chatVisible = useIDEStore((s) => s.chatVisible);
+  const setChatVisible = useIDEStore((s) => s.setChatVisible);
+  const terminalTab = useIDEStore((s) => s.terminalTab);
+  const setTerminalTab = useIDEStore((s) => s.setTerminalTab);
+  const openFilePaths = useIDEStore((s) => s.openFiles);
+  const activeFilePath = useIDEStore((s) => s.activeFile);
+  const setActiveFilePath = useIDEStore((s) => s.setActiveFile);
+  const addOpenFile = useIDEStore((s) => s.addOpenFile);
+  const removeOpenFile = useIDEStore((s) => s.removeOpenFile);
+
+  // Local state (ephemeral, not persisted)
   const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>();
-  const [terminalTab, setTerminalTab] = useState<TerminalTab>('terminal');
   const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0);
   
   // P1.4: Discovery mechanisms state
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isFeatureSearchOpen, setIsFeatureSearchOpen] = useState(false);
 
-  // Editor state
-  const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
-  const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
+  // Local file content cache (ephemeral, not persisted)
+  // File paths are persisted in useIDEStore, but content is cached locally
+  const [fileContentCache, setFileContentCache] = useState<Map<string, string>>(new Map());
+
+  // Derive OpenFile[] from Zustand state + local cache
+  const openFiles = useMemo<OpenFile[]>(() => {
+    return openFilePaths.map((path) => ({
+      path,
+      content: fileContentCache.get(path) || '',
+      isDirty: false,
+    }));
+  }, [openFilePaths, fileContentCache]);
 
   // Panel refs
   const mainPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
@@ -111,13 +130,23 @@ export function IDELayout(): React.JSX.Element {
 
   // Extracted hooks
   useIDEKeyboardShortcuts({
-    onChatToggle: () => setIsChatVisible(true),
+    onChatToggle: () => setChatVisible(true),
     onCommandPaletteOpen: () => setIsCommandPaletteOpen(true),
   });
   const { previewUrl, previewPort } = useWebContainerBoot({ onBooted: () => setIsWebContainerBooted(true) });
   const { handleFileSelect, handleSave, handleContentChange, handleTabClose } = useIDEFileHandlers({
-    openFiles, setOpenFiles, activeFilePath, setActiveFilePath,
-    setSelectedFilePath, setFileTreeRefreshKey, syncManagerRef, eventBus, toast,
+    openFiles,
+    openFilePaths,
+    activeFilePath,
+    setActiveFilePath,
+    addOpenFile,
+    removeOpenFile,
+    setSelectedFilePath,
+    setFileTreeRefreshKey,
+    setFileContentCache,
+    syncManagerRef,
+    eventBus,
+    toast,
   });
 
   // Story 28-24: Subscribe FileTree to agent file events via EventBus
@@ -133,25 +162,41 @@ export function IDELayout(): React.JSX.Element {
 
   // State restoration hook
   useIDEStateRestoration({
-    restoredIdeState, isChatVisible, openFilesCount: openFiles.length, permissionState, syncStatus, localAdapterRef,
-    appliedPanelGroupsRef, didRestoreOpenFilesRef, activeFileScrollTopRef,
-    mainPanelGroupRef, centerPanelGroupRef, editorPanelGroupRef,
-    setIsChatVisible, setTerminalTab, setActiveFilePath, setSelectedFilePath, setOpenFiles,
+    restoredIdeState,
+    isChatVisible: chatVisible,
+    openFilesCount: openFiles.length,
+    permissionState,
+    syncStatus,
+    localAdapterRef,
+    appliedPanelGroupsRef,
+    didRestoreOpenFilesRef,
+    activeFileScrollTopRef,
+    mainPanelGroupRef,
+    centerPanelGroupRef,
+    editorPanelGroupRef,
+    setChatVisible,
+    setTerminalTab,
+    setActiveFilePath,
+    setSelectedFilePath,
+    setOpenFiles: (files: OpenFile[]) => {
+      // Update file content cache when open files are restored
+      setFileContentCache(new Map(files.map((f) => [f.path, f.content] as [string, string])));
+    },
   });
 
   // State sync with refs
-  const openFilePathsKey = openFiles.map((f) => f.path).join('\0');
-  useEffect(() => { openFilePathsRef.current = openFiles.map((f) => f.path); }, [openFilePathsKey, openFilePathsRef]);
+  const openFilePathsKey = openFilePaths.join('\0');
+  useEffect(() => { openFilePathsRef.current = openFilePaths; }, [openFilePathsKey, openFilePathsRef]);
   useEffect(() => { activeFilePathRef.current = activeFilePath; }, [activeFilePath, activeFilePathRef]);
   useEffect(() => { terminalTabRef.current = terminalTab; }, [terminalTab, terminalTabRef]);
-  useEffect(() => { chatVisibleRef.current = isChatVisible; }, [isChatVisible, chatVisibleRef]);
-  useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, isChatVisible]);
+  useEffect(() => { chatVisibleRef.current = chatVisible; }, [chatVisible, chatVisibleRef]);
+  useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
 
   return (
     <SidebarProvider defaultPanel="explorer">
       <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
         {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
-        <IDEHeaderBar projectId={projectId} isChatVisible={isChatVisible} onToggleChat={() => setIsChatVisible(!isChatVisible)} />
+        <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
         
         {/* P1.4: Discovery mechanisms */}
         {isCommandPaletteOpen && (
@@ -293,7 +338,7 @@ export function IDELayout(): React.JSX.Element {
             </ResizablePanel>
 
             {/* Chat Panel */}
-            {isChatVisible && (
+            {chatVisible && (
               <>
                 <ResizableHandle
                   withHandle

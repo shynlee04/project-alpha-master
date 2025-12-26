@@ -14,16 +14,22 @@ import type { OpenFile } from '../../ide/MonacoEditor';
 interface UseIDEFileHandlersOptions {
     /** Current open files */
     openFiles: OpenFile[];
-    /** Setter for open files state */
-    setOpenFiles: React.Dispatch<React.SetStateAction<OpenFile[]>>;
+    /** Open file paths from Zustand */
+    openFilePaths: string[];
     /** Currently active file path */
     activeFilePath: string | null;
     /** Setter for active file path */
-    setActiveFilePath: React.Dispatch<React.SetStateAction<string | null>>;
+    setActiveFilePath: (path: string | null) => void;
+    /** Add file to open files */
+    addOpenFile: (path: string) => void;
+    /** Remove file from open files */
+    removeOpenFile: (path: string) => void;
     /** Setter for selected file path (FileTree highlight) */
     setSelectedFilePath: React.Dispatch<React.SetStateAction<string | undefined>>;
     /** Setter for file tree refresh key */
     setFileTreeRefreshKey: React.Dispatch<React.SetStateAction<number>>;
+    /** Setter for file content cache */
+    setFileContentCache: React.Dispatch<React.SetStateAction<Map<string, string>>>;
     /** Reference to sync manager */
     syncManagerRef: React.RefObject<SyncManager | null>;
     /** Event bus for file events */
@@ -54,11 +60,14 @@ interface UseIDEFileHandlersResult {
  */
 export function useIDEFileHandlers({
     openFiles,
-    setOpenFiles,
+    openFilePaths,
     activeFilePath,
     setActiveFilePath,
+    addOpenFile,
+    removeOpenFile,
     setSelectedFilePath,
     setFileTreeRefreshKey,
+    setFileContentCache,
     syncManagerRef,
     eventBus,
     toast,
@@ -77,13 +86,15 @@ export function useIDEFileHandlers({
             try {
                 const file = await handle.getFile();
                 const content = await file.text();
-                setOpenFiles((prev) => [...prev, { path, content, isDirty: false }]);
+                // Update Zustand store and local cache
+                addOpenFile(path);
+                setFileContentCache((prev) => new Map(prev).set(path, content));
                 setActiveFilePath(path);
             } catch (error) {
                 console.error('[IDE] Failed to read file:', path, error);
             }
         },
-        [openFiles, setOpenFiles, setActiveFilePath, setSelectedFilePath],
+        [openFiles, addOpenFile, setActiveFilePath, setSelectedFilePath, setFileContentCache],
     );
 
     const handleSave = useCallback(
@@ -92,11 +103,8 @@ export function useIDEFileHandlers({
             try {
                 if (syncManagerRef.current) {
                     await syncManagerRef.current.writeFile(path, content);
-                    setOpenFiles((prev) =>
-                        prev.map((f) =>
-                            f.path === path ? { ...f, content, isDirty: false } : f,
-                        ),
-                    );
+                    // Update local content cache
+                    setFileContentCache((prev) => new Map(prev).set(path, content));
                     console.log('[IDE] File saved successfully:', path);
                     setFileTreeRefreshKey((prev) => prev + 1);
                 } else {
@@ -109,29 +117,28 @@ export function useIDEFileHandlers({
                 toast(`Failed to save ${path.split('/').pop()}: ${errorMessage}`, 'error');
             }
         },
-        [syncManagerRef, setOpenFiles, setFileTreeRefreshKey, toast],
+        [syncManagerRef, setFileTreeRefreshKey, setFileContentCache, toast],
     );
 
     const handleContentChange = useCallback(
         (path: string, content: string) => {
-            setOpenFiles((prev) =>
-                prev.map((f) =>
-                    f.path === path ? { ...f, content, isDirty: true } : f,
-                ),
-            );
+            // Update local content cache
+            setFileContentCache((prev) => new Map(prev).set(path, content));
             eventBus.emit('file:modified', { path, source: 'editor', content });
         },
-        [setOpenFiles, eventBus],
+        [setFileContentCache, eventBus],
     );
 
     const handleTabClose = useCallback(
         (path: string) => {
-            setOpenFiles((prev) => prev.filter((f) => f.path !== path));
+            removeOpenFile(path);
             if (activeFilePath === path) {
-                setActiveFilePath(openFiles.find((f) => f.path !== path)?.path ?? null);
+                // Find the last open file after removing current
+                const remainingFiles = openFilePaths.filter((p) => p !== path);
+                setActiveFilePath(remainingFiles.length > 0 ? remainingFiles[remainingFiles.length - 1] : null);
             }
         },
-        [activeFilePath, openFiles, setOpenFiles, setActiveFilePath],
+        [activeFilePath, openFilePaths, removeOpenFile, setActiveFilePath],
     );
 
     return {

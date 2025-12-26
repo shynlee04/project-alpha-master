@@ -11,7 +11,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHubStore } from '@/lib/state/hub-store';
-import { HubSidebar } from './HubSidebar';
 import { TopicCard } from './TopicCard';
 import { TopicPortalCard } from './TopicPortalCard';
 import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
@@ -77,11 +76,8 @@ export const HubHomePage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]">
-      {/* Sidebar */}
-      <HubSidebar />
-
-      {/* Main content area */}
+    <div className="flex-1 min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]">
+      {/* Main content area - sidebar is rendered by HubLayout */}
       <main className="flex-1 overflow-y-auto">
         {/* Breadcrumbs */}
         <div className="px-6 py-4">

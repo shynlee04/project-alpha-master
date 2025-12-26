@@ -1,6 +1,6 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
+// import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+// import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
@@ -51,11 +51,6 @@ export const Route = createRootRoute({
       },
     ],
     scripts: [
-      // TanStack Router Devtools
-      {
-        src: 'https://cdn.jsdelivr.net/npm/@tanstack/router-devtools@latest/bundle/index.js',
-        type: 'module',
-      },
     ],
   }),
   component: () => (
@@ -68,8 +63,9 @@ export const Route = createRootRoute({
           <LocaleProvider>
             <AppErrorBoundary>
               <Header />
-              <TanStackRouterDevtoolsPanel />
-              <TanStackDevtools />
+              {/* DevTools disabled due to SSR duplicate route issue (INC-2025-12-24-001) */}
+              {/* <TanStackRouterDevtoolsPanel /> */}
+              {/* <TanStackDevtools /> */}
               <hr />
               <Outlet />
             </AppErrorBoundary>
