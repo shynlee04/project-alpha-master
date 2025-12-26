@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Maximize2, Minimize2, X, Minus } from 'lucide-react'
+import { MaximizeIcon, CloseIcon, MinusIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -86,7 +86,7 @@ export function PanelShell({
                                 onClick={onMinimize}
                                 className="h-6 w-6 text-muted-foreground hover:text-foreground"
                             >
-                                <Minus className="w-3 h-3" />
+                                <MinusIcon className="w-3 h-3" />
                             </Button>
                         )}
                         {onToggleFullscreen && (
@@ -97,9 +97,9 @@ export function PanelShell({
                                 className="h-6 w-6 text-muted-foreground hover:text-foreground"
                             >
                                 {isFullscreen ? (
-                                    <Minimize2 className="w-3 h-3" />
+                                    <MaximizeIcon className="w-3 h-3 rotate-180" />
                                 ) : (
-                                    <Maximize2 className="w-3 h-3" />
+                                    <MaximizeIcon className="w-3 h-3" />
                                 )}
                             </Button>
                         )}
@@ -110,7 +110,7 @@ export function PanelShell({
                                 onClick={onClose}
                                 className="h-6 w-6 text-muted-foreground hover:text-destructive"
                             >
-                                <X className="w-3 h-3" />
+                                <CloseIcon className="w-3 h-3" />
                             </Button>
                         )}
                     </div>

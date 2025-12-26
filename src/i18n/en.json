@@ -48,6 +48,20 @@
   "errors.openFolder": "Failed to open folder",
   "badges.clickToReauthorize": "Click to re-authorize",
   "badges.accessDenied": "Access denied",
+  "bentoGrid": {
+    "title": "Discover Features",
+    "searchPlaceholder": "Search features...",
+    "noResults": "No features found",
+    "allTopics": "All Topics",
+    "topicGettingStarted": "Getting Started",
+    "topicFileOperations": "File Operations",
+    "topicAIAgent": "AI Agent",
+    "topicTerminal": "Terminal",
+    "topicSettings": "Settings"
+  },
+  "bentoCardPreview": {
+    "quickStart": "Quick Start"
+  },
   "dashboard.title": "Dashboard",
   "actions.openLocalFolder": "Open Local Folder",
   "actions.dismiss": "Dismiss",

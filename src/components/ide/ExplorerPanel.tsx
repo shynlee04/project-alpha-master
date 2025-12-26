@@ -1,6 +1,6 @@
 import { useSidebar, SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
-import { FolderOpen, Plus, RefreshCw } from 'lucide-react'
+import { PlusIcon, RefreshIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -32,7 +32,7 @@ export function ExplorerPanel({
                             onClick={onNewFile}
                             title={t('actions.newFile', 'New File')}
                         >
-                            <Plus className="w-4 h-4" />
+                            <PlusIcon className="w-4 h-4" aria-label={t('actions.newFile')} />
                         </Button>
                         <Button
                             variant="ghost"
@@ -40,7 +40,7 @@ export function ExplorerPanel({
                             onClick={onRefresh}
                             title={t('actions.refresh', 'Refresh')}
                         >
-                            <RefreshCw className="w-4 h-4" />
+                            <RefreshIcon className="w-4 h-4" aria-label={t('actions.refresh')} />
                         </Button>
                     </>
                 }

@@ -48,6 +48,20 @@
   "errors.openFolder": "Không mở được thư mục",
   "badges.clickToReauthorize": "Nhấn để ủy quyền lại",
   "badges.accessDenied": "Truy cập bị từ chối",
+  "bentoGrid": {
+    "title": "Khám phá tính năng",
+    "searchPlaceholder": "Tìm kiếm tính năng...",
+    "noResults": "Không tìm thấy tính năng nào",
+    "allTopics": "Tất cả chủ đề",
+    "topicGettingStarted": "Bắt đầu",
+    "topicFileOperations": "Thao tác tệp",
+    "topicAIAgent": "AI Agent",
+    "topicTerminal": "Terminal",
+    "topicSettings": "Cài đặt"
+  },
+  "bentoCardPreview": {
+    "quickStart": "Bắt đầu nhanh"
+  },
   "dashboard.title": "Bảng điều khiển",
   "actions.openLocalFolder": "Mở thư mục cục bộ",
   "actions.dismiss": "Bỏ qua",

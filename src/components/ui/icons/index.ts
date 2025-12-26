@@ -25,6 +25,9 @@ export { SettingsIcon } from './SettingsIcon';
 export { ChatIcon } from './ChatIcon';
 export { RefreshIcon } from './RefreshIcon';
 export { PlusIcon } from './PlusIcon';
+export { MinusIcon } from './MinusIcon';
+export { SearchIcon } from './SearchIcon';
+export { MaximizeIcon } from './MaximizeIcon';
 
 // Re-export base icon component and props
 export { Icon } from './icon';
