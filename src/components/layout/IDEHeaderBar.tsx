@@ -16,7 +16,8 @@
  * ```
  */
 
-import { MessageSquare, FolderOpen, Loader2, RefreshCw, MoreHorizontal } from 'lucide-react';
+import { FolderOpen, Loader2, MoreHorizontal } from 'lucide-react';
+import { ChatIcon, RefreshIcon } from '@/components/ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
@@ -139,7 +140,7 @@ export function IDEHeaderBar({
                     className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
                     title={t('ide.toggleChatShortcut')}
                 >
-                    <MessageSquare className="w-4 h-4" />
+                    <ChatIcon className="w-4 h-4" aria-label={isChatVisible ? t('ide.hideChat') : t('ide.showChat')} />
                     {isChatVisible ? t('ide.hideChat') : t('ide.showChat')}
                 </button>
 
@@ -236,7 +237,7 @@ function FolderOpenedControls({
                     </>
                 ) : (
                     <>
-                        <RefreshCw className="w-4 h-4" />
+                        <RefreshIcon className="w-4 h-4" aria-label={t('ide.syncNow')} />
                         {t('ide.syncNow')}
                     </>
                 )}
@@ -279,7 +280,7 @@ function OpenFolderButton({
                 }`}
             title={t('ide.openFolder')}
         >
-            <FolderOpen className="w-4 h-4" />
+            <FolderOpen className="w-4 h-4" aria-label={t('ide.openFolder')} />
             {t('ide.openFolder')}
         </button>
     );

@@ -1,0 +1,347 @@
+/**
+ * Via-gent 8-bit Custom Animations
+ * 
+ * Animation Guidelines:
+ * - Duration: ≤200ms for micro-interactions
+ * - Easing: Use cubic-bezier for 8-bit feel
+ * - No spring/bounce effects (too modern)
+ * - Subtle and purposeful
+ * - Use design tokens from design-tokens.css
+ * 
+ * Reference: _bmad-output/design-system-8bit-2025-12-25.md
+ */
+
+/* === Animation Variables === */
+:root {
+  --animation-duration-fast: 100ms;
+  --animation-duration-medium: 150ms;
+  --animation-duration-slow: 200ms;
+  
+  --animation-easing-8bit: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --animation-easing-linear: linear;
+}
+
+/* === Micro-interaction Animations === */
+
+/* Button Click/Press */
+@keyframes button-press {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 4px var(--color-primary);
+  }
+  50% {
+    transform: scale(0.95);
+    box-shadow: 0 1px 2px var(--color-primary);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 4px var(--color-primary);
+  }
+}
+
+.anim-button-press {
+  animation: button-press var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+/* Button Hover */
+@keyframes button-hover {
+  0% {
+    background-color: var(--color-surface);
+    transform: translateY(0);
+  }
+  100% {
+    background-color: var(--color-surface-hover);
+    transform: translateY(-1px);
+  }
+}
+
+.anim-button-hover {
+  animation: button-hover var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* Panel Slide In */
+@keyframes panel-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.anim-panel-slide-in {
+  animation: panel-slide-in var(--animation-duration-slow) var(--animation-easing-8bit);
+}
+
+/* Panel Slide Out */
+@keyframes panel-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+.anim-panel-slide-out {
+  animation: panel-slide-out var(--animation-duration-slow) var(--animation-easing-8bit);
+}
+
+/* Modal Fade In */
+@keyframes modal-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-modal-fade-in {
+  animation: modal-fade-in var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* Modal Fade Out */
+@keyframes modal-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.anim-modal-fade-out {
+  animation: modal-fade-out var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* Tab Switch */
+@keyframes tab-switch {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-tab-switch {
+  animation: tab-switch var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+/* Status Indicator Pulse */
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.anim-status-pulse {
+  animation: status-pulse 2s var(--animation-easing-8bit) infinite;
+}
+
+/* Sync Progress */
+@keyframes sync-progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.anim-sync-progress {
+  animation: sync-progress var(--animation-duration-slow) var(--animation-easing-linear);
+}
+
+/* Tool Call Badge */
+@keyframes tool-call-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-tool-call-appear {
+  animation: tool-call-appear var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+/* File Tree Expand/Collapse */
+@keyframes tree-expand {
+  0% {
+    max-height: 0;
+    opacity: 0;
+  }
+  100% {
+    max-height: 200px;
+    opacity: 1;
+  }
+}
+
+.anim-tree-expand {
+  animation: tree-expand var(--animation-duration-slow) var(--animation-easing-8bit);
+}
+
+/* Icon Rotate */
+@keyframes icon-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.anim-icon-rotate {
+  animation: icon-rotate 1s var(--animation-easing-linear) infinite;
+}
+
+/* Notification Slide In */
+@keyframes notification-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.anim-notification-slide-in {
+  animation: notification-slide-in var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* Notification Slide Out */
+@keyframes notification-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+.anim-notification-slide-out {
+  animation: notification-slide-out var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* === Utility Classes === */
+
+/* Button Animations */
+.btn-interactive {
+  transition: all var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+.btn-interactive:hover {
+  animation: button-hover var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+.btn-interactive:active {
+  animation: button-press var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+/* Panel Animations */
+.panel-animate-in {
+  animation: panel-slide-in var(--animation-duration-slow) var(--animation-easing-8bit);
+}
+
+.panel-animate-out {
+  animation: panel-slide-out var(--animation-duration-slow) var(--animation-easing-8bit);
+}
+
+/* Modal Animations */
+.modal-animate-in {
+  animation: modal-fade-in var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+.modal-animate-out {
+  animation: modal-fade-out var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* Tab Animations */
+.tab-animate {
+  animation: tab-switch var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+/* Status Animations */
+.status-pulse {
+  animation: status-pulse 2s var(--animation-easing-8bit) infinite;
+}
+
+/* Tool Call Animations */
+.tool-call-badge {
+  animation: tool-call-appear var(--animation-duration-fast) var(--animation-easing-8bit);
+}
+
+/* File Tree Animations */
+.tree-item-expand {
+  animation: tree-expand var(--animation-duration-slow) var(--animation-easing-8bit);
+}
+
+/* Notification Animations */
+.notification-enter {
+  animation: notification-slide-in var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+.notification-exit {
+  animation: notification-slide-out var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+/* Icon Animations */
+.icon-spin {
+  animation: icon-rotate 1s var(--animation-easing-linear) infinite;
+}
+
+/* Progress Bar Animation */
+.progress-bar-animate {
+  animation: sync-progress var(--animation-duration-slow) var(--animation-easing-linear);
+}
+
+/* === Accessibility === */
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* === Performance Notes === */
+
+/* Use transform and opacity for better performance */
+/* Avoid animating layout properties (width, height, margin, padding) */
+/* Use will-change: transform to avoid layout thrashing */
+.anim-performance-optimized {
+  will-change: transform, opacity;
+}
+
+/* === Animation Delays === */
+
+.delay-50 { animation-delay: 50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
