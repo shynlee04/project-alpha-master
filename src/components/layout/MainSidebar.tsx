@@ -5,7 +5,6 @@ import {
   Home,
   Folder,
   Bot,
-  ShieldCheck,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -116,12 +115,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       label: 'Agents',
       icon: Bot,
       path: '/agents',
-    },
-    {
-      id: 'quality' as const,
-      label: 'Quality',
-      icon: ShieldCheck,
-      path: '/quality',
     },
     {
       id: 'settings' as const,

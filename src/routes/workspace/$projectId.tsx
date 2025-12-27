@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { IDELayout } from '../../components/layout/IDELayout'
+import { MainLayout } from '../../components/layout/MainLayout'
 import { ToastProvider, Toast } from '../../components/ui/Toast'
 import { WorkspaceProvider } from '../../lib/workspace'
 import { getProject } from '../../lib/workspace'
@@ -21,7 +21,7 @@ function Workspace() {
     return (
         <ToastProvider>
             <WorkspaceProvider projectId={projectId} initialProject={project}>
-                <IDELayout />
+                <MainLayout />
             </WorkspaceProvider>
             <Toast />
         </ToastProvider>

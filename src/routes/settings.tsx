@@ -10,6 +10,7 @@
 
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { AgentConfigDialog } from '@/components/agent/AgentConfigDialog';
 import { SettingsIcon, PlusIcon } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,7 @@ function SettingsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
+        <MainLayout>
             <div className="max-w-4xl mx-auto p-6">
                 <div className="flex items-center gap-3 mb-6">
                     <SettingsIcon className="text-primary" />
@@ -80,6 +81,6 @@ function SettingsPage() {
                     onSubmit={handleAgentSubmit}
                 />
             </div>
-        </div>
+        </MainLayout>
     );
 }

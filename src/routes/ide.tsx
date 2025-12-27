@@ -2,15 +2,15 @@
  * @fileoverview IDE Workspace Route
  * @module routes/ide
  *
- * Simple route to access the IDE workspace with Monaco Editor,
+ * Simple route to access IDE workspace with Monaco Editor,
  * terminal, file tree, preview, chat, and all IDE panels.
  *
- * This route provides direct access to the IDE without requiring
+ * This route provides direct access to IDE without requiring
  * a specific project ID parameter.
  */
 
 import { createFileRoute } from '@tanstack/react-router'
-import { IDELayout } from '../components/layout/IDELayout'
+import { MainLayout } from '../components/layout/MainLayout'
 import { ToastProvider, Toast } from '../components/ui/Toast'
 import { WorkspaceProvider } from '../lib/workspace'
 
@@ -22,8 +22,8 @@ export const Route = createFileRoute('/ide')({
 function IDEWorkspace() {
     return (
         <ToastProvider>
-            <WorkspaceProvider>
-                <IDELayout />
+            <WorkspaceProvider projectId={null}>
+                <MainLayout />
             </WorkspaceProvider>
             <Toast />
         </ToastProvider>

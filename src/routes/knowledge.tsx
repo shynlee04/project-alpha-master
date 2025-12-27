@@ -9,6 +9,7 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { Sparkles } from 'lucide-react';
 
 export const Route = createFileRoute('/knowledge')({
@@ -17,7 +18,7 @@ export const Route = createFileRoute('/knowledge')({
 
 function KnowledgePage() {
     return (
-        <div className="min-h-screen bg-background text-foreground">
+        <MainLayout>
             <div className="max-w-4xl mx-auto p-6">
                 <div className="flex items-center gap-3 mb-6">
                     <Sparkles className="text-primary" size={32} />
@@ -39,6 +40,6 @@ function KnowledgePage() {
                     </p>
                 </div>
             </div>
-        </div>
+        </MainLayout>
     );
 }

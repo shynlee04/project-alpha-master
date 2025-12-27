@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { HubHomePage } from '../components/hub/HubHomePage'
-import { HubLayout } from '../components/layout/HubLayout'
+import { MainLayout } from '../components/layout/MainLayout'
 
 export const Route = createFileRoute('/')({
   component: () => (
-    <HubLayout>
+    <MainLayout>
       <HubHomePage />
-    </HubLayout>
+    </MainLayout>
   ),
 })

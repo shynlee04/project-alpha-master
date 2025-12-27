@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use MainLayout instead. This component is being phased out as part of the Home Page Layout Redesign epic.
+ * See: src/components/layout/MainLayout.tsx
+ */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHubStore } from '@/lib/state/hub-store';

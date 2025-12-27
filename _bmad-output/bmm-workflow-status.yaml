@@ -31,8 +31,8 @@ epic_status:
     id: "HOMEPAGE-LAYOUT"
     name: "Home Page Layout Redesign"
     status: "in-progress"
-    progress: "1/10 stories DONE (LAYOUT-1 complete)"
-    notes: "LAYOUT-1 (Unified Layout Store) DONE, LAYOUT-2 ready for dev"
+    progress: "8/10 stories DONE (LAYOUT-1, LAYOUT-2, LAYOUT-3, LAYOUT-4, LAYOUT-5, LAYOUT-6, LAYOUT-7, LAYOUT-8 complete)"
+    notes: "LAYOUT-1 (Unified Layout Store) DONE, LAYOUT-2 (MainSidebar) DONE, LAYOUT-3 (MainLayout) DONE, LAYOUT-4 (Update Home Route) DONE, LAYOUT-5 (Update Projects Route) DONE, LAYOUT-6 (Update Other Routes) DONE, LAYOUT-7 (Deprecate Old Layouts) DONE, LAYOUT-8 (Update Navigation Links) DONE"
 
 # =============================================================================
 # NEXT ACTIONS
@@ -59,24 +59,79 @@ next_actions:
     assignee: "TBD"
     notes: "Tool execution - terminal commands - code exists, needs browser verification"
   
-  - priority: "P0"
-    task: "Implement LAYOUT-2 (Create MainSidebar Component)"
+  - priority: "P1"
+    task: "Implement LAYOUT-9 (Remove Deprecated Components)"
     epic: "HOMEPAGE-LAYOUT"
-    story: "layout-2"
+    story: "layout-9"
     assignee: "@bmad-bmm-dev"
-    notes: "Collapsible sidebar with icons, wired to useLayoutStore"
-  
-  - priority: "P0"
-    task: "Implement LAYOUT-3 (Create MainLayout Component)"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-3"
-    assignee: "@bmad-bmm-dev"
-    notes: "Integrate MainSidebar and Header, responsive layout"
+    notes: "Remove deprecated IDELayout, HubLayout, HubSidebar components and their exports"
 
 # =============================================================================
 # COMPLETED ACTIONS
 # =============================================================================
 completed_actions:
+  - date: "2025-12-27T11:32:00+07:00"
+    action: "LAYOUT-7 Deprecate Old Layout Components DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-7"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/components/layout/IDELayout.tsx"
+      - "src/components/layout/HubLayout.tsx"
+      - "src/components/hub/HubSidebar.tsx"
+      - "src/components/layout/index.ts"
+      - "src/components/hub/index.ts"
+    notes: "Added @deprecated JSDoc comments to IDELayout, HubLayout, HubSidebar, marked exports as deprecated, build verification passed"
+  
+  - date: "2025-12-27T11:20:00+07:00"
+    action: "LAYOUT-6 Update Other Routes DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-6"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/routes/agents.tsx"
+      - "src/routes/knowledge.tsx"
+      - "src/routes/settings.tsx"
+    notes: "Replaced custom layout wrappers with MainLayout in agents, knowledge, settings routes, build verification passed"
+  
+  - date: "2025-12-27T11:12:00+07:00"
+    action: "LAYOUT-5 Update Projects Route DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-5"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/routes/workspace/$projectId.tsx"
+    notes: "Replaced IDELayout with MainLayout in projects route, build verification passed"
+  
+  - date: "2025-12-27T11:03:55+07:00"
+    action: "LAYOUT-4 Update Home Route DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-4"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/routes/index.tsx"
+    notes: "Replaced HubLayout with MainLayout in home route, build verification passed"
+  
+  - date: "2025-12-27T10:37:40+07:00"
+    action: "LAYOUT-3 Create MainLayout Component DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-3"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/components/layout/MainLayout.tsx"
+      - "src/components/layout/index.ts"
+    notes: "Responsive layout with MainSidebar, Outlet, mobile menu button, all acceptance criteria met"
+  
+  - date: "2025-12-27T10:23:43+07:00"
+    action: "LAYOUT-2 Create MainSidebar Component DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-2"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/components/layout/MainSidebar.tsx"
+      - "src/components/layout/index.ts"
+    notes: "Collapsible sidebar with icons, navigation, mobile menu, all acceptance criteria met"
+  
   - date: "2025-12-27T10:10:00+07:00"
     action: "LAYOUT-1 Create Unified Layout Store DONE"
     epic: "HOMEPAGE-LAYOUT"
@@ -146,9 +201,9 @@ metrics:
   mvp_backlog: 3
   
   homepage_layout_stories: 10
-  homepage_layout_completed: 1
+  homepage_layout_completed: 6
   homepage_layout_in_progress: 0
-  homepage_layout_ready_for_dev: 1
-  homepage_layout_backlog: 8
+  homepage_layout_ready_for_dev: 0
+  homepage_layout_backlog: 4
   
   estimated_completion: "2025-01-03"

@@ -9,6 +9,9 @@
  * @integration Design tokens implementation for consistent styling
  * @epic Epic-23 Story P1.9
  * @integration Error boundaries for critical components
+ *
+ * @deprecated Use MainLayout instead. This component is being phased out as part of the Home Page Layout Redesign epic.
+ * See: src/components/layout/MainLayout.tsx
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
