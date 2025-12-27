@@ -16,6 +16,7 @@ import { Route as IdeRouteImport } from './routes/ide'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -55,6 +56,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkspaceIndexRoute = WorkspaceIndexRouteImport.update({
+  id: '/workspace/',
+  path: '/workspace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorkspaceProjectIdRoute = WorkspaceProjectIdRouteImport.update({
   id: '/workspace/$projectId',
   path: '/workspace/$projectId',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
+  '/workspace': typeof WorkspaceIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
+  '/workspace': typeof WorkspaceIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
+  '/workspace/': typeof WorkspaceIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
+    | '/workspace'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
+    | '/workspace'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
+    | '/workspace/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
+  WorkspaceIndexRoute: typeof WorkspaceIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/workspace/': {
+      id: '/workspace/'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof WorkspaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/workspace/$projectId': {
       id: '/workspace/$projectId'
       path: '/workspace/$projectId'
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
+  WorkspaceIndexRoute: WorkspaceIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

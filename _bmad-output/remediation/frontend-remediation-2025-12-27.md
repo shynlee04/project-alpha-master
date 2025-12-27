@@ -2,9 +2,11 @@
 
 **Document ID**: `REMEDIATION-FRONTEND-2025-12-27`
 **Created**: 2025-12-27T19:55:00+07:00
-**Last Updated**: 2025-12-27T20:00:00+07:00
-**Status**: PHASE 2 COMPLETE
+**Last Updated**: 2025-12-27T20:25:00+07:00
+**Status**: PHASE 4 COMPLETE ✅ (LAYOUT Sprint Done)
 **Agent**: @bmad-core-bmad-master
+**Team**: Team A (Frontend Remediation)
+**Build**: ✅ PASSED (19.97s)
 
 ---
 
@@ -137,28 +139,84 @@ Pre-existing errors in unrelated files (test files, AgentConfigDialog) remain bu
 
 ---
 
-## Deprecated Components (To Be Removed in v2.0)
+## Phase 3: Deprecated Component Cleanup
 
-The following components are marked as deprecated and should be removed after verification:
+### 6. Removed Deprecated Components
 
-| Component | Location | Replacement |
-|-----------|----------|-------------|
-| `HubLayout` | `src/components/layout/HubLayout.tsx` | `MainLayout` |
-| `HubSidebar` | `src/components/hub/HubSidebar.tsx` | `MainSidebar` |
-| `Header` (mobile menu) | `src/components/Header.tsx` | `MainSidebar` (mobile) |
+**Issue**: Deprecated HubLayout and HubSidebar were still in the codebase, creating confusion and potential for accidental use.
+
+**Actions Performed**:
+
+| Component | Location | Action |
+|-----------|----------|--------|
+| `HubLayout` | `src/components/layout/HubLayout.tsx` | ✅ **DELETED** |
+| `HubSidebar` | `src/components/hub/HubSidebar.tsx` | ✅ **DELETED** |
+| `HubSidebar.test.tsx` | `src/components/hub/__tests__/HubSidebar.test.tsx` | ✅ **DELETED** |
+| `Header` | `src/components/Header.tsx` | ⚠️ **MARKED DEPRECATED** (kept for reference) |
+
+**Barrel Export Updated**:
+- Removed `HubSidebar` export from `src/components/hub/index.ts`
 
 ---
 
-## Remaining Work (P2)
+### Build Status: ✅ PASSED (Phase 3)
 
-### Not Yet Addressed
+```bash
+pnpm build
+# ✓ built in 21.78s
+# Exit code: 0
+```
 
-1. **LAYOUT-5**: Create `/workspace` index route (project list)
-2. **LAYOUT-6**: Simplify Header component (remove duplicate mobile menu)
-3. **LAYOUT-7**: Add QuickActions component
-4. **LAYOUT-8**: Add PortalCards component
-5. **LAYOUT-9**: Enhance HubHomePage
-6. **LAYOUT-10**: Deprecate HubLayout (remove from codebase)
+---
+
+## Summary: Files Modified/Deleted
+
+| File | Action | Reason |
+|------|--------|--------|
+| `src/routes/__root.tsx` | Modified | Commented out unused Header import |
+| `src/components/layout/MainLayout.tsx` | Modified | CSS variables for design consistency |
+| `src/components/layout/MainSidebar.tsx` | Modified | CSS variables + Theme/Language toggles |
+| `src/components/ui/button.tsx` | Modified | Fixed contrast (text-primary-foreground) |
+| `src/routes/ide.tsx` | Modified | Use IDELayout instead of MainLayout |
+| `src/routes/workspace/$projectId.tsx` | Modified | Use IDELayout instead of MainLayout |
+| `src/routes/workspace/index.tsx` | **CREATED** | Workspace index route with project list |
+| `src/components/hub/index.ts` | Modified | Removed HubSidebar export |
+| `src/components/Header.tsx` | Modified | Added deprecation notice |
+| `src/components/layout/HubLayout.tsx` | **DELETED** | Deprecated, replaced by MainLayout |
+| `src/components/hub/HubSidebar.tsx` | **DELETED** | Deprecated, replaced by MainSidebar |
+| `src/components/hub/__tests__/HubSidebar.test.tsx` | **DELETED** | Test for deleted component |
+
+---
+
+## LAYOUT Sprint Status
+
+### Completed ✅
+
+| Story | Task | Status |
+|-------|------|--------|
+| LAYOUT-1 | Create Unified Layout Store | ✅ Done (pre-existing) |
+| LAYOUT-2 | Create MainSidebar Component | ✅ Done (pre-existing) |
+| LAYOUT-3 | Create MainLayout Component | ✅ Done (pre-existing) |
+| LAYOUT-4 | Update Root Route to use MainLayout | ✅ Done (pre-existing) |
+| LAYOUT-5 | Create Workspace Index Route | ✅ **Done** (this session) |
+| LAYOUT-6 | Simplify Header Component | ✅ **Done** (deprecated) |
+| LAYOUT-10 | Deprecate HubLayout | ✅ **Done** (deleted) |
+
+### Additional Improvements (This Session)
+
+| Feature | Status |
+|---------|--------|
+| Theme Toggle in sidebar footer | ✅ Done |
+| Language Toggle in sidebar footer | ✅ Done |
+| Mobile sidebar controls | ✅ Done |
+| Button contrast fix | ✅ Done |
+| Workspace routes use IDELayout | ✅ Done |
+
+### Not Yet Addressed (P2 - Lower Priority)
+
+1. **LAYOUT-7**: Add QuickActions component (nice-to-have)
+2. **LAYOUT-8**: Add PortalCards component (nice-to-have)
+3. **LAYOUT-9**: Enhance HubHomePage (nice-to-have)
 
 ### Pre-existing Issues (Out of Scope)
 

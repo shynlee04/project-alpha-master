@@ -1,4 +1,18 @@
+/**
+ * @deprecated This component is deprecated as of 2025-12-27.
+ * Use MainLayout + MainSidebar instead for all navigation needs.
+ * 
+ * Migration:
+ * - Hub pages: Use MainLayout wrapper (see src/routes/index.tsx)
+ * - IDE pages: Use IDELayout wrapper (see src/routes/workspace/$projectId.tsx)
+ * 
+ * This file will be removed in v2.0.
+ * @see src/components/layout/MainLayout.tsx
+ * @see src/components/layout/MainSidebar.tsx
+ */
 "use client"
+
+
 
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'

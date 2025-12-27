@@ -8,12 +8,17 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Sun,
+  Moon,
+  Languages
 } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLayoutStore } from '@/lib/state/layout-store';
+import { useTheme } from 'next-themes';
+import { useLocalePreference } from '@/i18n/LocaleProvider';
 
 const sidebarVariants = cva(
   'flex flex-col h-screen border-r border-border bg-sidebar transition-all duration-300 ease-in-out',
@@ -97,6 +102,19 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
     setActiveNavItem,
   } = useLayoutStore();
 
+  // Theme and locale hooks
+  const { resolvedTheme, setTheme } = useTheme();
+  const { locale, setLocale } = useLocalePreference();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === 'dark';
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
+  const toggleLocale = () => setLocale(locale === 'en' ? 'vi' : 'en');
+
   const navItems = [
     {
       id: 'home' as const,
@@ -177,6 +195,33 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             );
           })}
         </nav>
+
+        {/* Mobile Footer / Theme & Language Controls */}
+        {mounted && (
+          <div className="p-3 border-t border-border flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-2 px-3 py-2 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                <span className="text-xs font-mono">{isDark ? 'Light' : 'Dark'}</span>
+              </button>
+
+              {/* Language Toggle */}
+              <button
+                onClick={toggleLocale}
+                className="flex items-center gap-2 px-3 py-2 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
+              >
+                <Languages className="h-4 w-4" />
+                <span className="text-xs font-mono">{locale.toUpperCase()}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* Desktop Sidebar */}
@@ -224,8 +269,60 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           })}
         </nav>
 
-        {/* Desktop Footer / Collapse Toggle */}
-        <div className="p-2 border-t border-border">
+        {/* Desktop Footer / Settings Controls */}
+        <div className="p-2 border-t border-border space-y-2">
+          {/* Theme and Language Controls */}
+          {mounted && (
+            <div className={cn(
+              "flex items-center gap-2",
+              sidebarCollapsed ? "flex-col" : "justify-between px-2"
+            )}>
+              {/* Theme Toggle */}
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={toggleTheme}
+                    className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                    aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                  >
+                    {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  </button>
+                </TooltipTrigger>
+                {sidebarCollapsed && (
+                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-border bg-popover">
+                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+
+              {/* Language Toggle */}
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={toggleLocale}
+                    className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                    aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
+                  >
+                    <Languages className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                {sidebarCollapsed && (
+                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-border bg-popover">
+                    {locale === 'en' ? 'Tiếng Việt' : 'English'}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+
+              {/* Current Language Indicator (expanded only) */}
+              {!sidebarCollapsed && (
+                <span className="text-xs font-mono text-muted-foreground">
+                  {locale.toUpperCase()}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Collapse Toggle */}
           <button
             onClick={handleToggleSidebar}
             className={cn(
