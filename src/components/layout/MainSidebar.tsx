@@ -179,7 +179,11 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         {/* Mobile Header with Close Button */}
         <div className="flex items-center justify-between h-14 border-b border-border px-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+            <img
+              src="/via-gent-logo.svg"
+              alt="Via-gent"
+              className="w-8 h-8"
+            />
             <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
               Via-gent
             </span>
@@ -242,7 +246,11 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       <aside className={cn(sidebarVariants({ collapsed: sidebarCollapsed }), 'hidden md:flex', className)}>
         {/* Desktop Header / Logo Area */}
         <div className={cn("flex items-center h-14 border-b border-border", sidebarCollapsed ? "justify-center" : "px-4")}>
-          <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+          <img
+            src="/via-gent-logo.svg"
+            alt="Via-gent"
+            className="w-8 h-8"
+          />
           {!sidebarCollapsed && (
             <span className="ml-3 font-bold font-pixel text-lg tracking-tight text-foreground">
               Via-gent
