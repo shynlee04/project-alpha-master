@@ -4,14 +4,14 @@
  *
  * Main IDE layout component that orchestrates all IDE panels.
  * Uses react-resizable-panels for a VS Code-like layout.
+ * Responsive: Uses MobileIDELayout for viewports <768px.
  *
  * @epic Epic-23 Story P1.1
  * @integration Design tokens implementation for consistent styling
  * @epic Epic-23 Story P1.9
  * @integration Error boundaries for critical components
- *
- * @deprecated Use MainLayout instead. This component is being phased out as part of the Home Page Layout Redesign epic.
- * See: src/components/layout/MainLayout.tsx
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @integration Responsive branching for mobile/desktop layouts
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -29,7 +29,10 @@ import { IDEHeaderBar } from './IDEHeaderBar';
 import { TerminalPanel } from './TerminalPanel';
 import { ChatPanelWrapper } from './ChatPanelWrapper';
 import { PermissionOverlay } from './PermissionOverlay';
-import { MinViewportWarning } from './MinViewportWarning';
+
+// Mobile-responsive layout (Epic-MRT)
+import { MobileIDELayout } from './MobileIDELayout';
+import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
 
 // Agent tool facades (Story MVP-3: Wire tool facades to agent)
 import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
@@ -81,8 +84,19 @@ import {
  * - Resizable panel layout
  * - File tree, editor, preview, terminal, chat panels
  * - IDE state persistence
+ *
+ * @responsive Uses MobileIDELayout for viewports <768px
  */
 export function IDELayout(): React.JSX.Element {
+  // Responsive branching: Use mobile layout on small viewports
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
+
+  // Early return for mobile - use dedicated mobile layout
+  if (isMobile) {
+    return <MobileIDELayout />;
+  }
+
+  // Desktop layout continues below
   const { toast } = useToast();
   const {
     projectId, projectMetadata, permissionState, syncStatus, initialSyncCompleted,
@@ -409,13 +423,13 @@ export function IDELayout(): React.JSX.Element {
                         }
                       >
                         <ChatPanelWrapper
-                            projectId={projectId}
-                            projectName={projectMetadata?.name ?? projectId ?? 'Project'}
-                            onClose={() => setChatVisible(false)}
-                            // ADD: Pass tool facades to chat panel (Story MVP-3)
-                            fileTools={fileTools}
-                            terminalTools={terminalTools}
-                            eventBus={eventBus}
+                          projectId={projectId}
+                          projectName={projectMetadata?.name ?? projectId ?? 'Project'}
+                          onClose={() => setChatVisible(false)}
+                          // ADD: Pass tool facades to chat panel (Story MVP-3)
+                          fileTools={fileTools}
+                          terminalTools={terminalTools}
+                          eventBus={eventBus}
                         />
                       </WithErrorBoundary>
                     </CardContent>
@@ -428,7 +442,7 @@ export function IDELayout(): React.JSX.Element {
         {/* VS Code-style footer StatusBar (Story 28-18) */}
         <StatusBar />
 
-        <MinViewportWarning />
+        {/* MinViewportWarning removed - MobileIDELayout handles small viewports now */}
       </div>
     </SidebarProvider>
   );
