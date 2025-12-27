@@ -1,0 +1,503 @@
+/**
+ * VIA-GENT Brand Design Tokens
+ * ============================
+ * Overrides ShadcnUI defaults with MistralAI-inspired 8-bit aesthetic.
+ * 
+ * Color Palette:
+ * - Primary: Orange (#f97316) - MistralAI inspired
+ * - Background: Deep black (#0f0f11) - Premium dark theme
+ * - Surface: Dark zinc (#18181b) - Panels and cards
+ * - Editor: Near-black (#09090b) - Monaco editor
+ * 
+ * Aesthetic:
+ * - Squared corners (--radius: 0px)
+ * - Pixel shadows (2px hard drop shadow)
+ * - 8-bit gaming feel without kitsch
+ */
+
+/* =============================================================================
+   DARK THEME (DEFAULT)
+   ============================================================================= */
+:root {
+  /* ===== Core Brand Colors ===== */
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange accent */
+  --primary-foreground: 0 0% 100%;
+  /* White */
+
+  /* ===== Surface Colors ===== */
+  --background: 240 6% 4%;
+  /* #0f0f11 - Deep black */
+  --foreground: 0 0% 95%;
+  /* Near white text */
+
+  --card: 240 4% 10%;
+  /* #18181b - Card/panel background */
+  --card-foreground: 0 0% 95%;
+
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+
+  --secondary: 240 4% 16%;
+  /* #27272a - Secondary surfaces */
+  --secondary-foreground: 0 0% 90%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+
+  --destructive: 0 84% 60%;
+  /* Red for errors */
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 240 4% 16%;
+  /* #27272a - Borders */
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  /* Orange focus ring */
+
+  /* ===== Sidebar Specific ===== */
+  --sidebar: 240 6% 6%;
+  /* Slightly darker sidebar */
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
+
+  /* ===== Semantic Colors ===== */
+  --success: 142 71% 45%;
+  /* #22c55e - Green */
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  /* #f59e0b - Amber */
+  --warning-foreground: 0 0% 0%;
+  --info: 217 91% 60%;
+  /* #3b82f6 - Blue */
+  --info-foreground: 0 0% 100%;
+
+  /* ===== Gradient Colors for Topic Cards ===== */
+  --gradient-orange-start: #f97316;
+  --gradient-orange-end: #ea580c;
+  --gradient-coral-start: #f472b6;
+  --gradient-coral-end: #ec4899;
+  --gradient-teal-start: #2dd4bf;
+  --gradient-teal-end: #14b8a6;
+  --gradient-purple-start: #a78bfa;
+  --gradient-purple-end: #8b5cf6;
+  --gradient-blue-start: #60a5fa;
+  --gradient-blue-end: #3b82f6;
+
+  /* ===== Color Aliases (for hub components) ===== */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-border: hsl(var(--border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  /* ===== Hub Layout Tokens ===== */
+  --sidebar-width-collapsed: 64px;
+  --sidebar-width-expanded: 256px;
+  --transition-duration-base: 200ms;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* ===== 8-Bit Aesthetic ===== */
+  --radius: 0rem;
+  /* Squared corners by default */
+  --radius-sm: 0.125rem;
+  /* 2px - subtle rounding */
+  --radius-md: 0.25rem;
+  /* 4px */
+  --radius-lg: 0.375rem;
+  /* 6px */
+
+  /* ===== Pixel Shadows ===== */
+  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
+  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+  --shadow-pixel-inset: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.05),
+    inset -1px -1px 0px 0px rgba(0, 0, 0, 0.5);
+
+  /* ===== Editor Specific ===== */
+  --editor-bg: 240 6% 3.5%;
+  /* #09090b - Deep code background */
+  --editor-gutter: 240 4% 8%;
+  /* Line number gutter */
+  --editor-selection: 24.6 95% 53.1%;
+  /* Selection highlight */
+  --editor-line-highlight: 240 4% 8%;
+  /* Current line */
+
+  /* ===== Chart Colors ===== */
+  --chart-1: 24.6 95% 53.1%;
+  /* Primary orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+
+  /* ===== Layout Tokens ===== */
+  /* Panel sizes (percentages for resizable panels) */
+  --panel-editor: 70%;
+  /* Main editor panel */
+  --panel-editor-monaco: 60%;
+  /* Monaco editor within editor */
+  --panel-preview: 40%;
+  /* Preview panel */
+  --panel-terminal: 30%;
+  /* Terminal panel */
+  --panel-chat: 25%;
+  /* Chat panel */
+
+  /* Sidebar dimensions */
+  --sidebar-activity-bar: 48px;
+  /* Activity bar width */
+  --sidebar-activity-bar-height: 44px;
+  /* Touch-friendly button height (mobile: 44px, tablet+: 48px) */
+  --sidebar-content-panel: 280px;
+  /* Sidebar content panel width */
+  --sidebar-content-panel-mobile: 200px;
+  /* Mobile sidebar width */
+  --sidebar-content-panel-tablet: 240px;
+  /* Tablet sidebar width */
+  --sidebar-content-panel-lg: 320px;
+  /* Large desktop sidebar width */
+
+  /* Status bar */
+  --status-bar-height: 24px;
+  /* Status bar height (h-6) */
+
+  /* ===== Responsive Breakpoints ===== */
+  /* Breakpoint definitions for responsive design */
+  --breakpoint-mobile: 640px;
+  /* Mobile devices */
+  --breakpoint-tablet: 768px;
+  /* Tablets */
+  --breakpoint-desktop: 1024px;
+  /* Desktop */
+  --breakpoint-lg: 1280px;
+  /* Large desktop */
+
+  /* ===== Responsive Typography ===== */
+  /* Fluid font sizes that scale with viewport */
+  --font-size-mobile: 14px;
+  /* Mobile base font size */
+  --font-size-tablet: 15px;
+  /* Tablet base font size */
+  --font-size-desktop: 16px;
+  /* Desktop base font size */
+  --font-size-lg: 17px;
+  /* Large desktop font size */
+
+  /* ===== Responsive Spacing ===== */
+  /* Adaptive spacing for different screen sizes */
+  --spacing-mobile: 0.5rem;
+  /* Mobile spacing */
+  --spacing-tablet: 0.75rem;
+  /* Tablet spacing */
+  --spacing-desktop: 1rem;
+  /* Desktop spacing */
+  --spacing-lg: 1.25rem;
+  /* Large desktop spacing */
+}
+
+/* =============================================================================
+   RESPONSIVE MEDIA QUERIES (P1.7)
+   ============================================================================= */
+
+/* Mobile breakpoint: < 640px */
+@media (max-width: 639px) {
+  :root {
+    /* Mobile sidebar dimensions */
+    --sidebar-activity-bar: 40px;
+    --sidebar-activity-bar-height: 44px;
+    --sidebar-content-panel: var(--sidebar-content-panel-mobile);
+  }
+}
+
+/* Tablet breakpoint: 640px - 767px */
+@media (min-width: 640px) and (max-width: 767px) {
+  :root {
+    /* Tablet sidebar dimensions */
+    --sidebar-activity-bar: 48px;
+    --sidebar-activity-bar-height: 48px;
+    --sidebar-content-panel: var(--sidebar-content-panel-tablet);
+  }
+}
+
+/* Desktop breakpoint: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    /* Desktop sidebar dimensions */
+    --sidebar-activity-bar: 48px;
+    --sidebar-activity-bar-height: 48px;
+    --sidebar-content-panel: 280px;
+  }
+}
+
+/* Large desktop breakpoint: >= 1024px */
+@media (min-width: 1024px) {
+  :root {
+    /* Large desktop sidebar dimensions */
+    --sidebar-activity-bar: 48px;
+    --sidebar-activity-bar-height: 48px;
+    --sidebar-content-panel: var(--sidebar-content-panel-lg);
+  }
+}
+
+/* =============================================================================
+   LIGHT THEME (OPTIONAL - DARK IS DEFAULT)
+   ============================================================================= */
+.light {
+  --background: 0 0% 98%;
+  /* Near white */
+  --foreground: 240 6% 10%;
+  /* Near black */
+
+  --card: 0 0% 100%;
+  /* White */
+  --card-foreground: 240 6% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 6% 10%;
+
+  --primary: 24.6 95% 45%;
+  /* Slightly darker orange for contrast */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 240 4% 95%;
+  /* Light gray */
+  --secondary-foreground: 240 6% 10%;
+
+  --muted: 240 4% 95%;
+  --muted-foreground: 240 4% 40%;
+
+  --accent: 240 4% 95%;
+  --accent-foreground: 240 6% 10%;
+
+  --destructive: 0 84% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 240 4% 90%;
+  --input: 240 4% 90%;
+  --ring: 24.6 95% 45%;
+
+  --sidebar: 240 4% 97%;
+  --sidebar-foreground: 240 6% 10%;
+  --sidebar-primary: 24.6 95% 45%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 95%;
+  --sidebar-accent-foreground: 240 6% 10%;
+  --sidebar-border: 240 4% 90%;
+  --sidebar-ring: 24.6 95% 45%;
+
+  /* ===== Semantic Colors ===== */
+  --success: 142 71% 45%;
+  /* Green */
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  /* Amber */
+  --warning-foreground: 0 0% 0%;
+  --info: 217 91% 60%;
+  /* Blue */
+  --info-foreground: 0 0% 100%;
+
+  /* ===== Gradient Colors for Topic Cards ===== */
+  --gradient-orange-start: #f97316;
+  --gradient-orange-end: #ea580c;
+  --gradient-coral-start: #f472b6;
+  --gradient-coral-end: #ec4899;
+  --gradient-teal-start: #2dd4bf;
+  --gradient-teal-end: #14b8a6;
+  --gradient-purple-start: #a78bfa;
+  --gradient-purple-end: #8b5cf6;
+  --gradient-blue-start: #60a5fa;
+  --gradient-blue-end: #3b82f6;
+
+  /* ===== Color Aliases (for hub components) ===== */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-border: hsl(var(--border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  /* ===== Hub Layout Tokens ===== */
+  --sidebar-width-collapsed: 64px;
+  --sidebar-width-expanded: 256px;
+  --transition-duration-base: 200ms;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* ===== 8-Bit Aesthetic ===== */
+  --radius: 0rem;
+  /* Squared corners by default */
+  --radius-sm: 0.125rem;
+  /* 2px - subtle rounding */
+  --radius-md: 0.25rem;
+  /* 4px */
+  --radius-lg: 0.375rem;
+  /* 6px */
+
+  /* ===== Pixel Shadows ===== */
+  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
+  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+  --shadow-pixel-inset: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.05),
+    inset -1px -1px 0px 0px rgba(0, 0, 0, 0.5);
+
+  /* ===== Editor Specific ===== */
+  --editor-bg: 0 0% 98%;
+  /* Near white editor background */
+  --editor-gutter: 0 0% 90%;
+  /* Lighter gutter */
+  --editor-selection: 24.6 95% 85%;
+  /* Orange selection */
+  --editor-line-highlight: 0 0% 93%;
+  /* Current line highlight */
+
+  /* ===== Chart Colors ===== */
+  --chart-1: 24.6 95% 45%;
+  /* Primary orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+
+  /* ===== Layout Tokens ===== */
+  /* Panel sizes (percentages for resizable panels) */
+  --panel-editor: 70%;
+  /* Main editor panel */
+  --panel-editor-monaco: 60%;
+  /* Monaco editor within editor */
+  --panel-preview: 40%;
+  /* Preview panel */
+  --panel-terminal: 30%;
+  /* Terminal panel */
+  --panel-chat: 25%;
+  /* Chat panel */
+
+  /* Sidebar dimensions */
+  --sidebar-activity-bar: 48px;
+  /* Activity bar width */
+  --sidebar-activity-bar-height: 44px;
+  /* Touch-friendly button height (mobile: 44px, tablet+: 48px) */
+  --sidebar-content-panel: 280px;
+  /* Sidebar content panel width */
+  --sidebar-content-panel-mobile: 200px;
+  /* Mobile sidebar width */
+  --sidebar-content-panel-tablet: 240px;
+  /* Tablet sidebar width */
+  --sidebar-content-panel-lg: 320px;
+  /* Large desktop sidebar width */
+
+  /* Status bar */
+  --status-bar-height: 24px;
+  /* Status bar height (h-6) */
+
+  /* ===== Responsive Breakpoints ===== */
+  /* Breakpoint definitions for responsive design */
+  --breakpoint-mobile: 640px;
+  /* Mobile devices */
+  --breakpoint-tablet: 768px;
+  /* Tablets */
+  --breakpoint-desktop: 1024px;
+  /* Desktop */
+  --breakpoint-lg: 1280px;
+  /* Large desktop */
+
+  /* ===== Responsive Typography ===== */
+  /* Fluid font sizes that scale with viewport */
+  --font-size-mobile: 14px;
+  /* Mobile base font size */
+  --font-size-tablet: 15px;
+  /* Tablet base font size */
+  --font-size-desktop: 16px;
+  /* Desktop base font size */
+  --font-size-lg: 17px;
+  /* Large desktop font size */
+
+  /* ===== Responsive Spacing ===== */
+  /* Adaptive spacing for different screen sizes */
+  --spacing-mobile: 0.5rem;
+  /* Mobile spacing */
+  --spacing-tablet: 0.75rem;
+  /* Tablet spacing */
+  --spacing-desktop: 1rem;
+  /* Desktop spacing */
+  --spacing-lg: 1.25rem;
+  /* Large desktop spacing */
+}
+
+/* =============================================================================
+   CUSTOM SCROLLBAR STYLES
+   ============================================================================= */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(240 4% 25%);
+  border-radius: 0px;
+  border: 2px solid hsl(var(--card));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(240 4% 35%);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(240 4% 25%) transparent;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* =============================================================================
+   SELECTION HIGHLIGHT
+   ============================================================================= */
+::selection {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+::-moz-selection {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}

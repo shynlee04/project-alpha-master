@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- Project Color Gradients -->
+    <linearGradient id="cyanBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="amberGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="magentaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#d946ef;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0abfc;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="slateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e2e8f0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#020617;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Tech Grid Pattern -->
+    <pattern id="gridPattern" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect width="16" height="16" fill="#020617" opacity="0.8"/>
+      <rect x="0" y="0" width="1" height="1" fill="#27272a" opacity="0.3"/>
+      <rect x="8" y="8" width="1" height="1" fill="#27272a" opacity="0.3"/>
+      <circle cx="4" cy="4" r="1" fill="#06b6d4" opacity="0.2"/>
+      <circle cx="12" cy="12" r="1" fill="#3b82f6" opacity="0.2"/>
+    </pattern>
+    
+    <!-- Circuit Pattern -->
+    <pattern id="circuitPattern" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M0 12 L24 12" stroke="#06b6d4" stroke-width="0.5" fill="none" opacity="0.2"/>
+      <path d="M12 0 L12 24" stroke="#3b82f6" stroke-width="0.5" fill="none" opacity="0.2"/>
+      <circle cx="12" cy="12" r="1.5" fill="#f97316" opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="500" height="120" fill="#020617" rx="8"/>
+  <rect width="500" height="120" fill="url(#gridPattern)" opacity="0.6"/>
+  <rect width="500" height="120" fill="url(#circuitPattern)" opacity="0.4"/>
+
+  <!-- Animated Background Data Streams -->
+  <g opacity="0.2">
+    <path d="M0 15 Q125 45 250 15 T375 45 500 15" stroke="#06b6d4" stroke-width="0.8" fill="none">
+      <animate attributeName="stroke-dasharray" values="0,500;40,460;80,420;120,380;160,340;200,300;250,250;300,200;350,150;400,100;450,50;500,0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="10s" repeatCount="indefinite"/>
+    </path>
+    <path d="M0 60 Q125 90 250 60 T375 90 500 60" stroke="#3b82f6" stroke-width="0.8" fill="none">
+      <animate attributeName="stroke-dasharray" values="0,500;40,460;80,420;120,380;160,340;200,300;250,250;300,200;350,150;400,100;450,50;500,0" dur="10s" begin="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="10s" begin="2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M0 105 Q125 135 250 105 T375 135 500 105" stroke="#f97316" stroke-width="0.8" fill="none">
+      <animate attributeName="stroke-dasharray" values="0,500;40,460;80,420;120,380;160,340;200,300;250,250;300,200;350,150;400,100;450,50;500,0" dur="10s" begin="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="10s" begin="4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- Main Logo Mark - Abstract IDE/AI Symbol -->
+  <g transform="translate(30, 20)">
+    <!-- Outer Hexagon Frame -->
+    <polygon points="45,0 85,0 105,30 105,60 85,100 45,100 30,65" 
+             fill="none" 
+             stroke="url(#cyanBlueGrad)" 
+             stroke-width="2"
+             filter="url(#glow)">
+      <animate attributeName="stroke-opacity" values="0.5;0.8;0.5" dur="4s" repeatCount="indefinite"/>
+    </polygon>
+    
+    <!-- Inner Hexagon -->
+    <polygon points="45,10 85,10 95,35 95,60 85,90 45,90 35,65" 
+             fill="#020617" 
+             stroke="#06b6d4" 
+             stroke-width="1.5">
+    </polygon>
+    
+    <!-- IDE Elements -->
+    <!-- Code Brackets -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="6" height="6" fill="#06b6d4" opacity="0.8" rx="1"/>
+      <rect x="0" y="6" width="6" height="6" fill="#06b6d4" opacity="0.8" rx="1"/>
+      <rect x="0" y="12" width="6" height="6" fill="#06b6d4" opacity="0.8" rx="1"/>
+      <rect x="0" y="18" width="6" height="6" fill="#06b6d4" opacity="0.8" rx="1"/>
+      <rect x="0" y="24" width="6" height="6" fill="#06b6d4" opacity="0.8" rx="1"/>
+      <rect x="0" y="30" width="6" height="6" fill="#06b6d4" opacity="0.8" rx="1"/>
+      
+      <!-- Code Lines -->
+      <line x1="6" y1="3" x2="6" y2="33" stroke="#06b6d4" stroke-width="1.5"/>
+      <line x1="6" y1="9" x2="6" y2="39" stroke="#06b6d4" stroke-width="1.5"/>
+      <line x1="6" y1="15" x2="6" y2="45" stroke="#06b6d4" stroke-width="1.5"/>
+      <line x1="6" y1="21" x2="6" y2="51" stroke="#06b6d4" stroke-width="1.5"/>
+      <line x1="6" y1="27" x2="6" y2="57" stroke="#06b6d4" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Terminal Icon -->
+    <g transform="translate(95, 30)">
+      <rect x="0" y="0" width="20" height="14" fill="#020617" stroke="#27272a" stroke-width="1.5" rx="2"/>
+      <text x="5" y="10" fill="#06b6d4" font-family="monospace" font-size="8" font-weight="700">_</text>
+      <text x="10" y="10" fill="#06b6d4" font-family="monospace" font-size="8" font-weight="700">$</text>
+      <line x1="5" y1="13" x2="15" y2="13" stroke="#06b6d4" stroke-width="1.5"/>
+    </g>
+    
+    <!-- AI Brain/Core -->
+    <g transform="translate(65, 50)" filter="url(#strongGlow)">
+      <!-- Rotating Rings -->
+      <circle cx="0" cy="0" r="25" fill="none" stroke="url(#cyanBlueGrad)" stroke-width="1.5">
+        <animate attributeName="r" values="25;28;25" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="0" cy="0" r="20" fill="none" stroke="url(#amberGreenGrad)" stroke-width="1.5">
+        <animate attributeName="r" values="20;23;20" dur="2.5s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.4;0.7;0.4" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="0" cy="0" r="15" fill="none" stroke="#3b82f6" stroke-width="1.5">
+        <animate attributeName="r" values="15;18;15" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Core -->
+      <circle cx="0" cy="0" r="8" fill="url(#cyanBlueGrad)">
+        <animate attributeName="r" values="8;10;8" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Neural Nodes -->
+      <circle cx="-15" cy="-12" r="4" fill="#06b6d4" opacity="0.6">
+        <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="15" cy="-12" r="4" fill="#3b82f6" opacity="0.6">
+        <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <circle cx="0" cy="15" r="4" fill="#f97316" opacity="0.6">
+        <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+      <circle cx="0" cy="-15" r="4" fill="#22c55e" opacity="0.6">
+        <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+      </circle>
+      
+      <!-- Connection Lines -->
+      <g stroke="#27272a" stroke-width="1" opacity="0.4">
+        <line x1="-15" y1="-12" x2="0" y2="0">
+          <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite"/>
+        </line>
+        <line x1="15" y1="-12" x2="0" y2="0">
+          <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        </line>
+        <line x1="0" y1="15" x2="0" y2="0">
+          <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite" begin="1s"/>
+        </line>
+        <line x1="0" y1="-15" x2="0" y2="0">
+          <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+        </line>
+      </g>
+    </g>
+  </g>
+
+  <!-- Text: Via-gent -->
+  <g transform="translate(160, 70)">
+    <!-- "Via" in white -->
+    <text font-family="'JetBrains Mono', 'Fira Code', monospace" 
+          font-weight="800" 
+          font-size="56" 
+          fill="#e2e8f0" 
+          letter-spacing="2">
+      Via
+    </text>
+    
+    <!-- "-gent" with gradient -->
+    <text x="92" 
+          font-family="'JetBrains Mono', 'Fira Code', monospace" 
+          font-weight="800" 
+          font-size="56" 
+          fill="url(#cyanBlueGrad)" 
+          letter-spacing="2">
+      -gent
+    </text>
+    
+    <!-- Animated Underline with gradient -->
+    <line x1="0" y1="14" x2="0" y2="14" stroke="url(#cyanBlueGrad)" stroke-width="4">
+      <animate attributeName="x2" values="0;120;0" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- Status Indicators -->
+  <g transform="translate(430, 25)">
+    <!-- AI Indicator -->
+    <circle cx="0" cy="0" r="6" fill="#06b6d4" filter="url(#glow)">
+      <animate attributeName="r" values="6;7;6" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" opacity="0.9"/>
+    <text x="12" y="4" fill="#06b6d4" font-family="monospace" font-size="9" font-weight="700">AI</text>
+    
+    <!-- Code Indicator -->
+    <circle cx="0" cy="18" r="6" fill="#3b82f6" filter="url(#glow)">
+      <animate attributeName="r" values="6;7;6" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="18" r="3" fill="#ffffff" opacity="0.9"/>
+    <text x="12" y="22" fill="#3b82f6" font-family="monospace" font-size="9" font-weight="700">CODE</text>
+    
+    <!-- Terminal Indicator -->
+    <circle cx="0" cy="36" r="6" fill="#f97316" filter="url(#glow)">
+      <animate attributeName="r" values="6;7;6" dur="2s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="36" r="3" fill="#ffffff" opacity="0.9"/>
+    <text x="12" y="40" fill="#f97316" font-family="monospace" font-size="9" font-weight="700">TERM</text>
+    
+    <!-- Sync Indicator -->
+    <circle cx="0" cy="54" r="6" fill="#22c55e" filter="url(#glow)">
+      <animate attributeName="r" values="6;7;6" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="54" r="3" fill="#ffffff" opacity="0.9"/>
+    <text x="12" y="58" fill="#22c55e" font-family="monospace" font-size="9" font-weight="700">SYNC</text>
+  </g>
+
+  <!-- Floating Code Symbols -->
+  <g fill="#27272a" font-family="monospace" font-size="7" opacity="0.3">
+    <text x="50" y="15">&lt;/&gt;</text>
+    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="5s" repeatCount="indefinite"/>
+    
+    <text x="120" y="35">{ }</text>
+    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="5s" begin="1.5s" repeatCount="indefinite"/>
+    
+    <text x="200" y="55">const</text>
+    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="5s" begin="3s" repeatCount="indefinite"/>
+    
+    <text x="280" y="25">=&gt;</text>
+    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="5s" begin="4.5s" repeatCount="indefinite"/>
+    
+    <text x="360" y="45">function</text>
+    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="5s" begin="2.5s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- Corner Tech Accents -->
+  <g fill="none" stroke="url(#cyanBlueGrad)" stroke-width="1.5" opacity="0.5">
+    <!-- Top Left -->
+    <path d="M10 5 L10 2 L15 2">
+      <animate attributeName="stroke-dasharray" values="0,10;5,5;0,10" dur="4s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Top Right -->
+    <path d="M490 5 L490 2 L495 2">
+      <animate attributeName="stroke-dasharray" values="0,10;5,5;0,10" dur="4s" begin="1s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Bottom Left -->
+    <path d="M10 115 L10 120 L15 120">
+      <animate attributeName="stroke-dasharray" values="0,10;5,5;0,10" dur="4s" begin="2s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Bottom Right -->
+    <path d="M490 115 L490 120 L495 120">
+      <animate attributeName="stroke-dasharray" values="0,10;5,5;0,10" dur="4s" begin="3s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

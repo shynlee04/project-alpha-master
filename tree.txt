@@ -1,0 +1,988 @@
+.
+├── AGENTS.md
+├── CLAUDE.md
+├── README.md
+├── _bmad
+│   ├── _config
+│   │   ├── agent-manifest.csv
+│   │   ├── agents
+│   │   │   ├── bmb-bmad-builder.customize.yaml
+│   │   │   ├── bmm-analyst.customize.yaml
+│   │   │   ├── bmm-architect.customize.yaml
+│   │   │   ├── bmm-dev.customize.yaml
+│   │   │   ├── bmm-pm.customize.yaml
+│   │   │   ├── bmm-quick-flow-solo-dev.customize.yaml
+│   │   │   ├── bmm-sm.customize.yaml
+│   │   │   ├── bmm-tea.customize.yaml
+│   │   │   ├── bmm-tech-writer.customize.yaml
+│   │   │   ├── bmm-ux-designer.customize.yaml
+│   │   │   ├── cis-brainstorming-coach.customize.yaml
+│   │   │   ├── cis-creative-problem-solver.customize.yaml
+│   │   │   ├── cis-design-thinking-coach.customize.yaml
+│   │   │   ├── cis-innovation-strategist.customize.yaml
+│   │   │   ├── cis-presentation-master.customize.yaml
+│   │   │   ├── cis-storyteller.customize.yaml
+│   │   │   └── core-bmad-master.customize.yaml
+│   │   ├── custom
+│   │   ├── files-manifest.csv
+│   │   ├── ides
+│   │   │   ├── claude-code.yaml
+│   │   │   └── codex.yaml
+│   │   ├── manifest.yaml
+│   │   ├── task-manifest.csv
+│   │   ├── tool-manifest.csv
+│   │   └── workflow-manifest.csv
+│   ├── _memory
+│   │   ├── config.yaml
+│   │   └── storyteller-sidecar
+│   │       ├── stories-told.md
+│   │       └── story-preferences.md
+│   ├── bmb
+│   │   ├── agents
+│   │   │   └── bmad-builder.md
+│   │   ├── config.yaml
+│   │   ├── docs
+│   │   │   ├── README.md
+│   │   │   ├── agents
+│   │   │   │   ├── agent-compilation.md
+│   │   │   │   ├── agent-menu-patterns.md
+│   │   │   │   ├── expert-agent-architecture.md
+│   │   │   │   ├── index.md
+│   │   │   │   ├── kb.csv
+│   │   │   │   ├── simple-agent-architecture.md
+│   │   │   │   └── understanding-agent-types.md
+│   │   │   └── workflows
+│   │   │       ├── architecture.md
+│   │   │       ├── common-workflow-tools.csv
+│   │   │       ├── csv-data-file-standards.md
+│   │   │       ├── index.md
+│   │   │       ├── intent-vs-prescriptive-spectrum.md
+│   │   │       ├── kb.csv
+│   │   │       ├── templates
+│   │   │       │   ├── step-01-init-continuable-template.md
+│   │   │       │   ├── step-1b-template.md
+│   │   │       │   ├── step-file.md
+│   │   │       │   ├── step-template.md
+│   │   │       │   ├── workflow-template.md
+│   │   │       │   └── workflow.md
+│   │   │       └── terms.md
+│   │   ├── reference
+│   │   │   ├── README.md
+│   │   │   ├── agents
+│   │   │   │   ├── expert-examples
+│   │   │   │   │   └── journal-keeper
+│   │   │   │   │       └── README.md
+│   │   │   │   ├── module-examples
+│   │   │   │   │   └── README.md
+│   │   │   │   └── simple-examples
+│   │   │   │       └── README.md
+│   │   │   └── workflows
+│   │   │       └── meal-prep-nutrition
+│   │   │           ├── data
+│   │   │           │   ├── dietary-restrictions.csv
+│   │   │           │   ├── macro-calculator.csv
+│   │   │           │   └── recipe-database.csv
+│   │   │           ├── steps
+│   │   │           │   ├── step-01-init.md
+│   │   │           │   ├── step-01b-continue.md
+│   │   │           │   ├── step-02-profile.md
+│   │   │           │   ├── step-03-assessment.md
+│   │   │           │   ├── step-04-strategy.md
+│   │   │           │   ├── step-05-shopping.md
+│   │   │           │   └── step-06-prep-schedule.md
+│   │   │           ├── templates
+│   │   │           │   ├── assessment-section.md
+│   │   │           │   ├── nutrition-plan.md
+│   │   │           │   ├── prep-schedule-section.md
+│   │   │           │   ├── profile-section.md
+│   │   │           │   ├── shopping-section.md
+│   │   │           │   └── strategy-section.md
+│   │   │           └── workflow.md
+│   │   ├── workflows
+│   │   │   ├── create-agent
+│   │   │   │   ├── data
+│   │   │   │   │   ├── agent-validation-checklist.md
+│   │   │   │   │   ├── brainstorm-context.md
+│   │   │   │   │   ├── communication-presets.csv
+│   │   │   │   │   ├── info-and-installation-guide.md
+│   │   │   │   │   ├── reference
+│   │   │   │   │   │   ├── README.md
+│   │   │   │   │   │   ├── agents
+│   │   │   │   │   │   │   ├── expert-examples
+│   │   │   │   │   │   │   │   └── journal-keeper
+│   │   │   │   │   │   │   │       └── README.md
+│   │   │   │   │   │   │   ├── module-examples
+│   │   │   │   │   │   │   │   └── README.md
+│   │   │   │   │   │   │   └── simple-examples
+│   │   │   │   │   │   │       └── README.md
+│   │   │   │   │   │   └── workflows
+│   │   │   │   │   │       └── meal-prep-nutrition
+│   │   │   │   │   │           ├── data
+│   │   │   │   │   │           │   ├── dietary-restrictions.csv
+│   │   │   │   │   │           │   ├── macro-calculator.csv
+│   │   │   │   │   │           │   └── recipe-database.csv
+│   │   │   │   │   │           ├── steps
+│   │   │   │   │   │           │   ├── step-01-init.md
+│   │   │   │   │   │           │   ├── step-01b-continue.md
+│   │   │   │   │   │           │   ├── step-02-profile.md
+│   │   │   │   │   │           │   ├── step-03-assessment.md
+│   │   │   │   │   │           │   ├── step-04-strategy.md
+│   │   │   │   │   │           │   ├── step-05-shopping.md
+│   │   │   │   │   │           │   └── step-06-prep-schedule.md
+│   │   │   │   │   │           ├── templates
+│   │   │   │   │   │           │   ├── assessment-section.md
+│   │   │   │   │   │           │   ├── nutrition-plan.md
+│   │   │   │   │   │           │   ├── prep-schedule-section.md
+│   │   │   │   │   │           │   ├── profile-section.md
+│   │   │   │   │   │           │   ├── shopping-section.md
+│   │   │   │   │   │           │   └── strategy-section.md
+│   │   │   │   │   │           └── workflow.md
+│   │   │   │   │   └── validation-complete.md
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-brainstorm.md
+│   │   │   │   │   ├── step-02-discover.md
+│   │   │   │   │   ├── step-03-persona.md
+│   │   │   │   │   ├── step-04-commands.md
+│   │   │   │   │   ├── step-05-name.md
+│   │   │   │   │   ├── step-06-build.md
+│   │   │   │   │   ├── step-07-validate.md
+│   │   │   │   │   └── step-08-celebrate.md
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── agent-plan.template.md
+│   │   │   │   │   ├── expert-agent.template.md
+│   │   │   │   │   └── simple-agent.template.md
+│   │   │   │   └── workflow.md
+│   │   │   ├── create-module
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-init.md
+│   │   │   │   │   ├── step-01b-continue.md
+│   │   │   │   │   ├── step-02-concept.md
+│   │   │   │   │   ├── step-03-components.md
+│   │   │   │   │   ├── step-04-structure.md
+│   │   │   │   │   ├── step-05-config.md
+│   │   │   │   │   ├── step-06-agents.md
+│   │   │   │   │   ├── step-07-workflows.md
+│   │   │   │   │   ├── step-08-installer.md
+│   │   │   │   │   ├── step-09-documentation.md
+│   │   │   │   │   ├── step-10-roadmap.md
+│   │   │   │   │   └── step-11-validate.md
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── agent.template.md
+│   │   │   │   │   ├── installer.template.js
+│   │   │   │   │   ├── module-plan.template.md
+│   │   │   │   │   ├── module.template.yaml
+│   │   │   │   │   └── workflow-plan-template.md
+│   │   │   │   ├── validation.md
+│   │   │   │   └── workflow.md
+│   │   │   ├── create-workflow
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-init.md
+│   │   │   │   │   ├── step-02-gather.md
+│   │   │   │   │   ├── step-03-tools-configuration.md
+│   │   │   │   │   ├── step-04-plan-review.md
+│   │   │   │   │   ├── step-05-output-format-design.md
+│   │   │   │   │   ├── step-06-design.md
+│   │   │   │   │   ├── step-07-build.md
+│   │   │   │   │   ├── step-08-review.md
+│   │   │   │   │   └── step-09-complete.md
+│   │   │   │   └── workflow.md
+│   │   │   ├── edit-agent
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-discover-intent.md
+│   │   │   │   │   ├── step-02-analyze-agent.md
+│   │   │   │   │   ├── step-03-propose-changes.md
+│   │   │   │   │   ├── step-04-apply-changes.md
+│   │   │   │   │   └── step-05-validate.md
+│   │   │   │   └── workflow.md
+│   │   │   ├── edit-workflow
+│   │   │   │   ├── steps
+│   │   │   │   │   ├── step-01-analyze.md
+│   │   │   │   │   ├── step-02-discover.md
+│   │   │   │   │   ├── step-03-improve.md
+│   │   │   │   │   ├── step-04-validate.md
+│   │   │   │   │   └── step-05-compliance-check.md
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── completion-summary.md
+│   │   │   │   │   ├── improvement-goals.md
+│   │   │   │   │   ├── improvement-log.md
+│   │   │   │   │   ├── validation-results.md
+│   │   │   │   │   └── workflow-analysis.md
+│   │   │   │   └── workflow.md
+│   │   │   └── workflow-compliance-check
+│   │   │       ├── steps
+│   │   │       │   ├── step-01-validate-goal.md
+│   │   │       │   ├── step-02-workflow-validation.md
+│   │   │       │   ├── step-03-step-validation.md
+│   │   │       │   ├── step-04-file-validation.md
+│   │   │       │   ├── step-05-intent-spectrum-validation.md
+│   │   │       │   ├── step-06-web-subprocess-validation.md
+│   │   │       │   ├── step-07-holistic-analysis.md
+│   │   │       │   └── step-08-generate-report.md
+│   │   │       ├── templates
+│   │   │       │   └── compliance-report.md
+│   │   │       └── workflow.md
+│   │   └── workflows-legacy
+│   │       ├── edit-module
+│   │       │   ├── README.md
+│   │       │   ├── checklist.md
+│   │       │   ├── instructions.md
+│   │       │   └── workflow.yaml
+│   │       └── module-brief
+│   │           ├── README.md
+│   │           ├── checklist.md
+│   │           ├── instructions.md
+│   │           ├── template.md
+│   │           └── workflow.yaml
+│   ├── bmm
+│   │   ├── README.md
+│   │   ├── agents
+│   │   │   ├── analyst.md
+│   │   │   ├── architect.md
+│   │   │   ├── dev.md
+│   │   │   ├── pm.md
+│   │   │   ├── quick-flow-solo-dev.md
+│   │   │   ├── sm.md
+│   │   │   ├── tea.md
+│   │   │   ├── tech-writer.md
+│   │   │   └── ux-designer.md
+│   │   ├── config.yaml
+│   │   ├── data
+│   │   │   ├── README.md
+│   │   │   ├── documentation-standards.md
+│   │   │   └── project-context-template.md
+│   │   ├── docs
+│   │   │   ├── README.md
+│   │   │   ├── agents-guide.md
+│   │   │   ├── bmad-quick-flow.md
+│   │   │   ├── brownfield-guide.md
+│   │   │   ├── enterprise-agentic-development.md
+│   │   │   ├── faq.md
+│   │   │   ├── glossary.md
+│   │   │   ├── images
+│   │   │   │   ├── README.md
+│   │   │   │   ├── workflow-method-greenfield.excalidraw
+│   │   │   │   └── workflow-method-greenfield.svg
+│   │   │   ├── party-mode.md
+│   │   │   ├── quick-flow-solo-dev.md
+│   │   │   ├── quick-spec-flow.md
+│   │   │   ├── quick-start.md
+│   │   │   ├── scale-adaptive-system.md
+│   │   │   ├── test-architecture.md
+│   │   │   ├── troubleshooting.md
+│   │   │   ├── workflow-architecture-reference.md
+│   │   │   ├── workflow-document-project-reference.md
+│   │   │   ├── workflows-analysis.md
+│   │   │   ├── workflows-implementation.md
+│   │   │   ├── workflows-planning.md
+│   │   │   └── workflows-solutioning.md
+│   │   ├── teams
+│   │   │   ├── default-party.csv
+│   │   │   └── team-fullstack.yaml
+│   │   ├── testarch
+│   │   │   ├── knowledge
+│   │   │   │   ├── api-request.md
+│   │   │   │   ├── auth-session.md
+│   │   │   │   ├── burn-in.md
+│   │   │   │   ├── ci-burn-in.md
+│   │   │   │   ├── component-tdd.md
+│   │   │   │   ├── contract-testing.md
+│   │   │   │   ├── data-factories.md
+│   │   │   │   ├── email-auth.md
+│   │   │   │   ├── error-handling.md
+│   │   │   │   ├── feature-flags.md
+│   │   │   │   ├── file-utils.md
+│   │   │   │   ├── fixture-architecture.md
+│   │   │   │   ├── fixtures-composition.md
+│   │   │   │   ├── intercept-network-call.md
+│   │   │   │   ├── log.md
+│   │   │   │   ├── network-error-monitor.md
+│   │   │   │   ├── network-first.md
+│   │   │   │   ├── network-recorder.md
+│   │   │   │   ├── nfr-criteria.md
+│   │   │   │   ├── overview.md
+│   │   │   │   ├── playwright-config.md
+│   │   │   │   ├── probability-impact.md
+│   │   │   │   ├── recurse.md
+│   │   │   │   ├── risk-governance.md
+│   │   │   │   ├── selective-testing.md
+│   │   │   │   ├── selector-resilience.md
+│   │   │   │   ├── test-healing-patterns.md
+│   │   │   │   ├── test-levels-framework.md
+│   │   │   │   ├── test-priorities-matrix.md
+│   │   │   │   ├── test-quality.md
+│   │   │   │   ├── timing-debugging.md
+│   │   │   │   └── visual-debugging.md
+│   │   │   └── tea-index.csv
+│   │   └── workflows
+│   │       ├── 1-analysis
+│   │       │   ├── create-product-brief
+│   │       │   │   ├── product-brief.template.md
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-init.md
+│   │       │   │   │   ├── step-01b-continue.md
+│   │       │   │   │   ├── step-02-vision.md
+│   │       │   │   │   ├── step-03-users.md
+│   │       │   │   │   ├── step-04-metrics.md
+│   │       │   │   │   ├── step-05-scope.md
+│   │       │   │   │   └── step-06-complete.md
+│   │       │   │   └── workflow.md
+│   │       │   └── research
+│   │       │       ├── domain-steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-02-domain-analysis.md
+│   │       │       │   ├── step-03-competitive-landscape.md
+│   │       │       │   ├── step-04-regulatory-focus.md
+│   │       │       │   ├── step-05-technical-trends.md
+│   │       │       │   └── step-06-research-synthesis.md
+│   │       │       ├── market-steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-02-customer-behavior.md
+│   │       │       │   ├── step-02-customer-insights.md
+│   │       │       │   ├── step-03-customer-pain-points.md
+│   │       │       │   ├── step-04-customer-decisions.md
+│   │       │       │   ├── step-05-competitive-analysis.md
+│   │       │       │   └── step-06-research-completion.md
+│   │       │       ├── research.template.md
+│   │       │       ├── technical-steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-02-technical-overview.md
+│   │       │       │   ├── step-03-integration-patterns.md
+│   │       │       │   ├── step-04-architectural-patterns.md
+│   │       │       │   ├── step-05-implementation-research.md
+│   │       │       │   └── step-06-research-synthesis.md
+│   │       │       └── workflow.md
+│   │       ├── 2-plan-workflows
+│   │       │   ├── create-ux-design
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-init.md
+│   │       │   │   │   ├── step-01b-continue.md
+│   │       │   │   │   ├── step-02-discovery.md
+│   │       │   │   │   ├── step-03-core-experience.md
+│   │       │   │   │   ├── step-04-emotional-response.md
+│   │       │   │   │   ├── step-05-inspiration.md
+│   │       │   │   │   ├── step-06-design-system.md
+│   │       │   │   │   ├── step-07-defining-experience.md
+│   │       │   │   │   ├── step-08-visual-foundation.md
+│   │       │   │   │   ├── step-09-design-directions.md
+│   │       │   │   │   ├── step-10-user-journeys.md
+│   │       │   │   │   ├── step-11-component-strategy.md
+│   │       │   │   │   ├── step-12-ux-patterns.md
+│   │       │   │   │   ├── step-13-responsive-accessibility.md
+│   │       │   │   │   └── step-14-complete.md
+│   │       │   │   ├── ux-design-template.md
+│   │       │   │   └── workflow.md
+│   │       │   └── prd
+│   │       │       ├── domain-complexity.csv
+│   │       │       ├── prd-template.md
+│   │       │       ├── project-types.csv
+│   │       │       ├── steps
+│   │       │       │   ├── step-01-init.md
+│   │       │       │   ├── step-01b-continue.md
+│   │       │       │   ├── step-02-discovery.md
+│   │       │       │   ├── step-03-success.md
+│   │       │       │   ├── step-04-journeys.md
+│   │       │       │   ├── step-05-domain.md
+│   │       │       │   ├── step-06-innovation.md
+│   │       │       │   ├── step-07-project-type.md
+│   │       │       │   ├── step-08-scoping.md
+│   │       │       │   ├── step-09-functional.md
+│   │       │       │   ├── step-10-nonfunctional.md
+│   │       │       │   └── step-11-complete.md
+│   │       │       └── workflow.md
+│   │       ├── 3-solutioning
+│   │       │   ├── check-implementation-readiness
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-document-discovery.md
+│   │       │   │   │   ├── step-02-prd-analysis.md
+│   │       │   │   │   ├── step-03-epic-coverage-validation.md
+│   │       │   │   │   ├── step-04-ux-alignment.md
+│   │       │   │   │   ├── step-05-epic-quality-review.md
+│   │       │   │   │   └── step-06-final-assessment.md
+│   │       │   │   ├── templates
+│   │       │   │   │   └── readiness-report-template.md
+│   │       │   │   └── workflow.md
+│   │       │   ├── create-architecture
+│   │       │   │   ├── architecture-decision-template.md
+│   │       │   │   ├── data
+│   │       │   │   │   ├── domain-complexity.csv
+│   │       │   │   │   └── project-types.csv
+│   │       │   │   ├── steps
+│   │       │   │   │   ├── step-01-init.md
+│   │       │   │   │   ├── step-01b-continue.md
+│   │       │   │   │   ├── step-02-context.md
+│   │       │   │   │   ├── step-03-starter.md
+│   │       │   │   │   ├── step-04-decisions.md
+│   │       │   │   │   ├── step-05-patterns.md
+│   │       │   │   │   ├── step-06-structure.md
+│   │       │   │   │   ├── step-07-validation.md
+│   │       │   │   │   └── step-08-complete.md
+│   │       │   │   └── workflow.md
+│   │       │   └── create-epics-and-stories
+│   │       │       ├── steps
+│   │       │       │   ├── step-01-validate-prerequisites.md
+│   │       │       │   ├── step-02-design-epics.md
+│   │       │       │   ├── step-03-create-stories.md
+│   │       │       │   └── step-04-final-validation.md
+│   │       │       ├── templates
+│   │       │       │   └── epics-template.md
+│   │       │       └── workflow.md
+│   │       ├── 4-implementation
+│   │       │   ├── code-review
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.xml
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── correct-course
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── create-story
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.xml
+│   │       │   │   ├── template.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── dev-story
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.xml
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── retrospective
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── sprint-planning
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── sprint-status-template.yaml
+│   │       │   │   └── workflow.yaml
+│   │       │   └── sprint-status
+│   │       │       ├── instructions.md
+│   │       │       └── workflow.yaml
+│   │       ├── bmad-quick-flow
+│   │       │   ├── create-tech-spec
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   └── quick-dev
+│   │       │       ├── checklist.md
+│   │       │       ├── instructions.md
+│   │       │       └── workflow.yaml
+│   │       ├── document-project
+│   │       │   ├── checklist.md
+│   │       │   ├── documentation-requirements.csv
+│   │       │   ├── instructions.md
+│   │       │   ├── templates
+│   │       │   │   ├── deep-dive-template.md
+│   │       │   │   ├── index-template.md
+│   │       │   │   ├── project-overview-template.md
+│   │       │   │   ├── project-scan-report-schema.json
+│   │       │   │   └── source-tree-template.md
+│   │       │   ├── workflow.yaml
+│   │       │   └── workflows
+│   │       │       ├── deep-dive-instructions.md
+│   │       │       ├── deep-dive.yaml
+│   │       │       ├── full-scan-instructions.md
+│   │       │       └── full-scan.yaml
+│   │       ├── excalidraw-diagrams
+│   │       │   ├── _shared
+│   │       │   │   ├── excalidraw-library.json
+│   │       │   │   └── excalidraw-templates.yaml
+│   │       │   ├── create-dataflow
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── create-diagram
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── create-flowchart
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   └── create-wireframe
+│   │       │       ├── checklist.md
+│   │       │       ├── instructions.md
+│   │       │       └── workflow.yaml
+│   │       ├── generate-project-context
+│   │       │   ├── project-context-template.md
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-discover.md
+│   │       │   │   ├── step-02-generate.md
+│   │       │   │   └── step-03-complete.md
+│   │       │   └── workflow.md
+│   │       ├── testarch
+│   │       │   ├── atdd
+│   │       │   │   ├── atdd-checklist-template.md
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── automate
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── ci
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── github-actions-template.yaml
+│   │       │   │   ├── gitlab-ci-template.yaml
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── framework
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── nfr-assess
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── nfr-report-template.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── test-design
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── test-design-template.md
+│   │       │   │   └── workflow.yaml
+│   │       │   ├── test-review
+│   │       │   │   ├── checklist.md
+│   │       │   │   ├── instructions.md
+│   │       │   │   ├── test-review-template.md
+│   │       │   │   └── workflow.yaml
+│   │       │   └── trace
+│   │       │       ├── checklist.md
+│   │       │       ├── instructions.md
+│   │       │       ├── trace-template.md
+│   │       │       └── workflow.yaml
+│   │       └── workflow-status
+│   │           ├── init
+│   │           │   ├── instructions.md
+│   │           │   └── workflow.yaml
+│   │           ├── instructions.md
+│   │           ├── paths
+│   │           │   ├── enterprise-brownfield.yaml
+│   │           │   ├── enterprise-greenfield.yaml
+│   │           │   ├── method-brownfield.yaml
+│   │           │   └── method-greenfield.yaml
+│   │           ├── project-levels.yaml
+│   │           ├── workflow-status-template.yaml
+│   │           └── workflow.yaml
+│   ├── cis
+│   │   ├── agents
+│   │   │   ├── brainstorming-coach.md
+│   │   │   ├── creative-problem-solver.md
+│   │   │   ├── design-thinking-coach.md
+│   │   │   ├── innovation-strategist.md
+│   │   │   ├── presentation-master.md
+│   │   │   └── storyteller
+│   │   │       └── storyteller.md
+│   │   ├── config.yaml
+│   │   ├── readme.md
+│   │   ├── teams
+│   │   │   ├── creative-squad.yaml
+│   │   │   └── default-party.csv
+│   │   └── workflows
+│   │       ├── README.md
+│   │       ├── design-thinking
+│   │       │   ├── README.md
+│   │       │   ├── design-methods.csv
+│   │       │   ├── instructions.md
+│   │       │   ├── template.md
+│   │       │   └── workflow.yaml
+│   │       ├── innovation-strategy
+│   │       │   ├── README.md
+│   │       │   ├── innovation-frameworks.csv
+│   │       │   ├── instructions.md
+│   │       │   ├── template.md
+│   │       │   └── workflow.yaml
+│   │       ├── problem-solving
+│   │       │   ├── README.md
+│   │       │   ├── instructions.md
+│   │       │   ├── solving-methods.csv
+│   │       │   ├── template.md
+│   │       │   └── workflow.yaml
+│   │       └── storytelling
+│   │           ├── README.md
+│   │           ├── instructions.md
+│   │           ├── story-types.csv
+│   │           ├── template.md
+│   │           └── workflow.yaml
+│   ├── core
+│   │   ├── agents
+│   │   │   └── bmad-master.md
+│   │   ├── config.yaml
+│   │   ├── resources
+│   │   │   └── excalidraw
+│   │   │       ├── README.md
+│   │   │       ├── excalidraw-helpers.md
+│   │   │       ├── library-loader.md
+│   │   │       └── validate-json-instructions.md
+│   │   ├── tasks
+│   │   │   ├── advanced-elicitation-methods.csv
+│   │   │   ├── advanced-elicitation.xml
+│   │   │   ├── index-docs.xml
+│   │   │   ├── validate-workflow.xml
+│   │   │   └── workflow.xml
+│   │   ├── tools
+│   │   │   └── shard-doc.xml
+│   │   └── workflows
+│   │       ├── brainstorming
+│   │       │   ├── brain-methods.csv
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-session-setup.md
+│   │       │   │   ├── step-01b-continue.md
+│   │       │   │   ├── step-02a-user-selected.md
+│   │       │   │   ├── step-02b-ai-recommended.md
+│   │       │   │   ├── step-02c-random-selection.md
+│   │       │   │   ├── step-02d-progressive-flow.md
+│   │       │   │   ├── step-03-technique-execution.md
+│   │       │   │   └── step-04-idea-organization.md
+│   │       │   ├── template.md
+│   │       │   └── workflow.md
+│   │       └── party-mode
+│   │           ├── steps
+│   │           │   ├── step-01-agent-loading.md
+│   │           │   ├── step-02-discussion-orchestration.md
+│   │           │   └── step-03-graceful-exit.md
+│   │           └── workflow.md
+│   └── custom
+│       ├── config.yaml
+│       └── src
+│           └── modules
+│               └── cham
+│                   ├── README.md
+│                   ├── agents
+│                   │   ├── architecture-compliance.agent.yaml
+│                   │   ├── architecture-fixer.agent.yaml
+│                   │   ├── cartographer.agent.yaml
+│                   │   ├── dependency-hygiene.agent.yaml
+│                   │   ├── documenter.agent.yaml
+│                   │   ├── final-validator.agent.yaml
+│                   │   ├── master-orchestrator-sidecar
+│                   │   │   ├── memories.md
+│                   │   │   └── plans
+│                   │   │       ├── template-cycle-prompts.md
+│                   │   │       ├── template-execution-status.json
+│                   │   │       └── template-master-plan.md
+│                   │   ├── master-orchestrator.agent.yaml
+│                   │   ├── pattern-analyzer.agent.yaml
+│                   │   ├── performance.agent.yaml
+│                   │   ├── security-data-flow.agent.yaml
+│                   │   ├── state-management.agent.yaml
+│                   │   ├── state-refactor.agent.yaml
+│                   │   ├── synthesizer.agent.yaml
+│                   │   ├── test-coverage.agent.yaml
+│                   │   ├── test-validator.agent.yaml
+│                   │   ├── test-writer.agent.yaml
+│                   │   ├── type-safety-fixer.agent.yaml
+│                   │   ├── type-safety.agent.yaml
+│                   │   └── ux-consistency.agent.yaml
+│                   ├── control
+│                   │   ├── config.yaml
+│                   │   └── platform-configs
+│                   │       ├── agent.yaml
+│                   │       ├── claude.yaml
+│                   │       ├── cursor.yaml
+│                   │       ├── gemini.yaml
+│                   │       ├── kilocode.yaml
+│                   │       └── windsurf.yaml
+│                   ├── docs
+│                   │   ├── agent-specifications.md
+│                   │   ├── architecture.md
+│                   │   ├── master-orchestrator-guide.md
+│                   │   ├── platform-guide.md
+│                   │   └── usage-guide.md
+│                   ├── module-plan-cham.md
+│                   ├── status
+│                   │   ├── 2025-12-09-v2
+│                   │   │   ├── codebase-map.json
+│                   │   │   ├── issue-reports
+│                   │   │   │   └── architecture.json
+│                   │   │   ├── patterns-detected.yaml
+│                   │   │   ├── phase-discovery.json
+│                   │   │   ├── phase-scanning.json
+│                   │   │   ├── phase-synthesis.json
+│                   │   │   ├── remediation-roadmap.md
+│                   │   │   └── synthesis-report.md
+│                   │   ├── 2025-12-10
+│                   │   │   ├── diagnostic-request.md
+│                   │   │   └── proposal-diagnostic-framework.md
+│                   │   ├── 2025-12-12
+│                   │   │   ├── phase-scanning.json
+│                   │   │   └── phase-synthesis.json
+│                   │   ├── 2025-12-13
+│                   │   │   ├── codebase-map.json
+│                   │   │   ├── issue-reports
+│                   │   │   │   ├── architecture.json
+│                   │   │   │   ├── dependencies.json
+│                   │   │   │   ├── performance.json
+│                   │   │   │   ├── security.json
+│                   │   │   │   ├── state.json
+│                   │   │   │   ├── testing.json
+│                   │   │   │   ├── type-safety.json
+│                   │   │   │   └── ux.json
+│                   │   │   ├── patterns-detected.yaml
+│                   │   │   ├── phase-discovery.json
+│                   │   │   ├── phase-scanning.json
+│                   │   │   ├── phase-synthesis.json
+│                   │   │   └── remediation-roadmap.md
+│                   │   ├── 2025-12-13-audit
+│                   │   │   ├── discovery-report.md
+│                   │   │   ├── integration-analysis.md
+│                   │   │   ├── remediation-roadmap.md
+│                   │   │   ├── revised-epic-priorities.yaml
+│                   │   │   └── synthesis-report.md
+│                   │   └── audit-status.json
+│                   └── workflows
+│                       ├── continuous-monitoring
+│                       │   └── workflow.md
+│                       ├── full-audit
+│                       │   ├── steps
+│                       │   │   ├── step-01-discovery.md
+│                       │   │   ├── step-02-scanning.md
+│                       │   │   ├── step-03-synthesis.md
+│                       │   │   ├── step-04-remediation.md
+│                       │   │   └── step-05-validation.md
+│                       │   └── workflow.md
+│                       ├── incremental-remediation
+│                       │   └── workflow.md
+│                       └── master-orchestration
+│                           ├── steps
+│                           │   ├── step-01-understand.md
+│                           │   ├── step-02-diagnose.md
+│                           │   ├── step-03-plan.md
+│                           │   ├── step-04-generate-prompts.md
+│                           │   └── step-05-execute.md
+│                           └── workflow.md
+├── _bmad-output
+│   ├── architecture.md
+│   ├── bmm-workflow-status.yaml
+│   ├── component-inventory.md
+│   ├── development-guide.md
+│   ├── documentation-consolidation-validation.md
+│   ├── epics.md
+│   ├── handoffs
+│   │   └── ux-designer-2025-12-20-1332.md
+│   ├── index.md
+│   ├── parallel-execution-strategy.md
+│   ├── prd.md
+│   ├── project-context.md
+│   ├── project-overview.md
+│   ├── project-scan-report.json
+│   ├── research-epic-22-tech-stack.md
+│   ├── research-report.md
+│   ├── shadcn-ui-mcp-server-guide.md
+│   ├── source-tree-analysis.md
+│   ├── sprint-artifacts
+│   │   ├── 13-1-fix-terminal-working-directory-context.xml
+│   │   ├── 13-1-fix-terminal-working-directory.md
+│   │   ├── 13-2-fix-auto-sync-on-project-load-context.xml
+│   │   ├── 13-2-fix-auto-sync-on-project-load.md
+│   │   ├── 13-3-add-sync-progress-indicator-context.xml
+│   │   ├── 13-3-add-sync-progress-indicator.md
+│   │   ├── 13-4-preserve-file-tree-state-context.xml
+│   │   ├── 13-4-preserve-file-tree-state.md
+│   │   ├── 13-5-improve-permission-restoration-context.xml
+│   │   ├── 13-5-improve-permission-restoration.md
+│   │   ├── 13-6-fix-preview-in-new-tab-context.xml
+│   │   ├── 13-6-fix-preview-in-new-tab.md
+│   │   ├── 21-1-locale-aware-routing-and-html-lang-context.xml
+│   │   ├── 21-1-locale-aware-routing-and-html-lang.md
+│   │   ├── 21-3-language-switcher-and-persistence-context.xml
+│   │   ├── 21-3-language-switcher-and-persistence.md
+│   │   ├── 21-5-ui-migration-wave-2-ide-surfaces-context.xml
+│   │   ├── 21-5-ui-migration-wave-2-ide-surfaces.md
+│   │   ├── 21-8-complete-localization-coverage.md
+│   │   ├── 22-1-implement-security-headers-context.xml
+│   │   ├── 22-1-implement-security-headers.md
+│   │   ├── 22-2-create-cicd-pipeline-context.xml
+│   │   ├── 22-2-create-cicd-pipeline.md
+│   │   ├── 23-1-install-tailwindcss-4.md
+│   │   ├── epic-1-retrospective.md
+│   │   ├── epic-10-retrospective.md
+│   │   ├── epic-13-retrospective.md
+│   │   ├── epic-2-retrospective.md
+│   │   ├── epic-3-code-review.md
+│   │   ├── epic-3-retrospective.md
+│   │   ├── epic-4-retrospective.md
+│   │   ├── epic-5-retrospective.md
+│   │   ├── production-readiness-epic-13-report.md
+│   │   ├── sprint-status.yaml
+│   │   ├── tech-spec-branding-overhaul-context.xml
+│   │   └── tech-spec-branding-overhaul.md
+│   ├── sprint-change-proposal-v5-2025-12-20.md
+│   ├── sprint-change-proposal-v6-2025-12-20.md
+│   ├── state-management.md
+│   ├── tree.txt
+│   └── ux-design.md
+├── docs
+│   └── specify.md
+├── i18next-scanner.config.cjs
+├── package.json
+├── pnpm-lock.yaml
+├── public
+│   ├── _headers
+│   ├── favicon.ico
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── robots.txt
+│   ├── tanstack-circle-logo.png
+│   ├── tanstack-word-logo-white.svg
+│   └── via-gent-logo.svg
+├── src
+│   ├── components
+│   │   ├── Header.tsx
+│   │   ├── LanguageSwitcher.tsx
+│   │   ├── __tests__
+│   │   │   └── workspace-i18n.test.tsx
+│   │   ├── dashboard
+│   │   │   ├── Onboarding.tsx
+│   │   │   ├── PitchDeck.tsx
+│   │   │   └── __tests__
+│   │   │       └── Onboarding.test.tsx
+│   │   ├── ide
+│   │   │   ├── AgentChatPanel.tsx
+│   │   │   ├── FileTree
+│   │   │   │   ├── ContextMenu.tsx
+│   │   │   │   ├── FileTree.tsx
+│   │   │   │   ├── FileTreeItem.tsx
+│   │   │   │   ├── __tests__
+│   │   │   │   │   └── FileTree.test.ts
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── useContextMenuActions.ts
+│   │   │   │   │   ├── useFileTreeActions.ts
+│   │   │   │   │   ├── useFileTreeState.ts
+│   │   │   │   │   └── useKeyboardNavigation.ts
+│   │   │   │   ├── hooks.ts
+│   │   │   │   ├── icons.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils.ts
+│   │   │   ├── MonacoEditor
+│   │   │   │   ├── EditorTabBar.tsx
+│   │   │   │   ├── MonacoEditor.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── PreviewPanel
+│   │   │   │   ├── PreviewPanel.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   └── types.ts
+│   │   │   ├── SyncEditWarning.tsx
+│   │   │   ├── SyncStatusIndicator.tsx
+│   │   │   ├── XTerminal.tsx
+│   │   │   └── __tests__
+│   │   │       └── SyncStatusIndicator.test.tsx
+│   │   ├── layout
+│   │   │   ├── ChatPanelWrapper.tsx
+│   │   │   ├── IDEHeaderBar.tsx
+│   │   │   ├── IDELayout.tsx
+│   │   │   ├── TerminalPanel.tsx
+│   │   │   └── index.ts
+│   │   └── ui
+│   │       └── Toast
+│   │           ├── Toast.tsx
+│   │           ├── ToastContext.tsx
+│   │           └── index.ts
+│   ├── data
+│   │   └── demo.punk-songs.ts
+│   ├── hooks
+│   │   ├── useIdeStatePersistence.ts
+│   │   └── useProcessManager.ts
+│   ├── i18n
+│   │   ├── LocaleProvider.tsx
+│   │   ├── __tests__
+│   │   │   └── config.test.ts
+│   │   ├── config.ts
+│   │   ├── en.json
+│   │   └── vi.json
+│   ├── lib
+│   │   ├── editor
+│   │   │   ├── __tests__
+│   │   │   │   └── language-utils.test.ts
+│   │   │   ├── index.ts
+│   │   │   └── language-utils.ts
+│   │   ├── events
+│   │   │   ├── __tests__
+│   │   │   │   ├── use-workspace-event.test.tsx
+│   │   │   │   └── workspace-events.test.ts
+│   │   │   ├── index.ts
+│   │   │   ├── use-workspace-event.ts
+│   │   │   └── workspace-events.ts
+│   │   ├── filesystem
+│   │   │   ├── __tests__
+│   │   │   │   ├── directory-walker.test.ts
+│   │   │   │   ├── exclusion-config.test.ts
+│   │   │   │   ├── local-fs-adapter.integration.test.ts
+│   │   │   │   ├── local-fs-adapter.test.ts
+│   │   │   │   ├── path-guard.test.ts
+│   │   │   │   ├── sync-executor.test.ts
+│   │   │   │   └── sync-planner.test.ts
+│   │   │   ├── dir-ops.ts
+│   │   │   ├── directory-walker.ts
+│   │   │   ├── exclusion-config.ts
+│   │   │   ├── file-ops.ts
+│   │   │   ├── fs-errors.ts
+│   │   │   ├── fs-types.ts
+│   │   │   ├── handle-utils.ts
+│   │   │   ├── index.ts
+│   │   │   ├── local-fs-adapter.ts
+│   │   │   ├── path-guard.ts
+│   │   │   ├── path-utils.ts
+│   │   │   ├── permission-lifecycle.test.ts
+│   │   │   ├── permission-lifecycle.ts
+│   │   │   ├── sync-executor.ts
+│   │   │   ├── sync-manager.test.ts
+│   │   │   ├── sync-manager.ts
+│   │   │   ├── sync-operations.ts
+│   │   │   ├── sync-planner.ts
+│   │   │   ├── sync-types.ts
+│   │   │   └── sync-utils.ts
+│   │   ├── persistence
+│   │   │   ├── __tests__
+│   │   │   │   └── db.test.ts
+│   │   │   ├── db.ts
+│   │   │   └── index.ts
+│   │   ├── webcontainer
+│   │   │   ├── index.ts
+│   │   │   ├── manager.ts
+│   │   │   ├── process-manager.ts
+│   │   │   ├── terminal-adapter.ts
+│   │   │   └── types.ts
+│   │   └── workspace
+│   │       ├── WorkspaceContext.test.tsx
+│   │       ├── WorkspaceContext.tsx
+│   │       ├── conversation-store.test.ts
+│   │       ├── conversation-store.ts
+│   │       ├── file-sync-status-store.ts
+│   │       ├── hooks
+│   │       │   ├── useEventBusEffects.ts
+│   │       │   ├── useInitialSync.ts
+│   │       │   ├── useSyncOperations.ts
+│   │       │   ├── useWorkspaceActions.ts
+│   │       │   └── useWorkspaceState.ts
+│   │       ├── ide-state-store.test.ts
+│   │       ├── ide-state-store.ts
+│   │       ├── index.ts
+│   │       ├── project-store.test.ts
+│   │       ├── project-store.ts
+│   │       └── workspace-types.ts
+│   ├── logo.svg
+│   ├── routeTree.gen.ts
+│   ├── router.tsx
+│   ├── routes
+│   │   ├── __root.tsx
+│   │   ├── __tests__
+│   │   │   └── dashboard-i18n.test.tsx
+│   │   ├── demo
+│   │   │   ├── api.names.ts
+│   │   │   ├── start.api-request.tsx
+│   │   │   ├── start.server-funcs.tsx
+│   │   │   ├── start.ssr.data-only.tsx
+│   │   │   ├── start.ssr.full-ssr.tsx
+│   │   │   ├── start.ssr.index.tsx
+│   │   │   └── start.ssr.spa-mode.tsx
+│   │   ├── index.tsx
+│   │   ├── test-fs-adapter.tsx
+│   │   ├── webcontainer.$.tsx
+│   │   └── workspace
+│   │       └── $projectId.tsx
+│   ├── styles.css
+│   └── tree.txt
+├── tree.txt
+├── tsconfig.json
+├── vite.config.ts
+└── vitest.config.ts
+
+207 directories, 779 files

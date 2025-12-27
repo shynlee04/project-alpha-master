@@ -1,0 +1,477 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* VIA-GENT Design System Imports */
+@import "./styles/design-tokens.css";
+@import "./styles/animations.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =============================================================================
+   VIA-GENT Typography System
+   - Body: Inter (clean sans-serif)
+   - Pixel: VT323 (lightweight 8-bit)
+   - Pixel Heavy: Press Start 2P (chunky 8-bit)
+   - Code: JetBrains Mono (developer-focused)
+   ============================================================================= */
+
+body {
+  @apply m-0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas,
+    'Courier New', monospace;
+}
+
+/* Pixel Font Utility Classes */
+.font-pixel {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.05em;
+}
+
+.font-pixel-heavy {
+  font-family: 'Press Start 2P', 'VT323', monospace;
+  letter-spacing: 0.1em;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Pixel text sizes - optimized for VT323 readability */
+.text-pixel-xs {
+  font-family: 'VT323', monospace;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-pixel-sm {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-pixel-base {
+  font-family: 'VT323', monospace;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-pixel-lg {
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-pixel-xl {
+  font-family: 'VT323', monospace;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-pixel-2xl {
+  font-family: 'VT323', monospace;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+/* =============================================================================
+   VIA-GENT Custom Scrollbar Styling
+   - Premium thin scrollbar for 8-bit aesthetic
+   - Works in Webkit (Chrome, Edge, Safari) and Firefox
+   ============================================================================= */
+
+/* Base scrollbar styling - applies to all scrollable elements */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 0;
+  border: 1px solid hsl(var(--border));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--accent));
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--primary));
+}
+
+::-webkit-scrollbar-corner {
+  background: hsl(var(--background));
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) hsl(var(--background));
+}
+
+/* Thin scrollbar variant for smaller panels */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Primary colored scrollbar for active panels */
+.scrollbar-primary::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / 50%);
+}
+
+.scrollbar-primary::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 80%);
+}
+
+.demo-start-server-funcs-bg {
+  background-image: radial-gradient(50% 50% at 20% 60%,
+      #23272a 0%,
+      #18181b 50%,
+      #000000 100%);
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 15s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Color mappings - wrap HSL values with hsl() for Tailwind utilities */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* VIA-GENT Brand Extensions */
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-info: hsl(var(--info));
+  --color-editor-bg: hsl(var(--editor-bg));
+
+  /* Pixel Shadow Utilities */
+  --shadow-pixel: var(--shadow-pixel);
+  --shadow-pixel-primary: var(--shadow-pixel-primary);
+  --shadow-pixel-sm: var(--shadow-pixel-sm);
+
+  /* ===== Mobile Responsive Tokens (Epic-MRT) ===== */
+  /* Touch target minimum size (WCAG 2.5.5) */
+  --touch-target-min: 44px;
+  
+  /* Safe area insets for notched devices (iPhone X+) */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  
+  /* Mobile tab bar height */
+  --mobile-tab-bar-height: 56px;
+  
+  /* Panel transition duration */
+  --panel-transition-duration: 200ms;
+}
+
+/* ===== Mobile Panel Transitions (Epic-MRT) ===== */
+@keyframes panel-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes panel-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+.panel-enter {
+  animation: panel-slide-in var(--panel-transition-duration) ease-out;
+}
+
+.panel-exit {
+  animation: panel-slide-out var(--panel-transition-duration) ease-in;
+}
+
+/* Touch-friendly utility */
+.touch-target {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+/* Prevent text selection during touch interactions */
+.touch-action-manipulation {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+:root {
+  /* VIA-GENT Brand Design System
+   * Primary: Orange (#f97316) - MistralAI inspired
+   * Dark theme default with 8-bit aesthetic */
+
+  --radius: 0rem;
+  /* Squared corners - 8-bit aesthetic */
+
+  /* ===== Core Brand Colors ===== */
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange accent */
+  --primary-foreground: 0 0% 100%;
+  /* White */
+
+  /* ===== Surface Colors (Dark Default) ===== */
+  --background: 240 6% 4%;
+  /* #0f0f11 - Deep black */
+  --foreground: 0 0% 95%;
+  /* Near white text */
+
+  --card: 240 4% 10%;
+  /* #18181b - Card/panel background */
+  --card-foreground: 0 0% 95%;
+
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+
+  --secondary: 240 4% 16%;
+  /* #27272a - Secondary surfaces */
+  --secondary-foreground: 0 0% 90%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+
+  --destructive: 0 84% 60%;
+  /* Red for errors */
+
+  --border: 240 4% 16%;
+  /* #27272a - Borders */
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  /* Orange focus ring */
+
+  /* ===== Chart Colors ===== */
+  --chart-1: 24.6 95% 53.1%;
+  /* Primary orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+
+  /* ===== Sidebar Specific ===== */
+  --sidebar: 240 6% 6%;
+  /* Slightly darker sidebar */
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
+
+  /* ===== Semantic Colors ===== */
+  --success: 142 71% 45%;
+  /* #22c55e - Green */
+  --warning: 38 92% 50%;
+  /* #f59e0b - Amber */
+  --info: 217 91% 60%;
+  /* #3b82f6 - Blue */
+
+  /* ===== 8-Bit Aesthetic ===== */
+  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
+  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+
+  /* ===== Editor Specific ===== */
+  --editor-bg: 240 6% 3.5%;
+  /* #09090b - Deep code background */
+}
+
+.dark {
+  /* VIA-GENT Dark Theme (Primary - Matches :root since dark is default)
+   * Kept for explicit .dark class compatibility with next-themes */
+  --background: 240 6% 4%;
+  /* #0f0f11 */
+  --foreground: 0 0% 95%;
+  --card: 240 4% 10%;
+  /* #18181b */
+  --card-foreground: 0 0% 95%;
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 90%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+  --destructive: 0 84% 60%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  --chart-1: 24.6 95% 53.1%;
+  /* Orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+  --sidebar: 240 6% 6%;
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

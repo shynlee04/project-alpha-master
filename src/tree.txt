@@ -1,0 +1,390 @@
+.
+├── __tests__
+│   └── dashboard-i18n.test.tsx
+├── components
+│   ├── __tests__
+│   │   ├── ThemeToggle.test.tsx
+│   │   └── workspace-i18n.test.tsx
+│   ├── agent
+│   │   ├── __tests__
+│   │   │   └── AgentConfigDialog.test.tsx
+│   │   └── AgentConfigDialog.tsx
+│   ├── chat
+│   │   ├── __tests__
+│   │   │   ├── ApprovalOverlay.test.tsx
+│   │   │   ├── CodeBlock.test.tsx
+│   │   │   ├── DiffPreview.test.tsx
+│   │   │   └── ToolCallBadge.test.tsx
+│   │   ├── AgentSelector.tsx
+│   │   ├── ApprovalOverlay.tsx
+│   │   ├── ChatConversation.tsx
+│   │   ├── ChatPanel.tsx
+│   │   ├── CodeBlock.tsx
+│   │   ├── DiffPreview.tsx
+│   │   ├── index.ts
+│   │   ├── StreamdownRenderer.tsx
+│   │   ├── ThreadCard.tsx
+│   │   ├── ThreadsList.tsx
+│   │   └── ToolCallBadge.tsx
+│   ├── common
+│   │   ├── AppErrorBoundary.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   └── index.ts
+│   ├── dashboard
+│   │   ├── __tests__
+│   │   │   └── Onboarding.test.tsx
+│   │   ├── Onboarding.tsx
+│   │   └── PitchDeck.tsx
+│   ├── Header.tsx
+│   ├── hub
+│   │   ├── __tests__
+│   │   │   ├── HubHomePage.test.tsx
+│   │   │   ├── HubSidebar.test.tsx
+│   │   │   ├── NavigationBreadcrumbs.test.tsx
+│   │   │   ├── TopicCard.test.tsx
+│   │   │   └── TopicPortalCard.test.tsx
+│   │   ├── HubHomePage.tsx
+│   │   ├── HubSidebar.tsx
+│   │   ├── index.ts
+│   │   ├── NavigationBreadcrumbs.tsx
+│   │   ├── TopicCard.tsx
+│   │   └── TopicPortalCard.tsx
+│   ├── ide
+│   │   ├── __tests__
+│   │   │   ├── AgentChatPanel.test.tsx
+│   │   │   ├── StreamingMessage.test.tsx
+│   │   │   └── SyncStatusIndicator.test.tsx
+│   │   ├── AgentCard.tsx
+│   │   ├── AgentChatPanel.tsx
+│   │   ├── AgentsPanel.tsx
+│   │   ├── BentoCardPreview.tsx
+│   │   ├── BentoGrid.tsx
+│   │   ├── BentoGridExample.tsx
+│   │   ├── CommandPalette.tsx
+│   │   ├── EnhancedChatInterface.tsx
+│   │   ├── ExplorerPanel.tsx
+│   │   ├── FeatureSearch.tsx
+│   │   ├── FileTree
+│   │   │   ├── __tests__
+│   │   │   │   └── FileTree.test.ts
+│   │   │   ├── ContextMenu.tsx
+│   │   │   ├── FileTree.tsx
+│   │   │   ├── FileTreeItem.tsx
+│   │   │   ├── hooks
+│   │   │   │   ├── __tests__
+│   │   │   │   │   └── useFileTreeEventSubscriptions.test.ts
+│   │   │   │   ├── useContextMenuActions.ts
+│   │   │   │   ├── useFileTreeActions.ts
+│   │   │   │   ├── useFileTreeEventSubscriptions.ts
+│   │   │   │   ├── useFileTreeState.ts
+│   │   │   │   └── useKeyboardNavigation.ts
+│   │   │   ├── hooks.ts
+│   │   │   ├── icons.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── types.ts
+│   │   │   └── utils.ts
+│   │   ├── IconSidebar.tsx
+│   │   ├── index.ts
+│   │   ├── MonacoEditor
+│   │   │   ├── EditorTabBar.tsx
+│   │   │   ├── hooks
+│   │   │   │   ├── __tests__
+│   │   │   │   │   └── useMonacoEventSubscriptions.test.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useMonacoEditorEventSubscriptions.ts
+│   │   │   │   └── useMonacoEventSubscriptions.ts
+│   │   │   ├── index.ts
+│   │   │   └── MonacoEditor.tsx
+│   │   ├── PanelShell.tsx
+│   │   ├── PreviewPanel
+│   │   │   ├── index.ts
+│   │   │   ├── PreviewPanel.tsx
+│   │   │   └── types.ts
+│   │   ├── QuickActionsMenu.tsx
+│   │   ├── SearchPanel.tsx
+│   │   ├── SettingsPanel.tsx
+│   │   ├── statusbar
+│   │   │   ├── AgentStatusSegment.tsx
+│   │   │   ├── CursorPosition.tsx
+│   │   │   ├── FileTypeIndicator.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── ProviderStatus.tsx
+│   │   │   ├── StatusBarSegment.tsx
+│   │   │   ├── SyncStatusSegment.tsx
+│   │   │   └── WebContainerStatus.tsx
+│   │   ├── StatusBar.tsx
+│   │   ├── StreamingMessage.tsx
+│   │   ├── SyncEditWarning.tsx
+│   │   ├── SyncStatusIndicator.tsx
+│   │   ├── UnifiedNavigation.tsx
+│   │   ├── XTerminal
+│   │   │   └── hooks
+│   │   │       ├── __tests__
+│   │   │       │   └── useTerminalEventSubscriptions.test.ts
+│   │   │       └── useTerminalEventSubscriptions.ts
+│   │   └── XTerminal.tsx
+│   ├── LanguageSwitcher.tsx
+│   ├── layout
+│   │   ├── __tests__
+│   │   │   └── IDELayout.test.tsx
+│   │   ├── ChatPanelWrapper.tsx
+│   │   ├── hooks
+│   │   │   ├── index.ts
+│   │   │   ├── useIDEFileHandlers.ts
+│   │   │   ├── useIDEKeyboardShortcuts.ts
+│   │   │   ├── useIDEStateRestoration.ts
+│   │   │   └── useWebContainerBoot.ts
+│   │   ├── HubLayout.tsx
+│   │   ├── IDEHeaderBar.tsx
+│   │   ├── IDELayout.tsx
+│   │   ├── index.ts
+│   │   ├── MinViewportWarning.tsx
+│   │   ├── PermissionOverlay.tsx
+│   │   └── TerminalPanel.tsx
+│   └── ui
+│       ├── brand-logo.tsx
+│       ├── breadcrumbs.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── checkbox.tsx
+│       ├── collapsible-section.tsx
+│       ├── context-tooltip.tsx
+│       ├── dialog.tsx
+│       ├── dropdown-menu.tsx
+│       ├── empty-state.tsx
+│       ├── EmptyState.tsx
+│       ├── ErrorState.tsx
+│       ├── feature-discovery-guide.tsx
+│       ├── icons
+│       │   ├── AIIcon.tsx
+│       │   ├── ChatIcon.tsx
+│       │   ├── CloseIcon.tsx
+│       │   ├── FileIcon.tsx
+│       │   ├── icon.tsx
+│       │   ├── index.ts
+│       │   ├── MaximizeIcon.tsx
+│       │   ├── MenuIcon.tsx
+│       │   ├── MinusIcon.tsx
+│       │   ├── PlusIcon.tsx
+│       │   ├── RefreshIcon.tsx
+│       │   ├── SearchIcon.tsx
+│       │   ├── SettingsIcon.tsx
+│       │   └── TerminalIcon.tsx
+│       ├── index.ts
+│       ├── input.tsx
+│       ├── keyboard-shortcuts-overlay.tsx
+│       ├── label.tsx
+│       ├── LoadingState.tsx
+│       ├── pixel-badge.tsx
+│       ├── progress-indicator.tsx
+│       ├── resizable.tsx
+│       ├── select.tsx
+│       ├── separator.tsx
+│       ├── ShadcnTest.tsx
+│       ├── sheet.tsx
+│       ├── skeleton.tsx
+│       ├── SkeletonLoader.tsx
+│       ├── sonner.tsx
+│       ├── status-dot.tsx
+│       ├── switch.tsx
+│       ├── tabs.tsx
+│       ├── TailwindTest.tsx
+│       ├── textarea.tsx
+│       ├── ThemeProvider.tsx
+│       ├── ThemeToggle.tsx
+│       ├── Toast
+│       │   ├── index.ts
+│       │   ├── Toast.tsx
+│       │   └── ToastContext.tsx
+│       ├── tooltip.tsx
+│       └── welcome-message.tsx
+├── data
+│   └── demo.punk-songs.ts
+├── hooks
+│   ├── useAgents.ts
+│   ├── useIdeStatePersistence.ts
+│   └── useProcessManager.ts
+├── i18n
+│   ├── __tests__
+│   │   └── config.test.ts
+│   ├── config.ts
+│   ├── en.json
+│   ├── LocaleProvider.tsx
+│   └── vi.json
+├── lib
+│   ├── agent
+│   │   ├── __tests__
+│   │   │   └── factory.test.ts
+│   │   ├── facades
+│   │   │   ├── __tests__
+│   │   │   │   ├── file-lock.test.ts
+│   │   │   │   ├── file-tools.test.ts
+│   │   │   │   └── terminal-tools.test.ts
+│   │   │   ├── file-lock.ts
+│   │   │   ├── file-tools-impl.ts
+│   │   │   ├── file-tools.ts
+│   │   │   ├── index.ts
+│   │   │   ├── terminal-tools-impl.ts
+│   │   │   └── terminal-tools.ts
+│   │   ├── factory.ts
+│   │   ├── hooks
+│   │   │   ├── __tests__
+│   │   │   │   ├── use-agent-chat-with-tools.test.ts
+│   │   │   │   └── use-agent-chat.test.ts
+│   │   │   ├── index.ts
+│   │   │   ├── use-agent-chat-with-tools.ts
+│   │   │   └── use-prompt-enhancer.ts
+│   │   ├── providers
+│   │   │   ├── __tests__
+│   │   │   │   ├── model-registry.test.ts
+│   │   │   │   └── provider-adapter.test.ts
+│   │   │   ├── credential-vault.ts
+│   │   │   ├── index.ts
+│   │   │   ├── model-registry.ts
+│   │   │   ├── provider-adapter.ts
+│   │   │   └── types.ts
+│   │   ├── routes
+│   │   │   └── __tests__
+│   │   │       ├── chat-api.test.ts
+│   │   │       └── sse-streaming.test.ts
+│   │   ├── system-prompt.ts
+│   │   └── tools
+│   │       ├── __tests__
+│   │       │   ├── execute-command-tool.test.ts
+│   │       │   ├── list-files-tool.test.ts
+│   │       │   ├── read-file-tool.test.ts
+│   │       │   └── write-file-tool.test.ts
+│   │       ├── execute-command-tool.ts
+│   │       ├── index.ts
+│   │       ├── list-files-tool.ts
+│   │       ├── read-file-tool.ts
+│   │       ├── types.ts
+│   │       └── write-file-tool.ts
+│   ├── editor
+│   │   ├── __tests__
+│   │   │   └── language-utils.test.ts
+│   │   ├── index.ts
+│   │   └── language-utils.ts
+│   ├── events
+│   │   ├── __tests__
+│   │   │   ├── use-workspace-event.test.tsx
+│   │   │   └── workspace-events.test.ts
+│   │   ├── index.ts
+│   │   ├── use-workspace-event.ts
+│   │   └── workspace-events.ts
+│   ├── filesystem
+│   │   ├── __tests__
+│   │   │   ├── directory-walker.test.ts
+│   │   │   ├── exclusion-config.test.ts
+│   │   │   ├── local-fs-adapter.integration.test.ts
+│   │   │   ├── local-fs-adapter.test.ts
+│   │   │   ├── path-guard.test.ts
+│   │   │   ├── sync-executor.test.ts
+│   │   │   └── sync-planner.test.ts
+│   │   ├── dir-ops.ts
+│   │   ├── directory-walker.ts
+│   │   ├── exclusion-config.ts
+│   │   ├── file-ops.ts
+│   │   ├── fs-errors.ts
+│   │   ├── fs-types.ts
+│   │   ├── handle-utils.ts
+│   │   ├── index.ts
+│   │   ├── local-fs-adapter.ts
+│   │   ├── path-guard.ts
+│   │   ├── path-utils.ts
+│   │   ├── permission-lifecycle.test.ts
+│   │   ├── permission-lifecycle.ts
+│   │   ├── sync-executor.ts
+│   │   ├── sync-manager.test.ts
+│   │   ├── sync-manager.ts
+│   │   ├── sync-operations.ts
+│   │   ├── sync-planner.ts
+│   │   ├── sync-types.ts
+│   │   └── sync-utils.ts
+│   ├── monitoring
+│   │   └── sentry.ts
+│   ├── persistence
+│   │   ├── __tests__
+│   │   │   └── db.test.ts
+│   │   ├── db.ts
+│   │   └── index.ts
+│   ├── state
+│   │   ├── dexie-db.ts
+│   │   ├── dexie-storage.ts
+│   │   ├── hub-store.ts
+│   │   ├── ide-store.ts
+│   │   ├── index.ts
+│   │   ├── navigation-store.ts
+│   │   └── statusbar-store.ts
+│   ├── utils
+│   │   └── error-handling.ts
+│   ├── utils.ts
+│   ├── webcontainer
+│   │   ├── __tests__
+│   │   │   ├── manager.test.ts
+│   │   │   ├── terminal-adapter.test.ts
+│   │   │   └── webcontainer.mock.ts
+│   │   ├── index.ts
+│   │   ├── manager.ts
+│   │   ├── process-manager.ts
+│   │   ├── terminal-adapter.ts
+│   │   └── types.ts
+│   └── workspace
+│       ├── conversation-store.test.ts
+│       ├── conversation-store.ts
+│       ├── file-sync-status-store.ts
+│       ├── hooks
+│       │   ├── useEventBusEffects.ts
+│       │   ├── useInitialSync.ts
+│       │   ├── useSyncOperations.ts
+│       │   ├── useWorkspaceActions.ts
+│       │   └── useWorkspaceState.ts
+│       ├── ide-state-store.test.ts
+│       ├── ide-state-store.ts
+│       ├── index.ts
+│       ├── project-store.test.ts
+│       ├── project-store.ts
+│       ├── threads-store.ts
+│       ├── workspace-types.ts
+│       ├── WorkspaceContext.test.tsx
+│       └── WorkspaceContext.tsx
+├── logo.svg
+├── mocks
+│   └── agents.ts
+├── router.tsx
+├── routes
+│   ├── __root.tsx
+│   ├── agents.tsx
+│   ├── api
+│   │   └── chat.ts
+│   ├── hub.tsx
+│   ├── index.tsx
+│   ├── knowledge.tsx
+│   ├── settings.tsx
+│   ├── test-fs-adapter.tsx
+│   ├── webcontainer.$.tsx
+│   └── workspace
+│       └── $projectId.tsx
+├── routeTree.gen.ts
+├── server.ts
+├── src-tree.md
+├── stores
+│   ├── agent-selection-store.ts
+│   ├── agents-store.ts
+│   ├── conversation-threads-store.ts
+│   ├── openai-compatible-store.ts
+│   └── prompt-enhancement-store.ts
+├── styles
+│   ├── animations.css
+│   ├── design-tokens.css
+│   └── design-tokens.ts
+├── styles.css
+├── test
+│   └── setup.ts
+├── tree-2025-12-24.md
+├── tree.txt
+└── types
+    ├── tool-call.ts
+    └── vitest-axe.d.ts
+
+73 directories, 315 files

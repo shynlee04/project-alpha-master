@@ -1,0 +1,381 @@
+/**
+ * @fileoverview Main Sidebar Component
+ * @module components/layout/MainSidebar
+ * 
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-9 Dashboard Responsive
+ */
+
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from '@tanstack/react-router';
+import {
+  Home,
+  Folder,
+  Bot,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Sun,
+  Moon,
+  Languages
+} from 'lucide-react';
+import { cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useLayoutStore } from '@/lib/state/layout-store';
+import { useTheme } from 'next-themes';
+import { useLocalePreference } from '@/i18n/LocaleProvider';
+
+const sidebarVariants = cva(
+  'flex flex-col h-screen border-r border-border bg-sidebar transition-all duration-300 ease-in-out',
+  {
+    variants: {
+      collapsed: {
+        true: 'w-16',
+        false: 'w-64',
+      },
+    },
+    defaultVariants: {
+      collapsed: false,
+    },
+  }
+);
+
+// MRT-9: Enhanced nav item with mobile-first touch targets
+const navItemVariants = cva(
+  'flex items-center gap-3 mx-2 rounded-none cursor-pointer transition-colors duration-300 font-mono text-sm group relative touch-manipulation',
+  {
+    variants: {
+      active: {
+        true: 'bg-accent text-accent-foreground border-l-2 border-primary pl-[10px]',
+        false: 'text-muted-foreground hover:bg-accent hover:text-foreground border-l-2 border-transparent',
+      },
+      collapsed: {
+        true: 'justify-center px-2 py-2',
+        false: 'px-3 py-3',
+      },
+      mobile: {
+        true: 'min-h-[48px] py-3',
+        false: 'py-2',
+      },
+    },
+    defaultVariants: {
+      active: false,
+      collapsed: false,
+      mobile: false,
+    },
+  }
+);
+
+const mobileSidebarVariants = cva(
+  'fixed inset-y-0 left-0 z-50 h-screen w-[280px] bg-sidebar border-r border-border transition-transform duration-300 ease-in-out',
+  {
+    variants: {
+      open: {
+        true: 'translate-x-0',
+        false: '-translate-x-full',
+      },
+    },
+    defaultVariants: {
+      open: false,
+    },
+  }
+);
+
+const backdropVariants = cva(
+  'fixed inset-0 bg-black/50 z-40 transition-opacity duration-300',
+  {
+    variants: {
+      open: {
+        true: 'opacity-100 pointer-events-auto',
+        false: 'opacity-0 pointer-events-none',
+      },
+    },
+    defaultVariants: {
+      open: false,
+    },
+  }
+);
+
+interface MainSidebarProps {
+  className?: string;
+}
+
+export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    sidebarCollapsed,
+    sidebarMobileOpen,
+    activeNavItem,
+    toggleSidebar,
+    setMobileMenuOpen,
+    setActiveNavItem,
+  } = useLayoutStore();
+
+  // Theme and locale hooks
+  const { resolvedTheme, setTheme, theme } = useTheme();
+  const { locale, setLocale } = useLocalePreference();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = resolvedTheme === 'dark';
+
+  const handleToggleTheme = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const newTheme = isDark ? 'light' : 'dark';
+    console.log('[MainSidebar] Toggling theme:', { current: resolvedTheme, theme, newTheme });
+    setTheme(newTheme);
+  };
+
+  const handleToggleLocale = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const newLocale = locale === 'en' ? 'vi' : 'en';
+    console.log('[MainSidebar] Toggling locale:', { current: locale, newLocale });
+    setLocale(newLocale);
+  };
+
+  const navItems = [
+    {
+      id: 'home' as const,
+      label: t('sidebar.home'),
+      icon: Home,
+      path: '/',
+    },
+    {
+      id: 'projects' as const,
+      label: t('sidebar.projects'),
+      icon: Folder,
+      path: '/workspace',
+    },
+    {
+      id: 'agents' as const,
+      label: t('sidebar.agents'),
+      icon: Bot,
+      path: '/agents',
+    },
+    {
+      id: 'settings' as const,
+      label: t('sidebar.settings'),
+      icon: Settings,
+      path: '/settings',
+    },
+  ];
+
+  const handleNavigation = (path: string, itemId: string) => {
+    navigate({ to: path });
+    setActiveNavItem(itemId as any);
+  };
+
+  const handleToggleSidebar = () => {
+    toggleSidebar();
+  };
+
+  const handleCloseMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  return (
+    <>
+      {/* Mobile Backdrop */}
+      <div className={backdropVariants({ open: sidebarMobileOpen })} onClick={handleCloseMobileMenu} />
+
+      {/* Mobile Sidebar */}
+      <aside className={cn(mobileSidebarVariants({ open: sidebarMobileOpen }), 'md:hidden', className)}>
+        {/* Mobile Header with Close Button - MRT-9: 44px touch target */}
+        <div className="flex items-center justify-between h-14 border-b border-border px-4">
+          <div className="flex items-center gap-2">
+            <img
+              src="/via-gent-logo.svg"
+              alt="Via-gent"
+              className="w-8 h-8"
+            />
+            <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
+              Via-gent
+            </span>
+          </div>
+          <button
+            onClick={handleCloseMobileMenu}
+            className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-none hover:bg-accent text-muted-foreground transition-colors touch-manipulation"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Mobile Navigation Items - MRT-9: Enhanced touch targets */}
+        <nav className="flex-1 py-4 space-y-1">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            return (
+              <div
+                key={item.id}
+                onClick={() => handleNavigation(item.path, item.id)}
+                className={cn(navItemVariants({ active: isActive, collapsed: false, mobile: true }))}
+              >
+                <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
+                <span className="truncate">{item.label}</span>
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Mobile Footer / Theme & Language Controls - MRT-9: 44px touch targets */}
+        {mounted && (
+          <div className="p-3 border-t border-border flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <button
+                onClick={handleToggleTheme}
+                className="flex items-center gap-2 px-3 min-h-[44px] rounded-none hover:bg-accent text-muted-foreground transition-colors touch-manipulation"
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                <span className="text-sm font-mono">{isDark ? 'Light' : 'Dark'}</span>
+              </button>
+
+              {/* Language Toggle */}
+              <button
+                onClick={handleToggleLocale}
+                className="flex items-center gap-2 px-3 min-h-[44px] rounded-none hover:bg-accent text-muted-foreground transition-colors touch-manipulation"
+                aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
+              >
+                <Languages className="h-5 w-5" />
+                <span className="text-sm font-mono">{locale.toUpperCase()}</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </aside>
+
+      {/* Desktop Sidebar */}
+      <aside className={cn(sidebarVariants({ collapsed: sidebarCollapsed }), 'hidden md:flex', className)}>
+        {/* Desktop Header / Logo Area */}
+        <div className={cn("flex items-center h-14 border-b border-border", sidebarCollapsed ? "justify-center" : "px-4")}>
+          <img
+            src="/via-gent-logo.svg"
+            alt="Via-gent"
+            className="w-8 h-8"
+          />
+          {!sidebarCollapsed && (
+            <span className="ml-3 font-bold font-pixel text-lg tracking-tight text-foreground">
+              Via-gent
+            </span>
+          )}
+        </div>
+
+        {/* Desktop Navigation Items */}
+        <nav className="flex-1 py-4 space-y-1">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            return (
+              <Tooltip key={item.id} delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <div
+                    onClick={() => handleNavigation(item.path, item.id)}
+                    className={cn(navItemVariants({ active: isActive, collapsed: sidebarCollapsed }))}
+                  >
+                    <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
+                    {!sidebarCollapsed && (
+                      <span className="truncate">{item.label}</span>
+                    )}
+
+                    {/* Active Indicator Dot (Collapsed Mode) */}
+                    {sidebarCollapsed && isActive && (
+                      <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-none" />
+                    )}
+                  </div>
+                </TooltipTrigger>
+                {sidebarCollapsed && (
+                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-border bg-popover">
+                    {item.label}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            );
+          })}
+        </nav>
+
+        {/* Desktop Footer / Settings Controls */}
+        <div className="p-2 border-t border-border space-y-2">
+          {/* Theme and Language Controls */}
+          {mounted && (
+            <div className={cn(
+              "flex items-center gap-2",
+              sidebarCollapsed ? "flex-col" : "justify-between px-2"
+            )}>
+              {/* Theme Toggle */}
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={handleToggleTheme}
+                    className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                    aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                  >
+                    {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  </button>
+                </TooltipTrigger>
+                {sidebarCollapsed && (
+                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-border bg-popover">
+                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+
+              {/* Language Toggle */}
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={handleToggleLocale}
+                    className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                    aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
+                  >
+                    <Languages className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                {sidebarCollapsed && (
+                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-border bg-popover">
+                    {locale === 'en' ? 'Tiếng Việt' : 'English'}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+
+              {/* Current Language Indicator (expanded only) */}
+              {!sidebarCollapsed && (
+                <span className="text-xs font-mono text-muted-foreground">
+                  {locale.toUpperCase()}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Collapse Toggle */}
+          <button
+            onClick={handleToggleSidebar}
+            className={cn(
+              "flex items-center justify-center w-full h-8 rounded-none hover:bg-accent text-muted-foreground transition-colors",
+              sidebarCollapsed ? "" : "px-2"
+            )}
+          >
+            {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : (
+              <div className="flex items-center w-full">
+                <ChevronLeft className="h-4 w-4" />
+                <span className="ml-2 text-xs font-mono ml-auto opacity-70">Collapse</span>
+              </div>
+            )}
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+};
