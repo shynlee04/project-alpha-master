@@ -36,7 +36,7 @@ export {
 } from './dexie-db';
 
 // Storage adapter
-export { dexieStorage, createProjectStorage } from './dexie-storage';
+export { createDexieStorage } from './dexie-storage';
 
 // Zustand store
 export {

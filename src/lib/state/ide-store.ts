@@ -32,7 +32,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { dexieStorage } from './dexie-storage';
+import { createDexieStorage } from './dexie-storage';
 
 // ============================================================================
 // Types
@@ -236,7 +236,7 @@ export const useIDEStore = create<IDEState>()(
         }),
         {
             name: 'via-gent-ide-state', // Will be overridden per-project
-            storage: createJSONStorage(() => dexieStorage),
+            storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
 
             // Only persist data, not functions
             partialize: (state) => ({
