@@ -10,7 +10,7 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router'
-import { MainLayout } from '../components/layout/MainLayout'
+import { IDELayout } from '../components/layout/IDELayout'
 import { ToastProvider, Toast } from '../components/ui/Toast'
 import { WorkspaceProvider } from '../lib/workspace'
 
@@ -23,9 +23,10 @@ function IDEWorkspace() {
     return (
         <ToastProvider>
             <WorkspaceProvider projectId={null}>
-                <MainLayout />
+                <IDELayout />
             </WorkspaceProvider>
             <Toast />
         </ToastProvider>
     )
 }
+

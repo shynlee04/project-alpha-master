@@ -39,19 +39,19 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
   };
 
   return (
-    <div className={cn('flex h-screen bg-gray-900 overflow-hidden', className)}>
+    <div className={cn('flex h-screen bg-background overflow-hidden', className)}>
       {/* Mobile Header */}
-      <header className="md:hidden flex items-center h-14 border-b border-gray-800 px-4 bg-gray-900">
+      <header className="md:hidden flex items-center h-14 border-b border-border px-4 bg-background">
         <button
           onClick={handleMobileMenuToggle}
-          className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-gray-800 text-gray-300 transition-colors"
+          className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
           aria-label="Toggle menu"
         >
           <Menu className="h-5 w-5" />
         </button>
         <div className="ml-4 flex items-center gap-2">
-          <div className="w-8 h-8 bg-gray-600 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
-          <span className="font-bold font-pixel text-lg tracking-tight text-gray-100">
+          <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+          <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
             Via-gent
           </span>
         </div>

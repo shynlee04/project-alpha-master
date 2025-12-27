@@ -16,7 +16,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useLayoutStore } from '@/lib/state/layout-store';
 
 const sidebarVariants = cva(
-  'flex flex-col h-screen border-r border-gray-800 bg-gray-900 transition-all duration-300 ease-in-out',
+  'flex flex-col h-screen border-r border-border bg-sidebar transition-all duration-300 ease-in-out',
   {
     variants: {
       collapsed: {
@@ -35,8 +35,8 @@ const navItemVariants = cva(
   {
     variants: {
       active: {
-        true: 'bg-gray-800 text-white border-l-2 border-gray-600 pl-[10px]',
-        false: 'text-gray-300 hover:bg-gray-800 hover:text-gray-100 border-l-2 border-transparent',
+        true: 'bg-accent text-accent-foreground border-l-2 border-primary pl-[10px]',
+        false: 'text-muted-foreground hover:bg-accent hover:text-foreground border-l-2 border-transparent',
       },
       collapsed: {
         true: 'justify-center px-2',
@@ -51,7 +51,7 @@ const navItemVariants = cva(
 );
 
 const mobileSidebarVariants = cva(
-  'fixed inset-y-0 left-0 z-50 h-screen w-[280px] bg-gray-900 border-r border-gray-800 transition-transform duration-300 ease-in-out',
+  'fixed inset-y-0 left-0 z-50 h-screen w-[280px] bg-sidebar border-r border-border transition-transform duration-300 ease-in-out',
   {
     variants: {
       open: {
@@ -145,16 +145,16 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       {/* Mobile Sidebar */}
       <aside className={cn(mobileSidebarVariants({ open: sidebarMobileOpen }), 'md:hidden', className)}>
         {/* Mobile Header with Close Button */}
-        <div className="flex items-center justify-between h-14 border-b border-gray-800 px-4">
+        <div className="flex items-center justify-between h-14 border-b border-border px-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gray-600 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
-            <span className="font-bold font-pixel text-lg tracking-tight text-gray-100">
+            <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+            <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
               Via-gent
             </span>
           </div>
           <button
             onClick={handleCloseMobileMenu}
-            className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-gray-800 text-gray-300 transition-colors"
+            className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -171,7 +171,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
                 onClick={() => handleNavigation(item.path, item.id)}
                 className={cn(navItemVariants({ active: isActive, collapsed: false }))}
               >
-                <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-white" : "text-gray-300")} />
+                <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
                 <span className="truncate">{item.label}</span>
               </div>
             );
@@ -182,10 +182,10 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       {/* Desktop Sidebar */}
       <aside className={cn(sidebarVariants({ collapsed: sidebarCollapsed }), 'hidden md:flex', className)}>
         {/* Desktop Header / Logo Area */}
-        <div className={cn("flex items-center h-14 border-b border-gray-800", sidebarCollapsed ? "justify-center" : "px-4")}>
-          <div className="w-8 h-8 bg-gray-600 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+        <div className={cn("flex items-center h-14 border-b border-border", sidebarCollapsed ? "justify-center" : "px-4")}>
+          <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
           {!sidebarCollapsed && (
-            <span className="ml-3 font-bold font-pixel text-lg tracking-tight text-gray-100">
+            <span className="ml-3 font-bold font-pixel text-lg tracking-tight text-foreground">
               Via-gent
             </span>
           )}
@@ -203,19 +203,19 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
                     onClick={() => handleNavigation(item.path, item.id)}
                     className={cn(navItemVariants({ active: isActive, collapsed: sidebarCollapsed }))}
                   >
-                    <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-white" : "text-gray-300")} />
+                    <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
                     {!sidebarCollapsed && (
                       <span className="truncate">{item.label}</span>
                     )}
 
                     {/* Active Indicator Dot (Collapsed Mode) */}
                     {sidebarCollapsed && isActive && (
-                      <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-gray-600 rounded-none" />
+                      <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-none" />
                     )}
                   </div>
                 </TooltipTrigger>
                 {sidebarCollapsed && (
-                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-gray-800 bg-gray-900">
+                  <TooltipContent side="right" className="font-mono text-xs rounded-none border-border bg-popover">
                     {item.label}
                   </TooltipContent>
                 )}
@@ -225,11 +225,11 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         </nav>
 
         {/* Desktop Footer / Collapse Toggle */}
-        <div className="p-2 border-t border-gray-800">
+        <div className="p-2 border-t border-border">
           <button
             onClick={handleToggleSidebar}
             className={cn(
-              "flex items-center justify-center w-full h-8 rounded-none hover:bg-gray-800 text-gray-300 transition-colors",
+              "flex items-center justify-center w-full h-8 rounded-none hover:bg-accent text-muted-foreground transition-colors",
               sidebarCollapsed ? "" : "px-2"
             )}
           >

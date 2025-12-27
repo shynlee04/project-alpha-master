@@ -2,7 +2,8 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-r
 // import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 // import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import Header from '../components/Header'
+// Header is deprecated - navigation now handled by MainLayout/MainSidebar
+// import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '../components/common/AppErrorBoundary'
 import { initSentry } from '../lib/monitoring/sentry'

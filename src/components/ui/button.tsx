@@ -42,15 +42,15 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  */
 const buttonVariants = cva(
   // Base styles
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-medium transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary-500/50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-medium transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring/50',
   {
     variants: {
       variant: {
-        primary: 'bg-primary-500 text-neutral-950 hover:bg-primary-600 active:bg-primary-700 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        secondary: 'bg-neutral-800 text-neutral-100 border border-neutral-700 hover:bg-neutral-700 active:bg-neutral-900 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        ghost: 'text-neutral-100 hover:bg-neutral-800 active:bg-neutral-900 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        outline: 'border-2 border-primary-500 text-primary-500 bg-transparent hover:bg-primary-500/10 active:bg-primary-500/20 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        destructive: 'bg-error-500 text-white hover:bg-error-600 active:bg-error-700 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        primary: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+        secondary: 'bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 active:bg-secondary/70 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        ghost: 'text-foreground hover:bg-accent active:bg-accent/80 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        outline: 'border-2 border-primary text-primary bg-transparent hover:bg-primary/10 active:bg-primary/20 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        destructive: 'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
       },
       size: {
         sm: 'h-8 px-3 text-sm min-h-[32px]',
@@ -105,14 +105,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { t } = useTranslation()
 
     // Get translation key for button text
-    const buttonText = typeof children === 'string' 
+    const buttonText = typeof children === 'string'
       ? t(`button.${variant}`, { defaultValue: children as string })
       : children
 
     // Loading spinner animation
     const Spinner = loading ? (
-      <Loader2 
-        className="animate-spin" 
+      <Loader2
+        className="animate-spin"
         size={size === 'sm' ? 16 : size === 'md' ? 20 : size === 'lg' ? 24 : 28}
         aria-hidden="true"
       />
@@ -138,9 +138,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // ARIA attributes for icon-only buttons
     const ariaProps = iconOnly && !loading
       ? {
-          'aria-label': typeof children === 'string' ? children : 'Button',
-          role: 'button',
-        }
+        'aria-label': typeof children === 'string' ? children : 'Button',
+        role: 'button',
+      }
       : {}
 
     // Render as child element or button
