@@ -4,6 +4,9 @@
  * Home page with topic-based onboarding, real project data from Dexie,
  * and proper routing.
  *
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-9 Dashboard Responsive
+ * 
  * @file HubHomePage.tsx
  * @created 2025-12-27T00:50:00Z
  * @refactored Integrated with projectStore, BentoGrid, Router
@@ -21,7 +24,6 @@ import {
   type ProjectMetadata,
 } from '@/lib/workspace/project-store';
 import { BentoGrid, type BentoCardProps } from '@/components/ide/BentoGrid';
-import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 import {
   PlusIcon,
   FileIcon,
@@ -33,10 +35,14 @@ import { Sparkles, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
+import { cn } from '@/lib/utils';
+import { useDeviceType } from '@/hooks/useMediaQuery';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // MRT-9: Mobile responsive detection
+  const { isMobile } = useDeviceType();
 
   // Real project data from Dexie via useLiveQuery
   // Note: useLiveQuery requires a function that returns a Promise
@@ -130,30 +136,30 @@ export const HubHomePage: React.FC = () => {
   return (
     <div className="flex-1 min-h-screen bg-background text-foreground">
       <main className="flex-1 overflow-y-auto">
-        {/* Breadcrumbs */}
-        <div className="px-6 py-4">
-          <NavigationBreadcrumbs
-            items={[
-              { label: t('breadcrumbs.home'), interactive: false },
-              { label: t('breadcrumbs.projects'), interactive: false },
-              { label: t('breadcrumbs.workspace'), interactive: false },
-            ]}
-          />
-        </div>
+        {/* MRT-9: Removed redundant breadcrumbs - MainSidebar handles navigation */}
 
-        {/* Welcome section with 8-bit styling */}
-        <div className="px-6 py-6">
-          <h1 className="text-4xl font-bold mb-2 text-foreground font-mono tracking-tight">
+        {/* Welcome section with 8-bit styling - MRT-9: Mobile responsive padding */}
+        <div className={cn('py-6', isMobile ? 'px-4' : 'px-6')}>
+          <h1 className={cn(
+            'font-bold mb-2 text-foreground font-mono tracking-tight',
+            isMobile ? 'text-2xl' : 'text-4xl'
+          )}>
             {t('welcome')}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl">
+          <p className={cn(
+            'text-muted-foreground max-w-3xl',
+            isMobile ? 'text-sm' : 'text-lg'
+          )}>
             {t('onboarding.slides.intro.desc')}
           </p>
         </div>
 
-        {/* Portal Cards using BentoGrid (8-bit styled) */}
-        <div className="px-6 py-8">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground font-mono">
+        {/* Portal Cards using BentoGrid (8-bit styled) - MRT-9: Mobile padding */}
+        <div className={cn('py-8', isMobile ? 'px-4' : 'px-6')}>
+          <h2 className={cn(
+            'font-semibold mb-6 text-foreground font-mono',
+            isMobile ? 'text-lg' : 'text-2xl'
+          )}>
             {t('hub.exploreViaGent', 'Explore Via-gent')}
           </h2>
           <BentoGrid
@@ -163,15 +169,25 @@ export const HubHomePage: React.FC = () => {
           />
         </div>
 
-        {/* Recent Projects section (Real Data from Dexie) */}
-        <div className="px-6 py-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-foreground font-mono">
+        {/* Recent Projects section (Real Data from Dexie) - MRT-9: Mobile responsive */}
+        <div className={cn('py-8', isMobile ? 'px-4' : 'px-6')}>
+          <div className={cn(
+            'flex items-center justify-between mb-6',
+            isMobile && 'flex-col gap-4 items-start'
+          )}>
+            <h2 className={cn(
+              'font-semibold text-foreground font-mono',
+              isMobile ? 'text-lg' : 'text-2xl'
+            )}>
               {t('projects.recent')}
             </h2>
             <Button
               onClick={handleOpenFolder}
-              className="gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+              className={cn(
+                'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                // MRT-9: 44px touch target on mobile
+                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+              )}
               aria-label={t('projects.openFolder')}
             >
               <PlusIcon />

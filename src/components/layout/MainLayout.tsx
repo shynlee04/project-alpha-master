@@ -7,7 +7,8 @@
  * Main layout wrapper for the home page with responsive sidebar and content area.
  * Integrates MainSidebar, mobile header, and TanStack Router Outlet.
  * 
- * Story LAYOUT-3: Create MainLayout Component
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-9 Dashboard Responsive
  * 
  * @example
  * ```tsx
@@ -40,14 +41,18 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
 
   return (
     <div className={cn('flex h-screen bg-background overflow-hidden', className)}>
-      {/* Mobile Header */}
+      {/* Mobile Header - MRT-9: Enhanced touch targets */}
       <header className="md:hidden flex items-center h-14 border-b border-border px-4 bg-background">
         <button
           onClick={handleMobileMenuToggle}
-          className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+          className={cn(
+            'flex items-center justify-center rounded-none hover:bg-accent text-muted-foreground transition-colors',
+            // MRT-9: 44px minimum touch target for WCAG 2.5.5
+            'min-w-[44px] min-h-[44px] touch-manipulation'
+          )}
           aria-label="Toggle menu"
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-6 w-6" />
         </button>
         <div className="ml-4 flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />

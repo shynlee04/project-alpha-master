@@ -1,3 +1,11 @@
+/**
+ * @fileoverview Main Sidebar Component
+ * @module components/layout/MainSidebar
+ * 
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-9 Dashboard Responsive
+ */
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from '@tanstack/react-router';
@@ -35,8 +43,9 @@ const sidebarVariants = cva(
   }
 );
 
+// MRT-9: Enhanced nav item with mobile-first touch targets
 const navItemVariants = cva(
-  'flex items-center gap-3 px-3 py-2 mx-2 rounded-none cursor-pointer transition-colors duration-300 font-mono text-sm group relative',
+  'flex items-center gap-3 mx-2 rounded-none cursor-pointer transition-colors duration-300 font-mono text-sm group relative touch-manipulation',
   {
     variants: {
       active: {
@@ -44,13 +53,18 @@ const navItemVariants = cva(
         false: 'text-muted-foreground hover:bg-accent hover:text-foreground border-l-2 border-transparent',
       },
       collapsed: {
-        true: 'justify-center px-2',
-        false: '',
+        true: 'justify-center px-2 py-2',
+        false: 'px-3 py-3',
+      },
+      mobile: {
+        true: 'min-h-[48px] py-3',
+        false: 'py-2',
       },
     },
     defaultVariants: {
       active: false,
       collapsed: false,
+      mobile: false,
     },
   }
 );
@@ -176,7 +190,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
 
       {/* Mobile Sidebar */}
       <aside className={cn(mobileSidebarVariants({ open: sidebarMobileOpen }), 'md:hidden', className)}>
-        {/* Mobile Header with Close Button */}
+        {/* Mobile Header with Close Button - MRT-9: 44px touch target */}
         <div className="flex items-center justify-between h-14 border-b border-border px-4">
           <div className="flex items-center gap-2">
             <img
@@ -190,13 +204,14 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           </div>
           <button
             onClick={handleCloseMobileMenu}
-            className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+            className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-none hover:bg-accent text-muted-foreground transition-colors touch-manipulation"
+            aria-label="Close menu"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Mobile Navigation Items */}
+        {/* Mobile Navigation Items - MRT-9: Enhanced touch targets */}
         <nav className="flex-1 py-4 space-y-1">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -205,7 +220,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
               <div
                 key={item.id}
                 onClick={() => handleNavigation(item.path, item.id)}
-                className={cn(navItemVariants({ active: isActive, collapsed: false }))}
+                className={cn(navItemVariants({ active: isActive, collapsed: false, mobile: true }))}
               >
                 <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
                 <span className="truncate">{item.label}</span>
@@ -214,28 +229,28 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           })}
         </nav>
 
-        {/* Mobile Footer / Theme & Language Controls */}
+        {/* Mobile Footer / Theme & Language Controls - MRT-9: 44px touch targets */}
         {mounted && (
           <div className="p-3 border-t border-border flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {/* Theme Toggle */}
               <button
                 onClick={handleToggleTheme}
-                className="flex items-center gap-2 px-3 py-2 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                className="flex items-center gap-2 px-3 min-h-[44px] rounded-none hover:bg-accent text-muted-foreground transition-colors touch-manipulation"
                 aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               >
-                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                <span className="text-xs font-mono">{isDark ? 'Light' : 'Dark'}</span>
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                <span className="text-sm font-mono">{isDark ? 'Light' : 'Dark'}</span>
               </button>
 
               {/* Language Toggle */}
               <button
                 onClick={handleToggleLocale}
-                className="flex items-center gap-2 px-3 py-2 rounded-none hover:bg-accent text-muted-foreground transition-colors"
+                className="flex items-center gap-2 px-3 min-h-[44px] rounded-none hover:bg-accent text-muted-foreground transition-colors touch-manipulation"
                 aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
               >
-                <Languages className="h-4 w-4" />
-                <span className="text-xs font-mono">{locale.toUpperCase()}</span>
+                <Languages className="h-5 w-5" />
+                <span className="text-sm font-mono">{locale.toUpperCase()}</span>
               </button>
             </div>
           </div>

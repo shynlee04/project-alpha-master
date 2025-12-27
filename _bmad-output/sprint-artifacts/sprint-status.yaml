@@ -110,7 +110,12 @@ stories:
   # Phase 4 - Route-Level
   MRT-9:
     title: "Dashboard Responsive"
-    status: "BACKLOG"
+    status: "DONE"
+    completed_at: "2025-12-28T01:30:00+07:00"
+    files_changed:
+      - "src/components/layout/MainLayout.tsx"
+      - "src/components/layout/MainSidebar.tsx"
+    validation: "PASS"
     
   MRT-10:
     title: "Settings Page Responsive"
@@ -126,11 +131,11 @@ stories:
 # =============================================================================
 metrics:
   total_stories: 11
-  completed: 7
+  completed: 8
   in_progress: 1
-  backlog: 3
+  backlog: 2
   
-  progress_percentage: 64%
+  progress_percentage: 73%
   
   velocity:
     planned: 11
