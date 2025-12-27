@@ -97,14 +97,14 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{provider ? 'Edit Provider' : 'Add Provider'}</DialogTitle>
+                    <DialogTitle>{provider ? t('providers.edit', 'Edit Provider') : t('providers.add', 'Add Provider')}</DialogTitle>
                     <DialogDescription>
-                        Configure your AI provider settings.
+                        {t('providers.description', 'Configure your AI provider settings.')}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Provider Name</Label>
+                        <Label htmlFor="name">{t('providers.name', 'Provider Name')}</Label>
                         <Input
                             id="name"
                             value={name}
@@ -116,7 +116,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="type">Provider Type</Label>
+                        <Label htmlFor="type">{t('providers.type', 'Provider Type')}</Label>
                         <Select value={type} onValueChange={setType}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select type" />
@@ -131,7 +131,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="baseURL">Base URL (Optional)</Label>
+                        <Label htmlFor="baseURL">{t('providers.baseURL', 'Base URL (Optional)')}</Label>
                         <Input
                             id="baseURL"
                             value={baseURL}
@@ -141,7 +141,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="defaultModel">Default Model (Optional)</Label>
+                        <Label htmlFor="defaultModel">{t('providers.defaultModel', 'Default Model (Optional)')}</Label>
                         <Input
                             id="defaultModel"
                             value={defaultModel}
@@ -151,20 +151,20 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="apiKey">API Key</Label>
+                        <Label htmlFor="apiKey">{t('providers.apiKey', 'API Key')}</Label>
                         <Input
                             id="apiKey"
                             type="password"
                             value={apiKey}
                             onChange={(e) => setApiKey(e.target.value)}
-                            placeholder={provider ? 'Leave blank to keep existing' : 'sk-...'}
+                            placeholder={provider ? t('providers.apiKeyPlaceholderEdit', 'Leave blank to keep existing') : 'sk-...'}
                         />
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel', 'Cancel')}</Button>
                     <Button onClick={handleSubmit} disabled={isSubmitting}>
-                        {isSubmitting ? 'Saving...' : 'Save Provider'}
+                        {isSubmitting ? t('common.saving', 'Saving...') : t('providers.save', 'Save Provider')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

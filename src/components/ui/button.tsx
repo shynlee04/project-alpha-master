@@ -104,11 +104,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const { t } = useTranslation()
 
-    // Get translation key for button text
-    const buttonText = typeof children === 'string'
-      ? t(`button.${variant}`, { defaultValue: children as string })
-      : children
-
     // Loading spinner animation
     const Spinner = loading ? (
       <Loader2
@@ -130,7 +125,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ) : (
       <span className="flex items-center gap-2">
         {leftIcon}
-        {buttonText}
+        {children}
         {rightIcon}
       </span>
     )
