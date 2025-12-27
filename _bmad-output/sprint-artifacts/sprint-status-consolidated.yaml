@@ -1,4 +1,4 @@
-# generated: 2025-12-26T18:45:00+07:00 (Updated: P1 Urgent Fixes)
+# generated: 2025-12-27T17:15:00+07:00 (Updated: Refactored Sprint Plan)
 # created: 2025-12-24T20:00:00+07:00
 # project: project-alpha
 # project_key: project-alpha-master
@@ -305,7 +305,7 @@ backlog_epics:
     platform: "Platform A"
     started_at: null
     completed_at: null
-    notes: "Deferred from MVP to Epic 29. Full implementation with state tracking, iteration UI, intelligent termination."
+    notes: "Full implementation with state tracking, iteration UI, intelligent termination, error recovery. 4 stories, 10 points. Week 2 priority."
 
 # =============================================================================
 # STORIES
@@ -584,50 +584,173 @@ stories:
       - "Verify no other components depend on HubLayout - NOT IMPLEMENTED"
       - "No linter errors - NOT IMPLEMENTED"
       - "No type errors - NOT IMPLEMENTED"
+  epic-29-1:
+    id: EPIC-29-1
+    name: "Agentic State Tracking"
+    status: "backlog"
+    points: 2
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create Zustand store for agentic state (iterations, tool calls, conversation context) - NOT IMPLEMENTED"
+      - "State persistence to IndexedDB via Dexie - NOT IMPLEMENTED"
+      - "State hydration on page reload - NOT IMPLEMENTED"
+      - "Integration with useAgentChatWithTools hook - NOT IMPLEMENTED"
+      - "Unit tests for state management - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+    notes: "Foundation for intelligent agentic loop. Optional dependency on state refactoring."
+  epic-29-2:
+    id: EPIC-29-2
+    name: "Iteration UI Component"
+    status: "backlog"
+    points: 3
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "EPIC-29-1"
+    acceptance_criteria:
+      - "Create IterationList component showing iteration history - NOT IMPLEMENTED"
+      - "Create ToolExecutionStep component showing individual tool calls - NOT IMPLEMENTED"
+      - "Add progress indicators for active iterations - NOT IMPLEMENTED"
+      - "Add expandable/collapsible iteration details - NOT IMPLEMENTED"
+      - "Integration with agentic state store - NOT IMPLEMENTED"
+      - "Unit tests for components - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+    notes: "Provides visibility into agent reasoning and execution. Matches Cursor/Windsurf UX."
+  epic-29-3:
+    id: EPIC-29-3
+    name: "Intelligent Termination"
+    status: "backlog"
+    points: 3
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "EPIC-29-1, EPIC-29-2"
+    acceptance_criteria:
+      - "Implement termination conditions: goal completion, convergence, max iterations, errors - NOT IMPLEMENTED"
+      - "Implement convergence detection: similar tool calls, diminishing returns - NOT IMPLEMENTED"
+      - "Implement error recovery: graceful termination on tool failures - NOT IMPLEMENTED"
+      - "Integration with useAgentChatWithTools hook - NOT IMPLEMENTED"
+      - "Add configuration options for termination thresholds - NOT IMPLEMENTED"
+      - "Unit tests for termination logic - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+    notes: "Replaces maxIterations(3) with intelligent termination. Prevents infinite loops."
+  epic-29-4:
+    id: EPIC-29-4
+    name: "Agentic Loop E2E Validation"
+    status: "backlog"
+    points: 2
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "EPIC-29-1, EPIC-29-2, EPIC-29-3"
+    acceptance_criteria:
+      - "E2E test: Agent completes task with multiple iterations - NOT IMPLEMENTED"
+      - "E2E test: Iteration UI displays correctly - NOT IMPLEMENTED"
+      - "E2E test: Intelligent termination works as expected - NOT IMPLEMENTED"
+      - "E2E test: State persists across page reloads - NOT IMPLEMENTED"
+      - "E2E test: Error recovery handles tool failures - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+      - "Test coverage report - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+    notes: "Validates complete agentic loop implementation. Matches Cursor/Windsurf functionality."
 
 # =============================================================================
 # METRICS AND TRACKING
 # =============================================================================
 metrics:
   total_epics: 1 (active) + 8 (archived) + 1 (backlog) = 10
-  total_stories: 7 (MVP) + 10 (LAYOUT) = 17
-  story_points: 35 (MVP: 7 stories × 5 points) + 40 (LAYOUT: 10 stories × 4 points avg) = 75
+  total_stories: 7 (MVP) + 10 (LAYOUT) + 4 (EPIC-29) = 21
+  story_points: 35 (MVP: 7 stories × 5 points) + 40 (LAYOUT: 10 stories × 4 points avg) + 10 (EPIC-29: 4 stories × 2.5 points avg) = 85
   epic_23_completion: "13/13 stories complete (100%)"
   epic_completion: "0% (0/1 epics completed)"
   layout_progress: "1/10 stories DONE (10%)"
-  estimated_duration: "2-3 weeks for MVP + 1-2 weeks for LAYOUT epic"
+  epic_29_progress: "0/4 stories DONE (0%)"
+  estimated_duration: "3 weeks for MVP + Epic 29 + LAYOUT epic (refactored plan)"
   next_review: "2025-12-27"
 
 # =============================================================================
-# CRITICAL INCIDENT REMEDIATION (2025-12-26)
+# CRITICAL INCIDENT REMEDIATION (2025-12-27)
 # =============================================================================
 incident_remediation:
-  id: "INC-2025-12-26"
+  id: "INC-2025-12-27"
   status: "IN_PROGRESS"
-  root_cause: "Component-centric validation without E2E testing"
+  root_cause: "Multi-Phase Course Correction: P0 fixes + Epic 29 + E2E validation"
   remediation: |
-    1. Created consolidated MVP epic for vertical slice
-    2. Added mandatory browser E2E verification gates
-    3. Updated governance documents to reflect accurate status
-    4. Reverted MVP-3 to backlog (dependency violation fixed)
-    5. Created E2E verification infrastructure
-    6. Created MCP research documentation template
-    7. Created handoff validation mechanism
-    8. Updated definition of done to require E2E verification
-    9. Documented enforcement mechanisms
-    10. Created P0 fixes report
+    1. Created refactored sprint plan aligned with technical roadmap
+    2. Added Epic 29 stories to backlog (4 stories, 10 points)
+    3. Priorized P0 fixes for Week 1 (agentic loop, path validation)
+    4. Updated sprint status with 3-week timeline
+    5. Aligned with technical roadmap recommendations
+    6. Maintained single source of truth principle
+    7. Updated metrics to include Epic 29 progress
+    8. Documented risk mitigation strategies
+    9. Established resource allocation for 3-week sprint
+    10. Updated governance documents to reflect accurate status
   lessons_learned: |
-      - E2E verification is mandatory, not optional
-      - Component completion ≠ feature completion
-      - Governance integrity is foundation for quality
-      - Sequential story development prevents parallel execution issues
-      - Documentation and validation ensure traceability
+      - Sprint plan refactoring requires alignment with technical roadmap
+      - P0 fixes must complete before MVP-2/3 E2E verification
+      - Epic 29 provides competitive parity with Cursor/Windsurf
+      - E2E validation is mandatory for all story completions
+      - State management refactoring deferred to post-MVP (Week 2)
+      - Single source of truth principle prevents conflicts
+      - 3-week timeline balances unblocking, refactoring, and validation
     blocked_stories: |
-      - MVP-3 blocked by MVP-2 E2E verification requirement
-      - MVP-4 blocked by MVP-3 dependency
-      - MVP-5 blocked by MVP-4 dependency
-      - MVP-6 blocked by MVP-5 dependency
-      - MVP-7 blocked by MVP-6 dependency
+      - MVP-2 blocked by P0 fix (agentic loop)
+      - MVP-3 blocked by P0 fix (path validation)
+      - MVP-4 blocked by MVP-3 E2E verification
+      - MVP-5 blocked by MVP-4 E2E verification
+      - MVP-6 blocked by MVP-5 E2E verification
+      - MVP-7 blocked by MVP-6 E2E verification
+      - Epic 29-1 blocked by state refactoring (optional dependency)
+      - Epic 29-2 blocked by Epic 29-1
+      - Epic 29-3 blocked by Epic 29-1, Epic 29-2
+      - Epic 29-4 blocked by Epic 29-1, Epic 29-2, Epic 29-3
 
 # =============================================================================
 # END OF FILE
