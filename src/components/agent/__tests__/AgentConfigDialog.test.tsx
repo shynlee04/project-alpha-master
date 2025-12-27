@@ -25,6 +25,78 @@ vi.mock('sonner', () => ({
     },
 }))
 
+// Mock UI components
+vi.mock('@/components/ui/button', () => ({
+    Button: ({ children, onClick, ...props }: any) => <button onClick={onClick} {...props}>{children}</button>,
+    buttonVariants: () => '',
+}))
+
+vi.mock('@/components/ui/dialog', () => ({
+    Dialog: ({ children, open }: any) => open ? <div>{children}</div> : null,
+    DialogContent: ({ children, className }: any) => <div className={className} data-testid="dialog-content">{children}</div>,
+    DialogHeader: ({ children }: any) => <div>{children}</div>,
+    DialogTitle: ({ children }: any) => <h1>{children}</h1>,
+    DialogDescription: ({ children }: any) => <p>{children}</p>,
+    DialogFooter: ({ children }: any) => <div>{children}</div>,
+}))
+
+vi.mock('@/components/ui/input', () => ({
+    Input: (props: any) => <input {...props} />,
+}))
+
+vi.mock('@/components/ui/label', () => ({
+    Label: ({ children, ...props }: any) => <label {...props}>{children}</label>,
+}))
+
+vi.mock('@/components/ui/tabs', () => ({
+    Tabs: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    TabsList: ({ children }: any) => <div>{children}</div>,
+    TabsTrigger: ({ children }: any) => <button>{children}</button>,
+    TabsContent: ({ children, value }: any) => <div data-tab={value}>{children}</div>,
+}))
+
+vi.mock('@/components/ui/select', () => ({
+    Select: ({ children, onValueChange }: any) => <div onClick={() => onValueChange && onValueChange('test-value')}>{children}</div>,
+    SelectTrigger: ({ children }: any) => <div>{children}</div>,
+    SelectContent: ({ children }: any) => <div>{children}</div>,
+    SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
+    SelectValue: () => <span>Select Value</span>,
+}))
+
+vi.mock('@/components/ui/switch', () => ({
+    Switch: (props: any) => <input type="checkbox" {...props} />,
+}))
+
+vi.mock('@/lib/state/provider-store', () => ({
+    useProviderStore: () => ({
+        providers: [],
+        addProvider: vi.fn(),
+        updateProvider: vi.fn(),
+        removeProvider: vi.fn(),
+        setActiveProvider: vi.fn(),
+        activeProviderId: null,
+        modelSettings: {},
+        updateModelSettings: vi.fn(),
+    }),
+}))
+
+vi.mock('@/lib/agent/providers/credential-vault', () => ({
+    credentialVault: {
+        initialize: vi.fn().mockResolvedValue(undefined),
+        getCredentials: vi.fn().mockResolvedValue('test-key'),
+        hasCredentials: vi.fn().mockResolvedValue(true),
+        storeCredentials: vi.fn(),
+    },
+}))
+
+vi.mock('@/lib/agent/providers/model-registry', () => ({
+    modelRegistry: {
+        getModels: vi.fn().mockResolvedValue([]),
+        getFreeModels: vi.fn().mockReturnValue([]),
+        getDefaultModels: vi.fn().mockReturnValue([]),
+    },
+}))
+
 describe('AgentConfigDialog', () => {
     const mockOnOpenChange = vi.fn()
     const mockOnSubmit = vi.fn()
@@ -82,7 +154,7 @@ describe('AgentConfigDialog', () => {
         renderDialog(true)
 
         // Check dialog has rounded-none for pixel aesthetic
-        const dialogContent = document.querySelector('[data-slot="dialog-content"]')
+        const dialogContent = screen.getByTestId('dialog-content')
         expect(dialogContent).toHaveClass('rounded-none')
     })
 })

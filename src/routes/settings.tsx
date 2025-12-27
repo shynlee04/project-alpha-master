@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import type { Agent } from '@/mocks/agents';
+import { ProviderSettings } from '@/components/agent/ProviderSettings';
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -64,6 +65,11 @@ function SettingsPage() {
                     )}>
                         AI Agent Configuration
                     </h2>
+
+                    <div className="mb-8">
+                        <ProviderSettings />
+                    </div>
+
                     <div className={cn(
                         'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
                         isMobile ? 'p-4' : 'p-6'

@@ -58,67 +58,21 @@ import {
 /**
  * Provider configuration interface for extensibility
  */
-interface ProviderConfig {
-    id: string
-    display: string
-    icon: React.ReactNode
-    description: string
-    requiresApiKey: boolean
-    supportsFreeModels: boolean
-    supportsCustomEndpoint: boolean
-}
+// Removed local ProviderConfig interface in favor of @/lib/agent/providers type
+import { useProviderStore } from '@/lib/state/provider-store'
+import { ProviderConfig } from '@/lib/agent/providers/types'
 
 /**
  * Extensible provider configurations
  * Can be easily extended without modifying core dialog logic
  */
-const PROVIDER_CONFIGS: ProviderConfig[] = [
-    {
-        id: 'openrouter',
-        display: 'OpenRouter',
-        icon: <Bot className="w-5 h-5" />,
-        description: 'agents.config.providers.openrouter.description',
-        requiresApiKey: false,
-        supportsFreeModels: true,
-        supportsCustomEndpoint: false,
-    },
-    {
-        id: 'openai',
-        display: 'OpenAI',
-        icon: <Bot className="w-5 h-5" />,
-        description: 'agents.config.providers.openai.description',
-        requiresApiKey: true,
-        supportsFreeModels: false,
-        supportsCustomEndpoint: false,
-    },
-    {
-        id: 'anthropic',
-        display: 'Anthropic',
-        icon: <Bot className="w-5 h-5" />,
-        description: 'agents.config.providers.anthropic.description',
-        requiresApiKey: true,
-        supportsFreeModels: false,
-        supportsCustomEndpoint: false,
-    },
-    {
-        id: 'google',
-        display: 'Google AI',
-        icon: <Bot className="w-5 h-5" />,
-        description: 'agents.config.providers.google.description',
-        requiresApiKey: true,
-        supportsFreeModels: false,
-        supportsCustomEndpoint: false,
-    },
-    {
-        id: 'openai-compatible',
-        display: 'OpenAI Compatible',
-        icon: <Settings2 className="w-5 h-5" />,
-        description: 'agents.config.providers.openaiCompatible.description',
-        requiresApiKey: false,
-        supportsFreeModels: false,
-        supportsCustomEndpoint: true,
-    },
-]
+// Helper to get icon for provider
+const getProviderIcon = (id: string, name: string) => {
+    if (id.includes('openai')) return <Bot className="w-5 h-5" />
+    if (id.includes('anthropic')) return <Bot className="w-5 h-5" />
+    if (id.includes('google')) return <Bot className="w-5 h-5" />
+    return <Settings2 className="w-5 h-5" />
+}
 
 /**
  * Form validation schema using Zod
@@ -209,10 +163,13 @@ export function AgentConfigDialog({
     // Model list
     const [models, setModels] = useState<ModelInfo[]>([])
 
-    // Get provider config
+    // Get configured providers from store
+    const { providers } = useProviderStore()
+
+    // Get selected provider config
     const providerConfig = useMemo(() => {
-        return PROVIDER_CONFIGS.find(p => p.id === providerId)
-    }, [providerId])
+        return providers.find(p => p.id === providerId)
+    }, [providerId, providers])
 
     // Initialize credentialVault on mount
     useEffect(() => {
@@ -295,9 +252,15 @@ export function AgentConfigDialog({
         if (!providerId) {
             newErrors.provider = t('agents.config.validation.providerRequired', 'Please select a provider')
         }
-        if (!model.trim() && providerConfig?.requiresApiKey) {
+
+        // Model validation: Skip for openai-compatible as it uses customModelId logic mapped to model
+        // But in handleSubmit we map customModelId to model. Here 'model' state might be empty if using custom logic?
+        // Actually, for openai-compatible, we set 'model' when customModelId changes in the UI.
+        // So checking !model.trim() is generally valid, unless it's strictly optional.
+        if (!model.trim()) {
             newErrors.model = t('agents.config.validation.modelRequired', 'Please select a model')
         }
+
         if (providerId === 'openai-compatible' && !customBaseURL.trim()) {
             newErrors.customBaseURL = t('agents.config.validation.baseUrlRequired', 'Base URL is required')
         }
@@ -401,7 +364,7 @@ export function AgentConfigDialog({
             name: name.trim(),
             role: role.trim() || 'Assistant',
             status: 'offline',
-            provider: providerConfig?.display || 'OpenRouter',
+            provider: providerConfig?.name || 'OpenRouter',
             model: providerId === 'openai-compatible' ? customModelId : model,
             description: role.trim() || undefined,
             // OpenAI Compatible Provider support
@@ -547,12 +510,12 @@ export function AgentConfigDialog({
                                             <SelectValue placeholder={t('agents.config.providerPlaceholder', 'Select provider...')} />
                                         </SelectTrigger>
                                         <SelectContent className="rounded-none">
-                                            {PROVIDER_CONFIGS.map((p) => (
+                                            {providers.map((p) => (
                                                 <SelectItem key={p.id} value={p.id}>
                                                     <div className="flex items-center gap-2">
-                                                        {p.icon}
-                                                        <span>{p.display}</span>
-                                                        {p.supportsFreeModels && (
+                                                        {getProviderIcon(p.id, p.name)}
+                                                        <span>{p.name}</span>
+                                                        {p.id === 'openrouter' && (
                                                             <span className="ml-2 text-xs text-success">
                                                                 {t('agents.config.freeModels', '(Free models available)')}
                                                             </span>
@@ -621,7 +584,7 @@ export function AgentConfigDialog({
                                         <Label className="flex items-center gap-2">
                                             <Key className="w-4 h-4" />
                                             {t('agents.config.apiKey.label', 'API Key')}
-                                            {providerConfig.requiresApiKey ? (
+                                            {providerConfig.id !== 'openrouter' && providerConfig.id !== 'openai-compatible' ? (
                                                 <span className="text-destructive">*</span>
                                             ) : (
                                                 <span className="text-xs text-muted-foreground">

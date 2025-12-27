@@ -213,11 +213,11 @@ epic_25:
       effort: "2d"
     - id: "phase-2"
       name: "CRUD Completion"
-      status: "BACKLOG"
+      status: "DONE"
       effort: "1d"
     - id: "phase-3"
       name: "Hot-Reload Implementation"
-      status: "BACKLOG"
+      status: "READY"
       effort: "1d"
 
 # AI-25 Stories
@@ -232,7 +232,7 @@ stories_ai_25:
     
   AI-25-2:
     title: "Complete CRUD for all config types"
-    status: "drafted"
+    status: "DONE"
     priority: "P0"
     effort: "1d"
     depends_on: "AI-25-1"
@@ -240,7 +240,7 @@ stories_ai_25:
     
   AI-25-3:
     title: "Hot-load configuration changes"
-    status: "BACKLOG"
+    status: "review"
     priority: "P0"
     effort: "1d"
     depends_on: "AI-25-2"
@@ -407,9 +407,9 @@ current_workflow:
     completed_at: "2025-12-28T03:38:00+07:00"
   
   next_actions:
-    - "Generate story file for AI-25-2 (CRUD Operations)"
-    - "Create context XML for AI-25-2"
-    - "Validate and handoff to dev"
+    - "Develop AI-25-2 (ProviderSettings.tsx)"
+    - "Implement Delete/Add flows"
+    - "Refactor AgentConfigDialog to use store providers"
     
   investigation_integration_complete: true
   

@@ -1,0 +1,59 @@
+<context story="AI-25-3" created="2025-12-28T04:05:00+07:00">
+  <files>
+    <file path="src/lib/state/provider-store.ts">
+      <content><![CDATA[
+// ...
+export const useProviderStore = create<ProviderState>()(
+    persist(
+        (set, get) => ({
+            providers: INITIAL_PROVIDERS,
+            // ...
+            addProvider: async (config) => {
+                set((state) => ({
+                    providers: [...state.providers, config]
+                }));
+            },
+            // ...
+        }),
+        {
+            name: 'via-gent-providers',
+            storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
+            // ...
+        }
+    )
+);
+      ]]></content>
+    </file>
+    <file path="src/components/agent/ProviderSettings.tsx">
+      <content><![CDATA[
+// ...
+    const { providers, removeProvider } = useProviderStore();
+// ...
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="architecture" query="Hot Reload">
+      Architecture Section 6 specifies Zustand subscription pattern using `useShallow`.
+      Components must select only what they need to avoid unnecessary renders.
+    </finding>
+    <finding source="code-analysis" query="Current Implementation">
+      `useProviderStore` is standard Zustand. React components using it will re-render on *any* change unless selectors are used.
+      Cross-tab sync needs verification - `zustand/persist` with `createJSONStorage` typically handles `storage` events if using localStorage, but we use `createDexieStorage`. Does Dexie trigger storage events?
+      Dexie `useLiveQuery` is the reactive way for Dexie, but we are layering Zustand on top. 
+      If we want cross-tab sync with Zustand+Dexie, we usually need a listener for Dexie changes or a BroadcastChannel.
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <note priority="high">
+      Verify if `AgentConfigDialog` is using `PROVIDER_CONFIGS` constant (static) or `useProviderStore` (dynamic).
+      If it uses `PROVIDER_CONFIGS`, it won't hot-reload. It needs to be refactored to use the store.
+    </note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="zustand" version="^5.0.9" />
+  </dependencies>
+</context>
