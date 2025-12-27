@@ -1,136 +1,74 @@
 /**
- * @fileoverview Custom Zustand Storage Adapter for Dexie.js
+ * @fileoverview Dexie Storage Adapter for Zustand
  * @module lib/state/dexie-storage
+ * @epic 25 - AI Foundation Sprint
+ * @story 25-1 - Migrate provider config to Zustand
  * 
- * Provides a storage adapter that connects Zustand's persist middleware
- * to Dexie.js (IndexedDB), enabling automatic state persistence.
+ * Implements Zustand's StateStorage interface using Dexie.js for persistence.
+ * This allows Zustand stores to be persisted to IndexedDB instead of localStorage.
+ */
+
+import { type StateStorage } from 'zustand/middleware';
+import { db, type PersistedStateRecord } from './dexie-db';
+import type { Table } from 'dexie';
+
+/**
+ * Create a persistence storage adapter for a specific Dexie table
  * 
- * Story 27-1: State Architecture Stabilization
+ * @param tableName Name of the Dexie table to store state in
+ * @returns Zustand StateStorage implementation
  * 
  * @example
- * ```tsx
- * import { create } from 'zustand';
- * import { persist, createJSONStorage } from 'zustand/middleware';
- * import { dexieStorage } from './dexie-storage';
- * 
- * const useStore = create(
- *   persist(
- *     (set) => ({ ... }),
- *     { 
- *       name: 'project-123',
- *       storage: createJSONStorage(() => dexieStorage) 
- *     }
- *   )
- * );
+ * ```ts
+ * persist(
+ *   (set) => ({ ... }),
+ *   {
+ *     name: 'my-store',
+ *     storage: createDexieStorage('providerConfigs')
+ *   }
+ * )
  * ```
  */
+export function createDexieStorage(tableName: keyof typeof db): { getItem: (name: string) => Promise<string | null>, setItem: (name: string, value: string) => Promise<void>, removeItem: (name: string) => Promise<void> } {
+    // We assume the table is accessible on the db instance
+    // and follows the PersistedStateRecord interface (id, state, updatedAt)
+    const table = db[tableName] as Table<PersistedStateRecord, string>;
 
-import type { StateStorage } from 'zustand/middleware';
-import { db, type IDEStateRecord } from './dexie-db';
-
-/**
- * Parse stored JSON safely
- */
-function safeJSONParse<T>(str: string | null): T | null {
-    if (!str) return null;
-    try {
-        return JSON.parse(str) as T;
-    } catch {
-        console.warn('[DexieStorage] Failed to parse stored state');
-        return null;
-    }
-}
-
-/**
- * Dexie-backed storage adapter for Zustand persist middleware
- * 
- * This adapter stores state in IndexedDB via Dexie.js, providing:
- * - Async persistence (non-blocking)
- * - Large storage capacity (browser limit, typically 50%+ of disk)
- * - Automatic schema migrations
- * 
- * The storage key (name) is used as the projectId in ideState table.
- */
-export const dexieStorage: StateStorage = {
-    /**
-     * Get item from IndexedDB
-     * Returns null if not found or on error
-     */
-    getItem: async (name: string): Promise<string | null> => {
-        try {
-            const record = await db.ideState.get(name);
-            if (!record) return null;
-
-            // Return the full record as JSON string (Zustand expects this)
-            return JSON.stringify({
-                state: {
-                    openFiles: record.openFiles,
-                    activeFile: record.activeFile,
-                    expandedPaths: record.expandedPaths,
-                    panelLayouts: record.panelLayouts,
-                    terminalTab: record.terminalTab,
-                    chatVisible: record.chatVisible,
-                    activeFileScrollTop: record.activeFileScrollTop,
-                },
-                version: 0,
-            });
-        } catch (error) {
-            console.error('[DexieStorage] getItem error:', error);
-            return null;
-        }
-    },
-
-    /**
-     * Set item in IndexedDB
-     * Creates or updates the record
-     */
-    setItem: async (name: string, value: string): Promise<void> => {
-        try {
-            const parsed = safeJSONParse<{ state: Partial<IDEStateRecord> }>(value);
-            if (!parsed?.state) return;
-
-            const record: IDEStateRecord = {
-                projectId: name,
-                openFiles: parsed.state.openFiles ?? [],
-                activeFile: parsed.state.activeFile ?? null,
-                expandedPaths: parsed.state.expandedPaths ?? [],
-                panelLayouts: parsed.state.panelLayouts ?? {},
-                terminalTab: parsed.state.terminalTab ?? 'terminal',
-                chatVisible: parsed.state.chatVisible ?? true,
-                activeFileScrollTop: parsed.state.activeFileScrollTop,
-                updatedAt: new Date(),
-            };
-
-            await db.ideState.put(record);
-        } catch (error) {
-            console.error('[DexieStorage] setItem error:', error);
-        }
-    },
-
-    /**
-     * Remove item from IndexedDB
-     */
-    removeItem: async (name: string): Promise<void> => {
-        try {
-            await db.ideState.delete(name);
-        } catch (error) {
-            console.error('[DexieStorage] removeItem error:', error);
-        }
-    },
-};
-
-/**
- * Create a project-scoped storage adapter
- * 
- * Use this when you need to scope storage to a specific project
- * outside of the Zustand persist middleware.
- * 
- * @param projectId - Project identifier
- */
-export function createProjectStorage(projectId: string) {
     return {
-        get: () => dexieStorage.getItem(projectId),
-        set: (value: string) => dexieStorage.setItem(projectId, value),
-        remove: () => dexieStorage.removeItem(projectId),
+        getItem: async (name: string): Promise<string | null> => {
+            try {
+                const record = await table.get(name);
+                return record ? JSON.stringify(record.state) : null;
+            } catch (error) {
+                console.warn(`[DexieStorage] Failed to get item '${name}':`, error);
+                return null;
+            }
+        },
+
+        setItem: async (name: string, value: string): Promise<void> => {
+            try {
+                // Dexie/IndexedDB needs the raw object, not stringified JSON for the 'state' field
+                // But Zustand passes a stringified JSON. 
+                // We parse it back to store as object for better inspectability in DB,
+                // OR we store as string if we want 1:1 fidelity with localStorage behavior.
+                // The Target Architecture suggested JSON.parse(value).
+
+                await table.put({
+                    id: name,
+                    state: JSON.parse(value),
+                    updatedAt: new Date()
+                });
+            } catch (error) {
+                console.error(`[DexieStorage] Failed to set item '${name}':`, error);
+            }
+        },
+
+        removeItem: async (name: string): Promise<void> => {
+            try {
+                await table.delete(name);
+            } catch (error) {
+                console.error(`[DexieStorage] Failed to remove item '${name}':`, error);
+            }
+        }
     };
 }

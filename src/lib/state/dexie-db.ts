@@ -185,6 +185,23 @@ export interface ConversationThreadRecord {
 }
 
 // ============================================================================
+// State Persistence (Epic 25 - AI Foundation)
+// ============================================================================
+
+/**
+ * Generic record for Zustand persistence in Dexie
+ * Used by createDexieStorage adapter
+ * 
+ * @epic 25 - AI Foundation Sprint
+ * @story 25-1 - Migrate provider config to Zustand
+ */
+export interface PersistedStateRecord {
+    id: string;                 // Storage key (e.g., 'via-gent-providers')
+    state: any;                 // JSON-serializable state
+    updatedAt: Date;
+}
+
+// ============================================================================
 // Database Class
 // ============================================================================
 
@@ -212,6 +229,9 @@ class ViaGentDatabase extends Dexie {
 
     // Conversation threads (MVP-2)
     threads!: Table<ConversationThreadRecord, string>;
+
+    // State persistence (Epic 25)
+    providerConfigs!: Table<PersistedStateRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -274,6 +294,22 @@ class ViaGentDatabase extends Dexie {
             threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
         }).upgrade(async () => {
             console.log('[Dexie] Running migration to v5 (conversation threads)');
+        });
+
+        // Schema version 6: Add providerConfigs table (Epic 25)
+        // For Zustand store persistence
+        this.version(6).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            // Generic state persistence
+            providerConfigs: 'id, updatedAt',
+        }).upgrade(async () => {
+            console.log('[Dexie] Running migration to v6 (provider configs)');
         });
     }
 }

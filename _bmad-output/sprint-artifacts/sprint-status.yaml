@@ -1,12 +1,22 @@
 # Sprint Status - Via-gent
-# Last Updated: 2025-12-28T01:10:00+07:00
+# Last Updated: 2025-12-28T03:30:00+07:00
+# Session: BMAD v6 Investigation Integration
 
 sprint:
-  id: "MRT-2025-12-28"
-  name: "Mobile Responsive Transformation Sprint"
+  id: "INTEGRATED-2025-12-28"
+  name: "Integrated Development Sprint (MRT + AI Foundation + State Management)"
   status: "active"
   start_date: "2025-12-28"
-  end_date: "2025-12-29"
+  end_date: "2025-12-30"
+  
+  investigation_cycle:
+    status: "COMPLETE"
+    completed_at: "2025-12-28T03:30:00+07:00"
+    artifacts:
+      - "docs/2025-12-28/investigation-report.md"
+      - "docs/2025-12-28/target-architecture.md"
+      - "docs/2025-12-28/gemini-api-integration.md"
+      - "docs/2025-12-28/rag-infrastructure.md"
   
 # =============================================================================
 # EPIC: MOBILE RESPONSIVE TRANSFORMATION
@@ -181,6 +191,165 @@ stories_mfa:
     depends_on: "MFA-2"
 
 # =============================================================================
+# EPIC 25: AI FOUNDATION (From Investigation → Epic 25 Remediation)
+# =============================================================================
+epic_25:
+  id: "AI-25"
+  name: "AI Foundation Sprint"
+  status: "READY"
+  priority: "P0"
+  source: "BMAD v6 Investigation Cycle 2025-12-28"
+  reference: "docs/2025-12-28/investigation-report.md#section-1"
+  
+  critical_issues:
+    - "CRUD operation gaps in AgentConfigDialog"
+    - "Hot-load persistence failure (state updates don't trigger re-renders)"
+    - "Label/stats update propagation via props drilling"
+  
+  phases:
+    - id: "phase-1"
+      name: "Store Migration"
+      status: "READY"
+      effort: "2d"
+    - id: "phase-2"
+      name: "CRUD Completion"
+      status: "BACKLOG"
+      effort: "1d"
+    - id: "phase-3"
+      name: "Hot-Reload Implementation"
+      status: "BACKLOG"
+      effort: "1d"
+
+# AI-25 Stories
+stories_ai_25:
+  AI-25-1:
+    title: "Migrate provider config to Zustand"
+    status: "DONE"
+    priority: "P0"
+    effort: "2d"
+    details: "Create provider-store.ts with persist middleware to Dexie"
+    reference: "docs/2025-12-28/target-architecture.md#section-3"
+    
+  AI-25-2:
+    title: "Complete CRUD for all config types"
+    status: "drafted"
+    priority: "P0"
+    effort: "1d"
+    depends_on: "AI-25-1"
+    details: "Add delete flow to ProviderSettings, CustomProviderConfig"
+    
+  AI-25-3:
+    title: "Hot-load configuration changes"
+    status: "BACKLOG"
+    priority: "P0"
+    effort: "1d"
+    depends_on: "AI-25-2"
+    details: "Implement Zustand subscription pattern for cross-component updates"
+    
+  AI-25-4:
+    title: "Gemini native tool calling integration"
+    status: "BACKLOG"
+    priority: "P1"
+    effort: "2d"
+    depends_on: "AI-25-3"
+    reference: "docs/2025-12-28/gemini-api-integration.md"
+    
+  AI-25-5:
+    title: "TanStack AI Gemini adapter"
+    status: "BACKLOG"
+    priority: "P1"
+    effort: "1.5d"
+    depends_on: "AI-25-4"
+    reference: "docs/2025-12-28/gemini-api-integration.md#tools"
+
+# =============================================================================
+# EPIC 29: STATE MANAGEMENT CONSOLIDATION (From Investigation)
+# =============================================================================
+epic_29:
+  id: "SM-29"
+  name: "State Management Consolidation"
+  status: "READY"
+  priority: "P0"
+  source: "BMAD v6 Investigation Cycle 2025-12-28"
+  reference: "docs/2025-12-28/investigation-report.md#section-2"
+  
+  critical_issues:
+    - "IDELayout.tsx dual-source state management"
+    - "MobileIDELayout.tsx state synchronization duplication"
+    - "Props drilling instead of Zustand subscription"
+
+# SM-29 Stories
+stories_sm_29:
+  SM-29-1:
+    title: "Eliminate IDELayout state duplication"
+    status: "READY"
+    priority: "P0"
+    effort: "1d"
+    details: "Replace local state + custom setOpenFiles with Zustand actions"
+    evidence: "investigation-report.md line 263-269"
+    
+  SM-29-2:
+    title: "Consolidate MobileIDELayout state"
+    status: "BACKLOG"
+    priority: "P0"
+    effort: "0.5d"
+    depends_on: "SM-29-1"
+    
+  SM-29-3:
+    title: "Provider service layer"
+    status: "BACKLOG"
+    priority: "P1"
+    effort: "2d"
+    depends_on: "SM-29-2"
+    details: "Create ProviderService for centralized provider management"
+
+# =============================================================================
+# EPIC 30: KNOWLEDGE SYNTHESIS STATION (From Investigation)
+# =============================================================================
+epic_30:
+  id: "KS-30"
+  name: "Knowledge Synthesis Station"
+  status: "BACKLOG"
+  priority: "P2"
+  source: "BMAD v6 Investigation Cycle 2025-12-28"
+  reference: "docs/2025-12-28/rag-infrastructure.md"
+  
+  strategy:
+    embedding_model: "all-MiniLM-L6-v2 via ONNX Runtime Web"
+    vector_storage: "Dexie.js with custom indexes"
+    chunking: "Semantic (by sections) 512-1024 tokens"
+
+# KS-30 Stories
+stories_ks_30:
+  KS-30-1:
+    title: "Source upload and processing"
+    status: "BACKLOG"
+    priority: "P0"
+    effort: "2d"
+    
+  KS-30-2:
+    title: "Local embedding with ONNX"
+    status: "BACKLOG"
+    priority: "P1"
+    effort: "3d"
+    depends_on: "KS-30-1"
+    
+  KS-30-3:
+    title: "Visual knowledge canvas"
+    status: "BACKLOG"
+    priority: "P1"
+    effort: "3d"
+    depends_on: "KS-30-2"
+    
+  KS-30-4:
+    title: "Audio overview generation"
+    status: "BACKLOG"
+    priority: "P2"
+    effort: "2d"
+    depends_on: "KS-30-3"
+    reference: "Gemini Live API for audio streaming"
+
+# =============================================================================
 # SPRINT METRICS
 # =============================================================================
 metrics:
@@ -189,17 +358,33 @@ metrics:
   mrt_completed: 9
   mrt_progress: 82%
   
-  # MFA Epic (new)
+  # MFA Epic
   mfa_stories: 3
   mfa_completed: 1
   mfa_progress: 33%
   
+  # AI-25 Epic (new from investigation)
+  ai_25_stories: 5
+  ai_25_completed: 1
+  ai_25_progress: 20%
+  
+  # SM-29 Epic (new from investigation)
+  sm_29_stories: 3
+  sm_29_completed: 0
+  sm_29_progress: 0%
+  
+  # KS-30 Epic (new from investigation - lower priority)
+  ks_30_stories: 4
+  ks_30_completed: 0
+  ks_30_progress: 0%
+  
   # Combined
-  total_stories: 14
-  completed: 10
+  total_stories: 26
+  completed: 11
+  ready: 2  # SM-29-1, next MRT story
   in_progress: 0
-  backlog: 4
-  overall_progress: 71%
+  backlog: 12
+  overall_progress: 42%
   
   quality:
     pass_rate: 100%
@@ -208,17 +393,36 @@ metrics:
 # =============================================================================
 # CURRENT WORKFLOW
 # =============================================================================
+# =============================================================================
+# CURRENT WORKFLOW
+# =============================================================================
 current_workflow:
   workflow: "story-dev-cycle"
-  current_story: "MFA-1"
-  current_phase: "dev-story"
-  agent: "@bmad-bmm-dev"
+  current_story: "AI-25-2"
+  current_phase: "create-story"
+  agent: "@bmad-bmm-sm"
+  
+  last_completed:
+    story: "AI-25-1"
+    completed_at: "2025-12-28T03:38:00+07:00"
   
   next_actions:
-    - "Create MobileProjectSelector component"
-    - "Update HubHomePage with mobile detection"
-    - "Add demo template messaging"
-    - "Verify on mobile viewport"
+    - "Generate story file for AI-25-2 (CRUD Operations)"
+    - "Create context XML for AI-25-2"
+    - "Validate and handoff to dev"
+    
+  investigation_integration_complete: true
+  
+  priority_queue:
+    - story: "AI-25-2"
+      title: "Complete CRUD for provider configs"
+      priority: "P0"
+      rationale: "Required for adding/editing providers"
+      
+    - story: "SM-29-1"
+      title: "Eliminate IDELayout state duplication"
+      priority: "P0"
+      rationale: "Critical architectural fix"
     
 # =============================================================================
 # PREVIOUS SPRINT REFERENCE
@@ -228,3 +432,29 @@ previous_sprint:
   name: "Documentation Sprint"
   status: "COMPLETED"
   summary: "All 15 documentation tasks completed with PASS validation"
+
+# =============================================================================
+# INVESTIGATION CYCLE ARTIFACTS (2025-12-28)
+# =============================================================================
+investigation_artifacts:
+  completed_at: "2025-12-28T03:30:00+07:00"
+  documents:
+    - path: "docs/2025-12-28/investigation-report.md"
+      description: "500+ line analysis covering 4 domains"
+      
+    - path: "docs/2025-12-28/target-architecture.md"
+      description: "Zustand stores, Dexie persistence, multi-layer agent architecture"
+      
+    - path: "docs/2025-12-28/gemini-api-integration.md"
+      description: "Gemini API with TanStack AI adapter patterns, tool calling"
+      
+    - path: "docs/2025-12-28/rag-infrastructure.md"
+      description: "RAG design with Dexie schema, ONNX embeddings, chunking"
+      
+  key_findings:
+    - "CRUD operation gaps in AgentConfigDialog, ProviderSettings, CustomProviderConfig"
+    - "Hot-load persistence failures (state updates don't trigger re-renders)"
+    - "State duplication in IDELayout.tsx (dual-source management)"
+    - "Existing infrastructure: credential-vault.ts (AES-GCM), model-registry.ts"
+    - "Gemini integration: TanStack AI provides geminiText adapter with native tool support"
+    - "RAG strategy: all-MiniLM-L6-v2 via ONNX Runtime Web for local embeddings"
