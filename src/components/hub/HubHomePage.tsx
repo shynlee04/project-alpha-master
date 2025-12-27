@@ -12,7 +12,7 @@
  * @refactored Integrated with projectStore, BentoGrid, Router
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -38,11 +38,25 @@ import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
+/**
+ * Check if File System Access API is supported.
+ * Not available on mobile browsers (iOS Safari, Android Chrome).
+ */
+function isFileSystemAccessSupported(): boolean {
+  return typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+}
+
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   // MRT-9: Mobile responsive detection
   const { isMobile } = useDeviceType();
+
+  // Check File System Access API support (not available on mobile browsers)
+  const isFileSystemSupported = useMemo(() => isFileSystemAccessSupported(), []);
+
+  // State for showing mobile warning
+  const [showMobileWarning, setShowMobileWarning] = React.useState(false);
 
   // Real project data from Dexie via useLiveQuery
   // Note: useLiveQuery requires a function that returns a Promise
@@ -52,8 +66,15 @@ export const HubHomePage: React.FC = () => {
 
   /**
    * Handle opening a new folder via File System Access API
+   * With mobile fallback UX
    */
   const handleOpenFolder = async () => {
+    // Check if FS API is supported (not on mobile browsers)
+    if (!isFileSystemSupported) {
+      setShowMobileWarning(true);
+      return;
+    }
+
     try {
       const handle = await window.showDirectoryPicker();
 

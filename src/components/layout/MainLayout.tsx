@@ -10,14 +10,9 @@
  * @epic Epic-MRT Mobile Responsive Transformation
  * @story MRT-9 Dashboard Responsive
  * 
- * @example
- * ```tsx
- * import { MainLayout } from '@/components/layout';
- * 
- * function App() {
- *   return <MainLayout />;
- * }
- * ```
+ * Layout Structure:
+ * - Mobile: Column layout (header -> main content)
+ * - Desktop: Row layout (sidebar + content)
  */
 
 import React from 'react';
@@ -40,9 +35,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
   };
 
   return (
-    <div className={cn('flex h-screen bg-background overflow-hidden', className)}>
-      {/* Mobile Header - MRT-9: Enhanced touch targets */}
-      <header className="md:hidden flex items-center h-14 border-b border-border px-4 bg-background">
+    // CRITICAL FIX: Use flex-col for mobile, flex-row for desktop
+    <div className={cn('flex flex-col h-screen bg-background overflow-hidden', className)}>
+      {/* Mobile Header - MRT-9: MUST be outside the row flex container */}
+      <header className="md:hidden flex items-center h-14 border-b border-border px-4 bg-background shrink-0">
         <button
           onClick={handleMobileMenuToggle}
           className={cn(
@@ -55,20 +51,31 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
           <Menu className="h-6 w-6" />
         </button>
         <div className="ml-4 flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-none shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+          <img
+            src="/via-gent-logo.svg"
+            alt="Via-gent"
+            className="w-8 h-8"
+            onError={(e) => {
+              // Fallback for missing logo
+              e.currentTarget.style.display = 'none';
+            }}
+          />
           <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
             Via-gent
           </span>
         </div>
       </header>
 
-      {/* Main Sidebar */}
-      <MainSidebar />
+      {/* Main content row - sidebar (desktop only) + content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Main Sidebar - handles its own mobile/desktop visibility */}
+        <MainSidebar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto">
-        {children || <Outlet />}
-      </main>
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto">
+          {children || <Outlet />}
+        </main>
+      </div>
     </div>
   );
 };
