@@ -1,244 +1,266 @@
-# Status Update Procedure
+# Status Update Procedure with MCP Research Validation
 
-**Version**: 1.0  
-**Date**: 2025-12-26  
-**Purpose**: Establish single source of truth for project status and prevent governance failures
+**Document ID:** `STATUS-UPDATE-PROCEDURE-2025-12-26`  
+**Version:** 2.0  
+**Classification:** P1 - Governance  
+**Base Protocol:** [`.agent/rules/general-rules.md`](.agent/rules/general-rules.md)
 
-## Overview
+---
 
-This document defines the authoritative procedure for updating project status files to prevent the governance failures identified in Phase 1 investigation (E2E verification bypass, sequential dependency violations, status file inconsistencies).
+## 1. Overview
 
-## Authority
+This document defines the status update procedure including MCP research validation as part of story completion criteria.
 
-### Who Can Update Status Files
+**Related Documents:**
+- [`mcp-research-enforcement-checklist-2025-12-26.md`](mcp-research-enforcement-checklist-2025-12-26.md)
+- [`handoff-mcp-validation-2025-12-26.md`](handoff-mcp-validation-2025-12-26.md)
 
-| Role | Files | Authority Level |
-|------|-------|-----------------|
-| @bmad-core-bmad-master | [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) | Full |
-| @bmad-bmm-pm | [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) | Story status updates only |
-| @bmad-bmm-dev | [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) | Read-only |
-| @bmad-bmm-sm | [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) | Story status updates only |
+---
 
-**NOTE**: [`bmm-workflow-status-consolidated.yaml`](_bmad-output/bmm-workflow-status-consolidated.yaml) is **DEPRECATED**. Do not update this file.
+## 2. Story Completion Criteria
 
-## When Status Updates Are Allowed
+### 2.1 Standard Story Completion
 
-### Story Status Transitions
+A story is considered DONE when ALL of the following are complete:
 
-```
-BACKLOG → IN_PROGRESS → BLOCKED → DONE
-         ↓            ↓
-      IN_PROGRESS → BACKLOG (rollback)
-```
+| Criterion | Description | Validation |
+|-----------|-------------|------------|
+| **Code Complete** | All acceptance criteria met | PR reviewed & merged |
+| **Tests Pass** | Unit/integration tests pass | CI pipeline green |
+| **MCP Research** | Research completed for new patterns | See Section 3 |
+| **Documentation** | Story documented | Artifacts in `_bmad-output/` |
+| **E2E Verified** | Browser verification complete | Screenshot/recording captured |
+| **Handoff Complete** | Next agent handoff created | Linked in completion report |
 
-**Rules**:
-1. **BACKLOG → IN_PROGRESS**: Allowed when previous story is DONE (see Sequential Dependencies)
-2. **IN_PROGRESS → DONE**: **ONLY** after E2E verification completed and evidence captured
-3. **DONE → IN_PROGRESS**: NEVER (requires new story creation)
-4. **IN_PROGRESS → BLOCKED**: Allowed when dependency not met
-5. **BLOCKED → IN_PROGRESS**: Allowed when dependency resolved
+### 2.2 MCP Research Validation
 
-## How to Perform Updates
-
-### Step 1: Verify Dependencies
-
-Before updating story status to IN_PROGRESS:
-
-```yaml
-# Check sprint-status.yaml for previous story
-stories:
-  MVP-1:
-    status: DONE  # Must be DONE before MVP-2 can start
-    e2e_verified: true
-```
-
-**Sequential Dependency Enforcement**:
-- MVP-2 requires MVP-1 DONE
-- MVP-3 requires MVP-2 DONE
-- MVP-4 requires MVP-3 DONE
-- MVP-5 requires MVP-4 DONE
-- MVP-6 requires MVP-5 DONE
-- MVP-7 requires MVP-6 DONE
-
-### Step 2: Complete E2E Verification (for DONE status)
-
-**MANDATORY Checklist**:
-
-- [ ] All acceptance criteria implemented (verify in story document)
-- [ ] Manual browser E2E testing completed
-- [ ] Screenshot captured (saved to `_bmad-output/e2e-evidence/{story-id}-{date}.png`)
-- [ ] Full workflow tested (not just component existence)
-- [ ] No console errors
-- [ ] No runtime errors
-- [ ] Feature works as specified in story
-
-**Evidence Location**: `_bmad-output/e2e-evidence/`
-
-### Step 3: Update sprint-status.yaml
-
-**Template**:
-
-```yaml
-stories:
-  MVP-X:
-    id: MVP-X
-    title: "Story Title"
-    status: DONE  # or IN_PROGRESS, BLOCKED, BACKLOG
-    e2e_verified: true  # REQUIRED for DONE status
-    e2e_verification_date: "2025-12-26T20:00:00Z"
-    e2e_verification_evidence: "_bmad-output/e2e-evidence/mvp-x-2025-12-26.png"
-    acceptance_criteria:
-      - criterion_1: true
-      - criterion_2: true
-```
-
-**Critical Fields**:
-- `e2e_verified`: MUST be `true` for DONE status
-- `e2e_verification_date`: ISO 8601 timestamp
-- `e2e_verification_evidence`: Path to screenshot/recording
-
-### Step 4: Validate Update
-
-**Validation Checklist**:
-
-- [ ] Previous story status is DONE (for IN_PROGRESS transition)
-- [ ] All acceptance criteria marked `true`
-- [ ] E2E verification fields populated (for DONE status)
-- [ ] Evidence file exists at specified path
-- [ ] No conflicts with other stories
-
-## E2E Verification Approval Process
-
-### Pre-Verification
-
-1. **Developer**: Completes implementation
-2. **Developer**: Runs local E2E test
-3. **Developer**: Captures screenshot/recording
-4. **Developer**: Updates story status to IN_PROGRESS with `e2e_verified: false`
-
-### Verification
-
-1. **Developer**: Opens browser to `http://localhost:3000`
-2. **Developer**: Tests complete user journey
-3. **Developer**: Captures evidence screenshot
-4. **Developer**: Saves evidence to `_bmad-output/e2e-evidence/`
-
-### Approval
-
-1. **Developer**: Updates story status to DONE
-2. **Developer**: Populates E2E verification fields
-3. **PM (@bmad-bmm-pm)**: Reviews evidence
-4. **PM (@bmad-bmm-pm)**: Validates status update
-5. **Master (@bmad-core-bmad-master)**: Final approval
-
-**Rejection Process**:
-- If E2E verification fails, revert status to IN_PROGRESS
-- Document failure reason in story comments
-- Create new task to fix issues
-
-## Sequential Dependency Enforcement
-
-### Dependency Graph
-
-```
-MVP-1 (DONE) → MVP-2 (IN_PROGRESS) → MVP-3 (BLOCKED) → MVP-4 (BLOCKED) → MVP-5 (BLOCKED) → MVP-6 (BLOCKED) → MVP-7 (BLOCKED)
-```
-
-### Enforcement Mechanism
-
-**Before updating story status to IN_PROGRESS**:
-
-1. Check previous story status in [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml)
-2. Verify previous story `e2e_verified: true`
-3. Verify previous story `status: DONE`
-4. If any check fails, set current story status to BLOCKED
-
-**Example**:
-
-```yaml
-# ❌ INVALID: MVP-2 cannot be IN_PROGRESS if MVP-1 is not DONE
-stories:
-  MVP-1:
-    status: IN_PROGRESS  # BLOCKS MVP-2
-  MVP-2:
-    status: IN_PROGRESS  # VIOLATION
-
-# ✅ VALID: MVP-2 can be IN_PROGRESS only after MVP-1 is DONE
-stories:
-  MVP-1:
-    status: DONE
-    e2e_verified: true
-  MVP-2:
-    status: IN_PROGRESS  # ALLOWED
-```
-
-## Handoff Document Validation
-
-### Required Fields
-
-All handoff documents must include:
+Add to each story's definition of done:
 
 ```markdown
-## Status Updates
+## MCP Research Protocol
 
-Updated: sprint-status.yaml (story {id} → {status})
-- Previous status: {previous}
-- New status: {new}
-- E2E verified: {true/false}
-- Evidence: {path-to-evidence}
+- [ ] MCP research completed before implementation
+- [ ] Research findings documented in _bmad-output/research/
+- [ ] Pattern validated against existing codebase
+- [ ] Integration approach confirmed
+- [ ] Handoff includes MCP research section
 ```
 
-### Validation Checklist
+---
 
-- [ ] Story status update documented
-- [ ] Previous status mentioned
-- [ ] E2E verification status included
-- [ ] Evidence path provided (for DONE status)
-- [ ] No conflicts with sequential dependencies
+## 3. Status Update Workflow
 
-## Status File Consolidation
+### 3.1 Step-by-Step Procedure
 
-### Single Source of Truth
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ 1. PRE-IMPLEMENTATION                                           │
+│    □ Identify unfamiliar patterns requiring MCP research        │
+│    □ Complete 4-step MCP research protocol                      │
+│    □ Document findings in _bmad-output/research/                │
+│    □ Include MCP section in handoff document                    │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 2. IMPLEMENTATION                                               │
+│    □ Implement based on research findings                       │
+│    □ Reference existing patterns in codebase                    │
+│    □ Flag any deviations from research                          │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 3. CODE REVIEW                                                  │
+│    □ Verify MCP research documented in handoff                  │
+│    □ Check implementation matches documented approach           │
+│    □ Validate no unresearched patterns introduced               │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 4. E2E VERIFICATION                                             │
+│    □ Browser test of complete workflow                          │
+│    □ Capture screenshot/recording                               │
+│    □ Verify all acceptance criteria met                         │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 5. STATUS UPDATE                                                │
+│    □ Update sprint-status.yaml                                  │
+│    □ Link research artifacts                                    │
+│    □ Document handoff to next agent                             │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-**Authoritative File**: [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml)
+---
 
-**Deprecated Files**:
-- [`bmm-workflow-status-consolidated.yaml`](_bmad-output/bmm-workflow-status-consolidated.yaml) - DO NOT UPDATE
+## 4. Status Update YAML Format
 
-### Migration Procedure
+### 4.1 Story Status Entry
 
-1. Read current status from [`bmm-workflow-status-consolidated.yaml`](_bmad-output/bmm-workflow-status-consolidated.yaml)
-2. Update [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml) with current status
-3. Add deprecation notice to [`bmm-workflow-status-consolidated.yaml`](_bmad-output/bmm-workflow-status-consolidated.yaml)
-4. Update all references in handoff documents
+```yaml
+stories:
+  - story_id: "XX-Y"
+    status: "BACKLOG" | "IN_PROGRESS" | "IN_REVIEW" | "DONE" | "BLOCKED"
+    assignee: "{mode-slug}"
+    epic: "EPIC-XX"
+    priority: "P0" | "P1" | "P2"
+    
+    # MCP Research Validation
+    mcp_research:
+      required: true | false
+      completed: true | false
+      research_artifacts:
+        - "_bmad-output/research/{file}"
+      handoff_validated: true | false
+    
+    # E2E Verification
+    e2e_verification:
+      completed: true | false
+      evidence: "_bmad-output/e2e/{story}-verification-{YYYY-MM-DD}.md"
+    
+    # Timestamps
+    created: "YYYY-MM-DD"
+    started: "YYYY-MM-DD"
+    completed: "YYYY-MM-DD"
+    
+    # Notes
+    notes: "{any additional notes}"
+```
 
-## Governance Violations
+---
 
-### Violation Types
+## 5. Reporting Structure
 
-1. **E2E Verification Bypass**: Story marked DONE without E2E verification
-2. **Sequential Dependency Violation**: Story started before previous story DONE
-3. **Status File Inconsistency**: Conflicting status between files
-4. **Missing Evidence**: DONE status without screenshot/recording
+### 5.1 Completion Report Template
 
-### Correction Process
+```markdown
+## Completion Report to BMAD Master
 
-1. **Identify Violation**: Review [`sprint-status.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml)
-2. **Document Violation**: Create entry in [`status-correction-log-2025-12-26.md`](_bmad-output/governance/status-correction-log-2025-12-26.md)
-3. **Correct Status**: Revert to appropriate status
-4. **Block Dependent Stories**: Set dependent stories to BLOCKED
-5. **Notify Stakeholders**: Report to @bmad-core-bmad-master
+**Agent:** {mode-slug}  
+**Story:** {epic}-{story}  
+**Completed:** {YYYY-MM-DD}
 
-## References
+### MCP Research Validation
+| Step | Status | Artifact |
+|------|--------|----------|
+| Context7 | ✅/❌ | {file} |
+| Deepwiki | ✅/❌ | {file} |
+| Tavily/Exa | ✅/❌ | {file} |
+| Repomix | ✅/❌ | {file} |
 
-- [`MVP Traceability Matrix`](_bmad-output/governance/mvp-traceability-matrix-2025-12-26.md)
-- [`MVP Sprint Plan`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md)
-- [`Story Validation`](_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md)
-- [`Status Correction Log`](_bmad-output/governance/status-correction-log-2025-12-26.md)
-- [`Phase 1 Investigation`](_bmad-output/investigation/agentic-workflow-gap-analysis-2025-12-26.md)
+### Artifacts Created
+- `_bmad-output/{path}/{file}`
+- `_bmad-output/research/{mcp-research-file}`
+- `_bmad-output/e2e/{verification-file}`
 
-## Change Log
+### Workflow Status Updates
+Updated: `sprint-status.yaml` (story {id} → DONE)
+Updated: `bmm-workflow-status.yaml` (epic {id} progress)
 
-| Date | Version | Changes | Author |
-|------|---------|---------|--------|
-| 2025-12-26 | 1.0 | Initial creation | @bmad-bmm-pm |
+### Next Action
+{handoff to next agent or next story}
+```
+
+---
+
+## 6. Quality Gates
+
+### 6.1 Story Progress Gates
+
+| Gate | From | To | Requirements |
+|------|------|-----|--------------|
+| **G1** | BACKLOG | IN_PROGRESS | MCP research plan documented |
+| **G2** | IN_PROGRESS | IN_REVIEW | Code complete, MCP research documented |
+| **G3** | IN_REVIEW | DONE | Code reviewed, E2E verified, MCP validated |
+
+### 6.2 Gate G2 Checklist (Pre-Review)
+
+```
+□ MCP research documented in handoff
+□ Research artifacts linked
+□ Implementation matches documented approach
+□ No unresearched patterns detected
+□ Code passes linting and type checking
+```
+
+### 6.3 Gate G3 Checklist (Completion)
+
+```
+□ Code review approved
+□ All tests passing
+□ E2E verification complete with screenshot
+□ MCP research validated by reviewer
+□ Next agent handoff prepared
+```
+
+---
+
+## 7. Violation Handling
+
+### 7.1 MCP Research Violations
+
+| Violation | Action | Resolution |
+|-----------|--------|------------|
+| Research not completed | Story blocked at G1 | Complete MCP research |
+| Research not documented | Story blocked at G2 | Document findings |
+| Handoff missing MCP section | Story blocked at G2 | Add MCP section |
+| Unresearched pattern detected | Code review fail | Complete research, revise code |
+
+### 7.2 Remediation Process
+
+```
+1. Identify missing MCP step(s)
+2. Complete missing research
+3. Document findings in _bmad-output/research/
+4. Update handoff with research
+5. Resume review process
+6. Log as course correction if pattern changed
+```
+
+---
+
+## 8. Metrics & Reporting
+
+### 8.1 Sprint Metrics
+
+| Metric | Calculation | Target |
+|--------|-------------|--------|
+| MCP Research Completion Rate | stories_with_research / total_stories | 100% |
+| Gate G1 Pass Rate | passed_g1 / started | > 95% |
+| Gate G2 Pass Rate | passed_g2 / submitted | > 90% |
+| Gate G3 Pass Rate | completed / submitted | > 85% |
+| Violation Count | number of violations | 0 |
+
+### 8.2 Weekly Report Template
+
+```yaml
+sprint_report:
+  sprint: "{sprint-id}"
+  period: "{start_date} - {end_date}"
+  
+  mcp_metrics:
+    research_completion_rate: 100%
+    violations: 0
+    
+  story_progress:
+    started: n
+    completed: n
+    blocked: n
+    
+  gate_metrics:
+    g1_pass_rate: 95%
+    g2_pass_rate: 90%
+    g3_pass_rate: 85%
+    
+  highlights:
+    - {achievement 1}
+    - {achievement 2}
+    
+  issues:
+    - {issue 1 and resolution}
+```
+
+---
+
+**Effective Date:** 2025-12-26  
+**Governance Owner:** @bmad-bmm-pm  
+**Review Cycle:** Weekly with sprint retrospectives

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="MVP-1-E2E" created="2025-12-27T08:06:00+07:00">
+  
+  <!-- Current code state - Key excerpts for verification -->
+  <files>
+    
+    <file path="src/stores/agents-store.ts">
+      <description>Zustand store with localStorage persistence</description>
+      <content><![CDATA[
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+// Key implementation: persist middleware with localStorage
+export const useAgentsStore = create<AgentsState>()(
+    persist(
+        (set, get) => ({
+            agents: [DEFAULT_AGENT],
+            _hasHydrated: false,
+            // ... actions
+        }),
+        {
+            name: 'via-gent-agents', // localStorage key
+            version: 1,
+            onRehydrateStorage: () => (state) => {
+                console.log('[AgentsStore] Rehydrated from storage:', state?.agents?.length, 'agents');
+                state?.setHasHydrated(true);
+            },
+        }
+    )
+);
+
+// Verification: Check localStorage for 'via-gent-agents' key after save
+      ]]></content>
+    </file>
+    
+    <file path="src/components/agent/AgentConfigDialog.tsx">
+      <description>Multi-tab configuration dialog with model loading</description>
+      <content><![CDATA[
+// Line 225-258: loadModels function
+const loadModels = useCallback(async (provider: string, directApiKey?: string) => {
+    setIsLoadingModels(true);
+    try {
+        const apiKeyVal = directApiKey ?? await credentialVault.getCredentials(provider);
+        if (!apiKeyVal) {
+            // Use fallback free models
+            if (provider === 'openrouter') {
+                const freeModels = modelRegistry.getFreeModels();
+                setModels(freeModels);
+            }
+            return;
+        }
+        const fetchedModels = await modelRegistry.getModels(provider, apiKeyVal);
+        setModels(fetchedModels);
+    } finally {
+        setIsLoadingModels(false);
+    }
+}, []);
+
+// Line 336-367: handleTestConnection
+const handleTestConnection = useCallback(async () => {
+    setIsTestingConnection(true);
+    const apiKeyVal = await credentialVault.getCredentials(providerId);
+    const result = await providerAdapterFactory.testConnection(providerId, apiKeyVal);
+    if (result.success) {
+        toast.success('Connection successful!');
+        setConnectionStatus('success');
+    } else {
+        toast.error('Connection failed');
+        setConnectionStatus('error');
+    }
+}, [providerId]);
+
+// Line 75-121: Provider configurations
+const PROVIDER_CONFIGS: ProviderConfig[] = [
+    { id: 'openrouter', display: 'OpenRouter', ... },
+    { id: 'openai', display: 'OpenAI', ... },
+    { id: 'anthropic', display: 'Anthropic', ... },
+    { id: 'google', display: 'Google AI', ... },
+    { id: 'openai-compatible', display: 'OpenAI Compatible', ... },
+];
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/providers/credential-vault.ts">
+      <description>Secure API key storage using localStorage</description>
+      <content><![CDATA[
+// storeCredentials - saves to localStorage with encryption
+async storeCredentials(providerId: string, apiKey: string): Promise<void>
+
+// getCredentials - retrieves from localStorage
+async getCredentials(providerId: string): Promise<string | null>
+
+// hasCredentials - checks if key exists
+async hasCredentials(providerId: string): Promise<boolean>
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/providers/model-registry.ts">
+      <description>Model fetching with cache and fallback</description>
+      <content><![CDATA[
+// getModels - fetches from provider API with caching
+async getModels(providerId: string, apiKey?: string): Promise<ModelInfo[]>
+
+// getFreeModels - returns hardcoded free models
+getFreeModels(): ModelInfo[]
+
+// getDefaultModels - provider default models
+getDefaultModels(providerId: string): ModelInfo[]
+      ]]></content>
+    </file>
+    
+  </files>
+  
+  <!-- Research findings from previous investigation -->
+  <research_notes>
+    <finding source="code-investigation" query="AgentConfigDialog model loading">
+      Model selection IS implemented. loadModels() uses modelRegistry.getModels() with API key 
+      or falls back to getFreeModels() for OpenRouter without API key.
+    </finding>
+    <finding source="code-investigation" query="Agent persistence">
+      Zustand persist middleware configured with name='via-gent-agents'. 
+      Agents survive page refresh via localStorage.
+    </finding>
+    <finding source="code-investigation" query="Connection testing">
+      handleTestConnection() calls providerAdapterFactory.testConnection() and shows toast.
+      Fully implemented at lines 336-367.
+    </finding>
+    <finding source="deep-research-doc" query="Roo Code patterns">
+      Via-gent follows similar patterns to Kilo Code: provider adapters, model selection,
+      credential management. Implementation appears complete at code level.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Zustand Persist" source="architecture.md">
+      State management uses Zustand with persist middleware for localStorage.
+      Key format: 'via-gent-agents' with version: 1.
+    </pattern>
+    <pattern name="Event-Driven" source="architecture.md">
+      Components communicate via WorkspaceEventEmitter (eventemitter3).
+      Credential updates dispatch 'credentials-updated' custom event.
+    </pattern>
+    <pattern name="Provider Factory" source="providers/index.ts">
+      ProviderAdapterFactory, credentialVault, and modelRegistry are singletons
+      exported from src/lib/agent/providers/.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for verification -->
+  <technical_notes>
+    <note priority="high">
+      Check localStorage 'via-gent-agents' in DevTools → Application → Local Storage
+      after creating an agent. JSON should contain the agent object.
+    </note>
+    <note priority="high">
+      For OpenRouter, free models should appear WITHOUT API key.
+      After saving API key, full model list should load from API.
+    </note>
+    <note priority="medium">
+      Test Connection success depends on valid API key. Use OpenRouter 
+      with free tier to test without charges.
+    </note>
+    <note priority="medium">
+      Agent status 'Ready' indicator may need styling verification in AgentCard component.
+    </note>
+    <note priority="low">
+      Console logs prefixed with [AgentsStore] and [AgentConfigDialog] for debugging.
+    </note>
+  </technical_notes>
+  
+  <!-- Verification checklist mapping -->
+  <verification_checklist>
+    <criterion id="AC-1" status="TO_VERIFY">
+      Provider dropdown with 5 providers (lines 75-121)
+    </criterion>
+    <criterion id="AC-2" status="TO_VERIFY">
+      Model dropdown population (lines 225-258, 576-600)
+    </criterion>
+    <criterion id="AC-3" status="TO_VERIFY">
+      API key storage with mask display (lines 310-333)
+    </criterion>
+    <criterion id="AC-4" status="TO_VERIFY">
+      Persistence via Zustand persist (agents-store.ts lines 73-144)
+    </criterion>
+    <criterion id="AC-5" status="TO_VERIFY">
+      Connection test (lines 336-367)
+    </criterion>
+    <criterion id="AC-6" status="TO_VERIFY">
+      Agent status display (needs UI inspection)
+    </criterion>
+    <criterion id="AC-7" status="TO_VERIFY">
+      Dialog accessibility (gear icon on agent card)
+    </criterion>
+  </verification_checklist>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="zustand" version="^5.0.9" usage="State management with persist" />
+    <dependency name="zod" version="^3.x" usage="Form validation in dialog" />
+    <dependency name="sonner" version="latest" usage="Toast notifications" />
+    <dependency name="@tanstack/ai-react" version="latest" usage="AI chat hooks" />
+  </dependencies>
+  
+</context>

@@ -92,10 +92,10 @@ export interface UseAgentChatWithToolsReturn {
     toolsAvailable: boolean;
     /** Tool calls awaiting user approval (Story 25-5) */
     pendingApprovals: PendingApprovalInfo[];
-    /** Approve a pending tool call (for needsApproval tools) */
-    approveToolCall: (toolCallId: string) => void;
-    /** Reject a pending tool call */
-    rejectToolCall: (toolCallId: string, reason?: string) => void;
+    /** Approve a pending tool call using its approvalId */
+    approveToolCall: (approvalId: string, toolCallId?: string) => void;
+    /** Reject a pending tool call using its approvalId */
+    rejectToolCall: (approvalId: string, reason?: string, toolCallId?: string) => void;
 }
 
 // Default values
@@ -322,9 +322,10 @@ export function useAgentChatWithTools(
     }, [rawSendMessage]);
 
     // Approve tool call - uses { id, approved } object format
-    const approveToolCall = useCallback((toolCallId: string) => {
+    // CRITICAL FIX: Uses approvalId (from part.approval.id), NOT toolCallId
+    const approveToolCall = useCallback((approvalId: string, toolCallId?: string) => {
         if (addToolApprovalResponse) {
-            addToolApprovalResponse({ id: toolCallId, approved: true });
+            addToolApprovalResponse({ id: approvalId, approved: true });
 
             // Update tool call status and emit event
             setToolCalls((prev) => {
@@ -349,9 +350,10 @@ export function useAgentChatWithTools(
     }, [addToolApprovalResponse, eventBus]);
 
     // Reject tool call - uses { id, approved } object format
-    const rejectToolCall = useCallback((toolCallId: string, reason?: string) => {
+    // CRITICAL FIX: Uses approvalId (from part.approval.id), NOT toolCallId
+    const rejectToolCall = useCallback((approvalId: string, reason?: string, toolCallId?: string) => {
         if (addToolApprovalResponse) {
-            addToolApprovalResponse({ id: toolCallId, approved: false });
+            addToolApprovalResponse({ id: approvalId, approved: false });
 
             // Update tool call status and emit event
             setToolCalls((prev) => {

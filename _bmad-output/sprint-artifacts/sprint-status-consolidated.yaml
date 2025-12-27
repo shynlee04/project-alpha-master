@@ -155,13 +155,13 @@ stories:
   mvp-3:
     id: MVP-3
     name: "Tool Execution - File Operations"
-    status: "blocked"
+    status: "ready-for-e2e"
     points: 5
     priority: P0
     platform: "Platform A"
-    startedat: null
-    devcompletedat: null
-    devstartedat: null
+    startedat: "2025-12-26T20:00:00+07:00"
+    devcompletedat: "2025-12-26T21:51:00+07:00"
+    devstartedat: "2025-12-26T20:00:00+07:00"
     reviewsubmittedat: null
     reviewcompletedat: null
     testsadded: 0
@@ -169,8 +169,8 @@ stories:
     e2e_verified: false
     e2e_verification_date: null
     e2e_verification_evidence: null
-    block_reason: "Dependency not met - MVP-2 must be DONE first"
-    dependency: "MVP-2"
+    block_reason: null
+    dependency: null
     acceptance_criteria:
       - "AI can request to read project files - NOT IMPLEMENTED"
       - "Approval dialog shows file path and content preview - NOT IMPLEMENTED"

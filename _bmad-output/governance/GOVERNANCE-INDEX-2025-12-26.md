@@ -164,6 +164,15 @@
 | P1.10-2025-12-26 | State Management Audit | 2025-12-26 | COMPLETED |
 | GOV-AUD-2025-12-25 | OpenRouter 401 Fix Analysis | 2025-12-25 | COMPLETED |
 
+### Remediation Documents
+
+| Document ID | Title | Date | Status | Priority |
+|-------------|-------|------|----------|
+| REM-PRI-2025-12-26 | Remediation Prioritization Matrix | 2025-12-26 | COMPLETED |
+| REM-ROAD-2025-12-26 | Remediation Execution Roadmap | 2025-12-26 | COMPLETED |
+| REM-MVP3-2025-12-26 | MVP-3 E2E Verification Checklist | 2025-12-26 | COMPLETED |
+| REM-POST-2025-12-26 | Post-MVP-3 Remediation Plan | 2025-12-26 | COMPLETED |
+
 ### Architecture Documents
 
 | Document ID | Title | Date | Status |
@@ -463,6 +472,7 @@ When implementing unfamiliar patterns:
 | `_bmad-output/course-corrections/` | Course correction analyses |
 | `_bmad-output/architecture/` | Architecture documentation |
 | `_bmad-output/epics/` | Epic specifications |
+| `_bmad-output/remediation/` | Remediation plans and execution roadmaps |
 
 ---
 
@@ -471,6 +481,7 @@ When implementing unfamiliar patterns:
 | Date | Change | Author |
 |------|--------|---------|
 | 2025-12-26T16:45:00+07:00 | Initial governance infrastructure created | bmad-bmm-architect |
+| 2025-12-26T22:40:00+07:00 | Added remediation documents section | bmad-bmm-pm |
 
 ---
 

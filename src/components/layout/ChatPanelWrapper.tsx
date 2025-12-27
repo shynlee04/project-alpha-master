@@ -2,7 +2,7 @@
  * @fileoverview Chat Panel Wrapper Component
  * @module components/layout/ChatPanelWrapper
  * 
- * Right sidebar containing the AI chat platform with conversation threads.
+ * Right sidebar containing AI chat platform with conversation threads.
  * Shows ThreadCard list when no thread is active.
  * Shows AgentChatPanel when a thread is selected.
  * 
@@ -19,15 +19,21 @@ import { ThreadCard } from '../chat/ThreadCard';
 import { useThreadsStore, useActiveThread } from '@/stores/conversation-threads-store';
 
 /**
- * Props for the ChatPanelWrapper component.
+ * Props for ChatPanelWrapper component.
  */
 export interface ChatPanelWrapperProps {
     /** Current project ID */
     projectId: string | null;
-    /** Display name for the project */
+    /** Display name for project */
     projectName: string;
-    /** Callback to close the chat panel */
+    /** Callback to close chat panel */
     onClose: () => void;
+    /** File tools facade for agent */
+    fileTools?: any;
+    /** Terminal tools facade for agent */
+    terminalTools?: any;
+    /** Event bus for tool operations */
+    eventBus?: any;
 }
 
 /**
@@ -46,6 +52,9 @@ export function ChatPanelWrapper({
     projectId,
     projectName,
     onClose,
+    fileTools,
+    terminalTools,
+    eventBus,
 }: ChatPanelWrapperProps): React.JSX.Element {
     const { t } = useTranslation();
     const [currentPage, setCurrentPage] = useState(0);
@@ -94,7 +103,7 @@ export function ChatPanelWrapper({
         setActiveThread(null);
     }, [setActiveThread]);
 
-    // If a thread is active, show the existing AgentChatPanel
+    // If a thread is active, show existing AgentChatPanel
     if (activeThread) {
         return (
             <div className="h-full flex flex-col bg-surface-dark border-l border-border-dark">
@@ -126,6 +135,9 @@ export function ChatPanelWrapper({
                     <AgentChatPanel
                         projectId={projectId}
                         projectName={projectName}
+                        fileTools={fileTools}
+                        terminalTools={terminalTools}
+                        eventBus={eventBus}
                     />
                 </div>
             </div>

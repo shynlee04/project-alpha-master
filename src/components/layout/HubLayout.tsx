@@ -35,6 +35,9 @@ export const HubLayout: React.FC<HubLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
+      {/* Header with LanguageSwitcher and ThemeToggle */}
+      <Header />
+
       {/* Sidebar */}
       <HubSidebar />
 

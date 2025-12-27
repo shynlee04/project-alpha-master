@@ -9,7 +9,9 @@ import { saveThread, getThreadsForProject } from '../../lib/workspace/threads-st
 import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
 import { ApprovalOverlay } from '../chat/ApprovalOverlay';
+import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '../../lib/agent/hooks/use-agent-chat-with-tools';
+import { useAutoApproveStore } from '@/stores/auto-approve-store';
 import { useAgentSelection } from '@/stores/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
@@ -71,6 +73,9 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     // Prompt Enhancement State
     const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();
     const { enhancePrompt, isEnhancing: isEnhancingPrompt } = usePromptEnhancer();
+
+    // Auto-Approve Settings (toggle-based UX)
+    const { shouldAutoApprove } = useAutoApproveStore();
 
     // Get selected agent from Zustand store
     const { activeAgentId } = useAgentSelection();
@@ -456,16 +461,30 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     }, [sendMessage, isEnhancementEnabled, isEnhancingPrompt, allMessages, enhancePrompt]);
 
     // Handle tool approval - Story 25-5 integration
+    // CRITICAL FIX: Use approvalId (not toolCallId) for TanStack AI approval response
     const handleApprove = useCallback((approval: PendingApprovalInfo) => {
-        console.log('[AgentChatPanel] Approving tool call:', approval.toolName);
-        approveToolCall(approval.toolCallId);
+        console.log('[AgentChatPanel] Approving tool call:', approval.toolName, 'approvalId:', approval.approvalId);
+        approveToolCall(approval.approvalId, approval.toolCallId);
     }, [approveToolCall]);
 
     // Handle tool rejection
+    // CRITICAL FIX: Use approvalId (not toolCallId) for TanStack AI approval response
     const handleReject = useCallback((approval: PendingApprovalInfo) => {
-        console.log('[AgentChatPanel] Rejecting tool call:', approval.toolName);
-        rejectToolCall(approval.toolCallId, 'User rejected');
+        console.log('[AgentChatPanel] Rejecting tool call:', approval.toolName, 'approvalId:', approval.approvalId);
+        rejectToolCall(approval.approvalId, 'User rejected', approval.toolCallId);
     }, [rejectToolCall]);
+
+    // Auto-approve effect: when a pending approval arrives and auto-approve is enabled for that tool
+    useEffect(() => {
+        if (pendingApprovals.length === 0) return;
+
+        for (const approval of pendingApprovals) {
+            if (shouldAutoApprove(approval.toolName)) {
+                console.log('[AgentChatPanel] Auto-approving tool call:', approval.toolName);
+                approveToolCall(approval.approvalId, approval.toolCallId);
+            }
+        }
+    }, [pendingApprovals, shouldAutoApprove, approveToolCall]);
 
     // Handle artifact preview
     const handlePreviewArtifact = useCallback((code: string) => {
@@ -607,6 +626,9 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     </span>
                 </div>
             )}
+
+            {/* Auto-Approve Settings (toggle-based UX like Roo Code) */}
+            <AutoApproveSettings className="mx-2 mt-2" compact />
 
             {/* Content */}
             <div className="flex-1 overflow-hidden relative">

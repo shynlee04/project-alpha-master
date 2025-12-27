@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="MVP-2-E2E" created="2025-12-27T08:21:00+07:00">
+  
+  <!-- Story Context -->
+  <metadata>
+    <story_id>MVP-2-E2E</story_id>
+    <epic>MVP - AI Coding Agent Vertical Slice</epic>
+    <title>Chat Interface with Streaming</title>
+    <depends_on>MVP-1 (done)</depends_on>
+    <status>ready-for-dev</status>
+  </metadata>
+  
+  <!-- Key Implementation Files -->
+  <files>
+    
+    <file path="src/components/ide/AgentChatPanel.tsx" lines="648" purpose="Main chat UI component">
+      <signature><![CDATA[
+/**
+ * AgentChatPanel - AI conversation interface with tool execution
+ * 
+ * Integrates useAgentChatWithTools hook for real TanStack AI streaming
+ * instead of mock setTimeout responses.
+ * 
+ * @story 25-R1 - Replace mock with real hook integration
+ */
+interface AgentChatPanelProps {
+    projectId: string | null;
+    projectName?: string;
+}
+
+// Key features:
+// - Uses useAgentChatWithTools hook for chat functionality
+// - Handles pending approvals for tool executions
+// - Persists messages to Dexie threads
+// - Renders with StreamdownRenderer for markdown
+      ]]></signature>
+      <key_patterns>
+        <pattern name="hook_usage">useAgentChatWithTools({ providerId, modelId, apiKey, ... })</pattern>
+        <pattern name="message_display">messages.map(m => &lt;MessageBubble .../&gt;)</pattern>
+        <pattern name="tool_extraction">extractToolExecutions(rawMessages, currentIndex)</pattern>
+        <pattern name="persistence">load() and persist() functions for Dexie</pattern>
+      </key_patterns>
+    </file>
+    
+    <file path="src/lib/agent/hooks/use-agent-chat-with-tools.ts" lines="465" purpose="Chat hook with tool support">
+      <signature><![CDATA[
+interface UseAgentChatWithToolsOptions {
+    providerId?: string;
+    modelId?: string;
+    apiKey?: string;
+    endpoint?: string;
+    systemMessage?: string;
+    fileTools?: AgentFileTools | null;
+    terminalTools?: AgentTerminalTools | null;
+    eventBus?: WorkspaceEventEmitter | null;
+    customBaseURL?: string;
+    customHeaders?: Record<string, string>;
+    enableTools?: boolean;
+}
+
+interface UseAgentChatWithToolsReturn {
+    messages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }>;
+    isLoading: boolean;
+    error: Error | null;
+    sendMessage: (content: string) => Promise<void>;
+    rawMessages: unknown[];
+    providerId: string;
+    modelId: string;
+    toolCalls: ToolCallInfo[];
+    toolsAvailable: boolean;
+    pendingApprovals: PendingApprovalInfo[];
+    approveToolCall: (toolCallId: string) => void;
+    rejectToolCall: (toolCallId: string, reason?: string) => void;
+}
+
+function useAgentChatWithTools(
+    options: UseAgentChatWithToolsOptions = {}
+): UseAgentChatWithToolsReturn
+      ]]></signature>
+      <key_patterns>
+        <pattern name="endpoint">DEFAULT_ENDPOINT = '/api/chat'</pattern>
+        <pattern name="default_model">DEFAULT_MODEL = 'mistralai/devstral-2512:free'</pattern>
+        <pattern name="approval_flow">pendingApprovals, approveToolCall, rejectToolCall</pattern>
+      </key_patterns>
+    </file>
+    
+    <file path="src/routes/api/chat.ts" lines="212" purpose="SSE streaming API endpoint">
+      <signature><![CDATA[
+interface ChatRequest {
+    messages: Array<{ role: 'user' | 'assistant' | 'tool'; content: string }>;
+    providerId?: string;
+    modelId?: string;
+    apiKey?: string;
+    disableTools?: boolean;
+    customBaseURL?: string;
+    customHeaders?: Record<string, string>;
+}
+
+export const Route = createFileRoute('/api/chat')({
+    server: {
+        handlers: {
+            GET(): Response { /* health check */ },
+            POST({ request }): Response { /* SSE streaming */ }
+        }
+    }
+});
+      ]]></signature>
+      <key_patterns>
+        <pattern name="sse_streaming">Response with SSE chunks</pattern>
+        <pattern name="provider_urls">PROVIDER_BASE_URLS: openrouter, openai, anthropic</pattern>
+        <pattern name="tools">getTools() returns file/terminal tool definitions</pattern>
+      </key_patterns>
+    </file>
+    
+  </files>
+  
+  <!-- Architecture Patterns -->
+  <architecture_patterns>
+    <pattern name="chat_flow" source="architecture.md">
+      1. User types message in AgentChatPanel
+      2. sendMessage() called on useAgentChatWithTools hook
+      3. POST /api/chat with messages, apiKey, modelId
+      4. Server streams SSE response chunks
+      5. Hook updates messages array incrementally
+      6. StreamdownRenderer displays formatted content
+      7. On complete, messages persisted to Dexie threadsDb
+    </pattern>
+    
+    <pattern name="sse_streaming" source="chat.ts">
+      - TanStack Start server handlers with createFileRoute
+      - fetchServerSentEvents on client side
+      - Chunks arrive as data: {...}\n\n format
+      - Client reconstructs full response from chunks
+    </pattern>
+    
+    <pattern name="message_persistence" source="threadsDb.ts">
+      - Dexie.js for IndexedDB wrapper
+      - threads table stores conversation threads
+      - Messages saved on assistant response complete
+      - Loaded on component mount
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Research Notes -->
+  <research_notes>
+    <finding source="codebase_investigation" query="chat hook integration">
+      AgentChatPanel at line 148 uses useAgentChatWithTools with:
+      - providerId from agents store
+      - modelId from agents store  
+      - apiKey from credential vault
+      - fileTools and terminalTools from workspace context
+    </finding>
+    
+    <finding source="codebase_investigation" query="SSE configuration">
+      The /api/chat endpoint uses TanStack Start server handlers.
+      Response is streamed using the provider adapter's chat methods.
+      Client uses hook's internal fetch with streaming parsing.
+    </finding>
+    
+    <finding source="MVP-1_verification" query="dependency gap">
+      cmdk dependency was missing, blocking main route.
+      This was fixed during MVP-1 verification.
+      Application now loads correctly.
+    </finding>
+  </research_notes>
+  
+  <!-- Technical Notes -->
+  <technical_notes>
+    <note priority="high">
+      Chat requires a valid agent to be selected with:
+      - API key stored in credentialVault
+      - Model selected from provider
+      The agent must be in "configured" state from MVP-1
+    </note>
+    
+    <note priority="high">
+      SSE streaming requires proper headers:
+      - Content-Type: text/event-stream
+      - Cache-Control: no-cache
+      - Connection: keep-alive
+      If not present, check /api/chat route implementation
+    </note>
+    
+    <note priority="medium">
+      Markdown rendering uses StreamdownRenderer which integrates:
+      - rehype-raw for HTML parsing
+      - syntax highlighting for code blocks
+      - Custom code block component with copy button
+    </note>
+    
+    <note priority="medium">
+      Error handling should show toast via sonner:
+      - toast.error() for API failures
+      - Inline error state in hook (error property)
+    </note>
+  </technical_notes>
+  
+  <!-- E2E Verification Strategy -->
+  <e2e_strategy>
+    <approach>Manual test framework - browser automation too slow</approach>
+    <workflow>
+      <step n="1">Agent generates test framework/commands</step>
+      <step n="2">User executes manually in browser</step>
+      <step n="3">User reports errors back to agent</step>
+      <step n="4">Agent creates gap fixes based on error reports</step>
+      <step n="5">Repeat until all ACs verified</step>
+    </workflow>
+    <test_locations>
+      <test ac="AC-1" name="Chat Panel Display">Check panel visibility</test>
+      <test ac="AC-2" name="Message Sending">Network tab POST /api/chat</test>
+      <test ac="AC-3" name="SSE Streaming">Watch incremental response</test>
+      <test ac="AC-4" name="Markdown Rendering">Check formatted output</test>
+      <test ac="AC-5" name="Code Highlighting">Check syntax colors</test>
+      <test ac="AC-6" name="Error Handling">Simulate network error</test>
+      <test ac="AC-7" name="Persistence">Refresh and check messages</test>
+    </test_locations>
+  </e2e_strategy>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@tanstack/ai-react" version="latest" purpose="Chat hooks" />
+    <dependency name="dexie" version="^4.x" purpose="IndexedDB persistence" />
+    <dependency name="sonner" version="latest" purpose="Toast notifications" />
+    <dependency name="react-markdown" version="latest" purpose="Markdown rendering" />
+    <dependency name="rehype-raw" version="latest" purpose="Raw HTML in markdown" />
+    <dependency name="cmdk" version="latest" purpose="Command menu (fixed in MVP-1)" />
+  </dependencies>
+  
+</context>

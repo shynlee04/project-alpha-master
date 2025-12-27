@@ -28,6 +28,10 @@ import { ChatPanelWrapper } from './ChatPanelWrapper';
 import { PermissionOverlay } from './PermissionOverlay';
 import { MinViewportWarning } from './MinViewportWarning';
 
+// Agent tool facades (Story MVP-3: Wire tool facades to agent)
+import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
+import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';
+
 // P1.9: Error boundary for critical components
 import { WithErrorBoundary } from '@/components/common/ErrorBoundary';
 
@@ -175,6 +179,19 @@ export function IDELayout(): React.JSX.Element {
     eventBus,
     toast,
   });
+
+  // Story MVP-3: Create tool facades for agent
+  // ADD: Create file tools facade
+  const fileTools = useMemo(() => {
+    if (!localAdapterRef.current || !syncManagerRef.current) return null;
+    return createFileToolsFacade(localAdapterRef.current, syncManagerRef.current, eventBus);
+  }, [localAdapterRef.current, syncManagerRef.current, eventBus]);
+
+  // ADD: Create terminal tools facade
+  const terminalTools = useMemo(() => {
+    if (!syncManagerRef.current) return null;
+    return createTerminalToolsFacade(syncManagerRef.current);
+  }, [syncManagerRef.current]);
 
   // Story 28-24: Subscribe FileTree to agent file events via EventBus
   useFileTreeEventSubscriptions(eventBus, () => setFileTreeRefreshKey(k => k + 1));
@@ -388,7 +405,15 @@ export function IDELayout(): React.JSX.Element {
                           </div>
                         }
                       >
-                        <ChatPanelWrapper projectId={projectId} projectName={projectMetadata?.name ?? projectId ?? 'Project'} onClose={() => setChatVisible(false)} />
+                        <ChatPanelWrapper
+                            projectId={projectId}
+                            projectName={projectMetadata?.name ?? projectId ?? 'Project'}
+                            onClose={() => setChatVisible(false)}
+                            // ADD: Pass tool facades to chat panel (Story MVP-3)
+                            fileTools={fileTools}
+                            terminalTools={terminalTools}
+                            eventBus={eventBus}
+                        />
                       </WithErrorBoundary>
                     </CardContent>
                   </Card>

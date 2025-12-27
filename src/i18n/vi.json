@@ -120,25 +120,29 @@
     "error_generic": "Đã xảy ra lỗi",
     "key_missing": "Thiếu API Key cho {{provider}}. Vui lòng cấu hình trong panel Agents."
   },
-  "editor": {
-    "loading": "Đang tải trình soạn thảo...",
-    "noFile": {
-      "title": "Không có tệp nào đang mở",
-      "subtitle": "Chọn tệp để chỉnh sửa"
+  "hub": {
+    "portals": {
+      "ideWorkspace": "IDE Workspace",
+      "ideWorkspaceDesc": "Open your projects in full IDE",
+      "agentCenter": "Agent Center",
+      "agentCenterDesc": "Configure and manage AI agents",
+      "knowledgeHub": "Knowledge Hub",
+      "knowledgeHubDesc": "Your knowledge synthesis station",
+      "settings": "Settings",
+      "settingsDesc": "Configure your workspace preferences"
     },
-    "input": {
-      "syncWarning": "Chỉnh sửa trong khi đồng bộ có thể gây xung đột"
-    }
+    "exploreViaGent": "Explore Via-gent"
   },
-  "terminal": {
-    "ariaLabel": "Terminal",
-    "shellExited": "Shell đã thoát với mã {{code}}",
-    "error": "Lỗi Terminal: {{error}}",
-    "bootFailed": "Không khởi động được WebContainer: {{error}}",
-    "loading": "Đang tải terminal...",
-    "waitingForSync": "Đang chờ đồng bộ dự án...",
-    "syncRequired": "Cần đồng bộ dự án",
-    "grantPermission": "Cấp quyền truy cập tệp để bật terminal"
+  "projects": {
+    "recent": "Recent Projects",
+    "openFolder": "Open Folder",
+    "lastEdited": "Last edited",
+    "needsAccess": "Needs Access"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "projects": "Projects",
+    "workspace": "Workspace"
   },
   "onboarding": {
     "launch": "Khởi chạy Tour Tương tác",
@@ -1006,5 +1010,21 @@
   "bentoGrid.topicAIAgent": "__STRING_NOT_TRANSLATED__",
   "bentoGrid.topicTerminal": "__STRING_NOT_TRANSLATED__",
   "bentoGrid.topicSettings": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.title": "__STRING_NOT_TRANSLATED__"
+  "bentoGrid.title": "__STRING_NOT_TRANSLATED__",
+  "autoApprove": {
+    "title": "Tự động phê duyệt",
+    "toggle": "Bật/tắt tự động phê duyệt",
+    "description": "Chạy các hành động này mà không cần hỏi ý kiến. Chỉ bật cho các hành động bạn tin tưởng hoàn toàn.",
+    "none": "Không có",
+    "read": "Đọc",
+    "write": "Ghi",
+    "delete": "Xóa",
+    "execute": "Thực thi",
+    "browser": "Trình duyệt",
+    "mcp": "MCP",
+    "mode": "Chế độ",
+    "subtasks": "Tác vụ con",
+    "enableAll": "Bật tất cả",
+    "disableAll": "Tắt tất cả"
+  }
 }
