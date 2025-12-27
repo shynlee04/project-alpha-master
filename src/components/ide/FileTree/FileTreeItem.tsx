@@ -1,14 +1,19 @@
 /**
  * @fileoverview FileTreeItem Component
  * Renders a single item in the file tree (file or folder)
+ * 
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-4 FileTree Mobile Adaptation
  */
 
 import React, { useState } from 'react';
 import { ChevronRight, ChevronDown, Loader2, Check, Clock, AlertTriangle } from 'lucide-react';
 import { FileIcon } from './icons';
 import type { FileTreeItemProps } from './types';
-import { useSyncStatusStore } from '../../../lib/workspace'
-import { isPathExcluded } from '../../../lib/filesystem/exclusion-config'
+import { useSyncStatusStore } from '../../../lib/workspace';
+import { isPathExcluded } from '../../../lib/filesystem/exclusion-config';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 
 /**
  * FileTreeItem - Renders a single file or folder in the tree
@@ -24,6 +29,8 @@ export function FileTreeItem({
     onRetryFile,
     isExcluded = false,
 }: FileTreeItemProps): React.JSX.Element {
+    // MRT-4: Mobile responsive detection
+    const { isMobile } = useDeviceType();
 
     const isSelected = selectedPath === node.path;
     const isFocused = focusedPath === node.path;
@@ -31,13 +38,13 @@ export function FileTreeItem({
     const isExpanded = node.expanded ?? false;
     const isLoading = node.loading ?? false;
 
-    const [isErrorDetailsOpen, setIsErrorDetailsOpen] = useState(false)
+    const [isErrorDetailsOpen, setIsErrorDetailsOpen] = useState(false);
     // Story 27-1b: Migrated from TanStack Store to Zustand
-    const fileSyncStatus = useSyncStatusStore((s) => s.statuses[node.path])
+    const fileSyncStatus = useSyncStatusStore((s) => s.statuses[node.path]);
 
-    const isError = !isDirectory && fileSyncStatus?.state === 'error'
-    const isPending = !isDirectory && fileSyncStatus?.state === 'pending'
-    const isSynced = !isDirectory && fileSyncStatus?.state === 'synced'
+    const isError = !isDirectory && fileSyncStatus?.state === 'error';
+    const isPending = !isDirectory && fileSyncStatus?.state === 'pending';
+    const isSynced = !isDirectory && fileSyncStatus?.state === 'synced';
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -94,25 +101,37 @@ export function FileTreeItem({
             onKeyDown={handleKeyDown}
         >
             <div
-                className={`
-        flex items-center gap-1 h-7 cursor-pointer select-none
-        text-sm hover:bg-accent/50
-        ${isExcluded ? 'text-muted-foreground opacity-60' : 'text-foreground'}
-        ${isSelected ? 'bg-primary/20 text-primary' : ''}
-        ${isFocused ? 'outline outline-1 outline-primary/50 outline-offset-[-1px]' : ''}
-        transition-colors duration-75
-      `}
+                className={cn(
+                    // Base layout
+                    'flex items-center gap-1 cursor-pointer select-none',
+                    'text-sm transition-colors duration-75',
+                    // MRT-4: Mobile touch targets (44px) vs Desktop compact (28px)
+                    isMobile ? 'min-h-[44px] py-2 px-1' : 'h-7',
+                    // MRT-4: Touch optimization for mobile
+                    isMobile && 'touch-manipulation',
+                    // Hover/selection states
+                    'hover:bg-accent/50',
+                    isExcluded ? 'text-muted-foreground opacity-60' : 'text-foreground',
+                    isSelected && 'bg-primary/20 text-primary',
+                    isFocused && 'outline outline-1 outline-primary/50 outline-offset-[-1px]'
+                )}
                 title={isExcluded ? 'Excluded from sync' : undefined}
             >
-                {/* Chevron for directories */}
-                <div className="w-4 h-4 flex items-center justify-center shrink-0">
+                {/* Chevron for directories - MRT-4: Larger touch area on mobile */}
+                <div
+                    className={cn(
+                        'flex items-center justify-center shrink-0',
+                        // MRT-4: 40x40 touch area on mobile, 16x16 on desktop
+                        isMobile ? 'w-10 h-10 -ml-1' : 'w-4 h-4'
+                    )}
+                >
                     {isDirectory && (
                         isLoading ? (
-                            <Loader2 size={12} className="text-muted-foreground animate-spin" />
+                            <Loader2 size={isMobile ? 16 : 12} className="text-muted-foreground animate-spin" />
                         ) : isExpanded ? (
-                            <ChevronDown size={12} className="text-muted-foreground" />
+                            <ChevronDown size={isMobile ? 16 : 12} className="text-muted-foreground" />
                         ) : (
-                            <ChevronRight size={12} className="text-muted-foreground" />
+                            <ChevronRight size={isMobile ? 16 : 12} className="text-muted-foreground" />
                         )
                     )}
                 </div>
@@ -224,7 +243,7 @@ export function FileTreeItem({
             )}
 
             {isDirectory && isExpanded && node.children && (
-                <div role="group" className="pl-3">
+                <div role="group" className={cn(isMobile ? 'pl-2' : 'pl-3')}>
                     <FileTreeItemList
                         nodes={node.children}
                         depth={depth + 1}
