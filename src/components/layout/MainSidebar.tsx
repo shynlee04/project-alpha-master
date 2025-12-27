@@ -103,7 +103,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   } = useLayoutStore();
 
   // Theme and locale hooks
-  const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme, theme } = useTheme();
   const { locale, setLocale } = useLocalePreference();
   const [mounted, setMounted] = React.useState(false);
 
@@ -111,32 +111,46 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
     setMounted(true);
   }, []);
 
-  const isDark = mounted && resolvedTheme === 'dark';
-  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
-  const toggleLocale = () => setLocale(locale === 'en' ? 'vi' : 'en');
+  const isDark = resolvedTheme === 'dark';
+
+  const handleToggleTheme = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const newTheme = isDark ? 'light' : 'dark';
+    console.log('[MainSidebar] Toggling theme:', { current: resolvedTheme, theme, newTheme });
+    setTheme(newTheme);
+  };
+
+  const handleToggleLocale = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const newLocale = locale === 'en' ? 'vi' : 'en';
+    console.log('[MainSidebar] Toggling locale:', { current: locale, newLocale });
+    setLocale(newLocale);
+  };
 
   const navItems = [
     {
       id: 'home' as const,
-      label: 'Home',
+      label: t('sidebar.home'),
       icon: Home,
       path: '/',
     },
     {
       id: 'projects' as const,
-      label: 'Projects',
+      label: t('sidebar.projects'),
       icon: Folder,
       path: '/workspace',
     },
     {
       id: 'agents' as const,
-      label: 'Agents',
+      label: t('sidebar.agents'),
       icon: Bot,
       path: '/agents',
     },
     {
       id: 'settings' as const,
-      label: 'Settings',
+      label: t('sidebar.settings'),
       icon: Settings,
       path: '/settings',
     },
@@ -202,7 +216,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             <div className="flex items-center gap-3">
               {/* Theme Toggle */}
               <button
-                onClick={toggleTheme}
+                onClick={handleToggleTheme}
                 className="flex items-center gap-2 px-3 py-2 rounded-none hover:bg-accent text-muted-foreground transition-colors"
                 aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               >
@@ -212,7 +226,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
 
               {/* Language Toggle */}
               <button
-                onClick={toggleLocale}
+                onClick={handleToggleLocale}
                 className="flex items-center gap-2 px-3 py-2 rounded-none hover:bg-accent text-muted-foreground transition-colors"
                 aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
               >
@@ -281,7 +295,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={toggleTheme}
+                    onClick={handleToggleTheme}
                     className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
                     aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
                   >
@@ -299,7 +313,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={toggleLocale}
+                    onClick={handleToggleLocale}
                     className="flex items-center justify-center h-8 w-8 rounded-none hover:bg-accent text-muted-foreground transition-colors"
                     aria-label={`Switch to ${locale === 'en' ? 'Vietnamese' : 'English'}`}
                   >

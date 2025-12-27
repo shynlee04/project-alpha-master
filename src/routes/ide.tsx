@@ -22,7 +22,7 @@ export const Route = createFileRoute('/ide')({
 function IDEWorkspace() {
     return (
         <ToastProvider>
-            <WorkspaceProvider projectId={null}>
+            <WorkspaceProvider projectId={undefined}>
                 <IDELayout />
             </WorkspaceProvider>
             <Toast />

@@ -138,10 +138,15 @@
     "exploreViaGent": "Explore Via-gent"
   },
   "projects": {
-    "recent": "Recent Projects",
-    "openFolder": "Open Folder",
-    "lastEdited": "Last edited",
-    "needsAccess": "Needs Access"
+    "title": "Dự án",
+    "subtitle": "Mở thư mục cục bộ để bắt đầu lập trình",
+    "recent": "Dự án Gần đây",
+    "openFolder": "Mở Thư mục",
+    "lastEdited": "Đã chỉnh sửa lần cuối",
+    "lastOpened": "Đã mở lần cuối",
+    "needsAccess": "Cần Quyền Truy cập",
+    "emptyTitle": "Chưa có Dự án nào",
+    "emptySubtitle": "Mở một thư mục để bắt đầu dự án đầu tiên"
   },
   "breadcrumbs": {
     "home": "Home",
@@ -263,10 +268,20 @@
     "unknown": "Lỗi không xác định"
   },
   "sidebar": {
-    "explorer": "Trình khám phá",
+    "themeLight": "Chế độ Sáng",
+    "themeDark": "Chế độ Tối",
+    "languageEn": "English",
+    "languageVi": "Tiếng Việt",
+    "switchToLight": "Chuyển sang chế độ sáng",
+    "switchToDark": "Chuyển sang chế độ tối",
+    "switchToVi": "Chuyển sang Tiếng Việt",
+    "switchToEn": "Chuyển sang Tiếng Anh",
+    "home": "Trang chủ",
+    "projects": "Dự án",
     "agents": "Agents",
-    "search": "Tìm kiếm",
     "settings": "Cài đặt",
+    "explorer": "Trình khám phá",
+    "search": "Tìm kiếm",
     "terminal": "Terminal",
     "git": "Git",
     "collapse": "Thu gọn Thanh bên",

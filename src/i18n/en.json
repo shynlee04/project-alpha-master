@@ -77,10 +77,40 @@
     "exploreViaGent": "Explore Via-gent"
   },
   "projects": {
+    "title": "Projects",
+    "subtitle": "Open a local folder to start coding",
     "recent": "Recent Projects",
     "openFolder": "Open Folder",
     "lastEdited": "Last edited",
-    "needsAccess": "Needs Access"
+    "lastOpened": "Last opened",
+    "needsAccess": "Needs Access",
+    "emptyTitle": "No Projects Yet",
+    "emptySubtitle": "Open a folder to start your first project"
+  },
+  "sidebar": {
+    "themeLight": "Light Mode",
+    "themeDark": "Dark Mode",
+    "languageEn": "English",
+    "languageVi": "Tiếng Việt",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode",
+    "switchToVi": "Switch to Vietnamese",
+    "switchToEn": "Switch to English",
+    "home": "Home",
+    "projects": "Projects",
+    "agents": "Agents",
+    "settings": "Settings",
+    "collapse": "Collapse",
+    "explorer": "Explorer",
+    "search": "Search",
+    "terminal": "Terminal",
+    "git": "Git",
+    "expand": "Expand Sidebar",
+    "noAgents": "No agents configured",
+    "noResults": "No results found",
+    "recentSearches": "Recent Searches",
+    "clearRecent": "Clear Recent",
+    "toggleSidebar": "Toggle Sidebar (Ctrl+B)"
   },
   "breadcrumbs": {
     "home": "Home",

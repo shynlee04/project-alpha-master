@@ -345,3 +345,157 @@
 .delay-100 { animation-delay: 100ms; }
 .delay-150 { animation-delay: 150ms; }
 .delay-200 { animation-delay: 200ms; }
+
+/* =============================================================================
+   ENHANCED MICRO-ANIMATIONS (UX/UI Overhaul 2025-12-27)
+   ============================================================================= */
+
+/* Fade In Up - For portal cards and content reveal */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-fade-in-up {
+  animation: fade-in-up var(--animation-duration-medium) var(--animation-easing-8bit) forwards;
+}
+
+/* Scale In - For modals and dialogs */
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-scale-in {
+  animation: scale-in var(--animation-duration-medium) var(--animation-easing-8bit) forwards;
+}
+
+/* Glow Pulse - For AI features and active indicators */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px hsl(var(--primary) / 0.3), 
+                0 0 10px hsl(var(--primary) / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.5), 
+                0 0 20px hsl(var(--primary) / 0.3);
+  }
+}
+
+.anim-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Shimmer - For loading states and skeleton loaders */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.anim-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--accent)) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* Slide In Right - For side panels */
+@keyframes slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.anim-slide-in-right {
+  animation: slide-in-right var(--animation-duration-slow) var(--animation-easing-8bit) forwards;
+}
+
+/* Gradient Shift - For portal card backgrounds */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.anim-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}
+
+/* Typewriter - For text reveal */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.anim-typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 2s steps(40, end);
+}
+
+/* Card Hover Lift - For interactive cards */
+@keyframes card-hover-lift {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-pixel);
+  }
+  100% {
+    transform: translateY(-4px);
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.card-hover-lift {
+  transition: all var(--animation-duration-medium) var(--animation-easing-8bit);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+}
+
+/* Staggered Fade In - For lists */
+.stagger-fade-in > * {
+  opacity: 0;
+  animation: fade-in-up var(--animation-duration-medium) var(--animation-easing-8bit) forwards;
+}
+
+.stagger-fade-in > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-fade-in > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-fade-in > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-fade-in > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-fade-in > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-fade-in > *:nth-child(6) { animation-delay: 250ms; }
+
