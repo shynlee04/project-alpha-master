@@ -1,222 +1,135 @@
-# BMAD Workflow Status - Via-gent
-# Single Source of Truth
-# Last Updated: 2025-12-27T20:05:00+07:00
-
-project:
-  name: "via-gent"
-  description: "100% client-side AI-powered IDE with WebContainers"
-  phase: "implementation"
+# BMM Workflow Status
+# Last Updated: 2025-12-28T01:22:00+07:00
+# Agent: BMAD Master Orchestrator
 
 # =============================================================================
-# ACTIVE WORKFLOWS
+# WORKFLOW STATE
 # =============================================================================
-current_workflow:
-  - "MVP Epic: AI Coding Agent Vertical Slice"
-  - "Home Page Layout Redesign (NEW)"
-
-# =============================================================================
-# EPIC STATUS
-# =============================================================================
-epic_status:
-  mvp:
-    id: "MVP"
-    name: "AI Coding Agent Vertical Slice"
-    status: "in-progress"
-    progress: "1/7 stories DONE"
-    current_story: "mvp-2"
-    next_story: "mvp-3"
-    notes: "MVP-1 DONE, MVP-2/3/4 code-complete pending E2E verification"
+workflow:
+  current_workflow: "story-dev-cycle"
+  current_phase: "dev-story"
+  status: "ACTIVE"
   
-  homepage_layout:
-    id: "HOMEPAGE-LAYOUT"
-    name: "Home Page Layout Redesign"
-    status: "in-progress"
-    progress: "8/10 stories DONE (LAYOUT-1, LAYOUT-2, LAYOUT-3, LAYOUT-4, LAYOUT-5, LAYOUT-6, LAYOUT-7, LAYOUT-8 complete)"
-    notes: "LAYOUT-1 (Unified Layout Store) DONE, LAYOUT-2 (MainSidebar) DONE, LAYOUT-3 (MainLayout) DONE, LAYOUT-4 (Update Home Route) DONE, LAYOUT-5 (Update Projects Route) DONE, LAYOUT-6 (Update Other Routes) DONE, LAYOUT-7 (Deprecate Old Layouts) DONE, LAYOUT-8 (Update Navigation Links) DONE"
+  epic:
+    id: "MRT"
+    name: "Mobile Responsive Transformation"
+    status: "IN_PROGRESS"
+    progress: "64%"
+    
+  current_story:
+    id: "MRT-8"
+    title: "Preview Panel Mobile"
+    status: "IN_PROGRESS"
+    assigned_agent: "@bmad-bmm-dev"
 
 # =============================================================================
-# NEXT ACTIONS
-# =============================================================================
-next_actions:
-  - priority: "P0"
-    task: "Complete MVP-2 E2E verification"
-    epic: "MVP"
-    story: "mvp-2"
-    assignee: "TBD"
-    notes: "Chat interface with streaming - code exists, needs browser verification"
-  
-  - priority: "P0"
-    task: "Complete MVP-3 E2E verification"
-    epic: "MVP"
-    story: "mvp-3"
-    assignee: "TBD"
-    notes: "Tool execution - file operations - code exists, needs browser verification"
-  
-  - priority: "P0"
-    task: "Complete MVP-4 E2E verification"
-    epic: "MVP"
-    story: "mvp-4"
-    assignee: "TBD"
-    notes: "Tool execution - terminal commands - code exists, needs browser verification"
-  
-  - priority: "P1"
-    task: "Implement LAYOUT-9 (Remove Deprecated Components)"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-9"
-    assignee: "@bmad-bmm-dev"
-    notes: "Remove deprecated IDELayout, HubLayout, HubSidebar components and their exports"
-
-# =============================================================================
-# COMPLETED ACTIONS
+# COMPLETED ACTIONS (Session: 2025-12-28)
 # =============================================================================
 completed_actions:
-  - date: "2025-12-27T20:05:00+07:00"
-    action: "document-project Workflow COMPLETED"
-    workflow: "document-project"
-    agent: "@bmad-bmm-tech-writer"
-    artifacts:
-      - "_bmad-output/documentation/project-architecture-analysis-2025-12-27.md"
-      - "_bmad-output/documentation/internationalization-setup-2025-12-27.md"
-      - "_bmad-output/documentation/testing-infrastructure-2025-12-27.md"
-      - "_bmad-output/documentation/development-workflow-2025-12-27.md"
-      - "_bmad-output/documentation/index.md"
-      - "_bmad-output/documentation/validation-report-2025-12-27.md"
-    notes: "All 15 tasks completed with PASS validation status. Comprehensive documentation created covering project architecture, i18n setup, testing infrastructure, and development workflow."
-  
-  - date: "2025-12-27T11:32:00+07:00"
-    action: "LAYOUT-7 Deprecate Old Layout Components DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-7"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/components/layout/IDELayout.tsx"
-      - "src/components/layout/HubLayout.tsx"
-      - "src/components/hub/HubSidebar.tsx"
-      - "src/components/layout/index.ts"
-      - "src/components/hub/index.ts"
-    notes: "Added @deprecated JSDoc comments to IDELayout, HubLayout, HubSidebar, marked exports as deprecated, build verification passed"
-  
-  - date: "2025-12-27T11:20:00+07:00"
-    action: "LAYOUT-6 Update Other Routes DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-6"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/routes/agents.tsx"
-      - "src/routes/knowledge.tsx"
-      - "src/routes/settings.tsx"
-    notes: "Replaced custom layout wrappers with MainLayout in agents, knowledge, settings routes, build verification passed"
-  
-  - date: "2025-12-27T11:12:00+07:00"
-    action: "LAYOUT-5 Update Projects Route DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-5"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/routes/workspace/$projectId.tsx"
-    notes: "Replaced IDELayout with MainLayout in projects route, build verification passed"
-  
-  - date: "2025-12-27T11:03:55+07:00"
-    action: "LAYOUT-4 Update Home Route DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-4"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/routes/index.tsx"
-    notes: "Replaced HubLayout with MainLayout in home route, build verification passed"
-  
-  - date: "2025-12-27T10:37:40+07:00"
-    action: "LAYOUT-3 Create MainLayout Component DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-3"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/components/layout/MainLayout.tsx"
-      - "src/components/layout/index.ts"
-    notes: "Responsive layout with MainSidebar, Outlet, mobile menu button, all acceptance criteria met"
-  
-  - date: "2025-12-27T10:23:43+07:00"
-    action: "LAYOUT-2 Create MainSidebar Component DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-2"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/components/layout/MainSidebar.tsx"
-      - "src/components/layout/index.ts"
-    notes: "Collapsible sidebar with icons, navigation, mobile menu, all acceptance criteria met"
-  
-  - date: "2025-12-27T10:10:00+07:00"
-    action: "LAYOUT-1 Create Unified Layout Store DONE"
-    epic: "HOMEPAGE-LAYOUT"
-    story: "layout-1"
-    agent: "@bmad-bmm-dev"
-    artifacts:
-      - "src/lib/state/layout-store.ts"
-    notes: "Zustand store with persistence, all acceptance criteria met"
-  
-  - date: "2025-12-27T09:45:00+07:00"
-    action: "Home Page Layout Architecture Complete"
-    epic: "HOMEPAGE-LAYOUT"
-    agent: "@bmad-bmm-architect"
-    artifacts:
-      - "_bmad-output/architecture/homepage-layout-redesign-2025-12-27.md"
-      - "_bmad-output/handoffs/architect-to-master-homepage-layout-2025-12-27.md"
-    notes: "Technical specification created with 4-day migration plan"
-  
-  - date: "2025-12-27T08:15:00+07:00"
-    action: "MVP-1 Agent Configuration & Persistence DONE"
-    epic: "MVP"
-    story: "mvp-1"
-    notes: "6/7 acceptance criteria verified, E2E evidence captured"
-
-# =============================================================================
-# COURSE CORRECTIONS
-# =============================================================================
-course_corrections:
-  - date: "2025-12-27"
-    type: "new-initiative"
-    description: "Home Page Layout Redesign initiated"
-    impact: "New epic added to workflow, independent of MVP"
-    rationale: "User requested unified navigation system with collapsible sidebar"
-    artifacts:
-      - "_bmad-output/architecture/homepage-layout-redesign-2025-12-27.md"
-
-# =============================================================================
-# WORKFLOW COORDINATION
-# =============================================================================
-workflow_coordination:
-  parallel_execution:
-    enabled: true
-    strategy: "Platform A continues MVP, Platform B can start Home Page Layout"
-    notes: "No cross-epic dependencies between MVP and Home Page Layout"
-  
-  dependencies:
-    - epic: "HOMEPAGE-LAYOUT"
-      depends_on: []
-      notes: "Independent initiative, can proceed in parallel with MVP"
+  - timestamp: "2025-12-28T00:45:00+07:00"
+    action: "Sprint Change Proposal created"
+    artifact: "_bmad-output/sprint-change-proposal-2025-12-28.md"
+    agent: "@bmad-core-bmad-master"
     
-    - epic: "MVP"
-      depends_on: []
-      notes: "Sequential story execution within MVP, no external dependencies"
+  - timestamp: "2025-12-28T01:00:00+07:00"
+    action: "Implementation Plan approved"
+    artifact: ".gemini/antigravity/brain/4af7c582-a51d-427c-a675-6bf82dd0698d/implementation_plan.md"
+    agent: "@bmad-bmm-ux-designer"
+    
+  - timestamp: "2025-12-28T01:05:00+07:00"
+    action: "Story MRT-4 drafted"
+    artifact: "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation.md"
+    agent: "@bmad-bmm-sm"
+    
+  - timestamp: "2025-12-28T01:06:00+07:00"
+    action: "Context XML created"
+    artifact: "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation-context.xml"
+    agent: "@bmad-bmm-sm"
+    
+  - timestamp: "2025-12-28T01:08:00+07:00"
+    action: "Story MRT-4 implemented"
+    files_changed:
+      - "src/components/ide/FileTree/FileTreeItem.tsx"
+    agent: "@bmad-bmm-dev"
+    
+  - timestamp: "2025-12-28T01:10:00+07:00"
+    action: "Story MRT-4 marked DONE"
+    validation: "PASS"
+    agent: "@bmad-bmm-dev"
 
 # =============================================================================
-# METRICS
+# NEXT STEPS
 # =============================================================================
-metrics:
-  total_epics: 2
-  active_epics: 2
-  completed_epics: 0
+next_steps:
+  - step: 1
+    action: "Create story file for MRT-5"
+    agent: "@bmad-bmm-sm"
+    
+  - step: 2
+    action: "Research Monaco Editor mobile patterns"
+    tools:
+      - "Context7: @monaco-editor/react mobile handling"
+      - "DeepWiki: microsoft/monaco-editor touch support"
+      
+  - step: 3
+    action: "Create context XML for MRT-5"
+    agent: "@bmad-bmm-sm"
+    
+  - step: 4
+    action: "Implement Monaco mobile optimizations"
+    agent: "@bmad-bmm-dev"
+    
+  - step: 5
+    action: "Code review"
+    agent: "@code-reviewer"
+
+# =============================================================================
+# SPRINT SUMMARY
+# =============================================================================
+sprint:
+  id: "MRT-2025-12-28"
+  name: "Mobile Responsive Transformation"
   
-  mvp_stories: 7
-  mvp_completed: 1
-  mvp_in_progress: 0
-  mvp_ready_for_dev: 3
-  mvp_backlog: 3
-  
-  homepage_layout_stories: 10
-  homepage_layout_completed: 6
-  homepage_layout_in_progress: 0
-  homepage_layout_ready_for_dev: 0
-  homepage_layout_backlog: 4
-  
-  estimated_completion: "2025-01-03"
+  progress:
+    phases_complete: 2
+    phases_total: 6
+    stories_complete: 4
+    stories_total: 11
+    percentage: 36%
+    
+  completed_stories:
+    - story: "MRT-1"
+      title: "Remove Viewport Block"
+      completed_at: "2025-12-27T18:00:00+07:00"
+      
+    - story: "MRT-2"
+      title: "Create Mobile Tab Bar"
+      completed_at: "2025-12-27T18:30:00+07:00"
+      
+    - story: "MRT-3"
+      title: "Implement Mobile IDE Layout"
+      completed_at: "2025-12-27T19:00:00+07:00"
+      
+    - story: "MRT-4"
+      title: "FileTree Mobile Adaptation"
+      completed_at: "2025-12-28T01:10:00+07:00"
+      tests: 0
+      artifacts:
+        - "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation.md"
+        - "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation-context.xml"
+
+# =============================================================================
+# HANDOFF TRACKING
+# =============================================================================
+handoffs:
+  last_handoff:
+    from: "@bmad-bmm-dev"
+    to: "@bmad-core-bmad-master"
+    timestamp: "2025-12-28T01:10:00+07:00"
+    context: "MRT-4 completed, ready to continue with MRT-5"
+    
+  pending_handoff:
+    from: "@bmad-core-bmad-master"
+    to: "@bmad-bmm-dev"
+    story: "MRT-5"
+    action: "Create story and begin implementation"

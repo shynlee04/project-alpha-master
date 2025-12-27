@@ -5,6 +5,9 @@
  * Bottom panel containing terminal, output, and problems tabs.
  * Part of the IDE layout refactoring to reduce IDELayout.tsx complexity.
  * 
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-6 Terminal Panel Mobile
+ * 
  * @example
  * ```tsx
  * <TerminalPanel
@@ -19,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '../../lib/utils';
 import { type TerminalTab } from '../../lib/workspace';
+import { useDeviceType } from '@/hooks/useMediaQuery';
 
 /**
  * SSR-safe lazy import for XTerminal.
@@ -76,25 +80,33 @@ export function TerminalPanel({
     className,
 }: TerminalPanelProps): React.JSX.Element {
     const { t } = useTranslation();
+    // MRT-6: Mobile responsive detection for touch targets
+    const { isMobile } = useDeviceType();
 
     return (
         <div className={cn("h-full flex flex-col border-t border-border", className)}>
-            {/* Tab Bar */}
-            <div className="h-8 px-4 flex items-center gap-6 border-b border-border/50">
+            {/* Tab Bar - MRT-6: 44px height on mobile for WCAG touch targets */}
+            <div className={cn(
+                "px-4 flex items-center gap-6 border-b border-border/50",
+                isMobile ? 'h-11 gap-2' : 'h-8 gap-6'
+            )}>
                 <TabButton
                     label={t('ide.terminal')}
                     isActive={activeTab === 'terminal'}
                     onClick={() => onTabChange('terminal')}
+                    isMobile={isMobile}
                 />
                 <TabButton
                     label={t('ide.output')}
                     isActive={activeTab === 'output'}
                     onClick={() => onTabChange('output')}
+                    isMobile={isMobile}
                 />
                 <TabButton
                     label={t('ide.problems')}
                     isActive={activeTab === 'problems'}
                     onClick={() => onTabChange('problems')}
+                    isMobile={isMobile}
                 />
             </div>
 
@@ -137,25 +149,35 @@ interface TabButtonProps {
     label: string;
     isActive: boolean;
     onClick: () => void;
+    /** MRT-6: Mobile flag for touch target sizing */
+    isMobile?: boolean;
 }
 
 /**
  * TabButton - Individual tab button in the terminal panel.
+ * MRT-6: Enhanced with mobile touch targets
  */
 function TabButton({
     label,
     isActive,
     onClick,
+    isMobile = false,
 }: TabButtonProps): React.JSX.Element {
     return (
         <button
             type="button"
             onClick={onClick}
-            className={
+            className={cn(
+                'font-medium flex items-center justify-center transition-colors',
+                // MRT-6: Touch optimization for mobile
+                isMobile && 'touch-manipulation',
+                // MRT-6: Larger touch targets on mobile (44x44 minimum)
+                isMobile ? 'min-w-[44px] min-h-[44px] px-3 text-sm' : 'h-full text-xs',
+                // Active/inactive state styling
                 isActive
-                    ? 'text-xs font-medium text-primary border-b-2 border-primary h-full flex items-center'
-                    : 'text-xs font-medium text-muted-foreground hover:text-foreground h-full flex items-center'
-            }
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-muted-foreground hover:text-foreground'
+            )}
         >
             {label}
         </button>

@@ -18,7 +18,7 @@ project:
   description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
 
 generated: "2025-12-24T20:00:00+07:00"
-last_updated: "2025-12-27T08:21:00+07:00"
+last_updated: "2025-12-27T18:07:00+07:00"
 current_phase: "implementation"
 consolidation_date: "2025-12-24"
 
@@ -219,6 +219,39 @@ incident_response:
     - "E2E verification evidence required in _bmad-output/e2e-verification/"
     - "MCP research documentation required before implementation"
     - "Handoff validation checklist enforced"
+
+# =============================================================================
+# TEAM B COORDINATION - STATE MANAGEMENT REFACTORING
+# =============================================================================
+team_b_coordination:
+  phase_1_requirements:
+    status: "DONE"
+    completed_at: "2025-12-27T18:07:00+07:00"
+    artifact: "_bmad-output/team-b/state-management-requirements-2025-12-27.md"
+    notes: |
+      Architect agent documented state management refactoring requirements
+      Key findings:
+      - Both IDELayout.tsx and MobileIDELayout.tsx duplicate state with custom setOpenFiles
+      - Zustand store (useIDEStore) properly configured with all necessary actions
+      - File content cache should use ephemeral useState<Map<string, string>>
+      - useIDEFileHandlers hook already correctly uses Zustand actions
+      - Required refactoring: Remove custom setOpenFiles, add setFileContentCache parameter
+    
+  phase_2_refactoring:
+    status: "BLOCKED"
+    blocking_reason: "Awaiting Team A MRT-3 completion"
+    notes: |
+      State refactoring execution blocked to prevent interference with MVP-3
+      (Tool Execution - File Operations)
+      Dependencies:
+      - Team A MRT-3 (Mobile Responsive Transformation) must complete first
+      - Team A MVP-3 must complete first
+      - Prevents cross-team interference during critical MVP-3 development
+    
+  phase_3_testing:
+    status: "FUTURE"
+    depends_on: "Phase 2 completion"
+    notes: "Testing and validation after state refactoring execution"
 
 # =============================================================================
 # WORKFLOW COMMANDS (UPDATED)

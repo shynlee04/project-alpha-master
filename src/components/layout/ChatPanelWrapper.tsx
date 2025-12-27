@@ -6,8 +6,8 @@
  * Shows ThreadCard list when no thread is active.
  * Shows AgentChatPanel when a thread is selected.
  * 
- * @epic MVP - AI Coding Agent Vertical Slice
- * @story MVP-2 - Chat Interface with Rich Streaming
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-7 Chat Panel Mobile
  */
 
 import { useCallback, useMemo, useState } from 'react';
@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { AgentChatPanel } from '../ide/AgentChatPanel';
 import { ThreadCard } from '../chat/ThreadCard';
 import { useThreadsStore, useActiveThread } from '@/stores/conversation-threads-store';
+import { useDeviceType } from '@/hooks/useMediaQuery';
 
 /**
  * Props for ChatPanelWrapper component.
@@ -57,6 +58,9 @@ export function ChatPanelWrapper({
     eventBus,
 }: ChatPanelWrapperProps): React.JSX.Element {
     const { t } = useTranslation();
+    // MRT-7: Mobile responsive detection for touch targets
+    const { isMobile } = useDeviceType();
+
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 6;
 
@@ -107,15 +111,22 @@ export function ChatPanelWrapper({
     if (activeThread) {
         return (
             <div className="h-full flex flex-col bg-surface-dark border-l border-border-dark">
-                {/* Header - matches AgentChatPanel styling */}
-                <div className="h-9 px-3 flex items-center justify-between border-b border-border-dark bg-surface-darker">
+                {/* Header - MRT-7: 44px height on mobile for touch targets */}
+                <div className={cn(
+                    "px-3 flex items-center justify-between border-b border-border-dark bg-surface-darker",
+                    isMobile ? 'h-11' : 'h-9'
+                )}>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handleBackToList}
-                            className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                            className={cn(
+                                'text-muted-foreground hover:text-foreground transition-colors',
+                                // MRT-7: Larger touch target on mobile
+                                isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : 'p-1'
+                            )}
                             title={t('chat.backToList', 'Back to threads')}
                         >
-                            <ArrowLeft className="w-4 h-4" />
+                            <ArrowLeft className={cn(isMobile ? 'w-5 h-5' : 'w-4 h-4')} />
                         </button>
                         <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel truncate max-w-[120px]">
                             {activeThread.title || t('chat.newConversation', 'New Chat')}
@@ -123,10 +134,14 @@ export function ChatPanelWrapper({
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className={cn(
+                            'text-muted-foreground hover:text-foreground transition-colors',
+                            // MRT-7: Larger touch target on mobile
+                            isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : ''
+                        )}
                         title={t('chat.close', 'Close chat panel')}
                     >
-                        <X className="w-4 h-4" />
+                        <X className={cn(isMobile ? 'w-5 h-5' : 'w-4 h-4')} />
                     </button>
                 </div>
 
@@ -147,8 +162,11 @@ export function ChatPanelWrapper({
     // No active thread - show ThreadCard list (box-like cards)
     return (
         <div className="h-full flex flex-col bg-surface-dark border-l border-border-dark">
-            {/* Header - matches AgentChatPanel styling */}
-            <div className="h-9 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
+            {/* Header - MRT-7: 44px height on mobile for touch targets */}
+            <div className={cn(
+                "px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker",
+                isMobile ? 'h-11' : 'h-9'
+            )}>
                 <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel">
                     {t('chat.conversations', 'Conversations')}
                 </span>
@@ -157,20 +175,26 @@ export function ChatPanelWrapper({
                         onClick={handleNewThread}
                         disabled={!projectId}
                         className={cn(
-                            'flex items-center gap-1 px-2 py-1 text-[10px] font-pixel',
+                            'flex items-center gap-1 font-pixel',
                             'text-green-400 hover:text-green-300 transition-colors',
-                            'disabled:opacity-50 disabled:cursor-not-allowed'
+                            'disabled:opacity-50 disabled:cursor-not-allowed',
+                            // MRT-7: Larger touch target on mobile
+                            isMobile ? 'px-3 py-2 text-xs min-h-[44px] touch-manipulation' : 'px-2 py-1 text-[10px]'
                         )}
                     >
-                        <MessageSquarePlus className="w-3 h-3" />
+                        <MessageSquarePlus className={cn(isMobile ? 'w-4 h-4' : 'w-3 h-3')} />
                         {t('chat.newConversation', 'NEW')}
                     </button>
                     <button
                         onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className={cn(
+                            'text-muted-foreground hover:text-foreground transition-colors',
+                            // MRT-7: Larger touch target on mobile
+                            isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : ''
+                        )}
                         title={t('chat.close', 'Close chat panel')}
                     >
-                        <X className="w-4 h-4" />
+                        <X className={cn(isMobile ? 'w-5 h-5' : 'w-4 h-4')} />
                     </button>
                 </div>
             </div>
@@ -214,23 +238,32 @@ export function ChatPanelWrapper({
                 )}
             </div>
 
-            {/* Pagination - matches pixel aesthetic */}
+            {/* Pagination - MRT-7: Larger touch targets on mobile */}
             {totalPages > 1 && (
-                <div className="h-8 px-4 flex items-center justify-center gap-3 border-t border-border-dark bg-surface-darker">
+                <div className={cn(
+                    "px-4 flex items-center justify-center gap-3 border-t border-border-dark bg-surface-darker",
+                    isMobile ? 'h-11' : 'h-8'
+                )}>
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
                         disabled={currentPage === 0}
-                        className="text-[10px] font-pixel text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        className={cn(
+                            'font-pixel text-muted-foreground hover:text-foreground disabled:opacity-30',
+                            isMobile ? 'text-sm min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : 'text-[10px]'
+                        )}
                     >
                         ◀
                     </button>
-                    <span className="text-[10px] font-pixel text-muted-foreground">
+                    <span className={cn('font-pixel text-muted-foreground', isMobile ? 'text-sm' : 'text-[10px]')}>
                         {currentPage + 1}/{totalPages}
                     </span>
                     <button
                         onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
                         disabled={currentPage >= totalPages - 1}
-                        className="text-[10px] font-pixel text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        className={cn(
+                            'font-pixel text-muted-foreground hover:text-foreground disabled:opacity-30',
+                            isMobile ? 'text-sm min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : 'text-[10px]'
+                        )}
                     >
                         ▶
                     </button>
