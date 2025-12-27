@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-19-chat-tool-call-badge" created="2025-12-22T22:35:00+07:00">
+  
+  <!-- Current code state for ToolCallBadge development -->
+  <files>
+    
+    <!-- EnhancedChatInterface - Primary integration point -->
+    <file path="src/components/ide/EnhancedChatInterface.tsx">
+      <summary>
+        Premium chat interface with ToolExecutionLog component (230 lines).
+        Has existing ToolExecution interface that ToolCallBadge will complement.
+        Key interfaces: ChatMessage, ToolExecution, EnhancedChatProps.
+      </summary>
+      <integration_points>
+        - ChatMessageBubble renders tool executions at line 148-150
+        - ToolExecutionLog shows collapsible list at lines 161-205
+        - TypingIndicator available at lines 208-222
+      </integration_points>
+      <content><![CDATA[
+interface ToolExecution {
+    id: string
+    name: string
+    status: 'running' | 'success' | 'error'
+    input?: string
+    output?: string
+    duration?: number
+}
+
+interface ChatMessage {
+    id: string
+    role: 'user' | 'assistant'
+    content: string
+    timestamp: Date
+    toolExecutions?: ToolExecution[]
+}
+      ]]></content>
+    </file>
+    
+    <!-- Existing StatusDot pattern for status indicators -->
+    <file path="src/components/ui/status-dot.tsx">
+      <summary>
+        Status indicator component with variants: online, offline, error, active.
+        Has pulse animation for active state. Reference for status styling.
+      </summary>
+    </file>
+    
+    <!-- Existing PixelBadge for badge styling reference -->
+    <file path="src/components/ui/pixel-badge.tsx">
+      <summary>
+        Brand badge component with variants: primary, secondary, success, warning, danger, info.
+        Pixel aesthetic with squared corners and shadow. Reference for ToolCallBadge styling.
+      </summary>
+    </file>
+    
+    <!-- Button component with pixel variants -->
+    <file path="src/components/ui/button.tsx">
+      <summary>
+        ShadcnUI Button extended with pixel variants: pixel, pixel-primary, pixel-outline, pixel-ghost.
+        Press animation with translate and shadow changes.
+      </summary>
+    </file>
+    
+    <!-- SyncStatusIndicator test pattern -->
+    <file path="src/components/ide/__tests__/SyncStatusIndicator.test.tsx">
+      <summary>
+        Test file (183 lines) demonstrating test patterns:
+        - vi.mock for react-i18next translation mocking
+        - vi.useFakeTimers for time-based tests
+        - Testing React components with @testing-library/react
+      </summary>
+      <content><![CDATA[
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string, opts?: Record<string, unknown>) => {
+            const translations: Record<string, string> = {
+                // ... key-value pairs
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+      ]]></content>
+    </file>
+    
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI tool call streaming">
+      ToolCallStreamChunk interface for streaming tool calls:
+      - type: 'tool_call'
+      - toolCall.id: string
+      - toolCall.function.name: string (e.g., "read_file")
+      - toolCall.function.arguments: JSON string
+      - index: number for parallel calls
+    </finding>
+    <finding source="context7" query="TanStack AI tool approval">
+      addToolApprovalResponse(approvalId, approved) for user confirmation pattern.
+      needsApproval: true on tool definition triggers approval flow.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Component with JSDoc integration comments" source="epic-28-holistic-integration-analysis.md">
+      All Epic 28 Phase 6 components must include JSDoc with:
+      - @epic Epic-28 Story 28-XX
+      - @integrates [Epic-X Story X-Y] - [Why]
+      - @listens [event:name] - [Action]
+      - @roadmap [Future work]
+    </pattern>
+    <pattern name="Pixel Aesthetic" source="design-tokens.css">
+      - Squared corners: rounded-none
+      - Pixel shadow: shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]
+      - Monospace font for code/tool names: font-mono
+      - Primary orange: bg-primary text-primary-foreground
+    </pattern>
+    <pattern name="i18n Pattern" source="existing components">
+      - Import { useTranslation } from 'react-i18next'
+      - const { t } = useTranslation()
+      - All visible strings use t('namespace.key', { interpolation })
+      - Add keys to both en.json and vi.json
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      ToolCallBadge must extend existing ToolExecution interface pattern for consistency,
+      while also being ready for TanStack AI ToolCallStreamChunk integration in Epic 25.
+    </note>
+    <note priority="high">
+      Create new chat/ directory under components/ to organize chat-related components.
+      This follows VS Code pattern of feature-based organization.
+    </note>
+    <note priority="medium">
+      Use Lucide icons from existing imports: FileText, Save, FolderOpen, Terminal, Search, Wrench.
+      Icon size should be w-3 h-3 to match existing tool log pattern.
+    </note>
+    <note priority="medium">
+      Badge status colors follow existing patterns:
+      - running/pending: text-primary, animate-pulse
+      - success: text-green-500
+      - error: text-red-500
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="react" version="^19.2.3" />
+    <dependency name="react-i18next" version="^15.3.0" />
+    <dependency name="lucide-react" version="^0.544.0" />
+    <dependency name="class-variance-authority" version="^0.7.1" />
+    <dependency name="@tanstack/ai" version="^0.1.0" />
+  </dependencies>
+  
+  <!-- Test commands -->
+  <test_commands>
+    <command purpose="Run single test file">pnpm test src/components/chat/__tests__/ToolCallBadge.test.tsx</command>
+    <command purpose="Run all tests">pnpm test</command>
+    <command purpose="TypeScript check">pnpm exec tsc --noEmit</command>
+    <command purpose="Dev server">pnpm dev</command>
+  </test_commands>
+  
+</context>

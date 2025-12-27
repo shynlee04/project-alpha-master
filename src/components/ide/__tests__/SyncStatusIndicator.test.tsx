@@ -10,6 +10,38 @@ import { render, screen, cleanup } from '@testing-library/react';
 import { SyncStatusIndicator, formatRelativeTime } from '../SyncStatusIndicator';
 import type { SyncProgress } from '../../../lib/filesystem';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string, opts?: Record<string, unknown>) => {
+            const translations: Record<string, string> = {
+                'status.syncing': 'Syncing',
+                'status.error': 'Error',
+                'status.notSynced': 'Not synced',
+                'status.lastSynced': 'Last synced',
+                'status.syncingFile': `Syncing: ${opts?.file || ''}`,
+                'errors.syncRetry': 'Click to retry',
+                'time.justNow': 'Just now',
+                'time.agoSeconds': `${opts?.count || 0}s ago`,
+                'time.agoMinutes': `${opts?.count || 0}m ago`,
+                'time.agoHours': `${opts?.count || 0}h ago`,
+            };
+            return translations[key] || key;
+        },
+    }),
+}));
+
+// Mock translation function for formatRelativeTime tests
+const mockT = (key: string, opts?: Record<string, unknown>) => {
+    const translations: Record<string, string> = {
+        'time.justNow': 'Just now',
+        'time.agoSeconds': `${opts?.count || 0}s ago`,
+        'time.agoMinutes': `${opts?.count || 0}m ago`,
+        'time.agoHours': `${opts?.count || 0}h ago`,
+    };
+    return translations[key] || key;
+};
+
 describe('SyncStatusIndicator', () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -129,21 +161,22 @@ describe('formatRelativeTime', () => {
 
     it('should return "Just now" for recent times', () => {
         const date = new Date('2025-12-20T07:59:55Z'); // 5 seconds ago
-        expect(formatRelativeTime(date)).toBe('Just now');
+        expect(formatRelativeTime(date, mockT)).toBe('Just now');
     });
 
     it('should return seconds for times under a minute', () => {
         const date = new Date('2025-12-20T07:59:30Z'); // 30 seconds ago
-        expect(formatRelativeTime(date)).toBe('30s ago');
+        expect(formatRelativeTime(date, mockT)).toBe('30s ago');
     });
 
     it('should return minutes for times under an hour', () => {
         const date = new Date('2025-12-20T07:45:00Z'); // 15 minutes ago
-        expect(formatRelativeTime(date)).toBe('15m ago');
+        expect(formatRelativeTime(date, mockT)).toBe('15m ago');
     });
 
     it('should return hours for times under a day', () => {
         const date = new Date('2025-12-20T05:00:00Z'); // 3 hours ago
-        expect(formatRelativeTime(date)).toBe('3h ago');
+        expect(formatRelativeTime(date, mockT)).toBe('3h ago');
     });
 });
+

@@ -1,5 +1,7 @@
 .
 ├── AGENTS.md
+├── CLAUDE.md
+├── README.md
 ├── _bmad
 │   ├── _config
 │   │   ├── agent-manifest.csv
@@ -744,127 +746,70 @@
 │                           │   ├── step-04-generate-prompts.md
 │                           │   └── step-05-execute.md
 │                           └── workflow.md
+├── _bmad-output
+│   ├── architecture.md
+│   ├── bmm-workflow-status.yaml
+│   ├── component-inventory.md
+│   ├── development-guide.md
+│   ├── documentation-consolidation-validation.md
+│   ├── epics.md
+│   ├── handoffs
+│   │   └── ux-designer-2025-12-20-1332.md
+│   ├── index.md
+│   ├── parallel-execution-strategy.md
+│   ├── prd.md
+│   ├── project-context.md
+│   ├── project-overview.md
+│   ├── project-scan-report.json
+│   ├── research-epic-22-tech-stack.md
+│   ├── research-report.md
+│   ├── shadcn-ui-mcp-server-guide.md
+│   ├── source-tree-analysis.md
+│   ├── sprint-artifacts
+│   │   ├── 13-1-fix-terminal-working-directory-context.xml
+│   │   ├── 13-1-fix-terminal-working-directory.md
+│   │   ├── 13-2-fix-auto-sync-on-project-load-context.xml
+│   │   ├── 13-2-fix-auto-sync-on-project-load.md
+│   │   ├── 13-3-add-sync-progress-indicator-context.xml
+│   │   ├── 13-3-add-sync-progress-indicator.md
+│   │   ├── 13-4-preserve-file-tree-state-context.xml
+│   │   ├── 13-4-preserve-file-tree-state.md
+│   │   ├── 13-5-improve-permission-restoration-context.xml
+│   │   ├── 13-5-improve-permission-restoration.md
+│   │   ├── 13-6-fix-preview-in-new-tab-context.xml
+│   │   ├── 13-6-fix-preview-in-new-tab.md
+│   │   ├── 21-1-locale-aware-routing-and-html-lang-context.xml
+│   │   ├── 21-1-locale-aware-routing-and-html-lang.md
+│   │   ├── 21-3-language-switcher-and-persistence-context.xml
+│   │   ├── 21-3-language-switcher-and-persistence.md
+│   │   ├── 21-5-ui-migration-wave-2-ide-surfaces-context.xml
+│   │   ├── 21-5-ui-migration-wave-2-ide-surfaces.md
+│   │   ├── 21-8-complete-localization-coverage.md
+│   │   ├── 22-1-implement-security-headers-context.xml
+│   │   ├── 22-1-implement-security-headers.md
+│   │   ├── 22-2-create-cicd-pipeline-context.xml
+│   │   ├── 22-2-create-cicd-pipeline.md
+│   │   ├── 23-1-install-tailwindcss-4.md
+│   │   ├── epic-1-retrospective.md
+│   │   ├── epic-10-retrospective.md
+│   │   ├── epic-13-retrospective.md
+│   │   ├── epic-2-retrospective.md
+│   │   ├── epic-3-code-review.md
+│   │   ├── epic-3-retrospective.md
+│   │   ├── epic-4-retrospective.md
+│   │   ├── epic-5-retrospective.md
+│   │   ├── production-readiness-epic-13-report.md
+│   │   ├── sprint-status.yaml
+│   │   ├── tech-spec-branding-overhaul-context.xml
+│   │   └── tech-spec-branding-overhaul.md
+│   ├── sprint-change-proposal-v5-2025-12-20.md
+│   ├── sprint-change-proposal-v6-2025-12-20.md
+│   ├── state-management.md
+│   ├── tree.txt
+│   └── ux-design.md
 ├── docs
-│   └── legacy-unfiltered
-│       ├── Validate Course-Correction & Epics.md
-│       ├── agent-instructions
-│       │   ├── dependency-libraries-usage.md
-│       │   ├── project-fugu-integration-guide.md
-│       │   └── roo-code-agent-patterns.md
-│       ├── architecture.md
-│       ├── bmm-workflow-status.yaml
-│       ├── epics.md
-│       ├── essential-prompts
-│       │   ├── 01-project-improvement-of-flow.md
-│       │   ├── 02-architectural-decision-fugu-project.md
-│       │   ├── 03-follow-up-to-make-adr.md
-│       │   ├── 04-implementation-cycle-epic-4.md
-│       │   ├── 05-issues-at-epic-3.md
-│       │   ├── 06-implementation-sprint-changes.md
-│       │   ├── 07-validation-of-course-corrections.md
-│       │   ├── some-quick-scan-result.md
-│       │   ├── tempo-agent-plan-output.md
-│       │   └── via-gent.code-workspace
-│       ├── prd-via-gent-foundational-architectural-slice-2025-12-10.md
-│       ├── proposal
-│       │   ├── project-fugu.md
-│       │   ├── roo-code-custom-instruction.md
-│       │   ├── roo-code-modes-agents.md
-│       │   ├── roo-code-samples.md
-│       │   ├── roo-code-slashes-commands.md
-│       │   └── roo-code-tools.md
-│       ├── sprint-artifacts
-│       │   ├── 1-1-initialize-tanstack-start-project.md
-│       │   ├── 1-2-configure-core-dependencies.md
-│       │   ├── 1-3-create-route-structure-context.xml
-│       │   ├── 1-3-create-route-structure.md
-│       │   ├── 1-4-implement-ide-layout-shell-context.xml
-│       │   ├── 1-4-implement-ide-layout-shell.md
-│       │   ├── 1-5-configure-coop-coep-headers-context.xml
-│       │   ├── 1-5-configure-coop-coep-headers.md
-│       │   ├── 10-1-create-event-bus-infrastructure-context.xml
-│       │   ├── 10-1-create-event-bus-infrastructure.md
-│       │   ├── 10-2-refactor-syncmanager-emit-events-context.xml
-│       │   ├── 10-2-refactor-syncmanager-emit-events.md
-│       │   ├── 10-3-add-manual-sync-toggle-context.xml
-│       │   ├── 10-3-add-manual-sync-toggle.md
-│       │   ├── 10-4-implement-per-file-sync-status-context.xml
-│       │   ├── 10-4-implement-per-file-sync-status.md
-│       │   ├── 10-5-create-sync-exclusion-config-context.xml
-│       │   ├── 10-5-create-sync-exclusion-config.md
-│       │   ├── 11-1-extract-pathguard-module-context.xml
-│       │   ├── 11-1-extract-pathguard-module.md
-│       │   ├── 11-2-extract-directorywalker-module-context.xml
-│       │   ├── 11-2-extract-directorywalker-module.md
-│       │   ├── 11-3-extract-syncplanner-module-context.xml
-│       │   ├── 11-3-extract-syncplanner-module.md
-│       │   ├── 11-4-extract-syncexecutor-module-context.xml
-│       │   ├── 11-4-extract-syncexecutor-module.md
-│       │   ├── 2-1-create-webcontainers-manager-context.xml
-│       │   ├── 2-1-create-webcontainers-manager.md
-│       │   ├── 2-2-implement-terminal-adapter-context.xml
-│       │   ├── 2-2-implement-terminal-adapter.md
-│       │   ├── 2-3-create-xterminal-component-context.xml
-│       │   ├── 2-3-create-xterminal-component.md
-│       │   ├── 2-4-implement-process-management-context.xml
-│       │   ├── 2-4-implement-process-management.md
-│       │   ├── 3-1-completion-report.md
-│       │   ├── 3-1-implement-local-fs-adapter-context.xml
-│       │   ├── 3-1-implement-local-fs-adapter.md
-│       │   ├── 3-1-implementation-summary.md
-│       │   ├── 3-2-implement-filetree-component-context.xml
-│       │   ├── 3-2-implement-filetree-component.md
-│       │   ├── 3-3-implement-sync-manager-context.xml
-│       │   ├── 3-3-implement-sync-manager.md
-│       │   ├── 3-4-handle-directory-permission-lifecycle-context.xml
-│       │   ├── 3-4-handle-directory-permission-lifecycle.md
-│       │   ├── 3-5-implement-folder-switching-context.xml
-│       │   ├── 3-5-implement-folder-switching.md
-│       │   ├── 3-6-implement-sync-status-ui-context.xml
-│       │   ├── 3-6-implement-sync-status-ui.md
-│       │   ├── 3-7-project-metadata-persistence-context.xml
-│       │   ├── 3-7-project-metadata-persistence.md
-│       │   ├── 3-8-implement-workspace-context-context.xml
-│       │   ├── 3-8-implement-workspace-context.md
-│       │   ├── 4-0-1-dashboard-recent-projects-context.xml
-│       │   ├── 4-0-1-dashboard-recent-projects.md
-│       │   ├── 4-0-2-wire-dashboard-projectstore-context.xml
-│       │   ├── 4-0-2-wire-dashboard-projectstore.md
-│       │   ├── 4-1-implement-monaco-editor-component-context.xml
-│       │   ├── 4-1-implement-monaco-editor-component.md
-│       │   ├── 4-2-wire-editor-to-sync-manager-context.xml
-│       │   ├── 4-2-wire-editor-to-sync-manager.md
-│       │   ├── 4-3-implement-preview-panel-context.xml
-│       │   ├── 4-3-implement-preview-panel.md
-│       │   ├── 4-4-implement-chat-panel-shell-context.xml
-│       │   ├── 4-4-implement-chat-panel-shell.md
-│       │   ├── 5-1-set-up-indexeddb-schema-context.xml
-│       │   ├── 5-2-implement-project-store-context.xml
-│       │   ├── 5-2-implement-project-store.md
-│       │   ├── 5-3-implement-conversation-store-context.xml
-│       │   ├── 5-3-implement-conversation-store.md
-│       │   ├── 5-4-implement-ide-state-store-context.xml
-│       │   ├── 5-4-implement-ide-state-store.md
-│       │   ├── course-correction-epic-3-4-issues-2025-12-11.md
-│       │   ├── epic-1-retrospective.md
-│       │   ├── epic-10-retrospective.md
-│       │   ├── epic-2-retrospective.md
-│       │   ├── epic-3-code-review.md
-│       │   ├── epic-3-retrospective.md
-│       │   ├── epic-4-retrospective.md
-│       │   ├── epic-5-retrospective.md
-│       │   ├── fs-workspace-discovery-2025-12-12.md
-│       │   ├── spike-project-alpha-next-iteration.md
-│       │   ├── sprint-change-proposal-2025-12-12.md
-│       │   ├── sprint-change-proposal-2025-12-14.md
-│       │   ├── sprint-change-proposal-v2-2025-12-12.md
-│       │   ├── sprint-change-proposal-v3-2025-12-12.md
-│       │   ├── sprint-status.yaml
-│       │   └── via-gent.code-alpha.code-workspace
-│       ├── technical-via-gent-foundational-architectural-slice-spike-research-2025-12-10.md
-│       ├── ux-color-themes.html
-│       ├── ux-design-directions.html
-│       └── ux-design-specification.md
+│   └── specify.md
+├── i18next-scanner.config.cjs
 ├── package.json
 ├── pnpm-lock.yaml
 ├── public
@@ -875,16 +820,27 @@
 │   ├── manifest.json
 │   ├── robots.txt
 │   ├── tanstack-circle-logo.png
-│   └── tanstack-word-logo-white.svg
+│   ├── tanstack-word-logo-white.svg
+│   └── via-gent-logo.svg
 ├── src
 │   ├── components
 │   │   ├── Header.tsx
+│   │   ├── LanguageSwitcher.tsx
+│   │   ├── __tests__
+│   │   │   └── workspace-i18n.test.tsx
+│   │   ├── dashboard
+│   │   │   ├── Onboarding.tsx
+│   │   │   ├── PitchDeck.tsx
+│   │   │   └── __tests__
+│   │   │       └── Onboarding.test.tsx
 │   │   ├── ide
 │   │   │   ├── AgentChatPanel.tsx
 │   │   │   ├── FileTree
 │   │   │   │   ├── ContextMenu.tsx
 │   │   │   │   ├── FileTree.tsx
 │   │   │   │   ├── FileTreeItem.tsx
+│   │   │   │   ├── __tests__
+│   │   │   │   │   └── FileTree.test.ts
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── useContextMenuActions.ts
 │   │   │   │   │   ├── useFileTreeActions.ts
@@ -903,8 +859,11 @@
 │   │   │   │   ├── PreviewPanel.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   └── types.ts
+│   │   │   ├── SyncEditWarning.tsx
 │   │   │   ├── SyncStatusIndicator.tsx
-│   │   │   └── XTerminal.tsx
+│   │   │   ├── XTerminal.tsx
+│   │   │   └── __tests__
+│   │   │       └── SyncStatusIndicator.test.tsx
 │   │   ├── layout
 │   │   │   ├── ChatPanelWrapper.tsx
 │   │   │   ├── IDEHeaderBar.tsx
@@ -921,6 +880,13 @@
 │   ├── hooks
 │   │   ├── useIdeStatePersistence.ts
 │   │   └── useProcessManager.ts
+│   ├── i18n
+│   │   ├── LocaleProvider.tsx
+│   │   ├── __tests__
+│   │   │   └── config.test.ts
+│   │   ├── config.ts
+│   │   ├── en.json
+│   │   └── vi.json
 │   ├── lib
 │   │   ├── editor
 │   │   │   ├── __tests__
@@ -997,6 +963,8 @@
 │   ├── router.tsx
 │   ├── routes
 │   │   ├── __root.tsx
+│   │   ├── __tests__
+│   │   │   └── dashboard-i18n.test.tsx
 │   │   ├── demo
 │   │   │   ├── api.names.ts
 │   │   │   ├── start.api-request.tsx
@@ -1007,6 +975,7 @@
 │   │   │   └── start.ssr.spa-mode.tsx
 │   │   ├── index.tsx
 │   │   ├── test-fs-adapter.tsx
+│   │   ├── webcontainer.$.tsx
 │   │   └── workspace
 │   │       └── $projectId.tsx
 │   ├── styles.css
@@ -1016,4 +985,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-201 directories, 816 files
+207 directories, 779 files

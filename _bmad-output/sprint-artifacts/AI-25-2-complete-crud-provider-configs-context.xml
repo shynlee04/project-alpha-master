@@ -1,0 +1,98 @@
+<context story="AI-25-2" created="2025-12-28T03:45:00+07:00">
+  <files>
+    <file path="src/lib/state/provider-store.ts">
+      <content><![CDATA[
+/**
+ * @fileoverview Provider State Management (Zustand)
+ * @module lib/state/provider-store
+ */
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { createDexieStorage } from './dexie-storage';
+import { PROVIDERS, type ProviderConfig } from '../agent/providers/types';
+import { credentialVault } from '../agent/providers/credential-vault';
+
+// ... (Interface definitions omit for brevity if unchanged)
+
+export const useProviderStore = create<ProviderState>()(
+    persist(
+        (set, get) => ({
+            providers: INITIAL_PROVIDERS,
+            // ...
+            removeProvider: async (id) => {
+                try {
+                    await credentialVault.deleteCredentials(id);
+                } catch (error) {
+                    console.error(`[ProviderStore] Failed to delete credentials for ${id}:`, error);
+                }
+                set((state) => ({
+                    providers: state.providers.filter(p => p.id !== id),
+                    activeProviderId: state.activeProviderId === id
+                        ? (state.providers.find(p => p.id !== id && p.enabled)?.id || null)
+                        : state.activeProviderId
+                }));
+            },
+            // ...
+        }),
+        {
+            name: 'via-gent-providers',
+            storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
+            // ...
+        }
+    )
+);
+      ]]></content>
+    </file>
+    <file path="src/lib/state/dexie-db.ts">
+      <content><![CDATA[
+// ...
+        // Schema version 6: Add providerConfigs table (Epic 25)
+        // For Zustand store persistence
+        this.version(6).stores({
+            // ...
+            // Generic state persistence
+            providerConfigs: 'id, updatedAt',
+        }).upgrade(async () => {
+            console.log('[Dexie] Running migration to v6 (provider configs)');
+        });
+// ...
+      ]]></content>
+    </file>
+    <file path="src/lib/agent/providers/credential-vault.ts">
+      <content><![CDATA[
+// ...
+    async deleteCredentials(providerId: string): Promise<void> {
+        await db.credentials.delete(providerId);
+    }
+// ...
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="code-analysis" query="Provider Logic">
+      Provider Store already implements 'removeProvider' which handles both store update and CredentialVault cleanup.
+      Target Architecture specifies 'ProviderSettings.tsx' as the component to implement.
+    </finding>
+    <finding source="architecture" query="UI Pattern">
+      ProviderSettings should list providers from the store, not static config.
+      It should support Adding (ProviderConfigDialog) and Deleting.
+      AgentConfigDialog currently hardcodes provider list - this needs to change to use useProviderStore.providers.
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <note priority="high">
+      Ensure 'removeProvider' is only called after user confirmation.
+    </note>
+    <note priority="medium">
+      ProviderSettings.tsx should reuse the design patterns from AgentConfigDialog (8-bit style, headers).
+    </note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="zustand" version="^5.0.9" />
+    <dependency name="lucide-react" version="^0.544.0" />
+    <dependency name="@radix-ui/react-dialog" version="^1.1.15" />
+  </dependencies>
+</context>

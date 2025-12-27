@@ -24,7 +24,6 @@
  */
 
 import React, { useEffect, useCallback, useRef } from 'react';
-import { useStore } from '@tanstack/react-store';
 import { FolderOpen, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +41,8 @@ import {
 } from './hooks';
 
 // State and types
-import { fileSyncCountsStore, useWorkspace } from '../../../lib/workspace';
+// Story 27-1b: Migrated to Zustand
+import { useSyncStatusStore, useWorkspace } from '../../../lib/workspace';
 import type { TreeNode } from './types';
 
 // ============================================================================
@@ -103,8 +103,8 @@ export function FileTree({
 
   const { t } = useTranslation();
 
-  // Sync counts for status display
-  const fileSyncCounts = useStore(fileSyncCountsStore, (state) => state);
+  // Sync counts for status display (Story 27-1b: Migrated to Zustand)
+  const fileSyncCounts = useSyncStatusStore((s) => s.counts);
 
   // Container ref for focus management
   const treeRef = useRef<HTMLDivElement>(null);
@@ -207,10 +207,10 @@ export function FileTree({
   // Empty state - no directory
   if (!directoryHandle) {
     return (
-      <div className={`h-full flex flex-col items-center justify-center text-slate-500 p-4 ${className}`}>
-        <FolderOpen size={32} className="mb-2 text-slate-600" />
+      <div className={`h-full flex flex-col items-center justify-center text-muted-foreground p-4 ${className}`}>
+        <FolderOpen size={32} className="mb-2 text-muted-foreground/70" />
         <p className="text-sm text-center">{t('ide.noFolderSelected')}</p>
-        <p className="text-xs text-slate-600 text-center mt-1">
+        <p className="text-xs text-muted-foreground/70 text-center mt-1">
           {t('ide.openFolderToView')}
         </p>
       </div>
@@ -230,7 +230,7 @@ export function FileTree({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`h-full flex items-center justify-center text-slate-500 ${className}`}>
+      <div className={`h-full flex items-center justify-center text-muted-foreground ${className}`}>
         <p className="text-sm">{t('ide.loading')}</p>
       </div>
     );
@@ -243,8 +243,8 @@ export function FileTree({
   return (
     <div className={`h-full flex flex-col ${className}`}>
       {/* Sync Status Header */}
-      <div className="h-7 px-3 flex items-center justify-between border-b border-slate-800/30 bg-slate-900/30 shrink-0">
-        <div className="flex items-center gap-2 text-xs text-slate-400">
+      <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {fileSyncCounts.total > 0 && (
             <>
               <span title={t('status.pendingFiles')} className="text-amber-400">

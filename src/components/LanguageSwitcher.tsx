@@ -14,7 +14,7 @@ export const LanguageSwitcher = () => {
     return (
         <button
             onClick={toggleLocale}
-            className="flex items-center gap-2 px-3 py-2 rounded-md bg-slate-700 hover:bg-slate-600 text-sm transition-colors text-white"
+            className="flex items-center gap-2 px-3 py-2 rounded-md bg-secondary hover:bg-secondary/80 text-sm transition-colors text-secondary-foreground"
             aria-label={t('actions.toggleLanguage', { code: locale.toUpperCase() })}
             title={t('actions.toggleLanguage', { code: locale.toUpperCase() })}
         >

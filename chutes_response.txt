@@ -1,0 +1,11 @@
+HTTP/1.1 401 Unauthorized
+server: nginx
+date: Thu, 25 Dec 2025 17:14:49 GMT
+content-type: application/json
+Content-Length: 27
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS, PUT, DELETE, PATCH
+via: 1.1 google
+Alt-Svc: clear
+
+{"detail":"Invalid token."}

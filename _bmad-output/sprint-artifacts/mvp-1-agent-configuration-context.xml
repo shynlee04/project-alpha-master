@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="MVP-1" created="2025-12-25T10:10:00+07:00">
+    <!-- 
+        MVP-1 Context XML
+        Agent Configuration & Persistence
+        
+        This context provides developers with:
+        - Current code state for relevant files
+        - Research findings from MCP tools
+        - Architecture patterns to follow
+        - Technical notes for implementation
+    -->
+
+    <!-- Current Code State -->
+    <files>
+        <file path="src/stores/agents-store.ts" lines="157" status="complete">
+            <summary>
+                Zustand store for agent configurations with localStorage persistence.
+                Uses persist middleware with 'via-gent-agents' key.
+                Includes DEFAULT_AGENT, addAgent, removeAgent, updateAgent, updateAgentStatus.
+                Has onRehydrateStorage callback for logging restoration.
+            </summary>
+            <key_exports>
+                <export name="useAgentsStore" type="hook">Main store hook</export>
+                <export name="useAgentsStoreHydration" type="hook">Hydration status hook</export>
+                <export name="DEFAULT_AGENT" type="constant">Default agent config</export>
+            </key_exports>
+        </file>
+        
+        <file path="src/stores/agent-selection-store.ts" lines="66" status="complete">
+            <summary>
+                Manages which agent is currently active for chat.
+                Uses Zustand persist with 'agent-selection' key.
+                Includes setActiveAgent, clearSelection, useActiveAgent helper.
+            </summary>
+            <key_exports>
+                <export name="useAgentSelection" type="hook">Selection store hook</export>
+                <export name="useActiveAgent" type="hook">Get active agent data</export>
+            </key_exports>
+        </file>
+        
+        <file path="src/components/agent/AgentConfigDialog.tsx" lines="576" status="complete">
+            <summary>
+                Agent configuration form dialog component.
+                Wired to Epic 25 infrastructure: credentialVault, modelRegistry.
+                Provider options: OpenRouter, OpenAI, Anthropic, Gemini.
+                Handles model selection, API key storage, connection testing.
+            </summary>
+            <key_features>
+                <feature>Provider selection dropdown</feature>
+                <feature>Dynamic model list based on provider</feature>
+                <feature>API key input with secure storage</feature>
+                <feature>Connection test functionality</feature>
+                <feature>Form validation with zod or manual</feature>
+            </key_features>
+        </file>
+        
+        <file path="src/lib/agent/providers/provider-adapter.ts" status="fixed">
+            <summary>
+                Provider adapter for connecting to AI services.
+                COURSE CORRECTION APPLIED 2025-12-25:
+                - Fixed createOpenaiChat signature: (modelId, apiKey, config)
+                - Fixed OpenAIChatConfig → OpenAITextConfig
+                - See: _bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md
+            </summary>
+        </file>
+        
+        <file path="src/lib/agent/factory.ts" lines="231" status="complete">
+            <summary>
+                Agent tool factory with TanStack AI integration.
+                Creates client-side tools for: read_file, write_file, list_files, execute_command.
+                Uses toolDefinition.client() pattern for browser-local operations.
+            </summary>
+        </file>
+    </files>
+
+    <!-- Research Findings -->
+    <research_notes>
+        <finding source="code_analysis" query="Zustand persist pattern">
+            Pattern: create()(persist((set, get) => ({...}), {name: 'key', version: N}))
+            Storage: localStorage by default
+            Hydration: onRehydrateStorage callback for post-hydration actions
+        </finding>
+        
+        <finding source="course_correction" date="2025-12-25">
+            Issue: OpenRouter 401/400 errors
+            Root Cause 1: Incorrect argument order for createOpenaiChat
+            Root Cause 2: Empty messages array overriding useChat messages
+            Fix: Corrected signature to (modelId, apiKey, config), removed messages: []
+        </finding>
+        
+        <finding source="codebase" query="Agent type definition">
+            Located in: src/mocks/agents.ts
+            Fields: id, name, role, status, provider, model, description, 
+                    tasksCompleted, successRate, tokensUsed, lastActive, createdAt
+        </finding>
+        
+        <finding source="codebase" query="Credential storage">
+            Module: src/lib/agent/providers/credentials.ts
+            Pattern: credentialVault.setCredential(providerId, {apiKey, baseUrl})
+            Storage: Encrypted localStorage
+        </finding>
+    </research_notes>
+
+    <!-- Architecture Patterns -->
+    <architecture_patterns>
+        <pattern name="Zustand Persistence" source="Epic 25-R1">
+            <description>
+                All agent state uses Zustand stores with persist middleware.
+                localStorage provides cross-session persistence.
+                Hydration hooks ensure safe access to restored state.
+            </description>
+            <example>
+                const store = create()(persist((set) => ({...}), {
+                    name: 'storage-key',
+                    version: 1,
+                    onRehydrateStorage: () => (state) => { ... }
+                }));
+            </example>
+        </pattern>
+        
+        <pattern name="Provider Adapter" source="Epic 25">
+            <description>
+                Abstracts AI provider differences behind common interface.
+                Uses TanStack AI createOpenaiChat for OpenRouter compatibility.
+                3-argument signature: (modelId, apiKey, config)
+            </description>
+        </pattern>
+        
+        <pattern name="Event Bus Integration" source="Epic 10">
+            <description>
+                WorkspaceEventEmitter for cross-component communication.
+                Emit events for: agent status changes, file modifications, terminal output.
+            </description>
+        </pattern>
+    </architecture_patterns>
+
+    <!-- Technical Notes -->
+    <technical_notes>
+        <note priority="high">
+            COURSE CORRECTION APPLIED: The chat API was not working due to incorrect
+            provider adapter signature. This has been fixed. Dev server restart required.
+        </note>
+        
+        <note priority="high">
+            E2E VERIFICATION REQUIRED: All acceptance criteria require browser testing.
+            No screenshot evidence exists for DoD compliance. Must capture before DONE.
+        </note>
+        
+        <note priority="medium">
+            The AgentConfigDialog is 576 lines, which is large. Consider refactoring
+            into smaller components if modifications are needed.
+        </note>
+        
+        <note priority="medium">
+            API keys are stored via credentialVault which provides encryption.
+            Never log API keys. Always use the vault for storage/retrieval.
+        </note>
+        
+        <note priority="low">
+            Default agent is created on first load: 'Via-Gent Coder' with OpenRouter/Devstral.
+            This ensures the user has a working agent even before configuration.
+        </note>
+    </technical_notes>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency name="zustand" version="^4.5.0" usage="State management" />
+        <dependency name="@tanstack/ai-client" version="0.0.34" usage="AI tool definitions" />
+        <dependency name="@tanstack/ai-openai" version="0.0.34" usage="OpenRouter adapter" />
+        <dependency name="@radix-ui/react-dialog" version="^1.0.0" usage="Config dialog" />
+    </dependencies>
+
+    <!-- Verification Checklist -->
+    <verification_checklist>
+        <item id="V1" status="pending">Start dev server: pnpm dev</item>
+        <item id="V2" status="pending">Navigate to http://localhost:3000</item>
+        <item id="V3" status="pending">Open Agent Configuration dialog</item>
+        <item id="V4" status="pending">Select OpenRouter provider</item>
+        <item id="V5" status="pending">Enter valid API key</item>
+        <item id="V6" status="pending">Select model from dropdown</item>
+        <item id="V7" status="pending">Click Test Connection</item>
+        <item id="V8" status="pending">Save configuration</item>
+        <item id="V9" status="pending">Refresh browser</item>
+        <item id="V10" status="pending">Verify configuration persisted</item>
+        <item id="V11" status="pending">Capture screenshot for DoD</item>
+    </verification_checklist>
+</context>

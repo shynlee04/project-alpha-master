@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="22-3-add-integration-tests" created="2025-12-21T12:19:00+07:00" platform="Platform A">
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/webcontainer/manager.ts">
+      <description>
+        WebContainer singleton manager with exports:
+        - boot(options): Promise<WebContainer> - Boot with singleton pattern
+        - mount(files, mountPoint): Promise<void> - Mount FileSystemTree
+        - spawn(command, args, options): Promise<WebContainerProcess> - Execute commands
+        - getFileSystem(): FileSystemAPI - Get fs accessor
+        - getInstance(): WebContainer | null - Get current instance
+        - isBooted(): boolean - Check boot status
+        - onServerReady(callback): () => void - Subscribe to server events
+      </description>
+      <content><![CDATA[
+// Key patterns:
+// 1. Singleton: let instance: WebContainer | null = null;
+// 2. Boot guard: if (instance) return instance; if (bootPromise) return bootPromise;
+// 3. Error class: throw new WebContainerError(msg, 'BOOT_FAILED' | 'NOT_BOOTED' | 'MOUNT_FAILED' | 'SPAWN_FAILED')
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/webcontainer/terminal-adapter.ts">
+      <description>
+        Terminal adapter factory binding xterm.js to WebContainers shell.
+        Exports createTerminalAdapter(options): TerminalAdapter
+        Interface: startShell(projectPath?), write(data), resize(cols, rows), dispose(), isRunning()
+      </description>
+      <content><![CDATA[
+// Key patterns:
+// 1. Factory function: createTerminalAdapter({ terminal, fitAddon?, onExit?, onError? })
+// 2. Shell spawn: spawn('jsh', [], { terminal: { cols, rows }, cwd: projectPath })
+// 3. Error class: TerminalAdapterError with codes 'NOT_BOOTED' | 'SHELL_NOT_STARTED' | 'ALREADY_STARTED' | 'DISPOSED'
+// 4. Cleanup via dispose() - kills shell process, clears listeners
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/filesystem/__tests__/local-fs-adapter.integration.test.ts">
+      <description>
+        Reference integration test pattern - 365 lines, comprehensive mock strategy.
+        Uses vi.fn() mocks for File System Access API handles.
+      </description>
+      <content><![CDATA[
+// Mock pattern to follow:
+const mockShowDirectoryPicker = vi.fn();
+const mockWindow = { showDirectoryPicker: mockShowDirectoryPicker } as any;
+Object.defineProperty(global, 'window', { value: mockWindow, writable: true });
+
+// Mock handles with methods:
+const mockDirectoryHandle = {
+  kind: 'directory' as const,
+  name: 'test-project',
+  getFileHandle: vi.fn(),
+  getDirectoryHandle: vi.fn(),
+  // ...
+};
+      ]]></content>
+    </file>
+    
+    <file path="src/test/setup.ts">
+      <description>Vitest setup file with global mocks for matchMedia, ResizeObserver, IntersectionObserver</description>
+    </file>
+    
+    <file path="vitest.config.ts">
+      <description>
+        Vitest config: environment 'node', jsdom for .test.tsx files.
+        Setup file: ./src/test/setup.ts
+        Uses vite-tsconfig-paths for path resolution.
+      </description>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="Vitest mocking ES modules">
+      Use vi.mock(import('module'), () => ({ ... })) for mocking modules.
+      For singleton modules, use vi.resetModules() in beforeEach.
+      Mock patterns: vi.fn().mockResolvedValue() for async methods.
+    </finding>
+    
+    <finding source="test-writing-standards" query="WebContainer mocking pattern">
+      Standard mocking pattern from agent-os/standards/testing/test-writing.md:
+      ```typescript
+      vi.mock('@webcontainer/api', () => ({
+        WebContainer: {
+          boot: vi.fn().mockResolvedValue({
+            mount: vi.fn(),
+            spawn: vi.fn().mockResolvedValue({ output: new ReadableStream() }),
+            fs: { readFile: vi.fn(), writeFile: vi.fn() },
+          }),
+        },
+      }));
+      ```
+    </finding>
+    
+    <finding source="production-readiness-report" query="Integration testing gap">
+      From _bmad-output/sprint-artifacts/production-readiness-epic-13-report.md:
+      "No integration tests for WebContainer interaction (cannot verify actual file sync works)"
+      Risk Level: HIGH - Impact: High, Likelihood: Medium
+      Required: "Create end-to-end tests with actual WebContainer API"
+    </finding>
+    
+    <finding source="deepwiki" query="WebContainer testing patterns">
+      DeepWiki did not have specific testing documentation for WebContainers.
+      Recommended approach: Mock the WebContainer module with vi.mock() since
+      actual WebContainers cannot run in Node.js CI environment.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Singleton Testing" source="manager.ts">
+      Test boot() returns same instance on multiple calls.
+      Test concurrent boot calls don't create multiple instances.
+      Use vi.resetModules() to reset singleton state between tests.
+    </pattern>
+    
+    <pattern name="Error Handling Testing" source="types.ts">
+      WebContainerError thrown with codes: 'BOOT_FAILED', 'NOT_BOOTED', 'MOUNT_FAILED', 'SPAWN_FAILED'
+      TerminalAdapterError with codes: 'NOT_BOOTED', 'SHELL_NOT_STARTED', 'ALREADY_STARTED', 'DISPOSED'
+      Test each error path by configuring mocks to reject/throw.
+    </pattern>
+    
+    <pattern name="Factory Function Testing" source="terminal-adapter.ts">
+      createTerminalAdapter() returns object with methods.
+      Test each method independently.
+      Test lifecycle: create → startShell → use → dispose.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      WebContainer.boot() is a static method on the WebContainer class from @webcontainer/api.
+      The manager wraps this with singleton logic. Mock the import, not the class instance.
+    </note>
+    
+    <note priority="high">
+      Terminal adapter depends on xterm.js Terminal and FitAddon.
+      These should be mocked as well since we're testing the adapter logic, not xterm.
+    </note>
+    
+    <note priority="medium">
+      spawn() returns WebContainerProcess with output: ReadableStream.
+      Mock ReadableStream with pipeTo() for testing output piping.
+    </note>
+    
+    <note priority="medium">
+      onServerReady() subscribes to 'server-ready' events on the WebContainer instance.
+      Test should verify callback is called when event fires.
+    </note>
+    
+    <note priority="low">
+      Test file naming convention: manager.test.ts, terminal-adapter.test.ts
+      Place in src/lib/webcontainer/__tests__/ directory.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="vitest" version="^3.2.4" />
+    <dependency name="@webcontainer/api" version="^1.4.0" />
+    <dependency name="@xterm/xterm" version="^5.5.0" />
+    <dependency name="@xterm/addon-fit" version="^0.10.0" />
+  </dependencies>
+  
+  <!-- Test commands -->
+  <commands>
+    <command name="run-tests" value="pnpm test" />
+    <command name="run-specific" value="pnpm test src/lib/webcontainer/__tests__/" />
+    <command name="typecheck" value="pnpm exec tsc --noEmit" />
+    <command name="coverage" value="pnpm test --coverage" />
+  </commands>
+</context>

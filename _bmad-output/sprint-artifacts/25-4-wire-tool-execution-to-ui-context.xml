@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="25-4-wire-tool-execution-to-ui" created="2025-12-23T21:49:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/lib/agent/hooks/use-agent-chat.ts">
+      <summary>
+        Existing useAgentChat hook wrapping TanStack AI useChat.
+        Currently does NOT expose tool calls or provide tools to useChat.
+        Needs extension to support client-side tool execution.
+      </summary>
+      <snippet line="74-100"><![CDATA[
+export function useAgentChat(options: UseAgentChatOptions = {}): UseAgentChatReturn {
+    const {
+        providerId = DEFAULT_PROVIDER,
+        modelId = DEFAULT_MODEL,
+        endpoint = DEFAULT_ENDPOINT,
+        systemMessage,
+    } = options;
+
+    // Create connection adapter for SSE
+    const connection = useMemo(
+        () => fetchServerSentEvents(endpoint, {
+            body: { providerId, modelId },
+        }),
+        [endpoint, providerId, modelId]
+    );
+
+    // Use TanStack AI chat hook
+    const {
+        messages: rawMessages,
+        sendMessage: rawSendMessage,
+        isLoading,
+        error,
+        clearMessages,
+    } = useChat({
+        connection,
+    });
+      ]]></snippet>
+    </file>
+    
+    <file path="src/routes/api/chat.ts">
+      <summary>
+        Server-side chat endpoint. Currently returns empty tools array.
+        Will provide tool definitions for LLM context, but execution is client-side.
+      </summary>
+      <snippet line="106-117"><![CDATA[
+function getTools() {
+    // For this story, we return empty array as facades need real WebContainer
+    // Story 25-4 will wire these properly with actual WebContainer/LocalFS
+    // This establishes the pattern for how tools will be integrated
+
+    // TODO (Story 25-4): Wire actual facades when WebContainer is available
+    // const fileTools = createFileTools(() => getFileToolsFacade());
+    // const terminalTools = createTerminalTools(() => getTerminalToolsFacade());
+    // return [...Object.values(fileTools), ...Object.values(terminalTools)];
+
+    return [];
+}
+      ]]></snippet>
+    </file>
+    
+    <file path="src/lib/agent/tools/index.ts">
+      <summary>
+        Tool exports. Already has createFileTools and createTerminalTools factories.
+        These use toolDefinition.server() pattern - need client equivalents.
+      </summary>
+    </file>
+    
+    <file path="src/lib/workspace/WorkspaceContext.tsx">
+      <summary>
+        Provides workspace context including:
+        - webContainerRef (WebContainerInstance)
+        - syncManagerRef (SyncManager with LocalFSAdapter)
+        - eventBus (WorkspaceEventEmitter)
+        Use useWorkspace() hook to access.
+      </summary>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI client tools useChat">
+      TanStack AI supports client-side tool execution via toolDefinition.client() pattern.
+      Tools can be passed to useChat() and execute on browser with access to local APIs.
+      Pattern: const tool = toolDef.client(async (input) => { ...browser logic... });
+    </finding>
+    <finding source="context7" query="TanStack AI tool approval">
+      Tools with needsApproval: true pause before execution.
+      useChat returns addToolApprovalResponse() for approve/reject.
+      Approval flow: LLM calls tool → UI shows diff → User approves → Tool executes.
+    </finding>
+    <finding source="context7" query="TanStack AI agentic cycle">
+      ToolCallManager accumulates chunks and executes via executeTools().
+      For client: tools array passed to useChat suffices.
+      Streaming: onToolResult, onToolResultStateChange callbacks available.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Client Tool Pattern" source="TanStack AI Docs">
+      Use toolDefinition.client() for browser-local operations.
+      Pass tools array to useChat({ tools: [...] }).
+      Tool receives input from LLM, returns result to conversation.
+    </pattern>
+    <pattern name="Workspace Context Injection" source="docs/2025-12-23/architecture.md">
+      Use useWorkspace() hook to get webContainerRef, syncManagerRef, eventBus.
+      Create facades with these instances for tool operations.
+    </pattern>
+    <pattern name="Event-Driven UI Updates" source="docs/2025-12-23/data-and-contracts.md">
+      Emit file:modified, process:started events on tool completion.
+      UI components subscribe via eventBus.on() for reactive updates.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      WebContainer and LocalFSAdapter are CLIENT-ONLY. API route runs server-side.
+      Therefore: Tool DEFINITIONS go to server (for LLM context), 
+      but tool EXECUTION must happen client-side via toolDefinition.client().
+    </note>
+    <note priority="high">
+      useWorkspace() must be called inside React component/hook.
+      Tool factory needs lazy initialization pattern to access workspace context.
+    </note>
+    <note priority="medium">
+      write_file tool has needsApproval: true. This story wires execution;
+      approval UI is Story 25-5 scope.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@tanstack/ai" version="0.1.0" />
+    <dependency name="@tanstack/ai-react" version="0.1.0" />
+    <dependency name="@tanstack/ai-openai" version="0.1.0" />
+    <dependency name="zod" version="^3.24.1" />
+  </dependencies>
+</context>

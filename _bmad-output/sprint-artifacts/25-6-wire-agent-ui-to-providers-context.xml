@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="25-6-wire-agent-ui-to-providers" created="2025-12-24T06:16:00+07:00">
+  
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/agent/AgentConfigDialog.tsx">
+      <description>
+        Main component to modify. Currently uses hardcoded PROVIDER_MODELS (lines 67-72).
+        Has JSDOC @integrates comments referencing Epic 25 wiring (lines 10-13).
+        Uses mock provider names: OpenAI, Anthropic, Mistral, Google.
+        Needs OpenRouter added and connected to credentialVault/modelRegistry.
+      </description>
+      <key_snippets>
+        <snippet lines="67-72" description="Mock provider models to remove">
+          const PROVIDER_MODELS: Record&lt;Agent['provider'], string[]> = {
+            OpenAI: ['gpt-4-turbo', 'gpt-4o', 'gpt-4o-mini'],
+            Anthropic: ['claude-3-5-sonnet', 'claude-3-opus', 'claude-3-haiku'],
+            Mistral: ['mistral-large-latest', 'mistral-medium', 'mixtral-8x7b'],
+            Google: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.0-pro'],
+          }
+        </snippet>
+      </key_snippets>
+    </file>
+    
+    <file path="src/lib/agent/providers/credential-vault.ts">
+      <description>
+        Encrypted API key storage using Web Crypto API (AES-GCM) and Dexie.js.
+        Exports: CredentialVault class, credentialVault singleton.
+        Key methods: initialize(), storeCredentials(providerId, apiKey), 
+        getCredentials(providerId), hasCredentials(providerId), deleteCredentials(providerId).
+      </description>
+    </file>
+    
+    <file path="src/lib/agent/providers/model-registry.ts">
+      <description>
+        Dynamic model fetching from provider APIs with 5-minute cache.
+        Exports: ModelRegistry class, modelRegistry singleton.
+        Key methods: getModels(providerId, apiKey?), getDefaultModels(providerId),
+        getFreeModels(), clearCache(providerId?).
+        Falls back to FREE_MODELS from types.ts when API unavailable.
+      </description>
+    </file>
+    
+    <file path="src/lib/agent/providers/provider-adapter.ts">
+      <description>
+        Creates TanStack AI adapters for OpenAI-compatible providers.
+        Exports: providerAdapter singleton.
+        Key methods: createAdapter(config), testConnection(config).
+        Supports OpenRouter via baseURL override pattern.
+      </description>
+    </file>
+    
+    <file path="src/lib/agent/providers/types.ts">
+      <description>
+        Type definitions and constants.
+        Exports: ProviderConfig, ModelInfo, PROVIDERS (object with configs),
+        FREE_MODELS (array of free models).
+        PROVIDERS includes 'openrouter' with baseURL 'https://openrouter.ai/api/v1'.
+      </description>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="TanStack AI Docs - Client Tools" query="tool definition pattern">
+      Pattern: toolDefinition({ name, description, inputSchema, outputSchema }).client()
+      Client tools execute in browser, use onToolCall callback.
+    </finding>
+    <finding source="TanStack AI Docs - Connection Adapters" query="OpenAI adapter">
+      TanStack AI provides openai() adapter that accepts baseURL override.
+      Pattern: openai({ apiKey, baseURL: 'https://openrouter.ai/api/v1' })
+    </finding>
+    <finding source="epic-25-12-06-openaicompatible-support.md" query="OpenRouter integration">
+      OpenRouter is 100% compatible with OpenAI adapter via baseURL config.
+      Free models available: meta-llama/llama-3.1-8b-instruct:free, 
+      google/gemini-2.0-flash-exp:free, deepseek/deepseek-r1:free.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Provider Singleton" source="credential-vault.ts">
+      Use singleton pattern: import { credentialVault } from '@/lib/agent/providers';
+      Do not instantiate new instances.
+    </pattern>
+    <pattern name="Async Operations" source="model-registry.ts">
+      All provider operations are async. Use useEffect with async function pattern.
+      Handle loading states with useState.
+    </pattern>
+    <pattern name="i18n Integration" source="AgentConfigDialog.tsx">
+      Use useTranslation() hook. Keys follow pattern: agents.config.{section}.{key}
+      Both en.json and vi.json must be updated.
+    </pattern>
+    <pattern name="ShadcnUI Components" source="AgentConfigDialog.tsx">
+      Use Dialog, Input, Select, Label, Button from @/components/ui/*.
+      Apply 'rounded-none' class for pixel aesthetic.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Provider type mismatch: Current Agent['provider'] type is 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google'.
+      Need to update mocks/agents.ts to include 'OpenRouter' or use providerId string directly.
+    </note>
+    <note priority="high">
+      credentialVault.initialize() must be called before other operations.
+      Call it in useEffect on component mount.
+    </note>
+    <note priority="medium">
+      modelRegistry.getModels() returns ModelInfo[] with { id, name, isFree, providerId }.
+      UI should show model.name in dropdown, use model.id as value.
+    </note>
+    <note priority="medium">
+      Toast notifications via 'sonner' package.
+      Pattern: toast.success() or toast.error() for user feedback.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@/lib/agent/providers" provides="credentialVault, modelRegistry, providerAdapter, ModelInfo" />
+    <dependency name="sonner" provides="toast" />
+    <dependency name="react-i18next" provides="useTranslation" />
+  </dependencies>
+  
+  <!-- Epic 28 UI Reference -->
+  <epic28_reference>
+    <file path="_bmad-output/sprint-artifacts/28-16-agent-config-flow.md">
+      Story 28-16 created the base component with mock data.
+      JSDOC @integrates comments at lines 10-13 specify this wiring.
+    </file>
+    <design_tokens>
+      Use 'rounded-none' for pixel aesthetic.
+      Use 'font-pixel' for titles.
+      Use 'variant="pixel-primary"' for primary buttons.
+    </design_tokens>
+  </epic28_reference>
+</context>

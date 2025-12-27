@@ -1,0 +1,27 @@
+# Architecture Decision Document
+
+## Table of Contents
+
+- [Architecture Decision Document](#table-of-contents)
+  - [Via-Gent: Foundational Architectural Slice (Project Alpha)](#via-gent-foundational-architectural-slice-project-alpha)
+  - [Project Context Analysis](#project-context-analysis)
+  - [Starter Template Evaluation](#starter-template-evaluation)
+  - [Core Architectural Decisions](#core-architectural-decisions)
+  - [Implementation Patterns & Consistency Rules](#implementation-patterns-consistency-rules)
+  - [Project Structure & Boundaries](#project-structure-boundaries)
+  - [Architecture Validation Results](#architecture-validation-results)
+  - [Architecture Completion Summary](#architecture-completion-summary)
+  - [Epic 3 Validated Implementation Patterns](#epic-3-validated-implementation-patterns)
+  - [Workspace Context Layer (Epic 3 Hotfix)](#workspace-context-layer-epic-3-hotfix)
+  - [Multi-Root Workspace Roadmap (Epic 9 - POST-MVP)](#multi-root-workspace-roadmap-epic-9-post-mvp)
+  - [Project Fugu Enhancement Layer (Epic 4.5)](#project-fugu-enhancement-layer-epic-45)
+  - [Agent Tool Architecture (Epic 6 Prep)](#agent-tool-architecture-epic-6-prep)
+  - [Event Bus Architecture (Epic 10)](#event-bus-architecture-epic-10)
+  - [Agent Tool Facade Layer (Epic 12)](#agent-tool-facade-layer-epic-12)
+  - [WorkspaceOrchestrator Layer](#workspaceorchestrator-layer)
+  - [Code Quality Standards (Course Correction v3)](#code-quality-standards-course-correction-v3)
+  - [Related Documents](#related-documents)
+  - [Terminal Integration (Epic 13 - Course Correction v5)](#terminal-integration-epic-13-course-correction-v5)
+  - [Code Quality Standards (Mandatory - Course Correction v3)](#code-quality-standards-mandatory-course-correction-v3)
+  - [Lessons Learned (Retrospectives Synthesis)](#lessons-learned-retrospectives-synthesis)
+  - [MCP Research Protocol (Mandatory)](#mcp-research-protocol-mandatory)

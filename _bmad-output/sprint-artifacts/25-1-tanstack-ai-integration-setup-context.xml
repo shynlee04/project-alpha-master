@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context story="25-1-tanstack-ai-integration-setup" created="2025-12-23T21:25:00+07:00">
+  
+  <research-findings>
+    <source name="Context7 TanStack AI" date="2025-12-23">
+      <finding type="pattern">
+        chat() + toStreamResponse() for SSE server responses
+      </finding>
+      <finding type="pattern">
+        useChat + fetchServerSentEvents('/api/chat') for client
+      </finding>
+      <finding type="pattern">
+        tools: [...] parameter in chat() call for tool integration
+      </finding>
+      <finding type="pattern">
+        Return Content-Type: text/event-stream header
+      </finding>
+    </source>
+  </research-findings>
+
+  <code-state>
+    <existing-file path="src/lib/agent/providers/provider-adapter.ts">
+      ProviderAdapterFactory creates OpenAI-compatible adapters for OpenRouter.
+      Singleton: providerAdapterFactory
+      Methods: createAdapter(providerId, config), testConnection(), getEnabledProviders()
+    </existing-file>
+    <existing-file path="src/lib/agent/providers/credential-vault.ts">
+      CredentialVault for encrypted API key storage with AES-GCM
+    </existing-file>
+    <existing-file path="src/lib/agent/tools/index.ts">
+      createFileTools(getTools) - read_file, write_file, list_files
+      createTerminalTools(getTools) - execute_command
+    </existing-file>
+    <new-file path="src/routes/api/chat.ts">
+      TO BE CREATED - POST handler for AI chat
+    </new-file>
+    <new-file path="src/lib/agent/hooks/use-agent-chat.ts">
+      TO BE CREATED - React hook wrapping useChat
+    </new-file>
+  </code-state>
+
+  <architecture-patterns>
+    <pattern name="TanStack AI Server" source="context7">
+      chat({ adapter, messages, model, tools }); toStreamResponse(stream);
+    </pattern>
+    <pattern name="TanStack AI Client" source="context7">
+      useChat({ connection: fetchServerSentEvents('/api/chat') })
+    </pattern>
+    <pattern name="TanStack Start API Route" source="project">
+      src/routes/api/[name].ts exports POST function as API handler
+    </pattern>
+  </architecture-patterns>
+
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^0.2.0" />
+    <dependency name="@tanstack/ai-react" version="^0.2.0" />
+    <dependency name="@tanstack/ai-openai" version="^0.2.0" />
+  </dependencies>
+
+  <implementation-notes>
+    <note priority="high">
+      TanStack Start uses src/routes/api/*.ts for API routes.
+      Each file exports HTTP method handlers (POST, GET, etc.)
+    </note>
+    <note priority="high">
+      Tools must be instantiated with facade providers at route level
+    </note>
+    <note priority="medium">
+      Default to openrouter provider with free model for development
+    </note>
+  </implementation-notes>
+
+</story-context>

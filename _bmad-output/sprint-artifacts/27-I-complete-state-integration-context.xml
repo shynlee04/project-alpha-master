@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="27-I-complete-state-integration" created="2025-12-22T02:00:00+07:00">
+  
+  <!-- Current Code State -->
+  <files>
+    <file path="src/components/ide/XTerminal.tsx" status="modified">
+      <content><![CDATA[
+// Added props for sync-fail handling (Story 27-I)
+interface XTerminalProps {
+    className?: string;
+    initialSyncCompleted?: boolean;
+    permissionState?: 'prompt' | 'granted' | 'denied';
+    syncError?: boolean;        // NEW: Story 27-I
+    syncTimeout?: number;       // NEW: Story 27-I (default 30000ms)
+}
+
+// Shell start logic now handles:
+// 1. Start immediately if initialSyncCompleted
+// 2. Start with warning if syncError
+// 3. Start with timeout warning after syncTimeout ms
+      ]]></content>
+    </file>
+    <file path="src/lib/filesystem/sync-executor.ts" status="modified">
+      <content><![CDATA[
+// Fixed content extraction from FileReadResult
+const result = await adapter.readFile(path);
+const content = 'content' in result ? result.content : String(result);
+// Previously was passing the whole result object to writeFile
+      ]]></content>
+    </file>
+    <file path="src/components/ide/FileTree/ContextMenu.tsx" status="modified">
+      <content><![CDATA[
+// Fixed React hooks violation
+// Moved useTranslation() BEFORE conditional early return
+const { t } = useTranslation();  // NOW FIRST
+if (!isVisible || !position || !targetNode) return null;
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research Notes -->
+  <research_notes>
+    <finding source="grep" query="@tanstack/react-store">
+      0 results - AC-1 PASSED
+    </finding>
+    <finding source="grep" query="from 'idb'">
+      0 results in consumer files - AC-2 PASSED
+    </finding>
+    <finding source="code-analysis" query="XTerminal event bus usage">
+      XTerminal receives sync state via props from WorkspaceContext.
+      Does not need direct EventBus subscription.
+      This is correct - props flow: WorkspaceContext → TerminalPanel → XTerminal
+    </finding>
+    <finding source="code-analysis" query="Zustand store usage">
+      FileTree uses useSyncStatusStore (Zustand) ✓
+      MonacoEditor uses useWorkspace (Context, backed by Zustand) ✓
+      XTerminal uses props from parent (correct pattern) ✓
+    </finding>
+  </research_notes>
+
+  <!-- Architecture Patterns -->
+  <architecture_patterns>
+    <pattern name="Zustand Store Access" source="27-1b-component-migration">
+      import { useSyncStatusStore } from '@/lib/workspace';
+      const status = useSyncStatusStore(s => s.statuses[path]);
+    </pattern>
+    <pattern name="WorkspaceContext Access" source="WorkspaceContext.tsx">
+      import { useWorkspace } from '@/lib/workspace';
+      const { syncStatus, initialSyncCompleted } = useWorkspace();
+    </pattern>
+    <pattern name="Event Bus Emission" source="27-2-event-bus-integration">
+      eventBus.emit('sync:complete', { timestamp });
+      eventBus.emit('container:booted', { containerId });
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical Notes -->
+  <technical_notes>
+    <note priority="high">
+      XTerminal sync-fail handling: Added syncError and syncTimeout props.
+      Terminal will start after 30s timeout with warning message.
+      User approved this approach for non-blocking terminal access.
+    </note>
+    <note priority="medium">
+      sync-executor.ts: readFile returns { content: string, encoding: string }.
+      Must extract .content before writing to WebContainer.
+    </note>
+    <note priority="medium">
+      ContextMenu.tsx: React hooks must be called unconditionally.
+      useTranslation() moved before early return to fix violation.
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="zustand" version="^4.0.0" />
+    <dependency name="dexie" version="^4.0.0" />
+    <dependency name="@xterm/xterm" version="^5.3.0" />
+    <dependency name="@webcontainer/api" version="^1.2.0" />
+  </dependencies>
+</context>

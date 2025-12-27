@@ -1,0 +1,48 @@
+# .gitignore for main branch
+# This file lists directories excluded on main branch (included only on dev)
+
+# Build artifacts
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+count.txt
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+todos.json
+
+# ======================================
+# AI Agent Configuration Directories
+# (Present on dev branch only)
+# ======================================
+
+# BMAD Framework
+_bmad/
+_bmad-output/
+
+# AI Agent IDE Configurations
+.agent/
+.augment/
+.claude/
+.clinerules/
+.codex/
+.crush/
+.cursor/
+.gemini/
+.iflow/
+.kilocode/
+.kiro/
+.opencode/
+.qwen/
+.roo/
+.rovodev/
+.windsurf/
+
+# Agent Documentation
+CLAUDE.md
+AGENTS.md

@@ -1,6 +1,9 @@
 /**
  * Monaco Editor component with multi-model support, auto-save, and tab management
  * @module components/ide/MonacoEditor
+ * 
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-5 Monaco Editor Mobile Optimization
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
@@ -11,6 +14,7 @@ import { EditorTabBar, type OpenFile } from './EditorTabBar';
 import { useWorkspace } from '../../../lib/workspace';
 import { SyncEditWarning } from '../SyncEditWarning';
 import { useTranslation } from 'react-i18next';
+import { useDeviceType } from '@/hooks/useMediaQuery';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -49,6 +53,9 @@ export function MonacoEditor({
     onScrollTopChange,
 }: MonacoEditorProps): React.JSX.Element {
     const { t } = useTranslation();
+    // MRT-5: Mobile responsive detection for editor options
+    const { isMobile } = useDeviceType();
+
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
     const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -225,17 +232,17 @@ export function MonacoEditor({
     // Show empty state if no files are open
     if (!activeFile) {
         return (
-            <div className="h-full flex flex-col bg-slate-950">
+            <div className="h-full flex flex-col bg-background">
                 <EditorTabBar
                     openFiles={openFiles}
                     activeFilePath={activeFilePath}
                     onTabClick={handleTabClick}
                     onTabClose={handleTabClose}
                 />
-                <div className="flex-1 flex items-center justify-center text-slate-500">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
                     <div className="text-center">
                         <p className="text-sm">{t('ide.noFileOpen')}</p>
-                        <p className="text-xs text-slate-600 mt-1">
+                        <p className="text-xs text-muted-foreground/70 mt-1">
                             {t('ide.selectFile')}
                         </p>
                     </div>
@@ -245,7 +252,7 @@ export function MonacoEditor({
     }
 
     return (
-        <div className="h-full flex flex-col bg-slate-950">
+        <div className="h-full flex flex-col bg-background">
             <EditorTabBar
                 openFiles={openFiles}
                 activeFilePath={activeFilePath}
@@ -268,8 +275,11 @@ export function MonacoEditor({
                     }
                     options={{
                         fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                        fontSize: 13,
-                        lineHeight: 1.6,
+                        // MRT-5: Mobile-optimized settings
+                        // 16px prevents iOS Safari from zooming on focus
+                        fontSize: isMobile ? 16 : 13,
+                        // Reduced line height on mobile for more visible lines
+                        lineHeight: isMobile ? 1.4 : 1.6,
                         minimap: { enabled: false },
                         scrollBeyondLastLine: false,
                         renderLineHighlight: 'line',
@@ -278,7 +288,8 @@ export function MonacoEditor({
                         padding: { top: 8, bottom: 8 },
                         automaticLayout: true,
                         tabSize: 2,
-                        wordWrap: 'off',
+                        // MRT-5: Enable word wrap on mobile to prevent horizontal scrolling
+                        wordWrap: isMobile ? 'on' : 'off',
                         folding: true,
                         foldingHighlight: true,
                         showFoldingControls: 'mouseover',

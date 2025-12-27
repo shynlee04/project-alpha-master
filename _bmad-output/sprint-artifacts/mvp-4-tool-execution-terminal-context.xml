@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="mvp-4-tool-execution-terminal" created="2025-12-25T17:58:00+07:00">
+  <!-- Current relevant code state -->
+  <files>
+    <file path="src/lib/agent/tools/execute-command-tool.ts">
+      <content><![CDATA[
+// TanStack AI tool for executing terminal commands
+import { toolDefinition } from '@tanstack/ai';
+
+export const executeCommandDef = toolDefinition({
+    name: 'execute_command',
+    description: 'Execute a terminal command and return the output.',
+    inputSchema: ExecuteCommandInputSchema,
+    needsApproval: true, // HIGH RISK - requires approval
+});
+
+// Server implementation exists
+export function createExecuteCommandTool(getTools: () => AgentTerminalTools) {
+    return executeCommandDef.server(async (args) => { ... });
+}
+
+// Client implementation exists
+export function createExecuteCommandClientTool(getTools: () => AgentTerminalTools) {
+    return executeCommandDef.client(async (input) => { ... });
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/agent/facades/terminal-tools-impl.ts">
+      <content><![CDATA[
+// TerminalToolsFacade - Wraps WebContainer for agent command execution
+export class TerminalToolsFacade implements AgentTerminalTools {
+    async executeCommand(command: string, args: string[] = [], options: CommandOptions = {}): Promise<CommandResult> {
+        // Uses WebContainer spawn()
+        // Emits process:started, process:output, process:exited events
+        // Handles timeout and captures stdout
+    }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/components/chat/ApprovalOverlay.tsx">
+      <content><![CDATA[
+// ApprovalOverlay component for tool approval UI
+// Needs enhancement for terminal command display
+// Should show: command, args, cwd, risk level
+// Uses addToolApprovalResponse({ id, approved })
+      ]]></content>
+      <note>May need enhancement for terminal-specific display</note>
+    </file>
+    
+    <file path="src/lib/agent/hooks/use-agent-chat-with-tools.ts">
+      <content><![CDATA[
+// Hook combining chat with tool execution
+// Uses TanStack AI useChat with tools array
+// Needs verification that approval flow is wired correctly
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from TanStack AI docs -->
+  <research_notes>
+    <finding source="tanstack.com/ai" query="tool-architecture">
+      Tool approval flow uses addToolApprovalResponse({ id: part.approval.id, approved: true/false }).
+      Tool states: approval-requested, output, output-error.
+    </finding>
+    <finding source="tanstack.com/ai" query="agentic-cycle">
+      Agentic cycle enables multi-step reasoning. Agent calls tools, receives results, continues reasoning.
+      Multi-step example: searchFlights → bookFlight → final response.
+    </finding>
+    <finding source="execute-command-tool.ts" query="existing implementation">
+      Tool marked with needsApproval: true and riskLevel: 'high'.
+      Default timeout: 120000ms (2 minutes).
+      Emits agent:command:executed event on success.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Client Tool Execution" source="architecture.md">
+      File/Terminal tools use .client() pattern for browser-side execution.
+      Facade abstraction wraps WebContainer operations.
+    </pattern>
+    <pattern name="Event-Driven UI Updates" source="terminal-tools-impl.ts">
+      process:started { pid, command, args }
+      process:output { pid, data, type }
+      process:exited { pid, exitCode }
+    </pattern>
+    <pattern name="Approval Flow" source="TanStack AI docs">
+      1. Tool calls with needsApproval: true trigger approval-requested state
+      2. UI renders approval dialog
+      3. User approves/denies via addToolApprovalResponse()
+      4. On approve: tool executes; on deny: tool returns denial result
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">MVP-3 (file operations) must complete first - terminal depends on file tools being validated</note>
+    <note priority="high">Working directory (cwd) must default to project path from WorkspaceContext</note>
+    <note priority="high">Real-time output streaming to terminal panel via EventBus subscription</note>
+    <note priority="medium">ApprovalOverlay needs enhancement to show command syntax highlighting</note>
+    <note priority="medium">Terminal panel integration may already exist from Epic 13</note>
+    <note priority="low">Epic 29 (agentic loop) is post-MVP - MVP-4 uses maxIterations(3) as safety measure</note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@tanstack/ai" version="latest" />
+    <dependency name="@tanstack/ai-react" version="latest" />
+    <dependency name="@webcontainer/api" version="latest" />
+  </dependencies>
+  
+  <!-- Existing tests to verify compatibility -->
+  <existing_tests>
+    <test path="src/lib/agent/tools/__tests__/execute-command-tool.test.ts" cases="6">
+      - executeCommandDef has correct tool name
+      - requires approval (Story 25-5)
+      - execute command successfully
+      - return error for non-zero exit code
+      - pass timeout to facade
+      - handle execution errors
+    </test>
+    <test path="src/lib/agent/facades/__tests__/terminal-tools.test.ts">
+      Facade tests for TerminalToolsFacade
+    </test>
+  </existing_tests>
+</context>

@@ -1,0 +1,92 @@
+{
+    "mcpServers": {
+        "context7": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp@latest"
+            ]
+        },
+        "playwright": {
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest"
+            ],
+            "disabled": true
+        },
+        "memory": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory"
+            ],
+            "env": {
+                "MEMORY_FILE_PATH": ""
+            },
+            "disabled": true
+        },
+        "deepwiki": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://mcp.deepwiki.com/sse"
+            ],
+            "env": {}
+        },
+        "sequentialthinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ],
+            "disabled": false
+        },
+        "tavily": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "tavily-mcp@0.2.3"
+            ],
+            "env": {
+                "TAVILY_API_KEY": "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"
+            }
+        },
+        "exa": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "exa-mcp-server"
+            ],
+            "env": {
+                "EXA_API_KEY": "0f87e4ce-23ed-4bb1-85b2-2bf04ae7caba"
+            }
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "/Users/apple/Documents/"
+            ]
+        },
+        "repomix": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "repomix",
+                "--mcp"
+            ]
+        },
+        "brave-search": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-brave-search"
+            ],
+            "env": {
+                "BRAVE_API_KEY": "BSAoe1zO-z-9yeDLJ__8L4n11Y8EL7V"
+            }
+        }
+    }
+}

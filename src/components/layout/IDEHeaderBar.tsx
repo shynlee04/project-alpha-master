@@ -16,9 +16,12 @@
  * ```
  */
 
-import { MessageSquare, FolderOpen, Loader2, RefreshCw } from 'lucide-react';
+import { FolderOpen, Loader2, MoreHorizontal, Home } from 'lucide-react';
+import { ChatIcon, RefreshIcon } from '@/components/ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';
+import { QuickActionsMenu } from '../ide/QuickActionsMenu';
+import { useNavigate } from '@tanstack/react-router';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -55,6 +58,7 @@ export function IDEHeaderBar({
     onToggleChat,
 }: IDEHeaderBarProps): React.JSX.Element {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const {
         directoryHandle,
         permissionState,
@@ -71,14 +75,31 @@ export function IDEHeaderBar({
     const isSyncing = syncStatus === 'syncing';
     const isDisabled = isOpeningFolder || isSyncing;
 
+    const handleGoHome = () => {
+        navigate({ to: '/' });
+    };
+
     return (
-        <header className="h-10 bg-slate-900 border-b border-slate-800 flex items-center px-4 justify-between shrink-0">
+        <header className="h-10 bg-card border-b border-border flex items-center px-4 justify-between shrink-0">
             <div className="flex items-center gap-3">
-                <span className="text-cyan-400 font-bold tracking-tight">
-                    via-gent
-                </span>
-                <span className="text-slate-600">/</span>
-                <span className="font-medium text-slate-300">{projectId}</span>
+                {/* Home button with logo */}
+                <button
+                    onClick={handleGoHome}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                    title={t('sidebar.home')}
+                    aria-label={t('sidebar.home')}
+                >
+                    <img
+                        src="/via-gent-logo.svg"
+                        alt="Via-gent"
+                        className="w-32 h-8"
+                    />
+                    <span className="text-primary font-bold tracking-tight">
+                        via-gent
+                    </span>
+                </button>
+                <span className="text-muted-foreground">/</span>
+                <span className="font-medium text-foreground">{projectId}</span>
             </div>
             <div className="flex items-center gap-4">
                 {/* Conditional button rendering based on folder state */}
@@ -102,7 +123,7 @@ export function IDEHeaderBar({
 
                 {/* Permission state indicator */}
                 {permissionState !== 'unknown' && permissionState !== 'granted' && (
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-muted-foreground">
                         FS: {permissionState}
                     </span>
                 )}
@@ -111,7 +132,7 @@ export function IDEHeaderBar({
                 {permissionState === 'prompt' && directoryHandle && (
                     <button
                         onClick={openFolder}
-                        className="text-xs text-cyan-400 hover:text-cyan-200 underline"
+                        className="text-xs text-primary hover:text-primary/80 underline"
                         title={t('ide.reAuthorize')}
                     >
                         {t('ide.reAuthorize')}
@@ -120,14 +141,14 @@ export function IDEHeaderBar({
 
                 {/* Permission denied warning */}
                 {permissionState === 'denied' && (
-                    <span className="text-xs text-amber-400">
+                    <span className="text-xs text-destructive">
                         {t('ide.fsDenied')}
                     </span>
                 )}
 
                 {/* Sync error indicator */}
                 {syncError && (
-                    <span className="text-xs text-amber-400" title={syncError}>
+                    <span className="text-xs text-destructive" title={syncError}>
                         ⚠️ {t('ide.syncError')}
                     </span>
                 )}
@@ -135,15 +156,18 @@ export function IDEHeaderBar({
                 {/* Chat toggle */}
                 <button
                     onClick={onToggleChat}
-                    className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
                     title={t('ide.toggleChatShortcut')}
                 >
-                    <MessageSquare className="w-4 h-4" />
+                    <ChatIcon className="w-4 h-4" aria-label={isChatVisible ? t('ide.hideChat') : t('ide.showChat')} />
                     {isChatVisible ? t('ide.hideChat') : t('ide.showChat')}
                 </button>
 
+                {/* Quick actions menu */}
+                <QuickActionsMenu />
+
                 {/* Version indicator */}
-                <span className="text-xs text-slate-500">alpha-v0.1</span>
+                <span className="text-xs text-muted-foreground">alpha-v0.1</span>
             </div>
         </header>
     );
@@ -180,8 +204,8 @@ function FolderOpenedControls({
         <>
             <label
                 className={`flex items-center gap-2 text-xs transition-colors ${isDisabled
-                        ? 'text-slate-500 cursor-not-allowed'
-                        : 'text-slate-400 hover:text-slate-200 cursor-pointer'
+                    ? 'text-muted-foreground/50 cursor-not-allowed'
+                    : 'text-muted-foreground hover:text-foreground cursor-pointer'
                     }`}
                 title={
                     autoSync
@@ -199,13 +223,13 @@ function FolderOpenedControls({
                 <span
                     className={
                         `relative inline-flex h-4 w-7 items-center rounded-full transition-colors ` +
-                        (autoSync ? 'bg-cyan-500/40' : 'bg-slate-700')
+                        (autoSync ? 'bg-primary/40' : 'bg-muted')
                     }
                     aria-hidden="true"
                 >
                     <span
                         className={
-                            `inline-block h-3 w-3 transform rounded-full bg-slate-200 transition-transform ` +
+                            `inline-block h-3 w-3 transform rounded-full bg-foreground transition-transform ` +
                             (autoSync ? 'translate-x-3.5' : 'translate-x-0.5')
                         }
                     />
@@ -214,14 +238,14 @@ function FolderOpenedControls({
             </label>
 
             {!autoSync && (
-                <span className="text-xs text-amber-400">{t('ide.autoSyncOff')}</span>
+                <span className="text-xs text-destructive">{t('ide.autoSyncOff')}</span>
             )}
 
             <button
                 type="button"
                 onClick={onSyncNow}
                 disabled={isDisabled}
-                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
                     }`}
                 title={t('ide.syncNow')}
             >
@@ -232,7 +256,7 @@ function FolderOpenedControls({
                     </>
                 ) : (
                     <>
-                        <RefreshCw className="w-4 h-4" />
+                        <RefreshIcon className="w-4 h-4" aria-label={t('ide.syncNow')} />
                         {t('ide.syncNow')}
                     </>
                 )}
@@ -241,7 +265,7 @@ function FolderOpenedControls({
                 type="button"
                 onClick={onSwitchFolder}
                 disabled={isDisabled}
-                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
                     }`}
                 title={t('ide.switchFolder')}
             >
@@ -275,7 +299,7 @@ function OpenFolderButton({
                 }`}
             title={t('ide.openFolder')}
         >
-            <FolderOpen className="w-4 h-4" />
+            <FolderOpen className="w-4 h-4" aria-label={t('ide.openFolder')} />
             {t('ide.openFolder')}
         </button>
     );

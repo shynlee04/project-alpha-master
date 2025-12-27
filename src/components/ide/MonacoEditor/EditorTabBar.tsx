@@ -37,14 +37,14 @@ export function EditorTabBar({
 }: EditorTabBarProps) {
     if (openFiles.length === 0) {
         return (
-            <div className="h-9 bg-slate-900 border-b border-slate-800 flex items-center px-2">
-                <span className="text-xs text-slate-500">No files open</span>
+            <div className="h-9 bg-card border-b border-border flex items-center px-2">
+                <span className="text-xs text-muted-foreground">No files open</span>
             </div>
         );
     }
 
     return (
-        <div className="h-9 bg-slate-900 border-b border-slate-800 flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700">
+        <div className="h-9 bg-card border-b border-border flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-muted">
             {openFiles.map((file) => {
                 const isActive = file.path === activeFilePath;
                 const fileName = getFileName(file.path);
@@ -54,11 +54,11 @@ export function EditorTabBar({
                         key={file.path}
                         className={`
               group flex items-center gap-2 h-full px-3 cursor-pointer
-              border-r border-slate-800 min-w-0 max-w-[180px]
+              border-r border-border min-w-0 max-w-[180px]
               transition-colors
               ${isActive
-                                ? 'bg-slate-800 text-slate-200 border-t-2 border-t-cyan-500'
-                                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
+                                ? 'bg-accent text-foreground border-t-2 border-t-primary'
+                                : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
                             }
             `}
                         onClick={() => onTabClick(file.path)}
@@ -66,7 +66,7 @@ export function EditorTabBar({
                     >
                         {/* Dirty indicator */}
                         {file.isDirty && (
-                            <span className="w-2 h-2 rounded-full bg-cyan-400 flex-shrink-0" />
+                            <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
                         )}
 
                         {/* File name */}
@@ -75,7 +75,7 @@ export function EditorTabBar({
                         {/* Close button */}
                         <button
                             className={`
-                p-0.5 rounded hover:bg-slate-700 flex-shrink-0
+                p-0.5 rounded hover:bg-muted flex-shrink-0
                 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
                 transition-opacity
               `}

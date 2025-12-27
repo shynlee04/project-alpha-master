@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="22-5-create-deployment-docs" created="2025-12-21T13:30:00+07:00" platform="Platform A">
+  <!-- Current deployment configuration -->
+  <files>
+    <file path="netlify.toml" purpose="Netlify build and headers configuration">
+      <content><![CDATA[
+[build]
+  command = "pnpm run build"
+  publish = "dist/client"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Resource-Policy = "cross-origin"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+      ]]></content>
+    </file>
+    
+    <file path=".github/workflows/deploy.yml" purpose="GitHub Actions deployment workflow">
+      <summary>
+        - Triggers on push/PR to main
+        - Uses pnpm 10 + Node 20
+        - Builds and deploys to Netlify via nwtgck/actions-netlify@v3.0
+        - Requires NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID secrets
+      </summary>
+    </file>
+    
+    <file path=".github/workflows/ci.yml" purpose="CI pipeline for testing">
+      <summary>
+        - Triggers on push to main/dev, PR to main
+        - TypeScript check, tests, build
+        - Uploads build artifacts
+      </summary>
+    </file>
+    
+    <file path=".env.example" purpose="Environment variable documentation">
+      <summary>
+        Contains Sentry configuration variables:
+        - VITE_SENTRY_DSN
+        - VITE_SENTRY_ENVIRONMENT
+        - VITE_SENTRY_SAMPLE_RATE
+        - VITE_SENTRY_FORCE_ENABLED
+      </summary>
+    </file>
+  </files>
+  
+  <!-- Research notes -->
+  <research_notes>
+    <finding source="local-files" query="deployment config">
+      TanStack Start uses @netlify/vite-plugin-tanstack-start for SSR deployment.
+      Static files go to dist/client, SSR functions auto-configured by plugin.
+    </finding>
+    
+    <finding source="local-files" query="security headers">
+      WebContainer requires COOP, COEP, CORP headers - configured in netlify.toml
+    </finding>
+  </research_notes>
+  
+  <!-- Documentation structure to create -->
+  <documentation_structure>
+    <file path="docs/deployment/README.md">
+      Main deployment guide - overview, architecture, quick start
+    </file>
+    <file path="docs/deployment/netlify-setup.md">
+      Netlify-specific configuration and setup steps
+    </file>
+    <file path="docs/deployment/environment-variables.md">
+      Complete environment variable reference
+    </file>
+    <file path="docs/deployment/troubleshooting.md">
+      Common issues and solutions
+    </file>
+  </documentation_structure>
+  
+  <!-- Technical notes -->
+  <technical_notes>
+    <note priority="high">
+      This is a docs-only story - no code changes, only create markdown files.
+    </note>
+    <note priority="medium">
+      Document secret names but NEVER document secret values.
+    </note>
+    <note priority="medium">
+      Target audience: developers who are new to the project.
+    </note>
+  </technical_notes>
+</context>

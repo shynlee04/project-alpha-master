@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Unified IDE Workspace - Agent Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3B82F6", // Blueish primary color from the screenshots
+              "background-light": "#F3F4F6",
+              "background-dark": "#0F1117", // Very dark background like the IDE screenshots
+              "surface-dark": "#1E293B", // Slightly lighter for panels
+              "surface-dark-lighter": "#334155", // Even lighter for borders/hovers
+              "sidebar-dark": "#0B0D12", // Sidebar background
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+              mono: ["Fira Code", "monospace"],
+            },
+            borderRadius: {
+              DEFAULT: "0.375rem",
+            },
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0D12; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-300 h-screen flex flex-col overflow-hidden dark">
+<header class="h-12 bg-white dark:bg-sidebar-dark border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 shrink-0 z-20">
+<div class="flex items-center gap-4">
+<button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+<span class="material-icons-round">menu</span>
+</button>
+<div class="flex items-center gap-2 font-semibold text-gray-800 dark:text-white">
+<span class="material-icons-round text-primary text-xl">hub</span>
+<span>Via-gent</span>
+</div>
+<div class="h-4 w-px bg-gray-300 dark:bg-gray-700 mx-2"></div>
+<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+<span class="text-primary">via-gent</span>
+<span>/</span>
+<span>projects</span>
+<span>/</span>
+<span class="text-gray-800 dark:text-gray-200 font-medium">fd99f5a6-4c43...</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1 rounded bg-gray-100 dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span>Auto-sync On</span>
+</div>
+<button class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-surface-dark-lighter text-gray-500 dark:text-gray-400">
+<span class="material-icons-round text-sm">wb_sunny</span>
+</button>
+<button class="flex items-center gap-1 bg-surface-dark hover:bg-surface-dark-lighter border border-gray-700 text-xs px-2 py-1 rounded text-white">
+<span class="material-icons-round text-sm">translate</span>
+                EN-US
+            </button>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<aside class="w-64 bg-gray-50 dark:bg-sidebar-dark border-r border-gray-200 dark:border-gray-800 flex flex-col shrink-0">
+<div class="flex flex-1 flex-row">
+<div class="w-12 border-r border-gray-200 dark:border-gray-800 flex flex-col items-center py-4 gap-4 bg-white dark:bg-[#0B0D12]">
+<button class="p-2 text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-white transition-colors">
+<span class="material-icons-round text-xl">folder_open</span>
+</button>
+<button class="p-2 text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-white transition-colors">
+<span class="material-icons-round text-xl">search</span>
+</button>
+<button class="p-2 text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-white transition-colors">
+<span class="material-icons-round text-xl">call_split</span>
+</button>
+<button class="p-2 text-primary bg-primary/10 rounded-md transition-colors relative group">
+<span class="material-icons-round text-xl">smart_toy</span>
+<div class="absolute w-1.5 h-1.5 bg-red-500 rounded-full top-1.5 right-1.5 border border-sidebar-dark"></div>
+</button>
+<button class="p-2 text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-white transition-colors">
+<span class="material-icons-round text-xl">extension</span>
+</button>
+</div>
+<div class="flex-1 flex flex-col bg-gray-50 dark:bg-sidebar-dark overflow-hidden">
+<div class="h-10 flex items-center px-4 text-xs font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase bg-gray-100 dark:bg-sidebar-dark">
+                        Active Agents
+                    </div>
+<div class="flex-1 overflow-y-auto p-2 space-y-2">
+<div class="group flex flex-col p-3 rounded bg-white dark:bg-[#151921] border border-gray-200 dark:border-gray-800 hover:border-primary/50 cursor-pointer shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded flex items-center justify-center bg-blue-500/20 text-blue-400">
+<span class="material-icons-round text-sm">code</span>
+</div>
+<span class="text-sm font-medium text-gray-800 dark:text-gray-200">DevArchitect</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+</div>
+<div class="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">Refactoring authentication logic...</div>
+<div class="w-full bg-gray-200 dark:bg-gray-700 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div class="group flex flex-col p-3 rounded bg-white dark:bg-[#151921] border border-gray-200 dark:border-gray-800 hover:border-primary/50 cursor-pointer shadow-sm opacity-75">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded flex items-center justify-center bg-purple-500/20 text-purple-400">
+<span class="material-icons-round text-sm">bug_report</span>
+</div>
+<span class="text-sm font-medium text-gray-800 dark:text-gray-200">BugHunter_01</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+</div>
+<div class="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">Waiting for user input</div>
+<div class="w-full bg-gray-200 dark:bg-gray-700 h-1 rounded-full overflow-hidden">
+<div class="bg-yellow-500 h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="group flex flex-col p-3 rounded bg-white dark:bg-[#151921] border border-gray-200 dark:border-gray-800 hover:border-primary/50 cursor-pointer shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded flex items-center justify-center bg-emerald-500/20 text-emerald-400">
+<span class="material-icons-round text-sm">article</span>
+</div>
+<span class="text-sm font-medium text-gray-800 dark:text-gray-200">DocWriter</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-gray-500"></span>
+</div>
+<div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Idle</div>
+</div>
+<button class="w-full mt-2 py-2 border border-dashed border-gray-300 dark:border-gray-700 rounded text-xs text-gray-500 dark:text-gray-400 hover:text-primary hover:border-primary flex items-center justify-center gap-1 transition-colors">
+<span class="material-icons-round text-sm">add</span>
+                            Deploy New Agent
+                        </button>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col bg-white dark:bg-background-dark overflow-hidden relative">
+<div class="h-14 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-[#0B0D12]/50 backdrop-blur-sm">
+<div class="flex items-center gap-2">
+<h1 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Agent Command Center</h1>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20">3 Active</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-surface-dark border border-gray-300 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-surface-dark-lighter transition-colors">
+<span class="material-icons-round text-sm">settings</span>
+                        Configure All
+                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-white bg-primary rounded shadow hover:bg-blue-600 transition-colors">
+<span class="material-icons-round text-sm">add</span>
+                        New Agent
+                    </button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+<div class="p-4 rounded-lg bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800">
+<div class="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase mb-1">Total Tasks</div>
+<div class="text-2xl font-bold text-gray-900 dark:text-white">124</div>
+<div class="text-xs text-green-500 mt-1 flex items-center gap-1">
+<span class="material-icons-round text-xs">arrow_upward</span> 12% vs last hour
+                        </div>
+</div>
+<div class="p-4 rounded-lg bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800">
+<div class="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase mb-1">Success Rate</div>
+<div class="text-2xl font-bold text-gray-900 dark:text-white">98.5%</div>
+<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Last 24 hours</div>
+</div>
+<div class="p-4 rounded-lg bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800">
+<div class="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase mb-1">Token Usage</div>
+<div class="text-2xl font-bold text-gray-900 dark:text-white">1.2M</div>
+<div class="text-xs text-yellow-500 mt-1 flex items-center gap-1">
+<span class="material-icons-round text-xs">warning</span> High usage
+                        </div>
+</div>
+<div class="p-4 rounded-lg bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800">
+<div class="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase mb-1">Active Cost</div>
+<div class="text-2xl font-bold text-gray-900 dark:text-white">$4.20</div>
+<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Est. hourly: $0.85</div>
+</div>
+</div>
+<h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Active Deployments</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-surface-dark rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+<div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-md bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-icons-round">code</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">DevArchitect</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-mono">ID: agt_dev_092a</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-700 transition">
+<span class="material-icons-round text-lg">pause</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-700 transition">
+<span class="material-icons-round text-lg">settings</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-medium text-blue-400">Status: Running</span>
+<span class="text-xs text-gray-400">Step 3/4</span>
+</div>
+<div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden mb-4">
+<div class="bg-blue-500 h-full rounded-full animate-pulse" style="width: 75%"></div>
+</div>
+<div class="bg-gray-50 dark:bg-[#0B0D12] rounded p-3 font-mono text-xs text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800 h-24 overflow-y-auto">
+<div class="flex gap-2">
+<span class="text-gray-500">10:42:01</span>
+<span>Parsing `auth.ts` structure...</span>
+</div>
+<div class="flex gap-2">
+<span class="text-gray-500">10:42:05</span>
+<span>Identified redundant middleware logic.</span>
+</div>
+<div class="flex gap-2">
+<span class="text-gray-500">10:42:12</span>
+<span class="text-blue-400">&gt; Refactoring `validateSession` function...</span>
+</div>
+</div>
+</div>
+<div class="px-4 py-3 bg-gray-50 dark:bg-surface-dark-lighter/30 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
+<div class="flex -space-x-2">
+<img alt="User" class="w-6 h-6 rounded-full border-2 border-white dark:border-surface-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXbv7aNCId7vBkRepLnlL3eu2sCCEf2lnsu-8IHszCiaO2cZa_F5EW2u2Z-dZIAMfiebhDGY2mdZnghXIeXJ6fl0gxm8fbtJtsrMs6Pl9evgkzWUDEVuQCDm7sJfaEzhqPEJAXk9yNzKonQYWZb47RE_HlPPqtRJX7o_i4fZ05N6GR9vMmH-gI-7L8xSkLGDZcAPbPG_XC3kCy1QBQK-1s8aZSbGY5fI5foKhta5Nso7AwLVl4UgLpE9VPBi1jRF1kpCVbVoCOf8-h"/>
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-surface-dark bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-[10px] text-gray-600 dark:text-gray-300">+2</div>
+</div>
+<button class="text-xs text-primary hover:underline">View Full Logs</button>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+<div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-md bg-purple-500/10 flex items-center justify-center text-purple-500">
+<span class="material-icons-round">bug_report</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">BugHunter_01</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-mono">ID: agt_bug_881x</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-700 transition">
+<span class="material-icons-round text-lg">play_arrow</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-700 transition">
+<span class="material-icons-round text-lg">settings</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-medium text-yellow-500">Status: Paused (Awaiting Input)</span>
+<span class="text-xs text-gray-400">Step 1/5</span>
+</div>
+<div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden mb-4">
+<div class="bg-yellow-500 h-full rounded-full" style="width: 20%"></div>
+</div>
+<div class="bg-gray-50 dark:bg-[#0B0D12] rounded p-3 font-mono text-xs text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800 h-24 overflow-y-auto">
+<div class="flex gap-2">
+<span class="text-gray-500">10:30:00</span>
+<span>Scanning `/src/components` for prop drilling...</span>
+</div>
+<div class="flex gap-2">
+<span class="text-gray-500">10:30:45</span>
+<span class="text-red-400">! Ambiguous prop usage in `Header.tsx`</span>
+</div>
+<div class="flex gap-2 mt-1 p-1 bg-yellow-500/10 border border-yellow-500/20 rounded">
+<span class="text-yellow-500 font-bold">?</span>
+<span class="text-yellow-200">Should I refactor to use Context API? (Y/N)</span>
+</div>
+</div>
+</div>
+<div class="px-4 py-3 bg-gray-50 dark:bg-surface-dark-lighter/30 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
+<span class="text-xs text-gray-500">Assigned to: Main Thread</span>
+<div class="flex gap-2">
+<button class="px-2 py-1 text-xs bg-green-600 hover:bg-green-500 text-white rounded">Approve</button>
+<button class="px-2 py-1 text-xs bg-red-600 hover:bg-red-500 text-white rounded">Deny</button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm opacity-60 hover:opacity-100 transition-opacity">
+<div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+<span class="material-icons-round">article</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">DocWriter</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-mono">ID: agt_doc_112z</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-700 transition">
+<span class="material-icons-round text-lg">play_arrow</span>
+</button>
+<button class="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-700 transition">
+<span class="material-icons-round text-lg">settings</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-medium text-gray-400">Status: Idle</span>
+<span class="text-xs text-gray-400">Waiting for trigger</span>
+</div>
+<div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden mb-4">
+<div class="bg-gray-600 h-full rounded-full" style="width: 0%"></div>
+</div>
+<div class="bg-gray-50 dark:bg-[#0B0D12] rounded p-3 flex items-center justify-center font-mono text-xs text-gray-500 border border-gray-200 dark:border-gray-800 h-24">
+                                No active tasks.
+                            </div>
+</div>
+<div class="px-4 py-3 bg-gray-50 dark:bg-surface-dark-lighter/30 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
+<span class="text-xs text-gray-500">Last run: 2 hours ago</span>
+<button class="text-xs text-primary hover:underline">View History</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-80 bg-white dark:bg-surface-dark border-l border-gray-200 dark:border-gray-800 flex flex-col shrink-0 z-10">
+<div class="h-10 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800">
+<span class="text-xs font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase">Agent Chat</span>
+<div class="flex gap-2">
+<button class="text-gray-400 hover:text-white"><span class="material-icons-round text-base">delete_outline</span></button>
+<button class="text-gray-400 hover:text-white"><span class="material-icons-round text-base">close</span></button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center text-primary shrink-0">
+<span class="material-icons-round text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="text-xs text-gray-400 font-mono">DevArchitect • 10:41 AM</div>
+<div class="p-3 bg-gray-100 dark:bg-[#0B0D12] rounded-r-lg rounded-bl-lg text-sm text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-800">
+                            I've detected a deprecated library usage in `package.json`. Should I upgrade `react-router-dom` to v6 while I'm refactoring?
+                        </div>
+</div>
+</div>
+<div class="flex gap-3 flex-row-reverse">
+<div class="w-8 h-8 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-300 shrink-0">
+<span class="material-icons-round text-sm">person</span>
+</div>
+<div class="flex flex-col gap-1 items-end">
+<div class="text-xs text-gray-400 font-mono">You • 10:42 AM</div>
+<div class="p-3 bg-primary text-white rounded-l-lg rounded-br-lg text-sm">
+                            Yes, proceed with the upgrade but make sure to run the test suite first.
+                        </div>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center text-primary shrink-0">
+<span class="material-icons-round text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="text-xs text-gray-400 font-mono">DevArchitect • 10:42 AM</div>
+<div class="p-3 bg-gray-100 dark:bg-[#0B0D12] rounded-r-lg rounded-bl-lg text-sm text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-800">
+<p class="mb-2">Understood. Adding to task queue:</p>
+<ul class="list-disc pl-4 space-y-1 text-xs font-mono text-gray-500 dark:text-gray-400">
+<li>Run pre-upgrade tests</li>
+<li>Update package.json</li>
+<li>Fix breaking changes</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-surface-dark">
+<div class="relative">
+<textarea class="w-full bg-white dark:bg-[#0B0D12] border border-gray-200 dark:border-gray-700 rounded-lg pl-3 pr-10 py-2 text-sm text-gray-800 dark:text-white focus:outline-none focus:border-primary resize-none" placeholder="Message DevArchitect..." rows="3"></textarea>
+<button class="absolute right-2 bottom-2 p-1.5 bg-primary hover:bg-blue-600 text-white rounded-md transition-colors">
+<span class="material-icons-round text-sm">send</span>
+</button>
+<div class="absolute right-2 top-2">
+<button class="text-gray-400 hover:text-primary"><span class="material-icons-round text-sm">mic</span></button>
+</div>
+</div>
+<div class="text-[10px] text-center text-gray-400 mt-2">AI can make mistakes. Please review generated code.</div>
+</div>
+</aside>
+</div>
+<footer class="h-6 bg-primary dark:bg-primary text-white flex items-center justify-between px-3 text-xs shrink-0 select-none">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-round text-[14px]">call_merge</span>
+<span>main*</span>
+</div>
+<div class="flex items-center gap-1 hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-round text-[14px]">sync</span>
+<span>0</span>
+</div>
+<div class="flex items-center gap-1 hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-round text-[14px]">error_outline</span>
+<span>0</span>
+<span class="material-icons-round text-[14px] ml-1">warning_amber</span>
+<span>2</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="w-2 h-2 rounded-full bg-green-400"></span>
+<span>Agents Online</span>
+</div>
+<div class="hover:bg-white/10 px-1 rounded cursor-pointer">
+                Ln 42, Col 12
+            </div>
+<div class="hover:bg-white/10 px-1 rounded cursor-pointer">
+                UTF-8
+            </div>
+<div class="hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-round text-[14px]">notifications</span>
+</div>
+</div>
+</footer>
+
+</body></html>

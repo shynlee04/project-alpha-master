@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="MRT-4" created="2025-12-28T01:05:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/ide/FileTree/FileTreeItem.tsx">
+      <analysis>
+        <observation>Line 98: Row height is `h-7` (28px) - below 44px WCAG minimum for touch</observation>
+        <observation>Line 108: Chevron container is `w-4 h-4` (16px) - way too small for touch targets</observation>
+        <observation>Uses inline template string for classes, should migrate to cn() utility</observation>
+        <observation>No touch-manipulation CSS class - may have 300ms touch delay</observation>
+        <observation>Indentation via `pl-3` (12px) - may need adjustment for mobile</observation>
+      </analysis>
+      <key_lines>
+        <line num="97-104" desc="Main row styling - needs mobile conditional">
+          flex items-center gap-1 h-7 cursor-pointer select-none
+        </line>
+        <line num="108" desc="Chevron container - needs larger touch area on mobile">
+          w-4 h-4 flex items-center justify-center shrink-0
+        </line>
+        <line num="227" desc="Child indentation - pl-3 (12px)">
+          pl-3
+        </line>
+      </key_lines>
+    </file>
+    
+    <file path="src/hooks/useMediaQuery.ts">
+      <content><![CDATA[
+export function useDeviceType() {
+    const isMobile = useMediaQuery(BREAKPOINTS.mobile);
+    const isTablet = useMediaQuery(BREAKPOINTS.tablet);
+    const isDesktop = useMediaQuery(BREAKPOINTS.desktop);
+    // ... returns { isMobile, isTablet, isDesktop, ... }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/utils.ts">
+      <content><![CDATA[
+// cn() utility for merging Tailwind classes
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings -->
+  <research_notes>
+    <finding source="WCAG 2.5.5" query="touch target size">
+      Minimum touch target size is 44x44 CSS pixels for AAA compliance.
+      For AA compliance, 24x24 is minimum but 44x44 is recommended.
+    </finding>
+    <finding source="MDN" query="touch-manipulation CSS">
+      `touch-manipulation` enables panning and zooming but disables 
+      double-tap-to-zoom, removing 300ms click delay on mobile.
+    </finding>
+    <finding source="existing codebase" query="useDeviceType usage">
+      MobileIDELayout.tsx uses pattern:
+      import { useMobilePanel } from './MobileTabBar';
+      MobileTabBar.tsx uses: touch-manipulation class
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Responsive Conditional Styling" source="MobileIDELayout.tsx">
+      Use useDeviceType() hook to get isMobile boolean.
+      Apply conditional classes using cn() utility:
+      cn('base-classes', isMobile ? 'mobile-classes' : 'desktop-classes')
+    </pattern>
+    <pattern name="Touch Target Sizing" source="MobileTabBar.tsx">
+      Mobile buttons use: min-w-[44px] min-h-[44px]
+      Touch optimization: touch-manipulation select-none
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      Import useDeviceType from @/hooks/useMediaQuery
+      Import cn from @/lib/utils
+    </note>
+    <note priority="high">
+      Replace inline template string with cn() utility for cleaner conditional styling
+    </note>
+    <note priority="medium">
+      Add touch-manipulation to row for removing 300ms delay
+    </note>
+    <note priority="medium">
+      Consider reducing indent depth multiplier on mobile to prevent text overflow
+    </note>
+  </technical_notes>
+  
+  <!-- Implementation approach -->
+  <implementation>
+    <step num="1">Add imports for useDeviceType and cn</step>
+    <step num="2">Call useDeviceType() at start of component</step>
+    <step num="3">Replace row className template with cn() utility</step>
+    <step num="4">Add conditional height: h-7 (desktop) vs min-h-[44px] (mobile)</step>
+    <step num="5">Increase chevron touch area on mobile: w-4 → w-10 h-10</step>
+    <step num="6">Add touch-manipulation class on mobile</step>
+    <step num="7">Adjust indentation for mobile: pl-3 → pl-2 on mobile</step>
+    <step num="8">Verify TypeScript compilation</step>
+  </implementation>
+</context>

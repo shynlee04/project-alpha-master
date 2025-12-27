@@ -1,0 +1,12 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "via-gent",
+    "compatibility_date": "2025-12-21",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    // Custom server entry that injects COOP/COEP headers for WebContainer support
+    "main": "./src/server.ts",
+    // Enable Workers development
+    "workers_dev": true
+}

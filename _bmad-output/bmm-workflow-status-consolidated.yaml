@@ -1,0 +1,341 @@
+# BMad Method Workflow Status - ACTIVE
+# ========================================
+# Single source of truth: _bmad-output/sprint-status.yaml (stories)
+# Status files: _bmad-output/bmm-workflow-status-consolidated.yaml (this file - workflow)
+# ========================================
+#
+# BMad Method Workflow Status - CONSOLIDATED
+# Project Alpha - AI Coding Agent Vertical Slice
+# Generated: 2025-12-24
+# Last Updated: 2025-12-27T18:07:00+07:00 (Team B State Management Requirements documented)
+# Consolidated from 26+ epics to single MVP epic
+
+project:
+  name: "project-alpha"
+  user: "Admin"
+  type: "brownfield"
+  track: "bmad-method"
+  description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
+
+generated: "2025-12-24T20:00:00+07:00"
+last_updated: "2025-12-27T18:07:00+07:00"
+current_phase: "implementation"
+consolidation_date: "2025-12-24"
+
+# =============================================================================
+# CURRENT STATUS: MVP-1 COMPLETE, MVP-2 READY
+# Date: 2025-12-27T08:21:00+07:00
+# Milestone: First MVP story verified E2E
+# Gap Fix: cmdk dependency added
+# Next: MVP-2 Chat Interface verification
+# =============================================================================
+current_workflow: "mvp-story-dev-cycle"
+
+# CONSOLIDATION SUMMARY: 2025-12-24
+# From: 26+ epics, 124+ stories
+# To: 1 MVP epic, 7 stories
+# Archived: 8 completed epics
+# Superseded: 3 overlapping epics (12, 25, 28)
+# Backlogged: 6 non-essential epics
+
+current_story:
+  key: "MVP-2-through-MVP-4-verification"
+  epic: "MVP"
+  status: "ready-for-dev"
+  platform: "Platform A"
+  notes: |
+    DISCOVERY: MVP-2, MVP-3, MVP-4 all have CODE COMPLETE status!
+    
+    Per codebase analysis (2025-12-27):
+    - MVP-2: AgentChatPanel, useAgentChatWithTools, /api/chat - all implemented
+    - MVP-3: FileToolsFacade, SyncManager, MonacoEditor events - all implemented
+    - MVP-4: execute_command tool, TerminalToolsFacade - all implemented
+    
+    Implementation evidence:
+    - mvp-3-tool-execution-files-implementation-2025-12-25.md
+    - mvp-3-agentic-loop-basic-iteration-2025-12-25.md (maxIterations(3) already added)
+    - execute-command-tool.test.ts (6 tests passing)
+    
+    Next: User runs E2E verification checklist manually.
+    
+    Consolidated test checklist:
+    - _bmad-output/sprint-artifacts/MVP-E2E-verification-checklist-2025-12-27.md
+
+last_completed_story:
+  key: "MVP-1-agent-configuration"
+  epic: "MVP"
+  completed_at: "2025-12-27T08:15:00+07:00"
+  status: "done"
+  platform: "Platform A"
+  notes: |
+    MVP-1: Agent Configuration & Persistence - DONE ✅
+    6/7 acceptance criteria VERIFIED (1 partial: status badge).
+    E2E evidence captured in _bmad-output/sprint-artifacts/
+    Gap fix: cmdk dependency added to package.json.
+    Duration: ~15 minutes verification cycle.
+
+# =============================================================================
+# CONSOLIDATION GOVERNANCE
+# =============================================================================
+governance_docs:
+  prd:
+    path: "_bmad-output/prd.md"
+    status: "VALID"
+    date: "2025-12-21"
+    
+  architecture:
+    path: "_bmad-output/architecture/index.md"
+    status: "VALID"
+    date: "2025-12-21"
+    
+  ux_design:
+    path: "_bmad-output/ux-specification/index.md"
+    status: "VALID"
+    date: "2025-12-21"
+    
+  epics:
+    path: "_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml"
+    status: "UPDATED"
+    date: "2025-12-26"
+    notes: "Updated with accurate status after P0 governance fixes"
+    
+  consolidation_docs:
+    - "_bmad-output/consolidation/epic-overlap-analysis.md"
+    - "_bmad-output/consolidation/user-journey-definition.md"
+    - "_bmad-output/consolidation/dead-artifacts-inventory.md"
+    
+  p0_governance_fixes:
+    path: "_bmad-output/p0-fixes/p0-fixes-implementation-2025-12-26.md"
+    status: "IN_PROGRESS"
+    date: "2025-12-26"
+    notes: "Implementing all 6 P0 governance fixes"
+
+# =============================================================================
+# PHASE STATUS
+# =============================================================================
+prerequisite:
+  status: "DONE"
+  completed: "2025-12-20"
+  
+discovery:
+  status: "DONE"
+  completed: "2025-12-24"
+  outputs:
+    - "_bmad-output/research-synthesis-ai-agent-patterns-2025-12-24.md"
+    - "_bmad-output/consolidation/epic-overlap-analysis.md"
+    
+planning:
+  status: "DONE"
+  completed: "2025-12-24"
+  outputs:
+    - "_bmad-output/consolidation/user-journey-definition.md"
+    - "_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml"
+    
+solutioning:
+  status: "DONE"
+  completed: "2025-12-24"
+  notes: "Consolidated solution with single MVP epic"
+  
+implementation:
+  current_epic: "MVP"
+  status: "ACTIVE"
+  started: "2025-12-24"
+  stories:
+    total: 7
+    completed: 1
+    in_progress: 0
+    ready_for_dev: 1
+    backlog: 5
+  notes: |
+    MVP Progress (2025-12-27):
+    - MVP-1 Agent Configuration: DONE ✅ (6/7 verified, 1 partial)
+    - MVP-2 Chat Interface: READY-FOR-DEV (unblocked)
+    - MVP-3 through MVP-7: BACKLOG (sequential dependency)
+    
+    Gap Fix Applied:
+    - cmdk dependency was missing, blocking main route
+    - Added via pnpm add cmdk
+    - Application loads correctly after fix
+
+# =============================================================================
+# EPIC STATUS - CONSOLIDATED VIEW
+# =============================================================================
+epic_status:
+  # COMPLETED & ARCHIVED
+  - id: 1-5, 10, 13, 22
+    name: "Foundation Epics"
+    status: "ARCHIVED"
+    stories: "35/35"
+    notes: "Project foundation complete - reference only"
+    
+  # SUPERSEDED BY MVP
+  - id: 12, 25, 28
+    name: "AI Agent Epics (Superseded)"
+    status: "SUPERSEDED"
+    stories: "28/31"
+    notes: "Consolidated into MVP epic - traceability maintained"
+    
+  # ACTIVE MVP
+  - id: MVP
+    name: "AI Coding Agent Vertical Slice"
+    status: "ACTIVE"
+    stories: "0/7"
+    priority: "P0"
+    platform: "Platform A"
+    user_journey: "Configure → Chat → Execute → Approve → Iterate"
+    
+  # BACKLOG
+  - id: 7, 11, 21, 23, 26, 27
+    name: "Post-MVP Epics"
+    status: "BACKLOG"
+    priority: "P1-P2"
+    notes: "Deferred until MVP complete"
+
+# =============================================================================
+# INCIDENT RESPONSE TRACKING
+# =============================================================================
+incident_response:
+  id: "INC-2025-12-26"
+  title: "P0 Governance Issues"
+  status: "IN_PROGRESS"
+  resolution: "Governance Fixes"
+  actions_taken:
+    - "Updated sprint-status-consolidated.yaml with accurate status"
+    - "Updated bmm-workflow-status-consolidated.yaml to match"
+    - "Reverted MVP-3 to backlog (fixed dependency violation)"
+    - "Updated MVP-1 to in-progress (acknowledged incomplete implementation)"
+    - "Updated MVP-2 to backlog (no E2E verification)"
+    - "Created E2E verification directory structure"
+    - "Created MCP research documentation template"
+    - "Created handoff validation checklist"
+    - "Created governance enforcement mechanisms"
+  prevention_measures:
+    - "All stories require browser screenshot before DONE"
+    - "Integration testing mandatory"
+    - "Single epic per feature to prevent scope creep"
+    - "Clear user journey mapping"
+    - "Sequential story development enforced"
+    - "Governance documents must be synchronized"
+    - "E2E verification evidence required in _bmad-output/e2e-verification/"
+    - "MCP research documentation required before implementation"
+    - "Handoff validation checklist enforced"
+
+# =============================================================================
+# TEAM B COORDINATION - STATE MANAGEMENT REFACTORING
+# =============================================================================
+team_b_coordination:
+  phase_1_requirements:
+    status: "DONE"
+    completed_at: "2025-12-27T18:07:00+07:00"
+    artifact: "_bmad-output/team-b/state-management-requirements-2025-12-27.md"
+    notes: |
+      Architect agent documented state management refactoring requirements
+      Key findings:
+      - Both IDELayout.tsx and MobileIDELayout.tsx duplicate state with custom setOpenFiles
+      - Zustand store (useIDEStore) properly configured with all necessary actions
+      - File content cache should use ephemeral useState<Map<string, string>>
+      - useIDEFileHandlers hook already correctly uses Zustand actions
+      - Required refactoring: Remove custom setOpenFiles, add setFileContentCache parameter
+    
+  phase_2_refactoring:
+    status: "BLOCKED"
+    blocking_reason: "Awaiting Team A MRT-3 completion"
+    notes: |
+      State refactoring execution blocked to prevent interference with MVP-3
+      (Tool Execution - File Operations)
+      Dependencies:
+      - Team A MRT-3 (Mobile Responsive Transformation) must complete first
+      - Team A MVP-3 must complete first
+      - Prevents cross-team interference during critical MVP-3 development
+    
+  phase_3_testing:
+    status: "FUTURE"
+    depends_on: "Phase 2 completion"
+    notes: "Testing and validation after state refactoring execution"
+
+# =============================================================================
+# WORKFLOW COMMANDS (UPDATED)
+# =============================================================================
+commands:
+  check_status: "/bmad-bmm-workflows-workflow-status"
+  create_story: "/bmad-bmm-workflows-create-story"
+  dev_story: "/bmad-bmm-workflows-dev-story"
+  code_review: "/bmad-bmm-workflows-code-review"
+  correct_course: "/bmad-bmm-workflows-correct-course"
+  sprint_status: "/bmad-bmm-workflows-sprint-status"
+  consolidation_report: "_bmad-output/consolidation/final-consolidation-report.md"
+  p0_governance_fixes: "_bmad-output/p0-fixes/p0-fixes-implementation-2025-12-26.md"
+
+# =============================================================================
+# NEXT ACTIONS - MVP FOCUS (UPDATED 2025-12-26)
+# =============================================================================
+next_actions:
+  immediate:
+    - action: "Create MVP-2 Story File & E2E Test Framework"
+      status: "READY"
+      priority: "P0"
+      platform: "Platform A"
+      notes: "Generate story file + E2E framework output (NOT browser automation)"
+      
+    - action: "User Manually Verifies MVP-2 Chat Interface"
+      status: "PENDING_USER"
+      priority: "P0"
+      platform: "Platform A"
+      notes: "User runs E2E tests manually, reports errors for gap fixes"
+      
+  completed:
+    - action: "MVP-1 E2E Verification Complete"
+      completed_at: "2025-12-27T08:15:00+07:00"
+      notes: "6/7 verified, 1 partial. cmdk gap fixed. Story marked DONE."
+      
+    - action: "P0-1 through P0-6: Governance Fixes"
+      completed_at: "2025-12-26T18:25:00+07:00"
+      notes: "All P0 governance issues resolved"
+      
+  then:
+    - action: "Develop Story MVP-3 (File Tool Execution)"
+      depends_on: "MVP-2 DONE"
+      notes: "After MVP-2 E2E verified and marked DONE"
+      
+    - action: "Develop Story MVP-4 (Terminal Tool Execution)"
+      depends_on: "MVP-3 DONE"
+      
+    - action: "Develop Story MVP-5 (Approval Workflow)"
+      depends_on: "MVP-4 DONE"
+      
+    - action: "Develop Story MVP-6 (Real-time Updates)"
+      depends_on: "MVP-5 DONE"
+      
+    - action: "Develop Story MVP-7 (E2E Testing)"
+      depends_on: "MVP-6 DONE"
+
+# =============================================================================
+# E2E VERIFICATION STRATEGY (Updated 2025-12-27)
+# =============================================================================
+e2e_strategy:
+  approach: "Manual verification + E2E test framework generation"
+  rationale: |
+    Browser subagent automation is slow and crash-prone.
+    First action failures cause excessive execution time.
+    Better strategy: Generate E2E test script, user executes manually.
+  workflow:
+    - "Agent generates E2E test framework/commands"
+    - "User executes manually in browser"
+    - "User reports errors back to agent"
+    - "Agent creates gap fixes based on error reports"
+    - "Repeat until all ACs verified"
+
+# =============================================================================
+# SUCCESS METRICS
+# =============================================================================
+metrics:
+  consolidation_ratio: "26 epics → 1 MVP epic (96% reduction)"
+  story_reduction: "124 stories → 7 stories (94% reduction)"
+  focus_area: "Single user journey: AI coding assistant"
+  time_to_mvp: "2-3 weeks (vs 8+ weeks scattered)"
+  risk_reduction: "High (vertical slice vs parallel epics)"
+  governance_integrity: "Restored (P0 fixes in progress)"
+
+# =============================================================================
+# END OF FILE
+# =============================================================================

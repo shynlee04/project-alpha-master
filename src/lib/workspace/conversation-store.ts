@@ -1,3 +1,12 @@
+/**
+ * Conversation Store
+ * 
+ * @module lib/workspace/conversation-store
+ * @governance EPIC-27-1c
+ * 
+ * Story 27-1c: Migrated to use Dexie.js
+ */
+
 import { getPersistenceDB, type ConversationRecord } from '../persistence'
 
 export type ConversationMessageRole = 'user' | 'assistant' | 'system'
@@ -37,7 +46,7 @@ export async function getConversation(projectId: string): Promise<ConversationSt
   const db = await getPersistenceDB()
   if (!db) return null
 
-  const record = await db.get('conversations', projectId)
+  const record = await db.get<ConversationRecord>('conversations', projectId)
   if (!record) return null
 
   return toConversationState(record)
@@ -66,27 +75,24 @@ export async function appendConversationMessage(
   const db = await getPersistenceDB()
   if (!db) return false
 
-  const tx = db.transaction('conversations', 'readwrite')
-  const store = tx.store
-
-  const existing = await store.get(projectId)
+  // Get existing conversation
+  const existing = await db.get<ConversationRecord>('conversations', projectId)
 
   const next: ConversationRecord = existing
     ? {
-        ...existing,
-        messages: [...((existing.messages ?? []) as ConversationMessage[]), message],
-        updatedAt: new Date(),
-      }
+      ...existing,
+      messages: [...((existing.messages ?? []) as ConversationMessage[]), message],
+      updatedAt: new Date(),
+    }
     : {
-        id: projectId,
-        projectId,
-        messages: [message],
-        toolResults: [],
-        updatedAt: new Date(),
-      }
+      id: projectId,
+      projectId,
+      messages: [message],
+      toolResults: [],
+      updatedAt: new Date(),
+    }
 
-  await store.put(next)
-  await tx.done
+  await db.put('conversations', next)
   return true
 }
 
@@ -97,27 +103,24 @@ export async function appendToolResult(
   const db = await getPersistenceDB()
   if (!db) return false
 
-  const tx = db.transaction('conversations', 'readwrite')
-  const store = tx.store
-
-  const existing = await store.get(projectId)
+  // Get existing conversation
+  const existing = await db.get<ConversationRecord>('conversations', projectId)
 
   const next: ConversationRecord = existing
     ? {
-        ...existing,
-        toolResults: [...((existing.toolResults ?? []) as ToolResultRecord[]), toolResult],
-        updatedAt: new Date(),
-      }
+      ...existing,
+      toolResults: [...((existing.toolResults ?? []) as ToolResultRecord[]), toolResult],
+      updatedAt: new Date(),
+    }
     : {
-        id: projectId,
-        projectId,
-        messages: [],
-        toolResults: [toolResult],
-        updatedAt: new Date(),
-      }
+      id: projectId,
+      projectId,
+      messages: [],
+      toolResults: [toolResult],
+      updatedAt: new Date(),
+    }
 
-  await store.put(next)
-  await tx.done
+  await db.put('conversations', next)
   return true
 }
 
@@ -133,15 +136,11 @@ export async function listRecentConversations(limit = 20): Promise<ConversationS
   const db = await getPersistenceDB()
   if (!db) return []
 
-  const tx = db.transaction('conversations', 'readonly')
-  const index = tx.store.index('by-updated-at')
+  // Get all and sort by updatedAt (Dexie doesn't support idb-style iteration)
+  const all = await db.getAll<ConversationRecord>('conversations')
 
-  const out: ConversationState[] = []
-  for await (const cursor of index.iterate(null, 'prev')) {
-    out.push(toConversationState(cursor.value))
-    if (out.length >= limit) break
-  }
-
-  await tx.done
-  return out
+  return all
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, limit)
+    .map(toConversationState)
 }

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="27-1c-persistence-migration-dexie" created="2025-12-21T18:30:00+07:00">
+  
+  <!-- Prerequisites: Stories 27-1 and 27-1b complete -->
+  <prerequisites>
+    <story id="27-1" status="done">
+      Created src/lib/state/ with Zustand store and Dexie.js schema.
+      Dependencies: zustand, dexie 4.2.1, dexie-react-hooks
+    </story>
+    <story id="27-1b" status="done">
+      Migrated useIdeStatePersistence, file-sync-status-store, FileTree, FileTreeItem.
+      Removed: @tanstack/react-store
+    </story>
+  </prerequisites>
+  
+  <!-- Files to migrate -->
+  <files>
+    <file path="src/lib/persistence/db.ts" action="REWRITE">
+      <summary>149 lines. Current implementation uses idb library with ViaGentPersistenceDB schema.
+      Will rewrite to export Dexie-based equivalents for backward compatibility.</summary>
+      <current_exports><![CDATA[
+export interface ViaGentPersistenceDB extends DBSchema {
+    projects: { key: string; value: ProjectMetadata; }
+    conversations: { key: string; value: ConversationRecord; }
+    ideState: { key: string; value: IdeStateRecord; }
+}
+export async function getPersistenceDB(): Promise<IDBPDatabase<ViaGentPersistenceDB> | null>
+      ]]></current_exports>
+    </file>
+    
+    <file path="src/lib/workspace/project-store.ts" action="MODIFY">
+      <summary>366 lines. Uses getPersistenceDB() from persistence module.
+      Imports idb directly on line 14 for legacy migration.
+      Must update to use Dexie db.projects table.</summary>
+      <key_imports><![CDATA[
+import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+import { getPersistenceDB, _resetPersistenceDBForTesting, type ViaGentPersistenceDB } from '../persistence';
+      ]]></key_imports>
+    </file>
+    
+    <file path="src/lib/workspace/conversation-store.ts" action="MODIFY">
+      <summary>Uses getPersistenceDB() for conversation CRUD.
+      Must update to use db.conversations from Dexie.</summary>
+    </file>
+    
+    <file path="src/lib/workspace/ide-state-store.ts" action="DEPRECATE">
+      <summary>Current implementation for IDE state persistence.
+      After migration, should delegate to useIDEStore from lib/state.
+      Can be simplified to thin wrapper or deprecated.</summary>
+    </file>
+    
+    <file path="src/lib/state/dexie-db.ts" action="MODIFY">
+      <summary>Current version 1 schema has ideState table only.
+      Need to add: projects, conversations tables in version 2.</summary>
+      <current_schema><![CDATA[
+class ViaGentDatabase extends Dexie {
+  ideState!: Table<IDEStateRecord>
+  // Need to add:
+  // projects!: Table<ProjectMetadata>
+  // conversations!: Table<ConversationRecord>
+}
+      ]]></current_schema>
+    </file>
+  </files>
+  
+  <!-- Research notes from previous stories -->
+  <research_notes>
+    <finding source="story-27-1" query="dexie schema versioning">
+      Pattern: version(N).stores({...}).upgrade(tx => {...})
+      Key: Each version increment adds to cumulative schema
+      Key: upgrade() callback for data migration
+    </finding>
+    
+    <finding source="dexie-docs" query="compatibility with existing IndexedDB">
+      Dexie can open existing IndexedDB databases not created by Dexie.
+      Key: Database name must match
+      Key: Store names must match
+      Key: Use populate() for initial data seeding
+    </finding>
+    
+    <finding source="governance-scan" query="epic dependencies">
+      Epic 24 (Smart Dependency Sync) depends on ProjectStore.
+      Story 24-1 needs to add sync config fields to ProjectMetadata.
+      After 27-1c, Epic 24 should update schema in version(3).
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns -->
+  <architecture_patterns>
+    <pattern name="Database Unification" source="architectural-stabilization-proposal-v1">
+      BEFORE: Two separate IndexedDB implementations
+      - persistence/db.ts (idb library) - via-gent-persistence
+      - state/dexie-db.ts (Dexie.js) - via-gent
+      
+      AFTER: Single Dexie.js database
+      - state/dexie-db.ts exports db instance
+      - persistence/db.ts re-exports for backward compat
+      - All stores use db.table directly
+    </pattern>
+    
+    <pattern name="Migration Strategy" source="epic-27">
+      Step 1: Add missing tables to dexie-db.ts (version 2)
+      Step 2: Update persistence/db.ts to wrap Dexie
+      Step 3: Update stores to import from central source
+      Step 4: Remove idb dependency
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes -->
+  <technical_notes>
+    <note priority="high">
+      CRITICAL: Database name difference!
+      - idb uses: 'via-gent-persistence' 
+      - Dexie uses: 'via-gent'
+      Need Dexie version(2) upgrade to migrate data from old DB.
+    </note>
+    <note priority="high">
+      Project store has legacy migration from 'via-gent-projects'.
+      Keep this logic during transition.
+    </note>
+    <note priority="medium">
+      openDB from idb is only used in project-store.ts line 14 and db.ts line 10.
+      After migration, both can be removed.
+    </note>
+    <note priority="medium">
+      FSA handles (FileSystemDirectoryHandle) are stored in projects table.
+      These must be preserved during migration - they cannot be recreated.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="dexie" version="4.2.1" installed="true" action="KEEP" />
+    <dependency name="dexie-react-hooks" installed="true" action="KEEP" />
+    <dependency name="idb" installed="true" action="REMOVE" />
+  </dependencies>
+  
+</context>

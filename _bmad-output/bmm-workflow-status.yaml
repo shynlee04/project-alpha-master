@@ -1,375 +1,254 @@
-# BMad Method Workflow Status
-# Project Alpha - Brownfield Initialization
-# Generated: 2025-12-20
-
-project:
-  name: "project-alpha"
-  user: "Admin"
-  type: "brownfield"
-  track: "bmad-method"
-  description: "100% client-side, AI-powered IDE with WebContainers, File System Access API, and TanStack Start"
-
-generated: "2025-12-20T02:12:00+07:00"
-last_updated: "2025-12-20T09:02:00+07:00"
-current_phase: "implementation"
-current_workflow: "story-dev-cycle"
+# BMM Workflow Status
+# Last Updated: 2025-12-27T21:18:00+07:00
+# Agent: BMAD Master Orchestrator
+# Session: Investigation Integration + Story Dev Cycle Preparation
 
 # =============================================================================
-# GOVERNANCE DOCUMENT VALIDATION
+# WORKFLOW STATE
 # =============================================================================
-governance_docs:
-  prd:
-    path: "_bmad-output/prd.md"
-    legacy_path: "docs/legacy-unfiltered/prd-via-gent-foundational-architectural-slice-2025-12-10.md"
-    status: "VALID"
-    date: "2025-12-20"
-    notes: "Complete PRD with 14-step validation sequence. Migrated from legacy."
-    
-  architecture:
-    path: "_bmad-output/architecture.md"
-    legacy_path: "docs/legacy-unfiltered/architecture.md"
-    status: "VALID"
-    date: "2025-12-20"
-    notes: "Updated with Terminal Integration (Epic 13). Migrated from legacy."
-    
-  ux_design:
-    path: "_bmad-output/ux-design.md"
-    legacy_path: "docs/legacy-unfiltered/ux-design-specification.md"
-    status: "VALID"
-    date: "2025-12-20"
-    notes: "Complete UX spec. Migrated from legacy."
-    
-  epics:
-    path: "_bmad-output/epics.md"
-    legacy_path: "docs/legacy-unfiltered/epics.md"
-    status: "VALID"
-    date: "2025-12-20"
-    notes: "Epic 13 added per Course Correction v5. Migrated from legacy."
-
-# =============================================================================
-# BROWNFIELD DOCUMENTATION (Phase 0 - Prerequisite)
-# =============================================================================
-prerequisite:
-  document_project:
-    status: "DONE"
-    completed: "2025-12-20"
-    outputs:
-      - "_bmad-output/index.md"
-      - "_bmad-output/project-overview.md"
-      - "_bmad-output/source-tree-analysis.md"
-      - "_bmad-output/component-inventory.md"
-      - "_bmad-output/state-management.md"
-      - "_bmad-output/development-guide.md"
-    
-  generate_project_context:
-    status: "DONE"
-    completed: "2025-12-20"
-    output: "_bmad-output/project-context.md"
-
-# =============================================================================
-# DISCOVERY WORKFLOWS (Phase 0 - Optional)
-# =============================================================================
-discovery:
-  brainstorm:
-    status: "SKIPPED"
-    reason: "Not needed for brownfield with established direction"
-    
-  research:
-    status: "DONE"
-    completed: "2025-12-20"
-    output: "_bmad-output/research-report.md"
-    key_findings:
-      - topic: "WebContainer spawn CWD"
-        finding: "SpawnOptions.cwd supported in v1.2.0+"
-        source: "Context7/Deepwiki"
-      - topic: "TanStack AI tools"
-        finding: "createServerFnTool pattern for unified tools"
-        source: "Exa"
-      - topic: "xterm.js integration"
-        finding: "FitAddon + terminal.onResize for proper sizing"
-        source: "Context7"
-        
-  product_brief:
-    status: "SKIPPED"
-    reason: "PRD already exists"
-
-# =============================================================================
-# PLANNING PHASE (Phase 1)
-# =============================================================================
-planning:
-  prd:
-    status: "DONE"
-    path: "docs/legacy-unfiltered/prd-via-gent-foundational-architectural-slice-2025-12-10.md"
-    completed: "2025-12-10"
-    
-  create_ux_design:
-    status: "DONE"
-    path: "docs/legacy-unfiltered/ux-design-specification.md"
-    completed: "2025-12-11"
-
-# =============================================================================
-# SOLUTIONING PHASE (Phase 2)
-# =============================================================================
-solutioning:
-  create_architecture:
-    status: "DONE"
-    path: "docs/legacy-unfiltered/architecture.md"
-    completed: "2025-12-10"
-    
-  create_epics_and_stories:
-    status: "DONE"
-    path: "docs/legacy-unfiltered/epics.md"
-    completed: "2025-12-20"
-    notes: "Epic 13 added per Sprint Change Proposal v5"
-    
-  implementation_readiness:
-    status: "NOT_STARTED"
-    priority: "OPTIONAL"
-    notes: "Run after Epic 13 added to epics.md"
-
-# =============================================================================
-# IMPLEMENTATION PHASE (Phase 3 - Current)
-# =============================================================================
-implementation:
-  sprint_planning:
-    status: "DONE"
-    path: "_bmad-output/sprint-artifacts/sprint-status.yaml"
-    completed: "2025-12-20"
-    notes: "Generated with 23 epics, 124 stories. Epic 13 (P0) ready; Epic 21 (P2) added for localization."
-    updates:
-      - "Added Epic 21: Client-Side Localization (EN/VI) to epics.md and sprint-status.yaml (P2)"
-      - "Story-dev-cycle can start either Epic 13 stories or Epic 21 stories in parallel"
-    
-  course_corrections:
-    - version: "v1"
-      date: "2025-12-11"
-      notes: "Initial course correction"
-    - version: "v2"
-      date: "2025-12-12"
-      notes: "Bug fixes"
-    - version: "v3"
-      date: "2025-12-13"
-      notes: "Added Epics 10, 11, 12"
-    - version: "v4"
-      date: "2025-12-16"
-      notes: "Terminal CWD fix (superseded)"
-    - version: "v5"
-      date: "2025-12-20"
-      status: "CURRENT"
-      path: "_bmad-output/sprint-change-proposal-v5-2025-12-20.md"
-      description: "Epic 13 - Terminal & Sync Stability"
-      epics_added:
-        - id: 13
-          name: "Terminal & Sync Stability"
-          priority: "P0"
-          stories: 6  # Updated: Story 13-6 added
-          points: 14  # Updated
-
-# =============================================================================
-# EPIC STATUS SUMMARY
-# =============================================================================
-epic_status:
-  - id: 1
-    name: "Project Foundation & IDE Shell"
-    status: "DONE"
-    stories: "5/5"
-    
-  - id: 2
-    name: "WebContainers Integration"
-    status: "DONE"
-    stories: "4/4"
-    
-  - id: 3
-    name: "File System Access Layer"
-    status: "DONE"
-    stories: "8/8"
-    notes: "Includes hotfix stories"
-    
-  - id: 4
-    name: "IDE Components"
-    status: "DONE"
-    stories: "6/6"
-    
-  - id: 5
-    name: "Persistence Layer"
-    status: "DONE"
-    stories: "4/4"
-    
-  - id: 10
-    name: "Event Bus Architecture"
-    status: "DONE"
-    stories: "5/5"
-    
-  - id: 11
-    name: "Code Splitting & Module Refactor"
-    status: "IN_PROGRESS"
-    stories: "4/7"
-    completed: ["11-1", "11-2", "11-3", "11-4"]
-    notes: "PAUSED for Epic 13"
-    
-  - id: 13
-    name: "Terminal & Sync Stability"
-    status: "DONE"
-    stories: "6/6"
-    priority: "P0"
-    notes: "All stories complete. Focus Mode enhancement delivered. Retrospective done."
+workflow:
+  current_workflow: "story-dev-cycle-preparation"
+  current_phase: "research-complete"
+  status: "READY_FOR_TECH_SPECS"
   
-  - id: 21
-    name: "Client-Side Localization (EN/VI)"
-    status: "IN_PROGRESS"
-    stories: "1/7"
-    priority: "P2"
-    notes: "UI localization epic (client-side toggle, i18n bundles, switcher, tests). Story 21-1 in progress."
+  investigation_cycle:
+    status: "COMPLETE"
+    completed_at: "2025-12-28T03:30:00+07:00"
+    artifacts_generated: 5
+    epics_created: 3  # Epic 25, 29, 30
+    domain_research_complete: true
     
-  - id: 22
-    name: "Production Hardening"
+  team_a:
+    id: "MRT"
+    name: "Mobile Responsive Transformation"
     status: "IN_PROGRESS"
-    stories: "1/8"
+    progress: "82%"
+    current_story: "MRT-8"  # Preview Panel Mobile
+    stories_remaining: 2
+  
+  team_b:
+    id: "AI-FOUNDATION"
+    name: "AI Foundation + State Management (from Investigation)"
+    status: "READY_FOR_TECH_SPECS"
+    phase: "Tech-Specs Generation"
+    progress: "0%"
+    priority_story: "AI-25-1"
+    
+  recommended_next_story:
+    id: "AI-25-1"
+    title: "Migrate provider config to Zustand"
     priority: "P0"
-    platform: "A (Antigravity)"
-    notes: "Story 22-1 DONE (Security Headers). Platform A continues 22-2 → 22-8."
-    
-  - id: 23
-    name: "UX/UI Modernization"
-    status: "IN_PROGRESS"
-    stories: "0/8"
-    priority: "P1"
-    platform: "B (Second Agent)"
-    notes: "Platform B can start Story 23-1 (TailwindCSS 4.x). Parallel execution approved."
-    
-  - id: 12
-    name: "AI Tool Interface Layer"
-    status: "BACKLOG"
-    priority: "P1"
-    
-  - id: 6
-    name: "AI Agent Integration"
-    status: "BACKLOG"
-    priority: "P1"
-    
-  - id: 7
-    name: "Git Integration"
-    status: "BACKLOG"
-    priority: "P2"
+    rationale: "Foundation for hot-load fix, highest impact"
+    workflow: "story-dev-cycle"
 
 # =============================================================================
-# CRITICAL BUGS TRACKED
+# COMPLETED ACTIONS (Session: 2025-12-27)
 # =============================================================================
-bugs:
-  - id: "BUG-01"
-    name: "Terminal CWD Mismatch"
-    severity: "CRITICAL"
-    status: "FIXED"  # Story 13-1 completed 2025-12-20
-    epic: 13
-    story: "13-1"
-    fixed_date: "2025-12-20"
+completed_actions:
+  - timestamp: "2025-12-27T21:18:00+07:00"
+     action: "Domain 3 RAG Infrastructure Research completed"
+     artifact: "docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
+     details: "Comprehensive RAG infrastructure research covering Qdrant, Neo4j, Ollama embeddings, and NotebookLM integration"
+  - timestamp: "2025-12-27T18:00:00+07:00"
+     action: "Team B coordination plan created"
+     artifact: "_bmad-output/team-b/team-b-coordination-plan-2025-12-27.md"
+   agent: "@bmad-core-bmad-master"
+   
+ - timestamp: "2025-12-27T18:10:00+07:00"
+   action: "Team B Phase 1 initiated"
+   agent: "@bmad-core-bmad-master"
+   
+ - timestamp: "2025-12-27T18:15:00+07:00"
+   action: "State management requirements documented"
+   artifact: "_bmad-output/team-b/state-management-requirements-2025-12-27.md"
+   agent: "@bmad-bmm-architect"
+   
+ - timestamp: "2025-12-27T20:04:00+07:00"
+   action: "Phase 2 Research completed - LLM Provider Configuration System"
+   artifact: "_bmad-output/research/llm-provider-configuration-research-2025-12-27.md"
+   agent: "@bmad-bmm-tech-writer"
+   
+ - timestamp: "2025-12-27T18:18:00+07:00"
+   action: "Epic 29 specifications created"
+   artifact: "_bmad-output/team-b/epic-29-specifications-2025-12-27.md"
+   agent: "@bmad-bmm-architect"
+   
+ - timestamp: "2025-12-27T18:20:00+07:00"
+   action: "Team B Phase 1 completed"
+   agent: "@bmad-core-bmad-master"
+   
+ - timestamp: "2025-12-28T00:45:00+07:00"
+   action: "Sprint Change Proposal created"
+   artifact: "_bmad-output/sprint-change-proposal-2025-12-28.md"
+   agent: "@bmad-core-bmad-master"
     
-  - id: "BUG-02"
-    name: "Auto-Sync Not Triggering"
-    severity: "HIGH"
-    status: "FIX_PROPOSED"
-    epic: 13
-    story: "13-2"
+  - timestamp: "2025-12-28T01:00:00+07:00"
+    action: "Implementation Plan approved"
+    artifact: ".gemini/antigravity/brain/4af7c582-a51d-427c-a675-6bf82dd0698d/implementation_plan.md"
+    agent: "@bmad-bmm-ux-designer"
     
-  - id: "BUG-03"
-    name: "Sync Status Opacity"
-    severity: "MEDIUM"
-    status: "FIXED"  # Story 13-3 completed 2025-12-20
-    epic: 13
-    story: "13-3"
-    fixed_date: "2025-12-20"
+  - timestamp: "2025-12-28T01:05:00+07:00"
+    action: "Story MRT-4 drafted"
+    artifact: "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation.md"
+    agent: "@bmad-bmm-sm"
     
-  - id: "BUG-04"
-    name: "Permission Persistence"
-    severity: "MEDIUM"
-    status: "FIXED"  # Story 13-5 completed 2025-12-20
-    epic: 13
-    story: "13-5"
-    fixed_date: "2025-12-20"
+  - timestamp: "2025-12-28T01:06:00+07:00"
+    action: "Context XML created"
+    artifact: "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation-context.xml"
+    agent: "@bmad-bmm-sm"
     
-  - id: "BUG-05"
-    name: "File Tree State Reset"
-    severity: "MEDIUM"
-    status: "FIXED"  # Story 13-4 completed 2025-12-20
-    epic: 13
-    story: "13-4"
-    fixed_date: "2025-12-20"
+  - timestamp: "2025-12-28T01:08:00+07:00"
+    action: "Story MRT-4 implemented"
+    files_changed:
+      - "src/components/ide/FileTree/FileTreeItem.tsx"
+    agent: "@bmad-bmm-dev"
     
-  - id: "BUG-06"
-    name: "No Reverse Sync"
-    severity: "LOW"
-    status: "DOCUMENTED"
-    notes: "By design - documented in AGENTS.md"
-    
-  - id: "BUG-07"
-    name: "Preview in New Tab Fails"
-    severity: "MEDIUM"
-    status: "FIX_PROPOSED"
-    epic: 13
-    story: "13-6"
-    notes: "WebContainer connect route missing. Added 2025-12-20 from manual testing."
+  - timestamp: "2025-12-28T01:10:00+07:00"
+     action: "Story MRT-4 marked DONE"
+     validation: "PASS"
+     agent: "@bmad-bmm-dev"
+     
+  - timestamp: "2025-12-28T04:08:00+07:00"
+    action: "Domain 3 research completed - Knowledge Synthesis & RAG Infrastructure"
+    artifact: "docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
+    agent: "@bmad-bmm-architect"
+    mcp_tools_executed: 19
+    research_areas:
+      - "Qdrant vector database (hybrid search, RRF fusion)"
+      - "Ollama local embedding models (nomic-embed-text, mxbai-embed-large, BGE-M3)"
+      - "Domain-aware chunking strategies (AST-based, section-aware)"
+      - "Cross-architecture context management"
+      - "NotebookLM + Notion integration strategy"
+    recommended_stack:
+      - "Qdrant (vector) + Neo4j (graph) + PostgreSQL/pgvector (document)"
+      - "Ollama with nomic-embed-text for privacy-preserving embeddings"
+      - "Event-driven synchronization with file locking"
+      - "Bidirectional sync with citation tracking"
 
 # =============================================================================
-# NEXT ACTIONS
+# NEXT STEPS
 # =============================================================================
-next_actions:
-  completed:
-    - action: "Story 13-1: Fix Terminal Working Directory"
-      status: "DONE"
-      date: "2025-12-20"
-      
-    - action: "Update epics.md with Epic 13"
-      status: "DONE"
-      date: "2025-12-20"
-      
-    - action: "Update architecture.md with Terminal Integration"
-      status: "DONE"
-      date: "2025-12-20"
-      
-    - action: "Refresh sprint-status.yaml"
-      status: "DONE"
-      date: "2025-12-20"
-      notes: "Generated with 22 epics, 117 stories via sprint-planning workflow"
-      
-    - action: "Create Story 13-2 (Auto-Sync)"
-      status: "DONE"
-      date: "2025-12-20"
-      notes: "Story file and context XML created"
-      
-    - action: "Implement Story 13-2"
-      status: "DONE"
-      date: "2025-12-20"
-      notes: "Fixed auto-sync trigger, 160 tests pass"
-      
-  immediate:
-    - action: "Develop Story 13-6 (Fix Preview in New Tab)"
-      status: "READY_FOR_DEV"
-      command: "dev-story workflow"
-      agent: "dev"
-      priority: "P1"
-    - action: "Create Story 21-1 (Locale-Aware Routing & HTML Lang)"
-      status: "DONE"
-      command: "create-story workflow"
-      agent: "sm"
-      priority: "P2"
-      
-  then:
-    - action: "Implement Story 13-3"
-      command: "dev-story workflow"
-      agent: "dev"
-      priority: "P0"
-    - action: "Implement Story 21-1"
-      command: "dev-story workflow"
-      agent: "dev"
-      priority: "P2"
+next_steps:
+   # Team A (Mobile Responsive Transformation)
+   - step: 1
+     action: "Create story file for MRT-5"
+     agent: "@bmad-bmm-sm"
+     
+   - step: 2
+     action: "Research Monaco Editor mobile patterns"
+     tools:
+       - "Context7: @monaco-editor/react mobile handling"
+       - "DeepWiki: microsoft/monaco-editor touch support"
+       
+   - step: 3
+     action: "Create context XML for MRT-5"
+     agent: "@bmad-bmm-sm"
+     
+   - step: 4
+     action: "Implement Monaco mobile optimizations"
+     agent: "@bmad-bmm-dev"
+     
+   - step: 5
+     action: "Code review"
+     agent: "@code-reviewer"
+   
+   # Team B (Complementary Workstream)
+   - step: 1
+     action: "Await Team A MRT-3 completion (Mobile IDE Layout handoff)"
+     trigger: "Handoff document at _bmad-output/handoffs/team-a-mrt-3-complete.md"
+     
+   - step: 2
+     action: "Initiate Team B Phase 2: State Management Refactoring"
+     tasks:
+       - "Refactor IDELayout.tsx state to use Zustand"
+       - "Update MobileIDELayout.tsx to use same Zustand patterns"
+       - "Remove duplicate state synchronization code"
+     agent: "@bmad-bmm-dev"
+     
+   - step: 3
+     action: "Initiate Team B Phase 3: Epic 29 Implementation"
+     trigger: "MVP-1 status → DONE in sprint-status.yaml"
+     tasks:
+       - "Create Epic 29 stories"
+       - "Execute story development cycle for EPIC-29-1 through EPIC-29-4"
+     agent: "@bmad-bmm-dev"
 
 # =============================================================================
-# WORKFLOW COMMANDS
+# SPRINT SUMMARY
 # =============================================================================
-commands:
-  check_status: "/bmad-bmm-workflows-workflow-status"
-  create_story: "/bmad-bmm-workflows-create-story"
-  dev_story: "/bmad-bmm-workflows-dev-story"
-  code_review: "/bmad-bmm-workflows-code-review"
-  correct_course: "/bmad-bmm-workflows-correct-course"
-  sprint_status: "/bmad-bmm-workflows-sprint-status"
+sprint:
+  id: "MULTI-TEAM-2025-12-27"
+  name: "Multi-Team Coordination (Team A + Team B)"
+  
+  team_a:
+    id: "MRT"
+    name: "Mobile Responsive Transformation"
+    progress:
+      phases_complete: 2
+      phases_total: 6
+      stories_complete: 4
+      stories_total: 11
+      percentage: 36%
+  
+  team_b:
+    id: "TEAM-B"
+    name: "Complementary Workstream"
+    phase: "Phase 1: Preparation"
+    progress:
+      phases_complete: 1
+      phases_total: 3
+      tasks_complete: 2
+      tasks_total: 2
+      percentage: 100%
+    
+  completed_stories:
+    - story: "MRT-1"
+      title: "Remove Viewport Block"
+      completed_at: "2025-12-27T18:00:00+07:00"
+      
+    - story: "MRT-2"
+      title: "Create Mobile Tab Bar"
+      completed_at: "2025-12-27T18:30:00+07:00"
+      
+    - story: "MRT-3"
+      title: "Implement Mobile IDE Layout"
+      completed_at: "2025-12-27T19:00:00+07:00"
+      
+    - story: "MRT-4"
+      title: "FileTree Mobile Adaptation"
+      completed_at: "2025-12-28T01:10:00+07:00"
+      tests: 0
+      artifacts:
+        - "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation.md"
+        - "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation-context.xml"
+
+# =============================================================================
+# HANDOFF TRACKING
+# =============================================================================
+handoffs:
+  team_a:
+    last_handoff:
+      from: "@bmad-bmm-dev"
+      to: "@bmad-core-bmad-master"
+      timestamp: "2025-12-28T01:10:00+07:00"
+      context: "MRT-4 completed, ready to continue with MRT-5"
+      
+    pending_handoff:
+      from: "@bmad-core-bmad-master"
+      to: "@bmad-bmm-dev"
+      story: "MRT-5"
+      action: "Create story and begin implementation"
+  
+  team_b:
+    last_handoff:
+      from: "@bmad-bmm-architect"
+      to: "@bmad-core-bmad-master"
+      timestamp: "2025-12-27T18:18:00+07:00"
+      context: "Epic 29 specifications completed, Team B Phase 1 done"
+      
+    pending_handoff:
+      from: "@bmad-core-bmad-master"
+      to: "@bmad-bmm-dev"
+      phase: "Phase 2: State Management Refactoring"
+      trigger: "Await Team A MRT-3 completion handoff"
+      action: "Refactor IDELayout.tsx and MobileIDELayout.tsx to use Zustand"

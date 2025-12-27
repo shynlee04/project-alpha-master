@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="27-5a-refactor-idelayout" created="2025-12-22T02:31:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/layout/IDELayout.tsx" lines="590">
+      <structure>
+        <section name="Imports" lines="1-48">React, resizable panels, context, hooks, components</section>
+        <section name="IDELayout Component" lines="64-567">
+          <subsection name="Context destructuring" lines="68-79"/>
+          <subsection name="UI state" lines="81-93"/>
+          <subsection name="Panel refs" lines="95-98"/>
+          <subsection name="State persistence hook" lines="100-112"/>
+          <subsection name="Keyboard shortcuts effect" lines="119-143">Extract as useIDEKeyboardShortcuts</subsection>
+          <subsection name="State sync effects" lines="149-169">Keep in main</subsection>
+          <subsection name="State restoration effects" lines="176-255">Extract as useIDEStateRestoration</subsection>
+          <subsection name="WebContainer boot effect" lines="261-282">Extract as useWebContainerBoot</subsection>
+          <subsection name="File handlers" lines="288-357">Extract as useIDEFileHandlers</subsection>
+          <subsection name="JSX render" lines="363-566">Keep panel layout, extract overlays</subsection>
+        </section>
+        <section name="MinViewportWarning" lines="569-589">Move to own file</section>
+      </structure>
+    </file>
+    <file path="src/components/layout/__tests__/IDELayout.test.tsx" lines="281">
+      <tests count="10">
+        <test name="should render with ShadcnUI Resizable components"/>
+        <test name="renders panel headers and resizable handles with affordance"/>
+        <test name="renders TerminalPanel"/>
+        <test name="chat shell toggles and retains content"/>
+        <test name="preview shell renders and maintains layout container"/>
+        <test name="resizable handles have inner grip affordance"/>
+        <test name="dark mode still renders headers/handles"/>
+        <test name="should toggle chat panel visibility"/>
+        <test name="should show minimum viewport warning on small screens"/>
+        <test name="should handle keyboard shortcut for chat toggle"/>
+        <test name="axe check: no accessibility violations for main layout"/>
+      </tests>
+    </file>
+    <file path="src/components/layout/IDEHeaderBar.tsx" lines="264">
+      <notes>Already extracted, referenced by IDELayout</notes>
+    </file>
+    <file path="src/components/layout/TerminalPanel.tsx" lines="160">
+      <notes>Already extracted, referenced by IDELayout</notes>
+    </file>
+    <file path="src/components/layout/ChatPanelWrapper.tsx" lines="62">
+      <notes>Already extracted, referenced by IDELayout</notes>
+    </file>
+  </files>
+
+  <!-- Research findings -->
+  <research_notes>
+    <finding source="codebase" query="useIdeStatePersistence hook">
+      Hook already exists at src/hooks/useIdeStatePersistence.ts - returns objects including refs and handlers
+    </finding>
+    <finding source="codebase" query="useWorkspace hook">
+      Hook exists at src/lib/workspace - returns WorkspaceContext values
+    </finding>
+    <finding source="coding-style.md" query="file limits">
+      250 lines per file, ≤2 exports, cyclomatic complexity ≤10
+    </finding>
+  </research_notes>
+
+  <!-- Architecture patterns -->
+  <architecture_patterns>
+    <pattern name="Hook Extraction" source="refactor-clean">
+      Extract useEffect blocks into named hooks that return the values/handlers needed
+    </pattern>
+    <pattern name="Component Composition" source="react-patterns">
+      Keep IDELayout as orchestrator, extract presentation components
+    </pattern>
+    <pattern name="Barrel Exports" source="coding-style">
+      Create index.ts for hooks/ folder to simplify imports
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical notes -->
+  <technical_notes>
+    <note priority="high">Preserve existing test interfaces - tests mock child components</note>
+    <note priority="high">Hooks need access to WorkspaceContext values - pass as parameters</note>
+    <note priority="medium">useIdeStatePersistence already returns refs - leverage in extracted hooks</note>
+    <note priority="medium">Panel refs (mainPanelGroupRef, etc.) stay in IDELayout for layout control</note>
+  </technical_notes>
+
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="react-resizable-panels" usage="ImperativePanelGroupHandle refs"/>
+    <dependency name="@/lib/workspace" usage="useWorkspace hook"/>
+    <dependency name="@/hooks/useIdeStatePersistence" usage="State persistence"/>
+    <dependency name="@/lib/webcontainer" usage="boot, onServerReady, isBooted"/>
+  </dependencies>
+</context>

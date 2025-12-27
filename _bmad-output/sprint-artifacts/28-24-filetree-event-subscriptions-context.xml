@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-24-filetree-event-subscriptions" created="2025-12-24T04:25:00+07:00">
+  <!-- Current Code State -->
+  <files>
+    <!-- EventBus Event Types -->
+    <file path="src/lib/events/workspace-events.ts">
+      <content><![CDATA[
+import EventEmitter from 'eventemitter3'
+
+export interface WorkspaceEvents {
+  // File System Events
+  'file:created': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
+  'file:modified': [{ path: string; source: 'local' | 'editor' | 'agent'; content?: string; lockAcquired?: number; lockReleased?: number }]
+  'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
+  'directory:created': [{ path: string }]
+  'directory:deleted': [{ path: string }]
+  // ... more events
+}
+
+export type WorkspaceEventEmitter = EventEmitter<WorkspaceEvents>
+export function createWorkspaceEventBus(): WorkspaceEventEmitter {
+  return new EventEmitter<WorkspaceEvents>()
+}
+      ]]></content>
+    </file>
+    
+    <!-- Reference Pattern: useEventBusEffects -->
+    <file path="src/lib/workspace/hooks/useEventBusEffects.ts">
+      <content><![CDATA[
+export function useEventBusEffects(
+    projectId: string | null,
+    eventBusRef: WorkspaceStateReturn['refs']['eventBusRef'],
+    failedFilesRef: WorkspaceStateReturn['refs']['failedFilesRef']
+) {
+    useEffect(() => {
+        const eventBus = eventBusRef.current;
+
+        const handleFileModified = (payload: { path: string }) => {
+            setFileSyncPending(payload.path);
+        };
+
+        eventBus.on('file:modified', handleFileModified as any);
+        eventBus.on('file:deleted', handleFileDeleted as any);
+
+        return () => {
+            eventBus.off('file:modified', handleFileModified as any);
+            eventBus.off('file:deleted', handleFileDeleted as any);
+        };
+    }, [eventBusRef, failedFilesRef]);
+}
+      ]]></content>
+    </file>
+    
+    <!-- FileTree Props (has refreshKey) -->
+    <file path="src/components/ide/FileTree/FileTree.tsx">
+      <content><![CDATA[
+interface FileTreeProps {
+    selectedPath?: string;
+    onFileSelect: (path: string, handle: FileSystemFileHandle) => void;
+    refreshKey?: number;  // <-- Existing refresh mechanism
+    className?: string;
+}
+
+export function FileTree({
+  onFileSelect,
+  selectedPath,
+  className = '',
+  refreshKey,
+}: FileTreeProps) {
+    // Uses refreshKey for external refresh triggers
+    // ...
+}
+      ]]></content>
+    </file>
+    
+    <!-- WorkspaceContext provides eventBus -->
+    <file path="src/lib/workspace/WorkspaceContext.tsx">
+      <content><![CDATA[
+// eventBus is available from workspace context
+const value = useMemo(
+    () => ({
+        // ... other values
+        eventBus: refs.eventBusRef.current,
+    }),
+    [/* deps */]
+);
+
+// Usage:
+const { eventBus } = useWorkspaceContext();
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research Notes -->
+  <research_notes>
+    <finding source="codebase" query="EventBus file events">
+      EventBus emits file:created, file:modified, file:deleted with source field
+      ('local' | 'editor' | 'agent') to identify origin. FileToolsFacade (12-1)
+      emits events with source='agent' on CRUD operations.
+    </finding>
+    <finding source="codebase" query="FileTree refresh mechanism">
+      FileTree accepts refreshKey prop for external refresh triggers. When
+      refreshKey changes, the component reloads the file tree. This is the
+      preferred integration point.
+    </finding>
+    <finding source="codebase" query="useEventBusEffects pattern">
+      useEventBusEffects demonstrates the subscription pattern: subscribe in
+      useEffect, cleanup in return function. All handlers use 'as any' cast
+      for EventEmitter typing.
+    </finding>
+  </research_notes>
+
+  <!-- Architecture Patterns to Follow -->
+  <architecture_patterns>
+    <pattern name="Hook Subscription Pattern" source="useEventBusEffects.ts">
+      1. Subscribe in useEffect body
+      2. Return cleanup function to unsubscribe
+      3. Dependency array includes eventBusRef
+      4. Use 'as any' for handler typing
+    </pattern>
+    <pattern name="Debounce Pattern" source="sync-executor.ts">
+      Use lodash debounce or custom implementation for rapid event batching.
+      300ms is standard for UI refresh debouncing.
+    </pattern>
+    <pattern name="RefreshKey Pattern" source="FileTree.tsx">
+      Parent controls refresh via incrementing refreshKey prop. Component
+      reloads when key changes.
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical Notes for Developer -->
+  <technical_notes>
+    <note priority="high">
+      FileTree uses refreshKey prop for refresh - either create a counter state
+      in parent (ExplorerPanel) or add direct refresh method to FileTree.
+    </note>
+    <note priority="high">
+      ExplorerPanel is the parent of FileTree in icon-sidebar layout. Event
+      subscription might need to happen there to control refreshKey.
+    </note>
+    <note priority="medium">
+      Consider filtering events by source='agent' only to avoid redundant
+      refreshes from editor/local changes that are already reflected.
+    </note>
+    <note priority="medium">
+      Debounce refresh to 300ms to handle rapid file creation (e.g., scaffold).
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="eventemitter3" version="^5.0.1" />
+    <dependency name="react" version="^19.0.0" />
+    <dependency name="lodash" version="^4.17.x" optional="true" />
+  </dependencies>
+</context>

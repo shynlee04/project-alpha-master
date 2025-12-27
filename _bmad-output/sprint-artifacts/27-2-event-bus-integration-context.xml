@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="27-2-event-bus-integration" created="2025-12-21T22:00:00+07:00" platform="Platform A">
+  
+  <!-- Current Event Bus Infrastructure (ALREADY EXISTS) -->
+  <files>
+    <file path="src/lib/events/workspace-events.ts" status="complete">
+      <description>Typed WorkspaceEvents interface with all event types defined</description>
+      <events>
+        <category name="file">file:created, file:modified, file:deleted, directory:created, directory:deleted</category>
+        <category name="sync">sync:started, sync:progress, sync:completed, sync:error, sync:paused, sync:resumed</category>
+        <category name="container">container:booted, container:mounted, container:error</category>
+        <category name="process">process:started, process:output, process:exited, terminal:input</category>
+        <category name="permission">permission:requested, permission:granted, permission:denied, permission:expired</category>
+        <category name="project">project:opened, project:closed, project:switched</category>
+      </events>
+    </file>
+    
+    <file path="src/lib/events/use-workspace-event.ts" status="complete">
+      <description>React hook for subscribing to workspace events with auto-cleanup</description>
+      <content><![CDATA[
+export function useWorkspaceEvent<K extends keyof WorkspaceEvents>(
+  eventBus: WorkspaceEventEmitter,
+  event: K,
+  handler: (payload: WorkspaceEvents[K]) => void
+) {
+  useEffect(() => {
+    eventBus.on(event, handler);
+    return () => { eventBus.off(event, handler); };
+  }, [eventBus, event, handler]);
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/filesystem/sync-manager.ts" status="complete">
+      <description>SyncManager ALREADY has full eventBus integration</description>
+      <emissions>
+        <emit line="141">eventBus.emit('sync:started', { fileCount, direction: 'to-wc' })</emit>
+        <emit line="175">eventBus.emit('sync:completed', { success, timestamp, filesProcessed })</emit>
+        <emit line="196">eventBus.emit('sync:error', { error, file })</emit>
+        <emit line="259">eventBus.emit('sync:progress', { current, total, currentFile })</emit>
+      </emissions>
+    </file>
+    
+    <file path="src/lib/workspace/WorkspaceContext.tsx" status="complete">
+      <description>WorkspaceContext ALREADY exposes eventBus ref to children (line 94)</description>
+      <content><![CDATA[
+const value: WorkspaceContextValue = {
+  // ...
+  eventBus: refs.eventBusRef.current,
+};
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Files that NEED event bus integration -->
+  <gaps>
+    <gap file="src/lib/webcontainer/manager.ts" priority="high">
+      <description>WebContainer manager has NO event emissions</description>
+      <required_events>
+        <event name="container:booted" trigger="After WebContainer.boot() succeeds" />
+        <event name="container:mounted" trigger="After mount() succeeds" />
+        <event name="container:error" trigger="On boot or mount failure" />
+      </required_events>
+      <challenge>Manager is a module with exports, not a class with constructor injection.
+        Need to accept eventBus as optional parameter or create a wrapper.</challenge>
+    </gap>
+    
+    <gap file="src/lib/webcontainer/terminal-adapter.ts" priority="high">
+      <description>Terminal adapter lacks process event emissions</description>
+      <required_events>
+        <event name="process:started" trigger="When shell process spawns" />
+        <event name="process:output" trigger="On process stdout/stderr data" />
+        <event name="process:exited" trigger="When process exits" />
+      </required_events>
+    </gap>
+    
+    <gap file="src/lib/filesystem/permission-lifecycle.ts" priority="medium">
+      <description>Permission helpers don't emit events</description>
+      <required_events>
+        <event name="permission:requested" trigger="Before requestPermission()" />
+        <event name="permission:granted" trigger="After permission granted" />
+        <event name="permission:denied" trigger="After permission denied" />
+      </required_events>
+    </gap>
+    
+    <gap file="src/components/ide/SyncStatusIndicator.tsx" priority="low">
+      <description>SyncStatusIndicator uses PROPS passed from parent, not useWorkspaceEvent</description>
+      <current>Props-based: status, progress, lastSyncTime, errorMessage, onRetry</current>
+      <optional>Could convert to event-driven using useWorkspaceEvent hook</optional>
+    </gap>
+  </gaps>
+  
+  <!-- Research Notes -->
+  <research_notes>
+    <finding source="context7" query="eventemitter3 emit subscribe TypeScript">
+      Pattern: eventBus.emit('event-name', payload); eventBus.on('event-name', handler, context);
+    </finding>
+    <finding source="codebase" query="existing eventBus.emit usage">
+      IDELayout.tsx line 344 is the ONLY file:modified emit outside of sync-manager.ts
+    </finding>
+    <finding source="codebase" query="useWorkspaceEvent usage">
+      Hook exists but is ONLY used in tests (use-workspace-event.test.tsx)
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture Patterns -->
+  <architecture_patterns>
+    <pattern name="EventBus Injection" source="sync-manager.ts">
+      Pass eventBus as optional parameter: constructor(localAdapter, config, eventBus?)
+    </pattern>
+    <pattern name="Optional Event Emission" source="sync-manager.ts">
+      Use optional chaining: this.eventBus?.emit('event', payload)
+    </pattern>
+    <pattern name="React Integration" source="use-workspace-event.ts">
+      Hook pattern with auto-cleanup in useEffect return
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical Notes -->
+  <technical_notes>
+    <note priority="high">WebContainer manager uses module pattern, not class. Need eventBus param injection.</note>
+    <note priority="high">Terminal adapter creates WritableStream - need to capture output for events.</note>
+    <note priority="medium">Permission events are mostly informational for AI agents - low user impact.</note>
+    <note priority="low">SyncStatusIndicator conversion is optional - current props pattern works fine.</note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="eventemitter3" version="^5.0.1" status="installed" />
+    <dependency name="@webcontainer/api" version="^1.6.1" status="installed" />
+  </dependencies>
+  
+</context>

@@ -1,0 +1,420 @@
+<context story="28-22-approval-overlay-component" created="2025-12-22T17:33:00+07:00">
+  <!-- Current code state from previous Epic 28 chat components -->
+  <files>
+    <file path="src/components/chat/ToolCallBadge.tsx">
+      <content><![CDATA[
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
+import { useTranslation } from 'react-i18next';
+
+interface ToolCallBadgeProps {
+  toolName: string;
+  status: 'pending' | 'running' | 'completed' | 'error';
+  className?: string;
+}
+
+export const ToolCallBadge: React.FC<ToolCallBadgeProps> = ({ 
+  toolName, 
+  status, 
+  className 
+}) => {
+  const { t } = useTranslation();
+
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return {
+          icon: '⏳',
+          color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+          label: t('chat.toolCallBadge.pending')
+        };
+      case 'running':
+        return {
+          icon: '⚡',
+          color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+          label: t('chat.toolCallBadge.running')
+        };
+      case 'completed':
+        return {
+          icon: '✅',
+          color: 'bg-green-500/20 text-green-400 border-green-500/30',
+          label: t('chat.toolCallBadge.completed')
+        };
+      case 'error':
+        return {
+          icon: '❌',
+          color: 'bg-red-500/20 text-red-400 border-red-500/30',
+          label: t('chat.toolCallBadge.error')
+        };
+      default:
+        return {
+          icon: '🔧',
+          color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+          label: toolName
+        };
+    }
+  };
+
+  const config = getStatusConfig(status);
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            className={cn(
+              'inline-flex items-center gap-1 px-2 py-1 text-xs font-mono border rounded',
+              config.color,
+              className
+            )}
+          >
+            <span className="text-xs">{config.icon}</span>
+            <span className="uppercase tracking-wide">{toolName}</span>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{config.label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+      ]]></content>
+    </file>
+    
+    <file path="src/components/chat/CodeBlock.tsx">
+      <content><![CDATA[
+import React, { useState } from 'react';
+import { Copy, Check, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
+
+interface CodeBlockProps {
+  code: string;
+  language?: string;
+  showLineNumbers?: boolean;
+  maxHeight?: string;
+  className?: string;
+  onAccept?: () => void;
+  onReject?: () => void;
+  showActions?: boolean;
+}
+
+export const CodeBlock: React.FC<CodeBlockProps> = ({
+  code,
+  language = 'typescript',
+  showLineNumbers = true,
+  maxHeight = '400px',
+  className,
+  onAccept,
+  onReject,
+  showActions = false
+}) => {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy code:', err);
+    }
+  };
+
+  const lines = code.split('\n');
+
+  return (
+    <div className={cn('relative group', className)}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-2 bg-surface-darker border-b border-border-dark">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-pixel text-primary uppercase tracking-wider">
+            {language}
+          </span>
+          {lines.length > 1 && (
+            <span className="text-xs text-muted-foreground">
+              {t('chat.codeBlock.lines', { count: lines.length })}
+            </span>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {showActions && onAccept && onReject && (
+            <>
+              <button
+                onClick={onReject}
+                className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded transition-colors"
+                title={t('chat.codeBlock.reject')}
+              >
+                <ThumbsDown className="w-4 h-4" />
+              </button>
+              <button
+                onClick={onAccept}
+                className="p-1.5 text-green-400 hover:text-green-300 hover:bg-green-500/10 rounded transition-colors"
+                title={t('chat.codeBlock.accept')}
+              >
+                <ThumbsUp className="w-4 h-4" />
+              </button>
+            </>
+          )}
+          
+          <button
+            onClick={handleCopy}
+            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors"
+            title={copied ? t('chat.codeBlock.copied') : t('chat.codeBlock.copy')}
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Code Content */}
+      <div 
+        className="relative overflow-auto bg-editor-bg"
+        style={{ maxHeight }}
+      >
+        <pre className="p-4 text-sm font-mono leading-relaxed">
+          {showLineNumbers ? (
+            <div className="flex">
+              <div className="flex-shrink-0 w-12 pr-4 text-right text-muted-foreground select-none">
+                {lines.map((_, index) => (
+                  <div key={index} className="leading-6">
+                    {index + 1}
+                  </div>
+                ))}
+              </div>
+              <div className="flex-1">
+                <code className="text-foreground">{code}</code>
+              </div>
+            </div>
+          ) : (
+            <code className="text-foreground">{code}</code>
+          )}
+        </pre>
+      </div>
+    </div>
+  );
+};
+      ]]></content>
+    </file>
+    
+    <file path="src/components/chat/DiffPreview.tsx">
+      <content><![CDATA[
+import React, { useState } from 'react';
+import { ChevronDown, ChevronRight, Plus, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
+
+interface DiffLine {
+  type: 'add' | 'remove' | 'context';
+  content: string;
+  lineNumber?: number;
+}
+
+interface DiffPreviewProps {
+  oldCode: string;
+  newCode: string;
+  className?: string;
+}
+
+export const DiffPreview: React.FC<DiffPreviewProps> = ({
+  oldCode,
+  newCode,
+  className
+}) => {
+  const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [hideUnchanged, setHideUnchanged] = useState(false);
+
+  // Simple diff algorithm (for demonstration)
+  const generateDiff = (oldCode: string, newCode: string): DiffLine[] => {
+    const oldLines = oldCode.split('\n');
+    const newLines = newCode.split('\n');
+    const diff: DiffLine[] = [];
+
+    // This is a simplified diff - in production, use a proper diff library
+    const maxLines = Math.max(oldLines.length, newLines.length);
+    
+    for (let i = 0; i < maxLines; i++) {
+      const oldLine = oldLines[i];
+      const newLine = newLines[i];
+      
+      if (oldLine === undefined) {
+        diff.push({ type: 'add', content: newLine, lineNumber: i + 1 });
+      } else if (newLine === undefined) {
+        diff.push({ type: 'remove', content: oldLine, lineNumber: i + 1 });
+      } else if (oldLine !== newLine) {
+        diff.push({ type: 'remove', content: oldLine, lineNumber: i + 1 });
+        diff.push({ type: 'add', content: newLine, lineNumber: i + 1 });
+      } else {
+        diff.push({ type: 'context', content: oldLine, lineNumber: i + 1 });
+      }
+    }
+    
+    return diff;
+  };
+
+  const diff = generateDiff(oldCode, newCode);
+  const visibleDiff = hideUnchanged ? diff.filter(line => line.type !== 'context') : diff;
+  
+  const additions = diff.filter(line => line.type === 'add').length;
+  const deletions = diff.filter(line => line.type === 'remove').length;
+  const hiddenLines = diff.length - visibleDiff.length;
+
+  return (
+    <div className={cn('border border-border-dark rounded bg-surface-dark', className)}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 bg-surface-darker border-b border-border-dark">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+        >
+          {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          <span className="font-pixel text-primary uppercase tracking-wider">
+            Diff Preview
+          </span>
+        </button>
+        
+        <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-1 text-green-400">
+            <Plus className="w-3 h-3" />
+            <span>{t('chat.diff.additions', { count: additions })}</span>
+          </div>
+          <div className="flex items-center gap-1 text-red-400">
+            <Minus className="w-3 h-3" />
+            <span>{t('chat.diff.deletions', { count: deletions })}</span>
+          </div>
+          {hiddenLines > 0 && (
+            <button
+              onClick={() => setHideUnchanged(!hideUnchanged)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {hideUnchanged 
+                ? t('chat.diff.expand', { count: hiddenLines })
+                : t('chat.diff.collapse', { count: hiddenLines })
+              }
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Diff Content */}
+      {isExpanded && (
+        <div className="p-4">
+          <div className="font-mono text-sm">
+            {visibleDiff.map((line, index) => (
+              <div
+                key={index}
+                className={cn(
+                  'flex items-start gap-2 py-1 px-2 rounded',
+                  line.type === 'add' && 'bg-green-500/10 text-green-300',
+                  line.type === 'remove' && 'bg-red-500/10 text-red-300',
+                  line.type === 'context' && 'text-muted-foreground'
+                )}
+              >
+                <span className="flex-shrink-0 w-8 text-xs text-right opacity-60">
+                  {line.lineNumber}
+                </span>
+                <span className="flex-shrink-0 w-4 text-center">
+                  {line.type === 'add' && '+'}
+                  {line.type === 'remove' && '-'}
+                  {line.type === 'context' && ' '}
+                </span>
+                <span className="flex-1 whitespace-pre-wrap">{line.content}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI tool definition needsApproval pattern">
+      Pattern: toolDefinition({ ... }).server(async () => { ... }) with needsApproval: true flag
+      Key insight: Tools with needsApproval: true require user confirmation before execution
+      UI Integration: ApprovalOverlay should appear when tool needs user approval
+      Event Flow: User sees ToolCallBadge → ApprovalOverlay → User clicks Accept/Reject → Tool executes
+    </finding>
+    
+    <finding source="context7" query="Radix UI Dialog component API">
+      Pattern: Dialog.Root → Dialog.Portal → Dialog.Overlay → Dialog.Content → Dialog.Close
+      Key insight: Use Dialog.Content with forceMount for controlled overlay behavior
+      Accessibility: Proper ARIA labels, focus management, and escape key handling
+      Composability: Can wrap Dialog.Content with custom approval UI components
+    </finding>
+    
+    <finding source="context7" query="Radix UI Dialog content props and event handlers">
+      Pattern: Dialog.Content with onOpenAutoFocus, onCloseAutoFocus, onEscapeKeyDown handlers
+      Key insight: Use onInteractOutside to prevent accidental dismissal for critical approvals
+      Focus Management: Dialog automatically manages focus, but can be customized
+      Animation: Supports forceMount for integration with animation libraries
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="chat-component-integration" source="epic-28-holistic-integration-analysis.md">
+      Integration flow: ToolCallBadge → CodeBlock → DiffPreview → ApprovalOverlay
+      Each component should be composable and work independently
+      Consistent styling with MistralAI-inspired 8-bit gaming aesthetic
+      Full i18n support for English and Vietnamese
+    </pattern>
+    
+    <pattern name="event-bus-integration" source="epic-28-holistic-integration-analysis.md">
+      Future integration point: ApprovalOverlay will emit events to event bus
+      Events: approval:requested, approval:granted, approval:denied
+      Integration with Epic 10 (Event Bus) for tool→UI synchronization
+    </pattern>
+    
+    <pattern name="tanstack-ai-integration" source="epic-28-holistic-integration-analysis.md">
+      ApprovalOverlay integrates with TanStack AI tool execution flow
+      Triggered when toolDefinition has needsApproval: true
+      Receives tool context, shows diff preview, handles user approval
+      Communicates approval decision back to TanStack AI runtime
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">Use Radix UI Dialog primitives for accessible modal behavior</note>
+    <note priority="high">Implement proper focus management and keyboard navigation</note>
+    <note priority="high">Support both full-screen and inline approval modes</note>
+    <note priority="medium">Integrate with existing chat component styling system</note>
+    <note priority="medium">Add comprehensive i18n keys for all user-facing strings</note>
+    <note priority="medium">Include loading states and error handling</note>
+    <note priority="low">Consider animation for smooth overlay transitions</note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@radix-ui/react-dialog" version="latest" />
+    <dependency name="react" version="19" />
+    <dependency name="lucide-react" version="latest" />
+    <dependency name="react-i18next" version="latest" />
+  </dependencies>
+  
+  <!-- Integration points with other Epic 28 components -->
+  <integration_points>
+    <point component="ToolCallBadge" story="28-19">
+      ApprovalOverlay will be triggered when ToolCallBadge status is 'pending' and tool needs approval
+    </point>
+    <point component="CodeBlock" story="28-20">
+      ApprovalOverlay will contain CodeBlock component to show the code being approved
+    </point>
+    <point component="DiffPreview" story="28-21">
+      ApprovalOverlay will contain DiffPreview component to show changes when approving file modifications
+    </point>
+    <point component="EventBus" epic="10">
+      Future integration: ApprovalOverlay will emit approval events to event bus for UI synchronization
+    </point>
+  </integration_points>
+</context>

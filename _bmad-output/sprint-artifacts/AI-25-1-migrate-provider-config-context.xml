@@ -1,0 +1,74 @@
+<context story="AI-25-1" created="2025-12-28T03:35:00+07:00">
+  <files>
+    <file path="src/lib/agent/providers/types.ts">
+      <content><![CDATA[
+export interface ProviderConfig {
+    id: string;
+    name: string;
+    type: ProviderType;
+    baseURL?: string;
+    defaultModel?: string;
+    enabled: boolean;
+    isCustom?: boolean;
+    supportsNativeTools?: boolean;
+}
+      ]]></content>
+    </file>
+    <file path="src/lib/state/dexie-db.ts">
+      <content><![CDATA[
+export interface CredentialRecord {
+    providerId: string;
+    encrypted: string;
+    iv: string;
+    createdAt: Date;
+}
+// Needs to be updated to include 'providerConfigs' table
+      ]]></content>
+    </file>
+    <file path="src/lib/agent/providers/credential-vault.ts">
+      <content><![CDATA[
+export class CredentialVault {
+    async storeCredentials(providerId: string, apiKey: string): Promise<void> { ... }
+    async getCredentials(providerId: string): Promise<string | null> { ... }
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <research_notes>
+    <finding source="investigation-report.md" query="LLM Provider Configuration System">
+      Current issue: Hot-load persistence failures. State updates executed via local state + custom sync function duplicating Zustand logic, leading to UI not updating.
+    </finding>
+    <finding source="target-architecture.md" query="Provider Store Schema">
+      Use `createDexieStorage` adapter for Zustand persistence.
+      Schema:
+      interface ProviderState {
+        providers: ProviderConfig[];
+        activeProviderId: string | null;
+        isLoading: boolean;
+        addProvider: (config: ProviderConfig) => Promise<void>;
+        // ...
+      }
+    </finding>
+  </research_notes>
+  
+  <architecture_patterns>
+    <pattern name="Zustand + Dexie Persistence" source="target-architecture.md">
+      Use `persist` middleware with a custom `storage` adapter that interfaces with Dexie tables.
+      Avoid storing sensitive data (API keys) in the Zustand store; use CredentialVault for that.
+    </pattern>
+    <pattern name="Single Source of Truth">
+      The Zustand store is the single source of truth for configuration state. Components should subscribe to the store rather than maintaining local state.
+    </pattern>
+  </architecture_patterns>
+  
+  <technical_notes>
+    <note priority="high">Ensure that `CredentialVault` is NOT coupled directly into the store's state - keys should remain in `credentials` table, accessed only when needed.</note>
+    <note priority="medium">Update `Dexie` schema version to 4 (or 5 if 4 exists) to include `providerConfigs` table.</note>
+  </technical_notes>
+  
+  <dependencies>
+    <dependency name="zustand" version="^4.5.0" />
+    <dependency name="dexie" version="^3.2.0" />
+  </dependencies>
+</context>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="25-0-create-provideradapterfactory" created="2025-12-23T19:35:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/ide/statusbar/ProviderStatus.tsx">
+      <purpose>Shows LLM provider connection state (currently mocked)</purpose>
+      <content><![CDATA[
+// Uses useStatusBarStore for provider info
+const providerInfo = useStatusBarStore((s) => s.providerInfo);
+
+return (
+    <StatusBarSegment className={providerInfo.connected ? 'text-emerald-400' : 'text-white/50'}>
+        <Cpu className="w-3 h-3" />
+        <span>{providerInfo.name}: {providerInfo.connected ? t('statusBar.connected') : t('statusBar.notConfigured')}</span>
+    </StatusBarSegment>
+);
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/persistence/dexie-schema.ts">
+      <purpose>Dexie.js schema - will need credentials table</purpose>
+      <content><![CDATA[
+// Existing tables: projects, conversations, ideStates, taskContexts, toolExecutions
+// Need to add: credentials table for encrypted API keys
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI openai adapter">
+      Pattern: openai({ apiKey, baseURL }) creates adapter for chat().
+      Import from @tanstack/ai-openai (separate package).
+      Runtime switching: adapters[provider]() pattern.
+    </finding>
+    <finding source="exa" query="OpenRouter integration">
+      OpenRouter uses OpenAI-compatible API with baseURL override.
+      Base URL: https://openrouter.ai/api/v1
+      Optional headers: HTTP-Referer, X-Title for rankings.
+    </finding>
+    <finding source="codebase" query="ProviderStatus component">
+      Currently mocked using useStatusBarStore().providerInfo.
+      Shows connected/not configured states.
+      Will wire to real provider validation in Epic 26.
+    </finding>
+    <finding source="master-plan" query="December 2025 free models">
+      OpenRouter free models available:
+      - meta-llama/llama-3.1-8b-instruct:free
+      - google/gemini-2.0-flash-exp:free
+      - deepseek/deepseek-r1:free
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns -->
+  <architecture_patterns>
+    <pattern name="Factory Pattern" source="architecture.md">
+      ProviderAdapterFactory creates adapters based on provider config.
+      Decouples provider selection from chat/tool logic.
+    </pattern>
+    <pattern name="Credential Vault" source="master-plan">
+      Web Crypto API (AES-GCM) for encryption.
+      Dexie.js for IndexedDB storage.
+      Never store plaintext API keys.
+    </pattern>
+    <pattern name="Model Registry" source="master-plan">
+      Fetch models dynamically from provider APIs.
+      Cache in memory with TTL.
+      Fallback to hardcoded defaults.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes -->
+  <technical_notes>
+    <note priority="high">
+      @tanstack/ai-openai is a separate package - check if installed.
+      If not, add to devDependencies.
+    </note>
+    <note priority="high">
+      Web Crypto API requires HTTPS or localhost.
+      crypto.subtle.generateKey for AES-GCM.
+    </note>
+    <note priority="medium">
+      OpenRouter model list API: GET /api/v1/models
+      Returns JSON with model IDs and metadata.
+    </note>
+    <note priority="medium">
+      Add credentials table to Dexie schema v2.
+      Fields: providerId, encrypted, iv, createdAt.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@tanstack/ai" version="0.1.0" />
+    <dependency name="@tanstack/ai-openai" version="check_if_installed" />
+    <dependency name="dexie" version="4.0.10" />
+  </dependencies>
+</context>

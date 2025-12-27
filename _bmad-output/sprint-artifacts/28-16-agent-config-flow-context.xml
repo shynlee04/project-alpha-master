@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="28-16-agent-config-flow" created="2025-12-22T20:30:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/hooks/useAgents.ts">
+      <content><![CDATA[
+/**
+ * useAgents Hook - Agent Management State
+ * 
+ * @epic Epic-28 Story 28-15
+ * @roadmap Replace mock with TanStack Query in Epic 25 (Story 25-1)
+ */
+export function useAgents(): UseAgentsReturn {
+    const [agents, setAgents] = useState<Agent[]>(mockAgents)
+    
+    // addAgent function available for Story 28-16
+    const addAgent = useCallback((agentData: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => {
+        const newAgent: Agent = {
+            ...agentData,
+            id: `agt_${Date.now()}`,
+            // ... auto-generated fields
+        }
+        setAgents(prev => [...prev, newAgent])
+    }, [])
+    
+    return { agents, isLoading, error, addAgent, removeAgent, updateAgentStatus, refreshAgents }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/components/ide/AgentsPanel.tsx">
+      <content><![CDATA[
+export function AgentsPanel({ onSelectAgent }: { onSelectAgent?: (agent: Agent) => void }) {
+    const { t } = useTranslation()
+    const { agents, isLoading, refreshAgents } = useAgents()
+
+    const handleAddAgent = () => {
+        // TODO: Epic 28-16 - Open agent config modal/route
+        console.log('Add agent clicked - implement in Story 28-16')
+    }
+    
+    return (
+        <div className="flex flex-col h-full">
+            <SidebarHeader
+                title={t('sidebar.agents', 'Agents')}
+                actions={
+                    <>
+                        <Button variant="ghost" size="icon-sm" onClick={handleAddAgent}>
+                            <Plus className="w-4 h-4" />
+                        </Button>
+                        {/* ... refresh button */}
+                    </>
+                }
+            />
+            {/* ... agent list rendering */}
+        </div>
+    )
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/mocks/agents.ts">
+      <content><![CDATA[
+export interface Agent {
+    id: string
+    name: string
+    role: string
+    status: 'online' | 'offline' | 'busy' | 'error'
+    provider: 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google'
+    model: string
+    description?: string
+    tasksCompleted: number
+    successRate: number
+    tokensUsed: number
+    lastActive: string
+    createdAt: string
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/i18n/en.json">
+      <content><![CDATA[
+{
+  "agents": {
+    "config": {
+      "title": "Agent Configuration",
+      "provider": "Provider",
+      "model": "Model",
+      "name": "Agent Name",
+      "description": "Description",
+      "save": "Save Agent",
+      "cancel": "Cancel"
+    }
+  },
+  "actions": {
+    "addAgent": "Add Agent"
+  }
+}
+      ]]></content>
+      <note>Existing keys - may need additional keys for form fields</note>
+    </file>
+  </files>
+  
+  <!-- Research notes from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="ShadcnUI Dialog">
+      Dialog component uses @radix-ui/react-dialog with DialogContent, DialogHeader, DialogTitle, DialogFooter pattern
+    </finding>
+    <finding source="codebase" query="existing dialog usage">
+      Dialog component already in src/components/ui/dialog.tsx with all primitives exported
+    </finding>
+    <finding source="codebase" query="toast notifications">
+      Sonner toast library configured in src/components/ui/sonner.tsx
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Form Dialog" source="ShadcnUI docs">
+      Use Dialog with controlled open state via parent component.
+      Form inside DialogContent with DialogHeader, body, DialogFooter.
+    </pattern>
+    <pattern name="Mock Hook Pattern" source="useAgents.ts">
+      JSDoc comments reference future Epic for real API replacement.
+      Local state management with useState, useCallback.
+    </pattern>
+    <pattern name="Pixel Aesthetic" source="Story 28-4">
+      Use rounded-none for squared corners
+      Use variant="pixel-primary" for submit buttons
+      Use font-pixel class for headings
+    </pattern>
+    <pattern name="i18n" source="src/i18n/config.ts">
+      Use useTranslation() hook from react-i18next
+      Add keys to both en.json and vi.json
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      AgentsPanel already has handleAddAgent stub that logs TODO.
+      Replace console.log with dialog state toggle.
+    </note>
+    <note priority="high">
+      The useAgents hook already exports addAgent function.
+      Call it with { name, role, status, provider, model, description }.
+    </note>
+    <note priority="medium">
+      Model dropdown should be dependent on provider selection.
+      Use controlled Select component with onChange to reset model when provider changes.
+    </note>
+    <note priority="medium">
+      For pixel aesthetic: apply rounded-none to DialogContent, use pixel-primary button variant.
+    </note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="react-i18next" version="^15.4.1" />
+    <dependency name="@radix-ui/react-dialog" version="^1.1.6" />
+    <dependency name="sonner" version="^1.7.1" />
+    <dependency name="lucide-react" version="^0.468.0" />
+  </dependencies>
+  
+  <!-- Provider-Model mapping -->
+  <data_reference>
+    <provider_models><![CDATA[
+const PROVIDER_MODELS: Record<Agent['provider'], string[]> = {
+  OpenAI: ['gpt-4-turbo', 'gpt-4o', 'gpt-4o-mini'],
+  Anthropic: ['claude-3-5-sonnet', 'claude-3-opus', 'claude-3-haiku'],
+  Mistral: ['mistral-large-latest', 'mistral-medium', 'mixtral-8x7b'],
+  Google: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.0-pro']
+}
+    ]]></provider_models>
+  </data_reference>
+</context>

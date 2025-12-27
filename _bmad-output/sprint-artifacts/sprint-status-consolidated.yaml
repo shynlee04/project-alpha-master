@@ -1,0 +1,759 @@
+# generated: 2025-12-27T17:15:00+07:00 (Updated: Refactored Sprint Plan)
+# created: 2025-12-24T20:00:00+07:00
+# project: project-alpha
+# project_key: project-alpha-master
+# tracking_system: file-system
+# story_location: "{project-root}/_bmad-output/sprint-artifacts"
+
+# STATUS DEFINITIONS
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+# WORKFLOW NOTES
+# ===============
+# - Mark epic as 'in-progress' when starting work on its first story
+# - SM typically creates next story ONLY after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then Dev runs code-review (fresh context, ideally different LLM)
+# - MANDATORY: Browser E2E verification required before marking DONE (INC-2025-12-24-001)
+
+# =============================================================================
+# =============================================================================
+# GOVERNANCE: MANDATORY VERIFICATION GATES (Enforced 2025-12-24-001)
+# =============================================================================
+governance:
+  definition_of_done:
+    - "Code implementation complete"
+    - "TypeScript: pnpm build passes"
+    - "Unit tests passing (≥80% coverage)"
+    - "MANDATORY: Manual browser E2E verification with screenshot"
+    - "Code review approved"
+  verification_gates:
+    - gate: "Story Completion"
+      required: "Manual browser test passed with screenshot/recording"
+    - gate: "Epic Completion"
+      required: "All integration scenarios verified in browser"
+  incident_prevention:
+    - "Never mark DONE without browser screenshot"
+    - "Integration testing > component existence"
+    - "Mock implementations must be clearly labeled"
+    - "E2E validation is mandatory"
+
+# =============================================================================
+# =============================================================================
+development_status:
+# =============================================================================
+# =============================================================================
+# ARCHIVED EPICS (Completed - Reference Only)
+# =============================================================================
+archived_epics:
+  epic-1: "Project Foundation & IDE Shell - DONE"
+  epic-2: "WebContainers Integration - DONE"
+  epic-3: "File System Access Layer - DONE"
+  epic-4: "IDE Components - DONE"
+  epic-5: "Persistence Layer - DONE"
+  epic-10: "Event Bus Architecture - DONE"
+  epic-13: "Terminal & Sync Stability - DONE"
+  epic-22: "Production Hardening - DONE"
+  notes: |
+    These epics are complete and archived for reference.
+    Their patterns and implementations should be reused in MVP.
+
+# =============================================================================
+# SUPERSEDED EPICS (Consolidated into MVP)
+# =============================================================================
+superseded_epics:
+  epic-12: "Tool Interface Layer - Superseded by MVP-3/MVP-4"
+  epic-25: "AI Foundation Sprint - Superseded by MVP (INCIDENT RESPONSE)"
+  epic-28: "UX Brand Identity - Partially absorbed in MVP-1/MVP-2"
+  notes: |
+    These epics had overlapping work and are now superseded.
+    Refer to individual stories for traceability.
+
+# =============================================================================
+# EPIC MVP: AI Coding Agent Vertical Slice [P0 - ACTIVE]
+# =============================================================================
+epic-mvp: in-progress
+  platform: "Platform A"
+  started_at: "2025-12-24T20:00:00+07:00"
+  consolidated_from: [12, 25, 28]
+  incident_response: "INC-2025-12-24-001"
+  notes: |
+    Single epic for complete AI coding agent workflow.
+    Each story adds a layer of the user journey.
+    All stories require E2E browser verification before DONE.
+
+# =============================================================================
+# User Journey: Configure → Chat → Execute → Approve → Iterate
+# =============================================================================
+# =============================================================================
+stories:
+  mvp-1:
+    id: MVP-1
+    name: "Agent Configuration & Persistence"
+    status: "in-progress"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: "2025-12-25T01:00:00+07:00"
+    devcompletedat: null
+    devstartedat: "2025-12-25T00:00:00+07:00"
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    acceptance_criteria:
+      - "User can select AI provider (OpenRouter/Anthropic) - Implemented"
+      - "API keys stored securely in localStorage - Implemented"
+      - "Model selection from provider catalog - NOT IMPLEMENTED"
+      - "Configuration persists across browser sessions - NOT IMPLEMENTED"
+      - "Connection test passes before saving - NOT IMPLEMENTED"
+      - "Agent status shows 'Ready' when configured - NOT IMPLEMENTED"
+      - "Configuration dialog accessible from IDE - NOT IMPLEMENTED"
+  mvp-2:
+    id: MVP-2
+    name: "Chat Interface with Streaming"
+    status: "in-progress"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: "2025-12-26T20:00:00+07:00"
+    devcompletedat: null
+    devstartedat: "2025-12-26T20:00:00+07:00"
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    block_reason: "Pending E2E verification - no screenshot evidence"
+    acceptance_criteria:
+      - "Chat panel opens and displays messages - NOT IMPLEMENTED"
+      - "Messages send to /api/chat endpoint - NOT IMPLEMENTED"
+      - "Responses stream in real-time using SSE - NOT IMPLEMENTED"
+      - "Rich text formatting for responses - NOT IMPLEMENTED"
+      - "Code blocks with syntax highlighting - NOT IMPLEMENTED"
+      - "Error handling for failed requests - NOT IMPLEMENTED"
+      - "Chat history persists in localStorage - NOT IMPLEMENTED"
+  mvp-3:
+    id: MVP-3
+    name: "Tool Execution - File Operations"
+    status: "ready-for-e2e"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: "2025-12-26T20:00:00+07:00"
+    devcompletedat: "2025-12-26T21:51:00+07:00"
+    devstartedat: "2025-12-26T20:00:00+07:00"
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    block_reason: null
+    dependency: null
+    acceptance_criteria:
+      - "AI can request to read project files - NOT IMPLEMENTED"
+      - "Approval dialog shows file path and content preview - NOT IMPLEMENTED"
+      - "AI can request to write/update files - NOT IMPLEMENTED"
+      - "Approval dialog shows diff preview for writes - NOT IMPLEMENTED"
+      - "File changes sync to local filesystem - NOT IMPLEMENTED"
+      - "Monaco editor reflects changes in real-time - NOT IMPLEMENTED"
+      - "File tree shows updated status - NOT IMPLEMENTED"
+      - "File read executes in WebContainer - NOT IMPLEMENTED"
+      - "File write executes in WebContainer - NOT IMPLEMENTED"
+      - "File list tool for directory traversal - NOT IMPLEMENTED"
+      - "Approval flow for file operations - NOT IMPLEMENTED"
+      - "Error handling for file operations - NOT IMPLEMENTED"
+      - "File lock mechanism for concurrency - NOT IMPLEMENTED"
+  mvp-4:
+    id: MVP-4
+    name: "Tool Execution - Terminal Commands"
+    status: "blocked"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-3 must be DONE first"
+    dependency: "MVP-3"
+    acceptance_criteria:
+      - "AI can request terminal commands - NOT IMPLEMENTED"
+      - "Approval dialog shows command to execute - NOT IMPLEMENTED"
+      - "Commands execute in WebContainer terminal - NOT IMPLEMENTED"
+      - "Output captured and displayed in real-time - NOT IMPLEMENTED"
+      - "Terminal panel shows command history - NOT IMPLEMENTED"
+      - "Error handling for failed commands - NOT IMPLEMENTED"
+      - "Working directory set correctly - NOT IMPLEMENTED"
+      - "Terminal uses project path as CWD - NOT IMPLEMENTED"
+      - "Both stdout and stderr captured - NOT IMPLEMENTED"
+  mvp-5:
+    id: MVP-5
+    name: "Approval Workflow"
+    status: "blocked"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-4 must be DONE first"
+    dependency: "MVP-4"
+    acceptance_criteria:
+      - "Tool calls displayed in chat UI - NOT IMPLEMENTED"
+      - "Approval overlay shows clear context - NOT IMPLEMENTED"
+      - "User can approve or deny each tool call - NOT IMPLEMENTED"
+      - "Execution logs show in real-time - NOT IMPLEMENTED"
+      - "Error messages clear and actionable - NOT IMPLEMENTED"
+      - "Batch approval for multiple operations - NOT IMPLEMENTED"
+      - "One-click approval for safe operations - NOT IMPLEMENTED"
+  mvp-6:
+    id: MVP-6
+    name: "Real-time UI Updates"
+    status: "blocked"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-5 must be DONE first"
+    dependency: "MVP-5"
+    acceptance_criteria:
+      - "File sync status updates in UI - NOT IMPLEMENTED"
+      - "Terminal status reflects in chat - NOT IMPLEMENTED"
+      - "Agent status updates in real-time - NOT IMPLEMENTED"
+      - "No page refreshes required - NOT IMPLEMENTED"
+      - "State survives browser refresh - NOT IMPLEMENTED"
+      - "All IDE panels stay synchronized - NOT IMPLEMENTED"
+  mvp-7:
+    id: MVP-7
+    name: "E2E Integration Testing"
+    status: "blocked"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    block_reason: "Dependency not met - MVP-6 must be DONE first"
+    dependency: "MVP-6"
+    acceptance_criteria:
+      - "Full workflow test: configure → chat → execute → approve - NOT IMPLEMENTED"
+      - "Browser automation test passes - NOT IMPLEMENTED"
+      - "Performance benchmarks met - NOT IMPLEMENTED"
+      - "Error scenarios tested - NOT IMPLEMENTED"
+      - "Documentation complete - NOT IMPLEMENTED"
+      - "Demo video recorded - NOT IMPLEMENTED"
+
+# =============================================================================
+# BACKLOG EPICS (Post-MVP)
+# =============================================================================
+backlog_epics:
+  epic-29:
+    name: "Agentic Execution Loop"
+    status: "backlog"
+    priority: P0
+    platform: "Platform A"
+    started_at: null
+    completed_at: null
+    notes: "Full implementation with state tracking, iteration UI, intelligent termination, error recovery. 4 stories, 10 points. Week 2 priority."
+
+# =============================================================================
+# STORIES
+# =============================================================================
+stories:
+  layout-1:
+    id: LAYOUT-1
+    name: "Create Unified Layout Store"
+    status: "done"
+    points: 3
+    priority: P0
+    platform: "Platform A"
+    startedat: "2025-12-27T10:00:00+07:00"
+    devcompletedat: "2025-12-27T10:10:00+07:00"
+    devstartedat: "2025-12-27T10:00:00+07:00"
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create src/lib/state/layout-store.ts with Zustand store - IMPLEMENTED"
+      - "Define state: sidebarCollapsed, sidebarMobileOpen, activeNavItem - IMPLEMENTED"
+      - "Define actions: toggleSidebar, setSidebarCollapsed, setMobileMenuOpen, setActiveNavItem - IMPLEMENTED"
+      - "Implement persistence using persist middleware - IMPLEMENTED"
+      - "Store persists to localStorage with key via-gent-layout-storage - IMPLEMENTED"
+      - "TypeScript types properly exported for use in components - IMPLEMENTED"
+      - "No linter errors (pnpm build passes) - VERIFIED"
+      - "No type errors (pnpm tsc --noEmit passes) - VERIFIED"
+  layout-2:
+    id: LAYOUT-2
+    name: "Create MainSidebar Component"
+    status: "ready-for-dev"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-1"
+    acceptance_criteria:
+      - "Create src/components/layout/MainSidebar.tsx - NOT IMPLEMENTED"
+      - "Implement collapsible sidebar with icons (Home, Projects, Agents, Knowledge, Settings) - NOT IMPLEMENTED"
+      - "Wire to useLayoutStore for state management - NOT IMPLEMENTED"
+      - "Sidebar collapses to icon-only view (64px width) when collapsed - NOT IMPLEMENTED"
+      - "Sidebar expands to full width (256px width) when expanded - NOT IMPLEMENTED"
+      - "Navigation items highlight active route - NOT IMPLEMENTED"
+      - "Click on nav item navigates to correct route - NOT IMPLEMENTED"
+      - "Add collapse toggle button at bottom - NOT IMPLEMENTED"
+      - "Mobile menu overlay works correctly - NOT IMPLEMENTED"
+      - "Responsive design (mobile vs desktop) - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-3:
+    id: LAYOUT-3
+    name: "Create MainLayout Component"
+    status: "backlog"
+    points: 4
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-1, LAYOUT-2"
+    acceptance_criteria:
+      - "Create src/components/layout/MainLayout.tsx - NOT IMPLEMENTED"
+      - "Integrate MainSidebar on left side - NOT IMPLEMENTED"
+      - "Integrate Header at top - NOT IMPLEMENTED"
+      - "Main content area adjusts based on sidebar state - NOT IMPLEMENTED"
+      - "CSS transitions for sidebar collapse/expand - NOT IMPLEMENTED"
+      - "Responsive layout (mobile menu overlay) - NOT IMPLEMENTED"
+      - "Outlet for child routes - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-4:
+    id: LAYOUT-4
+    name: "Update Root Route"
+    status: "backlog"
+    points: 3
+    priority: P1
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-3"
+    acceptance_criteria:
+      - "Update src/routes/__root.tsx to use MainLayout - NOT IMPLEMENTED"
+      - "Remove HubLayout wrapper from root route - NOT IMPLEMENTED"
+      - "All routes use MainLayout (sidebar + header) - NOT IMPLEMENTED"
+      - "Outlet renders child routes correctly - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-5:
+    id: LAYOUT-5
+    name: "Create Workspace Index Route"
+    status: "backlog"
+    points: 5
+    priority: P1
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-4"
+    acceptance_criteria:
+      - "Create src/routes/workspace/index.tsx - NOT IMPLEMENTED"
+      - "Implement project list page - NOT IMPLEMENTED"
+      - "Integrate with Dexie project store to load projects - NOT IMPLEMENTED"
+      - "Display project cards with name, description, last modified - NOT IMPLEMENTED"
+      - "Add Open Folder button to open existing project - NOT IMPLEMENTED"
+      - "Add Create Project button to create new project - NOT IMPLEMENTED"
+      - "Click on project navigates to /workspace/$projectId - NOT IMPLEMENTED"
+      - "Empty state shows helpful message - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+  layout-6:
+    id: LAYOUT-6
+    name: "Simplify Header Component"
+    status: "backlog"
+    points: 3
+    priority: P1
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-1"
+    acceptance_criteria:
+      - "Remove duplicate mobile menu (lines 47-124) from Header.tsx - NOT IMPLEMENTED"
+      - "Add hamburger menu button to Header - NOT IMPLEMENTED"
+      - "Hamburger button triggers setMobileMenuOpen from useLayoutStore - NOT IMPLEMENTED"
+      - "Keep logo, theme toggle, language switcher, user menu - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-7:
+    id: LAYOUT-7
+    name: "Add QuickActions Component"
+    status: "backlog"
+    points: 3
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create src/components/layout/QuickActions.tsx - NOT IMPLEMENTED"
+      - "Implement Open Folder button - NOT IMPLEMENTED"
+      - "Implement Create Project button - NOT IMPLEMENTED"
+      - "Use existing project opening logic - NOT IMPLEMENTED"
+      - "Use existing project creation logic - NOT IMPLEMENTED"
+      - "Styled with 8-bit design system - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-8:
+    id: LAYOUT-8
+    name: "Add PortalCards Component"
+    status: "backlog"
+    points: 4
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create src/components/layout/PortalCards.tsx - NOT IMPLEMENTED"
+      - "Implement navigation cards for: IDE, Agents, Knowledge, Settings - NOT IMPLEMENTED"
+      - "Each card has icon, title, description - NOT IMPLEMENTED"
+      - "Click on card navigates to correct route - NOT IMPLEMENTED"
+      - "Cards styled with 8-bit design system - NOT IMPLEMENTED"
+      - "Hover effects for interactivity - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-9:
+    id: LAYOUT-9
+    name: "Enhance HubHomePage"
+    status: "backlog"
+    points: 4
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-7, LAYOUT-8"
+    acceptance_criteria:
+      - "Update HubHomePage.tsx to use QuickActions - NOT IMPLEMENTED"
+      - "Update HubHomePage.tsx to use PortalCards - NOT IMPLEMENTED"
+      - "Keep topic-based onboarding section - NOT IMPLEMENTED"
+      - "Keep recent projects section - NOT IMPLEMENTED"
+      - "Layout flows naturally: onboarding → quick actions → portal cards → recent projects - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+  layout-10:
+    id: LAYOUT-10
+    name: "Deprecate HubLayout"
+    status: "backlog"
+    points: 2
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-4"
+    acceptance_criteria:
+      - "Remove HubLayout.tsx from routing - NOT IMPLEMENTED"
+      - "Mark HubLayout as deprecated in code comments - NOT IMPLEMENTED"
+      - "Add TODO comment: Remove in v2.0 - NOT IMPLEMENTED"
+      - "Clean up unused imports from HubLayout - NOT IMPLEMENTED"
+      - "Verify no other components depend on HubLayout - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  epic-29-1:
+    id: EPIC-29-1
+    name: "Agentic State Tracking"
+    status: "backlog"
+    points: 2
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create Zustand store for agentic state (iterations, tool calls, conversation context) - NOT IMPLEMENTED"
+      - "State persistence to IndexedDB via Dexie - NOT IMPLEMENTED"
+      - "State hydration on page reload - NOT IMPLEMENTED"
+      - "Integration with useAgentChatWithTools hook - NOT IMPLEMENTED"
+      - "Unit tests for state management - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+    notes: "Foundation for intelligent agentic loop. Optional dependency on state refactoring."
+  epic-29-2:
+    id: EPIC-29-2
+    name: "Iteration UI Component"
+    status: "backlog"
+    points: 3
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "EPIC-29-1"
+    acceptance_criteria:
+      - "Create IterationList component showing iteration history - NOT IMPLEMENTED"
+      - "Create ToolExecutionStep component showing individual tool calls - NOT IMPLEMENTED"
+      - "Add progress indicators for active iterations - NOT IMPLEMENTED"
+      - "Add expandable/collapsible iteration details - NOT IMPLEMENTED"
+      - "Integration with agentic state store - NOT IMPLEMENTED"
+      - "Unit tests for components - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+    notes: "Provides visibility into agent reasoning and execution. Matches Cursor/Windsurf UX."
+  epic-29-3:
+    id: EPIC-29-3
+    name: "Intelligent Termination"
+    status: "backlog"
+    points: 3
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "EPIC-29-1, EPIC-29-2"
+    acceptance_criteria:
+      - "Implement termination conditions: goal completion, convergence, max iterations, errors - NOT IMPLEMENTED"
+      - "Implement convergence detection: similar tool calls, diminishing returns - NOT IMPLEMENTED"
+      - "Implement error recovery: graceful termination on tool failures - NOT IMPLEMENTED"
+      - "Integration with useAgentChatWithTools hook - NOT IMPLEMENTED"
+      - "Add configuration options for termination thresholds - NOT IMPLEMENTED"
+      - "Unit tests for termination logic - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+    notes: "Replaces maxIterations(3) with intelligent termination. Prevents infinite loops."
+  epic-29-4:
+    id: EPIC-29-4
+    name: "Agentic Loop E2E Validation"
+    status: "backlog"
+    points: 2
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "EPIC-29-1, EPIC-29-2, EPIC-29-3"
+    acceptance_criteria:
+      - "E2E test: Agent completes task with multiple iterations - NOT IMPLEMENTED"
+      - "E2E test: Iteration UI displays correctly - NOT IMPLEMENTED"
+      - "E2E test: Intelligent termination works as expected - NOT IMPLEMENTED"
+      - "E2E test: State persists across page reloads - NOT IMPLEMENTED"
+      - "E2E test: Error recovery handles tool failures - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+      - "Test coverage report - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+    notes: "Validates complete agentic loop implementation. Matches Cursor/Windsurf functionality."
+
+# =============================================================================
+# METRICS AND TRACKING
+# =============================================================================
+metrics:
+  total_epics: 1 (active) + 8 (archived) + 1 (backlog) = 10
+  total_stories: 7 (MVP) + 10 (LAYOUT) + 4 (EPIC-29) = 21
+  story_points: 35 (MVP: 7 stories × 5 points) + 40 (LAYOUT: 10 stories × 4 points avg) + 10 (EPIC-29: 4 stories × 2.5 points avg) = 85
+  epic_23_completion: "13/13 stories complete (100%)"
+  epic_completion: "0% (0/1 epics completed)"
+  layout_progress: "1/10 stories DONE (10%)"
+  epic_29_progress: "0/4 stories DONE (0%)"
+  estimated_duration: "3 weeks for MVP + Epic 29 + LAYOUT epic (refactored plan)"
+  next_review: "2025-12-27"
+
+# =============================================================================
+# CRITICAL INCIDENT REMEDIATION (2025-12-27)
+# =============================================================================
+incident_remediation:
+  id: "INC-2025-12-27"
+  status: "DONE"
+  root_cause: "Multi-Phase Course Correction: P0 fixes + Epic 29 + E2E validation"
+  remediation: |
+    1. Created refactored sprint plan aligned with technical roadmap
+    2. Added Epic 29 stories to backlog (4 stories, 10 points)
+    3. Priorized P0 fixes for Week 1 (agentic loop, path validation)
+    4. Updated sprint status with 3-week timeline
+    5. Aligned with technical roadmap recommendations
+    6. Maintained single source of truth principle
+    7. Updated metrics to include Epic 29 progress
+    8. Documented risk mitigation strategies
+    9. Established resource allocation for 3-week sprint
+    10. Updated governance documents to reflect accurate status
+    11. Completed Step 7: Validation - Verified all artifacts, confirmed alignment, provided final recommendations
+  completed_at: "2025-12-27T17:50:00+07:00"
+  lessons_learned: |
+      - Sprint plan refactoring requires alignment with technical roadmap
+      - P0 fixes must complete before MVP-2/3 E2E verification
+      - Epic 29 provides competitive parity with Cursor/Windsurf
+      - E2E validation is mandatory for all story completions
+      - State management refactoring deferred to post-MVP (Week 2)
+      - Single source of truth principle prevents conflicts
+      - 3-week timeline balances unblocking, refactoring, and validation
+    blocked_stories: |
+      - MVP-2 blocked by P0 fix (agentic loop)
+      - MVP-3 blocked by P0 fix (path validation)
+      - MVP-4 blocked by MVP-3 E2E verification
+      - MVP-5 blocked by MVP-4 E2E verification
+      - MVP-6 blocked by MVP-5 E2E verification
+      - MVP-7 blocked by MVP-6 E2E verification
+      - Epic 29-1 blocked by state refactoring (optional dependency)
+      - Epic 29-2 blocked by Epic 29-1
+      - Epic 29-3 blocked by Epic 29-1, Epic 29-2
+      - Epic 29-4 blocked by Epic 29-1, Epic 29-2, Epic 29-3
+
+# =============================================================================
+# END OF FILE
+# =============================================================================

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Unified IDE Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#f97316", // Orange accent inspired by Mistral branding
+                        secondary: "#3b82f6", // Blue accent for code highlights
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#0f0f11", // Very dark background like VS Code/Mistral
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#18181b", // Slightly lighter dark for panels
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#27272a",
+                        "editor-bg": "#09090b", // Deep black for editor
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.375rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 5px;
+            border: 2px solid #18181b;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-300 font-sans h-screen flex flex-col overflow-hidden">
+<header class="h-12 border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark flex items-center justify-between px-4 z-20 shrink-0">
+<div class="flex items-center space-x-4">
+<button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors">
+<span class="material-icons-outlined text-xl">menu</span>
+</button>
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 bg-primary rounded flex items-center justify-center text-white font-bold text-xs">M</div>
+<span class="font-semibold text-gray-900 dark:text-white tracking-tight">Mistral<span class="text-gray-400 dark:text-gray-500 font-normal">IDE</span></span>
+</div>
+<div class="hidden md:flex items-center text-xs text-gray-500 dark:text-gray-400 ml-4 space-x-2 px-3 py-1 bg-gray-100 dark:bg-[#27272a] rounded-md border border-border-light dark:border-border-dark">
+<span class="material-icons-outlined text-sm">folder_open</span>
+<span>via-gent</span>
+<span>/</span>
+<span class="text-gray-900 dark:text-gray-200">src/components/AgentChat.tsx</span>
+</div>
+</div>
+<div class="hidden lg:flex flex-1 justify-center max-w-xl mx-4">
+<button class="w-full flex items-center justify-between px-3 py-1.5 bg-gray-100 dark:bg-[#09090b] border border-border-light dark:border-border-dark rounded-md text-xs text-gray-500 dark:text-gray-400 hover:border-primary transition-colors group">
+<span class="group-hover:text-gray-800 dark:group-hover:text-gray-200">Search files, commands, and more...</span>
+<div class="flex items-center space-x-1">
+<kbd class="px-1.5 py-0.5 bg-gray-200 dark:bg-[#27272a] rounded border border-gray-300 dark:border-gray-600 text-[10px] font-mono">Ctrl</kbd>
+<kbd class="px-1.5 py-0.5 bg-gray-200 dark:bg-[#27272a] rounded border border-gray-300 dark:border-gray-600 text-[10px] font-mono">P</kbd>
+</div>
+</button>
+</div>
+<div class="flex items-center space-x-3">
+<div class="hidden sm:flex items-center space-x-2 mr-2">
+<span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+<span class="text-xs font-medium text-gray-600 dark:text-gray-400">Agent Active</span>
+</div>
+<button class="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-[#27272a] text-gray-500 dark:text-gray-400">
+<span class="material-icons-outlined text-xl">notifications</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-[#27272a] text-gray-500 dark:text-gray-400">
+<span class="material-icons-outlined text-xl">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-purple-600 flex items-center justify-center text-white text-xs font-bold border-2 border-surface-light dark:border-surface-dark">
+                JS
+            </div>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<aside class="w-12 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col items-center py-4 space-y-4 shrink-0 z-10">
+<button class="p-2 rounded-md bg-gray-200 dark:bg-[#27272a] text-primary relative group">
+<span class="material-icons-outlined text-xl">description</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Explorer</div>
+</button>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">search</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Search</div>
+</button>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">hub</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Source Control</div>
+</button>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">bug_report</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Debug</div>
+</button>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">extension</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Extensions</div>
+</button>
+<div class="flex-1"></div>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">account_circle</span>
+</button>
+</aside>
+<nav class="w-64 bg-background-light dark:bg-[#18181b] border-r border-border-light dark:border-border-dark flex flex-col shrink-0">
+<div class="h-9 px-4 flex items-center justify-between text-xs font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase">
+<span>Explorer</span>
+<span class="material-icons-outlined text-sm cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+<div class="px-2 py-1">
+<div class="flex items-center px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer group">
+<span class="material-icons-outlined text-sm text-gray-400 transform rotate-90 mr-1">chevron_right</span>
+<span class="text-sm font-semibold text-gray-800 dark:text-gray-200">via-gent</span>
+<span class="ml-auto text-xs text-green-500 opacity-0 group-hover:opacity-100">Synced</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto font-mono text-sm pl-2">
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="material-icons-outlined text-sm text-gray-400 mr-1 transform rotate-90">chevron_right</span>
+<span class="material-icons-outlined text-sm text-yellow-500 mr-2">folder</span>
+<span>src</span>
+</div>
+<div class="pl-4 border-l border-gray-300 dark:border-gray-700 ml-3">
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="material-icons-outlined text-sm text-gray-400 mr-1">chevron_right</span>
+<span class="material-icons-outlined text-sm text-green-500 mr-2">folder</span>
+<span>components</span>
+</div>
+<div class="pl-4 border-l border-gray-300 dark:border-gray-700 ml-3">
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 bg-blue-100 dark:bg-[#27272a] border-l-2 border-primary cursor-pointer">
+<span class="material-icons-outlined text-sm text-blue-400 mr-2">code</span>
+<span class="text-primary">AgentChat.tsx</span>
+<span class="ml-auto text-[10px] text-gray-400">M</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="material-icons-outlined text-sm text-blue-400 mr-2">code</span>
+<span>Sidebar.tsx</span>
+</div>
+</div>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="material-icons-outlined text-sm text-gray-400 mr-1">chevron_right</span>
+<span class="material-icons-outlined text-sm text-blue-500 mr-2">folder</span>
+<span>public</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-yellow-600 mr-2">settings</span>
+<span>package.json</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-purple-400 mr-2">description</span>
+<span>README.md</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-gray-400 mr-2">settings_suggest</span>
+<span>.env.local</span>
+</div>
+</div>
+<div class="border-t border-border-light dark:border-border-dark">
+<div class="px-4 py-2 flex items-center justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#27272a] cursor-pointer">
+<div class="flex items-center">
+<span class="material-icons-outlined text-sm mr-1">chevron_right</span>
+<span>OUTLINE</span>
+</div>
+</div>
+<div class="px-4 py-2 flex items-center justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#27272a] cursor-pointer">
+<div class="flex items-center">
+<span class="material-icons-outlined text-sm mr-1">chevron_right</span>
+<span>TIMELINE</span>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col min-w-0 bg-white dark:bg-editor-bg">
+<div class="flex items-center h-9 bg-gray-100 dark:bg-[#18181b] border-b border-border-light dark:border-border-dark overflow-x-auto no-scrollbar">
+<div class="flex items-center h-full px-3 min-w-fit bg-white dark:bg-editor-bg border-t-2 border-t-primary text-xs text-gray-800 dark:text-gray-200 font-medium select-none cursor-pointer">
+<span class="material-icons-outlined text-sm text-blue-400 mr-2">code</span>
+                    AgentChat.tsx
+                    <span class="material-icons-outlined text-sm ml-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-0.5">close</span>
+</div>
+<div class="flex items-center h-full px-3 min-w-fit border-r border-border-light dark:border-border-dark hover:bg-white dark:hover:bg-editor-bg text-xs text-gray-500 dark:text-gray-400 cursor-pointer transition-colors">
+<span class="material-icons-outlined text-sm text-yellow-400 mr-2">css</span>
+                    global.css
+                    <span class="opacity-0 hover:opacity-100 ml-2"><span class="material-icons-outlined text-sm">close</span></span>
+</div>
+<div class="flex items-center h-full px-3 min-w-fit border-r border-border-light dark:border-border-dark hover:bg-white dark:hover:bg-editor-bg text-xs text-gray-500 dark:text-gray-400 cursor-pointer transition-colors">
+<span class="material-icons-outlined text-sm text-yellow-600 mr-2">settings</span>
+                    package.json
+                    <span class="opacity-0 hover:opacity-100 ml-2"><span class="material-icons-outlined text-sm">close</span></span>
+</div>
+</div>
+<div class="flex-1 overflow-auto relative font-mono text-sm leading-6">
+<div class="absolute left-0 top-0 bottom-0 w-12 bg-white dark:bg-editor-bg text-right pr-3 pt-4 text-gray-400 dark:text-gray-600 select-none border-r border-transparent">
+<div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div><div>17</div><div>18</div><div>19</div><div>20</div>
+</div>
+<div class="pl-14 pt-4 pr-4 text-gray-800 dark:text-gray-300">
+<div class="whitespace-pre"><span class="text-purple-600 dark:text-purple-400">import</span> React, { useState, useEffect } <span class="text-purple-600 dark:text-purple-400">from</span> <span class="text-green-600 dark:text-green-400">'react'</span>;</div>
+<div class="whitespace-pre"><span class="text-purple-600 dark:text-purple-400">import</span> { motion } <span class="text-purple-600 dark:text-purple-400">from</span> <span class="text-green-600 dark:text-green-400">'framer-motion'</span>;</div>
+<div class="whitespace-pre"> </div>
+<div class="whitespace-pre"><span class="text-gray-500 dark:text-gray-500">// Component for the main chat interface used by the coding agent</span></div>
+<div class="whitespace-pre"><span class="text-purple-600 dark:text-purple-400">export default function</span> <span class="text-yellow-600 dark:text-yellow-400">AgentChat</span>({ projectContext }) {</div>
+<div class="whitespace-pre"> <span class="text-purple-600 dark:text-purple-400">const</span> [messages, setMessages] = <span class="text-blue-600 dark:text-blue-400">useState</span>([]);</div>
+<div class="whitespace-pre"> <span class="text-purple-600 dark:text-purple-400">const</span> [isLoading, setIsLoading] = <span class="text-blue-600 dark:text-blue-400">useState</span>(<span class="text-blue-400 dark:text-blue-300">false</span>);</div>
+<div class="whitespace-pre"> </div>
+<div class="whitespace-pre"> <span class="text-blue-600 dark:text-blue-400">useEffect</span>(() =&gt; {</div>
+<div class="whitespace-pre"> <span class="text-gray-500 dark:text-gray-500">// Initialize connection to Mistral API</span></div>
+<div class="whitespace-pre">    console.<span class="text-yellow-600 dark:text-yellow-400">log</span>(<span class="text-green-600 dark:text-green-400">'Initializing agent connection...'</span>);</div>
+<div class="whitespace-pre">  }, []);</div>
+<div class="whitespace-pre"> </div>
+<div class="whitespace-pre"> <span class="text-purple-600 dark:text-purple-400">const</span> handleSendMessage = <span class="text-purple-600 dark:text-purple-400">async</span> (text) =&gt; {</div>
+<div class="whitespace-pre">    setIsLoading(<span class="text-blue-400 dark:text-blue-300">true</span>);</div>
+<div class="whitespace-pre"> <span class="text-purple-600 dark:text-purple-400">try</span> {</div>
+<div class="whitespace-pre"> <span class="text-gray-500 dark:text-gray-500"></span></div>
+<div class="whitespace-pre"> <span class="text-purple-600 dark:text-purple-400">const</span> response = <span class="text-purple-600 dark:text-purple-400">await</span> fetch(<span class="text-green-600 dark:text-green-400">'/api/agent/chat'</span>, {</div>
+<div class="whitespace-pre">          method: <span class="text-green-600 dark:text-green-400">'POST'</span>,</div>
+<div class="whitespace-pre">          body: JSON.<span class="text-yellow-600 dark:text-yellow-400">stringify</span>({ prompt: text, context: projectContext })</div>
+<div class="whitespace-pre">      });</div>
+<div class="whitespace-pre"> <span class="text-purple-600 dark:text-purple-400">const</span> data = <span class="text-purple-600 dark:text-purple-400">await</span> response.<span class="text-yellow-600 dark:text-yellow-400">json</span>();</div>
+<div class="whitespace-pre"> <span class="text-blue-600 dark:text-blue-400">setMessages</span>(prev =&gt; [...prev, data.message]);</div>
+<div class="whitespace-pre">    } <span class="text-purple-600 dark:text-purple-400">catch</span> (error) {</div>
+</div>
+<div class="absolute left-[200px] top-[430px] w-0.5 h-4 bg-primary animate-pulse"></div>
+</div>
+<div class="h-48 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-[#18181b] flex flex-col">
+<div class="flex items-center px-4 py-2 border-b border-border-light dark:border-border-dark space-x-6 text-xs font-semibold text-gray-500 dark:text-gray-400">
+<button class="hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent hover:border-gray-400 pb-1">PROBLEMS <span class="ml-1 px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-500 text-[10px]">0</span></button>
+<button class="hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent hover:border-gray-400 pb-1">OUTPUT</button>
+<button class="text-primary border-b-2 border-primary pb-1">TERMINAL</button>
+<button class="hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent hover:border-gray-400 pb-1">DEBUG CONSOLE</button>
+</div>
+<div class="flex-1 p-3 font-mono text-xs overflow-auto bg-white dark:bg-editor-bg text-gray-700 dark:text-gray-300">
+<div class="mb-1"><span class="text-green-500">➜</span> <span class="text-blue-500">via-gent</span> <span class="text-purple-500">git:(main)</span> npm run dev</div>
+<div class="mb-1 text-gray-500 dark:text-gray-500">&gt; via-gent@0.1.0 dev</div>
+<div class="mb-1 text-gray-500 dark:text-gray-500">&gt; next dev</div>
+<div class="mb-2 text-green-500">ready - started server on 0.0.0.0:3000, url: http://localhost:3000</div>
+<div class="mb-1"><span class="text-green-500">event</span> - compiled client and server successfully in 1241 ms (154 modules)</div>
+<div class="mb-1 text-blue-400">wait  - compiling...</div>
+<div class="mb-1"><span class="text-green-500">event</span> - compiled client and server successfully in 304 ms (154 modules)</div>
+<div class="flex items-center">
+<span class="text-green-500 mr-2">➜</span>
+<span class="text-blue-500 mr-2">via-gent</span>
+<span class="text-purple-500 mr-2">git:(main)</span>
+<span class="w-1.5 h-3 bg-gray-400 dark:bg-gray-500 block"></span>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-80 border-l border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark flex flex-col shrink-0">
+<div class="flex items-center h-9 bg-gray-100 dark:bg-[#18181b] border-b border-border-light dark:border-border-dark">
+<button class="flex-1 h-full text-xs font-medium text-gray-800 dark:text-gray-200 border-b-2 border-primary bg-white dark:bg-surface-dark">
+                    Agent Chat
+                </button>
+<button class="flex-1 h-full text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-surface-dark transition-colors">
+                    Preview
+                </button>
+</div>
+<div class="flex-1 flex flex-col overflow-hidden">
+<div class="flex-1 overflow-y-auto p-4 space-y-4 bg-background-light dark:bg-[#09090b]">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20">
+<span class="material-icons-outlined text-white text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col space-y-1 max-w-[85%]">
+<div class="flex items-baseline space-x-2">
+<span class="text-xs font-bold text-gray-900 dark:text-white">Mistral Agent</span>
+<span class="text-[10px] text-gray-500 dark:text-gray-500">10:42 AM</span>
+</div>
+<div class="p-3 bg-white dark:bg-[#27272a] rounded-lg rounded-tl-none border border-border-light dark:border-border-dark shadow-sm text-sm text-gray-700 dark:text-gray-200">
+<p>Hello! I'm your AI coding assistant for this project. I've analyzed <code class="bg-gray-100 dark:bg-black px-1 py-0.5 rounded text-xs border border-gray-200 dark:border-gray-700 font-mono text-primary">src/components/AgentChat.tsx</code>.</p>
+<p class="mt-2">It looks like you're setting up the message handling. Would you like me to generate the corresponding API route for the backend?</p>
+</div>
+</div>
+</div>
+<div class="flex gap-3 flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center shrink-0 text-white text-xs font-bold shadow-lg shadow-purple-500/20">
+                            JS
+                        </div>
+<div class="flex flex-col space-y-1 max-w-[85%] items-end">
+<div class="flex items-baseline space-x-2">
+<span class="text-[10px] text-gray-500 dark:text-gray-500">10:45 AM</span>
+<span class="text-xs font-bold text-gray-900 dark:text-white">You</span>
+</div>
+<div class="p-3 bg-primary text-white rounded-lg rounded-tr-none shadow-sm text-sm">
+<p>Yes, please create a Next.js API route handler for the chat endpoint.</p>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center shrink-0 opacity-70">
+<span class="material-icons-outlined text-white text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col space-y-1">
+<div class="flex items-baseline space-x-2">
+<span class="text-xs font-bold text-gray-900 dark:text-white">Mistral Agent</span>
+<span class="text-[10px] text-gray-500 dark:text-gray-500">Thinking...</span>
+</div>
+<div class="p-3 bg-white dark:bg-[#27272a] rounded-lg rounded-tl-none border border-border-light dark:border-border-dark shadow-sm w-fit">
+<div class="flex space-x-1">
+<div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+<div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+<div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark">
+<div class="relative">
+<textarea class="w-full bg-white dark:bg-[#27272a] border border-border-light dark:border-border-dark rounded-md p-3 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none placeholder-gray-400 dark:placeholder-gray-500" placeholder="Ask the agent to edit code, explain logic, or fix bugs..." rows="3"></textarea>
+<div class="absolute bottom-2 right-2 flex space-x-2">
+<button class="p-1.5 text-gray-400 hover:text-primary transition-colors rounded">
+<span class="material-icons-outlined text-lg">attach_file</span>
+</button>
+<button class="p-1.5 bg-primary hover:bg-orange-600 text-white rounded shadow-md transition-colors">
+<span class="material-icons-outlined text-lg">send</span>
+</button>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex space-x-2 text-[10px] text-gray-500">
+<span class="px-1.5 py-0.5 border border-border-light dark:border-gray-700 rounded bg-gray-100 dark:bg-transparent">Model: Mistral Large</span>
+<span class="px-1.5 py-0.5 border border-border-light dark:border-gray-700 rounded bg-gray-100 dark:bg-transparent flex items-center"><span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span> Online</span>
+</div>
+<button class="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex items-center">
+<span class="material-icons-outlined text-xs mr-1">history</span> Clear Chat
+                         </button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<footer class="h-6 bg-primary dark:bg-[#007acc] text-white flex items-center justify-between px-3 text-xs select-none dark:bg-primary z-20">
+<div class="flex items-center space-x-4">
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs mr-1">source_branch</span>
+<span>main*</span>
+</div>
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs mr-1">sync</span>
+<span>0↓ 1↑</span>
+</div>
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs mr-1">error_outline</span>
+<span>0</span>
+<span class="material-icons-outlined text-xs ml-2 mr-1">warning_amber</span>
+<span>0</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="mr-2">Ln 24, Col 36</span>
+<span>Spaces: 2</span>
+<span class="ml-2">UTF-8</span>
+<span class="ml-2">TypeScript React</span>
+</div>
+<div class="hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs">notifications_none</span>
+</div>
+</div>
+</footer>
+
+</body></html>

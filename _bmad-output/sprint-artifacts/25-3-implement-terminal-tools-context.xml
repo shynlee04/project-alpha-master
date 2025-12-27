@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context story="25-3-implement-terminal-tools" created="2025-12-23T21:15:00+07:00">
+  
+  <research-findings>
+    <source name="Context7 TanStack AI" date="2025-12-23">
+      <finding type="pattern">
+        ToolCallManager handles tool execution with streaming
+      </finding>
+      <finding type="pattern">
+        yield* manager.executeTools(doneChunk) for streaming results
+      </finding>
+      <finding type="pattern">
+        ToolResultStreamChunk contains toolCallId and JSON result
+      </finding>
+    </source>
+  </research-findings>
+
+  <code-state>
+    <existing-file path="src/lib/agent/facades/terminal-tools.ts">
+      AgentTerminalTools interface with executeCommand, startShell, killProcess, isRunning
+    </existing-file>
+    <existing-file path="src/lib/agent/facades/terminal-tools-impl.ts">
+      TerminalToolsFacade implementation wrapping WebContainer spawn
+    </existing-file>
+    <existing-file path="src/lib/agent/tools/types.ts">
+      Existing file tool types - add terminal tool types here
+    </existing-file>
+    <existing-file path="src/lib/agent/tools/index.ts">
+      Existing exports - add terminal tool exports
+    </existing-file>
+  </code-state>
+
+  <architecture-patterns>
+    <pattern name="Factory Pattern" source="story-25-2">
+      createXTool(getTools: () => FacadeInterface) for dependency injection
+    </pattern>
+    <pattern name="toolDefinition().server()" source="tanstack-ai">
+      Server-side tool execution in TanStack Start SSR context
+    </pattern>
+    <pattern name="Timeout" source="master-plan">
+      2-minute (120000ms) default timeout for long-running commands
+    </pattern>
+  </architecture-patterns>
+
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^0.2.0" />
+    <dependency name="zod" version="^3.23.8" />
+    <dependency name="AgentTerminalTools" path="src/lib/agent/facades" />
+  </dependencies>
+
+  <test-strategy>
+    <approach>Mock AgentTerminalTools facade methods</approach>
+    <coverage>80% minimum per AC-25-3-4</coverage>
+    <pattern>
+      Mock createTerminalToolsFacade
+      Test success, timeout, process errors
+    </pattern>
+  </test-strategy>
+
+</story-context>

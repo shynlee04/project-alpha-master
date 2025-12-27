@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="MVP-2" created="2025-12-25T10:50:00+07:00">
+    <!-- 
+        MVP-2 Context XML
+        Chat Interface with Rich Streaming
+        
+        This context provides developers with:
+        - MCP research findings for Streamdown and Mermaid
+        - Current code state for relevant files
+        - Implementation patterns for rich text rendering
+    -->
+
+    <!-- MCP Research Findings -->
+    <research_notes>
+        <finding source="context7" query="react-markdown streaming" priority="high">
+            CRITICAL DISCOVERY: Use `streamdown` from Vercel instead of react-markdown!
+            
+            Streamdown is specifically designed for AI-powered streaming content:
+            - Drop-in replacement for react-markdown
+            - Handles incomplete Markdown blocks gracefully
+            - Built-in Mermaid diagram support
+            - Optimized for streaming scenarios
+            
+            Install: pnpm add streamdown
+            
+            Basic usage:
+            ```tsx
+            import { Streamdown } from 'streamdown';
+            
+            <Streamdown
+              mermaid={{ config: { theme: 'dark' } }}
+              controls={{ mermaid: { fullscreen: true, download: true, copy: true } }}
+            >
+              {markdownContent}
+            </Streamdown>
+            ```
+        </finding>
+        
+        <finding source="context7" query="mermaid react integration" priority="high">
+            Mermaid integration is INCLUDED in Streamdown:
+            - Supports flowcharts, sequence diagrams, class diagrams
+            - Custom theming via mermaid.config prop
+            - Error handling with custom error components
+            - Interactive controls (fullscreen, download, copy)
+            
+            Example with custom theme:
+            ```tsx
+            <Streamdown
+              mermaid={{
+                config: {
+                  theme: 'dark',
+                  themeVariables: {
+                    primaryColor: '#ff6b6b',
+                    primaryTextColor: '#fff',
+                    lineColor: '#f5f5f5',
+                  }
+                }
+              }}
+            >
+              {markdown}
+            </Streamdown>
+            ```
+        </finding>
+        
+        <finding source="code_analysis" query="existing message rendering">
+            Current MessageContent in EnhancedChatInterface.tsx:
+            - Uses regex to split code blocks: /(```[\w-]*\n[\s\S]*?```)/g
+            - Manual parsing, doesn't handle markdown features
+            - Has CodeBlock component for syntax highlighting
+            
+            MUST REPLACE with Streamdown component.
+        </finding>
+    </research_notes>
+
+    <!-- Current Code State -->
+    <files>
+        <file path="src/components/ide/EnhancedChatInterface.tsx" lines="256" status="needs-update">
+            <summary>
+                Chat interface with message bubbles and tool execution logs.
+                MessageContent component uses regex-based parsing.
+                MUST BE UPDATED to use Streamdown for rich rendering.
+            </summary>
+            <modification_required>
+                Replace MessageContent component to use Streamdown.
+            </modification_required>
+        </file>
+        
+        <file path="src/components/ide/AgentChatPanel.tsx" lines="456" status="ok">
+            <summary>
+                Main chat panel with useAgentChatWithTools hook integration.
+                Handles agent configuration, streaming, and message display.
+                Uses EnhancedChatInterface for rendering.
+            </summary>
+        </file>
+        
+        <file path="src/lib/workspace/conversation-store.ts" status="needs-update">
+            <summary>
+                Conversation store exists but persistence not implemented.
+                MUST ADD: Save/load conversation to localStorage or Dexie.
+            </summary>
+        </file>
+        
+        <file path="src/routes/api/chat.ts" status="ok">
+            <summary>
+                API route for chat with SSE streaming.
+                Course correction applied for OpenRouter 401/400.
+                Working correctly with fetchServerSentEvents.
+            </summary>
+        </file>
+    </files>
+
+    <!-- Implementation Plan -->
+    <implementation_plan>
+        <step order="1" priority="high">
+            Install streamdown package:
+            pnpm add streamdown
+        </step>
+        
+        <step order="2" priority="high">
+            Create StreamdownRenderer component:
+            - Wrapper around Streamdown with Via-gent theming
+            - Dark mode support via next-themes
+            - Custom error handling
+        </step>
+        
+        <step order="3" priority="high">
+            Update EnhancedChatInterface.tsx:
+            - Replace MessageContent with StreamdownRenderer
+            - Keep tool execution log display
+        </step>
+        
+        <step order="4" priority="medium">
+            Add conversation persistence:
+            - Save to localStorage on message send
+            - Load on component mount
+            - Clear conversation option
+        </step>
+        
+        <step order="5" priority="medium">
+            Add error handling UI:
+            - Error message display
+            - Retry button
+            - Connection status indicator
+        </step>
+        
+        <step order="6" priority="low">
+            Add CSS customization:
+            - Match Via-gent theme
+            - Dark mode support
+            - Mobile responsiveness
+        </step>
+    </implementation_plan>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency name="streamdown" version="latest" action="ADD">
+            Vercel's streaming-optimized markdown renderer with Mermaid support.
+        </dependency>
+        <dependency name="react-markdown" version="^10.1.0" action="KEEP">
+            Already installed, but Streamdown replaces it for AI streaming.
+        </dependency>
+    </dependencies>
+
+    <!-- Architecture Patterns -->
+    <architecture_patterns>
+        <pattern name="Streaming Markdown" source="Vercel Streamdown">
+            <description>
+                Use Streamdown for AI streaming scenarios.
+                It handles incomplete markdown gracefully.
+                Built-in Mermaid, code highlighting, and controls.
+            </description>
+            <example>
+                import { Streamdown } from 'streamdown';
+                
+                // In component
+                <Streamdown mermaid={{ config: { theme: 'dark' } }}>
+                  {message.content}
+                </Streamdown>
+            </example>
+        </pattern>
+        
+        <pattern name="Conversation Persistence" source="Epic 25">
+            <description>
+                Use conversation-store.ts for persistence.
+                Store in localStorage or Dexie for cross-session.
+            </description>
+        </pattern>
+    </architecture_patterns>
+
+    <!-- Technical Notes -->
+    <technical_notes>
+        <note priority="high">
+            STREAMDOWN over react-markdown:
+            - Specifically built for AI streaming
+            - Handles incomplete markdown during stream
+            - Built-in Mermaid with no extra packages
+            - Controlled with simple props
+        </note>
+        
+        <note priority="high">
+            Mermaid diagrams are now supported OUT OF THE BOX:
+            - Just wrap content in Streamdown
+            - Diagrams render when ```mermaid blocks are detected
+            - Theme customization via props
+        </note>
+        
+        <note priority="medium">
+            Keep existing CodeBlock component for copy functionality.
+            Streamdown has built-in code block rendering but can use custom.
+        </note>
+        
+        <note priority="low">
+            Consider debouncing re-renders during rapid streaming to improve performance.
+        </note>
+    </technical_notes>
+
+    <!-- Verification Checklist -->
+    <verification_checklist>
+        <item id="V1" status="pending">Install streamdown: pnpm add streamdown</item>
+        <item id="V2" status="pending">Create StreamdownRenderer component</item>
+        <item id="V3" status="pending">Update EnhancedChatInterface MessageContent</item>
+        <item id="V4" status="pending">Test markdown rendering (headers, lists, links)</item>
+        <item id="V5" status="pending">Test code block rendering with syntax highlighting</item>
+        <item id="V6" status="pending">Test mermaid diagram rendering</item>
+        <item id="V7" status="pending">Test streaming during partial content</item>
+        <item id="V8" status="pending">Add conversation persistence</item>
+        <item id="V9" status="pending">Add error handling UI</item>
+        <item id="V10" status="pending">Browser E2E test with screenshot</item>
+    </verification_checklist>
+</context>

@@ -1,0 +1,116 @@
+<context story="23-5-implement-theme-toggle" created="2025-12-21T13:52:00+07:00">
+  <files>
+    <file path="src/components/ui/ThemeProvider.tsx">
+      <content><![CDATA[
+"use client"
+
+import * as React from "react"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { type ThemeProviderProps } from "next-themes/dist/types"
+
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+      ]]></content>
+    </file>
+    <file path="src/components/ui/ThemeToggle.tsx">
+      <content><![CDATA[
+"use client"
+
+import * as React from "react"
+import { Moon, Sun } from "lucide-react"
+import { Button } from "./button"
+
+export function ThemeToggle() {
+  const [theme, setTheme] = React.useState<"light" | "dark">("dark")
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light"
+    setTheme(newTheme)
+    document.documentElement.classList.toggle("dark", newTheme === "dark")
+    localStorage.setItem("theme", newTheme)
+  }
+
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null
+    if (savedTheme) {
+      setTheme(savedTheme)
+      document.documentElement.classList.toggle("dark", savedTheme === "dark")
+    }
+  }, [])
+
+  return (
+    <Button variant="outline" size="icon" onClick={toggleTheme}>
+      {theme === "light" ? (
+        <Moon className="h-[1.2rem] w-[1.2rem]" />
+      ) : (
+        <Sun className="h-[1.2rem] w-[1.2rem]" />
+      )}
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+      ]]></content>
+    </file>
+    <file path="src/components/ui/sonner.tsx">
+      <content><![CDATA[
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
+
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme()
+
+  return (
+    <Sonner
+      theme={theme as ToasterProps["theme"]}
+      className="toaster group"
+      icons={{ /* lucide icons */ }}
+      style={
+        {
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
+          "--border-radius": "var(--radius)",
+        } as React.CSSProperties
+      }
+      {...props}
+    />
+  )
+}
+export { Toaster }
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="context7" query="ThemeProvider disableTransitionOnChange useTheme setTheme mounted guard">
+      ThemeProvider can set disableTransitionOnChange and enableSystem to prevent flashes; useTheme values are undefined on server so guard with mounted state before rendering toggle UI.
+    </finding>
+    <finding source="deepwiki" repo="pacocoursey/next-themes">
+      Avoid hydration mismatch by delaying theme-dependent UI until useEffect sets mounted=true; ThemeSwitch pattern returns null until mounted and then calls setTheme.
+    </finding>
+  </research_notes>
+
+  <architecture_patterns>
+    <pattern name="Import Order" source="agent-os/standards/global/coding-style.md">
+      React first, third-party libs second, internal alias, then relative imports.
+    </pattern>
+    <pattern name="Dark Class Strategy" source="agent-os/standards/frontend/components.md">
+      Use Tailwind dark class on html; prefer library-level theme management over manual documentElement toggles.
+    </pattern>
+  </architecture_patterns>
+
+  <technical_notes>
+    <note priority="high">Replace custom state/localStorage toggle with next-themes useTheme + mounted guard; avoid direct document.documentElement mutations.</note>
+    <note priority="high">Wrap app with ThemeProvider defaults (enableSystem=true, defaultTheme="system" or "light", disableTransitionOnChange=true) to prevent FOUC.</note>
+    <note priority="medium">Preserve accessibility: keep sr-only label and ensure button is focusable; consider aria-pressed for toggle semantics.</note>
+    <note priority="medium">Align Sonner theme prop with next-themes resolved theme to keep toasts themed.</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="next-themes" version="0.4.6" />
+    <dependency name="lucide-react" version="0.544.0" />
+    <dependency name="sonner" version="2.0.7" />
+    <dependency name="react" version="19.2.3" />
+  </dependencies>
+</context>

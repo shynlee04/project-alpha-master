@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="23-4-migrate-ide-panel-components" created="2025-12-21T13:00:00+07:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/components/layout/IDELayout.tsx">
+      <content><![CDATA[
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+  type ImperativePanelGroupHandle,
+} from '@/components/ui/resizable';
+
+// Panel group refs used for layout persistence
+const mainPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
+const centerPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
+const editorPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
+
+// State persistence hooks
+const {
+  restoredIdeState,
+  appliedPanelGroupsRef,
+  scheduleIdeStatePersistence,
+  handlePanelLayoutChange,
+} = useIdeStatePersistence({ projectId });
+
+// Apply saved layouts when available
+useEffect(() => {
+  const layouts = restoredIdeState?.panelLayouts;
+  if (!layouts) return;
+  const applyLayout = (groupKey, ref, expectedLength) => {
+    if (appliedPanelGroupsRef.current.has(groupKey)) return;
+    const layout = layouts[groupKey];
+    if (!ref || !layout) return;
+    if (expectedLength !== undefined && layout.length !== expectedLength) return;
+    ref.setLayout(layout);
+    appliedPanelGroupsRef.current.add(groupKey);
+  };
+  applyLayout('center', centerPanelGroupRef.current);
+  applyLayout('editor', editorPanelGroupRef.current);
+  applyLayout('main', mainPanelGroupRef.current, isChatVisible ? 3 : 2);
+}, [restoredIdeState, isChatVisible, appliedPanelGroupsRef]);
+      ]]></content>
+    </file>
+
+    <file path="src/components/layout/TerminalPanel.tsx">
+      <content><![CDATA[
+export function TerminalPanel({ activeTab, onTabChange, projectPath }: TerminalPanelProps) {
+  return (
+    <div className="h-full flex flex-col border-t border-slate-800">
+      <div className="h-8 px-4 flex items-center gap-6 border-b border-slate-800/50">
+        <TabButton label={t('ide.terminal')} isActive={activeTab === 'terminal'} onClick={() => onTabChange('terminal')} />
+        <TabButton label={t('ide.output')} isActive={activeTab === 'output'} onClick={() => onTabChange('output')} />
+        <TabButton label={t('ide.problems')} isActive={activeTab === 'problems'} onClick={() => onTabChange('problems')} />
+      </div>
+      <div className="flex-1 bg-slate-950 min-h-0 relative">
+        {activeTab === 'terminal' ? (
+          XTerminal ? (
+            <Suspense fallback={<div className="h-full flex items-center justify-center text-slate-500 text-sm">{t('terminal.loading', 'Loading terminal...')}</div>}>
+              <XTerminal projectPath={projectPath} />
+            </Suspense>
+          ) : (
+            <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+              {t('terminal.loading', 'Loading terminal...')}
+            </div>
+          )
+        ) : (
+          <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+            {activeTab === 'output' ? t('ide.outputSoon') : t('ide.problemsSoon')}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="shadcn/ui resizable layout">
+      Use ResizablePanelGroup with ResizablePanel + ResizableHandle; direction can be horizontal or vertical; withHandle provides visible drag affordance.
+    </finding>
+  </research_notes>
+
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Layout persistence with panel groups" source="useIdeStatePersistence">
+      Persist panel layouts via ImperativePanelGroupHandle refs and apply saved layout on mount; ensure expected panel count matches when restoring.
+    </pattern>
+    <pattern name="COOP/COEP for preview isolation" source="CLAUDE.md / epic-13">
+      Preserve isolation headers for preview panel; do not break cross-origin isolation required by WebContainers.
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">Ensure resizable layout integration preserves existing state persistence keys (main, center, editor) and expected panel counts (chat visible toggles 3 vs 2 panels).</note>
+    <note priority="high">TerminalPanel must maintain projectPath for correct CWD; keep lazy XTerminal SSR guard.</note>
+    <note priority="medium">Add ShadcnUI panel shells/headers with consistent padding, focus rings, and dark/light tokens; align with TailwindCSS 4.x.</note>
+    <note priority="medium">Validate Monaco/XTerminal resize fit after panel changes; ensure min-h-0 wrappers so flex children can shrink.</note>
+  </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@/components/ui/resizable" version="local shadcn/ui generated" />
+    <dependency name="react-resizable-panels" version="local (installed via shadcn/ui resizable)" />
+  </dependencies>
+</context>

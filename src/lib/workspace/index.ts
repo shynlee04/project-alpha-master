@@ -61,7 +61,9 @@ export {
     type SyncStatus,
 } from './WorkspaceContext';
 
+// Story 27-1b: Migrated to Zustand
 export {
+    useSyncStatusStore,
     fileSyncStatusStore,
     fileSyncCountsStore,
     setFileSyncPending,
@@ -71,5 +73,5 @@ export {
     clearAllFileSyncStatuses,
     type FileSyncState,
     type FileSyncStatus,
-    type FileSyncStatusMap,
+    type FileSyncCounts,
 } from './file-sync-status-store';

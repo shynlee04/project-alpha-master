@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="23-3-migrate-layout-components" created="2025-12-20T18:50:00+07:00">
+  <!-- Current code state for layout components -->
+  <files>
+    <file path="src/components/layout/IDEHeaderBar.tsx">
+      <content><![CDATA[
+/**
+ * @fileoverview IDE Header Bar Component
+ * @module components/layout/IDEHeaderBar
+ *
+ * Top navigation bar for the IDE with project name, sync controls,
+ * and workspace management buttons.
+ */
+
+import { MessageSquare, FolderOpen, Loader2, RefreshCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useWorkspace } from '../../lib/workspace';
+
+/**
+ * Props for the IDEHeaderBar component.
+ *
+ * @interface IDEHeaderBarProps
+ */
+export interface IDEHeaderBarProps {
+    /** Current project ID */
+    projectId: string | null;
+    /** Whether the chat panel is visible */
+    isChatVisible: boolean;
+    /** Callback to toggle chat visibility */
+    onToggleChat: () => void;
+}
+
+/**
+ * IDEHeaderBar - Top navigation bar for the IDE.
+ *
+ * Displays:
+ * - Project name and branding
+ * - Auto-sync toggle
+ * - Sync Now button
+ * - Open/Switch Folder button
+ * - Permission state indicators
+ * - Chat toggle
+ * - Version indicator
+ *
+ * @param props - Component props
+ * @returns Header bar JSX element
+ */
+export function IDEHeaderBar({
+  projectId,
+  isChatVisible,
+  onToggleChat,
+}: IDEHeaderBarProps) {
+  const { t } = useTranslation();
+  const { project, syncStatus, toggleAutoSync, triggerSync, permissionState } = useWorkspace();
+
+  return (
+    <header className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
+          <img src="/via-gent-logo.svg" alt="Via-Gent" className="h-6 w-6" />
+          <span className="font-semibold text-gray-900 dark:text-gray-100">
+            {project?.name || 'Via-Gent'}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={toggleAutoSync}
+          className="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+          title={t('toggleAutoSync')}
+        >
+          {syncStatus.autoSync ? 'Auto' : 'Manual'}
+        </button>
+        <button
+          onClick={triggerSync}
+          disabled={syncStatus.isSyncing}
+          className="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+          title={t('syncNow')}
+        >
+          {syncStatus.isSyncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+        </button>
+        <button
+          onClick={onToggleChat}
+          className="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+          title={t('toggleChat')}
+        >
+          <MessageSquare className="h-4 w-4" />
+        </button>
+      </div>
+    </header>
+  );
+}
+      ]]></content>
+    </file>
+
+    <file path="src/components/layout/IDELayout.tsx">
+      <content><![CDATA[
+/**
+ * @fileoverview IDE Layout Component
+ * @module components/layout/IDELayout
+ *
+ * Main IDE layout component that orchestrates all IDE panels.
+ * Uses react-resizable-panels for a VS Code-like layout with:
+ * - Left sidebar (FileTree)
+ * - Center area (Editor + Preview)
+ * - Bottom panel (Terminal)
+ * - Right sidebar (Agent Chat)
+ */
+
+import { useState, useCallback, useEffect, useRef } from 'react';
+import {
+  Panel,
+  PanelGroup,
+  PanelResizeHandle,
+  type ImperativePanelGroupHandle,
+} from 'react-resizable-panels';
+
+// Layout sub-components
+import { IDEHeaderBar } from './IDEHeaderBar';
+import { TerminalPanel } from './TerminalPanel';
+import { ChatPanelWrapper } from './ChatPanelWrapper';
+
+// IDE components
+import { FileTree } from '../ide/FileTree';
+import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
+import { PreviewPanel } from '../ide/PreviewPanel';
+
+// Hooks and context
+import { useIdeStatePersistence } from '../../hooks/useIdeStatePersistence';
+import { useWorkspace, type TerminalTab } from '../../lib/workspace';
+import { boot, onServerReady, isBooted } from '../../lib/webcontainer';
+import { useToast } from '../ui/Toast';
+
+/**
+ * IDELayout - Main IDE layout component.
+ *
+ * Consumes WorkspaceContext for project state and provides:
+ * - Resizable panel layout
+ * - File tree navigation
+ * - Monaco editor with tabs
+ * - Terminal integration
+ * - Preview panel
+ * - Chat panel
+ */
+export function IDELayout() {
+  const { projectId } = useWorkspace();
+  const [isChatVisible, setIsChatVisible] = useState(true);
+  const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
+  const [activeFile, setActiveFile] = useState<OpenFile | null>(null);
+
+  // Panel layout state
+  const [leftPanelSize, setLeftPanelSize] = useState(20);
+  const [bottomPanelSize, setBottomPanelSize] = useState(25);
+  const [rightPanelSize, setRightPanelSize] = useState(25);
+
+  return (
+    <div className="flex flex-col h-screen overflow-hidden">
+      <IDEHeaderBar
+        projectId={projectId}
+        isChatVisible={isChatVisible}
+        onToggleChat={() => setIsChatVisible(!isChatVisible)}
+      />
+
+      <PanelGroup direction="horizontal" className="flex-1 overflow-hidden">
+        {/* Left Panel - File Tree */}
+        <Panel defaultSize={leftPanelSize} minSize={10} maxSize={30}>
+          <FileTree
+            projectId={projectId}
+            onFileSelect={(file) => handleFileSelect(file)}
+          />
+        </Panel>
+
+        <PanelResizeHandle className="w-2 bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-700 transition-colors" />
+
+        {/* Center Panel - Editor + Preview */}
+        <Panel defaultSize={100 - leftPanelSize - (isChatVisible ? rightPanelSize : 0)} minSize={30}>
+          <PanelGroup direction="vertical">
+            <Panel defaultSize={75} minSize={30}>
+              <MonacoEditor
+                files={openFiles}
+                activeFile={activeFile}
+                onFilesChange={setOpenFiles}
+                onActiveFileChange={setActiveFile}
+              />
+            </Panel>
+
+            <PanelResizeHandle className="h-2 bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-700 transition-colors" />
+
+            <Panel defaultSize={25} minSize={10} maxSize={50}>
+              <PreviewPanel activeFile={activeFile} />
+            </Panel>
+          </PanelGroup>
+        </Panel>
+
+        {isChatVisible && (
+          <>
+            <PanelResizeHandle className="w-2 bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-700 transition-colors" />
+            <Panel defaultSize={rightPanelSize} minSize={15} maxSize={40}>
+              <ChatPanelWrapper />
+            </Panel>
+          </>
+        )}
+      </PanelGroup>
+
+      {/* Bottom Panel - Terminal */}
+      <div className="border-t border-gray-200 dark:border-gray-700" style={{ height: `${bottomPanelSize}%` }}>
+        <TerminalPanel />
+      </div>
+    </div>
+  );
+}
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="context7" query="ShadcnUI layout components">
+      ShadcnUI provides layout primitives including Card, Separator, and Resizable components that can replace custom layout implementations
+    </finding>
+    <finding source="context7" query="TailwindCSS 4.x responsive design">
+      TailwindCSS 4.x includes improved responsive design utilities and dark mode support that should be leveraged for layout components
+    </finding>
+    <finding source="deepwiki" repo="shadcn/ui">
+      ShadcnUI components are designed to be composed together, with Card components being particularly useful for panel headers and containers
+    </finding>
+    <finding source="shadcn-mcp" query="resizable components">
+      ShadcnUI provides a Resizable component that can replace react-resizable-panels for a more integrated solution
+    </finding>
+  </research_notes>
+
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Component Composition" source="architecture.md">
+      ShadcnUI components should be composed together rather than extended. Use Card components as containers with proper padding and spacing.
+    </pattern>
+    <pattern name="Theme Integration" source="architecture.md">
+      All components should support dark/light theme switching via CSS variables and TailwindCSS dark mode classes.
+    </pattern>
+    <pattern name="Accessibility" source="ux-design.md">
+      All interactive elements must have proper ARIA attributes, keyboard navigation, and focus states.
+    </pattern>
+    <pattern name="Responsive Design" source="ux-design.md">
+      Layout should adapt to different screen sizes with appropriate breakpoints and mobile-friendly controls.
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">
+      The current layout uses react-resizable-panels which may need to be replaced with ShadcnUI's Resizable component for consistency.
+    </note>
+    <note priority="high">
+      IDEHeaderBar needs to be migrated to use ShadcnUI Button, DropdownMenu, and Separator components.
+    </note>
+    <note priority="medium">
+      Maintain the existing functionality while improving the visual design and accessibility.
+    </note>
+    <note priority="medium">
+      Ensure all components work correctly with the existing theme toggle functionality.
+    </note>
+    <note priority="low">
+      Consider adding animations for panel resizing to improve user experience.
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@radix-ui/react-dropdown-menu" version="^1.0.0" />
+    <dependency name="@radix-ui/react-separator" version="^1.0.0" />
+    <dependency name="lucide-react" version="^0.300.0" />
+    <dependency name="react-resizable-panels" version="^2.0.0" />
+  </dependencies>
+
+  <!-- Current component structure analysis -->
+  <component_analysis>
+    <component name="IDEHeaderBar">
+      <current_implementation>Custom CSS classes with Tailwind</current_implementation>
+      <target_implementation>ShadcnUI Button, DropdownMenu, Separator</target_implementation>
+      <complexity>Medium</complexity>
+      <dependencies>useWorkspace, useTranslation</dependencies>
+    </component>
+    <component name="IDELayout">
+      <current_implementation>react-resizable-panels with custom handles</current_implementation>
+      <target_implementation>ShadcnUI Resizable with Card containers</target_implementation>
+      <complexity>High</complexity>
+      <dependencies>FileTree, MonacoEditor, TerminalPanel, ChatPanelWrapper</dependencies>
+    </component>
+    <component name="TerminalPanel">
+      <current_implementation>Custom container with xterm.js</current_implementation>
+      <target_implementation>ShadcnUI Card container with xterm.js</target_implementation>
+      <complexity>Low</complexity>
+      <dependencies>XTerminal component</dependencies>
+    </component>
+  </component_analysis>
+</context>

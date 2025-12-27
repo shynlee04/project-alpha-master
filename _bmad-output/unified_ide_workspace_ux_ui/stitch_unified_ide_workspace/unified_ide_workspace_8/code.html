@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LLM Provider Management - MistralIDE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#f97316", // Orange accent inspired by Mistral branding
+                        secondary: "#3b82f6", // Blue accent for code highlights
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#0f0f11", // Very dark background like VS Code/Mistral
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#18181b", // Slightly lighter dark for panels
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#27272a",
+                        "editor-bg": "#09090b", // Deep black for editor
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.375rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 5px;
+            border: 2px solid #18181b;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-300 font-sans h-screen flex flex-col overflow-hidden">
+<header class="h-12 border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark flex items-center justify-between px-4 z-20 shrink-0">
+<div class="flex items-center space-x-4">
+<button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors">
+<span class="material-icons-outlined text-xl">menu</span>
+</button>
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 bg-primary rounded flex items-center justify-center text-white font-bold text-xs">M</div>
+<span class="font-semibold text-gray-900 dark:text-white tracking-tight">Mistral<span class="text-gray-400 dark:text-gray-500 font-normal">IDE</span></span>
+</div>
+<div class="hidden md:flex items-center text-xs text-gray-500 dark:text-gray-400 ml-4 space-x-2 px-3 py-1 bg-gray-100 dark:bg-[#27272a] rounded-md border border-border-light dark:border-border-dark">
+<span class="material-icons-outlined text-sm">settings</span>
+<span>Settings</span>
+<span>/</span>
+<span class="text-gray-900 dark:text-gray-200">LLM Providers</span>
+</div>
+</div>
+<div class="hidden lg:flex flex-1 justify-center max-w-xl mx-4">
+<button class="w-full flex items-center justify-between px-3 py-1.5 bg-gray-100 dark:bg-[#09090b] border border-border-light dark:border-border-dark rounded-md text-xs text-gray-500 dark:text-gray-400 hover:border-primary transition-colors group">
+<span class="group-hover:text-gray-800 dark:group-hover:text-gray-200">Search settings (Ctrl+P)</span>
+<div class="flex items-center space-x-1">
+<kbd class="px-1.5 py-0.5 bg-gray-200 dark:bg-[#27272a] rounded border border-gray-300 dark:border-gray-600 text-[10px] font-mono">Ctrl</kbd>
+<kbd class="px-1.5 py-0.5 bg-gray-200 dark:bg-[#27272a] rounded border border-gray-300 dark:border-gray-600 text-[10px] font-mono">P</kbd>
+</div>
+</button>
+</div>
+<div class="flex items-center space-x-3">
+<div class="hidden sm:flex items-center space-x-2 mr-2">
+<span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+<span class="text-xs font-medium text-gray-600 dark:text-gray-400">System Stable</span>
+</div>
+<button class="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-[#27272a] text-gray-500 dark:text-gray-400">
+<span class="material-icons-outlined text-xl">notifications</span>
+</button>
+<button class="p-1.5 rounded-md bg-gray-200 dark:bg-[#27272a] text-primary">
+<span class="material-icons-outlined text-xl">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-purple-600 flex items-center justify-center text-white text-xs font-bold border-2 border-surface-light dark:border-surface-dark">
+                JS
+            </div>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<aside class="w-12 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col items-center py-4 space-y-4 shrink-0 z-10">
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white relative group">
+<span class="material-icons-outlined text-xl">description</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Explorer</div>
+</button>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">search</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Search</div>
+</button>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">hub</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Source Control</div>
+</button>
+<button class="p-2 rounded-md text-primary bg-gray-200 dark:bg-[#27272a] group relative">
+<span class="material-icons-outlined text-xl">settings_applications</span>
+<div class="absolute left-10 top-1/2 -translate-y-1/2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap ml-2">Provider Management</div>
+</button>
+<div class="flex-1"></div>
+<button class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white group relative">
+<span class="material-icons-outlined text-xl">account_circle</span>
+</button>
+</aside>
+<nav class="w-64 bg-background-light dark:bg-[#18181b] border-r border-border-light dark:border-border-dark flex flex-col shrink-0">
+<div class="h-9 px-4 flex items-center justify-between text-xs font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase">
+<span>Configuration</span>
+<span class="material-icons-outlined text-sm cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+<div class="px-2 py-1">
+<div class="flex items-center px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer group">
+<span class="material-icons-outlined text-sm text-gray-400 transform rotate-90 mr-1">chevron_right</span>
+<span class="text-sm font-semibold text-gray-800 dark:text-gray-200">Global Settings</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto font-mono text-sm pl-2">
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 bg-blue-100 dark:bg-[#27272a] border-l-2 border-primary cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-primary mr-2">smart_toy</span>
+<span class="text-primary">LLM Providers</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-gray-400 mr-2">folder_shared</span>
+<span>Knowledge Base</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-gray-400 mr-2">security</span>
+<span>API Security</span>
+</div>
+<div class="flex items-center py-1 px-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#27272a] cursor-pointer">
+<span class="w-4 mr-1"></span>
+<span class="material-icons-outlined text-sm text-gray-400 mr-2">tune</span>
+<span>Fine-tuning</span>
+</div>
+<div class="mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<div class="px-2 pb-2 text-xs font-semibold text-gray-500 dark:text-gray-400">ACTIVE MODELS</div>
+<div class="flex items-center py-1 px-2 text-gray-600 dark:text-gray-400 text-xs">
+<span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                        GPT-4 Turbo
+                    </div>
+<div class="flex items-center py-1 px-2 text-gray-600 dark:text-gray-400 text-xs">
+<span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                        Claude 3 Opus
+                    </div>
+<div class="flex items-center py-1 px-2 text-gray-600 dark:text-gray-400 text-xs">
+<span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                        Local Ollama
+                    </div>
+</div>
+</div>
+</nav>
+<main class="flex-1 flex flex-col min-w-0 bg-white dark:bg-editor-bg">
+<div class="flex items-center h-9 bg-gray-100 dark:bg-[#18181b] border-b border-border-light dark:border-border-dark overflow-x-auto no-scrollbar">
+<div class="flex items-center h-full px-3 min-w-fit bg-white dark:bg-editor-bg border-t-2 border-t-primary text-xs text-gray-800 dark:text-gray-200 font-medium select-none cursor-pointer">
+<span class="material-icons-outlined text-sm text-primary mr-2">settings_suggest</span>
+                    LLM Providers
+                    <span class="material-icons-outlined text-sm ml-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-0.5">close</span>
+</div>
+<div class="flex items-center h-full px-3 min-w-fit border-r border-border-light dark:border-border-dark hover:bg-white dark:hover:bg-editor-bg text-xs text-gray-500 dark:text-gray-400 cursor-pointer transition-colors group">
+<span class="material-icons-outlined text-sm text-blue-400 mr-2">code</span>
+                    AgentChat.tsx
+                    <span class="opacity-0 group-hover:opacity-100 ml-2"><span class="material-icons-outlined text-sm">close</span></span>
+</div>
+<div class="flex items-center h-full px-3 min-w-fit border-r border-border-light dark:border-border-dark hover:bg-white dark:hover:bg-editor-bg text-xs text-gray-500 dark:text-gray-400 cursor-pointer transition-colors group">
+<span class="material-icons-outlined text-sm text-yellow-600 mr-2">settings</span>
+                    package.json
+                    <span class="opacity-0 group-hover:opacity-100 ml-2"><span class="material-icons-outlined text-sm">close</span></span>
+</div>
+</div>
+<div class="flex-1 overflow-auto bg-[#09090b] text-gray-300 p-6 relative">
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMyNzI3MmEiLz48L3N2Zz4=')] opacity-20 pointer-events-none"></div>
+<div class="absolute inset-0 scanlines pointer-events-none opacity-30 z-0"></div>
+<div class="max-w-6xl mx-auto relative z-10">
+<div class="flex justify-between items-end mb-8 border-b border-border-dark pb-6">
+<div>
+<h2 class="text-2xl font-bold text-white mb-2 font-mono tracking-tight">LLM Provider Configuration</h2>
+<p class="text-sm text-gray-500">Configure connections, manage API keys, and monitor usage for AI agents.</p>
+</div>
+<button class="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded text-xs font-bold font-mono uppercase tracking-wide flex items-center shadow-lg shadow-orange-900/20 transition-all transform hover:scale-105">
+<span class="material-icons-outlined text-sm mr-2">add_link</span> Add Provider
+                        </button>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+<div class="bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-primary/50 transition-colors group shadow-lg">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-[#10a37f] rounded flex items-center justify-center text-white font-bold text-lg shadow-inner">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9995 3.753 6.0462 6.0462 0 0 0 .7427 7.0703 5.98 5.98 0 0 0 .511 4.9107 6.0462 6.0462 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.997-3.79 6.0557 6.0557 0 0 0-.7468-6.1831zM11.3787 2.2133a4.0531 4.0531 0 0 1 2.3789.7712l-2.071 1.1963-3.2678-1.8867a4.0042 4.0042 0 0 1 2.9599-.0808zm-7.0754 4.084a4.0531 4.0531 0 0 1 .7729-2.3774l2.071 1.1963.0031 3.7717-3.2687 1.8876a4.0135 4.0135 0 0 1 .4217-4.4782zm-.5784 8.7997a4.0531 4.0531 0 0 1-1.6063-1.8976l3.2669-1.8876 3.2696 1.8885v2.3926l-3.2678 1.8876a4.008 4.008 0 0 1-1.6624-2.3835zm5.321 4.7554a4.0531 4.0531 0 0 1-2.3798-.7712l2.071-1.1963 3.2678 1.8867a4.0182 4.0182 0 0 1-2.959.0808zm7.0754-4.085a4.0531 4.0531 0 0 1-.7729 2.3774l-2.071-1.1963-.0031-3.7717 3.2687-1.8876a4.0135 4.0135 0 0 1-.4217 4.4782zm.5774-8.7997a4.0531 4.0531 0 0 1 1.6073 1.8976l-3.2669 1.8876-3.2696-1.8885V6.3986l3.2678-1.8876a4.008 4.008 0 0 1 1.6614 2.3826z"></path></svg>
+</div>
+<div>
+<h3 class="font-bold text-gray-200 text-base">OpenAI</h3>
+<div class="flex items-center space-x-2 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+<span class="text-[10px] uppercase font-mono text-green-500 tracking-wider">Operational</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-1">
+<span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-1 rounded border border-gray-700 font-mono">v4.28.0</span>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-[10px] font-mono uppercase text-gray-500 mb-1 block">API Key</label>
+<div class="relative group/input">
+<input class="w-full bg-black/30 border border-gray-700 rounded px-3 py-2 text-xs font-mono text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all" readonly="" type="text" value="sk-proj-• • • • • • • • • • • • • • • •"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"><span class="material-icons-outlined text-xs">edit</span></button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-black/20 p-2 rounded border border-gray-800">
+<div class="text-[10px] text-gray-500 mb-1">Default Model</div>
+<div class="text-xs font-mono text-gray-300">gpt-4-turbo</div>
+</div>
+<div class="bg-black/20 p-2 rounded border border-gray-800">
+<div class="text-[10px] text-gray-500 mb-1">Context Window</div>
+<div class="text-xs font-mono text-gray-300">128k Tokens</div>
+</div>
+</div>
+<div class="pt-2">
+<div class="flex justify-between text-[10px] text-gray-500 mb-1 font-mono">
+<span>USAGE (MAY)</span>
+<span>$12.54 / $50.00</span>
+</div>
+<div class="h-2 w-full bg-gray-800 rounded-sm overflow-hidden border border-gray-700/50">
+<div class="h-full bg-gradient-to-r from-green-600 to-green-400 w-[25%] shadow-[0_0_10px_rgba(74,222,128,0.3)]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-primary/50 transition-colors group shadow-lg">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-[#d97757] rounded flex items-center justify-center text-white font-bold text-lg shadow-inner">
+<span class="material-icons-outlined">psychology</span>
+</div>
+<div>
+<h3 class="font-bold text-gray-200 text-base">Anthropic</h3>
+<div class="flex items-center space-x-2 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+<span class="text-[10px] uppercase font-mono text-green-500 tracking-wider">Operational</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-1">
+<button class="text-gray-500 hover:text-primary"><span class="material-icons-outlined text-lg">refresh</span></button>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-[10px] font-mono uppercase text-gray-500 mb-1 block">API Key</label>
+<div class="relative group/input">
+<input class="w-full bg-black/30 border border-gray-700 rounded px-3 py-2 text-xs font-mono text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all" readonly="" type="text" value="sk-ant-• • • • • • • • • • • • • • • •"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"><span class="material-icons-outlined text-xs">edit</span></button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-black/20 p-2 rounded border border-gray-800">
+<div class="text-[10px] text-gray-500 mb-1">Default Model</div>
+<div class="text-xs font-mono text-gray-300">claude-3-opus</div>
+</div>
+<div class="bg-black/20 p-2 rounded border border-gray-800">
+<div class="text-[10px] text-gray-500 mb-1">Context Window</div>
+<div class="text-xs font-mono text-gray-300">200k Tokens</div>
+</div>
+</div>
+<div class="pt-2">
+<div class="flex justify-between text-[10px] text-gray-500 mb-1 font-mono">
+<span>USAGE (MAY)</span>
+<span>$45.20 / $100.00</span>
+</div>
+<div class="h-2 w-full bg-gray-800 rounded-sm overflow-hidden border border-gray-700/50">
+<div class="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[45%] shadow-[0_0_10px_rgba(251,146,60,0.3)]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-primary/50 transition-colors group opacity-80">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-[#4285f4] rounded flex items-center justify-center text-white font-bold text-lg shadow-inner">
+<span class="material-icons-outlined">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-bold text-gray-200 text-base">Google Gemini</h3>
+<div class="flex items-center space-x-2 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-gray-600"></span>
+<span class="text-[10px] uppercase font-mono text-gray-500 tracking-wider">Not Configured</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-blue-500/5 border border-blue-500/10 rounded text-xs text-blue-200">
+<span class="font-bold">Recommendation:</span> Connect Gemini Pro 1.5 for enhanced multimodal reasoning capabilities and larger context window.
+                                </div>
+<div>
+<button class="w-full py-2 bg-[#27272a] hover:bg-[#3f3f46] text-gray-300 rounded text-xs font-mono border border-gray-700 transition-colors flex justify-center items-center group-hover:border-gray-500">
+<span class="material-icons-outlined text-sm mr-2">key</span>
+                                    Enter API Key
+                                </button>
+</div>
+</div>
+</div>
+<div class="bg-[#18181b] border border-[#27272a] rounded-lg p-5 hover:border-primary/50 transition-colors group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-white rounded flex items-center justify-center text-black font-bold text-lg border border-gray-200">
+<span class="material-icons-outlined">dns</span>
+</div>
+<div>
+<h3 class="font-bold text-gray-200 text-base">Ollama (Local)</h3>
+<div class="flex items-center space-x-2 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<span class="text-[10px] uppercase font-mono text-red-500 tracking-wider">Connection Error</span>
+</div>
+</div>
+</div>
+<button class="text-gray-500 hover:text-primary"><span class="material-icons-outlined text-lg">refresh</span></button>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-[10px] font-mono uppercase text-gray-500 mb-1 block">Endpoint URL</label>
+<input class="w-full bg-black/30 border border-red-900/50 rounded px-3 py-2 text-xs font-mono text-red-400 focus:border-red-500 focus:outline-none transition-all" type="text" value="http://localhost:11434"/>
+<p class="text-[10px] text-red-500 mt-1 flex items-center"><span class="material-icons-outlined text-[10px] mr-1">error</span> Connection refused</p>
+</div>
+<div class="p-2 bg-red-500/10 border border-red-500/20 rounded text-[10px] text-red-300 font-mono">
+                                    [FATAL] Is Ollama running? Run `ollama serve` in terminal.
+                                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-32 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-[#18181b] flex flex-col shrink-0">
+<div class="flex items-center px-4 py-1.5 border-b border-border-light dark:border-border-dark space-x-6 text-[10px] font-semibold text-gray-500 dark:text-gray-400">
+<button class="hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent hover:border-gray-400 pb-0.5">PROBLEMS</button>
+<button class="text-primary border-b-2 border-primary pb-0.5">OUTPUT</button>
+<button class="hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent hover:border-gray-400 pb-0.5">TERMINAL</button>
+<button class="hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent hover:border-gray-400 pb-0.5">DEBUG CONSOLE</button>
+</div>
+<div class="flex-1 p-3 font-mono text-[10px] overflow-auto bg-white dark:bg-editor-bg text-gray-600 dark:text-gray-400">
+<div class="flex items-center mb-1">
+<span class="text-blue-500 w-16">[Info]</span>
+<span>Initializing LLM Provider Manager...</span>
+</div>
+<div class="flex items-center mb-1">
+<span class="text-green-500 w-16">[Success]</span>
+<span>Loaded configuration for OpenAI (sk-proj-...)</span>
+</div>
+<div class="flex items-center mb-1">
+<span class="text-green-500 w-16">[Success]</span>
+<span>Loaded configuration for Anthropic (sk-ant-...)</span>
+</div>
+<div class="flex items-center mb-1">
+<span class="text-red-500 w-16">[Error]</span>
+<span>Failed to connect to Local Ollama instance at http://localhost:11434</span>
+</div>
+<div class="flex items-center mb-1 opacity-50">
+<span class="text-gray-500 w-16">[Debug]</span>
+<span>Checking rate limits for gpt-4-turbo... OK (Remaining: 8900 TPM)</span>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-80 border-l border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark flex flex-col shrink-0">
+<div class="flex items-center h-9 bg-gray-100 dark:bg-[#18181b] border-b border-border-light dark:border-border-dark">
+<button class="flex-1 h-full text-xs font-medium text-gray-800 dark:text-gray-200 border-b-2 border-primary bg-white dark:bg-surface-dark">
+                    Agent Chat
+                </button>
+<button class="flex-1 h-full text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-surface-dark transition-colors">
+                    Preview
+                </button>
+</div>
+<div class="flex-1 flex flex-col overflow-hidden">
+<div class="flex-1 overflow-y-auto p-4 space-y-4 bg-background-light dark:bg-[#09090b]">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20">
+<span class="material-icons-outlined text-white text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col space-y-1 max-w-[85%]">
+<div class="flex items-baseline space-x-2">
+<span class="text-xs font-bold text-gray-900 dark:text-white">Mistral Agent</span>
+<span class="text-[10px] text-gray-500 dark:text-gray-500">10:42 AM</span>
+</div>
+<div class="p-3 bg-white dark:bg-[#27272a] rounded-lg rounded-tl-none border border-border-light dark:border-border-dark shadow-sm text-sm text-gray-700 dark:text-gray-200">
+<p>I've detected a configuration issue with the Local Ollama instance.</p>
+<p class="mt-2">Would you like me to try restarting the service or switch to OpenAI for the debugging task?</p>
+</div>
+</div>
+</div>
+<div class="flex gap-3 flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center shrink-0 text-white text-xs font-bold shadow-lg shadow-purple-500/20">
+                            JS
+                        </div>
+<div class="flex flex-col space-y-1 max-w-[85%] items-end">
+<div class="flex items-baseline space-x-2">
+<span class="text-[10px] text-gray-500 dark:text-gray-500">10:45 AM</span>
+<span class="text-xs font-bold text-gray-900 dark:text-white">You</span>
+</div>
+<div class="p-3 bg-primary text-white rounded-lg rounded-tr-none shadow-sm text-sm">
+<p>Switch to OpenAI GPT-4 Turbo for now. I'll fix the local setup later.</p>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center shrink-0 opacity-70">
+<span class="material-icons-outlined text-white text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col space-y-1">
+<div class="flex items-baseline space-x-2">
+<span class="text-xs font-bold text-gray-900 dark:text-white">Mistral Agent</span>
+<span class="text-[10px] text-gray-500 dark:text-gray-500">Thinking...</span>
+</div>
+<div class="p-3 bg-white dark:bg-[#27272a] rounded-lg rounded-tl-none border border-border-light dark:border-border-dark shadow-sm w-fit">
+<div class="flex space-x-1">
+<div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+<div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+<div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark">
+<div class="relative">
+<textarea class="w-full bg-white dark:bg-[#27272a] border border-border-light dark:border-border-dark rounded-md p-3 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none placeholder-gray-400 dark:placeholder-gray-500" placeholder="Ask the agent to edit code, explain logic, or fix bugs..." rows="3"></textarea>
+<div class="absolute bottom-2 right-2 flex space-x-2">
+<button class="p-1.5 text-gray-400 hover:text-primary transition-colors rounded">
+<span class="material-icons-outlined text-lg">attach_file</span>
+</button>
+<button class="p-1.5 bg-primary hover:bg-orange-600 text-white rounded shadow-md transition-colors">
+<span class="material-icons-outlined text-lg">send</span>
+</button>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<div class="flex space-x-2 text-[10px] text-gray-500">
+<span class="px-1.5 py-0.5 border border-border-light dark:border-gray-700 rounded bg-gray-100 dark:bg-transparent">Model: GPT-4 Turbo</span>
+<span class="px-1.5 py-0.5 border border-border-light dark:border-gray-700 rounded bg-gray-100 dark:bg-transparent flex items-center"><span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span> Active</span>
+</div>
+<button class="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex items-center">
+<span class="material-icons-outlined text-xs mr-1">history</span> Clear Chat
+                         </button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<footer class="h-6 bg-primary dark:bg-[#007acc] text-white flex items-center justify-between px-3 text-xs select-none dark:bg-primary z-20">
+<div class="flex items-center space-x-4">
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs mr-1">source_branch</span>
+<span>main*</span>
+</div>
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs mr-1">sync</span>
+<span>0↓ 1↑</span>
+</div>
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs mr-1">error_outline</span>
+<span>1</span>
+<span class="material-icons-outlined text-xs ml-2 mr-1">warning_amber</span>
+<span>0</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="mr-2">Settings</span>
+<span>UTF-8</span>
+<span class="ml-2">System</span>
+</div>
+<div class="hover:bg-white/10 px-1 rounded cursor-pointer">
+<span class="material-icons-outlined text-xs">notifications_none</span>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,89 +1,168 @@
 /**
  * @fileoverview IDE Layout Component
  * @module components/layout/IDELayout
- * 
+ *
  * Main IDE layout component that orchestrates all IDE panels.
- * Uses react-resizable-panels for a VS Code-like layout with:
- * - Left sidebar (FileTree)
- * - Center area (Editor + Preview)
- * - Bottom panel (Terminal)
- * - Right sidebar (Agent Chat)
- * 
- * @example
- * ```tsx
- * <WorkspaceProvider projectId="my-project">
- *   <IDELayout />
- * </WorkspaceProvider>
- * ```
+ * Uses react-resizable-panels for a VS Code-like layout.
+ * Responsive: Uses MobileIDELayout for viewports <768px.
+ *
+ * @epic Epic-23 Story P1.1
+ * @integration Design tokens implementation for consistent styling
+ * @epic Epic-23 Story P1.9
+ * @integration Error boundaries for critical components
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @integration Responsive branching for mobile/desktop layouts
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useIDEStore } from '@/lib/state';
 import {
-  Panel,
-  PanelGroup,
-  PanelResizeHandle,
-  type ImperativePanelGroupHandle,
-} from 'react-resizable-panels';
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from '@/components/ui/resizable';
+import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Layout sub-components
 import { IDEHeaderBar } from './IDEHeaderBar';
 import { TerminalPanel } from './TerminalPanel';
 import { ChatPanelWrapper } from './ChatPanelWrapper';
+import { PermissionOverlay } from './PermissionOverlay';
+
+// Mobile-responsive layout (Epic-MRT)
+import { MobileIDELayout } from './MobileIDELayout';
+import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
+
+// Agent tool facades (Story MVP-3: Wire tool facades to agent)
+import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
+import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';
+
+// P1.9: Error boundary for critical components
+import { WithErrorBoundary } from '@/components/common/ErrorBoundary';
 
 // IDE components
 import { FileTree } from '../ide/FileTree';
+import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
+import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
 import { PreviewPanel } from '../ide/PreviewPanel';
+import { StatusBar } from '../ide/StatusBar';
 
-// Hooks and context
+// NEW: IconSidebar integration (Story 28-5 → 28-14)
+import {
+  SidebarProvider,
+  ActivityBar,
+  SidebarContent,
+  useSidebar
+} from '../ide/IconSidebar';
+import { ExplorerPanel } from '../ide/ExplorerPanel';
+import { AgentsPanel } from '../ide/AgentsPanel';
+import { SearchPanel } from '../ide/SearchPanel';
+import { SettingsPanel } from '../ide/SettingsPanel';
+
+import { CommandPalette } from '../ide/CommandPalette';
+import { FeatureSearch } from '../ide/FeatureSearch';
+// QuickActionsMenu available but not currently rendered
+
+// Hooks
 import { useIdeStatePersistence } from '../../hooks/useIdeStatePersistence';
-import { useWorkspace, type TerminalTab } from '../../lib/workspace';
-import { boot, onServerReady, isBooted } from '../../lib/webcontainer';
+import { useWorkspace } from '../../lib/workspace';
 import { useToast } from '../ui/Toast';
+import {
+  useIDEKeyboardShortcuts,
+  useWebContainerBoot,
+  useIDEFileHandlers,
+  useIDEStateRestoration,
+} from './hooks';
+
 
 /**
- * IDELayout - Main IDE layout component.
- * 
- * Consumes WorkspaceContext for project state and provides:
+ * IDELayout - Main IDE layout orchestrator.
+ *
+ * Consumes WorkspaceContext and coordinates:
  * - Resizable panel layout
- * - File tree navigation
- * - Monaco editor with tabs
- * - Preview panel for dev server
- * - Terminal panel
- * - Agent chat panel
+ * - File tree, editor, preview, terminal, chat panels
  * - IDE state persistence
- * 
- * @returns IDE layout JSX element
+ *
+ * @responsive Uses MobileIDELayout for viewports <768px
  */
 export function IDELayout(): React.JSX.Element {
-  const { toast } = useToast();
+  // Responsive branching: Use mobile layout on small viewports
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
-  // Workspace context
+  // Early return for mobile - use dedicated mobile layout
+  if (isMobile) {
+    return <MobileIDELayout />;
+  }
+
+  // Desktop layout continues below
+  const { toast } = useToast();
   const {
-    projectId,
-    projectMetadata,
-    permissionState,
-    syncStatus,
-    localAdapterRef,
-    syncManagerRef,
-    eventBus,
-    setIsWebContainerBooted,  // Story 13-2: Notify context when boot completes
-    restoreAccess,  // Story 13-5: Restore permission for prompt state
+    projectId, projectMetadata, permissionState, syncStatus, initialSyncCompleted,
+    localAdapterRef, syncManagerRef, eventBus, setIsWebContainerBooted, restoreAccess,
   } = useWorkspace();
 
-  // UI state
-  const [isChatVisible, setIsChatVisible] = useState(true);
+  // Zustand state (persisted to IndexedDB)
+  const chatVisible = useIDEStore((s) => s.chatVisible);
+  const setChatVisible = useIDEStore((s) => s.setChatVisible);
+  const terminalTab = useIDEStore((s) => s.terminalTab);
+  const setTerminalTab = useIDEStore((s) => s.setTerminalTab);
+  const openFilePaths = useIDEStore((s) => s.openFiles);
+  const activeFilePath = useIDEStore((s) => s.activeFile);
+  const setActiveFilePath = useIDEStore((s) => s.setActiveFile);
+  const addOpenFile = useIDEStore((s) => s.addOpenFile);
+  const removeOpenFile = useIDEStore((s) => s.removeOpenFile);
+
+  // Local state (ephemeral, not persisted)
   const [selectedFilePath, setSelectedFilePath] = useState<string | undefined>();
-  const [terminalTab, setTerminalTab] = useState<TerminalTab>('terminal');
   const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0);
 
-  // Editor state
-  const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
-  const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
+  // P1.4: Discovery mechanisms state
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isFeatureSearchOpen, setIsFeatureSearchOpen] = useState(false);
 
-  // Preview state
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewPort, setPreviewPort] = useState<number | null>(null);
+  // Local file content cache (ephemeral, not persisted)
+  // File paths are persisted in useIDEStore, but content is cached locally
+  const [fileContentCache, setFileContentCache] = useState<Map<string, string>>(new Map());
+
+  // Derive OpenFile[] from Zustand state + local cache
+  const openFiles = useMemo<OpenFile[]>(() => {
+    return openFilePaths.map((path) => ({
+      path,
+      content: fileContentCache.get(path) || '',
+      isDirty: false,
+    }));
+  }, [openFilePaths, fileContentCache]);
+
+  // Callback to update open files from hooks that need to modify file content
+  // This updates both the local content cache and syncs with Zustand paths
+  const setOpenFiles = (filesOrUpdater: OpenFile[] | ((prev: OpenFile[]) => OpenFile[])) => {
+    const newFiles = typeof filesOrUpdater === 'function'
+      ? filesOrUpdater(openFiles)
+      : filesOrUpdater;
+
+    // Update the file content cache
+    setFileContentCache(new Map(newFiles.map((f) => [f.path, f.content] as [string, string])));
+
+    // Sync paths with Zustand if they changed
+    const newPaths = newFiles.map(f => f.path);
+    const currentPathsStr = openFilePaths.join('\0');
+    const newPathsStr = newPaths.join('\0');
+    if (currentPathsStr !== newPathsStr) {
+      // Add new paths and remove old ones
+      newPaths.forEach(path => {
+        if (!openFilePaths.includes(path)) {
+          addOpenFile(path);
+        }
+      });
+      openFilePaths.forEach(path => {
+        if (!newPaths.includes(path)) {
+          removeOpenFile(path);
+        }
+      });
+    }
+  };
 
   // Panel refs
   const mainPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
@@ -92,435 +171,398 @@ export function IDELayout(): React.JSX.Element {
 
   // State persistence
   const {
+    restoredIdeState, appliedPanelGroupsRef, didRestoreOpenFilesRef, activeFileScrollTopRef,
+    openFilePathsRef, activeFilePathRef, terminalTabRef, chatVisibleRef,
+    scheduleIdeStatePersistence, handlePanelLayoutChange,
+  } = useIdeStatePersistence({ projectId });
+
+  // Extracted hooks
+  useIDEKeyboardShortcuts({
+    onChatToggle: () => setChatVisible(true),
+    onCommandPaletteOpen: () => setIsCommandPaletteOpen(true),
+  });
+  const { previewUrl, previewPort } = useWebContainerBoot({ onBooted: () => setIsWebContainerBooted(true) });
+  const { handleFileSelect, handleSave, handleContentChange, handleTabClose } = useIDEFileHandlers({
+    openFiles,
+    openFilePaths,
+    activeFilePath,
+    setActiveFilePath,
+    addOpenFile,
+    removeOpenFile,
+    setSelectedFilePath,
+    setFileTreeRefreshKey,
+    setFileContentCache,
+    syncManagerRef,
+    eventBus,
+    toast,
+  });
+
+  // Story MVP-3: Create tool facades for agent
+  // ADD: Create file tools facade
+  const fileTools = useMemo(() => {
+    if (!localAdapterRef.current || !syncManagerRef.current) return null;
+    return createFileToolsFacade(localAdapterRef.current, syncManagerRef.current, eventBus);
+  }, [localAdapterRef.current, syncManagerRef.current, eventBus]);
+
+  // ADD: Create terminal tools facade
+  const terminalTools = useMemo(() => {
+    if (!syncManagerRef.current) return null;
+    return createTerminalToolsFacade(syncManagerRef.current);
+  }, [syncManagerRef.current]);
+
+  // Story 28-24: Subscribe FileTree to agent file events via EventBus
+  useFileTreeEventSubscriptions(eventBus, () => setFileTreeRefreshKey(k => k + 1));
+
+  // MVP-3: Subscribe MonacoEditor to agent file:modified events
+  useMonacoEditorEventSubscriptions({
+    eventBus,
+    openFiles,
+    activeFilePath,
+    setOpenFiles,
+  });
+
+  // State restoration hook
+  useIDEStateRestoration({
     restoredIdeState,
+    isChatVisible: chatVisible,
+    openFilesCount: openFiles.length,
+    permissionState,
+    syncStatus,
+    localAdapterRef,
     appliedPanelGroupsRef,
     didRestoreOpenFilesRef,
     activeFileScrollTopRef,
-    openFilePathsRef,
-    activeFilePathRef,
-    terminalTabRef,
-    chatVisibleRef,
-    scheduleIdeStatePersistence,
-    handlePanelLayoutChange,
-  } = useIdeStatePersistence({ projectId });
-
-
-  // ============================================================================
-  // Keyboard Shortcuts
-  // ============================================================================
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const isModifierPressed = event.metaKey || event.ctrlKey;
-      if (!isModifierPressed || event.key.toLowerCase() !== 'k') return;
-
-      const target = event.target;
-      if (target instanceof HTMLElement) {
-        const tagName = target.tagName?.toLowerCase();
-        const isEditable =
-          tagName === 'input' ||
-          tagName === 'textarea' ||
-          target.isContentEditable ||
-          Boolean(target.closest('.monaco-editor'));
-
-        if (isEditable) return;
-      }
-
-      event.preventDefault();
-      setIsChatVisible(true);
-      window.dispatchEvent(new CustomEvent('ide.chat.focus'));
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // ============================================================================
-  // State Sync with Refs
-  // ============================================================================
-
-  const openFilePathsKey = openFiles.map((f) => f.path).join('\0');
-
-  useEffect(() => {
-    openFilePathsRef.current = openFiles.map((f) => f.path);
-  }, [openFilePathsKey, openFilePathsRef]);
-
-  useEffect(() => {
-    activeFilePathRef.current = activeFilePath;
-  }, [activeFilePath, activeFilePathRef]);
-
-  useEffect(() => {
-    terminalTabRef.current = terminalTab;
-  }, [terminalTab, terminalTabRef]);
-
-  useEffect(() => {
-    chatVisibleRef.current = isChatVisible;
-  }, [isChatVisible, chatVisibleRef]);
-
-  useEffect(() => {
-    scheduleIdeStatePersistence(250);
-  }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, isChatVisible]);
-
-  // ============================================================================
-  // State Restoration
-  // ============================================================================
-
-  // Restore UI state from saved state
-  useEffect(() => {
-    if (!restoredIdeState) return;
-    setIsChatVisible(restoredIdeState.chatVisible);
-    setTerminalTab(restoredIdeState.terminalTab);
-    setActiveFilePath(restoredIdeState.activeFile);
-    activeFileScrollTopRef.current = restoredIdeState.activeFileScrollTop;
-  }, [restoredIdeState, activeFileScrollTopRef]);
-
-  // Apply panel layouts
-  useEffect(() => {
-    const layouts = restoredIdeState?.panelLayouts;
-    if (!layouts) return;
-
-    const applyLayout = (
-      groupKey: string,
-      ref: ImperativePanelGroupHandle | null,
-      expectedLength?: number,
-    ) => {
-      if (appliedPanelGroupsRef.current.has(groupKey)) return;
-      const layout = layouts[groupKey];
-      if (!ref || !layout) return;
-      if (expectedLength !== undefined && layout.length !== expectedLength) return;
-
-      ref.setLayout(layout);
-      appliedPanelGroupsRef.current.add(groupKey);
-    };
-
-    applyLayout('center', centerPanelGroupRef.current);
-    applyLayout('editor', editorPanelGroupRef.current);
-    applyLayout('main', mainPanelGroupRef.current, isChatVisible ? 3 : 2);
-  }, [restoredIdeState, isChatVisible, appliedPanelGroupsRef]);
-
-  // Restore open files
-  useEffect(() => {
-    if (didRestoreOpenFilesRef.current) return;
-    if (!restoredIdeState) return;
-    if (openFiles.length > 0) {
-      didRestoreOpenFilesRef.current = true;
-      return;
-    }
-    if (restoredIdeState.openFiles.length === 0) {
-      didRestoreOpenFilesRef.current = true;
-      return;
-    }
-    if (permissionState !== 'granted') return;
-    if (syncStatus === 'syncing') return;
-
-    const adapter = localAdapterRef.current;
-    if (!adapter) return;
-
-    didRestoreOpenFilesRef.current = true;
-
-    void (async () => {
-      const restoredFiles: OpenFile[] = [];
-
-      for (const path of restoredIdeState.openFiles) {
-        try {
-          const result = await adapter.readFile(path);
-          if ('content' in result) {
-            restoredFiles.push({ path, content: result.content, isDirty: false });
-          }
-        } catch (error) {
-          console.warn('[IDE] Failed to restore tab:', path, error);
-        }
-      }
-
-      if (restoredFiles.length === 0) return;
-
-      setOpenFiles(restoredFiles);
-
-      const preferredActive =
-        restoredIdeState.activeFile &&
-          restoredFiles.some((f) => f.path === restoredIdeState.activeFile)
-          ? restoredIdeState.activeFile
-          : restoredFiles[0].path;
-
-      setActiveFilePath(preferredActive);
-      setSelectedFilePath(preferredActive);
-    })();
-  }, [restoredIdeState, openFiles.length, permissionState, syncStatus, localAdapterRef, didRestoreOpenFilesRef]);
-
-  // ============================================================================
-  // WebContainer Initialization
-  // ============================================================================
-
-  useEffect(() => {
-    boot()
-      .then(() => {
-        // Story 13-2: Notify WorkspaceContext that boot is complete
-        // This enables useInitialSync to trigger auto-sync
-        setIsWebContainerBooted(true);
-        console.log('[IDE] WebContainer booted, auto-sync can now proceed');
-
-        if (isBooted()) {
-          const unsubscribe = onServerReady((port, url) => {
-            console.log(`[IDE] Server ready on port ${port}: ${url}`);
-            setPreviewUrl(url);
-            setPreviewPort(port);
-          });
-          return unsubscribe;
-        }
-      })
-      .catch((error) => {
-        console.error('[IDE] WebContainer boot failed:', error);
-        // Don't set booted on failure - sync won't attempt
-      });
-  }, [setIsWebContainerBooted]);
-
-  // ============================================================================
-  // File Handlers
-  // ============================================================================
-
-  const handleFileSelect = useCallback(
-    async (path: string, handle: FileSystemFileHandle) => {
-      setSelectedFilePath(path);
-      console.log('[IDE] File selected:', path);
-
-      const existingFile = openFiles.find((f) => f.path === path);
-      if (existingFile) {
-        setActiveFilePath(path);
-        return;
-      }
-
-      try {
-        const file = await handle.getFile();
-        const content = await file.text();
-        setOpenFiles((prev) => [...prev, { path, content, isDirty: false }]);
-        setActiveFilePath(path);
-      } catch (error) {
-        console.error('[IDE] Failed to read file:', path, error);
-      }
+    mainPanelGroupRef,
+    centerPanelGroupRef,
+    editorPanelGroupRef,
+    setChatVisible,
+    setTerminalTab,
+    setActiveFilePath,
+    setSelectedFilePath,
+    setOpenFiles: (files: OpenFile[]) => {
+      // Update file content cache when open files are restored
+      setFileContentCache(new Map(files.map((f) => [f.path, f.content] as [string, string])));
     },
-    [openFiles],
-  );
+  });
 
-  const handleSave = useCallback(
-    async (path: string, content: string) => {
-      console.log('[IDE] Saving file:', path);
-      try {
-        if (syncManagerRef.current) {
-          await syncManagerRef.current.writeFile(path, content);
-          setOpenFiles((prev) =>
-            prev.map((f) =>
-              f.path === path ? { ...f, content, isDirty: false } : f,
-            ),
-          );
-          console.log('[IDE] File saved successfully:', path);
-          setFileTreeRefreshKey((prev) => prev + 1);
-        } else {
-          console.warn('[IDE] No SyncManager available for save');
-          toast('No project folder open - save skipped', 'warning');
-        }
-      } catch (error) {
-        console.error('[IDE] Failed to save file:', path, error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        toast(`Failed to save ${path.split('/').pop()}: ${errorMessage}`, 'error');
-      }
-    },
-    [toast, syncManagerRef],
-  );
-
-  const handleContentChange = useCallback(
-    (path: string, content: string) => {
-      setOpenFiles((prev) =>
-        prev.map((f) =>
-          f.path === path ? { ...f, content, isDirty: true } : f,
-        ),
-      );
-      eventBus.emit('file:modified', { path, source: 'editor', content });
-    },
-    [eventBus],
-  );
-
-  const handleTabClose = useCallback(
-    (path: string) => {
-      setOpenFiles((prev) => prev.filter((f) => f.path !== path));
-      if (activeFilePath === path) {
-        setActiveFilePath(openFiles.find((f) => f.path !== path)?.path ?? null);
-      }
-    },
-    [activeFilePath, openFiles],
-  );
-
-  // ============================================================================
-  // Render
-  // ============================================================================
+  // State sync with refs
+  const openFilePathsKey = openFilePaths.join('\0');
+  useEffect(() => { openFilePathsRef.current = openFilePaths; }, [openFilePathsKey, openFilePathsRef]);
+  useEffect(() => { activeFilePathRef.current = activeFilePath; }, [activeFilePath, activeFilePathRef]);
+  useEffect(() => { terminalTabRef.current = terminalTab; }, [terminalTab, terminalTabRef]);
+  useEffect(() => { chatVisibleRef.current = chatVisible; }, [chatVisible, chatVisibleRef]);
+  useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-slate-200 overflow-hidden flex flex-col">
-      {/* Story 13-5: Restore Access Overlay */}
-      {permissionState === 'prompt' && (
-        <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-8 rounded-lg text-center max-w-md border border-slate-700 shadow-2xl">
-            <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/20 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
-              Permission Required
-            </h3>
-            <p className="text-slate-400 text-sm mb-6">
-              Click below to restore access to your project folder.
-              {projectMetadata?.name && (
-                <span className="block mt-1 text-slate-300 font-medium">
-                  {projectMetadata.name}
-                </span>
-              )}
-            </p>
-            <button
-              onClick={restoreAccess}
-              className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-medium transition-colors"
-            >
-              Restore Access
-            </button>
-          </div>
-        </div>
-      )}
+    <SidebarProvider defaultPanel="explorer">
+      <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+        {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
+        <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
 
-      {/* Header */}
-      <IDEHeaderBar
-        projectId={projectId}
-        isChatVisible={isChatVisible}
-        onToggleChat={() => setIsChatVisible(!isChatVisible)}
-      />
-
-      {/* Main Resizable Layout */}
-      <PanelGroup
-        ref={mainPanelGroupRef}
-        direction="horizontal"
-        className="flex-1"
-        onLayout={(layout) => handlePanelLayoutChange('main', layout)}
-      >
-        {/* Left Sidebar - FileTree */}
-        <Panel
-          order={1}
-          defaultSize={20}
-          minSize={10}
-          maxSize={30}
-          className="bg-slate-900/50"
-        >
-          <div className="h-full flex flex-col border-r border-slate-800">
-            <div className="h-9 px-4 flex items-center text-xs font-semibold text-slate-400 tracking-wider uppercase border-b border-slate-800/50">
-              Explorer
-            </div>
-            <div className="flex-1 min-h-0">
-              <FileTree
-                selectedPath={selectedFilePath}
-                onFileSelect={handleFileSelect}
-                refreshKey={fileTreeRefreshKey}
-              />
-            </div>
-          </div>
-        </Panel>
-
-        <PanelResizeHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
-
-        {/* Center Area - Editor + Terminal */}
-        <Panel order={2} minSize={30}>
-          <PanelGroup
-            ref={centerPanelGroupRef}
-            direction="vertical"
-            onLayout={(layout) => handlePanelLayoutChange('center', layout)}
-          >
-            {/* Editor + Preview */}
-            <Panel defaultSize={70} minSize={30}>
-              <PanelGroup
-                ref={editorPanelGroupRef}
-                direction="horizontal"
-                onLayout={(layout) => handlePanelLayoutChange('editor', layout)}
-              >
-                {/* Editor */}
-                <Panel defaultSize={60} minSize={30} className="bg-slate-950">
-                  <MonacoEditor
-                    openFiles={openFiles}
-                    activeFilePath={activeFilePath}
-                    onSave={handleSave}
-                    onActiveFileChange={setActiveFilePath}
-                    onTabClose={handleTabClose}
-                    onContentChange={handleContentChange}
-                    initialScrollTop={
-                      activeFilePath && activeFilePath === restoredIdeState?.activeFile
-                        ? restoredIdeState.activeFileScrollTop
-                        : undefined
-                    }
-                    onScrollTopChange={(_path, scrollTop) => {
-                      activeFileScrollTopRef.current = scrollTop;
-                      scheduleIdeStatePersistence(400);
-                    }}
-                  />
-                </Panel>
-
-                <PanelResizeHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
-
-                {/* Preview */}
-                <Panel defaultSize={40} minSize={15} className="bg-slate-900/30">
-                  <PreviewPanel previewUrl={previewUrl} port={previewPort} />
-                </Panel>
-              </PanelGroup>
-            </Panel>
-
-            <PanelResizeHandle className="h-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-row-resize" />
-
-            {/* Terminal */}
-            <Panel defaultSize={30} minSize={10} maxSize={50} className="bg-slate-900">
-              <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} projectPath="/" />
-            </Panel>
-          </PanelGroup>
-        </Panel>
-
-        {/* Right Sidebar - Chat */}
-        {isChatVisible && (
-          <>
-            <PanelResizeHandle className="w-1 bg-slate-800 hover:bg-cyan-500/50 transition-colors cursor-col-resize" />
-            <Panel
-              order={3}
-              defaultSize={25}
-              minSize={15}
-              maxSize={40}
-              className="bg-slate-900/50"
-            >
-              <ChatPanelWrapper
-                projectId={projectId}
-                projectName={projectMetadata?.name ?? projectId ?? 'Project'}
-                onClose={() => setIsChatVisible(false)}
-              />
-            </Panel>
-          </>
+        {/* P1.4: Discovery mechanisms */}
+        {isCommandPaletteOpen && (
+          <CommandPalette
+            isOpen={isCommandPaletteOpen}
+            onClose={() => setIsCommandPaletteOpen(false)}
+          />
         )}
-      </PanelGroup>
 
-      {/* Minimum Viewport Warning */}
-      <MinViewportWarning />
-    </div>
+        {isFeatureSearchOpen && (
+          <FeatureSearch
+            isOpen={isFeatureSearchOpen}
+            onClose={() => setIsFeatureSearchOpen(false)}
+          />
+        )}
+
+        {/* P1.7: Responsive main content area with mobile-first layout */}
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}
+          {/* P1.7: Hide sidebar on mobile, show on tablet+ */}
+          <ActivityBar />
+          <SidebarContent className="hidden md:flex">
+            <SidebarPanelRenderer
+              selectedFilePath={selectedFilePath}
+              onFileSelect={handleFileSelect}
+              fileTreeRefreshKey={fileTreeRefreshKey}
+            />
+          </SidebarContent>
+
+          {/* Main Resizable Panel Group */}
+          <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
+
+
+            {/* Center Panel (Editor + Preview + Terminal) */}
+            <ResizablePanel order={2} minSize={30}>
+              <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
+                {/* Editor + Preview */}
+                <ResizablePanel defaultSize={70} minSize={30}>
+                  <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
+                    <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
+                      <Card className="h-full rounded-none border-0 bg-background">
+                        {/* P1.7: Responsive header height */}
+                        <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                          <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 min-h-0">
+                          <WithErrorBoundary
+                            fallback={
+                              <div className="h-full flex items-center justify-center text-muted-foreground">
+                                <div className="text-center">
+                                  <p className="text-sm font-medium">Editor Error</p>
+                                  <p className="text-xs text-muted-foreground/70 mt-1">
+                                    The code editor encountered an error. Please refresh the page.
+                                  </p>
+                                </div>
+                              </div>
+                            }
+                          >
+                            <MonacoEditor
+                              openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
+                              onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
+                              initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                              onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
+                            />
+                          </WithErrorBoundary>
+                        </CardContent>
+                      </Card>
+                    </ResizablePanel>
+                    <ResizableHandle
+                      withHandle
+                      orientation="vertical"
+                      className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                      aria-label="Resize editor and preview panels"
+                      aria-orientation="vertical"
+                    />
+                    {/* P1.7: Responsive header height and panel sizing */}
+                    <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
+                      <Card className="h-full rounded-none border-0 bg-background">
+                        <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                          <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Preview</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 min-h-0">
+                          <WithErrorBoundary
+                            fallback={
+                              <div className="h-full flex items-center justify-center text-muted-foreground">
+                                <div className="text-center">
+                                  <p className="text-sm font-medium">Preview Error</p>
+                                  <p className="text-xs text-muted-foreground/70 mt-1">
+                                    The preview panel encountered an error.
+                                  </p>
+                                </div>
+                              </div>
+                            }
+                          >
+                            <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                          </WithErrorBoundary>
+                        </CardContent>
+                      </Card>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </ResizablePanel>
+                <ResizableHandle
+                  withHandle
+                  orientation="horizontal"
+                  className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                  aria-label="Resize editor and terminal panels"
+                  aria-orientation="horizontal"
+                />
+                {/* Terminal Panel */}
+                {/* P1.7: Responsive header height and panel sizing */}
+                <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
+                  <Card className="h-full rounded-none border-0 bg-background">
+                    <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                      <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Terminal</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 flex-1 min-h-0">
+                      <WithErrorBoundary
+                        fallback={
+                          <div className="h-full flex items-center justify-center text-muted-foreground">
+                            <div className="text-center">
+                              <p className="text-sm font-medium">Terminal Error</p>
+                              <p className="text-xs text-muted-foreground/70 mt-1">
+                                The terminal encountered an error. Please refresh the page.
+                              </p>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
+                      </WithErrorBoundary>
+                    </CardContent>
+                  </Card>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
+
+            {/* Chat Panel */}
+            {chatVisible && (
+              <>
+                <ResizableHandle
+                  withHandle
+                  className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                  aria-label="Resize chat panel"
+                  aria-orientation="vertical"
+                />
+                {/* P1.7: Responsive header height and chat panel sizing */}
+                <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
+                  <Card className="h-full rounded-none border-0 bg-background">
+                    <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                      <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0 flex-1 min-h-0">
+                      <WithErrorBoundary
+                        fallback={
+                          <div className="h-full flex items-center justify-center text-muted-foreground">
+                            <div className="text-center">
+                              <p className="text-sm font-medium">Chat Error</p>
+                              <p className="text-xs text-muted-foreground/70 mt-1">
+                                The chat panel encountered an error. Please refresh the page.
+                              </p>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <ChatPanelWrapper
+                          projectId={projectId}
+                          projectName={projectMetadata?.name ?? projectId ?? 'Project'}
+                          onClose={() => setChatVisible(false)}
+                          // ADD: Pass tool facades to chat panel (Story MVP-3)
+                          fileTools={fileTools}
+                          terminalTools={terminalTools}
+                          eventBus={eventBus}
+                        />
+                      </WithErrorBoundary>
+                    </CardContent>
+                  </Card>
+                </ResizablePanel>
+              </>
+            )}
+          </ResizablePanelGroup>
+        </div>
+        {/* VS Code-style footer StatusBar (Story 28-18) */}
+        <StatusBar />
+
+        {/* MinViewportWarning removed - MobileIDELayout handles small viewports now */}
+      </div>
+    </SidebarProvider>
   );
 }
 
 /**
- * MinViewportWarning - Shown when viewport is too small.
+ * SidebarPanelRenderer - Renders the active sidebar panel content
  * 
- * @returns Warning overlay JSX element
+ * @epic Epic-28 Story 28-14
+ * Uses useSidebar hook to determine which panel to show
  */
-function MinViewportWarning(): React.JSX.Element {
-  return (
-    <div className="fixed inset-0 bg-slate-950/95 z-50 hidden min-[1024px]:hidden items-center justify-center p-8 text-center max-[1023px]:flex">
-      <div>
-        <h2 className="text-xl font-semibold text-white mb-2">
-          Screen Too Small
-        </h2>
-        <p className="text-slate-400 text-sm">
-          via-gent IDE requires a minimum viewport width of 1024px.
-          <br />
-          Please resize your browser window or use a larger screen.
-        </p>
-      </div>
-    </div>
-  );
+function SidebarPanelRenderer({
+  selectedFilePath,
+  onFileSelect,
+  fileTreeRefreshKey,
+}: {
+  selectedFilePath?: string;
+  onFileSelect: (path: string, handle: FileSystemFileHandle) => void;
+  fileTreeRefreshKey: number;
+}) {
+  const { activePanel } = useSidebar();
+
+  switch (activePanel) {
+    case 'explorer':
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Explorer Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The file explorer encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <ExplorerPanel>
+            <FileTree
+              selectedPath={selectedFilePath}
+              onFileSelect={onFileSelect}
+              refreshKey={fileTreeRefreshKey}
+            />
+          </ExplorerPanel>
+        </WithErrorBoundary>
+      );
+    case 'agents':
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Agents Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The agents panel encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <AgentsPanel />
+        </WithErrorBoundary>
+      );
+    case 'search':
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Search Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The search panel encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <SearchPanel />
+        </WithErrorBoundary>
+      );
+    case 'settings':
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Settings Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The settings panel encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <SettingsPanel />
+        </WithErrorBoundary>
+      );
+    default:
+      return (
+        <WithErrorBoundary
+          fallback={
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm font-medium">Explorer Error</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  The file explorer encountered an error. Please refresh the page.
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <ExplorerPanel>
+            <FileTree
+              selectedPath={selectedFilePath}
+              onFileSelect={onFileSelect}
+              refreshKey={fileTreeRefreshKey}
+            />
+          </ExplorerPanel>
+        </WithErrorBoundary>
+      );
+  }
 }
+

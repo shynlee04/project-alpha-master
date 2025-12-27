@@ -4,13 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Via-gent** is a browser-based IDE that runs code locally using WebContainers. It provides:
+**Via-gent** is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. It provides:
 - Monaco Editor for code editing with tabbed interface
 - xterm.js-based terminal integrated with WebContainers
 - Bidirectional file sync between local File System Access API and WebContainers
+- **AI Agent System** with multi-provider support (OpenRouter, Anthropic, etc.) via TanStack AI
 - Multi-language support (English, Vietnamese) with i18next
 - Project persistence via IndexedDB
 - React 19 + TypeScript + Vite + TanStack Router stack
+- **8-bit Design System**: Dark-themed aesthetic with pixel-perfect styling and CSS design tokens
+- **Error Handling**: Comprehensive error boundaries and error state components
 
 ## Essential Development Commands
 
@@ -29,6 +32,9 @@ pnpm test
 
 # Extract translation keys
 pnpm i18n:extract
+
+# Type checking
+pnpm tsc --noEmit
 ```
 
 ## Key Directories & Files
@@ -36,33 +42,46 @@ pnpm i18n:extract
 ```
 src/
 ├── components/           # React components organized by feature
-│   ├── ide/             # IDE components: editor, terminal, file tree, preview
-│   ├── ui/              # Reusable UI components (Toast, etc.)
+│   ├── agent/           # AI agent configuration and dialogs
+│   ├── chat/            # Chat interface components (ChatConversation, ThreadCard, etc.)
+│   ├── common/          # Common utilities (ErrorBoundary)
+│   ├── ide/             # IDE components: editor, terminal, file tree, preview, agent panels
+│   │   └── statusbar/   # Status bar segments (AgentStatusSegment)
+│   ├── ui/              # Reusable UI components (Button, Dialog, Input, etc.)
+│   │   └── icons/       # Icon components (AIIcon, TerminalIcon, etc.)
 │   └── layout/          # Layout components (IDELayout, IDEHeaderBar, etc.)
-├── lib/                 # Core business logic
-│   ├── filesystem/      # File system sync and FSA utilities
-│   ├── webcontainer/    # WebContainer lifecycle and process management
-│   ├── workspace/       # Workspace state and project persistence
-│   ├── editor/          # Monaco editor integration
-│   ├── events/          # Event system
-│   └── persistence/     # Data persistence utilities
+├── lib/
+│   ├── agent/           # AI agent infrastructure
+│   │   ├── facades/    # Agent tool facades (FileTools, TerminalTools)
+│   │   ├── providers/  # Provider adapters, model registry, credential vault
+│   │   ├── tools/      # Individual agent tools (read, write, execute)
+│   │   └── hooks/      # React hooks for agent operations
+│   ├── filesystem/     # File system sync and FSA utilities
+│   ├── webcontainer/   # WebContainer lifecycle and process management
+│   ├── workspace/      # Workspace state and project persistence
+│   ├── editor/         # Monaco editor integration
+│   ├── events/         # Event system
+│   ├── state/          # Zustand stores (IDE, statusbar, navigation, file-sync-status)
+│   └── utils/          # Utilities including error-handling.ts
 ├── routes/              # TanStack Router file-based routes
-├── i18n/                # Internationalization files (en.json, vi.json)
-└── data/                # Demo data and fixtures
+│   └── api/            # API endpoints (/api/chat)
+├── hooks/              # Custom React hooks
+├── i18n/               # Internationalization files (en.json, vi.json)
+├── stores/             # Agent-specific stores (agents.ts, agent-selection.ts)
+└── styles/             # Global styles including design-tokens.css, animations.css
 
-.cursor/rules/bmad/      # BMAD method agents, workflows, and tools
-vite.config.ts           # Vite config with WebContainer cross-origin plugin
-vitest.config.ts         # Test configuration
-tsconfig.json           # TypeScript config with @/* path alias
+.agent/rules/            # AI agent rules and prompts
+_bmad-output/           # BMAD method artifacts and sprint tracking
+docs/2025-12-23/        # Comprehensive technical documentation
 ```
 
 ## Architecture & Key Components
 
 ### Core Architecture
 - **Local FS as Source of Truth**: All file operations go through `LocalFSAdapter` to browser's File System Access API
-- **WebContainer Mirror**: `SyncManager` (`src/lib/filesystem/sync-manager.ts`) syncs files to WebContainer sandbox
-- **State Management**: TanStack Store with React Context (`src/lib/workspace/WorkspaceContext.tsx`)
-- **Project Persistence**: IndexedDB via `ProjectStore` (`src/lib/workspace/project-store.ts`)
+- **WebContainer Mirror**: `SyncManager` syncs files to WebContainer sandbox
+- **State Management**: Zustand stores with React Context for workspace and IDE state
+- **Project Persistence**: IndexedDB via Dexie for project metadata and conversations
 
 ### File System Sync Flow
 ```
@@ -71,16 +90,54 @@ Local FS (FSA) ←→ LocalFSAdapter ←→ SyncManager ←→ WebContainer FS
    IndexedDB (ProjectStore)         File Change Events
 ```
 
-### Key Directories
-- `src/lib/filesystem/` - File system sync and FSA utilities
-- `src/lib/webcontainer/` - WebContainer lifecycle and process management
-- `src/lib/workspace/` - Workspace state and project persistence
-- `src/components/ide/` - Monaco editor, file tree, terminal, preview panel
-- `src/routes/` - TanStack Router file-based routes (SSR disabled for WebContainer compatibility)
-- `src/data/` - Demo data and fixtures
+### AI Agent Architecture
+```
+UI Components (AgentChatPanel, AgentConfigDialog)
+         ↓
+useAgentChat Hook (with tools)
+         ↓
+AgentFactory (creates adapters)
+         ↓
+ProviderAdapter (OpenRouter, Anthropic, etc.)
+         ↓
+TanStack AI (chat streaming)
+         ↓
+Agent Tools (FileTools, TerminalTools)
+         ↓
+Facades (abstract over WebContainer/LocalFS)
+```
+
+**Key Components:**
+- **Provider Adapter Factory** (`src/lib/agent/providers/provider-adapter.ts`): Creates adapters for different AI providers
+- **Model Registry** (`src/lib/agent/providers/model-registry.ts`): Manages available AI models
+- **Credential Vault** (`src/lib/agent/providers/credential-vault.ts`): Secure storage of API keys
+- **Agent Tool Facades**: `AgentFileTools` and `AgentTerminalTools` abstract WebContainer operations for agents
+- **Tool Registry**: Individual tools for file operations (`read`, `write`, `list`, `execute`)
+
+### Error Handling Architecture
+```
+Error Boundary Components (src/components/common/ErrorBoundary.tsx)
+         ↓
+Error State UI (src/components/ui/ErrorState.tsx)
+         ↓
+Error Utilities (src/lib/utils/error-handling.ts)
+```
+
+### State Architecture (P1.10 Audit Complete)
+- **Persisted State** (IndexedDB): `useIDEStore` - open files, active file, panels, terminal tab, chat visibility
+- **Ephemeral State** (in-memory): `useStatusBarStore`, `useFileSyncStatusStore`, `useNavigationStore`
+- **Agent State** (localStorage): `useAgentsStore`, `useAgentSelectionStore`
+- **UI State** (React Context): Workspace context, theme context
+- **Prompt Enhancement**: `usePromptEnhancementStore`, `conversationThreadsStore`
+
+### Discovery & Navigation Components
+- **Command Palette** (Ctrl+P/Cmd+P): Quick command access
+- **Feature Search**: Search across IDE features
+- **Quick Actions Menu**: Frequently used actions
+- **UnifiedNavigation**: Integrates all discovery components
 
 ### Component Structure
-- Components organized by feature: `ide/`, `ui/`, `layout/`
+- Components organized by feature: `agent/`, `chat/`, `ide/`, `ui/`, `layout/`
 - Each component directory has `index.ts` barrel exports
 - TypeScript interfaces for props (not `type` aliases)
 
@@ -94,6 +151,14 @@ res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
 res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
 ```
 The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
+
+### Design Tokens (`src/styles/design-tokens.css` & `design-tokens.ts`)
+CSS custom properties and TypeScript constants for:
+- Layout tokens (panel sizes, sidebar dimensions)
+- Color tokens (8-bit dark theme palette)
+- Typography tokens
+- Spacing and sizing tokens
+- Animation tokens
 
 ### TypeScript (`tsconfig.json`)
 - Path alias `@/*` → `./src/*`
@@ -120,6 +185,7 @@ The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 - Tests use `vitest` with `jsdom` for React components
 - File System Access API is mocked in tests
 - Test files follow naming pattern `*.test.ts` or `*.test.tsx`
+- Use `vi.mock()` for mocking TanStack AI and providers
 
 ### Internationalization
 - Use `t()` hook or `i18next.t()` function for translations
@@ -129,7 +195,18 @@ The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 ### Route Generation
 - TanStack Router auto-generates `src/routeTree.gen.ts`
 - **DO NOT edit this file manually**
-- VS Code settings (`.vscode/settings.json`) mark it as read-only and exclude from watcher/search
+- VS Code settings (`.vscode/settings.json`) mark it as read-only
+
+### AI Agent Development
+When implementing agent features:
+1. **MCP Research Protocol**: Before implementing unfamiliar patterns:
+   - Context7: Query library documentation for API signatures
+   - Deepwiki: Check repo wikis for architecture decisions
+   - Tavily/Exa: Search for 2025 best practices
+   - Repomix: Analyze current codebase structure
+2. **Agent Tools**: Implement in `src/lib/agent/tools/` following the facade pattern
+3. **Provider Adapters**: Use `providerAdapterFactory.createAdapter(providerId, config)`
+4. **Tool Execution**: Wire through `useAgentChatWithTools` hook with approval UI
 
 ### VS Code Settings
 The `.vscode/settings.json` file configures:
@@ -172,13 +249,31 @@ The `.vscode/settings.json` file configures:
 ### 6. Error Handling
 - Use custom error classes from `src/lib/filesystem/sync-types.ts`
 - `SyncError`, `PermissionDeniedError`, `FileSystemError`
-- Catch specific error types rather than generic `Error`
+- Wrap critical components with `ErrorBoundary` from `src/components/common/ErrorBoundary.tsx`
+- Use error utilities from `src/lib/utils/error-handling.ts`
 
 ### 7. Import Order Convention
 1. React imports
 2. Third-party libraries
 3. Internal modules with `@/` alias
 4. Relative imports
+
+### 8. AI Agent Tool Concurrency
+- Agent tools use a file locking mechanism via `FileLock` class
+- Multiple concurrent file operations on the same path are serialized
+- Always await tool results before proceeding
+- Tools validate paths before execution
+
+### 9. TanStack AI Streaming
+- Chat responses are Server-Sent Events (SSE) streams
+- Use `Symbol.asyncIterator` to consume streams
+- Handle `done` event types for completion
+- Stream responses require proper error handling
+
+### 10. State Management (P0 Issue - Deferred)
+- `IDELayout.tsx` duplicates IDE state with local `useState` instead of using `useIDEStore`
+- Recommended refactoring deferred to avoid MVP-3 interference
+- See `_bmad-output/state-management-audit-p1.10-2025-12-26.md` for details
 
 ## Existing Documentation & Guidance
 
@@ -190,27 +285,17 @@ The repository already has comprehensive guidance in `AGENTS.md` covering:
 - Project-specific nuances and gotchas
 - Code style and conventions
 - Testing structure and patterns
+- State management best practices (P1.10 audit findings)
 
-**Key points from AGENTS.md:**
-- Ignore admin route completely (100% client-side project)
-- Terminal working directory must be set with `projectPath` parameter
-- No reverse sync from WebContainer to local FS
-- `.git` and `node_modules` excluded from sync (regenerated in WebContainer)
-- Use BMAD method for development workflows
-
-**Development Tools & Research Guidance (from AGENTS.md):**
-- Use innate search tools, grep, etc. for codebase exploration
-- Use Context7 MCP tools for official documentation (2 sequential steps per turn based on scoring)
-- Use Deepwiki for semantic questions about specific tech stacks (TanStack Router, WebContainer, xterm.js, etc.)
-- Use Tavily and Exa MCP tools for semantic repo search
-- Use Repomix MCP tools for granular codebase analysis
-- Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
-- Prioritize iteration, insertion, updates on single-source of truth
-- When generating new files, isolate with new folders and date-time-stamp marking
+### .agent/rules/general-rules.md
+Comprehensive development rules including:
+- **Mandators MCP Research Protocol**: Step-by-step research before implementing unfamiliar patterns
+- **Dependency documentation**: Full list of GitHub repos and official docs for all dependencies
+- **Development tools guidance**: When to use Context7, Deepwiki, Tavily, Exa, Repomix MCP tools
+- **Context preservation**: Document artifact IDs, variables, naming conventions, date stamps
 
 ### BMAD Method Integration
-
-The project includes BMAD (Business Model & Agile Development) method rules in `.cursor/rules/bmad/`:
+The project includes BMAD (Business Model & Agile Development) method rules:
 
 #### Available Modules
 - **CORE**: Master agent, brainstorming, party mode workflows
@@ -224,23 +309,22 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - `@bmad/bmm/workflows/code-review` - Code review workflow
 - `@bmad/core/workflows/brainstorming` - Brainstorming facilitation
 
-#### Development Workflow from AGENTS.md
-1. **Story Development Cycle**: After completing a story following the **story-dev-cycle** workflow:
-   - Run tests: `pnpm test`
-   - Stage changes: `git add .`
-   - Commit with story ID: `git commit -m "feat(epic-N): Story N-X - [Story Title]"`
-2. **Branch Strategy**: Feature branches created after epic completion (not per-story)
-   - Branch naming: `epic-N/descriptive-name`
-   - Created after `/bmad-bmm-workflows-retrospective` workflow
-3. **Commit Message Format**:
-   ```
-   feat(epic-13): Story 13-1 - Fix Terminal Working Directory
-   fix(epic-13): Story 13-2 - Fix Auto-Sync on Project Load
-   docs(governance): Update sprint-status.yaml with Story 13-6
-   chore(bmad): Course correction - Add Story 13-6 for Preview in New Tab
-   ```
-
 ## Common Operations
+
+### Adding New Agent Tools
+1. Create tool in `src/lib/agent/tools/`
+2. Add tool schema with `zod` validation
+3. Implement tool handler (read from facade, execute, return result)
+4. Register in `src/lib/agent/tools/index.ts`
+5. Add to agent configuration in `useAgentChatWithTools`
+6. Write tests in `src/lib/agent/tools/__tests__/`
+
+### Adding New AI Providers
+1. Add provider config to `model-registry.ts`
+2. Implement adapter in `provider-adapter.ts` following `ProviderAdapter` interface
+3. Register in `providerAdapterFactory.createAdapter()`
+4. Add to `AgentConfigDialog` provider selector
+5. Test with `/api/chat` endpoint
 
 ### Adding New Features
 1. Create component in appropriate feature directory (`ide/`, `ui/`, `layout/`)
@@ -249,6 +333,11 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 4. Write tests in adjacent `__tests__/` directory
 5. Run `pnpm i18n:extract` if adding new translation keys
 
+### Adding New Icon Components
+1. Create icon file in `src/components/ui/icons/` (e.g., `NewIcon.tsx`)
+2. Follow the icon component pattern with SVG and 8-bit styling
+3. Export from `src/components/ui/icons/index.ts`
+
 ### File System Operations
 - Use `LocalFSAdapter` for all file operations
 - File changes trigger sync via `SyncManager`
@@ -256,8 +345,9 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 
 ### State Management
 - Workspace state via `WorkspaceContext` React Context
-- TanStack Store for reactive state
+- Zustand stores for reactive state (`src/lib/state/`)
 - Project metadata persisted in IndexedDB
+- Agent state in `src/stores/` (localStorage)
 
 ## Testing Notes
 
@@ -266,12 +356,34 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - React component tests use `@testing-library/react` with `jsdom`
 - File system tests mock File System Access API
 
+### Agent Testing
+- Mock TanStack AI with `vi.mock('@tanstack/ai')`
+- Mock provider adapters for unit tests
+- Facade tests should mock WebContainer operations
+- Use `FileLock` wrapper for concurrency tests
+
+### Error Boundary Testing
+- Test error boundary catches expected errors
+- Verify error state UI displays correctly
+- Test error recovery mechanisms
+
 ## Performance Considerations
 
 - WebContainer boot is expensive (≈3-5 seconds)
 - File sync uses debounced batch operations
 - Large `node_modules` directories are excluded from sync (regenerated in WebContainer)
 - Monaco Editor loads languages/features on-demand
+
+### AI Agent Performance
+- Tool execution uses non-blocking async patterns
+- Streaming responses reduce perceived latency
+- File operations are debounced and batched
+- Credential vault uses fast IndexedDB lookups
+
+### UI Performance
+- `react-window` for virtual scrolling in long lists
+- `SkeletonLoader` for perceived performance during loading
+- CSS animations from `animations.css` for smooth transitions
 
 ## Troubleshooting
 
@@ -294,3 +406,85 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 1. Run `pnpm i18n:extract`
 2. Check key is in correct namespace (default: `translation`)
 3. Verify `t()` function usage follows i18next patterns
+
+### Agent Tool Not Executing
+1. Verify tool is registered in `tools/index.ts`
+2. Check facade is properly initialized with WebContainer instance
+3. Verify file lock is not held by another operation
+4. Check browser console for tool execution errors
+5. Verify API credentials are set via `AgentConfigDialog`
+
+### Chat API Returning 401
+1. Check if provider has credentials in `credentialVault`
+2. Open `AgentConfigDialog` and configure API keys
+3. Verify provider is supported in `model-registry`
+4. Check `/api/chat` logs for authentication errors
+
+### Component Error Boundary Triggered
+1. Check browser console for error details
+2. Review error state UI for error message
+3. Verify component props are valid
+4. Check for async operation failures
+
+## Recent Updates (Updated: 2025-12-26)
+
+### UI & Design System Enhancements (Epic 28 & P2)
+- **Icon System**: Added 10 new icon components (AIIcon, ChatIcon, CloseIcon, FileIcon, MenuIcon, PlusIcon, RefreshIcon, SettingsIcon, TerminalIcon)
+- **Animation System**: New `animations.css` with 8-bit themed animations
+- **Design Tokens**: Comprehensive CSS custom properties and TypeScript constants
+- **8-bit Design**: Dark-themed aesthetic with pixel-perfect styling standardized
+
+### Error Handling & Accessibility (Epic 23 P1.8, P1.9)
+- **Error Boundaries**: Added `ErrorBoundary` component to critical IDE components
+- **Error State UI**: New `ErrorState`, `EmptyState`, `LoadingState`, `SkeletonLoader` components
+- **Error Utilities**: New `error-handling.ts` utilities for consistent error handling
+- **Accessibility**: Enhanced keyboard navigation and ARIA support across IDE components
+
+### Responsive Design (Epic 23 P1.7)
+- **Mobile-First**: Implemented responsive layout for IDE components
+- **Breakpoints**: Added responsive classes to `IDELayout` and `IconSidebar`
+- **Design Tokens**: Responsive panel sizes and sidebar dimensions
+
+### Navigation & Discovery (Epic 23 P1.5)
+- **Command Palette**: Ctrl+P/Cmd+P keyboard shortcut for quick access
+- **Feature Search**: Search across IDE features
+- **Quick Actions Menu**: Frequently used actions
+- **UnifiedNavigation**: Integrates all discovery components
+- **Navigation Store**: New `useNavigationStore` for state management
+
+### State Management (Epic 23 P1.10)
+- **Audit Complete**: State management audit documented
+- **P0 Issue Identified**: `IDELayout.tsx` duplicates IDE state (deferred refactoring)
+- **Architecture Documented**: Clear separation of persisted, ephemeral, agent, and UI state
+
+### Internationalization
+- **Vietnamese**: Comprehensive Vietnamese translations added
+- **Command Palette**: Full i18n support for discovery components
+- **Keyboard Shortcuts**: Translated shortcut descriptions
+
+### Key Files for Recent Changes
+- `src/components/common/ErrorBoundary.tsx`: Error boundary implementation
+- `src/components/ui/icons/`: Icon component library
+- `src/styles/design-tokens.css` & `design-tokens.ts`: Design token system
+- `src/styles/animations.css`: Animation styles
+- `src/lib/state/navigation-store.ts`: Navigation state management
+- `src/lib/utils/error-handling.ts`: Error handling utilities
+- `_bmad-output/state-management-audit-p1.10-2025-12-26.md`: State audit findings
+
+## Where to Find Things
+
+- **AI Agent System**: `src/lib/agent/`
+- **Chat UI Components**: `src/components/chat/`
+- **Chat API**: `src/routes/api/chat.ts`
+- **Agent Configuration**: `src/components/agent/AgentConfigDialog.tsx`
+- **File System Logic**: `src/lib/filesystem/`
+- **WebContainer Manager**: `src/lib/webcontainer/manager.ts`
+- **Workspace State**: `src/lib/workspace/`
+- **Zustand Stores**: `src/lib/state/`, `src/stores/`
+- **UI Components**: `src/components/ui/`
+- **Icon Components**: `src/components/ui/icons/`
+- **Error Handling**: `src/lib/utils/error-handling.ts`, `src/components/common/`
+- **Translation Keys**: `src/i18n/{en,vi}.json`
+- **BMAD Workflows**: `.cursor/commands/bmad/`
+- **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **Tech Documentation**: `docs/2025-12-23/`

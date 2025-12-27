@@ -1,17 +1,33 @@
 /**
- * Persistence DB - Unified IndexedDB schema for Project Alpha spike.
- *
- * Story 5-1: Set Up IndexedDB Schema
- *
- * Centralizes persistence behind a small facade so higher-level stores
- * (projects, conversations, ideState) share one database and upgrade path.
+ * Persistence DB - Dexie Compatibility Layer
+ * 
+ * @module lib/persistence/db
+ * @governance EPIC-27-1c
+ * 
+ * Story 5-1: Set Up IndexedDB Schema (Original)
+ * Story 27-1c: Migrated to Dexie.js with idb-compatible wrapper
+ * 
+ * This module wraps the Dexie database to provide backward compatibility
+ * with code that used the idb-style API patterns.
+ * 
+ * @example
+ * ```tsx
+ * // Using the compatibility wrapper (existing code works unchanged):
+ * const db = await getPersistenceDB();
+ * await db.put('projects', project);             // ✅ Works
+ * const project = await db.get('projects', id);  // ✅ Works
+ * 
+ * // NEW code should use Dexie directly:
+ * import { db } from '@/lib/state';
+ * await db.projects.put(project);
+ * ```
  */
 
-import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+import { db as dexieDb, resetDatabaseForTesting } from '../state/dexie-db';
 import type { ProjectMetadata } from '../workspace/project-store';
 
 // ============================================================================
-// Record Types (placeholder shapes, refined in Stories 5.2–5.4)
+// Legacy Types (Backward Compatibility)
 // ============================================================================
 
 export interface ConversationRecord {
@@ -24,14 +40,7 @@ export interface ConversationRecord {
 
 export interface IdeStateRecord {
     projectId: string;
-    /**
-     * Panel layouts keyed by panel-group identifier (e.g. "main", "center", "editor").
-     * Use this for async persistence (IndexedDB) since react-resizable-panels storage is sync-only.
-     */
     panelLayouts?: Record<string, number[]>;
-    /**
-     * Legacy single-layout field (kept for backward compatibility with early spikes).
-     */
     panelSizes?: number[];
     openFiles?: string[];
     activeFile?: string | null;
@@ -41,108 +50,163 @@ export interface IdeStateRecord {
     updatedAt: Date;
 }
 
-// ============================================================================
-// IndexedDB Schema
-// ============================================================================
-
-export interface ViaGentPersistenceDB extends DBSchema {
+/**
+ * Legacy schema type for backward compatibility
+ * @deprecated Use Dexie db.table directly
+ */
+export interface ViaGentPersistenceDB {
     projects: {
         key: string;
         value: ProjectMetadata;
-        indexes: {
-            'by-last-opened': Date;
-        };
+        indexes: { 'by-last-opened': Date };
     };
     conversations: {
         key: string;
         value: ConversationRecord;
-        indexes: {
-            'by-project-id': string;
-            'by-updated-at': Date;
-        };
+        indexes: { 'by-project-id': string; 'by-updated-at': Date };
     };
     ideState: {
         key: string;
         value: IdeStateRecord;
-        indexes: {
-            'by-project-id': string;
-            'by-updated-at': Date;
-        };
+        indexes: { 'by-project-id': string; 'by-updated-at': Date };
     };
 }
 
-const DB_NAME = 'via-gent-persistence';
-const DB_VERSION = 1;
+// ============================================================================
+// IDB-Compatible Wrapper
+// ============================================================================
 
-let dbInstance: IDBPDatabase<ViaGentPersistenceDB> | null = null;
+type TableName = 'projects' | 'conversations' | 'ideState';
 
 /**
- * Get or open the unified persistence database.
+ * Wrapper that provides idb-like API on top of Dexie
+ * This allows existing code to work without modification.
  */
-export async function getPersistenceDB(): Promise<IDBPDatabase<ViaGentPersistenceDB> | null> {
+class IdbCompatWrapper {
+    private getTable(storeName: TableName) {
+        switch (storeName) {
+            case 'projects':
+                return dexieDb.projects;
+            case 'conversations':
+                return dexieDb.conversations;
+            case 'ideState':
+                return dexieDb.ideState;
+            default:
+                throw new Error(`Unknown store: ${storeName}`);
+        }
+    }
+
+    /** idb-style put */
+    async put(storeName: TableName, value: unknown): Promise<string> {
+        const table = this.getTable(storeName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const key = await (table as any).put(value);
+        return String(key);
+    }
+
+    /** idb-style get */
+    async get<T>(storeName: TableName, key: string): Promise<T | undefined> {
+        const table = this.getTable(storeName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (table as any).get(key) as Promise<T | undefined>;
+    }
+
+    /** idb-style getAll */
+    async getAll<T>(storeName: TableName): Promise<T[]> {
+        const table = this.getTable(storeName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (table as any).toArray() as Promise<T[]>;
+    }
+
+    /** idb-style delete */
+    async delete(storeName: TableName, key: string): Promise<void> {
+        const table = this.getTable(storeName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (table as any).delete(key);
+    }
+
+    /** idb-style count */
+    async count(storeName: TableName): Promise<number> {
+        const table = this.getTable(storeName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (table as any).count();
+    }
+
+    /** idb-style clear */
+    async clear(storeName: TableName): Promise<void> {
+        const table = this.getTable(storeName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (table as any).clear();
+    }
+
+    /** idb-style transaction (simplified) */
+    transaction(_storeName: TableName, _mode: 'readonly' | 'readwrite') {
+        // Legacy transaction not needed with Dexie - operations are auto-transactional
+        console.warn('[IdbCompatWrapper] transaction() is deprecated, use direct db operations');
+        return {
+            store: {
+                put: async () => { throw new Error('Use db.put directly'); },
+                get: async () => { throw new Error('Use db.get directly'); },
+            },
+            done: Promise.resolve(),
+        };
+    }
+
+    /** Check if object store exists */
+    get objectStoreNames(): { contains: (name: string) => boolean } {
+        const validNames = ['projects', 'conversations', 'ideState', 'taskContexts', 'toolExecutions'];
+        return {
+            contains: (name: string) => validNames.includes(name),
+        };
+    }
+
+    /** Close database (no-op for Dexie, it manages connections) */
+    close(): void {
+        // No-op - Dexie manages its own connections
+    }
+}
+
+// Singleton wrapper instance
+let wrapperInstance: IdbCompatWrapper | null = null;
+
+// ============================================================================
+// Public API
+// ============================================================================
+
+const DB_NAME = 'via-gent-persistence';
+const DB_VERSION = 3;
+
+/**
+ * Get the persistence database (idb-compatible wrapper on Dexie)
+ * 
+ * @returns IDB-compatible wrapper for backward compatibility
+ */
+export async function getPersistenceDB(): Promise<IdbCompatWrapper | null> {
     if (typeof indexedDB === 'undefined') {
         console.warn('[PersistenceDB] IndexedDB is not available.');
         return null;
     }
 
-    if (dbInstance) {
-        return dbInstance;
+    // Ensure Dexie database is open
+    await dexieDb.open();
+
+    // Return singleton wrapper
+    if (!wrapperInstance) {
+        wrapperInstance = new IdbCompatWrapper();
     }
-
-    try {
-        dbInstance = await openDB<ViaGentPersistenceDB>(DB_NAME, DB_VERSION, {
-            upgrade(db, oldVersion) {
-                if (oldVersion < 1) {
-                    const projectsStore = db.createObjectStore('projects', { keyPath: 'id' });
-                    projectsStore.createIndex('by-last-opened', 'lastOpened');
-
-                    const conversationsStore = db.createObjectStore('conversations', { keyPath: 'id' });
-                    conversationsStore.createIndex('by-project-id', 'projectId');
-                    conversationsStore.createIndex('by-updated-at', 'updatedAt');
-
-                    const ideStateStore = db.createObjectStore('ideState', { keyPath: 'projectId' });
-                    ideStateStore.createIndex('by-project-id', 'projectId');
-                    ideStateStore.createIndex('by-updated-at', 'updatedAt');
-                }
-            },
-            blocked() {
-                console.warn('[PersistenceDB] Upgrade blocked by another tab.');
-            },
-            blocking() {
-                dbInstance?.close();
-                dbInstance = null;
-            },
-            terminated() {
-                dbInstance = null;
-            },
-        });
-
-        return dbInstance;
-    } catch (error) {
-        console.error('[PersistenceDB] Failed to open database:', error);
-        return null;
-    }
+    return wrapperInstance;
 }
 
 /**
- * Close and delete the persistence database.
- * Testing-only helper.
+ * Reset database for testing
  */
 export async function _resetPersistenceDBForTesting(): Promise<void> {
-    if (dbInstance) {
-        dbInstance.close();
-        dbInstance = null;
-    }
-
-    if (typeof indexedDB === 'undefined') return;
-
-    await new Promise<void>((resolve) => {
-        const request = indexedDB.deleteDatabase(DB_NAME);
-        request.onsuccess = () => resolve();
-        request.onerror = () => resolve();
-        request.onblocked = () => resolve();
-    });
+    wrapperInstance = null;
+    await resetDatabaseForTesting();
 }
+
+// Re-export Dexie instance for direct access
+export { dexieDb as db };
 
 export const PERSISTENCE_DB_NAME = DB_NAME;
 export const PERSISTENCE_DB_VERSION = DB_VERSION;

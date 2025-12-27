@@ -6,6 +6,7 @@ dist-ssr
 count.txt
 .env
 .nitro
+.netlify
 .tanstack
 .wrangler
 .output

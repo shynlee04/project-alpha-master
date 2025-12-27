@@ -30,6 +30,7 @@ export {
     getInstance,
     isBooted,
     onServerReady,
+    setEventBus,
 } from './manager';
 
 // Types
