@@ -354,7 +354,9 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         // currentSessionMessages updates on every token. We should debounce.
         // But `isLoading` is the best trigger for "turn complete".
 
-        if (!isLoading && currentSessionMessages.length > 0) {
+        // CC-2025-12-27: Always save when messages exist - don't wait for isLoading
+        // This ensures persistence even if tool calls are pending
+        if (currentSessionMessages.length > 0) {
             persist();
         }
 
@@ -371,9 +373,14 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         const combined = [...initialHistory, ...currentSessionMessages];
 
         // Deduplicate by message ID to prevent duplication
+        // Also filter out empty assistant messages (tool-result only)
         const seen = new Set<string>();
         const deduplicated = combined.filter(msg => {
             if (seen.has(msg.id)) {
+                return false;
+            }
+            // Filter out empty assistant messages (these are tool-result containers)
+            if (msg.role === 'assistant' && (!msg.content || msg.content.trim() === '')) {
                 return false;
             }
             seen.add(msg.id);

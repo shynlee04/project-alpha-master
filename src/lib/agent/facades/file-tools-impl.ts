@@ -66,10 +66,12 @@ export class FileToolsFacade implements AgentFileTools {
     async writeFile(path: string, content: string): Promise<void> {
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
+        console.log('[FileToolsFacade] writeFile called:', { path, normalizedPath, contentLength: content.length });
         const lockAcquired = await this.fileLock.acquire(normalizedPath);
         try {
             await this.syncManager.writeFile(normalizedPath, content);
             const lockReleased = Date.now();
+            console.log('[FileToolsFacade] Emitting file:modified event:', { path, source: 'agent' });
             this.eventBus.emit('file:modified', {
                 path,
                 source: 'agent',
@@ -113,10 +115,12 @@ export class FileToolsFacade implements AgentFileTools {
     async createFile(path: string, content = ''): Promise<void> {
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
+        console.log('[FileToolsFacade] createFile called:', { path, normalizedPath, contentLength: content.length });
         const lockAcquired = await this.fileLock.acquire(normalizedPath);
         try {
             await this.syncManager.writeFile(normalizedPath, content);
             const lockReleased = Date.now();
+            console.log('[FileToolsFacade] Emitting file:created event:', { path, source: 'agent' });
             this.eventBus.emit('file:created', {
                 path,
                 source: 'agent',

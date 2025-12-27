@@ -7,6 +7,9 @@ import {
   Home,
   Menu,
   X,
+  Settings,
+  Cpu,
+  Sparkles,
 } from 'lucide-react'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ThemeToggle } from './ui'
