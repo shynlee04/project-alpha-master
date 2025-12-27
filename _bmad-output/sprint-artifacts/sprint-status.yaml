@@ -134,20 +134,73 @@ stories:
     status: "BACKLOG"
 
 # =============================================================================
+# EPIC: MOBILE FILE ACCESS (Course Correction 2025-12-28)
+# =============================================================================
+epic_mfa:
+  id: "MFA"
+  name: "Mobile File Access"
+  status: "IN_PROGRESS"
+  priority: "P0"
+  reason: "FSA API + WebContainers not supported on mobile browsers"
+  research: "_bmad-output/research/mobile-file-access-research-2025-12-28.md"
+  
+  phases:
+    - id: "phase-1"
+      name: "Demo Mode"
+      status: "IN_PROGRESS"
+    - id: "phase-2"
+      name: "Zip Upload/Export"
+      status: "BACKLOG"
+    - id: "phase-3"
+      name: "Master File Sync"
+      status: "BACKLOG"
+
+# MFA Stories
+stories_mfa:
+  MFA-1:
+    title: "Demo Mode with Templates"
+    status: "DONE"
+    started_at: "2025-12-28T01:53:00+07:00"
+    completed_at: "2025-12-28T02:00:00+07:00"
+    effort: "1-2d"
+    files:
+      - "src/components/hub/MobileProjectSelector.tsx"
+      - "src/components/hub/HubHomePage.tsx"
+    validation: "PASS"
+    
+  MFA-2:
+    title: "Zip File Upload/Export"
+    status: "BACKLOG"
+    effort: "2-3d"
+    depends_on: "MFA-1"
+    
+  MFA-3:
+    title: "Master File Sync"
+    status: "BACKLOG"
+    effort: "2-3d"
+    depends_on: "MFA-2"
+
+# =============================================================================
 # SPRINT METRICS
 # =============================================================================
 metrics:
-  total_stories: 11
-  completed: 9
+  # MRT Epic
+  mrt_stories: 11
+  mrt_completed: 9
+  mrt_progress: 82%
+  
+  # MFA Epic (new)
+  mfa_stories: 3
+  mfa_completed: 1
+  mfa_progress: 33%
+  
+  # Combined
+  total_stories: 14
+  completed: 10
   in_progress: 0
-  backlog: 2
+  backlog: 4
+  overall_progress: 71%
   
-  progress_percentage: 82%
-  
-  velocity:
-    planned: 11
-    completed: 4
-    
   quality:
     pass_rate: 100%
     typescript_errors: 0
@@ -157,15 +210,15 @@ metrics:
 # =============================================================================
 current_workflow:
   workflow: "story-dev-cycle"
-  current_story: "MRT-8"
+  current_story: "MFA-1"
   current_phase: "dev-story"
   agent: "@bmad-bmm-dev"
   
   next_actions:
-    - "Create story file for MRT-5"
-    - "Create context XML with Monaco research"
-    - "Implement mobile optimizations"
-    - "Code review"
+    - "Create MobileProjectSelector component"
+    - "Update HubHomePage with mobile detection"
+    - "Add demo template messaging"
+    - "Verify on mobile viewport"
     
 # =============================================================================
 # PREVIOUS SPRINT REFERENCE

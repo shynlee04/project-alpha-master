@@ -37,6 +37,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import { MobileProjectSelector } from './MobileProjectSelector';
 
 /**
  * Check if File System Access API is supported.
@@ -156,6 +157,15 @@ export const HubHomePage: React.FC = () => {
 
   return (
     <div className="flex-1 min-h-screen bg-background text-foreground">
+      {/* MFA-1: Mobile Project Selector Overlay */}
+      {showMobileWarning && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="max-w-md w-full">
+            <MobileProjectSelector onClose={() => setShowMobileWarning(false)} />
+          </div>
+        </div>
+      )}
+
       <main className="flex-1 overflow-y-auto">
         {/* MRT-9: Removed redundant breadcrumbs - MainSidebar handles navigation */}
 
