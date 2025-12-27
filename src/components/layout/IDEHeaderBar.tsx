@@ -92,7 +92,7 @@ export function IDEHeaderBar({
                     <img
                         src="/via-gent-logo.svg"
                         alt="Via-gent"
-                        className="w-6 h-6"
+                        className="w-32 h-8"
                     />
                     <span className="text-primary font-bold tracking-tight">
                         via-gent
