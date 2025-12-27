@@ -34,6 +34,34 @@ const PROVIDER_BASE_URLS: Record<string, string> = {
 };
 
 /**
+ * Models known to NOT support function calling
+ * Add models here that return errors when tools are passed
+ */
+const MODELS_WITHOUT_TOOL_SUPPORT = [
+    'nex-agi/deepseek-v3.1-nex-n1:free',
+    'deepseek/deepseek-chat:free',
+    'deepseek-chat',
+    // Add more models here as discovered
+];
+
+/**
+ * Check if a model supports tool/function calling
+ */
+function modelSupportsTools(modelId: string): boolean {
+    // Check explicit blocklist
+    if (MODELS_WITHOUT_TOOL_SUPPORT.some(m => modelId.includes(m))) {
+        return false;
+    }
+    // Known good models
+    if (modelId.includes('gpt-') || modelId.includes('claude') || modelId.includes('devstral')) {
+        return true;
+    }
+    // Default to true but log warning
+    console.log('[/api/chat] Unknown model tool support, assuming yes:', modelId);
+    return true;
+}
+
+/**
  * Request body for chat endpoint
  */
 interface ChatRequest {
@@ -55,6 +83,27 @@ function errorResponse(message: string, status: number) {
         JSON.stringify({ error: message }),
         { status, headers: { 'Content-Type': 'application/json' } }
     );
+}
+
+/**
+ * Sanitize messages for models without tool support
+ * Removes tool-related messages and tool_calls from assistant messages
+ */
+function sanitizeMessagesForNoToolModel(
+    messages: Array<{ role: string; content: string; tool_calls?: unknown[]; tool_call_id?: string }>
+): Array<{ role: 'user' | 'assistant' | 'tool'; content: string }> {
+    return messages
+        // Filter out tool role messages entirely
+        .filter(m => m.role !== 'tool')
+        // Filter out system messages (convert to user with prefix if needed)
+        .filter(m => m.role !== 'system')
+        // Map remaining to clean format
+        .map(m => ({
+            role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant' | 'tool',
+            content: m.content || '',
+        }))
+        // Filter out empty messages
+        .filter(m => m.content.trim() !== '');
 }
 
 /**
@@ -170,18 +219,33 @@ export const Route = createFileRoute('/api/chat')({
                     });
 
                     // CC-2025-12-25-004: Debug flag to test without tools
-                    // Set DISABLE_TOOLS=true in request body to test basic chat
-                    const enableTools = !body.disableTools;
+                    // Also check if model supports tools (some models error with tool definitions)
+                    const modelHasToolSupport = modelSupportsTools(modelId);
+                    const enableTools = !body.disableTools && modelHasToolSupport;
 
-                    console.log('[/api/chat] Tools enabled:', enableTools);
+                    console.log('[/api/chat] Tools enabled:', enableTools, {
+                        disableTools: body.disableTools,
+                        modelHasToolSupport
+                    });
+
+                    // Sanitize messages for models without tool support
+                    // This removes tool-role messages and empty messages that could cause errors
+                    const finalMessages = enableTools
+                        ? body.messages
+                        : sanitizeMessagesForNoToolModel(body.messages);
+
+                    console.log('[/api/chat] Message count:', {
+                        original: body.messages.length,
+                        final: finalMessages.length
+                    });
 
                     // Create streaming chat with the adapter
                     // NOTE: Some free models may not support tools
                     const stream = chat({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         adapter: adapter as any,
-                        messages: body.messages,
-                        // Only pass tools if enabled
+                        messages: finalMessages,
+                        // Only pass tools if enabled and model supports them
                         ...(enableTools && { tools }),
                     });
 

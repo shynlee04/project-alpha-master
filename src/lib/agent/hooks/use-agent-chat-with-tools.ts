@@ -271,12 +271,23 @@ export function useAgentChatWithTools(
     const error = chatResult.error ?? null;
     const addToolApprovalResponse = chatResult.addToolApprovalResponse;
 
+    // DEBUG: Log chat state
+    useEffect(() => {
+        console.log('[useAgentChat] Chat state:', {
+            isLoading,
+            hasError: !!error,
+            error: error?.message,
+            rawMessagesCount: rawMessages.length,
+        });
+    }, [isLoading, error, rawMessages]);
+
     // Update agent status based on loading state
     useEffect(() => {
         if (isLoading) {
             setAgentStatus('thinking');
         } else if (error) {
             setAgentStatus('error');
+            console.error('[useAgentChat] Error:', error);
         } else {
             setAgentStatus('idle');
         }
@@ -313,11 +324,30 @@ export function useAgentChatWithTools(
             }
         }
 
+        // DEBUG: Log message transformation with full details
+        if (rawMessages.length > 0) {
+            const lastRaw = rawMessages[rawMessages.length - 1];
+            console.log('[useAgentChat] Messages transformed:', {
+                rawCount: rawMessages.length,
+                resultCount: result.length,
+                lastRawRole: (lastRaw as { role?: string })?.role,
+                lastRawHasParts: !!(lastRaw as { parts?: unknown })?.parts,
+                lastRawContent: ((lastRaw as { content?: string })?.content || '').substring(0, 100),
+                lastResultContent: result[result.length - 1]?.content?.substring(0, 100),
+            });
+            // Log full structure of last raw message for debugging
+            console.log('[useAgentChat] Last raw message structure:', JSON.stringify(lastRaw, null, 2).substring(0, 500));
+        }
+
         return result;
     }, [rawMessages]);
 
     // Wrap sendMessage for simple string input
     const sendMessage = useCallback((content: string) => {
+        console.log('[useAgentChat] sendMessage called:', {
+            contentLength: content.length,
+            content: content.substring(0, 100)
+        });
         rawSendMessage(content);
     }, [rawSendMessage]);
 

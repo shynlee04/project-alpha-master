@@ -308,16 +308,295 @@ backlog_epics:
     notes: "Deferred from MVP to Epic 29. Full implementation with state tracking, iteration UI, intelligent termination."
 
 # =============================================================================
+# STORIES
+# =============================================================================
+stories:
+  layout-1:
+    id: LAYOUT-1
+    name: "Create Unified Layout Store"
+    status: "done"
+    points: 3
+    priority: P0
+    platform: "Platform A"
+    startedat: "2025-12-27T10:00:00+07:00"
+    devcompletedat: "2025-12-27T10:10:00+07:00"
+    devstartedat: "2025-12-27T10:00:00+07:00"
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create src/lib/state/layout-store.ts with Zustand store - IMPLEMENTED"
+      - "Define state: sidebarCollapsed, sidebarMobileOpen, activeNavItem - IMPLEMENTED"
+      - "Define actions: toggleSidebar, setSidebarCollapsed, setMobileMenuOpen, setActiveNavItem - IMPLEMENTED"
+      - "Implement persistence using persist middleware - IMPLEMENTED"
+      - "Store persists to localStorage with key via-gent-layout-storage - IMPLEMENTED"
+      - "TypeScript types properly exported for use in components - IMPLEMENTED"
+      - "No linter errors (pnpm build passes) - VERIFIED"
+      - "No type errors (pnpm tsc --noEmit passes) - VERIFIED"
+  layout-2:
+    id: LAYOUT-2
+    name: "Create MainSidebar Component"
+    status: "ready-for-dev"
+    points: 5
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-1"
+    acceptance_criteria:
+      - "Create src/components/layout/MainSidebar.tsx - NOT IMPLEMENTED"
+      - "Implement collapsible sidebar with icons (Home, Projects, Agents, Knowledge, Settings) - NOT IMPLEMENTED"
+      - "Wire to useLayoutStore for state management - NOT IMPLEMENTED"
+      - "Sidebar collapses to icon-only view (64px width) when collapsed - NOT IMPLEMENTED"
+      - "Sidebar expands to full width (256px width) when expanded - NOT IMPLEMENTED"
+      - "Navigation items highlight active route - NOT IMPLEMENTED"
+      - "Click on nav item navigates to correct route - NOT IMPLEMENTED"
+      - "Add collapse toggle button at bottom - NOT IMPLEMENTED"
+      - "Mobile menu overlay works correctly - NOT IMPLEMENTED"
+      - "Responsive design (mobile vs desktop) - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-3:
+    id: LAYOUT-3
+    name: "Create MainLayout Component"
+    status: "backlog"
+    points: 4
+    priority: P0
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-1, LAYOUT-2"
+    acceptance_criteria:
+      - "Create src/components/layout/MainLayout.tsx - NOT IMPLEMENTED"
+      - "Integrate MainSidebar on left side - NOT IMPLEMENTED"
+      - "Integrate Header at top - NOT IMPLEMENTED"
+      - "Main content area adjusts based on sidebar state - NOT IMPLEMENTED"
+      - "CSS transitions for sidebar collapse/expand - NOT IMPLEMENTED"
+      - "Responsive layout (mobile menu overlay) - NOT IMPLEMENTED"
+      - "Outlet for child routes - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-4:
+    id: LAYOUT-4
+    name: "Update Root Route"
+    status: "backlog"
+    points: 3
+    priority: P1
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-3"
+    acceptance_criteria:
+      - "Update src/routes/__root.tsx to use MainLayout - NOT IMPLEMENTED"
+      - "Remove HubLayout wrapper from root route - NOT IMPLEMENTED"
+      - "All routes use MainLayout (sidebar + header) - NOT IMPLEMENTED"
+      - "Outlet renders child routes correctly - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-5:
+    id: LAYOUT-5
+    name: "Create Workspace Index Route"
+    status: "backlog"
+    points: 5
+    priority: P1
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-4"
+    acceptance_criteria:
+      - "Create src/routes/workspace/index.tsx - NOT IMPLEMENTED"
+      - "Implement project list page - NOT IMPLEMENTED"
+      - "Integrate with Dexie project store to load projects - NOT IMPLEMENTED"
+      - "Display project cards with name, description, last modified - NOT IMPLEMENTED"
+      - "Add Open Folder button to open existing project - NOT IMPLEMENTED"
+      - "Add Create Project button to create new project - NOT IMPLEMENTED"
+      - "Click on project navigates to /workspace/$projectId - NOT IMPLEMENTED"
+      - "Empty state shows helpful message - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+  layout-6:
+    id: LAYOUT-6
+    name: "Simplify Header Component"
+    status: "backlog"
+    points: 3
+    priority: P1
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-1"
+    acceptance_criteria:
+      - "Remove duplicate mobile menu (lines 47-124) from Header.tsx - NOT IMPLEMENTED"
+      - "Add hamburger menu button to Header - NOT IMPLEMENTED"
+      - "Hamburger button triggers setMobileMenuOpen from useLayoutStore - NOT IMPLEMENTED"
+      - "Keep logo, theme toggle, language switcher, user menu - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-7:
+    id: LAYOUT-7
+    name: "Add QuickActions Component"
+    status: "backlog"
+    points: 3
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create src/components/layout/QuickActions.tsx - NOT IMPLEMENTED"
+      - "Implement Open Folder button - NOT IMPLEMENTED"
+      - "Implement Create Project button - NOT IMPLEMENTED"
+      - "Use existing project opening logic - NOT IMPLEMENTED"
+      - "Use existing project creation logic - NOT IMPLEMENTED"
+      - "Styled with 8-bit design system - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-8:
+    id: LAYOUT-8
+    name: "Add PortalCards Component"
+    status: "backlog"
+    points: 4
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: null
+    acceptance_criteria:
+      - "Create src/components/layout/PortalCards.tsx - NOT IMPLEMENTED"
+      - "Implement navigation cards for: IDE, Agents, Knowledge, Settings - NOT IMPLEMENTED"
+      - "Each card has icon, title, description - NOT IMPLEMENTED"
+      - "Click on card navigates to correct route - NOT IMPLEMENTED"
+      - "Cards styled with 8-bit design system - NOT IMPLEMENTED"
+      - "Hover effects for interactivity - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+  layout-9:
+    id: LAYOUT-9
+    name: "Enhance HubHomePage"
+    status: "backlog"
+    points: 4
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-7, LAYOUT-8"
+    acceptance_criteria:
+      - "Update HubHomePage.tsx to use QuickActions - NOT IMPLEMENTED"
+      - "Update HubHomePage.tsx to use PortalCards - NOT IMPLEMENTED"
+      - "Keep topic-based onboarding section - NOT IMPLEMENTED"
+      - "Keep recent projects section - NOT IMPLEMENTED"
+      - "Layout flows naturally: onboarding → quick actions → portal cards → recent projects - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+      - "Browser E2E verification with screenshot - NOT IMPLEMENTED"
+  layout-10:
+    id: LAYOUT-10
+    name: "Deprecate HubLayout"
+    status: "backlog"
+    points: 2
+    priority: P2
+    platform: "Platform A"
+    startedat: null
+    devcompletedat: null
+    devstartedat: null
+    reviewsubmittedat: null
+    reviewcompletedat: null
+    testsadded: 0
+    testspassing: 0
+    e2e_verified: false
+    e2e_verification_date: null
+    e2e_verification_evidence: null
+    dependency: "LAYOUT-4"
+    acceptance_criteria:
+      - "Remove HubLayout.tsx from routing - NOT IMPLEMENTED"
+      - "Mark HubLayout as deprecated in code comments - NOT IMPLEMENTED"
+      - "Add TODO comment: Remove in v2.0 - NOT IMPLEMENTED"
+      - "Clean up unused imports from HubLayout - NOT IMPLEMENTED"
+      - "Verify no other components depend on HubLayout - NOT IMPLEMENTED"
+      - "No linter errors - NOT IMPLEMENTED"
+      - "No type errors - NOT IMPLEMENTED"
+
+# =============================================================================
 # METRICS AND TRACKING
 # =============================================================================
 metrics:
-  total_epics: 1 (active) + 8 (archived) = 9
-  total_stories: 7 (MVP) + 0 (backlog) = 7
-  story_points: 35 (MVP: 7 stories × 5 points = 35)
+  total_epics: 1 (active) + 8 (archived) + 1 (backlog) = 10
+  total_stories: 7 (MVP) + 10 (LAYOUT) = 17
+  story_points: 35 (MVP: 7 stories × 5 points) + 40 (LAYOUT: 10 stories × 4 points avg) = 75
   epic_23_completion: "13/13 stories complete (100%)"
   epic_completion: "0% (0/1 epics completed)"
-  estimated_duration: "2-3 weeks for MVP"
-  next_review: "2025-12-26"
+  layout_progress: "1/10 stories DONE (10%)"
+  estimated_duration: "2-3 weeks for MVP + 1-2 weeks for LAYOUT epic"
+  next_review: "2025-12-27"
 
 # =============================================================================
 # CRITICAL INCIDENT REMEDIATION (2025-12-26)

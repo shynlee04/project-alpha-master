@@ -1,0 +1,154 @@
+# BMAD Workflow Status - Via-gent
+# Single Source of Truth
+# Last Updated: 2025-12-27T09:45:00+07:00
+
+project:
+  name: "via-gent"
+  description: "100% client-side AI-powered IDE with WebContainers"
+  phase: "implementation"
+
+# =============================================================================
+# ACTIVE WORKFLOWS
+# =============================================================================
+current_workflow:
+  - "MVP Epic: AI Coding Agent Vertical Slice"
+  - "Home Page Layout Redesign (NEW)"
+
+# =============================================================================
+# EPIC STATUS
+# =============================================================================
+epic_status:
+  mvp:
+    id: "MVP"
+    name: "AI Coding Agent Vertical Slice"
+    status: "in-progress"
+    progress: "1/7 stories DONE"
+    current_story: "mvp-2"
+    next_story: "mvp-3"
+    notes: "MVP-1 DONE, MVP-2/3/4 code-complete pending E2E verification"
+  
+  homepage_layout:
+    id: "HOMEPAGE-LAYOUT"
+    name: "Home Page Layout Redesign"
+    status: "in-progress"
+    progress: "1/10 stories DONE (LAYOUT-1 complete)"
+    notes: "LAYOUT-1 (Unified Layout Store) DONE, LAYOUT-2 ready for dev"
+
+# =============================================================================
+# NEXT ACTIONS
+# =============================================================================
+next_actions:
+  - priority: "P0"
+    task: "Complete MVP-2 E2E verification"
+    epic: "MVP"
+    story: "mvp-2"
+    assignee: "TBD"
+    notes: "Chat interface with streaming - code exists, needs browser verification"
+  
+  - priority: "P0"
+    task: "Complete MVP-3 E2E verification"
+    epic: "MVP"
+    story: "mvp-3"
+    assignee: "TBD"
+    notes: "Tool execution - file operations - code exists, needs browser verification"
+  
+  - priority: "P0"
+    task: "Complete MVP-4 E2E verification"
+    epic: "MVP"
+    story: "mvp-4"
+    assignee: "TBD"
+    notes: "Tool execution - terminal commands - code exists, needs browser verification"
+  
+  - priority: "P0"
+    task: "Implement LAYOUT-2 (Create MainSidebar Component)"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-2"
+    assignee: "@bmad-bmm-dev"
+    notes: "Collapsible sidebar with icons, wired to useLayoutStore"
+  
+  - priority: "P0"
+    task: "Implement LAYOUT-3 (Create MainLayout Component)"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-3"
+    assignee: "@bmad-bmm-dev"
+    notes: "Integrate MainSidebar and Header, responsive layout"
+
+# =============================================================================
+# COMPLETED ACTIONS
+# =============================================================================
+completed_actions:
+  - date: "2025-12-27T10:10:00+07:00"
+    action: "LAYOUT-1 Create Unified Layout Store DONE"
+    epic: "HOMEPAGE-LAYOUT"
+    story: "layout-1"
+    agent: "@bmad-bmm-dev"
+    artifacts:
+      - "src/lib/state/layout-store.ts"
+    notes: "Zustand store with persistence, all acceptance criteria met"
+  
+  - date: "2025-12-27T09:45:00+07:00"
+    action: "Home Page Layout Architecture Complete"
+    epic: "HOMEPAGE-LAYOUT"
+    agent: "@bmad-bmm-architect"
+    artifacts:
+      - "_bmad-output/architecture/homepage-layout-redesign-2025-12-27.md"
+      - "_bmad-output/handoffs/architect-to-master-homepage-layout-2025-12-27.md"
+    notes: "Technical specification created with 4-day migration plan"
+  
+  - date: "2025-12-27T08:15:00+07:00"
+    action: "MVP-1 Agent Configuration & Persistence DONE"
+    epic: "MVP"
+    story: "mvp-1"
+    notes: "6/7 acceptance criteria verified, E2E evidence captured"
+
+# =============================================================================
+# COURSE CORRECTIONS
+# =============================================================================
+course_corrections:
+  - date: "2025-12-27"
+    type: "new-initiative"
+    description: "Home Page Layout Redesign initiated"
+    impact: "New epic added to workflow, independent of MVP"
+    rationale: "User requested unified navigation system with collapsible sidebar"
+    artifacts:
+      - "_bmad-output/architecture/homepage-layout-redesign-2025-12-27.md"
+
+# =============================================================================
+# WORKFLOW COORDINATION
+# =============================================================================
+workflow_coordination:
+  parallel_execution:
+    enabled: true
+    strategy: "Platform A continues MVP, Platform B can start Home Page Layout"
+    notes: "No cross-epic dependencies between MVP and Home Page Layout"
+  
+  dependencies:
+    - epic: "HOMEPAGE-LAYOUT"
+      depends_on: []
+      notes: "Independent initiative, can proceed in parallel with MVP"
+    
+    - epic: "MVP"
+      depends_on: []
+      notes: "Sequential story execution within MVP, no external dependencies"
+
+# =============================================================================
+# METRICS
+# =============================================================================
+metrics:
+  total_epics: 2
+  active_epics: 2
+  completed_epics: 0
+  
+  mvp_stories: 7
+  mvp_completed: 1
+  mvp_in_progress: 0
+  mvp_ready_for_dev: 3
+  mvp_backlog: 3
+  
+  homepage_layout_stories: 10
+  homepage_layout_completed: 1
+  homepage_layout_in_progress: 0
+  homepage_layout_ready_for_dev: 1
+  homepage_layout_backlog: 8
+  
+  estimated_completion: "2025-01-03"

@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import Header from '@/components/Header';
 import { HubSidebar } from '@/components/hub/HubSidebar';
 import { useHubStore } from '@/lib/state/hub-store';
 import { CommandPalette } from '@/components/ide/CommandPalette';

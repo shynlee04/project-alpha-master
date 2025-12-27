@@ -148,10 +148,18 @@ function AgentItem({
     onEdit?: (e: React.MouseEvent) => void
 }) {
     return (
-        <button
+        <div
+            role="button"
+            tabIndex={0}
             onClick={onClick}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClick?.();
+                }
+            }}
             className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 text-left rounded-none",
+                "w-full flex items-center gap-3 px-3 py-2 text-left rounded-none cursor-pointer",
                 "hover:bg-secondary transition-colors group",
                 isSelected && "bg-primary/10 border-l-2 border-primary"
             )}
@@ -191,7 +199,7 @@ function AgentItem({
             >
                 <Settings className="w-3 h-3" />
             </Button>
-        </button>
+        </div>
     )
 }
 

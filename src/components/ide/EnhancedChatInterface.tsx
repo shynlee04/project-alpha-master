@@ -61,6 +61,14 @@ export function EnhancedChatInterface({
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages, isTyping])
 
+    // DEBUG: Log messages received
+    useEffect(() => {
+        console.log('[EnhancedChatInterface] Messages received:', {
+            count: messages.length,
+            messages: messages.map(m => ({ id: m.id, role: m.role, contentLength: m.content?.length }))
+        });
+    }, [messages]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (input.trim()) {
