@@ -16,11 +16,12 @@
  * ```
  */
 
-import { FolderOpen, Loader2, MoreHorizontal } from 'lucide-react';
+import { FolderOpen, Loader2, MoreHorizontal, Home } from 'lucide-react';
 import { ChatIcon, RefreshIcon } from '@/components/ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
+import { useNavigate } from '@tanstack/react-router';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -57,6 +58,7 @@ export function IDEHeaderBar({
     onToggleChat,
 }: IDEHeaderBarProps): React.JSX.Element {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const {
         directoryHandle,
         permissionState,
@@ -73,12 +75,29 @@ export function IDEHeaderBar({
     const isSyncing = syncStatus === 'syncing';
     const isDisabled = isOpeningFolder || isSyncing;
 
+    const handleGoHome = () => {
+        navigate({ to: '/' });
+    };
+
     return (
         <header className="h-10 bg-card border-b border-border flex items-center px-4 justify-between shrink-0">
             <div className="flex items-center gap-3">
-                <span className="text-primary font-bold tracking-tight">
-                    via-gent
-                </span>
+                {/* Home button with logo */}
+                <button
+                    onClick={handleGoHome}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                    title={t('sidebar.home')}
+                    aria-label={t('sidebar.home')}
+                >
+                    <img
+                        src="/via-gent-logo.svg"
+                        alt="Via-gent"
+                        className="w-6 h-6"
+                    />
+                    <span className="text-primary font-bold tracking-tight">
+                        via-gent
+                    </span>
+                </button>
                 <span className="text-muted-foreground">/</span>
                 <span className="font-medium text-foreground">{projectId}</span>
             </div>
@@ -185,8 +204,8 @@ function FolderOpenedControls({
         <>
             <label
                 className={`flex items-center gap-2 text-xs transition-colors ${isDisabled
-                        ? 'text-muted-foreground/50 cursor-not-allowed'
-                        : 'text-muted-foreground hover:text-foreground cursor-pointer'
+                    ? 'text-muted-foreground/50 cursor-not-allowed'
+                    : 'text-muted-foreground hover:text-foreground cursor-pointer'
                     }`}
                 title={
                     autoSync
