@@ -185,8 +185,8 @@ workflow_status:
     
     execution:
       current_sprint: "Sprint 0"
-      focus: "Infrastructure & Credential Vault"
-      active_story: "2-0-credential-vault-implementation"
+      focus: "Epic 1 - Mobile Demo Mode"
+      active_story: "1-3-mobile-demo-mode"
       status: "in_progress"
 
 # =============================================================================

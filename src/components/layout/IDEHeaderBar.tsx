@@ -21,6 +21,7 @@ import { ChatIcon, RefreshIcon } from '@/components/ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useNavigate } from '@tanstack/react-router';
 
 /**
@@ -162,6 +163,9 @@ export function IDEHeaderBar({
                     <ChatIcon className="w-4 h-4" aria-label={isChatVisible ? t('ide.hideChat') : t('ide.showChat')} />
                     {isChatVisible ? t('ide.hideChat') : t('ide.showChat')}
                 </button>
+
+                {/* Theme Toggle */}
+                <ThemeToggle />
 
                 {/* Quick actions menu */}
                 <QuickActionsMenu />

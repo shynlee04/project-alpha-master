@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, Monitor } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "./button"
 
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme, theme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
@@ -16,28 +16,34 @@ export function ThemeToggle() {
 
   if (!mounted) return null
 
-  const currentTheme = resolvedTheme ?? theme ?? "system"
-  const isDark = currentTheme === "dark"
+  // Cycle: light -> dark -> system -> light
+  const cycleTheme = () => {
+    if (theme === 'light') {
+      setTheme('dark')
+    } else if (theme === 'dark') {
+      setTheme('system')
+    } else {
+      setTheme('light')
+    }
+  }
 
-  const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark")
+  const Icon = () => {
+    if (theme === 'light') return <Sun className="h-[1.2rem] w-[1.2rem]" />
+    if (theme === 'dark') return <Moon className="h-[1.2rem] w-[1.2rem]" />
+    return <Monitor className="h-[1.2rem] w-[1.2rem]" />
   }
 
   return (
     <Button
-      variant="secondary"
+      variant="ghost"
       size="icon"
+      onClick={cycleTheme}
+      className="text-muted-foreground hover:text-foreground transition-colors"
+      title={`Current theme: ${theme}`}
       aria-label="Toggle theme"
-      aria-pressed={isDark}
       data-testid="theme-toggle"
-      onClick={toggleTheme}
-      className="text-foreground border-border"
     >
-      {isDark ? (
-        <Sun className="h-[1.2rem] w-[1.2rem]" />
-      ) : (
-        <Moon className="h-[1.2rem] w-[1.2rem]" />
-      )}
+      <Icon />
       <span className="sr-only">Toggle theme</span>
     </Button>
   )

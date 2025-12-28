@@ -32,7 +32,8 @@ import { PermissionOverlay } from './PermissionOverlay';
 
 // Mobile-responsive layout (Epic-MRT)
 import { MobileIDELayout } from './MobileIDELayout';
-import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
+// Refactored to use semantic hook (Story 1.1)
+import { useResponsive } from '@/hooks/useResponsive';
 
 // Agent tool facades (Story MVP-3: Wire tool facades to agent)
 import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
@@ -88,8 +89,8 @@ import {
  * @responsive Uses MobileIDELayout for viewports <768px
  */
 export function IDELayout(): React.JSX.Element {
-  // Responsive branching: Use mobile layout on small viewports
-  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
+  // Responsive branching using semantic hook
+  const { isMobile, isTablet } = useResponsive();
 
   // Early return for mobile - use dedicated mobile layout
   if (isMobile) {
@@ -254,7 +255,7 @@ export function IDELayout(): React.JSX.Element {
   useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
 
   return (
-    <SidebarProvider defaultPanel="explorer">
+    <SidebarProvider defaultPanel="explorer" defaultCollapsed={isTablet}>
       <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
         {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
         <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />

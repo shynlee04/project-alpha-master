@@ -15,6 +15,7 @@ import { useWorkspace } from '../../../lib/workspace';
 import { SyncEditWarning } from '../SyncEditWarning';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import { useTheme } from 'next-themes';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -53,8 +54,11 @@ export function MonacoEditor({
     onScrollTopChange,
 }: MonacoEditorProps): React.JSX.Element {
     const { t } = useTranslation();
+    const { resolvedTheme } = useTheme();
     // MRT-5: Mobile responsive detection for editor options
     const { isMobile } = useDeviceType();
+
+    const editorTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'vs';
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
@@ -262,7 +266,7 @@ export function MonacoEditor({
             <div className="flex-1 min-h-0">
                 <Editor
                     height="100%"
-                    theme="vs-dark"
+                    theme={editorTheme}
                     path={activeFile.path}
                     defaultLanguage={language}
                     defaultValue={activeFile.content}

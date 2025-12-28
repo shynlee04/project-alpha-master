@@ -11,6 +11,15 @@ _bmad-output/project-planning-artifacts/ux-design-specification.md
 _bmad-output/epics.md
 ```
 
+## Parallel Development Strategy
+
+Check this and follow with the strategy by knowing  your team and have check-list checked:
+@_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md
+
+## Development Constitution
+Check either at AGENTS.md or CLAUDE.md
+
+
 ## The project brownfield
 refer to these only for references of not repeating the same issues
 

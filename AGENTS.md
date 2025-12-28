@@ -1,66 +1,132 @@
-# AGENTS.md
-
-This file provides guidance to AI agents when working with code in this repository.
 
 ## Project Overview
 
-**Project Alpha** (formerly Via-gent) is evolving from a browser-based IDE into a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
+**Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
 
-### 🚨 COURSE CORRECTION (2025-12-28)
-The project has pivoted from "IDE-first" to "Knowledge-Synthesis-first" architecture:
+### 🚨 Phase 1 Priority: Core Stabilization
 
-| Aspect | Before (Via-gent) | After (Project Alpha v2.0) |
-|--------|-------------------|---------------------------|
-| **Focus** | Developer IDE | Knowledge Synthesis Platform |
-| **Primary Runtime** | WebContainer (Node.js) | Orama WASM (Vector Store) |
-| **Mobile Strategy** | IDE panels (blocked by WebContainer) | Card Feed + Reader Mode |
-| **Target Users** | Developers | Students, Teachers, Knowledge Workers |
-| **Market** | Global dev tools | Vietnam Education & Enterprise |
+The current development focus is stabilizing the core agent system before expanding to Knowledge Synthesis features:
 
-### Two-Phase Implementation Approach
+- **Chat Cascade System**: Fix composable architecture issues
+- **LLM Provider Configuration**: Resolve hot-reload visibility bugs
+- **State Management**: Unify Zustand + Dexie, remove Context mixing
+- **Mobile Support**: Responsive layout with mobile-specific error states
+- **Database Persistence**: Schema refinement for IndexedDB
 
-**Phase 1: Core Stabilization (2-3 weeks)**
-- Unify state management (Zustand + Dexie, remove Context mixing)
-- Fix chat cascade system (composable architecture)
-- Resolve LLM provider hot-reload visibility bug
-- Mobile-first responsive layout
-- Database schema refinement
+### 🎯 Future Vision: Knowledge Synthesis Station
 
-**Phase 2: Knowledge Synthesis MVP (3-4 weeks)**
+A local-first platform targeting Vietnamese education market with:
 - Source ingestion (PDF, URL via client-side parsing)
-- Vector store (Orama WASM)
-- RAG chat with citations
-- Knowledge canvas (blocks + connections)
+- Vector store (Orama WASM) for RAG
+- Knowledge canvas with blocks + connections
 - Study artifact generation (flashcards, quizzes)
 
-### Current Tech Stack (Retained)
-- React 19 + TypeScript + Vite + TanStack Router/AI
-- Zustand for state management, Dexie for IndexedDB
-- Monaco Editor for code editing (Creator mode only)
-- Multi-language support (English, Vietnamese) with i18next
-- Lucide icons, Radix UI primitives
+See: `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
 
-### Key Documentation
-- **Course Correction Proposals:** `_bmad-output/docs/2025-12-28/correct-course/`
-- **Workflow Status:** `_bmad-output/bmm-workflow-status.yaml`
-- **Sprint Status:** `_bmad-output/sprint-artifacts/sprint-status.yaml`
-- **Knowledge Synthesis Concept:** `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
-- **Technical Research:** `_bmad-output/docs/2025-12-28/version-2/`
-- **Architecture:** `_bmad-output/project-planning-artifacts/architecture.md`
-- **Project Context:** `_bmad-output/project-planning-artifacts/project-context.md`
+## Project Planning Artifacts (Controlled Documents)
 
-### 🚀 Deployment Target
+The following governance documents define project direction and constraints:
 
-**CRITICAL:** Project Alpha deploys to **Cloudflare Pages** ONLY in production.
+| Document | Purpose |
+|----------|---------|
+| `_bmad-output/project-planning-artifacts/architecture.md` | System architecture decisions |
+| `_bmad-output/project-planning-artifacts/prd.md` | Product requirements definition |
+| `_bmad-output/project-planning-artifacts/project-context.md` | Project context and constraints |
+| `_bmad-output/project-planning-artifacts/ux-design-specification.md` | UX/UI design requirements |
+| `_bmad-output/epics.md` | Epic breakdown and dependencies |
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `wrangler.jsonc` | Cloudflare Workers config | ✅ **PRIMARY** |
-| `netlify.toml` | Legacy backup | ⚠️ **NOT IN USE** |
+## Parallel Development Strategy
 
-- Default `DEPLOY_TARGET=cloudflare` in `vite.config.ts`
-- Build command: `pnpm build` (no env var needed)
-- **DO NOT** modify `netlify.toml` - it is not in deployment pipeline
+For two AI agent teams, follow the strategy in `_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md`:
+
+### Team Assignment
+
+| Team A (UI/Foundation) | Team B (Backend/Agent) |
+|------------------------|------------------------|
+| Epic 1 (Mobile-First Visual) | Epic 4 Foundation (Prompt System) |
+| Epic 2 Frontend UI | Epic 2 Backend State + Tool Exec |
+| Epic 3 UI Components | Epic 3 WebContainer + Sync |
+| Epic 5 Polish | Epic 4 Completion + Epic 5 Backend |
+
+### Key Integration Points
+
+- **Day 3**: Epic 1 UI + Epic 4 Prompt System (Chat UI renders agent modes)
+- **Day 6**: Epic 2 UI + Stores (`ChatPanel` consumes `useConversationStore`)
+- **Day 9**: Terminal UI + WebContainer (`TerminalPanel` connects to WC shell)
+- **Day 12**: Sync UI + Sync Backend (`ProcessPanel` displays sync queue)
+- **Day 15**: Full System Integration (E2E validation begins)
+
+### Pre-Work Checklist (Sprint 0)
+
+- [ ] Complete Story 2.0 (Credential Vault) - Team B
+- [ ] Create `sample-conversations.json` - Team A
+- [ ] Define store interface contracts - Both
+- [ ] Set up separate Git branches (`team-a/*`, `team-b/*`) - Both
+- [ ] Mock store implementations for Team A - Team A
+- [ ] Unit test harness for tool execution - Team B
+
+## Brownfield Context (Reference Only)
+
+These documents provide historical context and lessons learned. Reference them to avoid repeating past issues:
+
+| Document | Purpose |
+|----------|---------|
+| `_bmad-output/docs/architecture-analysis-2025-12-28.md` | System architecture analysis |
+| `_bmad-output/docs/development-patterns-conventions-2025-12-28.md` | Coding patterns and conventions |
+| `_bmad-output/docs/project-overview-2025-12-28.md` | Project overview |
+| `_bmad-output/docs/source-tree-analysis-2025-12-28.md` | Directory structure analysis |
+| `_bmad-output/docs/tech-stack-documentation-2025-12-28.md` | Tech stack details |
+
+### Version 2 Technical Research
+
+Research documents informing current implementation:
+
+| Document | Domain |
+|----------|--------|
+| `_bmad-output/docs/2025-12-28/version-2/domain-1-llm-provider-config-research.md` | LLM provider configuration |
+| `_bmad-output/docs/2025-12-28/version-2/domain-2-agent-config-architecture-research.md` | Agent architecture |
+| `_bmad-output/docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md` | RAG infrastructure |
+| `_bmad-output/docs/2025-12-28/version-2/implementation-roadmap.md` | Implementation roadmap |
+| `_bmad-output/docs/2025-12-28/version-2/technical-architecture-document.md` | Technical architecture |
+| `_bmad-output/docs/2025-12-28/version-2/remediation-epics.md` | Remediation epics |
+
+## UX/UI Requirements
+
+All UI work must follow these standards:
+
+### Design Principles
+- **8-bit Gaming Style**: Dark-themed aesthetic with pixel-perfect styling
+- **Responsive First**: Mobile detection with appropriate layouts
+- **No Hardcoded Values**: All styles via design tokens, all strings via i18n
+
+### Device Detection
+```typescript
+// Use useResponsive hook for breakpoint detection
+const { isMobile, isTablet, isDesktop } = useResponsive();
+
+// Mobile-specific handling in:
+// - IDELayout.tsx
+// - MobileIDELayout.tsx
+// - ErrorState components
+```
+
+### Internationalization
+- All UI strings must use `t()` hook from i18next
+- Support both English (`en.json`) and Vietnamese (`vi.json`)
+- Run `pnpm i18n:extract` after adding new strings
+
+### Component Standards
+- Components logically routed and wired
+- Interfaces mapped to user journeys
+- Professional first impression with meticulous detail
+- Clear error states and loading states
+
+### Design Tokens
+All styling via CSS custom properties in `src/styles/design-tokens.css`:
+- Layout tokens (panel sizes, sidebar dimensions)
+- Color tokens (8-bit dark theme palette)
+- Typography tokens
+- Animation tokens
 
 ## Essential Development Commands
 
@@ -90,12 +156,15 @@ pnpm tsc --noEmit
 src/
 ├── components/           # React components organized by feature
 │   ├── agent/           # AI agent configuration and dialogs
-│   ├── chat/            # Chat interface components (ApprovalOverlay, CodeBlock, ToolCallBadge)
+│   ├── chat/            # Chat interface components (ChatConversation, ThreadCard, etc.)
+│   ├── common/          # Common utilities (ErrorBoundary)
 │   ├── ide/             # IDE components: editor, terminal, file tree, preview, agent panels
-│   ├── ui/              # Reusable UI components (Toast, Dialog, etc.)
+│   │   └── statusbar/   # Status bar segments (AgentStatusSegment)
+│   ├── ui/              # Reusable UI components (Button, Dialog, Input, etc.)
+│   │   └── icons/       # Icon components (AIIcon, TerminalIcon, etc.)
 │   └── layout/          # Layout components (IDELayout, IDEHeaderBar, etc.)
 ├── lib/
-│   ├── agent/           # AI agent infrastructure (NEW)
+│   ├── agent/           # AI agent infrastructure
 │   │   ├── facades/    # Agent tool facades (FileTools, TerminalTools)
 │   │   ├── providers/  # Provider adapters, model registry, credential vault
 │   │   ├── tools/      # Individual agent tools (read, write, execute)
@@ -105,17 +174,18 @@ src/
 │   ├── workspace/      # Workspace state and project persistence
 │   ├── editor/         # Monaco editor integration
 │   ├── events/         # Event system
-│   ├── state/          # TanStack stores (IDE, statusbar)
-│   └── persistence/    # Data persistence utilities
+│   ├── state/          # Zustand stores (IDE, statusbar, navigation, file-sync-status)
+│   └── utils/          # Utilities including error-handling.ts
 ├── routes/              # TanStack Router file-based routes
-│   └── api/            # API endpoints (NEW: /api/chat)
+│   └── api/            # API endpoints (/api/chat)
 ├── hooks/              # Custom React hooks
 ├── i18n/               # Internationalization files (en.json, vi.json)
-└── types/              # TypeScript type definitions
+├── stores/             # Agent-specific stores (agents.ts, agent-selection.ts)
+└── styles/             # Global styles including design-tokens.css, animations.css
 
-.agent/rules/            # AI agent rules and prompts (NEW: general-rules.md)
+.agent/rules/            # AI agent rules and prompts
 _bmad-output/           # BMAD method artifacts and sprint tracking
-docs/2025-12-23/        # Comprehensive technical documentation (NEW)
+docs/2025-12-23/        # Comprehensive technical documentation
 ```
 
 ## Architecture & Key Components
@@ -123,7 +193,7 @@ docs/2025-12-23/        # Comprehensive technical documentation (NEW)
 ### Core Architecture
 - **Local FS as Source of Truth**: All file operations go through `LocalFSAdapter` to browser's File System Access API
 - **WebContainer Mirror**: `SyncManager` syncs files to WebContainer sandbox
-- **State Management**: Zustand stores with React Context for workspace and IDE state (migration complete - see [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md))
+- **State Management**: Zustand stores with React Context for workspace and IDE state
 - **Project Persistence**: IndexedDB via Dexie for project metadata and conversations
 
 ### File System Sync Flow
@@ -133,7 +203,7 @@ Local FS (FSA) ←→ LocalFSAdapter ←→ SyncManager ←→ WebContainer FS
    IndexedDB (ProjectStore)         File Change Events
 ```
 
-### AI Agent Architecture (NEW)
+### AI Agent Architecture
 ```
 UI Components (AgentChatPanel, AgentConfigDialog)
          ↓
@@ -157,11 +227,27 @@ Facades (abstract over WebContainer/LocalFS)
 - **Agent Tool Facades**: `AgentFileTools` and `AgentTerminalTools` abstract WebContainer operations for agents
 - **Tool Registry**: Individual tools for file operations (`read`, `write`, `list`, `execute`)
 
-### API Routes
-- **GET/POST `/api/chat`** (NEW): AI chat endpoint with SSE streaming
-  - Supports multi-provider AI models
-  - Returns ChatGPT-compatible or OpenAI format
-  - Integrates with provider adapter system
+### Error Handling Architecture
+```
+Error Boundary Components (src/components/common/ErrorBoundary.tsx)
+         ↓
+Error State UI (src/components/ui/ErrorState.tsx)
+         ↓
+Error Utilities (src/lib/utils/error-handling.ts)
+```
+
+### State Architecture (P1.10 Audit Complete)
+- **Persisted State** (IndexedDB): `useIDEStore` - open files, active file, panels, terminal tab, chat visibility
+- **Ephemeral State** (in-memory): `useStatusBarStore`, `useFileSyncStatusStore`, `useNavigationStore`
+- **Agent State** (localStorage): `useAgentsStore`, `useAgentSelectionStore`
+- **UI State** (React Context): Workspace context, theme context
+- **Prompt Enhancement**: `usePromptEnhancementStore`, `conversationThreadsStore`
+
+### Discovery & Navigation Components
+- **Command Palette** (Ctrl+P/Cmd+P): Quick command access
+- **Feature Search**: Search across IDE features
+- **Quick Actions Menu**: Frequently used actions
+- **UnifiedNavigation**: Integrates all discovery components
 
 ### Component Structure
 - Components organized by feature: `agent/`, `chat/`, `ide/`, `ui/`, `layout/`
@@ -179,6 +265,14 @@ res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
 ```
 The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 
+### Design Tokens (`src/styles/design-tokens.css` & `design-tokens.ts`)
+CSS custom properties and TypeScript constants for:
+- Layout tokens (panel sizes, sidebar dimensions)
+- Color tokens (8-bit dark theme palette)
+- Typography tokens
+- Spacing and sizing tokens
+- Animation tokens
+
 ### TypeScript (`tsconfig.json`)
 - Path alias `@/*` → `./src/*`
 - `verbatimModuleSyntax: false` (not strict ESM)
@@ -194,23 +288,6 @@ The `crossOriginIsolationPlugin` must be FIRST in the plugins array.
 - Excludes test files and generated routes
 
 ## Development Workflow
-
-### MVP Story Development Cycle
-The project follows a sequential story approach for the MVP epic. Each story must be completed before starting the next:
-
-1. **MVP-1**: Agent Configuration & Persistence (IN_PROGRESS)
-2. **MVP-2**: Chat Interface with Streaming
-3. **MVP-3**: Tool Execution - File Operations
-4. **MVP-4**: Tool Execution - Terminal Commands
-5. **MVP-5**: Approval Workflow
-6. **MVP-6**: Real-time UI Updates
-7. **MVP-7**: E2E Integration Testing
-
-**Critical Requirements**:
-- Stories must be completed sequentially (no parallel execution)
-- **MANDATORY: Browser E2E verification** required before marking any story DONE
-- Story dependencies must be respected (see [`_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md))
-- Screenshot or recording must be captured for each E2E verification
 
 ### Starting Development
 1. Run `pnpm dev` - starts on port 3000 with required headers
@@ -235,7 +312,7 @@ The project follows a sequential story approach for the MVP epic. Each story mus
 
 ### AI Agent Development
 When implementing agent features:
-1. **MCP Research Protocol** (`/update-claudemd/update-claudemd`): Before implementing unfamiliar patterns:
+1. **MCP Research Protocol**: Before implementing unfamiliar patterns:
    - Context7: Query library documentation for API signatures
    - Deepwiki: Check repo wikis for architecture decisions
    - Tavily/Exa: Search for 2025 best practices
@@ -285,7 +362,8 @@ The `.vscode/settings.json` file configures:
 ### 6. Error Handling
 - Use custom error classes from `src/lib/filesystem/sync-types.ts`
 - `SyncError`, `PermissionDeniedError`, `FileSystemError`
-- Catch specific error types rather than generic `Error`
+- Wrap critical components with `ErrorBoundary` from `src/components/common/ErrorBoundary.tsx`
+- Use error utilities from `src/lib/utils/error-handling.ts`
 
 ### 7. Import Order Convention
 1. React imports
@@ -293,39 +371,22 @@ The `.vscode/settings.json` file configures:
 3. Internal modules with `@/` alias
 4. Relative imports
 
-### 8. AI Agent Tool Concurrency (NEW)
+### 8. AI Agent Tool Concurrency
 - Agent tools use a file locking mechanism via `FileLock` class
 - Multiple concurrent file operations on the same path are serialized
 - Always await tool results before proceeding
 - Tools validate paths before execution
 
-### 9. TanStack AI Streaming (NEW)
+### 9. TanStack AI Streaming
 - Chat responses are Server-Sent Events (SSE) streams
 - Use `Symbol.asyncIterator` to consume streams
 - Handle `done` event types for completion
 - Stream responses require proper error handling
 
-### 10. MVP Consolidation Approach (NEW)
-- **Single Epic**: All AI agent functionality consolidated into one MVP epic
-- **Sequential Stories**: 7 stories must be completed in order (no parallel execution)
-- **Platform A Only**: Single workstream approach (Platform B not utilized for MVP)
-- **Vertical Slice**: Complete user journey from configuration to E2E validation
-- **Traceability**: All MVP stories trace back to original Epics 12, 25, 28
-
-### 11. Mandatory Browser E2E Verification (NEW)
-- **MANDATORY**: Every story requires manual browser E2E verification before DONE
-- **Screenshot Required**: Capture screenshot or recording of working feature
-- **Full Workflow**: Test complete user journey, not just component existence
-- **No Exceptions**: Stories cannot be marked DONE without browser verification
-- **Definition of Done**: Updated to enforce E2E verification gate
-
-### 12. Agentic Loop Limitation (Temporary MVP Measure)
-- **maxIterations(3)**: Currently enforced as a temporary safety measure during MVP-3/MVP-4 validation
-- **Limited Execution**: Agents will terminate after 3 tool execution iterations to prevent infinite loops
-- **Full Implementation Deferred**: Complete agentic loop with state tracking, iteration UI, and intelligent termination is planned for Epic 29
-- **Reference**: See course correction analysis in [`_bmad-output/course-corrections/read-file-and-agentic-execution-analysis-2025-12-25.md`](_bmad-output/course-corrections/read-file-and-agentic-execution-analysis-2025-12-25.md) and Epic 29 specification in [`_bmad-output/epics/epic-29-agentic-execution-loop.md`](_bmad-output/epics/epic-29-agentic-execution-loop.md)
-
-See [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md) for complete MVP story details.
+### 10. State Management (P0 Issue - Deferred)
+- `IDELayout.tsx` duplicates IDE state with local `useState` instead of using `useIDEStore`
+- Recommended refactoring deferred to avoid MVP-3 interference
+- See `_bmad-output/state-management-audit-p1.10-2025-12-26.md` for details
 
 ## Existing Documentation & Guidance
 
@@ -337,8 +398,9 @@ The repository already has comprehensive guidance in `AGENTS.md` covering:
 - Project-specific nuances and gotchas
 - Code style and conventions
 - Testing structure and patterns
+- State management best practices (P1.10 audit findings)
 
-### .agent/rules/general-rules.md (NEW)
+### .agent/rules/general-rules.md
 Comprehensive development rules including:
 - **Mandators MCP Research Protocol**: Step-by-step research before implementing unfamiliar patterns
 - **Dependency documentation**: Full list of GitHub repos and official docs for all dependencies
@@ -346,7 +408,7 @@ Comprehensive development rules including:
 - **Context preservation**: Document artifact IDs, variables, naming conventions, date stamps
 
 ### BMAD Method Integration
-The project includes BMAD (Business Model & Agile Development) method rules in `.cursor/rules/bmad/`:
+The project includes BMAD (Business Model & Agile Development) method rules:
 
 #### Available Modules
 - **CORE**: Master agent, brainstorming, party mode workflows
@@ -384,57 +446,21 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 4. Write tests in adjacent `__tests__/` directory
 5. Run `pnpm i18n:extract` if adding new translation keys
 
+### Adding New Icon Components
+1. Create icon file in `src/components/ui/icons/` (e.g., `NewIcon.tsx`)
+2. Follow the icon component pattern with SVG and 8-bit styling
+3. Export from `src/components/ui/icons/index.ts`
+
 ### File System Operations
 - Use `LocalFSAdapter` for all file operations
 - File changes trigger sync via `SyncManager`
 - Handle permission lifecycle with `permission-lifecycle.ts` utilities
 
 ### State Management
-- All client state uses Zustand stores (6 stores total)
-- No legacy TanStack Store usage (migration complete)
-- IndexedDB operations use Dexie exclusively (no legacy idb)
-- Project metadata persisted in IndexedDB via Dexie
-- Agent configurations persisted in localStorage
-
-**State Architecture**:
-- `useIDEStore` - Main IDE state (open files, active file, panels) - persisted to IndexedDB
-- `useStatusBarStore` - StatusBar state (WC status, sync status, cursor) - ephemeral
-- `useFileSyncStatusStore` - File sync progress and status - ephemeral
-- `useAgentsStore` - Agent configuration and state - persisted to localStorage
-- `useAgentSelectionStore` - Selected agent state - persisted to localStorage
-
-See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md) for complete state architecture details.
-
-### State Management Best Practices (P1.10 - 2025-12-26)
-**Status**: Audit completed - 1 P0 issue documented, refactoring recommended for future iteration
-
-**Audit Findings**:
-- **Zero Legacy State**: No TanStack Store usage found (migration complete)
-- **Zero Duplicate Stores**: All 6 Zustand stores are unique and serve distinct purposes
-- **1 P0 Issue Identified**: [`IDELayout.tsx`](src/components/layout/IDELayout.tsx) duplicates IDE state with local `useState` instead of using [`useIDEStore`](src/lib/state/ide-store.ts)
-
-**Recommended Refactoring** (deferred to avoid MVP-3 interference):
-1. Replace duplicated state in [`IDELayout.tsx`](src/components/layout/IDELayout.tsx) with Zustand hooks:
-   - `isChatVisible` → `useIDEStore(s => s.chatVisible)` + `setChatVisible()`
-   - `terminalTab` → `useIDEStore(s => s.terminalTab)` + `setTerminalTab()`
-   - `openFiles` → Use `useIDEStore` with local file content cache
-   - `activeFilePath` → `useIDEStore(s => s.activeFile)` + `setActiveFile()`
-
-2. Add local `fileContentCache` Map for ephemeral file content (not persisted)
-
-3. Update [`useIDEFileHandlers`](src/components/layout/hooks/useIDEFileHandlers.ts) to work with Zustand actions
-
-4. Remove duplicate state synchronization code (lines 142-148 in [`IDELayout.tsx`](src/components/layout/IDELayout.tsx))
-
-**State Architecture Summary**:
-- **Persisted State** (IndexedDB): [`useIDEStore`](src/lib/state/ide-store.ts) - open files, active file, panels, terminal tab, chat visibility
-- **Ephemeral State** (in-memory): [`useStatusBarStore`](src/lib/state/statusbar-store.ts), [`useFileSyncStatusStore`](src/lib/state/file-sync-status-store.ts)
-- **Agent State** (localStorage): [`useAgentsStore`](src/stores/agents.ts), [`useAgentSelectionStore`](src/stores/agent-selection.ts)
-- **UI State** (React Context): Workspace context, theme context
-
-**Key Principle**: Single source of truth - each state property has ONE owner (either Zustand, Context, or localStorage)
-
-**Reference**: See [`_bmad-output/state-management-audit-p1.10-2025-12-26.md`](_bmad-output/state-management-audit-p1.10-2025-12-26.md) for detailed audit findings and refactoring plan.
+- Workspace state via `WorkspaceContext` React Context
+- Zustand stores for reactive state (`src/lib/state/`)
+- Project metadata persisted in IndexedDB
+- Agent state in `src/stores/` (localStorage)
 
 ## Testing Notes
 
@@ -443,11 +469,16 @@ See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-man
 - React component tests use `@testing-library/react` with `jsdom`
 - File system tests mock File System Access API
 
-### Agent Testing (NEW)
+### Agent Testing
 - Mock TanStack AI with `vi.mock('@tanstack/ai')`
 - Mock provider adapters for unit tests
 - Facade tests should mock WebContainer operations
 - Use `FileLock` wrapper for concurrency tests
+
+### Error Boundary Testing
+- Test error boundary catches expected errors
+- Verify error state UI displays correctly
+- Test error recovery mechanisms
 
 ## Performance Considerations
 
@@ -456,11 +487,16 @@ See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-man
 - Large `node_modules` directories are excluded from sync (regenerated in WebContainer)
 - Monaco Editor loads languages/features on-demand
 
-### AI Agent Performance (NEW)
+### AI Agent Performance
 - Tool execution uses non-blocking async patterns
 - Streaming responses reduce perceived latency
 - File operations are debounced and batched
 - Credential vault uses fast IndexedDB lookups
+
+### UI Performance
+- `react-window` for virtual scrolling in long lists
+- `SkeletonLoader` for perceived performance during loading
+- CSS animations from `animations.css` for smooth transitions
 
 ## Troubleshooting
 
@@ -484,77 +520,78 @@ See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-man
 2. Check key is in correct namespace (default: `translation`)
 3. Verify `t()` function usage follows i18next patterns
 
-### Agent Tool Not Executing (NEW)
+### Agent Tool Not Executing
 1. Verify tool is registered in `tools/index.ts`
 2. Check facade is properly initialized with WebContainer instance
 3. Verify file lock is not held by another operation
 4. Check browser console for tool execution errors
 5. Verify API credentials are set via `AgentConfigDialog`
 
-### Chat API Returning 401 (NEW)
+### Chat API Returning 401
 1. Check if provider has credentials in `credentialVault`
 2. Open `AgentConfigDialog` and configure API keys
 3. Verify provider is supported in `model-registry`
 4. Check `/api/chat` logs for authentication errors
 
-## Recent Updates (Updated: 2025-12-25)
+### Component Error Boundary Triggered
+1. Check browser console for error details
+2. Review error state UI for error message
+3. Verify component props are valid
+4. Check for async operation failures
 
-### MVP Consolidation (INC-2025-12-24-001 Response)
-- **Major Consolidation**: Reduced 26+ epics to 1 focused MVP epic (96% reduction)
-- **Story Reduction**: Reduced 124+ stories to 7 sequential stories (94% reduction)
-- **Single Workstream**: Platform A (Antigravity) only - no parallel execution
-- **Vertical Slice**: Complete AI coding agent workflow from configuration to E2E validation
-- **Traceability Preserved**: All MVP stories trace to original Epics 12, 25, 28
-- **Mandatory E2E Verification**: Browser testing required for all story completions
+## Recent Updates (Updated: 2025-12-28)
 
-### Course Corrections (2025-12-25)
-- **OpenRouter 401 Fix**: Fixed provider adapter signature for `createOpenaiChat` (see [`_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md`](_bmad-output/course-corrections/openrouter-401-fix-2025-12-25.md))
-- **Chat API Integration**: Resolved authentication and streaming issues
-- **Provider Configuration**: Updated provider adapter factory for correct API calls
+### Phase 1: Core Stabilization (Current Focus)
+- **Responsive Design**: `useResponsive` hook for breakpoint detection
+- **Mobile Layouts**: `IDELayout.tsx` and `MobileIDELayout.tsx` with proper device detection
+- **Mobile Error States**: Desktop-only feature messages for mobile users
+- **State Management**: Continued cleanup of duplicate state in `IDELayout.tsx`
 
-### State Management Migration (Complete)
-- **Zustand Migration**: All client state migrated to Zustand (6 stores)
-- **Dexie Migration**: All IndexedDB operations use Dexie (no legacy idb)
-- **TanStack Store Removed**: Zero legacy TanStack Store usage
-- **Audit Complete**: See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md)
+### UI & Design System Enhancements (Epic 28 & P2)
+- **Icon System**: Added 10+ new icon components (AIIcon, ChatIcon, CloseIcon, FileIcon, MenuIcon, PlusIcon, RefreshIcon, SettingsIcon, TerminalIcon)
+- **Animation System**: New `animations.css` with 8-bit themed animations
+- **Design Tokens**: Comprehensive CSS custom properties and TypeScript constants
+- **8-bit Design**: Dark-themed aesthetic with pixel-perfect styling standardized
 
-### Major AI Agent Infrastructure (Epic 25 - Consolidated into MVP)
-- **Provider Adapter System**: Multi-provider support for OpenRouter, Anthropic, etc.
-- **Credential Vault**: Secure storage of API keys in IndexedDB
-- **Model Registry**: Centralized configuration of available AI models
-- **Agent Tools**: `read`, `write`, `list`, `execute` for file and terminal operations
-- **Agent Facades**: Abstract WebContainer operations for safe agent interactions
-- **FileLock**: Concurrency control for file operations
-- **TanStack AI Integration**: Streaming chat with tool support
-- **Chat API**: New `/api/chat` endpoint with SSE streaming
+### Error Handling & Accessibility (Epic 23 P1.8, P1.9)
+- **Error Boundaries**: Added `ErrorBoundary` component to critical IDE components
+- **Error State UI**: New `ErrorState`, `EmptyState`, `LoadingState`, `SkeletonLoader` components
+- **Error Utilities**: New `error-handling.ts` utilities for consistent error handling
+- **Accessibility**: Enhanced keyboard navigation and ARIA support across IDE components
 
-### UI Enhancements (Epic 28 - Partially absorbed in MVP)
-- **Chat System Components**: `StreamingMessage`, `ApprovalOverlay`, `CodeBlock`, `ToolCallBadge`, `DiffPreview`
-- **Agent Management**: `AgentConfigDialog`, `AgentsPanel`, `AgentChatPanel`
-- **Status Bar**: Segmented status indicators for sync, WebContainer, cursor, file type
-- **8-bit Design System**: Dark-themed aesthetic with pixel-perfect styling
+### Responsive Design (Epic 23 P1.7)
+- **Mobile-First**: Implemented responsive layout for IDE components
+- **Breakpoints**: Added responsive classes to `IDELayout` and `IconSidebar`
+- **Design Tokens**: Responsive panel sizes and sidebar dimensions
 
-### Documentation (2025-12-25)
-- **MVP Sprint Plan**: [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md)
-- **Story Validation**: [`_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md)
-- **Sprint Status**: [`_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`](_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml)
-- **State Audit**: [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-management-audit-2025-12-24.md)
-- **Comprehensive Tech Docs**: `docs/2025-12-23/` with architecture, tech context, data contracts, flows
-- **Development Guidelines**: `.agent/rules/general-rules.md` with MCP research protocol
+### Navigation & Discovery (Epic 23 P1.5)
+- **Command Palette**: Ctrl+P/Cmd+P keyboard shortcut for quick access
+- **Feature Search**: Search across IDE features
+- **Quick Actions Menu**: Frequently used actions
+- **UnifiedNavigation**: Integrates all discovery components
+- **Navigation Store**: New `useNavigationStore` for state management
 
-### Dependency Changes
-- Added `@tanstack/ai`, `@tanstack/ai-gemini`, `@tanstack/ai-react` for AI/chat functionality
-- Updated various UI libraries
-- New utilities for agent and chat features
+### State Management (Epic 23 P1.10)
+- **Audit Complete**: State management audit documented
+- **P0 Issue Identified**: `IDELayout.tsx` duplicates IDE state (deferred refactoring)
+- **Architecture Documented**: Clear separation of persisted, ephemeral, agent, and UI state
 
-### Key Files for AI Agent Development
-- `src/lib/agent/providers/provider-adapter.ts`: Provider abstraction layer
-- `src/lib/agent/providers/credential-vault.ts`: Secure credential storage
-- `src/lib/agent/providers/model-registry.ts`: Model configuration
-- `src/lib/agent/tools/`: Individual agent tools
-- `src/lib/agent/facades/`: Agent tool facades
-- `src/lib/agent/hooks/use-agent-chat-with-tools.ts`: Chat with tool integration
-- `src/routes/api/chat.ts`: Chat API endpoint
+### Internationalization
+- **Vietnamese**: Comprehensive Vietnamese translations added
+- **Command Palette**: Full i18n support for discovery components
+- **Keyboard Shortcuts**: Translated shortcut descriptions
+
+### Key Files for Recent Changes
+- `src/components/layout/IDELayout.tsx`: Main IDE layout with responsive design
+- `src/components/layout/MobileIDELayout.tsx`: Mobile-specific layout
+- `src/hooks/useResponsive.ts`: Breakpoint detection hook
+- `src/components/common/ErrorBoundary.tsx`: Error boundary implementation
+- `src/components/ui/icons/`: Icon component library
+- `src/styles/design-tokens.css` & `design-tokens.ts`: Design token system
+- `src/styles/animations.css`: Animation styles
+- `src/lib/state/navigation-store.ts`: Navigation state management
+- `src/lib/utils/error-handling.ts`: Error handling utilities
+- `_bmad-output/state-management-audit-p1.10-2025-12-26.md`: State audit findings
 
 ## Where to Find Things
 
@@ -567,17 +604,25 @@ See [`_bmad-output/state-management-audit-2025-12-24.md`](_bmad-output/state-man
 - **WebContainer Manager**: `src/lib/webcontainer/manager.ts`
 - **Workspace State**: `src/lib/workspace/`
 - **Zustand Stores**: `src/lib/state/`, `src/stores/`
+- **UI Components**: `src/components/ui/`
+- **Icon Components**: `src/components/ui/icons/`
+- **Layout Components**: `src/components/layout/` (IDELayout, MobileIDELayout)
+- **Error Handling**: `src/lib/utils/error-handling.ts`, `src/components/common/`
 - **Translation Keys**: `src/i18n/{en,vi}.json`
+- **Hooks**: `src/hooks/` (useResponsive, etc.)
 
-### BMAD Artifacts
+### Project Planning Artifacts
+- **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **Parallel Development Strategy**: `_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md`
+- **Architecture**: `_bmad-output/project-planning-artifacts/architecture.md`
+- **PRD**: `_bmad-output/project-planning-artifacts/prd.md`
+- **Project Context**: `_bmad-output/project-planning-artifacts/project-context.md`
+- **UX Design Spec**: `_bmad-output/project-planning-artifacts/ux-design-specification.md`
+- **Epics**: `_bmad-output/epics.md`
+
+### BMAD Documentation
 - **BMAD Workflows**: `.cursor/commands/bmad/`
-- **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status-consolidated.yaml`
-- **MVP Sprint Plan**: `_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`
-- **Story Validation**: `_bmad-output/sprint-artifacts/mvp-story-validation-2025-12-24.md`
-- **Workflow Status**: `_bmad-output/bmm-workflow-status-consolidated.yaml`
-
-### Documentation
+- **Knowledge Synthesis Concept**: `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
 - **Tech Documentation**: `docs/2025-12-23/`
-- **State Audit**: `_bmad-output/state-management-audit-2025-12-24.md`
-- **Course Corrections**: `_bmad-output/course-corrections/`
-- **Development Guidelines**: `.agent/rules/general-rules.md`
+- **Brownfield Analysis**: `_bmad-output/docs/`
+- **Version 2 Research**: `_bmad-output/docs/2025-12-28/version-2/`

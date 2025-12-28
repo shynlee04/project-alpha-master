@@ -4,16 +4,132 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Via-gent** is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. It provides:
-- Monaco Editor for code editing with tabbed interface
-- xterm.js-based terminal integrated with WebContainers
-- Bidirectional file sync between local File System Access API and WebContainers
-- **AI Agent System** with multi-provider support (OpenRouter, Anthropic, etc.) via TanStack AI
-- Multi-language support (English, Vietnamese) with i18next
-- Project persistence via IndexedDB
-- React 19 + TypeScript + Vite + TanStack Router stack
-- **8-bit Design System**: Dark-themed aesthetic with pixel-perfect styling and CSS design tokens
-- **Error Handling**: Comprehensive error boundaries and error state components
+**Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
+
+### 🚨 Phase 1 Priority: Core Stabilization
+
+The current development focus is stabilizing the core agent system before expanding to Knowledge Synthesis features:
+
+- **Chat Cascade System**: Fix composable architecture issues
+- **LLM Provider Configuration**: Resolve hot-reload visibility bugs
+- **State Management**: Unify Zustand + Dexie, remove Context mixing
+- **Mobile Support**: Responsive layout with mobile-specific error states
+- **Database Persistence**: Schema refinement for IndexedDB
+
+### 🎯 Future Vision: Knowledge Synthesis Station
+
+A local-first platform targeting Vietnamese education market with:
+- Source ingestion (PDF, URL via client-side parsing)
+- Vector store (Orama WASM) for RAG
+- Knowledge canvas with blocks + connections
+- Study artifact generation (flashcards, quizzes)
+
+See: `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
+
+## Project Planning Artifacts (Controlled Documents)
+
+The following governance documents define project direction and constraints:
+
+| Document | Purpose |
+|----------|---------|
+| `_bmad-output/project-planning-artifacts/architecture.md` | System architecture decisions |
+| `_bmad-output/project-planning-artifacts/prd.md` | Product requirements definition |
+| `_bmad-output/project-planning-artifacts/project-context.md` | Project context and constraints |
+| `_bmad-output/project-planning-artifacts/ux-design-specification.md` | UX/UI design requirements |
+| `_bmad-output/epics.md` | Epic breakdown and dependencies |
+
+## Parallel Development Strategy
+
+For two AI agent teams, follow the strategy in `_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md`:
+
+### Team Assignment
+
+| Team A (UI/Foundation) | Team B (Backend/Agent) |
+|------------------------|------------------------|
+| Epic 1 (Mobile-First Visual) | Epic 4 Foundation (Prompt System) |
+| Epic 2 Frontend UI | Epic 2 Backend State + Tool Exec |
+| Epic 3 UI Components | Epic 3 WebContainer + Sync |
+| Epic 5 Polish | Epic 4 Completion + Epic 5 Backend |
+
+### Key Integration Points
+
+- **Day 3**: Epic 1 UI + Epic 4 Prompt System (Chat UI renders agent modes)
+- **Day 6**: Epic 2 UI + Stores (`ChatPanel` consumes `useConversationStore`)
+- **Day 9**: Terminal UI + WebContainer (`TerminalPanel` connects to WC shell)
+- **Day 12**: Sync UI + Sync Backend (`ProcessPanel` displays sync queue)
+- **Day 15**: Full System Integration (E2E validation begins)
+
+### Pre-Work Checklist (Sprint 0)
+
+- [ ] Complete Story 2.0 (Credential Vault) - Team B
+- [ ] Create `sample-conversations.json` - Team A
+- [ ] Define store interface contracts - Both
+- [ ] Set up separate Git branches (`team-a/*`, `team-b/*`) - Both
+- [ ] Mock store implementations for Team A - Team A
+- [ ] Unit test harness for tool execution - Team B
+
+## Brownfield Context (Reference Only)
+
+These documents provide historical context and lessons learned. Reference them to avoid repeating past issues:
+
+| Document | Purpose |
+|----------|---------|
+| `_bmad-output/docs/architecture-analysis-2025-12-28.md` | System architecture analysis |
+| `_bmad-output/docs/development-patterns-conventions-2025-12-28.md` | Coding patterns and conventions |
+| `_bmad-output/docs/project-overview-2025-12-28.md` | Project overview |
+| `_bmad-output/docs/source-tree-analysis-2025-12-28.md` | Directory structure analysis |
+| `_bmad-output/docs/tech-stack-documentation-2025-12-28.md` | Tech stack details |
+
+### Version 2 Technical Research
+
+Research documents informing current implementation:
+
+| Document | Domain |
+|----------|--------|
+| `_bmad-output/docs/2025-12-28/version-2/domain-1-llm-provider-config-research.md` | LLM provider configuration |
+| `_bmad-output/docs/2025-12-28/version-2/domain-2-agent-config-architecture-research.md` | Agent architecture |
+| `_bmad-output/docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md` | RAG infrastructure |
+| `_bmad-output/docs/2025-12-28/version-2/implementation-roadmap.md` | Implementation roadmap |
+| `_bmad-output/docs/2025-12-28/version-2/technical-architecture-document.md` | Technical architecture |
+| `_bmad-output/docs/2025-12-28/version-2/remediation-epics.md` | Remediation epics |
+
+## UX/UI Requirements
+
+All UI work must follow these standards:
+
+### Design Principles
+- **8-bit Gaming Style**: Dark-themed aesthetic with pixel-perfect styling
+- **Responsive First**: Mobile detection with appropriate layouts
+- **No Hardcoded Values**: All styles via design tokens, all strings via i18n
+
+### Device Detection
+```typescript
+// Use useResponsive hook for breakpoint detection
+const { isMobile, isTablet, isDesktop } = useResponsive();
+
+// Mobile-specific handling in:
+// - IDELayout.tsx
+// - MobileIDELayout.tsx
+// - ErrorState components
+```
+
+### Internationalization
+- All UI strings must use `t()` hook from i18next
+- Support both English (`en.json`) and Vietnamese (`vi.json`)
+- Run `pnpm i18n:extract` after adding new strings
+
+### Component Standards
+- Components logically routed and wired
+- Interfaces mapped to user journeys
+- Professional first impression with meticulous detail
+- Clear error states and loading states
+
+### Design Tokens
+All styling via CSS custom properties in `src/styles/design-tokens.css`:
+- Layout tokens (panel sizes, sidebar dimensions)
+- Color tokens (8-bit dark theme palette)
+- Typography tokens
+- Animation tokens
 
 ## Essential Development Commands
 
@@ -426,10 +542,16 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 3. Verify component props are valid
 4. Check for async operation failures
 
-## Recent Updates (Updated: 2025-12-26)
+## Recent Updates (Updated: 2025-12-28)
+
+### Phase 1: Core Stabilization (Current Focus)
+- **Responsive Design**: `useResponsive` hook for breakpoint detection
+- **Mobile Layouts**: `IDELayout.tsx` and `MobileIDELayout.tsx` with proper device detection
+- **Mobile Error States**: Desktop-only feature messages for mobile users
+- **State Management**: Continued cleanup of duplicate state in `IDELayout.tsx`
 
 ### UI & Design System Enhancements (Epic 28 & P2)
-- **Icon System**: Added 10 new icon components (AIIcon, ChatIcon, CloseIcon, FileIcon, MenuIcon, PlusIcon, RefreshIcon, SettingsIcon, TerminalIcon)
+- **Icon System**: Added 10+ new icon components (AIIcon, ChatIcon, CloseIcon, FileIcon, MenuIcon, PlusIcon, RefreshIcon, SettingsIcon, TerminalIcon)
 - **Animation System**: New `animations.css` with 8-bit themed animations
 - **Design Tokens**: Comprehensive CSS custom properties and TypeScript constants
 - **8-bit Design**: Dark-themed aesthetic with pixel-perfect styling standardized
@@ -463,6 +585,9 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - **Keyboard Shortcuts**: Translated shortcut descriptions
 
 ### Key Files for Recent Changes
+- `src/components/layout/IDELayout.tsx`: Main IDE layout with responsive design
+- `src/components/layout/MobileIDELayout.tsx`: Mobile-specific layout
+- `src/hooks/useResponsive.ts`: Breakpoint detection hook
 - `src/components/common/ErrorBoundary.tsx`: Error boundary implementation
 - `src/components/ui/icons/`: Icon component library
 - `src/styles/design-tokens.css` & `design-tokens.ts`: Design token system
@@ -473,6 +598,7 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 
 ## Where to Find Things
 
+### Code Locations
 - **AI Agent System**: `src/lib/agent/`
 - **Chat UI Components**: `src/components/chat/`
 - **Chat API**: `src/routes/api/chat.ts`
@@ -483,8 +609,23 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - **Zustand Stores**: `src/lib/state/`, `src/stores/`
 - **UI Components**: `src/components/ui/`
 - **Icon Components**: `src/components/ui/icons/`
+- **Layout Components**: `src/components/layout/` (IDELayout, MobileIDELayout)
 - **Error Handling**: `src/lib/utils/error-handling.ts`, `src/components/common/`
 - **Translation Keys**: `src/i18n/{en,vi}.json`
-- **BMAD Workflows**: `.cursor/commands/bmad/`
+- **Hooks**: `src/hooks/` (useResponsive, etc.)
+
+### Project Planning Artifacts
 - **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **Parallel Development Strategy**: `_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md`
+- **Architecture**: `_bmad-output/project-planning-artifacts/architecture.md`
+- **PRD**: `_bmad-output/project-planning-artifacts/prd.md`
+- **Project Context**: `_bmad-output/project-planning-artifacts/project-context.md`
+- **UX Design Spec**: `_bmad-output/project-planning-artifacts/ux-design-specification.md`
+- **Epics**: `_bmad-output/epics.md`
+
+### BMAD Documentation
+- **BMAD Workflows**: `.cursor/commands/bmad/`
+- **Knowledge Synthesis Concept**: `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
 - **Tech Documentation**: `docs/2025-12-23/`
+- **Brownfield Analysis**: `_bmad-output/docs/`
+- **Version 2 Research**: `_bmad-output/docs/2025-12-28/version-2/`

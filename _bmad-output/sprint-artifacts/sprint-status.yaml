@@ -25,14 +25,14 @@ story_location: "/Users/apple/Documents/coding-projects/project-alpha-master/_bm
 development_status:
   # SPRINT 0: Infrastructure & Pre-Work (Days -2 to 0)
   infrastructure-setup: in-progress
-  2-0-credential-vault-implementation: ready-for-dev
+  2-0-credential-vault-implementation: in-progress
   0-1-create-demo-content: done # sample-conversations.json created
 
   # EPIC 1: Mobile-First Visual Foundation (Days 1-3)
   epic-1: in-progress
-  1-1-responsive-breakpoint-foundation: in-progress
-  1-2-dark-light-theme-system: backlog
-  1-3-mobile-demo-mode: backlog # Unblocked by 0-1
+  1-1-responsive-breakpoint-foundation: done
+  1-2-dark-light-theme-system: done
+  1-3-mobile-demo-mode: drafted # Unblocked by 0-1
   1-4-accessibility-foundation: backlog
   epic-1-retrospective: optional
 
@@ -75,4 +75,5 @@ current_sprint:
   start_date: "2025-12-28"
   end_date: "2025-12-31"
   active_epics: ["infrastructure-setup", "epic-1"]
-  active_stories: ["2-0-credential-vault-implementation", "1-1-responsive-breakpoint-foundation"]
+  active_stories: ["2-0-credential-vault-implementation"]
+  completed_stories: ["0-1-create-demo-content", "1-1-responsive-breakpoint-foundation", "1-2-dark-light-theme-system"]

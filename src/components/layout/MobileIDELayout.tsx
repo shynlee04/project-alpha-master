@@ -257,23 +257,29 @@ export function MobileIDELayout(): React.JSX.Element {
                     {/* Editor Panel */}
                     {activePanel === 'editor' && (
                         <WithErrorBoundary fallback={<PanelErrorFallback label="Editor" />}>
-                            <div className="h-full">
-                                <MonacoEditor
-                                    openFiles={openFiles}
-                                    activeFilePath={activeFilePath}
-                                    onSave={handleSave}
-                                    onActiveFileChange={setActiveFilePath}
-                                    onTabClose={handleTabClose}
-                                    onContentChange={handleContentChange}
-                                    initialScrollTop={
-                                        activeFilePath && activeFilePath === restoredIdeState?.activeFile
-                                            ? restoredIdeState.activeFileScrollTop
-                                            : undefined
-                                    }
-                                    onScrollTopChange={(_path, _scrollTop) => {
-                                        scheduleIdeStatePersistence(400);
-                                    }}
-                                />
+                            <div className="h-full flex flex-col">
+                                {/* Demo Mode Banner (Story 1.1 AC-3) */}
+                                <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-xs px-3 py-1 text-center border-b border-amber-200 dark:border-amber-800/50">
+                                    Demo Mode: Read-only on mobile
+                                </div>
+                                <div className="flex-1 min-h-0">
+                                    <MonacoEditor
+                                        openFiles={openFiles}
+                                        activeFilePath={activeFilePath}
+                                        onSave={handleSave}
+                                        onActiveFileChange={setActiveFilePath}
+                                        onTabClose={handleTabClose}
+                                        onContentChange={handleContentChange}
+                                        initialScrollTop={
+                                            activeFilePath && activeFilePath === restoredIdeState?.activeFile
+                                                ? restoredIdeState.activeFileScrollTop
+                                                : undefined
+                                        }
+                                        onScrollTopChange={(_path, _scrollTop) => {
+                                            scheduleIdeStatePersistence(400);
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </WithErrorBoundary>
                     )}
