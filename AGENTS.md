@@ -46,6 +46,21 @@ The project has pivoted from "IDE-first" to "Knowledge-Synthesis-first" architec
 - **Sprint Status:** `_bmad-output/sprint-artifacts/sprint-status.yaml`
 - **Knowledge Synthesis Concept:** `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
 - **Technical Research:** `_bmad-output/docs/2025-12-28/version-2/`
+- **Architecture:** `_bmad-output/project-planning-artifacts/architecture.md`
+- **Project Context:** `_bmad-output/project-planning-artifacts/project-context.md`
+
+### 🚀 Deployment Target
+
+**CRITICAL:** Project Alpha deploys to **Cloudflare Pages** ONLY in production.
+
+| File | Purpose | Status |
+|------|---------|--------|
+| `wrangler.jsonc` | Cloudflare Workers config | ✅ **PRIMARY** |
+| `netlify.toml` | Legacy backup | ⚠️ **NOT IN USE** |
+
+- Default `DEPLOY_TARGET=cloudflare` in `vite.config.ts`
+- Build command: `pnpm build` (no env var needed)
+- **DO NOT** modify `netlify.toml` - it is not in deployment pipeline
 
 ## Essential Development Commands
 

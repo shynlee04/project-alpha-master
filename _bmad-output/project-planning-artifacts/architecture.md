@@ -553,22 +553,28 @@ ssr: {
 
 ### 3.8 Platform-Specific Deployment
 
-**Cloudflare (Default):**
+**Primary Target: Cloudflare Pages (✅ ACTIVE)**
 ```typescript
-// DEPLOY_TARGET=cloudflare
-ssr: { noExternal: true } // Bundle everything
-```
-
-**Netlify/Node:**
-```typescript
-// DEPLOY_TARGET=netlify or DEPLOY_TARGET=node
-ssr: { external: ['@xterm/xterm', ...] } // Externalize browser deps
+// Current production configuration (default in vite.config.ts)
+DEPLOY_TARGET=cloudflare
+ssr: { noExternal: true }  // Bundle everything for Workers
 ```
 
 **Hosting Configuration:**
-- **Cloudflare Pages:** Zero-config with `@cloudflare/vite-plugin`
-- **Netlify:** Uses `@netlify/vite-plugin-tanstack-start`
-- **Node:** Standard TanStack Start server output
+- **Cloudflare Pages:** ✅ **ACTIVE** - Zero-config with `@cloudflare/vite-plugin`
+  - Build command: `pnpm build`
+  - Output: `.output/` (Workers + static assets)
+  - Headers: COOP/COEP handled by Workers middleware (`server/middleware/security-headers.ts`)
+  - Deploy: Connected to GitHub repo for auto-deploy
+
+**Alternative Targets (⚠️ NOT CURRENTLY USED):**
+```typescript
+// Fallback options for future multi-cloud strategy
+DEPLOY_TARGET=netlify  // Netlify Edge Functions
+DEPLOY_TARGET=node     // Standard Node.js server
+```
+
+**Note:** `netlify.toml` exists in codebase as legacy/backup configuration but is **NOT** used for production deployments.
 
 ## Section 4: Core Architectural Decisions
 
@@ -2135,14 +2141,15 @@ AgentFileTools.execute() ◄─────────── User Approval
 
 #### Configuration Files
 
-| File | Purpose | Location |
-|------|---------|----------|
-| `vite.config.ts` | Vite + TanStack Start | Root |
-| `tsconfig.json` | TypeScript | Root |
-| `vitest.config.ts` | Test runner | Root |
-| `eslint.config.mjs` | Linting | Root |
-| `wrangler.jsonc` | Cloudflare Workers | Root |
-| `.env.example` | Environment template | Root |
+| File | Purpose | Status | Location |
+|------|---------|--------|----------|
+| `vite.config.ts` | Vite + TanStack Start | ✅ ACTIVE | Root |
+| `tsconfig.json` | TypeScript | ✅ ACTIVE | Root |
+| `vitest.config.ts` | Test runner | ✅ ACTIVE | Root |
+| `eslint.config.mjs` | Linting | ✅ ACTIVE | Root |
+| `wrangler.jsonc` | Cloudflare Workers config | ✅ **PRIMARY** | Root |
+| `netlify.toml` | Legacy deployment config | ⚠️ BACKUP ONLY | Root |
+| `.env.example` | Environment template | ✅ ACTIVE | Root |
 | `components.json` | shadcn/ui config | Root |
 
 #### Source Organization
@@ -2188,11 +2195,14 @@ pnpm build           # Production build
 
 #### Deployment
 
-| Target | Command | Output |
-|--------|---------|--------|
-| Cloudflare | `DEPLOY_TARGET=cloudflare pnpm build` | Workers + Assets |
-| Netlify | `DEPLOY_TARGET=netlify pnpm build` | Functions + Static |
-| Preview | `pnpm preview` | Local production |
+| Target | Command | Output | Status |
+|--------|---------|--------|--------|
+| **Cloudflare (Primary)** | `pnpm build` | `.output/server` (Workers) + `.output/public` (Static) | ✅ **ACTIVE** |
+| Netlify (Backup) | `DEPLOY_TARGET=netlify pnpm build` | Functions + Static | ⚠️ NOT DEPLOYED |
+| Node (Fallback) | `DEPLOY_TARGET=node pnpm build` | Standard SSR server | ⚠️ NOT DEPLOYED |
+| Local Preview | `pnpm preview` | Local production build | ✅ Dev Use |
+
+**Note:** Default build uses Cloudflare configuration (`DEPLOY_TARGET` defaults to `cloudflare` in `vite.config.ts`).
 
 ## Section 7: Architecture Validation Results
 

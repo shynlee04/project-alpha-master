@@ -9,6 +9,7 @@
 import { Sentry } from '../../lib/monitoring/sentry'
 import { useTranslation } from 'react-i18next'
 import { useDeviceType } from '../../hooks/useMediaQuery'
+import { showMobileWorkspaceError } from '../../lib/utils/mobile-error-handling'
 
 /**
  * Props for the FallbackComponent
@@ -24,6 +25,7 @@ interface FallbackProps {
  */
 function ErrorFallback({ error, resetError }: FallbackProps) {
     const { t } = useTranslation()
+    const { isMobile, isTablet } = useDeviceType()
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -47,10 +49,14 @@ function ErrorFallback({ error, resetError }: FallbackProps) {
 
                 {/* Error message */}
                 <h2 className="text-xl font-semibold text-foreground mb-2">
-                    {t('errors.generic.unexpected.title', 'Unexpected Error')}
+                    {isMobile || isTablet
+                        ? t('errors.workspace.openFailed.mobileTitle', 'Desktop Feature')
+                        : t('errors.generic.unexpected.title', 'Unexpected Error')}
                 </h2>
                 <p className="text-muted-foreground mb-4">
-                    {t('errors.generic.unexpected.description', 'We encountered an unexpected error. Our team has been notified.')}
+                    {isMobile || isTablet
+                        ? t('errors.workspace.openFailed.mobileDescription', 'Opening projects requires a desktop browser. Please use Chrome, Edge, or Safari on your computer to access full IDE features.')
+                        : t('errors.generic.unexpected.description', 'We encountered an unexpected error. Our team has been notified.')}
                 </p>
 
                 {/* Error details (development only) */}

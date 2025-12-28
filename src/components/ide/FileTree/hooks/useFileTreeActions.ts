@@ -123,7 +123,7 @@ export function useFileTreeActions(
                         window.location.href = '/hub';
                     });
                 } else {
-                    setError(t('errors.workspace.openFailed.description', 'An unexpected error occurred.'));
+                    setError(t('errors.workspace.openFailed.description', `Error loading directory: ${err instanceof Error ? err.message : String(err)}`));
                     console.error('FileTree error:', err);
                 }
             }

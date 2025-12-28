@@ -7,6 +7,8 @@
 
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { useDeviceType } from '@/hooks/useMediaQuery'
+import { useDeviceType } from '@/hooks/useMediaQuery'
 
 /**
  * Error recovery action type
@@ -260,6 +262,12 @@ export function getErrorMessage(error: unknown): string {
 
     if (error && typeof error === 'object' && 'message' in error) {
         return String((error as { message: unknown }).message)
+    }
+
+    // Check if we're in a mobile context and provide mobile-specific message
+    const { isMobile, isTablet } = useDeviceType()
+    if (isMobile || isTablet) {
+        return 'This feature requires a desktop browser. Please use Chrome, Edge, or Safari on your computer.'
     }
 
     return 'An unexpected error occurred'

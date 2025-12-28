@@ -363,6 +363,46 @@ pnpm build
 
 ---
 
+## Deployment Configuration
+
+**Primary Target:** Cloudflare Pages  
+**Status:** ✅ Active production deployment
+
+**Key Configuration Files:**
+| File | Purpose | Status |
+|------|---------|--------|
+| `wrangler.jsonc` | Cloudflare Workers config | ✅ **ACTIVE** |
+| `vite.config.ts` | Default `DEPLOY_TARGET=cloudflare` | ✅ **ACTIVE** |
+| `server/middleware/security-headers.ts` | Production COOP/COEP headers | ✅ **ACTIVE** |
+| `netlify.toml` | Legacy backup config | ⚠️ **NOT IN USE** |
+
+**Critical Deployment Rules:**
+- ✅ Cloudflare Workers require `ssr.noExternal: true` (bundles all dependencies)
+- ✅ Security headers (COOP/COEP) handled by Workers middleware
+- ✅ WebContainer requires Cross-Origin Isolation (SharedArrayBuffer)
+- ⚠️ Do NOT modify `netlify.toml` - it is not active in deployment pipeline
+
+**Deployment Workflow:**
+```bash
+# Build for Cloudflare (default)
+pnpm build            # Uses DEPLOY_TARGET=cloudflare by default
+# Output: .output/server (Workers) + .output/public (static)
+
+# Preview production build locally
+pnpm preview
+
+# Deploy to Cloudflare Pages
+# Automated via GitHub integration (push to main branch)
+```
+
+**Why Cloudflare?**
+- ✅ Global edge network (low latency for Vietnam + international users)
+- ✅ Native TanStack Start SSR support via Workers
+- ✅ COOP/COEP headers via Workers middleware
+- ✅ Generous free tier (100K requests/day)
+
+---
+
 ## Reference Documents
 
 - **Architecture:** `_bmad-output/project-planning-artifacts/architecture.md`
