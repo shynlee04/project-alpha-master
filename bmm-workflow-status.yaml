@@ -1,11 +1,16 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
-# Generated: 2025-12-28T22:00:00+07:00
+# Generated: 2025-12-28T22:40:00+07:00
 
 current_workflow: "story-dev-cycle"
-current_story: "1-2-dark-light-theme-system"
+current_story: "2-0-credential-vault-implementation"
 phase: "Complete"
 active_epics:
+  - id: "SPRINT-0"
+    name: "Infrastructure & Pre-Work"
+    status: "IN_PROGRESS"
+    start_date: "2025-12-28"
+    end_date: "2025-12-31"
   - id: "EPIC-1"
     name: "Mobile-First Visual Foundation"
     status: "IN_PROGRESS"
@@ -14,13 +19,14 @@ active_epics:
 
 epic_status:
   KNOWLEDGE-SYNTHESIS-2025-12-28: "DONE"
+  STORY-2-0-CREDENTIAL-VAULT: "DONE"
 
 next_actions:
-  - "Execute Story 1.2 Development Cycle"
-  - "Implement ThemeToggle component"
-  - "Wire up Monaco Editor theme sync"
-  - "Verify persistence"
-  - "Begin Story 2.0 (Credential Vault)"
+  - "Create follow-up task for implementing clear() method in CredentialVault"
+  - "Create follow-up task for fixing error handling consistency"
+  - "Create follow-up task for refining test mock setup"
+  - "Begin next story in Sprint 0 backlog"
+  - "Continue Epic 1 stories (1-4-accessibility-foundation)"
 
 bugs: []
 

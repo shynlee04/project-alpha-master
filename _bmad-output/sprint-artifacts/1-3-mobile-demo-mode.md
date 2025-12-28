@@ -56,21 +56,21 @@
 
 ## Part 4: Implementation Tasks
 
-- [ ] **Task 1: Create `useCapabilityDetection` Hook**
+- [x] **Task 1: Create `useCapabilityDetection` Hook**
     - Implement `hasSharedArrayBuffer()` check
     - Implement `isMobile` check (using `useResponsive` or user agent fallback)
     - Return capabilities object `{ canBootWebContainer, isMobile, supportsFSA }`
-- [ ] **Task 2: Implement Banner Component**
+- [x] **Task 2: Implement Banner Component**
     - Create `MobileCapabilityBanner.tsx`
     - Style with Amber warning colors (Tailwind)
     - Add "Learn More" button triggering modal
-- [ ] **Task 3: Implement Demo Chat Logic**
+- [x] **Task 3: Implement Demo Chat Logic**
     - Modify `ChatPanel` to check capabilities
     - If `!apiKey` AND `isMobile`, load `sample-conversations.json`
     - Disable input if in read-only demo source mode (or allow "fake" interaction?) -> *Clarification: AC says "User sees pre-loaded conversations". Implies read-only or simulated chat.*
-- [ ] **Task 4: WebContainer Boot Logic Update**
+- [x] **Task 4: WebContainer Boot Logic Update**
     - Modify `BootManager` (or the component triggering it) to skip boot if `!canBootWebContainer`
-- [ ] **Task 5: File System Access Disabling**
+- [x] **Task 5: File System Access Disabling**
     - Disable "Open Folder" buttons if `!supportsFSA`
     - Add tooltip explaining why
 
@@ -78,7 +78,59 @@
 
 ## Part 5: Dev Agent Record
 
-*To be populated during development...*
+### Dev Agent Record
+**Agent:** @bmad-bmm-dev
+**Session:** 2025-12-28
+
+#### Task Progress:
+- [x] **Task 1: Create `useCapabilityDetection` Hook** - Implemented with `crossOriginIsolated` check.
+- [x] **Task 2: Implement Banner Component** - Created `MobileCapabilityBanner` with Tailwind and Dialog.
+- [x] **Task 3: Implement Demo Chat Logic** - Added seeding logic to `ChatPanel` using `sample-conversations.json`.
+- [x] **Task 4: WebContainer Boot Logic Update** - Added guard in `useWebContainerBoot`.
+- [x] **Task 5: File System Access Disabling** - Updated `IDEHeaderBar` buttons.
+
+#### Research Executed:
+- **Context7**: Confirmed `window.crossOriginIsolated` is the standard check for SharedArrayBuffer availability.
+- **Codebase**: Identified `useResponsive` and `sample-conversations.json` locations.
+
+#### Files Changed:
+| File | Action | Lines |
+|------|--------|-------|
+| `src/hooks/useCapabilityDetection.ts` | Created | 32 |
+| `src/hooks/useCapabilityDetection.test.ts` | Created | 60 |
+| `src/components/ui/MobileCapabilityBanner.tsx` | Created | 65 |
+| `src/components/layout/IDELayout.tsx` | Modified | Import & Render Banner |
+| `src/components/layout/MobileIDELayout.tsx` | Modified | Import & Render Banner |
+| `src/components/layout/hooks/useWebContainerBoot.ts` | Modified | Added Boot Guard |
+| `src/components/layout/IDEHeaderBar.tsx` | Modified | Added Button Guards |
+| `src/components/chat/ChatPanel.tsx` | Modified | Added Demo Seeding & Send Guard |
+
+#### Decisions Made:
+- **Decision 1**: Implemented `canBootWebContainer` check in `useWebContainerBoot` to prevent errors before they happen, rather than just handling them.
+- **Decision 2**: Used a global `MobileCapabilityBanner` in layouts instead of local ones for better visibility.
+- **Decision 3**: Seeded demo data directly into `useThreadsStore` on client-side to leverage existing UI components.
+
+---
+
+## Part 6: Code Review
+
+### Code Review
+**Reviewer:** @bmad-bmm-dev (Self-Review / Architect Mode)
+**Date:** 2025-12-28
+
+#### Checklist:
+- [x] **AC-1 Met**: Banner appears when `!canBootWebContainer`.
+- [x] **AC-2 Met**: Chat allowed if agents exist.
+- [x] **AC-3 Met**: Demo conversations seeded when no agents/threads and mobile.
+- [x] **AC-4 Met**: Modal explains COOP/COEP requirements.
+- [x] **Architecture**: Hook-based capability detection follows Arch 5.2.
+- [x] **Tests**: Unit tests for capability logic provided.
+
+#### Issues Found:
+- None critical.
+
+#### Sign-off:
+✅ APPROVED for merge
 
 ---
 
