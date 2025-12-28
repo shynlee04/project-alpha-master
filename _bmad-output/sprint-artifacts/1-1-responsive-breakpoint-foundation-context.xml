@@ -1,0 +1,80 @@
+<context story="1-1-responsive-breakpoint-foundation" created="2025-12-28T22:15:00">
+  <!-- Current code state -->
+  <files>
+    <file path="src/hooks/useMediaQuery.ts">
+      <content><![CDATA[
+/**
+ * @fileoverview Media Query Hook for Responsive Detection
+ * @module hooks/useMediaQuery
+ */
+import { useState, useEffect, useCallback } from 'react';
+
+export const BREAKPOINTS = {
+    xs: '(max-width: 413px)',
+    sm: '(min-width: 414px) and (max-width: 767px)',
+    md: '(min-width: 768px) and (max-width: 1023px)',
+    lg: '(min-width: 1024px)',
+    mobile: '(max-width: 767px)',
+    tablet: '(min-width: 768px) and (max-width: 1023px)',
+    desktop: '(min-width: 1024px)',
+} as const;
+
+export function useMediaQuery(query: string): boolean {
+    const [matches, setMatches] = useState<boolean>(false);
+    const handleChange = useCallback((event: MediaQueryListEvent) => {
+        setMatches(event.matches);
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const mediaQueryList = window.matchMedia(query);
+        setMatches(mediaQueryList.matches);
+        mediaQueryList.addEventListener('change', handleChange);
+        return () => mediaQueryList.removeEventListener('change', handleChange);
+    }, [query, handleChange]);
+
+    return matches;
+}
+
+export function useDeviceType() {
+    const isMobile = useMediaQuery(BREAKPOINTS.mobile);
+    const isTablet = useMediaQuery(BREAKPOINTS.tablet);
+    const isDesktop = useMediaQuery(BREAKPOINTS.desktop);
+    return { isMobile, isTablet, isDesktop };
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research findings from MCP tools -->
+  <research_notes>
+    <finding source="codebase" query="useMediaQuery">
+      Existing useMediaQuery.ts provides basic breakpoint detection.
+      useResponsive.ts should ideally wrap this to provide semantic layout states (desktop, tablet, mobile) consistent with IDELayout requirements.
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture patterns to follow -->
+  <architecture_patterns>
+    <pattern name="Hook Naming" source="architecture.md">
+      use* prefix, named exports.
+    </pattern>
+    <pattern name="Responsive Design" source="ux-design-specification.md">
+      Mobile: Bottom Tabs, Single View.
+      Tablet: Collapsible Sidebar.
+      Desktop: 3-Panel Resizable.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical notes for developer -->
+  <technical_notes>
+    <note priority="high">Avoid Hydration Mismatch: Initialize with false or use a documented isomorphic pattern.</note>
+    <note priority="medium">react-resizable-panels has built-in persistence, but we requirements specify Zustand middleware for centralized control.</note>
+  </technical_notes>
+  
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="react-resizable-panels" version="latest" />
+    <dependency name="zustand" version="5.0.9" />
+  </dependencies>
+</context>

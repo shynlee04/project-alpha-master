@@ -30,7 +30,7 @@ development_status:
 
   # EPIC 1: Mobile-First Visual Foundation (Days 1-3)
   epic-1: in-progress
-  1-1-responsive-breakpoint-foundation: ready-for-dev
+  1-1-responsive-breakpoint-foundation: in-progress
   1-2-dark-light-theme-system: backlog
   1-3-mobile-demo-mode: backlog # Unblocked by 0-1
   1-4-accessibility-foundation: backlog
@@ -74,5 +74,5 @@ current_sprint:
   goal: "Infrastructure & Content Prep"
   start_date: "2025-12-28"
   end_date: "2025-12-31"
-  active_epics: ["infrastructure-setup"]
-  active_stories: ["2-0-credential-vault-implementation"]
+  active_epics: ["infrastructure-setup", "epic-1"]
+  active_stories: ["2-0-credential-vault-implementation", "1-1-responsive-breakpoint-foundation"]

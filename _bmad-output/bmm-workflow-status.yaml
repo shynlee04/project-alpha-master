@@ -173,7 +173,7 @@ workflow_status:
   # Phase 3: Implementation
   phase_3_implementation:
     name: "Implementation"
-    status: "ready"
+    status: "in_progress"
     
     sprint_planning:
       status: "completed"
@@ -182,6 +182,12 @@ workflow_status:
       command: "sprint-planning"
       note: "Sprint 1 (Visual Foundation) initialized"
       artifact: "_bmad-output/sprint-artifacts/sprint-status.yaml"
+    
+    execution:
+      current_sprint: "Sprint 0"
+      focus: "Infrastructure & Credential Vault"
+      active_story: "2-0-credential-vault-implementation"
+      status: "in_progress"
 
 # =============================================================================
 # TWO-PHASE APPROACH (From Course Correction Proposal)

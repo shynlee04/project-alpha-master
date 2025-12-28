@@ -28,7 +28,6 @@ _bmad-output\bmm-workflow-status.yaml``` -> You are also expected these frontend
 - A complete upgrade of the UX/UI that impresses and fixes current flaws.
 - All components logically routed, wired, and extended with modern frontend practices.
 - Interfaces that are wired, routed, and logically mapped to boost user experience.
-- Future-proofing with categorized filetree, mocked backend states, and accurate user flows.
 - Clear demonstration of user journeys and use cases through well-articulated e2e expectations.
 - Professional first impression through meticulous care for details and frontend professionalism.
 
