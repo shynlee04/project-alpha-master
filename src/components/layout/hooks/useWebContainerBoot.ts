@@ -7,6 +7,8 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { showMobileWebContainerError } from '@/lib/utils/mobile-error-handling';
 import { boot, onServerReady, isBooted } from '../../../lib/webcontainer';
 
 interface UseWebContainerBootOptions {
@@ -31,6 +33,7 @@ interface UseWebContainerBootResult {
 export function useWebContainerBoot({
     onBooted,
 }: UseWebContainerBootOptions): UseWebContainerBootResult {
+    const deviceType = useDeviceType();
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [previewPort, setPreviewPort] = useState<number | null>(null);
 
@@ -53,7 +56,14 @@ export function useWebContainerBoot({
             })
             .catch((error) => {
                 console.error('[IDE] WebContainer boot failed:', error);
-                // Don't set booted on failure - sync won't attempt
+                
+                // Check if mobile/tablet and show mobile-friendly error
+                if (deviceType === 'mobile' || deviceType === 'tablet') {
+                    showMobileWebContainerError('bootFailed');
+                } else {
+                    // Desktop users see improved error message
+                    console.error('[IDE] WebContainer boot failed:', error);
+                }
             });
     }, [onBooted]);
 

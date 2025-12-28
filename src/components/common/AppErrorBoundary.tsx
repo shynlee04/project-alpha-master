@@ -8,6 +8,7 @@
 
 import { Sentry } from '../../lib/monitoring/sentry'
 import { useTranslation } from 'react-i18next'
+import { useDeviceType } from '../../hooks/useMediaQuery'
 
 /**
  * Props for the FallbackComponent

@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useDeviceType } from '@/hooks/useMediaQuery';
 
 import { saveThread, getThreadsForProject } from '../../lib/workspace/threads-store';
 import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store';
@@ -503,6 +504,18 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // Handle artifact save
     const handleSaveArtifact = useCallback(async (code: string, language: string) => {
+        const deviceType = useDeviceType();
+        const isMobile = deviceType === 'mobile' || deviceType === 'tablet';
+        
+        // Mobile-specific error handling
+        if (isMobile) {
+            toast.error(
+                t('errors.fs.notSupported.mobileTitle', 'Desktop Feature'),
+                t('errors.fs.notSupported.mobileDescription', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+            );
+            return;
+        }
+        
         const extension = language === 'html' ? '.html' :
             language === 'css' ? '.css' :
                 language === 'javascript' || language === 'js' ? '.js' :

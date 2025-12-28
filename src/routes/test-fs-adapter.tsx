@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { LocalFSAdapter, FileSystemError, PermissionDeniedError } from '../lib/filesystem/local-fs-adapter'
+import { useDeviceType } from '../hooks/useMediaQuery'
 
 export const Route = createFileRoute('/test-fs-adapter')({
   component: TestFSAdapter,
@@ -100,11 +101,21 @@ function TestFSAdapter() {
         if (error instanceof FileSystemError && error.code === 'PATH_TRAVERSAL') {
           setStatus('✅ Path validation working - traversal attack blocked')
         } else {
-          setStatus(`❌ Unexpected error: ${error.message}`)
+          const deviceType = useDeviceType()
+          if (deviceType === 'mobile' || deviceType === 'tablet') {
+            setStatus('❌ Desktop Feature: File System Access API requires a desktop browser (Chrome, Edge, or Safari)')
+          } else {
+            setStatus(`❌ Unexpected error: ${error.message}`)
+          }
         }
       }
     } catch (error: any) {
-      setStatus(`❌ Error: ${error.message}`)
+      const deviceType = useDeviceType()
+      if (deviceType === 'mobile' || deviceType === 'tablet') {
+        setStatus('❌ Desktop Feature: File System Access API requires a desktop browser (Chrome, Edge, or Safari)')
+      } else {
+        setStatus(`❌ Error: ${error.message}`)
+      }
     }
   }
 
