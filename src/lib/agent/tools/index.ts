@@ -13,6 +13,19 @@
 // Types
 export * from './types';
 
+// Tool parser (Story 2-3)
+export {
+    createToolCallBuffer,
+    parseToolCallChunks,
+    type ToolCallBuffer,
+    type ToolCallChunk,
+    type BufferedToolCall,
+    type PendingToolCallInfo,
+    type ParseResult,
+    type BufferStats,
+    type ToolCallBufferOptions,
+} from './tool-parser';
+
 // File tool definitions (Story 25-2)
 export { readFileDef, createReadFileTool, createReadFileClientTool } from './read-file-tool';
 export { writeFileDef, writeFileToolConfig, createWriteFileTool, createWriteFileClientTool } from './write-file-tool';

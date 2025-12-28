@@ -197,6 +197,15 @@ export function useAgentChatWithTools(
         return composer;
     }, [eventBus]);
 
+    // Build LayerContext from IDE state for system prompt generation
+    // NOTE: This is a placeholder - actual integration with useIDEStore happens in consuming components
+    const layerContext: LayerContext = {
+        openFiles: [], // Will be populated from IDE state
+        activeFile: undefined,
+        projectPackageJson: undefined,
+        workspaceReady: false,
+    };
+
     // Create tool factory options
     const toolFactoryOptions = useMemo((): ToolFactoryOptions => ({
         getFileTools: () => fileTools,
@@ -249,6 +258,8 @@ export function useAgentChatWithTools(
                         customHeaders: current.customHeaders,
                         // Toggle tools support (native function calling)
                         disableTools: !current.enableTools,
+                        // System Prompts: Use SystemPromptComposer for 5-layer architecture
+                        systemPrompts: promptComposer.compose(layerContext),
                     }
                 };
             }
