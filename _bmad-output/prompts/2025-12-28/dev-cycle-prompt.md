@@ -25,6 +25,12 @@ Check either at AGENTS.md or CLAUDE.md
 ## Sprint Status
 _bmad-output/sprint-artifacts/sprint-status.yaml
 
+
+## Reminders of your platforms utilities (help boosting your workflow success)
+- Use MCP Servers' tools to gain up-to-date information about dependencies, guides, documentations and implementation patterns of the stacks in used (they are Context7, Deepwiki, Tavily, Exa - and Repomix)
+- Agents and sub-agents (baseed on your decisions to switch, delegate run in parallel, run in sequence, or run in a loop)
+- SKILLS and Plugins - base on what happen during the iteration, choose which efficient to run.
+
 ## The project brownfield
 refer to these only for references of not repeating the same issues
 

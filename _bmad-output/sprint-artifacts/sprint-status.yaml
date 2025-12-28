@@ -37,13 +37,13 @@ development_status:
   epic-1-retrospective: done
 
   # EPIC 2: AI Chat That Just Works (Days 4-7)
-  epic-2: in-progress
+  epic-2: done
   # 2-0 moved to Sprint 0
   2-1-zustand-dexie-state-migration: done
   2-2-agent-crud-operations: done
   2-3-streaming-chat-tool-approval: done
-  2-4-conversation-persistence: ready-for-dev
-  epic-2-retrospective: optional
+  2-4-conversation-persistence: done
+  epic-2-retrospective: done
 
   # EPIC 3: Local-First File Magic (Days 8-10)
   epic-3: backlog

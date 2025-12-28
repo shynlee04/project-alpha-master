@@ -238,11 +238,15 @@ export class SystemPromptComposer {
     workspaceReady: false,
   };
 
+  /** Store the configuration for this instance */
+  private config: PromptComposerConfig;
+
   /**
    * Get singleton instance
    */
   public static getInstance(config?: PromptComposerConfig): SystemPromptComposer {
-    if (!SystemPromptComposer.instance) {
+    // If config is provided OR instance doesn't exist, create new instance
+    if (config || !SystemPromptComposer.instance) {
       SystemPromptComposer.instance = new SystemPromptComposer(config);
     }
     return SystemPromptComposer.instance;
@@ -252,6 +256,7 @@ export class SystemPromptComposer {
    * Private constructor - use getInstance()
    */
   private constructor(config?: PromptComposerConfig) {
+    this.config = config || DEFAULT_CONFIG;
     this.layers = new Map();
     this.currentConfigHash = this.generateConfigHash(config || DEFAULT_CONFIG);
     
@@ -347,21 +352,14 @@ export class SystemPromptComposer {
    * Get current configuration
    */
   public getConfig(): PromptComposerConfig {
-    const layer2 = this.layers.get(2);
-    const agentMode = layer2?.generate(this.layer3Context) as any;
-    
-    return {
-      agentMode: agentMode ? {
-        id: 'solo-dev',
-        name: 'Quick Flow Solo Dev',
-        icon: '🚀',
-        cognitivePhase: '',
-        persona: '',
-        communicationStyle: '',
-        rules: '',
-      } : undefined,
-      toolConstitution: this.layers.get(1)?.generate(this.layer3Context) || DEFAULT_CONFIG.toolConstitution,
-    };
+    return this.config;
+  }
+
+  /**
+   * Get registered layers (for testing)
+   */
+  public getLayers(): PromptLayer[] {
+    return Array.from(this.layers.values()).sort((a, b) => a.priority - b.priority);
   }
 
   /**
@@ -376,7 +374,7 @@ export class SystemPromptComposer {
     // Get layers in priority order
     const layers = Array.from(this.layers.values())
       .sort((a, b) => a.priority - b.priority);
-      
+    
     // For Layer 3, merge passed context with internal layer3Context state
     // This ensures that context management methods (setOpenFiles, setActiveFile, etc.)
     // are reflected in the composed prompt
@@ -388,9 +386,25 @@ export class SystemPromptComposer {
       projectPackageJson: this.layer3Context.projectPackageJson || context.projectPackageJson,
       workspaceReady: this.layer3Context.workspaceReady || context.workspaceReady,
     };
-      
+    
     for (const layer of layers) {
-      const content = layer.generate(mergedContext);
+      let content: string;
+      
+      // Generate content based on layer type
+      switch (layer.type) {
+        case 'tool-constitution':
+          content = this.getConfig().toolConstitution ?? DEFAULT_CONFIG.toolConstitution;
+          break;
+        case 'agent-mode':
+          content = this.formatAgentMode(this.getConfig().agentMode);
+          break;
+        case 'context-injection':
+          content = this.generateLayer3Content(mergedContext);
+          break;
+        default:
+          content = '';
+      }
+      
       messages.push({ role: 'system', content });
     }
     
@@ -468,7 +482,7 @@ export class SystemPromptComposer {
       
       // Update active file if it's in list
       if (this.layer3Context.activeFile) {
-        const stillActive = files.some(f => f.path === this.layer3Context.activeFile.path);
+        const stillActive = files.some(f => f.path === this.layer3Context.activeFile?.path);
         if (!stillActive) {
           this.layer3Context.activeFile = undefined;
         }

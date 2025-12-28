@@ -42,6 +42,8 @@ interface EnhancedChatProps {
     className?: string
     onPreviewArtifact?: (code: string) => void
     onSaveArtifact?: (code: string, language: string) => void
+    onScroll?: (e: React.UIEvent<HTMLDivElement>) => void
+    setScrollRef?: React.RefObject<HTMLDivElement>
 }
 
 export function EnhancedChatInterface({
@@ -51,6 +53,8 @@ export function EnhancedChatInterface({
     className,
     onPreviewArtifact,
     onSaveArtifact,
+    onScroll,
+    setScrollRef,
 }: EnhancedChatProps) {
     const { t } = useTranslation()
     const [input, setInput] = useState('')
@@ -80,7 +84,11 @@ export function EnhancedChatInterface({
     return (
         <div className={cn("flex flex-col h-full bg-background", className)}>
             {/* Messages area */}
-            <div className="flex-1 overflow-auto p-4 space-y-4 scrollbar-thin">
+            <div
+                ref={setScrollRef}
+                className="flex-1 overflow-auto p-4 space-y-4 scrollbar-thin"
+                onScroll={onScroll}
+            >
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center">
                         <Bot className="w-16 h-16 text-muted-foreground/30 mb-4" />
