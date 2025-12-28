@@ -271,11 +271,11 @@ export class ToolPermissionManager {
 
   /**
    * Deserialize permissions from persistence
+   * Preserves defaults for tools not in the JSON
    */
   public static fromJSON(json: string): ToolPermissionManager {
     const data = JSON.parse(json);
     const instance = new ToolPermissionManager();
-    instance.trustLevels.clear();
 
     if (data.permissions) {
       Object.entries(data.permissions).forEach(([toolId, level]) => {
