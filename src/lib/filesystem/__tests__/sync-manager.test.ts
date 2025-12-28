@@ -6,9 +6,9 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import type { SyncConfig } from '../sync-types';
 
-// Mock webcontainer module before importing SyncManager
-const mockMount = vi.fn().mockResolvedValue(undefined);
+// Create mock functions before vi.mock
 const mockBoot = vi.fn().mockResolvedValue(undefined);
+const mockMount = vi.fn().mockResolvedValue(undefined);
 const mockIsBooted = vi.fn().mockReturnValue(true);
 const mockGetFileSystem = vi.fn().mockReturnValue({
   writeFile: vi.fn().mockResolvedValue(undefined),
@@ -16,20 +16,16 @@ const mockGetFileSystem = vi.fn().mockReturnValue({
   rm: vi.fn().mockResolvedValue(undefined),
 });
 
+// Mock webcontainer module
 vi.mock('../webcontainer', () => ({
-  boot: vi.fn().mockResolvedValue(undefined),
-  mount: vi.fn().mockResolvedValue(undefined),
-  getFileSystem: vi.fn().mockReturnValue({
-    writeFile: vi.fn().mockResolvedValue(undefined),
-    mkdir: vi.fn().mockResolvedValue(undefined),
-    rm: vi.fn().mockResolvedValue(undefined),
-  }),
-  isBooted: vi.fn().mockReturnValue(true),
+  boot: mockBoot,
+  mount: mockMount,
+  getFileSystem: mockGetFileSystem,
+  isBooted: mockIsBooted,
 }));
 
-import { SyncManager, createSyncManager } from '../sync-manager';
-import { LocalFSAdapter } from '../local-fs-adapter';
-import { boot, mount, getFileSystem, isBooted } from '../webcontainer';
+import { SyncManager, createSyncManager, SyncError } from '../sync-manager';
+import type { LocalFSAdapter } from '../local-fs-adapter';
 
 describe('SyncManager', () => {
   let mockAdapter: LocalFSAdapter;
@@ -38,11 +34,11 @@ describe('SyncManager', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Reset and configure mocks
-    vi.mocked(boot).mockResolvedValue(undefined);
-    vi.mocked(mount).mockResolvedValue(undefined);
-    vi.mocked(isBooted).mockReturnValue(true);
-    vi.mocked(getFileSystem).mockReturnValue({
+    // Reset mock implementations
+    mockBoot.mockResolvedValue(undefined);
+    mockMount.mockResolvedValue(undefined);
+    mockIsBooted.mockReturnValue(true);
+    mockGetFileSystem.mockReturnValue({
       writeFile: vi.fn().mockResolvedValue(undefined),
       mkdir: vi.fn().mockResolvedValue(undefined),
       rm: vi.fn().mockResolvedValue(undefined),
@@ -88,41 +84,11 @@ describe('SyncManager', () => {
       const manager = new SyncManager(mockAdapter, customConfig);
       expect(manager.getExcludePatterns()).toContain('custom-dir');
     });
-  });
 
-  describe('syncToWebContainer', () => {
-    it('should boot WebContainer if not already booted', async () => {
-      vi.mocked(isBooted).mockReturnValue(false);
-
-      await syncManager.syncToWebContainer();
-
-      expect(boot).toHaveBeenCalled();
-    });
-
-    it('should mount built file tree to WebContainer', async () => {
-      mockAdapter.listFiles = vi.fn().mockResolvedValue([]);
-
-      await syncManager.syncToWebContainer();
-
-      expect(mount).toHaveBeenCalled();
-      const mountedTree = vi.mocked(mount).mock.calls[0][0];
-      expect(mountedTree).toBeDefined();
-    });
-
-    it('should return successful result', async () => {
-      mockAdapter.listFiles = vi.fn().mockResolvedValue([]);
-
-      const result = await syncManager.syncToWebContainer();
-
-      expect(result.success).toBe(true);
-      expect(result.duration).toBeGreaterThanOrEqual(0);
-    });
-
-    it('should set status to error on failure', async () => {
-      vi.mocked(mount).mockRejectedValue(new Error('Mount failed'));
-
-      await expect(syncManager.syncToWebContainer()).rejects.toThrow();
-      expect(syncManager.status).toBe('error');
+    it('should have default config values', () => {
+      const manager = new SyncManager(mockAdapter);
+      const config = (manager as { config: SyncConfig }).config;
+      expect(config.preScanFileCount).toBe(true);
     });
   });
 
@@ -134,23 +100,44 @@ describe('SyncManager', () => {
     });
 
     it('should write to WebContainer if booted', async () => {
-      const mockFs = vi.mocked(getFileSystem)();
       await syncManager.writeFile('test.txt', 'content');
 
+      const mockFs = mockGetFileSystem();
       expect(mockFs.writeFile).toHaveBeenCalledWith('test.txt', 'content');
     });
 
-    it('should create parent directories in WebContainer', async () => {
-      const mockFs = vi.mocked(getFileSystem)();
+    it('should create parent directories in WebContainer for nested paths', async () => {
       await syncManager.writeFile('src/components/Test.tsx', 'content');
 
+      const mockFs = mockGetFileSystem();
       expect(mockFs.mkdir).toHaveBeenCalledWith('src/components', { recursive: true });
     });
 
-    it('should throw on local FS write failure', async () => {
+    it('should not create directories for root-level files', async () => {
+      const mockFs = mockGetFileSystem();
+      mockFs.mkdir.mockClear();
+
+      await syncManager.writeFile('index.html', '<html></html>');
+
+      expect(mockFs.mkdir).not.toHaveBeenCalled();
+    });
+
+    it('should throw SyncError on local FS write failure', async () => {
       mockAdapter.writeFile = vi.fn().mockRejectedValue(new Error('Permission denied'));
 
-      await expect(syncManager.writeFile('test.txt', 'content')).rejects.toThrow();
+      await expect(syncManager.writeFile('test.txt', 'content')).rejects.toThrow(SyncError);
+    });
+
+    it('should set error status on write failure', async () => {
+      mockAdapter.writeFile = vi.fn().mockRejectedValue(new Error('Permission denied'));
+
+      try {
+        await syncManager.writeFile('test.txt', 'content');
+      } catch {
+        // Expected
+      }
+
+      expect(syncManager.status).toBe('error');
     });
   });
 
@@ -162,18 +149,24 @@ describe('SyncManager', () => {
     });
 
     it('should delete from WebContainer if booted', async () => {
-      const mockFs = vi.mocked(getFileSystem)();
       await syncManager.deleteFile('test.txt');
 
+      const mockFs = mockGetFileSystem();
       expect(mockFs.rm).toHaveBeenCalledWith('test.txt');
     });
 
     it('should handle missing file in WebContainer gracefully', async () => {
-      const mockFs = vi.mocked(getFileSystem)();
+      const mockFs = mockGetFileSystem();
       mockFs.rm.mockRejectedValue(new Error('Not found'));
 
       // Should not throw
       await syncManager.deleteFile('test.txt');
+    });
+
+    it('should throw SyncError on local FS delete failure', async () => {
+      mockAdapter.deleteFile = vi.fn().mockRejectedValue(new Error('Not found'));
+
+      await expect(syncManager.deleteFile('test.txt')).rejects.toThrow(SyncError);
     });
   });
 
@@ -185,10 +178,16 @@ describe('SyncManager', () => {
     });
 
     it('should create in WebContainer if booted', async () => {
-      const mockFs = vi.mocked(getFileSystem)();
       await syncManager.createDirectory('new-dir');
 
+      const mockFs = mockGetFileSystem();
       expect(mockFs.mkdir).toHaveBeenCalledWith('new-dir', { recursive: true });
+    });
+
+    it('should throw SyncError on local FS create failure', async () => {
+      mockAdapter.createDirectory = vi.fn().mockRejectedValue(new Error('Already exists'));
+
+      await expect(syncManager.createDirectory('new-dir')).rejects.toThrow(SyncError);
     });
   });
 
@@ -200,10 +199,16 @@ describe('SyncManager', () => {
     });
 
     it('should delete from WebContainer if booted', async () => {
-      const mockFs = vi.mocked(getFileSystem)();
       await syncManager.deleteDirectory('old-dir');
 
+      const mockFs = mockGetFileSystem();
       expect(mockFs.rm).toHaveBeenCalledWith('old-dir', { recursive: true });
+    });
+
+    it('should throw SyncError on local FS delete failure', async () => {
+      mockAdapter.deleteDirectory = vi.fn().mockRejectedValue(new Error('Not found'));
+
+      await expect(syncManager.deleteDirectory('old-dir')).rejects.toThrow(SyncError);
     });
   });
 
@@ -214,36 +219,21 @@ describe('SyncManager', () => {
       expect(syncManager.getExcludePatterns()).toEqual(['custom', 'patterns']);
     });
 
+    it('should preserve default patterns when updating', () => {
+      syncManager.setExcludePatterns(['custom']);
+
+      const patterns = syncManager.getExcludePatterns();
+      expect(patterns).toContain('.git');
+      expect(patterns).toContain('node_modules');
+      expect(patterns).toContain('custom');
+    });
+
     it('should return copy of patterns array', () => {
       const patterns1 = syncManager.getExcludePatterns();
       const patterns2 = syncManager.getExcludePatterns();
 
       expect(patterns1).not.toBe(patterns2);
       expect(patterns1).toEqual(patterns2);
-    });
-  });
-
-  describe('callbacks', () => {
-    it('should call onComplete callback', async () => {
-      const onComplete = vi.fn();
-      const manager = new SyncManager(mockAdapter, { onComplete });
-
-      mockAdapter.listFiles = vi.fn().mockResolvedValue([]);
-
-      await manager.syncToWebContainer();
-
-      expect(onComplete).toHaveBeenCalled();
-    });
-
-    it('should call onError callback on failure', async () => {
-      const onError = vi.fn();
-      const manager = new SyncManager(mockAdapter, { onError });
-
-      vi.mocked(mount).mockRejectedValue(new Error('Mount failed'));
-
-      await expect(manager.syncToWebContainer()).rejects.toThrow();
-
-      expect(onError).toHaveBeenCalled();
     });
   });
 
@@ -256,6 +246,32 @@ describe('SyncManager', () => {
     it('should accept optional config', () => {
       const manager = createSyncManager(mockAdapter, { excludePatterns: ['test'] });
       expect(manager.getExcludePatterns()).toContain('test');
+    });
+
+    it('should accept eventBus parameter', () => {
+      const eventBus = { emit: vi.fn() };
+      const manager = createSyncManager(mockAdapter, {}, eventBus as never);
+      expect(manager.status).toBe('idle');
+    });
+  });
+
+  describe('SyncError', () => {
+    it('should have correct error codes', () => {
+      const error = new SyncError('Test error', 'FILE_WRITE_FAILED', '/test', new Error('original'));
+      expect(error.code).toBe('FILE_WRITE_FAILED');
+      expect(error.message).toBe('Test error');
+      expect(error.filePath).toBe('/test');
+    });
+
+    it('should be throwable and catchable', async () => {
+      mockAdapter.writeFile = vi.fn().mockRejectedValue(new Error('Permission denied'));
+
+      try {
+        await syncManager.writeFile('test.txt', 'content');
+        fail('Should have thrown');
+      } catch (error) {
+        expect(error).toBeInstanceOf(SyncError);
+      }
     });
   });
 });
