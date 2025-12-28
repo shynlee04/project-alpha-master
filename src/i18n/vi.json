@@ -416,5 +416,13 @@
   "errors.network.timeout.action": "Thử lại",
   "errors.network.serverError.title": "Lỗi Server",
   "errors.network.serverError.description": "Đã xảy ra lỗi server. Vui lòng thử lại sau.",
-  "errors.network.serverAction": "Thử lại sau"
+  "errors.network.serverAction": "Thử lại sau",
+  "agents.config.openaiCompatible.modelsLoaded_0": "Found {{count}} models",
+  "chat.codeBlock.lines_0": " lines",
+  "chat.diff.linesHidden_0": " lines hidden",
+  "errors.fs.notSupported.mobileHint": "__STRING_NOT_TRANSLATED__",
+  "errors.sync.retry.description": "__STRING_NOT_TRANSLATED__",
+  "time.agoSeconds_0": "__STRING_NOT_TRANSLATED__",
+  "time.agoMinutes_0": "__STRING_NOT_TRANSLATED__",
+  "time.agoHours_0": "__STRING_NOT_TRANSLATED__"
 }

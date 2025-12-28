@@ -404,5 +404,19 @@
   "errors.network.timeout.action": "Retry",
   "errors.network.serverError.title": "Server Error",
   "errors.network.serverError.description": "A server error occurred. Please try again later.",
-  "errors.network.serverError.action": "Retry Later"
+  "errors.network.serverError.action": "Retry Later",
+  "errors.workspace.openFailed.mobileTitle": "Desktop Feature",
+  "errors.workspace.openFailed.mobileDescription": "Opening projects requires a desktop browser. Please use Chrome, Edge, or Safari on your computer to access full IDE features.",
+  "errors.ide.openOnMobile.title": "Desktop Feature",
+  "errors.ide.openOnMobile.description": "This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.",
+  "errors.fs.notSupported.mobileHint": "__STRING_NOT_TRANSLATED__",
+  "errors.sync.retry.description": "__STRING_NOT_TRANSLATED__",
+  "errors.workspace.openFailed.mobileAction": "Go to Knowledge Hub",
+  "errors.workspace.permissionDenied.mobileTitle": "Desktop Feature",
+  "errors.workspace.permissionDenied.mobileDescription": "Folder access requires a desktop browser. Please use Chrome, Edge, or Safari on your computer.",
+  "errors.workspace.permissionDenied.mobileAction": "Go to Knowledge Hub",
+  "errors.workspace.notFound.mobileTitle": "Desktop Feature",
+  "errors.workspace.notFound.mobileDescription": "Opening projects requires a desktop browser. Please access from a computer to use the IDE.",
+  "errors.workspace.notFound.mobileAction": "Go to Knowledge Hub",
+  "errors.ide.openOnMobile.action": "Use Desktop"
 }

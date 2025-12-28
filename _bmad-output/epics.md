@@ -205,12 +205,175 @@ This document provides the complete epic and story breakdown for **Project Alpha
 
 ### FR Coverage Map
 
-{{requirements_coverage_map}}
+| FR ID | Epic | Description |
+|-------|------|-------------|
+| FR-UI-01 | Epic 1 | Responsive Layout |
+| FR-UI-02 | Epic 1 | Mobile Demo Mode |
+| FR-UI-03 | Epic 1 | Theme System |
+| FR-UI-04 | Epic 1 | Accessibility Foundations |
+| FR-AGENT-01 | Epic 2 | Multi-Provider Configuration |
+| FR-AGENT-03 | Epic 2 | Conversation Context Preservation |
+| FR-STATE-01 | Epic 2 | Unified Store (Zustand+Dexie) |
+| FR-STATE-02 | Epic 2 | Session Restoration |
+| FR-ENV-01 | Epic 3 | WebContainer Boot |
+| FR-ENV-02 | Epic 3 | Permission Re-Grant Flow |
+| FR-ENV-03 | Epic 3 | Terminal Integration |
+| FR-STATE-03 | Epic 3 | Dual-Write Sync |
+| FR-AGENT-02 | Epic 4 | Tool Execution (Read/Write) |
+| FR-AGENT-04 | Epic 4 | Streaming Response Buffer |
+| FR-AGENT-05 | Epic 4 | Tool Error Handling |
+| FR-ERROR-01 | Epic 4 | Tool Failure Retry |
+| FR-STATE-04 | Epic 5 | Sync Queue Visualizer |
+| FR-ERROR-02 | Epic 5 | Sync Conflict UI |
+| FR-ERROR-03 | Epic 5 | Crash Recovery |
+| FR-ERROR-04 | Epic 5 | Persistence Loss |
+| FR-EDU-01 | Phase 2 | Source File Import |
+| FR-EDU-02 | Phase 2 | Citation Placeholder |
 
 ---
 
 ## Epic List
 
-{{epics_list}}
+> **Strategy:** Epics reordered for **"Daily Dev Journey" Social Campaign** (Vietnamese market) with visual progress prioritization.
+> **Launch Target:** Jan 1-18, 2026 (17-day sprint)
 
-<!-- Epics and Stories will be generated in Step 2 -->
+---
+
+### Epic 1: 🎨 Mobile-First Visual Foundation
+*Days 1-3 (Jan 1-3, 2026)*
+
+**User Outcome:** Users on any device see a polished, responsive interface with dark/light themes and clear messaging about feature availability.
+
+**Social Media Appeal:** ⭐⭐⭐⭐⭐ — Before/after screenshots, dark mode toggle videos, mobile demo mode screencast
+
+**FRs Covered:** FR-UI-01, FR-UI-02, FR-UI-03, FR-UI-04
+
+**Remediation Epics Addressed:** R-13 (IDELayout State Refactor)
+
+**UX Requirements:**
+- UX 2.1 (Multi-Surface Layout)
+- UX 3.1 (Mobile Card Feed)
+- UX 4.1 (WCAG 2.1 AA)
+- UX 4.2 (Color contrast 4.5:1)
+
+**Implementation Notes:**
+- Progressive degradation with SharedArrayBuffer detection
+- Tailwind CSS 4 responsive breakpoints
+- next-themes integration for theme persistence
+- Mobile demo mode with pre-loaded templates
+
+---
+
+### Epic 2: 💬 AI Chat That Just Works
+*Days 4-7 (Jan 4-7, 2026)*
+
+**User Outcome:** Users configure AI agents with their API keys and experience streaming responses with tool approval workflows.
+
+**Social Media Appeal:** ⭐⭐⭐⭐⭐ — AI streaming demo, tool approval overlay, "config persists across sessions" proof
+
+**FRs Covered:** FR-AGENT-01, FR-AGENT-03, FR-STATE-01, FR-STATE-02
+
+**Remediation Epics Addressed:**
+- R-01 (Hot-Reloading Bug Fix)
+- R-02 (Atomic State Updates)
+- R-05 (Complete CRUD Surface)
+
+**Implementation Notes:**
+- Migrate AgentConfigDialog from useState to Zustand
+- Implement Zustand + Dexie persist middleware
+- Add optimistic UI with rollback
+- Streaming markdown with 50ms buffer delay
+
+---
+
+### Epic 3: 🔗 Local-First File Magic
+*Days 8-10 (Jan 8-10, 2026)*
+
+**User Outcome:** Users open local projects, edit files in the browser, and see changes appear in their local VS Code immediately.
+
+**Social Media Appeal:** ⭐⭐⭐⭐ — **THE MAGIC MOMENT** — browser edit → VS Code update screencast
+
+**FRs Covered:** FR-ENV-01, FR-ENV-02, FR-ENV-03, FR-STATE-03
+
+**Remediation Epics Addressed:**
+- R-09 (Cross-Architecture Context Management)
+
+**Implementation Notes:**
+- FSA permission lifecycle handling
+- WebContainer boot with <5s target
+- Dual-write sync (Local FS ↔ WebContainer)
+- WorkspaceContext for cross-boundary state
+
+---
+
+### Epic 4: 🧠 Smart Agent Tools
+*Days 11-14 (Jan 11-14, 2026)*
+
+**User Outcome:** Users interact with an AI that reliably reads, writes files, and executes commands with clear feedback and error recovery.
+
+**Social Media Appeal:** ⭐⭐⭐⭐ — AI reads project → explains architecture → writes code to disk
+
+**FRs Covered:** FR-AGENT-02, FR-AGENT-04, FR-AGENT-05, FR-ERROR-01
+
+**Remediation Epics Addressed:**
+- R-04 (5-Layer Agent System)
+- R-10 (Tool Permissions Model)
+- R-14 (Multi-Provider Race Conditions)
+
+**Implementation Notes:**
+- Create `src/lib/agent/layers/` structure
+- Implement SystemPromptComposer (Layers 1-3 only for Phase 1)
+- Tool trust levels (auto/prompt/block)
+- Retry logic with user feedback
+
+---
+
+### Epic 5: 🚀 Production-Ready Polish
+*Days 15-17 (Jan 15-17, 2026)*
+
+**User Outcome:** Users experience seamless session restoration, error recovery, and reliable performance across all features.
+
+**Social Media Appeal:** ⭐⭐ — Behind-the-scenes reliability work, performance metrics dashboard
+
+**FRs Covered:** FR-STATE-04, FR-ERROR-02, FR-ERROR-03, FR-ERROR-04
+
+**Remediation Epics Addressed:**
+- R-07 (Chatflow Composition Architecture — basic implementation)
+
+**Implementation Notes:**
+- Sync queue visualizer in status bar
+- WebContainer crash recovery
+- IndexedDB → Zustand hydration
+- Performance benchmark validation (NFR-PERF-01 to 08)
+
+---
+
+## Sprint Calendar
+
+| Sprint | Epic | Dates | Demo Focus |
+|--------|------|-------|------------|
+| Sprint 0 | Pre-Launch Setup | Dec 29-31, 2025 | Social media accounts, Day 0 teaser |
+| Sprint 1 | Epic 1: Visual Foundation | Jan 1-3, 2026 | Responsive layout, themes, mobile demo |
+| Sprint 2 | Epic 2: AI Chat | Jan 4-7, 2026 | Agent config, streaming, tool approval |
+| Sprint 3 | Epic 3: File Magic | Jan 8-10, 2026 | FSA sync, "magic moment" |
+| Sprint 4 | Epic 4: Smart Tools | Jan 11-14, 2026 | 5-Layer System, file operations |
+| Sprint 5 | Epic 5: Polish | Jan 15-17, 2026 | Session restore, performance |
+| **Launch** | **Public Beta** | **Jan 18, 2026** | ProductHunt + Hacker News |
+
+---
+
+## NFR Validation Points
+
+| NFR ID | Validation Epic | Target |
+|--------|-----------------|--------|
+| NFR-PERF-01 | Epic 3 | WebContainer boot <5s |
+| NFR-PERF-02 | Epic 3 | File mount <3s |
+| NFR-PERF-04 | Epic 4 | Agent TTFT <2s |
+| NFR-PERF-06 | Epic 3 | File save <500ms |
+| NFR-REL-01 | Epic 3 | File sync 99%+ |
+| NFR-REL-02 | Epic 5 | State restoration 99%+ |
+| NFR-REL-06 | Epic 4 | Tool execution >95% |
+| NFR-SEC-05 | Epic 2 | API key encryption AES-256 |
+| NFR-USE-01 | Epic 3 | Time to first project <2min |
+
+<!-- Stories will be created in Step 3 -->

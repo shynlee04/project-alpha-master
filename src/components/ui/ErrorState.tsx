@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { AlertCircle, RefreshCw, X, Home } from 'lucide-react'
+import { useDeviceType } from '@/hooks/useMediaQuery'
 
 /**
  * Error state variant
@@ -86,9 +87,15 @@ export function ErrorState({
     icon,
 }: ErrorStateProps) {
     const { t } = useTranslation()
+    const { isMobile, isTablet } = useDeviceType()
     
     const errorTitle = title || t('errors.generic.unexpected.title', 'Unexpected Error')
     const isDev = import.meta.env.DEV
+    
+    // Use mobile-specific error message on mobile/tablet devices
+    const errorMessage = (isMobile || isTablet) && !title
+        ? t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+        : error
     
     // Get action icon based on action type
     const getActionIcon = () => {
@@ -135,7 +142,7 @@ export function ErrorState({
             <h3 className="text-xl font-bold mb-2">{errorTitle}</h3>
             
             {/* Error message */}
-            <p className="text-sm opacity-90 mb-4">{error}</p>
+            <p className="text-sm opacity-90 mb-4">{errorMessage}</p>
             
             {/* Action button */}
             {action && onAction && (

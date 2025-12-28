@@ -53,6 +53,7 @@ interface AgentChatPanelProps {
  */
 export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChatPanelProps) {
     const { t } = useTranslation();
+    const { isMobile, isTablet } = useDeviceType();
 
     // Local state for conversation persistence
     // initialHistory holds messages loaded on mount (or after clear)
@@ -504,14 +505,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // Handle artifact save
     const handleSaveArtifact = useCallback(async (code: string, language: string) => {
-        const deviceType = useDeviceType();
-        const isMobile = deviceType === 'mobile' || deviceType === 'tablet';
-        
         // Mobile-specific error handling
-        if (isMobile) {
+        if (isMobile || isTablet) {
             toast.error(
-                t('errors.fs.notSupported.mobileTitle', 'Desktop Feature'),
-                t('errors.fs.notSupported.mobileDescription', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+                t('errors.ide.openOnMobile.title', 'Desktop Feature'),
+                t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
             );
             return;
         }
@@ -536,7 +534,14 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 }
             } catch (err) {
                 console.error('Failed to save artifact:', err);
-                toast.error(t('errors.generic.unexpected.description'), t('errors.actions.retry'));
+                if (isMobile || isTablet) {
+                    toast.error(
+                        t('errors.ide.openOnMobile.title', 'Desktop Feature'),
+                        t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+                    );
+                } else {
+                    toast.error(t('errors.generic.unexpected.description'), t('errors.actions.retry'));
+                }
             }
         }
     }, [localAdapterRef, t]);
