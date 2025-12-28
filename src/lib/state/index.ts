@@ -50,5 +50,17 @@ export {
     type TerminalTab,
 } from './ide-store';
 
+// Conversation store (Story 2.1)
+export {
+    useConversationStore,
+    useConversationStoreHydration,
+    useActiveConversation,
+    usePendingApprovals,
+    type ConversationState,
+    type ConversationMetadata,
+    type PendingToolApproval,
+} from './conversation-store';
+
 // Re-export Dexie hooks for convenience
 export { useLiveQuery } from 'dexie-react-hooks';
+
