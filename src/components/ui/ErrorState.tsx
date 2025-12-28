@@ -12,6 +12,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { AlertCircle, RefreshCw, X, Home } from 'lucide-react'
 import { useDeviceType } from '@/hooks/useMediaQuery'
+import { useNavigate } from '@tanstack/react-router'
 
 /**
  * Error state variant
@@ -88,6 +89,11 @@ export function ErrorState({
 }: ErrorStateProps) {
     const { t } = useTranslation()
     const { isMobile, isTablet } = useDeviceType()
+    const navigate = useNavigate()
+    
+    const handleGoHome = () => {
+        navigate({ to: '/' })
+    }
     
     const errorTitle = title || t('errors.generic.unexpected.title', 'Unexpected Error')
     const isDev = import.meta.env.DEV
@@ -123,7 +129,7 @@ export function ErrorState({
             case 'dismiss':
                 return t('errors.actions.dismiss', 'Dismiss')
             case 'home':
-                return t('errors.actions.home', 'Go Home')
+                return t('errors.actions.home', 'Back to Home')
             default:
                 return ''
         }
@@ -145,9 +151,9 @@ export function ErrorState({
             <p className="text-sm opacity-90 mb-4">{errorMessage}</p>
             
             {/* Action button */}
-            {action && onAction && (
+            {action && (
                 <button
-                    onClick={onAction}
+                    onClick={action === 'home' ? handleGoHome : onAction}
                     className="inline-flex items-center gap-2 px-6 py-2 bg-primary-500 text-neutral-950 rounded-none font-medium hover:bg-primary-600 active:bg-primary-700 transition-all hover:scale-105 active:scale-95"
                 >
                     {getActionIcon()}

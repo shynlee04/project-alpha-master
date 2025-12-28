@@ -10,6 +10,7 @@ import { Sentry } from '../../lib/monitoring/sentry'
 import { useTranslation } from 'react-i18next'
 import { useDeviceType } from '../../hooks/useMediaQuery'
 import { showMobileWorkspaceError } from '../../lib/utils/mobile-error-handling'
+import { useNavigate } from '@tanstack/react-router'
 
 /**
  * Props for the FallbackComponent
@@ -26,6 +27,11 @@ interface FallbackProps {
 function ErrorFallback({ error, resetError }: FallbackProps) {
     const { t } = useTranslation()
     const { isMobile, isTablet } = useDeviceType()
+    const navigate = useNavigate()
+    
+    const handleGoHome = () => {
+        navigate({ to: '/' })
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -84,6 +90,12 @@ function ErrorFallback({ error, resetError }: FallbackProps) {
                         className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
                     >
                         {t('errors.actions.reload', 'Reload Page')}
+                    </button>
+                    <button
+                        onClick={handleGoHome}
+                        className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+                    >
+                        {t('errors.actions.home', 'Back to Home')}
                     </button>
                 </div>
             </div>
