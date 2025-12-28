@@ -1,254 +1,357 @@
-# BMM Workflow Status
-# Last Updated: 2025-12-27T21:18:00+07:00
+# BMM Workflow Status - Course Correction
+# Generated: 2025-12-28T18:16:46+07:00
 # Agent: BMAD Master Orchestrator
-# Session: Investigation Integration + Story Dev Cycle Preparation
+# Session: Course Correction - Knowledge Synthesis Station Pivot
+# ═══════════════════════════════════════════════════════════════════════════════
 
 # =============================================================================
-# WORKFLOW STATE
+# PROJECT METADATA
 # =============================================================================
-workflow:
-  current_workflow: "story-dev-cycle-preparation"
-  current_phase: "research-complete"
-  status: "READY_FOR_TECH_SPECS"
+project:
+  name: "project-alpha-master"
+  version: "2.0.0-alpha"
+  pivot_name: "Knowledge Synthesis Station"
+  previous_codename: "Via-gent IDE"
   
-  investigation_cycle:
-    status: "COMPLETE"
-    completed_at: "2025-12-28T03:30:00+07:00"
-    artifacts_generated: 5
-    epics_created: 3  # Epic 25, 29, 30
-    domain_research_complete: true
-    
-  team_a:
-    id: "MRT"
-    name: "Mobile Responsive Transformation"
-    status: "IN_PROGRESS"
-    progress: "82%"
-    current_story: "MRT-8"  # Preview Panel Mobile
-    stories_remaining: 2
+# =============================================================================
+# WORKFLOW INITIALIZATION
+# =============================================================================
+generated: "2025-12-28T18:16:46+07:00"
+project_type: "knowledge-synthesis-platform"
+selected_track: "bmad-method"
+field_type: "brownfield"
+workflow_path: "_bmad/bmm/workflows/workflow-status/paths/method-brownfield.yaml"
+
+# =============================================================================
+# COURSE CORRECTION RECORD
+# =============================================================================
+course_correction:
+  initiated_at: "2025-12-28T18:16:46+07:00"
+  reason: "Strategic pivot from IDE-first to Knowledge-Synthesis-first architecture"
   
-  team_b:
-    id: "AI-FOUNDATION"
-    name: "AI Foundation + State Management (from Investigation)"
-    status: "READY_FOR_TECH_SPECS"
-    phase: "Tech-Specs Generation"
-    progress: "0%"
-    priority_story: "AI-25-1"
+  from:
+    focus: "Via-gent Browser IDE"
+    active_epics:
+      - "MRT (Mobile Responsive Transformation)"
+      - "AI-Foundation (Provider Store, State Management)"
+    blockers:
+      - "WebContainer not supported on mobile browsers"
+      - "State management patterns inconsistent (Zustand + Context mixing)"
+      - "LLM provider hot-reload visibility bug"
+      - "Chat cascade not composable"
+  
+  to:
+    focus: "Knowledge Synthesis Station (Project Alpha v2.0)"
+    strategy: "Two-Engine Architecture (Creator Studio + Knowledge Reader)"
+    key_decisions:
+      - "Replace Qdrant Docker with Orama (WASM-only for MVP)"
+      - "Mobile-first card feed UI (not IDE layout)"
+      - "Local-first with OPFS/IndexedDB storage"
+      - "Stabilize core systems before feature expansion"
+  
+  archived_artifacts:
+    - "_bmad-output/sprint-artifacts/sprint-status.yaml → archive/"
+    - "bmm-workflow-status.yaml (previous version)"
+    - "MRT epics → archived (partial completion noted)"
+    - "AI-Foundation epics → archived (incorporated into stabilization)"
+
+# =============================================================================
+# WORKFLOW STATUS (BMad Method - Brownfield)
+# =============================================================================
+workflow_status:
+  # Prerequisite Phase
+  prerequisite:
+    document_project:
+      status: "completed"
+      completed_at: "2025-12-28T12:00:00+07:00"
+      artifacts:
+        - "_bmad-output/docs/index.md"
+        - "_bmad-output/docs/project-overview-2025-12-28.md"
+        - "_bmad-output/docs/architecture-analysis-2025-12-28.md"
+        - "_bmad-output/docs/source-tree-analysis-2025-12-28.md"
+        - "_bmad-output/docs/tech-stack-documentation-2025-12-28.md"
+        - "_bmad-output/docs/development-patterns-conventions-2025-12-28.md"
+
+  # Phase 0: Discovery (Optional)
+  phase_0_discovery:
+    name: "Discovery"
+    status: "completed"
+    optional: true
     
-  recommended_next_story:
-    id: "AI-25-1"
-    title: "Migrate provider config to Zustand"
+    brainstorm:
+      status: "completed"
+      completed_at: "2025-12-26T20:00:00+07:00"
+      artifact: "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
+      agents: ["brainstorming-coach", "design-thinking-coach"]
+    
+    research:
+      status: "completed"
+      completed_at: "2025-12-28T04:00:00+07:00"
+      artifacts:
+        - "_bmad-output/docs/2025-12-28/version-2/domain-1-llm-provider-config-research.md"
+        - "_bmad-output/docs/2025-12-28/version-2/domain-2-agent-config-architecture-research.md"
+        - "_bmad-output/docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
+        - "_bmad-output/docs/2025-12-28/investigation-report.md"
+        - "_bmad-output/docs/2025-12-28/target-architecture.md"
+      mcp_tools_executed: 50+
+    
+    product_brief:
+      status: "completed"
+      completed_at: "2025-12-28T15:00:00+07:00"
+      artifacts:
+        - "_bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md"
+        - "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
+      note: "Course correction proposals serve as product brief"
+
+  # Phase 1: Planning
+  phase_1_planning:
+    name: "Planning"
+    status: "ready"
+    
+    prd:
+      status: "required"
+      agent: "pm"
+      command: "create-prd"
+      note: "Create PRD for Knowledge Synthesis Station v2.0 pivot"
+      input_documents:
+        - "_bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md"
+        - "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
+    
+    ux_design:
+      status: "conditional"
+      condition: "if_has_ui"
+      agent: "ux-designer"
+      command: "create-ux-design"
+      note: "Refine UX spec from proposal into implementation-ready wireframes"
+      input_documents:
+        - "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
+
+  # Phase 2: Solutioning
+  phase_2_solutioning:
+    name: "Solutioning"
+    status: "not_started"
+    
+    architecture:
+      status: "recommended"
+      agent: "architect"
+      command: "create-architecture"
+      note: "Adapt target architecture for 2-phase approach (Stabilization → Knowledge MVP)"
+      input_documents:
+        - "_bmad-output/docs/2025-12-28/target-architecture.md"
+        - "_bmad-output/docs/2025-12-28/version-2/technical-architecture-document.md"
+    
+    epics_and_stories:
+      status: "required"
+      agent: "pm"
+      command: "create-epics-and-stories"
+      note: "Create epics for 2-phase approach"
+    
+    test_design:
+      status: "recommended"
+      agent: "tea"
+      command: "testarch-test-design"
+    
+    implementation_readiness:
+      status: "required"
+      agent: "architect"
+      command: "check-implementation-readiness"
+
+  # Phase 3: Implementation
+  phase_3_implementation:
+    name: "Implementation"
+    status: "not_started"
+    
+    sprint_planning:
+      status: "required"
+      agent: "sm"
+      command: "sprint-planning"
+
+# =============================================================================
+# TWO-PHASE APPROACH (From Course Correction Proposal)
+# =============================================================================
+implementation_phases:
+  phase_1_stabilization:
+    name: "Core Stabilization"
+    duration: "2-3 weeks"
     priority: "P0"
-    rationale: "Foundation for hot-load fix, highest impact"
-    workflow: "story-dev-cycle"
+    status: "PENDING"
+    
+    goals:
+      - "Stabilize chat cascade system (composable across agent types)"
+      - "Fix agent center configuration (LLM provider hot-reload bug)"
+      - "Unified state management (Zustand + Dexie, remove Context mixing)"
+      - "Mobile-first responsive layout (not WebContainer-dependent)"
+      - "Database persistence (Dexie schema refinement)"
+      - "API management (credential vault, multi-provider)"
+    
+    epic_candidates:
+      - id: "STAB-01"
+        name: "State Management Unification"
+        description: "Migrate all state to Zustand + Dexie pattern, remove React Context state"
+        priority: "P0"
+        stories_estimate: 5-8
+        
+      - id: "STAB-02"
+        name: "Chat Cascade Refactor"
+        description: "Make chat components composable, fix streaming, add tool execution"
+        priority: "P0"
+        stories_estimate: 6-10
+        
+      - id: "STAB-03"
+        name: "LLM Provider System Fix"
+        description: "Hot-reload visibility bug, atomic updates, CRUD completeness"
+        priority: "P0"
+        stories_estimate: 4-6
+        
+      - id: "STAB-04"
+        name: "Mobile-First Layout"
+        description: "Card feed UI, bottom sheet chat, adaptive panels"
+        priority: "P1"
+        stories_estimate: 5-8
+        
+      - id: "STAB-05"
+        name: "Database Schema Refinement"
+        description: "Dexie schema updates, migration tooling, data integrity"
+        priority: "P1"
+        stories_estimate: 3-5
 
-# =============================================================================
-# COMPLETED ACTIONS (Session: 2025-12-27)
-# =============================================================================
-completed_actions:
-  - timestamp: "2025-12-27T21:18:00+07:00"
-     action: "Domain 3 RAG Infrastructure Research completed"
-     artifact: "docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
-     details: "Comprehensive RAG infrastructure research covering Qdrant, Neo4j, Ollama embeddings, and NotebookLM integration"
-  - timestamp: "2025-12-27T18:00:00+07:00"
-     action: "Team B coordination plan created"
-     artifact: "_bmad-output/team-b/team-b-coordination-plan-2025-12-27.md"
-   agent: "@bmad-core-bmad-master"
-   
- - timestamp: "2025-12-27T18:10:00+07:00"
-   action: "Team B Phase 1 initiated"
-   agent: "@bmad-core-bmad-master"
-   
- - timestamp: "2025-12-27T18:15:00+07:00"
-   action: "State management requirements documented"
-   artifact: "_bmad-output/team-b/state-management-requirements-2025-12-27.md"
-   agent: "@bmad-bmm-architect"
-   
- - timestamp: "2025-12-27T20:04:00+07:00"
-   action: "Phase 2 Research completed - LLM Provider Configuration System"
-   artifact: "_bmad-output/research/llm-provider-configuration-research-2025-12-27.md"
-   agent: "@bmad-bmm-tech-writer"
-   
- - timestamp: "2025-12-27T18:18:00+07:00"
-   action: "Epic 29 specifications created"
-   artifact: "_bmad-output/team-b/epic-29-specifications-2025-12-27.md"
-   agent: "@bmad-bmm-architect"
-   
- - timestamp: "2025-12-27T18:20:00+07:00"
-   action: "Team B Phase 1 completed"
-   agent: "@bmad-core-bmad-master"
-   
- - timestamp: "2025-12-28T00:45:00+07:00"
-   action: "Sprint Change Proposal created"
-   artifact: "_bmad-output/sprint-change-proposal-2025-12-28.md"
-   agent: "@bmad-core-bmad-master"
+  phase_2_knowledge_mvp:
+    name: "Knowledge Synthesis MVP"
+    duration: "3-4 weeks"
+    priority: "P0 (after Phase 1)"
+    status: "PENDING"
     
-  - timestamp: "2025-12-28T01:00:00+07:00"
-    action: "Implementation Plan approved"
-    artifact: ".gemini/antigravity/brain/4af7c582-a51d-427c-a675-6bf82dd0698d/implementation_plan.md"
-    agent: "@bmad-bmm-ux-designer"
+    goals:
+      - "Source ingestion (PDF, URL, YouTube via client-side parsing)"
+      - "Vector store integration (Orama WASM for MVP)"
+      - "RAG chat with citations and grounding"
+      - "Knowledge canvas (blocks + connections)"
+      - "Study artifacts generation (flashcards, quizzes)"
+      - ".alpha pack export/import"
     
-  - timestamp: "2025-12-28T01:05:00+07:00"
-    action: "Story MRT-4 drafted"
-    artifact: "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation.md"
-    agent: "@bmad-bmm-sm"
-    
-  - timestamp: "2025-12-28T01:06:00+07:00"
-    action: "Context XML created"
-    artifact: "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation-context.xml"
-    agent: "@bmad-bmm-sm"
-    
-  - timestamp: "2025-12-28T01:08:00+07:00"
-    action: "Story MRT-4 implemented"
-    files_changed:
-      - "src/components/ide/FileTree/FileTreeItem.tsx"
-    agent: "@bmad-bmm-dev"
-    
-  - timestamp: "2025-12-28T01:10:00+07:00"
-     action: "Story MRT-4 marked DONE"
-     validation: "PASS"
-     agent: "@bmad-bmm-dev"
-     
-  - timestamp: "2025-12-28T04:08:00+07:00"
-    action: "Domain 3 research completed - Knowledge Synthesis & RAG Infrastructure"
-    artifact: "docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
-    agent: "@bmad-bmm-architect"
-    mcp_tools_executed: 19
-    research_areas:
-      - "Qdrant vector database (hybrid search, RRF fusion)"
-      - "Ollama local embedding models (nomic-embed-text, mxbai-embed-large, BGE-M3)"
-      - "Domain-aware chunking strategies (AST-based, section-aware)"
-      - "Cross-architecture context management"
-      - "NotebookLM + Notion integration strategy"
-    recommended_stack:
-      - "Qdrant (vector) + Neo4j (graph) + PostgreSQL/pgvector (document)"
-      - "Ollama with nomic-embed-text for privacy-preserving embeddings"
-      - "Event-driven synchronization with file locking"
-      - "Bidirectional sync with citation tracking"
+    epic_candidates:
+      - id: "KNOW-01"
+        name: "Source Manager"
+        description: "Drag-drop ingestion, PDF.js parsing, URL scraping"
+        priority: "P0"
+        stories_estimate: 8-12
+        
+      - id: "KNOW-02"
+        name: "Vector Store (Orama)"
+        description: "Client-side embeddings, hybrid search, serializable indices"
+        priority: "P0"
+        stories_estimate: 6-8
+        
+      - id: "KNOW-03"
+        name: "RAG Chat with Citations"
+        description: "Grounded answers, footnote citations, source sheets"
+        priority: "P0"
+        stories_estimate: 6-10
+        
+      - id: "KNOW-04"
+        name: "Knowledge Canvas"
+        description: "Block editor, visual connections, React Flow integration"
+        priority: "P1"
+        stories_estimate: 10-15
+        
+      - id: "KNOW-05"
+        name: "Study Artifacts"
+        description: "Flashcard generator, quiz generator, audio overview"
+        priority: "P1"
+        stories_estimate: 6-8
+        
+      - id: "KNOW-06"
+        name: "Pack System"
+        description: ".alpha export/import, encryption, licensing"
+        priority: "P2"
+        stories_estimate: 5-8
 
 # =============================================================================
 # NEXT STEPS
 # =============================================================================
 next_steps:
-   # Team A (Mobile Responsive Transformation)
-   - step: 1
-     action: "Create story file for MRT-5"
-     agent: "@bmad-bmm-sm"
-     
-   - step: 2
-     action: "Research Monaco Editor mobile patterns"
-     tools:
-       - "Context7: @monaco-editor/react mobile handling"
-       - "DeepWiki: microsoft/monaco-editor touch support"
-       
-   - step: 3
-     action: "Create context XML for MRT-5"
-     agent: "@bmad-bmm-sm"
-     
-   - step: 4
-     action: "Implement Monaco mobile optimizations"
-     agent: "@bmad-bmm-dev"
-     
-   - step: 5
-     action: "Code review"
-     agent: "@code-reviewer"
-   
-   # Team B (Complementary Workstream)
-   - step: 1
-     action: "Await Team A MRT-3 completion (Mobile IDE Layout handoff)"
-     trigger: "Handoff document at _bmad-output/handoffs/team-a-mrt-3-complete.md"
-     
-   - step: 2
-     action: "Initiate Team B Phase 2: State Management Refactoring"
-     tasks:
-       - "Refactor IDELayout.tsx state to use Zustand"
-       - "Update MobileIDELayout.tsx to use same Zustand patterns"
-       - "Remove duplicate state synchronization code"
-     agent: "@bmad-bmm-dev"
-     
-   - step: 3
-     action: "Initiate Team B Phase 3: Epic 29 Implementation"
-     trigger: "MVP-1 status → DONE in sprint-status.yaml"
-     tasks:
-       - "Create Epic 29 stories"
-       - "Execute story development cycle for EPIC-29-1 through EPIC-29-4"
-     agent: "@bmad-bmm-dev"
-
-# =============================================================================
-# SPRINT SUMMARY
-# =============================================================================
-sprint:
-  id: "MULTI-TEAM-2025-12-27"
-  name: "Multi-Team Coordination (Team A + Team B)"
-  
-  team_a:
-    id: "MRT"
-    name: "Mobile Responsive Transformation"
-    progress:
-      phases_complete: 2
-      phases_total: 6
-      stories_complete: 4
-      stories_total: 11
-      percentage: 36%
-  
-  team_b:
-    id: "TEAM-B"
-    name: "Complementary Workstream"
-    phase: "Phase 1: Preparation"
-    progress:
-      phases_complete: 1
-      phases_total: 3
-      tasks_complete: 2
-      tasks_total: 2
-      percentage: 100%
+  - step: 1
+    action: "Create PRD for Knowledge Synthesis Station v2.0"
+    agent: "@bmad-bmm-pm"
+    workflow: "create-prd"
+    inputs:
+      - "_bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md"
+      - "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
     
-  completed_stories:
-    - story: "MRT-1"
-      title: "Remove Viewport Block"
-      completed_at: "2025-12-27T18:00:00+07:00"
-      
-    - story: "MRT-2"
-      title: "Create Mobile Tab Bar"
-      completed_at: "2025-12-27T18:30:00+07:00"
-      
-    - story: "MRT-3"
-      title: "Implement Mobile IDE Layout"
-      completed_at: "2025-12-27T19:00:00+07:00"
-      
-    - story: "MRT-4"
-      title: "FileTree Mobile Adaptation"
-      completed_at: "2025-12-28T01:10:00+07:00"
-      tests: 0
-      artifacts:
-        - "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation.md"
-        - "_bmad-output/sprint-artifacts/MRT-4-filetree-mobile-adaptation-context.xml"
+  - step: 2
+    action: "Create/Refine UX Design specification"
+    agent: "@bmad-bmm-ux-designer"
+    workflow: "create-ux-design"
+    inputs:
+      - "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
+    
+  - step: 3
+    action: "Create Solution Architecture"
+    agent: "@bmad-bmm-architect"
+    workflow: "create-architecture"
+    inputs:
+      - "PRD (from step 1)"
+      - "UX Design (from step 2)"
+      - "_bmad-output/docs/2025-12-28/target-architecture.md"
+    
+  - step: 4
+    action: "Create Epics and Stories"
+    agent: "@bmad-bmm-pm"
+    workflow: "create-epics-and-stories"
+    inputs:
+      - "PRD"
+      - "Architecture"
+      - "UX Design"
+    
+  - step: 5
+    action: "Implementation Readiness Check"
+    agent: "@bmad-bmm-architect"
+    workflow: "check-implementation-readiness"
+    
+  - step: 6
+    action: "Sprint Planning"
+    agent: "@bmad-bmm-sm"
+    workflow: "sprint-planning"
 
 # =============================================================================
-# HANDOFF TRACKING
+# SESSION NOTES
 # =============================================================================
-handoffs:
-  team_a:
-    last_handoff:
-      from: "@bmad-bmm-dev"
-      to: "@bmad-core-bmad-master"
-      timestamp: "2025-12-28T01:10:00+07:00"
-      context: "MRT-4 completed, ready to continue with MRT-5"
+session_notes:
+  - timestamp: "2025-12-28T18:16:46+07:00"
+    action: "Course correction initiated"
+    agent: "@bmad-core-bmad-master"
+    details: "Pivoting from Via-gent IDE to Knowledge Synthesis Station"
+    
+  - key_insight: "Two-phase approach prevents scope creep"
+    details: |
+      Phase 1 (Stabilization) fixes foundation issues that would otherwise
+      block Phase 2 (Knowledge MVP). This prevents the previous pattern of
+      starting features on shaky foundations.
       
-    pending_handoff:
-      from: "@bmad-core-bmad-master"
-      to: "@bmad-bmm-dev"
-      story: "MRT-5"
-      action: "Create story and begin implementation"
-  
-  team_b:
-    last_handoff:
-      from: "@bmad-bmm-architect"
-      to: "@bmad-core-bmad-master"
-      timestamp: "2025-12-27T18:18:00+07:00"
-      context: "Epic 29 specifications completed, Team B Phase 1 done"
-      
-    pending_handoff:
-      from: "@bmad-core-bmad-master"
-      to: "@bmad-bmm-dev"
-      phase: "Phase 2: State Management Refactoring"
-      trigger: "Await Team A MRT-3 completion handoff"
-      action: "Refactor IDELayout.tsx and MobileIDELayout.tsx to use Zustand"
+  - key_insight: "Mobile-first requires architectural pivot"
+    details: |
+      WebContainer cannot run on mobile. Instead of forcing desktop-only,
+      we pivot to a "Two-Engine" strategy where mobile gets a Reader mode
+      (Orama WASM) while desktop gets full Creator Studio capabilities.
+
+# =============================================================================
+# ARCHIVED EPICS (For Reference)
+# =============================================================================
+archived_epics:
+  - id: "MRT"
+    name: "Mobile Responsive Transformation"
+    status: "PARTIAL_COMPLETE"
+    completed_stories: ["MRT-1", "MRT-2", "MRT-3", "MRT-4"]
+    remaining_stories: ["MRT-5", "MRT-6", "MRT-7", "MRT-8"]
+    archived_reason: "Superseded by Phase 1 STAB-04 (Mobile-First Layout)"
+    reusable_components:
+      - "MobileTabBar.tsx (keep)"
+      - "MobileIDELayout.tsx (refactor to MobileKnowledgeLayout)"
+    
+  - id: "AI-Foundation"
+    name: "AI Foundation + State Management"
+    status: "PLANNING_COMPLETE"
+    archived_reason: "Incorporated into Phase 1 STAB-01, STAB-02, STAB-03"
+    research_retained:
+      - "domain-1-llm-provider-config-research.md"
+      - "domain-2-agent-config-architecture-research.md"

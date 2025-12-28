@@ -27,7 +27,7 @@
   "ide.refreshPreview": "Refresh Preview",
   "ide.openInNewTab": "Open in New Tab",
   "ide.waitingDevServer": "Waiting for dev server...",
-  "ide.runDevCommand": "Run npm run dev to start the server",
+  "ide.runDevCommand": "Run npm run dev to start server",
   "ide.reAuthorize": "Re-authorize",
   "ide.fsDenied": "File System Access Denied",
   "ide.syncError": "Sync Error",
@@ -49,12 +49,249 @@
   "ide.tabs.preview": "Preview",
   "ide.tabs.terminal": "Term",
   "ide.tabs.chat": "Chat",
-  "errors.loadProjects": "Failed to load projects",
-  "errors.permissionDenied": "Permission denied",
-  "errors.generic": "An error occurred",
-  "errors.accessDenied": "Access denied",
-  "errors.fsNotSupported": "File System Access API not supported",
-  "errors.openFolder": "Failed to open folder",
+  "errors": {
+    "loadProjects": "Failed to load projects",
+    "permissionDenied": "Permission denied",
+    "generic": "An error occurred",
+    "accessDenied": "Access denied",
+    "fsNotSupported": "File System Access API not supported",
+    "openFolder": "Failed to open folder",
+    "fs": {
+      "title": "File System Error",
+      "permissionDenied": {
+        "title": "Permission Required",
+        "description": "We need your permission to access files on your device.",
+        "action": "Grant Permission",
+        "mobileHint": "Tap the button above to allow file access"
+      },
+      "notSupported": {
+        "title": "Browser Not Supported",
+        "description": "Your browser doesn't support file system access. Please use Chrome, Edge, or a modern browser.",
+        "action": "Learn More",
+        "mobileHint": "Try opening this app in Chrome or Edge browser"
+      },
+      "readFailed": {
+        "title": "Cannot Read File",
+        "description": "We couldn't read this file. It may be in use or the file is corrupted.",
+        "action": "Try Again",
+        "mobileHint": "Close other apps that might be using this file"
+      },
+      "writeFailed": {
+        "title": "Cannot Save File",
+        "description": "We couldn't save your changes. The file might be locked or you don't have permission.",
+        "action": "Try Again",
+        "mobileHint": "Make sure you have write permissions for this folder"
+      },
+      "deleteFailed": {
+        "title": "Cannot Delete File",
+        "description": "We couldn't delete this file. It may be in use by another program.",
+        "action": "Try Again",
+        "mobileHint": "Close any apps that might be using this file"
+      },
+      "folderNotFound": {
+        "title": "Folder Not Found",
+        "description": "We couldn't find this folder. It may have been moved or deleted.",
+        "action": "Browse Files",
+        "mobileHint": "Select a different folder from your device"
+      },
+      "quotaExceeded": {
+        "title": "Storage Full",
+        "description": "Your device storage is almost full. Please free up some space.",
+        "action": "Manage Storage",
+        "mobileHint": "Delete unused files or clear browser cache"
+      }
+    },
+    "network": {
+      "title": "Network Error",
+      "offline": {
+        "title": "No Internet Connection",
+        "description": "We couldn't connect to the internet. Please check your network connection.",
+        "action": "Retry",
+        "mobileHint": "Enable WiFi or mobile data and try again"
+      },
+      "timeout": {
+        "title": "Connection Timeout",
+        "description": "The request took too long. Your internet connection might be slow.",
+        "action": "Try Again",
+        "mobileHint": "Move to a location with better signal"
+      },
+      "serverError": {
+        "title": "Server Unavailable",
+        "description": "Our servers are having trouble. Please try again later.",
+        "action": "Retry",
+        "mobileHint": "Wait a few minutes and try again"
+      },
+      "requestFailed": {
+        "title": "Request Failed",
+        "description": "Something went wrong with your request. Please try again.",
+        "action": "Retry",
+        "mobileHint": "Check your internet connection"
+      }
+    },
+    "agent": {
+      "title": "AI Agent Error",
+      "apiKeyMissing": {
+        "title": "API Key Required",
+        "description": "You need to add an API key to use this AI provider.",
+        "action": "Add API Key",
+        "mobileHint": "Go to Settings > Agents to configure your API key"
+      },
+      "apiKeyInvalid": {
+        "title": "Invalid API Key",
+        "description": "Your API key doesn't work. Please check it and try again.",
+        "action": "Update Key",
+        "mobileHint": "Make sure you copied the entire API key correctly"
+      },
+      "providerUnavailable": {
+        "title": "AI Provider Unavailable",
+        "description": "This AI provider is temporarily unavailable. Please try again later.",
+        "action": "Try Again",
+        "mobileHint": "Switch to a different AI provider if available"
+      },
+      "modelNotAvailable": {
+        "title": "Model Not Available",
+        "description": "This AI model is not available. Please select a different model.",
+        "action": "Select Model",
+        "mobileHint": "Choose from the list of available models"
+      },
+      "toolExecutionFailed": {
+        "title": "Tool Execution Failed",
+        "description": "The AI agent couldn't complete this action. Please try again.",
+        "action": "Retry",
+        "mobileHint": "Check if you have the necessary permissions"
+      },
+      "rateLimitExceeded": {
+        "title": "Too Many Requests",
+        "description": "You've reached the limit for this AI provider. Please wait a bit.",
+        "action": "Wait",
+        "mobileHint": "Try again in a few minutes"
+      },
+      "quotaExceeded": {
+        "title": "Usage Limit Reached",
+        "description": "You've used up your free quota. Please upgrade your plan.",
+        "action": "Upgrade Plan",
+        "mobileHint": "Check your provider's pricing page"
+      }
+    },
+    "terminal": {
+      "title": "Terminal Error",
+      "bootFailed": {
+        "title": "Terminal Failed to Start",
+        "description": "We couldn't start the terminal. Please try again.",
+        "action": "Restart Terminal",
+        "mobileHint": "Make sure you have an active project open"
+      },
+      "commandFailed": {
+        "title": "Command Failed",
+        "description": "The command didn't work as expected. Please check the command.",
+        "action": "Try Again",
+        "mobileHint": "Make sure the command is correct for your project"
+      },
+      "shellExited": {
+        "title": "Terminal Closed",
+        "description": "The terminal session ended unexpectedly.",
+        "action": "Restart",
+        "mobileHint": "Your command may have caused the terminal to close"
+      },
+      "notReady": {
+        "title": "Terminal Not Ready",
+        "description": "The terminal is still starting up. Please wait a moment.",
+        "action": "Wait",
+        "mobileHint": "This should only take a few seconds"
+      }
+    },
+    "sync": {
+      "title": "Sync Error",
+      "syncFailed": {
+        "title": "Sync Failed",
+        "description": "We couldn't sync your files. Some changes may be lost.",
+        "action": "Retry Sync",
+        "mobileHint": "Check your internet connection and try again"
+      },
+      "conflictDetected": {
+        "title": "File Conflict",
+        "description": "This file was changed by another program. Which version do you want to keep?",
+        "action": "Resolve",
+        "mobileHint": "Choose to keep your changes or the other version"
+      },
+      "partialSync": {
+        "title": "Partial Sync",
+        "description": "Some files couldn't be synced. Your work is mostly saved.",
+        "action": "View Details",
+        "mobileHint": "Check which files need attention"
+      },
+      "timeout": {
+        "title": "Sync Timeout",
+        "description": "Syncing took too long. Please try again.",
+        "action": "Retry Sync",
+        "mobileHint": "Check your internet connection"
+      }
+    },
+    "webcontainer": {
+      "title": "WebContainer Error",
+      "bootFailed": {
+        "title": "Environment Failed to Start",
+        "description": "We couldn't start the development environment. Please try again.",
+        "action": "Retry",
+        "mobileHint": "This might take a moment on slower devices"
+      },
+      "notSupported": {
+        "title": "Feature Not Available",
+        "description": "This feature requires a desktop browser. Some features are limited on mobile.",
+        "action": "Learn More",
+        "mobileHint": "Use a desktop computer for full development features"
+      },
+      "resourceLimit": {
+        "title": "Out of Memory",
+        "description": "The environment ran out of memory. Please close other tabs or apps.",
+        "action": "Free Memory",
+        "mobileHint": "Close unused browser tabs to free up memory"
+      },
+      "crashed": {
+        "title": "Environment Crashed",
+        "description": "The development environment stopped unexpectedly. Please restart it.",
+        "action": "Restart",
+        "mobileHint": "Your work should be saved automatically"
+      }
+    },
+    "generic": {
+      "title": "Something Went Wrong",
+      "unexpected": {
+        "title": "Unexpected Error",
+        "description": "We encountered an unexpected error. Our team has been notified.",
+        "action": "Try Again",
+        "mobileHint": "If this keeps happening, please contact support"
+      },
+      "critical": {
+        "title": "Critical Error",
+        "description": "A serious error occurred. The app needs to restart.",
+        "action": "Reload App",
+        "mobileHint": "Your unsaved changes may be lost"
+      },
+      "loading": {
+        "title": "Loading Issue",
+        "description": "We're having trouble loading this content. Please wait...",
+        "action": "Refresh",
+        "mobileHint": "Check your internet connection"
+      },
+      "validation": {
+        "title": "Invalid Input",
+        "description": "Please check your input and try again.",
+        "action": "Fix Input",
+        "mobileHint": "Make sure all required fields are filled correctly"
+      }
+    },
+    "actions": {
+      "retry": "Try Again",
+      "refresh": "Refresh",
+      "reload": "Reload Page",
+      "goHome": "Go to Home",
+      "dismiss": "Dismiss",
+      "contactSupport": "Contact Support",
+      "viewDetails": "View Details",
+      "learnMore": "Learn More"
+    }
+  },
   "badges.clickToReauthorize": "Click to re-authorize",
   "badges.accessDenied": "Access denied",
   "bentoGrid": {
@@ -67,67 +304,6 @@
     "topicAIAgent": "AI Agent",
     "topicTerminal": "Terminal",
     "topicSettings": "Settings"
-  },
-  "hub": {
-    "portals": {
-      "ideWorkspace": "IDE Workspace",
-      "ideWorkspaceDesc": "Open your projects in full IDE",
-      "agentCenter": "Agent Center",
-      "agentCenterDesc": "Configure and manage AI agents",
-      "knowledgeHub": "Knowledge Hub",
-      "knowledgeHubDesc": "Your knowledge synthesis station",
-      "settings": "Settings",
-      "settingsDesc": "Configure your workspace preferences"
-    },
-    "exploreViaGent": "Explore Via-gent"
-  },
-  "projects": {
-    "title": "Projects",
-    "subtitle": "Open a local folder to start coding",
-    "recent": "Recent Projects",
-    "openFolder": "Open Folder",
-    "lastEdited": "Last edited",
-    "lastOpened": "Last opened",
-    "needsAccess": "Needs Access",
-    "emptyTitle": "No Projects Yet",
-    "emptySubtitle": "Open a folder to start your first project"
-  },
-  "sidebar": {
-    "themeLight": "Light Mode",
-    "themeDark": "Dark Mode",
-    "languageEn": "English",
-    "languageVi": "Tiếng Việt",
-    "switchToLight": "Switch to light mode",
-    "switchToDark": "Switch to dark mode",
-    "switchToVi": "Switch to Vietnamese",
-    "switchToEn": "Switch to English",
-    "home": "Home",
-    "projects": "Projects",
-    "agents": "Agents",
-    "settings": "Settings",
-    "collapse": "Collapse",
-    "explorer": "Explorer",
-    "search": "Search",
-    "terminal": "Terminal",
-    "git": "Git",
-    "expand": "Expand Sidebar",
-    "noAgents": "No agents configured",
-    "noResults": "No results found",
-    "recentSearches": "Recent Searches",
-    "clearRecent": "Clear Recent",
-    "toggleSidebar": "Toggle Sidebar (Ctrl+B)"
-  },
-  "breadcrumbs": {
-    "home": "Home",
-    "projects": "Projects",
-    "workspace": "Workspace"
-  },
-  "onboarding": {
-    "slides": {
-      "intro": {
-        "desc": "Get started with your projects and explore the powerful features of Via-Gent."
-      }
-    }
   },
   "bentoCardPreview": {
     "quickStart": "Quick Start"
@@ -188,133 +364,51 @@
     },
     "tools_ready": "TOOLS READY",
     "error_generic": "An error occurred",
-    "key_missing": "API Key missing for {{provider}}. Please configure it in the Agents panel."
+    "key_missing": "API Key missing for {{provider}}. Please configure it in Agents panel."
   },
-  "editor": {
-    "loading": "Loading editor...",
-    "noFile": {
-      "title": "No file open",
-      "subtitle": "Select a file to edit"
+  "hub": {
+    "portals": {
+      "ideWorkspace": "IDE Workspace",
+      "ideWorkspaceDesc": "Open your projects in full IDE",
+      "agentCenter": "Agent Center",
+      "agentCenterDesc": "Configure and manage AI agents",
+      "knowledgeHub": "Knowledge Hub",
+      "knowledgeHubDesc": "Your knowledge synthesis station",
+      "settings": "Settings",
+      "settingsDesc": "Configure your workspace preferences"
     },
-    "input": {
-      "syncWarning": "Editing during sync may cause conflicts"
-    }
+    "exploreViaGent": "Explore Via-gent"
   },
-  "terminal": {
-    "ariaLabel": "Terminal",
-    "shellExited": "Shell exited with code {{code}}",
-    "error": "Terminal Error: {{error}}",
-    "bootFailed": "Failed to boot WebContainer: {{error}}",
-    "loading": "Loading terminal...",
-    "waitingForSync": "Waiting for project sync...",
-    "syncRequired": "Project sync required",
-    "grantPermission": "Grant file access to enable terminal"
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Open a local folder to start coding",
+    "recent": "Recent Projects",
+    "openFolder": "Open Folder",
+    "lastEdited": "Last edited",
+    "lastOpened": "Last opened",
+    "needsAccess": "Needs Access",
+    "emptyTitle": "No Projects Yet",
+    "emptySubtitle": "Open a folder to start your first project"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "projects": "Projects",
+    "workspace": "Workspace"
   },
   "onboarding": {
     "launch": "Launch Interactive Tour",
     "slides": {
-      "agent": {
-        "title": "AI Agent",
-        "enhance_prompt": "Auto-Enhance Prompt",
-        "enhancing": "Enhancing prompt...",
-        "enhance_tooltip": "Automatically improve prompt clarity and context (2-step process)",
-        "welcome_message": "Welcome to {{projectName}}! I'm your AI assistant. How can I help you today?",
-        "desc": "Experience the future of browser-based development. Zero setup. 100% Privacy."
-      },
-      "privacy": {
-        "title": "Complete Privacy",
-        "subtitle": "100% Client-Side",
-        "desc": "No servers. No data tracking. Your code never leaves your browser."
-      },
-      "agents": {
-        "title": "AI-Powered Teams",
-        "subtitle": "Multi-Agent Orchestration",
-        "desc": "Orchestrator, Planner, Coder, and Validator agents working in unison to build your vision."
-      },
-      "workflows": {
-        "title": "Workflow for Every Department",
-        "subtitle": "Unified Process",
-        "desc": "Seamlessly bridge Research, Design, Coding, and Deployment in one workspace."
-      },
-      "roadmap": {
-        "title": "The Future",
-        "subtitle": "Roadmap",
-        "desc": "Collaborative Editing, Mobile Support, and Plugin Architecture coming soon."
-      },
-      "contact": {
-        "title": "Join the Revolution",
-        "subtitle": "Connect with Creator",
-        "roles": "Creator & Maintainer",
-        "name": "Linh Nguyen"
+      "intro": {
+        "desc": "Get started with your projects and explore powerful features of Via-Gent."
       }
-    },
-    "controls": {
-      "next": "Next",
-      "prev": "Previous",
-      "close": "Close Pitch",
-      "restart": "Replay",
-      "skip": "Skip Onboarding",
-      "complete": "Complete Onboarding"
-    },
-    "breadcrumbs": {
-      "home": "Home",
-      "projects": "Projects",
-      "project": "Project",
-      "folder": "Folder",
-      "file": "File",
-      "navigateTo": "Navigate to",
-      "fullPath": "Full path",
-      "back": "Back",
-      "enter": "Enter",
-      "showFullPath": "Show full path"
-    },
-    "emptyState": {
-      "noProjects": {
-        "title": "No Projects Yet",
-        "description": "Create your first project to start coding with AI.",
-        "action": "Create Project"
-      },
-      "noFiles": {
-        "title": "No Files Yet",
-        "description": "Click + to create your first file.",
-        "action": "Create File"
-      },
-      "noAgents": {
-        "title": "No Agents Configured",
-        "description": "Configure an AI agent to get started.",
-        "action": "Configure Agent"
-      },
-      "noChatHistory": {
-        "title": "No Chat History",
-        "description": "Start a conversation with AI agent.",
-        "action": "Start Chat"
-      },
-      "noSearchResults": {
-        "title": "No Search Results",
-        "description": "Try different search terms.",
-        "action": "Clear Search"
-      },
-      "welcome": {
-        "title": "Welcome to Via-gent",
-        "description": "Your browser-based AI-powered IDE is ready.",
-        "action": "Get Started"
-      }
-    },
-    "progress": {
-      "step": "Step {{current}} of {{total}}",
-      "loading": "Loading...",
-      "syncing": "Syncing files...",
-      "synced": "Synced {{count}}/{{total}} files",
-      "booting": "Booting WebContainer...",
-      "ready": "Ready!"
     }
   },
   "webcontainer": {
     "notSupported": {
       "title": "Preview Not Available",
       "subtitle": "WebContainer Preview Limitation",
-      "description": "This preview is bound to the IDE tab where WebContainer was initialized. Preview cannot be viewed in a separate browser tab.",
-      "explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within the IDE session.",
+      "description": "This preview is bound to IDE tab where WebContainer was initialized. Preview cannot be viewed in a separate browser tab.",
+      "explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within IDE session.",
       "backToDashboard": "Back to Dashboard"
     }
   },
@@ -765,8 +859,8 @@
   "emptyState.welcome.action": "Get Started",
   "webcontainer.notSupported.title": "Preview Not Available",
   "webcontainer.notSupported.subtitle": "WebContainer Preview Limitation",
-  "webcontainer.notSupported.description": "This preview is bound to the IDE tab where WebContainer was initialized. Preview cannot be viewed in a separate browser tab.",
-  "webcontainer.notSupported.explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within the IDE session.",
+  "webcontainer.notSupported.description": "This preview is bound to IDE tab where WebContainer was initialized. Preview cannot be viewed in a separate browser tab.",
+  "webcontainer.notSupported.explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within IDE session.",
   "webcontainer.notSupported.backToDashboard": "Back to Dashboard",
   "contextTooltip.tooltip": "Tooltip",
   "contextTooltip.help": "Help",
@@ -807,7 +901,7 @@
   "discovery.step.welcome.title": "Welcome to Via-gent",
   "discovery.step.welcome.description": "Via-gent is a browser-based IDE with AI agent capabilities. Let's explore key features.",
   "discovery.step.fileExplorer.title": "File Explorer",
-  "discovery.step.fileExplorer.description": "Browse and manage your project files. Click on files to open them in the editor.",
+  "discovery.step.fileExplorer.description": "Browse and manage your project files. Click on files to open them in editor.",
   "discovery.step.editor.title": "Code Editor",
   "discovery.step.editor.description": "Write and edit your code. The editor supports syntax highlighting, auto-completion, and multiple tabs.",
   "discovery.step.terminal.title": "Terminal",
@@ -815,16 +909,16 @@
   "discovery.step.aiAgent.title": "AI Agent",
   "discovery.step.aiAgent.description": "Interact with AI agents for code assistance. Configure providers and models in settings.",
   "discovery.step.shortcuts.title": "Keyboard Shortcuts",
-  "discovery.step.shortcuts.description": "Press Cmd/Ctrl+K to open the keyboard shortcuts reference.",
+  "discovery.step.shortcuts.description": "Press Cmd/Ctrl+K to open keyboard shortcuts reference.",
   "discovery.step.settings.title": "Settings",
   "discovery.step.settings.description": "Customize your IDE experience. Access themes, editor settings, and agent configuration.",
   "discovery.step.complete.title": "You're Ready!",
   "discovery.step.complete.description": "You've completed the feature discovery guide. Start coding with Via-gent!",
   "commandPalette": {
     "openFile": "Open File",
-    "openFileDesc": "Open a file from the file explorer",
+    "openFileDesc": "Open a file from file explorer",
     "toggleTerminal": "Toggle Terminal",
-    "toggleTerminalDesc": "Show or hide the terminal panel",
+    "toggleTerminalDesc": "Show or hide terminal panel",
     "openSettings": "Open Settings",
     "openSettingsDesc": "Open IDE settings and preferences",
     "searchInFiles": "Search in Files",
@@ -878,9 +972,9 @@
     "help": "Help"
   },
   "commandPalette.openFile": "Open File",
-  "commandPalette.openFileDesc": "Open a file from the file explorer",
+  "commandPalette.openFileDesc": "Open a file from file explorer",
   "commandPalette.toggleTerminal": "Toggle Terminal",
-  "commandPalette.toggleTerminalDesc": "Show or hide the terminal panel",
+  "commandPalette.toggleTerminalDesc": "Show or hide terminal panel",
   "commandPalette.openSettings": "Open Settings",
   "commandPalette.openSettingsDesc": "Open IDE settings and preferences",
   "commandPalette.searchInFiles": "Search in Files",
@@ -1042,34 +1136,6 @@
     "navigateTo": "Navigate to",
     "forward": "Forward"
   },
-  "breadcrumb.home": "__STRING_NOT_TRANSLATED__",
-  "breadcrumbs.projects": "__STRING_NOT_TRANSLATED__",
-  "breadcrumbs.workspace": "__STRING_NOT_TRANSLATED__",
-  "projects.recent": "__STRING_NOT_TRANSLATED__",
-  "projects.new": "__STRING_NOT_TRANSLATED__",
-  "projects.lastEdited": "__STRING_NOT_TRANSLATED__",
-  "projects.openFolder": "__STRING_NOT_TRANSLATED__",
-  "home": "__STRING_NOT_TRANSLATED__",
-  "ide": "__STRING_NOT_TRANSLATED__",
-  "knowledge": "__STRING_NOT_TRANSLATED__",
-  "settings": "__STRING_NOT_TRANSLATED__",
-  "sidebar.toggle": "__STRING_NOT_TRANSLATED__",
-  "navigateTo": "__STRING_NOT_TRANSLATED__",
-  "bentoCardPreview.quickStart": "__STRING_NOT_TRANSLATED__",
-  "bentoCard.ariaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.searchPlaceholder": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.searchAriaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicFilterAriaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.allTopics": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicFilter": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.gridAriaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.noResults": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.tryDifferentSearch": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicGettingStarted": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicAIAgent": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicTerminal": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicSettings": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.title": "__STRING_NOT_TRANSLATED__",
   "autoApprove": {
     "title": "Auto-approve",
     "toggle": "Toggle auto-approve",

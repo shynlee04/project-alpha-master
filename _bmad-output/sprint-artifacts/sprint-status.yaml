@@ -1,242 +1,209 @@
 ---
-# Sprint Status - Via-gent
-# Last Updated: 2025-12-28T22:05:00+07:00
+# Sprint Status - Knowledge Synthesis Station
+# Generated: 2025-12-28T18:16:46+07:00
+# Course Correction: Via-gent IDE → Knowledge Synthesis Station
 
+# =============================================================================
+# SPRINT METADATA
+# =============================================================================
 sprint:
-  id: "KNOWLEDGE-SYNTHESIS-2025-12-28"
-    name: "Knowledge-Synthesis Research & Implementation Roadmap"
-    status: "active"
-    start_date: "2025-12-28"
-    end_date: "2025-12-30"
-    
-investigation_cycle:
-  status: "COMPLETE"
-  completed_at: "2025-12-28T22:05:00+07:00"
-  artifacts:
-    - "docs/2025-12-28/investigation-report.md"
-    - "docs/2025-12-28/target-architecture.md"
-    - "docs/2025-12-28/gemini-api-integration.md"
-    - "docs/2025-12-28/rag-infrastructure.md"
-    - "docs/2025-12-28/version-2/domain-1-llm-provider-config-research.md"
-    - "docs/2025-12-28/version-2/domain-2-agent-config-architecture-research.md"
-    - "docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
-    - "docs/2025-12-28/version-2/technical-architecture-document.md"
-    - "docs/2025-12-28/version-2/remediation-epics.md"
-    - "docs/2025-12-28/version-2/implementation-roadmap.md"
-    - "bmm-workflow-status.yaml"
-    - "_bmad-output/sprint-artifacts/sprint-status.yaml"
+  id: "KSS-PIVOT-2025-12-28"
+  name: "Knowledge Synthesis Station - Course Correction Sprint"
+  status: "planning"
+  phase: "Phase 1: Planning (PRD + UX + Architecture)"
+  start_date: "2025-12-28"
+  target_end_date: "TBD (after sprint planning)"
+  
+  course_correction:
+    initiated_at: "2025-12-28T18:16:46+07:00"
+    reason: "Strategic pivot to Knowledge Synthesis Station"
+    from_focus: "Via-gent Browser IDE"
+    to_focus: "Knowledge Synthesis Station (Project Alpha v2.0)"
 
 # =============================================================================
-# EPIC: KNOWLEDGE-SYNTHESIS-2025-12-28
+# CURRENT PHASE: PLANNING
 # =============================================================================
+current_phase:
+  name: "Phase 1: Planning"
+  status: "IN_PROGRESS"
+  
+  workflows:
+    prd:
+      status: "READY"
+      assigned_to: "@bmad-bmm-pm"
+      priority: "P0"
+      inputs:
+        - "_bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md"
+        - "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
+      output: "_bmad-output/prd/knowledge-synthesis-station-prd.md"
+      
+    ux_design:
+      status: "READY"
+      assigned_to: "@bmad-bmm-ux-designer"
+      priority: "P0"
+      depends_on: []  # Can run in parallel with PRD
+      inputs:
+        - "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
+      output: "_bmad-output/ux-design/knowledge-synthesis-ux-spec.md"
 
-epic:
-  id: "KNOWLEDGE-SYNTHESIS-2025-12-28"
-    name: "Knowledge-Synthesis Research & Implementation Roadmap"
-    status: "DONE"
+# =============================================================================
+# IMPLEMENTATION PHASES (HIGH-LEVEL)
+# =============================================================================
+implementation_roadmap:
+  phase_1:
+    id: "STABILIZATION"
+    name: "Core Stabilization"
+    status: "PENDING (after planning)"
+    duration: "2-3 weeks"
     priority: "P0"
-    start_date: "2025-12-28"
-    end_date: "2025-12-28"
+    epics:
+      - { id: "STAB-01", name: "State Management Unification", status: "pending" }
+      - { id: "STAB-02", name: "Chat Cascade Refactor", status: "pending" }
+      - { id: "STAB-03", name: "LLM Provider System Fix", status: "pending" }
+      - { id: "STAB-04", name: "Mobile-First Layout", status: "pending" }
+      - { id: "STAB-05", name: "Database Schema Refinement", status: "pending" }
+    total_stories_estimate: "22-37"
     
-phases:
-  - id: "phase-1"
-    name: "Research & Documentation"
-    status: "DONE"
-    duration: "1 day"
-    artifacts:
-      - "5 research artifacts generated"
-      - "25000+ lines of documentation"
-      - "100% coverage of documented issues"
-      - "14 remediation epics defined"
-      - "5 implementation phases planned"
-      - "15-week execution roadmap"
-      - "50+ MCP tool executions"
-      - "Success metrics and validation gates established"
-      
-  - id: "phase-2"
-    name: "Sprint Planning & Resource Allocation"
-    status: "PLANNED"
-    duration: "1 week"
-    artifacts:
-      - "Sprint planning ceremonies for Phase 1 epics"
-      - "Resource allocation for team composition and infrastructure"
-      - "Quality gates and testing infrastructure established"
-      
-  - id: "phase-3"
-    name: "Foundation (Weeks 1-4)"
-    status: "PLANNED"
-    duration: "4 weeks"
-    artifacts:
-      - "Epic R-01: Hot-Reloading Fix (P0, 2 weeks)"
-      - "Epic R-02: Atomic State Updates (P0, 2 weeks)"
-      - "Epic R-03: Qdrant Vector Store (P0, 2 weeks)"
-      - "Epic R-04: 5-Layer Agent System (P0, 2 weeks)"
-      
-  - id: "phase-4"
-    name: "Infrastructure Setup (Weeks 5-6)"
-    status: "PLANNED"
-    duration: "2 weeks"
-    artifacts:
-      - "Epic R-05: Complete CRUD Surface (P1, 2 weeks)"
-      - "Epic R-06: Ollama Embedding Service (P1, 2 weeks)"
-      
-  - id: "phase-5"
-    name: "Agent Architecture Core (Weeks 7-9)"
-    status: "PLANNED"
-    duration: "3 weeks"
-    artifacts:
-      - "Epic R-07: Chatflow Composition (HIGH, 3 weeks)"
-      - "Epic R-08: Neo4j Graph Database (HIGH, 3 weeks)"
-      - "Epic R-09: Cross-Architecture Context Management (HIGH, 3 weeks)"
-      
-  - id: "phase-6"
-    name: "RAG Infrastructure (Weeks 10-12)"
-    status: "PLANNED"
-    duration: "3 weeks"
-    artifacts:
-      - "Epic R-10: Multi-Modal Support (MEDIUM, 3 weeks)"
-      - "Epic R-11: Team Orchestration (MEDIUM, 3 weeks)"
-      - "Epic R-12: NotebookLM + Notion Integration (MEDIUM, 3 weeks)"
-      
-  - id: "phase-7"
-    name: "Advanced Features (Weeks 13-15)"
-    status: "PLANNED"
-    duration: "3 weeks"
-    artifacts:
-      - "Epic R-13: Dynamic UI Feedback (P2, 3 weeks)"
-      - "Epic R-14: Multi-Provider Race Conditions (P2, 3 weeks)"
+  phase_2:
+    id: "KNOWLEDGE-MVP"
+    name: "Knowledge Synthesis MVP"
+    status: "PENDING (after Phase 1)"
+    duration: "3-4 weeks"
+    priority: "P0"
+    epics:
+      - { id: "KNOW-01", name: "Source Manager", status: "pending" }
+      - { id: "KNOW-02", name: "Vector Store (Orama)", status: "pending" }
+      - { id: "KNOW-03", name: "RAG Chat with Citations", status: "pending" }
+      - { id: "KNOW-04", name: "Knowledge Canvas", status: "pending" }
+      - { id: "KNOW-05", name: "Study Artifacts", status: "pending" }
+      - { id: "KNOW-06", name: "Pack System", status: "pending" }
+    total_stories_estimate: "41-61"
 
 # =============================================================================
-# CRITICAL ISSUES ADDRESSED
+# ARCHIVED WORK (FROM PREVIOUS SPRINT)
 # =============================================================================
-
-critical_issues:
-  - id: "CI-001"
-    category: "LLM Provider Configuration"
-    severity: "P0"
-    description: "Hot-Reloading & Visibility Bug - Configuration updates only visible after navigating back and re-accessing the link"
-    remediation_epic: "R-01"
-    acceptance_criteria: "Updates must reflect immediately upon component unmount, navigation away, or page refresh. Visual feedback confirms save operation. UI reflects current state within 100ms of input."
+archived_work:
+  mrt_epic:
+    id: "MRT"
+    name: "Mobile Responsive Transformation"
+    status: "ARCHIVED"
+    archived_at: "2025-12-28T18:16:46+07:00"
+    completed_stories:
+      - { id: "MRT-1", title: "Remove Viewport Block", status: "DONE" }
+      - { id: "MRT-2", title: "Create Mobile Tab Bar", status: "DONE" }
+      - { id: "MRT-3", title: "Implement Mobile IDE Layout", status: "DONE" }
+      - { id: "MRT-4", title: "FileTree Mobile Adaptation", status: "DONE" }
+    remaining_stories:
+      - { id: "MRT-5", title: "Monaco Editor Mobile", status: "ARCHIVED" }
+      - { id: "MRT-6", title: "Terminal Mobile", status: "ARCHIVED" }
+      - { id: "MRT-7", title: "Preview Panel Mobile", status: "ARCHIVED" }
+      - { id: "MRT-8", title: "Integration Testing", status: "ARCHIVED" }
+    note: "Remaining stories superseded by STAB-04 (Mobile-First Layout)"
     
-  - id: "CI-002"
-    category: "LLM Provider Configuration"
-    severity: "P0"
-    description: "State Synchronization Failures - Edits to persistent values are lost or not reflected accurately"
-    remediation_epic: "R-02"
-    acceptance_criteria: "State remains consistent across tabs, sessions, and device restarts. Atomic state updates with optimistic UI and rollback capabilities."
-    
-  - id: "CI-003"
-    category: "LLM Provider Configuration"
-    severity: "P1"
-    description: "CRUD Operation Gaps - Many components lack full Create, Read, Update, Delete props"
-    remediation_epic: "R-05"
-    acceptance_criteria: "Every configuration entity supports add, view, edit, delete operations."
-    
-  - id: "CI-004"
-    category: "LLM Provider Configuration"
-    severity: "P2"
-    description: "Dynamic UI/UX Feedback - Labels and stats do not update dynamically during input"
-    remediation_epic: "R-13"
-    acceptance_criteria: "Real-time validation and visual feedback for all configurable parameters."
-    
-  - id: "CI-005"
-    category: "LLM Provider Configuration"
-    severity: "P2"
-    description: "Multi-Provider Race Conditions - Race conditions when multiple providers fetch models simultaneously"
-    remediation_epic: "R-14"
-    acceptance_criteria: "Concurrent provider operations serialized with proper synchronization."
-    
-  - id: "CI-006"
-    category: "Agent Configuration"
-    severity: "HIGH"
-    description: "Missing Agent Definition Layers 3-5 - Current system only implements Layers 1-2 (System Instruction + Domain-Specific Instructions)"
-    remediation_epic: "R-04"
-    acceptance_criteria: "All 5 agent definition layers implemented: System Instruction, Domain-Specific Instructions + Agentic Steps, Domain-Specific Tools, Custom Roles, Custom Instructions. Layers 4-5 appended to Layers 1-2 and pinned at every API request."
-    
-  - id: "CI-007"
-    category: "Agent Configuration"
-    severity: "MEDIUM"
-    description: "No Multi-Modal Support - Agents only support text modality"
-    remediation_epic: "R-10"
-    acceptance_criteria: "Agents support text, vision, audio, and structured data modalities. Multi-modal tool integration."
-    
-  - id: "CI-008"
-    category: "Agent Configuration"
-    severity: "MEDIUM"
-    description: "No Team Orchestration - Agents operate independently without feedback loops or collaborative decision-making"
-    remediation_epic: "R-11"
-    acceptance_criteria: "Team-based operations with feedback loops and collaborative decision-making. Orchestration and agentic routing for complex task decomposition."
-    
-  - id: "CI-009"
-    category: "Agent Configuration"
-    severity: "HIGH"
-    description: "Chatflow Not Composable - Chatflow components not reusable across different agent types"
-    remediation_epic: "R-07"
-    acceptance_criteria: "Chatflow/chat cascade as core component group. Composable architecture for different agent types and workflows."
-    
-  - id: "CI-010"
-    category: "Knowledge Synthesis"
-    severity: "P0"
-    description: "No RAG Infrastructure - Missing vector database, graph database, and document store for knowledge synthesis"
-    remediation_epic: "R-03"
-    acceptance_criteria: "Hybrid RAG architecture deployed: Qdrant (vector) + Neo4j (graph) + PostgreSQL/pgvector (document). RRF fusion, hybrid search, multi-modal indexing."
-    
-  - id: "CI-011"
-    category: "Knowledge Synthesis"
-    severity: "P1"
-    description: "No Local Embedding Service - Missing local embedding model support for privacy and cost reduction"
-    remediation_epic: "R-06"
-    acceptance_criteria: "Local embedding service deployed: Ollama with domain-aware chunking. Models: nomic-embed-text (95.2% MTEB), mxbai-embed-large (97.1% MTEB), BGE-M3. Chunking strategies: AST-based for code, section-aware for legal, clinical finding clusters for medical, methodology-result correlations for scientific."
-    
-  - id: "CI-012"
-    category: "Knowledge Synthesis"
-    severity: "HIGH"
-    description: "Cross-Architecture Context Management - No context preservation when agents work across different workspace interfaces"
-    remediation_epic: "R-09"
-    acceptance_criteria: "Context preservation across workspace boundaries. Tool access patterns in heterogeneous environments. State synchronization between workspace boundaries. Conflict resolution for concurrent agent operations."
-    
-  - id: "CI-013"
-    category: "Knowledge Synthesis"
-    severity: "MEDIUM"
-    description: "No NotebookLM + Notion Integration - Missing artifact generation, digital notebooks, and RAG with citation tracking"
-    remediation_epic: "R-12"
-    acceptance_criteria: "NotebookLM + Notion integration deployed. Artifact generation (diagrams, charts, structured summaries). Digital notebooks with rich media support. Advanced RAG with citation and provenance tracking. Professional-specific embedding and chunking: legal, medical, scientific, software engineering. Tutoring capabilities using LiveAPI for speech I/O. Multi-modal I/O using Google Gemini for vision, audio, and text processing."
+  ai_foundation_epic:
+    id: "AI-FOUNDATION"
+    name: "AI Foundation + State Management"
+    status: "ARCHIVED"
+    archived_at: "2025-12-28T18:16:46+07:00"
+    note: "Research and planning complete. Implementation incorporated into STAB-01, STAB-02, STAB-03"
+    research_retained:
+      - "_bmad-output/docs/2025-12-28/version-2/domain-1-llm-provider-config-research.md"
+      - "_bmad-output/docs/2025-12-28/version-2/domain-2-agent-config-architecture-research.md"
+      - "_bmad-output/docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
 
 # =============================================================================
-# SUCCESS METRICS
+# RESEARCH ARTIFACTS RETAINED
 # =============================================================================
-
-success_metrics:
-  documentation_coverage: "100%"
-  critical_issues_coverage: "100%"
-  remediation_epics_coverage: "100%"
-  implementation_roadmap_coverage: "100%"
-  research_artifacts_count: 5"
-  total_lines_generated: "25000+"
-  
-  quality_gates:
-    - "All documents include frontmatter metadata"
-    - "All documents include references to research artifacts"
-    - "All documents include acceptance criteria"
-    - "All documents include risk assessment"
-    - "All documents include success metrics"
-  
-  validation_results:
-    - "All 20+ critical gaps from original task specification addressed"
-    - "All 14 remediation epics defined with detailed technical specifications"
-    - "All 5 implementation phases defined with dependencies and milestones"
-    - "Resource requirements defined (team composition, skill matrix, infrastructure)"
-    - "Risk assessment completed with 14 identified risks and mitigation strategies"
-    - "Success metrics and validation gates established"
+research_artifacts:
+  knowledge_synthesis:
+    - path: "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
+      type: "concept"
+      status: "active"
+      
+    - path: "_bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md"
+      type: "proposal"
+      status: "active"
+      
+    - path: "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
+      type: "ux-proposal"
+      status: "active"
+      
+  technical_research:
+    - path: "_bmad-output/docs/2025-12-28/version-2/domain-1-llm-provider-config-research.md"
+      type: "research"
+      domain: "LLM Provider Configuration"
+      
+    - path: "_bmad-output/docs/2025-12-28/version-2/domain-2-agent-config-architecture-research.md"
+      type: "research"
+      domain: "Agent Configuration"
+      
+    - path: "_bmad-output/docs/2025-12-28/version-2/domain-3-rag-infrastructure-research.md"
+      type: "research"
+      domain: "RAG Infrastructure"
+      
+    - path: "_bmad-output/docs/2025-12-28/target-architecture.md"
+      type: "architecture"
+      status: "active (to be refined)"
+      
+  codebase_documentation:
+    - path: "_bmad-output/docs/index.md"
+      type: "documentation-index"
+      
+    - path: "_bmad-output/docs/project-overview-2025-12-28.md"
+      type: "project-overview"
+      
+    - path: "_bmad-output/docs/architecture-analysis-2025-12-28.md"
+      type: "architecture-analysis"
+      
+    - path: "_bmad-output/docs/source-tree-analysis-2025-12-28.md"
+      type: "source-tree"
+      
+    - path: "_bmad-output/docs/tech-stack-documentation-2025-12-28.md"
+      type: "tech-stack"
+      
+    - path: "_bmad-output/docs/development-patterns-conventions-2025-12-28.md"
+      type: "dev-patterns"
 
 # =============================================================================
-# NEXT STEPS
+# NEXT ACTIONS
 # =============================================================================
+next_actions:
+  - priority: "P0"
+    action: "Execute create-prd workflow"
+    agent: "@bmad-bmm-pm"
+    command: "/bmad-bmm-workflows-create-prd"
+    context: "Use knowledge-synthesis-proposal as primary input"
+    
+  - priority: "P0"
+    action: "Execute create-ux-design workflow (parallel)"
+    agent: "@bmad-bmm-ux-designer"
+    command: "/bmad-bmm-workflows-create-ux-design"
+    context: "Refine ux-ui-knowledge-synthesis-proposal into implementation spec"
+    
+  - priority: "P0 (after PRD + UX)"
+    action: "Execute create-architecture workflow"
+    agent: "@bmad-bmm-architect"
+    command: "/bmad-bmm-workflows-create-architecture"
+    context: "Create 2-phase solution architecture"
+    
+  - priority: "P0 (after Architecture)"
+    action: "Execute create-epics-and-stories workflow"
+    agent: "@bmad-bmm-pm"
+    command: "/bmad-bmm-workflows-create-epics-and-stories"
+    context: "Generate STAB-01 through STAB-05 and KNOW-01 through KNOW-06"
 
-next_steps:
-  - "Review and approve implementation roadmap by BMAD Master"
-  - "Sprint planning by PM to create detailed sprint plans for each phase"
-  - "Resource allocation for team composition and infrastructure"
-  - "Phase 1 kickoff with R-01, R-02, R-03, R-04 epics"
-  - "Establish quality gates and testing infrastructure"
-  - "Risk mitigation implementation (rollback, error handling, feature flags)"
+# =============================================================================
+# SESSION LOG
+# =============================================================================
+session_log:
+  - timestamp: "2025-12-28T18:16:46+07:00"
+    agent: "@bmad-core-bmad-master"
+    action: "Course correction initiated via workflow-init"
+    details: "User selected option 1 (COURSE CORRECT) to pivot to Knowledge Synthesis Station"
+    
+  - timestamp: "2025-12-28T18:16:46+07:00"
+    agent: "@bmad-core-bmad-master"
+    action: "Workflow status regenerated"
+    artifacts:
+      - "_bmad-output/bmm-workflow-status.yaml"
+      - "_bmad-output/sprint-artifacts/sprint-status.yaml"

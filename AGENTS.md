@@ -1,26 +1,51 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI agents when working with code in this repository.
 
 ## Project Overview
 
-**Via-gent** is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. It provides:
-- Monaco Editor for code editing with tabbed interface
-- xterm.js-based terminal integrated with WebContainers
-- Bidirectional file sync between local File System Access API and WebContainers
-- **AI Agent System** with multi-provider support (OpenRouter, Anthropic, etc.) via TanStack AI
+**Project Alpha** (formerly Via-gent) is evolving from a browser-based IDE into a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
+
+### 🚨 COURSE CORRECTION (2025-12-28)
+The project has pivoted from "IDE-first" to "Knowledge-Synthesis-first" architecture:
+
+| Aspect | Before (Via-gent) | After (Project Alpha v2.0) |
+|--------|-------------------|---------------------------|
+| **Focus** | Developer IDE | Knowledge Synthesis Platform |
+| **Primary Runtime** | WebContainer (Node.js) | Orama WASM (Vector Store) |
+| **Mobile Strategy** | IDE panels (blocked by WebContainer) | Card Feed + Reader Mode |
+| **Target Users** | Developers | Students, Teachers, Knowledge Workers |
+| **Market** | Global dev tools | Vietnam Education & Enterprise |
+
+### Two-Phase Implementation Approach
+
+**Phase 1: Core Stabilization (2-3 weeks)**
+- Unify state management (Zustand + Dexie, remove Context mixing)
+- Fix chat cascade system (composable architecture)
+- Resolve LLM provider hot-reload visibility bug
+- Mobile-first responsive layout
+- Database schema refinement
+
+**Phase 2: Knowledge Synthesis MVP (3-4 weeks)**
+- Source ingestion (PDF, URL via client-side parsing)
+- Vector store (Orama WASM)
+- RAG chat with citations
+- Knowledge canvas (blocks + connections)
+- Study artifact generation (flashcards, quizzes)
+
+### Current Tech Stack (Retained)
+- React 19 + TypeScript + Vite + TanStack Router/AI
+- Zustand for state management, Dexie for IndexedDB
+- Monaco Editor for code editing (Creator mode only)
 - Multi-language support (English, Vietnamese) with i18next
-- Project persistence via IndexedDB
-- React 19 + TypeScript + Vite + TanStack Router stack
+- Lucide icons, Radix UI primitives
 
-**Current Status (2025-12-25)**: The project has undergone a major consolidation (INC-2025-12-24-001 response):
-- Reduced 26+ epics to 1 focused MVP epic (96% reduction)
-- Reduced 124+ stories to 7 sequential stories (94% reduction)
-- Current active story: MVP-1 (Agent Configuration & Persistence) - IN_PROGRESS
-- Platform A (Antigravity) single workstream approach
-- **Mandatory browser E2E verification** for all story completions
-
-**Consolidation Context**: Epics 12 (Tool Interface), 25 (AI Foundation), and 28 (UX Brand) have been consolidated into a single MVP epic to ensure a complete vertical slice of the AI coding agent functionality. See [`_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md`](_bmad-output/sprint-artifacts/mvp-sprint-plan-2025-12-24.md) for details.
+### Key Documentation
+- **Course Correction Proposals:** `_bmad-output/docs/2025-12-28/correct-course/`
+- **Workflow Status:** `_bmad-output/bmm-workflow-status.yaml`
+- **Sprint Status:** `_bmad-output/sprint-artifacts/sprint-status.yaml`
+- **Knowledge Synthesis Concept:** `_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md`
+- **Technical Research:** `_bmad-output/docs/2025-12-28/version-2/`
 
 ## Essential Development Commands
 
