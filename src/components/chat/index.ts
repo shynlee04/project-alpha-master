@@ -19,6 +19,9 @@ export type { DiffPreviewProps } from './DiffPreview';
 export { ApprovalOverlay } from './ApprovalOverlay';
 export type { ApprovalOverlayProps } from './ApprovalOverlay';
 
+export { BatchApprovalBar } from './BatchApprovalBar';
+export type { BatchApprovalBarProps } from './BatchApprovalBar';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';

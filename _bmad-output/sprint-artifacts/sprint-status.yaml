@@ -41,7 +41,7 @@ development_status:
   # 2-0 moved to Sprint 0
   2-1-zustand-dexie-state-migration: done
   2-2-agent-crud-operations: done
-  2-3-streaming-chat-tool-approval: in-progress
+  2-3-streaming-chat-tool-approval: review
   2-4-conversation-persistence: backlog
   epic-2-retrospective: optional
 
@@ -55,7 +55,7 @@ development_status:
 
   # EPIC 4: Smart Agent Tools (Days 11-14) - TEAM B
   epic-4: in-progress
-  4-1-system-prompt-composer: ready-for-dev # Team B - 5-Layer System Prompt Composer - Phase 2 Complete
+  4-1-system-prompt-composer: review # Team B - 5-Layer System Prompt Composer - Phase 3 Complete, Phase 4 Pending
   4-2-file-tool-execution: backlog # Deferred to Phase 2
   4-3-tool-permissions: backlog # Team B - Tool Permissions & Trust Levels
   4-4-tool-error-handling: backlog # Team B - Tool Error Handling with Retry Logic

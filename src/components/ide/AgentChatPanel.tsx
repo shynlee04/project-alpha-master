@@ -9,7 +9,7 @@ import { useDeviceType } from '@/hooks/useMediaQuery';
 import { saveThread, getThreadsForProject } from '../../lib/workspace/threads-store';
 import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
-import { ApprovalOverlay } from '../chat/ApprovalOverlay';
+import { ApprovalOverlay, BatchApprovalBar } from '../chat';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '../../lib/agent/hooks/use-agent-chat-with-tools';
 import { useAutoApproveStore } from '@/stores/auto-approve-store';
@@ -513,7 +513,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
             );
             return;
         }
-        
+
         const extension = language === 'html' ? '.html' :
             language === 'css' ? '.css' :
                 language === 'javascript' || language === 'js' ? '.js' :
@@ -576,8 +576,67 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         }
     }, [projectId, createWelcomeMessage, t]);
 
-    // Get the first pending approval for the overlay (if any)
-    const currentApproval = pendingApprovals.length > 0 ? pendingApprovals[0] : null;
+    // Batch approval state
+    const [approvalMode, setApprovalMode] = useState<'batch' | 'individual'>('batch');
+    const [currentApprovalIndex, setCurrentApprovalIndex] = useState(0);
+
+    // Get the current approval for the overlay
+    const currentApproval = pendingApprovals.length > 0
+        ? pendingApprovals[approvalMode === 'batch' ? 0 : currentApprovalIndex]
+        : null;
+
+    // Handle batch approval actions
+    const handleApproveAll = useCallback(() => {
+        for (const approval of pendingApprovals) {
+            approveToolCall(approval.approvalId, approval.toolCallId);
+        }
+        setApprovalMode('batch');
+        setCurrentApprovalIndex(0);
+    }, [pendingApprovals, approveToolCall]);
+
+    const handleRejectAll = useCallback(() => {
+        for (const approval of pendingApprovals) {
+            rejectToolCall(approval.approvalId, 'Batch rejected by user', approval.toolCallId);
+        }
+        setApprovalMode('batch');
+        setCurrentApprovalIndex(0);
+    }, [pendingApprovals, rejectToolCall]);
+
+    const handleReviewEach = useCallback(() => {
+        setApprovalMode('individual');
+        setCurrentApprovalIndex(0);
+    }, []);
+
+    // Handle individual approval in review-each mode
+    const handleApproveInReview = useCallback((approval: PendingApprovalInfo) => {
+        approveToolCall(approval.approvalId, approval.toolCallId);
+        // Move to next or reset to batch mode if done
+        if (currentApprovalIndex >= pendingApprovals.length - 1) {
+            setApprovalMode('batch');
+            setCurrentApprovalIndex(0);
+        } else {
+            setCurrentApprovalIndex(prev => prev + 1);
+        }
+    }, [approveToolCall, currentApprovalIndex, pendingApprovals.length]);
+
+    const handleRejectInReview = useCallback((approval: PendingApprovalInfo) => {
+        rejectToolCall(approval.approvalId, 'Rejected by user', approval.toolCallId);
+        // Move to next or reset to batch mode if done
+        if (currentApprovalIndex >= pendingApprovals.length - 1) {
+            setApprovalMode('batch');
+            setCurrentApprovalIndex(0);
+        } else {
+            setCurrentApprovalIndex(prev => prev + 1);
+        }
+    }, [rejectToolCall, currentApprovalIndex, pendingApprovals.length]);
+
+    // Reset approval mode when pending approvals change
+    useEffect(() => {
+        if (pendingApprovals.length === 0) {
+            setApprovalMode('batch');
+            setCurrentApprovalIndex(0);
+        }
+    }, [pendingApprovals.length]);
 
     return (
         <div className="flex flex-col h-full bg-surface-dark relative">
@@ -676,12 +735,31 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 />
             </div>
 
+            {/* Batch Approval Bar - shown when multiple approvals pending */}
+            {pendingApprovals.length > 1 && (
+                <BatchApprovalBar
+                    pendingApprovals={pendingApprovals}
+                    onApproveAll={handleApproveAll}
+                    onRejectAll={handleRejectAll}
+                    onReviewEach={handleReviewEach}
+                    mode={approvalMode}
+                    currentIndex={currentApprovalIndex}
+                    className="mx-2"
+                />
+            )}
+
             {/* Approval Overlay - triggered by real pending approvals */}
-            {currentApproval && (
+            {currentApproval && (approvalMode === 'individual' || pendingApprovals.length === 1) && (
                 <ApprovalOverlay
                     isOpen={true}
-                    onApprove={() => handleApprove(currentApproval)}
-                    onReject={() => handleReject(currentApproval)}
+                    onApprove={() => approvalMode === 'individual'
+                        ? handleApproveInReview(currentApproval)
+                        : handleApprove(currentApproval)
+                    }
+                    onReject={() => approvalMode === 'individual'
+                        ? handleRejectInReview(currentApproval)
+                        : handleReject(currentApproval)
+                    }
                     toolName={currentApproval.toolName}
                     description={currentApproval.description}
                     code={currentApproval.proposedContent}

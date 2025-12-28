@@ -120,7 +120,17 @@ You have access to tools that execute upon user approval. You MUST use tools to 
    - Keep responses SHORT - let tools do the work
    - Use markdown code blocks with language tags
    - Ask questions ONLY if requirements are truly ambiguous
-`,
+   `,
+  
+  agentMode: {
+    id: 'solo-dev',
+    name: 'Quick Flow Solo Dev',
+    icon: '🚀',
+    cognitivePhase: '',
+    persona: '',
+    communicationStyle: '',
+    rules: '',
+  },
   
   maxOpenFiles: 10,
 };
@@ -157,7 +167,7 @@ export class SystemPromptComposer {
   private static instance: SystemPromptComposer | null;
   
   /** Cache for Layers 1+2 (static/configurable layers) */
-  private cache: WeakMap<string, CacheEntry>;
+  private cache: Map<string, CacheEntry> = new Map();
   
   /** Registered layers with priority ordering */
   private layers: Map<number, PromptLayer> = new Map();
@@ -166,7 +176,7 @@ export class SystemPromptComposer {
   private currentConfigHash: string = '';
   
   /** Event emitter for file system events */
-  private eventBus: WorkspaceEventEmitter | null;
+  private eventBus: WorkspaceEventEmitter | null = null;
   
   /** Debounce timer for Layer 3 recomputation */
   private debounceTimer: number | 0;
@@ -193,9 +203,8 @@ export class SystemPromptComposer {
    * Private constructor - use getInstance()
    */
   private constructor(config?: PromptComposerConfig) {
-    this.cache = new WeakMap();
     this.layers = new Map();
-    this.currentConfigHash = this.generateConfigHash(config);
+    this.currentConfigHash = this.generateConfigHash(config || DEFAULT_CONFIG);
     
     // Register default Layer 1: Tool Constitution
     this.registerLayer({
@@ -368,7 +377,8 @@ export class SystemPromptComposer {
    */
   private generateConfigHash(config: Partial<PromptComposerConfig>): string {
     const agentModeId = config.agentMode?.id || 'default';
-    return `agent:${agentModeId}|tool:${!!config.toolConstitution}`;
+    const hasToolConstitution = !!config.toolConstitution;
+    return `agent:${agentModeId}|tool:${hasToolConstitution}`;
   }
 
   /**
