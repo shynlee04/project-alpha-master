@@ -66,6 +66,8 @@ vi.mock('react-i18next', () => ({
                 'chat.approvalOverlay.risk.high': 'High Risk',
                 'chat.approvalOverlay.risk.medium': 'Medium Risk',
                 'chat.approvalOverlay.risk.low': 'Low Risk',
+                'chat.approvalOverlay.sessionTrust': 'Trust for this session',
+                'chat.approvalOverlay.sessionTrustDescription': 'Automatically approve this tool for the rest of this session',
             };
             return translations[key] || fallback || key;
         },
@@ -95,7 +97,14 @@ vi.mock('lucide-react', () => ({
     CheckCircle: () => <div data-testid="icon-check" />,
     XCircle: () => <div data-testid="icon-x-circle" />,
     AlertTriangle: () => <div data-testid="icon-alert" />,
+    ShieldCheck: () => <div data-testid="icon-shield-check" />,
     Wand2: () => <div data-testid="icon-wand" />
+}));
+
+vi.mock('@/components/ui/checkbox', () => ({
+    Checkbox: ({ id, checked, onCheckedChange }: { id: string; checked?: boolean; onCheckedChange?: (checked: boolean) => void }) => (
+        <input type="checkbox" data-testid="mock-checkbox" id={id} checked={checked} onChange={(e) => onCheckedChange?.(e.target.checked)} />
+    ),
 }));
 
 describe('ApprovalOverlay', () => {

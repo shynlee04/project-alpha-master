@@ -13,13 +13,14 @@
  * @roadmap Future: Add "Approve All" for batch operations (Epic 26)
  */
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { X, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { X, CheckCircle, XCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { CodeBlock } from './CodeBlock';
 import { DiffPreview } from './DiffPreview';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export interface ApprovalOverlayProps {
   /** Whether the overlay is visible */
@@ -46,6 +47,12 @@ export interface ApprovalOverlayProps {
   className?: string;
   /** Loading state during approval/rejection */
   isLoading?: boolean;
+  /** Whether to show session trust option */
+  showSessionTrust?: boolean;
+  /** Initial session trust state */
+  initialSessionTrust?: boolean;
+  /** Called when session trust checkbox changes */
+  onSessionTrustChange?: (trust: boolean) => void;
 }
 
 export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
@@ -60,9 +67,26 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
   mode = 'fullscreen',
   riskLevel = 'medium',
   className,
-  isLoading = false
+  isLoading = false,
+  showSessionTrust = true,
+  initialSessionTrust = false,
+  onSessionTrustChange,
 }) => {
   const { t } = useTranslation();
+  const [trustForSession, setTrustForSession] = useState(initialSessionTrust);
+
+  // Reset trust state when overlay opens with new initial value
+  useEffect(() => {
+    if (isOpen) {
+      setTrustForSession(initialSessionTrust);
+    }
+  }, [isOpen, initialSessionTrust]);
+
+  // Handle session trust checkbox change
+  const handleTrustChange = (checked: boolean) => {
+    setTrustForSession(checked);
+    onSessionTrustChange?.(checked);
+  };
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -230,6 +254,29 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Session Trust Option */}
+      {showSessionTrust && (
+        <div className="px-6 py-3 border-t border-border-dark bg-surface-darker/50">
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <Checkbox
+              id="session-trust"
+              checked={trustForSession}
+              onCheckedChange={handleTrustChange}
+              className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+            />
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-green-400" />
+              <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                {t('chat.approvalOverlay.sessionTrust', 'Trust for this session')}
+              </span>
+            </div>
+          </label>
+          <p className="text-xs text-muted-foreground mt-1 ml-7">
+            {t('chat.approvalOverlay.sessionTrustDescription', 'Automatically approve this tool for the rest of this session')}
+          </p>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-3 p-6 border-t border-border-dark bg-surface-darker">
