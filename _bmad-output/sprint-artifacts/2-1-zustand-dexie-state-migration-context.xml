@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="2-1-zustand-dexie-state-migration" created="2025-12-28T23:15:00+07:00">
+  
+  <!-- =================================================================== -->
+  <!-- CURRENT CODE STATE                                                  -->
+  <!-- Files the developer will be working with                            -->
+  <!-- =================================================================== -->
+  <files>
+    <!-- Existing agents store with localStorage persistence -->
+    <file path="src/stores/agents-store.ts" priority="high">
+      <summary>
+        Current implementation uses Zustand with localStorage persistence.
+        Needs migration to Dexie persistence matching provider-store.ts pattern.
+      </summary>
+      <key_code><![CDATA[
+export const useAgentsStore = create<AgentsState>()(
+    persist(
+        (set, get) => ({
+            agents: [DEFAULT_AGENT],
+            _hasHydrated: false,
+            // ... actions
+        }),
+        {
+            name: 'via-gent-agents',
+            version: 1,
+            onRehydrateStorage: () => (state) => {
+                state?.setHasHydrated(true);
+            },
+        }
+    )
+);
+      ]]></key_code>
+      <changes_needed>
+        - Replace persistence with createDexieStorage
+        - Add partialize for selective state persistence
+        - Integrate credential vault for API keys
+      </changes_needed>
+    </file>
+    
+    <!-- Working example: Provider store with Dexie persistence -->
+    <file path="src/lib/state/provider-store.ts" priority="high">
+      <summary>
+        Model implementation of Zustand + Dexie pattern.
+        USE THIS AS THE TEMPLATE for agents-store migration.
+      </summary>
+      <key_code><![CDATA[
+export const useProviderStore = create<ProviderState>()(
+    persist(
+        (set, get) => ({ /* state and actions */ }),
+        {
+            name: 'via-gent-providers',
+            storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
+            partialize: (state) => ({
+                providers: state.providers,
+                activeProviderId: state.activeProviderId,
+                modelSettings: state.modelSettings
+            }),
+            onRehydrateStorage: () => (state) => {
+                if (state) {
+                    if (!state.providers || state.providers.length === 0) {
+                        state.providers = INITIAL_PROVIDERS;
+                    }
+                }
+            }
+        }
+    )
+);
+      ]]></key_code>
+    </file>
+    
+    <!-- Dexie storage adapter -->
+    <file path="src/lib/state/dexie-storage.ts" priority="high">
+      <summary>
+        Zustand StateStorage adapter for Dexie tables.
+        Returns { getItem, setItem, removeItem } interface.
+      </summary>
+      <key_code><![CDATA[
+export function createDexieStorage(tableName: keyof typeof db): { 
+    getItem: (name: string) => Promise<string | null>, 
+    setItem: (name: string, value: string) => Promise<void>, 
+    removeItem: (name: string) => Promise<void> 
+} {
+    const table = db[tableName] as Table<PersistedStateRecord, string>;
+    return {
+        getItem: async (name: string): Promise<string | null> => {
+            const record = await table.get(name);
+            return record ? JSON.stringify(record.state) : null;
+        },
+        setItem: async (name: string, value: string): Promise<void> => {
+            await table.put({
+                id: name,
+                state: JSON.parse(value),
+                updatedAt: new Date()
+            });
+        },
+        removeItem: async (name: string): Promise<void> => {
+            await table.delete(name);
+        }
+    };
+}
+      ]]></key_code>
+    </file>
+    
+    <!-- Dexie database schema - needs new table -->
+    <file path="src/lib/state/dexie-db.ts" priority="high">
+      <summary>
+        Schema version 6 is current. Need to add version 7 with agentConfigs table.
+      </summary>
+      <key_code><![CDATA[
+// Current version 6 - need to add version 7
+this.version(6).stores({
+    projects: 'id, lastOpened, name',
+    ideState: 'projectId, updatedAt',
+    conversations: 'id, projectId, updatedAt',
+    taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+    toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+    credentials: 'providerId, createdAt',
+    threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+    providerConfigs: 'id, updatedAt',
+});
+      ]]></key_code>
+      <changes_needed>
+        Add version 7 with:
+        - agentConfigs: 'id, updatedAt' (for agent store persistence)
+        - conversationState: 'id, updatedAt' (for conversation store persistence)
+      </changes_needed>
+    </file>
+    
+    <!-- Credential vault for API key encryption -->
+    <file path="src/lib/agent/providers/credential-vault.ts" priority="medium">
+      <summary>
+        CredentialVault class for encrypted API key storage.
+        Uses Web Crypto API with AES-GCM.
+      </summary>
+      <key_methods>
+        - storeCredentials(providerId: string, apiKey: string): Promise<void>
+        - getCredentials(providerId: string): Promise<string | null>
+        - deleteCredentials(providerId: string): Promise<void>
+      </key_methods>
+    </file>
+    
+    <!-- State barrel export -->
+    <file path="src/lib/state/index.ts" priority="medium">
+      <summary>
+        Exports all state-related modules. 
+        New conversation-store.ts must be added here.
+      </summary>
+      <current_exports><![CDATA[
+export { createDexieStorage } from './dexie-storage';
+// ... other exports
+      ]]></current_exports>
+    </file>
+  </files>
+  
+  <!-- =================================================================== -->
+  <!-- RESEARCH FINDINGS FROM MCP TOOLS                                    -->
+  <!-- =================================================================== -->
+  <research_notes>
+    <finding source="codebase" query="useAgentsStore implementation">
+      Current store uses Zustand persist middleware with localStorage.
+      Pattern works but lacks:
+      - IndexedDB durability
+      - Complex query capability
+      - Larger storage capacity
+      
+      Migration path: Replace storage adapter, keep store actions.
+    </finding>
+    
+    <finding source="codebase" query="provider-store pattern">
+      Working Dexie integration exists in useProviderStore:
+      1. Uses createJSONStorage wrapper around createDexieStorage
+      2. Has partialize to select which state to persist
+      3. Has onRehydrateStorage for defaults/cleanup
+      4. Integrates with credentialVault for secure key handling
+      
+      This is the target pattern for agents-store migration.
+    </finding>
+    
+    <finding source="context7" query="Dexie storage persistence">
+      Dexie supports navigator.storage.persist() for durability.
+      IndexedDB storage is more resilient than localStorage.
+      Automatic schema versioning with upgrade migrations.
+    </finding>
+    
+    <finding source="architecture" section="4.2.1">
+      Decision: Zustand + Dexie Middleware (Option A)
+      - Solving BF-01 (hot-reload) and BF-02 (atomic updates)
+      - Pattern: persist middleware with Dexie storage adapter
+      - partialize for selective field persistence
+    </finding>
+  </research_notes>
+  
+  <!-- =================================================================== -->
+  <!-- ARCHITECTURE PATTERNS TO FOLLOW                                     -->
+  <!-- =================================================================== -->
+  <architecture_patterns>
+    <pattern name="Unified Store Pattern" source="architecture.md:4.2.1">
+      All state through Zustand → Dexie middleware.
+      Components subscribe to Zustand selectors, never direct Dexie.
+    </pattern>
+    
+    <pattern name="State Boundary" source="architecture.md:6.2">
+      Components → Zustand → Dexie (never skip layers).
+      State mutations always through store actions.
+    </pattern>
+    
+    <pattern name="Optimistic Update with Rollback" source="architecture.md:R-02">
+      1. Save previous state
+      2. Apply optimistic update (immediate UI)
+      3. Persist async
+      4. Rollback on error
+    </pattern>
+    
+    <pattern name="Hydration Guard" source="existing pattern">
+      Export usexxxStoreHydration() hook.
+      Components can wait for IndexedDB restoration before rendering.
+    </pattern>
+    
+    <pattern name="i18n Compliance" source="project conventions">
+      All UI strings through i18next.
+      Add keys to en.json and vi.json.
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- =================================================================== -->
+  <!-- TECHNICAL NOTES FOR DEVELOPER                                       -->
+  <!-- =================================================================== -->
+  <technical_notes>
+    <note priority="high" category="critical">
+      API keys NEVER go in agent store state directly.
+      Always use credentialVault for encrypted storage.
+      Store only reference (agentId/providerId) in main state.
+    </note>
+    
+    <note priority="high" category="pattern">
+      Follow provider-store.ts pattern EXACTLY:
+      1. createJSONStorage wrapper
+      2. createDexieStorage with table name
+      3. partialize for selective persistence
+      4. onRehydrateStorage for defaults
+    </note>
+    
+    <note priority="medium" category="schema">
+      Add Dexie schema version 7 BEFORE changing store.
+      Schema upgrade runs automatically on db.open().
+      Test migration with existing v6 data.
+    </note>
+    
+    <note priority="medium" category="testing">
+      Mock dexie-storage in unit tests (see provider-store.test.ts).
+      Test hydration timing with performance.now().
+      Target: &lt;100ms for 10 agents.
+    </note>
+    
+    <note priority="medium" category="naming">
+      New table name: 'agentConfigs' (not 'agents' - too generic)
+      New store name: 'agent-configs' (matches table)
+    </note>
+    
+    <note priority="low" category="future">
+      useConversationStore will follow same pattern.
+      Table: 'conversationState'
+      Store name: 'conversation-state'
+    </note>
+  </technical_notes>
+  
+  <!-- =================================================================== -->
+  <!-- DEPENDENCIES AND IMPORTS                                            -->
+  <!-- =================================================================== -->
+  <dependencies>
+    <dependency name="zustand" version="5.0.9" usage="state management" />
+    <dependency name="zustand/middleware" usage="persist, createJSONStorage" />
+    <dependency name="dexie" version="4.2.1" usage="IndexedDB abstraction" />
+    <dependency name="@/lib/state/dexie-storage" usage="Zustand storage adapter" />
+    <dependency name="@/lib/state/dexie-db" usage="db instance, table types" />
+    <dependency name="@/lib/agent/providers/credential-vault" usage="API key encryption" />
+  </dependencies>
+  
+  <!-- =================================================================== -->
+  <!-- VALIDATION CHECKLIST                                                -->
+  <!-- =================================================================== -->
+  <validation_checklist>
+    <check id="vc-1">useAgentsStore uses createDexieStorage('agentConfigs')</check>
+    <check id="vc-2">partialize excludes sensitive data from persistence</check>
+    <check id="vc-3">API keys routed through credentialVault, not store</check>
+    <check id="vc-4">Dexie schema v7 added with agentConfigs table</check>
+    <check id="vc-5">useConversationStore created with same pattern</check>
+    <check id="vc-6">Hydration hook exported for both stores</check>
+    <check id="vc-7">Unit tests pass for CRUD + persistence</check>
+    <check id="vc-8">AgentConfigDialog updates visible immediately (no refresh)</check>
+    <check id="vc-9">State persists across page reload</check>
+    <check id="vc-10">No TypeScript errors (npx tsc --noEmit)</check>
+  </validation_checklist>
+  
+</context>

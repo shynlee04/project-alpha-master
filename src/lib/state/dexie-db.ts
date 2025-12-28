@@ -233,6 +233,12 @@ class ViaGentDatabase extends Dexie {
     // State persistence (Epic 25)
     providerConfigs!: Table<PersistedStateRecord, string>;
 
+    // Agent configuration persistence (Story 2.1)
+    agentConfigs!: Table<PersistedStateRecord, string>;
+
+    // Conversation state persistence (Story 2.1)
+    conversationState!: Table<PersistedStateRecord, string>;
+
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
         super('via-gent-persistence');
@@ -310,6 +316,25 @@ class ViaGentDatabase extends Dexie {
             providerConfigs: 'id, updatedAt',
         }).upgrade(async () => {
             console.log('[Dexie] Running migration to v6 (provider configs)');
+        });
+
+        // Schema version 7: Add agentConfigs + conversationState tables (Story 2.1)
+        // For unified state management with Zustand + Dexie
+        this.version(7).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            // Agent configuration persistence (Story 2.1)
+            agentConfigs: 'id, updatedAt',
+            // Conversation state persistence (Story 2.1)
+            conversationState: 'id, updatedAt',
+        }).upgrade(async () => {
+            console.log('[Dexie] Running migration to v7 (agent configs + conversation state)');
         });
     }
 }

@@ -1,16 +1,24 @@
 /**
- * Agents Store - Zustand with Persistence
+ * Agents Store - Zustand with Dexie Persistence
  * 
- * Stores agent configurations persistently in localStorage.
+ * Stores agent configurations persistently in IndexedDB via Dexie.
  * Agents survive page refresh and browser restarts.
  * 
- * @epic 25 - AI Foundation Sprint
- * @story 25-R1 - E2E Integration Fix
- * @fix Gap 3: Agents not persisting (lost on refresh)
+ * @epic 2 - AI Chat That Just Works
+ * @story 2.1 - Zustand + Dexie State Migration
+ * @fix BF-01: Hot-reload visibility bug
+ * @fix BF-02: Atomic state updates
+ * 
+ * Migration from localStorage to IndexedDB provides:
+ * - Better scalability for complex state
+ * - Async operations (non-blocking)
+ * - Better inspectability in DevTools
+ * - Consistent pattern with provider-store.ts
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { createDexieStorage } from '@/lib/state/dexie-storage';
 import type { Agent } from '../mocks/agents';
 
 /**
@@ -32,11 +40,19 @@ const DEFAULT_AGENT: Agent = {
 };
 
 /**
- * Agents store state
+ * Agents store state interface
+ * 
+ * @notes
+ * - API keys are NOT stored here - use credentialVault
+ * - _hasHydrated tracks IndexedDB restoration
  */
 interface AgentsState {
     /** List of configured agents */
     agents: Agent[];
+
+    /** Currently active agent ID for chat */
+    activeAgentId: string | null;
+
     /** Whether the store has been hydrated from persistence */
     _hasHydrated: boolean;
 
@@ -58,14 +74,20 @@ interface AgentsState {
     /** Get agent by ID */
     getAgent: (id: string) => Agent | undefined;
 
+    /** Set active agent for chat */
+    setActiveAgent: (id: string | null) => void;
+
     /** Reset to default agents */
     resetToDefaults: () => void;
 }
 
 /**
- * Agents store with localStorage persistence
+ * Agents store with IndexedDB (Dexie) persistence
  * 
- * Usage:
+ * Uses the same pattern as useProviderStore for consistency.
+ * State changes sync to IndexedDB within ~100ms (NFR-PERF-08).
+ * 
+ * @example
  * ```tsx
  * const { agents, addAgent, removeAgent } = useAgentsStore();
  * ```
@@ -74,6 +96,7 @@ export const useAgentsStore = create<AgentsState>()(
     persist(
         (set, get) => ({
             agents: [DEFAULT_AGENT],
+            activeAgentId: DEFAULT_AGENT.id,
             _hasHydrated: false,
 
             setHasHydrated: (state: boolean) => {
@@ -98,7 +121,21 @@ export const useAgentsStore = create<AgentsState>()(
 
             removeAgent: (id) => {
                 console.log('[AgentsStore] Removing agent:', id);
-                set((state) => ({ agents: state.agents.filter((a) => a.id !== id) }));
+                const currentActive = get().activeAgentId;
+
+                set((state) => {
+                    const filteredAgents = state.agents.filter((a) => a.id !== id);
+
+                    // If removing active agent, switch to first remaining agent
+                    const newActiveId = currentActive === id
+                        ? (filteredAgents[0]?.id || null)
+                        : currentActive;
+
+                    return {
+                        agents: filteredAgents,
+                        activeAgentId: newActiveId
+                    };
+                });
             },
 
             updateAgent: (id, updates) => {
@@ -127,24 +164,61 @@ export const useAgentsStore = create<AgentsState>()(
                 return get().agents.find((a) => a.id === id);
             },
 
+            setActiveAgent: (id) => {
+                console.log('[AgentsStore] Setting active agent:', id);
+                set({ activeAgentId: id });
+            },
+
             resetToDefaults: () => {
                 console.log('[AgentsStore] Resetting to defaults');
-                set({ agents: [DEFAULT_AGENT] });
+                set({
+                    agents: [DEFAULT_AGENT],
+                    activeAgentId: DEFAULT_AGENT.id
+                });
             },
         }),
         {
-            name: 'via-gent-agents',
-            version: 1,
+            name: 'agent-configs',
+            // Use Dexie storage adapter for IndexedDB persistence
+            storage: createJSONStorage(() => createDexieStorage('agentConfigs')),
+
+            // Only persist essential fields (not hydration state)
+            partialize: (state) => ({
+                agents: state.agents,
+                activeAgentId: state.activeAgentId,
+            }),
+
+            // Hydration handler - restore defaults if empty
             onRehydrateStorage: () => (state) => {
-                console.log('[AgentsStore] Rehydrated from storage:', state?.agents?.length, 'agents');
-                state?.setHasHydrated(true);
+                console.log('[AgentsStore] Rehydrated from IndexedDB:', state?.agents?.length, 'agents');
+
+                if (state) {
+                    // Ensure at least one agent exists
+                    if (!state.agents || state.agents.length === 0) {
+                        state.agents = [DEFAULT_AGENT];
+                        state.activeAgentId = DEFAULT_AGENT.id;
+                    }
+
+                    // Ensure activeAgentId points to valid agent
+                    if (state.activeAgentId && !state.agents.find(a => a.id === state.activeAgentId)) {
+                        state.activeAgentId = state.agents[0]?.id || null;
+                    }
+
+                    state.setHasHydrated(true);
+                }
             },
         }
     )
 );
 
 /**
- * Hook to wait for hydration
+ * Hook to wait for hydration from IndexedDB
+ * 
+ * @example
+ * ```tsx
+ * const hasHydrated = useAgentsStoreHydration();
+ * if (!hasHydrated) return <Loading />;
+ * ```
  */
 export function useAgentsStoreHydration() {
     return useAgentsStore((state) => state._hasHydrated);
@@ -154,3 +228,8 @@ export function useAgentsStoreHydration() {
  * Export default agent for reference
  */
 export { DEFAULT_AGENT };
+
+/**
+ * Export type for external use
+ */
+export type { AgentsState };
