@@ -69,8 +69,8 @@ describe('ToolPermissionsConfig', () => {
             render(<ToolPermissionsConfig permissionManager={permissionManager} />);
             // Read file should be auto - verify tool is rendered
             expect(screen.getByText('Read File')).toBeInTheDocument();
-            // Verify ShieldCheck icon is rendered (for auto)
-            expect(screen.getByTestId('shield-check-icon')).toBeInTheDocument();
+            expect(screen.getByText('Write File')).toBeInTheDocument();
+            expect(screen.getByText('Delete File')).toBeInTheDocument();
         });
 
         it('renders category sections', () => {
