@@ -39,7 +39,7 @@ development_status:
   # EPIC 2: AI Chat That Just Works (Days 4-7)
   epic-2: in-progress
   # 2-0 moved to Sprint 0
-  2-1-zustand-dexie-state-migration: in-progress
+  2-1-zustand-dexie-state-migration: review
   2-2-agent-crud-operations: backlog
   2-3-streaming-chat-tool-approval: backlog
   2-4-conversation-persistence: backlog

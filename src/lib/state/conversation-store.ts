@@ -17,7 +17,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
-import type { ThreadMessageRecord, ThreadToolCallRecord } from './dexie-db';
+import type { ThreadMessageRecord } from './dexie-db';
 
 // ============================================================================
 // Types
