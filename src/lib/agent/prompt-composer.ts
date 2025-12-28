@@ -243,11 +243,20 @@ export class SystemPromptComposer {
 
   /**
    * Get singleton instance
+   *
+   * When config is provided, creates a NEW instance (for testing)
+   * When no config provided, returns the singleton instance (for production)
    */
   public static getInstance(config?: PromptComposerConfig): SystemPromptComposer {
-    // If config is provided OR instance doesn't exist, create new instance
-    if (config || !SystemPromptComposer.instance) {
-      SystemPromptComposer.instance = new SystemPromptComposer(config);
+    // If config is provided, create a new instance without modifying singleton
+    // This allows tests to create fresh instances with custom configurations
+    if (config) {
+      return new SystemPromptComposer(config);
+    }
+    
+    // No config provided - return singleton instance
+    if (!SystemPromptComposer.instance) {
+      SystemPromptComposer.instance = new SystemPromptComposer();
     }
     return SystemPromptComposer.instance;
   }
