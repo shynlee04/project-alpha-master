@@ -184,10 +184,10 @@ workflow_status:
       artifact: "_bmad-output/sprint-artifacts/sprint-status.yaml"
     
     execution:
-      current_sprint: "Sprint 0"
-      focus: "Epic 1 - Mobile Demo Mode"
-      active_story: "1-3-mobile-demo-mode"
-      status: "completed"
+      current_sprint: "Sprint 1"
+      focus: "Epic 2 - AI Chat That Just Works"
+      active_story: "2-1-zustand-dexie-state-migration"
+      status: "story_in_progress"
 
 # =============================================================================
 # TWO-PHASE APPROACH (From Course Correction Proposal)

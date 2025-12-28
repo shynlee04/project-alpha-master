@@ -282,7 +282,7 @@ export function IDELayout(): React.JSX.Element {
           )}
 
           {/* P1.7: Responsive main content area with mobile-first layout */}
-          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          <div id="main-content" className="flex-1 flex flex-col md:flex-row overflow-hidden" tabIndex={-1}>
             {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}
             {/* P1.7: Hide sidebar on mobile, show on tablet+ */}
             <ActivityBar />
@@ -305,7 +305,7 @@ export function IDELayout(): React.JSX.Element {
                   <ResizablePanel defaultSize={70} minSize={30}>
                     <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
                       <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
-                        <Card className="h-full rounded-none border-0 bg-background">
+                        <Card id="editor-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
                           {/* P1.7: Responsive header height */}
                           <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
                             <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
@@ -412,7 +412,7 @@ export function IDELayout(): React.JSX.Element {
                   />
                   {/* P1.7: Responsive header height and chat panel sizing */}
                   <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
-                    <Card className="h-full rounded-none border-0 bg-background">
+                    <Card id="chat-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
                       <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
                         <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
                       </CardHeader>
