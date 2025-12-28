@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Story 4-3 Context XML
+  Tool Permissions & Trust Levels
+
+  Provides additional context for AI agents implementing this story.
+  Generated: 2025-12-29
+-->
+
+<context>
+  <metadata>
+    <story_id>4-3-tool-permissions</story_id>
+    <epic>Epic 4: Smart Agent Tools</epic>
+    <priority>P0</priority>
+    <points>5</points>
+    <team>Team B</team>
+    <status>ready-for-dev</status>
+  </metadata>
+
+  <prerequisites>
+    <dependency story="4-1-system-prompt-composer" status="done">
+      <reason>ToolPermissionManager composes context with SystemPromptComposer for tool execution context</reason>
+    </dependency>
+    <dependency story="25-5-implement-approval-flow" status="done">
+      <reason>ApprovalOverlay component exists and needs session trust checkbox integration</reason>
+    </dependency>
+  </prerequisites>
+
+  <architecture>
+    <component name="ToolPermissionManager" file="src/lib/agent/tool-permission-manager.ts">
+      <responsibilities>
+        <responsibility>Store and retrieve trust levels for each tool</responsibility>
+        <responsibility>Check if a tool needs approval before execution</responsibility>
+        <responsibility>Manage session-based temporary trust</responsibility>
+        <responsibility>Serialize/deserialize permissions for persistence</responsibility>
+      </responsibilities>
+      <interface>
+        <method name="getTrustLevel" returns="ToolTrustLevel">
+          <param name="toolId" type="string">Tool identifier</param>
+        </method>
+        <method name="setTrustLevel">
+          <param name="toolId" type="string">Tool identifier</param>
+          <param name="level" type="ToolTrustLevel">New trust level</param>
+        </method>
+        <method name="checkPermission" returns="PermissionCheckResult">
+          <param name="toolId" type="string">Tool identifier</param>
+        </method>
+        <method name="addSessionTrust" returns="void">
+          <param name="toolId" type="string">Tool to trust for session</param>
+        </method>
+        <method name="clearSessionTrust" returns="void">
+          <description>Clear all session trust (call on page reload)</description>
+        </method>
+      </interface>
+    </component>
+
+    <component name="ToolTrustLevel" type="union">
+      <option value="auto">
+        <description>Execute immediately without user approval</description>
+        <use_cases>
+          <use_case>Safe read-only operations</use_case>
+          <use_case>Information gathering tools</use_case>
+        </use_cases>
+      </option>
+      <option value="prompt">
+        <description>Show approval overlay before execution</description>
+        <use_cases>
+          <use_case>File modification tools</use_case>
+          <use_case>Command execution tools</use_case>
+        </use_cases>
+      </option>
+      <option value="block">
+        <description>Never execute, always reject</description>
+        <use_cases>
+          <use_case>Dangerous operations</use_case>
+          <use_case>Security-sensitive tools</use_case>
+        </use_cases>
+      </option>
+    </component>
+  </architecture>
+
+  <data_flow>
+    <flow name="tool_execution_permission_check">
+      <step number="1">
+        <description>Agent requests tool execution</description>
+        <data>
+          <field name="toolId" type="string">Tool identifier</field>
+          <field name="parameters" type="Record">Tool parameters</field>
+        </data>
+      </step>
+      <step number="2">
+        <description>Check permission with ToolPermissionManager</description>
+        <data>
+          <code>
+result = permissionManager.checkPermission(toolId)
+          </code>
+        </data>
+      </step>
+      <step number="3">
+        <decision>
+          <condition>result.canExecute === false</condition>
+          <then>
+            <action>Return blocked error to agent</action>
+            <action>Show blocked message in chat</action>
+          </then>
+          <else>
+            <decision>
+              <condition>result.needsApproval === true</condition>
+              <then>
+                <action>Queue for approval overlay</action>
+                <action>Show ApprovalOverlay with trust checkbox</action>
+              </then>
+              <else>
+                <action>Execute tool immediately</action>
+                <action>Log to toolExecutionHistory</action>
+              </else>
+            </decision>
+          </else>
+        </decision>
+      </step>
+    </flow>
+  </data_flow>
+
+  <default_permissions>
+    <tool id="read_file" level="auto" reason="Safe read-only operation"/>
+    <tool id="list_files" level="auto" reason="Safe listing operation"/>
+    <tool id="write_file" level="prompt" reason="Modifies files - requires user approval"/>
+    <tool id="delete_file" level="block" reason="Dangerous - permanently removes data"/>
+    <tool id="execute_command" level="prompt" reason="Runs arbitrary commands - security risk"/>
+    <tool id="create_directory" level="prompt" reason="Modifies file system structure"/>
+    <tool id="read_directory" level="auto" reason="Safe listing operation"/>
+  </default_permissions>
+
+  <security_requirements>
+    <requirement name="no_persistent_trust">
+      <description>Session trust must expire on page reload</description>
+      <implementation>Store session trust in memory only, not in IndexedDB</implementation>
+    </requirement>
+    <requirement name="block_takes_precedence">
+      <description>Blocked tools never execute, even if session trust exists</description>
+      <implementation>Check block status before session trust in permission check</implementation>
+    </requirement>
+    <requirement name="audit_logging">
+      <description>All tool executions must be logged for security review</description>
+      <implementation>Write to useAgentsStore().toolExecutionHistory with sanitized parameters</implementation>
+    </requirement>
+  </security_requirements>
+
+  <integration_points>
+    <point component="useAgentsStore" direction="bidirectional">
+      <description>Persist permission configuration to IndexedDB</description>
+      <data>
+        <field name="toolPermissions" type="Record<string, ToolTrustLevel>">Current permission settings</field>
+      </data>
+    </point>
+    <point component="ApprovalOverlay" direction="incoming">
+      <description>Receive permission check result and show approval UI</description>
+      <data>
+        <field name="toolName" type="string">Display name of tool</field>
+        <field name="toolId" type="string">Tool identifier</field>
+        <field name="preview" type="string">Preview of what will happen</field>
+      </data>
+    </point>
+    <point component="ToolExecutionService" direction="incoming">
+      <description>Check permissions before executing any tool</description>
+      <data>
+        <field name="toolId" type="string">Tool to check</field>
+        <returns>PermissionCheckResult</returns>
+      </data>
+    </point>
+  </integration_points>
+
+  <testing_requirements>
+    <test name="default_permissions_test">
+      <description>Verify default trust levels are set correctly</description>
+      <assertion>read_file has auto level</assertion>
+      <assertion>write_file has prompt level</assertion>
+      <assertion>delete_file has block level</assertion>
+    </test>
+    <test name="permission_check_test">
+      <description>Verify permission check returns correct result for each level</description>
+      <assertion>auto returns needsApproval=false, canExecute=true</assertion>
+      <assertion>prompt returns needsApproval=true, canExecute=true</assertion>
+      <assertion>block returns needsApproval=false, canExecute=false</assertion>
+    </test>
+    <test name="session_trust_test">
+      <description>Verify session trust overrides configured level</description>
+      <assertion>prompt tool with session trust executes without approval</assertion>
+      <assertion>clearing session trust restores original level</assertion>
+    </test>
+    <test name="persistence_test">
+      <description>Verify permissions survive page reload</description>
+      <assertion>toJSON() serializes correctly</assertion>
+      <assertion>fromJSON() restores permissions</assertion>
+      <assertion>Session trust does NOT persist (security requirement)</assertion>
+    </test>
+  </testing_requirements>
+
+  <known_constraints>
+    <constraint name="memory_only_session">
+      <description>Session trust must be stored in memory, never persisted</description>
+      <reason>Security - prevents permanent elevation of privileges</reason>
+    </constraint>
+    <constraint name="no_async_permission_check">
+      <description>Permission checks must be synchronous</description>
+      <reason>Performance - tool execution flow depends on immediate result</reason>
+    </constraint>
+  </known_constraints>
+
+  <future_considerations>
+    <item name="path_based_permissions">
+      <description>Allow permissions per path (e.g., allow read src/* but not /etc/*)</description>
+      <status>deferred_phase2</status>
+    </item>
+    <item name="permission_templates">
+      <description>Predefined permission sets (Strict, Balanced, Permissive)</description>
+      <status>deferred_phase2</status>
+    </item>
+    <item name="audit_log_ui">
+      <description>UI to view tool execution history</description>
+      <status>after_epic_5</status>
+    </item>
+  </future_considerations>
+</context>

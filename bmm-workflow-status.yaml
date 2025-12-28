@@ -3,8 +3,13 @@
 # Generated: 2025-12-28T22:40:00+07:00
 
 current_workflow: "story-dev-cycle"
-current_story: "2-4-conversation-persistence"
-phase: "code-review"
+current_story: "4-1-system-prompt-composer"
+phase: "story-done"
+last_updated: "2025-12-29T01:45:00+07:00"
+test_results:
+  passing: 31
+  total: 31
+  coverage: "100%"
 active_epics:
   - id: "SPRINT-0"
     name: "Infrastructure & Pre-Work"
