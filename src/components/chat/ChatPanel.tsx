@@ -22,7 +22,7 @@ import { useAgentsStore } from '@/stores/agents-store';
 import { useAgentSelection } from '@/stores/agent-selection-store';
 import type { Agent } from '@/mocks/agents';
 import { useResponsive } from '@/hooks/useResponsive';
-import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
+import { useTranslation } from 'react-i18next';
 
 interface ChatPanelProps {
     projectId: string;
@@ -54,6 +54,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
     // Hooks for mobile/demo mode
     const { isMobile } = useResponsive();
     const { updateThreadTitle } = useThreadsStore();
+    const { t } = useTranslation();
 
     // Local state
     const [isStreaming, setIsStreaming] = useState(false);
@@ -156,7 +157,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
     const handleSendMessage = useCallback(async (content: string) => {
         // Block sending in mobile demo mode if no agent/key
         if (isMobile && agents.length === 0) {
-            setError('Chat is read-only in Demo Mode. Enable an agent to chat.');
+            setError(t('chat.demoModeReadOnly'));
             return;
         }
 
