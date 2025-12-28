@@ -161,9 +161,24 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         id: 'gemini',
         name: 'Google Gemini',
         type: 'gemini',
-        defaultModel: 'gemini-2.0-flash',
-        enabled: false, // Use existing @tanstack/ai-gemini
+        defaultModel: 'gemini-3.0-flash',
+        enabled: true,
+        supportsNativeTools: true,
     },
+};
+
+/**
+ * Gemini Model Hierarchy (December 2025)
+ * - gemini-3.0-flash: Fast, cheap text/RAG chat
+ * - gemini-3.0-pro: Deep synthesis, reasoning
+ * - gemini-2.5-flash-native-audio-preview-12-2025: Live API WebSocket (audio in/out)
+ * - gemini-embedding-001: Cloud embeddings (replaces deprecated text-embedding-004)
+ */
+export const GEMINI_MODELS = {
+    flash: 'gemini-3.0-flash',
+    pro: 'gemini-3.0-pro',
+    live: 'gemini-2.5-flash-native-audio-preview-12-2025',
+    embedding: 'gemini-embedding-001',
 };
 
 /**
@@ -178,8 +193,8 @@ export const FREE_MODELS: ModelInfo[] = [
         providerId: 'openrouter',
     },
     {
-        id: 'google/gemini-2.0-flash-exp:free',
-        name: 'Gemini 2.0 Flash (Experimental)',
+        id: 'google/gemini-3.0-flash:free',
+        name: 'Gemini 3.0 Flash',
         isFree: true,
         contextLength: 1048576,
         providerId: 'openrouter',

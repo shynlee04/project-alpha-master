@@ -1310,34 +1310,48 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 
 ---
 
-#### Story 7.3: Embedding Service Integration
+#### Story 7.3: Embedding Service Integration (Hybrid Local/Cloud)
 
 **As a** user wanting semantic search,
-**I want** embeddings generated for my sources,
-**So that** the system understands meaning, not just keywords.
+**I want** embeddings generated locally on desktop or via cloud on mobile,
+**So that** the system works offline on desktop while being accessible everywhere.
 
 **Acceptance Criteria:**
 
-**Given** a user configures the app
-**When** they select embedding provider
-**Then** options include: Cloud (via existing providers), Local (Ollama if available)
+**Given** the app loads,
+**When** it detects WebGPU support,
+**Then** it checks for cached Transformers.js model in IndexedDB
 
-**Given** a chunk is ready for embedding
-**When** embedding generation starts
-**Then** progress shows in status bar
-**And** embeddings are stored alongside chunks
+**Given** a chunk is ready for embedding,
+**When** running on Desktop with WebGPU and cached model,
+**Then** use **local embeddings** (Transformers.js + MiniLM Q4)
+**And** no API calls are made
+**And** embedding takes ~10-50ms per chunk
 
-**Given** user has no embedding provider
-**When** they try semantic search
-**Then** they see setup prompt
-**And** keyword search works without embeddings
+**Given** running on Mobile OR no WebGPU,
+**When** embedding is needed,
+**Then** use **cloud API** (`gemini-embedding-001`)
+**And** progress shows "Generating embeddings via cloud..."
+**And** embeddings are stored locally after download
 
-**Given** embedding generation fails
-**When** retry is available
-**Then** user can retry or skip the chunk
-**And** partial indexing completes
+**Given** user has no API key and no WebGPU,
+**When** they try semantic search,
+**Then** show warning: "Semantic search requires API key or desktop browser with WebGPU"
+**And** BM25 keyword search works normally
+**And** option to switch to keyword-only mode
 
-**Demo Checkpoint:** 🧮 Embedding progress indicator during import
+**Given** local embedding model not cached,
+**When** on Desktop,
+**Then** prompt user: "Download local embedding model (~90MB) for offline semantic search?"
+**And** if confirmed, download and cache in IndexedDB
+**And** if declined, use cloud fallback
+
+**Technical Notes:**
+- Embedding model: `Xenova/all-MiniLM-L6-v2` (Q4 quantized, ~90MB)
+- Cloud fallback: `gemini-embedding-001` (replaces deprecated `text-embedding-004`)
+- Provider selection: Auto-detect WebGPU capability → choose local or cloud
+
+**Demo Checkpoint:** 🖥️ Desktop: "Using local embeddings (offline)" → 📱 Mobile: "Using cloud embeddings"
 
 ---
 
@@ -1398,6 +1412,36 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 **And** prior citations remain accessible
 
 **Demo Checkpoint:** 💬 Chat: "What are the main causes of climate change?" → AI answers with `[1][2][3]` citations
+
+---
+
+#### Story 7.6: "Deep Think" Synthesis Block (Desktop Only)
+
+**As a** researcher,
+**I want** to use Gemini 3.0's reasoning capabilities,
+**So that** I can get a synthesis of contradicting papers.
+
+**Acceptance Criteria:**
+
+**Given** a prompt asking to compare multiple sources,
+**When** the user holds the "Generate" button (Long Press),
+**Then** switch the model from `gemini-3.0-flash` to `gemini-3.0-pro`.
+**And** display a "Deep Thinking" UI state while the model reasons.
+**And** output a structured Markdown comparison table with citations.
+
+**Given** deep think mode is active,
+**When** reasoning completes,
+**Then** show reasoning steps in expandable section
+**And** display final synthesis with confidence scores
+
+**Given** user wants to cancel deep think,
+**When** they click cancel during reasoning,
+**Then** request is terminated immediately
+**And** model switches back to `gemini-3.0-flash`
+
+**Platform Note:** Desktop-only feature (high compute requirements)
+
+**Demo Checkpoint:** 🧠 Long-press → "Deep Thinking" animation → Structured comparison table
 
 ---
 
@@ -1699,59 +1743,86 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 
 ---
 
-#### Story 10.1: Multi-Source Synthesis Chat
+#### Story 10.1: Live API WebSocket Manager (Desktop Only)
 
-**As a** researcher synthesizing findings,
-**I want** to chat across multiple sources,
-**So that** I can understand how different sources relate.
+**As a** user wanting voice interaction,
+**I want** a WebSocket connection to Gemini Live API,
+**So that** I can speak naturally and get audio responses in real-time.
 
 **Acceptance Criteria:**
 
-**Given** user selects multiple sources
-**When** they start a synthesis chat
-**Then** all sources are included in context
-**And** chat UI shows which sources are active
+**Given** user clicks microphone button on desktop,
+**When** voice mode activates,
+**Then** establish WebSocket connection to `gemini-2.5-flash-native-audio-preview-12-2025`
+**And** audio input captures from microphone at 16kHz
+**And** audio output streams to speakers in real-time
 
-**Given** user asks a synthesis question
-**When** AI responds
-**Then** response compares/contrasts sources
-**And** citations from multiple sources are included `[1][2][3]`
-**And** contradictions between sources are highlighted
+**Given** WebSocket is connected,
+**When** user speaks,
+**Then** audio chunks are sent with `clientContent` messages
+**And** server responds with audio chunks via `serverContent`
+**And** latency is <500ms for perceived real-time
 
-**Given** user wants to focus on one source
-**When** they filter
-**Then** chat narrows to that source
-**And** synthesis context updates
+**Given** connection fails,
+**When** WebSocket errors,
+**Then** show retry dialog with "Connection lost. Reconnecting..."
+**And** after 3 failures, show manual entry fallback
 
-**Demo Checkpoint:** 🔬 Chat: "Compare the findings of these 3 papers on climate change"
+**Given** user is on mobile,
+**When** they tap voice,
+**Then** show tooltip: "Voice chat available on desktop"
+**And** text input remains available
+
+**Platform Note:** Desktop-only (WebSocket bandwidth + processing requirements)
+
+**Technical Notes:**
+```typescript
+const GEMINI_MODELS = {
+  flash: 'gemini-3.0-flash',
+  pro: 'gemini-3.0-pro',
+  live: 'gemini-2.5-flash-native-audio-preview-12-2025',
+  embedding: 'gemini-embedding-001'
+};
+const wsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${apiKey}`;
+```
+
+**Demo Checkpoint:** 🎙️ Voice chat with real-time audio streaming (desktop only)
 
 ---
 
-#### Story 10.2: Source-Grounded Q&A
+#### Story 10.2: Multimodal Source Vision (Desktop Only)
 
-**As a** student reviewing materials,
-**I want** to ask questions and get answers with verified citations,
-**So that** I can learn with confidence.
+**As a** student asking about a diagram,
+**I want** Gemini to "see" the PDF page I'm looking at,
+**So that** it can explain charts and graphs in real-time.
 
 **Acceptance Criteria:**
 
-**Given** user asks a question about sources
-**When** AI generates response
-**Then** every factual claim has a citation
-**And** citations are inline with clickable `[n]` links
-**And** citations open source at exact passage
+**Given** the user is viewing a specific PDF page,
+**When** they ask a question via voice (Desktop Live API),
+**Then** the client captures the current viewport as a base64 JPEG (using `pdf.js`).
+**And** sends it in the `clientContent` WebSocket frame alongside the audio chunk.
+**And** the model references the visual content in its audio response.
 
-**Given** user wants to verify a claim
-**When** they click citation
-**Then** source slides over showing highlighted passage
-**And** user can expand to full source view
+**Given** multimodal vision is active,
+**When** user asks "What does this chart show?",
+**Then** AI describes the chart/figure in the captured viewport
+**And** points out specific data trends visible in the image
+**And** provides context from surrounding text
 
-**Given** AI is uncertain
-**When** response has low confidence
-**Then** it says "Based on the sources, it appears that..." or "I couldn't find..."
-**And** confidence is calibrated
+**Given** user scrolls to a new page,
+**When** vision is still active,
+**Then** the captured viewport updates automatically
+**And** AI can answer questions about the new content
 
-**Demo Checkpoint:** ✅ Click citation → See exact sentence that supports claim
+**Given** user is not on desktop,
+**When** they try to use vision,
+**Then** show tooltip: "Vision requires desktop browser"
+**And** text-based Q&A remains available
+
+**Platform Note:** Desktop-only (WebSocket required, high bandwidth ~500KB/min for images)
+
+**Demo Checkpoint:** 👁️ Point at chart → "This bar chart shows..." → Real-time audio explanation
 
 ---
 
@@ -1765,8 +1836,9 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 
 **Given** user selects sources
 **When** they click "Generate Audio"
-**Then** AI generates a ~2-minute audio summary
-**And** text-to-speech uses Vietnamese voice (natural sounding)
+**Then** call the REST API with model `gemini-3.0-flash`
+**And** set config: `response_modalities: ["AUDIO"]` and `speech_config.voice_name: "Aoede"`
+**And** use system prompt: *"Create a lively 2-person dialogue debating key points."*
 **And** audio is saved to IndexedDB for offline playback
 
 **Given** audio is generating
@@ -1783,6 +1855,12 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 **When** audio plays
 **Then** background playback works
 **And** audio continues when app is in background
+
+**Technical Notes:**
+- Model: `gemini-3.0-flash` for fast, cost-effective audio generation
+- Voice: Aoede (default Gemini TTS voice)
+- Format: Audio blob stored in IndexedDB for offline playback
+- Mobile: Works via cloud API, playback optimized for mobile
 
 **Demo Checkpoint:** 🎧 Generate audio from textbook → Listen during commute
 

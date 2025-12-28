@@ -330,7 +330,11 @@ export class SystemPromptComposer {
    */
   public updateConfig(config: Partial<PromptComposerConfig>): void {
     const newConfig = { ...this.getConfig(), ...config };
+    this.config = newConfig;
     this.currentConfigHash = this.generateConfigHash(newConfig);
+    
+    // Invalidate cache when configuration changes
+    this.invalidateCache();
     
     // Update Layer 2 (Agent Mode) if changed
     if (config.agentMode && config.agentMode.id) {
@@ -614,7 +618,7 @@ export class SystemPromptComposer {
       return '';
     }
     
-    return `## AGENT MODE\n\n${mode.name}\n\n${mode.cognitivePhase}\n\n${mode.persona}\n\n${mode.communicationStyle}\n\n${mode.rules}`;
+    return `## AGENT MODE\n\n${mode.name} (${mode.id})\n\n${mode.cognitivePhase}\n\n${mode.persona}\n\n${mode.communicationStyle}\n\n${mode.rules}`;
   }
 
   /**

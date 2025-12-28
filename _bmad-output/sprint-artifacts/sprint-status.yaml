@@ -84,9 +84,10 @@ development_status:
   epic-7: backlog
   7-1-orama-index-management: backlog # Orama WASM integration
   7-2-document-chunking: backlog # 512-2048 token chunks
-  7-3-embedding-service: backlog # Embedding integration (Ollama/cloud)
+  7-3-embedding-service: backlog # Hybrid: local (Transformers.js) + cloud (gemini-embedding-001)
   7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
   7-5-rag-chat-integration: backlog # Source-grounded responses
+  7-6-deep-think-synthesis: backlog # NEW: gemini-3.0-pro reasoning mode (Desktop only)
   epic-7-retrospective: optional
 
   # EPIC 8: Knowledge Canvas (Days 25-29)
@@ -108,9 +109,9 @@ development_status:
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)
   epic-10: backlog
-  10-1-source-grounded-chat: backlog # RAG-powered Q&A
-  10-2-multi-source-synthesis: backlog # Combine 2+ sources
-  10-3-audio-overview-generator: backlog # NotebookLM-style TTS
+  10-1-live-api-websocket: backlog # NEW: Desktop-only WebSocket voice (gemini-2.5-flash-native-audio)
+  10-2-multimodal-source-vision: backlog # NEW: PDF viewport capture + send to Live API
+  10-3-audio-overview-generator: backlog # NotebookLM-style TTS (gemini-3.0-flash)
   epic-10-retrospective: optional
 
 current_sprint:

@@ -24,8 +24,9 @@ describe('SystemPromptComposer', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     vi.clearAllMocks();
-    // Reset composer instance
-    composer = SystemPromptComposer.getInstance();
+    // Reset composer instance to default state
+    // Force a new instance to avoid test pollution
+    composer = new SystemPromptComposer();
   });
 
   describe('Singleton Pattern', () => {
