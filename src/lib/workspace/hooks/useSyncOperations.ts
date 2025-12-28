@@ -5,6 +5,8 @@
 import { useCallback } from 'react';
 import { LocalFSAdapter, SyncManager, type SyncResult } from '../../filesystem';
 import type { useWorkspaceState } from './useWorkspaceState';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 
 type WorkspaceStateReturn = ReturnType<typeof useWorkspaceState>;
 
@@ -12,6 +14,7 @@ export function useSyncOperations(
     setters: WorkspaceStateReturn['setters'],
     refs: WorkspaceStateReturn['refs']
 ) {
+    const deviceType = useDeviceType();
     const {
         setSyncStatus,
         setSyncError,
@@ -47,6 +50,11 @@ export function useSyncOperations(
                                 setSyncProgress(progress);
                             },
                             onError: (error) => {
+                                // Check if mobile/tablet and show appropriate error
+                                if (deviceType === 'mobile' || deviceType === 'tablet') {
+                                    showMobileWorkspaceError('syncFailed');
+                                    return;
+                                }
                                 console.warn('[Workspace] Sync error:', error.message, error.filePath);
                             },
                             onComplete: (result: SyncResult) => {
@@ -79,6 +87,14 @@ export function useSyncOperations(
                 setSyncProgress(null);
                 return true;
             } catch (error) {
+                // Check if mobile/tablet and show appropriate error
+                if (deviceType === 'mobile' || deviceType === 'tablet') {
+                    showMobileWorkspaceError('syncFailed');
+                    setSyncError('Sync failed on mobile device');
+                    setSyncStatus('error');
+                    setSyncProgress(null);
+                    return false;
+                }
                 console.error('[Workspace] Sync failed:', error);
                 setSyncError(error instanceof Error ? error.message : 'Sync failed');
                 setSyncStatus('error');
@@ -86,7 +102,7 @@ export function useSyncOperations(
                 return false;
             }
         },
-        [setSyncStatus, setSyncError, setSyncProgress, setLastSyncTime, localAdapterRef, syncManagerRef, eventBusRef]
+        [setSyncStatus, setSyncError, setSyncProgress, setLastSyncTime, localAdapterRef, syncManagerRef, eventBusRef, deviceType]
     );
 
     const syncNow = useCallback(async (

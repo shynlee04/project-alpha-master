@@ -72,6 +72,9 @@ export function useIDEFileHandlers({
     eventBus,
     toast,
 }: UseIDEFileHandlersOptions): UseIDEFileHandlersResult {
+    // Call hook at top level (React rules compliance)
+    const { isMobile, isTablet } = useDeviceType();
+
     const handleFileSelect = useCallback(
         async (path: string, handle: FileSystemFileHandle) => {
             setSelectedFilePath(path);
@@ -100,6 +103,7 @@ export function useIDEFileHandlers({
     const handleSave = useCallback(
         async (path: string, content: string) => {
             console.log('[IDE] Saving file:', path);
+            
             try {
                 if (syncManagerRef.current) {
                     await syncManagerRef.current.writeFile(path, content);
@@ -109,15 +113,25 @@ export function useIDEFileHandlers({
                     setFileTreeRefreshKey((prev) => prev + 1);
                 } else {
                     console.warn('[IDE] No SyncManager available for save');
+                    // Mobile users get specific error message
+                    if (isMobile || isTablet) {
+                        showMobileWorkspaceError('openFailed');
+                        return;
+                    }
                     toast('No project folder open - save skipped', 'warning');
                 }
             } catch (error) {
                 console.error('[IDE] Failed to save file:', path, error);
+                // Mobile users get specific error message
+                if (isMobile || isTablet) {
+                    showMobileWorkspaceError('openFailed');
+                    return;
+                }
                 const errorMessage = error instanceof Error ? error.message : 'Unknown error';
                 toast(`Failed to save ${path.split('/').pop()}: ${errorMessage}`, 'error');
             }
         },
-        [syncManagerRef, setFileTreeRefreshKey, setFileContentCache, toast],
+        [syncManagerRef, isMobile, isTablet, setFileTreeRefreshKey, setFileContentCache, toast],
     );
 
     const handleContentChange = useCallback(
