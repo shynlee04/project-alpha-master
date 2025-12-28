@@ -65,7 +65,8 @@ export function useWebContainerBoot({
                 console.error('[IDE] WebContainer boot failed:', error);
 
                 // Check if mobile/tablet and show mobile-friendly error
-                if (deviceType === 'mobile' || deviceType === 'tablet') {
+                const { isMobile, isTablet } = deviceType;
+                if (isMobile || isTablet) {
                     showMobileWebContainerError('bootFailed');
                 } else {
                     // Desktop users see improved error message

@@ -57,8 +57,8 @@ development_status:
   epic-4: in-progress
   4-1-system-prompt-composer: drafted # Team B - 5-Layer System Prompt Composer
   4-2-file-tool-execution: backlog # Deferred to Phase 2
-  4-3-tool-permissions: drafted # Team B - Tool Permissions & Trust Levels
-  4-4-tool-error-handling: drafted # Team B - Tool Error Handling with Retry Logic
+  4-3-tool-permissions: backlog # Team B - Tool Permissions & Trust Levels
+  4-4-tool-error-handling: backlog # Team B - Tool Error Handling with Retry Logic
   epic-4-retrospective: optional
 
   # EPIC 5: Production-Ready Polish (Days 15-17)
@@ -75,7 +75,7 @@ current_sprint:
   start_date: "2025-12-28"
   end_date: "2026-01-01"
   active_epics: ["epic-2", "epic-4"]
-  active_stories: ["4-1-system-prompt-composer", "4-3-tool-permissions", "4-4-tool-error-handling"]
+  active_stories: ["4-1-system-prompt-composer"]
   completed_stories: ["0-1-create-demo-content", "1-1-responsive-breakpoint-foundation", "1-2-dark-light-theme-system", "1-3-mobile-demo-mode", "1-4-accessibility-foundation", "2-0-credential-vault-implementation", "2-1-zustand-dexie-state-migration"]
   team_assignments:
     epic-2: "Team A"

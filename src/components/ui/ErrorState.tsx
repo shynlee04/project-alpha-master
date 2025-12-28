@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { AlertCircle, RefreshCw, X, Home } from 'lucide-react'
-import { useDeviceType } from '@/hooks/useMediaQuery'
 import { useNavigate } from '@tanstack/react-router'
 
 /**
@@ -88,7 +87,6 @@ export function ErrorState({
     icon,
 }: ErrorStateProps) {
     const { t } = useTranslation()
-    const { isMobile, isTablet } = useDeviceType()
     const navigate = useNavigate()
 
     const handleGoHome = () => {

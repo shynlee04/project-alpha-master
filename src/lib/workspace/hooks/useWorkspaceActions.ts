@@ -58,7 +58,9 @@ export function useWorkspaceActions(
     const openFolder = useCallback(async (): Promise<void> => {
         if (!LocalFSAdapter.isSupported()) {
             // Check if mobile/tablet and show appropriate error
-            if (deviceType === 'mobile' || deviceType === 'tablet') {
+            // Check if mobile/tablet and show appropriate error
+            const { isMobile, isTablet } = deviceType;
+            if (isMobile || isTablet) {
                 showMobileWorkspaceError('openFailed');
                 return;
             }
@@ -114,7 +116,9 @@ export function useWorkspaceActions(
         } catch (error) {
             if ((error as Error).name !== 'AbortError') {
                 // Check if mobile/tablet and show appropriate error
-                if (deviceType === 'mobile' || deviceType === 'tablet') {
+                // Check if mobile/tablet and show appropriate error
+                const { isMobile, isTablet } = deviceType;
+                if (isMobile || isTablet) {
                     showMobileWorkspaceError('openFailed');
                     return;
                 }
@@ -128,7 +132,9 @@ export function useWorkspaceActions(
     const switchFolder = useCallback(async (): Promise<void> => {
         if (!LocalFSAdapter.isSupported()) {
             // Check if mobile/tablet and show appropriate error
-            if (deviceType === 'mobile' || deviceType === 'tablet') {
+            // Check if mobile/tablet and show appropriate error
+            const { isMobile, isTablet } = deviceType;
+            if (isMobile || isTablet) {
                 showMobileWorkspaceError('openFailed');
                 return;
             }
@@ -177,7 +183,9 @@ export function useWorkspaceActions(
         } catch (error) {
             if ((error as Error).name !== 'AbortError') {
                 // Check if mobile/tablet and show appropriate error
-                if (deviceType === 'mobile' || deviceType === 'tablet') {
+                // Check if mobile/tablet and show appropriate error
+                const { isMobile, isTablet } = deviceType;
+                if (isMobile || isTablet) {
                     showMobileWorkspaceError('openFailed');
                     return;
                 }
