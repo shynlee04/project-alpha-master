@@ -109,22 +109,26 @@ workflow_status:
     status: "ready"
     
     prd:
-      status: "required"
+      status: "completed"
+      completed_at: "2025-12-28T19:16:46+07:00"
       agent: "pm"
       command: "create-prd"
       note: "Create PRD for Knowledge Synthesis Station v2.0 pivot"
+      artifact: "_bmad-output/project-planning-artifacts/prd.md"
       input_documents:
         - "_bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md"
         - "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
     
     ux_design:
-      status: "conditional"
-      condition: "if_has_ui"
+      status: "in_progress"
+      started_at: "2025-12-28T19:14:41+07:00"
       agent: "ux-designer"
       command: "create-ux-design"
       note: "Refine UX spec from proposal into implementation-ready wireframes"
       input_documents:
+        - "_bmad-output/project-planning-artifacts/prd.md"
         - "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
+        - "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
 
   # Phase 2: Solutioning
   phase_2_solutioning:
