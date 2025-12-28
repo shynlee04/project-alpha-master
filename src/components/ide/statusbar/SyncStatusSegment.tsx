@@ -105,7 +105,7 @@ export function SyncStatusSegment({ onRetry }: SyncStatusSegmentProps) {
             dividerLeft
             clickable={status === 'error'}
             onClick={handleClick}
-            title={status === 'error' ? t('errors.syncRetry') : undefined}
+            title={status === 'error' ? t('errors.sync.retry.description') : undefined}
         >
             {renderContent()}
         </StatusBarSegment>

@@ -25,7 +25,7 @@
   "ide.deviceTablet": "Máy tính bảng",
   "ide.deviceMobile": "Di động",
   "ide.refreshPreview": "Làm mới bản xem trước",
-  "ide.openInNewTab": "Mở trong tab mới",
+  "ide.openInNewTab": "Mở trong Tab Mới",
   "ide.waitingDevServer": "Đang chờ máy chủ phát triển...",
   "ide.runDevCommand": "Chạy npm run dev để khởi động máy chủ",
   "ide.reAuthorize": "Ủy quyền lại",
@@ -49,12 +49,248 @@
   "ide.tabs.preview": "Xem",
   "ide.tabs.terminal": "Term",
   "ide.tabs.chat": "Chat",
-  "errors.loadProjects": "Không tải được dự án",
-  "errors.permissionDenied": "Quyền bị từ chối",
-  "errors.generic": "Đã xảy ra lỗi",
-  "errors.accessDenied": "Truy cập bị từ chối",
-  "errors.fsNotSupported": "API truy cập hệ thống tệp không được hỗ trợ",
-  "errors.openFolder": "Không mở được thư mục",
+  "errors": {
+    "loadProjects": "Không tải được dự án",
+    "permissionDenied": "Quyền bị từ chối",
+    "generic": {
+      "title": "Đã xảy ra Sự cố",
+      "unexpected": {
+        "title": "Lỗi Bất ngờ",
+        "description": "Chúng tôi đã gặp một lỗi bất ngờ. Đội ngũ của chúng tôi đã được thông báo.",
+        "action": "Thử Lại",
+        "mobileHint": "Nếu việc này tiếp tục xảy ra, vui lòng liên hệ hỗ trợ"
+      },
+      "critical": {
+        "title": "Lỗi Nghiêm trọng",
+        "description": "Đã xảy ra một lỗi nghiêm trọng. Ứng dụng cần khởi động lại.",
+        "action": "Tải lại Ứng dụng",
+        "mobileHint": "Các thay đổi chưa lưu của bạn có thể bị mất"
+      },
+      "loading": {
+        "title": "Lỗi Tải",
+        "description": "Chúng tôi đang gặp sự cố khi tải nội dung này. Vui lòng đợi...",
+        "action": "Làm mới",
+        "mobileHint": "Kiểm tra kết nối internet của bạn"
+      },
+      "validation": {
+        "title": "Dữ liệu Không hợp lệ",
+        "description": "Vui lòng kiểm tra dữ liệu nhập của bạn và thử lại.",
+        "action": "Sửa Dữ liệu",
+        "mobileHint": "Đảm bảo tất cả các trường bắt buộc được điền đúng"
+      }
+    },
+    "accessDenied": "Truy cập bị từ chối",
+    "fsNotSupported": "API truy cập hệ thống tệp không được hỗ trợ",
+    "openFolder": "Không mở được thư mục",
+    "fs": {
+      "title": "Lỗi Hệ thống Tệp",
+      "permissionDenied": {
+        "title": "Cần Quyền",
+        "description": "Chúng tôi cần quyền của bạn để truy cập tệp trên thiết bị.",
+        "action": "Cấp Quyền",
+        "mobileHint": "Nhấn nút ở trên để cho phép truy cập tệp"
+      },
+      "notSupported": {
+        "title": "Trình duyệt Không được Hỗ trợ",
+        "description": "Trình duyệt của bạn không hỗ trợ truy cập hệ thống tệp. Vui lòng sử dụng Chrome, Edge, hoặc trình duyệt hiện đại khác.",
+        "action": "Tìm hiểu Thêm",
+        "mobileHint": "Thử mở ứng dụng này trong trình duyệt Chrome hoặc Edge"
+      },
+      "readFailed": {
+        "title": "Không thể Đọc Tệp",
+        "description": "Chúng tôi không thể đọc tệp này. Có thể đang được sử dụng bởi ứng dụng khác hoặc tệp bị hỏng.",
+        "action": "Thử Lại",
+        "mobileHint": "Đóng các ứng dụng khác có thể đang sử dụng tệp này"
+      },
+      "writeFailed": {
+        "title": "Không thể Lưu Tệp",
+        "description": "Chúng tôi không thể lưu thay đổi của bạn. Tệp có thể đang bị khóa hoặc bạn không có quyền.",
+        "action": "Thử Lại",
+        "mobileHint": "Đảm bảo bạn có quyền ghi cho thư mục này"
+      },
+      "deleteFailed": {
+        "title": "Không thể Xóa Tệp",
+        "description": "Chúng tôi không thể xóa tệp này. Có thể đang được sử dụng bởi chương trình khác.",
+        "action": "Thử Lại",
+        "mobileHint": "Đóng bất kỳ ứng dụng nào có thể đang sử dụng tệp này"
+      },
+      "folderNotFound": {
+        "title": "Không Tìm thấy Thư mục",
+        "description": "Chúng tôi không thể tìm thấy thư mục này. Có thể đã bị di chuyển hoặc xóa.",
+        "action": "Duyệt Tệp",
+        "mobileHint": "Chọn một thư mục khác từ thiết bị của bạn"
+      },
+      "quotaExceeded": {
+        "title": "Bộ nhớ Đầy",
+        "description": "Bộ nhớ thiết bị của bạn sắp đầy. Vui lòng giải phóng một chút không gian.",
+        "action": "Quản lý Bộ nhớ",
+        "mobileHint": "Xóa các tệp không sử dụng hoặc xóa bộ nhớ đệm trình duyệt"
+      }
+    },
+    "network": {
+      "title": "Lỗi Mạng",
+      "offline": {
+        "title": "Không có Kết nối Internet",
+        "description": "Chúng tôi không thể kết nối đến internet. Vui lòng kiểm tra kết nối mạng của bạn.",
+        "action": "Thử Lại",
+        "mobileHint": "Bật WiFi hoặc dữ liệu di động và thử lại"
+      },
+      "timeout": {
+        "title": "Hết thời gian Kết nối",
+        "description": "Yêu cầu mất quá nhiều thời gian. Kết nối internet của bạn có thể chậm.",
+        "action": "Thử Lại",
+        "mobileHint": "Di chuyển đến vị trí có tín hiệu tốt hơn"
+      },
+      "serverError": {
+        "title": "Máy chủ Không khả dụng",
+        "description": "Máy chủ của chúng tôi đang gặp sự cố. Vui lòng thử lại sau.",
+        "action": "Thử Lại",
+        "mobileHint": "Chờ vài phút và thử lại"
+      },
+      "requestFailed": {
+        "title": "Yêu cầu Thất bại",
+        "description": "Đã xảy ra sự cố với yêu cầu của bạn. Vui lòng thử lại.",
+        "action": "Thử Lại",
+        "mobileHint": "Kiểm tra kết nối internet của bạn"
+      }
+    },
+    "agent": {
+      "title": "Lỗi AI Agent",
+      "apiKeyMissing": {
+        "title": "Cần API Key",
+        "description": "Bạn cần thêm API key để sử dụng nhà cung cấp AI này.",
+        "action": "Thêm API Key",
+        "mobileHint": "Đi đến Cài đặt > Agents để cấu hình API key của bạn"
+      },
+      "apiKeyInvalid": {
+        "title": "API Key Không hợp lệ",
+        "description": "API key của bạn không hoạt động. Vui lòng kiểm tra và thử lại.",
+        "action": "Cập nhật Key",
+        "mobileHint": "Đảm bảo bạn đã sao chép toàn bộ API key đúng"
+      },
+      "providerUnavailable": {
+        "title": "Nhà cung cấp AI Không khả dụng",
+        "description": "Nhà cung cấp AI này tạm thời không khả dụng. Vui lòng thử lại sau.",
+        "action": "Thử Lại",
+        "mobileHint": "Chuyển sang nhà cung cấp AI khác nếu có sẵn"
+      },
+      "modelNotAvailable": {
+        "title": "Mô hình Không khả dụng",
+        "description": "Mô hình AI này không khả dụng. Vui lòng chọn một mô hình khác.",
+        "action": "Chọn Mô hình",
+        "mobileHint": "Chọn từ danh sách các mô hình khả dụng"
+      },
+      "toolExecutionFailed": {
+        "title": "Thực thi Công cụ Thất bại",
+        "description": "AI agent không thể hoàn thành hành động này. Vui lòng thử lại.",
+        "action": "Thử Lại",
+        "mobileHint": "Kiểm tra xem bạn có các quyền cần thiết"
+      },
+      "rateLimitExceeded": {
+        "title": "Quá nhiều Yêu cầu",
+        "description": "Bạn đã đạt giới hạn cho nhà cung cấp AI này. Vui lòng chờ một chút.",
+        "action": "Chờ",
+        "mobileHint": "Thử lại sau vài phút"
+      },
+      "quotaExceeded": {
+        "title": "Đạt Giới hạn Sử dụng",
+        "description": "Bạn đã sử dụng hết gói miễn phí. Vui lòng nâng cấp gói của bạn.",
+        "action": "Nâng cấp Gói",
+        "mobileHint": "Kiểm tra trang định giá của nhà cung cấp"
+      }
+    },
+    "terminal": {
+      "title": "Lỗi Terminal",
+      "bootFailed": {
+        "title": "Terminal Không thể Khởi động",
+        "description": "Chúng tôi không thể khởi động terminal. Vui lòng thử lại.",
+        "action": "Khởi động lại Terminal",
+        "mobileHint": "Đảm bảo bạn có dự án đang mở"
+      },
+      "commandFailed": {
+        "title": "Lệnh Thất bại",
+        "description": "Lệnh không hoạt động như mong đợi. Vui lòng kiểm tra lệnh.",
+        "action": "Thử Lại",
+        "mobileHint": "Đảm bảo lệnh đúng cho dự án của bạn"
+      },
+      "shellExited": {
+        "title": "Terminal Đã đóng",
+        "description": "Phiên làm việc terminal đã kết thúc bất ngờ.",
+        "action": "Khởi động lại",
+        "mobileHint": "Lệnh của bạn có thể đã khiến terminal đóng"
+      },
+      "notReady": {
+        "title": "Terminal Chưa Sẵn sàng",
+        "description": "Terminal vẫn đang khởi động. Vui lòng đợi một chút.",
+        "action": "Chờ",
+        "mobileHint": "Việc này chỉ nên mất vài giây"
+      }
+    },
+    "sync": {
+      "title": "Lỗi Đồng bộ",
+      "syncFailed": {
+        "title": "Đồng bộ Thất bại",
+        "description": "Chúng tôi không thể đồng bộ tệp của bạn. Một số thay đổi có thể bị mất.",
+        "action": "Thử Đồng bộ lại",
+        "mobileHint": "Kiểm tra kết nối internet và thử lại"
+      },
+      "conflictDetected": {
+        "title": "Xung đột Tệp",
+        "description": "Tệp này đã được thay đổi bởi chương trình khác. Bạn muốn giữ phiên bản nào?",
+        "action": "Giải quyết",
+        "mobileHint": "Chọn giữ thay đổi của bạn hoặc phiên bản khác"
+      },
+      "partialSync": {
+        "title": "Đồng bộ Một phần",
+        "description": "Một số tệp không thể đồng bộ. Công việc của bạn chủ yếu đã được lưu.",
+        "action": "Xem Chi tiết",
+        "mobileHint": "Kiểm tra tệp nào cần chú ý"
+      },
+      "timeout": {
+        "title": "Hết thời gian Đồng bộ",
+        "description": "Đồng bộ mất quá nhiều thời gian. Vui lòng thử lại.",
+        "action": "Thử Đồng bộ lại",
+        "mobileHint": "Kiểm tra kết nối internet của bạn"
+      }
+    },
+    "webcontainer": {
+      "title": "Lỗi WebContainer",
+      "bootFailed": {
+        "title": "Môi trường Không thể Khởi động",
+        "description": "Chúng tôi không thể khởi động môi trường phát triển. Vui lòng thử lại.",
+        "action": "Thử Lại",
+        "mobileHint": "Việc này có thể mất một chút trên thiết bị chậm hơn"
+      },
+      "notSupported": {
+        "title": "Tính năng Không khả dụng",
+        "description": "Tính năng này yêu cầu trình duyệt máy tính để bàn. Một số tính năng bị hạn chế trên di động.",
+        "action": "Tìm hiểu Thêm",
+        "mobileHint": "Sử dụng máy tính để có đầy đủ các tính năng phát triển"
+      },
+      "resourceLimit": {
+        "title": "Hết Bộ nhớ",
+        "description": "Môi trường đã hết bộ nhớ. Vui lòng đóng các tab hoặc ứng dụng khác.",
+        "action": "Giải phóng Bộ nhớ",
+        "mobileHint": "Đóng các tab trình duyệt không sử dụng để giải phóng bộ nhớ"
+      },
+      "crashed": {
+        "title": "Môi trường Bị sập",
+        "description": "Môi trường phát triển đã dừng bất ngờ. Vui lòng khởi động lại.",
+        "action": "Khởi động lại",
+        "mobileHint": "Công việc của bạn nên được lưu tự động"
+      }
+    },
+    "actions": {
+      "retry": "Thử Lại",
+      "refresh": "Làm mới",
+      "reload": "Tải lại Trang",
+      "goHome": "Về Trang chủ",
+      "dismiss": "Bỏ qua",
+      "contactSupport": "Liên hệ Hỗ trợ",
+      "viewDetails": "Xem Chi tiết",
+      "learnMore": "Tìm hiểu Thêm"
+    }
+  },
   "badges.clickToReauthorize": "Nhấn để ủy quyền lại",
   "badges.accessDenied": "Truy cập bị từ chối",
   "bentoGrid": {
@@ -130,138 +366,45 @@
     "key_missing": "Thiếu API Key cho {{provider}}. Vui lòng cấu hình trong panel Agents."
   },
   "hub": {
-    "portals": {
-      "ideWorkspace": "IDE Workspace",
-      "ideWorkspaceDesc": "Open your projects in full IDE",
-      "agentCenter": "Agent Center",
-      "agentCenterDesc": "Configure and manage AI agents",
-      "knowledgeHub": "Knowledge Hub",
-      "knowledgeHubDesc": "Your knowledge synthesis station",
-      "settings": "Settings",
-      "settingsDesc": "Configure your workspace preferences"
-    },
-    "exploreViaGent": "Explore Via-gent"
+    "home": "Trang chủ",
+    "ide": "Không gian làm việc IDE",
+    "agents": "Quản lý Agent",
+    "knowledge": "Trung tâm Kiến thức",
+    "settings": "Cài đặt",
+    "sidebar": {
+      "toggle": "Bật/Tắt Thanh bên",
+      "expand": "Mở rộng Thanh bên",
+      "collapse": "Thu gọn Thanh bên"
+    }
   },
   "projects": {
-    "title": "Dự án",
-    "subtitle": "Mở thư mục cục bộ để bắt đầu lập trình",
-    "recent": "Dự án Gần đây",
-    "openFolder": "Mở Thư mục",
+    "recent": "Dự án gần đây",
+    "new": "Dự án mới",
+    "openFolder": "Mở thư mục",
     "lastEdited": "Đã chỉnh sửa lần cuối",
-    "lastOpened": "Đã mở lần cuối",
-    "needsAccess": "Cần Quyền Truy cập",
-    "emptyTitle": "Chưa có Dự án nào",
-    "emptySubtitle": "Mở một thư mục để bắt đầu dự án đầu tiên"
+    "templates": "Mẫu dự án",
+    "starterKits": "Bộ khởi đầu"
   },
   "breadcrumbs": {
-    "home": "Home",
-    "projects": "Projects",
-    "workspace": "Workspace"
+    "home": "Trang chủ",
+    "projects": "Dự án",
+    "workspace": "Không gian làm việc",
+    "navigateTo": "Điều hướng đến",
+    "forward": "Tiến tới"
   },
   "onboarding": {
     "launch": "Khởi chạy Tour Tương tác",
     "slides": {
-      "agent": {
-        "title": "AI Agent",
-        "enhance_prompt": "Tự động Nâng cao Prompt",
-        "enhancing": "Đang nâng cao prompt...",
-        "enhance_tooltip": "Tự động cải thiện độ rõ ràng và ngữ cảnh của prompt (quy trình 2 bước)",
-        "welcome_message": "Chào mừng đến với {{projectName}}! Tôi là trợ lý AI của bạn. Tôi có thể giúp gì cho bạn hôm nay?",
-        "desc": "Trải nghiệm tương lai của phát triển dựa trên trình duyệt. Không cần cài đặt. 100% Riêng tư."
-      },
-      "privacy": {
-        "title": "Riêng tư Hoàn toàn",
-        "subtitle": "100% Phía Client",
-        "desc": "Không có máy chủ. Không theo dõi dữ liệu. Mã của bạn không bao giờ rời khỏi trình duyệt của bạn."
-      },
-      "agents": {
-        "title": "Đội ngũ Được Cấp quyền AI",
-        "subtitle": "Điều phối Multi-Agent",
-        "desc": "Các agent Orchestrator, Planner, Coder, và Validator làm việc thống nhất để xây dựng tầm nhìn của bạn."
-      },
-      "workflows": {
-        "title": "Quy trình cho Mọi Phòng ban",
-        "subtitle": "Quy trình Thống nhất",
-        "desc": "Kết nối liền mạch Nghiên cứu, Thiết kế, Lập trình, và Triển khai trong một không gian làm việc."
-      },
-      "roadmap": {
-        "title": "Tương lai",
-        "subtitle": "Lộ trình",
-        "desc": "Chỉnh sửa Hợp tác, Hỗ trợ Di động, và Kiến trúc Plugin sẽ sớm ra mắt."
-      },
-      "contact": {
-        "title": "Tham gia Cuộc cách mạng",
-        "subtitle": "Kết nối với Người tạo",
-        "roles": "Người tạo & Người duy trì",
-        "name": "Linh Nguyen"
+      "intro": {
+        "desc": "Get started with your projects and explore powerful features of Via-Gent."
       }
-    },
-    "controls": {
-      "next": "Tiếp theo",
-      "prev": "Trước đó",
-      "close": "Đóng Giới thiệu",
-      "restart": "Phát lại",
-      "skip": "Bỏ qua Hướng dẫn",
-      "complete": "Hoàn thành Hướng dẫn"
-    },
-    "breadcrumbs": {
-      "home": "Trang chủ",
-      "projects": "Dự án",
-      "project": "Dự án",
-      "folder": "Thư mục",
-      "file": "Tệp",
-      "navigateTo": "Điều hướng đến",
-      "fullPath": "Đường dẫn đầy đủ",
-      "back": "Quay lại",
-      "enter": "Nhập",
-      "showFullPath": "Hiển thị đường dẫn đầy đủ"
-    },
-    "emptyState": {
-      "noProjects": {
-        "title": "Chưa có Dự án nào",
-        "description": "Tạo dự án đầu tiên của bạn để bắt đầu lập trình với AI.",
-        "action": "Tạo Dự án"
-      },
-      "noFiles": {
-        "title": "Chưa có Tệp nào",
-        "description": "Nhấp + để tạo tệp đầu tiên của bạn.",
-        "action": "Tạo Tệp"
-      },
-      "noAgents": {
-        "title": "Chưa cấu hình Agent nào",
-        "description": "Cấu hình một AI agent để bắt đầu.",
-        "action": "Cấu hình Agent"
-      },
-      "noChatHistory": {
-        "title": "Không có Lịch sử Trò chuyện",
-        "description": "Bắt đầu cuộc trò chuyện với AI agent.",
-        "action": "Bắt đầu Trò chuyện"
-      },
-      "noSearchResults": {
-        "title": "Không có Kết quả Tìm kiếm",
-        "description": "Thử các thuật ngữ tìm kiếm khác.",
-        "action": "Xóa Tìm kiếm"
-      },
-      "welcome": {
-        "title": "Chào mừng đến với Via-gent",
-        "description": "IDE được cấp quyền AI dựa trên trình duyệt của bạn đã sẵn sàng.",
-        "action": "Bắt đầu"
-      }
-    },
-    "progress": {
-      "step": "Bước {{current}} của {{total}}",
-      "loading": "Đang tải...",
-      "syncing": "Đang đồng bộ tệp...",
-      "synced": "Đã đồng bộ {{count}}/{{total}} tệp",
-      "booting": "Đang khởi động WebContainer...",
-      "ready": "Sẵn sàng!"
     }
   },
   "webcontainer": {
     "notSupported": {
       "title": "Xem trước Không khả dụng",
       "subtitle": "Hạn chế Xem trước WebContainer",
-      "description": "Xem trước này được gắn với tab IDE nơi WebContainer được khởi tạo. Không thể xem trước trong tab trình duyệt riêng biệt.",
+      "description": "Xem trước này được gắn với tab IDE nơi WebContainer được khởi tạo. Xem trước không thể được xem trong tab trình duyệt riêng biệt.",
       "explanation": "WebContainer chạy một môi trường Node.js đầy đủ trong trình duyệt của bạn. Để bảo mật và quản lý tài nguyên, bản xem trước phải nằm trong phiên IDE.",
       "backToDashboard": "Quay lại Bảng điều khiển"
     }
@@ -273,29 +416,19 @@
     "unknown": "Lỗi không xác định"
   },
   "sidebar": {
-    "themeLight": "Chế độ Sáng",
-    "themeDark": "Chế độ Tối",
-    "languageEn": "English",
-    "languageVi": "Tiếng Việt",
-    "switchToLight": "Chuyển sang chế độ sáng",
-    "switchToDark": "Chuyển sang chế độ tối",
-    "switchToVi": "Chuyển sang Tiếng Việt",
-    "switchToEn": "Chuyển sang Tiếng Anh",
-    "home": "Trang chủ",
-    "projects": "Dự án",
+    "explorer": "Explorer",
     "agents": "Agents",
-    "settings": "Cài đặt",
-    "explorer": "Trình khám phá",
-    "search": "Tìm kiếm",
+    "search": "Search",
+    "settings": "Settings",
     "terminal": "Terminal",
     "git": "Git",
     "collapse": "Thu gọn Thanh bên",
     "expand": "Mở rộng Thanh bên",
-    "noAgents": "Chưa có agent nào được cấu hình",
-    "noResults": "Không tìm thấy kết quả",
-    "recentSearches": "Tìm kiếm gần đây",
-    "clearRecent": "Xóa gần đây",
-    "toggleSidebar": "Chuyển đổi Thanh bên (Ctrl+B)"
+    "noAgents": "No agents configured",
+    "noResults": "No results found",
+    "recentSearches": "Recent Searches",
+    "clearRecent": "Clear Recent",
+    "toggleSidebar": "Toggle Sidebar (Ctrl+B)"
   },
   "agents": {
     "panel": {
@@ -568,14 +701,14 @@
   "agents.config.openaiCompatible.noModels": "Không tìm thấy mô hình nào",
   "agents.config.openaiCompatible.loadFailed": "Không thể tải mô hình",
   "agents.config.openaiCompatible.loadModels": "Làm mới Mô hình",
-  "agents.config.openaiCompatible.modelIdHint": "Nhập ID mô hình cụ thể (ví dụ: local-model) hoặc nhấp làm mới để tự động phát hiện",
+  "agents.config.openaiCompatible.modelIdHint": "Nhập ID mô hình cụ thể (ví dụ: local-model) hoặc nhấn làm mới để tự động phát hiện",
   "agents.config.openaiCompatible.enableTools": "Bật Công cụ Bản địa",
   "agents.config.openaiCompatible.enableToolsDescription": "Cho phép agent sử dụng gọi hàm (tắt nếu nhà cung cấp trả về 400/404)",
-  "agents.config.openaiCompatible.headers": "Headers Tùy chỉnh",
+  "agents.config.openaiCompatible.headers": "Tiêu đề Tùy chỉnh",
   "agents.config.openaiCompatible.headerKey": "Khóa",
   "agents.config.openaiCompatible.headerValue": "Giá trị",
   "agents.config.openaiCompatible.removeHeader": "Xóa",
-  "agents.config.openaiCompatible.addHeader": "Thêm Header",
+  "agents.config.openaiCompatible.addHeader": "Thêm Tiêu đề",
   "agents.config.cancel": "Hủy",
   "agents.config.save": "Tạo Agent",
   "chat.selectAgent": "Chọn Agent",
@@ -616,26 +749,26 @@
   "chat.startConversation": "Nhấp vào \"TRÒ CHUYỆN MỚI\" để bắt đầu",
   "chat.tools.arguments": "Đối số",
   "error.something_went_wrong": "Đã xảy ra lỗi",
-  "error.unexpected_error_description": "Chúng tôi rất tiếc, nhưng đã xảy ra lỗi không mong muốn.",
+  "error.unexpected_error_description": "Chúng tôi rất tiếc, nhưng đã xảy ra một lỗi không mong muốn.",
   "error.technical_details": "Chi tiết Kỹ thuật",
   "error.try_again": "Thử lại",
   "error.reload_page": "Tải lại Trang",
   "onboarding.slides.intro.title": "Chào mừng đến với Via-gent",
-  "onboarding.slides.intro.desc": "Via-gent là một IDE dựa trên trình duyệt với khả năng AI agent. Hãy khám phá các tính năng chính.",
+  "onboarding.slides.intro.desc": "Via-gent là một IDE dựa trên trình duyệt với khả năng AI agent. Hãy cùng khám phá các tính năng chính.",
   "onboarding.launch": "Khởi chạy Chuyến tham gia Tương tác",
   "onboarding.skip": "Bỏ qua Hướng dẫn",
   "onboarding.controls.next": "Tiếp theo",
   "onboarding.slides.privacy.title": "Riêng tư Hoàn toàn",
   "onboarding.slides.privacy.subtitle": "100% Phía Client",
   "onboarding.slides.privacy.desc": "Không có máy chủ. Không theo dõi dữ liệu. Mã của bạn không bao giờ rời khỏi trình duyệt của bạn.",
-  "onboarding.slides.agents.title": "Đội ngũ được Hỗ trợ bởi AI",
+  "onboarding.slides.agents.title": "Đội ngũ Được Cấp quyền AI",
   "onboarding.slides.agents.subtitle": "Điều phối Đa Agent",
-  "onboarding.slides.agents.desc": "Các agent Điều phối, Lập kế hoạch, Lập trình viên và Người xác thực hợp tác để xây dựng tầm nhìn của bạn.",
+  "onboarding.slides.agents.desc": "Các agent Orchestrator, Planner, Coder, và Validator làm việc thống nhất để xây dựng tầm nhìn của bạn.",
   "onboarding.slides.workflows.title": "Quy trình cho Mọi Bộ phận",
   "onboarding.slides.workflows.subtitle": "Quy trình Thống nhất",
-  "onboarding.slides.workflows.desc": "Kết nối liền mạch Nghiên cứu, Thiết kế, Lập trình và Triển khai trong một không gian làm việc.",
+  "onboarding.slides.workflows.desc": "Kết nối liền mạch Nghiên cứu, Thiết kế, Lập trình, và Triển khai trong một không gian làm việc.",
   "onboarding.slides.roadmap.title": "Tương lai",
-  "onboarding.slides.roadmap.desc": "Chỉnh sửa Hợp tác, Hỗ trợ Di động và Kiến trúc Plugin sắp ra mắt.",
+  "onboarding.slides.roadmap.desc": "Chỉnh sửa Hợp tác, Hỗ trợ Di động, và Kiến trúc Plugin sẽ sớm ra mắt.",
   "onboarding.slides.contact.title": "Tham gia Cách mạng",
   "onboarding.slides.contact.name": "Linh Nguyen",
   "onboarding.slides.contact.roles": "Người tạo & Người duy trì",
@@ -654,10 +787,10 @@
   "agent.title": "Trò chuyện với Agent",
   "agent.tools_ready": "CÔNG CỤ SẴN SÀNG",
   "agent.enhance_tooltip": "Tự động cải thiện độ rõ ràng và ngữ cảnh của lời nhắc (quy trình 2 bước)",
-  "agent.enhance_prompt": "Tự động Cải thiện Lời nhắc",
+  "agent.enhance_prompt": "Tự động Nâng cao Lời nhắc",
   "agent.clear": "Xóa",
   "agent.error_generic": "Đã xảy ra lỗi",
-  "agent.enhancing": "Đang cải thiện lời nhắc...",
+  "agent.enhancing": "Đang nâng cao lời nhắc...",
   "sidebar.agents": "Agents",
   "actions.addAgent": "Thêm Agent",
   "actions.refresh": "Làm mới",
@@ -719,11 +852,11 @@
   "common.scrollDown": "Cuộn xuống",
   "common.toggle": "Bật/Tắt",
   "emptyState.welcome.title": "Chào mừng đến với Via-gent",
-  "emptyState.welcome.description": "IDE được hỗ trợ bởi AI dựa trên trình duyệt của bạn đã sẵn sàng.",
+  "emptyState.welcome.description": "IDE được cấp quyền AI dựa trên trình duyệt của bạn đã sẵn sàng.",
   "emptyState.welcome.action": "Bắt đầu",
   "webcontainer.notSupported.title": "Xem trước Không khả dụng",
   "webcontainer.notSupported.subtitle": "Hạn chế Xem trước WebContainer",
-  "webcontainer.notSupported.description": "Xem trước này bị ràng buộc vào tab IDE nơi WebContainer được khởi tạo. Không thể xem trước trong một tab trình duyệt riêng biệt.",
+  "webcontainer.notSupported.description": "Xem trước này bị ràng buộc vào tab IDE nơi WebContainer được khởi tạo. Xem trước không thể được xem trong tab trình duyệt riêng biệt.",
   "webcontainer.notSupported.explanation": "WebContainer chạy một môi trường Node.js đầy đủ trong trình duyệt của bạn. Để bảo mật và quản lý tài nguyên, xem trước phải nằm trong phiên IDE.",
   "webcontainer.notSupported.backToDashboard": "Quay lại Bảng điều khiển",
   "contextTooltip.tooltip": "Mẹo công cụ",
@@ -764,30 +897,30 @@
   "discovery.finish": "Hoàn thành",
   "discovery.step.welcome.title": "Chào mừng đến với Via-gent",
   "discovery.step.welcome.description": "Via-gent là một IDE dựa trên trình duyệt với khả năng tác nhân AI. Hãy cùng khám phá các tính năng chính.",
-  "discovery.step.fileExplorer.title": "Trình khám phá tệp",
+  "discovery.step.fileExplorer.title": "Trình duyệt tệp",
   "discovery.step.fileExplorer.description": "Duyệt và quản lý các tệp dự án của bạn. Nhấp vào các tệp để mở chúng trong trình soạn thảo.",
   "discovery.step.editor.title": "Trình soạn thảo mã",
-  "discovery.step.editor.description": "Viết và chỉnh sửa mã của bạn. Trình soạn thảo hỗ trợ tô sáng cú pháp, tự động hoàn thành và nhiều tab.",
+  "discovery.step.editor.description": "Viết và chỉnh sửa mã của bạn. Trình soạn thảo hỗ trợ tô sáng cú pháp, tự động hoàn thành, và nhiều tab.",
   "discovery.step.terminal.title": "Terminal",
   "discovery.step.terminal.description": "Chạy các lệnh và tập lệnh. Terminal được tích hợp với WebContainers để thực thi cục bộ.",
   "discovery.step.aiAgent.title": "Tác nhân AI",
   "discovery.step.aiAgent.description": "Tương tác với các tác nhân AI để được trợ giúp về mã. Cấu hình nhà cung cấp và mô hình trong cài đặt.",
-  "discovery.step.shortcuts.title": "Lối tắt bàn phím",
+  "discovery.step.shortcuts.title": "Lối tắt Bàn phím",
   "discovery.step.shortcuts.description": "Nhấn Cmd/Ctrl+K để mở tài liệu tham khảo lối tắt bàn phím.",
   "discovery.step.settings.title": "Cài đặt",
-  "discovery.step.settings.description": "Tùy chỉnh trải nghiệm IDE của bạn. Truy cập chủ đề, cài đặt trình soạn thảo và cấu hình tác nhân.",
-  "discovery.step.complete.title": "Bạn đã sẵn sàng!",
+  "discovery.step.settings.description": "Tùy chỉnh trải nghiệm IDE của bạn. Truy cập chủ đề, cài đặt trình soạn thảo, và cấu hình tác nhân.",
+  "discovery.step.complete.title": "Bạn đã Sẵn sàng!",
   "discovery.step.complete.description": "Bạn đã hoàn thành hướng dẫn khám phá tính năng. Bắt đầu viết mã với Via-gent!",
   "commandPalette": {
     "openFile": "Mở tệp",
-    "openFileDesc": "Mở một tệp từ trình khám phá tệp",
+    "openFileDesc": "Mở một tệp từ trình duyệt tệp",
     "toggleTerminal": "Bật/Tắt Terminal",
     "toggleTerminalDesc": "Hiển thị hoặc ẩn bảng điều khiển terminal",
     "openSettings": "Mở Cài đặt",
     "openSettingsDesc": "Mở cài đặt và sở thích IDE",
-    "searchInFiles": "Tìm trong tệp",
+    "searchInFiles": "Tìm trong Tệp",
     "searchInFilesDesc": "Tìm kiếm văn bản trên tất cả các tệp",
-    "showShortcuts": "Hiển thị lối tắt bàn phím",
+    "showShortcuts": "Hiển thị Lối tắt Bàn phím",
     "showShortcutsDesc": "Hiển thị tất cả các lối tắt bàn phím có sẵn",
     "showHelp": "Hiển thị Trợ giúp",
     "showHelpDesc": "Mở tài liệu và tài nguyên trợ giúp",
@@ -795,7 +928,7 @@
     "noResults": "Không tìm thấy lệnh nào"
   },
   "featureSearch": {
-    "title": "Tìm kiếm tính năng",
+    "title": "Tìm kiếm Tính năng",
     "placeholder": "Tìm kiếm tính năng...",
     "clear": "Xóa",
     "close": "Đóng",
@@ -804,17 +937,17 @@
     "monacoEditorDesc": "Trình soạn thảo mã với tô sáng cú pháp và IntelliSense",
     "terminal": "Terminal",
     "terminalDesc": "Terminal tích hợp để chạy các lệnh",
-    "fileExplorer": "Trình khám phá tệp",
+    "fileExplorer": "Trình duyệt tệp",
     "fileExplorerDesc": "Duyệt và quản lý các tệp dự án",
     "agentChat": "Trò chuyện với tác nhân",
     "agentChatDesc": "Trợ giúp viết mã được hỗ trợ bởi AI",
     "settings": "Cài đặt",
     "settingsDesc": "Cấu hình sở thích IDE",
-    "syncStatus": "Trạng thái đồng bộ",
+    "syncStatus": "Trạng thái Đồng bộ",
     "syncStatusDesc": "Xem trạng thái đồng bộ hóa tệp",
     "webcontainerStatus": "Trạng thái WebContainer",
     "webcontainerStatusDesc": "Kiểm tra trạng thái thời gian chạy WebContainer",
-    "keyboardShortcuts": "Lối tắt bàn phím",
+    "keyboardShortcuts": "Lối tắt Bàn phím",
     "keyboardShortcutsDesc": "Xem tất cả các lối tắt bàn phím",
     "categoryEditor": "Trình soạn thảo",
     "categoryTools": "Công cụ",
@@ -832,18 +965,18 @@
     "export": "Xuất",
     "import": "Nhập",
     "agentChat": "Trò chuyện với tác nhân",
-    "shortcuts": "Lối tắt bàn phím",
+    "shortcuts": "Lối tắt Bàn phím",
     "help": "Trợ giúp"
   },
   "commandPalette.openFile": "Mở tệp",
-  "commandPalette.openFileDesc": "Mở một tệp từ trình khám phá tệp",
+  "commandPalette.openFileDesc": "Mở một tệp từ trình duyệt tệp",
   "commandPalette.toggleTerminal": "Bật/Tắt Terminal",
   "commandPalette.toggleTerminalDesc": "Hiển thị hoặc ẩn bảng điều khiển terminal",
   "commandPalette.openSettings": "Mở Cài đặt",
   "commandPalette.openSettingsDesc": "Mở cài đặt và sở thích IDE",
-  "commandPalette.searchInFiles": "Tìm trong tệp",
+  "commandPalette.searchInFiles": "Tìm trong Tệp",
   "commandPalette.searchInFilesDesc": "Tìm kiếm văn bản trên tất cả các tệp",
-  "commandPalette.showShortcuts": "Hiển thị lối tắt bàn phím",
+  "commandPalette.showShortcuts": "Hiển thị Lối tắt Bàn phím",
   "commandPalette.showShortcutsDesc": "Hiển thị tất cả các lối tắt bàn phím có sẵn",
   "commandPalette.showHelp": "Hiển thị Trợ giúp",
   "commandPalette.showHelpDesc": "Mở tài liệu và tài nguyên trợ giúp",
@@ -855,22 +988,22 @@
   "featureSearch.terminal": "Terminal",
   "featureSearch.terminalDesc": "Terminal tích hợp để chạy các lệnh",
   "featureSearch.categoryTools": "Công cụ",
-  "featureSearch.fileExplorer": "Trình khám phá tệp",
+  "featureSearch.fileExplorer": "Trình duyệt tệp",
   "featureSearch.fileExplorerDesc": "Duyệt và quản lý các tệp dự án",
   "featureSearch.agentChat": "Trò chuyện với tác nhân",
   "featureSearch.agentChatDesc": "Trợ giúp viết mã được hỗ trợ bởi AI",
   "featureSearch.categoryAI": "AI",
   "featureSearch.settings": "Cài đặt",
   "featureSearch.settingsDesc": "Cấu hình sở thích IDE",
-  "featureSearch.syncStatus": "Trạng thái đồng bộ",
+  "featureSearch.syncStatus": "Trạng thái Đồng bộ",
   "featureSearch.syncStatusDesc": "Xem trạng thái đồng bộ hóa tệp",
   "featureSearch.categoryStatus": "Trạng thái",
   "featureSearch.webcontainerStatus": "Trạng thái WebContainer",
   "featureSearch.webcontainerStatusDesc": "Kiểm tra trạng thái thời gian chạy WebContainer",
-  "featureSearch.keyboardShortcuts": "Lối tắt bàn phím",
+  "featureSearch.keyboardShortcuts": "Lối tắt Bàn phím",
   "featureSearch.keyboardShortcutsDesc": "Xem tất cả các lối tắt bàn phím",
   "featureSearch.categoryHelp": "Trợ giúp",
-  "featureSearch.title": "Tìm kiếm tính năng",
+  "featureSearch.title": "Tìm kiếm Tính năng",
   "featureSearch.close": "Đóng",
   "featureSearch.placeholder": "Tìm kiếm tính năng...",
   "featureSearch.clear": "Xóa",
@@ -883,24 +1016,24 @@
   "quickActions.export": "Xuất",
   "quickActions.import": "Nhập",
   "quickActions.agentChat": "Trò chuyện với tác nhân",
-  "quickActions.shortcuts": "Lối tắt bàn phím",
+  "quickActions.shortcuts": "Lối tắt Bàn phím",
   "quickActions.help": "Trợ giúp",
   "quickActions.ariaLabel": "Hành động nhanh",
   "errorState": {
     "title": "Lỗi",
     "default": "Đã xảy ra lỗi",
-    "critical": "Lỗi nghiêm trọng",
+    "critical": "Lỗi Nghiêm trọng",
     "warning": "Cảnh báo",
     "description": "Đã xảy ra sự cố",
     "retry": "Thử lại",
     "reload": "Tải lại",
     "dismiss": "Bỏ qua",
-    "home": "Về trang chủ",
-    "technicalDetails": "Chi tiết kỹ thuật"
+    "home": "Về Trang chủ",
+    "technicalDetails": "Chi tiết Kỹ thuật"
   },
   "loadingState": {
     "default": "Đang tải...",
-    "message": "Vui lòng chờ trong khi chúng tôi tải nội dung của bạn"
+    "message": "Vui lòng đợi trong khi chúng tôi tải nội dung của bạn"
   },
   "emptyState": {
     "message": "Không có gì ở đây",
@@ -908,7 +1041,7 @@
     "action": {
       "create": "Tạo mới",
       "refresh": "Làm mới",
-      "browse": "Duyệt tệp"
+      "browse": "Duyệt Tệp"
     }
   },
   "toast": {
@@ -918,56 +1051,38 @@
     "warning": "Cảnh báo",
     "loading": "Đang tải..."
   },
-  "agents.config.openaiCompatible.modelsLoaded_0": "Found {{count}} models",
-  "chat.codeBlock.lines_0": " lines",
-  "chat.diff.linesHidden_0": " lines hidden",
-  "time.agoSeconds_0": "__STRING_NOT_TRANSLATED__",
-  "time.agoMinutes_0": "__STRING_NOT_TRANSLATED__",
-  "time.agoHours_0": "__STRING_NOT_TRANSLATED__",
-  "empty.message": "Nothing here",
-  "empty.title": "Empty",
-  "empty.action.create": "Create New",
-  "empty.action.refresh": "Refresh",
-  "empty.action.browse": "Browse Files",
-  "error.title": "Something went wrong",
-  "error.action.retry": "Retry",
-  "error.action.reload": "Reload",
-  "error.action.dismiss": "Dismiss",
-  "error.action.home": "Go Home",
-  "error.showDetails": "Show technical details",
-  "loading.message": "Loading...",
-  "loading.progress": "Progress",
-  "error.retry": "Retry",
-  "error.reload": "Reload",
-  "error.dismiss": "Dismiss",
-  "error.goHome": "Go Home",
-  "error.action": "Action",
-  "hub": {
-    "home": "Trang chủ",
-    "ide": "Không gian làm việc IDE",
-    "agents": "Quản lý Agent",
-    "knowledge": "Trung tâm Kiến thức",
-    "settings": "Cài đặt",
-    "sidebar": {
-      "toggle": "Bật/Tắt Thanh bên",
-      "expand": "Mở rộng Thanh bên",
-      "collapse": "Thu gọn Thanh bên"
-    }
-  },
+  "empty.message": "Không có gì ở đây",
+  "empty.title": "Trống",
+  "empty.action.create": "Tạo mới",
+  "empty.action.refresh": "Làm mới",
+  "empty.action.browse": "Duyệt Tệp",
+  "error.title": "Đã xảy ra sự cố",
+  "error.action.retry": "Thử lại",
+  "error.action.reload": "Tải lại",
+  "error.action.dismiss": "Bỏ qua",
+  "error.action.home": "Về Trang chủ",
+  "error.showDetails": "Hiển thị chi tiết kỹ thuật",
+  "loading.message": "Đang tải...",
+  "loading.progress": "Tiến độ",
+  "error.retry": "Thử lại",
+  "error.reload": "Tải lại",
+  "error.dismiss": "Bỏ qua",
+  "error.goHome": "Về Trang chủ",
+  "error.action": "Hành động",
   "topic": {
     "aiPoweredDev": {
       "title": "Phát triển được hỗ trợ bởi AI",
-      "description": "Trải nghiệm tương lai của phát triển dựa trên trình duyệt. Không cần cài đặt. 100% Riêng tư. Các agent AI thực thi, không chỉ đề xuất.",
+      "description": "Trải nghiệm tương lai của phát triển dựa trên trình duyệt. Không cần cài đặt. 100% Riêng tư. Các tác nhân AI thực thi, không chỉ đề xuất.",
       "action": "Bắt đầu Lập trình"
     },
     "privacyFirst": {
       "title": "Không gian làm việc Ưu tiên Riêng tư",
-      "description": "Không có máy chủ. Không theo dõi dữ liệu. Mã của bạn không bao giờ rời trình duyệt. Phát triển được hỗ trợ bởi AI và riêng tư cho các nhóm doanh nghiệp.",
+      "description": "Không có máy chủ. Không theo dõi dữ liệu. Mã của bạn không bao giờ rời khỏi trình duyệt. Phát triển được hỗ trợ bởi AI và riêng tư cho các nhóm doanh nghiệp.",
       "action": "Cấu hình Không gian làm việc"
     },
     "classroomReady": {
       "title": "IDE Sẵn sàng cho Lớp học",
-      "description": "Dạy lập trình hiệu quả hơn 3 lần với sự hỗ trợ của AI. Cài đặt lớp học tức thì mà không cần cài đặt.",
+      "description": "Dạy lập trình hiệu quả hơn 3 lần với sự hỗ trợ của AI. Thiết lập lớp học tức thì mà không cần cài đặt.",
       "action": "Khám phá Giáo dục"
     },
     "knowledgeSynthesis": {
@@ -977,17 +1092,9 @@
     },
     "agentOrchestration": {
       "title": "Trung tâm Điều phối Agent",
-      "description": "Các đội agent hoàn toàn nhận thức điều phối và quản lý công việc/dự án của bạn. Không gian làm việc được cá nhân hóa cho mọi quy trình.",
-      "action": "Cấu hình Agent"
+      "description": "Các đội tác nhân hoàn toàn nhận thức điều phối và quản lý công việc/dự án của bạn. Không gian làm việc được cá nhân hóa cho mọi quy trình.",
+      "action": "Cấu hình Agents"
     }
-  },
-  "projects": {
-    "recent": "Dự án gần đây",
-    "new": "Dự án mới",
-    "openFolder": "Mở thư mục",
-    "lastEdited": "Chỉnh sửa lần cuối",
-    "templates": "Mẫu dự án",
-    "starterKits": "Bộ khởi đầu"
   },
   "portal": {
     "ideWorkspace": "Không gian làm việc IDE",
@@ -997,44 +1104,8 @@
     "knowledgeHub": "Trung tâm Tổng hợp Kiến thức",
     "knowledgeHubDesc": "Bảng vẽ kiến thức trực quan và tổng hợp AI",
     "settings": "Cài đặt",
-    "settingsDesc": "Tùy chọn, ngôn ngữ, chủ đề, phím tắt"
+    "settingsDesc": "Tùy chọn, ngôn ngữ, chủ đề, lối tắt"
   },
-  "breadcrumbs": {
-    "home": "Trang chủ",
-    "projects": "Dự án",
-    "workspace": "Không gian làm việc",
-    "navigateTo": "Điều hướng đến",
-    "back": "Quay lại",
-    "forward": "Tiến tới"
-  },
-  "breadcrumbs.home": "__STRING_NOT_TRANSLATED__",
-  "breadcrumbs.projects": "__STRING_NOT_TRANSLATED__",
-  "breadcrumbs.workspace": "__STRING_NOT_TRANSLATED__",
-  "projects.recent": "__STRING_NOT_TRANSLATED__",
-  "projects.new": "__STRING_NOT_TRANSLATED__",
-  "projects.lastEdited": "__STRING_NOT_TRANSLATED__",
-  "projects.openFolder": "__STRING_NOT_TRANSLATED__",
-  "home": "__STRING_NOT_TRANSLATED__",
-  "ide": "__STRING_NOT_TRANSLATED__",
-  "knowledge": "__STRING_NOT_TRANSLATED__",
-  "settings": "__STRING_NOT_TRANSLATED__",
-  "sidebar.toggle": "__STRING_NOT_TRANSLATED__",
-  "navigateTo": "__STRING_NOT_TRANSLATED__",
-  "bentoCardPreview.quickStart": "__STRING_NOT_TRANSLATED__",
-  "bentoCard.ariaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.searchPlaceholder": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.searchAriaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicFilterAriaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.allTopics": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicFilter": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.gridAriaLabel": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.noResults": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.tryDifferentSearch": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicGettingStarted": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicAIAgent": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicTerminal": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.topicSettings": "__STRING_NOT_TRANSLATED__",
-  "bentoGrid.title": "__STRING_NOT_TRANSLATED__",
   "autoApprove": {
     "title": "Tự động phê duyệt",
     "toggle": "Bật/tắt tự động phê duyệt",
@@ -1050,5 +1121,74 @@
     "subtasks": "Tác vụ con",
     "enableAll": "Bật tất cả",
     "disableAll": "Tắt tất cả"
-  }
+  },
+  "agents.config.openaiCompatible.modelsLoaded_0": "Found {{count}} models",
+  "providers.edit": "Edit Provider",
+  "providers.add": "Add Provider",
+  "providers.description": "Configure your AI provider settings.",
+  "providers.name": "Provider Name",
+  "providers.type": "Provider Type",
+  "providers.baseURL": "Base URL (Optional)",
+  "providers.defaultModel": "Default Model (Optional)",
+  "providers.apiKey": "API Key",
+  "providers.apiKeyPlaceholderEdit": "Leave blank to keep existing",
+  "common.cancel": "Cancel",
+  "common.saving": "Saving...",
+  "providers.save": "Save Provider",
+  "autoApprove.none": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.toggle": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.title": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.description": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.enableAll": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.disableAll": "__STRING_NOT_TRANSLATED__",
+  "chat.codeBlock.lines_0": " lines",
+  "chat.diff.linesHidden_0": " lines hidden",
+  "errors.generic.unexpected.title": "Unexpected Error",
+  "errors.generic.unexpected.description": "We encountered an unexpected error. Our team has been notified.",
+  "errors.actions.showDetails": "Show Details",
+  "errors.actions.retry": "Try Again",
+  "errors.actions.reload": "Reload Page",
+  "hub.portals.ideWorkspace": "IDE Workspace",
+  "hub.portals.ideWorkspaceDesc": "Open your projects in the full IDE",
+  "hub.portals.agentCenter": "Agent Center",
+  "hub.portals.agentCenterDesc": "Configure and manage AI agents",
+  "hub.portals.knowledgeHub": "Knowledge Hub",
+  "hub.portals.knowledgeHubDesc": "Your knowledge synthesis station",
+  "hub.portals.settings": "Settings",
+  "hub.portals.settingsDesc": "Configure your workspace preferences",
+  "hub.exploreViaGent": "Explore Via-gent",
+  "projects.recent": "__STRING_NOT_TRANSLATED__",
+  "projects.openFolder": "__STRING_NOT_TRANSLATED__",
+  "projects.lastEdited": "__STRING_NOT_TRANSLATED__",
+  "projects.needsAccess": "Needs Access",
+  "mobile.desktopRequired": "Desktop Browser Required",
+  "mobile.desktopRequiredDesc": "Full IDE features including folder access and Node.js require a desktop browser (Chrome, Edge, or Safari).",
+  "mobile.mobileOptions": "Mobile Options",
+  "mobile.comingSoon": "Zip upload & offline mode coming soon",
+  "navigateTo": "__STRING_NOT_TRANSLATED__",
+  "errors.fs.notSupported.description": "__STRING_NOT_TRANSLATED__",
+  "errors.fs.notSupported.mobileHint": "__STRING_NOT_TRANSLATED__",
+  "errors.agent.toolExecutionFailed.description": "Agent tool execution failed. Please try again.",
+  "bentoCardPreview.quickStart": "__STRING_NOT_TRANSLATED__",
+  "bentoCard.ariaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchPlaceholder": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilterAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.allTopics": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilter": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.gridAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.noResults": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.tryDifferentSearch": "__STRING_NOT_TRANSLATED__",
+  "errors.sync.retry.description": "__STRING_NOT_TRANSLATED__",
+  "time.agoSeconds_0": "__STRING_NOT_TRANSLATED__",
+  "time.agoMinutes_0": "__STRING_NOT_TRANSLATED__",
+  "time.agoHours_0": "__STRING_NOT_TRANSLATED__",
+  "sidebar.home": "__STRING_NOT_TRANSLATED__",
+  "sidebar.projects": "__STRING_NOT_TRANSLATED__",
+  "errors.actions.dismiss": "Dismiss",
+  "errors.actions.home": "Go Home",
+  "projects.title": "Projects",
+  "projects.subtitle": "Open a local folder to start coding",
+  "projects.emptyTitle": "No Projects Yet",
+  "projects.emptySubtitle": "Open a folder to start your first project"
 }

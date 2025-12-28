@@ -87,7 +87,7 @@ export function ErrorState({
 }: ErrorStateProps) {
     const { t } = useTranslation()
     
-    const errorTitle = title || t('error.title', 'Something went wrong')
+    const errorTitle = title || t('errors.generic.unexpected.title', 'Unexpected Error')
     const isDev = import.meta.env.DEV
     
     // Get action icon based on action type
@@ -110,13 +110,13 @@ export function ErrorState({
     const getActionLabel = () => {
         switch (action) {
             case 'retry':
-                return t('error.action.retry', 'Retry')
+                return t('errors.actions.retry', 'Try Again')
             case 'reload':
-                return t('error.action.reload', 'Reload')
+                return t('errors.actions.reload', 'Reload Page')
             case 'dismiss':
-                return t('error.action.dismiss', 'Dismiss')
+                return t('errors.actions.dismiss', 'Dismiss')
             case 'home':
-                return t('error.action.home', 'Go Home')
+                return t('errors.actions.home', 'Go Home')
             default:
                 return ''
         }
@@ -152,7 +152,7 @@ export function ErrorState({
             {isDev && showDetails && (
                 <details className="mt-4 text-xs opacity-70">
                     <summary className="cursor-pointer hover:opacity-100 transition-opacity">
-                        {t('error.showDetails', 'Show technical details')}
+                        {t('errors.actions.showDetails', 'Show technical details')}
                     </summary>
                     <pre className="mt-2 overflow-auto rounded bg-black/20 p-2">
                         {error}

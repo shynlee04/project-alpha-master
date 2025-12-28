@@ -52,7 +52,33 @@
   "errors": {
     "loadProjects": "Failed to load projects",
     "permissionDenied": "Permission denied",
-    "generic": "An error occurred",
+    "generic": {
+      "title": "Something Went Wrong",
+      "unexpected": {
+        "title": "Unexpected Error",
+        "description": "We encountered an unexpected error. Our team has been notified.",
+        "action": "Try Again",
+        "mobileHint": "If this keeps happening, please contact support"
+      },
+      "critical": {
+        "title": "Critical Error",
+        "description": "A serious error occurred. The app needs to restart.",
+        "action": "Reload App",
+        "mobileHint": "Your unsaved changes may be lost"
+      },
+      "loading": {
+        "title": "Loading Issue",
+        "description": "We're having trouble loading this content. Please wait...",
+        "action": "Refresh",
+        "mobileHint": "Check your internet connection"
+      },
+      "validation": {
+        "title": "Invalid Input",
+        "description": "Please check your input and try again.",
+        "action": "Fix Input",
+        "mobileHint": "Make sure all required fields are filled correctly"
+      }
+    },
     "accessDenied": "Access denied",
     "fsNotSupported": "File System Access API not supported",
     "openFolder": "Failed to open folder",
@@ -254,33 +280,6 @@
         "mobileHint": "Your work should be saved automatically"
       }
     },
-    "generic": {
-      "title": "Something Went Wrong",
-      "unexpected": {
-        "title": "Unexpected Error",
-        "description": "We encountered an unexpected error. Our team has been notified.",
-        "action": "Try Again",
-        "mobileHint": "If this keeps happening, please contact support"
-      },
-      "critical": {
-        "title": "Critical Error",
-        "description": "A serious error occurred. The app needs to restart.",
-        "action": "Reload App",
-        "mobileHint": "Your unsaved changes may be lost"
-      },
-      "loading": {
-        "title": "Loading Issue",
-        "description": "We're having trouble loading this content. Please wait...",
-        "action": "Refresh",
-        "mobileHint": "Check your internet connection"
-      },
-      "validation": {
-        "title": "Invalid Input",
-        "description": "Please check your input and try again.",
-        "action": "Fix Input",
-        "mobileHint": "Make sure all required fields are filled correctly"
-      }
-    },
     "actions": {
       "retry": "Try Again",
       "refresh": "Refresh",
@@ -367,33 +366,31 @@
     "key_missing": "API Key missing for {{provider}}. Please configure it in Agents panel."
   },
   "hub": {
-    "portals": {
-      "ideWorkspace": "IDE Workspace",
-      "ideWorkspaceDesc": "Open your projects in full IDE",
-      "agentCenter": "Agent Center",
-      "agentCenterDesc": "Configure and manage AI agents",
-      "knowledgeHub": "Knowledge Hub",
-      "knowledgeHubDesc": "Your knowledge synthesis station",
-      "settings": "Settings",
-      "settingsDesc": "Configure your workspace preferences"
-    },
-    "exploreViaGent": "Explore Via-gent"
+    "home": "Home",
+    "ide": "IDE Workspace",
+    "agents": "Agent Management",
+    "knowledge": "Knowledge Hub",
+    "settings": "Settings",
+    "sidebar": {
+      "toggle": "Toggle Sidebar",
+      "expand": "Expand Sidebar",
+      "collapse": "Collapse Sidebar"
+    }
   },
   "projects": {
-    "title": "Projects",
-    "subtitle": "Open a local folder to start coding",
     "recent": "Recent Projects",
+    "new": "New Project",
     "openFolder": "Open Folder",
     "lastEdited": "Last edited",
-    "lastOpened": "Last opened",
-    "needsAccess": "Needs Access",
-    "emptyTitle": "No Projects Yet",
-    "emptySubtitle": "Open a folder to start your first project"
+    "templates": "Project Templates",
+    "starterKits": "Starter Kits"
   },
   "breadcrumbs": {
     "home": "Home",
     "projects": "Projects",
-    "workspace": "Workspace"
+    "workspace": "Workspace",
+    "navigateTo": "Navigate to",
+    "forward": "Forward"
   },
   "onboarding": {
     "launch": "Launch Interactive Tour",
@@ -1072,18 +1069,6 @@
   "error.dismiss": "Dismiss",
   "error.goHome": "Go Home",
   "error.action": "Action",
-  "hub": {
-    "home": "Home",
-    "ide": "IDE Workspace",
-    "agents": "Agent Management",
-    "knowledge": "Knowledge Hub",
-    "settings": "Settings",
-    "sidebar": {
-      "toggle": "Toggle Sidebar",
-      "expand": "Expand Sidebar",
-      "collapse": "Collapse Sidebar"
-    }
-  },
   "topic": {
     "aiPoweredDev": {
       "title": "AI-Powered Development",
@@ -1111,14 +1096,6 @@
       "action": "Configure Agents"
     }
   },
-  "projects": {
-    "recent": "Recent Projects",
-    "new": "New Project",
-    "openFolder": "Open Folder",
-    "lastEdited": "Last edited",
-    "templates": "Project Templates",
-    "starterKits": "Starter Kits"
-  },
   "portal": {
     "ideWorkspace": "IDE Workspace",
     "ideWorkspaceDesc": "Full IDE with editor, terminal, and file tree",
@@ -1128,13 +1105,6 @@
     "knowledgeHubDesc": "Visual knowledge canvas and AI synthesis",
     "settings": "Settings",
     "settingsDesc": "Preferences, language, theme, shortcuts"
-  },
-  "breadcrumbs": {
-    "home": "Home",
-    "projects": "Projects",
-    "workspace": "Workspace",
-    "navigateTo": "Navigate to",
-    "forward": "Forward"
   },
   "autoApprove": {
     "title": "Auto-approve",
@@ -1151,5 +1121,68 @@
     "subtasks": "Subtasks",
     "enableAll": "Enable All",
     "disableAll": "Disable All"
-  }
+  },
+  "providers.edit": "Edit Provider",
+  "providers.add": "Add Provider",
+  "providers.description": "Configure your AI provider settings.",
+  "providers.name": "Provider Name",
+  "providers.type": "Provider Type",
+  "providers.baseURL": "Base URL (Optional)",
+  "providers.defaultModel": "Default Model (Optional)",
+  "providers.apiKey": "API Key",
+  "providers.apiKeyPlaceholderEdit": "Leave blank to keep existing",
+  "common.cancel": "Cancel",
+  "common.saving": "Saving...",
+  "providers.save": "Save Provider",
+  "autoApprove.none": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.toggle": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.title": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.description": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.enableAll": "__STRING_NOT_TRANSLATED__",
+  "autoApprove.disableAll": "__STRING_NOT_TRANSLATED__",
+  "errors.generic.unexpected.title": "Unexpected Error",
+  "errors.generic.unexpected.description": "We encountered an unexpected error. Our team has been notified.",
+  "errors.actions.showDetails": "Show Details",
+  "errors.actions.retry": "Try Again",
+  "errors.actions.reload": "Reload Page",
+  "hub.portals.ideWorkspace": "IDE Workspace",
+  "hub.portals.ideWorkspaceDesc": "Open your projects in the full IDE",
+  "hub.portals.agentCenter": "Agent Center",
+  "hub.portals.agentCenterDesc": "Configure and manage AI agents",
+  "hub.portals.knowledgeHub": "Knowledge Hub",
+  "hub.portals.knowledgeHubDesc": "Your knowledge synthesis station",
+  "hub.portals.settings": "Settings",
+  "hub.portals.settingsDesc": "Configure your workspace preferences",
+  "hub.exploreViaGent": "Explore Via-gent",
+  "projects.recent": "__STRING_NOT_TRANSLATED__",
+  "projects.openFolder": "__STRING_NOT_TRANSLATED__",
+  "projects.lastEdited": "__STRING_NOT_TRANSLATED__",
+  "projects.needsAccess": "Needs Access",
+  "mobile.desktopRequired": "Desktop Browser Required",
+  "mobile.desktopRequiredDesc": "Full IDE features including folder access and Node.js require a desktop browser (Chrome, Edge, or Safari).",
+  "mobile.mobileOptions": "Mobile Options",
+  "mobile.comingSoon": "Zip upload & offline mode coming soon",
+  "navigateTo": "__STRING_NOT_TRANSLATED__",
+  "errors.fs.notSupported.description": "__STRING_NOT_TRANSLATED__",
+  "errors.fs.notSupported.mobileHint": "__STRING_NOT_TRANSLATED__",
+  "errors.agent.toolExecutionFailed.description": "Agent tool execution failed. Please try again.",
+  "bentoCardPreview.quickStart": "__STRING_NOT_TRANSLATED__",
+  "bentoCard.ariaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchPlaceholder": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.searchAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilterAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.allTopics": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.topicFilter": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.gridAriaLabel": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.noResults": "__STRING_NOT_TRANSLATED__",
+  "bentoGrid.tryDifferentSearch": "__STRING_NOT_TRANSLATED__",
+  "errors.sync.retry.description": "__STRING_NOT_TRANSLATED__",
+  "sidebar.home": "__STRING_NOT_TRANSLATED__",
+  "sidebar.projects": "__STRING_NOT_TRANSLATED__",
+  "errors.actions.dismiss": "Dismiss",
+  "errors.actions.home": "Go Home",
+  "projects.title": "Projects",
+  "projects.subtitle": "Open a local folder to start coding",
+  "projects.emptyTitle": "No Projects Yet",
+  "projects.emptySubtitle": "Open a folder to start your first project"
 }

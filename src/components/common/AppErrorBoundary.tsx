@@ -46,17 +46,17 @@ function ErrorFallback({ error, resetError }: FallbackProps) {
 
                 {/* Error message */}
                 <h2 className="text-xl font-semibold text-foreground mb-2">
-                    {t('error.something_went_wrong', 'Something went wrong')}
+                    {t('errors.generic.unexpected.title', 'Unexpected Error')}
                 </h2>
                 <p className="text-muted-foreground mb-4">
-                    {t('error.unexpected_error_description', "We're sorry, but an unexpected error has occurred.")}
+                    {t('errors.generic.unexpected.description', 'We encountered an unexpected error. Our team has been notified.')}
                 </p>
 
                 {/* Error details (development only) */}
                 {import.meta.env.DEV && (
                     <details className="mb-4 text-left">
                         <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
-                            {t('error.technical_details', 'Technical Details')}
+                            {t('errors.actions.showDetails', 'Show Details')}
                         </summary>
                         <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto max-h-32">
                             {error.message}
@@ -70,13 +70,13 @@ function ErrorFallback({ error, resetError }: FallbackProps) {
                         onClick={resetError}
                         className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
                     >
-                        {t('error.try_again', 'Try Again')}
+                        {t('errors.actions.retry', 'Try Again')}
                     </button>
                     <button
                         onClick={() => window.location.reload()}
                         className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
                     >
-                        {t('error.reload_page', 'Reload Page')}
+                        {t('errors.actions.reload', 'Reload Page')}
                     </button>
                 </div>
             </div>

@@ -111,7 +111,7 @@ export function SyncStatusIndicator({
         <button
           onClick={onRetry}
           className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
-          title={errorMessage || t('errors.syncRetry')}
+          title={errorMessage || t('errors.sync.retry.description')}
         >
           <AlertTriangle className="w-3 h-3" />
           <span>{t('status.error')}</span>

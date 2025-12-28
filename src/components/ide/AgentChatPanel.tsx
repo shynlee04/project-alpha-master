@@ -519,11 +519,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     await localAdapterRef.current.writeFile(path, code);
                     toast.success(t('chat.codeBlock.saved', 'File saved successfully'));
                 } else {
-                    toast.error(t('errors.fsNotSupported', 'File System access not available'));
+                    toast.error(t('errors.fs.notSupported.description'), t('errors.fs.notSupported.mobileHint'));
                 }
             } catch (err) {
                 console.error('Failed to save artifact:', err);
-                toast.error(t('errors.generic', 'Failed to save file'));
+                toast.error(t('errors.generic.unexpected.description'), t('errors.actions.retry'));
             }
         }
     }, [localAdapterRef, t]);
@@ -619,7 +619,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 <div className="px-4 py-2 bg-destructive/10 border-b border-destructive/30 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-destructive" />
                     <span className="text-xs text-destructive">
-                        {error.message || t('agent.error_generic', 'An error occurred')}
+                        {error.message || t('errors.agent.toolExecutionFailed.description', 'Agent tool execution failed. Please try again.')}
                     </span>
                 </div>
             )}
