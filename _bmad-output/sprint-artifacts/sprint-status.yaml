@@ -41,8 +41,8 @@ development_status:
   # 2-0 moved to Sprint 0
   2-1-zustand-dexie-state-migration: done
   2-2-agent-crud-operations: done
-  2-3-streaming-chat-tool-approval: review
-  2-4-conversation-persistence: backlog
+  2-3-streaming-chat-tool-approval: done
+  2-4-conversation-persistence: ready-for-dev
   epic-2-retrospective: optional
 
   # EPIC 3: Local-First File Magic (Days 8-10)

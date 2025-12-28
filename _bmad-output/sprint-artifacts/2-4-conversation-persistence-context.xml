@@ -1,0 +1,48 @@
+<context story="2-4-conversation-persistence" created="2025-12-29T00:35:00+07:00">
+  <files>
+    <file path="src/lib/state/conversation-store.ts">
+      <description>Current Zustand store for conversation state with Dexie persistence middleware</description>
+    </file>
+    <file path="src/components/ide/AgentChatPanel.tsx">
+      <description>Chat UI component that currently handles persistence manually via saveThread()</description>
+    </file>
+    <file path="src/lib/workspace/threads-store.ts">
+      <description>Direct Dexie access for saving threads (need to check if this conflicts)</description>
+    </file>
+  </files>
+  
+  <research_notes>
+    <finding source="codebase" query="persistence pattern">
+      Current pattern involves dual-persistence:
+      1. useConversationStore uses 'conversation-state' key in Dexie key-value store.
+      2. AgentChatPanel calls saveThread() which writes to 'conversations' table.
+      
+      Goal: Unify or clearly separate. 
+      - Store = Active Session (hot)
+      - Threads Table = Long-term History (cold)
+    </finding>
+    <finding source="codebase" query="scroll restoration">
+      AgentChatPanel has 'scrollPosition' in metadata but logic to apply it to the DOM (virtuoso or scrollable div) is missing.
+    </finding>
+  </research_notes>
+  
+  <architecture_patterns>
+    <pattern name="Unified Store Pattern" source="architecture.md">
+      "User Edit → Zustand Action → Optimistic UI Update → Background Persist"
+      This implies logic should move OUT of AgentChatPanel and INTO the store.
+    </pattern>
+    <pattern name="Session Restoration" source="architecture.md">
+      Restore: Open files, Active file, Cursor position, Chat history, Panel widths.
+    </pattern>
+  </architecture_patterns>
+  
+  <technical_notes>
+    <note priority="high">
+      Dependency: AgentChatPanel.tsx currently holds 'initialHistory' and 'currentSessionMessages' separately. 
+      Refactor Target: Move all message aggregation logic into useConversationStore selectors.
+    </note>
+    <note priority="medium">
+      Challenge: deduplicating messages when rehydrating from store + hydration from 'saveThread' load.
+    </note>
+  </technical_notes>
+</context>

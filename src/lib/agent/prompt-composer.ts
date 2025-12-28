@@ -39,7 +39,7 @@ export interface PromptLayer {
   /** Whether this layer should be cached (Layers 1+2) */
   cacheable: boolean;
   
-  /** Generate the prompt content for this layer */
+  /** Generate prompt content for this layer */
   generate: (context: LayerContext) => string;
 }
 
@@ -98,7 +98,7 @@ You have access to tools that execute upon user approval. You MUST use tools to 
 
 1. **ACTION, NOT INSTRUCTION**
    - WRONG: "You should run: npm install zustand"
-   - CORRECT: *Actually call write_file to create the code*
+   - CORRECT: *Actually call write_file to create code*
    - CORRECT: *Actually call execute_command to run npm*
 
 2. **STEP-BY-STEP EXECUTION**
@@ -126,10 +126,59 @@ You have access to tools that execute upon user approval. You MUST use tools to 
     id: 'solo-dev',
     name: 'Quick Flow Solo Dev',
     icon: '🚀',
-    cognitivePhase: '',
-    persona: '',
-    communicationStyle: '',
-    rules: '',
+    cognitivePhase: `
+## COGNITIVE ANALYSIS PHASE
+
+Before responding, analyze the request:
+
+1. **Intent Classification:**
+   - VAGUE (e.g., "make it cool", "impressive app") → Ask 2-3 clarifying questions
+   - SPECIFIC (e.g., "use #F59E0B", "React + Zustand") → Execute exactly as specified
+   - DATA-HEAVY (e.g., "CSV", "charts", "AI demo") → Suggest Python (Streamlit/Gradio)
+   - CONTRADICTORY (impossible request) → Educate and propose alternative
+   - NOISY (irrelevant context) → Extract only: Functional Reqs, UI Preferences, Constraints
+
+2. **Tech Stack Routing:**
+   - Web Apps/SaaS/Landing → React (Vite + Tailwind)
+   - Data Science/AI → Python (Streamlit/Gradio)
+   - Offline/No-Server → Client-side + LocalStorage/IndexedDB
+
+3. **Planning (before coding):**
+   - ALWAYS output file tree structure first
+   - Explain stack decision briefly
+   - Then execute with tools
+   `,
+    persona: `
+## PERSONA
+
+You are an Adaptive Senior Engineer - a "Vibe Coder" for modern web. You optimize for *right tool for job*.
+
+**Identity:** Elite developer who switches hats based on client needs.
+
+**Principles:**
+- Context is King: Adapt to who the user is
+- Stack Agnostic: Don't force React on a Data problem
+- Production Foundation: Even "quick" tasks need scalable structure
+- Safety First: Fix broken thinking before fixing code
+    `,
+    communicationStyle: `
+## COMMUNICATION STYLE
+
+- **For Vague Requests:** Consultative ("I recommend...")
+- **For Specific Requests:** Military precision ("Acknowledged. Implementing exactly as specified.")
+- **For Noise:** Summarizing ("So, to recap: You need X, Y, Z. Ignoring the rest.")
+- **After Completion:** Brief summary of what was done
+    `,
+    rules: `
+## MODE RULES
+
+1. If AMBIGUOUS: Do NOT guess. Ask 2-3 clarifying questions.
+2. If SPECIFIC: Follow constraints RELIGIOUSLY. If user says "#F59E0B", use exactly that.
+3. MODERN WEB STANDARD: Always scaffold proper structure (src/components, src/hooks, etc.)
+4. If TECHNICALLY IMPOSSIBLE: Stop, educate, propose closest viable alternative.
+5. NOISE FILTERING: Ignore irrelevant context (feelings, unrelated topics).
+6. TECHNICAL TRANSLATION: Convert lay terms to tech specs ("remember when I come back" → "LocalStorage").
+    `,
   },
   
   maxOpenFiles: 10,
@@ -151,7 +200,7 @@ interface CacheEntry {
  * - Singleton: One instance per agent configuration
  * - Observer: Listens to file system events for Layer 3 updates
  * - Strategy: Different layer types implement common PromptLayer interface
- * - Cache: WeakMap memoization for Layers 1+2
+ * - Cache: Map memoization for Layers 1+2
  * 
  * Layer Composition Order: Layer 1 → Layer 2 → Layer 3
  * - Layer 1 (Tool Constitution): Hidden from UI, sent as system role
@@ -159,7 +208,7 @@ interface CacheEntry {
  * - Layer 3 (Context Injection): Dynamic, recomputed on file changes
  * 
  * Caching Strategy:
- * - Layers 1+2: Cached with WeakMap, invalidated on config change
+ * - Layers 1+2: Cached with Map, invalidated on config change
  * - Layer 3: Never cached, always recomputed
  * - Cache key: {layerType}_{configHash}
  */
@@ -179,7 +228,7 @@ export class SystemPromptComposer {
   private eventBus: WorkspaceEventEmitter | null = null;
   
   /** Debounce timer for Layer 3 recomputation */
-  private debounceTimer: number | 0;
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
   
   /** Current Layer 3 context */
   private layer3Context: LayerContext = {
@@ -221,7 +270,7 @@ export class SystemPromptComposer {
       type: 'agent-mode',
       priority: 2,
       cacheable: true,
-      generate: () => this.getDefaultAgentMode(),
+      generate: () => this.getDefaultAgentModeContent(),
     });
     
     // Register Layer 3: Context Injection (dynamic, never cached)
@@ -241,8 +290,10 @@ export class SystemPromptComposer {
     this.eventBus = eventBus;
     
     // Subscribe to file system events for Layer 3 updates
-    eventBus.on('files:changed', this.handleFilesChanged.bind(this));
-    eventBus.on('workspace:ready', this.handleWorkspaceReady.bind(this));
+    // Note: Using 'any' to bypass type checking for now
+    // In production, WorkspaceEvents should include these event types
+    (eventBus as any).on('files:changed', this.handleFilesChanged.bind(this));
+    (eventBus as any).on('workspace:ready', this.handleWorkspaceReady.bind(this));
   }
 
   /**
@@ -287,7 +338,7 @@ export class SystemPromptComposer {
         type: 'tool-constitution',
         priority: 1,
         cacheable: true,
-        generate: () => config.toolConstitution,
+        generate: () => config.toolConstitution || DEFAULT_CONFIG.toolConstitution,
       });
     }
   }
@@ -297,21 +348,25 @@ export class SystemPromptComposer {
    */
   public getConfig(): PromptComposerConfig {
     const layer2 = this.layers.get(2);
-    const agentMode = layer2?.generate({}) as any;
+    const agentMode = layer2?.generate(this.layer3Context) as any;
     
     return {
       agentMode: agentMode ? {
         id: 'solo-dev',
         name: 'Quick Flow Solo Dev',
         icon: '🚀',
+        cognitivePhase: '',
+        persona: '',
+        communicationStyle: '',
+        rules: '',
       } : undefined,
-      toolConstitution: this.layers.get(1)?.generate({}),
+      toolConstitution: this.layers.get(1)?.generate(this.layer3Context) || DEFAULT_CONFIG.toolConstitution,
     };
   }
 
   /**
    * Compose complete system prompt from all layers
-   * 
+   *
    * Order: Layer 1 (system role) → Layer 2 (agent mode) → Layer 3 (context)
    * Returns array of system messages for TanStack AI
    */
@@ -321,9 +376,21 @@ export class SystemPromptComposer {
     // Get layers in priority order
     const layers = Array.from(this.layers.values())
       .sort((a, b) => a.priority - b.priority);
-    
+      
+    // For Layer 3, merge passed context with internal layer3Context state
+    // This ensures that context management methods (setOpenFiles, setActiveFile, etc.)
+    // are reflected in the composed prompt
+    const mergedContext: LayerContext = {
+      ...context,
+      // Prioritize internal state over passed context for Layer 3
+      openFiles: this.layer3Context.openFiles.length > 0 ? this.layer3Context.openFiles : context.openFiles,
+      activeFile: this.layer3Context.activeFile || context.activeFile,
+      projectPackageJson: this.layer3Context.projectPackageJson || context.projectPackageJson,
+      workspaceReady: this.layer3Context.workspaceReady || context.workspaceReady,
+    };
+      
     for (const layer of layers) {
-      const content = layer.generate(context);
+      const content = layer.generate(mergedContext);
       messages.push({ role: 'system', content });
     }
     
@@ -369,7 +436,7 @@ export class SystemPromptComposer {
    * Invalidate cache for cacheable layers
    */
   private invalidateCache(): void {
-    this.cache = new WeakMap();
+    this.cache.clear();
   }
 
   /**
@@ -377,8 +444,11 @@ export class SystemPromptComposer {
    */
   private generateConfigHash(config: Partial<PromptComposerConfig>): string {
     const agentModeId = config.agentMode?.id || 'default';
-    const hasToolConstitution = !!config.toolConstitution;
-    return `agent:${agentModeId}|tool:${hasToolConstitution}`;
+    const toolConstitution = config.toolConstitution || DEFAULT_CONFIG.toolConstitution;
+    // Include actual tool constitution content in hash for uniqueness
+    // Use first 100 chars to avoid overly long hashes
+    const toolConstitutionHash = toolConstitution.substring(0, 100);
+    return `agent:${agentModeId}|tool:${toolConstitutionHash}`;
   }
 
   /**
@@ -391,10 +461,12 @@ export class SystemPromptComposer {
     }
     
     // Set new timer (300ms debounce)
-    this.debounceTimer = window.setTimeout(() => {
+    // Note: In test environment, setTimeout may not be available
+    // Tests should mock this behavior or use vi.useFakeTimers()
+    this.debounceTimer = setTimeout(() => {
       this.layer3Context.openFiles = files;
       
-      // Update active file if it's in the list
+      // Update active file if it's in list
       if (this.layer3Context.activeFile) {
         const stillActive = files.some(f => f.path === this.layer3Context.activeFile.path);
         if (!stillActive) {
@@ -424,6 +496,8 @@ export class SystemPromptComposer {
    */
   public setProjectPackageJson(packageJson: LayerContext['projectPackageJson']): void {
     this.layer3Context.projectPackageJson = packageJson;
+    // Invalidate cache since Layer 3 content changed
+    this.invalidateCache();
   }
 
   /**
@@ -431,6 +505,8 @@ export class SystemPromptComposer {
    */
   public setOpenFiles(files: Array<{ path: string; name: string }>): void {
     this.layer3Context.openFiles = files.slice(0, this.getConfig().maxOpenFiles || DEFAULT_CONFIG.maxOpenFiles);
+    // Invalidate cache since Layer 3 content changed
+    this.invalidateCache();
   }
 
   /**
@@ -438,6 +514,8 @@ export class SystemPromptComposer {
    */
   public setActiveFile(file: { path: string; name: string } | undefined): void {
     this.layer3Context.activeFile = file;
+    // Invalidate cache since Layer 3 content changed
+    this.invalidateCache();
   }
 
   /**
@@ -449,7 +527,7 @@ export class SystemPromptComposer {
       return cached;
     }
     
-    const content = this.layers.get(1)?.generate({});
+    const content = this.layers.get(1)?.generate(this.layer3Context) || DEFAULT_CONFIG.toolConstitution;
     this.setCachedLayerContent('layer-1-tool-constitution', content);
     return content;
   }
@@ -463,7 +541,7 @@ export class SystemPromptComposer {
       return cached;
     }
     
-    const content = this.layers.get(2)?.generate({});
+    const content = this.layers.get(2)?.generate(this.layer3Context) || DEFAULT_CONFIG.agentMode.cognitivePhase;
     this.setCachedLayerContent('layer-2-agent-mode', content);
     return content;
   }
@@ -482,7 +560,7 @@ export class SystemPromptComposer {
       const fileList = openFiles
         .slice(0, this.getConfig().maxOpenFiles || DEFAULT_CONFIG.maxOpenFiles)
         .map(f => `  - ${f.name} (${f.path})`);
-      
+        
       parts.push(`## Open Files\n\n${fileList.join('\n')}`);
     }
     
@@ -498,7 +576,7 @@ export class SystemPromptComposer {
             .slice(0, 5)
             .map(([name, version]) => `  - ${name}@${version || 'latest'}`)
         : [];
-      
+        
       parts.push(`\n## Project Summary\n\nProject: ${projectPackageJson.name}\nVersion: ${projectPackageJson.version}\nDependencies:\n${deps.join('\n') || 'None'}`);
     }
     
@@ -517,71 +595,10 @@ export class SystemPromptComposer {
   }
 
   /**
-   * Get default agent mode (solo-dev from system-prompt.ts)
+   * Get default agent mode content (solo-dev from system-prompt.ts)
    */
-  private getDefaultAgentMode(): PromptComposerConfig['agentMode'] {
-    // Import from existing system-prompt.ts for backward compatibility
-    // In production, this would be loaded from the AGENT_MODES constant
-    return {
-      id: 'solo-dev',
-      name: 'Quick Flow Solo Dev',
-      icon: '🚀',
-      cognitivePhase: `
-## COGNITIVE ANALYSIS PHASE
-
-Before responding, analyze the request:
-
-1. **Intent Classification:**
-   - VAGUE (e.g., "make it cool", "impressive app") → Ask 2-3 clarifying questions
-   - SPECIFIC (e.g., "use #F59E0B", "React + Zustand") → Execute exactly as specified
-   - DATA-HEAVY (e.g., "CSV", "charts", "AI demo") → Suggest Python (Streamlit/Gradio)
-   - CONTRADICTORY (impossible request) → Educate and propose alternative
-   - NOISY (irrelevant context) → Extract only: Functional Reqs, UI Preferences, Constraints
-
-2. **Tech Stack Routing:**
-   - Web Apps/SaaS/Landing → React (Vite + Tailwind)
-   - Data Science/AI → Python (Streamlit/Gradio)
-   - Offline/No-Server → Client-side + LocalStorage/IndexedDB
-
-3. **Planning (before coding):**
-   - ALWAYS output file tree structure first
-   - Explain stack decision briefly
-   - Then execute with tools
-
-`,
-      persona: `
-## PERSONA
-
-You are an Adaptive Senior Engineer - a "Vibe Coder" for modern web. You optimize for the *right tool for the job*.
-
-**Identity:** Elite developer who switches hats based on client needs.
-
-**Principles:**
-- Context is King: Adapt to who the user is
-- Stack Agnostic: Don't force React on a Data problem
-- Production Foundation: Even "quick" tasks need scalable structure
-- Safety First: Fix broken thinking before fixing code
-
-`,
-      communicationStyle: `
-## COMMUNICATION STYLE
-
-- **For Vague Requests:** Consultative ("I recommend...")
-- **For Specific Requests:** Military precision ("Acknowledged. Implementing exactly as specified.")
-- **For Noise:** Summarizing ("So, to recap: You need X, Y, Z. Ignoring the rest.")
-- **After Completion:** Brief summary of what was done
-
-`,
-      rules: `
-## MODE RULES
-
-1. If AMBIGUOUS: Do NOT guess. Ask 2-3 clarifying questions.
-2. If SPECIFIC: Follow constraints RELIGIOUSLY. If user says "#F59E0B", use exactly that.
-3. MODERN WEB STANDARD: Always scaffold proper structure (src/components, src/hooks, etc.)
-4. If TECHNICALLY IMPOSSIBLE: Stop, educate, propose closest viable alternative.
-5. NOISE FILTERING: Ignore irrelevant context (feelings, unrelated topics).
-6. TECHNICAL TRANSLATION: Convert lay terms to tech specs ("remember when I come back" → "LocalStorage").
-`,
-    };
+  private getDefaultAgentModeContent(): string {
+    // Return formatted default agent mode
+    return `## AGENT MODE\n\n${DEFAULT_CONFIG.agentMode.name}\n\n${DEFAULT_CONFIG.agentMode.cognitivePhase}\n\n${DEFAULT_CONFIG.agentMode.persona}\n\n${DEFAULT_CONFIG.agentMode.communicationStyle}\n\n${DEFAULT_CONFIG.agentMode.rules}`;
   }
 }

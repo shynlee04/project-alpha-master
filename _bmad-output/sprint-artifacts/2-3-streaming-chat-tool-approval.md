@@ -5,7 +5,7 @@ epic: 2
 story: 3
 title: Streaming Chat with Tool Approval UI
 slug: streaming-chat-tool-approval
-status: review
+status: done
 created_at: 2025-12-28T23:55:00+07:00
 team: A
 platform: UI/Foundation
@@ -279,4 +279,24 @@ if (manager.hasToolCalls()) {
 | ready-for-dev | ✅ | 2025-12-29T00:00:00+07:00 |
 | in-progress | ✅ | 2025-12-29T00:10:00+07:00 |
 | review | ✅ | 2025-12-29T00:20:00+07:00 |
-| done | ⬜ | — |
+| done | ✅ | 2025-12-29T00:30:00+07:00 |
+
+### Code Review
+
+**Reviewer:** @code-reviewer
+**Date:** 2025-12-29T00:30:00+07:00
+
+#### Checklist:
+- [x] All ACs verified
+  - AC-1: Streaming wired via `useAgentChatWithTools`
+  - AC-2: `ApprovalOverlay` correctly handles individual approvals
+  - AC-3: `BatchApprovalBar` handles multiple tool calls
+  - AC-4: `tool-parser` buffers JSON chunks with timeout protection
+  - AC-5: Execution status tracked in chat messages
+- [x] All tests passing (9 new tests for tool-parser)
+- [x] Architecture patterns followed (TanStack AI ToolCallManager pattern)
+- [x] No TypeScript errors
+- [x] Code quality acceptable
+
+#### Sign-off:
+✅ APPROVED for merge

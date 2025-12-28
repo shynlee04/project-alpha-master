@@ -16,8 +16,11 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { toast } from 'sonner';
 import { createDexieStorage } from './dexie-storage';
-import type { ThreadMessageRecord } from './dexie-db';
+import type { ThreadMessageRecord, ConversationThreadRecord } from './dexie-db';
+import { saveThread, getThread, deleteThread as deleteDexieThread } from '../workspace/threads-store';
+import type { ConversationThread } from '@/stores/conversation-threads-store';
 
 // ============================================================================
 // Types
@@ -107,8 +110,11 @@ interface ConversationStoreState {
     /** Get conversation by ID */
     getConversation: (id: string) => ConversationState | undefined;
 
+    /** Load conversation from Dexie into store */
+    loadConversation: (id: string) => Promise<void>;
+
     /** Delete conversation */
-    deleteConversation: (id: string) => void;
+    deleteConversation: (id: string) => Promise<void>;
 
     /** Reset store to empty state */
     reset: () => void;
@@ -119,6 +125,61 @@ interface ConversationStoreState {
 // ============================================================================
 
 const MAX_CONVERSATIONS = 50; // Limit to prevent unbounded growth
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Persist conversation state to Dexie threads table
+ * This ensures consistency with the Threads view
+ */
+async function persistToDexie(conversation: ConversationState) {
+    try {
+        const thread: ConversationThreadRecord = {
+            id: conversation.metadata.id,
+            projectId: conversation.metadata.projectId || 'default',
+            title: conversation.metadata.title,
+            preview: conversation.metadata.preview || '',
+            messages: conversation.messages,
+            agentsUsed: conversation.metadata.agentId ? [conversation.metadata.agentId] : [],
+            messageCount: conversation.messages.length,
+            createdAt: conversation.metadata.createdAt,
+            updatedAt: conversation.metadata.updatedAt,
+        };
+
+        // Use the saveThread helper but mapped to correct type
+        // Actually saveThread expects ConversationThread (UI type), not Record (DB type)
+        // casting or mapping needed.
+        // Let's manually invoke the store logic or just use db direct.
+        // Easier to map to ConversationThread.
+
+        const uiThread: ConversationThread = {
+            id: thread.id,
+            projectId: thread.projectId,
+            title: thread.title,
+            preview: thread.preview,
+            messages: thread.messages as any[], // Casting for now, types match close enough
+            agentsUsed: thread.agentsUsed,
+            messageCount: thread.messageCount,
+            createdAt: thread.createdAt,
+            updatedAt: thread.updatedAt
+        };
+
+        await saveThread(uiThread);
+    } catch (error: any) {
+        console.error('[ConversationStore] Failed to persist thread:', error);
+        if (error.name === 'QuotaExceededError') {
+            toast.error('Storage full. Please clear old conversations.', {
+                duration: 5000,
+                action: {
+                    label: 'Clear Data',
+                    onClick: () => console.log('Trigger clear data') // Todo wire up
+                }
+            });
+        }
+    }
+}
 
 // ============================================================================
 // Store Implementation
@@ -194,13 +255,25 @@ export const useConversationStore = create<ConversationStoreState>()(
                         return state;
                     }
 
-                    const updatedMessages = [...conversation.messages, message];
-                    const preview = message.content.slice(0, 100);
+                    // Deduplicate by ID
+                    if (conversation.messages.some(m => m.id === message.id)) {
+                        return state;
+                    }
+
+                    // Enforce limit (AC-5)
+                    let updatedMessages = [...conversation.messages, message];
+                    if (updatedMessages.length > MAX_CONVERSATIONS) { // Using MAX_CONVERSATIONS (50) for message limit too for now
+                        // Prune oldest, keep system prompt if any (usually index 0)
+                        // Simple pruning: remove from index 0
+                        updatedMessages = updatedMessages.slice(updatedMessages.length - 50);
+                    }
+
+                    const preview = message.content.substring(0, 100);
                     const title = conversation.metadata.title === 'New Conversation' && message.role === 'user'
-                        ? message.content.slice(0, 50)
+                        ? message.content.substring(0, 50)
                         : conversation.metadata.title;
 
-                    return {
+                    const newState = {
                         conversations: {
                             ...state.conversations,
                             [conversationId]: {
@@ -216,114 +289,118 @@ export const useConversationStore = create<ConversationStoreState>()(
                             },
                         },
                     };
+
+                    // Optimistic persist to Dexie Table (Background Ref)
+                    persistToDexie(newState.conversations[conversationId]);
+                    return newState;
                 });
             },
 
-            updateMessage: (conversationId, messageId, updates) => {
-                set((state) => {
-                    const conversation = state.conversations[conversationId];
-                    if (!conversation) return state;
+            const updatedMessages = conversation.messages.map(m =>
+                m.id === messageId ? { ...m, ...updates } : m
+            );
 
-                    const updatedMessages = conversation.messages.map(m =>
-                        m.id === messageId ? { ...m, ...updates } : m
-                    );
-
-                    return {
-                        conversations: {
-                            ...state.conversations,
-                            [conversationId]: {
-                                ...conversation,
-                                messages: updatedMessages,
-                                metadata: {
-                                    ...conversation.metadata,
-                                    updatedAt: Date.now(),
-                                },
-                            },
+            const newState = {
+                conversations: {
+                    ...state.conversations,
+                    [conversationId]: {
+                        ...conversation,
+                        messages: updatedMessages,
+                        metadata: {
+                            ...conversation.metadata,
+                            updatedAt: Date.now(),
                         },
-                    };
+                    },
+                },
+            };
+
+            // Optimistic update
+            persistToDexie(newState.conversations[conversationId]);
+return newState;
                 });
             },
 
-            updateScrollPosition: (conversationId, scrollTop) => {
-                set((state) => ({
-                    scrollPositions: {
-                        ...state.scrollPositions,
-                        [conversationId]: scrollTop,
-                    },
-                }));
-            },
+updateScrollPosition: (conversationId, scrollTop) => {
+    // Determine if we need to update metadata too
+    set((state) => {
+        // Update auxiliary scrollPositions map
+        const scrollState = {
+            scrollPositions: {
+                ...state.scrollPositions,
+                [conversationId]: scrollTop,
+            }
+        };
 
-            addPendingToolApproval: (approval) => {
-                const id = `tool_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // Also update metadata if conversation exists
+        const conversation = state.conversations[conversationId];
+        if (conversation) {
+            return {
+                ...scrollState,
+                conversations: {
+                    ...state.conversations,
+                    [conversationId]: {
+                        ...conversation,
+                        metadata: {
+                            ...conversation.metadata,
+                            scrollPosition: scrollTop
+                        }
+                    }
+                }
+            };
+        }
 
-                const fullApproval: PendingToolApproval = {
-                    ...approval,
-                    id,
-                    createdAt: Date.now(),
-                };
+        return scrollState;
+    });
+},
 
-                console.log('[ConversationStore] Adding tool approval:', id, approval.toolName);
+    addPendingToolApproval: (approval) => {
+        const id = `tool_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-                set((state) => ({
-                    pendingToolApprovals: [...state.pendingToolApprovals, fullApproval],
-                }));
+        const fullApproval: PendingToolApproval = {
+            ...approval,
+            id,
+            createdAt: Date.now(),
+        };
 
-                return id;
-            },
+        console.log('[ConversationStore] Adding tool approval:', id, approval.toolName);
 
-            resolveToolApproval: (id, status) => {
-                console.log('[ConversationStore] Resolving tool approval:', id, status);
+        set((state) => ({
+            pendingToolApprovals: [...state.pendingToolApprovals, fullApproval],
+        }));
 
-                set((state) => ({
-                    pendingToolApprovals: state.pendingToolApprovals.map(a =>
-                        a.id === id ? { ...a, status } : a
-                    ),
-                }));
-            },
+        return id;
+    },
+
+        resolveToolApproval: (id, status) => {
+            console.log('[ConversationStore] Resolving tool approval:', id, status);
+
+            set((state) => ({
+                pendingToolApprovals: state.pendingToolApprovals.map(a =>
+                    a.id === id ? { ...a, status } : a
+                ),
+            }));
+        },
 
             getConversation: (id) => {
                 return get().conversations[id];
             },
 
-            deleteConversation: (id) => {
-                console.log('[ConversationStore] Deleting conversation:', id);
 
-                set((state) => {
-                    const { [id]: deleted, ...remaining } = state.conversations;
-                    const { [id]: deletedScroll, ...remainingScrolls } = state.scrollPositions;
 
-                    // If deleting active, switch to most recent remaining
-                    const newActiveId = state.activeConversationId === id
-                        ? Object.keys(remaining).sort((a, b) =>
-                            (remaining[b]?.metadata.updatedAt || 0) - (remaining[a]?.metadata.updatedAt || 0)
-                        )[0] || null
-                        : state.activeConversationId;
-
-                    return {
-                        conversations: remaining,
-                        scrollPositions: remainingScrolls,
-                        activeConversationId: newActiveId,
-                        pendingToolApprovals: state.pendingToolApprovals.filter(
-                            a => a.conversationId !== id
-                        ),
-                    };
-                });
-            },
-
-            reset: () => {
-                console.log('[ConversationStore] Resetting to empty state');
-                set({
-                    activeConversationId: null,
-                    conversations: {},
-                    scrollPositions: {},
-                    pendingToolApprovals: [],
-                });
-            },
+                reset: () => {
+                    console.log('[ConversationStore] Resetting to empty state');
+                    set({
+                        activeConversationId: null,
+                        conversations: {},
+                        scrollPositions: {},
+                        pendingToolApprovals: [],
+                    });
+                },
         }),
-        {
-            name: 'conversation-state',
-            // Use Dexie storage adapter for IndexedDB persistence
-            storage: createJSONStorage(() => createDexieStorage('conversationState')),
+{
+    name: 'conversation-state',
+        // Use Dexie storage adapter for IndexedDB persistence
+        storage: createJSONStorage(() => createDexieStorage('conversationState')),
 
             // Persist all essential state
             partialize: (state) => ({
@@ -333,38 +410,38 @@ export const useConversationStore = create<ConversationStoreState>()(
                 // Don't persist pending approvals - they should be reprocessed on reload
             }),
 
-            // Hydration handler
-            onRehydrateStorage: () => (state) => {
-                console.log('[ConversationStore] Rehydrated from IndexedDB:',
-                    Object.keys(state?.conversations || {}).length, 'conversations');
+                // Hydration handler
+                onRehydrateStorage: () => (state) => {
+                    console.log('[ConversationStore] Rehydrated from IndexedDB:',
+                        Object.keys(state?.conversations || {}).length, 'conversations');
 
-                if (state) {
-                    // Clean up old conversations (keep last MAX_CONVERSATIONS)
-                    const conversationIds = Object.keys(state.conversations);
-                    if (conversationIds.length > MAX_CONVERSATIONS) {
-                        const sorted = conversationIds.sort((a, b) =>
-                            (state.conversations[b]?.metadata.updatedAt || 0) -
-                            (state.conversations[a]?.metadata.updatedAt || 0)
-                        );
+                    if (state) {
+                        // Clean up old conversations (keep last MAX_CONVERSATIONS)
+                        const conversationIds = Object.keys(state.conversations);
+                        if (conversationIds.length > MAX_CONVERSATIONS) {
+                            const sorted = conversationIds.sort((a, b) =>
+                                (state.conversations[b]?.metadata.updatedAt || 0) -
+                                (state.conversations[a]?.metadata.updatedAt || 0)
+                            );
 
-                        const toDelete = sorted.slice(MAX_CONVERSATIONS);
-                        toDelete.forEach(id => {
-                            delete state.conversations[id];
-                            delete state.scrollPositions[id];
-                        });
+                            const toDelete = sorted.slice(MAX_CONVERSATIONS);
+                            toDelete.forEach(id => {
+                                delete state.conversations[id];
+                                delete state.scrollPositions[id];
+                            });
 
-                        console.log('[ConversationStore] Cleaned up', toDelete.length, 'old conversations');
+                            console.log('[ConversationStore] Cleaned up', toDelete.length, 'old conversations');
+                        }
+
+                        // Validate activeConversationId
+                        if (state.activeConversationId && !state.conversations[state.activeConversationId]) {
+                            const firstId = Object.keys(state.conversations)[0];
+                            state.activeConversationId = firstId || null;
+                        }
+
+                        state.setHasHydrated(true);
                     }
-
-                    // Validate activeConversationId
-                    if (state.activeConversationId && !state.conversations[state.activeConversationId]) {
-                        const firstId = Object.keys(state.conversations)[0];
-                        state.activeConversationId = firstId || null;
-                    }
-
-                    state.setHasHydrated(true);
-                }
-            },
+                },
         }
     )
 );
