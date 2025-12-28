@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     LocalFSAdapter,
     FileSystemError,
@@ -6,6 +7,8 @@ import {
 } from '../../../../lib/filesystem/local-fs-adapter';
 import type { TreeNode } from '../types';
 import { buildTreeNode, updateNodeByPath, restoreExpandedState } from '../utils';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 
 /**
  * Options for the useFileTreeActions hook.
@@ -54,6 +57,8 @@ export interface UseFileTreeActionsResult {
 export function useFileTreeActions(
     options: UseFileTreeActionsOptions
 ): UseFileTreeActionsResult {
+    const { t } = useTranslation();
+    const { isMobile } = useDeviceType();
     const {
         directoryHandle,
         getAdapter,
@@ -91,18 +96,42 @@ export function useFileTreeActions(
             setRootNodes(restoredNodes);
         } catch (err) {
             if (err instanceof PermissionDeniedError) {
-                setError('Permission required to access this folder.');
+                // Show mobile-specific error on mobile devices
+                if (isMobile) {
+                    setError(null); // Clear the error state for toast handling
+                    showMobileWorkspaceError('permissionDenied', () => {
+                        window.location.href = '/hub';
+                    });
+                } else {
+                    setError(t('errors.workspace.permissionDenied.description', 'Permission was denied to access this folder. Please grant access in your browser settings.'));
+                }
             } else if (err instanceof FileSystemError) {
-                setError(`Error loading directory: ${err.message}`);
+                // Show mobile-specific error on mobile devices
+                if (isMobile) {
+                    setError(null); // Clear the error state for toast handling
+                    showMobileWorkspaceError('openFailed', () => {
+                        window.location.href = '/hub';
+                    });
+                } else {
+                    setError(t('errors.workspace.openFailed.description', `Error loading directory: ${err.message}`));
+                }
             } else {
-                setError('An unexpected error occurred.');
-                console.error('FileTree error:', err);
+                // Show mobile-specific error on mobile devices
+                if (isMobile) {
+                    setError(null); // Clear the error state for toast handling
+                    showMobileWorkspaceError('openFailed', () => {
+                        window.location.href = '/hub';
+                    });
+                } else {
+                    setError(t('errors.workspace.openFailed.description', 'An unexpected error occurred.'));
+                    console.error('FileTree error:', err);
+                }
             }
             setRootNodes([]);
         } finally {
             setIsLoading(false);
         }
-    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths]);
+    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths, isMobile]);
 
     /**
      * Load children of a directory node.
