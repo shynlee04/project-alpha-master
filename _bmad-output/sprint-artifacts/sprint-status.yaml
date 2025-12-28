@@ -32,7 +32,7 @@ development_status:
   epic-1: in-progress
   1-1-responsive-breakpoint-foundation: done
   1-2-dark-light-theme-system: done
-  1-3-mobile-demo-mode: drafted # Unblocked by 0-1
+  1-3-mobile-demo-mode: in-progress # Unblocked by 0-1
   1-4-accessibility-foundation: backlog
   epic-1-retrospective: optional
 

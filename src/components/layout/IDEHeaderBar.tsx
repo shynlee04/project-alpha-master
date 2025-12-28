@@ -23,6 +23,7 @@ import { useWorkspace } from '../../lib/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useNavigate } from '@tanstack/react-router';
+import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -60,6 +61,7 @@ export function IDEHeaderBar({
 }: IDEHeaderBarProps): React.JSX.Element {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { supportsFSA } = useCapabilityDetection();
     const {
         directoryHandle,
         permissionState,
@@ -107,7 +109,7 @@ export function IDEHeaderBar({
                 {directoryHandle ? (
                     <FolderOpenedControls
                         autoSync={autoSync}
-                        isDisabled={isDisabled}
+                        isDisabled={isDisabled || !supportsFSA}
                         isSyncing={isSyncing}
                         onSyncNow={syncNow}
                         onSwitchFolder={switchFolder}
@@ -116,7 +118,7 @@ export function IDEHeaderBar({
                     />
                 ) : (
                     <OpenFolderButton
-                        isDisabled={isDisabled}
+                        isDisabled={isDisabled || !supportsFSA}
                         onOpenFolder={openFolder}
                         t={t}
                     />

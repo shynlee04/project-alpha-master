@@ -21,6 +21,8 @@ import {
 import { useAgentsStore } from '@/stores/agents-store';
 import { useAgentSelection } from '@/stores/agent-selection-store';
 import type { Agent } from '@/mocks/agents';
+import { useResponsive } from '@/hooks/useResponsive';
+import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 
 interface ChatPanelProps {
     projectId: string;
@@ -49,6 +51,10 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
     const { agents } = useAgentsStore();
     const { activeAgentId, setActiveAgent } = useAgentSelection();
 
+    // Hooks for mobile/demo mode
+    const { isMobile } = useResponsive();
+    const { updateThreadTitle } = useThreadsStore();
+
     // Local state
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState<string>('');
@@ -72,6 +78,36 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
             setActiveAgent(agents[0].id);
         }
     }, [activeAgentId, agents, setActiveAgent]);
+
+    // Demo Mode Seeding (Story 1.3)
+    useEffect(() => {
+        const seedDemoData = async () => {
+            // Only seed if mobile, no threads exist, and no agent is active (implies no key/setup)
+            if (isMobile && projectThreads.length === 0 && !activeAgentId && agents.length === 0) {
+                try {
+                    console.log('[ChatPanel] Seeding demo conversations for mobile...');
+                    const demoData = await import('@/lib/demo/sample-conversations.json');
+
+                    for (const conv of demoData.conversations) {
+                        const thread = createThread(projectId);
+                        updateThreadTitle(thread.id, conv.title);
+
+                        // Add messages in sequence
+                        for (const msg of conv.messages) {
+                            addMessage(thread.id, {
+                                role: msg.role as 'user' | 'assistant',
+                                content: msg.content
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error('[ChatPanel] Failed to seed demo data:', err);
+                }
+            }
+        };
+
+        seedDemoData();
+    }, [isMobile, projectThreads.length, activeAgentId, agents.length, projectId, createThread, updateThreadTitle, addMessage]);
 
     /**
      * Create new thread and enter it
@@ -118,6 +154,12 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
      * Send a message
      */
     const handleSendMessage = useCallback(async (content: string) => {
+        // Block sending in mobile demo mode if no agent/key
+        if (isMobile && agents.length === 0) {
+            setError('Chat is read-only in Demo Mode. Enable an agent to chat.');
+            return;
+        }
+
         if (!activeThreadId || !selectedAgent) return;
 
         setError(null);

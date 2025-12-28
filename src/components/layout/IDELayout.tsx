@@ -21,6 +21,7 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from '@/components/ui/resizable';
+import { MobileCapabilityBanner } from '@/components/ui/MobileCapabilityBanner';
 import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -257,6 +258,7 @@ export function IDELayout(): React.JSX.Element {
   return (
     <SidebarProvider defaultPanel="explorer" defaultCollapsed={isTablet}>
       <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+        <MobileCapabilityBanner />
         {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
         <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
 

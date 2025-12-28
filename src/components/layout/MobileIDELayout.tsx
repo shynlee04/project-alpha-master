@@ -19,6 +19,7 @@ import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useIDEStore } from '@/lib/state';
 import { useWorkspace } from '@/lib/workspace';
 import { useToast } from '@/components/ui/Toast';
+import { MobileCapabilityBanner } from '@/components/ui/MobileCapabilityBanner';
 
 // Layout components
 import { IDEHeaderBar } from './IDEHeaderBar';
@@ -220,6 +221,7 @@ export function MobileIDELayout(): React.JSX.Element {
 
     return (
         <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+            <MobileCapabilityBanner />
             {/* Permission overlay */}
             {permissionState === 'prompt' && (
                 <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />
@@ -258,10 +260,6 @@ export function MobileIDELayout(): React.JSX.Element {
                     {activePanel === 'editor' && (
                         <WithErrorBoundary fallback={<PanelErrorFallback label="Editor" />}>
                             <div className="h-full flex flex-col">
-                                {/* Demo Mode Banner (Story 1.1 AC-3) */}
-                                <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-xs px-3 py-1 text-center border-b border-amber-200 dark:border-amber-800/50">
-                                    Demo Mode: Read-only on mobile
-                                </div>
                                 <div className="flex-1 min-h-0">
                                     <MonacoEditor
                                         openFiles={openFiles}

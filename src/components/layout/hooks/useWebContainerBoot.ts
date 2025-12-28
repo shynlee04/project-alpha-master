@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 import { showMobileWebContainerError } from '@/lib/utils/mobile-error-handling';
 import { boot, onServerReady, isBooted } from '../../../lib/webcontainer';
 
@@ -34,10 +35,16 @@ export function useWebContainerBoot({
     onBooted,
 }: UseWebContainerBootOptions): UseWebContainerBootResult {
     const deviceType = useDeviceType();
+    const { canBootWebContainer } = useCapabilityDetection();
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [previewPort, setPreviewPort] = useState<number | null>(null);
 
     useEffect(() => {
+        if (!canBootWebContainer) {
+            console.log('[IDE] WebContainer boot skipped (missing capabilities)');
+            return;
+        }
+
         boot()
             .then(() => {
                 // Notify WorkspaceContext that boot is complete
@@ -56,7 +63,7 @@ export function useWebContainerBoot({
             })
             .catch((error) => {
                 console.error('[IDE] WebContainer boot failed:', error);
-                
+
                 // Check if mobile/tablet and show mobile-friendly error
                 if (deviceType === 'mobile' || deviceType === 'tablet') {
                     showMobileWebContainerError('bootFailed');
