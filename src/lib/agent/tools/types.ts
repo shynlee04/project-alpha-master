@@ -9,6 +9,7 @@
  */
 
 import { z } from 'zod';
+import type { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
 
 /**
  * Tool execution result
@@ -39,6 +40,20 @@ export interface ToolExecutionContext {
     projectPath: string;
     /** User's preferred language */
     language?: 'en' | 'vi';
+    /** Tool permission manager for trust level checks */
+    permissionManager?: ToolPermissionManager;
+}
+
+/**
+ * Request for tool execution with permission check
+ */
+export interface ToolExecutionRequest {
+    /** Tool identifier */
+    toolId: string;
+    /** Tool parameters */
+    parameters: Record<string, unknown>;
+    /** Pre-computed permission check result (optional) */
+    permissionCheck?: PermissionCheckResult;
 }
 
 // ============================================================================
