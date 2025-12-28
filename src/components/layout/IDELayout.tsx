@@ -22,6 +22,8 @@ import {
   ResizableHandle,
 } from '@/components/ui/resizable';
 import { MobileCapabilityBanner } from '@/components/ui/MobileCapabilityBanner';
+import { SkipLinks } from '@/components/ui/SkipLinks';
+import { StatusAnnouncerProvider } from '@/components/ui/StatusAnnouncer';
 import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -256,198 +258,201 @@ export function IDELayout(): React.JSX.Element {
   useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
 
   return (
-    <SidebarProvider defaultPanel="explorer" defaultCollapsed={isTablet}>
-      <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
-        <MobileCapabilityBanner />
-        {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
-        <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
+    <StatusAnnouncerProvider>
+      <SidebarProvider defaultPanel="explorer" defaultCollapsed={isTablet}>
+        <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+          <SkipLinks />
+          <MobileCapabilityBanner />
+          {permissionState === 'prompt' && <PermissionOverlay projectMetadata={projectMetadata} onRestoreAccess={restoreAccess} />}
+          <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
 
-        {/* P1.4: Discovery mechanisms */}
-        {isCommandPaletteOpen && (
-          <CommandPalette
-            isOpen={isCommandPaletteOpen}
-            onClose={() => setIsCommandPaletteOpen(false)}
-          />
-        )}
-
-        {isFeatureSearchOpen && (
-          <FeatureSearch
-            isOpen={isFeatureSearchOpen}
-            onClose={() => setIsFeatureSearchOpen(false)}
-          />
-        )}
-
-        {/* P1.7: Responsive main content area with mobile-first layout */}
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-          {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}
-          {/* P1.7: Hide sidebar on mobile, show on tablet+ */}
-          <ActivityBar />
-          <SidebarContent className="hidden md:flex">
-            <SidebarPanelRenderer
-              selectedFilePath={selectedFilePath}
-              onFileSelect={handleFileSelect}
-              fileTreeRefreshKey={fileTreeRefreshKey}
+          {/* P1.4: Discovery mechanisms */}
+          {isCommandPaletteOpen && (
+            <CommandPalette
+              isOpen={isCommandPaletteOpen}
+              onClose={() => setIsCommandPaletteOpen(false)}
             />
-          </SidebarContent>
+          )}
 
-          {/* Main Resizable Panel Group */}
-          <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
+          {isFeatureSearchOpen && (
+            <FeatureSearch
+              isOpen={isFeatureSearchOpen}
+              onClose={() => setIsFeatureSearchOpen(false)}
+            />
+          )}
+
+          {/* P1.7: Responsive main content area with mobile-first layout */}
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+            {/* VS Code-style Activity Bar + Collapsible Sidebar (Story 28-14) */}
+            {/* P1.7: Hide sidebar on mobile, show on tablet+ */}
+            <ActivityBar />
+            <SidebarContent className="hidden md:flex">
+              <SidebarPanelRenderer
+                selectedFilePath={selectedFilePath}
+                onFileSelect={handleFileSelect}
+                fileTreeRefreshKey={fileTreeRefreshKey}
+              />
+            </SidebarContent>
+
+            {/* Main Resizable Panel Group */}
+            <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
 
 
-            {/* Center Panel (Editor + Preview + Terminal) */}
-            <ResizablePanel order={2} minSize={30}>
-              <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
-                {/* Editor + Preview */}
-                <ResizablePanel defaultSize={70} minSize={30}>
-                  <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
-                    <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
-                      <Card className="h-full rounded-none border-0 bg-background">
-                        {/* P1.7: Responsive header height */}
-                        <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
-                          <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0 flex-1 min-h-0">
-                          <WithErrorBoundary
-                            fallback={
-                              <div className="h-full flex items-center justify-center text-muted-foreground">
-                                <div className="text-center">
-                                  <p className="text-sm font-medium">Editor Error</p>
-                                  <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The code editor encountered an error. Please refresh the page.
-                                  </p>
+              {/* Center Panel (Editor + Preview + Terminal) */}
+              <ResizablePanel order={2} minSize={30}>
+                <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
+                  {/* Editor + Preview */}
+                  <ResizablePanel defaultSize={70} minSize={30}>
+                    <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
+                      <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
+                        <Card className="h-full rounded-none border-0 bg-background">
+                          {/* P1.7: Responsive header height */}
+                          <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                            <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-0 flex-1 min-h-0">
+                            <WithErrorBoundary
+                              fallback={
+                                <div className="h-full flex items-center justify-center text-muted-foreground">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium">Editor Error</p>
+                                    <p className="text-xs text-muted-foreground/70 mt-1">
+                                      The code editor encountered an error. Please refresh the page.
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            }
-                          >
-                            <MonacoEditor
-                              openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
-                              onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
-                              initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
-                              onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
-                            />
-                          </WithErrorBoundary>
-                        </CardContent>
-                      </Card>
-                    </ResizablePanel>
-                    <ResizableHandle
-                      withHandle
-                      orientation="vertical"
-                      className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
-                      aria-label="Resize editor and preview panels"
-                      aria-orientation="vertical"
-                    />
-                    {/* P1.7: Responsive header height and panel sizing */}
-                    <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
-                      <Card className="h-full rounded-none border-0 bg-background">
-                        <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
-                          <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Preview</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0 flex-1 min-h-0">
-                          <WithErrorBoundary
-                            fallback={
-                              <div className="h-full flex items-center justify-center text-muted-foreground">
-                                <div className="text-center">
-                                  <p className="text-sm font-medium">Preview Error</p>
-                                  <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The preview panel encountered an error.
-                                  </p>
+                              }
+                            >
+                              <MonacoEditor
+                                openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
+                                onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
+                                initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                                onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
+                              />
+                            </WithErrorBoundary>
+                          </CardContent>
+                        </Card>
+                      </ResizablePanel>
+                      <ResizableHandle
+                        withHandle
+                        orientation="vertical"
+                        className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                        aria-label="Resize editor and preview panels"
+                        aria-orientation="vertical"
+                      />
+                      {/* P1.7: Responsive header height and panel sizing */}
+                      <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
+                        <Card className="h-full rounded-none border-0 bg-background">
+                          <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                            <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Preview</CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-0 flex-1 min-h-0">
+                            <WithErrorBoundary
+                              fallback={
+                                <div className="h-full flex items-center justify-center text-muted-foreground">
+                                  <div className="text-center">
+                                    <p className="text-sm font-medium">Preview Error</p>
+                                    <p className="text-xs text-muted-foreground/70 mt-1">
+                                      The preview panel encountered an error.
+                                    </p>
+                                  </div>
                                 </div>
+                              }
+                            >
+                              <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                            </WithErrorBoundary>
+                          </CardContent>
+                        </Card>
+                      </ResizablePanel>
+                    </ResizablePanelGroup>
+                  </ResizablePanel>
+                  <ResizableHandle
+                    withHandle
+                    orientation="horizontal"
+                    className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                    aria-label="Resize editor and terminal panels"
+                    aria-orientation="horizontal"
+                  />
+                  {/* Terminal Panel */}
+                  {/* P1.7: Responsive header height and panel sizing */}
+                  <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
+                    <Card className="h-full rounded-none border-0 bg-background">
+                      <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                        <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Terminal</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0 flex-1 min-h-0">
+                        <WithErrorBoundary
+                          fallback={
+                            <div className="h-full flex items-center justify-center text-muted-foreground">
+                              <div className="text-center">
+                                <p className="text-sm font-medium">Terminal Error</p>
+                                <p className="text-xs text-muted-foreground/70 mt-1">
+                                  The terminal encountered an error. Please refresh the page.
+                                </p>
                               </div>
-                            }
-                          >
-                            <PreviewPanel previewUrl={previewUrl} port={previewPort} />
-                          </WithErrorBoundary>
-                        </CardContent>
-                      </Card>
-                    </ResizablePanel>
-                  </ResizablePanelGroup>
-                </ResizablePanel>
-                <ResizableHandle
-                  withHandle
-                  orientation="horizontal"
-                  className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
-                  aria-label="Resize editor and terminal panels"
-                  aria-orientation="horizontal"
-                />
-                {/* Terminal Panel */}
-                {/* P1.7: Responsive header height and panel sizing */}
-                <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
-                  <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Terminal</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 flex-1 min-h-0">
-                      <WithErrorBoundary
-                        fallback={
-                          <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                              <p className="text-sm font-medium">Terminal Error</p>
-                              <p className="text-xs text-muted-foreground/70 mt-1">
-                                The terminal encountered an error. Please refresh the page.
-                              </p>
                             </div>
-                          </div>
-                        }
-                      >
-                        <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
-                      </WithErrorBoundary>
-                    </CardContent>
-                  </Card>
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </ResizablePanel>
+                          }
+                        >
+                          <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
+                        </WithErrorBoundary>
+                      </CardContent>
+                    </Card>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              </ResizablePanel>
 
-            {/* Chat Panel */}
-            {chatVisible && (
-              <>
-                <ResizableHandle
-                  withHandle
-                  className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
-                  aria-label="Resize chat panel"
-                  aria-orientation="vertical"
-                />
-                {/* P1.7: Responsive header height and chat panel sizing */}
-                <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
-                  <Card className="h-full rounded-none border-0 bg-background">
-                    <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
-                      <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 flex-1 min-h-0">
-                      <WithErrorBoundary
-                        fallback={
-                          <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                              <p className="text-sm font-medium">Chat Error</p>
-                              <p className="text-xs text-muted-foreground/70 mt-1">
-                                The chat panel encountered an error. Please refresh the page.
-                              </p>
+              {/* Chat Panel */}
+              {chatVisible && (
+                <>
+                  <ResizableHandle
+                    withHandle
+                    className="w-2 bg-border hover:bg-accent transition-colors cursor-col-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+                    aria-label="Resize chat panel"
+                    aria-orientation="vertical"
+                  />
+                  {/* P1.7: Responsive header height and chat panel sizing */}
+                  <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
+                    <Card className="h-full rounded-none border-0 bg-background">
+                      <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                        <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0 flex-1 min-h-0">
+                        <WithErrorBoundary
+                          fallback={
+                            <div className="h-full flex items-center justify-center text-muted-foreground">
+                              <div className="text-center">
+                                <p className="text-sm font-medium">Chat Error</p>
+                                <p className="text-xs text-muted-foreground/70 mt-1">
+                                  The chat panel encountered an error. Please refresh the page.
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        }
-                      >
-                        <ChatPanelWrapper
-                          projectId={projectId}
-                          projectName={projectMetadata?.name ?? projectId ?? 'Project'}
-                          onClose={() => setChatVisible(false)}
-                          // ADD: Pass tool facades to chat panel (Story MVP-3)
-                          fileTools={fileTools}
-                          terminalTools={terminalTools}
-                          eventBus={eventBus}
-                        />
-                      </WithErrorBoundary>
-                    </CardContent>
-                  </Card>
-                </ResizablePanel>
-              </>
-            )}
-          </ResizablePanelGroup>
+                          }
+                        >
+                          <ChatPanelWrapper
+                            projectId={projectId}
+                            projectName={projectMetadata?.name ?? projectId ?? 'Project'}
+                            onClose={() => setChatVisible(false)}
+                            // ADD: Pass tool facades to chat panel (Story MVP-3)
+                            fileTools={fileTools}
+                            terminalTools={terminalTools}
+                            eventBus={eventBus}
+                          />
+                        </WithErrorBoundary>
+                      </CardContent>
+                    </Card>
+                  </ResizablePanel>
+                </>
+              )}
+            </ResizablePanelGroup>
+          </div>
+          {/* VS Code-style footer StatusBar (Story 28-18) */}
+          <StatusBar />
+
+          {/* MinViewportWarning removed - MobileIDELayout handles small viewports now */}
         </div>
-        {/* VS Code-style footer StatusBar (Story 28-18) */}
-        <StatusBar />
-
-        {/* MinViewportWarning removed - MobileIDELayout handles small viewports now */}
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </StatusAnnouncerProvider>
   );
 }
 
