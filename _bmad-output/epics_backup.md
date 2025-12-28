@@ -23,21 +23,8 @@ epic_strategy: 'Visual Progress Prioritization'
 This document provides the complete epic and story breakdown for **Project Alpha v2.0 - Knowledge Synthesis Station**, decomposing the requirements from the PRD, UX Design Specification, and Architecture into implementable stories.
 
 **Phased Approach:**
-- **Phase 0: Infrastructure & Pre-Work** (Sprint 0 - Dec 29-31)
-- **Phase 1: Core Stabilization** (Sprint 1-5 - Jan 1-18)
+- **Phase 1: Core Stabilization** (This document's primary focus)
 - **Phase 2: Knowledge Synthesis MVP** (Future PRD)
-
-### 📅 "Daily Dev Journey" Content Calendar
-_Strategy: 30-day "Build in Public" for Vietnamese EdTech Market_
-
-| Date | Content Type | Topic | Goal |
-|------|--------------|-------|------|
-| **Dec 29-31** | 🎥 Teaser | "Why I'm rebuilding my IDE" | Hook audience with the 'Why' |
-| **Jan 1-3** | 📸 Carousel | Dark Mode & Mobile UI | Show visual polish/responsiveness |
-| **Jan 4-7** | 🎥 Short | "AI that asks for permission" | Demo tool approval security |
-| **Jan 8-10** | 🎥 **HERO** | **The Magic Moment** (Browser → VS Code) | Viral potential hook |
-| **Jan 11-14** | 📸 Deep Dive | "How 5-Layer Agents Work" | Technical authority building |
-| **Jan 15-18** | 🎥 Countdown | Performance Dashboard (60fps) | Build launch hype |
 
 ---
 
@@ -431,8 +418,7 @@ _Strategy: 30-day "Build in Public" for Vietnamese EdTech Market_
 - `useConversationStore` → Messages + scroll position
 - `useProviderStore` → API clients + connection status
 
-#### Story 2.0: Credential Vault Implementation 🛠️ INFRASTRUCTURE (Sprint 0)
-_Moved to Sprint 0 to unblock Epic 2 execution._
+#### Story 2.0: Credential Vault Implementation ⚠️ PREREQUISITE
 
 **As a** security-conscious user,  
 **I want** my API keys encrypted before storage,  

@@ -412,5 +412,19 @@ pnpm preview
 
 ---
 
+## Critical Dependency Matrix
+
+_Strict execution order required to prevent blockers._
+
+| Predecessor | Successor | Reason |
+|-------------|-----------|--------|
+| **Epic 1 (Theme System)** | **Epic 2 (Agent Config)** | `AgentConfigDialog` requires theme context |
+| **Story 2.0 (Credential Vault)** | **Story 2.1 (Config Persistence)** | API keys must be encrypted before storage implementation |
+| **Story 2.4 (Conversation Store)** | **Story 4.3 (Tool Logs)** | Tool execution history lives in conversation store |
+| **Story 3.1 (FSA Handle)** | **Story 4.2 (File Tools)** | Agent cannot read/write without `WorkspaceContext` file handles |
+| **Story 4.3 (Execution Log)** | **Story 5.1 (Sync Visualizer)** | Visualizer consumes audit logs from tool execution |
+
+---
+
 _Generated: 2025-12-28T20:46+07:00_
 _This document is optimized for LLM context efficiency. Keep it lean._
