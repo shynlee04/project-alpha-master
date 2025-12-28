@@ -1059,3 +1059,757 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 | NFR-USE-01 | Epic 3 | Time to first project <2min |
 
 <!-- Stories will be created in Step 3 -->
+
+---
+
+## Phase 2: Knowledge Synthesis Station MVP
+
+> **Launch Target:** Post-Phase 1 (TBD based on Phase 1 completion)
+> **Architecture:** Orama WASM for local-first vector search, React Flow for canvas
+
+### Core Loop (Phase 2): Ground → Synthesize → Review
+- **Ground:** Ingest PDF/URL → Orama vector index (Local)
+- **Synthesize:** Generate Blocks (Summaries, Quizzes) with citations
+- **Review:** Consume via Flashcard Feed or Audio Overview
+
+### Critical Success Moments (Phase 2)
+1. **First Drop:** PDF ingestion to Summary with citations in < 60 seconds
+2. **Citation Verification:** Tap `[1]` → Source highlights exact sentence (Trust moment)
+3. **Mobile Exam Prep:** Flashcard feed loads from IndexedDB in < 2 seconds
+
+### Experience Principles (Phase 2)
+1. **Source is Sacred:** Never modify original documents; synthesis layers on top
+2. **Blocks, Not Blobs:** AI produces persistent, structured artifacts (JSON), not ephemeral text
+3. **Grounding Always Visible:** 100% of AI assertions must have deep-linked citations
+
+---
+
+### Epic 6: 📥 Source Ingestion & Management
+*Days 1-3*
+
+**User Outcome:** Users import PDF, URL, and text sources into their knowledge base with automatic metadata extraction and preview.
+
+**Social Media Appeal:** ⭐⭐⭐⭐ — "Drop a PDF, get instant insights" demo
+
+**UX Principles Applied:**
+- **Drop-to-Knowledge:** PDF drag-and-drop triggers immediate ingestion pipeline
+- **Informed Patience:** Progress indicators during parsing ("Reading page 5... Extracting concepts...")
+- **Offline-First:** All sources stored in IndexedDB for mobile access
+
+**FRs Covered:** FR-EDU-01 (Source File Import)
+
+**Dependencies on Phase 1:**
+- Dexie.js for IndexedDB persistence (`src/lib/state/dexie-db.ts`)
+- Event bus for ingestion progress events
+- i18n system for Vietnamese translations
+
+---
+
+#### Story 6.1: Source Import Pipeline (PDF, URL, Text)
+
+**As a** student with research materials,
+**I want** to drag and drop PDF/URL/text sources into the app,
+**So that** I can quickly ingest my study materials.
+
+**Acceptance Criteria:**
+
+**Given** a user on the Knowledge tab
+**When** they drag a PDF file onto the drop zone
+**Then** the file is validated (type, size < 50MB)
+**And** progress shows: "Reading page 1... Extracting text..."
+**And** extracted text is stored in IndexedDB via Dexie
+
+**Given** a user pastes a URL
+**When** they submit the URL
+**Then** the page is fetched client-side (no server)
+**And** main content is extracted (removing nav/ads)
+**And** source URL is saved with metadata
+
+**Given** a user pastes text directly
+**When** they submit
+**Then** the text is accepted without size limit
+**And** character count is shown
+
+**Given** an import is in progress
+**When** the user navigates away
+**Then** import continues in background
+**And** toast notifies when complete
+
+**Demo Checkpoint:** 📄 Drag PDF → "Reading page 5..." → Source card appears
+
+---
+
+#### Story 6.2: Source Card UI with Preview
+
+**As a** user with multiple sources,
+**I want** to see my sources as beautiful cards with previews,
+**So that** I can quickly identify and access each source.
+
+**Acceptance Criteria:**
+
+**Given** a source has been imported
+**When** it appears in the Source panel
+**Then** a card shows: thumbnail/icon, title, source type (PDF/URL/Text)
+**And** card shows: estimated reading time, key topics detected
+**And** card has quick actions: Open, Delete, Synthesize
+
+**Given** a user clicks a source card
+**When** the source is a PDF or URL
+**Then** a preview panel opens showing content
+**And** text is readable (proper formatting, no ads)
+
+**Given** a source is a video (YouTube)
+**When** previewed
+**Then** embedded player appears if available
+**And** transcript is extracted if accessible
+
+**Demo Checkpoint:** 🃏 Beautiful source cards with reading time estimates
+
+---
+
+#### Story 6.3: Source Management (Delete, Rename, Organize)
+
+**As a** organized user,
+**I want** to manage my sources (delete, rename, organize),
+**So that** my knowledge base stays clean and findable.
+
+**Acceptance Criteria:**
+
+**Given** a user selects a source
+**When** they click the context menu
+**Then** options include: Rename, Delete, Move to Collection, Export
+
+**Given** a user deletes a source
+**When** they confirm
+**Then** the source is removed from IndexedDB
+**And** any derived artifacts (summaries, flashcards) are also removed
+**And** "Undo" option is available for 5 seconds
+
+**Given** a user renames a source
+**When** they save the new name
+**Then** the name updates everywhere (cards, chat citations)
+
+**Given** a user creates a collection
+**When** they add sources
+**Then** sources can be in multiple collections
+**And** collection view shows filtered sources
+
+**Demo Checkpoint:** 🗑️ Delete source → Toast with Undo option
+
+---
+
+#### Story 6.4: Source Metadata Extraction
+
+**As a** user reviewing sources,
+**I want** automatic metadata extraction (title, summary, key concepts),
+**So that** I can quickly understand a source before reading.
+
+**Acceptance Criteria:**
+
+**Given** a PDF is imported
+**When** processing completes
+**Then** metadata is extracted:
+  - Title (from PDF metadata or filename)
+  - Author (if available)
+  - Page count, word count
+  - Published date (if available)
+
+**Given** metadata extraction runs
+**When** it completes
+**Then** AI generates:
+  - 3-sentence summary
+  - 5 key concepts (as tags)
+  - Suggested questions to explore
+
+**Given** a user views source metadata
+**When** they expand the card
+**Then** they can edit/approve the AI-generated metadata
+**And** corrections are saved
+
+**Demo Checkpoint:** 🤖 Auto-generated summary + key concepts tags
+
+---
+
+### Epic 7: 🧠 RAG Infrastructure (Orama WASM)
+*Days 4-7*
+
+**User Outcome:** Sources are indexed for semantic search with hybrid retrieval (BM25 + vector), enabling source-grounded AI responses with citations.
+
+**Social Media Appeal:** ⭐⭐⭐⭐ — "AI that cites its sources" demo
+
+**UX Principles Applied:**
+- **Citation Visibility:** Every AI claim links to source with one-tap verification
+- **Grounding Always Visible:** Deep-linked citations build trust
+- **Mobile-First:** Orama WASM runs entirely in-browser (no server needed)
+
+**FRs Covered:** FR-AGENT-02 (Tool Execution), FR-EDU-02 (Citation Placeholder)
+
+**Technical Architecture:**
+- **Orama WASM** for in-browser vector search (mobile-compatible)
+- **Hybrid Retrieval:** BM25 (keyword) + Vector (semantic) with RRF fusion
+- **Dexie Storage:** Persistent Orama indexes in IndexedDB
+
+---
+
+#### Story 7.1: Orama WASM Integration & Index Management
+
+**As a** developer,
+**I want** Orama WASM integrated for local vector search,
+**So that** users can search sources semantically without server.
+
+**Acceptance Criteria:**
+
+**Given** the application loads
+**When** Orama initializes
+**Then** it loads from WASM with no server round-trips
+**And** existing indexes are loaded from IndexedDB
+
+**Given** a source is imported
+**When** indexing completes
+**Then** document is added to Orama index
+**And** index is persisted to IndexedDB
+
+**Given** multiple sources exist
+**When** user searches
+**Then** all sources are searched
+**And** results include source attribution
+
+**Given** index becomes large (>100MB)
+**When** user manages storage
+**Then** they can rebuild index from sources
+**And** orphaned indexes are cleaned up
+
+**Demo Checkpoint:** 🔍 Search finds semantically related content across sources
+
+---
+
+#### Story 7.2: Document Chunking Strategy
+
+**As a** developer implementing RAG,
+**I want** an effective chunking strategy for documents,
+**So that** retrieval returns relevant, coherent passages.
+
+**Acceptance Criteria:**
+
+**Given** a document is processed for indexing
+**When** chunking runs
+**Then** documents are split into chunks of 512-2048 tokens
+**And** chunk boundaries respect: paragraphs, headings, code blocks
+
+**Given** a chunk is created
+**When** it's indexed
+**Then** it includes: text content, source ID, position metadata
+**And** overlapping chunks (100 token overlap) ensure coverage
+
+**Given** a PDF is chunked
+**When** figures/tables exist
+**Then** they are preserved as separate chunks with captions
+**And** OCR text is included where available
+
+**Demo Checkpoint:** 📊 Show chunk boundaries in source preview
+
+---
+
+#### Story 7.3: Embedding Service Integration
+
+**As a** user wanting semantic search,
+**I want** embeddings generated for my sources,
+**So that** the system understands meaning, not just keywords.
+
+**Acceptance Criteria:**
+
+**Given** a user configures the app
+**When** they select embedding provider
+**Then** options include: Cloud (via existing providers), Local (Ollama if available)
+
+**Given** a chunk is ready for embedding
+**When** embedding generation starts
+**Then** progress shows in status bar
+**And** embeddings are stored alongside chunks
+
+**Given** user has no embedding provider
+**When** they try semantic search
+**Then** they see setup prompt
+**And** keyword search works without embeddings
+
+**Given** embedding generation fails
+**When** retry is available
+**Then** user can retry or skip the chunk
+**And** partial indexing completes
+
+**Demo Checkpoint:** 🧮 Embedding progress indicator during import
+
+---
+
+#### Story 7.4: Hybrid Retrieval Tool (BM25 + Vector + RRF)
+
+**As a** user searching knowledge,
+**I want** combined keyword and semantic search,
+**So that** I find both exact matches and related concepts.
+
+**Acceptance Criteria:**
+
+**Given** a user enters a search query
+**When** search executes
+**Then** BM25 keyword search runs in parallel with vector search
+**And** results are fused using Reciprocal Rank Fusion (RRF)
+**And** final results show combined relevance score
+
+**Given** search results appear
+**When** user clicks a result
+**Then** the source opens at the relevant passage
+**And** the matching text is highlighted
+
+**Given** no results match
+**When** search completes
+**Then** user sees "No matches found" with suggestions
+**And** they can expand search to web
+
+**Demo Checkpoint:** 🔎 Search "photosynthesis" finds both keyword matches and semantically related content
+
+---
+
+#### Story 7.5: RAG Chat Integration
+
+**As a** student studying,
+**I want** to chat with my sources and get grounded answers,
+**So that** I can learn from my materials conversationally.
+
+**Acceptance Criteria:**
+
+**Given** a user starts a knowledge chat
+**When** they ask a question
+**Then** the query triggers hybrid retrieval
+**And** relevant chunks are gathered with citations
+
+**Given** AI generates a response
+**When** it includes claims
+**Then** each claim has inline citation `[source_id]`
+**And** citations link to exact passages
+
+**Given** user clicks a citation
+**When** it opens
+**Then** source panel slides over showing the passage
+**And** matching text is highlighted
+
+**Given** response is complete
+**When** user asks follow-up
+**Then** conversation history is preserved
+**And** prior citations remain accessible
+
+**Demo Checkpoint:** 💬 Chat: "What are the main causes of climate change?" → AI answers with `[1][2][3]` citations
+
+---
+
+### Epic 8: 🎨 Knowledge Canvas
+*Days 8-12*
+
+**User Outcome:** Visual knowledge management with drag-drop nodes and connections, letting users see how concepts relate.
+
+**Social Media Appeal:** ⭐⭐⭐⭐⭐ — **"See how your knowledge connects"** mind map demo
+
+**UX Principles Applied:**
+- **Clear-Headed Mastery:** Visual representation turns chaos into order
+- **Two-Engine:** Canvas editing on desktop, viewing on mobile
+- **Offline-First:** Canvas state persisted to IndexedDB
+
+**Dependencies:**
+- React Flow for node/edge rendering (lazy-loaded for bundle size)
+- Zustand + Dexie for canvas state persistence
+
+---
+
+#### Story 8.1: React Flow Canvas Setup
+
+**As a** user opening the canvas,
+**I want** a visual workspace with nodes and connections,
+**So that** I can organize knowledge visually.
+
+**Acceptance Criteria:**
+
+**Given** a user opens the Knowledge Canvas
+**When** the canvas loads
+**Then** React Flow renders with pan/zoom controls
+**And** empty state shows: "Drop sources here to start"
+
+**Given** a user interacts with canvas
+**When** they drag, pan, or zoom
+**Then** interactions are smooth (60fps)
+**And** canvas state is saved to IndexedDB on change
+
+**Given** user is on mobile
+**When** canvas opens
+**Then** canvas is read-only (view only)
+**And** tooltip explains: "Edit on desktop"
+
+**Demo Checkpoint:** 🎮 Smooth pan/zoom on empty canvas
+
+---
+
+#### Story 8.2: Source Node Creation
+
+**As a** user building a knowledge map,
+**I want** to drag sources from the sidebar onto the canvas,
+**So that** my sources become visual nodes.
+
+**Acceptance Criteria:**
+
+**Given** a user drags a source from the panel
+**When** they drop it on the canvas
+**Then** a source node is created at drop position
+**And** node displays: source title, icon, thumbnail
+
+**Given** a source node is selected
+**When** user clicks it
+**Then** preview panel shows source content
+**And** user can expand to full source view
+
+**Given** user drags multiple sources
+**When** they overlap
+**Then** visual feedback shows overlap
+**And** auto-arrange option is available
+
+**Demo Checkpoint:** 🧩 Drag 3 sources → They appear as connected nodes
+
+---
+
+#### Story 8.3: Concept & Mind Map Nodes
+
+**As a** user synthesizing knowledge,
+**I want** to create concept nodes that aren't tied to sources,
+**So that** I can express my own ideas and connections.
+
+**Acceptance Criteria:**
+
+**Given** a user double-clicks on canvas
+**When** a new node is created
+**Then** default text is "New Concept"
+**And** user can edit the text inline
+
+**Given** a concept node is selected
+**When** they type
+**Then** content updates in real-time
+**And** changes persist automatically
+
+**Given** user creates multiple concepts
+**When** they want to organize
+**Then** they can drag to rearrange
+**And** group nodes visually
+
+**Demo Checkpoint:** 🧠 Create concept nodes: "Main Idea", "Supporting Evidence", "Conclusion"
+
+---
+
+#### Story 8.4: Connection Lines with Labels
+
+**As a** user showing relationships,
+**I want** to connect nodes with labeled lines,
+**So that** the visual map shows how concepts relate.
+
+**Acceptance Criteria:**
+
+**Given** a user selects two nodes
+**When** they click "Connect"
+**Then** an edge is drawn between them
+**And** edge label is optional (e.g., "leads to", "contradicts", "supports")
+
+**Given** an edge exists
+**When** user hovers over it
+**Then** relationship label is visible
+**And** edge highlights for deletion
+
+**Given** edge labels exist
+**When** user clicks one
+**Then** they can edit the label
+**And** changes persist
+
+**Demo Checkpoint:** 🔗 Connect "Climate Change" → "Renewable Energy" with label "solution for"
+
+---
+
+#### Story 8.5: Canvas Persistence & Export
+
+**As a** returning user,
+**I want** my canvas to be saved and restored,
+**So that** I can continue working across sessions.
+
+**Acceptance Criteria:**
+
+**Given** a user makes changes to canvas
+**When** they close or switch tabs
+**Then** canvas state is saved to IndexedDB
+**And** "Saved" indicator appears
+
+**Given** user returns to canvas
+**When** it loads
+**Then** all nodes and connections are restored
+**And** pan/zoom position is preserved
+
+**Given** user wants to share canvas
+**When** they export
+**Then** options include: PNG image, JSON backup, .alpha pack
+**And** exported file can be imported later
+
+**Demo Checkpoint:** 💾 Close tab → Reopen → Canvas exactly as left
+
+---
+
+### Epic 9: 📚 Study Artifacts Generation
+*Days 13-16*
+
+**User Outcome:** Auto-generated flashcards, quizzes, and study materials from sources that help with retention.
+
+**Social Media Appeal:** ⭐⭐⭐⭐ — "AI-generated flashcards from my notes" demo
+
+**UX Principles Applied:**
+- **Supported Autonomy:** AI assists but student is learning
+- **Trust & Authority:** Citation visibility for every question
+- **Offline-First:** Flashcards load in < 2 seconds on mobile
+
+---
+
+#### Story 9.1: Flashcard Generator
+
+**As a** student preparing for exams,
+**I want** AI-generated flashcards from my sources,
+**So that** I can study key concepts efficiently.
+
+**Acceptance Criteria:**
+
+**Given** a user selects a source
+**When** they click "Generate Flashcards"
+**Then** AI creates Q&A pairs from content
+**And** each card has front (question) and back (answer)
+
+**Given** flashcards are generated
+**When** user reviews them
+**Then** cards show: question on front, answer on back (flip animation)
+**And** each card cites the source `[1]`
+**And** cards are stored in IndexedDB
+
+**Given** user wants specific cards
+**When** they filter
+**Then** cards can be filtered by source, topic, or difficulty
+**And** search finds cards by content
+
+**Demo Checkpoint:** 🃏 Flip through 10 flashcards generated from PDF
+
+---
+
+#### Story 9.2: Quiz Generator
+
+**As a** teacher creating assessments,
+**I want** AI-generated quizzes from my materials,
+**So that** I can quickly create engaging student assessments.
+
+**Acceptance Criteria:**
+
+**Given** a user selects sources
+**When** they generate a quiz
+**Then** AI creates multiple choice questions (4 options)
+**And** correct answer is marked
+**And** explanation is provided for each question
+
+**Given** quiz is generated
+**When** user reviews
+**Then** they can edit questions, answers, explanations
+**And** they can add/remove questions
+**And** they can change difficulty level
+
+**Given** quiz is complete
+**When** exported
+**Then** options include: PDF print, JSON share, .alpha pack
+**And** exported quiz includes answer key
+
+**Demo Checkpoint:** 📝 Generate quiz from textbook chapter → 10 multiple choice questions
+
+---
+
+#### Story 9.3: Flashcard Study Interface
+
+**As a** student studying for exams,
+**I want** a focused study interface with spaced repetition,
+**So that** I can efficiently memorize key information.
+
+**Acceptance Criteria:**
+
+**Given** user enters study mode
+**When** flashcards load
+**Then** interface shows one card at a time
+**And** large, readable text (mobile-friendly)
+
+**Given** user knows a card
+**When** they tap "Know"
+**Then** card is scheduled for later review (spaced repetition)
+**And** next review date is shown
+
+**Given** user doesn't know a card
+**When** they tap "Review Later"
+**Then** card appears again soon
+**And** learning stats update
+
+**Given** study session ends
+**When** user completes cards
+**Then** summary shows: cards reviewed, time spent, accuracy
+**And** progress is tracked over time
+
+**Demo Checkpoint:** 📱 Mobile study session with swipe gestures
+
+---
+
+#### Story 9.4: Quiz Taking Interface
+
+**As a** student taking a quiz,
+**I want** an interactive quiz interface with scoring,
+**So that** I can test my knowledge and see results.
+
+**Acceptance Criteria:**
+
+**Given** a user starts a quiz
+**When** questions load
+**Then** one question appears at a time
+**And** timer starts (optional)
+
+**Given** user selects an answer
+**When** they submit
+**Then** immediate feedback shows: correct/incorrect + explanation
+**And** score updates
+
+**Given** quiz completes
+**When** all questions answered
+**Then** results show: score, time taken, questions reviewed
+**And** user can retry incorrect questions
+**And** results are saved to history
+
+**Demo Checkpoint:** 🎯 Complete quiz → See score breakdown → Review explanations
+
+---
+
+### Epic 10: 🎙️ Knowledge Chat & Synthesis
+*Days 17-19*
+
+**User Outcome:** Chat with sources and generate NotebookLM-style audio overviews for learning on-the-go.
+
+**Social Media Appeal:** ⭐⭐⭐⭐⭐ — **"Listen to your study materials"** audio overview demo
+
+**UX Principles Applied:**
+- **Audio Overview as Viral Hook:** 30-second AI summaries in Vietnamese
+- **Mobile Consumption:** Audio enables learning during commute
+- **Background Listening:** Offline-capable playback
+
+---
+
+#### Story 10.1: Multi-Source Synthesis Chat
+
+**As a** researcher synthesizing findings,
+**I want** to chat across multiple sources,
+**So that** I can understand how different sources relate.
+
+**Acceptance Criteria:**
+
+**Given** user selects multiple sources
+**When** they start a synthesis chat
+**Then** all sources are included in context
+**And** chat UI shows which sources are active
+
+**Given** user asks a synthesis question
+**When** AI responds
+**Then** response compares/contrasts sources
+**And** citations from multiple sources are included `[1][2][3]`
+**And** contradictions between sources are highlighted
+
+**Given** user wants to focus on one source
+**When** they filter
+**Then** chat narrows to that source
+**And** synthesis context updates
+
+**Demo Checkpoint:** 🔬 Chat: "Compare the findings of these 3 papers on climate change"
+
+---
+
+#### Story 10.2: Source-Grounded Q&A
+
+**As a** student reviewing materials,
+**I want** to ask questions and get answers with verified citations,
+**So that** I can learn with confidence.
+
+**Acceptance Criteria:**
+
+**Given** user asks a question about sources
+**When** AI generates response
+**Then** every factual claim has a citation
+**And** citations are inline with clickable `[n]` links
+**And** citations open source at exact passage
+
+**Given** user wants to verify a claim
+**When** they click citation
+**Then** source slides over showing highlighted passage
+**And** user can expand to full source view
+
+**Given** AI is uncertain
+**When** response has low confidence
+**Then** it says "Based on the sources, it appears that..." or "I couldn't find..."
+**And** confidence is calibrated
+
+**Demo Checkpoint:** ✅ Click citation → See exact sentence that supports claim
+
+---
+
+#### Story 10.3: Audio Overview Generator
+
+**As a** student commuting,
+**I want** to listen to AI-generated audio summaries of my sources,
+**So that** I can learn during downtime.
+
+**Acceptance Criteria:**
+
+**Given** user selects sources
+**When** they click "Generate Audio"
+**Then** AI generates a ~2-minute audio summary
+**And** text-to-speech uses Vietnamese voice (natural sounding)
+**And** audio is saved to IndexedDB for offline playback
+
+**Given** audio is generating
+**When** user waits
+**Then** progress shows: "Generating script..." → "Synthesizing audio..."
+**And** estimated time is shown
+
+**Given** audio is ready
+**When** user plays
+**Then** audio player shows: progress bar, speed control, skip forward/back
+**And** transcripts are available (read while listening)
+
+**Given** user is on mobile
+**When** audio plays
+**Then** background playback works
+**And** audio continues when app is in background
+
+**Demo Checkpoint:** 🎧 Generate audio from textbook → Listen during commute
+
+---
+
+## Phase 2 Sprint Calendar
+
+| Sprint | Epic | Dates | Demo Focus |
+|--------|------|-------|------------|
+| Sprint 6 | Epic 6: Source Ingestion | TBD | Drag & drop PDF import |
+| Sprint 7 | Epic 7: RAG Infrastructure | TBD | Semantic search + citations |
+| Sprint 8 | Epic 8: Knowledge Canvas | TBD | Visual knowledge map |
+| Sprint 9 | Epic 9: Study Artifacts | TBD | Flashcards + quiz |
+| Sprint 10 | Epic 10: Knowledge Chat | TBD | Audio overview |
+
+---
+
+## Phase 2 NFR Validation Points
+
+| NFR ID | Validation Epic | Target |
+|--------|-----------------|--------|
+| NFR-PERF-P2-01 | Epic 6 | Source ingestion < 60s for typical PDF |
+| NFR-PERF-P2-02 | Epic 6 | Source preview < 2s load |
+| NFR-PERF-P2-03 | Epic 7 | Semantic search < 500ms |
+| NFR-PERF-P2-04 | Epic 7 | Citation lookup < 100ms |
+| NFR-PERF-P2-05 | Epic 8 | Canvas interaction 60fps |
+| NFR-PERF-P2-06 | Epic 9 | Flashcard load < 2s mobile |
+| NFR-PERF-P2-07 | Epic 10 | Audio generation < 30s |
+| NFR-REL-P2-01 | Epic 6 | IndexedDB reliability 99%+ |
+| NFR-REL-P2-02 | Epic 7 | Citation accuracy 100% |

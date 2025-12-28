@@ -69,6 +69,50 @@ development_status:
   5-4-robust-state-hydration: backlog
   epic-5-retrospective: optional
 
+  # PHASE 2: Knowledge Synthesis Station (Days 18-28)
+  # =================================================
+
+  # EPIC 6: Source Ingestion & Management (Days 18-20)
+  epic-6: backlog
+  6-1-source-import-pipeline: backlog # PDF, URL, Text upload
+  6-2-source-card-ui: backlog # Preview UI for sources
+  6-3-source-management: backlog # Delete, rename, organize
+  6-4-source-metadata-extraction: backlog # Title, summary, key concepts
+  epic-6-retrospective: optional
+
+  # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)
+  epic-7: backlog
+  7-1-orama-index-management: backlog # Orama WASM integration
+  7-2-document-chunking: backlog # 512-2048 token chunks
+  7-3-embedding-service: backlog # Embedding integration (Ollama/cloud)
+  7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
+  7-5-rag-chat-integration: backlog # Source-grounded responses
+  epic-7-retrospective: optional
+
+  # EPIC 8: Knowledge Canvas (Days 25-29)
+  epic-8: backlog
+  8-1-react-flow-canvas: backlog # Nodes/edges rendering
+  8-2-source-node-creation: backlog # Drag from sidebar to canvas
+  8-3-concept-node-creation: backlog # Mind map nodes
+  8-4-connection-lines: backlog # Relationship labels
+  8-5-canvas-persistence: backlog # Save/load canvas state
+  epic-8-retrospective: optional
+
+  # EPIC 9: Study Artifacts Generation (Days 30-33)
+  epic-9: backlog
+  9-1-flashcard-generator: backlog # Q&A pairs from content
+  9-2-quiz-generator: backlog # Multiple choice from sources
+  9-3-flashcard-study-interface: backlog # Flip cards, spaced repetition
+  9-4-quiz-taking-interface: backlog # Scoring, explanations
+  epic-9-retrospective: optional
+
+  # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)
+  epic-10: backlog
+  10-1-source-grounded-chat: backlog # RAG-powered Q&A
+  10-2-multi-source-synthesis: backlog # Combine 2+ sources
+  10-3-audio-overview-generator: backlog # NotebookLM-style TTS
+  epic-10-retrospective: optional
+
 current_sprint:
   id: "SPRINT-1"
   goal: "AI Chat That Just Works + Smart Agent Tools Foundation"

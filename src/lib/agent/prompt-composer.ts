@@ -570,7 +570,7 @@ export class SystemPromptComposer {
     const parts: string[] = [];
     
     // Add open files section (max 10)
-    if (openFiles.length > 0) {
+    if (openFiles && openFiles.length > 0) {
       const fileList = openFiles
         .slice(0, this.getConfig().maxOpenFiles || DEFAULT_CONFIG.maxOpenFiles)
         .map(f => `  - ${f.name} (${f.path})`);
