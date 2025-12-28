@@ -298,50 +298,201 @@ We are building on **Radix Primitives** via **ShadCN UI** to ensure accessibilit
     *   `Database`: Local Storage/Sources.
     *   `WifiOff`: Offline Indicator.
 
-## 5. Screen Specifications (Phase 1)
+## 5. Screen Specifications (Detailed)
 
-### Desktop: The Creator Studio
-**Layout:** 3-Column Resizable
-1.  **Sidebar (Left):** File Explorer / Source List.
-    *   *Features:* Drag-drop upload, status indicators, "Open Folder" CTA.
-2.  **Main Stage (Center):** Monaco Editor / Preview / Canvas.
-    *   *Features:* Tabbed interface, Split view (Code | Preview).
-3.  **Assistant (Right):** Cascade Chat.
-    *   *Features:* Chat bubbles, "Apply Diff" blocks, "Thinking" logs.
+### 5.1 Onboarding & Permissions (Critical)
+**Context:** First launch on Desktop.
+*   **Modal 1 (Value Prop):**
+    *   Copy: "Project Alpha: Knowledge Synthesis Station."
+    *   Sub: "Private. Local. Offline."
+    *   Visual: Hero illustration of "Brain connecting to File Folder."
+*   **Modal 2 (FSA Grant):**
+    *   **Header:** "Connect Your Workspace"
+    *   **Body:** "We need access to a folder on your disk to save your work. Your files never leave your device."
+    *   **Action:** Button "Select Project Folder" (Primary).
+    *   **Microcopy:** "Trusted by browser security sandbox."
+    *   **Edge Case (Deny):** "Without file access, changes will be lost on refresh. [Try Again]"
 
-**Key Interaction:**
-*   **Agent Diff View:** When agent proposes code, show `DiffEditor` (Monaco) in a modal or inline block. User clicks "Accept" to write to disk.
+### 5.2 Desktop Creator Studio (Main Interface)
+**Layout:** 3-Column Resizable (Default: 20% | 50% | 30%)
+*   **Left Panel (Explorer):**
+    *   **Project Header:** Project Name + Connection Status Dot (Green=Saved).
+    *   **File Tree:** Standard recursive tree.
+        *   *Icons:* File type icons (ts, css, md).
+        *   *Status:* "Unsaved" dot, "Syncing" spinner.
+    *   **Source List (Phase 2):** Accordion below files called "Knowledge Sources".
+*   **Center Panel (Workspace):**
+    *   **Tabs:** Draggable file tabs.
+    *   **Empty State:** "Select a file to edit or ask the Assistant to create one."
+    *   **Editor:** Monaco instance.
+    *   **Preview:** Iframe (WebContainer port 3000).
+*   **Right Panel (Assistant):**
+    *   **Thread List:** History of chats.
+    *   **Chat View:** Message bubbles.
+    *   **Agent Blocks:**
+        *   "Searching..." (Spinner)
+        *   "Reading file..." (File path)
+        *   "Diff Proposal" (Monaco Diff Editor with Accept/Reject).
 
-### Mobile: The Companion (Demo Mode)
-**Layout:** Bottom Tab Bar Navigation
-1.  **Home:** Recent Projects / Read-Only File Tree.
-2.  **Chat:** Full-screen chat interface with history.
-3.  **Settings:** Theme, Cache Management.
+### 5.3 Mobile Companion (Demo Mode)
+**Context:** User opens app on phone.
+*   **Global Banner:**
+    *   Type: Dismissible Warning (`Alert` component).
+    *   Copy: "📱 Viewing Mode. Switch to Desktop to edit code."
+*   **Tab 1: Home:**
+    *   Recent Projects List.
+    *   Quick Actions: "Review Flashcards", "Ask Question".
+*   **Tab 2: Chat:**
+    *   Full screen chat interface.
+    *   Input includes "Voice" button (Phase 2).
+*   **Tab 3: Settings:**
+    *   Theme Toggle.
+    *   Language Toggle (VN/EN).
+    *   Cache Manager ("Clear Offline Data").
 
-**Key Interaction:**
-*   **Read-Only Editor:** Tap a file -> Opens `MonacoEditor` in `readOnly={true}` mode.
-*   **Banner:** "Editing disabled on mobile. Switch to desktop to code." (Dismissible).
+## 6. Interaction Patterns & User Flows
 
-## 6. Accessibility & Responsiveness
+### 6.1 FSA Permission Restoration
+**Trigger:** User reloads page or returns after session close.
+1.  **System Check:** `queryPermission({ mode: 'readwrite' })`.
+2.  **Condition:**
+    *   If `granted`: Silent restore. Green dot appears.
+    *   If `prompt`: Show "Resume Session" banner.
+    *   If `denied`: Show Blocking Modal.
+3.  **User Action:** Clicks "Resume". Browser native prompt appears.
+4.  **Result:** Success toast "Workspace Connected".
 
-### Accessibility Standards (WCAG 2.1 AA)
-*   **Contrast:** All text must meet 4.5:1 ratio against background.
-*   **Focus States:** Visible ring (2px blue) on all interactive elements for keyboard nav.
-*   **Screen Readers:** All icon buttons must have `aria-label`.
-*   **Motion:** Respect `prefers-reduced-motion` (disable confetti/smooth scroll).
+### 6.2 Agent-Assisted Edit (The Trust Loop)
+1.  **User:** Asks "Add a button to the header."
+2.  **Agent:** "Thinking... Reading Header.tsx..."
+3.  **Agent:** "I've drafted a change." -> **Shows Diff Block**.
+    *   *Left:* Original Code.
+    *   *Right:* New Code (Green highlights).
+4.  **User:** Reviews. Clicks "Apply".
+5.  **System:**
+    *   Writes to Virtual FS (WebContainer).
+    *   Writes to Local FS (FSA).
+    *   Updates Preview.
+6.  **Agent:** "Done. Preview updated."
 
-### Responsive Breakpoints
-*   **Mobile (<768px):** Sidebar hidden (Hamburger menu). Chat is overlay or full screen.
-*   **Tablet (768px-1024px):** Sidebar collapsible. 2-column view (Editor + Chat).
-*   **Desktop (>1024px):** Full 3-column layout.
+## 7. Component Library Specifications
 
-## 7. Implementation Checklist (Phase 1)
+### 7.1 Monaco Editor Wrapper
+*   **Props:** `path`, `content`, `language`, `readOnly`, `onSave`.
+*   **Mobile Behavior:** If `isMobile=true`, force `readOnly=true` and `minimap={enabled: false}`.
+*   **Theme:** Syncs with `next-themes` (VsDark / VsLight).
 
+### 7.2 Agent Diff Block
+*   **Component:** `DiffEditor` (Monaco).
+*   **Height:** Auto-expanding or Fixed 400px with scroll.
+*   **Actions:**
+    *   `Accept`: Primary (Blue). Commits change.
+    *   `Reject`: Outline (Red). Discards diff.
+    *   `Edit`: Secondary. Opens diff in main editor for manual tweak.
+
+## 8. Content & Microcopy Guidelines (Localization)
+
+**Strategy:** Keys in `src/i18n/{lang}.json`. Default: `vi` (Vietnamese).
+
+### 8.1 Error Message Matrix
+
+| Error Key | English (en) | Vietnamese (vi) | Tone |
+| :--- | :--- | :--- | :--- |
+| `ERR_FSA_DENIED` | "Access denied. We need permission to save your files." | "Từ chối truy cập. Ứng dụng cần quyền để lưu file của bạn." | Urgent |
+| `ERR_WC_BOOT` | "Environment failed to start. Please reload." | "Không thể khởi động môi trường. Vui lòng tải lại trang." | Apologetic |
+| `ERR_SYNC_CONFLICT` | "File changed on disk. Keep local or reload?" | "File đã thay đổi. Giữ bản hiện tại hay tải lại?" | Warning |
+| `MSG_MOBILE_LIMIT` | "Editing disabled on mobile." | "Chế độ xem trên di động. Dùng máy tính để chỉnh sửa." | Informational |
+| `MSG_SAVING` | "Saving..." | "Đang lưu..." | Neutral |
+| `MSG_SAVED` | "Saved locally." | "Đã lưu vào máy." | Reassuring |
+
+## 9. Mobile Responsiveness Specifications
+
+### 9.1 Breakpoints
+*   **Compact (<640px):** Mobile Layout.
+    *   *Sidebar:* Hidden (Drawer).
+    *   *Panels:* Stacked (Tabs).
+    *   *Editor:* Read-only.
+*   **Medium (640-1024px):** Tablet.
+    *   *Sidebar:* Icons only (Rail).
+    *   *Panels:* 2-Col (Editor + Chat).
+*   **Large (>1024px):** Desktop.
+    *   *Sidebar:* Expanded.
+    *   *Panels:* 3-Col Resizable.
+
+### 9.2 Touch Targets
+*   All buttons: Min 44x44px padding.
+*   Panel Resizers: Increased grab area (10px invisible hit box).
+*   Tree Items: 40px height with full-row click target.
+
+## 10. Accessibility Requirements
+
+### 10.1 Keyboard Navigation
+*   **Focus Trap:** Modals must trap focus.
+*   **Skip Links:** "Skip to Editor", "Skip to Chat" at top of DOM.
+*   **Shortcuts:**
+    *   `Cmd+S`: Save (Manual trigger).
+    *   `Cmd+B`: Toggle Sidebar.
+    *   `Cmd+J`: Toggle Terminal/bottom panel.
+
+### 10.2 ARIA Specifications
+*   **Icons:** `aria-label` required for all icon-only buttons.
+*   **Status Dots:** `aria-live="polite"` for connection status changes (e.g., "Connection Lost").
+*   **Tabs:** Proper `role="tablist"` / `role="tabpanel"` structure (Radix handles this).
+
+## 11. Error Handling & Edge Cases
+
+### 11.1 WebContainer Boot Failure
+*   **Scenario:** Implementation fails to load (browser unsupported or network block).
+*   **UI:** Full screen error state.
+*   **Action:** "Download Logs" + "Reload" button.
+*   **Fallback:** None (Core dependency).
+
+### 11.2 Offline During Sync
+*   **Scenario:** Agent is generating code, network cuts.
+*   **UI:** Toast "Connection lost. Agent paused."
+*   **State:** Pause generic spinner. Show "Retry" button when online event fires.
+
+### 11.3 IndexedDB Quota Exceeded
+*   **Scenario:** Too many PDFs/Vectors.
+*   **UI:** Warning Banner "Storage Full".
+*   **Action:** Prompt to clear cache or delete old projects.
+
+## 12. Performance Requirements
+
+### 12.1 Latency Targets
+| Interaction | Target | measurement |
+| :--- | :--- | :--- |
+| **App Load (Cold)** | < 3s | TTI (Time to Interactive) |
+| **WebContainer Boot** | < 5s | `boot()` promise resolution |
+| **File Save** | < 100ms | Optimistic UI update |
+| **Agent Response** | < 2s | Time to first token |
+| **Mobile Scroll** | 60fps | Flashcard feed |
+
+### 12.2 Optimization Strategy
+*   **Code Splitting:** Lazy load `monaco-editor` and `@webcontainer/api`.
+*   **Vector Search:** Run Orama in Web Worker to prevent UI block.
+*   **Virtualization:** Use `Virtuoso` for long file trees and chat logs.
+
+## 13. Animation & Transition Specifications
+
+*   **Motion System:** "Snappy & Professional".
+    *   *Duration:* 200ms default.
+    *   *Curve:* `ease-out`.
+*   **Transitions:**
+    *   **Tab Switch:** Instant (0ms). No fade.
+    *   **Panel Resize:** 0ms (Direct manipulation).
+    *   **Modal Open:** Scale In (95% -> 100%) + Fade In.
+*   **Reduced Motion:**
+    *   If `prefers-reduced-motion: reduce`: Disable modal scale, use simple fade.
+
+## 14. Implementation Checklist (Phase 1)
 *   [ ] **Theme Engine:** Implement `next-themes` with System/Dark/Light support.
 *   [ ] **Layout Shell:** `ResizablePanelGroup` for Desktop, `Drawer` for Mobile.
 *   [ ] **FSA Guard:** `useFileSystem` hook that handles permission state logic.
 *   [ ] **Mobile Guard:** `isMobile` check to disable WebContainer/Monaco write mode.
 *   [ ] **Agent UI:** `ChatInterface` component with "Tool Execution" blocks (not just text).
+*   [ ] **i18n Setup:** `react-i18next` with `vi`/`en` JSONs.
+
 
 
 ## 1. Project Understanding

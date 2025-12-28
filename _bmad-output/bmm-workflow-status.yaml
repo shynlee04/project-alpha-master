@@ -120,11 +120,13 @@ workflow_status:
         - "_bmad-output/cis/knowledge-synthesis-station-concept-2025-12-26.md"
     
     ux_design:
-      status: "in_progress"
+      status: "completed"
       started_at: "2025-12-28T19:14:41+07:00"
+      completed_at: "2025-12-28T19:41:07+07:00"
       agent: "ux-designer"
       command: "create-ux-design"
-      note: "Refine UX spec from proposal into implementation-ready wireframes"
+      note: "UX specification complete with 14 sections covering all user experiences"
+      artifact: "_bmad-output/project-planning-artifacts/ux-design-specification.md"
       input_documents:
         - "_bmad-output/project-planning-artifacts/prd.md"
         - "_bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md"
@@ -133,16 +135,21 @@ workflow_status:
   # Phase 2: Solutioning
   phase_2_solutioning:
     name: "Solutioning"
-    status: "not_started"
+    status: "in_progress"
     
     architecture:
-      status: "recommended"
+      status: "in_progress"
+      started_at: "2025-12-28T19:41:07+07:00"
       agent: "architect"
       command: "create-architecture"
-      note: "Adapt target architecture for 2-phase approach (Stabilization → Knowledge MVP)"
+      note: "Creating solution architecture for 2-phase approach (Stabilization → Knowledge MVP)"
+      artifact: "_bmad-output/project-planning-artifacts/architecture.md"
       input_documents:
+        - "_bmad-output/project-planning-artifacts/prd.md"
+        - "_bmad-output/project-planning-artifacts/ux-design-specification.md"
         - "_bmad-output/docs/2025-12-28/target-architecture.md"
-        - "_bmad-output/docs/2025-12-28/version-2/technical-architecture-document.md"
+        - "_bmad-output/docs/2025-12-28/investigation-report.md"
+        - "_bmad-output/archive/architecture.md"
     
     epics_and_stories:
       status: "required"
