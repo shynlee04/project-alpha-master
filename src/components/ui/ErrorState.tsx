@@ -90,19 +90,16 @@ export function ErrorState({
     const { t } = useTranslation()
     const { isMobile, isTablet } = useDeviceType()
     const navigate = useNavigate()
-    
+
     const handleGoHome = () => {
         navigate({ to: '/' })
     }
-    
+
     const errorTitle = title || t('errors.generic.unexpected.title', 'Unexpected Error')
     const isDev = import.meta.env.DEV
-    
-    // Use mobile-specific error message on mobile/tablet devices
-    const errorMessage = (isMobile || isTablet) && !title
-        ? t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
-        : error
-    
+
+    const errorMessage = error
+
     // Get action icon based on action type
     const getActionIcon = () => {
         switch (action) {
@@ -118,7 +115,7 @@ export function ErrorState({
                 return null
         }
     }
-    
+
     // Get action label based on action type
     const getActionLabel = () => {
         switch (action) {
@@ -134,7 +131,7 @@ export function ErrorState({
                 return ''
         }
     }
-    
+
     return (
         <div className={cn(errorStateVariants({ variant }), className)}>
             {/* Icon */}
@@ -143,13 +140,13 @@ export function ErrorState({
                     <AlertCircle className="w-12 h-12" />
                 </div>
             )}
-            
+
             {/* Title */}
             <h3 className="text-xl font-bold mb-2">{errorTitle}</h3>
-            
+
             {/* Error message */}
             <p className="text-sm opacity-90 mb-4">{errorMessage}</p>
-            
+
             {/* Action button */}
             {action && (
                 <button
@@ -160,7 +157,7 @@ export function ErrorState({
                     <span>{getActionLabel()}</span>
                 </button>
             )}
-            
+
             {/* Technical details (development only) */}
             {isDev && showDetails && (
                 <details className="mt-4 text-xs opacity-70">
