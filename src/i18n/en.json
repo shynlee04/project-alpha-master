@@ -259,7 +259,19 @@
         "title": "Environment Failed to Start",
         "description": "We couldn't start the development environment. Please try again.",
         "action": "Retry",
-        "mobileHint": "This might take a moment on slower devices"
+        "mobileHint": "This might take a moment on slower devices",
+        "mobile": {
+          "title": "Desktop Required",
+          "description": "The development environment requires a desktop browser. Please access this app from a desktop computer (Chrome, Edge, or Safari) for full IDE features.",
+          "action": "Learn More",
+          "hint": "Mobile browsers don't support WebContainer. Use desktop for development."
+        },
+        "desktop": {
+          "title": "Environment Failed to Start",
+          "description": "We couldn't start the development environment. Please check the error details and try again.",
+          "action": "Retry",
+          "hint": "This might be a temporary issue. Try reloading the page."
+        }
       },
       "notSupported": {
         "title": "Feature Not Available",

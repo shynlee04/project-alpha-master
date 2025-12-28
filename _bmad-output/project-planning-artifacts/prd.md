@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4]
+stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 inputDocuments:
   - _bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md
   - _bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md
@@ -17,7 +17,7 @@ documentCounts:
   brainstorming: 1
   projectDocs: 10
 workflowType: 'prd'
-lastStep: 4
+lastStep: 8
 project_name: 'Project Alpha v2.0 - Knowledge Synthesis Station'
 user_name: 'Admin'
 date: '2025-12-28'
@@ -435,3 +435,290 @@ These narrative arcs reveal critical capability requirements:
 4. **State Persistence Engine:** Requires IndexedDB (Dexie) to store UI state (open tabs, scroll position) and FSA handles for seamless session restoration.
 5. **Progressive Degradation (Mobile):** Requires a "Capability Detection" layer that toggles features based on `SharedArrayBuffer` availability and viewport size.
 6. **Agent Tool Transparency:** Requires UI markers showing when the AI is reading or writing files, with explicit "Approve/Reject" gates for code changes.
+
+---
+
+## Domain-Specific Requirements
+
+### EdTech Compliance & Regulatory Overview
+
+**Project Alpha v2.0** operates in the Vietnamese EdTech market, prioritizing **Local-First Privacy** to exceed typical regional requirements. While the project follows a "Solo Dev / Open-Source" delivery model, it adheres to the spirit of **Vietnamese Decree 13/2023/ND-CP** by ensuring 100% user control over data flows.
+
+### Key Domain Concerns
+
+| Concern | Solo-Dev Implementation Strategy |
+|---------|---------------------------------|
+| **Student Privacy** | Local-first file storage + BYOK (Bring Your Own Key) model ensures the developer never sees user data. |
+| **Accessibility** | Focus on keyboard navigation and contrast ratios to support learners with diverse needs. |
+| **Content Safety** | Grounded RAG citations [1][2] to mitigate AI hallucinations in educational materials. |
+| **Curriculum Alignment** | Community-driven tagging system for subjects, grade levels, and exam preparation. |
+
+### Compliance Requirements
+
+| ID | Requirement | Priority | Implementation |
+|----|-------------|----------|----------------|
+| **EDU-PRIV-01** | Privacy banner on first use explaining external AI providers | P0 | Phase 1 |
+| **EDU-PRIV-02** | "Clear All Data" button for local IndexedDB/State | P0 | Phase 1 |
+| **EDU-PRIV-03** | Privacy Shield mode (regex-based PII redaction) | P1 | Phase 2 |
+| **EDU-A11Y-01** | Keyboard-only navigation audit (A) | P0 | Phase 1 |
+| **EDU-A11Y-02** | Color contrast validation 4.5:1 ratio (AA) | P0 | Phase 1 |
+| **EDU-A11Y-03** | ARIA labels on all interactive/icon elements | P0 | Phase 1 |
+
+### Industry Standards & Best Practices
+
+1. **WCAG 2.1 Level AA:** Target standard for the primary Creator Studio interface.
+2. **Grounded RAG (Source Grounding):** Mandatory citation requirement for all AI-generated educational content to ensure factual accuracy.
+3. **Local-First Software:** Adherence to "offline-capable" and "user-owned-data" principles defined by Ink & Switch.
+
+### Required Expertise & Validation
+
+- **Community Validation:** Rely on teachers (Cô Lan persona) to review and tag "Verified" notebooks.
+- **User Responsibility Model:** Explicit disclaimers for AI-generated quizzes/lessons requiring teacher review before classroom use.
+
+### Implementation Considerations
+
+**Phase 1 Effort (Core Stabilization): ~10 Days**
+- Primarily focused on accessibility boilerplate and basic privacy controls (banners/clear state).
+
+**Phase 2 Effort (Knowledge Synthesis): ~20 Days**
+- Focused on the citation engine (source grounding), Privacy Shield redaction, and the curriculum tagging UI.
+
+---
+
+## Innovation & Differentiation
+
+### Core Innovation Thesis
+
+> **"AI-powered knowledge work doesn't require cloud infrastructure or sacrificing privacy—and a solo developer can prove it."**
+
+**Project Alpha v2.0** is a **technical showcase** that challenges the assumption that complex AI + developer tooling requires cloud infrastructure or corporate backing. As an open-source project by a solo developer, it proves that modern browser APIs (WebContainers, WASM, File System Access) enable experiences previously reserved for enterprise SaaS.
+
+### What Sacred Cow Is Being Challenged?
+
+| Industry Assumption | Project Alpha's Counter-Thesis |
+|---------------------|-------------------------------|
+| "AI assistants require cloud servers" | BYOK model - users bring their own API keys, no proxy server |
+| "Real IDEs need native apps" | WebContainer runs Node.js entirely in the browser |
+| "Knowledge tools need vendor lock-in" | Local-first files + IndexedDB = zero lock-in |
+| "Open-source can't compete with SaaS UX" | Modern component libraries (Radix, Monaco) close the gap |
+
+### Technical Innovations (Proving the Browser's Limits)
+
+**Browser-Native Compute Stack:**
+
+```
+Project Alpha Runtime (Zero Backend)
+├── WebContainer API → Node.js 18+ execution in browser
+├── Monaco Editor → VS Code editor core
+├── xterm.js → Full terminal emulator
+├── Orama WASM → Vector search without server
+├── File System Access API → Direct local disk read/write
+└── TanStack AI → Streaming LLM with multi-provider support
+```
+
+**Why This Is Hard (And Why It's Valuable to Prove):**
+- WebContainers require `SharedArrayBuffer` (cross-origin isolation headers)
+- File System Access API has strict permission lifecycles
+- WASM + IndexedDB together can hit storage/memory quotas
+- Multi-provider AI requires unified abstraction over different APIs
+
+**Solo Dev Advantage:** No legacy architecture to refactor. Ground-up design for browser-native.
+
+### Unfair Advantages (Solo Dev Open-Source Edition)
+
+| Advantage | Why It's Sustainable | Enterprise Can't Copy Because... |
+|-----------|---------------------|----------------------------------|
+| **$0 Hosting** | No servers = no cloud bills | Their business model IS cloud revenue |
+| **BYOK Model** | User pays OpenAI/Anthropic directly | Cannibalizes their AI upsell strategy |
+| **Open Source** | Community contributions, transparency | Won't open-source their cash cows |
+| **Zero Analytics** | Privacy by design, not policy | User data is their ML training asset |
+| **Solo Velocity** | No meetings, no PRDs for PRDs | Coordination overhead kills speed |
+
+### Validation Metrics
+
+**Technical Proof Points (Phase 1 Demo):**
+
+| Metric | Target | Validates |
+|--------|--------|-----------|
+| WebContainer cold boot | < 5s | Browser can run Node.js fast |
+| 100-file mount via FSA | < 3s | Real projects work, not just demos |
+| Agent tool execution | 95%+ success | AI can reliably edit local files |
+| State restoration | 99%+ success | Session persistence works across visits |
+
+**Market Validation (Phase 2 Beta):**
+
+| Signal | Target | Indicates |
+|--------|--------|-----------|
+| GitHub stars | 500+ | Open-source community interest |
+| Weekly active users | 50+ beta testers | Real usage, not just curiosity |
+| Issues filed | 20+ substantive bugs | Users care enough to report |
+| PRs from community | 5+ | Contributors want to improve it |
+
+### Risk Mitigation & Fallback Strategy
+
+**The "Prove the Tech" approach carries technical risk. Here's the escape ladder:**
+
+| Fallback Level | Trigger | What Changes | Effort |
+|----------------|---------|--------------|--------|
+| **Plan A (Full Stack)** | Default | WebContainer + WASM + FSA + Monaco | Current |
+| **Plan B (Lite)** | WC boot failures > 5% | Drop WebContainer, keep FSA + WASM + Monaco | 2-3 weeks |
+| **Plan C (Core)** | WASM perf issues | Drop WASM, keep FSA + AI chat + basic editor | 1-2 weeks |
+| **Plan D (Desktop)** | Browser limits block adoption | Pivot to Electron shell | 1 month |
+
+**Decision Points:**
+- End of Phase 1: If WebContainer reliability < 95%, pivot to Plan B
+- Phase 2 Beta: If 30%+ users hit browser limits, evaluate Plan C
+- Post-launch: If mobile demand high, build Plan D alongside web
+
+### Open-Source Project Philosophy
+
+**What "Open Source" Means for Project Alpha:**
+1. **MIT Licensed** - Anyone can fork, modify, commercial use OK
+2. **No Telemetry** - Zero tracking by default (opt-in analytics only)
+3. **BYOK Only** - No hosted AI tier that creates vendor dependency
+4. **Transparent Roadmap** - GitHub Issues/Discussions drive priorities
+5. **Solo Maintainer Reality** - Contributions welcome, but expectations managed
+
+**What This ISN'T:**
+- ❌ "Open core" with paid enterprise features
+- ❌ VC-backed with growth pressure
+- ❌ Trying to compete with Google/Notion directly
+- ❌ Aiming for unicorn status
+
+**What This IS:**
+- ✅ A technical proof-of-concept for browser-native knowledge tools
+- ✅ A portfolio piece demonstrating advanced web APIs
+- ✅ A useful tool for the Vietnamese EdTech community
+- ✅ A foundation others can build on (forks, plugins, integrations)
+
+---
+
+## Technical Specifications
+
+### Browser Compatibility Matrix
+
+| Browser | Min Version | Status | Limiting Factor |
+|---------|-------------|--------|-----------------|
+| **Chrome** | 86+ | ✅ Full Support | SharedArrayBuffer, FSA API |
+| **Edge** | 86+ | ✅ Full Support | Chromium-based |
+| **Safari** | 15.2+ | ⚠️ Partial | No FSA API, limited WebContainer |
+| **Firefox** | 111+ | ⚠️ Partial | No FSA API, experimental WC |
+| **Mobile Chrome** | N/A | ❌ Demo Mode | No SharedArrayBuffer |
+| **Mobile Safari** | N/A | ❌ Demo Mode | No SharedArrayBuffer, no FSA |
+
+**Required Browser Features:**
+- `SharedArrayBuffer` (for WebContainer)
+- `Cross-Origin-Embedder-Policy: require-corp` header
+- `Cross-Origin-Opener-Policy: same-origin` header
+- IndexedDB (for Dexie.js persistence)
+- Service Worker (for offline caching - Phase 2)
+
+### Language & Framework Matrix
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **TypeScript** | 5.x | Primary language |
+| **React** | 19.x | UI framework |
+| **TanStack Router** | 1.x | File-based routing |
+| **TanStack Start** | 1.x | SSR/Full-stack framework |
+| **Zustand** | 5.x | State management |
+| **Dexie.js** | 4.x | IndexedDB abstraction |
+| **TanStack AI** | 0.x | LLM integration |
+| **Tailwind CSS** | 4.x | Styling |
+| **Radix UI** | 1.x | Accessible components |
+
+### Installation & Distribution Methods
+
+| Method | Target User | Status |
+|--------|-------------|--------|
+| **Direct Browser** | All users | ✅ Primary (hosted on Vercel/Netlify) |
+| **npm package** | Developers embedding features | 🔄 Phase 2 |
+| **Docker** | Self-hosted | 🔄 Phase 3 |
+| **Electron** | Desktop users (fallback) | 🔄 Plan D backup |
+
+**No Installation Required:** Primary distribution is a hosted web app. Users visit URL, grant FSA permission, and start working.
+
+### API Surface (Developer Tool Features)
+
+**Agent Tool API:**
+
+| Tool | Purpose | Phase |
+|------|---------|-------|
+| `readFile` | Read file contents from project | Phase 1 |
+| `writeFile` | Write/create files in project | Phase 1 |
+| `listFiles` | List directory contents | Phase 1 |
+| `runCommand` | Execute shell commands via xterm | Phase 1 |
+| `searchFiles` | Grep/semantic search in project | Phase 2 |
+| `vectorSearch` | RAG query against sources | Phase 2 |
+
+**State Store API (Zustand):**
+
+| Store | Purpose | Persistence |
+|-------|---------|-------------|
+| `useAgentsStore` | Agent configurations | Dexie (IndexedDB) |
+| `useWorkspaceStore` | Open files, tabs, layout | Dexie |
+| `useConversationStore` | Chat history, messages | Dexie |
+| `useSettingsStore` | User preferences | localStorage |
+
+**Event System:**
+
+| Event | Trigger | Consumers |
+|-------|---------|-----------|
+| `file:changed` | FSA write or WC sync | FileTree, Monaco, Agent |
+| `agent:tool:start` | Tool execution begins | UI indicators |
+| `agent:tool:end` | Tool execution completes | Conversation panel |
+| `webcontainer:ready` | WC boot complete | Terminal, Preview |
+
+---
+
+## Project Scoping & Phased Development
+
+### MVP Strategy & Philosophy
+
+**MVP Approach:** Strategy #3: Platform MVP (Foundation First)
+**Resource Requirements:** Solo Developer + Open Source Contributors
+
+**Rationale:**
+We are building a technically complex "browser OS" platform. Before adding advanced EdTech features (RAG, Canvas), we must prove the core "Platform Constraints" (WebContainer + FSA + State) are solvable and reliable. A robust foundation enables rapid feature growth in Phase 2.
+
+### MVP Feature Set (Phase 1)
+
+**Core User Journeys Supported:**
+1. **Alex (Developer):** Local project open, edit, agent refactor, persistence.
+2. **Returning User:** Seamless session restore, permission re-grant.
+3. **Mobile User:** Demo mode access (progressive degradation).
+
+**Must-Have Capabilities (P0):**
+- **WebContainer Core:** Reliable boot (<5s), error handling, `npm install`.
+- **File System Bridge:** Bi-directional sync (<500ms latency), handle 100+ files.
+- **Agent System:** Multi-provider support (OpenRouter/Anthropic), tool execution (RW files).
+- **State Engine:** Unified Zustand+Dexie store, schema versioning, zero data loss.
+- **UI Foundations:** Mobile-responsive layout, accessibility baseline (A11y), dark mode.
+- **Privacy Controls:** BYOK key management, local data clear options.
+
+### Post-MVP Features
+
+**Phase 2: Knowledge Synthesis (Growth)**
+- **Source Ingestion:** PDF/URL/YouTube import pipelines.
+- **Intelligence Layer:** Orama WASM vector store, RAG chat with grounded citations.
+- **Synthesis UI:** Knowledge Canvas (React Flow) for non-linear connection.
+- **Compliance:** Privacy Shield (PII redaction), curriculum tags.
+
+**Phase 3: Expansion (Vision)**
+- **Artifact Generation:** AI-generated flashcards, quizzes, study guides.
+- **Collaboration:** Peer-to-peer sync (future research), shared notebooks.
+- **Monetization:** .alpha pack marketplace, Pro themes.
+
+### Risk Mitigation Strategy
+
+**Technical Risks:**
+- **WebContainer Instability:** Fallback → "Lite Mode" (FSA + Agent only, no Node.js).
+- **Storage Limits:** Mitigation → Auto-prune old sessions, warn at 80% quota.
+- **Browser Compatibility:** Mitigation → Clear "Desktop Required" messaging for advanced features.
+
+**Market Risks:**
+- **Low Adoption:** Mitigation → Validate with 50 diverse beta testers (Devs + Students).
+- **Complexity Overload:** Mitigation → Progressive onboarding (hide features until needed).
+
+**Resource Risks:**
+- **Solo Burnout:** Mitigation → Strict innovative scope boundaries (NO custom server backend).
