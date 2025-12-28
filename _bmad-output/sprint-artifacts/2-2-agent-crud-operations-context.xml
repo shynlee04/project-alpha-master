@@ -1,0 +1,67 @@
+<context story="2-2-agent-crud-operations" created="2025-12-28T23:55:00+07:00">
+  <files>
+    <file path="src/components/agent/AgentConfigDialog.tsx">
+      <content><![CDATA[
+// See Step 19 for full content
+// Key areas to modify:
+// - Remove local state for agent list management (if any)
+// - Connect onSubmit to useAgentsStore actions
+// - Add Zod validation
+// - Implement optimistic UI via store
+      ]]></content>
+    </file>
+    <file path="src/components/chat/AgentSelector.tsx">
+      <content><![CDATA[
+// See Step 20 for full content
+// Ensure this consumes agents from useAgentsStore or parent passes it reactively
+      ]]></content>
+    </file>
+    <file path="src/stores/agents-store.ts">
+      <content><![CDATA[
+// See Step 22 for full content
+// Already migrated to Dexie.
+// Exported actions: addAgent, updateAgent, removeAgent
+      ]]></content>
+    </file>
+    <file path="src/lib/agent/providers/credential-vault.ts">
+      <content><![CDATA[
+// See Step 21 for full content
+// Methods: storeCredentials, getCredentials, deleteCredentials
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="codebase" query="AgentConfigDialog">
+      AgentConfigDialog currently handles its own API key saving via credentialVault.
+      It uses a callback `onSubmit` for the agent data.
+      Validation is manual (validateForm function).
+    </finding>
+    <finding source="codebase" query="AgentsStore">
+      Store actions are synchronous (optimistic) and persist to Dexie asynchronously.
+      This handles AC-1 and AC-2 naturally if UI reflects store state.
+    </finding>
+  </research_notes>
+
+  <architecture_patterns>
+    <pattern name="State Boundary" source="architecture.md">
+      Components -> Zustand Actions -> Dexie Middleware -> IndexedDB.
+      Do not bypass Zustand for agent configuration updates.
+    </pattern>
+    <pattern name="Optimistic UI" source="architecture.md">
+      Update store immediately. If DB write fails, middleware handles rollback or error reporting (though current Dexie middleware is simple fire-and-forget, may need enhancement for true rollback if critical). 
+      For now, assume optimistic update is sufficient.
+    </pattern>
+  </architecture_patterns>
+
+  <technical_notes>
+    <note priority="high">
+      Review `AgentConfigDialog.tsx`. It currently calls `credentialVault.storeCredentials` directly. 
+      AC-3 requires this logic to be robust. Consider if this should move to the store or stay in the dialog. 
+      Since the store handles "Agent Data" and Vault handles "Sensitive Data", keeping them separate but coordinated in the UI handler is acceptable architecture (UI orchestration).
+    </note>
+    <note priority="medium">
+      Implementation of "Undo" for deletion (AC-4) can be done by locally holding the deleted agent in a ref and restoring it if Undo is clicked.
+    </note>
+  </technical_notes>
+</context>

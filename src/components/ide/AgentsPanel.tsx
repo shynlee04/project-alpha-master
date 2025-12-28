@@ -45,16 +45,11 @@ export function AgentsPanel({
         setIsConfigDialogOpen(true)
     }, [])
 
-    const handleConfigSubmit = useCallback((data: any) => {
-        console.log('[AgentsPanel] handleConfigSubmit called with:', data)
-        if (editingAgent) {
-            console.log('[AgentsPanel] Updating existing agent:', editingAgent.id)
-            updateAgent(editingAgent.id, data)
-        } else {
-            console.log('[AgentsPanel] Adding new agent')
-            addAgent(data)
-        }
-    }, [editingAgent, addAgent, updateAgent])
+    // Simplified handlers - Dialog manages persistence
+    const handleSuccess = useCallback(() => {
+        setIsConfigDialogOpen(false)
+        setEditingAgent(undefined)
+    }, [])
 
     return (
         <div className="flex flex-col h-full">
@@ -129,7 +124,7 @@ export function AgentsPanel({
             <AgentConfigDialog
                 open={isConfigDialogOpen}
                 onOpenChange={setIsConfigDialogOpen}
-                onSubmit={handleConfigSubmit}
+                onSuccess={handleSuccess}
                 agent={editingAgent}
             />
         </div>

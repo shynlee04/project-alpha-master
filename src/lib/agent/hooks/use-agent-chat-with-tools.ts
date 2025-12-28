@@ -15,6 +15,7 @@ import { useChat, fetchServerSentEvents } from '@tanstack/ai-react';
 import { maxIterations } from '@tanstack/ai';
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
+import { SystemPromptComposer, type LayerContext } from '../prompt-composer';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';
 
@@ -186,6 +187,15 @@ export function useAgentChatWithTools(
 
     // Check if tools are available
     const toolsAvailable = enableTools && (fileTools !== null || terminalTools !== null);
+
+    // Create SystemPromptComposer instance for 5-layer system prompt generation
+    const promptComposer = useMemo(() => {
+        const composer = SystemPromptComposer.getInstance();
+        if (eventBus) {
+            composer.setEventBus(eventBus);
+        }
+        return composer;
+    }, [eventBus]);
 
     // Create tool factory options
     const toolFactoryOptions = useMemo((): ToolFactoryOptions => ({

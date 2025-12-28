@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="4-1-system-prompt-composer" created="2025-12-28T16:50:00.000Z">
+  <!-- 
+    Story 4.1: 5-Layer System Prompt Composer
+    Phase 2 Context Document
+    Epic 4: Smart Agent Tools
+  -->
+
+  <!-- Current Code State -->
+  <files>
+    <file path="src/lib/agent/system-prompt.ts">
+      <content><![CDATA[
+        // Existing 2-layer system prompt architecture
+        // Layer 1: TOOL_CONSTITUTION (hidden from UI, always included as system role)
+        // Layer 2: AgentMode prompt (user-selectable, visible in UI)
+        
+        export const TOOL_CONSTITUTION = `...tool usage rules...`;
+        
+        export const AGENT_MODES = {
+          code_assistant: `...code-focused persona...`,
+          file_explorer: `...file navigation persona...`,
+          terminal_expert: `...command execution persona...`,
+          full_stack_developer: `...comprehensive development persona...`
+        };
+        
+        // Current composeSystemPrompt function merges layers
+      ]]></content>
+    </file>
+    <file path="src/lib/agent/factory.ts">
+      <content><![CDATA[
+        // Agent factory creates provider adapters and initializes chat
+        // Integration point: system prompt composition happens here
+      ]]></content>
+    </file>
+    <file path="src/lib/agent/hooks/use-agent-chat-with-tools.ts">
+      <content><![CDATA[
+        // React hook that manages chat state and tool execution
+        // Uses system prompt from system-prompt.ts
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research Findings from MCP Tools -->
+  <research_notes>
+    <finding source="context7" query="TanStack AI system message composition chat streaming API">
+      <pattern>
+        TanStack AI's `chat()` function accepts `systemPrompts` array for multi-part system messages
+        - System messages are sent as `role: 'system'` in the messages array
+        - Supports streaming via SSE (Server-Sent Events)
+        - Tools are defined separately from system prompts
+        - Context injection through `messages` parameter with proper message structure
+        - Provider-agnostic abstraction over different LLM APIs
+        - Key API: `chat({ systemPrompts: [...], messages: [...], tools: [...] })`
+      </pattern>
+    </finding>
+    
+    <finding source="tavily" query="AI agent prompt caching strategies 2025 memoization performance">
+      <pattern>
+        AI prompt caching strategies in 2025:
+        - Layer-based memoization: Cache stable layers (1-2) by config hash
+        - WeakMap for memory-efficient caching (auto GC when no refs)
+        - Cache key: `${layerType}_${configHash}_${timestamp}`
+        - LRU eviction for dynamic content (Layer 3)
+        - Context7 caching: Cache provider-specific system prompts
+        - Pattern: Memoize layers until config changes, invalidate on tool updates
+        - Performance: Avoid regenerating stable layers per chat message
+      </pattern>
+    </finding>
+    
+    <finding source="deepwiki" query="TanStack AI context injection RAG prompt patterns tools">
+      <pattern>
+        TanStack AI context injection patterns:
+        - RAG integration via tools: fetch_context, search_knowledge_base
+        - Server-side tools vs client-side tools execution model
+        - Context window management: chunk large contexts, summarize files
+        - Dynamic context: Layer 3 (Open Files) updates on file change events
+        - File content retrieval: read file tool with max size limits
+        - Project metadata integration via tool results
+        - Message history integration with system prompts
+      </pattern>
+    </finding>
+    
+    <finding source="repomix" query="System prompt patterns in src/lib/agent/">
+      <pattern>
+        Current codebase system prompt architecture:
+        - Two-layer system in `system-prompt.ts`
+        - Layer 1: TOOL_CONSTITUTION (hidden from UI, always included)
+        - Layer 2: AGENT_MODES (user-selectable personas)
+        - Factory pattern in `factory.ts` for agent creation
+        - Integration point: `use-agent-chat-with-tools.ts` hook
+        - No caching currently implemented
+        - No dynamic context (Layer 3) for open files
+        - Opportunity: Extend to 5-layer system with caching
+      </pattern>
+    </finding>
+    
+    <finding source="tavily" query="AI agent persona system prompts role-based agents 2025 multi-mode architecture">
+      <pattern>
+        Agent persona/system prompt patterns 2025:
+        - Multi-agent systems: CrewAI, AutoGPT patterns
+        - Role-based personas with clear behavioral boundaries
+        - System prompts as security layer (reject harmful requests)
+        - Persona switching without re-initialization
+        - Multi-modal agent architectures (file ops, terminal, chat)
+        - Human-in-the-loop with approval overlays
+        - Best practice: Separate concern layers (security, behavior, context, user prefs)
+      </pattern>
+    </finding>
+  </research_notes>
+
+  <!-- Architecture Patterns to Follow -->
+  <architecture_patterns>
+    <pattern name="Singleton Pattern" source="architecture.md">
+      Only one instance of PromptComposer per agent configuration
+    </pattern>
+    <pattern name="Observer Pattern" source="architecture.md">
+      Listen to file system events for Layer 3 (Open Files) updates
+    </pattern>
+    <pattern name="Strategy Pattern" source="architecture.md">
+      Different layer types (static, dynamic, user) implement common interface
+    </pattern>
+    <pattern name="Cache Pattern" source="architecture.md">
+      Memoize Layers 1+2 using WeakMap with cache key: {layerType}_{configHash}
+    </pattern>
+    <pattern name="Factory Pattern" source="architecture.md">
+      PromptComposerFactory creates and manages composer instances
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical Implementation Notes -->
+  <technical_notes>
+    <note priority="high">
+      Phase 1 implements Layers 1-3 only. Layers 4-5 (User Preferences, Session Context) deferred to future stories.
+    </note>
+    <note priority="high">
+      Use WeakMap for caching with cache key: `${layerType}_${configHash}`
+      Example: `cache.set('layer1_tool_constitution_' + hash, content)`
+    </note>
+    <note priority="high">
+      Layer 1 (Tool Constitution) is hidden from UI, sent as system role in chat API
+    </note>
+    <note priority="medium">
+      Layer 3 uses Hybrid Strategy: open files (max 10) + project summary
+      - Listen to file system events for changes
+      - Debounce updates (300ms) to avoid excessive regeneration
+    </note>
+    <note priority="medium">
+      TanStack AI integration: Pass composed system prompt as first message in systemPrompts array
+    </note>
+    <note priority="low">
+      Integrate with agent initialization flow and file system events
+    </note>
+    <note priority="low">
+      Ensure cache invalidation when agent configuration changes
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies and Imports -->
+  <dependencies>
+    <dependency name="@tanstack/ai" version="latest" purpose="Chat streaming and system prompts" />
+    <dependency name="zod" version="latest" purpose="Schema validation for layer configurations" />
+    <dependency name="zustand" version="latest" purpose="Caching state management" />
+  </dependencies>
+
+  <!-- Story Context -->
+  <story_context>
+    <epic>Epic 4: Smart Agent Tools</epic>
+    <story_id>4-1</story_id>
+    <story_title>5-Layer System Prompt Composer</story_title>
+    <status>ready-for-dev</status>
+    <previous_status>drafted</previous_status>
+    <dependencies>
+      <dep story="2-0" name="Credential Vault" status="DONE" />
+      <dep story="2-2" name="Agent CRUD Operations" status="DONE" />
+    </dependencies>
+  </story_context>
+
+  <!-- 5-Layer Architecture Specification -->
+  <layer_specification>
+    <layer id="1" name="Tool Constitution" type="static" cacheable="true">
+      <description>Hidden system rules for tool usage, safety, and constraints</description>
+      <update_frequency>Never (unless tool definitions change)</update_frequency>
+      <ui_visible>false</ui_visible>
+      <example_content>You are a helpful AI assistant with access to file operations...</example_content>
+    </layer>
+    <layer id="2" name="Agent Mode Persona" type="configurable" cacheable="true">
+      <description>User-selectable agent persona/behavior profile</description>
+      <update_frequency>On user selection change</update_frequency>
+      <ui_visible>true</ui_visible>
+      <example_content>Code Assistant: Focus on code quality, best practices, and explanations...</example_content>
+    </layer>
+    <layer id="3" name="Project Context" type="dynamic" cacheable="false">
+      <description>Current project state: open files, project structure, recent changes</description>
+      <update_frequency>On file events (debounced 300ms)</update_frequency>
+      <ui_visible>false</ui_visible>
+      <example_content>Currently open files: src/App.tsx, src/index.ts...</example_content>
+    </layer>
+    <layer id="4" name="User Preferences" type="user" deferred="true">
+      <description>User-specific settings and preferences</description>
+      <update_frequency>On user preference changes</update_frequency>
+      <ui_visible>false</ui_visible>
+    </layer>
+    <layer id="5" name="Session Context" type="session" deferred="true">
+      <description>Current conversation history and state</description>
+      <update_frequency>Per message</update_frequency>
+      <ui_visible>false</ui_visible>
+    </layer>
+  </layer_specification>
+
+  <!-- Implementation Checklist -->
+  <checklist>
+    <item>Create PromptComposer class with 5-layer composition logic</item>
+    <item>Implement WeakMap caching for Layers 1-2</item>
+    <item>Add file system event listeners for Layer 3 updates</item>
+    <item>Integrate with existing agent factory and chat hooks</item>
+    <item>Write unit tests for prompt composition and caching</item>
+    <item>Update agent configuration UI to display Layer 2 options</item>
+    <item>Validate with TanStack AI chat integration</item>
+  </checklist>
+
+  <!-- Validation Criteria -->
+  <validation_criteria>
+    <criterion>System prompts correctly composed in order: Layer 1 + Layer 2 + Layer 3</criterion>
+    <criterion>Layers 1-2 cached with WeakMap, invalidated on config change</criterion>
+    <criterion>Layer 3 updates on file system events (debounced)</criterion>
+    <criterion>TanStack AI receives correct systemPrompts array</criterion>
+    <criterion>All existing agent functionality preserved</criterion>
+    <criterion>No performance regression from caching/memoization</criterion>
+  </validation_criteria>
+
+</context>

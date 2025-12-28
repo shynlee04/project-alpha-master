@@ -19,6 +19,11 @@ Check this and follow with the strategy by knowing  your team and have check-lis
 ## Development Constitution
 Check either at AGENTS.md or CLAUDE.md
 
+## Completed epics
+- @`_bmad-output/sprint-artifacts/epic-1-retro-2025-12-28.md`
+
+## Sprint Status
+_bmad-output/sprint-artifacts/sprint-status.yaml
 
 ## The project brownfield
 refer to these only for references of not repeating the same issues

@@ -60,6 +60,7 @@ import {
  */
 // Removed local ProviderConfig interface in favor of @/lib/agent/providers type
 import { useProviderStore } from '@/lib/state/provider-store'
+import { useAgentsStore } from '@/stores/agents-store'
 import { ProviderConfig } from '@/lib/agent/providers/types'
 
 /**
@@ -122,14 +123,14 @@ type ConfigTab = 'basic' | 'advanced'
 interface AgentConfigDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => void
+    onSuccess?: (agent: Agent) => void // Changed from onSubmit to onSuccess
     agent?: Agent
 }
 
 export function AgentConfigDialog({
     open,
     onOpenChange,
-    onSubmit,
+    onSuccess,
     agent,
 }: AgentConfigDialogProps) {
     const { t } = useTranslation()
@@ -148,6 +149,9 @@ export function AgentConfigDialog({
     const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
     const [enableNativeTools, setEnableNativeTools] = useState(true)
     const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
+
+    // Store actions
+    const { addAgent, updateAgent, removeAgent } = useAgentsStore()
 
     // Loading states
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -242,32 +246,54 @@ export function AgentConfigDialog({
             .finally(() => setIsCheckingKey(false))
     }, [providerId, open, loadModels])
 
-    // Validate form
+    // Validate form using Zod
     const validateForm = useCallback((): boolean => {
-        const newErrors: FormErrors = {}
-
-        if (!name.trim()) {
-            newErrors.name = t('agents.config.validation.nameRequired', 'Agent name is required')
+        const formData = {
+            name,
+            role,
+            providerId,
+            model,
+            apiKey,
+            customBaseURL,
+            customModelId,
+            customHeaders,
+            enableNativeTools
         }
-        if (!providerId) {
-            newErrors.provider = t('agents.config.validation.providerRequired', 'Please select a provider')
+        console.log('[AgentConfigDialog] Validating:', formData)
+
+        const result = agentFormSchema.safeParse(formData)
+
+        if (!result.success) {
+            const formattedErrors: FormErrors = {}
+            result.error.issues.forEach((issue) => {
+                const path = issue.path[0] as keyof FormErrors
+                formattedErrors[path] = issue.message
+            })
+            setErrors(formattedErrors)
+            return false
         }
 
-        // Model validation: Skip for openai-compatible as it uses customModelId logic mapped to model
-        // But in handleSubmit we map customModelId to model. Here 'model' state might be empty if using custom logic?
-        // Actually, for openai-compatible, we set 'model' when customModelId changes in the UI.
-        // So checking !model.trim() is generally valid, unless it's strictly optional.
-        if (!model.trim()) {
-            newErrors.model = t('agents.config.validation.modelRequired', 'Please select a model')
+        // Additional manual check for model strictly if not custom
+        if (providerId !== 'openai-compatible' && !model.trim()) {
+            setErrors(prev => ({ ...prev, model: t('agents.config.validation.modelRequired') }))
+            return false
         }
 
-        if (providerId === 'openai-compatible' && !customBaseURL.trim()) {
-            newErrors.customBaseURL = t('agents.config.validation.baseUrlRequired', 'Base URL is required')
+        // OpenAI compatible checks
+        if (providerId === 'openai-compatible') {
+            if (!customBaseURL.trim()) {
+                setErrors(prev => ({ ...prev, customBaseURL: t('agents.config.validation.baseUrlRequired') }))
+                return false
+            }
+            if (!customModelId.trim()) {
+                // If user didn't select or type a model ID, maybe warn? Schema says optional but logic might need it.
+                // For now, if customModelId is empty, we fall back to 'model' state which tracks it.
+            }
         }
 
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }, [name, providerId, model, customBaseURL, providerConfig, t])
+        setErrors({})
+        return true
+    }, [name, role, providerId, model, apiKey, customBaseURL, customModelId, customHeaders, enableNativeTools, t])
 
     // Handle API key save
     const handleSaveApiKey = useCallback(async () => {
@@ -343,60 +369,6 @@ export function AgentConfigDialog({
         if (errors.model) setErrors(prev => ({ ...prev, model: undefined }))
     }, [errors.model])
 
-    // Form submission
-    const handleSubmit = useCallback(async () => {
-        if (!validateForm()) return
-
-        setIsSubmitting(true)
-
-        // Simulate network delay for UX
-        await new Promise(resolve => setTimeout(resolve, 300))
-
-        // Convert custom headers array to object
-        const headersObj = customHeaders.reduce((acc, h) => {
-            if (h.key.trim() && h.value.trim()) {
-                acc[h.key.trim()] = h.value.trim()
-            }
-            return acc
-        }, {} as Record<string, string>)
-
-        const agentData = {
-            name: name.trim(),
-            role: role.trim() || 'Assistant',
-            status: 'offline',
-            provider: providerConfig?.name || 'OpenRouter',
-            model: providerId === 'openai-compatible' ? customModelId : model,
-            description: role.trim() || undefined,
-            // OpenAI Compatible Provider support
-            customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
-            customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
-            enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
-        }
-
-        console.log('[AgentConfigDialog] handleSubmit calling onSubmit with:', agentData)
-        onSubmit(agentData)
-
-        // Show success toast
-        toast.success(agent
-            ? t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: name.trim() })
-            : t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: name.trim() })
-        )
-
-        // Reset form and close
-        setName('')
-        setRole('')
-        setProviderId('openrouter')
-        setModel('')
-        setCustomBaseURL('')
-        setCustomHeaders([])
-        setCustomModelId('')
-        setEnableNativeTools(true)
-        setErrors({})
-        setIsSubmitting(false)
-        setConnectionStatus('idle')
-        onOpenChange(false)
-    }, [name, role, providerConfig?.display, providerId, model, customBaseURL, customHeaders, enableNativeTools, validateForm, onSubmit, onOpenChange, agent, t])
-
     // Handle cancel
     const handleCancel = useCallback(() => {
         setName('')
@@ -412,6 +384,77 @@ export function AgentConfigDialog({
         setConnectionStatus('idle')
         onOpenChange(false)
     }, [onOpenChange])
+
+    // Form submission
+    const handleSubmit = useCallback(async () => {
+        if (!validateForm()) return
+
+        setIsSubmitting(true)
+
+        try {
+            // Auto-save API Key if pending (UX fix)
+            if (apiKey.trim() && apiKey !== '••••') {
+                console.log('[AgentConfigDialog] Auto-saving pending API key...')
+                await credentialVault.storeCredentials(providerId, apiKey.trim())
+            }
+
+            // Convert custom headers array to object
+            const headersObj = customHeaders.reduce((acc, h) => {
+                if (h.key.trim() && h.value.trim()) {
+                    acc[h.key.trim()] = h.value.trim()
+                }
+                return acc
+            }, {} as Record<string, string>)
+
+            const agentData = {
+                name: name.trim(),
+                role: role.trim() || 'Assistant',
+                status: 'offline' as const,
+                provider: providerConfig?.name || 'OpenRouter',
+                model: providerId === 'openai-compatible' ? customModelId : model,
+                description: role.trim() || undefined,
+                // OpenAI Compatible Provider support
+                customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
+                customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
+                enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
+            }
+
+            console.log('[AgentConfigDialog] Saving agent:', agentData)
+
+            let savedAgent: Agent | undefined;
+
+            if (agent) {
+                // Update existing
+                updateAgent(agent.id, agentData)
+                savedAgent = { ...agent, ...agentData }
+                toast.success(t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: agentData.name }))
+            } else {
+                // Add new
+                savedAgent = addAgent(agentData)
+                toast.success(t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: agentData.name }))
+            }
+
+            // Trigger success callback
+            if (onSuccess && savedAgent) {
+                onSuccess(savedAgent)
+            }
+
+            // Close dialog
+            onOpenChange(false)
+
+            // Reset form (will happen via handleCancel/useEffect when closed, but good to be explicit)
+            handleCancel()
+
+        } catch (error) {
+            console.error('[AgentConfigDialog] Save failed:', error)
+            toast.error(t('agents.config.error.save', 'Failed to save agent'))
+        } finally {
+            setIsSubmitting(false)
+        }
+
+    }, [name, role, providerConfig?.display, providerId, model, customBaseURL, customHeaders, enableNativeTools, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, handleCancel, providerConfig?.name, customModelId])
+
+
 
     // Render configuration status indicator
     const renderConfigStatus = () => {
@@ -445,11 +488,50 @@ export function AgentConfigDialog({
                             ? t('agents.config.editTitle', 'Edit Agent Configuration')
                             : t('agents.config.title', 'New Agent Configuration')}
                     </DialogTitle>
-                    <DialogDescription className="text-muted-foreground text-sm">
-                        {agent
-                            ? t('agents.config.editSubtitle', 'Modify your AI agent settings')
-                            : t('agents.config.subtitle', 'Configure a new AI agent for your workflow')}
-                    </DialogDescription>
+                    <div className="flex justify-between items-center">
+                        <DialogDescription className="text-muted-foreground text-sm">
+                            {agent
+                                ? t('agents.config.editSubtitle', 'Modify your AI agent settings')
+                                : t('agents.config.subtitle', 'Configure a new AI agent for your workflow')}
+                        </DialogDescription>
+                        {agent && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    if (window.confirm(t('agents.config.confirmDelete', 'Are you sure you want to delete this agent?'))) {
+                                        // Capture data for undo
+                                        const agentToDelete = agent
+
+                                        // Delete immediately (Optimistic UI)
+                                        removeAgent(agent.id)
+                                        onOpenChange(false)
+
+                                        // Show undo toast
+                                        toast.success(t('agents.config.deleted', 'Agent deleted'), {
+                                            action: {
+                                                label: t('actions.undo', 'Undo'),
+                                                onClick: () => {
+                                                    // Restore agent (will have new ID unless we force it, but for now addAgent is fine)
+                                                    // Actually addAgent generates new ID. This is acceptable for simple restore.
+                                                    // If we needed exact ID restore, store needs 'restoreAgent' method.
+                                                    // For MVP, recreating is fine.
+                                                    const { id, ...restoreData } = agentToDelete
+                                                    addAgent(restoreData)
+                                                    toast.success(t('agents.config.restored', 'Agent restored'))
+                                                }
+                                            },
+                                            duration: 5000,
+                                        })
+                                    }
+                                }}
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                            >
+                                <Trash2 className="w-4 h-4 mr-1" />
+                                {t('actions.delete', 'Delete')}
+                            </Button>
+                        )}
+                    </div>
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -647,6 +729,7 @@ export function AgentConfigDialog({
                                                 onClick={handleSaveApiKey}
                                                 disabled={isSavingKey || !apiKey.trim()}
                                                 className="rounded-none gap-1"
+                                                type="button"
                                             >
                                                 {isSavingKey && <Loader2 className="w-3 h-3 animate-spin" />}
                                                 {t('agents.config.apiKey.save', 'Save')}
@@ -848,7 +931,9 @@ export function AgentConfigDialog({
                         className="gap-2"
                     >
                         {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                        {t('agents.config.save', 'Create Agent')}
+                        {agent
+                            ? t('agents.config.update', 'Update Agent')
+                            : t('agents.config.save', 'Create Agent')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

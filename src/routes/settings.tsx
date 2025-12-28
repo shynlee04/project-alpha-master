@@ -31,14 +31,9 @@ function SettingsPage() {
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();
 
-    const handleAgentSubmit = (
-        agentData: Omit<
-            Agent,
-            'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'
-        >
-    ) => {
-        console.log('[SettingsPage] Agent created/updated:', agentData);
-        // The AgentConfigDialog handles persistence via credentialVault
+    const handleAgentSuccess = () => {
+        console.log('[SettingsPage] Agent created/updated successfully');
+        setIsDialogOpen(false);
     };
 
     return (
@@ -119,7 +114,7 @@ function SettingsPage() {
                 <AgentConfigDialog
                     open={isDialogOpen}
                     onOpenChange={setIsDialogOpen}
-                    onSubmit={handleAgentSubmit}
+                    onSuccess={handleAgentSuccess}
                 />
             </div>
         </MainLayout>
