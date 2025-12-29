@@ -252,7 +252,7 @@ development_status:
     last_validated: "2025-12-30T14:30:00+07:00"
     validated_by: "bmad-bmm-orchestrator"
   7-3-embedding-service: done # COMPLETED 2025-12-30 - Core infrastructure: types, cache, store, i18n (EN+VI), existing embedding-service.ts integration, cloud-embedder.ts created, UI components (T7,T8) deferred, tests deferred - Code review APPROVED
-  7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
+  7-4-hybrid-retrieval: ready-for-dev # Story file + context XML created - 7 ACs, 9 tasks, research complete (Orama BM25/hybrid, RRF algorithm)
   7-5-rag-chat-integration: backlog # Source-grounded responses
   7-6-deep-think-synthesis: backlog # NEW: gemini-3.0-pro reasoning mode (Desktop only)
   epic-7-retrospective: optional

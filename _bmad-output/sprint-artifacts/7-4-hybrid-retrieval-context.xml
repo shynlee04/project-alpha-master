@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="context.xsl"?>
+<context story="7-4-hybrid-retrieval" created="2025-12-30T16:45:00+07:00">
+  <!-- Current Code State -->
+  <files>
+    <file path="src/lib/rag/types.ts">
+      <content><![CDATA[
+// Story 7-3 Types (Embedding)
+export type EmbeddingVector = Float32Array;
+export type EmbeddingMode = 'local' | 'cloud' | 'keyword-only';
+
+export interface EmbeddingProgress {
+  chunkId: string;
+  currentChunk: number;
+  totalChunks: number;
+  status: 'embedding' | 'completed' | 'error';
+  mode: EmbeddingMode;
+  error?: string;
+}
+
+// Story 7-1 Types (Orama)
+export interface DocumentSchema {
+  id: string;
+  sourceId: string;
+  content: string;
+  title?: string;
+  position?: number;
+  embedding?: number[];
+  metadata?: {
+    chunkIndex: number;
+    totalChunks: number;
+  };
+}
+
+export interface SearchResult {
+  document: DocumentSchema;
+  score: number;
+  source: {
+    id: string;
+    title?: string;
+  };
+}
+      ]]></content>
+    </file>
+    <file path="src/lib/rag/embedding-service.ts">
+      <content><![CDATA[
+// Hybrid embedding service with device capability detection
+export type EmbeddingProvider = 'local' | 'cloud' | 'none';
+
+export interface BatchEmbeddingResult {
+  results: EmbeddingResult[];
+  totalLatencyMs: number;
+  provider: EmbeddingProvider;
+}
+
+export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
+  // WebGPU detection, mobile detection, local model cache check
+}
+
+export async function createEmbeddingService(apiKey?: string): Promise<EmbeddingService> {
+  // Auto-detects best provider (local/cloud/none)
+  // Returns configured embedding service
+}
+      ]]></content>
+    </file>
+    <file path="src/lib/state/rag-store.ts">
+      <content><![CDATA[
+// RAG State Management (Zustand)
+interface RAGStore {
+  // Index state
+  indexStatus: IndexStatus;
+  documentCount: number;
+  indexMetadata: IndexMetadata | null;
+
+  // Search cache
+  searchCache: Map<string, SearchResult[]>;
+
+  // Chunking state (Story 7-2)
+  chunkingProgress: Map<string, ChunkingProgress>;
+
+  // Embedding state (Story 7-3)
+  embeddingProgress: Map<string, EmbeddingProgress>;
+  embeddingMode: EmbeddingMode;
+
+  // Actions
+  detectEmbeddingCapability: () => Promise<EmbeddingMode>;
+  generateEmbeddings: (chunks: ChunkMetadata[], options?: EmbeddingOptions) => Promise<Map<string, EmbeddingVector>>;
+}
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research Findings from MCP Tools -->
+  <research_notes>
+    <finding source="context7" query="Orama BM25 hybrid search">
+      <pattern>
+        Orama has built-in BM25 search with configurable parameters:
+        - k (term frequency saturation): 1.2-2.0, default 1.2
+        - b (length normalization): >0.75, default 0.75
+        - d (frequency normalization): 0.5-1.0, default 0.5
+
+        Orama supports hybrid search with mode: 'hybrid':
+        - Combines full-text (BM25) and vector search
+        - Customizable weights via hybridWeights: { text: 0.8, vector: 0.2 }
+        - Similarity threshold for vector matches
+      </pattern>
+    </finding>
+
+    <finding source="tavily" query="Reciprocal Rank Fusion RRF algorithm 2024">
+      <pattern>
+        Reciprocal Rank Fusion (RRF) Algorithm:
+        - Formula: score = 1 / (k + rank)
+        - Default k parameter: 60 (commonly used)
+        - k should be chosen via grid search (46-60 range typical)
+        - RRF is rank-based, does NOT utilize raw score magnitudes
+        - Effective zero-shot fusion but sensitive to k parameter
+
+        Implementation notes:
+        - Fuse results from multiple ranked lists
+        - Combine scores by summation for same document
+        - Sort by final combined score
+      </pattern>
+    </finding>
+
+    <finding source="codebase" query="Orama search implementation">
+      <pattern>
+        Current Orama usage (Story 7-1):
+        - create() with schema definition
+        - insertMultiple() for batch indexing
+        - search() with term and vector support
+        - Built-in BM25 algorithm (default)
+        - Support for custom relevance parameters
+
+        Need to extend for Story 7-4:
+        - Parallel search execution (BM25 + vector)
+        - Custom RRF fusion (override Orama's hybrid)
+        - Search mode state management
+        - Result highlighting
+      </pattern>
+    </finding>
+  </research_notes>
+
+  <!-- Architecture Patterns to Follow -->
+  <architecture_patterns>
+    <pattern name="Orama Search" source="architecture.md Section 9.5">
+      Use Orama's built-in search() with mode parameter:
+      - mode: 'fulltext' for BM25 keyword
+      - mode: 'vector' for semantic similarity
+      - mode: 'hybrid' for built-in fusion
+
+      Custom RRF implementation will:
+      1. Run two parallel searches (fulltext + vector)
+      2. Collect results with rankings
+      3. Apply RRF formula: score = 1/(k + rank)
+      4. Combine and sort by final score
+    </pattern>
+
+    <pattern name="State Management" source="Story 7-2, 7-3">
+      Follow Zustand patterns:
+      - Search state in rag-store.ts
+      - Map serialization for search cache
+      - Action-based state updates
+      - Error handling with try-catch
+    </pattern>
+
+    <pattern name="Service Pattern" source="Story 7-3">
+      Service classes with async methods:
+      - class HybridRetriever { async search(query, options) }
+      - Parallel execution with Promise.all
+      - Result fusion and sorting
+      - Error handling with graceful fallback
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical Notes for Developer -->
+  <technical_notes>
+    <note priority="high">
+      Orama has built-in hybrid search, but Story 7-4 requires custom RRF implementation
+      to match specific requirements and enable parallel execution optimization.
+    </note>
+
+    <note priority="high">
+      BM25 parameters (k, b, d) should be configurable via RRFConfig interface.
+      Default values: k=1.2, b=0.75, d=0.5 (from Orama docs).
+    </note>
+
+    <note priority="medium">
+      Text highlighting must preserve markdown formatting. Use regex with
+      lookbehind/lookahead or markdown-aware parsing.
+    </note>
+
+    <note priority="medium">
+      Multi-language tokenization (English + Vietnamese) required for BM25.
+      Consider using Intl.Segmenter for word boundaries.
+    </note>
+
+    <note priority="low">
+      Performance requirement: < 2 seconds for < 100 documents.
+      Parallel execution with Promise.all should achieve this.
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency name="@orama/orama" version="^2.0.0" />
+    <dependency name="zustand" version="^4.5.0" />
+    <dependency name="dexie" version="^3.2.4" />
+  </dependencies>
+
+  <!-- Implementation Tasks Reference -->
+  <tasks>
+    <task id="T1" status="pending">Define Retrieval Types and Interfaces</task>
+    <task id="T2" status="pending">Create BM25 Keyword Searcher</task>
+    <task id="T3" status="pending">Create Vector Searcher (Embedding-Based)</task>
+    <task id="T4" status="pending">Create RRF Fusion Algorithm</task>
+    <task id="T5" status="pending">Create Hybrid Retriever Service</task>
+    <task id="T6" status="pending">Create Text Highlighter Utility</task>
+    <task id="T7" status="pending">Extend RAG Store with Search Actions</task>
+    <task id="T8" status="pending">Create Search Results UI Component</task>
+    <task id="T9" status="pending">Add i18n Translation Keys</task>
+  </tasks>
+
+  <!-- Known Integration Points -->
+  <integration_points>
+    <point component="embedding-service.ts" type="dependency">
+      Vector search requires embedding generation for query terms.
+      Use createEmbeddingService() with auto-detected provider.
+    </point>
+    <point component="orama-index.ts" type="dependency">
+      Hybrid retriever searches existing Orama indexes.
+      Index must be created with vector schema property.
+    </point>
+    <point component="rag-store.ts" type="extension">
+      Add search state and actions following existing pattern.
+      Use Map serialization for search results cache.
+    </point>
+  </integration_points>
+</context>
