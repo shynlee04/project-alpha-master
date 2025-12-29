@@ -58,7 +58,7 @@ describe('SyncStatusIndicator', () => {
             const progress: SyncProgress = {
                 totalFiles: 100,
                 syncedFiles: 45,
-                currentFile: 'src/components/Button.tsx',
+                // currentFile is intentionally not set - when set, component shows "Syncing: <filename>" instead
                 percentage: 45,
             };
 

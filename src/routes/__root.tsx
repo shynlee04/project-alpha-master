@@ -6,6 +6,7 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-r
 // import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '../components/common/AppErrorBoundary'
+import { AppInitializer } from '../components/common/AppInitializer'
 import { initSentry } from '../lib/monitoring/sentry'
 import { ThemeProvider } from '../components/ui/ThemeProvider'
 import { TooltipProvider } from '../components/ui/tooltip'
@@ -69,9 +70,11 @@ export const Route = createRootRoute({
         <ThemeProvider>
           <LocaleProvider>
             <TooltipProvider>
-              <AppErrorBoundary>
-                <Outlet />
-              </AppErrorBoundary>
+              <AppInitializer>
+                <AppErrorBoundary>
+                  <Outlet />
+                </AppErrorBoundary>
+              </AppInitializer>
             </TooltipProvider>
           </LocaleProvider>
         </ThemeProvider>

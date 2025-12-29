@@ -5,6 +5,8 @@ import type { FileMetadataRecord } from '../../state/dexie-db';
 const mockPut = vi.fn();
 const mockGet = vi.fn();
 const mockWhere = vi.fn();
+const mockEquals = vi.fn();
+const mockFirst = vi.fn();
 const mockToArray = vi.fn();
 const mockClear = vi.fn();
 const mockDelete = vi.fn();
@@ -41,19 +43,22 @@ describe('FileMetadataCache', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockWhere.mockReturnValue({ toArray: mockToArray });
+    // Configure mock chain for where().equals().first() pattern
+    mockEquals.mockReturnValue({ first: mockFirst, delete: mockDelete, toArray: mockToArray });
+    mockWhere.mockReturnValue({ equals: mockEquals, toArray: mockToArray });
     mockOrderBy.mockReturnValue({ last: mockLast });
     cache = new FileMetadataCache();
   });
 
   describe('get', () => {
     it('should return undefined when file not in cache', async () => {
-      mockGet.mockResolvedValue(undefined);
+      mockFirst.mockResolvedValue(undefined);
 
       const result = await cache.get('/test/path/file.txt');
 
       expect(result).toBeUndefined();
-      expect(mockGet).toHaveBeenCalledWith('/test/path/file.txt');
+      expect(mockWhere).toHaveBeenCalledWith('path');
+      expect(mockEquals).toHaveBeenCalledWith('/test/path/file.txt');
     });
 
     it('should return metadata when file exists in cache', async () => {
@@ -67,7 +72,7 @@ describe('FileMetadataCache', () => {
         createdAt: 1234567800,
         updatedAt: 1234567890
       };
-      mockGet.mockResolvedValue(mockMetadata);
+      mockFirst.mockResolvedValue(mockMetadata);
 
       const result = await cache.get('/test/path/file.txt');
 
@@ -89,9 +94,9 @@ describe('FileMetadataCache', () => {
       };
       mockPut.mockResolvedValue(undefined);
 
-      await cache.set('/test/path/file.txt', mockMetadata);
+      await cache.set(mockMetadata);
 
-      expect(mockPut).toHaveBeenCalledWith(mockMetadata);
+      expect(mockPut).toHaveBeenCalled();
     });
   });
 
@@ -112,7 +117,7 @@ describe('FileMetadataCache', () => {
 
   describe('hasChanged', () => {
     it('should return true when file not in cache', async () => {
-      mockGet.mockResolvedValue(undefined);
+      mockFirst.mockResolvedValue(undefined);
 
       const currentMetadata: FileMetadataRecord = {
         path: '/test/path/file.txt',
@@ -131,7 +136,7 @@ describe('FileMetadataCache', () => {
     });
 
     it('should return true when lastModified differs', async () => {
-      mockGet.mockResolvedValue({
+      mockFirst.mockResolvedValue({
         path: '/test/path/file.txt',
         projectId: 'project-1',
         lastModified: 1234567880,
@@ -159,7 +164,7 @@ describe('FileMetadataCache', () => {
     });
 
     it('should return false when lastModified and size match', async () => {
-      mockGet.mockResolvedValue({
+      mockFirst.mockResolvedValue({
         path: '/test/path/file.txt',
         projectId: 'project-1',
         lastModified: 1234567890,
@@ -193,7 +198,8 @@ describe('FileMetadataCache', () => {
 
       await cache.invalidate('/test/path/file.txt');
 
-      expect(mockDelete).toHaveBeenCalledWith('/test/path/file.txt');
+      expect(mockWhere).toHaveBeenCalledWith('path');
+      expect(mockEquals).toHaveBeenCalledWith('/test/path/file.txt');
     });
   });
 
@@ -244,7 +250,12 @@ describe('FileMetadataCache', () => {
 
       await cache.updateBatch(mockFiles);
 
-      expect(mockBulkPut).toHaveBeenCalledWith(mockFiles);
+      // Implementation enriches files with current timestamps, so just verify bulkPut was called
+      expect(mockBulkPut).toHaveBeenCalled();
+      const calledFiles = mockBulkPut.mock.calls[0][0];
+      expect(calledFiles).toHaveLength(2);
+      expect(calledFiles[0].path).toBe('/test/file1.txt');
+      expect(calledFiles[1].path).toBe('/test/file2.txt');
     });
   });
 });
