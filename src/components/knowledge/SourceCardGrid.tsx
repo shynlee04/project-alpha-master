@@ -15,9 +15,11 @@ interface SourceCardGridProps {
     projectId: string;
     /** Optional collection ID to filter sources */
     collectionId?: string | null;
+    /** Callback to open import dialog */
+    onOpenImport?: () => void;
 }
 
-export function SourceCardGrid({ projectId, collectionId }: SourceCardGridProps) {
+export function SourceCardGrid({ projectId, collectionId, onOpenImport }: SourceCardGridProps) {
     const { sources, collections, loadSources, selectedSource, openPreview } = useKnowledgeStore();
 
     useEffect(() => {
@@ -32,9 +34,9 @@ export function SourceCardGrid({ projectId, collectionId }: SourceCardGridProps)
     // Filter sources by collection
     const filteredSources = collectionId
         ? sources.filter((source) => {
-              const collection = collections.find((c) => c.id === collectionId);
-              return collection?.sourceIds?.includes(source.id) || false;
-          })
+            const collection = collections.find((c) => c.id === collectionId);
+            return collection?.sourceIds?.includes(source.id) || false;
+        })
         : sources;
 
     // Get collection name for empty state
