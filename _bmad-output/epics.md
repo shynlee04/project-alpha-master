@@ -1062,6 +1062,185 @@ _Moved to Sprint 0 to unblock Epic 2 execution._
 
 ---
 
+## Epic 24: ⚡ Performance & UX Optimization
+*Added via correct-course workflow: 2025-12-29*
+
+**User Outcome:** Project re-entry is instant (<500ms), and chat conversations are fully restored with complete context when resuming threads.
+
+**Social Media Appeal:** ⭐⭐⭐⭐ — "Open project → instant access" time-lapse, "Chat history never lost" demo
+
+**FRs Covered:** NFR-PERF-02 (File mount), NFR-REL-02 (State restoration 99%+), FR-AGENT-03 (Conversation Context Preservation)
+
+**Remediation Addressed:**
+- CC-001: Full re-sync on every project entry
+- CC-002: Conversation history not restored on thread re-entry
+
+**Dependencies:** None (enhancement to completed Epics 2, 3)
+
+**Team Assignment:** Parallel - Team A (24-1, 24-2), Team B (24-3, 24-4, 24-5)
+
+**Dexie Schema:** Requires v9 update (adds `fileMetadata`, `toolExecutionLogs` tables)
+
+---
+
+### Story 24-1: Incremental Sync with Metadata Cache
+
+**As a** developer  
+**I want** my project to sync only changed files  
+**So that** re-opening my project is fast (<500ms)
+
+**Acceptance Criteria:**
+
+**Given** a user opens a previously-accessed project  
+**When** the sync process starts  
+**Then** file metadata is loaded from IndexedDB cache  
+**And** only files with `lastModified` > cached timestamp are synced  
+**And** sync completes in <500ms for 100-file project with <10 changes
+
+**Given** a file is modified locally  
+**When** the file is saved  
+**Then** the metadata cache is updated with new `lastModified` timestamp  
+**And** the `sync:incremental` event is emitted with delta count
+
+**Given** the metadata cache is empty (first visit)  
+**When** the project is opened  
+**Then** a full sync is performed (fallback behavior)  
+**And** metadata cache is populated after sync completes
+
+**Implementation Files:**
+- `src/lib/filesystem/incremental-sync-manager.ts`
+- `src/lib/state/dexie-db.ts` (schema v9)
+
+**Demo Checkpoint:** ⚡ Before/after timing comparison (3s → 500ms)
+
+---
+
+### Story 24-2: FSA Handle Persistence & Instant Re-grant
+
+**As a** developer  
+**I want** my project folder access to persist across browser sessions  
+**So that** I don't need to re-grant permission every time
+
+**Acceptance Criteria:**
+
+**Given** a user grants FSA permission for a project  
+**When** the permission is granted  
+**Then** the `FileSystemDirectoryHandle` is serialized to IndexedDB  
+**And** the project ID is associated with the handle
+
+**Given** a user returns to a previously-accessed project  
+**When** the page loads  
+**Then** `queryPermission()` is called on the stored handle  
+**And** if `granted`, IDE loads immediately (no re-grant modal)  
+**And** success rate target: 90%+ instant restoration
+
+**Given** a stored handle is stale or revoked  
+**When** `queryPermission()` returns `prompt` or `denied`  
+**Then** the standard re-grant flow is triggered  
+**And** the stale handle is removed from storage
+
+**Implementation Files:**
+- `src/lib/filesystem/fsa-handle-persistence.ts`
+- `src/lib/state/dexie-db.ts` (add `fsaHandles` table)
+
+**Demo Checkpoint:** 🔐 "Zero-click project restore" screencast
+
+---
+
+### Story 24-3: Conversation History Auto-Restore
+
+**As a** user  
+**I want** my chat history to automatically load when I select a thread  
+**So that** I can continue conversations seamlessly
+
+**Acceptance Criteria:**
+
+**Given** a user selects a conversation thread from the sidebar  
+**When** the thread ID changes  
+**Then** `loadConversation(id)` is automatically triggered  
+**And** a loading skeleton is shown while messages load  
+**And** messages appear within 200ms for <50 messages
+
+**Given** a conversation has a saved scroll position  
+**When** messages are restored  
+**Then** the chat panel scrolls to the saved position  
+**And** scroll position matches exactly (±10px)
+
+**Given** a conversation has pending tool approvals  
+**When** the conversation is restored  
+**Then** pending approvals are re-displayed in the UI  
+**And** user can approve/deny as if session was continuous
+
+**Implementation Files:**
+- `src/components/chat/AgentChatPanel.tsx` (add auto-load effect)
+- `src/lib/state/conversation-store.ts` (ensure loadConversation triggers)
+
+**Demo Checkpoint:** 🔄 "Close tab → reopen → conversation restored" demo
+
+---
+
+### Story 24-4: Tool Execution Context Persistence
+
+**As a** user  
+**I want** my tool approvals and results from previous sessions to be available  
+**So that** I can understand what happened in past conversations
+
+**Acceptance Criteria:**
+
+**Given** a user approves a tool execution  
+**When** the approval is confirmed  
+**Then** a `ToolExecutionLog` record is created in IndexedDB  
+**And** the record includes: toolName, args, result, approved, timestamp
+
+**Given** a conversation is restored  
+**When** messages with tool calls are loaded  
+**Then** the `approvedTools` set is reconstructed from logs  
+**And** previously-approved tools don't require re-approval in same session
+
+**Given** tool logs are older than 30 days  
+**When** the cleanup job runs  
+**Then** old logs are archived or deleted  
+**And** storage usage is kept reasonable (<50MB for tool logs)
+
+**Implementation Files:**
+- `src/lib/state/dexie-db.ts` (add `toolExecutionLogs` table)
+- `src/lib/agent/tool-execution-logger.ts`
+
+**Demo Checkpoint:** 📜 "Tool execution history" panel showing past operations
+
+---
+
+### Story 24-5: Session State Snapshot System
+
+**As a** developer  
+**I want** my complete IDE session to be restorable  
+**So that** I can resume exactly where I left off
+
+**Acceptance Criteria:**
+
+**Given** a user has an active IDE session  
+**When** meaningful state changes occur (file open, scroll, panel resize)  
+**Then** a session snapshot is saved (debounced, every 5s of inactivity)  
+**And** snapshot includes: open files, active file, cursor positions, panel widths, chat state
+
+**Given** a user opens a project with a saved snapshot  
+**When** the snapshot is less than 7 days old  
+**Then** the full session state is restored  
+**And** user sees exactly what they left (files, panels, scroll positions)
+
+**Given** a snapshot is older than 7 days  
+**When** the project is opened  
+**Then** the snapshot is ignored  
+**And** a fresh session is started with default layout
+
+**Implementation Files:**
+- `src/lib/state/session-snapshot-manager.ts`
+- `src/lib/state/dexie-db.ts` (extend `ideState` or add `sessionSnapshots`)
+
+**Demo Checkpoint:** 🛡️ "Complete session restoration" video (open 5 files, close, reopen)
+
+---
+
 ## Phase 2: Knowledge Synthesis Station MVP
 
 > **Launch Target:** Post-Phase 1 (TBD based on Phase 1 completion)

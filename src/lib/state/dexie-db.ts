@@ -229,6 +229,104 @@ export function generateSyncStatusId(filePath: string): string {
     return `sync-${filePath.replace(/[^a-zA-Z0-9]/g, '_')}`;
 }
 
+// ============================================================================
+// Epic 24: Performance & UX Optimization Tables
+// ============================================================================
+
+/**
+ * File metadata cache for incremental sync (Story 24-1)
+ * Stores file metadata to enable syncing only changed files on project re-entry.
+ * 
+ * @epic Epic 24 - Performance & UX Optimization
+ * @story 24-1 - Incremental Sync with Metadata Cache
+ */
+export interface FileMetadataRecord {
+    path: string;               // Primary key - relative file path
+    projectId: string;          // Foreign key to project
+    lastModified: number;       // Unix timestamp of last modification
+    size: number;               // File size in bytes
+    hash?: string;              // Optional SHA-256 hash for content verification
+    syncedAt: number;           // Timestamp of last successful sync
+    createdAt: number;
+    updatedAt: number;
+}
+
+/**
+ * Generate file metadata ID from project and path
+ */
+export function generateFileMetadataId(projectId: string, filePath: string): string {
+    return `${projectId}:${filePath}`;
+}
+
+/**
+ * Tool execution log for context persistence (Story 24-4)
+ * Records tool approvals and execution results for conversation restoration.
+ * 
+ * @epic Epic 24 - Performance & UX Optimization
+ * @story 24-4 - Tool Execution Context Persistence
+ */
+export interface ToolExecutionLogRecord {
+    id: string;                 // Primary key (UUID)
+    conversationId: string;     // Foreign key to conversation thread
+    messageId: string;          // Foreign key to the message containing tool call
+    toolName: string;           // e.g., 'readFile', 'writeFile', 'runCommand'
+    args: unknown;              // Tool input parameters (JSON serialized)
+    result?: {
+        success: boolean;
+        output?: string;
+        error?: string;
+        duration?: number;      // Execution duration in ms
+    };
+    approved: boolean;          // Whether user approved the execution
+    status: 'pending' | 'approved' | 'denied' | 'executed' | 'error';
+    timestamp: number;          // Execution timestamp
+    createdAt: number;
+}
+
+/**
+ * FSA handle persistence for instant permission restore (Story 24-2)
+ * Stores serialized FileSystemDirectoryHandle for instant access on return visits.
+ * 
+ * @epic Epic 24 - Performance & UX Optimization
+ * @story 24-2 - FSA Handle Persistence & Instant Re-grant
+ */
+export interface FSAHandleRecord {
+    projectId: string;          // Primary key - foreign key to project
+    handleData: unknown;        // Serialized FileSystemDirectoryHandle
+    directoryPath: string;      // Original directory path for display
+    grantedAt: number;          // When permission was granted
+    lastAccessedAt: number;     // Last successful access check
+    permissionStatus: 'granted' | 'prompt' | 'denied' | 'unknown';
+    createdAt: number;
+    updatedAt: number;
+}
+
+/**
+ * Session state snapshot for complete restoration (Story 24-5)
+ * Captures full IDE session state for seamless resumption.
+ * 
+ * @epic Epic 24 - Performance & UX Optimization  
+ * @story 24-5 - Session State Snapshot System
+ */
+export interface SessionSnapshotRecord {
+    id: string;                 // Primary key (projectId:timestamp)
+    projectId: string;          // Foreign key to project
+    snapshot: {
+        openFiles: string[];    // List of open file paths
+        activeFile: string | null;
+        cursorPositions: Record<string, { line: number; column: number }>;
+        scrollPositions: Record<string, number>;
+        panelWidths: number[];
+        terminalHistory: string[]; // Last N commands
+        chatState: {
+            activeConversationId: string | null;
+            scrollPosition: number;
+        };
+    };
+    createdAt: number;
+    expiresAt: number;          // Auto-cleanup after 7 days
+}
+
 /**
  * Convert SyncQueueItem to SyncStatusRecord
  */
@@ -355,6 +453,12 @@ class ViaGentDatabase extends Dexie {
 
     // Sync status persistence (RC-005 - Sprint 27B)
     syncStatus!: Table<SyncStatusRecord, string>;
+
+    // Epic 24: Performance & UX Optimization tables
+    fileMetadata!: Table<FileMetadataRecord, string>;
+    toolExecutionLogs!: Table<ToolExecutionLogRecord, string>;
+    fsaHandles!: Table<FSAHandleRecord, string>;
+    sessionSnapshots!: Table<SessionSnapshotRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -499,8 +603,8 @@ class ViaGentDatabase extends Dexie {
                                     id: item.id || `sync-${item.path.replace(/[^a-zA-Z0-9]/g, '_')}`,
                                     path: item.path,
                                     syncStatus: item.status === 'pending' ? 'pending' :
-                                               item.status === 'active' ? 'syncing' :
-                                               item.status === 'failed' ? 'error' : 'synced',
+                                        item.status === 'active' ? 'syncing' :
+                                            item.status === 'failed' ? 'error' : 'synced',
                                     errorMessage: item.error,
                                     retryCount: item.status === 'failed' ? 1 : 0,
                                     createdAt: item.createdAt ? new Date(item.createdAt).getTime() : now,
@@ -525,6 +629,50 @@ class ViaGentDatabase extends Dexie {
                     error: error instanceof Error ? error.message : 'Unknown error'
                 });
             }
+        });
+
+        // Schema version 9: Epic 24 - Performance & UX Optimization
+        // Adds tables for incremental sync, tool context, FSA handles, and session snapshots
+        this.version(9).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            // NEW: Epic 24 tables
+            // Story 24-1: File metadata cache for incremental sync
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            // Story 24-4: Tool execution logs for context persistence
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            // Story 24-2: FSA handle persistence for instant re-grant
+            fsaHandles: 'projectId, lastAccessedAt',
+            // Story 24-5: Session snapshots for complete restoration
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+        }).upgrade(async () => {
+            logDexieMigration(9, 'epic-24-schema', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(9)) {
+                logDexieMigration(9, 'epic-24-schema', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - tables are new
+            // Mark migration as applied
+            markMigrationApplied(9);
+
+            logDexieMigration(9, 'epic-24-schema', 'completed', {
+                tableName: 'fileMetadata, toolExecutionLogs, fsaHandles, sessionSnapshots',
+                itemsCount: 0
+            });
         });
     }
 }
@@ -700,4 +848,289 @@ export async function getSyncStatusStats(): Promise<{
         error: all.filter((s) => s.syncStatus === 'error').length,
         conflict: all.filter((s) => s.syncStatus === 'conflict').length,
     };
+}
+
+// ============================================================================
+// Epic 24: File Metadata Helpers (Story 24-1)
+// ============================================================================
+
+/**
+ * Get file metadata for a specific file in a project
+ */
+export async function getFileMetadata(
+    projectId: string,
+    filePath: string
+): Promise<FileMetadataRecord | undefined> {
+    return db.fileMetadata
+        .where('[projectId+path]')
+        .equals([projectId, filePath])
+        .first();
+}
+
+/**
+ * Get all file metadata for a project
+ */
+export async function getAllFileMetadata(
+    projectId: string
+): Promise<FileMetadataRecord[]> {
+    return db.fileMetadata.where('projectId').equals(projectId).toArray();
+}
+
+/**
+ * Upsert file metadata (insert or update)
+ */
+export async function upsertFileMetadata(
+    record: Omit<FileMetadataRecord, 'createdAt' | 'updatedAt'>
+): Promise<void> {
+    const now = Date.now();
+    const existing = await getFileMetadata(record.projectId, record.path);
+
+    await db.fileMetadata.put({
+        ...record,
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+    });
+}
+
+/**
+ * Bulk upsert file metadata for efficient syncing
+ */
+export async function bulkUpsertFileMetadata(
+    records: Omit<FileMetadataRecord, 'createdAt' | 'updatedAt'>[]
+): Promise<void> {
+    const now = Date.now();
+    const enrichedRecords = records.map((record) => ({
+        ...record,
+        createdAt: now,
+        updatedAt: now,
+    }));
+
+    await db.fileMetadata.bulkPut(enrichedRecords);
+}
+
+/**
+ * Delete file metadata
+ */
+export async function deleteFileMetadata(
+    projectId: string,
+    filePath: string
+): Promise<void> {
+    await db.fileMetadata
+        .where('[projectId+path]')
+        .equals([projectId, filePath])
+        .delete();
+}
+
+/**
+ * Clear all file metadata for a project
+ */
+export async function clearProjectFileMetadata(projectId: string): Promise<number> {
+    return db.fileMetadata.where('projectId').equals(projectId).delete();
+}
+
+/**
+ * Get files that need syncing (lastModified > syncedAt)
+ */
+export async function getFilesNeedingSync(projectId: string): Promise<FileMetadataRecord[]> {
+    const allFiles = await getAllFileMetadata(projectId);
+    return allFiles.filter((f) => f.lastModified > f.syncedAt);
+}
+
+// ============================================================================
+// Epic 24: Tool Execution Log Helpers (Story 24-4)
+// ============================================================================
+
+/**
+ * Add a tool execution log entry
+ */
+export async function addToolExecutionLog(
+    record: Omit<ToolExecutionLogRecord, 'createdAt'>
+): Promise<string> {
+    const enrichedRecord: ToolExecutionLogRecord = {
+        ...record,
+        createdAt: Date.now(),
+    };
+
+    await db.toolExecutionLogs.put(enrichedRecord);
+    return record.id;
+}
+
+/**
+ * Get all tool execution logs for a conversation
+ */
+export async function getToolExecutionLogs(
+    conversationId: string
+): Promise<ToolExecutionLogRecord[]> {
+    return db.toolExecutionLogs
+        .where('conversationId')
+        .equals(conversationId)
+        .sortBy('timestamp');
+}
+
+/**
+ * Get tool execution log by ID
+ */
+export async function getToolExecutionLog(
+    id: string
+): Promise<ToolExecutionLogRecord | undefined> {
+    return db.toolExecutionLogs.get(id);
+}
+
+/**
+ * Update tool execution log (e.g., after execution completes)
+ */
+export async function updateToolExecutionLog(
+    id: string,
+    updates: Partial<Omit<ToolExecutionLogRecord, 'id' | 'createdAt'>>
+): Promise<void> {
+    await db.toolExecutionLogs.update(id, updates);
+}
+
+/**
+ * Get approved tools from a conversation (for session trust)
+ */
+export async function getApprovedTools(
+    conversationId: string
+): Promise<string[]> {
+    const logs = await db.toolExecutionLogs
+        .where('conversationId')
+        .equals(conversationId)
+        .filter((log) => log.approved && log.status === 'executed')
+        .toArray();
+
+    return [...new Set(logs.map((log) => log.toolName))];
+}
+
+/**
+ * Clear old tool execution logs (older than 30 days)
+ */
+export async function clearOldToolExecutionLogs(
+    maxAgeMs = 30 * 24 * 60 * 60 * 1000
+): Promise<number> {
+    const cutoff = Date.now() - maxAgeMs;
+    return db.toolExecutionLogs.where('timestamp').below(cutoff).delete();
+}
+
+// ============================================================================
+// Epic 24: FSA Handle Helpers (Story 24-2)
+// ============================================================================
+
+/**
+ * Store FSA handle for a project
+ */
+export async function storeFSAHandle(
+    record: Omit<FSAHandleRecord, 'createdAt' | 'updatedAt'>
+): Promise<void> {
+    const now = Date.now();
+    const existing = await db.fsaHandles.get(record.projectId);
+
+    await db.fsaHandles.put({
+        ...record,
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+    });
+}
+
+/**
+ * Get FSA handle for a project
+ */
+export async function getFSAHandle(
+    projectId: string
+): Promise<FSAHandleRecord | undefined> {
+    return db.fsaHandles.get(projectId);
+}
+
+/**
+ * Update FSA handle permission status
+ */
+export async function updateFSAHandleStatus(
+    projectId: string,
+    status: FSAHandleRecord['permissionStatus']
+): Promise<void> {
+    await db.fsaHandles.update(projectId, {
+        permissionStatus: status,
+        lastAccessedAt: Date.now(),
+        updatedAt: Date.now(),
+    });
+}
+
+/**
+ * Delete FSA handle (e.g., when revoked)
+ */
+export async function deleteFSAHandle(projectId: string): Promise<void> {
+    await db.fsaHandles.delete(projectId);
+}
+
+/**
+ * Get all valid FSA handles (for dashboard display)
+ */
+export async function getAllValidFSAHandles(): Promise<FSAHandleRecord[]> {
+    return db.fsaHandles
+        .where('permissionStatus')
+        .equals('granted')
+        .toArray();
+}
+
+// ============================================================================
+// Epic 24: Session Snapshot Helpers (Story 24-5)
+// ============================================================================
+
+/**
+ * Save session snapshot
+ */
+export async function saveSessionSnapshot(
+    record: Omit<SessionSnapshotRecord, 'createdAt' | 'expiresAt'>
+): Promise<void> {
+    const now = Date.now();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+    await db.sessionSnapshots.put({
+        ...record,
+        createdAt: now,
+        expiresAt: now + sevenDays,
+    });
+}
+
+/**
+ * Get latest session snapshot for a project
+ */
+export async function getLatestSessionSnapshot(
+    projectId: string
+): Promise<SessionSnapshotRecord | undefined> {
+    const now = Date.now();
+    const snapshots = await db.sessionSnapshots
+        .where('[projectId+createdAt]')
+        .between([projectId, 0], [projectId, now])
+        .reverse()
+        .limit(1)
+        .toArray();
+
+    // Return only if not expired
+    const snapshot = snapshots[0];
+    if (snapshot && snapshot.expiresAt > now) {
+        return snapshot;
+    }
+    return undefined;
+}
+
+/**
+ * Delete session snapshot
+ */
+export async function deleteSessionSnapshot(id: string): Promise<void> {
+    await db.sessionSnapshots.delete(id);
+}
+
+/**
+ * Clear expired session snapshots
+ */
+export async function clearExpiredSessionSnapshots(): Promise<number> {
+    const now = Date.now();
+    return db.sessionSnapshots.where('expiresAt').below(now).delete();
+}
+
+/**
+ * Clear all session snapshots for a project
+ */
+export async function clearProjectSessionSnapshots(projectId: string): Promise<number> {
+    return db.sessionSnapshots.where('projectId').equals(projectId).delete();
 }

@@ -46,6 +46,9 @@ import {
 import { cn } from '@/lib/utils'
 import type { Agent } from '@/mocks/agents'
 
+// Security utilities for safe logging (RC-028-010)
+import { safeLog, safeDebug, sanitizeForLogging } from '@/lib/utils/security'
+
 // Epic 25 Provider Infrastructure
 import {
     credentialVault,
@@ -188,7 +191,7 @@ export function AgentConfigDialog({
         try {
             // Use direct API key if provided, otherwise fetch from vault
             const apiKeyVal = directApiKey ?? await credentialVault.getCredentials(provider)
-            console.log('[AgentConfigDialog] loadModels called for', provider, 'hasKey:', !!apiKeyVal)
+            safeDebug('[AgentConfigDialog] loadModels called for', provider, 'hasKey:', !!apiKeyVal)
 
             if (!apiKeyVal) {
                 console.log('[AgentConfigDialog] No API key, using fallback models')
@@ -202,7 +205,7 @@ export function AgentConfigDialog({
             }
 
             const fetchedModels = await modelRegistry.getModels(provider, apiKeyVal)
-            console.log('[AgentConfigDialog] Fetched', fetchedModels.length, 'models from API')
+            safeDebug('[AgentConfigDialog] Fetched', fetchedModels.length, 'models from API')
             setModels(fetchedModels)
         } catch (error) {
             console.warn('[AgentConfigDialog] Failed to fetch models, using fallback:', error)
@@ -259,7 +262,7 @@ export function AgentConfigDialog({
             customHeaders,
             enableNativeTools
         }
-        console.log('[AgentConfigDialog] Validating:', formData)
+        console.log('[AgentConfigDialog] Validating:', sanitizeForLogging(formData))
 
         const result = agentFormSchema.safeParse(formData)
 
@@ -394,7 +397,7 @@ export function AgentConfigDialog({
         try {
             // Auto-save API Key if pending (UX fix)
             if (apiKey.trim() && apiKey !== '••••') {
-                console.log('[AgentConfigDialog] Auto-saving pending API key...')
+                safeDebug('[AgentConfigDialog] Auto-saving pending API key...')
                 await credentialVault.storeCredentials(providerId, apiKey.trim())
             }
 
@@ -419,7 +422,7 @@ export function AgentConfigDialog({
                 enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
             }
 
-            console.log('[AgentConfigDialog] Saving agent:', agentData)
+            safeDebug('[AgentConfigDialog] Saving agent:', sanitizeForLogging(agentData))
 
             let savedAgent: Agent | undefined;
 

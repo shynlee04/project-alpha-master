@@ -2,9 +2,10 @@
 project_name: 'Project Alpha v2.0 - Knowledge Synthesis Station'
 user_name: 'Admin'
 date: '2025-12-29'
-sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality', 'workflow_rules', 'critical_rules', 'phase_2_technical_constraints']
+sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality', 'workflow_rules', 'critical_rules', 'phase_2_technical_constraints', 'epic_24_schema']
 generated_from: 'architecture.md'
 phase: 'Phase 2'
+last_updated: '2025-12-29T19:24:42+07:00'
 ---
 
 # Project Context for AI Agents
@@ -424,6 +425,78 @@ _Strict execution order required to prevent blockers._
 | **Story 2.4 (Conversation Store)** | **Story 4.3 (Tool Logs)** | Tool execution history lives in conversation store |
 | **Story 3.1 (FSA Handle)** | **Story 4.2 (File Tools)** | Agent cannot read/write without `WorkspaceContext` file handles |
 | **Story 4.3 (Execution Log)** | **Story 5.1 (Sync Visualizer)** | Visualizer consumes audit logs from tool execution |
+| **Dexie v8 Schema** | **Story 24-1 (Incremental Sync)** | Requires `fileMetadata` table (v9) |
+| **Story 24-1** | **Story 24-2 (FSA Handle Persistence)** | Metadata cache enables instant restore |
+| **Story 2.4 (Conversation Store)** | **Story 24-3 (Auto-Restore)** | Uses existing `loadConversation()` method |
+| **Dexie v8 Schema** | **Story 24-4 (Tool Context)** | Requires `toolExecutionLogs` table (v9) |
+
+---
+
+## Epic 24: Dexie Schema v9 Additions (NEW)
+
+_Schema changes required for Performance & UX Optimization stories._
+
+### New Tables
+
+```typescript
+// src/lib/state/dexie-db.ts (Schema v9)
+
+// File metadata cache for incremental sync (Story 24-1)
+fileMetadata: 'path, lastModified, [path+lastModified]'
+
+// Tool execution audit trail (Story 24-4)
+toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp'
+
+// FSA handle persistence (Story 24-2 - optional, may use existing ideState)
+fsaHandles: 'projectId, handle, grantedAt'
+```
+
+### New Interfaces
+
+```typescript
+// File metadata for incremental sync
+interface CachedFileMetadata {
+    path: string;           // File path (primary key)
+    lastModified: number;   // Unix timestamp
+    size: number;           // File size in bytes
+    hash?: string;          // Optional SHA-256 for content verification
+    syncedAt: number;       // Last sync timestamp
+}
+
+// Tool execution log for context persistence
+interface ToolExecutionLog {
+    id: string;             // UUID
+    conversationId: string; // Foreign key to conversation
+    messageId: string;      // Foreign key to message
+    toolName: string;       // e.g., 'readFile', 'writeFile'
+    args: Record<string, unknown>;
+    result: {
+        success: boolean;
+        output?: string;
+        error?: string;
+    };
+    approved: boolean;      // User approval status
+    timestamp: number;      // Execution timestamp
+}
+```
+
+### Migration Strategy
+
+```typescript
+// Upgrade from v8 to v9
+this.version(9).stores({
+    // Existing tables unchanged
+    projects: 'id, lastOpened, name',
+    ideState: 'projectId, updatedAt',
+    // ... other existing tables ...
+    
+    // NEW: Epic 24 tables
+    fileMetadata: 'path, lastModified, [path+lastModified]',
+    toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp',
+}).upgrade(async () => {
+    console.log('[Dexie] Running migration to v9 (Epic 24 Performance & UX)');
+});
+```
 
 ## Phase 2 Technical Constraints
 

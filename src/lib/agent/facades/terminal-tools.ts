@@ -43,6 +43,8 @@ export interface ShellSession {
     kill(): void;
     /** Check if shell is running */
     isRunning(): boolean;
+    /** Get elapsed time in milliseconds since session started (RC-028-008) */
+    getElapsedTime(): number;
 }
 
 /**

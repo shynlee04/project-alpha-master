@@ -71,33 +71,55 @@ export class FileLock {
      */
     async acquire(path: string, timeout?: number): Promise<number> {
         const lockTimeout = timeout ?? this.defaultTimeout;
-        const existing = this.locks.get(path);
+        const startTime = Date.now();
 
-        // If there's an existing lock, wait for it or timeout
-        if (existing) {
-            const timeoutPromise = this.createTimeoutPromise(path, lockTimeout);
-            await Promise.race([existing.promise, timeoutPromise]);
+        // Retry loop to handle concurrent lock acquisition
+        while (true) {
+            const existing = this.locks.get(path);
 
-            // After waiting, check if lock is still held
-            if (this.locks.has(path)) {
-                throw new FileLockTimeoutError(path, lockTimeout);
+            // If there's an existing lock, wait for it or timeout
+            if (existing) {
+                const elapsed = Date.now() - startTime;
+                if (elapsed >= lockTimeout) {
+                    throw new FileLockTimeoutError(path, lockTimeout);
+                }
+
+                const remainingTime = lockTimeout - elapsed;
+                const timeoutPromise = this.createTimeoutPromise(path, remainingTime);
+
+                try {
+                    await Promise.race([existing.promise, timeoutPromise]);
+                } catch {
+                    // Timeout expired
+                    throw new FileLockTimeoutError(path, lockTimeout);
+                }
+
+                // Lock was released, try to acquire it
+                // Continue to create new lock below
             }
+
+            // Create new lock (only if path is not already locked by concurrent acquire)
+            const lockInfo = this.locks.get(path);
+            if (lockInfo) {
+                // Another concurrent acquire beat us, retry
+                continue;
+            }
+
+            // Create new lock
+            let resolver: () => void;
+            const promise = new Promise<void>((resolve) => {
+                resolver = resolve;
+            });
+
+            const acquiredAt = Date.now();
+            this.locks.set(path, {
+                promise,
+                resolver: resolver!,
+                acquiredAt,
+            });
+
+            return acquiredAt;
         }
-
-        // Create new lock
-        let resolver: () => void;
-        const promise = new Promise<void>((resolve) => {
-            resolver = resolve;
-        });
-
-        const acquiredAt = Date.now();
-        this.locks.set(path, {
-            promise,
-            resolver: resolver!,
-            acquiredAt,
-        });
-
-        return acquiredAt;
     }
 
     /**

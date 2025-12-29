@@ -24,7 +24,12 @@ import { TerminalToolsError } from './terminal-tools';
 import { createDefaultSanitizer } from './command-sanitizer';
 import { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
 
+// Command execution timeout (30 seconds)
 const DEFAULT_TIMEOUT = 30000;
+
+// Shell session timeout settings
+const SHELL_SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+const SHELL_WARNING_TIME = 25 * 60 * 1000; // 25 minutes (warning threshold)
 
 /**
  * Error thrown when tool execution is blocked by permission settings
@@ -183,7 +188,7 @@ export class TerminalToolsFacade implements AgentTerminalTools {
 
     /**
      * Start an interactive shell session
-     * @fix RC-028-001 - Added permission check
+     * @fix RC-028-008 - Add shell session timeout (30min max with warning at 25min)
      */
     async startShell(projectPath?: string): Promise<ShellSession> {
         // RC-028-001: Check permission before execution
@@ -200,7 +205,9 @@ export class TerminalToolsFacade implements AgentTerminalTools {
         const spawnOptions = projectPath ? { cwd: projectPath } : undefined;
         const process = await spawn('jsh', [], spawnOptions);
         const writer = process.input.getWriter();
+        const startTime = Date.now();
         let running = true;
+        let warningEmitted = false;
 
         // Track process
         this.processes.set(pid, { kill: () => process.kill() });
@@ -208,9 +215,44 @@ export class TerminalToolsFacade implements AgentTerminalTools {
         // Emit start event
         this.eventBus.emit('process:started', { pid, command: 'jsh', args: [] });
 
+        // RC-028-008: Shell session timeout - monitor elapsed time
+        const sessionTimer = setInterval(() => {
+            if (!running) {
+                clearInterval(sessionTimer);
+                return;
+            }
+
+            const elapsed = Date.now() - startTime;
+
+            // Warning at 25 minutes
+            if (elapsed >= SHELL_WARNING_TIME && !warningEmitted) {
+                warningEmitted = true;
+                this.eventBus.emit('shell:warning', {
+                    pid,
+                    message: 'Shell session has been running for 25 minutes. It will be terminated at 30 minutes.',
+                    remainingTime: SHELL_SESSION_TIMEOUT - elapsed,
+                });
+                console.warn(`[TerminalToolsFacade] Shell session ${pid} warning: 25min limit reached`);
+            }
+
+            // Terminate at 30 minutes
+            if (elapsed >= SHELL_SESSION_TIMEOUT) {
+                console.warn(`[TerminalToolsFacade] Shell session ${pid} terminated: 30min limit reached`);
+                process.kill();
+                running = false;
+                clearInterval(sessionTimer);
+                this.eventBus.emit('shell:timeout', {
+                    pid,
+                    message: 'Shell session terminated after 30 minutes',
+                    elapsed,
+                });
+            }
+        }, 10000); // Check every 10 seconds
+
         // Handle exit
         process.exit.then((exitCode) => {
             running = false;
+            clearInterval(sessionTimer);
             this.processes.delete(pid);
             this.eventBus.emit('process:exited', { pid, exitCode });
         });
@@ -223,8 +265,10 @@ export class TerminalToolsFacade implements AgentTerminalTools {
             kill: () => {
                 process.kill();
                 running = false;
+                clearInterval(sessionTimer);
             },
             isRunning: () => running,
+            getElapsedTime: () => Date.now() - startTime,
         };
     }
 

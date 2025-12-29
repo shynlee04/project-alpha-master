@@ -160,18 +160,18 @@ development_status:
     completion_date: "pending"
     stories:
       # CRITICAL Issues (Must Fix)
-      - "rc-028-001-tool-permission-wire": pending # Wire checkPermission() to execution
-      - "rc-028-002-xor-encryption": pending # Replace XOR with AES-GCM
-      - "rc-028-003-idelayout-state": pending # Fix state duplication
-      - "rc-028-004-conversation-store": pending # Consolidate dual-write
-      - "rc-028-005-filelock-race": pending # Fix race condition
-      - "rc-028-006-path-validation": pending # Add path guard to LocalFSAdapter
+      - "rc-028-001-tool-permission-wire": done # Wire checkPermission() to execution
+      - "rc-028-002-xor-encryption": done # Replace XOR with AES-GCM
+      - "rc-028-003-idelayout-state": done # Fix state duplication (verified already addressed)
+      - "rc-028-004-conversation-store": done # Consolidate dual-write (deprecated old store)
+      - "rc-028-005-filelock-race": done # Fix race condition (retry loop for concurrent acquires)
+      - "rc-028-006-path-validation": done # Add path guard to LocalFSAdapter (already fully implemented)
       # HIGH Issues (Should Fix)
-      - "rc-028-007-command-sanitizer": pending # Add argument validation
-      - "rc-028-008-shell-timeout": pending # Add 30min timeout
-      - "rc-028-009-crash-recovery": pending # Add unsaved work preservation
+      - "rc-028-007-command-sanitizer": done # Add argument validation (already fully implemented)
+      - "rc-028-008-shell-timeout": done # Add 30min timeout (with warning at 25min)
+      - "rc-028-009-crash-recovery": done # Add unsaved work preservation (beforeunload + auto-recovery)
       - "rc-028-010-security-hardening": pending # API keys, path traversal
-    sprint_progress: "0/10 stories complete (0%)"
+    sprint_progress: "9/10 stories complete (90%)"
     validation_summary:
       critical_issues: 6
       high_issues: 14
@@ -186,6 +186,18 @@ development_status:
     trigger: "Exit correct-course workflow"
     stories:
       - "rc-999-ralph-loop-revalidation"
+
+  # EPIC 24: Performance & UX Optimization (Parallel Sprint)
+  # Added via correct-course workflow: 2025-12-29
+  # Addresses: CC-001 (Incremental Sync) + CC-002 (Conversation History)
+  # PREREQUISITE COMPLETE: Dexie v9 schema implemented (2025-12-29T19:28:35+07:00)
+  epic-24: in-progress
+  24-1-incremental-sync-metadata-cache: ready-for-dev # Team A - 3-4 hours
+  24-2-fsa-handle-persistence: ready-for-dev # Team A - 2-3 hours
+  24-3-conversation-history-auto-restore: ready-for-dev # Team B - 2-3 hours
+  24-4-tool-execution-context-persistence: ready-for-dev # Team B - 3-4 hours
+  24-5-session-state-snapshot: backlog # Either team - 4-5 hours
+  epic-24-retrospective: optional
 
   # EPIC 6: Source Ingestion & Management (Days 18-20)
   epic-6: backlog

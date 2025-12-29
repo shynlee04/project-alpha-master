@@ -47,6 +47,7 @@ For two AI agent teams, follow the strategy in `_bmad-output/project-planning-ar
 | Epic 2 Frontend UI | Epic 2 Backend State + Tool Exec |
 | Epic 3 UI Components | Epic 3 WebContainer + Sync |
 | Epic 5 Polish | Epic 4 Completion + Epic 5 Backend |
+| **Epic 24-1, 24-2** (Incremental Sync) | **Epic 24-3, 24-4, 24-5** (Conversation Restore) |
 
 ### Key Integration Points
 
@@ -359,6 +360,13 @@ The `.vscode/settings.json` file configures:
 - Schema changes require migration logic
 - Versioned schema with upgrade transactions
 
+### 5b. Dexie Schema v9 (Epic 24) - NEW
+- **fileMetadata table**: Caches file paths, lastModified, size for incremental sync
+- **toolExecutionLogs table**: Persists tool approvals and execution history
+- **fsaHandles table**: Stores FileSystemDirectoryHandle for instant permission restore
+- Schema upgrade path: v8 → v9 with additive migrations only
+- See `src/lib/state/dexie-db.ts` for table definitions
+
 ### 6. Error Handling
 - Use custom error classes from `src/lib/filesystem/sync-types.ts`
 - `SyncError`, `PermissionDeniedError`, `FileSystemError`
@@ -539,7 +547,14 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 3. Verify component props are valid
 4. Check for async operation failures
 
-## Recent Updates (Updated: 2025-12-28)
+## Recent Updates (Updated: 2025-12-29)
+
+### Epic 24: Performance & UX Optimization (NEW via correct-course)
+- **Incremental Sync**: Stories 24-1, 24-2 for metadata cache + FSA handle persistence
+- **Conversation Restore**: Stories 24-3, 24-4 for auto-restore + tool context
+- **Session Snapshots**: Story 24-5 for complete IDE state restoration
+- **Dexie Schema v9**: Adds `fileMetadata`, `toolExecutionLogs` tables
+- **Team Assignment**: Team A (24-1, 24-2), Team B (24-3, 24-4, 24-5)
 
 ### Phase 1: Core Stabilization (Current Focus)
 - **Responsive Design**: `useResponsive` hook for breakpoint detection

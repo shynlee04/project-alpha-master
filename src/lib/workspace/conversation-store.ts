@@ -1,10 +1,16 @@
 /**
- * Conversation Store
- * 
+ * Conversation Store (DEPRECATED)
+ *
  * @module lib/workspace/conversation-store
  * @governance EPIC-27-1c
- * 
+ *
+ * ⚠️ DEPRECATED: This module is deprecated.
+ * Use `lib/state/conversation-store.ts` instead.
+ * This file is kept for reference and will be removed in a future update.
+ *
  * Story 27-1c: Migrated to use Dexie.js
+ *
+ * @deprecated Use useConversationStore from '@/lib/state/conversation-store' instead
  */
 
 import { getPersistenceDB, type ConversationRecord } from '../persistence'

@@ -32,6 +32,11 @@ active_epics:
     status: "DONE"
     start_date: "2025-12-28"
     end_date: "2025-12-31"
+  - id: "EPIC-24"
+    name: "Performance & UX Optimization"
+    status: "READY_FOR_DEV"
+    start_date: "2025-12-29"
+    trigger: "correct-course-2025-12-29"
 
 epic_status:
   KNOWLEDGE-SYNTHESIS-2025-12-28: "DONE"
@@ -39,12 +44,16 @@ epic_status:
   EPIC-1: "DONE"
   EPIC-2: "DONE"
   EPIC-4: "DONE"
+  EPIC-24: "READY_FOR_DEV"
 
 next_actions:
   - "Phase 2 documentation suite complete - all 5 core documents enhanced and validated"
   - "Implementation readiness confirmed - all quality gates passed with warnings"
   - "Ready to proceed with Phase 2 development kickoff"
   - "Update AGENTS.md with Phase 2 documentation completion status"
+  - "Epic 24 created via correct-course workflow (CC-001, CC-002 addressed)"
+  - "Team A: Stories 24-1, 24-2 (Incremental Sync, FSA Persistence)"
+  - "Team B: Stories 24-3, 24-4 (Conversation Restore, Tool Context)"
   - "Begin Sprint 28: Critical security fixes (6 CRITICAL issues)"
   - "Address HIGH priority issues (14 issues) in Sprint 28"
   - "Resolve MEDIUM priority issues (31 issues) in Sprint 28"
@@ -53,7 +62,21 @@ next_actions:
 
 bugs: []
 
-course_corrections: []
+course_corrections:
+  - id: "CC-2025-12-29-001"
+    date: "2025-12-29T19:19:16+07:00"
+    trigger: "User feedback on project re-entry performance and chat history restoration"
+    issues:
+      - id: "CC-001"
+        description: "Full re-sync on every project entry causing 3-5s delays"
+        resolution: "Epic 24 Stories 24-1, 24-2"
+      - id: "CC-002"
+        description: "Conversation history not restored on thread re-entry"
+        resolution: "Epic 24 Stories 24-3, 24-4"
+    proposal_path: "_bmad-output/sprint-change-proposal-2025-12-29.md"
+    epic_created: "EPIC-24"
+    stories_created: ["24-1", "24-2", "24-3", "24-4", "24-5"]
+    status: "APPROVED"
 
 # =============================================================================
 # Phase 2 Documentation Enhancement Status
