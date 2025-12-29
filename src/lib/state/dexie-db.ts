@@ -305,8 +305,8 @@ export interface FSAHandleRecord {
 /**
  * Session state snapshot for complete restoration (Story 24-5)
  * Captures full IDE session state for seamless resumption.
- * 
- * @epic Epic 24 - Performance & UX Optimization  
+ *
+ * @epic Epic 24 - Performance & UX Optimization
  * @story 24-5 - Session State Snapshot System
  */
 export interface SessionSnapshotRecord {
@@ -326,6 +326,32 @@ export interface SessionSnapshotRecord {
     };
     createdAt: number;
     expiresAt: number;          // Auto-cleanup after 7 days
+}
+
+// ============================================================================
+// Epic 6: Source Ingestion & Management Tables
+// ============================================================================
+
+/**
+ * Source record for knowledge base content
+ * Stores imported PDF, URL, and text sources for RAG indexing.
+ *
+ * @epic Epic 6 - Source Ingestion & Management
+ * @story 6-1 - Source Import Pipeline
+ */
+export interface SourceRecord {
+    id: string;                 // Primary key (UUID)
+    projectId: string;          // Foreign key to project
+    type: 'pdf' | 'url' | 'text';
+    title: string;
+    content: string;            // Extracted text content
+    url?: string;               // For URL sources
+    pageCount?: number;         // For PDF sources
+    wordCount?: number;         // For PDF/URL sources
+    charCount?: number;         // For text sources
+    fileSize?: number;          // For PDF sources (bytes)
+    createdAt: number;
+    updatedAt: number;
 }
 
 /**
@@ -463,6 +489,9 @@ class ViaGentDatabase extends Dexie {
     toolExecutionLogs!: Table<ToolExecutionLogRecord, string>;
     fsaHandles!: Table<FSAHandleRecord, string>;
     sessionSnapshots!: Table<SessionSnapshotRecord, string>;
+
+    // Epic 6: Source Ingestion & Management tables
+    sources!: Table<SourceRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -704,6 +733,48 @@ class ViaGentDatabase extends Dexie {
             markMigrationApplied(10);
             logDexieMigration(10, 'file-sync-status-store', 'completed', {
                 tableName: 'fileSyncStatus',
+                itemsCount: 0
+            });
+        });
+
+        // Schema version 11: Epic 6 - Source Ingestion & Management
+        // Adds sources table for PDF, URL, and text imports
+        this.version(11).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            // NEW: Sources table for knowledge base content (Story 6-1)
+            sources: 'id, projectId, type, createdAt, [projectId+type], [projectId+createdAt]',
+        }).upgrade(async () => {
+            logDexieMigration(11, 'epic-6-source-ingestion', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(11)) {
+                logDexieMigration(11, 'epic-6-source-ingestion', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(11);
+
+            logDexieMigration(11, 'epic-6-source-ingestion', 'completed', {
+                tableName: 'sources',
                 itemsCount: 0
             });
         });
@@ -1287,8 +1358,8 @@ export async function deleteConversationThread(
 
 /**
  * Update scroll position for a thread.
- * 
- * @param threadId - The thread ID 
+ *
+ * @param threadId - The thread ID
  * @param scrollPosition - The new scroll position
  */
 export async function updateThreadScrollPosition(
@@ -1299,5 +1370,135 @@ export async function updateThreadScrollPosition(
         scrollPosition,
         updatedAt: Date.now(),
     });
+}
+
+// ============================================================================
+// Epic 6: Source Ingestion Helpers (Story 6-1)
+// ============================================================================
+
+/**
+ * Get a source by ID.
+ *
+ * @param sourceId - The ID of the source to retrieve
+ * @returns The source record or undefined if not found
+ */
+export async function getSource(
+    sourceId: string
+): Promise<SourceRecord | undefined> {
+    return db.sources.get(sourceId);
+}
+
+/**
+ * Save a source (insert or update).
+ *
+ * @param source - The source record to save
+ */
+export async function saveSource(
+    source: SourceRecord
+): Promise<void> {
+    await db.sources.put({
+        ...source,
+        updatedAt: Date.now(),
+    });
+}
+
+/**
+ * Get all sources for a project sorted by most recently created.
+ *
+ * @param projectId - The project ID to query
+ * @returns Array of sources sorted by createdAt descending
+ */
+export async function getSourcesForProject(
+    projectId: string
+): Promise<SourceRecord[]> {
+    const sources = await db.sources
+        .where('projectId')
+        .equals(projectId)
+        .sortBy('createdAt');
+
+    // Reverse to get most recent first
+    return sources.reverse();
+}
+
+/**
+ * Get sources by type for a project.
+ *
+ * @param projectId - The project ID
+ * @param type - The source type filter
+ * @returns Array of sources matching the type
+ */
+export async function getSourcesByType(
+    projectId: string,
+    type: SourceRecord['type']
+): Promise<SourceRecord[]> {
+    return db.sources
+        .where('[projectId+type]')
+        .equals([projectId, type])
+        .toArray();
+}
+
+/**
+ * Delete a source.
+ *
+ * @param sourceId - The ID of the source to delete
+ */
+export async function deleteSource(
+    sourceId: string
+): Promise<void> {
+    await db.sources.delete(sourceId);
+}
+
+/**
+ * Clear all sources for a project.
+ *
+ * @param projectId - The project ID
+ * @returns Number of sources deleted
+ */
+export async function clearProjectSources(projectId: string): Promise<number> {
+    return db.sources.where('projectId').equals(projectId).delete();
+}
+
+/**
+ * Search sources by content (full-text search).
+ *
+ * @param projectId - The project ID
+ * @param query - Search query string
+ * @returns Array of sources containing the query in title or content
+ */
+export async function searchSources(
+    projectId: string,
+    query: string
+): Promise<SourceRecord[]> {
+    const allSources = await getSourcesForProject(projectId);
+    const lowerQuery = query.toLowerCase();
+
+    return allSources.filter(source =>
+        source.title.toLowerCase().includes(lowerQuery) ||
+        source.content.toLowerCase().includes(lowerQuery)
+    );
+}
+
+/**
+ * Get source statistics for a project.
+ *
+ * @param projectId - The project ID
+ * @returns Object with counts by type and total
+ */
+export async function getSourceStats(
+    projectId: string
+): Promise<{
+    total: number;
+    pdf: number;
+    url: number;
+    text: number;
+}> {
+    const allSources = await getSourcesForProject(projectId);
+
+    return {
+        total: allSources.length,
+        pdf: allSources.filter(s => s.type === 'pdf').length,
+        url: allSources.filter(s => s.type === 'url').length,
+        text: allSources.filter(s => s.type === 'text').length,
+    };
 }
 
