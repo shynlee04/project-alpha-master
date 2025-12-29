@@ -1,44 +1,320 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<context story="9-3-flashcard-study-interface" created="2025-12-30T12:30:00+07:00">
-  <files>
-    <file path="src/components/study/FlashcardView.tsx">
-      <content><![CDATA[
-        // Flashcard component with 3D flip animation
-        // Front: question, Back: answer + rating buttons
-      ]]></content>
-    </file>
-  </files>
+<story_context>
+  <story_id>9-3-flashcard-study-interface</story_id>
+  <epic>9</epic>
+  <title>Flashcard Study Interface</title>
+  <created>2025-12-30T11:00:00+07:00</created>
+  <updated>2025-12-30T18:00:00+07:00</updated>
 
-  <research_notes>
-    <finding source="context7" query="CSS 3D transform flip animation">
-      <pattern>
-        transform-style: preserve-3d
-        backface-visibility: hidden
-        rotateX(180deg) for flip
-        perspective on container
-      </pattern>
-    </finding>
-    <finding source="context7" query="React touch swipe gesture">
-      <pattern>
-        touchstart, touchmove, touchend events
-        threshold for swipe detection
-      </pattern>
-    </finding>
-  </research_notes>
+  <research_summary>
+    <source name="CSS Transforms" url="https://developer.mozilla.org/en-US/docs/Web/CSS/transform">
+      <finding>3D flip animation uses transform-style: preserve-3d, backface-visibility: hidden, rotateX()</finding>
+      <code>
+.flashcard {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+.flashcard.flipped {
+  transform: rotateX(180deg);
+}
+.flashcard-front, .flashcard-back {
+  backface-visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+.flashcard-back {
+  transform: rotateX(180deg);
+}
+      </code>
+      <applies_to>Flashcard 3D flip animation component</applies_to>
+    </source>
+    <source name="React Touch Events" url="https://react.dev/learn/responding-to-events">
+      <finding>Touch events (touchstart, touchmove, touchend) for swipe detection</finding>
+      <code>
+const handleTouchStart = (e) => { touchStartX = e.touches[0].clientX; };
+const handleTouchMove = (e) => { touchCurrentX = e.touches[0].clientX; };
+const handleTouchEnd = () => {
+  const diff = touchStartX - touchCurrentX;
+  if (Math.abs(diff) > threshold) { /* navigate */ }
+};
+      </code>
+      <applies_to>Mobile swipe navigation for flashcards</applies_to>
+    </source>
+    <source name="Animations.css" url="src/styles/animations.css">
+      <finding>8-bit animation patterns with cubic-bezier easing, prefers-reduced-motion</finding>
+      <code>
+--animation-easing-8bit: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+  }
+}
+      </code>
+      <applies_to>Animation timing and accessibility</applies_to>
+    </source>
+  </research_summary>
 
-  <technical_notes>
-    <note priority="high">3D flip animation: 0.6s cubic-bezier</note>
-    <note priority="medium">SRS ratings: Again, Hard, Good, Easy</note>
-    <note priority="low">Offline-first: all data from IndexedDB</note>
-  </technical_notes>
+  <flashcard_study_types>
+    <typescript>
+// SRS Rating type
+export type SRSRating = 'again' | 'hard' | 'good' | 'easy';
+
+// SRS data for spaced repetition scheduling
+export interface SRSData {
+  interval: number;      // Days until next review
+  easeFactor: number;    // Difficulty multiplier (default 2.5)
+  repetitions: number;   // Number of successful reviews
+  lastReview: number;    // Timestamp of last review
+  nextReview: number;    // Timestamp of next review
+}
+
+// Study session state
+export interface StudySession {
+  id: string;
+  cardIds: string[];
+  currentIndex: number;
+  startTime: number;
+  endTime?: number;
+  ratings: Map<string, SRSRating>;
+  completed: boolean;
+}
+
+// Study statistics
+export interface StudyStats {
+  cardsStudied: number;
+  timeSpent: number;  // seconds
+  correct: number;
+  incorrect: number;
+  streak: number;
+  ratingDistribution: Record<SRSRating, number>;
+}
+    </typescript>
+    <dexie_stores>
+      studySessions: 'id, startTime, completed'
+      studySessionCards: 'id, sessionId, cardId, rating, timestamp'
+    </dexie_stores>
+  </flashcard_study_types>
+
+  <srs_algorithm>
+    <description>Simplified SM-2 algorithm for spaced repetition</description>
+    <typescript>
+const DEFAULT_EASE_FACTOR = 2.5;
+const MIN_EASE_FACTOR = 1.3;
+
+interface SM2Input {
+  rating: SRSRating;        // again=1, hard=2, good=3, easy=4
+  current: SRSData;         // Current SRS data for the card
+}
+
+interface SM2Output extends SRSData {
+  // Updated SRS data for next review
+}
+
+function calculateNextReview(input: SM2Input): SM2Output {
+  const { rating, current } = input;
+
+  // Rating to quality mapping (SM-2 quality 0-5)
+  const qualityMap: Record<SRSRating, number> = {
+    again: 0,
+    hard: 2,
+    good: 4,
+    easy: 5,
+  };
+
+  const quality = qualityMap[rating);
+
+  // Update ease factor
+  let newEaseFactor = current.easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+  newEaseFactor = Math.max(MIN_EASE_FACTOR, newEaseFactor);
+
+  // Calculate interval
+  let newInterval: number;
+  let newRepetitions: number;
+
+  if (quality < 3) {
+    // Failed - reset
+    newRepetitions = 0;
+    newInterval = 1;  // Review tomorrow
+  } else {
+    // Passed
+    newRepetitions = current.repetitions + 1;
+
+    if (newRepetitions === 1) {
+      newInterval = 1;
+    } else if (newRepetitions === 2) {
+      newInterval = 6;
+    } else {
+      newInterval = Math.round(current.interval * newEaseFactor);
+    }
+  }
+
+  return {
+    interval: newInterval,
+    easeFactor: newEaseFactor,
+    repetitions: newRepetitions,
+    lastReview: Date.now(),
+    nextReview: Date.now() + newInterval * 24 * 60 * 60 * 1000,
+  };
+}
+    </typescript>
+  </srs_algorithm>
+
+  <css_animations>
+    <css>
+/* Flashcard flip animation */
+.flashcard-container {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 600px;
+  min-height: 300px;
+}
+
+.flashcard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+}
+
+.flashcard.flipped {
+  transform: rotateX(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.flashcard-front {
+  /* Front face styling */
+}
+
+.flashcard-back {
+  transform: rotateX(180deg);
+  /* Back face styling with rating buttons */
+}
+
+/* Rating buttons */
+.rating-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Progress indicator */
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--color-muted);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+}
+    </css>
+  </css_animations>
 
   <dependencies>
-    <dependency name="dexie" version="^4.0.0" />
+    <dep name="Story 9-1 Flashcard Generator" status="complete">
+      <reason>Uses Flashcard type and flashcard-store</reason>
+      <file>src/lib/knowledge/types.ts</file>
+    </dep>
+    <dep name="Dexie" version="^3.0">
+      <reason>IndexedDB persistence for study sessions</reason>
+    </dep>
+    <dep name="animations.css" status="complete">
+      <reason>8-bit animation patterns and easing</reason>
+    </dep>
   </dependencies>
 
-  <implementation_hints>
-    <hint>CSS class: .flashcard.flipped { transform: rotateX(180deg) }</hint>
-    <hint>Swipe threshold: 50px for navigation</hint>
-    <hint>SRS algorithm: simplified SM-2</hint>
-  </implementation_hints>
-</context>
+  <implementation_sequence>
+    <step number="1">
+      <task>Create SRS types and algorithm</task>
+      <file>src/lib/study/srs-types.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="2">
+      <task>Create Flashcard component with 3D flip</task>
+      <file>src/components/study/flashcard.tsx</file>
+      <status>pending</status>
+    </step>
+    <step number="3">
+      <task>Create StudySession store with Dexie persistence</task>
+      <file>src/lib/state/study-store.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="4">
+      <task>Implement StudySession component with navigation</task>
+      <file>src/components/study/study-session.tsx</file>
+      <status>pending</status>
+    </step>
+    <step number="5">
+      <task>Create StudyStats component</task>
+      <file>src/components/study/study-stats.tsx</file>
+      <status>pending</status>
+    </step>
+    <step number="6">
+      <task>Write unit tests</task>
+      <file>src/lib/study/__tests__/srs.test.ts</file>
+      <status>pending</status>
+    </step>
+  </implementation_sequence>
+
+  <testing_strategy>
+    <unit_tests>
+      <test>SM-2 algorithm calculations</test>
+      <test>SRS data updates</test>
+      <test>Session creation and completion</test>
+      <test>Statistics calculation</test>
+    </unit_tests>
+    <integration_tests>
+      <test>Flashcard flip animation</test>
+      <test>Swipe navigation</test>
+      <test>Keyboard navigation</test>
+      <test>Dexie persistence roundtrip</test>
+    </integration_tests>
+  </testing_strategy>
+
+  <nfr_validations>
+    <nfr name="NFR-PERF-P2-06">
+      <description>Flashcard flip animation runs at 60fps</description>
+      <test>Measure frame rate during flip animation</test>
+      <threshold>&gt;55fps</threshold>
+    </nfr>
+  </nfr_validations>
+
+  <technical_notes>
+    <note priority="high">Use CSS transform: rotateX(180deg) for flip from bottom edge</note>
+    <note priority="high">Support prefers-reduced-motion for accessibility</note>
+    <note priority="high">SRS algorithm must persist card scheduling data</note>
+    <note priority="medium">Touch swipe threshold: 50px</note>
+    <note priority="medium">Keyboard navigation: ArrowLeft, ArrowRight, Space to flip</note>
+  </technical_notes>
+
+  <file_paths>
+    <srs_types>src/lib/study/srs-types.ts</srs_types>
+    <flashcard_component>src/components/study/flashcard.tsx</flashcard_component>
+    <study_store>src/lib/state/study-store.ts</study_store>
+    <session_component>src/components/study/study-session.tsx</session_component>
+    <stats_component>src/components/study/study-stats.tsx</stats_component>
+    <tests>src/lib/study/__tests__/srs.test.ts</tests>
+  </file_paths>
+</story_context>
