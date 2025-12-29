@@ -1,0 +1,48 @@
+import { memo } from 'react';
+import { NodeTypes } from '@xyflow/react';
+import { SourceNode } from './SourceNode';
+import { ConceptNode } from './ConceptNode';
+import { SourceNodeData } from '@/lib/canvas/types';
+import { ConceptNodeData } from './ConceptNode';
+
+/**
+ * Node types map for React Flow
+ * Using memo to prevent unnecessary re-renders
+ */
+export const nodeTypes: NodeTypes = {
+  source: SourceNode as never,
+  concept: ConceptNode as never,
+};
+
+/**
+ * Type-safe node type definitions
+ */
+export type CanvasNodeType = 'source' | 'concept';
+
+/**
+ * Helper to check if a node is a source node
+ */
+export const isSourceNode = (node: { type?: string | null }): boolean => {
+  return node.type === 'source';
+};
+
+/**
+ * Helper to check if a node is a concept node
+ */
+export const isConceptNode = (node: { type?: string | null }): boolean => {
+  return node.type === 'concept';
+};
+
+/**
+ * Default node options for new nodes
+ */
+export const defaultNodeOptions = {
+  source: {
+    type: 'source',
+    origin: [0.5, 0.5] as [number, number],
+  },
+  concept: {
+    type: 'concept',
+    origin: [0.5, 0.5] as [number, number],
+  },
+};

@@ -226,20 +226,20 @@ development_status:
   epic-7-retrospective: optional
 
   # EPIC 8: Knowledge Canvas (Days 25-29)
-  epic-8: backlog
-  8-1-react-flow-canvas: backlog # Nodes/edges rendering
-  8-2-source-node-creation: backlog # Drag from sidebar to canvas
-  8-3-concept-node-creation: backlog # Mind map nodes
-  8-4-connection-lines: backlog # Relationship labels
-  8-5-canvas-persistence: backlog # Save/load canvas state
-  epic-8-retrospective: optional
+  epic-8: in_progress # Ralph Loop: Stories + Contexts created and validated 2025-12-30
+  8-1-react-flow-canvas-setup: done # Canvas store + component verified, tests pass
+  8-2-source-node-creation: done # SourceNode + drag-drop complete, 7 tests passing
+  8-3-concept-node-creation: done # ConceptNode + inline editing complete, 12 tests passing
+  8-4-connection-lines: ready-for-dev # Story file created, ready for dev
+  8-5-canvas-persistence: ready-for-dev # Story file created, ready for dev
+  epic-8-retrospective: pending
 
   # EPIC 9: Study Artifacts Generation (Days 30-33)
-  epic-9: backlog
-  9-1-flashcard-generator: backlog # Q&A pairs from content
-  9-2-quiz-generator: backlog # Multiple choice from sources
-  9-3-flashcard-study-interface: backlog # Flip cards, spaced repetition
-  9-4-quiz-taking-interface: backlog # Scoring, explanations
+  epic-9: context_ready # Ralph Loop: Stories + Contexts created and validated 2025-12-30
+  9-1-flashcard-generator: ready-for-dev # Story file created, ready for dev
+  9-2-quiz-generator: ready-for-dev # Story file created, ready for dev
+  9-3-flashcard-study-interface: ready-for-dev # Story file created, ready for dev
+  9-4-quiz-taking-interface: ready-for-dev # Story file created, ready for dev
   epic-9-retrospective: optional
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)

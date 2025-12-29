@@ -1,0 +1,47 @@
+[
+  {
+    "id": "src-1",
+    "title": "Introduction to Machine Learning",
+    "type": "pdf",
+    "metadata": {
+      "keyConcepts": ["supervised learning", "neural networks", "gradient descent"],
+      "summary": "A comprehensive introduction to ML fundamentals"
+    }
+  },
+  {
+    "id": "src-2",
+    "title": "TypeScript Best Practices",
+    "type": "markdown",
+    "metadata": {
+      "keyConcepts": ["generics", "type inference", "strict mode"],
+      "summary": "Best practices for writing maintainable TypeScript"
+    }
+  },
+  {
+    "id": "src-3",
+    "title": "React 19 Documentation",
+    "type": "url",
+    "metadata": {
+      "keyConcepts": ["hooks", "concurrent mode", "server components"],
+      "summary": "Official React documentation for version 19"
+    }
+  },
+  {
+    "id": "src-4",
+    "title": "Understanding Neural Networks",
+    "type": "pdf",
+    "metadata": {
+      "keyConcepts": ["backpropagation", "activation functions", "deep learning"],
+      "summary": "Deep dive into neural network architecture"
+    }
+  },
+  {
+    "id": "src-5",
+    "title": "Design Patterns in TypeScript",
+    "type": "markdown",
+    "metadata": {
+      "keyConcepts": ["singleton", "observer", "factory pattern"],
+      "summary": "Common design patterns implemented in TypeScript"
+    }
+  }
+]

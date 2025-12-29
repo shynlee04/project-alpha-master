@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="9-3-flashcard-study-interface" created="2025-12-30T12:30:00+07:00">
+  <files>
+    <file path="src/components/study/FlashcardView.tsx">
+      <content><![CDATA[
+        // Flashcard component with 3D flip animation
+        // Front: question, Back: answer + rating buttons
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="context7" query="CSS 3D transform flip animation">
+      <pattern>
+        transform-style: preserve-3d
+        backface-visibility: hidden
+        rotateX(180deg) for flip
+        perspective on container
+      </pattern>
+    </finding>
+    <finding source="context7" query="React touch swipe gesture">
+      <pattern>
+        touchstart, touchmove, touchend events
+        threshold for swipe detection
+      </pattern>
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <note priority="high">3D flip animation: 0.6s cubic-bezier</note>
+    <note priority="medium">SRS ratings: Again, Hard, Good, Easy</note>
+    <note priority="low">Offline-first: all data from IndexedDB</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="dexie" version="^4.0.0" />
+  </dependencies>
+
+  <implementation_hints>
+    <hint>CSS class: .flashcard.flipped { transform: rotateX(180deg) }</hint>
+    <hint>Swipe threshold: 50px for navigation</hint>
+    <hint>SRS algorithm: simplified SM-2</hint>
+  </implementation_hints>
+</context>

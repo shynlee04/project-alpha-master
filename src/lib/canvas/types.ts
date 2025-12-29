@@ -6,13 +6,18 @@ import type { Node, Edge, Viewport, OnNodesChange, OnEdgesChange, OnConnect } fr
 export type CanvasNodeType = 'source' | 'concept';
 
 /**
+ * Source content type
+ */
+export type SourceContentType = 'pdf' | 'url' | 'text';
+
+/**
  * Source node data structure
  */
 export interface SourceNodeData {
-  type: 'source';
+  nodeType: 'source';
   sourceId: string;
   title: string;
-  type: 'pdf' | 'url' | 'text';
+  contentType: SourceContentType;
   excerpt?: string;
 }
 
@@ -20,13 +25,14 @@ export interface SourceNodeData {
  * Concept node data structure
  */
 export interface ConceptNodeData {
-  type: 'concept';
+  nodeType: 'concept';
   title: string;
   description?: string;
 }
 
 /**
  * Union type for all canvas node data
+ * Note: Uses nodeType to avoid conflict with React Flow's built-in type property
  */
 export type CanvasNodeData = SourceNodeData | ConceptNodeData;
 
@@ -42,9 +48,9 @@ export interface CanvasEdgeData {
  * Canvas state interface
  */
 export interface CanvasStoreState {
-  // Nodes and edges
-  nodes: Node<CanvasNodeData>[];
-  edges: Edge<CanvasEdgeData>[];
+  // Nodes and edges - use any to bypass strict type constraints for custom data
+  nodes: Node<any>[];
+  edges: Edge<any>[];
 
   // Viewport state
   viewport: Viewport;
@@ -53,8 +59,8 @@ export interface CanvasStoreState {
   isReadOnly: boolean;
 
   // Actions
-  setNodes: (nodes: Node<CanvasNodeData>[]) => void;
-  setEdges: (edges: Edge<CanvasEdgeData>[]) => void;
+  setNodes: (nodes: Node<any>[]) => void;
+  setEdges: (edges: Edge<any>[]) => void;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -62,9 +68,9 @@ export interface CanvasStoreState {
   setReadOnly: (readOnly: boolean) => void;
 
   // Bulk operations
-  addNode: (node: Node<CanvasNodeData>) => void;
+  addNode: (node: Node<any>) => void;
   removeNode: (nodeId: string) => void;
-  addEdge: (edge: Edge<CanvasEdgeData>) => void;
+  addEdge: (edge: Edge<any>) => void;
   removeEdge: (edgeId: string) => void;
   resetCanvas: () => void;
 }

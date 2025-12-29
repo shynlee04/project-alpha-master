@@ -1,28 +1,23 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   ReactFlow,
   Controls,
   Background,
-  useReactFlow,
   ReactFlowProvider,
   Panel,
   Viewport,
-  OnNodesChange,
-  OnEdgesChange,
-  OnConnect,
-  Connection,
-  Edge,
+  useReactFlow,
   Node,
-  getRectOfNodes,
-  getTransformForBounds,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useTranslation } from 'react-i18next';
 import { useCanvasStore } from '../../lib/state/canvas-store';
-import type { CanvasNodeData, CanvasEdgeData, viewportOptions as vo } from '../../lib/canvas/types';
+import type { CanvasNodeData } from '../../lib/canvas/types';
 import { useResponsive } from '../../hooks/useResponsive';
+import { nodeTypes } from './nodes/nodeTypes';
+import { useCanvasDrop } from '../../hooks/useCanvasDrop';
 
-// Default viewport options matching types.ts
+// Default viewport options
 const defaultViewportOptions = {
   minZoom: 0.1,
   maxZoom: 4,
@@ -80,7 +75,6 @@ function ReadOnlyOverlay() {
  */
 function KeyboardShortcutsPanel() {
   const { t } = useTranslation();
-  const { fitView } = useReactFlow();
 
   const shortcuts = [
     { key: 'Arrow keys', action: t('canvas.shortcut.pan', 'Pan') },
@@ -104,59 +98,9 @@ function KeyboardShortcutsPanel() {
 }
 
 /**
- * Fit view button panel
- */
-function FitViewPanel() {
-  const { fitView, getNodes } = useReactFlow();
-
-  const handleFitView = useCallback(() => {
-    const nodes = getNodes();
-    if (nodes.length > 0) {
-      const bounds = getRectOfNodes(nodes);
-      const transform = getTransformForBounds(
-        bounds,
-        bounds.width,
-        bounds.height,
-        0.8,
-        2,
-      );
-      fitView({ ...transform, duration: 300 });
-    } else {
-      fitView({ duration: 300 });
-    }
-  }, [fitView, getNodes]);
-
-  return (
-    <Panel position="top-right">
-      <button
-        onClick={handleFitView}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm bg-background border border-border rounded hover:bg-muted transition-colors"
-        aria-label="Fit view"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-          <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-          <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-          <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-        </svg>
-        Fit View
-      </button>
-    </Panel>
-  );
-}
-
-/**
  * Main canvas content component
  */
 function CanvasContent() {
-  const { t } = useTranslation();
   const { isMobile } = useResponsive();
 
   // Get store state and actions
@@ -177,9 +121,48 @@ function CanvasContent() {
     setReadOnly(isMobile);
   }, [isMobile, setReadOnly]);
 
-  // Memoize node and edge types for performance
-  const nodeTypes = useMemo(() => ({}), []);
+  // Use memoized node types from nodeTypes.ts
   const edgeTypes = useMemo(() => ({}), []);
+
+  // Drag and drop handlers
+  const { handleDragOver, handleDrop } = useCanvasDrop();
+
+  // Get React Flow instance for coordinate transformation
+  const { screenToFlowPosition, getNodes, setNodes } = useReactFlow();
+
+  // Handle double-click to create concept node
+  const handlePaneDoubleClick = useCallback(
+    (event: React.MouseEvent) => {
+      if (isReadOnly) return;
+
+      // Check if double-clicked on empty area (not on a node)
+      const clickTarget = event.target as HTMLElement;
+      if (clickTarget.closest('.react-flow__node')) return;
+
+      // Calculate position on canvas
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      // Create new concept node
+      const newNode: Node = {
+        id: `concept-${Date.now()}`,
+        type: 'concept',
+        position,
+        data: {
+          nodeType: 'concept' as const,
+          title: 'New Concept',
+        },
+        origin: [0.5, 0.5],
+      };
+
+      // Add node to canvas
+      const currentNodes = getNodes();
+      setNodes([...currentNodes, newNode]);
+    },
+    [isReadOnly, screenToFlowPosition, getNodes, setNodes],
+  );
 
   // Handle viewport changes
   const handleViewportChange = useCallback(
@@ -192,29 +175,21 @@ function CanvasContent() {
   // Check if canvas is empty
   const isEmpty = nodes.length === 0;
 
-  // Prose component for node labels
-  const prose = {
-    nodes: (
-      <div className="text-xs">
-        {nodes.map((node) => (
-          <div key={node.id} className="p-2 bg-card border rounded mb-1">
-            {(node.data as CanvasNodeData).title || 'Untitled'}
-          </div>
-        ))}
-      </div>
-    ),
-  };
-
   return (
-    <div className="w-full h-full min-h-[400px] relative">
+    <div
+      className="w-full h-full min-h-[400px] relative"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <ReactFlow
-        nodes={nodes as Node<CanvasNodeData>[]}
-        edges={edges as Edge<CanvasEdgeData>[]}
-        onNodesChange={onNodesChange as OnNodesChange}
-        onEdgesChange={onEdgesChange as OnEdgesChange}
-        onConnect={onConnect as OnConnect}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         viewport={viewport}
         onViewportChange={handleViewportChange}
+        onPaneDoubleClick={handlePaneDoubleClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         minZoom={defaultViewportOptions.minZoom}
@@ -225,7 +200,6 @@ function CanvasContent() {
         snapGrid={[15, 15]}
         onlyRenderVisibleElements={true}
         preventScrolling={!isMobile}
-        prose={prose}
         // Read-only mode for mobile
         nodesDraggable={!isReadOnly}
         nodesConnectable={!isReadOnly}
@@ -248,16 +222,14 @@ function CanvasContent() {
           color="var(--color-border)"
           gap={20}
           size={1}
-          variant="dots"
         />
 
         {/* Panels */}
-        <FitViewPanel />
         <KeyboardShortcutsPanel />
 
         {/* Empty state */}
         {isEmpty && (
-          <Panel position="center">
+          <Panel position="top-center" style={{ top: '50%', transform: 'translateY(-50%)' }}>
             <CanvasEmptyState />
           </Panel>
         )}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="9-1-flashcard-generator" created="2025-12-30T12:20:00+07:00">
+  <files>
+    <file path="src/lib/study/flashcard-types.ts">
+      <content><![CDATA[
+        // Flashcard and FlashcardSet type definitions
+        interface Flashcard {
+          id: string;
+          front: string;      // Question
+          back: string;       // Answer
+          sourceIds: string[];
+          difficulty: 'easy' | 'medium' | 'hard';
+          topic: string;
+          createdAt: number;
+        }
+      ]]></content>
+    </file>
+    <file path="src/data/mock-flashcards.json">
+      <content><![CDATA[
+        // Mock flashcard data for testing
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="context7" query="TanStack AI structured output JSON schema">
+      <pattern>
+        generate({ model, prompt, schema }) for structured outputs
+        Zod schemas for validation
+        System prompts for flashcard generation
+      </pattern>
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <note priority="high">AI prompt extracts Q&A pairs from source content</note>
+    <note priority="medium">Each card cites sources via sourceIds array</note>
+    <note priority="low">Preview shows first 5 cards before save</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^1.0.0" />
+    <dependency name="zod" version="^3.22.0" />
+  </dependencies>
+
+  <implementation_hints>
+    <hint>Prompt template: "Generate {count} flashcards from content..."</hint>
+    <hint>Difficulty auto-assigned based on content complexity</hint>
+  </implementation_hints>
+</context>
