@@ -211,7 +211,7 @@ development_status:
   epic-6: in_progress # Story 6.1-6.2 complete, stories 6.3-6.4 pending
   6-1-source-import-pipeline: done # Code review complete 2025-12-30, all HIGH issues fixed, tests passing (16/26)
   6-2-source-card-ui: done # Code review complete 2025-12-30, all issues fixed, 47 tests passing (4 skipped due to jsdom)
-  6-3-source-management: in-progress # Implementation started 2025-12-30
+  6-3-source-management: in-progress # Task 1 complete (store+tests), Tasks 2-7 pending (UI components), ~50% complete
   6-4-source-metadata-extraction: backlog # Title, summary, key concepts
   epic-6-retrospective: optional
 

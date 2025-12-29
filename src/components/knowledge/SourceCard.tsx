@@ -1,13 +1,14 @@
 /**
  * @fileoverview Source Card Component
  * @module components/knowledge/SourceCard
- * @governance EPIC-6-2
+ * @governance EPIC-6-3
  *
- * Card component displaying source with icon, title, metadata, and quick actions.
+ * Card component displaying source with icon, title, metadata, and context menu.
  */
 
 import { useState } from 'react';
 import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
+import { SourceContextMenu } from './SourceContextMenu';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 
@@ -67,6 +68,7 @@ function getSourceIcon(source: SourceRecord) {
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
     const { deleteSource } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [showRenameDialog, setShowRenameDialog] = useState(false);
 
     const Icon = getSourceIcon(source);
     const readingTime = calculateReadingTime(source);
@@ -75,6 +77,21 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const handleDelete = async () => {
         await deleteSource(source.id);
         setShowDeleteDialog(false);
+    };
+
+    const handleRename = () => {
+        // TODO: Implement rename dialog (Task 4)
+        setShowRenameDialog(true);
+    };
+
+    const handleMoveToCollection = () => {
+        // TODO: Implement collection selector (Task 5)
+        console.log('Move to collection:', source.id);
+    };
+
+    const handleExport = () => {
+        // TODO: Implement export (Task 6)
+        console.log('Export:', source.id);
     };
 
     return (
@@ -107,39 +124,15 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 <span>{readingTime}</span>
             </div>
 
-            {/* Quick actions on hover */}
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                <button
-                    className="p-1 hover:bg-surface-darker rounded-none"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onSelect?.(source);
-                    }}
-                    aria-label="Open source"
-                    title="Open"
-                >
-                    {/* Eye icon */}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="M21 21l-4.35-4.35" />
-                        <path d="M11 8a3 3 0 0 0-6 0" />
-                    </svg>
-                </button>
-                <button
-                    className="p-1 hover:bg-destructive/20 text-destructive rounded-none"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDeleteDialog(true);
-                    }}
-                    aria-label="Delete source"
-                    title="Delete"
-                >
-                    {/* Trash icon */}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                    </svg>
-                </button>
+            {/* Context menu on hover (Story 6-3) */}
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <SourceContextMenu
+                    source={source}
+                    onRename={handleRename}
+                    onDelete={() => setShowDeleteDialog(true)}
+                    onMoveToCollection={handleMoveToCollection}
+                    onExport={handleExport}
+                />
             </div>
 
             {/* Delete confirmation dialog */}
