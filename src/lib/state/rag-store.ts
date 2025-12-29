@@ -19,6 +19,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
 import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
+import type { ChatMessage, Citation } from '@/lib/rag/types';
 import {
     getIndexMetadata,
     getIndexSize,
@@ -105,6 +106,11 @@ interface RAGStoreState {
     searchQuery: string;
     searchResults: import('./rag/types').ExtendedSearchResult[];
     searchMode: import('./rag/types').SearchMode;
+
+    /** Chat state (Story 7-5) */
+    chatMessages: ChatMessage[];
+    citations: Map<string, Citation>;
+    activeCitation: Citation | null;
 
     /** Loading state for async operations */
     loading: boolean;
@@ -262,6 +268,9 @@ export const useRAGStore = create<RAGStoreState>()(
             searchQuery: '',
             searchResults: [],
             searchMode: 'hybrid' as import('./rag/types').SearchMode,
+            chatMessages: [],
+            citations: new Map(),
+            activeCitation: null,
             loading: false,
             error: null,
             _hasHydrated: false,
@@ -630,6 +639,97 @@ export const useRAGStore = create<RAGStoreState>()(
                 });
             },
 
+            // RAG Chat actions (Story 7-5)
+            sendRAGMessage: async (query: string) => {
+                const { HybridRetriever } = await import('../rag/hybrid-retriever');
+                const { createEmbeddingService } = await import('../rag/embedding-service');
+                const { loadOrCreateIndex } = await import('../rag/orama-index');
+                const { formatCitations, buildContext, createCitationsMap } = await import('../rag/citation-formatter');
+                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const apiKey = vault.getCredential('google')?.apiKey;
+
+                set({ loading: true, error: null });
+
+                try {
+                    // Load or create Orama index
+                    const projectId = get().currentProjectId || 'default';
+                    const index = await loadOrCreateIndex(projectId);
+
+                    // Create embedding service
+                    const embeddingService = await createEmbeddingService(apiKey);
+
+                    // Create hybrid retriever
+                    const retriever = new HybridRetriever({
+                        index,
+                        embeddingService,
+                        defaultMode: 'hybrid',
+                    });
+
+                    // Step 1: Retrieve context
+                    const results = await retriever.search(query, { limit: 10 });
+
+                    // Step 2: Format citations
+                    const citations = formatCitations(results);
+                    const citationsMap = createCitationsMap(citations);
+
+                    // Step 3: Build context
+                    const context = buildContext(results, query);
+
+                    // Step 4: Add user message
+                    const userMessage: ChatMessage = {
+                        role: 'user',
+                        content: query,
+                        timestamp: Date.now(),
+                    };
+
+                    // Step 5: Generate assistant response (placeholder for TanStack AI integration)
+                    const responseText = `Based on ${results.length} sources, here's an answer. [Integration with TanStack AI pending]`;
+
+                    const assistantMessage: ChatMessage = {
+                        role: 'assistant',
+                        content: responseText,
+                        citations,
+                        timestamp: Date.now(),
+                    };
+
+                    // Step 6: Update state
+                    set({
+                        chatMessages: [...get().chatMessages, userMessage, assistantMessage],
+                        citations: citationsMap,
+                        loading: false,
+                    });
+
+                    console.log(`[RAGStore] RAG chat complete: ${results.length} sources, ${citations.length} citations`);
+
+                    return assistantMessage;
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        loading: false,
+                    });
+                    throw error;
+                }
+            },
+
+            showCitation: (citationId: string) => {
+                const citation = get().citations.get(citationId);
+                if (citation) {
+                    set({ activeCitation: citation });
+                }
+            },
+
+            closeCitationPanel: () => {
+                set({ activeCitation: null });
+            },
+
+            clearChatHistory: () => {
+                set({
+                    chatMessages: [],
+                    citations: new Map(),
+                    activeCitation: null,
+                });
+            },
+
             reset: () => {
                 set({
                     currentProjectId: null,
@@ -646,6 +746,9 @@ export const useRAGStore = create<RAGStoreState>()(
                     searchQuery: '',
                     searchResults: [],
                     searchMode: 'hybrid' as import('./rag/types').SearchMode,
+                    chatMessages: [],
+                    citations: new Map(),
+                    activeCitation: null,
                     loading: false,
                     error: null,
                 });
@@ -674,6 +777,10 @@ export const useRAGStore = create<RAGStoreState>()(
                 searchQuery: state.searchQuery,
                 searchResults: state.searchResults,
                 searchMode: state.searchMode,
+                // Chat state (Story 7-5) - Convert Map to array
+                chatMessages: state.chatMessages,
+                citations: Array.from(state.citations.entries()),
+                activeCitation: state.activeCitation,
                 error: state.error,
             }),
 
@@ -688,6 +795,12 @@ export const useRAGStore = create<RAGStoreState>()(
                     state.embeddingProgress = new Map(
                         state.embeddingProgress as [string, import('./rag/types').EmbeddingProgress][]
                     );
+                    // Chat state (Story 7-5) - Convert citations array back to Map
+                    if (!Array.isArray(state.citations) && !(state.citations instanceof Map)) {
+                        state.citations = new Map();
+                    } else if (Array.isArray(state.citations)) {
+                        state.citations = new Map(state.citations as [string, Citation][]);
+                    }
 
                     // Clean expired cache entries on hydration
                     state.searchCache = cleanExpiredCache(state.searchCache);
