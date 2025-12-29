@@ -419,6 +419,36 @@ export interface OramaIndexRecord {
     lastUpdated: number;
 }
 
+/**
+ * Cached embedding model (Story 7-3)
+ * Stores Transformers.js models in IndexedDB for offline semantic search
+ */
+export interface EmbeddingModelRecord {
+    /** Primary key - unique identifier */
+    id: string;
+
+    /** Model identifier (e.g., 'Xenova/all-MiniLM-L6-v2') */
+    modelId: string;
+
+    /** Model name */
+    name: string;
+
+    /** Model version */
+    version: string;
+
+    /** Quantization (q4, q8, etc.) */
+    quantization: string;
+
+    /** Model binary data (Blob) */
+    modelData: Blob;
+
+    /** Model size in bytes */
+    size: number;
+
+    /** Download timestamp */
+    downloadedAt: Date;
+}
+
 // Type alias for backward compatibility
 export type Collection = CollectionRecord;
 
@@ -564,6 +594,7 @@ class ViaGentDatabase extends Dexie {
 
     // Epic 7: RAG Infrastructure tables
     oramaIndexes!: Table<OramaIndexRecord, string>;
+    embedding_models!: Table<EmbeddingModelRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -935,6 +966,50 @@ class ViaGentDatabase extends Dexie {
 
             logDexieMigration(13, 'epic-7-orama-indexes', 'completed', {
                 tableName: 'oramaIndexes',
+                itemsCount: 0
+            });
+        });
+
+        // Schema version 14: Add embedding models table (Story 7-3)
+        this.version(14).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            // NEW: Embedding models table for local semantic search (Story 7-3)
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+        }).upgrade(async () => {
+            logDexieMigration(14, 'epic-7-3-embedding-models', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(14)) {
+                logDexieMigration(14, 'epic-7-3-embedding-models', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(14);
+
+            logDexieMigration(14, 'epic-7-3-embedding-models', 'completed', {
+                tableName: 'embedding_models',
                 itemsCount: 0
             });
         });
