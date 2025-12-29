@@ -448,4 +448,5 @@ export function useErrorToast() {
 }
 
 // Import useTranslation and useCallback at the end to avoid circular dependencies
-import { useTranslation, useCallback } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
+import { useCallback } from 'react'

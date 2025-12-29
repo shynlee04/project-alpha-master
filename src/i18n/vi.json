@@ -89,8 +89,6 @@
   "chat.approvalOverlay.reject": "Từ chối",
   "chat.approvalOverlay.processing": "Đang xử lý...",
   "chat.approvalOverlay.approve": "Phê duyệt",
-
-  // Approval Overlay (RC-008)
   "approval.title": "Yêu cầu thực thi công cụ",
   "approval.fromAgent": "Được yêu cầu bởi {{agent}}",
   "approval.parameters": "Tham số",
@@ -103,7 +101,6 @@
   "approval.risk.medium": "Rủi ro trung bình",
   "approval.risk.high": "Rủi ro cao",
   "approval.risk.critical": "Rủi ro nghiêm trọng",
-
   "autoApprove.none": "Yêu cầu xem xét thủ công",
   "autoApprove.toggle": "Bật Tự động phê duyệt",
   "autoApprove.title": "Cài đặt Tự động phê duyệt",
