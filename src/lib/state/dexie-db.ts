@@ -894,6 +894,50 @@ class ViaGentDatabase extends Dexie {
                 itemsCount: 0
             });
         });
+
+        // Schema version 13: Epic 7 - RAG Infrastructure (Orama WASM)
+        // Adds oramaIndexes table for Orama search index persistence
+        this.version(13).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            // NEW: Orama indexes table for RAG search (Story 7-1)
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+        }).upgrade(async () => {
+            logDexieMigration(13, 'epic-7-orama-indexes', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(13)) {
+                logDexieMigration(13, 'epic-7-orama-indexes', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(13);
+
+            logDexieMigration(13, 'epic-7-orama-indexes', 'completed', {
+                tableName: 'oramaIndexes',
+                itemsCount: 0
+            });
+        });
     }
 }
 

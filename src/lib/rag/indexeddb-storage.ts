@@ -7,38 +7,13 @@
  * Stores serialized Orama indexes in IndexedDB.
  */
 
-import { db } from '@/lib/state/dexie-db';
+import { db, type OramaIndexRecord } from '@/lib/state/dexie-db';
 
 // ============================================================================
-// Types
+// Re-export Types
 // ============================================================================
 
-/**
- * Orama index record for IndexedDB storage
- * Stores serialized Orama index data as JSON.
- *
- * @epic Epic 7 - RAG Infrastructure
- * @story 7-1 - Orama Index Management
- */
-export interface OramaIndexRecord {
-  /** Primary key - project ID */
-  projectId: string;
-
-  /** Serialized Orama index data (JSON string) */
-  data: string;
-
-  /** Schema version for migration */
-  schemaVersion: number;
-
-  /** Number of documents in index */
-  documentCount: number;
-
-  /** Size of serialized data in bytes */
-  size: number;
-
-  /** Last updated timestamp */
-  lastUpdated: number;
-}
+export type { OramaIndexRecord };
 
 // ============================================================================
 // Helper Functions
