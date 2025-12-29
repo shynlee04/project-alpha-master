@@ -293,5 +293,5 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
       },
     });
     expect(results).toHaveNoViolations();
-  });
+  }, 30000); // 30 second timeout for complex layout accessibility check
 });

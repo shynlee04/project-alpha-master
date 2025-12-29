@@ -23,9 +23,9 @@ epic_strategy: 'Visual Progress Prioritization'
 This document provides the complete epic and story breakdown for **Project Alpha v2.0 - Knowledge Synthesis Station**, decomposing the requirements from the PRD, UX Design Specification, and Architecture into implementable stories.
 
 **Phased Approach:**
-- **Phase 0: Infrastructure & Pre-Work** (Sprint 0 - Dec 29-31)
-- **Phase 1: Core Stabilization** (Sprint 1-5 - Jan 1-18)
-- **Phase 2: Knowledge Synthesis MVP** (Future PRD)
+- **Phase 1: Infrastructure & Pre-Work** (Sprint 0 - Dec 29-31)
+- **Phase 2: Core Stabilization** (Sprint 1-5 - Jan 1-18)
+- **Phase 3: Knowledge Synthesis MVP** (Future PRD)
 
 ### 📅 "Daily Dev Journey" Content Calendar
 _Strategy: 30-day "Build in Public" for Vietnamese EdTech Market_
