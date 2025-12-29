@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { useCanvasStore } from '../../lib/state/canvas-store';
 import type { CanvasNodeData } from '../../lib/canvas/types';
 import { useResponsive } from '../../hooks/useResponsive';
+import { nodeTypes } from './nodes/nodeTypes';
+import { useCanvasDrop } from '../../hooks/useCanvasDrop';
 
 // Default viewport options
 const defaultViewportOptions = {
@@ -117,9 +119,11 @@ function CanvasContent() {
     setReadOnly(isMobile);
   }, [isMobile, setReadOnly]);
 
-  // Memoize node and edge types for performance
-  const nodeTypes = useMemo(() => ({}), []);
+  // Use memoized node types from nodeTypes.ts
   const edgeTypes = useMemo(() => ({}), []);
+
+  // Drag and drop handlers
+  const { handleDragOver, handleDrop } = useCanvasDrop();
 
   // Handle viewport changes
   const handleViewportChange = useCallback(
@@ -133,7 +137,11 @@ function CanvasContent() {
   const isEmpty = nodes.length === 0;
 
   return (
-    <div className="w-full h-full min-h-[400px] relative">
+    <div
+      className="w-full h-full min-h-[400px] relative"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}

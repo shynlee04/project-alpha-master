@@ -226,13 +226,13 @@ development_status:
   epic-7-retrospective: optional
 
   # EPIC 8: Knowledge Canvas (Days 25-29)
-  epic-8: context_ready # Ralph Loop: Stories + Contexts created and validated 2025-12-30
-  8-1-react-flow-canvas-setup: ready-for-dev # Story file created, ready for dev
-  8-2-source-node-creation: ready-for-dev # Story file created, ready for dev
+  epic-8: in_progress # Ralph Loop: Stories + Contexts created and validated 2025-12-30
+  8-1-react-flow-canvas-setup: done # Canvas store + component verified, tests pass
+  8-2-source-node-creation: in-progress # Ready for development
   8-3-concept-node-creation: ready-for-dev # Story file created, ready for dev
   8-4-connection-lines: ready-for-dev # Story file created, ready for dev
   8-5-canvas-persistence: ready-for-dev # Story file created, ready for dev
-  epic-8-retrospective: optional
+  epic-8-retrospective: pending
 
   # EPIC 9: Study Artifacts Generation (Days 30-33)
   epic-9: context_ready # Ralph Loop: Stories + Contexts created and validated 2025-12-30
