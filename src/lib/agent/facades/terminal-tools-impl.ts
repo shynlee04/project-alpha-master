@@ -5,9 +5,11 @@
  * Facade implementation wrapping WebContainer spawn() for AI agent command execution.
  * Emits process lifecycle events for UI integration.
  * Includes command injection protection via CommandSanitizer.
+ * Includes permission checks via ToolPermissionManager.
  *
  * @epic 12 - Agent Tool Interface Layer
  * @story 12-2 - Create AgentTerminalTools Facade
+ * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 
 import { spawn, isBooted } from '../../webcontainer/manager';
@@ -20,27 +22,83 @@ import type {
 } from './terminal-tools';
 import { TerminalToolsError } from './terminal-tools';
 import { createDefaultSanitizer } from './command-sanitizer';
+import { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
 
 const DEFAULT_TIMEOUT = 30000;
 
 /**
+ * Error thrown when tool execution is blocked by permission settings
+ */
+export class ToolPermissionDeniedError extends Error {
+    constructor(
+        message: string,
+        public readonly toolName: string,
+        public readonly reason: PermissionCheckResult['reason']
+    ) {
+        super(message);
+        this.name = 'ToolPermissionDeniedError';
+    }
+}
+
+/**
  * TerminalToolsFacade - Wraps WebContainer for agent command execution
- * Includes command injection protection
+ * Includes command injection protection and permission checks
  */
 export class TerminalToolsFacade implements AgentTerminalTools {
     private processes = new Map<string, { kill: () => void }>();
     private sanitizer = createDefaultSanitizer();
+    private readonly permissionManager: ToolPermissionManager;
 
-    constructor(private readonly eventBus: WorkspaceEventEmitter) { }
+    constructor(private readonly eventBus: WorkspaceEventEmitter, permissionManager?: ToolPermissionManager) {
+        this.permissionManager = permissionManager || ToolPermissionManager.getInstance();
+    }
+
+    /**
+     * Check permission before tool execution
+     * @throws ToolPermissionDeniedError if tool cannot execute
+     */
+    private checkPermission(toolId: string): void {
+        const result = this.permissionManager.checkPermission(toolId);
+
+        if (!result.canExecute) {
+            let userMessage: string;
+
+            switch (result.reason) {
+                case 'block':
+                    userMessage = `The "${result.toolName}" tool is blocked by your security settings. You can change this in Agent Settings.`;
+                    break;
+                case 'prompt':
+                    userMessage = `The "${result.toolName}" tool requires your approval before execution. Please approve this action when prompted.`;
+                    break;
+                default:
+                    userMessage = `Permission denied for "${result.toolName}" tool.`;
+            }
+
+            throw new ToolPermissionDeniedError(
+                userMessage,
+                result.toolName,
+                result.reason
+            );
+        }
+
+        // Log for debugging (auto-approved or session-trusted tools)
+        if (result.reason === 'auto' || result.reason === 'session') {
+            console.log(`[TerminalToolsFacade] Permission granted for ${result.toolName} (reason: ${result.reason})`);
+        }
+    }
 
     /**
      * Execute a command and capture output
+     * @fix RC-028-001 - Added permission check
      */
     async executeCommand(
         command: string,
         args: string[] = [],
         options: CommandOptions = {}
     ): Promise<CommandResult> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('execute_command');
+
         if (!isBooted()) {
             throw new TerminalToolsError(
                 'WebContainer not booted. Call boot() first.',
@@ -115,6 +173,9 @@ export class TerminalToolsFacade implements AgentTerminalTools {
             if (error instanceof TerminalToolsError) {
                 throw error;
             }
+            if (error instanceof ToolPermissionDeniedError) {
+                throw error;
+            }
             const message = error instanceof Error ? error.message : 'Unknown error';
             throw new TerminalToolsError(`Spawn failed: ${message}`, 'SPAWN_FAILED');
         }
@@ -122,8 +183,12 @@ export class TerminalToolsFacade implements AgentTerminalTools {
 
     /**
      * Start an interactive shell session
+     * @fix RC-028-001 - Added permission check
      */
     async startShell(projectPath?: string): Promise<ShellSession> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('execute_command');
+
         if (!isBooted()) {
             throw new TerminalToolsError(
                 'WebContainer not booted. Call boot() first.',
@@ -189,9 +254,11 @@ export class TerminalToolsFacade implements AgentTerminalTools {
 
 /**
  * Factory function to create TerminalToolsFacade
+ * @param permissionManager - Optional permission manager for testing
  */
 export function createTerminalToolsFacade(
-    eventBus: WorkspaceEventEmitter
+    eventBus: WorkspaceEventEmitter,
+    permissionManager?: ToolPermissionManager
 ): AgentTerminalTools {
-    return new TerminalToolsFacade(eventBus);
+    return new TerminalToolsFacade(eventBus, permissionManager);
 }

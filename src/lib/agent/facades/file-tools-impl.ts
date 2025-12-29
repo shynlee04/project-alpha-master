@@ -1,14 +1,16 @@
 /**
  * @fileoverview Agent File Tools Facade Implementation
  * @module lib/agent/facades/file-tools-impl
- * 
+ *
  * Implementation of AgentFileTools interface.
  * Wraps LocalFSAdapter + SyncManager with event emission.
  * Includes file-level locking for concurrent operation safety.
- * 
+ * Includes permission checks via ToolPermissionManager.
+ *
  * @epic 12 - Agent Tool Interface Layer
  * @story 12-1 - Create AgentFileTools Facade
  * @story 12-1B - Add Concurrency Control to FileToolsFacade
+ * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 
 import type { AgentFileTools, FileEntry, RollbackInfo, BatchOperationError, FileReadResult } from './file-tools';
@@ -17,32 +19,93 @@ import { FileLock, fileLock as defaultFileLock } from './file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
+import { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
 
 export { PathValidationError };
 
 /**
+ * Error thrown when tool execution is blocked by permission settings
+ */
+export class ToolPermissionDeniedError extends Error {
+    constructor(
+        message: string,
+        public readonly toolName: string,
+        public readonly reason: PermissionCheckResult['reason']
+    ) {
+        super(message);
+        this.name = 'ToolPermissionDeniedError';
+    }
+}
+
+/**
  * FileToolsFacade - Implementation of AgentFileTools
- * 
+ *
  * Wraps LocalFSAdapter (reads) and SyncManager (writes) to provide
  * a stable API for AI agent file operations.
- * 
- * All write operations:
- * - Acquire file-level lock before operation
+ *
+ * All operations:
+ * - Check permission via ToolPermissionManager before execution
+ * - Write operations: Acquire file-level lock before operation
  * - Emit events via EventBus with source: 'agent' and lock timestamps
  * - Release lock in finally block (even on error)
+ *
+ * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 export class FileToolsFacade implements AgentFileTools {
+    private readonly permissionManager: ToolPermissionManager;
+
     constructor(
         private readonly localFS: LocalFSAdapter,
         private readonly syncManager: SyncManager,
         private readonly eventBus: WorkspaceEventEmitter,
-        private readonly fileLock: FileLock = defaultFileLock
-    ) { }
+        private readonly fileLock: FileLock = defaultFileLock,
+        permissionManager?: ToolPermissionManager
+    ) {
+        this.permissionManager = permissionManager || ToolPermissionManager.getInstance();
+    }
+
+    /**
+     * Check permission before tool execution
+     * @throws ToolPermissionDeniedError if tool cannot execute
+     */
+    private checkPermission(toolId: string): void {
+        const result = this.permissionManager.checkPermission(toolId);
+
+        if (!result.canExecute) {
+            let userMessage: string;
+
+            switch (result.reason) {
+                case 'block':
+                    userMessage = `The "${result.toolName}" tool is blocked by your security settings. You can change this in Agent Settings.`;
+                    break;
+                case 'prompt':
+                    userMessage = `The "${result.toolName}" tool requires your approval before execution. Please approve this action when prompted.`;
+                    break;
+                default:
+                    userMessage = `Permission denied for "${result.toolName}" tool.`;
+            }
+
+            throw new ToolPermissionDeniedError(
+                userMessage,
+                result.toolName,
+                result.reason
+            );
+        }
+
+        // Log for debugging (auto-approved or session-trusted tools)
+        if (result.reason === 'auto' || result.reason === 'session') {
+            console.log(`[FileToolsFacade] Permission granted for ${result.toolName} (reason: ${result.reason})`);
+        }
+    }
 
     /**
      * Read a file's content (no lock required for reads)
+     * @fix RC-028-001 - Added permission check
      */
     async readFile(path: string): Promise<string | null> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('read_file');
+
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
         try {
@@ -62,8 +125,12 @@ export class FileToolsFacade implements AgentFileTools {
      * Write content to a file (creates if doesn't exist)
      * Uses SyncManager for dual-write to LocalFS + WebContainer
      * @story 12-1B - Now includes file-level locking
+     * @fix RC-028-001 - Added permission check
      */
     async writeFile(path: string, content: string): Promise<void> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('write_file');
+
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
         console.log('[FileToolsFacade] writeFile called:', { path, normalizedPath, contentLength: content.length });
@@ -80,14 +147,18 @@ export class FileToolsFacade implements AgentFileTools {
                 lockReleased
             });
         } finally {
-            this.fileLock.release(path);
+            this.fileLock.release(normalizedPath);
         }
     }
 
     /**
      * List contents of a directory (no lock required for reads)
+     * @fix RC-028-001 - Added permission check
      */
     async listDirectory(path: string = '', recursive = false): Promise<FileEntry[]> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('list_files');
+
         // Use centralized normalizePath for consistent handling of '.', './', etc.
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
@@ -111,8 +182,12 @@ export class FileToolsFacade implements AgentFileTools {
     /**
      * Create a new file
      * @story 12-1B - Now includes file-level locking
+     * @fix RC-028-001 - Added permission check
      */
     async createFile(path: string, content = ''): Promise<void> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('write_file');
+
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
         console.log('[FileToolsFacade] createFile called:', { path, normalizedPath, contentLength: content.length });
@@ -128,15 +203,20 @@ export class FileToolsFacade implements AgentFileTools {
                 lockReleased
             });
         } finally {
-            this.fileLock.release(path);
+            this.fileLock.release(normalizedPath);
         }
     }
 
     /**
      * Delete a file
      * @story 12-1B - Now includes file-level locking
+     * @fix RC-028-001 - Added permission check (BLOCKED by default!)
      */
     async deleteFile(path: string): Promise<void> {
+        // RC-028-001: Check permission before execution
+        // Note: delete_file defaults to 'block' trust level - user must explicitly allow
+        this.checkPermission('delete_file');
+
         const normalizedPath = normalizePath(path);
         validatePath(normalizedPath);
         const lockAcquired = await this.fileLock.acquire(normalizedPath);
@@ -150,14 +230,18 @@ export class FileToolsFacade implements AgentFileTools {
                 lockReleased
             });
         } finally {
-            this.fileLock.release(path);
+            this.fileLock.release(normalizedPath);
         }
     }
 
     /**
      * Search for files by name pattern (no lock required for reads)
+     * @fix RC-028-001 - Added permission check
      */
     async searchFiles(query: string, basePath = ''): Promise<FileEntry[]> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('list_files');
+
         const normalizedBasePath = normalizePath(basePath);
         validatePath(normalizedBasePath);
         const allFiles = await this.listDirectory(normalizedBasePath, true);
@@ -173,8 +257,12 @@ export class FileToolsFacade implements AgentFileTools {
 
     /**
      * Read multiple files atomically
+     * @fix RC-028-001 - Added permission check
      */
     async readMultiple(paths: string[], signal?: AbortSignal): Promise<FileReadResult[]> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('read_file');
+
         // Check if aborted before starting
         if (signal?.aborted) {
             throw new Error('Operation was aborted');
@@ -203,12 +291,16 @@ export class FileToolsFacade implements AgentFileTools {
 
     /**
      * Write multiple files atomically with rollback on failure
+     * @fix RC-028-001 - Added permission check
      */
     async writeMultiple(
         files: Array<{ path: string; content: string }>,
         onProgress?: (progress: number) => void,
         signal?: AbortSignal
     ): Promise<void> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('write_file');
+
         if (signal?.aborted) {
             throw new Error('Operation was aborted');
         }
@@ -292,8 +384,12 @@ export class FileToolsFacade implements AgentFileTools {
     /**
      * Find files matching a glob pattern
      * Supports basic glob patterns: `**`/ `*`.ext, `src`/ `**`/ `*`, etc.
+     * @fix RC-028-001 - Added permission check
      */
     async globFiles(pattern: string, basePath = ''): Promise<FileEntry[]> {
+        // RC-028-001: Check permission before execution
+        this.checkPermission('list_files');
+
         const normalizedBasePath = normalizePath(basePath);
         validatePath(normalizedBasePath);
 
@@ -373,12 +469,17 @@ export class FileToolsFacade implements AgentFileTools {
 
     /**
      * Delete multiple files atomically with rollback
+     * @fix RC-028-001 - Added permission check (BLOCKED by default!)
      */
     async deleteMultiple(
         paths: string[],
         onProgress?: (progress: number) => void,
         signal?: AbortSignal
     ): Promise<void> {
+        // RC-028-001: Check permission before execution
+        // Note: delete_file defaults to 'block' trust level - user must explicitly allow
+        this.checkPermission('delete_file');
+
         if (signal?.aborted) {
             throw new Error('Operation was aborted');
         }
@@ -461,13 +562,15 @@ export class FileToolsFacade implements AgentFileTools {
 
 /**
  * Factory function to create FileToolsFacade
+ * @param permissionManager - Optional permission manager for testing
  */
 export function createFileToolsFacade(
     localFS: LocalFSAdapter,
     syncManager: SyncManager,
     eventBus: WorkspaceEventEmitter,
-    fileLock: FileLock = defaultFileLock
+    fileLock: FileLock = defaultFileLock,
+    permissionManager?: ToolPermissionManager
 ): AgentFileTools {
-    return new FileToolsFacade(localFS, syncManager, eventBus, fileLock);
+    return new FileToolsFacade(localFS, syncManager, eventBus, fileLock, permissionManager);
 }
 

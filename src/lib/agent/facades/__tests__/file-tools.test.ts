@@ -1,19 +1,21 @@
 /**
  * @fileoverview Agent File Tools Unit Tests
  * @module lib/agent/facades/__tests__/file-tools.test
- * 
+ *
  * @epic 12 - Agent Tool Interface Layer
  * @story 12-1 - Create AgentFileTools Facade
  * @story 12-1B - Add Concurrency Control to FileToolsFacade
+ * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { FileToolsFacade } from '../file-tools-impl';
+import { FileToolsFacade, ToolPermissionDeniedError } from '../file-tools-impl';
 import { validatePath, PathValidationError } from '../file-tools';
 import { FileLock } from '../file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
+import { ToolPermissionManager } from '../../tool-permission-manager';
 
 // Create mock factories
 function createMockLocalFS() {
@@ -69,6 +71,37 @@ function createMockFileLock() {
     } as unknown as FileLock;
 }
 
+/**
+ * Create a mock permission manager that allows all operations by default
+ */
+function createMockPermissionManager(allowAll = true) {
+    const mock = {
+        checkPermission: vi.fn((toolId: string) => ({
+            needsApproval: false,
+            canExecute: allowAll,
+            reason: 'auto' as const,
+            toolName: toolId.replace(/_/g, ' '),
+            toolId,
+        })),
+        getTrustLevel: vi.fn(() => 'auto' as const),
+        setTrustLevel: vi.fn(),
+        hasSessionTrust: vi.fn(() => false),
+        addSessionTrust: vi.fn(),
+        removeSessionTrust: vi.fn(),
+        clearSessionTrust: vi.fn(),
+        getAllTrustLevels: vi.fn(() => ({})),
+        getDefaultTrustLevels: vi.fn(() => ({})),
+        resetToDefaults: vi.fn(),
+        toJSON: vi.fn(() => '{}'),
+        getToolIds: vi.fn(() => []),
+        getToolsByLevel: vi.fn(() => []),
+        hasPromptTools: vi.fn(() => false),
+        hasBlockedTools: vi.fn(() => false),
+        setEventBus: vi.fn(),
+    } as unknown as ToolPermissionManager;
+    return mock;
+}
+
 describe('validatePath', () => {
     it('should accept valid relative paths', () => {
         expect(() => validatePath('src/file.ts')).not.toThrow();
@@ -93,13 +126,21 @@ describe('FileToolsFacade', () => {
     let mockSyncManager: ReturnType<typeof createMockSyncManager>;
     let mockEventBus: ReturnType<typeof createMockEventBus>;
     let mockFileLock: ReturnType<typeof createMockFileLock>;
+    let mockPermissionManager: ReturnType<typeof createMockPermissionManager>;
 
     beforeEach(() => {
         mockLocalFS = createMockLocalFS();
         mockSyncManager = createMockSyncManager();
         mockEventBus = createMockEventBus();
         mockFileLock = createMockFileLock();
-        facade = new FileToolsFacade(mockLocalFS, mockSyncManager, mockEventBus, mockFileLock);
+        mockPermissionManager = createMockPermissionManager(true);
+        facade = new FileToolsFacade(
+            mockLocalFS,
+            mockSyncManager,
+            mockEventBus,
+            mockFileLock,
+            mockPermissionManager
+        );
     });
 
     describe('readFile', () => {
@@ -361,6 +402,123 @@ describe('FileToolsFacade', () => {
 
             await expect(facade.deleteMultiple(['file.txt'], undefined, abortController.signal))
                 .rejects.toThrow('Operation was aborted');
+        });
+    });
+
+    // ============================================================================
+    // RC-028-001: Permission Wiring Tests
+    // ============================================================================
+
+    describe('Permission Wiring (RC-028-001)', () => {
+        it('should check permission before readFile', async () => {
+            await facade.readFile('test.txt');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('read_file');
+        });
+
+        it('should check permission before writeFile', async () => {
+            await facade.writeFile('test.txt', 'content');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('write_file');
+        });
+
+        it('should check permission before listDirectory', async () => {
+            await facade.listDirectory('src');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('list_files');
+        });
+
+        it('should check permission before createFile', async () => {
+            await facade.createFile('new.ts', 'content');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('write_file');
+        });
+
+        it('should check permission before deleteFile', async () => {
+            mockPermissionManager.checkPermission = vi.fn(() => ({
+                needsApproval: false,
+                canExecute: true,
+                reason: 'session' as const,
+                toolName: 'Delete File',
+                toolId: 'delete_file',
+            }));
+            // Re-create facade with updated mock
+            facade = new FileToolsFacade(
+                mockLocalFS,
+                mockSyncManager,
+                mockEventBus,
+                mockFileLock,
+                mockPermissionManager
+            );
+            await facade.deleteFile('obsolete.ts');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('delete_file');
+        });
+
+        it('should check permission before searchFiles', async () => {
+            await facade.searchFiles('button');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('list_files');
+        });
+
+        it('should check permission before readMultiple', async () => {
+            await facade.readMultiple(['file1.txt', 'file2.txt']);
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('read_file');
+        });
+
+        it('should check permission before writeMultiple', async () => {
+            await facade.writeMultiple([{ path: 'file.txt', content: 'content' }]);
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('write_file');
+        });
+
+        it('should check permission before globFiles', async () => {
+            await facade.globFiles('**/*.ts');
+            expect(mockPermissionManager.checkPermission).toHaveBeenCalledWith('list_files');
+        });
+
+        it('should throw ToolPermissionDeniedError when permission denied', async () => {
+            // Create a permission manager that denies read_file
+            const denyingPermissionManager = {
+                checkPermission: vi.fn((toolId: string) => ({
+                    needsApproval: false,
+                    canExecute: false,
+                    reason: 'block' as const,
+                    toolName: 'Read File',
+                    toolId,
+                })),
+            } as unknown as ToolPermissionManager;
+
+            const denyingFacade = new FileToolsFacade(
+                mockLocalFS,
+                mockSyncManager,
+                mockEventBus,
+                mockFileLock,
+                denyingPermissionManager
+            );
+
+            await expect(denyingFacade.readFile('test.txt'))
+                .rejects.toThrow(ToolPermissionDeniedError);
+            expect(mockLocalFS.readFile).not.toHaveBeenCalled();
+        });
+
+        it('should not execute operation when permission denied', async () => {
+            const denyingPermissionManager = {
+                checkPermission: vi.fn((toolId: string) => ({
+                    needsApproval: true,
+                    canExecute: true,
+                    reason: 'prompt' as const,
+                    toolName: 'Write File',
+                    toolId,
+                })),
+            } as unknown as ToolPermissionManager;
+
+            const denyingFacade = new FileToolsFacade(
+                mockLocalFS,
+                mockSyncManager,
+                mockEventBus,
+                mockFileLock,
+                denyingPermissionManager
+            );
+
+            // Should throw when requires approval but not granted
+            await expect(denyingFacade.writeFile('test.txt', 'content'))
+                .rejects.toThrow(ToolPermissionDeniedError);
+            expect(mockSyncManager.writeFile).not.toHaveBeenCalled();
+            expect(mockFileLock.acquire).not.toHaveBeenCalled();
         });
     });
 });
