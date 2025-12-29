@@ -52,9 +52,9 @@ describe('ConversationAutoRestore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     restore = new ConversationAutoRestore();
-    mockSortBy.mockResolvedValue([]);
-    mockWhere.mockReturnValue(mockWhereResult);
-    mockEquals.mockReturnValue(mockWhereResult);
+    // Reset mock chain to return empty array by default
+    mockWhereResult.sortBy.mockReturnValue(Promise.resolve([]));
+    mockWhereResult.count.mockReturnValue(Promise.resolve(0));
   });
 
   describe('getMostRecentThread', () => {
