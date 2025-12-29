@@ -4,7 +4,7 @@
  * @governance EPIC-6-3
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CollectionSelector } from '../CollectionSelector';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
@@ -15,6 +15,8 @@ vi.mock('@/lib/state/knowledge-store', () => ({
     useKnowledgeStore: vi.fn(),
 }));
 
+const mockedUseKnowledgeStore = useKnowledgeStore as Mock;
+
 const mockCollections: Collection[] = [
     {
         id: 'collection-1',
@@ -22,6 +24,7 @@ const mockCollections: Collection[] = [
         name: 'ML Research',
         sourceIds: ['source-1'],
         createdAt: Date.now(),
+        updatedAt: Date.now(),
     },
     {
         id: 'collection-2',
@@ -29,20 +32,31 @@ const mockCollections: Collection[] = [
         name: 'Documentation',
         sourceIds: [],
         createdAt: Date.now(),
+        updatedAt: Date.now(),
     },
 ];
 
 describe('CollectionSelector (Story 6-3, Task 5)', () => {
+    const mockAddSourceToCollection = vi.fn();
+    const mockRemoveSourceFromCollection = vi.fn();
+
     beforeEach(() => {
         vi.clearAllMocks();
         document.body.innerHTML = '';
+
+        // Default mock setup
+        mockedUseKnowledgeStore.mockReturnValue({
+            collections: mockCollections,
+            addSourceToCollection: mockAddSourceToCollection,
+            removeSourceFromCollection: mockRemoveSourceFromCollection,
+        });
     });
 
     it('should render dialog when isOpen is true', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        mockedUseKnowledgeStore.mockReturnValue({
             collections: [],
-            addSourceToCollection: vi.fn(),
+            addSourceToCollection: mockAddSourceToCollection,
+            removeSourceFromCollection: mockRemoveSourceFromCollection,
         });
 
         render(
@@ -57,12 +71,6 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should not render dialog when isOpen is false', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
-            collections: [],
-            addSourceToCollection: vi.fn(),
-        });
-
         const { container } = render(
             <CollectionSelector
                 isOpen={false}
@@ -75,12 +83,6 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should render collection list', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
-            collections: mockCollections,
-            addSourceToCollection: vi.fn(),
-        });
-
         render(
             <CollectionSelector
                 isOpen={true}
@@ -94,12 +96,6 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should show checkboxes for each collection', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
-            collections: mockCollections,
-            addSourceToCollection: vi.fn(),
-        });
-
         render(
             <CollectionSelector
                 isOpen={true}
@@ -112,14 +108,8 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
         expect(checkboxes).toHaveLength(2);
     });
 
-    it('should call addSourceToCollection when collection checkbox is checked', () => {
-        const addSourceToCollection = vi.fn();
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
-            collections: mockCollections,
-            addSourceToCollection,
-        });
-
+    it('should call addSourceToCollection when unchecked collection checkbox is clicked', () => {
+        // Set up: source-1 is not in Documentation
         render(
             <CollectionSelector
                 isOpen={true}
@@ -128,19 +118,15 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
             />
         );
 
-        const mlCheckbox = screen.getByRole('checkbox', { name: /ml research/i });
-        fireEvent.click(mlCheckbox);
+        // Documentation doesn't contain source-1, clicking should add
+        const docCheckbox = screen.getByRole('checkbox', { name: /documentation/i });
+        fireEvent.click(docCheckbox);
 
-        expect(addSourceToCollection).toHaveBeenCalledWith('source-1', 'collection-1');
+        expect(mockAddSourceToCollection).toHaveBeenCalledWith('source-1', 'collection-2');
     });
 
     it('should call onClose when Cancel is clicked', () => {
         const onClose = vi.fn();
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
-            collections: mockCollections,
-            addSourceToCollection: vi.fn(),
-        });
 
         render(
             <CollectionSelector
@@ -157,10 +143,10 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should show empty state when no collections exist', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        mockedUseKnowledgeStore.mockReturnValue({
             collections: [],
-            addSourceToCollection: vi.fn(),
+            addSourceToCollection: mockAddSourceToCollection,
+            removeSourceFromCollection: mockRemoveSourceFromCollection,
         });
 
         render(
@@ -182,6 +168,7 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
                 name: 'ML Research',
                 sourceIds: ['source-1'], // Already contains source
                 createdAt: Date.now(),
+                updatedAt: Date.now(),
             },
             {
                 id: 'collection-2',
@@ -189,13 +176,14 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
                 name: 'Documentation',
                 sourceIds: [],
                 createdAt: Date.now(),
+                updatedAt: Date.now(),
             },
         ];
 
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        mockedUseKnowledgeStore.mockReturnValue({
             collections: collectionsWithSource,
-            addSourceToCollection: vi.fn(),
+            addSourceToCollection: mockAddSourceToCollection,
+            removeSourceFromCollection: mockRemoveSourceFromCollection,
         });
 
         render(
@@ -215,11 +203,6 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
 
     it('should call onClose when Done button is clicked', () => {
         const onClose = vi.fn();
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
-            collections: mockCollections,
-            addSourceToCollection: vi.fn(),
-        });
 
         render(
             <CollectionSelector
@@ -235,3 +218,4 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
         expect(onClose).toHaveBeenCalled();
     });
 });
+

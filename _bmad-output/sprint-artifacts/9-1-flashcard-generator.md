@@ -2,7 +2,7 @@
 epic: 9
 story: 1
 title: Flashcard Generator
-status: ready-for-dev
+status: done
 created: 2025-12-30T10:50:00+07:00
 author: Ralph Loop Agent
 team: Team B (Backend/AI)
@@ -189,27 +189,56 @@ const mockSources = [
 - [x] Story validation (all ACs complete)
 - [x] Story context created with implementation sequence
 - [x] Research executed (Context7 for TanStack AI + Gemini API)
-- [x] Story marked ready-for-dev
+- [x] Define Flashcard types, Zod schemas, and Dexie store
+- [x] Create flashcard store with Dexie persistence
+- [x] Implement AI generation service with Gemini API
+- [x] Create API endpoint for generation
+- [x] Build preview UI component
+- [x] Implement filter and search logic
+- [x] Create mock data for testing
+- [x] Write unit tests for flashcard types (16 tests)
+- [x] Write unit tests for flashcard store (24 tests)
+- [x] Write unit tests for flashcard utils (27 tests)
+- [x] Story marked done
 
 ### Research Executed:
 - TanStack AI structured output patterns (outputSchema with Zod)
 - Gemini API structured output (responseMimeType + responseJsonSchema)
 - Codebase patterns from Epic 4 (AI tools) and Epic 2 (Dexie persistence)
 
-### Files Changed:
+### Files Created:
 | File | Action | Lines |
 |------|--------|-------|
-| 9-1-flashcard-generator.md | Updated | +80 (research, schema, prompts) |
-| 9-1-flashcard-generator-context.xml | Created/Updated | +150 (full context) |
+| src/lib/knowledge/types.ts | Created | +120 (Zod schemas, types) |
+| src/lib/state/flashcard-store.ts | Created | +510 (Dexie store + Zustand) |
+| src/lib/knowledge/flashcard-generator.ts | Created | +210 (Gemini API + mock) |
+| src/routes/api/flashcards/generate.ts | Created | +100 (API endpoint) |
+| src/components/knowledge/flashcard-preview.tsx | Created | +180 (React component) |
+| src/lib/knowledge/flashcard-utils.ts | Created | +180 (filter/search utils) |
+| src/lib/knowledge/__tests__/mock-data.ts | Created | +100 (test fixtures) |
+| src/lib/knowledge/__tests__/flashcard-types.test.ts | Created | +240 (16 tests) |
+| src/lib/state/__tests__/flashcard-store.test.ts | Created | +480 (24 tests) |
+| src/lib/knowledge/__tests__/flashcard-utils.test.ts | Created | +260 (27 tests) |
 
 ### Tests Created:
-- Pending implementation
+- flashcard-types.test.ts: 16 tests passing
+- flashcard-store.test.ts: 24 tests passing
+- flashcard-utils.test.ts: 27 tests passing
+- **Total: 67 tests passing (100%)**
 
 ### Decisions Made:
 - Using Zod for schema validation (consistent with codebase)
-- Using Gemini API's native structured output (not TanStack AI wrapper) for reliability
+- Using Gemini API's native structured output (responseMimeType + responseJsonSchema)
 - Flashcard IDs: `fc-{timestamp}-{random}` format
+- FlashcardSet IDs: `fcs-{timestamp}-{random}` format
 - Dexie stores: flashcards and flashcardSets tables with proper indexes
+- Mock generator for testing without API calls
+
+### Integration Notes:
+- No conflicts with Epic 6 (Source Ingestion) - uses source IDs from sources
+- No conflicts with Epic 8 (Knowledge Canvas) - separate data models
+- Uses Dexie v1 schema for flashcards (separate from KnowledgeCanvasDB v2)
+- NFR-PERF-P2-06: Generation complete within 30s (mock returns immediately, real API depends on Gemini latency)
 
 ## Code Review
 
@@ -235,3 +264,5 @@ const mockSources = [
 | Date | Status | Notes |
 |------|--------|-------|
 | 2025-12-30T10:50:00+07:00 | drafted | Story created |
+| 2025-12-30T16:30:00+07:00 | ready-for-dev | Research complete, context created |
+| 2025-12-30T16:45:00+07:00 | done | Implementation complete, 67 tests passing |

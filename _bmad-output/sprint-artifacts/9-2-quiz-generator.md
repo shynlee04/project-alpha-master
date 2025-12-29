@@ -2,7 +2,10 @@
 epic: 9
 story: 2
 title: Quiz Generator
-status: drafted
+status: ready-for-dev
+validation_passed: true
+validation_date: 2025-12-30T17:20:00+07:00
+validation_notes: Research completed via Context7 (TanStack AI) and web search (Gemini API). Zod schemas validated. Implementation pattern follows flashcard-generator.ts
 created: 2025-12-30T10:55:00+07:00
 author: Ralph Loop Agent
 team: Team B (Backend/AI)
