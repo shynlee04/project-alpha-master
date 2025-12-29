@@ -35,7 +35,7 @@ export interface FileReadResult {
 
 /**
  * Agent File Tools Interface
- * 
+ *
  * Stable contract for AI agent file operations.
  * Implementation wraps LocalFSAdapter + SyncManager with event emission.
  */
@@ -85,6 +85,80 @@ export interface AgentFileTools {
      * @returns Matching file entries
      */
     searchFiles(query: string, basePath?: string): Promise<FileEntry[]>;
+
+    // ============================================================================
+    // Advanced Operations (RC-007: Epic 4 Story 4.2 ACs)
+    // ============================================================================
+
+    /**
+     * Read multiple files atomically
+     * @param paths - Array of relative paths to read
+     * @param signal - Optional AbortSignal for cancellation
+     * @returns Array of FileReadResult in the same order as paths
+     * @throws Error if any file read fails (none written if partial failure)
+     */
+    readMultiple(paths: string[], signal?: AbortSignal): Promise<FileReadResult[]>;
+
+    /**
+     * Write multiple files atomically with rollback on failure
+     * @param files - Array of {path, content} objects to write
+     * @param onProgress - Optional callback for progress tracking (0-100%)
+     * @param signal - Optional AbortSignal for cancellation
+     * @throws Error with RollbackInfo if any write fails (rollback triggered)
+     */
+    writeMultiple(
+        files: Array<{ path: string; content: string }>,
+        onProgress?: (progress: number) => void,
+        signal?: AbortSignal
+    ): Promise<void>;
+
+    /**
+     * Find files matching a glob pattern
+     * @param pattern - Glob pattern (e.g., '**/*.ts', 'src/**/*.tsx')
+     * @param basePath - Optional base path (defaults to project root)
+     * @returns Array of matching file entries
+     */
+    globFiles(pattern: string, basePath?: string): Promise<FileEntry[]>;
+
+    /**
+     * Delete multiple files atomically with rollback
+     * @param paths - Array of paths to delete
+     * @param onProgress - Optional callback for progress tracking (0-100%)
+     * @param signal - Optional AbortSignal for cancellation
+     * @throws Error with RollbackInfo if any delete fails (rollback triggered)
+     */
+    deleteMultiple(
+        paths: string[],
+        onProgress?: (progress: number) => void,
+        signal?: AbortSignal
+    ): Promise<void>;
+}
+
+/**
+ * Information about a batch operation that was rolled back
+ */
+export interface RollbackInfo {
+    /** Total operations attempted */
+    totalOperations: number;
+    /** Operations completed before failure */
+    completedOperations: number;
+    /** Files that were written and need cleanup */
+    writtenFiles: string[];
+    /** The error that caused the rollback */
+    cause: Error;
+}
+
+/**
+ * Error thrown when batch operation fails and triggers rollback
+ */
+export class BatchOperationError extends Error {
+    constructor(
+        message: string,
+        public readonly rollbackInfo: RollbackInfo
+    ) {
+        super(message);
+        this.name = 'BatchOperationError';
+    }
 }
 
 /**

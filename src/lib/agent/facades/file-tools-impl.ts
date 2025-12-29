@@ -11,7 +11,7 @@
  * @story 12-1B - Add Concurrency Control to FileToolsFacade
  */
 
-import type { AgentFileTools, FileEntry } from './file-tools';
+import type { AgentFileTools, FileEntry, RollbackInfo, BatchOperationError, FileReadResult } from './file-tools';
 import { validatePath, normalizePath, PathValidationError } from './file-tools';
 import { FileLock, fileLock as defaultFileLock } from './file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
@@ -165,6 +165,297 @@ export class FileToolsFacade implements AgentFileTools {
         return allFiles.filter(f =>
             f.type === 'file' && f.name.toLowerCase().includes(lowerQuery)
         );
+    }
+
+    // ============================================================================
+    // Advanced Operations (RC-007: Epic 4 Story 4.2 ACs)
+    // ============================================================================
+
+    /**
+     * Read multiple files atomically
+     */
+    async readMultiple(paths: string[], signal?: AbortSignal): Promise<FileReadResult[]> {
+        // Check if aborted before starting
+        if (signal?.aborted) {
+            throw new Error('Operation was aborted');
+        }
+
+        const results: FileReadResult[] = [];
+        for (let i = 0; i < paths.length; i++) {
+            // Check abort between each file
+            if (signal?.aborted) {
+                throw new Error('Operation was aborted');
+            }
+
+            const path = paths[i];
+            const normalizedPath = normalizePath(path);
+            validatePath(normalizedPath);
+
+            try {
+                const content = await this.readFile(normalizedPath);
+                results.push({ path: normalizedPath, content: content ?? '' });
+            } catch (error) {
+                throw new Error(`Failed to read file "${path}": ${(error as Error).message}`);
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Write multiple files atomically with rollback on failure
+     */
+    async writeMultiple(
+        files: Array<{ path: string; content: string }>,
+        onProgress?: (progress: number) => void,
+        signal?: AbortSignal
+    ): Promise<void> {
+        if (signal?.aborted) {
+            throw new Error('Operation was aborted');
+        }
+
+        if (files.length === 0) {
+            onProgress?.(100);
+            return;
+        }
+
+        const writtenFiles: string[] = [];
+        let completedOperations = 0;
+        const totalOperations = files.length;
+
+        try {
+            for (let i = 0; i < files.length; i++) {
+                // Check abort between each file
+                if (signal?.aborted) {
+                    throw new Error('Operation was aborted');
+                }
+
+                const { path, content } = files[i];
+                const normalizedPath = normalizePath(path);
+                validatePath(normalizedPath);
+
+                // Acquire lock and write
+                const lockAcquired = await this.fileLock.acquire(normalizedPath);
+                try {
+                    await this.syncManager.writeFile(normalizedPath, content);
+                    writtenFiles.push(normalizedPath);
+
+                    // Emit event for each file
+                    this.eventBus.emit('file:modified', {
+                        path: normalizedPath,
+                        source: 'agent',
+                        content,
+                        lockAcquired,
+                        lockReleased: Date.now()
+                    });
+                } finally {
+                    this.fileLock.release(normalizedPath);
+                }
+
+                completedOperations++;
+                onProgress?.(Math.round((completedOperations / totalOperations) * 100));
+            }
+            onProgress?.(100);
+        } catch (error) {
+            // Rollback: delete all files that were successfully written
+            const rollbackInfo: RollbackInfo = {
+                totalOperations,
+                completedOperations,
+                writtenFiles,
+                cause: error as Error
+            };
+
+            // Perform rollback
+            for (const filePath of writtenFiles) {
+                try {
+                    await this.syncManager.deleteFile(filePath);
+                    this.eventBus.emit('file:deleted', {
+                        path: filePath,
+                        source: 'agent',
+                        lockAcquired: Date.now(),
+                        lockReleased: Date.now()
+                    });
+                } catch (rollbackError) {
+                    // Log but don't fail - best effort rollback
+                    console.error(`[FileToolsFacade] Rollback failed for ${filePath}:`, rollbackError);
+                }
+            }
+
+            // Create BatchOperationError with rollback info
+            const batchError = new BatchOperationError(
+                `Batch write failed after ${completedOperations}/${totalOperations} files. Rolled back ${writtenFiles.length} files.`,
+                rollbackInfo
+            ) as BatchOperationError;
+            throw batchError;
+        }
+    }
+
+    /**
+     * Find files matching a glob pattern
+     * Supports basic glob patterns: **/*.ext, src/**/*, etc.
+     */
+    async globFiles(pattern: string, basePath = ''): Promise<FileEntry[]> {
+        const normalizedBasePath = normalizePath(basePath);
+        validatePath(normalizedBasePath);
+
+        // Get all files recursively
+        const allFiles = await this.listDirectory(normalizedBasePath, true);
+
+        // Parse glob pattern
+        const { dirPattern, extension } = this.parseGlobPattern(pattern);
+
+        return allFiles.filter(entry => {
+            if (entry.type !== 'file') return false;
+
+            // Check extension first (most common filter)
+            if (extension && !entry.name.endsWith(extension)) {
+                return false;
+            }
+
+            // Check directory pattern if specified
+            if (dirPattern) {
+                const normalizedDirPattern = dirPattern.replace(/\*\*/g, '**').replace(/\*/g, '*');
+                return this.matchGlob(entry.path, normalizedDirPattern);
+            }
+
+            return true;
+        });
+    }
+
+    /**
+     * Parse a glob pattern into directory pattern and extension
+     */
+    private parseGlobPattern(pattern: string): { dirPattern: string; extension: string } {
+        // Handle patterns like "**/*.ts", "src/**/*.tsx", "*.json"
+        const parts = pattern.split(/[\/*]/).filter(Boolean);
+
+        let dirPattern = '';
+        let extension = '';
+
+        // Find where the extension starts (after the last ** or *)
+        const lastWildcardIndex = parts.findLastIndex(p => p.includes('*'));
+
+        if (lastWildcardIndex !== -1) {
+            // Directory pattern is everything up to and including the last wildcard segment
+            dirPattern = parts.slice(0, lastWildcardIndex + 1).join('/');
+
+            // Extension is everything after the last wildcard (if it's not a wildcard itself)
+            const extensionPart = parts.slice(lastWildcardIndex + 1).join('/');
+            if (extensionPart && !extensionPart.includes('*')) {
+                extension = extensionPart;
+            }
+        } else {
+            // No wildcard - it's just a file name or extension pattern
+            const extensionPart = parts.join('/');
+            if (extensionPart && !extensionPart.includes('*')) {
+                extension = extensionPart;
+            }
+        }
+
+        return { dirPattern, extension };
+    }
+
+    /**
+     * Match a path against a glob pattern
+     * Supports ** (recursive), * (single segment)
+     */
+    private matchGlob(path: string, pattern: string): boolean {
+        // Convert glob pattern to regex
+        const regexPattern = pattern
+            .replace(/\*\*/g, '{{DOUBLE_STAR}}')
+            .replace(/\*/g, '{{STAR}}')
+            .replace(/\./g, '\\.')
+            .replace(/\{\{DOUBLE_STAR\}\}/g, '.*')
+            .replace(/\{\{STAR\}\}/g, '[^/]*');
+
+        const regex = new RegExp(`^${regexPattern}$`);
+        return regex.test(path);
+    }
+
+    /**
+     * Delete multiple files atomically with rollback
+     */
+    async deleteMultiple(
+        paths: string[],
+        onProgress?: (progress: number) => void,
+        signal?: AbortSignal
+    ): Promise<void> {
+        if (signal?.aborted) {
+            throw new Error('Operation was aborted');
+        }
+
+        if (paths.length === 0) {
+            onProgress?.(100);
+            return;
+        }
+
+        const deletedFiles: string[] = [];
+        let completedOperations = 0;
+        const totalOperations = paths.length;
+
+        try {
+            for (let i = 0; i < paths.length; i++) {
+                // Check abort between each file
+                if (signal?.aborted) {
+                    throw new Error('Operation was aborted');
+                }
+
+                const path = paths[i];
+                const normalizedPath = normalizePath(path);
+                validatePath(normalizedPath);
+
+                // Acquire lock and delete
+                const lockAcquired = await this.fileLock.acquire(normalizedPath);
+                try {
+                    await this.syncManager.deleteFile(normalizedPath);
+                    deletedFiles.push(normalizedPath);
+
+                    // Emit event for each file
+                    this.eventBus.emit('file:deleted', {
+                        path: normalizedPath,
+                        source: 'agent',
+                        lockAcquired,
+                        lockReleased: Date.now()
+                    });
+                } finally {
+                    this.fileLock.release(normalizedPath);
+                }
+
+                completedOperations++;
+                onProgress?.(Math.round((completedOperations / totalOperations) * 100));
+            }
+            onProgress?.(100);
+        } catch (error) {
+            // Rollback: re-create all files that were successfully deleted
+            const rollbackInfo: RollbackInfo = {
+                totalOperations,
+                completedOperations,
+                writtenFiles: deletedFiles, // Re-using field name for consistency
+                cause: error as Error
+            };
+
+            // Perform rollback (re-create files)
+            for (const filePath of deletedFiles) {
+                try {
+                    await this.syncManager.writeFile(filePath, '');
+                    this.eventBus.emit('file:created', {
+                        path: filePath,
+                        source: 'agent',
+                        lockAcquired: Date.now(),
+                        lockReleased: Date.now()
+                    });
+                } catch (rollbackError) {
+                    // Log but don't fail - best effort rollback
+                    console.error(`[FileToolsFacade] Rollback failed for ${filePath}:`, rollbackError);
+                }
+            }
+
+            // Create BatchOperationError with rollback info
+            const batchError = new BatchOperationError(
+                `Batch delete failed after ${completedOperations}/${totalOperations} files. Rolled back ${deletedFiles.length} files.`,
+                rollbackInfo
+            ) as BatchOperationError;
+            throw batchError;
+        }
     }
 }
 
