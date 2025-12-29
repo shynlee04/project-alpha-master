@@ -199,7 +199,7 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
                             value={newConcept}
                             onChange={(e) => setNewConcept(e.target.value)}
                             maxLength={MAX_CONCEPT_LENGTH}
-                            onKeyPress={(e) => e.key === 'Enter' && handleAddConcept()}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddConcept()}
                             className="flex-1 px-3 py-1.5 bg-surface-dark border border-border-dark rounded text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
                             placeholder="Add a key concept..."
                         />

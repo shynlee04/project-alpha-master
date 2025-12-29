@@ -63,8 +63,9 @@ describe('MetadataEditor (Story 6.4)', () => {
 
         expect(screen.getByText('Edit Metadata')).toBeInTheDocument();
         expect(screen.getByDisplayValue('Original summary')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('Concept 1')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('Concept 2')).toBeInTheDocument();
+        // Check for concepts using text content (not displayValue since they're in spans)
+        expect(screen.getByText('Concept 1')).toBeInTheDocument();
+        expect(screen.getByText('Concept 2')).toBeInTheDocument();
         expect(screen.getByDisplayValue('Question 1?')).toBeInTheDocument();
         expect(screen.getByDisplayValue('Question 2?')).toBeInTheDocument();
     });
@@ -144,9 +145,9 @@ describe('MetadataEditor (Story 6.4)', () => {
 
         const conceptInput = screen.getByPlaceholderText('Add a key concept...');
         fireEvent.change(conceptInput, { target: { value: 'New Concept' } });
-        fireEvent.keyPress(conceptInput, { key: 'Enter', code: 'Enter' });
+        fireEvent.keyDown(conceptInput, { key: 'Enter', code: 'Enter' });
 
-        // New concept should be visible
+        // New concept should be visible (as text in a span)
         expect(screen.getByText('New Concept')).toBeInTheDocument();
         // Input should be cleared
         expect(conceptInput).toHaveValue('');
@@ -167,7 +168,7 @@ describe('MetadataEditor (Story 6.4)', () => {
         const addButton = screen.getByLabelText('Add concept');
         fireEvent.click(addButton);
 
-        // New concept should be visible
+        // New concept should be visible (as text in a span)
         expect(screen.getByText('New Concept')).toBeInTheDocument();
     });
 
