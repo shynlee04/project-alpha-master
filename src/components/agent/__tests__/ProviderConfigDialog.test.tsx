@@ -7,7 +7,7 @@ import { credentialVault } from '@/lib/agent/providers/credential-vault';
 // Mock dependencies
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
-        t: (key: string) => key,
+        t: (key: string, fallback?: string) => fallback || key,
     }),
 }));
 

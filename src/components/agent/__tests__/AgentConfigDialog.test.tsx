@@ -78,6 +78,13 @@ vi.mock('@/lib/state/provider-store', () => ({
         activeProviderId: null,
         modelSettings: {},
         updateModelSettings: vi.fn(),
+        availableModels: {
+            openrouter: [
+                { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B', pricing: { input: 0, output: 0 } }
+            ],
+        },
+        isLoadingModels: {},
+        fetchModels: vi.fn().mockResolvedValue([]),
     }),
 }))
 

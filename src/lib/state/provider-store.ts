@@ -162,12 +162,13 @@ export const useProviderStore = create<ProviderState>()(
                     }));
                 } catch (error) {
                     console.error(`[ProviderStore] Failed to fetch models for ${providerId}:`, error);
-                    // Fall back to default models
-                    const fallback = modelRegistry.getDefaultModels(providerId);
+
+                    // Reset loading state but don't set fallback models - let UI handle the error
                     set((state) => ({
-                        availableModels: { ...state.availableModels, [providerId]: fallback },
                         isLoadingModels: { ...state.isLoadingModels, [providerId]: false }
                     }));
+
+                    throw error;
                 }
             },
 

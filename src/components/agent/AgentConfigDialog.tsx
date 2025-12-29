@@ -719,9 +719,16 @@ export function AgentConfigDialog({
                                         variant="ghost"
                                         size="icon"
                                         className="h-6 w-6"
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.preventDefault()
-                                            storeFetchModels(providerId)
+                                            try {
+                                                await storeFetchModels(providerId)
+                                                toast.success(t('agents.config.modelsRefreshed', 'Models refreshed'))
+                                            } catch (err: any) {
+                                                toast.error(t('agents.config.fetchFailed', 'Failed to fetch models: {{error}}', {
+                                                    error: err.message || 'Unknown error'
+                                                }))
+                                            }
                                         }}
                                         disabled={isLoadingModels}
                                         title={t('agents.config.refreshModels', 'Refresh models')}

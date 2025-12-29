@@ -119,11 +119,11 @@ describe('Conversation Store', () => {
         expect(pendingToolApprovals[0].status).toBe('approved');
     });
 
-    it('should delete conversation', () => {
+    it('should delete conversation', async () => {
         const conversationId = useConversationStore.getState().createConversation();
         useConversationStore.getState().updateScrollPosition(conversationId, 100);
 
-        useConversationStore.getState().deleteConversation(conversationId);
+        await useConversationStore.getState().deleteConversation(conversationId);
 
         const { conversations, scrollPositions, activeConversationId } = useConversationStore.getState();
         expect(conversations[conversationId]).toBeUndefined();
@@ -131,17 +131,26 @@ describe('Conversation Store', () => {
         expect(activeConversationId).toBeNull();
     });
 
-    it('should switch active conversation when deleting active', () => {
+    it('should switch active conversation when deleting active', async () => {
         const conv1 = useConversationStore.getState().createConversation();
         const conv2 = useConversationStore.getState().createConversation();
 
         // conv2 is now active (last created)
         expect(useConversationStore.getState().activeConversationId).toBe(conv2);
 
-        // Delete conv2
-        useConversationStore.getState().deleteConversation(conv2);
+        // Add a message to conv1 to ensure it has a newer updatedAt than conv2
+        // This makes the sort order deterministic
+        useConversationStore.getState().addMessage(conv1, {
+            id: 'msg-1',
+            role: 'user',
+            content: 'Update timestamp',
+            timestamp: Date.now(),
+        });
 
-        // Should switch to conv1
+        // Delete conv2
+        await useConversationStore.getState().deleteConversation(conv2);
+
+        // Should switch to conv1 (it has the newer updatedAt)
         expect(useConversationStore.getState().activeConversationId).toBe(conv1);
     });
 

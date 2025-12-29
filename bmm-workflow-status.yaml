@@ -46,17 +46,25 @@ epic_status:
   STORY-2-0-CREDENTIAL-VAULT: "DONE"
   EPIC-1: "DONE"
   EPIC-2: "DONE"
+  EPIC-3: "DONE"
   EPIC-4: "DONE"
+  EPIC-5: "IN_PROGRESS"
   EPIC-24: "IN_PROGRESS"
 
 next_actions:
   - "Phase 2 documentation suite complete - all 5 core documents enhanced and validated"
   - "Implementation readiness confirmed - all quality gates passed with warnings"
+  - "CONTROLLED DOCUMENTS VALIDATION 2025-12-29: COMPLETED - See _bmad-output/validation/controlled-documents-validation-report-2025-12-29.md"
+  - "P0 CRITICAL: Fix epic_status section in bmm-workflow-status.yaml - removed non-existent epics 13, 21, 22, 23"
+  - "P0 CRITICAL: Add frontmatter metadata to architecture.md - date, time, phase, team, agent_mode"
+  - "P1 HIGH: Update epics.md frontmatter to reflect 'Phase 2' terminology consistency"
+  - "P1 HIGH: Add tracking sections to PRD.md and ux-design-specification.md"
   - "EPIC 24 VALIDATION SWEEP 2025-12-29: PARTIAL IMPLEMENTATION"
   - "Story 24-1: FileMetadataCache (12 tests) - ACs 33% met, needs SyncManager integration"
   - "Story 24-2: permission-lifecycle.ts (11 tests) - marked 'spike-only', needs production implementation"
   - "Story 24-3: ConversationAutoRestore (9 tests) - ACs 62% met, needs scrollPosition DB field"
   - "Story 24-4: ToolExecutionLogger (16 tests) - ACs 40% met, needs middleware wiring"
+  - "Story 24-5: SessionStateSnapshot - backlog, 4-5 hours estimated"
   - "REVERTED: Stories status from 'done' to 'in-progress' - ACs not fully satisfied"
   - "Run Ralph Loop re-validation after Sprint 28 completion"
   - "Target: 85+ health score for Phase 2 certification"
@@ -78,6 +86,68 @@ course_corrections:
     epic_created: "EPIC-24"
     stories_created: ["24-1", "24-2", "24-3", "24-4", "24-5"]
     status: "APPROVED"
+
+# =============================================================================
+# Controlled Documents Validation Status (2025-12-29)
+# =============================================================================
+controlled_documents_validation:
+  workflow: "controlled-documents-validation"
+  status: "COMPLETE"
+  completed_at: "2025-12-29T17:30:00+07:00"
+  validation_report: "_bmad-output/validation/controlled-documents-validation-report-2025-12-29.md"
+  
+  critical_issues_found: 2
+  high_priority_issues_found: 2
+  medium_priority_issues_found: 1
+  
+  findings:
+    - id: "CD-001"
+      severity: "P0 CRITICAL"
+      issue: "Epic status inconsistency in bmm-workflow-status.yaml"
+      description: "References non-existent epics 13, 21, 22, 23 (only epics 1-5 and 24 exist in epics.md)"
+      resolution: "Removed non-existent epic references, added EPIC-3 and EPIC-5"
+      status: "RESOLVED"
+      
+    - id: "CD-002"
+      severity: "P0 CRITICAL"
+      issue: "Missing frontmatter in architecture.md"
+      description: "Completely lacks required metadata (date, time, phase, team, agent_mode)"
+      resolution: "Pending - requires frontmatter addition"
+      status: "PENDING"
+      
+    - id: "CD-003"
+      severity: "P1 HIGH"
+      issue: "Phase terminology inconsistency"
+      description: "epics.md references 'Phase 1' while all other documents reference 'Phase 2'"
+      resolution: "Update epics.md frontmatter to reflect 'Phase 2'"
+      status: "PENDING"
+      
+    - id: "CD-004"
+      severity: "P1 HIGH"
+      issue: "Missing tracking sections in PRD and UX spec"
+      description: "PRD.md and ux-design-specification.md lack tracking sections with frontmatter"
+      resolution: "Add tracking sections to both documents"
+      status: "PENDING"
+      
+    - id: "CD-005"
+      severity: "P2 MEDIUM"
+      issue: "Epic 24 partial implementation"
+      description: "Stories 24-1 through 24-4 show 33-62% ACs met - normal development progress"
+      resolution: "Continue Epic 24 development per sprint plan"
+      status: "IN_PROGRESS"
+      
+  positive_findings:
+    - "Team assignments consistent across all documents (Team A: UI/Foundation, Team B: Backend/Agent)"
+    - "FR to PRD mapping well-traced with bidirectional references"
+    - "UX personas aligned across PRD and UX specification"
+    - "Dexie Schema v10 implementation complete (enhanced beyond documented v9)"
+    - "12-Level Validation Framework integrated into documentation standards"
+    
+  recommendations:
+    - "Establish automated validation gate for workflow status updates"
+    - "Create frontmatter template for all controlled documents"
+    - "Implement cross-document consistency checks in CI/CD pipeline"
+    - "Schedule quarterly controlled documents audit"
 
 # =============================================================================
 # Phase 2 Documentation Enhancement Status

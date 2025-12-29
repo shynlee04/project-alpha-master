@@ -117,6 +117,8 @@ export class ModelRegistry {
             return models;
         } catch (error) {
             console.warn(`[ModelRegistry] Failed to fetch models from ${providerId}:`, error);
+            // If explicit API key failed, propagate error to UI instead of silent fallback
+            if (apiKey) throw error;
             return this.getDefaultModels(providerId);
         }
     }
