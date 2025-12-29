@@ -28,6 +28,7 @@ export { PlusIcon } from './PlusIcon';
 export { MinusIcon } from './MinusIcon';
 export { SearchIcon } from './SearchIcon';
 export { MaximizeIcon } from './MaximizeIcon';
+export { PDFIcon, URLIcon, TextIcon } from './source-icons';
 
 // Re-export base icon component and props
 export { Icon } from './icon';
