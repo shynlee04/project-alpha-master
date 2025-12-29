@@ -193,14 +193,12 @@ export function FlashcardView({
             transformStyle: 'preserve-3d',
             transform: isFlipped ? 'rotateX(180deg)' : 'rotateX(0deg)',
             transition: prefersReducedMotion ? 'none' : 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            willChange: 'transform',
           }}
         >
           {/* Front face - Question */}
           <div
-            className="flashcard-face flashcard-front absolute inset-0",
-            'backface-hidden flex flex-col items-center justify-center',
-            'p-8 bg-card border-2 border-border rounded-xl',
-            'text-center'
+            className="flashcard-face flashcard-front absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-xl text-center"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
@@ -221,10 +219,7 @@ export function FlashcardView({
 
           {/* Back face - Answer with rating buttons */}
           <div
-            className="flashcard-face flashcard-back absolute inset-0",
-            'backface-hidden flex flex-col items-center justify-center',
-            'p-8 bg-card border-2 border-border rounded-xl',
-            'text-center'
+            className="flashcard-face flashcard-back absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-xl text-center"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
@@ -290,5 +285,6 @@ export function FlashcardView({
 
 /**
  * Memoized flashcard component to prevent unnecessary re-renders
+ * (Available for external use if needed)
  */
-export const MemoizedFlashcardView = memo(FlashcardView);
+const MemoizedFlashcardView = memo(FlashcardView);
