@@ -18,12 +18,14 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
+import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
 import {
     getIndexMetadata,
     getIndexSize,
     getAllIndexesMetadata,
     cleanupOrphanedIndexes,
 } from '@/lib/rag/orama-index';
+import { documentChunker } from '@/lib/rag/document-chunker';
 
 // ============================================================================
 // Types
@@ -90,6 +92,9 @@ interface RAGStoreState {
     /** Cached search results */
     searchCache: Map<string, CachedSearchResult>;
 
+    /** Chunking progress tracking (Story 7-2) */
+    chunkingProgress: Map<string, ChunkingProgress>;
+
     /** Loading state for async operations */
     loading: boolean;
 
@@ -133,6 +138,17 @@ interface RAGStoreState {
 
     /** Clean up orphaned indexes */
     cleanupOrphaned: (activeProjectIds: string[]) => Promise<number>;
+
+    // Chunking Actions (Story 7-2)
+
+    /** Chunk a source and return chunks */
+    chunkSource: (sourceId: string, content: string, options?: ChunkingOptions) => Promise<ChunkMetadata[]>;
+
+    /** Get chunks for a source */
+    getChunksForSource: (sourceId: string) => ChunkMetadata[] | undefined;
+
+    /** Clear chunking progress for a source */
+    clearChunkingProgress: (sourceId: string) => void;
 
     /** Reset store to initial state */
     reset: () => void;
@@ -215,6 +231,7 @@ export const useRAGStore = create<RAGStoreState>()(
             indexSize: 0,
             indexMetadata: null,
             searchCache: new Map(),
+            chunkingProgress: new Map(),
             loading: false,
             error: null,
             _hasHydrated: false,
@@ -359,6 +376,92 @@ export const useRAGStore = create<RAGStoreState>()(
                 }
             },
 
+            // Chunking Actions (Story 7-2)
+
+            chunkSource: async (sourceId: string, content: string, options?: ChunkingOptions) => {
+                set({ loading: true, error: null });
+
+                try {
+                    // Create a temporary source record for chunking
+                    const tempSource = {
+                        id: sourceId,
+                        type: 'text' as const,
+                        content,
+                        title: '',
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                    };
+
+                    // Track chunking progress
+                    const chunks: ChunkMetadata[] = [];
+
+                    // Chunk with progress tracking
+                    const result = documentChunker.chunkSource(
+                        tempSource,
+                        options,
+                        (progress) => {
+                            set((state) => {
+                                const newProgress = new Map(state.chunkingProgress);
+                                newProgress.set(sourceId, progress);
+                                return { chunkingProgress: newProgress };
+                            });
+                        }
+                    );
+
+                    // Update progress to completed
+                    set((state) => {
+                        const newProgress = new Map(state.chunkingProgress);
+                        newProgress.set(sourceId, {
+                            sourceId,
+                            currentChunk: result.totalChunks,
+                            totalChunks: result.totalChunks,
+                            status: 'completed',
+                        });
+                        return { chunkingProgress: newProgress, loading: false };
+                    });
+
+                    console.log(
+                        `[RAGStore] Chunked source ${sourceId}: ` +
+                            `${result.totalChunks} chunks, ${result.totalTokens} tokens`
+                    );
+
+                    return result.chunks;
+                } catch (error) {
+                    // Update progress to error
+                    set((state) => {
+                        const newProgress = new Map(state.chunkingProgress);
+                        newProgress.set(sourceId, {
+                            sourceId,
+                            currentChunk: 0,
+                            totalChunks: 0,
+                            status: 'error',
+                            error: (error as Error).message,
+                        });
+                        return {
+                            chunkingProgress: newProgress,
+                            error: (error as Error).message,
+                            loading: false,
+                        };
+                    });
+                    return [];
+                }
+            },
+
+            getChunksForSource: (sourceId: string) => {
+                // For now, this is a placeholder. In a full implementation,
+                // chunks would be stored in IndexedDB and retrieved here.
+                // The chunkingProgress map only stores progress, not the actual chunks.
+                return undefined;
+            },
+
+            clearChunkingProgress: (sourceId: string) => {
+                set((state) => {
+                    const newProgress = new Map(state.chunkingProgress);
+                    newProgress.delete(sourceId);
+                    return { chunkingProgress: newProgress };
+                });
+            },
+
             reset: () => {
                 set({
                     currentProjectId: null,
@@ -369,6 +472,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     indexSize: 0,
                     indexMetadata: null,
                     searchCache: new Map(),
+                    chunkingProgress: new Map(),
                     loading: false,
                     error: null,
                 });
@@ -390,6 +494,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 indexMetadata: state.indexMetadata,
                 // Convert Map to array for serialization
                 searchCache: Array.from(state.searchCache.entries()),
+                chunkingProgress: Array.from(state.chunkingProgress.entries()),
                 error: state.error,
             }),
 
@@ -400,6 +505,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 if (state) {
                     // Convert array back to Map
                     state.searchCache = new Map(state.searchCache as [string, CachedSearchResult][]);
+                    state.chunkingProgress = new Map(state.chunkingProgress as [string, ChunkingProgress][]);
 
                     // Clean expired cache entries on hydration
                     state.searchCache = cleanExpiredCache(state.searchCache);

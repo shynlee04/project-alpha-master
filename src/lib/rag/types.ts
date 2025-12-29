@@ -127,3 +127,104 @@ export interface IndexStatus {
   /** Error message if operation failed */
   error?: string;
 }
+
+// ============================================================================
+// Chunking Types (Story 7-2)
+// ============================================================================
+
+/**
+ * Chunking strategy type
+ */
+export type ChunkingStrategy = 'fixed-size' | 'semantic' | 'recursive';
+
+/**
+ * Options for document chunking
+ */
+export interface ChunkingOptions {
+  /** Chunking strategy to use */
+  strategy: ChunkingStrategy;
+
+  /** Minimum chunk size in tokens */
+  minChunkSize: number;
+
+  /** Maximum chunk size in tokens */
+  maxChunkSize: number;
+
+  /** Overlap between chunks in tokens */
+  overlap: number;
+
+  /** Preserve formatting (code blocks, tables, etc.) */
+  preserveFormatting: boolean;
+}
+
+/**
+ * Default chunking options
+ */
+export const DEFAULT_CHUNKING_OPTIONS: ChunkingOptions = {
+  strategy: 'fixed-size',
+  minChunkSize: 512,
+  maxChunkSize: 2048,
+  overlap: 100,
+  preserveFormatting: true,
+};
+
+/**
+ * Metadata for a single chunk
+ */
+export interface ChunkMetadata {
+  /** Unique chunk identifier */
+  chunkId: string;
+
+  /** Source document ID */
+  sourceId: string;
+
+  /** 0-based index of this chunk in the source */
+  chunkIndex: number;
+
+  /** Total number of chunks in the source */
+  totalChunks: number;
+
+  /** Character offset where chunk starts in source */
+  startPosition: number;
+
+  /** Character offset where chunk ends in source */
+  endPosition: number;
+
+  /** Chunk content */
+  content: string;
+
+  /** Token count (approximate) */
+  tokenCount: number;
+
+  /** Additional metadata */
+  metadata: {
+    /** Type of chunk content */
+    type?: 'text' | 'figure' | 'table' | 'code';
+
+    /** Caption for figures/tables */
+    caption?: string;
+
+    /** Language (for code chunks) */
+    language?: string;
+  };
+}
+
+/**
+ * Progress tracking for chunking operation
+ */
+export interface ChunkingProgress {
+  /** Source ID being chunked */
+  sourceId: string;
+
+  /** Current chunk number (1-indexed) */
+  currentChunk: number;
+
+  /** Total chunks to create */
+  totalChunks: number;
+
+  /** Status of chunking */
+  status: 'chunking' | 'completed' | 'error';
+
+  /** Error message if status is 'error' */
+  error?: string;
+}
