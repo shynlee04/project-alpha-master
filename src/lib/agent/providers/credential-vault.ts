@@ -353,24 +353,36 @@ export class CredentialVault {
      * Retrieve and decrypt credentials for a provider
      */
     async getCredentials(providerId: string): Promise<string | null> {
+        console.log('[CredentialVault] getCredentials called for:', providerId);
         await this.initialize();
-        if (!this.masterKey) throw new Error('Vault not initialized');
+        if (!this.masterKey) {
+            console.error('[CredentialVault] Master key not available after initialization');
+            throw new Error('Vault not initialized');
+        }
 
         const credential = await db.credentials.get(providerId);
+        console.log('[CredentialVault] Credential lookup result:', credential ? 'found' : 'not found');
         if (!credential) return null;
 
-        // Decrypt the API key
-        const encrypted = this.base64ToArrayBuffer(credential.encrypted);
-        const iv = this.base64ToArrayBuffer(credential.iv);
+        try {
+            // Decrypt the API key
+            const encrypted = this.base64ToArrayBuffer(credential.encrypted);
+            const iv = this.base64ToArrayBuffer(credential.iv);
 
-        const decrypted = await crypto.subtle.decrypt(
-            { name: ENCRYPTION_ALGORITHM, iv: new Uint8Array(iv) },
-            this.masterKey,
-            encrypted
-        );
+            const decrypted = await crypto.subtle.decrypt(
+                { name: ENCRYPTION_ALGORITHM, iv: new Uint8Array(iv) },
+                this.masterKey,
+                encrypted
+            );
 
-        const decoder = new TextDecoder();
-        return decoder.decode(decrypted);
+            const decoder = new TextDecoder();
+            const result = decoder.decode(decrypted);
+            console.log('[CredentialVault] Decryption successful, key length:', result.length);
+            return result;
+        } catch (error) {
+            console.error('[CredentialVault] Decryption failed:', error);
+            throw error;
+        }
     }
 
     /**

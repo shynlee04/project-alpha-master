@@ -105,7 +105,11 @@ const agentFormSchema = z.object({
     providerId: z.string().min(1, 'agents.config.validation.providerRequired'),
     model: z.string().optional(),
     apiKey: z.string().optional(),
-    customBaseURL: z.string().url().optional(),
+    // CC-2025-12-29: Allow empty string OR valid URL, not just valid URL
+    customBaseURL: z.string().optional().refine(
+        (val) => !val || val === '' || /^https?:\/\/.+/.test(val),
+        { message: 'agents.config.validation.invalidUrl' }
+    ),
     customModelId: z.string().optional(),
     customHeaders: z.array(
         z.object({
@@ -422,7 +426,12 @@ export function AgentConfigDialog({
 
     // Handle API key save
     const handleSaveApiKey = useCallback(async () => {
-        if (!apiKey.trim()) {
+        // CC-2025-12-29: Don't try to save masked value - only save real new keys
+        if (!apiKey.trim() || apiKey === '••••') {
+            if (apiKey === '••••') {
+                toast.info(t('agents.config.apiKey.alreadySaved', 'API key is already saved'))
+                return
+            }
             setErrors(prev => ({ ...prev, apiKey: t('agents.config.apiKey.required', 'API key is required') }))
             return
         }
@@ -430,6 +439,7 @@ export function AgentConfigDialog({
         setIsSavingKey(true)
         const keyToSave = apiKey.trim()
         try {
+            console.log('[AgentConfigDialog] Saving API key for provider:', providerId)
             await credentialVault.storeCredentials(providerId, keyToSave)
             setApiKey('••••')
             toast.success(t('agents.config.apiKey.saveSuccess', 'API key saved successfully'))
@@ -859,7 +869,7 @@ export function AgentConfigDialog({
                                                 variant="primary"
                                                 size="sm"
                                                 onClick={handleSaveApiKey}
-                                                disabled={isSavingKey || !apiKey.trim()}
+                                                disabled={isSavingKey || !apiKey.trim() || apiKey === '••••'}
                                                 className="rounded-none gap-1"
                                                 type="button"
                                             >
