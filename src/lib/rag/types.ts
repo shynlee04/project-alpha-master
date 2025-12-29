@@ -411,3 +411,107 @@ export interface SearchQuery {
   embedding?: EmbeddingVector;
 }
 
+// ============================================================================
+// RAG Chat Types (Story 7-5)
+// ============================================================================
+
+/**
+ * Chat message role
+ */
+export type ChatRole = 'user' | 'assistant' | 'system';
+
+/**
+ * Citation reference in chat responses
+ */
+export interface Citation {
+  /** Citation ID (1-indexed for display: [1], [2], [3]) */
+  id: number;
+
+  /** Source document ID */
+  sourceId: string;
+
+  /** Source title */
+  title?: string;
+
+  /** Passage content with highlighting */
+  passage: string;
+
+  /** Position in source document */
+  position?: number;
+
+  /** Relevance score */
+  score?: number;
+}
+
+/**
+ * Chat message with optional citations
+ */
+export interface ChatMessage {
+  /** Message role */
+  role: ChatRole;
+
+  /** Message content */
+  content: string;
+
+  /** Citations referenced in this message */
+  citations?: Citation[];
+
+  /** Timestamp */
+  timestamp?: number;
+
+  /** Streaming state (for incomplete messages) */
+  streaming?: boolean;
+}
+
+/**
+ * Retrieved context for RAG generation
+ */
+export interface RAGContext {
+  /** Retrieved chunks */
+  chunks: Array<{
+    id: string;
+    sourceId: string;
+    title?: string;
+    content: string;
+    position?: number;
+    score?: number;
+  }>;
+
+  /** Original query */
+  query: string;
+
+  /** Context window size */
+  windowSize: number;
+}
+
+/**
+ * RAG chat configuration options
+ */
+export interface RAGChatOptions {
+  /** Maximum chunks to retrieve */
+  maxChunks?: number;
+
+  /** Search mode for retrieval */
+  searchMode?: SearchMode;
+
+  /** Include citations in response */
+  includeCitations?: boolean;
+
+  /** Stream response */
+  stream?: boolean;
+
+  /** Conversation history limit */
+  historyLimit?: number;
+}
+
+/**
+ * Default RAG chat options
+ */
+export const DEFAULT_RAG_CHAT_OPTIONS: Required<RAGChatOptions> = {
+  maxChunks: 10,
+  searchMode: 'hybrid',
+  includeCitations: true,
+  stream: true,
+  historyLimit: 10,
+};
+

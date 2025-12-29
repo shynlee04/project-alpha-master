@@ -101,6 +101,11 @@ interface RAGStoreState {
     /** Current embedding mode (Story 7-3) */
     embeddingMode: import('./rag/types').EmbeddingMode;
 
+    /** Search state (Story 7-4) */
+    searchQuery: string;
+    searchResults: import('./rag/types').ExtendedSearchResult[];
+    searchMode: import('./rag/types').SearchMode;
+
     /** Loading state for async operations */
     loading: boolean;
 
@@ -254,6 +259,9 @@ export const useRAGStore = create<RAGStoreState>()(
             chunkingProgress: new Map(),
             embeddingProgress: new Map(),
             embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
+            searchQuery: '',
+            searchResults: [],
+            searchMode: 'hybrid' as import('./rag/types').SearchMode,
             loading: false,
             error: null,
             _hasHydrated: false,
@@ -563,6 +571,65 @@ export const useRAGStore = create<RAGStoreState>()(
                 });
             },
 
+            // Search Actions (Story 7-4)
+
+            performSearch: async (query: string, mode?: import('./rag/types').SearchMode) => {
+                const { HybridRetriever } = await import('../rag/hybrid-retriever');
+                const { createEmbeddingService } = await import('../rag/embedding-service');
+                const { loadOrCreateIndex } = await import('../rag/orama-index');
+                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const apiKey = vault.getCredential('google')?.apiKey;
+
+                set({ loading: true, error: null, searchQuery: query });
+
+                try {
+                    // Load or create Orama index
+                    const projectId = get().currentProjectId || 'default';
+                    const index = await loadOrCreateIndex(projectId);
+
+                    // Create embedding service
+                    const embeddingService = await createEmbeddingService(apiKey);
+
+                    // Create hybrid retriever
+                    const retriever = new HybridRetriever({
+                        index,
+                        embeddingService,
+                        defaultMode: mode || get().searchMode,
+                    });
+
+                    // Perform search
+                    const results = await retriever.search(query);
+
+                    set({
+                        searchResults: results,
+                        searchMode: mode || get().searchMode,
+                        loading: false,
+                    });
+
+                    console.log(`[RAGStore] Search complete: ${results.length} results via ${mode || get().searchMode}`);
+
+                    return results;
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        searchResults: [],
+                        loading: false,
+                    });
+                    return [];
+                }
+            },
+
+            setSearchMode: (mode: import('./rag/types').SearchMode) => {
+                set({ searchMode: mode });
+            },
+
+            clearSearchResults: () => {
+                set({
+                    searchQuery: '',
+                    searchResults: [],
+                });
+            },
+
             reset: () => {
                 set({
                     currentProjectId: null,
@@ -576,6 +643,9 @@ export const useRAGStore = create<RAGStoreState>()(
                     chunkingProgress: new Map(),
                     embeddingProgress: new Map(),
                     embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
+                    searchQuery: '',
+                    searchResults: [],
+                    searchMode: 'hybrid' as import('./rag/types').SearchMode,
                     loading: false,
                     error: null,
                 });
@@ -600,6 +670,10 @@ export const useRAGStore = create<RAGStoreState>()(
                 chunkingProgress: Array.from(state.chunkingProgress.entries()),
                 embeddingProgress: Array.from(state.embeddingProgress.entries()),
                 embeddingMode: state.embeddingMode,
+                // Search state (Story 7-4)
+                searchQuery: state.searchQuery,
+                searchResults: state.searchResults,
+                searchMode: state.searchMode,
                 error: state.error,
             }),
 
