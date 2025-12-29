@@ -9,8 +9,18 @@ created: "2025-12-30"
 completed: "2025-12-30"
 sprint: "SPRINT-6"
 team: "Team A"
+validation_framework: "12-level-grandiose-definition-of-completion"
+validation_levels: [1,2,3,4,5,6,7,8,9,10,11,12]
+last_validated: "2025-12-30T14:05:00+07:00"
+validated_by: "bmad-bmm-orchestrator"
+phase: story-dev-cycle
 dependencies:
   - "6-1-source-import-pipeline"
+nfr_validated:
+  - "NFR-USE-01"
+tech_stack:
+  - "Radix UI"
+  - "Zustand"
 ---
 
 # Story: 6-2 Source Card UI with Preview

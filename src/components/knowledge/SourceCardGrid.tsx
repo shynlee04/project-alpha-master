@@ -77,8 +77,7 @@ export function SourceCardGrid({ projectId, collectionId, onOpenImport }: Source
                     <button
                         className="px-4 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
                         onClick={() => {
-                            // TODO: Wire to SourceDropZone in Story 6.3
-                            console.log('Open SourceDropZone');
+                            if (onOpenImport) onOpenImport();
                         }}
                     >
                         Import Source

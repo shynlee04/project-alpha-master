@@ -1,14 +1,19 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Plus, Bot } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import {
     ResizableHandle,
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { SourceCardGrid } from '@/components/knowledge/SourceCardGrid';
 import { Canvas } from '@/components/canvas/Canvas';
+import { SourceImportDialog } from '@/components/knowledge/SourceImportDialog';
 import { useIDEStore } from '@/lib/state/ide-store';
+import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
 
 export function KnowledgePage() {
@@ -17,6 +22,21 @@ export function KnowledgePage() {
     const projectId = useIDEStore((state) => state.projectId) || 'default';
     const { isMobile } = useResponsive();
 
+    // State
+    const [importDialogOpen, setImportDialogOpen] = useState(false);
+    const [isAiAvailable, setIsAiAvailable] = useState(false);
+
+    // Check Gemini API availability
+    useEffect(() => {
+        const checkAiStatus = async () => {
+            const available = await metadataExtractor.isAvailable();
+            setIsAiAvailable(available);
+        };
+        checkAiStatus();
+    }, []);
+
+    const handleOpenImport = () => setImportDialogOpen(true);
+
     if (isMobile) {
         // Mobile Layout: Simplified Stack (MVP)
         return (
@@ -24,10 +44,20 @@ export function KnowledgePage() {
                 <div className="flex flex-col h-full overflow-y-auto">
                     {/* Source Library Section */}
                     <div className="p-4 border-b border-border">
-                        <h2 className="font-mono font-bold mb-4 flex items-center gap-2">
-                            <Sparkles size={16} className="text-primary" /> {t('knowledge.sources')}
-                        </h2>
-                        <SourceCardGrid projectId={projectId} />
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="font-mono font-bold flex items-center gap-2">
+                                <Sparkles size={16} className="text-primary" /> {t('knowledge.sources')}
+                            </h2>
+                            <div className="flex items-center gap-2">
+                                {isAiAvailable && (
+                                    <Sparkles size={14} className="text-primary animate-pulse" />
+                                )}
+                                <Button size="sm" onClick={handleOpenImport}>
+                                    <Plus size={16} />
+                                </Button>
+                            </div>
+                        </div>
+                        <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
                     </div>
                     {/* Canvas Section - Read Only/Preview */}
                     <div className="h-[400px] border-b border-border relative">
@@ -37,6 +67,7 @@ export function KnowledgePage() {
                         <Canvas />
                     </div>
                 </div>
+                <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
             </MainLayout>
         );
     }
@@ -50,12 +81,26 @@ export function KnowledgePage() {
                     <div className="h-full flex flex-col border-r border-border bg-background">
                         <div className="p-3 border-b border-border flex items-center justify-between">
                             <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
-                            <span className="text-xs text-muted-foreground bg-accent px-1.5 py-0.5 rounded">
-                                {projectId === 'default' ? t('knowledge.scope.global') : t('knowledge.scope.project')}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                                                <Bot size={14} />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{isAiAvailable ? 'Gemini AI Active' : 'AI Metadata Disabled (No API Key)'}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleOpenImport}>
+                                    <Plus size={14} />
+                                </Button>
+                            </div>
                         </div>
                         <div className="flex-1 overflow-y-auto">
-                            <SourceCardGrid projectId={projectId} />
+                            <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
                         </div>
                     </div>
                 </ResizablePanel>
@@ -90,6 +135,8 @@ export function KnowledgePage() {
                     </div>
                 </ResizablePanel>
             </ResizablePanelGroup>
+
+            <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
         </MainLayout>
     );
 }
