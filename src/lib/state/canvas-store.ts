@@ -92,8 +92,10 @@ export const useCanvasStore = create<CanvasStoreState>()(
             animated: true,
           },
           edges,
-        ) as Edge<any>;
-        set({ edges: [...edges, newEdge] });
+        );
+        // rfAddEdge can return single Edge or Edge[] depending on connection
+        const edgeArray = Array.isArray(newEdge) ? newEdge : [newEdge];
+        set({ edges: [...edges, ...edgeArray] as Edge<any>[] });
       },
 
       // Add edge with specific relationship type
