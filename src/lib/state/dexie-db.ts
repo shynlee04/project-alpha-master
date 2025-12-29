@@ -1151,3 +1151,30 @@ export async function clearExpiredSessionSnapshots(): Promise<number> {
 export async function clearProjectSessionSnapshots(projectId: string): Promise<number> {
     return db.sessionSnapshots.where('projectId').equals(projectId).delete();
 }
+
+// ============================================================================
+// Epic 24: Additional File Metadata Helpers (Story 24-1)
+// Missing exports required by file-metadata-cache.ts
+// ============================================================================
+
+/**
+ * Get files that have been changed since a given timestamp.
+ * Used by FileMetadataCache for incremental sync detection.
+ * 
+ * @param sinceTimestamp - Unix timestamp to check changes since
+ * @returns Array of file metadata records modified after the timestamp
+ */
+export async function getChangedFilesSince(sinceTimestamp: number): Promise<FileMetadataRecord[]> {
+    return db.fileMetadata
+        .where('lastModified')
+        .above(sinceTimestamp)
+        .toArray();
+}
+
+/**
+ * Clear all file metadata cache entries.
+ * Used when resetting sync state or clearing project data.
+ */
+export async function clearFileMetadataCache(): Promise<void> {
+    await db.fileMetadata.clear();
+}

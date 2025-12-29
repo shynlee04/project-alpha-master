@@ -12,6 +12,7 @@ import { AgentConfigDialog } from '../AgentConfigDialog'
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string, fallback?: string | Record<string, unknown>) => {
+            // Return fallback if provided, otherwise return key
             if (typeof fallback === 'string') return fallback
             return key
         },
@@ -99,7 +100,7 @@ vi.mock('@/lib/agent/providers/model-registry', () => ({
 
 describe('AgentConfigDialog', () => {
     const mockOnOpenChange = vi.fn()
-    const mockOnSubmit = vi.fn()
+    const mockOnSuccess = vi.fn()
 
     beforeEach(() => {
         vi.clearAllMocks()
@@ -110,7 +111,7 @@ describe('AgentConfigDialog', () => {
             <AgentConfigDialog
                 open={open}
                 onOpenChange={mockOnOpenChange}
-                onSubmit={mockOnSubmit}
+                onSuccess={mockOnSuccess}
             />
         )
     }
@@ -135,10 +136,11 @@ describe('AgentConfigDialog', () => {
         const submitButton = screen.getByText('Create Agent')
         fireEvent.click(submitButton)
 
+        // Zod returns the translation key as the error message
         await waitFor(() => {
-            expect(screen.getByText('Agent name is required')).toBeInTheDocument()
+            expect(screen.getByText('agents.config.validation.nameRequired')).toBeInTheDocument()
         })
-        expect(mockOnSubmit).not.toHaveBeenCalled()
+        expect(mockOnSuccess).not.toHaveBeenCalled()
     })
 
     it('calls onOpenChange when cancel is clicked', () => {

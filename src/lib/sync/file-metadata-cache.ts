@@ -1,23 +1,43 @@
 import type { FileMetadataRecord } from '../state/dexie-db';
-import { db, upsertFileMetadata, getFileMetadata, getChangedFilesSince, clearFileMetadataCache } from '../state/dexie-db';
+import { db, getChangedFilesSince, clearFileMetadataCache as clearCache } from '../state/dexie-db';
 
 /**
  * FileMetadataCache service for managing file metadata cache.
  * Used for incremental sync to detect changed files efficiently.
+ * 
+ * @epic Epic 24 - Performance & UX Optimization
+ * @story 24-1 - Incremental Sync with Metadata Cache
  */
 export class FileMetadataCache {
   /**
-   * Get metadata for a specific file path.
+   * Get metadata for a specific file path in any project.
+   * Searches by path across all projects.
    */
   async get(path: string): Promise<FileMetadataRecord | undefined> {
-    return getFileMetadata(path);
+    // Query by path field directly
+    return db.fileMetadata.where('path').equals(path).first();
+  }
+
+  /**
+   * Get metadata for a specific file in a specific project.
+   */
+  async getByProjectAndPath(projectId: string, path: string): Promise<FileMetadataRecord | undefined> {
+    return db.fileMetadata
+      .where('[projectId+path]')
+      .equals([projectId, path])
+      .first();
   }
 
   /**
    * Store metadata for a file path.
    */
-  async set(path: string, metadata: FileMetadataRecord): Promise<void> {
-    await upsertFileMetadata(metadata);
+  async set(metadata: FileMetadataRecord): Promise<void> {
+    const now = Date.now();
+    await db.fileMetadata.put({
+      ...metadata,
+      createdAt: metadata.createdAt || now,
+      updatedAt: now,
+    });
   }
 
   /**
@@ -47,14 +67,14 @@ export class FileMetadataCache {
    * Invalidate cached metadata for a specific file.
    */
   async invalidate(path: string): Promise<void> {
-    await db.fileMetadata.delete(path);
+    await db.fileMetadata.where('path').equals(path).delete();
   }
 
   /**
    * Clear all cached metadata.
    */
   async clear(): Promise<void> {
-    await clearFileMetadataCache();
+    await clearCache();
   }
 
   /**
@@ -62,7 +82,13 @@ export class FileMetadataCache {
    * Uses bulk operation for efficiency.
    */
   async updateBatch(files: FileMetadataRecord[]): Promise<void> {
-    await db.fileMetadata.bulkPut(files);
+    const now = Date.now();
+    const enrichedFiles = files.map(f => ({
+      ...f,
+      createdAt: f.createdAt || now,
+      updatedAt: now,
+    }));
+    await db.fileMetadata.bulkPut(enrichedFiles);
   }
 
   /**
@@ -80,3 +106,4 @@ export class FileMetadataCache {
 
 // Export singleton instance
 export const fileMetadataCache = new FileMetadataCache();
+
