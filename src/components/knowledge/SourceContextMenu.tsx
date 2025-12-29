@@ -37,6 +37,9 @@ export interface SourceContextMenuProps {
     /** Callback when extract metadata is selected (Story 6-4) */
     onExtractMetadata?: (source: SourceRecord) => void;
 
+    /** Callback when view metadata is selected (Story 6-4) */
+    onViewMetadata?: (source: SourceRecord) => void;
+
     /** Whether the menu is disabled */
     disabled?: boolean;
 
@@ -69,6 +72,7 @@ export function SourceContextMenu({
     onMoveToCollection,
     onExport,
     onExtractMetadata,
+    onViewMetadata,
     disabled = false,
     className,
 }: SourceContextMenuProps) {
@@ -125,12 +129,14 @@ export function SourceContextMenu({
                 >
                     Move to Collection
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => onViewMetadata(source)}
-                    className="rounded-none cursor-pointer"
-                >
-                    View Metadata
-                </DropdownMenuItem>
+                {onViewMetadata && (
+                    <DropdownMenuItem
+                        onClick={() => onViewMetadata(source)}
+                        className="rounded-none cursor-pointer"
+                    >
+                        View Metadata
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     onClick={() => onExport(source)}
                     className="rounded-none cursor-pointer"
