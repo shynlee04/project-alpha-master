@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import Dexie from 'dexie';
 import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflow/react';
-import type { Node, Edge, Viewport, OnNodesChange, OnEdgesChange, OnConnect } from '@xyflow/react';
+import type { Node, Edge, Viewport } from '@xyflow/react';
 import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData } from '../canvas/types';
 
 // IndexedDB database for canvas persistence
@@ -26,31 +26,31 @@ export const useCanvasStore = create<CanvasStoreState>()(
       isReadOnly: false,
 
       // Node operations with React Flow change handlers
-      setNodes: (nodes: Node<CanvasNodeData>[]) => {
+      setNodes: (nodes: Node<any>[]) => {
         set({ nodes });
       },
 
       onNodesChange: (changes) => {
         const { nodes } = get();
-        const newNodes = applyNodeChanges(changes, nodes) as Node<CanvasNodeData>[];
+        const newNodes = applyNodeChanges(changes, nodes) as Node<any>[];
         set({ nodes: newNodes });
       },
 
       // Edge operations with React Flow change handlers
-      setEdges: (edges: Edge<CanvasEdgeData>[]) => {
+      setEdges: (edges: Edge<any>[]) => {
         set({ edges });
       },
 
       onEdgesChange: (changes) => {
         const { edges } = get();
-        const newEdges = applyEdgeChanges(changes, edges) as Edge<CanvasEdgeData>[];
+        const newEdges = applyEdgeChanges(changes, edges) as Edge<any>[];
         set({ edges: newEdges });
       },
 
       // Connection handler
       onConnect: (connection) => {
         const { edges } = get();
-        const newEdge = rfAddEdge(connection, edges) as Edge<CanvasEdgeData>;
+        const newEdge = rfAddEdge(connection, edges) as Edge<any>;
         set({ edges: [...edges, newEdge] });
       },
 
@@ -65,7 +65,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
       },
 
       // Bulk operations
-      addNode: (node: Node<CanvasNodeData>) => {
+      addNode: (node: Node<any>) => {
         const { nodes } = get();
         set({ nodes: [...nodes, node] });
       },
@@ -75,7 +75,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
         set({ nodes: nodes.filter((n) => n.id !== nodeId) });
       },
 
-      addEdge: (edge: Edge<CanvasEdgeData>) => {
+      addEdge: (edge: Edge<any>) => {
         const { edges } = get();
         set({ edges: [...edges, edge] });
       },
