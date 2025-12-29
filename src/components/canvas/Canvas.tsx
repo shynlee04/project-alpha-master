@@ -6,6 +6,8 @@ import {
   ReactFlowProvider,
   Panel,
   Viewport,
+  useReactFlow,
+  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useTranslation } from 'react-i18next';
@@ -125,6 +127,43 @@ function CanvasContent() {
   // Drag and drop handlers
   const { handleDragOver, handleDrop } = useCanvasDrop();
 
+  // Get React Flow instance for coordinate transformation
+  const { screenToFlowPosition, getNodes, setNodes } = useReactFlow();
+
+  // Handle double-click to create concept node
+  const handlePaneDoubleClick = useCallback(
+    (event: React.MouseEvent) => {
+      if (isReadOnly) return;
+
+      // Check if double-clicked on empty area (not on a node)
+      const clickTarget = event.target as HTMLElement;
+      if (clickTarget.closest('.react-flow__node')) return;
+
+      // Calculate position on canvas
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      // Create new concept node
+      const newNode: Node = {
+        id: `concept-${Date.now()}`,
+        type: 'concept',
+        position,
+        data: {
+          nodeType: 'concept' as const,
+          title: 'New Concept',
+        },
+        origin: [0.5, 0.5],
+      };
+
+      // Add node to canvas
+      const currentNodes = getNodes();
+      setNodes([...currentNodes, newNode]);
+    },
+    [isReadOnly, screenToFlowPosition, getNodes, setNodes],
+  );
+
   // Handle viewport changes
   const handleViewportChange = useCallback(
     (newViewport: Viewport) => {
@@ -150,6 +189,7 @@ function CanvasContent() {
         onConnect={onConnect}
         viewport={viewport}
         onViewportChange={handleViewportChange}
+        onPaneDoubleClick={handlePaneDoubleClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         minZoom={defaultViewportOptions.minZoom}
