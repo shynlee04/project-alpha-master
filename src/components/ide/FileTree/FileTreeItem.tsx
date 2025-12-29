@@ -14,6 +14,7 @@ import { useSyncStatusStore } from '../../../lib/workspace';
 import { isPathExcluded } from '../../../lib/filesystem/exclusion-config';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 /**
  * FileTreeItem - Renders a single file or folder in the tree
@@ -145,7 +146,7 @@ export function FileTreeItem({
                 />
 
                 {/* Name */}
-                <span className="truncate">{node.name}</span>
+                <TruncatedText text={node.name} />
 
                 {/* Per-file sync status */}
                 {!isDirectory && fileSyncStatus && (

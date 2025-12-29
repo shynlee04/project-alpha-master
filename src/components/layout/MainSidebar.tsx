@@ -24,6 +24,7 @@ import {
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { TruncatedText } from '@/components/ui/truncated-text';
 import { useLayoutStore } from '@/lib/state/layout-store';
 import { useTheme } from 'next-themes';
 import { useLocalePreference } from '@/i18n/LocaleProvider';
@@ -223,7 +224,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
                 className={cn(navItemVariants({ active: isActive, collapsed: false, mobile: true }))}
               >
                 <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
-                <span className="truncate">{item.label}</span>
+                <TruncatedText text={item.label} />
               </div>
             );
           })}
@@ -287,7 +288,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
                   >
                     <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
                     {!sidebarCollapsed && (
-                      <span className="truncate">{item.label}</span>
+                      <TruncatedText text={item.label} />
                     )}
 
                     {/* Active Indicator Dot (Collapsed Mode) */}

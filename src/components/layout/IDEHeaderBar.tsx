@@ -24,6 +24,7 @@ import { QuickActionsMenu } from '../ide/QuickActionsMenu';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useNavigate } from '@tanstack/react-router';
 import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -102,7 +103,7 @@ export function IDEHeaderBar({
                     </span>
                 </button>
                 <span className="text-muted-foreground">/</span>
-                <span className="font-medium text-foreground">{projectId}</span>
+                <TruncatedText text={projectId || ''} className="font-medium text-foreground" />
             </div>
             <div className="flex items-center gap-4">
                 {/* Conditional button rendering based on folder state */}

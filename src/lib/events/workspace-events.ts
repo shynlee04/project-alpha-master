@@ -50,6 +50,13 @@ export interface WorkspaceEvents {
   'agent:tool:completed': [{ toolName: string; toolCallId: string; success: boolean; result?: unknown }]
   'agent:tool:failed': [{ toolName: string; toolCallId: string; error: string }]
   'agent:activity:changed': [{ status: 'idle' | 'thinking' | 'executing' | 'error' }]
+
+  // Retry Queue Events (RC-006)
+  'retry:queued': [{ item: { id: string; toolId: string; toolName: string; attempt: number; maxAttempts: number } }]
+  'retry:attempt': [{ item: { id: string; toolId: string; toolName: string }; attempt: number }]
+  'retry:success': [{ item: { id: string; toolId: string; toolName: string }; result: unknown }]
+  'retry:exhausted': [{ item: { id: string; toolId: string; toolName: string }; finalError: string }]
+  'retry:failed': [{ item: { id: string; toolId: string; toolName: string }; error: string }]
 }
 
 export type WorkspaceEventEmitter = EventEmitter<WorkspaceEvents>
