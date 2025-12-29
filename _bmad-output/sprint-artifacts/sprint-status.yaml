@@ -226,13 +226,13 @@ development_status:
   epic-7-retrospective: optional
 
   # EPIC 8: Knowledge Canvas (Days 25-29)
-  epic-8: in_progress # Ralph Loop: Stories + Contexts created and validated 2025-12-30
+  epic-8: done # COMPLETED 2025-12-30 - 5 stories + retrospective complete
   8-1-react-flow-canvas-setup: done # Canvas store + component verified, tests pass
   8-2-source-node-creation: done # SourceNode + drag-drop complete, 7 tests passing
   8-3-concept-node-creation: done # ConceptNode + inline editing complete, 12 tests passing
   8-4-connection-lines: done # COMPLETED 2025-12-30 - Custom edges with 4 relationship types, 25 tests passing
   8-5-canvas-persistence: done # COMPLETED 2025-12-30 - Dexie + Zustand persistence, 17 tests passing
-  epic-8-retrospective: pending
+  epic-8-retrospective: done # _bmad-output/epic-retrospectives/epic-8-retrospective-2025-12-30.md
 
   # EPIC 9: Study Artifacts Generation (Days 30-33)
   epic-9: context_ready # Ralph Loop: Stories + Contexts created and validated 2025-12-30
