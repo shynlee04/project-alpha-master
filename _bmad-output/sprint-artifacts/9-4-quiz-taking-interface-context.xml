@@ -14,6 +14,24 @@
     </file>
   </files>
 
+  <research_notes>
+    <finding source="context7" query="React timer hook countdown stopwatch">
+      <pattern>
+        useEffect with setInterval for countdown
+        useRef for elapsed time tracking
+        clearInterval on unmount
+        pause/resume functionality
+      </pattern>
+    </finding>
+    <finding source="context7" query="React quiz scoring multiple choice feedback">
+      <pattern>
+        Score calculation: correct / total * 100
+        Immediate feedback with explanation display
+        Option states: selected, correct, incorrect styling
+      </pattern>
+    </finding>
+  </research_notes>
+
   <technical_notes>
     <note priority="high">Timer: counts up during quiz</note>
     <note priority="medium">Immediate feedback: show correct/incorrect + explanation</note>
