@@ -15,6 +15,7 @@ import { useCanvasStore } from '../../lib/state/canvas-store';
 import type { CanvasNodeData } from '../../lib/canvas/types';
 import { useResponsive } from '../../hooks/useResponsive';
 import { nodeTypes } from './nodes/nodeTypes';
+import { edgeTypes, defaultEdgeOptions } from './edges/edgeTypes';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop';
 
 // Default viewport options
@@ -121,8 +122,8 @@ function CanvasContent() {
     setReadOnly(isMobile);
   }, [isMobile, setReadOnly]);
 
-  // Use memoized node types from nodeTypes.ts
-  const edgeTypes = useMemo(() => ({}), []);
+  // Use memoized edge types from edgeTypes.ts
+  const memoizedEdgeTypes = useMemo(() => edgeTypes, []);
 
   // Drag and drop handlers
   const { handleDragOver, handleDrop } = useCanvasDrop();

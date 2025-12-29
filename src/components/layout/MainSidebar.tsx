@@ -12,6 +12,7 @@ import { useNavigate, useLocation } from '@tanstack/react-router';
 import {
   Home,
   Folder,
+  Brain,
   Bot,
   Settings,
   ChevronLeft,
@@ -156,6 +157,12 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       label: t('sidebar.projects'),
       icon: Folder,
       path: '/workspace',
+    },
+    {
+      id: 'knowledge' as const,
+      label: t('sidebar.knowledge', 'Knowledge'),
+      icon: Brain,
+      path: '/knowledge',
     },
     {
       id: 'agents' as const,
