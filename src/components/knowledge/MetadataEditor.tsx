@@ -16,6 +16,7 @@ import { Check, X, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import type { SourceMetadataFields } from '@/lib/state/knowledge-store';
+import { useTranslation } from 'react-i18next';
 
 export interface MetadataEditorProps {
     /** The source to edit metadata for */
@@ -41,6 +42,7 @@ const MAX_CONCEPT_LENGTH = 20;
  * - Validates input before saving
  */
 export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps) {
+    const { t } = useTranslation();
     const [summary, setSummary] = useState(source.summary || '');
     const [keyConcepts, setKeyConcepts] = useState<string[]>(source.keyConcepts || []);
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>(
@@ -60,14 +62,14 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
     const handleSave = async () => {
         // Validate summary length
         if (summary.length > MAX_SUMMARY_LENGTH) {
-            toast.error(`Summary must be ${MAX_SUMMARY_LENGTH} characters or less`);
+            toast.error(t('knowledge.metadata.summaryTooLong', { max: MAX_SUMMARY_LENGTH }));
             return;
         }
 
         // Validate concept lengths
         const invalidConcept = keyConcepts.find(c => c.length > MAX_CONCEPT_LENGTH);
         if (invalidConcept) {
-            toast.error(`Concept "${invalidConcept}" must be ${MAX_CONCEPT_LENGTH} characters or less`);
+            toast.error(t('knowledge.metadata.conceptTooLong', { concept: invalidConcept, max: MAX_CONCEPT_LENGTH }));
             return;
         }
 
@@ -78,9 +80,9 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
                 keyConcepts: keyConcepts.length > 0 ? keyConcepts : undefined,
                 suggestedQuestions: suggestedQuestions.length > 0 ? suggestedQuestions : undefined,
             });
-            toast.success('Metadata saved successfully');
+            toast.success(t('knowledge.metadata.savedSuccessfully'));
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Failed to save metadata');
+            toast.error(error instanceof Error ? error.message : t('knowledge.metadata.saveFailed'));
         } finally {
             setIsSaving(false);
         }
@@ -91,12 +93,12 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
         if (!trimmed) return;
 
         if (trimmed.length > MAX_CONCEPT_LENGTH) {
-            toast.error(`Concept must be ${MAX_CONCEPT_LENGTH} characters or less`);
+            toast.error(t('knowledge.metadata.conceptTooLong', { concept: trimmed, max: MAX_CONCEPT_LENGTH }));
             return;
         }
 
         if (keyConcepts.includes(trimmed)) {
-            toast.error('Concept already exists');
+            toast.error(t('knowledge.metadata.conceptExists'));
             return;
         }
 
@@ -123,18 +125,18 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
     };
 
     return (
-        <div className="border-t border-border-dark bg-surface-darker">
+        <div className="border-t border-border-dark bg-surface-darker" role="region" aria-label={t('knowledge.metadata.edit')}>
             <div className="p-4 space-y-4">
                 {/* Header with Save/Cancel buttons */}
                 <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-foreground">Edit Metadata</h3>
+                    <h3 className="text-sm font-medium text-foreground">{t('knowledge.metadata.edit')}</h3>
                     <div className="flex items-center gap-2">
                         <button
                             type="button"
                             onClick={onCancel}
                             disabled={isSaving}
                             className="p-1.5 hover:bg-surface-dark rounded transition-colors disabled:opacity-50"
-                            aria-label="Cancel"
+                            aria-label={t('knowledge.metadata.cancel')}
                         >
                             <X className="w-4 h-4 text-muted-foreground" />
                         </button>
@@ -143,7 +145,7 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
                             onClick={handleSave}
                             disabled={isSaving}
                             className="p-1.5 bg-primary hover:bg-primary/90 rounded transition-colors disabled:opacity-50"
-                            aria-label="Save"
+                            aria-label={t('knowledge.metadata.save')}
                         >
                             <Check className="w-4 h-4 text-background" />
                         </button>
@@ -152,41 +154,43 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
 
                 {/* Summary Editor */}
                 <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                        Summary
+                    <label htmlFor="summary-input" className="text-sm font-medium text-foreground mb-2 block">
+                        {t('knowledge.metadata.summary')}
                     </label>
                     <textarea
+                        id="summary-input"
                         value={summary}
                         onChange={(e) => setSummary(e.target.value)}
                         maxLength={MAX_SUMMARY_LENGTH}
                         rows={3}
                         className="w-full px-3 py-2 bg-surface-dark border border-border-dark rounded text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none"
-                        placeholder="Enter a 3-sentence summary..."
+                        placeholder={t('knowledge.metadata.summaryPlaceholder')}
                     />
                     <div className="flex justify-between mt-1">
-                        <span className="text-xs text-muted-foreground">
-                            {summary.length} / {MAX_SUMMARY_LENGTH} characters
+                        <span className="text-xs text-muted-foreground" aria-live="polite">
+                            {t('knowledge.metadata.summaryCharCount', { count: summary.length, max: MAX_SUMMARY_LENGTH })}
                         </span>
                     </div>
                 </div>
 
                 {/* Key Concepts Editor */}
                 <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                        Key Concepts
+                    <label htmlFor="concept-input" className="text-sm font-medium text-foreground mb-2 block">
+                        {t('knowledge.metadata.concepts')}
                     </label>
-                    <div className="flex flex-wrap gap-2 mb-2">
+                    <div className="flex flex-wrap gap-2 mb-2" role="list" aria-label={t('knowledge.metadata.concepts')}>
                         {keyConcepts.map((concept) => (
                             <span
                                 key={concept}
                                 className="px-2 py-1 text-xs rounded bg-primary/20 text-primary border border-primary/30 flex items-center gap-1"
+                                role="listitem"
                             >
                                 {concept}
                                 <button
                                     type="button"
                                     onClick={() => handleRemoveConcept(concept)}
                                     className="hover:text-destructive transition-colors"
-                                    aria-label={`Remove ${concept}`}
+                                    aria-label={t('knowledge.metadata.removeConcept', { concept })}
                                 >
                                     <X className="w-3 h-3" />
                                 </button>
@@ -195,19 +199,25 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
                     </div>
                     <div className="flex gap-2">
                         <input
+                            id="concept-input"
                             type="text"
                             value={newConcept}
                             onChange={(e) => setNewConcept(e.target.value)}
                             maxLength={MAX_CONCEPT_LENGTH}
-                            onKeyDown={(e) => e.key === 'Enter' && handleAddConcept()}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleAddConcept();
+                                }
+                            }}
                             className="flex-1 px-3 py-1.5 bg-surface-dark border border-border-dark rounded text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
-                            placeholder="Add a key concept..."
+                            placeholder={t('knowledge.metadata.conceptPlaceholder')}
                         />
                         <button
                             type="button"
                             onClick={handleAddConcept}
                             className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded transition-colors"
-                            aria-label="Add concept"
+                            aria-label={t('knowledge.metadata.addConcept')}
                         >
                             <Plus className="w-4 h-4" />
                         </button>
@@ -218,31 +228,31 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
                 <div>
                     <div className="flex items-center justify-between mb-2">
                         <label className="text-sm font-medium text-foreground">
-                            Suggested Questions
+                            {t('knowledge.metadata.questions')}
                         </label>
                         <button
                             type="button"
                             onClick={handleAddQuestion}
                             className="text-xs text-primary hover:text-primary/80 transition-colors"
                         >
-                            + Add Question
+                            {t('knowledge.metadata.addQuestion')}
                         </button>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2" role="list" aria-label={t('knowledge.metadata.questions')}>
                         {suggestedQuestions.map((question, index) => (
-                            <div key={index} className="flex gap-2">
+                            <div key={index} className="flex gap-2" role="listitem">
                                 <input
                                     type="text"
                                     value={question}
                                     onChange={(e) => handleQuestionChange(index, e.target.value)}
                                     className="flex-1 px-3 py-1.5 bg-surface-dark border border-border-dark rounded text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
-                                    placeholder={`Question ${index + 1}`}
+                                    placeholder={t('knowledge.metadata.questionPlaceholder', { index: index + 1 })}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => handleRemoveQuestion(index)}
                                     className="p-1.5 hover:bg-destructive/20 text-destructive rounded transition-colors"
-                                    aria-label={`Remove question ${index + 1}`}
+                                    aria-label={t('knowledge.metadata.removeConcept', { concept: t('knowledge.metadata.questionPlaceholder', { index: index + 1 }) })}
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </button>
@@ -250,7 +260,7 @@ export function MetadataEditor({ source, onSave, onCancel }: MetadataEditorProps
                         ))}
                         {suggestedQuestions.length === 0 && (
                             <p className="text-sm text-muted-foreground italic">
-                                No suggested questions. Add one above.
+                                {t('knowledge.metadata.noQuestions')}
                             </p>
                         )}
                     </div>

@@ -12,6 +12,7 @@
 
 import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import type { SourceRecord } from '@/lib/state/dexie-db';
+import { useTranslation } from 'react-i18next';
 
 export interface MetadataDisplayProps {
     /** The source to display metadata for */
@@ -54,6 +55,7 @@ function hashToColor(concept: string): string {
  * - Error state if analysis failed
  */
 export function MetadataDisplay({ source }: MetadataDisplayProps) {
+    const { t } = useTranslation();
     const hasMetadata = Boolean(source.summary || source.keyConcepts?.length || source.suggestedQuestions?.length);
     const isAnalyzing = source.metadataExtracted === false && !hasMetadata;
 
@@ -63,21 +65,21 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
     }
 
     return (
-        <div className="border-t border-border-dark bg-surface-darker">
+        <div className="border-t border-border-dark bg-surface-darker" role="region" aria-label={t('knowledge.metadata.title')}>
             {/* AI-analyzed badge */}
             {source.metadataExtracted && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border-b border-primary/20">
-                    <span className="text-sm">AI-analyzed</span>
-                    <span className="text-primary">✨</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border-b border-primary/20" role="status" aria-label={t('knowledge.metadata.aiAnalyzed')}>
+                    <span className="text-sm">{t('knowledge.metadata.aiAnalyzed')}</span>
+                    <span className="text-primary" aria-hidden="true">✨</span>
                 </div>
             )}
 
             {/* Loading state */}
             {isAnalyzing && (
-                <div className="p-4">
+                <div className="p-4" role="status" aria-live="polite" aria-busy="true">
                     <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
-                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        <span>Analyzing with AI...</span>
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                        <span>{t('knowledge.metadata.analyzing')}</span>
                     </div>
                     <SkeletonLoader variant="paragraph" lines={3} />
                 </div>
@@ -86,8 +88,8 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
             {/* Summary */}
             {source.summary && (
                 <div className="p-4 border-b border-border-dark">
-                    <h3 className="text-sm font-medium text-foreground mb-2">Summary</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <h3 id="metadata-summary" className="text-sm font-medium text-foreground mb-2">{t('knowledge.metadata.summary')}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed" aria-labelledby="metadata-summary">
                         {source.summary}
                     </p>
                 </div>
@@ -96,12 +98,13 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
             {/* Key Concepts */}
             {source.keyConcepts && source.keyConcepts.length > 0 && (
                 <div className="p-4 border-b border-border-dark">
-                    <h3 className="text-sm font-medium text-foreground mb-2">Key Concepts</h3>
-                    <div className="flex flex-wrap gap-2">
+                    <h3 id="metadata-concepts" className="text-sm font-medium text-foreground mb-2">{t('knowledge.metadata.concepts')}</h3>
+                    <div className="flex flex-wrap gap-2" role="list" aria-labelledby="metadata-concepts">
                         {source.keyConcepts.map((concept, index) => (
                             <span
                                 key={index}
                                 className={`px-2 py-1 text-xs rounded border ${hashToColor(concept)}`}
+                                role="listitem"
                             >
                                 {concept}
                             </span>
@@ -113,14 +116,14 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
             {/* Suggested Questions */}
             {source.suggestedQuestions && source.suggestedQuestions.length > 0 && (
                 <div className="p-4">
-                    <h3 className="text-sm font-medium text-foreground mb-2">Suggested Questions</h3>
-                    <ul className="space-y-2">
+                    <h3 id="metadata-questions" className="text-sm font-medium text-foreground mb-2">{t('knowledge.metadata.questions')}</h3>
+                    <ul className="space-y-2" aria-labelledby="metadata-questions">
                         {source.suggestedQuestions.map((question, index) => (
                             <li
                                 key={index}
                                 className="text-sm text-muted-foreground flex items-start gap-2"
                             >
-                                <span className="text-primary mt-0.5">•</span>
+                                <span className="text-primary mt-0.5" aria-hidden="true">•</span>
                                 <span>{question}</span>
                             </li>
                         ))}

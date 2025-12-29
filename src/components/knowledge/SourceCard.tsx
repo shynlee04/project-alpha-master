@@ -16,6 +16,7 @@ import { exportText, exportPDF } from '@/utils/export-utils';
 import { toast } from 'sonner';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useTranslation } from 'react-i18next';
 
 interface SourceCardProps {
     source: SourceRecord;
@@ -129,6 +130,7 @@ function exportSource(source: SourceRecord): void {
 }
 
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
+    const { t } = useTranslation();
     const { deleteSource, renameSource, extractMetadata, extractingMetadata } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showRenameDialog, setShowRenameDialog] = useState(false);
@@ -169,9 +171,9 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const handleExtractMetadata = async () => {
         try {
             await extractMetadata(source.id);
-            toast.success('Metadata extracted successfully');
+            toast.success(t('knowledge.metadata.extractedSuccessfully'));
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Failed to extract metadata');
+            toast.error(error instanceof Error ? error.message : t('knowledge.metadata.extractFailed'));
         }
     };
 
@@ -194,7 +196,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                         </h3>
                         {/* Story 6-4: AI-analyzed badge */}
                         {source.metadataExtracted && (
-                            <span className="text-xs text-primary" title="AI-analyzed">
+                            <span className="text-xs text-primary" title={t('knowledge.metadata.aiAnalyzed')}>
                                 ✨
                             </span>
                         )}
