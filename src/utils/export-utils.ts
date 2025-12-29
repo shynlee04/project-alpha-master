@@ -29,13 +29,8 @@ export function sanitizeFilename(filename: string): string {
         return '';
     }
 
-    // Replace common URL schemes first to preserve readability
-    let sanitized = filename
-        .replace(/:\/\//g, '--')  // :// -> --
-        .replace(/:/g, '-');        // : -> -
-
-    // Remove remaining invalid characters
-    sanitized = sanitized.replace(INVALID_CHARS, '');
+    // Remove invalid characters
+    let sanitized = filename.replace(INVALID_CHARS, '');
 
     // Replace spaces and multiple underscores with single underscore
     sanitized = sanitized.replace(/[ _]+/g, '_');

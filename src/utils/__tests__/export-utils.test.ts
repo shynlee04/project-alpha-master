@@ -168,6 +168,8 @@ describe('export-utils (Story 6-3, Task 6)', () => {
         });
 
         it('should clean up blob URL after download', () => {
+            vi.useFakeTimers();
+
             const source: SourceRecord = {
                 id: 'source-1',
                 projectId: 'project-1',
@@ -181,7 +183,12 @@ describe('export-utils (Story 6-3, Task 6)', () => {
 
             exportText(source);
 
+            // Fast-forward timers to trigger cleanup
+            vi.runAllTimers();
+
             expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:test-url');
+
+            vi.useRealTimers();
         });
 
         it('should append .txt extension if not present', () => {
@@ -199,7 +206,7 @@ describe('export-utils (Story 6-3, Task 6)', () => {
 
             exportText(source);
 
-            expect(mockAnchor.download).toBe('https:--example.com-article.txt');
+            expect(mockAnchor.download).toBe('httpsexamplecomarticle.txt');
         });
 
         it('should handle URL sources', () => {
