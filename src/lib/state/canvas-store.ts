@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import Dexie from 'dexie';
 import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflow/react';
 import type { Node, Edge, Viewport } from '@xyflow/react';
-import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData } from '../canvas/types';
+import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData, CanvasRelationshipType } from '../canvas/types';
 
 // IndexedDB database for canvas persistence
 const canvasDb = new Dexie('KnowledgeCanvasDB');
@@ -47,10 +47,31 @@ export const useCanvasStore = create<CanvasStoreState>()(
         set({ edges: newEdges });
       },
 
-      // Connection handler
+      // Connection handler - creates relationship edges
       onConnect: (connection) => {
         const { edges } = get();
-        const newEdge = rfAddEdge(connection, edges) as Edge<any>;
+        const newEdge = rfAddEdge(
+          {
+            ...connection,
+            type: 'relationship',
+            animated: true,
+          },
+          edges,
+        ) as Edge<any>;
+        set({ edges: [...edges, newEdge] });
+      },
+
+      // Add edge with specific relationship type
+      addEdgeWithRelationship: (connection: { source: string; target: string }, relationship: CanvasRelationshipType) => {
+        const { edges } = get();
+        const newEdge: Edge<any> = {
+          id: `edge-${connection.source}-${connection.target}-${Date.now()}`,
+          source: connection.source,
+          target: connection.target,
+          type: 'relationship',
+          data: { relationship },
+          animated: true,
+        };
         set({ edges: [...edges, newEdge] });
       },
 
