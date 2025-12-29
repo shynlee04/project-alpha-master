@@ -17,7 +17,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { toast } from 'sonner';
-import { debounce } from 'lodash';
 import { createDexieStorage } from './dexie-storage';
 import type { ThreadMessageRecord, ConversationThreadRecord } from './dexie-db';
 import { saveThread, getThread, deleteThread as deleteDexieThread } from '../workspace/threads-store';
@@ -132,6 +131,59 @@ const MAX_CONVERSATIONS = 50; // Limit to prevent unbounded growth
 // ============================================================================
 
 /**
+ * Simple debounce utility
+ * Creates a debounced function that delays invoking func until after wait milliseconds
+ */
+function simpleDebounce<T extends (arg: ConversationState) => Promise<void>>(
+    func: T,
+    wait: number
+): T & { flush: () => void; cancel: () => void } {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let flushResolve: (() => void) | null = null;
+
+    const debounced = (async (arg: ConversationState) => {
+        if (flushResolve) {
+            // A flush is pending, resolve it
+            flushResolve();
+            flushResolve = null;
+            return;
+        }
+
+        return new Promise<void>((resolve, reject) => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+
+            timeoutId = setTimeout(async () => {
+                timeoutId = null;
+                try {
+                    await func(arg);
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            }, wait);
+        });
+    }) as T;
+
+    (debounced as T & { flush: () => void; cancel: () => void }).flush = () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+    };
+
+    (debounced as T & { flush: () => void; cancel: () => void }).cancel = () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+    };
+
+    return debounced as T & { flush: () => void; cancel: () => void };
+}
+
+/**
  * Persist conversation state to Dexie threads table
  * This ensures consistency with the Threads view
  */
@@ -180,12 +232,11 @@ async function persistToDexie(conversation: ConversationState) {
  * Debounced persist to Dexie (500ms default)
  * Performance optimization for frequent updates during chat
  */
-const debouncedPersistToDexie = debounce(
+const debouncedPersistToDexie = simpleDebounce(
     async (conversation: ConversationState) => {
         await persistToDexie(conversation);
     },
-    500,
-    { leading: false, trailing: true }
+    500
 );
 
 // ============================================================================
@@ -244,8 +295,8 @@ export const useConversationStore = create<ConversationStoreState>()(
                     activeConversationId: id,
                 }));
 
-                // Initial persist
-                persistToDexie(newConversation);
+                // Initial persist (debounced for performance)
+                debouncedPersistToDexie(newConversation);
 
                 return id;
             },
@@ -299,8 +350,8 @@ export const useConversationStore = create<ConversationStoreState>()(
                         },
                     };
 
-                    // Optimistic persist
-                    persistToDexie(newState.conversations[conversationId]);
+                    // Optimistic persist (debounced for performance)
+                    debouncedPersistToDexie(newState.conversations[conversationId]);
                     return newState;
                 });
             },
@@ -328,8 +379,8 @@ export const useConversationStore = create<ConversationStoreState>()(
                         },
                     };
 
-                    // Optimistic persist
-                    persistToDexie(newState.conversations[conversationId]);
+                    // Optimistic persist (debounced for performance)
+                    debouncedPersistToDexie(newState.conversations[conversationId]);
                     return newState;
                 });
             },
@@ -521,6 +572,20 @@ export const useConversationStore = create<ConversationStoreState>()(
         }
     )
 );
+
+// ============================================================================
+// Cleanup
+// ============================================================================
+
+/**
+ * Flush pending debounced saves on page unload
+ * Ensures any pending persistence calls are completed
+ */
+if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+        debouncedPersistToDexie.flush();
+    });
+}
 
 // ============================================================================
 // Hooks

@@ -281,8 +281,32 @@ export const Route = createFileRoute('/api/chat')({
                     // Create abort controller for streaming
                     const abortController = new AbortController();
 
-                    // Return SSE stream using non-deprecated toServerSentEventsStream
-                    const readableStream = toServerSentEventsStream(stream, abortController);
+                    // Handle client disconnect - abort the stream when client disconnects
+                    request.signal.addEventListener('abort', () => {
+                        console.log('[/api/chat] Client disconnected, aborting stream');
+                        abortController.abort(new Error('Client disconnected'));
+                    });
+
+                    // Ensure cleanup when stream completes or errors
+                    const cleanup = () => {
+                        if (!abortController.signal.aborted) {
+                            abortController.abort(new Error('Stream completed'));
+                        }
+                    };
+
+                    // Create SSE stream with abort controller
+                    const readableStream = toServerSentEventsStream(
+                        stream,
+                        abortController,
+                        {
+                            onComplete: cleanup,
+                            onError: (error) => {
+                                console.log('[/api/chat] Stream error:', error);
+                                cleanup();
+                            },
+                        }
+                    );
+
                     return new Response(readableStream, {
                         headers: {
                             'Content-Type': 'text/event-stream',
