@@ -1,0 +1,453 @@
+---
+title: "6-2 Source Card UI with Preview"
+epic: "Epic 6: Source Ingestion & Management"
+story: "6-2-source-card-ui"
+status: "in-progress"
+priority: "P0"
+points: 3
+created: "2025-12-30"
+sprint: "SPRINT-6"
+team: "Team A"
+dependencies:
+  - "6-1-source-import-pipeline"
+---
+
+# Story: 6-2 Source Card UI with Preview
+
+**As a** user with multiple sources,
+**I want** to see my sources as beautiful cards with previews,
+**So that** I can quickly identify and access each source.
+
+---
+
+## Story Context
+
+### From Epic 6
+
+Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source card UI, source management, and metadata extraction. Story 6.2 delivers the Source Card UI that displays imported sources as beautiful cards with quick actions and preview panels.
+
+### User Journey
+
+1. User has imported 3 sources (PDF, URL, text)
+2. User opens Knowledge tab
+3. User sees 3 beautiful cards with:
+   - PDF: Document icon, "Machine Learning Basics.pdf", 12 min read
+   - URL: Link icon, "Understanding RAG", 8 min read
+   - Text: Text icon, "My Notes", 2 min read
+4. User hovers over PDF card - sees quick actions: Open, Delete, Synthesize
+5. User clicks card - preview panel opens with formatted text
+6. User closes preview - returns to card grid
+
+### Technical Context
+
+**UI Components:**
+- `SourceCard.tsx`: Card component with thumbnail/icon, title, metadata
+- `SourceCardGrid.tsx`: Responsive grid layout for cards
+- `SourcePreviewPanel.tsx`: Preview panel with formatted content
+
+**State Management:**
+- Zustand store: `useKnowledgeStore` for sources state
+- Live query: `useLiveQuery` for reactive source list
+
+**Styling:**
+- 8-bit gaming aesthetic (dark theme)
+- Design tokens for consistent spacing and colors
+- Responsive layout (mobile, tablet, desktop)
+
+**Key Files:**
+- `src/components/knowledge/SourceCard.tsx`: Card component
+- `src/components/knowledge/SourceCardGrid.tsx`: Grid layout
+- `src/components/knowledge/SourcePreviewPanel.tsx`: Preview panel
+- `src/lib/state/knowledge-store.ts`: Zustand store for sources
+
+---
+
+## Acceptance Criteria
+
+### AC-1: Source Card Display
+
+**Given** a source has been imported
+**When** it appears in the Source panel
+**Then** a card shows:
+- **Thumbnail/icon**: Document icon for PDF, link icon for URL, text icon for text
+- **Title**: Source title (truncated if > 50 chars)
+- **Source type badge**: "PDF", "URL", or "TEXT" label
+- **Reading time**: Estimated minutes (wordCount / 200 words per minute)
+- **Char/word count**: For text sources: "1,234 chars", for PDF/URL: "5,678 words"
+
+**And** card styling uses:
+- 8-bit dark theme colors (from design tokens)
+- Hover effect: Scale up 1.05x, shadow glow
+- Border: 1px solid border-color from design tokens
+- Border radius: 8px
+
+---
+
+### AC-2: Quick Actions on Card
+
+**Given** a user hovers over a source card
+**When** hover state activates
+**Then** quick actions appear:
+- **Open button**: Opens preview panel (eye icon)
+- **Delete button**: Deletes source with confirmation (trash icon)
+- **Synthesize button**: Starts AI synthesis (sparkles icon) - disabled until Story 6.4
+
+**And** buttons use:
+- Icon components from `src/components/ui/icons/`
+- Tooltip on hover: "Open", "Delete", "Synthesize"
+- Click animations: Press down effect
+
+**And** delete action:
+- Shows confirmation dialog: "Delete '{title}'?"
+- On confirm: Deletes from IndexedDB, removes card with fade-out animation
+- On cancel: Closes dialog
+
+---
+
+### AC-3: Preview Panel
+
+**Given** a user clicks a source card's Open button
+**When** the preview panel opens
+**Then** panel shows:
+- **Header**: Source title, Close button
+- **Metadata bar**: Source type, import date, reading time
+- **Content area**: Formatted text content
+  - For PDF/URL: Preserve paragraph structure
+  - For text: Preserve line breaks
+- **Scrollable**: Content area scrolls independently
+
+**And** panel behavior:
+- **Slide-in animation** from right side (300ms ease-out)
+- **Backdrop**: Semi-transparent overlay (click to close)
+- **Close**: Click backdrop, Close button, or press Escape key
+- **Responsive**: Full screen on mobile, 600px panel on desktop
+
+---
+
+### AC-4: Responsive Card Grid
+
+**Given** a user has multiple sources
+**When** viewing the source grid
+**Then** grid layout adapts:
+- **Mobile (< 768px)**: 1 column, full-width cards
+- **Tablet (768px - 1024px)**: 2 columns, cards with gap
+- **Desktop (> 1024px)**: 3-4 columns (auto-fill), cards with gap
+
+**And** grid uses:
+- CSS Grid with `minmax(300px, 1fr)` for responsive columns
+- Gap: 16px from design tokens
+- Padding: 24px from design tokens
+
+---
+
+### AC-5: Empty State
+
+**Given** a user has no imported sources
+**When** viewing the source panel
+**Then** empty state shows:
+- **Illustration**: Icon or image representing empty state
+- **Message**: "No sources yet. Import your first PDF, URL, or text to get started."
+- **Action button**: "Import Source" button (opens SourceDropZone)
+
+**And** empty state uses:
+- Center alignment
+- 8-bit styling (pixel art icon if available)
+- Colors: Muted text color from design tokens
+
+---
+
+## Research Requirements
+
+### MCP Research Tasks (MANDATORY before implementation)
+
+1. **Zustand Store Patterns**
+   - Query Context7 for Zustand best practices
+   - Verify async action patterns for Dexie integration
+   - Test store persistence and rehydration
+
+2. **React Component Testing**
+   - Query Context7 for React Testing Library patterns
+   - Verify async/await in component tests
+   - Test user interactions (hover, click, scroll)
+
+3. **CSS Grid Responsive Layouts**
+   - Research CSS Grid auto-fill with minmax patterns
+   - Verify mobile-first responsive breakpoints
+   - Test grid behavior with different card counts
+
+4. **Design Tokens Usage**
+   - Review existing design tokens in design-tokens.css
+   - Verify 8-bit color scheme tokens
+   - Check animation token values for slide-in effects
+
+---
+
+## Implementation Tasks
+
+### Task 1: Create Knowledge Store (Zustand)
+
+**File:** `src/lib/state/knowledge-store.ts`
+
+Create Zustand store for source management:
+```typescript
+import { create } from 'zustand';
+import { db, type SourceRecord } from '@/lib/state/dexie-db';
+
+interface KnowledgeStore {
+    sources: SourceRecord[];
+    selectedSource: SourceRecord | null;
+    isPreviewOpen: boolean;
+    loading: boolean;
+    error: string | null;
+
+    // Actions
+    loadSources: (projectId: string) => Promise<void>;
+    selectSource: (source: SourceRecord | null) => void;
+    openPreview: (source: SourceRecord) => void;
+    closePreview: () => void;
+    deleteSource: (sourceId: string) => Promise<void>;
+}
+
+export const useKnowledgeStore = create<KnowledgeStore>((set, get) => ({
+    sources: [],
+    selectedSource: null,
+    isPreviewOpen: false,
+    loading: false,
+    error: null,
+
+    loadSources: async (projectId: string) => {
+        set({ loading: true, error: null });
+        try {
+            const sources = await db.sources
+                .where('projectId')
+                .equals(projectId)
+                .toArray();
+            set({ sources, loading: false });
+        } catch (error) {
+            set({ error: (error as Error).message, loading: false });
+        }
+    },
+
+    selectSource: (source) => set({ selectedSource: source }),
+
+    openPreview: (source) => set({
+        selectedSource: source,
+        isPreviewOpen: true,
+    }),
+
+    closePreview: () => set({
+        isPreviewOpen: false,
+        selectedSource: null,
+    }),
+
+    deleteSource: async (sourceId: string) => {
+        try {
+            await db.sources.delete(sourceId);
+            const sources = get().sources.filter(s => s.id !== sourceId);
+            set({ sources });
+        } catch (error) {
+            set({ error: (error as Error).message });
+        }
+    },
+}));
+```
+
+---
+
+### Task 2: Create SourceCard Component
+
+**File:** `src/components/knowledge/SourceCard.tsx`
+
+**Features:**
+- Display icon based on source type
+- Show title, reading time, word/char count
+- Quick actions on hover (Open, Delete, Synthesize)
+- Hover animations (scale up, shadow glow)
+- Delete confirmation dialog
+
+**Styling:**
+- Use design tokens for colors, spacing, border-radius
+- 8-bit aesthetic with hover effects
+
+---
+
+### Task 3: Create SourceCardGrid Component
+
+**File:** `src/components/knowledge/SourceCardGrid.tsx`
+
+**Features:**
+- Responsive grid layout (1/2/3-4 columns)
+- Empty state when no sources
+- Load sources from knowledge store on mount
+
+**Styling:**
+- CSS Grid with `minmax(300px, 1fr)`
+- Gap and padding from design tokens
+- Mobile-first responsive breakpoints
+
+---
+
+### Task 4: Create SourcePreviewPanel Component
+
+**File:** `src/components/knowledge/SourcePreviewPanel.tsx`
+
+**Features:**
+- Slide-in animation from right
+- Backdrop overlay (click to close)
+- Scrollable content area
+- Header with title and close button
+- Metadata bar with source info
+- Close on Escape key
+
+**Styling:**
+- Fixed position panel (600px width on desktop, full screen on mobile)
+- Backdrop with semi-transparent black
+- Animation from design tokens (300ms ease-out)
+
+---
+
+### Task 5: Create Icon Components for Source Types
+
+**File:** `src/components/ui/icons/SourceIcon.tsx`, `DocumentIcon.tsx`, `LinkIcon.tsx`, `TextIcon.tsx`
+
+**Features:**
+- 8-bit styled icons
+- Used in SourceCard component
+- Follow existing icon patterns
+
+---
+
+### Task 6: Add unit tests
+
+**File:** `src/components/knowledge/__tests__/SourceCard.test.tsx`
+
+**Test cases:**
+- SourceCard renders with correct icon for each type
+- Reading time calculation is correct
+- Quick actions appear on hover
+- Delete confirmation dialog appears
+- Preview panel opens and closes
+- Responsive grid layout adapts
+- Empty state displays when no sources
+
+---
+
+## Technical Notes
+
+### Reading Time Calculation
+
+| Source Type | Formula |
+|-------------|---------|
+| PDF/URL | `Math.ceil(wordCount / 200)` = minutes |
+| Text | `Math.ceil(charCount / 1000)` = minutes |
+
+Average reading speed: 200 words per minute, 1000 characters per minute.
+
+### Zustand Store Pattern
+
+| Operation | Method |
+|-----------|--------|
+| Load sources | `db.sources.where('projectId').equals(id).toArray()` |
+| Select source | `set({ selectedSource: source })` |
+| Open preview | `set({ isPreviewOpen: true, selectedSource: source })` |
+| Close preview | `set({ isPreviewOpen: false, selectedSource: null })` |
+| Delete source | `db.sources.delete(id)` + filter from state |
+
+### Design Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--spacing-md` | 16px | Grid gap |
+| --spacing-lg | 24px | Grid padding |
+| --border-radius-md | 8px | Card border radius |
+| --color-border | var(--color-gray-700) | Card border |
+| --color-bg-card | var(--color-gray-800) | Card background |
+| --transition-duration | 300ms | Panel animation |
+
+### Responsive Breakpoints
+
+| Breakpoint | Width | Columns |
+|------------|-------|---------|
+| Mobile | < 768px | 1 column |
+| Tablet | 768px - 1024px | 2 columns |
+| Desktop | > 1024px | 3-4 columns (auto-fill) |
+
+---
+
+## Dependencies
+
+| Dependency | Version | Purpose |
+|------------|---------|---------|
+| zustand | ^4.5.0 | State management for sources |
+| dexie | ^3.2.4 | IndexedDB source persistence |
+| @/lib/state/dexie-db | Local | SourceRecord interface |
+| @/components/ui/icons | Local | Icon components |
+| @/styles/design-tokens.ts | Local | Design token constants |
+
+---
+
+## Definition of Done
+
+- [ ] All acceptance criteria implemented (AC-1 through AC-5)
+- [ ] Unit tests written (component tests with React Testing Library)
+- [ ] Zustand store created for knowledge state
+- [ ] Responsive grid layout working (mobile/tablet/desktop)
+- [ ] Preview panel with slide-in animation
+- [ ] Empty state with call-to-action
+- [ ] Delete confirmation dialog
+- [ ] Story file updated with Dev Agent Record
+- [ ] `sprint-status.yaml` updated: `6-2-source-card-ui: review`
+
+**Notes:**
+- UI-focused story (Team A responsibility)
+- Synthesize button disabled until Story 6.4
+- No i18n needed initially (can add later)
+
+---
+
+## References
+
+- **Architecture:** `_bmad-output/project-planning-artifacts/architecture.md` - Section 4.2 (State Persistence)
+- **PRD:** `_bmad-output/project-planning-artifacts/prd.md` - Section 6.2 (Source Card UI)
+- **UX Design:** `_bmad-output/project-planning-artifacts/ux-design-specification.md` - Section 15 (Knowledge Synthesis Interface)
+- **Epic 6:** `_bmad-output/epics.md` - Story 6.2
+- **Story 6.1:** `_bmad-output/sprint-artifacts/6-1-source-import-pipeline.md` - Source import pipeline
+
+---
+
+## Dev Agent Record
+
+**Agent:** Claude Sonnet 4.5
+**Session:** 2025-12-30T02:15:00+07:00
+
+#### Task Progress:
+- [x] T1: Create Knowledge Store (Zustand) - COMPLETE (16 tests passing)
+- [ ] T2: Create SourceCard Component - IN PROGRESS
+- [ ] T3: Create SourceCardGrid Component - PENDING
+- [ ] T4: Create SourcePreviewPanel Component - PENDING
+- [ ] T5: Create Icon Components - PENDING
+- [ ] T6: Add unit tests - PENDING
+
+#### Research Executed:
+- [ ] Codebase: Existing Zustand store patterns
+- [ ] Codebase: React component patterns
+- [ ] Codebase: Design tokens usage
+
+#### Files Changed:
+| File | Action | Lines |
+|------|--------|-------|
+| _bmad-output/sprint-artifacts/6-2-source-card-ui.md | Created | TBD |
+
+#### Tests Created:
+- TBD
+
+#### Test Results:
+- TBD
+
+#### Decisions Made:
+- TBD
+
+#### Known Issues:
+- TBD
+
+---

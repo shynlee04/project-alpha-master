@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Story 6.2 Context XML
+  Story: Source Card UI with Preview
+  Epic: Epic 6 - Source Ingestion &amp; Management
+  Created: 2025-12-30T02:45:00+07:00
+  Phase: Story Context Creation (Phase 2)
+  Team: Single Agent (Admin)
+  Agent Mode: @bmad-bmm-dev
+-->
+
+<context>
+  <meta>
+    <story_key>6-2-source-card-ui</story_key>
+    <story_file>_bmad-output/sprint-artifacts/6-2-source-card-ui.md</story_file>
+    <epic>Epic 6 - Source Ingestion &amp; Management</epic>
+    <phase>2 - Context Creation</phase>
+    <date>2025-12-30</date>
+  </meta>
+
+  <!-- ========================================================================
+       RESEARCH NOTES (MCP Tools)
+       ======================================================================== -->
+
+  <research>
+    <!-- 1. Zustand Store Patterns (Context7: /pmndrs/zustand) -->
+    <section name="zustand-patterns">
+      <source>Context7: /pmndrs/zustand</source>
+      <findings>
+        <pattern name="Type-Safe Store with Persist">
+          <description>Use create&lt;State&gt;() syntax with persist middleware for type-safe stores</description>
+          <code><![CDATA[
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+
+interface MyState {
+  items: Item[]
+  addItem: (item: Item) => void
+}
+
+export const useStore = create<MyState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      addItem: (item) => set({ items: [...get().items, item] }),
+    }),
+    {
+      name: 'storage-name',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ items: state.items }),
+    }
+  )
+)
+          ]]></code>
+        </pattern>
+        <pattern name="Dexie Storage Adapter">
+          <description>Project uses custom createDexieStorage for IndexedDB persistence</description>
+          <reference_file>src/lib/state/dexie-storage.ts</reference_file>
+        </pattern>
+        <pattern name="Hydration Pattern">
+          <description>Use _hasHydrated flag and onRehydrateStorage callback</description>
+          <reference_file>src/lib/state/conversation-store.ts:541-571</reference_file>
+        </pattern>
+      </findings>
+    </section>
+
+    <!-- 2. React Testing Library (Context7: /websites/testing-library) -->
+    <section name="testing-patterns">
+      <source>Context7: /websites/testing-library</source>
+      <findings>
+        <pattern name="Component Testing">
+          <description>Use render, screen queries, and userEvent for interactions</description>
+          <code><![CDATA[
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+
+test('component renders and handles click', async () => {
+  render(<MyComponent />)
+
+  const button = screen.getByRole('button', { name: /click me/i })
+  await userEvent.click(button)
+
+  expect(screen.getByText('Clicked')).toBeInTheDocument()
+})
+          ]]></code>
+        </pattern>
+        <pattern name="Store Mocking">
+          <description>Mock Zustand store using vi.mock or create mocked store</description>
+          <code><![CDATA[
+vi.mock('@/lib/state/my-store', () => ({
+  useMyStore: () => ({
+    items: mockItems,
+    addItem: vi.fn(),
+  })
+}))
+          ]]></code>
+        </pattern>
+      </findings>
+    </section>
+
+    <!-- 3. CSS Grid Responsive Layouts -->
+    <section name="responsive-layouts">
+      <source>Project Pattern Analysis</source>
+      <findings>
+        <pattern name="Breakpoint System">
+          <description>useResponsive hook provides isMobile, isTablet, isDesktop</description>
+          <reference_file>src/hooks/useResponsive.ts</reference_file>
+          <breakpoints>
+            <mobile>&lt; 768px</mobile>
+            <tablet>768px - 1023px</tablet>
+            <desktop>&gt;= 1024px</desktop>
+          </breakpoints>
+        </pattern>
+        <pattern name="CSS Grid with Tailwind">
+          <description>Use grid-cols-{n} with responsive prefixes</description>
+          <code><![CDATA[
+<!-- Mobile: 1 col, Tablet: 2 cols, Desktop: 3 cols -->
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {items.map(item => <Card key={item.id} {...item} />)}
+</div>
+          ]]></code>
+        </pattern>
+      </findings>
+    </section>
+
+    <!-- 4. Design Tokens -->
+    <section name="design-tokens">
+      <source>src/styles/design-tokens.css</source>
+      <tokens>
+        <spacing>
+          <spacing-mobile>0.5rem</spacing-mobile>
+          <spacing-tablet>0.75rem</spacing-tablet>
+          <spacing-desktop>1rem</spacing-desktop>
+        </spacing>
+        <colors>
+          <primary>24.6 95% 53.1% (#f97316 - Orange)</primary>
+          <background>240 6% 4% (#0f0f11)</background>
+          <card>240 4% 10% (#18181b)</card>
+          <border>hsl(var(--border))</border>
+        </colors>
+        <radius>
+          <radius>0rem (squared corners, 8-bit style)</radius>
+          <radius-sm>0.125rem</radius-sm>
+          <radius-md>0.25rem</radius-md>
+        </radius>
+        <effects>
+          <shadow-md>Medium shadow for card depth</shadow-md>
+          <hover-translate>translate-x-[1px] translate-y-[1px]</hover-translate>
+        </effects>
+      </tokens>
+    </section>
+  </research>
+
+  <!-- ========================================================================
+       CURRENT CODE STATE
+       ======================================================================== -->
+
+  <current_code>
+    <!-- SourceRecord Database Schema -->
+    <section name="source-record-schema">
+      <file>src/lib/state/dexie-db.ts:342-356</file>
+      <description>SourceRecord type defines the structure of imported sources</description>
+      <code><![CDATA[
+export interface SourceRecord {
+    id: string;                 // Primary key (UUID)
+    projectId: string;          // Foreign key to project
+    type: 'pdf' | 'url' | 'text';
+    title: string;
+    content: string;            // Extracted text content
+    url?: string;               // For URL sources
+    pageCount?: number;         // For PDF sources
+    wordCount?: number;         // For PDF/URL sources
+    charCount?: number;         // For text sources
+    fileSize?: number;          // For PDF sources (bytes)
+    createdAt: number;
+    updatedAt: number;
+}
+      ]]></code>
+      <helpers>
+        <function>getSourcesForProject(projectId): Promise&lt;SourceRecord[]&gt;</function>
+        <function>getSource(id): Promise&lt;SourceRecord | undefined&gt;</function>
+        <function>deleteSource(id): Promise&lt;void&gt;</function>
+        <function>getSourcesByType(projectId, type): Promise&lt;SourceRecord[]&gt;</function>
+        <function>searchSources(projectId, query): Promise&lt;SourceRecord[]&gt;</function>
+      </helpers>
+    </section>
+
+    <!-- Similar Component Pattern: ThreadCard -->
+    <section name="thread-card-pattern">
+      <file>src/components/chat/ThreadCard.tsx</file>
+      <description>Reference pattern for card-based UI component</description>
+      <patterns>
+        <pattern>8-bit styled card with squared corners</pattern>
+        <pattern>Pixel-art shadow effect (shadow-md, hover:shadow-sm)</pattern>
+        <pattern>Hover translate effect for interactive feedback</pattern>
+        <pattern>Active state with border-primary and bg-primary/10</pattern>
+        <pattern>TruncatedText component for long titles</pattern>
+        <pattern>formatRelativeTime utility for timestamps</pattern>
+        <pattern>Delete button with confirmation dialog</pattern>
+      </patterns>
+      <styling_classes>
+        <class>group relative cursor-pointer</class>
+        <class>border border-border-dark bg-surface-dark</class>
+        <class>hover:bg-surface-darker transition-all duration-150</class>
+        <class>shadow-md hover:shadow-sm hover:translate-x-[1px] hover:translate-y-[1px]</class>
+        <class>rounded-none min-h-[90px] p-3</class>
+      </styling_classes>
+    </section>
+
+    <!-- useResponsive Hook -->
+    <section name="responsive-hook">
+      <file>src/hooks/useResponsive.ts</file>
+      <description>Breakpoint detection hook for responsive layouts</description>
+      <code><![CDATA[
+export interface ResponsiveState {
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    isTouch: boolean;
+    isReady: boolean;
+}
+
+const { isMobile, isTablet, isDesktop } = useResponsive();
+      ]]></code>
+    </section>
+  </current_code>
+
+  <!-- ========================================================================
+       ARCHITECTURE PATTERNS
+       ======================================================================== -->
+
+  <architecture>
+    <state_management>
+      <pattern>Zustand for ephemeral UI state</pattern>
+      <pattern>Dexie.js for persistent data storage</pattern>
+      <pattern>Separate stores per domain (hub-store, conversation-store, knowledge-store)</pattern>
+    </state_management>
+
+    <component_structure>
+      <pattern>Components in src/components/{domain}/</pattern>
+      <pattern>Tests co-located in __tests__/ directories</pattern>
+      <pattern>Barrel exports in index.ts files</pattern>
+      <pattern>Interfaces use 'interface' not 'type'</pattern>
+    </component_structure>
+
+    <styling>
+      <pattern>Tailwind CSS with design tokens from CSS variables</pattern>
+      <pattern>8-bit gaming aesthetic (squared corners, pixel shadows)</pattern>
+      <pattern>cn() utility for conditional classes</pattern>
+      <pattern>Responsive prefixes (md:, lg:) for breakpoints</pattern>
+    </styling>
+
+    <i18n>
+      <pattern>All strings via t() hook from react-i18next</pattern>
+      <pattern>Translation keys in src/i18n/{en,vi}.json</pattern>
+      <pattern>Run pnpm i18n:extract after adding keys</pattern>
+    </i18n>
+  </architecture>
+
+  <!-- ========================================================================
+       TECHNICAL NOTES FOR DEVELOPER
+       ======================================================================== -->
+
+  <technical_notes priority="high">
+    <note type="critical">
+      <title>Knowledge Store Requirements</title>
+      <description>Must follow same pattern as conversation-store.ts with Dexie persistence</description>
+      <details>
+        - Use createDexieStorage adapter for IndexedDB
+        - Implement _hasHydrated flag for hydration tracking
+        - Use onRehydrateStorage callback
+        - Store sources array + selectedSourceId + previewVisible
+      </details>
+    </note>
+
+    <note type="high">
+      <title>Icon Components for Source Types</title>
+      <description>Create three new icon components: PDFIcon, URLIcon, TextIcon</description>
+      <details>
+        - Follow pattern from src/components/ui/icons/FileIcon.tsx
+        - Use lucide-react icons: FileText for PDF, Globe for URL, File for text
+        - 8-bit styling with squared corners
+        - Export from src/components/ui/icons/index.ts
+      </details>
+    </note>
+
+    <note type="high">
+      <title>Responsive Grid Layout</title>
+      <description>CSS Grid with breakpoint-based column count</description>
+      <details>
+        - Mobile: grid-cols-1
+        - Tablet: md:grid-cols-2
+        - Desktop: lg:grid-cols-3
+        - Use gap-4 for spacing between cards
+      </details>
+    </note>
+
+    <note type="medium">
+      <title>Empty State Component</title>
+      <description>Create EmptyState when no sources exist</description>
+      <details>
+        - Reference src/components/ui/EmptyState.tsx if exists
+        - Show message: "No sources imported yet"
+        - Suggest: "Import a PDF, URL, or paste text to get started"
+        - Use primary color for call-to-action
+      </details>
+    </note>
+
+    <note type="medium">
+      <title>Source Preview Panel</title>
+      <description>Side panel for viewing full source content</description>
+      <details>
+        - Use react-resizable-panels for resizable panel
+        - Show title, type, metadata at top
+        - Read-only content display with whitespace preservation
+        - Export button (download as .txt)
+        - Close button to hide panel
+      </details>
+    </note>
+  </technical_notes>
+
+  <!-- ========================================================================
+       DEPENDENCIES AND IMPORTS
+       ======================================================================== -->
+
+  <dependencies>
+    <internal_imports>
+      <import>src/lib/state/dexie-db (SourceRecord, helper functions)</import>
+      <import>src/lib/state/dexie-storage (createDexieStorage)</import>
+      <import>src/hooks/useResponsive (breakpoint detection)</import>
+      <import>src/components/ui/icons (existing icon patterns)</import>
+      <import>src/components/ui/button (Button component)</import>
+      <import>src/components/ui/truncated-text (TruncatedText component)</import>
+      <import>src/lib/utils (cn utility)</import>
+    </internal_imports>
+
+    <external_imports>
+      <package>zustand (state management)</package>
+      <package>zustand/middleware (persist, createJSONStorage)</package>
+      <package>react-i18next (i18n)</package>
+      <package>lucide-react (icons)</package>
+      <package>date-fns or Intl (date formatting)</package>
+    </external_imports>
+
+    <testing_imports>
+      <package>vitest (test runner)</package>
+      <package>@testing-library/react (render, screen)</package>
+      <package>@testing-library/user-event (interaction simulation)</package>
+      <package>@testing-library/jest-dom (custom matchers)</package>
+    </testing_imports>
+  </dependencies>
+
+  <!-- ========================================================================
+       ACCEPTANCE CRITERIA MAPPING
+       ======================================================================== -->
+
+  <acceptance_criteria>
+    <criterion id="AC-1">
+      <title>Source Card Display</title>
+      <implementation>
+        - Create SourceCard component with title, type icon, metadata
+        - Display wordCount/pageCount/charCount based on type
+        - Show relative time (e.g., "2 hours ago")
+        - Use 8-bit styling matching ThreadCard pattern
+      </implementation>
+      <test_cases>
+        <case>Render PDF card with page count</case>
+        <case>Render URL card with word count</case>
+        <case>Render text card with char count</case>
+        <case>Display correct icon for each type</case>
+      </test_cases>
+    </criterion>
+
+    <criterion id="AC-2">
+      <title>Quick Actions on Card</title>
+      <implementation>
+        - View button: Opens preview panel
+        - Delete button: Confirm dialog, then delete from DB
+        - Use Button component with ghost variant
+        - Show on hover (opacity-0 group-hover:opacity-100)
+      </implementation>
+      <test_cases>
+        <case>Click view opens preview panel</case>
+        <case>Click delete shows confirmation</case>
+        <case>Confirm delete removes from DB and UI</case>
+        <case>Cancel delete keeps source</case>
+      </test_cases>
+    </criterion>
+
+    <criterion id="AC-3">
+      <title>Preview Panel</title>
+      <implementation>
+        - Create SourcePreviewPanel component
+        - Use react-resizable-panels Panel component
+        - Display full content with whitespace preservation
+        - Show metadata (title, type, date)
+        - Export button to download as .txt
+      </implementation>
+      <test_cases>
+        <case>Panel shows when source selected</case>
+        <case>Content displays with formatting preserved</case>
+        <case>Export button downloads .txt file</case>
+        <case>Close button hides panel</case>
+      </test_cases>
+    </criterion>
+
+    <criterion id="AC-4">
+      <title>Responsive Card Grid</title>
+      <implementation>
+        - Create SourceCardGrid component
+        - Use CSS Grid: grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+        - Use useResponsive hook for conditional behavior
+        - Maintain spacing with gap-4
+      </implementation>
+      <test_cases>
+        <case>Mobile: 1 column layout</case>
+        <case>Tablet: 2 column layout</case>
+        <case>Desktop: 3 column layout</case>
+        <case>Cards wrap correctly on resize</case>
+      </test_cases>
+    </criterion>
+
+    <criterion id="AC-5">
+      <title>Empty State</title>
+      <implementation>
+        - Create EmptyState component or reuse existing
+        - Display when sources array is empty
+        - Show helpful message and call-to-action
+        - Use 8-bit styling consistent with design system
+      </implementation>
+      <test_cases>
+        <case>Empty state shows when no sources</case>
+        <case>Empty state hides when sources exist</case>
+        <case>Message is i18n translated</case>
+      </test_cases>
+    </criterion>
+  </acceptance_criteria>
+
+  <!-- ========================================================================
+       TASK BREAKDOWN WITH IMPLEMENTATION NOTES
+       ======================================================================== -->
+
+  <tasks>
+    <task id="1">
+      <title>Create Knowledge Store (Zustand)</title>
+      <file>src/lib/state/knowledge-store.ts</file>
+      <notes>
+        - Follow conversation-store.ts pattern exactly
+        - State: sources[], selectedSourceId, previewVisible, _hasHydrated
+        - Actions: setSources, selectSource, deleteSource, togglePreview, loadSources
+        - Use Dexie helper functions (getSourcesForProject, deleteSource)
+        - Persist with createDexieStorage
+      </notes>
+    </task>
+
+    <task id="2">
+      <title>Create SourceCard Component</title>
+      <file>src/components/knowledge/SourceCard.tsx</file>
+      <notes>
+        - Props: source, isActive, onSelect, onDelete
+        - Use ThreadCard styling as reference
+        - Format relative time with utility function
+        - Conditionally render metadata based on type
+        - Add i18n translation keys
+      </notes>
+    </task>
+
+    <task id="3">
+      <title>Create SourceCardGrid Component</title>
+      <file>src/components/knowledge/SourceCardGrid.tsx</file>
+      <notes>
+        - Use CSS Grid with responsive breakpoints
+        - Map sources array to SourceCard components
+        - Show EmptyState when sources.length === 0
+        - Use useKnowledgeStore hook for data
+      </notes>
+    </task>
+
+    <task id="4">
+      <title>Create SourcePreviewPanel Component</title>
+      <file>src/components/knowledge/SourcePreviewPanel.tsx</file>
+      <notes>
+        - Use react-resizable-panels Panel
+        - Props: source, visible, onClose
+        - Display content with white-space: pre-wrap
+        - Export as .txt functionality (Blob + URL.createObjectURL)
+      </notes>
+    </task>
+
+    <task id="5">
+      <title>Create Icon Components for Source Types</title>
+      <files>
+        <file>src/components/ui/icons/PDFIcon.tsx</file>
+        <file>src/components/ui/icons/URLIcon.tsx</file>
+        <file>src/components/ui/icons/TextIcon.tsx</file>
+      </files>
+      <notes>
+        - Use lucide-react: FileText, Globe, File
+        - Follow FileIcon.tsx pattern
+        - Export from icons/index.ts
+      </notes>
+    </task>
+
+    <task id="6">
+      <title>Add Unit Tests</title>
+      <files>
+        <file>src/lib/state/__tests__/knowledge-store.test.ts</file>
+        <file>src/components/knowledge/__tests__/SourceCard.test.tsx</file>
+        <file>src/components/knowledge/__tests__/SourceCardGrid.test.tsx</file>
+        <file>src/components/knowledge/__tests__/SourcePreviewPanel.test.tsx</file>
+      </files>
+      <notes>
+        - Mock Dexie helper functions
+        - Mock useKnowledgeStore for component tests
+        - Test user interactions with userEvent
+        - Test responsive behavior with viewport mocking
+      </notes>
+    </task>
+  </tasks>
+
+  <!-- ========================================================================
+       GOTCHAS AND WARNINGS
+       ======================================================================== -->
+
+  <gotchas>
+    <gotcha severity="critical">
+      <title>Dexie Table Schema Version</title>
+      <description>sources table was added in schema version 11</description>
+      <check>Verify database migration runs correctly in existing installations</check>
+      <reference>dexie-db.ts:742-780</reference>
+    </gotcha>
+
+    <gotcha severity="high">
+      <title>Hydration Race Condition</title>
+      <description>Zustand store may not be hydrated on first render</description>
+      <check>Use _hasHydrated flag or render check before accessing sources</check>
+      <pattern>if (!hasHydrated) return &lt;Loading /&gt;</pattern>
+    </gotcha>
+
+    <gotcha severity="medium">
+      <title>i18n Key Extraction</title>
+      <description>Must run pnpm i18n:extract after adding new translation keys</description>
+      <check>Add translation keys to both en.json and vi.json</check>
+    </gotcha>
+
+    <gotcha severity="low">
+      <title>8-bit Aesthetic Consistency</title>
+      <description>All squared corners, no rounded corners except radius-sm/md</description>
+      <check>Use rounded-none for card containers</check>
+    </gotcha>
+  </gotchas>
+
+  <!-- ========================================================================
+       HANDOFF ARTIFACT
+       ======================================================================== -->
+
+  <handoff>
+    <to>@bmad-bmm-dev</to>
+    <task>Implement Story 6.2: Source Card UI with Preview</task>
+    <methodology>TDD (Test-Driven Development)</methodology>
+    <instructions>
+      1. Read this context XML completely before starting
+      2. Follow task breakdown in order (1-6)
+      3. Write failing tests FIRST for each component
+      4. Implement minimal code to make tests pass
+      5. Refactor for clarity and maintainability
+      6. Update sprint-status.yaml after completion
+      7. Create pull request or commit with story reference
+    </instructions>
+    <success_criteria>
+      - All acceptance criteria implemented and tested
+      - 100% test coverage for new components
+      - No TypeScript errors
+      - i18n keys extracted and translated
+      - Responsive layout verified on mobile/tablet/desktop
+      - All sources use Dexie helper functions correctly
+    </success_criteria>
+  </handoff>
+</context>

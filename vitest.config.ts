@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   test: {
     environment: 'node',
-    environmentMatchGlobs: [['**/*.test.tsx', 'jsdom']],
+    environmentMatchGlobs: [['**/*.test.tsx', 'jsdom'], ['src/lib/state/**/*.test.ts', 'jsdom']],
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
   },
