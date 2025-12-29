@@ -18,7 +18,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
-import type { SourceRecord, CollectionRecord } from './dexie-db';
+import type { SourceRecord, CollectionRecord, SourceMetadata } from './dexie-db';
 import {
     db,
     getCollectionsForProject as dbGetCollectionsForProject,
@@ -119,6 +119,14 @@ interface KnowledgeStoreState {
 
     /** Filter sources by collection */
     filterByCollection: (collectionId: string | null) => void;
+
+    // Story 6-4: Metadata & Processing Actions
+
+    /** Update source metadata */
+    updateSourceMetadata: (sourceId: string, metadata: SourceMetadata) => Promise<void>;
+
+    /** Update processing status */
+    updateProcessingStatus: (sourceId: string, status: 'pending' | 'processing' | 'completed' | 'failed', error?: string) => Promise<void>;
 
     /** Reset store to initial state */
     reset: () => void;
@@ -370,7 +378,7 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
             removeSourceFromCollection: async (sourceId: string, collectionId: string) => {
                 set({ loading: true, error: null });
                 try {
-                    await dbRemoveSourceToCollection(collectionId, sourceId);
+                    await dbRemoveSourceFromCollection(collectionId, sourceId);
 
                     // TODO: Get projectId from current project context
                     // For now, get it from the collection being updated
@@ -388,6 +396,49 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
 
             filterByCollection: (collectionId: string | null) => {
                 set({ filteredCollectionId: collectionId });
+            },
+
+            updateSourceMetadata: async (sourceId: string, metadata: SourceMetadata) => {
+                try {
+                    await db.sources.update(sourceId, {
+                        metadata,
+                        updatedAt: Date.now(),
+                    });
+
+                    set((state) => ({
+                        sources: state.sources.map(s =>
+                            s.id === sourceId ? { ...s, metadata } : s
+                        ),
+                        selectedSource:
+                            state.selectedSource?.id === sourceId
+                                ? { ...state.selectedSource, metadata }
+                                : state.selectedSource
+                    }));
+                } catch (error) {
+                    set({ error: (error as Error).message });
+                }
+            },
+
+            updateProcessingStatus: async (sourceId: string, status: 'pending' | 'processing' | 'completed' | 'failed', processingError?: string) => {
+                try {
+                    await db.sources.update(sourceId, {
+                        processingStatus: status,
+                        processingError,
+                        updatedAt: Date.now(),
+                    });
+
+                    set((state) => ({
+                        sources: state.sources.map(s =>
+                            s.id === sourceId ? { ...s, processingStatus: status, processingError } : s
+                        ),
+                        selectedSource:
+                            state.selectedSource?.id === sourceId
+                                ? { ...state.selectedSource, processingStatus: status, processingError }
+                                : state.selectedSource
+                    }));
+                } catch (error) {
+                    set({ error: (error as Error).message });
+                }
             },
 
             reset: () => {

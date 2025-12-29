@@ -235,9 +235,9 @@ development_status:
   epic-8-retrospective: done # _bmad-output/epic-retrospectives/epic-8-retrospective-2025-12-30.md
 
   # EPIC 9: Study Artifacts Generation (Days 30-33)
-  epic-9: in_progress # Story 9.1 complete with 67 tests
+  epic-9: in_progress # Story 9.1 complete, Story 9.2 complete
   9-1-flashcard-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Utils, Tests (67 tests, all passing)
-  9-2-quiz-generator: ready-for-dev # Story file created, ready for dev
+  9-2-quiz-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Tests (24 tests, all passing)
   9-3-flashcard-study-interface: ready-for-dev # Story file created, ready for dev
   9-4-quiz-taking-interface: ready-for-dev # Story file created, ready for dev
   epic-9-retrospective: optional

@@ -353,8 +353,26 @@ export interface SourceRecord {
     collections?: string[];     // Collection IDs (Story 6-3)
     deleted?: boolean;          // Soft delete flag (Story 6-3)
     deletedAt?: number;         // Deletion timestamp (Story 6-3)
+
+    // Metadata (Story 6-4)
+    metadata?: SourceMetadata;
+    processingStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+    processingError?: string;
+
     createdAt: number;
     updatedAt: number;
+}
+
+/**
+ * Metadata for AI analysis (Story 6-4)
+ */
+export interface SourceMetadata {
+    summary?: string;
+    keyConcepts?: string[];
+    authors?: string[];
+    publishedDate?: string;
+    readingTime?: string;
+    language?: string;
 }
 
 /**

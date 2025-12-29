@@ -1,0 +1,84 @@
+<context story="6-4-source-metadata-extraction" created="2025-12-30T04:55:00+07:00">
+  <files>
+    <file path="src/lib/state/dexie-db.ts">
+      <content><![CDATA[
+export interface SourceRecord {
+    id: string;                 // Primary key (UUID)
+    projectId: string;          // Foreign key to project
+    type: 'pdf' | 'url' | 'text';
+    title: string;
+    content: string;            // Extracted text content
+    url?: string;               // For URL sources
+    pageCount?: number;         // For PDF sources
+    wordCount?: number;         // For PDF/URL sources
+    charCount?: number;         // For text sources
+    fileSize?: number;          // For PDF sources (bytes)
+    collections?: string[];     // Collection IDs (Story 6-3)
+    deleted?: boolean;          // Soft delete flag (Story 6-3)
+    deletedAt?: number;         // Deletion timestamp (Story 6-3)
+    // PROPOSED ADDITIONS FOR STORY 6-4
+    // metadata?: {
+    //   summary?: string;
+    //   keyConcepts?: string[];
+    //   authors?: string[];
+    //   publishedDate?: string;
+    // };
+    // processingStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+    createdAt: number;
+    updatedAt: number;
+}
+      ]]></content>
+    </file>
+    <file path="src/components/knowledge/SourceCard.tsx">
+      <content><![CDATA[
+// ... existing imports ...
+import type { SourceRecord } from '@/lib/state/dexie-db';
+
+interface SourceCardProps {
+    source: SourceRecord;
+    isActive?: boolean;
+    onSelect?: (source: SourceRecord) => void;
+}
+
+// ... helper functions ...
+
+export function SourceCard({ source, isActive, onSelect }: SourceCardProps) {
+    // ... existing source card implementation ...
+    // Needs expansion logic for metadata view
+}
+      ]]></content>
+    </file>
+  </files>
+  
+  <research_notes>
+    <finding source="codebase" query="LLM Integration">
+      Use `ProviderAdapterFactory` from `@/lib/agent/providers/provider-adapter` to create instances of `OpenAIAdapter`.
+      This adapter wraps `@tanstack/ai-openai` and likely exposes a method compatible with Vercel AI SDK or TanStack AI.
+      For metadata extraction, a direct completion call is preferred over a chat hook.
+    </finding>
+    <finding source="codebase" query="SourceRecord">
+      SourceRecord in `dexie-db.ts` needs to be updated with `metadata` optional field and `processingStatus`.
+    </finding>
+  </research_notes>
+  
+  <architecture_patterns>
+    <pattern name="Metadata Extractor Service" source="architecture.md">
+      Create a dedicated service `src/lib/knowledge/metadata-extractor.ts` that handles:
+      1. Local metadata extraction (regex/parsing)
+      2. AI-powered extraction (summary/concepts) via ProviderAdapter
+      3. State updates via KnowledgeStore
+    </pattern>
+    <pattern name="Non-Blocking Processing" source="architecture.md">
+      Metadata extraction should be async and not block the UI. Use `processingStatus` to show a spinner/indicator.
+    </pattern>
+  </architecture_patterns>
+  
+  <technical_notes>
+    <note priority="high">
+      Ensure the prompt for Gemini is structured to return JSON or a easily parsable format for key concepts/tags.
+    </note>
+    <note priority="medium">
+      Handle API failures gracefully. If AI extraction fails, valid local metadata should still be preserved.
+    </note>
+  </technical_notes>
+</context>
