@@ -7,6 +7,7 @@
  * @story 25-R1 - Integrate useAgentChatWithTools to AgentChatPanel
  */
 
+import React from 'react';
 import { render, screen, fireEvent, waitFor, act, configure } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
@@ -100,21 +101,27 @@ vi.mock('../../chat/ApprovalOverlay', () => ({
     ),
 }));
 
-// Create mock functions that persist across tests
+// Create mock functions that persist across tests - MUST be defined BEFORE vi.mock that uses them
 const mockSendMessage = vi.fn();
 const mockApproveToolCall = vi.fn();
 const mockRejectToolCall = vi.fn();
-
-// Mock hook with factory function that can be configured per test
 const mockUseAgentChatWithTools = vi.fn();
 
+// Mock workspace module
+vi.mock('../../lib/workspace', () => ({
+    getConversation: vi.fn().mockResolvedValue({ messages: [] }),
+    appendConversationMessage: vi.fn().mockResolvedValue(undefined),
+    clearConversation: vi.fn().mockResolvedValue(undefined),
+}));
+
+// Mock hook with factory function that can be configured per test
 vi.mock('../../lib/agent/hooks/use-agent-chat-with-tools', () => ({
     useAgentChatWithTools: (...args: any[]) => mockUseAgentChatWithTools(...args),
 }));
 
 // Import component AFTER mocks are set up
 import { AgentChatPanel } from '../AgentChatPanel';
-import { WorkspaceProvider } from '../../lib/workspace';
+import { WorkspaceProvider } from '@/lib/workspace';
 
 describe('AgentChatPanel', () => {
     const mockProjectId = 'proj-123';
@@ -264,7 +271,7 @@ describe('AgentChatPanel', () => {
             isLoading: true,
         });
 
-        render(<AgentChatPanel projectId={mockProjectId} />);
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
 
         expect(screen.getByTestId('typing-indicator')).toBeInTheDocument();
     });

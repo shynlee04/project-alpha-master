@@ -1,4 +1,14 @@
 
+## Set up for second AI agent
+
+-OPENAI_API_KEY = `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`
+-455e3428c7bf43a9b5bbc43d4ab3c6b3.uoS5Ta4qnNocQfs9
+https://docs.z.ai/devpack/tool/claude
+https://docs.z.ai/devpack/mcp/search-mcp-server
+https://docs.z.ai/devpack/mcp/reader-mcp-server
+
+
+
 development_status:
   # SPRINT 0: Infrastructure & Pre-Work (Days -2 to 0)
   infrastructure-setup: done
@@ -29,6 +39,7 @@ development_status:
   3-3-dual-write-sync: done # sync-manager.ts + tests (21 tests, 2025-12-29)
   3-4-terminal-integration: done # terminal-adapter.ts + tests (15 tests, 2025-12-29)
   epic-3-retrospective: done # _bmad-output/epic-retrospectives/epic-3-retrospective-2025-12-29.md
+  -https://docs.z.ai/devpack/tool/claude
 
   # EPIC 4: Smart Agent Tools (Days 11-14) - TEAM B
   epic-4: done # All core stories complete with tests
