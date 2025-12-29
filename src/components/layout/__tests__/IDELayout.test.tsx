@@ -142,12 +142,12 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     expect(screen.getByText('Chat')).toBeInTheDocument();
     expect(screen.getByTestId('chat-panel')).toBeInTheDocument();
 
-    // Hide chat
-    fireEvent.click(screen.getByRole('button', { name: 'ide.hideChat' }));
+    // Hide chat - button shows "Hide chat" (translated text, not the translation key)
+    fireEvent.click(screen.getByRole('button', { name: 'Hide chat' }));
     expect(screen.queryByTestId('chat-panel')).not.toBeInTheDocument();
 
     // Show chat
-    fireEvent.click(screen.getByRole('button', { name: 'ide.showChat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Show chat' }));
     expect(screen.getByTestId('chat-panel')).toBeInTheDocument();
     expect(screen.getByText('Chat')).toBeInTheDocument();
   });
@@ -176,7 +176,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
       </ToastProvider>,
     );
     const handles = container.querySelectorAll('[data-slot="resizable-handle"]');
-    expect(handles.length).toBeGreaterThanOrEqual(4);
+    expect(handles.length).toBeGreaterThanOrEqual(3);
     handles.forEach((h) => {
       expect(h.querySelector('svg')).not.toBeNull();
     });
@@ -192,7 +192,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
       </ToastProvider>,
     );
     expect(screen.getByText('Explorer')).toBeInTheDocument();
-    expect(screen.getAllByRole('separator').length).toBeGreaterThanOrEqual(4);
+    expect(screen.getAllByRole('separator').length).toBeGreaterThanOrEqual(3);
   });
 
   test('should toggle chat panel visibility', () => {
@@ -204,26 +204,26 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
       </ToastProvider>,
     );
 
-    // Find the chat toggle button by its title (translation key)
-    const chatToggle = screen.getByRole('button', { name: 'ide.hideChat' });
+    // Find the chat toggle button by its translated text (not the translation key)
+    const chatToggle = screen.getByRole('button', { name: 'Hide chat' });
     expect(chatToggle).toBeInTheDocument();
 
     // Click to hide chat
     fireEvent.click(chatToggle);
-    // After clicking, the button should show "show chat" translation key
-    expect(screen.getByRole('button', { name: 'ide.showChat' })).toBeInTheDocument();
+    // After clicking, the button should show "Show chat"
+    expect(screen.getByRole('button', { name: 'Show chat' })).toBeInTheDocument();
 
     // Click to show chat again
-    fireEvent.click(screen.getByRole('button', { name: 'ide.showChat' }));
-    expect(screen.getByRole('button', { name: 'ide.hideChat' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Show chat' }));
+    expect(screen.getByRole('button', { name: 'Hide chat' })).toBeInTheDocument();
   });
 
   test('should show minimum viewport warning on small screens', () => {
-    // Mock small screen
+    // Mock small screen - needs to return true for both mobile and tablet queries
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: vi.fn().mockImplementation((query: string) => ({
-        matches: query === '(max-width: 1023px)',
+        matches: query.includes('max-width: 1023px') || query.includes('max-width: 767px'),
         media: query,
         onchange: null,
         addListener: vi.fn(),

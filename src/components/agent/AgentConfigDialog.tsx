@@ -255,20 +255,26 @@ export function AgentConfigDialog({
         setIsCheckingKey(true)
         setConnectionStatus('idle')
 
-        credentialVault.hasCredentials(providerId)
-            .then(async (hasKey) => {
-                setApiKey(hasKey ? '••••' : '')
+        // CC-2025-12-29: Get the actual API key, not just check if it exists
+        const loadProviderData = async () => {
+            try {
+                await credentialVault.initialize()
+                const apiKeyValue = await credentialVault.getCredentials(providerId)
 
-                // Load models if we have a key
-                if (hasKey) {
-                    await loadModels(providerId)
+                console.log('[AgentConfigDialog] Provider:', providerId, 'hasKey:', !!apiKeyValue)
+
+                if (apiKeyValue) {
+                    setApiKey('••••')
+                    // Pass API key directly to avoid re-fetching
+                    await loadModels(providerId, apiKeyValue)
                 } else {
+                    setApiKey('')
                     // Load free models for OpenRouter
                     if (providerId === 'openrouter') {
                         const freeModels = modelRegistry.getFreeModels()
                         setModels(freeModels)
                     } else {
-                        setModels([])
+                        setModels(modelRegistry.getDefaultModels(providerId))
                     }
                 }
 
@@ -277,9 +283,21 @@ export function AgentConfigDialog({
                     console.log('[AgentConfigDialog] Restoring model from edit:', editingAgentRef.current.model)
                     setModel(editingAgentRef.current.model)
                 }
-            })
-            .catch(console.error)
-            .finally(() => setIsCheckingKey(false))
+            } catch (error) {
+                console.error('[AgentConfigDialog] Error loading provider data:', error)
+                setApiKey('')
+                if (providerId === 'openrouter') {
+                    const freeModels = modelRegistry.getFreeModels()
+                    setModels(freeModels)
+                } else {
+                    setModels([])
+                }
+            } finally {
+                setIsCheckingKey(false)
+            }
+        }
+
+        loadProviderData()
     }, [providerId, open, loadModels])
 
     /**
