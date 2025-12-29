@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="9-2-quiz-generator" created="2025-12-30T12:25:00+07:00">
+  <files>
+    <file path="src/lib/study/quiz-types.ts">
+      <content><![CDATA[
+        // Quiz and QuizQuestion type definitions
+        interface QuizQuestion {
+          id: string;
+          question: string;
+          options: string[];
+          correctIndex: number;
+          explanation: string;
+          sourceIds: string[];
+          difficulty: 'easy' | 'medium' | 'hard';
+        }
+      ]]></content>
+    </file>
+  </files>
+
+  <research_notes>
+    <finding source="context7" query="TanStack AI multiple choice question generation">
+      <pattern>
+        Structured output with JSON schema for quiz questions
+        Distractor generation: plausible wrong answers based on misconceptions
+        Explanation generation for correct answers
+      </pattern>
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <note priority="high">4 options per question (1 correct, 3 distractors)</note>
+    <note priority="medium">Distractors based on common misconceptions</note>
+    <note priority="low">Explanation provided for correct answer</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="@tanstack/ai" version="^1.0.0" />
+    <dependency name="zod" version="^3.22.0" />
+  </dependencies>
+
+  <implementation_hints>
+    <hint>Prompt: "Generate {count} multiple choice questions..."</hint>
+    <hint>Distractor generation: include plausible but wrong answers</hint>
+  </implementation_hints>
+</context>

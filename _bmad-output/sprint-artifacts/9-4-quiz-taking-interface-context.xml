@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="9-4-quiz-taking-interface" created="2025-12-30T12:35:00+07:00">
+  <files>
+    <file path="src/components/study/QuizContainer.tsx">
+      <content><![CDATA[
+        // Main quiz taking component
+        // States: intro, in-progress, completed, review
+      ]]></content>
+    </file>
+    <file path="src/components/study/QuizResults.tsx">
+      <content><![CDATA[
+        // Results display with score, time, question breakdown
+      ]]></content>
+    </file>
+  </files>
+
+  <technical_notes>
+    <note priority="high">Timer: counts up during quiz</note>
+    <note priority="medium">Immediate feedback: show correct/incorrect + explanation</note>
+    <note priority="low">Grade calculation: (correct / total) * 100</note>
+  </technical_notes>
+
+  <dependencies>
+    <dependency name="dexie" version="^4.0.0" />
+  </dependencies>
+
+  <implementation_hints>
+    <hint>Quiz flow: intro → question → completed → review</hint>
+    <hint>Option states: default, selected, correct, incorrect</hint>
+    <hint>History stored in IndexedDB for progress tracking</hint>
+  </implementation_hints>
+</context>

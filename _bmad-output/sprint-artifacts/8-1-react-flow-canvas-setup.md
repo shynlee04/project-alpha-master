@@ -4,20 +4,30 @@ story: 1
 title: React Flow Canvas Setup
 status: drafted
 created: 2025-12-30T10:00:00+07:00
-author: Ralph Loop
-phase: 2
+author: Ralph Loop Agent
+team: Team A (UI/Frontend)
+phase: story-dev-cycle
 sprint: 8
 priority: P0
 estimated_effort: 4-6 hours
-dependencies: []
-blockers: []
 nfr_validated:
   - NFR-PERF-P2-05
 tech_stack:
-  - React Flow
+  - "@xyflow/react" (React Flow v12+)
   - Zustand
   - Dexie
   - TypeScript
+dependencies: []
+blockers: []
+validation_criteria:
+  - "Story file exists at correct path"
+  - "User story format complete (As a/I want/So that)"
+  - "At least 3 acceptance criteria defined"
+  - "Each AC has Given/When/Then format"
+  - "Tasks section with checkboxes"
+  - "Research Requirements section populated"
+  - "Dev Notes references architecture.md"
+  - "Status set to drafted"
 ---
 
 # Story 8.1: React Flow Canvas Setup
@@ -126,9 +136,31 @@ interface CanvasState {
 
 ## Research Requirements
 
-1. **Context7**: React Flow documentation for node/edge rendering
-2. **Context7**: React Flow TypeScript types and interfaces
-3. **DeepWiki**: GitHub repos using React Flow with Zustand + Dexie
+### Dependency Research: React Flow (@xyflow/react)
+
+**Source: Context7 Documentation** (`/websites/reactflow_dev`)
+
+**Key Patterns for Implementation:**
+1. **Provider Setup**: `ReactFlowProvider` wrapper required for hooks access
+2. **State Management**: `useNodesState`, `useEdgesState` for local state; `useStoreApi` for advanced access
+3. **TypeScript Integration**: Custom node/edge types via generics:
+   ```typescript
+   const store = useStoreApi<CustomNodeType, CustomEdgeType>();
+   ```
+4. **Selection Tracking**: `useOnSelectionChange` hook for selection events
+5. **Performance**: Components using `useNodes()` re-render on any node change
+
+**Critical Implementation Notes:**
+- Must use `@xyflow/react` package (React Flow v12+ rebranding)
+- CSS imports: `@xyflow/react/dist/style.css`
+- Lazy loading supported via `React.lazy()`
+
+### Codebase Patterns to Follow
+
+- Zustand + Dexie middleware pattern from Epic 2
+- Mobile detection via `useResponsive` hook (Epic 1)
+- 8-bit design system from CLAUDE.md
+- i18n pattern with EN + VI translations
 
 ## References
 
