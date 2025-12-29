@@ -213,10 +213,14 @@ describe('SyncManager', () => {
   });
 
   describe('exclude patterns', () => {
-    it('should allow updating exclusion patterns', () => {
+    it('should merge custom patterns with defaults', () => {
       syncManager.setExcludePatterns(['custom', 'patterns']);
 
-      expect(syncManager.getExcludePatterns()).toEqual(['custom', 'patterns']);
+      const patterns = syncManager.getExcludePatterns();
+      expect(patterns).toContain('.git');
+      expect(patterns).toContain('node_modules');
+      expect(patterns).toContain('custom');
+      expect(patterns).toContain('patterns');
     });
 
     it('should preserve default patterns when updating', () => {

@@ -44,6 +44,8 @@ import {
     DEFAULT_SYNC_CONFIG,
 } from './sync-types';
 import { countFilesToSync, buildFileSystemTree } from './sync-operations';
+import { validateFileSize, shouldWarnFileSize, formatFileSize } from './validation';
+import { showErrorToast } from '../utils/error-handling';
 
 // Re-export types for convenience
 export { SyncError } from './sync-types';
@@ -219,6 +221,46 @@ export class SyncManager {
      */
     async writeFile(path: string, content: string): Promise<void> {
         const startTime = performance.now();
+
+        // Validate file size before writing
+        const contentSize = new Blob([content]).size;
+        const sizeValidation = validateFileSize(contentSize);
+
+        if (!sizeValidation.valid) {
+            // Show warning toast for large files
+            showErrorToast(new Error('File too large'), {
+                messageKey: sizeValidation.errorKey!,
+                message: `File too large: ${formatFileSize(contentSize)}. Maximum is ${sizeValidation.errorParams?.maxSize}.`,
+                action: 'dismiss',
+                id: `file-size-warning-${path}`,
+            });
+
+            // Emit warning event
+            this.eventBus?.emit('sync:warning', {
+                file: path,
+                warning: 'FILE_SIZE_EXCEEDED',
+                message: sizeValidation.errorKey,
+                params: sizeValidation.errorParams,
+            });
+
+            // Throw error to prevent the write
+            const syncError = new SyncError(
+                `File too large: ${formatFileSize(contentSize)}. Maximum is ${sizeValidation.errorParams?.maxSize}.`,
+                'FILE_SIZE_EXCEEDED',
+                path
+            );
+            this.eventBus?.emit('sync:error', { error: syncError, file: path });
+            throw syncError;
+        }
+
+        // Show warning for large files (but allow the operation)
+        if (shouldWarnFileSize(contentSize)) {
+            showErrorToast(new Error('Large file warning'), {
+                message: `Warning: Large file (${formatFileSize(contentSize)}). Consider using smaller files for optimal performance.`,
+                duration: 4000,
+                id: `file-size-warning-${path}`,
+            });
+        }
 
         this.eventBus?.emit('sync:started', {
             fileCount: 1,
@@ -430,11 +472,15 @@ export class SyncManager {
 
     /**
      * Update exclusion patterns
-     * 
-     * @param patterns - New array of exclusion patterns
+     * Merges custom patterns with default patterns to ensure critical exclusions are preserved
+     *
+     * @param patterns - New array of exclusion patterns to add
      */
     setExcludePatterns(patterns: string[]): void {
-        this.config.excludePatterns = patterns;
+        // Merge custom patterns with default patterns to preserve critical exclusions
+        const defaults = DEFAULT_SYNC_CONFIG.excludePatterns;
+        const uniquePatterns = [...new Set([...defaults, ...patterns])];
+        this.config.excludePatterns = uniquePatterns;
     }
 
     /**

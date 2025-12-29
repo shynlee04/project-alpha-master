@@ -3,10 +3,17 @@
  * @module lib/utils/error-handling
  *
  * Utilities for error recovery and toast notifications.
+ *
+ * IMPORTANT: This module follows the "translation outside hooks" pattern.
+ * The showErrorToast() function does NOT call useTranslation() directly.
+ * Instead, it accepts either:
+ * - A pre-translated message string
+ * - A translation key (messageKey) that components can translate
+ *
+ * For React components, use the useErrorToast() hook which handles translation.
  */
 
 import { toast } from 'sonner'
-import { useTranslation } from 'react-i18next'
 
 
 /**
@@ -15,13 +22,15 @@ import { useTranslation } from 'react-i18next'
 export type ErrorRecoveryAction = 'retry' | 'reload' | 'dismiss' | 'home' | 'custom'
 
 /**
- * Error recovery options
+ * Extended error toast options with translation support
  */
-export interface ErrorRecoveryOptions {
+export interface ErrorToastOptions {
     /** Action to take */
     action?: ErrorRecoveryAction
-    /** Custom action label */
+    /** Custom action label (pre-translated) */
     actionLabel?: string
+    /** Translation key for action label (e.g., 'error.retry') */
+    actionLabelKey?: string
     /** Custom action handler */
     onAction?: () => void | Promise<void>
     /** Error ID for deduplication */
@@ -30,52 +39,64 @@ export interface ErrorRecoveryOptions {
     duration?: number
     /** Whether to show error details */
     showDetails?: boolean
+    /** Pre-translated error message (use this OR messageKey) */
+    message?: string
+    /** Translation key for error message (e.g., 'error.file.tooLarge') */
+    messageKey?: string
 }
 
 /**
  * Show error toast notification
  *
- * @param error - Error object or message
- * @param options - Recovery options
+ * NOTE: This function does NOT call useTranslation() to comply with React's Rules of Hooks.
+ * It can be called from any context (components, event handlers, API routes, etc.).
+ *
+ * @param error - Error object or message string
+ * @param options - Toast options (use message for pre-translated text, messageKey for translation key)
  */
-export function showErrorToast(error: Error | string, options?: ErrorRecoveryOptions) {
-    const { t } = useTranslation()
+export function showErrorToast(error: Error | string, options?: ErrorToastOptions): void {
+    // Get error message from error object or string
     const errorMessage = typeof error === 'string' ? error : error.message
     const errorDetails = typeof error === 'object' ? error.stack : undefined
+
+    // Determine the display message (priority: message > messageKey > error message)
+    let displayMessage = options?.message ?? options?.messageKey ?? errorMessage
 
     const {
         action = 'dismiss',
         actionLabel,
+        actionLabelKey,
         onAction,
         id,
         duration = 5000,
         showDetails = false,
     } = options || {}
 
-    // Get action label
-    let actionText = actionLabel
+    // Get action label (priority: actionLabel > actionLabelKey > default)
+    let actionText = actionLabel ?? actionLabelKey
     if (!actionText) {
+        // Use default action labels (non-translated - caller should provide if needed)
         switch (action) {
             case 'retry':
-                actionText = t('error.retry', 'Retry')
+                actionText = 'Retry'
                 break
             case 'reload':
-                actionText = t('error.reload', 'Reload')
+                actionText = 'Reload'
                 break
             case 'dismiss':
-                actionText = t('error.dismiss', 'Dismiss')
+                actionText = 'Dismiss'
                 break
             case 'home':
-                actionText = t('error.goHome', 'Go Home')
+                actionText = 'Go Home'
                 break
             case 'custom':
-                actionText = t('error.action', 'Action')
+                actionText = 'Action'
                 break
         }
     }
 
     // Show toast with action
-    toast.error(errorMessage, {
+    toast.error(displayMessage, {
         id,
         duration,
         action: {
@@ -87,10 +108,14 @@ export function showErrorToast(error: Error | string, options?: ErrorRecoveryOpt
                     // Default action handlers
                     switch (action) {
                         case 'reload':
-                            window.location.reload()
+                            if (typeof window !== 'undefined') {
+                                window.location.reload()
+                            }
                             break
                         case 'home':
-                            window.location.href = '/'
+                            if (typeof window !== 'undefined') {
+                                window.location.href = '/'
+                            }
                             break
                         case 'dismiss':
                         case 'retry':
@@ -351,17 +376,18 @@ export function logError(error: unknown, context?: Record<string, unknown>) {
  * Create error handler for async operations
  *
  * @param operationName - Name of the operation
- * @returns Error handler function
+ * @returns Error handler object with onError and onSuccess methods
  */
 export function createAsyncErrorHandler<T>(
     operationName: string
 ) {
     return {
-        onError: (error: unknown) => {
+        onError: (error: unknown, options?: ErrorToastOptions) => {
             logError(error, { operation: operationName })
             showErrorToast(error, {
                 action: 'retry',
                 id: `${operationName}-error`,
+                ...options,
             })
         },
         onSuccess: (result: T) => {
@@ -370,3 +396,56 @@ export function createAsyncErrorHandler<T>(
         },
     }
 }
+
+/**
+ * React hook for error toast notifications
+ *
+ * This hook provides a convenient way to show error toasts in React components
+ * with automatic translation support.
+ *
+ * @example
+ * ```typescript
+ * const showError = useErrorToast()
+ *
+ * showError(new Error('File not found'), { action: 'retry' })
+ * // OR with translation key
+ * showError('error.file.notFound', { messageKey: 'error.file.notFound' })
+ * ```
+ */
+export function useErrorToast() {
+    // NOTE: This is a React hook - it can only be called in React components
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { t } = useTranslation()
+
+    return useCallback(
+        (error: Error | string, options?: ErrorToastOptions) => {
+            // Determine message - priority: message > messageKey > error
+            let displayMessage: string
+            if (options?.message) {
+                displayMessage = options.message
+            } else if (options?.messageKey) {
+                displayMessage = t(options.messageKey)
+            } else {
+                displayMessage = typeof error === 'string' ? error : error.message
+            }
+
+            // Get action label with translation
+            let actionText: string | undefined
+            if (options?.actionLabel) {
+                actionText = options.actionLabel
+            } else if (options?.actionLabelKey) {
+                actionText = t(options.actionLabelKey)
+            }
+
+            showErrorToast(displayMessage, {
+                ...options,
+                message: displayMessage,
+                actionLabel: actionText,
+            })
+        },
+        [t]
+    )
+}
+
+// Import useTranslation and useCallback at the end to avoid circular dependencies
+import { useTranslation, useCallback } from 'react-i18next'

@@ -1,10 +1,11 @@
 /**
  * @fileoverview Agent Terminal Tools Implementation
  * @module lib/agent/facades/terminal-tools-impl
- * 
+ *
  * Facade implementation wrapping WebContainer spawn() for AI agent command execution.
  * Emits process lifecycle events for UI integration.
- * 
+ * Includes command injection protection via CommandSanitizer.
+ *
  * @epic 12 - Agent Tool Interface Layer
  * @story 12-2 - Create AgentTerminalTools Facade
  */
@@ -18,14 +19,17 @@ import type {
     ShellSession,
 } from './terminal-tools';
 import { TerminalToolsError } from './terminal-tools';
+import { createDefaultSanitizer } from './command-sanitizer';
 
 const DEFAULT_TIMEOUT = 30000;
 
 /**
  * TerminalToolsFacade - Wraps WebContainer for agent command execution
+ * Includes command injection protection
  */
 export class TerminalToolsFacade implements AgentTerminalTools {
     private processes = new Map<string, { kill: () => void }>();
+    private sanitizer = createDefaultSanitizer();
 
     constructor(private readonly eventBus: WorkspaceEventEmitter) { }
 
@@ -43,6 +47,9 @@ export class TerminalToolsFacade implements AgentTerminalTools {
                 'NOT_BOOTED'
             );
         }
+
+        // Validate command before execution (RC-004: Command Injection Protection)
+        this.sanitizer.validateOrThrow(command, args);
 
         const { timeout = DEFAULT_TIMEOUT, cwd } = options;
         const pid = `${command}-${Date.now()}`;

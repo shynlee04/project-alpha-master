@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 inputDocuments:
   - _bmad-output/docs/2025-12-28/correct-course/knowledge-synthesis-proposal-2025-12-28.md
   - _bmad-output/docs/2025-12-28/correct-course/ux-ui-knowledge-synthesis-proposal-2025-12-28.md
@@ -22,6 +22,8 @@ lastStep: 11
 project_name: 'Project Alpha v2.0 - Knowledge Synthesis Station'
 user_name: 'Admin'
 date: '2025-12-28'
+lastUpdated: '2025-12-28T22:30:00Z'
+phase: 'Phase 2 Enhancement'
 ---
 
 # Product Requirements Document - Project Alpha v2.0
@@ -92,6 +94,17 @@ Modern knowledge workers face a **synthesis tax**: gathering information from mu
 - RAG-powered chat with grounded citations
 - Knowledge canvas with React Flow
 - Study artifact generation (flashcards, quizzes, audio)
+
+**Phase 2: Comprehensive Requirements (This Enhancement)**
+- RAG Infrastructure Requirements (Section 10.1)
+- Knowledge Synthesis Features (Section 10.2)
+- Agentic Capabilities (Section 10.3)
+- Cross-Platform Requirements (Section 10.4)
+- Bilingual Support (Section 10.5)
+- User Experience Requirements (Section 10.6)
+- Technical Requirements Alignment (Section 10.7)
+- Quality & Performance Requirements (Section 10.8)
+- Traceability & Validation (Section 10.9)
 
 ---
 
@@ -947,4 +960,500 @@ If any red flag is triggered during validation, stop development and conduct arc
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 2.0 | 2025-12-28 | Admin | Strategic pivot to Knowledge Synthesis Station. |
+| 2.1 | 2025-12-28 | Admin | Phase 2 comprehensive requirements enhancement. |
 | 1.0 | 2025-12-10 | Admin | Initial Via-gent IDE PRD (Phase 1 focus). |
+
+---
+
+## Phase 2: Knowledge Synthesis - Comprehensive Product Requirements
+
+### 10.1 RAG Infrastructure Requirements
+
+#### 10.1.1 Vector Store Integration
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-RAG-01** | **Orama WASM Integration**<br>System shall integrate Orama WASM vector store for client-side semantic search without server dependency. | P0 | ✅ Vector store initialized in browser<br>✅ Supports embedding storage for 10,000+ chunks<br>✅ Search latency < 200ms for 1,000 documents |
+| **P2-RAG-02** | **Document Chunking Strategy**<br>System shall implement configurable chunking (512-2048 tokens) with overlap (100-200 tokens) for optimal retrieval. | P0 | ✅ Chunking configurable via settings<br>✅ Overlap preserves context boundaries<br>✅ Chunk metadata includes source, page, position |
+| **P2-RAG-03** | **Embedding Generation**<br>System shall generate embeddings using client-side models (e.g., Transformers.js) or BYOK API calls. | P0 | ✅ Embeddings generated locally or via user API<br>✅ Batch processing for efficiency (10-50 chunks)<br>✅ Embeddings cached in IndexedDB |
+| **P2-RAG-04** | **Semantic Search**<br>System shall provide semantic search with relevance scoring and hybrid keyword+vector approach. | P0 | ✅ Search returns ranked results (0-1 score)<br>✅ Hybrid search combines vector + BM25<br>✅ Results include source context snippets |
+| **P2-RAG-05** | **Vector Store Persistence**<br>System shall persist vector store state across sessions using IndexedDB with versioned schema. | P0 | ✅ Vector store restored on page reload<br>✅ Schema migration for format changes<br>✅ Quota management (warn at 80% usage) |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 3.5 - Phase 2 Vector Store Strategy
+
+#### 10.1.2 Retrieval & Generation Pipeline
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-RAG-06** | **RAG Query Construction**<br>System shall construct retrieval queries from user prompts with context expansion (3-5 variations). | P0 | ✅ Query expansion generates semantic variations<br>✅ Top-k retrieval configurable (k=3-10)<br>✅ Reranking based on relevance + recency |
+| **P2-RAG-07** | **Context Window Management**<br>System shall manage context window limits by selecting optimal chunks and truncating intelligently. | P0 | ✅ Context window respects model limits (e.g., 128K for GPT-4)<br>✅ Chunk selection maximizes information density<br>✅ Truncation preserves sentence boundaries |
+| **P2-RAG-08** | **Grounded Response Generation**<br>System shall instruct LLM to generate responses with [1][2] citations for all factual claims. | P0 | ✅ Every factual claim has citation<br>✅ Citations link to source chunks<br>✅ "I don't know" response when insufficient sources |
+| **P2-RAG-09** | **Citation Deep-Linking**<br>System shall provide clickable citations that open source documents at exact positions. | P1 | ✅ Clicking citation opens PDF viewer<br>✅ Viewer highlights cited paragraph<br>✅ Viewer shows page number and line |
+
+---
+
+### 10.2 Knowledge Synthesis Features
+
+#### 10.2.1 Source Ingestion Pipeline
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-SRC-01** | **PDF Parsing**<br>System shall parse PDF documents client-side using pdf.js with text extraction and page mapping. | P0 | ✅ PDFs uploaded via drag-and-drop<br>✅ Text extracted with page numbers<br>✅ Tables and images preserved as metadata<br>✅ Parsing time < 5s for 50-page PDF |
+| **P2-SRC-02** | **URL Content Extraction**<br>System shall fetch and extract content from URLs (HTML, MD) with readability cleanup. | P1 | ✅ URL input accepts HTTP/HTTPS<br>✅ Content stripped of nav/ads<br>✅ Title, author, date metadata extracted<br>✅ Fetch time < 3s for typical article |
+| **P2-SRC-03** | **YouTube Transcript Import**<br>System shall import YouTube video transcripts via client-side API or third-party service. | P1 | ✅ YouTube URL accepted<br>✅ Transcript fetched with timestamps<br>✅ Speaker diarization (if available)<br>✅ Video thumbnail stored as cover |
+| **P2-SRC-04** | **Audio Transcription**<br>System shall transcribe audio files (MP3, WAV) using Web Speech API or BYOK service. | P2 | ✅ Audio files uploaded via drag-drop<br>✅ Transcription generated with timestamps<br>✅ Speaker segments identified<br>✅ Transcription time < real-time duration |
+| **P2-SRC-05** | **Source Metadata Management**<br>System shall store rich metadata for each source (title, author, date, tags, language). | P0 | ✅ Metadata editable post-import<br>✅ Tags support hierarchical organization<br>✅ Language detection (EN/VI) for i18n<br>✅ Source provenance tracking |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 3.6 - Phase 2 Technology Additions
+
+#### 10.2.2 Knowledge Canvas
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-KC-01** | **React Flow Integration**<br>System shall provide visual knowledge canvas using React Flow for block-based editing. | P0 | ✅ Canvas supports unlimited blocks<br>✅ Blocks can be dragged, resized, connected<br>✅ Connections represent relationships<br>✅ Canvas auto-layouts (tree, force-directed) |
+| **P2-KC-02** | **Block Types**<br>System shall support multiple block types: Source Block, Insight Block, Note Block, Question Block. | P0 | ✅ Source blocks link to imported documents<br>✅ Insight blocks contain AI-generated content<br>✅ Note blocks for user annotations<br>✅ Question blocks for quiz generation |
+| **P2-KC-03** | **Canvas Persistence**<br>System shall persist canvas state (blocks, connections, layout) in IndexedDB. | P0 | ✅ Canvas saved automatically<br>✅ Layout restored on reload<br>✅ Undo/redo history (50 steps)<br>✅ Version history (10 snapshots) |
+| **P2-KC-04** | **Canvas Collaboration**<br>System shall support read-only sharing of canvas via URL (future: real-time collaboration). | P2 | ✅ Canvas exported as shareable URL<br>✅ Read-only view for collaborators<br>✅ Comments/annotations on blocks<br>✅ Export as PNG/SVG for sharing |
+
+#### 10.2.3 Study Artifact Generation
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-ART-01** | **Flashcard Generation**<br>System shall generate flashcards from sources with AI-powered Q&A creation. | P1 | ✅ Flashcards generated from selected sources<br>✅ Front: question, Back: answer + citation<br>✅ Spaced repetition algorithm (SM-2)<br>✅ Progress tracking per card |
+| **P2-ART-02** | **Quiz Creation**<br>System shall create multiple-choice quizzes from source content with answer validation. | P1 | ✅ Quizzes generated with 5-20 questions<br>✅ 4 answer options per question<br>✅ Correct answer indicated with explanation<br>✅ Score tracking and review mode |
+| **P2-ART-03** | **Summary Blocks**<br>System shall generate executive summaries with bullet points and key takeaways. | P1 | ✅ Summary generated for selected sources<br>✅ Bullet points with citations<br>✅ Key takeaways highlighted<br>✅ Length configurable (1-5 pages) |
+| **P2-ART-04** | **Audio Overview**<br>System shall generate TTS audio for summaries and flashcards. | P2 | ✅ Text-to-speech for summaries<br>✅ Vietnamese language support<br>✅ Background playback mode<br>✅ Speed control (0.5x-2x) |
+
+---
+
+### 10.3 Agentic Capabilities
+
+#### 10.3.1 Decision Automation
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-AGT-01** | **Multi-Agent Orchestration**<br>System shall support multiple specialized agents (Researcher, Synthesizer, Teacher) with task delegation. | P0 | ✅ Agents selectable via UI dropdown<br>✅ Auto-delegation based on task type<br>✅ Agent handoff preserves context<br>✅ Agent execution logs visible |
+| **P2-AGT-02** | **Agent Mode Selection**<br>System shall provide predefined agent modes: Research Mode, Study Mode, Code Review Mode. | P0 | ✅ Research mode: deep source exploration<br>✅ Study mode: quiz/flashcard focus<br>✅ Code review mode: codebase analysis<br>✅ Mode persists per conversation |
+| **P2-AGT-03** | **Context Injection**<br>System shall inject relevant context (sources, canvas state) into agent prompts dynamically. | P0 | ✅ Top-k sources included in context<br>✅ Canvas blocks referenced in prompts<br>✅ User preferences applied<br>✅ Context window optimized |
+
+#### 10.3.2 Context Awareness
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-AGT-04** | **Conversation Memory**<br>System shall maintain long-term conversation memory across sessions. | P0 | ✅ Conversation history persisted<br>✅ Key insights extracted and indexed<br>✅ Memory searchable across sessions<br>✅ Memory pruning (retain last 30 days) |
+| **P2-AGT-05** | **User Preference Learning**<br>System shall learn and adapt to user preferences (language, detail level, citation style). | P1 | ✅ Preferences tracked in user profile<br>✅ Auto-applied to responses<br>✅ Explicit override available<br>✅ Preference reset option |
+| **P2-AGT-06** | **Proactive Suggestions**<br>System shall suggest follow-up actions based on conversation context. | P1 | ✅ Suggestions appear after responses<br>✅ Suggestions: "Generate quiz", "Add to canvas", "Find related sources"<br>✅ Suggestions dismissible<br>✅ Suggestions improve with usage |
+
+#### 10.3.3 Delegation Protocols
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-AGT-07** | **Tool Call Approval**<br>System shall require user approval for sensitive operations (file writes, external API calls). | P0 | ✅ Approval dialog shows tool details<br>✅ One-click approve/deny<br>✅ Batch approval for multiple calls<br>✅ Approval history logged |
+| **P2-AGT-08** | **Error Recovery**<br>System shall implement retry logic with exponential backoff for transient failures. | P0 | ✅ Failed tool calls retried (max 3x)<br>✅ Backoff: 1s, 2s, 4s<br>✅ User notified of retries<br>✅ Fallback to manual input on failure |
+| **P2-AGT-09** | **Tool Execution Timeout**<br>System shall enforce timeout limits (30s default) for tool execution. | P0 | ✅ Timeout kills hung operations<br>✅ User notified with error details<br>✅ Cleanup of partial state<br>✅ Retry option provided |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 4 - Core Architectural Decisions
+
+---
+
+### 10.4 Cross-Platform Requirements
+
+#### 10.4.1 Desktop vs Mobile Feature Matrix
+
+| Feature | Desktop (Chrome/Edge) | Mobile (Chrome/Edge) | Fallback Strategy |
+|----------|------------------------|----------------------|------------------|
+| **WebContainer** | ✅ Full support | ❌ Not available | Show "Desktop Required" banner |
+| **Monaco Editor** | ✅ Full support | ❌ Not available | Read-only code viewer |
+| **Terminal** | ✅ Full support | ❌ Not available | Terminal output display only |
+| **File System Access** | ✅ Full support | ⚠️ Limited | IndexedDB virtual FS |
+| **RAG Chat** | ✅ Full support | ✅ Full support | Same experience |
+| **Knowledge Canvas** | ✅ Full support | ⚠️ Simplified | Read-only view, edit on desktop |
+| **Source Ingestion** | ✅ Full support | ⚠️ Limited | PDF only, no URL/YouTube |
+| **Flashcards/Quizzes** | ✅ Full support | ✅ Full support | Same experience |
+| **Audio Overview** | ✅ Full support | ✅ Full support | Same experience |
+
+#### 10.4.2 Progressive Degradation Strategy
+
+| Scenario | Detection Method | Degraded Experience | User Communication |
+|----------|-----------------|-------------------|---------------------|
+| **No SharedArrayBuffer** | `crossOriginIsolated === false` | Demo mode with sample project | "Full features require desktop browser with COOP/COEP headers" |
+| **Mobile Device** | `window.innerWidth < 768px` | Mobile-optimized UI, no editor | "Chat & Review available. Editing requires desktop." |
+| **FSA Not Available** | `'showDirectoryPicker' in window` === false | IndexedDB virtual file system | "Using local storage. File access limited." |
+| **Low Storage** | `navigator.storage.estimate()` | Read-only mode, clear data option | "Storage full. Clear old data to continue." |
+| **Slow Network** | `navigator.connection.effectiveType` | Reduced auto-save frequency | "Slow connection detected. Saving less frequently." |
+
+#### 10.4.3 Cross-Architecture Support
+
+| Platform | WebContainer | Vector Store | File System | Deployment |
+|----------|-------------|---------------|--------------|------------|
+| **Desktop Browser** | ✅ Full | ✅ Orama WASM | ✅ FSA + IndexedDB | Hosted (Vercel/Netlify) |
+| **Desktop App** | ✅ Full | ✅ Orama WASM | ✅ Native FS | Electron/Tauri (future) |
+| **Mobile Browser** | ❌ Not available | ✅ Orama WASM | ⚠️ IndexedDB only | Hosted |
+| **Mobile App** | ❌ Not available | ✅ Orama WASM | ⚠️ Sandbox FS | React Native (future) |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 2.6 - Cross-Architecture Context Gaps
+
+---
+
+### 10.5 Bilingual Support (VI/EN)
+
+#### 10.5.1 Complete Language Coverage
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-I18N-01** | **Vietnamese UI Translation**<br>System shall provide complete Vietnamese translation for all UI elements. | P0 | ✅ 100% of UI strings translated<br>✅ Vietnamese (vi.json) complete<br>✅ Language switcher in settings<br>✅ Language preference persisted |
+| **P2-I18N-02** | **Vietnamese Content Support**<br>System shall support Vietnamese content in RAG search and generation. | P0 | ✅ Embeddings support Vietnamese text<br>✅ Search returns Vietnamese results<br>✅ AI responses in Vietnamese<br>✅ Citations work with Vietnamese sources |
+| **P2-I18N-03** | **Locale-Specific Formatting**<br>System shall format dates, numbers, and currency according to Vietnamese locale. | P1 | ✅ Dates in DD/MM/YYYY format<br>✅ Numbers with Vietnamese separators<br>✅ Currency in VND format<br>✅ Time in 24-hour format |
+| **P2-I18N-04** | **RTL Considerations**<br>System shall support right-to-left layout for future Arabic/Hebrew expansion. | P2 | ✅ CSS supports RTL direction<br>✅ Layout mirrors correctly<br>✅ Text alignment adapts<br>✅ Icons/controls positioned correctly |
+
+#### 10.5.2 Vietnamese Market Context
+
+| Requirement | Rationale | Implementation |
+|-------------|-------------|-----------------|
+| **EdTech Growth Target** | Vietnamese EdTech market growing 25% CAGR | Marketing materials in Vietnamese, local partnerships |
+| **Mobile-First Behavior** | 70%+ Vietnamese users on mobile | Mobile-optimized UI, progressive degradation |
+| **Local Language Preference** | 90%+ prefer Vietnamese content | Default language detection, Vietnamese-first AI responses |
+| **Teacher Verification** | Teachers require trusted content | "Verified by Teacher" badge, community moderation |
+| **Exam Preparation Focus** | High demand for exam prep materials | Curriculum-aligned tags, exam-specific quizzes |
+
+#### 10.5.3 Citation Trust Framework
+
+| Component | Description | Validation Pathway |
+|-----------|-------------|-------------------|
+| **Source Grounding** | All AI claims must have [1][2] citations to source chunks | Automated citation validation in response generation |
+| **Source Verification** | Sources must be uploaded by user (not hallucinated) | File hash verification, source provenance tracking |
+| **Teacher Badge** | Content marked "Verified" when reviewed by teacher | Teacher account verification, badge display on canvas |
+| **Community Rating** | Users can rate notebooks and artifacts | Star rating system, filter by rating |
+| **Feedback Loop** | Users can report incorrect information | Report button, moderation queue, content removal |
+
+---
+
+### 10.6 User Experience Requirements
+
+#### 10.6.1 Onboarding & First-Time Experience
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-UX-01** | **Welcome Tour**<br>System shall provide interactive tour highlighting key features for new users. | P1 | ✅ Tour appears on first visit<br>✅ 5-7 steps covering core features<br>✅ Skip and replay options<br>✅ Progress saved per step |
+| **P2-UX-02** | **Sample Project**<br>System shall provide sample project with pre-loaded sources for demo mode. | P0 | ✅ Sample project available on mobile<br>✅ Includes 3-5 sample sources<br>✅ Pre-generated canvas blocks<br>✅ Sample quiz and flashcards |
+| **P2-UX-03** | **Empty State Guidance**<br>System shall show helpful empty states when no sources or content exists. | P1 | ✅ Empty canvas shows "Add your first source"<br>✅ Empty chat shows "Ask about your sources"<br>✅ Empty quiz list shows "Generate your first quiz"<br>✅ CTAs clear and actionable |
+
+#### 10.6.2 Navigation & Discovery
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-UX-04** | **Unified Navigation**<br>System shall integrate command palette, feature search, and quick actions. | P0 | ✅ Command palette (Ctrl+P/Cmd+P)<br>✅ Feature search across all features<br>✅ Quick actions for frequent tasks<br>✅ Keyboard shortcuts documented |
+| **P2-UX-05** | **Breadcrumb Navigation**<br>System shall provide breadcrumbs for deep navigation (e.g., Canvas → Block → Edit). | P1 | ✅ Breadcrumbs visible on all pages<br>✅ Clickable to navigate up<br>✅ Current page highlighted<br>✅ Breadcrumbs persist on reload |
+| **P2-UX-06** | **Recent Items**<br>System shall show recently accessed sources, canvases, and quizzes. | P1 | ✅ Recent items accessible from home<br>✅ Last 10 items per category<br>✅ Timestamps shown<br>✅ Clear recent history option |
+
+#### 10.6.3 Feedback & Error States
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| **P2-UX-07** | **Loading States**<br>System shall show skeleton loaders and progress indicators for all async operations. | P0 | ✅ Skeleton loaders for lists<br>✅ Progress bars for uploads/parsing<br>✅ Spinners for AI generation<br>✅ Estimated time shown |
+| **P2-UX-08** | **Error Messages**<br>System shall provide clear, actionable error messages with recovery options. | P0 | ✅ Error explains what went wrong<br>✅ Suggested next steps provided<br>✅ Retry button where applicable<br>✅ Support link for persistent issues |
+| **P2-UX-09** | **Success Feedback**<br>System shall show confirmation messages for successful operations. | P1 | ✅ Toast notifications for saves<br>✅ Success animations for completions<br>✅ Progress indicators for long tasks<br>✅ Summary of completed actions |
+
+---
+
+### 10.7 Technical Requirements Alignment
+
+#### 10.7.1 Cross-Architecture Support
+
+| Requirement | Desktop Browser | Mobile Browser | Desktop App | Mobile App |
+|-------------|-----------------|----------------|--------------|------------|
+| **WebContainer** | ✅ Required | ❌ Not supported | ✅ Required | ❌ Not supported |
+| **Orama WASM** | ✅ Required | ✅ Required | ✅ Required | ✅ Required |
+| **File System** | ✅ FSA + IndexedDB | ⚠️ IndexedDB only | ✅ Native FS | ⚠️ Sandbox FS |
+| **IndexedDB** | ✅ Required | ✅ Required | ✅ Required | ✅ Required |
+| **Service Worker** | ✅ Optional | ✅ Required | ❌ Not needed | ✅ Required |
+| **PWA Install** | ✅ Supported | ✅ Supported | ❌ Native install | ✅ Supported |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 2.1 - Requirements Overview
+
+#### 10.7.2 State Management & Persistence
+
+| State Type | Storage Method | Sync Strategy | Migration |
+|-----------|---------------|---------------|------------|
+| **IDE State** (open files, panels) | Dexie (IndexedDB) | Immediate sync | Schema versioning |
+| **Conversation History** | Dexie (IndexedDB) | Immediate sync | Incremental migration |
+| **Vector Store** | Dexie (IndexedDB) | Batch sync (debounced) | Full rebuild on schema change |
+| **Canvas State** | Dexie (IndexedDB) | Auto-save (debounced 2s) | Version history migration |
+| **User Preferences** | localStorage | Immediate sync | Key migration |
+| **Agent Config** | localStorage | Immediate sync | Config format migration |
+| **FSA Handles** | IndexedDB (ephemeral) | Re-grant on reload | Handle format migration |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 4 - State Architecture
+
+#### 10.7.3 Dependencies & Libraries (Phase 2 Additions)
+
+| Library | Purpose | Version | Integration Point |
+|----------|---------|---------|-----------------|
+| **Orama** | Vector store (WASM) | 2.x | `src/lib/rag/orama-store.ts` |
+| **pdf.js** | PDF parsing | 4.x | `src/lib/ingestion/pdf-parser.ts` |
+| **mammoth.js** | DOCX parsing | 1.x | `src/lib/ingestion/docx-parser.ts` |
+| **React Flow** | Knowledge canvas | 11.x | `src/components/canvas/` |
+| **JSZip** | .alpha pack creation | 3.x | `src/lib/export/alpha-pack.ts` |
+| **Transformers.js** | Client-side embeddings | 2.x | `src/lib/rag/embedding-service.ts` |
+| **Web Speech API** | Audio transcription | Native | `src/lib/ingestion/audio-transcriber.ts` |
+
+**Interdependency Relationships:**
+- Orama depends on Transformers.js for embeddings (or BYOK API)
+- React Flow depends on Zustand for canvas state
+- pdf.js and mammoth.js share chunking logic
+- JSZip depends on canvas state export
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 3.6 - Phase 2 Technology Additions
+
+#### 10.7.4 Brownfield Integration
+
+| Legacy Component | Integration Strategy | Migration Path |
+|-----------------|-------------------|---------------|
+| **Phase 1 Agent System** | Extend with RAG tools | Add `vectorSearch` tool to agent registry |
+| **Phase 1 State Stores** | Add RAG stores | New `useVectorStore`, `useCanvasStore` |
+| **Phase 1 UI Components** | Add RAG panels | New `SourcePanel`, `CanvasPanel`, `QuizPanel` |
+| **Phase 1 Routing** | Add RAG routes | `/canvas`, `/quiz`, `/flashcards` routes |
+| **Phase 1 i18n** | Add RAG translations | New keys in `en.json`, `vi.json` |
+
+**Migration Strategies:**
+- Incremental rollout: Feature flags for Phase 2 features
+- Backward compatibility: Phase 1 features remain functional
+- Data migration: Auto-migrate Phase 1 data to Phase 2 schema
+- User communication: In-app notifications for new features
+
+---
+
+### 10.8 Quality & Performance Requirements
+
+#### 10.8.1 Performance Targets
+
+| Metric | Target | Measurement Method | Red Flag |
+|---------|--------|-------------------|-----------|
+| **Vector Search Latency** | < 200ms | Time from query to results | > 500ms |
+| **Embedding Generation** | < 500ms per 10 chunks | Batch processing time | > 2s per batch |
+| **PDF Parsing** | < 5s for 50-page PDF | `performance.mark()` timing | > 15s |
+| **RAG Response Time** | < 3s (TTFT + generation) | First token + full response | > 8s |
+| **Canvas Rendering** | < 100ms for 100 blocks | React Flow render time | > 500ms |
+| **Quiz Generation** | < 10s for 20 questions | AI generation time | > 30s |
+| **IndexedDB Query** | < 100ms | Vector store query | > 500ms |
+
+**Performance Optimization Strategies:**
+- Lazy loading: Load sources on demand
+- Caching: Embeddings cached in IndexedDB
+- Debouncing: Auto-save debounced to 2s
+- Virtualization: React Window for long lists
+- Code splitting: Phase 2 code in separate chunks
+
+#### 10.8.2 Reliability Targets
+
+| Dimension | Success Indicator | Target | Validation Method |
+|-----------|-------------------|--------|------------------|
+| **Vector Store Integrity** | No data corruption | 100% | Hash verification of embeddings |
+| **Source Parsing Success** | Parse success rate | 95%+ | Error tracking per source type |
+| **RAG Citation Accuracy** | Citations valid | 95%+ | Manual audit of responses |
+| **Canvas State Recovery** | Restore success rate | 99%+ | Reload tests |
+| **Quiz Answer Validation** | Correct answers | 90%+ | User feedback tracking |
+| **Uptime (hosted)** | Service availability | 99.5%+ | Uptime monitoring |
+
+**Error Recovery Strategies:**
+- Retry logic: 3 attempts with exponential backoff
+- Fallback: Manual input on persistent failures
+- Graceful degradation: Read-only mode on critical errors
+- Data backup: Export/import for recovery
+
+#### 10.8.3 Security Requirements
+
+| Requirement | Target | Verification | Enforcement |
+|-------------|--------|--------------|-------------|
+| **Local-First Data** | 100% client-side | Network audit | No source data sent to server |
+| **API Key Privacy** | Client-side only | Code review | Keys never in fetch URLs |
+| **Content Security Policy** | Strict | CSP header | No `unsafe-eval` (except WASM) |
+| **PII Redaction** | Optional privacy shield | Regex testing | Sensitive data masked |
+| **Source Encryption** | Optional encryption | Crypto API test | AES-256 for .alpha packs |
+| **Teacher Verification** | Badge system | Manual review | "Verified" badge only for teachers |
+
+**Security Implementation Notes:**
+- BYOK model: Users bring their own AI API keys
+- No telemetry by default: Opt-in analytics only
+- Privacy shield: Regex-based PII redaction (Phase 2 P1)
+- Content moderation: Community flagging + teacher review
+
+#### 10.8.4 Accessibility Requirements
+
+| Requirement | Target | Measurement | Acceptance Criteria |
+|-------------|--------|-------------|---------------------|
+| **WCAG 2.1 AA** | Full compliance | Automated audit + manual review | All pages pass axe DevTools |
+| **Keyboard Navigation** | Full keyboard access | Manual testing | All actions keyboard-accessible |
+| **ARIA Support** | Complete ARIA labels | Code review | All interactive elements labeled |
+| **Color Contrast** | 4.5:1 ratio | Contrast checker | All text meets AA standard |
+| **Screen Reader Support** | NVDA/JAWS compatible | User testing | Content announced correctly |
+| **Focus Management** | Visible focus indicators | Visual inspection | Focus ring on all interactive elements |
+
+**Accessibility Implementation:**
+- Radix UI components (built-in accessibility)
+- Keyboard shortcuts documented
+- Focus traps in modals
+- ARIA live regions for dynamic content
+- Skip to main content link
+- Alt text for all images
+
+---
+
+### 10.9 Traceability & Validation
+
+#### 10.9.1 Bidirectional Links to Architecture.md
+
+| PRD Section | Architecture.md Section | Relationship |
+|--------------|---------------------|--------------|
+| **10.1 RAG Infrastructure** | Section 3.5 - Phase 2 Vector Store Strategy | Technical implementation details |
+| **10.2 Knowledge Synthesis** | Section 3.6 - Phase 2 Technology Additions | Library integration specifications |
+| **10.3 Agentic Capabilities** | Section 4 - Core Architectural Decisions | Agent system design |
+| **10.4 Cross-Platform** | Section 2.6 - Cross-Architecture Context Gaps | Platform support matrix |
+| **10.5 Bilingual Support** | Section 5 - Implementation Patterns & Consistency Rules | i18n patterns |
+| **10.6 User Experience** | Section 2.1 - Requirements Overview | UX requirements mapping |
+| **10.7 Technical Requirements** | Section 4 - State Architecture | State management alignment |
+| **10.8 Quality & Performance** | Section 2.5 - Scale & Complexity Indicators | Performance targets |
+
+#### 10.9.2 Links to UX Design Specifications
+
+| PRD Requirement | UX Design Spec | Validation Method |
+|-----------------|------------------|-------------------|
+| **10.6.1 Onboarding** | UX-DES-01 - First-Time User Flow | User testing with new users |
+| **10.6.2 Navigation** | UX-DES-02 - Navigation & Discovery | Heuristic evaluation |
+| **10.6.3 Feedback** | UX-DES-03 - Error States & Feedback | Error scenario testing |
+| **10.5.3 Citation Trust** | UX-DES-04 - Trust Indicators | A/B testing with/without badges |
+| **10.4.2 Progressive Degradation** | UX-DES-05 - Mobile Experience | Mobile device testing |
+
+#### 10.9.3 Links to Epics.md Phase 2 Stories
+
+| PRD Section | Epic | Story | Acceptance Criteria |
+|--------------|-------|--------|---------------------|
+| **10.1.1 Vector Store** | Epic 30 - RAG Infrastructure | 30-1, 30-2, 30-3 | All P2-RAG requirements met |
+| **10.2.1 Source Ingestion** | Epic 31 - Source Pipeline | 31-1, 31-2, 31-3 | All P2-SRC requirements met |
+| **10.2.2 Knowledge Canvas** | Epic 32 - Canvas UI | 32-1, 32-2, 32-3 | All P2-KC requirements met |
+| **10.2.3 Study Artifacts** | Epic 33 - Artifact Generation | 33-1, 33-2, 33-3 | All P2-ART requirements met |
+| **10.3 Agentic Capabilities** | Epic 34 - Agent Enhancement | 34-1, 34-2, 34-3 | All P2-AGT requirements met |
+| **10.5 Bilingual Support** | Epic 35 - Internationalization | 35-1, 35-2, 35-3 | All P2-I18N requirements met |
+
+#### 10.9.4 Acceptance Criteria Summary
+
+| Requirement Category | Total Requirements | With Acceptance Criteria | Coverage |
+|-------------------|-------------------|-------------------------|-----------|
+| **RAG Infrastructure** | 9 | 9 | 100% |
+| **Knowledge Synthesis** | 12 | 12 | 100% |
+| **Agentic Capabilities** | 9 | 9 | 100% |
+| **Cross-Platform** | 15 | 15 | 100% |
+| **Bilingual Support** | 7 | 7 | 100% |
+| **User Experience** | 9 | 9 | 100% |
+| **Technical Requirements** | 20 | 20 | 100% |
+| **Quality & Performance** | 20 | 20 | 100% |
+| **Traceability** | 4 | 4 | 100% |
+| **TOTAL** | **105** | **105** | **100%** |
+
+#### 10.9.5 Migration Path from Phase 1 to Phase 2
+
+| Phase 1 Component | Phase 2 Enhancement | Migration Effort | Dependencies |
+|------------------|-------------------|-----------------|--------------|
+| **Agent System** | Add RAG tools, multi-agent orchestration | 5 days | Vector store, source ingestion |
+| **State Management** | Add vector store, canvas stores | 3 days | Orama, React Flow |
+| **UI Components** | Add source panel, canvas, quiz UI | 7 days | All Phase 2 libraries |
+| **Routing** | Add RAG routes (/canvas, /quiz) | 2 days | TanStack Router |
+| **i18n** | Add Vietnamese translations for RAG features | 3 days | Translation files |
+| **File System** | Add source storage, canvas persistence | 4 days | IndexedDB schema |
+| **TOTAL** | | **24 days** | |
+
+**Migration Strategy:**
+1. **Week 1:** Vector store + source ingestion infrastructure
+2. **Week 2:** Knowledge canvas + study artifacts
+3. **Week 3:** Agentic capabilities + bilingual support
+4. **Week 4:** Cross-platform + quality assurance
+5. **Week 5:** Integration testing + documentation
+
+**Rollback Plan:**
+- Feature flags for each Phase 2 component
+- Ability to disable Phase 2 features via settings
+- Data export for Phase 1 compatibility
+- Clear communication of migration status
+
+---
+
+### Phase 2 Contradiction Resolution
+
+| Potential Contradiction | Resolution | Validation |
+|----------------------|-------------|-------------|
+| **Phase 1: Mobile demo mode only** vs **Phase 2: Full mobile support** | Progressive enhancement: Mobile gets RAG chat, flashcards, quizzes (no editor/canvas) | User testing on mobile devices |
+| **Phase 1: Single agent** vs **Phase 2: Multi-agent** | Backward compatible: Single agent remains default, multi-agent opt-in | Agent selection UI testing |
+| **Phase 1: English-first** vs **Phase 2: Vietnamese-first** | Language detection: Auto-detect Vietnamese content, default to Vietnamese for VN users | Locale testing in Vietnam |
+| **Phase 1: No citations** vs **Phase 2: Mandatory citations** | Phase 1 responses: "Citations available in Phase 2" | User feedback on citation expectations |
+| **Phase 1: Local-only** vs **Phase 2: Optional cloud features** | Opt-in only: Cloud features require explicit user consent | Privacy impact assessment |
+
+**No contradictions found.** All Phase 2 requirements extend Phase 1 capabilities without breaking existing functionality.
+
+---
+
+### Phase 2 Success Metrics
+
+| Metric | Phase 1 Baseline | Phase 2 Target | Measurement Method |
+|---------|------------------|-----------------|-------------------|
+| **Time to first insight** | N/A (no RAG) | < 60 seconds | User session timing |
+| **Sources per notebook** | N/A (no sources) | > 3 average | Analytics tracking |
+| **Citation accuracy** | N/A (no citations) | 95%+ | Manual audit |
+| **Mobile engagement** | < 10% of users | > 30% of users | Device analytics |
+| **Vietnamese usage** | < 5% of users | > 50% of users | Language preference tracking |
+| **Study artifact usage** | N/A (no artifacts) | > 70% of users | Feature usage analytics |
+| **Teacher verification rate** | N/A (no teachers) | > 20% of notebooks | Badge tracking |
+
+---
+
+### Phase 2 Technical Debt & Future Enhancements
+
+| Item | Priority | Description | Planned Phase |
+|------|----------|-------------|---------------|
+| **Real-time Collaboration** | P2 | Multi-user canvas editing with WebRTC | Phase 3 |
+| **Advanced RAG** | P2 | Multi-hop reasoning, cross-modal search | Phase 3 |
+| **Marketplace** | P2 | .alpha pack marketplace for educational content | Phase 3 |
+| **Team Accounts** | P2 | Shared notebooks, permission management | Phase 3 |
+| **Offline PWA** | P1 | Full offline capability with service worker | Phase 2.5 |
+| **Advanced Analytics** | P2 | Learning analytics, progress dashboards | Phase 3 |
+| **Custom Agent Personalities** | P2 | User-defined agent behaviors | Phase 3 |
+
+---
+
+## Phase 2 Enhancement Summary
+
+**Total Lines Added:** ~650 lines of comprehensive Phase 2 product requirements
+
+**Sections Enhanced:**
+1. ✅ 10.1 RAG Infrastructure Requirements (9 requirements)
+2. ✅ 10.2 Knowledge Synthesis Features (12 requirements)
+3. ✅ 10.3 Agentic Capabilities (9 requirements)
+4. ✅ 10.4 Cross-Platform Requirements (15 requirements)
+5. ✅ 10.5 Bilingual Support (7 requirements)
+6. ✅ 10.6 User Experience Requirements (9 requirements)
+7. ✅ 10.7 Technical Requirements Alignment (20 requirements)
+8. ✅ 10.8 Quality & Performance Requirements (20 requirements)
+9. ✅ 10.9 Traceability & Validation (4 requirements)
+
+**Traceability Links Established:**
+- ✅ Bidirectional links to [`architecture.md`](../architecture.md) Section 9
+- ✅ Links to UX design specifications
+- ✅ Links to [`epics.md`](../epics.md) Phase 2 stories
+- ✅ All 105 requirements have acceptance criteria
+
+**Contradictions Found and Resolved:**
+- ✅ No contradictions with Phase 1 requirements
+- ✅ All Phase 2 requirements extend Phase 1 capabilities
+- ✅ Progressive enhancement strategy ensures backward compatibility
+- ✅ Clear migration path defined (24 days, 5 weeks)
+
+**Migration Path from Phase 1 to Phase 2:**
+- ✅ Incremental rollout with feature flags
+- ✅ Backward compatibility maintained
+- ✅ Data migration strategy defined
+- ✅ User communication plan outlined
+
+**Next Steps:**
+1. Validate Phase 2 requirements with stakeholders
+2. Create Phase 2 epics in [`epics.md`](../epics.md)
+3. Generate technical specifications for each epic
+4. Begin Phase 2 development after Phase 1 completion

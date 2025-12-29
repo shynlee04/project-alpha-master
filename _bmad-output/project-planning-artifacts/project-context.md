@@ -1,9 +1,10 @@
 ---
 project_name: 'Project Alpha v2.0 - Knowledge Synthesis Station'
 user_name: 'Admin'
-date: '2025-12-28'
-sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality', 'workflow_rules', 'critical_rules']
+date: '2025-12-29'
+sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality', 'workflow_rules', 'critical_rules', 'phase_2_technical_constraints']
 generated_from: 'architecture.md'
+phase: 'Phase 2'
 ---
 
 # Project Context for AI Agents
@@ -424,7 +425,1029 @@ _Strict execution order required to prevent blockers._
 | **Story 3.1 (FSA Handle)** | **Story 4.2 (File Tools)** | Agent cannot read/write without `WorkspaceContext` file handles |
 | **Story 4.3 (Execution Log)** | **Story 5.1 (Sync Visualizer)** | Visualizer consumes audit logs from tool execution |
 
+## Phase 2 Technical Constraints
+
+### Cross-Architecture Support
+
+#### CPU Architecture Compatibility
+
+| Architecture | Status | WebContainer Support | Vector Store Support | Notes |
+|-------------|--------|---------------------|---------------------|-------|
+| **x86-64** | ✅ Primary Target | ✅ Full | ✅ Full | Desktop browsers (Chrome/Edge) |
+| **ARM64** | ✅ Supported | ⚠️ Partial (WASM) | ✅ Full | Apple Silicon Macs, ARM64 browsers |
+| **Emerging** | 🔜 Future | ❌ Not Tested | ❌ Not Tested | RISC-V, experimental architectures |
+
+**Implementation Constraints:**
+- WebContainer requires x86-64 for full Node.js compatibility
+- Orama WASM supports ARM64 (vector operations optimized)
+- Fallback strategy: Graceful degradation for unsupported architectures
+
+#### Platform Targets
+
+| Platform | WebContainer | Vector Store | File System | Deployment | Notes |
+|-----------|-------------|----------------|--------------|------------|-------|
+| **Linux (Desktop)** | ✅ Full | ✅ Full | ✅ FSA + IndexedDB | Cloudflare, Netlify, Node.js |
+| **macOS (Desktop)** | ✅ Full | ✅ Full | ✅ FSA + IndexedDB | Cloudflare, Netlify, Electron |
+| **Windows (Desktop)** | ✅ Full | ✅ Full | ✅ FSA + IndexedDB | Cloudflare, Netlify, Electron |
+| **iOS (Mobile)** | ❌ Not Supported | ✅ Full | ⚠️ IndexedDB Only | Safari 15.2+, PWA |
+| **Android (Mobile)** | ❌ Not Supported | ✅ Full | ⚠️ IndexedDB Only | Chrome Mobile, PWA |
+
+**Browser Compatibility Matrix:**
+```typescript
+// Capability Detection
+interface BrowserCapabilities {
+  webContainer: boolean;      // SharedArrayBuffer support
+  fileSystemAccess: boolean;  // window.showDirectoryPicker
+  indexedDB: boolean;          // Always true (modern browsers)
+  serviceWorker: boolean;         // Offline support
+  webAssembly: boolean;          // Orama requirement
+}
+
+// Runtime Detection
+const detectCapabilities = (): BrowserCapabilities => ({
+  webContainer: typeof SharedArrayBuffer !== 'undefined',
+  fileSystemAccess: 'showDirectoryPicker' in window,
+  indexedDB: 'indexedDB' in window,
+  serviceWorker: 'serviceWorker' in window.navigator,
+  webAssembly: typeof WebAssembly !== 'undefined',
+});
+```
+
+#### Deployment Models
+
+| Model | Architecture | Storage | Network | Offline | Use Case |
+|--------|-------------|---------|---------|-----------|-----------|
+| **On-Premise** | x86-64, ARM64 | Local FS | Optional | ✅ | Enterprise, privacy-sensitive |
+| **Cloud-Native** | x86-64 | Cloud Storage | Required | ❌ | SaaS, multi-tenant |
+| **Hybrid** | x86-64, ARM64 | Local + Cloud | Optional | ✅ | Best of both worlds |
+
+**Deployment Constraints:**
+- Primary: Cloudflare Pages (edge-first, COOP/COEP headers)
+- Fallback: Netlify Edge Functions (alternative deployment)
+- Local: Electron/Tauri (desktop app with native FS)
+- PWA: Service Worker cache for offline-first
+
+#### Runtime Environments
+
+| Runtime | WebContainer | Vector Store | File System | Notes |
+|---------|-------------|----------------|--------------|-------|
+| **Browser (Chrome/Edge)** | ✅ Full | ✅ Orama WASM | ✅ FSA + IndexedDB | Primary target |
+| **Browser (Safari)** | ⚠️ Partial | ✅ Orama WASM | ⚠️ IndexedDB only | FSA not available |
+| **Browser (Firefox)** | ❌ Experimental | ✅ Orama WASM | ⚠️ IndexedDB only | WebContainer experimental |
+| **Node.js (Electron)** | ✅ Full | ✅ Orama WASM | ✅ Native FS | Desktop app fallback |
+| **Node.js (Server)** | N/A | ❌ Not Supported | N/A | Future: server-side RAG |
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 3.5 - Phase 2 Vector Store Strategy
+
+---
+
+### Advanced State Management & Persistence
+
+#### Client-Side State Patterns
+
+| State Type | Storage Method | Persistence Scope | Sync Strategy | Reactivity |
+|-------------|-----------------|---------------------|---------------|-------------|
+| **Component-Level** | useState, useRef | Component lifecycle | N/A | ✅ Immediate |
+| **Global Shared** | Zustand stores | Cross-component | Dexie middleware | ✅ Reactive |
+| **Ephemeral Session** | In-memory, WeakMap | Session duration | N/A | ✅ Fast |
+| **Persistent Domain** | Dexie (IndexedDB) | Cross-session | Immediate sync | ✅ Reactive |
+
+**State Management Architecture:**
+```typescript
+// src/lib/state/ide-store.ts (Pattern)
+import { create } from 'zustand';
+import { persist, createDexieStorage } from './dexie-storage';
+
+export const useIDEStore = create<IDEState>()(
+  persist(
+    (set, get) => ({
+      // State (nouns)
+      openFiles: [],
+      activeFile: null,
+      
+      // Actions (verbs)
+      setActiveFile: (path) => set({ activeFile: path }),
+      addOpenFile: (path) => set((state) => ({
+        openFiles: [...state.openFiles, path],
+      })),
+      
+      // Async actions (verb + Async)
+      loadProjectAsync: async (id) => {
+        const project = await db.projects.get(id);
+        set({ activeProject: project });
+      },
+    }),
+    {
+      name: 'ide-storage',
+      storage: createDexieStorage('ideStates'),
+      partialize: (state) => ({
+        openFiles: state.openFiles,
+        activeFile: state.activeFile,
+      }),
+    }
+  )
+);
+```
+
+#### Server-Side State Patterns (Future - Phase 3)
+
+| Pattern | Description | Use Case | Implementation |
+|---------|-------------|-----------|----------------|
+| **Database Persistence** | Direct DB writes | Server-side RAG | IndexedDB for offline, sync to server |
+| **Caching Layer** | Redis/Memcached | High-frequency reads | Service Worker cache for PWA |
+| **Distributed Sync** | Multi-device state | Collaboration | CRDT-based conflict resolution |
+| **Event Sourcing** | Immutable event log | Audit trail | IndexedDB event log for replay |
+
+**State Synchronization Pipeline:**
+```
+User Action → Component State → Zustand Store → Dexie Persist → IndexedDB
+     ↓
+Optimistic UI Update (<100ms)
+     ↓
+Background Sync (debounced 500ms)
+     ↓
+Success/Rollback Notification
+```
+
+#### Persistent Management Strategies
+
+| Strategy | Implementation | Migration | Backup/Recovery |
+|-----------|----------------|------------|-------------------|
+| **Schema Versioning** | Dexie version upgrades | Auto-migration on DB open | Rollback to previous version |
+| **Data Lifecycle** | TTL-based pruning | Auto-cleanup of old data | Manual export/import |
+| **Backup/Recovery** | JSON export | N/A | Restore from backup file |
+| **Conflict Resolution** | Last-write-wins | N/A | Manual merge UI |
+
+**IndexedDB Schema Management:**
+```typescript
+// src/lib/workspace/project-store.ts
+class ViaGentDB extends Dexie {
+  projects!: Table<Project>;
+  ragDocuments!: Table<RAGDocument>;
+  embeddings!: Table<Embedding>;
+  canvasBlocks!: Table<CanvasBlock>;
+  
+  constructor() {
+    super('via-gent-db');
+    
+    // Version 5: Phase 1 (Current)
+    this.version(5).stores({
+      projects: '++id, name, createdAt',
+      ragDocuments: '++id, sourceId, chunkId',
+      embeddings: '++id, documentId, vector',
+      canvasBlocks: '++id, type, position',
+    });
+    
+    // Version 6: Phase 2 (Future - RAG)
+    this.version(6).upgrade((trans) => {
+      // Migration: Add RAG tables
+      trans.db.createObjectStore('ragDocuments');
+      trans.db.createObjectStore('embeddings');
+      trans.db.createObjectStore('canvasBlocks');
+    });
+  }
+}
+```
+
+#### State Persistence Patterns
+
+| Pattern | Description | Pros | Cons | Use Case |
+|---------|-------------|-------|-------|-----------|
+| **Event Sourcing** | Immutable event log | Audit trail, replayability | Complex queries | RAG audit trail |
+| **CQRS** | Read/Write separation | Scalable reads | Complexity | RAG read/write split |
+| **Traditional CRUD** | Direct DB operations | Simple, familiar | N/A | Most state (default) |
+| **Optimistic UI** | Immediate update, rollback | Great UX | Race conditions | File operations, agent tools |
+
+**RAG-Specific State Management:**
+```typescript
+// src/lib/state/rag-store.ts (New in Phase 2)
+interface RAGState {
+  documents: RAGDocument[];
+  embeddings: Map<string, number[]>;
+  searchResults: SearchResult[];
+  retrievalState: 'idle' | 'searching' | 'retrieving';
+}
+
+export const useRAGStore = create<RAGState>()(
+  persist(
+    (set) => ({
+      documents: [],
+      embeddings: new Map(),
+      searchResults: [],
+      retrievalState: 'idle',
+      
+      // RAG-specific actions
+      addDocument: (doc) => set((state) => ({
+        documents: [...state.documents, doc],
+      })),
+      
+      search: (query) => {
+        set({ retrievalState: 'searching' });
+        // Async: vector search
+        vectorSearch(query).then(results => {
+          set({ searchResults: results, retrievalState: 'idle' });
+        });
+      },
+    }),
+    {
+      name: 'rag-storage',
+      storage: createDexieStorage('ragStates'),
+      partialize: (state) => ({
+        documents: state.documents,
+        embeddings: Array.from(state.embeddings.entries()),
+      }),
+    }
+  )
+);
+```
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 4.2 - Data Architecture
+
+---
+
+### RAG Infrastructure Constraints
+
+#### Vector Database Specifications
+
+| Component | Technology | Constraints | Performance Target | Implementation |
+|-----------|-------------|--------------|-------------------|----------------|
+| **Vector Store** | Orama WASM | Browser-only, 180KB WASM | <500ms search (1K docs) | `src/lib/rag/orama-store.ts` |
+| **Embedding Model** | Transformers.js | Client-side, 50MB model | <2s per 100 chunks | `src/lib/rag/embedding-service.ts` |
+| **Chunking Strategy** | Fixed-size | 512-2048 tokens, 100-200 overlap | <1s per 50-page PDF | `src/lib/rag/chunker.ts` |
+| **Retrieval** | Hybrid search | Vector + BM25 fusion, top-k=3-10 | <500ms total | `src/lib/rag/retriever.ts` |
+
+**Orama WASM Integration Constraints:**
+```typescript
+// src/lib/rag/orama-store.ts
+import { create, insert, search } from '@orama/orama';
+
+interface RAGConfig {
+  dimension: number;      // Embedding dimension (e.g., 384, 768)
+  metric: 'cosine' | 'euclidean' | 'dotproduct';
+  topK: number;          // Number of results to return
+}
+
+// Initialize Orama WASM vector store
+const initializeOrama = async () => {
+  const db = await create({
+    schema: {
+      document: {
+        id: 'string',
+        title: 'string',
+        content: 'string',
+        embedding: 'vector[384]',  // 384-dimensional embeddings
+      },
+    },
+  });
+  
+  return db;
+};
+
+// Insert document with embedding
+const indexDocument = async (db: OramaDB, doc: RAGDocument) => {
+  await insert(db, 'document', {
+    id: doc.id,
+    title: doc.title,
+    content: doc.content,
+    embedding: await generateEmbedding(doc.content), // Client-side generation
+  });
+};
+
+// Semantic search
+const searchDocuments = async (db: OramaDB, query: string, topK: number = 5) => {
+  const results = await search(db, {
+    term: query,
+    properties: ['title', 'content'],
+    limit: topK,
+  });
+  
+  return results.hits.map(hit => ({
+    document: hit.document,
+    score: hit.score,
+  }));
+};
+```
+
+#### Embedding Service Constraints
+
+| Constraint | Value | Rationale | Implementation |
+|------------|-------|-----------|----------------|
+| **Model Size** | <50MB | Browser memory limits | Lazy load on demand |
+| **Batch Size** | 10-50 chunks | Balance speed vs memory | Queue-based processing |
+| **Cache Strategy** | IndexedDB | Persistent across sessions | LRU eviction policy |
+| **Dimension** | 384 or 768 | Standard embedding sizes | Configurable per provider |
+
+**Embedding Generation Pipeline:**
+```typescript
+// src/lib/rag/embedding-service.ts
+interface EmbeddingService {
+  generateEmbedding(text: string): Promise<number[]>;
+  generateBatch(texts: string[]): Promise<number[][]>;
+  clearCache(): void;
+}
+
+// Client-side embedding using Transformers.js
+class TransformersEmbeddingService implements EmbeddingService {
+  private model: any;
+  private cache: Map<string, number[]>;
+  
+  async generateEmbedding(text: string): Promise<number[]> {
+    // Check cache
+    if (this.cache.has(text)) {
+      return this.cache.get(text)!;
+    }
+    
+    // Generate embedding
+    const embedding = await this.model.embed(text);
+    
+    // Cache result
+    this.cache.set(text, embedding);
+    
+    return embedding;
+  }
+  
+  async generateBatch(texts: string[]): Promise<number[][]> {
+    // Process in batches of 10-50
+    const results: number[][] = [];
+    for (let i = 0; i < texts.length; i += 10) {
+      const batch = texts.slice(i, i + 10);
+      const embeddings = await Promise.all(
+        batch.map(text => this.generateEmbedding(text))
+      );
+      results.push(...embeddings);
+    }
+    return results;
+  }
+}
+```
+
+#### Retrieval Mechanisms
+
+| Mechanism | Description | Pros | Cons | Use Case |
+|-----------|-------------|-------|-------|-----------|
+| **Semantic Search** | Vector similarity | Captures meaning | Miss exact matches | Concept queries |
+| **Hybrid Search** | Vector + BM25 fusion | Best of both | Complexity | General queries |
+| **Re-ranking** | Re-score results | Improved relevance | Latency | Complex queries |
+| **Context Expansion** | Query variations | Better recall | Cost | Ambiguous queries |
+
+**Retrieval Pipeline:**
+```typescript
+// src/lib/rag/retriever.ts
+interface RetrievalConfig {
+  topK: number;           // Number of chunks to retrieve
+  minScore: number;        // Minimum relevance threshold
+  expandQueries: boolean;  // Generate variations
+  rerank: boolean;         // Re-score results
+}
+
+const retrieveContext = async (
+  query: string,
+  config: RetrievalConfig
+): Promise<RetrievalResult> => {
+  // Step 1: Query expansion (if enabled)
+  const queries = config.expandQueries
+    ? await expandQuery(query)
+    : [query];
+  
+  // Step 2: Vector search (parallel)
+  const vectorResults = await Promise.all(
+    queries.map(q => vectorSearch(q, config.topK))
+  );
+  
+  // Step 3: BM25 keyword search
+  const keywordResults = await bm25Search(query);
+  
+  // Step 4: Merge and re-rank
+  const merged = mergeResults(vectorResults, keywordResults);
+  
+  // Step 5: Re-ranking (if enabled)
+  const final = config.rerank
+    ? await rerankResults(merged, query)
+    : merged;
+  
+  return {
+    chunks: final.slice(0, config.topK),
+    sources: extractUniqueSources(final),
+    scores: final.map(r => r.score),
+  };
+};
+```
+
+#### Knowledge Base Curation
+
+| Aspect | Constraint | Implementation | Validation |
+|---------|-------------|----------------|-------------|
+| **Source Validation** | User-upload only | File hash verification | SHA-256 checksum |
+| **Freshness Management** | TTL-based pruning | Auto-cleanup | 30-day retention |
+| **Deduplication** | Content hash | Prevent duplicates | Hash-based dedup |
+| **Quality Scoring** | User ratings | Community moderation | Star rating system |
+
+**Source Management Schema:**
+```typescript
+// src/lib/rag/source-manager.ts
+interface RAGSource {
+  id: string;
+  type: 'pdf' | 'url' | 'youtube' | 'audio';
+  title: string;
+  contentHash: string;      // SHA-256 for dedup
+  createdAt: number;
+  lastAccessed: number;
+  freshness: number;        // Days since last access
+  tags: string[];
+  language: 'en' | 'vi';
+}
+
+class SourceManager {
+  async addSource(source: RAGSource): Promise<void> {
+    // Validate source
+    const hash = await this.computeHash(source);
+    const existing = await db.sources
+      .where('contentHash')
+      .equals(hash)
+      .first();
+    
+    if (existing) {
+      throw new DuplicateSourceError(source.id);
+    }
+    
+    // Store source
+    await db.sources.add(source);
+  }
+  
+  async pruneOldSources(): Promise<void> {
+    const cutoff = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    await db.sources
+      .where('createdAt')
+      .below(cutoff)
+      .delete();
+  }
+}
+```
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 3.5 - Phase 2 Vector Store Strategy and [`prd.md`](../prd.md) Section 10.1 - RAG Infrastructure Requirements
+
+---
+
+### Bilingual Support Constraints
+
+#### Vietnamese/English Support Requirements
+
+| Aspect | English (en) | Vietnamese (vi) | Implementation |
+|---------|----------------|-------------------|----------------|
+| **UI Strings** | 100% coverage | 100% coverage | `src/i18n/{en,vi}.json` |
+| **AI Responses** | English default | Vietnamese default | Prompt language selection |
+| **Content Parsing** | UTF-8 support | UTF-8 + diacritics | Unicode normalization |
+| **Date/Time Format** | MM/DD/YYYY | DD/MM/YYYY | Locale-specific formatting |
+| **Number Format** | 1,234.56 | 1.234,56 | Number separators |
+| **Currency** | USD | VND | Currency symbols |
+
+**i18n Configuration:**
+```typescript
+// src/i18n/config.ts
+import i18n from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+export const SUPPORTED_LOCALES = ['en', 'vi'] as const;
+
+export const initializeI18n = () => {
+  i18n
+    .use(LanguageDetector)
+    .init({
+      resources: {
+        en: { translation: require('./en.json') },
+        vi: { translation: require('./vi.json') },
+      },
+      fallbackLng: 'en',
+      detection: {
+        order: ['localStorage', 'navigator'],
+        caches: ['localStorage'],
+      },
+    });
+};
+
+// Usage in components
+const { t } = useTranslation();
+const greeting = t('common.hello'); // "Hello" (en) or "Xin chào" (vi)
+```
+
+#### Locale-Specific Formatting
+
+| Format Type | English (en) | Vietnamese (vi) | Implementation |
+|-------------|----------------|-------------------|----------------|
+| **Date** | MM/DD/YYYY | DD/MM/YYYY | `Intl.DateTimeFormat` |
+| **Time** | 12-hour AM/PM | 24-hour | `Intl.DateTimeFormat` |
+| **Number** | 1,234.56 | 1.234,56 | `Intl.NumberFormat` |
+| **Currency** | $1,234.56 | 1.234,56 ₫ | `Intl.NumberFormat` |
+| **Percent** | 50% | 50% | `Intl.NumberFormat` |
+| **List Separator** | ", " | ", " | Locale-specific |
+
+**Locale Formatting Utilities:**
+```typescript
+// src/lib/utils/locale-formatter.ts
+export class LocaleFormatter {
+  private locale: string;
+  
+  constructor(locale: string = 'vi') {
+    this.locale = locale;
+  }
+  
+  formatDate(date: Date): string {
+    return new Intl.DateTimeFormat(this.locale, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(date);
+  }
+  
+  formatNumber(num: number): string {
+    return new Intl.NumberFormat(this.locale).format(num);
+  }
+  
+  formatCurrency(amount: number, currency: string): string {
+    return new Intl.NumberFormat(this.locale, {
+      style: 'currency',
+      currency,
+    }).format(amount);
+  }
+  
+  formatPercent(value: number): string {
+    return new Intl.NumberFormat(this.locale, {
+      style: 'percent',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value / 100);
+  }
+}
+```
+
+#### RTL Language Preparation
+
+| Language | Direction | Status | Implementation Notes |
+|---------|-----------|--------|---------------------|
+| **Vietnamese** | LTR (Left-to-Right) | ✅ Supported (default) |
+| **English** | LTR (Left-to-Right) | ✅ Supported |
+| **Arabic** | RTL (Right-to-Left) | 🔜 Future support |
+| **Hebrew** | RTL (Right-to-Left) | 🔜 Future support |
+
+**RTL/LTR Support:**
+```css
+/* src/styles/rtl-support.css */
+:root {
+  --direction: ltr; /* Default LTR */
+}
+
+[dir="rtl"] {
+  --direction: rtl;
+  /* Mirror layouts for RTL */
+  .sidebar {
+    order: 2; /* Move to right */
+  }
+  .main-content {
+    order: 1; /* Move to left */
+  }
+}
+
+/* Dynamic direction switching */
+[dir="rtl"] .icon-arrow-right {
+  transform: scaleX(-1); /* Flip icon */
+}
+```
+
+#### Translation Key Management
+
+| Aspect | Constraint | Implementation | Validation |
+|---------|-------------|----------------|-------------|
+| **Key Extraction** | Automated via i18next-scanner | `pnpm i18n:extract` |
+| **Key Organization** | Namespace-based | `common.*`, `agent.*`, `rag.*` |
+| **Missing Keys** | Fallback to English | Development mode warning |
+| **Key Length** | <100 chars | Readability guideline |
+| **Pluralization** | ICU message format | Count-based strings |
+
+**Translation Workflow:**
+```bash
+# Extract translation keys after adding new strings
+pnpm i18n:extract
+
+# Output: src/i18n/{en,vi}.json
+# Keys are auto-extracted from t() and i18next.t() calls
+
+# Translation file structure
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "agent": {
+    "thinking": "Thinking...",
+    "searching": "Searching..."
+  },
+  "rag": {
+    "indexing": "Indexing...",
+    "searching": "Searching..."
+  }
+}
+```
+
+**Architecture Alignment:** See [`prd.md`](../prd.md) Section 10.5 - Bilingual Support (VI/EN) and [`ux-design-specification.md`](../ux-design-specification.md) Section 8 - Content & Microcopy Guidelines (Localization)
+
+---
+
+### Performance Targets
+
+#### PDF Ingestion Performance
+
+| Metric | Target | Measurement | Red Flag Threshold |
+|--------|---------|-------------|---------------------|
+| **PDF Parse Time** | <60s (50-page PDF) | `performance.mark()` start → end | >120s |
+| **Text Extraction** | <30s (50-page PDF) | pdf.js text extraction duration | >60s |
+| **Chunking Time** | <10s (50-page PDF) | Chunk generation duration | >20s |
+| **Embedding Generation** | <30s (100 chunks) | Batch embedding duration | >60s |
+| **Total Ingestion** | <60s (end-to-end) | Upload → Indexed | >120s |
+
+**PDF Ingestion Pipeline:**
+```typescript
+// src/lib/ingestion/pdf-ingestion.ts
+interface PDFIngestionMetrics {
+  parseTime: number;
+  extractTime: number;
+  chunkingTime: number;
+  embeddingTime: number;
+  totalTime: number;
+}
+
+const ingestPDF = async (file: File): Promise<PDFIngestionMetrics> => {
+  const start = performance.now();
+  
+  // Step 1: Parse PDF
+  const parseStart = performance.now();
+  const pdf = await pdfjsLib.getDocument(file);
+  const parseTime = performance.now() - parseStart;
+  
+  // Step 2: Extract text
+  const extractStart = performance.now();
+  const text = await extractText(pdf);
+  const extractTime = performance.now() - extractStart;
+  
+  // Step 3: Chunk content
+  const chunkStart = performance.now();
+  const chunks = await chunkText(text);
+  const chunkingTime = performance.now() - chunkStart;
+  
+  // Step 4: Generate embeddings
+  const embedStart = performance.now();
+  const embeddings = await generateEmbeddings(chunks);
+  const embeddingTime = performance.now() - embedStart;
+  
+  const totalTime = performance.now() - start;
+  
+  return { parseTime, extractTime, chunkingTime, embeddingTime, totalTime };
+};
+```
+
+#### Vector Search Performance
+
+| Metric | Target | Measurement | Red Flag Threshold |
+|--------|---------|-------------|---------------------|
+| **Search Latency** | <500ms (1K docs) | Query → results display | >1s |
+| **Indexing Time** | <2s (100 chunks) | Chunk → vector store | >5s |
+| **Retrieval Time** | <200ms (top-k=10) | Vector search duration | >500ms |
+| **Re-ranking Time** | <100ms (100 results) | Re-score duration | >200ms |
+
+**Vector Search Optimization:**
+```typescript
+// src/lib/rag/vector-search.ts
+const searchWithMetrics = async (
+  query: string,
+  topK: number = 5
+): Promise<SearchResult[]> => {
+  const start = performance.now();
+  
+  // Vector search
+  const results = await oramaSearch(query, topK);
+  
+  const searchTime = performance.now() - start;
+  
+  // Log metrics
+  logMetric('vector_search_latency', searchTime);
+  
+  // Red flag check
+  if (searchTime > 1000) {
+    console.warn(`Slow vector search: ${searchTime}ms`);
+  }
+  
+  return results;
+};
+```
+
+#### Summary Generation Performance
+
+| Metric | Target | Measurement | Red Flag Threshold |
+|--------|---------|-------------|---------------------|
+| **Generation Time** | <30s (5 sources) | LLM response time | >60s |
+| **Citation Accuracy** | 100% | Citation validation | <90% |
+| **Source Attribution** | 100% | Source linking | <95% |
+
+**Summary Generation Pipeline:**
+```typescript
+// src/lib/rag/summary-generator.ts
+interface SummaryMetrics {
+  generationTime: number;
+  citationCount: number;
+  sourceCount: number;
+}
+
+const generateSummary = async (
+  sources: RAGSource[],
+  query: string
+): Promise<SummaryMetrics> => {
+  const start = performance.now();
+  
+  // Construct RAG context
+  const context = await retrieveContext(sources, query);
+  
+  // Generate summary with citations
+  const response = await llmGenerate(
+    systemPrompt: CITATION_SYSTEM_PROMPT,
+    userPrompt: query,
+    context: context
+  );
+  
+  const generationTime = performance.now() - start;
+  
+  // Validate citations
+  const citations = extractCitations(response);
+  const citationCount = citations.length;
+  
+  return {
+    generationTime,
+    citationCount,
+    sourceCount: sources.length,
+  };
+};
+```
+
+#### Audio Generation Performance
+
+| Metric | Target | Measurement | Red Flag Threshold |
+|--------|---------|-------------|---------------------|
+| **Script Generation** | <30s (5-page summary) | LLM script time | >60s |
+| **TTS Encoding** | <30s (5-min audio) | Speech synthesis duration | >60s |
+| **Total Generation** | <60s (end-to-end) | Script → audio | >120s |
+
+**Audio Generation Pipeline:**
+```typescript
+// src/lib/rag/audio-generator.ts
+interface AudioMetrics {
+  scriptTime: number;
+  ttsTime: number;
+  totalTime: number;
+}
+
+const generateAudio = async (
+  summary: string,
+  language: 'vi' | 'en'
+): Promise<AudioMetrics> => {
+  const start = performance.now();
+  
+  // Step 1: Generate script
+  const scriptStart = performance.now();
+  const script = await llmGenerateScript(summary, language);
+  const scriptTime = performance.now() - scriptStart;
+  
+  // Step 2: Text-to-speech
+  const ttsStart = performance.now();
+  const audio = await textToSpeech(script, language);
+  const ttsTime = performance.now() - ttsStart;
+  
+  const totalTime = performance.now() - start;
+  
+  return { scriptTime, ttsTime, totalTime };
+};
+```
+
+#### Canvas Interaction Performance
+
+| Metric | Target | Measurement | Red Flag Threshold |
+|--------|---------|-------------|---------------------|
+| **Zoom Performance** | 60fps | Frame rate during zoom | <30fps |
+| **Pan Performance** | 60fps | Frame rate during pan | <30fps |
+| **Block Drag** | 60fps | Frame rate during drag | <30fps |
+| **Card Flip** | 60fps | Animation frame rate | <30fps |
+
+**Canvas Performance Optimization:**
+```typescript
+// src/components/canvas/Canvas.ts
+const useCanvasPerformance = () => {
+  const [fps, setFps] = useState(60);
+  
+  useEffect(() => {
+    let frameCount = 0;
+    let lastTime = performance.now();
+    
+    const measureFPS = () => {
+      frameCount++;
+      const now = performance.now();
+      const delta = now - lastTime;
+      
+      if (delta >= 1000) {
+        const currentFPS = Math.round((frameCount * 1000) / delta);
+        setFps(currentFPS);
+        
+        // Red flag check
+        if (currentFPS < 30) {
+          console.warn(`Low canvas FPS: ${currentFPS}`);
+        }
+        
+        frameCount = 0;
+        lastTime = now;
+      }
+      
+      requestAnimationFrame(measureFPS);
+    };
+    
+    measureFPS();
+  }, []);
+  
+  return fps;
+};
+```
+
+**Architecture Alignment:** See [`prd.md`](../prd.md) Section 10.8 - Quality & Performance Requirements and [`ux-design-specification.md`](../ux-design-specification.md) Section 24 - Performance Targets (Phase 2)
+
+---
+
+### Brownfield Architecture Alignment
+
+#### Integration Points with Legacy Systems
+
+| Legacy System | Integration Point | Strategy | Status |
+|---------------|-------------------|----------|--------|
+| **Phase 1 IDE** | File system bridge | Reuse FSA adapters | ✅ Existing |
+| **Phase 1 Agent** | Tool registry | Extend tool definitions | ✅ Existing |
+| **Phase 1 State** | Zustand stores | Add RAG stores | 🔜 Phase 2 |
+| **IndexedDB Schema** | Version 5 → 6 migration | Auto-migration | 🔜 Phase 2 |
+| **WebContainer** | File system sync | Maintain dual-write sync | ✅ Existing |
+
+**Gradual Migration Strategy:**
+```typescript
+// Migration Path: Phase 1 → Phase 2
+interface MigrationPhase {
+  version: number;
+  description: string;
+  migration: () => Promise<void>;
+}
+
+const migrations: MigrationPhase[] = [
+  {
+    version: 6,
+    description: 'Add RAG infrastructure',
+    migration: async () => {
+      // Create RAG tables
+      await db.version(6).stores({
+        ragDocuments: '++id, sourceId, chunkId',
+        embeddings: '++id, documentId, vector',
+      });
+      
+      // Migrate existing data
+      await migrateDocumentsToRAG();
+    },
+  },
+];
+
+// Auto-migration on DB open
+db.on('populate', () => {
+  const currentVersion = await db.version.get('currentVersion');
+  const pendingMigrations = migrations.filter(m => m.version > currentVersion);
+  
+  for (const migration of pendingMigrations) {
+    await migration.migration();
+    await db.version.put('currentVersion', migration.version);
+  }
+});
+```
+
+#### Backward Compatibility Requirements
+
+| Component | Compatibility Strategy | Implementation | Validation |
+|-----------|---------------------|----------------|-------------|
+| **State Stores** | Versioned schema | Auto-migration | Migration tests |
+| **File Format** | JSON-based | Version field | Format validation |
+| **API Surface** | Deprecation warnings | Graceful fallback | Deprecated API logs |
+| **UI Components** | Feature flags | Progressive disclosure | Feature flag tests |
+
+**Backward Compatibility Pattern:**
+```typescript
+// src/lib/utils/compatibility.ts
+interface VersionedData<T> {
+  version: number;
+  data: T;
+}
+
+export const migrateData = async <T>(
+  rawData: unknown,
+  currentVersion: number,
+  targetVersion: number
+): Promise<T> => {
+  // Validate version
+  if (typeof rawData !== 'object' || !rawData.hasOwnProperty('version')) {
+    throw new InvalidDataError('Missing version field');
+  }
+  
+  const versioned = rawData as VersionedData<T>;
+  
+  // Apply migrations sequentially
+  let data = versioned.data;
+  for (let v = versioned.version + 1; v <= targetVersion; v++) {
+    const migration = migrations.find(m => m.version === v);
+    if (migration) {
+      data = await migration.migrate(data);
+    }
+  }
+  
+  return data;
+};
+```
+
+#### Strangler Fig Pattern Implementation
+
+| Phase | Strangled Component | New Implementation | Integration |
+|-------|-------------------|-------------------|------------|
+| **Phase 1** | File system sync | RAG file system | Dual-write to vector store |
+| **Phase 1** | Agent tools | RAG tools | Tool registry extension |
+| **Phase 1** | State management | RAG state | Zustand store addition |
+| **Phase 2** | Knowledge canvas | Phase 2 canvas | React Flow integration |
+
+**Strangler Fig Pattern:**
+```typescript
+// src/lib/strangler-fig/registry.ts
+interface StrangledModule {
+  name: string;
+  version: number;
+  status: 'active' | 'deprecated' | 'replaced';
+}
+
+const moduleRegistry: StrangledModule[] = [
+  {
+    name: 'file-system-sync',
+    version: 1,
+    status: 'active',
+  },
+  {
+    name: 'rag-file-system',
+    version: 2,
+    status: 'active',
+  },
+  {
+    name: 'knowledge-canvas',
+    version: 1,
+    status: 'deprecated',
+  },
+];
+
+// Gradual migration: Replace deprecated modules
+const migrateModule = async (moduleName: string) => {
+  const module = moduleRegistry.find(m => m.name === moduleName);
+  if (!module || module.status !== 'deprecated') return;
+  
+  // Initialize new module
+  await initializeNewModule(moduleName);
+  
+  // Migrate data
+  await migrateData(moduleName, module.version);
+  
+  // Mark as replaced
+  module.status = 'replaced';
+};
+```
+
+**Architecture Alignment:** See [`architecture.md`](../architecture.md) Section 2.3 - Brownfield Architecture Constraints and [`prd.md`](../prd.md) Section 10.7 - Technical Requirements Alignment
+
+---
+
+## Reference Documents
+
+- **Architecture:** [`architecture.md`](../architecture.md)
+- **PRD:** [`prd.md`](../prd.md)
+- **UX Design Specification:** [`ux-design-specification.md`](../ux-design-specification.md)
+- **Sprint Status:** `../sprint-artifacts/sprint-status.yaml`
+- **Epics:** [`../epics.md`](../epics.md)
+- **MCP Research Protocol:** `.agent/rules/general-rules.md`
+
+## Critical Dependency Matrix
+
+_Strict execution order required to prevent blockers._
+
+| Predecessor | Successor | Reason |
+|-------------|-----------|--------|
+| **Phase 1 State** | **Phase 2 RAG State** | RAG requires stable state foundation |
+| **Phase 1 File System** | **Phase 2 RAG Ingestion** | RAG requires file access |
+| **Phase 1 Agent Tools** | **Phase 2 RAG Tools** | RAG extends tool registry |
+| **RAG Infrastructure** | **Knowledge Canvas** | Canvas requires RAG context |
+| **Knowledge Canvas** | **Study Artifacts** | Artifacts generated from canvas |
+| **Bilingual Support** | **All Phase 2 Features** | Vietnamese-first UI required |
+
 ---
 
 _Generated: 2025-12-28T20:46+07:00_
-_This document is optimized for LLM context efficiency. Keep it lean._
+_Enhanced: 2025-12-29T23:29+07:00_
+_This document is optimized for LLM context efficiency. Keep it lean.

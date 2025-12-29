@@ -36,3 +36,7 @@ export { ProgressIndicator } from './progress-indicator';
 export { ContextTooltip } from './context-tooltip';
 export { CollapsibleSection } from './collapsible-section';
 export { KeyboardShortcutsOverlay } from './keyboard-shortcuts-overlay';
+
+// Agent UI Components (RC-008)
+export { ApprovalOverlay } from './ApprovalOverlay';
+export type { ApprovalDecision, PermissionRequest, RiskLevel } from './ApprovalOverlay';

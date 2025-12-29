@@ -1,14 +1,15 @@
 /**
  * @fileoverview AI Chat API Route
  * @module routes/api/chat
- * 
+ *
  * TanStack Start server route with streaming SSE responses.
  * Integrates ProviderAdapterFactory + file/terminal tools.
- * 
+ *
  * @epic 25 - AI Foundation Sprint
  * @story 25-R1 - E2E Integration Fix
  * @fix INC-2025-12-24-001 - 500 Error on /api/chat
- * 
+ * @fix RC-009 - ChatRequest Validation
+ *
  * ARCHITECTURE NOTE:
  * This is a server-side route that runs in Cloudflare Workers/Node.
  * IndexedDB (credentialVault) is NOT available here.
@@ -21,6 +22,11 @@ import { createFileRoute } from '@tanstack/react-router';
 import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
 import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
+import {
+    validateChatRequest,
+    createValidationErrorResponse,
+    logValidationError,
+} from '../../lib/validation/chat-request';
 
 // Default configuration
 const DEFAULT_PROVIDER = 'openrouter';
@@ -140,7 +146,7 @@ export const Route = createFileRoute('/api/chat')({
 
             /**
              * POST handler - chat with AI
-             * 
+             *
              * Client must pass:
              * - messages: Array of chat messages
              * - apiKey: API key from credentialVault (required)
@@ -149,47 +155,70 @@ export const Route = createFileRoute('/api/chat')({
              */
             POST: async ({ request }: { request: Request }) => {
                 try {
-                    const body: ChatRequest = await request.json();
+                    // Parse request body
+                    let body: unknown;
+                    try {
+                        body = await request.json();
+                    } catch {
+                        return createValidationErrorResponse('Invalid JSON in request body');
+                    }
+
+                    // RC-009: Validate request with Zod
+                    const validation = validateChatRequest(body);
+
+                    if (!validation.success) {
+                        // Log validation error for security monitoring
+                        logValidationError(
+                            validation.error?.message || 'unknown',
+                            validation.error?.message || 'Validation failed',
+                            {
+                                providerId: (body as { providerId?: string })?.providerId,
+                                messageCount: (body as { messages?: unknown[] })?.messages?.length,
+                                timestamp: Date.now(),
+                            }
+                        );
+                        return createValidationErrorResponse(
+                            validation.error?.message || 'Validation failed',
+                            validation.error?.details
+                        );
+                    }
+
+                    const validatedBody = validation.data!;
 
                     console.log('[/api/chat] Request received:', {
-                        providerId: body.providerId,
-                        modelId: body.modelId,
-                        hasApiKey: !!body.apiKey,
-                        messageCount: body.messages?.length
+                        providerId: validatedBody.providerId,
+                        modelId: validatedBody.modelId,
+                        hasApiKey: !!validatedBody.apiKey,
+                        messageCount: validatedBody.messages?.length
                     });
-
-                    // Validate messages
-                    if (!body.messages || !Array.isArray(body.messages)) {
-                        return errorResponse('Messages array required', 400);
-                    }
 
                     // API key is required - client must retrieve from credentialVault
                     // and pass it in the request body
-                    const apiKey = body.apiKey;
+                    const apiKey = validatedBody.apiKey;
                     if (!apiKey) {
-                        return errorResponse(
+                        return createChatErrorResponse(
                             'API key required. Configure API key in Agent Settings and ensure it is passed in request.',
                             401
                         );
                     }
 
-                    const providerId = body.providerId || DEFAULT_PROVIDER;
-                    const modelId = body.modelId || DEFAULT_MODEL;
+                    const providerId = validatedBody.providerId || DEFAULT_PROVIDER;
+                    const modelId = validatedBody.modelId || DEFAULT_MODEL;
 
                     // Determine baseURL: prioritize custom URL, then look up by provider
                     let baseURL: string;
-                    if (body.customBaseURL) {
+                    if (validatedBody.customBaseURL) {
                         // OpenAI Compatible provider with custom endpoint
                         // Strip trailing slashes to avoid double slashes when SDK appends /chat/completions
-                        baseURL = body.customBaseURL.replace(/\/+$/, '');
+                        baseURL = validatedBody.customBaseURL.replace(/\/+$/, '');
                     } else {
                         baseURL = PROVIDER_BASE_URLS[providerId] || PROVIDER_BASE_URLS.openrouter;
                     }
 
                     // Determine headers: custom headers OR OpenRouter defaults
                     let defaultHeaders: Record<string, string> | undefined;
-                    if (body.customHeaders && Object.keys(body.customHeaders).length > 0) {
-                        defaultHeaders = body.customHeaders;
+                    if (validatedBody.customHeaders && Object.keys(validatedBody.customHeaders).length > 0) {
+                        defaultHeaders = validatedBody.customHeaders;
                     } else if (providerId === 'openrouter') {
                         defaultHeaders = {
                             'HTTP-Referer': 'https://via-gent.dev',
@@ -213,7 +242,7 @@ export const Route = createFileRoute('/api/chat')({
                     console.log('[/api/chat] Creating stream:', {
                         modelId,
                         baseURL,
-                        isCustomProvider: !!body.customBaseURL,
+                        isCustomProvider: !!validatedBody.customBaseURL,
                         toolCount: tools.length,
                         toolNames: tools.map(t => t.name),
                     });
@@ -221,21 +250,21 @@ export const Route = createFileRoute('/api/chat')({
                     // CC-2025-12-25-004: Debug flag to test without tools
                     // Also check if model supports tools (some models error with tool definitions)
                     const modelHasToolSupport = modelSupportsTools(modelId);
-                    const enableTools = !body.disableTools && modelHasToolSupport;
+                    const enableTools = !validatedBody.disableTools && modelHasToolSupport;
 
                     console.log('[/api/chat] Tools enabled:', enableTools, {
-                        disableTools: body.disableTools,
+                        disableTools: validatedBody.disableTools,
                         modelHasToolSupport
                     });
 
                     // Sanitize messages for models without tool support
                     // This removes tool-role messages and empty messages that could cause errors
                     const finalMessages = enableTools
-                        ? body.messages
-                        : sanitizeMessagesForNoToolModel(body.messages);
+                        ? validatedBody.messages
+                        : sanitizeMessagesForNoToolModel(validatedBody.messages);
 
                     console.log('[/api/chat] Message count:', {
-                        original: body.messages.length,
+                        original: validatedBody.messages.length,
                         final: finalMessages.length
                     });
 
