@@ -338,6 +338,7 @@ export interface SessionSnapshotRecord {
  *
  * @epic Epic 6 - Source Ingestion & Management
  * @story 6-1 - Source Import Pipeline
+ * @story 6-4 - Source Metadata Extraction
  */
 export interface SourceRecord {
     id: string;                 // Primary key (UUID)
@@ -353,6 +354,12 @@ export interface SourceRecord {
     collections?: string[];     // Collection IDs (Story 6-3)
     deleted?: boolean;          // Soft delete flag (Story 6-3)
     deletedAt?: number;         // Deletion timestamp (Story 6-3)
+    // AI-generated metadata (Story 6-4)
+    summary?: string;           // AI-generated 3-sentence summary
+    keyConcepts?: string[];     // Array of 5 key concept tags
+    suggestedQuestions?: string[]; // Array of 3 suggested questions
+    metadataExtracted?: boolean; // Flag for AI analysis completion
+    metadataEdited?: boolean;   // Flag for user corrections
     createdAt: number;
     updatedAt: number;
 }

@@ -22,3 +22,9 @@ export {
     type SourceType,
     type SourceImportOptions,
 } from './source-import';
+
+export {
+    MetadataExtractor,
+    metadataExtractor,
+    type ExtractedMetadata,
+} from './metadata-extractor';
