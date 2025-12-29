@@ -576,13 +576,14 @@ export class SyncManager {
                 }
             }
 
-            // Update the last sync time
+            // Update the last sync time by updating metadata for synced files
             const now = Date.now();
-            await fileMetadataCache.set('@lastSync', {
-                path: '@lastSync',
-                lastModified: now,
-                size: 0,
-            });
+            const updatedMetadata: FileMetadataRecord[] = changedFiles.map(file => ({
+                ...file,
+                syncedAt: now,
+                updatedAt: now,
+            }));
+            await fileMetadataCache.updateBatch(updatedMetadata);
 
             result.duration = Math.round(performance.now() - startTime);
 
