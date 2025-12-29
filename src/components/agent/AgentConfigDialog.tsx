@@ -19,7 +19,7 @@
  * @see _bmad-output/design-system-8bit-2025-12-25.md
  */
 
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Plus, Settings2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -169,6 +169,14 @@ export function AgentConfigDialog({
     const [enableNativeTools, setEnableNativeTools] = useState(true)
     const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
 
+    // CC-2025-12-29: LLM Parameters State
+    const [temperature, setTemperature] = useState(0.7)
+    const [maxTokens, setMaxTokens] = useState(4096)
+    const [topP, setTopP] = useState(0.95)
+    const [topK, setTopK] = useState<number | undefined>(undefined)
+    const [systemPrompt, setSystemPrompt] = useState('')
+    const [showAdvancedParams, setShowAdvancedParams] = useState(false)
+
     // Store actions
     const { addAgent, updateAgent, removeAgent } = useAgentsStore()
 
@@ -237,6 +245,9 @@ export function AgentConfigDialog({
         }
     }, [])
 
+    // Ref to track agent being edited (for model restoration after loadModels)
+    const editingAgentRef = useRef<Agent | undefined>(undefined)
+
     // Check for stored credentials when provider changes
     useEffect(() => {
         if (!open || !providerId) return
@@ -260,6 +271,12 @@ export function AgentConfigDialog({
                         setModels([])
                     }
                 }
+
+                // CC-2025-12-29: Restore model from agent being edited after models load
+                if (editingAgentRef.current && editingAgentRef.current.model) {
+                    console.log('[AgentConfigDialog] Restoring model from edit:', editingAgentRef.current.model)
+                    setModel(editingAgentRef.current.model)
+                }
             })
             .catch(console.error)
             .finally(() => setIsCheckingKey(false))
@@ -270,10 +287,18 @@ export function AgentConfigDialog({
      * Fixes: Agent config edits not reflecting existing values (CC-2025-12-29)
      */
     useEffect(() => {
-        if (!open) return
+        if (!open) {
+            // Reset ref when dialog closes
+            editingAgentRef.current = undefined
+            return
+        }
 
         if (agent) {
-            // Edit mode: populate form from agent data
+            // Edit mode: store agent ref for model restoration
+            editingAgentRef.current = agent
+            console.log('[AgentConfigDialog] Edit mode - agent:', agent.name, 'model:', agent.model, 'provider:', agent.provider)
+
+            // Populate form from agent data
             setName(agent.name)
             setRole(agent.role || agent.description || '')
             const mappedProviderId = mapProviderNameToId(agent.provider)
@@ -289,9 +314,17 @@ export function AgentConfigDialog({
             }
             if (agent.enableNativeTools !== undefined) setEnableNativeTools(agent.enableNativeTools)
 
-            console.log('[AgentConfigDialog] Populated form for edit:', agent.name)
+            // CC-2025-12-29: LLM Parameters
+            if (agent.temperature !== undefined) setTemperature(agent.temperature)
+            if (agent.maxTokens !== undefined) setMaxTokens(agent.maxTokens)
+            if (agent.topP !== undefined) setTopP(agent.topP)
+            if (agent.topK !== undefined) setTopK(agent.topK)
+            if (agent.systemPrompt) setSystemPrompt(agent.systemPrompt)
+
+            console.log('[AgentConfigDialog] Populated form for edit:', agent.name, 'mapped provider:', mappedProviderId)
         } else {
             // Create mode: reset to defaults
+            editingAgentRef.current = undefined
             setName('')
             setRole('')
             setProviderId('openrouter')
@@ -303,6 +336,13 @@ export function AgentConfigDialog({
             setEnableNativeTools(true)
             setErrors({})
             setConnectionStatus('idle')
+            // LLM Parameters defaults
+            setTemperature(0.7)
+            setMaxTokens(4096)
+            setTopP(0.95)
+            setTopK(undefined)
+            setSystemPrompt('')
+            setShowAdvancedParams(false)
         }
     }, [agent, open])
 
@@ -477,6 +517,12 @@ export function AgentConfigDialog({
                 customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
                 customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
                 enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
+                // CC-2025-12-29: LLM Parameters
+                temperature,
+                maxTokens,
+                topP,
+                topK: topK !== undefined ? topK : undefined,
+                systemPrompt: systemPrompt.trim() || undefined,
             }
 
             safeDebug('[AgentConfigDialog] Saving agent:', sanitizeForLogging(agentData))

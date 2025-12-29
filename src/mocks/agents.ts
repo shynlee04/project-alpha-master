@@ -19,10 +19,29 @@ export interface Agent {
     tokensUsed: number
     lastActive: string
     createdAt: string
+
     // OpenAI Compatible Provider support
     customBaseURL?: string
     customHeaders?: Record<string, string>
     enableNativeTools?: boolean
+
+    // CC-2025-12-29: Standard LLM Parameters
+    /** Temperature (0.0-2.0, default 0.7) - controls randomness */
+    temperature?: number
+    /** Max output tokens (model-specific max) */
+    maxTokens?: number
+    /** Top-p nucleus sampling (0.0-1.0, default 0.95) */
+    topP?: number
+    /** Top-k sampling (optional, for Gemini/local models) */
+    topK?: number
+    /** System prompt / agent personality */
+    systemPrompt?: string
+    /** Frequency penalty (-2.0 to 2.0, reduces repetition) */
+    frequencyPenalty?: number
+    /** Presence penalty (-2.0 to 2.0, encourages new topics) */
+    presencePenalty?: number
+    /** Stop sequences */
+    stopSequences?: string[]
 }
 
 /**

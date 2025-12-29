@@ -81,6 +81,7 @@ export interface AdapterConfig {
 
 /**
  * Model information from provider API
+ * CC-2025-12-29: Extended with LLM parameters and pricing
  */
 export interface ModelInfo {
     /** Model ID (e.g., 'gpt-4o', 'meta-llama/llama-3.1-8b-instruct:free') */
@@ -89,10 +90,38 @@ export interface ModelInfo {
     name: string;
     /** Whether this is a free model */
     isFree?: boolean;
-    /** Context window size */
+    /** Context window size (input tokens) */
     contextLength?: number;
+    /** Max output tokens */
+    maxOutputTokens?: number;
     /** Provider ID */
     providerId: string;
+
+    // LLM Parameter Defaults (from provider API)
+    /** Default temperature */
+    temperature?: number;
+    /** Max temperature allowed */
+    maxTemperature?: number;
+    /** Default top_p */
+    topP?: number;
+    /** Default top_k (Gemini/local) */
+    topK?: number;
+
+    // Capabilities
+    /** Supported generation methods */
+    supportedMethods?: string[];
+    /** Input modalities (text, image, audio) */
+    inputModalities?: string[];
+    /** Output modalities */
+    outputModalities?: string[];
+    /** Supports tool/function calling */
+    supportsTools?: boolean;
+
+    // Pricing (per 1M tokens)
+    pricing?: {
+        prompt: number;
+        completion: number;
+    };
 }
 
 /**

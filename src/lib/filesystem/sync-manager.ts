@@ -1,35 +1,39 @@
 /**
  * Sync Manager - Bidirectional file sync between Local FS and WebContainers
  * @module lib/filesystem/sync-manager
- * 
+ *
  * This module provides synchronization between the local file system (via File System Access API)
  * and WebContainers' in-memory file system.
- * 
+ *
  * **Sync Strategy:**
  * - Local FS is the source of truth
  * - WebContainers mirrors the local file system
  * - Initial sync: Local FS → WebContainers (via mount)
  * - File save: Dual write to both systems
- * 
+ * - Incremental sync: Uses FileMetadataCache to detect changed files
+ *
  * **Exclusions:**
  * - .git directory (not needed in WebContainers, will be regenerated)
  * - node_modules (regenerated via npm install)
  * - System files (.DS_Store, Thumbs.db)
- * 
+ *
  * @example
  * ```ts
  * import { SyncManager } from '@/lib/filesystem/sync-manager';
  * import { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
- * 
+ *
  * const adapter = new LocalFSAdapter();
  * await adapter.requestDirectoryAccess();
- * 
+ *
  * const syncManager = new SyncManager(adapter, {
  *   onProgress: (p) => console.log(`Syncing: ${p.currentFile}`),
  *   onComplete: (r) => console.log(`Synced ${r.syncedFiles} files in ${r.duration}ms`),
  * });
- * 
+ *
  * await syncManager.syncToWebContainer();
+ *
+ * // Incremental sync (syncs only changed files)
+ * await syncManager.incrementalSyncToWebContainer();
  * ```
  */
 
@@ -46,6 +50,8 @@ import {
 import { countFilesToSync, buildFileSystemTree } from './sync-operations';
 import { validateFileSize, shouldWarnFileSize, formatFileSize } from './validation';
 import { showErrorToast } from '../utils/error-handling';
+import { fileMetadataCache } from '../sync/file-metadata-cache';
+import type { FileMetadataRecord } from '../state/dexie-db';
 
 // Re-export types for convenience
 export { SyncError } from './sync-types';
@@ -468,6 +474,157 @@ export class SyncManager {
             this.config.onError?.(syncError);
             throw syncError;
         }
+    }
+
+    /**
+     * Incrementally sync changed files from Local FS to WebContainers
+     *
+     * Uses FileMetadataCache to detect which files have changed since the last sync
+     * and only syncs those files. This is more efficient than full sync for small changes.
+     *
+     * @returns Promise resolving to SyncResult with sync statistics
+     * @throws {SyncError} If sync fails critically
+     */
+    async incrementalSyncToWebContainer(): Promise<SyncResult> {
+        if (this._status === 'syncing') {
+            console.warn('[SyncManager] Sync already in progress, skipping incremental request');
+            return {
+                success: false,
+                totalFiles: 0,
+                syncedFiles: 0,
+                failedFiles: [],
+                duration: 0,
+            };
+        }
+
+        this._status = 'syncing';
+        const startTime = performance.now();
+
+        const result: SyncResult = {
+            success: true,
+            totalFiles: 0,
+            syncedFiles: 0,
+            failedFiles: [],
+            duration: 0,
+        };
+
+        try {
+            // Ensure WebContainer is booted
+            if (!isBooted()) {
+                await boot();
+            }
+
+            // Get last sync time and changed files
+            const lastSyncTime = await fileMetadataCache.getLastSyncTime();
+            const changedFiles = await fileMetadataCache.getChangedFiles(lastSyncTime);
+
+            if (changedFiles.length === 0) {
+                console.log('[SyncManager] No changed files detected for incremental sync');
+                this._status = 'idle';
+                result.duration = Math.round(performance.now() - startTime);
+                this.config.onComplete?.(result);
+                return result;
+            }
+
+            this.eventBus?.emit('sync:started', {
+                fileCount: changedFiles.length,
+                direction: 'to-wc',
+                incremental: true,
+                lastSyncTime,
+            });
+
+            const fs = getFileSystem();
+
+            for (const fileRecord of changedFiles) {
+                try {
+                    result.totalFiles++;
+
+                    // Read file content from local FS
+                    const content = await this.localAdapter.readFile(fileRecord.path);
+
+                    // Ensure parent directories exist in WebContainers
+                    const segments = fileRecord.path.split('/');
+                    if (segments.length > 1) {
+                        const parentPath = segments.slice(0, -1).join('/');
+                        try {
+                            await fs.mkdir(parentPath, { recursive: true });
+                        } catch {
+                            // Directory might already exist, ignore
+                        }
+                    }
+
+                    // Write to WebContainer
+                    await fs.writeFile(fileRecord.path, content);
+                    result.syncedFiles++;
+
+                    // Emit progress
+                    this.eventBus?.emit('sync:progress', {
+                        current: result.syncedFiles,
+                        total: changedFiles.length,
+                        currentFile: fileRecord.path,
+                    });
+                } catch (error) {
+                    const fileError = new SyncError(
+                        `Failed to sync file: ${fileRecord.path}`,
+                        'FILE_SYNC_FAILED',
+                        fileRecord.path,
+                        error
+                    );
+                    console.error(`[SyncManager] Failed to sync ${fileRecord.path}:`, error);
+                    result.failedFiles.push(fileRecord.path);
+                    this.config.onError?.(fileError);
+                }
+            }
+
+            // Update the last sync time
+            const now = Date.now();
+            await fileMetadataCache.set('@lastSync', {
+                path: '@lastSync',
+                lastModified: now,
+                size: 0,
+            });
+
+            result.duration = Math.round(performance.now() - startTime);
+
+            // Determine overall success
+            result.success = result.failedFiles.length === 0;
+
+            this._status = 'idle';
+
+            this.eventBus?.emit('sync:completed', {
+                success: result.success,
+                timestamp: new Date(),
+                filesProcessed: result.syncedFiles,
+                incremental: true,
+            });
+
+            this.config.onComplete?.(result);
+        } catch (error) {
+            result.success = false;
+            result.duration = Math.round(performance.now() - startTime);
+            this._status = 'error';
+
+            const syncError = new SyncError(
+                `Incremental sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                error instanceof SyncError ? error.code : 'SYNC_FAILED',
+                undefined,
+                error
+            );
+
+            console.error('[SyncManager] Incremental sync failed:', syncError);
+
+            this.eventBus?.emit('sync:error', {
+                error: syncError,
+                file: syncError.filePath,
+            });
+
+            this.config.onError?.(syncError);
+            this.config.onComplete?.(result);
+
+            throw syncError;
+        }
+
+        return result;
     }
 
     /**

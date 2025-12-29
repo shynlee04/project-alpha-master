@@ -279,3 +279,236 @@ describe('SyncManager', () => {
     });
   });
 });
+
+// Story 24-1: Tests for incrementalSyncToWebContainer with FileMetadataCache integration
+describe('SyncManager incrementalSync (Story 24-1)', () => {
+  let mockAdapter: LocalFSAdapter;
+  let mockFileMetadataCache: {
+    getLastSyncTime: ReturnType<typeof vi.fn>;
+    getChangedFiles: ReturnType<typeof vi.fn>;
+    set: ReturnType<typeof vi.fn>;
+  };
+  let syncManager: SyncManager;
+
+  // Create mock functions before vi.mock
+  const mockBoot = vi.fn().mockResolvedValue(undefined);
+  const mockMount = vi.fn().mockResolvedValue(undefined);
+  const mockIsBooted = vi.fn().mockReturnValue(true);
+  const mockGetFileSystem = vi.fn().mockReturnValue({
+    writeFile: vi.fn().mockResolvedValue(undefined),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    rm: vi.fn().mockResolvedValue(undefined),
+  });
+
+  // Mock webcontainer module
+  vi.mock('../webcontainer', () => ({
+    boot: mockBoot,
+    mount: mockMount,
+    getFileSystem: mockGetFileSystem,
+    isBooted: mockIsBooted,
+  }));
+
+  // Mock file-metadata-cache module
+  vi.mock('../sync/file-metadata-cache', () => ({
+    fileMetadataCache: {
+      getLastSyncTime: vi.fn(),
+      getChangedFiles: vi.fn(),
+      set: vi.fn(),
+    },
+  }));
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Reset mock implementations
+    mockBoot.mockResolvedValue(undefined);
+    mockIsBooted.mockReturnValue(true);
+    mockGetFileSystem.mockReturnValue({
+      writeFile: vi.fn().mockResolvedValue(undefined),
+      mkdir: vi.fn().mockResolvedValue(undefined),
+      rm: vi.fn().mockResolvedValue(undefined),
+    });
+
+    // Setup file metadata cache mock
+    mockFileMetadataCache = {
+      getLastSyncTime: vi.fn().mockResolvedValue(0),
+      getChangedFiles: vi.fn().mockResolvedValue([]),
+      set: vi.fn().mockResolvedValue(undefined),
+    };
+
+    // Import and replace the mock
+    const { fileMetadataCache } = await import('../sync/file-metadata-cache');
+    vi.mocked(fileMetadataCache).getLastSyncTime = mockFileMetadataCache.getLastSyncTime;
+    vi.mocked(fileMetadataCache).getChangedFiles = mockFileMetadataCache.getChangedFiles;
+    vi.mocked(fileMetadataCache).set = mockFileMetadataCache.set;
+
+    mockAdapter = {
+      requestDirectoryAccess: vi.fn().mockResolvedValue({}),
+      getDirectoryHandle: vi.fn(),
+      readFile: vi.fn().mockResolvedValue('file content'),
+      writeFile: vi.fn().mockResolvedValue(undefined),
+      deleteFile: vi.fn().mockResolvedValue(undefined),
+      createDirectory: vi.fn().mockResolvedValue(undefined),
+      deleteDirectory: vi.fn().mockResolvedValue(undefined),
+      exists: vi.fn().mockResolvedValue(true),
+      listFiles: vi.fn().mockResolvedValue([]),
+      isDirectory: vi.fn().mockResolvedValue(false),
+      getFullPath: vi.fn().mockImplementation((path) => Promise.resolve(path)),
+    } as unknown as LocalFSAdapter;
+
+    syncManager = new SyncManager(mockAdapter);
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
+  });
+
+  describe('incrementalSyncToWebContainer', () => {
+    it('should return empty result when no files changed', async () => {
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue([]);
+
+      const result = await syncManager.incrementalSyncToWebContainer();
+
+      expect(result.success).toBe(true);
+      expect(result.totalFiles).toBe(0);
+      expect(result.syncedFiles).toBe(0);
+      expect(result.failedFiles).toHaveLength(0);
+    });
+
+    it('should sync only changed files to WebContainer', async () => {
+      const changedFiles = [
+        { path: 'src/index.ts', lastModified: 1000, size: 100 },
+        { path: 'src/utils.ts', lastModified: 1001, size: 200 },
+      ];
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue(changedFiles);
+      mockAdapter.readFile.mockResolvedValue('// file content');
+
+      const result = await syncManager.incrementalSyncToWebContainer();
+
+      expect(result.success).toBe(true);
+      expect(result.totalFiles).toBe(2);
+      expect(result.syncedFiles).toBe(2);
+
+      const mockFs = mockGetFileSystem();
+      expect(mockFs.writeFile).toHaveBeenCalledTimes(2);
+    });
+
+    it('should read file content from local FS for each changed file', async () => {
+      const changedFiles = [
+        { path: 'src/index.ts', lastModified: 1000, size: 100 },
+      ];
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue(changedFiles);
+      mockAdapter.readFile.mockResolvedValue('// updated content');
+
+      await syncManager.incrementalSyncToWebContainer();
+
+      expect(mockAdapter.readFile).toHaveBeenCalledWith('src/index.ts');
+    });
+
+    it('should create parent directories for nested files', async () => {
+      const changedFiles = [
+        { path: 'src/components/Button.tsx', lastModified: 1000, size: 100 },
+      ];
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue(changedFiles);
+      mockAdapter.readFile.mockResolvedValue('// component code');
+
+      await syncManager.incrementalSyncToWebContainer();
+
+      const mockFs = mockGetFileSystem();
+      expect(mockFs.mkdir).toHaveBeenCalledWith('src/components', { recursive: true });
+    });
+
+    it('should update last sync time after successful sync', async () => {
+      const changedFiles = [
+        { path: 'test.ts', lastModified: 1000, size: 100 },
+      ];
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue(changedFiles);
+
+      await syncManager.incrementalSyncToWebContainer();
+
+      expect(mockFileMetadataCache.set).toHaveBeenCalled();
+      const setCall = (mockFileMetadataCache.set as vi.fn).mock.calls[0][0];
+      expect(setCall.path).toBe('@lastSync');
+      expect(setCall.lastModified).toBeDefined();
+    });
+
+    it('should skip files that fail to read', async () => {
+      const changedFiles = [
+        { path: 'good.ts', lastModified: 1000, size: 100 },
+        { path: 'bad.ts', lastModified: 1001, size: 200 },
+      ];
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue(changedFiles);
+      mockAdapter.readFile
+        .mockResolvedValueOnce('// good content')
+        .mockRejectedValueOnce(new Error('Read error'));
+
+      const result = await syncManager.incrementalSyncToWebContainer();
+
+      expect(result.success).toBe(false);
+      expect(result.failedFiles).toContain('bad.ts');
+    });
+
+    it('should skip files that fail to write to WebContainer', async () => {
+      const changedFiles = [
+        { path: 'good.ts', lastModified: 1000, size: 100 },
+        { path: 'bad.ts', lastModified: 1001, size: 200 },
+      ];
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue(changedFiles);
+      mockAdapter.readFile.mockResolvedValue('// content');
+
+      const mockFs = mockGetFileSystem();
+      mockFs.writeFile
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new Error('Write error'));
+
+      const result = await syncManager.incrementalSyncToWebContainer();
+
+      expect(result.success).toBe(false);
+      expect(result.failedFiles).toContain('bad.ts');
+    });
+
+    it('should boot WebContainer if not booted', async () => {
+      mockIsBooted.mockReturnValue(false);
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue([]);
+
+      await syncManager.incrementalSyncToWebContainer();
+
+      expect(mockBoot).toHaveBeenCalled();
+    });
+
+    it('should return result when sync already in progress', async () => {
+      // Start first sync
+      const syncPromise = syncManager.incrementalSyncToWebContainer();
+
+      // Second sync should return early
+      const result = await syncManager.incrementalSyncToWebContainer();
+
+      expect(result.success).toBe(false);
+      expect(result.totalFiles).toBe(0);
+
+      // Wait for first sync to complete
+      await syncPromise;
+    });
+
+    it('should set error status on critical failure', async () => {
+      mockFileMetadataCache.getChangedFiles.mockRejectedValue(new Error('Cache error'));
+
+      try {
+        await syncManager.incrementalSyncToWebContainer();
+        fail('Should have thrown');
+      } catch (error) {
+        expect(error).toBeInstanceOf(SyncError);
+      }
+
+      expect(syncManager.status).toBe('error');
+    });
+
+    it('should report duration in result', async () => {
+      mockFileMetadataCache.getChangedFiles.mockResolvedValue([]);
+
+      const result = await syncManager.incrementalSyncToWebContainer();
+
+      expect(result.duration).toBeGreaterThanOrEqual(0);
+    });
+  });
+});
