@@ -220,6 +220,7 @@
   "agent.risk.medium": "Medium",
   "agent.risk.low": "Low",
   "sidebar.agents": "Agents",
+  "sidebar.knowledge": "Knowledge",
   "actions.addAgent": "Add Agent",
   "actions.refresh": "Refresh",
   "sidebar.noAgents": "No agents configured",
@@ -597,5 +598,11 @@
   "canvas.shortcut.pan": "Pan",
   "canvas.shortcut.zoom": "Zoom in/out",
   "canvas.shortcut.fitView": "Fit view",
-  "canvas.shortcut.delete": "Delete selected"
+  "canvas.shortcut.delete": "Delete selected",
+  "knowledge.scope.global": "Global",
+  "knowledge.scope.project": "Project",
+  "knowledge.canvas.preview": "Canvas Preview",
+  "knowledge.synthesis.title": "Synthesis & Chat",
+  "knowledge.synthesis.placeholder.text": "Select sources from the library or nodes on the canvas to begin synthesis.",
+  "knowledge.synthesis.placeholder.feature": "Feature coming in Sprint 6-3 (Integration)"
 }

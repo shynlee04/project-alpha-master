@@ -37,11 +37,16 @@ export interface ConceptNodeData {
 export type CanvasNodeData = SourceNodeData | ConceptNodeData;
 
 /**
+ * Relationship type for edges
+ */
+export type CanvasRelationshipType = 'relates' | 'supports' | 'contradicts' | 'extends';
+
+/**
  * Custom edge data structure
  */
 export interface CanvasEdgeData {
   label?: string;
-  relationship?: 'relates' | 'supports' | 'contradicts' | 'extends';
+  relationship?: CanvasRelationshipType;
 }
 
 /**
@@ -71,6 +76,7 @@ export interface CanvasStoreState {
   addNode: (node: Node<any>) => void;
   removeNode: (nodeId: string) => void;
   addEdge: (edge: Edge<any>) => void;
+  addEdgeWithRelationship: (connection: { source: string; target: string }, relationship: CanvasRelationshipType) => void;
   removeEdge: (edgeId: string) => void;
   resetCanvas: () => void;
 }

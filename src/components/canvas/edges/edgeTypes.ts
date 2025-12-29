@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { EdgeTypes } from '@xyflow/react';
 import { RelationshipEdge } from './RelationshipEdge';
+import type { CanvasRelationshipType } from '../../../lib/canvas/types';
 
 /**
  * Memoized edge types map for React Flow

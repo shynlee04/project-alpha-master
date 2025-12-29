@@ -7,25 +7,21 @@ import {
   useReactFlow,
   MarkerType,
 } from '@xyflow/react';
+import type { CanvasRelationshipType } from '../../../lib/canvas/types';
 import '@xyflow/react/dist/style.css';
-
-/**
- * Relationship type for edges
- */
-export type RelationshipType = 'relates' | 'supports' | 'contradicts' | 'extends';
 
 /**
  * Props for RelationshipEdge component
  */
 export interface RelationshipEdgeData {
-  relationship?: RelationshipType;
+  relationship?: CanvasRelationshipType;
   label?: string;
 }
 
 /**
  * Get styling for relationship type
  */
-const getRelationshipStyle = (relationship: RelationshipType = 'relates') => {
+const getRelationshipStyle = (relationship: CanvasRelationshipType = 'relates') => {
   switch (relationship) {
     case 'supports':
       return {
@@ -54,7 +50,7 @@ const getRelationshipStyle = (relationship: RelationshipType = 'relates') => {
 /**
  * Get marker end type for relationship
  */
-const getMarkerType = (relationship: RelationshipType = 'relates'): MarkerType => {
+const getMarkerType = (relationship: CanvasRelationshipType = 'relates'): MarkerType => {
   switch (relationship) {
     case 'contradicts':
       return MarkerType.ArrowClosed;
@@ -243,7 +239,7 @@ export const createRelationshipEdge = (
 /**
  * Get color for relationship type
  */
-export const getRelationshipColor = (relationship: RelationshipType): string => {
+export const getRelationshipColor = (relationship: CanvasRelationshipType): string => {
   const styles = getRelationshipStyle(relationship);
   return styles.color;
 };
@@ -251,8 +247,8 @@ export const getRelationshipColor = (relationship: RelationshipType): string => 
 /**
  * Get label for relationship type (for UI display)
  */
-export const getRelationshipLabel = (relationship: RelationshipType): string => {
-  const labels: Record<RelationshipType, string> = {
+export const getRelationshipLabel = (relationship: CanvasRelationshipType): string => {
+  const labels: Record<CanvasRelationshipType, string> = {
     relates: 'Related to',
     supports: 'Supports',
     contradicts: 'Contrasts with',

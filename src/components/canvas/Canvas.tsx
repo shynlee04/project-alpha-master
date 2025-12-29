@@ -192,7 +192,8 @@ function CanvasContent() {
         onViewportChange={handleViewportChange}
         onPaneDoubleClick={handlePaneDoubleClick}
         nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
+        edgeTypes={memoizedEdgeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
         minZoom={defaultViewportOptions.minZoom}
         maxZoom={defaultViewportOptions.maxZoom}
         fitView={defaultViewportOptions.fitView}

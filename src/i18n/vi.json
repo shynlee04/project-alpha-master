@@ -220,6 +220,7 @@
   "agent.risk.medium": "Trung bình",
   "agent.risk.low": "Thấp",
   "sidebar.agents": "Tác nhân",
+  "sidebar.knowledge": "Kiến thức",
   "actions.addAgent": "Thêm tác nhân",
   "actions.refresh": "Làm mới",
   "sidebar.noAgents": "Chưa cấu hình tác nhân nào",
@@ -594,5 +595,11 @@
   "canvas.shortcut.pan": "Di chuyển",
   "canvas.shortcut.zoom": "Phóng to/thu nhỏ",
   "canvas.shortcut.fitView": "Co dãn vừa khung",
-  "canvas.shortcut.delete": "Xóa mục đã chọn"
+  "canvas.shortcut.delete": "Xóa mục đã chọn",
+  "knowledge.scope.global": "Toàn cục",
+  "knowledge.scope.project": "Dự án",
+  "knowledge.canvas.preview": "Xem trước Canvas",
+  "knowledge.synthesis.title": "Tổng hợp & Chat",
+  "knowledge.synthesis.placeholder.text": "Chọn nguồn từ thư viện hoặc các nút trên canvas để bắt đầu tổng hợp.",
+  "knowledge.synthesis.placeholder.feature": "Tính năng sẽ có trong Sprint 6-3 (Tích hợp)"
 }
