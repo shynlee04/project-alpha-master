@@ -212,7 +212,7 @@ development_status:
   6-1-source-import-pipeline: done # Code review complete 2025-12-30, all HIGH issues fixed, tests passing (16/26)
   6-2-source-card-ui: done # Code review complete 2025-12-30, all issues fixed, 47 tests passing (4 skipped due to jsdom)
   6-3-source-management: done # All tasks complete 2025-12-30, verified with tests
-  6-4-source-metadata-extraction: in-progress # Team A starting implementation
+  6-4-source-metadata-extraction: done # All tasks complete 2025-12-30 (Team A)
   epic-6-retrospective: optional
 
   # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)

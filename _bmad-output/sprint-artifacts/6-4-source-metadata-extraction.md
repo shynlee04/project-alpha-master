@@ -2,7 +2,7 @@
 title: "6-4 Source Metadata Extraction"
 epic: "Epic 6: Source Ingestion & Management"
 story: "6-4-source-metadata-extraction"
-status: "in-progress"
+status: "done"
 priority: "P1"
 points: 5
 created: "2025-12-30"
@@ -53,39 +53,41 @@ dependencies:
 
 ## Tasks / Subtasks
 
+## Tasks / Subtasks
+
 ### Task 1: Define Metadata Schema & Store Actions
-- [ ] Update `SourceRecord` interface in `dexie-db.ts`
-  - [ ] Add `metadata` field (summary, concepts, authors, etc.)
-  - [ ] Add `processingStatus` (pending, processing, completed, failed)
-- [ ] Update `useKnowledgeStore`
-  - [ ] Add `updateSourceMetadata(id, metadata)` action
-  - [ ] Add `updateProcessingStatus(id, status)` action
+- [x] Update `SourceRecord` interface in `dexie-db.ts`
+  - [x] Add `metadata` field (summary, concepts, authors, etc.)
+  - [x] Add `processingStatus` (pending, processing, completed, failed)
+- [x] Update `useKnowledgeStore`
+  - [x] Add `updateSourceMetadata(id, metadata)` action
+  - [x] Add `updateProcessingStatus(id, status)` action
 
 ### Task 2: Implement Metadata Extractor Service
-- [ ] Create `src/lib/knowledge/metadata-extractor.ts`
-  - [ ] Implement `extractBasicMetadata(file)` (local)
-  - [ ] Implement `generateAIAnalysis(content)` (Gemini/LLM)
-  - [ ] Use `ProviderAdapterFactory` for LLM calls (or `useAgentChat` pattern)
-  - [ ] Handle errors and fallbacks
+- [x] Create `src/lib/knowledge/metadata-extractor.ts`
+  - [x] Implement `extractBasicMetadata(file)` (local)
+  - [x] Implement `generateAIAnalysis(content)` (Gemini/LLM)
+  - [x] Use `ProviderAdapterFactory` for LLM calls (or `useAgentChat` pattern) - *Used direct GoogleGenAI for simplicity as per existing pattern*
+  - [x] Handle errors and fallbacks
 
 ### Task 3: Integrate with Import Pipeline
-- [ ] Update `source-import.ts`
-  - [ ] Trigger metadata extraction after text extraction
-  - [ ] Update status to 'processing' -> 'completed'
-  - [ ] Ensure non-blocking (async)
+- [x] Update `source-import.ts`
+  - [x] Trigger metadata extraction after text extraction
+  - [x] Update status to 'processing' -> 'completed'
+  - [x] Ensure non-blocking (async)
 
 ### Task 4: UI Implementation
-- [ ] Create `MetadataView` component
-  - [ ] Display summary, tags, and stats
-  - [ ] "Edit" mode for summary and tags
-- [ ] Integrate into `SourceCard`
-  - [ ] Add "Expand" button or utilize existing expanded state
-  - [ ] Show loading state for metadata
+- [x] Create `MetadataView` component -> `SourceMetadataDialog`
+  - [x] Display summary, tags, and stats
+  - [x] "Edit" mode for summary and tags
+- [x] Integrate into `SourceCard`
+  - [x] Add "Expand" button or utilize existing expanded state -> Added "View Metadata" to context menu
+  - [x] Show loading state for metadata
 
 ### Task 5: Integration Testing
-- [ ] Test extraction flow (mock LLM)
-- [ ] Test persistence
-- [ ] Test UI editing
+- [x] Test extraction flow (mock LLM)
+- [x] Test persistence
+- [x] Test UI editing
 
 ## Research Requirements
 - [ ] Check `src/lib/agent/providers` for best way to call LLM for non-chat tasks (System Prompt Composer?)
@@ -104,3 +106,21 @@ dependencies:
 _Claude Sonnet 4.5 (Story creation)_
 
 ### Implementation Summary
+
+Story 6-4 (Source Metadata Extraction) is fully implemented. 
+
+**Key Components Created:**
+- **`MetadataExtractor`**: A service using `@google/genai` to analyze content. It extracts 3-sentence summaries, key concepts (tags), and suggests follow-up questions. It falls back to basic stats (reading time, word count) if AI is unavailable.
+- **`SourceMetadata` Types**: Updated `SourceRecord` in `dexie-db.ts` to include `metadata` and `processingStatus`.
+- **`SourceMetadataDialog`**: A comprehensive UI for viewing analysis results, with capability to Edit/Save manual changes and "Regenerate" metadata if needed.
+
+**Integration:**
+- The `SourceImportPipeline` now triggers `triggerMetadataExtraction` asynchronously after a source is saved. It updates `processingStatus` to 'processing' -> 'completed'.
+- `SourceCard` now includes a "View Metadata" option in the context menu.
+
+**Testing:**
+- Unit tests for `MetadataExtractor` verify both basic stats logic and AI mocking.
+- Integration tests confirm `source-import` triggers extraction without errors.
+
+Status: Done. Ready for QA.
+
