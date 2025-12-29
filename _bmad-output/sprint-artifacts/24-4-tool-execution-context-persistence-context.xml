@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context_document>
+  <meta>
+    <epic>24</epic>
+    <story>4</story>
+    <title>Tool Execution Context Persistence</title>
+    <created>2025-12-29</created>
+    <purpose>Provide current code state and implementation hints for tool execution logging</purpose>
+  </meta>
+
+  <file path="src/lib/agent/tools/types.ts">
+    <code_state>
+      <current_implementation>
+        <![CDATA[
+interface ToolExecutionContext {
+  conversationId: string;
+  messageId: string;
+  wasApproved?: boolean;
+  approvedAt?: number;
+  deniedAt?: number;
+}
+
+interface ToolResult {
+  success: boolean;
+  output?: unknown;
+  error?: string;
+  duration?: number;
+}
+
+interface ToolExecutionLog {
+  id: string;
+  conversationId: string;
+  messageId: string;
+  toolName: string;
+  args: unknown;
+  result?: ToolResult;
+  status: 'pending' | 'executed' | 'error';
+  approved?: boolean;
+  timestamp: number;
+  duration?: number;
+}
+        ]]>
+      </current_implementation>
+    </code_state>
+  </file>
+
+  <file path="src/lib/state/dexie-db.ts">
+    <code_state>
+      <schema_definition>
+        <![CDATA[
+// Epic 24: Performance & UX Optimization tables
+toolExecutionLogs!: Table<ToolExecutionLogRecord, string>;
+
+this.version(11).stores({
+  toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp'
+});
+
+// ToolExecutionLogRecord type
+interface ToolExecutionLogRecord {
+  id: string;
+  conversationId: string;
+  messageId: string;
+  toolName: string;
+  args: Record<string, unknown>;
+  result?: {
+    success: boolean;
+    output?: unknown;
+    error?: string;
+  };
+  status: 'pending' | 'executed' | 'error' | 'denied';
+  approved?: boolean;
+  timestamp: number;
+  duration?: number;
+}
+        ]]>
+      </schema_definition>
+      <helper_functions>
+        <![CDATA[
+async function addToolExecutionLog(log: ToolExecutionLogRecord): Promise<void> {
+  await db.toolExecutionLogs.add(log);
+}
+
+async function updateToolExecutionLog(
+  id: string,
+  updates: Partial<ToolExecutionLogRecord>
+): Promise<void> {
+  await db.toolExecutionLogs.update(id, updates);
+}
+
+async function getToolExecutionLogs(
+  conversationId: string
+): Promise<ToolExecutionLogRecord[]> {
+  return db.toolExecutionLogs
+    .where('conversationId')
+    .equals(conversationId)
+    .sortBy('timestamp');
+}
+
+async function clearToolExecutionLogs(conversationId?: string): Promise<void> {
+  if (conversationId) {
+    await db.toolExecutionLogs
+      .where('conversationId')
+      .equals(conversationId)
+      .delete();
+  } else {
+    await db.toolExecutionLogs.clear();
+  }
+}
+        ]]>
+      </helper_functions>
+    </code_state>
+  </file>
+
+  <file path="src/lib/agent/facades/file-tools-impl.ts">
+    <code_state>
+      <current_implementation>
+        <![CDATA[
+export class AgentFileTools {
+  constructor(private webcontainer: WebContainer) {}
+
+  async readFile(context: ToolExecutionContext, params: { path: string }) {
+    // Current: No logging
+    const entries = await this.webcontainer.fs.readFile(params.path, 'utf-8');
+    return entries;
+  }
+
+  async writeFile(context: ToolExecutionContext, params: { path: string; content: string }) {
+    // Current: No logging
+    await this.webcontainer.fs.writeFile(params.path, params.content);
+    return { success: true };
+  }
+
+  async listFiles(context: ToolExecutionContext, params: { path: string }) {
+    // Current: No logging
+    const entries = await this.webcontainer.fs.readdir(params.path);
+    return entries;
+  }
+}
+        ]]>
+      </current_implementation>
+      <problems_identified>
+        <problem>
+          <description>No tool execution logging</description>
+          <impact>Cannot track tool approvals or execution history (CC-002)</impact>
+        </problem>
+        <problem>
+          <description>No trust memory for auto-approve</description>
+          <impact>Users must re-approve same tools on return</impact>
+        </problem>
+      </problems_identified>
+    </code_state>
+  </file>
+
+  <research_notes>
+    <finding id="1">
+      <source>Context7 MCP - Dexie.js Documentation</source>
+      <relevance>high</relevance>
+      <summary>Dexie supports compound indexes and secondary indexes</summary>
+      <implication>Can query toolExecutionLogs by conversationId + timestamp efficiently</implication>
+    </finding>
+    <finding id="2">
+      <source>Codebase Analysis - tool-permission-manager.ts</source>
+      <relevance>high</relevance>
+      <summary>Permission requests are tracked but not persisted</summary>
+      <implication>Can integrate trust memory with permission manager</implication>
+    </finding>
+    <finding id="3">
+      <source>Security Best Practices</source>
+      <relevance>medium</relevance>
+      <summary>Tool arguments may contain sensitive data (file paths, commands)</summary>
+      <implication>Consider encryption for sensitive tool inputs</implication>
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <implementation_hints>
+      <hint id="1">
+        <phase="1-logger-middleware</phase>
+        <description>Create tool execution logger middleware</description>
+        <files>
+          <file>src/lib/agent/tools/tool-execution-logger.ts</file>
+        </files>
+        <pattern>
+          <![CDATA[
+const withExecutionLogging = (tool: Tool) => {
+  return async (context: ToolExecutionContext, params: unknown) => {
+    const startTime = Date.now();
+    const logId = await logToolExecution({
+      id: crypto.randomUUID(),
+      conversationId: context.conversationId,
+      messageId: context.messageId,
+      toolName: tool.name,
+      args: params,
+      status: 'pending',
+      timestamp: startTime,
+    });
+
+    try {
+      const result = await tool.execute(context, params);
+      await updateToolExecution(logId, {
+        status: 'executed',
+        result: { success: true, output: result },
+        approved: context.wasApproved,
+        duration: Date.now() - startTime
+      });
+      return result;
+    } catch (error) {
+      await updateToolExecution(logId, {
+        status: 'error',
+        result: { success: false, error: error.message },
+        duration: Date.now() - startTime
+      });
+      throw error;
+    }
+  };
+};
+          ]]>
+        </pattern>
+      </hint>
+      <hint id="2">
+        <phase="2-trust-memory</phase>
+        <description>Implement trust memory service for auto-approve</description>
+        <files>
+          <file>src/lib/agent/tools/trust-memory.ts</file>
+        </files>
+        <pattern>
+          <![CDATA[
+class TrustMemory {
+  async isTrusted(conversationId: string, toolName: string): Promise<boolean> {
+    const logs = await getToolExecutionLogs(conversationId);
+    const approvedTools = logs
+      .filter(log =>
+        log.toolName === toolName &&
+        log.approved &&
+        log.status === 'executed'
+      )
+      .map(log => log.toolName);
+    return new Set(approvedTools).has(toolName);
+  }
+
+  async recordApproval(conversationId: string, toolName: string): Promise<void> {
+    // Mark tool as trusted for this conversation
+  }
+}
+          ]]>
+        </pattern>
+      </hint>
+      <hint id="3">
+        <phase="3-audit-trail</phase>
+        <description>Create audit trail UI and export functionality</description>
+        <files>
+          <file>src/components/chat/ToolExecutionAudit.tsx</file>
+        </files>
+        <features>
+          <feature>Expandable section in conversation view</feature>
+          <feature>Filter by status (all, approved, denied, error)</feature>
+          <feature>Export as JSON for debugging/compliance</feature>
+          <feature>Clear audit trail with confirmation</feature>
+        </features>
+      </hint>
+    </implementation_hints>
+    <dependencies>
+      <dependency>dexie-db.ts helper functions</dependency>
+      <dependency>tool-permission-manager.ts</dependency>
+      <dependency>file-tools-impl.ts and terminal-tools-impl.ts</dependency>
+    </dependencies>
+    <test_strategy>
+      <unit>
+        <file>src/lib/agent/tools/__tests__/tool-execution-logger.test.ts</file>
+        <coverage>logging, status updates, duration tracking</coverage>
+      </unit>
+      <unit>
+        <file>src/lib/agent/tools/__tests__/trust-memory.test.ts</file>
+        <coverage>isTrusted, recordApproval, clear</coverage>
+      </unit>
+      <integration>
+        <file>src/lib/agent/__tests__/execution-context.test.ts</file>
+        <scenario>Execute tool → verify log created → verify audit shows entry</scenario>
+      </integration>
+    </test_strategy>
+  </technical_notes>
+
+  <acceptance_criteria_tracking>
+    <criterion id="AC-1">Tool execution logging - TODO</criterion>
+    <criterion id="AC-2">Context restoration - TODO</criterion>
+    <criterion id="AC-3">Trust memory auto-approve - TODO</criterion>
+    <criterion id="AC-4">Audit trail UI - TODO</criterion>
+    <criterion id="AC-5">Performance &lt;5ms overhead - TODO</criterion>
+  </acceptance_criteria_tracking>
+</context_document>

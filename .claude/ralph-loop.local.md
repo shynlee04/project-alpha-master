@@ -1,201 +1,279 @@
 ---
 active: true
-iteration: 91
+iteration: 1
 max_iterations: 0
 completion_promise: null
-started_at: "2025-12-28T22:28:13Z"
+started_at: "2025-12-29T13:45:19Z"
 ---
 
+ looping through this @.agent/workflows/story-dev-cycle.md with /tdd-workflows:tdd-cycle ; **IMPORTANT** manage resource as mentioned in @.claude/rules/general-rules.md  
 
 ## CONTEXT OVERVIEW
 
-You are conducting a comprehensive validation sweep of Project Alpha v2.0 - Knowledge Synthesis Station. This project has completed Sprint 0 through Epic 5 development, with Epics 1-4 marked as fully complete and Epic 5 currently in-progress. The remediation stories drafted in Epic 5 specifically target brownfield flaws and shortcomings identified during Phase 1 stabilization efforts.
+Execute comprehensive validation sweep for **EPIC 24: Performance & UX Optimization (Parallel Sprint)**. Address stories **24-1 through 24-4** currently in  status. Coordinate BMAD agents and workflows following prescribed patterns in:
+- 
+- 
 
-The codebase represents a sophisticated local-first application architecture featuring:
-- Mobile-first responsive visual foundation with accessibility compliance
-- AI-powered chat infrastructure with streaming capabilities and agent CRUD operations
-- WebContainer-based file operations with dual-write synchronization
-- Tool permission management system with comprehensive error handling
-- Production-ready polish initiatives addressing crash recovery, state hydration, and performance telemetry
+### Epic Details
+- **Epic ID**: epic-24
+- **Status**: in-progress
+- **Added**: 2025-12-29 via correct-course workflow
+- **Addresses**: CC-001 (Incremental Sync), CC-002 (Conversation History)
+- **Prerequisite**: Dexie v9 schema implemented (2025-12-29T19:28:35+07:00)
 
----
-
-## PRIMARY OBJECTIVE
-
-Conduct a complete validation sweep across all completed epics and stories to verify architectural integrity, requirements traceability, cross-epic integration, and code quality compliance. Assess whether remediation stories successfully address identified brownfield flaws and shortcomings.
-
----
-
-## VALIDATION DOMAIN 1: ARCHITECTURE COMPLIANCE & STRUCTURAL INTEGRITY
-
-### 1.1 Architectural Pattern Validation
-
-Verify that all implemented components adhere to the established architectural patterns specified in architecture.md. Check for architectural drift where implementation deviates from documented patterns without proper change management approval. Validate that each epic's implementation maintains consistency with the overall system architecture while respecting domain boundaries between modules.
-
-### 1.2 Cross-Architecture Compatibility Assessment
-
-Examine implementation across supported CPU architectures (x86-64, ARM64) where applicable. Identify any architecture-specific code paths that may introduce incompatibilities or require platform-conditional compilation. Verify that WebContainer operations, file system access patterns, and terminal integration behave consistently across target platforms.
-
-### 1.3 Cross-Dependency Chain Analysis
-
-Map all inter-epic dependencies and verify that dependency direction follows established architectural boundaries. Identify any circular dependencies introduced between modules. Validate that shared utilities, hooks, and components maintain proper abstraction levels without creating tight coupling between otherwise independent domains.
+### Stories Under Validation
+| Story ID | Status | Owner | Duration |
+|----------|--------|-------|----------|
+| 24-1-incremental-sync-metadata-cache | ready-for-dev | Team A | 3-4 hours |
+| 24-2-fsa-handle-persistence | ready-for-dev | Team A | 2-3 hours |
+| 24-3-conversation-history-auto-restore | ready-for-dev | Team B | 2-3 hours |
+| 24-4-tool-execution-context-persistence | ready-for-dev | Team B | 3-4 hours |
 
 ---
 
-## VALIDATION DOMAIN 2: CODE QUALITY & IMPLEMENTATION CORRECTNESS
+## REFERENCE DOCUMENTS
 
-### 2.1 Code Review Compliance
-
-Conduct thorough code review of all completed stories against coding standards established in the project. Verify that implementation matches accepted code review patterns, specifically noting APPROVED_WITH_NOTES status on credential vault implementation. Ensure test coverage meets thresholds specified for each story (11+ tests for FSA permissions, 15+ tests for WebContainer boot and terminal integration, 46 tests for tool permissions, 31 tests for system prompt composer, 20 tests for error handling).
-
-### 2.2 Conflict & Overlap Detection
-
-Perform systematic analysis to identify code duplication, overlapping responsibilities, and conflicting implementations across stories. Flag any components that implement identical or substantially similar functionality without proper abstraction into shared utilities. Detect shadow implementations where the same concern is addressed in multiple locations with inconsistent approaches.
-
-### 2.3 Dead Code & Technical Debt Assessment
-
-Identify unused code paths, commented-out implementations, TODO comments awaiting resolution, and placeholder code that should be removed or completed. Catalog technical debt items that may impact long-term maintainability but do not immediately block functionality.
+| Document | Path |
+|----------|------|
+| Sprint Status |  |
+| Story Dev Cycle Workflow |  |
+| TDD Cycle Commands |  |
+| Epic 24 Artifact |  |
+| Parallel Development Strategy |  |
+| Completed Epics |  |
 
 ---
 
-## VALIDATION DOMAIN 3: REQUIREMENTS TRACEABILITY & ACCEPTANCE CRITERIA VERIFICATION
+## VALIDATION FRAMEWORK INTEGRATION
 
-### 3.1 Story-to-Requirements Mapping
+Incorporate **12-level validation framework** from .
 
-For each completed story, verify that implementation directly addresses documented acceptance criteria. Trace story implementations back to epic-level requirements and confirm complete coverage. Flag any stories where implementation partially satisfies or diverges from stated acceptance criteria.
 
-### 3.2 Cross-Story Integration Verification
+### VALIDATION DOMAIN 1: Architecture Compliance & Structural Integrity
 
-Validate that acceptance criteria requiring integration between stories are satisfied by actual integrated behavior. Specifically verify:
-- Conversation persistence integration with chat streaming infrastructure
-- File system permission lifecycle integration with terminal operations
-- Tool permission enforcement integration with agent execution paths
-- State management migration integration with existing component architecture
+**Objective**: Verify component adherence to documented architectural patterns and maintain system integrity.
 
-### 3.3 Epic Boundary Compliance
+#### 1.1 Architectural Pattern Validation
+- Verify component adherence to patterns in 
+- Detect architectural drift from documented patterns
+- Validate epic implementation maintains consistency with system architecture
+- Confirm respect for domain boundaries
 
-Verify that each story's implementation respects epic boundaries and does not inappropriately couple concerns across domain boundaries. Identify stories that have introduced dependencies requiring epic-level architectural review.
+#### 1.2 Cross-Architecture Compatibility Assessment
+- Examine implementation across **x86-64** and **ARM64** architectures
+- Identify platform-specific code paths requiring conditional compilation
+- Verify WebContainer operations and terminal integration behave consistently across target platforms
 
----
+#### 1.3 Cross-Dependency Chain Analysis
+- Map inter-epic dependencies and verify direction follows architectural boundaries
+- Identify circular dependencies between modules
+- Validate shared utilities maintain proper abstraction without tight coupling
 
-## VALIDATION DOMAIN 4: API & CONTRACT VALIDATION
 
-### 4.1 API Contract Consistency
+### VALIDATION DOMAIN 2: Code Quality & Implementation Correctness
 
-Review all exposed APIs, public interfaces, and module boundaries for contract consistency. Verify that interface definitions match implementations and that breaking changes are properly versioned. Check TypeScript types, function signatures, and exported APIs for alignment with documented contracts.
+**Objective**: Ensure all implementations meet coding standards and pass quality thresholds.
 
-### 4.2 Schema Validation Coverage
+#### 2.1 Code Review Compliance
+- Review all completed stories against coding standards
+- Verify implementation matches accepted patterns with **APPROVED_WITH_NOTES** status on credential vault
+- Confirm test coverage thresholds:
+  - **11+ tests** (FSA permissions)
+  - **15+ tests** (WebContainer boot)
+  - **46 tests** (tool permissions)
+  - **31 tests** (system prompt composer)
+  - **20 tests** (error handling)
 
-Assess schema validation implementation across data exchange points. Verify that incoming data is validated against defined schemas, that validation errors provide actionable feedback, and that schema evolution is handled gracefully. Check WebContainer data structures, file metadata schemas, and conversation state schemas for completeness.
+#### 2.2 Conflict & Overlap Detection
+- Analyze code duplication, overlapping responsibilities, and conflicting implementations across stories
+- Flag components implementing identical functionality without shared utility abstraction
+- Detect shadow implementations with inconsistent approaches
 
-### 4.3 End-to-End Interface Verification
+#### 2.3 Dead Code & Technical Debt Assessment
+- Identify unused code paths, commented implementations, TODO comments, and placeholder code
+- Catalog technical debt impacting long-term maintainability
+- Flag dead code for elimination
 
-Validate complete request-response flows across multiple service boundaries. Trace data transformations from UI components through state management, persistence layer, and external service interactions. Verify that interfaces between local-first infrastructure and remote services maintain contract integrity.
 
----
+### VALIDATION DOMAIN 3: Requirements Traceability & Acceptance Criteria Verification
 
-## VALIDATION DOMAIN 5: STATE MANAGEMENT & DATA FLOW VALIDATION
+**Objective**: Ensure complete traceable alignment between implementations and documented requirements.
 
-### 5.1 Zustand Store Architecture Review
+#### 3.1 Story-to-Requirements Mapping
+- Verify implementation addresses documented acceptance criteria for each completed story
+- Trace story implementations to epic-level requirements
+- Flag partial satisfaction or divergence from specifications
 
-Examine Zustand store implementations for proper state organization, selector optimization, and subscription management. Verify that state slices are appropriately normalized to prevent unnecessary re-renders. Check that computed derived state is implemented efficiently without redundant calculations.
+#### 3.2 Cross-Story Integration Verification
+- Validate acceptance criteria requiring story integration:
+  - Conversation persistence with chat streaming
+  - File system permissions with terminal operations
+  - Tool permission enforcement with agent execution
+  - State management with component architecture
 
-### 5.2 Dexie Persistence Layer Assessment
+#### 3.3 Epic Boundary Compliance
+- Verify stories respect epic boundaries without inappropriate coupling
+- Identify stories introducing dependencies requiring architectural review
 
-Review Dexie schema definitions, migration strategies, and query patterns. Verify that persistence operations do not block UI rendering and that error handling covers edge cases like storage quota exceeded, corrupted indexes, and concurrent access conflicts.
 
-### 5.3 State-to-Component Mapping Verification
+### VALIDATION DOMAIN 4: API & Contract Validation
 
-Validate that all UI components correctly subscribe to relevant state slices and that state updates propagate appropriately. Check for missing subscriptions, incorrect selector usage, or stale closure issues that may cause UI inconsistencies. Verify optimistic update patterns are implemented where appropriate.
+**Objective**: Verify all exposed APIs and module boundaries maintain contract consistency.
 
-### 5.4 Client-Side Data Management Review
+#### 4.1 API Contract Consistency
+- Review exposed APIs and module boundaries for contract consistency
+- Verify interface definitions match implementations
+- Check TypeScript types, function signatures, and exported APIs align with documented contracts
 
-Assess how client-side data is managed across the application lifecycle. Verify proper invalidation patterns when remote data changes, appropriate caching strategies to balance freshness with performance, and garbage collection of unused cached data. Check memory leak potential from subscriptions, event listeners, and held references.
+#### 4.2 Schema Validation Coverage
+- Assess schema validation at data exchange points
+- Verify incoming data validated against schemas with actionable error feedback
+- Check WebContainer data structures, file metadata, and conversation state schemas
 
----
+#### 4.3 End-to-End Interface Verification
+- Validate request-response flows across service boundaries
+- Trace data transformations from UI through state management, persistence layer, and external services
 
-## VALIDATION DOMAIN 6: LOGIC REASONING & BUSINESS RULE VALIDATION
 
-### 6.1 Control Flow Analysis
+### VALIDATION DOMAIN 5: State Management & Data Flow Validation
 
-Examine control flow through critical paths including chat message processing, file operation sequencing, tool execution approval workflows, and permission verification chains. Verify that error conditions are handled gracefully at each decision point and that fallback paths maintain system consistency.
+**Objective**: Ensure robust state management architecture with proper data flow patterns.
 
-### 6.2 Business Rule Implementation Verification
+#### 5.1 Zustand Store Architecture Review
+- Examine Zustand implementations for state organization, selector optimization, and subscription management
+- Verify normalized state slices and efficient derived state
+- Identify performance bottlenecks in state access patterns
 
-Trace business rule implementations through code paths and verify that they match documented requirements. Check edge case handling where business rules must handle boundary conditions, concurrent modifications, and race conditions. Validate that rule enforcement is consistent across all entry points.
+#### 5.2 Dexie Persistence Layer Assessment
+- Review Dexie schema definitions, migrations, and query patterns
+- Verify non-blocking persistence operations and edge case error handling
+- Confirm schema compatibility with Dexie v9 implementation
 
-### 6.3 Async Operation Coordination
+#### 5.3 State-to-Component Mapping Verification
+- Validate UI components correctly subscribe to state slices with proper propagation
+- Check missing subscriptions, selector usage, and stale closures
+- Verify reactive updates occur only when necessary
 
-Review coordination of asynchronous operations across the application. Verify that promise chains handle errors appropriately, that parallel operations are appropriately synchronized where order matters, and that loading states accurately reflect operation progress without false positives or negatives.
+#### 5.4 Client-Side Data Management Review
+- Assess data management across application lifecycle
+- Verify invalidation patterns, caching strategies, and memory leak prevention
+- Confirm proper cleanup on component unmount
 
----
+### VALIDATION DOMAIN 6: Logic Reasoning & Business Rule Validation
 
-## VALIDATION DOMAIN 7: REMEDIATION STORY EFFECTIVENESS
+**Objective**: Verify critical business logic paths execute correctly under all conditions.
 
-### 7.1 Sync Queue Visualizer Assessment (Story 5-1)
+#### 6.1 Control Flow Analysis
+- Examine critical paths: chat message processing, file operations, tool execution approval, permission verification
+- Verify graceful error handling and fallback paths for all failure modes
+- Validate retry mechanisms and circuit breaker patterns where applicable
 
-Evaluate whether the drafted sync queue visualizer adequately addresses synchronization visibility gaps. Verify that implementation will provide clear representation of dual-write sync status, conflict detection outcomes, and retry queue management. Check that visual design requirements align with mobile-first foundation established in Epic 1.
+#### 6.2 Business Rule Implementation Verification
+- Trace business rule implementations to documented requirements
+- Check edge case handling and consistent enforcement across all entry points
+- Verify permission boundaries and escalation paths
 
-### 7.2 WebContainer Crash Recovery Assessment (Story 5-2)
+#### 6.3 Async Operation Coordination
+- Review async operation coordination across stories
+- Verify error handling in promise chains
+- Confirm parallel operation synchronization and accurate loading states
 
-Review crash recovery strategy to verify it addresses root causes of WebContainer instability identified during Phase 1 operation. Verify that recovery mechanisms preserve unsaved work, properly release resources, and restore consistent state without data corruption. Check that recovery triggers are appropriately sensitive without causing false positives.
 
-### 7.3 Performance Telemetry Assessment (Story 5-3)
+### VALIDATION DOMAIN 7: Remediation Story Effectiveness (Optional)
 
-Evaluate performance telemetry implementation strategy to ensure it captures meaningful metrics without introducing excessive overhead. Verify coverage of critical performance paths including state updates, rendering cycles, persistence operations, and WebContainer boot sequences. Check that telemetry data enables actionable optimization insights.
+**Objective**: Evaluate remediation stories addressing identified gaps.
 
-### 7.4 State Hydration Robustness Assessment (Story 5-4)
+#### 7.1 Sync Queue Visualizer Assessment (Story 5-1)
+- Evaluate sync queue visualizer addressing synchronization visibility gaps
+- Verify dual-write sync status, conflict detection, and retry queue management
+- Confirm mobile-first design alignment
 
-Assess state hydration implementation to verify it handles all edge cases including partial hydration, corrupted storage, version mismatches, and migration failures. Verify that hydration errors provide clear diagnostic information and that degraded functionality is available when full hydration fails. Check integration with error handling infrastructure from Epic 4.
+#### 7.2 WebContainer Crash Recovery Assessment (Story 5-2)
+- Review crash recovery addressing root causes of WebContainer instability
+- Verify recovery preserves unsaved work, releases resources, and restores consistent state
 
----
+#### 7.3 Performance Telemetry Assessment (Story 5-3)
+- Evaluate performance telemetry capturing meaningful metrics without excessive overhead
+- Verify coverage of state updates, rendering cycles, persistence, and WebContainer boot
 
-## VALIDATION DOMAIN 8: DEFECT DETECTION & QUALITY METRICS
+#### 7.4 State Hydration Robustness Assessment (Story 5-4)
+- Assess state hydration handling partial hydration, corrupted storage, version mismatches, and migration failures
+- Verify diagnostic error information and degraded functionality availability
 
-### 8.1 Gap Analysis
+### VALIDATION DOMAIN 8: Defect Detection & Quality Metrics
 
-Identify missing functionality that acceptance criteria or architectural specifications require but implementation does not provide. Catalog gaps by severity and epic ownership. Flag any gaps that may cause integration failures, data corruption, or security vulnerabilities.
+**Objective**: Identify and catalog defects, code smells, and security concerns.
 
-### 8.2 Code Smell Detection
+#### 8.1 Gap Analysis
+- Identify missing functionality required by acceptance criteria or specifications
+- Catalog gaps by severity and epic ownership
+- Flag gaps causing integration failures or vulnerabilities
 
-Apply established code smell patterns to identify maintainability concerns including:
-- Excessive function or class lengths
-- High cyclomatic complexity in critical paths
-- Magic numbers and strings without documentation
-- Inconsistent naming conventions across modules
-- Excessive parameter counts suggesting poor abstraction
-- Feature envy where modules access excessive external state
+#### 8.2 Code Smell Detection
+- Identify maintainability concerns:
+  - Excessive length
+  - High cyclomatic complexity
+  - Magic numbers
+  - Inconsistent naming
+  - Excessive parameters
+  - Feature envy
 
-### 8.3 Architectural Drift Detection
+#### 8.3 Architectural Drift Detection
+- Compare implementation against 
+- Identify divergence without documentation updates
+- Flag accumulated technical debt
 
-Compare current implementation against documented architecture specifications in architecture.md. Identify components where implementation has diverged from design without corresponding documentation updates. Flag drifts that may indicate accumulated technical debt requiring architectural review.
+#### 8.4 Security Concern Assessment
+- Review implementation for:
+  - Credential handling
+  - Permission escalation
+  - Input validation
+  - Data exposure
+  - Authentication/authorization boundaries
 
-### 8.4 Security Concern Assessment
 
-Review implementation for common security concerns including:
-- Improper credential handling in credential vault implementation
-- Permission escalation possibilities in tool execution
-- Input validation gaps in file system operations
-- Data exposure risks in local-first storage architecture
-- Authentication/authorization boundary enforcement
+## EXECUTION CONSTRAINTS
 
----
+1. **Parallel Development Strategy**: Follow strategy in 
+2. **Development Constitution**: Adhere to AGENTS.md or CLAUDE.md guidelines
+3. **MCP Server Usage**: Use Context7, Deepwiki, Tavily, Exa, Repomix for dependency and pattern information
+4. **Recursive Hierarchy Loops**: Inner cycles impact higher-level concerns; propagate findings upward
+5. **Correct-Course Workflow**: Conduct when deviation detected, updating sprint-status and workflow-status
+6. **Ongoing Refactoring**: Anticipate code split, import validation, type checking, and comment cleanup
+7. **Dead Code Elimination**: Target 100% elimination of dead code, unwired components, and conflicting implementations
+8. **Test Coverage**: Maintain 100% test coverage after completing sweep and grand list
+9. **Brownfield Integration**: Validate complete integration with existing brownfield project
+
+
+## RECURSIVE LOOP PROTOCOL
+
+### Hierarchy of Concerns
+- Inner cycles (individual stories) impact higher-level concerns (epic integration, sprint goals)
+- Detection of deviation triggers correct-course workflow
+- Update both **sprint-status** and **workflow-status** documents
+- New epics or additional stories generated from corrections must be handled in alignment with current project
+
+### Refactoring Anticipation
+- Continuous code restructuring required
+- Validate imports, types, and comments at each iteration
+- Split monolithic implementations into focused modules
+- Maintain backward compatibility during refactoring
+
+### Completion Criteria
+- **100% coverage** of inner and outer cycles after sweeping and grand list generation
+- **Zero dead code**, unwired components, or conflicting implementations
+- **Logical integration** with brownfield project validated
+- All acceptance criteria satisfied for validated stories
+
 
 ## OUTPUT REQUIREMENTS
 
-Present findings organized by validation domain with clear severity classifications for each identified issue. Include specific file paths, line numbers, and code snippets where applicable. Provide actionable remediation recommendations prioritized by impact and effort. Conclude with overall architectural health assessment and Phase 2 readiness determination.
+Generate comprehensive validation report containing:
+1. **Domain-by-domain findings** with severity ratings
+2. **Architectural drift** documentation
+3. **Test coverage** verification per story
+4. **Gap analysis** with remediation recommendations
+5. **Cross-story dependency** mapping
+6. **Correct-course recommendations** if deviations detected
+7. **Updated sprint-status** and workflow-status artifacts
 
----
-
-## SOURCE MATERIAL REFERENCE
-
-**Development Status Configuration**:
-- Sprint 0: Infrastructure & Pre-Work — infrastructure-setup in-progress, credential vault implementation done (APPROVED_WITH_NOTES), demo content creation done
-- Epic 1: Mobile-First Visual Foundation — all stories complete, retrospective completed
-- Epic 2: AI Chat That Just Works — all stories complete, retrospective completed
-- Epic 3: Local-First File Magic — core infrastructure complete (50/50 story points), all implementation stories done, retrospective pending
-- Epic 4: Smart Agent Tools — all core stories complete (45/45 story points), file tool execution deferred to Phase 2, retrospective pending
-- Epic 5: Production-Ready Polish — in-progress, all four remediation stories drafted pending implementationake 
-
-## Definition of COMPLETE
-If any of the above viloated -> create /bmad:bmm:workflows:correct-course  -> update -> /bmad:bmm:workflows:sprint-planning  and iteratively cycles through @.kilocode/workflows/story-dev-cycle.md  until the 100% pass rate of what I have expected above. 

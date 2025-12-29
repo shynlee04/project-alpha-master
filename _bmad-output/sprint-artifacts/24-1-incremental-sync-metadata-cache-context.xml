@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context_document>
+  <meta>
+    <epic>24</epic>
+    <story>1</story>
+    <title>Incremental Sync with Metadata Cache</title>
+    <created>2025-12-29</created>
+    <purpose>Provide current code state and implementation hints for incremental sync development</purpose>
+  </meta>
+
+  <file path="src/lib/filesystem/sync-manager.ts">
+    <code_state>
+      <current_implementation>
+        <![CDATA[
+export class SyncManager {
+  private projectPath: string;
+  private webcontainer: WebContainer | null = null;
+  private excludedPatterns: string[] = DEFAULT_EXCLUDED_PATTERNS;
+  private syncQueue: Map<string, FileSyncOperation> = new Map();
+  private syncInProgress: boolean = false;
+
+  constructor(projectPath: string) {
+    this.projectPath = projectPath;
+  }
+
+  async syncToWebContainer(): Promise<void> {
+    if (this.syncInProgress) {
+      console.warn('Sync already in progress, skipping');
+      return;
+    }
+    this.syncInProgress = true;
+    try {
+      // ISSUE: Full directory tree scan every time
+      const allFiles = await this.scanDirectoryTree(this.projectPath);
+      const operations: FileSyncOperation[] = [];
+
+      for (const file of allFiles) {
+        const relativePath = path.relative(this.projectPath, file.path);
+        if (this.shouldExclude(relativePath)) continue;
+
+        operations.push({
+          type: 'write',
+          path: relativePath,
+          content: file.content
+        });
+      }
+
+      await this.batchSync(operations);
+    } finally {
+      this.syncInProgress = false;
+    }
+  }
+
+  async scanDirectoryTree(dirPath: string): Promise<LocalFileRecord[]> {
+    const files: LocalFileRecord[] = [];
+    const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(dirPath, entry.name);
+      if (this.shouldExclude(entry.name)) continue;
+
+      if (entry.isDirectory()) {
+        const subFiles = await this.scanDirectoryTree(fullPath);
+        files.push(...subFiles);
+      } else if (entry.isFile()) {
+        const content = await fs.promises.readFile(fullPath, 'utf-8');
+        const stat = await fs.promises.stat(fullPath);
+        files.push({
+          path: fullPath,
+          name: entry.name,
+          content,
+          mtime: stat.mtimeMs,
+          size: stat.size
+        });
+      }
+    }
+    return files;
+  }
+}
+        ]]>
+      </current_implementation>
+      <problems_identified>
+        <problem>
+          <description>Full directory tree scan on every sync operation</description>
+          <impact>3-5 second delays on every project entry (CC-001)</impact>
+        </problem>
+        <problem>
+          <description>No caching of file metadata (mtime, size, content hash)</description>
+          <impact>Cannot detect unchanged files efficiently</impact>
+        </problem>
+      </problems_identified>
+    </code_state>
+  </file>
+
+  <file path="src/lib/state/dexie-db.ts">
+    <code_state>
+      <schema_definition>
+        <![CDATA[
+// Epic 24: Performance & UX Optimization tables
+fileMetadata!: Table<FileMetadataRecord, string>;
+
+this.version(11).stores({
+  // Epic 24 tables
+  fileMetadata: 'path, mtime, size, hash',
+  toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp',
+  fsaHandles: 'projectId, directoryPath',
+  sessionSnapshots: 'id, projectId, timestamp'
+});
+        ]]>
+      </schema_definition>
+      <helper_functions>
+        <![CDATA[
+async function getFileMetadata(filePath: string): Promise<FileMetadataRecord | undefined> {
+  return db.fileMetadata.get(filePath);
+}
+
+async function upsertFileMetadata(metadata: FileMetadataRecord): Promise<void> {
+  await db.fileMetadata.put(metadata);
+}
+
+async function getChangedFilesSince(timestamp: number): Promise<FileMetadataRecord[]> {
+  return db.fileMetadata
+    .where('mtime')
+    .above(timestamp)
+    .toArray();
+}
+
+async function clearFileMetadataCache(): Promise<void> {
+  await db.fileMetadata.clear();
+}
+        ]]>
+      </helper_functions>
+    </code_state>
+  </file>
+
+  <research_notes>
+    <finding id="1">
+      <source>Context7 MCP - Dexie.js v9 Documentation</source>
+      <relevance>high</relevance>
+      <summary>Dexie v9 supports compound indexes and multi-entry indexes for efficient queries</summary>
+      <implication>fileMetadata table should use compound index on [path,mtime] for efficient lookups</implication>
+    </finding>
+    <finding id="2">
+      <source>Codebase Analysis - sync-manager.ts</source>
+      <relevance>high</relevance>
+      <summary>Default excluded patterns: .git, node_modules, .DS_Store, Thumbs.db</summary>
+      <implication>These patterns must be checked against metadata cache entries</implication>
+    </finding>
+    <finding id="3">
+      <source>Codebase Analysis - local-fs-adapter.ts</source>
+      <relevance>medium</relevance>
+      <summary>FileSystemHandle provides kind property (file/directory) and lastModified</summary>
+      <implication>Can use FSA API metadata for cache population</implication>
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <implementation_hints>
+      <hint id="1">
+        <phase>1-metadata-cache</phase>
+        <description>Create FileMetadataCacheService class that wraps Dexie helpers</description>
+        <files>
+          <file>src/lib/sync/file-metadata-cache.ts</file>
+        </files>
+        <methods>
+          <method>get(path: string): Promise&lt;FileMetadataRecord | undefined&gt;</method>
+          <method>set(path: string, metadata: FileMetadataRecord): Promise&lt;void&gt;</method>
+          <method>getChangedFiles(since: number): Promise&lt;FileMetadataRecord[]&gt;</method>
+          <method>invalidate(path: string): Promise&lt;void&gt;</method>
+        </methods>
+      </hint>
+      <hint id="2">
+        <phase>2-incremental-sync</phase>
+        <description>Modify SyncManager to use cache-first approach</description>
+        <pattern>
+          <![CDATA[
+async syncToWebContainer(): Promise<void> {
+  const lastSyncTime = await this.cache.getLastSyncTime();
+  const currentFiles = await this.scanWithCache(lastSyncTime);
+
+  const changedFiles = currentFiles.filter(file =>
+    !this.cache.has(file.path) ||
+    this.cache.get(file.path).mtime !== file.mtime
+  );
+
+  await this.batchSync(changedFiles);
+  await this.cache.updateFrom(currentFiles);
+}
+          ]]>
+        </pattern>
+      </hint>
+      <hint id="3">
+        <phase>3-content-hashing</phase>
+        <description>Add content hash computation for large files (>1MB)</description>
+        <algorithm>Use SubtleCrypto SHA-256 for content hashing</algorithm>
+        <threshold>1048576 bytes</threshold>
+      </hint>
+    </implementation_hints>
+    <dependencies>
+      <dependency>dexie-db.ts helper functions</dependency>
+      <dependency>local-fs-adapter.ts for file reading</dependency>
+      <dependency>Crypto API for content hashing</dependency>
+    </dependencies>
+    <test_strategy>
+      <unit>
+        <file>src/lib/sync/__tests__/file-metadata-cache.test.ts</file>
+        <coverage>get, set, getChangedFiles, invalidate</coverage>
+      </unit>
+      <integration>
+        <file>src/lib/filesystem/__tests__/incremental-sync.test.ts</file>
+        <scenario>Full sync → change file → incremental sync</scenario>
+      </integration>
+    </test_strategy>
+  </technical_notes>
+
+  <acceptance_criteria_tracking>
+    <criterion id="AC-1">Metadata cache table exists - VERIFIED (dexie-db.ts)</criterion>
+    <criterion id="AC-2">SyncManager uses cache-first - TODO</criterion>
+    <criterion id="AC-3">Change detection via mtime - TODO</criterion>
+    <criterion id="AC-4">Sync exclusions apply - TODO</criterion>
+    <criterion id="AC-5">Performance target &lt;200ms - TODO</criterion>
+  </acceptance_criteria_tracking>
+</context_document>

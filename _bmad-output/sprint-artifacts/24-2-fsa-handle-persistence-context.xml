@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context_document>
+  <meta>
+    <epic>24</epic>
+    <story>2</story>
+    <title>FSA Handle Persistence &amp; Instant Re-grant</title>
+    <created>2025-12-29</created>
+    <purpose>Provide current code state and implementation hints for FSA handle persistence</purpose>
+  </meta>
+
+  <file path="src/lib/filesystem/local-fs-adapter.ts">
+    <code_state>
+      <current_implementation>
+        <![CDATA[
+export class LocalFSAdapter {
+  private directoryHandle: FileSystemDirectoryHandle | null = null;
+  private projectId: string | null = null;
+
+  async selectDirectory(): Promise<FileSystemDirectoryHandle | null> {
+    try {
+      const handle = await window.showDirectoryPicker();
+      this.directoryHandle = handle;
+      this.projectId = crypto.randomUUID();
+      return handle;
+    } catch (error) {
+      if (isPermissionDeniedError(error)) {
+        console.warn('Directory access denied');
+      }
+      return null;
+    }
+  }
+
+  async getDirectoryHandle(): Promise<FileSystemDirectoryHandle | null> {
+    return this.directoryHandle;
+  }
+
+  async hasPermission(): Promise<boolean> {
+    if (!this.directoryHandle) return false;
+    const status = await this.directoryHandle.queryPermission({ mode: 'readwrite' });
+    return status === 'granted';
+  }
+
+  async requestPermission(): Promise<boolean> {
+    if (!this.directoryHandle) return false;
+    const status = await this.directoryHandle.requestPermission({ mode: 'readwrite' });
+    return status === 'granted';
+  }
+
+  async readFile(fileName: string): Promise<string | null> {
+    // Implementation reads from handle...
+  }
+
+  async writeFile(fileName: string, content: string): Promise<boolean> {
+    // Implementation writes to handle...
+  }
+}
+        ]]>
+      </current_implementation>
+      <problems_identified>
+        <problem>
+          <description>Handle stored in memory only</description>
+          <impact>Reloading page loses handle, requires re-grant (CC-001)</impact>
+        </problem>
+        <problem>
+          <description>No handle metadata persistence</description>
+          <impact>Cannot restore handle on return visit</impact>
+        </problem>
+      </problems_identified>
+    </code_state>
+  </file>
+
+  <file path="src/lib/state/dexie-db.ts">
+    <code_state>
+      <schema_definition>
+        <![CDATA[
+// Epic 24: Performance & UX Optimization tables
+fsaHandles!: Table<FSAHandleRecord, string>;
+
+this.version(11).stores({
+  fsaHandles: 'projectId, directoryPath'
+});
+
+// FSAHandleRecord type
+interface FSAHandleRecord {
+  projectId: string;
+  directoryPath: string;
+  kind: 'directory';
+  name: string;
+  permissionStatus: 'granted' | 'prompt' | 'denied' | 'unknown';
+  grantedAt?: number;
+  lastAccessedAt?: number;
+}
+        ]]>
+      </schema_definition>
+      <helper_functions>
+        <![CDATA[
+async function storeFSAHandle(handle: FSAHandleRecord): Promise<void> {
+  await db.fsaHandles.put({
+    ...handle,
+    lastAccessedAt: Date.now()
+  });
+}
+
+async function getFSAHandle(projectId: string): Promise<FSAHandleRecord | undefined> {
+  return db.fsaHandles.get(projectId);
+}
+
+async function deleteFSAHandle(projectId: string): Promise<void> {
+  await db.fsaHandles.delete(projectId);
+}
+
+async function updateFSAHandlePermission(
+  projectId: string,
+  status: FSAHandleRecord['permissionStatus']
+): Promise<void> {
+  await db.fsaHandles.update(projectId, {
+    permissionStatus: status,
+    ...(status === 'granted' ? { grantedAt: Date.now() } : {})
+  });
+}
+
+async function clearAllFSAHandles(): Promise<void> {
+  await db.fsaHandles.clear();
+}
+        ]]>
+      </helper_functions>
+    </code_state>
+  </file>
+
+  <research_notes>
+    <finding id="1">
+      <source>MDN Web Docs - File System Access API</source>
+      <relevance>high</relevance>
+      <summary>FileSystemDirectoryHandle is not directly serializable</summary>
+      <implication>Must store metadata only, recreate handle on restore</implication>
+    </finding>
+    <finding id="2">
+      <source>MDN Web Docs - File System Access API</source>
+      <relevance>high</relevance>
+      <summary>window.showDirectoryPicker can accept an ID parameter for handle persistence</summary>
+      <implication>Browser may persist handle by ID across sessions</implication>
+    </finding>
+    <finding id="3">
+      <source>Browser Support Research</source>
+      <relevance>medium</relevance>
+      <summary>Handle persistence varies by browser (Chrome best support)</summary>
+      <implication>Must have fallback UI for browsers without persistence</implication>
+    </finding>
+  </research_notes>
+
+  <technical_notes>
+    <implementation_hints>
+      <hint id="1">
+        <phase>1-handle-manager</phase>
+        <description>Create FSAHandleManager class for persistence operations</description>
+        <files>
+          <file>src/lib/filesystem/fsa-handle-manager.ts</file>
+        </files>
+        <methods>
+          <method>persistHandle(handle, projectId): Promise&lt;void&gt;</method>
+          <method>restoreHandle(projectId): Promise&lt;FileSystemDirectoryHandle | null&gt;</method>
+          <method>deleteHandle(projectId): Promise&lt;void&gt;</method>
+          <method>getPermissionStatus(projectId): Promise&lt;string&gt;</method>
+        </methods>
+      </hint>
+      <hint id="2">
+        <phase>2-serialization</phase>
+        <description>Serialize handle to storable format (metadata only)</description>
+        <pattern>
+          <![CDATA[
+async persistHandle(handle: FileSystemDirectoryHandle, projectId: string) {
+  const record: FSAHandleRecord = {
+    projectId,
+    kind: handle.kind,
+    name: handle.name,
+    directoryPath: await getPathFromHandle(handle), // if available
+    permissionStatus: 'granted',
+    grantedAt: Date.now(),
+    lastAccessedAt: Date.now()
+  };
+  await storeFSAHandle(record);
+}
+          ]]>
+        </pattern>
+      </hint>
+      <hint id="3">
+        <phase>3-restore-flow</phase>
+        <description>Instant re-grant flow on project load</description>
+        <pattern>
+          <![CDATA[
+async restoreHandle(projectId: string): Promise<FileSystemDirectoryHandle | null> {
+  const record = await getFSAHandle(projectId);
+  if (!record || record.permissionStatus !== 'granted') {
+    return null;
+  }
+
+  try {
+    // Try browser's handle persistence by ID
+    const handle = await window.showDirectoryPicker({ id: projectId });
+    return handle;
+  } catch {
+    // Silent re-grant failed
+    await deleteFSAHandle(projectId);
+    return null;
+  }
+}
+          ]]>
+        </pattern>
+      </hint>
+    </implementation_hints>
+    <dependencies>
+      <dependency>dexie-db.ts helper functions</dependency>
+      <dependency>File System Access API</dependency>
+      <dependency>LocalFSAdapter integration</dependency>
+    </dependencies>
+    <test_strategy>
+      <unit>
+        <file>src/lib/filesystem/__tests__/fsa-handle-manager.test.ts</file>
+        <coverage>persist, restore, delete, permission status</coverage>
+      </unit>
+      <integration>
+        <file>src/lib/filesystem/__tests__/handle-persistence.test.ts</file>
+        <scenario>Select dir → reload → verify handle restored</scenario>
+      </integration>
+    </test_strategy>
+  </technical_notes>
+
+  <acceptance_criteria_tracking>
+    <criterion id="AC-1">Dexie table fsaHandles exists - VERIFIED (dexie-db.ts)</criterion>
+    <criterion id="AC-2">Handle serialization - TODO</criterion>
+    <criterion id="AC-3">Silent re-grant within 500ms - TODO</criterion>
+    <criterion id="AC-4">Permission status tracking - TODO</criterion>
+    <criterion id="AC-5">Privacy controls (view/clear) - TODO</criterion>
+  </acceptance_criteria_tracking>
+</context_document>
