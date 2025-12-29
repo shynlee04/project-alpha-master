@@ -287,6 +287,8 @@ export function AgentConfigDialog({
      * Fixes: Agent config edits not reflecting existing values (CC-2025-12-29)
      */
     useEffect(() => {
+        console.log('[AgentConfigDialog] Form effect triggered - open:', open, 'agent:', agent?.name || 'null')
+
         if (!open) {
             // Reset ref when dialog closes
             editingAgentRef.current = undefined
@@ -296,7 +298,12 @@ export function AgentConfigDialog({
         if (agent) {
             // Edit mode: store agent ref for model restoration
             editingAgentRef.current = agent
-            console.log('[AgentConfigDialog] Edit mode - agent:', agent.name, 'model:', agent.model, 'provider:', agent.provider)
+            console.log('[AgentConfigDialog] Edit mode - populating from agent:', {
+                name: agent.name,
+                role: agent.role,
+                provider: agent.provider,
+                model: agent.model
+            })
 
             // Populate form from agent data
             setName(agent.name)
@@ -566,7 +573,8 @@ export function AgentConfigDialog({
     const renderConfigStatus = () => {
         if (!providerConfig) return null
 
-        const hasApiKey = apiKey !== '' && apiKey !== '••••'
+        // CC-2025-12-29: '••••' means key IS stored, not that it's missing
+        const hasApiKey = apiKey === '••••' || (apiKey !== '' && apiKey.length > 0)
 
         return (
             <div className="flex items-center gap-2 text-xs">

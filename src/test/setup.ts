@@ -2,6 +2,7 @@
 // This provides a mock IndexedDB implementation for tests
 import 'fake-indexeddb/auto';
 
+import React from 'react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
@@ -23,6 +24,8 @@ vi.mock('react-i18next', () => ({
         'ide.switchFolder': 'Switch folder',
         'ide.minViewportWarning': 'Screen Too Small',
         'ide.minViewportMessage': 'This application requires a minimum viewport width of 320px to function properly.',
+        'ide.reAuthorize': 'Re-authorize',
+        'ide.fsDenied': 'File access denied',
         // Panel headers
         'explorer.title': 'Explorer',
         'editor.title': 'Editor',
@@ -49,6 +52,10 @@ vi.mock('react-i18next', () => ({
         'sidebar.agents': 'Agents',
         'sidebar.chat': 'Chat',
         'sidebar.settings': 'Settings',
+        'sidebar.expand': 'Expand',
+        'sidebar.collapse': 'Collapse',
+        'sidebar.terminal': 'Terminal',
+        'sidebar.git': 'Git',
         // Common
         'common.cancel': 'Cancel',
         'common.confirm': 'Confirm',
@@ -58,6 +65,8 @@ vi.mock('react-i18next', () => ({
         'common.close': 'Close',
         'common.loading': 'Loading...',
         'common.error': 'Error',
+        // Mobile demo
+        'mobileDemo.learnMore': 'Learn more',
       };
       return translations[key] || key;
     },
@@ -70,6 +79,44 @@ vi.mock('react-i18next', () => ({
     type: '3rdParty',
     init: vi.fn(),
   },
+}));
+
+// Mock @tanstack/react-router for all tests
+vi.mock('@tanstack/react-router', () => ({
+  useNavigate: vi.fn(() => vi.fn()),
+  useLocation: vi.fn(() => ({ pathname: '/' })),
+  useSearch: vi.fn(() => ({})),
+  useParams: vi.fn(() => ({})),
+  RouterProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+  createRouter: vi.fn(),
+  Router: vi.fn(({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children)),
+}));
+
+// Mock useCapabilityDetection hook
+vi.mock('@/hooks/useCapabilityDetection', () => ({
+  useCapabilityDetection: vi.fn(() => ({
+    supportsFSA: true,
+    supportsWebContainer: true,
+    isMobile: false,
+  })),
+}));
+
+// Mock useWorkspace hook
+vi.mock('../../lib/workspace', () => ({
+  useWorkspace: vi.fn(() => ({
+    directoryHandle: null,
+    permissionState: 'granted',
+    syncStatus: 'idle',
+    syncError: null,
+    autoSync: true,
+    isOpeningFolder: false,
+    openFolder: vi.fn(),
+    switchFolder: vi.fn(),
+    syncNow: vi.fn(),
+    setAutoSync: vi.fn(),
+    projectMetadata: null,
+  })),
+  WorkspaceProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
 }));
 
 // Mock window.matchMedia (only in browser environment)

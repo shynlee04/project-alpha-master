@@ -455,6 +455,9 @@ class ViaGentDatabase extends Dexie {
     // Sync status persistence (RC-005 - Sprint 27B)
     syncStatus!: Table<SyncStatusRecord, string>;
 
+    // CC-2025-12-29: File sync status store persistence
+    fileSyncStatus!: Table<PersistedStateRecord, string>;
+
     // Epic 24: Performance & UX Optimization tables
     fileMetadata!: Table<FileMetadataRecord, string>;
     toolExecutionLogs!: Table<ToolExecutionLogRecord, string>;
@@ -672,6 +675,35 @@ class ViaGentDatabase extends Dexie {
 
             logDexieMigration(9, 'epic-24-schema', 'completed', {
                 tableName: 'fileMetadata, toolExecutionLogs, fsaHandles, sessionSnapshots',
+                itemsCount: 0
+            });
+        });
+
+        // Schema version 10: Add fileSyncStatus table for Zustand store persistence
+        // CC-2025-12-29: File sync status was not persisting because table was missing
+        this.version(10).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            // NEW: File sync status store persistence (CC-2025-12-29)
+            fileSyncStatus: 'id, updatedAt',
+        }).upgrade(async () => {
+            logDexieMigration(10, 'file-sync-status-store', 'started');
+            markMigrationApplied(10);
+            logDexieMigration(10, 'file-sync-status-store', 'completed', {
+                tableName: 'fileSyncStatus',
                 itemsCount: 0
             });
         });
