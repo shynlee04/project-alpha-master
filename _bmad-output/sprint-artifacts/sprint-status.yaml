@@ -231,7 +231,7 @@ development_status:
   8-2-source-node-creation: done # SourceNode + drag-drop complete, 7 tests passing
   8-3-concept-node-creation: done # ConceptNode + inline editing complete, 12 tests passing
   8-4-connection-lines: done # COMPLETED 2025-12-30 - Custom edges with 4 relationship types, 25 tests passing
-  8-5-canvas-persistence: ready-for-dev # Story file created, ready for dev
+  8-5-canvas-persistence: done # COMPLETED 2025-12-30 - Dexie + Zustand persistence, 17 tests passing
   epic-8-retrospective: pending
 
   # EPIC 9: Study Artifacts Generation (Days 30-33)

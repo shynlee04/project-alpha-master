@@ -18,7 +18,7 @@ Object.defineProperty(window, 'localStorage', {
   writable: true,
 });
 
-// Mock Dexie tables
+// Create mock Dexie tables - needs to be accessible by mock factory
 const mockTables = {
   canvases: {
     get: vi.fn().mockResolvedValue(undefined),
@@ -40,25 +40,27 @@ const mockTables = {
   },
 };
 
-// Create mock Dexie instance
-const createMockDexieInstance = () => ({
-  version: vi.fn().mockReturnThis(),
-  stores: vi.fn().mockReturnThis(),
-  transaction: vi.fn().mockImplementation(async (_mode: string, _stores: string[], callback: () => Promise<void>) => {
-    await callback();
-  }),
-  table: vi.fn((name: string) => mockTables[name as keyof typeof mockTables] || mockTables.canvases),
+// Mock Dexie class - must be a constructor for extends to work
+// Use vi.hoisted so it gets evaluated at the right time
+const { MockDexie } = vi.hoisted(() => {
+  class MockDexie {
+    version() { return this; }
+    stores() { return this; }
+    async transaction(_mode: string, _stores: string[], callback: () => Promise<void>) {
+      await callback();
+    }
+    table(name: string) {
+      return mockTables[name as keyof typeof mockTables] || mockTables.canvases;
+    }
+  }
+  return { MockDexie };
 });
 
-// Setup Dexie mock before imports
-vi.mock('dexie', async () => {
-  const actual = await vi.importActual('dexie');
-  return {
-    ...actual,
-    default: createMockDexieInstance,
-    Dexie: createMockDexieInstance,
-  };
-});
+// Setup Dexie mock - this gets hoisted by vitest
+vi.mock('dexie', () => ({
+  default: MockDexie,
+  Dexie: MockDexie,
+}));
 
 // Import after mocking
 const { useCanvasStore, useMultiCanvasStore, generateCanvasId, KnowledgeCanvasDB, getCanvasDb, setCanvasDbForTesting } = await import('../canvas-store');
