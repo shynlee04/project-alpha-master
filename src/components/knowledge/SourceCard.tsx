@@ -300,6 +300,13 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 sourceId={source.id}
                 onClose={() => setShowCollectionSelector(false)}
             />
+
+            {/* Metadata dialog (Story 6-4) */}
+            <SourceMetadataDialog
+                source={source}
+                open={showMetadataDialog}
+                onOpenChange={setShowMetadataDialog}
+            />
         </div>
     );
 }
