@@ -2,10 +2,11 @@
 title: "6-3 Source Management (Delete, Rename, Organize)"
 epic: "Epic 6: Source Ingestion & Management"
 story: "6-3-source-management"
-status: "ready-for-dev"
+status: "done"
 priority: "P0"
 points: 5
 created: "2025-12-30"
+completed: "2025-12-30"
 sprint: "SPRINT-6"
 team: "Team A"
 dependencies:
@@ -533,9 +534,52 @@ src/
 ### Agent Model Used
 
 _Claude Sonnet 4.5 (Story creation)_
+_Gemini 2.5 Pro (Implementation completion 2025-12-30)_
+
+### Session: 2025-12-30T04:36:00+07:00
+
+### Implementation Summary
+
+Completed Story 6-3 Source Management tasks 4-7 (Tasks 1-3 were previously complete):
+
+1. **Task 4 (Rename)**: RenameDialog already wired to SourceCard - validated working
+2. **Task 5 (Collections)**: Wired CollectionSelector to SourceCard for "Move to Collection" action
+3. **Task 6 (Export)**: Implemented `exportSource()` function with:
+   - PDF export (raw content or text fallback)
+   - Text/URL export as .txt file
+   - `sanitizeFilename()` utility for safe filenames
+4. **Task 7 (Integration)**: Fixed test file to use proper Vitest mocking pattern
+
+### Files Changed
+
+| File | Action | Lines |
+|------|--------|-------|
+| `src/components/knowledge/SourceCard.tsx` | Modified | +60 (export, CollectionSelector integration) |
+| `src/components/knowledge/index.ts` | Modified | +1 (CollectionSelector export) |
+| `src/lib/state/dexie-db.ts` | Modified | +3 (Collection type alias) |
+| `src/components/knowledge/__tests__/CollectionSelector.test.tsx` | Modified | Refactored mocking pattern |
+| `src/i18n/en.json` | Modified | +2 (missing translations) |
+| `src/i18n/vi.json` | Modified | +5 (missing translations) |
+
+### Tests Created/Updated
+
+- CollectionSelector tests: 9 passing
+- SourceCard tests: 8 passing  
+- Total knowledge component tests: 59 passing (4 skipped due to jsdom)
+
+### Decisions Made
+
+1. **Export Implementation**: Implemented export as utility function in SourceCard rather than store action - simpler for browser download trigger
+2. **CollectionSelector Wiring**: Used dialog state in SourceCard component to manage selector visibility
+3. **Test Mocking**: Converted require() pattern to proper Vitest Mock type pattern for better ESM compatibility
 
 ### Debug Log References
 
-### Completion Notes List
+- Test run: `npm test -- --run src/components/knowledge/__tests__/` - All 59 tests passing
 
-### File List
+### Completion Notes
+
+- Story 6-3 COMPLETE: All 7 tasks implemented and tested
+- Epic 6 now at ~87% completion (Story 6-4 remaining)
+- Knowledge Hub components fully functional with delete/rename/export/collections
+

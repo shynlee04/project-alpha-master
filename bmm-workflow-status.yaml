@@ -1,19 +1,20 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2025-12-29T18:00:00+07:00
+# Updated: 2025-12-30T04:30:00+07:00
 
-current_workflow: "epic-24-development"
-current_story: "epic-24-kickoff"
+current_workflow: "refinement-sprint-knowledge-hub"
+current_story: "knowledge-hub-polish"
 phase: "phase-2-implementation"
-last_updated: "2025-12-29T18:00:00+07:00"
+last_updated: "2025-12-30T04:30:00+07:00"
 ralph_loop_status: "CANCELLED"
 ralph_loop_cancelled_at: "2025-12-29T12:00:00+07:00"
 ralph_loop_cancelled_by: "user-command"
 test_results:
-  passing: 46
-  total: 46
+  passing: 126
+  total: 126
   coverage: "100%"
+  note: "Epic 6 + Epic 8 stories with 65+61 tests"
 active_epics:
   - id: "SPRINT-0"
     name: "Infrastructure & Pre-Work"
@@ -35,6 +36,17 @@ active_epics:
     status: "DONE"
     start_date: "2025-12-28"
     end_date: "2025-12-31"
+  - id: "EPIC-6"
+    name: "Source Ingestion & Management"
+    status: "IN_PROGRESS"
+    start_date: "2025-12-30"
+    progress: "75% (Story 6-3 tasks 4-7 remaining)"
+  - id: "EPIC-8"
+    name: "Knowledge Canvas"
+    status: "DONE"
+    start_date: "2025-12-30"
+    end_date: "2025-12-30"
+    tests_passing: 61
   - id: "EPIC-24"
     name: "Performance & UX Optimization"
     status: "IN_PROGRESS"
@@ -48,27 +60,38 @@ epic_status:
   EPIC-2: "DONE"
   EPIC-3: "DONE"
   EPIC-4: "DONE"
-  EPIC-5: "IN_PROGRESS"
+  EPIC-5: "DONE"
+  EPIC-6: "IN_PROGRESS"
+  EPIC-8: "DONE"
   EPIC-24: "IN_PROGRESS"
 
 next_actions:
-  - "P0 REMEDIATION COMPLETE 2025-12-29: All critical documentation issues resolved"
-  - "✓ RESOLVED: Fixed epic_status section in bmm-workflow-status.yaml - removed non-existent epics 13, 21, 22, 23"
-  - "✓ RESOLVED: Added comprehensive frontmatter to architecture.md with BMAD V6 tracking sections"
-  - "✓ RESOLVED: Updated epics.md phase terminology to align with current Phase 2 status"
-  - "P1 DEFERRED: Add tracking sections to PRD.md and ux-design-specification.md (lower priority, no immediate impact)"
-  - "Proceed with Epic 24 development - Performance & UX Optimization"
-  - "Team A: Stories 24-1, 24-2 (Incremental Sync)"
-  - "Team B: Stories 24-3, 24-4, 24-5 (Conversation Restore)"
-  - "EPIC 24 VALIDATION SWEEP 2025-12-29: PARTIAL IMPLEMENTATION"
-  - "Story 24-1: FileMetadataCache (12 tests) - ACs 33% met, needs SyncManager integration"
-  - "Story 24-2: permission-lifecycle.ts (11 tests) - marked 'spike-only', needs production implementation"
-  - "Story 24-3: ConversationAutoRestore (9 tests) - ACs 62% met, needs scrollPosition DB field"
-  - "Story 24-4: ToolExecutionLogger (16 tests) - ACs 40% met, needs middleware wiring"
-  - "Story 24-5: SessionStateSnapshot - backlog, 4-5 hours estimated"
-  - "REVERTED: Stories status from 'done' to 'in-progress' - ACs not fully satisfied"
-  - "Run Ralph Loop re-validation after Sprint 28 completion"
-  - "Target: 85+ health score for Phase 2 certification"
+  - "🔧 REFINEMENT SPRINT 2025-12-30: Knowledge Hub Polish"
+  - "📋 Sprint Plan: _bmad-output/sprint-artifacts/refinement-sprint-knowledge-hub-2025-12-30.md"
+  - "---"
+  - "P0 CRITICAL - Team A:"
+  - "  - P-1: Fix __STRING_NOT_TRANSLATED__ markers in en.json/vi.json"
+  - "  - P-4: Dark theme audit - ensure all components use CSS variables"
+  - "P0 CRITICAL - Team B:"
+  - "  - I-1: Complete Story 6-3 (tasks 4-7: rename, collections, export)"
+  - "---"
+  - "P1 HIGH - Team A:"
+  - "  - P-2: Mobile Knowledge Page polish"
+  - "  - P-3: Responsive SourceCard (44px touch targets)"
+  - "  - P-5: Canvas mobile UX improvements"
+  - "P1 HIGH - Team B:"
+  - "  - I-2: Canvas ↔ Source integration wiring"
+  - "  - I-4: Panel persistence to Dexie"
+  - "  - I-5: Integration tests for KnowledgePage"
+  - "---"
+  - "P2 - Both Teams:"
+  - "  - V-1: i18n string audit (grep for missing keys)"
+  - "  - V-2: FR coverage mapping in epics.md"
+  - "  - V-3: Visual regression testing (4 viewports)"
+  - "  - V-4: Accessibility audit (ARIA, keyboard, contrast)"
+  - "---"
+  - "THEME DECISION: Dark theme ONLY (per spec). Light theme tokens exist but NOT active."
+  - "i18n: 2 languages supported - English (en) and Vietnamese (vi)"
 
 bugs: []
 

@@ -13,7 +13,6 @@ import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IdeRouteImport } from './routes/ide'
-import { Route as HubRouteImport } from './routes/hub'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
@@ -39,11 +38,6 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
 const IdeRoute = IdeRouteImport.update({
   id: '/ide',
   path: '/ide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HubRoute = HubRouteImport.update({
-  id: '/hub',
-  path: '/hub',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgentsRoute = AgentsRouteImport.update({
@@ -80,7 +74,6 @@ const ApiChatRoute = ApiChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRoute
-  '/hub': typeof HubRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
   '/settings': typeof SettingsRoute
@@ -93,7 +86,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agents': typeof AgentsRoute
-  '/hub': typeof HubRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
   '/settings': typeof SettingsRoute
@@ -107,7 +99,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agents': typeof AgentsRoute
-  '/hub': typeof HubRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
   '/settings': typeof SettingsRoute
@@ -122,7 +113,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agents'
-    | '/hub'
     | '/ide'
     | '/knowledge'
     | '/settings'
@@ -135,7 +125,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/agents'
-    | '/hub'
     | '/ide'
     | '/knowledge'
     | '/settings'
@@ -148,7 +137,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/agents'
-    | '/hub'
     | '/ide'
     | '/knowledge'
     | '/settings'
@@ -162,7 +150,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentsRoute: typeof AgentsRoute
-  HubRoute: typeof HubRoute
   IdeRoute: typeof IdeRoute
   KnowledgeRoute: typeof KnowledgeRoute
   SettingsRoute: typeof SettingsRoute
@@ -201,13 +188,6 @@ declare module '@tanstack/react-router' {
       path: '/ide'
       fullPath: '/ide'
       preLoaderRoute: typeof IdeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hub': {
-      id: '/hub'
-      path: '/hub'
-      fullPath: '/hub'
-      preLoaderRoute: typeof HubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agents': {
@@ -258,7 +238,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentsRoute: AgentsRoute,
-  HubRoute: HubRoute,
   IdeRoute: IdeRoute,
   KnowledgeRoute: KnowledgeRoute,
   SettingsRoute: SettingsRoute,

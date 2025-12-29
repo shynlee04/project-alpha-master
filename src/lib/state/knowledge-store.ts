@@ -22,7 +22,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
-import type { SourceRecord, CollectionRecord } from './dexie-db';
+import type { SourceRecord, CollectionRecord, SourceMetadata } from './dexie-db';
 import {
     db,
     getCollectionsForProject as dbGetCollectionsForProject,
@@ -138,12 +138,13 @@ interface KnowledgeStoreState {
     /** Filter sources by collection */
     filterByCollection: (collectionId: string | null) => void;
 
-    // Story 6-4: Metadata actions
-    /** Extract metadata for a source using AI */
-    extractMetadata: (sourceId: string) => Promise<void>;
+    // Story 6-4: Metadata & Processing Actions
 
-    /** Update metadata for a source (user edits) */
-    updateMetadata: (sourceId: string, metadata: SourceMetadataFields) => Promise<void>;
+    /** Update source metadata */
+    updateSourceMetadata: (sourceId: string, metadata: SourceMetadata) => Promise<void>;
+
+    /** Update processing status */
+    updateProcessingStatus: (sourceId: string, status: 'pending' | 'processing' | 'completed' | 'failed', error?: string) => Promise<void>;
 
     /** Reset store to initial state */
     reset: () => void;
@@ -398,7 +399,7 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
             removeSourceFromCollection: async (sourceId: string, collectionId: string) => {
                 set({ loading: true, error: null });
                 try {
-                    await dbRemoveSourceToCollection(collectionId, sourceId);
+                    await dbRemoveSourceFromCollection(collectionId, sourceId);
 
                     // TODO: Get projectId from current project context
                     // For now, get it from the collection being updated
@@ -418,110 +419,43 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                 set({ filteredCollectionId: collectionId });
             },
 
-            // Story 6-4: Extract metadata using AI
-            extractMetadata: async (sourceId: string) => {
-                const source = get().sources.find(s => s.id === sourceId);
-                if (!source || !source.content) {
-                    set({ error: 'Source not found or has no content' });
-                    return;
-                }
-
-                // Add to extracting set
-                set((state) => ({
-                    extractingMetadata: new Set([...state.extractingMetadata, sourceId]),
-                    error: null,
-                }));
-
+            updateSourceMetadata: async (sourceId: string, metadata: SourceMetadata) => {
                 try {
-                    // Extract metadata using AI
-                    const metadata = await metadataExtractor.extractAllMetadata(source);
-
-                    // Update in IndexedDB
                     await db.sources.update(sourceId, {
-                        summary: metadata.summary,
-                        keyConcepts: metadata.keyConcepts,
-                        suggestedQuestions: metadata.suggestedQuestions,
-                        metadataExtracted: metadata.metadataExtracted,
-                        metadataEdited: metadata.metadataEdited,
+                        metadata,
                         updatedAt: Date.now(),
                     });
 
-                    // Update local state
                     set((state) => ({
                         sources: state.sources.map(s =>
-                            s.id === sourceId
-                                ? {
-                                    ...s,
-                                    summary: metadata.summary,
-                                    keyConcepts: metadata.keyConcepts,
-                                    suggestedQuestions: metadata.suggestedQuestions,
-                                    metadataExtracted: metadata.metadataExtracted,
-                                    metadataEdited: metadata.metadataEdited,
-                                }
-                                : s
+                            s.id === sourceId ? { ...s, metadata } : s
                         ),
                         selectedSource:
                             state.selectedSource?.id === sourceId
-                                ? {
-                                    ...state.selectedSource,
-                                    summary: metadata.summary,
-                                    keyConcepts: metadata.keyConcepts,
-                                    suggestedQuestions: metadata.suggestedQuestions,
-                                    metadataExtracted: metadata.metadataExtracted,
-                                    metadataEdited: metadata.metadataEdited,
-                                }
-                                : state.selectedSource,
-                        extractingMetadata: new Set(
-                            [...state.extractingMetadata].filter(id => id !== sourceId)
-                        ),
+                                ? { ...state.selectedSource, metadata }
+                                : state.selectedSource
                     }));
                 } catch (error) {
-                    set((state) => ({
-                        error: (error as Error).message,
-                        extractingMetadata: new Set(
-                            [...state.extractingMetadata].filter(id => id !== sourceId)
-                        ),
-                    }));
+                    set({ error: (error as Error).message });
                 }
             },
 
-            // Story 6-4: Update metadata (user edits)
-            updateMetadata: async (sourceId: string, metadata: SourceMetadataFields) => {
-                const source = get().sources.find(s => s.id === sourceId);
-                if (!source) {
-                    set({ error: 'Source not found' });
-                    return;
-                }
-
+            updateProcessingStatus: async (sourceId: string, status: 'pending' | 'processing' | 'completed' | 'failed', processingError?: string) => {
                 try {
-                    // Update in IndexedDB
                     await db.sources.update(sourceId, {
-                        summary: metadata.summary,
-                        keyConcepts: metadata.keyConcepts,
-                        suggestedQuestions: metadata.suggestedQuestions,
-                        metadataEdited: true,
+                        processingStatus: status,
+                        processingError,
                         updatedAt: Date.now(),
                     });
 
-                    // Update local state
                     set((state) => ({
                         sources: state.sources.map(s =>
-                            s.id === sourceId
-                                ? {
-                                    ...s,
-                                    ...metadata,
-                                    metadataEdited: true,
-                                }
-                                : s
+                            s.id === sourceId ? { ...s, processingStatus: status, processingError } : s
                         ),
                         selectedSource:
                             state.selectedSource?.id === sourceId
-                                ? {
-                                    ...state.selectedSource,
-                                    ...metadata,
-                                    metadataEdited: true,
-                                }
-                                : state.selectedSource,
+                                ? { ...state.selectedSource, processingStatus: status, processingError }
+                                : state.selectedSource
                     }));
                 } catch (error) {
                     set({ error: (error as Error).message });

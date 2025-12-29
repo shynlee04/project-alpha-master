@@ -7,7 +7,7 @@
  * Extended for Story 6.4: AI metadata extraction trigger and badge display.
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
 import { RenameDialog } from './RenameDialog';
@@ -70,6 +70,64 @@ function getSourceIcon(source: SourceRecord) {
     }
 }
 
+/**
+ * Sanitize filename for download
+ */
+function sanitizeFilename(title: string): string {
+    return title
+        .replace(/[/\\?%*:|"<>]/g, '-') // Replace invalid characters
+        .replace(/\s+/g, '_')           // Replace spaces with underscores
+        .substring(0, 100);              // Limit length
+}
+
+/**
+ * Export source as downloadable file
+ */
+function exportSource(source: SourceRecord): void {
+    let content: string;
+    let filename: string;
+    let mimeType: string;
+
+    const sanitizedTitle = sanitizeFilename(source.title);
+
+    switch (source.type) {
+        case 'pdf':
+            // For PDFs, we download the raw content if available
+            if (source.rawContent) {
+                content = source.rawContent;
+                filename = `${sanitizedTitle}.pdf`;
+                mimeType = 'application/pdf';
+            } else if (source.content) {
+                // Fallback to text content if raw not available
+                content = source.content;
+                filename = `${sanitizedTitle}.txt`;
+                mimeType = 'text/plain';
+            } else {
+                console.warn('No content available for PDF export');
+                return;
+            }
+            break;
+        case 'url':
+        case 'text':
+        default:
+            content = source.content || '';
+            filename = `${sanitizedTitle}.txt`;
+            mimeType = 'text/plain';
+            break;
+    }
+
+    // Create blob and trigger download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
     const { deleteSource, renameSource, extractMetadata, extractingMetadata } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -81,19 +139,19 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const metadata = formatMetadata(source);
     const isExtracting = extractingMetadata.has(source.id);
 
-    const handleDelete = async () => {
+    const handleDelete = useCallback(async () => {
         await deleteSource(source.id);
         setShowDeleteDialog(false);
-    };
+    }, [deleteSource, source.id]);
 
-    const handleRename = () => {
+    const handleRename = useCallback(() => {
         setShowRenameDialog(true);
-    };
+    }, []);
 
-    const handleSaveRename = async (newTitle: string) => {
+    const handleSaveRename = useCallback(async (newTitle: string) => {
         await renameSource(source.id, newTitle);
         setShowRenameDialog(false);
-    };
+    }, [renameSource, source.id]);
 
     const handleMoveToCollection = () => {
         setShowCollectionSelector(true);
@@ -119,9 +177,8 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
 
     return (
         <div
-            className={`group relative p-4 border border-border-dark bg-surface-dark hover:bg-surface-darker transition-all duration-150 shadow-md hover:shadow-sm hover:translate-x-[1px] hover:translate-y-[1px] rounded-none min-h-[90px] cursor-pointer ${
-                isActive ? 'border-primary bg-primary/10' : ''
-            }`}
+            className={`group relative p-4 border border-border-dark bg-surface-dark hover:bg-surface-darker transition-all duration-150 shadow-md hover:shadow-sm hover:translate-x-[1px] hover:translate-y-[1px] rounded-none min-h-[90px] cursor-pointer ${isActive ? 'border-primary bg-primary/10' : ''
+                }`}
             onClick={() => onSelect?.(source)}
             role="button"
             tabIndex={0}
@@ -222,3 +279,4 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
         </div>
     );
 }
+

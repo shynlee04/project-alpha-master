@@ -126,6 +126,12 @@ export function SourceContextMenu({
                     Move to Collection
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                    onClick={() => onViewMetadata(source)}
+                    className="rounded-none cursor-pointer"
+                >
+                    View Metadata
+                </DropdownMenuItem>
+                <DropdownMenuItem
                     onClick={() => onExport(source)}
                     className="rounded-none cursor-pointer"
                 >

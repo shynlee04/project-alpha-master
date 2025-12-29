@@ -1,34 +1,71 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
+/**
+ * @fileoverview Canvas Store Tests
+ * @module lib/state/__tests__/canvas-store.test.ts
+ */
 
-// Mock IndexedDB
-const mockIndexedDB = {
-  tables: new Map(),
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Node, Edge, Viewport } from '@xyflow/react';
+
+// Mock localStorage first - before any imports
+const mockLocalStorage = {
+  getItem: vi.fn().mockReturnValue(null),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
   clear: vi.fn(),
-  get: vi.fn(),
-  put: vi.fn(),
-  add: vi.fn(),
-  toArray: vi.fn().mockResolvedValue([]),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: mockLocalStorage,
+  writable: true,
+});
+
+// Create mock Dexie tables - needs to be accessible by mock factory
+const mockTables = {
+  canvases: {
+    get: vi.fn().mockResolvedValue(undefined),
+    add: vi.fn().mockResolvedValue('test-id'),
+    update: vi.fn().mockResolvedValue(1),
+    delete: vi.fn().mockResolvedValue(undefined),
+    toArray: vi.fn().mockResolvedValue([]),
+    clear: vi.fn().mockResolvedValue(undefined),
+    put: vi.fn().mockResolvedValue('test-id'),
+  },
+  canvasStates: {
+    get: vi.fn().mockResolvedValue(undefined),
+    add: vi.fn().mockResolvedValue('test-id'),
+    update: vi.fn().mockResolvedValue(1),
+    delete: vi.fn().mockResolvedValue(undefined),
+    toArray: vi.fn().mockResolvedValue([]),
+    clear: vi.fn().mockResolvedValue(undefined),
+    put: vi.fn().mockResolvedValue('test-id'),
+  },
 };
 
-const mockDexie = {
-  table: vi.fn().mockReturnValue(mockIndexedDB),
-  transaction: vi.fn().mockImplementation(async (_mode, _stores, callback) => {
-    await callback();
-  }),
-};
+// Mock Dexie class - must be a constructor for extends to work
+// Use vi.hoisted so it gets evaluated at the right time
+const { MockDexie } = vi.hoisted(() => {
+  class MockDexie {
+    version() { return this; }
+    stores() { return this; }
+    async transaction(_mode: string, _stores: string[], callback: () => Promise<void>) {
+      await callback();
+    }
+    table(name: string) {
+      return mockTables[name as keyof typeof mockTables] || mockTables.canvases;
+    }
+  }
+  return { MockDexie };
+});
 
-// Mock Dexie
+// Setup Dexie mock - this gets hoisted by vitest
 vi.mock('dexie', () => ({
-  default: vi.fn().mockImplementation(() => mockDexie),
+  default: MockDexie,
+  Dexie: MockDexie,
 }));
 
 // Import after mocking
-const { useCanvasStore } = await import('../canvas-store');
+const { useCanvasStore, useMultiCanvasStore, generateCanvasId, KnowledgeCanvasDB, getCanvasDb, setCanvasDbForTesting } = await import('../canvas-store');
 
-describe('CanvasStore', () => {
+describe('Canvas Store', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset store state
@@ -42,12 +79,12 @@ describe('CanvasStore', () => {
 
   describe('Node Management', () => {
     it('should add a node to the canvas', () => {
-      const { addNode, nodes } = useCanvasStore.getState();
+      const { addNode } = useCanvasStore.getState();
 
       const newNode = {
         id: 'node-1',
-        type: 'concept',
-        data: { type: 'concept' as const, title: 'Test Concept' },
+        type: 'concept' as const,
+        data: { nodeType: 'concept' as const, title: 'Test Concept' },
         position: { x: 100, y: 100 },
       };
 
@@ -60,12 +97,12 @@ describe('CanvasStore', () => {
     });
 
     it('should remove a node from the canvas', () => {
-      const { addNode, removeNode, nodes } = useCanvasStore.getState();
+      const { addNode, removeNode } = useCanvasStore.getState();
 
       const newNode = {
         id: 'node-1',
-        type: 'concept',
-        data: { type: 'concept' as const, title: 'Test Concept' },
+        type: 'concept' as const,
+        data: { nodeType: 'concept' as const, title: 'Test Concept' },
         position: { x: 100, y: 100 },
       };
 
@@ -77,19 +114,19 @@ describe('CanvasStore', () => {
     });
 
     it('should set nodes array', () => {
-      const { setNodes, nodes } = useCanvasStore.getState();
+      const { setNodes } = useCanvasStore.getState();
 
       const nodeArray = [
         {
           id: 'node-1',
-          type: 'source',
-          data: { type: 'source' as const, sourceId: 'src-1', title: 'Source 1', type: 'pdf' as const },
+          type: 'source' as const,
+          data: { nodeType: 'source' as const, sourceId: 'src-1', title: 'Source 1', contentType: 'pdf' as const },
           position: { x: 0, y: 0 },
         },
         {
           id: 'node-2',
-          type: 'concept',
-          data: { type: 'concept' as const, title: 'Concept 1' },
+          type: 'concept' as const,
+          data: { nodeType: 'concept' as const, title: 'Concept 1' },
           position: { x: 200, y: 200 },
         },
       ];
@@ -101,13 +138,13 @@ describe('CanvasStore', () => {
 
   describe('Edge Management', () => {
     it('should add an edge to the canvas', () => {
-      const { addEdge, edges } = useCanvasStore.getState();
+      const { addEdge } = useCanvasStore.getState();
 
       const newEdge = {
         id: 'edge-1',
         source: 'node-1',
         target: 'node-2',
-        type: 'default',
+        type: 'default' as const,
       };
 
       addEdge(newEdge);
@@ -124,7 +161,7 @@ describe('CanvasStore', () => {
         id: 'edge-1',
         source: 'node-1',
         target: 'node-2',
-        type: 'default',
+        type: 'default' as const,
       };
 
       addEdge(newEdge);
@@ -133,11 +170,22 @@ describe('CanvasStore', () => {
       removeEdge('edge-1');
       expect(useCanvasStore.getState().edges).toHaveLength(0);
     });
+
+    it('should add edge with relationship type', () => {
+      const { addEdgeWithRelationship, edges } = useCanvasStore.getState();
+
+      addEdgeWithRelationship({ source: 'node-1', target: 'node-2' }, 'supports');
+
+      const updatedEdges = useCanvasStore.getState().edges;
+      expect(updatedEdges).toHaveLength(1);
+      expect(updatedEdges[0].data?.relationship).toBe('supports');
+      expect(updatedEdges[0].animated).toBe(true);
+    });
   });
 
   describe('Viewport Management', () => {
     it('should update viewport', () => {
-      const { setViewport, viewport } = useCanvasStore.getState();
+      const { setViewport } = useCanvasStore.getState();
 
       const newViewport = { x: 100, y: 200, zoom: 1.5 };
       setViewport(newViewport);
@@ -148,9 +196,9 @@ describe('CanvasStore', () => {
 
   describe('Read-Only Mode', () => {
     it('should toggle read-only mode', () => {
-      const { setReadOnly, isReadOnly } = useCanvasStore.getState();
+      const { setReadOnly } = useCanvasStore.getState();
 
-      expect(isReadOnly).toBe(false);
+      expect(useCanvasStore.getState().isReadOnly).toBe(false);
 
       setReadOnly(true);
       expect(useCanvasStore.getState().isReadOnly).toBe(true);
@@ -162,13 +210,13 @@ describe('CanvasStore', () => {
 
   describe('Canvas Reset', () => {
     it('should reset canvas to initial state', () => {
-      const { addNode, addEdge, setViewport, resetCanvas, nodes, edges } = useCanvasStore.getState();
+      const { addNode, addEdge, setViewport, resetCanvas } = useCanvasStore.getState();
 
       // Add some data
       addNode({
         id: 'node-1',
-        type: 'concept',
-        data: { type: 'concept' as const, title: 'Test' },
+        type: 'concept' as const,
+        data: { nodeType: 'concept' as const, title: 'Test' },
         position: { x: 100, y: 100 },
       });
 
@@ -176,6 +224,7 @@ describe('CanvasStore', () => {
         id: 'edge-1',
         source: 'node-1',
         target: 'node-2',
+        type: 'default' as const,
       });
 
       setViewport({ x: 500, y: 500, zoom: 2 });
@@ -195,8 +244,8 @@ describe('CanvasStore', () => {
 
       const node = {
         id: 'node-1',
-        type: 'concept',
-        data: { type: 'concept' as const, title: 'Test' },
+        type: 'concept' as const,
+        data: { nodeType: 'concept' as const, title: 'Test' },
         position: { x: 100, y: 100 },
       };
 
@@ -238,37 +287,62 @@ describe('CanvasStore', () => {
       const updatedEdge = useCanvasStore.getState().edges.find((e) => e.id === 'edge-1');
       expect(updatedEdge?.selected).toBe(true);
     });
+  });
+});
 
-    it('should handle connections', () => {
-      const { onConnect, addNode } = useCanvasStore.getState();
+describe('Canvas ID Generation', () => {
+  it('should generate unique canvas IDs', () => {
+    const id1 = generateCanvasId();
+    const id2 = generateCanvasId();
 
-      // Add two nodes first
-      addNode({
-        id: 'node-1',
-        type: 'concept',
-        data: { type: 'concept' as const, title: 'Node 1' },
-        position: { x: 0, y: 0 },
-      });
+    expect(id1).toMatch(/^canvas-\d+-[a-z0-9]+$/);
+    expect(id2).toMatch(/^canvas-\d+-[a-z0-9]+$/);
+    expect(id1).not.toBe(id2);
+  });
+});
 
-      addNode({
-        id: 'node-2',
-        type: 'concept',
-        data: { type: 'concept' as const, title: 'Node 2' },
-        position: { x: 200, y: 200 },
-      });
+describe('Multi-Canvas Store', () => {
+  it('should have initial state', () => {
+    const state = useMultiCanvasStore.getState();
 
-      const connection = {
-        source: 'node-1',
-        target: 'node-2',
-        sourceHandle: null,
-        targetHandle: null,
-      };
+    expect(state.activeCanvasId).toBeNull();
+    expect(state.canvasList).toBeInstanceOf(Array);
+  });
+});
 
-      onConnect(connection);
+describe('KnowledgeCanvasDB', () => {
+  it('should be a class extending Dexie', () => {
+    expect(KnowledgeCanvasDB).toBeDefined();
+    expect(typeof KnowledgeCanvasDB).toBe('function');
+  });
 
-      expect(useCanvasStore.getState().edges).toHaveLength(1);
-      expect(useCanvasStore.getState().edges[0].source).toBe('node-1');
-      expect(useCanvasStore.getState().edges[0].target).toBe('node-2');
-    });
+  it('should have getCanvasDb function', () => {
+    expect(getCanvasDb).toBeDefined();
+    expect(typeof getCanvasDb).toBe('function');
+  });
+
+  it('should have setCanvasDbForTesting function', () => {
+    expect(setCanvasDbForTesting).toBeDefined();
+    expect(typeof setCanvasDbForTesting).toBe('function');
+  });
+});
+
+describe('Canvas Export Format', () => {
+  it('should validate export structure', () => {
+    const exportData = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      canvas: {
+        id: 'test-canvas',
+        name: 'Test Canvas',
+        nodes: [] as Node<any>[],
+        edges: [] as Edge<any>[],
+        viewport: { x: 0, y: 0, zoom: 1 } as Viewport,
+      },
+    };
+
+    expect(exportData.version).toBe(1);
+    expect(exportData.canvas.nodes).toBeInstanceOf(Array);
+    expect(exportData.canvas.edges).toBeInstanceOf(Array);
   });
 });

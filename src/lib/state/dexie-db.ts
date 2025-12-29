@@ -365,6 +365,18 @@ export interface SourceRecord {
 }
 
 /**
+ * Metadata for AI analysis (Story 6-4)
+ */
+export interface SourceMetadata {
+    summary?: string;
+    keyConcepts?: string[];
+    authors?: string[];
+    publishedDate?: string;
+    readingTime?: string;
+    language?: string;
+}
+
+/**
  * Collection record for organizing sources
  * Stores collections for grouping related sources.
  *
@@ -379,6 +391,9 @@ export interface CollectionRecord {
     createdAt: number;
     updatedAt: number;
 }
+
+// Type alias for backward compatibility
+export type Collection = CollectionRecord;
 
 /**
  * Convert SyncQueueItem to SyncStatusRecord
