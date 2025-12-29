@@ -1,15 +1,18 @@
 /**
  * @fileoverview Source Preview Panel Component
  * @module components/knowledge/SourcePreviewPanel
- * @governance EPIC-6-2, EPIC-6-4
+ * @governance EPIC-6-2, EPIC-6-4, EPIC-7-2
  *
  * Slide-in preview panel for viewing full source content.
  * Extended for Story 6.4: Metadata display and editing.
+ * Extended for Story 7.2: Chunk boundary visualization.
  */
 
 import { useEffect, useState } from 'react';
-import { Edit, X } from 'lucide-react';
+import { Edit, X, Grid3x3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useRAGStore } from '@/lib/state/rag-store';
 import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { MetadataDisplay } from './MetadataDisplay';
 import { MetadataEditor } from './MetadataEditor';
@@ -64,10 +67,66 @@ function formatRelativeTime(timestamp: number): string {
     return `${Math.floor(seconds / 86400)} days ago`;
 }
 
+/**
+ * Chunk Boundary Badge Component
+ * Displays chunk number and token count
+ */
+function ChunkBoundaryBadge({ index, tokenCount, type }: { index: number; tokenCount: number; type?: string }) {
+    const { t } = useTranslation();
+
+    const getTypeColor = () => {
+        switch (type) {
+            case 'figure':
+                return 'text-purple-400 border-purple-400';
+            case 'table':
+                return 'text-blue-400 border-blue-400';
+            case 'code':
+                return 'text-green-400 border-green-400';
+            default:
+                return 'text-primary border-border-dark';
+        }
+    };
+
+    const getTypeLabel = () => {
+        switch (type) {
+            case 'figure':
+                return t('rag.chunking.figureDetected');
+            case 'table':
+                return t('rag.chunking.tableDetected');
+            case 'code':
+                return t('rag.chunking.codeDetected');
+            default:
+                return '';
+        }
+    };
+
+    return (
+        <div className={`flex items-center gap-2 px-2 py-1 bg-surface-darker border-l-2 ${getTypeColor()} text-xs font-mono`}>
+            <span className="text-muted-foreground">
+                {t('rag.chunking.chunkNumber', { index: index + 1 })}
+            </span>
+            <span>•</span>
+            <span>{t('rag.chunking.tokenCount', { count: tokenCount })}</span>
+            {type && (
+                <>
+                    <span>•</span>
+                    <span className="font-semibold">{getTypeLabel()}</span>
+                </>
+            )}
+        </div>
+    );
+}
+
 export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
+    const { t } = useTranslation();
     const { selectedSource, isPreviewOpen, closePreview, updateMetadata, extractingMetadata } =
         useKnowledgeStore();
+    const { getChunksForSource } = useRAGStore();
     const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+    const [showChunkBoundaries, setShowChunkBoundaries] = useState(false);
+
+    // Get chunks for source if available
+    const chunks = selectedSource ? getChunksForSource(selectedSource.id) : undefined;
 
     // Handle Escape key to close
     useEffect(() => {
@@ -152,6 +211,16 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
                         </h2>
                     </div>
                     <div className="flex items-center gap-2">
+                        {/* Story 7-2: Show chunk boundaries toggle */}
+                        <button
+                            className={`p-2 rounded-none ${showChunkBoundaries ? 'bg-surface-darker text-primary' : 'hover:bg-surface-darker'}`}
+                            onClick={() => setShowChunkBoundaries(!showChunkBoundaries)}
+                            aria-label={showChunkBoundaries ? 'Hide chunks' : 'Show chunks'}
+                            aria-pressed={showChunkBoundaries}
+                            title={showChunkBoundaries ? t('rag.chunking.hideBoundaries') : t('rag.chunking.showBoundaries')}
+                        >
+                            <Grid3x3 className="w-4 h-4" />
+                        </button>
                         {/* Story 6-4: Edit metadata button */}
                         {(selectedSource.summary ||
                             selectedSource.keyConcepts?.length ||
@@ -214,12 +283,43 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
 
                 {/* Content area with metadata */}
                 <div className="flex-1 overflow-y-auto">
-                    {/* Source content */}
-                    <div className="p-4">
-                        <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-mono">
-                            {selectedSource.content}
-                        </pre>
-                    </div>
+                    {/* Source content with chunk boundaries (Story 7-2) */}
+                    {showChunkBoundaries ? (
+                        // Chunked view
+                        chunks && chunks.length > 0 ? (
+                            <div className="p-4 space-y-4">
+                                {chunks.map((chunk, idx) => (
+                                    <div key={chunk.chunkId} className="border-b border-border-dark pb-4 last:border-b-0">
+                                        <ChunkBoundaryBadge
+                                            index={chunk.chunkIndex}
+                                            tokenCount={chunk.tokenCount}
+                                            type={chunk.metadata?.type}
+                                        />
+                                        <pre className="mt-2 whitespace-pre-wrap text-sm text-foreground leading-relaxed font-mono">
+                                            {chunk.content}
+                                        </pre>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            // Placeholder when no chunks available
+                            <div className="p-4 text-center">
+                                <div className="text-muted-foreground text-sm">
+                                    {t('rag.chunking.title')} - {t('rag.chunking.progress', { current: 0, total: 0 })}
+                                </div>
+                                <div className="text-xs text-muted-foreground mt-2">
+                                    Chunks will be displayed here after chunking is complete.
+                                </div>
+                            </div>
+                        )
+                    ) : (
+                        // Normal view
+                        <div className="p-4">
+                            <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-mono">
+                                {selectedSource.content}
+                            </pre>
+                        </div>
+                    )}
 
                     {/* Story 6-4: Metadata display/editor */}
                     {isEditingMetadata ? (

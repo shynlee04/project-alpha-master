@@ -350,4 +350,101 @@ describe('Story 7-1: RAG Store', () => {
             expect(Array.isArray(partialized.searchCache)).toBe(true);
         });
     });
+
+    // Story 7-2: Document Chunking Tests
+    describe('Story 7-2: Document Chunking', () => {
+        const testContent = 'This is test content. '.repeat(200);
+
+        it('should chunk source successfully', async () => {
+            const chunks = await useRAGStore.getState().chunkSource('test-source-1', testContent);
+
+            expect(chunks).toBeDefined();
+            expect(chunks.length).toBeGreaterThan(0);
+            expect(useRAGStore.getState().loading).toBe(false);
+            expect(useRAGStore.getState().error).toBeNull();
+        });
+
+        it('should track chunking progress', async () => {
+            const sourceId = 'test-source-progress';
+
+            await useRAGStore.getState().chunkSource(sourceId, testContent);
+
+            const state = useRAGStore.getState();
+            const progress = state.chunkingProgress.get(sourceId);
+
+            expect(progress).toBeDefined();
+            expect(progress?.status).toBe('completed');
+            expect(progress?.totalChunks).toBeGreaterThan(0);
+        });
+
+        it('should handle chunking errors', async () => {
+            // Use content that will cause an error (empty string)
+            const chunks = await useRAGStore.getState().chunkSource('test-error', '');
+
+            expect(chunks).toEqual([]);
+
+            const state = useRAGStore.getState();
+            expect(state.error).not.toBeNull();
+            expect(state.loading).toBe(false);
+        });
+
+        it('should clear chunking progress for source', async () => {
+            const sourceId = 'test-source-clear';
+
+            // First, chunk something
+            await useRAGStore.getState().chunkSource(sourceId, testContent);
+            expect(useRAGStore.getState().chunkingProgress.has(sourceId)).toBe(true);
+
+            // Then clear progress
+            useRAGStore.getState().clearChunkingProgress(sourceId);
+            expect(useRAGStore.getState().chunkingProgress.has(sourceId)).toBe(false);
+        });
+
+        it('should use custom chunking options', async () => {
+            const chunks = await useRAGStore.getState().chunkSource(
+                'test-source-options',
+                testContent,
+                {
+                    strategy: 'semantic',
+                    minChunkSize: 100,
+                    maxChunkSize: 500,
+                    overlap: 50,
+                    preserveFormatting: true,
+                }
+            );
+
+            expect(chunks.length).toBeGreaterThan(0);
+        });
+
+        it('should get chunks for source (returns undefined for now)', () => {
+            // This is a placeholder - chunks are not persisted yet
+            const chunks = useRAGStore.getState().getChunksForSource('test-source');
+            expect(chunks).toBeUndefined();
+        });
+
+        it('should handle multiple concurrent chunking operations', async () => {
+            const promises = [
+                useRAGStore.getState().chunkSource('source-1', testContent),
+                useRAGStore.getState().chunkSource('source-2', testContent),
+                useRAGStore.getState().chunkSource('source-3', testContent),
+            ];
+
+            const results = await Promise.all(promises);
+
+            expect(results[0].length).toBeGreaterThan(0);
+            expect(results[1].length).toBeGreaterThan(0);
+            expect(results[2].length).toBeGreaterThan(0);
+
+            const state = useRAGStore.getState();
+            expect(state.chunkingProgress.size).toBe(3);
+        });
+
+        it('should reset chunking progress on store reset', async () => {
+            await useRAGStore.getState().chunkSource('test-source-reset', testContent);
+            expect(useRAGStore.getState().chunkingProgress.size).toBeGreaterThan(0);
+
+            useRAGStore.getState().reset();
+            expect(useRAGStore.getState().chunkingProgress.size).toBe(0);
+        });
+    });
 });

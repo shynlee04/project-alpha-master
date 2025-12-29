@@ -27,6 +27,9 @@ import { db, type SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 import { metadataExtractor } from './metadata-extractor';
 import type { WorkspaceEventEmitter, WorkspaceEvents } from '@/lib/events/workspace-events';
+import { useRAGStore } from '@/lib/state/rag-store';
+import type { ChunkingOptions } from '@/lib/rag/types';
+import { DEFAULT_CHUNKING_OPTIONS } from '@/lib/rag/types';
 
 /**
  * Supported source types
@@ -41,6 +44,10 @@ export interface SourceImportOptions {
     projectId: string;
     /** Optional progress callback for UI updates */
     onProgress?: (message: string) => void;
+    /** Auto-chunk after import (Story 7-2) */
+    autoChunk?: boolean;
+    /** Chunking options (defaults to DEFAULT_CHUNKING_OPTIONS) */
+    chunkingOptions?: ChunkingOptions;
 }
 
 /**
@@ -113,6 +120,11 @@ export class SourceImportPipeline {
 
             this.triggerMetadataExtraction(sourceId, result.text);
 
+            // Trigger chunking if enabled (Story 7-2)
+            if (options.autoChunk) {
+                await this.triggerChunking(sourceId, result.text, options.chunkingOptions);
+            }
+
             this.emitEvent('import.completed', { sourceId, record });
             return record;
         } catch (error) {
@@ -163,6 +175,11 @@ export class SourceImportPipeline {
 
             this.triggerMetadataExtraction(sourceId, result.content);
 
+            // Trigger chunking if enabled (Story 7-2)
+            if (options.autoChunk) {
+                await this.triggerChunking(sourceId, result.content, options.chunkingOptions);
+            }
+
             this.emitEvent('import.completed', { sourceId, record });
             return record;
         } catch (error) {
@@ -212,6 +229,11 @@ export class SourceImportPipeline {
             await db.sources.put(record);
 
             this.triggerMetadataExtraction(sourceId, text);
+
+            // Trigger chunking if enabled (Story 7-2)
+            if (options.autoChunk) {
+                await this.triggerChunking(sourceId, text, options.chunkingOptions);
+            }
 
             this.emitEvent('import.completed', { sourceId, record });
             return record;
@@ -304,6 +326,36 @@ export class SourceImportPipeline {
         } catch (error) {
             console.error('[Metadata] Extraction failed:', error);
             await store.updateProcessingStatus(sourceId, 'failed', (error as Error).message);
+        }
+    }
+
+    /**
+     * Trigger background chunking (Story 7-2)
+     */
+    private async triggerChunking(
+        sourceId: string,
+        content: string,
+        options?: ChunkingOptions
+    ): Promise<void> {
+        const ragStore = useRAGStore.getState();
+
+        try {
+            console.log('[Chunking] Starting chunking for source:', sourceId);
+
+            // Chunk using RAG store
+            const chunks = await ragStore.chunkSource(
+                sourceId,
+                content,
+                options ?? DEFAULT_CHUNKING_OPTIONS
+            );
+
+            console.log(`[Chunking] Completed: ${chunks.length} chunks created`);
+
+            // Note: In a full implementation, chunks would be saved to IndexedDB
+            // and associated with the source for retrieval during search.
+        } catch (error) {
+            console.error('[Chunking] Failed:', error);
+            // Don't throw - chunking failure shouldn't block import
         }
     }
 }
