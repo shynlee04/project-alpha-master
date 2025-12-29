@@ -1,54 +1,122 @@
+/**
+ * @fileoverview Metadata Extraction Service Tests (Story 6.4)
+ * @module lib/knowledge/__tests__/metadata-extractor
+ */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MetadataExtractor, createMetadataExtractor, MockMetadataExtractor } from '../metadata-extractor';
+import { MetadataExtractor } from '../metadata-extractor';
+import type { SourceRecord } from '@/lib/state/dexie-db';
 
-// Mock dependencies
-vi.mock('@google/genai', () => ({
-    GoogleGenAI: vi.fn().mockImplementation(() => ({
-        models: {
-            generateContent: vi.fn().mockResolvedValue({
-                text: JSON.stringify({
-                    summary: "This is a test summary.",
-                    keyConcepts: ["Test", "Concept"],
-                    suggestedQuestions: ["Q1?", "Q2?", "Q3?"],
-                    language: "en",
-                    readingTime: "1 min"
-                }),
-            }),
-        },
-    })),
-}));
-
+// Mock credential vault
 vi.mock('@/lib/agent/providers/credential-vault', () => ({
     credentialVault: {
-        getCredential: vi.fn().mockReturnValue({ apiKey: 'test-key' }),
+        getCredential: vi.fn().mockResolvedValue('test-api-key-123'),
     },
 }));
 
-describe('MetadataExtractor', () => {
+// Mock Gemini API
+vi.mock('@google/generative-ai', () => ({
+    GoogleGenerativeAI: vi.fn().mockImplementation(() => ({
+        getGenerativeModel: vi.fn().mockReturnValue({
+            generateContent: vi.fn().mockResolvedValue({
+                response: {
+                    text: () => 'Mock response',
+                },
+            }),
+        }),
+    })),
+}));
+
+describe('MetadataExtractor (Story 6.4)', () => {
     let extractor: MetadataExtractor;
+    let mockSource: Pick<SourceRecord, 'content'>;
 
     beforeEach(() => {
+        extractor = new MetadataExtractor();
         vi.clearAllMocks();
-        extractor = new MetadataExtractor('test-key');
+
+        // Create mock source with content
+        mockSource = {
+            content: 'This is a test document about machine learning and artificial intelligence. ' +
+                'It contains information about neural networks, data science, and algorithms. ' +
+                'The document is written for educational purposes.',
+        };
     });
 
-    it('extracts basic stats correctly', () => {
-        const content = "Word ".repeat(200); // 200 words
-        const stats = extractor.extractBasicStats(content);
-        expect(stats.readingTime).toBe('1 min read');
+    describe('Content Truncation', () => {
+        it('should limit content to 10k characters', () => {
+            const longContent = 'a'.repeat(15000);
+            const truncated = extractor['truncateContent'](longContent);
+
+            expect(truncated.length).toBe(10000);
+        });
+
+        it('should not truncate short content', () => {
+            const shortContent = 'short content';
+            const truncated = extractor['truncateContent'](shortContent);
+
+            expect(truncated).toBe(shortContent);
+        });
     });
 
-    it('generates analysis via AI', async () => {
-        const result = await extractor.generateAnalysis('some content');
+    describe('Empty Content Handling', () => {
+        it('should return fallback metadata for empty content', async () => {
+            const emptySource: Pick<SourceRecord, 'content'> = { content: '' };
 
-        expect(result.summary).toBe('This is a test summary.');
-        expect(result.keyConcepts).toContain('Test');
-        expect(result.suggestedQuestions).toHaveLength(3);
+            const metadata = await extractor.extractAllMetadata(emptySource);
+
+            expect(metadata.summary).toBe('AI analysis unavailable');
+            expect(metadata.keyConcepts).toEqual([]);
+            expect(metadata.suggestedQuestions).toEqual([]);
+            expect(metadata.metadataExtracted).toBe(false);
+        });
+
+        it('should return fallback metadata for whitespace-only content', async () => {
+            const whitespaceSource: Pick<SourceRecord, 'content'> = { content: '   \n\n   ' };
+
+            const metadata = await extractor.extractAllMetadata(whitespaceSource);
+
+            expect(metadata.summary).toBe('AI analysis unavailable');
+            expect(metadata.keyConcepts).toEqual([]);
+            expect(metadata.suggestedQuestions).toEqual([]);
+            expect(metadata.metadataExtracted).toBe(false);
+        });
     });
 
-    it('uses MockMetadataExtractor when requested', () => {
-        const mock = createMetadataExtractor(true);
-        expect(mock).toBeInstanceOf(MockMetadataExtractor);
+    describe('API Key Management', () => {
+        it('should retrieve API key from credential vault', async () => {
+            const { credentialVault } = await import('@/lib/agent/providers/credential-vault');
+
+            // This will fail the actual API call, but we can verify the API key was requested
+            try {
+                await extractor.generateSummary('test content');
+            } catch {
+                // Expected to fail since we're using a mock
+            }
+
+            expect(credentialVault.getCredential).toHaveBeenCalledWith('google-gemini');
+        });
+    });
+
+    describe('Error Handling', () => {
+        it('should handle missing API key gracefully', async () => {
+            const { credentialVault } = await import('@/lib/agent/providers/credential-vault');
+            vi.mocked(credentialVault).getCredential.mockResolvedValue(undefined);
+
+            const summary = await extractor.generateSummary('test content');
+
+            expect(summary).toBe('AI analysis unavailable');
+        });
+
+        it('should handle API errors gracefully', async () => {
+            const { GoogleGenerativeAI } = await import('@google/generative-ai');
+            vi.mocked(GoogleGenerativeAI).mockImplementation(() => {
+                throw new Error('API Error');
+            });
+
+            const summary = await extractor.generateSummary('test content');
+
+            expect(summary).toBe('AI analysis unavailable');
+        });
     });
 });

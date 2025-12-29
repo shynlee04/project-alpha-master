@@ -1,14 +1,19 @@
 /**
  * @fileoverview Source Preview Panel Component
  * @module components/knowledge/SourcePreviewPanel
- * @governance EPIC-6-2
+ * @governance EPIC-6-2, EPIC-6-4
  *
  * Slide-in preview panel for viewing full source content.
+ * Extended for Story 6.4: Metadata display and editing.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Edit, X } from 'lucide-react';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
+import { MetadataDisplay } from './MetadataDisplay';
+import { MetadataEditor } from './MetadataEditor';
+import type { SourceMetadataFields } from '@/lib/state/knowledge-store';
 
 interface SourcePreviewPanelProps {
     projectId: string;
@@ -60,19 +65,25 @@ function formatRelativeTime(timestamp: number): string {
 }
 
 export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
-    const { selectedSource, isPreviewOpen, closePreview } = useKnowledgeStore();
+    const { selectedSource, isPreviewOpen, closePreview, updateMetadata, extractingMetadata } =
+        useKnowledgeStore();
+    const [isEditingMetadata, setIsEditingMetadata] = useState(false);
 
     // Handle Escape key to close
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape' && isPreviewOpen) {
-                closePreview();
+                if (isEditingMetadata) {
+                    setIsEditingMetadata(false);
+                } else {
+                    closePreview();
+                }
             }
         };
 
         document.addEventListener('keydown', handleEscape);
         return () => document.removeEventListener('keydown', handleEscape);
-    }, [isPreviewOpen, closePreview]);
+    }, [isPreviewOpen, closePreview, isEditingMetadata]);
 
     // Prevent body scroll when panel is open
     useEffect(() => {
@@ -87,6 +98,11 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
         };
     }, [isPreviewOpen]);
 
+    // Reset edit state when source changes
+    useEffect(() => {
+        setIsEditingMetadata(false);
+    }, [selectedSource?.id]);
+
     if (!isPreviewOpen || !selectedSource) {
         return null;
     }
@@ -94,6 +110,7 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
     const Icon = getSourceIcon(selectedSource.type);
     const readingTime = calculateReadingTime(selectedSource);
     const importedAt = formatRelativeTime(selectedSource.createdAt);
+    const isExtracting = extractingMetadata.has(selectedSource.id);
 
     const handleExport = () => {
         const blob = new Blob([selectedSource.content], { type: 'text/plain' });
@@ -105,6 +122,15 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    };
+
+    const handleSaveMetadata = async (metadata: SourceMetadataFields) => {
+        await updateMetadata(selectedSource.id, metadata);
+        setIsEditingMetadata(false);
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditingMetadata(false);
     };
 
     return (
@@ -126,6 +152,23 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
                         </h2>
                     </div>
                     <div className="flex items-center gap-2">
+                        {/* Story 6-4: Edit metadata button */}
+                        {(selectedSource.summary ||
+                            selectedSource.keyConcepts?.length ||
+                            selectedSource.suggestedQuestions?.length) && (
+                            <button
+                                className="p-2 hover:bg-surface-darker rounded-none text-primary"
+                                onClick={() => setIsEditingMetadata(!isEditingMetadata)}
+                                aria-label={isEditingMetadata ? 'Cancel edit' : 'Edit metadata'}
+                                title={isEditingMetadata ? 'Cancel edit' : 'Edit metadata'}
+                            >
+                                {isEditingMetadata ? (
+                                    <X className="w-4 h-4" />
+                                ) : (
+                                    <Edit className="w-4 h-4" />
+                                )}
+                            </button>
+                        )}
                         <button
                             className="p-2 hover:bg-surface-darker rounded-none"
                             onClick={handleExport}
@@ -161,13 +204,33 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
                     <span>{readingTime}</span>
                     <span>•</span>
                     <span>Imported {importedAt}</span>
+                    {isExtracting && (
+                        <>
+                            <span>•</span>
+                            <span className="text-primary animate-pulse">Analyzing...</span>
+                        </>
+                    )}
                 </div>
 
-                {/* Content area */}
-                <div className="flex-1 overflow-y-auto p-4">
-                    <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-mono">
-                        {selectedSource.content}
-                    </pre>
+                {/* Content area with metadata */}
+                <div className="flex-1 overflow-y-auto">
+                    {/* Source content */}
+                    <div className="p-4">
+                        <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-mono">
+                            {selectedSource.content}
+                        </pre>
+                    </div>
+
+                    {/* Story 6-4: Metadata display/editor */}
+                    {isEditingMetadata ? (
+                        <MetadataEditor
+                            source={selectedSource}
+                            onSave={handleSaveMetadata}
+                            onCancel={handleCancelEdit}
+                        />
+                    ) : (
+                        <MetadataDisplay source={selectedSource} />
+                    )}
                 </div>
             </div>
         </>

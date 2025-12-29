@@ -49,6 +49,7 @@ describe('SourceCardGrid', () => {
         const loadSources = vi.fn().mockResolvedValue(undefined);
         vi.mocked(useKnowledgeStore).mockReturnValue({
             sources: mockSources,
+            collections: [],
             loadSources,
             selectedSource: null,
             openPreview: vi.fn(),
@@ -62,6 +63,7 @@ describe('SourceCardGrid', () => {
     it('should render empty state when no sources', () => {
         vi.mocked(useKnowledgeStore).mockReturnValue({
             sources: [],
+            collections: [],
             loadSources: vi.fn(),
             selectedSource: null,
             openPreview: vi.fn(),
@@ -76,6 +78,7 @@ describe('SourceCardGrid', () => {
     it('should render source cards', () => {
         vi.mocked(useKnowledgeStore).mockReturnValue({
             sources: mockSources,
+            collections: [],
             loadSources: vi.fn(),
             selectedSource: null,
             openPreview: vi.fn(),
@@ -90,6 +93,7 @@ describe('SourceCardGrid', () => {
     it('should use responsive grid classes', () => {
         vi.mocked(useKnowledgeStore).mockReturnValue({
             sources: mockSources,
+            collections: [],
             loadSources: vi.fn(),
             selectedSource: null,
             openPreview: vi.fn(),

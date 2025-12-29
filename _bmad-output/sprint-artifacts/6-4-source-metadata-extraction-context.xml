@@ -1,84 +1,368 @@
-<context story="6-4-source-metadata-extraction" created="2025-12-30T04:55:00+07:00">
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="6-4-source-metadata-extraction" created="2025-12-30T04:00:00Z">
+  <!-- Current code state for files to be modified/created -->
   <files>
     <file path="src/lib/state/dexie-db.ts">
       <content><![CDATA[
+// Current SourceRecord interface (lines ~50-80)
 export interface SourceRecord {
-    id: string;                 // Primary key (UUID)
-    projectId: string;          // Foreign key to project
-    type: 'pdf' | 'url' | 'text';
+    id: string;
+    projectId: string;
+    type: 'text' | 'url' | 'pdf';
     title: string;
-    content: string;            // Extracted text content
-    url?: string;               // For URL sources
-    pageCount?: number;         // For PDF sources
-    wordCount?: number;         // For PDF/URL sources
-    charCount?: number;         // For text sources
-    fileSize?: number;          // For PDF sources (bytes)
-    collections?: string[];     // Collection IDs (Story 6-3)
-    deleted?: boolean;          // Soft delete flag (Story 6-3)
-    deletedAt?: number;         // Deletion timestamp (Story 6-3)
-    // PROPOSED ADDITIONS FOR STORY 6-4
-    // metadata?: {
-    //   summary?: string;
-    //   keyConcepts?: string[];
-    //   authors?: string[];
-    //   publishedDate?: string;
-    // };
-    // processingStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+    content: string;
+    charCount?: number;
+    wordCount?: number;
+    pageCount?: number;
+    url?: string;
     createdAt: number;
     updatedAt: number;
+    // TODO: Add metadata fields in Story 6.4:
+    // summary?: string;
+    // keyConcepts?: string[];
+    // suggestedQuestions?: string[];
+    // metadataExtracted?: boolean;
+    // metadataEdited?: boolean;
 }
       ]]></content>
     </file>
-    <file path="src/components/knowledge/SourceCard.tsx">
+
+    <file path="src/lib/state/knowledge-store.ts">
       <content><![CDATA[
-// ... existing imports ...
+// Current store structure (lines ~1-50)
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { createDexieStorage } from './dexie-storage';
+import type { SourceRecord, Collection } from './dexie-db';
+import { db } from './dexie-db';
+
+interface KnowledgeStore {
+    sources: SourceRecord[];
+    collections: Collection[];
+    selectedSource: SourceRecord | null;
+
+    // Existing actions
+    loadSources: (projectId: string) => Promise<void>;
+    addSource: (source: Omit<SourceRecord, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+    deleteSource: (sourceId: string) => Promise<void>;
+    renameSource: (sourceId: string, newName: string) => Promise<void>;
+    createCollection: (name: string) => Promise<Collection>;
+    addSourceToCollection: (sourceId: string, collectionId: string) => Promise<void>;
+    removeSourceFromCollection: (sourceId: string, collectionId: string) => Promise<void>;
+
+    // TODO: Add metadata actions in Story 6.4:
+    // extractMetadata: (sourceId: string) => Promise<void>;
+    // updateMetadata: (sourceId: string, metadata: Partial<MetadataFields>) => Promise<void>;
+}
+      ]]></content>
+    </file>
+
+    <file path="src/lib/knowledge/source-import.ts">
+      <content><![CDATA[
+// Current import pipeline (lines ~1-100)
 import type { SourceRecord } from '@/lib/state/dexie-db';
 
-interface SourceCardProps {
-    source: SourceRecord;
-    isActive?: boolean;
-    onSelect?: (source: SourceRecord) => void;
+// Import functions for PDF, URL, text
+export async function importPDF(file: File, projectId: string): Promise<SourceRecord> {
+    // PDF parsing with pdf.js
+    // Text extraction
+    // Store in Dexie
 }
 
-// ... helper functions ...
-
-export function SourceCard({ source, isActive, onSelect }: SourceCardProps) {
-    // ... existing source card implementation ...
-    // Needs expansion logic for metadata view
+export async function importURL(url: string, projectId: string): Promise<SourceRecord> {
+    // Fetch with Readability
+    // Extract content
+    // Store in Dexie
 }
+
+export async function importText(text: string, projectId: string): Promise<SourceRecord> {
+    // Create source record
+    // Store in Dexie
+}
+
+// TODO: Story 6.4 will add metadata extraction after import
+// await extractMetadata(sourceRecord);
+      ]]></content>
+    </file>
+
+    <file path="src/components/knowledge/SourceCard.tsx">
+      <content><![CDATA[
+// Current card structure (lines ~1-100)
+export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
+    const { deleteSource, renameSource } = useKnowledgeStore();
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [showRenameDialog, setShowRenameDialog] = useState(false);
+    const [showCollectionSelector, setShowCollectionSelector] = useState(false);
+
+    // TODO: Story 6.4 will add:
+    // const { extractMetadata } = useKnowledgeStore();
+    // const [isExtracting, setIsExtracting] = useState(false);
+    // Extract Metadata button in context menu
+    // Metadata badge display: "✨ AI-analyzed"
+      ]]></content>
+    </file>
+
+    <file path="src/components/knowledge/SourcePreviewPanel.tsx">
+      <content><![CDATA[
+// Current preview panel (lines ~1-100)
+export function SourcePreviewPanel({ source }: SourcePreviewPanelProps) {
+    // Displays source.content with formatting
+    // TODO: Story 6.4 will add:
+    // <MetadataDisplay metadata={source} />
+    // <MetadataEditor metadata={source} onSave={handleUpdateMetadata} />
       ]]></content>
     </file>
   </files>
-  
+
+  <!-- Research findings from MCP tools -->
   <research_notes>
-    <finding source="codebase" query="LLM Integration">
-      Use `ProviderAdapterFactory` from `@/lib/agent/providers/provider-adapter` to create instances of `OpenAIAdapter`.
-      This adapter wraps `@tanstack/ai-openai` and likely exposes a method compatible with Vercel AI SDK or TanStack AI.
-      For metadata extraction, a direct completion call is preferred over a chat hook.
+    <finding source="context7" query="Gemini API TypeScript usage">
+      Pattern: Use @google/generative-ai/sdk package for TypeScript
+      Installation: pnpm add @google/generative-ai
+      Import: import { GoogleGenerativeAI } from '@google/generative-ai';
+
+      Initialization:
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+      Content Generation:
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      Note: The API key should come from credential vault, not env var
     </finding>
-    <finding source="codebase" query="SourceRecord">
-      SourceRecord in `dexie-db.ts` needs to be updated with `metadata` optional field and `processingStatus`.
+
+    <finding source="context7" query="Gemini API rate limiting">
+      Pattern: Free tier has 60 requests/minute limit
+      Implementation: Use request queue with debouncing
+      Error handling: Exponential backoff on 429 (Too Many Requests)
+      Retry logic: wait 1s, 2s, 4s, 8s, 16s between retries
+    </finding>
+
+    <finding source="deepwiki" query="PDF metadata extraction with pdf.js">
+      Repository: mozilla/pdf.js
+      Pattern: pdf.getDocument().promise.then(pdf => {
+        const metadata = pdf.pdfInfo;
+        return {
+          title: metadata.info.Title,
+          author: metadata.info.Author,
+          subject: metadata.info.Subject,
+          keywords: metadata.info.Keywords,
+          creator: metadata.info.Creator,
+          producer: metadata.info.Producer,
+          creationDate: metadata.info.CreationDate,
+          modificationDate: metadata.info.ModDate,
+        };
+      });
+      Note: Some PDFs may not have metadata, use filename as fallback
+    </finding>
+
+    <finding source="tavily" query="AI text summarization best practices 2025">
+      Patterns:
+      - Limit input length to avoid token limits (10k chars for gemini-pro)
+      - Use structured prompts for consistent output format
+      - Ask for JSON response for easy parsing
+      - Include examples in prompt for desired output style
+      - Temperature 0.7 for balanced creativity
+      - Max output tokens 1024 for summaries
+    </finding>
+
+    <finding source="repomix" query="existing metadata patterns in docs/dependencies-libraries/">
+      Pattern: No existing metadata extraction implementation found
+      This is greenfield development for Story 6.4
     </finding>
   </research_notes>
-  
+
+  <!-- Architecture patterns to follow -->
   <architecture_patterns>
-    <pattern name="Metadata Extractor Service" source="architecture.md">
-      Create a dedicated service `src/lib/knowledge/metadata-extractor.ts` that handles:
-      1. Local metadata extraction (regex/parsing)
-      2. AI-powered extraction (summary/concepts) via ProviderAdapter
-      3. State updates via KnowledgeStore
+    <pattern name="Zustand Store Actions" source="CLAUDE.md">
+      All state mutations must go through Zustand store actions
+      Pattern: async action(params) → update Dexie → update Zustand state
+      Example:
+        extractMetadata: async (sourceId: string) => {
+          const source = get().sources.find(s => s.id === sourceId);
+          const metadata = await extractAllMetadata(source);
+          await db.sources.update(sourceId, metadata);
+          set((state) => ({
+            sources: state.sources.map(s => s.id === sourceId ? { ...s, ...metadata } : s)
+          }));
+        }
     </pattern>
-    <pattern name="Non-Blocking Processing" source="architecture.md">
-      Metadata extraction should be async and not block the UI. Use `processingStatus` to show a spinner/indicator.
+
+    <pattern name="Dexie.js Bulk Operations" source="CLAUDE.md">
+      Use Dexie's bulkPut() for efficient batch updates
+      Pattern: await db.sources.bulkPut([source1, source2, ...])
+      Benefits: Single transaction, better performance
+    </pattern>
+
+    <pattern name="Error Handling with Toast" source="Story 6.3">
+      Use toast notifications for user feedback
+      Pattern: showErrorToast('Error message', { action: 'Retry', onAction: retryFn })
+      Import: import { toast } from 'sonner';
+    </pattern>
+
+    <pattern name="Component Loading States" source="Story 6.2">
+      Use SkeletonLoader component for loading states
+      Pattern: <SkeletonLoader className="h-4 w-32" />
+      Import: import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
+    </pattern>
+
+    <pattern name="Test Mock Strategy" source="Story 6.2-6.3">
+      Pattern for mocking useKnowledgeStore:
+      vi.mock('@/lib/state/knowledge-store', () => ({
+        useKnowledgeStore: vi.fn(),
+      }));
+
+      (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+        sources: mockSources,
+        extractMetadata: vi.fn(),
+        updateMetadata: vi.fn(),
+      });
+    </pattern>
+
+    <pattern name="8-bit Design Tokens" source="design-tokens.css">
+      Use CSS custom properties for consistent styling:
+      - Colors: --color-primary, --color-surface-dark
+      - Spacing: --spacing-1 through --spacing-4
+      - Border: --border-dark, --shadow-pixel
+      - Typography: --text-foreground, --text-muted-foreground
     </pattern>
   </architecture_patterns>
-  
+
+  <!-- Technical notes for developer -->
   <technical_notes>
     <note priority="high">
-      Ensure the prompt for Gemini is structured to return JSON or a easily parsable format for key concepts/tags.
+      CRITICAL: Use credential vault for API key storage
+      Import: import { credentialVault } from '@/lib/agent/providers/credential-vault';
+      Pattern: const apiKey = await credentialVault.getCredential('google-gemini');
+      NEVER hardcode API keys or use environment variables directly
     </note>
+
+    <note priority="high">
+      Content truncation: Limit API input to 10k characters
+      Use: content.substring(0, 10000) for prompt context
+      For longer documents, implement chunking in future stories
+    </note>
+
+    <note priority="high">
+      Error handling fallback: If Gemini API fails, fall back to basic metadata
+      Basic metadata: title, page count, word count (from Story 6.1)
+      Set summary to "AI analysis unavailable"
+      Set keyConcepts to empty array []
+      Set suggestedQuestions to empty array []
+    </note>
+
     <note priority="medium">
-      Handle API failures gracefully. If AI extraction fails, valid local metadata should still be preserved.
+      Prompt engineering templates:
+      - Summary: "Generate a 3-sentence summary..."
+      - Concepts: "Extract 5 key concepts as JSON array..."
+      - Questions: "Generate 3 thought-provoking questions as JSON array..."
+
+      Include validation instructions to ensure proper JSON parsing
+      Use try-catch for JSON.parse() with fallback to empty array
+    </note>
+
+    <note priority="medium">
+      Metadata extraction timing:
+      - Trigger: After source import completes (post-processing)
+      - User experience: Show progress indicator "Analyzing with AI..."
+      - Timeout: 30 second timeout for API calls
+      - Retry: Allow manual retry via "Extract Metadata" button
+    </note>
+
+    <note priority="medium">
+      Color generation for key concept tags:
+      Use hash-based color assignment for consistency
+      Palette: blue, green, purple, orange, pink (from design tokens)
+      Pattern: const color = hashToColor(concept) returns color string
+    </note>
+
+    <note priority="low">
+      Future enhancements (out of scope for Story 6.4):
+      - Chunking for very long documents (>10k chars)
+      - Incremental metadata updates
+      - Metadata caching to avoid re-analysis
+      - Batch metadata extraction for multiple sources
     </note>
   </technical_notes>
+
+  <!-- Dependencies and imports -->
+  <dependencies>
+    <dependency name="@google/generative-ai" version="latest" />
+    <dependency name="zustand" version="^4.5.0" />
+    <dependency name="dexie" version="^3.2.4" />
+    <dependency name="sonner" version="latest" />
+    <dependency name="@radix-ui/react-dialog" version="latest" />
+    <dependency name="vitest" version="^1.0.0" />
+  </dependencies>
+
+  <!-- Testing strategy -->
+  <testing>
+    <note priority="high">
+      Unit tests for metadata-extractor.ts:
+      - Mock Gemini API responses with vi.fn()
+      - Test PDF metadata extraction
+      - Test AI summary generation with mock responses
+      - Test key concept extraction with mock JSON
+      - Test error handling and fallback logic
+      - Target: 80%+ coverage
+    </note>
+
+    <note priority="high">
+      Integration tests for store actions:
+      - Test extractMetadata flow (Dexie + Zustand)
+      - Test updateMetadata with user corrections
+      - Verify state persistence across reloads
+    </note>
+
+    <note priority="medium">
+      Component tests for MetadataDisplay:
+      - Test rendering with different metadata states
+      - Test loading skeleton during extraction
+      - Test error state display
+      - Test "✨ AI-analyzed" badge visibility
+    </note>
+
+    <note priority="medium">
+      Component tests for MetadataEditor:
+      - Test inline editing for summary
+      - Test tag editor (add/remove concepts)
+      - Test question editor
+      - Test save/cancel buttons
+      - Test validation (max lengths)
+    </note>
+  </testing>
+
+  <!-- Files from Story 6.3 to reference -->
+  <previous_story intelligence>
+    <story number="6.3" name="Source Management">
+      <learnings>
+        <item>Zustand Store Pattern: Use create() with persist middleware</item>
+        <item>DexieStorage Adapter: Use createDexieStorage for persistence</item>
+        <item>Test Query Strategy: Use container.querySelector() for reliable selection</item>
+        <item>Icon Components: 8-bit styled SVG icons from components/ui/icons/</item>
+        <item>Design Tokens: CSS custom properties from design-tokens.css</item>
+        <item>Mock Strategy: vi.mock('@/lib/state/knowledge-store') with cast return type</item>
+        <item>Code Patterns: Store action → update Dexie → update Zustand state</item>
+      </learnings>
+
+      <files_created>
+        <file>src/lib/state/knowledge-store.ts (36 tests)</file>
+        <file>src/components/knowledge/SourceContextMenu.tsx (6 tests)</file>
+        <file>src/components/knowledge/RenameDialog.tsx (11 tests)</file>
+        <file>src/components/knowledge/UndoToast.tsx (6 tests)</file>
+        <file>src/components/knowledge/CollectionManager.tsx (10 tests)</file>
+        <file>src/components/knowledge/CollectionSelector.tsx (9 tests)</file>
+        <file>src/utils/export-utils.ts (18 tests)</file>
+        <file>src/components/knowledge/__tests__/knowledge-integration.test.tsx (14 tests)</file>
+      </files_created>
+
+      <test_summary>
+        <total_tests>143</total_tests>
+        <passing>143</passing>
+        <failing>0</failing>
+      </test_summary>
+    </story>
+  </previous_story intelligence>
 </context>

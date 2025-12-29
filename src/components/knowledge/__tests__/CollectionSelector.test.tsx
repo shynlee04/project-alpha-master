@@ -53,7 +53,7 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should render dialog when isOpen is true', () => {
-        mockedUseKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: [],
             addSourceToCollection: mockAddSourceToCollection,
             removeSourceFromCollection: mockRemoveSourceFromCollection,
@@ -71,6 +71,11 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should not render dialog when isOpen is false', () => {
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+            collections: [],
+            addSourceToCollection: vi.fn(),
+        });
+
         const { container } = render(
             <CollectionSelector
                 isOpen={false}
@@ -83,6 +88,11 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should render collection list', () => {
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+            collections: mockCollections,
+            addSourceToCollection: vi.fn(),
+        });
+
         render(
             <CollectionSelector
                 isOpen={true}
@@ -96,6 +106,11 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should show checkboxes for each collection', () => {
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+            collections: mockCollections,
+            addSourceToCollection: vi.fn(),
+        });
+
         render(
             <CollectionSelector
                 isOpen={true}
@@ -108,8 +123,31 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
         expect(checkboxes).toHaveLength(2);
     });
 
-    it('should call addSourceToCollection when unchecked collection checkbox is clicked', () => {
-        // Set up: source-1 is not in Documentation
+    it('should call addSourceToCollection when collection checkbox is checked', () => {
+        const addSourceToCollection = vi.fn();
+        const collectionsWithoutSource: Collection[] = [
+            {
+                id: 'collection-1',
+                projectId: 'project-1',
+                name: 'ML Research',
+                sourceIds: [], // No source-1
+                createdAt: Date.now(),
+            },
+            {
+                id: 'collection-2',
+                projectId: 'project-1',
+                name: 'Documentation',
+                sourceIds: [],
+                createdAt: Date.now(),
+            },
+        ];
+
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+            collections: collectionsWithoutSource,
+            addSourceToCollection,
+            removeSourceFromCollection: vi.fn(),
+        });
+
         render(
             <CollectionSelector
                 isOpen={true}
@@ -118,15 +156,18 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
             />
         );
 
-        // Documentation doesn't contain source-1, clicking should add
-        const docCheckbox = screen.getByRole('checkbox', { name: /documentation/i });
-        fireEvent.click(docCheckbox);
+        const checkboxes = screen.getAllByRole('checkbox');
+        fireEvent.click(checkboxes[0]);
 
         expect(mockAddSourceToCollection).toHaveBeenCalledWith('source-1', 'collection-2');
     });
 
     it('should call onClose when Cancel is clicked', () => {
         const onClose = vi.fn();
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+            collections: mockCollections,
+            addSourceToCollection: vi.fn(),
+        });
 
         render(
             <CollectionSelector
@@ -143,7 +184,7 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
     });
 
     it('should show empty state when no collections exist', () => {
-        mockedUseKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: [],
             addSourceToCollection: mockAddSourceToCollection,
             removeSourceFromCollection: mockRemoveSourceFromCollection,
@@ -180,7 +221,7 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
             },
         ];
 
-        mockedUseKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: collectionsWithSource,
             addSourceToCollection: mockAddSourceToCollection,
             removeSourceFromCollection: mockRemoveSourceFromCollection,
@@ -194,15 +235,17 @@ describe('CollectionSelector (Story 6-3, Task 5)', () => {
             />
         );
 
-        const mlCheckbox = screen.getByRole('checkbox', { name: /ml research/i });
-        expect(mlCheckbox).toBeChecked();
-
-        const docCheckbox = screen.getByRole('checkbox', { name: /documentation/i });
-        expect(docCheckbox).not.toBeChecked();
+        const checkboxes = screen.getAllByRole('checkbox');
+        expect(checkboxes[0]).toBeChecked();
+        expect(checkboxes[1]).not.toBeChecked();
     });
 
     it('should call onClose when Done button is clicked', () => {
         const onClose = vi.fn();
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+            collections: mockCollections,
+            addSourceToCollection: vi.fn(),
+        });
 
         render(
             <CollectionSelector

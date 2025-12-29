@@ -1,7 +1,7 @@
 /**
  * @fileoverview Knowledge State Management (Zustand)
  * @module lib/state/knowledge-store
- * @governance EPIC-6-3
+ * @governance EPIC-6-3, EPIC-6-4
  *
  * Single source of truth for knowledge source state.
  * Persists to IndexedDB via Dexie adapter.
@@ -13,6 +13,10 @@
  * - Source deletion with undo
  * - Source rename
  * - Collection management
+ *
+ * Features (Extended for Story 6.4):
+ * - AI metadata extraction
+ * - User metadata editing
  */
 
 import { create } from 'zustand';
@@ -27,6 +31,7 @@ import {
     addSourceToCollection as dbAddSourceToCollection,
     removeSourceFromCollection as dbRemoveSourceFromCollection,
 } from './dexie-db';
+import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 
 // ============================================================================
 // Types
@@ -39,6 +44,15 @@ interface DeletedSource {
     sourceId: string;
     source: SourceRecord;
     timestamp: number;
+}
+
+/**
+ * Metadata fields for editing (Story 6.4)
+ */
+export interface SourceMetadataFields {
+    summary?: string;
+    keyConcepts?: string[];
+    suggestedQuestions?: string[];
 }
 
 /**
@@ -72,6 +86,10 @@ interface KnowledgeStoreState {
 
     /** Undo queue for deleted sources */
     undoQueue: DeletedSource[];
+
+    // Story 6-4: Metadata extraction state
+    /** Source IDs currently being extracted */
+    extractingMetadata: Set<string>;
 
     // Actions
 
@@ -151,6 +169,9 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
             collections: [],
             filteredCollectionId: null,
             undoQueue: [],
+
+            // Story 6-4: Metadata extraction state
+            extractingMetadata: new Set<string>(),
 
             // Actions
             setHasHydrated: (state: boolean) => {
@@ -451,6 +472,7 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                     collections: [],
                     filteredCollectionId: null,
                     undoQueue: [],
+                    extractingMetadata: new Set<string>(),
                 });
             },
         }),

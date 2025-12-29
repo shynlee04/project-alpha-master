@@ -1,13 +1,14 @@
 /**
  * @fileoverview Source Context Menu Component
  * @module components/knowledge/SourceContextMenu
- * @governance EPIC-6-3
+ * @governance EPIC-6-3, EPIC-6-4
  *
  * Context menu for source management actions (rename, delete, move to collection, export).
+ * Extended for Story 6.4: Extract metadata action.
  * Uses Radix UI Dropdown Menu for accessibility and keyboard navigation.
  */
 
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Sparkles } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,8 +34,8 @@ export interface SourceContextMenuProps {
     /** Callback when export is selected */
     onExport: (source: SourceRecord) => void;
 
-    /** Callback when view metadata is selected */
-    onViewMetadata: (source: SourceRecord) => void;
+    /** Callback when extract metadata is selected (Story 6-4) */
+    onExtractMetadata?: (source: SourceRecord) => void;
 
     /** Whether the menu is disabled */
     disabled?: boolean;
@@ -52,12 +53,14 @@ export interface SourceContextMenuProps {
  * - Delete: Remove source with undo
  * - Move to Collection: Add to existing collection
  * - Export: Download as PDF or text
+ * - Extract Metadata: AI analysis (Story 6.4)
  *
  * Features:
  * - Keyboard navigation (arrow keys, Enter, Escape)
  * - Click outside to close
  * - Accessible ARIA attributes
  * - 8-bit design styling
+ * - Extract Metadata shown only when metadata not yet extracted
  */
 export function SourceContextMenu({
     source,
@@ -65,7 +68,7 @@ export function SourceContextMenu({
     onDelete,
     onMoveToCollection,
     onExport,
-    onViewMetadata,
+    onExtractMetadata,
     disabled = false,
     className,
 }: SourceContextMenuProps) {
@@ -100,6 +103,16 @@ export function SourceContextMenu({
                 >
                     Rename
                 </DropdownMenuItem>
+                {/* Story 6-4: Extract Metadata (shown only if not extracted) */}
+                {onExtractMetadata && (
+                    <DropdownMenuItem
+                        onClick={() => onExtractMetadata(source)}
+                        className="rounded-none cursor-pointer text-primary focus:text-primary"
+                    >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Extract Metadata
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     onClick={() => onDelete(source)}
                     className="rounded-none cursor-pointer text-destructive focus:text-destructive"

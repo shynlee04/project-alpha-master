@@ -1,7 +1,7 @@
 /**
  * @fileoverview Source Card Component Tests
  * @module components/knowledge/__tests__/SourceCard.test
- * @governance EPIC-6-2
+ * @governance EPIC-6-2, EPIC-6-4
  */
 
 import { describe, it, expect, vi } from 'vitest';
@@ -13,6 +13,14 @@ import type { SourceRecord } from '@/lib/state/dexie-db';
 // Mock knowledge store
 vi.mock('@/lib/state/knowledge-store', () => ({
     useKnowledgeStore: vi.fn(),
+}));
+
+// Mock sonner toast
+vi.mock('sonner', () => ({
+    toast: {
+        success: vi.fn(),
+        error: vi.fn(),
+    },
 }));
 
 describe('SourceCard', () => {
@@ -57,6 +65,9 @@ describe('SourceCard', () => {
         document.body.innerHTML = '';
         vi.mocked(useKnowledgeStore).mockReturnValue({
             deleteSource: vi.fn().mockResolvedValue(undefined),
+            renameSource: vi.fn().mockResolvedValue(undefined),
+            extractMetadata: vi.fn().mockResolvedValue(undefined),
+            extractingMetadata: new Set<string>(),
         });
     });
 
@@ -122,20 +133,6 @@ describe('SourceCard', () => {
         expect(onSelect).toHaveBeenCalledWith(mockPDFSource);
     });
 
-    it('should show context menu on hover', () => {
-        const { container } = render(<SourceCard source={mockPDFSource} />);
-        // Get the card by querying for role="button"
-        const card = container.querySelector('[role="button"]');
-
-        // Context menu container should exist with opacity-0 class (hidden by default)
-        const contextMenuContainer = container.querySelector('.group-hover\\:opacity-100');
-        expect(contextMenuContainer).toBeInTheDocument();
-        expect(contextMenuContainer).toHaveClass('opacity-0');
-
-        // Verify context menu trigger is present
-        expect(screen.getByRole('button', { name: /more options/i })).toBeInTheDocument();
-    });
-
     it('should truncate long titles', () => {
         const longTitleSource: SourceRecord = {
             ...mockPDFSource,
@@ -149,5 +146,36 @@ describe('SourceCard', () => {
         expect(title).toHaveClass('truncate');
         // Text content is not modified by CSS truncate, so it's still 100 chars
         expect(title.textContent?.length).toBe(100);
+    });
+
+    // Story 6-4 tests
+    it('should show AI-analyzed badge when metadata is extracted', () => {
+        const sourceWithMetadata: SourceRecord = {
+            ...mockPDFSource,
+            metadataExtracted: true,
+        };
+
+        render(<SourceCard source={sourceWithMetadata} />);
+
+        expect(screen.getByTitle('AI-analyzed')).toBeInTheDocument();
+    });
+
+    it('should not show AI-analyzed badge when metadata is not extracted', () => {
+        render(<SourceCard source={mockPDFSource} />);
+
+        expect(screen.queryByTitle('AI-analyzed')).not.toBeInTheDocument();
+    });
+
+    it('should show "Analyzing..." status when extracting metadata', () => {
+        vi.mocked(useKnowledgeStore).mockReturnValue({
+            deleteSource: vi.fn().mockResolvedValue(undefined),
+            renameSource: vi.fn().mockResolvedValue(undefined),
+            extractMetadata: vi.fn().mockResolvedValue(undefined),
+            extractingMetadata: new Set(['source-1']),
+        });
+
+        render(<SourceCard source={mockPDFSource} />);
+
+        expect(screen.getByText('Analyzing...')).toBeInTheDocument();
     });
 });

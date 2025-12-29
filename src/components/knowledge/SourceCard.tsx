@@ -1,9 +1,10 @@
 /**
  * @fileoverview Source Card Component
  * @module components/knowledge/SourceCard
- * @governance EPIC-6-3
+ * @governance EPIC-6-3, EPIC-6-4
  *
  * Card component displaying source with icon, title, metadata, and context menu.
+ * Extended for Story 6.4: AI metadata extraction trigger and badge display.
  */
 
 import { useState, useCallback } from 'react';
@@ -11,7 +12,8 @@ import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
 import { RenameDialog } from './RenameDialog';
 import { CollectionSelector } from './CollectionSelector';
-import { SourceMetadataDialog } from './SourceMetadataDialog';
+import { exportText, exportPDF } from '@/utils/export-utils';
+import { toast } from 'sonner';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 
@@ -127,15 +129,15 @@ function exportSource(source: SourceRecord): void {
 }
 
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
-    const { deleteSource, renameSource } = useKnowledgeStore();
+    const { deleteSource, renameSource, extractMetadata, extractingMetadata } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showRenameDialog, setShowRenameDialog] = useState(false);
     const [showCollectionSelector, setShowCollectionSelector] = useState(false);
-    const [showMetadataDialog, setShowMetadataDialog] = useState(false);
 
     const Icon = getSourceIcon(source);
     const readingTime = calculateReadingTime(source);
     const metadata = formatMetadata(source);
+    const isExtracting = extractingMetadata.has(source.id);
 
     const handleDelete = useCallback(async () => {
         await deleteSource(source.id);
@@ -151,17 +153,27 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
         setShowRenameDialog(false);
     }, [renameSource, source.id]);
 
-    const handleMoveToCollection = useCallback(() => {
+    const handleMoveToCollection = () => {
         setShowCollectionSelector(true);
-    }, []);
+    };
 
-    const handleExport = useCallback(() => {
-        exportSource(source);
-    }, [source]);
+    const handleExport = () => {
+        // Export based on source type (Story 6-3, Task 6)
+        if (source.type === 'pdf') {
+            exportPDF(source);
+        } else {
+            exportText(source);
+        }
+    };
 
-    const handleViewMetadata = useCallback(() => {
-        setShowMetadataDialog(true);
-    }, []);
+    const handleExtractMetadata = async () => {
+        try {
+            await extractMetadata(source.id);
+            toast.success('Metadata extracted successfully');
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'Failed to extract metadata');
+        }
+    };
 
     return (
         <div
@@ -176,9 +188,17 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
             <div className="flex items-start gap-3 mb-2">
                 <Icon size={24} className="text-primary flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-foreground truncate text-sm" title={source.title}>
-                        {source.title}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground truncate text-sm" title={source.title}>
+                            {source.title}
+                        </h3>
+                        {/* Story 6-4: AI-analyzed badge */}
+                        {source.metadataExtracted && (
+                            <span className="text-xs text-primary" title="AI-analyzed">
+                                ✨
+                            </span>
+                        )}
+                    </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                         {source.type.toUpperCase()}
                     </p>
@@ -190,6 +210,12 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 {metadata && <span>{metadata}</span>}
                 <span>•</span>
                 <span>{readingTime}</span>
+                {isExtracting && (
+                    <>
+                        <span>•</span>
+                        <span className="text-primary animate-pulse">Analyzing...</span>
+                    </>
+                )}
             </div>
 
             {/* Context menu on hover (Story 6-3) */}
@@ -200,7 +226,8 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                     onDelete={() => setShowDeleteDialog(true)}
                     onMoveToCollection={handleMoveToCollection}
                     onExport={handleExport}
-                    onViewMetadata={handleViewMetadata}
+                    // Story 6-4: Add metadata extraction trigger
+                    onExtractMetadata={!source.metadataExtracted ? handleExtractMetadata : undefined}
                 />
             </div>
 
@@ -243,18 +270,11 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 onCancel={() => setShowRenameDialog(false)}
             />
 
-            {/* Collection selector dialog (Story 6-3, Task 5) */}
+            {/* Collection selector (Story 6-3, Task 5) */}
             <CollectionSelector
                 isOpen={showCollectionSelector}
                 sourceId={source.id}
                 onClose={() => setShowCollectionSelector(false)}
-            />
-
-            {/* Metadata dialog (Story 6-4) */}
-            <SourceMetadataDialog
-                source={source}
-                open={showMetadataDialog}
-                onOpenChange={setShowMetadataDialog}
             />
         </div>
     );

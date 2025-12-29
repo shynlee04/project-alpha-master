@@ -245,7 +245,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
 
 ## Tasks / Subtasks
 
-### Task 1: Extend Knowledge Store with Management Actions ✅
+### Task 1: Extend Knowledge Store with Management Actions
 - [x] Extend `useKnowledgeStore` with new state and actions
   - [x] Add `collections` state (Collection[])
   - [x] Add `undoQueue` state (DeletedSource[])
@@ -268,7 +268,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
   - [x] Test collection CRUD operations
   - [x] Test source-to-collection associations
 
-### Task 2: Create SourceContextMenu Component ✅
+### Task 2: Create SourceContextMenu Component
 - [x] Create `SourceContextMenu.tsx` component
   - [x] Render dropdown with menu items
   - [x] Menu items: Rename, Delete, Move to Collection, Export
@@ -286,7 +286,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
   - [x] Test keyboard navigation
   - [x] Test click outside to close
 
-### Task 3: Implement Delete with Undo ✅
+### Task 3: Implement Delete with Undo
 - [x] Create DeleteConfirmationDialog component
   - [x] Show dialog with warning message
   - [x] Confirm button (red color)
@@ -313,7 +313,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
   - [x] Test toast countdown timer
   - [x] Test permanent delete after timeout
 
-### Task 4: Implement Rename Functionality ✅
+### Task 4: Implement Rename Functionality
 - [x] Create RenameDialog or inline edit component
   - [x] Show text input with current title
   - [x] Focus input and select text
@@ -331,7 +331,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
   - [x] Test title update in store
   - [x] Test title update in UI (card, preview)
 
-### Task 5: Implement Collections ✅
+### Task 5: Implement Collections
 - [x] Create CollectionManager component
   - [x] "New Collection" button
   - [x] Collection creation dialog (name input)
@@ -356,7 +356,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
   - [x] Test filtering by collection
   - [x] Test multi-collection membership
 
-### Task 6: Implement Export Functionality ✅
+### Task 6: Implement Export Functionality
 - [x] Add export action to knowledge store
   - [x] `exportSource(sourceId)` action
   - [x] Generate downloadable file from source content
@@ -372,7 +372,7 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
   - [x] Test text export
   - [x] Test filename sanitization
 
-### Task 7: Integration Testing ✅
+### Task 7: Integration Testing
 - [x] Test full user flows
   - [x] Delete → Undo → Restore flow
   - [x] Rename → Update across UI flow

@@ -10,6 +10,6 @@ export { UndoToast } from './UndoToast';
 export { RenameDialog } from './RenameDialog';
 export { CollectionManager } from './CollectionManager';
 export { CollectionSelector } from './CollectionSelector';
-export { CreateCollectionDialog } from './CreateCollectionDialog';
-export { KnowledgePage } from './KnowledgePage';
-
+// Story 6-4: Metadata components
+export { MetadataDisplay } from './MetadataDisplay';
+export { MetadataEditor } from './MetadataEditor';
