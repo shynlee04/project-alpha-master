@@ -2,7 +2,7 @@
 title: "6-2 Source Card UI with Preview"
 epic: "Epic 6: Source Ingestion & Management"
 story: "6-2-source-card-ui"
-status: "review"
+status: "done"
 priority: "P0"
 points: 3
 created: "2025-12-30"
@@ -439,17 +439,17 @@ Average reading speed: 200 words per minute, 1000 characters per minute.
 #### Files Created:
 | File | Lines | Description |
 |------|-------|-------------|
-| src/lib/state/knowledge-store.ts | ~100 | Zustand store for sources state with persist |
-| src/lib/state/__tests__/knowledge-store.test.ts | ~400 | Store unit tests |
-| src/components/ui/icons/source-icons.tsx | ~150 | PDFIcon, URLIcon, TextIcon components |
-| src/components/ui/icons/__tests__/source-icons.test.tsx | ~110 | Icon tests |
-| src/components/knowledge/SourceCard.tsx | ~180 | Card component with hover actions |
-| src/components/knowledge/__tests__/SourceCard.test.tsx | ~180 | Card tests |
-| src/components/knowledge/SourceCardGrid.tsx | ~80 | Responsive grid layout |
-| src/components/knowledge/__tests__/SourceCardGrid.test.tsx | ~120 | Grid tests |
-| src/components/knowledge/SourcePreviewPanel.tsx | ~170 | Preview panel component |
-| src/components/knowledge/__tests__/SourcePreviewPanel.test.tsx | ~200 | Preview tests |
-| src/components/knowledge/index.ts | ~5 | Barrel export |
+| src/lib/state/knowledge-store.ts | 177 | Zustand store for sources state with persist |
+| src/lib/state/__tests__/knowledge-store.test.ts | 398 | Store unit tests |
+| src/components/ui/icons/source-icons.tsx | 154 | PDFIcon, URLIcon, TextIcon components |
+| src/components/ui/icons/__tests__/source-icons.test.tsx | 118 | Icon tests |
+| src/components/knowledge/SourceCard.tsx | 177 | Card component with hover actions |
+| src/components/knowledge/__tests__/SourceCard.test.tsx | 180 | Card tests |
+| src/components/knowledge/SourceCardGrid.tsx | 71 | Responsive grid layout |
+| src/components/knowledge/__tests__/SourceCardGrid.test.tsx | 122 | Grid tests |
+| src/components/knowledge/SourcePreviewPanel.tsx | 175 | Preview panel component |
+| src/components/knowledge/__tests__/SourcePreviewPanel.test.tsx | 207 | Preview tests |
+| src/components/knowledge/index.ts | 8 | Barrel export |
 
 #### Tests Created:
 | Test File | Tests | Status |
@@ -484,6 +484,20 @@ Duration: ~15s
   - Workaround: Tests skipped with clear documentation that functionality works in browsers
   - Affects: SourcePreviewPanel tests for body scroll prevention and content rendering
 - **No Integration Tests**: Components tested in isolation; integration with actual IndexedDB deferred to Story 6.3
+
+#### Code Review Fixes Applied (2025-12-30):
+**HIGH Issues Fixed:**
+- ✅ AC-5 Empty State - Added "Import Source" button to empty state with TODO to wire to SourceDropZone in Story 6.3
+  - File: `src/components/knowledge/SourceCardGrid.tsx:56-64`
+
+**MEDIUM Issues Fixed:**
+- ✅ Barrel Exports - Verified all components exported in `src/components/knowledge/index.ts`
+- ✅ useEffect Dependency - Fixed ESLint warning by removing `loadSources` from dependencies (Zustand guarantees stability)
+  - File: `src/components/knowledge/SourceCardGrid.tsx:21-24`
+
+**LOW Issues Fixed:**
+- ✅ Line Count Accuracy - Updated file line counts to actual values from git show
+- ✅ Test Count Documentation - Updated to reflect actual test counts (47 passing, 4 skipped)
 
 #### Acceptance Criteria Status:
 - [x] AC-1: Source Card Display - COMPLETE

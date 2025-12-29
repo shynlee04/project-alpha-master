@@ -350,6 +350,25 @@ export interface SourceRecord {
     wordCount?: number;         // For PDF/URL sources
     charCount?: number;         // For text sources
     fileSize?: number;          // For PDF sources (bytes)
+    collections?: string[];     // Collection IDs (Story 6-3)
+    deleted?: boolean;          // Soft delete flag (Story 6-3)
+    deletedAt?: number;         // Deletion timestamp (Story 6-3)
+    createdAt: number;
+    updatedAt: number;
+}
+
+/**
+ * Collection record for organizing sources
+ * Stores collections for grouping related sources.
+ *
+ * @epic Epic 6 - Source Ingestion & Management
+ * @story 6-3 - Source Management
+ */
+export interface CollectionRecord {
+    id: string;                 // Primary key (UUID)
+    projectId: string;          // Foreign key to project
+    name: string;               // Collection name
+    sourceIds: string[];        // Sources in this collection
     createdAt: number;
     updatedAt: number;
 }
@@ -492,6 +511,7 @@ class ViaGentDatabase extends Dexie {
 
     // Epic 6: Source Ingestion & Management tables
     sources!: Table<SourceRecord, string>;
+    collections!: Table<CollectionRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -775,6 +795,50 @@ class ViaGentDatabase extends Dexie {
 
             logDexieMigration(11, 'epic-6-source-ingestion', 'completed', {
                 tableName: 'sources',
+                itemsCount: 0
+            });
+        });
+
+        // Schema version 12: Epic 6 - Source Management
+        // Adds collections table and extends sources with soft delete
+        this.version(12).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            // UPDATED: Sources table with soft delete support (Story 6-3)
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            // NEW: Collections table for organizing sources (Story 6-3)
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+        }).upgrade(async () => {
+            logDexieMigration(12, 'epic-6-source-management', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(12)) {
+                logDexieMigration(12, 'epic-6-source-management', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(12);
+
+            logDexieMigration(12, 'epic-6-source-management', 'completed', {
+                tableName: 'collections',
                 itemsCount: 0
             });
         });
@@ -1502,3 +1566,142 @@ export async function getSourceStats(
     };
 }
 
+// ============================================================================
+// Epic 6: Collection Helpers (Story 6-3)
+// ============================================================================
+
+/**
+ * Get all collections for a project.
+ *
+ * @param projectId - The project ID
+ * @returns Array of collections sorted by name
+ */
+export async function getCollectionsForProject(
+    projectId: string
+): Promise<CollectionRecord[]> {
+    const collections = await db.collections
+        .where('projectId')
+        .equals(projectId)
+        .sortBy('name');
+
+    return collections;
+}
+
+/**
+ * Get a collection by ID.
+ *
+ * @param collectionId - The ID of the collection to retrieve
+ * @returns The collection record or undefined if not found
+ */
+export async function getCollection(
+    collectionId: string
+): Promise<CollectionRecord | undefined> {
+    return db.collections.get(collectionId);
+}
+
+/**
+ * Save a collection (insert or update).
+ *
+ * @param collection - The collection record to save
+ */
+export async function saveCollection(
+    collection: CollectionRecord
+): Promise<void> {
+    await db.collections.put({
+        ...collection,
+        updatedAt: Date.now(),
+    });
+}
+
+/**
+ * Create a new collection.
+ *
+ * @param projectId - The project ID
+ * @param name - The collection name
+ * @returns The created collection ID
+ */
+export async function createCollection(
+    projectId: string,
+    name: string
+): Promise<string> {
+    const id = crypto.randomUUID();
+    const now = Date.now();
+
+    await db.collections.add({
+        id,
+        projectId,
+        name,
+        sourceIds: [],
+        createdAt: now,
+        updatedAt: now,
+    });
+
+    return id;
+}
+
+/**
+ * Delete a collection.
+ *
+ * @param collectionId - The ID of the collection to delete
+ */
+export async function deleteCollection(
+    collectionId: string
+): Promise<void> {
+    await db.collections.delete(collectionId);
+}
+
+/**
+ * Add a source to a collection.
+ *
+ * @param collectionId - The collection ID
+ * @param sourceId - The source ID
+ */
+export async function addSourceToCollection(
+    collectionId: string,
+    sourceId: string
+): Promise<void> {
+    const collection = await db.collections.get(collectionId);
+    if (!collection) return;
+
+    if (!collection.sourceIds.includes(sourceId)) {
+        await db.collections.update(collectionId, {
+            sourceIds: [...collection.sourceIds, sourceId],
+            updatedAt: Date.now(),
+        });
+    }
+}
+
+/**
+ * Remove a source from a collection.
+ *
+ * @param collectionId - The collection ID
+ * @param sourceId - The source ID
+ */
+export async function removeSourceFromCollection(
+    collectionId: string,
+    sourceId: string
+): Promise<void> {
+    const collection = await db.collections.get(collectionId);
+    if (!collection) return;
+
+    await db.collections.update(collectionId, {
+        sourceIds: collection.sourceIds.filter(id => id !== sourceId),
+        updatedAt: Date.now(),
+    });
+}
+
+/**
+ * Get sources for a collection.
+ *
+ * @param collectionId - The collection ID
+ * @returns Array of sources in the collection
+ */
+export async function getSourcesForCollection(
+    collectionId: string
+): Promise<SourceRecord[]> {
+    const collection = await db.collections.get(collectionId);
+    if (!collection || collection.sourceIds.length === 0) return [];
+
+    const sources = await db.sources.bulkGet(collection.sourceIds);
+    return sources.filter((s): s is SourceRecord => s !== undefined && !s.deleted);
+}
