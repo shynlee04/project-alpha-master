@@ -373,6 +373,9 @@ export interface CollectionRecord {
     updatedAt: number;
 }
 
+// Type alias for backward compatibility
+export type Collection = CollectionRecord;
+
 /**
  * Convert SyncQueueItem to SyncStatusRecord
  */
