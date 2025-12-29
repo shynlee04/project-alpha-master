@@ -57,6 +57,12 @@ export interface WorkspaceEvents {
   'retry:success': [{ item: { id: string; toolId: string; toolName: string }; result: unknown }]
   'retry:exhausted': [{ item: { id: string; toolId: string; toolName: string }; finalError: string }]
   'retry:failed': [{ item: { id: string; toolId: string; toolName: string }; error: string }]
+
+  // Source Import Events (Epic 6 - Story 6.1)
+  'import.started': [{ sourceId: string; type: 'pdf' | 'url' | 'text'; title: string }]
+  'import.progress': [{ sourceId: string; page?: number; total?: number; message: string }]
+  'import.completed': [{ sourceId: string; record: { id: string; type: string; title: string; createdAt: number } }]
+  'import.error': [{ sourceId: string; error: Error }]
 }
 
 export type WorkspaceEventEmitter = EventEmitter<WorkspaceEvents>
