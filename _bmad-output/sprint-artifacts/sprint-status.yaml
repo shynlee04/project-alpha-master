@@ -216,8 +216,8 @@ development_status:
   epic-6-retrospective: pending # All stories complete, retrospective required
 
   # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)
-  epic-7: backlog
-  7-1-orama-index-management: backlog # Orama WASM integration
+  epic-7: in_progress # Story 7.1 ready for development
+  7-1-orama-index-management: ready-for-dev # Orama WASM integration
   7-2-document-chunking: backlog # 512-2048 token chunks
   7-3-embedding-service: backlog # Hybrid: local (Transformers.js) + cloud (gemini-embedding-001)
   7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
