@@ -19,7 +19,7 @@
  * ```
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 
@@ -51,15 +51,12 @@ export interface ExtractedMetadata {
  * - API key management via credential vault
  */
 export class MetadataExtractor {
-    private readonly MAX_CONTENT_LENGTH = 10000; // 10k characters for gemini-pro
-    private readonly API_TIMEOUT = 30000; // 30 seconds
-    private readonly MODEL_NAME = 'gemini-pro';
+    private readonly MAX_CONTENT_LENGTH = 10000; // 10k characters
+    private readonly MODEL_NAME = 'gemini-2.0-flash';
+    private client: GoogleGenAI | null = null;
 
     /**
      * Truncate content to maximum allowed length
-     *
-     * @param content - Content to truncate
-     * @returns Truncated content
      */
     private truncateContent(content: string): string {
         if (content.length <= this.MAX_CONTENT_LENGTH) {
@@ -69,50 +66,68 @@ export class MetadataExtractor {
     }
 
     /**
-     * Get Gemini API client
-     *
-     * @returns Initialized GoogleGenerativeAI instance
-     * @throws Error if API key not found in credential vault
+     * Get or create Gemini API client
      */
-    private async getClient(): Promise<GoogleGenerativeAI> {
+    private async getClient(): Promise<GoogleGenAI> {
+        if (this.client) {
+            return this.client;
+        }
+
         const apiKey = await credentialVault.getCredential('google-gemini');
 
         if (!apiKey) {
             throw new Error('Google Gemini API key not found. Please add API key in settings.');
         }
 
-        return new GoogleGenerativeAI(apiKey as string);
+        this.client = new GoogleGenAI({ apiKey: apiKey as string });
+        return this.client;
+    }
+
+    /**
+     * Check if API is available
+     */
+    async isAvailable(): Promise<boolean> {
+        try {
+            const apiKey = await credentialVault.getCredential('google-gemini');
+            return !!apiKey;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
+     * Extract basic statistics from content (no API needed)
+     */
+    extractBasicStats(content: string): { wordCount: number; charCount: number } {
+        const words = content.trim().split(/\s+/).filter(Boolean);
+        return {
+            wordCount: words.length,
+            charCount: content.length,
+        };
     }
 
     /**
      * Generate AI-powered summary
-     *
-     * @param content - Source content
-     * @returns 3-sentence summary or fallback text
      */
     async generateSummary(content: string): Promise<string> {
         try {
-            const genAI = await this.getClient();
-            const model = genAI.getGenerativeModel({ model: this.MODEL_NAME });
-
+            const client = await this.getClient();
             const truncatedContent = this.truncateContent(content);
-            const prompt = `Generate a concise 3-sentence summary of the following text. ` +
-                `Focus on the main themes, key insights, and overall purpose. ` +
-                `Each sentence should be clear and informative.\n\n` +
-                `Text:\n${truncatedContent}\n\n` +
-                `Summary:`;
 
-            const result = await Promise.race([
-                model.generateContent(prompt),
-                new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('API timeout')), this.API_TIMEOUT)
-                ),
-            ]);
+            const prompt = `Generate a concise 3-sentence summary of the following text. Focus on the main themes, key insights, and overall purpose. Each sentence should be clear and informative.
 
-            const response = await result.response;
-            const summary = response.text().trim();
+Text:
+${truncatedContent}
 
-            // Validate summary is not empty
+Summary:`;
+
+            const response = await client.models.generateContent({
+                model: this.MODEL_NAME,
+                contents: prompt,
+            });
+
+            const summary = response.text?.trim();
+
             if (!summary || summary.length === 0) {
                 return 'AI analysis unavailable';
             }
@@ -126,33 +141,26 @@ export class MetadataExtractor {
 
     /**
      * Extract key concepts using AI
-     *
-     * @param content - Source content
-     * @returns Array of 5 key concepts or empty array on error
      */
     async extractKeyConcepts(content: string): Promise<string[]> {
         try {
-            const genAI = await this.getClient();
-            const model = genAI.getGenerativeModel({ model: this.MODEL_NAME });
-
+            const client = await this.getClient();
             const truncatedContent = this.truncateContent(content);
-            const prompt = `Extract exactly 5 key concepts from the following text. ` +
-                `Return ONLY a JSON array of strings, like this: ["Concept 1", "Concept 2", "Concept 3", "Concept 4", "Concept 5"]. ` +
-                `Each concept should be 1-3 words long and represent a main topic or theme.\n\n` +
-                `Text:\n${truncatedContent}\n\n` +
-                `Key Concepts:`;
 
-            const result = await Promise.race([
-                model.generateContent(prompt),
-                new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('API timeout')), this.API_TIMEOUT)
-                ),
-            ]);
+            const prompt = `Extract exactly 5 key concepts from the following text. Return ONLY a JSON array of strings, like this: ["Concept 1", "Concept 2", "Concept 3", "Concept 4", "Concept 5"]. Each concept should be 1-3 words long and represent a main topic or theme.
 
-            const response = await result.response;
-            const text = response.text().trim();
+Text:
+${truncatedContent}
 
-            // Parse JSON response
+Key Concepts:`;
+
+            const response = await client.models.generateContent({
+                model: this.MODEL_NAME,
+                contents: prompt,
+            });
+
+            const text = response.text?.trim() || '';
+
             try {
                 const concepts = JSON.parse(text);
                 if (Array.isArray(concepts) && concepts.length === 5) {
@@ -160,7 +168,6 @@ export class MetadataExtractor {
                 }
                 return [];
             } catch {
-                // JSON parse failed, return empty array
                 return [];
             }
         } catch (error) {
@@ -171,33 +178,26 @@ export class MetadataExtractor {
 
     /**
      * Generate suggested questions using AI
-     *
-     * @param content - Source content
-     * @returns Array of 3 suggested questions or empty array on error
      */
     async generateSuggestedQuestions(content: string): Promise<string[]> {
         try {
-            const genAI = await this.getClient();
-            const model = genAI.getGenerativeModel({ model: this.MODEL_NAME });
-
+            const client = await this.getClient();
             const truncatedContent = this.truncateContent(content);
-            const prompt = `Generate exactly 3 thought-provoking questions about the following text. ` +
-                `Return ONLY a JSON array of strings, like this: ["Question 1?", "Question 2?", "Question 3?"]. ` +
-                `Each question should be answerable from the text and encourage deeper understanding.\n\n` +
-                `Text:\n${truncatedContent}\n\n` +
-                `Questions:`;
 
-            const result = await Promise.race([
-                model.generateContent(prompt),
-                new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('API timeout')), this.API_TIMEOUT)
-                ),
-            ]);
+            const prompt = `Generate exactly 3 thought-provoking questions about the following text. Return ONLY a JSON array of strings, like this: ["Question 1?", "Question 2?", "Question 3?"]. Each question should be answerable from the text and encourage deeper understanding.
 
-            const response = await result.response;
-            const text = response.text().trim();
+Text:
+${truncatedContent}
 
-            // Parse JSON response
+Questions:`;
+
+            const response = await client.models.generateContent({
+                model: this.MODEL_NAME,
+                contents: prompt,
+            });
+
+            const text = response.text?.trim() || '';
+
             try {
                 const questions = JSON.parse(text);
                 if (Array.isArray(questions) && questions.length === 3) {
@@ -205,7 +205,6 @@ export class MetadataExtractor {
                 }
                 return [];
             } catch {
-                // JSON parse failed, return empty array
                 return [];
             }
         } catch (error) {
@@ -216,12 +215,8 @@ export class MetadataExtractor {
 
     /**
      * Extract all metadata from a source
-     *
-     * @param source - Source record with content
-     * @returns Complete extracted metadata
      */
     async extractAllMetadata(source: Pick<SourceRecord, 'content'>): Promise<ExtractedMetadata> {
-        // Check if content exists
         if (!source.content || source.content.trim().length === 0) {
             return {
                 summary: 'AI analysis unavailable',

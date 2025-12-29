@@ -142,6 +142,25 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
         </div>
       )}
 
+      {/* Source Attribution */}
+      {quiz.sourcesUsed && quiz.sourcesUsed.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-sm font-medium text-muted-foreground mb-3">
+            {t('quizzes.start.sources')}
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {quiz.sourcesUsed.map((source) => (
+              <span
+                key={source}
+                className="px-3 py-1 text-sm bg-muted rounded-full"
+              >
+                {source}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex gap-4">
         {onExit && (
