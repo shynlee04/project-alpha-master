@@ -1,7 +1,7 @@
 /**
  * @fileoverview Knowledge State Management (Zustand)
  * @module lib/state/knowledge-store
- * @governance EPIC-6-3
+ * @governance EPIC-6-3, EPIC-6-4
  *
  * Single source of truth for knowledge source state.
  * Persists to IndexedDB via Dexie adapter.
@@ -13,6 +13,10 @@
  * - Source deletion with undo
  * - Source rename
  * - Collection management
+ *
+ * Features (Extended for Story 6.4):
+ * - AI metadata extraction
+ * - User metadata editing
  */
 
 import { create } from 'zustand';
@@ -27,6 +31,7 @@ import {
     addSourceToCollection as dbAddSourceToCollection,
     removeSourceFromCollection as dbRemoveSourceFromCollection,
 } from './dexie-db';
+import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 
 // ============================================================================
 // Types
@@ -39,6 +44,15 @@ interface DeletedSource {
     sourceId: string;
     source: SourceRecord;
     timestamp: number;
+}
+
+/**
+ * Metadata fields for editing (Story 6.4)
+ */
+export interface SourceMetadataFields {
+    summary?: string;
+    keyConcepts?: string[];
+    suggestedQuestions?: string[];
 }
 
 /**
@@ -72,6 +86,10 @@ interface KnowledgeStoreState {
 
     /** Undo queue for deleted sources */
     undoQueue: DeletedSource[];
+
+    // Story 6-4: Metadata extraction state
+    /** Source IDs currently being extracted */
+    extractingMetadata: Set<string>;
 
     // Actions
 
@@ -120,6 +138,13 @@ interface KnowledgeStoreState {
     /** Filter sources by collection */
     filterByCollection: (collectionId: string | null) => void;
 
+    // Story 6-4: Metadata actions
+    /** Extract metadata for a source using AI */
+    extractMetadata: (sourceId: string) => Promise<void>;
+
+    /** Update metadata for a source (user edits) */
+    updateMetadata: (sourceId: string, metadata: SourceMetadataFields) => Promise<void>;
+
     /** Reset store to initial state */
     reset: () => void;
 }
@@ -143,6 +168,9 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
             collections: [],
             filteredCollectionId: null,
             undoQueue: [],
+
+            // Story 6-4: Metadata extraction state
+            extractingMetadata: new Set<string>(),
 
             // Actions
             setHasHydrated: (state: boolean) => {
@@ -390,6 +418,116 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                 set({ filteredCollectionId: collectionId });
             },
 
+            // Story 6-4: Extract metadata using AI
+            extractMetadata: async (sourceId: string) => {
+                const source = get().sources.find(s => s.id === sourceId);
+                if (!source || !source.content) {
+                    set({ error: 'Source not found or has no content' });
+                    return;
+                }
+
+                // Add to extracting set
+                set((state) => ({
+                    extractingMetadata: new Set([...state.extractingMetadata, sourceId]),
+                    error: null,
+                }));
+
+                try {
+                    // Extract metadata using AI
+                    const metadata = await metadataExtractor.extractAllMetadata(source);
+
+                    // Update in IndexedDB
+                    await db.sources.update(sourceId, {
+                        summary: metadata.summary,
+                        keyConcepts: metadata.keyConcepts,
+                        suggestedQuestions: metadata.suggestedQuestions,
+                        metadataExtracted: metadata.metadataExtracted,
+                        metadataEdited: metadata.metadataEdited,
+                        updatedAt: Date.now(),
+                    });
+
+                    // Update local state
+                    set((state) => ({
+                        sources: state.sources.map(s =>
+                            s.id === sourceId
+                                ? {
+                                    ...s,
+                                    summary: metadata.summary,
+                                    keyConcepts: metadata.keyConcepts,
+                                    suggestedQuestions: metadata.suggestedQuestions,
+                                    metadataExtracted: metadata.metadataExtracted,
+                                    metadataEdited: metadata.metadataEdited,
+                                }
+                                : s
+                        ),
+                        selectedSource:
+                            state.selectedSource?.id === sourceId
+                                ? {
+                                    ...state.selectedSource,
+                                    summary: metadata.summary,
+                                    keyConcepts: metadata.keyConcepts,
+                                    suggestedQuestions: metadata.suggestedQuestions,
+                                    metadataExtracted: metadata.metadataExtracted,
+                                    metadataEdited: metadata.metadataEdited,
+                                }
+                                : state.selectedSource,
+                        extractingMetadata: new Set(
+                            [...state.extractingMetadata].filter(id => id !== sourceId)
+                        ),
+                    }));
+                } catch (error) {
+                    set((state) => ({
+                        error: (error as Error).message,
+                        extractingMetadata: new Set(
+                            [...state.extractingMetadata].filter(id => id !== sourceId)
+                        ),
+                    }));
+                }
+            },
+
+            // Story 6-4: Update metadata (user edits)
+            updateMetadata: async (sourceId: string, metadata: SourceMetadataFields) => {
+                const source = get().sources.find(s => s.id === sourceId);
+                if (!source) {
+                    set({ error: 'Source not found' });
+                    return;
+                }
+
+                try {
+                    // Update in IndexedDB
+                    await db.sources.update(sourceId, {
+                        summary: metadata.summary,
+                        keyConcepts: metadata.keyConcepts,
+                        suggestedQuestions: metadata.suggestedQuestions,
+                        metadataEdited: true,
+                        updatedAt: Date.now(),
+                    });
+
+                    // Update local state
+                    set((state) => ({
+                        sources: state.sources.map(s =>
+                            s.id === sourceId
+                                ? {
+                                    ...s,
+                                    ...metadata,
+                                    metadataEdited: true,
+                                }
+                                : s
+                        ),
+                        selectedSource:
+                            state.selectedSource?.id === sourceId
+                                ? {
+                                    ...state.selectedSource,
+                                    ...metadata,
+                                    metadataEdited: true,
+                                }
+                                : state.selectedSource,
+                    }));
+                } catch (error) {
+                    set({ error: (error as Error).message });
+                }
+            },
+
             reset: () => {
                 set({
                     sources: [],
@@ -400,6 +538,7 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                     collections: [],
                     filteredCollectionId: null,
                     undoQueue: [],
+                    extractingMetadata: new Set<string>(),
                 });
             },
         }),
