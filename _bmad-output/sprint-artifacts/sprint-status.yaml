@@ -216,9 +216,9 @@ development_status:
   epic-6-retrospective: done # _bmad-output/sprint-artifacts/epic-6-retrospective-2025-12-30.md
 
   # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)
-  epic-7: in_progress # Story 7.1 complete, awaiting retrospective
+  epic-7: in_progress # Story 7.1 complete, 7.2 in development
   7-1-orama-index-management: done # COMPLETED 2025-12-30 - All 69 tests passing (20+22+27)
-  7-2-document-chunking: backlog # 512-2048 token chunks
+  7-2-document-chunking: ready-for-dev # Story file + context XML validated, ready for implementation
   7-3-embedding-service: backlog # Hybrid: local (Transformers.js) + cloud (gemini-embedding-001)
   7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
   7-5-rag-chat-integration: backlog # Source-grounded responses
