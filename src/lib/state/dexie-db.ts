@@ -392,6 +392,33 @@ export interface CollectionRecord {
     updatedAt: number;
 }
 
+/**
+ * Orama index record for IndexedDB storage
+ * Stores serialized Orama index data as JSON.
+ *
+ * @epic Epic 7 - RAG Infrastructure
+ * @story 7-1 - Orama Index Management
+ */
+export interface OramaIndexRecord {
+    /** Primary key - project ID */
+    projectId: string;
+
+    /** Serialized Orama index data (JSON string) */
+    data: string;
+
+    /** Schema version for migration */
+    schemaVersion: number;
+
+    /** Number of documents in index */
+    documentCount: number;
+
+    /** Size of serialized data in bytes */
+    size: number;
+
+    /** Last updated timestamp */
+    lastUpdated: number;
+}
+
 // Type alias for backward compatibility
 export type Collection = CollectionRecord;
 
@@ -534,6 +561,9 @@ class ViaGentDatabase extends Dexie {
     // Epic 6: Source Ingestion & Management tables
     sources!: Table<SourceRecord, string>;
     collections!: Table<CollectionRecord, string>;
+
+    // Epic 7: RAG Infrastructure tables
+    oramaIndexes!: Table<OramaIndexRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -861,6 +891,50 @@ class ViaGentDatabase extends Dexie {
 
             logDexieMigration(12, 'epic-6-source-management', 'completed', {
                 tableName: 'collections',
+                itemsCount: 0
+            });
+        });
+
+        // Schema version 13: Epic 7 - RAG Infrastructure (Orama WASM)
+        // Adds oramaIndexes table for Orama search index persistence
+        this.version(13).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            // NEW: Orama indexes table for RAG search (Story 7-1)
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+        }).upgrade(async () => {
+            logDexieMigration(13, 'epic-7-orama-indexes', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(13)) {
+                logDexieMigration(13, 'epic-7-orama-indexes', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(13);
+
+            logDexieMigration(13, 'epic-7-orama-indexes', 'completed', {
+                tableName: 'oramaIndexes',
                 itemsCount: 0
             });
         });
