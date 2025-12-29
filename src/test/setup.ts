@@ -67,6 +67,14 @@ vi.mock('react-i18next', () => ({
         'common.error': 'Error',
         // Mobile demo
         'mobileDemo.learnMore': 'Learn more',
+        // Knowledge metadata
+        'knowledge.metadata.aiAnalyzed': 'AI-analyzed',
+        'knowledge.metadata.title': 'Source Metadata',
+        'knowledge.metadata.summary': 'Summary',
+        'knowledge.metadata.concepts': 'Key Concepts',
+        'knowledge.metadata.questions': 'Suggested Questions',
+        'knowledge.metadata.extractedSuccessfully': 'Metadata extracted successfully',
+        'knowledge.metadata.extractFailed': 'Failed to extract metadata',
       };
       return translations[key] || key;
     },

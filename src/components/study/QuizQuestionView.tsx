@@ -3,7 +3,7 @@
  * @module components/study/QuizQuestionView
  */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import type { QuizQuestion } from '@/lib/study/quiz-types';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
