@@ -1,50 +1,183 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<context story="9-1-flashcard-generator" created="2025-12-30T12:20:00+07:00">
-  <files>
-    <file path="src/lib/study/flashcard-types.ts">
-      <content><![CDATA[
-        // Flashcard and FlashcardSet type definitions
-        interface Flashcard {
-          id: string;
-          front: string;      // Question
-          back: string;       // Answer
-          sourceIds: string[];
-          difficulty: 'easy' | 'medium' | 'hard';
-          topic: string;
-          createdAt: number;
-        }
-      ]]></content>
-    </file>
-    <file path="src/data/mock-flashcards.json">
-      <content><![CDATA[
-        // Mock flashcard data for testing
-      ]]></content>
-    </file>
-  </files>
+<story_context>
+  <story_id>9-1-flashcard-generator</story_id>
+  <epic>9</epic>
+  <title>Flashcard Generator</title>
+  <created>2025-12-30T16:30:00+07:00</created>
+  <updated>2025-12-30T16:35:00+07:00</updated>
 
-  <research_notes>
-    <finding source="context7" query="TanStack AI structured output JSON schema">
-      <pattern>
-        generate({ model, prompt, schema }) for structured outputs
-        Zod schemas for validation
-        System prompts for flashcard generation
-      </pattern>
-    </finding>
-  </research_notes>
+  <research_summary>
+    <source name="TanStack AI" url="https://github.com/tanstack/ai">
+      <finding>TanStack AI provides outputSchema option using Zod for structured output</finding>
+      <code>
+import { z } from 'zod';
+const outputSchema = z.object({
+  name: z.string(),
+  age: z.number()
+});
+const options = { outputSchema };
+      </code>
+      <applies_to>FlashcardSchema definition, validation</applies_to>
+    </source>
+    <source name="Gemini API" url="https://ai.google.dev/gemini-api/docs/structured-output">
+      <finding>Gemini API supports responseMimeType: "application/json" with responseJsonSchema for structured output</finding>
+      <code>
+const response = await ai.models.generateContent({
+  model: "gemini-2.5-flash",
+  contents: prompt,
+  config: {
+    responseMimeType: "application/json",
+    responseJsonSchema: zodToJsonSchema(flashcardSchema),
+  },
+});
+      </code>
+      <applies_to>AI generation endpoint, schema enforcement</applies_to>
+    </source>
+  </research_summary>
 
-  <technical_notes>
-    <note priority="high">AI prompt extracts Q&A pairs from source content</note>
-    <note priority="medium">Each card cites sources via sourceIds array</note>
-    <note priority="low">Preview shows first 5 cards before save</note>
-  </technical_notes>
+  <flashcard_schema>
+    <typescript>
+import { z } from 'zod';
+
+export const flashcardSchema = z.object({
+  question: z.string().describe("The question or prompt on the front of the flashcard"),
+  answer: z.string().describe("The answer on the back of the flashcard"),
+  difficulty: z.enum(['easy', 'medium', 'hard']).describe("Difficulty level of the card"),
+  topic: z.string().describe("Topic or category for this card"),
+  sourceCitations: z.array(z.string()).describe("Source IDs used for this card"),
+});
+
+export const flashcardGenerationSchema = z.object({
+  cards: z.array(flashcardSchema),
+  totalCards: z.number(),
+  topics: z.array(z.string()),
+  sourcesUsed: z.array(z.string()),
+});
+
+export type Flashcard = z.infer<typeof flashcardSchema>;
+export type FlashcardGeneration = z.infer<typeof flashcardGenerationSchema>;
+    </typescript>
+    <dexie_stores>
+      flashcards: 'id, topic, difficulty, sourceIds, createdAt'
+      flashcardSets: 'id, name, createdAt'
+    </dexie_stores>
+  </flashcard_schema>
+
+  <ai_prompt_strategy>
+    <system_prompt>
+You are an expert educator. Generate flashcards from the provided content.
+
+Requirements:
+- Each flashcard has a question (front) and answer (back)
+- Focus on key concepts, definitions, and important facts
+- Assign difficulty level based on complexity (easy=basic recall, medium=application, hard=analysis)
+- Extract or infer topic tags from content
+- Cite sources using [source_id] format in sourceCitations
+
+Output: JSON object with cards array following the provided schema.
+    </system_prompt>
+  </ai_prompt_strategy>
 
   <dependencies>
-    <dependency name="@tanstack/ai" version="^1.0.0" />
-    <dependency name="zod" version="^3.22.0" />
+    <dep name="Epic 6 Source Ingestion" status="in_progress">
+      <reason>Flashcards reference sources by ID</reason>
+      <fallback>Mock source data for testing (src/lib/knowledge/__tests__/mock-data.ts)</fallback>
+    </dep>
+    <dep name="@tanstack/ai" version="^1.0.0">
+      <reason>Provider-agnostic AI integration</reason>
+    </dep>
+    <dep name="Gemini API (google-genai)" version="^1.0">
+      <reason>Primary LLM for generation</reason>
+    </dep>
+    <dep name="Dexie" version="^3.0">
+      <reason>Flashcard persistence</reason>
+    </dep>
+    <dep name="zod" version="^3.22">
+      <reason>Schema validation</reason>
+    </dep>
   </dependencies>
 
-  <implementation_hints>
-    <hint>Prompt template: "Generate {count} flashcards from content..."</hint>
-    <hint>Difficulty auto-assigned based on content complexity</hint>
-  </implementation_hints>
-</context>
+  <implementation_sequence>
+    <step number="1">
+      <task>Define Flashcard types, Zod schemas, and Dexie store</task>
+      <file>src/lib/knowledge/types.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="2">
+      <task>Create flashcard store with Dexie persistence</task>
+      <file>src/lib/state/flashcard-store.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="3">
+      <task>Implement AI generation service with Gemini</task>
+      <file>src/lib/knowledge/flashcard-generator.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="4">
+      <task>Create API endpoint for generation</task>
+      <file>src/routes/api/flashcards/generate.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="5">
+      <task>Build preview UI component</task>
+      <file>src/components/knowledge/flashcard-preview.tsx</file>
+      <status>pending</status>
+    </step>
+    <step number="6">
+      <task>Implement filter and search logic</task>
+      <file>src/lib/knowledge/flashcard-utils.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="7">
+      <task>Create mock data for testing</task>
+      <file>src/lib/knowledge/__tests__/mock-data.ts</file>
+      <status>pending</status>
+    </step>
+    <step number="8">
+      <task>Write unit tests</task>
+      <file>src/lib/knowledge/__tests__/flashcard.test.ts</file>
+      <status>pending</status>
+    </step>
+  </implementation_sequence>
+
+  <testing_strategy>
+    <unit_tests>
+      <test>Flashcard type validation with Zod schema</test>
+      <test>Store operations (CRUD)</test>
+      <test>Filter and search logic</test>
+      <test>Schema conversion</test>
+    </unit_tests>
+    <integration_tests>
+      <test>AI generation with mock sources</test>
+      <test>API endpoint response</test>
+      <test>Dexie persistence roundtrip</test>
+    </integration_tests>
+  </testing_strategy>
+
+  <nfr_validations>
+    <nfr name="NFR-PERF-P2-06">
+      <description>Flashcard generation complete within 30 seconds</description>
+      <test>Time generation of 10 cards from 2000-token source</test>
+      <threshold>&lt;30000ms</threshold>
+    </nfr>
+  </nfr_validations>
+
+  <technical_notes>
+    <note priority="high">Use Gemini API's structured output with responseJsonSchema for reliable card generation</note>
+    <note priority="high">Flashcard IDs should be unique (timestamp + random suffix)</note>
+    <note priority="medium">Each card must cite sources via sourceIds array</note>
+    <note priority="low">Preview shows first 5 cards before save - consider pagination for large sets</note>
+    <note priority="low">Topic extraction can be manual or AI-assisted</note>
+  </technical_notes>
+
+  <file_paths>
+    <types>src/lib/knowledge/types.ts</types>
+    <store>src/lib/state/flashcard-store.ts</stores>
+    <generator>src/lib/knowledge/flashcard-generator.ts</generator>
+    <api>src/routes/api/flashcards/generate.ts</api>
+    <preview>src/components/knowledge/flashcard-preview.tsx</preview>
+    <utils>src/lib/knowledge/flashcard-utils.ts</utils>
+    <mock_data>src/lib/knowledge/__tests__/mock-data.ts</mock_data>
+    <tests>src/lib/knowledge/__tests__/flashcard.test.ts</tests>
+  </file_paths>
+</story_context>

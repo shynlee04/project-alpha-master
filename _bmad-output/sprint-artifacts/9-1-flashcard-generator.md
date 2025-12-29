@@ -2,7 +2,7 @@
 epic: 9
 story: 1
 title: Flashcard Generator
-status: drafted
+status: ready-for-dev
 created: 2025-12-30T10:50:00+07:00
 author: Ralph Loop Agent
 team: Team B (Backend/AI)
@@ -13,12 +13,14 @@ estimated_effort: 4-6 hours
 nfr_validated:
   - NFR-PERF-P2-06
 tech_stack:
-  - TanStack AI
+  - "@tanstack/ai"
   - Gemini API
   - Dexie
+  - Zod
 dependencies:
   - "6-1-source-import-pipeline"
-blockers: ["Awaiting Epic 6 completion for real source data"]
+blockers: []
+story_context: "9-1-flashcard-generator-context.xml"
 ---
 
 # Story 9.1: Flashcard Generator
@@ -88,40 +90,60 @@ blockers: ["Awaiting Epic 6 completion for real source data"]
 
 ## Dev Notes
 
-### Flashcard Type
+### Flashcard Type (Updated with Zod)
 
 ```typescript
-interface Flashcard {
-  id: string;
-  front: string;        // Question
-  back: string;         // Answer
-  sourceIds: string[];  // Citations
-  difficulty: 'easy' | 'medium' | 'hard';
-  topic: string;
-  createdAt: number;
-}
+import { z } from 'zod';
 
-interface FlashcardSet {
-  id: string;
-  name: string;
-  cards: Flashcard[];
-  sourceIds: string[];
-  createdAt: number;
-}
+export const flashcardSchema = z.object({
+  question: z.string().describe("The question or prompt on the front"),
+  answer: z.string().describe("The answer on the back"),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+  topic: z.string().describe("Topic or category"),
+  sourceCitations: z.array(z.string()).describe("Source IDs used"),
+});
+
+export const flashcardGenerationSchema = z.object({
+  cards: z.array(flashcardSchema),
+  totalCards: z.number(),
+  topics: z.array(z.string()),
+  sourcesUsed: z.array(z.string()),
+});
+
+export type Flashcard = z.infer<typeof flashcardSchema>;
 ```
 
 ### AI Prompt Strategy
 
-```
-You are an expert educator. Generate {count} flashcards from the following content.
+```typescript
+const FLASHCAED_PROMPT = `You are an expert educator. Generate flashcards from the provided content.
 
 Requirements:
-- Each card has a question (front) and answer (back)
+- Each flashcard has a question (front) and answer (back)
 - Focus on key concepts, definitions, and important facts
-- Include difficulty level for each card
+- Assign difficulty level based on complexity
+- Extract or infer topic tags from content
 - Cite sources using [source_id] format
 
-Output format: JSON array of flashcard objects
+Output: JSON object with cards array following the schema.`;
+```
+
+### Gemini Structured Output
+
+```typescript
+import { GoogleGenAI } from "@google/genai";
+import { zodToJsonSchema } from "zod-to-json-schema";
+
+const ai = new GoogleGenAI({});
+
+const response = await ai.models.generateContent({
+  model: "gemini-2.5-flash",
+  contents: prompt,
+  config: {
+    responseMimeType: "application/json",
+    responseJsonSchema: zodToJsonSchema(flashcardGenerationSchema),
+  },
+});
 ```
 
 ### Mock Data Structure
@@ -139,9 +161,21 @@ const mockSources = [
 
 ## Research Requirements
 
-1. **Context7**: TanStack AI prompt generation patterns
-2. **Context7**: Gemini API flashcard/QA generation
-3. **Codebase**: Existing AI integration patterns from Epic 4
+**Source: Context7 Documentation**
+
+1. **TanStack AI Structured Output** (`/tanstack/ai`)
+   - `outputSchema` option using Zod for type-safe structured responses
+   - Provider-agnostic adapters for multi-LLM support
+
+2. **Gemini API Structured Output** (`/websites/ai_google_dev_gemini-api`)
+   - `responseMimeType: "application/json"` for JSON mode
+   - `responseJsonSchema` for enforcing output structure
+   - Uses `gemini-2.5-flash` for efficient generation
+
+**Codebase Patterns to Follow**
+- Epic 4 AI tool patterns (`src/lib/agent/tools/`)
+- Dexie persistence from Epic 2 (`conversation-store.ts`)
+- Zod validation from existing codebase
 
 ## References
 
@@ -152,21 +186,30 @@ const mockSources = [
 ## Dev Agent Record
 
 ### Task Progress:
-- TBD
+- [x] Story validation (all ACs complete)
+- [x] Story context created with implementation sequence
+- [x] Research executed (Context7 for TanStack AI + Gemini API)
+- [x] Story marked ready-for-dev
 
 ### Research Executed:
-- TBD
+- TanStack AI structured output patterns (outputSchema with Zod)
+- Gemini API structured output (responseMimeType + responseJsonSchema)
+- Codebase patterns from Epic 4 (AI tools) and Epic 2 (Dexie persistence)
 
 ### Files Changed:
 | File | Action | Lines |
 |------|--------|-------|
-| | | |
+| 9-1-flashcard-generator.md | Updated | +80 (research, schema, prompts) |
+| 9-1-flashcard-generator-context.xml | Created/Updated | +150 (full context) |
 
 ### Tests Created:
-- TBD
+- Pending implementation
 
 ### Decisions Made:
-- TBD
+- Using Zod for schema validation (consistent with codebase)
+- Using Gemini API's native structured output (not TanStack AI wrapper) for reliability
+- Flashcard IDs: `fc-{timestamp}-{random}` format
+- Dexie stores: flashcards and flashcardSets tables with proper indexes
 
 ## Code Review
 
