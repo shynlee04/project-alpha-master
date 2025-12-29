@@ -2,7 +2,7 @@
 epic: 9
 story: 4
 title: Quiz Taking Interface
-status: ready-for-dev
+status: done
 validation_passed: true
 validation_date: 2025-12-30T20:10:00+07:00
 validation_notes: Story validated - all ACs clear, dependencies verified (9-2), NFR specified, dev notes comprehensive
@@ -21,6 +21,9 @@ tech_stack:
 dependencies:
   - "9-2-quiz-generator"
 blockers: []
+completed_date: 2025-12-30T05:20:00+07:00
+tests_created: 31
+code_review: PASSED
 ---
 
 # Story 9.4: Quiz Taking Interface
