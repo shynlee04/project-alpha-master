@@ -42,7 +42,9 @@ describe('TopicCard', () => {
     it('should render icon', () => {
       render(<TopicCard {...defaultProps} />);
 
-      expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+      // Component clones icon in two places, so check for at least one
+      const icons = screen.getAllByTestId('test-icon');
+      expect(icons.length).toBeGreaterThanOrEqual(1);
     });
 
     it('should render action button', () => {
@@ -63,7 +65,8 @@ describe('TopicCard', () => {
       const onAction = vi.fn();
       render(<TopicCard {...defaultProps} onAction={onAction} />);
 
-      const actionButton = screen.getByRole('button');
+      // Action button has aria-label matching the action text
+      const actionButton = screen.getByRole('button', { name: /testAction/i });
       actionButton.click();
 
       expect(onAction).toHaveBeenCalledTimes(1);
@@ -113,14 +116,16 @@ describe('TopicCard', () => {
     it('should have proper ARIA attributes', () => {
       render(<TopicCard {...defaultProps} />);
 
-      const card = screen.getByRole('button');
-      expect(card).toHaveAttribute('aria-label', 'testTopic');
+      // Card container has role="button" with aria-label
+      const card = screen.getByRole('button', { name: /testTopic/i });
+      expect(card).toBeInTheDocument();
     });
 
     it('should be keyboard navigable', () => {
       render(<TopicCard {...defaultProps} />);
 
-      const card = screen.getByRole('button');
+      // Card container is the main focusable element (has tabIndex=0)
+      const card = screen.getByRole('button', { name: /testTopic/i });
       card.focus();
 
       expect(document.activeElement).toBe(card);

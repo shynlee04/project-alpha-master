@@ -1,43 +1,49 @@
 /**
  * @fileoverview AgentChatPanel Component Tests
  * @module components/ide/__tests__/AgentChatPanel.test
- * 
+ *
  * Tests for AgentChatPanel with real useAgentChatWithTools hook integration.
- * 
+ *
  * @story 25-R1 - Integrate useAgentChatWithTools to AgentChatPanel
  */
 
 import { render, screen, fireEvent, waitFor, act, configure } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
-// Mock ResizeObserver for Radix UI
+// Mock ResizeObserver and other globals
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+}));
+
 beforeAll(() => {
     configure({ defaultHidden: true });
-    global.ResizeObserver = class ResizeObserver {
-        observe() { }
-        unobserve() { }
-        disconnect() { }
-    };
-    window.PointerEvent = class PointerEvent extends Event { } as any;
-    window.HTMLElement.prototype.scrollIntoView = vi.fn();
-    window.HTMLElement.prototype.releasePointerCapture = vi.fn();
-    window.HTMLElement.prototype.hasPointerCapture = vi.fn();
-    Object.defineProperty(window, 'matchMedia', {
-        writable: true,
-        value: vi.fn().mockImplementation((query: string) => ({
-            matches: false,
-            media: query,
-            onchange: null,
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            addEventListener: vi.fn(),
-            removeEventListener: vi.fn(),
-            dispatchEvent: vi.fn(),
-        })),
-    });
 });
 
-// Mock all dependencies BEFORE importing the component
+// Mock HTMLElement methods
+if (typeof HTMLElement !== 'undefined') {
+    HTMLElement.prototype.scrollIntoView = vi.fn();
+    HTMLElement.prototype.releasePointerCapture = vi.fn();
+    HTMLElement.prototype.hasPointerCapture = vi.fn();
+}
+window.PointerEvent = class PointerEvent extends Event { } as any;
+
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    })),
+});
+
+// Mock react-i18next
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string, defaults?: any) => {
@@ -48,6 +54,10 @@ vi.mock('react-i18next', () => ({
             if (key === 'agent.tools_ready') return 'TOOLS READY';
             if (key === 'agent.error_generic') return 'An error occurred';
             return key;
+        },
+        i18n: {
+            language: 'en',
+            changeLanguage: vi.fn(),
         },
     }),
 }));
@@ -104,9 +114,17 @@ vi.mock('../../lib/agent/hooks/use-agent-chat-with-tools', () => ({
 
 // Import component AFTER mocks are set up
 import { AgentChatPanel } from '../AgentChatPanel';
+import { WorkspaceProvider } from '../../lib/workspace';
 
 describe('AgentChatPanel', () => {
     const mockProjectId = 'proj-123';
+
+    // Wrapper component to provide workspace context
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+        <WorkspaceProvider projectId={mockProjectId}>
+            {children}
+        </WorkspaceProvider>
+    );
 
     // Default return value for hook
     const getDefaultHookReturn = () => ({
@@ -129,73 +147,52 @@ describe('AgentChatPanel', () => {
         mockUseAgentChatWithTools.mockReturnValue(getDefaultHookReturn());
     });
 
-    it('renders correctly with title', async () => {
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+    it('renders correctly with title', () => {
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
         expect(screen.getByText('Agent')).toBeInTheDocument();
-    }, 10000);
+    });
 
-    it('renders the enhanced chat interface', async () => {
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+    it('renders the enhanced chat interface', () => {
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
         expect(screen.getByTestId('enhanced-chat')).toBeInTheDocument();
-    }, 10000);
+    });
 
-    it('renders welcome message when no hook messages', async () => {
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} projectName="TestProject" />);
-        });
+    it('renders welcome message when no hook messages', () => {
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} projectName="TestProject" /></Wrapper>);
+        expect(screen.getByTestId('message-assistant')).toBeInTheDocument();
+    });
 
-        await waitFor(() => {
-            expect(screen.getByTestId('message-assistant')).toBeInTheDocument();
-        });
-    }, 10000);
-
-    it('sends messages via the hook', async () => {
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+    it('sends messages via the hook', () => {
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
 
         const sendButton = screen.getByText('Send Test');
-        await act(async () => {
-            fireEvent.click(sendButton);
-        });
+        fireEvent.click(sendButton);
 
         expect(mockSendMessage).toHaveBeenCalledWith('test message');
-    }, 10000);
+    });
 
-    it('shows model ID in header', async () => {
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
-
+    it('shows model ID in header', () => {
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
         expect(screen.getByText(/llama-3.1-8b-instruct/)).toBeInTheDocument();
-    }, 10000);
+    });
 
-    it('shows clear button', async () => {
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
-
+    it('shows clear button', () => {
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
         expect(screen.getByText('Clear')).toBeInTheDocument();
-    }, 10000);
+    });
 
-    it('shows error when hook returns error', async () => {
+    it('shows error when hook returns error', () => {
         mockUseAgentChatWithTools.mockReturnValue({
             ...getDefaultHookReturn(),
             error: new Error('API key not configured'),
         });
 
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
 
         expect(screen.getByText('API key not configured')).toBeInTheDocument();
-    }, 10000);
+    });
 
-    it('shows approval overlay when pendingApprovals has items', async () => {
+    it('shows approval overlay when pendingApprovals has items', () => {
         mockUseAgentChatWithTools.mockReturnValue({
             ...getDefaultHookReturn(),
             toolsAvailable: true,
@@ -210,16 +207,14 @@ describe('AgentChatPanel', () => {
             }],
         });
 
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
 
         expect(screen.getByTestId('approval-overlay')).toBeInTheDocument();
         expect(screen.getByTestId('tool-name')).toHaveTextContent('write_file');
         expect(screen.getByTestId('description')).toHaveTextContent('Write to file: test.txt');
-    }, 10000);
+    });
 
-    it('calls approveToolCall when approve button is clicked', async () => {
+    it('calls approveToolCall when approve button is clicked', () => {
         mockUseAgentChatWithTools.mockReturnValue({
             ...getDefaultHookReturn(),
             toolsAvailable: true,
@@ -233,19 +228,15 @@ describe('AgentChatPanel', () => {
             }],
         });
 
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
 
         const approveBtn = screen.getByTestId('approve-btn');
-        await act(async () => {
-            fireEvent.click(approveBtn);
-        });
+        fireEvent.click(approveBtn);
 
         expect(mockApproveToolCall).toHaveBeenCalledWith('tool-1');
-    }, 10000);
+    });
 
-    it('calls rejectToolCall when reject button is clicked', async () => {
+    it('calls rejectToolCall when reject button is clicked', () => {
         mockUseAgentChatWithTools.mockReturnValue({
             ...getDefaultHookReturn(),
             toolsAvailable: true,
@@ -259,28 +250,22 @@ describe('AgentChatPanel', () => {
             }],
         });
 
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+        render(<Wrapper><AgentChatPanel projectId={mockProjectId} /></Wrapper>);
 
         const rejectBtn = screen.getByTestId('reject-btn');
-        await act(async () => {
-            fireEvent.click(rejectBtn);
-        });
+        fireEvent.click(rejectBtn);
 
         expect(mockRejectToolCall).toHaveBeenCalledWith('tool-1', 'User rejected');
-    }, 10000);
+    });
 
-    it('shows typing indicator when isLoading is true', async () => {
+    it('shows typing indicator when isLoading is true', () => {
         mockUseAgentChatWithTools.mockReturnValue({
             ...getDefaultHookReturn(),
             isLoading: true,
         });
 
-        await act(async () => {
-            render(<AgentChatPanel projectId={mockProjectId} />);
-        });
+        render(<AgentChatPanel projectId={mockProjectId} />);
 
         expect(screen.getByTestId('typing-indicator')).toBeInTheDocument();
-    }, 10000);
+    });
 });

@@ -21,7 +21,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Plus, Settings2, Trash2 } from 'lucide-react'
+import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Settings2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
@@ -47,14 +47,12 @@ import { cn } from '@/lib/utils'
 import type { Agent } from '@/mocks/agents'
 
 // Security utilities for safe logging (RC-028-010)
-import { safeLog, safeDebug, sanitizeForLogging } from '@/lib/utils/security'
+import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
 
 // Epic 25 Provider Infrastructure
 import {
     credentialVault,
-    modelRegistry,
     providerAdapterFactory,
-    PROVIDERS,
     type ModelInfo,
 } from '@/lib/agent/providers'
 
