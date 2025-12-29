@@ -24,7 +24,7 @@
 import { PDFParser, type PDFProgressCallback } from './pdf-parser';
 import { URLFetcher } from './url-fetcher';
 import { db, type SourceRecord } from '@/lib/state/dexie-db';
-import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
+import type { WorkspaceEventEmitter, WorkspaceEvents } from '@/lib/events/workspace-events';
 
 /**
  * Supported source types
@@ -237,15 +237,16 @@ export class SourceImportPipeline {
      * @throws Error if URL is invalid
      */
     private validateURL(url: string): void {
+        // Check protocol first before URL construction
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            throw new Error('URL must start with http:// or https://');
+        }
+
+        // Validate URL format
         try {
             new URL(url);
         } catch {
             throw new Error('Invalid URL format. Please enter a complete URL (e.g., https://example.com).');
-        }
-
-        // Ensure HTTP/HTTPS
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            throw new Error('URL must start with http:// or https://');
         }
     }
 
@@ -257,10 +258,9 @@ export class SourceImportPipeline {
      */
     private emitEvent(
         event: 'import.started' | 'import.progress' | 'import.completed' | 'import.error',
-        data: unknown
+        data: WorkspaceEvents[keyof WorkspaceEvents][number]
     ): void {
         if (this.eventBus) {
-            // @ts-ignore - Dynamic event emission for import events
             this.eventBus.emit(event, data);
         }
     }
