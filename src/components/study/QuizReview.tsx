@@ -51,16 +51,16 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">{t('quiz.review.title')}</h1>
+          <h1 className="text-2xl font-bold">{t('quizzes.review.title')}</h1>
           <p className="text-sm text-muted-foreground">
-            {correctCount} {t('quiz.review.correct')} • {incorrectCount} {t('quiz.review.incorrect')}
+            {correctCount} {t('quizzes.review.correct')} • {incorrectCount} {t('quizzes.review.incorrect')}
           </p>
         </div>
         {onExit && (
           <button
             onClick={onExit}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
-            aria-label={t('quiz.review.exit')}
+            aria-label={t('quizzes.review.exit')}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -124,7 +124,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
                       : 'bg-error/20 text-error'
                   )}
                 >
-                  {isCorrect ? t('quiz.review.correct') : t('quiz.review.incorrect')}
+                  {isCorrect ? t('quizzes.review.correct') : t('quizzes.review.incorrect')}
                 </div>
 
                 {/* Expand Icon */}
@@ -190,7 +190,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
                   {/* Your Answer */}
                   <div className="mt-4 text-sm">
                     <span className="text-muted-foreground">
-                      {t('quiz.review.your-answer')}:{' '}
+                      {t('quizzes.review.your-answer')}:{' '}
                     </span>
                     <span className={isCorrect ? 'text-success' : 'text-error'}>
                       {String.fromCharCode(65 + (answer?.selectedIndex ?? -1))}
@@ -202,7 +202,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
                   {!isCorrect && (
                     <div className="mt-2 text-sm">
                       <span className="text-muted-foreground">
-                        {t('quiz.review.correct-answer')}:{' '}
+                        {t('quizzes.review.correct-answer')}:{' '}
                       </span>
                       <span className="text-success">
                         {String.fromCharCode(65 + question.correctIndex)} - {question.options[question.correctIndex]}
@@ -214,7 +214,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
                   {question.explanation && (
                     <div className="mt-4 p-3 bg-muted/50 rounded-lg">
                       <div className="font-medium text-sm mb-1">
-                        {t('quiz.question.explanation')}
+                        {t('quizzes.explanation')}
                       </div>
                       <p className="text-sm text-muted-foreground">
                         {question.explanation}
@@ -234,7 +234,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
           onClick={onExit}
           className="w-full mt-6 px-4 py-3 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors"
         >
-          {t('quiz.review.exit-button')}
+          {t('quizzes.review.exit-button')}
         </button>
       )}
     </div>

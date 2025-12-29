@@ -253,20 +253,31 @@
 
 | Task | Assignee | Status | Notes |
 |------|----------|--------|-------|
-| P-1 | Team A | TODO | |
+| P-1 | Team A | DONE | No `__STRING_NOT_TRANSLATED__` found |
 | P-2 | Team A | TODO | |
 | P-3 | Team A | TODO | |
 | P-4 | Team A | TODO | |
 | P-5 | Team A | TODO | |
-| I-1 | Team B | TODO | |
-| I-2 | Team B | TODO | |
+| I-1 | Team B | VERIFIED | Rename, Collections, Export already wired |
+| I-2 | Team B | DONE | SourceCard now draggable with onDragStart |
 | I-3 | Team B | TODO | |
 | I-4 | Team B | TODO | |
-| I-5 | Team B | TODO | |
-| V-1 | Both | TODO | |
+| I-5 | Team B | IN_PROGRESS | Test fixture updates needed |
+| V-1 | Both | DONE | No missing strings |
 | V-2 | Both | TODO | |
 | V-3 | Both | TODO | |
 | V-4 | Both | TODO | |
+
+### Fixes Applied (2025-12-30T05:15:00+07:00)
+- **SourceContextMenu.tsx**: Added `onViewMetadata` prop to interface and destructuring
+- **SourceCard.tsx**: 
+  - Added `SourceMetadataDialog` import and usage
+  - Added `showMetadataDialog` state
+  - Added `handleViewMetadata` callback  
+  - Added `draggable` and `onDragStart` for Canvas integration
+  - Removed unused `exportSource` function
+- **SourceMetadataDialog.tsx**: Rewrote to use actual SourceRecord fields instead of non-existent `metadata`/`processingStatus`
+- **source-icons.tsx**: Fixed type mismatch (IconProps vs SourceIconProps)
 
 ---
 

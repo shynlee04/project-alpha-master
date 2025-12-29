@@ -7,13 +7,22 @@
  */
 
 import React from 'react';
-import { IconProps } from './icon';
+
+/**
+ * Props for source icons (uses numeric size for direct SVG sizing)
+ */
+interface SourceIconProps {
+    size?: number;
+    className?: string;
+    color?: string;
+    'aria-label'?: string;
+}
 
 /**
  * PDFIcon - 8-bit styled PDF document icon
  * Represents PDF source type in knowledge management
  */
-export const PDFIcon: React.FC<IconProps> = ({
+export const PDFIcon: React.FC<SourceIconProps> = ({
     size = 24,
     className = '',
     color = 'currentColor',
@@ -59,7 +68,7 @@ export const PDFIcon: React.FC<IconProps> = ({
  * URLIcon - 8-bit styled URL/link icon
  * Represents URL source type in knowledge management
  */
-export const URLIcon: React.FC<IconProps> = ({
+export const URLIcon: React.FC<SourceIconProps> = ({
     size = 24,
     className = '',
     color = 'currentColor',
@@ -112,7 +121,7 @@ export const URLIcon: React.FC<IconProps> = ({
  * TextIcon - 8-bit styled text file icon
  * Represents text source type in knowledge management
  */
-export const TextIcon: React.FC<IconProps> = ({
+export const TextIcon: React.FC<SourceIconProps> = ({
     size = 24,
     className = '',
     color = 'currentColor',

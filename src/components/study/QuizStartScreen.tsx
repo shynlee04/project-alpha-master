@@ -61,7 +61,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
         {/* Question Count */}
         <div className="quiz-info-card p-4 bg-card border border-border rounded-xl">
           <div className="text-sm text-muted-foreground mb-1">
-            {t('quiz.start.questions')}
+            {t('quizzes.start.questions')}
           </div>
           <div className="text-2xl font-bold">
             {quiz.questions.length}
@@ -71,10 +71,10 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
         {/* Estimated Time */}
         <div className="quiz-info-card p-4 bg-card border border-border rounded-xl">
           <div className="text-sm text-muted-foreground mb-1">
-            {t('quiz.start.time-estimate')}
+            {t('quizzes.start.time-estimate')}
           </div>
           <div className="text-2xl font-bold">
-            {Math.ceil(estimatedTime / 60)} {t('quiz.start.minutes')}
+            {Math.ceil(estimatedTime / 60)} {t('quizzes.start.minutes')}
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
       {/* Difficulty Breakdown */}
       <div className="mb-8">
         <h3 className="text-sm font-medium text-muted-foreground mb-3">
-          {t('quiz.start.difficulty')}
+          {t('quizzes.start.difficulty')}
         </h3>
         <div className="space-y-2">
           {(['easy', 'medium', 'hard'] as const).map((difficulty) => {
@@ -99,7 +99,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
                     DIFFICULTY_COLORS[difficulty]
                   )}
                 >
-                  {t(`quiz.difficulty.${difficulty}`)}
+                  {t(`quizzes.difficulty.${difficulty}`)}
                 </div>
                 <div className="flex-1">
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -127,7 +127,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
       {topics.length > 0 && (
         <div className="mb-8">
           <h3 className="text-sm font-medium text-muted-foreground mb-3">
-            {t('quiz.start.topics')}
+            {t('quizzes.start.topics')}
           </h3>
           <div className="flex flex-wrap gap-2">
             {topics.map((topic) => (
@@ -149,14 +149,14 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
             onClick={onExit}
             className="flex-1 px-4 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
           >
-            {t('quiz.start.exit-button')}
+            {t('quizzes.start.exit-button')}
           </button>
         )}
         <button
           onClick={onStart}
           className="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
         >
-          {t('quiz.start.start-button')}
+          {t('quizzes.start.start-button')}
         </button>
       </div>
     </div>

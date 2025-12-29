@@ -61,7 +61,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
     <div className="quiz-results w-full">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">{t('quiz.results.title')}</h1>
+        <h1 className="text-2xl font-bold mb-2">{t('quizzes.results.title')}</h1>
         <p className="text-muted-foreground">{quiz.title}</p>
       </div>
 
@@ -102,7 +102,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="text-4xl font-bold">{result.correctAnswers}/{result.totalQuestions}</div>
             <div className={cn('text-lg font-medium', GRADE_COLORS[grade])}>
-              {t(`quiz.grade.${grade.toLowerCase()}`)}
+              {t(`quizzes.grade.${grade.toLowerCase()}`)}
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
         {/* Percentage */}
         <div className="quiz-stat-card p-4 bg-card border border-border rounded-xl text-center">
           <div className="text-sm text-muted-foreground mb-1">
-            {t('quiz.results.percentage')}
+            {t('quizzes.results.percentage')}
           </div>
           <div className={cn('text-2xl font-bold', GRADE_COLORS[grade])}>
             {result.percentage.toFixed(0)}%
@@ -123,7 +123,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
         {/* Time */}
         <div className="quiz-stat-card p-4 bg-card border border-border rounded-xl text-center">
           <div className="text-sm text-muted-foreground mb-1">
-            {t('quiz.results.time-taken')}
+            {t('quizzes.results.time-taken')}
           </div>
           <div className="text-2xl font-bold">
             {formatTime(Math.floor(result.timeSpent / 1000))}
@@ -133,7 +133,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
         {/* Correct Answers */}
         <div className="quiz-stat-card p-4 bg-card border border-border rounded-xl text-center">
           <div className="text-sm text-muted-foreground mb-1">
-            {t('quiz.results.correct')}
+            {t('quizzes.results.correct')}
           </div>
           <div className={cn('text-2xl font-bold', 'text-success')}>
             {result.correctAnswers}
@@ -144,10 +144,10 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
       {/* Performance Message */}
       <div className={cn('p-4 rounded-xl mb-8 text-center', GRADE_BG_COLORS[grade])}>
         <p className={cn('font-medium', GRADE_COLORS[grade])}>
-          {result.percentage >= 90 && t('quiz.results.message.excellent')}
-          {result.percentage >= 70 && result.percentage < 90 && t('quiz.results.message.good')}
-          {result.percentage >= 50 && result.percentage < 70 && t('quiz.results.message.fair')}
-          {result.percentage < 50 && t('quiz.results.message.needs-improvement')}
+          {result.percentage >= 90 && t('quizzes.results.message.excellent')}
+          {result.percentage >= 70 && result.percentage < 90 && t('quizzes.results.message.good')}
+          {result.percentage >= 50 && result.percentage < 70 && t('quizzes.results.message.fair')}
+          {result.percentage < 50 && t('quizzes.results.message.needs-improvement')}
         </p>
       </div>
 
@@ -157,14 +157,14 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
           onClick={onReview}
           className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
         >
-          {t('quiz.results.review-button')}
+          {t('quizzes.results.review-button')}
         </button>
         {onRetake && (
           <button
             onClick={onRetake}
             className="w-full px-4 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
           >
-            {t('quiz.results.retake-button')}
+            {t('quizzes.results.retake-button')}
           </button>
         )}
         {onExit && (
@@ -172,7 +172,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
             onClick={onExit}
             className="w-full px-4 py-3 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors"
           >
-            {t('quiz.results.exit-button')}
+            {t('quizzes.results.exit-button')}
           </button>
         )}
       </div>
