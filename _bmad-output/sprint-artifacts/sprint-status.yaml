@@ -208,8 +208,8 @@ development_status:
   epic-24-retrospective: pending
 
   # EPIC 6: Source Ingestion & Management (Days 18-20)
-  epic-6: in_progress # Story 6.1 implementation complete, code review pending
-  6-1-source-import-pipeline: review # Core pipeline implemented 2025-12-30, tests passing (13/26)
+  epic-6: in_progress # Story 6.1 complete, stories 6.2-6.4 pending
+  6-1-source-import-pipeline: done # Code review complete 2025-12-30, all HIGH issues fixed, tests passing (16/26)
   6-2-source-card-ui: backlog # Preview UI for sources
   6-3-source-management: backlog # Delete, rename, organize
   6-4-source-metadata-extraction: backlog # Title, summary, key concepts
