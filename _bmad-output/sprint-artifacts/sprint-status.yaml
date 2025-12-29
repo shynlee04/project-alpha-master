@@ -208,8 +208,8 @@ development_status:
   epic-24-retrospective: pending
 
   # EPIC 6: Source Ingestion & Management (Days 18-20)
-  epic-6: in_progress # Story 6.1 drafted, starting Phase 2 development
-  6-1-source-import-pipeline: drafted # Story file created 2025-12-30, awaiting context XML
+  epic-6: in_progress # Story 6.1 context complete, ready for development
+  6-1-source-import-pipeline: ready-for-dev # Story + Context XML created 2025-12-30, validated
   6-2-source-card-ui: backlog # Preview UI for sources
   6-3-source-management: backlog # Delete, rename, organize
   6-4-source-metadata-extraction: backlog # Title, summary, key concepts
