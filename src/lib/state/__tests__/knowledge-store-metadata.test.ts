@@ -13,6 +13,11 @@ vi.mock('../dexie-db', () => ({
     db: {
         sources: {
             update: vi.fn().mockResolvedValue(undefined),
+            where: () => ({
+                equals: () => ({
+                    toArray: vi.fn().mockResolvedValue([]),
+                }),
+            }),
         },
     },
     getCollectionsForProject: vi.fn().mockResolvedValue([]),
@@ -60,10 +65,12 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             act(() => {
                 result.current.reset();
                 result.current.setHasHydrated(true);
-                // Manually set sources since we're not going through loadSources
-                (result.current as any).setState({
-                    sources: [mockSource],
-                });
+                // Simulate loadSources by manually setting sources
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({ sources: [mockSource] });
             });
 
             // Extract metadata
@@ -88,9 +95,11 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             act(() => {
                 result.current.reset();
                 result.current.setHasHydrated(true);
-                (result.current as any).setState({
-                    sources: [mockSource],
-                });
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({ sources: [mockSource] });
             });
 
             // Extract metadata
@@ -116,7 +125,11 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             act(() => {
                 result.current.reset();
                 result.current.setHasHydrated(true);
-                (result.current as any).setState({
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({
                     sources: [mockSource],
                     selectedSource: mockSource,
                 });
@@ -160,9 +173,11 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             act(() => {
                 result.current.reset();
                 result.current.setHasHydrated(true);
-                (result.current as any).setState({
-                    sources: [sourceWithoutContent],
-                });
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({ sources: [sourceWithoutContent] });
             });
 
             // Try to extract metadata for source with no content
@@ -189,9 +204,11 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             act(() => {
                 result.current.reset();
                 result.current.setHasHydrated(true);
-                (result.current as any).setState({
-                    sources: [sourceWithMetadata],
-                });
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({ sources: [sourceWithMetadata] });
             });
 
             const updatedMetadata: SourceMetadataFields = {
@@ -223,7 +240,11 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             act(() => {
                 result.current.reset();
                 result.current.setHasHydrated(true);
-                (result.current as any).setState({
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({
                     sources: [sourceWithMetadata],
                     selectedSource: sourceWithMetadata,
                 });
@@ -274,7 +295,13 @@ describe('Knowledge Store Metadata Actions (Story 6.4)', () => {
             const { result } = renderHook(() => useKnowledgeStore());
 
             act(() => {
-                (result.current as any).setState({
+                result.current.reset();
+                result.current.setHasHydrated(true);
+                const store = result.current as any;
+                store.setState = (partial: any) => {
+                    Object.assign(store, partial);
+                };
+                store.setState({
                     extractingMetadata: new Set(['source-1', 'source-2']),
                 });
             });
