@@ -62,7 +62,7 @@ const activeIndexes = new Map<string, Orama<OramaSchema>>();
  * ```
  */
 export async function createIndex(config: IndexConfig): Promise<Orama<OramaSchema>> {
-  const { projectId, enableVectorSearch = true, vectorDimensions = DEFAULT_VECTOR_DIMENSIONS } = config;
+  const { projectId, enableVectorSearch = false, vectorDimensions = DEFAULT_VECTOR_DIMENSIONS } = config;
 
   // Check if index already exists
   if (activeIndexes.has(projectId)) {

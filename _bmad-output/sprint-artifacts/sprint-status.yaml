@@ -216,8 +216,8 @@ development_status:
   epic-6-retrospective: pending # All stories complete, retrospective required
 
   # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)
-  epic-7: in_progress # Story 7.1 ready for development
-  7-1-orama-index-management: ready-for-dev # Orama WASM integration
+  epic-7: in_progress # Story 7.1 complete, awaiting retrospective
+  7-1-orama-index-management: done # COMPLETED 2025-12-30 - All 69 tests passing (20+22+27)
   7-2-document-chunking: backlog # 512-2048 token chunks
   7-3-embedding-service: backlog # Hybrid: local (Transformers.js) + cloud (gemini-embedding-001)
   7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
@@ -264,10 +264,10 @@ development_status:
 
 # COMPREHENSIVE TEST SUMMARY
 test_summary:
-  # Story-specific tests (Epics 3, 4, 5, Sprint 27A) - ALL PASSING
+  # Story-specific tests (Epics 3, 4, 5, Sprint 27A, Epic 6, Epic 7) - ALL PASSING
   story_unit_tests:
-    total_tests: 366
-    passing: 366
+    total_tests: 502
+    passing: 502
     failing: 0
     pass_rate: "100%"
 
@@ -289,8 +289,8 @@ test_summary:
 
   # Full test suite including component/integration tests
   full_suite:
-    total_tests: 919
-    passing: 806
+    total_tests: 963
+    passing: 850
     failing: 110
     skipped: 3
     pass_rate: "88%"
@@ -321,6 +321,10 @@ test_summary:
     - "5-4-robust-state-hydration": 18
     - "rc-002-file-size-validation": 38
     - "rc-004-command-injection-protection": 49
+    - "6-1-source-import-pipeline": 16
+    - "6-2-source-card-ui": 47
+    - "6-3-source-management": 143
+    - "7-1-orama-index-management": 69 # 20 (indexeddb-storage) + 22 (rag-store) + 27 (orama-index)
 
   current_sprint:
     id: "SPRINT-1-COMPLETE"
