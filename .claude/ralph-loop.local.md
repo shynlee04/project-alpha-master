@@ -1,43 +1,18 @@
 ---
 active: true
-iteration: 7
+iteration: 1
 max_iterations: 0
 completion_promise: null
-started_at: "2025-12-29T20:29:15Z"
+started_at: "2025-12-29T22:45:25Z"
 ---
 
- @.agent/workflows/story-dev-cycle.md .starting EPIC 6 To the end of Epic &
-- A cycle is defined as story creation -> story validation -> loop if not passed 100% -> create story context -> validation workflow of the created story context -> loop still passed 100% -> dev-story by dev agent -> following TDD cycles -> validation by running *code-review -> loop still passed 100% ->  next story cycle
-- updte *sprint-status.yaml* at the end of each cycle, remember to mark and cross-check all documents and artifacts
-- As all stories of an epic are completed -> run *retrospective -> make the sweeping check as below -> make sweeping check with @_bmad-output/sprint-artifacts/epic-1-retro-2025-12-28.md
-- If anything worng -> run *correct-course -> correct-course will occur with new stories or whole new epic -> run *sprint-planning to reorganize the epics and stories order -> iterate and loop again.
-- No cheating of test modification to pass
-- incrementally check for integration, no overlapping, conflict, gaps, smell, superficial implementations are allowed
-- all codes must make contribution to the project -> migration over removal
-- consume and update *work-flow-status once an epic is completed or significant change takes place 
-## Development Constitution
-Check either at AGENTS.md or CLAUDE.md
-
-## Completed epics
-
-
-## Sprint Status
-_bmad-output/sprint-artifacts/sprint-status.yaml
-
-
-## Reminders of your platforms utilities (help boosting your workflow success)
-- Use MCP Servers' tools to gain up-to-date information about dependencies, guides, documentations and implementation patterns of the stacks in used (they are Context7, Deepwiki, Tavily, Exa - and Repomix)
-- Agents and sub-agents (baseed on your decisions to switch, delegate run in parallel, run in sequence, or run in a loop)
-- SKILLS and Plugins - base on what happen during the iteration, choose which efficient to run.
-
-## CONTEXT OVERVIEW
-
-You are conducting a comprehensive validation sweep of Project Alpha v2.0 - Knowledge Synthesis Station. This project has completed Sprint 0 through Epic 5 development, with Epics 1-4 marked as fully complete and Epic 5 currently in-progress. The remediation stories drafted in Epic 5 specifically target brownfield flaws and shortcomings identified during Phase 1 stabilization efforts.
-
-The codebase represents a sophisticated local-first application architecture featuring:
-- Mobile-first responsive visual foundation with accessibility compliance
-- AI-powered chat infrastructure with streaming capabilities and agent CRUD operations
-- WebContainer-based file operations with dual-write synchronization
-- Tool permission management system with comprehensive error handling
-- Production-ready polish initiatives addressing crash recovery, state hydration, and performance telemetry.
-Definition of complete: all the above stories and epics implemented, checked, validated, both code files and documents artifacts, maek integration  and all correct-course stories and epics of the epics are also address. Check to make end to end developed with the brownfield. HIghly autonomy, do not stop, auto loop, always select best coverage and logical paths.
+: I believe all of EPIC 6, 7 (ongoing by another team), 8, and 9 are all implemented - /bmad:core:agents:bmad-master but they do not integrate nor making any sense to every validation in @_bmad-output/validation/12-level-framework-integration-2025-12-29.md, so you job here is to integrate, making improvement and integration by /bmad:bmm:workflows:correct-course when neccessary, remember to /ado-research /bmad:bmm:workflows:research , have all requirements check, if any stories are expanded to correct-course please conduct following @.agent/workflows/story-dev-cycle.md . Now assembly everything together  and these are our single source of truth for governance _bmad-output/project-planning-artifacts
+_bmad-output/project-planning-artifacts/architecture-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/architecture.md
+_bmad-output/project-planning-artifacts/epics-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md
+_bmad-output/project-planning-artifacts/prd-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/prd.md
+_bmad-output/project-planning-artifacts/project-context.md
+_bmad-output/project-planning-artifacts/ux-design-specification-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/ux-design-specification.md

@@ -45,6 +45,7 @@ describe('SourceImportDialog', () => {
     it('should render PDF input by default', () => {
         render(<SourceImportDialog {...defaultProps} />);
         expect(screen.getByLabelText('PDF File')).toBeInTheDocument();
-        expect(screen.getByText('Import Source')).toBeInTheDocument();
+        // Check for dialog title specifically
+        expect(screen.getByRole('heading', { name: 'Import Source' })).toBeInTheDocument();
     });
 });
