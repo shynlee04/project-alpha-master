@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { ConversationThread } from '@/stores/conversation-threads-store';
 import { useTranslation } from 'react-i18next';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 interface ThreadCardProps {
     thread: ConversationThread;
@@ -94,13 +95,14 @@ function ThreadCardComponent({
         >
             {/* Header: Title + Delete */}
             <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className={cn(
-                    'font-pixel text-xs font-bold truncate flex-1 tracking-wider uppercase',
-                    'text-foreground',
-                    isActive && 'text-primary'
-                )}>
-                    {thread.title || t('chat.newConversation', 'New Conversation')}
-                </h3>
+                <TruncatedText
+                    text={thread.title || t('chat.newConversation', 'New Conversation')}
+                    className={cn(
+                        'font-pixel text-xs font-bold flex-1 tracking-wider uppercase',
+                        'text-foreground',
+                        isActive && 'text-primary'
+                    )}
+                />
 
                 {/* Delete button - visible on hover */}
                 <Button

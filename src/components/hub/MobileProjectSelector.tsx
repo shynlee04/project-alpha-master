@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Monitor, Smartphone, Zap, FileCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 interface DemoTemplate {
     id: string;
@@ -161,9 +162,10 @@ export function MobileProjectSelector({
                             <h5 className="font-mono font-semibold text-foreground text-sm">
                                 {template.name}
                             </h5>
-                            <p className="text-xs text-muted-foreground truncate">
-                                {template.description}
-                            </p>
+                            <TruncatedText
+                                text={template.description}
+                                className="text-xs text-muted-foreground"
+                            />
                         </div>
                     </button>
                 ))}

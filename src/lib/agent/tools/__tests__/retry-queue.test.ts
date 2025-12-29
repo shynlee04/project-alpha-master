@@ -59,7 +59,7 @@ function createMockToolError(
  * Uses the actual EventEmitter3 class directly
  */
 function createMockEventEmitter(): WorkspaceEventEmitter {
-    // Import EventEmitter3 dynamically to get the actual class
+    // eventemitter3 exports EventEmitter directly (not as default)
     const EventEmitter = require('eventemitter3');
     return new EventEmitter() as unknown as WorkspaceEventEmitter;
 }

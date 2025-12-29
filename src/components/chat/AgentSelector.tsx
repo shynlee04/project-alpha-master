@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { ChevronDown, Bot, Circle, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { TruncatedText } from '@/components/ui/truncated-text';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -107,13 +108,15 @@ export function AgentSelector({
                             )} />
 
                             {/* Agent info */}
-                            <div className="flex flex-col items-start">
-                                <span className="text-xs font-bold text-slate-100 truncate max-w-[120px]">
-                                    {selectedAgent.name}
-                                </span>
-                                <span className="text-[10px] text-slate-400 truncate max-w-[120px]">
-                                    {selectedAgent.model.split('/').pop()}
-                                </span>
+                            <div className="flex flex-col items-start min-w-0 max-w-[120px]">
+                                <TruncatedText
+                                    text={selectedAgent.name}
+                                    className="text-xs font-bold text-slate-100 w-full"
+                                />
+                                <TruncatedText
+                                    text={selectedAgent.model.split('/').pop() || ''}
+                                    className="text-[10px] text-slate-400 w-full"
+                                />
                             </div>
                         </>
                     ) : (
@@ -185,7 +188,7 @@ export function AgentSelector({
                                 </div>
                                 <div className="flex items-center gap-1 text-[10px] text-slate-400">
                                     <Cpu className="h-3 w-3" />
-                                    <span className="truncate">{agent.model}</span>
+                                    <TruncatedText text={agent.model} />
                                 </div>
                                 <div className="text-[10px] text-slate-500">
                                     {agent.provider}
