@@ -3,7 +3,7 @@
  * @module components/study
  */
 
-export { FlashcardView, MemoizedFlashcardView } from './flashcard';
+export { FlashcardView } from './flashcard';
 export type { FlashcardViewProps } from './flashcard';
 
 export { StudySession, StudySessionPage } from './study-session';

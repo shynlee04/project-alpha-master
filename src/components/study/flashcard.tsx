@@ -193,6 +193,7 @@ export function FlashcardView({
             transformStyle: 'preserve-3d',
             transform: isFlipped ? 'rotateX(180deg)' : 'rotateX(0deg)',
             transition: prefersReducedMotion ? 'none' : 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            willChange: 'transform',
           }}
         >
           {/* Front face - Question */}
@@ -284,5 +285,6 @@ export function FlashcardView({
 
 /**
  * Memoized flashcard component to prevent unnecessary re-renders
+ * (Available for external use if needed)
  */
-export const MemoizedFlashcardView = memo(FlashcardView);
+const MemoizedFlashcardView = memo(FlashcardView);
