@@ -124,6 +124,7 @@ describe('ConversationAutoRestore', () => {
           messages: [],
           agentsUsed: [],
           messageCount: 5,
+          scrollPosition: 200,
           createdAt: 1000,
           updatedAt: 2000
         }
@@ -162,9 +163,9 @@ describe('ConversationAutoRestore', () => {
   describe('getThreadsSortedByUpdate', () => {
     it('should return threads sorted by updatedAt descending', async () => {
       const mockThreads: ConversationThreadRecord[] = [
-        { id: 't1', projectId: 'p1', title: 'First', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 1000 },
-        { id: 't2', projectId: 'p1', title: 'Second', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 2000 },
-        { id: 't3', projectId: 'p1', title: 'Third', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 3000 }
+        { id: 't1', projectId: 'p1', title: 'First', preview: '', messages: [], agentsUsed: [], messageCount: 1, scrollPosition: 0, createdAt: 1000, updatedAt: 1000 },
+        { id: 't2', projectId: 'p1', title: 'Second', preview: '', messages: [], agentsUsed: [], messageCount: 1, scrollPosition: 50, createdAt: 1000, updatedAt: 2000 },
+        { id: 't3', projectId: 'p1', title: 'Third', preview: '', messages: [], agentsUsed: [], messageCount: 1, scrollPosition: 100, createdAt: 1000, updatedAt: 3000 }
       ];
       // Mock returns already sorted ascending by updatedAt
       mockWhereResult.sortBy.mockReturnValue(Promise.resolve(mockThreads));
@@ -175,6 +176,77 @@ describe('ConversationAutoRestore', () => {
       expect(result[0].id).toBe('t3');
       expect(result[1].id).toBe('t2');
       expect(result[2].id).toBe('t1');
+    });
+  });
+
+  describe('getScrollPosition', () => {
+    it('should return scroll position from thread', async () => {
+      mockGet.mockResolvedValue({
+        id: 'thread-1',
+        projectId: 'project-1',
+        title: 'Test',
+        preview: '',
+        messages: [],
+        agentsUsed: [],
+        messageCount: 5,
+        scrollPosition: 250,
+        createdAt: 1000,
+        updatedAt: 2000
+      });
+
+      const result = await restore.getScrollPosition('thread-1');
+      expect(result).toBe(250);
+    });
+
+    it('should return 0 when thread not found', async () => {
+      mockGet.mockResolvedValue(null);
+
+      const result = await restore.getScrollPosition('nonexistent');
+      expect(result).toBe(0);
+    });
+
+    it('should return 0 when thread has no scroll position', async () => {
+      mockGet.mockResolvedValue({
+        id: 'thread-1',
+        projectId: 'project-1',
+        title: 'Test',
+        preview: '',
+        messages: [],
+        agentsUsed: [],
+        messageCount: 5,
+        createdAt: 1000,
+        updatedAt: 2000
+      });
+
+      const result = await restore.getScrollPosition('thread-1');
+      expect(result).toBe(0);
+    });
+  });
+
+  describe('saveScrollPosition', () => {
+    it('should save scroll position to thread', async () => {
+      const { saveConversationThread } = await import('../dexie-db');
+      mockGet.mockResolvedValue({
+        id: 'thread-1',
+        projectId: 'project-1',
+        title: 'Test',
+        preview: '',
+        messages: [],
+        agentsUsed: [],
+        messageCount: 5,
+        scrollPosition: 0,
+        createdAt: 1000,
+        updatedAt: 2000
+      });
+
+      await restore.saveScrollPosition('thread-1', 350);
+
+      expect(saveConversationThread).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'thread-1',
+          scrollPosition: 350,
+        })
+      );
     });
   });
 

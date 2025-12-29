@@ -7,9 +7,7 @@
  * BEFORE: TanStack Store with Map<string, FileSyncStatus>
  * AFTER: Zustand store with Record<string, FileSyncStatus>
  * 
- * Note: This store is NOT persisted - sync status is runtime-only.
- * It resets when the page reloads, which is correct behavior.
- * 
+ * CC-2025-12-29: Added Dexie persistence so sync status survives page reload.
  * CC-2025-12-29: Renamed from useSyncStatusStore to useFileSyncStatusStore
  * to avoid namespace collision with sync-status-store.ts.
  * 
@@ -26,7 +24,8 @@
  */
 
 import { create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
+import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+import { createDexieStorage } from '../state/dexie-storage';
 
 // ============================================================================
 // Types
@@ -100,86 +99,102 @@ function computeCounts(statuses: Record<string, FileSyncStatus>): FileSyncCounts
  * Zustand store for file sync status
  * 
  * Replaces the TanStack Store implementation.
- * Note: No persistence - sync status is transient runtime state.
+ * CC-2025-12-29: Added Dexie persistence so status survives reload.
  */
 export const useFileSyncStatusStore = create<SyncStatusState>()(
-  subscribeWithSelector(
-    (set, get) => ({
-      statuses: {},
-      counts: { synced: 0, pending: 0, error: 0, total: 0 },
+  persist(
+    subscribeWithSelector(
+      (set, get) => ({
+        statuses: {},
+        counts: { synced: 0, pending: 0, error: 0, total: 0 },
 
-      setFileSyncPending: (path) => {
-        if (!path) return;
-        const now = Date.now();
-        set((state) => {
-          const newStatuses = {
-            ...state.statuses,
-            [path]: { state: 'pending' as const, updatedAt: now },
-          };
-          return {
-            statuses: newStatuses,
-            counts: computeCounts(newStatuses),
-          };
-        });
+        setFileSyncPending: (path) => {
+          if (!path) return;
+          const now = Date.now();
+          set((state) => {
+            const newStatuses = {
+              ...state.statuses,
+              [path]: { state: 'pending' as const, updatedAt: now },
+            };
+            return {
+              statuses: newStatuses,
+              counts: computeCounts(newStatuses),
+            };
+          });
+        },
+
+        setFileSyncSynced: (path) => {
+          if (!path) return;
+          const now = Date.now();
+          set((state) => {
+            const newStatuses = {
+              ...state.statuses,
+              [path]: { state: 'synced' as const, updatedAt: now },
+            };
+            return {
+              statuses: newStatuses,
+              counts: computeCounts(newStatuses),
+            };
+          });
+        },
+
+        setFileSyncError: (path, error) => {
+          if (!path) return;
+          const now = Date.now();
+          set((state) => {
+            const newStatuses = {
+              ...state.statuses,
+              [path]: {
+                state: 'error' as const,
+                updatedAt: now,
+                errorMessage: error.message,
+                errorStack: error.stack,
+              },
+            };
+            return {
+              statuses: newStatuses,
+              counts: computeCounts(newStatuses),
+            };
+          });
+        },
+
+        clearFileSyncStatus: (path) => {
+          if (!path) return;
+          const current = get().statuses;
+          if (!(path in current)) return;
+
+          set((state) => {
+            const { [path]: _, ...rest } = state.statuses;
+            return {
+              statuses: rest,
+              counts: computeCounts(rest),
+            };
+          });
+        },
+
+        clearAllFileSyncStatuses: () => {
+          set({
+            statuses: {},
+            counts: { synced: 0, pending: 0, error: 0, total: 0 },
+          });
+        },
+      }),
+    ),
+    {
+      name: 'via-gent-file-sync-status',
+      storage: createJSONStorage(() => createDexieStorage('fileSyncStatus')),
+      partialize: (state) => ({
+        statuses: state.statuses,
+        // counts are recomputed from statuses on hydration
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state && state.statuses) {
+          // Recompute counts from hydrated statuses
+          state.counts = computeCounts(state.statuses);
+        }
       },
-
-      setFileSyncSynced: (path) => {
-        if (!path) return;
-        const now = Date.now();
-        set((state) => {
-          const newStatuses = {
-            ...state.statuses,
-            [path]: { state: 'synced' as const, updatedAt: now },
-          };
-          return {
-            statuses: newStatuses,
-            counts: computeCounts(newStatuses),
-          };
-        });
-      },
-
-      setFileSyncError: (path, error) => {
-        if (!path) return;
-        const now = Date.now();
-        set((state) => {
-          const newStatuses = {
-            ...state.statuses,
-            [path]: {
-              state: 'error' as const,
-              updatedAt: now,
-              errorMessage: error.message,
-              errorStack: error.stack,
-            },
-          };
-          return {
-            statuses: newStatuses,
-            counts: computeCounts(newStatuses),
-          };
-        });
-      },
-
-      clearFileSyncStatus: (path) => {
-        if (!path) return;
-        const current = get().statuses;
-        if (!(path in current)) return;
-
-        set((state) => {
-          const { [path]: _, ...rest } = state.statuses;
-          return {
-            statuses: rest,
-            counts: computeCounts(rest),
-          };
-        });
-      },
-
-      clearAllFileSyncStatuses: () => {
-        set({
-          statuses: {},
-          counts: { synced: 0, pending: 0, error: 0, total: 0 },
-        });
-      },
-    }),
-  ),
+    }
+  )
 );
 
 // ============================================================================

@@ -6,14 +6,14 @@
  * Keys are encrypted before storage and decrypted on retrieval.
  *
  * Security improvements (RC-003, RC-028-002):
- * - Uses sessionStorage instead of localStorage (clears when browser closes)
- * - Adds clear-on-tab-close protection
  * - Master key encryption using PBKDF2-derived key (not XOR obfuscation)
  * - Salt + IV + Authentication tag for proper cryptographic security
+ * - CC-2025-12-29: Changed from sessionStorage to localStorage for persistence
  *
  * @epic 25 - AI Foundation Sprint
  * @story 25-0 - Create ProviderAdapterFactory with OpenRouter
  * @fix RC-028-002 - Replace XOR with AES-GCM encryption
+ * @fix CC-2025-12-29 - Persist vault metadata between sessions
  */
 
 import { db, type CredentialRecord } from '../../state/dexie-db';
@@ -34,12 +34,12 @@ const KEY_VERSION_STORAGE = 'vg_kv_v3';
  * CredentialVault - Secure API key storage with encryption
  *
  * Security features:
- * - Session-based key storage (cleared on browser/session close)
+ * - Persistent key storage via localStorage (CC-2025-12-29)
  * - Key derived from password using PBKDF2-SHA256
  * - Salt + IV + Authentication tag for proper cryptographic security
- * - Automatic cleanup on page unload
  *
  * @fix RC-028-002 - Replace XOR with AES-GCM encryption
+ * @fix CC-2025-12-29 - Persist vault between browser sessions
  */
 export class CredentialVault {
     private masterKey: CryptoKey | null = null;
@@ -47,10 +47,7 @@ export class CredentialVault {
     private encryptionKey: CryptoKey | null = null;
 
     constructor() {
-        // Register for cleanup on page unload
-        if (typeof window !== 'undefined') {
-            window.addEventListener('beforeunload', () => this.clearFromMemory());
-        }
+        // CC-2025-12-29: Removed beforeunload cleanup - we now persist credentials
     }
 
     /**
@@ -171,16 +168,15 @@ export class CredentialVault {
      * Encrypted with a key derived from browser fingerprint
      */
     private storeSessionPassword(password: string): void {
-        // For now, store in sessionStorage (cleared on tab close)
-        // In a more secure version, we'd use WebAuthn or user password
-        sessionStorage.setItem('vg_vp_v3', password);
+        // CC-2025-12-29: Changed from sessionStorage to localStorage for persistence
+        localStorage.setItem('vg_vp_v3', password);
     }
 
     /**
      * Retrieve the vault password
      */
     private getSessionPassword(): string | null {
-        return sessionStorage.getItem('vg_vp_v3');
+        return localStorage.getItem('vg_vp_v3');
     }
 
     /**
@@ -251,8 +247,9 @@ export class CredentialVault {
      */
     private getStoredEncryptedKey(): string | null {
         try {
-            const stored = sessionStorage.getItem(ENCRYPTED_KEY_STORAGE);
-            const version = sessionStorage.getItem(KEY_VERSION_STORAGE);
+            // CC-2025-12-29: Changed from sessionStorage to localStorage
+            const stored = localStorage.getItem(ENCRYPTED_KEY_STORAGE);
+            const version = localStorage.getItem(KEY_VERSION_STORAGE);
 
             // Verify version matches
             if (version !== '3') return null;
@@ -268,8 +265,9 @@ export class CredentialVault {
      * Store encrypted master key
      */
     private storeEncryptedKey(encrypted: string): void {
-        sessionStorage.setItem(ENCRYPTED_KEY_STORAGE, encrypted);
-        sessionStorage.setItem(KEY_VERSION_STORAGE, '3');
+        // CC-2025-12-29: Changed from sessionStorage to localStorage
+        localStorage.setItem(ENCRYPTED_KEY_STORAGE, encrypted);
+        localStorage.setItem(KEY_VERSION_STORAGE, '3');
     }
 
     /**
@@ -277,7 +275,8 @@ export class CredentialVault {
      */
     private getStoredSalt(): Uint8Array | null {
         try {
-            const stored = sessionStorage.getItem(SALT_STORAGE);
+            // CC-2025-12-29: Changed from sessionStorage to localStorage
+            const stored = localStorage.getItem(SALT_STORAGE);
             if (!stored) return null;
 
             const binary = atob(stored);
@@ -299,14 +298,16 @@ export class CredentialVault {
         for (let i = 0; i < salt.length; i++) {
             binary += String.fromCharCode(salt[i]);
         }
-        sessionStorage.setItem(SALT_STORAGE, btoa(binary));
+        // CC-2025-12-29: Changed from sessionStorage to localStorage
+        localStorage.setItem(SALT_STORAGE, btoa(binary));
     }
 
     /**
      * Store vault password hint
      */
     private storeVaultPasswordHint(): void {
-        sessionStorage.setItem('vg_vph_v3', 'Session-based encryption active');
+        // CC-2025-12-29: Changed from sessionStorage to localStorage
+        localStorage.setItem('vg_vph_v3', 'Persistent encryption active');
     }
 
     /**

@@ -13,6 +13,7 @@ import {
   storeFSAHandle,
   getFSAHandle,
   updateFSAHandleStatus,
+  deleteFSAHandle,
 } from '../state/dexie-db';
 
 /**
@@ -89,6 +90,7 @@ export async function saveDirectoryHandleReference(
  * Load directory handle reference metadata from Dexie persistence.
  * Returns null if no stored handle exists.
  * Note: The actual handle cannot be restored - user must re-select directory.
+ * However, we still update the access time for tracking purposes.
  */
 export async function loadDirectoryHandleReference(
   projectId: string,
@@ -99,13 +101,15 @@ export async function loadDirectoryHandleReference(
       return null;
     }
 
+    // Always update access time when we find a stored handle
+    await updateFSAHandleStatus(projectId, record.permissionStatus);
+
+    // Note: Handles cannot be fully serialized/deserialized
+    // The actual handle must be obtained via showDirectoryPicker again
     const handle = deserializeHandle(record.handleData);
     if (!handle) {
       return null;
     }
-
-    // Update last accessed timestamp
-    await updateFSAHandleStatus(projectId, record.permissionStatus);
 
     return { handle, directoryPath: record.directoryPath };
   } catch (error) {

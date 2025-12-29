@@ -1,19 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock the dexie-db module before importing
-vi.mock('../state/dexie-db', async () => {
-  const mockStoreFSAHandle = vi.fn().mockResolvedValue(undefined);
-  const mockGetFSAHandle = vi.fn().mockResolvedValue(undefined);
-  const mockUpdateFSAHandleStatus = vi.fn().mockResolvedValue(undefined);
-  const mockDeleteFSAHandle = vi.fn().mockResolvedValue(undefined);
-
-  return {
-    storeFSAHandle: mockStoreFSAHandle,
-    getFSAHandle: mockGetFSAHandle,
-    updateFSAHandleStatus: mockUpdateFSAHandleStatus,
-    deleteFSAHandle: mockDeleteFSAHandle,
-  };
-});
+vi.mock('../state/dexie-db', () => ({
+  storeFSAHandle: vi.fn().mockResolvedValue(undefined),
+  getFSAHandle: vi.fn().mockResolvedValue(undefined),
+  updateFSAHandleStatus: vi.fn().mockResolvedValue(undefined),
+  deleteFSAHandle: vi.fn().mockResolvedValue(undefined),
+}));
 
 import {
   getPermissionState,
@@ -26,13 +19,8 @@ import {
   deleteStoredHandleReference,
 } from './permission-lifecycle'
 
-// Import mock functions for verification
-import {
-  storeFSAHandle,
-  getFSAHandle,
-  updateFSAHandleStatus,
-  deleteFSAHandle,
-} from '../state/dexie-db';
+// Import mocked functions for assertions
+import { storeFSAHandle, getFSAHandle, updateFSAHandleStatus, deleteFSAHandle } from '../state/dexie-db';
 
 function createMockHandle(states: {
   query?: 'granted' | 'prompt' | 'denied'
@@ -52,6 +40,10 @@ function createMockHandle(states: {
 }
 
 describe('permission-lifecycle (Epic 24)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('maps queryPermission state correctly', async () => {
     const granted = createMockHandle({ query: 'granted' })
     const prompt = createMockHandle({ query: 'prompt' })
@@ -201,7 +193,8 @@ describe('permission-lifecycle Dexie persistence (Epic 24)', () => {
 
   describe('loadDirectoryHandleReference', () => {
     it('returns null when no stored handle exists', async () => {
-      (getFSAHandle as any).mockResolvedValue(null);
+      // Mock getFSAHandle to return null
+      vi.mocked(getFSAHandle).mockResolvedValue(null);
 
       const result = await loadDirectoryHandleReference('project-123');
       expect(result).toBeNull();
@@ -214,12 +207,12 @@ describe('permission-lifecycle Dexie persistence (Epic 24)', () => {
         handleData: { kind: 'directory', name: 'test-project' },
         permissionStatus: 'granted' as const,
       };
-      (getFSAHandle as any).mockResolvedValue(mockRecord);
+      vi.mocked(getFSAHandle).mockResolvedValue(mockRecord);
 
       const result = await loadDirectoryHandleReference('project-123');
       // deserializeHandle returns null because handles can't be fully reconstructed
       expect(result).toBeNull();
-      expect(updateFSAHandleStatus).toHaveBeenCalledWith('project-123', 'granted');
+      expect(vi.mocked(updateFSAHandleStatus)).toHaveBeenCalledWith('project-123', 'granted');
     });
   });
 
@@ -250,14 +243,13 @@ describe('permission-lifecycle Dexie persistence (Epic 24)', () => {
   describe('deleteStoredHandleReference', () => {
     it('calls deleteFSAHandle with projectId', async () => {
       await deleteStoredHandleReference('project-123');
-      expect(deleteFSAHandle).toHaveBeenCalledWith('project-123');
+      expect(vi.mocked(deleteFSAHandle)).toHaveBeenCalledWith('project-123');
     });
 
     it('handles errors gracefully', async () => {
-      (deleteFSAHandle as any).mockRejectedValue(new Error('DB error'));
+      vi.mocked(deleteFSAHandle).mockRejectedValue(new Error('DB error'));
       // Should not throw
       await expect(deleteStoredHandleReference('project-123')).resolves.toBeUndefined();
     });
   });
 })
-
