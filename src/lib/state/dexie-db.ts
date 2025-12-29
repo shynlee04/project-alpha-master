@@ -392,6 +392,33 @@ export interface CollectionRecord {
     updatedAt: number;
 }
 
+/**
+ * Orama index record for IndexedDB storage
+ * Stores serialized Orama index data as JSON.
+ *
+ * @epic Epic 7 - RAG Infrastructure
+ * @story 7-1 - Orama Index Management
+ */
+export interface OramaIndexRecord {
+    /** Primary key - project ID */
+    projectId: string;
+
+    /** Serialized Orama index data (JSON string) */
+    data: string;
+
+    /** Schema version for migration */
+    schemaVersion: number;
+
+    /** Number of documents in index */
+    documentCount: number;
+
+    /** Size of serialized data in bytes */
+    size: number;
+
+    /** Last updated timestamp */
+    lastUpdated: number;
+}
+
 // Type alias for backward compatibility
 export type Collection = CollectionRecord;
 
@@ -534,6 +561,9 @@ class ViaGentDatabase extends Dexie {
     // Epic 6: Source Ingestion & Management tables
     sources!: Table<SourceRecord, string>;
     collections!: Table<CollectionRecord, string>;
+
+    // Epic 7: RAG Infrastructure tables
+    oramaIndexes!: Table<OramaIndexRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
