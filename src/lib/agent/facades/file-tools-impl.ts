@@ -291,7 +291,7 @@ export class FileToolsFacade implements AgentFileTools {
 
     /**
      * Find files matching a glob pattern
-     * Supports basic glob patterns: **/*.ext, src/**/*, etc.
+     * Supports basic glob patterns: `**`/ `*`.ext, `src`/ `**`/ `*`, etc.
      */
     async globFiles(pattern: string, basePath = ''): Promise<FileEntry[]> {
         const normalizedBasePath = normalizePath(basePath);

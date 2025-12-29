@@ -79,7 +79,7 @@ export function ProviderSettings() {
                         <div className="flex items-center gap-2">
                             <Button
                                 variant="ghost"
-                                size="icon"
+                                size="sm"
                                 className="h-8 w-8 rounded-none"
                                 aria-label="Edit provider"
                                 onClick={() => handleEdit(provider)}
@@ -88,7 +88,7 @@ export function ProviderSettings() {
                             </Button>
                             <Button
                                 variant="ghost"
-                                size="icon"
+                                size="sm"
                                 className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-none"
                                 onClick={() => confirmDelete(provider)}
                                 aria-label="Delete provider"

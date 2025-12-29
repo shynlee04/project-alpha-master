@@ -73,6 +73,11 @@ describe('Agent Tool Factory', () => {
                 { name: 'folder', kind: 'directory' },
             ]),
             searchFiles: vi.fn().mockResolvedValue([]),
+            // Advanced operations (RC-007)
+            readMultiple: vi.fn().mockResolvedValue([]),
+            writeMultiple: vi.fn().mockResolvedValue(undefined),
+            globFiles: vi.fn().mockResolvedValue([]),
+            deleteMultiple: vi.fn().mockResolvedValue(undefined),
         };
 
         mockTerminalTools = {

@@ -17,6 +17,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { toast } from 'sonner';
+import { debounce } from 'lodash';
 import { createDexieStorage } from './dexie-storage';
 import type { ThreadMessageRecord, ConversationThreadRecord } from './dexie-db';
 import { saveThread, getThread, deleteThread as deleteDexieThread } from '../workspace/threads-store';
@@ -174,6 +175,18 @@ async function persistToDexie(conversation: ConversationState) {
         }
     }
 }
+
+/**
+ * Debounced persist to Dexie (500ms default)
+ * Performance optimization for frequent updates during chat
+ */
+const debouncedPersistToDexie = debounce(
+    async (conversation: ConversationState) => {
+        await persistToDexie(conversation);
+    },
+    500,
+    { leading: false, trailing: true }
+);
 
 // ============================================================================
 // Store Implementation

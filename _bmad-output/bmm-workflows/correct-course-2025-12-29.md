@@ -130,13 +130,13 @@
 
 **Duration:** 5 days
 **Goal:** Resolve HIGH issues
-**Status:** 7/11 STORIES COMPLETE (64%)
+**Status:** 8/11 STORIES COMPLETE (73%)
 
 | Story | Task | Status | Tests |
 |-------|------|--------|-------|
 | RC-005 | Migrate SyncStatusStore to Dexie | ✅ DONE | 32 tests |
 | RC-006 | Complete Epic 4 Story 4.4 Retry Queue | ✅ DONE | 40 tests |
-| RC-007 | Complete Epic 4 Story 4.2 File ACs | 🔄 PENDING | 15+ tests |
+| RC-007 | Complete Epic 4 Story 4.2 File ACs | ✅ DONE | Advanced ops |
 | RC-008 | Implement Approval Overlay | ✅ DONE | UI complete |
 | RC-009 | Add ChatRequest Validation | ✅ DONE | Zod schema |
 | RC-010 | Fix Type Mismatches | 🔄 PENDING | Build verification |
@@ -250,7 +250,7 @@
 | Sprint | Stories | Days | Focus | Status |
 |--------|---------|------|-------|--------|
 | 27A | 4 | 3 | CRITICAL security | ✅ DONE |
-| 27B | 11 | 5 | HIGH functionality | 🔄 7/11 |
+| 27B | 11 | 5 | HIGH functionality | 🔄 8/11 |
 | 28 | 9 | 5 | CRITICAL + MEDIUM | ⏳ PENDING |
 | **Total** | **24** | **13** | | |
 
@@ -259,7 +259,7 @@
 | Category | Count | Estimated Effort |
 |----------|-------|------------------|
 | CRITICAL (remaining) | 4 | ~8 hours |
-| HIGH (remaining) | 9 | ~18 hours |
+| HIGH (remaining) | 8 | ~16 hours |
 | MEDIUM | 25 | ~40 hours |
 | **Total** | **39** | **~68 hours** |
 

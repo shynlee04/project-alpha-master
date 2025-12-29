@@ -114,7 +114,7 @@ export interface AgentFileTools {
 
     /**
      * Find files matching a glob pattern
-     * @param pattern - Glob pattern (e.g., '**/*.ts', 'src/**/*.tsx')
+     * @param pattern - Glob pattern (e.g., `**`/ `*`.ts, `src`/ `**`/ `*`.tsx)
      * @param basePath - Optional base path (defaults to project root)
      * @returns Array of matching file entries
      */

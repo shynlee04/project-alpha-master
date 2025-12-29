@@ -201,5 +201,167 @@ describe('FileToolsFacade', () => {
             expect(results.map(r => r.name)).toEqual(['Button.tsx', 'button.css']);
         });
     });
+
+    // ============================================================================
+    // Advanced Operations Tests (RC-007)
+    // ============================================================================
+
+    describe('readMultiple', () => {
+        it('should read multiple files atomically', async () => {
+            mockLocalFS.readFile = vi.fn()
+                .mockResolvedValueOnce({ content: 'content1', path: 'file1.txt' })
+                .mockResolvedValueOnce({ content: 'content2', path: 'file2.txt' })
+                .mockResolvedValueOnce({ content: 'content3', path: 'file3.txt' });
+
+            const results = await facade.readMultiple(['file1.txt', 'file2.txt', 'file3.txt']);
+
+            expect(results).toHaveLength(3);
+            expect(results[0].content).toBe('content1');
+            expect(results[1].content).toBe('content2');
+            expect(results[2].content).toBe('content3');
+        });
+
+        it('should throw error when aborted', async () => {
+            const abortController = new AbortController();
+            abortController.abort();
+
+            await expect(facade.readMultiple(['file.txt'], abortController.signal))
+                .rejects.toThrow('Operation was aborted');
+        });
+
+        it('should throw on file read failure', async () => {
+            mockLocalFS.readFile = vi.fn().mockRejectedValue(new Error('File not found'));
+
+            await expect(facade.readMultiple(['nonexistent.txt']))
+                .rejects.toThrow('Failed to read file "nonexistent.txt"');
+        });
+    });
+
+    describe('writeMultiple', () => {
+        it('should write multiple files with progress tracking', async () => {
+            const progressCalls: number[] = [];
+            mockSyncManager.writeFile = vi.fn().mockResolvedValue(undefined);
+
+            await facade.writeMultiple(
+                [
+                    { path: 'file1.txt', content: 'content1' },
+                    { path: 'file2.txt', content: 'content2' },
+                ],
+                (progress) => progressCalls.push(progress)
+            );
+
+            expect(mockSyncManager.writeFile).toHaveBeenCalledTimes(2);
+            expect(progressCalls).toContain(100);
+        });
+
+        it('should emit events for each file written', async () => {
+            mockSyncManager.writeFile = vi.fn().mockResolvedValue(undefined);
+
+            await facade.writeMultiple([{ path: 'test.txt', content: 'test' }]);
+
+            expect(mockEventBus.emit).toHaveBeenCalledWith('file:modified', expect.objectContaining({
+                path: 'test.txt',
+                source: 'agent',
+            }));
+        });
+
+        it('should rollback on failure', async () => {
+            mockSyncManager.writeFile = vi.fn()
+                .mockResolvedValueOnce(undefined)
+                .mockRejectedValueOnce(new Error('Disk full'));
+            mockSyncManager.deleteFile = vi.fn().mockResolvedValue(undefined);
+
+            await expect(facade.writeMultiple([
+                { path: 'file1.txt', content: 'content1' },
+                { path: 'file2.txt', content: 'content2' },
+            ])).rejects.toThrow();
+
+            // Should have tried to delete the first file (rollback)
+            expect(mockSyncManager.deleteFile).toHaveBeenCalledWith('file1.txt');
+        });
+    });
+
+    describe('globFiles', () => {
+        it('should find files by extension', async () => {
+            mockLocalFS.listDirectory = vi.fn().mockResolvedValue([
+                { name: 'Button.tsx', type: 'file', handle: {} },
+                { name: 'button.css', type: 'file', handle: {} },
+                { name: 'Card.tsx', type: 'file', handle: {} },
+                { name: 'index.tsx', type: 'file', handle: {} },
+            ]);
+
+            const results = await facade.globFiles('*.tsx');
+            expect(results).toHaveLength(3);
+            expect(results.map(r => r.name)).toEqual(['Button.tsx', 'Card.tsx', 'index.tsx']);
+        });
+
+        it('should match nested directory patterns', async () => {
+            mockLocalFS.listDirectory = vi.fn().mockResolvedValue([
+                { name: 'src', type: 'directory', handle: {} },
+            ]);
+
+            const results = await facade.globFiles('src/**/*.tsx');
+            expect(mockLocalFS.listDirectory).toHaveBeenCalled();
+        });
+
+        it('should filter by extension only when no wildcard', async () => {
+            mockLocalFS.listDirectory = vi.fn().mockResolvedValue([
+                { name: 'test.ts', type: 'file', handle: {} },
+                { name: 'test.tsx', type: 'file', handle: {} },
+                { name: 'test.js', type: 'file', handle: {} },
+            ]);
+
+            const results = await facade.globFiles('.ts');
+            expect(results).toHaveLength(1);
+            expect(results[0].name).toBe('test.ts');
+        });
+    });
+
+    describe('deleteMultiple', () => {
+        it('should delete multiple files with progress tracking', async () => {
+            const progressCalls: number[] = [];
+            mockSyncManager.deleteFile = vi.fn().mockResolvedValue(undefined);
+
+            await facade.deleteMultiple(
+                ['file1.txt', 'file2.txt'],
+                (progress) => progressCalls.push(progress)
+            );
+
+            expect(mockSyncManager.deleteFile).toHaveBeenCalledTimes(2);
+            expect(progressCalls).toContain(100);
+        });
+
+        it('should emit events for each file deleted', async () => {
+            mockSyncManager.deleteFile = vi.fn().mockResolvedValue(undefined);
+
+            await facade.deleteMultiple(['test.txt']);
+
+            expect(mockEventBus.emit).toHaveBeenCalledWith('file:deleted', expect.objectContaining({
+                path: 'test.txt',
+                source: 'agent',
+            }));
+        });
+
+        it('should rollback on failure by re-creating files', async () => {
+            mockSyncManager.deleteFile = vi.fn()
+                .mockResolvedValueOnce(undefined)
+                .mockRejectedValueOnce(new Error('Permission denied'));
+            mockSyncManager.writeFile = vi.fn().mockResolvedValue(undefined);
+
+            await expect(facade.deleteMultiple(['file1.txt', 'file2.txt']))
+                .rejects.toThrow();
+
+            // Should have tried to re-create the first file (rollback)
+            expect(mockSyncManager.writeFile).toHaveBeenCalledWith('file1.txt', '');
+        });
+
+        it('should throw error when aborted', async () => {
+            const abortController = new AbortController();
+            abortController.abort();
+
+            await expect(facade.deleteMultiple(['file.txt'], undefined, abortController.signal))
+                .rejects.toThrow('Operation was aborted');
+        });
+    });
 });
 

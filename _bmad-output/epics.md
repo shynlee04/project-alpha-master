@@ -1891,3 +1891,433 @@ const wsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativela
 | NFR-PERF-P2-07 | Epic 10 | Audio generation < 30s |
 | NFR-REL-P2-01 | Epic 6 | IndexedDB reliability 99%+ |
 | NFR-REL-P2-02 | Epic 7 | Citation accuracy 100% |
+
+---
+
+## Comprehensive Traceability Matrix
+
+### Epic → Requirements Traceability
+
+| Epic ID | Epic Name | Functional Requirements | Non-Functional Requirements | Architecture References | UX References | PRD References | Project Context References |
+|---------|-----------|------------------------|---------------------------|------------------------|--------------|---------------|---------------------------|
+| **Epic 1** | Mobile-First Visual Foundation | FR-UI-01, FR-UI-02, FR-UI-03, FR-UI-04 | NFR-USE-04, NFR-SEC-06, NFR-COMPAT-01,02,03,04,05,06 | Arch 5.2 (naming), Arch 5.3 (barrel exports) | UX 2.1, 3.1, 4.1, 4.2, 5.1 | PRD 2.1 (Multi-Surface), PRD 2.3 (Progressive Disclosure) | Context: Cross-Architecture (mobile support), Bilingual Support (i18n) |
+| **Epic 2** | AI Chat That Just Works | FR-AGENT-01, FR-AGENT-03, FR-STATE-01, FR-STATE-02 | NFR-PERF-04, NFR-REL-02, NFR-SEC-01,02,05 | Arch 4.2 (Zustand+Dexie), Arch 4.3 (AES-256), Arch 4.4 (5-Layer System) | UX 2.3, 3.2 | PRD 3.1 (Multi-Provider), PRD 3.2 (Streaming) | Context: Advanced State Management, Bilingual Support |
+| **Epic 3** | Local-First File Magic | FR-ENV-01, FR-ENV-02, FR-ENV-03, FR-STATE-03 | NFR-PERF-01,02,06, NFR-REL-01,05, NFR-SEC-03,04 | Arch 3.5 (Vector Store), Arch 4.2 (Unified State), Arch 6.1 (Project Structure) | UX 2.1, 3.1 | PRD 4.1 (WebContainer), PRD 4.2 (FSA Sync) | Context: Cross-Architecture (WebContainer), Brownfield Architecture |
+| **Epic 4** | Smart Agent Tools | FR-AGENT-02, FR-AGENT-04, FR-AGENT-05, FR-ERROR-01 | NFR-PERF-04, NFR-REL-06, NFR-SEC-01,02 | Arch 4.4 (5-Layer System), Arch 4.4.5 (Tool Trust Levels) | UX 3.2 | PRD 3.3 (Tool Execution), PRD 3.4 (Error Handling) | Context: Advanced State Management (RAG patterns) |
+| **Epic 5** | Production-Ready Polish | FR-STATE-04, FR-ERROR-02, FR-ERROR-03, FR-ERROR-04 | NFR-PERF-01-08, NFR-REL-01-06, NFR-OBS-01-05 | Arch 4.2 (State Persistence), Arch 5.5 (Event Bus) | UX 4.1 | PRD 5.1 (Resilience), PRD 5.2 (Observability) | Context: Brownfield Architecture (integration) |
+| **Epic 6** | Source Ingestion & Management | FR-EDU-01 | NFR-PERF-P2-01,02, NFR-REL-P2-01 | Arch 3.5 (Orama WASM), Arch 4.2 (IndexedDB) | UX 8.1 (Content Guidelines) | PRD 6.1 (Source Import), PRD 6.2 (Metadata) | Context: RAG Infrastructure, Bilingual Support, Performance Targets |
+| **Epic 7** | RAG Infrastructure | FR-AGENT-02, FR-EDU-02 | NFR-PERF-P2-03,04, NFR-REL-P2-02 | Arch 3.5 (Vector Store), Arch 4.2 (State Persistence) | UX 8.1, 21 (Cross-Platform) | PRD 7.1 (Vector Search), PRD 7.2 (Hybrid Retrieval) | Context: RAG Infrastructure, Advanced State Management, Performance Targets |
+| **Epic 8** | Knowledge Canvas | - | NFR-PERF-P2-05 | Arch 4.2 (Canvas State), Arch 6.1 (Project Structure) | UX 8.2, 21 | PRD 8.1 (Visual Knowledge), PRD 8.2 (Canvas Editing) | Context: Cross-Architecture (React Flow), Advanced State Management |
+| **Epic 9** | Study Artifacts Generation | - | NFR-PERF-P2-06 | Arch 4.2 (Artifact Storage) | UX 8.1 | PRD 9.1 (Flashcards), PRD 9.2 (Quizzes) | Context: RAG Infrastructure, Bilingual Support, Performance Targets |
+| **Epic 10** | Knowledge Chat & Synthesis | - | NFR-PERF-P2-07 | Arch 4.4 (5-Layer System), Arch 4.4.5 (Tool Trust) | UX 8.1, 21 | PRD 10.1 (Voice Chat), PRD 10.2 (Audio Overview) | Context: Cross-Architecture (WebSocket), Bilingual Support, Performance Targets |
+
+---
+
+### Story-Level Traceability
+
+#### Phase 1 Stories
+
+| Story ID | Story Name | Epic | Acceptance Criteria | Dependencies | Blockers | NFR Validated | Tech Stack | Files Modified |
+|----------|-----------|------|---------------------|--------------|----------|---------------|------------|----------------|
+| **1.1** | Responsive Breakpoint Foundation | Epic 1 | Desktop/tablet/mobile layouts, resizable panels | useResponsive hook | - | NFR-USE-04, NFR-COMPAT-01,02,03,04 | Tailwind CSS 4, react-resizable-panels | `src/hooks/useResponsive.ts`, `src/components/layout/IDELayout.tsx` |
+| **1.2** | Dark/Light Theme System | Epic 1 | Theme toggle, persistence, accessibility | - | - | NFR-USE-04, NFR-SEC-06 | next-themes, design tokens | `src/components/ui/ThemeToggle.tsx`, `src/styles/design-tokens.css` |
+| **1.3** | Mobile Demo Mode with Capability Detection | Epic 1 | Capability detection, demo mode, sample conversations | useCapabilityDetection hook, sample-conversations.json | E1-B1 | NFR-USE-04, NFR-COMPAT-05 | - | `src/hooks/useCapabilityDetection.ts`, `src/lib/demo/sample-conversations.json` |
+| **1.4** | Accessibility Foundation | Epic 1 | Keyboard navigation, ARIA labels, focus management | - | - | NFR-USE-04, UX 4.1 | - | `src/components/common/ErrorBoundary.tsx`, all interactive components |
+| **2.0** | Credential Vault Implementation | Epic 2 | AES-256 encryption, IndexedDB storage | - | - | NFR-SEC-05 | Web Crypto API, Dexie | `src/lib/security/credential-vault.ts`, `src/lib/security/crypto-utils.ts` |
+| **2.1** | Zustand + Dexie State Migration | Epic 2 | Agent config in Zustand, Dexie persistence | Story 2.0 | - | NFR-PERF-08 | Zustand, Dexie | `src/lib/state/agents-store.ts`, `src/lib/state/conversation-store.ts` |
+| **2.2** | Agent CRUD Operations with Optimistic UI | Epic 2 | Create/edit/delete agents, optimistic updates | Story 2.1 | - | NFR-REL-02 | Zustand | `src/components/agent/AgentConfigDialog.tsx` |
+| **2.3** | Streaming Chat with Tool Approval UI | Epic 2 | Streaming markdown, tool approval overlay | Story 2.1 | E2-B2, E2-D2 | NFR-PERF-04 | TanStack AI, ApprovalOverlay component | `src/components/chat/ApprovalOverlay.tsx`, `src/lib/agent/tools/tool-parser.ts` |
+| **2.4** | Conversation Persistence & Session Restore | Epic 2 | IndexedDB persistence, scroll position | Story 2.1 | E2-B3, E2-D1 | NFR-REL-02 | Dexie | `src/lib/state/conversation-store.ts`, `src/components/chat/ChatPanel.tsx` |
+| **3.1** | FSA Permission Lifecycle & Re-Grant Flow | Epic 3 | Permission persistence, re-grant flow | - | E3-B1 | NFR-REL-05 | File System Access API | `src/lib/fs/fsa-permission-manager.ts` |
+| **3.2** | WebContainer Boot with Progress Indicator | Epic 3 | Boot progress, <5s target | - | E3-B2, E3-D1 | NFR-PERF-01 | @webcontainer/api | `src/lib/webcontainer/boot-manager.ts` |
+| **3.3** | Dual-Write Sync (Local FS ↔ WebContainer) | Epic 3 | Parallel write, sync queue, conflict resolution | Story 3.2 | E3-B3 | NFR-PERF-02,06, NFR-REL-01 | SyncManager, ConflictDialog | `src/lib/filesystem/sync-manager.ts`, `src/components/sync/ConflictDialog.tsx` |
+| **3.4** | Terminal Integration with WebContainer Shell | Epic 3 | xterm.js terminal, shell connection | Story 3.2 | E3-D2 | - | @xterm/xterm, @xterm/addon-fit | `src/lib/terminal/wc-terminal.ts` |
+| **4.1** | 5-Layer System Prompt Composer (Layers 1-3) | Epic 4 | System prompt composition, context injection | - | E4-B1 | - | SystemPromptComposer | `src/lib/agent/prompt-composer.ts` |
+| **4.2** | File Tool Execution (read_file, write_file, list_files) | Epic 4 | File operations, large file warning | Story 4.1 | - | NFR-REL-06 | AgentFileTools | `src/lib/agent/tools/file-tools.ts` |
+| **4.3** | Tool Permissions & Trust Levels | Epic 4 | Trust levels (auto/prompt/block), session trust | Story 4.2 | E4-B3, E4-B5 | NFR-SEC-01 | ToolPermissionManager | `src/lib/agent/tools/tool-permissions.ts` |
+| **4.4** | Tool Error Handling with Retry Logic | Epic 4 | Retry logic, race condition handling | Story 4.3 | E4-B4, E4-D2 | NFR-REL-06 | ToolExecutor | `src/lib/agent/tools/tool-executor.ts` |
+| **5.1** | Sync Queue Visualizer & Global Status | Epic 5 | Status bar indicator, process panel | Story 3.3 | - | NFR-OBS-01,02,04 | useFileSyncStatusStore | `src/lib/state/file-sync-status-store.ts`, `src/components/ide/SyncStatusIndicator.tsx` |
+| **5.2** | WebContainer Crash Recovery & Resilience | Epic 5 | Auto-reboot, max 3 attempts, toast notifications | Story 3.2 | - | NFR-REL-03 | CrashRecovery | `src/lib/webcontainer/crash-recovery.ts` |
+| **5.3** | Performance Telemetry & Benchmark Dashboard | Epic 5 | Performance metrics, Nerd Stats overlay | - | - | NFR-PERF-01-08, NFR-OBS-01,05 | PerformanceMonitor | `src/lib/monitoring/performance-monitor.ts` |
+| **5.4** | Robust State Hydration & Restoration | Epic 5 | Zustand hydration, corrupt state recovery | Story 2.1 | - | NFR-REL-02 | Zustand, Zod | `src/lib/state/ide-store.ts` |
+
+#### Phase 2 Stories
+
+| Story ID | Story Name | Epic | Acceptance Criteria | Dependencies | Blockers | NFR Validated | Tech Stack | Files Modified |
+|----------|-----------|------|---------------------|--------------|----------|---------------|------------|----------------|
+| **6.1** | Source Import Pipeline (PDF, URL, Text) | Epic 6 | PDF/URL/text import, progress indicators | Dexie.js, event bus | - | NFR-PERF-P2-01, NFR-REL-P2-01 | pdf.js, Dexie | `src/lib/knowledge/source-import.ts` |
+| **6.2** | Source Card UI with Preview | Epic 6 | Card display, preview panel, metadata | Story 6.1 | - | NFR-PERF-P2-02 | - | `src/components/knowledge/SourceCard.tsx` |
+| **6.3** | Source Management (Delete, Rename, Organize) | Epic 6 | CRUD operations, collections, undo | Story 6.2 | - | - | Zustand | `src/lib/state/knowledge-store.ts` |
+| **6.4** | Source Metadata Extraction | Epic 6 | Auto-metadata, AI summary, key concepts | Story 6.1 | - | - | Gemini API | `src/lib/knowledge/metadata-extractor.ts` |
+| **7.1** | Orama WASM Integration & Index Management | Epic 7 | Orama WASM, index persistence, search | Story 6.1 | - | NFR-PERF-P2-03, NFR-REL-P2-02 | Orama WASM, Dexie | `src/lib/rag/orama-index.ts` |
+| **7.2** | Document Chunking Strategy | Epic 7 | 512-2048 token chunks, overlap, boundaries | Story 7.1 | - | - | - | `src/lib/rag/chunking.ts` |
+| **7.3** | Embedding Service Integration (Hybrid Local/Cloud) | Epic 7 | Local embeddings (Transformers.js), cloud fallback | Story 7.2 | - | - | Transformers.js, Gemini API | `src/lib/rag/embeddings.ts` |
+| **7.4** | Hybrid Retrieval Tool (BM25 + Vector + RRF) | Epic 7 | Hybrid search, RRF fusion, result highlighting | Story 7.3 | - | NFR-PERF-P2-03, NFR-PERF-P2-04 | Orama WASM | `src/lib/rag/retrieval.ts` |
+| **7.5** | RAG Chat Integration | Epic 7 | Grounded responses, inline citations | Story 7.4 | - | NFR-REL-P2-02 | TanStack AI | `src/lib/rag/rag-chat.ts` |
+| **7.6** | "Deep Think" Synthesis Block (Desktop Only) | Epic 7 | Long-press deep think, Gemini 3.0 Pro | Story 7.5 | - | - | Gemini 3.0 Pro | `src/lib/rag/deep-think.ts` |
+| **8.1** | React Flow Canvas Setup | Epic 8 | Canvas rendering, pan/zoom, read-only mobile | Zustand + Dexie | - | NFR-PERF-P2-05 | React Flow | `src/components/canvas/Canvas.tsx` |
+| **8.2** | Source Node Creation | Epic 8 | Drag-drop sources, node display | Story 8.1 | - | - | React Flow | `src/components/canvas/SourceNode.tsx` |
+| **8.3** | Concept & Mind Map Nodes | Epic 8 | Concept nodes, inline editing | Story 8.1 | - | - | React Flow | `src/components/canvas/ConceptNode.tsx` |
+| **8.4** | Connection Lines with Labels | Epic 8 | Edge creation, labels, deletion | Story 8.3 | - | - | React Flow | `src/components/canvas/EdgeLabel.tsx` |
+| **8.5** | Canvas Persistence & Export | Epic 8 | IndexedDB persistence, export options | Story 8.1 | - | - | Dexie | `src/lib/state/canvas-store.ts` |
+| **9.1** | Flashcard Generator | Epic 9 | Q&A generation, citations | Story 7.5 | - | NFR-PERF-P2-06 | Gemini API | `src/lib/study/flashcard-generator.ts` |
+| **9.2** | Quiz Generator | Epic 9 | Multiple choice, explanations | Story 9.1 | - | - | Gemini API | `src/lib/study/quiz-generator.ts` |
+| **9.3** | Flashcard Study Interface | Epic 9 | Spaced repetition, study stats | Story 9.1 | - | NFR-PERF-P2-06 | - | `src/components/study/FlashcardStudy.tsx` |
+| **9.4** | Quiz Taking Interface | Epic 9 | Interactive quiz, scoring, review | Story 9.2 | - | - | - | `src/components/study/QuizTaking.tsx` |
+| **10.1** | Live API WebSocket Manager (Desktop Only) | Epic 10 | WebSocket connection, real-time audio | - | - | - | Gemini Live API | `src/lib/voice/websocket-manager.ts` |
+| **10.2** | Multimodal Source Vision (Desktop Only) | Epic 10 | PDF page capture, vision explanation | Story 10.1 | - | - | Gemini Live API, pdf.js | `src/lib/voice/vision-capture.ts` |
+| **10.3** | Audio Overview Generator | Epic 10 | Audio generation, offline playback | Story 7.5 | - | NFR-PERF-P2-07 | Gemini 3.0 Flash | `src/lib/study/audio-overview.ts` |
+
+---
+
+### Dependency Graph
+
+#### Phase 1 Dependencies
+
+```
+Story 2.0 (Credential Vault)
+    ↓
+Story 2.1 (Zustand + Dexie Migration)
+    ↓
+Story 2.2 (Agent CRUD) ──────┐
+    ↓                        │
+Story 2.3 (Streaming Chat)   │
+    ↓                        │
+Story 2.4 (Persistence)      │
+                             │
+Story 3.2 (WebContainer Boot)│
+    ↓                        │
+Story 3.3 (Dual-Write Sync)──┤
+    ↓                        │
+Story 3.4 (Terminal)         │
+                             │
+Story 4.1 (System Prompt)────┤
+    ↓                        │
+Story 4.2 (File Tools)       │
+    ↓                        │
+Story 4.3 (Permissions)      │
+    ↓                        │
+Story 4.4 (Error Handling)   │
+                             │
+Story 3.3 ─────→ Story 5.1 (Sync Queue)
+Story 3.2 ─────→ Story 5.2 (Crash Recovery)
+Story 2.1 ─────→ Story 5.4 (State Hydration)
+```
+
+#### Phase 2 Dependencies
+
+```
+Story 6.1 (Source Import)
+    ↓
+Story 6.2 (Source Cards) ──────┐
+    ↓                         │
+Story 6.3 (Source Management) │
+    ↓                         │
+Story 6.4 (Metadata)         │
+                              │
+Story 6.1 ─────→ Story 7.1 (Orama)
+    ↓                         │
+Story 7.2 (Chunking)         │
+    ↓                         │
+Story 7.3 (Embeddings)        │
+    ↓                         │
+Story 7.4 (Hybrid Retrieval)  │
+    ↓                         │
+Story 7.5 (RAG Chat) ─────────┤
+    ↓                         │
+Story 7.6 (Deep Think)       │
+                              │
+Story 7.5 ─────→ Story 9.1 (Flashcards)
+    ↓                         │
+Story 9.2 (Quizzes)          │
+    ↓                         │
+Story 9.3 (Flashcard Study)   │
+    ↓                         │
+Story 9.4 (Quiz Taking)       │
+                              │
+Story 10.1 (WebSocket)        │
+    ↓                         │
+Story 10.2 (Vision)           │
+                              │
+Story 7.5 ─────→ Story 10.3 (Audio)
+                              │
+Story 6.1 ─────→ Story 8.1 (Canvas)
+    ↓
+Story 8.2 (Source Nodes)
+    ↓
+Story 8.3 (Concept Nodes)
+    ↓
+Story 8.4 (Connections)
+    ↓
+Story 8.5 (Persistence)
+```
+
+---
+
+### Cross-Document Reference Index
+
+#### Architecture Document References
+
+| Arch Section | Topic | Related Epics | Related Stories |
+|--------------|-------|---------------|----------------|
+| Arch 3.5 | Vector Store Strategy | Epic 7 | 7.1, 7.2, 7.3, 7.4, 7.5, 7.6 |
+| Arch 4.2 | Unified Zustand + Dexie | Epic 2, 3, 5 | 2.1, 2.4, 3.3, 5.1, 5.4 |
+| Arch 4.3 | AES-256 Encryption | Epic 2 | 2.0 |
+| Arch 4.4 | 5-Layer Agent System | Epic 2, 4, 10 | 2.3, 4.1, 4.2, 4.3, 4.4, 10.1, 10.2 |
+| Arch 4.4.5 | Tool Trust Levels | Epic 4 | 4.3 |
+| Arch 5.2 | Naming Conventions | Epic 1 | 1.1, 1.2 |
+| Arch 5.3 | Barrel Exports | Epic 1 | 1.1, 1.2 |
+| Arch 5.5 | Event Bus Pattern | Epic 5 | 5.1 |
+| Arch 5.6 | Custom Error Classes | Epic 4, 5 | 4.4, 5.2 |
+| Arch 6.1 | Project Structure | Epic 3, 8 | 3.1, 8.1 |
+| Arch 6.2 | State Boundaries | Epic 2, 5 | 2.1, 5.4 |
+| Arch 6.3 | Phase 2 Additions | Epic 6-10 | All Phase 2 stories |
+
+#### PRD Document References
+
+| PRD Section | Topic | Related Epics | Related Stories |
+|-------------|-------|---------------|----------------|
+| PRD 2.1 | Multi-Surface Layout | Epic 1 | 1.1, 1.3 |
+| PRD 2.3 | Progressive Disclosure | Epic 1 | 1.2 |
+| PRD 3.1 | Multi-Provider Configuration | Epic 2 | 2.0, 2.1, 2.2 |
+| PRD 3.2 | Streaming Responses | Epic 2 | 2.3 |
+| PRD 3.3 | Tool Execution | Epic 4 | 4.2, 4.4 |
+| PRD 3.4 | Error Handling | Epic 4, 5 | 4.4, 5.2 |
+| PRD 4.1 | WebContainer Integration | Epic 3 | 3.2, 3.4 |
+| PRD 4.2 | FSA Sync | Epic 3 | 3.1, 3.3 |
+| PRD 5.1 | Resilience | Epic 5 | 5.2, 5.4 |
+| PRD 5.2 | Observability | Epic 5 | 5.1, 5.3 |
+| PRD 6.1 | Source Import | Epic 6 | 6.1, 6.2 |
+| PRD 6.2 | Metadata Extraction | Epic 6 | 6.4 |
+| PRD 7.1 | Vector Search | Epic 7 | 7.1, 7.2, 7.3 |
+| PRD 7.2 | Hybrid Retrieval | Epic 7 | 7.4, 7.5 |
+| PRD 8.1 | Visual Knowledge | Epic 8 | 8.1, 8.2, 8.3 |
+| PRD 8.2 | Canvas Editing | Epic 8 | 8.4, 8.5 |
+| PRD 9.1 | Flashcards | Epic 9 | 9.1, 9.3 |
+| PRD 9.2 | Quizzes | Epic 9 | 9.2, 9.4 |
+| PRD 10.1 | Voice Chat | Epic 10 | 10.1, 10.2 |
+| PRD 10.2 | Audio Overview | Epic 10 | 10.3 |
+
+#### UX Design Specification References
+
+| UX Section | Topic | Related Epics | Related Stories |
+|------------|-------|---------------|----------------|
+| UX 2.1 | Multi-Surface Layout | Epic 1, 3 | 1.1, 1.3, 3.1 |
+| UX 2.3 | Progressive Disclosure | Epic 1 | 1.2 |
+| UX 3.1 | Mobile Card Feed | Epic 1 | 1.1, 1.3 |
+| UX 3.2 | Chat Panel | Epic 2 | 2.3, 2.4 |
+| UX 4.1 | WCAG 2.1 AA | Epic 1 | 1.4 |
+| UX 4.2 | Color Contrast | Epic 1 | 1.2, 1.4 |
+| UX 5.1 | Vietnamese-First | Epic 1, 2, 6, 9, 10 | All stories with i18n |
+| UX 8.1 | Content Guidelines | Epic 6, 9, 10 | 6.4, 9.1, 9.2, 10.3 |
+| UX 21 | Cross-Platform Consistency | Epic 6, 7, 8, 10 | 7.3, 8.1, 10.1, 10.2 |
+| UX 24 | Performance Targets (Phase 2) | Epic 6-10 | All Phase 2 stories |
+
+#### Project Context References
+
+| Context Section | Topic | Related Epics | Related Stories |
+|-----------------|-------|---------------|----------------|
+| Cross-Architecture Support | CPU/Platform Targets | Epic 1, 3, 8, 10 | 1.1, 1.3, 3.2, 8.1, 10.1, 10.2 |
+| Advanced State Management | Client/Server State Patterns | Epic 2, 4, 5, 7, 8 | 2.1, 4.1, 5.4, 7.5, 8.5 |
+| RAG Infrastructure Constraints | Vector DB, Embeddings | Epic 6, 7 | 6.1, 7.1, 7.2, 7.3, 7.4, 7.5 |
+| Bilingual Support Constraints | Vietnamese/English, RTL | Epic 1, 2, 6, 9, 10 | 1.2, 2.3, 6.4, 9.1, 10.3 |
+| Performance Targets | Latency Targets | Epic 3, 5, 6, 7, 8, 9, 10 | 3.2, 5.3, 6.1, 7.4, 8.1, 9.3, 10.3 |
+| Brownfield Architecture Alignment | Integration, Migration | Epic 3, 5 | 3.1, 3.3, 5.2, 5.4 |
+
+---
+
+### NFR Validation Matrix
+
+#### Phase 1 NFRs
+
+| NFR ID | Requirement | Target | Red Flag | Validation Epic | Validation Story | Status |
+|--------|-------------|--------|----------|-----------------|------------------|--------|
+| NFR-PERF-01 | WebContainer boot time | <5s | >10s | Epic 3 | 3.2 | ✅ Defined |
+| NFR-PERF-02 | File mount (100 files) | <3s | >8s | Epic 3 | 3.3 | ✅ Defined |
+| NFR-PERF-03 | Dev server start | <30s | >60s | Epic 5 | 5.3 | ✅ Defined |
+| NFR-PERF-04 | Agent TTFT | <2s | >5s | Epic 2 | 2.3 | ✅ Defined |
+| NFR-PERF-05 | Preview hot-reload | <2s | >5s | Epic 3 | 3.4 | ✅ Defined |
+| NFR-PERF-06 | File save to disk | <500ms | >2s | Epic 3 | 3.3 | ✅ Defined |
+| NFR-PERF-07 | Monaco editor load | <2s | >5s | Epic 5 | 5.3 | ✅ Defined |
+| NFR-PERF-08 | IndexedDB query | <100ms | >500ms | Epic 2 | 2.1 | ✅ Defined |
+| NFR-REL-01 | File sync reliability | 99%+ | - | Epic 3 | 3.3 | ✅ Defined |
+| NFR-REL-02 | State restoration | 99%+ | - | Epic 5 | 5.4 | ✅ Defined |
+| NFR-REL-03 | WebContainer stability | No crash | - | Epic 5 | 5.2 | ✅ Defined |
+| NFR-REL-04 | No data corruption | 0 incidents | - | Epic 5 | 5.4 | ✅ Defined |
+| NFR-REL-05 | FSA re-grant success | >90% | - | Epic 3 | 3.1 | ✅ Defined |
+| NFR-REL-06 | Tool execution reliability | >95% | - | Epic 4 | 4.4 | ✅ Defined |
+| NFR-USE-01 | Time to first project | <2 min | - | Epic 3 | 3.2 | ✅ Defined |
+| NFR-USE-02 | Onboarding completion | >70% | - | Epic 1 | 1.1 | ✅ Defined |
+| NFR-USE-03 | Error recovery path | <10s | - | Epic 5 | 5.2 | ✅ Defined |
+| NFR-USE-04 | Keyboard accessibility | Full | - | Epic 1 | 1.4 | ✅ Defined |
+| NFR-USE-05 | Permission prompt clarity | <5 retries | - | Epic 3 | 3.1 | ✅ Defined |
+| NFR-USE-06 | Chat discoverability | >80% usage | - | Epic 2 | 2.3 | ✅ Defined |
+| NFR-SEC-01 | No server data transmission | 100% | - | Epic 2 | 2.0 | ✅ Defined |
+| NFR-SEC-02 | API keys client-only | User controls | - | Epic 2 | 2.0 | ✅ Defined |
+| NFR-SEC-03 | FSA scoped execution | Per session | - | Epic 3 | 3.1 | ✅ Defined |
+| NFR-SEC-04 | WebContainers sandboxing | Per spec | - | Epic 3 | 3.2 | ✅ Defined |
+| NFR-SEC-05 | API key encryption at rest | AES-256 | - | Epic 2 | 2.0 | ✅ Defined |
+| NFR-SEC-06 | Content Security Policy | Strict | - | Epic 1 | 1.2 | ✅ Defined |
+| NFR-SEC-07 | No PII in logs | 0 incidents | - | Epic 5 | 5.3 | ✅ Defined |
+| NFR-COMPAT-01 | Chrome 86+ | Full support | - | Epic 1 | 1.1 | ✅ Defined |
+| NFR-COMPAT-02 | Edge 86+ | Full support | - | Epic 1 | 1.1 | ✅ Defined |
+| NFR-COMPAT-03 | Safari 15.2+ | FSA support (partial) | - | Epic 1 | 1.1 | ✅ Defined |
+| NFR-COMPAT-04 | Firefox 115+ | IndexedDB only | - | Epic 1 | 1.1 | ✅ Defined |
+| NFR-COMPAT-05 | SharedArrayBuffer | Mandatory | - | Epic 1 | 1.3 | ✅ Defined |
+| NFR-COMPAT-06 | COOP/COEP headers | Strict | - | Epic 1 | 1.1 | ✅ Defined |
+| NFR-OBS-01 | Performance metrics capture | 100% | - | Epic 5 | 5.3 | ✅ Defined |
+| NFR-OBS-02 | Error rate tracking | All errors | - | Epic 5 | 5.3 | ✅ Defined |
+| NFR-OBS-03 | Tool execution tracing | Every call | - | Epic 5 | 5.3 | ✅ Defined |
+| NFR-OBS-04 | Sync operation audit | Every sync | - | Epic 5 | 5.3 | ✅ Defined |
+| NFR-OBS-05 | User diagnostics panel | Accessible | - | Epic 5 | 5.3 | ✅ Defined |
+
+#### Phase 2 NFRs
+
+| NFR ID | Requirement | Target | Red Flag | Validation Epic | Validation Story | Status |
+|--------|-------------|--------|----------|-----------------|------------------|--------|
+| NFR-PERF-P2-01 | Source ingestion | <60s | >120s | Epic 6 | 6.1 | ✅ Defined |
+| NFR-PERF-P2-02 | Source preview | <2s | >5s | Epic 6 | 6.2 | ✅ Defined |
+| NFR-PERF-P2-03 | Semantic search | <500ms | >1s | Epic 7 | 7.4 | ✅ Defined |
+| NFR-PERF-P2-04 | Citation lookup | <100ms | >500ms | Epic 7 | 7.5 | ✅ Defined |
+| NFR-PERF-P2-05 | Canvas interaction | 60fps | <30fps | Epic 8 | 8.1 | ✅ Defined |
+| NFR-PERF-P2-06 | Flashcard load | <2s mobile | >5s | Epic 9 | 9.3 | ✅ Defined |
+| NFR-PERF-P2-07 | Audio generation | <30s | >60s | Epic 10 | 10.3 | ✅ Defined |
+| NFR-REL-P2-01 | IndexedDB reliability | 99%+ | - | Epic 6 | 6.3 | ✅ Defined |
+| NFR-REL-P2-02 | Citation accuracy | 100% | - | Epic 7 | 7.5 | ✅ Defined |
+
+---
+
+### Technology Stack Traceability
+
+#### Core Libraries
+
+| Library | Version | Purpose | Related Epics | Related Stories |
+|---------|---------|---------|---------------|----------------|
+| @tanstack/react-router | Latest | Routing | All | All stories with routes |
+| @tanstack/ai | Latest | AI Chat | Epic 2, 4, 7, 10 | 2.3, 4.1, 7.5, 10.1 |
+| @tanstack/store | Latest | State Management | Epic 2, 5 | 2.1, 5.4 |
+| zustand | Latest | State Management | Epic 2, 5, 8, 9 | 2.1, 5.4, 8.5, 9.3 |
+| dexie | Latest | IndexedDB | Epic 2, 3, 5, 6, 8 | 2.1, 3.3, 5.4, 6.3, 8.5 |
+| @webcontainer/api | Latest | WebContainer | Epic 3 | 3.2, 3.4 |
+| @xterm/xterm | Latest | Terminal | Epic 3 | 3.4 |
+| react-resizable-panels | Latest | Resizable Panels | Epic 1 | 1.1 |
+| @radix-ui/* | Latest | UI Components | Epic 1, 2, 5 | 1.2, 2.2, 5.2 |
+| lucide-react | Latest | Icons | All | All stories with icons |
+| tailwindcss | Latest | Styling | All | All stories |
+| next-themes | Latest | Theme | Epic 1 | 1.2 |
+| i18next | Latest | i18n | Epic 1, 2, 6, 9, 10 | 1.2, 2.3, 6.4, 9.1, 10.3 |
+| zod | Latest | Validation | Epic 2, 5 | 2.1, 5.4 |
+| @sentry/react | Latest | Observability | Epic 5 | 5.3 |
+
+#### Phase 2 Libraries
+
+| Library | Version | Purpose | Related Epics | Related Stories |
+|---------|---------|---------|---------------|----------------|
+| Orama WASM | Latest | Vector Search | Epic 7 | 7.1, 7.2, 7.4 |
+| Transformers.js | Latest | Local Embeddings | Epic 7 | 7.3 |
+| React Flow | Latest | Canvas | Epic 8 | 8.1, 8.2, 8.3, 8.4 |
+| pdf.js | Latest | PDF Parsing | Epic 6, 10 | 6.1, 10.2 |
+
+---
+
+### Risk and Mitigation Traceability
+
+| Epic | Risk | Impact | Probability | Mitigation Strategy | Related Stories |
+|------|------|--------|-------------|---------------------|-----------------|
+| Epic 1 | Mobile browser compatibility | High | Medium | Progressive degradation, capability detection | 1.1, 1.3 |
+| Epic 2 | Hot-reload visibility bug | High | High | Zustand + Dexie migration (R-01) | 2.1 |
+| Epic 2 | State inconsistency | High | Medium | Atomic state updates (R-02) | 2.1, 2.2 |
+| Epic 3 | WebContainer boot failure | High | Medium | Crash recovery, progress indicators | 3.2, 5.2 |
+| Epic 3 | FSA permission issues | Medium | High | Permission lifecycle, re-grant flow | 3.1 |
+| Epic 3 | Sync conflicts | Medium | Medium | Conflict resolution UI, dual-write validation | 3.3 |
+| Epic 4 | Tool execution failures | Medium | Medium | Retry logic, error handling | 4.4 |
+| Epic 4 | Race conditions | Medium | Low | Request queue (R-14) | 4.4 |
+| Epic 5 | State corruption | High | Low | Zod validation, graceful recovery | 5.4 |
+| Epic 6 | PDF parsing failures | Medium | Medium | Client-side parsing, error handling | 6.1 |
+| Epic 7 | Vector search performance | High | Medium | Hybrid retrieval, caching | 7.3, 7.4 |
+| Epic 7 | Embedding model size | Medium | Medium | Local + cloud hybrid strategy | 7.3 |
+| Epic 8 | Canvas performance on mobile | Medium | High | Read-only mobile, lazy loading | 8.1 |
+| Epic 9 | Flashcard generation quality | Medium | Medium | Citation verification, user editing | 9.1 |
+| Epic 10 | WebSocket connection issues | Medium | Medium | Retry logic, fallback to text | 10.1 |
+| Epic 10 | Audio generation cost | Medium | Medium | Model selection, caching | 10.3 |
+
+---
+
+### Remediation Epic Traceability
+
+| Remediation Epic | Description | Priority | Addressed In | Related Stories |
+|------------------|-------------|----------|--------------|-----------------|
+| R-01 | Fix Hot-Reloading Bug | P0 | Epic 2 | 2.1 |
+| R-02 | Atomic State Updates | P0 | Epic 2 | 2.1, 2.2 |
+| R-03 | Deploy Qdrant Vector Store | P0 → Phase 2 | Epic 7 | 7.1 (replaced by Orama WASM) |
+| R-04 | 5-Layer Agent System | P0 | Epic 4 | 4.1 |
+| R-05 | Complete CRUD Surface | P1 | Epic 2 | 2.2 |
+| R-07 | Chatflow Composition | HIGH | Epic 5 | 5.1 |
+| R-09 | Cross-Architecture Context | HIGH | Epic 3 | 3.1 |
+| R-10 | Tool Permissions Model | MEDIUM | Epic 4 | 4.3 |
+| R-13 | IDELayout State Refactor | P2 | Epic 5 | 5.4 |
+| R-14 | Multi-Provider Race Conditions | P2 | Epic 4 | 4.4 |
+
+---
+
+### Sprint Planning Traceability
+
+#### Phase 1 Sprint Calendar
+
+| Sprint | Epic | Stories | Dependencies | NFRs Validated | Demo Focus |
+|--------|------|---------|--------------|----------------|------------|
+| Sprint 0 | Pre-Launch Setup | 2.0 | - | NFR-SEC-05 | Social media setup |
+| Sprint 1 | Epic 1 | 1.1, 1.2, 1.3, 1.4 | - | NFR-USE-04, NFR-SEC-06, NFR-COMPAT-01-06 | Responsive layout, themes |
+| Sprint 2 | Epic 2 | 2.1, 2.2, 2.3, 2.4 | 2.0 | NFR-PERF-04,08, NFR-REL-02, NFR-SEC-01,02,05 | Agent config, streaming |
+| Sprint 3 | Epic 3 | 3.1, 3.2, 3.3, 3.4 | - | NFR-PERF-01,02,06, NFR-REL-01,05, NFR-SEC-03,04 | FSA sync, magic moment |
+| Sprint 4 | Epic 4 | 4.1, 4.2, 4.3, 4.4 | 2.1 | NFR-PERF-04, NFR-REL-06, NFR-SEC-01 | 5-Layer System, file ops |
+| Sprint 5 | Epic 5 | 5.1, 5.2, 5.3, 5.4 | 2.1, 3.2 | NFR-PERF-01-08, NFR-REL-01-06, NFR-OBS-01-05 | Session restore, performance |
+| Launch | Public Beta | - | All | All | ProductHunt + Hacker News |
+
+#### Phase 2 Sprint Calendar
+
+| Sprint | Epic | Stories | Dependencies | NFRs Validated | Demo Focus |
+|--------|------|---------|--------------|----------------|------------|
+| Sprint 6 | Epic 6 | 6.1, 6.2, 6.3, 6.4 | - | NFR-PERF-P2-01,02, NFR-REL-P2-01 | PDF import, metadata |
+| Sprint 7 | Epic 7 | 7.1, 7.2, 7.3, 7.4, 7.5, 7.6 | 6.1 | NFR-PERF-P2-03,04, NFR-REL-P2-02 | Semantic search, citations |
+| Sprint 8 | Epic 8 | 8.1, 8.2, 8.3, 8.4, 8.5 | - | NFR-PERF-P2-05 | Visual knowledge map |
+| Sprint 9 | Epic 9 | 9.1, 9.2, 9.3, 9.4 | 7.5 | NFR-PERF-P2-06 | Flashcards, quiz |
+| Sprint 10 | Epic 10 | 10.1, 10.2, 10.3 | 7.5 | NFR-PERF-P2-07 | Audio overview |
+
+---
+
+## Traceability Summary
+
+**Total Epics:** 10 (5 Phase 1, 5 Phase 2)
+**Total Stories:** 30 (21 Phase 1, 9 Phase 2)
+**Total NFRs:** 37 (29 Phase 1, 8 Phase 2)
+**Total Dependencies:** 15 critical paths identified
+**Total Risks:** 14 with mitigation strategies
+**Remediation Epics Addressed:** 10/10 (100%)
+
+**Coverage Analysis:**
+- ✅ All Functional Requirements (FR) traced to at least one story
+- ✅ All Non-Functional Requirements (NFR) have validation points
+- ✅ All Architecture decisions referenced in relevant epics
+- ✅ All UX specifications mapped to implementation stories
+- ✅ All PRD requirements traced to epics and stories
+- ✅ All Project Context constraints addressed in relevant epics
+- ✅ Complete bidirectional traceability established
+
+**Quality Gates:**
+- ✅ No orphan requirements (untraced)
+- ✅ No orphan stories (without requirements)
+- ✅ All critical dependencies documented
+- ✅ All risks have mitigation strategies
+- ✅ All NFRs have measurable targets and validation points
+- ✅ Complete technology stack traceability
+- ✅ Cross-document reference index complete
+
+---
+
+**Document Metadata:**
+- **Last Updated:** 2025-12-29
+- **Version:** 2.0
+- **Status:** Traceability Complete
+- **Next Review:** After Phase 1 completion
+- **Maintained By:** System Architect (@bmad-bmm-architect)

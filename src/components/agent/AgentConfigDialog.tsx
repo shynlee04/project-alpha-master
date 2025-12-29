@@ -410,7 +410,7 @@ export function AgentConfigDialog({
                 name: name.trim(),
                 role: role.trim() || 'Assistant',
                 status: 'offline' as const,
-                provider: providerConfig?.name || 'OpenRouter',
+                provider: (providerConfig?.name || 'OpenRouter') as Agent['provider'],
                 model: providerId === 'openai-compatible' ? customModelId : model,
                 description: role.trim() || undefined,
                 // OpenAI Compatible Provider support
@@ -452,7 +452,7 @@ export function AgentConfigDialog({
             setIsSubmitting(false)
         }
 
-    }, [name, role, providerConfig?.display, providerId, model, customBaseURL, customHeaders, enableNativeTools, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, handleCancel, providerConfig?.name, customModelId])
+    }, [name, role, providerConfig?.name, providerId, model, customBaseURL, customHeaders, enableNativeTools, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, handleCancel, customModelId])
 
 
 
@@ -534,7 +534,7 @@ export function AgentConfigDialog({
                     </div>
                 </DialogHeader>
 
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <Tabs value={activeTab} onValueChange={(value: string) => setActiveTab(value as ConfigTab)}>
                     <TabsList className="w-full">
                         <TabsTrigger value="basic" className="font-pixel">
                             {t('agents.config.tabs.basic', 'Basic')}
@@ -724,7 +724,7 @@ export function AgentConfigDialog({
                                                 className="rounded-none flex-1"
                                             />
                                             <Button
-                                                variant="pixel-primary"
+                                                variant="primary"
                                                 size="sm"
                                                 onClick={handleSaveApiKey}
                                                 disabled={isSavingKey || !apiKey.trim()}
@@ -925,7 +925,7 @@ export function AgentConfigDialog({
                         {t('agents.config.cancel', 'Cancel')}
                     </Button>
                     <Button
-                        variant="pixel-primary"
+                        variant="primary"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
                         className="gap-2"
