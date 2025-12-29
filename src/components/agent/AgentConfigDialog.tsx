@@ -401,9 +401,8 @@ export function AgentConfigDialog({
             setApiKey('••••')
             toast.success(t('agents.config.apiKey.saveSuccess', 'API key saved successfully'))
 
-            // Reload models with the key we just saved (avoid race condition)
-            // CC-2025-12-26: Pass API key directly instead of re-fetching from vault
-            await loadModels(providerId, keyToSave)
+            // CC-2025-12-29: Reload models using the STORE (single source of truth)
+            await storeFetchModels(providerId)
         } catch (error) {
             console.error('[AgentConfigDialog] Failed to save API key:', error)
             toast.error(t('agents.config.apiKey.saveFailed', 'Failed to save API key'))
@@ -411,7 +410,7 @@ export function AgentConfigDialog({
         } finally {
             setIsSavingKey(false)
         }
-    }, [apiKey, providerId, loadModels, t])
+    }, [apiKey, providerId, storeFetchModels, t])
 
     // Handle connection test
     const handleTestConnection = useCallback(async () => {

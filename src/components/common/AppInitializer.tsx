@@ -3,18 +3,18 @@
  * 
  * Initializes critical services on app boot:
  * - CredentialVault (API key encryption)
- * - ProviderModelsStore (models cache)
+ * - ProviderStore (models cache - single source of truth)
  * - Dexie stores hydration
  * 
  * CC-2025-12-29: Fix credential vault not being initialized on page load
- * CC-2025-12-29: Add provider models store initialization
+ * CC-2025-12-29: Auto-fetch models for default provider on boot
  * 
  * @epic Sprint 30 - Agent Configuration Corrections
  */
 
 import { useEffect, type ReactNode } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import { useProviderModelsStore } from '@/stores/provider-models-store';
+import { useProviderStore } from '@/lib/state/provider-store';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -25,7 +25,8 @@ interface AppInitializerProps {
  * before any components that depend on them mount.
  */
 export function AppInitializer({ children }: AppInitializerProps) {
-    const initializeProviders = useProviderModelsStore(s => s.initialize);
+    const fetchModels = useProviderStore(s => s.fetchModels);
+    const activeProviderId = useProviderStore(s => s.activeProviderId);
 
     useEffect(() => {
         // Initialize all critical services on app boot
@@ -37,9 +38,12 @@ export function AppInitializer({ children }: AppInitializerProps) {
                 await credentialVault.initialize();
                 console.log('[AppInitializer] Credential vault ready');
 
-                // 2. Initialize provider models store (loads API key status and models)
-                await initializeProviders();
-                console.log('[AppInitializer] Provider models store ready');
+                // 2. Auto-fetch models for the default/active provider
+                // This populates availableModels for immediate use
+                const providerId = activeProviderId || 'openrouter';
+                console.log('[AppInitializer] Fetching models for:', providerId);
+                await fetchModels(providerId);
+                console.log('[AppInitializer] Models fetched for:', providerId);
 
             } catch (error) {
                 console.error('[AppInitializer] Initialization failed:', error);
@@ -47,8 +51,7 @@ export function AppInitializer({ children }: AppInitializerProps) {
         };
 
         initServices();
-    }, [initializeProviders]);
+    }, [fetchModels, activeProviderId]);
 
     return <>{children}</>;
 }
-
