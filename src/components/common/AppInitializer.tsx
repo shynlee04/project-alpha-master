@@ -26,7 +26,6 @@ interface AppInitializerProps {
  */
 export function AppInitializer({ children }: AppInitializerProps) {
     const fetchModels = useProviderStore(s => s.fetchModels);
-    const activeProviderId = useProviderStore(s => s.activeProviderId);
 
     useEffect(() => {
         // Initialize all critical services on app boot
@@ -38,12 +37,31 @@ export function AppInitializer({ children }: AppInitializerProps) {
                 await credentialVault.initialize();
                 console.log('[AppInitializer] Credential vault ready');
 
-                // 2. Auto-fetch models for the default/active provider
-                // This populates availableModels for immediate use
-                const providerId = activeProviderId || 'openrouter';
-                console.log('[AppInitializer] Fetching models for:', providerId);
-                await fetchModels(providerId);
-                console.log('[AppInitializer] Models fetched for:', providerId);
+                // 2. Auto-fetch models for ALL providers with credentials
+                // This ensures "single source of truth" is populated regardless of active selection
+                const { providers } = useProviderStore.getState();
+
+                console.log('[AppInitializer] Checking credentials for providers:', providers.map(p => p.id));
+
+                // execute in parallel
+                await Promise.all(providers.map(async (provider) => {
+                    if (!provider.enabled) return;
+
+                    try {
+                        const hasKey = await credentialVault.hasCredentials(provider.id);
+                        if (hasKey) {
+                            console.log(`[AppInitializer] Pre-fetching models for ${provider.id}...`);
+                            await fetchModels(provider.id);
+                            console.log(`[AppInitializer] Models loaded for ${provider.id}`);
+                        } else if (provider.id === 'openrouter') {
+                            // Ensure free models are loaded for OpenRouter even without key
+                            console.log(`[AppInitializer] Loading default models for ${provider.id}...`);
+                            await fetchModels(provider.id);
+                        }
+                    } catch (err) {
+                        console.warn(`[AppInitializer] Failed to load ${provider.id}:`, err);
+                    }
+                }));
 
             } catch (error) {
                 console.error('[AppInitializer] Initialization failed:', error);
@@ -51,7 +69,7 @@ export function AppInitializer({ children }: AppInitializerProps) {
         };
 
         initServices();
-    }, [fetchModels, activeProviderId]);
+    }, [fetchModels]);
 
     return <>{children}</>;
 }

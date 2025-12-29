@@ -711,9 +711,25 @@ export function AgentConfigDialog({
 
                             {/* Model Selection */}
                             <div className="grid gap-2">
-                                <Label>
-                                    {t('agents.config.model', 'Model')} <span className="text-destructive">*</span>
-                                </Label>
+                                <div className="flex items-center justify-between">
+                                    <Label>
+                                        {t('agents.config.model', 'Model')} <span className="text-destructive">*</span>
+                                    </Label>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6"
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            storeFetchModels(providerId)
+                                        }}
+                                        disabled={isLoadingModels}
+                                        title={t('agents.config.refreshModels', 'Refresh models')}
+                                    >
+                                        <RefreshCw className={cn("w-3 h-3", isLoadingModels && "animate-spin")} />
+                                        <span className="sr-only">Refresh</span>
+                                    </Button>
+                                </div>
                                 <Select
                                     value={model}
                                     onValueChange={handleModelChange}
@@ -727,16 +743,22 @@ export function AgentConfigDialog({
                                         } />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none max-h-60">
-                                        {models.map((m) => (
-                                            <SelectItem key={m.id} value={m.id}>
-                                                {m.name}
-                                                {m.isFree && (
-                                                    <span className="ml-2 text-xs text-success">
-                                                        {t('agents.config.modelFree', '(Free)')}
-                                                    </span>
-                                                )}
+                                        {models.length === 0 ? (
+                                            <SelectItem value="none" disabled>
+                                                {t('agents.config.noModels', 'No models found')}
                                             </SelectItem>
-                                        ))}
+                                        ) : (
+                                            models.map((m) => (
+                                                <SelectItem key={m.id} value={m.id}>
+                                                    {m.name}
+                                                    {m.isFree && (
+                                                        <span className="ml-2 text-xs text-success">
+                                                            {t('agents.config.modelFree', '(Free)')}
+                                                        </span>
+                                                    )}
+                                                </SelectItem>
+                                            ))
+                                        )}
                                     </SelectContent>
                                 </Select>
                                 {errors.model && (
