@@ -228,10 +228,14 @@ export async function indexDocument(
   projectId: string,
   document: DocumentSchema
 ): Promise<void> {
-  // Get or create index
+  // Get or create index (use full-text only if no embedding provided)
   let db = activeIndexes.get(projectId);
   if (!db) {
-    db = await createIndex({ projectId });
+    // Create index with vector search only if document has embedding
+    db = await createIndex({
+      projectId,
+      enableVectorSearch: !!document.embedding,
+    });
   }
 
   // Insert document into index
@@ -269,15 +273,18 @@ export async function indexSource(
     embedding?: number[];
   } = {}
 ): Promise<number> {
-  const { title, chunkSize = 1000, chunkOverlap = 200 } = options;
+  const { title, chunkSize = 1000, chunkOverlap = 200, embedding } = options;
 
   // Chunk the content (simple implementation - Story 7-2 will add proper chunking)
   const chunks = chunkContent(content, chunkSize, chunkOverlap);
 
-  // Get or create index
+  // Get or create index (use full-text only if no embedding provided)
   let db = activeIndexes.get(projectId);
   if (!db) {
-    db = await createIndex({ projectId });
+    db = await createIndex({
+      projectId,
+      enableVectorSearch: !!embedding,
+    });
   }
 
   // Insert all chunks as documents
@@ -287,6 +294,7 @@ export async function indexSource(
     content: chunk.text,
     title,
     position: index,
+    ...(embedding ? { embedding } : {}),
     metadata: {
       chunkIndex: index,
       totalChunks: chunks.length,
