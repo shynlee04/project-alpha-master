@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
 import { RenameDialog } from './RenameDialog';
+import { CollectionSelector } from './CollectionSelector';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 
@@ -70,6 +71,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const { deleteSource, renameSource } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showRenameDialog, setShowRenameDialog] = useState(false);
+    const [showCollectionSelector, setShowCollectionSelector] = useState(false);
 
     const Icon = getSourceIcon(source);
     const readingTime = calculateReadingTime(source);
@@ -90,8 +92,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     };
 
     const handleMoveToCollection = () => {
-        // TODO: Implement collection selector (Task 5)
-        console.log('Move to collection:', source.id);
+        setShowCollectionSelector(true);
     };
 
     const handleExport = () => {
@@ -177,6 +178,13 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 currentTitle={source.title}
                 onSave={handleSaveRename}
                 onCancel={() => setShowRenameDialog(false)}
+            />
+
+            {/* Collection selector (Story 6-3, Task 5) */}
+            <CollectionSelector
+                isOpen={showCollectionSelector}
+                sourceId={source.id}
+                onClose={() => setShowCollectionSelector(false)}
             />
         </div>
     );
