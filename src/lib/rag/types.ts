@@ -228,3 +228,80 @@ export interface ChunkingProgress {
   /** Error message if status is 'error' */
   error?: string;
 }
+
+// ============================================================================
+// Embedding Types (Story 7-3)
+// ============================================================================
+
+/**
+ * Embedding vector (384 dimensions for MiniLM-L6-v2)
+ */
+export type EmbeddingVector = Float32Array;
+
+/**
+ * Embedding provider mode
+ */
+export type EmbeddingMode = 'local' | 'cloud' | 'keyword-only';
+
+/**
+ * Progress tracking for embedding operation
+ */
+export interface EmbeddingProgress {
+  /** Chunk ID being embedded (or 'batch' for batch operations) */
+  chunkId: string;
+
+  /** Current chunk number (1-indexed) */
+  currentChunk: number;
+
+  /** Total chunks to embed */
+  totalChunks: number;
+
+  /** Status of embedding */
+  status: 'embedding' | 'completed' | 'error';
+
+  /** Embedding mode being used */
+  mode: EmbeddingMode;
+
+  /** Error message if status is 'error' */
+  error?: string;
+}
+
+/**
+ * Options for embedding generation
+ */
+export interface EmbeddingOptions {
+  /** Embedding mode (auto-detect if 'auto') */
+  mode?: 'auto' | EmbeddingMode;
+
+  /** Batch size for processing multiple chunks */
+  batchSize?: number;
+
+  /** Model to use (for local: 'Xenova/all-MiniLM-L6-v2', for cloud: 'gemini-embedding-001') */
+  model?: string;
+
+  /** Optional progress callback */
+  onProgress?: (progress: EmbeddingProgress) => void;
+}
+
+/**
+ * Metadata for cached embedding model
+ */
+export interface EmbeddingModelMetadata {
+  /** Unique model identifier */
+  modelId: string;
+
+  /** Model name (e.g., 'all-MiniLM-L6-v2') */
+  name: string;
+
+  /** Model version */
+  version: string;
+
+  /** Quantization (e.g., 'q4', 'q8') */
+  quantization: string;
+
+  /** Model size in bytes */
+  size: number;
+
+  /** Download timestamp */
+  downloadedAt: number;
+}

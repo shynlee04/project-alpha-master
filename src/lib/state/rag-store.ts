@@ -95,6 +95,12 @@ interface RAGStoreState {
     /** Chunking progress tracking (Story 7-2) */
     chunkingProgress: Map<string, ChunkingProgress>;
 
+    /** Embedding progress tracking (Story 7-3) */
+    embeddingProgress: Map<string, import('./rag/types').EmbeddingProgress>;
+
+    /** Current embedding mode (Story 7-3) */
+    embeddingMode: import('./rag/types').EmbeddingMode;
+
     /** Loading state for async operations */
     loading: boolean;
 
@@ -149,6 +155,20 @@ interface RAGStoreState {
 
     /** Clear chunking progress for a source */
     clearChunkingProgress: (sourceId: string) => void;
+
+    // Embedding Actions (Story 7-3)
+
+    /** Detect embedding capability */
+    detectEmbeddingCapability: () => Promise<import('./rag/types').EmbeddingMode>;
+
+    /** Generate embeddings for chunks */
+    generateEmbeddings: (
+      chunks: import('./rag/types').ChunkMetadata[],
+      options?: import('./rag/types').EmbeddingOptions
+    ) => Promise<Map<string, import('./rag/types').EmbeddingVector>>;
+
+    /** Clear embedding progress for a chunk */
+    clearEmbeddingProgress: (chunkId: string) => void;
 
     /** Reset store to initial state */
     reset: () => void;
@@ -232,6 +252,8 @@ export const useRAGStore = create<RAGStoreState>()(
             indexMetadata: null,
             searchCache: new Map(),
             chunkingProgress: new Map(),
+            embeddingProgress: new Map(),
+            embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
             loading: false,
             error: null,
             _hasHydrated: false,
@@ -462,6 +484,85 @@ export const useRAGStore = create<RAGStoreState>()(
                 });
             },
 
+            // Embedding Actions (Story 7-3)
+
+            detectEmbeddingCapability: async () => {
+                const { createEmbeddingService } = await import('../rag/embedding-service');
+                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const apiKey = vault.getCredential('google')?.apiKey;
+
+                try {
+                    const service = await createEmbeddingService(apiKey);
+                    const provider = service.getProvider();
+                    const mode = provider === 'local'
+                        ? ('local' as const)
+                        : provider === 'cloud'
+                        ? ('cloud' as const)
+                        : ('keyword-only' as const);
+
+                    set({ embeddingMode: mode });
+                    return mode;
+                } catch (error) {
+                    console.error('[RAGStore] Failed to detect embedding capability:', error);
+                    set({ embeddingMode: 'keyword-only' as const });
+                    return 'keyword-only';
+                }
+            },
+
+            generateEmbeddings: async (chunks, options) => {
+                set({ loading: true, error: null });
+
+                try {
+                    const { createEmbeddingService } = await import('../rag/embedding-service');
+                    const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                    const apiKey = vault.getCredential('google')?.apiKey;
+
+                    const service = await createEmbeddingService(apiKey);
+
+                    // Map ChunkMetadata to strings for batch embedding
+                    const texts = chunks.map((chunk) => chunk.content);
+                    const result = await service.embedBatch(texts);
+
+                    // Map results back to chunk IDs
+                    const embeddings = new Map<string, import('./rag/types').EmbeddingVector>();
+                    chunks.forEach((chunk, idx) => {
+                        embeddings.set(
+                            chunk.chunkId,
+                            Float32Array.from(result.results[idx].embedding)
+                        );
+                    });
+
+                    // Update mode based on provider used
+                    const mode = result.provider === 'local'
+                        ? ('local' as const)
+                        : result.provider === 'cloud'
+                        ? ('cloud' as const)
+                        : ('keyword-only' as const);
+                    set({ embeddingMode: mode, loading: false });
+
+                    console.log(
+                        `[RAGStore] Generated ${embeddings.size} embeddings via ${mode}`
+                    );
+
+                    return embeddings;
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        embeddingMode: 'keyword-only',
+                        loading: false,
+                    });
+                    return new Map();
+                }
+            },
+
+            clearEmbeddingProgress: (chunkId) => {
+                set((state) => {
+                    const newProgress = new Map(state.embeddingProgress);
+                    newProgress.delete(chunkId);
+                    return { embeddingProgress: newProgress };
+                });
+            },
+
             reset: () => {
                 set({
                     currentProjectId: null,
@@ -473,6 +574,8 @@ export const useRAGStore = create<RAGStoreState>()(
                     indexMetadata: null,
                     searchCache: new Map(),
                     chunkingProgress: new Map(),
+                    embeddingProgress: new Map(),
+                    embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
                     loading: false,
                     error: null,
                 });
@@ -495,6 +598,8 @@ export const useRAGStore = create<RAGStoreState>()(
                 // Convert Map to array for serialization
                 searchCache: Array.from(state.searchCache.entries()),
                 chunkingProgress: Array.from(state.chunkingProgress.entries()),
+                embeddingProgress: Array.from(state.embeddingProgress.entries()),
+                embeddingMode: state.embeddingMode,
                 error: state.error,
             }),
 
@@ -506,6 +611,9 @@ export const useRAGStore = create<RAGStoreState>()(
                     // Convert array back to Map
                     state.searchCache = new Map(state.searchCache as [string, CachedSearchResult][]);
                     state.chunkingProgress = new Map(state.chunkingProgress as [string, ChunkingProgress][]);
+                    state.embeddingProgress = new Map(
+                        state.embeddingProgress as [string, import('./rag/types').EmbeddingProgress][]
+                    );
 
                     // Clean expired cache entries on hydration
                     state.searchCache = cleanExpiredCache(state.searchCache);
