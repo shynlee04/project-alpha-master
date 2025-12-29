@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { MaximizeIcon, CloseIcon, MinusIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
+import { TruncatedText } from '@/components/ui/truncated-text'
 
 /**
  * PanelShell - Wrapper for IDE panels with VIA-GENT styling
@@ -64,9 +65,10 @@ export function PanelShell({
                             {icon}
                         </span>
                     )}
-                    <span className="text-xs font-pixel uppercase tracking-wider text-muted-foreground truncate">
-                        {title}
-                    </span>
+                    <TruncatedText
+                        text={title}
+                        className="text-xs font-pixel uppercase tracking-wider text-muted-foreground"
+                    />
                 </div>
 
                 {/* Actions */}
@@ -155,9 +157,10 @@ export function SimplePanelHeader({
                         {icon}
                     </span>
                 )}
-                <span className="text-xs font-pixel uppercase tracking-wider text-muted-foreground truncate">
-                    {title}
-                </span>
+                <TruncatedText
+                    text={title}
+                    className="text-xs font-pixel uppercase tracking-wider text-muted-foreground"
+                />
             </div>
             {actions && (
                 <div className="flex items-center gap-1">

@@ -137,7 +137,8 @@ export interface RetryQueueEvents {
 /**
  * Calculate exponential backoff with jitter
  *
- * Formula: delay = min(baseDelay * 2^attempt, maxDelay) + jitter
+ * Formula: delay = min(baseDelay * 2^attempt + jitter, maxDelay)
+ * where jitter = random(0, baseDelay * jitterFactor)
  *
  * @param attempt - Current attempt number (0-based for first retry)
  * @param config - Retry queue configuration
@@ -148,14 +149,14 @@ export function calculateBackoff(attempt: number, config: RetryQueueConfig = DEF
     const maxDelay = config.maxDelay;
     const jitterFactor = config.jitterFactor;
 
-    // Exponential growth: baseDelay * 2^attempt
-    const exponential = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
+    // Calculate raw exponential backoff first
+    const rawBackoff = baseDelay * Math.pow(2, attempt);
 
     // Jitter: random factor between 0 and jitterFactor * baseDelay
     const jitter = Math.random() * jitterFactor * baseDelay;
 
-    // Total delay
-    const delay = Math.floor(exponential + jitter);
+    // Total delay with jitter, then cap at maxDelay
+    const delay = Math.min(Math.floor(rawBackoff + jitter), maxDelay);
 
     return {
         delay,
@@ -324,7 +325,8 @@ export class RetryQueue {
 
         // Check if max attempts reached
         if (item.attempt >= item.maxAttempts) {
-            return this.markExhausted(id);
+            this.markExhausted(id);
+            return undefined; // Return undefined when exhausted
         }
 
         // Calculate backoff for next attempt
@@ -472,8 +474,12 @@ export class RetryQueue {
             return this.markFailed(id, toolError);
         }
 
-        // Schedule retry
-        return this.scheduleRetry(id);
+        // Schedule retry - if undefined (exhausted), return the item from store
+        const scheduled = this.scheduleRetry(id);
+        if (scheduled === undefined) {
+            return this.items.get(id);
+        }
+        return scheduled;
     }
 
     /**

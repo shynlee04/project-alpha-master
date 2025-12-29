@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { TruncatedText } from '@/components/ui/truncated-text';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
 import { getThreadsForProject } from '../../lib/workspace/threads-store'; // Keep for migration/fallback
@@ -641,17 +642,19 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
             {/* Header */}
             <div className="h-10 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
                 <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30">
+                    <div className="w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30 flex-shrink-0">
                         <Bot className="w-3.5 h-3.5 text-primary" />
                     </div>
-                    <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel">
-                        {t('agent.title')}
-                    </span>
+                    <TruncatedText
+                        text={t('agent.title')}
+                        className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel max-w-[80px]"
+                    />
                     {/* Show connection status */}
                     {toolsAvailable && (
-                        <span className="text-[10px] text-green-400 font-pixel">
-                            {t('agent.tools_ready', 'TOOLS READY')}
-                        </span>
+                        <TruncatedText
+                            text={t('agent.tools_ready', 'TOOLS READY')}
+                            className="text-[10px] text-green-400 font-pixel max-w-[80px]"
+                        />
                     )}
                 </div>
                 <div className="flex items-center gap-3">
@@ -674,9 +677,10 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                     </div>
 
                     {/* Model indicator */}
-                    <span className="text-[10px] text-muted-foreground font-mono">
-                        {modelId.split('/').pop()?.substring(0, 20)}
-                    </span>
+                    <TruncatedText
+                        text={modelId.split('/').pop()?.substring(0, 20) || ''}
+                        className="text-[10px] text-muted-foreground font-mono max-w-[100px]"
+                    />
                     <button
                         onClick={handleClear}
                         title={t('agent.clear')}
@@ -702,10 +706,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
             {/* API Key Missing Warning */}
             {apiKeyError && (
                 <div className="px-4 py-2 bg-yellow-500/10 border-b border-yellow-500/30 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-yellow-500" />
-                    <span className="text-xs text-yellow-500 font-medium">
-                        {t('agent.key_missing', `API Key missing for ${providerId}. Please configure it in the Agents panel.`)}
-                    </span>
+                    <AlertCircle className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                    <TruncatedText
+                        text={t('agent.key_missing', `API Key missing for ${providerId}. Please configure it in the Agents panel.`)}
+                        className="text-xs text-yellow-500 font-medium"
+                    />
                 </div>
             )}
 

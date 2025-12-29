@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { RefreshCw, ExternalLink, Monitor, Tablet, Smartphone, Maximize2, X } from 'lucide-react';
 import { useToast } from '../../ui/Toast';
 import { type PreviewPanelProps, type DeviceFrame, DEVICE_FRAMES } from './types';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 /**
  * PreviewPanel - Live preview of the running dev server
@@ -125,9 +126,12 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                     {/* Modal Header */}
                     <div className="h-12 px-4 flex items-center justify-between border-b border-border bg-card/80 backdrop-blur shrink-0">
                         <div className="flex items-center gap-4">
-                            <span className="text-primary font-semibold">via-gent</span>
-                            <span className="text-sm text-muted-foreground">
-                                {t('ide.preview')} {port && <span className="text-muted-foreground/70">:{port}</span>}
+                            <TruncatedText
+                                text={t('ide.preview')}
+                                className="text-primary font-semibold max-w-[100px]"
+                            />
+                            <span className="text-sm text-muted-foreground whitespace-nowrap">
+                                {port && <span className="text-muted-foreground/70">:{port}</span>}
                             </span>
                         </div>
 
@@ -183,9 +187,10 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                 {/* Toolbar */}
                 <div className="h-9 px-3 flex items-center justify-between border-b border-border/50 bg-card/50">
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase">
-                            {t('ide.preview')}
-                        </span>
+                        <TruncatedText
+                            text={t('ide.preview')}
+                            className="text-xs font-semibold text-muted-foreground tracking-wider uppercase max-w-[80px]"
+                        />
                         {port && (
                             <span className="text-xs text-muted-foreground/70">
                                 :{port}

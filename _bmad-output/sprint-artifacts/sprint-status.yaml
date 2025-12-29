@@ -96,7 +96,7 @@ development_status:
     completion_date: "pending"
     stories:
       - "rc-005-sync-status-store-dexie": done # COMPLETED with 32 tests
-      - "rc-006-epic4-story44-retry-queue": pending
+      - "rc-006-epic4-story44-retry-queue": done # COMPLETED with 40 tests
       - "rc-007-epic42-file-ac-completes": pending
       - "rc-008-approval-overlay-ui": done # COMPLETED
       - "rc-009-chat-request-validation": done # COMPLETED with Zod validation
@@ -108,10 +108,11 @@ development_status:
       - "rc-015-retry-classification": done # COMPLETED with 47 tests
     test_coverage:
       rc-005: 32 tests (100% pass)
+      rc-006: 40 tests (100% pass)
       rc-011: 32 tests (100% pass)
       rc-013: 13 tests (100% pass)
       rc-015: 47 tests (100% pass)
-    sprint_progress: "6/11 stories complete (55%)"
+    sprint_progress: "7/11 stories complete (64%)"
 
   # Sprint 28: Medium Priority (Days 26-30)
   sprint-28:

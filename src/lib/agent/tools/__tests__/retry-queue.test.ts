@@ -311,8 +311,8 @@ describe('RetryQueue Operations', () => {
 
     beforeEach(() => {
         eventBus = createMockEventEmitter();
-        // Fix: pass config first, then eventBus (order matters!)
-        queue = createRetryQueue(undefined, eventBus as any);
+        // Pass eventBus first, config second (order matters!)
+        queue = createRetryQueue(eventBus as any, undefined);
     });
 
     afterEach(() => {

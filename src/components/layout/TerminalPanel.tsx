@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '../../lib/utils';
 import { type TerminalTab } from '../../lib/workspace';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 /**
  * SSR-safe lazy import for XTerminal.
@@ -179,7 +180,13 @@ function TabButton({
                     : 'text-muted-foreground hover:text-foreground'
             )}
         >
-            {label}
+            <TruncatedText
+                text={label}
+                className={cn(
+                    "max-w-[100px]",
+                    isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                )}
+            />
         </button>
     );
 }
