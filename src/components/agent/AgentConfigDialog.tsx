@@ -190,16 +190,24 @@ export function AgentConfigDialog({
     const [isSavingKey, setIsSavingKey] = useState(false)
     const [isTestingConnection, setIsTestingConnection] = useState(false)
     const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('idle')
-    const [isLoadingModels, setIsLoadingModels] = useState(false)
 
     // Validation errors
     const [errors, setErrors] = useState<FormErrors>({})
 
-    // Model list
-    const [models, setModels] = useState<ModelInfo[]>([])
+    // CC-2025-12-29: Subscribe to provider store for SINGLE SOURCE OF TRUTH
+    const {
+        providers,
+        availableModels,
+        isLoadingModels: storeLoadingModels,
+        fetchModels: storeFetchModels
+    } = useProviderStore()
 
-    // Get configured providers from store
-    const { providers } = useProviderStore()
+    // Get models from the centralized store
+    const models = useMemo(() => {
+        return availableModels[providerId] || []
+    }, [availableModels, providerId])
+
+    const isLoadingModels = storeLoadingModels[providerId] || false
 
     // Get selected provider config
     const providerConfig = useMemo(() => {
@@ -211,78 +219,33 @@ export function AgentConfigDialog({
         credentialVault.initialize().catch(console.error)
     }, [])
 
-    // Load models from provider API or fallback
-    // CC-2025-12-26: Accept optional direct API key to avoid race condition
-    // NOTE: This must be defined BEFORE the useEffect that uses it
-    const loadModels = useCallback(async (provider: string, directApiKey?: string) => {
-        setIsLoadingModels(true)
-        try {
-            // Use direct API key if provided, otherwise fetch from vault
-            const apiKeyVal = directApiKey ?? await credentialVault.getCredentials(provider)
-            safeDebug('[AgentConfigDialog] loadModels called for', provider, 'hasKey:', !!apiKeyVal)
-
-            if (!apiKeyVal) {
-                console.log('[AgentConfigDialog] No API key, using fallback models')
-                if (provider === 'openrouter') {
-                    const freeModels = modelRegistry.getFreeModels()
-                    setModels(freeModels)
-                } else {
-                    setModels(modelRegistry.getDefaultModels(provider))
-                }
-                return
-            }
-
-            const fetchedModels = await modelRegistry.getModels(provider, apiKeyVal)
-            safeDebug('[AgentConfigDialog] Fetched', fetchedModels.length, 'models from API')
-            setModels(fetchedModels)
-        } catch (error) {
-            console.warn('[AgentConfigDialog] Failed to fetch models, using fallback:', error)
-            // Fallback to free models for OpenRouter
-            if (provider === 'openrouter') {
-                const freeModels = modelRegistry.getFreeModels()
-                setModels(freeModels)
-            } else {
-                setModels(modelRegistry.getDefaultModels(provider))
-            }
-        } finally {
-            setIsLoadingModels(false)
-        }
-    }, [])
+    // NOTE: loadModels is now replaced by storeFetchModels from useProviderStore
+    // This ensures single source of truth for models across the entire app
 
     // Ref to track agent being edited (for model restoration after loadModels)
     const editingAgentRef = useRef<Agent | undefined>(undefined)
 
-    // Check for stored credentials when provider changes
+    // CC-2025-12-29: Check credentials and load models from STORE (single source of truth)
     useEffect(() => {
         if (!open || !providerId) return
 
         setIsCheckingKey(true)
         setConnectionStatus('idle')
 
-        // CC-2025-12-29: Get the actual API key, not just check if it exists
         const loadProviderData = async () => {
             try {
                 await credentialVault.initialize()
                 const apiKeyValue = await credentialVault.getCredentials(providerId)
 
                 console.log('[AgentConfigDialog] Provider:', providerId, 'hasKey:', !!apiKeyValue)
+                setApiKey(apiKeyValue ? '••••' : '')
 
-                if (apiKeyValue) {
-                    setApiKey('••••')
-                    // Pass API key directly to avoid re-fetching
-                    await loadModels(providerId, apiKeyValue)
-                } else {
-                    setApiKey('')
-                    // Load free models for OpenRouter
-                    if (providerId === 'openrouter') {
-                        const freeModels = modelRegistry.getFreeModels()
-                        setModels(freeModels)
-                    } else {
-                        setModels(modelRegistry.getDefaultModels(providerId))
-                    }
-                }
+                // Fetch models using the STORE (single source of truth)
+                // This populates availableModels[providerId] which is subscribed via useMemo
+                await storeFetchModels(providerId)
+                console.log('[AgentConfigDialog] Models fetched via store, count:', models.length)
 
-                // CC-2025-12-29: Restore model from agent being edited after models load
+                // Restore model from agent being edited after models load
                 if (editingAgentRef.current && editingAgentRef.current.model) {
                     console.log('[AgentConfigDialog] Restoring model from edit:', editingAgentRef.current.model)
                     setModel(editingAgentRef.current.model)
@@ -290,19 +253,13 @@ export function AgentConfigDialog({
             } catch (error) {
                 console.error('[AgentConfigDialog] Error loading provider data:', error)
                 setApiKey('')
-                if (providerId === 'openrouter') {
-                    const freeModels = modelRegistry.getFreeModels()
-                    setModels(freeModels)
-                } else {
-                    setModels([])
-                }
             } finally {
                 setIsCheckingKey(false)
             }
         }
 
         loadProviderData()
-    }, [providerId, open, loadModels])
+    }, [providerId, open, storeFetchModels])
 
     /**
      * Populate form when editing an existing agent
