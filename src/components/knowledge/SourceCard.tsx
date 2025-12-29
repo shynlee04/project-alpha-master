@@ -179,6 +179,23 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
         }
     };
 
+    const handleViewMetadata = useCallback(() => {
+        setShowMetadataDialog(true);
+    }, []);
+
+    // Drag handler for Canvas integration (I-2)
+    const handleDragStart = useCallback((event: React.DragEvent) => {
+        event.dataTransfer.setData('application/json', JSON.stringify({
+            type: 'source',
+            sourceId: source.id,
+            data: {
+                title: source.title,
+                sourceType: source.type,
+            }
+        }));
+        event.dataTransfer.effectAllowed = 'move';
+    }, [source.id, source.title, source.type]);
+
     return (
         <div
             className={`group relative p-4 border border-border-dark bg-surface-dark hover:bg-surface-darker transition-all duration-150 shadow-md hover:shadow-sm hover:translate-x-[1px] hover:translate-y-[1px] rounded-none min-h-[90px] cursor-pointer ${isActive ? 'border-primary bg-primary/10' : ''
@@ -187,6 +204,8 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
             role="button"
             tabIndex={0}
             aria-pressed={isActive}
+            draggable
+            onDragStart={handleDragStart}
         >
             {/* Header with icon and title */}
             <div className="flex items-start gap-3 mb-2">
@@ -230,6 +249,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                     onDelete={() => setShowDeleteDialog(true)}
                     onMoveToCollection={handleMoveToCollection}
                     onExport={handleExport}
+                    onViewMetadata={handleViewMetadata}
                     // Story 6-4: Add metadata extraction trigger
                     onExtractMetadata={!source.metadataExtracted ? handleExtractMetadata : undefined}
                 />
