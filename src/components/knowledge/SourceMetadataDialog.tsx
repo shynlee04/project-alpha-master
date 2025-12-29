@@ -17,7 +17,6 @@ import { Label } from '@/components/ui/label';
 import { Plus, Save, Edit2, Loader2, RefreshCw, X } from 'lucide-react';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
-import { MetadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { toast } from 'sonner';
 
 interface SourceMetadataDialogProps {

@@ -609,6 +609,7 @@
   "quizzes.start.minutes": "min",
   "quizzes.start.difficulty": "Difficulty",
   "quizzes.start.topics": "Topics",
+  "quizzes.start.sources": "Sources",
   "quizzes.start.start-button": "Start Quiz",
   "quizzes.start.exit-button": "Exit",
   "quizzes.navigation.previous": "Previous",

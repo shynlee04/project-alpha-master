@@ -239,7 +239,7 @@ development_status:
   9-1-flashcard-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Utils, Tests (67 tests, all passing)
   9-2-quiz-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Tests (24 tests, all passing)
   9-3-flashcard-study-interface: done # COMPLETED 2025-12-30 - SRS types, SM-2 algorithm, 3D flip animation, Dexie persistence, 23 tests
-  9-4-quiz-taking-interface: ready-for-dev # Story file created, ready for dev
+  9-4-quiz-taking-interface: done # COMPLETED 2025-12-30 - Quiz session types, hooks, components, UI, 31 tests
   epic-9-retrospective: optional
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)

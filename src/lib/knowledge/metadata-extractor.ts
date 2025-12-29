@@ -73,7 +73,7 @@ export class MetadataExtractor {
             return this.client;
         }
 
-        const apiKey = await credentialVault.getCredential('google-gemini');
+        const apiKey = await credentialVault.getCredentials('google-gemini');
 
         if (!apiKey) {
             throw new Error('Google Gemini API key not found. Please add API key in settings.');
@@ -88,7 +88,7 @@ export class MetadataExtractor {
      */
     async isAvailable(): Promise<boolean> {
         try {
-            const apiKey = await credentialVault.getCredential('google-gemini');
+            const apiKey = await credentialVault.getCredentials('google-gemini');
             return !!apiKey;
         } catch {
             return false;
