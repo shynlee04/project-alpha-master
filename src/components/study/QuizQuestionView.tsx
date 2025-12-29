@@ -3,7 +3,7 @@
  * @module components/study/QuizQuestionView
  */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import type { QuizQuestion } from '@/lib/study/quiz-types';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -73,7 +73,7 @@ export function QuizQuestionView({
       {/* Progress Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="text-sm text-muted-foreground">
-          {t('quiz.question.progress', {
+          {t('quizzes.question.progress', {
             current: questionNumber,
             total: totalQuestions,
           })}
@@ -180,7 +180,7 @@ export function QuizQuestionView({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <div className="font-medium mb-1">{t('quiz.question.explanation')}</div>
+              <div className="font-medium mb-1">{t('quizzes.explanation')}</div>
               <p className="text-muted-foreground text-sm">{question.explanation}</p>
             </div>
           </div>
@@ -195,7 +195,7 @@ export function QuizQuestionView({
             disabled={questionNumber <= 1}
             className="px-4 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {t('quiz.navigation.previous')}
+            {t('quizzes.navigation.previous')}
           </button>
         )}
         <div className="flex-1" />
@@ -210,7 +210,7 @@ export function QuizQuestionView({
             }}
             className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
           >
-            {hasMoreQuestions ? t('quiz.navigation.next') : t('quiz.navigation.finish')}
+            {hasMoreQuestions ? t('quizzes.navigation.next') : t('quizzes.navigation.finish')}
           </button>
         )}
       </div>
@@ -218,7 +218,7 @@ export function QuizQuestionView({
       {/* Keyboard Hints */}
       {!showResult && (
         <div className="mt-4 text-center text-xs text-muted-foreground">
-          <span>{t('quiz.hints.keyboard')}</span>
+          <span>{t('quizzes.hints.keyboard')}</span>
         </div>
       )}
     </div>

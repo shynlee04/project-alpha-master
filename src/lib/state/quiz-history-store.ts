@@ -53,7 +53,7 @@ interface QuizHistoryState {
 /**
  * Quiz history store with Dexie persistence
  */
-export const useQuizHistoryStore = create<QuizHistoryState>((set, get) => ({
+export const useQuizHistoryStore = create<QuizHistoryState>((set) => ({
   history: [],
   isLoading: false,
   error: null,

@@ -53,6 +53,10 @@ describe('SourceCardGrid', () => {
             loadSources,
             selectedSource: null,
             openPreview: vi.fn(),
+            deleteSource: vi.fn(),
+            renameSource: vi.fn(),
+            extractMetadata: vi.fn(),
+            extractingMetadata: new Set<string>(),
         });
 
         render(<SourceCardGrid projectId="test-project" />);
@@ -82,6 +86,10 @@ describe('SourceCardGrid', () => {
             loadSources: vi.fn(),
             selectedSource: null,
             openPreview: vi.fn(),
+            deleteSource: vi.fn(),
+            renameSource: vi.fn(),
+            extractMetadata: vi.fn(),
+            extractingMetadata: new Set<string>(),
         });
 
         render(<SourceCardGrid projectId="test-project" />);
@@ -97,6 +105,10 @@ describe('SourceCardGrid', () => {
             loadSources: vi.fn(),
             selectedSource: null,
             openPreview: vi.fn(),
+            deleteSource: vi.fn(),
+            renameSource: vi.fn(),
+            extractMetadata: vi.fn(),
+            extractingMetadata: new Set<string>(),
         });
 
         const { container } = render(<SourceCardGrid projectId="test-project" />);

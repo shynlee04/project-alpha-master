@@ -12,7 +12,6 @@ import { QuizStartScreen } from './QuizStartScreen';
 import { QuizQuestionView } from './QuizQuestionView';
 import { QuizResults } from './QuizResults';
 import { QuizReview } from './QuizReview';
-import { cn } from '@/lib/utils';
 
 interface QuizContainerProps {
   quiz: Quiz;
@@ -39,13 +38,10 @@ export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) 
     startSession,
     selectAnswer,
     confirmAndNext,
-    goToQuestion,
     previousQuestion,
-    nextQuestion,
     completeSession,
     resetSession,
     enterReview,
-    exitReview,
   } = useQuizSession(quiz);
 
   const timer = useQuizTimer();

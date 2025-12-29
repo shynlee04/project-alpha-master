@@ -25,7 +25,7 @@ import { PDFParser, type PDFProgressCallback } from './pdf-parser';
 import { URLFetcher } from './url-fetcher';
 import { db, type SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
-import { createMetadataExtractor } from './metadata-extractor';
+import { metadataExtractor } from './metadata-extractor';
 import type { WorkspaceEventEmitter, WorkspaceEvents } from '@/lib/events/workspace-events';
 
 /**
@@ -281,24 +281,19 @@ export class SourceImportPipeline {
      */
     private async triggerMetadataExtraction(sourceId: string, content: string): Promise<void> {
         const store = useKnowledgeStore.getState();
-        const extractor = createMetadataExtractor();
-
-        // If no API key configured, we can still extract basic stats but skip AI
-        // Or we use the Mock extractor if in dev mode (but createMetadataExtractor handles logic)
-        // If !isAvailable(), createMetadataExtractor might return mock or throw depending on implementation
-        // Current implementation: returns instance, but .generateAnalysis throws if no client.
 
         try {
             await store.updateProcessingStatus(sourceId, 'processing');
 
             // 1. Basic Stats
-            const basicStats = extractor.extractBasicStats(content);
+            const basicStats = metadataExtractor.extractBasicStats(content);
             await store.updateSourceMetadata(sourceId, basicStats);
 
             // 2. AI Analysis (if available)
-            if (extractor.isAvailable()) {
-                const analysis = await extractor.generateAnalysis(content);
-                // Merge with basic stats
+            const isAvailable = await metadataExtractor.isAvailable();
+            if (isAvailable) {
+                const analysis = await metadataExtractor.extractAllMetadata({ content });
+                // Merge with basic stats (analysis includes metadataExtracted flag)
                 await store.updateSourceMetadata(sourceId, {
                     ...basicStats,
                     ...analysis

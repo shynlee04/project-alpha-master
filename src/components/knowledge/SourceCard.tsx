@@ -82,54 +82,6 @@ function sanitizeFilename(title: string): string {
         .substring(0, 100);              // Limit length
 }
 
-/**
- * Export source as downloadable file
- */
-function exportSource(source: SourceRecord): void {
-    let content: string;
-    let filename: string;
-    let mimeType: string;
-
-    const sanitizedTitle = sanitizeFilename(source.title);
-
-    switch (source.type) {
-        case 'pdf':
-            // For PDFs, we download the raw content if available
-            if (source.rawContent) {
-                content = source.rawContent;
-                filename = `${sanitizedTitle}.pdf`;
-                mimeType = 'application/pdf';
-            } else if (source.content) {
-                // Fallback to text content if raw not available
-                content = source.content;
-                filename = `${sanitizedTitle}.txt`;
-                mimeType = 'text/plain';
-            } else {
-                console.warn('No content available for PDF export');
-                return;
-            }
-            break;
-        case 'url':
-        case 'text':
-        default:
-            content = source.content || '';
-            filename = `${sanitizedTitle}.txt`;
-            mimeType = 'text/plain';
-            break;
-    }
-
-    // Create blob and trigger download
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-}
-
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
     const { t } = useTranslation();
     const { deleteSource, renameSource, extractMetadata, extractingMetadata } = useKnowledgeStore();
