@@ -59,7 +59,7 @@ describe('ConversationAutoRestore', () => {
 
   describe('getMostRecentThread', () => {
     it('should return null when no threads exist', async () => {
-      mockSortBy.mockResolvedValue([]);
+      mockWhereResult.sortBy.mockReturnValue(Promise.resolve([]));
 
       const result = await restore.getMostRecentThread('project-1');
 
@@ -91,7 +91,7 @@ describe('ConversationAutoRestore', () => {
           updatedAt: 2000
         }
       ];
-      mockSortBy.mockResolvedValue(mockThreads);
+      mockWhereResult.sortBy.mockReturnValue(Promise.resolve(mockThreads));
 
       const result = await restore.getMostRecentThread('project-1');
 
@@ -102,7 +102,7 @@ describe('ConversationAutoRestore', () => {
 
   describe('restoreOnProjectLoad', () => {
     it('should create new conversation when no threads exist', async () => {
-      mockSortBy.mockResolvedValue([]);
+      mockWhereResult.sortBy.mockReturnValue(Promise.resolve([]));
       mockCreateConversation.mockReturnValue('new-conversation-id');
 
       await restore.restoreOnProjectLoad('project-1');
@@ -125,7 +125,7 @@ describe('ConversationAutoRestore', () => {
           updatedAt: 2000
         }
       ];
-      mockSortBy.mockResolvedValue(mockThreads);
+      mockWhereResult.sortBy.mockReturnValue(Promise.resolve(mockThreads));
 
       await restore.restoreOnProjectLoad('project-1');
 
@@ -133,7 +133,7 @@ describe('ConversationAutoRestore', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      mockSortBy.mockRejectedValue(new Error('Database error'));
+      mockWhereResult.sortBy.mockRejectedValue(new Error('Database error'));
       mockCreateConversation.mockReturnValue('new-conversation-id');
 
       // Should not throw - should create new conversation on error
@@ -160,22 +160,24 @@ describe('ConversationAutoRestore', () => {
     it('should return threads sorted by updatedAt descending', async () => {
       const mockThreads: ConversationThreadRecord[] = [
         { id: 't1', projectId: 'p1', title: 'First', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 1000 },
-        { id: 't2', projectId: 'p1', title: 'Second', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 3000 },
-        { id: 't3', projectId: 'p1', title: 'Third', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 2000 }
+        { id: 't2', projectId: 'p1', title: 'Second', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 2000 },
+        { id: 't3', projectId: 'p1', title: 'Third', preview: '', messages: [], agentsUsed: [], messageCount: 1, createdAt: 1000, updatedAt: 3000 }
       ];
-      mockSortBy.mockResolvedValue(mockThreads);
+      // Mock returns already sorted ascending by updatedAt
+      mockWhereResult.sortBy.mockReturnValue(Promise.resolve(mockThreads));
 
       const result = await restore.getThreadsSortedByUpdate('p1');
 
-      expect(result[0].id).toBe('t2'); // Most recent
-      expect(result[1].id).toBe('t3');
-      expect(result[2].id).toBe('t1'); // Oldest
+      // After reverse, t3 (3000) should be first, t1 (1000) should be last
+      expect(result[0].id).toBe('t3');
+      expect(result[1].id).toBe('t2');
+      expect(result[2].id).toBe('t1');
     });
   });
 
   describe('hasSavedState', () => {
     it('should return false when no threads exist', async () => {
-      mockCount.mockResolvedValue(0);
+      mockWhereResult.count.mockReturnValue(Promise.resolve(0));
 
       const result = await restore.hasSavedState('project-1');
 
@@ -183,7 +185,7 @@ describe('ConversationAutoRestore', () => {
     });
 
     it('should return true when threads exist', async () => {
-      mockCount.mockResolvedValue(5);
+      mockWhereResult.count.mockReturnValue(Promise.resolve(5));
 
       const result = await restore.hasSavedState('project-1');
 
