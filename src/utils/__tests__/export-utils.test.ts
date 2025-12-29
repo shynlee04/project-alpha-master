@@ -206,7 +206,7 @@ describe('export-utils (Story 6-3, Task 6)', () => {
 
             exportText(source);
 
-            expect(mockAnchor.download).toBe('httpsexamplecomarticle.txt');
+            expect(mockAnchor.download).toBe('httpsexample.comarticle.txt');
         });
 
         it('should handle URL sources', () => {

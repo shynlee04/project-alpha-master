@@ -11,6 +11,7 @@ import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
 import { RenameDialog } from './RenameDialog';
 import { CollectionSelector } from './CollectionSelector';
+import { exportText, exportPDF } from '@/utils/export-utils';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 
@@ -96,8 +97,12 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     };
 
     const handleExport = () => {
-        // TODO: Implement export (Task 6)
-        console.log('Export:', source.id);
+        // Export based on source type (Story 6-3, Task 6)
+        if (source.type === 'pdf') {
+            exportPDF(source);
+        } else {
+            exportText(source);
+        }
     };
 
     return (
