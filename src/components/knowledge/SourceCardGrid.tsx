@@ -1,9 +1,9 @@
 /**
  * @fileoverview Source Card Grid Component
  * @module components/knowledge/SourceCardGrid
- * @governance EPIC-6-2
+ * @governance EPIC-6-3
  *
- * Responsive grid layout for source cards with empty state.
+ * Responsive grid layout for source cards with empty state and collection filtering.
  */
 
 import { useEffect } from 'react';
@@ -13,10 +13,12 @@ import type { SourceRecord } from '@/lib/state/dexie-db';
 
 interface SourceCardGridProps {
     projectId: string;
+    /** Optional collection ID to filter sources */
+    collectionId?: string | null;
 }
 
-export function SourceCardGrid({ projectId }: SourceCardGridProps) {
-    const { sources, loadSources, selectedSource, openPreview } = useKnowledgeStore();
+export function SourceCardGrid({ projectId, collectionId }: SourceCardGridProps) {
+    const { sources, collections, loadSources, selectedSource, openPreview } = useKnowledgeStore();
 
     useEffect(() => {
         loadSources(projectId);
@@ -27,7 +29,19 @@ export function SourceCardGrid({ projectId }: SourceCardGridProps) {
         openPreview(source);
     };
 
-    if (sources.length === 0) {
+    // Filter sources by collection
+    const filteredSources = collectionId
+        ? sources.filter((source) => {
+              const collection = collections.find((c) => c.id === collectionId);
+              return collection?.sourceIds?.includes(source.id) || false;
+          })
+        : sources;
+
+    // Get collection name for empty state
+    const collection = collections.find((c) => c.id === collectionId);
+    const isFilteredByCollection = !!collectionId;
+
+    if (filteredSources.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
                 {/* Empty state illustration */}
@@ -48,28 +62,33 @@ export function SourceCardGrid({ projectId }: SourceCardGridProps) {
                 </svg>
 
                 <h3 className="text-lg font-medium text-foreground mb-2">
-                    No sources yet
+                    {isFilteredByCollection
+                        ? `No sources in "${collection?.name || 'this collection'}"`
+                        : 'No sources yet'}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-6 max-w-md">
-                    Import your first PDF, URL, or text to get started with knowledge management.
+                    {isFilteredByCollection
+                        ? 'Add sources to this collection or select a different collection.'
+                        : 'Import your first PDF, URL, or text to get started with knowledge management.'}
                 </p>
-                {/* Import Source button - opens SourceDropZone */}
-                <button
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
-                    onClick={() => {
-                        // TODO: Wire to SourceDropZone in Story 6.3
-                        console.log('Open SourceDropZone');
-                    }}
-                >
-                    Import Source
-                </button>
+                {!isFilteredByCollection && (
+                    <button
+                        className="px-4 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
+                        onClick={() => {
+                            // TODO: Wire to SourceDropZone in Story 6.3
+                            console.log('Open SourceDropZone');
+                        }}
+                    >
+                        Import Source
+                    </button>
+                )}
             </div>
         );
     }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-            {sources.map((source) => (
+            {filteredSources.map((source) => (
                 <SourceCard
                     key={source.id}
                     source={source}
