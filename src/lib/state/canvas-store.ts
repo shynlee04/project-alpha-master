@@ -25,7 +25,11 @@ interface CanvasMetadataRecord {
   edgeCount: number;
 }
 
-class KnowledgeCanvasDB extends Dexie {
+/**
+ * KnowledgeCanvasDB class for IndexedDB operations
+ * Extends Dexie for type-safe database operations
+ */
+export class KnowledgeCanvasDB extends Dexie {
   canvases!: Dexie.Table<CanvasMetadataRecord, string>;
   canvasStates!: Dexie.Table<CanvasStateRecord, string>;
 
@@ -38,12 +42,27 @@ class KnowledgeCanvasDB extends Dexie {
   }
 }
 
-const canvasDb = new KnowledgeCanvasDB();
+// Singleton instance - can be replaced for testing
+let canvasDbInstance: KnowledgeCanvasDB | null = null;
+
+export function getCanvasDb(): KnowledgeCanvasDB {
+  if (!canvasDbInstance) {
+    canvasDbInstance = new KnowledgeCanvasDB();
+  }
+  return canvasDbInstance;
+}
+
+export function setCanvasDbForTesting(db: KnowledgeCanvasDB | null): void {
+  canvasDbInstance = db;
+}
+
+// For backwards compatibility
+const canvasDb = getCanvasDb();
 
 /**
  * Generate a unique canvas ID
  */
-function generateCanvasId(): string {
+export function generateCanvasId(): string {
   return `canvas-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
