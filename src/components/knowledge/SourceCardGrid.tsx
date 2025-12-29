@@ -20,7 +20,8 @@ export function SourceCardGrid({ projectId }: SourceCardGridProps) {
 
     useEffect(() => {
         loadSources(projectId);
-    }, [projectId, loadSources]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [projectId]);
 
     const handleSelectSource = (source: SourceRecord) => {
         openPreview(source);
@@ -52,6 +53,16 @@ export function SourceCardGrid({ projectId }: SourceCardGridProps) {
                 <p className="text-sm text-muted-foreground mb-6 max-w-md">
                     Import your first PDF, URL, or text to get started with knowledge management.
                 </p>
+                {/* Import Source button - opens SourceDropZone */}
+                <button
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
+                    onClick={() => {
+                        // TODO: Wire to SourceDropZone in Story 6.3
+                        console.log('Open SourceDropZone');
+                    }}
+                >
+                    Import Source
+                </button>
             </div>
         );
     }

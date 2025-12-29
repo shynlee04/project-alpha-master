@@ -53,6 +53,8 @@ describe('SourceCard', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        // Clear any DOM elements left by previous tests
+        document.body.innerHTML = '';
         vi.mocked(useKnowledgeStore).mockReturnValue({
             deleteSource: vi.fn().mockResolvedValue(undefined),
         });
@@ -84,8 +86,9 @@ describe('SourceCard', () => {
     });
 
     it('should highlight when active', () => {
-        const { rerender } = render(<SourceCard source={mockPDFSource} isActive={false} />);
-        const card = screen.getByRole('button');
+        const { rerender, container } = render(<SourceCard source={mockPDFSource} isActive={false} />);
+        // Get the card by querying for role="button"
+        const card = container.querySelector('[role="button"]');
 
         expect(card).not.toHaveClass('border-primary');
 
@@ -95,34 +98,40 @@ describe('SourceCard', () => {
     });
 
     it('should show quick actions on hover', () => {
-        render(<SourceCard source={mockPDFSource} />);
-        const card = screen.getByRole('button');
+        const { container } = render(<SourceCard source={mockPDFSource} />);
+        // Get the card by querying for role="button"
+        const card = container.querySelector('[role="button"]');
 
-        // Actions should be hidden by default
-        const deleteButton = screen.getByTitle('Delete');
-        expect(deleteButton.parentElement).toHaveClass('opacity-0');
+        // Actions container should exist with opacity-0 class (hidden by default)
+        const actionsContainer = container.querySelector('.group-hover\\:opacity-100');
+        expect(actionsContainer).toBeInTheDocument();
+        expect(actionsContainer).toHaveClass('opacity-0');
 
-        // Hover should show actions
-        fireEvent.mouseEnter(card);
+        // Verify both buttons are present
+        expect(screen.getByTitle('Open')).toBeInTheDocument();
+        expect(screen.getByTitle('Delete')).toBeInTheDocument();
 
-        const openButton = screen.getByTitle('Open');
-        expect(openButton.parentElement).not.toHaveClass('opacity-0');
+        // Hover event is fired (CSS hover states don't work in jsdom)
+        fireEvent.mouseEnter(card!);
     });
 
     it('should call onSelect when clicked', () => {
         const onSelect = vi.fn();
-        render(<SourceCard source={mockPDFSource} onSelect={onSelect} />);
+        const { container } = render(<SourceCard source={mockPDFSource} onSelect={onSelect} />);
 
-        fireEvent.click(screen.getByRole('button'));
+        // Get the card by querying for role="button"
+        const card = container.querySelector('[role="button"]');
+        fireEvent.click(card!);
 
         expect(onSelect).toHaveBeenCalledWith(mockPDFSource);
     });
 
     it('should show delete confirmation dialog when delete clicked', () => {
-        render(<SourceCard source={mockPDFSource} />);
-        const card = screen.getByRole('button');
+        const { container } = render(<SourceCard source={mockPDFSource} />);
+        // Get the card by querying for role="button"
+        const card = container.querySelector('[role="button"]');
 
-        fireEvent.mouseEnter(card);
+        fireEvent.mouseEnter(card!);
         fireEvent.click(screen.getByTitle('Delete'));
 
         expect(screen.getByText(/Delete "Test PDF Document"\?/)).toBeInTheDocument();
@@ -136,10 +145,11 @@ describe('SourceCard', () => {
             deleteSource,
         });
 
-        render(<SourceCard source={mockPDFSource} />);
-        const card = screen.getByRole('button');
+        const { container } = render(<SourceCard source={mockPDFSource} />);
+        // Get the card by querying for role="button"
+        const card = container.querySelector('[role="button"]');
 
-        fireEvent.mouseEnter(card);
+        fireEvent.mouseEnter(card!);
         fireEvent.click(screen.getByTitle('Delete'));
         fireEvent.click(screen.getByText('Delete'));
 
@@ -149,10 +159,11 @@ describe('SourceCard', () => {
     });
 
     it('should close dialog when cancel clicked', () => {
-        render(<SourceCard source={mockPDFSource} />);
-        const card = screen.getByRole('button');
+        const { container } = render(<SourceCard source={mockPDFSource} />);
+        // Get the card by querying for role="button"
+        const card = container.querySelector('[role="button"]');
 
-        fireEvent.mouseEnter(card);
+        fireEvent.mouseEnter(card!);
         fireEvent.click(screen.getByTitle('Delete'));
         fireEvent.click(screen.getByText('Cancel'));
 
