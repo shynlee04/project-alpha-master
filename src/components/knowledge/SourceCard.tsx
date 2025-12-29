@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
+import { RenameDialog } from './RenameDialog';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 
@@ -66,7 +67,7 @@ function getSourceIcon(source: SourceRecord) {
 }
 
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
-    const { deleteSource } = useKnowledgeStore();
+    const { deleteSource, renameSource } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showRenameDialog, setShowRenameDialog] = useState(false);
 
@@ -80,8 +81,12 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     };
 
     const handleRename = () => {
-        // TODO: Implement rename dialog (Task 4)
         setShowRenameDialog(true);
+    };
+
+    const handleSaveRename = async (newTitle: string) => {
+        await renameSource(source.id, newTitle);
+        setShowRenameDialog(false);
     };
 
     const handleMoveToCollection = () => {
@@ -165,6 +170,14 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                     </div>
                 </div>
             )}
+
+            {/* Rename dialog (Story 6-3, Task 4) */}
+            <RenameDialog
+                isOpen={showRenameDialog}
+                currentTitle={source.title}
+                onSave={handleSaveRename}
+                onCancel={() => setShowRenameDialog(false)}
+            />
         </div>
     );
 }
