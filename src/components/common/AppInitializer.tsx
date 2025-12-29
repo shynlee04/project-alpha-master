@@ -48,8 +48,8 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     if (!provider.enabled) return;
 
                     try {
-                        const hasKey = await credentialVault.hasCredentials(provider.id);
-                        if (hasKey) {
+                        const apiKey = await credentialVault.getCredentials(provider.id);
+                        if (apiKey) {
                             console.log(`[AppInitializer] Pre-fetching models for ${provider.id}...`);
                             await fetchModels(provider.id);
                             console.log(`[AppInitializer] Models loaded for ${provider.id}`);

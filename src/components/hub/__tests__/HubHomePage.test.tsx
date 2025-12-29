@@ -122,7 +122,7 @@ describe('HubHomePage', () => {
     it('should navigate to IDE when IDE Workspace card is clicked', () => {
       render(<HubHomePage />);
 
-      // Find the IDE Workspace card by role and name
+      // Find the IDE Workspace card by looking for text content
       const ideCard = screen.getByRole('button', { name: /IDE Workspace/i });
       fireEvent.click(ideCard);
 
@@ -150,8 +150,7 @@ describe('HubHomePage', () => {
     it('should navigate to settings when Settings card is clicked', () => {
       render(<HubHomePage />);
 
-      // Use getAllByRole to find all buttons, then filter by one containing "Settings"
-      // The card has aria-label but we need to match it as accessible name
+      // Find the Settings card by text content
       const buttons = screen.getAllByRole('button');
       const settingsCard = buttons.find(btn =>
         btn.textContent?.includes('Settings') &&
