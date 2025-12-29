@@ -103,7 +103,7 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
 
     // Resizable handles with visible affordance (withHandle adds inner div)
     const handles = screen.getAllByRole('separator');
-    expect(handles.length).toBeGreaterThanOrEqual(4);
+    expect(handles.length).toBeGreaterThanOrEqual(3); // 3 handles: editor/preview, editor/terminal, terminal/bottom
     handles.forEach((h) => {
       expect(h).toHaveAttribute('tabindex', '0');
     });
