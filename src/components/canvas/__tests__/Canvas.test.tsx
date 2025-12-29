@@ -1,8 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
-import { Canvas } from '../Canvas';
 import '@testing-library/jest-dom';
+
+// Mock useCanvasDrop BEFORE importing Canvas
+vi.mock('../../hooks/useCanvasDrop', () => ({
+  useCanvasDrop: () => ({
+    handleDragOver: vi.fn(),
+    handleDrop: vi.fn(),
+  }),
+}));
 
 // Mock dependencies
 vi.mock('@xyflow/react', async () => {
@@ -22,6 +29,15 @@ vi.mock('@xyflow/react', async () => {
     Panel: ({ children, position }: { children: React.ReactNode; position?: string }) => (
       <div data-testid={`panel-${position || 'default'}`}>{children}</div>
     ),
+    useReactFlow: () => ({
+      screenToFlowPosition: vi.fn(({ x, y }) => ({ x, y })),
+      getNodes: vi.fn(() => []),
+      setNodes: vi.fn(),
+    }),
+    useStoreApi: () => ({
+      getState: vi.fn(),
+      setState: vi.fn(),
+    }),
   };
 });
 
@@ -36,6 +52,9 @@ vi.mock('react-i18next', () => ({
 vi.mock('../../hooks/useResponsive', () => ({
   useResponsive: () => ({ isMobile: false, isTablet: false, isDesktop: true }),
 }));
+
+// Import Canvas after mocks are set up
+import { Canvas } from '../Canvas';
 
 describe('Canvas Component', () => {
   beforeEach(() => {
