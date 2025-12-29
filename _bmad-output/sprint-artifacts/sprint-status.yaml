@@ -230,7 +230,7 @@ development_status:
   8-1-react-flow-canvas-setup: done # Canvas store + component verified, tests pass
   8-2-source-node-creation: done # SourceNode + drag-drop complete, 7 tests passing
   8-3-concept-node-creation: done # ConceptNode + inline editing complete, 12 tests passing
-  8-4-connection-lines: ready-for-dev # Story file created, ready for dev
+  8-4-connection-lines: done # COMPLETED 2025-12-30 - Custom edges with 4 relationship types, 25 tests passing
   8-5-canvas-persistence: ready-for-dev # Story file created, ready for dev
   epic-8-retrospective: pending
 

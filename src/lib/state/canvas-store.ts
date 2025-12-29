@@ -3,19 +3,54 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import Dexie from 'dexie';
 import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflow/react';
 import type { Node, Edge, Viewport } from '@xyflow/react';
-import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData, CanvasRelationshipType } from '../canvas/types';
+import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData, CanvasRelationshipType, CanvasMetadata, CanvasExport } from '../canvas/types';
 
+// ============================================================
 // IndexedDB database for canvas persistence
-const canvasDb = new Dexie('KnowledgeCanvasDB');
-canvasDb.version(1).stores({
-  nodes: 'id, type',
-  edges: 'id, source, target',
-  viewport: 'key',
-});
+// ============================================================
+
+interface CanvasStateRecord {
+  canvasId: string;
+  nodes: Node<any>[];
+  edges: Edge<any>[];
+  viewport: Viewport;
+}
+
+interface CanvasMetadataRecord {
+  id: string;
+  name: string;
+  createdAt: number;
+  updatedAt: number;
+  nodeCount: number;
+  edgeCount: number;
+}
+
+class KnowledgeCanvasDB extends Dexie {
+  canvases!: Dexie.Table<CanvasMetadataRecord, string>;
+  canvasStates!: Dexie.Table<CanvasStateRecord, string>;
+
+  constructor() {
+    super('KnowledgeCanvasDB');
+    this.version(2).stores({
+      canvases: 'id, name, updatedAt',
+      canvasStates: 'canvasId',
+    });
+  }
+}
+
+const canvasDb = new KnowledgeCanvasDB();
 
 /**
- * Zustand store for Knowledge Canvas state with Dexie persistence
+ * Generate a unique canvas ID
  */
+function generateCanvasId(): string {
+  return `canvas-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+// ============================================================
+// Canvas Store with Persistence
+// ============================================================
+
 export const useCanvasStore = create<CanvasStoreState>()(
   persist(
     (set, get) => ({
@@ -115,38 +150,50 @@ export const useCanvasStore = create<CanvasStoreState>()(
       },
     }),
     {
-      name: 'canvas-store',
+      name: 'canvas-storage',
       storage: createJSONStorage(() => ({
         getItem: async (name: string) => {
           try {
-            const nodes = await canvasDb.table('nodes').toArray();
-            const edges = await canvasDb.table('edges').toArray();
-            const viewport = await canvasDb.table('viewport').get('main');
-            return JSON.stringify({
-              nodes,
-              edges,
-              viewport: viewport?.value,
-            });
+            // Get the active canvas from localStorage or default to 'default'
+            const stored = localStorage.getItem('canvas-active-id');
+            const activeCanvasId = stored || 'default';
+
+            const state = await canvasDb.table('canvasStates').get(activeCanvasId);
+            if (state) {
+              return JSON.stringify({
+                nodes: state.nodes,
+                edges: state.edges,
+                viewport: state.viewport,
+              });
+            }
+            return null;
           } catch {
             return null;
           }
         },
         setItem: async (name: string, value: string) => {
           try {
+            const stored = localStorage.getItem('canvas-active-id');
+            const activeCanvasId = stored || 'default';
             const parsed = JSON.parse(value);
-            await canvasDb.transaction('rw', 'nodes', 'edges', 'viewport', async () => {
-              await canvasDb.table('nodes').clear();
-              await canvasDb.table('edges').clear();
-              await canvasDb.table('viewport').clear();
 
-              if (parsed.nodes?.length) {
-                await canvasDb.table('nodes').bulkAdd(parsed.nodes);
-              }
-              if (parsed.edges?.length) {
-                await canvasDb.table('edges').bulkAdd(parsed.edges);
-              }
-              if (parsed.viewport) {
-                await canvasDb.table('viewport').put({ key: 'main', value: parsed.viewport });
+            await canvasDb.transaction('rw', 'canvasStates', 'canvases', async () => {
+              // Save canvas state
+              await canvasDb.table('canvasStates').put({
+                canvasId: activeCanvasId,
+                nodes: parsed.nodes || [],
+                edges: parsed.edges || [],
+                viewport: parsed.viewport || { x: 0, y: 0, zoom: 1 },
+              });
+
+              // Update canvas metadata
+              const metadata = await canvasDb.table('canvases').get(activeCanvasId);
+              if (metadata) {
+                await canvasDb.table('canvases').update(activeCanvasId, {
+                  updatedAt: Date.now(),
+                  nodeCount: parsed.nodes?.length || 0,
+                  edgeCount: parsed.edges?.length || 0,
+                });
               }
             });
           } catch (error) {
@@ -155,10 +202,12 @@ export const useCanvasStore = create<CanvasStoreState>()(
         },
         removeItem: async (name: string) => {
           try {
-            await canvasDb.transaction('rw', 'nodes', 'edges', 'viewport', async () => {
-              await canvasDb.table('nodes').clear();
-              await canvasDb.table('edges').clear();
-              await canvasDb.table('viewport').clear();
+            const stored = localStorage.getItem('canvas-active-id');
+            const activeCanvasId = stored || 'default';
+
+            await canvasDb.transaction('rw', 'canvasStates', 'canvases', async () => {
+              await canvasDb.table('canvasStates').delete(activeCanvasId);
+              await canvasDb.table('canvases').delete(activeCanvasId);
             });
           } catch (error) {
             console.error('Failed to clear canvas state:', error);
@@ -174,10 +223,208 @@ export const useCanvasStore = create<CanvasStoreState>()(
   ),
 );
 
-/**
- * Hook to get canvas store persistence API
- */
+// ============================================================
+// Multi-Canvas Management Store
+// ============================================================
+
+interface MultiCanvasStoreState {
+  activeCanvasId: string | null;
+  canvasList: CanvasMetadata[];
+
+  // Actions
+  setActiveCanvas: (canvasId: string) => Promise<void>;
+  createCanvas: (name?: string) => Promise<string>;
+  deleteCanvas: (canvasId: string) => Promise<void>;
+  renameCanvas: (canvasId: string, name: string) => Promise<void>;
+  loadCanvasList: () => Promise<void>;
+  exportCanvas: () => Promise<CanvasExport>;
+  importCanvas: (exportData: CanvasExport) => Promise<string>;
+}
+
+export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => ({
+  activeCanvasId: null,
+  canvasList: [],
+
+  setActiveCanvas: async (canvasId: string) => {
+    // Save current canvas state before switching
+    const currentState = useCanvasStore.getState();
+    try {
+      await canvasDb.transaction('rw', 'canvasStates', 'canvases', async () => {
+        const stored = localStorage.getItem('canvas-active-id');
+        const activeCanvasId = stored || 'default';
+
+        await canvasDb.table('canvasStates').put({
+          canvasId: activeCanvasId,
+          nodes: currentState.nodes,
+          edges: currentState.edges,
+          viewport: currentState.viewport,
+        });
+
+        const metadata = await canvasDb.table('canvases').get(activeCanvasId);
+        if (metadata) {
+          await canvasDb.table('canvases').update(activeCanvasId, {
+            updatedAt: Date.now(),
+            nodeCount: currentState.nodes.length,
+            edgeCount: currentState.edges.length,
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Failed to save current canvas:', error);
+    }
+
+    // Switch to new canvas
+    localStorage.setItem('canvas-active-id', canvasId);
+    set({ activeCanvasId: canvasId });
+
+    // Load new canvas state
+    try {
+      const state = await canvasDb.table('canvasStates').get(canvasId);
+      if (state) {
+        useCanvasStore.setState({
+          nodes: state.nodes,
+          edges: state.edges,
+          viewport: state.viewport,
+        });
+      } else {
+        useCanvasStore.setState({
+          nodes: [],
+          edges: [],
+          viewport: { x: 0, y: 0, zoom: 1 },
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load canvas:', error);
+    }
+
+    // Refresh canvas list
+    await get().loadCanvasList();
+  },
+
+  createCanvas: async (name?: string) => {
+    const canvasId = generateCanvasId();
+    const canvasName = name || `Canvas ${Date.now()}`;
+    const now = Date.now();
+
+    await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
+      await canvasDb.table('canvases').add({
+        id: canvasId,
+        name: canvasName,
+        createdAt: now,
+        updatedAt: now,
+        nodeCount: 0,
+        edgeCount: 0,
+      });
+
+      await canvasDb.table('canvasStates').add({
+        canvasId,
+        nodes: [],
+        edges: [],
+        viewport: { x: 0, y: 0, zoom: 1 },
+      });
+    });
+
+    await get().loadCanvasList();
+    return canvasId;
+  },
+
+  deleteCanvas: async (canvasId: string) => {
+    if (canvasId === 'default') {
+      throw new Error('Cannot delete the default canvas');
+    }
+
+    await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
+      await canvasDb.table('canvases').delete(canvasId);
+      await canvasDb.table('canvasStates').delete(canvasId);
+    });
+
+    // If deleting active canvas, switch to default
+    const stored = localStorage.getItem('canvas-active-id');
+    if (stored === canvasId) {
+      localStorage.removeItem('canvas-active-id');
+      set({ activeCanvasId: null });
+      useCanvasStore.setState({
+        nodes: [],
+        edges: [],
+        viewport: { x: 0, y: 0, zoom: 1 },
+      });
+    }
+
+    await get().loadCanvasList();
+  },
+
+  renameCanvas: async (canvasId: string, name: string) => {
+    await canvasDb.table('canvases').update(canvasId, {
+      name,
+      updatedAt: Date.now(),
+    });
+    await get().loadCanvasList();
+  },
+
+  loadCanvasList: async () => {
+    try {
+      const canvases = await canvasDb.table('canvases').toArray();
+      set({ canvasList: canvases });
+    } catch (error) {
+      console.error('Failed to load canvas list:', error);
+      set({ canvasList: [] });
+    }
+  },
+
+  exportCanvas: async () => {
+    const state = useCanvasStore.getState();
+    const stored = localStorage.getItem('canvas-active-id');
+    const activeCanvasId = stored || 'default';
+
+    const metadata = await canvasDb.table('canvases').get(activeCanvasId);
+
+    return {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      canvas: {
+        id: activeCanvasId,
+        name: metadata?.name || 'Untitled',
+        nodes: state.nodes,
+        edges: state.edges,
+        viewport: state.viewport,
+      },
+    };
+  },
+
+  importCanvas: async (exportData: CanvasExport) => {
+    const canvasId = generateCanvasId();
+    const now = Date.now();
+
+    await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
+      await canvasDb.table('canvases').add({
+        id: canvasId,
+        name: `${exportData.canvas.name} (Imported)`,
+        createdAt: now,
+        updatedAt: now,
+        nodeCount: exportData.canvas.nodes.length,
+        edgeCount: exportData.canvas.edges.length,
+      });
+
+      await canvasDb.table('canvasStates').add({
+        canvasId,
+        nodes: exportData.canvas.nodes,
+        edges: exportData.canvas.edges,
+        viewport: exportData.canvas.viewport,
+      });
+    });
+
+    await get().loadCanvasList();
+    return canvasId;
+  },
+}));
+
+// ============================================================
+// Persistence API Hook
+// ============================================================
+
 export const useCanvasPersistence = () => {
+  const { exportCanvas } = useMultiCanvasStore();
+
   return {
     clearCanvas: async () => {
       await canvasDb.transaction('rw', 'nodes', 'edges', 'viewport', async () => {
@@ -187,10 +434,56 @@ export const useCanvasPersistence = () => {
       });
       useCanvasStore.getState().resetCanvas();
     },
+
     exportCanvas: async () => {
-      const nodes = await canvasDb.table('nodes').toArray();
-      const edges = await canvasDb.table('edges').toArray();
-      return { nodes, edges };
+      return await exportCanvas();
+    },
+
+    downloadCanvas: async () => {
+      const exportData = await exportCanvas();
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${exportData.canvas.name.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     },
   };
 };
+
+// ============================================================
+// Initialize default canvas if needed
+// ============================================================
+
+async function initializeDefaultCanvas() {
+  try {
+    const existing = await canvasDb.table('canvases').get('default');
+    if (!existing) {
+      await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
+        await canvasDb.table('canvases').add({
+          id: 'default',
+          name: 'My First Canvas',
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          nodeCount: 0,
+          edgeCount: 0,
+        });
+
+        await canvasDb.table('canvasStates').add({
+          canvasId: 'default',
+          nodes: [],
+          edges: [],
+          viewport: { x: 0, y: 0, zoom: 1 },
+        });
+      });
+    }
+  } catch (error) {
+    console.error('Failed to initialize default canvas:', error);
+  }
+}
+
+// Initialize on module load
+initializeDefaultCanvas();

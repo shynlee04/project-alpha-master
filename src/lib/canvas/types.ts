@@ -101,3 +101,47 @@ export const viewportOptions = {
     padding: 0.8,
   },
 };
+
+/**
+ * Canvas metadata for multi-canvas support
+ */
+export interface CanvasMetadata {
+  id: string;
+  name: string;
+  createdAt: number;
+  updatedAt: number;
+  nodeCount: number;
+  edgeCount: number;
+}
+
+/**
+ * Canvas export format
+ */
+export interface CanvasExport {
+  version: number;
+  exportedAt: string;
+  canvas: {
+    id: string;
+    name: string;
+    nodes: Node<any>[];
+    edges: Edge<any>[];
+    viewport: Viewport;
+  };
+}
+
+/**
+ * Multi-canvas store state
+ */
+export interface MultiCanvasState {
+  // Current active canvas
+  activeCanvasId: string | null;
+  canvasList: CanvasMetadata[];
+
+  // Actions
+  setActiveCanvas: (canvasId: string) => void;
+  createCanvas: (name?: string) => Promise<string>;
+  deleteCanvas: (canvasId: string) => Promise<void>;
+  renameCanvas: (canvasId: string, name: string) => Promise<void>;
+  loadCanvasList: () => Promise<void>;
+  importCanvas: (exportData: CanvasExport) => Promise<string>;
+}
