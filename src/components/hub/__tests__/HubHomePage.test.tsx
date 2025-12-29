@@ -122,9 +122,11 @@ describe('HubHomePage', () => {
     it('should navigate to IDE when IDE Workspace card is clicked', () => {
       render(<HubHomePage />);
 
-      // Find the IDE Workspace card by looking for text content
-      const ideCard = screen.getByRole('button', { name: /IDE Workspace/i });
-      fireEvent.click(ideCard);
+      // Find by text content in the BentoCard
+      const buttons = screen.getAllByRole('button');
+      const ideCard = buttons.find(btn => btn.textContent?.includes('IDE Workspace'));
+      expect(ideCard).toBeDefined();
+      fireEvent.click(ideCard!);
 
       expect(mockNavigate).toHaveBeenCalledWith({ to: '/ide' });
     });
@@ -132,8 +134,10 @@ describe('HubHomePage', () => {
     it('should navigate to agents when Agent Center card is clicked', () => {
       render(<HubHomePage />);
 
-      const agentCard = screen.getByRole('button', { name: /Agent Center/i });
-      fireEvent.click(agentCard);
+      const buttons = screen.getAllByRole('button');
+      const agentCard = buttons.find(btn => btn.textContent?.includes('Agent Center'));
+      expect(agentCard).toBeDefined();
+      fireEvent.click(agentCard!);
 
       expect(mockNavigate).toHaveBeenCalledWith({ to: '/agents' });
     });
@@ -141,8 +145,10 @@ describe('HubHomePage', () => {
     it('should navigate to knowledge when Knowledge Hub card is clicked', () => {
       render(<HubHomePage />);
 
-      const knowledgeCard = screen.getByRole('button', { name: /Knowledge Hub/i });
-      fireEvent.click(knowledgeCard);
+      const buttons = screen.getAllByRole('button');
+      const knowledgeCard = buttons.find(btn => btn.textContent?.includes('Knowledge Hub'));
+      expect(knowledgeCard).toBeDefined();
+      fireEvent.click(knowledgeCard!);
 
       expect(mockNavigate).toHaveBeenCalledWith({ to: '/knowledge' });
     });
@@ -150,7 +156,6 @@ describe('HubHomePage', () => {
     it('should navigate to settings when Settings card is clicked', () => {
       render(<HubHomePage />);
 
-      // Find the Settings card by text content
       const buttons = screen.getAllByRole('button');
       const settingsCard = buttons.find(btn =>
         btn.textContent?.includes('Settings') &&
