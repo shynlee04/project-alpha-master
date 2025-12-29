@@ -12,6 +12,7 @@ import { PDFIcon, URLIcon, TextIcon } from '@/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
 import { RenameDialog } from './RenameDialog';
 import { CollectionSelector } from './CollectionSelector';
+import { SourceMetadataDialog } from './SourceMetadataDialog';
 import { exportText, exportPDF } from '@/utils/export-utils';
 import { toast } from 'sonner';
 import type { SourceRecord } from '@/lib/state/dexie-db';
@@ -135,6 +136,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showRenameDialog, setShowRenameDialog] = useState(false);
     const [showCollectionSelector, setShowCollectionSelector] = useState(false);
+    const [showMetadataDialog, setShowMetadataDialog] = useState(false);
 
     const Icon = getSourceIcon(source);
     const readingTime = calculateReadingTime(source);
