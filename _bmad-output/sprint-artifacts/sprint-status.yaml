@@ -213,9 +213,6 @@ development_status:
   6-2-source-card-ui: done # Code review complete 2025-12-30, all issues fixed, 47 tests passing (4 skipped due to jsdom)
   6-3-source-management: done # All 7 tasks complete, 143 tests passing (125 knowledge + 18 export-utils)
 <<<<<<< HEAD
-  6-4-source-metadata-extraction: done # All 7 ACs met, implementation complete 2025-12-30
-  epic-6-retrospective: done # _bmad-output/sprint-artifacts/epic-6-retrospective-2025-12-30.md
-=======
   6-4-source-metadata-extraction: done # All 7 ACs met, implementation complete 2025-12-30 - 12-LEVEL VALIDATED
   epic-6-retrospective: done # COMPLETED 2025-12-30 - All 7 sections present, sweeping check passed
   epic-6-validation_status:
@@ -234,14 +231,11 @@ development_status:
     overall: "VALIDATED (11/12 levels fully passed)"
     last_validated: "2025-12-30T13:30:00+07:00"
     validated_by: "bmad-bmm-orchestrator"
->>>>>>> beb618d89d369f4ad041d85fdd66ab02aa93f9f9
 
   # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)
   epic-7: in_progress # Story 7.1 complete, 7.2 in development
   7-1-orama-index-management: done # COMPLETED 2025-12-30 - All 69 tests passing (20+22+27)
-<<<<<<< HEAD
-  7-2-document-chunking: ready-for-dev # Story file + context XML validated, ready for implementation
-=======
+  7-2-document-chunking: done # COMPLETED 2025-12-30 - All chunk strategies implemented
   epic-7-validation_status:
     level_1: "7/7 PASSED"
     level_2: "4/4 PASSED"
