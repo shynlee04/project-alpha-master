@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="8-1-react-flow-canvas-setup" created="2025-12-30T10:30:00+07:00">
+  <description>React Flow canvas setup with Zustand + Dexie persistence</description>
+
+  <!-- Current Code State -->
+  <files>
+    <file path="src/lib/state/canvas-store.ts">
+      <content><![CDATA[
+        // Canvas state will be created following this pattern:
+        import { create } from 'zustand';
+        import { persist, createJSONStorage } from 'zustand/middleware';
+        import Dexie from 'dexie';
+
+        interface CanvasState {
+          nodes: Node[];
+          edges: Edge[];
+          viewport: { x: number; y: number; zoom: number };
+          isReadOnly: boolean;
+          setNodes: (nodes: Node[]) => void;
+          setEdges: (edges: Edge[]) => void;
+          setViewport: (viewport: { x: number; y: number; zoom: number }) => void;
+          setReadOnly: (readOnly: boolean) => void;
+        }
+      ]]></content>
+    </file>
+    <file path="src/components/canvas/Canvas.tsx">
+      <content><![CDATA[
+        // Canvas component will use React Flow with this pattern:
+        import React, { useCallback, useRef } from 'react';
+        import ReactFlow, {
+          useNodesState,
+          useEdgesState,
+          Controls,
+          Background,
+          useReactFlow,
+          ReactFlowProvider,
+        } from 'reactflow';
+        import 'reactflow/dist/style.css';
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- Research Findings from MCP Tools -->
+  <research_notes>
+    <finding source="context7" query="React Flow TypeScript types node edge">
+      <pattern><![CDATA[
+        // Custom Node/Edge Type Definition Pattern
+        import type { BuiltInNode, BuiltInEdge } from '@xyflow/react';
+
+        export type CustomNodeType = BuiltInNode | NumberNode | TextNode;
+        export type CustomEdgeType = BuiltInEdge | EditableEdge;
+
+        // Usage with hooks:
+        const store = useStoreApi<CustomNodeType, CustomEdgeType>();
+        const reactFlow = useReactFlow<CustomNodeType, CustomEdgeType>();
+      ]]></pattern>
+    </finding>
+
+    <finding source="context7" query="React Flow viewport pan zoom control">
+      <pattern><![CDATA[
+        // Viewport Management Pattern
+        import { useViewport, useOnViewportChange } from '@xyflow/react';
+
+        function ViewportHandler() {
+          const { x, y, zoom } = useViewport();
+
+          useOnViewportChange({
+            onStart: (viewport) => console.log('start', viewport),
+            onChange: (viewport) => console.log('change', viewport),
+            onEnd: (viewport) => console.log('end', viewport),
+          });
+
+          return null;
+        }
+
+        // Fit View Utility
+        import { getViewportForBounds } from '@xyflow/react';
+        const { x, y, zoom } = getViewportForBounds(bounds, width, height, minZoom, maxZoom);
+      ]]></pattern>
+    </finding>
+
+    <finding source="context7" query="Zustand persist middleware TypeScript Dexie">
+      <pattern><![CDATA[
+        // Zustand with Dexie Storage Pattern
+        import { create } from 'zustand';
+        import { persist, createJSONStorage } from 'zustand/middleware';
+        import Dexie from 'dexie';
+
+        const db = new Dexie('CanvasStore');
+
+        interface CanvasStore {
+          nodes: Node[];
+          edges: Edge[];
+          setNodes: (nodes: Node[]) => void;
+        }
+
+        export const useCanvasStore = create<CanvasStore>()(
+          persist(
+            (set) => ({
+              nodes: [],
+              edges: [],
+              setNodes: (nodes) => set({ nodes }),
+            }),
+            {
+              name: 'canvas-storage',
+              storage: createJSONStorage(() => ({
+                getItem: async (name) => await db.table(name).toArray(),
+                setItem: async (name, value) => {
+                  await db.table(name).clear();
+                  await db.table(name).add(value);
+                },
+                removeItem: async (name) => {
+                  await db.table(name).clear();
+                },
+              })),
+            },
+          ),
+        );
+      ]]></pattern>
+    </finding>
+  </research_notes>
+
+  <!-- Architecture Patterns -->
+  <architecture_patterns>
+    <pattern name="zustand-persist-canvas" source="architecture.md">
+      <description>
+        Canvas state management follows the Zustand + Dexie pattern established in
+        Epic 2 (Story 2.1) for conversation persistence. Canvas state is persisted
+        to IndexedDB with auto-save on changes (500ms debounce).
+      </description>
+    </pattern>
+    <pattern name="two-engine-canvas" source="architecture.md">
+      <description>
+        Two-Engine Architecture: Desktop = full editing, Mobile = read-only view.
+        Uses useResponsive hook from Epic 1.1 for device detection.
+      </description>
+    </pattern>
+  </architecture_patterns>
+
+  <!-- Technical Notes for Developer -->
+  <technical_notes>
+    <note priority="high">
+      React Flow v12 uses @xyflow/react package (renamed from reactflow).
+      Import from '@xyflow/react' not 'reactflow'.
+    </note>
+    <note priority="high">
+      Lazy load React Flow to optimize bundle size:
+      const ReactFlow = lazy(() => import('@xyflow/react'));
+    </note>
+    <note priority="medium">
+      Use useCallback for onNodesChange, onEdgesChange, onConnect to prevent
+      unnecessary re-renders (critical for 60fps target).
+    </note>
+    <note priority="medium">
+      Only render visible elements with onlyRenderVisibleElements prop
+      for large canvases (performance optimization).
+    </note>
+    <note priority="low">
+      Keyboard shortcuts: Arrow keys (pan), +/- (zoom), Home (fit view).
+      Implement using useOnViewportChange hook.
+    </note>
+  </technical_notes>
+
+  <!-- Dependencies and Imports -->
+  <dependencies>
+    <dependency name="@xyflow/react" version="^12.0.0" />
+    <dependency name="zustand" version="^5.0.0" />
+    <dependency name="dexie" version="^4.0.0" />
+    <dependency name="react" version="^18.0.0" />
+  </dependencies>
+
+  <!-- File Structure to Create -->
+  <file_structure>
+    <directory path="src/lib/state/">
+      - canvas-store.ts (Zustand store with Dexie persistence)
+    </directory>
+    <directory path="src/components/canvas/">
+      - Canvas.tsx (Main canvas component)
+      - EmptyState.tsx (Empty state component with i18n)
+      - CanvasControls.tsx (Custom controls if needed)
+    </directory>
+    <directory path="src/hooks/">
+      - useCanvasState.ts (Canvas-specific hooks)
+    </directory>
+    <directory path="src/lib/canvas/">
+      - types.ts (Canvas type definitions)
+      - utils.ts (Canvas utilities)
+    </directory>
+    <directory path="src/components/canvas/__tests__/">
+      - canvas.test.tsx
+      - canvas-store.test.ts
+    </directory>
+  </file_structure>
+
+  <!-- Test Requirements -->
+  <test_requirements>
+    <test name="canvas-store">
+      - Node state management
+      - Edge state management
+      - Viewport state management
+      - Persistence to Dexie
+      - Debounced auto-save
+    </test>
+    <test name="canvas-component">
+      - React Flow rendering
+      - Pan/zoom interactions
+      - Mobile read-only mode
+      - Empty state display
+      - Keyboard navigation
+    </test>
+    <test name="integration">
+      - State restoration on page load
+      - Cross-tab sync (optional)
+    </test>
+  </test_requirements>
+
+  <!-- i18n Keys -->
+  <i18n_keys>
+    <key namespace="canvas">
+      - canvas.emptyState.title: "Drop sources here to start"
+      - canvas.emptyState.hint: "Drag and drop sources from the sidebar"
+      - canvas.mobileReadOnly: "Edit on desktop"
+      - canvas.zoom.in: "Zoom in"
+      - canvas.zoom.out: "Zoom out"
+      - canvas.fitView: "Fit view"
+    </key>
+  </i18n_keys>
+
+</context>

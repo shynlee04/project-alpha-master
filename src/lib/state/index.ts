@@ -61,6 +61,12 @@ export {
     type PendingToolApproval,
 } from './conversation-store';
 
+// Canvas store (Story 8.1)
+export {
+    useCanvasStore,
+    useCanvasPersistence,
+} from './canvas-store';
+
 // Re-export Dexie hooks for convenience
 export { useLiveQuery } from 'dexie-react-hooks';
 

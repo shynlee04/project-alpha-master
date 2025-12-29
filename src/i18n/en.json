@@ -586,5 +586,16 @@
   "collections.create": "Create Collection",
   "collections.addSource": "Add to Collection",
   "collections.removeSource": "Remove from Collection",
-  "knowledge.verified": "Teacher Verified"
+  "knowledge.verified": "Teacher Verified",
+  "canvas.title": "Knowledge Canvas",
+  "canvas.emptyState.title": "Drop sources here to start",
+  "canvas.emptyState.hint": "Drag and drop sources from the sidebar to create your knowledge map",
+  "canvas.mobileReadOnly": "Edit on desktop",
+  "canvas.zoom.in": "Zoom in",
+  "canvas.zoom.out": "Zoom out",
+  "canvas.fitView": "Fit view",
+  "canvas.shortcut.pan": "Pan",
+  "canvas.shortcut.zoom": "Zoom in/out",
+  "canvas.shortcut.fitView": "Fit view",
+  "canvas.shortcut.delete": "Delete selected"
 }

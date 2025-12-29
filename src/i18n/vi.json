@@ -583,5 +583,16 @@
   "collections.create": "Tạo bộ sưu tập",
   "collections.addSource": "Thêm vào bộ sưu tập",
   "collections.removeSource": "Xóa khỏi bộ sưu tập",
-  "knowledge.verified": "Đã xác minh bởi Giáo viên"
+  "knowledge.verified": "Đã xác minh bởi Giáo viên",
+  "canvas.title": "Canvas Kiến thức",
+  "canvas.emptyState.title": "Thả nguồn vào đây để bắt đầu",
+  "canvas.emptyState.hint": "Kéo và thả nguồn từ thanh bên để tạo sơ đồ kiến thức",
+  "canvas.mobileReadOnly": "Chỉnh sửa trên máy tính",
+  "canvas.zoom.in": "Phóng to",
+  "canvas.zoom.out": "Thu nhỏ",
+  "canvas.fitView": "Co dãn vừa khung",
+  "canvas.shortcut.pan": "Di chuyển",
+  "canvas.shortcut.zoom": "Phóng to/thu nhỏ",
+  "canvas.shortcut.fitView": "Co dãn vừa khung",
+  "canvas.shortcut.delete": "Xóa mục đã chọn"
 }
