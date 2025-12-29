@@ -245,143 +245,143 @@ Epic 6 delivers "Source Ingestion & Management" with PDF/URL/text import, source
 ## Tasks / Subtasks
 
 ### Task 1: Extend Knowledge Store with Management Actions
-- [ ] Extend `useKnowledgeStore` with new state and actions
-  - [ ] Add `collections` state (Collection[])
-  - [ ] Add `undoQueue` state (DeletedSource[])
-  - [ ] Add `renameSource(sourceId, newName)` action
-  - [ ] Add `deleteSource(sourceId)` action with soft delete
-  - [ ] Add `undoDelete(sourceId)` action
-  - [ ] Add `createCollection(name)` action
-  - [ ] Add `updateCollection(collectionId, updates)` action
-  - [ ] Add `deleteCollection(collectionId)` action
-  - [ ] Add `addSourceToCollection(sourceId, collectionId)` action
-  - [ ] Add `removeSourceFromCollection(sourceId, collectionId)` action
-  - [ ] Add `filterByCollection(collectionId)` selector
-- [ ] Update Dexie schema to add `collections` table
-  - [ ] Define `Collection` interface: id, projectId, name, sourceIds, createdAt
-  - [ ] Add `collections` table to `dexie-db.ts`
-  - [ ] Extend `SourceRecord` with `collections` array
-- [ ] Write tests for store actions
-  - [ ] Test rename source
-  - [ ] Test delete/undo delete
-  - [ ] Test collection CRUD operations
-  - [ ] Test source-to-collection associations
+- [x] Extend `useKnowledgeStore` with new state and actions
+  - [x] Add `collections` state (Collection[])
+  - [x] Add `undoQueue` state (DeletedSource[])
+  - [x] Add `renameSource(sourceId, newName)` action
+  - [x] Add `deleteSource(sourceId)` action with soft delete
+  - [x] Add `undoDelete(sourceId)` action
+  - [x] Add `createCollection(name)` action
+  - [x] Add `updateCollection(collectionId, updates)` action
+  - [x] Add `deleteCollection(collectionId)` action
+  - [x] Add `addSourceToCollection(sourceId, collectionId)` action
+  - [x] Add `removeSourceFromCollection(sourceId, collectionId)` action
+  - [x] Add `filterByCollection(collectionId)` selector
+- [x] Update Dexie schema to add `collections` table
+  - [x] Define `Collection` interface: id, projectId, name, sourceIds, createdAt
+  - [x] Add `collections` table to `dexie-db.ts`
+  - [x] Extend `SourceRecord` with `collections` array
+- [x] Write tests for store actions
+  - [x] Test rename source
+  - [x] Test delete/undo delete
+  - [x] Test collection CRUD operations
+  - [x] Test source-to-collection associations
 
 ### Task 2: Create SourceContextMenu Component
-- [ ] Create `SourceContextMenu.tsx` component
-  - [ ] Render dropdown with menu items
-  - [ ] Menu items: Rename, Delete, Move to Collection, Export
-  - [ ] Position dropdown relative to trigger button
-  - [ ] Close on click outside
-  - [ ] Close on Escape key
-  - [ ] Add keyboard navigation (arrow keys, Enter)
-- [ ] Add context menu trigger to SourceCard
-  - [ ] Add three dots icon button to card actions
-  - [ ] Position button in top-right corner
-  - [ ] Show on card hover
-- [ ] Write tests for SourceContextMenu
-  - [ ] Test menu opens/closes correctly
-  - [ ] Test menu item callbacks
-  - [ ] Test keyboard navigation
-  - [ ] Test click outside to close
+- [x] Create `SourceContextMenu.tsx` component
+  - [x] Render dropdown with menu items
+  - [x] Menu items: Rename, Delete, Move to Collection, Export
+  - [x] Position dropdown relative to trigger button
+  - [x] Close on click outside
+  - [x] Close on Escape key
+  - [x] Add keyboard navigation (arrow keys, Enter)
+- [x] Add context menu trigger to SourceCard
+  - [x] Add three dots icon button to card actions
+  - [x] Position button in top-right corner
+  - [x] Show on card hover
+- [x] Write tests for SourceContextMenu
+  - [x] Test menu opens/closes correctly
+  - [x] Test menu item callbacks
+  - [x] Test keyboard navigation
+  - [x] Test click outside to close
 
 ### Task 3: Implement Delete with Undo
-- [ ] Create DeleteConfirmationDialog component
-  - [ ] Show dialog with warning message
-  - [ ] Confirm button (red color)
-  - [ ] Cancel button
-- [ ] Create UndoToast component
-  - [ ] Show toast at bottom-right fixed position
-  - [ ] Display message: "Source deleted. Undo?"
-  - [ ] Show countdown timer (5 seconds)
-  - [ ] Undo button (appears on hover)
-  - [ ] Auto-dismiss after 5 seconds
-- [ ] Implement delete logic
-  - [ ] Soft delete: Mark source as deleted (add `deleted` flag, `deletedAt` timestamp)
-  - [ ] Remove source from all collections
-  - [ ] Add to undo queue
-  - [ ] Trigger card fade-out animation
-- [ ] Implement undo logic
-  - [ ] Remove `deleted` flag
-  - [ ] Restore source to collections
-  - [ ] Trigger card fade-in animation
-  - [ ] Clear from undo queue
-- [ ] Write tests for delete/undo
-  - [ ] Test delete confirmation flow
-  - [ ] Test undo restoration
-  - [ ] Test toast countdown timer
-  - [ ] Test permanent delete after timeout
+- [x] Create DeleteConfirmationDialog component
+  - [x] Show dialog with warning message
+  - [x] Confirm button (red color)
+  - [x] Cancel button
+- [x] Create UndoToast component
+  - [x] Show toast at bottom-right fixed position
+  - [x] Display message: "Source deleted. Undo?"
+  - [x] Show countdown timer (5 seconds)
+  - [x] Undo button (appears on hover)
+  - [x] Auto-dismiss after 5 seconds
+- [x] Implement delete logic
+  - [x] Soft delete: Mark source as deleted (add `deleted` flag, `deletedAt` timestamp)
+  - [x] Remove source from all collections
+  - [x] Add to undo queue
+  - [x] Trigger card fade-out animation
+- [x] Implement undo logic
+  - [x] Remove `deleted` flag
+  - [x] Restore source to collections
+  - [x] Trigger card fade-in animation
+  - [x] Clear from undo queue
+- [x] Write tests for delete/undo
+  - [x] Test delete confirmation flow
+  - [x] Test undo restoration
+  - [x] Test toast countdown timer
+  - [x] Test permanent delete after timeout
 
 ### Task 4: Implement Rename Functionality
-- [ ] Create RenameDialog or inline edit component
-  - [ ] Show text input with current title
-  - [ ] Focus input and select text
-  - [ ] Save button (enabled when title changed)
-  - [ ] Cancel button
-  - [ ] Validation: Required, max 100 chars, trim whitespace
-- [ ] Integrate rename with SourceCard
-  - [ ] Show dialog/inline edit on Rename click
-  - [ ] Update title in store on save
-  - [ ] Update UI immediately
-  - [ ] Update preview panel title
-- [ ] Write tests for rename
-  - [ ] Test rename dialog opens/closes
-  - [ ] Test title validation
-  - [ ] Test title update in store
-  - [ ] Test title update in UI (card, preview)
+- [x] Create RenameDialog or inline edit component
+  - [x] Show text input with current title
+  - [x] Focus input and select text
+  - [x] Save button (enabled when title changed)
+  - [x] Cancel button
+  - [x] Validation: Required, max 100 chars, trim whitespace
+- [x] Integrate rename with SourceCard
+  - [x] Show dialog/inline edit on Rename click
+  - [x] Update title in store on save
+  - [x] Update UI immediately
+  - [x] Update preview panel title
+- [x] Write tests for rename
+  - [x] Test rename dialog opens/closes
+  - [x] Test title validation
+  - [x] Test title update in store
+  - [x] Test title update in UI (card, preview)
 
 ### Task 5: Implement Collections
-- [ ] Create CollectionManager component
-  - [ ] "New Collection" button
-  - [ ] Collection creation dialog (name input)
-  - [ ] Collection list in sidebar
-  - [ ] Collection count badges
-- [ ] Create CollectionSelector component
-  - [ ] Dropdown of existing collections
-  - [ ] Multi-select for multiple collections
-  - [ ] "Create new collection" option
-- [ ] Create CollectionPanel for filtered view
-  - [ ] Show collection name and description
-  - [ ] Show filtered source grid
-  - [ ] "All Sources" button to clear filter
-- [ ] Integrate collections with SourceCardGrid
-  - [ ] Add collection filter dropdown
-  - [ ] Filter sources by selected collection
-  - [ ] Show "No sources in this collection" empty state
-- [ ] Write tests for collections
-  - [ ] Test collection creation
-  - [ ] Test adding source to collection
-  - [ ] Test removing source from collection
-  - [ ] Test filtering by collection
-  - [ ] Test multi-collection membership
+- [x] Create CollectionManager component
+  - [x] "New Collection" button
+  - [x] Collection creation dialog (name input)
+  - [x] Collection list in sidebar
+  - [x] Collection count badges
+- [x] Create CollectionSelector component
+  - [x] Dropdown of existing collections
+  - [x] Multi-select for multiple collections
+  - [x] "Create new collection" option
+- [x] Create CollectionPanel for filtered view
+  - [x] Show collection name and description
+  - [x] Show filtered source grid
+  - [x] "All Sources" button to clear filter
+- [x] Integrate collections with SourceCardGrid
+  - [x] Add collection filter dropdown
+  - [x] Filter sources by selected collection
+  - [x] Show "No sources in this collection" empty state
+- [x] Write tests for collections
+  - [x] Test collection creation
+  - [x] Test adding source to collection
+  - [x] Test removing source from collection
+  - [x] Test filtering by collection
+  - [x] Test multi-collection membership
 
 ### Task 6: Implement Export Functionality
-- [ ] Add export action to knowledge store
-  - [ ] `exportSource(sourceId)` action
-  - [ ] Generate downloadable file from source content
-- [ ] Create export utility functions
-  - [ ] `exportPDF(source)`: Download original PDF
-  - [ ] `exportText(source)`: Download as `.txt` file
-  - [ ] `sanitizeFilename(title)`: Clean title for file name
-- [ ] Integrate export with context menu
-  - [ ] Add Export menu item
-  - [ ] Trigger browser download on click
-- [ ] Write tests for export
-  - [ ] Test PDF export
-  - [ ] Test text export
-  - [ ] Test filename sanitization
+- [x] Add export action to knowledge store
+  - [x] `exportSource(sourceId)` action
+  - [x] Generate downloadable file from source content
+- [x] Create export utility functions
+  - [x] `exportPDF(source)`: Download original PDF
+  - [x] `exportText(source)`: Download as `.txt` file
+  - [x] `sanitizeFilename(title)`: Clean title for file name
+- [x] Integrate export with context menu
+  - [x] Add Export menu item
+  - [x] Trigger browser download on click
+- [x] Write tests for export
+  - [x] Test PDF export
+  - [x] Test text export
+  - [x] Test filename sanitization
 
 ### Task 7: Integration Testing
-- [ ] Test full user flows
-  - [ ] Delete → Undo → Restore flow
-  - [ ] Rename → Update across UI flow
-  - [ ] Create collection → Add sources → Filter flow
-  - [ ] Export source → Download file flow
-- [ ] Test edge cases
-  - [ ] Delete last source in collection
-  - [ ] Rename to empty string (validation)
-  - [ ] Create collection with duplicate name
-  - [ ] Export very large text source
+- [x] Test full user flows
+  - [x] Delete → Undo → Restore flow
+  - [x] Rename → Update across UI flow
+  - [x] Create collection → Add sources → Filter flow
+  - [x] Export source → Download file flow
+- [x] Test edge cases
+  - [x] Delete last source in collection
+  - [x] Rename to empty string (validation)
+  - [x] Create collection with duplicate name
+  - [x] Export very large text source
 
 ---
 
