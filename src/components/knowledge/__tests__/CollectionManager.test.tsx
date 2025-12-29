@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CollectionManager } from '../CollectionManager';
+import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 import type { Collection } from '@/lib/state/dexie-db';
 
 // Mock knowledge store
@@ -38,8 +39,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should render New Collection button', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: [],
             createCollection: vi.fn(),
         });
@@ -51,8 +51,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should render collection list', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
@@ -64,8 +63,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should render collection count badges', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
@@ -80,8 +78,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
 
     it('should call createCollection when New Collection button is clicked', () => {
         const createCollection = vi.fn();
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: [],
             createCollection,
         });
@@ -98,8 +95,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
 
     it('should call onCollectionSelect when collection is clicked', () => {
         const onCollectionSelect = vi.fn();
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
@@ -113,8 +109,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should highlight active collection', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
@@ -126,8 +121,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should show empty state when no collections', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: [],
             createCollection: vi.fn(),
         });
@@ -138,8 +132,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should render All Sources button', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
@@ -152,8 +145,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
 
     it('should call onCollectionSelect with null when All Sources is clicked', () => {
         const onCollectionSelect = vi.fn();
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
@@ -167,8 +159,7 @@ describe('CollectionManager (Story 6-3, Task 5)', () => {
     });
 
     it('should highlight All Sources when no active collection', () => {
-        const { useKnowledgeStore } = require('@/lib/state/knowledge-store');
-        useKnowledgeStore.mockReturnValue({
+        (useKnowledgeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             collections: mockCollections,
             createCollection: vi.fn(),
         });
