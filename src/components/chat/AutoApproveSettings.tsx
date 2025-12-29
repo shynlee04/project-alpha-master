@@ -15,6 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useAutoApproveStore, type ToolCategory } from '@/stores/auto-approve-store';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 interface CategoryConfig {
     key: ToolCategory;
@@ -92,13 +93,15 @@ export const AutoApproveSettings: React.FC<AutoApproveSettingsProps> = ({
                         size="sm"
                         aria-label={t('autoApprove.toggle')}
                     />
-                    <span className="text-xs text-foreground font-medium truncate">
-                        {t('autoApprove.title')}
-                    </span>
+                    <TruncatedText
+                        text={t('autoApprove.title')}
+                        className="text-xs text-foreground font-medium"
+                    />
                     {enabled && (
-                        <span className="text-[10px] text-muted-foreground truncate max-w-[120px]">
-                            {summaryText}
-                        </span>
+                        <TruncatedText
+                            text={summaryText}
+                            className="text-[10px] text-muted-foreground max-w-[120px]"
+                        />
                     )}
                 </div>
                 {isExpanded ? (
@@ -147,7 +150,7 @@ export const AutoApproveSettings: React.FC<AutoApproveSettingsProps> = ({
                                         )}
                                     >
                                         <Icon className="w-3.5 h-3.5 text-muted-foreground" />
-                                        <span>{t(config.labelKey)}</span>
+                                        <TruncatedText text={t(config.labelKey)} />
                                     </Label>
                                     <Switch
                                         id={`auto-approve-${config.key}`}

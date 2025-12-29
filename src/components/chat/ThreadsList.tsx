@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { ThreadCard } from './ThreadCard';
 import type { ConversationThread } from '@/stores/conversation-threads-store';
 import { useTranslation } from 'react-i18next';
+import { TruncatedText } from '@/components/ui/truncated-text';
 
 interface ThreadsListProps {
     threads: ConversationThread[];
@@ -73,14 +74,15 @@ export function ThreadsList({
                 'flex items-center justify-between p-4',
                 'border-b-2 border-slate-700 dark:border-slate-600'
             )}>
-                <h2 className={cn(
-                    'font-mono font-bold text-lg',
-                    'text-blue-400 dark:text-blue-300',
-                    // 8-bit text shadow
-                    'drop-shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
-                )}>
-                    {t('chat.conversations', 'CONVERSATIONS')}
-                </h2>
+                <TruncatedText
+                    text={t('chat.conversations', 'CONVERSATIONS')}
+                    className={cn(
+                        'font-mono font-bold text-lg',
+                        'text-blue-400 dark:text-blue-300',
+                        // 8-bit text shadow
+                        'drop-shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
+                    )}
+                />
 
                 {/* New Conversation Button */}
                 <Button
@@ -97,7 +99,7 @@ export function ThreadsList({
                     )}
                 >
                     <MessageSquarePlus className="h-4 w-4 mr-2" />
-                    {t('chat.newConversation', 'NEW CHAT')}
+                    <TruncatedText text={t('chat.newConversation', 'NEW CHAT')} />
                 </Button>
             </div>
 

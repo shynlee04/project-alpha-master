@@ -56,12 +56,66 @@ function createMockToolError(
 
 /**
  * Create a mock event emitter for testing
- * Uses the actual EventEmitter3 class directly
+ * Simple object that implements the required interface without type casting issues
  */
-function createMockEventEmitter(): WorkspaceEventEmitter {
-    // eventemitter3 exports EventEmitter directly (not as default)
-    const EventEmitter = require('eventemitter3');
-    return new EventEmitter() as unknown as WorkspaceEventEmitter;
+function createMockEventEmitter() {
+    const events: Map<string, Array<(...args: unknown[]) => void>> = new Map();
+
+    // Track emit calls using a simple counter (without vi.fn for emit)
+    let emitCallCount = 0;
+    let lastEmitEvent: string | null = null;
+    let lastEmitData: unknown = null;
+
+    const emitter = {
+        on: (event: string, callback: (...args: unknown[]) => void) => {
+            if (!events.has(event)) {
+                events.set(event, []);
+            }
+            events.get(event)!.push(callback);
+        },
+        off: (event: string, callback: (...args: unknown[]) => void) => {
+            const callbacks = events.get(event);
+            if (callbacks) {
+                const index = callbacks.indexOf(callback);
+                if (index !== -1) {
+                    callbacks.splice(index, 1);
+                }
+            }
+        },
+        emit: (event: string, data: unknown) => {
+            emitCallCount++;
+            lastEmitEvent = event;
+            lastEmitData = data;
+            const callbacks = events.get(event);
+            if (callbacks) {
+                callbacks.forEach(cb => cb(data));
+            }
+        },
+        once: (event: string, callback: (...args: unknown[]) => void) => {
+            if (!events.has(event)) {
+                events.set(event, []);
+            }
+            events.get(event)!.push(callback);
+        },
+        removeAllListeners: (event?: string) => {
+            if (event) {
+                events.delete(event);
+            } else {
+                events.clear();
+            }
+        },
+        // Test utilities
+        _getEmitCallCount: () => emitCallCount,
+        _getLastEmitEvent: () => lastEmitEvent,
+        _getLastEmitData: () => lastEmitData,
+        _resetEmitCalls: () => {
+            emitCallCount = 0;
+            lastEmitEvent = null;
+            lastEmitData = null;
+        },
+    };
+
+    return emitter;
 }
 
 // ============================================================================
@@ -253,11 +307,12 @@ describe('Classify for Retry', () => {
 
 describe('RetryQueue Operations', () => {
     let queue: RetryQueue;
-    let eventBus: WorkspaceEventEmitter;
+    let eventBus: ReturnType<typeof createMockEventEmitter>;
 
     beforeEach(() => {
         eventBus = createMockEventEmitter();
-        queue = createRetryQueue({}, eventBus);
+        // Fix: pass config first, then eventBus (order matters!)
+        queue = createRetryQueue(undefined, eventBus as any);
     });
 
     afterEach(() => {
@@ -539,7 +594,9 @@ describe('RetryQueue Operations', () => {
             const item = createRetryQueueItem('tool', 'Tool', error, 'RETRYABLE');
             queue.queue(item);
 
-            expect(eventBus.emit).toHaveBeenCalledWith('retry:queued', expect.objectContaining({
+            expect(eventBus._getEmitCallCount()).toBe(1);
+            expect(eventBus._getLastEmitEvent()).toBe('retry:queued');
+            expect(eventBus._getLastEmitData()).toEqual(expect.objectContaining({
                 item: expect.objectContaining({ id: item.id }),
             }));
         });
@@ -550,7 +607,10 @@ describe('RetryQueue Operations', () => {
             queue.queue(item);
             queue.startExecuting(item.id);
 
-            expect(eventBus.emit).toHaveBeenCalledWith('retry:attempt', expect.objectContaining({
+            // First emit was retry:queued, second is retry:attempt
+            expect(eventBus._getEmitCallCount()).toBe(2);
+            expect(eventBus._getLastEmitEvent()).toBe('retry:attempt');
+            expect(eventBus._getLastEmitData()).toEqual(expect.objectContaining({
                 item: expect.objectContaining({ id: item.id }),
                 attempt: 1,
             }));
@@ -562,10 +622,12 @@ describe('RetryQueue Operations', () => {
             queue.queue(item);
             queue.startExecuting(item.id);
 
-            eventBus.emit.mockClear();
+            eventBus._resetEmitCalls();
             queue.markSuccess(item.id, { result: 'test' });
 
-            expect(eventBus.emit).toHaveBeenCalledWith('retry:success', expect.objectContaining({
+            expect(eventBus._getEmitCallCount()).toBe(1);
+            expect(eventBus._getLastEmitEvent()).toBe('retry:success');
+            expect(eventBus._getLastEmitData()).toEqual(expect.objectContaining({
                 result: { result: 'test' },
             }));
         });
@@ -577,10 +639,12 @@ describe('RetryQueue Operations', () => {
             queue.queue(item);
             queue.startExecuting(item.id);
 
-            eventBus.emit.mockClear();
+            eventBus._resetEmitCalls();
             queue.scheduleRetry(item.id);
 
-            expect(eventBus.emit).toHaveBeenCalledWith('retry:exhausted', expect.objectContaining({
+            expect(eventBus._getEmitCallCount()).toBe(1);
+            expect(eventBus._getLastEmitEvent()).toBe('retry:exhausted');
+            expect(eventBus._getLastEmitData()).toEqual(expect.objectContaining({
                 item: expect.objectContaining({ id: item.id }),
             }));
         });
@@ -591,10 +655,12 @@ describe('RetryQueue Operations', () => {
             queue.queue(item);
             queue.startExecuting(item.id);
 
-            eventBus.emit.mockClear();
+            eventBus._resetEmitCalls();
             queue.markFailed(item.id, error);
 
-            expect(eventBus.emit).toHaveBeenCalledWith('retry:failed', expect.objectContaining({
+            expect(eventBus._getEmitCallCount()).toBe(1);
+            expect(eventBus._getLastEmitEvent()).toBe('retry:failed');
+            expect(eventBus._getLastEmitData()).toEqual(expect.objectContaining({
                 item: expect.objectContaining({ id: item.id }),
             }));
         });

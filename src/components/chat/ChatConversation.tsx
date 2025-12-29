@@ -24,6 +24,7 @@ import type { ConversationThread, ThreadMessage } from '@/stores/conversation-th
 import type { Agent } from '@/mocks/agents'
 import { useTranslation } from 'react-i18next'
 import { FixedSizeList as List, areEqual } from 'react-window'
+import { TruncatedText } from '@/components/ui/truncated-text'
 
 /**
  * Format message timestamp
@@ -202,12 +203,12 @@ export function ChatConversation({
 
     // Debounced input handler
     const [debouncedInput, setDebouncedInput] = useState('');
-    
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedInput(input);
         }, 300); // 300ms debounce
-        
+
         return () => clearTimeout(timer);
     }, [input]);
 
@@ -278,12 +279,15 @@ export function ChatConversation({
                     </Button>
 
                     {/* Thread title */}
-                    <h2 className={cn(
-                        'flex-1 font-mono font-bold text-sm truncate',
-                        'text-slate-100'
-                    )}>
-                        {thread.title}
-                    </h2>
+                    <div className="flex-1 min-w-0">
+                        <TruncatedText
+                            text={thread.title}
+                            className={cn(
+                                'font-mono font-bold text-sm',
+                                'text-slate-100'
+                            )}
+                        />
+                    </div>
 
                     {/* Agent selector */}
                     <AgentSelector
@@ -391,12 +395,15 @@ export function ChatConversation({
                 </Button>
 
                 {/* Thread title */}
-                <h2 className={cn(
-                    'flex-1 font-mono font-bold text-sm truncate',
-                    'text-slate-100'
-                )}>
-                    {thread.title}
-                </h2>
+                <div className="flex-1 min-w-0">
+                    <TruncatedText
+                        text={thread.title}
+                        className={cn(
+                            'font-mono font-bold text-sm',
+                            'text-slate-100'
+                        )}
+                    />
+                </div>
 
                 {/* Agent selector */}
                 <AgentSelector
@@ -440,7 +447,7 @@ export function ChatConversation({
                 )}
 
                 {isStreaming && !streamingContent && <TypingIndicator />}
-                
+
                 <div ref={messagesEndRef} />
             </div>
 

@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { FileX, RefreshCw, FolderOpen, Search } from 'lucide-react'
+import { TruncatedText } from '@/components/ui/truncated-text'
 
 /**
  * Empty state variant
@@ -136,10 +137,18 @@ export function EmptyState({
             {icon || getVariantIcon()}
 
             {/* Title */}
-            <h3 className="text-xl font-bold mb-2 text-neutral-100">{emptyTitle}</h3>
+            {/* Title */}
+            <TruncatedText
+                text={emptyTitle}
+                className="text-xl font-bold mb-2 text-neutral-100 max-w-full"
+            />
 
             {/* Message */}
-            <p className="text-sm text-neutral-400 mb-4">{emptyMessage}</p>
+            {/* Message */}
+            <TruncatedText
+                text={emptyMessage}
+                className="text-sm text-neutral-400 mb-4 max-w-full"
+            />
 
             {/* Action button */}
             {action && onAction && (

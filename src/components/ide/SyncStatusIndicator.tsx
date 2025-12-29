@@ -13,6 +13,7 @@ import React, { useState, useEffect } from 'react'
 import { Check, Loader2, AlertTriangle } from 'lucide-react'
 import type { SyncProgress } from '../../lib/filesystem'
 import { useTranslation } from 'react-i18next'
+import { TruncatedText } from '@/components/ui/truncated-text'
 
 // ============================================================================
 // Types
@@ -97,12 +98,14 @@ export function SyncStatusIndicator({
           }
         >
           <Loader2 className="w-3 h-3 animate-spin" />
-          <span>
-            {t('status.syncing')}
-            {progress && progress.totalFiles > 0
-              ? ` ${progress.syncedFiles}/${progress.totalFiles}`
-              : '...'}
-          </span>
+          <TruncatedText
+            text={
+              progress?.currentFile
+                ? t('status.syncingFile', { file: progress.currentFile })
+                : `${t('status.syncing')}${progress && progress.totalFiles > 0 ? ` ${progress.syncedFiles}/${progress.totalFiles}` : '...'}`
+            }
+            className="max-w-[150px]"
+          />
         </span>
       )
 
@@ -113,8 +116,8 @@ export function SyncStatusIndicator({
           className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
           title={errorMessage || t('errors.sync.retry.description')}
         >
-          <AlertTriangle className="w-3 h-3" />
-          <span>{t('status.error')}</span>
+          <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+          <TruncatedText text={t('status.error')} />
         </button>
       )
 
@@ -124,8 +127,8 @@ export function SyncStatusIndicator({
       if (!lastSyncTime) {
         return (
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Check className="w-3 h-3" />
-            <span>{t('status.notSynced')}</span>
+            <Check className="w-3 h-3 flex-shrink-0" />
+            <TruncatedText text={t('status.notSynced')} />
           </span>
         )
       }
@@ -135,8 +138,8 @@ export function SyncStatusIndicator({
           className="flex items-center gap-1 text-xs text-emerald-400"
           title={`${t('status.lastSynced')}: ${lastSyncTime.toLocaleString()}`}
         >
-          <Check className="w-3 h-3" />
-          <span>{formatRelativeTime(lastSyncTime, t)}</span>
+          <Check className="w-3 h-3 flex-shrink-0" />
+          <TruncatedText text={formatRelativeTime(lastSyncTime, t)} />
         </span>
       )
   }

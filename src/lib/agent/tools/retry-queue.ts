@@ -22,7 +22,7 @@ import {
     isFatalError,
     isNonRetryableError,
 } from '../../utils/error-classification';
-import type { ToolError } from './tool-error';
+import { ToolError } from './tool-error';
 
 // ============================================================================
 // Types
