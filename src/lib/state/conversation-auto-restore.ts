@@ -125,14 +125,27 @@ export class ConversationAutoRestore {
     try {
       const thread = await getConversationThread(threadId);
       if (thread) {
-        // Update thread with scroll position (would need to add this field)
+        // Update thread with scroll position
         await saveConversationThread({
           ...thread,
-          // scrollPosition would be added to the interface
+          scrollPosition,
+          updatedAt: Date.now(),
         });
       }
     } catch (error) {
       console.error('[ConversationAutoRestore] Failed to save scroll position:', error);
+    }
+  }
+
+  /**
+   * Get scroll position for a conversation.
+   */
+  async getScrollPosition(threadId: string): Promise<number> {
+    try {
+      const thread = await getConversationThread(threadId);
+      return thread?.scrollPosition ?? 0;
+    } catch {
+      return 0;
     }
   }
 

@@ -76,6 +76,7 @@ describe('ConversationAutoRestore', () => {
           messages: [],
           agentsUsed: [],
           messageCount: 5,
+          scrollPosition: 0,
           createdAt: 1000,
           updatedAt: 1000
         },
@@ -87,6 +88,7 @@ describe('ConversationAutoRestore', () => {
           messages: [],
           agentsUsed: [],
           messageCount: 10,
+          scrollPosition: 150,
           createdAt: 2000,
           updatedAt: 2000
         }
@@ -97,6 +99,7 @@ describe('ConversationAutoRestore', () => {
 
       expect(result?.id).toBe('thread-2');
       expect(result?.title).toBe('Recent Thread');
+      expect(result?.scrollPosition).toBe(150);
     });
   });
 

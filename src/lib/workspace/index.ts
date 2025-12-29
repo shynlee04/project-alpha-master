@@ -63,7 +63,9 @@ export {
 
 // Story 27-1b: Migrated to Zustand
 export {
-    useSyncStatusStore,
+    useFileSyncStatusStore,
+    // Backward compatibility alias (deprecated)
+    useFileSyncStatusStore as useSyncStatusStore,
     fileSyncStatusStore,
     fileSyncCountsStore,
     setFileSyncPending,

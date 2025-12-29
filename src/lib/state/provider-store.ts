@@ -11,8 +11,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
-import { PROVIDERS, type ProviderConfig } from '../agent/providers/types';
+import { PROVIDERS, type ProviderConfig, type ModelInfo } from '../agent/providers/types';
 import { credentialVault } from '../agent/providers/credential-vault';
+import { modelRegistry } from '../agent/providers/model-registry';
 
 /**
  * Settings specific to a provider's model usage
@@ -38,8 +39,14 @@ interface ProviderState {
     /** Model settings per provider (keyed by provider ID) */
     modelSettings: Record<string, ModelSettings>;
 
+    /** Available models per provider (fetched from APIs) */
+    availableModels: Record<string, ModelInfo[]>;
+
     /** Loading state */
     isLoading: boolean;
+
+    /** Model loading state per provider */
+    isLoadingModels: Record<string, boolean>;
 
     // Actions
 
@@ -57,6 +64,12 @@ interface ProviderState {
 
     /** Update model settings for a provider */
     updateModelSettings: (providerId: string, settings: Partial<ModelSettings>) => void;
+
+    /** Fetch available models for a provider */
+    fetchModels: (providerId: string) => Promise<void>;
+
+    /** Get models for a provider (from cache or fetch) */
+    getAvailableModels: (providerId: string) => ModelInfo[];
 
     /** Reset to defaults (useful for testing or recovery) */
     reset: () => void;
@@ -78,7 +91,9 @@ export const useProviderStore = create<ProviderState>()(
             providers: INITIAL_PROVIDERS,
             activeProviderId: INITIAL_ACTIVE_ID,
             modelSettings: {},
+            availableModels: {},
             isLoading: false,
+            isLoadingModels: {},
 
             addProvider: (config) => {
                 set((state) => ({
@@ -128,11 +143,48 @@ export const useProviderStore = create<ProviderState>()(
                 });
             },
 
+            /**
+             * Fetch available models for a provider from the API
+             * CC-2025-12-29: Auto-load models on credential availability
+             */
+            fetchModels: async (providerId) => {
+                set((state) => ({
+                    isLoadingModels: { ...state.isLoadingModels, [providerId]: true }
+                }));
+
+                try {
+                    const apiKey = await credentialVault.getCredentials(providerId);
+                    const models = await modelRegistry.getModels(providerId, apiKey || undefined);
+
+                    set((state) => ({
+                        availableModels: { ...state.availableModels, [providerId]: models },
+                        isLoadingModels: { ...state.isLoadingModels, [providerId]: false }
+                    }));
+                } catch (error) {
+                    console.error(`[ProviderStore] Failed to fetch models for ${providerId}:`, error);
+                    // Fall back to default models
+                    const fallback = modelRegistry.getDefaultModels(providerId);
+                    set((state) => ({
+                        availableModels: { ...state.availableModels, [providerId]: fallback },
+                        isLoadingModels: { ...state.isLoadingModels, [providerId]: false }
+                    }));
+                }
+            },
+
+            /**
+             * Get available models for a provider
+             */
+            getAvailableModels: (providerId) => {
+                return get().availableModels[providerId] || [];
+            },
+
             reset: () => {
                 set({
                     providers: INITIAL_PROVIDERS,
                     activeProviderId: INITIAL_ACTIVE_ID,
-                    modelSettings: {}
+                    modelSettings: {},
+                    availableModels: {},
+                    isLoadingModels: {}
                 });
             }
         }),

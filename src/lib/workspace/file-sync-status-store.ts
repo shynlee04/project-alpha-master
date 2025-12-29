@@ -10,15 +10,18 @@
  * Note: This store is NOT persisted - sync status is runtime-only.
  * It resets when the page reloads, which is correct behavior.
  * 
+ * CC-2025-12-29: Renamed from useSyncStatusStore to useFileSyncStatusStore
+ * to avoid namespace collision with sync-status-store.ts.
+ * 
  * @example
  * ```tsx
- * import { useSyncStatusStore } from '@/lib/workspace';
+ * import { useFileSyncStatusStore } from '@/lib/workspace';
  * 
  * // Get status for a specific file
- * const status = useSyncStatusStore(s => s.statuses[filePath]);
+ * const status = useFileSyncStatusStore(s => s.statuses[filePath]);
  * 
  * // Get counts
- * const counts = useSyncStatusStore(s => s.counts);
+ * const counts = useFileSyncStatusStore(s => s.counts);
  * ```
  */
 
@@ -99,7 +102,7 @@ function computeCounts(statuses: Record<string, FileSyncStatus>): FileSyncCounts
  * Replaces the TanStack Store implementation.
  * Note: No persistence - sync status is transient runtime state.
  */
-export const useSyncStatusStore = create<SyncStatusState>()(
+export const useFileSyncStatusStore = create<SyncStatusState>()(
   subscribeWithSelector(
     (set, get) => ({
       statuses: {},
@@ -184,26 +187,26 @@ export const useSyncStatusStore = create<SyncStatusState>()(
 // ============================================================================
 
 // These functions maintain backward compatibility with the old TanStack Store API
-// New code should use the store directly via useSyncStatusStore
+// New code should use the store directly via useFileSyncStatusStore
 
 export function setFileSyncPending(path: string): void {
-  useSyncStatusStore.getState().setFileSyncPending(path);
+  useFileSyncStatusStore.getState().setFileSyncPending(path);
 }
 
 export function setFileSyncSynced(path: string): void {
-  useSyncStatusStore.getState().setFileSyncSynced(path);
+  useFileSyncStatusStore.getState().setFileSyncSynced(path);
 }
 
 export function setFileSyncError(path: string, error: Error): void {
-  useSyncStatusStore.getState().setFileSyncError(path, error);
+  useFileSyncStatusStore.getState().setFileSyncError(path, error);
 }
 
 export function clearFileSyncStatus(path: string): void {
-  useSyncStatusStore.getState().clearFileSyncStatus(path);
+  useFileSyncStatusStore.getState().clearFileSyncStatus(path);
 }
 
 export function clearAllFileSyncStatuses(): void {
-  useSyncStatusStore.getState().clearAllFileSyncStatuses();
+  useFileSyncStatusStore.getState().clearAllFileSyncStatuses();
 }
 
 // ============================================================================
@@ -213,24 +216,24 @@ export function clearAllFileSyncStatuses(): void {
 /**
  * Legacy fileSyncStatusStore for backward compatibility
  * 
- * @deprecated Use useSyncStatusStore instead
+ * @deprecated Use useFileSyncStatusStore instead
  * 
  * Components using useStore(fileSyncStatusStore, selector) should migrate to:
- * useSyncStatusStore(s => s.statuses[path])
+ * useFileSyncStatusStore(s => s.statuses[path])
  */
 export const fileSyncStatusStore = {
   // Simulate the TanStack Store interface for backward compatibility
-  state: useSyncStatusStore.getState().statuses,
-  subscribe: (callback: () => void) => useSyncStatusStore.subscribe(callback),
+  state: useFileSyncStatusStore.getState().statuses,
+  subscribe: (callback: () => void) => useFileSyncStatusStore.subscribe(callback),
 };
 
 /**
  * Legacy fileSyncCountsStore for backward compatibility
  * 
- * @deprecated Use useSyncStatusStore(s => s.counts) instead
+ * @deprecated Use useFileSyncStatusStore(s => s.counts) instead
  */
 export const fileSyncCountsStore = {
-  state: useSyncStatusStore.getState().counts,
+  state: useFileSyncStatusStore.getState().counts,
   subscribe: (callback: () => void) =>
-    useSyncStatusStore.subscribe((state) => state.counts, callback),
+    useFileSyncStatusStore.subscribe((state) => state.counts, callback),
 };

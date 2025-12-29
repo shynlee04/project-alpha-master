@@ -199,13 +199,13 @@ development_status:
   # Added via correct-course workflow: 2025-12-29
   # Addresses: CC-001 (Incremental Sync) + CC-002 (Conversation History)
   # PREREQUISITE COMPLETE: Dexie v9 schema implemented (2025-12-29T19:28:35+07:00)
-  epic-24: in-progress
-  24-1-incremental-sync-metadata-cache: ready-for-dev # Team A - 3-4 hours
-  24-2-fsa-handle-persistence: ready-for-dev # Team A - 2-3 hours
-  24-3-conversation-history-auto-restore: ready-for-dev # Team B - 2-3 hours
-  24-4-tool-execution-context-persistence: ready-for-dev # Team B - 3-4 hours
+  epic-24: in-progress # VALIDATION SWEEP 2025-12-29 - PARTIAL IMPLEMENTATION
+  24-1-incremental-sync-metadata-cache: in-progress # FileMetadataCache class (12 tests) - ACs 33% met
+  24-2-fsa-handle-persistence: in-progress # permission-lifecycle.ts (11 tests) - marked "spike-only"
+  24-3-conversation-history-auto-restore: in-progress # ConversationAutoRestore (9 tests) - ACs 62% met
+  24-4-tool-execution-context-persistence: in-progress # ToolExecutionLogger (16 tests) - ACs 40% met
   24-5-session-state-snapshot: backlog # Either team - 4-5 hours
-  epic-24-retrospective: optional
+  epic-24-retrospective: pending
 
   # EPIC 6: Source Ingestion & Management (Days 18-20)
   epic-6: backlog

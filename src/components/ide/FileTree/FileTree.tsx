@@ -42,7 +42,7 @@ import {
 
 // State and types
 // Story 27-1b: Migrated to Zustand
-import { useSyncStatusStore, useWorkspace } from '../../../lib/workspace';
+import { useFileSyncStatusStore, useWorkspace } from '../../../lib/workspace';
 import type { TreeNode } from './types';
 
 // ============================================================================
@@ -104,7 +104,7 @@ export function FileTree({
   const { t } = useTranslation();
 
   // Sync counts for status display (Story 27-1b: Migrated to Zustand)
-  const fileSyncCounts = useSyncStatusStore((s) => s.counts);
+  const fileSyncCounts = useFileSyncStatusStore((s) => s.counts);
 
   // Container ref for focus management
   const treeRef = useRef<HTMLDivElement>(null);

@@ -168,7 +168,7 @@ export interface ThreadMessageRecord {
 /**
  * Conversation thread record for Dexie persistence
  * Enables full-text indexing for search.
- * 
+ *
  * @epic MVP
  * @story MVP-2 - Chat Interface with Rich Streaming
  */
@@ -180,6 +180,7 @@ export interface ConversationThreadRecord {
     messages: ThreadMessageRecord[];
     agentsUsed: string[];       // Agent IDs used in this thread
     messageCount: number;
+    scrollPosition: number;     // Chat scroll position for restoration (Story 24-3)
     createdAt: number;
     updatedAt: number;          // Index for sorting
 }
@@ -338,7 +339,7 @@ export function queueItemToSyncStatus(item: {
     error?: string;
     createdAt: Date;
 }): SyncStatusRecord {
-    const statusMap: SyncStatusRecord['syncStatus'] = {
+    const statusMap: Record<string, SyncStatusRecord['syncStatus']> = {
         pending: 'pending',
         active: 'syncing',
         completed: 'synced',
@@ -1009,6 +1010,22 @@ export async function clearOldToolExecutionLogs(
 ): Promise<number> {
     const cutoff = Date.now() - maxAgeMs;
     return db.toolExecutionLogs.where('timestamp').below(cutoff).delete();
+}
+
+/**
+ * Clear all tool execution logs for a specific conversation, or all logs if no conversationId provided
+ */
+export async function clearToolExecutionLogs(
+    conversationId?: string
+): Promise<void> {
+    if (conversationId) {
+        await db.toolExecutionLogs
+            .where('conversationId')
+            .equals(conversationId)
+            .delete();
+    } else {
+        await db.toolExecutionLogs.clear();
+    }
 }
 
 // ============================================================================

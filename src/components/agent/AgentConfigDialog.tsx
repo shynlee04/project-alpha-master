@@ -67,6 +67,22 @@ import { useAgentsStore } from '@/stores/agents-store'
 import { ProviderConfig } from '@/lib/agent/providers/types'
 
 /**
+ * Map provider display name (from Agent interface) to store ID
+ * Fixes: Agent edits not reflecting existing values
+ */
+const mapProviderNameToId = (providerName: string): string => {
+    const nameToIdMap: Record<string, string> = {
+        'OpenRouter': 'openrouter',
+        'OpenAI': 'openai',
+        'Anthropic': 'anthropic',
+        'Mistral': 'mistral',
+        'Google': 'google',
+        'OpenAI Compatible': 'openai-compatible',
+    }
+    return nameToIdMap[providerName] || 'openrouter'
+}
+
+/**
  * Extensible provider configurations
  * Can be easily extended without modifying core dialog logic
  */
@@ -248,6 +264,47 @@ export function AgentConfigDialog({
             .catch(console.error)
             .finally(() => setIsCheckingKey(false))
     }, [providerId, open, loadModels])
+
+    /**
+     * Populate form when editing an existing agent
+     * Fixes: Agent config edits not reflecting existing values (CC-2025-12-29)
+     */
+    useEffect(() => {
+        if (!open) return
+
+        if (agent) {
+            // Edit mode: populate form from agent data
+            setName(agent.name)
+            setRole(agent.role || agent.description || '')
+            const mappedProviderId = mapProviderNameToId(agent.provider)
+            setProviderId(mappedProviderId)
+            setModel(agent.model || '')
+
+            // Custom provider fields
+            if (agent.customBaseURL) setCustomBaseURL(agent.customBaseURL)
+            if (agent.customHeaders) {
+                setCustomHeaders(
+                    Object.entries(agent.customHeaders).map(([key, value]) => ({ key, value }))
+                )
+            }
+            if (agent.enableNativeTools !== undefined) setEnableNativeTools(agent.enableNativeTools)
+
+            console.log('[AgentConfigDialog] Populated form for edit:', agent.name)
+        } else {
+            // Create mode: reset to defaults
+            setName('')
+            setRole('')
+            setProviderId('openrouter')
+            setModel('')
+            setApiKey('')
+            setCustomBaseURL('')
+            setCustomHeaders([])
+            setCustomModelId('')
+            setEnableNativeTools(true)
+            setErrors({})
+            setConnectionStatus('idle')
+        }
+    }, [agent, open])
 
     // Validate form using Zod
     const validateForm = useCallback((): boolean => {
