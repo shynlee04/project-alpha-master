@@ -119,6 +119,39 @@ vi.mock('../../lib/workspace', () => ({
   WorkspaceProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
 }));
 
+// Mock useIDEStore (Zustand store)
+vi.mock('@/lib/state', () => ({
+  useIDEStore: vi.fn((selector) => {
+    const state = {
+      projectId: 'test-project',
+      openFiles: [],
+      activeFile: null,
+      expandedPaths: new Set<string>(),
+      panelLayouts: {},
+      terminalTab: 'terminal',
+      chatVisible: true,
+      activeFileScrollTop: 0,
+      // Actions
+      setProjectId: vi.fn(),
+      addOpenFile: vi.fn(),
+      removeOpenFile: vi.fn(),
+      setActiveFile: vi.fn(),
+      toggleExpanded: vi.fn(),
+      setExpandedPaths: vi.fn(),
+      setPanelLayout: vi.fn(),
+      setTerminalTab: vi.fn(),
+      toggleChatVisible: vi.fn(),
+      setChatVisible: vi.fn(),
+      setActiveFileScrollTop: vi.fn(),
+      reset: vi.fn(),
+    };
+    if (typeof selector === 'function') {
+      return selector(state);
+    }
+    return state;
+  }),
+}));
+
 // Mock window.matchMedia (only in browser environment)
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {

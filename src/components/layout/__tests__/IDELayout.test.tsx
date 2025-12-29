@@ -218,16 +218,13 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
     expect(screen.getByRole('button', { name: 'Hide chat' })).toBeInTheDocument();
   });
 
-  test('should show minimum viewport warning on small screens', () => {
-    // This test verifies the MinViewportWarning component is rendered by IDELayout
-    // The actual viewport detection happens via CSS media queries in jsdom
-    // We test the component integration rather than CSS media query behavior
-
+  test('should render desktop layout on tablet viewports', () => {
     // Mock matchMedia for tablet viewport (>= 768px but < 1024px)
+    // This triggers isTablet=true but isMobile=false in useResponsive hook
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: vi.fn().mockImplementation((query: string) => ({
-        matches: query.includes('max-width: 1023px'),
+        matches: query.includes('max-width: 1023px') && !query.includes('max-width: 767px'),
         media: query,
         onchange: null,
         addListener: vi.fn(),
@@ -246,9 +243,9 @@ describe('IDELayout - Migrated to ShadcnUI', () => {
       </ToastProvider>,
     );
 
-    // The MinViewportWarning component should be present in the DOM
-    // (visibility controlled by CSS media queries which don't work in jsdom)
-    expect(screen.getByText('Screen Too Small')).toBeInTheDocument();
+    // On tablet (not mobile), desktop layout should render with collapsed sidebar
+    expect(screen.getByText('Explorer')).toBeInTheDocument();
+    expect(screen.getByTestId('file-tree')).toBeInTheDocument();
   });
 
   test('should handle keyboard shortcut for chat toggle', () => {
