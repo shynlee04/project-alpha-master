@@ -291,8 +291,12 @@ development_status:
     validated_by: "bmad-bmm-orchestrator"
 
   # EPIC 9: Study Artifacts Generation (Days 30-33)
-  epic-9: done # COMPLETED 2025-12-30 - All 4 stories complete with tests and retrospective
+  epic-9: in-progress # BACKEND COMPLETE - UI Integration in progress (Story 9-5)
   9-1-flashcard-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Utils, Tests (67 tests, all passing)
+  9-2-quiz-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Tests (24 tests, all passing)
+  9-3-flashcard-study-interface: done # COMPLETED 2025-12-30 - SRS types, SM-2 algorithm, 3D flip animation, Dexie persistence, 23 tests
+  9-4-quiz-taking-interface: done # COMPLETED 2025-12-30 - Quiz session types, hooks, components, UI, 31 tests
+  9-5-study-integration: in-progress # NEW STORY - Wire StudyPage, route (/study), navigation, i18n (EN+VI) - 2025-12-30
   epic-9-validation_status:
     level_1: "7/7 PASSED"
     level_2: "4/4 PASSED"
@@ -309,10 +313,7 @@ development_status:
     overall: "VALIDATED (11/12 levels fully passed)"
     last_validated: "2025-12-30T14:30:00+07:00"
     validated_by: "bmad-bmm-orchestrator"
-  9-2-quiz-generator: done # COMPLETED 2025-12-30 - Types, Store, Generator, API, UI, Tests (24 tests, all passing)
-  9-3-flashcard-study-interface: done # COMPLETED 2025-12-30 - SRS types, SM-2 algorithm, 3D flip animation, Dexie persistence, 23 tests
-  9-4-quiz-taking-interface: done # COMPLETED 2025-12-30 - Quiz session types, hooks, components, UI, 31 tests
-  epic-9-retrospective: done # _bmad-output/sprint-artifacts/epic-9-retrospective.md
+  epic-9-retrospective: pending # Cannot complete until Story 9-5 done
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)
   epic-10: done # COMPLETED 2025-12-30 - Story 10-1 complete, Stories 10-2 & 10-3 deferred (P2 advanced features)
