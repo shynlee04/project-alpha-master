@@ -94,8 +94,8 @@ export function KnowledgePage() {
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
-                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleOpenImport}>
-                                    <Plus size={14} />
+                                <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
+                                    <Plus className="h-3 w-3" />
                                 </Button>
                             </div>
                         </div>

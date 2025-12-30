@@ -48,7 +48,7 @@ const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
   return (
     <div
       className={`
-        min-w-[200px] max-w-[300px] bg-gray-900 border-2 rounded-lg overflow-hidden
+        min-w-[200px] max-w-[300px] bg-gray-900 border-2 rounded-none overflow-hidden
         transition-all duration-200
         ${selected ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-700'}
         hover:border-gray-600

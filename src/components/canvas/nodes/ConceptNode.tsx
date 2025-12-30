@@ -66,7 +66,7 @@ const ConceptNodeComponent = ({
   return (
     <div
       className={`
-        min-w-[150px] px-4 py-3 bg-gray-800 border-2 rounded-xl
+        min-w-[150px] px-4 py-3 bg-gray-800 border-2 rounded-none
         transition-all duration-200 cursor-pointer
         ${selected ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'border-gray-700'}
         hover:border-gray-600
