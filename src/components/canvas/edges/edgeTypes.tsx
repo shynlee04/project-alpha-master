@@ -29,13 +29,6 @@ export const defaultEdgeOptions: Partial<Edge> = {
     fill: 'var(--color-background, #0f0f0f)',
     fillOpacity: 0.9,
   },
-  markerEnd: {
-    type: 'arrowclosed',
-    color: 'var(--color-primary, #a855f7)',
-    orientation: 0,
-    width: 10,
-    height: 10,
-  },
 };
 
 /**

@@ -1,9 +1,6 @@
-import { memo } from 'react';
 import { NodeTypes } from '@xyflow/react';
 import { SourceNode } from './SourceNode';
 import { ConceptNode } from './ConceptNode';
-import { SourceNodeData } from '@/lib/canvas/types';
-import { ConceptNodeData } from './ConceptNode';
 
 /**
  * Node types map for React Flow

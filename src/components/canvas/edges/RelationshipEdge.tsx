@@ -18,6 +18,13 @@ export interface RelationshipEdgeData {
 }
 
 /**
+ * Cast data to RelationshipEdgeData for type-safe access
+ */
+const castEdgeData = (data: unknown): RelationshipEdgeData => {
+  return data as RelationshipEdgeData;
+};
+
+/**
  * Get styling for relationship type
  */
 const getRelationshipStyle = (relationship: CanvasRelationshipType = 'relates') => {
@@ -75,9 +82,9 @@ const RelationshipEdgeComponent = ({
   selected,
 }: EdgeProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [label, setLabel] = useState(data?.label || '');
+  const [label, setLabel] = useState(castEdgeData(data).label || '');
 
-  const relationship = (data?.relationship as CanvasRelationshipType) || 'relates';
+  const relationship = castEdgeData(data).relationship || 'relates';
   const { color, strokeDasharray } = useMemo(
     () => getRelationshipStyle(relationship),
     [relationship],
@@ -109,21 +116,10 @@ const RelationshipEdgeComponent = ({
     [style, color, strokeDasharray],
   );
 
-  // Memoized marker
-  const edgeMarker = useMemo(
-    () => ({
-      type: getMarkerType(relationship),
-      color,
-      orientation: 0,
-      width: 10,
-      height: 10,
-    }),
-    [relationship, color],
-  );
-
   // Handle label save
   const handleLabelSave = useCallback(() => {
-    const currentLabel = typeof data?.label === 'string' ? data.label : '';
+    const edgeData = castEdgeData(data);
+    const currentLabel = edgeData.label || '';
     if (label.trim() !== currentLabel) {
       // In a real implementation, this would update the edge data
       // For now, we just update local state
@@ -138,7 +134,8 @@ const RelationshipEdgeComponent = ({
       if (e.key === 'Enter') {
         handleLabelSave();
       } else if (e.key === 'Escape') {
-        setLabel(data?.label || '');
+        const edgeData = castEdgeData(data);
+        setLabel(edgeData.label || '');
         setIsEditing(false);
       }
     },
@@ -154,12 +151,14 @@ const RelationshipEdgeComponent = ({
     [],
   );
 
+  const edgeData = castEdgeData(data);
+
   return (
     <>
       <BaseEdge
         id={id}
         path={edgePath}
-        markerEnd={edgeMarker}
+        markerEnd={{ type: getMarkerType(relationship), color }}
         style={edgeStyle}
         className={selected ? 'react-flow__edge-selected' : ''}
         onClick={handleEdgeClick}
@@ -205,7 +204,7 @@ const RelationshipEdgeComponent = ({
               }}
               style={{ color: selected ? color : undefined }}
             >
-              {data?.label || ''}
+              {edgeData.label || ''}
             </button>
           )}
         </div>
@@ -223,7 +222,7 @@ export const RelationshipEdge = memo(RelationshipEdgeComponent);
 export const createRelationshipEdge = (
   source: string,
   target: string,
-  relationship: RelationshipType = 'relates',
+  relationship: CanvasRelationshipType = 'relates',
   label?: string,
 ) => ({
   id: `edge-${source}-${target}-${Date.now()}`,
