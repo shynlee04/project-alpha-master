@@ -6,7 +6,8 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
 import { Plus, Notebook } from 'lucide-react';
-import { NoteEditor } from './NoteEditor';
+import { lazy, Suspense } from 'react';
+const NoteEditor = lazy(() => import('./NoteEditor'));
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { useIDEStore } from '@/lib/state/ide-store';
 
@@ -90,10 +91,16 @@ export function NotesPage() {
                 <ResizablePanel defaultSize={80}>
                     <div className="h-full w-full bg-background">
                         {activeNote ? (
-                            <NoteEditor
-                                noteId={activeNote.id}
-                                className="h-full"
-                            />
+                            <Suspense fallback={
+                                <div className="flex-1 flex items-center justify-center">
+                                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+                                </div>
+                            }>
+                                <NoteEditor
+                                    noteId={activeNote.id}
+                                    className="h-full"
+                                />
+                            </Suspense>
                         ) : (
                             <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-4">
                                 <Notebook size={48} className="opacity-20" />

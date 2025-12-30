@@ -29,8 +29,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Layout sub-components
 import { IDEHeaderBar } from './IDEHeaderBar';
-import { TerminalPanel } from './TerminalPanel';
-import { ChatPanelWrapper } from './ChatPanelWrapper';
+// Static imports removed for lazy loading optimization
+// import { TerminalPanel } from './TerminalPanel';
+// import { ChatPanelWrapper } from './ChatPanelWrapper';
 import { PermissionOverlay } from './PermissionOverlay';
 
 // Mobile-responsive layout (Epic-MRT)
@@ -48,10 +49,29 @@ import { WithErrorBoundary } from '@/components/common/ErrorBoundary';
 // IDE components
 import { FileTree } from '../ide/FileTree';
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
-import { MonacoEditor, type OpenFile } from '../ide/MonacoEditor';
+// Lazy loaded components for bundle optimization
+import { type OpenFile } from '../ide/MonacoEditor';
 import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
-import { PreviewPanel } from '../ide/PreviewPanel';
 import { StatusBar } from '../ide/StatusBar';
+
+// Lazy Components
+import { lazy, Suspense } from 'react';
+
+const MonacoEditor = lazy(() => import('../ide/MonacoEditor').then(m => ({ default: m.MonacoEditor })));
+const TerminalPanel = lazy(() => import('./TerminalPanel').then(m => ({ default: m.TerminalPanel })));
+const ChatPanelWrapper = lazy(() => import('./ChatPanelWrapper').then(m => ({ default: m.ChatPanelWrapper })));
+const PreviewPanel = lazy(() => import('../ide/PreviewPanel').then(m => ({ default: m.PreviewPanel })));
+
+function PanelLoading({ label }: { label: string }) {
+  return (
+    <div className="h-full flex items-center justify-center text-muted-foreground bg-background">
+      <div className="flex flex-col items-center gap-2">
+        <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+        <span className="text-sm">Loading {label}...</span>
+      </div>
+    </div>
+  );
+}
 
 // NEW: IconSidebar integration (Story 28-5 → 28-14)
 import {
@@ -211,8 +231,8 @@ export function IDELayout(): React.JSX.Element {
   // ADD: Create terminal tools facade
   const terminalTools = useMemo(() => {
     if (!syncManagerRef.current) return null;
-    return createTerminalToolsFacade(syncManagerRef.current);
-  }, [syncManagerRef.current]);
+    return createTerminalToolsFacade(eventBus);
+  }, [syncManagerRef.current, eventBus]);
 
   // Story 28-24: Subscribe FileTree to agent file events via EventBus
   useFileTreeEventSubscriptions(eventBus, () => setFileTreeRefreshKey(k => k + 1));
@@ -323,12 +343,14 @@ export function IDELayout(): React.JSX.Element {
                                 </div>
                               }
                             >
-                              <MonacoEditor
-                                openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
-                                onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
-                                initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
-                                onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
-                              />
+                              <Suspense fallback={<PanelLoading label="Editor" />}>
+                                <MonacoEditor
+                                  openFiles={openFiles} activeFilePath={activeFilePath} onSave={handleSave}
+                                  onActiveFileChange={setActiveFilePath} onTabClose={handleTabClose} onContentChange={handleContentChange}
+                                  initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                                  onScrollTopChange={(_path, scrollTop) => { activeFileScrollTopRef.current = scrollTop; scheduleIdeStatePersistence(400); }}
+                                />
+                              </Suspense>
                             </WithErrorBoundary>
                           </CardContent>
                         </Card>
@@ -359,7 +381,9 @@ export function IDELayout(): React.JSX.Element {
                                 </div>
                               }
                             >
-                              <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                              <Suspense fallback={<PanelLoading label="Preview" />}>
+                                <PreviewPanel previewUrl={previewUrl} port={previewPort} />
+                              </Suspense>
                             </WithErrorBoundary>
                           </CardContent>
                         </Card>
@@ -393,7 +417,9 @@ export function IDELayout(): React.JSX.Element {
                             </div>
                           }
                         >
-                          <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
+                          <Suspense fallback={<PanelLoading label="Terminal" />}>
+                            <TerminalPanel activeTab={terminalTab} onTabChange={setTerminalTab} initialSyncCompleted={initialSyncCompleted} permissionState={permissionState} className="border-0" />
+                          </Suspense>
                         </WithErrorBoundary>
                       </CardContent>
                     </Card>
@@ -429,15 +455,17 @@ export function IDELayout(): React.JSX.Element {
                             </div>
                           }
                         >
-                          <ChatPanelWrapper
-                            projectId={projectId}
-                            projectName={projectMetadata?.name ?? projectId ?? 'Project'}
-                            onClose={() => setChatVisible(false)}
-                            // ADD: Pass tool facades to chat panel (Story MVP-3)
-                            fileTools={fileTools}
-                            terminalTools={terminalTools}
-                            eventBus={eventBus}
-                          />
+                          <Suspense fallback={<PanelLoading label="Chat" />}>
+                            <ChatPanelWrapper
+                              projectId={projectId}
+                              projectName={projectMetadata?.name ?? projectId ?? 'Project'}
+                              onClose={() => setChatVisible(false)}
+                              // ADD: Pass tool facades to chat panel (Story MVP-3)
+                              fileTools={fileTools}
+                              terminalTools={terminalTools}
+                              eventBus={eventBus}
+                            />
+                          </Suspense>
                         </WithErrorBoundary>
                       </CardContent>
                     </Card>

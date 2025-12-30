@@ -5,7 +5,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'node:path'
+
 
 // Conditional import for deployment platform
 // Use DEPLOY_TARGET env var: 'cloudflare' | 'netlify' | 'node'
@@ -231,7 +231,23 @@ const config = defineConfig(async () => {
     // SSR Configuration
     // Cloudflare plugin handles externals/bundling automatically
     ssr: DEPLOY_TARGET === 'cloudflare'
-      ? { noExternal: true } // Bundle everything for Cloudflare (pdfjs-dist loaded from CDN at runtime)
+      ? {
+        // Bundle everything for Cloudflare EXCEPT large client-side-only libraries
+        // These are accessed via dynamic import (React.lazy) and guarded by client checks
+        // We use a regex to match "everything except these specific packages"
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote)).*$/,
+        external: [
+          '@xterm/xterm',
+          '@xterm/addon-fit',
+          '@monaco-editor/react',
+          'monaco-editor',
+          '@webcontainer/api',
+          '@xenova/transformers',
+          '@blocknote/react',
+          '@blocknote/mantine',
+          '@blocknote/core'
+        ]
+      }
       : {
         external: [
           '@xterm/xterm',
