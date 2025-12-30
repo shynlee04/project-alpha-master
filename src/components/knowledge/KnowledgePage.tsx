@@ -92,7 +92,7 @@ export function KnowledgePage() {
                                             </div>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>{isAiAvailable ? 'Gemini AI Active' : 'AI Metadata Disabled (No API Key)'}</p>
+                                            <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>

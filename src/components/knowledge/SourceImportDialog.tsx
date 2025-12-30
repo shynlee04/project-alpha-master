@@ -62,12 +62,12 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
                 onProgress: (msg) => toast.info(msg),
             });
 
-            toast.success(t('knowledge.import.success', 'PDF imported successfully'));
+            toast.success(t('knowledge.import.successPdf'));
             handleOpenChange(false);
         } catch (err) {
             console.error(err);
             setError((err as Error).message);
-            toast.error(t('knowledge.import.error', 'Import failed'));
+            toast.error(t('knowledge.import.error'));
         } finally {
             setIsLoading(false);
         }
@@ -85,12 +85,12 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
                 onProgress: (msg) => toast.info(msg),
             });
 
-            toast.success(t('knowledge.import.success', 'URL imported successfully'));
+            toast.success(t('knowledge.import.successUrl'));
             handleOpenChange(false);
         } catch (err) {
             console.error(err);
             setError((err as Error).message);
-            toast.error(t('knowledge.import.error', 'Import failed'));
+            toast.error(t('knowledge.import.error'));
         } finally {
             setIsLoading(false);
         }
@@ -107,12 +107,12 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
                 projectId,
             });
 
-            toast.success(t('knowledge.import.success', 'Text imported successfully'));
+            toast.success(t('knowledge.import.successText'));
             handleOpenChange(false);
         } catch (err) {
             console.error(err);
             setError((err as Error).message);
-            toast.error(t('knowledge.import.error', 'Import failed'));
+            toast.error(t('knowledge.import.error'));
         } finally {
             setIsLoading(false);
         }
@@ -131,13 +131,13 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
                 <Tabs defaultValue="pdf" className="w-full">
                     <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="pdf" className="flex items-center gap-2">
-                            <Upload size={14} /> PDF
+                            <Upload size={14} /> {t('knowledge.import.tabPdf')}
                         </TabsTrigger>
                         <TabsTrigger value="url" className="flex items-center gap-2">
-                            <LinkIcon size={14} /> URL
+                            <LinkIcon size={14} /> {t('knowledge.import.tabUrl')}
                         </TabsTrigger>
                         <TabsTrigger value="text" className="flex items-center gap-2">
-                            <FileText size={14} /> Text
+                            <FileText size={14} /> {t('knowledge.import.tabText')}
                         </TabsTrigger>
                     </TabsList>
 

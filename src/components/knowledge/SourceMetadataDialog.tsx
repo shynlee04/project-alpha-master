@@ -50,9 +50,9 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
             // Use the store to update (we'll need to add this action)
             // For now, just close editing mode
             setIsEditing(false);
-            toast.success('Changes saved');
+            toast.success(t('knowledge.metadata.saveSuccess'));
         } catch (error) {
-            toast.error('Failed to save changes');
+            toast.error(t('knowledge.metadata.saveError'));
         }
     };
 
@@ -71,9 +71,9 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
         setIsRegenerating(true);
         try {
             await extractMetadata(source.id);
-            toast.success('Metadata regenerated successfully');
+            toast.success(t('knowledge.metadata.regenSuccess'));
         } catch (error) {
-            toast.error('Failed to regenerate metadata');
+            toast.error(t('knowledge.metadata.regenError'));
         } finally {
             setIsRegenerating(false);
         }
@@ -115,7 +115,7 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                             />
                         ) : (
                             <div className="bg-muted/30 p-3 rounded-md text-sm leading-relaxed min-h-[80px] text-foreground">
-                                {summary || <span className="text-muted-foreground italic">No summary available.</span>}
+                                {summary || <span className="text-muted-foreground italic">{t('knowledge.metadata.noSummary')}</span>}
                             </div>
                         )}
                     </div>
@@ -179,19 +179,19 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                     {/* Additional Info Grid */}
                     <div className="grid grid-cols-2 gap-4 text-sm">
                         <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Reading Time</span>
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.readingTime')}</span>
                             <span className="font-medium text-foreground">{readingTime}</span>
                         </div>
                         <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Source Type</span>
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.sourceType')}</span>
                             <span className="font-medium uppercase text-foreground">{source.type}</span>
                         </div>
                         <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Word Count</span>
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.wordCount')}</span>
                             <span className="font-medium text-foreground">{source.wordCount?.toLocaleString() || '-'}</span>
                         </div>
                         <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Page Count</span>
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.pageCount')}</span>
                             <span className="font-medium text-foreground">{source.pageCount || '-'}</span>
                         </div>
                     </div>

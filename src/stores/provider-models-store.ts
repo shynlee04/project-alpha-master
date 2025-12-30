@@ -2,7 +2,8 @@
  * @fileoverview Provider Models Store - Single Source of Truth
  * 
  * CC-2025-12-29: Central store for provider configurations and models
- * 
+ * CC-2025-12-30: FIX - Added graceful error handling for vault operations
+ *
  * This store is the SINGLE SOURCE OF TRUTH for:
  * - Available providers and their configurations
  * - Loaded models per provider
@@ -68,21 +69,38 @@ export const useProviderModelsStore = create<ProviderModelsState>()(
 
             /**
              * Initialize the store - call on app boot
+             * FIX-2025-12-30: Handle vault initialization failures gracefully
              */
             initialize: async () => {
                 if (get().isInitialized) return
 
                 console.log('[ProviderModelsStore] Initializing...')
 
-                // Initialize vault
-                await credentialVault.initialize()
+                // Initialize vault with try-catch for graceful fallback
+                let vaultReady = false
+                try {
+                    await credentialVault.initialize()
+                    vaultReady = credentialVault.isReady()
+                    console.log('[ProviderModelsStore] Vault initialized:', vaultReady ? 'ready' : 'not ready')
+                } catch (error) {
+                    console.error('[ProviderModelsStore] Vault initialization failed:', error)
+                    console.log('[ProviderModelsStore] Continuing without encrypted credentials')
+                    vaultReady = false
+                }
 
                 // Check API keys for all known providers
                 const providerIds = ['openrouter', 'gemini', 'anthropic', 'openai']
                 const states: Record<string, ProviderState> = {}
 
                 for (const id of providerIds) {
-                    const hasKey = await credentialVault.hasCredentials(id)
+                    let hasKey = false
+                    if (vaultReady) {
+                        try {
+                            hasKey = await credentialVault.hasCredentials(id)
+                        } catch (error) {
+                            console.warn(`[ProviderModelsStore] Failed to check credentials for ${id}:`, error)
+                        }
+                    }
                     states[id] = {
                         hasApiKey: hasKey,
                         isLoadingModels: false,
@@ -95,15 +113,14 @@ export const useProviderModelsStore = create<ProviderModelsState>()(
                 set({ providers: states, isInitialized: true })
                 console.log('[ProviderModelsStore] Initialized with providers:', Object.keys(states))
 
-                // Auto-load models for default provider if it has a key
+                // Auto-load free models for default provider (OpenRouter)
                 const defaultProvider = get().selectedProviderId
-                if (states[defaultProvider]?.hasApiKey) {
-                    await get().loadModelsForProvider(defaultProvider)
-                }
+                await get().loadModelsForProvider(defaultProvider)
             },
 
             /**
              * Load models for a provider from API
+             * FIX-2025-12-30: Handle vault errors gracefully
              */
             loadModelsForProvider: async (providerId: string) => {
                 const state = get().providers[providerId]
@@ -127,11 +144,21 @@ export const useProviderModelsStore = create<ProviderModelsState>()(
                 }))
 
                 try {
-                    // Get API key
-                    const apiKey = await credentialVault.getCredentials(providerId)
+                    // Try to get API key from vault
+                    let apiKey: string | null = null
+                    let hasKey = false
+                    
+                    try {
+                        if (credentialVault.isReady()) {
+                            apiKey = await credentialVault.getCredentials(providerId)
+                            hasKey = !!apiKey
+                        }
+                    } catch (vaultError) {
+                        console.warn(`[ProviderModelsStore] Vault error for ${providerId}:`, vaultError)
+                    }
 
-                    if (!apiKey) {
-                        // Use free models for OpenRouter
+                    if (!hasKey || !apiKey) {
+                        // Use free models for OpenRouter, defaults for others
                         const models = providerId === 'openrouter'
                             ? modelRegistry.getFreeModels()
                             : modelRegistry.getDefaultModels(providerId)
@@ -213,9 +240,18 @@ export const useProviderModelsStore = create<ProviderModelsState>()(
 
             /**
              * Refresh provider status (check API key, reload models)
+             * FIX-2025-12-30: Handle vault errors gracefully
              */
             refreshProviderStatus: async (providerId: string) => {
-                const hasKey = await credentialVault.hasCredentials(providerId)
+                let hasKey = false
+                
+                try {
+                    if (credentialVault.isReady()) {
+                        hasKey = await credentialVault.hasCredentials(providerId)
+                    }
+                } catch (error) {
+                    console.warn(`[ProviderModelsStore] Failed to check credentials for ${providerId}:`, error)
+                }
 
                 set(prev => ({
                     providers: {

@@ -8,6 +8,7 @@ import type { Quiz } from '@/lib/study/quiz-types';
 import type { QuizResult } from '@/lib/study/quiz-session';
 import { useQuizSession } from '@/hooks/useQuizSession';
 import { useQuizTimer } from '@/hooks/useQuizTimer';
+import { useTranslation } from 'react-i18next';
 import { QuizStartScreen } from './QuizStartScreen';
 import { QuizQuestionView } from './QuizQuestionView';
 import { QuizResults } from './QuizResults';
@@ -24,6 +25,7 @@ interface QuizContainerProps {
  * Manages state and renders appropriate view based on quiz progress
  */
 export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) {
+  const { t } = useTranslation();
   const [result, setResult] = useState<QuizResult | null>(null);
 
   const {
@@ -123,12 +125,12 @@ export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) 
   if (!currentQuestion) {
     return (
       <div className="quiz-container w-full max-w-2xl mx-auto p-8 text-center">
-        <p className="text-muted-foreground">No question available</p>
+        <p className="text-muted-foreground">{t('quizzes.error.noQuestion')}</p>
         <button
           onClick={handleExit}
           className="mt-4 px-4 py-2 bg-secondary rounded-none"
         >
-          Exit Quiz
+          {t('quizzes.exit')}
         </button>
       </div>
     );
