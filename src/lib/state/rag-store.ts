@@ -257,6 +257,23 @@ function cleanExpiredCache(cache: Map<string, CachedSearchResult>): Map<string, 
 }
 
 /**
+ * Convert base64 string to ArrayBuffer
+ */
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+            cleaned.set(key, entry);
+        }
+    }
+    return cleaned;
+}
+
+/**
  * Enforce cache size limit (LRU eviction)
  */
 function enforceCacheLimit(cache: Map<string, CachedSearchResult>): Map<string, CachedSearchResult> {
@@ -788,9 +805,167 @@ export const useRAGStore = create<RAGStoreState>()(
                     chatMessages: [],
                     citations: new Map(),
                     activeCitation: null,
+                    voiceState: 'idle' as import('./rag/live-api-types').VoiceModeState,
+                    voiceConnection: {
+                        state: 'disconnected',
+                        retryCount: 0,
+                    } as import('./rag/live-api-types').ConnectionState,
+                    voiceMicrophoneEnabled: false,
+                    voiceIsDesktop: true,
+                    voiceVolumeLevel: 0,
                     loading: false,
                     error: null,
                 });
+            },
+
+            // Voice Mode Actions (Story 10-1)
+
+            startVoiceMode: async () => {
+                const { getLiveApiWebSocketManager, getAudioCapture, getAudioPlayback } = await import('@/lib/rag');
+                const apiKey = 'YOUR_GEMINI_API_KEY'; // TODO: Get from credential vault
+
+                // Check platform first
+                const isDesktop = get().detectVoicePlatform();
+                if (!isDesktop) {
+                    set({
+                        error: 'Voice chat available on desktop only',
+                        voiceState: 'error',
+                    });
+                    return;
+                }
+
+                set({
+                    voiceState: 'connecting',
+                    loading: true,
+                    error: null,
+                });
+
+                try {
+                    // Initialize WebSocket manager
+                    const wsManager = getLiveApiWebSocketManager({
+                        apiKey,
+                        onMessage: (message) => {
+                            // Handle server audio chunks
+                            if (message.serverContent?.parts) {
+                                for (const part of message.serverContent.parts) {
+                                    if (part.inline_data?.mime_type?.startsWith('audio/')) {
+                                        const audioData = base64ToArrayBuffer(part.inline_data.data);
+                                        const chunk = {
+                                            data: new Float32Array(audioData),
+                                            timestamp: Date.now(),
+                                            index: 0,
+                                        };
+                                        getAudioPlayback().addChunk(chunk);
+                                    }
+                                }
+                            }
+                        },
+                        onStateChange: (state) => {
+                            get().setVoiceConnectionState(state);
+                        },
+                        onError: (error) => {
+                            set({
+                                error: error.message,
+                                voiceState: 'error',
+                            });
+                        },
+                    });
+
+                    await wsManager.connect();
+
+                    // Initialize audio capture and playback
+                    const audioCapture = getAudioCapture({
+                        onChunk: (chunk) => {
+                            if (get().voiceMicrophoneEnabled) {
+                                wsManager.sendAudioChunk(chunk);
+                            }
+                        },
+                        onVolumeChange: (level) => {
+                            get().setVoiceVolumeLevel(level);
+                        },
+                    });
+
+                    const audioPlayback = getAudioPlayback();
+
+                    await audioPlayback.initialize();
+
+                    set({
+                        voiceState: 'listening',
+                        loading: false,
+                    });
+
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        voiceState: 'error',
+                        loading: false,
+                    });
+                }
+            },
+
+            stopVoiceMode: () => {
+                const { resetWebSocketManager, resetAudioCapture, resetAudioPlayback } = require('@/lib/rag');
+
+                resetWebSocketManager();
+                resetAudioCapture();
+                resetAudioPlayback();
+
+                set({
+                    voiceState: 'idle',
+                    voiceMicrophoneEnabled: false,
+                    voiceVolumeLevel: 0,
+                    voiceConnection: {
+                        state: 'disconnected',
+                        retryCount: 0,
+                    },
+                });
+            },
+
+            toggleVoiceMicrophone: () => {
+                const { voiceMicrophoneEnabled, voiceState } = get();
+
+                if (!voiceMicrophoneEnabled && voiceState === 'listening') {
+                    // Enable microphone
+                    set({ voiceMicrophoneEnabled: true, voiceState: 'listening' });
+                } else if (voiceMicrophoneEnabled) {
+                    // Disable microphone
+                    set({ voiceMicrophoneEnabled: false, voiceState: 'idle' });
+                }
+            },
+
+            setVoiceState: (state: import('./rag/live-api-types').VoiceModeState) => {
+                set({ voiceState: state });
+            },
+
+            setVoiceConnectionState: (state: import('./rag/live-api-types').ConnectionState) => {
+                set({ voiceConnection: state });
+
+                // Update voice state based on connection state
+                if (state.state === 'connected') {
+                    set({ voiceState: 'listening' });
+                } else if (state.state === 'error') {
+                    set({ voiceState: 'error' });
+                }
+            },
+
+            setVoiceVolumeLevel: (level: number) => {
+                set({ voiceVolumeLevel: Math.max(0, Math.min(1, level)) });
+            },
+
+            detectVoicePlatform: () => {
+                // User-Agent detection
+                const userAgent = navigator.userAgent;
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+
+                // Screen width detection (mobile < 768px)
+                const screenWidth = window.innerWidth;
+                const isMobileByWidth = screenWidth < 768;
+
+                const isDesktop = !isMobile && !isMobileByWidth;
+
+                set({ voiceIsDesktop: isDesktop });
+
+                return isDesktop;
             },
         }),
         {
@@ -820,6 +995,12 @@ export const useRAGStore = create<RAGStoreState>()(
                 chatMessages: state.chatMessages,
                 citations: Array.from(state.citations.entries()),
                 activeCitation: state.activeCitation,
+                // Voice mode state (Story 10-1)
+                voiceState: state.voiceState,
+                voiceConnection: state.voiceConnection,
+                voiceMicrophoneEnabled: state.voiceMicrophoneEnabled,
+                voiceIsDesktop: state.voiceIsDesktop,
+                voiceVolumeLevel: state.voiceVolumeLevel,
                 error: state.error,
             }),
 
