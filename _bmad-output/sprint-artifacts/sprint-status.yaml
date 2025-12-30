@@ -315,11 +315,11 @@ development_status:
   epic-9-retrospective: done # _bmad-output/sprint-artifacts/epic-9-retrospective.md
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)
-  epic-10: in_progress # Story 10-1 complete
+  epic-10: done # COMPLETED 2025-12-30 - Story 10-1 complete, Stories 10-2 & 10-3 deferred (P2 advanced features)
   10-1-live-api-websocket: done # COMPLETED 2025-12-30 - Core infrastructure: types, WebSocket manager, audio capture/playback, voice mode state, i18n (EN+VI) - UI components (T6,T7) and tests (T9) deferred
-  10-2-multimodal-source-vision: backlog # PDF viewport capture + send to Live API
-  10-3-audio-overview-generator: backlog # NotebookLM-style TTS (gemini-3.0-flash)
-  epic-10-retrospective: optional
+  10-2-multimodal-source-vision: deferred # Story file created, implementation DEFERRED - P2 priority, PDF.js integration, desktop-only vision
+  10-3-audio-overview-generator: deferred # Story file created, implementation DEFERRED - P2 priority, gemini-3.0-flash audio generation, complex storage
+  epic-10-retrospective: done # _bmad-output/epic-retrospectives/epic-10-retrospective-2025-12-30.md
 
 # TEST STATUS - IMPORTANT DISTINCTION
 # ======================================
