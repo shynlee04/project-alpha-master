@@ -410,7 +410,7 @@ this
 
 ---
 /ralph-wiggum:ralph-loop  
-"sweep through stories and epic of phase 2 (there are epics completed EPIC 6, EPIC 7, EPIC 8, EPIC 9, part of EPIC 10 and new EPIC 26 but unsure if they have made the correct integration (end2end, wirring components, mapping data, checking off requirements and having routed and integrate to the accurate users' journeys and use cases). So check each story derived from the epics, reflect with the real codebase' code files implementation. Deep scan related files and components, be extremely skeptical to sweep through muliple round, having the integration validation, and set gatekeeping strategically. If any of the tasks, sub-tasks, stories which are either not implemented nor lack integrity to the documentations system - you must follow suit with BMAD framework's workflows and iterate with development-cycle workflows or *course-correction workflow for such`_bmad-output/sprint-artifacts/epic-1-retro-2025-12-28.md
+"sweep through stories and epic of phase 2 and remediation phase (there are epics completed EPIC 6, EPIC 7 (some of the tasks are deffered so please continue and dev), EPIC 8, EPIC 9, part of EPIC 10, (there are many tasks and stories which are not created nor implemented here) and new EPIC 26, and EPIC 27 and EPIC 24 too but unsure if they have made the correct integration (end2end, wirring components, mapping data, checking off requirements and having routed and integrate to the accurate users' journeys and use cases). So check each story derived from the epics, reflect with the real codebase' code files implementation. Deep scan related files and components, be extremely skeptical to sweep through muliple round, having the integration validation, and set gatekeeping strategically. If any of the tasks, sub-tasks, stories which are either not implemented nor lack integrity to the documentations system - you must follow suit with BMAD framework's workflows and iterate with development-cycle workflows or *course-correction workflow for such`_bmad-output/sprint-artifacts/epic-1-retro-2025-12-28.md
 _bmad-output/sprint-artifacts/epic-1-retrospective.md
 _bmad-output/sprint-artifacts/EPIC-2-RETRO.md
 _bmad-output/sprint-artifacts/epic-2-retrospective.md
@@ -462,4 +462,20 @@ _bmad-output/sprint-artifacts/rc-001-hook-violation-fix-2025-12-29.md
 _bmad-output/sprint-artifacts/rc-002-file-size-validation-2025-12-29.md
 _bmad-output/sprint-artifacts/refactored-sprint-plan-2025-12-27.md
 _bmad-output/sprint-artifacts/refinement-sprint-knowledge-hub-2025-12-30.md
-_bmad-output/sprint-artifacts/sprint-status.yaml`  focusing on only those that iimplemented in code) follow @.claude/rules/general-rules.md and as coordinator being ready to open *correct-course when things go worng - you go through @_bmad-output/validation/sweeping-validation.md -> check with /ado-research (using mcp servers) - correct-course -> @.kilocode/workflows/story-dev-cycle.md  loop until everything is fixed and integrated on all phase epic and implemented stories - making integration, having ux ui and routed on frontend following correct styling 8bit updating with workflow-status and sprint-status regarding. Focusing on endtoend integration, mapping and wiring of all components, front-end to back-end, cross-architectures and cross-dependencies (make installation of what missing too). Be fully aware of the UX and UI that must be available on mobile and desktop and the contrast issues when using with the current 8bit dark theme. If anything missing auto run *correct-course and then iterate through development cycle"
+_bmad-output/sprint-artifacts/sprint-status.yaml`
+-
+
+-0
+## Controlled and governance documents
+
+`_bmad-output/project-planning-artifacts/architecture-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/architecture.md
+_bmad-output/project-planning-artifacts/epics-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/prd-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/prd.md
+_bmad-output/project-planning-artifacts/project-context.md
+_bmad-output/project-planning-artifacts/ux-design-specification-enhanced-2025-12-29.md
+_bmad-output/project-planning-artifacts/ux-design-specification.md`
+-
+-
+  focusing on only those that iimplemented in code) follow @.claude/rules/general-rules.md and as coordinator being ready to open *correct-course when things go worng - you go through @_bmad-output/validation/sweeping-validation.md -> check with /ado-research (using mcp servers) - correct-course -> @.kilocode/workflows/story-dev-cycle.md  loop until everything is fixed and integrated on all phase epic and implemented stories - making integration, having ux ui and routed on frontend following correct styling 8bit updating with workflow-status and sprint-status regarding. Focusing on endtoend integration, mapping and wiring of all components, front-end to back-end, cross-architectures and cross-dependencies (make installation of what missing too). Be fully aware of the UX and UI that must be available on mobile and desktop and the contrast issues when using with the current 8bit dark theme. If anything missing auto run *correct-course and then iterate through development cycle"
