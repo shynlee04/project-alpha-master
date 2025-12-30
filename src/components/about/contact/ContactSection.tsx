@@ -8,7 +8,6 @@
  * Story 29.8: Contact Section Implementation
  */
 
-import { useTranslation } from 'react-i18next';
 import { Mail, Linkedin, Github, MapPin, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

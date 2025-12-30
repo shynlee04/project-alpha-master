@@ -54,7 +54,6 @@ import {
     credentialVault,
     providerAdapterFactory,
     modelRegistry,
-    type ModelInfo,
 } from '@/lib/agent/providers'
 
 /**
@@ -63,7 +62,6 @@ import {
 // Removed local ProviderConfig interface in favor of @/lib/agent/providers type
 import { useProviderStore } from '@/lib/state/provider-store'
 import { useAgentsStore } from '@/stores/agents-store'
-import { ProviderConfig } from '@/lib/agent/providers/types'
 
 /**
  * Map provider display name (from Agent interface) to store ID
@@ -86,7 +84,7 @@ const mapProviderNameToId = (providerName: string): string => {
  * Can be easily extended without modifying core dialog logic
  */
 // Helper to get icon for provider
-const getProviderIcon = (id: string, name: string) => {
+const getProviderIcon = (id: string, _name: string) => {
     if (id.includes('openai')) return <Bot className="w-5 h-5" />
     if (id.includes('anthropic')) return <Bot className="w-5 h-5" />
     if (id.includes('google')) return <Bot className="w-5 h-5" />
@@ -178,7 +176,6 @@ export function AgentConfigDialog({
     const [topP, setTopP] = useState(0.95)
     const [topK, setTopK] = useState<number | undefined>(undefined)
     const [systemPrompt, setSystemPrompt] = useState('')
-    const [showAdvancedParams, setShowAdvancedParams] = useState(false)
 
     // Store actions
     const { addAgent, updateAgent, removeAgent } = useAgentsStore()

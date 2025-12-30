@@ -10,7 +10,6 @@
 
 import { type LucideIcon } from 'lucide-react';
 import { SkillCard, type SkillLevel } from './SkillCard';
-import { cn } from '@/lib/utils';
 
 export interface Skill {
   name: string;

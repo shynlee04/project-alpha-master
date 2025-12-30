@@ -10,7 +10,6 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useResponsive } from '@/hooks/useResponsive';
 import { type StatItemProps, StatItem } from './StatItem';
 import { cn } from '@/lib/utils';
@@ -92,7 +91,6 @@ export function StatsBar({
   animationDelay = 0,
 }: StatsBarProps) {
   const { isMobile, isTablet, isDesktop } = useResponsive();
-  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

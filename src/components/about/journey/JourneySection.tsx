@@ -23,7 +23,7 @@ export interface JourneySectionProps {
 
 export function JourneySection({ className }: JourneySectionProps) {
   const { t } = useTranslation();
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isTablet, isDesktop } = useResponsive();
 
   return (
     <section

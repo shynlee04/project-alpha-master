@@ -5,8 +5,6 @@
  * @created 2025-12-29
  */
 
-import React from 'react';
-
 export interface PitchDeckProps {
     isOpen: boolean;
     onClose: () => void;

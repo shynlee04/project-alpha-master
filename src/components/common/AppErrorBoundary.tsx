@@ -9,7 +9,6 @@
 import { Sentry } from '../../lib/monitoring/sentry'
 import { useTranslation } from 'react-i18next'
 import { useDeviceType } from '../../hooks/useMediaQuery'
-import { showMobileWorkspaceError } from '../../lib/utils/mobile-error-handling'
 import { useNavigate } from '@tanstack/react-router'
 
 /**

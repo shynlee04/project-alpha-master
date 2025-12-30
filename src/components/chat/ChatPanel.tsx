@@ -16,7 +16,6 @@ import { ChatConversation } from './ChatConversation';
 import {
     useThreadsStore,
     useActiveThread,
-    type ThreadMessage,
 } from '@/stores/conversation-threads-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useAgentSelection } from '@/stores/agent-selection-store';
@@ -43,7 +42,6 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
         createThread,
         deleteThread,
         addMessage,
-        updateMessage,
         getThreadsForProject,
     } = useThreadsStore();
 

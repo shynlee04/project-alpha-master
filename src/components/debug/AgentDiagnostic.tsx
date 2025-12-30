@@ -5,7 +5,7 @@
  * Usage: Add <AgentDiagnostic /> to any page to run diagnostics
  */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { db } from '@/lib/state/dexie-db'
 import { credentialVault } from '@/lib/agent/providers/credential-vault'
 import { modelRegistry } from '@/lib/agent/providers/model-registry'

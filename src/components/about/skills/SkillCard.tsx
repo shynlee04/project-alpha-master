@@ -9,7 +9,6 @@
  */
 
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -67,7 +66,6 @@ export function SkillCard({
   projectEvidence,
   expandable = false,
 }: SkillCardProps) {
-  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const levelInfo = getLevelInfo(level);
 

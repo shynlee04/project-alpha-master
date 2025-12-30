@@ -6,8 +6,7 @@
  * Shows fallback UI when React errors occur in child components.
  */
 
-import React, { Component, ReactNode, ErrorInfo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Component, ReactNode, ErrorInfo } from 'react'
 import { ErrorState } from '@/components/ui/ErrorState'
 
 /**

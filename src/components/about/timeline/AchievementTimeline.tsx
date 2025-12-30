@@ -8,7 +8,6 @@
  * Story 29.7: Achievement Timeline Implementation
  */
 
-import { useTranslation } from 'react-i18next';
 import { Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

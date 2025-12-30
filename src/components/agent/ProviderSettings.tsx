@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, Edit2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useProviderStore } from '@/lib/state/provider-store';
@@ -15,7 +14,6 @@ import {
 } from '@/components/ui/dialog';
 
 export function ProviderSettings() {
-    const { t } = useTranslation();
     const { providers, removeProvider } = useProviderStore();
 
     // Edit/Add Dialog State

@@ -11,7 +11,7 @@
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Shield, ShieldAlert, ShieldCheck, ShieldQuestion, RotateCcw, Check, X } from 'lucide-react';
+import { Shield, ShieldAlert, ShieldCheck, ShieldQuestion, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -157,9 +157,6 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
     const [localManager] = useState(() => ToolPermissionManagerClass.createInstance());
     const permissionManager = propPermissionManager ?? localManager;
 
-    // Track permission changes for callback
-    const [hasChanges, setHasChanges] = useState(false);
-
     // Get current trust levels
     const currentPermissions = useMemo(() => {
         return permissionManager.getAllTrustLevels();
@@ -183,7 +180,6 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
         if (disabled) return;
 
         permissionManager.setTrustLevel(toolId, level);
-        setHasChanges(true);
 
         // Notify callback
         if (onPermissionsChange) {
@@ -204,7 +200,6 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
         if (disabled) return;
 
         permissionManager.resetToDefaults();
-        setHasChanges(true);
 
         if (onPermissionsChange) {
             const updated = permissionManager.getAllTrustLevels();
@@ -225,8 +220,8 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
 
         permissionManager.setEventBus({
             on: () => {},
-            emit: (event: string, ...args: unknown[]) => {
-                if (event === 'permission:changed') {
+            emit: (_event: string, ..._args: unknown[]) => {
+                if (_event === 'permission:changed') {
                     handlePermissionChange();
                 }
             },

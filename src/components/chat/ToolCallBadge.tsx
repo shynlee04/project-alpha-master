@@ -31,7 +31,6 @@ import { cn } from '@/lib/utils';
 import {
     FileText,
     Save,
-    FolderOpen,
     Terminal,
     Search,
     Wrench,
@@ -94,15 +93,6 @@ function formatArguments(args: Record<string, unknown> | undefined): string {
     } catch {
         return String(args);
     }
-}
-
-/**
- * Truncate long argument values
- */
-function truncateValue(value: unknown, maxLength = 30): string {
-    const str = String(value);
-    if (str.length <= maxLength) return str;
-    return str.slice(0, maxLength) + '...';
 }
 
 export function ToolCallBadge({

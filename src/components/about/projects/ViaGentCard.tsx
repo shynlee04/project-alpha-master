@@ -9,7 +9,6 @@
  */
 
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ExternalLink, Github, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,18 +23,11 @@ export interface ViaGentCardProps {
    * Project features for carousel
    */
   features?: ProjectFeature[];
-
-  /**
-   * Whether to show architecture diagram
-   */
-  showArchitecture?: boolean;
 }
 
 export function ViaGentCard({
   features = [],
-  showArchitecture = false,
 }: ViaGentCardProps) {
-  const { t } = useTranslation();
   const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
 
   // Default features if not provided

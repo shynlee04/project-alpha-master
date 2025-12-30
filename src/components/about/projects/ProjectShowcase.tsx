@@ -8,8 +8,6 @@
  * Story 29.6: Project Showcase Implementation
  */
 
-import { useTranslation } from 'react-i18next';
-import { useResponsive } from '@/hooks/useResponsive';
 import { Rocket } from 'lucide-react';
 import { ViaGentCard } from './ViaGentCard';
 import { cn } from '@/lib/utils';

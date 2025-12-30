@@ -172,7 +172,6 @@ export function showTimeoutOptions(
   currentTimeout: number,
   onSelect: (newTimeout: number) => void
 ): void {
-  const { t } = useTranslation();
   const { getTimeoutOptions } = require('@/lib/agent/tools/tool-timeout');
   const options = getTimeoutOptions(currentTimeout);
 

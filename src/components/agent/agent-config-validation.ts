@@ -95,7 +95,7 @@ export function validateModelSelection(
 export function validateOpenAICompatible(
     providerId: string,
     customBaseURL: string,
-    customModelId: string
+    _customModelId: string
 ): string | undefined {
     if (providerId === 'openai-compatible') {
         if (!customBaseURL.trim()) {
