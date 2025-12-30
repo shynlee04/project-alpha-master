@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="26-2-client-side-embedding-pipeline" created="2025-12-30T19:30:00+07:00">
+
+  <!-- ================================================================ -->
+  <!-- Current Code State -->
+  <!-- ================================================================ -->
+  <files>
+    
+    <file path="src/lib/notes/note-store.ts">
+      <description>Zustand store from Story 26.1 - add indexing triggers here</description>
+      <content><![CDATA[
+// Key actions to modify in Story 26.2:
+// 1. updateNote - trigger indexNote after save
+// 2. deleteNote - trigger removeNoteFromIndex after delete
+// 3. Add indexStatus to NoteRecord state
+
+export const useNoteStore = create<NoteStoreState>()(
+    persist(
+        (set, get) => ({
+            notes: new Map(),
+            notesArray: [],
+            activeNoteId: null,
+            currentProjectId: null,
+            saveStatus: 'idle',  // Extend with indexStatus
+            loading: false,
+            error: null,
+            _hasHydrated: false,
+            // ... actions
+        }),
+        { name: 'note-storage', storage: createDexieStorage() }
+    )
+);
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/rag/orama-index.ts">
+      <description>Existing Orama index management - reuse for notes</description>
+      <content><![CDATA[
+// Key exports to use:
+export async function createIndex(config: IndexConfig): Promise<Orama<OramaSchema>>
+export async function indexDocument(projectId: string, document: DocumentSchema): Promise<void>
+export async function removeFromIndex(projectId: string, sourceId: string): Promise<void>
+export async function searchIndex(projectId: string, query: string, options): Promise<SearchResult[]>
+export async function saveIndex(projectId: string, index?: Orama<OramaSchema>): Promise<void>
+
+// Schema: { id, sourceId, content, title, position, embedding?, metadata }
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/rag/embedding-service.ts">
+      <description>Existing embedding service - can reuse or create worker version</description>
+      <content><![CDATA[
+// Key functions to potentially use:
+export async function generateEmbedding(text: string, config: EmbeddingConfig): Promise<EmbeddingResult>
+
+// Uses Xenova/all-MiniLM-L6-v2 (384-dim quantized model)
+// Has local (WebGPU) and cloud (Gemini) providers
+// Story 26.2 should create Web Worker version for non-blocking
+
+async function generateLocalEmbedding(text: string, _modelName?: string): Promise<EmbeddingResult> {
+    const { pipeline } = await import('@xenova/transformers');
+    const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+        quantized: true, // Use Q4 quantized model (~90MB)
+    });
+    const output = await extractor(text, { pooling: 'mean', normalize: true });
+    const embedding = Array.from(output.data as Float32Array);
+    return { embedding, provider: 'local', latencyMs };
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/notes/types.ts">
+      <description>Note types from Story 26.1 - add indexing fields</description>
+      <content><![CDATA[
+export interface NoteRecord {
+    id: string;
+    projectId: string;
+    title: string;
+    emoji?: string;
+    blocks: unknown[];  // BlockNote JSON blocks
+    parentId?: string;
+    isFavorite: boolean;
+    order: number;
+    isIndexed: boolean;     // <-- Already exists, use for Story 26.2
+    indexedAt?: number;     // <-- Already exists
+    createdAt: number;
+    updatedAt: number;
+}
+
+// Add in Story 26.2:
+export type NoteIndexStatus = 'pending' | 'indexing' | 'indexed' | 'error';
+      ]]></content>
+    </file>
+    
+  </files>
+
+  <!-- ================================================================ -->
+  <!-- Research Notes (MCP Tools) -->
+  <!-- ================================================================ -->
+  <research_notes>
+    
+    <finding source="context7" query="Transformers.js Web Worker setup pipeline">
+      <title>Web Worker Singleton Pattern</title>
+      <pattern><![CDATA[
+// Web Worker script (note-embedding.worker.ts)
+import { pipeline } from '@huggingface/transformers';
+
+class EmbeddingPipeline {
+  static instance = null;
+  static async getInstance(progress_callback = null) {
+    this.instance ??= pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', { progress_callback, quantized: true });
+    return this.instance;
+  }
+}
+
+self.addEventListener('message', async (event) => {
+  const { noteId, content } = event.data;
+  const extractor = await EmbeddingPipeline.getInstance(x => self.postMessage({ status: 'progress', ...x }));
+  const output = await extractor(content, { pooling: 'mean', normalize: true });
+  self.postMessage({ status: 'complete', noteId, embedding: Array.from(output.data) });
+});
+      ]]></pattern>
+    </finding>
+    
+    <finding source="existing-codebase" query="Orama schema pattern">
+      <title>Document Schema for Notes</title>
+      <pattern><![CDATA[
+// Extend OramaSchema in src/lib/rag/types.ts for notes:
+export interface NoteDocumentSchema {
+    id: string;           // noteId-chunk-{index}
+    noteId: string;       // Parent note ID
+    content: string;      // Plain text chunk
+    title: string;        // Note title
+    position: number;     // Chunk index
+    embedding?: number[]; // 384-dim vector
+    metadata: {
+        chunkIndex: number;
+        totalChunks: number;
+    };
+}
+      ]]></pattern>
+    </finding>
+    
+    <finding source="epic-6-retrospective" query="Zustand + Dexie patterns">
+      <title>State Update Pattern</title>
+      <insight>
+        Story 26.2 should follow the pattern from knowledge-store.ts where source
+        processing status is tracked. Add `indexStatus` to NoteRecord or track
+        separately in a Map for UI indicators.
+      </insight>
+    </finding>
+    
+  </research_notes>
+
+  <!-- ================================================================ -->
+  <!-- Architecture Patterns -->
+  <!-- ================================================================ -->
+  <architecture_patterns>
+    
+    <pattern name="Web Worker Communication" source="story-26-2-requirements">
+      <description>
+        Use dedicated Web Worker for embedding generation to avoid UI blocking.
+        Main thread sends note content, worker returns vector.
+      </description>
+      <flow>
+        1. Note saved in useNoteStore.updateNote()
+        2. Debounce 500ms (avoid spam during typing)
+        3. Post message to embedding.worker.ts with { noteId, content }
+        4. Worker loads Transformers.js pipeline (singleton)
+        5. Worker generates embedding and posts back { noteId, vector }
+        6. Main thread calls indexNote() with vector
+        7. Update NoteRecord.isIndexed = true, indexedAt = Date.now()
+      </flow>
+    </pattern>
+    
+    <pattern name="Retry Logic" source="story-26-2-ac4">
+      <description>
+        Retry embedding generation on failure with exponential backoff.
+      </description>
+      <code><![CDATA[
+const MAX_RETRIES = 3;
+const RETRY_DELAYS = [5000, 10000, 20000]; // 5s, 10s, 20s
+
+async function embedWithRetry(noteId: string, content: string): Promise<number[]> {
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        try {
+            return await embedInWorker(noteId, content);
+        } catch (error) {
+            if (attempt < MAX_RETRIES - 1) {
+                await sleep(RETRY_DELAYS[attempt]);
+            } else {
+                throw error; // Final failure
+            }
+        }
+    }
+}
+      ]]></code>
+    </pattern>
+    
+    <pattern name="Content Extraction" source="story-26-2-requirements">
+      <description>
+        Extract plain text from BlockNote JSON for embedding.
+        Reuse extractTitleFromBlocks() pattern from types.ts.
+      </description>
+      <code><![CDATA[
+// src/lib/notes/types.ts - extend with full content extraction
+export function extractTextFromBlocks(blocks: unknown[]): string {
+    const texts: string[] = [];
+    for (const block of blocks) {
+        if (block.content && Array.isArray(block.content)) {
+            for (const item of block.content) {
+                if (item.type === 'text' && item.text) {
+                    texts.push(item.text);
+                }
+            }
+        }
+    }
+    return texts.join('\n').trim();
+}
+      ]]></code>
+    </pattern>
+    
+  </architecture_patterns>
+
+  <!-- ================================================================ -->
+  <!-- Technical Notes -->
+  <!-- ================================================================ -->
+  <technical_notes>
+    
+    <note priority="high">
+      EXISTING INFRASTRUCTURE: src/lib/rag/orama-index.ts already has createIndex,
+      indexDocument, removeFromIndex, searchIndex, saveIndex. Do NOT duplicate.
+      Story 26.2 should add note-specific schema and wrapper functions.
+    </note>
+    
+    <note priority="high">
+      WEB WORKER SINGLETON: Transformers.js model loading is expensive (~90MB).
+      Use singleton pattern in worker to load model once and reuse.
+      Progress callbacks can update UI via postMessage.
+    </note>
+    
+    <note priority="medium">
+      CHUNKING: For long notes, chunk content before embedding (use existing
+      chunkContent() from orama-index.ts). Each chunk gets a separate embedding.
+    </note>
+    
+    <note priority="medium">
+      INDEX KEY: Use "notes-{projectId}" as index ID to separate from source
+      documents. This allows unified search across sources AND notes.
+    </note>
+    
+    <note priority="medium">
+      DEBOUNCE: Don't trigger embedding on every keystroke. Wait 500ms after
+      last change (same debounce as auto-save). Can share the debounce logic.
+    </note>
+    
+    <note priority="low">
+      FALLBACK: If embedding fails after retries, note is still searchable via
+      BM25 keyword matching (Orama hybrid search handles this automatically).
+    </note>
+    
+  </technical_notes>
+
+  <!-- ================================================================ -->
+  <!-- Dependencies -->
+  <!-- ================================================================ -->
+  <dependencies>
+    <dependency name="@xenova/transformers" version="2.17.2" status="installed" />
+    <dependency name="@orama/orama" version="3.1.18" status="installed" />
+    <dependency name="@orama/plugin-data-persistence" version="3.1.18" status="installed" />
+    <dependency name="zustand" version="5.0.5" status="installed" />
+    <dependency name="dexie" version="4.2.1" status="installed" />
+  </dependencies>
+
+  <!-- ================================================================ -->
+  <!-- i18n Keys Required -->
+  <!-- ================================================================ -->
+  <i18n_keys>
+    <key key="notes.indexing" en="Indexing..." vi="Đang lập chỉ mục..." />
+    <key key="notes.indexed" en="Indexed" vi="Đã lập chỉ mục" />
+    <key key="notes.indexError" en="Indexing failed" vi="Lập chỉ mục thất bại" />
+    <key key="notes.retrying" en="Retrying indexing..." vi="Đang thử lại lập chỉ mục..." />
+    <key key="notes.indexingProgress" en="Indexing note ({progress}%)" vi="Đang lập chỉ mục ghi chú ({progress}%)" />
+  </i18n_keys>
+
+</context>
