@@ -4,7 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' vite build",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build",
+    "build:cloudflare": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=cloudflare vite build",
+    "build:vercel": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=netlify vite build",
+    "build:manual": "echo 'Manual build - use pnpm build:cloudflare or pnpm build:vercel'",
+    "build:analyze": "pnpm build && node scripts/analyze-bundle.js",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

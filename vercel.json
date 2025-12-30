@@ -1,0 +1,40 @@
+{
+  "buildCommand": "pnpm build:vercel",
+  "outputDirectory": ".output/public",
+  "installCommand": "pnpm install",
+  "framework": null,
+  "functions": {
+    ".output/server/index.mjs": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": ".output/server/index.mjs"
+    },
+    {
+      "src": "/(.*)",
+      "dest": ".output/server/index.mjs"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Embedder-Policy", 
+          "value": "require-corp"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
+        }
+      ]
+    }
+  ]
+}
