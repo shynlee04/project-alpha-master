@@ -229,24 +229,15 @@ const config = defineConfig(async () => {
       viteReact(),
     ],
     // SSR Configuration
-    // Cloudflare plugin handles externals/bundling automatically
+    // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
+    // Therefore, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
+    // We only specify 'noExternal' to bundle specific client-side libraries
     ssr: DEPLOY_TARGET === 'cloudflare'
       ? {
         // Bundle everything for Cloudflare EXCEPT large client-side-only libraries
         // These are accessed via dynamic import (React.lazy) and guarded by client checks
-        // We use a regex to match "everything except these specific packages"
+        // Cloudflare plugin handles Node.js externals automatically
         noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote)).*$/,
-        external: [
-          '@xterm/xterm',
-          '@xterm/addon-fit',
-          '@monaco-editor/react',
-          'monaco-editor',
-          '@webcontainer/api',
-          '@xenova/transformers',
-          '@blocknote/react',
-          '@blocknote/mantine',
-          '@blocknote/core'
-        ]
       }
       : {
         external: [
