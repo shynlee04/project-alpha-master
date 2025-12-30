@@ -7,7 +7,7 @@ import { RelationshipEdge } from './RelationshipEdge';
  * Using memo to prevent unnecessary re-renders
  */
 export const edgeTypes: EdgeTypes = {
-  relationship: memo(() => <RelationshipEdge />),
+  relationship: memo(RelationshipEdge) as EdgeTypes['relationship'],
 };
 
 /**

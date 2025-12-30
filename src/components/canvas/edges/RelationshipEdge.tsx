@@ -4,7 +4,6 @@ import {
   BaseEdge,
   EdgeProps,
   getBezierPath,
-  MarkerType,
 } from '@xyflow/react';
 import type { CanvasRelationshipType } from '../../../lib/canvas/types';
 import '@xyflow/react/dist/style.css';
@@ -22,6 +21,18 @@ export interface RelationshipEdgeData {
  */
 const castEdgeData = (data: unknown): RelationshipEdgeData => {
   return data as RelationshipEdgeData;
+};
+
+/**
+ * Get marker end type for relationship as a string
+ */
+const getMarkerEnd = (relationship: CanvasRelationshipType): string => {
+  switch (relationship) {
+    case 'contradicts':
+      return 'arrowclosed';
+    default:
+      return 'arrowclosed';
+  }
 };
 
 /**
@@ -50,18 +61,6 @@ const getRelationshipStyle = (relationship: CanvasRelationshipType = 'relates') 
         color: 'var(--color-primary, #a855f7)',
         strokeDasharray: 'none',
       };
-  }
-};
-
-/**
- * Get marker end type for relationship
- */
-const getMarkerType = (relationship: CanvasRelationshipType = 'relates'): MarkerType => {
-  switch (relationship) {
-    case 'contradicts':
-      return MarkerType.ArrowClosed;
-    default:
-      return MarkerType.ArrowClosed;
   }
 };
 
@@ -158,7 +157,7 @@ const RelationshipEdgeComponent = ({
       <BaseEdge
         id={id}
         path={edgePath}
-        markerEnd={{ type: getMarkerType(relationship), color }}
+        markerEnd={getMarkerEnd(relationship)}
         style={edgeStyle}
         className={selected ? 'react-flow__edge-selected' : ''}
         onClick={handleEdgeClick}
