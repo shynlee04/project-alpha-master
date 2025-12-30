@@ -1,7 +1,11 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Handle, Position, NodeProps, NodeResizer } from '@xyflow/react';
 import { FileText, Globe, FileJson } from 'lucide-react';
 import { SourceNodeData } from '@/lib/canvas/types';
+
+interface SourceNodeProps extends Omit<NodeProps, 'data'> {
+  data: SourceNodeData;
+}
 
 /**
  * Get icon component based on content type
@@ -37,7 +41,7 @@ const getContentTypeColor = (contentType: string): string => {
   }
 };
 
-const SourceNodeComponent = ({ data, selected }: NodeProps<SourceNodeData>) => {
+const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
   const { title, contentType, excerpt } = data;
   const typeColor = getContentTypeColor(contentType);
 
@@ -94,8 +98,6 @@ const SourceNodeComponent = ({ data, selected }: NodeProps<SourceNodeData>) => {
         <NodeResizer
           minWidth={150}
           minHeight={80}
-          className="!border-blue-500"
-          handleClassName="!bg-blue-500"
         />
       )}
     </div>

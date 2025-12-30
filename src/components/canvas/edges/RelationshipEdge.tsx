@@ -25,6 +25,18 @@ const castEdgeData = (data: unknown): RelationshipEdgeData => {
 };
 
 /**
+ * Get marker end type for relationship as a string
+ */
+const getMarkerEnd = (relationship: CanvasRelationshipType): string => {
+  switch (relationship) {
+    case 'contradicts':
+      return 'arrowclosed';
+    default:
+      return 'arrowclosed';
+  }
+};
+
+/**
  * Get styling for relationship type
  */
 const getRelationshipStyle = (relationship: CanvasRelationshipType = 'relates') => {
@@ -158,7 +170,7 @@ const RelationshipEdgeComponent = ({
       <BaseEdge
         id={id}
         path={edgePath}
-        markerEnd={{ type: getMarkerType(relationship), color }}
+        markerEnd={getMarkerEnd(relationship)}
         style={edgeStyle}
         className={selected ? 'react-flow__edge-selected' : ''}
         onClick={handleEdgeClick}
