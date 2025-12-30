@@ -1290,6 +1290,10 @@
         "title": "What I Bring",
         "description": "I combine enterprise architecture thinking with rapid prototyping agility. My multi-agent orchestration systems demonstrate how autonomous AI can solve complex problems while maintaining human oversight, transparency, and scalability."
       }
+    },
+    "skills": {
+      "title": "Technical Capabilities",
+      "subtitle": "Expertise across the full engineering stack with specialized focus on multi-agent systems"
     }
   }
 }

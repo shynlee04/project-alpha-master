@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useResponsive } from '@/hooks/useResponsive';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { User, Rocket, Mail, Linkedin, Github, Users, Clock, Cpu, Building2 } from 'lucide-react';
+import { User, Mail, Linkedin, Github, Users, Clock, Cpu, Building2 } from 'lucide-react';
 import { StatsBar } from './stats';
 import { JourneySection } from './journey';
+import { SkillsMatrix } from './skills';
+import { ProjectShowcase } from './projects';
 import './AboutPage.css';
 
 /**
@@ -81,62 +83,13 @@ export function AboutPage() {
       {/* Journey Section */}
       <JourneySection />
 
-      {/* Skills Section */}
-      <section className="about-section about-story">
-        <div className="about-section-header">
-          <Code className="section-icon" size={24} />
-          <h2 className="section-title">{t('about.story.title')}</h2>
-        </div>
-        <div className="about-section-content">
-          <div className="about-card">
-            <div className="about-card-header">
-              <Zap className="card-icon" size={20} />
-              <h3 className="card-title">{t('about.story.background')}</h3>
-            </div>
-            <p className="card-text">
-              {t('about.story.achievement')}
-            </p>
-          </div>
-          <div className="about-card">
-            <div className="about-card-header">
-              <Rocket className="card-icon" size={20} />
-              <h3 className="card-title">{t('about.story.transition')}</h3>
-            </div>
-            <p className="card-text">
-              {t('about.project.description')}
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Skills Matrix Section */}
+      <SkillsMatrix showEvidence={false} />
 
-      {/* Skills Section */}
-      <section className="about-section about-skills">
-        <div className="about-section-header">
-          <Zap className="section-icon" size={24} />
-          <h2 className="section-title">{t('about.skills.title')}</h2>
-        </div>
-        <div className="about-section-content">
-          <div className="skills-grid">
-            <div className="skill-item">
-              <div className="skill-icon">⚛️</div>
-              <h3 className="skill-title">{t('about.skills.frontend')}</h3>
-              <p className="skill-description">React 18, TypeScript, TanStack Router</p>
-            </div>
-            <div className="skill-item">
-              <div className="skill-icon">🤖</div>
-              <h3 className="skill-title">{t('about.skills.backend')}</h3>
-              <p className="skill-description">AI Integration, WebContainer API, IndexedDB</p>
-            </div>
-            <div className="skill-item">
-              <div className="skill-icon">🎯</div>
-              <h3 className="skill-title">{t('about.skills.framework')}</h3>
-              <p className="skill-description">BMAD V6, Multi-Agent Orchestration</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Project Showcase Section */}
+      <ProjectShowcase />
 
-      {/* Project Section */}
+      {/* Contact Section - Will be enhanced in Story 29-8 */}
       <section className="about-section about-project">
         <div className="about-section-header">
           <Rocket className="section-icon" size={24} />

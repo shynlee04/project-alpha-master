@@ -1277,6 +1277,10 @@
       "value": {
         "title": "Tôi Đem Lại Gì",
         "description": "Tôi kết hợp tư duy kiến trúc doanh nghiệp với sự linh hoạt của rapid prototyping. Hệ thống điều phối multi-agent của tôi chứng minh cách AI tự trị có thể giải quyết các vấn đề phức tạp trong khi vẫn duy trì sự giám sát của con người, tính minh bạch và khả năng mở rộng."
+      },
+      "skills": {
+        "title": "Năng lực Kỹ thuật",
+        "subtitle": "Chuyên môn toàn diện với trọng tâm vào hệ thống multi-agent"
       }
     }
   }

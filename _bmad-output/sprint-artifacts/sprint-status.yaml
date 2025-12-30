@@ -349,8 +349,8 @@ development_status:
   29-2-hero-section: review # Implementation complete, tests created (20+ cases), i18n updated (EN+VI), handoff created 2025-12-30T15:51:00+07:00
   29-3-stats-bar: done # 3 story points
   29-4-journey-section: done # 5 story points
-  29-5-skills-matrix: backlog # 5 story points
-  29-6-project-showcase: backlog # 5 story points
+  29-5-skills-matrix: done # 5 story points
+  29-6-project-showcase: done # 5 story points
   29-7-achievement-timeline: backlog # 3 story points
   29-8-contact-section: backlog # 2 story points
   29-9-navigation-integration: backlog # 3 story points
