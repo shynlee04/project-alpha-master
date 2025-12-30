@@ -6,13 +6,10 @@ import {
   ReactFlowProvider,
   Panel,
   Viewport,
-  useReactFlow,
-  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useTranslation } from 'react-i18next';
 import { useCanvasStore } from '../../lib/state/canvas-store';
-import type { CanvasNodeData } from '../../lib/canvas/types';
 import { useResponsive } from '../../hooks/useResponsive';
 import { nodeTypes } from './nodes/nodeTypes';
 import { edgeTypes, defaultEdgeOptions } from './edges/edgeTypes';
@@ -128,12 +125,9 @@ function CanvasContent() {
   // Drag and drop handlers
   const { handleDragOver, handleDrop } = useCanvasDrop();
 
-  // Get React Flow instance for coordinate transformation
-  const { screenToFlowPosition, getNodes, setNodes } = useReactFlow();
-
   // Handle double-click on nodes to create concept node
   const handleNodeDoubleClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: { type?: string }) => {
       if (isReadOnly) return;
 
       // Only handle double-clicks on concept nodes

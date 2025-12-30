@@ -11,7 +11,8 @@ export interface ConceptNodeData {
   isEditing?: boolean;
 }
 
-interface ConceptNodeProps extends NodeProps<ConceptNodeData> {
+interface ConceptNodeProps extends Omit<NodeProps, 'data'> {
+  data: ConceptNodeData;
   onTitleChange?: (id: string, title: string) => void;
 }
 
