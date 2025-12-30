@@ -72,6 +72,7 @@ const config = defineConfig(async () => {
   return {
     plugins: [
       securityHeadersPlugin,
+      tanstackStart(),
       devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
       ...(deployPlugin ? [deployPlugin] : []),
       viteTsConfigPaths({
@@ -80,7 +81,6 @@ const config = defineConfig(async () => {
       // Tailwind CSS 4 - configuration is done in CSS using @theme directives
       // Content detection is automatic in v4
       tailwindcss(),
-      tanstackStart(),
       viteReact(),
     ],
     // Explicit path alias for Vite 7 compatibility
