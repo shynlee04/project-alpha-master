@@ -11,10 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { BookOpen, Brain, Trophy, Sparkles } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useFlashcardStore } from '@/lib/state/flashcard-store';
 import { useQuizStore } from '@/lib/state/quiz-store';
+import { useStudyStore } from '@/lib/state/study-store';
 import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
@@ -28,6 +28,7 @@ export function StudyPage() {
     // Stores
     const flashcards = useFlashcardStore((state) => state.flashcards);
     const quizzes = useQuizStore((state) => state.quizzes);
+    const { totalCardsStudied, currentStreak } = useStudyStore();
 
     // State
     const [activeTab, setActiveTab] = useState<'flashcards' | 'quizzes' | 'stats'>('flashcards');
@@ -99,7 +100,10 @@ export function StudyPage() {
                                 </TabsContent>
 
                                 <TabsContent value="stats" className="mt-0">
-                                    <CompactStudyStats projectId={projectId} />
+                                    <CompactStudyStats
+                                      totalCardsStudied={totalCardsStudied}
+                                      currentStreak={currentStreak}
+                                    />
                                 </TabsContent>
                             </Tabs>
                         ) : (
@@ -126,7 +130,10 @@ export function StudyPage() {
                             <BookOpen className="text-primary" size={24} />
                             <h1 className="font-mono font-bold text-xl">{t('study.title')}</h1>
                         </div>
-                        <CompactStudyStats projectId={projectId} />
+                        <CompactStudyStats
+                          totalCardsStudied={totalCardsStudied}
+                          currentStreak={currentStreak}
+                        />
                     </div>
                     <p className="text-sm text-muted-foreground">{t('study.subtitle')}</p>
                 </div>
@@ -194,7 +201,10 @@ export function StudyPage() {
 
                                 <TabsContent value="stats" className="mt-0">
                                     <div className="max-w-4xl mx-auto">
-                                        <CompactStudyStats projectId={projectId} />
+                                        <CompactStudyStats
+                                          totalCardsStudied={totalCardsStudied}
+                                          currentStreak={currentStreak}
+                                        />
                                     </div>
                                 </TabsContent>
                             </div>
@@ -244,8 +254,3 @@ export interface StudyPageProps {
     /** Optional project ID override (defaults to current project from IDE store) */
     projectId?: string;
 }
-
-/**
- * Type export for barrel file
- */
-export type { StudyPageProps };

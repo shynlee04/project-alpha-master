@@ -449,6 +449,55 @@ export interface EmbeddingModelRecord {
     downloadedAt: Date;
 }
 
+// ============================================================================
+// Epic 26: Intelligent Knowledge Base (Notes)
+// ============================================================================
+
+/**
+ * Note record for BlockNote editor persistence
+ * Stores structured note content with hierarchical organization.
+ *
+ * @epic Epic 26 - Intelligent Knowledge Base
+ * @story 26-1 - Integrated BlockNote Editor
+ */
+export interface NoteRecord {
+    /** Primary key (UUID) */
+    id: string;
+
+    /** Foreign key to project */
+    projectId: string;
+
+    /** Note title (extracted from first heading or user-defined) */
+    title: string;
+
+    /** Optional emoji icon for the note */
+    emoji?: string;
+
+    /** BlockNote JSON block structure - stored as unknown[] for flexibility */
+    blocks: unknown[];
+
+    /** Parent note ID for nesting (undefined = root level) */
+    parentId?: string;
+
+    /** Whether note is starred/favorited */
+    isFavorite: boolean;
+
+    /** Sort order within parent (for drag-and-drop) */
+    order: number;
+
+    /** Whether note is indexed for RAG (Story 26-2) */
+    isIndexed?: boolean;
+
+    /** Last indexed timestamp (Story 26-2) */
+    indexedAt?: number;
+
+    /** Creation timestamp */
+    createdAt: number;
+
+    /** Last update timestamp */
+    updatedAt: number;
+}
+
 // Type alias for backward compatibility
 export type Collection = CollectionRecord;
 
@@ -595,6 +644,9 @@ class ViaGentDatabase extends Dexie {
     // Epic 7: RAG Infrastructure tables
     oramaIndexes!: Table<OramaIndexRecord, string>;
     embedding_models!: Table<EmbeddingModelRecord, string>;
+
+    // Epic 26: Notes tables for BlockNote editor
+    notes!: Table<NoteRecord, string>;
 
     constructor() {
         // DB name matches legacy 'via-gent-persistence' for data continuity
@@ -1010,6 +1062,52 @@ class ViaGentDatabase extends Dexie {
 
             logDexieMigration(14, 'epic-7-3-embedding-models', 'completed', {
                 tableName: 'embedding_models',
+                itemsCount: 0
+            });
+        });
+
+        // Schema version 15: Epic 26 - Intelligent Knowledge Base (Notes)
+        // Adds notes table for BlockNote editor with hierarchical organization
+        this.version(15).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            // NEW: Notes table for BlockNote editor (Story 26-1)
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+        }).upgrade(async () => {
+            logDexieMigration(15, 'epic-26-notes', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(15)) {
+                logDexieMigration(15, 'epic-26-notes', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(15);
+
+            logDexieMigration(15, 'epic-26-notes', 'completed', {
+                tableName: 'notes',
                 itemsCount: 0
             });
         });

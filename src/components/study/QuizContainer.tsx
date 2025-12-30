@@ -8,13 +8,14 @@ import type { Quiz } from '@/lib/study/quiz-types';
 import type { QuizResult } from '@/lib/study/quiz-session';
 import { useQuizSession } from '@/hooks/useQuizSession';
 import { useQuizTimer } from '@/hooks/useQuizTimer';
+import { useTranslation } from 'react-i18next';
 import { QuizStartScreen } from './QuizStartScreen';
 import { QuizQuestionView } from './QuizQuestionView';
 import { QuizResults } from './QuizResults';
 import { QuizReview } from './QuizReview';
 
 interface QuizContainerProps {
-  quiz: Quiz;
+  quiz?: Quiz;
   onComplete?: (result: QuizResult) => void;
   onExit?: () => void;
 }
@@ -23,8 +24,21 @@ interface QuizContainerProps {
  * Main quiz container component
  * Manages state and renders appropriate view based on quiz progress
  */
-export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) {
+export function QuizContainer({ quiz: quizProp, onComplete, onExit }: QuizContainerProps) {
+  const { t } = useTranslation();
   const [result, setResult] = useState<QuizResult | null>(null);
+
+  // TODO: Load quiz from store if not provided
+  // For now, show empty state if no quiz
+  if (!quizProp) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">{t('quizzes.noQuizSelected')}</p>
+      </div>
+    );
+  }
+
+  const quiz = quizProp;
 
   const {
     session,
@@ -123,12 +137,12 @@ export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) 
   if (!currentQuestion) {
     return (
       <div className="quiz-container w-full max-w-2xl mx-auto p-8 text-center">
-        <p className="text-muted-foreground">No question available</p>
+        <p className="text-muted-foreground">{t('quizzes.error.noQuestion')}</p>
         <button
           onClick={handleExit}
-          className="mt-4 px-4 py-2 bg-secondary rounded-lg"
+          className="mt-4 px-4 py-2 bg-secondary rounded-none"
         >
-          Exit Quiz
+          {t('quizzes.exit')}
         </button>
       </div>
     );

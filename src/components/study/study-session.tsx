@@ -217,7 +217,7 @@ export function StudySession({
         {onExit && (
           <button
             onClick={handleExit}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-none"
           >
             {t('common.back')}
           </button>
@@ -295,7 +295,7 @@ export function StudySession({
           onClick={handlePrevious}
           disabled={currentIndex === 0}
           className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors',
+            'flex items-center gap-2 px-4 py-2 rounded-none transition-colors',
             currentIndex === 0
               ? 'text-muted-foreground opacity-50'
               : 'bg-muted hover:bg-muted/80'
@@ -321,7 +321,7 @@ export function StudySession({
         <button
           onClick={handleNext}
           className={cn(
-            'flex items-center gap-2 px-6 py-2 rounded-lg transition-colors',
+            'flex items-center gap-2 px-6 py-2 rounded-none transition-colors',
             'bg-primary text-primary-foreground hover:bg-primary/90'
           )}
           aria-label={

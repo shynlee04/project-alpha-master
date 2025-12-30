@@ -272,11 +272,11 @@ export function SourcePreviewPanel({ projectId: _projectId }: SourcePreviewPanel
                     <span>•</span>
                     <span>{readingTime}</span>
                     <span>•</span>
-                    <span>Imported {importedAt}</span>
+                    <span>{t('knowledge.sources.imported', { date: importedAt })}</span>
                     {isExtracting && (
                         <>
                             <span>•</span>
-                            <span className="text-primary animate-pulse">Analyzing...</span>
+                            <span className="text-primary animate-pulse">{t('knowledge.metadata.analyzing')}</span>
                         </>
                     )}
                 </div>

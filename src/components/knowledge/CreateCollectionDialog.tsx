@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +44,7 @@ export function CreateCollectionDialog({
     onSave,
     onCancel,
 }: CreateCollectionDialogProps) {
+    const { t } = useTranslation();
     const [name, setName] = useState('');
     const [error, setError] = useState<string>('');
     const inputRef = useRef<HTMLInputElement>(null);
@@ -64,12 +66,12 @@ export function CreateCollectionDialog({
 
         // Validation
         if (!trimmed) {
-            setError('Collection name is required');
+            setError(t('knowledge.collections.nameRequired'));
             return;
         }
 
         if (trimmed.length > MAX_NAME_LENGTH) {
-            setError(`Name must be less than ${MAX_NAME_LENGTH} characters`);
+            setError(t('knowledge.collections.nameTooLong', { max: MAX_NAME_LENGTH }));
             return;
         }
 

@@ -69,7 +69,7 @@ export function StudyStatsDisplay({
       {/* Statistics grid */}
       <div className="grid grid-cols-2 gap-4 w-full mb-8">
         {/* Cards studied */}
-        <div className="bg-card border border-border rounded-xl p-4 text-center">
+        <div className="bg-card border border-border rounded-none p-4 text-center">
           <div className="text-3xl font-bold text-primary">{stats.cardsStudied}</div>
           <div className="text-sm text-muted-foreground mt-1">
             {t('study.stats.cardsStudied')}
@@ -77,7 +77,7 @@ export function StudyStatsDisplay({
         </div>
 
         {/* Time spent */}
-        <div className="bg-card border border-border rounded-xl p-4 text-center">
+        <div className="bg-card border border-border rounded-none p-4 text-center">
           <div className="text-3xl font-bold text-primary">
             {formatTime(stats.timeSpent)}
           </div>
@@ -87,7 +87,7 @@ export function StudyStatsDisplay({
         </div>
 
         {/* Correct/Incorrect */}
-        <div className="bg-card border border-border rounded-xl p-4 text-center">
+        <div className="bg-card border border-border rounded-none p-4 text-center">
           <div className="text-3xl font-bold text-green-500">{stats.correct}</div>
           <div className="text-sm text-muted-foreground mt-1">
             {t('study.stats.correct')}
@@ -95,7 +95,7 @@ export function StudyStatsDisplay({
         </div>
 
         {/* Streak */}
-        <div className="bg-card border border-border rounded-xl p-4 text-center">
+        <div className="bg-card border border-border rounded-none p-4 text-center">
           <div className="text-3xl font-bold text-orange-500">
             {streakEmoji} {stats.streak}
           </div>
@@ -149,7 +149,7 @@ export function StudyStatsDisplay({
           <button
             onClick={onRestart}
             className={cn(
-              'w-full py-3 px-4 rounded-lg font-medium transition-colors',
+              'w-full py-3 px-4 rounded-none font-medium transition-colors',
               'bg-primary text-primary-foreground hover:bg-primary/90'
             )}
           >
@@ -161,7 +161,7 @@ export function StudyStatsDisplay({
           <button
             onClick={onExit}
             className={cn(
-              'w-full py-3 px-4 rounded-lg font-medium transition-colors',
+              'w-full py-3 px-4 rounded-none font-medium transition-colors',
               'bg-muted hover:bg-muted/80 text-foreground'
             )}
           >

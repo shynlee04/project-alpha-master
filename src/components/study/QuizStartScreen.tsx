@@ -59,7 +59,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
       {/* Quiz Info Cards */}
       <div className="grid grid-cols-2 gap-4 mb-8">
         {/* Question Count */}
-        <div className="quiz-info-card p-4 bg-card border border-border rounded-xl">
+        <div className="quiz-info-card p-4 bg-card border border-border rounded-none">
           <div className="text-sm text-muted-foreground mb-1">
             {t('quizzes.start.questions')}
           </div>
@@ -69,7 +69,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
         </div>
 
         {/* Estimated Time */}
-        <div className="quiz-info-card p-4 bg-card border border-border rounded-xl">
+        <div className="quiz-info-card p-4 bg-card border border-border rounded-none">
           <div className="text-sm text-muted-foreground mb-1">
             {t('quizzes.start.time-estimate')}
           </div>
@@ -166,14 +166,14 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
         {onExit && (
           <button
             onClick={onExit}
-            className="flex-1 px-4 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
+            className="flex-1 px-4 py-3 bg-secondary text-secondary-foreground rounded-none font-medium hover:bg-secondary/80 transition-colors"
           >
             {t('quizzes.start.exit-button')}
           </button>
         )}
         <button
           onClick={onStart}
-          className="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-none font-medium hover:bg-primary/90 transition-colors"
         >
           {t('quizzes.start.start-button')}
         </button>

@@ -15,8 +15,7 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router';
-import { KnowledgePage } from '@/components/knowledge/KnowledgePage';
 
 export const Route = createFileRoute('/knowledge')({
-    component: KnowledgePage,
+    // Component moved to knowledge.lazy.tsx for code splitting
 });

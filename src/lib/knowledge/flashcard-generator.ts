@@ -36,26 +36,28 @@ export class FlashcardGenerator {
   constructor(apiKey?: string) {
     // Use provided API key or get from environment
     const key = apiKey || process.env.GEMINI_API_KEY || '';
-    this.client = new GoogleGenAI({ api: key });
-    this.model = 'gemini-2.5-flash'; // Using the latest flash model
+    this.client = new GoogleGenAI({ apiKey: key });
+    this.model = 'gemini-2.0-flash'; // Using the latest flash model
   }
 
   /**
    * Generate flashcards from content
    * @param content - The source content to generate flashcards from
    * @param sourceId - The ID of the source content
+   * @param projectId - The project ID for the flashcards
    * @param options - Generation options
    * @returns Promise<FlashcardGenerationResult>
    */
   async generateFromContent(
     content: string,
     sourceId: string,
+    projectId: string,
     options: {
       minCards?: number;
       maxCards?: number;
       topics?: string[];
     } = {}
-  ): Promise<FlashcardGenerationResult> {
+  ): Promise<FlashcardGenerationResult & { cards: Flashcard[] }> {
     const { minCards = 5, maxCards = 15, topics = [] } = options;
 
     const prompt = this.buildPrompt(content, sourceId, minCards, maxCards, topics);
@@ -79,6 +81,7 @@ export class FlashcardGenerator {
     // Ensure source IDs are set correctly
     const cardsWithSource: Flashcard[] = result.cards.map((card, index) => ({
       id: `fc-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`,
+      projectId,
       question: card.question,
       answer: card.answer,
       difficulty: card.difficulty as FlashcardDifficulty,
@@ -98,17 +101,19 @@ export class FlashcardGenerator {
   /**
    * Generate flashcards from multiple sources
    * @param sources - Array of { id, title, content } objects
+   * @param projectId - The project ID for the flashcards
    * @param options - Generation options
    * @returns Promise<FlashcardGenerationResult>
    */
   async generateFromSources(
     sources: Array<{ id: string; title: string; content: string }>,
+    projectId: string,
     options: {
       minCards?: number;
       maxCards?: number;
       topics?: string[];
     } = {}
-  ): Promise<FlashcardGenerationResult> {
+  ): Promise<FlashcardGenerationResult & { cards: Flashcard[] }> {
     const { minCards = 5, maxCards = 15, topics = [] } = options;
 
     // Combine all source content with source IDs
@@ -137,6 +142,7 @@ export class FlashcardGenerator {
     // Map cards with proper IDs
     const cardsWithIds: Flashcard[] = result.cards.map((card, index) => ({
       id: `fc-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`,
+      projectId,
       question: card.question,
       answer: card.answer,
       difficulty: card.difficulty as FlashcardDifficulty,
@@ -203,8 +209,9 @@ export class MockFlashcardGenerator {
   generateMockFlashcards(
     content: string,
     sourceId: string,
+    projectId: string,
     count: number = 5
-  ): FlashcardGenerationResult {
+  ): FlashcardGenerationResult & { cards: Flashcard[] } {
     const cards: Flashcard[] = [];
     const topics = new Set<string>();
     const sourcesUsed = new Set<string>([sourceId]);
@@ -217,6 +224,7 @@ export class MockFlashcardGenerator {
 
       cards.push({
         id: `fc-mock-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 9)}`,
+        projectId,
         question: `Question ${i + 1} about ${topic}?`,
         answer: `Answer ${i + 1} provides detailed information about ${topic}.`,
         difficulty,
@@ -253,6 +261,7 @@ export function createFlashcardGenerator(apiKey?: string, useMock: boolean = fal
 export async function generateFlashcards(
   content: string,
   sourceId: string,
+  projectId: string,
   options: {
     minCards?: number;
     maxCards?: number;
@@ -260,14 +269,14 @@ export async function generateFlashcards(
     apiKey?: string;
     useMock?: boolean;
   } = {}
-): Promise<FlashcardGenerationResult> {
+): Promise<FlashcardGenerationResult & { cards: Flashcard[] }> {
   const generator = createFlashcardGenerator(options.apiKey, options.useMock);
 
   if (generator instanceof MockFlashcardGenerator) {
-    return generator.generateMockFlashcards(content, sourceId, options.maxCards || 5);
+    return generator.generateMockFlashcards(content, sourceId, projectId, options.maxCards || 5);
   }
 
-  return generator.generateFromContent(content, sourceId, {
+  return generator.generateFromContent(content, sourceId, projectId, {
     minCards: options.minCards,
     maxCards: options.maxCards,
     topics: options.topics,

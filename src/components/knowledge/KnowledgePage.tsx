@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, Plus, Bot } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -10,8 +10,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { SourceCardGrid } from '@/components/knowledge/SourceCardGrid';
-import { Canvas } from '@/components/canvas/Canvas';
+const Canvas = lazy(() => {
+    if (import.meta.env.SSR) {
+        return Promise.resolve({ default: () => <></> });
+    }
+    return import('@/components/canvas/Canvas');
+});
 import { SourceImportDialog } from '@/components/knowledge/SourceImportDialog';
+import { RAGPanelContainer } from '@/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
@@ -64,7 +70,9 @@ export function KnowledgePage() {
                         <div className="absolute top-2 left-2 z-10 bg-background/80 p-1 px-2 rounded text-xs font-mono text-muted-foreground border border-border">
                             {t('knowledge.canvas.preview')}
                         </div>
-                        <Canvas />
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+                            <Canvas />
+                        </Suspense>
                     </div>
                 </div>
                 <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
@@ -90,7 +98,7 @@ export function KnowledgePage() {
                                             </div>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>{isAiAvailable ? 'Gemini AI Active' : 'AI Metadata Disabled (No API Key)'}</p>
+                                            <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
@@ -110,29 +118,17 @@ export function KnowledgePage() {
                 {/* Center Panel: Knowledge Canvas */}
                 <ResizablePanel defaultSize={50} minSize={30}>
                     <div className="h-full w-full relative">
-                        <Canvas />
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+                            <Canvas />
+                        </Suspense>
                     </div>
                 </ResizablePanel>
 
                 <ResizableHandle />
 
-                {/* Right Panel: Synthesis & Chat (Placeholder) */}
+                {/* Right Panel: RAG Search & Chat */}
                 <ResizablePanel defaultSize={30} minSize={20}>
-                    <div className="h-full flex flex-col bg-sidebar/30 border-l border-border">
-                        <div className="p-3 border-b border-border font-mono font-bold text-sm flex items-center gap-2">
-                            <Sparkles size={14} className="text-secondary" />
-                            {t('knowledge.synthesis.title')}
-                        </div>
-                        <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground text-sm p-6 text-center space-y-4">
-                            <div className="w-16 h-16 rounded-full bg-accent/50 flex items-center justify-center mb-2 animate-pulse">
-                                <Sparkles size={32} className="text-primary/50" />
-                            </div>
-                            <p>{t('knowledge.synthesis.placeholder.text')}</p>
-                            <div className="text-xs border border-dashed border-border p-2 rounded max-w-xs">
-                                {t('knowledge.synthesis.placeholder.feature')}
-                            </div>
-                        </div>
-                    </div>
+                    <RAGPanelContainer projectId={projectId} />
                 </ResizablePanel>
             </ResizablePanelGroup>
 

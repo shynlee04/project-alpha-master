@@ -5,7 +5,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'node:path'
+
 
 // Conditional import for deployment platform
 // Use DEPLOY_TARGET env var: 'cloudflare' | 'netlify' | 'node'
@@ -229,9 +229,16 @@ const config = defineConfig(async () => {
       viteReact(),
     ],
     // SSR Configuration
-    // Cloudflare plugin handles externals/bundling automatically
+    // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
+    // Therefore, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
+    // We only specify 'noExternal' to bundle specific client-side libraries
     ssr: DEPLOY_TARGET === 'cloudflare'
-      ? { noExternal: true } // Bundle everything for Cloudflare
+      ? {
+        // Bundle everything for Cloudflare EXCEPT large client-side-only libraries
+        // These are accessed via dynamic import (React.lazy) and guarded by client checks
+        // Cloudflare plugin handles Node.js externals automatically
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote)).*$/,
+      }
       : {
         external: [
           '@xterm/xterm',

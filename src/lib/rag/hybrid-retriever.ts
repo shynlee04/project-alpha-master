@@ -200,7 +200,7 @@ export class HybridRetriever {
   private transformResults(
     results: SearchResult[],
     queryTerms: string[],
-    source: 'bm25' | 'vector'
+    searchSource: 'bm25' | 'vector'
   ): ExtendedSearchResult[] {
     return results.hits.map((hit, index) => ({
       document: hit.document as DocumentSchema,
@@ -211,7 +211,7 @@ export class HybridRetriever {
       },
       matchedTerms: extractMatchedTerms((hit.document as DocumentSchema).content, queryTerms),
       rank: index,
-      source,
+      searchSource,
       highlightedText: highlightText(
         this.extractPreview((hit.document as DocumentSchema).content, queryTerms),
         queryTerms

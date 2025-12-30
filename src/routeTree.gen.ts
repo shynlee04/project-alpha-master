@@ -10,19 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
+import { Route as StudyRouteImport } from './routes/study'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as NotesRouteImport } from './routes/notes'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as AgentsRouteImport } from './routes/agents'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
+import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
 
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
   path: '/test-fs-adapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudyRoute = StudyRouteImport.update({
+  id: '/study',
+  path: '/study',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -30,11 +40,16 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotesRoute = NotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/notes.lazy').then((d) => d.Route))
 const KnowledgeRoute = KnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/knowledge.lazy').then((d) => d.Route))
 const IdeRoute = IdeRouteImport.update({
   id: '/ide',
   path: '/ide',
@@ -45,6 +60,11 @@ const AgentsRoute = AgentsRouteImport.update({
   path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -70,94 +90,139 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiQuizzesGenerateRoute = ApiQuizzesGenerateRouteImport.update({
+  id: '/api/quizzes/generate',
+  path: '/api/quizzes/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFlashcardsGenerateRoute = ApiFlashcardsGenerateRouteImport.update({
+  id: '/api/flashcards/generate',
+  path: '/api/flashcards/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/workspace': typeof WorkspaceIndexRoute
+  '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/workspace': typeof WorkspaceIndexRoute
+  '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/workspace/': typeof WorkspaceIndexRoute
+  '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/agents'
     | '/ide'
     | '/knowledge'
+    | '/notes'
     | '/settings'
+    | '/study'
     | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/workspace'
+    | '/api/flashcards/generate'
+    | '/api/quizzes/generate'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/agents'
     | '/ide'
     | '/knowledge'
+    | '/notes'
     | '/settings'
+    | '/study'
     | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/workspace'
+    | '/api/flashcards/generate'
+    | '/api/quizzes/generate'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/agents'
     | '/ide'
     | '/knowledge'
+    | '/notes'
     | '/settings'
+    | '/study'
     | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/workspace/'
+    | '/api/flashcards/generate'
+    | '/api/quizzes/generate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
   IdeRoute: typeof IdeRoute
   KnowledgeRoute: typeof KnowledgeRoute
+  NotesRoute: typeof NotesRoute
   SettingsRoute: typeof SettingsRoute
+  StudyRoute: typeof StudyRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
   ApiChatRoute: typeof ApiChatRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
   WorkspaceIndexRoute: typeof WorkspaceIndexRoute
+  ApiFlashcardsGenerateRoute: typeof ApiFlashcardsGenerateRoute
+  ApiQuizzesGenerateRoute: typeof ApiQuizzesGenerateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -169,11 +234,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestFsAdapterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/study': {
+      id: '/study'
+      path: '/study'
+      fullPath: '/study'
+      preLoaderRoute: typeof StudyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/knowledge': {
@@ -195,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/agents'
       fullPath: '/agents'
       preLoaderRoute: typeof AgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -232,20 +318,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/quizzes/generate': {
+      id: '/api/quizzes/generate'
+      path: '/api/quizzes/generate'
+      fullPath: '/api/quizzes/generate'
+      preLoaderRoute: typeof ApiQuizzesGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/flashcards/generate': {
+      id: '/api/flashcards/generate'
+      path: '/api/flashcards/generate'
+      fullPath: '/api/flashcards/generate'
+      preLoaderRoute: typeof ApiFlashcardsGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
   IdeRoute: IdeRoute,
   KnowledgeRoute: KnowledgeRoute,
+  NotesRoute: NotesRoute,
   SettingsRoute: SettingsRoute,
+  StudyRoute: StudyRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
   ApiChatRoute: ApiChatRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
   WorkspaceIndexRoute: WorkspaceIndexRoute,
+  ApiFlashcardsGenerateRoute: ApiFlashcardsGenerateRoute,
+  ApiQuizzesGenerateRoute: ApiQuizzesGenerateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

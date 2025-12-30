@@ -14,18 +14,19 @@ export * from './live-api-types';
 // ============================================================================
 // Core RAG Services
 // ============================================================================
-export { OramaIndexManager, getOramaIndexManager } from './orama-index';
+// Note: OramaIndexManager class deprecated - using functional API instead
+export { createIndex, loadIndex, saveIndex, deleteIndex, indexDocument, indexSource, removeFromIndex, searchIndex, getIndexSize, getIndexMetadata, getAllIndexesMetadata, rebuildIndex, cleanupOrphanedIndexes } from './orama-index';
 export { DocumentChunker, documentChunker } from './document-chunker';
 export { createEmbeddingService } from './embedding-service';
-export { HybridRetriever, getHybridRetriever } from './hybrid-retriever';
+export { HybridRetriever } from './hybrid-retriever';
 export { RAGChat, getRAGChat } from './rag-chat';
 
 // ============================================================================
 // RAG Components
 // ============================================================================
 export { RRFFusion, getRRFFusion } from './rrf-fusion';
-export { SearchHighlighter, searchHighlighter } from './search-highlighter';
-export { CitationFormatter, citationFormatter } from './citation-formatter';
+export { SearchHighlighter, highlightText, extractMatchedTerms } from './search-highlighter';
+export { CitationFormatter, formatCitations, buildContext, buildPrompt, extractCitationReferences, createCitationsMap } from './citation-formatter';
 
 // ============================================================================
 // Live API (Story 10-1)

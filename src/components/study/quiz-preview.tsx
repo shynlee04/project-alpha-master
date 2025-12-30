@@ -3,13 +3,14 @@
  * @module components/study/quiz-preview
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import type { QuizQuestion, QuizGenerationResult } from '@/lib/study/quiz-types';
 
 const questionCardVariants = cva(
-  'rounded-lg border p-4 transition-all',
+  'rounded-none border p-4 transition-all',
   {
     variants: {
       variant: {
@@ -26,7 +27,7 @@ const questionCardVariants = cva(
 );
 
 const optionVariants = cva(
-  'w-full rounded-md border p-3 text-left transition-all',
+  'w-full rounded-none border p-3 text-left transition-all',
   {
     variants: {
       variant: {
@@ -43,7 +44,7 @@ const optionVariants = cva(
 );
 
 interface QuestionCardProps {
-  question: QuizQuestion;
+  question: Omit<QuizQuestion, 'id' | 'createdAt'> & { id?: string; createdAt?: number };
   index: number;
   showAnswer: boolean;
   selectedAnswer: number | null;
@@ -61,6 +62,7 @@ export function QuestionCard({
   onRevealAnswer,
   className,
 }: QuestionCardProps) {
+  const { t } = useTranslation();
   const [hoveredOption, setHoveredOption] = useState<number | null>(null);
 
   const getOptionVariant = (optionIndex: number): VariantProps<typeof optionVariants>['variant'] => {
@@ -123,8 +125,8 @@ export function QuestionCard({
       </div>
 
       {showAnswer && (
-        <div className="mt-4 rounded-md bg-muted p-3">
-          <p className="text-sm font-medium">Explanation:</p>
+        <div className="mt-4 rounded-none bg-muted p-3">
+          <p className="text-sm font-medium">{t('quizzes.preview.explanation')}</p>
           <p className="text-sm text-muted-foreground">{question.explanation}</p>
         </div>
       )}
@@ -134,7 +136,7 @@ export function QuestionCard({
           onClick={onRevealAnswer}
           className="mt-4 text-sm text-primary hover:underline"
         >
-          Reveal Answer
+          {t('quizzes.preview.revealAnswer')}
         </button>
       )}
     </div>
@@ -153,9 +155,10 @@ export function QuizPreview({
   quiz,
   onSave,
   onRegenerate,
-  onEditQuestion,
+  onEditQuestion: _onEditQuestion,
   className,
 }: QuizPreviewProps) {
+  const { t } = useTranslation();
   const [showAnswers, setShowAnswers] = useState<boolean[]>(new Array(quiz.questions.length).fill(false));
   const [selectedAnswers, setSelectedAnswers] = useState<(number | null)[]>(
     new Array(quiz.questions.length).fill(null)
@@ -173,7 +176,7 @@ export function QuizPreview({
     setShowAnswers(newShowAnswers);
   };
 
-  const score = selectedAnswers.reduce((acc, answer, index) => {
+  const score = selectedAnswers.reduce<number>((acc, answer, index) => {
     if (answer === quiz.questions[index].correctIndex) return acc + 1;
     return acc;
   }, 0);
@@ -189,11 +192,11 @@ export function QuizPreview({
         </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-muted-foreground">
-            {quiz.totalQuestions} questions
+            {t('quizzes.preview.questionCount', { count: quiz.totalQuestions })}
           </span>
           {selectedAnswers.some((a) => a !== null) && (
             <span className="font-medium">
-              Score: {score}/{quiz.totalQuestions}
+              {t('quizzes.preview.score', { score, total: quiz.totalQuestions })}
             </span>
           )}
         </div>
@@ -213,7 +216,7 @@ export function QuizPreview({
       <div className="space-y-4">
         {quiz.questions.map((question, index) => (
           <QuestionCard
-            key={question.id}
+            key={question.id || `question-${index}`}
             question={question}
             index={index}
             showAnswer={showAnswers[index]}
@@ -228,17 +231,17 @@ export function QuizPreview({
         {onRegenerate && (
           <button
             onClick={onRegenerate}
-            className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent"
+            className="rounded-none border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent"
           >
-            Regenerate
+            {t('quizzes.preview.regenerate')}
           </button>
         )}
         {onSave && (
           <button
             onClick={onSave}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="rounded-none bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Save Quiz
+            {t('quizzes.preview.saveQuiz')}
           </button>
         )}
       </div>
@@ -261,12 +264,13 @@ export function QuizSettingsPanel({
   onSettingsChange,
   className,
 }: QuizSettingsPanelProps) {
+  const { t } = useTranslation();
   return (
-    <div className={cn('space-y-4 rounded-lg border p-4', className)}>
-      <h3 className="font-medium">Quiz Settings</h3>
+    <div className={cn('space-y-4 rounded-none border p-4', className)}>
+      <h3 className="font-medium">{t('quizzes.settings.title')}</h3>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Question Count</label>
+        <label className="text-sm font-medium">{t('quizzes.settings.questionCount')}</label>
         <input
           type="range"
           min="3"
@@ -288,7 +292,7 @@ export function QuizSettingsPanel({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Difficulty</label>
+        <label className="text-sm font-medium">{t('quizzes.settings.difficulty')}</label>
         <select
           value={settings.difficulty}
           onChange={(e) =>
@@ -297,12 +301,12 @@ export function QuizSettingsPanel({
               difficulty: e.target.value as 'mixed' | 'easy' | 'medium' | 'hard',
             })
           }
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-none border border-input bg-background px-3 py-2 text-sm"
         >
-          <option value="mixed">Mixed</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="mixed">{t('quizzes.settings.difficultyMixed')}</option>
+          <option value="easy">{t('quizzes.settings.difficultyEasy')}</option>
+          <option value="medium">{t('quizzes.settings.difficultyMedium')}</option>
+          <option value="hard">{t('quizzes.settings.difficultyHard')}</option>
         </select>
       </div>
 
@@ -317,10 +321,10 @@ export function QuizSettingsPanel({
               includeExplanation: e.target.checked,
             })
           }
-          className="h-4 w-4 rounded border-gray-300"
+          className="h-4 w-4 rounded-none border-gray-300"
         />
         <label htmlFor="includeExplanation" className="text-sm font-medium">
-          Include explanations
+          {t('quizzes.settings.includeExplanations')}
         </label>
       </div>
     </div>

@@ -49,7 +49,7 @@ export class RRFFusion {
             ...result,
             matchedTerms: [],
             rank: index,
-            source: 'bm25',
+            searchSource: 'bm25',
             highlightedText: undefined,
           });
         }
@@ -70,14 +70,14 @@ export class RRFFusion {
             ...result,
             matchedTerms: [],
             rank: index,
-            source: 'vector',
+            searchSource: 'vector',
             highlightedText: undefined,
           });
         } else {
           // Document exists in both - combine scores and mark as RRF
           const existing = scores.get(id)!;
           existing.score = (existing.score || 0) + score;
-          existing.source = 'rrf';
+          existing.searchSource = 'rrf';
         }
       });
 

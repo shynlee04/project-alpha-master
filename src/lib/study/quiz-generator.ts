@@ -4,9 +4,8 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
-import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { quizGenerationSchema, quizQuestionSchema } from './quiz-types';
+import { quizGenerationSchema } from './quiz-types';
 import type { QuizQuestion, QuizGenerationResult, QuizDifficulty } from './quiz-types';
 
 /**
@@ -38,8 +37,8 @@ export class QuizGenerator {
   constructor(apiKey?: string) {
     // Use provided API key or get from environment
     const key = apiKey || process.env.GEMINI_API_KEY || '';
-    this.client = new GoogleGenAI({ api: key });
-    this.model = 'gemini-2.5-flash'; // Using the latest flash model
+    this.client = new GoogleGenAI({ apiKey: key });
+    this.model = 'gemini-2.0-flash'; // Using the latest flash model
   }
 
   /**
@@ -58,8 +57,8 @@ export class QuizGenerator {
       difficulty?: 'mixed' | QuizDifficulty;
       title?: string;
     } = {}
-  ): Promise<QuizGenerationResult> {
-    const { questionCount = 5, includeExplanation = true, difficulty = 'mixed', title } = options;
+  ): Promise<QuizGenerationResult & { questions: QuizQuestion[] }> {
+    const { questionCount = 5, difficulty = 'mixed', title } = options;
 
     const prompt = this.buildPrompt(content, sourceId, questionCount, difficulty, title);
 
@@ -68,7 +67,7 @@ export class QuizGenerator {
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
-        responseJsonSchema: zodToJsonSchema(quizGenerationSchema),
+        responseSchema: zodToJsonSchema(quizGenerationSchema as any),
       },
     });
 
@@ -86,7 +85,7 @@ export class QuizGenerator {
       options: q.options,
       correctIndex: q.correctIndex,
       explanation: q.explanation,
-      difficulty: q.difficulty,
+      difficulty: q.difficulty as QuizDifficulty,
       topic: q.topic,
       sourceIds: q.sourceIds.length > 0 ? q.sourceIds : [sourceId],
       createdAt: Date.now(),
@@ -113,8 +112,8 @@ export class QuizGenerator {
       includeExplanation?: boolean;
       difficulty?: 'mixed' | QuizDifficulty;
     } = {}
-  ): Promise<QuizGenerationResult> {
-    const { questionCount = 5, includeExplanation = true, difficulty = 'mixed' } = options;
+  ): Promise<QuizGenerationResult & { questions: QuizQuestion[] }> {
+    const { questionCount = 5, difficulty = 'mixed' } = options;
 
     // Combine all source content with source IDs
     const combinedContent = sources
@@ -133,7 +132,7 @@ export class QuizGenerator {
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
-        responseJsonSchema: zodToJsonSchema(quizGenerationSchema),
+        responseSchema: zodToJsonSchema(quizGenerationSchema as any),
       },
     });
 
@@ -151,7 +150,7 @@ export class QuizGenerator {
       options: q.options,
       correctIndex: q.correctIndex,
       explanation: q.explanation,
-      difficulty: q.difficulty,
+      difficulty: q.difficulty as QuizDifficulty,
       topic: q.topic,
       sourceIds: q.sourceIds.length > 0 ? q.sourceIds : sources.map((s) => s.id),
       createdAt: Date.now(),
@@ -215,10 +214,10 @@ export class MockQuizGenerator {
    * Generate mock quizzes for testing
    */
   generateMockQuiz(
-    content: string,
+    _content: string,
     sourceId: string,
     questionCount: number = 5
-  ): QuizGenerationResult {
+  ): QuizGenerationResult & { questions: QuizQuestion[] } {
     const questions: QuizQuestion[] = [];
     const topics = new Set<string>();
     const sourcesUsed = new Set<string>([sourceId]);
@@ -287,7 +286,7 @@ export async function generateQuiz(
     apiKey?: string;
     useMock?: boolean;
   } = {}
-): Promise<QuizGenerationResult> {
+): Promise<QuizGenerationResult & { questions: QuizQuestion[] }> {
   const generator = createQuizGenerator(options.apiKey, options.useMock);
 
   if (generator instanceof MockQuizGenerator) {

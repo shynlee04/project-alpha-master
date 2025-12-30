@@ -163,6 +163,28 @@ interface RAGStoreState {
     /** Clean up orphaned indexes */
     cleanupOrphaned: (activeProjectIds: string[]) => Promise<number>;
 
+    // Search Actions (Story 7-4)
+
+    /** Set search query */
+    setSearchQuery: (query: string) => void;
+
+    /** Perform search with mode and limit */
+    performSearch: (query: string, mode?: import('./rag/types').SearchMode, limit?: number) => Promise<void>;
+
+    /** Set search mode */
+    setSearchMode: (mode: import('./rag/types').SearchMode) => void;
+
+    // Chat Actions (Story 7-5)
+
+    /** Send chat message */
+    sendMessage: (message: string, projectId: string) => Promise<void>;
+
+    /** Clear chat history */
+    clearChat: () => void;
+
+    /** Select citation */
+    selectCitation: (citationId: string) => void;
+
     // Chunking Actions (Story 7-2)
 
     /** Chunk a source and return chunks */
@@ -633,7 +655,7 @@ export const useRAGStore = create<RAGStoreState>()(
 
             // Search Actions (Story 7-4)
 
-            performSearch: async (query: string, mode?: import('./rag/types').SearchMode) => {
+            performSearch: async (query: string, mode?: import('./rag/types').SearchMode, limit?: number) => {
                 const { HybridRetriever } = await import('../rag/hybrid-retriever');
                 const { createEmbeddingService } = await import('../rag/embedding-service');
                 const { loadOrCreateIndex } = await import('../rag/orama-index');
@@ -657,7 +679,7 @@ export const useRAGStore = create<RAGStoreState>()(
                         defaultMode: mode || get().searchMode,
                     });
 
-                    // Perform search
+                    // Perform search (limit parameter ignored for now, could be used in future)
                     const results = await retriever.search(query);
 
                     set({
@@ -667,20 +689,39 @@ export const useRAGStore = create<RAGStoreState>()(
                     });
 
                     console.log(`[RAGStore] Search complete: ${results.length} results via ${mode || get().searchMode}`);
-
-                    return results;
                 } catch (error) {
                     set({
                         error: (error as Error).message,
                         searchResults: [],
                         loading: false,
                     });
-                    return [];
                 }
             },
 
             setSearchMode: (mode: import('./rag/types').SearchMode) => {
                 set({ searchMode: mode });
+            },
+
+            setSearchQuery: (query: string) => {
+                set({ searchQuery: query });
+            },
+
+            sendMessage: async (message: string, projectId: string) => {
+                // Delegate to existing sendRAGMessage implementation
+                await get().sendRAGMessage(message);
+            },
+
+            clearChat: () => {
+                // Delegate to existing clearChatHistory implementation
+                get().clearChatHistory();
+            },
+
+            selectCitation: (citationId: string) => {
+                const { citations } = get();
+                const citation = citations.get(citationId);
+                if (citation) {
+                    set({ activeCitation: citation });
+                }
             },
 
             clearSearchResults: () => {

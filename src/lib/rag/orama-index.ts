@@ -502,6 +502,9 @@ export async function cleanupOrphanedIndexes(activeProjectIds: string[]): Promis
   return orphanedIds.length;
 }
 
+// Re-export from indexeddb-storage for convenience
+export { getAllIndexesMetadata } from './indexeddb-storage';
+
 // ============================================================================
 // Helper Functions
 // ============================================================================

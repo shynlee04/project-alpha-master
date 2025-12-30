@@ -31,6 +31,7 @@ import {
   AIIcon,
   TerminalIcon,
 } from '@/components/ui/icons';
+import { User } from 'lucide-react';
 import { Sparkles, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -145,6 +146,15 @@ export const HubHomePage: React.FC = () => {
       onClick: () => handlePortalNavigation('/knowledge'),
     },
     {
+      id: 'portal-about',
+      size: 'medium',
+      title: t('about.title', 'About Me'),
+      description: t('about.hero.tagline', 'From solo developer to multi-agent orchestra conductor'),
+      icon: <User className="text-primary" />,
+      topic: 'About',
+      onClick: () => handlePortalNavigation('/about'),
+    },
+    {
       id: 'portal-settings',
       size: 'medium',
       title: t('hub.portals.settings', 'Settings'),
@@ -195,7 +205,7 @@ export const HubHomePage: React.FC = () => {
           </h2>
           <BentoGrid
             cards={portalCards}
-            topics={['Workspace', 'Agents', 'Knowledge', 'Settings']}
+            topics={['Workspace', 'Agents', 'Knowledge', 'About', 'Settings']}
             className="max-w-6xl"
           />
         </div>

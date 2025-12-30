@@ -50,9 +50,9 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
             // Use the store to update (we'll need to add this action)
             // For now, just close editing mode
             setIsEditing(false);
-            toast.success('Changes saved');
+            toast.success(t('knowledge.metadata.saveSuccess'));
         } catch (error) {
-            toast.error('Failed to save changes');
+            toast.error(t('knowledge.metadata.saveError'));
         }
     };
 
@@ -71,9 +71,9 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
         setIsRegenerating(true);
         try {
             await extractMetadata(source.id);
-            toast.success('Metadata regenerated successfully');
+            toast.success(t('knowledge.metadata.regenSuccess'));
         } catch (error) {
-            toast.error('Failed to regenerate metadata');
+            toast.error(t('knowledge.metadata.regenError'));
         } finally {
             setIsRegenerating(false);
         }
@@ -114,8 +114,8 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                                 className="resize-none bg-background border-border-dark"
                             />
                         ) : (
-                            <div className="bg-muted/30 p-3 rounded-md text-sm leading-relaxed min-h-[80px] text-foreground">
-                                {summary || <span className="text-muted-foreground italic">No summary available.</span>}
+                            <div className="bg-muted/30 p-3 rounded-none text-sm leading-relaxed min-h-[80px] text-foreground">
+                                {summary || <span className="text-muted-foreground italic">{t('knowledge.metadata.noSummary')}</span>}
                             </div>
                         )}
                     </div>
@@ -129,7 +129,7 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                             {tags.map((tag) => (
                                 <span
                                     key={tag}
-                                    className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded border border-primary/20"
+                                    className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-none border border-primary/20"
                                 >
                                     {tag}
                                     {isEditing && (
@@ -154,7 +154,7 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                                 </div>
                             )}
                             {!isEditing && tags.length === 0 && (
-                                <span className="text-muted-foreground text-sm italic">No concepts extracted.</span>
+                                <span className="text-muted-foreground text-sm italic">{t('knowledge.metadata.noConcepts')}</span>
                             )}
                         </div>
                     </div>
@@ -178,20 +178,20 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
 
                     {/* Additional Info Grid */}
                     <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Reading Time</span>
+                        <div className="bg-muted/30 p-3 rounded-none">
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.readingTime')}</span>
                             <span className="font-medium text-foreground">{readingTime}</span>
                         </div>
-                        <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Source Type</span>
+                        <div className="bg-muted/30 p-3 rounded-none">
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.sourceType')}</span>
                             <span className="font-medium uppercase text-foreground">{source.type}</span>
                         </div>
-                        <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Word Count</span>
+                        <div className="bg-muted/30 p-3 rounded-none">
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.wordCount')}</span>
                             <span className="font-medium text-foreground">{source.wordCount?.toLocaleString() || '-'}</span>
                         </div>
-                        <div className="bg-muted/30 p-3 rounded-md">
-                            <span className="text-muted-foreground block mb-1">Page Count</span>
+                        <div className="bg-muted/30 p-3 rounded-none">
+                            <span className="text-muted-foreground block mb-1">{t('knowledge.metadata.pageCount')}</span>
                             <span className="font-medium text-foreground">{source.pageCount || '-'}</span>
                         </div>
                     </div>
@@ -200,19 +200,19 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                 <DialogFooter className="gap-2 sm:gap-0">
                     {isEditing ? (
                         <>
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                            <Button variant="outline" onClick={() => setIsEditing(false)}>{t('common.cancel')}</Button>
                             <Button onClick={handleSave} disabled={isProcessing}>
-                                <Save size={14} className="mr-2" /> Save Changes
+                                <Save size={14} className="mr-2" /> {t('knowledge.metadata.save')}
                             </Button>
                         </>
                     ) : (
                         <>
                             <Button variant="outline" onClick={handleRegenerate} disabled={isProcessing}>
                                 <RefreshCw size={14} className={`mr-2 ${isProcessing ? 'animate-spin' : ''}`} />
-                                Regenerate
+                                {t('knowledge.metadata.regenerate')}
                             </Button>
                             <Button onClick={() => setIsEditing(true)}>
-                                <Edit2 size={14} className="mr-2" /> Edit Metadata
+                                <Edit2 size={14} className="mr-2" /> {t('knowledge.metadata.edit')}
                             </Button>
                         </>
                     )}

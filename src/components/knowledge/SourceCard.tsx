@@ -28,30 +28,30 @@ interface SourceCardProps {
 /**
  * Calculate reading time from source metadata
  */
-function calculateReadingTime(source: SourceRecord): string {
+function calculateReadingTime(source: SourceRecord, t: any): string {
     const wordsPerMinute = 200;
     const charsPerMinute = 1000;
 
     if (source.wordCount) {
         const minutes = Math.ceil(source.wordCount / wordsPerMinute);
-        return `${minutes} min read`;
+        return t('knowledge.source.readingTime', { count: minutes });
     } else if (source.charCount) {
         const minutes = Math.ceil(source.charCount / charsPerMinute);
-        return `${minutes} min read`;
+        return t('knowledge.source.readingTime', { count: minutes });
     }
-    return 'Unknown';
+    return t('knowledge.source.unknown');
 }
 
 /**
  * Format metadata for display
  */
-function formatMetadata(source: SourceRecord): string {
+function formatMetadata(source: SourceRecord, t: any): string {
     if (source.wordCount) {
-        return `${source.wordCount.toLocaleString()} words`;
+        return t('knowledge.source.wordCount', { count: source.wordCount.toLocaleString() });
     } else if (source.charCount) {
-        return `${source.charCount.toLocaleString()} chars`;
+        return t('knowledge.source.charCount', { count: source.charCount.toLocaleString() });
     } else if (source.pageCount) {
-        return `${source.pageCount} pages`;
+        return t('knowledge.source.pageCount', { count: source.pageCount });
     }
     return '';
 }
@@ -81,8 +81,8 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const [showMetadataDialog, setShowMetadataDialog] = useState(false);
 
     const Icon = getSourceIcon(source);
-    const readingTime = calculateReadingTime(source);
-    const metadata = formatMetadata(source);
+    const readingTime = calculateReadingTime(source, t);
+    const metadata = formatMetadata(source, t);
     const isExtracting = extractingMetadata.has(source.id);
 
     const handleDelete = useCallback(async () => {
@@ -178,7 +178,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 {isExtracting && (
                     <>
                         <span>•</span>
-                        <span className="text-primary animate-pulse">Analyzing...</span>
+                        <span className="text-primary animate-pulse">{t('knowledge.metadata.analyzing')}</span>
                     </>
                 )}
             </div>
@@ -202,7 +202,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 <div className="absolute inset-0 bg-background/95 flex items-center justify-center p-4 z-10">
                     <div className="bg-surface-dark border border-border-dark p-4 max-w-sm">
                         <p className="text-sm mb-4">
-                            Delete "{source.title}"?
+                            {t('knowledge.source.deleteConfirm', { title: source.title })}
                         </p>
                         <div className="flex gap-2 justify-end">
                             <button
@@ -212,7 +212,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                                     setShowDeleteDialog(false);
                                 }}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </button>
                             <button
                                 className="px-3 py-1 text-sm bg-destructive text-background hover:bg-destructive/90"
@@ -221,7 +221,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                                     handleDelete();
                                 }}
                             >
-                                Delete
+                                {t('common.delete')}
                             </button>
                         </div>
                     </div>

@@ -45,10 +45,12 @@ export interface QuizSettings {
  */
 export interface Quiz {
   id: string;
+  projectId: string;
   title: string;
   description?: string;
   questions: QuizQuestion[];
   sourceIds: string[];
+  sourcesUsed: string[];
   settings: QuizSettings;
   createdAt: number;
   updatedAt: number;
@@ -58,7 +60,7 @@ export interface Quiz {
  * Preview state for generated quizzes before saving
  */
 export interface QuizPreview {
-  questions: QuizQuestion[];
+  questions: (Omit<QuizQuestion, 'id' | 'createdAt'> & { id?: string; createdAt?: number })[];
   title: string;
   description?: string;
   topics: string[];
