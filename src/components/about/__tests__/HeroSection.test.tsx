@@ -1,8 +1,12 @@
 /**
+ * @vitest-environment jsdom
+ */
+
+/**
  * EPIC_ID: 29
  * STORY_ID: 29-2
  * CREATED_AT: 2025-12-30T15:40:00Z
- * 
+ *
  * HeroSection Component Tests
  */
 
