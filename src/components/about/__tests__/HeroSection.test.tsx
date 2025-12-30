@@ -393,4 +393,75 @@ describe('HeroSection', () => {
       expect(particleBackground).toHaveAttribute('data-particle-count', '0');
     });
   });
+
+  describe('Reduced Motion', () => {
+    beforeEach(() => {
+      // Mock prefers-reduced-motion media query
+      Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: vi.fn().mockImplementation((query) => ({
+          matches: query === '(prefers-reduced-motion: reduce)',
+          media: query,
+          onchange: null,
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn(),
+        })),
+      });
+    });
+
+    afterEach(() => {
+      // Reset matchMedia mock
+      vi.restoreAllMocks();
+    });
+
+    it('renders correctly with prefers-reduced-motion enabled', () => {
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      expect(heroSection).toBeInTheDocument();
+    });
+
+    it('disables scroll indicator animation with reduced motion', () => {
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      const style = heroSection.getAttribute('style');
+      
+      // Check that reduced motion styles are present
+      expect(style).toContain('@media (prefers-reduced-motion: reduce)');
+      expect(style).toContain('animation: none');
+    });
+
+    it('disables all animations with reduced motion', () => {
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      const style = heroSection.getAttribute('style');
+      
+      // Verify that animations are disabled for all elements
+      expect(style).toContain('.scroll-indicator');
+      expect(style).toContain('animation: none');
+      expect(style).toContain('opacity: 1');
+    });
+
+    it('maintains accessibility with reduced motion', () => {
+      render(<HeroSection />);
+      
+      // Ensure all interactive elements remain accessible
+      const primaryButton = screen.getByRole('button', { name: /about.hero.primaryCTA/i });
+      const secondaryButton = screen.getByRole('button', { name: /about.hero.secondaryCTA/i });
+      const scrollIndicator = screen.getByTestId('scroll-indicator');
+      
+      expect(primaryButton).toBeInTheDocument();
+      expect(secondaryButton).toBeInTheDocument();
+      expect(scrollIndicator).toBeInTheDocument();
+      
+      // Verify keyboard accessibility is maintained
+      expect(primaryButton).toHaveAttribute('type', 'button');
+      expect(secondaryButton).toHaveAttribute('type', 'button');
+    });
+  });
 });
