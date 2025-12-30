@@ -121,7 +121,7 @@ export function CollectionManager({
                         'rounded-none'
                     )}
                 >
-                    <PlusIcon size={16} />
+                    <PlusIcon className="w-4 h-4" />
                     New Collection
                 </button>
             </div>
