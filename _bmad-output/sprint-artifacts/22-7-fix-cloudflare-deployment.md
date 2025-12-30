@@ -39,13 +39,17 @@ The deployment to Cloudflare was failing due to unresolved internal imports in `
   - `dist/server/server.js` exists and is a valid bundled worker entry.
 
 # Technical Notes
-- **Verified Deployment Command**: 
+- **Verified Deployment Command (Cloudflare)**: 
   ```bash
   npm run deploy
   ```
-- This runs: `pnpm build:cloudflare && npx wrangler versions upload dist/server/index.js --config wrangler.jsonc`
+- **Verified Deployment Command (Vercel)**:
+  ```bash
+  npm run deploy:vercel
+  ```
+- This runs: `pnpm build:vercel && npx vercel deploy --prebuilt --prod`
 - `wrangler.jsonc` must include `"assets": { "directory": "./dist/client" }` to ensure static assets are uploaded.
-- Use `npx wrangler versions deploy` to promote the version to production.
+- Use `npx wrangler versions deploy` to promote the version to production on Cloudflare.
 acceptance_criteria:
   - "Build passes without 'Could not resolve' errors"
   - "Application deploys to Cloudflare"

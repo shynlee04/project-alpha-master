@@ -59,6 +59,13 @@ async function getDeploymentPlugin() {
   } else if (DEPLOY_TARGET === 'netlify') {
     const netlify = (await import('@netlify/vite-plugin-tanstack-start')).default
     return netlify()
+  } else if (DEPLOY_TARGET === 'vercel') {
+    // Vercel deployment relies on standard Vite build + vercel.json configuration
+    // or usage of Nitro if integrated. For basic TanStack Start, standard build is often sufficient
+    // if vercel.json rewrites are set.
+    // However, if using Nitro via 'noExternal' logic is insufficient, we might need explicit handling.
+    // For now, returning null as standard build + vercel.json is the strategy.
+    return null
   }
   // For 'node' or other targets, no additional plugin needed
   return null
@@ -119,11 +126,11 @@ const config = defineConfig(async () => {
     },
     // SSR Configuration
     // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
-    // Therefore, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
+    // Therefor, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
     // We only specify 'noExternal' to bundle specific client-side libraries
-    ssr: DEPLOY_TARGET === 'cloudflare'
+    ssr: (DEPLOY_TARGET === 'cloudflare' || DEPLOY_TARGET === 'vercel')
       ? {
-        // Bundle everything for Cloudflare EXCEPT large client-side-only libraries and native modules
+        // Bundle everything for Cloudflare/Vercel EXCEPT large client-side-only libraries and native modules
         // These are accessed via dynamic import (React.lazy) and guarded by client checks
         // Cloudflare plugin handles Node.js externals automatically - DO NOT add 'external' here
         noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web|react-resizable-panels|@xyflow)).*$/,

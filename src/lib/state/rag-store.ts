@@ -34,7 +34,8 @@ import {
 import { documentChunker } from '@/lib/rag/document-chunker';
 
 // Import types and helpers
-import type { RAGStoreState, IndexStatus, IndexOperation, CachedSearchResult } from './rag-store-types';
+import { IndexStatus, IndexOperation } from './rag-store-types';
+import type { RAGStoreState, CachedSearchResult } from './rag-store-types';
 import {
     generateCacheKey,
     isCacheValid,
