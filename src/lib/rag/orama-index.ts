@@ -16,7 +16,6 @@
  */
 
 import { create, insert, insertMultiple, remove, search, type Orama } from '@orama/orama';
-import { persist, restore } from '@orama/plugin-data-persistence';
 import type {
   DocumentSchema,
   IndexConfig,
@@ -25,6 +24,17 @@ import type {
   OramaSchema,
   SearchResult,
 } from './types';
+
+// Lazy load persistence plugin to avoid SSR issues with dpack (Node.js streams dependency)
+let persistPlugin: typeof import('@orama/plugin-data-persistence') | null = null;
+
+async function getPersistPlugin() {
+  if (typeof window === 'undefined') return null;
+  if (!persistPlugin) {
+    persistPlugin = await import('@orama/plugin-data-persistence');
+  }
+  return persistPlugin;
+}
 
 // ============================================================================
 // Constants
@@ -128,7 +138,12 @@ export async function loadIndex(projectId: string): Promise<Orama<OramaSchema> |
 
   try {
     // Restore Orama index from persisted data
-    const db = await restore('json', persistedData);
+    const plugin = await getPersistPlugin();
+    if (!plugin) {
+      console.warn(`[OramaIndex] Cannot load index during SSR`);
+      return null;
+    }
+    const db = await plugin.restore('json', persistedData);
 
     // Cache in memory
     activeIndexes.set(projectId, db);
@@ -166,7 +181,11 @@ export async function saveIndex(
 
   try {
     // Persist Orama index to JSON
-    const persistedData = await persist(db, 'json');
+    const plugin = await getPersistPlugin();
+    if (!plugin) {
+      throw new Error('Persistence plugin not available (SSR or not loaded)');
+    }
+    const persistedData = await plugin.persist(db, 'json');
 
     // Save to IndexedDB via Dexie
     const { saveOramaIndexData } = await import('./indexeddb-storage');

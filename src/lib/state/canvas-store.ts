@@ -56,8 +56,11 @@ export function setCanvasDbForTesting(db: KnowledgeCanvasDB | null): void {
   canvasDbInstance = db;
 }
 
-// For backwards compatibility
-const canvasDb = getCanvasDb();
+// For backwards compatibility - lazy initialization to avoid SSR issues
+const getSafeCanvasDb = (): KnowledgeCanvasDB | null => {
+  if (typeof window === 'undefined') return null;
+  return getCanvasDb();
+};
 
 /**
  * Generate a unique canvas ID
@@ -179,7 +182,9 @@ export const useCanvasStore = create<CanvasStoreState>()(
             const stored = localStorage.getItem('canvas-active-id');
             const activeCanvasId = stored || 'default';
 
-            const state = await canvasDb.table('canvasStates').get(activeCanvasId);
+            const db = getSafeCanvasDb();
+            if (!db) return null;
+            const state = await db.table('canvasStates').get(activeCanvasId);
             if (state) {
               return JSON.stringify({
                 nodes: state.nodes,
@@ -194,13 +199,15 @@ export const useCanvasStore = create<CanvasStoreState>()(
         },
         setItem: async (name: string, value: string) => {
           try {
+            const db = getSafeCanvasDb();
+            if (!db) return;
             const stored = localStorage.getItem('canvas-active-id');
             const activeCanvasId = stored || 'default';
             const parsed = JSON.parse(value);
 
-            await canvasDb.transaction('rw', 'canvasStates', 'canvases', async () => {
+            await db.transaction('rw', 'canvasStates', 'canvases', async () => {
               // Save canvas state
-              await canvasDb.table('canvasStates').put({
+              await db.table('canvasStates').put({
                 canvasId: activeCanvasId,
                 nodes: parsed.nodes || [],
                 edges: parsed.edges || [],
@@ -208,9 +215,9 @@ export const useCanvasStore = create<CanvasStoreState>()(
               });
 
               // Update canvas metadata
-              const metadata = await canvasDb.table('canvases').get(activeCanvasId);
+              const metadata = await db.table('canvases').get(activeCanvasId);
               if (metadata) {
-                await canvasDb.table('canvases').update(activeCanvasId, {
+                await db.table('canvases').update(activeCanvasId, {
                   updatedAt: Date.now(),
                   nodeCount: parsed.nodes?.length || 0,
                   edgeCount: parsed.edges?.length || 0,
@@ -223,12 +230,14 @@ export const useCanvasStore = create<CanvasStoreState>()(
         },
         removeItem: async (name: string) => {
           try {
+            const db = getSafeCanvasDb();
+            if (!db) return;
             const stored = localStorage.getItem('canvas-active-id');
             const activeCanvasId = stored || 'default';
 
-            await canvasDb.transaction('rw', 'canvasStates', 'canvases', async () => {
-              await canvasDb.table('canvasStates').delete(activeCanvasId);
-              await canvasDb.table('canvases').delete(activeCanvasId);
+            await db.transaction('rw', 'canvasStates', 'canvases', async () => {
+              await db.table('canvasStates').delete(activeCanvasId);
+              await db.table('canvases').delete(activeCanvasId);
             });
           } catch (error) {
             console.error('Failed to clear canvas state:', error);
@@ -267,23 +276,25 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
   canvasList: [],
 
   setActiveCanvas: async (canvasId: string) => {
+    const db = getSafeCanvasDb();
+    if (!db) return;
     // Save current canvas state before switching
     const currentState = useCanvasStore.getState();
     try {
-      await canvasDb.transaction('rw', 'canvasStates', 'canvases', async () => {
+      await db.transaction('rw', 'canvasStates', 'canvases', async () => {
         const stored = localStorage.getItem('canvas-active-id');
         const activeCanvasId = stored || 'default';
 
-        await canvasDb.table('canvasStates').put({
+        await db.table('canvasStates').put({
           canvasId: activeCanvasId,
           nodes: currentState.nodes,
           edges: currentState.edges,
           viewport: currentState.viewport,
         });
 
-        const metadata = await canvasDb.table('canvases').get(activeCanvasId);
+        const metadata = await db.table('canvases').get(activeCanvasId);
         if (metadata) {
-          await canvasDb.table('canvases').update(activeCanvasId, {
+          await db.table('canvases').update(activeCanvasId, {
             updatedAt: Date.now(),
             nodeCount: currentState.nodes.length,
             edgeCount: currentState.edges.length,
@@ -300,7 +311,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
 
     // Load new canvas state
     try {
-      const state = await canvasDb.table('canvasStates').get(canvasId);
+      const state = await db.table('canvasStates').get(canvasId);
       if (state) {
         useCanvasStore.setState({
           nodes: state.nodes,
@@ -323,12 +334,14 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
   },
 
   createCanvas: async (name?: string) => {
+    const db = getSafeCanvasDb();
+    if (!db) throw new Error('Database not available');
     const canvasId = generateCanvasId();
     const canvasName = name || `Canvas ${Date.now()}`;
     const now = Date.now();
 
-    await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
-      await canvasDb.table('canvases').add({
+    await db.transaction('rw', 'canvases', 'canvasStates', async () => {
+      await db.table('canvases').add({
         id: canvasId,
         name: canvasName,
         createdAt: now,
@@ -337,7 +350,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
         edgeCount: 0,
       });
 
-      await canvasDb.table('canvasStates').add({
+      await db.table('canvasStates').add({
         canvasId,
         nodes: [],
         edges: [],
@@ -350,13 +363,15 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
   },
 
   deleteCanvas: async (canvasId: string) => {
+    const db = getSafeCanvasDb();
+    if (!db) throw new Error('Database not available');
     if (canvasId === 'default') {
       throw new Error('Cannot delete the default canvas');
     }
 
-    await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
-      await canvasDb.table('canvases').delete(canvasId);
-      await canvasDb.table('canvasStates').delete(canvasId);
+    await db.transaction('rw', 'canvases', 'canvasStates', async () => {
+      await db.table('canvases').delete(canvasId);
+      await db.table('canvasStates').delete(canvasId);
     });
 
     // If deleting active canvas, switch to default
@@ -375,7 +390,9 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
   },
 
   renameCanvas: async (canvasId: string, name: string) => {
-    await canvasDb.table('canvases').update(canvasId, {
+    const db = getSafeCanvasDb();
+    if (!db) throw new Error('Database not available');
+    await db.table('canvases').update(canvasId, {
       name,
       updatedAt: Date.now(),
     });
@@ -384,7 +401,12 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
 
   loadCanvasList: async () => {
     try {
-      const canvases = await canvasDb.table('canvases').toArray();
+      const db = getSafeCanvasDb();
+      if (!db) {
+        set({ canvasList: [] });
+        return;
+      }
+      const canvases = await db.table('canvases').toArray();
       set({ canvasList: canvases });
     } catch (error) {
       console.error('Failed to load canvas list:', error);
@@ -393,11 +415,13 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
   },
 
   exportCanvas: async () => {
+    const db = getSafeCanvasDb();
+    if (!db) throw new Error('Database not available');
     const state = useCanvasStore.getState();
     const stored = localStorage.getItem('canvas-active-id');
     const activeCanvasId = stored || 'default';
 
-    const metadata = await canvasDb.table('canvases').get(activeCanvasId);
+    const metadata = await db.table('canvases').get(activeCanvasId);
 
     return {
       version: 1,
@@ -413,11 +437,13 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
   },
 
   importCanvas: async (exportData: CanvasExport) => {
+    const db = getSafeCanvasDb();
+    if (!db) throw new Error('Database not available');
     const canvasId = generateCanvasId();
     const now = Date.now();
 
-    await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
-      await canvasDb.table('canvases').add({
+    await db.transaction('rw', 'canvases', 'canvasStates', async () => {
+      await db.table('canvases').add({
         id: canvasId,
         name: `${exportData.canvas.name} (Imported)`,
         createdAt: now,
@@ -426,7 +452,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
         edgeCount: exportData.canvas.edges.length,
       });
 
-      await canvasDb.table('canvasStates').add({
+      await db.table('canvasStates').add({
         canvasId,
         nodes: exportData.canvas.nodes,
         edges: exportData.canvas.edges,
@@ -448,10 +474,12 @@ export const useCanvasPersistence = () => {
 
   return {
     clearCanvas: async () => {
-      await canvasDb.transaction('rw', 'nodes', 'edges', 'viewport', async () => {
-        await canvasDb.table('nodes').clear();
-        await canvasDb.table('edges').clear();
-        await canvasDb.table('viewport').clear();
+      const db = getSafeCanvasDb();
+      if (!db) return;
+      await db.transaction('rw', 'nodes', 'edges', 'viewport', async () => {
+        await db.table('nodes').clear();
+        await db.table('edges').clear();
+        await db.table('viewport').clear();
       });
       useCanvasStore.getState().resetCanvas();
     },
@@ -481,10 +509,12 @@ export const useCanvasPersistence = () => {
 
 async function initializeDefaultCanvas() {
   try {
-    const existing = await canvasDb.table('canvases').get('default');
+    const db = getSafeCanvasDb();
+    if (!db) return;
+    const existing = await db.table('canvases').get('default');
     if (!existing) {
-      await canvasDb.transaction('rw', 'canvases', 'canvasStates', async () => {
-        await canvasDb.table('canvases').add({
+      await db.transaction('rw', 'canvases', 'canvasStates', async () => {
+        await db.table('canvases').add({
           id: 'default',
           name: 'My First Canvas',
           createdAt: Date.now(),
@@ -493,7 +523,7 @@ async function initializeDefaultCanvas() {
           edgeCount: 0,
         });
 
-        await canvasDb.table('canvasStates').add({
+        await db.table('canvasStates').add({
           canvasId: 'default',
           nodes: [],
           edges: [],

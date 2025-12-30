@@ -62,8 +62,12 @@ export function setFlashcardDbForTesting(db: FlashcardDatabase | null): void {
   flashcardDbInstance = db;
 }
 
-// For backwards compatibility
-const flashcardDb = getFlashcardDb();
+// For backwards compatibility - lazy initialization to avoid SSR issues
+// Only initialize in browser environment
+const getSafeFlashcardDb = (): FlashcardDatabase | null => {
+  if (typeof window === 'undefined') return null;
+  return getFlashcardDb();
+};
 
 // ============================================================
 // Flashcard Store with Persistence
@@ -178,7 +182,12 @@ export const useFlashcardStore = create<FlashcardStoreState>((set, get) => ({
 
   loadFlashcards: async () => {
     try {
-      const records = await flashcardDb.table('flashcards').toArray();
+      const db = getSafeFlashcardDb();
+      if (!db) {
+        set({ flashcards: [] });
+        return;
+      }
+      const records = await db.table('flashcards').toArray();
       const flashcards: Flashcard[] = records.map((record) => ({
         id: record.id,
         question: record.question,
@@ -197,11 +206,13 @@ export const useFlashcardStore = create<FlashcardStoreState>((set, get) => ({
 
   saveFlashcards: async () => {
     try {
+      const db = getSafeFlashcardDb();
+      if (!db) return;
       const { flashcards } = get();
-      await flashcardDb.transaction('rw', 'flashcards', async () => {
+      await db.transaction('rw', 'flashcards', async () => {
         // Clear existing and bulk add for simplicity
         // For larger datasets, we'd use put() for updates
-        await flashcardDb.table('flashcards').clear();
+        await db.table('flashcards').clear();
         if (flashcards.length > 0) {
           const records: FlashcardRecord[] = flashcards.map((fc) => ({
             id: fc.id,
@@ -212,7 +223,7 @@ export const useFlashcardStore = create<FlashcardStoreState>((set, get) => ({
             sourceIds: fc.sourceIds,
             createdAt: fc.createdAt,
           }));
-          await flashcardDb.table('flashcards').bulkAdd(records);
+          await db.table('flashcards').bulkAdd(records);
         }
       });
     } catch (error) {
@@ -249,6 +260,8 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
   activeSetId: null,
 
   createFlashcardSet: async (name: string, description?: string, sourceIds: string[] = []) => {
+    const db = getSafeFlashcardDb();
+    if (!db) throw new Error('Database not available');
     const setId = generateFlashcardSetId();
     const now = Date.now();
 
@@ -262,8 +275,8 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
       updatedAt: now,
     };
 
-    await flashcardDb.transaction('rw', 'flashcardSets', async () => {
-      await flashcardDb.table('flashcardSets').add(newSet);
+    await db.transaction('rw', 'flashcardSets', async () => {
+      await db.table('flashcardSets').add(newSet);
     });
 
     set((state) => ({
@@ -274,8 +287,10 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
   },
 
   deleteFlashcardSet: async (setId: string) => {
-    await flashcardDb.transaction('rw', 'flashcardSets', async () => {
-      await flashcardDb.table('flashcardSets').delete(setId);
+    const db = getSafeFlashcardDb();
+    if (!db) return;
+    await db.transaction('rw', 'flashcardSets', async () => {
+      await db.table('flashcardSets').delete(setId);
     });
 
     set((state) => ({
@@ -285,8 +300,10 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
   },
 
   renameFlashcardSet: async (setId: string, name: string) => {
-    await flashcardDb.transaction('rw', 'flashcardSets', async () => {
-      await flashcardDb.table('flashcardSets').update(setId, {
+    const db = getSafeFlashcardDb();
+    if (!db) return;
+    await db.transaction('rw', 'flashcardSets', async () => {
+      await db.table('flashcardSets').update(setId, {
         name,
         updatedAt: Date.now(),
       });
@@ -300,12 +317,14 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
   },
 
   addCardsToSet: async (setId: string, cardIds: string[]) => {
-    await flashcardDb.transaction('rw', 'flashcardSets', async () => {
-      const set = await flashcardDb.table('flashcardSets').get(setId);
+    const db = getSafeFlashcardDb();
+    if (!db) return;
+    await db.transaction('rw', 'flashcardSets', async () => {
+      const set = await db.table('flashcardSets').get(setId);
       if (set) {
         const existingIds = new Set(set.cardIds);
         const newIds = cardIds.filter((id) => !existingIds.has(id));
-        await flashcardDb.table('flashcardSets').update(setId, {
+        await db.table('flashcardSets').update(setId, {
           cardIds: [...set.cardIds, ...newIds],
           updatedAt: Date.now(),
         });
@@ -326,13 +345,15 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
   },
 
   removeCardsFromSet: async (setId: string, cardIds: string[]) => {
+    const db = getSafeFlashcardDb();
+    if (!db) return;
     const cardIdSet = new Set(cardIds);
 
-    await flashcardDb.transaction('rw', 'flashcardSets', async () => {
-      const set = await flashcardDb.table('flashcardSets').get(setId);
+    await db.transaction('rw', 'flashcardSets', async () => {
+      const set = await db.table('flashcardSets').get(setId);
       if (set) {
         const filteredIds = set.cardIds.filter((id) => !cardIdSet.has(id));
-        await flashcardDb.table('flashcardSets').update(setId, {
+        await db.table('flashcardSets').update(setId, {
           cardIds: filteredIds,
           updatedAt: Date.now(),
         });
@@ -358,7 +379,12 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
 
   loadFlashcardSets: async () => {
     try {
-      const records = await flashcardDb.table('flashcardSets').toArray();
+      const db = getSafeFlashcardDb();
+      if (!db) {
+        set({ flashcardSets: [] });
+        return;
+      }
+      const records = await db.table('flashcardSets').toArray();
       const flashcardSets: FlashcardSet[] = records.map((record) => ({
         id: record.id,
         name: record.name,
@@ -411,6 +437,8 @@ export const useFlashcardOperations = () => {
 
   return {
     saveGeneratedFlashcards: async (cards: Flashcard[], sourceIds: string[]): Promise<string> => {
+      const db = getSafeFlashcardDb();
+      if (!db) throw new Error('Database not available');
       // Create a new set with the generated flashcards
       const setId = `fcs-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       const now = Date.now();
@@ -426,7 +454,7 @@ export const useFlashcardOperations = () => {
       };
 
       // Save to IndexedDB
-      await flashcardDb.transaction('rw', 'flashcards', 'flashcardSets', async () => {
+      await db.transaction('rw', 'flashcards', 'flashcardSets', async () => {
         const flashcardRecords: FlashcardRecord[] = cards.map((fc) => ({
           id: fc.id,
           question: fc.question,
@@ -436,8 +464,8 @@ export const useFlashcardOperations = () => {
           sourceIds: fc.sourceIds,
           createdAt: fc.createdAt,
         }));
-        await flashcardDb.table('flashcards').bulkAdd(flashcardRecords);
-        await flashcardDb.table('flashcardSets').add(set);
+        await db.table('flashcards').bulkAdd(flashcardRecords);
+        await db.table('flashcardSets').add(set);
       });
 
       // Update stores
@@ -457,9 +485,11 @@ export const useFlashcardOperations = () => {
     },
 
     clearAll: async () => {
-      await flashcardDb.transaction('rw', 'flashcards', 'flashcardSets', async () => {
-        await flashcardDb.table('flashcards').clear();
-        await flashcardDb.table('flashcardSets').clear();
+      const db = getSafeFlashcardDb();
+      if (!db) return;
+      await db.transaction('rw', 'flashcards', 'flashcardSets', async () => {
+        await db.table('flashcards').clear();
+        await db.table('flashcardSets').clear();
       });
       clearStoreFlashcards();
       useFlashcardSetStore.setState({ flashcardSets: [], activeSetId: null });

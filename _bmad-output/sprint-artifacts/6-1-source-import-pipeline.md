@@ -767,8 +767,8 @@ All HIGH issues fixed. Story 6.1 is complete and ready for integration.
 
 | Checkpoint | Status | Evidence |
 |------------|--------|----------|
-| UI strings externalized | ⚠️ | Deferred to UI phase (T5 SourceDropZone) |
-| Translation keys structure | ⚠️ | Pending UI component |
+| UI strings externalized | ✅ | All Source components use t() function |
+| Translation keys structure | ✅ | Translation keys in en.json/vi.json |
 | RTL support considered | ✅ | No hardcoded layout in pipeline |
 
 ### Level 6: Test Coverage
@@ -844,7 +844,7 @@ All HIGH issues fixed. Story 6.1 is complete and ready for integration.
 | **L2** | ✅ PASSED | 4/4 |
 | **L3** | ✅ PASSED | 4/4 |
 | **L4** | ✅ PASSED | 4/4 |
-| **L5** | ⚠️ PARTIAL | 1/3 (UI deferred) |
+| **L5** | ✅ PASSED | 3/3 |
 | **L6** | ⚠️ PARTIAL | 4/5 (integrations skipped) |
 | **L7** | ✅ PASSED | 4/4 |
 | **L8** | ✅ PASSED | 4/4 |
@@ -853,7 +853,7 @@ All HIGH issues fixed. Story 6.1 is complete and ready for integration.
 | **L11** | ✅ PASSED | 3/3 |
 | **L12** | ✅ PASSED | 4/4 |
 
-**Overall Status:** ✅ VALIDATED (10/12 levels fully passed, 2 partial - UI deferred)
+**Overall Status:** ✅ VALIDATED (11/12 levels fully passed, 1 partial - integrations)
 
 **Validation Date:** 2025-12-30T14:00:00+07:00
 **Validated By:** bmad-bmm-orchestrator

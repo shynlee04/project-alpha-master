@@ -9,15 +9,15 @@
  */
 
 import { type StateStorage } from 'zustand/middleware';
-import { db, type PersistedStateRecord } from './dexie-db';
+import { getDb, db, type PersistedStateRecord } from './dexie-db';
 import type { Table } from 'dexie';
 
 /**
  * Create a persistence storage adapter for a specific Dexie table
- * 
+ *
  * @param tableName Name of the Dexie table to store state in
  * @returns Zustand StateStorage implementation
- * 
+ *
  * @example
  * ```ts
  * persist(
@@ -30,13 +30,12 @@ import type { Table } from 'dexie';
  * ```
  */
 export function createDexieStorage(tableName: keyof typeof db): { getItem: (name: string) => Promise<string | null>, setItem: (name: string, value: string) => Promise<void>, removeItem: (name: string) => Promise<void> } {
-    // We assume the table is accessible on the db instance
-    // and follows the PersistedStateRecord interface (id, state, updatedAt)
-    const table = db[tableName] as Table<PersistedStateRecord, string>;
-
     return {
         getItem: async (name: string): Promise<string | null> => {
             try {
+                const database = getDb();
+                if (!database) return null;
+                const table = database[tableName] as Table<PersistedStateRecord, string>;
                 const record = await table.get(name);
                 return record ? JSON.stringify(record.state) : null;
             } catch (error) {
@@ -47,8 +46,11 @@ export function createDexieStorage(tableName: keyof typeof db): { getItem: (name
 
         setItem: async (name: string, value: string): Promise<void> => {
             try {
+                const database = getDb();
+                if (!database) return;
+                const table = database[tableName] as Table<PersistedStateRecord, string>;
                 // Dexie/IndexedDB needs the raw object, not stringified JSON for the 'state' field
-                // But Zustand passes a stringified JSON. 
+                // But Zustand passes a stringified JSON.
                 // We parse it back to store as object for better inspectability in DB,
                 // OR we store as string if we want 1:1 fidelity with localStorage behavior.
                 // The Target Architecture suggested JSON.parse(value).
@@ -65,6 +67,9 @@ export function createDexieStorage(tableName: keyof typeof db): { getItem: (name
 
         removeItem: async (name: string): Promise<void> => {
             try {
+                const database = getDb();
+                if (!database) return;
+                const table = database[tableName] as Table<PersistedStateRecord, string>;
                 await table.delete(name);
             } catch (error) {
                 console.error(`[DexieStorage] Failed to remove item '${name}':`, error);

@@ -15,7 +15,7 @@ import { ToastProvider, Toast } from '../components/ui/Toast'
 import { WorkspaceProvider } from '../lib/workspace'
 
 export const Route = createFileRoute('/ide')({
-    ssr: false, // CRITICAL: Disable SSR for WebContainers compatibility
+    ssr: false,
     component: IDEWorkspace,
 })
 

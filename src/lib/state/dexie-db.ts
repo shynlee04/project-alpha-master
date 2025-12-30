@@ -1119,18 +1119,49 @@ class ViaGentDatabase extends Dexie {
 // ============================================================================
 
 /**
- * Singleton database instance
- * 
+ * Singleton database instance - lazily initialized to avoid SSR issues
+ *
  * @example
  * ```tsx
- * import { db } from '@/lib/state';
- * 
+ * import { getDb } from '@/lib/state';
+ *
  * // CRUD operations
- * await db.projects.add({ id: '1', name: 'My Project', ... });
- * const project = await db.projects.get('1');
+ * const db = getDb();
+ * if (db) {
+ *   await db.projects.add({ id: '1', name: 'My Project', ... });
+ *   const project = await db.projects.get('1');
+ * }
  * ```
  */
-export const db = new ViaGentDatabase();
+
+// Internal singleton instance
+let dbInstance: ViaGentDatabase | null = null;
+
+/**
+ * Get the database instance (SSR-safe)
+ * Returns null during server-side rendering
+ */
+export function getDb(): ViaGentDatabase | null {
+  if (typeof window === 'undefined') return null;
+  if (!dbInstance) {
+    dbInstance = new ViaGentDatabase();
+  }
+  return dbInstance;
+}
+
+/**
+ * Legacy export for backwards compatibility
+ * @deprecated Use getDb() instead
+ */
+export const db = new Proxy({} as ViaGentDatabase, {
+  get(target, prop) {
+    const instance = getDb();
+    if (!instance) {
+      throw new Error('[Dexie] Database not available during SSR. Use getDb() and check for null.');
+    }
+    return instance[prop as keyof ViaGentDatabase];
+  }
+});
 
 // ============================================================================
 // Helper Functions

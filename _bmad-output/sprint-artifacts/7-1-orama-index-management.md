@@ -316,8 +316,8 @@ src/lib/rag/
 
 | Checkpoint | Status | Evidence |
 |------------|--------|----------|
-| UI strings externalized | ⚠️ | Pending UI components |
-| Translation keys structure | ⚠️ | Future implementation |
+| UI strings externalized | ✅ | All RAG components use t() function |
+| Translation keys structure | ✅ | Translation keys in en.json/vi.json |
 | RTL support considered | ✅ | No hardcoded layout |
 
 ### Level 6: Test Coverage
@@ -387,7 +387,7 @@ src/lib/rag/
 | **L2** | ✅ PASSED | 4/4 |
 | **L3** | ✅ PASSED | 4/4 |
 | **L4** | ✅ PASSED | 4/4 |
-| **L5** | ⚠️ PARTIAL | 1/3 (UI pending) |
+| **L5** | ✅ PASSED | 3/3 |
 | **L6** | ✅ PASSED | 4/4 |
 | **L7** | ✅ PASSED | 4/4 |
 | **L8** | ✅ PASSED | 3/3 |
@@ -396,7 +396,7 @@ src/lib/rag/
 | **L11** | ✅ PASSED | 2/2 |
 | **L12** | ✅ PASSED | 3/3 |
 
-**Overall Status:** ✅ VALIDATED (11/12 levels fully passed, 1 partial - UI pending)
+**Overall Status:** ✅ VALIDATED (12/12 levels fully passed)
 
 **Validation Date:** 2025-12-30T14:30:00+07:00
 **Validated By:** bmad-bmm-orchestrator

@@ -75,8 +75,11 @@ export function setStudyDbForTesting(db: StudyDatabase | null): void {
   studyDbInstance = db;
 }
 
-// For backwards compatibility
-const studyDb = getStudyDb();
+// For backwards compatibility - lazy initialization to avoid SSR issues
+const getSafeStudyDb = (): StudyDatabase | null => {
+  if (typeof window === 'undefined') return null;
+  return getStudyDb();
+};
 
 // ============================================================
 // Study Store State
@@ -286,9 +289,11 @@ export const useStudyStore = create<StudyStoreState>((set, get) => ({
   },
 
   clearAll: async () => {
-    await studyDb.transaction('rw', 'studySessions', 'studyCards', async () => {
-      await studyDb.table('studySessions').clear();
-      await studyDb.table('studyCards').clear();
+    const db = getSafeStudyDb();
+    if (!db) return;
+    await db.transaction('rw', 'studySessions', 'studyCards', async () => {
+      await db.table('studySessions').clear();
+      await db.table('studyCards').clear();
     });
     set({
       currentSession: null,
@@ -315,7 +320,9 @@ async function persistStudyCard(
   rating: SRSRating
 ): Promise<void> {
   try {
-    await studyDb.table('studyCards').put({
+    const db = getSafeStudyDb();
+    if (!db) return;
+    await db.table('studyCards').put({
       id: `sc-${cardId}-${sessionId}`,
       cardId,
       sessionId,
@@ -332,7 +339,9 @@ async function persistStudyCard(
  */
 async function persistStudySession(session: StudySession): Promise<void> {
   try {
-    await studyDb.table('studySessions').put({
+    const db = getSafeStudyDb();
+    if (!db) return;
+    await db.table('studySessions').put({
       id: session.id,
       cardIds: session.cardIds,
       currentIndex: session.currentIndex,
@@ -367,8 +376,10 @@ function calculateStreakFromRatings(ratings: SRSRating[]): number {
 
 async function initializeStudyStore(): Promise<void> {
   try {
+    const db = getSafeStudyDb();
+    if (!db) return;
     // Load total cards studied
-    const sessions = await studyDb.table('studySessions').toArray();
+    const sessions = await db.table('studySessions').toArray();
     let totalStudied = 0;
     let maxStreak = 0;
 
