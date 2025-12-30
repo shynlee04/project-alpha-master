@@ -18,3 +18,7 @@ export { QuizStartScreen } from './QuizStartScreen';
 export { QuizQuestionView } from './QuizQuestionView';
 export { QuizResults } from './QuizResults';
 export { QuizReview } from './QuizReview';
+
+// Main page
+export { StudyPage } from './StudyPage';
+export type { StudyPageProps } from './StudyPage';

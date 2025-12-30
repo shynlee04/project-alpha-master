@@ -13,6 +13,7 @@ import {
   Home,
   Folder,
   Brain,
+  BookOpen,
   Bot,
   Settings,
   ChevronLeft,
@@ -163,6 +164,12 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       label: t('sidebar.knowledge', 'Knowledge'),
       icon: Brain,
       path: '/knowledge',
+    },
+    {
+      id: 'study' as const,
+      label: t('sidebar.study', 'Study'),
+      icon: BookOpen,
+      path: '/study',
     },
     {
       id: 'agents' as const,
