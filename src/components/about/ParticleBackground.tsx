@@ -2,11 +2,17 @@
  * EPIC_ID: 29
  * STORY_ID: 29-2
  * CREATED_AT: 2025-12-30T15:35:00Z
- * 
+ * UPDATED_AT: 2025-12-30T16:05:00Z
+ *
  * ParticleBackground Component
- * 
+ *
  * Canvas-based particle system for 8-bit gaming aesthetic.
  * Optimized for performance with requestAnimationFrame and Intersection Observer.
+ *
+ * @example
+ * ```tsx
+ * <ParticleBackground particleCount={50} />
+ * ```
  */
 
 import { useEffect, useRef } from 'react';
@@ -20,7 +26,7 @@ export interface ParticleBackgroundProps {
   
   /**
    * Particle color
-   * Defaults to primary orange
+   * Defaults to primary orange from design tokens
    */
   particleColor?: string;
   
@@ -46,9 +52,19 @@ interface Particle {
   opacity: number;
 }
 
+/**
+ * ParticleBackground Component
+ *
+ * Renders an animated particle background with 8-bit aesthetic.
+ * Particles are rendered as squares for pixel-perfect styling.
+ * Animation pauses when component is off-screen via Intersection Observer.
+ *
+ * @param props - Component props
+ * @returns Canvas element with particle animation
+ */
 export function ParticleBackground({
   particleCount,
-  particleColor = 'rgba(249, 115, 22, 0.3)',
+  particleColor = 'hsla(var(--primary), 0.3)',
   speedMultiplier = 1.0,
   respectReducedMotion = true
 }: ParticleBackgroundProps) {
@@ -57,7 +73,12 @@ export function ParticleBackground({
   const animationRef = useRef<number>();
   const isVisibleRef = useRef(true);
 
-  // Initialize particles
+  /**
+   * Initialize particles with random positions and velocities
+   *
+   * @param canvas - Canvas element for dimension reference
+   * @returns Array of initialized particles
+   */
   const initParticles = (canvas: HTMLCanvasElement): Particle[] => {
     const particles: Particle[] = [];
     for (let i = 0; i < particleCount; i++) {
@@ -73,7 +94,13 @@ export function ParticleBackground({
     return particles;
   };
 
-  // Update particle positions
+  /**
+   * Update particle positions with wrap-around logic
+   * Particles that move off-screen reappear on the opposite side
+   *
+   * @param canvas - Canvas element for dimension reference
+   * @param particles - Array of particles to update
+   */
   const updateParticles = (canvas: HTMLCanvasElement, particles: Particle[]): void => {
     particles.forEach(particle => {
       particle.x += particle.vx;
@@ -87,7 +114,12 @@ export function ParticleBackground({
     });
   };
 
-  // Draw particles
+  /**
+   * Draw particles as squares for 8-bit aesthetic
+   *
+   * @param ctx - Canvas 2D rendering context
+   * @param particles - Array of particles to draw
+   */
   const drawParticles = (ctx: CanvasRenderingContext2D, particles: Particle[]): void => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
@@ -97,7 +129,13 @@ export function ParticleBackground({
     });
   };
 
-  // Animation loop
+  /**
+   * Animation loop using requestAnimationFrame
+   * Pauses when component is off-screen
+   *
+   * @param canvas - Canvas element
+   * @param ctx - Canvas 2D rendering context
+   */
   const animate = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void => {
     if (!isVisibleRef.current) return;
     
@@ -106,7 +144,11 @@ export function ParticleBackground({
     animationRef.current = requestAnimationFrame(() => animate(canvas, ctx));
   };
 
-  // Setup canvas and animation
+  /**
+   * Setup canvas, initialize particles, and start animation
+   * Handles reduced motion preference and window resize events
+   * Cleanup function prevents memory leaks
+   */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -149,7 +191,11 @@ export function ParticleBackground({
     };
   }, [particleCount, particleColor, speedMultiplier, respectReducedMotion]);
 
-  // Intersection Observer for pausing animation when off-screen
+  /**
+   * Intersection Observer for performance optimization
+   * Pauses animation when component is off-screen
+   * Cleanup function disconnects observer
+   */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

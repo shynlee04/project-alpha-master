@@ -2,11 +2,17 @@
  * EPIC_ID: 29
  * STORY_ID: 29-2
  * CREATED_AT: 2025-12-30T15:36:00Z
- * 
+ * UPDATED_AT: 2025-12-30T16:06:00Z
+ *
  * ScrollIndicator Component
- * 
+ *
  * Animated scroll indicator with bounce animation.
  * Respects reduced motion preference and provides smooth scroll functionality.
+ *
+ * @example
+ * ```tsx
+ * <ScrollIndicator targetId="projects" />
+ * ```
  */
 
 import { useEffect, useState } from 'react';
@@ -26,13 +32,25 @@ export interface ScrollIndicatorProps {
   animate?: boolean;
 }
 
-export function ScrollIndicator({ 
-  targetId = 'stats-bar', 
-  animate = true 
+/**
+ * ScrollIndicator Component
+ *
+ * Displays an animated chevron-down icon that scrolls to a target element when clicked.
+ * Respects user's reduced motion preference by disabling animations.
+ *
+ * @param props - Component props
+ * @returns Button element with scroll functionality
+ */
+export function ScrollIndicator({
+  targetId = 'stats-bar',
+  animate = true
 }: ScrollIndicatorProps) {
   const [respectsReducedMotion, setRespectsReducedMotion] = useState(false);
 
-  // Check for reduced motion preference
+  /**
+   * Check for reduced motion preference on mount and listen for changes
+   * Updates state when preference changes
+   */
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setRespectsReducedMotion(mediaQuery.matches);
@@ -45,6 +63,10 @@ export function ScrollIndicator({
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  /**
+   * Smooth scroll to target element
+   * Uses native scrollIntoView with smooth behavior
+   */
   const handleScroll = () => {
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
@@ -56,8 +78,8 @@ export function ScrollIndicator({
     <button
       onClick={handleScroll}
       className="scroll-indicator"
-      aria-hidden="true"
-      role="presentation"
+      aria-label="Scroll to next section"
+      role="button"
       style={{
         display: 'flex',
         flexDirection: 'column',

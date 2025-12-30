@@ -237,7 +237,7 @@ const config = defineConfig(async () => {
         // Bundle everything for Cloudflare EXCEPT large client-side-only libraries
         // These are accessed via dynamic import (React.lazy) and guarded by client checks
         // Cloudflare plugin handles Node.js externals automatically
-        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote)).*$/,
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|mermaid|cytoscape|dagre|@xyflow)).*$/,
       }
       : {
         external: [
