@@ -1,7 +1,6 @@
 import { memo } from 'react';
-import { EdgeTypes } from '@xyflow/react';
+import { Edge, EdgeTypes } from '@xyflow/react';
 import { RelationshipEdge } from './RelationshipEdge';
-import type { CanvasRelationshipType } from '../../../lib/canvas/types';
 
 /**
  * Memoized edge types map for React Flow
@@ -14,8 +13,8 @@ export const edgeTypes: EdgeTypes = {
 /**
  * Default edge options applied to all new edges
  */
-export const defaultEdgeOptions = {
-  type: 'smoothstep' as const,
+export const defaultEdgeOptions: Partial<Edge> = {
+  type: 'smoothstep',
   animated: true,
   style: {
     stroke: 'var(--color-primary, #a855f7)',
@@ -31,7 +30,7 @@ export const defaultEdgeOptions = {
     fillOpacity: 0.9,
   },
   markerEnd: {
-    type: 'arrowclosed' as const,
+    type: 'arrowclosed',
     color: 'var(--color-primary, #a855f7)',
     orientation: 0,
     width: 10,

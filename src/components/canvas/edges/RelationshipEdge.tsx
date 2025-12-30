@@ -4,7 +4,6 @@ import {
   BaseEdge,
   EdgeProps,
   getBezierPath,
-  useReactFlow,
   MarkerType,
 } from '@xyflow/react';
 import type { CanvasRelationshipType } from '../../../lib/canvas/types';
@@ -73,12 +72,10 @@ const RelationshipEdgeComponent = ({
   sourcePosition,
   targetPosition,
   style = {},
-  markerEnd,
   selected,
 }: EdgeProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [label, setLabel] = useState(data?.label || '');
-  const { fitView } = useReactFlow();
 
   const relationship = (data?.relationship as CanvasRelationshipType) || 'relates';
   const { color, strokeDasharray } = useMemo(
@@ -126,7 +123,8 @@ const RelationshipEdgeComponent = ({
 
   // Handle label save
   const handleLabelSave = useCallback(() => {
-    if (label.trim() !== data?.label) {
+    const currentLabel = typeof data?.label === 'string' ? data.label : '';
+    if (label.trim() !== currentLabel) {
       // In a real implementation, this would update the edge data
       // For now, we just update local state
     }
