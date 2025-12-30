@@ -21,7 +21,7 @@ export { ExplorerPanel } from './ExplorerPanel';
 export * as FileTree from './FileTree';
 
 // Layout Components
-export { IconSidebar } from './IconSidebar';
+export { ActivityBar } from './IconSidebar';
 export { PanelShell } from './PanelShell';
 export { QuickActionsMenu } from './QuickActionsMenu';
 export { SearchPanel } from './SearchPanel';
@@ -35,7 +35,7 @@ export * as PreviewPanel from './PreviewPanel';
 
 // Status Bar Components
 export { StatusBar } from './StatusBar';
-export * as StatusBar from './statusbar';
+export * as StatusBarSegments from './statusbar';
 
 // Terminal Components
 export { XTerminal } from './XTerminal';

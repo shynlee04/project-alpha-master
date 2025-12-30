@@ -40,6 +40,7 @@ import {
     Save,
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -104,7 +105,7 @@ function getLanguageLabel(lang?: string): string {
  * Simple tokenizer for basic syntax highlighting
  * For Phase 6, we keep this simple. Epic 27+ can integrate Monaco/Shiki.
  */
-function tokenizeLine(line: string, language?: string): JSX.Element {
+function tokenizeLine(line: string, language?: string): ReactElement {
     // Keywords by language
     const keywords = [
         'const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while',
@@ -114,7 +115,7 @@ function tokenizeLine(line: string, language?: string): JSX.Element {
     ];
 
     // Simple regex-based tokenization
-    const parts: JSX.Element[] = [];
+    const parts: ReactElement[] = [];
     let remaining = line;
     let index = 0;
 

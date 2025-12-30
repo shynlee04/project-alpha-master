@@ -36,7 +36,7 @@ export function ThemeToggle() {
   return (
     <Button
       variant="ghost"
-      size="icon"
+      iconOnly={true}
       onClick={cycleTheme}
       className="text-muted-foreground hover:text-foreground transition-colors"
       title={`Current theme: ${theme}`}

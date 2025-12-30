@@ -1,18 +1,19 @@
 /**
  * @fileoverview Maximize Icon - 8-bit styled maximize window icon
  * @module components/ui/icons
- * 
+ *
  * Squared maximize icon for panel expansion.
  */
 
 import { Icon } from './icon';
+import type { IconProps } from './icon';
 
-export function MaximizeIcon({ className, pixelSize = 'md', color = 'default' }: IconProps) {
+export function MaximizeIcon({ className, pixelSize = 24, color = 'default' }: IconProps) {
     return (
         <svg
             className={className}
-            width={pixelSize === 'sm' ? 16 : pixelSize === 'lg' ? 32 : 24}
-            height={pixelSize === 'sm' ? 16 : pixelSize === 'lg' ? 32 : 24}
+            width={typeof pixelSize === 'number' ? pixelSize : 24}
+            height={typeof pixelSize === 'number' ? pixelSize : 24}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

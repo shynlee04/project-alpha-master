@@ -23,7 +23,7 @@ import { AgentSelector } from './AgentSelector'
 import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store'
 import type { Agent } from '@/mocks/agents'
 import { useTranslation } from 'react-i18next'
-import { FixedSizeList as List, areEqual } from 'react-window'
+import { List } from 'react-window'
 import { TruncatedText } from '@/components/ui/truncated-text'
 
 /**
@@ -117,7 +117,7 @@ const MessageBubble = memo(function MessageBubble({
             </div>
         </div>
     );
-}, areEqual);
+});
 
 MessageBubble.displayName = 'MessageBubble';
 

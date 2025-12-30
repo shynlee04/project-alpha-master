@@ -146,7 +146,7 @@ export function EnhancedChatInterface({
                     <Button
                         type="submit"
                         variant="primary"
-                        size="icon"
+                        iconOnly={true}
                         className="h-10 w-10 shrink-0"
                         disabled={!input.trim() || isTyping}
                     >

@@ -75,22 +75,22 @@ export function AudioPlayer({
 
   // Initialize audio element
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audioElement = audioRef.current;
+    if (!audioElement) return;
 
     // Set audio source
-    audio.src = audio.audioUrl;
-    audio.load();
+    audioElement.src = audio.audioUrl;
+    audioElement.load();
 
     // Auto-play if requested
     if (autoPlay) {
-      audio.play().catch(console.error);
+      audioElement.play().catch(console.error);
     }
 
     // Cleanup on unmount
     return () => {
-      audio.pause();
-      audio.src = '';
+      audioElement.pause();
+      audioElement.src = '';
       revokeAudioUrl(audio.audioUrl);
       onUnmount?.();
     };
@@ -154,12 +154,13 @@ export function AudioPlayer({
   };
 
   // Seek to position
-  const handleSeek = (value: number[]) => {
+  const handleSeek = (value: number | number[]) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.currentTime = value[0];
-    setCurrentTime(value[0]);
+    const time = Array.isArray(value) ? value[0] : value;
+    audio.currentTime = time;
+    setCurrentTime(time);
   };
 
   // Change playback speed
@@ -254,7 +255,7 @@ export function AudioPlayer({
           {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
             <Button
               key={rate}
-              variant={playbackRate === rate ? 'default' : 'outline'}
+              variant={playbackRate === rate ? 'primary' : 'outline'}
               size="sm"
               onClick={() => handleSpeedChange(rate)}
             >

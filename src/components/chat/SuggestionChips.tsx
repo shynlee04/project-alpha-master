@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Lightbulb } from 'lucide-react';
 import type { Suggestion } from '@/lib/agent/suggestions/suggestion-engine';
-import { formatSuggestion, type SuggestionContext } from '@/lib/agent/suggestions/suggestion-engine';
+import { formatSuggestion, improveSuggestionsWithPatterns, type SuggestionContext } from '@/lib/agent/suggestions/suggestion-engine';
 import {
   dismissSuggestion,
   isSuggestionDismissed,

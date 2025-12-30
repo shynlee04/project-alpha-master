@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CodeBlock } from '@/components/chat/CodeBlock';
-import { useTranslation } from '@/hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 
 /**
  * BentoCardPreview - Interactive document preview component for bento cards

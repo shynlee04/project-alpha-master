@@ -1,5 +1,6 @@
 import { useSidebar, SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
+import { FolderOpen } from 'lucide-react'
 import { PlusIcon, RefreshIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 

@@ -71,7 +71,9 @@ export function useAgentChatArtifacts({
         if (isMobile || isTablet) {
             toast.error(
                 t('errors.ide.openOnMobile.title', 'Desktop Feature'),
-                t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+                {
+                    description: t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+                }
             );
             return;
         }
@@ -86,17 +88,23 @@ export function useAgentChatArtifacts({
                     await localAdapterRef.current.writeFile(path, code);
                     toast.success(t('chat.codeBlock.saved', 'File saved successfully'));
                 } else {
-                    toast.error(t('errors.fs.notSupported.description'), t('errors.fs.notSupported.mobileHint'));
+                    toast.error(t('errors.fs.notSupported.description'), {
+                        description: t('errors.fs.notSupported.mobileHint')
+                    });
                 }
             } catch (err) {
                 console.error('Failed to save artifact:', err);
                 if (isMobile || isTablet) {
                     toast.error(
                         t('errors.ide.openOnMobile.title', 'Desktop Feature'),
-                        t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+                        {
+                            description: t('errors.ide.openOnMobile.description', 'This feature is available on desktop browsers only. Please access from Chrome, Edge, or Safari on a computer.')
+                        }
                     );
                 } else {
-                    toast.error(t('errors.generic.unexpected.description'), t('errors.actions.retry'));
+                    toast.error(t('errors.generic.unexpected.description'), {
+                        description: t('errors.actions.retry')
+                    });
                 }
             }
         }

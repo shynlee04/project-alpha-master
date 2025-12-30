@@ -84,7 +84,8 @@ export function PanelShell({
                         {onMinimize && (
                             <Button
                                 variant="ghost"
-                                size="icon-sm"
+                                size="sm"
+                                iconOnly={true}
                                 onClick={onMinimize}
                                 className="h-6 w-6 text-muted-foreground hover:text-foreground"
                             >
@@ -94,7 +95,8 @@ export function PanelShell({
                         {onToggleFullscreen && (
                             <Button
                                 variant="ghost"
-                                size="icon-sm"
+                                size="sm"
+                                iconOnly={true}
                                 onClick={onToggleFullscreen}
                                 className="h-6 w-6 text-muted-foreground hover:text-foreground"
                             >
@@ -108,7 +110,8 @@ export function PanelShell({
                         {onClose && (
                             <Button
                                 variant="ghost"
-                                size="icon-sm"
+                                size="sm"
+                                iconOnly={true}
                                 onClick={onClose}
                                 className="h-6 w-6 text-muted-foreground hover:text-destructive"
                             >
