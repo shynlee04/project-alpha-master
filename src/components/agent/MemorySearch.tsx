@@ -35,7 +35,6 @@ export function MemorySearch({ onConversationClick }: MemorySearchProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [stats, setStats] = useState({
     totalConversations: 0,
-    totalMessages: 0,
     oldestConversation: 0,
   });
 

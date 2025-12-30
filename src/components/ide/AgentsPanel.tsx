@@ -59,7 +59,7 @@ export function AgentsPanel({
                     <>
                         <Button
                             variant="ghost"
-                            size="icon-sm"
+                            size="sm"
                             onClick={handleAddAgent}
                             title={t('actions.addAgent', 'Add Agent')}
                         >
@@ -67,7 +67,7 @@ export function AgentsPanel({
                         </Button>
                         <Button
                             variant="ghost"
-                            size="icon-sm"
+                            size="sm"
                             onClick={refreshAgents}
                             disabled={isLoading}
                             title={t('actions.refresh', 'Refresh')}
@@ -93,7 +93,7 @@ export function AgentsPanel({
                             {t('sidebar.noAgents', 'No agents configured')}
                         </p>
                         <Button
-                            variant="pixel-outline"
+                            variant="outline"
                             size="sm"
                             className="mt-4"
                             onClick={handleAddAgent}
@@ -187,7 +187,7 @@ function AgentItem({
 
             <Button
                 variant="ghost"
-                size="icon-sm"
+                size="sm"
                 className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"
                 onClick={onEdit}
                 title="Edit Agent"

@@ -142,7 +142,7 @@ export function TimeoutWarning({
 export function showTimeoutError(toolName: string, timeout: number): void {
   const { t } = useTranslation();
 
-  Toast.error(
+  toast.error(
     t('toolTimeout.error.title', { tool: toolName }),
     {
       description: t('toolTimeout.error.message', {

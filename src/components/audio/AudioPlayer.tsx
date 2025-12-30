@@ -12,7 +12,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/Slider';
+import { Slider } from '@/components/ui/slider';
 import { formatDuration, revokeAudioUrl } from '@/lib/audio/audio-generation';
 import { markAsPlayed } from '@/lib/audio/audio-storage';
 import type { AudioMetadata } from '@/lib/audio/audio-storage';

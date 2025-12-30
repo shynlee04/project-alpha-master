@@ -28,7 +28,7 @@ export function ExplorerPanel({
                     <>
                         <Button
                             variant="ghost"
-                            size="icon-sm"
+                            size="sm"
                             onClick={onNewFile}
                             title={t('actions.newFile', 'New File')}
                         >
@@ -36,7 +36,7 @@ export function ExplorerPanel({
                         </Button>
                         <Button
                             variant="ghost"
-                            size="icon-sm"
+                            size="sm"
                             onClick={onRefresh}
                             title={t('actions.refresh', 'Refresh')}
                         >
