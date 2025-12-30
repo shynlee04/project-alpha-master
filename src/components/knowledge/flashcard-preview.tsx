@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Flashcard, FlashcardGenerationResult } from '../../lib/knowledge/types';
 
 interface FlashcardPreviewProps {
@@ -52,7 +53,7 @@ function FlashcardCard({
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex items-start justify-between mb-4">
-            <span className="text-xs font-medium text-gray-500">Question {index + 1}</span>
+            <span className="text-xs font-medium text-gray-500">{t('flashcards.preview.questionNumber', { number: index + 1 })}</span>
             <span
               className={`px-2 py-1 text-xs font-medium rounded-full border ${difficultyColors[card.difficulty]}`}
             >
@@ -60,7 +61,7 @@ function FlashcardCard({
             </span>
           </div>
           <p className="text-lg font-medium text-gray-900">{card.question}</p>
-          <p className="text-sm text-gray-500 mt-4">Click to reveal answer</p>
+          <p className="text-sm text-gray-500 mt-4">{t('flashcards.preview.clickToReveal')}</p>
         </div>
 
         {/* Back of card */}
@@ -72,7 +73,7 @@ function FlashcardCard({
           }}
         >
           <div className="flex items-start justify-between mb-4">
-            <span className="text-xs font-medium text-gray-500">Answer</span>
+            <span className="text-xs font-medium text-gray-500">{t('flashcards.preview.answer')}</span>
             {onEdit && (
               <button
                 onClick={(e) => {
@@ -81,7 +82,7 @@ function FlashcardCard({
                 }}
                 className="text-xs text-blue-600 hover:text-blue-800"
               >
-                Edit
+                {t('flashcards.preview.edit')}
               </button>
             )}
           </div>
@@ -109,6 +110,7 @@ function FlashcardCard({
  * Shows first 5 cards in a flip card interface with approve/discard options
  */
 export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: FlashcardPreviewProps) {
+  const { t } = useTranslation();
   const [flippedIndices, setFlippedIndices] = useState<Set<number>>(new Set());
   // Transform preview cards to ensure they have required Flashcard fields
   const [editedCards, setEditedCards] = useState<Flashcard[]>(
@@ -145,24 +147,24 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Flashcard Preview</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{t('flashcards.preview.title')}</h2>
         <p className="text-gray-600 mt-1">
-          Review your generated flashcards before saving. Click a card to flip it.
+          {t('flashcards.preview.description')}
         </p>
       </div>
 
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-50 border border-blue-200 rounded-none p-4">
-          <p className="text-sm text-blue-600">Total Cards</p>
+          <p className="text-sm text-blue-600">{t('flashcards.preview.totalCards')}</p>
           <p className="text-2xl font-bold text-blue-900">{preview.totalCards}</p>
         </div>
         <div className="bg-green-50 border border-green-200 rounded-none p-4">
-          <p className="text-sm text-green-600">Topics</p>
+          <p className="text-sm text-green-600">{t('flashcards.preview.topics')}</p>
           <p className="text-2xl font-bold text-green-900">{preview.topics.length}</p>
         </div>
         <div className="bg-purple-50 border border-purple-200 rounded-none p-4">
-          <p className="text-sm text-purple-600">Sources</p>
+          <p className="text-sm text-purple-600">{t('flashcards.preview.sources')}</p>
           <p className="text-2xl font-bold text-purple-900">{preview.sourcesUsed.length}</p>
         </div>
       </div>
@@ -208,13 +210,13 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
           onClick={onDiscard}
           className="px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-none hover:bg-gray-200 transition-colors"
         >
-          Discard
+          {t('flashcards.preview.discard')}
         </button>
         <button
           onClick={() => onApprove(editedCards)}
           className="px-6 py-3 bg-blue-600 text-white font-medium rounded-none hover:bg-blue-700 transition-colors"
         >
-          Save All {editedCards.length} Cards
+          {t('flashcards.preview.saveAll', { count: editedCards.length })}
         </button>
       </div>
     </div>
@@ -244,9 +246,10 @@ export function FlashcardPreviewLoading() {
  * Empty state for no flashcards
  */
 export function FlashcardPreviewEmpty() {
+  const { t } = useTranslation();
   return (
     <div className="w-full max-w-4xl mx-auto p-6 text-center">
-      <p className="text-gray-500">No flashcards to preview. Generate flashcards first.</p>
+      <p className="text-gray-500">{t('flashcards.preview.empty')}</p>
     </div>
   );
 }

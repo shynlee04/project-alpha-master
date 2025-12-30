@@ -21,3 +21,6 @@ export { FlashcardPreview } from './flashcard-preview';
 // Story 6-3: Source Import & Management
 export { SourceImportDialog } from './SourceImportDialog';
 export { CreateCollectionDialog } from './CreateCollectionDialog';
+
+// Main Knowledge Page
+export { KnowledgePage } from './KnowledgePage';
