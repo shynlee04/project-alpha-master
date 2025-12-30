@@ -509,6 +509,7 @@
   "knowledge.sources.importProgress": "Đang đọc trang {{page}}...",
   "knowledge.sources.importSuccess": "Đã nhập nguồn thành công",
   "knowledge.sources.importError": "Nhập nguồn thất bại",
+  "knowledge.sources.imported": "Đã nhập {{date}}",
   "knowledge.sources.delete": "Xóa nguồn",
   "knowledge.sources.deleteConfirm": "Xóa nguồn này và tất cả các tạo phẩm?",
   "knowledge.sources.rename": "Đổi tên",

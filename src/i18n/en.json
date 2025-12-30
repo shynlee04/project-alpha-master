@@ -487,6 +487,7 @@
   "knowledge.sources.importProgress": "Reading page {{page}}...",
   "knowledge.sources.importSuccess": "Source imported successfully",
   "knowledge.sources.importError": "Failed to import source",
+  "knowledge.sources.imported": "Imported {{date}}",
   "knowledge.sources.delete": "Delete Source",
   "knowledge.sources.deleteConfirm": "Delete this source and all its artifacts?",
   "knowledge.sources.rename": "Rename",
