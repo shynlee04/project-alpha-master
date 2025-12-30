@@ -225,7 +225,7 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
 
         permissionManager.setEventBus({
             on: () => {},
-            emit: (event, ...args) => {
+            emit: (event: string, ...args: unknown[]) => {
                 if (event === 'permission:changed') {
                     handlePermissionChange();
                 }

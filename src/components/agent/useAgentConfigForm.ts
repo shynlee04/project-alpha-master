@@ -16,7 +16,6 @@ import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
 import type {
     AgentFormData,
     CustomHeader,
-    LLMParameters,
     FormErrors,
 } from './agent-config-types'
 import { validateAgentForm, validateModelSelection, validateOpenAICompatible } from './agent-config-validation'
@@ -318,12 +317,12 @@ export function useAgentConfigForm({
 
             if (agent) {
                 // Update existing
-                updateAgent(agent.id, agentData)
+                updateAgent(agent.id, agentData as Partial<Agent>)
                 savedAgent = { ...agent, ...agentData }
                 toast.success(t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: agentData.name }))
             } else {
                 // Add new
-                savedAgent = addAgent(agentData)
+                savedAgent = addAgent(agentData as Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>)
                 toast.success(t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: agentData.name }))
             }
 
@@ -346,7 +345,7 @@ export function useAgentConfigForm({
         } finally {
             setIsSubmitting(false)
         }
-    }, [name, role, providerId, model, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, resetForm, customModelId])
+    }, [name, role, providerId, model, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, agent, t, resetForm, customModelId])
 
     return {
         // Form state

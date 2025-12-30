@@ -188,7 +188,7 @@ export function ChatConversation({
     const { t } = useTranslation();
     const [input, setInput] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const listRef = useRef<List>(null);
+    const listRef = useRef<ReturnType<typeof List> | null>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // Auto-scroll to bottom on new messages
@@ -424,9 +424,8 @@ export function ChatConversation({
                         itemSize={getItemSize}
                         width="100%"
                         overscanCount={5} // Render 5 extra rows for smooth scrolling
-                    >
-                        {Row}
-                    </List>
+                        children={Row}
+                    />
                 </div>
 
                 {/* Streaming indicator or typing */}

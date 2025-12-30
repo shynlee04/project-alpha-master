@@ -16,11 +16,15 @@ export interface WorkspaceEvents {
   'sync:started': [
     { fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional' },
   ]
+  'sync:start': [{ fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional' }]
   'sync:progress': [{ current: number; total: number; currentFile: string }]
   'sync:completed': [{ success: boolean; timestamp: Date; filesProcessed: number }]
   'sync:error': [{ error: Error; file?: string }]
+  'sync:warning': [{ message: string; file?: string }]
   'sync:paused': [{ reason: 'user' | 'error' | 'permission' }]
   'sync:resumed': []
+  'sync:rollback:success': [{ transactionId: string; filesReverted: number }]
+  'sync:rollback:failed': [{ transactionId: string; error: string }]
 
   // WebContainer Events
   'container:booted': [{ bootTime: number }]
@@ -32,7 +36,10 @@ export interface WorkspaceEvents {
   'process:output': [{ pid: string; data: string; type: 'stdout' | 'stderr' }]
   'process:exited': [{ pid: string; exitCode: number }]
   'terminal:input': [{ data: string }]
+  'terminal:warning': [{ message: string; command?: string }]
+  'terminal:timeout': [{ command: string; duration: number }]
   'agent:command:executed': [{ command: string; workingDir?: string; output?: string; exitCode?: number }] // Agent executed command
+  'security:command:blocked': [{ command: string; reason: string; pattern: string }] // Command blocked by security rules
 
   // Permission Events
   'permission:requested': [{ handle: FileSystemDirectoryHandle }]

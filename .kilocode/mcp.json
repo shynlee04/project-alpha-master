@@ -1,1 +1,25 @@
-{"mcpServers":{}}
+{
+  "mcpServers": {
+    "zread": {
+      "type": "streamable-http",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer 455e3428c7bf43a9b5bbc43d4ab3c6b3.uoS5Ta4qnNocQfs9"
+      }
+    },
+    "web-reader": {
+      "type": "streamable-http",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer 455e3428c7bf43a9b5bbc43d4ab3c6b3.uoS5Ta4qnNocQfs9"
+      }
+    },
+    "web-search-prime": {
+      "type": "streamable-http",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer 455e3428c7bf43a9b5bbc43d4ab3c6b3.uoS5Ta4qnNocQfs9"
+      }
+    }
+  }
+}
