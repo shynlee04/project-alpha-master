@@ -82,7 +82,7 @@ function validateRequest(body: unknown): FlashcardGenerationRequest | null {
  * Flashcard generation API route handler
  * POST /api/flashcards/generate
  */
-const generateRoute = createFileRoute('/api/flashcards/generate').$post(async ({ request }) => {
+export const Route = createFileRoute('/api/flashcards/generate').$post(async ({ request }) => {
   try {
     // Parse request body
     const body = await request.json().catch(() => null);
@@ -135,5 +135,3 @@ const generateRoute = createFileRoute('/api/flashcards/generate').$post(async ({
     return errorResponse('Failed to generate flashcards. Please try again.', 500);
   }
 });
-
-export { generateRoute };

@@ -410,7 +410,7 @@ this
 
 ---
 /ralph-wiggum:ralph-loop  
-"sweep through stories and epic of phase 2 (there are epics completed but unsure if they have made the correct integration `_bmad-output/sprint-artifacts/epic-1-retro-2025-12-28.md
+"sweep through stories and epic of phase 2 (there are epics completed EPIC 6, EPIC 7, EPIC 8, EPIC 9, part of EPIC 10 and new EPIC 26 but unsure if they have made the correct integration (end2end, wirring components, mapping data, checking off requirements and having routed and integrate to the accurate users' journeys and use cases) `_bmad-output/sprint-artifacts/epic-1-retro-2025-12-28.md
 _bmad-output/sprint-artifacts/epic-1-retrospective.md
 _bmad-output/sprint-artifacts/EPIC-2-RETRO.md
 _bmad-output/sprint-artifacts/epic-2-retrospective.md

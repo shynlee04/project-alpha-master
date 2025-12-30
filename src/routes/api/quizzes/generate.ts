@@ -67,7 +67,7 @@ function errorResponse(message: string, details?: any, status: number = 500) {
  * POST /api/quizzes/generate
  * Generate a quiz from sources
  */
-const generateRoute = createFileRoute('/api/quizzes/generate').$post(async ({ request }) => {
+export const Route = createFileRoute('/api/quizzes/generate').$post(async ({ request }) => {
   try {
     // Parse request body
     const body = await request.json();
@@ -117,5 +117,3 @@ const generateRoute = createFileRoute('/api/quizzes/generate').$post(async ({ re
     );
   }
 });
-
-export { generateRoute };
