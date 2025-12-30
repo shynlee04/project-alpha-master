@@ -7,6 +7,7 @@ import {
 } from '@xyflow/react';
 import type { CanvasRelationshipType } from '../../../lib/canvas/types';
 import '@xyflow/react/dist/style.css';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props for RelationshipEdge component
@@ -80,6 +81,7 @@ const RelationshipEdgeComponent = ({
   style = {},
   selected,
 }: EdgeProps) => {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [label, setLabel] = useState(castEdgeData(data).label || '');
 
@@ -183,7 +185,7 @@ const RelationshipEdgeComponent = ({
               onKeyDown={handleKeyDown}
               autoFocus
               className="px-2 py-1 text-xs bg-background border border-primary rounded min-w-[80px] text-center focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Label"
+              placeholder={t('canvas.edge.label', 'Label')}
             />
           ) : (
             <button

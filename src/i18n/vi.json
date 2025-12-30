@@ -685,7 +685,6 @@
   "rag.chat.error": "Chat thất bại: {{error}}",
   "rag.chat.clearHistory": "Xóa Lịch Sử",
   "rag.chat.noMessages": "Chưa có tin nhắn. Bắt đầu cuộc trò chuyện!",
-  // Voice Chat (Story 10-1)
   "rag.voice.title": "Chat Giọng Nói",
   "rag.voice.tooltip.desktop": "Chat giọng nói có sẵn trên máy tính",
   "rag.voice.tooltip.mobile": "Chat giọng nói có sẵn trên máy tính",
@@ -779,5 +778,6 @@
   "rag.chunking.tokenCount": "{{count}} token",
   "rag.chunking.figureDetected": "Hình",
   "rag.chunking.tableDetected": "Bảng",
-  "rag.chunking.codeDetected": "Code"
+  "rag.chunking.codeDetected": "Code",
+  "canvas.edge.label": "Nhãn"
 }
