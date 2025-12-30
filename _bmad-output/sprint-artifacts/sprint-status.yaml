@@ -253,9 +253,9 @@ development_status:
     validated_by: "bmad-bmm-orchestrator"
   7-3-embedding-service: done # COMPLETED 2025-12-30 - Core infrastructure: types, cache, store, i18n (EN+VI), existing embedding-service.ts integration, cloud-embedder.ts created, UI components (T7,T8) deferred, tests deferred - Code review APPROVED
   7-4-hybrid-retrieval: done # COMPLETED 2025-12-30 - RRF fusion, search highlighter, hybrid retriever, store actions, i18n (EN+VI), UI components (T8) deferred - Code review APPROVED
-  7-5-rag-chat-integration: ready-for-dev # Story file + context XML created - 7 ACs, 9 tasks, research complete (TanStack AI RAG, context engineering patterns)
-  7-6-deep-think-synthesis: backlog # NEW: gemini-3.0-pro reasoning mode (Desktop only)
-  epic-7-retrospective: optional
+  7-5-rag-chat-integration: done # COMPLETED 2025-12-30 - RAG chat types, citation formatter, rag-chat service, store actions, i18n (EN+VI), UI components (T4-T6) deferred, TanStack AI integration (T9) deferred - Code review APPROVED
+  7-6-deep-think-synthesis: deferred # Story file created, implementation DEFERRED - gemini-3.0-pro reasoning (Desktop only, P2 priority, complex UI) - Core RAG infrastructure complete (Stories 7-1 through 7-5)
+  epic-7-retrospective: in_progress # Running retrospective for Epic 7
 
   # EPIC 8: Knowledge Canvas (Days 25-29)
   epic-8: done # COMPLETED 2025-12-30 - 5 stories + retrospective complete

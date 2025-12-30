@@ -6,7 +6,7 @@
  * Formats retrieved chunks into citations and builds RAG context prompts.
  */
 
-import type { Citation, DocumentSchema, ExtendedSearchResult, RAGContext } from './types';
+import type { Citation, ExtendedSearchResult, RAGContext } from './types';
 
 /**
  * Citation formatter service
