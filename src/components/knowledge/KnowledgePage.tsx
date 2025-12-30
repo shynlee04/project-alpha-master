@@ -12,8 +12,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { SourceCardGrid } from '@/components/knowledge/SourceCardGrid';
 import { Canvas } from '@/components/canvas/Canvas';
 import { SourceImportDialog } from '@/components/knowledge/SourceImportDialog';
+import { RAGPanelContainer } from '@/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
+import { useRAGStore } from '@/lib/state/rag-store';
 import { useResponsive } from '@/hooks/useResponsive';
 
 export function KnowledgePage() {
@@ -116,23 +118,9 @@ export function KnowledgePage() {
 
                 <ResizableHandle />
 
-                {/* Right Panel: Synthesis & Chat (Placeholder) */}
+                {/* Right Panel: RAG Search & Chat */}
                 <ResizablePanel defaultSize={30} minSize={20}>
-                    <div className="h-full flex flex-col bg-sidebar/30 border-l border-border">
-                        <div className="p-3 border-b border-border font-mono font-bold text-sm flex items-center gap-2">
-                            <Sparkles size={14} className="text-secondary" />
-                            {t('knowledge.synthesis.title')}
-                        </div>
-                        <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground text-sm p-6 text-center space-y-4">
-                            <div className="w-16 h-16 rounded-full bg-accent/50 flex items-center justify-center mb-2 animate-pulse">
-                                <Sparkles size={32} className="text-primary/50" />
-                            </div>
-                            <p>{t('knowledge.synthesis.placeholder.text')}</p>
-                            <div className="text-xs border border-dashed border-border p-2 rounded max-w-xs">
-                                {t('knowledge.synthesis.placeholder.feature')}
-                            </div>
-                        </div>
-                    </div>
+                    <RAGPanelContainer projectId={projectId} />
                 </ResizablePanel>
             </ResizablePanelGroup>
 
