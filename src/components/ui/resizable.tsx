@@ -66,7 +66,7 @@ function flattenChildren(children: React.ReactNode): React.ReactNode[] {
 
     // Handle Fragment - flatten its children
     if (child.type === React.Fragment) {
-      result.push(...flattenChildren(child.props.children))
+      result.push(...flattenChildren((child.props as { children?: React.ReactNode }).children))
     } else {
       result.push(child)
     }
@@ -123,18 +123,44 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       if (panelCount === 0) return
 
       if (layout.length !== panelCount) {
-        // Check if we have default sizes that sum to ~100
-        const totalDefault = defaultSizes.reduce((a, b) => a + b, 0)
-        if (totalDefault > 0 && Math.abs(totalDefault - 100) < 5) {
-          setLayout(defaultSizes)
-        } else if (totalDefault > 0) {
-          // Normalize default sizes to sum to 100
-          const normalized = defaultSizes.map(s => (s / totalDefault) * 100)
-          setLayout(normalized)
+        // Calculate layout with proper handling for missing default sizes
+        const totalExplicitDefault = defaultSizes.reduce((a, b) => a + b, 0)
+        const panelsWithoutDefault = defaultSizes.filter(s => s === 0).length
+        const panelsWithDefault = panelCount - panelsWithoutDefault
+
+        let newLayout: number[]
+
+        if (totalExplicitDefault > 0 && Math.abs(totalExplicitDefault - 100) < 5) {
+          // All defaults sum to ~100, use them directly
+          // But if some are 0, give them equal share of remaining
+          if (panelsWithoutDefault > 0) {
+            const remaining = 100 - totalExplicitDefault
+            const perPanel = remaining > 0 ? remaining / panelsWithoutDefault : (100 / panelCount)
+            newLayout = defaultSizes.map(s => s === 0 ? perPanel : s)
+          } else {
+            newLayout = defaultSizes
+          }
+        } else if (panelsWithDefault > 0 && panelsWithoutDefault > 0) {
+          // Some panels have defaults, some don't
+          // Give explicit defaults their share, distribute rest to others
+          const usedSpace = Math.min(totalExplicitDefault, 80) // Cap at 80% for explicit defaults
+          const remaining = 100 - usedSpace
+          const perUnassigned = remaining / panelsWithoutDefault
+
+          newLayout = defaultSizes.map(s => {
+            if (s === 0) return perUnassigned
+            // Scale down if total exceeds 80%
+            return totalExplicitDefault > 80 ? (s / totalExplicitDefault) * usedSpace : s
+          })
+        } else if (totalExplicitDefault > 0) {
+          // All panels have explicit defaults but don't sum to 100 - normalize
+          newLayout = defaultSizes.map(s => (s / totalExplicitDefault) * 100)
         } else {
-          // Distribute evenly
-          setLayout(new Array(panelCount).fill(100 / panelCount))
+          // No defaults at all - distribute evenly
+          newLayout = new Array(panelCount).fill(100 / panelCount)
         }
+
+        setLayout(newLayout)
       }
     }, [panelCount, defaultSizes, layout.length])
 
@@ -238,7 +264,7 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       let panelIndex = 0
       let handleIndex = 0
 
-      return flatChildren.map((child, i) => {
+      return flatChildren.map((child) => {
         if (!React.isValidElement(child)) return child
 
         if (isResizablePanel(child)) {

@@ -20,11 +20,11 @@ import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
+  type ImperativePanelGroupHandle,
 } from '@/components/ui/resizable';
 import { MobileCapabilityBanner } from '@/components/ui/MobileCapabilityBanner';
 import { SkipLinks } from '@/components/ui/SkipLinks';
 import { StatusAnnouncerProvider } from '@/components/ui/StatusAnnouncer';
-import type { ImperativePanelGroupHandle } from 'react-resizable-panels';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 // Layout sub-components
@@ -319,7 +319,7 @@ export function IDELayout(): React.JSX.Element {
 
 
               {/* Center Panel (Editor + Preview + Terminal) */}
-              <ResizablePanel id="ide-center-wrapper" order={2} minSize={30}>
+              <ResizablePanel id="ide-center-wrapper" order={2} defaultSize={75} minSize={30}>
                 <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
                   {/* Editor + Preview */}
                   <ResizablePanel id="ide-editor-preview-wrapper" defaultSize={70} minSize={30}>
