@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as StudyRouteImport } from './routes/study'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as NotesRouteImport } from './routes/notes'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as AgentsRouteImport } from './routes/agents'
@@ -37,6 +38,11 @@ const StudyRoute = StudyRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesRoute = NotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KnowledgeRoute = KnowledgeRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
   '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
   '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
   '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/agents'
     | '/ide'
     | '/knowledge'
+    | '/notes'
     | '/settings'
     | '/study'
     | '/test-fs-adapter'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/agents'
     | '/ide'
     | '/knowledge'
+    | '/notes'
     | '/settings'
     | '/study'
     | '/test-fs-adapter'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/agents'
     | '/ide'
     | '/knowledge'
+    | '/notes'
     | '/settings'
     | '/study'
     | '/test-fs-adapter'
@@ -201,6 +213,7 @@ export interface RootRouteChildren {
   AgentsRoute: typeof AgentsRoute
   IdeRoute: typeof IdeRoute
   KnowledgeRoute: typeof KnowledgeRoute
+  NotesRoute: typeof NotesRoute
   SettingsRoute: typeof SettingsRoute
   StudyRoute: typeof StudyRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/knowledge': {
@@ -321,6 +341,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgentsRoute: AgentsRoute,
   IdeRoute: IdeRoute,
   KnowledgeRoute: KnowledgeRoute,
+  NotesRoute: NotesRoute,
   SettingsRoute: SettingsRoute,
   StudyRoute: StudyRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,

@@ -16,6 +16,7 @@ import {
   BookOpen,
   Bot,
   Settings,
+  Notebook,
   ChevronLeft,
   ChevronRight,
   X,
@@ -164,6 +165,12 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       label: t('sidebar.knowledge', 'Knowledge'),
       icon: Brain,
       path: '/knowledge',
+    },
+    {
+      id: 'notes' as const,
+      label: t('sidebar.notes', 'Notes'),
+      icon: Notebook,
+      path: '/notes',
     },
     {
       id: 'study' as const,

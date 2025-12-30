@@ -58,7 +58,7 @@ class EmbeddingWorkerBridge {
 
             // Create worker from module
             this.worker = new Worker(
-                new URL('../../../workers/note-embedding.worker.ts', import.meta.url),
+                new URL('../../workers/note-embedding.worker.ts?worker', import.meta.url),
                 { type: 'module' }
             );
 
