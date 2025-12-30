@@ -31,13 +31,17 @@ const iconVariants = cva(
   }
 );
 
-export interface IconProps extends React.SVGProps<SVGSVGElement>, VariantProps<typeof iconVariants> {
+export interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'size' | 'width' | 'height'>, VariantProps<typeof iconVariants> {
+  /**
+   * Pixel size for width/height (alternative to variant size)
+   */
+  pixelSize?: number;
   className?: string;
   children?: React.ReactNode;
 }
 
 const Icon = React.forwardRef<SVGSVGElement, IconProps>(
-  ({ className, size, variant, children, ...props }, ref) => {
+  ({ className, size, variant, pixelSize, children, ...props }, ref) => {
     return (
       <svg
         ref={ref}
@@ -48,6 +52,8 @@ const Icon = React.forwardRef<SVGSVGElement, IconProps>(
         strokeWidth="2"
         strokeLinecap="square"
         strokeLinejoin="miter"
+        width={pixelSize}
+        height={pixelSize}
         className={cn(iconVariants({ size, variant }), className)}
         {...props}
       >

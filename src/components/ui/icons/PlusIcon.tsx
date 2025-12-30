@@ -7,11 +7,11 @@ import { IconProps } from './icon';
  * Design: 8-bit plus sign with squared corners
  * Usage: New file button, add controls
  */
-export function PlusIcon({ size = 24, color = 'currentColor', className = '', ...props }: IconProps): React.JSX.Element {
+export function PlusIcon({ pixelSize = 24, color = 'currentColor', className = '', ...props }: IconProps): React.JSX.Element {
     return (
         <svg
-            width={size}
-            height={size}
+            width={pixelSize}
+            height={pixelSize}
             viewBox="0 0 24 24"
             fill="none"
             stroke={color}

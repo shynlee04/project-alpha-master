@@ -7,12 +7,12 @@
 
 import { Icon } from './icon';
 
-export function MaximizeIcon({ className, size = 'md', color = 'default' }: IconProps) {
+export function MaximizeIcon({ className, pixelSize = 'md', color = 'default' }: IconProps) {
     return (
         <svg
             className={className}
-            width={size === 'sm' ? 16 : size === 'lg' ? 32 : 24}
-            height={size === 'sm' ? 16 : size === 'lg' ? 32 : 24}
+            width={pixelSize === 'sm' ? 16 : pixelSize === 'lg' ? 32 : 24}
+            height={pixelSize === 'sm' ? 16 : pixelSize === 'lg' ? 32 : 24}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

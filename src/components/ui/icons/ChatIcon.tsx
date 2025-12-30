@@ -7,11 +7,11 @@ import { IconProps } from './icon';
  * Design: 8-bit speech bubble with squared corners
  * Usage: Chat panel toggle, messaging interface
  */
-export function ChatIcon({ size = 24, color = 'currentColor', className = '', ...props }: IconProps): React.JSX.Element {
+export function ChatIcon({ pixelSize = 24, color = 'currentColor', className = '', ...props }: IconProps): React.JSX.Element {
     return (
         <svg
-            width={size}
-            height={size}
+            width={pixelSize}
+            height={pixelSize}
             viewBox="0 0 24 24"
             fill="none"
             stroke={color}

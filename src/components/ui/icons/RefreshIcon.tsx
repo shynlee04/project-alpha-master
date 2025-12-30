@@ -7,11 +7,11 @@ import { IconProps } from './icon';
  * Design: 8-bit circular arrow with squared corners
  * Usage: Sync now button, refresh controls
  */
-export function RefreshIcon({ size = 24, color = 'currentColor', className = '', ...props }: IconProps): React.JSX.Element {
+export function RefreshIcon({ pixelSize = 24, color = 'currentColor', className = '', ...props }: IconProps): React.JSX.Element {
     return (
         <svg
-            width={size}
-            height={size}
+            width={pixelSize}
+            height={pixelSize}
             viewBox="0 0 24 24"
             fill="none"
             stroke={color}

@@ -6,15 +6,15 @@ import { IconProps } from './icon';
  * Used for AI agent features and chat interface
  */
 export const AIIcon: React.FC<IconProps> = ({
-  size = 24,
+  pixelSize = 24,
   className = '',
   color = 'currentColor',
   'aria-label': ariaLabel = 'AI Agent',
 }) => {
   return (
     <svg
-      width={size}
-      height={size}
+      width={pixelSize}
+      height={pixelSize}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

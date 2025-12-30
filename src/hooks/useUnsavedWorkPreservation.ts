@@ -82,7 +82,7 @@ export function useUnsavedWorkPreservation({
         let count = 0;
 
         for (const file of openFiles) {
-            if (file.dirty) {
+            if (file.isDirty) {
                 dirtyFiles.add(file.path);
                 count++;
             }
@@ -107,11 +107,11 @@ export function useUnsavedWorkPreservation({
 
         const saveRecoveryData = () => {
             const files = openFiles
-                .filter((f) => f.dirty)
+                .filter((f) => f.isDirty)
                 .map((f) => ({
                     path: f.path,
                     content: f.content,
-                    dirty: f.dirty,
+                    dirty: f.isDirty,
                 }));
 
             if (files.length > 0) {
@@ -221,14 +221,14 @@ export function useUnsavedWorkPreservation({
  * Use this when you only need to check for unsaved changes without full preservation
  */
 export function useHasUnsavedChanges(openFiles: OpenFile[]): boolean {
-    return openFiles.some((f) => f.dirty);
+    return openFiles.some((f) => f.isDirty);
 }
 
 /**
  * Get unsaved files from open files
  */
 export function getUnsavedFilesList(openFiles: OpenFile[]): string[] {
-    return openFiles.filter((f) => f.dirty).map((f) => f.path);
+    return openFiles.filter((f) => f.isDirty).map((f) => f.path);
 }
 
 /**

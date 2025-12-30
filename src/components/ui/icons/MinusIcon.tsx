@@ -10,7 +10,7 @@ import { IconProps, Icon } from './icon'
  * 
  * Design: 8-bit pixel-perfect horizontal line
  */
-export function MinusIcon({ size = 'md', className = '', variant = 'default' }: IconProps) {
+export function MinusIcon({ pixelSize = 'md', className = '', variant = 'default' }: IconProps) {
     return (
         <Icon size={size} className={className} variant={variant} viewBox="0 0 24 24">
             {/* 8-bit minus icon - horizontal line with squared ends */}

@@ -13,7 +13,8 @@
  * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 
-import type { AgentFileTools, FileEntry, RollbackInfo, BatchOperationError, FileReadResult } from './file-tools';
+import type { AgentFileTools, FileEntry, RollbackInfo, FileReadResult }
+import { BatchOperationError } from './file-tools';
 import { validatePath, normalizePath, PathValidationError } from './file-tools';
 import { FileLock, fileLock as defaultFileLock } from './file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';

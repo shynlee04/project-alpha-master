@@ -23,15 +23,15 @@ interface SourceIconProps {
  * Represents PDF source type in knowledge management
  */
 export const PDFIcon: React.FC<SourceIconProps> = ({
-    size = 24,
+    pixelSize = 24,
     className = '',
     color = 'currentColor',
     'aria-label': ariaLabel = 'PDF Document',
 }) => {
     return (
         <svg
-            width={size}
-            height={size}
+            width={pixelSize}
+            height={pixelSize}
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -69,15 +69,15 @@ export const PDFIcon: React.FC<SourceIconProps> = ({
  * Represents URL source type in knowledge management
  */
 export const URLIcon: React.FC<SourceIconProps> = ({
-    size = 24,
+    pixelSize = 24,
     className = '',
     color = 'currentColor',
     'aria-label': ariaLabel = 'URL Source',
 }) => {
     return (
         <svg
-            width={size}
-            height={size}
+            width={pixelSize}
+            height={pixelSize}
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -122,15 +122,15 @@ export const URLIcon: React.FC<SourceIconProps> = ({
  * Represents text source type in knowledge management
  */
 export const TextIcon: React.FC<SourceIconProps> = ({
-    size = 24,
+    pixelSize = 24,
     className = '',
     color = 'currentColor',
     'aria-label': ariaLabel = 'Text Source',
 }) => {
     return (
         <svg
-            width={size}
-            height={size}
+            width={pixelSize}
+            height={pixelSize}
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
