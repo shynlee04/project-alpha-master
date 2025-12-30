@@ -1,20 +1,24 @@
 import { useTranslation } from 'react-i18next';
 import { useResponsive } from '@/hooks/useResponsive';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { User, Code, Zap, Rocket, Mail, Linkedin, Github } from 'lucide-react';
 import './AboutPage.css';
 
 /**
  * AboutPage Component
- * 
+ *
  * A professional "About Me" page with 8-bit gaming style aesthetic.
  * Features bilingual support, responsive design, and theme compatibility.
+ *
+ * UPDATED_AT: 2025-12-30T16:23:00Z
  */
 export function AboutPage() {
   const { t } = useTranslation();
   const { isMobile, isTablet, isDesktop } = useResponsive();
 
   return (
-    <div className="about-page">
+    <ErrorBoundary fallback={<div className="error-fallback">Error loading About page</div>}>
+      <div className="about-page">
       {/* Hero Section */}
       <section className="about-hero">
         <div className="about-hero-content">
@@ -135,6 +139,7 @@ export function AboutPage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }

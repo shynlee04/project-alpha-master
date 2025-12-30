@@ -1,11 +1,11 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
-import { Plus, Notebook } from 'lucide-react';
+import { Plus, Notebook, ArrowLeft } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 const NoteEditor = lazy(() => {
     if (import.meta.env.SSR) {
@@ -15,9 +15,11 @@ const NoteEditor = lazy(() => {
 });
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { useIDEStore } from '@/lib/state/ide-store';
+import { useResponsive } from '@/hooks/useResponsive';
 
 export function NotesPage() {
     const { t } = useTranslation();
+    const { isMobile } = useResponsive();
     const projectId = useIDEStore((state) => state.projectId) || 'default';
     const {
         notesArray,
@@ -29,12 +31,20 @@ export function NotesPage() {
     } = useNoteStore();
 
     const activeNote = useActiveNote();
+    const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
 
     useEffect(() => {
         if (projectId && currentProjectId !== projectId) {
             loadNotes(projectId);
         }
     }, [projectId, currentProjectId, loadNotes]);
+
+    // Sync mobile view with active note
+    useEffect(() => {
+        if (isMobile) {
+            setMobileView(activeNote ? 'editor' : 'list');
+        }
+    }, [activeNote, isMobile]);
 
     const handleCreateNote = async () => {
         try {
@@ -51,6 +61,99 @@ export function NotesPage() {
         setActiveNote(noteId);
     };
 
+    const handleBackToList = () => {
+        setMobileView('list');
+        setActiveNote(null);
+    };
+
+    // Mobile Layout: Stacked list and editor views
+    if (isMobile) {
+        return (
+            <MainLayout>
+                <div className="flex flex-col h-full overflow-y-auto">
+                    {mobileView === 'list' ? (
+                        <>
+                            {/* Header */}
+                            <div className="p-4 border-b border-border sticky top-0 bg-background z-10">
+                                <div className="flex items-center justify-between">
+                                    <h1 className="font-mono font-bold text-lg flex items-center gap-2">
+                                        <Notebook className="text-primary" size={20} />
+                                        {t('notes.title', 'Notes')}
+                                    </h1>
+                                    <Button size="sm" onClick={handleCreateNote}>
+                                        <Plus size={16} />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Notes List */}
+                            <div className="flex-1 p-4 space-y-2">
+                                {notesArray.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center text-center py-12 text-muted-foreground">
+                                        <Notebook size={48} className="mb-4 opacity-20" />
+                                        <p className="text-sm mb-4">{t('notes.empty', 'No notes yet')}</p>
+                                        <Button onClick={handleCreateNote}>
+                                            <Plus size={16} className="mr-2" />
+                                            {t('notes.create_new', 'Create New Note')}
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    notesArray.map((note) => (
+                                        <div
+                                            key={note.id}
+                                            onClick={() => handleNoteSelect(note.id)}
+                                            className={`
+                                                p-3 border-2 border-border rounded-none cursor-pointer text-sm flex items-center gap-3
+                                                ${activeNoteId === note.id ? 'bg-accent text-accent-foreground border-primary' : 'hover:bg-accent/50'}
+                                            `}
+                                        >
+                                            <span className="text-2xl">{note.emoji || '📄'}</span>
+                                            <TruncatedText text={note.title || 'Untitled'} className="flex-1 font-mono" />
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {/* Editor Header with Back Button */}
+                            <div className="p-3 border-b border-border sticky top-0 bg-background z-10 flex items-center gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={handleBackToList}
+                                    className="px-2"
+                                >
+                                    <ArrowLeft size={18} />
+                                </Button>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-mono text-sm font-bold truncate">
+                                        {activeNote?.emoji} {activeNote?.title || 'Untitled'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Editor */}
+                            <div className="flex-1 bg-background">
+                                <Suspense fallback={
+                                    <div className="flex items-center justify-center h-full">
+                                        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+                                    </div>
+                                }>
+                                    <NoteEditor
+                                        noteId={activeNote?.id || ''}
+                                        className="h-full"
+                                    />
+                                </Suspense>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </MainLayout>
+        );
+    }
+
+    // Desktop Layout: 2-Column Resizable Panels
     return (
         <MainLayout>
             <ResizablePanelGroup direction="horizontal" className="h-full w-full">
