@@ -813,5 +813,6 @@
   "rag.chunking.tokenCount": "{{count}} tokens",
   "rag.chunking.figureDetected": "Figure",
   "rag.chunking.tableDetected": "Table",
-  "rag.chunking.codeDetected": "Code"
+  "rag.chunking.codeDetected": "Code",
+  "canvas.edge.label": "Label"
 }

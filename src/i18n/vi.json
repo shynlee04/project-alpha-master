@@ -778,5 +778,6 @@
   "rag.chunking.tokenCount": "{{count}} token",
   "rag.chunking.figureDetected": "Hình",
   "rag.chunking.tableDetected": "Bảng",
-  "rag.chunking.codeDetected": "Code"
+  "rag.chunking.codeDetected": "Code",
+  "canvas.edge.label": "Nhãn"
 }

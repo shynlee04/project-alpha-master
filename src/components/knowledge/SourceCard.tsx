@@ -72,16 +72,6 @@ function getSourceIcon(source: SourceRecord) {
     }
 }
 
-/**
- * Sanitize filename for download
- */
-function sanitizeFilename(title: string): string {
-    return title
-        .replace(/[/\\?%*:|"<>]/g, '-') // Replace invalid characters
-        .replace(/\s+/g, '_')           // Replace spaces with underscores
-        .substring(0, 100);              // Limit length
-}
-
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
     const { t } = useTranslation();
     const { deleteSource, renameSource, extractMetadata, extractingMetadata } = useKnowledgeStore();
