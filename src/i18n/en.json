@@ -991,5 +991,21 @@
   "knowledge.metadata.wordCount": "Word Count",
   "knowledge.metadata.pageCount": "Page Count",
   "quizzes.error.noQuestion": "No question available",
-  "quizzes.exit": "Exit Quiz"
+  "quizzes.exit": "Exit Quiz",
+  "notes.saving": "Saving...",
+  "notes.saved": "Saved",
+  "notes.saveError": "Save failed",
+  "notes.selectNote": "Select a note to start editing",
+  "notes.noNoteSelected": "No note selected",
+  "notes.selectOrCreate": "Select a note from the sidebar or create a new one",
+  "notes.createNote": "Create Note",
+  "notes.untitled": "Untitled",
+  "notes.deleteConfirm": "Delete this note and all its children?",
+  "notes.deleted": "Note deleted",
+  "notes.favorites": "Favorites",
+  "notes.allNotes": "All Notes",
+  "notes.search": "Search notes...",
+  "notes.newNote": "New Note",
+  "notes.expand": "Expand",
+  "notes.collapse": "Collapse"
 }
