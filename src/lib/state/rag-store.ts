@@ -267,11 +267,6 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
     }
     return bytes.buffer;
 }
-            cleaned.set(key, entry);
-        }
-    }
-    return cleaned;
-}
 
 /**
  * Enforce cache size limit (LRU eviction)
