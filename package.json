@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build",
+    "dev": "DEPLOY_TARGET=node vite dev --port 3000",
+    "dev:cloudflare": "DEPLOY_TARGET=cloudflare vite dev --port 3000",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=node vite build",
     "build:cloudflare": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=cloudflare vite build",
     "build:vercel": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=netlify vite build",
     "build:manual": "echo 'Manual build - use pnpm build:cloudflare or pnpm build:vercel'",

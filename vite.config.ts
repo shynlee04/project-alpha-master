@@ -5,6 +5,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
 
 
 // Conditional import for deployment platform
@@ -63,6 +64,8 @@ async function getDeploymentPlugin() {
   return null
 }
 
+// Note: TS type error is expected - Vite 7's defineConfig types don't fully support async + environments.
+// The config runs correctly at runtime. This is a known Vite 7 type definition limitation.
 const config = defineConfig(async () => {
   const deployPlugin = await getDeploymentPlugin()
 
@@ -74,170 +77,50 @@ const config = defineConfig(async () => {
       viteTsConfigPaths({
         projects: ['./tsconfig.json'],
       }),
-      tailwindcss({
-        content: [
-          './index.html',
-          './src/**/*.{js,ts,jsx,tsx}',
-        ],
-        theme: {
-          extend: {
-            // Design tokens from src/styles/design-tokens.css
-            colors: {
-              primary: 'var(--color-primary-500)',
-              'primary-dark': 'var(--color-primary-600)',
-              secondary: 'var(--color-secondary-500)',
-              'secondary-dark': 'var(--color-secondary-600)',
-              neutral: {
-                50: 'var(--color-neutral-50)',
-                100: 'var(--color-neutral-100)',
-                200: 'var(--color-neutral-200)',
-                300: 'var(--color-neutral-300)',
-                400: 'var(--color-neutral-400)',
-                500: 'var(--color-neutral-500)',
-                600: 'var(--color-neutral-600)',
-                700: 'var(--color-neutral-700)',
-                800: 'var(--color-neutral-800)',
-                900: 'var(--color-neutral-900)',
-                950: 'var(--color-neutral-950)',
-              },
-              semantic: {
-                success: 'var(--color-success-500)',
-                warning: 'var(--color-warning-500)',
-                error: 'var(--color-error-500)',
-                info: 'var(--color-info-500)',
-              },
-              '8-bit': {
-                retro: {
-                  cyan: 'var(--color-8bit-retro-cyan)',
-                  magenta: 'var(--color-8bit-retro-magenta)',
-                  yellow: 'var(--color-8bit-retro-yellow)',
-                  green: 'var(--color-8bit-retro-green)',
-                  'red': 'var(--color-8bit-retro-red)',
-                  blue: 'var(--color-8bit-retro-blue)',
-                  orange: 'var(--color-8bit-retro-orange)',
-                  purple: 'var(--color-8bit-retro-purple)',
-                },
-                pixel: {
-                  black: 'var(--color-8bit-pixel-black)',
-                  white: 'var(--color-8bit-pixel-white)',
-                  gray: 'var(--color-8bit-pixel-gray)',
-                },
-              },
-            },
-            spacing: {
-              '0': 'var(--spacing-0)',
-              '1': 'var(--spacing-1)',
-              '2': 'var(--spacing-2)',
-              '3': 'var(--spacing-3)',
-              '4': 'var(--spacing-4)',
-              '5': 'var(--spacing-5)',
-              '6': 'var(--spacing-6)',
-              '7': 'var(--spacing-7)',
-              '8': 'var(--spacing-8)',
-              '9': 'var(--spacing-9)',
-              '10': 'var(--spacing-10)',
-              '11': 'var(--spacing-11)',
-              '12': 'var(--spacing-12)',
-              '13': 'var(--spacing-13)',
-              '14': 'var(--spacing-14)',
-              '15': 'var(--spacing-15)',
-              '16': 'var(--spacing-16)',
-              '17': 'var(--spacing-17)',
-              '18': 'var(--spacing-18)',
-              '19': 'var(--spacing-19)',
-              '20': 'var(--spacing-20)',
-              '21': 'var(--spacing-21)',
-              '22': 'var(--spacing-22)',
-              '23': 'var(--spacing-23)',
-              '24': 'var(--spacing-24)',
-              'panel': 'var(--spacing-panel)',
-              'component': 'var(--spacing-component)',
-            },
-            borderRadius: {
-              'none': 'var(--radius-none)',
-              'sm': 'var(--radius-sm)',
-              'base': 'var(--radius-base)',
-              'md': 'var(--radius-md)',
-              'lg': 'var(--radius-lg)',
-              'xl': 'var(--radius-xl)',
-              '2xl': 'var(--radius-2xl)',
-              'full': 'var(--radius-full)',
-            },
-            boxShadow: {
-              'none': 'var(--shadow-none)',
-              'sm': 'var(--shadow-sm)',
-              'md': 'var(--shadow-md)',
-              'lg': 'var(--shadow-lg)',
-              'xl': 'var(--shadow-xl)',
-              '2xl': 'var(--shadow-2xl)',
-              'colored': {
-                'primary': 'var(--shadow-colored-primary)',
-                'success': 'var(--shadow-colored-success)',
-                'warning': 'var(--shadow-colored-warning)',
-                'error': 'var(--shadow-colored-error)',
-              },
-            },
-            transitionDuration: {
-              'fast': 'var(--duration-fast)',
-              'normal': 'var(--duration-normal)',
-              'slow': 'var(--duration-slow)',
-            },
-            transitionTiming: {
-              'ease-in': 'var(--ease-in-out)',
-              'ease-out': 'var(--ease-out-in)',
-              'ease-in-out': 'var(--ease-in-out)',
-              'bounce': 'var(--ease-bounce)',
-            },
-            fontSize: {
-              'xs': 'var(--text-xs)',
-              'sm': 'var(--text-sm)',
-              'base': 'var(--text-base)',
-              'lg': 'var(--text-lg)',
-              'xl': 'var(--text-xl)',
-              '2xl': 'var(--text-2xl)',
-              '3xl': 'var(--text-3xl)',
-              '4xl': 'var(--text-4xl)',
-              '5xl': 'var(--text-5xl)',
-            },
-            lineHeight: {
-              'tight': 'var(--leading-tight)',
-              'normal': 'var(--leading-normal)',
-              'relaxed': 'var(--leading-relaxed)',
-            },
-            letterSpacing: {
-              'tighter': 'var(--tracking-tighter)',
-              'tight': 'var(--tracking-tight)',
-              'normal': 'var(--tracking-normal)',
-              'wide': 'var(--tracking-wide)',
-              'wider': 'var(--tracking-wider)',
-            },
-            fontFamily: {
-              sans: 'var(--font-sans)',
-              mono: 'var(--font-mono)',
-              pixel: 'var(--font-pixel)',
-            },
-            zIndex: {
-              'dropdown': 'var(--z-index-dropdown)',
-              'modal': 'var(--z-index-modal)',
-              'tooltip': 'var(--z-index-tooltip)',
-              'toast': 'var(--z-index-toast)',
-            },
-          },
-        },
-      }),
+      // Tailwind CSS 4 - configuration is done in CSS using @theme directives
+      // Content detection is automatic in v4
+      tailwindcss(),
       tanstackStart(),
       viteReact(),
     ],
+    // Explicit path alias for Vite 7 compatibility
+    // vite-tsconfig-paths may not fully resolve in all SSR/edge contexts
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+    // Dependency optimization config - exclude native modules from pre-bundling
+    // These packages contain .node native modules that esbuild cannot process
+    optimizeDeps: {
+      exclude: [
+        'sharp',
+        'onnxruntime-node',
+        '@xenova/transformers',
+      ],
+    },
+    // Vite 7 environment-specific config for SSR optimization
+    environments: {
+      ssr: {
+        optimizeDeps: {
+          exclude: [
+            'sharp',
+            'onnxruntime-node',
+            '@xenova/transformers',
+          ],
+        },
+      },
+    },
     // SSR Configuration
     // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
     // Therefore, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
     // We only specify 'noExternal' to bundle specific client-side libraries
     ssr: DEPLOY_TARGET === 'cloudflare'
       ? {
-        // Bundle everything for Cloudflare EXCEPT large client-side-only libraries
+        // Bundle everything for Cloudflare EXCEPT large client-side-only libraries and native modules
         // These are accessed via dynamic import (React.lazy) and guarded by client checks
-        // Cloudflare plugin handles Node.js externals automatically
-        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote)).*$/,
+        // Cloudflare plugin handles Node.js externals automatically - DO NOT add 'external' here
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web)).*$/,
       }
       : {
         external: [
@@ -246,6 +129,9 @@ const config = defineConfig(async () => {
           '@monaco-editor/react',
           'monaco-editor',
           '@webcontainer/api',
+          'sharp',
+          'onnxruntime-node',
+          '@xenova/transformers',
         ],
         noExternal: [],
       },
