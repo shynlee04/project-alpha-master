@@ -10,7 +10,7 @@ import type { SourceRecord } from '@/lib/state/dexie-db';
 // Mock credential vault
 vi.mock('@/lib/agent/providers/credential-vault', () => ({
     credentialVault: {
-        getCredential: vi.fn().mockResolvedValue('test-api-key-123'),
+        getCredentials: vi.fn().mockResolvedValue('test-api-key-123'),
     },
 }));
 
@@ -94,7 +94,7 @@ describe('MetadataExtractor (Story 6.4)', () => {
                 // Expected to fail since we're using a mock
             }
 
-            expect(credentialVault.getCredential).toHaveBeenCalledWith('google-gemini');
+            expect(credentialVault.getCredentials).toHaveBeenCalledWith('google-gemini');
         });
     });
 

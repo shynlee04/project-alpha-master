@@ -131,38 +131,18 @@ function CanvasContent() {
   // Get React Flow instance for coordinate transformation
   const { screenToFlowPosition, getNodes, setNodes } = useReactFlow();
 
-  // Handle double-click to create concept node
-  const handlePaneDoubleClick = useCallback(
-    (event: React.MouseEvent) => {
+  // Handle double-click on nodes to create concept node
+  const handleNodeDoubleClick = useCallback(
+    (event: React.MouseEvent, node: Node) => {
       if (isReadOnly) return;
 
-      // Check if double-clicked on empty area (not on a node)
-      const clickTarget = event.target as HTMLElement;
-      if (clickTarget.closest('.react-flow__node')) return;
+      // Only handle double-clicks on concept nodes
+      if (node.type !== 'concept') return;
 
-      // Calculate position on canvas
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      // Create new concept node
-      const newNode: Node = {
-        id: `concept-${Date.now()}`,
-        type: 'concept',
-        position,
-        data: {
-          nodeType: 'concept' as const,
-          title: 'New Concept',
-        },
-        origin: [0.5, 0.5],
-      };
-
-      // Add node to canvas
-      const currentNodes = getNodes();
-      setNodes([...currentNodes, newNode]);
+      // Edit the concept node title (inline editing)
+      // This is handled by the node component itself
     },
-    [isReadOnly, screenToFlowPosition, getNodes, setNodes],
+    [isReadOnly],
   );
 
   // Handle viewport changes
@@ -190,7 +170,7 @@ function CanvasContent() {
         onConnect={onConnect}
         viewport={viewport}
         onViewportChange={handleViewportChange}
-        onPaneDoubleClick={handlePaneDoubleClick}
+        onNodeDoubleClick={handleNodeDoubleClick}
         nodeTypes={nodeTypes}
         edgeTypes={memoizedEdgeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
