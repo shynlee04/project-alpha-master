@@ -4,7 +4,10 @@
  *
  * Hybrid embedding service that uses local Transformers.js embeddings on desktop
  * with WebGPU, falling back to cloud API (gemini-embedding-001) on mobile or
- * when WebGPU is not available.
+ * edge environments.
+ *
+ * Cloudflare Edge-compatible: Only cloud embeddings work in edge runtime Local embeddings require.
+ * desktop browser with WebGPU support.
  *
  * @story 7.3 - Embedding Service Integration (Hybrid Local/Cloud)
  */
@@ -66,14 +69,37 @@ export interface DeviceCapabilities {
     isDesktop: boolean;
     /** Whether running on mobile */
     isMobile: boolean;
+    /** Whether running in edge/SSR environment */
+    isEdge: boolean;
     /** Whether local model is cached */
     localModelCached: boolean;
+}
+
+/**
+ * Check if we're running in an edge/SSR environment
+ */
+function isEdgeEnvironment(): boolean {
+    return typeof window === 'undefined';
 }
 
 /**
  * Detect device capabilities for embedding provider selection
  */
 export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
+    const isEdge = isEdgeEnvironment();
+
+    // Edge environment: no local embeddings possible
+    if (isEdge) {
+        return {
+            hasWebGPU: false,
+            isDesktop: false,
+            isMobile: false,
+            isEdge: true,
+            localModelCached: false,
+        };
+    }
+
+    // Browser environment
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
     );
@@ -97,6 +123,7 @@ export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
         hasWebGPU,
         isDesktop,
         isMobile,
+        isEdge: false,
         localModelCached,
     };
 }
@@ -148,6 +175,11 @@ export function selectEmbeddingProvider(
     capabilities: DeviceCapabilities,
     hasApiKey: boolean
 ): EmbeddingProvider {
+    // Edge environment: only cloud or none
+    if (capabilities.isEdge) {
+        return hasApiKey ? 'cloud' : 'none';
+    }
+
     // Desktop with WebGPU and cached model -> use local
     if (capabilities.isDesktop && capabilities.hasWebGPU && capabilities.localModelCached) {
         return 'local';
@@ -187,6 +219,7 @@ export async function generateEmbedding(
 
 /**
  * Generate embedding using local Transformers.js model
+ * Only works in desktop browser with WebGPU
  */
 async function generateLocalEmbedding(
     text: string,
@@ -194,7 +227,12 @@ async function generateLocalEmbedding(
 ): Promise<EmbeddingResult> {
     const startTime = performance.now();
 
-    // Dynamic import of Transformers.js
+    // Guard: local embeddings only work in browser with WebGPU
+    if (isEdgeEnvironment()) {
+        throw new Error('Local embeddings require a desktop browser with WebGPU support');
+    }
+
+    // Dynamic import of Transformers.js (only executed in supported environments)
     const { pipeline } = await import('@xenova/transformers');
 
     // Use MiniLM model for embeddings
@@ -220,6 +258,7 @@ async function generateLocalEmbedding(
 
 /**
  * Generate embedding using cloud API (gemini-embedding-001)
+ * Works in all environments including Cloudflare Edge
  */
 async function generateCloudEmbedding(
     text: string,
@@ -297,8 +336,14 @@ export async function generateBatchEmbeddings(
 
 /**
  * Download and cache local embedding model
+ * Only works in desktop browser with WebGPU
  */
 export async function downloadLocalModel(): Promise<void> {
+    // Guard: only works in supported browser environments
+    if (isEdgeEnvironment()) {
+        throw new Error('Model download requires a desktop browser with WebGPU support');
+    }
+
     // Dynamic import of Transformers.js
     const { pipeline } = await import('@xenova/transformers');
 
@@ -332,6 +377,7 @@ export class EmbeddingService {
             hasWebGPU: false,
             isDesktop: true,
             isMobile: false,
+            isEdge: false,
             localModelCached: false,
         };
     }
@@ -384,7 +430,8 @@ export class EmbeddingService {
         return (
             this.capabilities.isDesktop &&
             this.capabilities.hasWebGPU &&
-            !this.capabilities.localModelCached
+            !this.capabilities.localModelCached &&
+            !this.capabilities.isEdge
         );
     }
 
