@@ -3,10 +3,9 @@
  * @module routes/api/quizzes/generate
  *
  * TanStack Start server route for quiz generation.
- * Converted from Hono to TanStack Router for consistency.
  *
- * @fix LOW-001 - API Route Pattern Consistency
- * @migration Converted from Hono to createFileRoute pattern
+ * @epic Epic 9 - Study Artifacts Generation
+ * @story 9.2 - Quiz Generator
  */
 
 import { json } from '@tanstack/react-start';
@@ -64,56 +63,64 @@ function errorResponse(message: string, details?: any, status: number = 500) {
 }
 
 /**
- * POST /api/quizzes/generate
- * Generate a quiz from sources
+ * TanStack Start Server Route
  */
-export const Route = createFileRoute('/api/quizzes/generate').$post(async ({ request }) => {
-  try {
-    // Parse request body
-    const body = await request.json();
+export const Route = createFileRoute('/api/quizzes/generate')({
+  server: {
+    handlers: {
+      /**
+       * POST handler - generate quiz from sources
+       */
+      POST: async ({ request }) => {
+        try {
+          // Parse request body
+          const body = await request.json();
 
-    // Validate request
-    const validated = validateRequest(body);
-    if (!validated.success) {
-      return errorResponse('Invalid request', validated.error, 400);
-    }
+          // Validate request
+          const validated = validateRequest(body);
+          if (!validated.success) {
+            return errorResponse('Invalid request', validated.error, 400);
+          }
 
-    const { sourceIds, options } = validated.data;
+          const { sourceIds, options } = validated.data;
 
-    // Get API key from request header
-    const apiKey = request.headers.get('x-gemini-api-key') || undefined;
+          // Get API key from request header
+          const apiKey = request.headers.get('x-gemini-api-key') || undefined;
 
-    // Create generator
-    const generator = createQuizGenerator(apiKey, !apiKey);
+          // Create generator
+          const generator = createQuizGenerator(apiKey, !apiKey);
 
-    // For now, use mock generation if no API key
-    if (!apiKey) {
-      const mockQuiz = generator.generateMockQuiz(
-        'Sample content for quiz generation',
-        sourceIds[0],
-        options?.questionCount || 5
-      );
+          // For now, use mock generation if no API key
+          if (!apiKey) {
+            const mockQuiz = generator.generateMockQuiz(
+              'Sample content for quiz generation',
+              sourceIds[0],
+              options?.questionCount || 5
+            );
 
-      return json({
-        success: true,
-        data: mockQuiz,
-      });
-    }
+            return json({
+              success: true,
+              data: mockQuiz,
+            });
+          }
 
-    // TODO: Fetch source content from database
-    // For now, return error indicating sources need to be loaded
-    return errorResponse(
-      'Source content loading not yet implemented',
-      { message: 'Epic 6 (Source Ingestion) must be completed first' },
-      501
-    );
-  } catch (error) {
-    console.error('Quiz generation error:', error);
+          // TODO: Fetch source content from database
+          // For now, return error indicating sources need to be loaded
+          return errorResponse(
+            'Source content loading not yet implemented',
+            { message: 'Epic 6 (Source Ingestion) must be completed first' },
+            501
+          );
+        } catch (error) {
+          console.error('Quiz generation error:', error);
 
-    return errorResponse(
-      'Failed to generate quiz',
-      { message: error instanceof Error ? error.message : 'Unknown error' },
-      500
-    );
-  }
+          return errorResponse(
+            'Failed to generate quiz',
+            { message: error instanceof Error ? error.message : 'Unknown error' },
+            500
+          );
+        }
+      },
+    },
+  },
 });

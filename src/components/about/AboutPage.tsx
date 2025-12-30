@@ -103,7 +103,7 @@ export function AboutPage() {
                   <span className="stat-label">{t('about.project.highlights')}</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-value"><1</span>
+                  <span className="stat-value">&lt;1</span>
                   <span className="stat-label">Month</span>
                 </div>
               </div>

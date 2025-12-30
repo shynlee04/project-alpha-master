@@ -15,11 +15,14 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as AgentsRouteImport } from './routes/agents'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
+import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
 
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
@@ -51,6 +54,11 @@ const AgentsRoute = AgentsRouteImport.update({
   path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -76,9 +84,20 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiQuizzesGenerateRoute = ApiQuizzesGenerateRouteImport.update({
+  id: '/api/quizzes/generate',
+  path: '/api/quizzes/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFlashcardsGenerateRoute = ApiFlashcardsGenerateRouteImport.update({
+  id: '/api/flashcards/generate',
+  path: '/api/flashcards/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
@@ -89,9 +108,12 @@ export interface FileRoutesByFullPath {
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/workspace': typeof WorkspaceIndexRoute
+  '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
@@ -102,10 +124,13 @@ export interface FileRoutesByTo {
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/workspace': typeof WorkspaceIndexRoute
+  '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
@@ -116,11 +141,14 @@ export interface FileRoutesById {
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/workspace/': typeof WorkspaceIndexRoute
+  '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/agents'
     | '/ide'
     | '/knowledge'
@@ -131,9 +159,12 @@ export interface FileRouteTypes {
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/workspace'
+    | '/api/flashcards/generate'
+    | '/api/quizzes/generate'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/agents'
     | '/ide'
     | '/knowledge'
@@ -144,9 +175,12 @@ export interface FileRouteTypes {
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/workspace'
+    | '/api/flashcards/generate'
+    | '/api/quizzes/generate'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/agents'
     | '/ide'
     | '/knowledge'
@@ -157,10 +191,13 @@ export interface FileRouteTypes {
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/workspace/'
+    | '/api/flashcards/generate'
+    | '/api/quizzes/generate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
   IdeRoute: typeof IdeRoute
   KnowledgeRoute: typeof KnowledgeRoute
@@ -171,6 +208,8 @@ export interface RootRouteChildren {
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
   WorkspaceIndexRoute: typeof WorkspaceIndexRoute
+  ApiFlashcardsGenerateRoute: typeof ApiFlashcardsGenerateRoute
+  ApiQuizzesGenerateRoute: typeof ApiQuizzesGenerateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -217,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -252,11 +298,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/quizzes/generate': {
+      id: '/api/quizzes/generate'
+      path: '/api/quizzes/generate'
+      fullPath: '/api/quizzes/generate'
+      preLoaderRoute: typeof ApiQuizzesGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/flashcards/generate': {
+      id: '/api/flashcards/generate'
+      path: '/api/flashcards/generate'
+      fullPath: '/api/flashcards/generate'
+      preLoaderRoute: typeof ApiFlashcardsGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
   IdeRoute: IdeRoute,
   KnowledgeRoute: KnowledgeRoute,
@@ -267,6 +328,8 @@ const rootRouteChildren: RootRouteChildren = {
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
   WorkspaceIndexRoute: WorkspaceIndexRoute,
+  ApiFlashcardsGenerateRoute: ApiFlashcardsGenerateRoute,
+  ApiQuizzesGenerateRoute: ApiQuizzesGenerateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

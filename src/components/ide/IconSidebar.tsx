@@ -8,7 +8,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Terminal,
-    GitBranch
+    GitBranch,
+    User
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -27,7 +28,7 @@ import { useTranslation } from 'react-i18next'
  */
 
 // Panel IDs
-type PanelId = 'explorer' | 'agents' | 'search' | 'terminal' | 'git' | 'settings' | null
+type PanelId = 'explorer' | 'agents' | 'search' | 'terminal' | 'git' | 'about' | 'settings' | null
 
 // Context for sidebar state
 interface SidebarContextType {
@@ -124,6 +125,7 @@ export function ActivityBar({ className }: { className?: string }) {
     ]
 
     const bottomItems = [
+        { id: 'about' as PanelId, icon: User, label: t('about.title', 'About Me') },
         { id: 'settings' as PanelId, icon: Settings, label: t('sidebar.settings', 'Settings') },
     ]
 
