@@ -107,6 +107,12 @@ const config = defineConfig(async () => {
             'sharp',
             'onnxruntime-node',
             '@xenova/transformers',
+            // Client-only libraries that cause SSR issues
+            '@blocknote/core',
+            '@blocknote/react',
+            '@blocknote/mantine',
+            '@xyflow/react',
+            'react-resizable-panels',
           ],
         },
       },
@@ -120,7 +126,7 @@ const config = defineConfig(async () => {
         // Bundle everything for Cloudflare EXCEPT large client-side-only libraries and native modules
         // These are accessed via dynamic import (React.lazy) and guarded by client checks
         // Cloudflare plugin handles Node.js externals automatically - DO NOT add 'external' here
-        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web)).*$/,
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web|react-resizable-panels|@xyflow)).*$/,
       }
       : {
         external: [

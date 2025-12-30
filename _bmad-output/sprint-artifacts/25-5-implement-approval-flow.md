@@ -59,10 +59,11 @@ const writeFileDef = toolDefinition({
 **When** the stream emits an `approval-requested` chunk  
 **Then** useAgentChatWithTools detects and exposes the pending approval
 
-### AC-25-5-3: ApprovalOverlay Integration (PENDING T3)
-**Given** a pending tool call with `needsApproval: true`  
-**When** the approval state is detected  
+### AC-25-5-3: ApprovalOverlay Integration ✅
+**Given** a pending tool call with `needsApproval: true`
+**When** the approval state is detected
 **Then** ApprovalOverlay renders with tool name, description, and code preview
+**Verified:** [AgentChatPanel.tsx:757-774](src/components/ide/AgentChatPanel.tsx#L757-L774)
 
 ### AC-25-5-4: Approve Triggers Execution ✅
 **Given** ApprovalOverlay is visible with pending tool  
@@ -96,10 +97,11 @@ const writeFileDef = toolDefinition({
 - [x] Extract approval info from TanStack AI message parts
 - [x] Determine risk level based on tool name
 
-### T3: Wire ApprovalOverlay to Hook State (IN PROGRESS)
-- [ ] Import ApprovalOverlay in chat panel component
-- [ ] Render ApprovalOverlay when `pendingApprovals.length > 0`
-- [ ] Pass onApprove/onReject handlers to call hook functions
+### T3: Wire ApprovalOverlay to Hook State ✅
+- [x] Import ApprovalOverlay in chat panel component
+- [x] Render ApprovalOverlay when `pendingApprovals.length > 0`
+- [x] Pass onApprove/onReject handlers to call hook functions
+- [x] Verified in [AgentChatPanel.tsx](src/components/ide/AgentChatPanel.tsx)
 
 ### T4: Add Risk Level Detection ✅
 - [x] Determine risk level based on tool name (implemented in T2)

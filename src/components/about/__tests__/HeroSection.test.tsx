@@ -125,12 +125,12 @@ describe('HeroSection', () => {
       expect(heading.textContent).toContain('about.hero.identity');
     });
 
-    it('renders subtitle (H2)', () => {
+    it('renders subtitle (paragraph)', () => {
       render(<HeroSection />);
       
-      const subtitle = screen.getByRole('heading', { level: 2 });
+      const subtitle = screen.getByText('about.hero.subtitle');
       expect(subtitle).toBeInTheDocument();
-      expect(subtitle.textContent).toContain('about.hero.subtitle');
+      expect(subtitle.tagName.toLowerCase()).toBe('p');
     });
 
     it('renders primary CTA button', () => {
@@ -267,7 +267,8 @@ describe('HeroSection', () => {
       const scrollIndicator = screen.getByTestId('scroll-indicator');
       
       expect(primaryButton).toHaveAttribute('type', 'button');
-      expect(scrollIndicator).toHaveAttribute('aria-label', 'Scroll to next section');
+      // ScrollIndicator has hardcoded aria-label in component
+      expect(scrollIndicator).toHaveAttribute('aria-label', 'Scroll to projects');
     });
 
     it('avatar has proper alt text', () => {

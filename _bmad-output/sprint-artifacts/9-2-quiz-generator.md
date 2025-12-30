@@ -297,8 +297,8 @@ Total: 24 tests, 24 passing
 
 | Checkpoint | Status | Evidence |
 |------------|--------|----------|
-| UI strings externalized | ⚠️ | Deferred to UI components |
-| Translation keys structure | ⚠️ | Future implementation |
+| UI strings externalized | ✅ | All Study components use t() function |
+| Translation keys structure | ✅ | 93 "study." keys in en.json/vi.json |
 | RTL support considered | ✅ | No hardcoded layout |
 
 ### Level 6: Test Coverage
@@ -369,7 +369,7 @@ Total: 24 tests, 24 passing
 | **L2** | ✅ PASSED | 4/4 |
 | **L3** | ✅ PASSED | 4/4 |
 | **L4** | ✅ PASSED | 3/3 |
-| **L5** | ⚠️ PARTIAL | 1/3 (i18n deferred) |
+| **L5** | ✅ PASSED | 3/3 |
 | **L6** | ✅ PASSED | 4/4 |
 | **L7** | ✅ PASSED | 4/4 |
 | **L8** | ✅ PASSED | 3/3 |
@@ -378,7 +378,7 @@ Total: 24 tests, 24 passing
 | **L11** | ✅ PASSED | 2/2 |
 | **L12** | ✅ PASSED | 3/3 |
 
-**Overall Status:** ✅ VALIDATED (11/12 levels fully passed, 1 partial - i18n deferred)
+**Overall Status:** ✅ VALIDATED (12/12 levels fully passed)
 
 **Validation Date:** 2025-12-30T14:20:00+07:00
 **Validated By:** bmad-bmm-orchestrator

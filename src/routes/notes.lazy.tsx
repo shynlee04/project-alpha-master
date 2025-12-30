@@ -12,12 +12,38 @@
  *
  * @file notes.lazy.tsx
  * @created 2025-12-28T10:00:00Z
- * @updated 2025-12-30T23:59:00Z - Standardized to barrel exports
+ * @updated 2025-12-31T00:55:00Z - Fixed SSR with React.lazy
  */
 
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { NotesPage } from '@/components/notes/NotesPage';
+import { lazy, Suspense } from 'react';
+
+// SSR-safe lazy import - only loads on client
+const NotesPage = lazy(() => {
+    if (import.meta.env.SSR) {
+        return Promise.resolve({ default: () => null });
+    }
+    return import('@/components/notes/NotesPage').then(mod => ({ default: mod.NotesPage }));
+});
+
+// Loading component for Suspense
+function NotesPageLoading() {
+    return (
+        <div className="flex items-center justify-center h-screen bg-background">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+        </div>
+    );
+}
+
+// Wrapper component with Suspense
+function NotesPageWrapper() {
+    return (
+        <Suspense fallback={<NotesPageLoading />}>
+            <NotesPage />
+        </Suspense>
+    );
+}
 
 export const Route = createLazyFileRoute('/notes')({
-    component: NotesPage,
+    component: NotesPageWrapper,
 });

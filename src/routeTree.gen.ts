@@ -8,11 +8,12 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
+import { Route as StudyRouteImport } from './routes/study'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as NotesRouteImport } from './routes/notes'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
@@ -24,35 +25,31 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
 import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
 
-const StudyLazyRouteImport = createFileRoute('/study')()
-const NotesLazyRouteImport = createFileRoute('/notes')()
-const KnowledgeLazyRouteImport = createFileRoute('/knowledge')()
-
-const StudyLazyRoute = StudyLazyRouteImport.update({
-  id: '/study',
-  path: '/study',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/study.lazy').then((d) => d.Route))
-const NotesLazyRoute = NotesLazyRouteImport.update({
-  id: '/notes',
-  path: '/notes',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/notes.lazy').then((d) => d.Route))
-const KnowledgeLazyRoute = KnowledgeLazyRouteImport.update({
-  id: '/knowledge',
-  path: '/knowledge',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/knowledge.lazy').then((d) => d.Route))
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
   path: '/test-fs-adapter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudyRoute = StudyRouteImport.update({
+  id: '/study',
+  path: '/study',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/study.lazy').then((d) => d.Route))
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotesRoute = NotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/notes.lazy').then((d) => d.Route))
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/knowledge.lazy').then((d) => d.Route))
 const IdeRoute = IdeRouteImport.update({
   id: '/ide',
   path: '/ide',
@@ -109,11 +106,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/knowledge': typeof KnowledgeLazyRoute
-  '/notes': typeof NotesLazyRoute
-  '/study': typeof StudyLazyRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -126,11 +123,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/knowledge': typeof KnowledgeLazyRoute
-  '/notes': typeof NotesLazyRoute
-  '/study': typeof StudyLazyRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -144,11 +141,11 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/ide': typeof IdeRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/notes': typeof NotesRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/knowledge': typeof KnowledgeLazyRoute
-  '/notes': typeof NotesLazyRoute
-  '/study': typeof StudyLazyRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -163,11 +160,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents'
     | '/ide'
-    | '/settings'
-    | '/test-fs-adapter'
     | '/knowledge'
     | '/notes'
+    | '/settings'
     | '/study'
+    | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -180,11 +177,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents'
     | '/ide'
-    | '/settings'
-    | '/test-fs-adapter'
     | '/knowledge'
     | '/notes'
+    | '/settings'
     | '/study'
+    | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -197,11 +194,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents'
     | '/ide'
-    | '/settings'
-    | '/test-fs-adapter'
     | '/knowledge'
     | '/notes'
+    | '/settings'
     | '/study'
+    | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -215,11 +212,11 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
   IdeRoute: typeof IdeRoute
+  KnowledgeRoute: typeof KnowledgeRoute
+  NotesRoute: typeof NotesRoute
   SettingsRoute: typeof SettingsRoute
+  StudyRoute: typeof StudyRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
-  KnowledgeLazyRoute: typeof KnowledgeLazyRoute
-  NotesLazyRoute: typeof NotesLazyRoute
-  StudyLazyRoute: typeof StudyLazyRoute
   ApiChatRoute: typeof ApiChatRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
@@ -230,27 +227,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/study': {
-      id: '/study'
-      path: '/study'
-      fullPath: '/study'
-      preLoaderRoute: typeof StudyLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes': {
-      id: '/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/knowledge': {
-      id: '/knowledge'
-      path: '/knowledge'
-      fullPath: '/knowledge'
-      preLoaderRoute: typeof KnowledgeLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/test-fs-adapter': {
       id: '/test-fs-adapter'
       path: '/test-fs-adapter'
@@ -258,11 +234,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestFsAdapterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/study': {
+      id: '/study'
+      path: '/study'
+      fullPath: '/study'
+      preLoaderRoute: typeof StudyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ide': {
@@ -343,11 +340,11 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
   IdeRoute: IdeRoute,
+  KnowledgeRoute: KnowledgeRoute,
+  NotesRoute: NotesRoute,
   SettingsRoute: SettingsRoute,
+  StudyRoute: StudyRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
-  KnowledgeLazyRoute: KnowledgeLazyRoute,
-  NotesLazyRoute: NotesLazyRoute,
-  StudyLazyRoute: StudyLazyRoute,
   ApiChatRoute: ApiChatRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
