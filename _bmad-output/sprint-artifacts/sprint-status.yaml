@@ -323,8 +323,8 @@ development_status:
   # Added: 2025-12-30T18:26:56+07:00
   # Research: BlockNote + Orama + Transformers.js (all validated 2025-12-30)
   # Priority: HIGH - Essential feature for Knowledge Synthesis experience
-  epic-26: in-progress # Started 2025-12-30 - Story 26.1 ready for development
-  26-1-integrated-blocknote-editor: ready-for-dev # Story file created 2025-12-30T18:30:00+07:00
+  epic-26: in-progress # Started 2025-12-30 - Story 26.1 in development
+  26-1-integrated-blocknote-editor: in-progress # Context XML created 2025-12-30T18:45:00+07:00, dev starting
   26-2-client-side-embedding-pipeline: backlog # Web Worker + Transformers.js + Orama indexing
   26-3-ask-my-notes-rag-tool: backlog # Client-side RAG tool for AI Agent, note citations
   26-4-inline-ai-magic: backlog # Notion AI-style AI actions in editor, streaming
