@@ -801,6 +801,8 @@
   "rag.embedding.showBoundaries": "Show Chunks",
   "rag.embedding.hideBoundaries": "Hide Chunks",
   "knowledge.collections.title": "Collections",
+  "knowledge.collections.nameRequired": "Collection name is required",
+  "knowledge.collections.nameTooLong": "Name must be less than {{max}} characters",
   "collections.create": "Create Collection",
   "collections.addSource": "Add to Collection",
   "collections.removeSource": "Remove from Collection",

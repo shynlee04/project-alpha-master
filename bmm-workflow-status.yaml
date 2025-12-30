@@ -44,6 +44,12 @@ ralph_loop_iteration10_fixes:
   - "TypeScript: PASS (0 Phase 2 errors)"
   - "Build: PASS (5541 modules, 34s)"
   - "PHASE 2 COMPLETE - READY FOR PRODUCTION"
+ralph_loop_iteration11_fixes:
+  - "Fixed i18n in CreateCollectionDialog.tsx (validation error messages)"
+  - "Added knowledge.collections.nameRequired translation key"
+  - "Added knowledge.collections.nameTooLong translation key"
+  - "Added Vietnamese translations for both keys"
+  - "Build validation: PASSED (34.21s)"
 test_results:
   passing: 126
   total: 127

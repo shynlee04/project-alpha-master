@@ -791,6 +791,8 @@
   "rag.embedding.provider.cloud": "Đám mây (Gemini)",
   "rag.embedding.provider.keyword": "Từ khóa (BM25)",
   "knowledge.collections.title": "Bộ sưu tập",
+  "knowledge.collections.nameRequired": "Tên bộ sưu tập là bắt buộc",
+  "knowledge.collections.nameTooLong": "Tên phải ít hơn {{max}} ký tự",
   "collections.create": "Tạo bộ sưu tập",
   "collections.addSource": "Thêm vào bộ sưu tập",
   "collections.removeSource": "Xóa khỏi bộ sưu tập",
