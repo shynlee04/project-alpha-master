@@ -279,12 +279,13 @@ describe('HeroSection', () => {
     it('applies animation classes to child elements', () => {
       render(<HeroSection />);
       
-      const heroSection = screen.getByTestId('hero-section');
-      expect(heroSection).toBeInTheDocument();
+      const h1 = screen.getByRole('heading', { level: 1 });
+      expect(h1).toBeInTheDocument();
       
-      // Check that animation styles are applied via inline styles
-      const style = heroSection.getAttribute('style');
-      expect(style).toContain('animation');
+      // Check that animation styles are applied to H1 element via inline styles
+      const h1Style = h1.getAttribute('style');
+      expect(h1Style).toContain('animation');
+      expect(h1Style).toContain('fade-in-up');
     });
 
     it('has staggered animation delays', () => {
