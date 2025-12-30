@@ -1103,3 +1103,17 @@ Each story must pass all 12 validation levels before being marked as DONE:
 - **Maintained By:** Technical Writer (@bmad-bmm-tech-writer)
 - **Validation Framework:** 12-Level GRANDIOSE DEFINITION OF COMPLETION
 - **Total Validation Checkpoints:** 380 across 30 stories
+## Epic 22: Production Hardening
+**Status**: In Progress
+**Priority**: P0
+**Goal**: Ensure the application is ready for production deployment on Cloudflare, with all build issues resolved and security/performance optimizations in place.
+
+### Stories
+- **Story 22-7**: Fix Cloudflare Deployment Build Issues
+  - **As a**: DevOps Engineer
+  - **I want to**: fix the Cloudflare build errors related to `@tanstack/start-server-core` unresolved imports
+  - **So that**: I can successfully deploy the application to the edge.
+  - **Acceptance Criteria**:
+    - The application builds successfully using `npx wrangler versions upload`.
+    - No unresolved import errors for `#tanstack-router-entry` or `#tanstack-start-entry`.
+    - The deployed application functions correctly on Cloudflare Workers/Pages.

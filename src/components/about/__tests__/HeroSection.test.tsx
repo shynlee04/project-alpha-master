@@ -15,10 +15,19 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HeroSection } from '../HeroSection';
 import * as i18next from 'react-i18next';
 
-// Mock react-i18next
+// Mock react-i18next with proper translations
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key,
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'about.hero.identity': 'about.hero.identity',
+        'about.hero.subtitle': 'about.hero.subtitle',
+        'about.hero.primaryCTA': 'View Projects',
+        'about.hero.secondaryCTA': 'Contact',
+        'about.hero.avatarAlt': 'Profile avatar',
+      };
+      return translations[key] || key;
+    },
     i18n: {
       language: 'en',
       changeLanguage: vi.fn(),
