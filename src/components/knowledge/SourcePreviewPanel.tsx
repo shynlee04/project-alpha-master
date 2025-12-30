@@ -117,7 +117,7 @@ function ChunkBoundaryBadge({ index, tokenCount, type }: { index: number; tokenC
     );
 }
 
-export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
+export function SourcePreviewPanel({ projectId: _projectId }: SourcePreviewPanelProps) {
     const { t } = useTranslation();
     const { selectedSource, isPreviewOpen, closePreview, updateMetadata, extractingMetadata } =
         useKnowledgeStore();
@@ -288,7 +288,7 @@ export function SourcePreviewPanel({ projectId }: SourcePreviewPanelProps) {
                         // Chunked view
                         chunks && chunks.length > 0 ? (
                             <div className="p-4 space-y-4">
-                                {chunks.map((chunk, idx) => (
+                                {chunks.map((chunk) => (
                                     <div key={chunk.chunkId} className="border-b border-border-dark pb-4 last:border-b-0">
                                         <ChunkBoundaryBadge
                                             index={chunk.chunkIndex}
