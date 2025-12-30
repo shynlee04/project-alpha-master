@@ -916,5 +916,21 @@
   "study.stats.beginner": "Người mới",
   "study.stats.intermediate": "Trung cấp",
   "study.stats.advanced": "Nâng cao",
-  "study.stats.master": "Thành thạo"
+  "study.stats.master": "Thành thạo",
+  "notes.saving": "Đang lưu...",
+  "notes.saved": "Đã lưu",
+  "notes.saveError": "Lưu thất bại",
+  "notes.selectNote": "Chọn ghi chú để bắt đầu chỉnh sửa",
+  "notes.noNoteSelected": "Chưa chọn ghi chú",
+  "notes.selectOrCreate": "Chọn ghi chú từ thanh bên hoặc tạo mới",
+  "notes.createNote": "Tạo ghi chú",
+  "notes.untitled": "Chưa đặt tên",
+  "notes.deleteConfirm": "Xóa ghi chú này và tất cả các ghi chú con?",
+  "notes.deleted": "Đã xóa ghi chú",
+  "notes.favorites": "Yêu thích",
+  "notes.allNotes": "Tất cả ghi chú",
+  "notes.search": "Tìm kiếm ghi chú...",
+  "notes.newNote": "Ghi chú mới",
+  "notes.expand": "Mở rộng",
+  "notes.collapse": "Thu gọn"
 }
