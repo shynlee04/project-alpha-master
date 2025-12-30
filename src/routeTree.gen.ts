@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
+import { Route as StudyRouteImport } from './routes/study'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IdeRouteImport } from './routes/ide'
@@ -23,6 +24,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
   path: '/test-fs-adapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudyRoute = StudyRouteImport.update({
+  id: '/study',
+  path: '/study',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/ide': typeof IdeRoute
   '/knowledge': typeof KnowledgeRoute
   '/settings': typeof SettingsRoute
+  '/study': typeof StudyRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/api/chat': typeof ApiChatRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/ide'
     | '/knowledge'
     | '/settings'
+    | '/study'
     | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/ide'
     | '/knowledge'
     | '/settings'
+    | '/study'
     | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/ide'
     | '/knowledge'
     | '/settings'
+    | '/study'
     | '/test-fs-adapter'
     | '/api/chat'
     | '/webcontainer/$'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   IdeRoute: typeof IdeRoute
   KnowledgeRoute: typeof KnowledgeRoute
   SettingsRoute: typeof SettingsRoute
+  StudyRoute: typeof StudyRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
   ApiChatRoute: typeof ApiChatRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/test-fs-adapter'
       fullPath: '/test-fs-adapter'
       preLoaderRoute: typeof TestFsAdapterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/study': {
+      id: '/study'
+      path: '/study'
+      fullPath: '/study'
+      preLoaderRoute: typeof StudyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   IdeRoute: IdeRoute,
   KnowledgeRoute: KnowledgeRoute,
   SettingsRoute: SettingsRoute,
+  StudyRoute: StudyRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
   ApiChatRoute: ApiChatRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,

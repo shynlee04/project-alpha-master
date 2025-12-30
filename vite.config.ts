@@ -231,7 +231,7 @@ const config = defineConfig(async () => {
     // SSR Configuration
     // Cloudflare plugin handles externals/bundling automatically
     ssr: DEPLOY_TARGET === 'cloudflare'
-      ? { noExternal: true } // Bundle everything for Cloudflare
+      ? { noExternal: true } // Bundle everything for Cloudflare (pdfjs-dist loaded from CDN at runtime)
       : {
         external: [
           '@xterm/xterm',
