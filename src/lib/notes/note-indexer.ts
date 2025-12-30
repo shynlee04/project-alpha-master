@@ -59,8 +59,7 @@ const DEFAULT_CONFIG: NoteIndexerConfig = {
     enableVectorSearch: true,
 };
 
-/** Index ID prefix for notes */
-const NOTE_INDEX_PREFIX = 'notes';
+
 
 // ============================================================================
 // Note Indexer Class
@@ -87,7 +86,8 @@ class NoteIndexer {
      * Get the index ID for a project's notes
      */
     private getIndexId(projectId: string): string {
-        return `${NOTE_INDEX_PREFIX}-${projectId}`;
+        // Use shared project index for unified RAG integration
+        return projectId;
     }
 
     /**

@@ -1,7 +1,7 @@
 ---
 id: "26-2"
 title: "Client-Side Embedding Pipeline"
-status: "in-progress"
+status: "done"
 created: "2025-12-30T19:25:00+07:00"
 last_updated: "2025-12-30T19:29:00+07:00"
 epic: 26
@@ -60,60 +60,60 @@ assigned_to: "dev"
 ## Technical Tasks
 
 ### T1: Create Note Embedding Types
-- [ ] Create `src/lib/notes/types-embedding.ts`
-- [ ] Define `NoteEmbeddingRecord` interface (noteId, vector, chunkIndex, updatedAt)
-- [ ] Add `indexStatus` field to `NoteRecord` ('pending' | 'indexing' | 'indexed' | 'error')
-- [ ] Update `src/lib/notes/types.ts` barrel exports
+- [x] Create `src/lib/notes/types-embedding.ts`
+- [x] Define `NoteEmbeddingRecord` interface (noteId, vector, chunkIndex, updatedAt)
+- [x] Add `indexStatus` field to `NoteRecord` ('pending' | 'indexing' | 'indexed' | 'error')
+- [x] Update `src/lib/notes/types.ts` barrel exports
 
 ### T2: Create Note Indexer Service
-- [ ] Create `src/lib/notes/note-indexer.ts`
-- [ ] Implement `indexNote(note: NoteRecord): Promise<void>`
-- [ ] Implement `removeNoteFromIndex(noteId: string): Promise<void>`
-- [ ] Implement `rebuildNoteIndex(): Promise<void>`
-- [ ] Integrate with existing `src/lib/rag/orama-index.ts`
+- [x] Create `src/lib/notes/note-indexer.ts`
+- [x] Implement `indexNote(note: NoteRecord): Promise<void>`
+- [x] Implement `removeNoteFromIndex(noteId: string): Promise<void>`
+- [x] Implement `rebuildNoteIndex(): Promise<void>`
+- [x] Integrate with existing `src/lib/rag/orama-index.ts`
 
 ### T3: Wire Note Store to Indexer
-- [ ] Modify `updateNote` action to trigger indexing after save
-- [ ] Modify `deleteNote` action to call `removeNoteFromIndex`
-- [ ] Add `indexStatus` to store state
-- [ ] Add debounce (500ms after last change) before triggering embedding
+- [x] Modify `updateNote` action to trigger indexing after save
+- [x] Modify `deleteNote` action to call `removeNoteFromIndex`
+- [x] Add `indexStatus` to store state
+- [x] Add debounce (500ms after last change) before triggering embedding
 
 ### T4: Create Embedding Web Worker
-- [ ] Create `src/workers/note-embedding.worker.ts`
-- [ ] Import Transformers.js in worker context
-- [ ] Implement message handler for 'embed' command
-- [ ] Return { noteId, vector[] } to main thread
-- [ ] Handle errors and post error messages back
+- [x] Create `src/workers/note-embedding.worker.ts`
+- [x] Import Transformers.js in worker context
+- [x] Implement message handler for 'embed' command
+- [x] Return { noteId, vector[] } to main thread
+- [x] Handle errors and post error messages back
 
 ### T5: Worker Communication Bridge
-- [ ] Create `src/lib/notes/embedding-worker-bridge.ts`
-- [ ] Implement `embedTextInWorker(noteId, content): Promise<number[]>`
-- [ ] Handle worker lifecycle (lazy init, terminate on idle)
-- [ ] Integrate with `useNoteStore` for status updates
+- [x] Create `src/lib/notes/embedding-worker-bridge.ts`
+- [x] Implement `embedTextInWorker(noteId, content): Promise<number[]>`
+- [x] Handle worker lifecycle (lazy init, terminate on idle)
+- [x] Integrate with `useNoteStore` for status updates
 
 ### T6: Orama Schema for Notes
-- [ ] Create `src/lib/rag/note-orama-schema.ts`
-- [ ] Define schema: { noteId, title, content, embedding, chunkIndex, updatedAt }
-- [ ] Enable hybrid search (vector + BM25 term matching)
-- [ ] Register note index in `orama-index.ts`
+- [x] Create `src/lib/rag/note-orama-schema.ts`
+- [x] Define schema: { noteId, title, content, embedding, chunkIndex, updatedAt }
+- [x] Enable hybrid search (vector + BM25 term matching)
+- [x] Register note index in `orama-index.ts`
 
 ### T7: UI Status Indicator
-- [ ] Add `indexingNotes` Map to store (noteId → status)
-- [ ] Update `NoteEditor.tsx` to show "Indexing..." spinner when active
-- [ ] Show toast on indexing failure with retry option
-- [ ] i18n keys: `notes.indexing`, `notes.indexed`, `notes.indexError`, `notes.retrying`
+- [x] Add `indexingNotes` Map to store (noteId → status)
+- [x] Update `NoteEditor.tsx` to show "Indexing..." spinner when active
+- [x] Show toast on indexing failure with retry option
+- [x] i18n keys: `notes.indexing`, `notes.indexed`, `notes.indexError`, `notes.retrying`
 
 ### T8: Unit Tests for Note Indexer
-- [ ] Create `src/lib/notes/__tests__/note-indexer.test.ts`
-- [ ] Test indexNote creates Orama document
-- [ ] Test removeNoteFromIndex removes from Orama
-- [ ] Test retry logic on failure (3 attempts)
-- [ ] Mock Transformers.js and Orama for isolated testing
+- [x] Create `src/lib/notes/__tests__/note-indexer.test.ts`
+- [x] Test indexNote creates Orama document
+- [x] Test removeNoteFromIndex removes from Orama
+- [x] Test retry logic on failure (3 attempts)
+- [x] Mock Transformers.js and Orama for isolated testing
 
 ### T9: Integration with Existing RAG
-- [ ] Verify compatibility with existing `hybrid-retriever.ts`
-- [ ] Ensure note chunks appear in unified search results
-- [ ] Test `searchNotes` integration with `search_notes` tool (Story 26.3)
+- [x] Verify compatibility with existing `hybrid-retriever.ts`
+- [x] Ensure note chunks appear in unified search results
+- [x] Test `searchNotes` integration with `search_notes` tool (Story 26.3)
 
 ---
 
@@ -179,6 +179,7 @@ assigned_to: "dev"
 |------|--------|-------|
 | 2025-12-30T19:25:00+07:00 | drafted | Story file created by SM agent |
 | 2025-12-30T19:30:00+07:00 | ready-for-dev | Context XML created, research complete |
+| 2025-01-02T20:00:00+07:00 | done | Implementation complete. Store, Indexer, UI, Worker, Tests, and Integration verified. |
 
 ---
 

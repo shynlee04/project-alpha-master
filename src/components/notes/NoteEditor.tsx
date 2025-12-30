@@ -21,7 +21,7 @@ import type { Block } from '@blocknote/core';
 import '@blocknote/mantine/style.css';
 import '@blocknote/core/fonts/inter.css';
 
-import { useNoteStore, useNoteSaveStatus } from '@/lib/notes';
+import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
@@ -88,6 +88,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const notes = useNoteStore((state) => state.notes);
     const note = notes.get(noteId);
     const saveStatus = useNoteSaveStatus();
+    const isIndexing = useIsNoteIndexing(noteId);
 
     // Get initial content from note
     const initialContent = useMemo(() => {
@@ -132,6 +133,20 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     </span>
                 );
             case 'saved':
+                if (isIndexing) {
+                    return (
+                        <span className="note-editor__status note-editor__status--saving">
+                            {t('notes.indexing', 'Indexing...')}
+                        </span>
+                    );
+                }
+                if (note?.isIndexed) {
+                    return (
+                        <span className="note-editor__status note-editor__status--saved">
+                            {t('notes.indexed', 'Indexed')}
+                        </span>
+                    );
+                }
                 return (
                     <span className="note-editor__status note-editor__status--saved">
                         {t('notes.saved', 'Saved')}

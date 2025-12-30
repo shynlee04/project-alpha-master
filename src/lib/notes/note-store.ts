@@ -18,6 +18,7 @@ import { db, type NoteRecord } from '@/lib/state/dexie-db';
 import type { NoteSaveStatus, CreateNoteParams, UpdateNoteParams } from './types';
 import { generateNoteId, extractTitleFromBlocks, DEFAULT_NOTE_BLOCKS } from './types';
 import type { Block } from '@blocknote/core';
+import { indexNote, removeNoteFromIndex } from './note-indexer';
 
 // ============================================================================
 // Store State Interface
@@ -29,6 +30,9 @@ interface NoteStoreState {
 
     /** Notes array for rendering (derived from Map) */
     notesArray: NoteRecord[];
+
+    /** Set of note IDs currently being indexed */
+    indexingNoteIds: Set<string>;
 
     /** Currently active note ID */
     activeNoteId: string | null;
@@ -94,6 +98,7 @@ export const useNoteStore = create<NoteStoreState>()(
             // Initial state
             notes: new Map(),
             notesArray: [],
+            indexingNoteIds: new Set(),
             activeNoteId: null,
             currentProjectId: null,
             saveStatus: 'idle',
@@ -161,18 +166,54 @@ export const useNoteStore = create<NoteStoreState>()(
                 try {
                     await db.notes.add(newNote);
 
-                    // Update local state
+                    // Update local state and set indexing status
                     set((state) => {
                         const newMap = new Map(state.notes);
                         newMap.set(noteId, newNote);
+                        const newIndexing = new Set(state.indexingNoteIds);
+                        newIndexing.add(noteId);
+
                         return {
                             notes: newMap,
                             notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
                             activeNoteId: noteId,
+                            indexingNoteIds: newIndexing
                         };
                     });
 
                     console.log(`[NoteStore] Created note ${noteId}`);
+
+                    // Trigger indexing (fire and forget)
+                    indexNote(newNote as any, currentProjectId)
+                        .then(async () => {
+                            const updates = { isIndexed: true, indexedAt: Date.now() };
+                            await db.notes.update(noteId, updates);
+                            set((state) => {
+                                const note = state.notes.get(noteId);
+                                if (!note) return state;
+
+                                const newMap = new Map(state.notes);
+                                newMap.set(noteId, { ...note, ...updates });
+
+                                const newIndexing = new Set(state.indexingNoteIds);
+                                newIndexing.delete(noteId);
+
+                                return {
+                                    notes: newMap,
+                                    notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
+                                    indexingNoteIds: newIndexing
+                                };
+                            });
+                        })
+                        .catch(err => {
+                            console.error('[NoteStore] Indexing failed for new note:', err);
+                            set(state => {
+                                const newIndexing = new Set(state.indexingNoteIds);
+                                newIndexing.delete(noteId);
+                                return { indexingNoteIds: newIndexing };
+                            });
+                        });
+
                     return noteId;
                 } catch (error) {
                     set({ error: (error as Error).message });
@@ -198,18 +239,23 @@ export const useNoteStore = create<NoteStoreState>()(
                         title = extractTitleFromBlocks(params.blocks as Block[]);
                     }
 
+                    const contentChanged = !!(params.blocks || params.title);
+
                     const updates: Partial<NoteRecord> = {
                         ...params,
                         title,
                         updatedAt: Date.now(),
+                        // Invalidate index if content changed
+                        ...(contentChanged ? { isIndexed: false } : {})
                     };
+
+                    const updatedNote = { ...note, ...updates } as NoteRecord;
 
                     await db.notes.update(params.id, updates);
 
                     // Update local state
                     set((state) => {
                         const newMap = new Map(state.notes);
-                        const updatedNote = { ...note, ...updates };
                         newMap.set(params.id, updatedNote);
                         return {
                             notes: newMap,
@@ -223,6 +269,45 @@ export const useNoteStore = create<NoteStoreState>()(
                         set({ saveStatus: 'idle' });
                     }, 2000);
 
+                    // Trigger indexing if content or title changed
+                    if (contentChanged) {
+                        set(state => {
+                            const newIndexing = new Set(state.indexingNoteIds);
+                            newIndexing.add(params.id);
+                            return { indexingNoteIds: newIndexing };
+                        });
+
+                        indexNote(updatedNote as any, updatedNote.projectId)
+                            .then(async () => {
+                                const indexUpdates = { isIndexed: true, indexedAt: Date.now() };
+                                await db.notes.update(params.id, indexUpdates);
+                                set((state) => {
+                                    const currentNote = state.notes.get(params.id);
+                                    if (!currentNote) return state;
+
+                                    const newMap = new Map(state.notes);
+                                    newMap.set(params.id, { ...currentNote, ...indexUpdates });
+
+                                    const newIndexing = new Set(state.indexingNoteIds);
+                                    newIndexing.delete(params.id);
+
+                                    return {
+                                        notes: newMap,
+                                        notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
+                                        indexingNoteIds: newIndexing
+                                    };
+                                });
+                            })
+                            .catch(err => {
+                                console.error('[NoteStore] Indexing failed for updated note:', err);
+                                set(state => {
+                                    const newIndexing = new Set(state.indexingNoteIds);
+                                    newIndexing.delete(params.id);
+                                    return { indexingNoteIds: newIndexing };
+                                });
+                            });
+                    }
+
                 } catch (error) {
                     set({ saveStatus: 'error', error: (error as Error).message });
                     console.error('[NoteStore] Failed to update note:', error);
@@ -231,6 +316,8 @@ export const useNoteStore = create<NoteStoreState>()(
 
             deleteNote: async (noteId: string) => {
                 try {
+                    const projectId = get().currentProjectId;
+
                     // Also delete all children recursively
                     const deleteRecursive = async (id: string) => {
                         const children = get().getNotesByParent(id);
@@ -263,6 +350,12 @@ export const useNoteStore = create<NoteStoreState>()(
                     });
 
                     console.log(`[NoteStore] Deleted note ${noteId} and children`);
+
+                    // Remove from index
+                    if (projectId) {
+                        removeNoteFromIndex(noteId, projectId)
+                            .catch(err => console.error('[NoteStore] Failed to remove from index:', err));
+                    }
                 } catch (error) {
                     set({ error: (error as Error).message });
                     console.error('[NoteStore] Failed to delete note:', error);
@@ -346,6 +439,7 @@ export const useNoteStore = create<NoteStoreState>()(
                 set({
                     notes: new Map(),
                     notesArray: [],
+                    indexingNoteIds: new Set(),
                     activeNoteId: null,
                     currentProjectId: null,
                     saveStatus: 'idle',
@@ -420,4 +514,12 @@ export function useNotesByParent(parentId: string | null): NoteRecord[] {
 export function useFavoriteNotes(): NoteRecord[] {
     const notesArray = useNoteStore((state) => state.notesArray);
     return notesArray.filter(n => n.isFavorite);
+}
+
+/**
+ * Check if a note is currently indexing
+ */
+export function useIsNoteIndexing(noteId: string): boolean {
+    const indexingNoteIds = useNoteStore((state) => state.indexingNoteIds);
+    return indexingNoteIds.has(noteId);
 }

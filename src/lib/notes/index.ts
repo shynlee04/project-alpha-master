@@ -48,6 +48,7 @@ export {
     useNoteSaveStatus,
     useNotesByParent,
     useFavoriteNotes,
+    useIsNoteIndexing,
 } from './note-store';
 
 // Indexer (Story 26.2)
