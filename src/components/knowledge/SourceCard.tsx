@@ -28,7 +28,7 @@ interface SourceCardProps {
 /**
  * Calculate reading time from source metadata
  */
-function calculateReadingTime(source: SourceRecord, t: ReturnType<typeof useTranslation>): string {
+function calculateReadingTime(source: SourceRecord, t: any): string {
     const wordsPerMinute = 200;
     const charsPerMinute = 1000;
 
@@ -45,7 +45,7 @@ function calculateReadingTime(source: SourceRecord, t: ReturnType<typeof useTran
 /**
  * Format metadata for display
  */
-function formatMetadata(source: SourceRecord, t: ReturnType<typeof useTranslation>): string {
+function formatMetadata(source: SourceRecord, t: any): string {
     if (source.wordCount) {
         return t('knowledge.source.wordCount', { count: source.wordCount.toLocaleString() });
     } else if (source.charCount) {

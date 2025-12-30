@@ -44,7 +44,7 @@ const optionVariants = cva(
 );
 
 interface QuestionCardProps {
-  question: QuizQuestion;
+  question: Omit<QuizQuestion, 'id' | 'createdAt'> & { id?: string; createdAt?: number };
   index: number;
   showAnswer: boolean;
   selectedAnswer: number | null;
@@ -63,6 +63,7 @@ export function QuestionCard({
   className,
 }: QuestionCardProps) {
   const { t } = useTranslation();
+  const [hoveredOption, setHoveredOption] = useState<number | null>(null);
 
   const getOptionVariant = (optionIndex: number): VariantProps<typeof optionVariants>['variant'] => {
     if (showAnswer) {
@@ -175,7 +176,7 @@ export function QuizPreview({
     setShowAnswers(newShowAnswers);
   };
 
-  const score = selectedAnswers.reduce((acc, answer, index) => {
+  const score = selectedAnswers.reduce<number>((acc, answer, index) => {
     if (answer === quiz.questions[index].correctIndex) return acc + 1;
     return acc;
   }, 0);

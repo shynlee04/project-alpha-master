@@ -15,6 +15,7 @@ export type FlashcardDifficulty = 'easy' | 'medium' | 'hard';
  */
 export interface Flashcard {
   id: string;
+  projectId: string;
   question: string;
   answer: string;
   difficulty: FlashcardDifficulty;

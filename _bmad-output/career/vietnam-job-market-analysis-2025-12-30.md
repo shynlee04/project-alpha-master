@@ -1,8 +1,91 @@
 # 🚀 Hồ Sơ Nghề Nghiệp: AI Agent Coordinator & Multi-Agent Systems Developer
 
-**Dự án:** Via-gent - Browser-based IDE with AI Agent Capabilities  
-**Thời gian hoàn thành:** < 1 tháng (solo developer)  
+**Dự án:** Via-gent - Browser-based IDE with AI Agent Capabilities
+**Thời gian hoàn thành:** < 1 tháng (solo developer)
 **Framework sử dụng:** BMAD V6 (Business Model & Agile Development) + Multi-Agent Orchestration
+**Background:** Quản lý Giáo dục (Education Management) & Ngôn ngữ Anh → AI/Tech Transition
+
+---
+
+## 💎 Lợi Thế Độc Đáo Từ Background Giáo Dục
+
+### Tại sao background Quản lý Giáo dục & Ngôn ngữ Anh là lợi thế trong kỷ nguyên AI?
+
+Việc chuyển đổi từ **Quản lý Giáo dục & Ngôn ngữ Anh** sang **AI/Tech** nghe có vẻ xa vời, nhưng thực tế đây là một lợi thế cực lớn trong kỷ nguyên **Generative AI (LLMs)**. Tại sao? Vì LLM (Large Language Models) bản chất là xử lý ngôn ngữ và logic.
+
+### 4 Điểm Nhấn "Vàng" Từ Background Giáo Dục (Chuyển Hóa Sang Tech)
+
+#### 1. Từ "Linguistic/Grammar Structure" ➡️ "Advanced Prompt Engineering"
+
+Đây là lợi thế lớn nhất của bạn mà dân thuần Tech (Coder) thường yếu. AI hiểu lệnh qua ngôn ngữ. Người giỏi cấu trúc ngữ pháp và logic ngôn ngữ sẽ viết Prompt tốt hơn hẳn.
+
+* **Kỹ năng cũ:** Phân tích ngữ pháp, cấu trúc câu, ngữ nghĩa (Semantics), diễn đạt gãy gọn để học viên hiểu.
+* **Điểm nhấn trong CV mới:**
+> "Áp dụng tư duy ngôn ngữ học (Linguistic Logic) để tối ưu hóa **System Prompts** cho các AI Agents, đảm bảo đầu ra chính xác, giảm thiểu ảo giác (hallucination) và tăng tính nhất quán (consistency) trong giao tiếp giữa các Agents."
+
+* **Từ khóa (Keywords):** *Chain-of-Thought (CoT) Prompting, Structured Outputs, Context Management, Semantic Analysis.*
+
+#### 2. Từ "Quản lý Đội ngũ Giáo viên" ➡️ "Multi-Agent Orchestration & Coordination"
+
+Bạn đã từng điều phối con người (Giáo viên, Nhân viên) - những "Agents" chạy bằng cơm với tính cách và nhiệm vụ khác nhau. Giờ bạn điều phối AI Agents. Nguyên lý quản lý (giao việc, kiểm soát chất lượng, quy trình) là như nhau.
+
+* **Kỹ năng cũ:** Phân công nhiệm vụ, quản lý KPI, điều phối lịch trình, xử lý xung đột giữa các nhân sự.
+* **Điểm nhấn trong CV mới:**
+> "Chuyển đổi kinh nghiệm quản lý nhân sự (Human Operations) sang **AI Agent Orchestration**. Thiết kế framework BMAD V6 dựa trên quy trình Agile để điều phối 15+ agents hoạt động song song, tương tự như việc quản lý một phòng ban chuyên môn cao."
+
+* **Từ khóa (Keywords):** *Workflow Automation, Role-based Access Control (RBAC), Process Optimization, Resource Allocation.*
+
+#### 3. Từ "Thiết kế Chương trình học (Curriculum Design)" ➡️ "Algorithm Design & Workflow Logic"
+
+Soạn giáo án là việc thiết kế một thuật toán: Bước 1 (Input) -> Bước 2 (Process) -> Bước 3 (Output/Check).
+
+* **Kỹ năng cũ:** Xây dựng lộ trình học tập (Syllabus), chia nhỏ kiến thức phức tạp thành từng bài học dễ hiểu (Scaffolding), đánh giá kết quả (Testing).
+* **Điểm nhấn trong CV mới:**
+> "Sử dụng tư duy sư phạm (Pedagogical Scaffolding) để thiết kế luồng xử lý (Workflow) cho AI. Chia nhỏ các tác vụ phức tạp thành chuỗi hành động đơn lẻ (Step-by-step logic) giúp AI xử lý chính xác các yêu cầu coding phức tạp."
+
+* **Từ khóa (Keywords):** *Algorithmic Thinking, Logical Flow Design, Task Decomposition, Step-by-Step Reasoning.*
+
+#### 4. Từ "Đánh giá & Phản hồi (Assessment & Feedback)" ➡️ "RLHF & Quality Assurance (QA)"
+
+Trong giáo dục, bạn chấm điểm và sửa lỗi cho học viên. Trong AI, đó là quá trình tinh chỉnh (Fine-tuning) và kiểm thử (QA).
+
+* **Kỹ năng cũ:** Chấm bài, đưa feedback chi tiết, sửa lỗi sai tư duy cho học viên.
+* **Điểm nhấn trong CV mới:**
+> "Thiết lập các tiêu chuẩn chất lượng (Quality Gates) cho đầu ra của AI Agent. Xây dựng cơ chế **Human-in-the-loop** để review code và logic, tương tự quy trình kiểm định chất lượng đào tạo, đảm bảo độ tin cậy của hệ thống Via-gent."
+
+* **Từ khóa (Keywords):** *Quality Assurance (QA), Human-in-the-loop, Error Handling, Output Validation.*
+
+### Cách Viết Phần "Kinh Nghiệm Cũ" Trong CV Mới
+
+Thay vì liệt kê nhiệm vụ cũ một cách nhàm chán, hãy viết lại chúng dưới lăng kính của một **Product Owner / System Architect**.
+
+**Vị trí cũ:** Academic Manager / English Center Manager
+
+**Mô tả lại (Re-framed for Tech):**
+
+> **Academic Manager & Operations Lead** | [Tên Công ty Cũ] | [Thời gian]
+> * **Operational System Design:** Xây dựng và tối ưu hóa quy trình vận hành cho [Số lượng] nhân sự và [Số lượng] học viên. -> *Kinh nghiệm nền tảng để phát triển framework quản lý BMAD V6.*
+> * **Instructional Logic:** Thiết kế hệ thống giáo trình và tài liệu hướng dẫn chuẩn hóa (Standard Operating Procedures - SOPs). -> *Kỹ năng chuyển đổi trực tiếp sang việc viết System Prompts và Documentation cho AI.*
+> * **User Empathy & UX:** Phân tích hành vi người học để tối ưu trải nghiệm dịch vụ. -> *Áp dụng vào việc thiết kế UI/UX thân thiện (User-centric) cho dự án Via-gent.*
+> * **Agile Leadership:** Quản lý dự án đào tạo theo mô hình cuốn chiếu, thích ứng nhanh với thay đổi thị trường. -> *Tư duy Agile/Scrum áp dụng vào phát triển phần mềm.*
+
+### Phần "Introduction/Summary" Trong CV (Kết hợp Cũ & Mới)
+
+Đây là đoạn quan trọng nhất để "bán" sự kết hợp độc đáo của bạn:
+
+> **"Lập trình viên AI & Chuyên gia Tự động hóa với nền tảng vững chắc về Quản lý Giáo dục & Ngôn ngữ học.**
+> **Sự kết hợp độc đáo giữa tư duy logic ngôn ngữ (Linguistic Logic) và kỹ thuật lập trình hiện đại (Modern Tech Stack) cho phép tôi xây dựng các hệ thống Multi-Agent giao tiếp hiệu quả và chính xác.**
+> **Đã chứng minh năng lực qua dự án Via-gent: tự phát triển framework BMAD V6 để điều phối 15+ AI Agents, chuyển hóa tư duy quản lý con người sang quản lý đội ngũ AI ảo."**
+
+### Chiến lược trả lời phỏng vấn (Khi bị hỏi về chuyển ngành)
+
+Nếu HR hỏi: *"Tại sao anh làm giáo dục lại qua làm code?"*
+
+**Câu trả lời "triệu đô":**
+
+> "Thực ra hai nghề này có điểm chung rất lớn là **Tư duy Hệ thống** và **Ngôn ngữ**.
+> Trước đây tôi dùng ngôn ngữ để lập trình tư duy cho con người (Giáo dục). Bây giờ tôi dùng ngôn ngữ và logic để lập trình tư duy cho AI (Prompt Engineering & Coding).
+> Dự án Via-gent và framework BMAD là minh chứng cho việc tôi áp dụng tư duy quản lý quy trình chặt chẽ của ngành giáo dục vào việc kiểm soát sự hỗn loạn của AI, tạo ra một sản phẩm có tính kỷ luật và độ chính xác cao."
 
 ---
 
@@ -422,6 +505,146 @@ bằng cách xây dựng một hệ thống phức tạp từ đầu đến cu�
 ### **Câu Slogan Cho CV:**
 
 > **"From solo developer to multi-agent orchestra conductor - building the future of AI-powered development tools"**
+
+---
+
+## 🏢 Top 10 Công Ty Việt Nam Để Ứng Tuyển
+
+Dưới đây là danh sách 10 công ty hàng đầu tại Việt Nam đang tuyển dụng nhân sự cho các vị trí liên quan đến AI, Machine Learning, và Full-stack Development với mức lương hấp dẫn:
+
+### 1. **VNG Corporation** 🏆
+- **Website:** [vng.com.vn](https://vng.com.vn)
+- **Vị trí phù hợp:** AI Engineer, Senior Frontend Developer, AI Product Engineer
+- **Mức lương:** $1,500 - $3,000+ (Senior)
+- **Tech Stack:** React, Node.js, Python, TensorFlow, PyTorch
+- **Tại sao phù hợp:** VNG là công ty công nghệ lớn nhất Việt Nam, đang đầu tư mạnh vào AI và ML. Dự án Via-gent của bạn với multi-agent orchestration sẽ là điểm cộng lớn.
+
+### 2. **FPT Software** 💻
+- **Website:** [fpt-software.com](https://fpt-software.com)
+- **Vị trí phù hợp:** AI/ML Engineer, Full-stack Developer, Technical Lead
+- **Mức lương:** $1,200 - $2,500+ (Senior)
+- **Tech Stack:** React, Angular, .NET, Azure AI, AWS
+- **Tại sao phù hợp:** FPT có nhiều dự án quốc tế về AI và automation. Kinh nghiệm của bạn với WebContainer và agent orchestration sẽ rất giá trị.
+
+### 3. **VinAI Research** 🧠
+- **Website:** [vinai.io](https://vinai.io)
+- **Vị trí phù hợp:** AI Research Engineer, ML Engineer, Applied AI Engineer
+- **Mức lương:** $2,000 - $4,000+ (Senior)
+- **Tech Stack:** Python, PyTorch, TensorFlow, NLP, Computer Vision
+- **Tại sao phù hợp:** VinAI là viện nghiên cứu AI hàng đầu Việt Nam. Dù họ tập trung vào research, kinh nghiệm practical AI của bạn sẽ là điểm mạnh.
+
+### 4. **MoMo (Mobile Money)** 💰
+- **Website:** [momo.vn](https://momo.vn)
+- **Vị trí phù hợp:** Senior Frontend Developer, AI Engineer, Product Engineer
+- **Mức lương:** $1,500 - $3,000+ (Senior)
+- **Tech Stack:** React, React Native, Node.js, Python, TensorFlow
+- **Tại sao phù hợp:** MoMo đang mở rộng AI cho fintech. Kinh nghiệm của bạn với browser-based IDE và agent tools sẽ rất phù hợp.
+
+### 5. **Shopee Vietnam** 🛒
+- **Website:** [shopee.vn](https://shopee.vn)
+- **Vị trí phù hợp:** Senior Frontend Developer, ML Engineer, Data Engineer
+- **Mức lương:** $1,800 - $3,500+ (Senior)
+- **Tech Stack:** React, Go, Python, TensorFlow, Spark
+- **Tại sao phù hợp:** Shopee có team AI mạnh tại Vietnam. Dự án của bạn với multi-agent system sẽ rất ấn tượng.
+
+### 6. **Grab Vietnam** 🚗
+- **Website:** [grab.com/vn](https://grab.com/vn)
+- **Vị trí phù hợp:** Senior Software Engineer, ML Engineer, AI Platform Engineer
+- **Mức lương:** $2,000 - $4,000+ (Senior)
+- **Tech Stack:** React, Go, Python, TensorFlow, Kubernetes
+- **Tại sao phù hợp:** Grab có team AI mạnh tại Vietnam. Kinh nghiệm của bạn với agent orchestration sẽ rất giá trị.
+
+### 7. **Viettel Digital** 📡
+- **Website:** [viettel.vn](https://viettel.vn)
+- **Vị trí phù hợp:** AI Engineer, Senior Full-stack Developer, Technical Architect
+- **Mức lương:** $1,500 - $3,000+ (Senior)
+- **Tech Stack:** React, Vue, .NET, Python, Azure AI
+- **Tại sao phù hợp:** Viettel đang đầu tư mạnh vào AI và digital transformation. Framework BMAD của bạn sẽ là điểm cộng.
+
+### 8. **KMS Technology** 🏢
+- **Website:** [kms-technology.com](https://kms-technology.com)
+- **Vị trí phù hợp:** Senior Frontend Developer, AI/ML Engineer, Technical Lead
+- **Mức lương:** $1,200 - $2,500+ (Senior)
+- **Tech Stack:** React, Angular, .NET, Python, Azure AI
+- **Tại sao phù hợp:** KMS làm nhiều dự án quốc tế. Kinh nghiệm của bạn với modern stack sẽ rất phù hợp.
+
+### 9. **NashTech Vietnam** 💼
+- **Website:** [nashtechglobal.com](https://nashtechglobal.com)
+- **Vị trí phù hợp:** Senior Frontend Developer, AI Engineer, Solution Architect
+- **Mức lương:** $1,300 - $2,800+ (Senior)
+- **Tech Stack:** React, .NET, Python, Azure AI, AWS
+- **Tại sao phù hợp:** NashTech có nhiều dự án AI cho khách hàng quốc tế. Dự án của bạn sẽ rất ấn tượng.
+
+### 10. **Sphinx JSC** 🐍
+- **Website:** [sphinxjsc.com](https://sphinxjsc.com)
+- **Vị trí phù hợp:** AI Engineer, Senior Full-stack Developer, AI Product Developer
+- **Mức lương:** $1,000 - $2,200+ (Senior)
+- **Tech Stack:** React, Node.js, Python, OpenAI API, LangChain
+- **Tại sao phù hợp:** Sphinx chuyên về AI agent development. Dự án Via-gent của bạn là ví dụ hoàn hảo cho kinh nghiệm này.
+
+---
+
+## ✉️ Mẫu Cover Letter (Thư Ứng Tuyển)
+
+### Mẫu 1: Tiếng Việt (Formal)
+
+**Kính gửi: [Tên người tuyển dụng/Bộ phận tuyển dụng]**
+
+Tôi viết thư này để ứng tuyển cho vị trí **[Tên vị trí]** tại **[Tên công ty]**. Với kinh nghiệm xây dựng **Via-gent** - một browser-based IDE với AI agent capabilities sử dụng framework BMAD V6 để điều phối multiple AI agents, tôi tin rằng mình có thể đóng góp đáng kể cho team của quý công ty.
+
+**Về tôi:**
+- Solo developer đã xây dựng enterprise-grade AI IDE trong **< 1 tháng**
+- Thiết kế và implement **BMAD V6 Framework** - enterprise-level framework cho multi-agent orchestration
+- Kinh nghiệm với **React 18, TypeScript, TanStack ecosystem, WebContainer API**
+- Tích hợp **multiple LLM providers** (OpenRouter, Anthropic, etc.) với streaming chat
+- Xây dựng **15+ specialized agent modes** với context isolation và handoff artifacts
+
+**Tại sao tôi phù hợp:**
+- Khả năng **rapid prototyping** và **full-stack development**
+- Kinh nghiệm thực tế với **multi-agent systems** và **AI/LLM integration**
+- Tư duy **system architecture** và **process design** từ background giáo dục
+- Kỹ năng **prompt engineering** và **agent orchestration** từ kinh nghiệm ngôn ngữ
+- Portfolio-driven với **live demo** và **comprehensive documentation**
+
+Tôi rất mong có cơ hội được trao đổi chi tiết hơn về cách tôi có thể đóng góp cho **[Tên công ty]**. Cảm ơn quý công ty đã xem xét hồ sơ của tôi.
+
+Trân trọng,
+
+**[Tên của bạn]**
+[Email]
+[Số điện thoại]
+[LinkedIn/GitHub]
+
+---
+
+### Mẫu 2: Tiếng Anh (International)
+
+**Dear [Hiring Manager/Recruitment Team],**
+
+I am writing to express my interest in the **[Position Name]** position at **[Company Name]**. Having built **Via-gent** - a browser-based IDE with AI agent capabilities using the BMAD V6 framework to coordinate multiple AI agents - I believe I can make significant contributions to your team.
+
+**About Me:**
+- Solo developer who built an enterprise-grade AI IDE in **< 1 month**
+- Designed and implemented **BMAD V6 Framework** - an enterprise-level framework for multi-agent orchestration
+- Experience with **React 18, TypeScript, TanStack ecosystem, WebContainer API**
+- Integrated **multiple LLM providers** (OpenRouter, Anthropic, etc.) with streaming chat
+- Built **15+ specialized agent modes** with context isolation and handoff artifacts
+
+**Why I'm a Good Fit:**
+- Strong **rapid prototyping** and **full-stack development** capabilities
+- Practical experience with **multi-agent systems** and **AI/LLM integration**
+- **System architecture** and **process design** mindset from educational background
+- **Prompt engineering** and **agent orchestration** skills from language expertise
+- Portfolio-driven approach with **live demo** and **comprehensive documentation**
+
+I would welcome the opportunity to discuss how I can contribute to **[Company Name]**. Thank you for considering my application.
+
+Sincerely,
+
+**[Your Name]**
+[Email]
+[Phone Number]
+[LinkedIn/GitHub]
 
 ---
 

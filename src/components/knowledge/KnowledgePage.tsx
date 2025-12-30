@@ -15,7 +15,6 @@ import { SourceImportDialog } from '@/components/knowledge/SourceImportDialog';
 import { RAGPanelContainer } from '@/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
-import { useRAGStore } from '@/lib/state/rag-store';
 import { useResponsive } from '@/hooks/useResponsive';
 
 export function KnowledgePage() {

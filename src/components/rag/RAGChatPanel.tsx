@@ -9,7 +9,7 @@
 
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Trash2, Bot, User, MessageSquare, Loader2 } from 'lucide-react';
+import { Send, Trash2, Bot, User, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
@@ -69,11 +69,11 @@ function formatTime(timestamp: number): string {
  */
 export const RAGChatPanel = memo(function RAGChatPanel({
   messages,
-  activeCitation,
+  activeCitation: _activeCitation,
   onSendMessage,
   onClearChat,
   onCitationClick,
-  onCloseCitation,
+  onCloseCitation: _onCloseCitation,
   loading,
   error,
 }: RAGChatPanelProps) {

@@ -12,6 +12,7 @@
 
 // Types
 export * from './types';
+import { createSearchNotesClientTool } from './search-notes-tool';
 
 // Tool parser (Story 2-3)
 export {
@@ -33,6 +34,9 @@ export { listFilesDef, createListFilesTool, createListFilesClientTool } from './
 
 // Terminal tool definitions (Story 25-3)
 export { executeCommandDef, executeCommandToolConfig, createExecuteCommandTool, createExecuteCommandClientTool } from './execute-command-tool';
+
+// Note tool definitions (Story 26-3)
+export { searchNotesDef, createSearchNotesClientTool } from './search-notes-tool';
 
 // Re-export facades for convenience
 export type { AgentFileTools, AgentTerminalTools } from '../facades';
@@ -116,6 +120,7 @@ export function getClientTools(
         ft.writeFile,
         ft.listFiles,
         tt.executeCommand,
+        createSearchNotesClientTool(),
     ];
 }
 

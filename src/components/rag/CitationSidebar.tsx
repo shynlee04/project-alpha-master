@@ -65,7 +65,7 @@ export function CitationSidebar({
           </p>
           {citation.sourceId && (
             <Button
-              variant="link"
+              variant="ghost"
               size="sm"
               onClick={() => onOpenSource?.(citation.sourceId)}
               className="h-auto p-0 text-xs text-primary hover:text-primary/80 rounded-none"

@@ -15,7 +15,7 @@ import { QuizResults } from './QuizResults';
 import { QuizReview } from './QuizReview';
 
 interface QuizContainerProps {
-  quiz: Quiz;
+  quiz?: Quiz;
   onComplete?: (result: QuizResult) => void;
   onExit?: () => void;
 }
@@ -24,9 +24,21 @@ interface QuizContainerProps {
  * Main quiz container component
  * Manages state and renders appropriate view based on quiz progress
  */
-export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) {
+export function QuizContainer({ quiz: quizProp, onComplete, onExit }: QuizContainerProps) {
   const { t } = useTranslation();
   const [result, setResult] = useState<QuizResult | null>(null);
+
+  // TODO: Load quiz from store if not provided
+  // For now, show empty state if no quiz
+  if (!quizProp) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">{t('quizzes.noQuizSelected')}</p>
+      </div>
+    );
+  }
+
+  const quiz = quizProp;
 
   const {
     session,

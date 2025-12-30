@@ -10,13 +10,12 @@
 import { useState, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, MessageSquare, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RAGSearchPanel } from './RAGSearchPanel';
 import { RAGChatPanel } from './RAGChatPanel';
 import { CitationSidebar } from './CitationSidebar';
 import { useRAGStore } from '@/lib/state/rag-store';
-import type { ExtendedSearchResult, SearchMode, Citation } from '@/lib/rag/types';
+import type { SearchMode, Citation } from '@/lib/rag/types';
 
 interface RAGPanelContainerProps {
   /** Current project ID */
@@ -45,7 +44,6 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
     searchResults,
     searchMode,
     chatMessages,
-    citations,
     indexStatus,
     documentCount,
     loading,
@@ -92,8 +90,8 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
   const storeActiveCitation = useRAGStore((s) => s.activeCitation);
   const displayCitation = activeCitation || storeActiveCitation;
 
-  // Check if we have sources to search
-  const hasSources = documentCount > 0;
+  // Check if we have sources to search (for future EmptyState usage)
+  const _hasSources = documentCount > 0;
 
   return (
     <div className="flex h-full w-full">
@@ -163,8 +161,9 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
 
 /**
  * Placeholder shown when no sources are indexed
+ * (Currently unused, reserved for future implementation)
  */
-function EmptyState() {
+function _EmptyState() {
   const { t } = useTranslation();
 
   return (
