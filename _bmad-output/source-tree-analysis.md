@@ -1,57 +1,34 @@
 # Source Tree Analysis
 
-**Generated:** 2025-12-28
-
-## Directory Structure
+## Project Structure
+**Root:** Monolithic implementation with server-side routes and client-side logic.
 
 ```
-project-alpha-master/
-├── .agent/              # AI Agent configuration
-├── .gemini/             # Gemini AI configuration/cache
-├── .github/             # GitHub Actions and workflows
-├── _bmad/               # BMAD Framework Core
-├── _bmad-output/        # Generated Documentation & Artifacts
-├── docs/                # Project documentation
-├── public/              # Static assets
-├── server/              # Server-side logic
-│   └── middleware/      # Request processing middleware
-├── src/                 # Main Application Source
-│   ├── components/      # UI Components
-│   │   ├── agent/       # Agent interface components
-│   │   ├── chat/        # Chat interface components
-│   │   ├── common/      # Shared components
-│   │   ├── dashboard/   # Dashboard views
-│   │   ├── hub/         # Hub/Repository views
-│   │   ├── ide/         # Core IDE components (Editor, Terminal)
-│   │   ├── layout/      # Application layouts
-│   │   └── ui/          # Base UI primitives (Radix/Tailwind)
-│   ├── hooks/           # Custom React hooks
-│   ├── i18n/            # Internationalization setup
-│   ├── lib/             # Utilities and helper functions
-│   ├── mocks/           # Test mocks
-│   ├── routes/          # TanStack Router definitions
-│   ├── stores/          # Zustand state stores
-│   ├── styles/          # Global styles
-│   ├── types/           # TypeScript definitions
-│   ├── router.tsx       # Router configuration
-│   └── server.ts        # Server entry point
-├── netlify.toml         # Netlify configuration
-├── package.json         # Dependencies and scripts
-├── tsconfig.json        # TypeScript configuration
-├── vite.config.ts       # Vite configuration
-└── wrangler.jsonc       # Cloudflare configuration
+/
+├── .bmad/                # Agent configuration
+├── server/               # Server-side configuration (root level)
+├── src/                  # Application Source
+│   ├── components/       # Domain-grouped React components
+│   │   ├── chat/         # AI Interface
+│   │   ├── ide/          # Editor & Terminal
+│   │   └── ui/           # Atomic Design System
+│   ├── lib/              # Core Logic
+│   │   ├── agent/        # AI Tools & Logic
+│   │   ├── validation/   # Zod Schemas
+│   │   └── webcontainer/ # Runtime
+│   ├── routes/           # Routing
+│   │   └── api/          # API Endpoints
+│   │       ├── chat.ts
+│   │       ├── flashcards/
+│   │       └── quizzes/
+│   ├── stores/           # Zustand State
+│   └── types/            # TypeScript Definitions
+├── public/               # Static Assets
+└── package.json          # Dependencies
 ```
 
-## Critical Directories
-
-### `src/components/ide/`
-Contains the core logic for the IDE experience, likely wrapping Monaco Editor and xterm.js interactions. This is a critical domain area.
-
-### `src/routes/`
-Defines the URL structure and page hierarchy. Using TanStack Router's file-based routing.
-
-### `src/stores/`
-Global state management using Zustand. Critical for managing application state like active files, terminal sessions, and user settings.
-
-### `src/lib/`
-Presumably contains the WebContainer integration logic and file system abstractions required for the in-browser IDE.
+## Critical Pathways
+1.  **Entry Point:** `src/main.tsx` (Vite app entry).
+2.  **Routing:** `src/routes/` defines the app structure.
+3.  **API Layer:** `src/routes/api/` contains the server-side logic for AI and tools.
+4.  **State:** `src/stores/` manages global application state (threads, settings).

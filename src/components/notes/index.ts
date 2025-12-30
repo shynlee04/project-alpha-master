@@ -5,3 +5,4 @@
  */
 
 export { NoteEditor, NoteEditorEmpty } from './NoteEditor';
+export { NotesPage } from './NotesPage';

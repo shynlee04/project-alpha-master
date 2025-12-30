@@ -45,9 +45,30 @@ vi.mock('../ScrollIndicator', () => ({
   ),
 }));
 
+// Setup window object for tests
+const mockWindow = {
+  innerWidth: 1024,
+  innerHeight: 768,
+  matchMedia: vi.fn().mockImplementation((query) => ({
+    matches: query === '(prefers-reduced-motion: reduce)',
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+};
+
+// Define window if it doesn't exist
+if (typeof window === 'undefined') {
+  (global as any).window = mockWindow;
+}
+
 describe('HeroSection', () => {
   beforeEach(() => {
-    // Mock window.innerWidth for responsive tests
+    // Reset window.innerWidth for responsive tests
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
@@ -396,25 +417,17 @@ describe('HeroSection', () => {
 
   describe('Reduced Motion', () => {
     beforeEach(() => {
-      // Mock prefers-reduced-motion media query
-      Object.defineProperty(window, 'matchMedia', {
-        writable: true,
-        value: vi.fn().mockImplementation((query) => ({
-          matches: query === '(prefers-reduced-motion: reduce)',
-          media: query,
-          onchange: null,
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-        })),
-      });
-    });
-
-    afterEach(() => {
-      // Reset matchMedia mock
-      vi.restoreAllMocks();
+      // Reset matchMedia mock for reduced motion tests
+      window.matchMedia = vi.fn().mockImplementation((query) => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
     });
 
     it('renders correctly with prefers-reduced-motion enabled', () => {

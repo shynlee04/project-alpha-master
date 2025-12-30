@@ -1,51 +1,30 @@
-# Project Alpha Overview
-
-**Generated:** 2025-12-28
-**Type:** Web Application (Monolith)
+# Project Scan Report
 
 ## Executive Summary
+This project is a modern, AI-powered IDE built with **TanStack Start** and **React**. It features a rich client-side architecture leveraging **WebContainers** for in-browser Node.js execution and **Monaco Editor** for code editing. The tech stack is current, utilizing **TailwindCSS v4** and **TanStack Router**.
 
-Project Alpha is a sophisticated web-based Integrated Development Environment (IDE) built with modern React technologies. It leverages WebContainers for in-browser Node.js execution, enabling a full development experience directly in the browser. The detailed architecture suggests a focus on AI-assisted coding, with integrations for various AI providers.
+## Project Classification
+- **Type:** Web Application (Monolith)
+- **Primary Language:** TypeScript
+- **Framework:** TanStack Start
 
-## Technology Stack
+## Directory Structure Overview
+- `src/`: Core source code
+  - `components/`: UI and feature components
+  - `routes/`: Application routes (file-based)
+    - `api/`: Server-side API endpoints
+  - `stores/`: Global state management
+  - `lib/`: Utilities and core logic
+- `server/`: Server-side configuration/middleware
+- `public/`: Static assets
 
-| Category | Technology | Description |
-| :--- | :--- | :--- |
-| **Framework** | React 19 | UI Library |
-| **Meta-Framework** | TanStack Start | SSR/Router/Server Functions |
-| **Routing** | TanStack Router | Type-safe routing |
-| **Build Tool** | Vite | Fast build tool |
-| **Language** | TypeScript | Typed JavaScript |
-| **Styling** | TailwindCSS v4 | Utility-first CSS |
-| **UI Library** | Radix UI | Headless UI primitives |
-| **State Management** | Zustand | Global state |
-| **Persistence** | Dexie.js (IndexedDB) | Local database |
-| **Editor** | Monaco Editor | VS Code-like editor |
-| **Terminal** | xterm.js | Web-based terminal |
-| **Runtime** | WebContainer | In-browser Node.js |
-| **Testing** | Vitest, React Testing Library | Unit and Integration testing |
-| **AI Integration** | TanStack AI | AI Provider abstraction |
+## Key Findings
+- **High Complexity Client:** Includes filesystem emulation and terminal integration.
+- **AI Integration:** Deep integration with AI providers via streaming endpoints.
+- **Local-First:** Relies heavily on browser storage (IndexedDB).
 
-## Architecture
-
-The project follows a **Client-Centric Modular Monolith** pattern.
-- **Frontend**: Heavy client-side logic utilizing WebContainers to run code locally in the browser.
-- **Routing**: File-based routing via `src/routes` (TanStack Router).
-- **Backend/API**: Utilizes TanStack Start for server functions, likely deployed to edge/serverless variants (Cloudflare/Netlify).
-- **Offline Capabilities**: Uses Dexie.js for robust local data storage, enabling offline-first or local-first development workflows.
-
-## Repository Structure
-
-- **`src/`**: Core application source code.
-  - **`components/`**: UI components organized by domain (`ide`, `chat`, `ui`, etc.).
-  - **`routes/`**: Application routes.
-  - **`lib/`, `hooks/`, `stores/`**: Shared logic and state.
-- **`server/`**: Server-side logic (Middleware).
-- **`docs/`**: Project documentation history.
-- **`public/`**: Static assets.
-
-## Deployment
-
-Configuration files suggest multi-platform deployment support:
-- **Netlify**: `netlify.toml`
-- **Cloudflare Workers/Pages**: `wrangler.jsonc`
+## Generated Documentation
+- [Technology Stack](./technology-stack.md)
+- [API Contracts](./api-contracts.md)
+- [Data Models](./data-models.md)
+- [Component Inventory](./component-inventory.md) _(To be generated)_

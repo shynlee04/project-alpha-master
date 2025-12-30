@@ -2,7 +2,7 @@
  * EPIC_ID: 29
  * STORY_ID: 29-2
  * CREATED_AT: 2025-12-30T15:38:00Z
- * UPDATED_AT: 2025-12-30T16:10:00Z
+ * UPDATED_AT: 2025-12-30T16:43:00Z
  *
  * HeroSection Component
  *
@@ -134,6 +134,7 @@ export function HeroSection({
   return (
     <section
       id="hero"
+      data-testid="hero-section"
       className={`hero-section ${className}`}
       aria-labelledby="hero-heading"
       role="region"
@@ -172,7 +173,6 @@ export function HeroSection({
           <img
             src={avatarUrl}
             alt={avatarAlt || t('about.hero.avatarAlt')}
-            aria-hidden="true"
             style={{
               width: '120px',
               height: '120px',
@@ -232,6 +232,7 @@ export function HeroSection({
         >
           {/* Primary CTA */}
           <button
+            type="button"
             onClick={() => handleScroll(primaryCTATarget)}
             className="cta-button primary"
             aria-label={primaryCTALabel || t('about.hero.primaryCTA')}
@@ -262,18 +263,20 @@ export function HeroSection({
           </button>
 
           {/* Secondary CTA */}
-          <button
-            onClick={() => handleScroll(secondaryCTATarget)}
-            className="cta-button secondary"
-            aria-label={secondaryCTALabel || t('about.hero.secondaryCTA')}
-            style={{
-              backgroundColor: 'transparent',
-              color: 'hsl(var(--foreground))',
-              padding: 'var(--spacing-desktop) * 2',
-              fontSize: '16px',
-              fontWeight: 600,
-              lineHeight: 1,
-              border: '2px solid hsl(var(--border))',
+          {secondaryCTALabel !== undefined && (
+            <button
+              type="button"
+              onClick={() => handleScroll(secondaryCTATarget)}
+              className="cta-button secondary"
+              aria-label={secondaryCTALabel || t('about.hero.secondaryCTA')}
+              style={{
+                backgroundColor: 'transparent',
+                color: 'hsl(var(--foreground))',
+                padding: 'var(--spacing-desktop) * 2',
+                fontSize: '16px',
+                fontWeight: 600,
+                lineHeight: 1,
+                border: '2px solid hsl(var(--border))',
               borderRadius: 'var(--radius)',
               cursor: 'pointer',
               boxShadow: 'var(--shadow-pixel)',
@@ -291,8 +294,9 @@ export function HeroSection({
               e.currentTarget.style.borderColor = 'hsl(var(--border))';
             }}
           >
-            {secondaryCTALabel || t('about.hero.secondaryCTA')}
-          </button>
+              {secondaryCTALabel || t('about.hero.secondaryCTA')}
+            </button>
+          )}
         </div>
 
         {/* Scroll Indicator */}
@@ -334,7 +338,7 @@ export function HeroSection({
             min-width: unset !important;
           }
           
-          img[aria-hidden="true"] {
+          img {
             width: 80px !important;
             height: 80px !important;
             margin-bottom: var(--spacing-mobile) * 2 !important;
@@ -364,7 +368,7 @@ export function HeroSection({
             min-width: 160px !important;
           }
           
-          img[aria-hidden="true"] {
+          img {
             width: 100px !important;
             height: 100px !important;
             margin-bottom: var(--spacing-tablet) * 2 !important;
@@ -410,7 +414,7 @@ export function HeroSection({
           }
           
           .hero-content > *,
-          img[aria-hidden="true"] {
+          img {
             animation: none !important;
             opacity: 1 !important;
           }

@@ -1,159 +1,128 @@
-# Project Alpha - Component Inventory
+# Component Inventory
 
-> **Generated:** 2025-12-20 | **Scan Level:** Exhaustive
+## Inventory Stats
+- **Total Components:** 100+ identified via static analysis.
+- **Design System:** ~30 atomic components.
+- **Feature Components:** ~70 domain-specific components.
 
-## IDE Components
+## 1. Atomic Design System (`src/components/ui`)
+Base primitives built with Radix UI and TailwindCSS.
 
-### Core IDE Components (`src/components/ide/`)
+| Component | Props Interface | Description |
+|-----------|-----------------|-------------|
+| `ApprovalOverlay` | `ApprovalOverlayProps` | Modal for user approvals |
+| `Button` | `ButtonProps` | Standard interactive button |
+| `Card` | `CardProps` | Container surfacing content |
+| `Checkbox` | `CheckboxProps` | Boolean input |
+| `CollapsibleSection` | `CollapsibleSectionProps` | Expandable content area |
+| `ContextTooltip` | `ContextTooltipProps` | Helper text on hover |
+| `Dialog` | `DialogContentProps` | Modal window |
+| `DropdownMenu` | - | Context menus |
+| `EmptyState` | `EmptyStateProps` | Placeholder for no data |
+| `ErrorState` | `ErrorStateProps` | Error feedback display |
+| `Input` | `InputProps` | Text input field |
+| `KeyboardShortcutsOverlay` | `KeyboardShortcutsOverlayProps` | Hotkey reference |
+| `Label` | `LabelProps` | Form label |
+| `LoadingState` | `LoadingStateProps` | Spinner/Loading feedback |
+| `ProgressIndicator` | `ProgressIndicatorProps` | Visual progress tracker |
+| `Select` | `SelectTriggerProps` | Dropdown selection |
+| `SkeletonLoader` | `SkeletonLoaderProps` | Loading placeholder |
+| `Switch` | `SwitchProps` | Toggle switch |
+| `Textarea` | `TextareaProps` | Multiline text input |
+| `Toast` | - | Notification notifications |
+| `Tooltip` | - | Info on hover |
 
-| Component | File | Description |
-|-----------|------|-------------|
-| **XTerminal** | `XTerminal.tsx` | Terminal emulator using xterm.js, bridges to WebContainer jsh shell |
-| **AgentChatPanel** | `AgentChatPanel.tsx` | AI agent conversation interface (future: full tool-calling support) |
-| **SyncStatusIndicator** | `SyncStatusIndicator.tsx` | Displays file sync status (synced/syncing/error) |
-| **FileTree** | `FileTree/` | File explorer with folder navigation, context menus |
-| **MonacoEditor** | `MonacoEditor/` | Code editor wrapper with language detection, themes |
-| **PreviewPanel** | `PreviewPanel/` | iframe-based preview of WebContainer dev server |
+## 2. IDE Core (`src/components/ide`)
+The primary coding environment interface.
 
-### Layout Components (`src/components/layout/`)
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `AgentChatPanel` | - | Main agent interaction area |
+| `AppearanceSettings` | - | Theme/font config |
+| `BentoCardPreview` | `BentoCardPreviewProps` | Card layout for dashboards |
+| `BentoGrid` | `BentoGridProps` | Grid layout system |
+| `CommandPalette` | `CommandPaletteProps` | Global command menu |
+| `EnhancedChatInterface` | - | Rich chat features |
+| `FeatureSearch` | `FeatureSearchProps` | Capability discovery |
+| `FileTree` | `FileTreeProps` | File system navigation |
+| `MonacoEditor` | `MonacoEditorProps` | Code editor instance |
+| `PreviewPanel` | `PreviewPanelProps` | WebContainer outputs |
+| `QuickActionsMenu` | `QuickActionsMenuProps` | Contextual actions |
+| `StatusBar` | - | Application status footer |
+| `StreamingMessage` | `StreamingMessageProps` | AI response renderer |
+| `SyncEditWarning` | `SyncEditWarningProps` | Conflict alert |
+| `SyncStatusIndicator` | `SyncStatusIndicatorProps` | Connectivity status |
+| `XTerminal` | - | Terminal emulator |
 
-| Component | Description |
-|-----------|-------------|
-| **IDELayout** | Main IDE shell with resizable panels (react-resizable-panels) |
-| **TerminalPanel** | Terminal container with tab interface |
-| **SidePanel** | Left sidebar containing FileTree |
-| **EditorPanel** | Central editor container |
-| **Header** | Top navigation bar |
+## 3. Chat System (`src/components/chat`)
+AI communication and control layers.
 
-### UI Components (`src/components/ui/`)
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `AgentSelector` | - | Model/Agent picker |
+| `ApprovalOverlay` | `ApprovalOverlayProps` | Tool execution gate |
+| `AutoApproveSettings` | `AutoApproveSettingsProps` | Permission config |
+| `BatchApprovalBar` | `BatchApprovalBarProps` | Bulk action toolbar |
+| `ChatConversation` | - | Thread view container |
+| `ChatPanel` | - | Messaging interface |
+| `CodeBlock` | `CodeBlockProps` | Syntax highlighted code |
+| `DiffPreview` | `DiffPreviewProps` | Code change approval |
+| `StreamdownRenderer` | - | Markdown streaming |
+| `ThreadCard` | - | History item |
+| `ThreadsList` | - | Sidebar history |
+| `ToolCallBadge` | `ToolCallBadgeGroupProps` | Tool execution status |
 
-Shared UI primitives for consistent styling across the application.
+## 4. Knowledge & Study (`src/components/knowledge`, `src/components/study`)
+RAG and learning features.
 
----
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `CollectionManager` | `CollectionManagerProps` | Document set management |
+| `CollectionSelector` | `CollectionSelectorProps` | RAG context picker |
+| `FlashcardView` | `FlashcardViewProps` | Study card display |
+| `MetadataDisplay` | `MetadataDisplayProps` | Source info view |
+| `MetadataEditor` | `MetadataEditorProps` | Metadata editing |
+| `StudyPage` | `StudyPageProps` | Learning dashboard |
+| `StudySession` | `StudySessionProps` | Active study flow |
+| `StudyStatsDisplay` | `StudyStatsDisplayProps` | Progress metrics |
+| `SourceContextMenu` | `SourceContextMenuProps` | Document actions |
 
-## Library Modules
+## 5. Agent Configuration (`src/components/agent`)
+Settings for AI behavior.
 
-### Filesystem Module (`src/lib/filesystem/`)
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `AgentConfigDialog` | - | Main config modal |
+| `ProviderSettings` | - | API key management |
+| `ToolPermissionsConfig`| `ToolPermissionsConfigProps` | Security policies |
 
-20 files - Handles all File System Access API operations.
+## 6. Visualization (`src/components/canvas`)
+Node-based relationship views.
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `sync-manager.ts` | ~450 | Main sync orchestration, dual-write strategy |
-| `local-fs-adapter.ts` | ~250 | FSA adapter implementation |
-| `sync-executor.ts` | ~200 | Executes sync plans |
-| `sync-planner.ts` | ~100 | Generates sync plans from directory diff |
-| `sync-operations.ts` | ~200 | Individual sync operations |
-| `sync-types.ts` | ~150 | Type definitions |
-| `sync-utils.ts` | ~100 | Utility functions |
-| `permission-lifecycle.ts` | ~150 | FSA permission grant/revoke/restore |
-| `exclusion-config.ts` | ~150 | Sync exclusion patterns (.git, node_modules) |
-| `path-guard.ts` | ~80 | Path validation and sanitization |
-| `path-utils.ts` | ~100 | Path manipulation utilities |
-| `directory-walker.ts` | ~80 | Recursive directory traversal |
-| `fs-types.ts` | ~100 | FS type definitions |
-| `fs-errors.ts` | ~100 | Custom error classes |
-| `file-ops.ts` | ~180 | File read/write operations |
-| `dir-ops.ts` | ~180 | Directory create/delete operations |
-| `handle-utils.ts` | ~100 | FSA handle utilities |
-| `index.ts` | ~50 | Public API exports |
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `Canvas` | - | Infinite canvas area |
+| `ConceptNode` | - | Knowledge node |
+| `RelationshipEdge` | - | Connection line |
 
-### WebContainer Module (`src/lib/webcontainer/`)
+## 7. Layouts (`src/components/layout`)
+Application scaffolding.
 
-5 files - Manages WebContainer lifecycle.
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `ChatPanelWrapper` | `ChatPanelWrapperProps` | Layout container |
+| `IDEHeaderBar` | `IDEHeaderBarProps` | Main navigation |
+| `IDELayout` | - | Workspace structure |
+| `MainLayout` | `MainLayoutProps` | Root layout |
+| `MainSidebar` | `MainSidebarProps` | Primary navigation |
+| `TerminalPanel` | `TerminalPanelProps` | Console container |
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `manager.ts` | ~250 | Singleton container boot/mount |
-| `terminal-adapter.ts` | ~280 | xterm.js ↔ jsh shell binding |
-| `process-manager.ts` | ~300 | Process lifecycle tracking |
-| `types.ts` | ~50 | Type definitions |
-| `index.ts` | ~40 | Public API exports |
+## 8. Hub & Dashboard (`src/components/hub`, `src/components/dashboard`)
+Project management and overview.
 
-### Workspace Module (`src/lib/workspace/`)
-
-11 files - Centralized state management.
-
-| File | LOC | Purpose |
-|------|-----|---------|
-| `WorkspaceContext.tsx` | ~100 | React context provider |
-| `project-store.ts` | ~350 | Project metadata (IndexedDB) |
-| `ide-state-store.ts` | ~100 | UI state (open tabs, panels) |
-| `conversation-store.ts` | ~120 | Chat history storage |
-| `file-sync-status-store.ts` | ~80 | Per-file sync status |
-| `workspace-types.ts` | ~100 | Type definitions |
-| `index.ts` | ~50 | Public API exports |
-| **hooks/** | | |
-| ├ `useWorkspaceState.ts` | ~60 | State hook |
-| ├ `useSyncOperations.ts` | ~80 | Sync action hooks |
-| ├ `useEventBusEffects.ts` | ~60 | Event bus subscription |
-| ├ `useInitialSync.ts` | ~70 | Initial project sync |
-| └ `useWorkspaceActions.ts` | ~80 | Workspace action hooks |
-
-### Events Module (`src/lib/events/`)
-
-Event bus infrastructure for cross-component communication.
-
-| Event Category | Events |
-|----------------|--------|
-| Sync | `sync:started`, `sync:completed`, `sync:error`, `sync:progress` |
-| File | `file:created`, `file:modified`, `file:deleted` |
-| Editor | `editor:open`, `editor:close`, `editor:save` |
-| Terminal | `terminal:command`, `terminal:output` |
-
-### Persistence Module (`src/lib/persistence/`)
-
-IndexedDB operations for offline data storage.
-
-| Store | Purpose |
-|-------|---------|
-| `projects` | Project metadata, FSA handles |
-| `conversations` | Chat history |
-| `ide-state` | UI preferences |
-
----
-
-## Route Components (`src/routes/`)
-
-| Route | File | Description |
-|-------|------|-------------|
-| `/` | `index.tsx` | Dashboard with recent projects |
-| `/workspace/:projectId` | `workspace/$projectId.tsx` | IDE workspace |
-| `/test-fs-adapter` | `test-fs-adapter.tsx` | FSA testing page |
-| `/demo/*` | `demo/` | Demo routes |
-
----
-
-## Component Dependencies
-
-```mermaid
-graph TB
-    subgraph UI["UI Layer"]
-        IDELayout --> FileTree
-        IDELayout --> MonacoEditor
-        IDELayout --> XTerminal
-        IDELayout --> PreviewPanel
-        IDELayout --> AgentChatPanel
-    end
-    
-    subgraph State["State Layer"]
-        WorkspaceContext --> ProjectStore
-        WorkspaceContext --> IDEStateStore
-        WorkspaceContext --> SyncManager
-    end
-    
-    subgraph Infra["Infrastructure"]
-        SyncManager --> LocalFSAdapter
-        SyncManager --> WebContainerManager
-        XTerminal --> TerminalAdapter
-        TerminalAdapter --> WebContainerManager
-    end
-    
-    FileTree --> WorkspaceContext
-    MonacoEditor --> SyncManager
-    XTerminal --> WorkspaceContext
-```
-
----
-
-*Generated by BMAD Document Project Workflow v1.2.0*
+| Component | Props Interface | Usage |
+|-----------|-----------------|-------|
+| `HubHomePage` | - | Main landing |
+| `NavigationBreadcrumbs`| `NavigationBreadcrumbsProps` | Path tracking |
+| `Onboarding` | - | User welcome flow |
+| `PitchDeck` | `PitchDeckProps` | Presentation view |
