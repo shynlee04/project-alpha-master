@@ -3,7 +3,7 @@
  * @module components/study/quiz-preview
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -63,7 +63,6 @@ export function QuestionCard({
   className,
 }: QuestionCardProps) {
   const { t } = useTranslation();
-  const [hoveredOption, setHoveredOption] = useState<number | null>(null);
 
   const getOptionVariant = (optionIndex: number): VariantProps<typeof optionVariants>['variant'] => {
     if (showAnswer) {
@@ -155,7 +154,7 @@ export function QuizPreview({
   quiz,
   onSave,
   onRegenerate,
-  onEditQuestion,
+  onEditQuestion: _onEditQuestion,
   className,
 }: QuizPreviewProps) {
   const { t } = useTranslation();
