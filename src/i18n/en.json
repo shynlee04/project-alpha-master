@@ -1020,8 +1020,8 @@
   "notes.indexed": "Indexed",
   "notes.indexError": "Indexing failed",
   "notes.retrying": "Retrying indexing...",
-  "notes.indexingProgress": "Indexing note ({{progress}}%)"
-"about.title": "About Me",
+  "notes.indexingProgress": "Indexing note ({{progress}}%)",
+  "about.title": "About Me",
 "about.hero.greeting": "Hello, I'm",
 "about.hero.name": "Via-gent Developer",
 "about.hero.tagline": "From solo developer to multi-agent orchestra conductor",

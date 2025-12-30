@@ -44,12 +44,14 @@ export class FlashcardGenerator {
    * Generate flashcards from content
    * @param content - The source content to generate flashcards from
    * @param sourceId - The ID of the source content
+   * @param projectId - The project ID for the flashcards
    * @param options - Generation options
    * @returns Promise<FlashcardGenerationResult>
    */
   async generateFromContent(
     content: string,
     sourceId: string,
+    projectId: string,
     options: {
       minCards?: number;
       maxCards?: number;
@@ -79,6 +81,7 @@ export class FlashcardGenerator {
     // Ensure source IDs are set correctly
     const cardsWithSource: Flashcard[] = result.cards.map((card, index) => ({
       id: `fc-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`,
+      projectId,
       question: card.question,
       answer: card.answer,
       difficulty: card.difficulty as FlashcardDifficulty,
@@ -98,11 +101,13 @@ export class FlashcardGenerator {
   /**
    * Generate flashcards from multiple sources
    * @param sources - Array of { id, title, content } objects
+   * @param projectId - The project ID for the flashcards
    * @param options - Generation options
    * @returns Promise<FlashcardGenerationResult>
    */
   async generateFromSources(
     sources: Array<{ id: string; title: string; content: string }>,
+    projectId: string,
     options: {
       minCards?: number;
       maxCards?: number;
@@ -137,6 +142,7 @@ export class FlashcardGenerator {
     // Map cards with proper IDs
     const cardsWithIds: Flashcard[] = result.cards.map((card, index) => ({
       id: `fc-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`,
+      projectId,
       question: card.question,
       answer: card.answer,
       difficulty: card.difficulty as FlashcardDifficulty,
@@ -203,6 +209,7 @@ export class MockFlashcardGenerator {
   generateMockFlashcards(
     content: string,
     sourceId: string,
+    projectId: string,
     count: number = 5
   ): FlashcardGenerationResult {
     const cards: Flashcard[] = [];
@@ -217,6 +224,7 @@ export class MockFlashcardGenerator {
 
       cards.push({
         id: `fc-mock-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 9)}`,
+        projectId,
         question: `Question ${i + 1} about ${topic}?`,
         answer: `Answer ${i + 1} provides detailed information about ${topic}.`,
         difficulty,
