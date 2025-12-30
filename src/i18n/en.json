@@ -1007,5 +1007,13 @@
   "notes.search": "Search notes...",
   "notes.newNote": "New Note",
   "notes.expand": "Expand",
-  "notes.collapse": "Collapse"
+  "notes.collapse": "Collapse",
+  "knowledge.source.readingTime_one": "{{count}} min read",
+  "knowledge.source.readingTime_other": "{{count}} min read",
+  "knowledge.source.unknown": "Unknown",
+  "knowledge.source.wordCount": "{{count}} words",
+  "knowledge.source.charCount": "{{count}} chars",
+  "knowledge.source.pageCount_one": "{{count}} page",
+  "knowledge.source.pageCount_other": "{{count}} pages",
+  "knowledge.source.deleteConfirm": "Delete \"{{title}}\"?"
 }

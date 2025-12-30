@@ -1,7 +1,7 @@
 # **SWEEPING VALIDATION CHECKLIST**
 ## *Post-Development Cycle Quality Gates for Project Alpha v2.0*
 
-**Purpose:** Brutal reality check after every development cycle (story/epic completion).
+**Purpose:** Brutal reality check after every development cycle (story/epic completion).  
 **Rule:** If ANY checkpoint fails → Fix before proceeding. No exceptions.
 
 ---
@@ -245,24 +245,24 @@
 
 **MUST pass on ALL three before declaring DONE:**
 
-1. **Desktop Chrome (macOS/Windows)** - Full IDE mode
-   - Open 300-file project → WC boots <10s
-   - Edit in Monaco → VS Code sees changes immediately
-   - Agent writes file → Approval → Code written
-   - Reload → Exact same state (tabs, scroll, cursor)
-   - Network offline → Save queues → Reconnect → Sync completes
+### 1. Desktop Chrome (macOS/Windows) - Full IDE mode
+- Open 300-file project → WC boots <10s
+- Edit in Monaco → VS Code sees changes immediately
+- Agent writes file → Approval → Code written
+- Reload → Exact same state (tabs, scroll, cursor)
+- Network offline → Save queues → Reconnect → Sync completes
 
-2. **Mobile Safari (iOS 16+)** - Demo mode, chat-only
-   - Demo mode banner shows (not blank screen)
-   - Chat with agent works
-   - Edit code gracefully blocked with explanation
-   - Toggle to Vietnamese → All text changes
-   - Close → Reopen → Chat history restored
+### 2. Mobile Safari (iOS 16+) - Demo mode, chat-only
+- Demo mode banner shows (not blank screen)
+- Chat with agent works
+- Edit code gracefully blocked with explanation
+- Toggle to Vietnamese → All text changes
+- Close → Reopen → Chat history restored
 
-3. **Android Chrome (mid-range)** - Demo mode, offline test
-   - Demo mode works
-   - Offline storage test passes
-   - Touch targets ≥44×44px
+### 3. Android Chrome (mid-range) - Demo mode, offline test
+- Demo mode works
+- Offline storage test passes
+- Touch targets ≥44×44px
 
 **If ANY device fails → Story is NOT done.**
 
@@ -272,17 +272,17 @@
 
 After implementing ANY story, ask:
 
-1. **Can I delete this feature in 1 command?**
-   - If removal requires >5 file changes → **Coupled too tightly**
-   - Fix: Extract to isolated module with barrel export
+### 1. Can I delete this feature in 1 command?
+- If removal requires >5 file changes → **Coupled too tightly**
+- Fix: Extract to isolated module with barrel export
 
-2. **Does this feature work on page refresh?**
-   - If state is lost → **Missing persistence**
-   - Fix: Add to Zustand persist middleware
+### 2. Does this feature work on page refresh?
+- If state is lost → **Missing persistence**
+- Fix: Add to Zustand persist middleware
 
-3. **Does this feature work offline?**
-   - If requires network → **Missing fallback UI**
-   - Fix: Add `navigator.onLine` check + error state
+### 3. Does this feature work offline?
+- If requires network → **Missing fallback UI**
+- Fix: Add `navigator.onLine` check + error state
 
 ---
 
@@ -304,7 +304,7 @@ After implementing ANY story, ask:
 ## **🔄 DECAY DETECTION TIMELINE**
 
 | Story Count | Rot Level | Action Required |
-|-------------|-------------|-----------------|
+|-------------|-------------|----------------|
 | 0-5 | Green | Continue development |
 | 6-10 | Yellow | Run full audit (2-3 duplicate utils, 1 zombie import) |
 | 11-15 | Orange | STOP → Fix state split + prop naming inconsistency |

@@ -932,5 +932,13 @@
   "notes.search": "Tìm kiếm ghi chú...",
   "notes.newNote": "Ghi chú mới",
   "notes.expand": "Mở rộng",
-  "notes.collapse": "Thu gọn"
+  "notes.collapse": "Thu gọn",
+  "knowledge.source.readingTime_one": "{{count}} phút đọc",
+  "knowledge.source.readingTime_other": "{{count}} phút đọc",
+  "knowledge.source.unknown": "Không xác định",
+  "knowledge.source.wordCount": "{{count}} từ",
+  "knowledge.source.charCount": "{{count}} ký tự",
+  "knowledge.source.pageCount_one": "{{count}} trang",
+  "knowledge.source.pageCount_other": "{{count}} trang",
+  "knowledge.source.deleteConfirm": "Xóa \"{{title}}\"?"
 }
