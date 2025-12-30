@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Edge, EdgeTypes, EdgeComponent } from '@xyflow/react';
+import { Edge, EdgeTypes } from '@xyflow/react';
 import { RelationshipEdge } from './RelationshipEdge';
 
 /**
@@ -7,7 +7,7 @@ import { RelationshipEdge } from './RelationshipEdge';
  * Using memo to prevent unnecessary re-renders
  */
 export const edgeTypes: EdgeTypes = {
-  relationship: memo(RelationshipEdge) as EdgeComponent,
+  relationship: memo(RelationshipEdge) as EdgeTypes['relationship'],
 };
 
 /**

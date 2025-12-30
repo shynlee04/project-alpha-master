@@ -4,7 +4,6 @@ import {
   BaseEdge,
   EdgeProps,
   getBezierPath,
-  MarkerType,
 } from '@xyflow/react';
 import type { CanvasRelationshipType } from '../../../lib/canvas/types';
 import '@xyflow/react/dist/style.css';
@@ -62,18 +61,6 @@ const getRelationshipStyle = (relationship: CanvasRelationshipType = 'relates') 
         color: 'var(--color-primary, #a855f7)',
         strokeDasharray: 'none',
       };
-  }
-};
-
-/**
- * Get marker end type for relationship
- */
-const getMarkerType = (relationship: CanvasRelationshipType = 'relates'): MarkerType => {
-  switch (relationship) {
-    case 'contradicts':
-      return MarkerType.ArrowClosed;
-    default:
-      return MarkerType.ArrowClosed;
   }
 };
 
