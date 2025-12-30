@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, Plus, Bot } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -10,7 +10,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { SourceCardGrid } from '@/components/knowledge/SourceCardGrid';
-import { Canvas } from '@/components/canvas/Canvas';
+const Canvas = lazy(() => {
+    if (import.meta.env.SSR) {
+        return Promise.resolve({ default: () => <></> });
+    }
+    return import('@/components/canvas/Canvas');
+});
 import { SourceImportDialog } from '@/components/knowledge/SourceImportDialog';
 import { RAGPanelContainer } from '@/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
@@ -65,7 +70,9 @@ export function KnowledgePage() {
                         <div className="absolute top-2 left-2 z-10 bg-background/80 p-1 px-2 rounded text-xs font-mono text-muted-foreground border border-border">
                             {t('knowledge.canvas.preview')}
                         </div>
-                        <Canvas />
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+                            <Canvas />
+                        </Suspense>
                     </div>
                 </div>
                 <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
@@ -111,7 +118,9 @@ export function KnowledgePage() {
                 {/* Center Panel: Knowledge Canvas */}
                 <ResizablePanel defaultSize={50} minSize={30}>
                     <div className="h-full w-full relative">
-                        <Canvas />
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+                            <Canvas />
+                        </Suspense>
                     </div>
                 </ResizablePanel>
 

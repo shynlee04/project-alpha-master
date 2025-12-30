@@ -7,7 +7,12 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Plus, Notebook } from 'lucide-react';
 import { lazy, Suspense } from 'react';
-const NoteEditor = lazy(() => import('./NoteEditor'));
+const NoteEditor = lazy(() => {
+    if (import.meta.env.SSR) {
+        return Promise.resolve({ default: (_props: any) => <></> });
+    }
+    return import('./NoteEditor');
+});
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { useIDEStore } from '@/lib/state/ide-store';
 
