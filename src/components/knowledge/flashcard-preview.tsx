@@ -112,7 +112,7 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
   const [flippedIndices, setFlippedIndices] = useState<Set<number>>(new Set());
   // Transform preview cards to ensure they have required Flashcard fields
   const [editedCards, setEditedCards] = useState<Flashcard[]>(
-    preview.cards.map(card => ({
+    preview.cards.map((card: Partial<Flashcard>) => ({
       ...card,
       id: card.id || `fc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       createdAt: card.createdAt || Date.now(),
@@ -153,15 +153,15 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
 
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-none p-4">
           <p className="text-sm text-blue-600">Total Cards</p>
           <p className="text-2xl font-bold text-blue-900">{preview.totalCards}</p>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-green-50 border border-green-200 rounded-none p-4">
           <p className="text-sm text-green-600">Topics</p>
           <p className="text-2xl font-bold text-green-900">{preview.topics.length}</p>
         </div>
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+        <div className="bg-purple-50 border border-purple-200 rounded-none p-4">
           <p className="text-sm text-purple-600">Sources</p>
           <p className="text-2xl font-bold text-purple-900">{preview.sourcesUsed.length}</p>
         </div>
@@ -171,7 +171,7 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
       <div className="mb-6">
         <div className="flex flex-wrap gap-2 mb-2">
           {preview.topics.map((topic) => (
-            <span key={topic} className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
+            <span key={topic} className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-none">
               {topic}
             </span>
           ))}
