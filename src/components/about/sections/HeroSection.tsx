@@ -14,7 +14,23 @@ export function HeroSection() {
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/30 rounded-full blur-[100px]" />
             </div>
 
-            <div className="relative z-10 flex flex-col items-start max-w-4xl mx-auto w-full px-4 md:px-0">
+            {/* Tech Stack Ticker (Abstract) */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 1 }}
+                className="absolute bottom-4 left-0 w-full overflow-hidden whitespace-nowrap opacity-20 select-none pointer-events-none z-0"
+            >
+                <div className="animate-ticker inline-block">
+                    {['AGENTS', 'REACT 18', 'NEXT.JS', 'WEBCONTAINERS', 'TYPESCRIPT', 'BMAD V6', 'LLM ORCHESTRATION', 'AGENTS', 'REACT 18', 'NEXT.JS'].map((item, i) => (
+                        <span key={i} className="mx-4 font-mono text-xs md:text-sm text-muted-foreground">
+                            {item} •
+                        </span>
+                    ))}
+                </div>
+            </motion.div>
+
+            <div className="relative z-10 flex flex-col items-start max-w-4xl mx-auto w-full px-4 md:px-0 pb-12 lg:pb-0">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -71,22 +87,6 @@ export function HeroSection() {
                     </button>
                 </motion.div>
             </div>
-
-            {/* Tech Stack Ticker (Abstract) */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 1 }}
-                className="absolute bottom-10 left-0 w-full overflow-hidden whitespace-nowrap opacity-30 select-none pointer-events-none"
-            >
-                <div className="animate-ticker inline-block">
-                    {['AGENTS', 'REACT 18', 'NEXT.JS', 'WEBCONTAINERS', 'TYPESCRIPT', 'BMAD V6', 'LLM ORCHESTRATION', 'AGENTS', 'REACT 18', 'NEXT.JS'].map((item, i) => (
-                        <span key={i} className="mx-4 font-mono text-xs md:text-sm text-muted-foreground">
-                            {item} •
-                        </span>
-                    ))}
-                </div>
-            </motion.div>
 
         </SectionContainer>
     );
