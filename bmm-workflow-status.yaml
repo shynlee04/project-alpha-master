@@ -1,17 +1,17 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2025-12-30T16:00:00+07:00
+# Updated: 2025-12-30T18:30:00+07:00
 
 current_workflow: "ralph-loop-phase2-validation"
 current_story: "phase2-validation-2025-12-30"
 phase: "phase-2-implementation"
-last_updated: "2025-12-30T16:00:00+07:00"
-ralph_loop_status: "IN_PROGRESS"
+last_updated: "2025-12-30T18:30:00+07:00"
+ralph_loop_status: "COMPLETED"
 ralph_loop_started_at: "2025-12-30T16:00:00+07:00"
-ralph_loop_iteration: 3
-ralph_loop_health_score: 92
-validation_report: "_bmad-output/validation/ralph-loop-iteration3-2025-12-30.md"
+ralph_loop_iteration: 4
+ralph_loop_health_score: 95
+validation_report: "_bmad-output/validation/ralph-loop-iteration4-2025-12-30.md"
 test_results:
   passing: 126
   total: 127
@@ -38,17 +38,6 @@ active_epics:
     status: "DONE"
     start_date: "2025-12-28"
     end_date: "2025-12-31"
-  - id: "EPIC-6"
-    name: "Source Ingestion & Management"
-    status: "DONE"
-    start_date: "2025-12-30"
-    end_date: "2025-12-30"
-    validation_status: "VALIDATED (12/12 levels)"
-    iteration3_fixes:
-      - "Fixed i18n missing key: canvas.edge.label"
-      - "Fixed TypeScript TS6133 unused variables in SourceCard, SourceImportDialog, SourcePreviewPanel, CollectionManager, KnowledgePage"
-      - "Fixed TypeScript TS2322 props type mismatches (PlusIcon, Button)"
-      - "Fixed 8-bit styling: rounded-lg/rounded-xl/rounded-full → rounded-none"
   - id: "EPIC-7"
     name: "RAG Infrastructure"
     status: "DONE"
@@ -63,6 +52,7 @@ active_epics:
       - "KnowledgePage updated with RAG integration"
       - "All deferred UI components from 7-3, 7-4, 7-5 now implemented"
       - "Fixed duplicate key 'source' → 'searchSource' in ExtendedSearchResult type"
+      - "Fixed barrel exports: RAG module properly exports all functions"
   - id: "EPIC-8"
     name: "Knowledge Canvas"
     status: "DONE"
@@ -74,6 +64,11 @@ active_epics:
       - "Fixed hardcoded 'Label' placeholder → i18n key canvas.edge.label"
       - "Fixed 8-bit styling: rounded-xl → rounded-none in ConceptNode"
       - "Fixed 8-bit styling: rounded-lg → rounded-none in SourceNode"
+    iteration4_fixes:
+      - "Fixed barrel exports: ConceptNode exported from nodes/index.ts"
+      - "Fixed barrel exports: Canvas now exports SourceNode, ConceptNode, RelationshipEdge"
+      - "Fixed 8-bit styling: rounded-lg → rounded-none in quiz-preview.tsx"
+      - "Fixed 8-bit styling: rounded-lg → rounded-none in flashcard-preview.tsx"
   - id: "EPIC-9"
     name: "Study Artifacts Generation"
     status: "DONE"
@@ -84,6 +79,22 @@ active_epics:
     iteration3_fixes:
       - "Fixed TypeScript type error in flashcard-preview.tsx (Partial<Flashcard> mapping)"
       - "Fixed 8-bit styling: rounded-lg → rounded-none in flip card containers"
+    iteration4_fixes:
+      - "Fixed barrel exports: QuizPreview exported from study/index.ts"
+      - "Fixed barrel exports: FlashcardPreview exported from knowledge/index.ts"
+  - id: "EPIC-6"
+    name: "Source Ingestion & Management"
+    status: "DONE"
+    start_date: "2025-12-30"
+    end_date: "2025-12-30"
+    validation_status: "VALIDATED (12/12 levels)"
+    iteration3_fixes:
+      - "Fixed i18n missing key: canvas.edge.label"
+      - "Fixed TypeScript TS6133 unused variables in SourceCard, SourceImportDialog, SourcePreviewPanel, CollectionManager, KnowledgePage"
+      - "Fixed TypeScript TS2322 props type mismatches (PlusIcon, Button)"
+      - "Fixed 8-bit styling: rounded-lg/rounded-xl/rounded-full → rounded-none"
+    iteration4_fixes:
+      - "Fixed barrel exports: FlashcardPreview exported from knowledge/index.ts"
   - id: "EPIC-24"
     name: "Performance & UX Optimization"
     status: "IN_PROGRESS"

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import type { QuizQuestion, QuizGenerationResult } from '@/lib/study/quiz-types';
 
 const questionCardVariants = cva(
-  'rounded-lg border p-4 transition-all',
+  'rounded-none border p-4 transition-all',
   {
     variants: {
       variant: {
@@ -262,7 +262,7 @@ export function QuizSettingsPanel({
   className,
 }: QuizSettingsPanelProps) {
   return (
-    <div className={cn('space-y-4 rounded-lg border p-4', className)}>
+    <div className={cn('space-y-4 rounded-none border p-4', className)}>
       <h3 className="font-medium">Quiz Settings</h3>
 
       <div className="space-y-2">

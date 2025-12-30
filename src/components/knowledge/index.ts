@@ -13,3 +13,6 @@ export { CollectionSelector } from './CollectionSelector';
 // Story 6-4: Metadata components
 export { MetadataDisplay } from './MetadataDisplay';
 export { MetadataEditor } from './MetadataEditor';
+
+// Flashcard preview
+export { FlashcardPreview } from './flashcard-preview';
