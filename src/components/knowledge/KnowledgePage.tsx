@@ -80,49 +80,59 @@ export function KnowledgePage() {
         );
     }
 
-    // Desktop Layout: 3-Column Flex (TODO: Make resizable - tracked in correct-course workflow)
+    // Desktop Layout: 3-Column Resizable
     return (
         <MainLayout>
-            <div className="flex flex-1 h-full">
+            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
                 {/* Left Panel: Source Library - 20% */}
-                <div className="w-1/5 min-w-[200px] border-r border-border flex flex-col bg-background">
-                    <div className="p-3 border-b border-border flex items-center justify-between">
-                        <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
-                        <div className="flex items-center gap-2">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                            <Bot size={14} />
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                            <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
-                                <Plus className="h-3 w-3" />
-                            </Button>
+                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                    <div className="h-full border-r border-border flex flex-col bg-background">
+                        <div className="p-3 border-b border-border flex items-center justify-between">
+                            <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
+                            <div className="flex items-center gap-2">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                                                <Bot size={14} />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                                <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
+                                    <Plus className="h-3 w-3" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto">
+                            <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto">
-                        <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
-                    </div>
-                </div>
+                </ResizablePanel>
 
-                {/* Center Panel: Knowledge Canvas - flex-1 */}
-                <div className="flex-1 min-w-[300px] relative">
-                    <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
-                        <Canvas />
-                    </Suspense>
-                </div>
+                <ResizableHandle withHandle />
+
+                {/* Center Panel: Knowledge Canvas - flex-1 (50%) */}
+                <ResizablePanel defaultSize={50} minSize={30}>
+                    <div className="h-full relative">
+                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
+                            <Canvas />
+                        </Suspense>
+                    </div>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
 
                 {/* Right Panel: RAG Search & Chat - 30% */}
-                <div className="w-[30%] min-w-[250px] border-l border-border">
-                    <RAGPanelContainer projectId={projectId} />
-                </div>
-            </div>
+                <ResizablePanel defaultSize={30} minSize={20} maxSize={45}>
+                    <div className="h-full border-l border-border">
+                        <RAGPanelContainer projectId={projectId} />
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
 
             <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
         </MainLayout>

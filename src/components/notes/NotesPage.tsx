@@ -4,6 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+} from '@/components/ui/resizable';
 import { Plus, Notebook, ArrowLeft } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 const NoteEditor = lazy(() => {
@@ -142,45 +147,49 @@ export function NotesPage() {
         );
     }
 
-    // Desktop Layout: 2-Column Flex (NoteSidebar + Editor)
+    // Desktop Layout: 2-Column Resizable (NoteSidebar + Editor)
     return (
         <MainLayout>
-            <div className="flex flex-1 h-full">
-                {/* Note Sidebar - 20% (300px max) */}
-                <div className="w-1/5 max-w-[300px] min-w-[200px]">
+            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
+                {/* Note Sidebar - 20% (min 15%, max 30%) */}
+                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
                     <NoteSidebar
                         notes={notesArray}
                         activeNoteId={activeNoteId}
                         onNoteSelect={handleNoteSelect}
                         onCreateNote={handleCreateNote}
                     />
-                </div>
+                </ResizablePanel>
 
-                {/* Main Editor Area - flex-1 */}
-                <div className="flex-1 bg-background">
-                    {activeNote ? (
-                        <Suspense fallback={
-                            <div className="h-full flex items-center justify-center">
-                                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+                <ResizableHandle withHandle />
+
+                {/* Main Editor Area - Remaining */}
+                <ResizablePanel defaultSize={80}>
+                    <div className="h-full bg-background flex flex-col">
+                        {activeNote ? (
+                            <Suspense fallback={
+                                <div className="h-full flex items-center justify-center">
+                                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+                                </div>
+                            }>
+                                <NoteEditor
+                                    noteId={activeNote.id}
+                                    className="h-full"
+                                />
+                            </Suspense>
+                        ) : (
+                            <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-4">
+                                <Notebook size={48} className="opacity-20" />
+                                <p>{t('notes.select_or_create', 'Select or create a note to start writing')}</p>
+                                <Button onClick={handleCreateNote}>
+                                    <Plus size={16} className="mr-2" />
+                                    {t('notes.create_new', 'Create New Note')}
+                                </Button>
                             </div>
-                        }>
-                            <NoteEditor
-                                noteId={activeNote.id}
-                                className="h-full"
-                            />
-                        </Suspense>
-                    ) : (
-                        <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-4">
-                            <Notebook size={48} className="opacity-20" />
-                            <p>{t('notes.select_or_create', 'Select or create a note to start writing')}</p>
-                            <Button onClick={handleCreateNote}>
-                                <Plus size={16} className="mr-2" />
-                                {t('notes.create_new', 'Create New Note')}
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </div>
+                        )}
+                    </div>
+                </ResizablePanel>
+            </ResizablePanelGroup>
         </MainLayout>
     );
 }
