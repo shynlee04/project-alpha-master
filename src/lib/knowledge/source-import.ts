@@ -21,7 +21,7 @@
  * ```
  */
 
-import { PDFParser, type PDFProgressCallback } from './pdf-parser';
+import { parsePDF, isPDF, getFileSizeMB } from './pdf-parser';
 import { URLFetcher } from './url-fetcher';
 import { db, type SourceRecord } from '@/lib/state/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
@@ -61,7 +61,6 @@ export interface SourceImportOptions {
  * - Error handling with cleanup
  */
 export class SourceImportPipeline {
-    private pdfParser = new PDFParser();
     private urlFetcher = new URLFetcher();
     private eventBus?: WorkspaceEventEmitter;
 
@@ -88,7 +87,7 @@ export class SourceImportPipeline {
 
         try {
             // Parse PDF with progress tracking
-            const result = await this.pdfParser.parsePDF(
+            const result = await parsePDF(
                 file,
                 (page, total) => {
                     const message = `Reading page ${page} of ${total}...`;
@@ -251,13 +250,13 @@ export class SourceImportPipeline {
      */
     private validatePDF(file: File): void {
         // Check file type
-        if (!this.pdfParser.isPDF(file)) {
+        if (!isPDF(file)) {
             throw new Error('Invalid file type. Only PDF files are supported.');
         }
 
         // Check file size (50MB limit)
         const MAX_SIZE_MB = 50;
-        const fileSizeMB = this.pdfParser.getFileSizeMB(file);
+        const fileSizeMB = getFileSizeMB(file);
         if (fileSizeMB > MAX_SIZE_MB) {
             throw new Error(`File too large (${fileSizeMB.toFixed(1)}MB). Maximum size is ${MAX_SIZE_MB}MB.`);
         }
