@@ -12,7 +12,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { twMerge, type ClassNameValue } from 'tailwind-merge';
 
 // Design tokens from 8-bit design system
 const TRANSITION_DURATION = 'var(--transition-duration-base, 200ms)';
@@ -45,7 +45,7 @@ interface TopicCardProps {
   descriptionKey: string;
   actionKey: string;
   icon: React.ReactNode;
-  className?: ClassValue;
+  className?: ClassNameValue;
   onAction?: () => void;
 }
 

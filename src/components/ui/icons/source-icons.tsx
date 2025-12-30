@@ -12,7 +12,7 @@ import React from 'react';
  * Props for source icons (uses numeric size for direct SVG sizing)
  */
 interface SourceIconProps {
-    size?: number;
+    pixelSize?: number;
     className?: string;
     color?: string;
     'aria-label'?: string;

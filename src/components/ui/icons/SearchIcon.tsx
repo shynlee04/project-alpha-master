@@ -10,9 +10,9 @@ import { IconProps, Icon } from './icon'
  * 
  * Design: 8-bit magnifying glass with squared edges
  */
-export function SearchIcon({ pixelSize = 'md', className = '', variant = 'default' }: IconProps) {
+export function SearchIcon({ pixelSize = 24, className = '', variant = 'default' }: IconProps) {
     return (
-        <Icon size={size} className={className} variant={variant} viewBox="0 0 24 24">
+        <Icon pixelSize={pixelSize} className={className} variant={variant} viewBox="0 0 24 24">
             {/* 8-bit search icon - magnifying glass with pixelated lens */}
             <circle
                 cx="11"

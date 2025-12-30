@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronRight, Home } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { twMerge, type ClassNameValue } from 'tailwind-merge';
 
 // Design tokens from 8-bit design system
 const TRANSITION_DURATION = 'var(--transition-duration-base, 200ms)';
@@ -52,7 +52,7 @@ interface BreadcrumbItem {
 
 interface NavigationBreadcrumbsProps {
   items: BreadcrumbItem[];
-  className?: ClassValue;
+  className?: ClassNameValue;
 }
 
 export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({ items, className }) => {

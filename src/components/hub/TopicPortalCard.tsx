@@ -12,7 +12,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { twMerge, type ClassNameValue } from 'tailwind-merge';
 import { ChevronRight } from 'lucide-react';
 
 // Design tokens from 8-bit design system
@@ -38,7 +38,7 @@ interface TopicPortalCardProps {
   descriptionKey: string;
   icon: React.ReactNode;
   badge?: string;
-  className?: ClassValue;
+  className?: ClassNameValue;
   onClick?: () => void;
 }
 
