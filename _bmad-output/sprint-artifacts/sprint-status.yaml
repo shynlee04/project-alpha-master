@@ -307,9 +307,9 @@ development_status:
   epic-9-retrospective: done # _bmad-output/sprint-artifacts/epic-9-retrospective.md
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)
-  epic-10: backlog
-  10-1-live-api-websocket: backlog # NEW: Desktop-only WebSocket voice (gemini-2.5-flash-native-audio)
-  10-2-multimodal-source-vision: backlog # NEW: PDF viewport capture + send to Live API
+  epic-10: in_progress # Story 10-1 ready-for-dev
+  10-1-live-api-websocket: ready-for-dev # Story file + context created 2025-12-30 - Desktop-only WebSocket voice (gemini-2.5-flash-native-audio)
+  10-2-multimodal-source-vision: backlog # PDF viewport capture + send to Live API
   10-3-audio-overview-generator: backlog # NotebookLM-style TTS (gemini-3.0-flash)
   epic-10-retrospective: optional
 
