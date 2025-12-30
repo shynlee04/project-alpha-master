@@ -114,7 +114,7 @@ export function QuizQuestionView({
               onClick={() => !showResult && onSelect(index)}
               disabled={showResult}
               className={cn(
-                'w-full p-4 text-left rounded-xl border-2 transition-all duration-200',
+                'w-full p-4 text-left rounded-none border-2 transition-all duration-200',
                 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
                 // Base state
                 !showResult && 'bg-card border-border hover:border-primary/50',
@@ -134,7 +134,7 @@ export function QuizQuestionView({
                 {/* Option Letter */}
                 <span
                   className={cn(
-                    'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg font-bold text-sm',
+                    'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-none font-bold text-sm',
                     // Base
                     !showResult && 'bg-muted text-muted-foreground',
                     // Selected
@@ -174,7 +174,7 @@ export function QuizQuestionView({
 
       {/* Explanation */}
       {showResult && question.explanation && (
-        <div className="p-4 bg-muted/50 rounded-xl mb-6">
+        <div className="p-4 bg-muted/50 rounded-none mb-6">
           <div className="flex items-start gap-2">
             <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -193,7 +193,7 @@ export function QuizQuestionView({
           <button
             onClick={onPrevious}
             disabled={questionNumber <= 1}
-            className="px-4 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-3 bg-secondary text-secondary-foreground rounded-none font-medium hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {t('quizzes.navigation.previous')}
           </button>
@@ -208,7 +208,7 @@ export function QuizQuestionView({
                 onFinish?.();
               }
             }}
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-none font-medium hover:bg-primary/90 transition-colors"
           >
             {hasMoreQuestions ? t('quizzes.navigation.next') : t('quizzes.navigation.finish')}
           </button>

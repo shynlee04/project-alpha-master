@@ -59,7 +59,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
         {onExit && (
           <button
             onClick={onExit}
-            className="p-2 hover:bg-muted rounded-lg transition-colors"
+            className="p-2 hover:bg-muted rounded-none transition-colors"
             aria-label={t('quizzes.review.exit')}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,7 +80,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
             <div
               key={question.id}
               className={cn(
-                'rounded-xl border overflow-hidden transition-colors',
+                'rounded-none border overflow-hidden transition-colors',
                 isCorrect
                   ? 'border-success/30 bg-success/5'
                   : 'border-error/30 bg-error/5'
@@ -98,7 +98,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
                 {/* Question Number */}
                 <span
                   className={cn(
-                    'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg font-bold text-sm',
+                    'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-none font-bold text-sm',
                     isCorrect
                       ? 'bg-success text-success-foreground'
                       : 'bg-error text-error-foreground'
@@ -154,7 +154,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
                         <div
                           key={optIndex}
                           className={cn(
-                            'p-3 rounded-lg border',
+                            'p-3 rounded-none border',
                             isCorrectOption && 'border-success bg-success/10',
                             isSelected && !isCorrectOption && 'border-error bg-error/10'
                           )}
@@ -212,7 +212,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
 
                   {/* Explanation */}
                   {question.explanation && (
-                    <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                    <div className="mt-4 p-3 bg-muted/50 rounded-none">
                       <div className="font-medium text-sm mb-1">
                         {t('quizzes.explanation')}
                       </div>
@@ -232,7 +232,7 @@ export function QuizReview({ quiz, answers, onQuestionClick, onExit }: QuizRevie
       {onExit && (
         <button
           onClick={onExit}
-          className="w-full mt-6 px-4 py-3 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors"
+          className="w-full mt-6 px-4 py-3 bg-muted text-muted-foreground rounded-none font-medium hover:bg-muted/80 transition-colors"
         >
           {t('quizzes.review.exit-button')}
         </button>

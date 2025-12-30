@@ -126,7 +126,7 @@ export function QuizContainer({ quiz, onComplete, onExit }: QuizContainerProps) 
         <p className="text-muted-foreground">No question available</p>
         <button
           onClick={handleExit}
-          className="mt-4 px-4 py-2 bg-secondary rounded-lg"
+          className="mt-4 px-4 py-2 bg-secondary rounded-none"
         >
           Exit Quiz
         </button>

@@ -198,7 +198,7 @@ export function FlashcardView({
         >
           {/* Front face - Question */}
           <div
-            className="flashcard-face flashcard-front absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-xl text-center"
+            className="flashcard-face flashcard-front absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-none text-center"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
@@ -219,7 +219,7 @@ export function FlashcardView({
 
           {/* Back face - Answer with rating buttons */}
           <div
-            className="flashcard-face flashcard-back absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-xl text-center"
+            className="flashcard-face flashcard-back absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-none text-center"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
@@ -257,7 +257,7 @@ export function FlashcardView({
                           onRate(rating);
                         }}
                         className={cn(
-                          'px-3 py-3 rounded-lg border text-sm font-medium transition-colors',
+                          'px-3 py-3 rounded-none border text-sm font-medium transition-colors',
                           'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
                           config.className
                         )}
