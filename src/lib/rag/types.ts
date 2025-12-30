@@ -329,7 +329,7 @@ export interface ExtendedSearchResult extends SearchResult {
   rank: number;
 
   /** Which search produced this result */
-  source: 'bm25' | 'vector' | 'rrf';
+  searchSource: 'bm25' | 'vector' | 'rrf';
 }
 
 /**

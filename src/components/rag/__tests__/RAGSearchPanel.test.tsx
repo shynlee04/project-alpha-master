@@ -48,7 +48,7 @@ const mockResults: ExtendedSearchResult[] = [
     highlightedText: 'This is <mark>test</mark> content about machine learning.',
     matchedTerms: ['test'],
     rank: 1,
-    source: 'hybrid',
+    searchSource: 'hybrid',
   },
   {
     document: {
@@ -63,7 +63,7 @@ const mockResults: ExtendedSearchResult[] = [
     highlightedText: 'Another document about <mark>artificial</mark> intelligence.',
     matchedTerms: ['artificial'],
     rank: 2,
-    source: 'hybrid',
+    searchSource: 'hybrid',
   },
 ];
 
