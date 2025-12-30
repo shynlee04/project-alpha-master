@@ -110,7 +110,14 @@ function FlashcardCard({
  */
 export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: FlashcardPreviewProps) {
   const [flippedIndices, setFlippedIndices] = useState<Set<number>>(new Set());
-  const [editedCards, setEditedCards] = useState<Flashcard[]>(preview.cards);
+  // Transform preview cards to ensure they have required Flashcard fields
+  const [editedCards, setEditedCards] = useState<Flashcard[]>(
+    preview.cards.map(card => ({
+      ...card,
+      id: card.id || `fc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: card.createdAt || Date.now(),
+    } as Flashcard))
+  );
 
   const toggleFlip = (index: number) => {
     setFlippedIndices((prev) => {
