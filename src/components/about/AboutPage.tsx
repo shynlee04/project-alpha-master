@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useResponsive } from '@/hooks/useResponsive';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { User, Mail, Linkedin, Github, Users, Clock, Cpu, Building2 } from 'lucide-react';
+import { User } from 'lucide-react';
 import { StatsBar } from './stats';
 import { JourneySection } from './journey';
 import { SkillsMatrix } from './skills';
 import { ProjectShowcase } from './projects';
+import { AchievementTimeline } from './timeline';
+import { ContactSection } from './contact';
 import './AboutPage.css';
 
 /**
@@ -89,57 +91,11 @@ export function AboutPage() {
       {/* Project Showcase Section */}
       <ProjectShowcase />
 
-      {/* Contact Section - Will be enhanced in Story 29-8 */}
-      <section className="about-section about-project">
-        <div className="about-section-header">
-          <Rocket className="section-icon" size={24} />
-          <h2 className="section-title">{t('about.project.title')}</h2>
-        </div>
-        <div className="about-section-content">
-          <div className="project-highlight">
-            <div className="project-highlight-content">
-              <h3 className="project-highlight-title">Via-gent</h3>
-              <p className="project-highlight-description">
-                {t('about.project.description')}
-              </p>
-              <div className="project-highlight-stats">
-                <div className="stat-item">
-                  <span className="stat-value">15+</span>
-                  <span className="stat-label">{t('about.project.highlights')}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-value">&lt;1</span>
-                  <span className="stat-label">Month</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Achievement Timeline Section */}
+      <AchievementTimeline />
 
       {/* Contact Section */}
-      <section className="about-section about-contact">
-        <div className="about-section-header">
-          <Mail className="section-icon" size={24} />
-          <h2 className="section-title">{t('about.contact.title')}</h2>
-        </div>
-        <div className="about-section-content">
-          <div className="contact-links">
-            <a href="mailto:contact@via-gent.dev" className="contact-link">
-              <Mail size={20} />
-              <span>{t('about.contact.email')}</span>
-            </a>
-            <a href="https://linkedin.com/in/viagent" target="_blank" rel="noopener noreferrer" className="contact-link">
-              <Linkedin size={20} />
-              <span>{t('about.contact.linkedin')}</span>
-            </a>
-            <a href="https://github.com/viagent" target="_blank" rel="noopener noreferrer" className="contact-link">
-              <Github size={20} />
-              <span>{t('about.contact.github')}</span>
-            </a>
-          </div>
-        </div>
-      </section>
+      <ContactSection />
       </div>
     </ErrorBoundary>
   );

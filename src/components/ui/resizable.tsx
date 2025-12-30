@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 
 // --- Custom Resizable Implementation ---
 // Fixes delta accumulation bug that caused panels to become tiny and unresizable
+// Handles conditional rendering (fragments) properly
 
 export type ImperativePanelGroupHandle = {
   getLayout: () => number[]
@@ -51,6 +52,40 @@ type PanelConfig = {
 
 const ResizableContext = React.createContext<ResizableContextType | null>(null)
 
+// --- Helper to flatten children (handles Fragments) ---
+function flattenChildren(children: React.ReactNode): React.ReactNode[] {
+  const result: React.ReactNode[] = []
+
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) {
+      if (child !== null && child !== undefined && child !== false) {
+        result.push(child)
+      }
+      return
+    }
+
+    // Handle Fragment - flatten its children
+    if (child.type === React.Fragment) {
+      result.push(...flattenChildren(child.props.children))
+    } else {
+      result.push(child)
+    }
+  })
+
+  return result
+}
+
+// --- Helper to check component type ---
+function isResizablePanel(child: React.ReactElement): boolean {
+  const type = child.type as any
+  return type?.displayName === 'ResizablePanel' || type === ResizablePanel
+}
+
+function isResizableHandle(child: React.ReactElement): boolean {
+  const type = child.type as any
+  return type?.displayName === 'ResizableHandle' || type === ResizableHandle
+}
+
 // --- Components ---
 
 const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, ResizablePanelGroupProps>(
@@ -64,32 +99,44 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       startLayout: number[]
     } | null>(null)
 
-    // Count panels and initialize layout
-    React.useLayoutEffect(() => {
-      let panelCount = 0
-      const defaultSizes: number[] = []
+    // Flatten children to handle Fragments
+    const flatChildren = React.useMemo(() => flattenChildren(children), [children])
 
-      React.Children.forEach(children, (child) => {
-        if (React.isValidElement(child) && (child.type as any)?.displayName === 'ResizablePanel') {
+    // Count panels and collect default sizes
+    const { panelCount, defaultSizes } = React.useMemo(() => {
+      let count = 0
+      const sizes: number[] = []
+
+      flatChildren.forEach((child) => {
+        if (React.isValidElement(child) && isResizablePanel(child)) {
           const props = child.props as ResizablePanelProps
-          defaultSizes.push(props.defaultSize ?? 0)
-          panelCount++
+          sizes.push(props.defaultSize ?? 0)
+          count++
         }
       })
 
+      return { panelCount: count, defaultSizes: sizes }
+    }, [flatChildren])
+
+    // Initialize/update layout when panel count changes
+    React.useLayoutEffect(() => {
       if (panelCount === 0) return
 
       if (layout.length !== panelCount) {
-        // Check if we have default sizes that sum to 100
+        // Check if we have default sizes that sum to ~100
         const totalDefault = defaultSizes.reduce((a, b) => a + b, 0)
-        if (totalDefault > 0 && Math.abs(totalDefault - 100) < 1) {
+        if (totalDefault > 0 && Math.abs(totalDefault - 100) < 5) {
           setLayout(defaultSizes)
+        } else if (totalDefault > 0) {
+          // Normalize default sizes to sum to 100
+          const normalized = defaultSizes.map(s => (s / totalDefault) * 100)
+          setLayout(normalized)
         } else {
           // Distribute evenly
           setLayout(new Array(panelCount).fill(100 / panelCount))
         }
       }
-    }, [children, layout.length])
+    }, [panelCount, defaultSizes, layout.length])
 
     React.useImperativeHandle(ref, () => ({
       getLayout: () => layout,
@@ -186,6 +233,36 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       resizeStateRef.current = null
     }, [])
 
+    // Render children with proper indices
+    const renderedChildren = React.useMemo(() => {
+      let panelIndex = 0
+      let handleIndex = 0
+
+      return flatChildren.map((child, i) => {
+        if (!React.isValidElement(child)) return child
+
+        if (isResizablePanel(child)) {
+          const size = layout[panelIndex] ?? (100 / Math.max(1, layout.length || 1))
+          const pIndex = panelIndex++
+          return React.cloneElement(child as React.ReactElement<any>, {
+            key: child.key ?? `panel-${pIndex}`,
+            _size: size,
+            _index: pIndex
+          })
+        }
+
+        if (isResizableHandle(child)) {
+          const hIndex = handleIndex++
+          return React.cloneElement(child as React.ReactElement<any>, {
+            key: child.key ?? `handle-${hIndex}`,
+            _index: hIndex
+          })
+        }
+
+        return child
+      })
+    }, [flatChildren, layout])
+
     return (
       <ResizableContext.Provider value={{ direction, registerPanel, startResize, updateResize, endResize }}>
         <div
@@ -198,33 +275,7 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
           )}
           {...props}
         >
-          {(() => {
-            let panelIndex = 0
-            let handleIndex = 0
-            return React.Children.map(children, (child) => {
-              if (!React.isValidElement(child)) return child
-
-              const childType = child.type as any
-
-              if (childType?.displayName === 'ResizablePanel') {
-                const size = layout[panelIndex] ?? (100 / Math.max(1, layout.length))
-                const pIndex = panelIndex++
-                return React.cloneElement(child as React.ReactElement<any>, {
-                  _size: size,
-                  _index: pIndex
-                })
-              }
-
-              if (childType?.displayName === 'ResizableHandle') {
-                const hIndex = handleIndex++
-                return React.cloneElement(child as React.ReactElement<any>, {
-                  _index: hIndex
-                })
-              }
-
-              return child
-            })
-          })()}
+          {renderedChildren}
         </div>
       </ResizableContext.Provider>
     )
@@ -260,8 +311,8 @@ function ResizablePanel({
         flexBasis: `${_size}%`,
         flexGrow: 0,
         flexShrink: 0,
-        minWidth: context?.direction === 'horizontal' ? `${minSize}%` : undefined,
-        minHeight: context?.direction === 'vertical' ? `${minSize}%` : undefined,
+        minWidth: context?.direction === 'horizontal' ? 0 : undefined,
+        minHeight: context?.direction === 'vertical' ? 0 : undefined,
       }}
       id={id}
       {...props}

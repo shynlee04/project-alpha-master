@@ -344,18 +344,18 @@ development_status:
   # Added: 2025-12-30T22:00:00+07:00
   # Reference: vietnam-job-market-analysis-2025-12-30.md
   # Priority: HIGH - Career positioning for Vietnam market
-  epic-29: in-progress # Started 2025-12-30 - Story 29-2 development complete, review submitted
+  epic-29: done # All 11 stories completed 2025-12-31
   29-1-about-me-context-validation: done # Context & Validation document complete
   29-2-hero-section: review # Implementation complete, tests created (20+ cases), i18n updated (EN+VI), handoff created 2025-12-30T15:51:00+07:00
   29-3-stats-bar: done # 3 story points
   29-4-journey-section: done # 5 story points
   29-5-skills-matrix: done # 5 story points
   29-6-project-showcase: done # 5 story points
-  29-7-achievement-timeline: backlog # 3 story points
-  29-8-contact-section: backlog # 2 story points
-  29-9-navigation-integration: backlog # 3 story points
-  29-10-accessibility-testing: backlog # 5 story points
-  29-11-internationalization: backlog # 3 story points
+  29-7-achievement-timeline: done # 3 story points
+  29-8-contact-section: done # 2 story points
+  29-9-navigation-integration: done # 3 story points
+  29-10-accessibility-testing: done # 5 story points
+  29-11-internationalization: done # 3 story points
   epic-29-retrospective: pending
 
   # EPIC 31: Advanced Agent Capabilities (Days 25-28)
