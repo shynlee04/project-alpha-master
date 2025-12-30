@@ -112,6 +112,13 @@ interface RAGStoreState {
     citations: Map<string, Citation>;
     activeCitation: Citation | null;
 
+    /** Voice mode state (Story 10-1) */
+    voiceState: import('./rag/live-api-types').VoiceModeState;
+    voiceConnection: import('./rag/live-api-types').ConnectionState;
+    voiceMicrophoneEnabled: boolean;
+    voiceIsDesktop: boolean;
+    voiceVolumeLevel: number;
+
     /** Loading state for async operations */
     loading: boolean;
 
@@ -183,6 +190,29 @@ interface RAGStoreState {
 
     /** Reset store to initial state */
     reset: () => void;
+
+    // Voice Mode Actions (Story 10-1)
+
+    /** Start voice mode (connect WebSocket) */
+    startVoiceMode: () => Promise<void>;
+
+    /** Stop voice mode (disconnect WebSocket) */
+    stopVoiceMode: () => void;
+
+    /** Toggle microphone on/off */
+    toggleVoiceMicrophone: () => void;
+
+    /** Set voice state */
+    setVoiceState: (state: import('./rag/live-api-types').VoiceModeState) => void;
+
+    /** Set voice connection state */
+    setVoiceConnectionState: (state: import('./rag/live-api-types').ConnectionState) => void;
+
+    /** Update voice volume level */
+    setVoiceVolumeLevel: (level: number) => void;
+
+    /** Detect platform (desktop/mobile) */
+    detectVoicePlatform: () => boolean;
 }
 
 // ============================================================================
@@ -271,6 +301,15 @@ export const useRAGStore = create<RAGStoreState>()(
             chatMessages: [],
             citations: new Map(),
             activeCitation: null,
+            // Voice mode state (Story 10-1)
+            voiceState: 'idle' as import('./rag/live-api-types').VoiceModeState,
+            voiceConnection: {
+                state: 'disconnected',
+                retryCount: 0,
+            } as import('./rag/live-api-types').ConnectionState,
+            voiceMicrophoneEnabled: false,
+            voiceIsDesktop: true, // Default to desktop, will detect on mount
+            voiceVolumeLevel: 0,
             loading: false,
             error: null,
             _hasHydrated: false,
