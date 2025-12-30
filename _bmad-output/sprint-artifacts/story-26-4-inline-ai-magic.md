@@ -1,7 +1,7 @@
 ---
 id: "26-4"
 title: "Inline AI Magic"
-status: "drafted"
+status: "done"
 created: "2025-12-30T21:40:00+07:00"
 epic: 26
 phase: "phase-2-extended"

@@ -319,7 +319,7 @@ development_status:
   26-1-integrated-blocknote-editor: done # Completed 2025-12-30T19:22:00+07:00, 25 tests, code reviewed
   26-2-client-side-embedding-pipeline: done # Completed 2025-01-02, Store+Indexer+UI+Tests verified
   26-3-ask-my-notes-rag-tool: done # Completed 2025-01-02, Tool+Retriever+Tests verified
-  26-4-inline-ai-magic: backlog # Notion AI-style AI actions in editor, streaming
+  26-4-inline-ai-magic: done # Completed 2025-01-02, Slash Command+Integration verified, 15 tests (unit+build)
   26-5-note-hierarchy-sidebar: backlog # Tree navigation, drag-drop, favorites
   epic-26-retrospective: pending
   epic-26-validation_status:

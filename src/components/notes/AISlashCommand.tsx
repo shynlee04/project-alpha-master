@@ -1,6 +1,6 @@
 import type { BlockNoteEditor } from '@blocknote/core';
 import { getDefaultReactSlashMenuItems, type DefaultReactSuggestionItem } from '@blocknote/react';
-import { filterSuggestionItems } from '@blocknote/core';
+
 import { Sparkles } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 

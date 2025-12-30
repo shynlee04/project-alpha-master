@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent } from '@/lib/notes/note-ai-service';
-import type { PartialBlock } from '@blocknote/core';
+
 import { toast } from 'sonner';
 
 export function AIPromptDialog() {

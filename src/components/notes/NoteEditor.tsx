@@ -23,7 +23,12 @@ import '@blocknote/core/fonts/inter.css';
 
 import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'; // Keep existing imports
+
+import { getCustomSlashMenuItems } from './AISlashCommand';
+import { AIPromptDialog } from './AIPromptDialog';
+import { SuggestionMenuController } from '@blocknote/react';
+import { filterSuggestionItems } from '@blocknote/core/extensions';
 
 import './NoteEditor.css';
 
@@ -190,7 +195,20 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     onChange={handleChange}
                     theme="dark"
                     editable={!readOnly}
-                />
+                    slashMenu={false}
+                >
+                    <SuggestionMenuController
+                        triggerCharacter="/"
+                        getItems={async (query) =>
+                            // Gets all default slash menu items and our custom item.
+                            filterSuggestionItems(
+                                getCustomSlashMenuItems(editor),
+                                query
+                            )
+                        }
+                    />
+                </BlockNoteView>
+                <AIPromptDialog />
             </div>
         </div>
     );

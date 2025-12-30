@@ -4,8 +4,8 @@
  * @story 26-4
  */
 
-import { generateText } from 'ai'; // Vercel AI SDK or TanStack AI facade
-import { useProviderStore } from '@/lib/agent/providers/store'; // Assuming availability
+// import { generateText } from 'ai'; // Vercel AI SDK or TanStack AI facade
+// import { useProviderStore } from '@/lib/agent/providers/store'; // Assuming availability
 // Actually, we might need to access the provider store dynamically 
 // or use the same mechanism the chat uses. 
 
@@ -17,7 +17,7 @@ import { useProviderStore } from '@/lib/agent/providers/store'; // Assuming avai
  * @param prompt User's instruction
  * @param context Optional context from the note
  */
-export async function generateNoteContent(prompt: string, context?: string): Promise<string> {
+export async function generateNoteContent(prompt: string): Promise<string> {
     // 1. Get active provider and model
     // This part depends on how the app manages providers.
     // I'll assume we can use the store or a default for now.
