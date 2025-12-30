@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { SectionContainer } from '../layout/SectionContainer';
 import { GraduationCap, Brain, Code2, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -58,7 +59,7 @@ const TimelineItem = ({ icon: Icon, year, title, description, skills, align, del
 }
 
 export function JourneySection() {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <SectionContainer className="bg-background/50">
@@ -69,10 +70,10 @@ export function JourneySection() {
                     viewport={{ once: true }}
                     className="text-3xl md:text-4xl font-bold mb-4"
                 >
-                    From <span className="text-primary">Minds</span> to <span className="text-accent">Machines</span>
+                    {t('about.journey.title')} <span className="text-primary">{t('about.journey.titleHighlight1')}</span> {t('about.journey.titleHighlight2')} <span className="text-accent">{t('about.journey.titleHighlight3')}</span>
                 </motion.h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                    My evolution from analyzing human learning systems to architecting artificial intelligence workflows.
+                    {t('about.journey.subtitle')}
                 </p>
             </div>
 
@@ -80,8 +81,8 @@ export function JourneySection() {
                 <TimelineItem
                     icon={GraduationCap}
                     year="2018 - 2023"
-                    title="Academic Manager & System Operational Lead"
-                    description="Designed curriculum frameworks and operational SOPs for large-scale educational centers. Managed feedback loops for human learning."
+                    title={t('about.journey.item1.title')}
+                    description={t('about.journey.item1.desc')}
                     skills={['System Design', 'Human Logic', 'Process Optimization']}
                     align="right"
                     delay={0}
@@ -90,8 +91,8 @@ export function JourneySection() {
                 <TimelineItem
                     icon={Brain}
                     year="2023 - 2024"
-                    title="Linguistics & Prompt Engineering Transition"
-                    description="Leveraged deep understanding of syntactic structures and semantics to master LLM prompting and Chain-of-Thought reasoning."
+                    title={t('about.journey.item2.title')}
+                    description={t('about.journey.item2.desc')}
                     skills={['Linguistic Logic', 'Prompt Engineering', 'Semantic Analysis']}
                     align="left"
                     delay={0.2}
@@ -100,8 +101,8 @@ export function JourneySection() {
                 <TimelineItem
                     icon={Code2}
                     year="2024 - 2025"
-                    title="Full-Stack AI Engineer"
-                    description="Built Via-gent (this IDE) to prove that complex agentic workflows can be governed by strict architectural principles."
+                    title={t('about.journey.item3.title')}
+                    description={t('about.journey.item3.desc')}
                     skills={['React 18', 'TypeScript', 'Vector DB', 'RAG']}
                     align="right"
                     delay={0.4}
@@ -110,8 +111,8 @@ export function JourneySection() {
                 <TimelineItem
                     icon={Rocket}
                     year="Now"
-                    title="Multi-Agent Systems Architect"
-                    description="Developing the BMAD V6 Framework to orchestrate 15+ specialized agents. Bridging the gap between chaotic AI and reliable software."
+                    title={t('about.journey.item4.title')}
+                    description={t('about.journey.item4.desc')}
                     skills={['Orchestration', 'BMAD Framework', 'Agentic Patterns']}
                     align="left"
                     delay={0.6}

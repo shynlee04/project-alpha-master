@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { SectionContainer } from '../layout/SectionContainer';
-import { Terminal, Send, Copy, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Terminal, Copy, Check } from 'lucide-react';
 
 export function ContactSection() {
+    const { t } = useTranslation();
     const [command, setCommand] = useState('');
     const [output, setOutput] = useState<string[]>(['> Initializing secure connection...', '> Ready. Type a message to contact.']);
     const [copied, setCopied] = useState(false);
@@ -38,7 +39,7 @@ export function ContactSection() {
                     <div className="w-3 h-3 rounded-full bg-red-500" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
                     <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <span className="ml-2 font-mono text-sm text-muted-foreground">contact.sh</span>
+                    <span className="ml-2 font-mono text-sm text-muted-foreground">{t('about.contact.terminal.title')}</span>
                 </div>
 
                 <div className="bg-black/90 rounded-lg border border-primary/20 p-6 shadow-2xl font-mono text-sm md:text-base relative overflow-hidden">
@@ -65,7 +66,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="mt-8 flex flex-col items-center gap-4">
-                    <p className="text-muted-foreground">Or connect directly via standard protocols:</p>
+                    <p className="text-muted-foreground">{t('about.contact.connect')}</p>
 
                     <div className="flex gap-4">
                         <button

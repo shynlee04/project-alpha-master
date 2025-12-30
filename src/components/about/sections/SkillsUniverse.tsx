@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { SectionContainer } from '../layout/SectionContainer';
 import { cn } from '@/lib/utils';
 
@@ -30,6 +31,7 @@ const skills: SkillNode[] = [
 ];
 
 export function SkillsUniverse() {
+    const { t } = useTranslation();
     const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
     const getCategoryColor = (cat: string) => {
@@ -44,8 +46,8 @@ export function SkillsUniverse() {
     return (
         <SectionContainer className="min-h-[80vh] flex flex-col items-center justify-center overflow-hidden">
             <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-5xl font-bold mb-4">Competency <span className="text-primary">Constellation</span></h2>
-                <p className="text-muted-foreground">Interactive map of technical expertise.</p>
+                <h2 className="text-3xl md:text-5xl font-bold mb-4">{t('about.skills.title')} <span className="text-primary">{t('about.skills.titleHighlight')}</span></h2>
+                <p className="text-muted-foreground">{t('about.skills.subtitle')}</p>
             </div>
 
             <div className="relative w-full max-w-4xl aspect-[4/3] md:aspect-[16/9] border border-border/50 rounded-xl bg-background/50 backdrop-blur-sm shadow-2xl overflow-hidden">
