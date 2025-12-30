@@ -7,7 +7,6 @@
  * Used by note-indexer.ts and embedding-worker-bridge.ts.
  */
 
-import type { Block } from '@blocknote/core';
 
 // ============================================================================
 // Index Status Types

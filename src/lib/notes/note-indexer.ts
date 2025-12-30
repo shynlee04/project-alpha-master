@@ -20,7 +20,6 @@ import {
     indexDocument,
     removeFromIndex,
     searchIndex,
-    type Orama,
 } from '@/lib/rag/orama-index';
 import type { DocumentSchema, SearchResult } from '@/lib/rag/types';
 import { embeddingWorkerBridge, embedChunksInWorker } from './embedding-worker-bridge';
@@ -31,9 +30,7 @@ import {
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
     EMBEDDING_DIMENSIONS,
-    type NoteDocumentSchema,
     type NoteIndexState,
-    type NoteEmbeddingResult,
 } from './types-embedding';
 import type { NoteRecord } from './types';
 

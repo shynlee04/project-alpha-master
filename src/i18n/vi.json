@@ -940,5 +940,10 @@
   "knowledge.source.charCount": "{{count}} ký tự",
   "knowledge.source.pageCount_one": "{{count}} trang",
   "knowledge.source.pageCount_other": "{{count}} trang",
-  "knowledge.source.deleteConfirm": "Xóa \"{{title}}\"?"
+  "knowledge.source.deleteConfirm": "Xóa \"{{title}}\"?",
+  "notes.indexing": "Đang lập chỉ mục...",
+  "notes.indexed": "Đã lập chỉ mục",
+  "notes.indexError": "Lập chỉ mục thất bại",
+  "notes.retrying": "Đang thử lại lập chỉ mục...",
+  "notes.indexingProgress": "Đang lập chỉ mục ghi chú ({{progress}}%)"
 }

@@ -23,8 +23,6 @@ import {
 // ============================================================================
 
 type ProgressCallback = (state: NoteIndexState) => void;
-type CompleteCallback = (result: NoteEmbeddingResult) => void;
-type ErrorCallback = (noteId: string, error: string) => void;
 
 interface PendingRequest {
     noteId: string;
@@ -121,7 +119,7 @@ class EmbeddingWorkerBridge {
      * Handle progress messages
      */
     private handleProgress(message: EmbeddingWorkerResponse & { type: 'progress' }): void {
-        const { noteId, status, progress } = message;
+        const { noteId, progress } = message;
 
         if (this.progressCallback) {
             this.progressCallback({

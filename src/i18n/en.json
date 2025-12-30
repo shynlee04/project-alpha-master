@@ -1015,5 +1015,10 @@
   "knowledge.source.charCount": "{{count}} chars",
   "knowledge.source.pageCount_one": "{{count}} page",
   "knowledge.source.pageCount_other": "{{count}} pages",
-  "knowledge.source.deleteConfirm": "Delete \"{{title}}\"?"
+  "knowledge.source.deleteConfirm": "Delete \"{{title}}\"?",
+  "notes.indexing": "Indexing...",
+  "notes.indexed": "Indexed",
+  "notes.indexError": "Indexing failed",
+  "notes.retrying": "Retrying indexing...",
+  "notes.indexingProgress": "Indexing note ({{progress}}%)"
 }
