@@ -11,7 +11,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/Slider';
 import { formatDuration, revokeAudioUrl } from '@/lib/audio/audio-generation';
 import { markAsPlayed } from '@/lib/audio/audio-storage';
@@ -217,7 +217,7 @@ export function AudioPlayer({
         {/* Skip back */}
         <Button
           variant="outline"
-          size="icon"
+          iconOnly
           onClick={() => skip(-10)}
           title={t('audio.skipBack')}
         >
@@ -226,8 +226,8 @@ export function AudioPlayer({
 
         {/* Play/Pause */}
         <Button
-          variant="default"
-          size="icon"
+          variant="primary"
+          iconOnly
           onClick={togglePlayPause}
           title={isPlaying ? t('audio.pause') : t('audio.play')}
         >
@@ -241,7 +241,7 @@ export function AudioPlayer({
         {/* Skip forward */}
         <Button
           variant="outline"
-          size="icon"
+          iconOnly
           onClick={() => skip(10)}
           title={t('audio.skipForward')}
         >

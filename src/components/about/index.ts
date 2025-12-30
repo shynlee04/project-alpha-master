@@ -7,7 +7,6 @@
  */
 
 export { AboutPage } from './AboutPage';
-export type { AboutPageProps } from './AboutPage';
 
 export { HeroSection } from './HeroSection';
 export type { HeroSectionProps } from './HeroSection';

@@ -10,4 +10,5 @@
 
 export { StatsBar } from './StatsBar';
 export { StatItem } from './StatItem';
-export type { StatsBarProps, StatItemProps } from './StatsBar';
+export type { StatsBarProps } from './StatsBar';
+export type { StatItemProps } from './StatItem';

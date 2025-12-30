@@ -10,7 +10,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Toast } from 'sonner';
+import { toast } from 'sonner';
 import { formatTimeoutDuration } from '@/lib/agent/tools/tool-timeout';
 
 export interface TimeoutWarningProps {

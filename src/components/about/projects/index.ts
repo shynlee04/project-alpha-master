@@ -10,4 +10,5 @@
 
 export { ProjectShowcase } from './ProjectShowcase';
 export { ViaGentCard } from './ViaGentCard';
-export type { ProjectShowcaseProps, ViaGentCardProps, ProjectFeature } from './ViaGentCard';
+export type { ProjectShowcaseProps, ProjectFeature } from './ProjectShowcase';
+export type { ViaGentCardProps } from './ViaGentCard';

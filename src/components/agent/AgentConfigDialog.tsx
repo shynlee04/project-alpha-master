@@ -53,6 +53,7 @@ import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
 import {
     credentialVault,
     providerAdapterFactory,
+    modelRegistry,
     type ModelInfo,
 } from '@/lib/agent/providers'
 
@@ -717,7 +718,7 @@ export function AgentConfigDialog({
                                     </Label>
                                     <Button
                                         variant="ghost"
-                                        size="icon"
+                                        iconOnly
                                         className="h-6 w-6"
                                         onClick={async (e) => {
                                             e.preventDefault()

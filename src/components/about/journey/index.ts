@@ -10,4 +10,5 @@
 
 export { JourneySection } from './JourneySection';
 export { JourneyCard } from './JourneyCard';
-export type { JourneySectionProps, JourneyCardProps } from './JourneyCard';
+export type { JourneySectionProps } from './JourneySection';
+export type { JourneyCardProps } from './JourneyCard';

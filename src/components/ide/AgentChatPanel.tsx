@@ -9,6 +9,7 @@ import { useDeviceType } from '@/hooks/useMediaQuery';
 
 import { getThreadsForProject } from '../../lib/workspace/threads-store'; // Keep for migration/fallback
 import type { ConversationThread } from '@/stores/conversation-threads-store';
+import { useThreadsStore } from '@/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
 import { ApprovalOverlay, BatchApprovalBar } from '../chat';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
@@ -77,6 +78,10 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // Derive active conversation from store
     const activeConversation = activeConversationId ? conversations[activeConversationId] : null;
+
+    // Threads Store for thread management
+    const createThread = useThreadsStore(state => state.createThread);
+    const setActiveThread = useThreadsStore(state => state.setActiveThread);
 
     // CC-2025-12-26-006: Key for forcing chat hook remount on clear/thread switch
     // Incrementing this causes the chat hook to reset its internal state
@@ -549,23 +554,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     // CC-2025-12-26-008: Fixed clear button by using key-based remounting
     const handleClear = useCallback(async () => {
         if (projectId) {
-            const newThreadId = crypto.randomUUID();
-
             // Create new thread - this will change chatInstanceKey
-            setActiveThread({
-                id: newThreadId,
-                projectId,
-                title: 'New Conversation',
-                preview: '',
-                messages: [],
-                agentsUsed: [],
-                messageCount: 0,
-                createdAt: Date.now(),
-                updatedAt: Date.now()
-            });
+            const newThread = createThread(projectId);
 
-            // Reset local history to just welcome message
-            setInitialHistory([createWelcomeMessage()]);
+            // Set the new thread as active
+            setActiveThread(newThread.id);
 
             // Increment reset key to force useChat hook remount via key change
             // This clears the internal hook state (messages, streaming state, etc.)
@@ -573,9 +566,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
             toast.success(t('agent.cleared', 'Conversation cleared'));
         }
-    }, [projectId, createWelcomeMessage, t]);
-
-    // Batch approval state
+    }, [projectId, createThread, setActiveThread, t, setChatResetKey]);
     const [approvalMode, setApprovalMode] = useState<'batch' | 'individual'>('batch');
     const [currentApprovalIndex, setCurrentApprovalIndex] = useState(0);
 

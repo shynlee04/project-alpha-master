@@ -267,7 +267,7 @@ export function ChatConversation({
                     {/* Back button */}
                     <Button
                         variant="ghost"
-                        size="icon"
+                        iconOnly
                         onClick={onBack}
                         className={cn(
                             'h-8 w-8',
@@ -383,7 +383,7 @@ export function ChatConversation({
                 {/* Back button */}
                 <Button
                     variant="ghost"
-                    size="icon"
+                    iconOnly
                     onClick={onBack}
                     className={cn(
                         'h-8 w-8',

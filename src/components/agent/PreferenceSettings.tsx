@@ -11,7 +11,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Settings, RotateCcw, Download, Upload, Brain } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import {
   getUserProfile,
   setPreference,

@@ -8,7 +8,7 @@
  */
 
 export { ToolCallBadge, ToolCallBadgeGroup } from './ToolCallBadge';
-export type { ToolCallBadgeProps, ToolCallBadgeGroupProps } from './ToolCallBadge';
+export type { ToolCallBadgeGroupProps } from './ToolCallBadge';
 
 export { CodeBlock } from './CodeBlock';
 export type { CodeBlockProps } from './CodeBlock';

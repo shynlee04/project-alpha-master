@@ -107,7 +107,7 @@ function ThreadCardComponent({
                 {/* Delete button - visible on hover */}
                 <Button
                     variant="ghost"
-                    size="icon"
+                    iconOnly
                     className={cn(
                         'h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity',
                         'text-destructive hover:text-destructive hover:bg-destructive/10'

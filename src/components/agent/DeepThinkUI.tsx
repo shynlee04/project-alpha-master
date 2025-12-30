@@ -11,9 +11,9 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import type { DeepThinkResult } from '@/lib/agent/deep-think/deep-think-hook';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import type { DeepThinkResult } from '@/lib/agent/deep-think/deep-think-types';
 
 export interface DeepThinkUIProps {
   /**

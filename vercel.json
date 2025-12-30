@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "/api/index.js"
     }
   ],
   "buildCommand": "pnpm build:vercel",

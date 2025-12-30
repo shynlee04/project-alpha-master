@@ -11,8 +11,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, X, Filter, Clock, RotateCcw } from 'lucide-react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { ConversationCard } from './ConversationCard';
 import {
   searchByKeyword,
@@ -60,7 +60,6 @@ export function MemorySearch({ onConversationClick }: MemorySearchProps) {
       const conversationStats = await getConversationStats();
       setStats({
         totalConversations: conversationStats.totalConversations,
-        totalMessages: conversationStats.totalMessages,
         oldestConversation: conversationStats.oldestConversation,
       });
     } catch (error) {
@@ -134,7 +133,7 @@ export function MemorySearch({ onConversationClick }: MemorySearchProps) {
 
           <div>
             {t('memory.stats.messages', '{{count}} messages', {
-              count: stats.totalMessages,
+              count: stats.totalConversations,
             })}
           </div>
         </div>

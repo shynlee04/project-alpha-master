@@ -11,4 +11,6 @@
 export { SkillsMatrix } from './SkillsMatrix';
 export { SkillCategory } from './SkillCategory';
 export { SkillCard } from './SkillCard';
-export type { SkillsMatrixProps, SkillCategoryProps, SkillCardProps, SkillLevel } from './SkillCard';
+export type { SkillsMatrixProps } from './SkillsMatrix';
+export type { SkillCategoryProps } from './SkillCategory';
+export type { SkillCardProps, SkillLevel } from './SkillCard';
