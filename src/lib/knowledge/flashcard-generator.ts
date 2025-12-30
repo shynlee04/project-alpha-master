@@ -36,8 +36,8 @@ export class FlashcardGenerator {
   constructor(apiKey?: string) {
     // Use provided API key or get from environment
     const key = apiKey || process.env.GEMINI_API_KEY || '';
-    this.client = new GoogleGenAI({ api: key });
-    this.model = 'gemini-2.5-flash'; // Using the latest flash model
+    this.client = new GoogleGenAI({ apiKey: key });
+    this.model = 'gemini-2.0-flash'; // Using the latest flash model
   }
 
   /**
@@ -57,7 +57,7 @@ export class FlashcardGenerator {
       maxCards?: number;
       topics?: string[];
     } = {}
-  ): Promise<FlashcardGenerationResult> {
+  ): Promise<FlashcardGenerationResult & { cards: Flashcard[] }> {
     const { minCards = 5, maxCards = 15, topics = [] } = options;
 
     const prompt = this.buildPrompt(content, sourceId, minCards, maxCards, topics);
@@ -113,7 +113,7 @@ export class FlashcardGenerator {
       maxCards?: number;
       topics?: string[];
     } = {}
-  ): Promise<FlashcardGenerationResult> {
+  ): Promise<FlashcardGenerationResult & { cards: Flashcard[] }> {
     const { minCards = 5, maxCards = 15, topics = [] } = options;
 
     // Combine all source content with source IDs
@@ -211,7 +211,7 @@ export class MockFlashcardGenerator {
     sourceId: string,
     projectId: string,
     count: number = 5
-  ): FlashcardGenerationResult {
+  ): FlashcardGenerationResult & { cards: Flashcard[] } {
     const cards: Flashcard[] = [];
     const topics = new Set<string>();
     const sourcesUsed = new Set<string>([sourceId]);
@@ -261,6 +261,7 @@ export function createFlashcardGenerator(apiKey?: string, useMock: boolean = fal
 export async function generateFlashcards(
   content: string,
   sourceId: string,
+  projectId: string,
   options: {
     minCards?: number;
     maxCards?: number;
@@ -268,14 +269,14 @@ export async function generateFlashcards(
     apiKey?: string;
     useMock?: boolean;
   } = {}
-): Promise<FlashcardGenerationResult> {
+): Promise<FlashcardGenerationResult & { cards: Flashcard[] }> {
   const generator = createFlashcardGenerator(options.apiKey, options.useMock);
 
   if (generator instanceof MockFlashcardGenerator) {
-    return generator.generateMockFlashcards(content, sourceId, options.maxCards || 5);
+    return generator.generateMockFlashcards(content, sourceId, projectId, options.maxCards || 5);
   }
 
-  return generator.generateFromContent(content, sourceId, {
+  return generator.generateFromContent(content, sourceId, projectId, {
     minCards: options.minCards,
     maxCards: options.maxCards,
     topics: options.topics,

@@ -1141,6 +1141,12 @@ active_epics:
     status: "IN_PROGRESS"
     start_date: "2025-12-29"
     trigger: "correct-course-2025-12-29"
+  - id: "EPIC-29"
+    name: "About Me Redesign"
+    status: "IN_PROGRESS"
+    start_date: "2025-12-30"
+    stories_done: "29-1 (Context & Validation)"
+    purpose: "Portfolio career page redesign for recruiter engagement"
 
 epic_status:
   KNOWLEDGE-SYNTHESIS-2025-12-28: "DONE"
@@ -1156,6 +1162,7 @@ epic_status:
   EPIC-9: "DONE"
   EPIC-24: "IN_PROGRESS"
   EPIC-26: "BACKLOG" # NEW - Intelligent Knowledge Base (The "Brain") - Added 2025-12-30
+  EPIC-29: "IN_PROGRESS" # About Me Redesign - Added 2025-12-30
 
 next_actions:
   - "🧠 EPIC 26: Intelligent Knowledge Base (The 'Brain') - READY FOR DEVELOPMENT"

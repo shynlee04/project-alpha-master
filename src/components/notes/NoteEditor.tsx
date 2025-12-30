@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils'; // Keep existing imports
 
 import { getCustomSlashMenuItems } from './AISlashCommand';
+import { NoteStudyMenu } from './NoteStudyMenu';
 import { AIPromptDialog } from './AIPromptDialog';
 import { SuggestionMenuController } from '@blocknote/react';
 import { filterSuggestionItems } from '@blocknote/core/extensions';
@@ -185,7 +186,10 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 {note.emoji && <span className="note-editor__emoji">{note.emoji}</span>}
                 <span className="note-editor__title">{note.title}</span>
                 <div className="note-editor__status-spacer" />
-                {renderSaveStatus()}
+                <div className="flex items-center gap-2">
+                    <NoteStudyMenu noteId={noteId} />
+                    {renderSaveStatus()}
+                </div>
             </div>
 
             {/* BlockNote editor */}
