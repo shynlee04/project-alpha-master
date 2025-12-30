@@ -319,12 +319,12 @@ export function IDELayout(): React.JSX.Element {
 
 
               {/* Center Panel (Editor + Preview + Terminal) */}
-              <ResizablePanel order={2} minSize={30}>
+              <ResizablePanel id="ide-center-wrapper" order={2} minSize={30}>
                 <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
                   {/* Editor + Preview */}
-                  <ResizablePanel defaultSize={70} minSize={30}>
+                  <ResizablePanel id="ide-editor-preview-wrapper" defaultSize={70} minSize={30}>
                     <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
-                      <ResizablePanel defaultSize={60} minSize={30} className="bg-background">
+                      <ResizablePanel id="ide-editor-panel" defaultSize={60} minSize={30} className="bg-background">
                         <Card id="editor-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
                           {/* P1.7: Responsive header height */}
                           <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
@@ -363,7 +363,7 @@ export function IDELayout(): React.JSX.Element {
                         aria-orientation="vertical"
                       />
                       {/* P1.7: Responsive header height and panel sizing */}
-                      <ResizablePanel defaultSize={40} minSize={15} className="bg-background">
+                      <ResizablePanel id="ide-preview-panel" defaultSize={40} minSize={15} className="bg-background">
                         <Card className="h-full rounded-none border-0 bg-background">
                           <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
                             <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Preview</CardTitle>
@@ -399,7 +399,7 @@ export function IDELayout(): React.JSX.Element {
                   />
                   {/* Terminal Panel */}
                   {/* P1.7: Responsive header height and panel sizing */}
-                  <ResizablePanel defaultSize={30} minSize={10} maxSize={50} className="bg-background">
+                  <ResizablePanel id="ide-terminal-panel" defaultSize={30} minSize={10} maxSize={50} className="bg-background">
                     <Card className="h-full rounded-none border-0 bg-background">
                       <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
                         <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Terminal</CardTitle>
@@ -437,7 +437,7 @@ export function IDELayout(): React.JSX.Element {
                     aria-orientation="vertical"
                   />
                   {/* P1.7: Responsive header height and chat panel sizing */}
-                  <ResizablePanel order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
+                  <ResizablePanel id="ide-chat-panel" order={3} defaultSize={25} minSize={15} maxSize={40} className="bg-background">
                     <Card id="chat-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
                       <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
                         <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>

@@ -1132,5 +1132,164 @@
   "toolTimeout.slowOperation.title": "Long-Running Operation",
   "toolTimeout.slowOperation.message": "This may take up to {{duration}} for large files. Continue?",
   "toolTimeout.slowOperation.confirm": "Continue",
-  "toolTimeout.slowOperation.cancel": "Cancel"
+  "toolTimeout.slowOperation.cancel": "Cancel",
+  "memory": {
+    "title": "Conversation Memory",
+    "stats": {
+      "conversations": "{{count}} conversations",
+      "conversations_one": "{{count}} conversation",
+      "messages": "{{count}} messages",
+      "messages_one": "{{count}} message"
+    },
+    "search": {
+      "placeholder": "Search conversations...",
+      "searching": "Searching...",
+      "results": "{{count}} results found",
+      "results_one": "{{count}} result found",
+      "noResults": "No results found",
+      "tryDifferent": "Try a different search term",
+      "enterQuery": "Enter at least 2 characters to search",
+      "searchTip": "Search summaries, insights, and tags"
+    },
+    "filters": {
+      "title": "Advanced Filters",
+      "threshold": "Relevance Threshold: {{value}}",
+      "recencyBoost": "Recency Boost: {{value}}x",
+      "includeExcluded": "Include excluded conversations",
+      "reset": "Reset Filters"
+    },
+    "insights": {
+      "label": "Key Insights",
+      "showMore": "Show {{count}} more",
+      "showLess": "Show less"
+    },
+    "tags": {
+      "label": "Tags"
+    },
+    "date": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{{days}} days ago",
+      "daysAgo_one": "{{days}} day ago"
+    },
+    "messages": {
+      "count": "{{count}} messages",
+      "count_one": "{{count}} message"
+    },
+    "status": {
+      "excluded": "Excluded from search"
+    },
+    "footer": {
+      "hint": "Memory is automatically pruned after 30 days"
+    }
+  },
+  "preferences": {
+    "title": "Agent Preferences",
+    "subtitle": "Manage your AI agent preferences and learned behaviors",
+    "loading": "Loading preferences...",
+    "noData": "No preferences data found",
+    "learnedEnabled": "AI Learning Active",
+    "learnedDesc": "The agent has learned from your interactions. You can override any preference below.",
+    "language": {
+      "label": "Language",
+      "auto": "Auto-detect",
+      "english": "English",
+      "vietnamese": "Vietnamese"
+    },
+    "detailLevel": {
+      "label": "Response Detail Level",
+      "concise": "Concise",
+      "normal": "Normal",
+      "detailed": "Detailed"
+    },
+    "citationStyle": {
+      "label": "Citation Style",
+      "inline": "Inline",
+      "footnote": "Footnote",
+      "none": "None"
+    },
+    "responseStyle": {
+      "label": "Response Style",
+      "formal": "Formal",
+      "casual": "Casual",
+      "technical": "Technical"
+    },
+    "manualOverride": "Manually set",
+    "export": "Export",
+    "import": "Import",
+    "importFailed": "Failed to import preferences",
+    "resetLearned": "Reset Learned Preferences",
+    "resetLearnedConfirm": "This will clear all auto-learned preferences. Manual settings will be kept. Continue?",
+    "resetAll": "Reset All Preferences to Defaults",
+    "resetAllConfirm": "Are you sure you want to reset all preferences?",
+    "lastUpdated": "Last updated: {{date}}",
+    "learnedFromNow": "I'll respond in {{language}} from now on",
+    "preferencesAdapted": "I've adapted to your preferences"
+  },
+  "suggestions": {
+    "title": "Suggested actions",
+    "dismissAll": "Dismiss all",
+    "dismissed": "Dismissed for 7 days",
+    "reenable": "Re-enable",
+    "executed": "Action completed",
+    "generateQuiz": "Generate Quiz",
+    "addToCanvas": "Add to Canvas",
+    "createNote": "Create Note",
+    "searchKb": "Search Knowledge Base",
+    "generateFlashcards": "Generate Flashcards",
+    "shareResult": "Share Result",
+    "generateQuizDesc": "Create a quiz from your materials",
+    "addToCanvasDesc": "Add to your knowledge canvas",
+    "createNoteDesc": "Save this as a note",
+    "searchKbDesc": "Find related information",
+    "generateFlashcardsDesc": "Create study flashcards",
+    "shareResultDesc": "Export or share this result",
+    "quizCreated": "Quiz created successfully",
+    "addedToCanvas": "Added to canvas",
+    "noteCreated": "Note created",
+    "kbSearched": "Searched knowledge base",
+    "flashcardsGenerated": "Flashcards generated",
+    "resultShared": "Result shared"
+  },
+  "snapshot": {
+    "title": "Session Snapshot",
+    "restored": "Session restored from {{date}}",
+    "tooOld": "Session snapshot is too old ({{days}} days)",
+    "cleared": "Session snapshots cleared",
+    "saved": "Session snapshot saved",
+    "age": "Snapshot age: {{days}} days",
+    "notFound": "No recent session snapshot found",
+    "autoRestoreEnabled": "Auto-restore session on startup",
+    "autoSaveEnabled": "Auto-save session state"
+  },
+  "about": {
+    "stats": {
+      "agents": "AI Agents Orchestrated",
+      "timeline": "Months to Production",
+      "techStack": "Technologies Mastered",
+      "architecture": "Architecture Grade",
+      "agentsTooltip": "BMAD V6 framework multi-agent orchestration system",
+      "timelineTooltip": "Full production system in under 1 month",
+      "techStackTooltip": "React, TypeScript, TanStack, WebContainer, and more",
+      "architectureTooltip": "Enterprise-grade system design with scalability"
+    },
+    "journey": {
+      "title": "My Journey",
+      "subtitle": "From Education Management to AI Agent Architecture",
+      "opening": "My journey from managing educational operations to architecting enterprise AI systems is rooted in a fundamental truth: the best technology amplifies human capability.",
+      "closing": "I don't just build AI tools; I design autonomous systems that solve complex problems with reliability, transparency, and scalability.",
+      "background": {
+        "title": "Professional Background",
+        "description": "From leading educational operations and curriculum design to transitioning into technology. My background in education management taught me the importance of clear communication, structured learning, and systematic problem-solving—skills that now define my approach to AI agent development."
+      },
+      "transition": {
+        "title": "Career Transformation",
+        "description": "Drawing from my background in curriculum design and team coordination, I approach AI agent development with a unique perspective—treating each agent as a team member with specialized skills, clear responsibilities, and seamless collaboration protocols."
+      },
+      "value": {
+        "title": "What I Bring",
+        "description": "I combine enterprise architecture thinking with rapid prototyping agility. My multi-agent orchestration systems demonstrate how autonomous AI can solve complex problems while maintaining human oversight, transparency, and scalability."
+      }
+    }
+  }
 }

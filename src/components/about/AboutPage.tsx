@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useResponsive } from '@/hooks/useResponsive';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { User, Code, Zap, Rocket, Mail, Linkedin, Github } from 'lucide-react';
+import { User, Rocket, Mail, Linkedin, Github, Users, Clock, Cpu, Building2 } from 'lucide-react';
+import { StatsBar } from './stats';
+import { JourneySection } from './journey';
 import './AboutPage.css';
 
 /**
@@ -15,6 +17,46 @@ import './AboutPage.css';
 export function AboutPage() {
   const { t } = useTranslation();
   const { isMobile, isTablet, isDesktop } = useResponsive();
+
+  // Stats data configuration
+  const statsData = [
+    {
+      id: 'agents',
+      value: '15+',
+      labelKey: 'about.stats.agents',
+      icon: Users,
+      color: 'var(--primary)',
+      showTooltip: true,
+      tooltip: t('about.stats.agentsTooltip'),
+    },
+    {
+      id: 'timeline',
+      value: '<1',
+      labelKey: 'about.stats.timeline',
+      icon: Clock,
+      color: 'var(--success)',
+      showTooltip: true,
+      tooltip: t('about.stats.timelineTooltip'),
+    },
+    {
+      id: 'techStack',
+      value: '10+',
+      labelKey: 'about.stats.techStack',
+      icon: Cpu,
+      color: 'var(--info)',
+      showTooltip: true,
+      tooltip: t('about.stats.techStackTooltip'),
+    },
+    {
+      id: 'architecture',
+      value: 'Enterprise',
+      labelKey: 'about.stats.architecture',
+      icon: Building2,
+      color: 'var(--accent)',
+      showTooltip: true,
+      tooltip: t('about.stats.architectureTooltip'),
+    },
+  ];
 
   return (
     <ErrorBoundary fallback={<div className="error-fallback">Error loading About page</div>}>
@@ -33,7 +75,13 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Story Section */}
+      {/* Stats Bar */}
+      <StatsBar stats={statsData} fixed={isDesktop} />
+
+      {/* Journey Section */}
+      <JourneySection />
+
+      {/* Skills Section */}
       <section className="about-section about-story">
         <div className="about-section-header">
           <Code className="section-icon" size={24} />

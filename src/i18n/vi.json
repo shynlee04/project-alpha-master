@@ -1120,5 +1120,164 @@
   "toolTimeout.slowOperation.title": "Thao Tác Chạy Dài",
   "toolTimeout.slowOperation.message": "Thao tác này có thể mất tới {{duration}} với file lớn. Tiếp tục?",
   "toolTimeout.slowOperation.confirm": "Tiếp tục",
-  "toolTimeout.slowOperation.cancel": "Hủy"
+  "toolTimeout.slowOperation.cancel": "Hủy",
+  "memory": {
+    "title": "Lịch sử Hội thoại",
+    "stats": {
+      "conversations": "{{count}} cuộc hội thoại",
+      "conversations_one": "{{count}} cuộc hội thoại",
+      "messages": "{{count}} tin nhắn",
+      "messages_one": "{{count}} tin nhắn"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm hội thoại...",
+      "searching": "Đang tìm kiếm...",
+      "results": "Tìm thấy {{count}} kết quả",
+      "results_one": "Tìm thấy {{count}} kết quả",
+      "noResults": "Không tìm thấy kết quả",
+      "tryDifferent": "Thử từ khóa khác",
+      "enterQuery": "Nhập ít nhất 2 ký tự để tìm",
+      "searchTip": "Tìm kiếm tóm tắt, thông tin chi tiết, và thẻ"
+    },
+    "filters": {
+      "title": "Bộ lọc Nâng cao",
+      "threshold": "Ngưỡng liên quan: {{value}}",
+      "recencyBoost": "Ưu tiên gần đây: {{value}}x",
+      "includeExcluded": "Bao gồm hội thoại đã loại trừ",
+      "reset": "Đặt lại Bộ lọc"
+    },
+    "insights": {
+      "label": "Thông tin Chi tiết",
+      "showMore": "Hiện thêm {{count}}",
+      "showLess": "Thu gọn"
+    },
+    "tags": {
+      "label": "Thẻ"
+    },
+    "date": {
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua",
+      "daysAgo": "{{days}} ngày trước",
+      "daysAgo_one": "{{days}} ngày trước"
+    },
+    "messages": {
+      "count": "{{count}} tin nhắn",
+      "count_one": "{{count}} tin nhắn"
+    },
+    "status": {
+      "excluded": "Đã loại trừ khỏi tìm kiếm"
+    },
+    "footer": {
+      "hint": "Lịch sử tự động xóa sau 30 ngày"
+    }
+  },
+  "preferences": {
+    "title": "Tùy chỉnh Trợ lý AI",
+    "subtitle": "Quản lý các tùy chỉnh và hành vi đã học của trợ lý AI",
+    "loading": "Đang tải tùy chỉnh...",
+    "noData": "Không tìm thấy dữ liệu tùy chỉnh",
+    "learnedEnabled": "Học tập AI đang hoạt động",
+    "learnedDesc": "Trợ lý đã học từ các tương tác của bạn. Bạn có thể ghi đè bất kỳ tùy chỉnh nào bên dưới.",
+    "language": {
+      "label": "Ngôn ngữ",
+      "auto": "Tự động phát hiện",
+      "english": "Tiếng Anh",
+      "vietnamese": "Tiếng Việt"
+    },
+    "detailLevel": {
+      "label": "Mức độ Chi tiết",
+      "concise": "Ngắn gọn",
+      "normal": "Bình thường",
+      "detailed": "Chi tiết"
+    },
+    "citationStyle": {
+      "label": "Kiểu Trích dẫn",
+      "inline": "Trong dòng",
+      "footnote": "Chú thích",
+      "none": "Không"
+    },
+    "responseStyle": {
+      "label": "Phong cách Trả lời",
+      "formal": "Trang trọng",
+      "casual": "Thân mật",
+      "technical": "Kỹ thuật"
+    },
+    "manualOverride": "Đặt thủ công",
+    "export": "Xuất",
+    "import": "Nhập",
+    "importFailed": "Không thể nhập tùy chỉnh",
+    "resetLearned": "Đặt lại Tùy chỉnh đã Học",
+    "resetLearnedConfirm": "Thao tác này sẽ xóa tất cả tùy chỉnh đã tự động học. Cài đặt thủ công sẽ được giữ lại. Tiếp tục?",
+    "resetAll": "Đặt lại tất cả Tùy chỉnh về Mặc định",
+    "resetAllConfirm": "Bạn có chắc chắn muốn đặt lại tất cả tùy chỉnh?",
+    "lastUpdated": "Cập nhật lần cuối: {{date}}",
+    "learnedFromNow": "Tôi sẽ trả lời bằng {{language}} từ bây giờ",
+    "preferencesAdapted": "Tôi đã điều chỉnh theo tùy chỉnh của bạn"
+  },
+  "suggestions": {
+    "title": "Hành động đề xuất",
+    "dismissAll": "Bỏ hết",
+    "dismissed": "Đã ẩn trong 7 ngày",
+    "reenable": "Bật lại",
+    "executed": "Hoàn thành hành động",
+    "generateQuiz": "Tạo Trắc nghiệm",
+    "addToCanvas": "Thêm vào Canvas",
+    "createNote": "Tạo Ghi chú",
+    "searchKb": "Tìm Kiến thức",
+    "generateFlashcards": "Tạo Flashcards",
+    "shareResult": "Chia sẻ Kết quả",
+    "generateQuizDesc": "Tạo trắc nghiệm từ tài liệu của bạn",
+    "addToCanvasDesc": "Thêm vào canvas kiến thức",
+    "createNoteDesc": "Lưu thành ghi chú",
+    "searchKbDesc": "Tìm thông tin liên quan",
+    "generateFlashcardsDesc": "Tạo flashcards học tập",
+    "shareResultDesc": "Xuất hoặc chia sẻ kết quả",
+    "quizCreated": "Đã tạo trắc nghiệm",
+    "addedToCanvas": "Đã thêm vào canvas",
+    "noteCreated": "Đã tạo ghi chú",
+    "kbSearched": "Đã tìm kiếm kiến thức",
+    "flashcardsGenerated": "Đã tạo flashcards",
+    "resultShared": "Đã chia sẻ kết quả"
+  },
+  "snapshot": {
+    "title": "Snapshot Phiên làm việc",
+    "restored": "Đã khôi phục phiên từ {{date}}",
+    "tooOld": "Snapshot phiên quá cũ ({{days}} ngày)",
+    "cleared": "Đã xóa snapshot phiên",
+    "saved": "Đã lưu snapshot phiên",
+    "age": "Tuổi snapshot: {{days}} ngày",
+    "notFound": "Không tìm thấy snapshot phiên gần đây",
+    "autoRestoreEnabled": "Tự động khôi phục phiên khi khởi động",
+    "autoSaveEnabled": "Tự động lưu trạng thái phiên"
+  },
+  "about": {
+    "stats": {
+      "agents": "AI Agents Đã Điều phối",
+      "timeline": "Tháng để Ra sản phẩm",
+      "techStack": "Công nghệ Đã thành thạo",
+      "architecture": "Cấp độ Kiến trúc",
+      "agentsTooltip": "Hệ thống điều phối multi-agent framework BMAD V6",
+      "timelineTooltip": "Hệ thống production hoàn chỉnh trong dưới 1 tháng",
+      "techStackTooltip": "React, TypeScript, TanStack, WebContainer, và nhiều hơn nữa",
+      "architectureTooltip": "Thiết kế hệ thống cấp doanh nghiệp với khả năng mở rộng"
+    },
+    "journey": {
+      "title": "Hành Trình Của Tôi",
+      "subtitle": "Từ Quản lý Giáo dục đến Kiến trúc sư AI Agent",
+      "opening": "Hành trình của tôi từ quản lý vận hành giáo dục đến kiến tạo hệ thống AI doanh nghiệp bắt đầu từ một sự thật cơ bản: công nghệ tốt nhất là công nghệ khuếch đại khả năng con người.",
+      "closing": "Tôi không chỉ xây dựng công cụ AI; tôi thiết kế các hệ thống tự trị giải quyết các vấn đề phức tạp một cách đáng tin cậy, minh bạch và có khả năng mở rộng.",
+      "background": {
+        "title": "Nền tảng Chuyên nghiệp",
+        "description": "Từ lãnh đạo vận hành giáo dục và thiết kế chương trình đến chuyển đổi sang công nghệ. Nền tảng quản lý giáo dục của tôi đã dạy tôi tầm quan trọng của giao tiếp rõ ràng, học tập có cấu trúc và giải quyết vấn đề một cách hệ thống—những kỹ năng giờ đây định nghĩa cách tiếp cận của tôi với phát triển AI agent."
+      },
+      "transition": {
+        "title": "Chuyển đổi Sự nghiệp",
+        "description": "Dựa trên nền tảng thiết kế chương trình và điều phối đội ngũ, tôi tiếp cận phát triển AI agent với một góc nhìn độc đáo—coi mỗi agent như một thành viên trong đội với kỹ năng chuyên môn, trách nhiệm rõ ràng và giao thức cộng tác liền mạch."
+      },
+      "value": {
+        "title": "Tôi Đem Lại Gì",
+        "description": "Tôi kết hợp tư duy kiến trúc doanh nghiệp với sự linh hoạt của rapid prototyping. Hệ thống điều phối multi-agent của tôi chứng minh cách AI tự trị có thể giải quyết các vấn đề phức tạp trong khi vẫn duy trì sự giám sát của con người, tính minh bạch và khả năng mở rộng."
+      }
+    }
+  }
 }
