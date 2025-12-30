@@ -8,6 +8,7 @@
     "build": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=node vite build",
     "build:cloudflare": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=cloudflare vite build",
     "build:vercel": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=netlify vite build",
+    "deploy": "pnpm build:cloudflare && npx wrangler versions upload dist/server/index.js --config wrangler.jsonc",
     "build:manual": "echo 'Manual build - use pnpm build:cloudflare or pnpm build:vercel'",
     "build:analyze": "pnpm build && node scripts/analyze-bundle.js",
     "preview": "vite preview",

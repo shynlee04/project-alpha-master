@@ -2344,6 +2344,289 @@ interface Note {
 
 ---
 
+### Epic 31: 🤖 Advanced Agent Capabilities
+*Days 25-28 (Phase 2 - Completes P2-AGT Requirements)*
+
+**User Outcome:** AI agent demonstrates intelligent behavior with long-term memory, personalized responses, proactive suggestions, and reliable timeout handling.
+
+**Social Media Appeal:** ⭐⭐⭐⭐⭐ — **"Your AI learns from you"** — memory, personalization, proactive help
+
+**PRD Requirements Covered:**
+- **P2-AGT-04:** Conversation Memory — Long-term memory across sessions
+- **P2-AGT-05:** User Preference Learning — Adapt to user behavior
+- **P2-AGT-06:** Proactive Suggestions — Suggest follow-up actions
+- **P2-AGT-09:** Tool Execution Timeout — Enforce 30s timeout
+
+**UX Principles Applied:**
+- **Progressive Enhancement:** Memory improves with usage
+- **Privacy-First:** User controls what's remembered
+- **Transparent AI:** User sees what's being suggested and why
+
+---
+
+#### Story 31.1: Conversation Memory & Long-Term Context
+
+**As a** user returning after a week,
+**I want** the AI to remember our previous conversations,
+**So that** I don't have to repeat context.
+
+**Acceptance Criteria:**
+
+**Given** a user has multiple conversations over days
+**When** they start a new conversation
+**Then** the agent can reference past discussions
+**And** key insights from previous chats are indexed and searchable
+**And** memory persists across sessions (IndexedDB)
+
+**Given** conversation memory is active
+**When** user asks "What did we discuss about X?"
+**Then** agent searches past conversations for mentions of X
+**And** provides summary with citations to specific conversations
+**And** shows conversation date and context
+
+**Given** memory storage reaches quota limits
+**When** automatic pruning triggers
+**Then** retain last 30 days of conversations
+**And** prioritize conversations with user interactions (favorites, long sessions)
+**And** notify user before pruning: "Old conversations will be archived"
+
+**Given** user wants privacy
+**When** they click "Forget this conversation"
+**Then** conversation is excluded from memory search
+**And** excluded from insight extraction
+**And** user can permanently delete conversation
+
+**Implementation Files:**
+- `src/lib/agent/memory/conversation-memory.ts`
+- `src/lib/agent/memory/insight-extractor.ts`
+- `src/lib/agent/memory/memory-index.ts`
+
+**IndexedDB Schema:**
+```typescript
+interface ConversationMemory {
+  id: string;
+  threadId: string;
+  summary: string;        // AI-generated summary
+  insights: string[];     // Key learnings extracted
+  embedding?: number[];   // For semantic search
+  createdAt: number;
+  accessedAt: number;
+  isExcluded: boolean;    // User opted out
+}
+```
+
+**Demo Checkpoint:** 🧠 "Continue our discussion about database schemas" → AI recalls from last week
+
+---
+
+#### Story 31.2: User Preference Learning & Personalization
+
+**As a** user,
+**I want** the AI to learn my preferences,
+**So that** responses are tailored to my style without repeated configuration.
+
+**Acceptance Criteria:**
+
+**Given** a user interacts with the agent
+**When** patterns emerge (language preference, detail level, citation style)
+**Then** preferences are automatically tracked
+**And** applied to future responses
+**And** user can see learned preferences in settings
+
+**Given** user prefers Vietnamese responses
+**When** they chat in Vietnamese 3+ times
+**Then** agent defaults to Vietnamese for new conversations
+**And** preference is persisted to user profile
+**And** agent confirms: "I'll respond in Vietnamese from now on"
+
+**Given** user prefers concise answers
+**When** they repeatedly ask for "shorter" or "briefer" responses
+**Then** agent adapts response length automatically
+**And** preference is tracked in user profile
+**And** user can override with "Be detailed this time"
+
+**Given** user wants to reset preferences
+**When** they click "Reset learned preferences"
+**Then** all learned preferences are cleared
+**And** agent returns to default behavior
+**And** confirmation dialog shows before reset
+
+**Given** user wants manual control
+**When** they open Agent Settings
+**Then** all learned preferences are displayed
+**And** user can manually override any preference
+**And** manual overrides take precedence over learned preferences
+
+**Implementation Files:**
+- `src/lib/agent/preferences/preference-tracker.ts`
+- `src/lib/agent/preferences/user-profile.ts`
+- `src/components/agent/PreferenceSettings.tsx`
+
+**User Profile Schema:**
+```typescript
+interface UserProfile {
+  userId: string;
+  preferences: {
+    language: 'en' | 'vi' | 'auto';
+    detailLevel: 'concise' | 'normal' | 'detailed';
+    citationStyle: 'inline' | 'footnote' | 'none';
+    responseStyle: 'formal' | 'casual' | 'technical';
+  };
+  learned: boolean;      // true if ML-based learning active
+  manualOverrides: string[];
+  updatedAt: number;
+}
+```
+
+**Demo Checkpoint:** 🎯 "I like concise answers" → AI adapts → Preferences shown in settings
+
+---
+
+#### Story 31.3: Proactive Suggestions & Follow-Up Actions
+
+**As a** user,
+**I want** the AI to suggest relevant actions,
+**So that** I can accomplish tasks faster without knowing all features.
+
+**Acceptance Criteria:**
+
+**Given** a user completes a task (e.g., generates flashcards)
+**When** the task completes
+**Then** agent suggests 2-3 relevant follow-up actions
+**And** suggestions appear as chips below response: "Generate quiz", "Add to canvas", "Find related sources"
+**And** suggestions are dismissible with "Don't show again"
+
+**Given** a user asks about a topic
+**When** agent responds
+**Then** suggestions are contextual: "Create a note about this", "Search my knowledge base", "Generate flashcards"
+**And** suggestions improve with usage (learn user patterns)
+**And**最多显示 3 suggestions (avoid overwhelm)
+
+**Given** user dismisses a suggestion
+**When** they click "×" or "Don't show again"
+**Then** that suggestion type is hidden for 7 days
+**And** feedback is logged (for improvement, not for targeted ads)
+**And** user can re-enable in settings
+
+**Given** user takes a suggestion
+**When** they click it
+**Then** the suggested action executes immediately
+**And** context is preserved (no need to re-explain)
+**And** agent confirms: "I've [action] for you"
+
+**Given** mobile user
+**When** suggestions appear
+**Then** suggestions are swipeable cards
+**And** tap to execute, swipe to dismiss
+**And** suggestions adapt to mobile context (no desktop-only features)
+
+**Implementation Files:**
+- `src/lib/agent/suggestions/suggestion-engine.ts`
+- `src/lib/agent/suggestions/suggestion-tracker.ts`
+- `src/components/chat/SuggestionChips.tsx`
+
+**Suggestion Schema:**
+```typescript
+interface Suggestion {
+  id: string;
+  type: 'generate-quiz' | 'add-to-canvas' | 'create-note' | 'search-kb';
+  title: string;         // "Generate Quiz"
+  description: string;   // "Create a quiz from these sources"
+  action: () => Promise<void>;
+  confidence: number;    // 0-1 score for relevance
+  dismissUntil?: number; // Timestamp if dismissed
+}
+```
+
+**Demo Checkpoint:** ✨ Agent response → Suggestion chips appear → Tap "Generate quiz" → Quiz created
+
+---
+
+#### Story 31.4: Tool Execution Timeout & Graceful Degradation
+
+**As a** user,
+**I want** long-running tools to timeout safely,
+**So that** the agent doesn't hang indefinitely.
+
+**Acceptance Criteria:**
+
+**Given** a tool call is executed (e.g., file write, shell command)
+**When** execution exceeds 30 seconds (configurable)
+**Then** tool execution is aborted with AbortController
+**And** user is notified: "Operation timed out after 30s"
+**And** partial state is cleaned up (no orphaned processes)
+
+**Given** timeout occurs
+**When** user sees error message
+**Then** retry option is provided: "Try again" or "Try with longer timeout"
+**And** user can adjust timeout for this operation: 1min, 5min, 10min
+**And** timeout preference is remembered for similar operations
+
+**Given** tool timeout is approaching (25s)
+**When** operation is still running
+**Then** warning toast appears: "Operation taking longer than expected..."
+**And** progress indicator shows: "Still working... (25s)"
+**And** user can choose to wait or cancel
+
+**Given** a tool is known to be slow (e.g., large file write)
+**When** agent calls the tool
+**Then** agent warns user: "This may take up to 2 minutes for large files"
+**And** user can confirm or cancel before execution
+**And** progress is shown during execution
+
+**Given** timeout occurs during tool execution
+**When** cleanup happens
+**Then** all related resources are released (file handles, processes, memory)
+**And** agent can recover and continue conversation
+**And** no zombie processes remain
+
+**Implementation Files:**
+- `src/lib/agent/tools/tool-timeout.ts`
+- `src/lib/agent/tools/abort-controller.ts`
+- `src/components/chat/TimeoutWarning.tsx`
+
+**Timeout Configuration:**
+```typescript
+interface ToolTimeoutConfig {
+  default: number;        // 30s default
+  warning: number;        // 25s warning threshold
+  max: number;           // 10min absolute max
+  toolSpecific: {
+    [toolName: string]: number;  // Custom timeouts per tool
+  };
+}
+
+const DEFAULT_CONFIG: ToolTimeoutConfig = {
+  default: 30000,
+  warning: 25000,
+  max: 600000,
+  toolSpecific: {
+    'write_file': 5000,      // 5s for file writes
+    'run_command': 120000,   // 2min for commands
+    'read_file': 3000,       // 3s for file reads
+  },
+};
+```
+
+**Demo Checkpoint:** ⏱️ Tool hangs → 25s warning → 30s timeout → Cleanup → Retry prompt
+
+---
+
+### Epic 31 NFR Validation
+
+| NFR ID | Requirement | Target | Validation Story |
+|--------|-------------|--------|-----------------|
+| NFR-PERF-P4-01 | Memory search latency | <500ms | 31.1 |
+| NFR-PERF-P4-02 | Preference update | <100ms | 31.2 |
+| NFR-PERF-P4-03 | Suggestion generation | <200ms | 31.3 |
+| NFR-PERF-P4-04 | Timeout precision | ±100ms | 31.4 |
+| NFR-REL-P4-01 | Memory persistence | 99%+ | 31.1 |
+| NFR-REL-P4-02 | Preference sync | 100% | 31.2 |
+| NFR-SEC-P4-01 | Memory encryption | AES-256 | 31.1 |
+| NFR-USE-P4-01 | Suggestion relevance | >80% | 31.3 |
+
+---
+
 ## Phase 2 Sprint Calendar
 
 | Sprint | Epic | Dates | Demo Focus |
@@ -2450,6 +2733,15 @@ interface Note {
 | **10.1** | Live API WebSocket Manager (Desktop Only) | Epic 10 | WebSocket connection, real-time audio | - | - | - | Gemini Live API | `src/lib/voice/websocket-manager.ts` |
 | **10.2** | Multimodal Source Vision (Desktop Only) | Epic 10 | PDF page capture, vision explanation | Story 10.1 | - | - | Gemini Live API, pdf.js | `src/lib/voice/vision-capture.ts` |
 | **10.3** | Audio Overview Generator | Epic 10 | Audio generation, offline playback | Story 7.5 | - | NFR-PERF-P2-07 | Gemini 3.0 Flash | `src/lib/study/audio-overview.ts` |
+| **26.1** | Integrated BlockNote Editor | Epic 26 | Notion-like blocks, slash commands | - | - | NFR-PERF-P3-01 | BlockNote | `src/components/notes/BlockNoteEditor.tsx` |
+| **26.2** | Client-Side Embedding Pipeline | Epic 26 | Local embeddings, Orama search | Story 26.1 | - | NFR-PERF-P3-02 | Transformers.js, Orama | `src/lib/notes/note-embeddings.ts` |
+| **26.3** | "Ask My Notes" RAG Tool | Epic 26 | Semantic search, citations | Story 26.2 | - | NFR-PERF-P3-03 | Orama, TanStack AI | `src/lib/agent/tools/note-search-tool.ts` |
+| **26.4** | Inline AI "Magic" | Epic 26 | Slash commands, streaming generation | Story 26.1 | - | NFR-PERF-P3-04 | TanStack AI | `src/components/notes/AISlashCommand.tsx` |
+| **26.5** | Note Hierarchy & Sidebar | Epic 26 | Tree navigation, drag-drop | Story 26.1 | - | NFR-PERF-P3-05 | - | `src/components/notes/NoteTree.tsx` |
+| **31.1** | Conversation Memory & Long-Term Context | Epic 31 | IndexedDB memory, semantic search | - | - | NFR-PERF-P4-01, NFR-REL-P4-01, NFR-SEC-P4-01 | Dexie, Orama | `src/lib/agent/memory/conversation-memory.ts` |
+| **31.2** | User Preference Learning & Personalization | Epic 31 | Adaptive preferences, profile persistence | - | - | NFR-PERF-P4-02, NFR-REL-P4-02 | Zustand, Dexie | `src/lib/agent/preferences/preference-tracker.ts` |
+| **31.3** | Proactive Suggestions & Follow-Up Actions | Epic 31 | Contextual suggestions, dismissible | - | - | NFR-PERF-P4-03, NFR-USE-P4-01 | - | `src/lib/agent/suggestions/suggestion-engine.ts` |
+| **31.4** | Tool Execution Timeout & Graceful Degradation | Epic 31 | AbortController, cleanup, retry | - | - | NFR-PERF-P4-04 | AbortController | `src/lib/agent/tools/tool-timeout.ts` |
 
 ---
 

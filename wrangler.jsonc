@@ -7,6 +7,9 @@
     ],
     // Custom server entry that injects COOP/COEP headers for WebContainer support
     "main": "./src/server.ts",
+    "assets": {
+        "directory": "./dist/client"
+    },
     // Enable Workers development
     "workers_dev": true
 }

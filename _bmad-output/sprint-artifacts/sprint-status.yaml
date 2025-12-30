@@ -358,6 +358,17 @@ development_status:
   29-11-internationalization: backlog # 3 story points
   epic-29-retrospective: pending
 
+  # EPIC 31: Advanced Agent Capabilities (Days 25-28)
+  # Added: 2025-12-31T00:00:00+07:00
+  # Completes: P2-AGT-04 through P2-AGT-09 (Conversation Memory, User Preferences, Proactive Suggestions, Tool Timeout)
+  # Priority: HIGH - Core agentic capabilities for complete AI experience
+  epic-31: backlog # Created 2025-12-31, awaiting implementation
+  31-1-conversation-memory: backlog # IndexedDB memory, semantic search, 30-day retention
+  31-2-user-preference-learning: backlog # Adaptive preferences, profile persistence
+  31-3-proactive-suggestions: backlog # Contextual suggestions, dismissible chips
+  31-4-tool-execution-timeout: backlog # AbortController, 30s timeout, graceful degradation
+  epic-31-retrospective: pending
+
 
 # TEST STATUS - IMPORTANT DISTINCTION
 # ======================================
