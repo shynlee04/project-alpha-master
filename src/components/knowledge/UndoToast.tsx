@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 export interface UndoToastProps {
@@ -46,6 +47,7 @@ export function UndoToast({
     countdown = 5,
     visible = true,
 }: UndoToastProps) {
+    const { t } = useTranslation();
     const [timeLeft, setTimeLeft] = useState(countdown);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -106,10 +108,10 @@ export function UndoToast({
             {/* Message */}
             <div className="flex-1">
                 <p className="text-sm text-foreground">
-                    <span className="font-medium">"{sourceTitle}"</span> deleted
+                    <span className="font-medium">"{sourceTitle}"</span> {t('knowledge.deleted')}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                    Undo available in <span className="font-mono">{timeLeft}s</span>
+                    {t('knowledge.undo.availableIn')} <span className="font-mono">{timeLeft}s</span>
                 </p>
             </div>
 
@@ -126,7 +128,7 @@ export function UndoToast({
                     'focus:outline-none focus:ring-2 focus:ring-primary'
                 )}
             >
-                Undo
+                {t('knowledge.undo.undo')}
             </button>
         </div>
     );

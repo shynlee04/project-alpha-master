@@ -154,7 +154,7 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                                 </div>
                             )}
                             {!isEditing && tags.length === 0 && (
-                                <span className="text-muted-foreground text-sm italic">No concepts extracted.</span>
+                                <span className="text-muted-foreground text-sm italic">{t('knowledge.metadata.noConcepts')}</span>
                             )}
                         </div>
                     </div>
@@ -200,7 +200,7 @@ export function SourceMetadataDialog({ source, open, onOpenChange }: SourceMetad
                 <DialogFooter className="gap-2 sm:gap-0">
                     {isEditing ? (
                         <>
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                            <Button variant="outline" onClick={() => setIsEditing(false)}>{t('common.cancel')}</Button>
                             <Button onClick={handleSave} disabled={isProcessing}>
                                 <Save size={14} className="mr-2" /> Save Changes
                             </Button>

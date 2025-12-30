@@ -178,7 +178,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                 {isExtracting && (
                     <>
                         <span>•</span>
-                        <span className="text-primary animate-pulse">Analyzing...</span>
+                        <span className="text-primary animate-pulse">{t('knowledge.metadata.analyzing')}</span>
                     </>
                 )}
             </div>

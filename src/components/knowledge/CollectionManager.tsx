@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusIcon } from '@/components/ui/icons';
 import { CreateCollectionDialog } from './CreateCollectionDialog';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
@@ -37,6 +38,7 @@ export function CollectionManager({
     onCollectionSelect,
     activeCollectionId = null,
 }: CollectionManagerProps) {
+    const { t } = useTranslation();
     const { collections, createCollection } = useKnowledgeStore();
     const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -53,7 +55,7 @@ export function CollectionManager({
         <div className="flex flex-col h-full">
             {/* Header */}
             <div className="px-4 py-3 border-b border-border-dark">
-                <h2 className="text-sm font-medium text-foreground">Collections</h2>
+                <h2 className="text-sm font-medium text-foreground">{t('knowledge.collections.title')}</h2>
             </div>
 
             {/* All Sources button */}
@@ -69,7 +71,7 @@ export function CollectionManager({
                         activeCollectionId === null && 'bg-primary/10 text-primary'
                     )}
                 >
-                    All Sources
+                    {t('knowledge.collections.allSources')}
                 </button>
             </div>
 
@@ -77,7 +79,7 @@ export function CollectionManager({
             <div className="flex-1 overflow-y-auto p-2">
                 {collections.length === 0 ? (
                     <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                        No collections yet
+                    {t('knowledge.collections.empty')}
                     </div>
                 ) : (
                     <ul className="space-y-1">
