@@ -16,6 +16,7 @@ import type { FlashcardGenerationResult } from '../../../lib/knowledge/types';
  * Request body for flashcard generation
  */
 interface FlashcardGenerationRequest {
+  projectId: string;
   sourceId: string;
   sourceContent: string;
   sourceTitle?: string;
@@ -50,6 +51,9 @@ function validateRequest(body: unknown): FlashcardGenerationRequest | null {
   const req = body as Record<string, unknown>;
 
   // Required fields
+  if (!req.projectId || typeof req.projectId !== 'string') {
+    return null;
+  }
   if (!req.sourceId || typeof req.sourceId !== 'string') {
     return null;
   }
@@ -69,6 +73,7 @@ function validateRequest(body: unknown): FlashcardGenerationRequest | null {
   };
 
   return {
+    projectId: req.projectId as string,
     sourceId: req.sourceId as string,
     sourceContent: req.sourceContent as string,
     sourceTitle: typeof req.sourceTitle === 'string' ? req.sourceTitle : undefined,
@@ -94,7 +99,7 @@ export const Route = createFileRoute('/api/flashcards/generate')({
           const validRequest = validateRequest(body);
 
           if (!validRequest) {
-            return errorResponse('Invalid request body. Required: sourceId (string), sourceContent (string)', 400);
+            return errorResponse('Invalid request body. Required: projectId (string), sourceId (string), sourceContent (string)', 400);
           }
 
           // Generate flashcards
@@ -106,11 +111,12 @@ export const Route = createFileRoute('/api/flashcards/generate')({
             result = mockGenerator.generateMockFlashcards(
               validRequest.sourceContent,
               validRequest.sourceId,
+              validRequest.projectId,
               validRequest.options?.maxCards || 5
             );
           } else {
             // Use real Gemini API
-            result = await generateFlashcards(validRequest.sourceContent, validRequest.sourceId, {
+            result = await generateFlashcards(validRequest.sourceContent, validRequest.sourceId, validRequest.projectId, {
               minCards: validRequest.options?.minCards,
               maxCards: validRequest.options?.maxCards,
               topics: validRequest.options?.topics,

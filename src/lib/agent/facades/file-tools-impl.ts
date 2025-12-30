@@ -13,7 +13,7 @@
  * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 
-import type { AgentFileTools, FileEntry, RollbackInfo, FileReadResult }
+import type { AgentFileTools, FileEntry, RollbackInfo, FileReadResult } from './file-tools';
 import { BatchOperationError } from './file-tools';
 import { validatePath, normalizePath, PathValidationError } from './file-tools';
 import { FileLock, fileLock as defaultFileLock } from './file-lock';

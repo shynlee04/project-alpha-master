@@ -70,16 +70,6 @@ function modelSupportsTools(modelId: string): boolean {
 /**
  * Request body for chat endpoint
  */
-interface ChatRequest {
-    messages: Array<{ role: 'user' | 'assistant' | 'tool'; content: string }>;
-    providerId?: string;
-    modelId?: string;
-    apiKey?: string; // Client MUST pass API key (from credentialVault)
-    disableTools?: boolean; // CC-2025-12-25-004: Debug flag to test without tools
-    // OpenAI Compatible Provider support
-    customBaseURL?: string; // Custom API base URL for openai-compatible providers
-    customHeaders?: Record<string, string>; // Custom headers for openai-compatible providers
-}
 
 /**
  * Error response helper
@@ -196,7 +186,7 @@ export const Route = createFileRoute('/api/chat')({
                     // and pass it in the request body
                     const apiKey = validatedBody.apiKey;
                     if (!apiKey) {
-                        return createChatErrorResponse(
+                        return createValidationErrorResponse(
                             'API key required. Configure API key in Agent Settings and ensure it is passed in request.',
                             401
                         );
