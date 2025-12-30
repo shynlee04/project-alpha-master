@@ -83,8 +83,8 @@ export function KnowledgePage() {
     // Desktop Layout: 3-Column Resizable
     return (
         <MainLayout>
-            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-                {/* Left Panel: Source Library */}
+            <ResizablePanelGroup direction="horizontal" className="h-full">
+                {/* Left Panel: Source Library - 20% */}
                 <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
                     <div className="h-full flex flex-col border-r border-border bg-background">
                         <div className="p-3 border-b border-border flex items-center justify-between">
@@ -100,8 +100,8 @@ export function KnowledgePage() {
                                         <TooltipContent>
                                             <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
                                         </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
                                     <Plus className="h-3 w-3" />
                                 </Button>
@@ -115,9 +115,9 @@ export function KnowledgePage() {
 
                 <ResizableHandle />
 
-                {/* Center Panel: Knowledge Canvas */}
+                {/* Center Panel: Knowledge Canvas - 50% */}
                 <ResizablePanel defaultSize={50} minSize={30}>
-                    <div className="h-full w-full relative">
+                    <div className="h-full relative">
                         <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
                             <Canvas />
                         </Suspense>
@@ -126,9 +126,11 @@ export function KnowledgePage() {
 
                 <ResizableHandle />
 
-                {/* Right Panel: RAG Search & Chat */}
+                {/* Right Panel: RAG Search & Chat - 30% */}
                 <ResizablePanel defaultSize={30} minSize={20}>
-                    <RAGPanelContainer projectId={projectId} />
+                    <div className="h-full border-l border-border">
+                        <RAGPanelContainer projectId={projectId} />
+                    </div>
                 </ResizablePanel>
             </ResizablePanelGroup>
 

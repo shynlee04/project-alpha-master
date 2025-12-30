@@ -72,7 +72,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
         <MainSidebar />
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-hidden relative">
           {children || <Outlet />}
         </main>
       </div>

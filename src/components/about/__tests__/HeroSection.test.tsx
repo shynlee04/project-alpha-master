@@ -258,7 +258,8 @@ describe('HeroSection', () => {
     it('buttons are keyboard accessible', () => {
       render(<HeroSection />);
       
-      const primaryButton = screen.getByRole('button', { name: /View Projects/i });
+      // Use getByText with exact match for primary button
+      const primaryButton = screen.getByText('View Projects', { selector: 'button' });
       const scrollIndicator = screen.getByTestId('scroll-indicator');
       
       expect(primaryButton).toHaveAttribute('type', 'button');
@@ -344,11 +345,13 @@ describe('HeroSection', () => {
         <HeroSection
           primaryCTATarget="#portfolio"
           secondaryCTATarget="#email"
+          secondaryCTALabel="Contact"
         />
       );
       
-      const primaryButton = screen.getByRole('button', { name: /about.hero.primaryCTA/i });
-      const secondaryButton = screen.getByRole('button', { name: /about.hero.secondaryCTA/i });
+      // Use getByText with exact match for buttons
+      const primaryButton = screen.getByText('View Projects', { selector: 'button' });
+      const secondaryButton = screen.getByText('Contact', { selector: 'button' });
       
       fireEvent.click(primaryButton);
       expect(document.getElementById).toHaveBeenCalledWith('#portfolio');

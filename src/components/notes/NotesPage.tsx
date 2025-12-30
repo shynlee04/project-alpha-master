@@ -153,11 +153,11 @@ export function NotesPage() {
         );
     }
 
-    // Desktop Layout: 2-Column Resizable Panels
+    // Desktop Layout: 2-Column Resizable
     return (
         <MainLayout>
-            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-                {/* Notes List Sidebar */}
+            <ResizablePanelGroup direction="horizontal" className="h-full">
+                {/* Notes List Sidebar - 20% */}
                 <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
                     <div className="h-full flex flex-col border-r border-border bg-background">
                         <div className="p-3 border-b border-border flex items-center justify-between">
@@ -195,12 +195,12 @@ export function NotesPage() {
 
                 <ResizableHandle />
 
-                {/* Main Editor Area */}
+                {/* Main Editor Area - 80% */}
                 <ResizablePanel defaultSize={80}>
-                    <div className="h-full w-full bg-background">
+                    <div className="h-full bg-background">
                         {activeNote ? (
                             <Suspense fallback={
-                                <div className="flex-1 flex items-center justify-center">
+                                <div className="h-full flex items-center justify-center">
                                     <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
                                 </div>
                             }>
