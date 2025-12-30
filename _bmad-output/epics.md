@@ -2045,6 +2045,305 @@ const wsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativela
 
 ---
 
+### Epic 26: 📝 Intelligent Knowledge Base (The "Brain")
+*Days 20-24 (Extended Phase 2)*
+
+**User Outcome:** Users have a personal, searchable knowledge base with Notion-like block editing that the AI Agent can read and reference.
+
+**Social Media Appeal:** ⭐⭐⭐⭐⭐ — **"Your AI remembers everything you write"** — semantic search + AI autocomplete
+
+**Strategic Value:**
+- Completes the "Personal Agent" experience by giving AI persistent memory
+- Bridges manual note-taking with AI-powered knowledge synthesis
+- Enables RAG-based personalized responses without cloud vector DBs
+
+**Tech Stack Decision (Research-Validated 2025-12-30):**
+
+| Component | Technology | Why |
+|-----------|-----------|-----|
+| Editor | **BlockNote** | Notion-like blocks, React-first, JSON output, slash commands |
+| Vector Search | **Orama** (existing) | Already installed, 100% client-side, hybrid search |
+| Embeddings | **Transformers.js** (existing) | Already integrated, local execution, no API costs |
+| Storage | **Dexie.js** (existing) | Already in use, schema extension required |
+| AI | **TanStack AI** (existing) | Streaming, tool integration, Gemini adapter |
+
+**New Dependencies Required:**
+```bash
+npm install @blocknote/core @blocknote/react @blocknote/mantine
+```
+
+**FRs Covered:**
+- FR-EDU-01 (Source File Import) — Extended to note creation
+- FR-STATE-01 (Unified Store) — Notes persist to Dexie
+- FR-AGENT-03 (Conversation Context) — AI can access note content
+
+**UX Principles Applied:**
+- **Progressive Disclosure:** Simple text first, formatting on demand
+- **Mobile-First:** Touch-friendly block handles, responsive toolbar
+- **Offline-First:** All operations work without network
+
+---
+
+#### Story 26.1: Integrated BlockNote Editor
+
+**As a** user creating personal notes,
+**I want** a Notion-like block editor,
+**So that** I can write structured notes with rich formatting.
+
+**Acceptance Criteria:**
+
+**Given** a user opens the Notes panel
+**When** they create a new note
+**Then** a BlockNote editor initializes with default placeholder text
+**And** slash menu (`/`) opens with block types: Paragraph, Heading, List, Code, Quote
+**And** editor uses existing design system (dark/light theme)
+
+**Given** a user types in the editor
+**When** they use slash commands
+**Then** `/heading` creates heading block (H1-H3)
+**And** `/list` creates bullet or numbered list
+**And** `/code` creates a syntax-highlighted code block
+**And** `/quote` creates a blockquote
+
+**Given** a user edits a note
+**When** content changes
+**Then** auto-save triggers after 500ms of inactivity (debounced)
+**And** note persists to Dexie `notes` table as JSON blocks
+**And** "Saved" indicator appears in status bar
+
+**Given** a user on mobile
+**When** they edit a note
+**Then** formatting toolbar adapts to viewport (floating or bottom-docked)
+**And** touch targets are ≥44px
+**And** virtual keyboard doesn't overlap active block
+
+**Implementation Files:**
+- `src/components/notes/NoteEditor.tsx`
+- `src/lib/notes/note-store.ts` (Zustand + Dexie persist)
+- `src/lib/db/schema.ts` (add `notes` table)
+
+**Blockers:**
+- E26-B1: Install BlockNote packages
+- E26-D1: Extend Dexie schema for notes
+
+**Demo Checkpoint:** ✍️ Create note → Slash commands → Auto-save demo
+
+---
+
+#### Story 26.2: Client-Side Embedding Pipeline (Web Worker)
+
+**As a** developer,
+**I want** notes to be automatically embedded and indexed,
+**So that** they are searchable via semantic queries.
+
+**Acceptance Criteria:**
+
+**Given** a user saves a note
+**When** the save completes
+**Then** a Web Worker receives the note content
+**And** Transformers.js generates a 384-dim vector embedding (MiniLM-L6-v2)
+**And** the embedding is inserted into Orama index with hybrid schema
+
+**Given** embedding is running
+**When** generation occurs
+**Then** it runs in a Web Worker (no UI blocking)
+**And** status indicator shows "Indexing..." in note header
+**And** process completes within 2 seconds for typical notes (<5KB)
+
+**Given** a note is deleted
+**When** deletion occurs
+**Then** corresponding embedding is removed from Orama index
+**And** orphaned index entries are cleaned up
+
+**Given** a failed embedding
+**When** Transformers.js errors (e.g., model not loaded)
+**Then** retry occurs after 5 seconds (max 3 attempts)
+**And** user sees warning toast after final failure
+**And** note remains searchable via keyword (BM25) only
+
+**Implementation Files:**
+- `src/workers/embedding.worker.ts` (new Web Worker)
+- `src/lib/notes/note-indexer.ts` (Orama integration)
+- `src/lib/rag/note-schema.ts` (Orama schema for notes)
+
+**Blockers:**
+- E26-D2: Verify Transformers.js model loading in Web Worker context
+
+**Demo Checkpoint:** 📊 Show embedding generation in DevTools → Console log vector dimensions
+
+---
+
+#### Story 26.3: "Ask My Notes" RAG Tool Integration
+
+**As a** user chatting with the AI Agent,
+**I want** the agent to search my notes,
+**So that** I can ask questions about things I've written.
+
+**Acceptance Criteria:**
+
+**Given** a user sends a chat message
+**When** the AI Agent determines it needs note context
+**Then** it calls the `search_notes` client-side tool
+**And** Orama performs hybrid search (vector + keyword)
+**And** top 3 relevant note chunks are returned to the LLM context
+
+**Given** search results are returned
+**When** the agent responds
+**Then** the response includes inline citations: `[Note: {title}]`
+**And** user can click citation to navigate to the source note
+**And** citation sidebar shows matched chunks with highlighting
+
+**Given** user asks: "What did I write about X?"
+**When** the agent processes the query
+**Then** it searches across all indexed notes
+**And** returns accurate content from the user's own notes
+**And** cites the specific note and paragraph
+
+**Given** no relevant notes found
+**When** search returns empty
+**Then** agent responds honestly: "I couldn't find anything in your notes about {topic}"
+**And** suggests: "Would you like to create a note about this?"
+
+**Implementation Files:**
+- `src/lib/agent/tools/note-search-tool.ts`
+- `src/lib/notes/note-retriever.ts`
+- `src/components/chat/NoteCitationChip.tsx`
+
+**Tool Definition:**
+```typescript
+const searchNotesTool = {
+  name: 'search_notes',
+  description: 'Search the user\'s personal notes and knowledge base.',
+  inputSchema: z.object({ 
+    query: z.string().describe('Search query'),
+    limit: z.number().optional().default(5)
+  }),
+};
+```
+
+**Demo Checkpoint:** 💬 "What did I note about database schemas?" → Agent searches → Cites note
+
+---
+
+#### Story 26.4: Inline AI "Magic" (Notion AI Style)
+
+**As a** user writing notes,
+**I want** AI assistance directly in the editor,
+**So that** I can generate, summarize, and improve content without leaving the note.
+
+**Acceptance Criteria:**
+
+**Given** a user types `/ai` in the editor
+**When** the slash command is selected
+**Then** a prompt input appears inline
+**And** user can type: "Continue writing", "Summarize", "Fix grammar", or custom prompt
+
+**Given** user triggers AI generation
+**When** they submit the prompt
+**Then** TanStack AI streams text directly into a new block below
+**And** preceding 3 blocks provide context to the AI
+**And** streaming indicator shows "Generating..."
+
+**Given** AI generates content
+**When** generation completes
+**Then** generated blocks are editable like any other block
+**And** user can undo generation (Ctrl+Z)
+**And** generation is logged in analytics (count, not content)
+
+**Given** user selects text and right-clicks
+**When** context menu appears
+**Then** "AI Actions" submenu shows: Improve Writing, Make Shorter, Make Longer, Explain
+**And** selected text is sent as context to AI
+
+**Given** mobile user
+**When** they use AI features
+**Then** AI actions are available via floating action button
+**And** streaming works on mobile
+
+**Implementation Files:**
+- `src/components/notes/AISlashCommand.tsx`
+- `src/lib/notes/note-ai-service.ts`
+- `src/hooks/useNoteGeneration.ts`
+
+**Demo Checkpoint:** ✨ Type `/ai summarize this` → AI streams summary into editor
+
+---
+
+#### Story 26.5: Note Hierarchy & Sidebar Navigation
+
+**As a** user with many notes,
+**I want** to organize notes in a tree structure,
+**So that** I can quickly navigate my knowledge base like Notion.
+
+**Acceptance Criteria:**
+
+**Given** a user has multiple notes
+**When** they view the Notes sidebar
+**Then** notes are displayed in a tree structure
+**And** notes can be nested infinitely (parent-child relationship)
+**And** drag-and-drop rearranges notes within the tree
+
+**Given** a user drags a note onto another
+**When** they drop it
+**Then** the dragged note becomes a child of the target
+**And** hierarchy persists to Dexie
+**And** tree state (expanded/collapsed) is restored on reload
+
+**Given** a user wants to favorite a note
+**When** they click the star icon
+**Then** the note appears in "Favorites" section at top of sidebar
+**And** favorites are synced to Dexie
+
+**Given** a mobile user
+**When** they open Notes panel
+**Then** note tree is in a swipeable drawer
+**And** editor is full-width when open
+**And** "Back to list" gesture returns to tree view
+
+**Given** a user searches notes
+**When** they type in search box
+**Then** search filters the tree to matching notes
+**And** search is instant (debounced 150ms)
+**And** keyboard navigation (arrow keys) works in results
+
+**Implementation Files:**
+- `src/components/notes/NoteTree.tsx`
+- `src/components/notes/NoteTreeItem.tsx`
+- `src/lib/notes/note-navigation-store.ts`
+
+**Dexie Schema for Notes:**
+```typescript
+interface Note {
+  id: string;           // UUID
+  title: string;
+  emoji?: string;       // Optional icon
+  blocks: Block[];      // BlockNote JSON structure
+  parentId?: string;    // For nesting
+  isFavorite: boolean;
+  order: number;        // Sort order within parent
+  createdAt: number;
+  updatedAt: number;
+}
+```
+
+**Demo Checkpoint:** 📁 Create nested notes → Drag-and-drop reorder → Mobile drawer demo
+
+---
+
+### Epic 26 NFR Validation
+
+| NFR ID | Requirement | Target | Validation Story |
+|--------|-------------|--------|-----------------|
+| NFR-PERF-P3-01 | Note save latency | <500ms | 26.1 |
+| NFR-PERF-P3-02 | Embedding generation | <2s | 26.2 |
+| NFR-PERF-P3-03 | Note search (RAG) | <500ms | 26.3 |
+| NFR-PERF-P3-04 | AI generation TTFT | <2s | 26.4 |
+| NFR-PERF-P3-05 | Tree navigation | 60fps | 26.5 |
+| NFR-REL-P3-01 | Note persistence | 99%+ | 26.1 |
+| NFR-USE-P3-01 | Mobile note editing | Touch-friendly | 26.1, 26.5 |
+
+---
+
 ## Phase 2 Sprint Calendar
 
 | Sprint | Epic | Dates | Demo Focus |
@@ -2054,6 +2353,7 @@ const wsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativela
 | Sprint 8 | Epic 8: Knowledge Canvas | TBD | Visual knowledge map |
 | Sprint 9 | Epic 9: Study Artifacts | TBD | Flashcards + quiz |
 | Sprint 10 | Epic 10: Knowledge Chat | TBD | Audio overview |
+| **Sprint 11** | **Epic 26: Knowledge Base** | **TBD** | **Notion-like notes + AI search** |
 
 ---
 
@@ -2070,6 +2370,10 @@ const wsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativela
 | NFR-PERF-P2-07 | Epic 10 | Audio generation < 30s |
 | NFR-REL-P2-01 | Epic 6 | IndexedDB reliability 99%+ |
 | NFR-REL-P2-02 | Epic 7 | Citation accuracy 100% |
+| **NFR-PERF-P3-01** | **Epic 26** | **Note save latency < 500ms** |
+| **NFR-PERF-P3-02** | **Epic 26** | **Embedding generation < 2s** |
+| **NFR-PERF-P3-03** | **Epic 26** | **Note search (RAG) < 500ms** |
+| **NFR-REL-P3-01** | **Epic 26** | **Note persistence 99%+** | |
 
 ---
 
