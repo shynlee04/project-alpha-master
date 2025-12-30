@@ -19,6 +19,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
 import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
+import type { ChatMessage, Citation } from '@/lib/rag/types';
 import {
     getIndexMetadata,
     getIndexSize,
@@ -101,6 +102,23 @@ interface RAGStoreState {
     /** Current embedding mode (Story 7-3) */
     embeddingMode: import('./rag/types').EmbeddingMode;
 
+    /** Search state (Story 7-4) */
+    searchQuery: string;
+    searchResults: import('./rag/types').ExtendedSearchResult[];
+    searchMode: import('./rag/types').SearchMode;
+
+    /** Chat state (Story 7-5) */
+    chatMessages: ChatMessage[];
+    citations: Map<string, Citation>;
+    activeCitation: Citation | null;
+
+    /** Voice mode state (Story 10-1) */
+    voiceState: import('./rag/live-api-types').VoiceModeState;
+    voiceConnection: import('./rag/live-api-types').ConnectionState;
+    voiceMicrophoneEnabled: boolean;
+    voiceIsDesktop: boolean;
+    voiceVolumeLevel: number;
+
     /** Loading state for async operations */
     loading: boolean;
 
@@ -172,6 +190,29 @@ interface RAGStoreState {
 
     /** Reset store to initial state */
     reset: () => void;
+
+    // Voice Mode Actions (Story 10-1)
+
+    /** Start voice mode (connect WebSocket) */
+    startVoiceMode: () => Promise<void>;
+
+    /** Stop voice mode (disconnect WebSocket) */
+    stopVoiceMode: () => void;
+
+    /** Toggle microphone on/off */
+    toggleVoiceMicrophone: () => void;
+
+    /** Set voice state */
+    setVoiceState: (state: import('./rag/live-api-types').VoiceModeState) => void;
+
+    /** Set voice connection state */
+    setVoiceConnectionState: (state: import('./rag/live-api-types').ConnectionState) => void;
+
+    /** Update voice volume level */
+    setVoiceVolumeLevel: (level: number) => void;
+
+    /** Detect platform (desktop/mobile) */
+    detectVoicePlatform: () => boolean;
 }
 
 // ============================================================================
@@ -216,6 +257,18 @@ function cleanExpiredCache(cache: Map<string, CachedSearchResult>): Map<string, 
 }
 
 /**
+ * Convert base64 string to ArrayBuffer
+ */
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+/**
  * Enforce cache size limit (LRU eviction)
  */
 function enforceCacheLimit(cache: Map<string, CachedSearchResult>): Map<string, CachedSearchResult> {
@@ -254,6 +307,21 @@ export const useRAGStore = create<RAGStoreState>()(
             chunkingProgress: new Map(),
             embeddingProgress: new Map(),
             embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
+            searchQuery: '',
+            searchResults: [],
+            searchMode: 'hybrid' as import('./rag/types').SearchMode,
+            chatMessages: [],
+            citations: new Map(),
+            activeCitation: null,
+            // Voice mode state (Story 10-1)
+            voiceState: 'idle' as import('./rag/live-api-types').VoiceModeState,
+            voiceConnection: {
+                state: 'disconnected',
+                retryCount: 0,
+            } as import('./rag/live-api-types').ConnectionState,
+            voiceMicrophoneEnabled: false,
+            voiceIsDesktop: true, // Default to desktop, will detect on mount
+            voiceVolumeLevel: 0,
             loading: false,
             error: null,
             _hasHydrated: false,
@@ -563,6 +631,156 @@ export const useRAGStore = create<RAGStoreState>()(
                 });
             },
 
+            // Search Actions (Story 7-4)
+
+            performSearch: async (query: string, mode?: import('./rag/types').SearchMode) => {
+                const { HybridRetriever } = await import('../rag/hybrid-retriever');
+                const { createEmbeddingService } = await import('../rag/embedding-service');
+                const { loadOrCreateIndex } = await import('../rag/orama-index');
+                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const apiKey = vault.getCredential('google')?.apiKey;
+
+                set({ loading: true, error: null, searchQuery: query });
+
+                try {
+                    // Load or create Orama index
+                    const projectId = get().currentProjectId || 'default';
+                    const index = await loadOrCreateIndex(projectId);
+
+                    // Create embedding service
+                    const embeddingService = await createEmbeddingService(apiKey);
+
+                    // Create hybrid retriever
+                    const retriever = new HybridRetriever({
+                        index,
+                        embeddingService,
+                        defaultMode: mode || get().searchMode,
+                    });
+
+                    // Perform search
+                    const results = await retriever.search(query);
+
+                    set({
+                        searchResults: results,
+                        searchMode: mode || get().searchMode,
+                        loading: false,
+                    });
+
+                    console.log(`[RAGStore] Search complete: ${results.length} results via ${mode || get().searchMode}`);
+
+                    return results;
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        searchResults: [],
+                        loading: false,
+                    });
+                    return [];
+                }
+            },
+
+            setSearchMode: (mode: import('./rag/types').SearchMode) => {
+                set({ searchMode: mode });
+            },
+
+            clearSearchResults: () => {
+                set({
+                    searchQuery: '',
+                    searchResults: [],
+                });
+            },
+
+            // RAG Chat actions (Story 7-5)
+            sendRAGMessage: async (query: string) => {
+                const { HybridRetriever } = await import('../rag/hybrid-retriever');
+                const { createEmbeddingService } = await import('../rag/embedding-service');
+                const { loadOrCreateIndex } = await import('../rag/orama-index');
+                const { formatCitations, buildContext, createCitationsMap } = await import('../rag/citation-formatter');
+                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const apiKey = vault.getCredential('google')?.apiKey;
+
+                set({ loading: true, error: null });
+
+                try {
+                    // Load or create Orama index
+                    const projectId = get().currentProjectId || 'default';
+                    const index = await loadOrCreateIndex(projectId);
+
+                    // Create embedding service
+                    const embeddingService = await createEmbeddingService(apiKey);
+
+                    // Create hybrid retriever
+                    const retriever = new HybridRetriever({
+                        index,
+                        embeddingService,
+                        defaultMode: 'hybrid',
+                    });
+
+                    // Step 1: Retrieve context
+                    const results = await retriever.search(query, { limit: 10 });
+
+                    // Step 2: Format citations
+                    const citations = formatCitations(results);
+                    const citationsMap = createCitationsMap(citations);
+
+                    // Step 3: Build context
+                    const context = buildContext(results, query);
+
+                    // Step 4: Add user message
+                    const userMessage: ChatMessage = {
+                        role: 'user',
+                        content: query,
+                        timestamp: Date.now(),
+                    };
+
+                    // Step 5: Generate assistant response (placeholder for TanStack AI integration)
+                    const responseText = `Based on ${results.length} sources, here's an answer. [Integration with TanStack AI pending]`;
+
+                    const assistantMessage: ChatMessage = {
+                        role: 'assistant',
+                        content: responseText,
+                        citations,
+                        timestamp: Date.now(),
+                    };
+
+                    // Step 6: Update state
+                    set({
+                        chatMessages: [...get().chatMessages, userMessage, assistantMessage],
+                        citations: citationsMap,
+                        loading: false,
+                    });
+
+                    console.log(`[RAGStore] RAG chat complete: ${results.length} sources, ${citations.length} citations`);
+
+                    return assistantMessage;
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        loading: false,
+                    });
+                    throw error;
+                }
+            },
+
+            showCitation: (citationId: string) => {
+                const citation = get().citations.get(citationId);
+                if (citation) {
+                    set({ activeCitation: citation });
+                }
+            },
+
+            closeCitationPanel: () => {
+                set({ activeCitation: null });
+            },
+
+            clearChatHistory: () => {
+                set({
+                    chatMessages: [],
+                    citations: new Map(),
+                    activeCitation: null,
+                });
+            },
+
             reset: () => {
                 set({
                     currentProjectId: null,
@@ -576,9 +794,173 @@ export const useRAGStore = create<RAGStoreState>()(
                     chunkingProgress: new Map(),
                     embeddingProgress: new Map(),
                     embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
+                    searchQuery: '',
+                    searchResults: [],
+                    searchMode: 'hybrid' as import('./rag/types').SearchMode,
+                    chatMessages: [],
+                    citations: new Map(),
+                    activeCitation: null,
+                    voiceState: 'idle' as import('./rag/live-api-types').VoiceModeState,
+                    voiceConnection: {
+                        state: 'disconnected',
+                        retryCount: 0,
+                    } as import('./rag/live-api-types').ConnectionState,
+                    voiceMicrophoneEnabled: false,
+                    voiceIsDesktop: true,
+                    voiceVolumeLevel: 0,
                     loading: false,
                     error: null,
                 });
+            },
+
+            // Voice Mode Actions (Story 10-1)
+
+            startVoiceMode: async () => {
+                const { getLiveApiWebSocketManager, getAudioCapture, getAudioPlayback } = await import('@/lib/rag');
+                const apiKey = 'YOUR_GEMINI_API_KEY'; // TODO: Get from credential vault
+
+                // Check platform first
+                const isDesktop = get().detectVoicePlatform();
+                if (!isDesktop) {
+                    set({
+                        error: 'Voice chat available on desktop only',
+                        voiceState: 'error',
+                    });
+                    return;
+                }
+
+                set({
+                    voiceState: 'connecting',
+                    loading: true,
+                    error: null,
+                });
+
+                try {
+                    // Initialize WebSocket manager
+                    const wsManager = getLiveApiWebSocketManager({
+                        apiKey,
+                        onMessage: (message) => {
+                            // Handle server audio chunks
+                            if (message.serverContent?.parts) {
+                                for (const part of message.serverContent.parts) {
+                                    if (part.inline_data?.mime_type?.startsWith('audio/')) {
+                                        const audioData = base64ToArrayBuffer(part.inline_data.data);
+                                        const chunk = {
+                                            data: new Float32Array(audioData),
+                                            timestamp: Date.now(),
+                                            index: 0,
+                                        };
+                                        getAudioPlayback().addChunk(chunk);
+                                    }
+                                }
+                            }
+                        },
+                        onStateChange: (state) => {
+                            get().setVoiceConnectionState(state);
+                        },
+                        onError: (error) => {
+                            set({
+                                error: error.message,
+                                voiceState: 'error',
+                            });
+                        },
+                    });
+
+                    await wsManager.connect();
+
+                    // Initialize audio capture and playback
+                    const audioCapture = getAudioCapture({
+                        onChunk: (chunk) => {
+                            if (get().voiceMicrophoneEnabled) {
+                                wsManager.sendAudioChunk(chunk);
+                            }
+                        },
+                        onVolumeChange: (level) => {
+                            get().setVoiceVolumeLevel(level);
+                        },
+                    });
+
+                    const audioPlayback = getAudioPlayback();
+
+                    await audioPlayback.initialize();
+
+                    set({
+                        voiceState: 'listening',
+                        loading: false,
+                    });
+
+                } catch (error) {
+                    set({
+                        error: (error as Error).message,
+                        voiceState: 'error',
+                        loading: false,
+                    });
+                }
+            },
+
+            stopVoiceMode: () => {
+                const { resetWebSocketManager, resetAudioCapture, resetAudioPlayback } = require('@/lib/rag');
+
+                resetWebSocketManager();
+                resetAudioCapture();
+                resetAudioPlayback();
+
+                set({
+                    voiceState: 'idle',
+                    voiceMicrophoneEnabled: false,
+                    voiceVolumeLevel: 0,
+                    voiceConnection: {
+                        state: 'disconnected',
+                        retryCount: 0,
+                    },
+                });
+            },
+
+            toggleVoiceMicrophone: () => {
+                const { voiceMicrophoneEnabled, voiceState } = get();
+
+                if (!voiceMicrophoneEnabled && voiceState === 'listening') {
+                    // Enable microphone
+                    set({ voiceMicrophoneEnabled: true, voiceState: 'listening' });
+                } else if (voiceMicrophoneEnabled) {
+                    // Disable microphone
+                    set({ voiceMicrophoneEnabled: false, voiceState: 'idle' });
+                }
+            },
+
+            setVoiceState: (state: import('./rag/live-api-types').VoiceModeState) => {
+                set({ voiceState: state });
+            },
+
+            setVoiceConnectionState: (state: import('./rag/live-api-types').ConnectionState) => {
+                set({ voiceConnection: state });
+
+                // Update voice state based on connection state
+                if (state.state === 'connected') {
+                    set({ voiceState: 'listening' });
+                } else if (state.state === 'error') {
+                    set({ voiceState: 'error' });
+                }
+            },
+
+            setVoiceVolumeLevel: (level: number) => {
+                set({ voiceVolumeLevel: Math.max(0, Math.min(1, level)) });
+            },
+
+            detectVoicePlatform: () => {
+                // User-Agent detection
+                const userAgent = navigator.userAgent;
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+
+                // Screen width detection (mobile < 768px)
+                const screenWidth = window.innerWidth;
+                const isMobileByWidth = screenWidth < 768;
+
+                const isDesktop = !isMobile && !isMobileByWidth;
+
+                set({ voiceIsDesktop: isDesktop });
+
+                return isDesktop;
             },
         }),
         {
@@ -600,6 +982,20 @@ export const useRAGStore = create<RAGStoreState>()(
                 chunkingProgress: Array.from(state.chunkingProgress.entries()),
                 embeddingProgress: Array.from(state.embeddingProgress.entries()),
                 embeddingMode: state.embeddingMode,
+                // Search state (Story 7-4)
+                searchQuery: state.searchQuery,
+                searchResults: state.searchResults,
+                searchMode: state.searchMode,
+                // Chat state (Story 7-5) - Convert Map to array
+                chatMessages: state.chatMessages,
+                citations: Array.from(state.citations.entries()),
+                activeCitation: state.activeCitation,
+                // Voice mode state (Story 10-1)
+                voiceState: state.voiceState,
+                voiceConnection: state.voiceConnection,
+                voiceMicrophoneEnabled: state.voiceMicrophoneEnabled,
+                voiceIsDesktop: state.voiceIsDesktop,
+                voiceVolumeLevel: state.voiceVolumeLevel,
                 error: state.error,
             }),
 
@@ -614,6 +1010,12 @@ export const useRAGStore = create<RAGStoreState>()(
                     state.embeddingProgress = new Map(
                         state.embeddingProgress as [string, import('./rag/types').EmbeddingProgress][]
                     );
+                    // Chat state (Story 7-5) - Convert citations array back to Map
+                    if (!Array.isArray(state.citations) && !(state.citations instanceof Map)) {
+                        state.citations = new Map();
+                    } else if (Array.isArray(state.citations)) {
+                        state.citations = new Map(state.citations as [string, Citation][]);
+                    }
 
                     // Clean expired cache entries on hydration
                     state.searchCache = cleanExpiredCache(state.searchCache);

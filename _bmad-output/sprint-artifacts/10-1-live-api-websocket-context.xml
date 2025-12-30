@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Story 10-1 Context: Live API WebSocket Manager (Desktop Only)
+Generated: 2025-12-30
+Epic: Epic 10 - Knowledge Chat & Synthesis
+-->
+<context>
+  <story_id>10-1-live-api-websocket</story_id>
+  <story_name>Live API WebSocket Manager (Desktop Only)</story_name>
+  <research_date>2025-12-30</research_date>
+
+  <research_queries>
+    <query id="q1" source="tavily" topic="Gemini Live API WebSocket implementation 2025">
+      <search>Generative AI WebSocket audio streaming Gemini Live API 2025 implementation guide</search>
+      <findings>
+        <finding source="tavily">
+          <summary>Gemini API supports real-time audio via REST API with audio modalities</summary>
+          <details>
+            Google Gemini API (as of late 2024/early 2025) supports:
+            - REST API with `response_modalities: ["AUDIO"]` configuration
+            - Speech synthesis with `speech_config.voice_name` parameter
+            - BidiGenerateContent for WebSocket-based bidirectional streaming (beta)
+            - Model: `gemini-2.5-flash-native-audio-preview-12-2025` for live audio
+          </details>
+          <references>
+            <url>https://ai.google.dev/gemini-api/docs/audio</url>
+          </references>
+        </finding>
+      </findings>
+    </query>
+
+    <query id="q2" source="tavily" topic="Web Audio API real-time streaming 2025">
+      <search>Web Audio API real-time microphone capture streaming best practices 2025</search>
+      <findings>
+        <finding source="tavily">
+          <summary>Web Audio API provides low-latency audio capture and playback</summary>
+          <details>
+            Key implementation points:
+            - Use AudioContext with sampleRate of 16000Hz for voice recognition
+            - MediaStreamSource from getUserMedia() for microphone capture
+            - ScriptProcessorNode or AudioWorklet for audio processing
+            - Audio chunking: 1024-4096 samples per chunk for smooth streaming
+            - Float32Array for audio data (not Int16) for better quality
+            - Consider jitter buffer for network variability
+          </details>
+          <references>
+            <url>https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API</url>
+          </references>
+        </finding>
+      </findings>
+    </query>
+
+    <query id="q3" source="tavily" topic="WebSocket audio streaming best practices 2025">
+      <search>WebSocket binary audio streaming best practices latency buffer 2025</search>
+      <findings>
+        <finding source="tavily">
+          <summary>WebSocket audio streaming requires careful buffering for low latency</summary>
+          <details>
+            Best practices for real-time audio over WebSocket:
+            - Use binary WebSocket frames (ArrayBuffer) for audio data
+            - Target latency: &lt;500ms for perceived real-time
+            - Implement adaptive jitter buffer (typically 3-5 chunks)
+            - Handle network congestion with dynamic quality adjustment
+            - Use WebSocket compression only if latency permits
+            - Implement heartbeat/keepalive for connection health
+            - Graceful degradation on poor network conditions
+          </details>
+          <references>
+            <url>https://developer.mozilla.org/en-US/docs/Web/API/WebSocket</url>
+          </references>
+        </finding>
+      </findings>
+    </query>
+
+    <query id="q4" source="tavily" topic="Desktop browser WebSocket support 2025">
+      <search>WebSocket support mobile browsers desktop only detection 2025</search>
+      <findings>
+        <finding source="tavily">
+          <summary>WebSocket is supported on most browsers but quality varies on mobile</summary>
+          <details>
+            Platform considerations:
+            - Desktop browsers (Chrome, Edge, Firefox): Full WebSocket support
+            - Mobile browsers: WebSocket supported but network quality variable
+            - iOS Safari: WebSocket supported but may have connection limits
+            - Android Chrome: WebSocket supported but bandwidth constraints
+            - Recommendation: Detect platform and show appropriate message
+            - Fallback: Text-based chat always available
+          </details>
+          <references>
+            <url>https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#browser_compatibility</url>
+          </references>
+        </finding>
+      </findings>
+    </query>
+  </research_queries>
+
+  <technical_decisions>
+    <decision id="d1" topic="WebSocket vs REST API">
+      <rationale>
+        Story specifies WebSocket connection for real-time bidirectional audio.
+        However, Gemini Live API WebSocket (BidiGenerateContent) may be in beta.
+        Fallback: Use REST API with audio modalities if WebSocket unavailable.
+      </rationale>
+      <implementation>
+        - Primary: WebSocket connection to BidiGenerateContent endpoint
+        - Fallback: REST API with response_modalities: ["AUDIO"]
+        - Detect availability at runtime and switch accordingly
+      </implementation>
+    </decision>
+
+    <decision id="d2" topic="Audio Sample Rate">
+      <rationale>
+        Voice recognition optimized for 16kHz sample rate.
+        Higher rates (44.1kHz, 48kHz) unnecessary for speech and increase bandwidth.
+      </rationale>
+      <implementation>
+        - Set AudioContext.sampleRate to 16000
+        - Configure microphone capture with { audio: { sampleRate: 16000 } }
+        - Downsample if hardware only supports higher rates
+      </implementation>
+    </decision>
+
+    <decision id="d3" topic="Audio Chunking Strategy">
+      <rationale>
+        Balance between latency and audio quality.
+        Too small: More overhead, potential glitching
+        Too large: Higher latency
+      </rationale>
+      <implementation>
+        - Chunk size: 1024 samples per chunk
+        - At 16kHz, 1024 samples = 64ms per chunk
+        - Target: ~3-5 chunks in jitter buffer (~200-300ms)
+        - Adaptive: Increase buffer size if network detected as poor
+      </implementation>
+    </decision>
+
+    <decision id="d4" topic="Platform Detection">
+      <rationale>
+        Feature is desktop-only due to WebSocket bandwidth and processing requirements.
+        Mobile users should see helpful message, not broken feature.
+      </rationale>
+      <implementation>
+        - User-Agent detection for mobile browsers
+        - Screen width detection (&lt;768px considered mobile)
+        - Combine both for robust detection
+        - Show tooltip: "Voice chat available on desktop"
+        - Keep text chat fully functional on mobile
+      </implementation>
+    </decision>
+
+    <decision id="d5" topic="Error Handling and Retry">
+      <rationale>
+        WebSocket connections can fail for various reasons (network, API limits, auth).
+        User should not see cryptic WebSocket errors.
+      </rationale>
+      <implementation>
+        - Max retry attempts: 3
+        - Exponential backoff: 1s, 2s, 4s
+        - Show "Connection lost. Reconnecting..." message
+        - After 3 failures: Show manual text input fallback
+        - Log errors for debugging (don't show to user)
+      </implementation>
+    </decision>
+  </technical_decisions>
+
+  <implementation_gotchas>
+    <gotcha id="g1" severity="HIGH">
+      <issue>WebSocket API differences between browsers</issue>
+      <mitigation>
+        - Test on Chrome, Firefox, Edge, Safari
+        - Use standard WebSocket API (avoid vendor prefixes)
+        - Handle Safari's stricter WebSocket policies
+      </mitigation>
+    </gotcha>
+
+    <gotcha id="g2" severity="MEDIUM">
+      <issue>Audio autoplay policies in browsers</issue>
+      <mitigation>
+        - Require user interaction before starting audio playback
+        - Microphone button click serves as user gesture
+        - Handle autoplay rejection gracefully
+      </mitigation>
+    </gotcha>
+
+    <gotcha id="g3" severity="MEDIUM">
+      <issue>Web Audio API not available in all browsers</issue>
+      <mitigation>
+        - Detect AudioContext availability
+        - Show message if not supported
+        - Fallback to text chat
+      </mitigation>
+    </gotcha>
+
+    <gotcha id="g4" severity="LOW">
+      <issue>Network variability affects audio quality</issue>
+      <mitigation>
+        - Implement adaptive jitter buffer
+        - Monitor audio queue depth
+        - Expand buffer if underruns detected
+      </mitigation>
+    </gotcha>
+  </implementation_gotchas>
+
+  <dependencies>
+    <dependency type="internal">
+      <name>Epic 7: RAG Infrastructure</name>
+      <reason>Embedding service for audio transcription (if needed)</reason>
+    </dependency>
+    <dependency type="internal">
+      <name>Epic 5: Robust State Hydration</name>
+      <reason>Voice mode state persistence patterns</reason>
+    </dependency>
+    <dependency type="external">
+      <name>Web Audio API</name>
+      <version>Browser Native</version>
+      <reason>Low-latency audio capture and playback</reason>
+    </dependency>
+    <dependency type="external">
+      <name>WebSocket API</name>
+      <version>Browser Native</version>
+      <reason>Real-time bidirectional communication</reason>
+    </dependency>
+    <dependency type="external">
+      <name>Gemini Live API</name>
+      <version>gemini-2.5-flash-native-audio-preview-12-2025</version>
+      <reason>AI audio generation and speech recognition</reason>
+    </dependency>
+  </dependencies>
+
+  <validation_checklist>
+    <check id="v1">WebSocket connection establishment works on desktop</check>
+    <check id="v2">Audio capture at 16kHz produces clear voice</check>
+    <check id="v3">Audio playback is smooth with no glitches</check>
+    <check id="v4">Latency &lt;500ms for perceived real-time</check>
+    <check id="v5">Connection retry logic works correctly</check>
+    <check id="v6">Mobile detection shows appropriate message</check>
+    <check id="v7">Voice mode state persists across page refresh</check>
+    <check id="v8">Error messages are user-friendly</check>
+    <check id="v9">Desktop-only enforcement works</check>
+    <check id="v10">i18n translations complete (EN + VI)</check>
+  </validation_checklist>
+</context>

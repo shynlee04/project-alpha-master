@@ -305,3 +305,213 @@ export interface EmbeddingModelMetadata {
   /** Download timestamp */
   downloadedAt: number;
 }
+
+// ============================================================================
+// Retrieval Types (Story 7-4)
+// ============================================================================
+
+/**
+ * Search mode for retrieval
+ */
+export type SearchMode = 'keyword' | 'semantic' | 'hybrid';
+
+/**
+ * Extended search result with highlighting info
+ */
+export interface ExtendedSearchResult extends SearchResult {
+  /** Matched text with highlighting */
+  highlightedText?: string;
+
+  /** Matched terms in this result */
+  matchedTerms: string[];
+
+  /** Result position in original search */
+  rank: number;
+
+  /** Which search produced this result */
+  source: 'bm25' | 'vector' | 'rrf';
+}
+
+/**
+ * Retrieval options
+ */
+export interface RetrievalOptions {
+  /** Search mode */
+  mode?: SearchMode;
+
+  /** Maximum results to return */
+  limit?: number;
+
+  /** Similarity threshold for vector search (0-1) */
+  similarity?: number;
+
+  /** Whether to include embeddings in results */
+  includeVectors?: boolean;
+
+  /** Properties to search */
+  properties?: string[];
+
+  /** BM25 relevance parameters */
+  bm25?: BM25Config;
+
+  /** RRF fusion parameters */
+  rrf?: RRFConfig;
+}
+
+/**
+ * BM25 algorithm configuration
+ */
+export interface BM25Config {
+  /** Term frequency saturation parameter (default: 1.2) */
+  k?: number;
+
+  /** Length normalization parameter (default: 0.75) */
+  b?: number;
+
+  /** Frequency normalization lower bound (default: 0.5) */
+  d?: number;
+}
+
+/**
+ * Default BM25 configuration
+ */
+export const DEFAULT_BM25_CONFIG: BM25Config = {
+  k: 1.2,
+  b: 0.75,
+  d: 0.5,
+};
+
+/**
+ * Reciprocal Rank Fusion configuration
+ */
+export interface RRFConfig {
+  /** RRF constant k (default: 60) */
+  k?: number;
+
+  /** Maximum results from each source to fuse */
+  maxResults?: number;
+}
+
+/**
+ * Default RRF configuration
+ */
+export const DEFAULT_RRF_CONFIG: RRFConfig = {
+  k: 60,
+  maxResults: 10,
+};
+
+/**
+ * Search query with embeddings
+ */
+export interface SearchQuery {
+  /** Query text */
+  text: string;
+
+  /** Query embedding (for semantic search) */
+  embedding?: EmbeddingVector;
+}
+
+// ============================================================================
+// RAG Chat Types (Story 7-5)
+// ============================================================================
+
+/**
+ * Chat message role
+ */
+export type ChatRole = 'user' | 'assistant' | 'system';
+
+/**
+ * Citation reference in chat responses
+ */
+export interface Citation {
+  /** Citation ID (1-indexed for display: [1], [2], [3]) */
+  id: number;
+
+  /** Source document ID */
+  sourceId: string;
+
+  /** Source title */
+  title?: string;
+
+  /** Passage content with highlighting */
+  passage: string;
+
+  /** Position in source document */
+  position?: number;
+
+  /** Relevance score */
+  score?: number;
+}
+
+/**
+ * Chat message with optional citations
+ */
+export interface ChatMessage {
+  /** Message role */
+  role: ChatRole;
+
+  /** Message content */
+  content: string;
+
+  /** Citations referenced in this message */
+  citations?: Citation[];
+
+  /** Timestamp */
+  timestamp?: number;
+
+  /** Streaming state (for incomplete messages) */
+  streaming?: boolean;
+}
+
+/**
+ * Retrieved context for RAG generation
+ */
+export interface RAGContext {
+  /** Retrieved chunks */
+  chunks: Array<{
+    id: string;
+    sourceId: string;
+    title?: string;
+    content: string;
+    position?: number;
+    score?: number;
+  }>;
+
+  /** Original query */
+  query: string;
+
+  /** Context window size */
+  windowSize: number;
+}
+
+/**
+ * RAG chat configuration options
+ */
+export interface RAGChatOptions {
+  /** Maximum chunks to retrieve */
+  maxChunks?: number;
+
+  /** Search mode for retrieval */
+  searchMode?: SearchMode;
+
+  /** Include citations in response */
+  includeCitations?: boolean;
+
+  /** Stream response */
+  stream?: boolean;
+
+  /** Conversation history limit */
+  historyLimit?: number;
+}
+
+/**
+ * Default RAG chat options
+ */
+export const DEFAULT_RAG_CHAT_OPTIONS: Required<RAGChatOptions> = {
+  maxChunks: 10,
+  searchMode: 'hybrid',
+  includeCitations: true,
+  stream: true,
+  historyLimit: 10,
+};
+

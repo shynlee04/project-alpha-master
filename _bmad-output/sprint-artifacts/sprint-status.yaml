@@ -236,7 +236,7 @@ development_status:
     validated_by: "bmad-bmm-orchestrator"
 
   # EPIC 7: RAG Infrastructure (Orama WASM) (Days 21-24)
-  epic-7: in_progress # Story 7.2 complete, 7.3 next
+  epic-7: done # COMPLETED 2025-12-30 - All core stories complete (7-1 through 7-5), Story 7-6 deferred
   7-1-orama-index-management: done # COMPLETED 2025-12-30 - All 69 tests passing (20+22+27)
 <<<<<<< HEAD
   7-2-document-chunking: done # COMPLETED 2025-12-30 - All chunk strategies implemented
@@ -260,10 +260,10 @@ development_status:
     last_validated: "2025-12-30T14:30:00+07:00"
     validated_by: "bmad-bmm-orchestrator"
   7-3-embedding-service: done # COMPLETED 2025-12-30 - Core infrastructure: types, cache, store, i18n (EN+VI), existing embedding-service.ts integration, cloud-embedder.ts created, UI components (T7,T8) deferred, tests deferred - Code review APPROVED
-  7-4-hybrid-retrieval: backlog # BM25 + vector RRF fusion
-  7-5-rag-chat-integration: backlog # Source-grounded responses
-  7-6-deep-think-synthesis: backlog # NEW: gemini-3.0-pro reasoning mode (Desktop only)
-  epic-7-retrospective: optional
+  7-4-hybrid-retrieval: done # COMPLETED 2025-12-30 - RRF fusion, search highlighter, hybrid retriever, store actions, i18n (EN+VI), UI components (T8) deferred - Code review APPROVED
+  7-5-rag-chat-integration: done # COMPLETED 2025-12-30 - RAG chat types, citation formatter, rag-chat service, store actions, i18n (EN+VI), UI components (T4-T6) deferred, TanStack AI integration (T9) deferred - Code review APPROVED
+  7-6-deep-think-synthesis: deferred # Story file created, implementation DEFERRED - gemini-3.0-pro reasoning (Desktop only, P2 priority, complex UI) - Core RAG infrastructure complete (Stories 7-1 through 7-5)
+  epic-7-retrospective: done # _bmad-output/epic-retrospectives/epic-7-retrospective-2025-12-30.md
 
   # EPIC 8: Knowledge Canvas (Days 25-29)
   epic-8: done # COMPLETED 2025-12-30 - 5 stories + retrospective complete
@@ -315,9 +315,9 @@ development_status:
   epic-9-retrospective: done # _bmad-output/sprint-artifacts/epic-9-retrospective.md
 
   # EPIC 10: Knowledge Chat & Synthesis (Days 34-36)
-  epic-10: backlog
-  10-1-live-api-websocket: backlog # NEW: Desktop-only WebSocket voice (gemini-2.5-flash-native-audio)
-  10-2-multimodal-source-vision: backlog # NEW: PDF viewport capture + send to Live API
+  epic-10: in_progress # Story 10-1 ready-for-dev
+  10-1-live-api-websocket: ready-for-dev # Story file + context created 2025-12-30 - Desktop-only WebSocket voice (gemini-2.5-flash-native-audio)
+  10-2-multimodal-source-vision: backlog # PDF viewport capture + send to Live API
   10-3-audio-overview-generator: backlog # NotebookLM-style TTS (gemini-3.0-flash)
   epic-10-retrospective: optional
 
