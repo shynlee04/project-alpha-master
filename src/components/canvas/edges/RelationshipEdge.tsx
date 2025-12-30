@@ -80,7 +80,7 @@ const RelationshipEdgeComponent = ({
   const [label, setLabel] = useState(data?.label || '');
   const { fitView } = useReactFlow();
 
-  const relationship = (data?.relationship as RelationshipType) || 'relates';
+  const relationship = (data?.relationship as CanvasRelationshipType) || 'relates';
   const { color, strokeDasharray } = useMemo(
     () => getRelationshipStyle(relationship),
     [relationship],
