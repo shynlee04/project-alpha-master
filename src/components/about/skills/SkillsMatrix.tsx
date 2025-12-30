@@ -11,7 +11,7 @@
 import { useTranslation } from 'react-i18next';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Bot, Code, Server, GitBranch } from 'lucide-react';
-import { SkillCategory, type Skill } from './SkillCategory';
+import { SkillCategory } from './SkillCategory';
 import { type SkillLevel } from './SkillCard';
 import { cn } from '@/lib/utils';
 
@@ -20,11 +20,15 @@ export interface SkillsMatrixProps {
    * Additional CSS classes
    */
   className?: string;
+  /**
+   * Whether to show evidence by default
+   */
+  showEvidence?: boolean;
 }
 
-export function SkillsMatrix({ className }: SkillsMatrixProps) {
+export function SkillsMatrix({ className, showEvidence }: SkillsMatrixProps) {
   const { t } = useTranslation();
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isTablet, isDesktop } = useResponsive();
 
   // Define all skills by category
   const skillsData = [
@@ -120,7 +124,7 @@ export function SkillsMatrix({ className }: SkillsMatrixProps) {
             >
               <SkillCategory
                 {...category}
-                showEvidence={isDesktop}
+                showEvidence={showEvidence ?? isDesktop}
               />
             </div>
           ))}

@@ -44,7 +44,6 @@ import {
     SEARCH_CACHE_TTL,
     MAX_CACHE_SIZE,
 } from './rag-store-helpers';
-import { db } from './dexie-db';
 
 // ============================================================================
 // Store

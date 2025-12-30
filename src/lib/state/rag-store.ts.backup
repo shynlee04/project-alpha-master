@@ -6,11 +6,6 @@
  * Single source of truth for RAG (Retrieval-Augmented Generation) state.
  * Manages Orama index status, search results cache, and indexing progress.
  *
- * Refactored from monolithic file (1071 lines) to modular structure:
- * - rag-store-types.ts: Type definitions
- * - rag-store-helpers.ts: Helper functions and constants
- * - rag-store.ts: Main store with actions (this file)
- *
  * Features:
  * - Index status tracking (building, ready, error)
  * - Indexing progress tracking
@@ -33,18 +28,287 @@ import {
 } from '@/lib/rag/orama-index';
 import { documentChunker } from '@/lib/rag/document-chunker';
 
-// Import types and helpers
-import type { RAGStoreState, IndexStatus, IndexOperation, CachedSearchResult } from './rag-store-types';
-import {
-    generateCacheKey,
-    isCacheValid,
-    cleanExpiredCache,
-    base64ToArrayBuffer,
-    enforceCacheLimit,
-    SEARCH_CACHE_TTL,
-    MAX_CACHE_SIZE,
-} from './rag-store-helpers';
-import { db } from './dexie-db';
+// ============================================================================
+// Types
+// ============================================================================
+
+/**
+ * Index status enum
+ */
+export enum IndexStatus {
+    IDLE = 'idle',
+    BUILDING = 'building',
+    READY = 'ready',
+    ERROR = 'error',
+}
+
+/**
+ * Indexing operation type
+ */
+export enum IndexOperation {
+    IDLE = 'idle',
+    CREATING = 'creating',
+    LOADING = 'loading',
+    SAVING = 'saving',
+    INDEXING = 'indexing',
+    REMOVING = 'removing',
+    REBUILDING = 'rebuilding',
+    CLEANING = 'cleaning',
+}
+
+/**
+ * Cached search result entry
+ */
+interface CachedSearchResult {
+    query: string;
+    results: SearchResult[];
+    timestamp: number;
+}
+
+/**
+ * RAG Store State Interface
+ */
+interface RAGStoreState {
+    /** Current project ID */
+    currentProjectId: string | null;
+
+    /** Index status */
+    indexStatus: IndexStatus;
+
+    /** Current indexing operation */
+    indexingOperation: IndexOperation;
+
+    /** Number of documents indexed */
+    documentCount: number;
+
+    /** Total documents to index (for progress tracking) */
+    totalDocuments: number;
+
+    /** Index size in bytes */
+    indexSize: number;
+
+    /** Index metadata */
+    indexMetadata: IndexMetadata | null;
+
+    /** Cached search results */
+    searchCache: Map<string, CachedSearchResult>;
+
+    /** Chunking progress tracking (Story 7-2) */
+    chunkingProgress: Map<string, ChunkingProgress>;
+
+    /** Embedding progress tracking (Story 7-3) */
+    embeddingProgress: Map<string, import('./rag/types').EmbeddingProgress>;
+
+    /** Current embedding mode (Story 7-3) */
+    embeddingMode: import('./rag/types').EmbeddingMode;
+
+    /** Search state (Story 7-4) */
+    searchQuery: string;
+    searchResults: import('./rag/types').ExtendedSearchResult[];
+    searchMode: import('./rag/types').SearchMode;
+
+    /** Chat state (Story 7-5) */
+    chatMessages: ChatMessage[];
+    citations: Map<string, Citation>;
+    activeCitation: Citation | null;
+
+    /** Voice mode state (Story 10-1) */
+    voiceState: import('./rag/live-api-types').VoiceModeState;
+    voiceConnection: import('./rag/live-api-types').ConnectionState;
+    voiceMicrophoneEnabled: boolean;
+    voiceIsDesktop: boolean;
+    voiceVolumeLevel: number;
+
+    /** Loading state for async operations */
+    loading: boolean;
+
+    /** Error state */
+    error: string | null;
+
+    /** Whether store has hydrated from persistence */
+    _hasHydrated: boolean;
+
+    // Actions
+
+    /** Set hydration status */
+    setHasHydrated: (state: boolean) => void;
+
+    /** Set current project ID */
+    setCurrentProject: (projectId: string | null) => void;
+
+    /** Load index metadata for project */
+    loadIndexMetadata: (projectId: string) => Promise<void>;
+
+    /** Update index status */
+    setIndexStatus: (status: IndexStatus, operation?: IndexOperation) => void;
+
+    /** Update indexing progress */
+    updateIndexingProgress: (documentCount: number, totalDocuments: number) => void;
+
+    /** Set error state */
+    setError: (error: string | null) => void;
+
+    /** Clear error state */
+    clearError: () => void;
+
+    /** Search with caching */
+    search: (projectId: string, query: string, searchFn: () => Promise<SearchResult[]>) => Promise<SearchResult[]>;
+
+    /** Clear search cache */
+    clearSearchCache: () => void;
+
+    /** Get all indexes metadata */
+    getAllIndexes: () => Promise<IndexMetadata[]>;
+
+    /** Clean up orphaned indexes */
+    cleanupOrphaned: (activeProjectIds: string[]) => Promise<number>;
+
+    // Search Actions (Story 7-4)
+
+    /** Set search query */
+    setSearchQuery: (query: string) => void;
+
+    /** Perform search with mode and limit */
+    performSearch: (query: string, mode?: import('./rag/types').SearchMode, limit?: number) => Promise<void>;
+
+    /** Set search mode */
+    setSearchMode: (mode: import('./rag/types').SearchMode) => void;
+
+    // Chat Actions (Story 7-5)
+
+    /** Send chat message */
+    sendMessage: (message: string, projectId: string) => Promise<void>;
+
+    /** Clear chat history */
+    clearChat: () => void;
+
+    /** Select citation */
+    selectCitation: (citationId: string) => void;
+
+    // Chunking Actions (Story 7-2)
+
+    /** Chunk a source and return chunks */
+    chunkSource: (sourceId: string, content: string, options?: ChunkingOptions) => Promise<ChunkMetadata[]>;
+
+    /** Get chunks for a source */
+    getChunksForSource: (sourceId: string) => ChunkMetadata[] | undefined;
+
+    /** Clear chunking progress for a source */
+    clearChunkingProgress: (sourceId: string) => void;
+
+    // Embedding Actions (Story 7-3)
+
+    /** Detect embedding capability */
+    detectEmbeddingCapability: () => Promise<import('./rag/types').EmbeddingMode>;
+
+    /** Generate embeddings for chunks */
+    generateEmbeddings: (
+      chunks: import('./rag/types').ChunkMetadata[],
+      options?: import('./rag/types').EmbeddingOptions
+    ) => Promise<Map<string, import('./rag/types').EmbeddingVector>>;
+
+    /** Clear embedding progress for a chunk */
+    clearEmbeddingProgress: (chunkId: string) => void;
+
+    /** Reset store to initial state */
+    reset: () => void;
+
+    // Voice Mode Actions (Story 10-1)
+
+    /** Start voice mode (connect WebSocket) */
+    startVoiceMode: () => Promise<void>;
+
+    /** Stop voice mode (disconnect WebSocket) */
+    stopVoiceMode: () => void;
+
+    /** Toggle microphone on/off */
+    toggleVoiceMicrophone: () => void;
+
+    /** Set voice state */
+    setVoiceState: (state: import('./rag/live-api-types').VoiceModeState) => void;
+
+    /** Set voice connection state */
+    setVoiceConnectionState: (state: import('./rag/live-api-types').ConnectionState) => void;
+
+    /** Update voice volume level */
+    setVoiceVolumeLevel: (level: number) => void;
+
+    /** Detect platform (desktop/mobile) */
+    detectVoicePlatform: () => boolean;
+}
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+/** Search cache TTL in milliseconds (5 minutes) */
+const SEARCH_CACHE_TTL = 5 * 60 * 1000;
+
+/** Maximum cache size */
+const MAX_CACHE_SIZE = 100;
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Generate cache key for search query
+ */
+function generateCacheKey(projectId: string, query: string): string {
+    return `${projectId}:${query}`;
+}
+
+/**
+ * Check if cached result is still valid
+ */
+function isCacheValid(entry: CachedSearchResult): boolean {
+    return Date.now() - entry.timestamp < SEARCH_CACHE_TTL;
+}
+
+/**
+ * Clean expired cache entries
+ */
+function cleanExpiredCache(cache: Map<string, CachedSearchResult>): Map<string, CachedSearchResult> {
+    const cleaned = new Map<string, CachedSearchResult>();
+    for (const [key, entry] of cache.entries()) {
+        if (isCacheValid(entry)) {
+            cleaned.set(key, entry);
+        }
+    }
+    return cleaned;
+}
+
+/**
+ * Convert base64 string to ArrayBuffer
+ */
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+/**
+ * Enforce cache size limit (LRU eviction)
+ */
+function enforceCacheLimit(cache: Map<string, CachedSearchResult>): Map<string, CachedSearchResult> {
+    if (cache.size <= MAX_CACHE_SIZE) {
+        return cache;
+    }
+
+    // Sort by timestamp (oldest first) and keep only the most recent MAX_CACHE_SIZE entries
+    const entries = Array.from(cache.entries())
+        .sort((a, b) => a[1].timestamp - b[1].timestamp);
+
+    const trimmed = new Map<string, CachedSearchResult>();
+    const startIdx = entries.length - MAX_CACHE_SIZE;
+    for (let i = startIdx; i < entries.length; i++) {
+        trimmed.set(entries[i][0], entries[i][1]);
+    }
+    return trimmed;
+}
 
 // ============================================================================
 // Store
@@ -442,13 +706,6 @@ export const useRAGStore = create<RAGStoreState>()(
                 set({ searchQuery: query });
             },
 
-            clearSearchResults: () => {
-                set({
-                    searchQuery: '',
-                    searchResults: [],
-                });
-            },
-
             sendMessage: async (message: string, projectId: string) => {
                 // Delegate to existing sendRAGMessage implementation
                 await get().sendRAGMessage(message);
@@ -465,6 +722,13 @@ export const useRAGStore = create<RAGStoreState>()(
                 if (citation) {
                     set({ activeCitation: citation });
                 }
+            },
+
+            clearSearchResults: () => {
+                set({
+                    searchQuery: '',
+                    searchResults: [],
+                });
             },
 
             // RAG Chat actions (Story 7-5)
@@ -782,16 +1046,16 @@ export const useRAGStore = create<RAGStoreState>()(
 
                 if (state) {
                     // Convert array back to Map
-                    state.searchCache = new Map(state.searchCache as unknown as [string, CachedSearchResult][]);
-                    state.chunkingProgress = new Map(state.chunkingProgress as unknown as [string, ChunkingProgress][]);
+                    state.searchCache = new Map(state.searchCache as [string, CachedSearchResult][]);
+                    state.chunkingProgress = new Map(state.chunkingProgress as [string, ChunkingProgress][]);
                     state.embeddingProgress = new Map(
-                        state.embeddingProgress as unknown as [string, import('./rag/types').EmbeddingProgress][]
+                        state.embeddingProgress as [string, import('./rag/types').EmbeddingProgress][]
                     );
                     // Chat state (Story 7-5) - Convert citations array back to Map
                     if (!Array.isArray(state.citations) && !(state.citations instanceof Map)) {
                         state.citations = new Map();
                     } else if (Array.isArray(state.citations)) {
-                        state.citations = new Map(state.citations as unknown as [string, Citation][]);
+                        state.citations = new Map(state.citations as [string, Citation][]);
                     }
 
                     // Clean expired cache entries on hydration
