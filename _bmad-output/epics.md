@@ -24,7 +24,7 @@
 | Epic ID | Name | Status | Priority | Period |
 |---------|------|--------|----------|--------|
 | EPIC-24 | Performance & UX Optimization | IN_PROGRESS | P0 | 2025-12-29 |
-| EPIC-26 | Intelligent Knowledge Base (The "Brain") | BACKLOG | P1 | 2025-12-30 |
+| EPIC-26 | Intelligent Knowledge Base (The "Brain") | IN_PROGRESS | P1 | 2025-12-30 |
 | **EPIC-29** | **About Me Page Redesign** | **PLANNING** | **P1** | **2025-12-30** |
 
 ## Epic 29: About Me Page Redesign
@@ -76,7 +76,7 @@ Transform the existing About Me page component (`src/components/about/AboutPage.
 
 | Epic ID | Name | Status | Dependencies |
 |---------|------|--------|--------------|
-| EPIC-26 | Intelligent Knowledge Base (The "Brain") | BACKLOG | Epic 7, Epic 8 |
+
 | EPIC-28 | Design System Completion | BACKLOG | Epic 23 |
 
 ## Epic Dependencies Graph
