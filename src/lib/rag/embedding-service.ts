@@ -228,11 +228,12 @@ async function generateLocalEmbedding(
     const startTime = performance.now();
 
     // Guard: local embeddings only work in browser with WebGPU
-    if (isEdgeEnvironment()) {
+    if (import.meta.env.SSR) {
         throw new Error('Local embeddings require a desktop browser with WebGPU support');
     }
 
     // Dynamic import of Transformers.js (only executed in supported environments)
+    // Build-time check import.meta.env.SSR ensures this chunk is not generated for server
     const { pipeline } = await import('@xenova/transformers');
 
     // Use MiniLM model for embeddings
@@ -340,7 +341,7 @@ export async function generateBatchEmbeddings(
  */
 export async function downloadLocalModel(): Promise<void> {
     // Guard: only works in supported browser environments
-    if (isEdgeEnvironment()) {
+    if (import.meta.env.SSR) {
         throw new Error('Model download requires a desktop browser with WebGPU support');
     }
 

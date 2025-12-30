@@ -1,0 +1,396 @@
+/**
+ * EPIC_ID: 29
+ * STORY_ID: 29-2
+ * CREATED_AT: 2025-12-30T15:40:00Z
+ * 
+ * HeroSection Component Tests
+ */
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { HeroSection } from '../HeroSection';
+import * as i18next from 'react-i18next';
+
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: {
+      language: 'en',
+      changeLanguage: vi.fn(),
+    },
+  }),
+}));
+
+// Mock ParticleBackground
+vi.mock('../ParticleBackground', () => ({
+  ParticleBackground: ({ particleCount, className }: any) => (
+    <div data-testid="particle-background" data-particle-count={particleCount} className={className}>
+      Particle Background
+    </div>
+  ),
+}));
+
+// Mock ScrollIndicator
+vi.mock('../ScrollIndicator', () => ({
+  ScrollIndicator: ({ targetId, onClick }: any) => (
+    <button
+      data-testid="scroll-indicator"
+      data-target={targetId}
+      onClick={onClick}
+      aria-label="Scroll to projects"
+    >
+      Scroll Down
+    </button>
+  ),
+}));
+
+describe('HeroSection', () => {
+  beforeEach(() => {
+    // Mock window.innerWidth for responsive tests
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1024,
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('Rendering', () => {
+    it('renders hero section with default props', () => {
+      render(<HeroSection />);
+      
+      expect(screen.getByTestId('hero-section')).toBeInTheDocument();
+      expect(screen.getByTestId('particle-background')).toBeInTheDocument();
+      expect(screen.getByTestId('scroll-indicator')).toBeInTheDocument();
+    });
+
+    it('renders avatar when avatarUrl is provided', () => {
+      const avatarUrl = 'https://example.com/avatar.jpg';
+      const avatarAlt = 'Profile Avatar';
+      
+      render(
+        <HeroSection
+          avatarUrl={avatarUrl}
+          avatarAlt={avatarAlt}
+        />
+      );
+      
+      const avatar = screen.getByRole('img');
+      expect(avatar).toBeInTheDocument();
+      expect(avatar).toHaveAttribute('src', avatarUrl);
+      expect(avatar).toHaveAttribute('alt', avatarAlt);
+    });
+
+    it('does not render avatar when avatarUrl is not provided', () => {
+      render(<HeroSection />);
+      
+      const avatar = screen.queryByRole('img');
+      expect(avatar).not.toBeInTheDocument();
+    });
+
+    it('renders identity text (H1)', () => {
+      render(<HeroSection />);
+      
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toBeInTheDocument();
+      expect(heading.textContent).toContain('about.hero.identity');
+    });
+
+    it('renders subtitle (H2)', () => {
+      render(<HeroSection />);
+      
+      const subtitle = screen.getByRole('heading', { level: 2 });
+      expect(subtitle).toBeInTheDocument();
+      expect(subtitle.textContent).toContain('about.hero.subtitle');
+    });
+
+    it('renders primary CTA button', () => {
+      render(<HeroSection />);
+      
+      const primaryButton = screen.getByRole('button', { name: /about.hero.primaryCTA/i });
+      expect(primaryButton).toBeInTheDocument();
+    });
+
+    it('renders secondary CTA button when secondaryCTALabel is provided', () => {
+      render(<HeroSection />);
+      
+      const secondaryButton = screen.getByRole('button', { name: /about.hero.secondaryCTA/i });
+      expect(secondaryButton).toBeInTheDocument();
+    });
+
+    it('applies custom className', () => {
+      const customClass = 'custom-hero-class';
+      render(<HeroSection className={customClass} />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      expect(heroSection).toHaveClass(customClass);
+    });
+  });
+
+  describe('Particle Background', () => {
+    it('enables particle background by default', () => {
+      render(<HeroSection />);
+      
+      expect(screen.getByTestId('particle-background')).toBeInTheDocument();
+    });
+
+    it('disables particle background when enableParticles is false', () => {
+      render(<HeroSection enableParticles={false} />);
+      
+      expect(screen.queryByTestId('particle-background')).not.toBeInTheDocument();
+    });
+
+    it('uses default particle count for desktop', () => {
+      Object.defineProperty(window, 'innerWidth', { value: 1024 });
+      
+      render(<HeroSection />);
+      
+      const particleBackground = screen.getByTestId('particle-background');
+      expect(particleBackground).toHaveAttribute('data-particle-count', '50');
+    });
+
+    it('uses reduced particle count for mobile', () => {
+      Object.defineProperty(window, 'innerWidth', { value: 375 });
+      
+      render(<HeroSection />);
+      
+      const particleBackground = screen.getByTestId('particle-background');
+      expect(particleBackground).toHaveAttribute('data-particle-count', '25');
+    });
+
+    it('uses custom particle count when provided', () => {
+      const customCount = 75;
+      render(<HeroSection particleCount={customCount} />);
+      
+      const particleBackground = screen.getByTestId('particle-background');
+      expect(particleBackground).toHaveAttribute('data-particle-count', String(customCount));
+    });
+  });
+
+  describe('CTA Buttons', () => {
+    it('primary CTA scrolls to target on click', () => {
+      render(<HeroSection primaryCTATarget="#projects" />);
+      
+      const primaryButton = screen.getByRole('button', { name: /about.hero.primaryCTA/i });
+      const mockScrollIntoView = vi.fn();
+      
+      // Mock element with scrollIntoView
+      const mockElement = { scrollIntoView: mockScrollIntoView };
+      vi.spyOn(document, 'getElementById').mockReturnValue(mockElement as any);
+      
+      fireEvent.click(primaryButton);
+      
+      expect(document.getElementById).toHaveBeenCalledWith('#projects');
+    });
+
+    it('secondary CTA scrolls to target on click', () => {
+      render(<HeroSection secondaryCTATarget="#contact" />);
+      
+      const secondaryButton = screen.getByRole('button', { name: /about.hero.secondaryCTA/i });
+      const mockScrollIntoView = vi.fn();
+      
+      const mockElement = { scrollIntoView: mockScrollIntoView };
+      vi.spyOn(document, 'getElementById').mockReturnValue(mockElement as any);
+      
+      fireEvent.click(secondaryButton);
+      
+      expect(document.getElementById).toHaveBeenCalledWith('#contact');
+    });
+
+    it('scroll indicator scrolls to target on click', () => {
+      render(<HeroSection />);
+      
+      const scrollIndicator = screen.getByTestId('scroll-indicator');
+      const mockScrollIntoView = vi.fn();
+      
+      const mockElement = { scrollIntoView: mockScrollIntoView };
+      vi.spyOn(document, 'getElementById').mockReturnValue(mockElement as any);
+      
+      fireEvent.click(scrollIndicator);
+      
+      expect(document.getElementById).toHaveBeenCalledWith('#projects');
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('has proper ARIA labels', () => {
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      expect(heroSection).toHaveAttribute('role', 'region');
+      expect(heroSection).toHaveAttribute('aria-labelledby', 'hero-title');
+    });
+
+    it('has proper heading structure', () => {
+      render(<HeroSection />);
+      
+      const h1 = screen.getByRole('heading', { level: 1 });
+      const h2 = screen.getByRole('heading', { level: 2 });
+      
+      expect(h1).toHaveAttribute('id', 'hero-title');
+      expect(h2).toBeInTheDocument();
+    });
+
+    it('buttons are keyboard accessible', () => {
+      render(<HeroSection />);
+      
+      const primaryButton = screen.getByRole('button', { name: /about.hero.primaryCTA/i });
+      const secondaryButton = screen.getByRole('button', { name: /about.hero.secondaryCTA/i });
+      const scrollIndicator = screen.getByTestId('scroll-indicator');
+      
+      expect(primaryButton).toHaveAttribute('type', 'button');
+      expect(secondaryButton).toHaveAttribute('type', 'button');
+      expect(scrollIndicator).toHaveAttribute('aria-label', 'Scroll to projects');
+    });
+
+    it('avatar has proper alt text', () => {
+      const avatarAlt = 'John Doe - Senior Fullstack Engineer';
+      render(<HeroSection avatarUrl="avatar.jpg" avatarAlt={avatarAlt} />);
+      
+      const avatar = screen.getByRole('img');
+      expect(avatar).toHaveAttribute('alt', avatarAlt);
+    });
+  });
+
+  describe('Animations', () => {
+    it('applies animation classes to child elements', () => {
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      expect(heroSection).toBeInTheDocument();
+      
+      // Check that animation classes are applied via inline styles
+      const style = heroSection.getAttribute('style');
+      expect(style).toContain('--animation-delay');
+    });
+
+    it('has staggered animation delays', () => {
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      const style = heroSection.getAttribute('style');
+      
+      expect(style).toContain('--animation-delay: 0ms');
+      expect(style).toContain('--animation-delay: 100ms');
+      expect(style).toContain('--animation-delay: 200ms');
+    });
+  });
+
+  describe('Responsive Design', () => {
+    it('renders correctly on mobile viewport', () => {
+      Object.defineProperty(window, 'innerWidth', { value: 375 });
+      
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      expect(heroSection).toBeInTheDocument();
+      
+      // Check for mobile-specific inline styles
+      const style = heroSection.getAttribute('style');
+      expect(style).toContain('@media (max-width: 767px)');
+    });
+
+    it('renders correctly on desktop viewport', () => {
+      Object.defineProperty(window, 'innerWidth', { value: 1024 });
+      
+      render(<HeroSection />);
+      
+      const heroSection = screen.getByTestId('hero-section');
+      expect(heroSection).toBeInTheDocument();
+      
+      // Check for desktop-specific inline styles
+      const style = heroSection.getAttribute('style');
+      expect(style).toContain('@media (min-width: 768px)');
+    });
+  });
+
+  describe('Props Handling', () => {
+    it('accepts custom CTA labels', () => {
+      render(
+        <HeroSection
+          primaryCTALabel="View Projects"
+          secondaryCTALabel="Contact Me"
+        />
+      );
+      
+      const primaryButton = screen.getByRole('button', { name: 'View Projects' });
+      const secondaryButton = screen.getByRole('button', { name: 'Contact Me' });
+      
+      expect(primaryButton).toBeInTheDocument();
+      expect(secondaryButton).toBeInTheDocument();
+    });
+
+    it('accepts custom CTA targets', () => {
+      render(
+        <HeroSection
+          primaryCTATarget="#portfolio"
+          secondaryCTATarget="#email"
+        />
+      );
+      
+      const primaryButton = screen.getByRole('button', { name: /about.hero.primaryCTA/i });
+      const secondaryButton = screen.getByRole('button', { name: /about.hero.secondaryCTA/i });
+      
+      fireEvent.click(primaryButton);
+      expect(document.getElementById).toHaveBeenCalledWith('#portfolio');
+      
+      fireEvent.click(secondaryButton);
+      expect(document.getElementById).toHaveBeenCalledWith('#email');
+    });
+
+    it('handles missing avatar gracefully', () => {
+      render(<HeroSection avatarUrl="" />);
+      
+      const avatar = screen.queryByRole('img');
+      expect(avatar).not.toBeInTheDocument();
+    });
+
+    it('handles missing secondary CTA gracefully', () => {
+      render(<HeroSection secondaryCTALabel="" />);
+      
+      const secondaryButton = screen.queryByRole('button', { name: /about.hero.secondaryCTA/i });
+      expect(secondaryButton).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('renders with all optional props omitted', () => {
+      render(<HeroSection />);
+      
+      expect(screen.getByTestId('hero-section')).toBeInTheDocument();
+      expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    });
+
+    it('renders with all props provided', () => {
+      render(
+        <HeroSection
+          avatarUrl="avatar.jpg"
+          avatarAlt="Profile"
+          primaryCTALabel="Projects"
+          primaryCTATarget="#projects"
+          secondaryCTALabel="Contact"
+          secondaryCTATarget="#contact"
+          enableParticles={true}
+          particleCount={100}
+          className="full-props"
+        />
+      );
+      
+      expect(screen.getByTestId('hero-section')).toBeInTheDocument();
+      expect(screen.getByRole('img')).toBeInTheDocument();
+      expect(screen.getByTestId('particle-background')).toBeInTheDocument();
+      expect(screen.getByTestId('scroll-indicator')).toBeInTheDocument();
+    });
+
+    it('handles zero particle count', () => {
+      render(<HeroSection particleCount={0} />);
+      
+      const particleBackground = screen.getByTestId('particle-background');
+      expect(particleBackground).toHaveAttribute('data-particle-count', '0');
+    });
+  });
+});

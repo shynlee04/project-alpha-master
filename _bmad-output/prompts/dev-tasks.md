@@ -463,11 +463,7 @@ _bmad-output/sprint-artifacts/rc-002-file-size-validation-2025-12-29.md
 _bmad-output/sprint-artifacts/refactored-sprint-plan-2025-12-27.md
 _bmad-output/sprint-artifacts/refinement-sprint-knowledge-hub-2025-12-30.md
 _bmad-output/sprint-artifacts/sprint-status.yaml`
--
-
--0
 ## Controlled and governance documents
-
 `_bmad-output/project-planning-artifacts/architecture-enhanced-2025-12-29.md
 _bmad-output/project-planning-artifacts/architecture.md
 _bmad-output/project-planning-artifacts/epics-enhanced-2025-12-29.md
@@ -476,6 +472,4 @@ _bmad-output/project-planning-artifacts/prd.md
 _bmad-output/project-planning-artifacts/project-context.md
 _bmad-output/project-planning-artifacts/ux-design-specification-enhanced-2025-12-29.md
 _bmad-output/project-planning-artifacts/ux-design-specification.md`
--
--
-  focusing on only those that iimplemented in code) follow @.claude/rules/general-rules.md and as coordinator being ready to open *correct-course when things go worng - you go through @_bmad-output/validation/sweeping-validation.md -> check with /ado-research (using mcp servers) - correct-course -> @.kilocode/workflows/story-dev-cycle.md  loop until everything is fixed and integrated on all phase epic and implemented stories - making integration, having ux ui and routed on frontend following correct styling 8bit updating with workflow-status and sprint-status regarding. Focusing on endtoend integration, mapping and wiring of all components, front-end to back-end, cross-architectures and cross-dependencies (make installation of what missing too). Be fully aware of the UX and UI that must be available on mobile and desktop and the contrast issues when using with the current 8bit dark theme. If anything missing auto run *correct-course and then iterate through development cycle"
+  focusing on only those that iimplemented in code) follow @.claude/rules/general-rules.md and as coordinator being ready to open *correct-course when things go worng - you go through @_bmad-output/validation/sweeping-validation.md -> check with /ado-research (using mcp servers) - correct-course -> @.kilocode/workflows/story-dev-cycle.md  loop until everything is fixed and integrated on all phase epic and implemented stories - making integration, having ux ui and routed on frontend following correct styling 8bit updating with workflow-status and sprint-status regarding. Focusing on endtoend integration, mapping and wiring of all components, front-end to back-end, cross-architectures and cross-dependencies (make installation of what missing too). Be fully aware of the UX and UI that must be available on mobile and desktop and the contrast issues when using with the current 8bit dark theme. If anything missing auto run *correct-course and then iterate through development cycle. The only end condition is when all of the above is incrementally completed and validated."

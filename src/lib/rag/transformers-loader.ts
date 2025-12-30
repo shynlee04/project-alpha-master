@@ -117,6 +117,10 @@ export class TransformersLoader {
     async loadModel(): Promise<ModelLoadResult> {
         const startTime = performance.now();
 
+        if (import.meta.env.SSR) {
+            throw new Error('Transformers.js is not supported in server environment');
+        }
+
         // Dynamic import of Transformers.js
         const transformers = await import('@xenova/transformers');
 

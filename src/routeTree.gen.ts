@@ -44,12 +44,12 @@ const NotesRoute = NotesRouteImport.update({
   id: '/notes',
   path: '/notes',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/notes.lazy').then((d) => d.Route))
 const KnowledgeRoute = KnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/knowledge.lazy').then((d) => d.Route))
 const IdeRoute = IdeRouteImport.update({
   id: '/ide',
   path: '/ide',
@@ -64,7 +64,7 @@ const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
