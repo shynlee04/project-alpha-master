@@ -142,7 +142,7 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
                     </TabsList>
 
                     {error && (
-                        <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md border border-destructive/20 mt-4 flex items-center gap-2">
+                        <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-none border border-destructive/20 mt-4 flex items-center gap-2">
                             <AlertCircle size={16} />
                             {error}
                         </div>

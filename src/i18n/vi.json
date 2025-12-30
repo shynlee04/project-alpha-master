@@ -544,6 +544,7 @@
   "knowledge.metadata.edit": "Chỉnh sửa metadata",
   "knowledge.metadata.save": "Lưu",
   "knowledge.metadata.cancel": "Hủy",
+  "knowledge.metadata.regenerate": "Tạo lại",
   "knowledge.metadata.summaryPlaceholder": "Nhập tóm tắt 3 câu...",
   "knowledge.metadata.summaryCharCount": "{{count}} / {{max}} ký tự",
   "knowledge.metadata.conceptPlaceholder": "Thêm khái niệm...",

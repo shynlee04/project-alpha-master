@@ -27,7 +27,7 @@ const questionCardVariants = cva(
 );
 
 const optionVariants = cva(
-  'w-full rounded-md border p-3 text-left transition-all',
+  'w-full rounded-none border p-3 text-left transition-all',
   {
     variants: {
       variant: {
@@ -124,7 +124,7 @@ export function QuestionCard({
       </div>
 
       {showAnswer && (
-        <div className="mt-4 rounded-md bg-muted p-3">
+        <div className="mt-4 rounded-none bg-muted p-3">
           <p className="text-sm font-medium">{t('quizzes.preview.explanation')}</p>
           <p className="text-sm text-muted-foreground">{question.explanation}</p>
         </div>
@@ -230,7 +230,7 @@ export function QuizPreview({
         {onRegenerate && (
           <button
             onClick={onRegenerate}
-            className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent"
+            className="rounded-none border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent"
           >
             {t('quizzes.preview.regenerate')}
           </button>
@@ -238,7 +238,7 @@ export function QuizPreview({
         {onSave && (
           <button
             onClick={onSave}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="rounded-none bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             {t('quizzes.preview.saveQuiz')}
           </button>
@@ -300,7 +300,7 @@ export function QuizSettingsPanel({
               difficulty: e.target.value as 'mixed' | 'easy' | 'medium' | 'hard',
             })
           }
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-none border border-input bg-background px-3 py-2 text-sm"
         >
           <option value="mixed">{t('quizzes.settings.difficultyMixed')}</option>
           <option value="easy">{t('quizzes.settings.difficultyEasy')}</option>
@@ -320,7 +320,7 @@ export function QuizSettingsPanel({
               includeExplanation: e.target.checked,
             })
           }
-          className="h-4 w-4 rounded border-gray-300"
+          className="h-4 w-4 rounded-none border-gray-300"
         />
         <label htmlFor="includeExplanation" className="text-sm font-medium">
           {t('quizzes.settings.includeExplanations')}

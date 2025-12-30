@@ -522,6 +522,7 @@
   "knowledge.metadata.edit": "Edit Metadata",
   "knowledge.metadata.save": "Save",
   "knowledge.metadata.cancel": "Cancel",
+  "knowledge.metadata.regenerate": "Regenerate",
   "knowledge.metadata.summaryPlaceholder": "Enter a 3-sentence summary...",
   "knowledge.metadata.summaryCharCount": "{{count}} / {{max}} characters",
   "knowledge.metadata.conceptPlaceholder": "Add a key concept...",
