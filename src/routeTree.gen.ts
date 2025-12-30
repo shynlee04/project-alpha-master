@@ -34,7 +34,7 @@ const StudyRoute = StudyRouteImport.update({
   id: '/study',
   path: '/study',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/study.lazy').then((d) => d.Route))
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',

@@ -228,35 +228,16 @@ const config = defineConfig(async () => {
       tanstackStart(),
       viteReact(),
     ],
-    // SSR Configuration - Optimized for bundle size
+    // SSR Configuration
+    // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
+    // Therefore, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
+    // We only specify 'noExternal' to bundle specific client-side libraries
     ssr: DEPLOY_TARGET === 'cloudflare'
       ? {
-        // Aggressive externalization for Cloudflare to reduce bundle size
-        external: [
-          // Large client-side libraries (loaded via dynamic import)
-          '@monaco-editor/react',
-          'monaco-editor',
-          '@xterm/xterm',
-          '@xterm/addon-fit',
-          '@webcontainer/api',
-          '@xenova/transformers',
-          'pdfjs-dist',
-          '@blocknote/core',
-          '@blocknote/react',
-          'mermaid',
-          '@xyflow/react',
-          // AI libraries (client-side only)
-          '@tanstack/ai-react',
-          '@tanstack/ai-client',
-        ],
-        // Bundle only essential server-side dependencies
-        noExternal: [
-          '@tanstack/ai',
-          '@tanstack/ai-openai', 
-          '@tanstack/ai-gemini',
-          'zod',
-          'dexie',
-        ],
+        // Bundle everything for Cloudflare EXCEPT large client-side-only libraries
+        // These are accessed via dynamic import (React.lazy) and guarded by client checks
+        // Cloudflare plugin handles Node.js externals automatically
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote)).*$/,
       }
       : {
         external: [
