@@ -48,7 +48,7 @@ function FlashcardCard({
       >
         {/* Front of card */}
         <div
-          className="absolute w-full h-full backface-hidden bg-white border-2 border-gray-200 rounded-lg p-6 shadow-md"
+          className="absolute w-full h-full backface-hidden bg-white border-2 border-gray-200 rounded-none p-6 shadow-md"
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex items-start justify-between mb-4">
@@ -65,7 +65,7 @@ function FlashcardCard({
 
         {/* Back of card */}
         <div
-          className="absolute w-full h-full backface-hidden bg-gray-50 border-2 border-gray-200 rounded-lg p-6 shadow-md"
+          className="absolute w-full h-full backface-hidden bg-gray-50 border-2 border-gray-200 rounded-none p-6 shadow-md"
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
@@ -88,7 +88,7 @@ function FlashcardCard({
           <p className="text-lg font-medium text-gray-900">{card.answer}</p>
           {card.topic && (
             <div className="mt-4 flex flex-wrap gap-1">
-              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-none">
                 {card.topic}
               </span>
             </div>
@@ -206,13 +206,13 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
       <div className="flex justify-center gap-4">
         <button
           onClick={onDiscard}
-          className="px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+          className="px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-none hover:bg-gray-200 transition-colors"
         >
           Discard
         </button>
         <button
           onClick={() => onApprove(editedCards)}
-          className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-6 py-3 bg-blue-600 text-white font-medium rounded-none hover:bg-blue-700 transition-colors"
         >
           Save All {editedCards.length} Cards
         </button>
