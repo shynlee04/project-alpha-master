@@ -6,8 +6,8 @@
 # Loop Metadata
 loop_id: "arc-loop-2025-12-31"
 started_at: "2025-12-31T16:44:51+07:00"
-last_updated: "2025-12-31T22:45:00+07:00"
-iteration_count: 11
+last_updated: "2025-12-31T23:00:00+07:00"
+iteration_count: 12
 max_iterations: 100
 status: "ACTIVE"
 
@@ -112,8 +112,8 @@ phase_1:
       name: "Fix 10 highest-priority file size violations"
       status: "IN_PROGRESS"
       started_at: "2025-12-31T18:15:00+07:00"
-      progress: "5/10 files split"
-      notes: "Split chunk-strategies.ts (626→52 LOC), quiz-store.ts (629→305 LOC), conversation-store.ts (626→424 LOC), rag-store.ts (810→already split into 3 files), prompt-composer.ts (635→467 LOC + types 82 + config 104). Build passing. 5 files remaining >300 LOC."
+      progress: "6/10 files split"
+      notes: "Split chunk-strategies.ts (626→52 LOC), quiz-store.ts (629→305 LOC), conversation-store.ts (626→424 LOC), rag-store.ts (810→already split), prompt-composer.ts (635→467 LOC), query-optimizer.ts (663→515 LOC). Build passing. 4 files remaining >300 LOC."
       findings:
           - file: "src/presentation/components/agent/AgentConfigDialog.tsx"
             loc: 1089

@@ -8,117 +8,26 @@
  */
 
 import type { SearchFilters } from './types';
+import type {
+  ParsedQuery,
+  QueryOperator,
+  QueryType,
+  OptimizedQuery,
+  QueryParserConfig,
+} from './query-optimizer-types';
+import { DEFAULT_CONFIG } from './query-optimizer-config';
 
-/**
- * Parsed query components
- */
-export interface ParsedQuery {
-  /** Original query text */
-  original: string;
-  /** Normalized query text */
-  normalized: string;
-  /** Extracted keywords */
-  keywords: string[];
-  /** Identified entities (e.g., "machine learning", "react hooks") */
-  entities: string[];
-  /** Boolean operators found */
-  operators: QueryOperator[];
-  /** Negation terms found */
-  negations: string[];
-  /** Suggested filters based on query */
-  suggestedFilters: SearchFilters;
-  /** Query type classification */
-  queryType: QueryType;
-  /** Confidence score (0-1) */
-  confidence: number;
-}
+// Re-export types for convenience
+export type {
+  ParsedQuery,
+  QueryOperator,
+  QueryType,
+  OptimizedQuery,
+  QueryParserConfig,
+} from './query-optimizer-types';
 
-/**
- * Query operator types
- */
-export type QueryOperator = 'AND' | 'OR' | 'NOT';
-
-/**
- * Query type classifications
- */
-export type QueryType =
-  | 'simple'        // Single keyword/phrase
-  | 'compound'      // Multiple keywords with operators
-  | 'question'      // Question format (what, how, why, when, where)
-  | 'comparative'   // Comparison (vs, compared to, better than)
-  | 'definitional'  // Definition (what is, what are, meaning of)
-  | 'causal'        // Cause/effect (why, because, causes)
-  | 'procedural'    // How-to (how to, steps, tutorial)
-  | 'factual'       // Who, when, where questions
-  | 'unsupported';  // Unable to classify
-
-/**
- * Query optimization result
- */
-export interface OptimizedQuery {
-  /** Optimized query string for search */
-  searchQuery: string;
-  /** Filters extracted from query */
-  filters: SearchFilters;
-  /** Parsed query components */
-  parsed: ParsedQuery;
-  /** Alternative queries to try */
-  alternatives: string[];
-  /** Optimization notes */
-  notes: string[];
-}
-
-/**
- * Configuration for query parser
- */
-export interface QueryParserConfig {
-  /** Minimum keyword length */
-  minKeywordLength?: number;
-  /** Maximum keywords to extract */
-  maxKeywords?: number;
-  /** Enable entity extraction */
-  enableEntityExtraction?: boolean;
-  /** Enable filter suggestion */
-  enableFilterSuggestion?: boolean;
-  /** Custom stop words */
-  stopWords?: string[];
-}
-
-/**
- * Default query parser configuration
- */
-const DEFAULT_CONFIG: Required<QueryParserConfig> = {
-  minKeywordLength: 2,
-  maxKeywords: 10,
-  enableEntityExtraction: true,
-  enableFilterSuggestion: true,
-  stopWords: [
-    'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
-    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
-    'should', 'may', 'might', 'must', 'shall', 'can', 'need', 'dare',
-    'to', 'of', 'in', 'for', 'on', 'with', 'at', 'by', 'from', 'as',
-    'into', 'through', 'during', 'before', 'after', 'above', 'below',
-    'between', 'under', 'again', 'further', 'then', 'once', 'here',
-    'there', 'when', 'where', 'why', 'how', 'all', 'each', 'few',
-    'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not',
-    'only', 'own', 'same', 'so', 'than', 'too', 'very', 'just',
-    'and', 'but', 'if', 'or', 'because', 'until', 'while', 'although',
-    'i', 'me', 'my', 'we', 'our', 'you', 'your', 'he', 'him', 'his',
-    'she', 'her', 'it', 'its', 'they', 'them', 'their', 'what', 'which',
-    'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'about',
-    'get', 'got', 'getting', 'like', 'know', 'make', 'made', 'making',
-    'think', 'see', 'come', 'want', 'use', 'find', 'give', 'tell', 'try',
-    'leave', 'call', 'keep', 'let', 'put', 'seem', 'help', 'show', 'hear',
-    'play', 'run', 'move', 'live', 'believe', 'bring', 'happen', 'say',
-    'said', 'saying', 'also', 'now', 'even', 'still', 'well', 'back',
-    'much', 'way', 'new', 'first', 'last', 'long', 'great', 'little',
-    'own', 'old', 'right', 'big', 'high', 'different', 'small', 'large',
-    'next', 'early', 'young', 'important', 'public', 'bad', 'good',
-    'best', 'better', 'worst', 'worse', 'real', 'bit', 'actually',
-    'really', 'something', 'anything', 'everything', 'nothing', 'someone',
-    'anyone', 'everyone', 'nobody', 'somewhere', 'anywhere', 'everywhere',
-  ],
-};
+// Re-export helpers
+export { createWeightedQuery } from './query-optimizer-helpers';
 
 /**
  * Query parser and optimizer class
@@ -603,61 +512,4 @@ export class QueryOptimizer {
   private escapeRegex(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
-}
-
-/**
- * Query weight configuration for boosting
- */
-export interface QueryWeightConfig {
-  /** Weight for exact phrase matches (default: 2.0) */
-  phraseWeight?: number;
-  /** Weight for keyword matches (default: 1.0) */
-  keywordWeight?: number;
-  /** Weight for entity matches (default: 1.5) */
-  entityWeight?: number;
-  /** Weight for negated terms (default: -1.0) */
-  negationWeight?: number;
-}
-
-/**
- * Create a weighted query for relevance tuning
- *
- * @param query - Base query
- * @param weights - Weight configuration
- * @returns Weighted query string
- */
-export function createWeightedQuery(
-  query: string,
-  weights: QueryWeightConfig = {}
-): string {
-  const {
-    phraseWeight = 2.0,
-    keywordWeight = 1.0,
-    entityWeight = 1.5,
-    negationWeight = -1.0,
-  } = weights;
-
-  const optimizer = new QueryOptimizer();
-  const parsed = optimizer.parseQuery(query);
-
-  let weightedQuery = '';
-
-  // Add phrase weight for entities
-  for (const entity of parsed.entities) {
-    weightedQuery += `"${entity}"^${entityWeight} `;
-  }
-
-  // Add keyword weights
-  for (const keyword of parsed.keywords) {
-    if (!parsed.entities.some(e => keyword.includes(e) || e.includes(keyword))) {
-      weightedQuery += `${keyword}^${keywordWeight} `;
-    }
-  }
-
-  // Handle negations
-  for (const negation of parsed.negations) {
-    weightedQuery += `NOT ${negation} `;
-  }
-
-  return weightedQuery.trim();
 }
