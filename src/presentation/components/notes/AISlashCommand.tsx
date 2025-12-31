@@ -2,7 +2,7 @@
  * @fileoverview AI Slash Commands for BlockNote Editor
  * @module components/notes/AISlashCommand
  * @story NR-05 - Implement Command Palette AI Actions
- * @updated 2025-12-31 - Added more AI commands
+ * @updated 2026-01-01 - Fixed async command execution with loading states
  */
 
 import type { BlockNoteEditor, Block } from '@blocknote/core';
@@ -19,7 +19,7 @@ import {
     AlignLeft
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
-import { generateNoteContent } from '@/lib/notes/note-ai-service';
+import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
 import { toast } from 'sonner';
 
 // ============================================================================
@@ -39,23 +39,93 @@ export const insertAIItem = (editor: BlockNoteEditor) => ({
 });
 
 // ============================================================================
-// Helper: Execute AI Command
+// Helper: Execute AI Command with Loading Toast
 // ============================================================================
 
 async function executeAICommand(
     editor: BlockNoteEditor,
     prompt: string,
-    successMessage: string = 'Content generated'
+    commandName: string = 'AI'
 ): Promise<void> {
+    // Show loading toast
+    const toastId = toast.loading(`${commandName} generating...`);
+
     try {
         const result = await generateNoteContent(prompt);
+
+        if (!result || result.trim().length === 0) {
+            toast.error('AI returned empty content', { id: toastId });
+            return;
+        }
+
+        // Parse markdown to blocks
         const blocks = await editor.tryParseMarkdownToBlocks(result);
-        editor.insertBlocks(blocks, editor.getTextCursorPosition().block, 'after');
-        toast.success(successMessage);
+
+        if (blocks.length === 0) {
+            toast.error('Failed to parse AI response', { id: toastId });
+            return;
+        }
+
+        // Get current cursor position
+        const cursorPosition = editor.getTextCursorPosition();
+
+        // Insert blocks after current position
+        editor.insertBlocks(blocks, cursorPosition.block, 'after');
+
+        // Move cursor to end of inserted content
+        const lastInsertedBlock = blocks[blocks.length - 1];
+        if (lastInsertedBlock?.id) {
+            editor.setTextCursorPosition(lastInsertedBlock.id, 'end');
+        }
+
+        toast.success(`${commandName} complete!`, { id: toastId });
     } catch (error) {
         console.error('AI command failed:', error);
-        toast.error('AI generation failed. Please try again.');
+
+        if (error instanceof NoteAIError) {
+            switch (error.code) {
+                case 'NO_AGENT':
+                    toast.error('Please select an AI agent first', { id: toastId });
+                    break;
+                case 'NO_API_KEY':
+                    toast.error('No API key configured', { id: toastId });
+                    break;
+                default:
+                    toast.error(`${commandName} failed: ${error.message}`, { id: toastId });
+            }
+        } else {
+            toast.error('AI generation failed. Please try again.', { id: toastId });
+        }
     }
+}
+
+// ============================================================================
+// Helper: Get All Note Text
+// ============================================================================
+
+function getAllNoteText(editor: BlockNoteEditor): string {
+    const blocks = editor.document;
+    return blocks
+        .map(block => extractBlockText(block))
+        .filter(Boolean)
+        .join('\n\n');
+}
+
+function extractBlockText(block: Block): string {
+    if (!block.content) return '';
+
+    if (Array.isArray(block.content)) {
+        return block.content
+            .map(item => {
+                if (typeof item === 'object' && item !== null && 'text' in item) {
+                    return (item as { text: string }).text;
+                }
+                return '';
+            })
+            .join('');
+    }
+
+    return '';
 }
 
 // ============================================================================
@@ -72,8 +142,8 @@ export const summarizeNoteItem = (editor: BlockNoteEditor) => ({
         }
         await executeAICommand(
             editor,
-            `Summarize the following note content in a clear, concise summary:\n\n${content}`,
-            'Summary generated'
+            `Create a clear, concise summary of the following note. Format the summary with bullet points for key takeaways:\n\n${content}`,
+            'Summary'
         );
     },
     aliases: ["summary", "summarize", "tldr"],
@@ -92,8 +162,8 @@ export const generateOutlineItem = (editor: BlockNoteEditor) => ({
         }
         await executeAICommand(
             editor,
-            `Create a structured outline from the following content. Use bullet points and headings:\n\n${content}`,
-            'Outline generated'
+            `Create a structured outline from the following content. Use markdown headings (## and ###) and bullet points:\n\n${content}`,
+            'Outline'
         );
     },
     aliases: ["outline", "structure", "toc"],
@@ -112,8 +182,8 @@ export const explainConceptItem = (editor: BlockNoteEditor) => ({
         }
         await executeAICommand(
             editor,
-            `Explain the following content in very simple terms that a child could understand. Use analogies and examples:\n\n${content}`,
-            'Explanation generated'
+            `Explain the following content in very simple terms that a child could understand. Use analogies, examples, and simple language:\n\n${content}`,
+            'Explanation'
         );
     },
     aliases: ["eli5", "explain", "simplify"],
@@ -132,8 +202,8 @@ export const generateQuestionsItem = (editor: BlockNoteEditor) => ({
         }
         await executeAICommand(
             editor,
-            `Generate 5 thoughtful questions based on the following content. These should help test understanding of the material:\n\n${content}`,
-            'Questions generated'
+            `Generate 5 thoughtful study questions based on the following content. Format each question with a number and make them help test understanding of the material:\n\n${content}`,
+            'Questions'
         );
     },
     aliases: ["questions", "quiz", "test"],
@@ -152,8 +222,8 @@ export const translateNoteItem = (editor: BlockNoteEditor) => ({
         }
         await executeAICommand(
             editor,
-            `Translate the following content. If it's in English, translate to Vietnamese. If it's in Vietnamese, translate to English. Preserve formatting:\n\n${content}`,
-            'Translation generated'
+            `Translate the following content. If it's in English, translate to Vietnamese. If it's in Vietnamese, translate to English. Preserve all formatting including headings, lists, and paragraphs:\n\n${content}`,
+            'Translation'
         );
     },
     aliases: ["translate", "dich", "language"],
@@ -169,15 +239,15 @@ export const continueWritingItem = (editor: BlockNoteEditor) => ({
         if (!content.trim()) {
             await executeAICommand(
                 editor,
-                `Start writing an engaging introduction for a new topic. Be creative and informative.`,
-                'Content generated'
+                `Start writing an engaging introduction for a new topic. Be creative, informative, and set up the reader for what's to come.`,
+                'Content'
             );
             return;
         }
         await executeAICommand(
             editor,
-            `Continue writing from where this text leaves off. Match the style and tone:\n\n${content}`,
-            'Content continued'
+            `Continue writing from where this text leaves off. Match the style, tone, and formatting of the existing content. Add 2-3 more paragraphs:\n\n${content}`,
+            'Continuation'
         );
     },
     aliases: ["continue", "write", "more"],
@@ -196,8 +266,16 @@ export const generateFlashcardsItem = (editor: BlockNoteEditor) => ({
         }
         await executeAICommand(
             editor,
-            `Create 5 flashcards from the following content. Format each as:\n\n**Q:** [Question]\n**A:** [Answer]\n\nContent:\n${content}`,
-            'Flashcards generated'
+            `Create 5 flashcards from the following content. Format each flashcard as:
+
+**Q:** [Question]
+**A:** [Answer]
+
+---
+
+Content to create flashcards from:
+${content}`,
+            'Flashcards'
         );
     },
     aliases: ["flashcards", "cards", "study"],
@@ -223,43 +301,7 @@ export const getCustomSlashMenuItems = (
         generateQuestionsItem(editor),
         translateNoteItem(editor),
         generateFlashcardsItem(editor),
-        // Separator would be nice, but BlockNote doesn't support it natively
-        // Default items
+        // Default BlockNote items
         ...getDefaultReactSlashMenuItems(editor),
     ];
 };
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Extract all text content from the editor
- */
-function getAllNoteText(editor: BlockNoteEditor): string {
-    const blocks = editor.document;
-    return blocks
-        .map(block => extractBlockText(block))
-        .filter(Boolean)
-        .join('\n\n');
-}
-
-/**
- * Extract text from a single block
- */
-function extractBlockText(block: Block): string {
-    if (!block.content) return '';
-
-    if (Array.isArray(block.content)) {
-        return block.content
-            .map(item => {
-                if (typeof item === 'object' && item !== null && 'text' in item) {
-                    return (item as { text: string }).text;
-                }
-                return '';
-            })
-            .join('');
-    }
-
-    return '';
-}

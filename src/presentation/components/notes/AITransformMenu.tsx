@@ -3,6 +3,7 @@
  * @module components/notes/AITransformMenu
  * @story NR-04 - Add Text Selection AI Transform
  * @created 2025-12-31
+ * @updated 2026-01-01 - Fixed selection detection using BlockNote API
  * 
  * Floating menu that appears when text is selected in the editor.
  * Provides AI-powered text transformation actions.
@@ -95,50 +96,35 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
 
     const actions = createTransformActions(t);
 
-    // Listen for text selection changes
+    // Use BlockNote's onSelectionChange event for proper selection detection
     useEffect(() => {
         const checkSelection = () => {
-            const selection = editor.getSelection();
+            try {
+                // Use getSelectedText() which is the proper BlockNote API
+                const text = editor.getSelectedText();
 
-            if (selection) {
-                // Get text content from selected blocks
-                const blocks = selection.blocks;
-                const text = blocks
-                    .map(block => extractBlockText(block))
-                    .filter(Boolean)
-                    .join('\n');
-
-                if (text.trim().length > 0) {
+                if (text && text.trim().length > 0) {
                     setSelectedText(text);
                     setIsOpen(true);
                 } else {
                     setIsOpen(false);
                     setSelectedText('');
                 }
-            } else {
-                setIsOpen(false);
-                setSelectedText('');
+            } catch (error) {
+                // Editor might not be fully initialized
+                console.debug('Selection check skipped:', error);
             }
         };
 
-        // Check selection periodically when editor content changes
-        const handleChange = () => {
-            setTimeout(checkSelection, 100);
-        };
-
-        editor.onEditorContentChange(handleChange);
-
-        // Also check on focus
-        const editorElement = editor.domElement;
-        if (editorElement) {
-            editorElement.addEventListener('mouseup', checkSelection);
-            editorElement.addEventListener('keyup', checkSelection);
-        }
+        // Use BlockNote's selection change event
+        const unsubscribe = editor.onSelectionChange(() => {
+            // Small delay to ensure selection is finalized
+            setTimeout(checkSelection, 50);
+        });
 
         return () => {
-            if (editorElement) {
-                editorElement.removeEventListener('mouseup', checkSelection);
-                editorElement.removeEventListener('keyup', checkSelection);
+            if (typeof unsubscribe === 'function') {
+                unsubscribe();
             }
         };
     }, [editor]);
@@ -153,26 +139,26 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
             const prompt = action.prompt(selectedText);
             const result = await generateNoteContent(prompt);
 
-            // Replace selected blocks with transformed content
+            // Get current selection and replace with transformed content
             const selection = editor.getSelection();
             if (selection && selection.blocks.length > 0) {
                 // Parse the result as blocks
                 const newBlocks = await editor.tryParseMarkdownToBlocks(result);
 
-                // Remove old blocks and insert new ones
+                // Get the first and last selected block IDs
                 const firstBlockId = selection.blocks[0].id;
 
                 // Insert new blocks after the first selected block
                 editor.insertBlocks(newBlocks, firstBlockId, 'after');
 
                 // Remove the original selected blocks
-                for (const block of selection.blocks) {
-                    editor.removeBlocks([block.id]);
-                }
+                const blockIdsToRemove = selection.blocks.map(b => b.id);
+                editor.removeBlocks(blockIdsToRemove);
             }
 
             toast.success(t('notes.ai.transform.success', 'Text transformed successfully'));
             setIsOpen(false);
+            setSelectedText('');
         } catch (error) {
             console.error('Transform failed:', error);
 
@@ -200,9 +186,11 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
         setIsOpen(false);
         setIsLoading(false);
         setLoadingAction(null);
+        setSelectedText('');
     };
 
-    if (!isOpen || !selectedText) {
+    // Don't render if nothing is selected
+    if (!isOpen || !selectedText.trim()) {
         return null;
     }
 
@@ -256,27 +244,6 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
             </div>
         </div>
     );
-}
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-function extractBlockText(block: Block): string {
-    if (!block.content) return '';
-
-    if (Array.isArray(block.content)) {
-        return block.content
-            .map(item => {
-                if (typeof item === 'object' && item !== null && 'text' in item) {
-                    return (item as { text: string }).text;
-                }
-                return '';
-            })
-            .join('');
-    }
-
-    return '';
 }
 
 export default AITransformMenu;
