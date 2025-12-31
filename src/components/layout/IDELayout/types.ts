@@ -94,3 +94,19 @@ export interface IDEResizableLayoutProps {
     centerPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
     editorPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
 }
+
+export interface IDEEditorPreviewGroupProps {
+    openFiles: OpenFile[];
+    activeFilePath: string | undefined;
+    onSave: () => void;
+    onActiveFileChange: (path: string) => void;
+    onTabClose: (path: string) => void;
+    onContentChange: (path: string, content: string) => void;
+    restoredIdeState: any;
+    activeFileScrollTopRef: React.RefObject<number | undefined>;
+    scheduleIdeStatePersistence: (ms: number) => void;
+    handlePanelLayoutChange: (group: string, layout: number[]) => void;
+    previewUrl: string | undefined;
+    previewPort: number | undefined;
+    editorPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
+}
