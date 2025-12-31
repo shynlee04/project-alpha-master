@@ -18,7 +18,7 @@ export * from './live-api-types';
 export { createIndex, loadIndex, saveIndex, deleteIndex, indexDocument, indexSource, removeFromIndex, searchIndex, getIndexSize, getIndexMetadata, getAllIndexesMetadata, rebuildIndex, cleanupOrphanedIndexes } from './orama-index';
 export { DocumentChunker, documentChunker } from './document-chunker';
 export { createEmbeddingService } from './embedding-service';
-export { HybridRetriever } from './hybrid-retriever';
+export { hybridSearch, hybridSearchWithEmbedding, type HybridSearchConfig, type SearchFilters, type HybridSearchResult, DEFAULT_HYBRID_CONFIG } from './hybrid-retriever';
 export { RAGChat, getRAGChat } from './rag-chat';
 
 // ============================================================================
