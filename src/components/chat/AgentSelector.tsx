@@ -12,8 +12,8 @@
  * FIXED: Now uses real agents store instead of mock data
  */
 
-import { useState, lazy, Suspense } from 'react';
-import { ChevronDown, Bot, Circle, Cpu, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown, Bot, Circle, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
@@ -22,7 +22,6 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-    DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import type { Agent } from '@/mocks/agents';
 import { useAgentsStore } from '@/stores/agents-store';
@@ -32,9 +31,6 @@ import {
     emitStoreEvent,
     type AgentSelectedPayload,
 } from '@/lib/events/store-events';
-
-// Lazy load agent config dialog for bundle splitting
-const AgentConfigDialog = lazy(() => import('@/components/agent/AgentConfigDialog'));
 
 /**
  * Workspace types for cross-workspace agent synchronization
@@ -101,10 +97,11 @@ function getStatusText(status: Agent['status']): string {
  * AgentSelector Component
  * 
  * AC-02: Unified agent selector with variant support and cross-workspace reactivity
+ * FIXED: Now uses real agents store instead of mock data
  */
 export function AgentSelector({
-    agents = mockAgents,
-    selectedAgent,
+    agents: propAgents,
+    selectedAgent: propSelectedAgent,
     onSelectAgent,
     disabled = false,
     className,
@@ -113,14 +110,21 @@ export function AgentSelector({
 }: AgentSelectorProps) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
+    // TODO: Add config dialog integration in future iteration
+    // const [configDialogOpen, setConfigDialogOpen] = useState(false);
+    // const [editingAgent, setEditingAgent] = useState<Agent | undefined>(undefined);
 
-    // Local state for selected agent when not controlled
-    const [localSelectedAgent, setLocalSelectedAgent] = useState<Agent | null>(
-        selectedAgent ?? agents.find(a => a.status === 'online') ?? agents[0] ?? null
-    );
+    // Use real agents from store instead of mock data
+    const { agents: storeAgents, activeAgentId, setActiveAgent } = useAgentsStore();
 
-    // Use controlled or uncontrolled agent
-    const currentAgent = selectedAgent !== undefined ? selectedAgent : localSelectedAgent;
+    // Allow prop override for backwards compatibility, but default to store agents
+    const agents = propAgents ?? storeAgents;
+
+    // Get selected agent from store or from prop
+    const selectedAgent = propSelectedAgent ??
+        storeAgents.find(a => a.id === activeAgentId) ??
+        storeAgents[0] ??
+        null;
 
     // Sort agents: online first, then by name
     const sortedAgents = [...agents].sort((a, b) => {
@@ -131,13 +135,11 @@ export function AgentSelector({
 
     /**
      * Handle agent selection with event emission
-     * AC-02: Cross-workspace reactivity via event bus
+     * AC-02: Cross-workspace reactivity via event bus + store update
      */
     const handleAgentSelect = (agent: Agent) => {
-        // Update local state if uncontrolled
-        if (selectedAgent === undefined) {
-            setLocalSelectedAgent(agent);
-        }
+        // Update store's active agent
+        setActiveAgent(agent.id);
 
         // Call external handler if provided
         onSelectAgent?.(agent);
@@ -152,12 +154,22 @@ export function AgentSelector({
         setOpen(false);
     };
 
+    /**
+     * Open agent configuration dialog
+     */
+    // TODO: Add config dialog integration in future iteration
+    // const handleOpenConfig = (agent?: Agent) => {
+    //     setEditingAgent(agent);
+    //     setConfigDialogOpen(true);
+    //     setOpen(false);
+    // };
+
     // Render compact variant
     if (variant === 'compact') {
         return (
             <CompactAgentSelector
                 agents={sortedAgents}
-                selectedAgent={currentAgent}
+                selectedAgent={selectedAgent}
                 onSelect={handleAgentSelect}
                 disabled={disabled}
                 className={className}
@@ -170,7 +182,7 @@ export function AgentSelector({
         return (
             <MinimalAgentSelector
                 agents={sortedAgents}
-                selectedAgent={currentAgent}
+                selectedAgent={selectedAgent}
                 onSelect={handleAgentSelect}
                 disabled={disabled}
                 className={className}
@@ -198,22 +210,22 @@ export function AgentSelector({
                         className
                     )}
                 >
-                    {currentAgent ? (
+                    {selectedAgent ? (
                         <>
                             {/* Status indicator */}
                             <Circle className={cn(
                                 'h-2.5 w-2.5 fill-current',
-                                getStatusColor(currentAgent.status)
+                                getStatusColor(selectedAgent.status)
                             )} />
 
                             {/* Agent info */}
                             <div className="flex flex-col items-start min-w-0 max-w-[120px]">
                                 <TruncatedText
-                                    text={currentAgent.name}
+                                    text={selectedAgent.name}
                                     className="text-xs font-bold text-slate-100 w-full"
                                 />
                                 <TruncatedText
-                                    text={currentAgent.model.split('/').pop() || ''}
+                                    text={selectedAgent.model.split('/').pop() || ''}
                                     className="text-[10px] text-slate-400 w-full"
                                 />
                             </div>
@@ -257,7 +269,7 @@ export function AgentSelector({
                                 'hover:bg-slate-700 focus:bg-slate-700',
                                 'rounded-sm',
                                 // Highlight selected
-                                currentAgent?.id === agent.id && 'bg-blue-900/30 border border-blue-500/30'
+                                selectedAgent?.id === agent.id && 'bg-blue-900/30 border border-blue-500/30'
                             )}
                         >
                             {/* Status dot */}

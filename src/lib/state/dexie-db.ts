@@ -22,6 +22,12 @@ export { ViaGentDatabase } from './dexie-db-class';
 // Core Types
 // ============================================================================
 
+import type {
+    ProjectRecord,
+    IDEStateRecord,
+    ConversationRecord,
+} from './dexie-db-core-types';
+
 export type {
     ProjectRecord,
     IDEStateRecord,
@@ -59,6 +65,15 @@ export type {
 // Session Types
 // ============================================================================
 
+import type {
+    PersistedStateRecord,
+    SyncStatusRecord,
+    FileMetadataRecord,
+    ToolExecutionLogRecord,
+    FSAHandleRecord,
+    SessionSnapshotRecord,
+} from './dexie-db-session-types';
+
 export type {
     PersistedStateRecord,
     SyncStatusRecord,
@@ -85,6 +100,16 @@ export {
 // ============================================================================
 // Knowledge Types
 // ============================================================================
+
+import type {
+    SourceRecord,
+    SourceMetadata,
+    CollectionRecord,
+    Collection,
+    OramaIndexRecord,
+    EmbeddingModelRecord,
+    NoteRecord,
+} from './dexie-db-knowledge-types';
 
 export type {
     SourceRecord,

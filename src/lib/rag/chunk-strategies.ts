@@ -329,7 +329,7 @@ export class SemanticChunker implements ChunkStrategy {
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        // const { minChunkSize, maxChunkSize, preserveFormatting } = _options;
+        const { maxChunkSize } = _options;
 
         const chunks: ChunkMetadata[] = [];
 
@@ -469,7 +469,7 @@ export class RecursiveChunker implements ChunkStrategy {
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        // const { minChunkSize, maxChunkSize } = _options;
+        const { maxChunkSize } = _options;
 
         const chunks: ChunkMetadata[] = [];
         let chunkIndex = 0;

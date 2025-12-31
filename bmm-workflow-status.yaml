@@ -1,27 +1,42 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2025-12-31T10:22:00+07:00
+# Updated: 2025-12-31T10:55:00+07:00
 
-current_workflow: "architectural-consolidation-2025-12-31"
-current_story: "AC-02-agent-selector-unification"
+# CURRENT WORKFLOW: Architectural Consolidation (CORRECTED)
+current_workflow: "architectural-consolidation-2025-12-31-v2"
+current_story: "AC-03-chat-panel-cross-workspace"
 phase: "phase-0-showcase-critical"
-last_updated: "2025-12-31T10:22:00+07:00"
-knowledge_synthesis_research_complete: true
-research_completion_date: "2025-12-31T09:00:00+07:00"
-research_artifacts_count: 7
-overall_confidence_score: 87
-ralph_loop_status: "IN_PROGRESS"
-ralph_loop_started_at: "2025-12-31T00:00:00+07:00"
-ralph_loop_iteration: 178
-ralph_loop_health_score: 100
-validation_report: "_bmad-output/ralph-loop-gap-analysis-2025-12-31.md"
-phase2_sweeping_validation_complete: true
-phase2_sweeping_validation_date: "2025-12-30T14:45:00+07:00"
-phase2_validation_levels_passed: "12/12"
-phase2_validation_status: "CERTIFIED PRODUCTION READY"
-ralph_loop_phase2_complete: true
-ralph_loop_phase2_complete_date: "2025-12-30T21:30:00+07:00"
+last_updated: "2025-12-31T10:55:00+07:00"
+
+# Sprint Change Proposal Status
+sprint_change_proposal_version: "2.0 - CORRECTED"
+sprint_change_proposal_status: "READY FOR EXECUTION"
+arc_module_version: "2.0.0"
+
+# Phase 0 Story Status (Showcase Critical)
+phase_0_stories:
+  AC-01-provider-configuration:
+    status: "DONE"
+    completed_at: "2025-12-31T10:30:00+07:00"
+    notes: "ProviderConfigDialog fixed - readonly baseURL for built-in providers"
+  AC-02-agent-selector-unification:
+    status: "DONE"
+    completed_at: "2025-12-31T10:40:00+07:00"
+    notes: "AgentSelector now uses useAgentsStore instead of mockAgents"
+  AC-03-chat-panel-cross-workspace:
+    status: "IN_PROGRESS"
+    started_at: "2025-12-31T10:45:00+07:00"
+    notes: "Unifying chat panel across IDE, Knowledge, Study, Notes"
+
+# Data Contracts Defined
+data_contracts_status:
+  provider_contracts: "DEFINED"
+  agent_contracts: "DEFINED"
+  conversation_contracts: "DEFINED"
+  event_contracts: "DEFINED"
+
+# Legacy research status (preserved)
 
 # Ralph Loop Gap Resolution - Iteration 178
 # Trigger: Complete project validation per Ralph Loop command

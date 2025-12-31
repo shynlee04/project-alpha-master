@@ -1,22 +1,31 @@
 ---
-name: arc (Architecture Governance Module)
+name: arc (Architecture Refinement & Consolidation Module)
 description: >
-  BMAD module for systematic architectural refactoring, state management consolidation,
-  and code hygiene enforcement. Integrates validation frameworks for gap and drift prevention.
-version: 1.0.0
-author: bmad-core-bmad-master
+  BMAD module for systematic architectural refinement focused on Provider→Model→Agent 
+  data flow, cross-workspace reactivity, and unified state management.
+version: 2.0.0
+author: bmad-core-bmad-master + morgan (module-builder)
 created: 2025-12-31
-module_type: governance
+revised: 2025-12-31T10:55:00+07:00
+module_type: implementation
 dependencies:
   - bmm (BMAD Method Module)
   - core (BMAD Core)
 ---
 
-# Architecture Governance Module (ARC)
+# Architecture Refinement & Consolidation Module (ARC) v2.0
 
 ## Overview
 
-The ARC module provides systematic tools for architectural refactoring, state management consolidation, and code quality enforcement. It integrates with existing BMAD validation frameworks to prevent gaps, drift, and decay.
+The ARC module implements the **5-Layer VIA-GENT Architecture** with focus on:
+
+1. **LLM Provider Configuration** - Foundation layer with hardcoded endpoints and reactive model loading
+2. **Agent Configuration Vault** - Central agent management with provider/model linkage and tool binding
+3. **Cross-Workspace Services** - Unified conversation, thread, and context management
+4. **Brownfield Integration** - Connecting existing components to Knowledge Synthesis
+5. **Clean Architecture** - Code hygiene, layer boundaries, and maintainability
+
+---
 
 ## Module Structure
 
@@ -25,209 +34,408 @@ _bmad/
 └── arc/                                    # Module root
     ├── config.yaml                         # Module configuration
     ├── agents/                             # Specialized agents
-    │   ├── architect-consolidator.md       # Architecture review specialist
-    │   └── hygiene-enforcer.md             # Code quality enforcement
+    │   ├── provider-architect.md           # Provider/Model architecture specialist
+    │   ├── agent-vault-specialist.md       # Agent configuration expert
+    │   └── integration-engineer.md         # Cross-workspace wiring specialist
     ├── workflows/                          # Module workflows
     │   └── architectural-consolidation/    # Main consolidation workflow
     │       ├── workflow.yaml               # Workflow definition
-    │       └── steps/                      # Step files
-    │           ├── step-01-init.md
-    │           ├── step-02-story-ac01.md
-    │           ├── step-03-story-ac02.md
-    │           ├── step-04-story-ac03.md
-    │           └── step-05-phase0-validation.md
-    ├── checklists/                         # Validation checklists
-    │   ├── sweeping-validation.md          # 12-level sweeping checks
-    │   └── phase-gate-checklist.md         # Phase gate validation
-    └── templates/                          # Output templates
-        ├── handoff-artifact.md             # Phase handoff template
-        └── validation-report.md            # Validation report template
+    │       └── steps/
+    │           ├── step-01-provider-foundation.md   # Story AC-01
+    │           ├── step-02-agent-vault.md           # Story AC-02
+    │           ├── step-03-chat-unification.md      # Story AC-03
+    │           ├── step-04-brownfield-bridge.md     # Story AC-04
+    │           └── step-05-validation-gate.md       # Phase validation
+    ├── contracts/                          # Data contracts (TypeScript interfaces)
+    │   ├── provider-contracts.ts           # LLMProvider, ProviderModel
+    │   ├── agent-contracts.ts              # Agent, AgentToolBinding
+    │   ├── conversation-contracts.ts       # Conversation, Message, Thread
+    │   └── event-contracts.ts              # Store events
+    ├── checklists/
+    │   ├── phase-0-showcase-checklist.md   # Showcase validation
+    │   └── data-flow-validation.md         # Flow verification
+    └── templates/
+        └── store-template.ts               # Zustand store template
 ```
 
-## Agents
+---
 
-### 1. Architect Consolidator
+## Core Data Contracts
 
-**File:** `agents/architect-consolidator.md`
+### Contract 1: LLM Provider
 
-**Purpose:** Reviews architectural decisions, enforces layer boundaries, and validates data flow patterns.
+```typescript
+// contracts/provider-contracts.ts
 
-**Capabilities:**
-- Layer boundary enforcement
-- Store reorganization guidance
-- Event bus pattern validation
-- Cross-workspace communication review
+/**
+ * IMMUTABLE: Built-in provider base URLs
+ * These values CANNOT be modified by user configuration
+ */
+export const HARDCODED_PROVIDERS = {
+  openrouter: {
+    id: 'openrouter',
+    name: 'OpenRouter',
+    type: 'openai-compatible' as const,
+    baseUrl: 'https://openrouter.ai/api/v1',
+    isHardcoded: true,
+  },
+  anthropic: {
+    id: 'anthropic',
+    name: 'Anthropic',
+    type: 'anthropic' as const,
+    baseUrl: 'https://api.anthropic.com/v1',
+    isHardcoded: true,
+  },
+  gemini: {
+    id: 'gemini',
+    name: 'Google Gemini',
+    type: 'gemini' as const,
+    baseUrl: 'Gemini SDK Native',
+    isHardcoded: true,
+  },
+  openai: {
+    id: 'openai',
+    name: 'OpenAI',
+    type: 'openai' as const,
+    baseUrl: 'https://api.openai.com/v1',
+    isHardcoded: true,
+  },
+} as const;
 
-### 2. Hygiene Enforcer
+/**
+ * Provider entity schema
+ */
+export interface LLMProvider {
+  id: string;
+  name: string;
+  type: 'openai' | 'anthropic' | 'gemini' | 'openai-compatible';
+  baseUrl: string;
+  isHardcoded: boolean;
+  hasApiKey: boolean;
+  isEnabled: boolean;
+  capabilities: {
+    streaming: boolean;
+    functionCalling: boolean;
+    vision: boolean;
+    embeddings: boolean;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-**File:** `agents/hygiene-enforcer.md`
-
-**Purpose:** Enforces code quality standards, file size limits, and naming conventions.
-
-**Capabilities:**
-- File size limit enforcement (< 300 lines)
-- Naming convention validation
-- Dead code detection
-- Circular dependency identification
-
-## Workflows
-
-### 1. Architectural Consolidation
-
-**Invocation:** `/architectural-consolidation`
-
-**Purpose:** Systematic refactoring workflow with validation gates.
-
-**Phases:**
-1. **Phase 0: Showcase Critical** - Provider, Agent, Chat unification
-2. **Phase 1: Foundation** - Store reorganization, event bus
-3. **Phase 2: Full Scope** - Code hygiene, API contracts, testing
-
-**Integrations:**
-- `/story-dev-cycle` - For each story implementation
-- `sweeping-validation.md` - Post-phase validation
-- `12-level-framework` - Gate progression
-
-## Configuration
-
-### Module Config (`config.yaml`)
-
-```yaml
-# ARC Module Configuration
-module_name: arc
-full_name: Architecture Governance Module
-version: 1.0.0
-
-# Validation settings
-validation:
-  sweeping_enabled: true
-  12_level_enabled: true
-  device_testing: true
-  
-# File size limits
-code_hygiene:
-  max_lines_per_file: 300
-  max_lines_per_function: 50
-  max_dependencies_per_file: 10
-  
-# Event bus settings
-event_bus:
-  debounce_ms: 100
-  max_listeners: 20
-  
-# Store organization
-stores:
-  core:
-    - provider-store
-    - agent-store
-    - config-store
-  workspace:
-    - ide-store
-    - knowledge-store
-    - study-store
-    - notes-store
-  feature:
-    - chat-store
-    - file-store
-    - rag-store
+/**
+ * Model entity schema (loaded from provider API)
+ */
+export interface ProviderModel {
+  id: string;
+  name: string;
+  providerId: string;
+  contextLength: number;
+  maxOutputTokens: number;
+  inputModalities: ('text' | 'image' | 'audio')[];
+  outputModalities: ('text' | 'image' | 'audio')[];
+  supportsTools: boolean;
+  supportsStreaming: boolean;
+  isFree: boolean;
+  isEnabled: boolean;
+  pricing?: {
+    promptPer1M: number;
+    completionPer1M: number;
+  };
+}
 ```
 
-## Integration Points
+### Contract 2: Agent Configuration
 
-### With BMM Module
+```typescript
+// contracts/agent-contracts.ts
 
-| BMM Component | ARC Integration |
-|---------------|-----------------|
-| `/story-dev-cycle` | Each ARC story follows story-dev-cycle |
-| `sprint-status.yaml` | ARC updates story/phase status |
-| `bmm-workflow-status.yaml` | ARC reports workflow progress |
-| `/code-review` | ARC stories go through code review |
+export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
+export type AgentStatus = 'online' | 'offline' | 'busy' | 'error';
 
-### With Validation Frameworks
+/**
+ * Agent entity schema
+ * Agents are the primary entity for AI interactions
+ */
+export interface Agent {
+  id: string;                       // 'agt_{timestamp}_{random}'
+  name: string;
+  description: string;
+  
+  // Provider + Model linkage (CRITICAL)
+  providerId: string;               // References LLMProvider.id
+  modelId: string;                  // References ProviderModel.id
+  
+  // LLM Parameters
+  systemPrompt: string;
+  temperature: number;
+  maxTokens: number;
+  topP: number;
+  topK?: number;
+  
+  // Tool binding (with workspace conditions)
+  tools: AgentToolBinding[];
+  
+  // Workspace availability
+  workspaceBindings: WorkspaceBinding[];
+  
+  // Status and metrics
+  status: AgentStatus;
+  tasksCompleted: number;
+  successRate: number;
+  tokensUsed: number;
+  lastActive: Date;
+  createdAt: Date;
+}
 
-| Framework | Integration |
-|-----------|-------------|
-| `sweeping-validation.md` | Post-phase validation checkpoints |
-| `12-level-framework` | Gate progression (Gate 1-4) |
-| `ralph-loop` | Continuous validation iterations |
+/**
+ * Tool binding with per-workspace permissions
+ */
+export interface AgentToolBinding {
+  toolId: string;
+  toolName: string;
+  isEnabled: boolean;
+  workspacePermissions: Record<WorkspaceType, boolean>;
+  configuration?: Record<string, unknown>;
+}
 
-## Usage
+/**
+ * Where agent is available and how it appears
+ */
+export interface WorkspaceBinding {
+  workspaceType: WorkspaceType;
+  isAvailable: boolean;
+  uiVariant: 'full' | 'compact' | 'minimal';
+  isDefault: boolean;
+}
+```
 
-### Quick Start
+### Contract 3: Store Events
+
+```typescript
+// contracts/event-contracts.ts
+
+/**
+ * Cross-store event types for reactivity
+ */
+export const STORE_EVENTS = {
+  // Provider events
+  PROVIDER_KEY_SET: 'provider:key-set',
+  PROVIDER_MODELS_LOADED: 'provider:models-loaded',
+  PROVIDER_ADDED: 'provider:added',
+  PROVIDER_REMOVED: 'provider:removed',
+  
+  // Agent events
+  AGENT_SELECTED: 'agent:selected',
+  AGENT_UPDATED: 'agent:updated',
+  AGENT_CREATED: 'agent:created',
+  AGENT_DELETED: 'agent:deleted',
+  
+  // Conversation events
+  CONVERSATION_CREATED: 'conversation:created',
+  MESSAGE_SENT: 'message:sent',
+  MESSAGE_RECEIVED: 'message:received',
+  
+  // Workspace events
+  WORKSPACE_CHANGED: 'workspace:changed',
+} as const;
+
+export type StoreEventType = typeof STORE_EVENTS[keyof typeof STORE_EVENTS];
+
+/**
+ * Event payloads
+ */
+export interface ProviderKeySetPayload {
+  providerId: string;
+  timestamp: number;
+}
+
+export interface ProviderModelsLoadedPayload {
+  providerId: string;
+  modelCount: number;
+  timestamp: number;
+}
+
+export interface AgentSelectedPayload {
+  agentId: string;
+  workspaceType: WorkspaceType;
+  timestamp: number;
+}
+```
+
+---
+
+## Data Flow Specifications
+
+### Flow 1: Provider Key → Models
+
+```
+User Input: API Key
+      │
+      ▼
+ProviderConfigDialog.handleSubmit()
+      │
+      ├── Validate key format
+      ├── credentialVault.storeCredentials(providerId, apiKey)
+      └── providerModelsStore.setApiKey(providerId, apiKey)
+              │
+              ▼
+      setApiKey() action:
+        1. Update state: providers[providerId].hasApiKey = true
+        2. Persist via Dexie storage
+        3. emitStoreEvent('provider:key-set', { providerId })
+              │
+              ▼
+      Event Listener (in store or effect):
+        On 'provider:key-set' → fetchModels(providerId)
+              │
+              ▼
+      fetchModels() action:
+        1. Call provider API for models list
+        2. Parse and normalize to ProviderModel[]
+        3. Store models in state
+        4. emitStoreEvent('provider:models-loaded', { providerId, count })
+              │
+              ▼
+      ALL UI Components (reactive):
+        - AgentSelector updates model options
+        - AgentConfigDialog shows new models
+        - Settings page shows model count
+```
+
+### Flow 2: Agent Selection → Chat
+
+```
+User Action: Click agent in AgentSelector
+      │
+      ▼
+AgentSelector.handleAgentSelect(agent)
+      │
+      ├── agentsStore.setActiveAgent(agent.id)
+      └── emitStoreEvent('agent:selected', { agentId, workspaceType })
+              │
+              ▼
+      ChatPanel (subscribed to agents store):
+        1. Read new activeAgentId
+        2. Get agent config: agentsStore.getAgent(id)
+        3. Get provider/model: providerModelsStore.getProvider/Model()
+        4. Initialize chat client with provider adapter
+              │
+              ▼
+      OTHER WORKSPACES (via event):
+        - All AgentSelectors show same selection
+        - Consistent across IDE/Knowledge/Study/Notes
+```
+
+---
+
+## Workflow: `/architectural-consolidation`
+
+### Invocation
 
 ```bash
-# Invoke the workflow
 /architectural-consolidation
-
-# Or manually:
-# 1. Read sprint change proposal
-# 2. Execute step-01-init.md
-# 3. Follow prompts
 ```
 
-### Phased Execution
+### Phase Execution
 
-```bash
-# Phase 0 only (for urgent showcase)
-/architectural-consolidation --phase=0
+#### Phase 0: Showcase Critical (TODAY - 8 hours)
 
-# Full execution (all phases)
-/architectural-consolidation --full
-```
+| Story | Description | Status |
+|-------|-------------|--------|
+| AC-01 | Provider Configuration Foundation | ✅ ProviderConfigDialog DONE |
+| AC-02 | Agent Selector Unification | ✅ AgentSelector uses store |
+| AC-03 | Chat Panel Cross-Workspace | 🔄 IN PROGRESS |
 
-## Outputs
+**Validation Gate:**
+- [ ] Enter API key → Models load automatically
+- [ ] Agent selector visible in all 4 workspaces
+- [ ] Change agent selection → persists across navigation
+- [ ] Send message → receive response
 
-### Validation Reports
+#### Phase 1: Foundation (Jan 1-3)
 
-Generated at: `_bmad-output/validation/architectural-consolidation-{date}.md`
+| Story | Description | Status |
+|-------|-------------|--------|
+| AC-04 | Store Reorganization | ⬜️ TODO |
+| AC-05 | Event Bus Implementation | ⬜️ TODO |
+| AC-06 | Tool Binding System | ⬜️ TODO |
 
-### Handoff Artifacts
+#### Phase 2: Full Scope (Jan 4-10)
 
-Generated at: `_bmad-output/sprint-artifacts/{phase}-handoff-{date}.md`
+| Story | Description | Status |
+|-------|-------------|--------|
+| AC-07 | Brownfield Integration | ⬜️ TODO |
+| AC-08 | Code Hygiene Sweep | ⬜️ TODO |
+| AC-09 | Test Coverage | ⬜️ TODO |
 
-### Updated Files
+---
 
-| Category | Location |
-|----------|----------|
-| Stores | `src/stores/**/*.ts` |
-| Events | `src/lib/events/*.ts` |
-| Components | `src/components/**/*.tsx` |
-| Tests | `src/**/*.test.ts` |
+## Implementation Checklist
+
+### Store Implementation Checklist
+
+- [ ] `provider-models-store.ts`:
+  - [ ] `setApiKey(providerId, apiKey)` action implemented
+  - [ ] Event emission on key set
+  - [ ] `fetchModels(providerId)` action implemented
+  - [ ] Models stored with providerId reference
+
+- [ ] `agents-store.ts`:
+  - [ ] `providerId` and `modelId` fields on Agent
+  - [ ] `tools: AgentToolBinding[]` field
+  - [ ] `workspaceBindings` field
+  - [ ] Validation: model belongs to provider
+
+- [ ] Event bus (`src/lib/events/store-events.ts`):
+  - [ ] Event types defined
+  - [ ] `emitStoreEvent()` function
+  - [ ] `subscribeStoreEvent()` function
+  - [ ] Cleanup on unmount
+
+### UI Implementation Checklist
+
+- [ ] `ProviderConfigDialog.tsx`:
+  - [x] Built-in providers show readonly baseURL
+  - [x] Custom providers allow baseURL editing
+  - [ ] Key save triggers model loading
+
+- [ ] `AgentSelector.tsx`:
+  - [x] Uses `useAgentsStore` instead of mockAgents
+  - [x] Updates store's activeAgentId
+  - [x] Emits selection events
+  - [ ] Shows provider/model info
+
+- [ ] `AgentConfigDialog.tsx`:
+  - [ ] Provider dropdown (only providers with API keys)
+  - [ ] Model dropdown (filtered by selected provider)
+  - [ ] Tool binding section
+  - [ ] Workspace binding section
+
+---
 
 ## Success Metrics
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| Phase 0 Completion | < 8 hours | Time tracking |
-| Sweeping Validation | 12/12 levels | Checkpoint count |
-| 12-Level Gates | Gate 4 | Gate progression |
-| File Size Compliance | 100% < 300 lines | Automated scan |
-| Test Coverage | > 80% | `pnpm test --coverage` |
-| Device Testing | 3/3 devices | Manual verification |
+| Provider key → models load | < 2s | Time from save to models visible |
+| Cross-workspace sync | < 100ms | Event propagation time |
+| Store hydration | < 100ms | Time from page load to data ready |
+| File size | 100% < 300 lines | Automated scan |
+| Test coverage | > 80% | `pnpm test --coverage` |
 
-## Maintenance
-
-### Updating Validation Checkpoints
-
-1. Edit `_bmad-output/validation/sweeping-validation.md`
-2. Update corresponding step files
-3. Test workflow execution
-
-### Adding New Phases
-
-1. Create new step files in `steps/`
-2. Update `workflow.yaml` with new phase
-3. Add validation gate step
+---
 
 ## References
 
 - Sprint Change Proposal: `_bmad-output/sprint-change-proposal-2025-12-31.md`
-- Architecture Document: `_bmad-output/project-planning-artifacts/architecture.md`
-- Sweeping Validation: `_bmad-output/validation/sweeping-validation.md`
-- 12-Level Framework: `_bmad-output/validation/12-level-framework-integration-2025-12-29.md`
+- Architecture: `_bmad-output/project-planning-artifacts/architecture.md`
+- Provider Types: `src/lib/agent/providers/types.ts`
+- Agents Store: `src/stores/agents-store.ts`
+- Provider Models Store: `src/stores/provider-models-store.ts`
 
 ---
 
-**Module Created:** 2025-12-31  
-**Author:** BMad Master  
-**Status:** Active
+**Module Revised:** 2025-12-31T10:55:00+07:00  
+**Author:** Morgan (Module Builder) + BMad Master (Orchestrator)  
+**Status:** Active - Phase 0 In Progress
