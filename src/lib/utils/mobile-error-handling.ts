@@ -14,9 +14,9 @@ import { toast } from 'sonner'
 /**
  * Error type for workspace operations
  */
-export type WorkspaceErrorType = 
-  | 'openFailed' 
-  | 'permissionDenied' 
+export type WorkspaceErrorType =
+  | 'openFailed'
+  | 'permissionDenied'
   | 'notFound'
 
 /**
@@ -46,7 +46,7 @@ interface MobileErrorMessages {
  */
 export function getMobileWorkspaceErrorMessages(type: WorkspaceErrorType): MobileErrorMessages {
   const { t } = useTranslation()
-  
+
   switch (type) {
     case 'openFailed':
       return {
@@ -77,7 +77,7 @@ export function getMobileWorkspaceErrorMessages(type: WorkspaceErrorType): Mobil
  */
 export function getMobileIDEErrorMessages(type: IDEErrorType): MobileErrorMessages {
   const { t } = useTranslation()
-  
+
   switch (type) {
     case 'openOnMobile':
       return {
@@ -125,7 +125,7 @@ export function showMobileWorkspaceError(
 ): void {
   // const { t } = useTranslation()
   const messages = getMobileWorkspaceErrorMessages(type)
-  
+
   toast.error(messages.title, {
     description: messages.description,
     action: {
@@ -134,8 +134,8 @@ export function showMobileWorkspaceError(
         if (onAction) {
           onAction()
         } else {
-          // Default action: navigate to Knowledge Hub
-          window.location.href = '/hub'
+          // Default action: navigate to Home
+          window.location.href = '/'
         }
       },
     },
@@ -154,7 +154,7 @@ export function showMobileIDEError(
   onAction?: () => void
 ): void {
   const messages = getMobileIDEErrorMessages(type)
-  
+
   toast.error(messages.title, {
     description: messages.description,
     action: {
@@ -180,7 +180,7 @@ export function showMobileWebContainerError(
   onAction?: () => void
 ): void {
   const messages = getMobileWebContainerErrorMessages(type)
-  
+
   toast.error(messages.title, {
     description: messages.description,
     action: {
@@ -189,8 +189,8 @@ export function showMobileWebContainerError(
         if (onAction) {
           onAction()
         } else {
-          // Default action: navigate to Knowledge Hub
-          window.location.href = '/hub'
+          // Default action: navigate to Home
+          window.location.href = '/'
         }
       },
     },

@@ -12,7 +12,9 @@ import {
   Settings,
   HardDrive,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  Notebook,
+  Info
 } from 'lucide-react';
 
 import { db } from '@/lib/state/dexie-db';
@@ -27,6 +29,7 @@ import {
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
+import { toast } from 'sonner';
 
 // --- Components ---
 
@@ -182,6 +185,16 @@ export const HubHomePage: React.FC = () => {
       className: 'bg-primary/5 border-primary/20 hover:border-primary/50',
     },
     {
+      id: 'notes',
+      size: 'medium',
+      title: t('hub.menu.notes', 'FIELD_NOTES'),
+      description: t('hub.notesDesc', 'Quick access to scratchpad'),
+      icon: <Notebook className="h-8 w-8" />,
+      topic: 'Notes',
+      onClick: () => navigate({ to: '/notes' }),
+      className: 'bg-green-500/5 border-green-500/20 hover:border-green-500/50',
+    },
+    {
       id: 'ai-agents',
       size: 'small',
       title: t('hub.menu.agents', 'NEURAL_AGENTS'),
@@ -199,11 +212,10 @@ export const HubHomePage: React.FC = () => {
     },
     {
       id: 'docs',
-      size: 'wide',
-      title: t('hub.documentation', 'MANUAL.TXT'),
-      description: t('hub.docsDesc', 'System documentation and guides'),
+      size: 'small',
+      title: t('hub.menu.study', 'STUDY_CORE'),
       icon: <BookOpen className="h-6 w-6" />,
-      topic: 'About',
+      topic: 'Study',
       onClick: () => navigate({ to: '/study' }),
     },
     {
@@ -212,7 +224,11 @@ export const HubHomePage: React.FC = () => {
       title: t('hub.terminal', 'TERMINAL'),
       icon: <Terminal className="h-6 w-6" />,
       topic: 'Terminal',
-      onClick: () => { },
+      onClick: () => {
+        toast.info("Global Terminal Access Restricted", {
+          description: "Please access terminal via an active Workspace."
+        });
+      },
     },
     {
       id: 'settings',
@@ -222,6 +238,14 @@ export const HubHomePage: React.FC = () => {
       topic: 'Settings',
       onClick: () => navigate({ to: '/settings' }),
     },
+    {
+      id: 'about',
+      size: 'small',
+      title: t('hub.menu.about', 'SYS_INFO'),
+      icon: <Info className="h-6 w-6" />,
+      topic: 'About',
+      onClick: () => navigate({ to: '/about' }), // Assuming /about exists or will be caught
+    }
   ], [t, navigate, handleNewProject]);
 
   const handleBootComplete = () => {

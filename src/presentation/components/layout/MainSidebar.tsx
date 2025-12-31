@@ -165,7 +165,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       <div className={backdropVariants({ open: sidebarMobileOpen })} onClick={() => setMobileMenuOpen(false)} />
 
       {/* Mobile Sidebar */}
-      <aside className={cn(mobileSidebarVariants({ open: sidebarMobileOpen }), 'md:hidden flex flex-col', className)}>
+      <aside className={cn(mobileSidebarVariants({ open: sidebarMobileOpen }), 'md:hidden flex flex-col', className, '!z-50')}>
         <div className="flex items-center justify-between h-16 border-b-2 border-border px-4 bg-sidebar">
           <div className="flex items-center gap-3">
             <img src="/via-gent-logo.svg" alt="Via-gent" className="w-10 h-10" />
