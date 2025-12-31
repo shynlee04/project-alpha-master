@@ -39,6 +39,7 @@ import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { MobileProjectSelector } from './MobileProjectSelector';
+import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 
 /**
  * Check if File System Access API is supported.
@@ -53,6 +54,7 @@ export const HubHomePage: React.FC = () => {
   const navigate = useNavigate();
   // MRT-9: Mobile responsive detection
   const { isMobile } = useDeviceType();
+  const { setMobileMenuOpen } = useLayoutStore();
 
   // Check File System Access API support (not available on mobile browsers)
   const isFileSystemSupported = useMemo(() => isFileSystemAccessSupported(), []);
@@ -60,11 +62,44 @@ export const HubHomePage: React.FC = () => {
   // State for showing mobile warning
   const [showMobileWarning, setShowMobileWarning] = React.useState(false);
 
-  // Real project data from Dexie via useLiveQuery
-  // Note: useLiveQuery requires a function that returns a Promise
-  const projects = useLiveQuery(() => listProjectsWithPermission(), []);
+  // -- Retro Typing Effect State --
+  const fullText = t('hub.welcome', 'INITIALIZING SYSTEM...');
+  const [typedText, setTypedText] = React.useState('');
+  const [cursorVisible, setCursorVisible] = React.useState(true);
 
+  // Typing animation effect
+  React.useEffect(() => {
+    let index = 0;
+    const typeInterval = setInterval(() => {
+      setTypedText((prev) => {
+        if (index < fullText.length) {
+          index++;
+          return fullText.slice(0, index);
+        }
+        clearInterval(typeInterval);
+        return prev;
+      });
+    }, 50); // Speed of typing
+
+    return () => clearInterval(typeInterval);
+  }, [fullText]);
+
+  // Cursor Blinking effect
+  React.useEffect(() => {
+    const blinkInterval = setInterval(() => {
+      setCursorVisible((v) => !v);
+    }, 530);
+    return () => clearInterval(blinkInterval);
+  }, []);
+
+  // -- Data Fetching --
+  const projects = useLiveQuery(() => listProjectsWithPermission(), []);
   const isLoading = projects === undefined;
+
+  // Sort projects by recency
+  const recentProjects = (projects || []).sort((a, b) => {
+    return new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime();
+  }).slice(0, 5);
 
   /**
    * Handle opening a new folder via File System Access API
@@ -102,205 +137,128 @@ export const HubHomePage: React.FC = () => {
     }
   };
 
-  /**
-   * Handle navigating to a specific project workspace
-   */
-  const handleProjectClick = (projectId: string) => {
-    navigate({ to: `/workspace/${projectId}` });
-  };
-
-  /**
-   * Handle portal card navigation
-   */
-  const handlePortalNavigation = (route: string) => {
-    navigate({ to: route });
-  };
-
-  // Define portal cards using BentoCard structure
-  const portalCards: BentoCardProps[] = [
+  // -- Bento Grid Data --
+  const bentoCards: BentoCardProps[] = [
     {
-      id: 'portal-ide',
+      id: 'new-project',
       size: 'medium',
-      title: t('hub.portals.ideWorkspace', 'IDE Workspace'),
-      description: t('hub.portals.ideWorkspaceDesc', 'Open your projects in the full IDE'),
-      icon: <TerminalIcon className="text-primary" />,
+      title: t('hub.newProject', 'NEW_PROJECT.EXE'),
+      description: t('hub.newProjectDesc', 'Initialize a new workspace environment'),
+      icon: <PlusIcon className="h-8 w-8" />,
       topic: 'Workspace',
-      onClick: () => navigate({ to: '/ide' }),
+      onClick: () => navigate({ to: '/workspace' }),
+      className: 'bg-primary/5 border-primary/20',
     },
     {
-      id: 'portal-agents',
-      size: 'medium',
-      title: t('hub.portals.agentCenter', 'Agent Center'),
-      description: t('hub.portals.agentCenterDesc', 'Configure and manage AI agents'),
-      icon: <AIIcon className="text-primary" />,
+      id: 'ai-agents',
+      size: 'small',
+      title: t('hub.agents', 'AI_AGENTS'),
+      icon: <AIIcon className="h-6 w-6" />,
       topic: 'Agents',
-      onClick: () => handlePortalNavigation('/agents'),
+      onClick: () => navigate({ to: '/agents' }),
     },
     {
-      id: 'portal-knowledge',
-      size: 'medium',
-      title: t('hub.portals.knowledgeHub', 'Knowledge Hub'),
-      description: t('hub.portals.knowledgeHubDesc', 'Your knowledge synthesis station'),
-      icon: <Sparkles className="text-primary" />,
+      id: 'knowledge',
+      size: 'small',
+      title: t('hub.knowledge', 'DATA_BANK'),
+      icon: <FolderPlus className="h-6 w-6" />,
       topic: 'Knowledge',
-      onClick: () => handlePortalNavigation('/knowledge'),
+      onClick: () => navigate({ to: '/knowledge' }),
     },
     {
-      id: 'portal-about',
-      size: 'medium',
-      title: t('about.title', 'About Me'),
-      description: t('about.hero.tagline', 'From solo developer to multi-agent orchestra conductor'),
-      icon: <User className="text-primary" />,
+      id: 'docs',
+      size: 'wide',
+      title: t('hub.documentation', 'MANUAL.TXT'),
+      description: t('hub.docsDesc', 'Access system documentation and guides'),
+      icon: <Sparkles className="h-6 w-6" />,
       topic: 'About',
-      onClick: () => handlePortalNavigation('/about'),
+      onClick: () => navigate({ to: '/study' }),
     },
     {
-      id: 'portal-settings',
-      size: 'medium',
-      title: t('hub.portals.settings', 'Settings'),
-      description: t('hub.portals.settingsDesc', 'Configure your workspace preferences'),
-      icon: <SettingsIcon className="text-primary" />,
+      id: 'terminal',
+      size: 'small',
+      title: t('hub.terminal', 'TERMINAL'),
+      icon: <TerminalIcon className="h-6 w-6" />,
+      topic: 'Terminal',
+      onClick: () => { },
+    },
+    {
+      id: 'settings',
+      size: 'small',
+      title: t('hub.config', 'CONFIG'),
+      icon: <SettingsIcon className="h-6 w-6" />,
       topic: 'Settings',
-      onClick: () => handlePortalNavigation('/settings'),
+      onClick: () => navigate({ to: '/settings' }),
     },
   ];
 
   return (
-    <div className="flex-1 min-h-screen bg-background text-foreground">
-      {/* MFA-1: Mobile Project Selector Overlay */}
-      {showMobileWarning && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="max-w-md w-full">
-            <MobileProjectSelector onClose={() => setShowMobileWarning(false)} />
-          </div>
-        </div>
-      )}
+    <div className="flex flex-col min-h-full p-4 md:p-8 space-y-8 bg-background text-foreground font-sans">
 
-      <main className="flex-1 overflow-y-auto">
-        {/* MRT-9: Removed redundant breadcrumbs - MainSidebar handles navigation */}
+      {/* -- Hero Section -- */}
+      <section className="space-y-2 mb-4">
+        <h1 className="text-3xl md:text-5xl font-pixel text-primary tracking-tight h-[1.2em]">
+          {typedText}
+          <span className={cn("inline-block w-[0.5em] h-[1em] bg-primary ml-1 align-middle", cursorVisible ? "opacity-100" : "opacity-0")} />
+        </h1>
+        <p className="text-muted-foreground font-mono text-sm md:text-base max-w-2xl">
+          {t('hub.subtitle', 'v2.4.0-ALPHA // READY FOR INPUT')}
+        </p>
+      </section>
 
-        {/* Welcome section with 8-bit styling - MRT-9: Mobile responsive padding */}
-        <div className={cn('py-6', isMobile ? 'px-4' : 'px-6')}>
-          <h1 className={cn(
-            'font-bold mb-2 text-foreground font-mono tracking-tight',
-            isMobile ? 'text-2xl' : 'text-4xl'
-          )}>
-            {t('welcome')}
-          </h1>
-          <p className={cn(
-            'text-muted-foreground max-w-3xl',
-            isMobile ? 'text-sm' : 'text-lg'
-          )}>
-            {t('onboarding.slides.intro.desc')}
-          </p>
-        </div>
+      {/* -- Main Grid -- */}
+      <section>
+        <BentoGrid cards={bentoCards} />
+      </section>
 
-        {/* Portal Cards using BentoGrid (8-bit styled) - MRT-9: Mobile padding */}
-        <div className={cn('py-8', isMobile ? 'px-4' : 'px-6')}>
-          <h2 className={cn(
-            'font-semibold mb-6 text-foreground font-mono',
-            isMobile ? 'text-lg' : 'text-2xl'
-          )}>
-            {t('hub.exploreViaGent', 'Explore Via-gent')}
+      {/* -- Recent Projects (File Directory Style) -- */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between border-b-2 border-border pb-2">
+          <h2 className="text-xl font-pixel text-foreground flex items-center gap-2">
+            <FileIcon className="h-5 w-5 text-primary" />
+            {t('hub.recentProjects', 'RECENT_DIRECTORIES')}
           </h2>
-          <BentoGrid
-            cards={portalCards}
-            topics={['Workspace', 'Agents', 'Knowledge', 'About', 'Settings']}
-            className="max-w-6xl"
-          />
+          <button
+            onClick={() => navigate({ to: '/workspace' })}
+            className="text-xs font-mono text-muted-foreground hover:text-primary hover:underline"
+          >
+            {t('hub.browse', 'BROWSE')}
+          </button>
         </div>
 
-        {/* Recent Projects section (Real Data from Dexie) - MRT-9: Mobile responsive */}
-        <div className={cn('py-8', isMobile ? 'px-4' : 'px-6')}>
-          <div className={cn(
-            'flex items-center justify-between mb-6',
-            isMobile && 'flex-col gap-4 items-start'
-          )}>
-            <h2 className={cn(
-              'font-semibold text-foreground font-mono',
-              isMobile ? 'text-lg' : 'text-2xl'
-            )}>
-              {t('projects.recent')}
-            </h2>
-            <Button
-              onClick={handleOpenFolder}
-              className={cn(
-                'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
-                // MRT-9: 44px touch target on mobile
-                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
-              )}
-              aria-label={t('projects.openFolder')}
-            >
-              <PlusIcon />
-              <span>{t('projects.openFolder')}</span>
-            </Button>
-          </div>
-
-          {/* Loading State */}
-          {isLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <SkeletonLoader className="h-32 rounded-none" />
-              <SkeletonLoader className="h-32 rounded-none" />
-              <SkeletonLoader className="h-32 rounded-none" />
-            </div>
-          )}
-
-          {/* Project List (Real Data) */}
-          {!isLoading && projects && projects.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {projects.map((project: ProjectWithPermission) => (
-                <div
-                  key={project.id}
-                  className="bg-card border-2 border-border rounded-none p-4 cursor-pointer
-                    shadow-[2px_2px_0px_rgba(0,0,0,0.5)]
-                    hover:shadow-[4px_4px_0px_rgba(0,0,0,0.7)]
-                    hover:border-primary/50
-                    transition-all duration-150"
-                  onClick={() => handleProjectClick(project.id)}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Open project ${project.name}`}
-                >
-                  <div className="flex items-start gap-3 mb-2">
-                    <FileIcon className="text-primary flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold mb-1 text-foreground truncate font-mono">
-                        {project.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {project.folderPath}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>
-                      {t('projects.lastEdited')}:{' '}
-                      {new Date(project.lastOpened).toLocaleDateString()}
-                    </span>
-                    {project.permissionState === 'prompt' && (
-                      <span className="px-2 py-1 bg-amber-500/20 text-amber-500 text-xs font-medium rounded-none">
-                        {t('projects.needsAccess', 'Needs Access')}
-                      </span>
-                    )}
+        {/* Project List or Empty State */}
+        {isLoading ? (
+          <SkeletonLoader count={3} />
+        ) : recentProjects.length > 0 ? (
+          <div className="grid gap-3">
+            {recentProjects.map((project) => (
+              <div
+                key={project.id}
+                onClick={() => navigate({ to: `/workspace/${project.id}` })}
+                className="flex items-center justify-between p-4 border border-border bg-card hover:bg-muted/50 cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <FolderPlus className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="font-medium text-foreground">{project.name}</p>
+                    <p className="text-xs text-muted-foreground font-mono">
+                      {new Date(project.lastOpened).toLocaleString()}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Empty State (No Projects) */}
-          {!isLoading && (!projects || projects.length === 0) && (
-            <EmptyState
-              icon={<FolderPlus size={48} className="text-muted-foreground" />}
-              title={t('dashboard.emptyTitle')}
-              message={t('dashboard.emptySubtitle')}
-              variant="no-projects"
-              action="browse"
-              onAction={handleOpenFolder}
-            />
-          )}
-        </div>
-      </main>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={<FileIcon className="h-8 w-8 text-muted-foreground" />}
+            title={t('hub.noProjects', 'NO_DIRECTORIES')}
+            description={t('hub.noProjectsDesc', 'No workspace directories initialized yet')}
+            actionLabel={t('hub.createFirst', 'CREATE_FIRST')}
+            onAction={handleOpenFolder}
+          />
+        )}
+      </section>
     </div>
   );
 };

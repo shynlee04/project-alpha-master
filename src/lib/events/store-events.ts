@@ -145,6 +145,17 @@ export function offStoreEvent(event: StoreEventType): void {
     storeEvents.removeAllListeners(event);
 }
 
+/**
+ * Alias for onStoreEvent for compatibility
+ * @deprecated Use onStoreEvent instead
+ */
+export function subscribeStoreEvent<T>(
+    event: StoreEventType,
+    handler: (payload: T) => void
+): () => void {
+    return onStoreEvent<T>(event, handler);
+}
+
 // =============================================================================
 // React Hooks for Event Subscriptions
 // =============================================================================

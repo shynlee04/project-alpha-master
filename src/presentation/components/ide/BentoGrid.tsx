@@ -49,6 +49,8 @@ export interface BentoGridProps {
  * - Keyboard navigation support
  * - Screen reader accessible
  */
+// ... imports remain the same
+
 export function BentoCard({
   id,
   size = 'medium',
@@ -78,18 +80,18 @@ export function BentoCard({
     <div
       id={id}
       className={`
-        relative bg-[#18181b] border-2 border-[#27272a]
-        shadow-[2px_2px_0px_rgba(0,0,0,0.5)]
-        hover:shadow-[4px_4px_0px_rgba(0,0,0,0.7)]
-        hover:scale-[1.02]
-        focus:ring-2 focus:ring-[#f97316] focus:ring-offset-2 focus:ring-offset-2
-        transition-all duration-150 ease-out
+        relative bg-card border-2 border-border
+        shadow-pixel hover:shadow-pixel-lg
+        hover:scale-[1.02] hover:border-primary/50
+        focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-2
+        transition-all duration-200 ease-out
         ${gridClass} ${className}
         rounded-none
         p-4
         cursor-pointer
         outline-none
         focus:outline-none
+        group
       `}
       role="button"
       tabIndex={0}
@@ -99,23 +101,23 @@ export function BentoCard({
       {/* Topic Badge */}
       {topic && (
         <div className="absolute top-3 right-3">
-          <span className="inline-block px-2 py-1 text-xs font-medium text-[#f97316] bg-[#27272a] rounded-none">
+          <span className="inline-block px-2 py-1 text-xs font-pixel text-primary bg-background/80 border border-border/50">
             {topic}
           </span>
         </div>
       )}
 
       {/* Card Content */}
-      <div className="h-full flex flex-col p-4">
+      <div className="h-full flex flex-col p-2">
         {/* Header with icon and title */}
-        <div className="flex items-start gap-3 mb-3">
+        <div className="flex items-start gap-4 mb-3">
           {icon && (
-            <div className="text-[#f97316]">
+            <div className="text-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
               {icon}
             </div>
           )}
           <div className="flex-1">
-            <h3 className="text-[#f97316] font-semibold text-lg">
+            <h3 className="text-foreground font-pixel-heavy text-lg leading-tight group-hover:text-primary transition-colors">
               {title}
             </h3>
           </div>
@@ -123,14 +125,14 @@ export function BentoCard({
 
         {/* Description */}
         {description && (
-          <p className="text-[#f97316] text-sm mb-2 line-clamp-3">
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-3 font-sans leading-relaxed">
             {description}
           </p>
         )}
 
         {/* Interactive Content */}
         {content && (
-          <div className="mt-3">
+          <div className="mt-auto">
             {content}
           </div>
         )}
@@ -139,19 +141,9 @@ export function BentoCard({
   );
 }
 
-/**
- * BentoGrid - Main grid container with topic filtering and search
- * 
- * Features:
- * - Responsive CSS Grid layout
- * - Topic categorization and filtering
- * - Search functionality
- * - Keyboard navigation
- * - Accessibility: WCAG AA compliant
- */
 export function BentoGrid({
   cards,
-  topics = ['Getting Started', 'File Operations', 'AI Agent', 'Terminal', 'Settings'],
+  topics = ['Workspace', 'Agents', 'Knowledge', 'About', 'Settings'],
   selectedTopic,
   onTopicSelect,
   searchQuery,
@@ -163,12 +155,7 @@ export function BentoGrid({
   // Filter cards by topic and search query
   const filteredCards = React.useMemo(() => {
     return cards.filter(card => {
-      // Filter by topic
-      if (selectedTopic && card.topic !== selectedTopic) {
-        return false;
-      }
-
-      // Filter by search query
+      if (selectedTopic && card.topic !== selectedTopic) return false;
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (
@@ -177,12 +164,10 @@ export function BentoGrid({
           card.topic?.toLowerCase().includes(query)
         );
       }
-
       return true;
     });
   }, [cards, selectedTopic, searchQuery]);
 
-  // Keyboard navigation
   const handleKeyDown = (event: React.KeyboardEvent, card: BentoCardProps) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -191,54 +176,55 @@ export function BentoGrid({
   };
 
   return (
-    <div className={`flex flex-col gap-6 ${className}`}>
+    <div className={`flex flex-col gap-8 ${className}`}>
       {/* Search and Topic Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-6 items-start md:items-end justify-between">
         {/* Search Input */}
-        <div className="flex-1 w-full sm:w-auto">
-          <div className="relative">
+        <div className="flex-1 w-full md:w-auto md:max-w-md">
+          <div className="relative group">
             <input
               type="text"
-              placeholder={t('bentoGrid.searchPlaceholder')}
+              placeholder={t('bentoGrid.searchPlaceholder', 'Type command or search...')}
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
-              className="w-full px-4 py-2 bg-[#18181b] border-2 border-[#27272a] text-[#f97316] placeholder:text-[#71717a] focus:ring-2 focus:ring-[#f97316] focus:ring-offset-2 focus:ring-offset-2 outline-none rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+              className="w-full px-4 py-3 bg-background border-2 border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none shadow-pixel group-hover:shadow-pixel-primary transition-all font-mono text-sm"
               aria-label={t('bentoGrid.searchAriaLabel')}
             />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+              <span className="text-xs font-pixel bg-muted px-1.5 py-0.5 border border-border">/</span>
+            </div>
           </div>
         </div>
 
         {/* Topic Filter Tabs */}
         <div
-          className="flex gap-2 overflow-x-auto pb-2 sm:pb-0"
+          className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-thin"
           role="tablist"
           aria-label={t('bentoGrid.topicFilterAriaLabel')}
         >
           <button
             onClick={() => onTopicSelect?.('')}
-            className={`px-4 py-2 text-sm font-medium transition-all duration-150 ease-out rounded-none border-2 ${!selectedTopic
-              ? 'bg-[#f97316] text-white border-[#f97316] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
-              : 'bg-[#18181b] text-[#f97316] border-[#27272a] hover:border-[#f97316]'
+            className={`px-4 py-2 text-sm font-pixel transition-all duration-200 ease-out border-2 shrink-0 ${!selectedTopic
+              ? 'bg-primary text-primary-foreground border-primary shadow-pixel-sm'
+              : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-foreground'
               }`}
-            aria-label={t('bentoGrid.allTopics')}
             role="tab"
-            aria-selected={!selectedTopic ? 'true' : 'false'}
+            aria-selected={!selectedTopic}
           >
-            {t('bentoGrid.allTopics')}
+            {t('bentoGrid.allTopics', 'ALL.SYS')}
           </button>
           {topics.map((topic) => (
             <button
               key={topic}
               onClick={() => onTopicSelect?.(topic)}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-150 ease-out rounded-none border-2 whitespace-nowrap ${selectedTopic === topic
-                ? 'bg-[#f97316] text-white border-[#f97316] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
-                : 'bg-[#18181b] text-[#f97316] border-[#27272a] hover:border-[#f97316]'
+              className={`px-4 py-2 text-sm font-pixel transition-all duration-200 ease-out border-2 shrink-0 ${selectedTopic === topic
+                ? 'bg-primary text-primary-foreground border-primary shadow-pixel-sm'
+                : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-foreground'
                 }`}
-              aria-label={`${t('bentoGrid.topicFilter', { topic })}`}
               role="tab"
-              aria-selected={selectedTopic === topic ? 'true' : 'false'}
+              aria-selected={selectedTopic === topic}
             >
-              {topic}
+              {topic.toUpperCase()}
             </button>
           ))}
         </div>
@@ -246,7 +232,7 @@ export function BentoGrid({
 
       {/* Bento Grid */}
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]"
         aria-label={t('bentoGrid.gridAriaLabel')}
       >
         {filteredCards.map((card) => (
@@ -254,19 +240,19 @@ export function BentoGrid({
             key={card.id}
             {...card}
             onKeyDown={(e) => handleKeyDown(e, card)}
-            className="focus-visible:ring-2 focus-visible:ring-[#f97316]"
+            className="focus-visible:ring-2 focus-visible:ring-primary"
           />
         ))}
       </div>
 
       {/* Empty State */}
       {filteredCards.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-[#71717a] text-lg">
-            {t('bentoGrid.noResults')}
+        <div className="text-center py-16 border-2 border-dashed border-border bg-card/30">
+          <p className="text-muted-foreground text-xl font-pixel">
+            {t('bentoGrid.noResults', 'NO_DATA_FOUND')}
           </p>
-          <p className="text-[#52525b] text-sm mt-2">
-            {t('bentoGrid.tryDifferentSearch')}
+          <p className="text-muted-foreground/60 text-sm mt-2 font-mono">
+            {t('bentoGrid.tryDifferentSearch', 'Check your query syntax...')}
           </p>
         </div>
       )}

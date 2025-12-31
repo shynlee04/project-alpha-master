@@ -413,13 +413,37 @@ code {
   /* #3b82f6 - Blue */
 
   /* ===== 8-Bit Aesthetic ===== */
-  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
-  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
-  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+  /* Crisper, harder shadows for retro feel */
+  --shadow-pixel: 4px 4px 0px 0px rgba(0, 0, 0, 0.4);
+  --shadow-pixel-lg: 6px 6px 0px 0px rgba(0, 0, 0, 0.4);
+  --shadow-pixel-primary: 4px 4px 0px 0px #f97316; /* Primary Orange */
+  --shadow-pixel-sm: 2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+
+  /* Glassmorphism with retro tint */
+  --glass-bg: rgba(15, 15, 17, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
 
   /* ===== Editor Specific ===== */
   --editor-bg: 240 6% 3.5%;
   /* #09090b - Deep code background */
+}
+
+/* Global Transition Utility */
+.retro-transition {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Retro Hover Effect Utility */
+.retro-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-pixel);
+}
+
+.retro-hover-primary:hover {
+  border-color: hsl(var(--primary));
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-pixel-primary);
 }
 
 .dark {

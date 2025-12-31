@@ -366,7 +366,7 @@ development_status:
   32-1-orama-wasm-vector-store-enhancement: done # COMPLETED 2025-12-31 - All 5 ACs validated, code review complete (APPROVED WITH RECOMMENDATIONS)
   32-2-hybrid-search-engine: done # COMPLETED 2025-12-31 - Code review complete (APPROVED WITH RECOMMENDATIONS)
   32-3-semantic-citation-system: done # COMPLETED 2025-12-31 - Citation types, sidebar, badge, 40+ tests, code review PASSED
-  32-4-rag-query-optimization: ready-for-dev # Story file created 2025-12-31, depends on 32-1
+  32-4-rag-query-optimization: review # COMPLETED 2025-12-31 - Query cache, pagination, query optimizer created
   32-5-knowledge-graph-integration: backlog # Depends on 32-2, 32-3
   epic-32-validation_status:
     research_validated: true

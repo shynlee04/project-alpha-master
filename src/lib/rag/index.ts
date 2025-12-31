@@ -37,6 +37,29 @@ export { AudioCaptureHandler, getAudioCapture, resetAudioCapture } from './audio
 export { AudioPlaybackHandler, getAudioPlayback, resetAudioPlayback } from './audio-playback';
 
 // ============================================================================
+// RAG Query Optimization (Story 32-4)
+// ============================================================================
+export { RAGQueryCache, createDebouncedSearch } from './query-cache';
+export {
+  paginateResults,
+  createPaginationController,
+  createInfiniteScrollController,
+  type PaginatedResults,
+  type PaginationController,
+  type InfiniteScrollController,
+} from './pagination';
+export {
+  QueryOptimizer,
+  createWeightedQuery,
+  type ParsedQuery,
+  type QueryOperator,
+  type QueryType,
+  type OptimizedQuery,
+  type QueryParserConfig,
+  type QueryWeightConfig,
+} from './query-optimizer';
+
+// ============================================================================
 // Cloud Services
 // ============================================================================
 export { CloudEmbedder } from './cloud-embedder';

@@ -36,46 +36,49 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
 
   return (
     // CRITICAL FIX: Use flex-col for mobile, flex-row for desktop
-    <div className={cn('flex flex-col h-screen bg-background overflow-hidden', className)}>
-      {/* Mobile Header - MRT-9: MUST be outside the row flex container */}
-      <header className="md:hidden flex items-center h-14 border-b border-border px-4 bg-background shrink-0">
-        <button
-          onClick={handleMobileMenuToggle}
-          className={cn(
-            'flex items-center justify-center rounded-none hover:bg-accent text-muted-foreground transition-colors',
-            // MRT-9: 44px minimum touch target for WCAG 2.5.5
-            'min-w-[44px] min-h-[44px] touch-manipulation'
-          )}
-          aria-label="Toggle menu"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-        <div className="ml-4 flex items-center gap-2">
-          <img
-            src="/via-gent-logo.svg"
-            alt="Via-gent"
-            className="w-8 h-8"
-            onError={(e) => {
-              // Fallback for missing logo
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-          <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
-            Via-gent
-          </span>
+    // Added 'bg-background' and 'text-foreground' explicitly
+    <div className={cn('flex flex-col md:flex-row h-screen w-full bg-background text-foreground overflow-hidden font-sans', className)}>
+
+      {/* Mobile Header - Visible only on mobile */}
+      <header className="md:hidden flex items-center justify-between h-14 border-b-2 border-border px-4 bg-background z-20 shrink-0 shadow-sm">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleMobileMenuToggle}
+            className={cn(
+              'flex items-center justify-center rounded-none hover:bg-accent text-muted-foreground transition-colors',
+              'min-w-[44px] min-h-[44px] touch-manipulation'
+            )}
+            aria-label="Toggle menu"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+
+          <div className="flex items-center gap-2">
+            <img
+              src="/via-gent-logo.svg"
+              alt="Via-gent"
+              className="w-8 h-8"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <span className="font-bold font-pixel text-lg tracking-tight text-foreground">
+              Via-gent
+            </span>
+          </div>
         </div>
       </header>
 
-      {/* Main content row - sidebar (desktop only) + content */}
-      <div className="flex flex-1 min-h-0">
-        {/* Main Sidebar - handles its own mobile/desktop visibility */}
-        <MainSidebar />
+      {/* Main Sidebar - Handles its own responsive visibility (hidden on mobile, block on desktop) */}
+      {/* Note: Mobile sidebar is an overlay rendered INSIDE MainSidebar component */}
+      <MainSidebar className="z-30" />
 
-        {/* Main Content Area */}
-        <main className="flex-1 min-h-0 relative overflow-hidden">
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 min-h-0 relative overflow-hidden bg-background">
+        <div className="flex-1 overflow-y-auto scrollbar-thin">
           {children || <Outlet />}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
