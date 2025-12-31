@@ -31,21 +31,27 @@ interface UseAgentsReturn {
 
 /**
  * Hook for managing agent state with persistence
- * 
- * Agents are stored in localStorage via Zustand persist middleware.
+ *
+ * Agents are stored in IndexedDB via Zustand persist middleware.
  * They survive page refresh and browser restarts.
- * 
+ *
  * @example
  * ```tsx
  * const { agents, addAgent, removeAgent } = useAgents();
- * 
+ *
  * // Add a new agent
  * addAgent({
  *     name: 'My Agent',
- *     role: 'Coder',
- *     status: 'online',
- *     provider: 'OpenRouter',
- *     model: 'mistralai/devstral-2512:free'
+ *     description: 'Expert coding assistant',
+ *     providerId: 'openrouter',
+ *     modelId: 'mistralai/devstral-2512:free',
+ *     systemPrompt: 'You are an expert coder',
+ *     temperature: 0.7,
+ *     maxTokens: 4096,
+ *     topP: 1.0,
+ *     tools: [],
+ *     workspaceBindings: [],
+ *     status: 'online'
  * });
  * ```
  */

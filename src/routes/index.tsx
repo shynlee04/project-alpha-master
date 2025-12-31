@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { HubHomePage } from '../components/hub/HubHomePage'
-import { MainLayout } from '../components/layout/MainLayout'
-import { AgentDiagnostic } from '../components/debug/AgentDiagnostic'
+import { HubHomePage } from '@/presentation/components/hub/HubHomePage'
+import { MainLayout } from '@/presentation/components/layout/MainLayout'
+import { AgentDiagnostic } from '@/presentation/components/debug/AgentDiagnostic'
 
 export const Route = createFileRoute('/')({
   component: () => (

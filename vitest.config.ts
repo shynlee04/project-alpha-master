@@ -9,7 +9,14 @@ export default defineConfig({
   ],
   test: {
     environment: 'node',
-    environmentMatchGlobs: [['**/*.test.tsx', 'jsdom'], ['src/lib/state/**/*.test.ts', 'jsdom']],
+    environmentMatchGlobs: [
+      ['**/*.test.tsx', 'jsdom'],
+      ['src/lib/state/**/*.test.ts', 'jsdom'],
+      ['src/lib/rag/**/*.test.ts', 'jsdom'],
+      ['src/lib/agent/**/*.test.ts', 'jsdom'],
+      ['src/lib/filesystem/**/*.test.ts', 'jsdom'],
+      ['src/lib/webcontainer/**/*.test.ts', 'jsdom'],
+    ],
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
   },

@@ -12,8 +12,8 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router';
-import { MainLayout } from '@/components/layout/MainLayout';
-import { AgentsPanel } from '@/components/ide/AgentsPanel';
+import { MainLayout } from '@/presentation/components/layout/MainLayout';
+import { AgentsPanel } from '@/presentation/components/ide/AgentsPanel';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 

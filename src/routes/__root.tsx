@@ -5,11 +5,11 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-r
 // Header is deprecated - navigation now handled by MainLayout/MainSidebar
 // import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
-import { AppErrorBoundary } from '../components/common/AppErrorBoundary'
-import { AppInitializer } from '../components/common/AppInitializer'
+import { AppErrorBoundary } from '@/presentation/components/common/AppErrorBoundary'
+import { AppInitializer } from '@/presentation/components/common/AppInitializer'
 import { initSentry } from '../lib/monitoring/sentry'
-import { ThemeProvider } from '../components/ui/ThemeProvider'
-import { TooltipProvider } from '../components/ui/tooltip'
+import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
+import { TooltipProvider } from '@/presentation/components/ui/tooltip'
 
 import appCss from '../styles.css?url'
 

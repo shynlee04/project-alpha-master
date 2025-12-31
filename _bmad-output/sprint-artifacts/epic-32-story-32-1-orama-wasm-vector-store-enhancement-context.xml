@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="epic-32-story-32-1" created="2025-12-31T13:35:00+07:00">
+  <!--
+    ========================================================
+    EPIC-32-1 CONTEXT XML - Orama WASM Vector Store Enhancement
+    Created: 2025-12-31T13:35:00+07:00
+    Agent: bmad-bmm-pm
+    Phase: create-context (Story Development Cycle Phase 2)
+    ========================================================
+  -->
+
+  <!-- Current Code State -->
+  <files>
+    <file path="src/lib/rag/orama-index.ts">
+      <content><![CDATA[
+import { create, insert, remove, search, type Orama } from '@orama/orama';
+import Dexie from 'dexie';
+
+// Existing Orama index implementation
+// This needs enhancement for WASM vector search
+export class OramaIndex {
+  private index: Orama;
+  
+  async initialize() {
+    this.index = await create({
+      schema: {
+        id: 'string',
+        content: 'string',
+        embedding: 'vector(384)', // CLIP embeddings
+        metadata: 'object'
+      }
+    });
+  }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/rag/rag-store.ts">
+      <content><![CDATA[
+import { create } from 'zustand';
+import { DexieStorage } from './dexie-storage';
+
+interface RAGState {
+  sources: SourceDocument[];
+  indexes: Map<string, OramaIndex>;
+  isIndexed: boolean;
+  
+  addSource(source: SourceDocument): Promise<void>;
+  search(query: string): Promise<SearchResult[]>;
+}
+
+export const useRAGStore = create<RAGState>()(
+  devtools(
+    persist(
+      (set, get) => ({
+        sources: [],
+        indexes: new Map(),
+        isIndexed: false,
+        
+        async addSource(source) {
+          // Existing implementation
+        },
+        
+        async search(query) {
+          // Basic text search, needs vector enhancement
+          return [];
+        }
+      }),
+      {
+        name: 'rag-state-storage',
+        storage: createStorage('rag-state'),
+      }
+    )
+  )
+);
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/notes/note-indexer.ts">
+      <content><![CDATA[
+import { pipeline, env } from '@xenova/transformers';
+
+// Existing embedding pipeline implementation
+// Uses CLIP model for text embeddings (384-dim)
+
+class NoteIndexer {
+  private extractor: any;
+  
+  async initialize() {
+    // Configure transformers.js for local inference
+    env.allowLocalModels = true;
+    this.extractor = await pipeline('feature-extraction', 'Xenova/clip-text-en');
+  }
+  
+  async generateEmbedding(text: string): Promise<number[]> {
+    const output = await this.extractor(text, {
+      pooling: 'mean',
+      normalize: true
+    });
+    return Array.from(output.data);
+  }
+}
+      ]]></content>
+    </file>
+    
+    <file path="src/lib/state/dexie-db.ts">
+      <content><![CDATA[
+import Dexie, { Table } from 'dexie';
+
+// Dexie database configuration
+// Version 15 with RAG-related tables
+
+export class ViaGentDB extends Dexie {
+  sources!: Table<SourceDocument, string>;
+  embeddings!: Table<EmbeddingRecord, string>;
+  ragMetadata!: Table<RAGMetadata, string>;
+  
+  constructor() {
+    super('ViaGentDB');
+    this.version(15).stores({
+      sources: 'id, sourceType, createdAt, collectionId',
+      embeddings: 'id, sourceId, chunkIndex, modelVersion',
+      ragMetadata: 'id, lastIndexed, vectorCount'
+    });
+  }
+}
+
+export const db = new ViaGentDB();
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research Findings from MCP Tools -->
+  <research_notes>
+    <finding source="context7" query="Orama.js WASM vector search schema definition">
+      Pattern: create({ schema: { field: 'type(embedding|vector)' } })
+      - Use 'vector(384)' for 384-dimensional embeddings
+      - Supports full-text search fallback
+      - Custom filters via schema properties
+      - Persistence via orama.save() / orama.load()
+    </finding>
+    
+    <finding source="deepwiki" repo="transducers-js/transformers.js">
+      Pattern: pipeline('feature-extraction', 'Xenova/clip-text-en')
+      - 384-dimensional embeddings (CLIP ViT-B/32)
+      - Outputs tensor, need to convert to array
+      - Supports batching for performance
+    </finding>
+    
+    <finding source="tavily" query="browser-based vector search performance optimization 2025">
+      Finding: Web Workers essential for embedding generation
+      - Offload CPU-intensive tasks from main thread
+      - IndexedDB storage for index persistence
+      - WASM bundles can be large (~100MB for CLIP)
+      - Lazy load model to improve initial load time
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture Patterns to Follow -->
+  <architecture_patterns>
+    <pattern name="Orama WASM Integration" source="src/lib/rag/orama-index.ts">
+      Pattern: Class-based index management with async initialization
+      - Constructor initializes Orama instance
+      - Public methods for CRUD operations
+      - Private methods for internal logic
+    </pattern>
+    
+    <pattern name="Zustand + Dexie Storage" source="src/lib/state/dexie-storage.ts">
+      Pattern: Persistence middleware with Dexie adapter
+      - persist() middleware with custom storage
+      - IndexedDB for larger data sets
+      - Graceful fallback to localStorage
+    </pattern>
+    
+    <pattern name="Web Worker Embeddings" source="src/lib/notes/embedding-worker-bridge.ts">
+      Pattern: Off-main-thread processing via workers
+      - Worker script loaded dynamically
+      - Message passing for input/output
+      - Error handling with worker termination
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical Notes for Developer -->
+  <technical_notes>
+    <note priority="high">WASM Bundle Size: CLIP model is ~100MB
+      - Implement lazy loading for embeddings model
+      - Show progress indicator during model download
+      - Provide fallback to server-side embeddings if needed</note>
+    
+    <note priority="high">IndexedDB Quota: Browser storage limits apply
+      - Implement LRU eviction for old embeddings
+      - Monitor storage usage and warn at 80%
+      - Provide manual cleanup option in settings</note>
+    
+    <note priority="medium">Performance Target: <100ms search for 1000 documents
+      - Use Web Workers for embedding generation
+      - Implement query result caching
+      - Consider approximate nearest neighbor (ANN) for scale</note>
+    
+    <note priority="medium">File Size Constraint: 300 lines per file
+      - Split orama-index.ts into smaller modules
+      - Separate concerns: schema, persistence, search</note>
+  </technical_notes>
+  
+  <!-- Dependencies and Imports -->
+  <dependencies>
+    <dependency name="@orama/orama" version="latest" />
+    <dependency name="@xenova/transformers" version="latest" />
+    <dependency name="dexie" version="^3.2.8" />
+  </dependencies>
+  
+  <!-- Implementation Checklist -->
+  <implementation_checklist>
+    <item name="Add Orama WASM dependency" status="pending" />
+    <item name="Configure Vite for WASM bundling" status="pending" />
+    <item name="Define enhanced vector store schema" status="pending" />
+    <item name="Implement OramaIndex class with vector support" status="pending" />
+    <item name="Create embedding pipeline service" status="pending" />
+    <item name="Implement similarity search function" status="pending" />
+    <item name="Add filter support (collection, date, source)" status="pending" />
+    <item name="Design IndexedDB storage for Orama index" status="pending" />
+    <item name="Implement index save/load operations" status="pending" />
+    <item name="Add incremental update logic" status="pending" />
+    <item name="Implement quota handling and recovery" status="pending" />
+    <item name="Write unit tests (≥45 tests)" status="pending" />
+  </implementation_checklist>
+  
+  <!-- Test Requirements -->
+  <test_requirements>
+    <coverage target="80%" />
+    <test_types>
+      <type name="unit" count="25" />
+      <type name="integration" count="15" />
+      <type name="performance" count="5" />
+    </test_types>
+    <files_to_test>
+      <file>src/lib/rag/orama-index.ts</file>
+      <file>src/lib/rag/orama-search.ts</file>
+      <file>src/lib/rag/orama-storage.ts</file>
+    </files_to_test>
+  </test_requirements>
+  
+  <!-- I18N Requirements -->
+  <i18n_requirements>
+    <namespace>rag</namespace>
+    <keys>
+      <key>search.placeholder</key>
+      <key>search.loading</key>
+      <key>search.noResults</key>
+      <key>index.building</key>
+      <key>index.progress</key>
+      <key>error.embedding</key>
+      <key>error.storage</key>
+    </keys>
+    <locales>en, vi</locales>
+  </i18n_requirements>
+  
+  <!-- Style Requirements -->
+  <style_requirements>
+    design_system="8-bit"
+    responsive=true
+    tokens_file="src/styles/design-tokens.css"
+  </style_requirements>
+  
+</context>

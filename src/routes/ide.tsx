@@ -11,8 +11,8 @@
 
 import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { IDELayout } from '../components/layout/IDELayout'
-import { ToastProvider, Toast } from '../components/ui/Toast'
+import { IDELayout } from '@/presentation/components/layout/IDELayout'
+import { ToastProvider, Toast } from '@/presentation/components/ui/Toast'
 import { WorkspaceProvider } from '../lib/workspace'
 
 export const Route = createFileRoute('/ide')({

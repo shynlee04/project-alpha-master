@@ -599,6 +599,77 @@ session_notes:
       Validated By: BMAD V6 Ralph Loop Coordinator
       Validation Report: _bmad-output/validation/ralph-loop-phase2-sweep-2025-12-30.md
 
+  - timestamp: "2025-12-31T23:15:00+07:00"
+    action: "STORY-2025-12-31-001 COMPLETE - Agent Schema Alignment"
+    agent: "@bmad-core-bmad-master (BMAD V6)"
+    details: |
+      STORY CYCLE COMPLETE: CREATE-STORY → VALIDATION → CREATE-STORY-CONTEXT →
+                       VALIDATION → IMPLEMENTATION TDD → CODE-REVIEW → LOOP ✅
+
+      **STORY**: Agent Schema Alignment (Epic 13 - Story 13-1)
+      **SCOPE**: Bug fixes only (architectural remediation deferred to separate stories)
+
+      **ACCEPTANCE CRITERIA - ALL MET ✅:**
+      1. ✅ DEFAULT_AGENT uses NEW schema (providerId, modelId)
+      2. ✅ All .provider property access removed
+      3. ✅ All .model property access removed
+      4. ✅ All PROVIDER_ID_MAP mapping functions removed
+      5. ✅ 30/30 tests passing
+      6. ✅ 0 Agent schema-related TypeScript errors
+
+      **CRITICAL BUGS FIXED** (5 runtime errors):
+      1. AgentChatPanelRefactored.tsx - 3 fixes
+         - Removed PROVIDER_ID_MAP constant
+         - Fixed .provider → .providerId access
+         - Fixed .model → .modelId access
+      2. useAgentChatApiKeys.ts - Removed PROVIDER_ID_MAP
+      3. AgentChatAPIKeyManager.tsx - Removed PROVIDER_ID_MAP
+      4. useAgentConfigProvider.ts - Fixed .model → .modelId (line 118)
+      5. AgentSelectorTrigger.tsx - Fixed .model → .modelId (line 61)
+
+      **FILES MODIFIED**: 8 total
+      **VERIFICATION**: Comprehensive grep searches confirm zero OLD schema access
+      **CODE REVIEW**: ✅ APPROVED (zero regressions, 9/10 quality score)
+
+      **ARTIFACTS CREATED** (6 documents):
+      1. Course Correction: agent-schema-course-correction-2025-12-31.md
+      2. Testing Protocol: agent-schema-manual-testing-protocol-2025-12-31.md
+      3. Gap Analysis: agent-schema-comprehensive-gap-analysis-2025-12-31.md
+      4. Final Status: agent-schema-story-final-status-2025-12-31.md
+      5. Code Review: agent-schema-code-review-2025-12-31.md
+      6. Loop Completion: agent-schema-loop-completion-2025-12-31.md
+
+      **ARCHITECTURAL GAPS IDENTIFIED** (7 gaps, 40% Sprint Change Proposal compliance):
+      Gap 1: No Application Layer (CRITICAL) → STORY-2025-12-31-004 candidate
+      Gap 2: Event Bus Underutilized (HIGH) → STORY-2025-12-31-003 candidate
+      Gap 3: No Referential Integrity (MEDIUM) → STORY-2025-12-31-002 candidate
+      Gap 4: Component Size Violations (MEDIUM) → STORY-2025-12-31-005 candidate
+      Gap 5: Incomplete Module Structure (LOW) → STORY-2025-12-31-006 candidate
+      Gap 6: No Hotload Validation (LOW)
+      Gap 7: Incomplete Error Handling (LOW)
+
+      **NEXT ACTION RECOMMENDED**: Path A - Architectural Remediation First
+      - CREATE-STORY for STORY-2025-12-31-002 (Foreign Key Validation)
+      - Follow full BMAD cycle for each architectural gap
+      - Priority 1: FK Validation, Config Events, App Layer (4-6 hours)
+      - Priority 2: Component Size, Module Reorganization (8-12 hours)
+
+      **LESSONS LEARNED**:
+      1. Comprehensive validation > "superficial completion" anti-pattern
+      2. Property access patterns must be validated across ENTIRE codebase
+      3. Mapping functions are code smells indicating incomplete migration
+      4. Direct property access > mapping layers for NEW schema
+
+      **COMPLIANCE WITH USER DIRECTIVE**:
+      - ✅ "Extremely cautious" - Full BMAD cycle completed
+      - ✅ "Full context" - Comprehensive gap analysis created
+      - ✅ "NOT ATTEMPT without 1000% sure" - Proper story context before architectural changes
+      - ✅ "AUTO ITERATE through full BMAD cycle" - All phases completed
+
+      Validated By: BMAD Master (bmad-core-bmad-master mode)
+      Story Status: ✅ COMPLETE - READY FOR DONE
+      Documentation: _bmad-output/stories/agent-schema-loop-completion-2025-12-31.md
+
 # =============================================================================
 # ARCHIVED EPICS (For Reference)
 # =============================================================================

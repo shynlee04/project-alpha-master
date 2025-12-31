@@ -20,18 +20,42 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
 import type { Agent } from '../mocks/agents';
+import { DEFAULT_TOOLS, DEFAULT_WORKSPACE_BINDINGS } from '../mocks/agents';
+import { useProviderStore } from '@/lib/state/provider-store';
 
 /**
  * Default agent created on first load
+ *
+ * NEW SCHEMA (per Sprint Change Proposal v2.0):
+ * - description (not role)
+ * - providerId (not provider)
+ * - modelId (not model)
+ * - systemPrompt, temperature, maxTokens, topP (LLM parameters)
+ * - tools, workspaceBindings (configuration)
  */
 const DEFAULT_AGENT: Agent = {
     id: 'agt_default_001',
     name: 'Via-Gent Coder',
-    role: 'AI Coding Assistant',
-    status: 'online',
-    provider: 'OpenRouter',
-    model: 'mistralai/devstral-2512:free',
     description: 'Default AI coding assistant powered by Devstral via OpenRouter',
+
+    // Provider + Model reference (foreign keys)
+    providerId: 'openrouter',
+    modelId: 'mistralai/devstral-2512:free',
+
+    // LLM Parameters
+    systemPrompt: 'You are an expert AI coding assistant specializing in React, TypeScript, and full-stack web development. You help write clean, maintainable code following best practices.',
+    temperature: 0.7,
+    maxTokens: 4096,
+    topP: 1.0,
+
+    // Tool bindings
+    tools: DEFAULT_TOOLS,
+
+    // Workspace bindings
+    workspaceBindings: DEFAULT_WORKSPACE_BINDINGS,
+
+    // Metadata
+    status: 'online',
     tasksCompleted: 0,
     successRate: 0,
     tokensUsed: 0,
@@ -104,6 +128,27 @@ export const useAgentsStore = create<AgentsState>()(
             },
 
             addAgent: (agentData) => {
+                // ============================================================================
+                // STORY AC-02: Agent Configuration Vault - P0 VALIDATION
+                // Acceptance Criterion: "Validation: model must belong to provider"
+                // ============================================================================
+                const { providerId, modelId } = agentData;
+
+                // Only validate if both providerId and modelId are provided (NEW schema)
+                // Skip validation for OLD schema or partial data (defensive programming)
+                if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
+                    // Get available models from provider store
+                    const availableModels = useProviderStore.getState().availableModels;
+                    const providerModels = availableModels[providerId] || [];
+
+                    // Validate: modelId must exist in provider's available models
+                    const modelExists = providerModels.some(m => m.id === modelId);
+
+                    if (!modelExists) {
+                        throw new Error(`Model "${modelId}" is not available for provider "${providerId}"`);
+                    }
+                }
+
                 const newAgent: Agent = {
                     ...agentData,
                     id: `agt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -139,6 +184,27 @@ export const useAgentsStore = create<AgentsState>()(
             },
 
             updateAgent: (id, updates) => {
+                // ============================================================================
+                // STORY AC-02: Agent Configuration Vault - P0 VALIDATION
+                // Acceptance Criterion: "Validation: model must belong to provider"
+                // ============================================================================
+                const { providerId, modelId } = updates;
+
+                // Only validate if both providerId and modelId are being updated (NEW schema)
+                // Skip validation for partial updates or OLD schema (defensive programming)
+                if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
+                    // Get available models from provider store
+                    const availableModels = useProviderStore.getState().availableModels;
+                    const providerModels = availableModels[providerId] || [];
+
+                    // Validate: modelId must exist in provider's available models
+                    const modelExists = providerModels.some(m => m.id === modelId);
+
+                    if (!modelExists) {
+                        throw new Error(`Model "${modelId}" is not available for provider "${providerId}"`);
+                    }
+                }
+
                 console.log('[AgentsStore] Updating agent:', id, updates);
                 set((state) => ({
                     agents: state.agents.map((a) =>

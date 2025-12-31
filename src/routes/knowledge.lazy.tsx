@@ -15,7 +15,7 @@
  */
 
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { KnowledgePage } from '@/components/knowledge/KnowledgePage';
+import { KnowledgePage } from '@/presentation/components/knowledge/KnowledgePage';
 
 export const Route = createLazyFileRoute('/knowledge')({
   ssr: false,

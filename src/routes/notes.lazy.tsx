@@ -16,7 +16,7 @@
  */
 
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { NotesPage } from '@/components/notes/NotesPage';
+import { NotesPage } from '@/presentation/components/notes/NotesPage';
 
 export const Route = createLazyFileRoute('/notes')({
   ssr: false,

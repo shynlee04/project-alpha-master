@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react';
-import type { OpenFile } from '@/components/ide/MonacoEditor';
+import type { OpenFile } from '@/presentation/components/ide/MonacoEditor';
 
 /**
  * Parameters for useUnsavedWorkPreservation hook

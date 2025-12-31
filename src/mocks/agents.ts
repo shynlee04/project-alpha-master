@@ -14,7 +14,7 @@ export type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/
 /**
  * Default tools available for agents
  */
-const DEFAULT_TOOLS: AgentToolBinding[] = [
+export const DEFAULT_TOOLS: AgentToolBinding[] = [
     {
         toolId: 'file-read',
         toolName: 'Read Files',
@@ -44,7 +44,7 @@ const DEFAULT_TOOLS: AgentToolBinding[] = [
 /**
  * Default workspace bindings (available everywhere)
  */
-const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
+export const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
     { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
     { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
     { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
