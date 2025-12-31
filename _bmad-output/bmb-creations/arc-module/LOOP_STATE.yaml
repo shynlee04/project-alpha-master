@@ -16,6 +16,8 @@ current_phase: 1
 current_task: "fc-02-event-bus"
 current_task_retries: 0
 max_retries_per_task: 3
+blocked: true
+block_reason: "Build blocked by pre-existing codebase issues (query-optimizer.ts, HubHomePage.tsx)"
 
 # Phase 0: Immediate Fixes
 phase_0:
@@ -69,11 +71,13 @@ phase_1:
         
     - id: "fc-02-event-bus"
       name: "Create/wire event bus module"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2025-12-31T17:45:00+07:00"
       agent: "provider-architect"
       workflow: "wire-events"
       target_files:
         - "src/lib/events/store-events.ts"
+      notes: "Added subscribeStoreEvent() function as alias to onStoreEvent(). STORE_EVENTS and emitStoreEvent() already existed. Acceptance criteria met."
       acceptance_criteria:
         - "STORE_EVENTS constant with all event types"
         - "emitStoreEvent() function exported"
@@ -230,9 +234,26 @@ iteration_history:
     status: "DONE"
     completed_at: "2025-12-31T17:30:00+07:00"
     notes: "Split provider-models-store.ts into provider-config-store.ts (333 LOC) and models-loader-store.ts (~300 LOC). Events wired for cross-store reactivity."
+  - iteration: 3
+    phase: 1
+    task: "fc-02-event-bus"
+    status: "BLOCKED"
+    completed_at: "2025-12-31T17:45:00+07:00"
+    notes: "Task complete (added subscribeStoreEvent function). Build blocked by pre-existing codebase issues in query-optimizer.ts and HubHomePage.tsx."
 
 # Error Log
-errors: []
+errors:
+  - timestamp: "2025-12-31T17:45:00+07:00"
+    phase: 1
+    task: "fc-02-event-bus"
+    message: "Build blocked by pre-existing codebase issues"
+    details:
+      - "query-optimizer.ts:376 - Malformed regex (unterminated group, duplicate 'pattern')"
+      - "HubHomePage.tsx - JSX syntax errors (broken button tag, missing closing tags)"
+      - "HubHomePage.tsx - Wrong import path @/stores/layoutStore (should be @/infrastructure/persistence/stores/layout-store)"
+      - "HubHomePage.tsx - Missing date-fns dependency"
+    status: "BLOCKED"
+    fix_required: "Fix pre-existing issues in query-optimizer.ts and HubHomePage.tsx"
 
 # Completion Status
 completion:
