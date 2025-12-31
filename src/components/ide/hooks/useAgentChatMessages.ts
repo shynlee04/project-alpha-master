@@ -44,7 +44,7 @@ export interface UseAgentChatMessagesReturn {
     /** Function to create welcome message */
     createWelcomeMessage: () => ChatMessage;
     /** Scroll ref for tracking scroll position */
-    scrollRef: React.RefObject<HTMLDivElement>;
+    scrollRef: React.RefObject<HTMLDivElement | null>;
     /** Handle scroll event */
     handleScroll: (e: React.UIEvent<HTMLDivElement>) => void;
     /** Whether prompt enhancement is enabled */

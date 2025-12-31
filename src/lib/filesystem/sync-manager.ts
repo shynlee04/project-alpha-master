@@ -245,7 +245,7 @@ export class SyncManager {
             this.eventBus?.emit('sync:warning', {
                 file: path,
                 warning: 'FILE_SIZE_EXCEEDED',
-                message: sizeValidation.errorKey,
+                message: sizeValidation.errorKey || 'File size exceeded',
                 params: sizeValidation.errorParams,
             });
 

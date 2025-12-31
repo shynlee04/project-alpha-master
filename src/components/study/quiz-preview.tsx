@@ -213,7 +213,7 @@ export function QuizPreview({
       <div className="space-y-4">
         {quiz.questions.map((question, index) => (
           <QuestionCard
-            key={question.id || `question-${index}`}
+            key={`question-${index}`}
             question={question}
             index={index}
             showAnswer={showAnswers[index]}

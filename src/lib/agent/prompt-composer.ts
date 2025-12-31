@@ -220,12 +220,12 @@ export class SystemPromptComposer {
   
   /** Registered layers with priority ordering */
   private layers: Map<number, PromptLayer> = new Map();
-  
+
   /** Current configuration hash for cache invalidation */
-  // private currentConfigHash: string = '';
+  private _currentConfigHash: string = '';
 
   /** Event emitter for file system events */
-  // private eventBus: WorkspaceEventEmitter | null = null;
+  private _eventBus: WorkspaceEventEmitter | null = null;
   
   /** Debounce timer for Layer 3 recomputation */
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -267,7 +267,7 @@ export class SystemPromptComposer {
   private constructor(config?: PromptComposerConfig) {
     this.config = config || DEFAULT_CONFIG;
     this.layers = new Map();
-    this.currentConfigHash = this.generateConfigHash(config || DEFAULT_CONFIG);
+    this._currentConfigHash = this.generateConfigHash(config || DEFAULT_CONFIG);
     
     // Register default Layer 1: Tool Constitution
     this.registerLayer({
@@ -301,7 +301,7 @@ export class SystemPromptComposer {
    * Set event bus for file system event listening
    */
   public setEventBus(eventBus: WorkspaceEventEmitter): void {
-    this.eventBus = eventBus;
+    this._eventBus = eventBus;
     
     // Subscribe to file system events for Layer 3 updates
     // Note: Using 'any' to bypass type checking for now
@@ -331,7 +331,7 @@ export class SystemPromptComposer {
   public updateConfig(config: Partial<PromptComposerConfig>): void {
     const newConfig = { ...this.getConfig(), ...config };
     this.config = newConfig;
-    this.currentConfigHash = this.generateConfigHash(newConfig);
+    this._currentConfigHash = this.generateConfigHash(newConfig);
     
     // Invalidate cache when configuration changes
     this.invalidateCache();

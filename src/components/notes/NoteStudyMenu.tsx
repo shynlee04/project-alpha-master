@@ -135,7 +135,12 @@ export function NoteStudyMenu({ noteId }: NoteStudyMenuProps) {
             projectId,
             title: result.title || `Quiz: ${note?.title}`,
             description: result.description || `Generated from note: ${note?.title}`,
-            questions: result.questions.map(q => ({...q, id: q.id || crypto.randomUUID(), createdAt: q.createdAt || Date.now(), sourceIds: [noteId]})) as QuizQuestion[],
+            questions: result.questions.map(q => ({
+                ...q,
+                id: crypto.randomUUID(),
+                createdAt: Date.now(),
+                sourceIds: [noteId]
+            })) as QuizQuestion[],
             sourceIds: [noteId],
             sourcesUsed: [noteId],
             settings: {

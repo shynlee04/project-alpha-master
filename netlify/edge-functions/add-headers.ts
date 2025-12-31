@@ -15,7 +15,7 @@ import type { Config, Context } from '@netlify/edge-functions'
  * @see https://docs.netlify.com/edge-functions/overview/
  */
 export default async function handler(
-    request: Request,
+    _request: Request,
     context: Context
 ): Promise<Response> {
     // Get the response from the origin (SSR or static)

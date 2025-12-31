@@ -183,7 +183,7 @@ export function AgentDiagnostic() {
                         <div className="text-xs opacity-70">{r.message}</div>
                         {r.data && (
                             <pre className="text-xs mt-1 overflow-auto max-h-20">
-                                {JSON.stringify(r.data, null, 2)}
+                                {JSON.stringify(r.data as any, null, 2)}
                             </pre>
                         )}
                     </div>

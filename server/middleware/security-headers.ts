@@ -9,7 +9,7 @@
  */
 import { defineEventHandler } from 'vinxi/http'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler((event: any) => {
     // Cross-Origin Isolation (required for WebContainers/SharedArrayBuffer)
     event.node.res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
     event.node.res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')

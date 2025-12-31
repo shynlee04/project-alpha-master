@@ -35,7 +35,7 @@ export * as PreviewPanel from './PreviewPanel';
 
 // Status Bar Components
 export { StatusBar } from './StatusBar';
-export * as StatusBarSegments from './statusbar';
+export * as StatusBarSegments from './StatusBar';
 
 // Terminal Components
 export { XTerminal } from './XTerminal';

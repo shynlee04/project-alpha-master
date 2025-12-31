@@ -420,7 +420,7 @@ export async function writeMultipleWithRollback(
                 // Emit failure event
                 eventBus?.emit('sync:error', {
                     operationId,
-                    error: result.error,
+                    error: new Error(result.error),
                     file: file.path,
                     rolledBack: result.rolledBackFiles,
                 });

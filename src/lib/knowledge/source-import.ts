@@ -127,7 +127,7 @@ export class SourceImportPipeline {
             this.emitEvent('import.completed', { sourceId, record });
             return record;
         } catch (error) {
-            this.emitEvent('import.error', { sourceId, error });
+            this.emitEvent('import.error', { sourceId, error: error as Error });
             throw error;
         }
     }
@@ -182,7 +182,7 @@ export class SourceImportPipeline {
             this.emitEvent('import.completed', { sourceId, record });
             return record;
         } catch (error) {
-            this.emitEvent('import.error', { sourceId, error });
+            this.emitEvent('import.error', { sourceId, error: error as Error });
             throw error;
         }
     }
@@ -237,7 +237,7 @@ export class SourceImportPipeline {
             this.emitEvent('import.completed', { sourceId, record });
             return record;
         } catch (error) {
-            this.emitEvent('import.error', { sourceId, error });
+            this.emitEvent('import.error', { sourceId, error: error as Error });
             throw error;
         }
     }

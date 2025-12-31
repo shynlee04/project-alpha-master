@@ -43,7 +43,7 @@ interface EnhancedChatProps {
     onPreviewArtifact?: (code: string) => void
     onSaveArtifact?: (code: string, language: string) => void
     onScroll?: (e: React.UIEvent<HTMLDivElement>) => void
-    setScrollRef?: React.RefObject<HTMLDivElement>
+    setScrollRef?: React.RefObject<HTMLDivElement | null>
 }
 
 export function EnhancedChatInterface({
