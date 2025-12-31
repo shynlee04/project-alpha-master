@@ -4,9 +4,9 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
-import { z } from 'zod';
+// import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { flashcardSchema, flashcardGenerationSchema } from './types';
+import { flashcardGenerationSchema } from './types';
 import type { Flashcard, FlashcardGenerationResult, FlashcardDifficulty } from './types';
 
 /**

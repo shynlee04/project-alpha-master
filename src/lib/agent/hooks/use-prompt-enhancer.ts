@@ -18,7 +18,7 @@ interface EnhancementResult {
 }
 
 export function usePromptEnhancer() {
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const [isEnhancing, setIsEnhancing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

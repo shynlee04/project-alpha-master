@@ -121,7 +121,7 @@ export async function generateAudioOverview(
     sourceContent,
     sourceTitle,
     language = 'en',
-    voiceName = 'Aoede',
+    // voiceName = 'Aoede',
     systemPrompt = DEFAULT_SYSTEM_PROMPTS[language],
     onProgress,
   } = options;

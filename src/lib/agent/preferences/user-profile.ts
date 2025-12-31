@@ -119,7 +119,7 @@ export async function getUserProfile(
     updatedAt: Date.now(),
   };
 
-  let hasLearned = false;
+  // let hasLearned = false;
 
   for (const pref of preferences) {
     const key = pref.key.replace(`${userId}.`, '');

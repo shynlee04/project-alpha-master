@@ -62,8 +62,8 @@ export function useDeepThink(options: DeepThinkOptions): UseDeepThinkResult {
   const {
     prompt,
     sources = [],
-    longPressDuration = 1000,
-    model = 'gemini-3.0-pro',
+    // longPressDuration = 1000,
+    // model = 'gemini-3.0-pro',
     onProgress,
     chatFn,
   } = options;
@@ -126,7 +126,7 @@ export function useDeepThink(options: DeepThinkOptions): UseDeepThinkResult {
 
       // Collect response
       let synthesis = '';
-      let reasoningText = '';
+      // let reasoningText = '';
       let progress = 0;
 
       for await (const chunk of responseStream) {

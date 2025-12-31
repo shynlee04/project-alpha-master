@@ -3,7 +3,7 @@
  * @module components/study/flashcard
  */
 
-import { useState, useCallback, useRef, useEffect, memo } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Flashcard } from '@/lib/knowledge/types';
 import type { SRSRating } from '@/lib/study/srs-types';
 import { useTranslation } from 'react-i18next';

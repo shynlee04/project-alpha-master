@@ -159,7 +159,7 @@ export function useAgentChatWithTools(
         modelId = DEFAULT_MODEL,
         apiKey,
         endpoint = DEFAULT_ENDPOINT,
-        systemMessage,
+        // systemMessage,
         fileTools = null,
         terminalTools = null,
         eventBus = null,

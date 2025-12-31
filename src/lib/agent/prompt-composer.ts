@@ -426,38 +426,40 @@ export class SystemPromptComposer {
 
   /**
    * Get cached layer content (for Layers 1+2)
+   * (Reserved for future use with Layers 1+2)
    */
-  private getCachedLayerContent(layerId: string): string | null {
-    const cacheKey = `${layerId}_${this.currentConfigHash}`;
-    const entry = this.cache.get(cacheKey);
-    
-    if (!entry) {
-      return null;
-    }
-    
-    // Check if cache is stale (older than 5 minutes)
-    const now = Date.now();
-    const STALE_MS = 5 * 60 * 1000; // 5 minutes
-    
-    if (now - entry.timestamp > STALE_MS) {
-      this.cache.delete(cacheKey);
-      return null;
-    }
-    
-    return entry.content;
-  }
+  // private getCachedLayerContent(layerId: string): string | null {
+  //   const cacheKey = `${layerId}_${this.currentConfigHash}`;
+  //   const entry = this.cache.get(cacheKey);
+  //
+  //   if (!entry) {
+  //     return null;
+  //   }
+  //
+  //   // Check if cache is stale (older than 5 minutes)
+  //   const now = Date.now();
+  //   const STALE_MS = 5 * 60 * 1000; // 5 minutes
+  //
+  //   if (now - entry.timestamp > STALE_MS) {
+  //     this.cache.delete(cacheKey);
+  //     return null;
+  //   }
+  //
+  //   return entry.content;
+  // }
 
   /**
    * Set cached layer content (for Layers 1+2)
+   * (Reserved for future use with Layers 1+2)
    */
-  private setCachedLayerContent(layerId: string, content: string): void {
-    const cacheKey = `${layerId}_${this.currentConfigHash}`;
-    this.cache.set(cacheKey, {
-      content,
-      timestamp: Date.now(),
-      configHash: this.currentConfigHash,
-    });
-  }
+  // private setCachedLayerContent(layerId: string, content: string): void {
+  //   const cacheKey = `${layerId}_${this.currentConfigHash}`;
+  //   this.cache.set(cacheKey, {
+  //     content,
+  //     timestamp: Date.now(),
+  //     configHash: this.currentConfigHash,
+  //   });
+  // }
 
   /**
    * Invalidate cache for cacheable layers
@@ -547,31 +549,33 @@ export class SystemPromptComposer {
 
   /**
    * Generate Layer 1 content (Tool Constitution)
+   * (Reserved for future use)
    */
-  private generateLayer1Content(): string {
-    const cached = this.getCachedLayerContent('layer-1-tool-constitution');
-    if (cached) {
-      return cached;
-    }
-    
-    const content = this.layers.get(1)?.generate(this.layer3Context) || DEFAULT_CONFIG.toolConstitution;
-    this.setCachedLayerContent('layer-1-tool-constitution', content);
-    return content;
-  }
+  // private generateLayer1Content(): string {
+  //   const cached = this.getCachedLayerContent('layer-1-tool-constitution');
+  //   if (cached) {
+  //     return cached;
+  //   }
+  //
+  //   const content = this.layers.get(1)?.generate(this.layer3Context) || DEFAULT_CONFIG.toolConstitution;
+  //   this.setCachedLayerContent('layer-1-tool-constitution', content);
+  //   return content;
+  // }
 
   /**
    * Generate Layer 2 content (Agent Mode)
+   * (Reserved for future use)
    */
-  private generateLayer2Content(): string {
-    const cached = this.getCachedLayerContent('layer-2-agent-mode');
-    if (cached) {
-      return cached;
-    }
-    
-    const content = this.layers.get(2)?.generate(this.layer3Context) || DEFAULT_CONFIG.agentMode.cognitivePhase;
-    this.setCachedLayerContent('layer-2-agent-mode', content);
-    return content;
-  }
+  // private generateLayer2Content(): string {
+  //   const cached = this.getCachedLayerContent('layer-2-agent-mode');
+  //   if (cached) {
+  //     return cached;
+  //   }
+  //
+  //   const content = this.layers.get(2)?.generate(this.layer3Context) || DEFAULT_CONFIG.agentMode.cognitivePhase;
+  //   this.setCachedLayerContent('layer-2-agent-mode', content);
+  //   return content;
+  // }
 
   /**
    * Generate Layer 3 content (Context Injection)

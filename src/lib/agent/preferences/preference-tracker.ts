@@ -13,7 +13,6 @@ import {
   setPreference,
   getPreference,
   markAsManualOverride,
-  type UserProfile,
 } from './user-profile';
 
 export interface PreferenceTrackingOptions {

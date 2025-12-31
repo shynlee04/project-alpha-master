@@ -93,7 +93,7 @@ export async function initializeMemoryIndex(
   const {
     language = 'english',
     stemming = true,
-    fuzzy = true,
+    // fuzzy = true,
   } = options;
 
   // Create Orama database with conversation schema
@@ -266,8 +266,8 @@ export async function searchByKeyword(
  * @returns Array of similar conversations
  */
 export async function searchBySemanticSimilarity(
-  embedding: number[],
-  options: SearchOptions = {}
+  // embedding: number[],
+  // options: SearchOptions = {}
 ): Promise<SearchResult[]> {
   // TODO: Implement true semantic search with embeddings
   // For now, fallback to keyword search
@@ -295,7 +295,7 @@ export async function deleteFromIndex(threadId: string): Promise<void> {
   });
 
   if (searchResult.hits.length > 0) {
-    const docId = searchResult.hits[0].id;
+    // const docId = searchResult.hits[0].id;
     // Orama doesn't have a simple delete by ID in current version
     // In production, would need to implement custom deletion logic
   }

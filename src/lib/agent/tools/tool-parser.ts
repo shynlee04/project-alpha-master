@@ -12,7 +12,7 @@
  * @blocker E2-B2 - Create tool call buffer parser
  */
 
-import { z } from 'zod';
+// import { z } from 'zod';
 
 // ============================================================================
 // Types

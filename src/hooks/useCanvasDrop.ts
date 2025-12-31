@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { useReactFlow, useStoreApi } from '@xyflow/react';
 import { Node } from '@xyflow/react';
 
@@ -60,7 +60,7 @@ export const useCanvasDrop = () => {
         setNodes([...currentNodes, newNode]);
 
         // Clear any selection and select new node
-        storeApi.setState((state) => ({
+        storeApi.setState(() => ({
           nodesSelection: null,
         }));
       } catch (error) {
