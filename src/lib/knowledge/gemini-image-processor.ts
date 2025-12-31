@@ -41,10 +41,10 @@ export class GeminiImageProcessor {
   private config: GeminiConfig;
   private providerId: string;
 
-  constructor(apiKey: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.5-flash', // Use latest multimodal model
+      model,
       apiKey,
     };
     this.providerId = providerId;
@@ -52,8 +52,11 @@ export class GeminiImageProcessor {
 
   /**
    * Create image processor with API key from credential vault
+   *
+   * @param providerId - Provider ID for credential vault lookup
+   * @param model - Model identifier (e.g., 'gemini-2.5-flash'). If not provided, will use default.
    */
-  static async create(providerId: string = 'gemini'): Promise<GeminiImageProcessor> {
+  static async create(providerId: string = 'gemini', model?: string): Promise<GeminiImageProcessor> {
     await credentialVault.initialize();
     const apiKey = await credentialVault.getCredentials(providerId);
 
@@ -61,7 +64,11 @@ export class GeminiImageProcessor {
       throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
     }
 
-    return new GeminiImageProcessor(apiKey, providerId);
+    // Use provided model or default
+    const defaultModel = 'gemini-2.5-flash';
+    const modelToUse = model || defaultModel;
+
+    return new GeminiImageProcessor(apiKey, modelToUse, providerId);
   }
 
   /**
@@ -295,8 +302,10 @@ export class GeminiImageProcessor {
  * Factory function to create Gemini image processor
  *
  * @param apiKey - Gemini API key from credential vault
+ * @param model - Model identifier (defaults to gemini-2.5-flash)
  * @returns Gemini image processor instance
  */
-export function createGeminiImageProcessor(apiKey: string): GeminiImageProcessor {
-  return new GeminiImageProcessor(apiKey);
+export function createGeminiImageProcessor(apiKey: string, model?: string): GeminiImageProcessor {
+  const defaultModel = 'gemini-2.5-flash';
+  return new GeminiImageProcessor(apiKey, model || defaultModel);
 }

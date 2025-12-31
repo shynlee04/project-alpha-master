@@ -10,13 +10,22 @@
  */
 
 import { clientTools } from '@tanstack/ai-client';
-import type { AgentFileTools, AgentTerminalTools } from './facades';
+import type { AgentFileTools, AgentTerminalTools, AgentKnowledgeTools } from './facades';
 import { readFileDef } from './tools/read-file-tool';
 import { writeFileDef } from './tools/write-file-tool';
 import { listFilesDef } from './tools/list-files-tool';
 import { executeCommandDef } from './tools/execute-command-tool';
+import { synthesizeDef, type SynthesizeInput } from './tools/synthesize-tool';
+import { processPDFDef, type ProcessPDFInput } from './tools/process-pdf-tool';
+import { processImageDef, type ProcessImageInput } from './tools/process-image-tool';
+import { processURLDef, type ProcessURLInput } from './tools/process-url-tool';
 import type { WorkspaceEventEmitter } from '../events/workspace-events';
-import type { ReadFileInput, WriteFileInput, ListFilesInput, ExecuteCommandInput } from './tools/types';
+import type {
+    ReadFileInput,
+    WriteFileInput,
+    ListFilesInput,
+    ExecuteCommandInput,
+} from './tools/types';
 
 /**
  * Options for creating the agent tool factory
@@ -26,8 +35,12 @@ export interface ToolFactoryOptions {
     getFileTools: () => AgentFileTools | null;
     /** Get the terminal tools facade (lazy initialization) */
     getTerminalTools: () => AgentTerminalTools | null;
+    /** Get the knowledge tools facade (lazy initialization) - EPIC-38 */
+    getKnowledgeTools?: () => AgentKnowledgeTools | null;
     /** Get the workspace event emitter */
     getEventBus: () => WorkspaceEventEmitter | null;
+    /** Model ID for agent configuration (optional - uses agent's default if not provided) */
+    modelId?: string;
 }
 
 /**
@@ -185,6 +198,130 @@ export function createClientTerminalTools(options: ToolFactoryOptions) {
 }
 
 /**
+ * Create client-side knowledge tools
+ * EPIC-38 - KSI Module
+ */
+export function createClientKnowledgeTools(options: ToolFactoryOptions) {
+    const { getKnowledgeTools } = options;
+
+    if (!getKnowledgeTools) {
+        return {
+            synthesize: null,
+            processPDF: null,
+            processImage: null,
+            processURL: null,
+        };
+    }
+
+    // synthesize_knowledge - client implementation
+    const synthesize = synthesizeDef.client(async (args: unknown) => {
+        const input = args as SynthesizeInput;
+        const tools = getKnowledgeTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Knowledge tools not available. Please ensure your agent is configured with knowledge synthesis capabilities.',
+                code: 'KNOWLEDGE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.synthesize(input);
+            return {
+                success: true,
+                data: {
+                    synthesisId: result.id,
+                    sourceId: result.sourceId,
+                    frontmatter: result.frontmatter,
+                    timestamp: result.timestamp,
+                },
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Synthesis failed'
+            };
+        }
+    });
+
+    // process_pdf - client implementation
+    const processPDF = processPDFDef.client(async (args: unknown) => {
+        const input = args as ProcessPDFInput;
+        const tools = getKnowledgeTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Knowledge tools not available',
+                code: 'KNOWLEDGE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.processPDF(input.file, input.base64Content, input.options);
+            return { success: true, data: result };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'PDF processing failed'
+            };
+        }
+    });
+
+    // process_image - client implementation
+    const processImage = processImageDef.client(async (args: unknown) => {
+        const input = args as ProcessImageInput;
+        const tools = getKnowledgeTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Knowledge tools not available',
+                code: 'KNOWLEDGE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.processImage(input.file, input.base64Content, input.options);
+            return { success: true, data: result };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Image processing failed'
+            };
+        }
+    });
+
+    // process_url - client implementation
+    const processURL = processURLDef.client(async (args: unknown) => {
+        const input = args as ProcessURLInput;
+        const tools = getKnowledgeTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Knowledge tools not available',
+                code: 'KNOWLEDGE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.processURL(input.url, input.htmlContent, input.options);
+            return { success: true, data: result };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'URL processing failed'
+            };
+        }
+    });
+
+    return {
+        synthesize,
+        processPDF,
+        processImage,
+        processURL,
+    };
+}
+
+/**
  * Create all client tools for useChat integration
  * Uses TanStack AI clientTools() helper for type-safe tool arrays
  * 
@@ -207,25 +344,47 @@ export function createClientTerminalTools(options: ToolFactoryOptions) {
 export function createAgentClientTools(options: ToolFactoryOptions) {
     const fileTools = createClientFileTools(options);
     const terminalTools = createClientTerminalTools(options);
+    const knowledgeTools = createClientKnowledgeTools(options);
 
     return {
         fileTools,
         terminalTools,
+        knowledgeTools,
         /** All tools as array for useChat */
         all: [
             fileTools.readFile,
             fileTools.writeFile,
             fileTools.listFiles,
             terminalTools.executeCommand,
+            ...(knowledgeTools.synthesize ? [knowledgeTools.synthesize] : []),
+            ...(knowledgeTools.processPDF ? [knowledgeTools.processPDF] : []),
+            ...(knowledgeTools.processImage ? [knowledgeTools.processImage] : []),
+            ...(knowledgeTools.processURL ? [knowledgeTools.processURL] : []),
         ],
         /** Get clientTools() wrapped array for createChatClientOptions */
         getClientTools() {
-            return clientTools(
+            const tools = clientTools(
                 fileTools.readFile,
                 fileTools.writeFile,
                 fileTools.listFiles,
                 terminalTools.executeCommand
             );
+
+            // Add knowledge tools if available
+            if (knowledgeTools.synthesize) {
+                tools.push(knowledgeTools.synthesize);
+            }
+            if (knowledgeTools.processPDF) {
+                tools.push(knowledgeTools.processPDF);
+            }
+            if (knowledgeTools.processImage) {
+                tools.push(knowledgeTools.processImage);
+            }
+            if (knowledgeTools.processURL) {
+                tools.push(knowledgeTools.processURL);
+            }
+
+            return tools;
         },
     };
 }
@@ -234,7 +393,11 @@ export function createAgentClientTools(options: ToolFactoryOptions) {
  * Check if tools are available (workspace loaded)
  */
 export function isToolsAvailable(options: ToolFactoryOptions): boolean {
-    return options.getFileTools() !== null && options.getTerminalTools() !== null;
+    const hasFileTools = options.getFileTools() !== null;
+    const hasTerminalTools = options.getTerminalTools() !== null;
+    const hasKnowledgeTools = options.getKnowledgeTools ? options.getKnowledgeTools() !== null : true; // Optional
+
+    return hasFileTools && hasTerminalTools && hasKnowledgeTools;
 }
 
 // Re-export for convenience

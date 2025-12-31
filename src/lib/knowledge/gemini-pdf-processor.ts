@@ -55,10 +55,10 @@ export class GeminiPDFProcessor {
   private config: GeminiConfig;
   private providerId: string;
 
-  constructor(apiKey: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.5-flash', // Use latest multimodal model
+      model,
       apiKey,
     };
     this.providerId = providerId;
@@ -66,8 +66,11 @@ export class GeminiPDFProcessor {
 
   /**
    * Create PDF processor with API key from credential vault
+   *
+   * @param providerId - Provider ID for credential vault lookup
+   * @param model - Model identifier (e.g., 'gemini-2.5-flash'). If not provided, will use default.
    */
-  static async create(providerId: string = 'gemini'): Promise<GeminiPDFProcessor> {
+  static async create(providerId: string = 'gemini', model?: string): Promise<GeminiPDFProcessor> {
     await credentialVault.initialize();
     const apiKey = await credentialVault.getCredentials(providerId);
 
@@ -75,7 +78,11 @@ export class GeminiPDFProcessor {
       throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
     }
 
-    return new GeminiPDFProcessor(apiKey, providerId);
+    // Use provided model or default
+    const defaultModel = 'gemini-2.5-flash';
+    const modelToUse = model || defaultModel;
+
+    return new GeminiPDFProcessor(apiKey, modelToUse, providerId);
   }
 
   /**

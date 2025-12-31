@@ -25,6 +25,17 @@ export type {
 export { TerminalToolsError } from './terminal-tools';
 export { TerminalToolsFacade, createTerminalToolsFacade } from './terminal-tools-impl';
 
+// Knowledge Tools (EPIC-38 - KSI Module)
+export type {
+    AgentKnowledgeTools,
+    SynthesisInput,
+    SynthesisOptions,
+    PDFProcessingOptions,
+    ImageProcessingOptions,
+    URLProcessingOptions,
+} from './knowledge-tools';
+export { KnowledgeToolsFacade, createKnowledgeToolsFacade } from './knowledge-tools-impl';
+
 // Sync Tools (Story 12-3 - TBD)
 // export type { AgentSyncTools } from './sync-tools';
 // export { SyncToolsFacade, createSyncToolsFacade } from './sync-tools-impl';

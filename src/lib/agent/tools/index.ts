@@ -38,8 +38,14 @@ export { executeCommandDef, executeCommandToolConfig, createExecuteCommandTool, 
 // Note tool definitions (Story 26-3)
 export { searchNotesDef, createSearchNotesClientTool } from './search-notes-tool';
 
+// Knowledge synthesis tool definitions (EPIC-38)
+export { synthesizeDef, createSynthesizeClientTool } from './synthesize-tool';
+export { processPDFDef, createProcessPDFClientTool } from './process-pdf-tool';
+export { processImageDef, createProcessImageClientTool } from './process-image-tool';
+export { processURLDef, createProcessURLClientTool } from './process-url-tool';
+
 // Re-export facades for convenience
-export type { AgentFileTools, AgentTerminalTools } from '../facades';
+export type { AgentFileTools, AgentTerminalTools, AgentKnowledgeTools } from '../facades';
 
 /**
  * Create all file tools with a shared facade provider (server-side)
@@ -89,7 +95,7 @@ export function createFileClientTools(getTools: () => import('../facades').Agent
 /**
  * Create all client-side terminal tools with a shared facade provider
  * Uses TanStack AI .client() pattern for browser execution
- * 
+ *
  * @param getTools - Function to get the terminal tools facade
  * @story 25-4 - Wire Tool Execution to UI
  */
@@ -102,25 +108,63 @@ export function createTerminalClientTools(getTools: () => import('../facades').A
 }
 
 /**
+ * Create all knowledge tools with a shared facade provider
+ * Uses TanStack AI .client() pattern for browser execution
+ *
+ * @param getTools - Function to get the knowledge tools facade
+ * @governance EPIC-38
+ * @story KSI Agent Integration
+ */
+export function createKnowledgeClientTools(getTools: () => import('../facades').AgentKnowledgeTools) {
+    const { createSynthesizeClientTool } = require('./synthesize-tool');
+    const { createProcessPDFClientTool } = require('./process-pdf-tool');
+    const { createProcessImageClientTool } = require('./process-image-tool');
+    const { createProcessURLClientTool } = require('./process-url-tool');
+
+    return {
+        synthesize: createSynthesizeClientTool(getTools),
+        processPDF: createProcessPDFClientTool(getTools),
+        processImage: createProcessImageClientTool(getTools),
+        processURL: createProcessURLClientTool(getTools),
+    };
+}
+
+/**
  * Returns an array of all client-side tools for use with TanStack AI chat
- * 
+ *
  * @param fileTools - Function to get file tools facade
  * @param terminalTools - Function to get terminal tools facade
+ * @param knowledgeTools - Function to get knowledge tools facade (optional)
  * @story 25-4 - Wire Tool Execution to UI
+ * @governance EPIC-38
  */
 export function getClientTools(
     fileTools: () => import('../facades').AgentFileTools,
-    terminalTools: () => import('../facades').AgentTerminalTools
+    terminalTools: () => import('../facades').AgentTerminalTools,
+    knowledgeTools?: () => import('../facades').AgentKnowledgeTools
 ) {
     const ft = createFileClientTools(fileTools);
     const tt = createTerminalClientTools(terminalTools);
 
-    return [
+    const tools = [
         ft.readFile,
         ft.writeFile,
         ft.listFiles,
         tt.executeCommand,
         createSearchNotesClientTool(),
     ];
+
+    // Add knowledge tools if provided
+    if (knowledgeTools) {
+        const kt = createKnowledgeClientTools(knowledgeTools);
+        tools.push(
+            kt.synthesize,
+            kt.processPDF,
+            kt.processImage,
+            kt.processURL
+        );
+    }
+
+    return tools;
 }
 

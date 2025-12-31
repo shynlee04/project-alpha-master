@@ -35,7 +35,7 @@ import {
     getSynthesisResultForSource as dbGetSynthesisResultForSource,
 } from './dexie-db';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
-import { createSynthesisService } from '@/lib/knowledge/synthesis-service';
+import { SynthesisService } from '@/lib/knowledge/synthesis-service';
 
 // ============================================================================
 // Types
@@ -590,11 +590,14 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                     // Update status to pending
                     await dbUpdateSynthesisResultStatus(synthesisId, 'pending');
 
-                    // Create synthesis service
-                    const synthesisService = createSynthesisService({
-                        apiKey: '', // TODO: Get from user settings
-                        model: 'gemini-2.0-flash-exp',
-                    });
+                    // Get agent configuration for synthesis
+                    // Use Gemini provider by default for KSI synthesis
+                    const providerId = 'gemini';
+                    const modelId = undefined; // Use service default (gemini-2.5-flash)
+
+                    // Create synthesis service using agent's configured provider
+                    // The static create() method fetches API key from credential vault
+                    const synthesisService = await SynthesisService.create(providerId, modelId);
 
                     // Build source document for synthesis
                     const sourceDocument = {

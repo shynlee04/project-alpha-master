@@ -38,10 +38,10 @@ export class SynthesisService {
   private config: GeminiConfig;
   private providerId: string;
 
-  constructor(apiKey: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.5-flash',
+      model,
       apiKey,
       temperature: 0.4,
     };
@@ -50,8 +50,11 @@ export class SynthesisService {
 
   /**
    * Create synthesis service with API key from credential vault
+   *
+   * @param providerId - Provider ID for credential vault lookup
+   * @param model - Model identifier (e.g., 'gemini-2.5-flash'). If not provided, will use default.
    */
-  static async create(providerId: string = 'gemini'): Promise<SynthesisService> {
+  static async create(providerId: string = 'gemini', model?: string): Promise<SynthesisService> {
     await credentialVault.initialize();
     const apiKey = await credentialVault.getCredentials(providerId);
 
@@ -59,7 +62,11 @@ export class SynthesisService {
       throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
     }
 
-    return new SynthesisService(apiKey, providerId);
+    // Use provided model or default
+    const defaultModel = 'gemini-2.5-flash';
+    const modelToUse = model || defaultModel;
+
+    return new SynthesisService(apiKey, modelToUse, providerId);
   }
 
   /**
@@ -302,8 +309,10 @@ export class SynthesisService {
  * Factory function to create synthesis service
  *
  * @param apiKey - Gemini API key from credential vault
+ * @param model - Model identifier (defaults to gemini-2.5-flash)
  * @returns Synthesis service instance
  */
-export function createSynthesisService(apiKey: string): SynthesisService {
-  return new SynthesisService(apiKey);
+export function createSynthesisService(apiKey: string, model?: string): SynthesisService {
+  const defaultModel = 'gemini-2.5-flash';
+  return new SynthesisService(apiKey, model || defaultModel);
 }
