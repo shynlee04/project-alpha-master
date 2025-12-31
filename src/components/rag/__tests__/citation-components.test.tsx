@@ -30,34 +30,38 @@ vi.mock('react-i18next', () => ({
 }));
 
 // Import after mocking
-import { CitationSidebar, type CitationDisplayItem } from '../CitationSidebar';
+import { CitationSidebar } from '../CitationSidebar';
 import { CitationCountBadge, type CitationCountBadgeProps } from '../CitationCountBadge';
+import type { DisplayCitation } from '@/lib/rag/citation-types';
 
-// Test data
-const mockCitations: CitationDisplayItem[] = [
+// Test data with correct DisplayCitation structure
+const mockCitations: DisplayCitation[] = [
   {
     id: 1,
     sourceId: 'source-1',
     title: 'Introduction to Machine Learning',
-    excerpt: 'Machine learning is a subset of artificial intelligence...',
-    relevanceScore: 0.95,
-    position: 42,
+    score: 0.95,
+    passage: 'Machine learning is a subset of artificial intelligence...',
+    inlineCitation: '[1]',
+    position: { start: 42, end: 100 },
   },
   {
     id: 2,
     sourceId: 'source-2',
     title: 'Deep Learning Fundamentals',
-    excerpt: 'Deep learning uses neural networks with multiple layers...',
-    relevanceScore: 0.87,
-    position: 156,
+    score: 0.87,
+    passage: 'Deep learning uses neural networks with multiple layers...',
+    inlineCitation: '[2]',
+    position: { start: 156, end: 220 },
   },
   {
     id: 3,
     sourceId: 'source-1',
     title: 'Introduction to Machine Learning',
-    excerpt: 'The field has grown significantly in recent years...',
-    relevanceScore: 0.72,
-    position: 89,
+    score: 0.72,
+    passage: 'The field has grown significantly in recent years...',
+    inlineCitation: '[3]',
+    position: { start: 89, end: 140 },
   },
 ];
 
@@ -281,34 +285,37 @@ describe('CitationCountBadge', () => {
 });
 
 describe('Citation Types', () => {
-  describe('CitationDisplayItem', () => {
+  describe('DisplayCitation Types', () => {
     it('should have all required properties', () => {
-      const citation: CitationDisplayItem = {
+      const citation: DisplayCitation = {
         id: 1,
         sourceId: 'source-1',
         title: 'Test Document',
-        excerpt: 'Test excerpt content',
-        relevanceScore: 0.85,
-        position: 100,
+        score: 0.85,
+        passage: 'Test passage content',
+        inlineCitation: '[1]',
+        position: { start: 100, end: 200 },
       };
       
       expect(citation.id).toBe(1);
       expect(citation.sourceId).toBe('source-1');
       expect(citation.title).toBe('Test Document');
-      expect(citation.excerpt).toBe('Test excerpt content');
-      expect(citation.relevanceScore).toBe(0.85);
-      expect(citation.position).toBe(100);
+      expect(citation.score).toBe(0.85);
+      expect(citation.passage).toBe('Test passage content');
+      expect(citation.inlineCitation).toBe('[1]');
+      expect(citation.position).toEqual({ start: 100, end: 200 });
     });
 
-    it('should allow optional properties', () => {
-      const citation: CitationDisplayItem = {
+    it('should allow optional position property', () => {
+      const citation: DisplayCitation = {
         id: 1,
         sourceId: 'source-1',
         title: 'Test Document',
-        excerpt: 'Test excerpt content',
+        score: 0.85,
+        passage: 'Test passage content',
+        inlineCitation: '[1]',
       };
       
-      expect(citation.relevanceScore).toBeUndefined();
       expect(citation.position).toBeUndefined();
     });
   });
