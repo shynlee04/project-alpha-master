@@ -8,10 +8,10 @@
  */
 
 import { Suspense, lazy } from 'react';
-import { ResizablePanel } from '@/components/ui/resizable';
+
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { WithErrorBoundary } from '@/components/common/ErrorBoundary';
-import type { OpenFile } from '../../ide/Monaco';
+import type { OpenFile } from '../../ide/MonacoEditor';
 
 const MonacoEditor = lazy(() => import('../../ide/MonacoEditor').then(m => ({ default: m.MonacoEditor })));
 
@@ -53,42 +53,40 @@ export function IDEEditorPanel({
     scheduleIdeStatePersistence
 }: IDEEditorPanelProps) {
     return (
-        <ResizablePanel id="ide-editor-panel" defaultSize={60} minSize={30} className="bg-background">
-            <Card id="editor-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
-                <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
-                    <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0 flex-1 min-h-0">
-                    <WithErrorBoundary
-                        fallback={
-                            <div className="h-full flex items-center justify-center text-muted-foreground">
-                                <div className="text-center">
-                                    <p className="text-sm font-medium">Editor Error</p>
-                                    <p className="text-xs text-muted-foreground/70 mt-1">
-                                        The code editor encountered an error. Please refresh the page.
-                                    </p>
-                                </div>
+        <Card id="editor-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
+            <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+                <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Editor</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex-1 min-h-0">
+                <WithErrorBoundary
+                    fallback={
+                        <div className="h-full flex items-center justify-center text-muted-foreground">
+                            <div className="text-center">
+                                <p className="text-sm font-medium">Editor Error</p>
+                                <p className="text-xs text-muted-foreground/70 mt-1">
+                                    The code editor encountered an error. Please refresh the page.
+                                </p>
                             </div>
-                        }
-                    >
-                        <Suspense fallback={<PanelLoading label="Editor" />}>
-                            <MonacoEditor
-                                openFiles={openFiles}
-                                activeFilePath={activeFilePath}
-                                onSave={onSave}
-                                onActiveFileChange={onActiveFileChange}
-                                onTabClose={onTabClose}
-                                onContentChange={onContentChange}
-                                initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
-                                onScrollTopChange={(_path, scrollTop) => {
-                                    activeFileScrollTopRef.current = scrollTop;
-                                    scheduleIdeStatePersistence(400);
-                                }}
-                            />
-                        </Suspense>
-                    </WithErrorBoundary>
-                </CardContent>
-            </Card>
-        </ResizablePanel>
+                        </div>
+                    }
+                >
+                    <Suspense fallback={<PanelLoading label="Editor" />}>
+                        <MonacoEditor
+                            openFiles={openFiles}
+                            activeFilePath={activeFilePath ?? null}
+                            onSave={onSave}
+                            onActiveFileChange={onActiveFileChange}
+                            onTabClose={onTabClose}
+                            onContentChange={onContentChange}
+                            initialScrollTop={activeFilePath && activeFilePath === restoredIdeState?.activeFile ? restoredIdeState.activeFileScrollTop : undefined}
+                            onScrollTopChange={(_path, scrollTop) => {
+                                activeFileScrollTopRef.current = scrollTop;
+                                scheduleIdeStatePersistence(400);
+                            }}
+                        />
+                    </Suspense>
+                </WithErrorBoundary>
+            </CardContent>
+        </Card>
     );
 }

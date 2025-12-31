@@ -7,7 +7,7 @@
  * Extracted from AgentConfigDialog.tsx for better code organization.
  */
 
-import type { Agent } from '@/mocks/agents'
+import type { Agent } from '@/core/entities/Agent'
 
 /**
  * Connection status type
@@ -24,8 +24,9 @@ export type ConfigTab = 'basic' | 'advanced'
  */
 export type FormErrors = {
     name?: string
+    description?: string
     provider?: string
-    model?: string
+    modelId?: string
     apiKey?: string
     customBaseURL?: string
 }
@@ -64,9 +65,9 @@ export interface LLMParameters {
  */
 export interface AgentFormData {
     name: string
-    role: string
+    description: string
     providerId: string
-    model: string
+    modelId: string
     apiKey: string
     customBaseURL?: string
     customModelId?: string
@@ -78,3 +79,4 @@ export interface AgentFormData {
     topK?: number
     systemPrompt?: string
 }
+

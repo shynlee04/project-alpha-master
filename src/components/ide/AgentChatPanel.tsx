@@ -56,7 +56,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // API key management
     const { apiKey, apiKeyError, providerId } = useAgentChatAPIKeyManager({
-        agentProvider: activeAgent?.provider
+        agentProviderId: activeAgent?.providerId
     });
 
     // Get workspace context for tool facades
@@ -94,11 +94,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         eventBus: eventBus || null,
         systemMessage: systemPrompt,
         providerId,
-        modelId: activeAgent?.model,
+        modelId: activeAgent?.modelId,
         apiKey: apiKey || undefined,
-        customBaseURL: activeAgent?.customBaseURL,
-        customHeaders: activeAgent?.customHeaders,
-        enableTools: activeAgent?.enableNativeTools ?? true,
+        // NOTE: customBaseURL, customHeaders, enableNativeTools are NOT part of Agent entity
+        // They are provider-level configuration, NOT agent-level
+        enableTools: true,
     });
 
     // Conversation management

@@ -6,15 +6,16 @@
  * @layer Presentation
  */
 
-import type { OpenFile } from '../../ide/Monaco';
+import type { OpenFile } from '../../ide/MonacoEditor';
 import type { ImperativePanelGroupHandle } from '@/components/ui/resizable';
+import type { TerminalTab } from '@/lib/workspace';
 
 export interface UseIDELayoutStateResult {
     // Store state
     chatVisible: boolean;
     setChatVisible: (visible: boolean) => void;
-    terminalTab: string;
-    setTerminalTab: (tab: string) => void;
+    terminalTab: TerminalTab;
+    setTerminalTab: (tab: TerminalTab) => void;
     openFilePaths: string[];
     activeFilePath: string | undefined;
     setActiveFilePath: (path: string) => void;
@@ -71,8 +72,8 @@ export interface IDEResizableLayoutProps {
     projectName: string;
     chatVisible: boolean;
     setChatVisible: (visible: boolean) => void;
-    terminalTab: string;
-    setTerminalTab: (tab: string) => void;
+    terminalTab: TerminalTab;
+    setTerminalTab: (tab: TerminalTab) => void;
     initialSyncCompleted: boolean;
     permissionState: any;
     openFiles: OpenFile[];

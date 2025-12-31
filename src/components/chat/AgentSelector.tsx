@@ -225,7 +225,7 @@ export function AgentSelector({
                                     className="text-xs font-bold text-slate-100 w-full"
                                 />
                                 <TruncatedText
-                                    text={selectedAgent.model.split('/').pop() || ''}
+                                    text={selectedAgent.modelId.split('/').pop() || ''}
                                     className="text-[10px] text-slate-400 w-full"
                                 />
                             </div>

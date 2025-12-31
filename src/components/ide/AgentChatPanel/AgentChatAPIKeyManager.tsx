@@ -20,7 +20,7 @@ const PROVIDER_ID_MAP: Record<string, string> = {
 };
 
 interface UseAgentChatAPIKeyManagerProps {
-    agentProvider: string | undefined;
+    agentProviderId: string | undefined;
 }
 
 interface APIKeyManagerResult {
@@ -33,16 +33,15 @@ interface APIKeyManagerResult {
  * Hook to manage API key fetching and credential updates
  */
 export function useAgentChatAPIKeyManager({
-    agentProvider
+    agentProviderId
 }: UseAgentChatAPIKeyManagerProps): APIKeyManagerResult {
     const [apiKey, setApiKey] = useState<string | null>(null);
     const [apiKeyError, setApiKeyError] = useState<string | null>(null);
 
-    // Get provider ID from agent's provider name
+    // Use provider ID directly (already in ID format)
     const providerId = useMemo(() => {
-        if (!agentProvider) return 'openrouter';
-        return PROVIDER_ID_MAP[agentProvider] || 'openrouter';
-    }, [agentProvider]);
+        return agentProviderId || 'openrouter';
+    }, [agentProviderId]);
 
     // Fetch API key when agent or provider changes
     useEffect(() => {

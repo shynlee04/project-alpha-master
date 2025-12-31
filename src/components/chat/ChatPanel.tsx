@@ -182,8 +182,8 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
                             .filter(m => m.role !== 'system')
                             .map(m => ({ role: m.role, content: m.content })) || []
                     ],
-                    provider: selectedAgent.provider.toLowerCase(),
-                    model: selectedAgent.model,
+                    provider: selectedAgent.providerId.toLowerCase(),
+                    model: selectedAgent.modelId,
                 }),
             });
 
@@ -228,7 +228,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
                 content: fullContent,
                 agentId: selectedAgent.id,
                 agentName: selectedAgent.name,
-                agentModel: selectedAgent.model,
+                agentModel: selectedAgent.modelId,
             });
 
         } catch (err) {
