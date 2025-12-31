@@ -26,7 +26,7 @@ import { Button } from '@/presentation/components/ui/button';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
 import { useAgentsStore } from '@/stores/agents-store';
 import { toast } from 'sonner';
-import type { BlockNoteEditor, Block } from '@blocknote/core';
+import type { BlockNoteEditor } from '@blocknote/core';
 
 // ============================================================================
 // Types

@@ -494,28 +494,140 @@ validation_gates:
 
 ## Phase 1: AI Integration
 
-### Story NR-03: Connect AgentSelector to AI Service
+### Story NR-03: Connect AgentSelector to AI Service ✅
 
-**Steps:**
-1. Modify `AIPromptDialog.tsx` to show selected agent
-2. Pass `agentId` to `generateNoteContent()`
-3. Subscribe to agent selection events
+**Status:** DONE (Already implemented in NR-01)
 
-### Story NR-04: Add Text Selection AI Transform
-
-**Steps:**
-1. Create `AITransformMenu.tsx` component
-2. Add selection listener in NoteEditor
-3. Implement transform actions (summarize, expand, explain, improve, translate)
-
-### Story NR-05: Implement Command Palette AI Actions
-
-**Steps:**
-1. Add AI commands to slash menu
-2. Implement note-level operations
-3. Add progress indicators
+**Implementation Summary:**
+- `AIPromptDialog.tsx` already shows active agent name
+- Uses `useAgentsStore.getState()` to get active agent
+- Passing `agentId` handled internally by `generateNoteContent()`
 
 ---
+
+### Story NR-04: Add Text Selection AI Transform ✅
+
+**Agent:** `@bmad-bmm-dev`
+
+**Objective:** Show floating AI menu when text is selected for transform actions.
+
+**Critical Implementation Details (from hotfix):**
+
+1. **Use BlockNote Selection API - NOT DOM Events**
+   ```typescript
+   // WRONG: Manual DOM event handling
+   editorElement.addEventListener('mouseup', checkSelection);
+   
+   // CORRECT: BlockNote API
+   const unsubscribe = editor.onSelectionChange(() => {
+       const text = editor.getSelectedText();
+       if (text && text.trim().length > 0) {
+           setSelectedText(text);
+           setIsOpen(true);
+       }
+   });
+   ```
+
+2. **Get Selected Text Directly**
+   ```typescript
+   // WRONG: Extract from block content arrays
+   const blocks = selection.blocks;
+   const text = blocks.map(block => extractBlockText(block)).join('\n');
+   
+   // CORRECT: Use BlockNote's getSelectedText()
+   const text = editor.getSelectedText();
+   ```
+
+3. **Files Created/Modified:**
+   - `src/presentation/components/notes/AITransformMenu.tsx` (NEW)
+   - `src/presentation/components/notes/NoteEditor.tsx` (add component)
+   - `src/i18n/en.json` (transform keys)
+   - `src/i18n/vi.json` (VN translations)
+
+4. **Transform Actions:**
+   - Summarize, Expand, Improve, Explain, Translate
+
+---
+
+### Story NR-05: Implement Command Palette AI Actions ✅
+
+**Agent:** `@bmad-bmm-dev`
+
+**Objective:** Add AI commands to slash menu that operate on note content.
+
+**Critical Implementation Details (from hotfix):**
+
+1. **Use Loading Toasts**
+   ```typescript
+   async function executeAICommand(editor, prompt, commandName) {
+       const toastId = toast.loading(`${commandName} generating...`);
+       try {
+           const result = await generateNoteContent(prompt);
+           toast.success(`${commandName} complete!`, { id: toastId });
+       } catch (error) {
+           toast.error(`${commandName} failed`, { id: toastId });
+       }
+   }
+   ```
+
+2. **Better Content Insertion**
+   ```typescript
+   // Get cursor position and insert after
+   const cursorPosition = editor.getTextCursorPosition();
+   editor.insertBlocks(blocks, cursorPosition.block, 'after');
+   
+   // Move cursor to end of inserted content
+   const lastBlock = blocks[blocks.length - 1];
+   if (lastBlock?.id) {
+       editor.setTextCursorPosition(lastBlock.id, 'end');
+   }
+   ```
+
+3. **Commands Implemented:**
+   | Command | Aliases | Action |
+   |---------|---------|--------|
+   | AI Magic | `/ai`, `/magic` | Opens custom prompt dialog |
+   | Continue Writing | `/continue`, `/write` | Continues from existing content |
+   | Summarize Note | `/summary`, `/tldr` | Summarizes entire note |
+   | Generate Outline | `/outline`, `/toc` | Creates structured outline |
+   | Explain Like I'm 5 | `/eli5`, `/explain` | Simple explanation |
+   | Generate Questions | `/questions`, `/quiz` | Study questions |
+   | Translate Note | `/translate`, `/dich` | EN ↔ VI translation |
+   | Generate Flashcards | `/flashcards`, `/study` | Q&A flashcard format |
+
+---
+
+### Phase 1 Validation Gate
+
+**Before proceeding to Phase 2:**
+
+```bash
+# Build validation
+pnpm exec tsc --noEmit && pnpm build
+
+# Manual tests:
+# 1. All Phase 0 criteria still passing
+# 2. Selecting text shows AI transform menu at bottom
+# 3. Transform actions call AI and replace selected text
+# 4. Slash commands show loading toast during generation
+# 5. Generated content inserts at cursor position
+```
+
+**Update Loop State:**
+```yaml
+phase_status:
+  phase_0: "DONE"
+  phase_1: "DONE"  
+  phase_2: "IN_PROGRESS"
+validation_gates:
+  phase_1:
+    passed: true
+    validated_at: "{timestamp}"
+    notes: "AI features working with hotfix applied"
+```
+
+---
+
 
 ## Phase 2: Ecosystem Integration
 

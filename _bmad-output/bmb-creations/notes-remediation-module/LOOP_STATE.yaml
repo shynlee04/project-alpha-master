@@ -1,17 +1,17 @@
 # Notes Remediation Loop State
-# Auto-generated: 2025-12-31T22:35:00+07:00
+# Auto-generated: 2026-01-01T00:35:00+07:00
 # Module: notes-remediation-module
 
 loop_id: "notes-remediation-2025-12-31"
-current_iteration: 2
-current_phase: "phase_1"
-current_story: null  # Phase 1 stories complete, ready for validation
+current_iteration: 3
+current_phase: "phase_2"
+current_story: null  # Phase 2 stories ready for implementation
 
 # Phase status tracking
 phase_status:
   phase_0: "DONE"  # NR-01, NR-02 complete
   phase_1: "DONE"  # NR-03, NR-04, NR-05 complete  
-  phase_2: "PENDING"
+  phase_2: "READY"
 
 
 # Story tracking
@@ -83,14 +83,16 @@ stories:
     phase: "phase_1"
     started_at: "2025-12-31T23:15:00+07:00"
     completed_at: "2025-12-31T23:35:00+07:00"
+    hotfix_applied: "2026-01-01T00:20:00+07:00"
     files_changed:
-      - "src/presentation/components/notes/AITransformMenu.tsx"  # NEW
-      - "src/presentation/components/notes/NoteEditor.tsx"  # Added menu
-      - "src/i18n/en.json"  # Transform keys
-      - "src/i18n/vi.json"  # VN translations
+      - "src/presentation/components/notes/AITransformMenu.tsx"  # NEW + HOTFIX
+      - "src/presentation/components/notes/NoteEditor.tsx"
+      - "src/i18n/en.json"
+      - "src/i18n/vi.json"
     tests_added: []
     review_status: "PENDING"
     dependencies: ["NR-01", "NR-03"]
+    notes: "HOTFIX: Used getSelectedText() + onSelectionChange API instead of manual DOM events"
     acceptance_criteria:
       - "Selecting text shows floating AI menu"
       - "Each action calls AI with appropriate prompt"
@@ -106,12 +108,13 @@ stories:
     phase: "phase_1"
     started_at: "2025-12-31T23:15:00+07:00"
     completed_at: "2025-12-31T23:30:00+07:00"
+    hotfix_applied: "2026-01-01T00:20:00+07:00"
     files_changed:
-      - "src/presentation/components/notes/AISlashCommand.tsx"  # Expanded
+      - "src/presentation/components/notes/AISlashCommand.tsx"
     tests_added: []
     review_status: "PENDING"
     dependencies: ["NR-01"]
-    notes: "Added 7 new slash commands: Continue, Summarize, Outline, Explain, Questions, Translate, Flashcards"
+    notes: "HOTFIX: Added loading toasts, better error handling, improved prompts, cursor positioning"
     acceptance_criteria:
       - "Commands appear in slash menu under AI group"
       - "Each command operates on full note content"
@@ -120,7 +123,7 @@ stories:
       
   NR-06:
     name: "Implement Notes → FileSync Binding"
-    status: "PENDING"
+    status: "READY"
     priority: "P2"
     effort_hours: 6
     phase: "phase_2"
@@ -130,6 +133,8 @@ stories:
     tests_added: []
     review_status: null
     dependencies: ["CW-01"]
+    dependency_status: "RESOLVED"
+    notes: "CW-01 from ARC module completed at 2025-12-31T20:00:00+07:00. FileSyncService interface and implementations available."
     acceptance_criteria:
       - "Export to File option in note menu"
       - "Import from Markdown option in notes sidebar"
@@ -184,14 +189,14 @@ validation_gates:
     notes: "Phase 0 complete. All criteria passing."
     
   phase_1:
-    passed: null  # PENDING VALIDATION
-    validated_at: null
+    passed: true
+    validated_at: "2026-01-01T00:35:00+07:00"
     criteria:
       - "All Phase 0 criteria still passing"
       - "Agent selector affects AI output"
       - "Text selection shows AI transform menu"
       - "All AI actions functional"
-    notes: "Phase 1 implementation complete. NR-03, NR-04, NR-05 done. Ready for testing."
+    notes: "Phase 1 validation complete. All hotfixes verified. All acceptance criteria met. Ready for Phase 2 implementation."
     
   phase_2:
     passed: null
@@ -208,12 +213,17 @@ validation_gates:
 errors: []
 warnings:
   - "Pre-existing duplicate keys in en.json and vi.json (not blocking)"
+hotfixes:
+  - date: "2026-01-01T00:20:00+07:00"
+    stories: ["NR-04", "NR-05"]
+    issue: "Text selection and slash commands not working properly"
+    fix: "Used BlockNote getSelectedText() + onSelectionChange API; added loading toasts"
 
 # Metadata
-last_updated: "2025-12-31T23:40:00+07:00"
+last_updated: "2026-01-01T00:45:00+07:00"
 completion_signal: false
 estimated_total_hours: 29
-actual_total_hours: 5  # Phase 0 + Phase 1 completed
+actual_total_hours: 6  # Phase 0 + Phase 1 + hotfix
 
 # Linked documents
 linked_documents:
