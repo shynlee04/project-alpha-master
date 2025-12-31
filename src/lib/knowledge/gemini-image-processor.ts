@@ -153,39 +153,34 @@ export class GeminiImageProcessor {
   /**
    * Call Gemini API with retry logic
    *
-   * TODO USER: Implement this method with:
-   * 1. Fetch with timeout
-   * 2. Retry logic for 429 (rate limit) and 5xx errors
-   * 3. Exponential backoff (wait 1s, 2s, 4s between retries)
-   * 4. Max 3 retries
-   * 5. Proper error parsing
-   * 6. JSON response validation
+   * Implements production-ready Gemini API integration for image processing with:
+   * - Fetch with timeout (30 seconds)
+   * - Retry logic for 429 (rate limit) and 5xx errors
+   * - Exponential backoff (1s, 2s, 4s between retries)
+   * - Max 3 retries
+   * - Proper error parsing and handling
+   * - JSON response validation
    */
   private async callGeminiAPI(
     requestBody: GeminiRequest,
     options: GeminiImageOptions
   ): Promise<GeminiImageResult> {
-    // === USER IMPLEMENTATION REQUIRED ===
-    // The code below is a placeholder. You need to implement:
-
-    // 1. Build the fetch request with proper error handling
-    // 2. Handle rate limiting (429) with retries
-    // 3. Parse JSON response
-    // 4. Validate response structure
-    // 5. Handle network errors
-
-    // Reference implementation structure:
-    /*
     const maxRetries = 3;
+    const timeoutMs = 30000; // 30 seconds
     let attempt = 0;
 
     while (attempt < maxRetries) {
       try {
+        // Report progress
         options.onProgress?.({
           status: 'processing',
           progress: 30 + (attempt * 20),
           stage: `Calling Gemini Vision API (attempt ${attempt + 1}/${maxRetries})`,
         });
+
+        // Create abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         const response = await fetch(
           `${this.config.baseUrl}/models/${this.config.model}:generateContent?key=${this.config.apiKey}`,
@@ -193,49 +188,89 @@ export class GeminiImageProcessor {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
+            signal: controller.signal,
           }
         );
 
+        // Clear timeout on successful response
+        clearTimeout(timeoutId);
+
         if (response.ok) {
           const result: GeminiResponse = await response.json();
+
+          // Validate response structure
+          if (!result.candidates || result.candidates.length === 0) {
+            throw new Error('Empty response from Gemini API');
+          }
+
           const rawText = result.candidates[0].content.parts[0].text;
+
+          if (!rawText) {
+            throw new Error('No text content in Gemini API response');
+          }
 
           // Parse JSON response
           const parsed = JSON.parse(rawText);
 
           // Validate structure (basic validation)
-          if (!parsed.text && !parsed.description) {
+          if (!parsed.extractedText && !parsed.description) {
             console.warn('[GeminiImage] No content extracted from image');
           }
 
           return parsed as GeminiImageResult;
         }
 
+        // Handle rate limiting (429)
         if (response.status === 429) {
-          // Rate limited - wait and retry
+          console.warn(`[GeminiImage] Rate limited, retry ${attempt + 1}/${maxRetries}`);
           const waitTime = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
-          console.warn(`[GeminiImage] Rate limited, waiting ${waitTime}ms...`);
           await new Promise(resolve => setTimeout(resolve, waitTime));
           attempt++;
           continue;
         }
 
-        throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+        // Handle server errors (5xx)
+        if (response.status >= 500 && response.status < 600) {
+          console.warn(`[GeminiImage] Server error ${response.status}, retry ${attempt + 1}/${maxRetries}`);
+          const waitTime = Math.pow(2, attempt) * 1000;
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          attempt++;
+          continue;
+        }
+
+        // Client errors (4xx except 429) - don't retry
+        const errorText = await response.text();
+        throw new Error(`Gemini API error ${response.status}: ${errorText}`);
+
       } catch (error) {
-        if (attempt === maxRetries - 1) throw error;
-        attempt++;
-        // Network error - retry after delay
-        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+        // Handle timeout
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.warn(`[GeminiImage] Request timeout, retry ${attempt + 1}/${maxRetries}`);
+          if (attempt === maxRetries - 1) {
+            throw new Error('Gemini API request timeout after 30 seconds');
+          }
+          attempt++;
+          await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+          continue;
+        }
+
+        // Handle network errors
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          console.warn(`[GeminiImage] Network error, retry ${attempt + 1}/${maxRetries}`);
+          if (attempt === maxRetries - 1) {
+            throw new Error('Network error - please check your connection');
+          }
+          attempt++;
+          await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+          continue;
+        }
+
+        // Re-throw other errors
+        throw error;
       }
     }
 
-    throw new Error('Max retries exceeded');
-    */
-
-    // TEMPORARY: Return mock data for development
-    // Remove this when you implement the actual API call
-    console.warn('[GeminiImageProcessor] Using mock data - implement callGeminiAPI()');
-    return getMockImageResult();
+    throw new Error('Max retries exceeded for Gemini Image API call');
   }
 }
 

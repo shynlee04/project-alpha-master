@@ -66,3 +66,12 @@ export {
     embedTextInWorker,
     embedChunksInWorker,
 } from './embedding-worker-bridge';
+
+// File Sync Service (NR-06)
+export {
+    NoteFileSyncService,
+    createNoteFileSyncService,
+    type NoteFileSyncOptions,
+    type NoteSyncResult,
+    type NoteImportResult,
+} from './note-file-sync';
