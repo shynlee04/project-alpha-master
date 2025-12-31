@@ -75,3 +75,36 @@ export {
     type NoteSyncResult,
     type NoteImportResult,
 } from './note-file-sync';
+
+// NR-07: Note Event Emitter
+export {
+    getNoteEventBus,
+    resetNoteEventBus,
+    emitNoteCreated,
+    emitNoteUpdated,
+    emitNoteDeleted,
+    emitNoteSelected,
+    emitNoteContentChanged,
+    emitNoteTitleChanged,
+    emitNoteMoved,
+    emitNoteFavoriteChanged,
+    emitNoteIndexed,
+    emitNoteIndexingStarted,
+    emitNoteIndexingFailed,
+    emitNotesListed,
+    type NoteEvents,
+    type NoteEventEmitter,
+} from './note-event-emitter';
+
+// NR-08: Markdown Converter
+export {
+    noteToMarkdown,
+    blocksToMarkdown,
+    markdownToBlocks,
+    blocksToPlainText,
+    plainTextToBlock,
+    stripMarkdown,
+    isValidMarkdown,
+    type MarkdownConversionOptions,
+    type MarkdownParseResult,
+} from './markdown-converter';

@@ -1,5 +1,11 @@
+/**
+ * NotesPage.tsx
+ * 
+ * Main notes page with import/export functionality.
+ * Part of NR-06, NR-08: FileSync Binding and Markdown Import/Export UI
+ */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
@@ -9,19 +15,15 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/presentation/components/ui/resizable';
-import { Plus, Notebook, ArrowLeft } from 'lucide-react';
-import { lazy, Suspense } from 'react';
-const NoteEditor = lazy(() => {
-    if (import.meta.env.SSR) {
-        return Promise.resolve({ default: (_props: any) => <></> });
-    }
-    return import('./NoteEditor');
-});
+import { Plus, Notebook, ArrowLeft, FileUp, FileDown } from 'lucide-react';
 import { NoteSidebar } from './NoteSidebar';
+import { NoteEditor } from './NoteEditor';
+import { MarkdownImportDialog } from './MarkdownImportDialog';
+import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
-// AC-02: Agent Selector Unification
 import { AgentSelector } from '@/presentation/components/chat';
+import type { NoteRecord } from '@/lib/state/dexie-db';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -39,6 +41,11 @@ export function NotesPage() {
 
     const activeNote = useActiveNote();
     const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
+    
+    // Import/Export dialog state (NR-06, NR-08)
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+    const [importedNotes, setImportedNotes] = useState<NoteRecord[]>([]);
 
     useEffect(() => {
         if (projectId && currentProjectId !== projectId) {
@@ -85,6 +92,22 @@ export function NotesPage() {
         }
     };
 
+    const handleImportComplete = (notes: NoteRecord[]) => {
+        setImportedNotes(notes);
+        // Refresh notes list
+        if (projectId) {
+            loadNotes(projectId);
+        }
+    };
+
+    const handleExport = () => {
+        setIsExportDialogOpen(true);
+    };
+
+    const handleImport = () => {
+        setIsImportDialogOpen(true);
+    };
+
     // Mobile Layout: Stacked list and editor views
     if (isMobile) {
         return (
@@ -96,6 +119,8 @@ export function NotesPage() {
                             activeNoteId={activeNoteId}
                             onNoteSelect={handleNoteSelect}
                             onCreateNote={handleCreateNote}
+                            onImport={handleImport}
+                            onExport={handleExport}
                             agentSelectorSlot={
                                 <AgentSelector
                                     variant="minimal"
@@ -150,6 +175,20 @@ export function NotesPage() {
                         </>
                     )}
                 </div>
+
+                {/* Import Dialog */}
+                <MarkdownImportDialog
+                    open={isImportDialogOpen}
+                    onOpenChange={setIsImportDialogOpen}
+                    onImportComplete={handleImportComplete}
+                />
+
+                {/* Export Dialog */}
+                <MarkdownExportDialog
+                    open={isExportDialogOpen}
+                    onOpenChange={setIsExportDialogOpen}
+                    notes={notesArray}
+                />
             </MainLayout>
         );
     }
@@ -165,6 +204,8 @@ export function NotesPage() {
                         activeNoteId={activeNoteId}
                         onNoteSelect={handleNoteSelect}
                         onCreateNote={handleCreateNote}
+                        onImport={handleImport}
+                        onExport={handleExport}
                         agentSelectorSlot={
                             <AgentSelector
                                 variant="minimal"
@@ -203,6 +244,20 @@ export function NotesPage() {
                     </div>
                 </ResizablePanel>
             </ResizablePanelGroup>
+
+            {/* Import Dialog */}
+            <MarkdownImportDialog
+                open={isImportDialogOpen}
+                onOpenChange={setIsImportDialogOpen}
+                onImportComplete={handleImportComplete}
+            />
+
+            {/* Export Dialog */}
+            <MarkdownExportDialog
+                open={isExportDialogOpen}
+                onOpenChange={setIsExportDialogOpen}
+                notes={notesArray}
+            />
         </MainLayout>
     );
 }

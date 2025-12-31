@@ -19,3 +19,7 @@ export { NoteStudyMenu } from './NoteStudyMenu';
 // NR-08: Markdown Import/Export UI
 export { MarkdownImportDialog } from './MarkdownImportDialog';
 export { MarkdownExportDialog } from './MarkdownExportDialog';
+
+// NR-07/NR-08: Context Menu and Event System
+export { NoteContextMenu, NoteListItem } from './NoteContextMenu';
+

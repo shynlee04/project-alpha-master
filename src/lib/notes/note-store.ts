@@ -19,6 +19,17 @@ import type { NoteSaveStatus, CreateNoteParams, UpdateNoteParams } from './types
 import { generateNoteId, extractTitleFromBlocks, DEFAULT_NOTE_BLOCKS } from './types';
 import type { Block } from '@blocknote/core';
 import { indexNote, removeNoteFromIndex } from './note-indexer';
+import {
+    emitNoteCreated,
+    emitNoteUpdated,
+    emitNoteDeleted,
+    emitNoteSelected,
+    emitNoteContentChanged,
+    emitNoteTitleChanged,
+    emitNoteMoved,
+    emitNoteFavoriteChanged,
+    emitNotesListed
+} from './note-event-emitter';
 
 // ============================================================================
 // Store State Interface
@@ -183,6 +194,9 @@ export const useNoteStore = create<NoteStoreState>()(
 
                     console.log(`[NoteStore] Created note ${noteId}`);
 
+                    // Emit event for cross-workspace note access (NR-07)
+                    emitNoteCreated(newNote);
+
                     // Trigger indexing (fire and forget)
                     indexNote(newNote as any, currentProjectId)
                         .then(async () => {
@@ -263,6 +277,13 @@ export const useNoteStore = create<NoteStoreState>()(
                             saveStatus: 'saved',
                         };
                     });
+
+                    // Emit events for cross-workspace note access (NR-07)
+                    emitNoteUpdated(updatedNote);
+                    if (contentChanged) {
+                        emitNoteContentChanged(updatedNote);
+                        emitNoteTitleChanged(updatedNote);
+                    }
 
                     // Reset save status after 2 seconds
                     setTimeout(() => {
@@ -351,6 +372,9 @@ export const useNoteStore = create<NoteStoreState>()(
 
                     console.log(`[NoteStore] Deleted note ${noteId} and children`);
 
+                    // Emit event for cross-workspace note access (NR-07)
+                    emitNoteDeleted(noteId, deletedNote.projectId);
+
                     // Remove from index
                     if (projectId) {
                         removeNoteFromIndex(noteId, projectId)
@@ -363,7 +387,12 @@ export const useNoteStore = create<NoteStoreState>()(
             },
 
             setActiveNote: (noteId: string | null) => {
+                const note = noteId ? get().notes.get(noteId) : null;
                 set({ activeNoteId: noteId });
+                // Emit event for cross-workspace note access (NR-07)
+                if (note) {
+                    emitNoteSelected(note);
+                }
             },
 
             toggleFavorite: async (noteId: string) => {
@@ -388,6 +417,9 @@ export const useNoteStore = create<NoteStoreState>()(
                             notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
                         };
                     });
+
+                    // Emit event for cross-workspace note access (NR-07)
+                    emitNoteFavoriteChanged({ ...note, isFavorite: newIsFavorite });
                 } catch (error) {
                     set({ error: (error as Error).message });
                 }
@@ -418,6 +450,9 @@ export const useNoteStore = create<NoteStoreState>()(
                             notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
                         };
                     });
+
+                    // Emit event for cross-workspace note access (NR-07)
+                    emitNoteMoved({ ...note, parentId: newParentId ?? undefined, order: newOrder });
                 } catch (error) {
                     set({ error: (error as Error).message });
                 }

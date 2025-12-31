@@ -49,6 +49,21 @@ export { SyncError, DEFAULT_SYNC_CONFIG, BINARY_EXTENSIONS } from './sync-types'
 export { isExcluded, isBinaryFile, readFileContent } from './sync-utils';
 export type { WalkDirectoryEntry } from './directory-walker';
 export { walkDirectory, walkDirectorySegments } from './directory-walker';
+
+// File snapshot store (Story WB-2)
+export { FileSnapshotStore, fileSnapshotStore } from './file-snapshot-store';
+export type { CacheLookupResult, SnapshotSaveResult } from './file-snapshot-store';
+
+// Hash utilities (Story WB-3)
+export { computeSHA256, computeSHA256FromBuffer } from './hash-utils';
+
+// Project context provider (Story WB-3)
+export { ProjectContextProvider } from './project-context-provider';
+export type {
+    CachedFileReadResult,
+    CachedFileReadBinaryResult,
+} from './project-context-provider';
+
 export {
     DEFAULT_EXCLUSION_PATTERNS,
     EXTENDED_DEFAULT_PATTERNS,
