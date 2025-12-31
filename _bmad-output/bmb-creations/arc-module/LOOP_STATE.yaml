@@ -1,0 +1,223 @@
+# ARC Module Loop State
+# This file tracks progress through the Ralph Loop iterations
+# Updated automatically by the loop agent
+
+---
+# Loop Metadata
+loop_id: "arc-loop-2025-12-31"
+started_at: "2025-12-31T16:44:51+07:00"
+last_updated: "2025-12-31T16:44:51+07:00"
+iteration_count: 0
+max_iterations: 100
+status: "ACTIVE"
+
+# Current Execution State
+current_phase: 0
+current_task: "phase-0-ac-03-chatpanel"
+current_task_retries: 0
+max_retries_per_task: 3
+
+# Phase 0: Immediate Fixes
+phase_0:
+  name: "Immediate Fixes"
+  status: "IN_PROGRESS"
+  started_at: "2025-12-31T16:00:00+07:00"
+  tasks:
+    - id: "phase-0-hybrid-retriever-fix"
+      name: "Fix hybrid-retriever.ts build error"
+      status: "DONE"
+      completed_at: "2025-12-31T16:00:00+07:00"
+      notes: "Import path corrected from ./embedding-generator to ./embedding-service"
+      
+    - id: "phase-0-ac-03-chatpanel"
+      name: "ChatPanel cross-workspace unification"
+      status: "IN_PROGRESS"
+      agent: "integration-engineer"
+      workflow: null
+      started_at: null
+      acceptance_criteria:
+        - "Same ChatPanel component across IDE, Knowledge, Study, Notes"
+        - "Agent selection persists across navigation"
+        - "Streaming works in all workspaces"
+
+# Phase 1: Foundation Consolidation
+phase_1:
+  name: "Foundation Consolidation"
+  status: "PLANNED"
+  validation_gate: "sweeping-validation L1-L2"
+  tasks:
+    - id: "fc-01-split-provider-store"
+      name: "Split provider-models-store.ts"
+      status: "TODO"
+      agent: "provider-architect"
+      workflow: "split-store"
+      target_files:
+        - "src/stores/provider-models-store.ts"
+      output_files:
+        - "src/stores/provider-store.ts"
+        - "src/stores/models-store.ts"
+      acceptance_criteria:
+        - "Each new store <300 LOC"
+        - "All imports updated"
+        - "Build passes"
+        
+    - id: "fc-02-event-bus"
+      name: "Create/wire event bus module"
+      status: "TODO"
+      agent: "provider-architect"
+      workflow: "wire-events"
+      target_files:
+        - "src/lib/events/store-events.ts"
+      acceptance_criteria:
+        - "STORE_EVENTS constant with all event types"
+        - "emitStoreEvent() function exported"
+        - "subscribeStoreEvent() function exported"
+        
+    - id: "fc-03-provider-reactivity"
+      name: "Wire provider-to-agent reactivity"
+      status: "TODO"
+      agent: "provider-architect"
+      workflow: "wire-events"
+      acceptance_criteria:
+        - "setApiKey emits provider:key-set event"
+        - "models-store subscribes and auto-fetches"
+        - "UI updates reactively"
+        
+    - id: "fc-04-credential-vault"
+      name: "Credential vault implementation"
+      status: "TODO"
+      agent: "provider-architect"
+      target_files:
+        - "src/lib/security/credential-vault.ts"
+      acceptance_criteria:
+        - "AES-256-GCM encryption implemented"
+        - "Keys stored encrypted in IndexedDB"
+        - "Decrypt on demand for API calls"
+        
+    - id: "fc-05-file-size-top10"
+      name: "Fix 10 highest-priority file size violations"
+      status: "TODO"
+      agent: "validation-runner"
+      workflow: "split-store"
+      acceptance_criteria:
+        - "10 files reduced to <300 LOC"
+        - "Build passes"
+        - "No functionality lost"
+
+# Phase 2: Cross-Workspace Integration
+phase_2:
+  name: "Cross-Workspace Integration"
+  status: "PLANNED"
+  validation_gate: "sweeping-validation L3-L6"
+  tasks:
+    - id: "cw-01-file-sync-service"
+      name: "Abstract file sync service"
+      status: "TODO"
+      agent: "integration-engineer"
+      acceptance_criteria:
+        - "AbstractFileSyncService interface"
+        - "IDEFileSyncService implementation"
+        - "KnowledgeFileSyncService implementation"
+        
+    - id: "cw-02-project-knowledge-sync"
+      name: "Project → Knowledge sync"
+      status: "TODO"
+      agent: "integration-engineer"
+      acceptance_criteria:
+        - "Documents from IDE projects sync to Knowledge"
+        - "RAG pipeline ingests synced documents"
+        
+    - id: "cw-03-unified-chatpanel"
+      name: "Unified ChatPanel"
+      status: "TODO"
+      agent: "integration-engineer"
+      acceptance_criteria:
+        - "Single ChatPanel component with variants"
+        - "Works in all 4 workspaces"
+        - "Tool approval consistent"
+        
+    - id: "cw-04-file-size-remaining"
+      name: "Fix remaining file size violations"
+      status: "TODO"
+      agent: "validation-runner"
+      workflow: "split-store"
+      acceptance_criteria:
+        - "All files <300 LOC"
+        - "L2 validation passes"
+
+# Phase 3: EPIC-32 RAG Infrastructure
+phase_3:
+  name: "EPIC-32 RAG Infrastructure"
+  status: "PLANNED"
+  reference: "_bmad-output/handoffs/pm-epic-32-sprint-planning-2025-12-31.md"
+  tasks:
+    - id: "rag-32-1-orama"
+      name: "Orama WASM Integration"
+      status: "TODO"
+      
+    - id: "rag-32-2-chunking"
+      name: "Document Chunking Pipeline"
+      status: "TODO"
+      
+    - id: "rag-32-3-embeddings"
+      name: "Embedding Generation Service"
+      status: "TODO"
+      
+    - id: "rag-32-4-hybrid-search"
+      name: "Hybrid Search Implementation"
+      status: "TODO"
+      
+    - id: "rag-32-5-citations"
+      name: "Citation & Source Tracking"
+      status: "TODO"
+
+# Phase 4: Code Hygiene Sprint
+phase_4:
+  name: "Code Hygiene Sprint"
+  status: "PLANNED"
+  validation_gate: "sweeping-validation L1-L12 + 3-Device Rule"
+  tasks:
+    - id: "hygiene-split-remaining"
+      name: "Split remaining god classes"
+      status: "TODO"
+      workflow: "split-store"
+      
+    - id: "hygiene-dead-code"
+      name: "Remove dead code"
+      status: "TODO"
+      
+    - id: "hygiene-full-validation"
+      name: "Run full Sweeping Validation L1-L12"
+      status: "TODO"
+      workflow: "validate-level"
+      
+    - id: "hygiene-3device"
+      name: "3-Device Rule Test"
+      status: "TODO"
+
+# Validation Status
+validation:
+  last_run: null
+  levels_passed: []
+  levels_failed: ["L1", "L2", "L11"]
+  typescript_errors: 1172
+  files_over_300_loc: 37
+  health_score: "5.9%"
+
+# Build Status
+build:
+  last_run: "2025-12-31T16:00:00+07:00"
+  status: "PASS"
+  duration_seconds: 27
+
+# Iteration History (last 10)
+iteration_history: []
+
+# Error Log
+errors: []
+
+# Completion Status
+completion:
+  all_phases_done: false
+  validation_passed: false
+  promise_output: null

@@ -85,7 +85,7 @@ function CitationCard({
         </span>
       </div>
       <p className="text-sm text-[var(--color-text-secondary)] line-clamp-3">
-        {truncateText(citation.excerpt, 150)}
+        {truncateText(citation.passage, 150)}
       </p>
     </button>
   );
@@ -213,7 +213,7 @@ export function CitationSidebar({
       result = result.filter(
         (c) =>
           c.title.toLowerCase().includes(query) ||
-          c.excerpt.toLowerCase().includes(query),
+          c.passage.toLowerCase().includes(query),
       );
     }
 

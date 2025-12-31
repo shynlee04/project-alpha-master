@@ -60,8 +60,8 @@ export interface DisplayCitation {
   /** Relevance score (0-1) */
   score: number;
   
-  /** Excerpt from source */
-  excerpt: string;
+  /** Passage from source */
+  passage: string;
   
   /** Formatted inline citation string */
   inlineCitation: string;
