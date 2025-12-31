@@ -11,7 +11,8 @@ import {
     ResizablePanelGroup,
     ResizablePanel,
 } from '@/components/ui/resizable';
-import { IDEEditorPreviewGroup } from './IDEEditorPreviewGroup';
+import { IDEEditorPanel } from './IDEEditorPanel';
+import { IDEPreviewPanel } from './IDEPreviewPanel';
 import { IDETerminalPanel } from './IDETerminalPanel';
 import { IDEChatPanel } from './IDEChatPanel';
 import type { IDEResizableLayoutProps } from './types';
@@ -53,21 +54,22 @@ export function IDEResizableLayout({
             <ResizablePanel id="ide-center-wrapper" order={2} defaultSize={75} minSize={30}>
                 <ResizablePanelGroup ref={centerPanelGroupRef} direction="vertical" onLayout={(layout) => handlePanelLayoutChange('center', layout)}>
                     {/* Editor + Preview */}
-                    <IDEEditorPreviewGroup
-                        openFiles={openFiles}
-                        activeFilePath={activeFilePath}
-                        onSave={onSave}
-                        onActiveFileChange={onActiveFileChange}
-                        onTabClose={onTabClose}
-                        onContentChange={onContentChange}
-                        restoredIdeState={restoredIdeState}
-                        activeFileScrollTopRef={activeFileScrollTopRef}
-                        scheduleIdeStatePersistence={scheduleIdeStatePersistence}
-                        handlePanelLayoutChange={handlePanelLayoutChange}
-                        previewUrl={previewUrl}
-                        previewPort={previewPort}
-                        editorPanelGroupRef={editorPanelGroupRef}
-                    />
+                    <ResizablePanel id="ide-editor-preview-wrapper" defaultSize={70} minSize={30}>
+                        <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>
+                            <IDEEditorPanel
+                                openFiles={openFiles}
+                                activeFilePath={activeFilePath}
+                                onSave={onSave}
+                                onActiveFileChange={onActiveFileChange}
+                                onTabClose={onTabClose}
+                                onContentChange={onContentChange}
+                                restoredIdeState={restoredIdeState}
+                                activeFileScrollTopRef={activeFileScrollTopRef}
+                                scheduleIdeStatePersistence={scheduleIdeStatePersistence}
+                            />
+                            <IDEPreviewPanel previewUrl={previewUrl} previewPort={previewPort} />
+                        </ResizablePanelGroup>
+                    </ResizablePanel>
                     <IDETerminalPanel
                         terminalTab={terminalTab}
                         onTabChange={setTerminalTab}

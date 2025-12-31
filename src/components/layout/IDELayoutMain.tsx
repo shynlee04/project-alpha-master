@@ -34,13 +34,11 @@ import {
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
 
-// Import sub-components
-import {
-    IDEDiscoveryMechanisms,
-    IDESidebarPanels,
-    IDEResizableLayout,
-    useIDELayoutState
-} from './IDELayout';
+// Import sub-components directly to avoid circular dependency
+import { IDEDiscoveryMechanisms } from './IDELayout/IDEDiscoveryMechanisms';
+import { IDESidebarPanels } from './IDELayout/IDESidebarPanels';
+import { IDEResizableLayout } from './IDELayout/IDEResizableLayout';
+import { useIDELayoutState } from './IDELayout/useIDELayoutState';
 
 /**
  * IDELayout - Main IDE layout orchestrator.

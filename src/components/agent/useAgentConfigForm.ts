@@ -9,7 +9,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { Agent } from '@/mocks/agents'
+import type { Agent } from '@/core/entities/Agent'
 import { useAgentsStore } from '@/stores/agents-store'
 import { toast } from 'sonner'
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
@@ -45,12 +45,12 @@ interface UseAgentConfigFormReturn {
     // Form state
     name: string
     setName: (name: string) => void
-    role: string
-    setRole: (role: string) => void
+    description: string
+    setDescription: (description: string) => void
     providerId: string
     setProviderId: (id: string) => void
-    model: string
-    setModel: (model: string) => void
+    modelId: string
+    setModelId: (modelId: string) => void
     apiKey: string
     setApiKey: (key: string) => void
     customBaseURL: string
@@ -103,9 +103,9 @@ export function useAgentConfigForm({
 
     // Form state
     const [name, setName] = useState('')
-    const [role, setRole] = useState('')
+    const [description, setDescription] = useState('')
     const [providerId, setProviderId] = useState<string>('openrouter')
-    const [model, setModel] = useState('')
+    const [modelId, setModelId] = useState('')
     const [apiKey, setApiKey] = useState('')
 
     // Advanced settings state
@@ -140,30 +140,25 @@ export function useAgentConfigForm({
         }
 
         if (agent) {
-            // Edit mode: store agent ref for model restoration
+            // Edit mode: store agent ref for modelId restoration
             editingAgentRef.current = agent
             console.log('[useAgentConfigForm] Edit mode - populating from agent:', {
                 name: agent.name,
-                role: agent.role,
-                provider: agent.providerId,
-                model: agent.model
+                description: agent.description,
+                providerId: agent.providerId,
+                modelId: agent.modelId
             })
 
             // Populate form from agent data
             setName(agent.name)
-            setRole(agent.role || agent.description || '')
+            setDescription(agent.description || '')
             const mappedProviderId = mapProviderNameToId(agent.providerId)
             setProviderId(mappedProviderId)
-            setModel(agent.modelId || '')
+            setModelId(agent.modelId || '')
 
-            // Custom provider fields
-            if (agent.customBaseURL) setCustomBaseURL(agent.customBaseURL)
-            if (agent.customHeaders) {
-                setCustomHeaders(
-                    Object.entries(agent.customHeaders).map(([key, value]) => ({ key, value }))
-                )
-            }
-            if (agent.enableNativeTools !== undefined) setEnableNativeTools(agent.enableNativeTools)
+            // Custom provider fields (NOTE: These are NOT part of Agent entity per Sprint Change Proposal v2.0)
+            // They're kept here for OpenAI-compatible providers which may need them
+            // These will be stored separately, not on the Agent entity itself
 
             // LLM Parameters
             if (agent.temperature !== undefined) setTemperature(agent.temperature)
@@ -185,9 +180,9 @@ export function useAgentConfigForm({
      */
     const resetForm = useCallback(() => {
         setName('')
-        setRole('')
+        setDescription('')
         setProviderId('openrouter')
-        setModel('')
+        setModelId('')
         setApiKey('')
         setCustomBaseURL('')
         setCustomHeaders([])
@@ -209,9 +204,9 @@ export function useAgentConfigForm({
     const validateForm = useCallback((): boolean => {
         const formData: AgentFormData = {
             name,
-            role,
+            description,
             providerId,
-            model,
+            modelId,
             apiKey,
             customBaseURL,
             customModelId,
@@ -233,10 +228,10 @@ export function useAgentConfigForm({
             return false
         }
 
-        // Additional model validation
-        const modelError = validateModelSelection(providerId, model)
+        // Additional modelId validation
+        const modelError = validateModelSelection(providerId, modelId)
         if (modelError) {
-            setErrors(prev => ({ ...prev, model: t(modelError) }))
+            setErrors(prev => ({ ...prev, modelId: t(modelError) }))
             return false
         }
 
@@ -249,7 +244,7 @@ export function useAgentConfigForm({
 
         setErrors({})
         return true
-    }, [name, role, providerId, model, apiKey, customBaseURL, customModelId, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, t])
+    }, [name, description, providerId, modelId, apiKey, customBaseURL, customModelId, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, t])
 
     /**
      * Handle cancel button click
@@ -263,17 +258,17 @@ export function useAgentConfigForm({
      */
     const handleProviderChange = useCallback((value: string) => {
         setProviderId(value)
-        setModel('')
-        setErrors(prev => ({ ...prev, provider: undefined, model: undefined }))
+        setModelId('')
+        setErrors(prev => ({ ...prev, provider: undefined, modelId: undefined }))
     }, [])
 
     /**
-     * Handle model change
+     * Handle modelId change
      */
     const handleModelChange = useCallback((value: string) => {
-        setModel(value)
-        if (errors.model) setErrors(prev => ({ ...prev, model: undefined }))
-    }, [errors.model])
+        setModelId(value)
+        if (errors.modelId) setErrors(prev => ({ ...prev, modelId: undefined }))
+    }, [errors.modelId])
 
     /**
      * Handle form submission
@@ -284,7 +279,7 @@ export function useAgentConfigForm({
         setIsSubmitting(true)
 
         try {
-            // Convert custom headers array to object
+            // Convert custom headers array to object (for OpenAI-compatible providers)
             const headersObj = customHeaders.reduce((acc, h) => {
                 if (h.key.trim() && h.value.trim()) {
                     acc[h.key.trim()] = h.value.trim()
@@ -292,23 +287,28 @@ export function useAgentConfigForm({
                 return acc
             }, {} as Record<string, string>)
 
+            // Prepare agent data following Sprint Change Proposal v2.0 Agent entity
             const agentData = {
                 name: name.trim(),
-                role: role.trim() || 'Assistant',
-                status: 'offline' as const,
-                provider: providerId, // Will be converted to display name by parent
-                model: providerId === 'openai-compatible' ? customModelId : model,
-                description: role.trim() || undefined,
-                // OpenAI Compatible Provider support
-                customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
-                customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
-                enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
-                // LLM Parameters
+                description: description.trim() || 'AI Assistant',
+                providerId: providerId,
+                modelId: providerId === 'openai-compatible' ? customModelId : modelId,
+                // LLM Parameters (required per Sprint Change Proposal v2.0)
                 temperature,
                 maxTokens,
                 topP,
                 topK: topK !== undefined ? topK : undefined,
-                systemPrompt: systemPrompt.trim() || undefined,
+                systemPrompt: systemPrompt.trim() || 'You are a helpful AI assistant.',
+                // Tools and workspace bindings (defaults)
+                tools: [],
+                workspaceBindings: [
+                    { workspaceType: 'ide' as const, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
+                    { workspaceType: 'knowledge' as const, isAvailable: true, uiVariant: 'compact' as const, isDefault: false },
+                    { workspaceType: 'study' as const, isAvailable: true, uiVariant: 'compact' as const, isDefault: false },
+                    { workspaceType: 'notes' as const, isAvailable: true, uiVariant: 'minimal' as const, isDefault: false },
+                ],
+                // Status (auto-generated fields)
+                status: 'offline' as const,
             }
 
             safeDebug('[useAgentConfigForm] Saving agent:', sanitizeForLogging(agentData))
@@ -317,12 +317,12 @@ export function useAgentConfigForm({
 
             if (agent) {
                 // Update existing
-                updateAgent(agent.id, agentData as Partial<Agent>)
+                updateAgent(agent.id, agentData)
                 savedAgent = { ...agent, ...agentData }
                 toast.success(t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: agentData.name }))
             } else {
                 // Add new
-                savedAgent = addAgent(agentData as Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>)
+                savedAgent = addAgent(agentData)
                 toast.success(t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: agentData.name }))
             }
 
@@ -345,14 +345,14 @@ export function useAgentConfigForm({
         } finally {
             setIsSubmitting(false)
         }
-    }, [name, role, providerId, model, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, agent, t, resetForm, customModelId])
+    }, [name, description, providerId, modelId, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, agent, t, resetForm, customModelId])
 
     return {
         // Form state
         name, setName,
-        role, setRole,
+        description, setDescription,
         providerId, setProviderId,
-        model, setModel,
+        modelId, setModelId,
         apiKey, setApiKey,
         customBaseURL, setCustomBaseURL,
         customModelId, setCustomModelId,

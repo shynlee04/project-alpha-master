@@ -16,7 +16,6 @@ export { IDETerminalPanel } from './IDETerminalPanel';
 export { IDEChatPanel } from './IDEChatPanel';
 export { IDESidebarPanels } from './IDESidebarPanels';
 export { IDEResizableLayout } from './IDEResizableLayout';
-export { IDEEditorPreviewGroup } from './IDEEditorPreviewGroup';
 export { useIDELayoutState } from './useIDELayoutState';
 export { useIDELayoutFileState } from './useIDELayoutFileState';
 export { useIDELayoutWorkspaceState } from './useIDELayoutWorkspaceState';

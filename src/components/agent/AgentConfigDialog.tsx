@@ -44,7 +44,7 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import type { Agent } from '@/mocks/agents'
+import type { Agent } from '@/core/entities/Agent'
 
 // Security utilities for safe logging (RC-028-010)
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
@@ -98,9 +98,9 @@ import { z } from 'zod'
 
 const agentFormSchema = z.object({
     name: z.string().min(1, 'agents.config.validation.nameRequired'),
-    role: z.string().optional(),
+    description: z.string().optional(),
     providerId: z.string().min(1, 'agents.config.validation.providerRequired'),
-    model: z.string().optional(),
+    modelId: z.string().optional(),
     apiKey: z.string().optional(),
     // CC-2025-12-29: Allow empty string OR valid URL, not just valid URL
     customBaseURL: z.string().optional().refine(
@@ -124,8 +124,9 @@ const agentFormSchema = z.object({
  */
 type FormErrors = {
     name?: string
+    description?: string
     provider?: string
-    model?: string
+    modelId?: string
     apiKey?: string
     customBaseURL?: string
 }
@@ -158,9 +159,9 @@ export function AgentConfigDialog({
     // Form state
     const [activeTab, setActiveTab] = useState<ConfigTab>('basic')
     const [name, setName] = useState('')
-    const [role, setRole] = useState('')
+    const [description, setDescription] = useState('')
     const [providerId, setProviderId] = useState<string>('openrouter')
-    const [model, setModel] = useState('')
+    const [modelId, setModelId] = useState('')
     const [apiKey, setApiKey] = useState('')
 
     // Advanced settings state
@@ -242,9 +243,9 @@ export function AgentConfigDialog({
                 console.log('[AgentConfigDialog] Models fetched via store, count:', models.length)
 
                 // Restore model from agent being edited after models load
-                if (editingAgentRef.current && editingAgentRef.current.model) {
-                    console.log('[AgentConfigDialog] Restoring model from edit:', editingAgentRef.current.model)
-                    setModel(editingAgentRef.current.model)
+                if (editingAgentRef.current && editingAgentRef.current.modelId) {
+                    console.log('[AgentConfigDialog] Restoring modelId from edit:', editingAgentRef.current.modelId)
+                    setModelId(editingAgentRef.current.modelId)
                 }
             } catch (error) {
                 console.error('[AgentConfigDialog] Error loading provider data:', error)
@@ -271,30 +272,25 @@ export function AgentConfigDialog({
         }
 
         if (agent) {
-            // Edit mode: store agent ref for model restoration
+            // Edit mode: store agent ref for modelId restoration
             editingAgentRef.current = agent
             console.log('[AgentConfigDialog] Edit mode - populating from agent:', {
                 name: agent.name,
-                role: agent.role,
-                provider: agent.providerId,
-                model: agent.model
+                description: agent.description,
+                providerId: agent.providerId,
+                modelId: agent.modelId
             })
 
             // Populate form from agent data
             setName(agent.name)
-            setRole(agent.role || agent.description || '')
+            setDescription(agent.description || '')
             const mappedProviderId = mapProviderNameToId(agent.providerId)
             setProviderId(mappedProviderId)
-            setModel(agent.modelId || '')
+            setModelId(agent.modelId || '')
 
-            // Custom provider fields
-            if (agent.customBaseURL) setCustomBaseURL(agent.customBaseURL)
-            if (agent.customHeaders) {
-                setCustomHeaders(
-                    Object.entries(agent.customHeaders).map(([key, value]) => ({ key, value }))
-                )
-            }
-            if (agent.enableNativeTools !== undefined) setEnableNativeTools(agent.enableNativeTools)
+            // Custom provider fields (NOTE: These are NOT part of Agent entity per Sprint Change Proposal v2.0)
+            // They're kept here for OpenAI-compatible providers which may need them
+            // These will be stored separately, not on the Agent entity itself
 
             // CC-2025-12-29: LLM Parameters
             if (agent.temperature !== undefined) setTemperature(agent.temperature)
@@ -308,9 +304,9 @@ export function AgentConfigDialog({
             // Create mode: reset to defaults
             editingAgentRef.current = undefined
             setName('')
-            setRole('')
+            setDescription('')
             setProviderId('openrouter')
-            setModel('')
+            setModelId('')
             setApiKey('')
             setCustomBaseURL('')
             setCustomHeaders([])
@@ -332,9 +328,9 @@ export function AgentConfigDialog({
     const validateForm = useCallback((): boolean => {
         const formData = {
             name,
-            role,
+            description,
             providerId,
-            model,
+            modelId,
             apiKey,
             customBaseURL,
             customModelId,
@@ -355,9 +351,9 @@ export function AgentConfigDialog({
             return false
         }
 
-        // Additional manual check for model strictly if not custom
-        if (providerId !== 'openai-compatible' && !model.trim()) {
-            setErrors(prev => ({ ...prev, model: t('agents.config.validation.modelRequired') }))
+        // Additional manual check for modelId strictly if not custom
+        if (providerId !== 'openai-compatible' && !modelId.trim()) {
+            setErrors(prev => ({ ...prev, modelId: t('agents.config.validation.modelRequired') }))
             return false
         }
 
@@ -368,14 +364,14 @@ export function AgentConfigDialog({
                 return false
             }
             if (!customModelId.trim()) {
-                // If user didn't select or type a model ID, maybe warn? Schema says optional but logic might need it.
-                // For now, if customModelId is empty, we fall back to 'model' state which tracks it.
+                // If user didn't select or type a modelId ID, maybe warn? Schema says optional but logic might need it.
+                // For now, if customModelId is empty, we fall back to 'modelId' state which tracks it.
             }
         }
 
         setErrors({})
         return true
-    }, [name, role, providerId, model, apiKey, customBaseURL, customModelId, customHeaders, enableNativeTools, t])
+    }, [name, description, providerId, modelId, apiKey, customBaseURL, customModelId, customHeaders, enableNativeTools, t])
 
     // Handle API key save
     const handleSaveApiKey = useCallback(async () => {
@@ -445,23 +441,23 @@ export function AgentConfigDialog({
     // Handle provider change
     const handleProviderChange = useCallback((value: string) => {
         setProviderId(value)
-        setModel('')
-        setErrors(prev => ({ ...prev, provider: undefined, model: undefined }))
+        setModelId('')
+        setErrors(prev => ({ ...prev, provider: undefined, modelId: undefined }))
         setConnectionStatus('idle')
     }, [])
 
-    // Handle model change
+    // Handle modelId change
     const handleModelChange = useCallback((value: string) => {
-        setModel(value)
-        if (errors.model) setErrors(prev => ({ ...prev, model: undefined }))
-    }, [errors.model])
+        setModelId(value)
+        if (errors.modelId) setErrors(prev => ({ ...prev, modelId: undefined }))
+    }, [errors.modelId])
 
     // Handle cancel
     const handleCancel = useCallback(() => {
         setName('')
-        setRole('')
+        setDescription('')
         setProviderId('openrouter')
-        setModel('')
+        setModelId('')
         setApiKey('')
         setCustomBaseURL('')
         setCustomHeaders([])
@@ -485,7 +481,7 @@ export function AgentConfigDialog({
                 await credentialVault.storeCredentials(providerId, apiKey.trim())
             }
 
-            // Convert custom headers array to object
+            // Convert custom headers array to object (for OpenAI-compatible providers)
             const headersObj = customHeaders.reduce((acc, h) => {
                 if (h.key.trim() && h.value.trim()) {
                     acc[h.key.trim()] = h.value.trim()
@@ -493,23 +489,30 @@ export function AgentConfigDialog({
                 return acc
             }, {} as Record<string, string>)
 
+            // Prepare agent data following Sprint Change Proposal v2.0 Agent entity
+            // NOTE: customBaseURL, customHeaders, enableNativeTools are NOT part of Agent entity
+            // They are provider-level configuration, NOT agent-level
             const agentData = {
                 name: name.trim(),
-                role: role.trim() || 'Assistant',
-                status: 'offline' as const,
-                provider: (providerConfig?.name || 'OpenRouter') as Agent['provider'],
-                model: providerId === 'openai-compatible' ? customModelId : model,
-                description: role.trim() || undefined,
-                // OpenAI Compatible Provider support
-                customBaseURL: providerId === 'openai-compatible' ? customBaseURL.trim() : undefined,
-                customHeaders: providerId === 'openai-compatible' && Object.keys(headersObj).length > 0 ? headersObj : undefined,
-                enableNativeTools: providerId === 'openai-compatible' ? enableNativeTools : undefined,
-                // CC-2025-12-29: LLM Parameters
+                description: description.trim(),
+                providerId: providerId,
+                modelId: providerId === 'openai-compatible' ? customModelId : modelId,
+                // LLM Parameters (required per Sprint Change Proposal v2.0)
                 temperature,
                 maxTokens,
                 topP,
                 topK: topK !== undefined ? topK : undefined,
-                systemPrompt: systemPrompt.trim() || undefined,
+                systemPrompt: systemPrompt.trim() || 'You are a helpful AI assistant.',
+                // Tools and workspace bindings (defaults)
+                tools: [],
+                workspaceBindings: [
+                    { workspaceType: 'ide' as const, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
+                    { workspaceType: 'knowledge' as const, isAvailable: true, uiVariant: 'compact' as const, isDefault: false },
+                    { workspaceType: 'study' as const, isAvailable: true, uiVariant: 'compact' as const, isDefault: false },
+                    { workspaceType: 'notes' as const, isAvailable: true, uiVariant: 'minimal' as const, isDefault: false },
+                ],
+                // Status (auto-generated fields)
+                status: 'offline' as const,
             }
 
             safeDebug('[AgentConfigDialog] Saving agent:', sanitizeForLogging(agentData))
@@ -545,7 +548,7 @@ export function AgentConfigDialog({
             setIsSubmitting(false)
         }
 
-    }, [name, role, providerConfig?.name, providerId, model, customBaseURL, customHeaders, enableNativeTools, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, handleCancel, customModelId])
+    }, [name, description, providerId, modelId, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, handleCancel, customModelId])
 
 
 
@@ -661,16 +664,16 @@ export function AgentConfigDialog({
                                 )}
                             </div>
 
-                            {/* Role/Description */}
+                            {/* Description */}
                             <div className="grid gap-2">
-                                <Label htmlFor="agent-role">
-                                    {t('agents.config.role', 'Role')}
+                                <Label htmlFor="agent-description">
+                                    {t('agents.config.description', 'Description')}
                                 </Label>
                                 <Input
-                                    id="agent-role"
-                                    value={role}
-                                    onChange={(e) => setRole(e.target.value)}
-                                    placeholder={t('agents.config.rolePlaceholder', 'e.g., Frontend Developer')}
+                                    id="agent-description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder={t('agents.config.descriptionPlaceholder', 'e.g., Frontend Developer')}
                                     className="rounded-none"
                                 />
                             </div>
@@ -736,7 +739,7 @@ export function AgentConfigDialog({
                                     </Button>
                                 </div>
                                 <Select
-                                    value={model}
+                                    value={modelId}
                                     onValueChange={handleModelChange}
                                     disabled={!providerId || isLoadingModels}
                                 >
@@ -766,8 +769,8 @@ export function AgentConfigDialog({
                                         )}
                                     </SelectContent>
                                 </Select>
-                                {errors.model && (
-                                    <p className="text-xs text-destructive">{errors.model}</p>
+                                {errors.modelId && (
+                                    <p className="text-xs text-destructive">{errors.modelId}</p>
                                 )}
                                 {!providerId && (
                                     <p className="text-xs text-muted-foreground">
@@ -925,7 +928,7 @@ export function AgentConfigDialog({
                                                 value={customModelId}
                                                 onChange={(e) => {
                                                     setCustomModelId(e.target.value)
-                                                    setModel(e.target.value)
+                                                    setModelId(e.target.value)
                                                 }}
                                                 placeholder={t('agents.config.openaiCompatible.modelIdPlaceholder', 'e.g., llama-3.1-8b or gpt-4o')}
                                                 className="rounded-none flex-1"

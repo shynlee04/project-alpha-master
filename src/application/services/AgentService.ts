@@ -47,26 +47,13 @@ export class AgentService {
         }
 
         // Provider validation
-        if (!params.provider) {
-            throw new AgentValidationError('provider', 'Provider is required');
+        if (!params.providerId?.trim()) {
+            throw new AgentValidationError('providerId', 'Provider is required');
         }
 
         // Model validation
-        if (!params.model?.trim()) {
-            throw new AgentValidationError('model', 'Model is required');
-        }
-
-        // Custom provider validation
-        if (params.provider === 'OpenAI Compatible') {
-            if (!params.customBaseURL?.trim()) {
-                throw new AgentValidationError('customBaseURL', 'Base URL is required for custom providers');
-            }
-
-            try {
-                new URL(params.customBaseURL);
-            } catch {
-                throw new AgentValidationError('customBaseURL', 'Invalid URL format');
-            }
+        if (!params.modelId?.trim()) {
+            throw new AgentValidationError('modelId', 'Model is required');
         }
 
         // Temperature validation
