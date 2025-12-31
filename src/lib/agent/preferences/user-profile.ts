@@ -220,12 +220,15 @@ export async function getPreference<T>(
 export async function resetLearnedPreferences(
   userId = 'default-user'
 ): Promise<number> {
-  const learnedPrefs = await db.preferences
-    .where('[key+learned]')
-    .equals([`${userId}.`, true])
-    .toArray();
+  // Query all preferences and filter by learned status and key prefix
+  const allPrefs = await db.preferences.toArray();
 
-  const keys = learnedPrefs.map((p) => p.key);
+  // Filter by learned status and user key prefix
+  const userPrefs = allPrefs.filter((p) =>
+    p.learned && p.key.startsWith(`${userId}.`)
+  );
+
+  const keys = userPrefs.map((p) => p.key);
 
   if (keys.length > 0) {
     await db.preferences.bulkDelete(keys);

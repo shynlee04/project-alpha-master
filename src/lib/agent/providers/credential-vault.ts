@@ -234,7 +234,7 @@ export class CredentialVault {
         return crypto.subtle.deriveKey(
             {
                 name: 'PBKDF2',
-                salt,
+                salt: salt as any,
                 iterations: ITERATIONS,
                 hash: 'SHA-256',
             },

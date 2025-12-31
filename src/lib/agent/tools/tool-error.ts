@@ -349,9 +349,9 @@ export function createResultFromToolCall<T>(
 
   const toolError = error
     ? createToolError(
-        toolCall.name,
-        getToolDisplayName(toolCall.name),
-        toolCall.input,
+        toolCall.toolId,
+        toolCall.toolName,
+        toolCall.parameters,
         error,
         1
       )

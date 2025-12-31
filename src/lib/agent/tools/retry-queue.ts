@@ -486,7 +486,7 @@ export class RetryQueue {
      * Emit an event to the event bus
      */
     private emitEvent<K extends keyof RetryQueueEvents>(event: K, data: RetryQueueEvents[K][0]): void {
-        this.eventBus?.emit(event as string, data);
+        (this.eventBus as any)?.emit(event as string, data);
     }
 
     /**

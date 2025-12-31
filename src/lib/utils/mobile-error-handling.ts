@@ -27,7 +27,7 @@ export type IDEErrorType = 'openOnMobile'
 /**
  * Error type for WebContainer operations
  */
-export type WebContainerErrorType = 'notSupported'
+export type WebContainerErrorType = 'notSupported' | 'bootFailed'
 
 /**
  * Mobile-specific error messages interface
@@ -96,13 +96,19 @@ export function getMobileIDEErrorMessages(type: IDEErrorType): MobileErrorMessag
  */
 export function getMobileWebContainerErrorMessages(type: WebContainerErrorType): MobileErrorMessages {
   const { t } = useTranslation()
-  
+
   switch (type) {
     case 'notSupported':
       return {
         title: t('webcontainer.notSupported.mobileTitle', 'Mobile Browser Detected'),
         description: t('webcontainer.notSupported.mobileDescription', 'The full IDE experience requires a desktop browser. Your Knowledge Hub features are still available on mobile.'),
         action: t('webcontainer.notSupported.mobileAction', 'Go to Knowledge Hub'),
+      }
+    case 'bootFailed':
+      return {
+        title: t('webcontainer.bootFailed.mobileTitle', 'IDE Initialization Failed'),
+        description: t('webcontainer.bootFailed.mobileDescription', 'The IDE failed to initialize. Please refresh the page or try again on a desktop browser.'),
+        action: t('webcontainer.bootFailed.mobileAction', 'Refresh Page'),
       }
   }
 }

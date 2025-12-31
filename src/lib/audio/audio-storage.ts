@@ -220,10 +220,14 @@ export async function listAudio(options?: {
 export async function markAsPlayed(id: number): Promise<void> {
   const db = getDb();
 
-  await db.audio.update(id, {
-    playedCount: Dexie.increment(1),
-    lastPlayedAt: Date.now(),
-  });
+  // Workaround for Dexie v9: fetch current value, increment, update
+  const audio = await db.audio.get(id);
+  if (audio) {
+    await db.audio.update(id, {
+      playedCount: (audio.playedCount || 0) + 1,
+      lastPlayedAt: Date.now(),
+    });
+  }
 }
 
 /**

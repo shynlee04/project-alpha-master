@@ -13,7 +13,7 @@
  * @story 4.3 - Tool Permissions & Trust Levels
  */
 
-import type { EventEmitter } from 'eventemitter3';
+// import type { EventEmitter } from 'eventemitter3'; // Reserved for future use
 
 /**
  * Trust level for a tool - determines when user approval is required
@@ -65,7 +65,7 @@ export class ToolPermissionManager {
   private sessionTrust: Set<string> = new Set();
 
   /** Event emitter for permission changes */
-  private eventBus: EventEmitter3<ToolPermissionEvents> | null = null;
+  private eventBus: any | null = null;
 
   /** Default trust levels for all tools */
   private readonly defaultTrustLevels: Record<string, ToolTrustLevel> = {
@@ -123,7 +123,7 @@ export class ToolPermissionManager {
   /**
    * Set event bus for emitting permission change events
    */
-  public setEventBus(eventBus: EventEmitter3<ToolPermissionEvents>): void {
+  public setEventBus(eventBus: any): void {
     this.eventBus = eventBus;
   }
 

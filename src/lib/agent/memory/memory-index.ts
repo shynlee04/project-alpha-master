@@ -9,7 +9,7 @@
  * Story 31.1: Conversation Memory & Long-Term Context
  */
 
-import { create, search, insert, Orama, insertMultiple } from '@orama/orama';
+import { create, search, insert, insertMultiple } from '@orama/orama';
 import type { ConversationMemory } from './conversation-memory';
 
 export interface MemoryIndexOptions {
@@ -75,21 +75,21 @@ export interface SearchOptions {
 /**
  * Orama schema for conversation memory
  */
-interface ConversationSchema {
-  threadId: string;
-  summary: string;
-  insights: string[];
-  tags: string[];
-  createdAt: number;
-  accessedAt: number;
-  messageCount: number;
-  isExcluded: boolean;
-}
+// interface ConversationSchema {
+//   threadId: string;
+//   summary: string;
+//   insights: string[];
+//   tags: string[];
+//   createdAt: number;
+//   accessedAt: number;
+//   messageCount: number;
+//   isExcluded: boolean;
+// }
 
 /**
  * Global Orama index instance
  */
-let memoryIndex: Orama<ConversationSchema> | null = null;
+let memoryIndex: any = null;
 
 /**
  * Initialize Orama memory index
@@ -99,7 +99,7 @@ let memoryIndex: Orama<ConversationSchema> | null = null;
  */
 export async function initializeMemoryIndex(
   options: MemoryIndexOptions = {}
-): Promise<Orama<ConversationSchema>> {
+): Promise<any> {
   if (memoryIndex) {
     return memoryIndex;
   }
@@ -172,7 +172,7 @@ export async function indexConversation(
     return;
   }
 
-  await insert(index, document);
+  await insert(index, document as any);
 }
 
 /**
@@ -201,7 +201,7 @@ export async function indexConversations(
     isExcluded: conv.isExcluded,
   }));
 
-  await insertMultiple(index, documents);
+  await insertMultiple(index, documents as any);
 }
 
 /**

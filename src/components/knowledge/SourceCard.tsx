@@ -151,7 +151,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
         >
             {/* Header with icon and title */}
             <div className="flex items-start gap-3 mb-2">
-                <Icon size={24} className="text-primary flex-shrink-0" />
+                <Icon pixelSize={24} className="text-primary flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                         <h3 className="font-medium text-foreground truncate text-sm" title={source.title}>

@@ -205,7 +205,7 @@ export function SourcePreviewPanel({ projectId: _projectId }: SourcePreviewPanel
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-border-dark">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <Icon size={20} className="text-primary flex-shrink-0" />
+                        <Icon pixelSize={20} className="text-primary flex-shrink-0" />
                         <h2 className="font-medium text-foreground truncate" title={selectedSource.title}>
                             {selectedSource.title}
                         </h2>

@@ -24,9 +24,8 @@ export class FSAHandleManager {
   ): Promise<void> {
     const record: FSAHandleRecord = {
       projectId,
-      kind: handle.kind,
-      name: handle.name,
-      // directoryPath is optional - may not be available in all browsers
+      handleData: handle as any, // Serialize handle for storage
+      directoryPath: handle.name || '',
       permissionStatus: 'granted',
       grantedAt: Date.now(),
       lastAccessedAt: Date.now()

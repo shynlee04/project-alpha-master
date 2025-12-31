@@ -28,13 +28,13 @@ export class ToolExecutionLogger {
 
     const logEntry: ToolExecutionLogRecord = {
       id: logId,
-      conversationId: context.conversationId,
-      messageId: context.messageId,
+      conversationId: (context as any).conversationId || 'unknown',
+      messageId: (context as any).messageId || 'unknown',
       toolName,
       args,
       status: 'pending',
       timestamp: Date.now(),
-      approved: context.wasApproved
+      approved: (context as any).wasApproved || false
     };
 
     await addToolExecutionLog(logEntry);
@@ -69,7 +69,7 @@ export class ToolExecutionLogger {
     await this.updateExecution(logId, {
       status: 'executed',
       result: { success: true, output: result },
-      approved: context.wasApproved,
+      approved: (context as any).wasApproved || false,
       duration
     });
   }
@@ -86,7 +86,7 @@ export class ToolExecutionLogger {
     await this.updateExecution(logId, {
       status: 'error',
       result: { success: false, error },
-      approved: context.wasApproved,
+      approved: (context as any).wasApproved || false,
       duration
     });
   }
@@ -172,8 +172,8 @@ export class ToolExecutionLogger {
     const errorLogs = logs.filter(log => log.status === 'error');
 
     const durations = logs
-      .filter(log => log.duration !== undefined)
-      .map(log => log.duration!);
+      .filter((log: any) => log.duration !== undefined)
+      .map((log: any) => log.duration!);
 
     const averageDuration = durations.length > 0
       ? durations.reduce((a, b) => a + b, 0) / durations.length
