@@ -1,0 +1,713 @@
+# KSI Module Loop State - Ralph Wiggum Technique
+# Iterative Knowledge Synthesis Integration Loop
+# Created: 2025-12-31T19:22:10+07:00
+# Purpose: Track progress through knowledge synthesis wiring iterations
+
+---
+# Loop Metadata
+loop_id: "ksi-loop-2025-12-31"
+module: "ksi-module"
+started_at: "2025-12-31T19:22:10+07:00"
+last_updated: "2025-12-31T19:22:10+07:00"
+iteration_count: 0
+max_iterations: 100
+status: "INITIALIZED"
+completion_promise: "KSI MODULE COMPLETE"
+
+# Current Execution State
+current_phase: 0
+current_task: "scan-implementations"
+current_task_retries: 0
+max_retries_per_task: 3
+blocked: false
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 0: Analysis & Gap Identification
+# ═══════════════════════════════════════════════════════════════════════════
+phase_0:
+  name: "Analysis & Gap Identification"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "Initial sweep complete"
+  tasks:
+    - id: "scan-implementations"
+      name: "Scan all knowledge-related implementations"
+      status: "PENDING"
+      agent: "integration-validator"
+      target_paths:
+        - "src/lib/knowledge/"
+        - "src/lib/rag/"
+        - "src/lib/notes/"
+        - "src/lib/study/"
+        - "src/lib/canvas/"
+        - "src/presentation/components/knowledge/"
+        - "src/presentation/components/rag/"
+        - "src/presentation/components/notes/"
+        - "src/presentation/components/study/"
+        - "src/presentation/components/canvas/"
+      output: "data/implementation-inventory.yaml"
+      acceptance_criteria:
+        - "All knowledge-related files catalogued"
+        - "File sizes and export counts documented"
+        - "Dependencies mapped"
+
+    - id: "map-use-cases"
+      name: "Map existing code to 4 use cases"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      input: "data/use-cases.yaml"
+      output: "data/use-case-mapping.yaml"
+      acceptance_criteria:
+        - "Each use case step mapped to code file(s)"
+        - "Coverage percentage calculated"
+        - "Missing implementations identified"
+
+    - id: "identify-broken-connections"
+      name: "Identify broken connections between components"
+      status: "PENDING"
+      agent: "integration-validator"
+      output: "data/broken-connections.yaml"
+      scan_patterns:
+        - "imports that reference non-existent exports"
+        - "event subscriptions without emitters"
+        - "store reads without corresponding writes"
+        - "UI components without data sources"
+      acceptance_criteria:
+        - "All 6 broken connections documented"
+        - "Root cause for each identified"
+        - "Fix strategy proposed"
+
+    - id: "document-integration-gaps"
+      name: "Document integration gaps"
+      status: "PENDING"
+      agent: "integration-validator"
+      output: "data/integration-gaps.yaml"
+      acceptance_criteria:
+        - "Gaps categorized by priority (P0, P1, P2)"
+        - "Effort estimates provided"
+        - "Dependencies identified"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 1: Source → RAG Wiring
+# ═══════════════════════════════════════════════════════════════════════════
+phase_1:
+  name: "Source → RAG Wiring"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L5 (Integration Reality)"
+  tasks:
+    - id: "wire-source-to-orama"
+      name: "Wire SourceImportDialog → OramaIndex.addDocument()"
+      status: "PENDING"
+      agent: "source-processor"
+      workflow: "wire-source-to-rag"
+      target_files:
+        - "src/presentation/components/knowledge/SourceImportDialog.tsx"
+        - "src/lib/rag/orama-index.ts"
+      output_files:
+        - "src/lib/knowledge/source-rag-bridge.ts"
+      acceptance_criteria:
+        - "Import completion → auto-index in Orama"
+        - "Embeddings generated for imported content"
+        - "Source metadata preserved in index"
+        - "Build passes"
+
+    - id: "add-auto-embedding"
+      name: "Add auto-embedding on import"
+      status: "PENDING"
+      agent: "source-processor"
+      target_files:
+        - "src/lib/knowledge/source-import.ts"
+        - "src/lib/rag/embedding-service.ts"
+      acceptance_criteria:
+        - "Embeddings generated during import (not after)"
+        - "Progress indicator shows embedding status"
+        - "Failure handling with retry"
+
+    - id: "connect-metadata-to-frontmatter"
+      name: "Connect metadata extraction to frontmatter generation"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      target_files:
+        - "src/lib/knowledge/metadata-extractor.ts"
+        - "src/lib/rag/document-chunker.ts"
+      acceptance_criteria:
+        - "Extracted metadata flows to synthesis service"
+        - "Frontmatter template populated"
+        - "Tags generated from content analysis"
+
+    - id: "validate-use-case-1"
+      name: "Validate Use Case 1 flow"
+      status: "PENDING"
+      agent: "integration-validator"
+      workflow: "validate-integration"
+      test_scenario: |
+        1. Create vault "Fall Semester 2024"
+        2. Batch import: PDF lecture notes, handwritten images, Markdown drafts
+        3. Verify parallel processing
+        4. Trigger synthesis for each
+        5. Verify frontmatter generation
+        6. Verify subject groupings created
+      acceptance_criteria:
+        - "End-to-end flow works without errors"
+        - "All file types processed correctly"
+        - "Synthesis generates valid frontmatter"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 2: Synthesis UI Layer
+# ═══════════════════════════════════════════════════════════════════════════
+phase_2:
+  name: "Synthesis UI Layer"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L6 (Architecture Compliance)"
+  tasks:
+    - id: "add-synthesize-button"
+      name: "Add 'Synthesize' button to SourceCard"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      workflow: "wire-synthesis-ui"
+      target_files:
+        - "src/presentation/components/knowledge/SourceCard.tsx"
+      acceptance_criteria:
+        - "Button visible on each source card"
+        - "Loading state during synthesis"
+        - "Success/error feedback"
+        - "i18n strings added (EN + VI)"
+
+    - id: "create-synthesis-service"
+      name: "Create SynthesisService with Gemini API integration"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      output_files:
+        - "src/lib/knowledge/synthesis-service.ts"
+        - "src/lib/knowledge/synthesis-types.ts"
+      gemini_endpoints:
+        - "generateContent with structured output"
+        - "document-processing for PDFs"
+        - "image-understanding for images"
+      acceptance_criteria:
+        - "Type-specific prompts for each document type"
+        - "Gemini API integration working"
+        - "Rate limiting handled"
+        - "Error handling with user feedback"
+
+    - id: "generate-structured-frontmatter"
+      name: "Generate structured frontmatter"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      template: "templates/synthesis-frontmatter.md"
+      output_schema:
+        summary: "string (150-300 words)"
+        tags: "string[] (3-10 semantic tags)"
+        subject: "string (classification)"
+        date_range: "string (if applicable)"
+        source_type: "enum (pdf, image, audio, url, markdown)"
+        key_concepts: "string[] (5-15 concepts)"
+        related_sources: "string[] (IDs of related sources)"
+      acceptance_criteria:
+        - "Schema validated with Zod"
+        - "Frontmatter stored in Dexie"
+        - "Searchable in RAG queries"
+
+    - id: "store-synthesis-results"
+      name: "Store synthesis results with source linkage"
+      status: "PENDING"
+      agent: "source-processor"
+      target_files:
+        - "src/infrastructure/persistence/dexie-db.ts"
+      schema_additions:
+        - "synthesisResults table (id, sourceId, frontmatter, createdAt, updatedAt)"
+        - "Foreign key to sources table"
+      acceptance_criteria:
+        - "Dexie schema v10 with synthesis table"
+        - "Bidirectional linkage (source ↔ synthesis)"
+        - "Migration from v9"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 3: Chat → RAG Integration
+# ═══════════════════════════════════════════════════════════════════════════
+phase_3:
+  name: "Chat → RAG Integration"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L5 + L6"
+  tasks:
+    - id: "create-unified-chatpanel-modes"
+      name: "Create unified ChatPanel mode toggle"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      workflow: "wire-chat-to-rag"
+      modes:
+        - "agent: Standard AI agent chat"
+        - "rag: Knowledge-only retrieval"
+        - "hybrid: Agent with RAG context injection"
+      target_files:
+        - "src/presentation/components/chat/ChatPanel.tsx"
+      acceptance_criteria:
+        - "Mode toggle in ChatPanel header"
+        - "Mode persists in localStorage"
+        - "Smooth mode transitions"
+
+    - id: "wire-useagentchat-to-retriever"
+      name: "Wire useAgentChat to hybrid-retriever"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      target_files:
+        - "src/hooks/useAgentChat.ts"
+        - "src/lib/rag/hybrid-retriever.ts"
+      acceptance_criteria:
+        - "In hybrid mode, queries run through retriever first"
+        - "Retrieved context injected into system prompt"
+        - "Citation metadata attached to messages"
+
+    - id: "add-intent-classification"
+      name: "Add intent classification for query routing"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      output_files:
+        - "src/lib/agent/intent-classifier.ts"
+      intent_types:
+        - "factual_lookup: Route to RAG"
+        - "synthesis_request: Route to Gemini synthesis"
+        - "exploration: Route to hybrid"
+        - "action_request: Route to agent with tools"
+      acceptance_criteria:
+        - "Classification runs on each user message"
+        - "Routing decision logged for debugging"
+        - "Override capability for user"
+
+    - id: "wire-citation-sidebar"
+      name: "Wire citation sidebar to chat responses"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      target_files:
+        - "src/presentation/components/rag/CitationSidebar.tsx"
+        - "src/presentation/components/chat/ChatConversation.tsx"
+      acceptance_criteria:
+        - "Citations extracted from RAG responses"
+        - "Sidebar shows source references"
+        - "Click citation → source preview"
+        - "Highlight in source document"
+
+    - id: "validate-use-case-3"
+      name: "Validate Use Case 3 flow"
+      status: "PENDING"
+      agent: "integration-validator"
+      test_scenario: |
+        1. Open chat in populated vault
+        2. Query: "How do calculus concepts connect to physics materials?"
+        3. Verify RAG retrieval occurs
+        4. Verify cross-document synthesis in response
+        5. Verify citations link to sources
+        6. Query: "Create comparison between literature documents"
+        7. Verify synthesis operation triggered
+        8. Verify new artifact created
+      acceptance_criteria:
+        - "Natural language queries work"
+        - "Responses include citations"
+        - "Cross-document synthesis accurate"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 4: Canvas Linkage Discovery
+# ═══════════════════════════════════════════════════════════════════════════
+phase_4:
+  name: "Canvas Linkage Discovery"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L6"
+  tasks:
+    - id: "create-linkage-analyzer"
+      name: "Create LinkageAnalyzer service"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      workflow: "wire-canvas-linkage"
+      output_files:
+        - "src/lib/canvas/linkage-analyzer.ts"
+        - "src/lib/canvas/linkage-types.ts"
+      analysis_types:
+        - "conceptual: shared concepts, themes, vocabulary"
+        - "sequential: prerequisite/progression relationships"
+        - "contrastive: opposing views, alternatives, complements"
+      acceptance_criteria:
+        - "Embedding similarity analysis working"
+        - "Linkage types categorized"
+        - "Confidence scores calculated"
+
+    - id: "add-drag-from-sources"
+      name: "Add drag-from-sources to canvas"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      target_files:
+        - "src/presentation/components/knowledge/SourceCard.tsx"
+        - "src/presentation/components/canvas/Canvas.tsx"
+      acceptance_criteria:
+        - "Drag source card to canvas"
+        - "Drop creates SourceNode"
+        - "Node linked to source data"
+        - "Synthesis metadata displayed"
+
+    - id: "implement-ai-recommendations"
+      name: "Implement AI connection recommendations"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      target_files:
+        - "src/presentation/components/canvas/Canvas.tsx"
+        - "src/lib/canvas/linkage-analyzer.ts"
+      acceptance_criteria:
+        - "When 3+ nodes added, trigger analysis"
+        - "Show proposed connections with rationale"
+        - "Connections rendered as dashed edges"
+        - "Hover shows confidence and type"
+
+    - id: "add-accept-dismiss-ui"
+      name: "Add accept/dismiss UI for linkage proposals"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      output_files:
+        - "src/presentation/components/canvas/LinkageProposalOverlay.tsx"
+      acceptance_criteria:
+        - "Accept → solid edge with label"
+        - "Dismiss → remove proposal"
+        - "Bulk accept/dismiss option"
+        - "Undo capability"
+
+    - id: "validate-use-case-2"
+      name: "Validate Use Case 2 flow"
+      status: "PENDING"
+      agent: "integration-validator"
+      test_scenario: |
+        1. Open canvas with 3 synthesized documents
+        2. Trigger linkage discovery
+        3. Verify connection recommendations appear
+        4. Accept conceptual link
+        5. Dismiss irrelevant proposal
+        6. Verify accepted link persists
+        7. When 3+ connected, verify cluster synthesis proposal
+      acceptance_criteria:
+        - "AI recommendations accurate"
+        - "Accept/dismiss works"
+        - "Knowledge graph updated"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 5: Gemini Multimodal Processing
+# ═══════════════════════════════════════════════════════════════════════════
+phase_5:
+  name: "Gemini Multimodal Processing"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L5"
+  tasks:
+    - id: "wire-pdf-processing"
+      name: "Wire PDF document processing endpoint"
+      status: "PENDING"
+      agent: "source-processor"
+      workflow: "wire-gemini-multimodal"
+      gemini_doc: "https://ai.google.dev/gemini-api/docs/document-processing"
+      target_files:
+        - "src/lib/knowledge/pdf-parser.ts"
+        - "src/lib/knowledge/synthesis-service.ts"
+      features:
+        - "Structural parsing (headings, paragraphs, figures)"
+        - "Table extraction"
+        - "Citation detection"
+        - "Multi-page context understanding"
+      acceptance_criteria:
+        - "PDF upload → Gemini processing"
+        - "Structured output received"
+        - "Tables and figures extracted"
+
+    - id: "wire-image-understanding"
+      name: "Wire image understanding (with OCR)"
+      status: "PENDING"
+      agent: "source-processor"
+      gemini_doc: "https://ai.google.dev/gemini-api/docs/image-understanding"
+      target_files:
+        - "src/lib/knowledge/source-import.ts"
+      features:
+        - "Handwriting recognition"
+        - "Diagram understanding"
+        - "Chart/graph interpretation"
+        - "Multi-image context"
+      acceptance_criteria:
+        - "Image upload → Gemini vision"
+        - "OCR text extracted"
+        - "Diagram descriptions generated"
+        - "Works for handwritten notes"
+
+    - id: "wire-audio-transcription"
+      name: "Wire audio transcription"
+      status: "PENDING"
+      agent: "source-processor"
+      gemini_doc: "https://ai.google.dev/gemini-api/docs/live"
+      target_files:
+        - "src/lib/rag/audio-capture.ts"
+        - "src/lib/knowledge/source-import.ts"
+      features:
+        - "Speech-to-text conversion"
+        - "Speaker detection"
+        - "Summary generation"
+        - "Key point extraction"
+      acceptance_criteria:
+        - "Audio file → Gemini transcription"
+        - "Transcript stored as source"
+        - "Summary frontmatter generated"
+
+    - id: "wire-url-content"
+      name: "Wire URL content extraction"
+      status: "PENDING"
+      agent: "source-processor"
+      gemini_doc: "https://ai.google.dev/gemini-api/docs/url-context"
+      target_files:
+        - "src/lib/knowledge/url-fetcher.ts"
+      features:
+        - "Dynamic content understanding"
+        - "Main content extraction (no ads)"
+        - "Metadata inference"
+        - "Related link detection"
+      acceptance_criteria:
+        - "URL input → content fetched via Gemini"
+        - "Clean content extracted"
+        - "Source card created with preview"
+
+    - id: "wire-structured-output"
+      name: "Wire structured output for frontmatter"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      gemini_doc: "https://ai.google.dev/gemini-api/docs/structured-output"
+      target_files:
+        - "src/lib/knowledge/synthesis-service.ts"
+      features:
+        - "JSON schema enforcement"
+        - "Type-safe responses"
+        - "Validation with Zod"
+      acceptance_criteria:
+        - "Synthesis returns typed frontmatter object"
+        - "Schema violations handled gracefully"
+        - "Retry on malformed output"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 6: Knowledge Matrix Auto-Organization
+# ═══════════════════════════════════════════════════════════════════════════
+phase_6:
+  name: "Knowledge Matrix Auto-Organization"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L5 + L6"
+  tasks:
+    - id: "create-knowledge-graph-service"
+      name: "Create KnowledgeGraph analysis service"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      output_files:
+        - "src/lib/knowledge/knowledge-graph.ts"
+        - "src/lib/knowledge/knowledge-graph-types.ts"
+      features:
+        - "Node tracking (sources, concepts, clusters)"
+        - "Edge tracking (relationships, strengths)"
+        - "Graph traversal algorithms"
+        - "Cluster detection"
+      acceptance_criteria:
+        - "Graph persisted in Dexie"
+        - "CRUD operations for nodes/edges"
+        - "Query by node, relationship type"
+
+    - id: "implement-subject-classification"
+      name: "Implement subject classification algorithms"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      output_files:
+        - "src/lib/knowledge/subject-classifier.ts"
+      algorithms:
+        - "Topic modeling from embeddings"
+        - "Hierarchical classification"
+        - "Dynamic category creation"
+      acceptance_criteria:
+        - "Sources auto-classified by subject"
+        - "New categories created as needed"
+        - "Reclassification on content update"
+
+    - id: "add-relevancy-scoring"
+      name: "Add relevancy scoring for inter-document relationships"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      output_files:
+        - "src/lib/knowledge/relevancy-scorer.ts"
+      scoring_factors:
+        - "Embedding similarity"
+        - "Citation overlap"
+        - "Subject proximity"
+        - "Temporal proximity"
+        - "User interaction patterns"
+      acceptance_criteria:
+        - "Scores calculated for all document pairs"
+        - "Scores cached and updated incrementally"
+        - "High-relevancy pairs surfaced in UI"
+
+    - id: "build-auto-organization-engine"
+      name: "Build auto-organization recommendations engine"
+      status: "PENDING"
+      agent: "linkage-discoverer"
+      output_files:
+        - "src/lib/knowledge/organization-engine.ts"
+        - "src/presentation/components/knowledge/OrganizationRecommendations.tsx"
+      recommendation_types:
+        - "chronological: by date/academic period"
+        - "conceptual: by topic cluster"
+        - "hybrid: balanced approach"
+      acceptance_criteria:
+        - "Recommendations generated on vault threshold"
+        - "Preview of each organization style"
+        - "One-click reorganization"
+        - "Multiple views simultaneously"
+
+    - id: "validate-use-case-4"
+      name: "Validate Use Case 4 flow"
+      status: "PENDING"
+      agent: "integration-validator"
+      test_scenario: |
+        1. Vault has 20+ synthesized documents
+        2. Invoke knowledge matrix reorganization
+        3. Verify subject classifications accurate
+        4. Verify relevancy scores calculated
+        5. Verify organization recommendations appear
+        6. Select chronological organization
+        7. Verify vault view updates
+        8. Switch to conceptual organization
+        9. Verify both views work simultaneously
+      acceptance_criteria:
+        - "Auto-organization works"
+        - "Multiple views supported"
+        - "Performance acceptable (<2s)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 7: Final Validation & Demo Prep
+# ═══════════════════════════════════════════════════════════════════════════
+phase_7:
+  name: "Final Validation & Demo Prep"
+  status: "PENDING"
+  started_at: null
+  completed_at: null
+  validation_gate: "sweeping-validation L1-L12 + 3-Device Rule"
+  tasks:
+    - id: "run-12-level-validation"
+      name: "Run 12-level sweeping validation"
+      status: "PENDING"
+      agent: "integration-validator"
+      workflow: "validate-integration"
+      reference: "_bmad-output/validation/sweeping-validation.md"
+      acceptance_criteria:
+        - "L1 State Integrity: PASSED"
+        - "L2 Code Hygiene: PASSED (all files <300 LOC)"
+        - "L3 Naming Consistency: PASSED"
+        - "L4 Dependency Sanity: PASSED"
+        - "L5 Integration Reality: PASSED"
+        - "L6 Architecture Compliance: PASSED"
+        - "L7 Mobile Reality: PASSED (demo mode)"
+        - "L8 I18N Wiring: PASSED"
+        - "L9 Performance Under Load: PASSED"
+        - "L10 Security + Privacy: PASSED"
+        - "L11 Documentation Completeness: PASSED"
+        - "L12 Test Coverage: PASSED (>80%)"
+
+    - id: "execute-3-device-rule"
+      name: "Execute 3-device rule tests"
+      status: "PENDING"
+      agent: "integration-validator"
+      devices:
+        - "Desktop Chrome (macOS) - Full Knowledge workspace mode"
+        - "Mobile Safari (iOS 16+) - Demo mode, knowledge exploration"
+        - "Android Chrome - Demo mode, study artifact review"
+      acceptance_criteria:
+        - "All 4 use cases work on desktop"
+        - "Demo mode works on mobile"
+        - "Offline storage functional"
+
+    - id: "validate-all-use-cases"
+      name: "Validate all 4 use cases end-to-end"
+      status: "PENDING"
+      agent: "integration-validator"
+      acceptance_criteria:
+        - "Use Case 1: Initial Vault Population ✓"
+        - "Use Case 2: Canvas Linkage Discovery ✓"
+        - "Use Case 3: Conversational Knowledge Exploration ✓"
+        - "Use Case 4: Dynamic Knowledge Matrix ✓"
+
+    - id: "prepare-demo-scenarios"
+      name: "Prepare demo scenarios"
+      status: "PENDING"
+      agent: "synthesis-architect"
+      output_files:
+        - "data/demo-scenarios.yaml"
+        - "data/demo-content.zip"
+      acceptance_criteria:
+        - "Demo data set created"
+        - "Script for each use case"
+        - "Fallback plans documented"
+
+    - id: "generate-completion-report"
+      name: "Generate completion report"
+      status: "PENDING"
+      agent: "integration-validator"
+      output_files:
+        - "COMPLETION_REPORT.md"
+      sections:
+        - "Executive Summary"
+        - "Use Cases Validated"
+        - "Integration Points Wired"
+        - "Health Scores"
+        - "Known Limitations"
+        - "Future Enhancements"
+      acceptance_criteria:
+        - "All sections complete"
+        - "Screenshots included"
+        - "Metrics documented"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Validation Status
+# ═══════════════════════════════════════════════════════════════════════════
+validation:
+  last_run: null
+  levels_passed: []
+  levels_failed: []
+  typescript_errors: null
+  health_score: null
+  use_case_coverage:
+    use_case_1: "0%"
+    use_case_2: "0%"
+    use_case_3: "0%"
+    use_case_4: "0%"
+
+# Build Status
+build:
+  last_run: null
+  status: "UNKNOWN"
+  duration_seconds: null
+
+# Iteration History (last 10)
+iteration_history: []
+
+# Error Log
+errors: []
+
+# Completion Status
+completion:
+  all_phases_done: false
+  validation_passed: false
+  promise_output: null
+  summary:
+    phase_0: "PENDING - Analysis not started"
+    phase_1: "PENDING - Source → RAG wiring"
+    phase_2: "PENDING - Synthesis UI"
+    phase_3: "PENDING - Chat → RAG"
+    phase_4: "PENDING - Canvas linkage"
+    phase_5: "PENDING - Gemini multimodal"
+    phase_6: "PENDING - Knowledge matrix"
+    phase_7: "PENDING - Final validation"

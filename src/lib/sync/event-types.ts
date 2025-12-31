@@ -7,8 +7,6 @@
  * @packageDocumentation
  */
 
-import { EventEmitter } from 'eventemitter3';
-
 // =============================================================================
 // Event Type Unions
 // =============================================================================
@@ -106,6 +104,8 @@ export interface TerminalEventPayload {
  * Navigation event payload
  */
 export interface NavigationEventPayload {
+  /** Previous path (for file/directory navigation) */
+  previousPath?: string;
   /** Previous state value */
   previousValue: unknown;
   /** New state value */

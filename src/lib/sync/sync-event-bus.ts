@@ -37,21 +37,31 @@ export class SyncEventBus {
   private emitter: EventEmitter;
   private namespace: string;
   private eventCount: number;
-  private maxListeners: number;
+  private wildcardListeners: Array<(type: SyncEventType, payload: BaseEventPayload<unknown>) => void>;
 
   constructor(namespace = 'sync') {
     this.emitter = new EventEmitter();
     this.namespace = namespace;
     this.eventCount = 0;
-    this.maxListeners = 100;
-    
-    // Set max listeners to prevent memory leaks from too many listeners
-    this.emitter.setMaxListeners?.(this.maxListeners);
+    this.wildcardListeners = [];
   }
 
   // ===========================================================================
   // Emit Methods
   // ===========================================================================
+
+  /**
+   * Notify all wildcard listeners (internal helper)
+   */
+  private notifyWildcardListeners(type: SyncEventType, payload: BaseEventPayload<unknown>): void {
+    for (const listener of this.wildcardListeners) {
+      try {
+        listener(type, payload);
+      } catch (error) {
+        console.error('Wildcard listener error:', error);
+      }
+    }
+  }
 
   /**
    * Emit a typed file event
@@ -62,6 +72,7 @@ export class SyncEventBus {
   ): void {
     const namespacedType = this.getNamespacedType(type);
     this.emitter.emit(namespacedType, payload);
+    this.notifyWildcardListeners(type, payload);
     this.eventCount++;
   }
 
@@ -74,6 +85,7 @@ export class SyncEventBus {
   ): void {
     const namespacedType = this.getNamespacedType(type);
     this.emitter.emit(namespacedType, payload);
+    this.notifyWildcardListeners(type, payload);
     this.eventCount++;
   }
 
@@ -86,6 +98,7 @@ export class SyncEventBus {
   ): void {
     const namespacedType = this.getNamespacedType(type);
     this.emitter.emit(namespacedType, payload);
+    this.notifyWildcardListeners(type, payload);
     this.eventCount++;
   }
 
@@ -95,6 +108,7 @@ export class SyncEventBus {
   emit<K extends SyncEventType>(type: K, payload: BaseEventPayload<unknown>): void {
     const namespacedType = this.getNamespacedType(type);
     this.emitter.emit(namespacedType, payload);
+    this.notifyWildcardListeners(type, payload);
     this.eventCount++;
   }
 
@@ -166,9 +180,10 @@ export class SyncEventBus {
 
   /**
    * Subscribe to all events (wildcard listener)
+   * Note: EventEmitter3 doesn't support wildcard '*', so we track these manually
    */
   onAny(listener: (type: SyncEventType, payload: BaseEventPayload<unknown>) => void): this {
-    this.emitter.on('*', listener as SyncEventListener);
+    this.wildcardListeners.push(listener);
     return this;
   }
 
@@ -213,9 +228,12 @@ export class SyncEventBus {
    */
   offAny(listener?: (type: SyncEventType, payload: BaseEventPayload<unknown>) => void): this {
     if (listener) {
-      this.emitter.off('*', listener as SyncEventListener);
+      const idx = this.wildcardListeners.indexOf(listener);
+      if (idx >= 0) {
+        this.wildcardListeners.splice(idx, 1);
+      }
     } else {
-      this.emitter.off('*');
+      this.wildcardListeners = [];
     }
     return this;
   }
@@ -242,12 +260,9 @@ export class SyncEventBus {
   /**
    * Get listener count for a specific event
    */
-  listenerCount(type?: SyncEventType): number {
-    if (type) {
-      const namespacedType = this.getNamespacedType(type);
-      return this.emitter.listenerCount(namespacedType);
-    }
-    return this.emitter.listenerCount();
+  listenerCount(type: SyncEventType): number {
+    const namespacedType = this.getNamespacedType(type);
+    return this.emitter.listenerCount(namespacedType);
   }
 
   /**
@@ -304,4 +319,20 @@ export function getSyncEventBus(): SyncEventBus {
 export function resetSyncEventBus(): void {
   syncEventBusInstance?.removeAllListeners();
   syncEventBusInstance = null;
+}
+
+// =============================================================================
+// Named Exports for Convenience
+// =============================================================================
+
+/**
+ * Default source identifier for sync events
+ */
+export const SYNC_EVENT_BUS_DEFAULT_SOURCE = 'sync-event-bus';
+
+/**
+ * Create a new SyncEventBus instance (convenience alias for new SyncEventBus)
+ */
+export function createSyncEventBus(namespace?: string): SyncEventBus {
+  return new SyncEventBus(namespace);
 }

@@ -26,11 +26,12 @@ export type {
 } from './event-types';
 
 // Sync Event Bus
-export {
+export { 
   SyncEventBus,
-  syncEventBus,
-  type SubscribeOptions,
-  type SyncEventBusConfig,
-  type EventCallback,
+  createSyncEventBus,
   SYNC_EVENT_BUS_DEFAULT_SOURCE,
+  type SyncEventListener,
+  type TypedEventListener,
 } from './sync-event-bus';
+
+export { createSyncEventBus as syncEventBus } from './sync-event-bus';

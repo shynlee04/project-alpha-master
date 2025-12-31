@@ -1,0 +1,238 @@
+# Knowledge Synthesis Integration (KSI) Module
+# A BMAD Module for iterative knowledge synthesis platform integration
+# Created: 2025-12-31T19:22:10+07:00
+# Author: BMAD Master Agent
+
+---
+module:
+  id: "ksi-module"
+  name: "Knowledge Synthesis Integration Module"
+  version: "1.0.0"
+  description: |
+    A comprehensive Ralph Loop-style iterative module for integrating 
+    heterogeneous learning materials into a coherent Knowledge Synthesis Platform.
+    
+    Leverages Gemini API multimodal capabilities for:
+    - Document processing (PDF, images, audio, URLs)
+    - OCR and vision understanding
+    - Synthesis generation with structured frontmatter
+    - Knowledge graph construction and linkage discovery
+    - RAG-powered conversational exploration
+    
+    Implements 4 core use cases:
+    1. Initial Vault Population and Baseline Synthesis
+    2. Interactive Canvas Knowledge Linkage Discovery
+    3. Conversational Knowledge Exploration Session
+    4. Dynamic Knowledge Matrix Evolution and Auto-Organization
+
+  # Core personas
+  agents:
+    - id: "source-processor"
+      name: "Sierra"
+      file: "agents/source-processor.md"
+      role: "Document Processing Specialist"
+      focus: "PDF parsing, OCR, audio transcription, URL fetching"
+
+    - id: "synthesis-architect" 
+      name: "Sage"
+      file: "agents/synthesis-architect.md"
+      role: "Knowledge Synthesis Expert"
+      focus: "Frontmatter generation, semantic tagging, context assembly"
+
+    - id: "linkage-discoverer"
+      name: "Linnea"
+      file: "agents/linkage-discoverer.md"
+      role: "Knowledge Graph Architect"
+      focus: "Canvas linkage analysis, relationship discovery, cluster synthesis"
+
+    - id: "integration-validator"
+      name: "Ivan"
+      file: "agents/integration-validator.md"
+      role: "Integration Testing Specialist"
+      focus: "End-to-end validation, wiring verification, use case testing"
+
+  # Workflows for iterative loop execution
+  workflows:
+    - id: "wire-source-to-rag"
+      name: "Wire Source Import to RAG Pipeline"
+      file: "workflows/wire-source-to-rag.md"
+      description: "Connect source ingestion to Orama indexing"
+
+    - id: "wire-synthesis-ui"
+      name: "Wire Synthesis UI Controls"
+      file: "workflows/wire-synthesis-ui.md"
+      description: "Add synthesis buttons and frontmatter generation"
+
+    - id: "wire-chat-to-rag"
+      name: "Wire Chat Interface to RAG Retrieval"
+      file: "workflows/wire-chat-to-rag.md"
+      description: "Connect unified ChatPanel to hybrid retriever"
+
+    - id: "wire-canvas-linkage"
+      name: "Wire Canvas AI Linkage Discovery"
+      file: "workflows/wire-canvas-linkage.md"
+      description: "Add AI-powered connection suggestions to canvas"
+
+    - id: "wire-gemini-multimodal"
+      name: "Wire Gemini Multimodal Processing"
+      file: "workflows/wire-gemini-multimodal.md"
+      description: "Connect Gemini API for OCR, vision, audio, document processing"
+
+    - id: "validate-integration"
+      name: "Validate KSI Integration"
+      file: "workflows/validate-integration.md"
+      description: "Run 12-level sweeping validation on knowledge synthesis features"
+
+  # Templates for generated artifacts
+  templates:
+    - id: "synthesis-frontmatter"
+      file: "templates/synthesis-frontmatter.md"
+      description: "Template for synthesized document frontmatter"
+
+    - id: "linkage-recommendation"
+      file: "templates/linkage-recommendation.md"
+      description: "Template for AI-generated linkage recommendations"
+
+    - id: "validation-report"
+      file: "templates/validation-report.md"
+      description: "Template for integration validation reports"
+
+  # Data schemas
+  data:
+    - id: "use-cases"
+      file: "data/use-cases.yaml"
+      description: "Detailed 4 use case specifications"
+
+    - id: "gemini-prompts"
+      file: "data/gemini-prompts.yaml"
+      description: "Optimized Gemini API prompts for each processing type"
+
+    - id: "integration-gaps"
+      file: "data/integration-gaps.yaml"
+      description: "Current integration gaps and wiring requirements"
+
+# Configuration
+config:
+  output_folder: "_bmad-output/ksi-artifacts"
+  loop_state_file: "LOOP_STATE.yaml"
+  max_iterations: 100
+  completion_promise: "KSI MODULE COMPLETE"
+  
+  # Validation integration
+  validation:
+    sweeping_validation_ref: "_bmad-output/validation/sweeping-validation.md"
+    framework_ref: "_bmad-output/validation/12-level-framework-integration-2025-12-29.md"
+    levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+
+  # Gemini API configuration
+  gemini:
+    base_url: "https://generativelanguage.googleapis.com/v1beta"
+    models:
+      text: "gemini-2.0-flash-latest"
+      vision: "gemini-2.0-flash-latest"
+      embeddings: "text-embedding-004"
+      audio: "gemini-2.0-flash-latest"
+    docs:
+      overview: "https://ai.google.dev/gemini-api/docs"
+      document_processing: "https://ai.google.dev/gemini-api/docs/document-processing"
+      image_understanding: "https://ai.google.dev/gemini-api/docs/image-understanding"
+      embeddings: "https://ai.google.dev/gemini-api/docs/embeddings"
+      structured_output: "https://ai.google.dev/gemini-api/docs/structured-output"
+      live_api: "https://ai.google.dev/gemini-api/docs/live"
+
+# Phase definitions for Ralph Loop execution
+phases:
+  - id: 0
+    name: "Analysis & Gap Identification"
+    status: "PENDING"
+    description: "Deep scan codebase, map implementations to use cases, identify wiring gaps"
+    tasks:
+      - "Scan all knowledge-related implementations"
+      - "Map existing code to 4 use cases"
+      - "Identify broken connections between components"
+      - "Document integration gaps in data/integration-gaps.yaml"
+
+  - id: 1  
+    name: "Source → RAG Wiring"
+    status: "PENDING"
+    description: "Connect source import pipeline to RAG indexing"
+    tasks:
+      - "Wire SourceImportDialog → OramaIndex.addDocument()"
+      - "Add auto-embedding on import"
+      - "Connect metadata extraction to frontmatter generation"
+      - "Validate with Use Case 1 flow"
+
+  - id: 2
+    name: "Synthesis UI Layer"
+    status: "PENDING" 
+    description: "Add synthesis controls and frontmatter generation"
+    tasks:
+      - "Add 'Synthesize' button to SourceCard"
+      - "Create SynthesisService with Gemini API integration"
+      - "Generate structured frontmatter (summary, tags, metadata)"
+      - "Store synthesis results in Dexie with source linkage"
+
+  - id: 3
+    name: "Chat → RAG Integration"
+    status: "PENDING"
+    description: "Wire conversational interface to RAG retrieval"
+    tasks:
+      - "Create unified ChatPanel mode toggle (agent/RAG/hybrid)"
+      - "Wire useAgentChat to hybrid-retriever"
+      - "Add intent classification for query routing"
+      - "Wire citation sidebar to chat responses"
+      - "Validate with Use Case 3 flow"
+
+  - id: 4
+    name: "Canvas Linkage Discovery"
+    status: "PENDING"
+    description: "Add AI-powered connection suggestions to canvas"
+    tasks:
+      - "Create LinkageAnalyzer service"
+      - "Add drag-from-sources to canvas"
+      - "Implement AI connection recommendations"
+      - "Add accept/dismiss UI for linkage proposals"
+      - "Validate with Use Case 2 flow"
+
+  - id: 5
+    name: "Gemini Multimodal Processing"
+    status: "PENDING"
+    description: "Integrate Gemini API for advanced document processing"
+    tasks:
+      - "Wire PDF document processing endpoint"
+      - "Wire image understanding (with OCR)"
+      - "Wire audio transcription"
+      - "Wire URL content extraction"
+      - "Wire structured output for frontmatter"
+
+  - id: 6
+    name: "Knowledge Matrix Auto-Organization"
+    status: "PENDING"
+    description: "Implement dynamic knowledge organization"
+    tasks:
+      - "Create KnowledgeGraph analysis service"
+      - "Implement subject classification algorithms"
+      - "Add relevancy scoring for inter-document relationships"
+      - "Build auto-organization recommendations engine"
+      - "Validate with Use Case 4 flow"
+
+  - id: 7
+    name: "Final Validation & Demo Prep"
+    status: "PENDING"
+    description: "Comprehensive testing and demo preparation"
+    tasks:
+      - "Run 12-level sweeping validation"
+      - "Execute 3-device rule tests"
+      - "Validate all 4 use cases end-to-end"
+      - "Prepare demo scenarios"
+      - "Generate completion report"
+
+# Success criteria
+completion_criteria:
+  - "All 4 use cases demonstrable end-to-end"
+  - "Source → RAG pipeline working"
+  - "Synthesis UI generating frontmatter"
+  - "Chat → RAG wired with citations"
+  - "Canvas showing AI linkage suggestions"
+  - "Build passing with no TypeScript errors"
+  - "12-level validation at ≥80% health score"

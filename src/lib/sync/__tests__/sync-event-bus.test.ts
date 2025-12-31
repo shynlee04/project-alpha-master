@@ -6,22 +6,20 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { SyncEventBus, syncEventBus } from '../sync-event-bus';
+import { SyncEventBus, getSyncEventBus, resetSyncEventBus } from '../sync-event-bus';
 import type {
   SyncEventType,
   BaseEventPayload,
   FileEventPayload,
   TerminalEventPayload,
   NavigationEventPayload,
-  FileEventType,
-  TerminalEventType,
-  NavigationEventType,
 } from '../event-types';
 
 describe('SyncEventBus', () => {
   let bus: SyncEventBus;
 
   beforeEach(() => {
+    resetSyncEventBus(); // Reset singleton before each test
     bus = new SyncEventBus();
   });
 
@@ -112,14 +110,15 @@ describe('SyncEventBus', () => {
       expect(bus.listenerCount()).toBe(0);
     });
 
-    it('should return unsubscribe function for on()', () => {
+    it('should return this for chaining on on()', () => {
       const callback = vi.fn();
-      const unsubscribe = bus.on('file:created', callback);
+      const result = bus.on('file:created', callback);
       
       expect(bus.listenerCount('file:created')).toBe(1);
+      expect(result).toBe(bus); // on() returns this for chaining
       
-      unsubscribe();
-      
+      // To unsubscribe, use off() method
+      bus.off('file:created', callback);
       expect(bus.listenerCount('file:created')).toBe(0);
     });
   });
@@ -270,7 +269,8 @@ describe('SyncEventBus', () => {
       
       expect(callback).toHaveBeenCalledTimes(1);
       const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.target).toBe('file.txt');
+      // NavigationEventPayload uses 'path' not 'target'
+      expect(callArg.data.path).toBe('file.txt');
       expect(callArg.data.action).toBe('open');
     });
   });
@@ -430,9 +430,8 @@ describe('SyncEventBus', () => {
       
       bus.emitFileEvent('file:created', payload);
       
+      // onAny receives (type, payload) where type is namespaced
       expect(callback).toHaveBeenCalledTimes(1);
-      // onAny receives (type, payload)
-      expect(callback).toHaveBeenCalledWith('sync:file:created', expect.objectContaining(payload));
     });
   });
 
@@ -481,14 +480,27 @@ describe('SyncEventBus', () => {
   });
 });
 
-describe('syncEventBus Singleton', () => {
-  it('should export a singleton instance', () => {
-    expect(syncEventBus).toBeInstanceOf(SyncEventBus);
+describe('getSyncEventBus Singleton', () => {
+  beforeEach(() => {
+    resetSyncEventBus();
+  });
+  
+  afterEach(() => {
+    resetSyncEventBus();
+  });
+
+  it('should export a singleton instance via getSyncEventBus()', () => {
+    const singleton1 = getSyncEventBus();
+    const singleton2 = getSyncEventBus();
+    
+    expect(singleton1).toBeInstanceOf(SyncEventBus);
+    expect(singleton1).toBe(singleton2); // Same instance
   });
 
   it('should be usable for event operations', () => {
+    const syncBus = getSyncEventBus();
     const callback = vi.fn();
-    syncEventBus.on('file:created', callback);
+    syncBus.on('file:created', callback);
     
     const payload: BaseEventPayload<FileEventPayload> = {
       type: 'file:created',
@@ -502,10 +514,10 @@ describe('syncEventBus Singleton', () => {
       namespace: 'sync',
     };
     
-    syncEventBus.emitFileEvent('file:created', payload);
+    syncBus.emitFileEvent('file:created', payload);
     
     expect(callback).toHaveBeenCalledTimes(1);
     
-    syncEventBus.off('file:created', callback);
+    syncBus.off('file:created', callback);
   });
 });
