@@ -1,74 +1,88 @@
-/**
- * Hub Home Page Component (Refactored)
- *
- * Home page with topic-based onboarding, real project data from Dexie,
- * and proper routing.
- *
- * @epic Epic-MRT Mobile Responsive Transformation
- * @story MRT-9 Dashboard Responsive
- * 
- * @file HubHomePage.tsx
- * @created 2025-12-27T00:50:00Z
- * @refactored Integrated with projectStore, BentoGrid, Router
- */
-
-import React, { useMemo } from 'react';
+```typescript
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
-import {
-  listProjectsWithPermission,
-  saveProject,
-  generateProjectId,
-  type ProjectWithPermission,
-  type ProjectMetadata,
-} from '@/lib/workspace/project-store';
-import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
-import {
-  PlusIcon,
-  FileIcon,
-  SettingsIcon,
-  AIIcon,
-  TerminalIcon,
-} from '@/presentation/components/ui/icons';
-import { User } from 'lucide-react';
-import { Sparkles, FolderPlus } from 'lucide-react';
-import { Button } from '@/presentation/components/ui/button';
-import { EmptyState } from '@/presentation/components/ui/EmptyState';
-import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
+import { formatDistanceToNow } from 'date-fns';
+import { 
+  Folder, 
+  Plus, 
+  Terminal, 
+  Cpu, 
+  BookOpen, 
+  Settings, 
+  Clock, 
+  HardDrive,
+  CheckCircle2,
+  ChevronRight
+} from 'lucide-react';
+
+import { db } from '@/db/db';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-import { MobileProjectSelector } from './MobileProjectSelector';
-import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 
-/**
- * Check if File System Access API is supported.
- * Not available on mobile browsers (iOS Safari, Android Chrome).
- */
-function isFileSystemAccessSupported(): boolean {
-  return typeof window !== 'undefined' && 'showDirectoryPicker' in window;
-}
+import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
+import { EmptyState } from '@/presentation/components/ui/EmptyState';
+import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
+
+// --- Components ---
+
+const BootSequence = ({ onComplete }: { onComplete: () => void }) => {
+  const [lines, setLines] = useState<string[]>([]);
+  const bootLines = [
+    "BIOS CHECK... OK",
+    "LOADING KERNEL... OK",
+    "MOUNTING VIRTUAL FILESYSTEM...",
+    "INITIALIZING NEURAL INTERFACE...",
+    "ACCESS GRANTED."
+  ];
+
+  useEffect(() => {
+    let delay = 0;
+    bootLines.forEach((line, i) => {
+      delay += Math.random() * 300 + 100;
+      setTimeout(() => {
+        setLines(prev => [...prev, line]);
+        if (i === bootLines.length - 1) {
+          setTimeout(onComplete, 500);
+        }
+      }, delay);
+    });
+  }, []);
+
+  return (
+    <div className="fixed inset-0 bg-background z-50 flex items-start justify-start p-8 font-mono text-primary text-sm md:text-base">
+      <div className="space-y-1">
+        {lines.map((line, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="text-muted-foreground">{`> `}</span>
+            <span>{line}</span>
+          </div>
+        ))}
+        <div className="animate-pulse">_</div>
+      </div>
+    </div>
+  );
+};
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  // MRT-9: Mobile responsive detection
   const { isMobile } = useDeviceType();
   const { setMobileMenuOpen } = useLayoutStore();
 
-  // Check File System Access API support (not available on mobile browsers)
-  const isFileSystemSupported = useMemo(() => isFileSystemAccessSupported(), []);
+  const [booting, setBooting] = useState(true);
+  const [showContent, setShowContent] = useState(false);
 
-  // State for showing mobile warning
-  const [showMobileWarning, setShowMobileWarning] = React.useState(false);
-
-  // -- Retro Typing Effect State --
+  // -- Text Typing Effect --
   const fullText = t('hub.welcome', 'INITIALIZING SYSTEM...');
-  const [typedText, setTypedText] = React.useState('');
-  const [cursorVisible, setCursorVisible] = React.useState(true);
+  const [typedText, setTypedText] = useState('');
+  const [cursorVisible, setCursorVisible] = useState(true);
 
-  // Typing animation effect
-  React.useEffect(() => {
+  useEffect(() => {
+    if (booting) return;
+    
     let index = 0;
     const typeInterval = setInterval(() => {
       setTypedText((prev) => {
@@ -79,89 +93,51 @@ export const HubHomePage: React.FC = () => {
         clearInterval(typeInterval);
         return prev;
       });
-    }, 50); // Speed of typing
+    }, 40);
 
     return () => clearInterval(typeInterval);
-  }, [fullText]);
+  }, [fullText, booting]);
 
-  // Cursor Blinking effect
-  React.useEffect(() => {
-    const blinkInterval = setInterval(() => {
-      setCursorVisible((v) => !v);
-    }, 530);
+  useEffect(() => {
+    const blinkInterval = setInterval(() => setCursorVisible(v => !v), 530);
     return () => clearInterval(blinkInterval);
   }, []);
 
   // -- Data Fetching --
-  const projects = useLiveQuery(() => listProjectsWithPermission(), []);
+  const projects = useLiveQuery(() => db.projects.toArray());
   const isLoading = projects === undefined;
 
-  // Sort projects by recency
-  const recentProjects = (projects || []).sort((a, b) => {
-    return new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime();
-  }).slice(0, 5);
+  const recentProjects = useMemo(() => {
+    return (projects || [])
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .slice(0, 5);
+  }, [projects]);
 
-  /**
-   * Handle opening a new folder via File System Access API
-   * With mobile fallback UX
-   */
-  const handleOpenFolder = async () => {
-    // Check if FS API is supported (not on mobile browsers)
-    if (!isFileSystemSupported) {
-      setShowMobileWarning(true);
-      return;
-    }
-
-    try {
-      const handle = await window.showDirectoryPicker();
-
-      // Create and save the project
-      const newProject: ProjectMetadata = {
-        id: generateProjectId(),
-        name: handle.name,
-        folderPath: handle.name, // FSA doesn't expose full path
-        fsaHandle: handle,
-        lastOpened: new Date(),
-        autoSync: true,
-      };
-
-      const saved = await saveProject(newProject);
-      if (saved) {
-        navigate({ to: `/workspace/${newProject.id}` });
-      }
-    } catch (err) {
-      // User cancelled or error
-      if ((err as Error).name !== 'AbortError') {
-        console.error('Failed to open folder:', err);
-      }
-    }
-  };
-
-  // -- Bento Grid Data --
-  const bentoCards: BentoCardProps[] = [
+  // -- Bento Cards Configuration --
+  const bentoCards: BentoCardProps[] = useMemo(() => [
     {
       id: 'new-project',
       size: 'medium',
-      title: t('hub.newProject', 'NEW_PROJECT.EXE'),
-      description: t('hub.newProjectDesc', 'Initialize a new workspace environment'),
-      icon: <PlusIcon className="h-8 w-8" />,
+      title: t('hub.menu.workspace', 'WORKSPACE_MOUNT'),
+      description: t('hub.newProjectDesc', 'Initialize a new workspace entry'),
+      icon: <Plus className="h-8 w-8" />,
       topic: 'Workspace',
       onClick: () => navigate({ to: '/workspace' }),
-      className: 'bg-primary/5 border-primary/20',
+      className: 'bg-primary/5 border-primary/20 hover:border-primary/50',
     },
     {
       id: 'ai-agents',
       size: 'small',
-      title: t('hub.agents', 'AI_AGENTS'),
-      icon: <AIIcon className="h-6 w-6" />,
+      title: t('hub.menu.agents', 'NEURAL_AGENTS'),
+      icon: <Cpu className="h-6 w-6" />,
       topic: 'Agents',
       onClick: () => navigate({ to: '/agents' }),
     },
     {
       id: 'knowledge',
       size: 'small',
-      title: t('hub.knowledge', 'DATA_BANK'),
-      icon: <FolderPlus className="h-6 w-6" />,
+      title: t('hub.menu.knowledge', 'DATA_BANK'),
+      icon: <HardDrive className="h-6 w-6" />,
       topic: 'Knowledge',
       onClick: () => navigate({ to: '/knowledge' }),
     },
@@ -169,41 +145,54 @@ export const HubHomePage: React.FC = () => {
       id: 'docs',
       size: 'wide',
       title: t('hub.documentation', 'MANUAL.TXT'),
-      description: t('hub.docsDesc', 'Access system documentation and guides'),
-      icon: <Sparkles className="h-6 w-6" />,
+      description: t('hub.docsDesc', 'System documentation and guides'),
+      icon: <BookOpen className="h-6 w-6" />,
       topic: 'About',
       onClick: () => navigate({ to: '/study' }),
     },
-    {
+     {
       id: 'terminal',
       size: 'small',
       title: t('hub.terminal', 'TERMINAL'),
-      icon: <TerminalIcon className="h-6 w-6" />,
+      icon: <Terminal className="h-6 w-6" />,
       topic: 'Terminal',
-      onClick: () => { },
+      onClick: () => {}, // Future: Open global terminal
     },
     {
       id: 'settings',
       size: 'small',
-      title: t('hub.config', 'CONFIG'),
-      icon: <SettingsIcon className="h-6 w-6" />,
+      title: t('hub.menu.settings', 'CONFIG_SYS'),
+      icon: <Settings className="h-6 w-6" />,
       topic: 'Settings',
       onClick: () => navigate({ to: '/settings' }),
     },
-  ];
+  ], [t, navigate]);
+
+  const handleBootComplete = () => {
+    setBooting(false);
+    setTimeout(() => setShowContent(true), 100);
+  };
+
+  if (booting) {
+    return <BootSequence onComplete={handleBootComplete} />;
+  }
 
   return (
-    <div className="flex flex-col min-h-full p-4 md:p-8 space-y-8 bg-background text-foreground font-sans">
-
+    <div className={cn(
+      "flex flex-col min-h-full p-4 md:p-8 space-y-8 bg-background text-foreground font-sans transition-opacity duration-700",
+      showContent ? "opacity-100" : "opacity-0"
+    )}>
+      
       {/* -- Hero Section -- */}
-      <section className="space-y-2 mb-4">
-        <h1 className="text-3xl md:text-5xl font-pixel text-primary tracking-tight h-[1.2em]">
+      <section className="space-y-2 mb-4 pt-4 md:pt-0">
+        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-1">
+          <Terminal className="w-3 h-3" />
+          <span>{t('hub.subtitle', 'v2.5.0-BETA // READY FOR INPUT')}</span>
+        </div>
+        <h1 className="text-3xl md:text-5xl font-pixel text-primary tracking-tight h-[1.2em] flex items-center">
           {typedText}
-          <span className={cn("inline-block w-[0.5em] h-[1em] bg-primary ml-1 align-middle", cursorVisible ? "opacity-100" : "opacity-0")} />
+          <span className={cn("inline-block w-[0.6em] h-[1em] bg-primary ml-1", cursorVisible ? "opacity-100" : "opacity-0")} />
         </h1>
-        <p className="text-muted-foreground font-mono text-sm md:text-base max-w-2xl">
-          {t('hub.subtitle', 'v2.4.0-ALPHA // READY FOR INPUT')}
-        </p>
       </section>
 
       {/* -- Main Grid -- */}
@@ -213,52 +202,92 @@ export const HubHomePage: React.FC = () => {
 
       {/* -- Recent Projects (File Directory Style) -- */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between border-b-2 border-border pb-2">
+        <div className="flex items-center justify-between border-b-2 border-border/50 pb-2">
           <h2 className="text-xl font-pixel text-foreground flex items-center gap-2">
-            <FileIcon className="h-5 w-5 text-primary" />
-            {t('hub.recentProjects', 'RECENT_DIRECTORIES')}
+            <Folder className="h-5 w-5 text-primary" />
+            {t('hub.recent.title', 'RECENT_DIRECTORIES')}
           </h2>
-          <button
+          <button 
             onClick={() => navigate({ to: '/workspace' })}
-            className="text-xs font-mono text-muted-foreground hover:text-primary hover:underline"
+            className="text-xs font-mono text-muted-foreground hover:text-primary hover:underline flex items-center gap-1 transition-colors"
           >
-            {t('hub.browse', 'BROWSE')}
+            {t('hub.actions.viewAll', 'VIEW_ALL >>')}
           </button>
         </div>
 
-        {/* Project List or Empty State */}
         {isLoading ? (
-          <SkeletonLoader count={3} />
-        ) : recentProjects.length > 0 ? (
-          <div className="grid gap-3">
-            {recentProjects.map((project) => (
-              <div
-                key={project.id}
-                onClick={() => navigate({ to: `/workspace/${project.id}` })}
-                className="flex items-center justify-between p-4 border border-border bg-card hover:bg-muted/50 cursor-pointer transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <FolderPlus className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground">{project.name}</p>
-                    <p className="text-xs text-muted-foreground font-mono">
-                      {new Date(project.lastOpened).toLocaleString()}
-                    </p>
+           <div className="space-y-2">
+             <SkeletonLoader variant="list" lines={3} />
+           </div>
+        ) : (!recentProjects || recentProjects.length === 0) ? (
+          <EmptyState 
+            variant="no-projects"
+            message={t('hub.noProjects', 'No directories found in local storage.')}
+            action="create"
+            onAction={() => navigate({ to: '/workspace' })}
+          />
+        ) : (
+          <div className="border-2 border-border/60 bg-card/50 backdrop-blur-sm shadow-pixel">
+            {/* Header Row */}
+            <div className="grid grid-cols-12 gap-4 p-3 border-b-2 border-border/40 bg-muted/40 font-pixel text-xs text-muted-foreground uppercase tracking-widest">
+              <div className="col-span-8 md:col-span-5 pl-2">Name</div>
+              <div className="col-span-3 md:col-span-2 hidden md:block">{t('hub.recent.status', 'STATUS')}</div>
+              <div className="col-span-4 md:col-span-3 text-right">{t('hub.recent.lastMod', 'LAST_MOD')}</div>
+              <div className="col-span-2 md:col-span-2 text-right hidden md:block pr-2">{t('hub.recent.size', 'SIZE')}</div>
+            </div>
+
+            {/* Project Rows */}
+            <div className="divide-y-2 divide-border/20">
+              {recentProjects.map((project) => (
+                <div 
+                  key={project.id}
+                  onClick={() => navigate({ to: `/ ide`, search: { projectId: project.id } })}
+                  className="grid grid-cols-12 gap-4 p-3 items-center hover:bg-primary/5 cursor-pointer group transition-all duration-200"
+                  role="button"
+                  tabIndex={0}
+                >
+                  {/* Name */}
+                  <div className="col-span-8 md:col-span-5 flex items-center gap-3 overflow-hidden pl-2">
+                    <Folder className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                    <span className="font-mono text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                      {project.name}
+                    </span>
+                  </div>
+
+                  {/* Status (Desktop only) */}
+                  <div className="col-span-3 md:col-span-2 hidden md:block">
+                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase font-pixel bg-green-500/10 text-green-500 border border-green-500/30 rounded-none">
+                       <CheckCircle2 className="w-3 h-3" />
+                       ACTIVE
+                     </span>
+                  </div>
+
+                  {/* Date */}
+                  <div className="col-span-4 md:col-span-3 text-right">
+                    <span className="text-xs font-mono text-muted-foreground flex items-center justify-end gap-1 group-hover:text-foreground transition-colors">
+                      <Clock className="h-3 w-3 md:hidden" />
+                      {formatDistanceToNow(project.updatedAt, { addSuffix: true })}
+                    </span>
+                  </div>
+
+                   {/* Size (Desktop only placeholder) */}
+                   <div className="col-span-2 md:col-span-2 text-right hidden md:block pr-2">
+                    <span className="text-xs font-mono text-muted-foreground group-hover:text-foreground transition-colors">
+                      --
+                    </span>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            
+            {/* Footer Row */}
+             <div className="bg-muted/40 p-2 font-mono text-[10px] text-muted-foreground text-center border-t-2 border-border/40">
+                Total Directories: {recentProjects.length}
+             </div>
           </div>
-        ) : (
-          <EmptyState
-            icon={<FileIcon className="h-8 w-8 text-muted-foreground" />}
-            title={t('hub.noProjects', 'NO_DIRECTORIES')}
-            description={t('hub.noProjectsDesc', 'No workspace directories initialized yet')}
-            actionLabel={t('hub.createFirst', 'CREATE_FIRST')}
-            onAction={handleOpenFolder}
-          />
         )}
       </section>
     </div>
   );
 };
+```
