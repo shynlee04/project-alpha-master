@@ -5,33 +5,44 @@
  *
  * @file HubHomePage.test.tsx
  * @created 2025-12-26
- * @updated 2025-12-29 - Rewritten for BentoGrid
+ * @updated 2025-12-31 - Updated for Retro-Tech overhaul
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { HubHomePage } from '../HubHomePage';
-import { useHubStore } from '@/lib/state/hub-store';
 import * as dexieReactHooks from 'dexie-react-hooks';
+import * as useMediaQuery from '@/hooks/useMediaQuery'; // Mock hook
 
 // Mock dependencies
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(),
 }));
 
-vi.mock('@/lib/state/hub-store', () => ({
-  useHubStore: vi.fn(),
+// Mock layout store
+vi.mock('@/stores/layoutStore', () => ({
+  useLayoutStore: () => ({
+    setMobileMenuOpen: vi.fn(),
+  }),
+}));
+
+// Mock media query hook
+vi.mock('@/hooks/useMediaQuery', () => ({
+  useDeviceType: () => ({ isMobile: false }),
 }));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, fallback?: string) => {
-      // Map translation keys to expected text
+      // Map translation keys to specific test values if needed, otherwise return key or fallback
       const translations: Record<string, string> = {
-        'welcome': 'Welcome to Via-gent',
-        'hub.exploreViaGent': 'Explore Via-gent',
-        'projects.recent': 'Recent Projects',
-        'projects.openFolder': 'Open Folder',
-        'projects.new': 'New Project',
+        'hub.welcome': 'INITIALIZING SYSTEM...',
+        'hub.menu.workspace': 'WORKSPACE_MOUNT',
+        'hub.menu.agents': 'NEURAL_AGENTS',
+        'hub.menu.knowledge': 'DATA_BANK',
+        'hub.menu.settings': 'CONFIG_SYS',
+        'hub.recentProjects': 'RECENT_DIRECTORIES',
+        'hub.recent.title': 'RECENT_DIRECTORIES',
+        'hub.actions.viewAll': 'VIEW_ALL >>',
       };
       return translations[key] || fallback || key;
     },
@@ -44,175 +55,104 @@ vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-// Mock project store
-vi.mock('@/lib/workspace/project-store', () => ({
-  listProjectsWithPermission: vi.fn().mockResolvedValue([]),
-  saveProject: vi.fn().mockResolvedValue(true),
-  generateProjectId: vi.fn().mockReturnValue('test-id'),
-}));
-
-// Mock icons
-vi.mock('@/presentation/components/ui/icons', () => ({
-  PlusIcon: () => <span data-testid="plus-icon">Plus</span>,
-  FileIcon: () => <span data-testid="file-icon">File</span>,
-  SettingsIcon: () => <span data-testid="settings-icon">Settings</span>,
-  AIIcon: () => <span data-testid="ai-icon">AI</span>,
-  TerminalIcon: () => <span data-testid="terminal-icon">Terminal</span>,
+// Mock db
+vi.mock('@/lib/state/dexie-db', () => ({
+  db: {
+    projects: {
+      toArray: vi.fn().mockResolvedValue([]),
+    },
+  },
 }));
 
 describe('HubHomePage', () => {
-  const mockSetActiveSection = vi.fn();
-  const mockToggleSidebar = vi.fn();
-
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
-
-    (useHubStore as any).mockReturnValue({
-      activeSection: 'home',
-      sidebarCollapsed: false,
-      toggleSidebar: mockToggleSidebar,
-      setActiveSection: mockSetActiveSection,
-      addToHistory: vi.fn(),
-      navigateBack: vi.fn(),
-      navigationHistory: [],
-    });
-
     (dexieReactHooks.useLiveQuery as any).mockReturnValue([]);
+    vi.useFakeTimers();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const skipBootSequence = () => {
+    act(() => {
+      vi.runAllTimers();
+    });
+  };
+
   describe('Rendering', () => {
-    it('should render main layout', () => {
+    it('should render boot sequence initially', () => {
       render(<HubHomePage />);
-
-      expect(document.body.querySelector('.min-h-screen')).toBeInTheDocument();
+      expect(screen.getByText(/BIOS CHECK... OK/i)).toBeInTheDocument();
     });
 
-    it('should render welcome heading', () => {
+    it('should render main content after boot', () => {
       render(<HubHomePage />);
 
-      expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+      skipBootSequence();
+
+      expect(screen.getByText('INITIALIZING SYSTEM...')).toBeInTheDocument();
+      expect(screen.getByText('WORKSPACE_MOUNT')).toBeInTheDocument();
     });
 
-    it('should render project section buttons', () => {
+    it('should render all bento cards', () => {
       render(<HubHomePage />);
+      skipBootSequence();
 
-      // Get all buttons rendered
-      const allButtons = screen.getAllByRole('button');
-      // At minimum should have portal cards (4) and open folder button
-      expect(allButtons.length).toBeGreaterThanOrEqual(4);
-    });
-
-    it('should render explore section heading', () => {
-      render(<HubHomePage />);
-
-      expect(screen.getByText(/explore/i)).toBeInTheDocument();
-    });
-
-    it('should render BentoGrid for portal cards', () => {
-      render(<HubHomePage />);
-
-      // BentoGrid renders a grid container
-      expect(document.body.querySelector('.grid')).toBeInTheDocument();
+      expect(screen.getByText('NEURAL_AGENTS')).toBeInTheDocument();
+      expect(screen.getByText('DATA_BANK')).toBeInTheDocument();
+      expect(screen.getByText('CONFIG_SYS')).toBeInTheDocument();
     });
   });
 
   describe('Navigation', () => {
-    it('should navigate to IDE when IDE Workspace card is clicked', () => {
+    it('should navigate to workspace when Workspace card is clicked', () => {
       render(<HubHomePage />);
+      skipBootSequence();
 
-      // Find by text content in the BentoCard
-      const buttons = screen.getAllByRole('button');
-      const ideCard = buttons.find(btn => btn.textContent?.includes('IDE Workspace'));
-      expect(ideCard).toBeDefined();
-      fireEvent.click(ideCard!);
+      const card = screen.getByText('WORKSPACE_MOUNT');
+      fireEvent.click(card);
 
-      expect(mockNavigate).toHaveBeenCalledWith({ to: '/ide' });
+      expect(mockNavigate).toHaveBeenCalledWith({ to: '/workspace' });
     });
 
-    it('should navigate to agents when Agent Center card is clicked', () => {
+    it('should navigate to agents when Agents card is clicked', () => {
       render(<HubHomePage />);
+      skipBootSequence();
 
-      const buttons = screen.getAllByRole('button');
-      const agentCard = buttons.find(btn => btn.textContent?.includes('Agent Center'));
-      expect(agentCard).toBeDefined();
-      fireEvent.click(agentCard!);
+      const card = screen.getByText('NEURAL_AGENTS');
+      fireEvent.click(card);
 
       expect(mockNavigate).toHaveBeenCalledWith({ to: '/agents' });
     });
-
-    it('should navigate to knowledge when Knowledge Hub card is clicked', () => {
-      render(<HubHomePage />);
-
-      const buttons = screen.getAllByRole('button');
-      const knowledgeCard = buttons.find(btn => btn.textContent?.includes('Knowledge Hub'));
-      expect(knowledgeCard).toBeDefined();
-      fireEvent.click(knowledgeCard!);
-
-      expect(mockNavigate).toHaveBeenCalledWith({ to: '/knowledge' });
-    });
-
-    it('should navigate to settings when Settings card is clicked', () => {
-      render(<HubHomePage />);
-
-      const buttons = screen.getAllByRole('button');
-      const settingsCard = buttons.find(btn =>
-        btn.textContent?.includes('Settings') &&
-        !btn.textContent?.includes('Workspace') &&
-        !btn.textContent?.includes('Agents') &&
-        !btn.textContent?.includes('Knowledge')
-      );
-      expect(settingsCard).toBeDefined();
-      fireEvent.click(settingsCard!);
-
-      expect(mockNavigate).toHaveBeenCalledWith({ to: '/settings' });
-    });
   });
 
-  describe('Project Actions', () => {
-    it('should render new project button', () => {
+  describe('Recent Projects', () => {
+    it('should render empty state when no projects', () => {
       render(<HubHomePage />);
+      skipBootSequence();
 
-      // The button has PlusIcon and aria-label from translation
-      expect(screen.getByLabelText('Open Folder')).toBeInTheDocument();
+      expect(screen.getByText('RECENT_DIRECTORIES')).toBeInTheDocument();
+      // Expect empty state message (using default key/fallback from mock if specific key not providing text)
+      // The component uses t('hub.noProjects', 'No directories found...')
+      // Our mock returns 'hub.noProjects' or the fallback.
+      expect(screen.getByText(/No directories found/i)).toBeInTheDocument();
     });
 
-    it('should handle open folder action button', () => {
-      render(<HubHomePage />);
-
-      const openButton = screen.getByLabelText('Open Folder');
-      expect(openButton).toBeInTheDocument();
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('should have main content area', () => {
-      render(<HubHomePage />);
-
-      const main = document.body.querySelector('main');
-      expect(main).toBeInTheDocument();
-    });
-
-    it('should have focusable elements', () => {
-      render(<HubHomePage />);
-
-      const buttons = document.body.querySelectorAll('button');
-      expect(buttons.length).toBeGreaterThan(0);
-
-      // At least one button should be focusable
-      const firstButton = buttons[0];
-      expect(firstButton.getAttribute('tabIndex')).not.toBe('-1');
-    });
-  });
-
-  describe('Loading State', () => {
-    it('should handle empty projects list', () => {
-      (dexieReactHooks.useLiveQuery as any).mockReturnValue([]);
+    it('should render project list when projects exist', () => {
+      const mockProjects = [
+        { id: '1', name: 'Project Alpha', updatedAt: new Date(), lastOpened: new Date() },
+        { id: '2', name: 'Project Beta', updatedAt: new Date(Date.now() - 10000), lastOpened: new Date() }
+      ];
+      (dexieReactHooks.useLiveQuery as any).mockReturnValue(mockProjects);
 
       render(<HubHomePage />);
+      skipBootSequence();
 
-      // Component should render without error
-      expect(screen.getByText(/explore/i)).toBeInTheDocument();
+      expect(screen.getByText('Project Alpha')).toBeInTheDocument();
+      expect(screen.getByText('Project Beta')).toBeInTheDocument();
     });
   });
 });

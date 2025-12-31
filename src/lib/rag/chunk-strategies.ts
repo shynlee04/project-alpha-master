@@ -14,12 +14,10 @@
  */
 
 import type { ChunkingStrategy } from './types';
-import {
-    ChunkStrategy,
-    FixedSizeChunker,
-    SemanticChunker,
-    RecursiveChunker,
-} from './chunk-strategies';
+import { ChunkStrategy } from './chunk-strategies/chunk-strategy.interface';
+import { FixedSizeChunker } from './chunk-strategies/fixed-size-chunker';
+import { SemanticChunker } from './chunk-strategies/semantic-chunker';
+import { RecursiveChunker } from './chunk-strategies/recursive-chunker';
 
 // ============================================================================
 // Re-exports for backwards compatibility

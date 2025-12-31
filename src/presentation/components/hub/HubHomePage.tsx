@@ -1,4 +1,3 @@
-```typescript
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
@@ -17,8 +16,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-import { db } from '@/db/db';
-import { useLayoutStore } from '@/stores/layoutStore';
+import { db } from '@/lib/state/dexie-db';
+import { useLayoutStore } from '@/lib/state/layout-store';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
@@ -241,7 +240,7 @@ export const HubHomePage: React.FC = () => {
               {recentProjects.map((project) => (
                 <div 
                   key={project.id}
-                  onClick={() => navigate({ to: `/ ide`, search: { projectId: project.id } })}
+                  onClick={() => navigate({ to: `/ide`, search: { projectId: project.id } })}
                   className="grid grid-cols-12 gap-4 p-3 items-center hover:bg-primary/5 cursor-pointer group transition-all duration-200"
                   role="button"
                   tabIndex={0}
@@ -290,4 +289,3 @@ export const HubHomePage: React.FC = () => {
     </div>
   );
 };
-```
