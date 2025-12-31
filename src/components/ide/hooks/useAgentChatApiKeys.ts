@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import type { Agent } from '@/mocks/agents';
+import type { Agent } from '@/core/entities/Agent';
 
 // Map agent provider display names to provider IDs
 const PROVIDER_ID_MAP: Record<string, string> = {
@@ -45,9 +45,9 @@ export function useAgentChatApiKeys(agent: Agent | undefined): UseAgentChatApiKe
 
     // Get provider ID from agent's provider name
     const providerId = useMemo(() => {
-        if (!agent?.provider) return 'openrouter';
-        return PROVIDER_ID_MAP[agent.providerId] || 'openrouter';
-    }, [agent?.provider]);
+        if (!agent?.providerId) return 'openrouter';
+        return agent.providerId || 'openrouter';
+    }, [agent?.providerId]);
 
     // Fetch API key
     const fetchApiKey = useCallback(async () => {

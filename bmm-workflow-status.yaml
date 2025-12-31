@@ -1198,6 +1198,157 @@ active_epics:
     status: "IN_PROGRESS"
     start_date: "2025-12-29"
     trigger: "correct-course-2025-12-29"
+  # Phase 4: Knowledge Synthesis Platform (EPIC-32 through EPIC-37)
+  # Research Complete: 2025-12-31 (87% confidence score)
+  # Sprint Planning Document: _bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md
+  - id: "EPIC-32"
+    name: "RAG Infrastructure"
+    status: "READY"
+    start_date: "2025-12-31"
+    stories: "32-1 through 32-5"
+    trigger: "knowledge-synthesis-tech-spec-2025-12-31"
+    sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+    team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+    duration: "Sprint 1-2 (Weeks 1-2)"
+    dependencies: []
+    research_confidence: "90%"
+  - id: "EPIC-33"
+    name: "Agent Integration"
+    status: "READY"
+    start_date: "2025-12-31"
+    stories: "33-1 through 33-4"
+    trigger: "knowledge-synthesis-tech-spec-2025-12-31"
+    sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+    team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+    duration: "Sprint 3-4 (Weeks 3-4)"
+    dependencies: ["EPIC-32"]
+    research_confidence: "88%"
+  - id: "EPIC-34"
+    name: "Image Understanding"
+    status: "READY"
+    start_date: "2025-12-31"
+    stories: "34-1 through 34-3"
+    trigger: "knowledge-synthesis-tech-spec-2025-12-31"
+    sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+    team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+    duration: "Sprint 5-6 (Weeks 5-6)"
+    dependencies: ["EPIC-32"]
+    research_confidence: "82%"
+  - id: "EPIC-35"
+    name: "Document Processing"
+    status: "READY"
+    start_date: "2025-12-31"
+    stories: "35-1 through 35-4"
+    trigger: "knowledge-synthesis-tech-spec-2025-12-31"
+    sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+    team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+    duration: "Sprint 7-8 (Weeks 7-8)"
+    dependencies: ["EPIC-32"]
+    research_confidence: "85%"
+  - id: "EPIC-36"
+    name: "Adaptive Learning Engine"
+    status: "READY"
+    start_date: "2025-12-31"
+    stories: "36-1 through 36-4"
+    trigger: "knowledge-synthesis-tech-spec-2025-12-31"
+    sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+    team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+    duration: "Sprint 9-10 (Weeks 9-10)"
+    dependencies: ["EPIC-32", "EPIC-33"]
+    research_confidence: "85%"
+  - id: "EPIC-37"
+    name: "Study Artifact Generation"
+    status: "READY"
+    start_date: "2025-12-31"
+    stories: "37-1 through 37-4"
+    trigger: "knowledge-synthesis-tech-spec-2025-12-31"
+    sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+    team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+    duration: "Sprint 11-12 (Weeks 11-12)"
+    dependencies: ["EPIC-32", "EPIC-33"]
+    research_confidence: "87%"
+
+# Next Actions
+next_actions:
+  - "Complete Sprint Planning with @bmad-bmm-pm for EPIC-32-37"
+  - "Begin EPIC-32 Story 32-1: Orama WASM Vector Store Enhancement"
+  - "Refactor note-store.ts (525→300 lines) before EPIC-33"
+  - "Refactor note-indexer.ts (381→300 lines) before EPIC-32"
+  - "Address TypeScript errors (1,172 remaining)"
+  - "Execute sweeping validation before development phases"
+
+# Completed Actions
+completed_actions:
+  - "2025-12-31: Sprint planning document created for EPIC-32-37"
+  - "2025-12-31: Handoff document created for @bmad-bmm-pm"
+  - "2025-12-31: Technical specification mapped to existing components"
+  - "2025-12-31: Gap analysis completed (42 RAG, 20+ knowledge components)"
+  - "2025-12-31: Story breakdown with acceptance criteria created"
+  - "2025-12-31: Story development cycle workflow integrated"
+  - "2025-12-31: Sweeping validation findings addressed"
+
+# Artifacts Created
+artifacts:
+  sprint_planning: "_bmad-output/sprint-artifacts/knowledge-synthesis-sprint-planning-2025-12-31.md"
+  handoff: "_bmad-output/handoffs/bmad-bmm-pm-knowledge-synthesis-sprint-planning-2025-12-31.md"
+  tech_spec: "_bmad-output/knowledge-synthesis-platform/knowledge-synthesis-platform-tech-spec-2025-12-31.md"
+  research_artifacts:
+    - "_bmad-output/research-artifacts/implementation-playbook-2025-12-31.md"
+    - "_bmad-output/research-artifacts/rag-pipeline-optimization-report-2025-12-31.md"
+    - "_bmad-output/research-artifacts/multimodal-processing-specification-2025-12-31.md"
+
+# Knowledge Synthesis Platform Summary
+knowledge_synthesis_platform:
+  research_complete: true
+  research_date: "2025-12-31"
+  research_confidence: "87%"
+  tech_spec_status: "COMPLETE"
+  sprint_planning_status: "COMPLETE"
+  next_phase: "SPRINT_PLANNING"
+  total_stories: 24
+  total_epics: 6
+  estimated_duration: "12 weeks (Sprints 1-6)"
+  team_assignment: "Team A (UI/Foundation), Team B (Backend/Agent)"
+  parallel_execution: true
+  integration_points: 5
+    - "Day 6: Knowledge UI ↔ Agent Tools"
+    - "Day 12: Image Search ↔ Processing"
+    - "Day 18: Document Pipeline ↔ RAG"
+    - "Day 24: Learning ↔ Knowledge"
+    - "Day 30: Study UI ↔ Generation"
+
+# Validation Status
+validation_status:
+  code_hygiene: "5.9% health score (1,172 TS errors)"
+  file_size_violations: "37 files exceed 300-line limit"
+  critical_issues:
+    - "note-store.ts (525 lines) - needs refactoring"
+    - "note-indexer.ts (381 lines) - needs refactoring"
+    - "sync-manager.ts (667 lines) - defer to Epic 24"
+    - "note-ai-service.ts placeholder - needs implementation"
+  sweeping_validation: "_bmad-output/validation/sweeping-validation.md"
+
+# Dependencies Validated
+dependencies:
+  orama_wasm: "Local-first vector search"
+  transformers_js_clip: "Text/image embeddings (384-dim)"
+  whisper_wasm: "Speech-to-text"
+  pdf_js: "Client-side PDF parsing"
+  tanstack_ai: "LLM orchestration"
+  gemini_2_0_2_5: "Query orchestration"
+
+# Codebase Mapping
+codebase_mapping:
+  rag_library: "src/lib/rag/ (22+ files) - Exists, extend"
+  knowledge_library: "src/lib/knowledge/ (20+ files) - Exists, enhance"
+  notes_library: "src/lib/notes/ - Exists, refactor"
+  missing_components:
+    - "OCR Pipeline (Tesseract.js)"
+    - "Audio Transcription (Whisper WASM)"
+    - "Adaptive Learning Engine"
+    - "Enhanced Flashcard Generation"
+    - "Quiz Generation System"
+    - "Export Functionality"
   - id: "EPIC-29"
     name: "About Me Redesign"
     status: "IN_PROGRESS"

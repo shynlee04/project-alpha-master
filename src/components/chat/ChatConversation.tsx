@@ -438,7 +438,7 @@ export function ChatConversation({
                                 content: streamingContent,
                                 timestamp: Date.now(),
                                 agentName: selectedAgent?.name,
-                                agentModel: selectedAgent?.model,
+                                agentModel: selectedAgent?.modelId,
                             }}
                             isStreaming
                         />

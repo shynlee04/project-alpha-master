@@ -10,10 +10,10 @@
 
 export { AgentChatHeader } from './AgentChatHeader';
 export { AgentChatStatus } from './AgentChatStatus';
-export { AgentChatAPIKeyManager, useAgentChatAPIKeyManager } from './AgentChatAPIKeyManager';
-export { AgentChatToolFacades, useAgentChatToolFacades } from './AgentChatToolFacades';
+export { useAgentChatAPIKeyManager } from './AgentChatAPIKeyManager';
+export { useAgentChatToolFacades } from './AgentChatToolFacades';
 export { AgentChatApprovals } from './AgentChatApprovals';
 export { useAgentChatApprovals } from './useAgentChatApprovals';
-export { AgentChatConversationManager, useAgentChatConversationManager } from './AgentChatConversationManager';
+export { useAgentChatConversationManager } from './AgentChatConversationManager';
 export { AgentChatEnhancingUI } from './AgentChatEnhancingUI';
 export { mapHookMessages, mapStoreMessages } from './message-mappers';
