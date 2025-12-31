@@ -46,6 +46,12 @@ export const STORE_EVENTS = {
     // File events - for sync coordination
     FILE_SYNCED: 'file:synced',
     FILE_CONFLICT: 'file:conflict',
+
+    // Source events - for Knowledge workspace
+    SOURCE_IMPORTED: 'source:imported',
+    SOURCE_SYNTHESIZED: 'source:synthesized',
+    SOURCE_INDEXED: 'source:indexed',
+    SOURCE_INDEX_FAILED: 'source:index-failed',
 } as const;
 
 // Type-safe event types
@@ -100,6 +106,32 @@ export interface AgentUpdatedPayload {
     agentId: string;
     changes: string[];
     timestamp: number;
+}
+
+export interface SourceImportedPayload {
+    sourceId: string;
+    sourceType: string;
+    collectionId: string;
+    timestamp: number;
+}
+
+export interface SourceSynthesizedPayload {
+    sourceId: string;
+    synthesisId: string;
+    timestamp: number;
+}
+
+export interface SourceIndexedPayload {
+    sourceId: string;
+    chunksCreated: number;
+    embeddingsGenerated: number;
+    indexedAt: number;
+}
+
+export interface SourceIndexFailedPayload {
+    sourceId: string;
+    error: string;
+    indexedAt: number;
 }
 
 // =============================================================================

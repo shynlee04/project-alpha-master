@@ -24,11 +24,12 @@ import { SyncError, type SyncErrorCode } from '../filesystem/sync-types';
 
 /**
  * Conflict resolution strategy for handling file conflicts
+ * Uses camelCase naming convention for consistency
  */
 export type ConflictResolutionStrategy = 
-  | 'local'    // Local file wins, skip reverse sync
-  | 'remote'   // Remote (WebContainer) file wins, overwrite local
-  | 'merge';   // Merge changes (not implemented for MVP)
+  | 'localWins'   // Local file wins, skip reverse sync
+  | 'remoteWins'  // Remote (WebContainer) file wins, overwrite local
+  | 'merge';      // Merge changes (not implemented for MVP)
 
 /**
  * Options for ReverseSyncService
@@ -44,6 +45,12 @@ export interface ReverseSyncOptions {
   onError?: (error: ReverseSyncError) => void;
   /** Callback for sync progress */
   onProgress?: (progress: ReverseSyncProgress) => void;
+  /** WebContainer instance for reading files */
+  webContainer?: {
+    fs: {
+      readFile: (path: string, encoding?: string) => Promise<Uint8Array | string>;
+    };
+  };
 }
 
 /**
@@ -58,6 +65,8 @@ export interface ReverseSyncProgress {
   syncedCount: number;
   /** Whether operation completed */
   completed: boolean;
+  /** Event type for progress tracking */
+  eventType?: FileEventType;
 }
 
 /**
@@ -75,6 +84,22 @@ export class ReverseSyncError extends Error {
   }
 }
 
+/**
+ * Interface for local file system adapter
+ */
+interface LocalFSAdapterLike {
+  writeFile: (path: string, content: Uint8Array) => Promise<void>;
+  deleteFile: (path: string) => Promise<void>;
+  fileExists: (path: string) => Promise<boolean>;
+  getFileMetadata: (path: string) => Promise<{ lastModified?: number } | null>;
+}
+
+// =============================================================================
+// Constants
+// =============================================================================
+
+const DEFAULT_DEBOUNCE_MS = 100;
+
 // =============================================================================
 // Reverse Sync Service
 // =============================================================================
@@ -91,19 +116,15 @@ export class ReverseSyncError extends Error {
  * const reverseSync = new ReverseSyncService(
  *   syncEventBus,
  *   localFSAdapter,
- *   { conflictResolution: 'local' }
+ *   { conflictResolution: 'localWins' }
  * );
  * reverseSync.start();
  * ```
  */
 export class ReverseSyncService {
   private readonly syncEventBus: SyncEventBus;
-  private readonly localFSAdapter: {
-    writeFile: (path: string, content: Uint8Array) => Promise<void>;
-    deleteFile: (path: string) => Promise<void>;
-    fileExists: (path: string) => Promise<boolean>;
-    getFileMetadata: (path: string) => Promise<{ lastModified?: number } | null>;
-  };
+  private readonly localFSAdapter: LocalFSAdapterLike;
+  private readonly webContainer?: ReverseSyncService['webContainer'];
   private readonly exclusionPatterns: string[];
   private readonly conflictResolution: ConflictResolutionStrategy;
   private readonly debounceMs: number;
@@ -111,7 +132,7 @@ export class ReverseSyncService {
   private readonly onProgress?: (progress: ReverseSyncProgress) => void;
   
   private isRunning: boolean;
-  private debounceTimers: Map<string, NodeJS.Timeout>;
+  private debounceTimers: Map<string, NodeJS.Timeout | number>;
   private syncedCount: number;
   private readonly eventListeners: Map<FileEventType, () => void>;
 
@@ -124,14 +145,15 @@ export class ReverseSyncService {
    */
   constructor(
     syncEventBus: SyncEventBus,
-    localFSAdapter: ReverseSyncService['localFSAdapter'],
+    localFSAdapter: LocalFSAdapterLike,
     options?: ReverseSyncOptions
   ) {
     this.syncEventBus = syncEventBus;
     this.localFSAdapter = localFSAdapter;
+    this.webContainer = options?.webContainer;
     this.exclusionPatterns = options?.exclusionPatterns ?? this.getDefaultExclusions();
-    this.conflictResolution = options?.conflictResolution ?? 'local';
-    this.debounceMs = options?.debounceMs ?? 100;
+    this.conflictResolution = options?.conflictResolution ?? 'localWins';
+    this.debounceMs = options?.debounceMs ?? DEFAULT_DEBOUNCE_MS;
     this.onError = options?.onError;
     this.onProgress = options?.onProgress;
     
@@ -297,7 +319,7 @@ export class ReverseSyncService {
       switch (eventType) {
         case 'file:created':
         case 'file:modified':
-          await this.syncFileToLocal(path);
+          await this.syncFileToLocal(path, eventType);
           break;
         case 'file:deleted':
           await this.deleteLocalFile(path);
@@ -312,6 +334,7 @@ export class ReverseSyncService {
         operation: operation as 'create' | 'modify' | 'delete',
         syncedCount: this.syncedCount,
         completed: false,
+        eventType,
       });
 
       console.log(`[ReverseSyncService] Synced ${operation} operation for: ${path}`);
@@ -334,23 +357,69 @@ export class ReverseSyncService {
    * Sync a file from WebContainer to local file system
    * 
    * @param wcPath - WebContainer file path
+   * @param eventType - The event type for progress tracking
    */
-  private async syncFileToLocal(wcPath: string): Promise<void> {
+  private async syncFileToLocal(wcPath: string, eventType: FileEventType): Promise<void> {
     // Check conflict resolution strategy
-    if (this.conflictResolution === 'local') {
-      const localExists = await this.localFSAdapter.fileExists(wcPath);
-      
-      if (localExists) {
-        const localMeta = await this.localFSAdapter.getFileMetadata(wcPath);
-        // For MVP, skip if local file exists (local wins)
-        console.log(`[ReverseSyncService] Local file exists, skipping sync: ${wcPath}`);
-        return;
-      }
+    const shouldSync = await this.applyConflictResolution(wcPath);
+    
+    if (!shouldSync) {
+      console.log(`[ReverseSyncService] Conflict resolved, skipping sync: ${wcPath}`);
+      return;
     }
 
-    // The actual file reading from WebContainer would be done by the caller
-    // This service handles the sync logic and local FS operations
-    console.log(`[ReverseSyncService] Ready to sync file to local: ${wcPath}`);
+    // Read file from WebContainer
+    if (!this.webContainer) {
+      console.warn('[ReverseSyncService] No WebContainer instance provided, cannot read file');
+      return;
+    }
+
+    const content = await this.webContainer.fs.readFile(wcPath);
+    const uint8ArrayContent = content instanceof Uint8Array 
+      ? content 
+      : new TextEncoder().encode(content);
+
+    // Write to local file system
+    await this.localFSAdapter.writeFile(wcPath, uint8ArrayContent);
+    
+    console.log(`[ReverseSyncService] Synced file to local: ${wcPath}`);
+  }
+
+  /**
+   * Apply conflict resolution strategy
+   * 
+   * @param wcPath - WebContainer file path
+   * @returns Whether to proceed with sync
+   */
+  private async applyConflictResolution(wcPath: string): Promise<boolean> {
+    const localExists = await this.localFSAdapter.fileExists(wcPath);
+    
+    if (!localExists) {
+      // Local file doesn't exist, always sync
+      return true;
+    }
+
+    switch (this.conflictResolution) {
+      case 'localWins':
+        // Skip sync if local file exists (local wins)
+        console.log(`[ReverseSyncService] Local file exists, localWins: ${wcPath}`);
+        return false;
+        
+      case 'remoteWins':
+        // Always overwrite local with remote
+        console.log(`[ReverseSyncService] Remote wins, overwriting: ${wcPath}`);
+        return true;
+        
+      case 'merge':
+        // TODO: Implement actual merge logic for MVP
+        // For now, treat as remote wins
+        console.log(`[ReverseSyncService] Merge strategy not implemented, remote wins: ${wcPath}`);
+        return true;
+        
+      default:
+        // Unknown strategy, default to local wins
+        return false;
+    }
   }
 
   /**
@@ -374,17 +443,32 @@ export class ReverseSyncService {
 
   /**
    * Check if a path should be excluded from sync
+   * Uses normalized paths and proper pattern matching
    * 
    * @param path - File path to check
    * @returns True if path should be excluded
    */
   isExcluded(path: string): boolean {
+    // Normalize path for consistent matching
+    const normalizedPath = path.replace(/\\/g, '/');
+    
     return this.exclusionPatterns.some(pattern => {
-      // Handle glob patterns
+      // Handle glob patterns (e.g., *.swp)
       if (pattern.startsWith('*')) {
-        return path.endsWith(pattern.slice(1));
+        const globSuffix = pattern.slice(1);
+        return normalizedPath.endsWith(globSuffix);
       }
-      return path.includes(pattern);
+      
+      // Handle directory patterns with trailing slash (e.g., node_modules/)
+      if (pattern.endsWith('/')) {
+        const dirPattern = pattern.slice(0, -1);
+        // Check if path starts with the directory pattern
+        return normalizedPath.startsWith(`${dirPattern}/`) || 
+               normalizedPath.includes(`/${dirPattern}/`);
+      }
+      
+      // Handle exact path matches (e.g., .git)
+      return normalizedPath.includes(pattern);
     });
   }
 
@@ -429,6 +513,32 @@ export class ReverseSyncService {
   setConflictResolution(strategy: ConflictResolutionStrategy): void {
     this.conflictResolution = strategy;
   }
+
+  /**
+   * Update options at runtime
+   * 
+   * @param options - Partial options to update
+   */
+  setOptions(options: Partial<ReverseSyncOptions>): void {
+    if (options.exclusionPatterns !== undefined) {
+      this.exclusionPatterns = options.exclusionPatterns;
+    }
+    if (options.conflictResolution !== undefined) {
+      this.conflictResolution = options.conflictResolution;
+    }
+    if (options.debounceMs !== undefined) {
+      this.debounceMs = options.debounceMs;
+    }
+    if (options.onError !== undefined) {
+      this.onError = options.onError;
+    }
+    if (options.onProgress !== undefined) {
+      this.onProgress = options.onProgress;
+    }
+    if (options.webContainer !== undefined) {
+      this.webContainer = options.webContainer;
+    }
+  }
 }
 
 // =============================================================================
@@ -440,11 +550,13 @@ export class ReverseSyncService {
  * 
  * @param syncEventBus - The SyncEventBus instance
  * @param localFSAdapter - Adapter for local file system operations
+ * @param options - Optional configuration
  * @returns Configured ReverseSyncService instance
  */
 export function createReverseSyncService(
   syncEventBus: SyncEventBus,
-  localFSAdapter: ReverseSyncService['localFSAdapter']
+  localFSAdapter: LocalFSAdapterLike,
+  options?: ReverseSyncOptions
 ): ReverseSyncService {
-  return new ReverseSyncService(syncEventBus, localFSAdapter);
+  return new ReverseSyncService(syncEventBus, localFSAdapter, options);
 }

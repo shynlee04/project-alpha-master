@@ -30,6 +30,8 @@ import type { WorkspaceEventEmitter, WorkspaceEvents } from '@/lib/events/worksp
 import { useRAGStore } from '@/lib/state/rag-store';
 import type { ChunkingOptions } from '@/lib/rag/types';
 import { DEFAULT_CHUNKING_OPTIONS } from '@/lib/rag/types';
+import { emitStoreEvent } from '@/lib/events/store-events';
+import { STORE_EVENTS } from '@/lib/events/store-events';
 
 /**
  * Supported source types
@@ -117,6 +119,14 @@ export class SourceImportPipeline {
             // Persist to IndexedDB
             await db.sources.put(record);
 
+            // Emit SOURCE_IMPORTED event for SourceRAGBridge
+            emitStoreEvent(STORE_EVENTS.SOURCE_IMPORTED, {
+                sourceId,
+                sourceType: 'pdf',
+                collectionId: options.projectId,
+                timestamp: Date.now()
+            });
+
             this.triggerMetadataExtraction(sourceId, result.text);
 
             // Trigger chunking if enabled (Story 7-2)
@@ -172,6 +182,14 @@ export class SourceImportPipeline {
             // Persist to IndexedDB
             await db.sources.put(record);
 
+            // Emit SOURCE_IMPORTED event for SourceRAGBridge
+            emitStoreEvent(STORE_EVENTS.SOURCE_IMPORTED, {
+                sourceId,
+                sourceType: 'url',
+                collectionId: options.projectId,
+                timestamp: Date.now()
+            });
+
             this.triggerMetadataExtraction(sourceId, result.content);
 
             // Trigger chunking if enabled (Story 7-2)
@@ -226,6 +244,14 @@ export class SourceImportPipeline {
 
             // Persist to IndexedDB
             await db.sources.put(record);
+
+            // Emit SOURCE_IMPORTED event for SourceRAGBridge
+            emitStoreEvent(STORE_EVENTS.SOURCE_IMPORTED, {
+                sourceId,
+                sourceType: 'text',
+                collectionId: options.projectId,
+                timestamp: Date.now()
+            });
 
             this.triggerMetadataExtraction(sourceId, text);
 

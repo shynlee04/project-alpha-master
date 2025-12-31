@@ -1,0 +1,166 @@
+# RAG Chat Integration Status
+# Generated: 2025-12-31T21:30:00+07:00
+# Gap: GAP-002 (ChatPanel → Hybrid Retriever)
+
+## Overall Status: 75% Complete ⏳
+
+### ✅ What Works
+
+#### 1. **HybridRetriever** (`src/lib/rag/hybrid-retriever.ts`)
+- ✓ Vector + fulltext hybrid search
+- ✓ Phrase matching boost
+- ✓ Configurable weights (default: vector 0.7, fulltext 0.3)
+- ✓ Result deduplication and merging
+- ✓ Performance: <500ms target for 10K documents
+
+#### 2. **RAGChat Service** (`src/lib/rag/rag-chat.ts`)
+- ✓ Orchestrates retrieval and generation
+- ✓ Formats citations from search results
+- ✓ Builds context from retrieved chunks
+- ✓ Conversation history management
+
+#### 3. **RAGChatPanel UI** (`src/presentation/components/rag/RAGChatPanel.tsx`)
+- ✓ Displays chat messages with user/assistant roles
+- ✓ Shows citations with clickable markers
+- ✓ Citation click handlers
+- ✓ Loading/error states
+- ✓ Message input with send button
+- ✓ Clear chat functionality
+
+#### 4. **RAGPanelContainer** (`src/presentation/components/rag/RAGPanelContainer.tsx`)
+- ✓ Tabbed interface (search/chat)
+- ✓ Integrates with useRAGStore
+- ✓ Citation sidebar integration
+- ✓ Mode switching between search and chat
+
+#### 5. **rag-store.ts sendRAGMessage** (`src/lib/state/rag-store.ts:472-541`)
+- ✓ Loads or creates Orama index
+- ✓ Creates embedding service
+- ✓ Creates hybrid retriever
+- ✓ Searches via retriever.search(query, { limit: 10 })
+- ✓ Formats citations
+- ✓ Updates chat state with messages
+- ✓ Error handling with user feedback
+
+### ❌ What's Missing
+
+#### 1. **LLM Generation** (`src/lib/state/rag-store.ts:515`)
+```typescript
+// CURRENT (placeholder):
+const responseText = `Based on ${results.length} sources, here's an answer.
+[Integration with TanStack AI pending]`;
+
+// NEEDED:
+const responseText = await tanStackAI.chat({
+  messages: [
+    { role: 'system', content: buildSystemPrompt(context) },
+    { role: 'user', content: query }
+  ],
+  stream: true
+});
+```
+
+**Requirements:**
+- Integrate TanStack AI chat completion
+- Inject retrieved context into system prompt
+- Support streaming responses
+- Handle citations in response format
+
+**Estimated effort:** 2-3 hours
+
+#### 2. **UnifiedChatPanel Mode Toggle**
+- ✓ RAGChatPanel exists
+- ✓ UnifiedChatPanel exists with mode support
+- ✗ Mode toggle not wired in UI
+- ✗ Mode persistence not implemented
+- ✗ Agent mode vs RAG mode switching
+
+**Estimated effort:** 1-2 hours
+
+### Data Flow Verification
+
+```
+User sends message
+    ↓
+RAGPanelContainer.handleSendMessage()
+    ↓
+useRAGStore.sendMessage(projectId)
+    ↓
+sendRAGMessage(query)
+    ↓
+Load/create Orama index ✓
+Create embedding service ✓
+Create HybridRetriever ✓
+retriever.search(query, { limit: 10 }) ✓
+Format citations ✓
+Build context (commented out)
+Generate response (PLACEHOLDER) ❌
+Update chat state ✓
+RAGChatPanel re-renders ✓
+Display messages with citations ✓
+```
+
+**Status:** 8/10 steps working
+
+### Integration Points
+
+| Component | File | Status | Notes |
+|-----------|------|--------|-------|
+| Event bus | `src/lib/events/store-events.ts` | ✓ | SOURCE_IMPORTED events working |
+| Bridge | `src/lib/knowledge/source-rag-bridge.ts` | ✓ | Auto-indexing on import |
+| Retriever | `src/lib/rag/hybrid-retriever.ts` | ✓ | Hybrid search functional |
+| Store | `src/lib/state/rag-store.ts` | ⏳ | sendRAGMessage 90% complete |
+| UI Panel | `src/presentation/components/rag/RAGChatPanel.tsx` | ✓ | Chat UI ready |
+| Container | `src/presentation/components/rag/RAGPanelContainer.tsx` | ✓ | Tabs working |
+| LLM | `src/lib/state/rag-store.ts:515` | ❌ | Placeholder needs TanStack AI |
+
+### Dependencies
+
+```
+RAGChatPanel
+  ↓ depends on
+useRAGStore
+  ↓ calls
+sendRAGMessage
+  ↓ uses
+HybridRetriever + EmbeddingService + OramaIndex
+  ↓ generates
+ChatMessage[] + citations
+  ↓ displays
+RAGChatPanel
+```
+
+**Circular dependency risk:** None - clean separation via store
+
+### Testing Requirements
+
+- ✓ Build passes (14.60s)
+- ⏳ Unit tests for sendRAGMessage
+- ⏳ E2E test: Import → Index → Chat → Citations
+- ⏳ Streaming response handling
+- ⏳ Error recovery (LLM failures)
+
+### Next Steps (Priority Order)
+
+1. **HIGH:** Implement TanStack AI chat completion (2-3h)
+   - Replace placeholder in rag-store.ts:515
+   - Build system prompt with context
+   - Handle streaming responses
+   - Parse citation references
+
+2. **MEDIUM:** Add mode toggle to UnifiedChatPanel (1-2h)
+   - Add mode selector UI
+   - Wire agent/rag/hybrid modes
+   - Persist mode to localStorage
+
+3. **LOW:** Testing and validation (1-2h)
+   - Unit tests for RAG flow
+   - E2E test for complete chat with citations
+   - Performance testing with large indexes
+
+### Total Remaining Effort: 4-7 hours
+
+### Build Status
+✓ Build passing: 14.60s
+✓ No TypeScript errors
+✓ All dependencies resolved

@@ -24,6 +24,14 @@ import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification
 import { AgentSelector } from '@/presentation/components/chat';
 
+// KSI Module: Source → RAG Bridge
+import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';
+import { DocumentChunker } from '@/lib/rag/document-chunker';
+import { EmbeddingService } from '@/lib/rag/embedding-service';
+import { indexSource, searchIndex } from '@/lib/rag/orama-index';
+import { storeEvents } from '@/lib/events/store-events';
+import type { EmbeddedChunk } from '@/lib/rag/types';
+
 export function KnowledgePage() {
     const { t } = useTranslation();
     // Get current project ID, default to 'default' if not set
@@ -42,6 +50,59 @@ export function KnowledgePage() {
         };
         checkAiStatus();
     }, []);
+
+    // KSI Module: Initialize Source → RAG Bridge
+    useEffect(() => {
+        // Initialize RAG dependencies
+        const documentChunker = new DocumentChunker();
+        const embeddingService = new EmbeddingService();
+
+        // Create OramaIndex adapter class
+        class OramaIndexAdapter {
+            constructor(private projectId: string) {}
+
+            async indexBatch(chunks: EmbeddedChunk[]): Promise<void> {
+                // Group chunks by source and index
+                for (const chunk of chunks) {
+                    await indexSource(this.projectId, {
+                        id: chunk.id,
+                        content: chunk.content,
+                        title: chunk.title,
+                        metadata: chunk.metadata
+                    });
+                }
+            }
+
+            async search(query: string, limit?: number): Promise<any[]> {
+                const results = await searchIndex(this.projectId, {
+                    query,
+                    limit: limit || 10
+                });
+                return results;
+            }
+        }
+
+        const oramaIndex = new OramaIndexAdapter(projectId);
+
+        // Create and start the bridge
+        const bridge = createSourceRAGBridge({
+            documentChunker,
+            embeddingService,
+            oramaIndex,
+            eventBus: storeEvents
+        });
+
+        // Start listening for source import events
+        bridge.start();
+
+        console.log('[KSI] SourceRAGBridge initialized and started');
+
+        // Cleanup on unmount
+        return () => {
+            bridge.dispose();
+            console.log('[KSI] SourceRAGBridge disposed');
+        };
+    }, [projectId]);
 
     const handleOpenImport = () => setImportDialogOpen(true);
 
