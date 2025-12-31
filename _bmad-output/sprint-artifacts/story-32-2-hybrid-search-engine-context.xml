@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Story Context XML - Story 32-2: Hybrid Search Engine
+  Created: 2025-12-31T08:30:00+07:00
+  Phase: create-context (Story Development Cycle Phase 2)
+  Agent: @bmad-bmm-sm
+-->
+
+<context story="32-2-hybrid-search-engine" created="2025-12-31T08:30:00+07:00">
+  
+  <!-- ========================================================================
+       SECTION 1: STORY OVERVIEW
+       ======================================================================== -->
+  <story_metadata>
+    <epic>EPIC-32 (RAG Infrastructure)</epic>
+    <title>Hybrid Search Engine - Vector + Fulltext Search</title>
+    <priority>P1 - High</priority>
+    <depends_on>32-1 (Orama WASM Vector Store Enhancement)</depends_on>
+    <status>drafted → ready-for-dev</status>
+  </story_metadata>
+
+  <!-- ========================================================================
+       SECTION 2: CURRENT CODE STATE
+       ======================================================================== -->
+  <files>
+    <file path="src/lib/rag/orama-index.ts">
+      <content><![CDATA[
+        // EXISTING IMPLEMENTATION (551 lines) - Key sections for hybrid search:
+        
+        // 1. Orama index creation and configuration
+        export async function createOramaIndex(
+          instanceId: string,
+          embeddings: Embeddings
+        ): Promise<Orama<typeof schema>> {
+          const orama = await create({
+            schema,
+            id: instanceId,
+          });
+          return orama;
+        }
+        
+        // 2. Vector search (already implemented)
+        export async function vectorSearch(
+          orama: Orama<typeof schema>,
+          query: string,
+          limit: number = 10
+        ): Promise<VectorSearchResult[]> {
+          const embeddings = await loadEmbeddings();
+          const vector = await embeddings.embed(query);
+          const results = await search(orama, {
+            mode: 'vector',
+            term: vector,
+            limit,
+          });
+          return results;
+        }
+        
+        // 3. Fulltext search (needs hybrid integration)
+        export async function fulltextSearch(
+          orama: Orama<typeof schema>,
+          query: string,
+          limit: number = 10
+        ): Promise<FulltextSearchResult[]> {
+          const results = await search(orama, {
+            mode: 'fulltext',
+            term: query,
+            limit,
+          });
+          return results;
+        }
+        
+        // 4. Schema definition
+        const schema = {
+          id: 'string',
+          documentId: 'string',
+          content: 'string',
+          embedding: 'vector[384]',
+          metadata: 'object',
+          createdAt: 'number',
+          updatedAt: 'number',
+        };
+      ]]></content>
+    </file>
+
+    <file path="src/lib/rag/rag-store.ts">
+      <content><![CDATA[
+        // EXISTING RAG STORE - State management for RAG operations:
+        
+        interface RAGState {
+          indexes: Map<string, Orama<typeof schema>>;
+          activeIndex: string | null;
+          searchResults: SearchResult[];
+          isSearching: boolean;
+          lastSearchQuery: string;
+        }
+        
+        // Actions that will use hybrid search:
+        - search(query: string, options?: SearchOptions)
+        - indexDocument(document: SourceDocument)
+        - deleteDocument(documentId: string)
+        - clearIndex()
+      ]]></content>
+    </file>
+
+    <file path="src/lib/knowledge/embedding-worker.ts">
+      <content><![CDATA[
+        // EXISTING EMBEDDING WORKER - For generating embeddings:
+        
+        // Uses Transformers.js (CLIP) for 384-dimensional embeddings
+        // Web Worker pattern for non-blocking embedding generation
+        // Methods:
+        - embed(text: string): Promise<number[]>
+        - embedBatch(texts: string[]): Promise<number[][]>
+      ]]></content>
+    </file>
+  </files>
+
+  <!-- ========================================================================
+       SECTION 3: RESEARCH FINDINGS (MCP Tools)
+       ======================================================================== -->
+  <research_notes>
+    <finding source="context7-orama" query="Orama hybrid search fulltext vector combination">
+      <insight>
+        Orama supports both fulltext and vector search modes. The hybrid search 
+        requires combining results from both modes using a weighted scoring 
+        formula: score = (vectorWeight × vectorScore) + ((1 - vectorWeight) × fulltextScore).
+        
+        Orama's search API: search(orama, { mode: 'hybrid', ... }) is NOT directly 
+        available - must implement custom hybrid scoring.
+        
+        Reference: Orama.js documentation - Search Configuration
+      </insight>
+    </finding>
+
+    <finding source="context7-transformers" query="Transformers.js CLIP embeddings 384 dimensional">
+      <insight>
+        Transformers.js with CLIP model generates 384-dimensional text embeddings.
+        The model: Xenova/clip-vit-base-patch32 is optimized for web inference.
+        
+        WebGPU acceleration available when supported by browser.
+        Fallback to WebAssembly when WebGPU not available.
+      </insight>
+    </finding>
+
+    <finding source="deepwiki-orama" repo="oramasearch/orama">
+      <insight>
+        Orama's internal vector search uses approximate nearest neighbor (ANN) 
+        algorithm. For hybrid search, results from both modes should be 
+        normalized to [0, 1] range before combining.
+        
+        Best practice: Use cosine similarity for vector scores, BM25 for fulltext.
+      </insight>
+    </finding>
+
+    <finding source="implementation-playbook" query="hybrid search weights vector fulltext">
+      <insight>
+        From implementation playbook: Recommended weights are 0.7 for vector 
+        (semantic similarity) and 0.3 for fulltext (keyword matching). This 
+        can be made configurable per search type.
+        
+        Pre-normalization of scores is critical for fair combination.
+      </insight>
+    </finding>
+  </research_notes>
+
+  <!-- ========================================================================
+       SECTION 4: ARCHITECTURE PATTERNS
+       ======================================================================== -->
+  <architecture_patterns>
+    <pattern name="hybrid-search-pattern" source="architecture.md">
+      <description>
+        Hybrid search combines vector similarity search (semantic understanding)
+        with fulltext search (keyword matching) using weighted scoring.
+        
+        Flow:
+        1. Receive search query
+        2. Generate query embedding (Transformers.js/CLIP)
+        3. Execute vector search → get scores (0-1)
+        4. Execute fulltext search → get scores (0-1)
+        5. Normalize both score sets
+        6. Combine: finalScore = (0.7 × vectorScore) + (0.3 × fulltextScore)
+        7. Sort by finalScore descending
+        8. Return top N results with source attribution
+      </description>
+    </pattern>
+
+    <pattern name="score-normalization" source="rag-pipeline-optimization-report">
+      <description>
+        Score normalization is required because:
+        - Vector scores: cosine similarity (already 0-1)
+        - Fulltext scores: Orama internal (needs min-max normalization)
+        
+        Normalization formula: normalizedScore = (score - min) / (max - min)
+      </description>
+    </pattern>
+
+    <pattern name="search-result-merging" source="implementation-playbook">
+      <description>
+        Results from different search modes may overlap. Merge strategy:
+        - Create Map<documentId, CombinedResult>
+        - For each result from vector search: add to Map
+        - For each result from fulltext search: merge with existing or add new
+        - Apply final scoring and sort
+      </description>
+    </pattern>
+  </architecture_patterns>
+
+  <!-- ========================================================================
+       SECTION 5: TECHNICAL NOTES
+       ======================================================================== -->
+  <technical_notes>
+    <note priority="high">
+      CRITICAL: The Orama WASM instance must be loaded before hybrid search.
+      Check `wcStatus === 'ready'` and ensure embeddings model is initialized.
+    </note>
+    
+    <note priority="high">
+      Weight configuration: Vector weight = 0.7, Fulltext weight = 0.3.
+      These should be configurable via search options but default to these values.
+    </note>
+    
+    <note priority="medium">
+      Performance: Run vector and fulltext searches in parallel using Promise.all()
+      to minimize latency. The embedding generation is the bottleneck.
+    </note>
+    
+    <note priority="medium">
+      Source attribution: Each search result must include the documentId and
+      original content excerpt for citation in responses.
+    </note>
+    
+    <note priority="medium">
+      Debouncing: Client-side search queries should be debounced (300-500ms)
+      to avoid excessive embedding generation and search operations.
+    </note>
+    
+    <note priority="low">
+      Error handling: If vector search fails (e.g., embedding model not ready),
+      fall back to fulltext-only search with appropriate user feedback.
+    </note>
+  </technical_notes>
+
+  <!-- ========================================================================
+       SECTION 6: DEPENDENCIES AND IMPORTS
+       ======================================================================== -->
+  <dependencies>
+    <dependency name="@oramasearch/orama" version="latest" />
+    <dependency name="@xenova/transformers" version="latest" />
+    <dependency name="zod" version="latest" />
+    <dependency name="dexie" version="latest" />
+    <dependency name="zustand" version="latest" />
+  </dependencies>
+
+  <imports>
+    <import source="@/lib/rag/orama-index" type="createOramaIndex, vectorSearch, fulltextSearch" />
+    <import source="@/lib/knowledge/embedding-worker" type="embed, embedBatch" />
+    <import source="@/lib/rag/rag-store" type="useRAGStore" />
+    <import source="@/lib/utils/error-handling" type="SearchError, handleSearchError" />
+    <import source="zod" type="z" />
+  </imports>
+
+  <!-- ========================================================================
+       SECTION 7: ACCEPTANCE CRITERIA (for reference)
+       ======================================================================== -->
+  <acceptance_criteria>
+    <ac id="1">
+      Given: Orama index with embedded documents exists
+      When: hybridSearch(query) is called
+      Then: Both vector and fulltext searches execute in parallel
+    </ac>
+    <ac id="2">
+      Given: Search results from both modes
+      When: Scores are combined
+      Then: Final score = (0.7 × vectorScore) + (0.3 × fulltextScore)
+    </ac>
+    <ac id="3">
+      Given: Multiple documents match query
+      When: Results are sorted
+      Then: Results ordered by combined score descending
+    </ac>
+    <ac id="4">
+      Given: Search completes
+      When: Results are returned
+      Then: Each result includes documentId, content excerpt, and source metadata
+    </ac>
+    <ac id="5">
+      Given: Search is configured with custom weights
+      When: hybridSearch is called with options
+      Then: Custom weights override default (0.7/0.3)
+    </ac>
+  </acceptance_criteria>
+
+  <!-- ========================================================================
+       SECTION 8: IMPLEMENTATION CHECKLIST
+       ======================================================================== -->
+  <implementation_checklist>
+    <task id="1">Implement hybridSearch function in orama-index.ts</task>
+    <task id="2">Add score normalization utilities</task>
+    <task id="3">Implement result merging logic</task>
+    <task id="4">Add configurable weights via search options</task>
+    <task id="5">Update rag-store.ts with hybrid search action</task>
+    <task id="6">Add debouncing for search UI integration</task>
+    <task id="7">Write unit tests for hybrid search</task>
+    <task id="8">Add integration tests with existing RAG pipeline</task>
+    <task id="9">Update TypeScript types for search results</task>
+    <task id="10">Add error handling for edge cases</task>
+  </implementation_checklist>
+
+</context>

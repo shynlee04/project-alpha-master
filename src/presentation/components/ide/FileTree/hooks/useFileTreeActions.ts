@@ -31,7 +31,7 @@ export interface UseFileTreeActionsOptions {
     /** Local adapter ref from workspace */
     localAdapterRef: React.RefObject<LocalFSAdapter | null>;
     /** Sync manager ref from workspace */
-    syncManagerRef: React.RefObject<import('../../../../lib/filesystem').SyncManager | null>;
+    syncManagerRef: React.RefObject<import('@/lib/filesystem').SyncManager | null>;
 }
 
 /**
@@ -224,7 +224,7 @@ export function useFileTreeActions(
 
             try {
                 // Dynamic import to avoid circular dependencies
-                const { setFileSyncPending } = await import('../../../../lib/workspace');
+                const { setFileSyncPending } = await import('@/lib/workspace');
 
                 adapter.setDirectoryHandle(directoryHandle);
                 setFileSyncPending(path);
@@ -232,7 +232,7 @@ export function useFileTreeActions(
                 await syncManager.writeFile(path, fileResult.content);
             } catch (error) {
                 // We need to import setFileSyncError here as well if it failed before the previous import
-                const { setFileSyncError } = await import('../../../../lib/workspace');
+                const { setFileSyncError } = await import('@/lib/workspace');
                 const err = error instanceof Error ? error : new Error('Unknown error');
                 setFileSyncError(path, err);
             }

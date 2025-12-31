@@ -364,7 +364,7 @@ development_status:
   # Priority: HIGH - Core foundation for Knowledge Synthesis
   epic-32: in_progress # SPRINT 1 COMPLETE
   32-1-orama-wasm-vector-store-enhancement: done # COMPLETED 2025-12-31 - All 5 ACs validated, code review complete (APPROVED WITH RECOMMENDATIONS)
-  32-2-hybrid-search-engine: backlog # Depends on 32-1
+  32-2-hybrid-search-engine: ready-for-dev # Context XML created 2025-12-31 - Ready for dev handoff
   32-3-semantic-citation-system: backlog # Depends on 32-1
   32-4-rag-query-optimization: backlog # Depends on 32-1
   32-5-knowledge-graph-integration: backlog # Depends on 32-2, 32-3
