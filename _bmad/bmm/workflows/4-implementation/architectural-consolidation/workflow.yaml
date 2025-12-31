@@ -1,0 +1,149 @@
+---
+name: architectural-consolidation
+description: >
+  Systematic refactoring workflow for layer boundary enforcement, 
+  store consolidation, component wiring audit, and code hygiene validation.
+  Integrates story-dev-cycle, sweeping-validation, and 12-level framework.
+version: 1.0
+author: bmad-core-bmad-master
+created: 2025-12-31
+installed_path: "{project-root}/_bmad/bmm/workflows/4-implementation/architectural-consolidation"
+web_bundle: true
+---
+
+# Architectural Consolidation Workflow
+
+**Goal:** Execute systematic architectural refactoring with integrated validation frameworks to transform fragmented architecture into cohesive, maintainable systems.
+
+**Your Role:** You are an Architectural Consolidation Specialist working with the Sprint Change Proposal to systematically refactor state management, component wiring, and code hygiene while preventing gaps and drift through continuous validation.
+
+---
+
+## WORKFLOW ARCHITECTURE
+
+### Core Principles
+
+- **Phased Execution**: Three phases (Showcase Critical → Foundation → Full Scope)
+- **Validation Integration**: Sweeping validation + 12-level gates after each phase
+- **Story-Dev-Cycle**: Each implementation task follows the story development cycle
+- **Anti-Drift Protocol**: Context XML, research, handoffs prevent gaps
+- **Device Testing**: 3-device rule at Phase 0 and Phase 2
+
+### Step Processing Rules
+
+1. **READ COMPLETELY**: Always read the entire step file before taking any action
+2. **FOLLOW SEQUENCE**: Execute all numbered sections in order, never deviate
+3. **VALIDATION GATES**: Run validation checkpoints after each phase
+4. **HANDOFF ARTIFACTS**: Generate ephemeral notes at phase completion
+5. **DEVICE TEST**: Run 3-device rule at specified phases
+
+### Critical Rules (NO EXCEPTIONS)
+
+- 🛑 **NEVER** skip validation checkpoints
+- 📖 **ALWAYS** generate context XML before implementation
+- 🚫 **NEVER** proceed to next phase without gate passage
+- 💾 **ALWAYS** update workflow status files
+- 🎯 **ALWAYS** follow the exact instructions in the step file
+- ⏸️ **ALWAYS** halt at gates and wait for validation
+- 📋 **NEVER** bypass sweeping validation levels
+
+---
+
+## INITIALIZATION SEQUENCE
+
+### 1. Configuration Loading
+
+Load and read full config from:
+- {project-root}/_bmad/bmm/config.yaml
+- {project-root}/_bmad-output/sprint-change-proposal-*.md (latest)
+
+Resolve:
+- `project_name`, `output_folder`, `user_name`, `communication_language`
+- Sprint Change Proposal sections and phase definitions
+
+### 2. Input Document Verification
+
+Verify these documents exist and are accessible:
+- `_bmad-output/sprint-change-proposal-2025-12-31.md` (or latest)
+- `_bmad-output/epics.md`
+- `_bmad-output/project-planning-artifacts/architecture.md`
+- `_bmad-output/validation/sweeping-validation.md`
+- `_bmad-output/validation/12-level-framework-integration-2025-12-29.md`
+
+### 3. First Step EXECUTION
+
+Load, read the full file and then execute {installed_path}/steps/step-01-init.md to begin the workflow.
+
+---
+
+## WORKFLOW PHASES
+
+### Phase 0: Showcase Critical (Priority 1 - TODAY)
+
+**Stories:**
+1. Provider Store Reactivity
+2. Agent Selector Unification
+3. Chat Panel Standardization
+
+**Validation:**
+- Sweeping Levels: 1, 2, 3, 5, 6
+- 12-Level Gate: 1 (Foundation)
+- Device Test: Required
+
+**Handoff:** Provider → Model → Agent flow working in Knowledge workspace
+
+---
+
+### Phase 1: Foundation (Jan 1-3)
+
+**Stories:**
+1. Store Reorganization
+2. Event Bus Implementation
+3. Data Flow Contracts
+
+**Validation:**
+- Sweeping Levels: 1, 2, 3, 4, 5, 6, 7
+- 12-Level Gate: 2 (Development)
+- Device Test: Not required
+
+**Handoff:** Store structure reorganized, event bus operational
+
+---
+
+### Phase 2: Full Scope (Jan 4-10)
+
+**Stories:**
+1. Code Hygiene Sweep
+2. API Contract Enforcement
+3. Test Coverage Completion
+
+**Validation:**
+- Sweeping Levels: 1-12 (ALL)
+- 12-Level Gate: 4 (BMAD Compliance)
+- Device Test: Required
+
+**Handoff:** All files < 300 lines, 80%+ test coverage
+
+---
+
+## AGENT COORDINATION
+
+| Agent | Responsibility | Phases |
+|-------|----------------|--------|
+| `@bmad-core-bmad-master` | Orchestration, status tracking | All |
+| `@bmad-bmm-architect` | Architecture review, ADR updates | 0, 1, 2 |
+| `@bmad-bmm-dev` | Implementation | 0, 1, 2 |
+| `@bmad-bmm-tea` | Testing, coverage | 1, 2 |
+| `@code-reviewer` | Quality gates | 0, 1, 2 |
+
+---
+
+## OUTPUT ARTIFACTS
+
+| Artifact | Location | Purpose |
+|----------|----------|---------|
+| Validation Report | `_bmad-output/validation/architectural-consolidation-{date}.md` | Phase validation results |
+| Updated Stores | `src/stores/**/*.ts` | Refactored store files |
+| Updated Components | `src/components/**/*.tsx` | Wired components |
+| Workflow Status | `bmm-workflow-status.yaml` | Progress tracking |
+| Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` | Story tracking |

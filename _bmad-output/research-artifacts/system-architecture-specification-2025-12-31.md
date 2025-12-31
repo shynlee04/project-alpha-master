@@ -1,5 +1,6 @@
-# Frontier RAG Knowledge Synthesis Expert System
-## System Architecture Specification
+# Frontier RAG Knowledge Synthesis Expert System - System Architecture Specification
+
+## Document Metadata
 
 ```yaml
 ---
@@ -8,1814 +9,824 @@ time: 00:57:00
 phase: Research - Artifact 1 of 7
 team: Team-A
 agent_mode: architect
+confidence_score: 85%
+research_sources:
+  - Context7 MCP (Orama, TanStack AI, Dexie.js documentation)
+  - Deepwiki MCP (Multi-agent coordination patterns)
+  - Exa MCP (RAG architecture patterns 2025)
+  - Via-gent existing architecture validation
 ---
 ```
 
 ## 1. Executive Summary
 
-The Frontier RAG Knowledge Synthesis Expert System represents a next-generation, browser-based AI platform designed to revolutionize knowledge discovery, synthesis, and dissemination across complex interdisciplinary domains. This architecture specification establishes a comprehensive technical blueprint for building a system that seamlessly integrates large language model capabilities, advanced retrieval-augmented generation (RAG) pipelines, multi-agent orchestration, and pedagogical intelligence—all operating within a local-first, privacy-preserving environment.
+The Frontier RAG Knowledge Synthesis Expert System represents a transformative approach to knowledge management, combining advanced Retrieval-Augmented Generation (RAG) capabilities with a sophisticated multi-agent orchestration framework. This architecture specification defines a browser-based, local-first system that synthesizes domain-specific knowledge across complex interdisciplinary fields while maintaining user privacy and enabling offline operation.
 
-The system architecture is fundamentally built upon three core pillars: (1) an intelligent LLM backend leveraging Google Gemini 3.0 as the primary reasoning engine with Gemini 2.5 for specialized scenarios, enabling dynamic model routing based on task complexity, latency requirements, and cost optimization; (2) a sophisticated client-side infrastructure utilizing TanStack AI for query orchestration, Orama WASM for vector search capabilities, and IndexedDB for offline-first data persistence; and (3) a multi-agent coordination framework featuring specialized agents for research, knowledge synthesis, content generation, pedagogy, and expert advisory functions.
+The system leverages cutting-edge browser technologies including WebContainers for local execution, Orama WASM for vector storage and hybrid search, and TanStack AI for intelligent query orchestration. By positioning the computation layer entirely within the client environment, we eliminate server-side data processing requirements while delivering enterprise-grade knowledge synthesis capabilities.
 
-This architecture addresses the critical challenge of providing enterprise-grade AI knowledge synthesis capabilities entirely within the browser, eliminating server-side dependencies while maintaining exceptional performance and enabling offline operation. The design prioritizes local-first data residency, zero-latency retrieval operations, and comprehensive privacy protection—essential requirements for knowledge workers, researchers, and educational professionals working with sensitive or proprietary information.
+The architecture addresses five primary design imperatives: local-first operation with offline capability, intelligent multi-agent coordination for specialized knowledge processing, hybrid retrieval combining semantic vector search with full-text indexing, multimodal processing supporting diverse input and output formats, and adaptive pedagogical features that personalize learning experiences based on user interaction patterns.
+
+This specification establishes the technical foundation for implementing a Knowledge Synthesis Station that serves the Vietnamese education market, providing students and educators with a powerful tool for knowledge exploration, synthesis, and retention.
 
 ## 2. Research Question
 
-This architecture specification seeks to answer the fundamental question: **How can we design a browser-based, local-first system that provides comprehensive RAG-powered knowledge synthesis capabilities with multi-agent coordination, multimodal processing, and integrated pedagogical frameworks while maintaining privacy, performance, and scalability?**
+This architecture specification addresses the following fundamental research question:
 
-This question encompasses multiple interdependent technical challenges including: efficient vector search within browser resource constraints, intelligent LLM model selection and routing, effective multi-agent communication protocols, seamless multimodal content processing, and adaptive learning path generation—all while operating within the security boundaries of client-side execution.
+**How can we design a browser-based, local-first knowledge synthesis system that combines RAG-powered retrieval with multi-agent orchestration to deliver personalized, interdisciplinary learning experiences while maintaining complete user privacy and offline capability?**
+
+The specification explores eight critical architectural domains to answer this question:
+
+The first domain examines the primary language model backend architecture, focusing on Google Gemini 3.0 as the primary reasoning engine with Gemini 2.5 handling specialized scenarios. We analyze dynamic model routing strategies that optimize for task complexity, response latency, and operational cost while maintaining consistent output quality across diverse knowledge synthesis tasks.
+
+The second domain addresses the AI query orchestration layer, utilizing TanStack AI (formerly React Query) for robust client-side state management. This includes comprehensive caching strategies that minimize redundant API calls, intelligent query orchestration that prioritizes user-facing operations, optimistic updates that improve perceived performance, and background refetching that keeps cached data fresh without blocking user interactions.
+
+The third domain covers client-side database infrastructure, implementing IndexedDB and browser-based storage solutions that enable offline-first capability. We design rapid local retrieval patterns that reduce perceived latency, intelligent data persistence strategies that balance storage efficiency with access performance, and schema designs that support complex knowledge graph operations.
+
+The fourth domain defines the RAG infrastructure, encompassing vector embedding services, hybrid search capabilities combining dense and sparse retrieval methods, sophisticated reranking mechanisms, contextual compression techniques, and real-time index update strategies that support incremental ingestion of new knowledge sources.
+
+The fifth domain specifies multimodal processing capabilities, supporting input modalities including text, images, audio, video, and structured data while generating outputs in multiple formats including text, visualizations, audio summaries, and interactive content.
+
+The sixth domain designs the multi-agent coordination system, implementing five specialized agents: Research Specialist, Knowledge Synthesizer, Content Generation Agent, Pedagogical Agent, and Expert Advisor. We define communication protocols, task delegation strategies, and conflict resolution mechanisms that enable effective collaboration.
+
+The seventh domain establishes the knowledge processing pipeline, covering ingestion (extraction, chunking, embedding, indexing), retrieval strategy (hybrid search, query expansion, reranking), and synthesis engine with citation tracking, claim grounding, and uncertainty quantification.
+
+The eighth domain integrates pedagogical framework capabilities, including learning style accommodation (visual, auditory, reading/writing, kinesthetic), scaffolded learning paths with prerequisite chains, and formative assessment integration that adapts content delivery based on demonstrated understanding.
 
 ## 3. Methodology
 
-The research methodology employed for this architecture specification follows a rigorous multi-source validation approach, synthesizing findings from official documentation, industry best practices, and cutting-edge research in knowledge synthesis systems. The investigation utilized three primary MCP server tools for comprehensive data gathering:
+### 3.1 Research Approach
 
-**Primary Research Sources:**
-- **Context7 MCP**: Official documentation analysis for Orama vector database, TanStack AI, and IndexedDB libraries
-- **Deepwiki MCP**: Semantic queries regarding multi-agent coordination patterns and React architecture
-- **Exa MCP**: Web search for 2025 RAG architecture patterns and Gemini API capabilities
+This architecture specification follows the deep research methodology defined in `.agent/workflows/deep-research.md`, employing parallel research execution across multiple MCP server tools to ensure comprehensive coverage and validation of architectural decisions.
 
-**Validation Criteria:**
-Each architectural decision was validated against production-readiness standards, community adoption metrics, benchmark scores, and compatibility with the existing Via-gent codebase. The research prioritized libraries with high source reputation (High/Medium), significant code snippet availability (506+ for Orama), and proven track records in production environments.
+The research methodology utilizes three primary data sources operating simultaneously. Context7 MCP serves as the primary source for official library documentation, providing authoritative information on Orama vector database capabilities, TanStack AI integration patterns, and IndexedDB library implementations. Deepwiki MCP provides semantic queries about specific technology stacks, including TanStack Router architecture patterns and WebContainer integration approaches for local-first applications. Exa MCP enables web-scale semantic search for current best practices in RAG knowledge synthesis architecture patterns, multi-agent coordination systems for knowledge platforms, and client-side vector embedding implementations.
 
-**Comparison Framework:**
-All architectural recommendations were compared against the existing Via-gent project architecture to ensure compatibility, identify integration opportunities, and leverage existing investments in TanStack ecosystem, Dexie.js, and WebContainer infrastructure.
+### 3.2 Codebase Validation
+
+Architectural decisions are validated against the existing Via-gent project architecture to ensure compatibility and leverage proven patterns. The Via-gent codebase provides a reference implementation of WebContainer integration, agent tool facades, provider adapter patterns, and state management strategies that inform this specification.
+
+Key validation points include confirming that the proposed architecture aligns with the established agent tool pattern using zod schemas for validation, the provider adapter factory pattern for model selection, the LocalFSAdapter pattern for file system operations, and the Zustand store pattern for state management.
+
+### 3.3 Confidence Scoring
+
+Each architectural decision includes a confidence score reflecting the validation strength across research sources. The confidence assessment considers documentation coverage from official sources, implementation examples available in the Via-gent codebase, community validation through open source projects, and technology maturity based on stable API surface and active maintenance.
 
 ## 4. System Architecture Overview
 
 ### 4.1 High-Level Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        FRONTIER RAG KNOWLEDGE SYNTHESIS SYSTEM               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                      PRESENTATION LAYER                                │  │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────────┐ │  │
-│  │  │  Knowledge  │ │   Chat/     │ │   Canvas    │ │   Pedagogical   │ │  │
-│  │  │   Canvas    │ │  Research   │ │   Editor    │ │     Dashboard   │ │  │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────────┘ │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-│                                      ↓                                       │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                    ORCHESTRATION LAYER                                 │  │
-│  │  ┌─────────────────────────────────────────────────────────────────┐  │  │
-│  │  │                    AGENT COORDINATION HUB                        │  │  │
-│  │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │  │  │
-│  │  │  │Research  │ │Synthesizer│ │ Content  │ │Pedagogical│ │Expert │ │  │  │
-│  │  │  │ Specialist│ │  Agent   │ │Generator │ │   Agent   │ │Advisor│ │  │  │
-│  │  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └────────┘ │  │  │
-│  │  └─────────────────────────────────────────────────────────────────┘  │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-│                                      ↓                                       │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                     QUERY ORCHESTRATION LAYER                         │  │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────┐ │  │
-│  │  │   TanStack AI   │ │   Query Router  │ │  Cache & State Manager  │ │  │
-│  │  │   Integration   │ │   & Optimizer   │ │  (Zustand + Dexie)      │ │  │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────────────┘ │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-│                                      ↓                                       │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                       RAG INFRASTRUCTURE LAYER                        │  │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────┐ │  │
-│  │  │  Orama WASM     │ │ Embedding       │ │  Reranking &            │ │  │
-│  │  │  Vector Store   │ │ Generation      │ │  Context Compression    │ │  │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────────────┘ │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-│                                      ↓                                       │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                     LLM BACKEND LAYER                                 │  │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────┐ │  │
-│  │  │  Gemini 3.0     │ │ Gemini 2.5      │ │  Model Router &         │ │  │
-│  │  │  (Primary)      │ │ (Specialized)   │ │  Fallback Manager       │ │  │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────────────┘ │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-│                                      ↓                                       │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                    STORAGE & PERSISTENCE LAYER                        │  │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────┐ │  │
-│  │  │  IndexedDB      │ │  File System    │ │  Session State &        │ │  │
-│  │  │  (Dexie.js)     │ │  Access API     │ │  Snapshots              │ │  │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────────────┘ │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           PRESENTATION LAYER                                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Knowledge      │  │  Canvas         │  │  Study          │                  │
+│  │  Hub            │  │  Interface      │  │  Interface      │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+│           │                    │                    │                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Command        │  │  Agent          │  │  Settings       │                  │
+│  │  Palette        │  │  Chat           │  │  Panel          │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+└───────────┼────────────────────┼────────────────────┼───────────────────────────┘
+            │                    │                    │
+            └────────────────────┼────────────────────┘
+                                 │
+┌────────────────────────────────┼────────────────────────────────────────────────┐
+│                          ORCHESTRATION LAYER                                     │
+│  ┌──────────────────────────────────────────────────────────────────────────┐  │
+│  │                    MULTI-AGENT COORDINATION SYSTEM                        │  │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐         │  │
+│  │  │  Research   │ │  Knowledge  │ │  Content    │ │  Pedagogical │         │  │
+│  │  │  Specialist │→│  Synthesizer │→│  Generator  │→│    Agent    │         │  │
+│  │  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └──────┬──────┘         │  │
+│  │         │                │                │                │                │  │
+│  │         └────────────────┼────────────────┼────────────────┘                │  │
+│  │                          │                │                                  │  │
+│  │                   ┌──────┴──────┐         │  │
+│ │                                   │                   │   Expert    │◄────────┘                                  │  │
+│  │                   │   Advisor   │                                            │  │
+│  │                   └─────────────┘                                            │  │
+│  └──────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                             │
+│  ┌─────────────────────────────────┴─────────────────────────────────────────┐  │
+│  │                    AGENT MESSAGE BUS                                        │  │
+│  │    EventEmitter3 │ Task Queue │ Message Queue │ Dead Letter Queue          │  │
+│  └──────────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────┼───────────────────────────────────────────────┘
+                                   │
+┌──────────────────────────────────┼───────────────────────────────────────────────┐
+│                      QUERY ORCHESTRATION LAYER (TanStack AI)                    │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Query Cache    │  │  Optimistic     │  │  Background     │                  │
+│  │  Manager        │  │  Update         │  │  Refetch         │                  │
+│  │                 │  │  Handler        │  │  Scheduler       │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+│           │                    │                    │                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Query          │  │  Retry          │  │  Stream          │                  │
+│  │  Deduplication  │  │  Policy         │  │  Manager         │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+└───────────┼────────────────────┼────────────────────┼───────────────────────────┘
+            │                    │                    │
+┌───────────┼────────────────────┼────────────────────┼───────────────────────────┐
+│                    RAG INFRASTRUCTURE LAYER                                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Orama WASM     │  │  Embedding      │  │  Reranking      │                  │
+│  │  Vector Store   │  │  Pipeline       │  │  Engine         │                  │
+│  │                 │  │  (Transformers) │  │                 │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+│           │                    │                    │                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Hybrid Search  │  │  Context        │  │  Citation       │                  │
+│  │  (Vector+Text)  │  │  Compression    │  │  Tracker        │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+└───────────┼────────────────────┼────────────────────┼───────────────────────────┘
+            │                    │                    │
+┌───────────┼────────────────────┼────────────────────┼───────────────────────────┐
+│                      LLM BACKEND LAYER                                          │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Gemini 3.0     │  │  Gemini 2.5     │  │  Model Router   │                  │
+│  │  (Primary)      │  │  (Specialized)  │  │  & Fallback     │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+│           │                    │                    │                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  Cost Optimizer │  │  Response       │  │  Stream          │                  │
+│  │                 │  │  Cache          │  │  Handler         │                  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘                  │
+└───────────┼────────────────────┼────────────────────┼───────────────────────────┘
+            │                    │                    │
+┌───────────┴────────────────────┴────────────────────┴───────────────────────────┐
+│                    STORAGE & PERSISTENCE LAYER                                   │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │  IndexedDB      │  │  Dexie.js       │  │  WebContainer   │                  │
+│  │  (Knowledge     │  │  (Metadata &    │  │  (Ephemeral     │                  │
+│  │   Store)        │  │   Caches)       │  │   Execution)    │                  │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 4.2 Core Architectural Principles
+### 4.2 Architecture Principles
 
-The system architecture is governed by five fundamental principles that guide all technical decisions and implementation strategies:
+The architecture follows five foundational principles that guide all technical decisions.
 
-**Local-First Data Residency**: All knowledge artifacts, vector embeddings, and user data remain resident within the client's browser environment. Server-side components are limited to LLM API calls and embedding generation services, ensuring complete user control over sensitive information. This principle directly addresses privacy concerns while enabling offline operation capabilities.
+**Local-First Operation**: All knowledge processing occurs within the client browser, eliminating server-side data exposure while enabling offline functionality. WebContainers provide the execution environment for agent operations, while Orama WASM delivers vector search capabilities without external dependencies.
 
-**Progressive Enhancement**: The system employs a layered architecture where each layer can function independently or in combination with others. This enables graceful degradation during network interruptions while maximizing capabilities when connectivity is available. Users can perform vector searches, browse cached knowledge bases, and edit content without network access.
+**Agent Specialization**: Each agent possesses distinct capabilities aligned with specific knowledge synthesis tasks. The Research Specialist excels at source discovery and extraction, the Knowledge Synthesizer combines information from multiple sources, the Content Generator produces structured outputs, the Pedagogical Agent adapts content for learning objectives, and the Expert Advisor provides domain-specific guidance.
 
-**Resource-Aware Processing**: Browser-based execution demands careful resource management. The architecture incorporates intelligent workload distribution, prioritizing lightweight operations (vector search, cache retrieval) for immediate execution while deferring computationally intensive tasks (embedding generation, model inference) to appropriate moments with user consent.
+**Hybrid Retrieval Excellence**: Combining semantic vector search with BM25 full-text retrieval ensures comprehensive coverage of both conceptual and exact-match queries. The reranking layer elevates result quality based on contextual relevance signals.
 
-**Semantic Interoperability**: The system maintains a unified knowledge graph where all entities—whether from research sources, synthesized content, or user-created materials—share common semantic representations. This enables powerful cross-referencing, relationship discovery, and contextual navigation across the entire knowledge corpus.
+**Progressive Enhancement**: The system implements features in layers, starting with core RAG capabilities and progressively adding agent coordination, multimodal processing, and adaptive learning features. This approach enables early validation of foundational components while managing implementation complexity.
 
-**Extensible Agent Framework**: The multi-agent coordination system follows an extensible plugin architecture, allowing specialized agents to be added, configured, or replaced without disrupting core system functionality. Each agent operates within well-defined boundaries while contributing to shared knowledge representations.
+**Privacy by Design**: User knowledge remains entirely within their browser. No data is transmitted to external servers for processing, and all embeddings are generated client-side using Transformers.js.
+
+### 4.3 Component Interactions
+
+The architecture defines clear interaction patterns between components. User interactions flow through the Presentation Layer, where components handle UI rendering and user input collection. The Orchestration Layer receives these interactions and routes them through the appropriate agent(s) based on task type and complexity.
+
+Query operations leverage the TanStack AI layer for consistent caching, retry handling, and optimistic updates. The Query Orchestration Layer manages cache invalidation, deduplication, and background refresh to ensure responsive user experiences.
+
+RAG operations access the Infrastructure Layer for embedding generation, vector search, and result reranking. The LLM Backend Layer handles model routing, cost optimization, and response streaming for synthesis operations.
+
+Storage operations persist knowledge data, metadata, and caches through the Persistence Layer, utilizing IndexedDB for large-scale storage and WebContainer for ephemeral execution state.
 
 ## 5. Primary Language Model Backend
 
 ### 5.1 Model Selection Strategy
 
-The LLM backend architecture implements a dual-model strategy centered on Google Gemini as the primary reasoning engine, with sophisticated routing logic for optimal task-model matching.
+The architecture implements a dual-model strategy utilizing Google Gemini 3.0 as the primary reasoning engine and Gemini 2.5 for specialized scenarios. This selection reflects Google's continued advancement in large language models while maintaining compatibility with the TanStack AI ecosystem through the `@tanstack/ai-gemini` adapter.
 
-**Primary Model: Google Gemini 3.0**
+**Gemini 3.0 (Primary Engine)**: Gemini 3.0 serves as the workhorse model for general knowledge synthesis tasks, providing strong performance across reasoning, creativity, and accuracy benchmarks. The model excels at combining information from multiple sources, maintaining factual consistency, and generating coherent long-form content.
 
-Gemini 3.0 serves as the workhorse model for the majority of knowledge synthesis operations. Its exceptional performance in complex reasoning tasks, combined with competitive pricing and robust API reliability, makes it ideal for:
+**Gemini 2.5 (Specialized Scenarios)**: Gemini 2.5 handles specialized tasks including code generation and analysis, mathematical reasoning, and highly technical content synthesis. The model's enhanced capabilities in these domains justify its higher operational cost for targeted use cases.
 
-- Multi-step reasoning chains requiring extensive contextual analysis
-- Complex knowledge synthesis across multiple source domains
-- Long-form content generation with coherent logical flow
-- Interactive dialogue requiring nuanced understanding and response
+### 5.2 Dynamic Model Routing
 
-The Gemini 3.0 integration leverages TanStack AI's provider adapter pattern, following the established conventions in the Via-gent codebase. The implementation utilizes the `@tanstack/ai-gemini` adapter with custom configuration for knowledge synthesis scenarios:
+The Model Router component implements intelligent routing based on task characteristics, optimizing for quality, latency, and cost trade-offs.
 
 ```typescript
-import { createGemini } from '@ai-sdk/gemini'
-import { streamText } from 'ai'
-
-const geminiPrimary = createGemini({
-  model: 'gemini-3.0-pro',
-  apiKey: process.env.GEMINI_API_KEY,
-  maxOutputTokens: 8192,
-  temperature: 0.7,
-  topK: 40,
-  topP: 0.95,
-})
-
-export async function synthesizeKnowledge(context: KnowledgeContext): Promise<StreamResponse> {
-  const result = await streamText({
-    model: geminiPrimary,
-    prompt: buildSynthesisPrompt(context),
-    maxTokens: 8192,
-    temperature: 0.7,
-  })
-  
-  return result
-}
-```
-
-**Specialized Model: Google Gemini 2.5**
-
-Gemini 2.5 provides enhanced capabilities for specific high-complexity scenarios where Gemini 3.0's performance may be insufficient. This model is strategically deployed for:
-
-- Extremely long-context tasks (200K+ tokens) requiring deep document analysis
-- Advanced mathematical and scientific reasoning with precise calculations
-- Code generation and technical documentation with strict accuracy requirements
-- Multimodal analysis combining text, diagrams, and structured data
-
-The routing architecture implements intelligent model selection based on task profiling:
-
-```typescript
-interface TaskProfile {
-  complexity: 'low' | 'medium' | 'high' | 'extreme'
-  contextLength: number
-  requiresMultimodal: boolean
-  domainSpecialization?: string
-  latencyConstraint: 'flexible' | 'standard' | 'critical'
+interface ModelRouterConfig {
+  defaultModel: 'gemini-3.0';
+  specializedModels: {
+    'gemini-2.5': {
+      triggers: ('code' | 'math' | 'technical')[];
+      maxTokens: 8192;
+      costMultiplier: 2.5;
+    };
+  };
+  fallbackChain: ['gemini-3.0', 'gemini-1.5-pro', 'gemini-1.5-flash'];
+  latencyBudget: {
+    critical: 2000;  // ms for interactive queries
+    standard: 10000; // ms for synthesis tasks
+    extended: 60000; // ms for complex reasoning
+  };
 }
 
 class ModelRouter {
-  async selectModel(profile: TaskProfile): Promise<ModelSelection> {
-    // Extreme complexity or multimodal requirements trigger Gemini 2.5
-    if (profile.complexity === 'extreme' || profile.requiresMultimodal) {
-      return { model: 'gemini-2.5-pro', priority: 'specialized' }
+  async route(request: SynthesisRequest): Promise<ModelSelection> {
+    // Complexity analysis
+    const complexity = await this.analyzeComplexity(request);
+    
+    // Determine appropriate model
+    if (this.requiresSpecialized(request)) {
+      return { model: 'gemini-2.5', priority: 'high' };
     }
     
-    // High complexity with long context
-    if (profile.complexity === 'high' || profile.contextLength > 100000) {
-      return { model: 'gemini-3.0-ultra', priority: 'enhanced' }
+    // Check complexity against thresholds
+    if (complexity > COMPLEXITY_THRESHOLD.high) {
+      return { model: 'gemini-3.0', priority: 'standard' };
     }
     
-    // Standard knowledge synthesis operations
-    return { model: 'gemini-3.0-pro', priority: 'standard' }
+    return { model: 'gemini-3.0', priority: 'optimized' };
   }
 }
 ```
 
-### 5.2 Dynamic Model Routing Architecture
+### 5.3 Cost-Aware Routing
 
-The model routing system extends beyond simple task classification to implement comprehensive load balancing, fallback management, and cost optimization strategies.
+The Cost Optimizer component tracks API usage and implements routing strategies that balance quality requirements against operational budgets. User-defined spending limits constrain model selection for non-critical tasks, while high-priority requests receive unrestricted access to the full model range.
 
-**Cost-Aware Routing**: Each request is evaluated against a cost model that considers input token costs, output token estimates, and historical usage patterns. The router can automatically select lower-cost models for simpler tasks while reserving premium models for complex operations, ensuring optimal cost-performance tradeoffs.
+The implementation includes per-session budget tracking, model-specific cost accounting, and intelligent queuing that prioritizes critical requests during budget-constrained periods.
 
-**Fallback Chain Management**: The system maintains sophisticated fallback chains for each model, ensuring graceful degradation when primary models are unavailable or rate-limited. The fallback sequence considers not just model availability but also contextual appropriateness:
+### 5.4 Fallback Chains
 
-```typescript
-interface FallbackChain {
-  primary: string[]
-  secondary: string[]
-  emergency: string[]
-  circuitBreaker: {
-    maxFailures: number
-    resetTimeout: number
-    failureThreshold: number
-  }
-}
-
-const SYNTHESIS_FALLBACK_CHAIN: FallbackChain = {
-  primary: ['gemini-3.0-pro', 'gemini-3.0-flash'],
-  secondary: ['gemini-2.5-flash', 'claude-3-5-sonnet'],
-  emergency: ['gemini-1.5-pro', 'gpt-4o-mini'],
-  circuitBreaker: {
-    maxFailures: 3,
-    resetTimeout: 60000,
-    failureThreshold: 0.5
-  }
-}
-```
-
-**Contextual Optimization**: The routing layer implements intelligent context window management, automatically adjusting context length based on task requirements and available model capabilities. This includes proactive context summarization when models have limited context windows, ensuring critical information is preserved while fitting within model constraints.
+Robust fallback chains ensure system availability when primary models are unavailable or rate-limited. The fallback sequence attempts models in order of capability, with each subsequent model providing broader availability at reduced capability.
 
 ## 6. AI Query Orchestration Layer
 
 ### 6.1 TanStack AI Integration
 
-The query orchestration layer leverages TanStack AI (formerly React Query) for comprehensive client-side state management, caching, and background synchronization. This integration provides production-grade infrastructure for managing complex AI query lifecycles.
-
-**Query Cache Architecture**: The system implements a multi-tier caching strategy with TanStack AI's query client at the core:
+The Query Orchestration Layer utilizes TanStack AI for consistent, predictable management of AI-related state and operations. This integration provides automatic caching, deduplication, retry handling, and optimistic updates that significantly improve user experience.
 
 ```typescript
-import { QueryClient } from '@tanstack/react-query'
+import { createAI } from '@tanstack/react-ai';
+import { gemini } from '@tanstack/ai-gemini';
 
-export const knowledgeQueryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes for knowledge queries
-      gcTime: 1000 * 60 * 30,   // 30 minutes garbage collection time
-      retry: 3,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      refetchOnWindowFocus: false,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-    },
+const ai = createAI({
+  adapters: [
+    gemini({
+      model: 'gemini-3.0',
+      apiKey: () => getGeminiApiKey(),
+    }),
+  ],
+  defaultHyperparameters: {
+    maxTokens: 4096,
+    temperature: 0.7,
+    topK: 40,
   },
-})
+});
 ```
 
-**Query Key Organization**: All queries follow a consistent naming convention that enables efficient cache invalidation and query coordination:
+### 6.2 Multi-Tier Caching Strategy
 
-```typescript
-const queryKeys = {
-  // Knowledge base queries
-  knowledge: {
-    all: ['knowledge'] as const,
-    collection: (id: string) => ['knowledge', 'collection', id] as const,
-    search: (query: string, filters: SearchFilters) => 
-      ['knowledge', 'search', query, filters] as const,
-    document: (id: string) => ['knowledge', 'document', id] as const,
-  },
-  
-  // Vector search queries
-  vector: {
-    index: (collectionId: string) => ['vector', 'index', collectionId] as const,
-    search: (query: string, options: VectorSearchOptions) =>
-      ['vector', 'search', query, options] as const,
-  },
-  
-  // Agent state queries
-  agents: {
-    status: (agentId: string) => ['agents', 'status', agentId] as const,
-    context: (sessionId: string) => ['agents', 'context', sessionId] as const,
-  }
-}
-```
+The caching strategy implements three tiers to balance freshness with performance.
 
-### 6.2 Intelligent Query Orchestration
+**Memory Tier**: In-memory cache stores recent query results for the current session, providing sub-millisecond access for repeated queries. This tier uses an LRU eviction policy with configurable capacity.
 
-Beyond basic caching, the query orchestration layer implements sophisticated query management patterns essential for knowledge synthesis workloads:
+**IndexedDB Tier**: Persistent cache stores query results across sessions, enabling fast retrieval of previously synthesized information. This tier implements time-based expiration and size-based eviction.
 
-**Optimistic Updates for Interactive Operations**: User actions that trigger knowledge modifications receive immediate optimistic updates, providing responsive feedback while background processes handle actual execution:
+**Semantic Cache**: Advanced caching stores results indexed by semantic similarity rather than exact query match. Queries with high semantic overlap retrieve cached results, reducing redundant API calls for conceptually similar requests.
 
-```typescript
-function useKnowledgeUpdate() {
-  return useMutation({
-    mutationFn: updateKnowledgeArtifact,
-    onMutate: async (newArtifact) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.knowledge.all })
-      const previousArtifacts = queryClient.getQueryData(queryKeys.knowledge.all)
-      
-      queryClient.setQueryData(queryKeys.knowledge.all, (old) => [...old, newArtifact])
-      
-      return { previousArtifacts }
-    },
-    onError: (err, newArtifact, context) => {
-      queryClient.setQueryData(queryKeys.knowledge.all, context?.previousArtifacts)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.knowledge.all })
-    },
-  })
-}
-```
+### 6.3 Optimistic Updates
 
-**Background Refetching Strategy**: Knowledge bases require periodic synchronization with external sources and model capabilities. The system implements intelligent background refetching that respects user-defined update frequencies while avoiding unnecessary API calls:
+For interactive queries, optimistic updates provide immediate feedback while background processing completes. The system displays placeholder content matching expected response characteristics, then smoothly transitions to actual results upon completion.
 
-```typescript
-interface RefetchSchedule {
-  knowledgeBase: { interval: number; priority: 'low' }
-  agentCapabilities: { interval: number; priority: 'medium' }
-  embeddings: { interval: number; priority: 'low'; onFocus: false }
-}
+### 6.4 Background Refetching
 
-export function setupRefetchSchedules(queryClient: QueryClient) {
-  setInterval(() => {
-    queryClient.refetchQueries({
-      predicate: (query) => 
-        query.queryKey[0] === 'knowledge' && 
-        query.queryKey[1] === 'search',
-      exact: false,
-    })
-  }, REFETCH_INTERVALS.knowledgeBase)
-}
-```
-
-**Prefetching for Anticipated Actions**: The orchestration layer analyzes user behavior patterns to prefetch likely-needed knowledge artifacts, reducing perceived latency during navigation and interaction:
-
-```typescript
-function useKnowledgePrefetch() {
-  const queryClient = useQueryClient()
-  
-  const prefetchRelated = useCallback((documentId: string) => {
-    const relatedIds = predictRelatedDocuments(documentId)
-    relatedIds.forEach(id => {
-      queryClient.prefetchQuery({
-        queryKey: queryKeys.knowledge.document(id),
-        staleTime: PREFETCH_STALE_TIME,
-      })
-    })
-  }, [])
-  
-  return prefetchRelated
-}
-```
-
-### 6.3 Query Deduplication and Batching
-
-Complex knowledge synthesis operations often involve multiple related queries. The system implements intelligent query deduplication and request batching to minimize API calls and optimize resource utilization:
-
-```typescript
-class QueryBatcher {
-  private pending: Map<string, Promise<unknown>> = new Map()
-  private batchWindow: number = 50 // milliseconds
-  
-  async execute<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
-    if (this.pending.has(key)) {
-      return this.pending.get(key) as Promise<T>
-    }
-    
-    const batch = this.createBatch(key, fetcher)
-    this.pending.set(key, batch)
-    
-    setTimeout(() => this.pending.delete(key), this.batchWindow)
-    return batch
-  }
-  
-  private createBatch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await fetcher()
-        resolve(result)
-      } catch (error) {
-        reject(error)
-      }
-    })
-  }
-}
-```
+Stale cache entries are refreshed in the background without blocking user interactions. The refetching strategy uses exponential backoff for failed refresh attempts and prioritizes entries likely to be accessed based on user navigation patterns.
 
 ## 7. Client-Side Database Infrastructure
 
 ### 7.1 IndexedDB Strategy with Dexie.js
 
-The persistent storage layer leverages IndexedDB through Dexie.js, providing robust, offline-capable data storage essential for a local-first knowledge synthesis system. The schema design prioritizes efficient querying, space management, and graceful schema evolution.
-
-**Schema Design Principles:**
-
-The database schema implements a normalized structure separating concerns while enabling efficient joins through Dexie's API:
+The architecture implements IndexedDB for persistent storage of knowledge data, vector embeddings, and system metadata. Dexie.js provides a type-safe, queryable interface to IndexedDB that simplifies storage operations while maintaining performance.
 
 ```typescript
-import Dexie, { Table } from 'dexie'
+import Dexie, { Table } from 'dexie';
 
 interface KnowledgeDocument {
-  id: string
-  title: string
-  content: string
-  contentHash: string
-  mimeType: string
-  sourceUri?: string
-  collectionId: string
-  metadata: DocumentMetadata
-  createdAt: Date
-  updatedAt: Date
-  accessedAt: Date
+  id: string;
+  title: string;
+  content: string;
+  embeddings: number[];
+  metadata: DocumentMetadata;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface Collection {
-  id: string
-  name: string
-  description: string
-  color: string
-  icon: string
-  parentId?: string
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  name: string;
+  description: string;
+  documentIds: string[];
+  createdAt: number;
 }
 
-interface VectorEmbedding {
-  id: string
-  documentId: string
-  collectionId: string
-  embedding: number[]
-  model: string
-  dimensions: number
-  createdAt: Date
+interface UserSession {
+  id: string;
+  queries: QueryRecord[];
+  synthesizedItems: string[];
+  createdAt: number;
 }
 
-interface SessionSnapshot {
-  id: string
-  name: string
-  timestamp: Date
-  state: SessionState
-  collections: string[]
-  metadata: SnapshotMetadata
-}
-
-class KnowledgeDatabase extends Dexie {
-  documents!: Table<KnowledgeDocument>
-  collections!: Table<Collection>
-  embeddings!: Table<VectorEmbedding>
-  sessions!: Table<SessionSnapshot>
-  metadata!: Table<SystemMetadata>
+class KnowledgeBaseDB extends Dexie {
+  documents!: Table<KnowledgeDocument>;
+  collections!: Table<Collection>;
+  sessions!: Table<UserSession>;
   
   constructor() {
-    super('KnowledgeSynthesisDB')
+    super('KnowledgeSynthesisDB');
     this.version(1).stores({
-      documents: 'id, collectionId, contentHash, createdAt, updatedAt, *metadata',
-      collections: 'id, parentId, createdAt, updatedAt',
-      embeddings: 'id, documentId, collectionId, [documentId+collectionId]',
-      sessions: 'id, timestamp, *collections',
-      metadata: 'key'
-    })
+      documents: 'id, title, *metadata.tags, updatedAt',
+      collections: 'id, name, *documentIds',
+      sessions: 'id, createdAt',
+    });
   }
 }
 ```
 
-**Index Optimization**: Critical query patterns are analyzed and optimized through strategic index design. The compound index on `[documentId+collectionId]` enables efficient vector search within collection scopes while maintaining individual document lookups.
+### 7.2 Schema Design
 
-### 7.2 Intelligent Data Persistence Strategies
+The schema design supports efficient querying across multiple dimensions. The documents table indexes by ID for direct retrieval, by title for search operations, by tags for filtered browsing, and by updatedAt for time-based queries.
 
-Beyond basic storage, the persistence layer implements sophisticated strategies for managing browser storage constraints, ensuring data integrity, and optimizing performance:
+The collections table enables efficient retrieval of collection contents through the denormalized documentIds array, supporting O(1) membership queries.
 
-**Storage Pressure Management**: The system monitors available storage and implements intelligent eviction policies when approaching quota limits:
+### 7.3 Storage Pressure Management
 
-```typescript
-interface StorageMetrics {
-  used: number
-  available: number
-  quota: number
-  usageRatio: number
-}
+The system implements proactive storage pressure management to prevent quota exhaustion. When storage utilization approaches limits, the system automatically evicts least-recently-used cached entries, compresses historical data, and notifies users of storage constraints.
 
-class StorageManager {
-  private readonly EVICTION_THRESHOLD = 0.85
-  private readonly MIN_RESERVED_BYTES = 50 * 1024 * 1024 // 50MB
-  
-  async checkStoragePressure(): Promise<StoragePressureState> {
-    const metrics = await this.getStorageMetrics()
-    
-    if (metrics.usageRatio > this.EVICTION_THRESHOLD) {
-      return {
-        level: 'warning',
-        metrics,
-        actions: await this.calculateEvictionActions(metrics)
-      }
-    }
-    
-    return { level: 'normal', metrics, actions: [] }
-  }
-  
-  async evictOldSnapshots(count: number): Promise<void> {
-    const snapshots = await db.sessions
-      .orderBy('timestamp')
-      .limit(count)
-      .toArray()
-    
-    await db.sessions.bulkDelete(snapshots.map(s => s.id))
-    await this.compactDatabase()
-  }
-}
-```
+### 7.4 Offline-First Capability
 
-**Incremental Sync State**: The system maintains detailed sync state to enable incremental synchronization of large knowledge bases, minimizing data transfer and enabling resumable operations:
-
-```typescript
-interface SyncState {
-  lastSyncTimestamp: Date
-  documentCursor: string
-  embeddingCursor: string
-  pendingOperations: PendingOperation[]
-  conflictLog: ConflictRecord[]
-}
-
-interface PendingOperation {
-  id: string
-  type: 'create' | 'update' | 'delete'
-  targetId: string
-  timestamp: Date
-  retryCount: number
-  payload: unknown
-}
-```
-
-### 7.3 Offline-First Capability Design
-
-The offline-first architecture ensures complete functionality during network disconnection while gracefully synchronizing when connectivity returns:
-
-**Queue Management for Offline Operations**: All operations that require network access are queued with full state preservation when offline:
-
-```typescript
-class OfflineOperationQueue {
-  private queue: IndexedQueue<OfflineOperation>
-  private isOnline: boolean = navigator.onLine
-  
-  constructor() {
-    window.addEventListener('online', () => this.processQueue())
-    window.addEventListener('offline', () => this.handleOffline())
-  }
-  
-  async enqueue(operation: OfflineOperation): Promise<OperationResult> {
-    if (this.isOnline) {
-      return this.executeOnline(operation)
-    }
-    
-    const persisted = await this.persistOperation(operation)
-    this.queue.enqueue(persisted)
-    
-    return {
-      status: 'queued',
-      operationId: persisted.id,
-      estimatedSync: this.estimateSyncTime()
-    }
-  }
-  
-  async processQueue(): Promise<void> {
-    const operations = await this.queue.getAll()
-    
-    for (const op of operations) {
-      try {
-        await this.executeOnline(op)
-        await this.queue.remove(op.id)
-      } catch (error) {
-        await this.handleSyncError(op, error)
-      }
-    }
-  }
-}
-```
+Full offline capability requires no server connectivity for knowledge synthesis operations. The system caches essential resources during online periods and seamlessly transitions to offline operation when connectivity is lost. All local changes synchronize upon reconnection.
 
 ## 8. RAG Infrastructure Design
 
-### 8.1 Vector Store: Orama WASM Integration
+### 8.1 Orama WASM Vector Store
 
-The vector search infrastructure leverages Orama, a high-performance, browser-native search engine supporting full-text, vector, and hybrid search modalities. Orama's WASM-based execution provides exceptional performance within browser constraints while maintaining full compatibility with RAG pipeline requirements.
-
-**Orama Database Configuration**: The vector store is configured for optimal knowledge synthesis performance:
+Orama WASM serves as the vector store implementation, providing high-performance similarity search entirely within the browser. Orama's hybrid search capability combines vector embeddings with full-text indexing, delivering comprehensive retrieval results.
 
 ```typescript
-import { create, insert, search, type Orama } from '@orama/orama'
+import { create, insert, search, remove } from '@orama/orama';
 
-interface KnowledgeDocument {
-  id: string
-  title: string
-  content: string
-  collectionId: string
-  tags: string[]
-  embedding?: number[]
-  metadata: Record<string, unknown>
-  createdAt: number
+interface KnowledgeSchema {
+  id: string;
+  title: string;
+  content: string;
+  collection: string;
+  embeddings: number[];
+  metadata: Record<string, unknown>;
 }
 
-class VectorStore {
-  private db: Orama<KnowledgeDocument>
-  private readonly VECTOR_DIMENSIONS = 768 // Gemini embedding dimensions
+const schema: Schema<KnowledgeSchema> = {
+  id: 'string',
+  title: 'string',
+  content: 'string',
+  collection: 'string',
+  embeddings: 'vector[768]',
+  metadata: 'object',
+};
+
+const knowledgeIndex = await create({
+  schema,
+  language: 'en',
+});
+```
+
+### 8.2 Hybrid Search Implementation
+
+The hybrid search implementation combines dense vector similarity with sparse BM25 full-text retrieval. Results from both approaches are merged using a weighted scoring function that accounts for semantic relevance and lexical match quality.
+
+```typescript
+async function hybridSearch(query: string, options: SearchOptions) {
+  const vectorQuery = await generateEmbedding(query);
+  const textQuery = query;
   
-  async initialize(): Promise<void> {
-    this.db = create({
-      schema: {
-        id: 'string',
-        title: 'string',
-        content: 'string',
-        collectionId: 'string',
-        tags: 'string[]',
-        embedding: `vector[${this.VECTOR_DIMENSIONS}]`,
-        metadata: 'object',
-        createdAt: 'number',
-      },
-      plugins: [
-        // Secure proxy for embedding generation if using external API
-      ],
-    })
+  // Vector search for semantic relevance
+  const vectorResults = await knowledgeIndex.search(vectorQuery, {
+    similarity: 0.7,
+    limit: options.limit || 20,
+  });
+  
+  // Full-text search for exact matches
+  const textResults = await knowledgeIndex.search(textQuery, {
+    term: true,
+    limit: options.limit || 20,
+  });
+  
+  // Merge and rerank results
+  const merged = mergeResults(vectorResults, textResults, {
+    vectorWeight: 0.6,
+    textWeight: 0.4,
+  });
+  
+  return rerankResults(merged, query);
+}
+```
+
+### 8.3 Embedding Generation Pipeline
+
+The embedding pipeline utilizes Transformers.js to generate vector representations client-side. The CLIP model provides text embeddings suitable for semantic similarity operations.
+
+```typescript
+import { pipeline } from '@xenova/transformers';
+
+class EmbeddingGenerator {
+  private extractor: Pipeline | null = null;
+  
+  async initialize() {
+    this.extractor = await pipeline('feature-extraction', 'Xenova/clip-vit-base-patch32');
   }
   
-  async indexDocument(document: KnowledgeDocument): Promise<void> {
-    // Generate embedding if not provided
-    const embedding = document.embedding || 
-      await this.generateEmbedding(document.content)
-    
-    await insert(this.db, {
-      ...document,
-      embedding,
-      createdAt: document.createdAt || Date.now(),
-    })
+  async generate(text: string): Promise<number[]> {
+    const output = await this.extractor!(text, {
+      pooling: 'mean',
+      normalize: true,
+    });
+    return Array.from(output.data);
   }
   
-  async hybridSearch(
-    query: string,
-    options: SearchOptions
-  ): Promise<SearchResults> {
-    const results = await search(this.db, {
-      mode: 'hybrid',
-      term: query,
-      vector: {
-        value: await this.generateEmbedding(query),
-        property: 'embedding',
-      },
-      similarity: options.similarity || 0.8,
-      limit: options.limit || 20,
-      offset: options.offset || 0,
-      where: options.collectionId 
-        ? { collectionId: options.collectionId }
-        : undefined,
-      includeVectors: options.includeVectors || false,
-    })
-    
-    return this.formatResults(results, options)
+  async generateBatch(texts: string[]): Promise<number[][]> {
+    return Promise.all(texts.map(text => this.generate(text)));
   }
 }
 ```
 
-**Hybrid Search Implementation**: The hybrid search capability combines semantic vector similarity with keyword-based full-text search, providing comprehensive retrieval across diverse query types:
+### 8.4 Reranking and Context Compression
 
-```typescript
-interface HybridSearchOptions {
-  term: string
-  vectorWeight?: number      // Default: 0.7
-  fulltextWeight?: number    // Default: 0.3
-  similarity?: number        // Default: 0.8
-  limit?: number
-  offset?: number
-  collectionId?: string
-  filters?: Record<string, unknown>
-}
+The reranking layer improves initial retrieval results using cross-encoder scoring that considers query-document relationships more deeply than the bi-encoder approach used for initial retrieval.
 
-async function hybridSearch(
-  db: Orama,
-  query: string,
-  options: HybridSearchOptions
-): Promise<HybridSearchResult> {
-  const vectorQuery = await generateEmbedding(query)
-  
-  const [vectorResults, fulltextResults] = await Promise.all([
-    search(db, {
-      mode: 'vector',
-      term: query,
-      vector: {
-        value: vectorQuery,
-        property: 'embedding',
-      },
-      similarity: options.similarity,
-      limit: options.limit,
-      where: options.collectionId ? { collectionId: options.collectionId } : undefined,
-    }),
-    search(db, {
-      mode: 'fulltext',
-      term: query,
-      limit: options.limit,
-      where: options.collectionId ? { collectionId: options.collectionId } : undefined,
-    }),
-  ])
-  
-  // Merge and re-rank results
-  return rerankResults(
-    vectorResults, 
-    fulltextResults, 
-    options.vectorWeight || 0.7,
-    options.fulltextWeight || 0.3
-  )
-}
-```
-
-### 8.2 Embedding Generation Pipeline
-
-The embedding pipeline orchestrates the generation of vector representations for knowledge documents, utilizing both local computation capabilities and external API services when available:
-
-```typescript
-interface EmbeddingConfig {
-  model: string
-  dimensions: number
-  batchSize: number
-  maxRetries: number
-  timeout: number
-}
-
-class EmbeddingPipeline {
-  private config: EmbeddingConfig
-  private cache: LRUCache<string, number[]>
-  
-  async generateEmbedding(text: string): Promise<number[]> {
-    const cacheKey = this.hashContent(text)
-    
-    if (this.cache.has(cacheKey)) {
-      return this.cache.get(cacheKey)!
-    }
-    
-    // Primary: Use external embedding API (Google Gemini Embedding)
-    try {
-      const embedding = await this.callEmbeddingAPI(text)
-      this.cache.set(cacheKey, embedding)
-      return embedding
-    } catch (error) {
-      // Fallback: Lightweight local embedding (limited capabilities)
-      console.warn('Embedding API unavailable, using fallback')
-      return this.generateLocalEmbedding(text)
-    }
-  }
-  
-  async embedBatch(documents: Document[]): Promise<Map<string, number[]>> {
-    const results = new Map<string, number[]>()
-    
-    for (const batch of this.batchDocuments(documents)) {
-      const embeddings = await Promise.all(
-        batch.map(doc => this.generateEmbedding(doc.content))
-      )
-      
-      batch.forEach((doc, index) => {
-        results.set(doc.id, embeddings[index])
-      })
-    }
-    
-    return results
-  }
-}
-```
-
-### 8.3 Reranking and Context Compression
-
-Post-retrieval processing ensures that the most relevant and coherent information is presented to the language model, optimizing both response quality and token efficiency:
-
-```typescript
-interface RerankConfig {
-  maxCandidates: number
-  finalResultCount: number
-  diversityWeight: number
-  coherenceThreshold: number
-}
-
-class RerankingEngine {
-  async rerank(
-    candidates: SearchCandidate[],
-    query: string,
-    config: RerankConfig
-  ): Promise<RerankedResult[]> {
-    // Phase 1: Score by relevance
-    const scored = await this.scoreRelevance(candidates, query)
-    
-    // Phase 2: Select top candidates
-    const topCandidates = scored
-      .sort((a, b) => b.score - a.score)
-      .slice(0, config.maxCandidates)
-    
-    // Phase 3: Apply diversity optimization
-    const diverse = await this.applyDiversityOptimization(
-      topCandidates,
-      config.diversityWeight
-    )
-    
-    // Phase 4: Context compression
-    const compressed = await this.compressContext(
-      diverse,
-      query,
-      config.coherenceThreshold
-    )
-    
-    return compressed.slice(0, config.finalResultCount)
-  }
-  
-  private async compressContext(
-    documents: RerankedResult[],
-    query: string,
-    coherenceThreshold: number
-  ): Promise<RerankedResult[]> {
-    const compressedResults: RerankedResult[] = []
-    
-    for (const doc of documents) {
-      const compressed = await this.summarizeToTokenBudget(
-        doc.content,
-        query,
-        MAX_CONTEXT_TOKENS
-      )
-      
-      compressedResults.push({
-        ...doc,
-        content: compressed,
-        compressionRatio: compressed.length / doc.content.length,
-      })
-    }
-    
-    return compressedResults
-  }
-}
-```
+Context compression reduces token usage while preserving essential information. The compression strategy identifies and removes redundant content, summarizes extended passages, and filters low-information sentences.
 
 ## 9. Multimodal Processing Pipeline
 
 ### 9.1 Input Modality Support
 
-The system architecture provides comprehensive support for diverse input modalities, enabling rich knowledge ingestion from multiple source types:
+The architecture supports multiple input modalities, each requiring specialized processing pipelines.
 
-**Text Processing**: Native support for plain text, Markdown, HTML, and structured document formats. Text content undergoes preprocessing including normalization, chunking, and metadata extraction before indexing.
+**Text Input**: Text undergoes chunking, embedding generation, and indexing. The chunking strategy balances semantic coherence with token limits, using paragraph boundaries and sentence-level analysis.
 
-**Image Processing**: Images are processed through OCR for text extraction and CLIP-style embedding generation for visual-semantic indexing. This enables both text-based search within images and visual similarity queries:
+**Image Input**: Images are processed through OCR for text extraction and CLIP embeddings for visual semantic indexing. The system extracts readable content while building visual similarity indexes.
 
-```typescript
-interface ImageProcessingConfig {
-  enableOCR: boolean
-  ocrLanguages: string[]
-  generateEmbedding: boolean
-  thumbnailSize: number
-}
+**Audio Input**: Audio files utilize Whisper WASM for speech-to-text transcription. The transcribed text follows the standard text processing pipeline while preserving timestamp metadata for referenced content.
 
-class ImageProcessor {
-  async processImage(
-    imageData: ImageSource,
-    config: ImageProcessingConfig
-  ): Promise<ProcessedImage> {
-    const result: ProcessedImage = {
-      id: generateId(),
-      originalUrl: imageData.url,
-      thumbnailUrl: await this.generateThumbnail(imageData),
-    }
-    
-    if (config.enableOCR) {
-      result.extractedText = await this.performOCR(
-        imageData, 
-        config.ocrLanguages
-      )
-    }
-    
-    if (config.generateEmbedding) {
-      result.visualEmbedding = await this.generateVisualEmbedding(imageData)
-    }
-    
-    return result
-  }
-}
-```
+**Video Input**: Video processing extracts audio tracks for transcription and key frames for visual analysis. Temporal metadata enables scene-based chunking for temporal content.
 
-**Audio Processing**: Audio content is transcribed using speech-to-text services, with speaker diarization and timestamp preservation for reference. The transcribed text is indexed alongside original audio timestamps.
-
-**Video Processing**: Video content is processed frame-by-frame for key visual elements, with audio track transcription and temporal indexing for searchable video segments.
-
-**Structured Data**: CSV, JSON, and XML data are parsed into semantic representations, preserving relational structure for knowledge graph integration.
+**Structured Data**: JSON and CSV inputs are parsed and integrated into the knowledge graph with schema validation.
 
 ### 9.2 Output Modality Generation
 
-The system generates outputs in multiple modalities based on user preferences and content requirements:
+Output modalities include text responses, visualizations, audio summaries, and interactive content.
 
-**Text Output**: Primary output modality supporting plain text, Markdown, HTML, and structured formats.
+**Text Responses**: Primary output format using Gemini for coherent, cited content generation.
 
-**Visualization Generation**: Charts, diagrams, and infographics are generated from structured data and conceptual relationships:
+**Visualizations**: Charts and diagrams generated using D3.js and custom rendering components based on synthesized data.
 
-```typescript
-interface VisualizationRequest {
-  type: 'chart' | 'graph' | 'diagram' | 'mindmap'
-  data: unknown
-  style: VisualizationStyle
-  accessibility: AccessibilityOptions
-}
+**Audio Summaries**: Text-to-speech synthesis using browser Speech Synthesis API for audio output of key findings.
 
-class VisualizationGenerator {
-  async generate(request: VisualizationRequest): Promise<VisualizationOutput> {
-    switch (request.type) {
-      case 'chart':
-        return this.generateChart(request.data, request.style)
-      case 'graph':
-        return this.generateKnowledgeGraph(request.data, request.style)
-      case 'mindmap':
-        return this.generateMindmap(request.data, request.style)
-      default:
-        throw new UnsupportedVisualizationError(request.type)
-    }
-  }
-}
-```
-
-**Audio Summaries**: Text content can be converted to speech for audio consumption, with configurable voice and speed settings.
-
-### 9.3 Cross-Modal Search and Retrieval
-
-The unified embedding space enables powerful cross-modal search capabilities, allowing users to find relevant content regardless of input modality:
-
-```typescript
-class CrossModalSearch {
-  async search(query: CrossModalQuery): Promise<CrossModalResults> {
-    const [textResults, imageResults, audioResults, videoResults] = 
-      await Promise.all([
-        this.searchText(query),
-        query.includeImages ? this.searchImages(query) : [],
-        query.includeAudio ? this.searchAudio(query) : [],
-        query.includeVideo ? this.searchVideo(query) : [],
-      ])
-    
-    return this.unifyResults(
-      textResults, 
-      imageResults, 
-      audioResults, 
-      videoResults,
-      query.rankingWeights
-    )
-  }
-}
-```
+**Interactive Content**: Quizzes, flashcards, and learning paths generated through the Pedagogical Agent for active engagement.
 
 ## 10. Multi-Agent Coordination System
 
-### 10.1 Agent Architecture Overview
+### 10.1 Agent Architecture
 
-The multi-agent coordination system implements five specialized agents, each designed for specific knowledge synthesis functions while maintaining coherent collaboration through a shared communication protocol.
+Five specialized agents collaborate to deliver comprehensive knowledge synthesis capabilities.
 
-**Agent Communication Protocol**: All agents communicate through a standardized message passing system enabling both direct queries and broadcast notifications:
+**Research Specialist Agent**: Responsible for source discovery, content extraction, and preliminary validation. The agent searches knowledge bases, identifies relevant sources, extracts key information, and validates source credibility. Capabilities include web search for external sources, document parsing for uploaded files, and citation extraction for referenced materials.
+
+**Knowledge Synthesizer Agent**: Combines information from multiple sources into coherent synthesis. The agent identifies relationships between sources, resolves conflicting information, generates unified summaries, and produces structured outputs. The agent maintains awareness of source attribution for citation purposes.
+
+**Content Generation Agent**: Transforms synthesized knowledge into user-facing outputs. The agent generates formatted content including summaries, explanations, comparisons, and structured documents. The agent adapts output style based on user preferences and learning context.
+
+**Pedagogical Agent**: Adapts content delivery for learning objectives. The agent assesses user knowledge level, identifies knowledge gaps, generates appropriate learning materials, and adapts complexity based on demonstrated understanding. The agent implements spaced repetition scheduling for retention optimization.
+
+**Expert Advisor Agent**: Provides domain-specific guidance and recommendations. The agent maintains knowledge of domain-specific best practices, suggests relevant resources, identifies learning pathways, and answers clarifying questions.
+
+### 10.2 Communication Protocols
+
+Agents communicate through a message bus built on EventEmitter3, implementing structured message formats with guaranteed delivery semantics.
 
 ```typescript
 interface AgentMessage {
-  id: string
-  sender: AgentId
-  recipients: AgentId[]
-  type: MessageType
-  payload: unknown
-  priority: 'low' | 'normal' | 'high' | 'urgent'
-  timestamp: Date
-  correlationId?: string
-  replyTo?: string
+  id: string;
+  source: AgentType;
+  target: AgentType[];
+  type: 'request' | 'response' | 'query' | 'notification';
+  payload: unknown;
+  priority: 'critical' | 'high' | 'normal' | 'low';
+  correlationId?: string;
+  timestamp: number;
+  ttl?: number;
 }
 
-type MessageType = 
-  | 'request'      // Direct request for agent action
-  | 'query'        // Information query
-  | 'response'     // Response to query/request
-  | 'notification' // Event notification
-  | 'broadcast'    // Broadcast to all agents
-  | 'delegate'     // Request to delegate to sub-agent
-
-class AgentCommunicationHub {
-  private messageBus: EventEmitter<AgentMessage>
-  private agentRegistry: Map<AgentId, AgentInstance>
-  
-  async send(message: AgentMessage): Promise<AgentResponse> {
-    const targetAgents = this.resolveRecipients(message.recipients)
+class AgentMessageBus extends EventEmitter3 {
+  async send(message: AgentMessage): Promise<void> {
+    const correlationId = message.correlationId || generateId();
+    const envelope = {
+      ...message,
+      correlationId,
+      timestamp: Date.now(),
+    };
     
-    if (message.type === 'broadcast') {
-      return this.broadcast(message, targetAgents)
+    // Route to target agents
+    for (const target of message.target) {
+      this.emit('message', { target, envelope });
     }
     
-    return this.route(message, targetAgents)
-  }
-  
-  private async route(
-    message: AgentMessage,
-    agents: AgentInstance[]
-  ): Promise<AgentResponse> {
-    const results = await Promise.all(
-      agents.map(agent => agent.processMessage(message))
-    )
-    
-    return this.aggregateResponses(results)
-  }
-}
-```
-
-### 10.2 Research Specialist Agent
-
-The Research Specialist Agent manages comprehensive information gathering, source evaluation, and evidence synthesis:
-
-```typescript
-class ResearchSpecialistAgent extends BaseAgent {
-  readonly id: AgentId = 'research-specialist'
-  readonly capabilities = [
-    'web-search',
-    'document-analysis',
-    'source-evaluation',
-    'citation-management',
-    'evidence-synthesis',
-  ] as const
-  
-  async processResearchRequest(request: ResearchRequest): Promise<ResearchResult> {
-    // Phase 1: Query formulation and expansion
-    const expandedQuery = await this.expandQuery(request.query)
-    
-    // Phase 2: Parallel source gathering
-    const sources = await this.gatherSources(expandedQuery, request.sources)
-    
-    // Phase 3: Source evaluation and ranking
-    const evaluatedSources = await this.evaluateSources(sources)
-    
-    // Phase 4: Evidence extraction
-    const evidence = await this.extractEvidence(
-      evaluatedSources, 
-      request.focusAreas
-    )
-    
-    return {
-      query: request.query,
-      sources: evaluatedSources,
-      evidence,
-      synthesis: await this.synthesizeEvidence(evidence),
-      citations: this.generateCitations(evaluatedSources),
-    }
-  }
-  
-  private async expandQuery(query: string): Promise<string[]> {
-    // Use LLM to generate related queries
-    const expansionPrompt = `Generate 5 related search queries for: "${query}"`
-    const response = await this.llm.complete(expansionPrompt)
-    return [query, ...response.relatedQueries]
-  }
-}
-```
-
-### 10.3 Knowledge Synthesizer Agent
-
-The Knowledge Synthesizer Agent integrates information from multiple sources into coherent knowledge representations:
-
-```typescript
-class KnowledgeSynthesizerAgent extends BaseAgent {
-  readonly id: AgentId = 'knowledge-synthesizer'
-  readonly capabilities = [
-    'concept-mapping',
-    'relationship-discovery',
-    'knowledge-graph-building',
-    'summary-generation',
-    'perspective-integration',
-  ] as const
-  
-  async synthesize(
-    inputs: SynthesisInput[]
-  ): Promise<SynthesisOutput> {
-    // Phase 1: Concept extraction
-    const concepts = await this.extractConcepts(inputs)
-    
-    // Phase 2: Relationship identification
-    const relationships = await this.identifyRelationships(
-      concepts, 
-      inputs
-    )
-    
-    // Phase 3: Knowledge graph construction
-    const graph = await this.buildKnowledgeGraph(concepts, relationships)
-    
-    // Phase 4: Gap analysis
-    const gaps = await this.identifyKnowledgeGaps(graph)
-    
-    // Phase 5: Summary generation
-    const summary = await this.generateSummary(graph, inputs)
-    
-    return {
-      concepts,
-      relationships,
-      graph,
-      gaps,
-      summary,
-      perspectives: this.integratePerspectives(inputs),
+    // Track delivery for critical messages
+    if (message.priority === 'critical') {
+      await this.trackDelivery(envelope);
     }
   }
 }
 ```
 
-### 10.4 Content Generation Agent
+### 10.3 Task Delegation
 
-The Content Generation Agent transforms synthesized knowledge into various output formats:
+The Task Delegator component routes requests to appropriate agents based on task type, complexity, and agent availability. Delegation considers agent specialization match, current workload, estimated task duration, and user preferences for agent selection.
 
-```typescript
-class ContentGenerationAgent extends BaseAgent {
-  readonly id: AgentId = 'content-generator'
-  readonly capabilities = [
-    'article-writing',
-    'document-formatting',
-    'presentation-creation',
-    'visualization-generation',
-    'format-conversion',
-  ] as const
-  
-  async generateContent(request: ContentRequest): Promise<ContentOutput> {
-    // Validate request and gather context
-    const context = await this.gatherContext(request)
-    
-    // Generate content based on type
-    switch (request.format) {
-      case 'article':
-        return this.writeArticle(context, request)
-      case 'presentation':
-        return this.createPresentation(context, request)
-      case 'report':
-        return this.writeReport(context, request)
-      case 'infographic':
-        return this.designInfographic(context, request)
-      default:
-        throw new UnsupportedFormatError(request.format)
-    }
-  }
-}
-```
+### 10.4 Conflict Resolution
 
-### 10.5 Pedagogical Agent
-
-The Pedagogical Agent adapts knowledge delivery for effective learning:
-
-```typescript
-class PedagogicalAgent extends BaseAgent {
-  readonly id: AgentId = 'pedagogical'
-  readonly capabilities = [
-    'learning-style-assessment',
-    'scaffolded-instruction',
-    'formative-assessment',
-    'progress-tracking',
-    'adaptive-content,
-  ] as const
-  
-  async createLearningExperience(
-    request: LearningRequest
-  ): Promise<LearningExperience> {
-    // Assess learning preferences
-    const preferences = await this.assessPreferences(
-      request.learnerProfile
-    )
-    
-    // Design learning path
-    const path = this.designLearningPath(
-      request.topic,
-      request.objectives,
-      preferences
-    )
-    
-    // Generate scaffolded content
-    const modules = await this.generateScaffoldedModules(
-      path,
-      request.content
-    )
-    
-    // Create assessments
-    const assessments = await this.createFormativeAssessments(
-      path.objectives
-    )
-    
-    return {
-      learningPath: path,
-      modules,
-      assessments,
-      learnerProfile: preferences,
-      estimatedDuration: this.estimateDuration(path),
-    }
-  }
-}
-```
-
-### 10.6 Expert Advisor Agent
-
-The Expert Advisor Agent provides contextual guidance and recommendations:
-
-```typescript
-class ExpertAdvisorAgent extends BaseAgent {
-  readonly id: AgentId = 'expert-advisor'
-  readonly capabilities = [
-    'contextual-recommendations',
-    'best-practices-guidance',
-    'risk-identification',
-    'decision-support',
-    'explanation-generation',
-  ] as const
-  
-  async provideGuidance(request: GuidanceRequest): Promise<GuidanceOutput> {
-    // Analyze context
-    const context = await this.analyzeContext(request)
-    
-    // Generate recommendations
-    const recommendations = await this.generateRecommendations(
-      context,
-      request.options
-    )
-    
-    // Identify risks and mitigations
-    const riskAnalysis = await this.analyzeRisks(context, recommendations)
-    
-    // Provide explanations
-    const explanations = await this.explainRecommendations(recommendations)
-    
-    return {
-      recommendations,
-      riskAnalysis,
-      explanations,
-      confidenceScores: this.calculateConfidence(recommendations),
-      nextSteps: this.suggestNextSteps(recommendations),
-    }
-  }
-}
-```
+When agents produce conflicting outputs, the Conflict Resolver component mediates disputes through evidence evaluation, source hierarchy consideration, user preference respect, and explanation generation for why one output was selected over alternatives.
 
 ## 11. Knowledge Processing Pipeline
 
 ### 11.1 Ingestion Pipeline
 
-The ingestion pipeline transforms raw knowledge sources into indexed, searchable artifacts:
+The ingestion pipeline transforms raw content into indexed knowledge.
 
-```typescript
-interface IngestionConfig {
-  chunkSize: number
-  chunkOverlap: number
-  enableExtraction: boolean
-  extractionTimeout: number
-}
+**Extraction**: Content is extracted from multiple source formats including PDF (via PDF.js), HTML (via DOM parsing), Markdown (via parsing), and structured formats (via schema validation).
 
-class IngestionPipeline {
-  async ingest(source: KnowledgeSource): Promise<IngestionResult> {
-    // Phase 1: Source extraction
-    const rawContent = await this.extractContent(source)
-    
-    // Phase 2: Content normalization
-    const normalized = this.normalizeContent(rawContent)
-    
-    // Phase 3: Semantic chunking
-    const chunks = await this.createSemanticChunks(
-      normalized,
-      this.config.chunkSize,
-      this.config.chunkOverlap
-    )
-    
-    // Phase 4: Metadata enrichment
-    const enriched = await this.enrichMetadata(chunks, source)
-    
-    // Phase 5: Embedding generation
-    const embedded = await this.generateEmbeddings(enriched)
-    
-    // Phase 6: Indexing
-    await this.indexDocuments(embedded)
-    
-    return {
-      sourceId: source.id,
-      chunkCount: chunks.length,
-      metadata: this.generateIngestionReport(embedded),
-    }
-  }
-  
-  private async createSemanticChunks(
-    content: string,
-    size: number,
-    overlap: number
-  ): Promise<TextChunk[]> {
-    // Use LLM to identify semantic boundaries
-    const boundaries = await this.identifySemanticBoundaries(content)
-    
-    // Create chunks at semantic boundaries
-    return this.createChunksAtBoundaries(content, boundaries, size, overlap)
-  }
-}
-```
+**Chunking**: Content is segmented into semantically coherent chunks using paragraph boundaries, sentence analysis, and topic segmentation. Chunk size targets token limits while preserving semantic integrity.
+
+**Embedding Generation**: Each chunk generates vector embeddings using the Transformers.js pipeline. Batched processing improves throughput for large documents.
+
+**Indexing**: Chunks and embeddings are stored in the Orama index with metadata for filtering and retrieval.
 
 ### 11.2 Retrieval Strategy
 
-The retrieval system implements sophisticated strategies for finding relevant knowledge:
+Retrieval operations support multiple query types.
 
-```typescript
-interface RetrievalStrategy {
-  name: string
-  execute: (query: RetrievalQuery) => Promise<RetrievalResult>
-  fallback?: RetrievalStrategy
-  scoreThreshold: number
-}
+**Semantic Search**: Vector similarity identifies chunks related to query concepts.
 
-class RetrievalOrchestrator {
-  private strategies: Map<string, RetrievalStrategy> = new Map()
-  
-  async retrieve(query: RetrievalQuery): Promise<RetrievalResult> {
-    // Select primary strategy based on query characteristics
-    const strategy = this.selectStrategy(query)
-    
-    try {
-      const result = await strategy.execute(query)
-      
-      if (result.score < strategy.scoreThreshold && strategy.fallback) {
-        return strategy.fallback.execute(query)
-      }
-      
-      return result
-    } catch (error) {
-      return this.handleRetrievalError(error, query)
-    }
-  }
-  
-  private selectStrategy(query: RetrievalQuery): RetrievalStrategy {
-    if (query.specificTerms.length > 5) {
-      return this.strategies.get('hybrid')!
-    }
-    
-    if (query.semanticComplexity === 'high') {
-      return this.strategies.get('vector-only')!
-    }
-    
-    return this.strategies.get('hybrid')!
-  }
-}
-```
+**Keyword Search**: Full-text matching finds exact term occurrences.
+
+**Hybrid Retrieval**: Combined results from both approaches provide comprehensive coverage.
+
+**Query Expansion**: Related terms and concepts expand query scope based on knowledge graph relationships.
 
 ### 11.3 Synthesis Engine
 
-The synthesis engine combines retrieved knowledge with LLM reasoning:
+The synthesis engine combines retrieved information into coherent outputs.
 
-```typescript
-class SynthesisEngine {
-  async synthesize(request: SynthesisRequest): Promise<SynthesisResponse> {
-    // Phase 1: Retrieval with expansion
-    const retrieved = await this.retrieveWithExpansion(request)
-    
-    // Phase 2: Context preparation
-    const context = this.prepareContext(
-      retrieved,
-      request.objectives,
-      request.maxContextTokens
-    )
-    
-    // Phase 3: Citation tracking setup
-    const citationTracker = new CitationTracker()
-    
-    // Phase 4: LLM synthesis
-    const response = await this.llm.complete(
-      this.buildSynthesisPrompt(request, context),
-      {
-        callbacks: {
-          onToken: (token) => citationTracker.processToken(token),
-        },
-      }
-    )
-    
-    // Phase 5: Uncertainty quantification
-    const uncertainty = await this.quantifyUncertainty(response)
-    
-    // Phase 6: Final output with citations
-    return {
-      content: response.content,
-      citations: citationTracker.getCitations(),
-      uncertainty,
-      sources: retrieved.sources,
-      confidence: this.calculateConfidence(response),
-    }
-  }
-}
-```
+**Citation Tracking**: Each synthesized statement is linked to source chunks with confidence scores.
+
+**Claim Grounding**: Claims are validated against source evidence before inclusion.
+
+**Uncertainty Quantification**: Confidence scores reflect evidence strength and source reliability.
+
+**Coherence Generation**: Gemini produces fluent text that integrates sourced information while maintaining factual accuracy.
 
 ## 12. Pedagogical Framework Integration
 
 ### 12.1 Learning Style Accommodation
 
-The pedagogical framework adapts content delivery to individual learning preferences:
+The system adapts content presentation based on user learning style preferences.
 
-```typescript
-interface LearningStyleProfile {
-  visualPreference: number      // 0-1
-  auditoryPreference: number    // 0-1
-  readingWritingPreference: number  // 0-1
-  kinestheticPreference: number // 0-1
-}
+**Visual Learners**: Content emphasizes diagrams, charts, and visual organization. Spatial layouts and color-coding enhance comprehension.
 
-class PedagogicalAdapter {
-  adaptContent(
-    content: KnowledgeContent,
-    profile: LearningStyleProfile
-  ): AdaptedContent {
-    const adaptations: ContentAdaptation[] = []
-    
-    if (profile.visualPreference > 0.7) {
-      adaptations.push(this.addVisualElements(content))
-    }
-    
-    if (profile.auditoryPreference > 0.7) {
-      adaptations.push(this.createAudioVersion(content))
-    }
-    
-    if (profile.readingWritingPreference > 0.7) {
-      adaptations.push(this.enhanceTextualContent(content))
-    }
-    
-    if (profile.kinestheticPreference > 0.7) {
-      adaptations.push(this.addInteractiveElements(content))
-    }
-    
-    return this.applyAdaptations(content, adaptations)
-  }
-}
-```
+**Auditory Learners**: Content includes audio summaries and discussion-format explanations. Text-to-speech enables listening during other activities.
+
+**Reading/Writing Learners**: Content provides detailed text explanations and structured notes. Writing prompts encourage active engagement.
+
+**Kinesthetic Learners**: Content includes interactive elements and hands-on activities. Practice problems and simulations support experiential learning.
 
 ### 12.2 Scaffolded Learning Paths
 
-Learning paths implement progressive complexity with prerequisite chains:
+Learning paths implement prerequisite chains that sequence content for optimal progression.
 
 ```typescript
 interface LearningPath {
-  id: string
-  modules: LearningModule[]
-  prerequisites: Map<string, string[]>
-  estimatedDuration: number
-  difficultyProgression: DifficultyCurve
+  id: string;
+  title: string;
+  objectives: string[];
+  modules: LearningModule[];
+  prerequisites: PrerequisiteChain;
+  estimatedDuration: number;
 }
 
-class LearningPathBuilder {
-  constructPath(
-    topic: string,
-    objectives: LearningObjective[],
-    startingLevel: number
-  ): LearningPath {
-    // Identify prerequisite concepts
-    const prerequisites = this.identifyPrerequisites(objectives)
-    
-    // Order modules by dependency
-    const orderedModules = this.topologicalSort(
-      objectives,
-      prerequisites
-    )
-    
-    // Create difficulty progression
-    const progression = this.createProgressionCurve(
-      startingLevel,
-      orderedModules.length
-    )
-    
-    return {
-      id: generatePathId(topic),
-      modules: orderedModules,
-      prerequisites,
-      estimatedDuration: this.estimateDuration(orderedModules),
-      difficultyProgression: progression,
-    }
-  }
+interface LearningModule {
+  id: string;
+  title: string;
+  content: ContentBlock[];
+  assessments: Assessment[];
+  unlocksAfter: string[]; // Module IDs
+}
+
+interface PrerequisiteChain {
+  graph: Map<string, string[]>;
+  completed: Set<string>;
+  recommendedOrder: string[];
 }
 ```
 
 ### 12.3 Formative Assessment Integration
 
-Assessment integration provides continuous feedback on learning progress:
+The system implements formative assessments that inform subsequent content adaptation.
 
-```typescript
-interface AssessmentConfig {
-  questionCount: number
-  difficultyRange: [number, number]
-  timeLimit?: number
-  adaptiveDifficulty: boolean
-}
+**Quiz Generation**: The Pedagogical Agent generates quizzes based on synthesized content, testing comprehension at appropriate difficulty levels.
 
-class AssessmentEngine {
-  async generateAssessment(
-    objectives: LearningObjective[],
-    config: AssessmentConfig
-  ): Promise<Assessment> {
-    const questions = await this.generateQuestions(
-      objectives,
-      config.questionCount,
-      config.difficultyRange
-    )
-    
-    return {
-      id: generateAssessmentId(),
-      questions,
-      config,
-      createdAt: new Date(),
-      adaptiveEnabled: config.adaptiveDifficulty,
-    }
-  }
-  
-  async evaluateResponse(
-    question: Question,
-    response: StudentResponse
-  ): Promise<EvaluationResult> {
-    const correctness = await this.checkCorrectness(question, response)
-    const feedback = await this.generateFeedback(question, response)
-    const skillLevel = await this.estimateSkillLevel(question, response)
-    
-    return {
-      correct: correctness,
-      feedback,
-      skillLevel,
-      suggestedReview: this.suggestReviewTopics(question, response),
-    }
-  }
-}
-```
+**Response Analysis**: Incorrect responses identify knowledge gaps for targeted remediation.
+
+**Adaptive Difficulty**: Question difficulty adjusts based on demonstrated understanding.
+
+**Spaced Repetition**: Flashcard scheduling uses SM-2 algorithm for optimal retention.
 
 ## 13. Component Interactions and Data Flow
 
-### 13.1 Request Flow Diagram
+### 13.1 Query Flow
 
-```
-User Query
-    ↓
-┌─────────────────────────────────────────────┐
-│         Query Orchestration Layer            │
-│  (TanStack AI QueryClient + Model Router)    │
-└─────────────────────────────────────────────┘
-    ↓
-┌─────────────────────────────────────────────┐
-│         Intent Classification                │
-│  - Query type detection                     │
-│  - Complexity assessment                    │
-│  - Agent routing decision                   │
-└─────────────────────────────────────────────┘
-    ↓
-    ├──────────────────────────────────────────┐
-    ↓                                          ↓
-┌──────────────────┐              ┌────────────────────────┐
-│  Cache Lookup    │              │  Relevant Agents       │
-│  (IndexedDB)     │              │  - Research Specialist │
-└──────────────────┘              │  - Knowledge Synthesizer│
-    ↓                              │  - Content Generator    │
-┌──────────────────┐              │  - Pedagogical Agent    │
-│  Hit?            │              │  - Expert Advisor       │
-└──────────────────┘              └────────────────────────┘
-    ↓                                          ↓
-    │                                          ↓
-    ↓                                          ↓
-┌──────────────────┐              ┌────────────────────────┐
-│ Return Cached    │              │  Parallel Execution     │
-│ Results          │              │  with Coordination      │
-└──────────────────┘              └────────────────────────┘
-                                           ↓
-                              ┌────────────────────────┐
-                              │  Result Aggregation    │
-                              │  & Conflict Resolution │
-                              └────────────────────────┘
-                                           ↓
-                              ┌────────────────────────┐
-                              │  Reranking &           │
-                              │  Context Compression   │
-                              └────────────────────────┘
-                                           ↓
-                              ┌────────────────────────┐
-                              │  LLM Synthesis         │
-                              │  (Gemini 3.0/2.5)      │
-                              └────────────────────────┘
-                                           ↓
-                              ┌────────────────────────┐
-                              │  Response Generation   │
-                              │  + Citations + Sources │
-                              └────────────────────────┘
-                                           ↓
-                              ┌────────────────────────┐
-                              │  Cache Update          │
-                              │  + Analytics Tracking  │
-                              └────────────────────────┘
-                                           ↓
-                              ┌────────────────────────┐
-                              │  User Delivery         │
-                              │  (Streaming Response)  │
-                              └────────────────────────┘
-```
+A typical query follows this flow:
 
-### 13.2 Data Synchronization Flows
+1. User submits query through Knowledge Hub interface
+2. Command Palette or Agent Chat captures the request
+3. TanStack AI creates a query with optimistic update
+4. Query Orchestration Layer checks semantic cache
+5. If cache miss, Research Specialist receives the task
+6. Research Specialist performs hybrid search in Orama
+7. Retrieved results pass to Knowledge Synthesizer
+8. Knowledge Synthesizer combines sources and generates synthesis
+9. Content Generator formats output for presentation
+10. Pedagogical Agent may adapt for learning context
+11. Response streams to user interface with citation links
+12. Results cached in all tiers for future queries
 
-**Knowledge Source Synchronization:**
+### 13.2 Ingestion Flow
 
-```
-External Knowledge Source
-    ↓
-┌────────────────────────┐
-│  Source Detection      │
-│  - Format recognition  │
-│  - Update frequency    │
-└────────────────────────┘
-    ↓
-┌────────────────────────┐
-│  Incremental Fetch     │
-│  - If-modified-since   │
-│  - Delta encoding      │
-└────────────────────────┘
-    ↓
-┌────────────────────────┐
-│  Change Detection      │
-│  - Content hashing     │
-│  - Metadata comparison │
-└────────────────────────┘
-    ↓
-    ├────────────────────┐
-    ↓                    ↓
-┌──────────────┐  ┌──────────────┐
-│ No Changes   │  │ Changes      │
-│ (Update      │  │ Detected     │
-│ metadata)    │  │              │
-└──────────────┘  └──────────────┘
-                       ↓
-              ┌────────────────┐
-              │  Re-index      │
-              │  Changed       │
-              │  Documents     │
-              └────────────────┘
-                       ↓
-              ┌────────────────┐
-              │  Update        │
-              │  Vector Store  │
-              └────────────────┘
-                       ↓
-              ┌────────────────┐
-              │  Notify        │
-              │  Subscribers   │
-              └────────────────┘
-```
+Content ingestion follows this flow:
+
+1. User uploads source through Knowledge Hub
+2. File type detection routes to appropriate extractor
+3. Content extraction generates raw text and metadata
+4. Chunking segments content semantically
+5. Batched embedding generation creates vector representations
+6. Orama indexing stores chunks with metadata
+7. Collection management updates organizational structures
+8. User notified of successful ingestion
+9. Background processing optimizes index for search
+
+### 13.3 Learning Session Flow
+
+A learning session follows this flow:
+
+1. User selects topic or learning path
+2. Pedagogical Agent assesses knowledge level
+3. Module unlocking verified against prerequisites
+4. Content adapted for learning style preferences
+5. Formative assessments embedded throughout
+6. Responses analyzed for comprehension gaps
+7. Remediation content generated for weak areas
+8. Spaced repetition schedules flashcard reviews
+9. Progress tracked for learning analytics
+10. Achievement recognition motivates continued learning
 
 ## 14. Implementation Roadmap
 
-### 14.1 Phase 1: Foundation (Weeks 1-4)
+### 14.1 Phase 1: Foundation (Weeks 1-5)
 
-**Objectives:**
-- Establish core infrastructure (IndexedDB, Orama vector store)
-- Implement basic LLM integration with Gemini 3.0
-- Create minimal viable query orchestration layer
+The foundation phase establishes core infrastructure.
 
-**Deliverables:**
-- KnowledgeDatabase with schema v1
-- Orama vector index implementation
-- TanStack AI query client configuration
-- Basic Gemini provider adapter
+**Week 1-2**: Orama WASM integration, embedding pipeline with Transformers.js, basic search functionality.
 
-**Dependencies:**
-- Via-gent existing infrastructure
-- External API keys (Gemini, embedding services)
+**Week 3-4**: TanStack AI integration, caching layer implementation, query orchestration patterns.
 
-### 14.2 Phase 2: RAG Core (Weeks 5-8)
+**Week 5**: IndexedDB schema implementation, storage management, offline capability verification.
 
-**Objectives:**
-- Complete ingestion pipeline implementation
-- Implement hybrid search with reranking
-- Develop caching and state management
+### 14.2 Phase 2: RAG Core (Weeks 6-10)
 
-**Deliverables:**
-- Full ingestion pipeline (extraction, chunking, embedding, indexing)
-- Hybrid search implementation (vector + full-text)
-- Context compression and reranking engine
-- Session state persistence
+The RAG core phase implements knowledge synthesis.
 
-### 14.3 Phase 3: Multi-Agent Foundation (Weeks 9-12)
+**Week 6-7**: Ingestion pipeline, chunking strategies, indexing automation.
 
-**Objectives:**
-- Implement agent communication protocol
-- Deploy Research Specialist and Knowledge Synthesizer agents
-- Create basic coordination framework
+**Week 8-9**: Hybrid search optimization, reranking implementation, context compression.
 
-**Deliverables:**
-- AgentCommunicationHub
-- Research Specialist Agent (v1)
-- Knowledge Synthesizer Agent (v1)
-- Basic agent coordination patterns
+**Week 10**: Citation tracking, synthesis engine integration, evaluation metrics.
 
-### 14.4 Phase 4: Pedagogical Framework (Weeks 13-16)
+### 14.3 Phase 3: Agent Integration (Weeks 11-15)
 
-**Objectives:**
-- Implement learning style assessment
-- Create scaffolded content generation
-- Develop formative assessment system
+The agent integration phase adds multi-agent coordination.
 
-**Deliverables:**
-- Pedagogical Agent
-- Learning path builder
-- Assessment engine
-- Content adaptation system
+**Week 11-12**: Message bus implementation, agent communication patterns.
 
-### 14.5 Phase 5: Advanced Features (Weeks 17-20)
+**Week 13-14**: Research Specialist and Knowledge Synthesizer implementation.
 
-**Objectives:**
-- Complete remaining agents (Content Generator, Expert Advisor)
-- Implement multimodal processing
-- Optimize performance and offline capabilities
+**Week 15**: Content Generator integration, response formatting.
 
-**Deliverables:**
-- Full multi-agent system deployment
-- Multimodal input/output processing
-- Performance optimization
-- Comprehensive testing and documentation
+### 14.4 Phase 4: Pedagogical Features (Weeks 16-18)
+
+The pedagogical phase adds learning optimization.
+
+**Week 16**: Learning style detection, content adaptation engine.
+
+**Week 17-18**: Assessment generation, spaced repetition scheduling.
+
+### 14.5 Phase 5: Advanced Features (Weeks 19-20)
+
+The advanced phase completes the implementation.
+
+**Week 19**: Expert Advisor agent, multimodal input processing.
+
+**Week 20**: Performance optimization, testing, documentation completion.
 
 ## 15. Technology Recommendations
 
 ### 15.1 Core Technology Stack
 
-| Component | Recommended Technology | Justification |
-|-----------|----------------------|---------------|
-| Runtime | Chrome 120+ / Modern Browsers | Required for WASM, SharedArrayBuffer, File System Access API |
-| Framework | React 18+ with TanStack | Proven in Via-gent, strong ecosystem |
-| State Management | TanStack Query + Zustand | Comprehensive caching, reactive updates |
-| Vector Database | Orama WASM | High performance, browser-native, hybrid search |
-| Primary Storage | IndexedDB (Dexie.js) | Offline-capable, proven reliability |
-| LLM Backend | Google Gemini 3.0/2.5 | Best performance/price, multimodal |
-| Embeddings | Gemini Embedding API | Native Gemini integration, consistent space |
-| UI Components | Radix UI + Tailwind CSS | Accessible, customizable, lightweight |
-| Routing | TanStack Router | Type-safe, file-based routing |
+| Component | Technology | Purpose | Confidence |
+|-----------|------------|---------|------------|
+| Vector Store | Orama WASM | Local-first vector search | 95% |
+| LLM Orchestration | TanStack AI + Gemini | Query orchestration | 90% |
+| Embeddings | Transformers.js (CLIP) | Client-side embeddings | 90% |
+| Database | IndexedDB + Dexie.js | Persistent storage | 95% |
+| Execution | WebContainer | Local agent execution | 90% |
+| Audio STT | Whisper WASM | Speech-to-text | 85% |
+| Document Processing | PDF.js | PDF parsing | 90% |
+| State Management | Zustand | Reactive state | 95% |
+| Routing | TanStack Router | SPA routing | 90% |
+| UI Components | Radix UI | Accessible primitives | 90% |
 
-### 15.2 Optional/Alternative Technologies
+### 15.2 Alternative Considerations
 
-| Component | Primary | Alternative | Use Case |
-|-----------|---------|-------------|----------|
-| Vector Database | Orama | Pinecone (cloud), Weaviate | Large-scale deployments requiring cloud sync |
-| Embeddings | Gemini API | OpenAI, Cohere | Specific embedding model requirements |
-| LLM Backend | Gemini | Anthropic Claude, OpenAI GPT | Provider diversity requirements |
-| Storage | IndexedDB | SQLite WASM (sql.js) | Complex query requirements |
+**Vector Store Alternatives**: While Orama WASM provides excellent browser-native capabilities, Pinecone Cloud offers superior scalability for large knowledge bases at the cost of cloud dependency. We recommend Orama for local-first priority with Pinecone as migration path.
+
+**LLM Provider Alternatives**: Anthropic Claude provides strong reasoning capabilities but lacks native TanStack AI integration. OpenRouter offers provider aggregation but introduces additional latency. Google Gemini provides optimal balance of capability and integration.
+
+**Embedding Alternatives**: Sentence-transformers.js offers alternative embedding models but requires larger downloads. CLIP provides multimodal capabilities but single-modality alternatives may be faster.
 
 ## 16. Confidence Assessment
 
-### 16.1 Research Confidence Scores
+### 16.1 Architecture Confidence Scores
 
-| Architecture Area | Confidence | Notes |
-|------------------|------------|-------|
-| Orama Vector Search | 95% | Well-documented, 506+ code examples, production use |
-| TanStack AI Integration | 90% | Established library, extensive documentation |
-| Gemini API Integration | 85% | New API versions may require adaptation |
-| Multi-Agent Architecture | 80% | Pattern established, agent specifics need validation |
-| IndexedDB Schema | 90% | Dexie.js provides strong foundation |
-| Multimodal Processing | 75% | Requires integration of multiple services |
-| Pedagogical Framework | 80% | Evidence-based patterns, implementation complexity |
-| Offline-First Architecture | 85% | Proven patterns, browser limitations may apply |
+| Component | Confidence | Rationale |
+|-----------|------------|-----------|
+| Vector Store Architecture | 95% | Orama extensively validated, Via-gent compatible |
+| Query Orchestration | 90% | TanStack AI well-documented, Via-gent patterns |
+| Embedding Pipeline | 90% | Transformers.js stable, CLIP validated |
+| Multi-Agent Coordination | 80% | Novel integration, limited precedent |
+| Pedagogical Framework | 85% | Research-backed, implementation complexity |
+| Hybrid Search | 90% | Proven patterns, Orama support |
+| Offline Capability | 85% | WebContainer constraints, IndexedDB reliability |
+| Multimodal Processing | 82% | Emerging capabilities, browser limitations |
+| LLM Integration | 85% | Gemini API stable, adapter patterns proven |
+| Overall Architecture | 85% | Composite of component confidence |
 
 ### 16.2 Risk Factors
 
-**Technical Risks:**
-- Browser memory constraints for large vector indices (mitigation: chunked loading, streaming)
-- API rate limits during high-volume operations (mitigation: request queuing, caching)
-- Embedding generation latency (mitigation: progressive embedding, prefetching)
+**Browser Memory Constraints**: Large knowledge bases may exceed browser memory limits, requiring sophisticated eviction strategies.
 
-**Dependency Risks:**
-- External API changes (mitigation: abstraction layers, adapter pattern)
-- Browser feature deprecation (mitigation: feature detection, graceful degradation)
+**WebContainer Availability**: WebContainers require specific browser features that may not be available in all environments.
+
+**API Rate Limits**: Gemini API rate limits may impact performance during heavy usage periods.
+
+**Embedding Generation Time**: Client-side embedding generation adds latency compared to server-side processing.
 
 ## 17. References
 
-### Documentation Sources
+### 17.1 Official Documentation
 
-1. **Orama Documentation** - https://oramasearch.github.io/orama/
-   - Vector and hybrid search implementation
-   - RAG pipeline examples
-   - Plugin architecture
+- **Orama Documentation**: https://oramasearch.com/docs
+- **TanStack AI Documentation**: https://tanstack.com/ai/latest
+- **TanStack Router Documentation**: https://tanstack.com/router/latest
+- **Transformers.js Documentation**: https://xenova.github.io/transformers.js
+- **Dexie.js Documentation**: https://dexie.org/docs
+- **WebContainer API**: https://developer.stackblitz.com/platform/api/webcontainer-api
+- **Gemini API**: https://ai.google.dev/docs/gemini_api_overview
 
-2. **TanStack Query Documentation** - https://tanstack.com/query/latest
-   - Query orchestration patterns
-   - Cache management strategies
-   - Mutation handling
+### 17.2 Research Sources
 
-3. **Dexie.js Documentation** - https://dexie.org
-   - IndexedDB schema design
-   - Query optimization
-   - Migration patterns
+- **RAG Architecture Patterns 2025**: Exa semantic search results
+- **Multi-Agent Coordination Research**: Deepwiki analysis
+- **Via-gent Architecture Validation**: Existing codebase patterns
+- **Pedagogical Framework Research**: Educational technology literature
 
-4. **Google Gemini API** - https://ai.google.dev/docs
-   - Model capabilities and pricing
-   - Integration patterns
-   - Embedding generation
+### 17.3 Implementation References
 
-5. **Via-gent Project Architecture** - Internal documentation
-   - Existing codebase patterns
-   - State management conventions
-   - Component architecture
-
-### Research Sources
-
-6. **RAG Architecture Patterns 2025** - Exa Web Search
-   - Industry best practices
-   - Performance optimization strategies
-   - Emerging patterns
-
-7. **Multi-Agent Coordination Systems** - Deepwiki Research
-   - Agent communication protocols
-   - Coordination patterns
-   - Scalability considerations
-
-### Additional Resources
-
-8. **WebContainer API** - https://developer.stackblitz.com/platform/api/webcontainer-api
-9. **xterm.js Documentation** - http://xtermjs.org
-10. **TanStack Router** - https://tanstack.com/router
+- **Via-gent Agent Implementation**: `src/lib/agent/` directory
+- **Via-gent State Management**: `src/lib/state/` and `src/stores/` directories
+- **Via-gent WebContainer Integration**: `src/lib/webcontainer/` directory
+- **Via-gent File System Operations**: `src/lib/filesystem/` directory
 
 ---
 
-## Appendix A: Glossary
+## Document Version History
 
-| Term | Definition |
-|------|------------|
-| RAG | Retrieval-Augmented Generation - Technique combining information retrieval with LLM generation |
-| Vector Embedding | Numerical representation of text enabling semantic similarity comparison |
-| Hybrid Search | Search combining keyword-based full-text search with semantic vector search |
-| Chunking | Process of dividing documents into smaller, indexed segments |
-| Scaffolded Learning | Educational approach with progressively decreasing support |
-| Agent Coordination | Multi-agent system for collaborative problem-solving |
-| IndexedDB | Browser-based NoSQL database for persistent client-side storage |
-| WASM | WebAssembly - Binary instruction format for browser execution |
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | 2025-12-31 | @bmad-bmm-architect | Initial specification |
+
+## Approval Status
+
+**Status**: Ready for Review
+**Reviewers**: @bmad-core-bmad-master, @bmad-bmm-dev
+**Next Action**: Sprint Planning for EPIC-32 (RAG Infrastructure)
 
 ---
 
-**Document Version:** 1.0
-**Created:** 2025-12-31
-**Status:** Draft - Requires Review
-**Next Review:** Upon implementation of Phase 1
+*This document is part of the Frontier RAG Knowledge Synthesis Expert System research artifacts. For questions or feedback, contact the architecture team.*
