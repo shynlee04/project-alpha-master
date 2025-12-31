@@ -112,8 +112,9 @@ export {
 
 export {
   useQuizStore,
+  initializeQuizStore,
   type QuizState
-} from './quiz-store';
+} from './quiz/index';
 
 export {
   useFlashcardStore,
