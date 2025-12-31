@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context story="32-4-rag-query-optimization" created="2025-12-31T10:16:00+07:00">
+  
+  <!-- Current Code State -->
+  <files>
+    <file path="src/lib/rag/orama-index.ts">
+      <content><![CDATA[
+        // Core Orama WASM vector store - reference for query patterns
+        // Key methods: search(), insert(), remove(), clear()
+        // Cache should wrap these methods
+      ]]></content>
+    </file>
+    <file path="src/lib/rag/rag-store.ts">
+      <content><![CDATA[
+        // RAG store - extend with cache state
+        // Current state: sources, searchQuery, searchResults, isSearching
+        // Need to add: queryCache, cacheConfig, performanceMetrics
+      ]]></content>
+    </file>
+    <file path="src/components/rag/RAGSearchPanel.tsx">
+      <content><![CDATA[
+        // Search panel UI - add loading states and performance metrics
+        // Current: search input, results list
+        // Need to add: loading indicator, debounced input, query time display
+      ]]></content>
+    </file>
+    <file path="src/lib/rag/hybrid-retriever.ts">
+      <content><![CDATA[
+        // Hybrid retriever - reference for result patterns
+        // Returns: SearchResult[] with relevance scores
+        // Priority boost should be applied here or in post-processing
+      ]]></content>
+    </file>
+  </files>
+  
+  <!-- Research Findings from MCP Tools -->
+  <research_notes>
+    <finding source="context7" query="Orama WASM caching patterns">
+      Pattern: Orama doesn't have built-in query caching. Cache at application layer using Map with TTL.
+      Cache key: query text + filter options (JSON.stringify for consistency)
+    </finding>
+    <finding source="deepwiki" repo="tanstack/query">
+      Pattern: Use useQuery hook with keepPreviousData for debounced results
+      Cache invalidation: broadcastChannel or custom event for cross-tab sync
+    </finding>
+    <finding source="tavily" query="RAG query optimization best practices 2025">
+      Finding: Implement query batching, result caching with TTL (5-10min default),
+      LRU eviction for cache entries (max 100 entries), and relevance boosting for recency
+    </finding>
+  </research_notes>
+  
+  <!-- Architecture Patterns to Follow -->
+  <architecture_patterns>
+    <pattern name="Singleton Cache Service" source="src/lib/rag/embedding-service.ts">
+      Use singleton pattern with lazy initialization for query cache
+    </pattern>
+    <pattern name="Debounce Hook Pattern" source="src/lib/agent/hooks/use-agent-chat-with-tools.ts">
+      Follow useDebouncedValue pattern from existing codebase
+    </pattern>
+    <pattern name="Store Extension Pattern" source="src/lib/rag/rag-store.ts">
+      Extend existing rag-store with new state properties
+    </pattern>
+  </architecture_patterns>
+  
+  <!-- Technical Notes for Developer -->
+  <technical_notes>
+    <note priority="high">Query cache must invalidate when sources change (insert/update/delete)</note>
+    <note priority="high">Cache TTL should be configurable (default 5 minutes = 300000ms)</note>
+    <note priority="medium">Use performance.now() for query time measurement</note>
+    <note priority="medium">Debounce delay of 300ms for search input</note>
+    <note priority="low">LRU eviction: remove oldest entries when cache exceeds 100 entries</note>
+  </technical_notes>
+  
+  <!-- Dependencies and Imports -->
+  <dependencies>
+    <dependency name="@orama/orama" version="1.0.0" />
+    <dependency name="zustand" version="^4.5.0" />
+  </dependencies>
+  
+</context>

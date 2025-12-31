@@ -43,7 +43,8 @@ export {
   useModelsStore,
   useProviderModels as useModelsForProvider,
   useSelectedModel,
-  type ModelsState
+  type ModelsState,
+  type ModelStateEntry
 } from '@/stores/models-loader-store';
 
 export {

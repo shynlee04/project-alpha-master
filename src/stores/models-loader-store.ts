@@ -20,7 +20,7 @@ import { modelRegistry } from '@/lib/agent/providers/model-registry'
 import { credentialVault } from '@/lib/agent/providers/credential-vault'
 import {
     STORE_EVENTS,
-    subscribeStoreEvent,
+    onStoreEvent,
     emitStoreEvent,
     type ProviderKeySetPayload,
     type ModelSelectedPayload,
@@ -230,7 +230,7 @@ export const useModelsStore = create<ModelsState>()(
  * Subscribe to provider key changes and auto-load models
  * This is the CRITICAL part that enables cross-workspace reactivity
  */
-subscribeStoreEvent<ProviderKeySetPayload>(STORE_EVENTS.PROVIDER_KEY_SET, ({ providerId }) => {
+onStoreEvent<ProviderKeySetPayload>(STORE_EVENTS.PROVIDER_KEY_SET, ({ providerId }) => {
     console.log(`[ModelsStore] Provider key set event for ${providerId}, reloading models...`)
 
     // Clear cache to force fresh fetch with new key
@@ -243,7 +243,7 @@ subscribeStoreEvent<ProviderKeySetPayload>(STORE_EVENTS.PROVIDER_KEY_SET, ({ pro
 /**
  * Subscribe to provider removal and clear models
  */
-subscribeStoreEvent<{ providerId: string; timestamp: number }>(
+onStoreEvent<{ providerId: string; timestamp: number }>(
     STORE_EVENTS.PROVIDER_KEY_REMOVED,
     ({ providerId }) => {
         console.log(`[ModelsStore] Provider key removed for ${providerId}, reloading defaults...`)
@@ -257,7 +257,7 @@ subscribeStoreEvent<{ providerId: string; timestamp: number }>(
 /**
  * Subscribe to provider selection and auto-load models if needed
  */
-subscribeStoreEvent<{ providerId: string; previousProviderId: string; timestamp: number }>(
+onStoreEvent<{ providerId: string; previousProviderId: string; timestamp: number }>(
     STORE_EVENTS.PROVIDER_SELECTED,
     ({ providerId }) => {
         const state = useModelsStore.getState().models[providerId]
