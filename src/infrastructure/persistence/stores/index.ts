@@ -98,7 +98,7 @@ export {
   type ConversationState,
   type ConversationMetadata,
   type PendingToolApproval,
-} from './conversation-store';
+} from './conversation/index';
 
 export {
   useProviderStore,

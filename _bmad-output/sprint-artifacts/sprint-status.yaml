@@ -1890,3 +1890,25 @@ ralph_loop_iteration_174:
   validated_by: "bmad-bmm-orchestrator"
   validation_report: "_bmad-output/validation/ralph-loop-phase2-sweep-2025-12-30.md"
 
+  # EPIC-38: Project Management System Restoration (NEW)
+  # Added: 2025-12-31T11:00:00+07:00
+  # Course Correction: Enhanced Project Management System
+  # Priority: P0 - Core Infrastructure Enhancement
+  # Duration: 3-4 weeks
+  # Team Assignment: Team A (UI/Foundation), Team B (Backend/Agent)
+  epic-38: in_progress # Sprint planning complete, story dev starting
+  38-10-state-management-cleanup: drafted → ready-for-dev
+  38-11-sync-event-bus-implementation: ready-for-dev # Created by SM, context XML ready
+  38-1-reverse-sync-infrastructure: backlog # P0, 3 days, Team B - Depends on 38-11
+  38-6-sync-status-ui-components: backlog # P0, 2 days, Team A - Depends on 38-11
+  38-7-file-tree-sync-integration: backlog # P0, 3 days, Team A - Depends on 38-6
+  38-2-project-initialization-workflow: backlog # P0, 2 days, Team A - Depends on nothing
+  38-3-space-management-service: backlog # P1, 2 days, Team B - Depends on nothing
+  38-4-terminal-sync-integration: backlog # P1, 1 day, Team B - Depends on 38-1
+  38-5-editor-auto-save-integration: backlog # P1, 2 days, Team A - Depends on nothing
+  38-8-properties-panel-component: backlog # P1, 2 days, Team A - Depends on nothing
+  38-9-navigation-sync-enhancements: backlog # P2, 1 day, Team A - Depends on nothing
+  38-12-integration-testing: backlog # P1, 3 days, Both - Depends on all other stories
+  epic-38-sprint-plan: done # _bmad-output/sprint-artifacts/epic-38-sprint-plan-2025-12-31.md
+  epic-38-tech-spec: done # _bmad-output/tech-specs/epic-38-tech-spec-2025-12-31.md
+

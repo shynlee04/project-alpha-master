@@ -6,8 +6,8 @@
 # Loop Metadata
 loop_id: "arc-loop-2025-12-31"
 started_at: "2025-12-31T16:44:51+07:00"
-last_updated: "2025-12-31T20:30:00+07:00"
-iteration_count: 8
+last_updated: "2025-12-31T22:00:00+07:00"
+iteration_count: 10
 max_iterations: 100
 status: "ACTIVE"
 
@@ -112,8 +112,8 @@ phase_1:
       name: "Fix 10 highest-priority file size violations"
       status: "IN_PROGRESS"
       started_at: "2025-12-31T18:15:00+07:00"
-      progress: "1/10 files split (chunk-strategies.ts 626→52 LOC)"
-      notes: "Split chunk-strategies.ts into modular structure: chunk-strategy.interface.ts (29 LOC), fixed-size-chunker.ts (281 LOC), semantic-chunker.ts (148 LOC), recursive-chunker.ts (162 LOC), index.ts (12 LOC). All files under 300 LOC. Build passing. Fixed HubHomePage pre-existing issues. 9 files remaining >300 LOC."
+      progress: "3/10 files split"
+      notes: "Split chunk-strategies.ts (626→52 LOC), quiz-store.ts (629→305 LOC), conversation-store.ts (626→424 LOC). Build passing. 7 files remaining >300 LOC."
       findings:
           - file: "src/presentation/components/agent/AgentConfigDialog.tsx"
             loc: 1089
@@ -140,12 +140,17 @@ phase_1:
             loc: 629
             suggested_split: "Split quiz session management from quiz state"
           - file: "src/infrastructure/persistence/stores/conversation-store.ts"
-            loc: 626
-            suggested_split: "Extract message management from conversation metadata"
+            loc: 424 (was 626)
+            status: "DONE"
+            split_into: "conversation/ module with 4 files: conversation-types.ts (100), conversation-helpers.ts (124), conversation-store.ts (424 orchestrator), index.ts (28)"
           - file: "src/lib/rag/chunk-strategies.ts"
             loc: 52 (was 626)
             status: "DONE"
             split_into: "chunk-strategies/ module with 5 files <300 LOC each"
+          - file: "src/infrastructure/persistence/stores/quiz-store.ts"
+            loc: 305 (was 629)
+            status: "DONE"
+            split_into: "quiz/ module with 5 files: quiz-database.ts (65), quiz-actions.ts (189), quiz-question-actions.ts (109), quiz-query-actions.ts (73), quiz-store.ts (305 orchestrator)"
       agent: "validation-runner"
       workflow: "split-store"
       notes: "Refactoring these files requires careful testing. Suggest dedicated refactoring sprint with comprehensive test coverage. Phase 1 Foundation Consolidation 4/6 tasks complete (fc-01, fc-02, fc-03, fc-04)."
@@ -311,6 +316,18 @@ iteration_history:
     status: "IN_PROGRESS"
     completed_at: "2025-12-31T20:30:00+07:00"
     notes: "Split chunk-strategies.ts (626→52 LOC) into 5 focused modules. Fixed HubHomePage pre-existing issues. Build passing. 1/10 files complete. 9 files remaining >300 LOC."
+  - iteration: 7
+    phase: 1
+    task: "fc-05-file-size-top10"
+    status: "IN_PROGRESS"
+    completed_at: "2025-12-31T21:00:00+07:00"
+    notes: "Split quiz-store.ts (629→305 LOC orchestrator + 4 action modules: quiz-database 65, quiz-actions 189, quiz-question-actions 109, quiz-query-actions 73). Build passing. 2/10 files complete. 8 files remaining >300 LOC."
+  - iteration: 8
+    phase: 1
+    task: "fc-05-file-size-top10"
+    status: "IN_PROGRESS"
+    completed_at: "2025-12-31T22:00:00+07:00"
+    notes: "Split conversation-store.ts (626→424 LOC orchestrator + 2 modules: conversation-types 100, conversation-helpers 124). Build passing. 3/10 files complete. 7 files remaining >300 LOC."
 
 # Error Log
 errors: []
@@ -322,7 +339,7 @@ completion:
   promise_output: null
   summary:
     phase_0: "DONE - Immediate fixes completed (hybrid-retriever import, ChatPanel already workspace-agnostic)"
-    phase_1: "IN_PROGRESS - 4/6 tasks completed. fc-05 file size refactoring 1/10 files split (chunk-strategies.ts). 9 files remaining."
+    phase_1: "IN_PROGRESS - 4/6 tasks completed. fc-05 file size refactoring 3/10 files split (chunk-strategies, quiz-store, conversation-store). 7 files remaining."
     phase_2: "SKIPPED - Workspaces don't exist yet. Revisit when Knowledge/Study/Notes implemented."
     phase_3: "TODO - RAG infrastructure EPIC-32"
     phase_4: "TODO - Code hygiene sprint"

@@ -351,12 +351,93 @@ Based on my research, here's a comprehensive list of official documentation and 
 
 ### vite-tsconfig-paths
 - **GitHub**: [https://github.com/aleclarson/vite-tsconfig-paths](https://github.com/aleclarson/vite-tsconfig-paths)
+These are tools that you must use to successfully coordinate and iterate between modes/agents/sub-agents in BMAD framework
 
-- Use innate search tools, grep, etc. for codebase exploration
+
+- search tools, grep, etc. for codebase exploration,if you are equipped with indexing database -> you can combine with semantic searching
+- for intensive and indepth analysis, understanding of the codebase use Repomix - pack the local repo (or can use with remote repo if you have link to access the full repo) - grep to learn the repo
 - Use Context7 MCP tools for official documentation (2 sequential steps per turn based on scoring)
-- Use Deepwiki for semantic questions about specific tech stacks (TanStack Router, WebContainer, xterm.js, etc.)
+- Use Deepwiki (you must have correct github link and/or deepwiki link of a specific repo) for semantic questions about specific tech stacks (TanStack Router, WebContainer, xterm.js, etc.)
 - Use Tavily and Exa MCP tools for semantic repo search
 - Use Repomix MCP tools for granular codebase analysis
+- Use Zread's tools to read repo, get repo, search_doc
+- Use Web-reader to read website
+- Use Minimax or web-search-prime for web searching
+- These are link to the git repo
+```
+### 🧠 AI & LLM Integration
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **@google/genai** | [googleapis/js-genai](https://github.com/googleapis/js-genai) | [npm/google-genai](https://www.npmjs.com/package/@google/genai) |
+| **@tanstack/ai** (+ adapters) | [TanStack/ai](https://github.com/TanStack/ai) | [tanstack.com/ai](https://tanstack.com/ai/latest) |
+| **@xenova/transformers** | [xenova/transformers.js](https://www.google.com/search?q=https://github.com/xenova/transformers.js) | [huggingface.co/docs/transformers.js](https://www.google.com/search?q=https://huggingface.co/docs/transformers.js) |
+
+### 🧭 Routing & Framework
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **@tanstack/react-router** | [TanStack/router](https://github.com/TanStack/router) | [tanstack.com/router](https://tanstack.com/router/latest) |
+| **@tanstack/react-start** | [TanStack/router](https://github.com/TanStack/router) | [tanstack.com/start](https://tanstack.com/router/latest/docs/framework/react/start/overview) |
+| **react** / **react-dom** | [facebook/react](https://github.com/facebook/react) | [react.dev](https://react.dev) |
+
+### 🎨 UI Components & Styling
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **@radix-ui/react-*** (Primitives) | [radix-ui/primitives](https://github.com/radix-ui/primitives) | [radix-ui.com](https://www.radix-ui.com) |
+| **tailwindcss** | [tailwindlabs/tailwindcss](https://github.com/tailwindlabs/tailwindcss) | [tailwindcss.com](https://tailwindcss.com/docs) |
+| **@tailwindcss/vite** | [tailwindlabs/tailwindcss](https://github.com/tailwindlabs/tailwindcss) | [tailwindcss.com/docs/guides/vite](https://tailwindcss.com/docs/guides/vite) |
+| **framer-motion** | [motiondivision/motion](https://github.com/motiondivision/motion) | [motion.dev](https://www.framer.com/motion/) |
+| **lucide-react** | [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | [lucide.dev](https://lucide.dev/guide/packages/lucide-react) |
+| **sonner** | [emilkowalski/sonner](https://github.com/emilkowalski/sonner) | [sonner.emilkowal.ski](https://www.google.com/search?q=https://sonner.emilkowal.ski) |
+| **cmdk** | [pacocoursey/cmdk](https://github.com/pacocoursey/cmdk) | [cmdk.paco.me](https://cmdk.paco.me) |
+| **class-variance-authority** | [cva](https://www.google.com/search?q=https://github.com/cva-documentation/cva) | [cva.style](https://cva.style/docs) |
+
+### 📝 Editors & Rich Text
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **@blocknote/core** (& react/mantine) | [TypeCellOS/BlockNote](https://github.com/TypeCellOS/BlockNote) | [blocknotejs.org](https://www.blocknotejs.org/docs/introduction) |
+| **monaco-editor** | [microsoft/monaco-editor](https://github.com/microsoft/monaco-editor) | [microsoft.github.io/monaco-editor](https://microsoft.github.io/monaco-editor/) |
+| **@monaco-editor/react** | [suren-atoyan/monaco-react](https://github.com/suren-atoyan/monaco-react) | [monaco-react (npm)](https://www.npmjs.com/package/@monaco-editor/react) |
+| **react-markdown** | [remarkjs/react-markdown](https://github.com/remarkjs/react-markdown) | [github.com/remarkjs/react-markdown](https://www.google.com/search?q=https://github.com/remarkjs/react-markdown%23readme) |
+| **mermaid** | [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid) | [mermaid.js.org](https://mermaid.js.org/intro/) |
+
+### 💾 Data, State & Validation
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **@tanstack/store** | [TanStack/store](https://github.com/TanStack/store) | [tanstack.com/store](https://tanstack.com/store/latest) |
+| **zustand** | [pmndrs/zustand](https://github.com/pmndrs/zustand) | [zustand-demo.pmnd.rs](https://docs.pmnd.rs/zustand/getting-started/introduction) |
+| **dexie** | [dexie/Dexie.js](https://www.google.com/search?q=https://github.com/dexie/Dexie.js) | [dexie.org](https://dexie.org) |
+| **idb** | [jakearchibald/idb](https://github.com/jakearchibald/idb) | [npmjs.com/package/idb](https://www.npmjs.com/package/idb) |
+| **zod** | [colinhacks/zod](https://github.com/colinhacks/zod) | [zod.dev](https://zod.dev) |
+| **@orama/orama** | [oramasearch/orama](https://github.com/oramasearch/orama) | [docs.orama.com](https://docs.orama.com) |
+
+### 🛠️ System & Utilities
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **@webcontainer/api** | [stackblitz/webcontainer-core](https://github.com/stackblitz/webcontainer-core) | [webcontainers.io](https://webcontainers.io/guides/introduction) |
+| **@xterm/xterm** | [xtermjs/xterm.js](https://www.google.com/search?q=https://github.com/xtermjs/xterm.js) | [xtermjs.org](https://xtermjs.org) |
+| **isomorphic-git** | [isomorphic-git/isomorphic-git](https://github.com/isomorphic-git/isomorphic-git) | [isomorphic-git.org](https://isomorphic-git.org) |
+| **i18next** | [i18next/i18next](https://github.com/i18next/i18next) | [i18next.com](https://www.i18next.com) |
+| **date-fns** | [date-fns/date-fns](https://github.com/date-fns/date-fns) | [date-fns.org](https://date-fns.org) |
+| **@sentry/react** | [getsentry/sentry-javascript](https://github.com/getsentry/sentry-javascript) | [docs.sentry.io](https://docs.sentry.io/platforms/javascript/guides/react/) |
+
+### 🕸️ React Ecosystem Utilities
+
+| Package | GitHub | DeepWiki / Docs |
+| --- | --- | --- |
+| **react-resizable-panels** | [bvaughn/react-resizable-panels](https://github.com/bvaughn/react-resizable-panels) | [github.com/bvaughn/react-resizable-panels](https://github.com/bvaughn/react-resizable-panels) |
+| **react-window** | [bvaughn/react-window](https://github.com/bvaughn/react-window) | [react-window.vercel.app](https://react-window.vercel.app) |
+| **@xyflow/react** (React Flow) | [xyflow/xyflow](https://github.com/xyflow/xyflow) | [reactflow.dev](https://reactflow.dev) |
+| **next-themes** | [pacocoursey/next-themes](https://github.com/pacocoursey/next-themes) | [github.com/pacocoursey/next-themes](https://github.com/pacocoursey/next-themes) |
+
+```
+- control your coordination. If you are coordinator/orchestrator -> you will **NEVER** execute tasks - your task list is a master one and it keeps expanding (by using edit/update task) as you coordinate the agents/modes
+- with handoff documents and links to context artifacts -> isolate to sub-tasks (sub TODO tasks) -> delegate by giving clear instruction, constraints, reports, requirements, accepted criteria -> then delegate to the mode/agent slug
+- when executing tasks (of other modes) if the manifested tasks (as you progress and update your TODO) will suit more to other modes/agents -> switch to the one with clear instruction
 - Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
 - Prioritize iteration, insertion, updates on single-source of truth
-- When generating new files, isolate with new
