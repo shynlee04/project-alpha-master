@@ -26,6 +26,12 @@ import type {
     ListFilesInput,
     ExecuteCommandInput,
 } from './tools/types';
+import { ToolPermissionManager } from './tool-permission-manager';
+import { WorkspacePermissionManager } from './workspace-permission-manager';
+import {
+    getWorkspaceExecutionContext,
+    createWorkspaceDeniedResponse,
+} from './workspace-execution-context';
 
 /**
  * Options for creating the agent tool factory
@@ -42,6 +48,15 @@ export interface ToolFactoryOptions {
     /** Model ID for agent configuration (optional - uses agent's default if not provided) */
     modelId?: string;
 }
+
+/**
+ * Workspace permission manager instance (singleton)
+ *
+ * Created once and reused across all tool factory calls.
+ */
+const workspacePermissionManager = new WorkspacePermissionManager(
+    ToolPermissionManager.getInstance()
+);
 
 /**
  * Tool call information for UI rendering
@@ -69,6 +84,30 @@ export function createClientFileTools(options: ToolFactoryOptions) {
     // read_file - client implementation
     // Note: .client() expects (args: unknown) => any, we cast inside the handler
     const readFile = readFileDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'read_file',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'read_file',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as ReadFileInput;
         const tools = getFileTools();
         if (!tools) {
@@ -92,6 +131,30 @@ export function createClientFileTools(options: ToolFactoryOptions) {
 
     // write_file - client implementation (approval handled by Story 25-5)
     const writeFile = writeFileDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'write_file',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'write_file',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as WriteFileInput;
         const tools = getFileTools();
         if (!tools) {
@@ -121,6 +184,30 @@ export function createClientFileTools(options: ToolFactoryOptions) {
 
     // list_files - client implementation
     const listFiles = listFilesDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'list_files',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'list_files',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as ListFilesInput;
         const tools = getFileTools();
         if (!tools) {
@@ -150,6 +237,30 @@ export function createClientTerminalTools(options: ToolFactoryOptions) {
 
     // execute_command - client implementation
     const executeCommand = executeCommandDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'execute_command',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'execute_command',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as ExecuteCommandInput;
         const tools = getTerminalTools();
         if (!tools) {
@@ -215,6 +326,30 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
 
     // synthesize_knowledge - client implementation
     const synthesize = synthesizeDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'synthesize',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'synthesize',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as SynthesizeInput;
         const tools = getKnowledgeTools();
         if (!tools) {
@@ -246,6 +381,30 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
 
     // process_pdf - client implementation
     const processPDF = processPDFDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'process_pdf',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'process_pdf',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as ProcessPDFInput;
         const tools = getKnowledgeTools();
         if (!tools) {
@@ -269,6 +428,30 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
 
     // process_image - client implementation
     const processImage = processImageDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'process_image',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'process_image',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as ProcessImageInput;
         const tools = getKnowledgeTools();
         if (!tools) {
@@ -292,6 +475,30 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
 
     // process_url - client implementation
     const processURL = processURLDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'process_url',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'process_url',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
         const input = args as ProcessURLInput;
         const tools = getKnowledgeTools();
         if (!tools) {

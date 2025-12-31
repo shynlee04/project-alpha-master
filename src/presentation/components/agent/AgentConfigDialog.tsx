@@ -44,6 +44,9 @@ import {
     SelectValue,
 } from '@/presentation/components/ui/select'
 import { cn } from '@/lib/utils'
+import { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig'
+import type { WorkspaceType } from '@/lib/state/workspace-types'
+import type { Agent, AgentToolBinding } from '@/core/entities/Agent'
 
 // Security utilities for safe logging (RC-028-010)
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
@@ -122,7 +125,7 @@ type ConnectionStatus = 'idle' | 'testing' | 'success' | 'error'
 /**
  * Configuration tab type
  */
-type ConfigTab = 'basic' | 'advanced'
+type ConfigTab = 'basic' | 'workspace' | 'advanced'
 
 interface AgentConfigDialogProps {
     open: boolean
@@ -149,6 +152,26 @@ export function AgentConfigDialog({
     const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
     const [enableNativeTools, setEnableNativeTools] = useState(true)
     const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
+
+    // WB-8.3: Workspace bindings state
+    const [workspaceBindings, setWorkspaceBindings] = useState<Agent['workspaceBindings']>([
+        { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
+        { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
+        { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
+        { workspaceType: 'notes', isAvailable: true, uiVariant: 'minimal', isDefault: false },
+    ])
+
+    // WB-8.3: Tools array state (for workspace permissions)
+    const [tools, setTools] = useState<AgentToolBinding[]>([
+        { toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
+        { toolId: 'write_file', toolName: 'Write File', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: true } },
+        { toolId: 'list_files', toolName: 'List Files', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
+        { toolId: 'execute_command', toolName: 'Execute Command', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: false } },
+        { toolId: 'synthesize', toolName: 'Synthesize', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+        { toolId: 'process_pdf', toolName: 'Process PDF', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+        { toolId: 'process_image', toolName: 'Process Image', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+        { toolId: 'process_url', toolName: 'Process URL', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+    ])
 
     // Store actions
     const { addAgent, updateAgent, removeAgent } = useAgentsStore()
@@ -237,6 +260,21 @@ export function AgentConfigDialog({
 
         loadProviderData()
     }, [providerId, open, storeFetchModels])
+
+    // WB-8.3: Load workspace bindings and tools from agent when editing
+    useEffect(() => {
+        if (!agent) return
+
+        // Load workspace bindings
+        if (agent.workspaceBindings && agent.workspaceBindings.length > 0) {
+            setWorkspaceBindings(agent.workspaceBindings)
+        }
+
+        // Load tools with workspace permissions
+        if (agent.tools && agent.tools.length > 0) {
+            setTools(agent.tools)
+        }
+    }, [agent])
 
     // Validate form using Zod
     const validateForm = useCallback((): boolean => {
@@ -374,6 +412,34 @@ export function AgentConfigDialog({
         if (errors.modelId) setErrors(prev => ({ ...prev, modelId: undefined }))
     }, [agentId, updateAgent, errors.modelId])
 
+    // WB-8.3: Handle workspace permission change
+    const handlePermissionChange = useCallback((toolId: string, workspaceType: WorkspaceType, isEnabled: boolean) => {
+        setTools(prevTools =>
+            prevTools.map(tool =>
+                tool.toolId === toolId
+                    ? {
+                        ...tool,
+                        workspacePermissions: {
+                            ...tool.workspacePermissions,
+                            [workspaceType]: isEnabled,
+                        },
+                    }
+                    : tool
+            )
+        )
+    }, [])
+
+    // WB-8.3: Handle workspace binding change
+    const handleWorkspaceBindingChange = useCallback((workspaceType: WorkspaceType, updates: Partial<Agent['workspaceBindings'][number]>) => {
+        setWorkspaceBindings(prev =>
+            prev.map(binding =>
+                binding.workspaceType === workspaceType
+                    ? { ...binding, ...updates }
+                    : binding
+            )
+        )
+    }, [])
+
     // Handle cancel
     // BF-01 FIX: With hot-reload, cancel just closes dialog (changes already saved)
     const handleCancel = useCallback(() => {
@@ -430,14 +496,10 @@ export function AgentConfigDialog({
                 topP,
                 topK: topK !== undefined ? topK : undefined,
                 systemPrompt: systemPrompt.trim() || 'You are a helpful AI assistant.',
-                // Tools and workspace bindings (defaults)
-                tools: [],
-                workspaceBindings: [
-                    { workspaceType: 'ide' as const, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
-                    { workspaceType: 'knowledge' as const, isAvailable: true, uiVariant: 'compact' as const, isDefault: false },
-                    { workspaceType: 'study' as const, isAvailable: true, uiVariant: 'compact' as const, isDefault: false },
-                    { workspaceType: 'notes' as const, isAvailable: true, uiVariant: 'minimal' as const, isDefault: false },
-                ],
+                // WB-8.3: Tools with workspace permissions (from state)
+                tools,
+                // WB-8.3: Workspace bindings (from state)
+                workspaceBindings,
                 // Status (auto-generated fields)
                 status: 'offline' as const,
             }
@@ -476,7 +538,7 @@ export function AgentConfigDialog({
             setIsSubmitting(false)
         }
 
-    }, [name, description, providerId, modelId, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agentId, t, handleCancel, customModelId])
+    }, [name, description, providerId, modelId, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agentId, t, handleCancel, customModelId, tools, workspaceBindings])
 
 
 
@@ -563,6 +625,9 @@ export function AgentConfigDialog({
                     <TabsList className="w-full">
                         <TabsTrigger value="basic" className="font-pixel">
                             {t('agents.config.tabs.basic', 'Basic')}
+                        </TabsTrigger>
+                        <TabsTrigger value="workspace" className="font-pixel">
+                            {t('agents.config.tabs.workspace', 'Workspace')}
                         </TabsTrigger>
                         <TabsTrigger value="advanced" className="font-pixel">
                             {t('agents.config.tabs.advanced', 'Advanced')}
@@ -812,6 +877,109 @@ export function AgentConfigDialog({
                                     )}
                                 </div>
                             )}
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="workspace" className="mt-4 space-y-4">
+                        {/* WB-8.3: Workspace Configuration */}
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <h3 className="text-lg font-semibold flex items-center gap-2">
+                                    <span className="text-primary">🌐</span>
+                                    {t('agents.config.workspace.title', 'Workspace Permissions')}
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    {t('agents.config.workspace.description', 'Configure where this agent can be used and what tools it can access in each workspace.')}
+                                </p>
+                            </div>
+
+                            {/* Workspace Bindings */}
+                            <div className="space-y-3">
+                                <Label className="text-sm font-medium">
+                                    {t('agents.config.workspace.availability', 'Agent Availability by Workspace')}
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.workspace.availabilityHint', 'Select which workspaces this agent can be used in.')}
+                                </p>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    {(['ide', 'knowledge', 'study', 'notes'] as WorkspaceType[]).map((workspace) => {
+                                        const binding = workspaceBindings.find(b => b.workspaceType === workspace)
+                                        const workspaceLabels: Record<WorkspaceType, string> = {
+                                            ide: '💻 IDE',
+                                            knowledge: '📚 Knowledge',
+                                            study: '🎓 Study',
+                                            notes: '📝 Notes',
+                                        }
+
+                                        return (
+                                            <div
+                                                key={workspace}
+                                                className="flex items-center justify-between rounded-lg border border-border bg-background/50 p-3"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-medium">{workspaceLabels[workspace]}</span>
+                                                    {binding?.isDefault && (
+                                                        <span className="text-xs text-primary">
+                                                            ({t('agents.config.workspace.default', 'default')})
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <Switch
+                                                    checked={binding?.isAvailable ?? false}
+                                                    onCheckedChange={(checked) =>
+                                                        handleWorkspaceBindingChange(workspace, { isAvailable: checked })
+                                                    }
+                                                />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Tool Permissions Grid */}
+                            <div className="space-y-3">
+                                <Label className="text-sm font-medium">
+                                    {t('agents.config.workspace.toolPermissions', 'Tool Access by Workspace')}
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.workspace.toolPermissionsHint', 'Configure which tools this agent can use in each workspace.')}
+                                </p>
+
+                                <WorkspaceToolPermissionsConfig
+                                    agent={{
+                                        id: agent?.id || '',
+                                        name,
+                                        description,
+                                        providerId,
+                                        modelId,
+                                        temperature,
+                                        maxTokens,
+                                        topP,
+                                        topK,
+                                        systemPrompt,
+                                        tools,
+                                        workspaceBindings,
+                                        status: 'offline',
+                                        tasksCompleted: 0,
+                                        successRate: 0,
+                                        tokensUsed: 0,
+                                        lastActive: new Date().toISOString(),
+                                        createdAt: agent?.createdAt || new Date().toISOString(),
+                                    }}
+                                    onPermissionsChange={handlePermissionChange}
+                                />
+                            </div>
+
+                            {/* Info Box */}
+                            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1">
+                                <p className="text-xs font-medium text-primary">
+                                    {t('agents.config.workspace.note', 'Note')}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    {t('agents.config.workspace.noteText', 'Workspace permissions help control tool access based on the current workspace. An agent can only use tools that are enabled for the current workspace.')}
+                                </p>
+                            </div>
                         </div>
                     </TabsContent>
 

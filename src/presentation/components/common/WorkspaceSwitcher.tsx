@@ -18,6 +18,8 @@ import { ChevronsUpDown } from 'lucide-react';
 import { useProjectContext } from '@/lib/workspace/ProjectContext';
 import type { WorkspaceId } from '@/lib/workspace/project-store';
 import { cn } from '@/lib/utils';
+import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
+import type { WorkspaceType } from '@/lib/state/workspace-types';
 
 // ============================================================================
 // Workspace Configuration
@@ -92,6 +94,35 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
   const { t } = useTranslation();
   const { currentWorkspace, enabledWorkspaces, switchWorkspace } =
     useProjectContext();
+
+  // ============================================================================
+  // WB-8.3: Workspace Transition with State Orchestration
+  // ============================================================================
+
+  /**
+   * Handle workspace switch using WorkspaceTransitionManager
+   *
+   * Coordinates state updates across all stores:
+   * - Workspace store (current workspace)
+   * - Agents store (filter by availability)
+   * - Agent selection store (re-select if needed)
+   * - Cross-workspace event bus (emit events)
+   */
+  const handleWorkspaceSwitch = async (workspace: WorkspaceId) => {
+    console.log('[WorkspaceSwitcher] Switching to workspace:', workspace);
+
+    try {
+      // Use WorkspaceTransitionManager for coordinated state updates
+      await workspaceTransitionManager.transitionTo(workspace as WorkspaceType);
+
+      // Also call original switchWorkspace for ProjectContext compatibility
+      // TODO: Eventually migrate ProjectContext to use WorkspaceTransitionManager
+      switchWorkspace(workspace);
+    } catch (error) {
+      console.error('[WorkspaceSwitcher] Failed to switch workspace:', error);
+      // Optionally show error toast to user
+    }
+  };
 
   // Guard: Hide if no workspaces enabled (shouldn't happen in practice)
   if (enabledWorkspaces.length === 0) {
@@ -176,7 +207,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
                   'cursor-pointer transition-colors',
                   isActive && 'bg-primary/10'
                 )}
-                onClick={() => switchWorkspace(workspace)}
+                onClick={() => handleWorkspaceSwitch(workspace)}
               >
                 {/* Workspace Icon */}
                 <span className={cn('text-base', config.color)}>
