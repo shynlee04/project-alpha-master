@@ -13,12 +13,16 @@
  * - WorkspaceSwitcher in header allows switching to Notes/Knowledge/Study
  */
 
+import { ComponentType, lazy, Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { IDELayout } from '@/presentation/components/layout/IDELayout';
+// IDELayout lazy loaded below
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
 import { WorkspaceProvider } from '@/lib/workspace';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+
+// Lazy load IDELayout
+const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayout').then(m => ({ default: m.IDELayout })));
 
 export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,
@@ -38,7 +42,13 @@ function IDEWorkspace() {
     <ProjectProvider project={project} workspace="ide">
       <ToastProvider>
         <WorkspaceProvider projectId={projectId}>
-          <IDELayout />
+          <Suspense fallback={
+            <div className="h-screen w-screen flex items-center justify-center bg-background">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+            </div>
+          }>
+            <IDELayout />
+          </Suspense>
         </WorkspaceProvider>
         <Toast />
       </ToastProvider>

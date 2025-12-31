@@ -15,11 +15,13 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/presentation/components/ui/resizable';
-import { Plus, Notebook, ArrowLeft, FileUp, FileDown } from 'lucide-react';
+import { Plus, Notebook, ArrowLeft } from 'lucide-react';
 import { NoteSidebar } from './NoteSidebar';
-import { NoteEditor } from './NoteEditor';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
+
+// Lazy load NoteEditor to reduce bundle size
+const NoteEditor = lazy(() => import('./NoteEditor'));
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
 import { AgentSelector } from '@/presentation/components/chat';
@@ -41,11 +43,11 @@ export function NotesPage() {
 
     const activeNote = useActiveNote();
     const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
-    
+
     // Import/Export dialog state (NR-06, NR-08)
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
-    const [importedNotes, setImportedNotes] = useState<NoteRecord[]>([]);
+
 
     useEffect(() => {
         if (projectId && currentProjectId !== projectId) {
@@ -92,8 +94,7 @@ export function NotesPage() {
         }
     };
 
-    const handleImportComplete = (notes: NoteRecord[]) => {
-        setImportedNotes(notes);
+    const handleImportComplete = (_notes: NoteRecord[]) => {
         // Refresh notes list
         if (projectId) {
             loadNotes(projectId);

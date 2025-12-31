@@ -46,6 +46,10 @@ export { StreamingMessage } from './StreamingMessage';
 export { SyncEditWarning } from './SyncEditWarning';
 export { SyncStatusIndicator } from './SyncStatusIndicator';
 
+// WB-7: Lazy Content Loading
+export { CacheIndicator } from './CacheIndicator';
+export * from './hooks';
+
 // Types
 export type { CommandItem } from './CommandPalette';
 export type { CommandPaletteProps } from './CommandPalette';

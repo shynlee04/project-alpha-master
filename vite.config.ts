@@ -78,6 +78,38 @@ const config = defineConfig(async () => {
 
   return {
     plugins: [
+
+      {
+        name: 'ssr-alias-resolve',
+        enforce: 'pre',
+        resolveId(source: string, importer: any, options: any) {
+          // Check for SSR build using options.ssr (Vite 6/classic) or environment name (Vite 7)
+          const isSsr = options?.ssr === true || (this.environment as any)?.name === 'ssr'
+
+          if (isSsr) {
+            if (
+              source === 'mermaid' ||
+              source === 'cytoscape' ||
+              source === 'dagre-d3' ||
+              source === 'd3' ||
+              source === 'khroma' ||
+              source === 'stylis' ||
+              source === '@blocknote/react' ||
+              source === '@blocknote/core' ||
+              source === '@blocknote/mantine' ||
+              source === '@xenova/transformers' ||
+              source === 'pdfjs-dist' ||
+              source === 'react-resizable-panels' ||
+              source === '@monaco-editor/react' ||
+              source === 'monaco-editor' ||
+              source === '@xterm/xterm' ||
+              source === '@xterm/addon-fit'
+            ) {
+              return path.resolve(__dirname, './src/lib/mocks/empty.ts')
+            }
+          }
+        }
+      },
       securityHeadersPlugin,
       tanstackStart(),
       devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
@@ -126,14 +158,11 @@ const config = defineConfig(async () => {
     },
     // SSR Configuration
     // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
-    // Therefor, we do NOT set 'external' array for Cloudflare (would conflict with plugin)
     // We only specify 'noExternal' to bundle specific client-side libraries
     ssr: (DEPLOY_TARGET === 'cloudflare' || DEPLOY_TARGET === 'vercel')
       ? {
-        // Bundle everything for Cloudflare/Vercel EXCEPT large client-side-only libraries and native modules
-        // These are accessed via dynamic import (React.lazy) and guarded by client checks
-        // Cloudflare plugin handles Node.js externals automatically - DO NOT add 'external' here
-        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web|react-resizable-panels|@xyflow)).*$/,
+        // Bundle everything for Cloudflare/Vercel EXCEPT large client-side-only libraries
+        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web|react-resizable-panels|@xyflow|mermaid|cytoscape|dagre|d3|khroma|stylis)).*$/,
       }
       : {
         external: [
