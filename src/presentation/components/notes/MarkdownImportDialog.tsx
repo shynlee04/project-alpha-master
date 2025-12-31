@@ -14,12 +14,12 @@ import { Label } from "@/components/ui/label"
 import { ProgressIndicator } from "@/components/ui/progress-indicator"
 import { FileUp, FolderOpen, Check, X, AlertCircle } from "lucide-react"
 import { createNoteFileSyncService, type NoteImportResult } from "@/lib/notes"
-import type { Note } from "@/lib/notes/note-types"
+import type { NoteRecord } from "@/lib/notes/types"
 
 interface MarkdownImportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onImportComplete: (notes: Note[]) => void
+  onImportComplete: (notes: NoteRecord[]) => void
   syncService?: ReturnType<typeof createNoteFileSyncService>
 }
 

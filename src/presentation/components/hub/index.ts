@@ -13,5 +13,7 @@ export { TopicPortalCard } from './TopicPortalCard';
 export { HubHomePage } from './HubHomePage';
 export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 export { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+export { WorkspaceBadge } from './WorkspaceBadge';
 export type { WorkspaceBindingDialogProps } from './WorkspaceBindingDialog';
+export type { WorkspaceBadgeProps, WorkspaceId } from './WorkspaceBadge';
 

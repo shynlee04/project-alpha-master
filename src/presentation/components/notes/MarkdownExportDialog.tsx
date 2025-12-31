@@ -13,13 +13,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ProgressIndicator } from "@/components/ui/progress-indicator"
 import { FileDown, FolderOpen, Check, X, AlertCircle } from "lucide-react"
-import { createNoteFileSyncService, type NoteExportResult } from "@/lib/notes"
-import type { Note } from "@/lib/notes/note-types"
+import { createNoteFileSyncService, type NoteSyncResult } from "@/lib/notes"
+import type { NoteRecord } from "@/lib/notes/types"
 
 interface MarkdownExportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  notes: Note[]
+  notes: NoteRecord[]
   syncService?: ReturnType<typeof createNoteFileSyncService>
 }
 
@@ -35,7 +35,7 @@ export function MarkdownExportDialog({
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState<"idle" | "exporting" | "success" | "error">("idle")
   const [error, setError] = useState<string | null>(null)
-  const [exportResult, setExportResult] = useState<NoteExportResult | null>(null)
+  const [exportResult, setExportResult] = useState<NoteSyncResult | null>(null)
 
   const syncService = providedSyncService ?? createNoteFileSyncService()
 
@@ -68,7 +68,7 @@ export function MarkdownExportDialog({
     }
   }, [exportPath, notes, syncService, t])
 
-  const handleExportSingle = useCallback(async (note: Note) => {
+  const handleExportSingle = useCallback(async (note: NoteRecord) => {
     if (!exportPath.trim()) {
       setError(t("notes.export.error"))
       return

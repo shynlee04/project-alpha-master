@@ -29,7 +29,6 @@ const WORKSPACES = [
   { id: 'notes', icon: '📝', labelKey: 'hub.workspaceBinding.workspaces.notes' },
   { id: 'knowledge', icon: '📚', labelKey: 'hub.workspaceBinding.workspaces.knowledge' },
   { id: 'study', icon: '🎓', labelKey: 'hub.workspaceBinding.workspaces.study' },
-  { id: 'canvas', icon: '🎨', labelKey: 'hub.workspaceBinding.workspaces.canvas' },
 ] as const;
 
 type WorkspaceId = typeof WORKSPACES[number]['id'];
@@ -95,7 +94,6 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
     notes: false,
     knowledge: false,
     study: false,
-    canvas: false,
   });
 
   // State: initial workspace selection (radio buttons)

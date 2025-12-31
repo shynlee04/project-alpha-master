@@ -171,7 +171,7 @@ export const HubHomePage: React.FC = () => {
       if (!project) return;
 
       // Open workspace binding dialog
-      setSelectedProject(project);
+      setSelectedProject(project as unknown as ProjectMetadata);
       setDialogOpen(true);
     } catch (error) {
       console.error('Failed to open recent project:', error);
