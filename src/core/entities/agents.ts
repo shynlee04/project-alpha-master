@@ -1,15 +1,85 @@
 /**
  * Mock Agent Data for VIA-GENT
- *
+ * 
  * @epic Epic-28 Story 28-15
  * @roadmap Replace with real API in Epic 25 (AI Foundation)
  * @see _bmad-output/epics/shards/epic-25-ai-foundation.md
- *
- * REFACTORED: Types now imported from src/core/entities (single source of truth)
  */
 
-// Import domain entities as single source of truth
-export type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
+/**
+ * Tool binding with per-workspace permissions
+ * AC-03: Enhanced with workspace-specific tool permissions
+ */
+export interface AgentToolBinding {
+    toolId: string
+    toolName: string
+    isEnabled: boolean
+
+    // Workspace permissions (ide, knowledge, study, notes)
+    workspacePermissions: {
+        ide: boolean
+        knowledge: boolean
+        study: boolean
+        notes: boolean
+    }
+
+    configuration?: Record<string, unknown>
+}
+
+/**
+ * Workspace binding configuration
+ * AC-03: Defines where an agent is available and how it's displayed
+ */
+export interface WorkspaceBinding {
+    workspaceType: 'ide' | 'knowledge' | 'study' | 'notes'
+    isAvailable: boolean
+    uiVariant: 'full' | 'compact' | 'minimal'
+    isDefault: boolean
+}
+
+export interface Agent {
+    id: string
+    name: string
+    role: string
+    status: 'online' | 'offline' | 'busy' | 'error'
+    provider: 'OpenRouter' | 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google' | 'OpenAI Compatible'
+    model: string
+    description?: string
+    tasksCompleted: number
+    successRate: number
+    tokensUsed: number
+    lastActive: string
+    createdAt: string
+
+    // OpenAI Compatible Provider support
+    customBaseURL?: string
+    customHeaders?: Record<string, string>
+    enableNativeTools?: boolean
+
+    // CC-2025-12-29: Standard LLM Parameters
+    /** Temperature (0.0-2.0, default 0.7) - controls randomness */
+    temperature?: number
+    /** Max output tokens (model-specific max) */
+    maxTokens?: number
+    /** Top-p nucleus sampling (0.0-1.0, default 0.95) */
+    topP?: number
+    /** Top-k sampling (optional, for Gemini/local models) */
+    topK?: number
+    /** System prompt / agent personality */
+    systemPrompt?: string
+    /** Frequency penalty (-2.0 to 2.0, reduces repetition) */
+    frequencyPenalty?: number
+    /** Presence penalty (-2.0 to 2.0, encourages new topics) */
+    presencePenalty?: number
+    /** Stop sequences */
+    stopSequences?: string[]
+
+    // AC-03: Tool and workspace bindings
+    /** Tools with workspace-specific permissions */
+    tools?: AgentToolBinding[]
+    /** Workspace availability configuration */
+    workspaceBindings?: WorkspaceBinding[]
+}
 
 /**
  * Default tools available for agents

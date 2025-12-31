@@ -11,6 +11,7 @@
  */
 
 import EventEmitter from 'eventemitter3';
+import { useEffect } from 'react';
 
 // Create singleton event bus for store communication
 // This is separate from workspace-events.ts which handles UI/file events
@@ -142,4 +143,58 @@ export function onceStoreEvent<T>(
  */
 export function offStoreEvent(event: StoreEventType): void {
     storeEvents.removeAllListeners(event);
+}
+
+// =============================================================================
+// React Hooks for Event Subscriptions
+// =============================================================================
+
+/**
+ * React hook to subscribe to store events
+ * Automatically handles cleanup on unmount
+ *
+ * @example
+ * ```tsx
+ * useStoreEvent<ProviderModelsLoadedPayload>(
+ *   STORE_EVENTS.PROVIDER_MODELS_LOADED,
+ *   ({ providerId, modelCount }) => {
+ *     console.log(`Loaded ${modelCount} models for ${providerId}`);
+ *   }
+ * );
+ * ```
+ */
+export function useStoreEvent<T>(
+    event: StoreEventType,
+    handler: (payload: T) => void,
+    deps: React.DependencyList = []
+): void {
+    useEffect(() => {
+        const unsubscribe = onStoreEvent<T>(event, handler);
+        return unsubscribe;
+    }, [event, handler, ...deps]);
+}
+
+/**
+ * React hook to subscribe to store events once
+ * Automatically handles cleanup and only fires on first occurrence
+ *
+ * @example
+ * ```tsx
+ * useStoreEventOnce<ProviderKeySetPayload>(
+ *   STORE_EVENTS.PROVIDER_KEY_SET,
+ *   ({ providerId }) => {
+ *     console.log(`Provider ${providerId} key set (first time)`);
+ *   }
+ * );
+ * ```
+ */
+export function useStoreEventOnce<T>(
+    event: StoreEventType,
+    handler: (payload: T) => void,
+    deps: React.DependencyList = []
+): void {
+    useEffect(() => {
+        const unsubscribe = onceStoreEvent<T>(event, handler);
+        return unsubscribe;
+    }, [event, handler, ...deps]);
 }
