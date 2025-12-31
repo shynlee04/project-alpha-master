@@ -6,14 +6,14 @@
 # Loop Metadata
 loop_id: "arc-loop-2025-12-31"
 started_at: "2025-12-31T16:44:51+07:00"
-last_updated: "2025-12-31T17:10:00+07:00"
-iteration_count: 1
+last_updated: "2025-12-31T17:30:00+07:00"
+iteration_count: 2
 max_iterations: 100
 status: "ACTIVE"
 
 # Current Execution State
 current_phase: 1
-current_task: "fc-01-split-provider-store"
+current_task: "fc-02-event-bus"
 current_task_retries: 0
 max_retries_per_task: 3
 
@@ -52,14 +52,16 @@ phase_1:
   tasks:
     - id: "fc-01-split-provider-store"
       name: "Split provider-models-store.ts"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2025-12-31T17:30:00+07:00"
       agent: "provider-architect"
       workflow: "split-store"
       target_files:
         - "src/stores/provider-models-store.ts"
       output_files:
-        - "src/stores/provider-store.ts"
-        - "src/stores/models-store.ts"
+        - "src/stores/provider-config-store.ts"
+        - "src/stores/models-loader-store.ts"
+      notes: "Split into provider-config-store.ts (provider management, API keys) and models-loader-store.ts (model loading, caching). Events wired via onStoreEvent for cross-store reactivity."
       acceptance_criteria:
         - "Each new store <300 LOC"
         - "All imports updated"
@@ -210,9 +212,9 @@ validation:
 
 # Build Status
 build:
-  last_run: "2025-12-31T17:05:00+07:00"
+  last_run: "2025-12-31T17:28:00+07:00"
   status: "PASS"
-  duration_seconds: 90
+  duration_seconds: 40
 
 # Iteration History (last 10)
 iteration_history:
@@ -222,6 +224,12 @@ iteration_history:
     status: "DONE"
     completed_at: "2025-12-31T17:10:00+07:00"
     notes: "ChatPanel already unified - accepts projectId, uses localStorage for agent persistence, supports streaming"
+  - iteration: 2
+    phase: 1
+    task: "fc-01-split-provider-store"
+    status: "DONE"
+    completed_at: "2025-12-31T17:30:00+07:00"
+    notes: "Split provider-models-store.ts into provider-config-store.ts (333 LOC) and models-loader-store.ts (~300 LOC). Events wired for cross-store reactivity."
 
 # Error Log
 errors: []
