@@ -4,7 +4,6 @@
  * @epic Epic-28 Story 28-16
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { AgentConfigDialog } from '../AgentConfigDialog'
 

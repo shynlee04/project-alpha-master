@@ -8,7 +8,6 @@
  * @updated 2025-12-29 - Rewritten for BentoGrid
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HubHomePage } from '../HubHomePage';
 import { useHubStore } from '@/lib/state/hub-store';

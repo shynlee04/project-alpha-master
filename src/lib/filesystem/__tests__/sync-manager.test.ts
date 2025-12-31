@@ -3,7 +3,6 @@
  * @module lib/filesystem/__tests__/sync-manager.test
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { SyncConfig } from '../sync-types';
 import * as webcontainer from '../../webcontainer';
 import { createWorkspaceEventBus } from '../../events';

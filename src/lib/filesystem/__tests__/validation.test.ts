@@ -3,7 +3,6 @@
  * @module lib/filesystem/__tests__/validation
  */
 
-import { describe, it, expect } from 'vitest';
 import {
     validateFileSize,
     shouldWarnFileSize,

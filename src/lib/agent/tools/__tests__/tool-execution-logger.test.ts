@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ToolExecutionLogRecord } from '../../state/dexie-db';
 
 // Mock the dexie-db module

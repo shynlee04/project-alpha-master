@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock the dexie-db module before importing
 vi.mock('../state/dexie-db', () => ({

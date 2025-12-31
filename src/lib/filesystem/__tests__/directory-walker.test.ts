@@ -1,4 +1,3 @@
-import { describe, expect, it, vi } from 'vitest';
 
 import { FileSystemError } from '../fs-errors';
 import { walkDirectory, walkDirectorySegments } from '../directory-walker';

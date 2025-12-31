@@ -4,7 +4,6 @@
  * @governance EPIC-6-1
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { SourceImportDialog } from '../SourceImportDialog';
 

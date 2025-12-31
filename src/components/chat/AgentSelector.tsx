@@ -9,10 +9,11 @@
  * @story AC-02 - Agent Selector Unification (Architectural Consolidation)
  * 
  * AC-02: Enhanced with variant support for different workspace presentations
+ * FIXED: Now uses real agents store instead of mock data
  */
 
-import { useState } from 'react';
-import { ChevronDown, Bot, Circle, Cpu } from 'lucide-react';
+import { useState, lazy, Suspense } from 'react';
+import { ChevronDown, Bot, Circle, Cpu, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
@@ -21,15 +22,19 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import type { Agent } from '@/mocks/agents';
-import { mockAgents } from '@/mocks/agents';
+import { useAgentsStore } from '@/stores/agents-store';
 import { useTranslation } from 'react-i18next';
 import {
     STORE_EVENTS,
     emitStoreEvent,
     type AgentSelectedPayload,
 } from '@/lib/events/store-events';
+
+// Lazy load agent config dialog for bundle splitting
+const AgentConfigDialog = lazy(() => import('@/components/agent/AgentConfigDialog'));
 
 /**
  * Workspace types for cross-workspace agent synchronization

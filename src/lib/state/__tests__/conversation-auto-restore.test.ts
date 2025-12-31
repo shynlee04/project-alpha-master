@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ConversationThreadRecord } from '../dexie-db';
 
 // Mock requestAnimationFrame for Node.js environment

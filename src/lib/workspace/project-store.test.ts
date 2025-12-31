@@ -7,7 +7,6 @@
 // Import fake-indexeddb polyfill BEFORE any idb imports
 import 'fake-indexeddb/auto';
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
     saveProject,
     getProject,

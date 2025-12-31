@@ -3,7 +3,6 @@
  * @module lib/state/__tests__/dexie-db-metadata
  */
 
-import { describe, it, expect } from 'vitest';
 import type { SourceRecord } from '../dexie-db';
 
 describe('SourceRecord - Metadata Fields (Story 6.4)', () => {

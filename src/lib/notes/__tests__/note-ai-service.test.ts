@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { generateNoteContent } from '../note-ai-service';
 
 describe('Note AI Service', () => {

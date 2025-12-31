@@ -4,7 +4,6 @@
  * @governance EPIC-6-3
  */
 
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CollectionSelector } from '../CollectionSelector';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';

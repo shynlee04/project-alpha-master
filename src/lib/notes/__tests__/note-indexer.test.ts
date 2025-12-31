@@ -7,7 +7,6 @@
  * Tests indexing, removal, search, and retry logic.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { NoteRecord } from '../types';
 import {
     extractTextFromBlocks,

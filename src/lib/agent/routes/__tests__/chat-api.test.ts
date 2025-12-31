@@ -7,7 +7,6 @@
  * @story 25-4 - Wire Tool Execution to UI
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock TanStack AI
 vi.mock('@tanstack/ai', () => ({

@@ -4,7 +4,6 @@
  * @governance EPIC-6-2
  */
 
-import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { PDFIcon, URLIcon, TextIcon } from '../source-icons';
 

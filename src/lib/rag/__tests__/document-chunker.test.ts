@@ -9,7 +9,6 @@
  * - Edge cases (small content, min chunk size)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DocumentChunker } from '../document-chunker';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { DEFAULT_CHUNKING_OPTIONS } from '../types';

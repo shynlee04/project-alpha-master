@@ -3,7 +3,6 @@
  * @module lib/knowledge/__tests__/metadata-extractor
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MetadataExtractor } from '../metadata-extractor';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 

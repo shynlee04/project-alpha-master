@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { FileMetadataRecord } from '../../state/dexie-db';
 
 // Create mock functions

@@ -3,7 +3,6 @@
  * @module lib/webcontainer/__tests__/crash-recovery.test
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { CrashRecoveryManager, createCrashRecoveryManager, type WebContainerAPI } from '../crash-recovery';
 
 describe('CrashRecoveryManager', () => {

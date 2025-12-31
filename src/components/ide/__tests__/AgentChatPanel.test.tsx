@@ -7,7 +7,6 @@
 
 import React from 'react';
 import { render, screen, fireEvent, configure } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 // Mock ResizeObserver and other globals
 global.ResizeObserver = vi.fn().mockImplementation(() => ({

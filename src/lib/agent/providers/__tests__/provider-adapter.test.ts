@@ -6,7 +6,6 @@
  * @story 25-0 - Create ProviderAdapterFactory with OpenRouter
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock @tanstack/ai-openai before importing the module under test
 vi.mock('@tanstack/ai-openai', () => ({

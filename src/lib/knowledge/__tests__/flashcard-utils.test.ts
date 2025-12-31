@@ -3,7 +3,6 @@
  * @module lib/knowledge/__tests__/flashcard-utils.test.ts
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import {
   filterFlashcards,
   searchFlashcards,

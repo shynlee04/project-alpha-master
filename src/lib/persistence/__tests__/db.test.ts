@@ -10,7 +10,6 @@
 // Import fake-indexeddb polyfill BEFORE any module imports
 import 'fake-indexeddb/auto';
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
     getPersistenceDB,
     _resetPersistenceDBForTesting,

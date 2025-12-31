@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { FSAHandleRecord } from '../../state/dexie-db';
 
 // Create mock functions

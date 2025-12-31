@@ -6,7 +6,6 @@
  * @story 2-0 - Credential Vault Implementation
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { CredentialVault, credentialVault } from '../credential-vault';
 
 // Setup crypto mock using vi.hoisted to run before imports

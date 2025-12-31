@@ -10,7 +10,6 @@
  * - Index metadata persistence
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useRAGStore } from '../rag-store';
 import { IndexStatus, IndexOperation } from '../rag-store';
 import type { SearchResult, IndexMetadata } from '@/lib/rag/types';

@@ -6,7 +6,6 @@
  * @story 25-0 - Create ProviderAdapterFactory with OpenRouter
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ModelRegistry, modelRegistry } from '../model-registry';
 import { FREE_MODELS } from '../types';
 

@@ -3,7 +3,6 @@
  */
 import { renderHook } from '@testing-library/react';
 import { useResponsive } from '../useResponsive';
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 
 describe('useResponsive', () => {
     // Mock matchMedia

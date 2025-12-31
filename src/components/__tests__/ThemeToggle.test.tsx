@@ -2,7 +2,6 @@
 
 import "@testing-library/jest-dom"
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
-import { beforeEach, describe, expect, it } from "vitest"
 
 import { ThemeProvider } from "../ui/ThemeProvider"
 import { ThemeToggle } from "../ui/ThemeToggle"

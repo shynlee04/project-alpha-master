@@ -25,7 +25,6 @@
  * - [x] Log errors
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock TanStack AI
 vi.mock('@tanstack/ai', () => ({

@@ -4,7 +4,6 @@
  * @governance EPIC-6-2, EPIC-6-4
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SourcePreviewPanel } from '../SourcePreviewPanel';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';

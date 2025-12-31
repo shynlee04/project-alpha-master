@@ -10,7 +10,6 @@
  * @test-coverage 28 tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
 

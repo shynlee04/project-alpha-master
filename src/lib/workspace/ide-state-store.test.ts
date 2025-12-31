@@ -1,6 +1,5 @@
 import 'fake-indexeddb/auto'
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { _resetPersistenceDBForTesting } from '../persistence'
 import {
   clearIdeState,

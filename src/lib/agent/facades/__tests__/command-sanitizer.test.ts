@@ -3,7 +3,6 @@
  * @module lib/agent/facades/__tests__/command-sanitizer
  */
 
-import { describe, it, expect } from 'vitest';
 import { CommandSanitizer, createDefaultSanitizer } from '../command-sanitizer';
 
 describe('Command Sanitizer', () => {

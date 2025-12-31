@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import i18n from '../config';
 
 describe('i18n configuration', () => {

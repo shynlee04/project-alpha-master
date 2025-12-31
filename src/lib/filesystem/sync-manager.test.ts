@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SyncManager } from './sync-manager';
 import { LocalFSAdapter } from './local-fs-adapter';
 import * as webcontainer from '../webcontainer';

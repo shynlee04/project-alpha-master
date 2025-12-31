@@ -536,8 +536,74 @@ Per stop hook directive, for EVERY story in scoped epics:
 | Epic 26 | 5 | 3 (60%) | ⚠️ PARTIAL | 2 file size violations, AI streaming placeholder, drag-drop missing |
 | Epic 27 | 0 | 0 (0%) | 🔍 NOT STARTED | - |
 
-**Total:** 31 stories, **16 validated (52%)**, **15 pending (48%)**
+**Total:** 31 stories, **19 validated (61%)**, **12 pending (39%)**
 **File Size Violations:** **37 files** exceed 300-line limit (101 total suspected)
+**Infrastructure Validation:** ✅ Complete (Health Score: 67.25%, Critical gaps documented)
+
+---
+
+## **🔍 INFRASTRUCTURE VALIDATION FINDINGS**
+
+**Validation Report:** `_bmad-output/validation/infrastructure-validation-2025-12-31.md`
+
+### **Summary**
+- **Scope:** IndexedDB (Dexie), RAG Pipeline, State Persistence, Error Handling
+- **Health Score:** 67.25% (Strong foundation, critical gaps)
+- **Files Analyzed:** 79 files with DB operations, 48 Zustand stores, 21 database tables
+
+### **Critical Issues Found**
+
+#### **1. No Quota Handling (P0 - Data Loss Risk)**
+- ❌ **79 files** with direct IndexedDB operations (`.add()`, `.put()`, `.update()`, `.delete()`)
+- ❌ No centralized quota exceeded handling
+- ❌ Silent failures when storage quota exceeded
+- **Impact:** Users create large notes → quota exceeded → silent save failure → data loss
+- **Action Required:** Implement `safePut()`, `safeAdd()` wrappers
+
+#### **2. Silent Failures Anti-Pattern (P0 - Data Loss Risk)**
+- ❌ **23 locations** with `console.error + return null` pattern
+- ❌ Callers have no indication operation failed
+- **Files Affected:** RAG module (8 files), storage (5 files), state (10 files)
+- **Impact:** Data appears saved but isn't, users discover too late
+- **Action Required:** Replace with proper error types and user notifications
+
+#### **3. No Index Size Management (P1 - Performance Risk)**
+- ❌ In-memory cache: `activeIndexes` Map with **no size limits**
+- ❌ No LRU eviction for old project indexes
+- ❌ `getTotalIndexesSize()` exists but **never called**
+- **Impact:** With 10+ projects, memory exceeds limits → tab crashes
+- **Action Required:** Implement LRU eviction, periodic size monitoring
+
+#### **4. Inconsistent Error Handling (P1 - Reliability Risk)**
+- ⚠️ Only **4 proper error types** found in codebase
+- ⚠️ 55 try-catch blocks across RAG, **28 use basic console.error**
+- ⚠️ No retry logic for transient database errors
+- **Impact:** Transient failures become permanent data loss
+- **Action Required:** Create retry wrapper, standardize error types
+
+### **Infrastructure Health Breakdown**
+
+| Component | Score | Status |
+|-----------|-------|--------|
+| Database Schema | 95% | ✅ Excellent |
+| Database Operations | 50% | ❌ Critical gaps |
+| RAG Pipeline | 75% | ⚠️ Needs work |
+| State Persistence | 70% | ⚠️ Inconsistent |
+| Error Handling | 55% | ❌ Major issues |
+| Performance | 65% | ⚠️ No monitoring |
+
+### **Priority Action Items**
+
+**P0 (URGENT - Data Loss Risk):**
+1. Add quota handling to all IndexedDB operations (~8-12 hours)
+2. Fix silent failures in RAG module (~6-8 hours)
+
+**P1 (HIGH - Reliability):**
+3. Add index size monitoring (~4 hours)
+4. Implement LRU eviction for index cache (~6 hours)
+5. Add retry logic for DB operations (~6 hours)
+
+**Total Estimated Effort:** ~22-34 hours for P0-P1 issues
 
 ---
 

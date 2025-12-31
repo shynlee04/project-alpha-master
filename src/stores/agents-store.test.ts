@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useAgentsStore, DEFAULT_AGENT } from './agents-store';
 
 // Mock Dexie Storage to behave synchronously/in-memory for tests

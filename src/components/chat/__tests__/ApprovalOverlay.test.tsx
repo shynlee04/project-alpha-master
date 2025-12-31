@@ -14,7 +14,6 @@
  * - Keyboard shortcuts (Enter to approve, Escape to reject)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { render, screen, cleanup, fireEvent, waitFor, configure } from '@testing-library/react';
 import { ApprovalOverlay } from '../ApprovalOverlay';
 import { CodeBlock } from '../CodeBlock';

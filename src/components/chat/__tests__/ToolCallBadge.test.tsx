@@ -11,7 +11,6 @@
  * - i18n key rendering
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { ToolCallBadge, ToolCallBadgeGroup } from '../ToolCallBadge';
 import { getToolCategory } from '@/types/tool-call';

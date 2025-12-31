@@ -3,7 +3,6 @@
  * @module lib/state/__tests__/hydration-manager.test
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import {
   HydrationManager,
   getHydrationManager,

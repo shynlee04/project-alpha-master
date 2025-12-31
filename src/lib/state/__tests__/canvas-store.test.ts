@@ -3,7 +3,6 @@
  * @module lib/state/__tests__/canvas-store.test.ts
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Node, Edge, Viewport } from '@xyflow/react';
 
 // Mock localStorage first - before any imports

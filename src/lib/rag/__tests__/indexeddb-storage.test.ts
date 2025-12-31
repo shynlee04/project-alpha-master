@@ -6,7 +6,6 @@
  * Tests for Dexie-based Orama index persistence.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   getOramaIndexData,
   saveOramaIndexData,

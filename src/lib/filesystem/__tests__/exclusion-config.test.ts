@@ -3,7 +3,6 @@
  * Story 10-5: Create Sync Exclusion Configuration
  */
 
-import { describe, it, expect } from 'vitest';
 import {
     DEFAULT_EXCLUSION_PATTERNS,
     EXTENDED_DEFAULT_PATTERNS,

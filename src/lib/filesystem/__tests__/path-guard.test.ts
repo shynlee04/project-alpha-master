@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 
 import { FileSystemError } from '../fs-errors';
 import { isTraversalAttempt, validatePath } from '../path-guard';

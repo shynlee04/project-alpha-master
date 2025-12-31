@@ -8,7 +8,6 @@
  * @fix RC-028-001 - Wire ToolPermissionManager to execution layer
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FileToolsFacade, ToolPermissionDeniedError } from '../file-tools-impl';
 import { validatePath, PathValidationError } from '../file-tools';
 import { FileLock } from '../file-lock';

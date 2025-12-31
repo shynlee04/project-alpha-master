@@ -3,7 +3,6 @@
  * @description Tests the adapter in realistic scenarios with multi-step workflows
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { LocalFSAdapter, FileSystemError } from '../local-fs-adapter';
 
 // Mock the window object and File System Access API

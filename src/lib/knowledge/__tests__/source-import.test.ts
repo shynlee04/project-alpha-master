@@ -4,7 +4,6 @@
  * @governance EPIC-6-1
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PDFParser } from '../pdf-parser';
 import { URLFetcher } from '../url-fetcher';
 import { SourceImportPipeline } from '../source-import';

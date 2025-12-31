@@ -6,7 +6,6 @@
  * Integration tests for knowledge store actions and state management.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 import { sanitizeFilename } from '@/utils/export-utils';
 

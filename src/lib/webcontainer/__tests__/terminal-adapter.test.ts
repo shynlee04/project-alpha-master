@@ -3,7 +3,6 @@
  * @module lib/webcontainer/__tests__/terminal-adapter.test
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTerminalAdapter, TerminalAdapterError } from '../terminal-adapter';
 import { spawn, isBooted } from '../manager';
 

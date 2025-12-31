@@ -13,7 +13,6 @@
  * The core SyncTransactionLog and SyncBatchError classes are tested thoroughly.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
     SyncTransactionLog,
     getTransactionLog,

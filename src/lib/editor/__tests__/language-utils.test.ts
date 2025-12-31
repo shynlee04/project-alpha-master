@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { getLanguageFromPath, getFileName, getFileExtension, EXTENSION_TO_LANGUAGE } from '../language-utils';
 
 describe('language-utils', () => {

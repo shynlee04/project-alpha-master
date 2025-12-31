@@ -3,7 +3,6 @@
  * @module lib/study/__tests__/quiz-session.test
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { Quiz, QuizQuestion } from '../quiz-types';
 import type { QuizSession, QuizAnswer, QuizResult } from '../quiz-session';
 import {

@@ -2,7 +2,6 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { EventEmitter3 } from 'eventemitter3';
 import type { SystemMessage } from '@tanstack/ai';
 import { SystemPromptComposer } from '../prompt-composer';

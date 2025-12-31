@@ -8,7 +8,6 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createAgentClientTools, createClientFileTools, createClientTerminalTools, isToolsAvailable, type ToolFactoryOptions } from '../factory';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';

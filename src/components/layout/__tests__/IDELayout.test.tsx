@@ -7,7 +7,6 @@
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { IDELayout } from '../IDELayout';
 import { WorkspaceProvider } from '../../../lib/workspace';
 import { ToastProvider } from '../../ui/Toast';

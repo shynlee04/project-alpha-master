@@ -3,7 +3,6 @@
  * @module lib/study/__tests__/quiz.test
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   quizQuestionSchema,
   quizGenerationSchema,

@@ -4,7 +4,6 @@
  * @governance EPIC-6-3
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RenameDialog } from '../RenameDialog';
 

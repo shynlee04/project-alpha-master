@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for LocalFSAdapter
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LocalFSAdapter, FileSystemError, PermissionDeniedError } from '../local-fs-adapter';
 
 // Type declarations for test globals

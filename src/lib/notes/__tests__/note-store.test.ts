@@ -7,7 +7,6 @@
  * Pattern follows Epic 6 retrospective: Zustand + Dexie testing patterns.
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { useNoteStore } from '../note-store';
 import { generateNoteId, DEFAULT_NOTE_BLOCKS } from '../types';
 

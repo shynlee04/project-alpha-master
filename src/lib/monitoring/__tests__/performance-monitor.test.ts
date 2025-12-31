@@ -3,7 +3,6 @@
  * @module lib/monitoring/__tests__/performance-monitor.test
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import {
   PerformanceMonitor,
   getPerformanceMonitor,

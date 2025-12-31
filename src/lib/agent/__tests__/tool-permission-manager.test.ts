@@ -2,7 +2,6 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import type { EventEmitter3 } from 'eventemitter3';
 import { ToolPermissionManager } from '../tool-permission-manager';
 

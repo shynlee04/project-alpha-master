@@ -10,7 +10,6 @@
  * HeroSection Component Tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HeroSection } from '../HeroSection';
 import * as i18next from 'react-i18next';

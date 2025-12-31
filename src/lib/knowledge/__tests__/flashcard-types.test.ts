@@ -3,7 +3,6 @@
  * @module lib/knowledge/__tests__/flashcard-types.test.ts
  */
 
-import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 import {
   flashcardSchema,

@@ -1,12 +1,12 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2025-12-31T09:10:00+07:00
+# Updated: 2025-12-31T10:22:00+07:00
 
-current_workflow: "frontier-rag-research-artifacts-2025-12-31"
-current_story: "artifact-7-implementation-playbook-2025-12-31"
-phase: "research-complete-sprint-planning"
-last_updated: "2025-12-31T09:10:00+07:00"
+current_workflow: "architectural-consolidation-2025-12-31"
+current_story: "AC-02-agent-selector-unification"
+phase: "phase-0-showcase-critical"
+last_updated: "2025-12-31T10:22:00+07:00"
 knowledge_synthesis_research_complete: true
 research_completion_date: "2025-12-31T09:00:00+07:00"
 research_artifacts_count: 7

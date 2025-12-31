@@ -156,10 +156,10 @@ export interface RAGStoreState {
     setSearchQuery: (query: string) => void;
 
     /** Perform search with mode and limit */
-    performSearch: (query: string, mode?: import('./rag/types').SearchMode, limit?: number) => Promise<void>;
+    performSearch: (query: string, mode?: import('@/lib/rag/types').SearchMode, limit?: number) => Promise<void>;
 
     /** Set search mode */
-    setSearchMode: (mode: import('./rag/types').SearchMode) => void;
+    setSearchMode: (mode: import('@/lib/rag/types').SearchMode) => void;
 
     /** Clear search results */
     clearSearchResults: () => void;
@@ -203,13 +203,13 @@ export interface RAGStoreState {
     // Embedding Actions (Story 7-3)
 
     /** Detect embedding capability */
-    detectEmbeddingCapability: () => Promise<import('./rag/types').EmbeddingMode>;
+    detectEmbeddingCapability: () => Promise<import('@/lib/rag/types').EmbeddingMode>;
 
     /** Generate embeddings for chunks */
     generateEmbeddings: (
-      chunks: import('./rag/types').ChunkMetadata[],
-      options?: import('./rag/types').EmbeddingOptions
-    ) => Promise<Map<string, import('./rag/types').EmbeddingVector>>;
+      chunks: import('@/lib/rag/types').ChunkMetadata[],
+      options?: import('@/lib/rag/types').EmbeddingOptions
+    ) => Promise<Map<string, import('@/lib/rag/types').EmbeddingVector>>;
 
     /** Clear embedding progress for a chunk */
     clearEmbeddingProgress: (chunkId: string) => void;

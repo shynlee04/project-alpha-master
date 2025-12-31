@@ -6,7 +6,6 @@
  * Since WebContainer.boot is a static method, we mock the @webcontainer/api module.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Create a mock WebContainer instance
 const createMockInstance = () => ({

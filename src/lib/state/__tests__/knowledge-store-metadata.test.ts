@@ -3,7 +3,6 @@
  * @module lib/state/__tests__/knowledge-store-metadata
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useKnowledgeStore, type SourceMetadataFields } from '../knowledge-store';
 import type { SourceRecord } from '../dexie-db';

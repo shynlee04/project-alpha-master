@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { executeSyncPlan } from '../sync-executor';
 import type { LocalFSAdapter } from '../local-fs-adapter';
 import type { SyncConfig, SyncPlan } from '../sync-types';

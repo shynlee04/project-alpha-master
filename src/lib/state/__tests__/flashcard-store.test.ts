@@ -3,7 +3,6 @@
  * @module lib/state/__tests__/flashcard-store.test.ts
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock localStorage first - before any imports
 const mockLocalStorage = {

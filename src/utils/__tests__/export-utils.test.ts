@@ -4,7 +4,6 @@
  * @governance EPIC-6-3
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { exportText, sanitizeFilename } from '../export-utils';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 

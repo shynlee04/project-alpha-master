@@ -11,7 +11,6 @@
  * - Storage management (size, rebuild, cleanup)
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   createIndex,
   loadIndex,

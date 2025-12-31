@@ -6,7 +6,6 @@
  * @story 12-1B - Add Concurrency Control to FileToolsFacade
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FileLock, FileLockTimeoutError, createFileLock } from '../file-lock';
 
 describe('FileLock', () => {

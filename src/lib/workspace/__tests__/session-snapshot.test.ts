@@ -3,7 +3,6 @@
  * @governance EPIC-24-5
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { db, type SessionSnapshotRecord } from '@/lib/state/dexie-db';
 import {
     SessionSnapshotManager,

@@ -5,7 +5,6 @@
  * Story 13-3: Add Sync Progress Indicator
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { SyncStatusIndicator, formatRelativeTime } from '../SyncStatusIndicator';
 import type { SyncProgress } from '../../../lib/filesystem';

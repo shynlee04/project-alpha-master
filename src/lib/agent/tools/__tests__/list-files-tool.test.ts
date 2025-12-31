@@ -6,7 +6,6 @@
  * @story 25-2 - Implement File Tools
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock TanStack AI - capture the server handler
 let capturedHandler: ((args: unknown) => Promise<any>) | null = null;

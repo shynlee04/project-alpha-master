@@ -6,7 +6,6 @@
  * @story 12-2 - Create AgentTerminalTools Facade
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TerminalToolsFacade, createTerminalToolsFacade } from '../terminal-tools-impl';
 import { TerminalToolsError } from '../terminal-tools';
 import type { WorkspaceEventEmitter } from '../../../events';

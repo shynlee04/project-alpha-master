@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ProviderConfigDialog } from '../ProviderConfigDialog';
 import { useProviderStore } from '@/lib/state/provider-store';

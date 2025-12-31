@@ -3,7 +3,6 @@
  * @module lib/study/__tests__/srs.test
  */
 
-import { describe, it, expect } from 'vitest';
 import {
   calculateNextReview,
   isCardDue,

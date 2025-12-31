@@ -4,7 +4,6 @@
  */
 
 import { render, screen, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { StreamingMessage } from '../StreamingMessage';
 
 // Mock CodeBlock since we're testing StreamingMessage logic

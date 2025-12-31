@@ -7,7 +7,6 @@
  * @created 2025-12-26T13:12:00Z
  */
 
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TopicPortalCard } from '../TopicPortalCard';
 

@@ -3,7 +3,6 @@
  * @module components/knowledge/__tests__/MetadataEditor
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MetadataEditor } from '../MetadataEditor';
 import type { SourceRecord } from '@/lib/state/dexie-db';

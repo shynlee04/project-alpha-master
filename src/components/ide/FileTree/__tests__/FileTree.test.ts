@@ -3,7 +3,6 @@
  * Tests for expanded state preservation and file tree behaviors
  */
 
-import { describe, it, expect } from 'vitest';
 import {
     restoreExpandedState,
     getAncestorPaths,

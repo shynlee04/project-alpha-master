@@ -13,7 +13,6 @@
  * - i18n localization
  */
 
-import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { DiffPreview } from '../DiffPreview';
 

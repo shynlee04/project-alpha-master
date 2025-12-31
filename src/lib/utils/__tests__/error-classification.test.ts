@@ -10,7 +10,6 @@
  * - Default classification for unknown errors
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import {
     ErrorClassificationRegistry,
     getErrorClassificationRegistry,

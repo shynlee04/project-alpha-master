@@ -2,7 +2,6 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import type { ToolExecutionContext, ToolExecutionRequest } from '../types';
 import { ToolPermissionManager } from '../../tool-permission-manager';
 

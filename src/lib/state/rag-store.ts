@@ -65,19 +65,19 @@ export const useRAGStore = create<RAGStoreState>()(
             searchCache: new Map(),
             chunkingProgress: new Map(),
             embeddingProgress: new Map(),
-            embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
+            embeddingMode: 'keyword-only' as import('@/lib/rag/types').EmbeddingMode,
             searchQuery: '',
             searchResults: [],
-            searchMode: 'hybrid' as import('./rag/types').SearchMode,
+            searchMode: 'hybrid' as import('@/lib/rag/types').SearchMode,
             chatMessages: [],
             citations: new Map(),
             activeCitation: null,
             // Voice mode state (Story 10-1)
-            voiceState: 'idle' as import('./rag/live-api-types').VoiceModeState,
+            voiceState: 'idle' as import('@/lib/rag/live-api-types').VoiceModeState,
             voiceConnection: {
                 state: 'disconnected',
                 retryCount: 0,
-            } as import('./rag/live-api-types').ConnectionState,
+            } as import('@/lib/rag/live-api-types').ConnectionState,
             voiceMicrophoneEnabled: false,
             voiceIsDesktop: true, // Default to desktop, will detect on mount
             voiceVolumeLevel: 0,
@@ -351,7 +351,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     const result = await service.embedBatch(texts);
 
                     // Map results back to chunk IDs
-                    const embeddings = new Map<string, import('./rag/types').EmbeddingVector>();
+                    const embeddings = new Map<string, import('@/lib/rag/types').EmbeddingVector>();
                     chunks.forEach((chunk, idx) => {
                         embeddings.set(
                             chunk.chunkId,
@@ -392,7 +392,7 @@ export const useRAGStore = create<RAGStoreState>()(
 
             // Search Actions (Story 7-4)
 
-            performSearch: async (query: string, mode?: import('./rag/types').SearchMode, _limit?: number) => {
+            performSearch: async (query: string, mode?: import('@/lib/rag/types').SearchMode, _limit?: number) => {
                 const { HybridRetriever } = await import('../rag/hybrid-retriever');
                 const { createEmbeddingService } = await import('../rag/embedding-service');
                 const { loadOrCreateIndex } = await import('../rag/orama-index');
@@ -435,7 +435,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 }
             },
 
-            setSearchMode: (mode: import('./rag/types').SearchMode) => {
+            setSearchMode: (mode: import('@/lib/rag/types').SearchMode) => {
                 set({ searchMode: mode });
             },
 
@@ -571,18 +571,18 @@ export const useRAGStore = create<RAGStoreState>()(
                     searchCache: new Map(),
                     chunkingProgress: new Map(),
                     embeddingProgress: new Map(),
-                    embeddingMode: 'keyword-only' as import('./rag/types').EmbeddingMode,
+                    embeddingMode: 'keyword-only' as import('@/lib/rag/types').EmbeddingMode,
                     searchQuery: '',
                     searchResults: [],
-                    searchMode: 'hybrid' as import('./rag/types').SearchMode,
+                    searchMode: 'hybrid' as import('@/lib/rag/types').SearchMode,
                     chatMessages: [],
                     citations: new Map(),
                     activeCitation: null,
-                    voiceState: 'idle' as import('./rag/live-api-types').VoiceModeState,
+                    voiceState: 'idle' as import('@/lib/rag/live-api-types').VoiceModeState,
                     voiceConnection: {
                         state: 'disconnected',
                         retryCount: 0,
-                    } as import('./rag/live-api-types').ConnectionState,
+                    } as import('@/lib/rag/live-api-types').ConnectionState,
                     voiceMicrophoneEnabled: false,
                     voiceIsDesktop: true,
                     voiceVolumeLevel: 0,
@@ -708,11 +708,11 @@ export const useRAGStore = create<RAGStoreState>()(
                 }
             },
 
-            setVoiceState: (state: import('./rag/live-api-types').VoiceModeState) => {
+            setVoiceState: (state: import('@/lib/rag/live-api-types').VoiceModeState) => {
                 set({ voiceState: state });
             },
 
-            setVoiceConnectionState: (state: import('./rag/live-api-types').ConnectionState) => {
+            setVoiceConnectionState: (state: import('@/lib/rag/live-api-types').ConnectionState) => {
                 set({ voiceConnection: state });
 
                 // Update voice state based on connection state
@@ -788,7 +788,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     state.searchCache = new Map(state.searchCache as unknown as [string, CachedSearchResult][]);
                     state.chunkingProgress = new Map(state.chunkingProgress as unknown as [string, ChunkingProgress][]);
                     state.embeddingProgress = new Map(
-                        state.embeddingProgress as unknown as [string, import('./rag/types').EmbeddingProgress][]
+                        state.embeddingProgress as unknown as [string, import('@/lib/rag/types').EmbeddingProgress][]
                     );
                     // Chat state (Story 7-5) - Convert citations array back to Map
                     if (!Array.isArray(state.citations) && !(state.citations instanceof Map)) {

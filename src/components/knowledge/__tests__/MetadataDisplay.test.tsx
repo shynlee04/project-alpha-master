@@ -3,7 +3,6 @@
  * @module components/knowledge/__tests__/MetadataDisplay
  */
 
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MetadataDisplay } from '../MetadataDisplay';
 import type { SourceRecord } from '@/lib/state/dexie-db';
