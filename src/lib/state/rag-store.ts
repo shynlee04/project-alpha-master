@@ -32,6 +32,7 @@ import {
     cleanupOrphanedIndexes,
 } from '@/lib/rag/orama-index';
 import { documentChunker } from '@/lib/rag/document-chunker';
+import { fetchServerSentEvents } from '@tanstack/ai-react';
 
 // Import types and helpers
 import { IndexStatus, IndexOperation } from './rag-store-types';
@@ -473,7 +474,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 const { HybridRetriever } = await import('../rag/hybrid-retriever');
                 const { createEmbeddingService } = await import('../rag/embedding-service');
                 const { loadOrCreateIndex } = await import('../rag/orama-index');
-                const { formatCitations, /* buildContext, */ createCitationsMap } = await import('../rag/citation-formatter');
+                const { formatCitations, buildContext, buildPrompt, createCitationsMap } = await import('../rag/citation-formatter');
                 const vault = await import('../state').then((m) => m.useCredentialVault.getState());
                 const apiKey = vault.getCredential('google')?.apiKey;
 
@@ -501,36 +502,102 @@ export const useRAGStore = create<RAGStoreState>()(
                     const citations = formatCitations(results);
                     const citationsMap = createCitationsMap(citations);
 
-                    // Step 3: Build context
-                    // const context = buildContext(results, query);
+                    // Step 3: Build context and prompt
+                    const context = buildContext(results, query);
+                    const ragSystemPrompt = buildPrompt(context, query);
 
-                    // Step 4: Add user message
+                    // Step 4: Add user message immediately
                     const userMessage: ChatMessage = {
                         role: 'user',
                         content: query,
                         timestamp: Date.now(),
                     };
 
-                    // Step 5: Generate assistant response (placeholder for TanStack AI integration)
-                    const responseText = `Based on ${results.length} sources, here's an answer. [Integration with TanStack AI pending]`;
+                    set({
+                        chatMessages: [...get().chatMessages, userMessage],
+                    });
 
-                    const assistantMessage: ChatMessage = {
+                    // Step 5: Generate assistant response using TanStack AI
+                    // Get provider config from credential vault
+                    const providerId = 'openrouter'; // Default provider
+                    const modelId = 'mistralai/devstral-2512:free'; // Free model
+                    const providerApiKey = vault.getCredential('openrouter')?.apiKey || apiKey;
+
+                    if (!providerApiKey) {
+                        throw new Error('No API key found. Please configure your API key in settings.');
+                    }
+
+                    // Create connection using TanStack AI's fetchServerSentEvents
+                    const connection = fetchServerSentEvents('/api/chat', () => ({
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: {
+                            providerId,
+                            modelId,
+                            apiKey: providerApiKey,
+                            // Pass RAG-augmented system prompt
+                            systemPrompts: [
+                                {
+                                    role: 'system',
+                                    content: ragSystemPrompt,
+                                }
+                            ],
+                        },
+                    }));
+
+                    // Stream the response
+                    let accumulatedResponse = '';
+
+                    for await (const chunk of connection) {
+                        const message = chunk as { type?: string; parts?: unknown[] };
+
+                        // Handle text content parts
+                        if (message.parts && Array.isArray(message.parts)) {
+                            for (const part of message.parts) {
+                                const p = part as { type?: string; content?: string };
+                                if (p.type === 'text' && p.content) {
+                                    accumulatedResponse += p.content;
+
+                                    // Update assistant message incrementally
+                                    const assistantMessage: ChatMessage = {
+                                        role: 'assistant',
+                                        content: accumulatedResponse,
+                                        citations,
+                                        timestamp: Date.now(),
+                                    };
+
+                                    set({
+                                        chatMessages: [...get().chatMessages.slice(0, -1), assistantMessage],
+                                    });
+                                }
+                            }
+                        }
+
+                        // Check if done
+                        if (message.type === 'done') {
+                            break;
+                        }
+                    }
+
+                    // Final assistant message
+                    const finalAssistantMessage: ChatMessage = {
                         role: 'assistant',
-                        content: responseText,
+                        content: accumulatedResponse,
                         citations,
                         timestamp: Date.now(),
                     };
 
-                    // Step 6: Update state
+                    // Step 6: Update final state
                     set({
-                        chatMessages: [...get().chatMessages, userMessage, assistantMessage],
+                        chatMessages: [...get().chatMessages.slice(0, -1), finalAssistantMessage],
                         citations: citationsMap,
                         loading: false,
                     });
 
-                    console.log(`[RAGStore] RAG chat complete: ${results.length} sources, ${citations.length} citations`);
+                    console.log(`[RAGStore] RAG chat complete: ${results.length} sources, ${citations.length} citations, ${accumulatedResponse.length} chars`);
 
-                    return assistantMessage;
+                    return finalAssistantMessage;
                 } catch (error) {
                     set({
                         error: (error as Error).message,

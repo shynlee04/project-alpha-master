@@ -57,6 +57,9 @@ export interface CanvasStoreState {
   nodes: Node<any>[];
   edges: Edge<any>[];
 
+  // Linkage proposals (AI-powered connection suggestions)
+  linkageProposals: LinkageProposal[];
+
   // Viewport state
   viewport: Viewport;
 
@@ -79,7 +82,18 @@ export interface CanvasStoreState {
   addEdgeWithRelationship: (connection: { source: string; target: string }, relationship: CanvasRelationshipType) => void;
   removeEdge: (edgeId: string) => void;
   resetCanvas: () => void;
+
+  // Linkage proposal operations
+  generateLinkageProposals: () => Promise<void>;
+  acceptProposal: (proposalId: string) => void;
+  dismissProposal: (proposalId: string) => void;
+  clearProposals: () => void;
 }
+
+/**
+ * Linkage proposal type (re-exported from linkage-types for convenience)
+ */
+export type LinkageProposal = import('./linkage-types').LinkageProposal;
 
 /**
  * Initial viewport settings

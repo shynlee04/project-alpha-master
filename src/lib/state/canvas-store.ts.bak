@@ -387,14 +387,12 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
       const state = await db.table('canvasStates').get(canvasId);
       if (state) {
         useCanvasStore.setState({
-          linkageProposals: [],
           nodes: state.nodes,
           edges: state.edges,
           viewport: state.viewport,
         });
       } else {
         useCanvasStore.setState({
-          linkageProposals: [],
           nodes: [],
           edges: [],
           viewport: { x: 0, y: 0, zoom: 1 },
@@ -455,7 +453,6 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
       localStorage.removeItem('canvas-active-id');
       set({ activeCanvasId: null });
       useCanvasStore.setState({
-          linkageProposals: [],
         nodes: [],
         edges: [],
         viewport: { x: 0, y: 0, zoom: 1 },

@@ -9,11 +9,12 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useTranslation } from 'react-i18next';
-import { useCanvasStore } from '@/lib/state/canvas-store';
+import { useCanvasStore } from '@/infrastructure/persistence/stores';
 import { useResponsive } from '@/hooks/useResponsive';
 import { nodeTypes } from './nodes/nodeTypes';
 import { edgeTypes, defaultEdgeOptions } from './edges/edgeTypes';
 import { useCanvasDrop } from '@/hooks/useCanvasDrop';
+import { LinkageProposalsPanel } from './LinkageProposalsPanel';
 
 // Default viewport options
 const defaultViewportOptions = {
@@ -202,6 +203,7 @@ function CanvasContent() {
 
         {/* Panels */}
         <KeyboardShortcutsPanel />
+        <LinkageProposalsPanel />
 
         {/* Empty state */}
         {isEmpty && (
