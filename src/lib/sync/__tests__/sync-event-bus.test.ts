@@ -256,7 +256,7 @@ describe('SyncEventBus', () => {
         type: 'navigation:file_opened',
         timestamp: Date.now(),
         data: {
-          previousPath: null,
+          previousPath: undefined,
           path: 'file.txt',
           name: 'file.txt',
           action: 'open',
@@ -330,7 +330,7 @@ describe('SyncEventBus', () => {
         type: 'navigation:file_opened',
         timestamp: Date.now(),
         data: {
-          previousPath: null,
+          previousPath: undefined,
           path: 'file.txt',
           name: 'file.txt',
           action: 'open',
@@ -398,7 +398,7 @@ describe('SyncEventBus', () => {
         type: 'navigation:file_opened',
         timestamp: Date.now(),
         data: {
-          previousPath: null,
+          previousPath: undefined,
           path: 'file.txt',
           name: 'file.txt',
           action: 'open',

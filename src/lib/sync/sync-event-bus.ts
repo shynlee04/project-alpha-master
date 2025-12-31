@@ -239,10 +239,15 @@ export class SyncEventBus {
   }
 
   /**
-   * Remove all listeners for this event bus
+   * Remove all listeners or listeners for a specific event
    */
-  removeAllListeners(): this {
-    this.emitter.removeAllListeners();
+  removeAllListeners(type?: SyncEventType): this {
+    if (type) {
+      const namespacedType = this.getNamespacedType(type);
+      this.emitter.removeAllListeners(namespacedType);
+    } else {
+      this.emitter.removeAllListeners();
+    }
     return this;
   }
 
@@ -258,11 +263,15 @@ export class SyncEventBus {
   }
 
   /**
-   * Get listener count for a specific event
+   * Get listener count for a specific event or total count
    */
-  listenerCount(type: SyncEventType): number {
-    const namespacedType = this.getNamespacedType(type);
-    return this.emitter.listenerCount(namespacedType);
+  listenerCount(type?: SyncEventType): number {
+    if (type) {
+      const namespacedType = this.getNamespacedType(type);
+      return this.emitter.listenerCount(namespacedType);
+    }
+    // Return total event count as proxy for total listeners
+    return this.eventCount;
   }
 
   /**

@@ -26,6 +26,21 @@ export type { BatchApprovalBarProps } from './BatchApprovalBar';
 export { AgentSelector } from './AgentSelector';
 export type { WorkspaceType, AgentSelectorVariant } from './AgentSelector';
 
+// CW-03: Unified Chat Panel - Single entry point for all chat interfaces
+export { UnifiedChatPanel } from './UnifiedChatPanel';
+export type {
+  ChatMode,
+  UnifiedChatPanelProps,
+  ThreadedModeProps,
+  SimpleModeProps,
+  AgentModeProps
+} from './UnifiedChatPanel';
+export {
+  isSimpleModeProps,
+  isAgentModeProps,
+  isThreadedModeProps
+} from './UnifiedChatPanel';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';

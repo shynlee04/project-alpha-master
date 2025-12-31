@@ -1,0 +1,469 @@
+# Gemini API Prompts for Knowledge Synthesis Platform
+# Optimized prompts for each document processing type
+# Reference: https://ai.google.dev/gemini-api/docs
+
+---
+# Configuration
+api_config:
+  base_url: "https://generativelanguage.googleapis.com/v1beta"
+  models:
+    flash: "gemini-2.0-flash-latest"      # Fast, multimodal
+    pro: "gemini-2.5-pro-preview"         # Advanced reasoning
+    embedding: "text-embedding-004"       # Vector embeddings
+  safety_settings:
+    - category: "HARM_CATEGORY_DANGEROUS_CONTENT"
+      threshold: "BLOCK_ONLY_HIGH"
+  generation_config:
+    temperature: 0.4
+    top_p: 0.95
+    max_output_tokens: 8192
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SYNTHESIS PROMPTS (Use Case 1, 2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+synthesis:
+  # Base synthesis system prompt
+  system_prompt: |
+    You are a Knowledge Synthesis Expert that transforms raw learning materials 
+    into organized, interconnected knowledge structures. You excel at:
+    - Extracting key concepts and relationships
+    - Generating structured metadata
+    - Identifying semantic connections across documents
+    - Creating concise but comprehensive summaries
+    
+    Output JSON only. Follow the schema exactly.
+
+  # PDF document synthesis
+  pdf_synthesis:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    prompt: |
+      Analyze this PDF document and generate structured synthesis metadata.
+      
+      TASK:
+      1. Read and understand the complete document
+      2. Identify the document type (lecture notes, textbook chapter, research paper, etc.)
+      3. Extract structural elements (headings, sections, figures, tables, citations)
+      4. Generate a comprehensive summary (150-300 words)
+      5. Extract 5-15 key concepts with brief definitions
+      6. Generate 3-10 semantic tags for categorization
+      7. Identify any prerequisites or related topics
+      8. Note any actionable items or questions raised
+      
+      OUTPUT SCHEMA:
+      {
+        "summary": "string (150-300 words)",
+        "document_type": "lecture_notes | textbook_chapter | research_paper | article | other",
+        "subject": "string (primary subject area)",
+        "key_concepts": [
+          {"term": "string", "definition": "string (1-2 sentences)"}
+        ],
+        "tags": ["string"],
+        "structure": {
+          "headings": ["string"],
+          "has_figures": boolean,
+          "has_tables": boolean,
+          "has_citations": boolean,
+          "page_count": number
+        },
+        "prerequisites": ["string"],
+        "related_topics": ["string"],
+        "action_items": ["string"],
+        "difficulty_level": "beginner | intermediate | advanced",
+        "estimated_study_time_minutes": number
+      }
+    response_mime_type: "application/json"
+
+  # Image/handwriting synthesis
+  image_synthesis:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    prompt: |
+      Analyze this image (handwritten notes, diagram, screenshot, or illustration) 
+      and generate structured synthesis metadata.
+      
+      TASK:
+      1. Identify the image type (handwritten notes, diagram, chart, illustration, screenshot)
+      2. If handwritten: Perform OCR to extract all text
+      3. If diagram/chart: Describe the structure and information conveyed
+      4. If illustration: Describe the visual content and educational purpose
+      5. Generate a summary of the information content
+      6. Extract key concepts visible in the image
+      7. Generate semantic tags
+      
+      OUTPUT SCHEMA:
+      {
+        "image_type": "handwritten_notes | diagram | chart | illustration | screenshot | other",
+        "ocr_text": "string (extracted text, or null if not applicable)",
+        "summary": "string (100-200 words)",
+        "key_concepts": [
+          {"term": "string", "definition": "string"}
+        ],
+        "tags": ["string"],
+        "visual_elements": {
+          "has_equations": boolean,
+          "has_diagrams": boolean,
+          "has_lists": boolean,
+          "has_graphs": boolean,
+          "color_significance": "string or null"
+        },
+        "quality_score": 1-10,
+        "related_topics": ["string"],
+        "suggested_connections": ["string (concepts this might connect to)"]
+      }
+    response_mime_type: "application/json"
+
+  # Audio synthesis
+  audio_synthesis:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    prompt: |
+      Analyze this audio file (lecture recording, study session, discussion)
+      and generate structured synthesis metadata.
+      
+      TASK:
+      1. Transcribe the audio content
+      2. Identify the audio type (lecture, discussion, podcast, notes)
+      3. Identify speakers if multiple
+      4. Generate a comprehensive summary
+      5. Extract key points and concepts
+      6. Note any questions or action items
+      7. Generate semantic tags
+      
+      OUTPUT SCHEMA:
+      {
+        "audio_type": "lecture | discussion | podcast | voice_notes | other",
+        "duration_seconds": number,
+        "transcript": "string (full transcript)",
+        "summary": "string (150-300 words)",
+        "speakers": [{"id": "string", "speaking_time_percent": number}],
+        "key_points": ["string"],
+        "key_concepts": [
+          {"term": "string", "timestamp": "string", "context": "string"}
+        ],
+        "tags": ["string"],
+        "questions_raised": ["string"],
+        "action_items": ["string"],
+        "topics_timeline": [
+          {"topic": "string", "start_time": "string", "end_time": "string"}
+        ]
+      }
+    response_mime_type: "application/json"
+
+  # URL/web content synthesis
+  url_synthesis:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    prompt: |
+      Analyze this web page content and generate structured synthesis metadata.
+      
+      TASK:
+      1. Identify the content type (article, documentation, tutorial, reference)
+      2. Extract the main content (ignore navigation, ads, footers)
+      3. Generate a comprehensive summary
+      4. Extract key concepts and definitions
+      5. Note any code examples or technical details
+      6. Identify related links and references
+      7. Generate semantic tags
+      
+      OUTPUT SCHEMA:
+      {
+        "content_type": "article | documentation | tutorial | reference | blog | other",
+        "title": "string",
+        "author": "string or null",
+        "publication_date": "string (ISO date) or null",
+        "summary": "string (150-300 words)",
+        "main_content": "string (cleaned text)",
+        "key_concepts": [
+          {"term": "string", "definition": "string"}
+        ],
+        "tags": ["string"],
+        "code_snippets": [
+          {"language": "string", "purpose": "string", "snippet": "string"}
+        ],
+        "related_links": [
+          {"title": "string", "url": "string"}
+        ],
+        "domain_authority": "high | medium | low",
+        "freshness_date": "string (ISO date of last update)"
+      }
+    response_mime_type: "application/json"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# LINKAGE DISCOVERY PROMPTS (Use Case 2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+linkage_discovery:
+  # Analyze connections between multiple documents
+  connection_analysis:
+    endpoint: "generateContent"
+    model: "gemini-2.5-pro-preview"
+    prompt: |
+      You are a Knowledge Graph Architect. Analyze these synthesized documents 
+      and discover connections between them.
+      
+      DOCUMENTS:
+      {{documents_json}}
+      
+      TASK:
+      1. Analyze the semantic content of each document
+      2. Identify conceptual overlaps (shared themes, vocabulary, principles)
+      3. Identify sequential relationships (prerequisite/progression chains)
+      4. Identify contrastive relationships (opposing views, alternatives)
+      5. Calculate confidence scores for each proposed connection
+      6. Generate rationale for each connection
+      
+      OUTPUT SCHEMA:
+      {
+        "analysis_summary": "string (overall relationship analysis)",
+        "connections": [
+          {
+            "source_id": "string",
+            "target_id": "string",
+            "connection_type": "conceptual | sequential | contrastive | causal | reference",
+            "label": "string (short connection label)",
+            "rationale": "string (why this connection exists)",
+            "shared_concepts": ["string"],
+            "confidence": 0.0-1.0,
+            "strength": "strong | moderate | weak"
+          }
+        ],
+        "clusters": [
+          {
+            "cluster_id": "string",
+            "document_ids": ["string"],
+            "theme": "string",
+            "synthesis_opportunity": "string (what synthesis could be created from this cluster)"
+          }
+        ],
+        "meta_insights": [
+          "string (high-level observations about the knowledge set)"
+        ]
+      }
+    response_mime_type: "application/json"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONVERSATIONAL PROMPTS (Use Case 3)
+# ═══════════════════════════════════════════════════════════════════════════
+
+conversational:
+  # Intent classification for query routing
+  intent_classification:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    prompt: |
+      Classify the user's query intent to determine optimal processing route.
+      
+      QUERY: {{user_query}}
+      
+      AVAILABLE ROUTES:
+      - factual_lookup: Direct fact retrieval from knowledge base
+      - synthesis_request: Create new synthesis from existing documents
+      - exploration: Open-ended knowledge exploration
+      - comparison: Compare/contrast multiple concepts or documents
+      - action_request: Perform an action (create, edit, delete, export)
+      - clarification: User needs clarification on previous response
+      
+      OUTPUT SCHEMA:
+      {
+        "primary_intent": "factual_lookup | synthesis_request | exploration | comparison | action_request | clarification",
+        "confidence": 0.0-1.0,
+        "secondary_intents": ["string"],
+        "entities": [
+          {"entity": "string", "type": "topic | document | concept | action"}
+        ],
+        "requires_rag": boolean,
+        "requires_synthesis": boolean,
+        "suggested_follow_up": "string or null"
+      }
+    response_mime_type: "application/json"
+
+  # RAG-enhanced response generation
+  rag_response:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    system_prompt: |
+      You are a Knowledge Synthesis Assistant with access to the user's 
+      personal knowledge base. When answering:
+      
+      1. Use ONLY information from the provided context
+      2. Cite sources using [1], [2] notation
+      3. If information is not in context, say so clearly
+      4. Synthesize information across multiple sources when relevant
+      5. Highlight connections between concepts
+      6. Suggest follow-up questions for deeper exploration
+      
+      CONTEXT FROM KNOWLEDGE BASE:
+      {{retrieved_context}}
+      
+      USER QUERY: {{user_query}}
+    prompt: |
+      Answer the user's query using the knowledge base context.
+      Include citations and suggest related topics.
+      
+      OUTPUT SCHEMA:
+      {
+        "answer": "string (main response with [n] citations inline)",
+        "citations": [
+          {
+            "id": "string",
+            "source_title": "string",
+            "excerpt": "string (relevant excerpt)",
+            "relevance_score": 0.0-1.0
+          }
+        ],
+        "confidence": 0.0-1.0,
+        "knowledge_gaps": ["string (topics not covered in knowledge base)"],
+        "follow_up_questions": ["string"],
+        "related_topics": ["string"]
+      }
+    response_mime_type: "application/json"
+
+  # Cross-document synthesis request
+  synthesis_request:
+    endpoint: "generateContent"
+    model: "gemini-2.5-pro-preview"
+    prompt: |
+      Create a synthesis analysis based on the user's request.
+      
+      USER REQUEST: {{user_request}}
+      
+      SOURCE DOCUMENTS:
+      {{source_documents_json}}
+      
+      TASK:
+      1. Analyze all provided documents
+      2. Identify themes, patterns, and relationships
+      3. Create a synthesis that addresses the user's request
+      4. Cite all sources used
+      5. Highlight unique insights from combining sources
+      6. Note any contradictions or gaps
+      
+      OUTPUT SCHEMA:
+      {
+        "synthesis_title": "string",
+        "synthesis_content": "string (multi-paragraph synthesis)",
+        "sources_used": [
+          {"id": "string", "contribution": "string"}
+        ],
+        "key_insights": [
+          {"insight": "string", "source_ids": ["string"]}
+        ],
+        "contradictions": [
+          {"topic": "string", "source_a": "string", "source_b": "string", "details": "string"}
+        ],
+        "knowledge_gaps": ["string"],
+        "recommended_actions": ["string"],
+        "suggested_additions": ["string (suggested new sources to add)"]
+      }
+    response_mime_type: "application/json"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AUTO-ORGANIZATION PROMPTS (Use Case 4)
+# ═══════════════════════════════════════════════════════════════════════════
+
+organization:
+  # Subject classification
+  subject_classification:
+    endpoint: "generateContent"
+    model: "gemini-2.0-flash-latest"
+    prompt: |
+      Classify this document into subject categories.
+      
+      DOCUMENT METADATA:
+      {{document_metadata_json}}
+      
+      EXISTING CATEGORIES:
+      {{existing_categories}}
+      
+      TASK:
+      1. Analyze the document content and metadata
+      2. Determine primary and secondary subjects
+      3. Suggest sub-categories if applicable
+      4. Determine if new category is needed
+      
+      OUTPUT SCHEMA:
+      {
+        "primary_subject": "string",
+        "secondary_subjects": ["string"],
+        "sub_categories": ["string"],
+        "new_category_suggested": {
+          "needed": boolean,
+          "name": "string or null",
+          "rationale": "string or null"
+        },
+        "confidence": 0.0-1.0,
+        "classification_reasoning": "string"
+      }
+    response_mime_type: "application/json"
+
+  # Organization recommendations
+  organization_recommendations:
+    endpoint: "generateContent"
+    model: "gemini-2.5-pro-preview"
+    prompt: |
+      Analyze this knowledge vault and recommend organization strategies.
+      
+      VAULT CONTENTS:
+      {{vault_summary_json}}
+      
+      CURRENT ORGANIZATION:
+      {{current_organization}}
+      
+      TASK:
+      1. Analyze the complete vault structure
+      2. Identify organizational inefficiencies
+      3. Generate 3 alternative organization strategies
+      4. Calculate efficiency metrics for each
+      5. Recommend primary strategy with rationale
+      
+      OUTPUT SCHEMA:
+      {
+        "current_assessment": {
+          "strengths": ["string"],
+          "weaknesses": ["string"],
+          "efficiency_score": 0.0-1.0
+        },
+        "recommendations": [
+          {
+            "strategy_name": "chronological | conceptual | hybrid | custom",
+            "description": "string",
+            "structure": {
+              "top_level_categories": ["string"],
+              "sub_structure": {}
+            },
+            "documents_moved": number,
+            "efficiency_improvement": 0.0-1.0,
+            "implementation_effort": "low | medium | high"
+          }
+        ],
+        "primary_recommendation": {
+          "strategy_index": number,
+          "rationale": "string"
+        },
+        "auto_groupings": [
+          {"name": "string", "document_ids": ["string"], "auto_created": boolean}
+        ]
+      }
+    response_mime_type: "application/json"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EMBEDDING CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+embeddings:
+  endpoint: "embedContent"
+  model: "text-embedding-004"
+  task_types:
+    retrieval_document: "RETRIEVAL_DOCUMENT"  # For indexing
+    retrieval_query: "RETRIEVAL_QUERY"        # For searching
+    semantic_similarity: "SEMANTIC_SIMILARITY" # For linkage
+  dimensions: 768
+  batch_size: 100
+  
+  # Chunking strategy for embedding
+  chunking:
+    max_tokens: 512
+    overlap_tokens: 50
+    split_strategy: "semantic"  # Use document structure when available
