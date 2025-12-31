@@ -29,6 +29,23 @@ export {
   type ProviderModelsState
 } from './provider-models-store';
 
+// New split stores (FC-01: Foundation Consolidation)
+// These replace provider-models-store.ts - split into provider and models concerns
+export {
+  useProviderConfigStore,
+  useProviderState,
+  useSelectedProvider,
+  type ProviderConfigState,
+  type CustomProvider
+} from '@/stores/provider-config-store';
+
+export {
+  useModelsStore,
+  useProviderModels as useModelsForProvider,
+  useSelectedModel,
+  type ModelsState
+} from '@/stores/models-loader-store';
+
 export {
   useAutoApproveStore,
   TOOL_CATEGORY_MAP,

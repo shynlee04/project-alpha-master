@@ -44,7 +44,7 @@ export interface CustomProvider {
     isHardcoded: false
 }
 
-interface ProviderState {
+export interface ProviderConfigState {
     // State
     providers: Record<string, ProviderStateEntry>
     selectedProviderId: string
@@ -69,7 +69,7 @@ interface ProviderState {
 // Store
 // ============================================================================
 
-export const useProviderStore = create<ProviderState>()(
+export const useProviderConfigStore = create<ProviderConfigState>()(
     subscribeWithSelector(
         persist(
             (set, get) => ({
@@ -314,9 +314,9 @@ export const useProviderStore = create<ProviderState>()(
  * Hook to get provider state
  */
 export function useProviderState(providerId: string) {
-    const hasApiKey = useProviderStore(s => s.providers[providerId]?.hasApiKey || false)
-    const error = useProviderStore(s => s.providers[providerId]?.error)
-    const refreshStatus = useProviderStore(s => s.refreshProviderStatus)
+    const hasApiKey = useProviderConfigStore(s => s.providers[providerId]?.hasApiKey || false)
+    const error = useProviderConfigStore(s => s.providers[providerId]?.error)
+    const refreshStatus = useProviderConfigStore(s => s.refreshProviderStatus)
 
     return { hasApiKey, error, refreshStatus }
 }
@@ -325,8 +325,8 @@ export function useProviderState(providerId: string) {
  * Hook to get selected provider
  */
 export function useSelectedProvider() {
-    const providerId = useProviderStore(s => s.selectedProviderId)
-    const setProvider = useProviderStore(s => s.setSelectedProvider)
+    const providerId = useProviderConfigStore(s => s.selectedProviderId)
+    const setProvider = useProviderConfigStore(s => s.setSelectedProvider)
 
     return { providerId, setProvider }
 }

@@ -31,14 +31,14 @@ import { useProviderConfigStore } from './provider-config-store'
 // Types
 // ============================================================================
 
-interface ModelStateEntry {
+export interface ModelStateEntry {
     models: ModelInfo[]
     isLoadingModels: boolean
     lastFetchedAt: number | null
     error: string | null
 }
 
-interface ModelsState {
+export interface ModelsState {
     // State
     models: Record<string, ModelStateEntry>
     selectedModelId: string | null
@@ -73,7 +73,7 @@ export const useModelsStore = create<ModelsState>()(
          */
         loadModelsForProvider: async (providerId: string) => {
             const state = get().models[providerId]
-            const providerEntry = useProviderStore.getState().providers[providerId]
+            const providerEntry = useProviderConfigStore.getState().providers[providerId]
 
             if (!providerEntry) {
                 console.warn(`[ModelsStore] Provider not initialized: ${providerId}`)
@@ -172,7 +172,7 @@ export const useModelsStore = create<ModelsState>()(
          */
         setSelectedModel: (modelId: string) => {
             const previousModelId = get().selectedModelId
-            const providerId = useProviderStore.getState().selectedProviderId
+            const providerId = useProviderConfigStore.getState().selectedProviderId
             set({ selectedModelId: modelId })
 
             // Emit event for cross-workspace sync
@@ -290,7 +290,7 @@ export function useProviderModels(providerId: string) {
 export function useSelectedModel() {
     const modelId = useModelsStore(s => s.selectedModelId)
     const setModel = useModelsStore(s => s.setSelectedModel)
-    const providerId = useProviderStore(s => s.selectedProviderId)
+    const providerId = useProviderConfigStore(s => s.selectedProviderId)
     const models = useModelsStore(s => s.getModelsForProvider(providerId))
 
     return { modelId, setModel, models, providerId }
