@@ -2,7 +2,7 @@
  * IDE Layout Components
  *
  * Orchestrates IDE layout with resizable panels.
- * Split from IDELayout.tsx (604 lines) into 6 sub-components.
+ * Split from IDELayout.tsx (604 lines) into 14 sub-components.
  *
  * @layer Presentation
  * @component IDELayout
@@ -15,4 +15,10 @@ export { IDETerminalPanel } from './IDETerminalPanel';
 export { IDEChatPanel } from './IDEChatPanel';
 export { IDESidebarPanels } from './IDESidebarPanels';
 export { IDEResizableLayout } from './IDEResizableLayout';
+export { IDEEditorPreviewGroup } from './IDEEditorPreviewGroup';
 export { useIDELayoutState } from './useIDELayoutState';
+export { useIDELayoutFileState } from './useIDELayoutFileState';
+export { useIDELayoutWorkspaceState } from './useIDELayoutWorkspaceState';
+export { useIDELayoutDiscoveryState } from './useIDELayoutDiscoveryState';
+export { useIDELayoutPanelRefs } from './useIDELayoutPanelRefs';
+export * from './types';

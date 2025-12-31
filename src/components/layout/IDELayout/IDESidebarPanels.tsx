@@ -8,12 +8,7 @@
  */
 
 import { useSidebar } from '../../ide/IconSidebar';
-import { WithErrorBoundary } from '@/components/common/ErrorBoundary';
-import { FileTree } from '../../ide/FileTree';
-import { ExplorerPanel } from '../../ide/ExplorerPanel';
-import { AgentsPanel } from '../../ide/AgentsPanel';
-import { SearchPanel } from '../../ide/SearchPanel';
-import { SettingsPanel } from '../../ide/SettingsPanel';
+import { IDEExplorerPanel, IDEAgentsPanel, IDESearchPanel, IDESettingsPanel } from './IDESidebarPanelComponents';
 
 interface IDESidebarPanelsProps {
     selectedFilePath?: string;
@@ -33,101 +28,14 @@ export function IDESidebarPanels({
 
     switch (activePanel) {
         case 'explorer':
-            return (
-                <WithErrorBoundary
-                    fallback={
-                        <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                                <p className="text-sm font-medium">Explorer Error</p>
-                                <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The file explorer encountered an error. Please refresh the page.
-                                </p>
-                            </div>
-                        </div>
-                    }
-                >
-                    <ExplorerPanel>
-                        <FileTree
-                            selectedPath={selectedFilePath}
-                            onFileSelect={onFileSelect}
-                            refreshKey={fileTreeRefreshKey}
-                        />
-                    </ExplorerPanel>
-                </WithErrorBoundary>
-            );
+            return <IDEExplorerPanel selectedFilePath={selectedFilePath} onFileSelect={onFileSelect} fileTreeRefreshKey={fileTreeRefreshKey} />;
         case 'agents':
-            return (
-                <WithErrorBoundary
-                    fallback={
-                        <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                                <p className="text-sm font-medium">Agents Error</p>
-                                <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The agents panel encountered an error. Please refresh the page.
-                                </p>
-                            </div>
-                        </div>
-                    }
-                >
-                    <AgentsPanel />
-                </WithErrorBoundary>
-            );
+            return <IDEAgentsPanel />;
         case 'search':
-            return (
-                <WithErrorBoundary
-                    fallback={
-                        <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                                <p className="text-sm font-medium">Search Error</p>
-                                <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The search panel encountered an error. Please refresh the page.
-                                </p>
-                            </div>
-                        </div>
-                    }
-                >
-                    <SearchPanel />
-                </WithErrorBoundary>
-            );
+            return <IDESearchPanel />;
         case 'settings':
-            return (
-                <WithErrorBoundary
-                    fallback={
-                        <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                                <p className="text-sm font-medium">Settings Error</p>
-                                <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The settings panel encountered an error. Please refresh the page.
-                                </p>
-                            </div>
-                        </div>
-                    }
-                >
-                    <SettingsPanel />
-                </WithErrorBoundary>
-            );
+            return <IDESettingsPanel />;
         default:
-            return (
-                <WithErrorBoundary
-                    fallback={
-                        <div className="h-full flex items-center justify-center text-muted-foreground">
-                            <div className="text-center">
-                                <p className="text-sm font-medium">Explorer Error</p>
-                                <p className="text-xs text-muted-foreground/70 mt-1">
-                                    The file explorer encountered an error. Please refresh the page.
-                                </p>
-                            </div>
-                        </div>
-                    }
-                >
-                    <ExplorerPanel>
-                        <FileTree
-                            selectedPath={selectedFilePath}
-                            onFileSelect={onFileSelect}
-                            refreshKey={fileTreeRefreshKey}
-                        />
-                    </ExplorerPanel>
-                </WithErrorBoundary>
-            );
+            return <IDEExplorerPanel selectedFilePath={selectedFilePath} onFileSelect={onFileSelect} fileTreeRefreshKey={fileTreeRefreshKey} />;
     }
 }

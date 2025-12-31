@@ -3,18 +3,51 @@
  * This file re-exports from the new consolidated location for backward compatibility
  */
 
-export { useAgentsStore } from './agents-store';
-export { useAgentSelection, activeAgentId, setActiveAgent } from './agent-selection-store';
-export { useProviderModelsStore } from './provider-models-store';
-export { useAutoApproveStore } from './auto-approve-store';
-export { usePromptEnhancementStore } from './prompt-enhancement-store';
-export { useThreadsStore, createThread, setActiveThread } from './conversation-threads-store';
-export { useOpenAICompatibleStore } from './openai-compatible-store';
+// Re-export from consolidated stores location
+export {
+  useAgentsStore,
+  useAgentsStoreHydration,
+  DEFAULT_AGENT,
+  type AgentsState
+} from '@/infrastructure/persistence/stores/agents-store';
 
-export type { AgentState } from './agents-store';
-export type { AgentSelectionState } from './agent-selection-store';
-export type { ProviderModelState } from './provider-models-store';
-export type { AutoApproveState } from './auto-approve-store';
-export type { PromptEnhancementState } from './prompt-enhancement-store';
-export type { ThreadsState, ConversationThread, ThreadMessage } from './conversation-threads-store';
-export type { OpenAICompatibleState } from './openai-compatible-store';
+export {
+  useAgentSelection,
+  useActiveAgent,
+  type AgentSelectionState
+} from '@/infrastructure/persistence/stores/agent-selection-store';
+
+export {
+  useProviderModelsStore,
+  useProviderModels,
+  useSelectedProviderModel,
+  type ProviderModelsState
+} from '@/infrastructure/persistence/stores/provider-models-store';
+
+export {
+  useAutoApproveStore,
+  TOOL_CATEGORY_MAP,
+  type AutoApproveState,
+  type ToolCategory
+} from '@/infrastructure/persistence/stores/auto-approve-store';
+
+export {
+  usePromptEnhancementStore,
+  type PromptEnhancementState
+} from '@/infrastructure/persistence/stores/prompt-enhancement-store';
+
+export {
+  useThreadsStore,
+  useActiveThread,
+  useProjectThreads,
+  useThreadsHydration,
+  type ThreadsState,
+  type ThreadMessage,
+  type ThreadToolCall,
+  type ConversationThread
+} from '@/infrastructure/persistence/stores/conversation-threads-store';
+
+export {
+  useOpenAICompatibleStore,
+  type OpenAICompatibleState
+} from '@/infrastructure/persistence/stores/openai-compatible-store';
