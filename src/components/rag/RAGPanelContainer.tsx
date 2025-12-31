@@ -9,7 +9,7 @@
 
 import { useState, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, MessageSquare, Sparkles } from 'lucide-react';
+import { Search, MessageSquare } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RAGSearchPanel } from './RAGSearchPanel';
 import { RAGChatPanel } from './RAGChatPanel';
@@ -91,7 +91,7 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
   const displayCitation = activeCitation || storeActiveCitation;
 
   // Check if we have sources to search (for future EmptyState usage)
-  const _hasSources = documentCount > 0;
+  // const _hasSources = documentCount > 0;
 
   return (
     <div className="flex h-full w-full">
@@ -163,20 +163,20 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
  * Placeholder shown when no sources are indexed
  * (Currently unused, reserved for future implementation)
  */
-function _EmptyState() {
-  const { t } = useTranslation();
-
-  return (
-    <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-accent/50 flex items-center justify-center mb-4">
-        <Sparkles size={32} className="text-primary/50" />
-      </div>
-      <p className="font-medium mb-2">{t('rag.empty.title', 'No Sources Indexed')}</p>
-      <p className="text-sm mb-4">
-        {t('rag.empty.hint', 'Add sources to your knowledge base to enable search and chat')}
-      </p>
-    </div>
-  );
-}
+// function _EmptyState() {
+//   const { t } = useTranslation();
+//
+//   return (
+//     <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6 text-center">
+//       <div className="w-16 h-16 rounded-full bg-accent/50 flex items-center justify-center mb-4">
+//         <Sparkles size={32} className="text-primary/50" />
+//       </div>
+//       <p className="font-medium mb-2">{t('rag.empty.title', 'No Sources Indexed')}</p>
+//       <p className="text-sm mb-4">
+//         {t('rag.empty.hint', 'Add sources to your knowledge base to enable search and chat')}
+//       </p>
+//     </div>
+//   );
+// }
 
 export default RAGPanelContainer;

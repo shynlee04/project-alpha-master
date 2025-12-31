@@ -10,9 +10,8 @@
  */
 
 import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { useTranslation } from 'react-i18next'
 
 /**
  * Textarea component props interface
@@ -100,8 +99,6 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref
   ) => {
-    const { t } = useTranslation()
-
     const baseId = React.useId()
     const textareaId = props.id || baseId
     const errorId = `${textareaId}-error`

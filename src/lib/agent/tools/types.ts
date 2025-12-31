@@ -45,6 +45,16 @@ export interface ToolExecutionContext {
 }
 
 /**
+ * Information about a tool call
+ */
+export interface ToolCallInfo {
+    toolId: string;
+    toolName: string;
+    parameters: Record<string, unknown>;
+    timestamp: number;
+}
+
+/**
  * Request for tool execution with permission check
  */
 export interface ToolExecutionRequest {

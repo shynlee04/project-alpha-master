@@ -63,7 +63,6 @@ export function QuestionCard({
   className,
 }: QuestionCardProps) {
   const { t } = useTranslation();
-  const [hoveredOption, setHoveredOption] = useState<number | null>(null);
 
   const getOptionVariant = (optionIndex: number): VariantProps<typeof optionVariants>['variant'] => {
     if (showAnswer) {
@@ -102,8 +101,6 @@ export function QuestionCard({
             key={optionIndex}
             onClick={() => !showAnswer && onSelectAnswer(optionIndex)}
             disabled={showAnswer}
-            onMouseEnter={() => setHoveredOption(optionIndex)}
-            onMouseLeave={() => setHoveredOption(null)}
             className={cn(
               optionVariants({ variant: getOptionVariant(optionIndex) }),
               'flex items-center gap-3',

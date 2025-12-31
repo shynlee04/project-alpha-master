@@ -557,6 +557,26 @@ export async function deleteFSAHandle(projectId: string): Promise<void> {
 }
 
 /**
+ * Update FSA handle permission status
+ */
+export async function updateFSAHandlePermission(
+    projectId: string,
+    status: FSAHandleRecord['permissionStatus']
+): Promise<void> {
+    await db.fsaHandles.update(projectId, {
+        permissionStatus: status,
+        updatedAt: Date.now()
+    });
+}
+
+/**
+ * Clear all FSA handles (privacy operation)
+ */
+export async function clearAllFSAHandles(): Promise<void> {
+    await db.fsaHandles.clear();
+}
+
+/**
  * Get all valid FSA handles (for dashboard display)
  */
 export async function getAllValidFSAHandles(): Promise<FSAHandleRecord[]> {

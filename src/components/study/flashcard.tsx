@@ -287,4 +287,4 @@ export function FlashcardView({
  * Memoized flashcard component to prevent unnecessary re-renders
  * (Reserved for future use)
  */
-const _MemoizedFlashcardView = memo(FlashcardView);
+// const _MemoizedFlashcardView = memo(FlashcardView);

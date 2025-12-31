@@ -39,7 +39,6 @@ function formatTime(seconds: number): string {
  */
 export function StudyStatsDisplay({
   stats,
-  totalCardsStudied,
   onRestart,
   onExit,
 }: StudyStatsDisplayProps) {
@@ -52,7 +51,7 @@ export function StudyStatsDisplay({
       : 0;
 
   // Determine streak status
-  const streakStatus = stats.streak > 0 ? 'hot' : 'cold';
+  // const streakStatus = stats.streak > 0 ? 'hot' : 'cold';
   const streakEmoji = stats.streak > 0 ? '🔥' : '❄️';
 
   return (

@@ -81,7 +81,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     // CC-2025-12-26-006: Key for forcing chat hook remount on clear/thread switch
     // Incrementing this causes the chat hook to reset its internal state
-    const [chatResetKey, setChatResetKey] = useState(0);
+    // const [chatResetKey, setChatResetKey] = useState(0);
 
     // Prompt Enhancement State
     const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();

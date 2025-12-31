@@ -49,7 +49,7 @@ export function StudySession({
     nextCard,
     previousCard,
     completeSession,
-    progress,
+    // progress,
     currentIndex,
     totalCards,
     resetSession,

@@ -56,7 +56,6 @@ export function useAgentConfigProvider({
     open,
     setApiKey,
     setModel,
-    _agent,
 }: UseAgentConfigProviderProps): UseAgentConfigProviderReturn {
     const { t } = useTranslation()
 

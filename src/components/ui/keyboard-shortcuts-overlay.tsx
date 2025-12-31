@@ -9,9 +9,9 @@
  */
 
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X, Keyboard, Search, Save, FileText, Terminal, Layout, ChevronRight, HelpCircle } from "lucide-react";
+import { X, Keyboard, Search, FileText, Terminal, Layout, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

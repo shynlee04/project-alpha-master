@@ -36,7 +36,6 @@ export function TruncatedText({
     delayDuration = 300,
     side = "top",
     tooltipContent,
-    forceTooltip = false,
 }: TruncatedTextProps) {
     // If no text, just return null to be safe
     if (!text) return null;

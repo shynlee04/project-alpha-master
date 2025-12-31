@@ -34,6 +34,11 @@ export interface ConversationSearchResult {
   tags: string[];
 }
 
+export interface ConversationSearchOptions {
+  limit?: number;
+  includeExcluded?: boolean;
+}
+
 /**
  * Conversation database class
  */

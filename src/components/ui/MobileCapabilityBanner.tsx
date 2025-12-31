@@ -17,7 +17,7 @@ export function MobileCapabilityBanner() {
     const { t } = useTranslation();
     const { canBootWebContainer } = useCapabilityDetection();
     const [showModal, setShowModal] = useState(false);
-    const [isDismissed, setIsDismissed] = useState(false);
+    const [isDismissed] = useState(false);
 
     // If we CAN boot WebContainer, or if user dismissed it, don't show
     if (canBootWebContainer || isDismissed) {

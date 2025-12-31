@@ -6,8 +6,7 @@
  * Follows 8-bit design system with CVA variants.
  */
 
-import React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 /**
@@ -67,7 +66,6 @@ export function SkeletonLoader({
     lines = 1,
     width,
     height,
-    animate = true,
     className,
 }: SkeletonLoaderProps) {
     const baseClasses = cn(skeletonVariants({ variant }), className)

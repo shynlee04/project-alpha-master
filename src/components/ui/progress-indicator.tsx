@@ -8,7 +8,6 @@
  * Follows 8-bit design system with pixel aesthetic.
  */
 
-import * as React from "react";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
