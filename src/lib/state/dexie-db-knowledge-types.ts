@@ -190,6 +190,63 @@ export interface NoteRecord {
 }
 
 // ============================================================================
+// KSI Module: Synthesis Results Table
+// ============================================================================
+
+/**
+ * Synthesis result record for AI-generated knowledge frontmatter
+ * Stores structured synthesis results for knowledge sources.
+ *
+ * @module KSI Module
+ * @epic Knowledge Synthesis Integration
+ * @story 2 - Synthesis UI Layer
+ */
+export interface SynthesisResultRecord {
+    /** Primary key (UUID) */
+    id: string;
+
+    /** Foreign key to source being synthesized */
+    sourceId: string;
+
+    /** Foreign key to project */
+    projectId: string;
+
+    /** Source type at time of synthesis */
+    sourceType: 'pdf' | 'url' | 'text';
+
+    /** AI-generated frontmatter (validated by SynthesisFrontmatterSchema) */
+    frontmatter: {
+        summary: string;
+        documentType: string;
+        subject: string;
+        keyConcepts: Array<{ term: string; definition: string }>;
+        topics: string[];
+        tags: string[];
+        difficultyLevel: string;
+        estimatedReadingTime: string;
+        prerequisites: string[];
+        learningObjectives: string[];
+        targetAudience: string;
+        language: string;
+    };
+
+    /** Current synthesis status */
+    status: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed';
+
+    /** Error message if synthesis failed */
+    errorMessage?: string;
+
+    /** Timestamp when synthesis completed */
+    synthesizedAt?: number;
+
+    /** Record creation timestamp */
+    createdAt: number;
+
+    /** Last update timestamp */
+    updatedAt: number;
+}
+
+// ============================================================================
 // Table Type Exports
 // ============================================================================
 
@@ -198,3 +255,4 @@ export type CollectionsTable = Table<CollectionRecord, string>;
 export type OramaIndexesTable = Table<OramaIndexRecord, string>;
 export type EmbeddingModelsTable = Table<EmbeddingModelRecord, string>;
 export type NotesTable = Table<NoteRecord, string>;
+export type SynthesisResultsTable = Table<SynthesisResultRecord, string>;

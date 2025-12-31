@@ -8,7 +8,7 @@
  * Uses Radix UI Dropdown Menu for accessibility and keyboard navigation.
  */
 
-import { MoreVertical, Sparkles } from 'lucide-react';
+import { MoreVertical, Sparkles, Brain } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -40,6 +40,9 @@ export interface SourceContextMenuProps {
     /** Callback when view metadata is selected (Story 6-4) */
     onViewMetadata?: (source: SourceRecord) => void;
 
+    /** Callback when synthesize is selected (KSI Module) */
+    onSynthesize?: (source: SourceRecord) => void;
+
     /** Whether the menu is disabled */
     disabled?: boolean;
 
@@ -57,6 +60,7 @@ export interface SourceContextMenuProps {
  * - Move to Collection: Add to existing collection
  * - Export: Download as PDF or text
  * - Extract Metadata: AI analysis (Story 6.4)
+ * - Synthesize: AI-powered knowledge synthesis (KSI Module)
  *
  * Features:
  * - Keyboard navigation (arrow keys, Enter, Escape)
@@ -64,6 +68,7 @@ export interface SourceContextMenuProps {
  * - Accessible ARIA attributes
  * - 8-bit design styling
  * - Extract Metadata shown only when metadata not yet extracted
+ * - Synthesize shown only when not currently synthesizing
  */
 export function SourceContextMenu({
     source,
@@ -73,6 +78,7 @@ export function SourceContextMenu({
     onExport,
     onExtractMetadata,
     onViewMetadata,
+    onSynthesize,
     disabled = false,
     className,
 }: SourceContextMenuProps) {
@@ -115,6 +121,16 @@ export function SourceContextMenu({
                     >
                         <Sparkles className="w-4 h-4 mr-2" />
                         Extract Metadata
+                    </DropdownMenuItem>
+                )}
+                {/* KSI Module: Synthesize (shown when available) */}
+                {onSynthesize && (
+                    <DropdownMenuItem
+                        onClick={() => onSynthesize(source)}
+                        className="rounded-none cursor-pointer text-green-500 focus:text-green-500"
+                    >
+                        <Brain className="w-4 h-4 mr-2" />
+                        Synthesize
                     </DropdownMenuItem>
                 )}
                 <DropdownMenuItem

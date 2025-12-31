@@ -22,7 +22,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
-import type { SourceRecord, CollectionRecord, SourceMetadata } from './dexie-db';
+import type { SourceRecord, CollectionRecord, SourceMetadata, SynthesisResultRecord } from './dexie-db';
 import {
     db,
     getCollectionsForProject as dbGetCollectionsForProject,
@@ -30,8 +30,12 @@ import {
     deleteCollection as dbDeleteCollection,
     addSourceToCollection as dbAddSourceToCollection,
     removeSourceFromCollection as dbRemoveSourceFromCollection,
+    createSynthesisResult as dbCreateSynthesisResult,
+    updateSynthesisResultStatus as dbUpdateSynthesisResultStatus,
+    getSynthesisResultForSource as dbGetSynthesisResultForSource,
 } from './dexie-db';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
+import { createSynthesisService } from '@/lib/knowledge/synthesis-service';
 
 // ============================================================================
 // Types
@@ -90,6 +94,13 @@ interface KnowledgeStoreState {
     // Story 6-4: Metadata extraction state
     /** Source IDs currently being extracted */
     extractingMetadata: Set<string>;
+
+    // KSI Module: Synthesis state
+    /** Source IDs currently being synthesized */
+    synthesizingSources: Set<string>;
+
+    /** Synthesis results by source ID */
+    synthesisResults: Map<string, SynthesisResultRecord>;
 
     // Actions
 
@@ -152,6 +163,14 @@ interface KnowledgeStoreState {
     /** Update processing status */
     updateProcessingStatus: (sourceId: string, status: 'pending' | 'processing' | 'completed' | 'failed', error?: string) => Promise<void>;
 
+    // KSI Module: Synthesis Actions
+
+    /** Synthesize a source using AI */
+    synthesizeSource: (sourceId: string) => Promise<void>;
+
+    /** Load synthesis result for a source */
+    loadSynthesisResult: (sourceId: string) => Promise<void>;
+
     /** Reset store to initial state */
     reset: () => void;
 }
@@ -205,6 +224,10 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
 
             // Story 6-4: Metadata extraction state
             extractingMetadata: new Set<string>(),
+
+            // KSI Module: Synthesis state
+            synthesizingSources: new Set<string>(),
+            synthesisResults: new Map<string, SynthesisResultRecord>(),
 
             // Actions
             setHasHydrated: (state: boolean) => {
@@ -547,6 +570,98 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                 }
             },
 
+            // KSI Module: Synthesis Actions
+            synthesizeSource: async (sourceId: string) => {
+                const source = get().sources.find(s => s.id === sourceId);
+                if (!source || !source.content) {
+                    set({ error: 'Source not found or has no content' });
+                    return;
+                }
+
+                // Add to synthesizing set
+                set((state) => ({
+                    synthesizingSources: new Set([...state.synthesizingSources, sourceId])
+                }));
+
+                try {
+                    // Create synthesis result record
+                    const synthesisId = await dbCreateSynthesisResult(sourceId, source.projectId, source.type);
+
+                    // Update status to pending
+                    await dbUpdateSynthesisResultStatus(synthesisId, 'pending');
+
+                    // Create synthesis service
+                    const synthesisService = createSynthesisService({
+                        apiKey: '', // TODO: Get from user settings
+                        model: 'gemini-2.0-flash-exp',
+                    });
+
+                    // Build source document for synthesis
+                    const sourceDocument = {
+                        id: source.id,
+                        title: source.title,
+                        type: source.type,
+                        content: source.content,
+                        metadata: source.metadata || {},
+                    };
+
+                    // Synthesize with progress callbacks
+                    const result = await synthesisService.synthesize(sourceDocument, {
+                        onProgress: (progress) => {
+                            console.log('[KSI] Synthesis progress:', progress);
+                        },
+                    });
+
+                    // Update synthesis result with completed status
+                    await dbUpdateSynthesisResultStatus(
+                        synthesisId,
+                        'completed',
+                        result.frontmatter
+                    );
+
+                    // Load and cache the result
+                    await get().loadSynthesisResult(sourceId);
+
+                } catch (error) {
+                    console.error('[KSI] Synthesis failed:', error);
+                    set({ error: (error as Error).message });
+
+                    // Try to get synthesis result ID and update status to failed
+                    const synthesisResult = await dbGetSynthesisResultForSource(sourceId);
+                    if (synthesisResult) {
+                        await dbUpdateSynthesisResultStatus(
+                            synthesisResult.id,
+                            'failed',
+                            undefined,
+                            (error as Error).message
+                        );
+                    }
+                } finally {
+                    // Remove from synthesizing set
+                    set((state) => {
+                        const newSet = new Set(state.synthesizingSources);
+                        newSet.delete(sourceId);
+                        return { synthesizingSources: newSet };
+                    });
+                }
+            },
+
+            loadSynthesisResult: async (sourceId: string) => {
+                try {
+                    const result = await dbGetSynthesisResultForSource(sourceId);
+                    if (result) {
+                        set((state) => {
+                            const newMap = new Map(state.synthesisResults);
+                            newMap.set(sourceId, result);
+                            return { synthesisResults: newMap };
+                        });
+                    }
+                } catch (error) {
+                    console.error('[KSI] Failed to load synthesis result:', error);
+                    set({ error: (error as Error).message });
+                }
+            },
+
             reset: () => {
                 set({
                     sources: [],
@@ -558,6 +673,8 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                     filteredCollectionId: null,
                     undoQueue: [],
                     extractingMetadata: new Set<string>(),
+                    synthesizingSources: new Set<string>(),
+                    synthesisResults: new Map<string, SynthesisResultRecord>(),
                 });
             },
         }),

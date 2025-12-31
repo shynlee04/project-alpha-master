@@ -36,3 +36,19 @@ export {
     type SourceIndexingResult,
     type SourceRAGBridgeConfig,
 } from './source-rag-bridge';
+
+export {
+    SynthesisService,
+    createSynthesisService,
+    type SynthesisFrontmatter,
+    type SynthesisResult,
+    type SynthesisProgress,
+    type SynthesisOptions,
+    type SynthesisStatus,
+    type SourceDocument,
+    type SynthesizableSourceType,
+} from './synthesis-service';
+
+export {
+    SynthesisFrontmatterSchema,
+} from './synthesis-types';

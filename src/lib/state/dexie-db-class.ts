@@ -57,11 +57,13 @@ import type {
     OramaIndexRecord,
     EmbeddingModelRecord,
     NoteRecord,
+    SynthesisResultRecord,
     type SourcesTable,
     type CollectionsTable,
     type OramaIndexesTable,
     type EmbeddingModelsTable,
     type NotesTable,
+    type SynthesisResultsTable,
 } from './dexie-db-knowledge-types';
 
 // Import migrations
@@ -145,6 +147,12 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     notes!: NotesTable;
+
+    // ========================================================================
+    // KSI Module: Synthesis Results Table
+    // ========================================================================
+
+    synthesisResults!: SynthesisResultsTable;
 
     // ========================================================================
     // Constructor

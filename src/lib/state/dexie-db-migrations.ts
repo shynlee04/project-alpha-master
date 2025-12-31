@@ -538,4 +538,51 @@ export function registerMigrations(db: ViaGentDatabase): void {
                 itemsCount: 0
             });
         });
+
+        // Schema version 16: KSI Module - Synthesis Results
+        // Adds synthesisResults table for AI-generated knowledge frontmatter
+        db.version(16).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            // NEW: Synthesis results table for AI-generated frontmatter (KSI Module)
+            synthesisResults: 'id, sourceId, projectId, status, synthesizedAt, [sourceId+projectId], [projectId+status]',
+        }).upgrade(async () => {
+            logDexieMigration(16, 'ksi-synthesis-results', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(16)) {
+                logDexieMigration(16, 'ksi-synthesis-results', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(16);
+
+            logDexieMigration(16, 'ksi-synthesis-results', 'completed', {
+                tableName: 'synthesisResults',
+                itemsCount: 0
+            });
+        });
 }

@@ -7,7 +7,7 @@
  * Extended for Story 6.4: AI metadata extraction trigger and badge display.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { PDFIcon, URLIcon, TextIcon } from '@/presentation/components/ui/icons';
 import { SourceContextMenu } from './SourceContextMenu';
 import { RenameDialog } from './RenameDialog';
@@ -74,7 +74,16 @@ function getSourceIcon(source: SourceRecord) {
 
 export function SourceCard({ source, isActive = false, onSelect }: SourceCardProps) {
     const { t } = useTranslation();
-    const { deleteSource, renameSource, extractMetadata, extractingMetadata } = useKnowledgeStore();
+    const {
+        deleteSource,
+        renameSource,
+        extractMetadata,
+        extractingMetadata,
+        synthesizeSource,
+        synthesizingSources,
+        loadSynthesisResult,
+        synthesisResults,
+    } = useKnowledgeStore();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showRenameDialog, setShowRenameDialog] = useState(false);
     const [showCollectionSelector, setShowCollectionSelector] = useState(false);
@@ -84,6 +93,15 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
     const readingTime = calculateReadingTime(source, t);
     const metadata = formatMetadata(source, t);
     const isExtracting = extractingMetadata.has(source.id);
+    const isSynthesizing = synthesizingSources.has(source.id);
+
+    // Load synthesis result on mount
+    useEffect(() => {
+        loadSynthesisResult(source.id);
+    }, [source.id, loadSynthesisResult]);
+
+    const synthesisResult = synthesisResults.get(source.id);
+    const isSynthesized = synthesisResult?.status === 'completed';
 
     const handleDelete = useCallback(async () => {
         await deleteSource(source.id);
@@ -118,6 +136,15 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
             toast.success(t('knowledge.metadata.extractedSuccessfully'));
         } catch (error) {
             toast.error(error instanceof Error ? error.message : t('knowledge.metadata.extractFailed'));
+        }
+    };
+
+    const handleSynthesize = async () => {
+        try {
+            await synthesizeSource(source.id);
+            toast.success(t('knowledge.synthesis.synthesizedSuccessfully'));
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : t('knowledge.synthesis.synthesizeFailed'));
         }
     };
 
@@ -163,6 +190,17 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                                 ✨
                             </span>
                         )}
+                        {/* KSI Module: Synthesis badge */}
+                        {isSynthesized && (
+                            <span className="text-xs text-green-500" title={t('knowledge.synthesis.synthesized')}>
+                                🧠
+                            </span>
+                        )}
+                        {isSynthesizing && (
+                            <span className="text-xs text-primary animate-pulse" title={t('knowledge.synthesis.synthesizing')}>
+                                ⏳
+                            </span>
+                        )}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                         {source.type.toUpperCase()}
@@ -194,6 +232,8 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                     onViewMetadata={handleViewMetadata}
                     // Story 6-4: Add metadata extraction trigger
                     onExtractMetadata={!source.metadataExtracted ? handleExtractMetadata : undefined}
+                    // KSI Module: Add synthesis trigger
+                    onSynthesize={!isSynthesizing ? handleSynthesize : undefined}
                 />
             </div>
 

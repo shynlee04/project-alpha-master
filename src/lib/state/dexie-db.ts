@@ -109,6 +109,7 @@ import type {
     OramaIndexRecord,
     EmbeddingModelRecord,
     NoteRecord,
+    SynthesisResultRecord,
 } from './dexie-db-knowledge-types';
 
 export type {
@@ -119,6 +120,7 @@ export type {
     OramaIndexRecord,
     EmbeddingModelRecord,
     NoteRecord,
+    SynthesisResultRecord,
 } from './dexie-db-knowledge-types';
 
 export type {
@@ -127,6 +129,7 @@ export type {
     OramaIndexesTable,
     EmbeddingModelsTable,
     NotesTable,
+    SynthesisResultsTable,
 } from './dexie-db-knowledge-types';
 
 // ============================================================================
@@ -1060,4 +1063,206 @@ export async function getSourcesForCollection(
 
     const sources = await db.sources.bulkGet(collection.sourceIds);
     return sources.filter((s): s is SourceRecord => s !== undefined && !s.deleted);
+}
+
+// ============================================================================
+// KSI Module: Synthesis Results Helpers
+// ============================================================================
+
+/**
+ * Get synthesis result by ID.
+ *
+ * @param synthesisId - The synthesis result ID
+ * @returns The synthesis result record or undefined if not found
+ */
+export async function getSynthesisResult(
+    synthesisId: string
+): Promise<SynthesisResultRecord | undefined> {
+    return db.synthesisResults.get(synthesisId);
+}
+
+/**
+ * Get synthesis result for a source.
+ *
+ * @param sourceId - The source ID
+ * @returns The synthesis result record or undefined if not found
+ */
+export async function getSynthesisResultForSource(
+    sourceId: string
+): Promise<SynthesisResultRecord | undefined> {
+    const results = await db.synthesisResults
+        .where('sourceId')
+        .equals(sourceId)
+        .limit(1)
+        .toArray();
+    return results[0];
+}
+
+/**
+ * Get all synthesis results for a project.
+ *
+ * @param projectId - The project ID
+ * @returns Array of synthesis results sorted by synthesizedAt descending
+ */
+export async function getSynthesisResultsForProject(
+    projectId: string
+): Promise<SynthesisResultRecord[]> {
+    const results = await db.synthesisResults
+        .where('projectId')
+        .equals(projectId)
+        .toArray();
+
+    // Sort by synthesizedAt descending (most recent first), placing non-synthesized at the end
+    return results.sort((a, b) => {
+        if (!a.synthesizedAt && !b.synthesizedAt) return 0;
+        if (!a.synthesizedAt) return 1;
+        if (!b.synthesizedAt) return -1;
+        return b.synthesizedAt - a.synthesizedAt;
+    });
+}
+
+/**
+ * Get synthesis results by status for a project.
+ *
+ * @param projectId - The project ID
+ * @param status - The synthesis status to filter by
+ * @returns Array of synthesis results matching the status
+ */
+export async function getSynthesisResultsByStatus(
+    projectId: string,
+    status: SynthesisResultRecord['status']
+): Promise<SynthesisResultRecord[]> {
+    return db.synthesisResults
+        .where('[projectId+status]')
+        .equals([projectId, status])
+        .toArray();
+}
+
+/**
+ * Save a synthesis result (insert or update).
+ *
+ * @param result - The synthesis result record to save
+ */
+export async function saveSynthesisResult(
+    result: SynthesisResultRecord
+): Promise<void> {
+    await db.synthesisResults.put({
+        ...result,
+        updatedAt: Date.now(),
+    });
+}
+
+/**
+ * Create a new synthesis result record.
+ *
+ * @param sourceId - The source ID to synthesize
+ * @param projectId - The project ID
+ * @param sourceType - The source type
+ * @returns The created synthesis result ID
+ */
+export async function createSynthesisResult(
+    sourceId: string,
+    projectId: string,
+    sourceType: 'pdf' | 'url' | 'text'
+): Promise<string> {
+    const id = crypto.randomUUID();
+    const now = Date.now();
+
+    await db.synthesisResults.add({
+        id,
+        sourceId,
+        projectId,
+        sourceType,
+        frontmatter: {
+            summary: '',
+            documentType: 'unknown',
+            subject: '',
+            keyConcepts: [],
+            topics: [],
+            tags: [],
+            difficultyLevel: 'intermediate',
+            estimatedReadingTime: '',
+            prerequisites: [],
+            learningObjectives: [],
+            targetAudience: '',
+            language: 'en',
+        },
+        status: 'idle',
+        createdAt: now,
+        updatedAt: now,
+    });
+
+    return id;
+}
+
+/**
+ * Update synthesis result status.
+ *
+ * @param synthesisId - The synthesis result ID
+ * @param status - The new status
+ * @param frontmatter - The frontmatter (if synthesis completed)
+ * @param errorMessage - Error message (if synthesis failed)
+ */
+export async function updateSynthesisResultStatus(
+    synthesisId: string,
+    status: SynthesisResultRecord['status'],
+    frontmatter?: SynthesisResultRecord['frontmatter'],
+    errorMessage?: string
+): Promise<void> {
+    const updates: Partial<SynthesisResultRecord> = {
+        status,
+        updatedAt: Date.now(),
+    };
+
+    if (status === 'completed' && frontmatter) {
+        updates.frontmatter = frontmatter;
+        updates.synthesizedAt = Date.now();
+    }
+
+    if (status === 'failed' && errorMessage) {
+        updates.errorMessage = errorMessage;
+    }
+
+    await db.synthesisResults.update(synthesisId, updates);
+}
+
+/**
+ * Delete a synthesis result.
+ *
+ * @param synthesisId - The synthesis result ID
+ */
+export async function deleteSynthesisResult(
+    synthesisId: string
+): Promise<void> {
+    await db.synthesisResults.delete(synthesisId);
+}
+
+/**
+ * Delete synthesis result for a source.
+ *
+ * @param sourceId - The source ID
+ */
+export async function deleteSynthesisResultForSource(
+    sourceId: string
+): Promise<void> {
+    const results = await db.synthesisResults
+        .where('sourceId')
+        .equals(sourceId)
+        .primaryKeys();
+
+    if (results.length > 0) {
+        await db.synthesisResults.bulkDelete(results);
+    }
+}
+
+/**
+ * Clear all synthesis results for a project.
+ *
+ * @param projectId - The project ID
+ * @returns Number of synthesis results deleted
+ */
+export async function clearProjectSynthesisResults(
+    projectId: string
+): Promise<number> {
+    return db.synthesisResults.where('projectId').equals(projectId).delete();
 }
