@@ -12,7 +12,7 @@ export const getRouter = () => {
   if (routeTree.children?.length) {
     const seenIds = new Set<string>()
     const originalLength = routeTree.children.length
-    routeTree.children = routeTree.children.filter((child) => {
+    routeTree.children = routeTree.children.filter((child: any) => {
       // Only deduplicate if child has a valid id
       const childId = child?.id
       if (!childId) {
@@ -30,7 +30,7 @@ export const getRouter = () => {
   }
 
   // Debug route tree
-  console.log('[Router] routeTree children:', routeTree.children?.map(c => c.id))
+  console.log('[Router] routeTree children:', routeTree.children?.map((c: any) => c.id))
 
   const router = createRouter({
     routeTree,

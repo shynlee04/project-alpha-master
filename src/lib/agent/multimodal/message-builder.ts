@@ -169,7 +169,7 @@ export function extractTextContent(
 
   if (Array.isArray(message.content)) {
     const textItem = message.content.find(
-      (item) => item.type === 'text'
+      (item: any) => item.type === 'text'
     ) as { type: 'text'; text: string } | undefined;
 
     return textItem?.text || null;
@@ -191,8 +191,8 @@ export function extractImages(message: CoreMessage): string[] {
 
   if (Array.isArray(message.content)) {
     return message.content
-      .filter((item) => item.type === 'image')
-      .map((item) => {
+      .filter((item: any) => item.type === 'image')
+      .map((item: any) => {
         const img = item as {
           source: { type: 'data'; value: string };
         };

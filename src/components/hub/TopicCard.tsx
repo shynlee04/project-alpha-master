@@ -10,15 +10,9 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge, type ClassNameValue } from 'tailwind-merge';
-
-// Design tokens from 8-bit design system
-const TRANSITION_DURATION = 'var(--transition-duration-base, 200ms)';
-const SHADOW_SM = 'var(--shadow-sm)';
-const SHADOW_LG = 'var(--shadow-lg)';
-const RADIUS_LG = 'var(--radius-lg)';
 
 const topicCardVariants = cva(
   'relative overflow-hidden rounded-[var(--radius-lg)] transition-all duration-200 cursor-pointer',

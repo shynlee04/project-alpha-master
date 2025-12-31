@@ -8,7 +8,7 @@
  * Handles message formatting, persistence, and synchronization between hook and store.
  */
 
-import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ChatMessage, ToolExecution } from '../EnhancedChatInterface';
 import { useConversationStore } from '@/lib/state/conversation-store';
@@ -113,7 +113,6 @@ function extractToolExecutions(msgs: unknown[], currentIndex: number): ToolExecu
  * Hook for managing messages in AgentChatPanel
  */
 export function useAgentChatMessages({
-    projectId,
     activeAgentId,
     projectName,
     hookMessages,
@@ -121,7 +120,6 @@ export function useAgentChatMessages({
     isLoading,
     isInitialized,
     addMessage,
-    createConversation,
     updateScrollPosition,
 }: UseAgentChatMessagesProps): UseAgentChatMessagesReturn {
     const { t } = useTranslation();

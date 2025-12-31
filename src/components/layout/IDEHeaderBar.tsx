@@ -16,7 +16,7 @@
  * ```
  */
 
-import { FolderOpen, Loader2, MoreHorizontal, Home } from 'lucide-react';
+import { FolderOpen, Loader2 } from 'lucide-react';
 import { ChatIcon, RefreshIcon } from '@/components/ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../../lib/workspace';

@@ -7,8 +7,6 @@ import { Label } from '@/components/ui/label';
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
-import { getThreadsForProject } from '../../lib/workspace/threads-store'; // Keep for migration/fallback
-import type { ConversationThread } from '@/stores/conversation-threads-store';
 import { useThreadsStore } from '@/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage, ToolExecution } from './EnhancedChatInterface';
 import { ApprovalOverlay, BatchApprovalBar } from '../chat';
@@ -70,10 +68,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         activeConversationId,
         conversations,
         addMessage,
-        updateMessage,
         updateScrollPosition,
-        createConversation,
-        loadConversation
+        createConversation
     } = useConversationStore();
 
     // Derive active conversation from store
@@ -86,11 +82,6 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     // CC-2025-12-26-006: Key for forcing chat hook remount on clear/thread switch
     // Incrementing this causes the chat hook to reset its internal state
     const [chatResetKey, setChatResetKey] = useState(0);
-
-    // Generate stable key combining thread ID and reset key for forced remounts
-    const chatInstanceKey = useMemo(() => {
-        return `${activeConversationId || 'no-thread'}-${chatResetKey}`;
-    }, [activeConversationId, chatResetKey]);
 
     // Prompt Enhancement State
     const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();
@@ -265,7 +256,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
                 // For now, if no active conversation, create one.
                 // In future, we could look up the "last active" from a project pref.
-                const newId = createConversation(projectId, activeAgentId); // Create empty
+                createConversation(projectId, activeAgentId); // Create empty
                 setIsInitialized(true);
             } catch (err) {
                 console.error('[AgentChatPanel] Failed to load threads:', err);

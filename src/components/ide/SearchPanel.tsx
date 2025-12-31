@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { SidebarHeader } from './IconSidebar'
 import { useTranslation } from 'react-i18next'
 import { Search as SearchIcon, X, FileText, Clock } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 /**

@@ -429,7 +429,7 @@ export class FileToolsFacade implements AgentFileTools {
         let extension = '';
 
         // Find where the extension starts (after the last ** or *)
-        const lastWildcardIndex = parts.findLastIndex(p => p.includes('*'));
+        const lastWildcardIndex = parts.findLastIndex((p: string) => p.includes('*'));
 
         if (lastWildcardIndex !== -1) {
             // Directory pattern is everything up to and including the last wildcard segment

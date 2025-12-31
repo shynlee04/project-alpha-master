@@ -10,16 +10,10 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge, type ClassNameValue } from 'tailwind-merge';
 import { ChevronRight } from 'lucide-react';
-
-// Design tokens from 8-bit design system
-const TRANSITION_DURATION = 'var(--transition-duration-base, 200ms)';
-const SHADOW_SM = 'var(--shadow-sm)';
-const SHADOW_MD = 'var(--shadow-md)';
-const RADIUS_MD = 'var(--radius-md)';
 
 const portalCardVariants = cva(
   'relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-card)] transition-all duration-200 cursor-pointer group',

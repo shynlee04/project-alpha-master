@@ -202,7 +202,7 @@ export class HybridRetriever {
     queryTerms: string[],
     searchSource: 'bm25' | 'vector'
   ): ExtendedSearchResult[] {
-    return results.hits.map((hit, index) => ({
+    return results.hits.map((hit: any, index: number) => ({
       document: hit.document as DocumentSchema,
       score: hit.score,
       source: {

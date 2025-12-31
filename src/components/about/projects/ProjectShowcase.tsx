@@ -20,9 +20,6 @@ export interface ProjectShowcaseProps {
 }
 
 export function ProjectShowcase({ className }: ProjectShowcaseProps) {
-  const { t } = useTranslation();
-  const { isMobile } = useResponsive();
-
   return (
     <section
       className={cn(

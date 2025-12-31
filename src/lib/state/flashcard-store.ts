@@ -352,7 +352,7 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
     await db.transaction('rw', 'flashcardSets', async () => {
       const set = await db.table('flashcardSets').get(setId);
       if (set) {
-        const filteredIds = set.cardIds.filter((id) => !cardIdSet.has(id));
+        const filteredIds = set.cardIds.filter((id: string) => !cardIdSet.has(id));
         await db.table('flashcardSets').update(setId, {
           cardIds: filteredIds,
           updatedAt: Date.now(),
@@ -411,7 +411,7 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
     const { flashcardSets, flashcards } = get();
     const set = flashcardSets.find((s) => s.id === setId);
     if (!set) return [];
-    return flashcards.filter((fc) => set.cardIds.includes(fc.id));
+    return flashcards.filter((fc: Flashcard) => set.cardIds.includes(fc.id));
   },
 }));
 

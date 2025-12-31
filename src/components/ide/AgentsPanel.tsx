@@ -27,7 +27,7 @@ export function AgentsPanel({
     onSelectAgent?: (agent: Agent) => void
 }) {
     const { t } = useTranslation()
-    const { agents, isLoading, refreshAgents, addAgent, updateAgent } = useAgents()
+    const { agents, isLoading, refreshAgents } = useAgents()
     const { activeAgentId, setActiveAgent } = useAgentSelection()
 
     // Dialog state for agent configuration

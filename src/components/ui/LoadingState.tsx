@@ -6,7 +6,6 @@
  * Follows 8-bit design system with CVA variants.
  */
 
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'

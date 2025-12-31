@@ -280,7 +280,7 @@ export async function pruneOldConversations(options: {
     .toArray();
 
   // Delete pruned conversations
-  const ids = toPrune.map((m) => m.id!).filter((id) => id !== undefined);
+  const ids = toPrune.map((m: any) => m.id!).filter((id: any) => id !== undefined);
 
   if (ids.length > 0) {
     await db.conversationMemory.where('id').anyOf(ids).delete();

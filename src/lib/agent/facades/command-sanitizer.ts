@@ -245,7 +245,7 @@ export class CommandSanitizer {
 
         if (!result.allowed) {
             // Log blocked attempt if event bus is configured
-            this.config.eventBus?.emit('security:command-blocked', {
+            this.config.eventBus?.emit('security:command:blocked' as any, {
                 command,
                 args,
                 reason: result.reason,

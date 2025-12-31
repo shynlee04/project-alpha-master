@@ -114,7 +114,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   const {
     sidebarCollapsed,
     sidebarMobileOpen,
-    activeNavItem,
     toggleSidebar,
     setMobileMenuOpen,
     setActiveNavItem,

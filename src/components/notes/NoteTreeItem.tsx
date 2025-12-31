@@ -8,7 +8,6 @@
  * Story 26.5: Note Hierarchy & Sidebar Navigation
  */
 
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, Star } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';

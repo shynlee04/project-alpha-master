@@ -23,6 +23,7 @@ export interface WorkspaceEvents {
   'sync:warning': [{ message: string; file?: string }]
   'sync:paused': [{ reason: 'user' | 'error' | 'permission' }]
   'sync:resumed': []
+  'sync:rollback': [{ transactionId: string; initiator: 'user' | 'system'; reason?: string }]
   'sync:rollback:success': [{ transactionId: string; filesReverted: number }]
   'sync:rollback:failed': [{ transactionId: string; error: string }]
 
@@ -30,6 +31,7 @@ export interface WorkspaceEvents {
   'container:booted': [{ bootTime: number }]
   'container:mounted': [{ fileCount: number }]
   'container:error': [{ error: Error }]
+  'bootFailed': [{ error: Error }]
 
   // Terminal/Process Events
   'process:started': [{ pid: string; command: string; args: string[] }]
@@ -38,6 +40,8 @@ export interface WorkspaceEvents {
   'terminal:input': [{ data: string }]
   'terminal:warning': [{ message: string; command?: string }]
   'terminal:timeout': [{ command: string; duration: number }]
+  'shell:warning': [{ message: string; command?: string }]
+  'shell:timeout': [{ command: string; duration: number }]
   'agent:command:executed': [{ command: string; workingDir?: string; output?: string; exitCode?: number }] // Agent executed command
   'security:command:blocked': [{ command: string; reason: string; pattern: string }] // Command blocked by security rules
 

@@ -443,7 +443,7 @@ export async function writeMultipleWithRollback(
         result.success = true;
         result.duration = Math.round(performance.now() - startTime);
 
-        eventBus?.emit('sync:complete', {
+        eventBus?.emit('sync:completed' as any, {
             operationId,
             success: true,
             synced: result.syncedFiles,
@@ -586,7 +586,7 @@ export async function deleteMultipleWithRollback(
         result.success = true;
         result.duration = Math.round(performance.now() - startTime);
 
-        eventBus?.emit('sync:complete', {
+        eventBus?.emit('sync:completed' as any, {
             operationId,
             success: true,
             deleted: result.syncedFiles,

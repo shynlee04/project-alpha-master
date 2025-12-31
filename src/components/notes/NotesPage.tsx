@@ -18,7 +18,6 @@ const NoteEditor = lazy(() => {
     return import('./NoteEditor');
 });
 import { NoteSidebar } from './NoteSidebar';
-import { TruncatedText } from '@/components/ui/truncated-text';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
 

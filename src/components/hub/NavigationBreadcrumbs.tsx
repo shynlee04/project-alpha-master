@@ -15,9 +15,6 @@ import { cva } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge, type ClassNameValue } from 'tailwind-merge';
 
-// Design tokens from 8-bit design system
-const RADIUS_SM = 'var(--radius-sm)';
-
 const breadcrumbVariants = cva(
   'flex items-center gap-2 text-sm',
   {

@@ -5,10 +5,9 @@
  * Squared maximize icon for panel expansion.
  */
 
-import { Icon } from './icon';
 import type { IconProps } from './icon';
 
-export function MaximizeIcon({ className, pixelSize = 24, color = 'default' }: IconProps) {
+export function MaximizeIcon({ className, pixelSize = 24 }: IconProps) {
     return (
         <svg
             className={className}

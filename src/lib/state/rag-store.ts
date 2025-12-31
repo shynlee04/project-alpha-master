@@ -617,7 +617,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     // Initialize WebSocket manager
                     const wsManager = getLiveApiWebSocketManager({
                         apiKey,
-                        onMessage: (message) => {
+                        onMessage: (message: any) => {
                             // Handle server audio chunks
                             if (message.serverContent?.parts) {
                                 for (const part of message.serverContent.parts) {
@@ -633,10 +633,10 @@ export const useRAGStore = create<RAGStoreState>()(
                                 }
                             }
                         },
-                        onStateChange: (state) => {
+                        onStateChange: (state: any) => {
                             get().setVoiceConnectionState(state);
                         },
-                        onError: (error) => {
+                        onError: (error: any) => {
                             set({
                                 error: error.message,
                                 voiceState: 'error',

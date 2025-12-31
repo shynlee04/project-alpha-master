@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Command } from 'cmdk';
-import { Search, Terminal, Settings, FileText, Zap, HelpCircle, Keyboard } from 'lucide-react';
+import { Search, Terminal, Settings, FileText, HelpCircle, Keyboard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
 
 /**
  * Command Palette Component

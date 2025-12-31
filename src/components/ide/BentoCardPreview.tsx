@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CodeBlock } from '@/components/chat/CodeBlock';
 import { useTranslation } from 'react-i18next';
 
