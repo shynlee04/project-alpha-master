@@ -1,20 +1,163 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2025-12-31T10:55:00+07:00
+# Updated: 2025-12-31T16:45:00+07:00
 
-# CURRENT WORKFLOW: Architectural Consolidation (CORRECTED)
-current_workflow: "architectural-consolidation-2025-12-31-v2"
+# CURRENT WORKFLOW: Architectural Consolidation + EPIC-32 Integration
+current_workflow: "architectural-consolidation-2025-12-31-v3"
 current_story: "AC-03-chat-panel-cross-workspace"
 phase: "phase-0-showcase-critical"
-last_updated: "2025-12-31T10:55:00+07:00"
+last_updated: "2025-12-31T16:45:00+07:00"
 
-# Sprint Change Proposal Status
-sprint_change_proposal_version: "2.0 - CORRECTED"
-sprint_change_proposal_status: "READY FOR EXECUTION"
-arc_module_version: "2.0.0"
+# ═══════════════════════════════════════════════════════════════════════════
+# COURSE CORRECTION - MAJOR SPRINT CHANGE
+# Proposal: _bmad-output/project-planning-artifacts/sprint-change-proposal-2025-12-31.md
+# Status: AWAITING USER APPROVAL
+# ═══════════════════════════════════════════════════════════════════════════
 
-# Phase 0 Story Status (Showcase Critical)
+sprint_change_proposal:
+  version: "3.0"
+  status: "APPROVED"
+  approved_at: "2025-12-31T16:30:45+07:00"
+  scope: "MAJOR"
+  document: "_bmad-output/project-planning-artifacts/sprint-change-proposal-2025-12-31.md"
+  triggered_at: "2025-12-31T16:45:00+07:00"
+  triggered_by: "Project Health Assessment"
+
+# 4-Phase Implementation Plan (On Approval)
+implementation_phases:
+  phase_0:
+    name: "Immediate Fixes"
+    dates: "2025-12-31"
+    status: "IN_PROGRESS"
+    stories:
+      - id: "hybrid-retriever-fix"
+        status: "DONE"
+        notes: "Build error fixed - import path corrected"
+      - id: "AC-03-chat-panel"
+        status: "IN_PROGRESS"
+        notes: "ChatPanel cross-workspace unification"
+  phase_1:
+    name: "Foundation Consolidation"
+    dates: "2026-01-01 to 2026-01-03"
+    status: "PLANNED"
+    stories:
+      - id: "FC-01"
+        name: "Split provider-models-store"
+        effort: "4h"
+      - id: "FC-02"
+        name: "Create event bus module"
+        effort: "3h"
+      - id: "FC-03"
+        name: "Wire provider-to-agent reactivity"
+        effort: "3h"
+      - id: "FC-04"
+        name: "Credential vault implementation"
+        effort: "4h"
+      - id: "FC-05"
+        name: "Fix 10 highest-priority file size violations"
+        effort: "6h"
+    validation_gate: "sweeping-validation L1-L2"
+  phase_2:
+    name: "Cross-Workspace Integration"
+    dates: "2026-01-04 to 2026-01-07"
+    status: "PLANNED"
+    stories:
+      - id: "CW-01"
+        name: "Abstract file sync service"
+        effort: "5h"
+      - id: "CW-02"
+        name: "Project → Knowledge sync"
+        effort: "4h"
+      - id: "CW-03"
+        name: "Unified ChatPanel"
+        effort: "6h"
+      - id: "CW-04"
+        name: "Fix remaining file size violations"
+        effort: "8h"
+    validation_gate: "sweeping-validation L3-L6"
+  phase_3:
+    name: "EPIC-32 RAG Infrastructure"
+    dates: "2026-01-08 to 2026-01-17"
+    status: "PLANNED"
+    epic_reference: "_bmad-output/handoffs/pm-epic-32-sprint-planning-2025-12-31.md"
+    stories:
+      - id: "32-1"
+        name: "Orama WASM Integration"
+        effort: "3d"
+      - id: "32-2"
+        name: "Document Chunking Pipeline"
+        effort: "4d"
+      - id: "32-3"
+        name: "Embedding Generation Service"
+        effort: "4d"
+      - id: "32-4"
+        name: "Hybrid Search Implementation"
+        effort: "3d"
+      - id: "32-5"
+        name: "Citation & Source Tracking"
+        effort: "3d"
+  phase_4:
+    name: "Code Hygiene Sprint"
+    dates: "2026-01-18 to 2026-01-20"
+    status: "PLANNED"
+    activities:
+      - "Split remaining god classes (<300 LOC)"
+      - "Remove dead code"
+      - "Run full Sweeping Validation L1-L12"
+      - "3-Device Rule Test"
+    validation_gate: "sweeping-validation L1-L12 + 3-Device Rule"
+
+# Module/Workflow Builder Integration
+bmb_integration:
+  module_created: "arc-module"
+  module_path: "_bmad-output/bmb-creations/arc-module"
+  created_at: "2025-12-31T16:33:35+07:00"
+  status: "COMPLETE"
+  agents_created:
+    - id: "provider-architect"
+      name: "Percy"
+      file: "agents/provider-architect.md"
+    - id: "agent-vault-specialist"
+      name: "Ava"
+      file: "agents/agent-vault-specialist.md"
+    - id: "integration-engineer"
+      name: "Iris"
+      file: "agents/integration-engineer.md"
+    - id: "validation-runner"
+      name: "Val"
+      file: "agents/validation-runner.md"
+  workflows_created:
+    - name: "split-store"
+      file: "workflows/split-store.md"
+      description: "Split god-class stores (>300 LOC) into focused stores"
+    - name: "wire-events"
+      file: "workflows/wire-events.md"
+      description: "Add event bus integration for cross-store reactivity"
+    - name: "validate-level"
+      file: "workflows/validate-level.md"
+      description: "Run specific Sweeping Validation level"
+
+# Validation Checklist Reference
+validation_reference:
+  document: "_bmad-output/validation/sweeping-validation.md"
+  current_status:
+    level_1_state_integrity: "FAILED"
+    level_2_code_hygiene: "FAILED"
+    level_3_naming: "UNKNOWN"
+    level_4_dependencies: "UNKNOWN"
+    level_5_integration: "UNKNOWN"
+    level_6_architecture: "UNKNOWN"
+    level_7_mobile: "UNKNOWN"
+    level_8_i18n: "UNKNOWN"
+    level_9_performance: "UNKNOWN"
+    level_10_security: "UNKNOWN"
+    level_11_documentation: "FAILED"
+    level_12_test_coverage: "UNKNOWN"
+  health_score: "5.9%"
+  last_assessment: "2025-12-31T16:00:00+07:00"
+
+# Phase 0 Story Status (Showcase Critical) - Legacy section preserved
 phase_0_stories:
   AC-01-provider-configuration:
     status: "DONE"

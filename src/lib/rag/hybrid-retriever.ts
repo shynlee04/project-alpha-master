@@ -14,7 +14,8 @@
  * - Performance target: <500ms for 10K documents
  */
 
-import type { Orama, search as oramaSearch } from '@orama/orama';
+import type { Orama } from '@orama/orama';
+import { search as oramaSearch } from '@orama/orama';
 import { loadIndex } from './orama-index';
 import type { OramaSchema, DocumentSchema } from './types';
 
@@ -82,6 +83,10 @@ interface HitWithScore {
   score: number;
   type: 'vector' | 'fulltext';
   highlights: string[];
+  /** Vector score (when merging fulltext hit with vector score) */
+  vectorScore?: number;
+  /** Fulltext score (when merging vector hit with fulltext score) */
+  fulltextScore?: number;
 }
 
 /** Default configuration */
@@ -177,7 +182,9 @@ function passesFilters(document: DocumentSchema, filters?: SearchFilters): boole
   // Date range filter
   if (filters.dateRange) {
     // Document would need a date field - check metadata
-    const docDate = document.metadata?.indexedAt as Date | undefined;
+    // Cast to Record for flexible property access
+    const meta = document.metadata as Record<string, unknown> | undefined;
+    const docDate = meta?.indexedAt as Date | undefined;
     if (docDate) {
       if (docDate < filters.dateRange.start || docDate > filters.dateRange.end) {
         return false;
@@ -187,7 +194,8 @@ function passesFilters(document: DocumentSchema, filters?: SearchFilters): boole
 
   // Source type filter
   if (filters.sourceType && filters.sourceType.length > 0) {
-    const sourceType = document.metadata?.sourceType as string | undefined;
+    const meta = document.metadata as Record<string, unknown> | undefined;
+    const sourceType = meta?.sourceType as string | undefined;
     if (sourceType && !filters.sourceType.includes(sourceType)) {
       return false;
     }
@@ -195,7 +203,8 @@ function passesFilters(document: DocumentSchema, filters?: SearchFilters): boole
 
   // Tags filter
   if (filters.tags && filters.tags.length > 0) {
-    const docTags = (document.metadata?.tags as string[] | undefined) || [];
+    const meta = document.metadata as Record<string, unknown> | undefined;
+    const docTags = (meta?.tags as string[] | undefined) || [];
     const hasMatchingTag = filters.tags.some(tag => docTags.includes(tag));
     if (!hasMatchingTag) {
       return false;
@@ -386,10 +395,10 @@ export async function hybridSearch(
 
   const results: HybridSearchResult[] = [];
 
-  for (const [id, hit] of docMap) {
+  for (const [_id, hit] of docMap) {
     // Use actual scores if available, otherwise use combined
-    const vectorScore = hit.type === 'vector' ? hit.score : (hit as any).vectorScore || 0;
-    const fulltextScore = hit.type === 'fulltext' ? hit.score : (hit as any).fulltextScore || 0;
+    const vectorScore = hit.type === 'vector' ? hit.score : hit.vectorScore || 0;
+    const fulltextScore = hit.type === 'fulltext' ? hit.score : hit.fulltextScore || 0;
 
     // Calculate combined weighted score
     const combinedScore =
@@ -453,38 +462,27 @@ export async function hybridSearchWithEmbedding(
   query: string,
   config?: Partial<HybridSearchConfig>
 ): Promise<HybridSearchResult[]> {
-  // Import embedding generator dynamically to avoid circular deps
+  // Import embedding service dynamically to avoid circular deps
   // and SSR issues
-  let embeddingGenerator: ((text: string) => Promise<number[]>) | null = null;
-
   try {
-    const embeddingModule = await import('./embedding-generator');
-    embeddingGenerator = embeddingModule.generateEmbedding;
-  } catch {
-    console.error('[HybridRetriever] Could not load embedding generator');
-    return [];
+    const embeddingModule = await import('./embedding-service');
+    const embeddingService = await embeddingModule.createEmbeddingService();
+
+    // Generate embedding for query
+    const result = await embeddingService.embed(query);
+    const embedding = result.embedding;
+
+    // Perform hybrid search
+    return hybridSearch(projectId, query, embedding, config);
+  } catch (error) {
+    console.error('[HybridRetriever] Could not generate embedding:', error);
+    // Fall back to full-text only search with empty vector
+    return hybridSearch(projectId, query, [], config);
   }
-
-  if (!embeddingGenerator) {
-    console.error('[HybridRetriever] Embedding generator not available');
-    return [];
-  }
-
-  // Generate embedding for query
-  const embedding = await embeddingGenerator(query);
-
-  // Perform hybrid search
-  return hybridSearch(projectId, query, embedding, config);
 }
 
 // ============================================================================
 // Export
 // ============================================================================
-
-export type {
-  HybridSearchConfig,
-  SearchFilters,
-  HybridSearchResult,
-};
 
 export const DEFAULT_HYBRID_CONFIG = DEFAULT_CONFIG;
