@@ -26,12 +26,14 @@ import type {
     ProjectRecord,
     IDEStateRecord,
     ConversationRecord,
+    WorkspaceBindings,
 } from './dexie-db-core-types';
 
 export type {
     ProjectRecord,
     IDEStateRecord,
     ConversationRecord,
+    WorkspaceBindings,
 } from './dexie-db-core-types';
 
 export type {
@@ -181,7 +183,8 @@ let dbInstance: ViaGentDatabase | null = null;
  * Returns null during server-side rendering
  */
 export function getDb(): ViaGentDatabase | null {
-  if (typeof window === 'undefined') return null;
+  // Check for browser or test environment (has IndexedDB)
+  if (typeof window === 'undefined' && typeof indexedDB === 'undefined') return null;
   if (!dbInstance) {
     dbInstance = new ViaGentDatabase();
   }
@@ -245,9 +248,10 @@ export async function getRecentProjects(limit = 10): Promise<ProjectRecord[]> {
  * Reset database for testing
  */
 export async function resetDatabaseForTesting(): Promise<void> {
-    if (typeof indexedDB === 'undefined') return;
-    await db.delete();
-    await db.open();
+    const dbInstance = getDb();
+    if (!dbInstance) return;
+    await dbInstance.delete();
+    await dbInstance.open();
 }
 
 // ============================================================================

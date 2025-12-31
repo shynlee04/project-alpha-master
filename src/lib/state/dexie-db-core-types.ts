@@ -17,6 +17,16 @@ import type { Table } from 'dexie';
 // ============================================================================
 
 /**
+ * Workspace binding configuration for project association
+ */
+export interface WorkspaceBindings {
+    ide?: boolean;
+    notes?: boolean;
+    knowledge?: boolean;
+    study?: boolean;
+}
+
+/**
  * Project metadata stored in IndexedDB
  */
 export interface ProjectRecord {
@@ -25,6 +35,10 @@ export interface ProjectRecord {
     path: string;
     lastOpened: Date;
     createdAt: Date;
+    /** Story WB-1: Workspace binding configuration */
+    workspaceBindings?: WorkspaceBindings;
+    /** Story WB-1: File snapshot feature flag */
+    fileSnapshotEnabled?: boolean;
 }
 
 /**

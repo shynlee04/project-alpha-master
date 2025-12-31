@@ -214,46 +214,10 @@ vi.stubGlobal('crypto', mockCrypto);
 vi.stubGlobal('Crypto', mockCrypto);
 
 // ============================================
-// Dexie Mock for RAG Tests
+// Dexie Mock for All Tests
 // ============================================
-// This mock provides a minimal Dexie implementation for tests
-// Works with fake-indexeddb in jsdom environment
+// NOTE: With fake-indexeddb/auto imported above, Dexie can use the real IndexedDB
+// We only mock specific Dexie methods if needed for certain tests
+// DO NOT mock the entire dexie module as it breaks database functionality
 
-// Create mock Dexie module
-const mockDexieTable = {
-  get: vi.fn((key: string | number) => Promise.resolve(undefined)),
-  put: vi.fn((doc: unknown, key?: string | number) => Promise.resolve(key ?? Date.now())),
-  add: vi.fn((doc: unknown, key?: string | number) => Promise.resolve(key ?? Date.now())),
-  update: vi.fn((key: string | number, changes: Record<string, unknown>) => Promise.resolve(1)),
-  delete: vi.fn((key: string | number) => Promise.resolve()),
-  clear: vi.fn(() => Promise.resolve()),
-  count: vi.fn(() => Promise.resolve(0)),
-  toArray: vi.fn(() => Promise.resolve([])),
-  where: vi.fn(() => ({
-    equals: vi.fn(() => ({
-      first: vi.fn(() => Promise.resolve(undefined)),
-      toArray: vi.fn(() => Promise.resolve([])),
-    })),
-  })),
-  filter: vi.fn(() => Promise.resolve([])),
-};
-
-vi.mock('dexie', async () => {
-  return {
-    Dexie: vi.fn().mockImplementation(() => ({
-      name: 'test-db',
-      tables: new Map(),
-      table: vi.fn((tableName: string) => ({ ...mockDexieTable })),
-      close: vi.fn(),
-      delete: vi.fn().mockResolvedValue(undefined),
-      open: vi.fn().mockResolvedValue(undefined),
-      transaction: vi.fn().mockResolvedValue(undefined),
-    })),
-    liveQuery: vi.fn((obs: { subscribe: (cb: (result: unknown) => void) => { unsubscribe: () => void } }) => ({
-      subscribe: (cb: (result: unknown) => void) => {
-        cb([]);
-        return { unsubscribe: vi.fn() };
-      },
-    })),
-  };
-});
+// vi.mock('dexie', () => mockDexieModule);

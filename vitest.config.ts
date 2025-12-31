@@ -16,6 +16,8 @@ export default defineConfig({
       ['src/lib/agent/**/*.test.ts', 'jsdom'],
       ['src/lib/filesystem/**/*.test.ts', 'jsdom'],
       ['src/lib/webcontainer/**/*.test.ts', 'jsdom'],
+      ['src/lib/workspace/**/__tests__/**/*.test.ts', 'jsdom'],
+      ['src/lib/workspace/**/*.test.ts', 'jsdom'],
     ],
     globals: true,
     setupFiles: ['./src/test/setup.ts'],

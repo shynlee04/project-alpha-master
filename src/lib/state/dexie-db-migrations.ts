@@ -585,4 +585,73 @@ export function registerMigrations(db: ViaGentDatabase): void {
                 itemsCount: 0
             });
         });
+
+        // Schema version 17: Story WB-1 - Project Metadata Enhancement
+        // Adds workspaceBindings and fileSnapshotEnabled fields to projects table
+        db.version(17).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            synthesisResults: 'id, sourceId, projectId, status, synthesizedAt, [sourceId+projectId], [projectId+status]',
+        }).upgrade(async (tx) => {
+            logDexieMigration(17, 'project-metadata-enhancement', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(17)) {
+                logDexieMigration(17, 'project-metadata-enhancement', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // Default values for migration
+            const DEFAULT_WORKSPACE_BINDINGS = {
+                ide: true,
+                notes: false,
+                knowledge: false,
+                study: false,
+            };
+            const DEFAULT_FILE_SNAPSHOT_ENABLED = false;
+
+            // Migrate existing projects
+            let migratedCount = 0;
+            const projectsTable = tx.table('projects');
+
+            await projectsTable.toCollection().modify((project) => {
+                // Only add fields if they don't exist
+                if (!project.workspaceBindings) {
+                    project.workspaceBindings = DEFAULT_WORKSPACE_BINDINGS;
+                }
+                if (project.fileSnapshotEnabled === undefined) {
+                    project.fileSnapshotEnabled = DEFAULT_FILE_SNAPSHOT_ENABLED;
+                }
+                migratedCount++;
+            });
+
+            // Mark migration as applied
+            markMigrationApplied(17);
+
+            logDexieMigration(17, 'project-metadata-enhancement', 'completed', {
+                tableName: 'projects',
+                itemsCount: migratedCount
+            });
+        });
 }

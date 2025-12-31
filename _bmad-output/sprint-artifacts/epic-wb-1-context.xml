@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Story Context: WB-1 - Project Metadata Enhancement
+  Epic: WB - Workspace Binding & Project Persistence
+  Created: 2026-01-01T02:30:00+07:00
+  Story: epic-wb-1-project-metadata-enhancement.md
+-->
+<context story="epic-wb-1" created="2026-01-01T02:30:00+07:00">
+
+  <!-- CURRENT CODE STATE -->
+  <files>
+    <file path="src/lib/workspace/project-store.ts">
+      <content><![CDATA[
+// Current ProjectMetadata interface (lines 24-55):
+export interface ProjectMetadata {
+    id: string;
+    name: string;
+    folderPath: string;
+    fsaHandle: FileSystemDirectoryHandle;
+    lastOpened: Date;
+    autoSync?: boolean;
+    layoutState?: LayoutConfig;
+    exclusionPatterns?: string[];
+    lastKnownPermissionState?: FsaPermissionState;
+}
+
+// MISSING FIELDS FOR WORKSPACE BINDING:
+// - workspaceBindings?: { ide?: boolean; notes?: boolean; knowledge?: boolean; study?: boolean; }
+// - fileSnapshotEnabled?: boolean
+      ]]></content>
+    </file>
+
+    <file path="src/lib/state/dexie-db.ts">
+      <content><![CDATA[
+// Database schema (version tracking needed)
+// Current database version needs to be incremented
+// Migration callback needs to be added for workspace bindings
+
+// Typical Dexie pattern:
+// db.version(1).stores({
+//   projects: 'id, name, lastOpened'
+// })
+//
+// Upgrade to version 2:
+// db.version(2).stores({
+//   projects: 'id, name, lastOpened' // same schema
+// }).upgrade(tx => {
+//   return tx.table('projects').toCollection().modify(project => {
+//     project.workspaceBindings = { ide: true, notes: false, knowledge: false, study: false };
+//     project.fileSnapshotEnabled = false;
+//   });
+// });
+      ]]></content>
+    </file>
+
+    <file path="src/presentation/components/hub/HubHomePage.tsx">
+      <content</arg_key><arg_value>[
+  // Current project creation flow (lines 125-150):
+  const handleNewProject = async () => {
+    const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    const newProjectId = generateProjectId();
+    const project: ProjectMetadata = {
+      id: newProjectId,
+      name: handle.name,
+      folderPath: handle.name,
+      fsaHandle: handle,
+      lastOpened: new Date(),
+      autoSync: true,
+      // MISSING: workspaceBindings, fileSnapshotEnabled
+    };
+    await saveProject(project);
+    await navigate({ to: '/workspace/$projectId', params: { projectId: newProjectId } });
+  };
+
+  // MISSING: Workspace selection dialog before navigation
+  // User should choose which workspaces to bind this project to
+]></content>
+    </file>
+  </files>
+
+  <!-- RESEARCH FINDINGS FROM MCP TOOLS -->
+  <research_notes>
+    <finding source="context7" query="Dexie.js database migration version.upgrade">
+      <pattern>
+        Dexie.js database migration requires:
+        1. Increment database version: db.version(2)
+        2. Use .upgrade() callback to migrate existing data
+        3. Access table via tx.table('tableName')
+        4. Use .toCollection().modify() for bulk updates
+        5. Always handle migration errors gracefully
+
+        Reference: https://dexie.org/docs/Version/Version.stores()
+      </pattern>
+    </finding>
+
+    <finding source="deepwiki" repo="dfahlander/Dexie.js">
+      <pattern>
+        Database versioning best practices:
+        - Always add new versions incrementally (1, 2, 3...)
+        - Keep schema definitions consistent across versions
+        - Use upgrade transactions for data migration
+        - Test with empty and existing databases
+        - Provide fallback for failed migrations
+      </pattern>
+    </finding>
+
+    <finding source="repomix" query="workspace.*binding|project.*binding">
+      <pattern>
+        Current codebase has no workspace binding implementation.
+        Projects always navigate to IDE workspace (/workspace/$projectId).
+        No workspace selection dialog exists in HubHomePage.
+      </pattern>
+    </finding>
+  </research_notes>
+
+  <!-- ARCHITECTURE PATTERNS TO FOLLOW -->
+  <architecture_patterns>
+    <pattern name="Dexie.js Versioned Migrations" source="_bmad-output/project-planning-artifacts/architecture.md">
+      <description>
+        All database schema changes must use versioned migrations:
+        1. Increment version number
+        2. Define upgrade callback
+        3. Migrate existing data with defaults
+        4. Test backward compatibility
+      </description>
+    </pattern>
+
+    <pattern name="Interface Extension" source="TypeScript best practices">
+      <description>
+        Extend interfaces with optional fields for backward compatibility:
+        - Use optional fields (?:) for new properties
+        - Provide default values in migration
+        - Update all consumers to handle optional fields
+      </description>
+    </pattern>
+
+    <pattern name="TDD Discipline" source=".agent/rules/commands/tdd-cycle.md">
+      <description>
+        Strict RED-GREEN-REFACTOR cycle:
+        1. RED: Write failing tests first
+        2. GREEN: Implement minimal code to pass
+        3. REFACTOR: Clean up while tests pass
+        4. Never skip the refactor phase
+      </description>
+    </pattern>
+  </architecture_patterns>
+
+  <!-- TECHNICAL NOTES FOR DEVELOPER -->
+  <technical_notes>
+    <note priority="high">
+      <title>Critical: Database Migration Safety</title>
+      <content>
+        - Always test migration with existing IndexedDB data
+        - Never clear user's database without consent
+        - Provide fallback if migration fails
+        - Log migration success/failure for debugging
+      </content>
+    </note>
+
+    <note priority="high">
+      <title>TypeScript Compilation Must Pass</title>
+      <content>
+        - After implementing new fields, run: pnpm exec tsc --noEmit
+        - Zero TypeScript errors allowed
+        - All consumers of ProjectMetadata must handle new fields
+      </content>
+    </note>
+
+    <note priority="medium">
+      <title>Default Workspace Binding Strategy</title>
+      <content>
+        For existing projects: Default to IDE only (ide: true, others: false)
+        For new projects: Show workspace selection dialog in future stories
+        This story only adds the fields, not the UI (Story WB-4)
+      </content>
+    </note>
+
+    <note priority="medium">
+      <title>File Snapshot Feature Not Yet Implemented</title>
+      <content>
+        - fileSnapshotEnabled field added now (Story WB-1)
+        - Actual snapshot implementation in Story WB-2
+        - Default to false for all projects
+      </content>
+    </note>
+
+    <note priority="low">
+      <title>Test Coverage Requirements</title>
+      <content>
+        - Unit tests for ProjectMetadata interface extension
+        - Migration tests with empty database
+        - Migration tests with existing projects
+        - TypeScript type validation tests
+      </content>
+    </note>
+  </technical_notes>
+
+  <!-- DEPENDENCIES AND IMPORTS -->
+  <dependencies>
+    <dependency name="dexie" version="^3.2.4">
+      <usage>IndexedDB ORM for database schema and migrations</usage>
+    </dependency>
+    <dependency name="typescript" version="^5.6.3">
+      <usage>Interface type safety and compilation</usage>
+    </dependency>
+  </dependencies>
+
+  <!-- ACCEPTANCE CRITERIA REFERENCE -->
+  <acceptance_criteria>
+    <criterion id="AC-WB-1-1">
+      <description>Add workspaceBindings field to ProjectMetadata</description>
+      <test>"ProjectMetadata should have workspaceBindings object with 4 boolean fields"</test>
+    </criterion>
+    <criterion id="AC-WB-1-2">
+      <description>Add fileSnapshotEnabled field to ProjectMetadata</description>
+      <test>"ProjectMetadata should have fileSnapshotEnabled boolean field"</test>
+    </criterion>
+    <criterion id="AC-WB-1-3">
+      <description>Database migration for existing projects</description>
+      <test>"Existing projects should be migrated with default workspace bindings"</test>
+    </criterion>
+    <criterion id="AC-WB-1-4">
+      <description>TypeScript compilation passes</description>
+      <test>"pnpm exec tsc --noEmit should have zero errors"</test>
+    </criterion>
+    <criterion id="AC-WB-1-5">
+      <description>IndexedDB persistence works</description>
+      <test>"Projects with new fields should persist and retrieve correctly"</test>
+    </criterion>
+  </acceptance_criteria>
+
+  <!-- IMPLEMENTATION SEQUENCE -->
+  <implementation_sequence>
+    <step order="1" phase="RED">Write failing test: workspaceBindings field exists</step>
+    <step order="2" phase="GREEN">Implement workspaceBindings in ProjectMetadata interface</step>
+    <step order="3" phase="RED">Write failing test: fileSnapshotEnabled field exists</step>
+    <step order="4" phase="GREEN">Implement fileSnapshotEnabled in ProjectMetadata interface</step>
+    <step order="5" phase="RED">Write failing test: database migration works</step>
+    <step order="6" phase="GREEN">Implement Dexie version upgrade and migration</step>
+    <step order="7" phase="REFACTOR">Clean up implementation, improve test coverage</step>
+    <step order="8" phase="VALIDATE">Run TypeScript compilation and all tests</step>
+  </implementation_sequence>
+
+  <!-- TESTING STRATEGY -->
+  <testing_strategy>
+    <unit_tests>
+      <file>src/lib/workspace/__tests__/project-store.test.ts</file>
+      <coverage>workspaceBindings field type and structure</coverage>
+      <coverage>fileSnapshotEnabled field type and default value</coverage>
+    </unit_tests>
+    <integration_tests>
+      <file>src/lib/state/__tests__/dexie-db.test.ts</file>
+      <coverage>Database migration with empty database</coverage>
+      <coverage>Database migration with existing projects</coverage>
+      <coverage>Migration failure handling</coverage>
+    </integration_tests>
+    <type_validation>
+      <command>pnpm exec tsc --noEmit</command>
+      <expected>Zero TypeScript errors</expected>
+    </type_validation>
+  </testing_strategy>
+
+  <!-- RELATED FILES TO UPDATE -->
+  <related_files>
+    <file path="src/lib/workspace/project-store.ts" action="modify">
+      <description>Add workspaceBindings and fileSnapshotEnabled to ProjectMetadata interface</description>
+    </file>
+    <file path="src/lib/state/dexie-db.ts" action="modify">
+      <description>Increment database version and add migration callback</description>
+    </file>
+    <file path="src/presentation/components/hub/HubHomePage.tsx" action="modify">
+      <description>Update handleNewProject to include new fields (future story WB-4)</description>
+    </file>
+    <file path="src/lib/workspace/__tests__/project-store.test.ts" action="create">
+      <description>Add tests for new ProjectMetadata fields</description>
+    </file>
+  </related_files>
+
+</context>

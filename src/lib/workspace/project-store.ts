@@ -32,6 +32,17 @@ export interface LayoutConfig {
 }
 
 /**
+ * Workspace binding configuration for project association.
+ * Story WB-1: Multi-workspace project support.
+ */
+export interface WorkspaceBindings {
+    ide?: boolean;
+    notes?: boolean;
+    knowledge?: boolean;
+    study?: boolean;
+}
+
+/**
  * Core project metadata stored in IndexedDB.
  */
 export interface ProjectMetadata {
@@ -52,7 +63,17 @@ export interface ProjectMetadata {
     exclusionPatterns?: string[];
     /** Story 13-5: Last known permission state for faster dashboard load */
     lastKnownPermissionState?: FsaPermissionState;
+    /** Story WB-1: Workspace binding configuration */
+    workspaceBindings?: WorkspaceBindings;
+    /** Story WB-1: File snapshot feature flag */
+    fileSnapshotEnabled?: boolean;
 }
+
+/**
+ * Export WorkspaceBindings type for use in other modules.
+ * Story WB-1: Multi-workspace project support.
+ */
+export type { WorkspaceBindings } from '../state/dexie-db-core-types';
 
 /**
  * Project with permission state for dashboard display.
@@ -153,12 +174,23 @@ export async function _resetDBForTesting(): Promise<void> {
     await _resetPersistenceDBForTesting();
 
     if (typeof indexedDB !== 'undefined') {
-        await new Promise<void>((resolve) => {
-            const request = indexedDB.deleteDatabase(LEGACY_DB_NAME);
-            request.onsuccess = () => resolve();
-            request.onerror = () => resolve();
-            request.onblocked = () => resolve();
-        });
+        try {
+            await new Promise<void>((resolve) => {
+                // Check if deleteDatabase method exists (may not in test environments)
+                if (typeof indexedDB.deleteDatabase === 'function') {
+                    const request = indexedDB.deleteDatabase(LEGACY_DB_NAME);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => resolve();
+                    request.onblocked = () => resolve();
+                } else {
+                    // Mock environment - just resolve
+                    resolve();
+                }
+            });
+        } catch (error) {
+            // Ignore errors in test environments
+            console.warn('[ProjectStore] Could not delete legacy database:', error);
+        }
     }
 
     legacyMigrationAttempted = false;
@@ -184,6 +216,15 @@ export function generateProjectId(): string {
 // CRUD Operations
 // ============================================================================
 
+// Default values for new fields (Story WB-1)
+const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBindings = {
+    ide: true,
+    notes: false,
+    knowledge: false,
+    study: false,
+};
+const DEFAULT_FILE_SNAPSHOT_ENABLED = false;
+
 /**
  * Save or update project metadata in IndexedDB.
  *
@@ -199,6 +240,9 @@ export async function saveProject(project: ProjectMetadata): Promise<boolean> {
             ...project,
             lastOpened: new Date(project.lastOpened),
             autoSync: project.autoSync ?? true,
+            // Story WB-1: Apply defaults for new fields
+            workspaceBindings: project.workspaceBindings ?? DEFAULT_WORKSPACE_BINDINGS,
+            fileSnapshotEnabled: project.fileSnapshotEnabled ?? DEFAULT_FILE_SNAPSHOT_ENABLED,
         };
         await db.put(STORE_NAME, projectToSave);
         console.log('[ProjectStore] Project saved:', project.id, project.name);
