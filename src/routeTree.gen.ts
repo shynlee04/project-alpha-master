@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
+import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
 import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
@@ -27,6 +28,11 @@ import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcar
 const StudyLazyRouteImport = createFileRoute('/study')()
 const NotesLazyRouteImport = createFileRoute('/notes')()
 const KnowledgeLazyRouteImport = createFileRoute('/knowledge')()
+const StudyProjectIdLazyRouteImport = createFileRoute('/study/$projectId')()
+const NotesProjectIdLazyRouteImport = createFileRoute('/notes/$projectId')()
+const KnowledgeProjectIdLazyRouteImport = createFileRoute(
+  '/knowledge/$projectId',
+)()
 
 const StudyLazyRoute = StudyLazyRouteImport.update({
   id: '/study',
@@ -78,6 +84,27 @@ const WorkspaceIndexRoute = WorkspaceIndexRouteImport.update({
   path: '/workspace/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudyProjectIdLazyRoute = StudyProjectIdLazyRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => StudyLazyRoute,
+} as any).lazy(() =>
+  import('./routes/study.$projectId.lazy').then((d) => d.Route),
+)
+const NotesProjectIdLazyRoute = NotesProjectIdLazyRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => NotesLazyRoute,
+} as any).lazy(() =>
+  import('./routes/notes.$projectId.lazy').then((d) => d.Route),
+)
+const KnowledgeProjectIdLazyRoute = KnowledgeProjectIdLazyRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => KnowledgeLazyRoute,
+} as any).lazy(() =>
+  import('./routes/knowledge.$projectId.lazy').then((d) => d.Route),
+)
 const WorkspaceProjectIdRoute = WorkspaceProjectIdRouteImport.update({
   id: '/workspace/$projectId',
   path: '/workspace/$projectId',
@@ -87,6 +114,11 @@ const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   id: '/webcontainer/$',
   path: '/webcontainer/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => IdeRoute,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
@@ -108,15 +140,19 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
-  '/ide': typeof IdeRoute
+  '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/knowledge': typeof KnowledgeLazyRoute
-  '/notes': typeof NotesLazyRoute
-  '/study': typeof StudyLazyRoute
+  '/knowledge': typeof KnowledgeLazyRouteWithChildren
+  '/notes': typeof NotesLazyRouteWithChildren
+  '/study': typeof StudyLazyRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
+  '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
+  '/notes/$projectId': typeof NotesProjectIdLazyRoute
+  '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
@@ -125,15 +161,19 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
-  '/ide': typeof IdeRoute
+  '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/knowledge': typeof KnowledgeLazyRoute
-  '/notes': typeof NotesLazyRoute
-  '/study': typeof StudyLazyRoute
+  '/knowledge': typeof KnowledgeLazyRouteWithChildren
+  '/notes': typeof NotesLazyRouteWithChildren
+  '/study': typeof StudyLazyRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
+  '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
+  '/notes/$projectId': typeof NotesProjectIdLazyRoute
+  '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
@@ -143,15 +183,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
-  '/ide': typeof IdeRoute
+  '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/knowledge': typeof KnowledgeLazyRoute
-  '/notes': typeof NotesLazyRoute
-  '/study': typeof StudyLazyRoute
+  '/knowledge': typeof KnowledgeLazyRouteWithChildren
+  '/notes': typeof NotesLazyRouteWithChildren
+  '/study': typeof StudyLazyRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
+  '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
+  '/notes/$projectId': typeof NotesProjectIdLazyRoute
+  '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace/': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
@@ -169,8 +213,12 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/api/chat'
+    | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
+    | '/knowledge/$projectId'
+    | '/notes/$projectId'
+    | '/study/$projectId'
     | '/workspace'
     | '/api/flashcards/generate'
     | '/api/quizzes/generate'
@@ -186,8 +234,12 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/api/chat'
+    | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
+    | '/knowledge/$projectId'
+    | '/notes/$projectId'
+    | '/study/$projectId'
     | '/workspace'
     | '/api/flashcards/generate'
     | '/api/quizzes/generate'
@@ -203,8 +255,12 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/api/chat'
+    | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
+    | '/knowledge/$projectId'
+    | '/notes/$projectId'
+    | '/study/$projectId'
     | '/workspace/'
     | '/api/flashcards/generate'
     | '/api/quizzes/generate'
@@ -214,12 +270,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
-  IdeRoute: typeof IdeRoute
+  IdeRoute: typeof IdeRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
-  KnowledgeLazyRoute: typeof KnowledgeLazyRoute
-  NotesLazyRoute: typeof NotesLazyRoute
-  StudyLazyRoute: typeof StudyLazyRoute
+  KnowledgeLazyRoute: typeof KnowledgeLazyRouteWithChildren
+  NotesLazyRoute: typeof NotesLazyRouteWithChildren
+  StudyLazyRoute: typeof StudyLazyRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
@@ -300,6 +356,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/study/$projectId': {
+      id: '/study/$projectId'
+      path: '/$projectId'
+      fullPath: '/study/$projectId'
+      preLoaderRoute: typeof StudyProjectIdLazyRouteImport
+      parentRoute: typeof StudyLazyRoute
+    }
+    '/notes/$projectId': {
+      id: '/notes/$projectId'
+      path: '/$projectId'
+      fullPath: '/notes/$projectId'
+      preLoaderRoute: typeof NotesProjectIdLazyRouteImport
+      parentRoute: typeof NotesLazyRoute
+    }
+    '/knowledge/$projectId': {
+      id: '/knowledge/$projectId'
+      path: '/$projectId'
+      fullPath: '/knowledge/$projectId'
+      preLoaderRoute: typeof KnowledgeProjectIdLazyRouteImport
+      parentRoute: typeof KnowledgeLazyRoute
+    }
     '/workspace/$projectId': {
       id: '/workspace/$projectId'
       path: '/workspace/$projectId'
@@ -313,6 +390,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/webcontainer/$'
       preLoaderRoute: typeof WebcontainerSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/ide/$projectId': {
+      id: '/ide/$projectId'
+      path: '/$projectId'
+      fullPath: '/ide/$projectId'
+      preLoaderRoute: typeof IdeProjectIdRouteImport
+      parentRoute: typeof IdeRoute
     }
     '/api/chat': {
       id: '/api/chat'
@@ -338,16 +422,62 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface IdeRouteChildren {
+  IdeProjectIdRoute: typeof IdeProjectIdRoute
+}
+
+const IdeRouteChildren: IdeRouteChildren = {
+  IdeProjectIdRoute: IdeProjectIdRoute,
+}
+
+const IdeRouteWithChildren = IdeRoute._addFileChildren(IdeRouteChildren)
+
+interface KnowledgeLazyRouteChildren {
+  KnowledgeProjectIdLazyRoute: typeof KnowledgeProjectIdLazyRoute
+}
+
+const KnowledgeLazyRouteChildren: KnowledgeLazyRouteChildren = {
+  KnowledgeProjectIdLazyRoute: KnowledgeProjectIdLazyRoute,
+}
+
+const KnowledgeLazyRouteWithChildren = KnowledgeLazyRoute._addFileChildren(
+  KnowledgeLazyRouteChildren,
+)
+
+interface NotesLazyRouteChildren {
+  NotesProjectIdLazyRoute: typeof NotesProjectIdLazyRoute
+}
+
+const NotesLazyRouteChildren: NotesLazyRouteChildren = {
+  NotesProjectIdLazyRoute: NotesProjectIdLazyRoute,
+}
+
+const NotesLazyRouteWithChildren = NotesLazyRoute._addFileChildren(
+  NotesLazyRouteChildren,
+)
+
+interface StudyLazyRouteChildren {
+  StudyProjectIdLazyRoute: typeof StudyProjectIdLazyRoute
+}
+
+const StudyLazyRouteChildren: StudyLazyRouteChildren = {
+  StudyProjectIdLazyRoute: StudyProjectIdLazyRoute,
+}
+
+const StudyLazyRouteWithChildren = StudyLazyRoute._addFileChildren(
+  StudyLazyRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
-  IdeRoute: IdeRoute,
+  IdeRoute: IdeRouteWithChildren,
   SettingsRoute: SettingsRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
-  KnowledgeLazyRoute: KnowledgeLazyRoute,
-  NotesLazyRoute: NotesLazyRoute,
-  StudyLazyRoute: StudyLazyRoute,
+  KnowledgeLazyRoute: KnowledgeLazyRouteWithChildren,
+  NotesLazyRoute: NotesLazyRouteWithChildren,
+  StudyLazyRoute: StudyLazyRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,

@@ -14,6 +14,8 @@ export { HubHomePage } from './HubHomePage';
 export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 export { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
 export { WorkspaceBadge } from './WorkspaceBadge';
+export { ProjectCard } from './ProjectCard';
 export type { WorkspaceBindingDialogProps } from './WorkspaceBindingDialog';
 export type { WorkspaceBadgeProps, WorkspaceId } from './WorkspaceBadge';
+export type { ProjectCardProps } from './ProjectCard';
 

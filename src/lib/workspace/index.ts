@@ -61,6 +61,14 @@ export {
     type SyncStatus,
 } from './WorkspaceContext';
 
+// Story WB-6: Cross-Workspace Navigation
+export {
+    ProjectProvider,
+    useProjectContext,
+    type ProjectContextValue,
+    type ProjectProviderProps,
+} from './ProjectContext';
+
 // Story 27-1b: Migrated to Zustand
 export {
     useFileSyncStatusStore,

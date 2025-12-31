@@ -25,6 +25,7 @@ import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 import { useNavigate } from '@tanstack/react-router';
 import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
+import { WorkspaceSwitcher } from '@/presentation/components/common';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -156,6 +157,9 @@ export function IDEHeaderBar({
                         ⚠️ {t('ide.syncError')}
                     </span>
                 )}
+
+                {/* Workspace Switcher (only when ProjectContext available) */}
+                <WorkspaceSwitcherWrapper />
 
                 {/* Chat toggle */}
                 <button
@@ -310,4 +314,34 @@ function OpenFolderButton({
             {t('ide.openFolder')}
         </button>
     );
+}
+
+// ============================================================================
+// Workspace Switcher Wrapper
+// ============================================================================
+
+/**
+ * WorkspaceSwitcherWrapper - Conditional workspace switcher rendering
+ *
+ * Only renders WorkspaceSwitcher when ProjectContext is available (new routes).
+ * Legacy routes (e.g., /ide without projectId) will not show the switcher.
+ *
+ * This prevents errors when using ProjectContext in routes that don't provide it.
+ */
+function WorkspaceSwitcherWrapper(): React.JSX.Element | null {
+    try {
+        // Dynamically import to avoid SSR issues with useContext
+        const { useProjectContext } = require('@/lib/workspace/ProjectContext');
+        const context = useProjectContext();
+
+        // Only show if project has multiple workspaces enabled
+        if (context.enabledWorkspaces.length > 1) {
+            return <WorkspaceSwitcher />;
+        }
+
+        return null;
+    } catch (error) {
+        // ProjectContext not available (legacy route)
+        return null;
+    }
 }

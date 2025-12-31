@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { formatDistanceToNow } from 'date-fns';
 import {
   Folder,
   Plus,
@@ -11,8 +10,6 @@ import {
   BookOpen,
   Settings,
   HardDrive,
-  Clock,
-  CheckCircle2,
   Notebook,
   Info
 } from 'lucide-react';
@@ -31,6 +28,7 @@ import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/Be
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
 import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+import { ProjectCard } from './ProjectCard';
 import type { WorkspaceBindings } from '@/lib/workspace/project-store';
 import { toast } from 'sonner';
 
@@ -352,44 +350,11 @@ export const HubHomePage: React.FC = () => {
             {/* Project Rows */}
             <div className="divide-y-2 divide-border/20">
               {recentProjects.map((project) => (
-                <div
+                <ProjectCard
                   key={project.id}
-                  onClick={() => handleOpenRecentProject(project.id)}
-                  className="grid grid-cols-12 gap-4 p-3 items-center hover:bg-primary/5 cursor-pointer group transition-all duration-200"
-                  role="button"
-                  tabIndex={0}
-                >
-                  {/* Name */}
-                  <div className="col-span-8 md:col-span-5 flex items-center gap-3 overflow-hidden pl-2">
-                    <Folder className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-                    <span className="font-mono text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                      {project.name}
-                    </span>
-                  </div>
-
-                  {/* Status (Desktop only) */}
-                  <div className="col-span-3 md:col-span-2 hidden md:block">
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase font-pixel bg-green-500/10 text-green-500 border border-green-500/30 rounded-none">
-                      <CheckCircle2 className="w-3 h-3" />
-                      ACTIVE
-                    </span>
-                  </div>
-
-                  {/* Date */}
-                  <div className="col-span-4 md:col-span-3 text-right">
-                    <span className="text-xs font-mono text-muted-foreground flex items-center justify-end gap-1 group-hover:text-foreground transition-colors">
-                      <Clock className="h-3 w-3 md:hidden" />
-                      {project.lastOpened ? formatDistanceToNow(project.lastOpened, { addSuffix: true }) : ''}
-                    </span>
-                  </div>
-
-                  {/* Size (Desktop only placeholder) */}
-                  <div className="col-span-2 md:col-span-2 text-right hidden md:block pr-2">
-                    <span className="text-xs font-mono text-muted-foreground group-hover:text-foreground transition-colors">
-                      --
-                    </span>
-                  </div>
-                </div>
+                  project={project}
+                  onOpen={handleOpenRecentProject}
+                />
               ))}
             </div>
 
