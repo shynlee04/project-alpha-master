@@ -70,10 +70,10 @@ export interface ProjectMetadata {
 }
 
 /**
- * Export WorkspaceBindings type for use in other modules.
+ * Export WorkspaceBindings and WorkspaceId types for use in other modules.
  * Story WB-1: Multi-workspace project support.
  */
-export type { WorkspaceBindings } from '../state/dexie-db-core-types';
+export type { WorkspaceBindings, WorkspaceId } from '../state/dexie-db-core-types';
 
 /**
  * Project with permission state for dashboard display.

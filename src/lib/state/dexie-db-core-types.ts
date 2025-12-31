@@ -17,6 +17,12 @@ import type { Table } from 'dexie';
 // ============================================================================
 
 /**
+ * Workspace identifier type
+ * Story WB-1: Workspace bindings
+ */
+export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
+
+/**
  * Workspace binding configuration for project association
  */
 export interface WorkspaceBindings {

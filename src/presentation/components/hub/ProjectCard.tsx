@@ -20,7 +20,8 @@ import {
 } from 'lucide-react';
 
 import type { ProjectMetadata, WorkspaceBindings } from '@/lib/workspace/project-store';
-import { WorkspaceBadge, type WorkspaceId } from './WorkspaceBadge';
+import type { WorkspaceId } from '@/lib/workspace';
+import { WorkspaceBadge } from './WorkspaceBadge';
 import { cn } from '@/lib/utils';
 
 // ============================================================================

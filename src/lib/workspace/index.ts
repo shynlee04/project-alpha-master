@@ -22,6 +22,7 @@ export {
     type ProjectMetadata,
     type ProjectWithPermission,
     type LayoutConfig,
+    type WorkspaceId,
 } from './project-store';
 
 // Story 5-3: Conversation Store

@@ -14,12 +14,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import type { WorkspaceId } from '@/lib/workspace';
 
 // ============================================================================
 // Types
 // ============================================================================
-
-export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
 
 export interface WorkspaceBadgeProps {
   /** Workspace identifier */
