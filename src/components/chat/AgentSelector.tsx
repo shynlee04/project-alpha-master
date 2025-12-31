@@ -6,6 +6,9 @@
  * 
  * @epic MVP - AI Coding Agent Vertical Slice
  * @story MVP-2 - Chat Interface with Rich Streaming
+ * @story AC-02 - Agent Selector Unification (Architectural Consolidation)
+ * 
+ * AC-02: Enhanced with variant support for different workspace presentations
  */
 
 import { useState } from 'react';
@@ -20,14 +23,42 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { Agent } from '@/mocks/agents';
+import { mockAgents } from '@/mocks/agents';
 import { useTranslation } from 'react-i18next';
+import {
+    STORE_EVENTS,
+    emitStoreEvent,
+    type AgentSelectedPayload,
+} from '@/lib/events/store-events';
+
+/**
+ * Workspace types for cross-workspace agent synchronization
+ */
+export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
+
+/**
+ * Display variants for different contexts
+ * - full: Full display with all details (IDE sidebar)
+ * - compact: Smaller display for workspace headers
+ * - minimal: Icon-only with tooltip (mobile/tight spaces)
+ */
+export type AgentSelectorVariant = 'full' | 'compact' | 'minimal';
 
 interface AgentSelectorProps {
-    agents: Agent[];
-    selectedAgent: Agent | null;
-    onSelectAgent: (agent: Agent) => void;
+    /** List of agents to display - defaults to mockAgents if not provided */
+    agents?: Agent[];
+    /** Currently selected agent */
+    selectedAgent?: Agent | null;
+    /** Callback when agent is selected */
+    onSelectAgent?: (agent: Agent) => void;
+    /** Whether the selector is disabled */
     disabled?: boolean;
+    /** Additional CSS classes */
     className?: string;
+    /** Display variant - affects size and detail level */
+    variant?: AgentSelectorVariant;
+    /** Workspace type for context-aware behavior */
+    workspaceType?: WorkspaceType;
 }
 
 /**
@@ -63,16 +94,28 @@ function getStatusText(status: Agent['status']): string {
 
 /**
  * AgentSelector Component
+ * 
+ * AC-02: Unified agent selector with variant support and cross-workspace reactivity
  */
 export function AgentSelector({
-    agents,
+    agents = mockAgents,
     selectedAgent,
     onSelectAgent,
     disabled = false,
     className,
+    variant = 'full',
+    workspaceType = 'ide',
 }: AgentSelectorProps) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
+
+    // Local state for selected agent when not controlled
+    const [localSelectedAgent, setLocalSelectedAgent] = useState<Agent | null>(
+        selectedAgent ?? agents.find(a => a.status === 'online') ?? agents[0] ?? null
+    );
+
+    // Use controlled or uncontrolled agent
+    const currentAgent = selectedAgent !== undefined ? selectedAgent : localSelectedAgent;
 
     // Sort agents: online first, then by name
     const sortedAgents = [...agents].sort((a, b) => {
@@ -80,6 +123,57 @@ export function AgentSelector({
         if (b.status === 'online' && a.status !== 'online') return 1;
         return a.name.localeCompare(b.name);
     });
+
+    /**
+     * Handle agent selection with event emission
+     * AC-02: Cross-workspace reactivity via event bus
+     */
+    const handleAgentSelect = (agent: Agent) => {
+        // Update local state if uncontrolled
+        if (selectedAgent === undefined) {
+            setLocalSelectedAgent(agent);
+        }
+
+        // Call external handler if provided
+        onSelectAgent?.(agent);
+
+        // Emit event for cross-workspace synchronization
+        emitStoreEvent<AgentSelectedPayload>(STORE_EVENTS.AGENT_SELECTED, {
+            agentId: agent.id,
+            workspaceType,
+            timestamp: Date.now(),
+        });
+
+        setOpen(false);
+    };
+
+    // Render compact variant
+    if (variant === 'compact') {
+        return (
+            <CompactAgentSelector
+                agents={sortedAgents}
+                selectedAgent={currentAgent}
+                onSelect={handleAgentSelect}
+                disabled={disabled}
+                className={className}
+            />
+        );
+    }
+
+    // Render minimal variant
+    if (variant === 'minimal') {
+        return (
+            <MinimalAgentSelector
+                agents={sortedAgents}
+                selectedAgent={currentAgent}
+                onSelect={handleAgentSelect}
+                disabled={disabled}
+                className={className}
+            />
+        );
+    }
+
+    // Full variant (default)
 
     return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -99,22 +193,22 @@ export function AgentSelector({
                         className
                     )}
                 >
-                    {selectedAgent ? (
+                    {currentAgent ? (
                         <>
                             {/* Status indicator */}
                             <Circle className={cn(
                                 'h-2.5 w-2.5 fill-current',
-                                getStatusColor(selectedAgent.status)
+                                getStatusColor(currentAgent.status)
                             )} />
 
                             {/* Agent info */}
                             <div className="flex flex-col items-start min-w-0 max-w-[120px]">
                                 <TruncatedText
-                                    text={selectedAgent.name}
+                                    text={currentAgent.name}
                                     className="text-xs font-bold text-slate-100 w-full"
                                 />
                                 <TruncatedText
-                                    text={selectedAgent.model.split('/').pop() || ''}
+                                    text={currentAgent.model.split('/').pop() || ''}
                                     className="text-[10px] text-slate-400 w-full"
                                 />
                             </div>
@@ -152,16 +246,13 @@ export function AgentSelector({
                     sortedAgents.map((agent) => (
                         <DropdownMenuItem
                             key={agent.id}
-                            onClick={() => {
-                                onSelectAgent(agent);
-                                setOpen(false);
-                            }}
+                            onClick={() => handleAgentSelect(agent)}
                             className={cn(
                                 'flex items-center gap-3 px-3 py-2 cursor-pointer',
                                 'hover:bg-slate-700 focus:bg-slate-700',
                                 'rounded-sm',
                                 // Highlight selected
-                                selectedAgent?.id === agent.id && 'bg-blue-900/30 border border-blue-500/30'
+                                currentAgent?.id === agent.id && 'bg-blue-900/30 border border-blue-500/30'
                             )}
                         >
                             {/* Status dot */}
@@ -197,6 +288,162 @@ export function AgentSelector({
                         </DropdownMenuItem>
                     ))
                 )}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
+// =============================================================================
+// Compact and Minimal Variants
+// =============================================================================
+
+interface VariantSelectorProps {
+    agents: Agent[];
+    selectedAgent: Agent | null;
+    onSelect: (agent: Agent) => void;
+    disabled?: boolean;
+    className?: string;
+}
+
+/**
+ * Compact variant for workspace headers
+ * AC-02: Smaller footprint while still showing essential info
+ */
+function CompactAgentSelector({
+    agents,
+    selectedAgent,
+    onSelect,
+    disabled = false,
+    className,
+}: VariantSelectorProps) {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
+
+    return (
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={disabled}
+                    className={cn(
+                        'h-8 px-2 gap-1.5 font-mono text-xs',
+                        'border border-border',
+                        'bg-muted/50 hover:bg-muted',
+                        className
+                    )}
+                >
+                    {selectedAgent ? (
+                        <>
+                            <Circle className={cn(
+                                'h-2 w-2 fill-current',
+                                getStatusColor(selectedAgent.status)
+                            )} />
+                            <span className="max-w-[100px] truncate">
+                                {selectedAgent.name}
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <Bot className="h-3 w-3" />
+                            <span>{t('chat.selectAgent', 'Agent')}</span>
+                        </>
+                    )}
+                    <ChevronDown className={cn(
+                        'h-3 w-3 transition-transform',
+                        open && 'rotate-180'
+                    )} />
+                </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+                align="end"
+                className="w-56 font-mono"
+            >
+                {agents.map((agent) => (
+                    <DropdownMenuItem
+                        key={agent.id}
+                        onClick={() => {
+                            onSelect(agent);
+                            setOpen(false);
+                        }}
+                        className={cn(
+                            'flex items-center gap-2 text-xs cursor-pointer',
+                            selectedAgent?.id === agent.id && 'bg-accent'
+                        )}
+                    >
+                        <Circle className={cn(
+                            'h-2 w-2 fill-current flex-shrink-0',
+                            getStatusColor(agent.status)
+                        )} />
+                        <span className="flex-1 truncate">{agent.name}</span>
+                        <span className="text-muted-foreground text-[10px]">
+                            {agent.provider}
+                        </span>
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
+/**
+ * Minimal variant - icon only with dropdown
+ * AC-02: For mobile/tight spaces
+ */
+function MinimalAgentSelector({
+    agents,
+    selectedAgent,
+    onSelect,
+    disabled = false,
+    className,
+}: VariantSelectorProps) {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
+
+    return (
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={disabled}
+                    className={cn('h-8 w-8 p-0 relative', className)}
+                    title={selectedAgent?.name || t('chat.selectAgent', 'Select Agent')}
+                >
+                    <Bot className="h-4 w-4" />
+                    {selectedAgent && (
+                        <Circle className={cn(
+                            'absolute -top-0.5 -right-0.5 h-2 w-2 fill-current',
+                            getStatusColor(selectedAgent.status)
+                        )} />
+                    )}
+                </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+                align="end"
+                className="w-48 font-mono"
+            >
+                {agents.map((agent) => (
+                    <DropdownMenuItem
+                        key={agent.id}
+                        onClick={() => {
+                            onSelect(agent);
+                            setOpen(false);
+                        }}
+                        className={cn(
+                            'flex items-center gap-2 text-xs cursor-pointer',
+                            selectedAgent?.id === agent.id && 'bg-accent'
+                        )}
+                    >
+                        <Circle className={cn(
+                            'h-2 w-2 fill-current',
+                            getStatusColor(agent.status)
+                        )} />
+                        <span className="truncate">{agent.name}</span>
+                    </DropdownMenuItem>
+                ))}
             </DropdownMenuContent>
         </DropdownMenu>
     );

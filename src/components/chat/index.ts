@@ -22,10 +22,14 @@ export type { ApprovalOverlayProps } from './ApprovalOverlay';
 export { BatchApprovalBar } from './BatchApprovalBar';
 export type { BatchApprovalBarProps } from './BatchApprovalBar';
 
+// AC-02: Agent Selector Unification - Now exported for cross-workspace use
+export { AgentSelector } from './AgentSelector';
+export type { WorkspaceType, AgentSelectorVariant } from './AgentSelector';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';
 // export { ThreadsList } from './ThreadsList';
 // export { ThreadCard } from './ThreadCard';
-// export { AgentSelector } from './AgentSelector';
 // export { StreamdownRenderer } from './StreamdownRenderer';
+

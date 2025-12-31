@@ -21,6 +21,8 @@ import { RAGPanelContainer } from '@/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
+// AC-02: Agent Selector Unification
+import { AgentSelector } from '@/components/chat';
 
 export function KnowledgePage() {
     const { t } = useTranslation();
@@ -55,6 +57,11 @@ export function KnowledgePage() {
                                 <Sparkles size={16} className="text-primary" /> {t('knowledge.sources')}
                             </h2>
                             <div className="flex items-center gap-2">
+                                {/* AC-02: Agent Selector - minimal for mobile */}
+                                <AgentSelector
+                                    variant="minimal"
+                                    workspaceType="knowledge"
+                                />
                                 {isAiAvailable && (
                                     <Sparkles size={14} className="text-primary animate-pulse" />
                                 )}
@@ -90,6 +97,11 @@ export function KnowledgePage() {
                         <div className="p-3 border-b border-border flex items-center justify-between">
                             <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
                             <div className="flex items-center gap-2">
+                                {/* AC-02: Agent Selector Unification */}
+                                <AgentSelector
+                                    variant="compact"
+                                    workspaceType="knowledge"
+                                />
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
