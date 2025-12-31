@@ -3,7 +3,16 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import Dexie from 'dexie';
 import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflow/react';
 import type { Node, Edge, Viewport } from '@xyflow/react';
-import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData, CanvasRelationshipType, CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
+import type {
+  CanvasStoreState,
+  CanvasNodeData,
+  CanvasEdgeData,
+  CanvasRelationshipType,
+  CanvasMetadata,
+  CanvasExport,
+  LinkageProposal
+} from '@/lib/canvas/types';
+import { createLinkageAnalyzer } from '@/lib/canvas/linkage-analyzer';
 
 // ============================================================
 // IndexedDB database for canvas persistence
@@ -14,6 +23,7 @@ interface CanvasStateRecord {
   nodes: Node<any>[];
   edges: Edge<any>[];
   viewport: Viewport;
+  linkageProposals?: LinkageProposal[];
 }
 
 interface CanvasMetadataRecord {
@@ -79,6 +89,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
       // Initial state
       nodes: [],
       edges: [],
+      linkageProposals: [],
       viewport: { x: 0, y: 0, zoom: 1 },
       isReadOnly: false,
 
@@ -165,10 +176,70 @@ export const useCanvasStore = create<CanvasStoreState>()(
         set({ edges: edges.filter((e) => e.id !== edgeId) });
       },
 
+      // Linkage proposal operations
+      generateLinkageProposals: async () => {
+        const { nodes } = get();
+
+        // Only analyze if we have 3+ nodes
+        if (nodes.length < 3) {
+          set({ linkageProposals: [] });
+          return;
+        }
+
+        try {
+          const analyzer = createLinkageAnalyzer({ useAI: false }); // Start with heuristic-only
+          const analysis = await analyzer.analyze(nodes);
+
+          set({ linkageProposals: analysis.proposals });
+        } catch (error) {
+          console.error('Failed to generate linkage proposals:', error);
+          set({ linkageProposals: [] });
+        }
+      },
+
+      acceptProposal: (proposalId: string) => {
+        const { linkageProposals, edges } = get();
+        const proposal = linkageProposals.find((p) => p.id === proposalId);
+
+        if (!proposal) return;
+
+        // Create edge from proposal
+        const newEdge: Edge<any> = {
+          id: `edge-${proposal.sourceNodeId}-${proposal.targetNodeId}-${Date.now()}`,
+          source: proposal.sourceNodeId,
+          target: proposal.targetNodeId,
+          type: 'relationship',
+          label: proposal.suggestedLabel,
+          data: {
+            relationship: proposal.suggestedRelationship,
+            confidence: proposal.confidence,
+          },
+          animated: true,
+        };
+
+        set({
+          edges: [...edges, newEdge],
+          // Remove the proposal after accepting
+          linkageProposals: linkageProposals.filter((p) => p.id !== proposalId),
+        });
+      },
+
+      dismissProposal: (proposalId: string) => {
+        const { linkageProposals } = get();
+        set({
+          linkageProposals: linkageProposals.filter((p) => p.id !== proposalId),
+        });
+      },
+
+      clearProposals: () => {
+        set({ linkageProposals: [] });
+      },
+
       resetCanvas: () => {
         set({
           nodes: [],
           edges: [],
+          linkageProposals: [],
           viewport: { x: 0, y: 0, zoom: 1 },
         });
       },
@@ -190,6 +261,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
                 nodes: state.nodes,
                 edges: state.edges,
                 viewport: state.viewport,
+                linkageProposals: state.linkageProposals || [],
               });
             }
             return null;
@@ -212,6 +284,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
                 nodes: parsed.nodes || [],
                 edges: parsed.edges || [],
                 viewport: parsed.viewport || { x: 0, y: 0, zoom: 1 },
+                linkageProposals: parsed.linkageProposals || [],
               });
 
               // Update canvas metadata
@@ -248,6 +321,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
         nodes: state.nodes,
         edges: state.edges,
         viewport: state.viewport,
+        linkageProposals: state.linkageProposals,
       }),
     },
   ),
@@ -290,6 +364,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
           nodes: currentState.nodes,
           edges: currentState.edges,
           viewport: currentState.viewport,
+          linkageProposals: currentState.linkageProposals,
         });
 
         const metadata = await db.table('canvases').get(activeCanvasId);
@@ -317,11 +392,13 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
           nodes: state.nodes,
           edges: state.edges,
           viewport: state.viewport,
+          linkageProposals: state.linkageProposals || [],
         });
       } else {
         useCanvasStore.setState({
           nodes: [],
           edges: [],
+          linkageProposals: [],
           viewport: { x: 0, y: 0, zoom: 1 },
         });
       }
@@ -355,6 +432,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
         nodes: [],
         edges: [],
         viewport: { x: 0, y: 0, zoom: 1 },
+        linkageProposals: [],
       });
     });
 
@@ -382,6 +460,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
       useCanvasStore.setState({
         nodes: [],
         edges: [],
+        linkageProposals: [],
         viewport: { x: 0, y: 0, zoom: 1 },
       });
     }
@@ -457,6 +536,7 @@ export const useMultiCanvasStore = create<MultiCanvasStoreState>((set, get) => (
         nodes: exportData.canvas.nodes,
         edges: exportData.canvas.edges,
         viewport: exportData.canvas.viewport,
+        linkageProposals: [],
       });
     });
 
@@ -528,6 +608,7 @@ async function initializeDefaultCanvas() {
           nodes: [],
           edges: [],
           viewport: { x: 0, y: 0, zoom: 1 },
+          linkageProposals: [],
         });
       });
     }
