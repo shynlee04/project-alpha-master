@@ -143,7 +143,7 @@ Focus on actionable insights, user preferences, and important topics discussed.`
 /**
  * Extract insights without AI (simple fallback)
  */
-function extractInsightsSimple(messages: CoreMessage[], threadId: string): ExtractedInsights {
+function extractInsightsSimple(messages: CoreMessage[], _threadId: string): ExtractedInsights {
   // Extract all user messages
   const userMessages = messages
     .filter((m) => m.role === 'user')

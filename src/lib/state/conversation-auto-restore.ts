@@ -104,7 +104,7 @@ export class ConversationAutoRestore {
    * Restore scroll position with animation.
    */
   async restoreScrollPosition(
-    threadId: string,
+    _threadId: string,
     scrollPosition: number
   ): Promise<void> {
     // In a real implementation, this would find the chat container

@@ -176,7 +176,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
     {
       name: 'canvas-storage',
       storage: createJSONStorage(() => ({
-        getItem: async (name: string) => {
+        getItem: async (_name: string) => {
           try {
             // Get the active canvas from localStorage or default to 'default'
             const stored = localStorage.getItem('canvas-active-id');
@@ -197,7 +197,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
             return null;
           }
         },
-        setItem: async (name: string, value: string) => {
+        setItem: async (_name: string, value: string) => {
           try {
             const db = getSafeCanvasDb();
             if (!db) return;
@@ -228,7 +228,7 @@ export const useCanvasStore = create<CanvasStoreState>()(
             console.error('Failed to persist canvas state:', error);
           }
         },
-        removeItem: async (name: string) => {
+        removeItem: async (_name: string) => {
           try {
             const db = getSafeCanvasDb();
             if (!db) return;

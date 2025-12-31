@@ -118,7 +118,7 @@ export class FlashcardGenerator {
 
     // Combine all source content with source IDs
     const combinedContent = sources
-      .map((source, index) => `[${source.id}] ${source.title}\n${source.content}`)
+      .map((source) => `[${source.id}] ${source.title}\n${source.content}`)
       .join('\n\n---\n\n');
 
     const prompt = this.buildPrompt(combinedContent, sources.map((s) => s.id).join(','), minCards, maxCards, topics);
@@ -207,7 +207,7 @@ export class MockFlashcardGenerator {
    * Generate mock flashcards for testing
    */
   generateMockFlashcards(
-    content: string,
+    _content: string,
     sourceId: string,
     projectId: string,
     count: number = 5

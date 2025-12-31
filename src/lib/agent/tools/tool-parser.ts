@@ -332,7 +332,7 @@ export function parseToolCallChunks(chunks: ToolCallChunk[]): ParseResult {
     }
 
     // Process each tool call's chunks
-    for (const [toolCallId, callChunks] of chunksByToolCall.entries()) {
+    for (const [_toolCallId, callChunks] of chunksByToolCall.entries()) {
         for (const chunk of callChunks) {
             buffer.addChunk(chunk);
         }

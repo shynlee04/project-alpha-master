@@ -72,8 +72,8 @@ export class FixedSizeChunker implements ChunkStrategy {
 
         while (currentPosition < content.length) {
             // Calculate target chunk size (in characters)
-            const targetSize = (avgChunkSize * 4); // Convert tokens to chars
-            const maxPos = Math.min(currentPosition + targetSize, content.length);
+            // const targetSize = (avgChunkSize * 4); // Convert tokens to chars
+            // const maxPos = Math.min(currentPosition + targetSize, content.length);
 
             // Find best boundary
             const endPosition = findChunkBoundary(
@@ -246,15 +246,15 @@ export class FixedSizeChunker implements ChunkStrategy {
         offset: number,
         minChunkSize: number,
         maxChunkSize: number,
-        overlap: number,
+        // overlap: number,
         startChunkIndex: number
     ): ChunkMetadata[] {
         const chunks: ChunkMetadata[] = [];
         let currentPosition = 0;
 
         while (currentPosition < content.length) {
-            const targetSize = ((minChunkSize + maxChunkSize) / 2) * 4;
-            const maxPos = Math.min(currentPosition + targetSize, content.length);
+            // const targetSize = ((minChunkSize + maxChunkSize) / 2) * 4;
+            // const maxPos = Math.min(currentPosition + targetSize, content.length);
 
             const endPosition = findChunkBoundary(
                 content,
@@ -329,7 +329,7 @@ export class SemanticChunker implements ChunkStrategy {
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        const { minChunkSize, maxChunkSize, preserveFormatting } = options;
+        // const { minChunkSize, maxChunkSize, preserveFormatting } = options;
 
         const chunks: ChunkMetadata[] = [];
 
@@ -469,7 +469,7 @@ export class RecursiveChunker implements ChunkStrategy {
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        const { minChunkSize, maxChunkSize } = options;
+        // const { minChunkSize, maxChunkSize } = options;
 
         const chunks: ChunkMetadata[] = [];
         let chunkIndex = 0;

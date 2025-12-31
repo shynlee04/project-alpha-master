@@ -222,10 +222,10 @@ export class SystemPromptComposer {
   private layers: Map<number, PromptLayer> = new Map();
   
   /** Current configuration hash for cache invalidation */
-  private currentConfigHash: string = '';
-  
+  // private currentConfigHash: string = '';
+
   /** Event emitter for file system events */
-  private eventBus: WorkspaceEventEmitter | null = null;
+  // private eventBus: WorkspaceEventEmitter | null = null;
   
   /** Debounce timer for Layer 3 recomputation */
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;

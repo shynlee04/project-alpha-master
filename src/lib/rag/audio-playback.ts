@@ -202,7 +202,7 @@ export class AudioPlaybackHandler {
     }
 
     const minChunks = this.config.jitterConfig!.minChunks!;
-    const targetChunks = this.config.jitterConfig!.targetChunks!;
+    // const targetChunks = this.config.jitterConfig!.targetChunks!;
 
     // Schedule chunks while buffer has enough data
     while (this.jitterBuffer.length >= minChunks) {

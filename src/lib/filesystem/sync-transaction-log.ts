@@ -196,11 +196,11 @@ export function resetTransactionLog(): void {
  * Rollback executor for reversing sync operations
  */
 export class SyncRollbackExecutor {
-    private localAdapter: LocalFSAdapter;
+    // private localAdapter: LocalFSAdapter;
     private eventBus?: WorkspaceEventEmitter;
 
-    constructor(localAdapter: LocalFSAdapter, eventBus?: WorkspaceEventEmitter) {
-        this.localAdapter = localAdapter;
+    constructor(_localAdapter: LocalFSAdapter, eventBus?: WorkspaceEventEmitter) {
+        // this.localAdapter = localAdapter;
         this.eventBus = eventBus;
     }
 
@@ -355,7 +355,7 @@ export async function writeMultipleWithRollback(
             const file = files[i];
 
             // Add operation to transaction log
-            const transaction = transactionLog.addOperation(operationId, 'write', file.path);
+            // const transaction = transactionLog.addOperation(operationId, 'write', file.path);
             transactionLog.updateOperation(operationId, file.path, { status: 'in-progress' });
 
             eventBus?.emit('sync:progress', {
@@ -523,7 +523,7 @@ export async function deleteMultipleWithRollback(
         for (let i = 0; i < paths.length; i++) {
             const path = paths[i];
 
-            const transaction = transactionLog.addOperation(operationId, 'delete', path);
+            // const transaction = transactionLog.addOperation(operationId, 'delete', path);
             transactionLog.updateOperation(operationId, path, { status: 'in-progress' });
 
             eventBus?.emit('sync:progress', {

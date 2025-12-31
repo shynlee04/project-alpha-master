@@ -83,7 +83,7 @@ export async function capturePdfPage(
   const {
     scale = 1.5,
     quality = 0.85,
-    fullPage = true,
+    // fullPage = true,
   } = options;
 
   // Validate page number

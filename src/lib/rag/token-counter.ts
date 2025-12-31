@@ -10,7 +10,7 @@
  * Alternative: 1 token ≈ 0.75 words (~1.3 tokens per word)
  */
 
-import type { ChunkingOptions } from './types';
+// import type { ChunkingOptions } from './types';
 
 // ============================================================================
 // Token Counting
@@ -127,7 +127,7 @@ export function findChunkBoundary(
  * @param overlap - Overlap in tokens
  * @returns Overlap in characters (approximate)
  */
-export function calculateOverlap(chunkSize: number, overlap: number): number {
+export function calculateOverlap(_chunkSize: number, overlap: number): number {
     return overlap * 4; // Convert tokens to characters
 }
 

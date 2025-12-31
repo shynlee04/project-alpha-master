@@ -7,7 +7,8 @@
  * Handles model storage, retrieval, and quota management.
  */
 
-import { db, type EmbeddingModelRecord } from '@/lib/state/dexie-db';
+import { db } from '@/lib/state/dexie-db';
+// import type { EmbeddingModelRecord } from '@/lib/state/dexie-db';
 import type { EmbeddingModelMetadata } from './types';
 
 /**

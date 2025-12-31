@@ -206,7 +206,7 @@ export async function generateEmbedding(
     text: string,
     config: EmbeddingConfig
 ): Promise<EmbeddingResult> {
-    const startTime = performance.now();
+    // const startTime = performance.now();
 
     if (config.provider === 'local') {
         return generateLocalEmbedding(text, config.localModel);

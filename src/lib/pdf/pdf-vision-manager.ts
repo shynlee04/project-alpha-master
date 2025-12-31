@@ -43,7 +43,7 @@ export interface CachedPage extends CapturedPage {
  */
 export class PdfVisionManager {
   private pdfDocument: pdfjsLib.PDFDocumentProxy | null = null;
-  private documentUrl: string | null = null;
+  // private documentUrl: string | null = null;
   private pageCache = new Map<number, CachedPage>();
   private maxCacheSize: number;
   private captureOptions: CaptureOptions;
@@ -65,7 +65,7 @@ export class PdfVisionManager {
     // Clear previous document and cache
     this.clearCache();
     this.pdfDocument = null;
-    this.documentUrl = null;
+    // this.documentUrl = null;
 
     // Load new document
     const loadingTask = typeof url === 'string'

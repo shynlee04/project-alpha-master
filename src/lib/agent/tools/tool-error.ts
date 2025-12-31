@@ -508,7 +508,7 @@ export class ToolExecutor {
  */
 export async function executeTool<T>(
   toolId: string,
-  toolName: string,
+  _toolName: string,
   fn: () => Promise<T>,
   config?: Partial<RetryConfig>
 ): Promise<ExecutionResult<T>> {

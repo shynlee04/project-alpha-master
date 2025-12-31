@@ -114,7 +114,7 @@ export async function executeWithTimeout<T>(
   config: ToolTimeoutConfig = DEFAULT_TIMEOUT_CONFIG
 ): Promise<T> {
   const timeout = getToolTimeout(toolName, config);
-  const warningThreshold = getWarningThreshold(toolName, config);
+  // const warningThreshold = getWarningThreshold(toolName, config);
 
   // Create abort controller
   const controller = new AbortController();
@@ -139,16 +139,16 @@ export async function executeWithTimeout<T>(
   });
 
   // Create warning promise (resolves when warning threshold reached)
-  const warningPromise = new Promise<void>((resolve) => {
-    warningId = setTimeout(() => {
-      console.warn(`Tool "${toolName}" taking longer than expected (${warningThreshold}ms)`);
-      // Trigger warning callback if provided
-      if (config.onWarning) {
-        config.onWarning(toolName, warningThreshold);
-      }
-      resolve();
-    }, warningThreshold);
-  });
+  // const warningPromise = new Promise<void>((resolve) => {
+  //   warningId = setTimeout(() => {
+  //     console.warn(`Tool "${toolName}" taking longer than expected (${warningThreshold}ms)`);
+  //     // Trigger warning callback if provided
+  //     if (config.onWarning) {
+  //       config.onWarning(toolName, warningThreshold);
+  //     }
+  //     resolve();
+  //   }, warningThreshold);
+  // });
 
   try {
     // Race between tool execution, timeout, and warning
@@ -196,7 +196,7 @@ export async function executeWithTimeoutAndProgress<T>(
   config: ToolTimeoutConfig = DEFAULT_TIMEOUT_CONFIG
 ): Promise<T> {
   const timeout = getToolTimeout(toolName, config);
-  const warningThreshold = getWarningThreshold(toolName, config);
+  // const warningThreshold = getWarningThreshold(toolName, config);
   const startTime = Date.now();
 
   // Create abort controller
@@ -215,12 +215,12 @@ export async function executeWithTimeoutAndProgress<T>(
   });
 
   // Create warning promise
-  const warningPromise = new Promise<void>((resolve) => {
-    setTimeout(() => {
-      callbacks.onWarning?.(toolName, warningThreshold);
-      resolve();
-    }, warningThreshold);
-  });
+  // const warningPromise = new Promise<void>((resolve) => {
+  //   setTimeout(() => {
+  //     callbacks.onWarning?.(toolName, warningThreshold);
+  //     resolve();
+  //   }, warningThreshold);
+  // });
 
   // Progress interval
   progressInterval = setInterval(() => {

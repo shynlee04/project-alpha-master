@@ -11,7 +11,7 @@
  * Story 27-1c: Persistence Migration (idb → Dexie)
  */
 
-import Dexie, { type Table } from 'dexie';
+import Dexie, { /* type Table */ } from 'dexie';
 
 // Import all record types
 import type {

@@ -7,7 +7,7 @@
  * and RAG infrastructure components.
  */
 
-import type { Orama } from '@orama/orama';
+// import type { Orama } from '@orama/orama';
 
 /**
  * Document schema for Orama index
