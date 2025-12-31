@@ -9,7 +9,7 @@
  * Story 31.1: Conversation Memory & Long-Term Context
  */
 
-import type { CoreMessage } from '@tanstack/ai-core';
+import type { CoreMessage } from '@tanstack/ai';
 
 export interface InsightExtractionOptions {
   /**

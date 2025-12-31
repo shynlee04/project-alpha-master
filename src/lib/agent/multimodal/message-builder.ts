@@ -9,7 +9,7 @@
  * Story 10.2: Multimodal Source Vision (Desktop Only)
  */
 
-import type { CoreMessage } from '@tanstack/ai-core';
+import type { CoreMessage } from '@tanstack/ai';
 
 export interface ImageContent {
   /**

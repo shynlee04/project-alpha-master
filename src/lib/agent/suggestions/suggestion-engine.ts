@@ -8,7 +8,7 @@
  * Story 31.3: Proactive Suggestions & Follow-Up Actions
  */
 
-import type { CoreMessage } from '@tanstack/ai-core';
+import type { CoreMessage } from '@tanstack/ai';
 
 export interface Suggestion {
   /**
