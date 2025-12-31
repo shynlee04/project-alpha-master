@@ -6,6 +6,7 @@
  * Sidebar with search, favorites toggle, and note tree.
  *
  * Story 26.5: Note Hierarchy & Sidebar Navigation
+ * AC-02: Agent Selector Unification - Added agent selector support
  */
 
 import { useState, useCallback, useEffect } from 'react';
@@ -22,6 +23,8 @@ interface NoteSidebarProps {
     activeNoteId: string | null;
     onNoteSelect: (noteId: string) => void;
     onCreateNote: () => void;
+    /** AC-02: Optional slot for agent selector */
+    agentSelectorSlot?: React.ReactNode;
 }
 
 /**
@@ -32,8 +35,9 @@ interface NoteSidebarProps {
  * - Favorites filter toggle
  * - Create note button
  * - Note tree display
+ * - Agent selector slot (AC-02)
  */
-export function NoteSidebar({ notes, activeNoteId, onNoteSelect, onCreateNote }: NoteSidebarProps) {
+export function NoteSidebar({ notes, activeNoteId, onNoteSelect, onCreateNote, agentSelectorSlot }: NoteSidebarProps) {
     const { t } = useTranslation();
     const { searchQuery, setSearchQuery, showFavoritesOnly, toggleFavoritesFilter } = useNoteNavigationStore();
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
@@ -65,10 +69,15 @@ export function NoteSidebar({ notes, activeNoteId, onNoteSelect, onCreateNote }:
                         <Notebook size={16} className="text-primary" />
                         {t('notes.title', 'Notes')}
                     </h2>
-                    <Button size="sm" variant="ghost" onClick={onCreateNote} aria-label={t('notes.create_new', 'Create new note')}>
-                        <Plus size={16} />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        {/* AC-02: Agent Selector slot */}
+                        {agentSelectorSlot}
+                        <Button size="sm" variant="ghost" onClick={onCreateNote} aria-label={t('notes.create_new', 'Create new note')}>
+                            <Plus size={16} />
+                        </Button>
+                    </div>
                 </div>
+
 
                 {/* Search Input */}
                 <div className="relative">

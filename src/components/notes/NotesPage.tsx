@@ -20,6 +20,8 @@ const NoteEditor = lazy(() => {
 import { NoteSidebar } from './NoteSidebar';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
+// AC-02: Agent Selector Unification
+import { AgentSelector } from '@/components/chat';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -94,6 +96,12 @@ export function NotesPage() {
                             activeNoteId={activeNoteId}
                             onNoteSelect={handleNoteSelect}
                             onCreateNote={handleCreateNote}
+                            agentSelectorSlot={
+                                <AgentSelector
+                                    variant="minimal"
+                                    workspaceType="notes"
+                                />
+                            }
                         />
                     ) : (
                         <>
@@ -157,6 +165,12 @@ export function NotesPage() {
                         activeNoteId={activeNoteId}
                         onNoteSelect={handleNoteSelect}
                         onCreateNote={handleCreateNote}
+                        agentSelectorSlot={
+                            <AgentSelector
+                                variant="minimal"
+                                workspaceType="notes"
+                            />
+                        }
                     />
                 </ResizablePanel>
 

@@ -19,6 +19,8 @@ import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
 import { useIDEStore } from '@/lib/state/ide-store';
+// AC-02: Agent Selector Unification
+import { AgentSelector } from '@/components/chat';
 
 export function StudyPage() {
     const { t } = useTranslation();
@@ -46,9 +48,16 @@ export function StudyPage() {
                 <div className="flex flex-col h-full overflow-y-auto">
                     {/* Header */}
                     <div className="p-4 border-b border-border">
-                        <div className="flex items-center gap-2 mb-2">
-                            <BookOpen className="text-primary" size={20} />
-                            <h1 className="font-mono font-bold text-lg">{t('study.title')}</h1>
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                                <BookOpen className="text-primary" size={20} />
+                                <h1 className="font-mono font-bold text-lg">{t('study.title')}</h1>
+                            </div>
+                            {/* AC-02: Agent Selector - minimal for mobile */}
+                            <AgentSelector
+                                variant="minimal"
+                                workspaceType="study"
+                            />
                         </div>
                         <p className="text-sm text-muted-foreground">{t('study.subtitle')}</p>
                     </div>
@@ -101,8 +110,8 @@ export function StudyPage() {
 
                                 <TabsContent value="stats" className="mt-0">
                                     <CompactStudyStats
-                                      totalCardsStudied={totalCardsStudied}
-                                      currentStreak={currentStreak}
+                                        totalCardsStudied={totalCardsStudied}
+                                        currentStreak={currentStreak}
                                     />
                                 </TabsContent>
                             </Tabs>
@@ -130,10 +139,17 @@ export function StudyPage() {
                             <BookOpen className="text-primary" size={24} />
                             <h1 className="font-mono font-bold text-xl">{t('study.title')}</h1>
                         </div>
-                        <CompactStudyStats
-                          totalCardsStudied={totalCardsStudied}
-                          currentStreak={currentStreak}
-                        />
+                        <div className="flex items-center gap-4">
+                            {/* AC-02: Agent Selector Unification */}
+                            <AgentSelector
+                                variant="compact"
+                                workspaceType="study"
+                            />
+                            <CompactStudyStats
+                                totalCardsStudied={totalCardsStudied}
+                                currentStreak={currentStreak}
+                            />
+                        </div>
                     </div>
                     <p className="text-sm text-muted-foreground">{t('study.subtitle')}</p>
                 </div>
@@ -202,8 +218,8 @@ export function StudyPage() {
                                 <TabsContent value="stats" className="mt-0">
                                     <div className="max-w-4xl mx-auto">
                                         <CompactStudyStats
-                                          totalCardsStudied={totalCardsStudied}
-                                          currentStreak={currentStreak}
+                                            totalCardsStudied={totalCardsStudied}
+                                            currentStreak={currentStreak}
                                         />
                                     </div>
                                 </TabsContent>
