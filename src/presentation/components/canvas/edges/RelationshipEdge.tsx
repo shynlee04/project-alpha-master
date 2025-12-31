@@ -5,7 +5,7 @@ import {
   EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import type { CanvasRelationshipType } from '../../../lib/canvas/types';
+import type { CanvasRelationshipType } from '@/lib/canvas/types';
 import '@xyflow/react/dist/style.css';
 import { useTranslation } from 'react-i18next';
 

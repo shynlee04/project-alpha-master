@@ -9,7 +9,7 @@ import {
     buildTreeNode,
 } from '../utils';
 import type { TreeNode } from '../types';
-import type { DirectoryEntry } from '../../../../lib/filesystem/local-fs-adapter';
+import type { DirectoryEntry } from '@/lib/filesystem/local-fs-adapter';
 
 // ============================================================================
 // Test: restoreExpandedState

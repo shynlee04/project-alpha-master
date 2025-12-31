@@ -1,955 +1,1044 @@
 ---
 date: 2025-12-31
-time: 06:17:00
-phase: Sprint Planning
-team: Team-A | Team-B (Parallel Execution)
+time: "08:20:00"
+phase: Sprint Planning - Knowledge Synthesis Station
+team: Team-A | Team-B
 agent_mode: bmad-core-bmad-master
 ---
 
-# Knowledge Synthesis Platform - Sprint Planning Document
-
-**Epic Range:** EPIC-32 through EPIC-37  
-**Created:** 2025-12-31  
-**Based On:** [`_bmad-output/knowledge-synthesis-platform/knowledge-synthesis-platform-tech-spec-2025-12-31.md`](_bmad-output/knowledge-synthesis-platform/knowledge-synthesis-platform-tech-spec-2025-12-31.md)  
-**Coordinated With:** [`.agent/workflows/story-dev-cycle.md`](.agent/workflows/story-dev-cycle.md)  
-**Validation Reference:** [`_bmad-output/validation/sweeping-validation.md`](_bmad-output/validation/sweeping-validation.md)
-
----
+# Knowledge Synthesis Platform - Sprint Planning & Story Development
 
 ## Executive Summary
 
-This document provides comprehensive sprint planning for implementing the Knowledge Synthesis Platform based on the technical specification. Key findings:
+This document orchestrates sprint planning for the Knowledge Synthesis Platform based on the completed technical specification ([`knowledge-synthesis-platform-tech-spec-2025-12-31.md`](_bmad-output/knowledge-synthesis-platform/knowledge-synthesis-platform-tech-spec-2025-12-31.md)). Story 32-1 (Orama WASM Vector Store Enhancement) is already COMPLETE, establishing the foundation for RAG Infrastructure.
 
-- **Existing Infrastructure:** 42 RAG components, 20+ knowledge components already implemented
-- **Gap Analysis:** Missing multimodal processing (image OCR, audio transcription), adaptive learning, study artifact generation
-- **Health Status:** Current codebase has 5.9% health score (1,172 TS errors, 37 file size violations)
-- **Parallel Execution Strategy:** Team A (UI/Foundation), Team B (Backend/Agent)
+### Current State Analysis
 
----
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Story 32-1 (Orama WASM) | ✅ DONE | All 5 ACs validated, code reviewed |
+| EPIC-32 (RAG Infrastructure) | 🚧 IN_PROGRESS | Stories 32-2 through 32-5 pending |
+| EPIC-33 (Agent Integration) | 📋 BACKLOG | Ready for sprint planning |
+| EPIC-34 (Image Understanding) | 📋 BACKLOG | Ready for sprint planning |
+| EPIC-35 (Document Processing) | 📋 BACKLOG | Ready for sprint planning |
+| EPIC-36 (Adaptive Learning) | 📋 BACKLOG | Ready for sprint planning |
+| EPIC-37 (Study Artifacts) | 📋 BACKLOG | Ready for sprint planning |
 
-## Part 1: Component Mapping Analysis
+### Team Assignment
 
-### 1.1 Existing RAG Infrastructure (`src/lib/rag/`)
-
-| Component | Status | Tech Spec Mapping | Gap |
-|-----------|--------|-------------------|-----|
-| `orama-index.ts` | ✅ Exists | EPIC-32 Vector Store | Extend for multimodal embeddings |
-| `document-chunker.ts` | ✅ Exists | EPIC-35 Document Processing | Add structural analysis |
-| `embedding-service.ts` | ✅ Exists | EPIC-32 Embeddings | Add image embeddings (CLIP) |
-| `hybrid-retriever.ts` | ✅ Exists | EPIC-32 Retrieval Pipeline | Extend for cross-modal |
-| `rag-chat.ts` | ✅ Exists | EPIC-33 Agent Integration | Add synthesis context |
-| `citation-formatter.ts` | ✅ Exists | EPIC-37 Study Artifacts | Extend for citations |
-| `token-counter.ts` | ✅ Exists | Infrastructure | No gap |
-| `indexeddb-storage.ts` | ✅ Exists | Infrastructure | No gap |
-| `transformers-loader.ts` | ✅ Exists | EPIC-32 Embeddings | Add CLIP model support |
-
-### 1.2 Existing Knowledge Components (`src/lib/knowledge/`)
-
-| Component | Status | Tech Spec Mapping | Gap |
-|-----------|--------|-------------------|-----|
-| `flashcard-generator.ts` | ✅ Exists | EPIC-37 Study Artifacts | Extend for synthesis |
-| `metadata-extractor.ts` | ✅ Exists | EPIC-35 Document Processing | Add structural analysis |
-| `pdf-parser.ts` | ✅ Exists | EPIC-35 Document Processing | Add visual structure |
-| `source-import.ts` | ✅ Exists | EPIC-35 Ingestion Pipeline | Extend for multimodal |
-| `url-fetcher.ts` | ✅ Exists | EPIC-35 URL Processing | Add content extraction |
-
-### 1.3 Existing Notes Components (`src/lib/notes/`)
-
-| Component | Status | Tech Spec Mapping | Gap |
-|-----------|--------|-------------------|-----|
-| `note-store.ts` | ✅ Exists (525 lines) | EPIC-33 Knowledge Storage | Split into smaller modules |
-| `note-indexer.ts` | ✅ Exists (381 lines) | EPIC-32 Index Pipeline | Extend for embeddings |
-| `note-ai-service.ts` | ⚠️ Placeholder | EPIC-33 AI Integration | Implement TanStack AI |
-| `note-navigation-store.ts` | ✅ Exists | UI/UX | No gap |
-
-### 1.4 Critical Validation Findings
-
-From [`_bmad-output/validation/sweeping-validation.md`](_bmad-output/validation/sweeping-validation.md):
-
-| Issue | Severity | Impact on EPIC-32-37 |
-|-------|----------|---------------------|
-| TypeScript Errors (1,172) | 🔴 Critical | Must fix before new code |
-| File Size Violations (37 files) | 🟠 High | `note-store.ts` (525 lines), `note-indexer.ts` (381 lines) |
-| AI Streaming Placeholder | 🔴 Critical | `note-ai-service.ts` is stub |
-| Drag-and-Drop Missing | 🟠 High | State exists, no UI implementation |
-| Missing Citations | 🟠 High | Source references not displayed |
+| Team | Focus Area | Rationale |
+|------|------------|-----------|
+| **Team A (UI/Foundation)** | EPIC-32 (32-2, 32-3), EPIC-34 UI | Frontend integration, canvas components |
+| **Team B (Backend/Agent)** | EPIC-32 (32-4, 32-5), EPIC-33 | RAG optimization, agent integration |
 
 ---
 
-## Part 2: Gap Analysis & Refactoring Recommendations
+## Part 1: EPIC-32 Stories (Continuing from Story 32-1)
 
-### 2.1 Component Consolidation Map
+### Story 32-2: Hybrid Search Engine Implementation
 
+**As a** user searching my knowledge base,  
+**I want** hybrid search combining full-text and vector similarity,  
+**So that** I can find relevant content using both exact keywords and semantic meaning.
+
+#### Acceptance Criteria
+
+**Given** a user enters search query "machine learning neural networks"  
+**When** hybrid search executes  
+**Then** results include documents matching both:  
+- Exact keywords: "machine learning", "neural networks"  
+- Semantic meaning: deep learning, AI, backpropagation  
+**And** results are ranked by combined relevance score  
+**And** response time <500ms for 10,000 documents
+
+**Given** a user searches with quoted phrase "exact phrase match"  
+**When** hybrid search executes  
+**Then** phrase-matched documents receive boost in ranking  
+**And** non-matching documents excluded from top results
+
+**Given** a user applies filters (date range, source type)  
+**When** hybrid search executes  
+**Then** results are filtered before ranking  
+**And** filter metadata is displayed in results
+
+#### Technical Implementation
+
+```typescript
+// src/lib/rag/hybrid-retriever.ts (EXTENSION)
+// Building on existing orama-index.ts (551 lines)
+
+// New HybridSearchConfig interface
+interface HybridSearchConfig {
+  weightVector: number;        // 0-1, default 0.7 for vector
+  weightFulltext: number;      // 0-1, default 0.3 for fulltext
+  minScore: number;            // minimum threshold
+  filters?: SearchFilters;
+  limit: number;               // max results
+}
+
+// New hybridSearch function
+export async function hybridSearch(
+  query: string,
+  config: HybridSearchConfig
+): Promise<HybridSearchResult[]> {
+  // Execute both searches in parallel
+  const [vectorResults, fulltextResults] = await Promise.all([
+    oramaIndex.vectorSearch(query, config),
+    oramaIndex.fulltextSearch(query, config)
+  ]);
+  
+  // Merge and rerank
+  return mergeAndRerank(vectorResults, fulltextResults, config);
+}
 ```
-EXISTING                          TECH SPEC REQUIRED                    ACTION
-─────────────────────────────────────────────────────────────────────────────
-src/lib/rag/orama-index    →     EPIC-32 Vector Store                  EXTEND
-src/lib/rag/embedding      →     EPIC-32 Text + Image Embeddings      ADD CLIP
-src/lib/knowledge/pdf      →     EPIC-35 PDF Processing               EXTEND
-src/lib/notes/note-store   →     EPIC-33 Knowledge Storage            REFACTOR (split)
-src/lib/rag/rag-chat       →     EPIC-33 Agent Integration            EXTEND
-(NONE)                      →     EPIC-34 Image Understanding          CREATE NEW
-(NONE)                      →     EPIC-36 Adaptive Learning           CREATE NEW
-src/lib/knowledge/flash    →     EPIC-37 Study Artifacts              EXTEND
-```
 
-### 2.2 Refactoring Priorities (Per Sweeping Validation)
+#### Dependencies & Integration Points
 
-| Priority | File | Current Lines | Target | Action |
-|----------|------|---------------|--------|--------|
-| P0 | `note-store.ts` | 525 | 300 | Split into note-tree-store.ts, note-content-store.ts |
-| P0 | `note-indexer.ts` | 381 | 300 | Split into note-embeddings.ts, note-search.ts |
-| P1 | `sync-manager.ts` | 667 | 300 | Split per sweeping validation |
-| P1 | `live-api-websocket.ts` | 387 | 300 | Extract retry logic |
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| Story 32-1 (Orama Index) | Uses oramaIndex.vectorSearch() | ✅ DONE |
+| rag-store.ts | State management for search results | ✅ EXISTS |
+| KnowledgePage | Search UI integration | ⚠️ WIRE NEEDED |
+
+#### Tasks
+
+- [ ] Research Orama hybrid search configuration options (Context7 MCP)
+- [ ] Implement hybridSearch() function in hybrid-retriever.ts
+- [ ] Add weighted scoring algorithm (vector 0.7, fulltext 0.3)
+- [ ] Implement result merging with deduplication
+- [ ] Add filter support (date, source type)
+- [ ] Write unit tests (target: 15 tests, 80% coverage)
+- [ ] Wire to KnowledgePage search component
+- [ ] Validate against sweeping-validation.md Level 5 (Integration Reality)
 
 ---
 
-## Part 3: Sprint 1 - EPIC-32 RAG Infrastructure (Weeks 1-2)
+### Story 32-3: Semantic Citation System
 
-**Focus:** Foundation vector store, embedding pipeline, and retrieval system
+**As a** researcher synthesizing knowledge,  
+**I want** automatic citations linking AI responses to source documents,  
+**So that** I can verify information and trace findings back to original sources.
 
-### Story 32-1: Orama WASM Vector Store Enhancement
+#### Acceptance Criteria
 
-**User Story:**
+**Given** an AI generates response citing document D123  
+**When** user hovers over citation [1]  
+**Then** tooltip shows document title, relevant excerpt, and relevance score  
+**And** clicking citation opens source document in preview panel
+
+**Given** response contains multiple citations  
+**When** citations are numbered sequentially  
+**Then** citation order reflects descending relevance  
+**And** duplicate sources are consolidated (single citation)
+
+**Given** user clicks "Show all citations"  
+**When** citation sidebar expands  
+**Then** all cited documents are listed with relevance scores  
+**And** document cards show matching text snippets
+
+#### Technical Implementation
+
+```typescript
+// src/lib/rag/citation-manager.ts (NEW)
+
+interface Citation {
+  id: string;
+  documentId: string;
+  documentTitle: string;
+  excerpt: string;           // Matching text snippet
+  relevanceScore: number;
+  position: { start: number; end: number }; // In response text
+}
+
+interface CitationContext {
+  responseId: string;
+  citations: Citation[];
+  generatedAt: Date;
+}
+
+export class CitationManager {
+  // Extract citations from AI response with source references
+  async extractCitations(
+    response: string,
+    sources: SearchResult[]
+  ): Promise<CitationContext> {
+    // Parse source IDs from response markers [1], [2], etc.
+    // Match to search results
+    // Generate excerpts from matching content
+    // Return structured citation context
+  }
+  
+  // Render inline citations with hover tooltips
+  renderInlineCitations(citations: Citation[]): JSX.Element {
+    return (
+      <div className="citation-inline">
+        {citations.map((c, i) => (
+          <CitationTooltip key={c.id} citation={c} index={i + 1} />
+        ))}
+      </div>
+    );
+  }
+}
 ```
-As a user,
-I want my knowledge sources to be indexed with local-first vector search,
-So that I can find relevant content instantly without network latency.
-```
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Orama index created for each project | `orama-index.ts` exists | Extend for project isolation |
-| AC-2 | 384-dimensional embeddings generated | `embedding-service.ts` exists | Add CLIP support |
-| AC-3 | Incremental index updates | Basic implementation | Add delta indexing |
-| AC-4 | Search results <100ms | No performance target | Add benchmarks |
+#### UI Components
 
-**Tasks:**
-- [ ] Extend `OramaIndexManager` for multi-project isolation
-- [ ] Add Transformers.js CLIP model loader for image embeddings
-- [ ] Implement delta indexing for incremental updates
-- [ ] Add performance benchmarks (target: <100ms)
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `CitationTooltip.tsx` | `src/components/rag/` | Hover card with document preview |
+| `CitationSidebar.tsx` | `src/components/rag/` | Sidebar showing all citations |
+| `CitationInline.tsx` | `src/components/rag/` | Inline citation component |
 
-**Research Requirements:**
-- [ ] Context7: Orama WASM indexing patterns
-- [ ] DeepWiki: Transformers.js WebGPU acceleration
-- [ ] Repomix: Analyze existing `embedding-service.ts`
+#### Dependencies & Integration Points
 
-**Dependencies:**
-- None (foundation story)
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| Story 32-2 (Hybrid Search) | Search results for source matching | 📋 BACKLOG |
+| RAGChatPanel | Citation display in chat responses | ⚠️ EXISTS, NEEDS EXTENSION |
+| CitationSidebar | Already exists in rag-components | ✅ EXISTS |
+
+#### Tasks
+
+- [ ] Implement CitationManager class
+- [ ] Create CitationTooltip component (8-bit styling)
+- [ ] Extend RAGChatPanel with citation rendering
+- [ ] Implement citation extraction from AI responses
+- [ ] Add citation sidebar toggle to KnowledgePage
+- [ ] Write unit tests (target: 12 tests, 80% coverage)
+- [ ] Validate against sweeping-validation.md Level 8 (I18N Wiring)
 
 ---
 
-### Story 32-2: Embedding Pipeline with CLIP Integration
+### Story 32-4: RAG Query Optimization
 
-**User Story:**
+**As a** user with large knowledge base,  
+**I want** optimized query performance,  
+**So that** search remains fast even with 100,000+ indexed documents.
+
+#### Acceptance Criteria
+
+**Given** knowledge base contains 100,000+ documents  
+**When** user executes search query  
+**Then** response time remains <500ms (target: <300ms P95)  
+**And** memory usage stays within browser limits
+
+**Given** concurrent search requests (3+ simultaneous)  
+**When** queries execute  
+**Then** requests are queued and processed without race conditions  
+**And** UX shows loading states for all pending queries
+
+**Given** frequent search patterns detected  
+**When** cache TTL expires  
+**Then** results are cached for 5 minutes  
+**And** cache hit reduces response time by 50%+
+
+#### Technical Implementation
+
+```typescript
+// src/lib/rag/query-optimizer.ts (NEW)
+
+interface QueryOptimizerConfig {
+  maxConcurrentQueries: number;
+  cacheTTL: number;        // milliseconds
+  batchWindow: number;     // milliseconds
+  memoryLimitMB: number;
+}
+
+export class QueryOptimizer {
+  private queue: QueryRequest[] = [];
+  private cache: LRUCache<string, SearchResult[]>;
+  private semaphore: Semaphore;
+  
+  constructor(private config: QueryOptimizerConfig) {
+    this.semaphore = new Semaphore(config.maxConcurrentQueries);
+    this.cache = new LRUCache({
+      maxSize: 1000,
+      ttl: config.cacheTTL
+    });
+  }
+  
+  async search(query: string, filters?: SearchFilters): Promise<SearchResult[]> {
+    // Check cache first
+    const cacheKey = this.getCacheKey(query, filters);
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey)!;
+    }
+    
+    // Acquire semaphore slot
+    await this.semaphore.acquire();
+    try {
+      // Execute search
+      const results = await this.performSearch(query, filters);
+      
+      // Cache results
+      this.cache.set(cacheKey, results);
+      
+      return results;
+    } finally {
+      this.semaphore.release();
+    }
+  }
+}
 ```
-As a user uploading images to my knowledge base,
-I want visual content to be embedded alongside text,
-So that I can search across both images and documents simultaneously.
-```
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | CLIP embeddings generated locally | `transformers-loader.ts` exists | Add CLIP model |
-| AC-2 | Image preprocessing pipeline | None | CREATE NEW |
-| AC-3 | Embedding cache with LRU eviction | Basic implementation | Enhance cache |
-| AC-4 | WebGPU acceleration where available | None | ADD detection |
+#### Performance Targets
 
-**Tasks:**
-- [ ] Add `@xenova/transformers` dependency for CLIP
-- [ ] Create `image-embedding-service.ts`
-- [ ] Implement WebGPU detection and fallback to WebGL
-- [ ] Add embedding cache with size limits
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| Query Latency P95 | <300ms | Performance API timing |
+| Query Latency P99 | <500ms | Performance API timing |
+| Memory Usage | <512MB | performance.memory |
+| Cache Hit Rate | >30% | Cache statistics |
 
-**Research Requirements:**
-- [ ] Context7: Transformers.js CLIP usage
-- [ ] Tavily: WebGPU embedding acceleration patterns
-- [ ] Exa: Best practices for local image embeddings
+#### Dependencies & Integration Points
 
-**Dependencies:**
-- Story 32-1 (Orama Vector Store)
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| Story 32-2 (Hybrid Search) | Core search implementation | 📋 BACKLOG |
+| DexieDB | Caching layer | ✅ EXISTS |
+| Performance monitoring | Already implemented in Epic 5 | ✅ EXISTS |
+
+#### Tasks
+
+- [ ] Implement QueryOptimizer with concurrency control
+- [ ] Add LRU cache with TTL
+- [ ] Implement cache key generation
+- [ ] Add performance metrics tracking
+- [ ] Configure batch window for query coalescing
+- [ ] Write unit tests (target: 18 tests, 85% coverage)
+- [ ] Performance benchmarking (100K+ documents)
 
 ---
 
-### Story 32-3: Hybrid Retrieval System
+### Story 32-5: Knowledge Graph Integration
 
-**User Story:**
+**As a** user exploring knowledge connections,  
+**I want** RAG search results to show knowledge graph relationships,  
+**So that** I can navigate between related concepts visually.
+
+#### Acceptance Criteria
+
+**Given** search returns documents about "reinforcement learning"  
+**When** knowledge graph integration is enabled  
+**Then** results panel shows connected concepts as graph nodes  
+**And** clicking node navigates to related document  
+**And** edge relationships show connection type (cites, builds_on, related_to)
+
+**Given** user selects two documents in search results  
+**When** "Compare" action is invoked  
+**Then** knowledge graph highlights shared concepts  
+**And** comparison view shows semantic overlap
+
+**Given** user adds new document to vault  
+**When** document is indexed and synthesized  
+**Then** knowledge graph is automatically updated  
+**And** connections to existing documents are suggested
+
+#### Technical Implementation
+
+```typescript
+// src/lib/rag/graph-integration.ts (NEW)
+
+interface GraphSearchResult {
+  documents: SearchResult[];
+  graphNodes: KnowledgeGraphNode[];
+  graphEdges: KnowledgeGraphEdge[];
+  suggestions: ConnectionSuggestion[];
+}
+
+export class GraphIntegration {
+  async searchWithGraph(
+    query: string,
+    options: GraphSearchOptions
+  ): Promise<GraphSearchResult> {
+    // Execute hybrid search
+    const documents = await hybridSearch(query, options);
+    
+    // Extract concepts from results
+    const concepts = this.extractConcepts(documents);
+    
+    // Find graph connections
+    const nodes = await this.findRelatedConcepts(concepts);
+    const edges = await this.findConnections(documents, nodes);
+    
+    // Generate suggestions for new connections
+    const suggestions = await this.suggestConnections(documents);
+    
+    return { documents, graphNodes: nodes, graphEdges: edges, suggestions };
+  }
+  
+  private async findRelatedConcepts(concepts: string[]): Promise<KnowledgeGraphNode[]> {
+    // Query knowledge graph for related concepts
+    const nodes: KnowledgeGraphNode[] = [];
+    for (const concept of concepts) {
+      const related = await knowledgeGraph.query(concept);
+      nodes.push(...related);
+    }
+    return dedupe(nodes);
+  }
+}
 ```
-As a user searching my knowledge base,
-I want results that combine semantic similarity with keyword matching,
-So that I find exactly what I'm looking for regardless of query phrasing.
-```
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Semantic search via vectors | `hybrid-retriever.ts` exists | Extend scoring |
-| AC-2 | Keyword search integration | Basic BM25 | Enhance BM25 |
-| AC-3 | RRF fusion algorithm | None | ADD RRF fusion |
-| AC-4 | Search result deduplication | None | ADD deduplication |
+#### Integration Points
 
-**Tasks:**
-- [ ] Enhance `HybridRetriever` with RRF fusion
-- [ ] Add BM25 keyword search integration
-- [ ] Implement result deduplication
-- [ ] Add search result ranking controls
+| Component | Integration | Status |
+|-----------|-------------|--------|
+| Knowledge Graph | Uses existing graph infrastructure | ✅ EXISTS |
+| Canvas Integration | Node visualization | ⚠️ NEEDS WIRE |
+| Story 32-2 (Search) | Uses hybrid search | 📋 BACKLOG |
 
-**Research Requirements:**
-- [ ] Context7: Reciprocal Rank Fusion algorithm
-- [ ] DeepWiki: Orama hybrid search patterns
+#### Tasks
 
-**Dependencies:**
-- Story 32-1 (Vector Store)
+- [ ] Implement GraphIntegration class
+- [ ] Create graph query interface for concept lookup
+- [ ] Implement connection suggestion algorithm
+- [ ] Add "View in Graph" action to search results
+- [ ] Wire to KnowledgeCanvas for visualization
+- [ ] Write unit tests (target: 15 tests, 80% coverage)
 
 ---
 
-### Story 32-4: Index Management & Persistence
+## Part 2: EPIC-33 Stories (Agent Integration)
 
-**User Story:**
+### Story 33-1: Knowledge-Aware Agent System Prompt
+
+**As an** AI agent working with user's knowledge base,  
+**I want** system prompts that include my vault context,  
+**So that** I can answer questions using synthesized knowledge.
+
+#### Acceptance Criteria
+
+**Given** agent configured with knowledge vault access  
+**When** conversation starts  
+**Then** system prompt includes:  
+- List of indexed documents with titles  
+- Recent synthesis topics  
+- Knowledge graph context (key concepts)  
+**And** token usage stays within model limits
+
+**Given** user asks about specific topic  
+**When** RAG retrieval provides context  
+**Then** system prompt includes retrieved content inline  
+**And** citations are formatted for reference
+
+**Given** vault has 1000+ documents  
+**When** constructing system prompt  
+**Then** only relevant subset is included (top 10 by relevance)  
+**And** truncation indicator shows if content omitted
+
+#### Technical Implementation
+
+```typescript
+// src/lib/agent/vault-context-composer.ts (NEW)
+
+interface VaultContextConfig {
+  maxDocuments: number;      // Default: 10
+  maxTokens: number;         // Model context limit
+  includeGraph: boolean;     // Include knowledge graph
+  includeSyntheses: boolean; // Include synthesized content
+}
+
+export async function composeVaultContext(
+  conversationId: string,
+  config: VaultContextConfig
+): Promise<VaultContextSection> {
+  // Get conversation context
+  const recentTopics = await getRecentTopics(conversationId);
+  
+  // Get relevant documents
+  const relevantDocs = await ragStore.search(recentTopics, {
+    limit: config.maxDocuments,
+    sortBy: 'relevance'
+  });
+  
+  // Get knowledge graph context
+  const graphContext = config.includeGraph
+    ? await knowledgeGraph.getContext(relevantDocs.map(d => d.id))
+    : null;
+  
+  // Construct context section
+  return {
+    documents: relevantDocs,
+    graph: graphContext,
+    syntheses: config.includeSyntheses
+      ? await getSyntheses(relevantDocs)
+      : [],
+    tokenCount: await countTokens(relevantDocs, graphContext)
+  };
+}
+
+// Hook for agent configuration
+export function useVaultContextAgent() {
+  const vaultContext = useVaultContext();
+  
+  return {
+    systemPrompt: composeVaultContextAgentPrompt(vaultContext),
+    tools: [
+      searchKnowledgeBase,    // New RAG search tool
+      getDocumentContext,     // Get full document
+      getGraphContext         // Get knowledge graph context
+    ]
+  };
+}
 ```
-As a user returning to my knowledge base,
-I want my indexes to be persisted and quickly loaded,
-So that I don't wait for re-indexing on every visit.
-```
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Index persistence to IndexedDB | Basic implementation | Enhance persistence |
-| AC-2 | Incremental index updates | None | ADD delta updates |
-| AC-3 | Orphaned index cleanup | None | ADD cleanup task |
-| AC-4 | Index size monitoring | None | ADD monitoring |
+#### Dependencies & Integration Points
 
-**Tasks:**
-- [ ] Implement `IndexedDBStorage` for Orama indexes
-- [ ] Create index metadata schema
-- [ ] Add orphaned index detection and cleanup
-- [ ] Add index size monitoring with warnings
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| RAG Infrastructure | Search and retrieval | 📋 EPIC-32 |
+| Knowledge Graph | Context from graph | 📋 EPIC-32 |
+| Agent System Prompt | Compose with vault context | ⚠️ EXISTS, NEEDS EXTENSION |
 
-**Dependencies:**
-- Story 32-1 (Vector Store)
+#### Tasks
+
+- [ ] Implement VaultContextComposer
+- [ ] Add RAG tools to agent tool registry
+- [ ] Create vault-aware system prompt templates
+- [ ] Implement token counting and truncation
+- [ ] Write unit tests (target: 12 tests, 80% coverage)
+- [ ] Integration test with TanStack AI
 
 ---
 
-### Story 32-5: Performance Optimization
+### Story 33-2: RAG Tool Integration
 
-**User Story:**
+**As an** AI agent,  
+**I want** dedicated tools for searching and retrieving from knowledge base,  
+**So that** I can answer questions using user's synthesized materials.
+
+#### Acceptance Criteria
+
+**Given** agent has `search_knowledge` tool available  
+**When** user asks "What did I learn about neural networks?"  
+**Then** agent can invoke tool to search vault  
+**And** results are returned with citations  
+**And** agent can cite results in response
+
+**Given** agent has `get_document` tool available  
+**When** agent needs full document content  
+**Then** tool retrieves and returns document text  
+**And** tool respects access permissions
+
+**Given** agent has `get_graph_context` tool available  
+**When** agent explores concept relationships  
+**Then** tool returns connected concepts and documents  
+**And** agent can navigate knowledge graph via tools
+
+#### Tool Definitions (TanStack AI)
+
+```typescript
+// src/lib/agent/tools/knowledge-tools.ts (NEW)
+
+import { tool } from '@tanstack/ai';
+import { z } from 'zod';
+
+// Search knowledge base
+export const searchKnowledgeBase = tool({
+  description: 'Search the user\'s knowledge base for relevant documents and syntheses',
+  parameters: z.object({
+    query: z.string().describe('Search query describing the information needed'),
+    filters: z.object({
+      dateRange: z.object({
+        start: z.string().optional(),
+        end: z.string().optional()
+      }).optional(),
+      sourceTypes: z.array(z.string()).optional(),
+      subjects: z.array(z.string()).optional()
+    }).optional(),
+    limit: z.number().min(1).max(20).default(10)
+  }),
+  execute: async ({ query, filters, limit }) => {
+    const results = await hybridSearch(query, {
+      weightVector: 0.7,
+      weightFulltext: 0.3,
+      filters,
+      limit
+    });
+    
+    return {
+      results: results.map(r => ({
+        id: r.id,
+        title: r.title,
+        excerpt: r.excerpt,
+        relevanceScore: r.score,
+        citations: r.sources
+      })),
+      totalHits: results.length,
+      searchTimestamp: new Date().toISOString()
+    };
+  }
+});
+
+// Get full document
+export const getDocumentContext = tool({
+  description: 'Retrieve the full content of a specific document from the knowledge base',
+  parameters: z.object({
+    documentId: z.string().describe('The ID of the document to retrieve'),
+    includeMetadata: z.boolean().default(true)
+  }),
+  execute: async ({ documentId, includeMetadata }) => {
+    const doc = await documentStore.get(documentId);
+    if (!doc) {
+      throw new Error(`Document ${documentId} not found`);
+    }
+    
+    return {
+      document: includeMetadata ? {
+        ...doc.content,
+        _metadata: doc.metadata
+      } : doc.content
+    };
+  }
+});
+
+// Get knowledge graph context
+export const getGraphContext = tool({
+  description: 'Get knowledge graph context for exploring concept relationships',
+  parameters: z.object({
+    concept: z.string().describe('Concept to explore'),
+    depth: z.number().min(1).max(3).default(2),
+    includeDocuments: z.boolean().default(true)
+  }),
+  execute: async ({ concept, depth, includeDocuments }) => {
+    const nodes = await knowledgeGraph.query(concept, { depth });
+    
+    return {
+      concepts: nodes.map(n => ({
+        id: n.id,
+        label: n.label,
+        type: n.type,
+        connections: n.connections
+      })),
+      documents: includeDocuments
+        ? await getDocumentsForNodes(nodes)
+        : []
+    };
+  }
+});
 ```
-As a user with a large knowledge base,
-I want search and indexing to remain fast,
-So that my workflow is not interrupted by slow operations.
-```
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Target | Gap |
-|-------|-----------|--------|-----|
-| AC-1 | Embedding generation | <500ms per chunk | Benchmark needed |
-| AC-2 | Vector search | <100ms | Benchmark needed |
-| AC-3 | Index loading | <2s for 10k docs | Implement streaming |
-| AC-4 | Memory usage | <500MB for indexes | ADD monitoring |
+#### Dependencies & Integration Points
 
-**Tasks:**
-- [ ] Add performance benchmarks for all RAG operations
-- [ ] Implement streaming index loading
-- [ ] Add memory usage monitoring
-- [ ] Optimize batch processing
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| Story 32-2 (Hybrid Search) | searchKnowledgeBase tool implementation | 📋 EPIC-32 |
+| Knowledge Graph | getGraphContext tool | 📋 EPIC-32 |
+| Agent Tool Registry | Register new tools | ⚠️ EXISTS, NEEDS EXTENSION |
 
-**Dependencies:**
-- Stories 32-1, 32-2, 32-3, 32-4
+#### Tasks
 
----
-
-## Part 4: Sprint 2 - EPIC-33 Agent Integration (Weeks 3-4)
-
-**Focus:** RAG-enhanced agent tools and synthesis capabilities
-
-### Story 33-1: Knowledge-Aware Agent Context
-
-**User Story:**
-```
-As an AI agent,
-I want access to the user's knowledge base when responding,
-So that I can provide answers grounded in their sources.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Agent receives relevant context | None | CREATE tool |
-| AC-2 | Context injection in chat | Basic implementation | Enhance |
-| AC-3 | Citation of sources in responses | None | ADD formatting |
-| AC-4 | Context refresh on new sources | None | ADD triggers |
-
-**Tasks:**
-- [ ] Create `knowledge-context-tool` for agent
-- [ ] Extend `SystemPromptComposer` with knowledge context
-- [ ] Implement source citation formatting
-- [ ] Add context refresh triggers
-
-**Dependencies:**
-- EPIC-32 completion
-
----
-
-### Story 33-2: Synthesis Query Engine
-
-**User Story:**
-```
-As a user asking complex questions,
-I want the AI to synthesize information from multiple sources,
-So that I get comprehensive answers rather than fragmented responses.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Multi-source retrieval | Basic retriever | Enhance |
-| AC-2 | Synthesis prompt template | None | CREATE |
-| AC-3 | Response with citations | None | ADD formatting |
-| AC-4 | Synthesis history | None | ADD persistence |
-
-**Tasks:**
-- [ ] Create synthesis prompt templates
-- [ ] Implement multi-source retrieval orchestration
-- [ ] Add citation formatting to responses
-- [ ] Persist synthesis history
-
-**Dependencies:**
-- Story 33-1
-
----
-
-### Story 33-3: Tool Registration for Knowledge Operations
-
-**User Story:**
-```
-As an AI agent,
-I want tools to search and query the knowledge base,
-So that I can help users find and organize their sources.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | `search_knowledge` tool | None | CREATE |
-| AC-2 | `get_source` tool | None | CREATE |
-| AC-3 | `list_sources` tool | None | CREATE |
-| AC-4 | Tools registered in TanStack AI | Basic tools | Extend |
-
-**Tasks:**
-- [ ] Create `search-notes-tool.ts` (already exists, enhance)
-- [ ] Create `get-source-tool.ts`
-- [ ] Create `list-sources-tool.ts`
+- [ ] Implement knowledge-tools.ts with 3 tools
 - [ ] Register tools in agent configuration
-
-**Dependencies:**
-- Stories 33-1, 33-2
+- [ ] Add tool schemas with Zod validation
+- [ ] Implement tool execution handlers
+- [ ] Write unit tests (target: 20 tests, 85% coverage)
+- [ ] Integration test with TanStack AI agent
 
 ---
 
-### Story 33-4: Workspace Integration
+### Story 33-3: Context-Aware Response Generation
 
-**User Story:**
+**As a** user asking questions about my knowledge,  
+**I want** AI responses that properly cite sources and use synthesis context,  
+**So that** answers are grounded in my synthesized materials.
+
+#### Acceptance Criteria
+
+**Given** user asks about topics covered in vault  
+**When** agent generates response  
+**Then** response includes inline citations [1], [2], etc.  
+**And** citations map to specific source documents  
+**And** confidence level reflects source quality
+
+**Given** multiple sources have conflicting information  
+**When** agent generates response  
+**Then** response acknowledges conflicts  
+**And** presents both perspectives  
+**And** doesn't take definitive stance without evidence
+
+**Given** user asks about unknown topic  
+**When** RAG returns no relevant results  
+**Then** agent responds acknowledging knowledge gap  
+**And** suggests related topics in vault  
+**And** doesn't hallucinate information
+
+#### Technical Implementation
+
+```typescript
+// src/lib/agent/vault-aware-generator.ts (NEW)
+
+import { generateText } from '@tanstack/ai';
+import { vaultAwarePrompt } from './prompt-templates';
+
+export async function generateVaultAwareResponse(
+  userMessage: string,
+  vaultContext: VaultContext,
+  options: GenerationOptions
+): Promise<VaultAwareResponse> {
+  // Construct prompt with vault context
+  const prompt = vaultAwarePrompt({
+    userMessage,
+    vaultContext,
+    options
+  });
+  
+  // Generate response
+  const { text, usage, sources } = await generateText({
+    model: options.model,
+    prompt,
+    tools: [searchKnowledgeBase, getDocumentContext, getGraphContext]
+  });
+  
+  // Extract and format citations
+  const citations = await extractCitations(text, sources);
+  
+  // Generate response with citations
+  return {
+    content: text,
+    citations,
+    confidence: calculateConfidence(sources),
+    conflicts: identifyConflicts(sources),
+    knowledgeGap: sources.length === 0
+  };
+}
+
+// Prompt template for vault-aware responses
+function vaultAwarePrompt(params: PromptParams): string {
+  return `
+You are a knowledgeable AI assistant helping the user explore their synthesized knowledge base.
+
+## USER QUESTION
+${params.userMessage}
+
+## AVAILABLE KNOWLEDGE
+${params.vaultContext.documents.map((d, i) => `
+[${i + 1}] "${d.title}"
+    Relevance: ${d.relevanceScore.toFixed(2)}
+    Content excerpt: ${d.excerpt}
+`).join('\n')}
+
+## KNOWLEDGE GRAPH CONTEXT
+${params.vaultContext.graphConcepts.map(c => `- ${c.label} (${c.type})`).join('\n')}
+
+## INSTRUCTIONS
+1. Answer based primarily on the provided knowledge sources
+2. Cite sources using [1], [2], etc. inline
+3. If sources conflict, acknowledge both perspectives
+4. If no relevant sources exist, say so and suggest related topics
+5. Synthesize information rather than just listing sources
+
+## RESPONSE
+`;
+}
 ```
-As a user working in the IDE,
-I want seamless access to my knowledge base,
-So that I can reference sources while coding.
+
+#### Dependencies & Integration Points
+
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| Story 33-1 (Vault Context) | composeVaultContext | 📋 BACKLOG |
+| Story 33-2 (RAG Tools) | Tool integration | 📋 BACKLOG |
+| TanStack AI | generateText | ✅ EXISTS |
+
+#### Tasks
+
+- [ ] Implement vault-aware prompt templates
+- [ ] Create generateVaultAwareResponse function
+- [ ] Implement citation extraction from generated text
+- [ ] Add conflict detection logic
+- [ ] Implement knowledge gap detection
+- [ ] Write unit tests (target: 15 tests, 80% coverage)
+
+---
+
+### Story 33-4: Agent-Vault Conversation Memory
+
+**As a** user having ongoing conversations about my knowledge,  
+**I want** the agent to remember what we've discussed,  
+**So that** I don't need to repeat context in subsequent messages.
+
+#### Acceptance Criteria
+
+**Given** user asks about "the document on reinforcement learning"  
+**When** conversation has prior references to this document  
+**Then** agent recognizes the reference without re-explanation  
+**And** can provide additional context from the document
+
+**Given** conversation spans multiple sessions  
+**When** user returns to previous topic  
+**Then** conversation memory persists via IndexedDB  
+**And** agent restores context from previous session
+
+**Given** user explicitly says "forget that" about a topic  
+**When** agent processes command  
+**Then** topic is removed from conversation memory  
+**And** subsequent queries don't reference forgotten content
+
+#### Technical Implementation
+
+```typescript
+// src/lib/agent/conversation-memory.ts (NEW)
+
+interface ConversationMemory {
+  id: string;
+  threadId: string;
+  topics: MemoryTopic[];
+  referencedDocuments: Map<string, ReferencedDocument>;
+  createdAt: Date;
+  lastAccessed: Date;
+}
+
+interface MemoryTopic {
+  id: string;
+  label: string;
+  firstMentioned: Date;
+  lastMentioned: Date;
+  messageCount: number;
+  documentRefs: string[]; // Document IDs referenced
+  summary: string; // Auto-generated summary
+}
+
+export class ConversationMemoryManager {
+  private memoryStore: DexieTable<ConversationMemory>;
+  
+  async rememberTopic(
+    threadId: string,
+    topic: { label: string; documentRefs: string[] }
+  ): Promise<void> {
+    const memory = await this.getOrCreate(threadId);
+    
+    // Update or create topic
+    const existing = memory.topics.find(t => t.label === topic.label);
+    if (existing) {
+      existing.lastMentioned = new Date();
+      existing.messageCount++;
+    } else {
+      memory.topics.push({
+        id: crypto.randomUUID(),
+        label: topic.label,
+        firstMentioned: new Date(),
+        lastMentioned: new Date(),
+        messageCount: 1,
+        documentRefs: topic.documentRefs,
+        summary: await this.generateTopicSummary(topic)
+      });
+    }
+    
+    // Update referenced documents
+    for (const docId of topic.documentRefs) {
+      const ref = memory.referencedDocuments.get(docId) || {
+        documentId: docId,
+        firstReferenced: new Date(),
+        lastReferenced: new Date(),
+        mentionCount: 0
+      };
+      ref.lastReferenced = new Date();
+      ref.mentionCount++;
+      memory.referencedDocuments.set(docId, ref);
+    }
+    
+    await this.persist(memory);
+  }
+  
+  async getContextForQuery(threadId: string, query: string): Promise<MemoryContext> {
+    const memory = await this.get(threadId);
+    if (!memory) return { topics: [], documents: [] };
+    
+    // Find relevant topics based on query
+    const relevantTopics = memory.topics.filter(t => 
+      t.label.includes(query) || t.documentRefs.some(ref => 
+        memory.referencedDocuments.get(ref)?.documentId.includes(query)
+      )
+    );
+    
+    // Get most referenced documents
+    const relevantDocs = Array.from(memory.referencedDocuments.entries())
+      .filter(([_, ref]) => ref.mentionCount > 1)
+      .sort((a, b) => b[1].mentionCount - a[1].mentionCount)
+      .slice(0, 5)
+      .map(([id, ref]) => ({
+        documentId: id,
+        mentionCount: ref.mentionCount,
+        lastReferenced: ref.lastReferenced
+      }));
+    
+    return {
+      topics: relevantTopics,
+      documents: relevantDocs
+    };
+  }
+}
 ```
+
+#### Dependencies & Integration Points
+
+| Dependency | Integration Point | Status |
+|------------|-------------------|--------|
+| DexieDB | Persistent storage | ✅ EXISTS |
+| useConversationStore | Thread context | ⚠️ EXISTS, NEEDS EXTENSION |
+| Story 2-4 (Conversation Persistence) | Base implementation | ✅ DONE |
+
+#### Tasks
+
+- [ ] Implement ConversationMemoryManager
+- [ ] Add Dexie schema for memory storage
+- [ ] Create memory context integration with agent
+- [ ] Implement topic summarization
+- [ ] Add "forget" command handler
+- [ ] Write unit tests (target: 15 tests, 80% coverage)
+
+---
+
+## Part 3: Sprint Coordination & Validation
+
+### Story Development Cycle Coordination
+
+Per `.agent/workflows/story-dev-cycle.md`, each story follows:
+
+```
+create-story → create-context → validate → dev-story → code-review → done
+```
+
+#### Handoff Document Structure
+
+For each story, create handoff at:
+```
+_bmad-output/handoffs/{agent}-{epic}-{story}-{YYYY-MM-DD}.md
+```
+
+**Example handoff template:**
+```markdown
+## Handoff: Story 32-2 (Hybrid Search)
+
+**From:** @bmad-core-bmad-master  
+**To:** @bmad-bmm-dev
+
+**Task:** Implement hybrid search combining full-text and vector similarity
+
+**Context Files:**
+- `src/lib/rag/orama-index.ts` (existing Orama implementation)
+- `src/lib/rag/rag-store.ts` (RAG state management)
+- `_bmad-output/knowledge-synthesis-platform/.../tech-spec-2025-12-31.md`
 
 **Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Knowledge panel in IDE | None | CREATE UI |
-| AC-2 | Quick search from chat | Basic implementation | Enhance |
-| AC-3 | Source drag-to-canvas | None | CREATE |
-| AC-4 | Knowledge sidebar | None | CREATE |
+1. Hybrid search with weighted scoring (vector 0.7, fulltext 0.3)
+2. Response time <500ms for 10,000 documents
+3. Filter support (date range, source type)
+4. Unit tests (15 tests, 80% coverage)
 
-**Tasks:**
-- [ ] Create KnowledgePanel component
-- [ ] Add quick search to ChatPanel
-- [ ] Implement drag-to-canvas functionality
-- [ ] Create KnowledgeSidebar component
+**Output Location:** `_bmad-output/sprint-artifacts/story-32-2-hybrid-search.md`
 
-**Dependencies:**
-- Stories 33-1, 33-2, 33-3
+**Return via:** Report to @bmad-core-bmad-master with completion summary
+```
+
+### Sweeping Validation Checklist
+
+Per `_bmad-output/validation/sweeping-validation.md`, validate each story against:
+
+| Level | Validation | EPIC-32 Stories | EPIC-33 Stories |
+|-------|------------|-----------------|-----------------|
+| 1 | State Integrity | ✅ Zustand + Dexie pattern | ✅ Same |
+| 2 | Code Hygiene | ⚠️ File size <300 lines | ⚠️ Same |
+| 3 | Naming Consistency | ✅ camelCase props | ✅ Same |
+| 4 | Dependency Sanity | ⚠️ No circular imports | ⚠️ Same |
+| 5 | Integration Reality | ⚠️ Wire to existing | ⚠️ Same |
+| 6 | Architecture Compliance | ✅ No direct DB access | ✅ Same |
+| 7 | Mobile Reality | ✅ 8-bit styling | ✅ Same |
+| 8 | I18N Wiring | ⚠️ Translation keys | ⚠️ Same |
+| 9 | Performance | ⚠️ <500ms target | ⚠️ Same |
+| 10 | Security + Privacy | ✅ No raw keys | ✅ Same |
+
+### Integration Points Mapping
+
+| Story | Existing Component | Integration Needed |
+|-------|-------------------|-------------------|
+| 32-2 | orama-index.ts | Extend with fulltext search |
+| 32-3 | RAGChatPanel | Add citation rendering |
+| 32-4 | Performance monitoring | Wire metrics collection |
+| 32-5 | Knowledge Graph | Connect graph queries |
+| 33-1 | System Prompt Composer | Add vault context |
+| 33-2 | Agent tools | Register new tools |
+| 33-3 | TanStack AI | Wire vault-aware generation |
+| 33-4 | Conversation store | Add memory persistence |
 
 ---
 
-## Part 5: Sprint 3 - EPIC-34 Image Understanding (Weeks 5-6)
+## Part 4: Implementation Timeline
 
-**Focus:** OCR, image embedding, and visual content processing
+### Sprint 1 (Week 1-2): RAG Infrastructure Completion
 
-### Story 34-1: OCR Pipeline with Tesseract.js
+| Day | Team A | Team B |
+|-----|--------|--------|
+| 1 | Story 32-2: Research Orama hybrid config | Story 32-4: QueryOptimizer core |
+| 2 | Story 32-2: Implement hybridSearch | Story 32-4: Add LRU cache |
+| 3 | Story 32-2: Write tests | Story 32-4: Performance benchmarking |
+| 4 | Story 32-3: CitationManager | Story 32-5: GraphIntegration |
+| 5 | Story 32-3: CitationTooltip UI | Story 32-5: Graph queries |
+| 6 | Integration: Wire to KnowledgePage | Integration: Wire to Canvas |
+| 7 | **VALIDATION SWEEP** | **VALIDATION SWEEP** |
 
-**User Story:**
-```
-As a user uploading images with text,
-I want the text content extracted and indexed,
-So that I can search for text within images.
-```
+### Sprint 2 (Week 3-4): Agent Integration
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Tesseract.js integration | None | CREATE |
-| AC-2 | Image preprocessing | None | CREATE |
-| AC-3 | Text extraction from images | None | CREATE |
-| AC-4 | Extracted text indexing | None | ADD to pipeline |
+| Day | Team A | Team B |
+|-----|--------|--------|
+| 8 | Story 33-1: Vault context composer | Story 33-2: Knowledge tools |
+| 9 | Story 33-1: Prompt templates | Story 33-2: Tool registration |
+| 10 | Story 33-3: Response generator | Story 33-2: Tool tests |
+| 11 | Story 33-3: Citation extraction | Story 33-4: Memory manager |
+| 12 | Story 33-3: Conflict detection | Story 33-4: Memory persistence |
+| 13 | Integration: Agent configuration | Integration: Conversation store |
+| 14 | **EPIC-32 RETROSPECTIVE** | **VALIDATION SWEEP** |
 
-**Tasks:**
-- [ ] Add `@aspect-ai/tesseract.js-wasm` dependency
-- [ ] Create `ocr-service.ts`
-- [ ] Implement image preprocessing (binarization, deskew)
-- [ ] Add extracted text to RAG pipeline
+### EPIC-33 Completion Criteria
 
-**Research Requirements:**
-- [ ] Context7: Tesseract.js WASM usage
-- [ ] Tavily: Best practices for client-side OCR
-
-**Dependencies:**
-- EPIC-32 completion
-
----
-
-### Story 34-2: Image Embedding Generation
-
-**User Story:**
-```
-As a user browsing my image collection,
-I want images to be semantically searchable,
-So that I can find images by describing their content.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | CLIP model for image embeddings | Story 32-2 | Extend |
-| AC-2 | Batch embedding processing | None | ADD |
-| AC-3 | Embedding quality validation | None | CREATE |
-| AC-4 | Image thumbnail generation | None | CREATE |
-
-**Tasks:**
-- [ ] Enhance image embedding service
-- [ ] Implement batch processing
-- [ ] Add quality validation metrics
-- [ ] Create thumbnail generation
-
-**Dependencies:**
-- Story 32-2 (CLIP Integration)
+- [ ] All 4 stories complete (33-1 through 33-4)
+- [ ] All unit tests passing (target: 62 tests, 80% coverage)
+- [ ] Code review approved (APPROVED or APPROVED WITH NOTES)
+- [ ] Sweeping validation: 12/12 levels pass
+- [ ] Integration test: Agent searches vault successfully
 
 ---
 
-### Story 34-3: Multimodal Search Interface
+## Part 5: Next Steps
 
-**User Story:**
-```
-As a user searching my knowledge base,
-I want to search across images and text simultaneously,
-So that I find all relevant content regardless of format.
-```
+### Immediate Actions (Next 24 hours)
 
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Unified search interface | Basic | Enhance |
-| AC-2 | Image result display | None | CREATE |
-| AC-3 | Text excerpt in results | Basic | Enhance |
-| AC-4 | Search result filtering | None | ADD |
+1. **@bmad-bmm-pm**: Create story files for 32-2 through 32-5
+2. **@bmad-bmm-architect**: Verify integration points with existing codebase
+3. **@bmad-bmm-dev**: Begin Story 32-2 implementation
 
-**Tasks:**
-- [ ] Enhance search interface for multimodal results
-- [ ] Create ImageResultCard component
-- [ ] Add excerpt highlighting
-- [ ] Implement result filtering
+### Handoff Sequence
 
-**Dependencies:**
-- Stories 34-1, 34-2
+| Sequence | From | To | Story |
+|----------|------|-----|-------|
+| 1 | Orchestrator | @bmad-bmm-sm | Create story 32-2 file |
+| 2 | @bmad-bmm-sm | @bmad-bmm-dev | Implement 32-2 |
+| 3 | @bmad-bmm-dev | @code-reviewer | Code review 32-2 |
+| 4 | Orchestrator | @bmad-bmm-sm | Create story 32-3 file |
+| ... | ... | ... | ... |
 
----
+### Critical Success Factors
 
-## Part 6: Sprint 4 - EPIC-35 Document Processing (Weeks 7-8)
-
-**Focus:** PDF, DOCX, and multimodal document ingestion
-
-### Story 35-1: Enhanced PDF Processing
-
-**User Story:**
-```
-As a user uploading PDF documents,
-I want structural analysis and visual content extraction,
-So that my PDFs are fully indexed with headings, tables, and figures.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | PDF.js integration | `pdf-parser.ts` exists | Extend |
-| AC-2 | Structural analysis | None | CREATE |
-| AC-3 | Table extraction | None | CREATE |
-| AC-4 | Figure caption detection | None | CREATE |
-
-**Tasks:**
-- [ ] Enhance PDF parser with structural analysis
-- [ ] Add table detection using PDF structure
-- [ ] Implement figure caption extraction
-- [ ] Create PDF metadata schema
-
-**Dependencies:**
-- EPIC-32 completion
-
----
-
-### Story 35-2: Document Chunking Strategy
-
-**User Story:**
-```
-As a user with large documents,
-I want intelligent chunking that preserves context,
-So that search results are meaningful and complete.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Semantic chunking | `document-chunker.ts` exists | Enhance |
-| AC-2 | Structure-aware splitting | None | CREATE |
-| AC-3 | Overlap management | None | ADD |
-| AC-4 | Chunk metadata preservation | None | ADD |
-
-**Tasks:**
-- [ ] Enhance chunking with semantic boundaries
-- [ ] Implement structure-aware splitting
-- [ ] Add configurable overlap
-- [ ] Preserve chunk metadata
-
-**Dependencies:**
-- Story 35-1
-
----
-
-### Story 35-3: Audio Processing with Whisper WASM
-
-**User Story:**
-```
-As a user uploading audio recordings,
-I want automatic transcription and indexing,
-So that I can search for content within audio files.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Whisper WASM integration | None | CREATE |
-| AC-2 | Audio preprocessing | None | CREATE |
-| AC-3 | Transcription indexing | None | ADD |
-| AC-4 | Timestamp preservation | None | ADD |
-
-**Tasks:**
-- [ ] Add `whisper WASM` dependency
-- [ ] Create `audio-transcription-service.ts`
-- [ ] Implement audio preprocessing
-- [ ] Add transcription to RAG pipeline
-
-**Research Requirements:**
-- [ ] Context7: Whisper WASM usage
-- [ ] Exa: Audio transcription best practices
-
-**Dependencies:**
-- EPIC-32 completion
-
----
-
-### Story 35-4: Unified Ingestion Pipeline
-
-**User Story:**
-```
-As a user importing various document types,
-I want a single pipeline that handles all formats,
-So that I don't need to manage different import tools.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Format detection | Basic | Enhance |
-| AC-2 | Unified processing interface | None | CREATE |
-| AC-3 | Progress tracking | None | ADD |
-| AC-4 | Error handling per format | None | Add validation |
-
-**Tasks:**
-- [ ] Create unified `DocumentIngestionPipeline`
-- [ ] Implement format auto-detection
-- [ ] Add progress tracking UI
-- [ ] Enhance error handling
-
-**Dependencies:**
-- Stories 35-1, 35-2, 35-3
-
----
-
-## Part 7: Sprint 5 - EPIC-36 Adaptive Learning Engine (Weeks 9-10)
-
-**Focus:** Spaced repetition, learning analytics, and adaptive content
-
-### Story 36-1: Spaced Repetition Algorithm
-
-**User Story:**
-```
-As a study user reviewing my knowledge,
-I want review intervals based on forgetting curve,
-So that I retain information efficiently.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | SM-2 algorithm implementation | Basic (Epic 9) | Enhance |
-| AC-2 | Forgetting curve modeling | None | CREATE |
-| AC-3 | Optimal interval calculation | None | CREATE |
-| AC-4 | Learning analytics | None | CREATE |
-
-**Tasks:**
-- [ ] Enhance spaced repetition algorithm
-- [ ] Implement forgetting curve model
-- [ ] Create interval calculator
-- [ ] Add learning analytics dashboard
-
-**Dependencies:**
-- Epic 9 completion
-
----
-
-### Story 36-2: Adaptive Content Recommendations
-
-**User Story:**
-```
-As a user with accumulated knowledge,
-I want the system to recommend what to study next,
-So that I focus on gaps in my understanding.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Knowledge gap analysis | None | CREATE |
-| AC-2 | Recommendation engine | None | CREATE |
-| AC-3 | Priority scoring | None | CREATE |
-| AC-4 | Recommendation UI | None | CREATE |
-
-**Tasks:**
-- [ ] Create knowledge gap analysis module
-- [ ] Implement recommendation engine
-- [ ] Add priority scoring system
-- [ ] Create RecommendationPanel component
-
-**Dependencies:**
-- Stories 36-1, EPIC-32 completion
-
----
-
-### Story 36-3: Learning Progress Tracking
-
-**User Story:**
-```
-As a learning user,
-I want to see my progress over time,
-So that I can measure my improvement.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Progress metrics collection | Basic | Enhance |
-| AC-2 | Time-series analytics | None | CREATE |
-| AC-3 | Progress visualization | None | CREATE |
-| AC-4 | Goal setting and tracking | None | CREATE |
-
-**Tasks:**
-- [ ] Enhance metrics collection
-- [ ] Create time-series analytics
-- [ ] Implement progress charts
-- [ ] Add goal tracking features
-
-**Dependencies:**
-- Stories 36-1, 36-2
-
----
-
-### Story 36-4: Personalized Study Paths
-
-**User Story:**
-```
-As a user with learning goals,
-I want personalized study paths,
-So that I efficiently achieve my objectives.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Goal configuration | None | CREATE |
-| AC-2 | Path generation algorithm | None | CREATE |
-| AC-3 | Path visualization | None | CREATE |
-| AC-4 | Progress adaptation | None | CREATE |
-
-**Tasks:**
-- [ ] Create goal configuration UI
-- [ ] Implement path generation algorithm
-- [ ] Add path visualization
-- [ ] Implement progress adaptation
-
-**Dependencies:**
-- Stories 36-1, 36-2, 36-3
-
----
-
-## Part 8: Sprint 6 - EPIC-37 Study Artifact Generation (Weeks 11-12)
-
-**Focus:** Flashcards, quizzes, and study materials
-
-### Story 37-1: Enhanced Flashcard Generation
-
-**User Story:**
-```
-As a study user,
-I want AI-generated flashcards from my knowledge sources,
-So that I can study efficiently with relevant materials.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Flashcard generation from sources | `flashcard-generator.ts` exists | Enhance |
-| AC-2 | Source citation on cards | None | ADD |
-| AC-3 | Card type variety (cloze, front/back) | Basic | Enhance |
-| AC-4 | Bulk generation | None | ADD |
-
-**Tasks:**
-- [ ] Enhance flashcard generation with context
-- [ ] Add source citation display
-- [ ] Implement cloze deletion cards
-- [ ] Add bulk generation with progress
-
-**Dependencies:**
-- EPIC-33 completion
-
----
-
-### Story 37-2: Quiz Generation System
-
-**User Story:**
-```
-As a study user,
-I want generated quizzes to test my knowledge,
-So that I can verify my understanding.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Quiz question generation | Basic (Epic 9) | Enhance |
-| AC-2 | Multiple question types | Basic | Enhance |
-| AC-3 | Difficulty adjustment | None | ADD |
-| AC-4 | Quiz analytics | None | CREATE |
-
-**Tasks:**
-- [ ] Enhance quiz generation
-- [ ] Add multiple question types (MCQ, TF, short answer)
-- [ ] Implement difficulty adjustment
-- [ ] Add quiz analytics
-
-**Dependencies:**
-- EPIC-33 completion
-
----
-
-### Story 37-3: Export Functionality
-
-**User Story:**
-```
-As a study user,
-I want to export my study materials,
-So that I can study offline or share with others.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Anki export (.apkg) | None | CREATE |
-| AC-2 | PDF export | None | CREATE |
-| AC-3 | JSON export | None | ADD |
-| AC-4 | .alpha pack format | None | CREATE |
-
-**Tasks:**
-- [ ] Implement Anki export
-- [ ] Create PDF export
-- [ ] Add JSON export
-- [ ] Implement .alpha pack format
-
-**Dependencies:**
-- Stories 37-1, 37-2
-
----
-
-### Story 37-4: Study Session Analytics
-
-**User Story:**
-```
-As a study user,
-I want detailed analytics on my study sessions,
-So that I can optimize my learning strategy.
-```
-
-**Acceptance Criteria:**
-| AC-ID | Criterion | Existing Implementation | Gap |
-|-------|-----------|------------------------|-----|
-| AC-1 | Session duration tracking | Basic | Enhance |
-| AC-2 | Performance metrics | Basic | Enhance |
-| AC-3 | Learning curve visualization | None | CREATE |
-| AC-4 | Exportable reports | None | CREATE |
-
-**Tasks:**
-- [ ] Enhance session tracking
-- [ ] Add performance metrics
-- [ ] Create learning curve charts
-- [ ] Implement report generation
-
-**Dependencies:**
-- Stories 37-1, 37-2, 37-3
-
----
-
-## Part 9: Parallel Execution Strategy
-
-### Team A (UI/Foundation) - Weeks 1-12
-
-| Sprint | Focus | Stories | Dependencies |
-|--------|-------|---------|--------------|
-| 1 | RAG UI Components | 32-4, 32-5 | 32-1, 32-2 |
-| 2 | Agent Integration UI | 33-4 (KnowledgePanel, Sidebar) | 33-1, 33-2 |
-| 3 | Image Search UI | 34-3 (Multimodal Interface) | 34-1, 34-2 |
-| 4 | Document Processing UI | 35-4 (Ingestion Pipeline UI) | 35-1, 35-2 |
-| 5 | Learning UI | 36-2, 36-4 (Recommendations, Paths) | 36-1 |
-| 6 | Study UI | 37-3, 37-4 (Export, Analytics) | 37-1, 37-2 |
-
-### Team B (Backend/Agent) - Weeks 1-12
-
-| Sprint | Focus | Stories | Dependencies |
-|--------|-------|---------|--------------|
-| 1 | RAG Core | 32-1, 32-2, 32-3 | None |
-| 2 | Agent Tools | 33-1, 33-2, 33-3 | 32-5 |
-| 3 | Image Processing | 34-1, 34-2 | 32-2 |
-| 4 | Document Pipeline | 35-1, 35-2, 35-3 | 32-1 |
-| 5 | Learning Engine | 36-1, 36-2, 36-3 | 32-1 |
-| 6 | Study Generation | 37-1, 37-2 | 33-2 |
-
-### Integration Points
-
-| Sprint | Integration | Description |
-|--------|-------------|-------------|
-| 2 | Day 6 | Knowledge UI ↔ Agent Tools (Story 33-4 with 33-3) |
-| 3 | Day 12 | Image Search ↔ Processing (Story 34-3 with 34-1, 34-2) |
-| 4 | Day 18 | Document Pipeline ↔ RAG (Story 35-4 with 32-1) |
-| 5 | Day 24 | Learning ↔ Knowledge (Story 36-2 with 33-1) |
-| 6 | Day 30 | Study UI ↔ Generation (Story 37-3 with 37-1) |
-
----
-
-## Part 10: Story Development Cycle Coordination
-
-### Workflow Integration
-
-Per [`.agent/workflows/story-dev-cycle.md`](.agent/workflows/story-dev-cycle.md), each story follows:
-
-```
-create-story → validate → create-context → validate → dev-story → code-review → done
-```
-
-### Required Research Per Story
-
-| Story | Context7 | DeepWiki | Tavily/Exa | Repomix |
-|-------|----------|----------|------------|---------|
-| 32-1 | Orama WASM | - | Orama patterns | embedding-service.ts |
-| 32-2 | Transformers.js | CLIP models | WebGPU embeddings | transformers-loader.ts |
-| 32-3 | RRF Fusion | Orama hybrid | - | hybrid-retriever.ts |
-| 33-1 | TanStack AI tools | - | Context injection | SystemPromptComposer |
-| 34-1 | Tesseract.js WASM | - | OCR patterns | - |
-| 35-3 | Whisper WASM | - | Audio transcription | - |
-| 36-1 | Spaced repetition | - | Learning algorithms | - |
-
-### Handoff Documents Required
-
-| Phase | Artifact | Location |
-|-------|----------|----------|
-| create-story | Story file | `_bmad-output/sprint-artifacts/{story}.md` |
-| create-context | Context XML | `_bmad-output/sprint-artifacts/{story}-context.xml` |
-| dev-story | Dev Record | In story file |
-| code-review | Review Report | In story file |
-
----
-
-## Part 11: Sweeping Validation Compliance
-
-### Pre-Implementation Audit Checklist
-
-Before starting any story, verify:
-
-- [ ] No duplicate utilities in `src/lib/rag/`, `src/lib/knowledge/`, `src/lib/notes/`
-- [ ] No direct IndexedDB access in components (use stores only)
-- [ ] All components use Zustand + Dexie pattern
-- [ ] No unused imports (run `pnpm eslint`)
-- [ ] No hardcoded strings (use i18n)
-- [ ] File size <300 lines (split if needed)
-
-### File Refactoring Priority
-
-| File | Current | Target | Action |
-|------|---------|--------|--------|
-| `note-store.ts` | 525 lines | 300 lines | Split before EPIC-33 |
-| `note-indexer.ts` | 381 lines | 300 lines | Split before EPIC-32 |
-| `sync-manager.ts` | 667 lines | 300 lines | Defer to Epic 24 |
-
-### TypeScript Error Reduction Plan
-
-| Phase | Target | Stories |
-|-------|--------|---------|
-| Phase 1 | 800 errors | EPIC-32 |
-| Phase 2 | 500 errors | EPIC-33 |
-| Phase 3 | 200 errors | EPIC-34, 35 |
-| Phase 4 | 0 errors | EPIC-36, 37 |
-
----
-
-## Part 12: Risk Assessment
-
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| WebGPU not available | Medium | High | Fallback to WebGL/CPU |
-| Large file handling | High | Medium | Chunked processing |
-| Memory constraints | High | Medium | LRU caching, streaming |
-| OCR accuracy | Medium | Low | User correction UI |
-| Model loading time | High | Low | Progressive loading |
-
----
-
-## Next Actions
-
-1. **Immediate:** Handoff to @bmad-bmm-pm for backlog grooming
-2. **Sprint 1 Start:** Begin EPIC-32 Story 32-1 (Orama Enhancement)
-3. **Refactoring:** Split `note-store.ts` and `note-indexer.ts` before EPIC-33
-4. **Validation:** Run sweeping audit before each story dev phase
+1. **No Duplicate Work**: Check existing implementations before creating new files
+2. **Integration First**: Wire to existing components before implementing new logic
+3. **Test Coverage**: Maintain 80% coverage target for all new code
+4. **Validation Gates**: Pass sweeping validation before marking stories done
 
 ---
 
 ## References
 
-- **Technical Spec:** [`_bmad-output/knowledge-synthesis-platform/knowledge-synthesis-platform-tech-spec-2025-12-31.md`](_bmad-output/knowledge-synthesis-platform/knowledge-synthesis-platform-tech-spec-2025-12-31.md)
-- **Research Artifacts:** [`_bmad-output/research-artifacts/`](_bmad-output/research-artifacts/)
-- **Story Workflow:** [`.agent/workflows/story-dev-cycle.md`](.agent/workflows/story-dev-cycle.md)
-- **Validation:** [`_bmad-output/validation/sweeping-validation.md`](_bmad-output/validation/sweeping-validation.md)
-- **Existing Components:** `src/lib/rag/`, `src/lib/knowledge/`, `src/lib/notes/`
+| Document | Path | Purpose |
+|----------|------|---------|
+| Technical Specification | `_bmad-output/knowledge-synthesis-platform/.../tech-spec-2025-12-31.md` | Implementation reference |
+| Story Dev Cycle | `.agent/workflows/story-dev-cycle.md` | Workflow guidance |
+| Sweeping Validation | `_bmad-output/validation/sweeping-validation.md` | Quality gates |
+| Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` | Status tracking |
+| BMM Workflow | `bmm-workflow-status.yaml` | Overall state |
 
 ---
+
+**Document Version:** 1.0  
+**Created:** 2025-12-31 08:20:00 UTC+7  
+**Next Review:** After Story 32-2 completion

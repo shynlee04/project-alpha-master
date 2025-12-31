@@ -9,9 +9,9 @@
 import { useCallback, useRef, useEffect, useState } from 'react';
 import Editor, { type OnMount, type OnChange } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
-import { getLanguageFromPath } from '../../../lib/editor/language-utils';
+import { getLanguageFromPath } from '@/lib/editor/language-utils';
 import { EditorTabBar, type OpenFile } from './EditorTabBar';
-import { useWorkspace } from '../../../lib/workspace';
+import { useWorkspace } from '@/lib/workspace';
 import { SyncEditWarning } from '../SyncEditWarning';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';

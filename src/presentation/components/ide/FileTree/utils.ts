@@ -1,7 +1,7 @@
 /**
  * FileTree Utilities
  */
-import type { DirectoryEntry } from '../../../lib/filesystem/local-fs-adapter';
+import type { DirectoryEntry } from '@/lib/filesystem/local-fs-adapter';
 import type { TreeNode } from './types';
 
 /**

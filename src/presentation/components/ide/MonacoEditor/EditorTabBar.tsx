@@ -4,7 +4,7 @@
  */
 
 import { X } from 'lucide-react';
-import { getFileName } from '../../../lib/editor/language-utils';
+import { getFileName } from '@/lib/editor/language-utils';
 
 export interface OpenFile {
     /** File path (unique identifier) */

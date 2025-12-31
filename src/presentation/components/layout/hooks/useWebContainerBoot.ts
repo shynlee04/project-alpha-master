@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 import { showMobileWebContainerError } from '@/lib/utils/mobile-error-handling';
-import { boot, onServerReady, isBooted } from '../../../lib/webcontainer';
+import { boot, onServerReady, isBooted } from '@/lib/webcontainer';
 
 interface UseWebContainerBootOptions {
     /** Callback to notify when WebContainer boot completes */

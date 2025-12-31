@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { LocalFSAdapter } from '../../../../lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { TreeNode, ContextMenuState, ContextMenuAction } from '../types';
 import { getAncestorPaths } from '../utils';
 

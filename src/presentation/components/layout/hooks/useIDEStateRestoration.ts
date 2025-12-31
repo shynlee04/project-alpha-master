@@ -9,9 +9,9 @@
 import { useEffect } from 'react';
 import type { ImperativePanelGroupHandle } from '../../ui/resizable';
 import type { OpenFile } from '../../ide/MonacoEditor';
-import type { LocalFSAdapter } from '../../../lib/filesystem';
-import type { TerminalTab, SyncStatus } from '../../../lib/workspace';
-import type { FsaPermissionState } from '../../../lib/filesystem/permission-lifecycle';
+import type { LocalFSAdapter } from '@/lib/filesystem';
+import type { TerminalTab, SyncStatus } from '@/lib/workspace';
+import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 
 interface RestoredIdeState {
     chatVisible?: boolean;

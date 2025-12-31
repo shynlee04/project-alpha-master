@@ -4,7 +4,7 @@ import {
     LocalFSAdapter,
     FileSystemError,
     PermissionDeniedError,
-} from '../../../../lib/filesystem/local-fs-adapter';
+} from '@/lib/filesystem/local-fs-adapter';
 import type { TreeNode } from '../types';
 import { buildTreeNode, updateNodeByPath, restoreExpandedState } from '../utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';

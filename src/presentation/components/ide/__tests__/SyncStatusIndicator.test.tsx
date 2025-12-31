@@ -7,7 +7,7 @@
 
 import { render, screen, cleanup } from '@testing-library/react';
 import { SyncStatusIndicator, formatRelativeTime } from '../SyncStatusIndicator';
-import type { SyncProgress } from '../../../lib/filesystem';
+import type { SyncProgress } from '@/lib/filesystem';
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({

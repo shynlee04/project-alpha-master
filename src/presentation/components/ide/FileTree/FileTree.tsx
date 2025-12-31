@@ -42,7 +42,7 @@ import {
 
 // State and types
 // Story 27-1b: Migrated to Zustand
-import { useFileSyncStatusStore, useWorkspace } from '../../../lib/workspace';
+import { useFileSyncStatusStore, useWorkspace } from '@/lib/workspace';
 import type { TreeNode } from './types';
 
 // ============================================================================

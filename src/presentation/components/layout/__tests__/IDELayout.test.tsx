@@ -8,7 +8,7 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import { IDELayout } from '../IDELayout';
-import { WorkspaceProvider } from '../../../lib/workspace';
+import { WorkspaceProvider } from '@/lib/workspace';
 import { ToastProvider } from '../../ui/Toast';
 import { axe, toHaveNoViolations } from 'jest-axe';
 

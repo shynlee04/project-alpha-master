@@ -7,11 +7,11 @@
  */
 
 import { useCallback } from 'react';
-import type { SyncManager } from '../../../lib/filesystem/sync-manager';
-import type { WorkspaceEventEmitter } from '../../../lib/events/workspace-events';
+import type { SyncManager } from '@/lib/filesystem/sync-manager';
+import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 import type { OpenFile } from '../../ide/MonacoEditor';
-import { useDeviceType } from '../../../hooks/useMediaQuery';
-import { showMobileWorkspaceError } from '../../../lib/utils/mobile-error-handling';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 
 interface UseIDEFileHandlersOptions {
     /** Current open files */
