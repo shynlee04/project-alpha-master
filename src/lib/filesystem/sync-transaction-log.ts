@@ -219,7 +219,9 @@ export class SyncRollbackExecutor {
                 await this.rollbackOperation(op, options);
                 rolledBack++;
 
-                this.eventBus?.emit('sync:rollback:success', {
+                (this.eventBus as any)?.emit('sync:rollback:success', {
+                    transactionId: this.transactionId,
+                    filesReverted: 1,
                     path: op.path,
                     type: op.type,
                 });
@@ -228,10 +230,11 @@ export class SyncRollbackExecutor {
             } catch (error) {
                 failed++;
 
-                this.eventBus?.emit('sync:rollback:failed', {
+                (this.eventBus as any)?.emit('sync:rollback:failed', {
+                    transactionId: this.transactionId,
+                    error: error instanceof Error ? error.message : 'Unknown error',
                     path: op.path,
                     type: op.type,
-                    error: error instanceof Error ? error.message : 'Unknown error',
                 });
 
                 options.onRollback?.(
@@ -344,10 +347,10 @@ export async function writeMultipleWithRollback(
     transactionLog.startTransaction(operationId);
 
     // Emit start event
-    eventBus?.emit('sync:start', {
+    (eventBus as any)?.emit('sync:start', {
+        fileCount: files.length,
+        direction: 'to-wc',
         operationId,
-        type: 'batch',
-        count: files.length,
     });
 
     try {
@@ -358,11 +361,11 @@ export async function writeMultipleWithRollback(
             // const transaction = transactionLog.addOperation(operationId, 'write', file.path);
             transactionLog.updateOperation(operationId, file.path, { status: 'in-progress' });
 
-            eventBus?.emit('sync:progress', {
-                operationId,
+            (eventBus as any)?.emit('sync:progress', {
                 current: i + 1,
                 total: files.length,
                 currentFile: file.path,
+                operationId,
             });
 
             try {
@@ -406,8 +409,9 @@ export async function writeMultipleWithRollback(
                 const completedOps = transactionLog.getCompletedOperations(operationId);
 
                 // Perform rollback
-                eventBus?.emit('sync:rollback', {
-                    operationId,
+                (eventBus as any)?.emit('sync:rollback', {
+                    transactionId: operationId,
+                    initiator: 'system',
                     filesToRevert: completedOps.map((op) => op.path),
                 });
 

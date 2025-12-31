@@ -28,7 +28,9 @@ export class FSAHandleManager {
       directoryPath: handle.name || '',
       permissionStatus: 'granted',
       grantedAt: Date.now(),
-      lastAccessedAt: Date.now()
+      lastAccessedAt: Date.now(),
+      createdAt: Date.now(),
+      updatedAt: Date.now()
     };
 
     await storeFSAHandle(record);

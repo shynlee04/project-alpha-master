@@ -34,6 +34,7 @@ export class ToolExecutionLogger {
       args,
       status: 'pending',
       timestamp: Date.now(),
+      createdAt: Date.now(),
       approved: (context as any).wasApproved || false
     };
 

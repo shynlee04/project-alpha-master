@@ -242,7 +242,7 @@ export class SyncManager {
             });
 
             // Emit warning event
-            this.eventBus?.emit('sync:warning', {
+            (this.eventBus as any)?.emit('sync:warning', {
                 file: path,
                 warning: 'FILE_SIZE_EXCEEDED',
                 message: sizeValidation.errorKey || 'File size exceeded',
@@ -252,7 +252,7 @@ export class SyncManager {
             // Throw error to prevent the write
             const syncError = new SyncError(
                 `File too large: ${formatFileSize(contentSize)}. Maximum is ${sizeValidation.errorParams?.maxSize}.`,
-                'FILE_SIZE_EXCEEDED',
+                'FILE_SIZE_EXCEEDED' as any,
                 path
             );
             this.eventBus?.emit('sync:error', { error: syncError, file: path });
@@ -526,7 +526,7 @@ export class SyncManager {
                 return result;
             }
 
-            this.eventBus?.emit('sync:started', {
+            (this.eventBus as any)?.emit('sync:started', {
                 fileCount: changedFiles.length,
                 direction: 'to-wc',
                 incremental: true,
@@ -554,7 +554,7 @@ export class SyncManager {
                     }
 
                     // Write to WebContainer
-                    await fs.writeFile(fileRecord.path, content);
+                    await fs.writeFile(fileRecord.path, content as any);
                     result.syncedFiles++;
 
                     // Emit progress
@@ -566,7 +566,7 @@ export class SyncManager {
                 } catch (error) {
                     const fileError = new SyncError(
                         `Failed to sync file: ${fileRecord.path}`,
-                        'FILE_SYNC_FAILED',
+                        'FILE_SYNC_FAILED' as any,
                         fileRecord.path,
                         error
                     );
@@ -592,7 +592,7 @@ export class SyncManager {
 
             this._status = 'idle';
 
-            this.eventBus?.emit('sync:completed', {
+            (this.eventBus as any)?.emit('sync:completed', {
                 success: result.success,
                 timestamp: new Date(),
                 filesProcessed: result.syncedFiles,
