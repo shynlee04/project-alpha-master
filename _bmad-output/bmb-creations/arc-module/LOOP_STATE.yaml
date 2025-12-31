@@ -6,14 +6,14 @@
 # Loop Metadata
 loop_id: "arc-loop-2025-12-31"
 started_at: "2025-12-31T16:44:51+07:00"
-last_updated: "2025-12-31T18:00:00+07:00"
-iteration_count: 3
+last_updated: "2025-12-31T18:10:00+07:00"
+iteration_count: 4
 max_iterations: 100
 status: "ACTIVE"
 
 # Current Execution State
 current_phase: 1
-current_task: "fc-03-provider-reactivity"
+current_task: "fc-05-file-size-top10"
 current_task_retries: 0
 max_retries_per_task: 3
 blocked: false
@@ -84,9 +84,11 @@ phase_1:
         
     - id: "fc-03-provider-reactivity"
       name: "Wire provider-to-agent reactivity"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2025-12-31T18:05:00+07:00"
       agent: "provider-architect"
       workflow: "wire-events"
+      notes: "Event reactivity already wired in fc-01: provider-config-store.setApiKey() emits PROVIDER_KEY_SET, models-loader-store subscribes via onStoreEvent and auto-fetches. UI updates reactively via Zustand subscribeWithSelector."
       acceptance_criteria:
         - "setApiKey emits provider:key-set event"
         - "models-store subscribes and auto-fetches"
@@ -94,10 +96,12 @@ phase_1:
         
     - id: "fc-04-credential-vault"
       name: "Credential vault implementation"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2025-12-31T18:10:00+07:00"
       agent: "provider-architect"
       target_files:
-        - "src/lib/security/credential-vault.ts"
+        - "src/lib/agent/providers/credential-vault.ts"
+      notes: "CredentialVault class already implements AES-256-GCM encryption with PBKDF2 key derivation. Keys encrypted in IndexedDB via Dexie.js, decrypted on demand. Fixed version with robust initialization (FIX-2025-12-30)."
       acceptance_criteria:
         - "AES-256-GCM encryption implemented"
         - "Keys stored encrypted in IndexedDB"
@@ -215,9 +219,9 @@ validation:
 
 # Build Status
 build:
-  last_run: "2025-12-31T18:00:00+07:00"
+  last_run: "2025-12-31T18:05:00+07:00"
   status: "PASS"
-  duration_seconds: 14
+  duration_seconds: 20
 
 # Iteration History (last 10)
 iteration_history:
@@ -237,8 +241,14 @@ iteration_history:
     phase: 1
     task: "fc-02-event-bus"
     status: "DONE"
-    completed_at: "2025-12-31T18:00:00+07:00"
-    notes: "Added subscribeStoreEvent() alias. Fixed pre-existing issues: query-optimizer.ts regex, HubHomePage.tsx JSX syntax, installed date-fns. Build passes."
+    completed_at: "2025-12-31T17:45:00+07:00"
+    notes: "Added subscribeStoreEvent() alias to store-events.ts. Fixed pre-existing build issues (regex, JSX syntax, date-fns)."
+  - iteration: 4
+    phase: 1
+    task: "fc-03-provider-reactivity + fc-04-credential-vault"
+    status: "DONE"
+    completed_at: "2025-12-31T18:10:00+07:00"
+    notes: "fc-03: Event reactivity already wired in fc-01. fc-04: CredentialVault already implements AES-256-GCM encryption with PBKDF2."
 
 # Error Log
 errors: []
