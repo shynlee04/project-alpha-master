@@ -511,7 +511,6 @@ customModes:
       7. Return to step 1
     groups:
       - read
-      - edit
       - browser
       - command
       - mcp

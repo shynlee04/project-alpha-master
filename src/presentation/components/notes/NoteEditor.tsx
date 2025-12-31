@@ -28,6 +28,7 @@ import { cn } from '@/lib/utils'; // Keep existing imports
 import { getCustomSlashMenuItems } from './AISlashCommand';
 import { NoteStudyMenu } from './NoteStudyMenu';
 import { AIPromptDialog } from './AIPromptDialog';
+import { AITransformMenu } from './AITransformMenu';
 import { SuggestionMenuController } from '@blocknote/react';
 import { filterSuggestionItems } from '@blocknote/core/extensions';
 
@@ -180,7 +181,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     }
 
     return (
-        <div className={cn('note-editor', className)}>
+        <div key={`note-editor-${noteId}`} className={cn('note-editor', className)}>
             {/* Status bar */}
             <div className="note-editor__status-bar">
                 {note.emoji && <span className="note-editor__emoji">{note.emoji}</span>}
@@ -213,6 +214,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     />
                 </BlockNoteView>
                 <AIPromptDialog />
+                <AITransformMenu editor={editor} />
             </div>
         </div>
     );
