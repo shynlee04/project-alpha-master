@@ -1,0 +1,348 @@
+/**
+ * @fileoverview Gemini URL Processor - Enhanced Web Content Understanding
+ * @module lib/knowledge/gemini-url-processor
+ * @governance EPIC-38, PHASE-5
+ *
+ * AI-powered web content analysis using Gemini's multimodal API.
+ * Enhances basic HTML extraction with semantic understanding, metadata inference,
+ * and related link detection.
+ *
+ * This is a FRAMEWORK implementation. Actual Gemini API calls require user
+ * configuration of API keys and implementation of TODO sections.
+ *
+ * @example
+ * ```tsx
+ * import { createGeminiURLProcessor } from '@/lib/knowledge/gemini-url-processor';
+ *
+ * const processor = createGeminiURLProcessor(apiKey);
+ * const result = await processor.processURL('https://example.com/article', htmlContent);
+ * console.log(result.cleanContent, result.metadata, result.relatedLinks);
+ * ```
+ */
+
+/**
+ * Enhanced URL analysis result
+ */
+export interface GeminiURLResult {
+  /** Clean main content (ads, nav, footer removed) */
+  cleanContent: string;
+  /** Extracted title */
+  title: string;
+  /** Author detection */
+  author?: string;
+  /** Publication date */
+  publishedDate?: string;
+  /** Content type inference */
+  contentType?: 'article' | 'blog' | 'news' | 'documentation' | 'tutorial' | 'research' | 'other';
+  /** Reading time estimate (minutes) */
+  readingTimeMinutes?: number;
+  /** Summary (3-5 sentences) */
+  summary?: string;
+  /** Key topics/tags */
+  tags?: string[];
+  /** Related links found in content */
+  relatedLinks?: Array<{
+    url: string;
+    title?: string;
+    relevance: 'high' | 'medium' | 'low';
+  }>;
+  /** Main image URL */
+  mainImageUrl?: string;
+}
+
+/**
+ * Processing progress callback
+ */
+export interface URLProcessingProgress {
+  status: 'processing' | 'completed' | 'failed';
+  progress: number; // 0-100
+  stage: string;
+  error?: string;
+}
+
+/**
+ * Processing options
+ */
+export interface GeminiURLOptions {
+  /** Progress callback for UI updates */
+  onProgress?: (progress: URLProcessingProgress) => void;
+  /** Generate summary (default: true) */
+  generateSummary?: boolean;
+  /** Detect related links (default: true) */
+  detectLinks?: boolean;
+  /** Infer metadata (default: true) */
+  inferMetadata?: boolean;
+}
+
+/**
+ * Gemini API configuration
+ */
+interface GeminiConfig {
+  baseUrl: string;
+  model: string;
+  apiKey: string;
+}
+
+/**
+ * Gemini API request structure
+ */
+interface GeminiRequest {
+  contents: Array<{
+    parts: Array<{ text: string }>;
+  }>;
+  generationConfig: {
+    temperature: number;
+    maxOutputTokens: number;
+  };
+}
+
+/**
+ * Gemini API response structure
+ */
+interface GeminiResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{ text?: string }>;
+    };
+  }>;
+}
+
+/**
+ * Gemini URL Processor
+ *
+ * Uses Gemini's multimodal API to analyze web content beyond basic
+ * HTML extraction. Provides semantic understanding and metadata inference.
+ */
+export class GeminiURLProcessor {
+  private config: GeminiConfig;
+
+  constructor(apiKey: string) {
+    this.config = {
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+      model: 'gemini-2.0-flash-latest',
+      apiKey,
+    };
+  }
+
+  /**
+   * Process URL content with Gemini for enhanced analysis
+   *
+   * @param url - The URL being processed
+   * @param htmlContent - Raw HTML content (already fetched)
+   * @param options - Processing options
+   * @returns Enhanced URL analysis result
+   * @throws Error if API key is missing or processing fails
+   */
+  async processURL(
+    url: string,
+    htmlContent: string,
+    options: GeminiURLOptions = {}
+  ): Promise<GeminiURLResult> {
+    const startTime = Date.now();
+
+    try {
+      // Validate API key
+      if (!this.config.apiKey) {
+        throw new Error('Gemini API key not configured');
+      }
+
+      // Report initial progress
+      options.onProgress?.({
+        status: 'processing',
+        progress: 10,
+        stage: 'Preparing content analysis',
+      });
+
+      // Truncate HTML if too long (Gemini has input limits)
+      const maxHtmlLength = 50000; // Keep first 50k chars
+      const truncatedHtml = htmlContent.length > maxHtmlLength
+        ? htmlContent.substring(0, maxHtmlLength) + '\n\n[Content truncated...]'
+        : htmlContent;
+
+      // Build analysis prompt
+      const prompt = this.buildAnalysisPrompt(url, options);
+
+      // Build request
+      const requestBody: GeminiRequest = {
+        contents: [{
+          parts: [
+            { text: prompt },
+            { text: truncatedHtml },
+          ],
+        }],
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 4096,
+        },
+      };
+
+      // Report progress
+      options.onProgress?.({
+        status: 'processing',
+        progress: 30,
+        stage: 'Analyzing content with Gemini',
+      });
+
+      // TODO USER: Implement retry logic with exponential backoff
+      const result = await this.callGeminiAPI(requestBody, options);
+
+      options.onProgress?.({
+        status: 'completed',
+        progress: 100,
+        stage: 'Complete',
+      });
+
+      return result;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      options.onProgress?.({
+        status: 'failed',
+        progress: 0,
+        stage: 'Error',
+        error: errorMessage,
+      });
+
+      throw new Error(`Gemini URL processing failed: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Build analysis prompt based on options
+   */
+  private buildAnalysisPrompt(url: string, options: GeminiURLOptions): string {
+    const generateSummary = options.generateSummary !== false;
+    const detectLinks = options.detectLinks !== false;
+    const inferMetadata = options.inferMetadata !== false;
+
+    const tasks = [];
+    if (generateSummary) tasks.push('Summarize the main content in 3-5 sentences');
+    if (detectLinks) tasks.push('Detect and categorize related links');
+    if (inferMetadata) tasks.push('Infer metadata (author, date, content type, tags)');
+
+    return `Analyze this web page content and provide structured information in JSON format.
+
+Source URL: ${url}
+
+Tasks:
+${tasks.map((t, i) => `${i + 1}. ${t}`).join('\n')}
+
+Specific analysis required:
+${generateSummary ? '- Extract the main content, removing navigation, ads, footers\n- Provide a concise 3-5 sentence summary' : ''}
+${inferMetadata ? '- Detect author if mentioned\n- Extract publication date if available\n- Classify content type (article/blog/news/documentation/tutorial/research/other)\n- Estimate reading time based on content length\n- Extract 5-10 relevant topic tags' : ''}
+${detectLinks ? '- Identify important related links (references, citations, further reading)\n- Categorize links by relevance (high/medium/low)' : ''}
+
+Respond ONLY with valid JSON matching this structure:
+{
+  "cleanContent": "Main article content with nav/ads/footer removed",
+  "title": "Article or page title",
+  "author": "Author name if detected",
+  "publishedDate": "ISO date string if detected",
+  "contentType": "article|blog|news|documentation|tutorial|research|other",
+  "readingTimeMinutes": 5,
+  "summary": "3-5 sentence summary of main content",
+  "tags": ["tag1", "tag2", "tag3"],
+  "relatedLinks": [
+    {"url": "https://example.com", "title": "Link Title", "relevance": "high"}
+  ],
+  "mainImageUrl": "URL of primary image if detected"
+}`;
+  }
+
+  /**
+   * Call Gemini API with retry logic
+   *
+   * TODO USER: Implement this method with:
+   * 1. Fetch with timeout
+   * 2. Retry logic for 429 (rate limit) and 5xx errors
+   * 3. Exponential backoff (wait 1s, 2s, 4s between retries)
+   * 4. Max 3 retries
+   * 5. Proper error parsing
+   * 6. JSON response validation
+   */
+  private async callGeminiAPI(
+    requestBody: GeminiRequest,
+    options: GeminiURLOptions
+  ): Promise<GeminiURLResult> {
+    // === USER IMPLEMENTATION REQUIRED ===
+    // Reference implementation structure:
+    /*
+    const maxRetries = 3;
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+      try {
+        options.onProgress?.({
+          status: 'processing',
+          progress: 30 + (attempt * 20),
+          stage: `Calling Gemini API (attempt ${attempt + 1}/${maxRetries})`,
+        });
+
+        const response = await fetch(
+          `${this.config.baseUrl}/models/${this.config.model}:generateContent?key=${this.config.apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        if (response.ok) {
+          const result: GeminiResponse = await response.json();
+          const rawText = result.candidates[0].content.parts[0].text;
+          return JSON.parse(rawText) as GeminiURLResult;
+        }
+
+        if (response.status === 429) {
+          const waitTime = Math.pow(2, attempt) * 1000;
+          console.warn(`[GeminiURL] Rate limited, waiting ${waitTime}ms...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          attempt++;
+          continue;
+        }
+
+        throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+      } catch (error) {
+        if (attempt === maxRetries - 1) throw error;
+        attempt++;
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+      }
+    }
+
+    throw new Error('Max retries exceeded');
+    */
+
+    // TEMPORARY: Return mock data for development
+    console.warn('[GeminiURLProcessor] Using mock data - implement callGeminiAPI()');
+    return this.getMockResult();
+  }
+
+  /**
+   * Generate mock result for development
+   */
+  private getMockResult(): GeminiURLResult {
+    return {
+      cleanContent: 'This is the mock clean content extracted from the web page.',
+      title: 'Mock Article Title',
+      author: 'Mock Author',
+      publishedDate: '2025-12-31',
+      contentType: 'article',
+      readingTimeMinutes: 5,
+      summary: 'This is a mock summary of the article content, typically 3-5 sentences long.',
+      tags: ['mock', 'development', 'test'],
+      relatedLinks: [
+        { url: 'https://example.com/related1', title: 'Related Article 1', relevance: 'high' },
+        { url: 'https://example.com/related2', title: 'Related Article 2', relevance: 'medium' },
+      ],
+      mainImageUrl: 'https://example.com/image.jpg',
+    };
+  }
+}
+
+/**
+ * Factory function to create Gemini URL processor
+ */
+export function createGeminiURLProcessor(apiKey: string): GeminiURLProcessor {
+  return new GeminiURLProcessor(apiKey);
+}

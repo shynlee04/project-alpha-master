@@ -1,13 +1,14 @@
 /**
  * @fileoverview Source Import Pipeline for Knowledge Base Ingestion
  * @module lib/knowledge/source-import
- * @governance EPIC-6-1
+ * @governance EPIC-6-1, PHASE-5
  * @ai-observable true
  *
- * Orchestrates PDF, URL, and text source imports with validation,
+ * Orchestrates PDF, URL, text, and image source imports with validation,
  * progress tracking, and IndexedDB persistence.
  *
  * Story 6.1: Source Import Pipeline
+ * Phase 5: Gemini Multimodal Image Understanding Integration
  *
  * @example
  * ```tsx
@@ -36,7 +37,7 @@ import { STORE_EVENTS } from '@/lib/events/store-events';
 /**
  * Supported source types
  */
-export type SourceType = 'pdf' | 'url' | 'text';
+export type SourceType = 'pdf' | 'url' | 'text' | 'image';
 
 /**
  * Source import options
@@ -50,6 +51,10 @@ export interface SourceImportOptions {
     autoChunk?: boolean;
     /** Chunking options (defaults to DEFAULT_CHUNKING_OPTIONS) */
     chunkingOptions?: ChunkingOptions;
+    /** Use Gemini multimodal processing for images (requires API key) */
+    useGemini?: boolean;
+    /** Gemini API key (required if useGemini is true) */
+    geminiApiKey?: string;
 }
 
 /**
@@ -269,6 +274,113 @@ export class SourceImportPipeline {
     }
 
     /**
+     * Import image source
+     *
+     * @param file - Image file to import
+     * @param options - Import options
+     * @returns Created SourceRecord
+     * @throws Error if validation fails or image cannot be processed
+     */
+    async importImage(
+        file: File,
+        options: SourceImportOptions
+    ): Promise<SourceRecord> {
+        this.validateImage(file);
+
+        const sourceId = crypto.randomUUID();
+        this.emitEvent('import.started', { sourceId, type: 'image', title: file.name });
+
+        try {
+            options.onProgress?.('Processing image...');
+
+            let extractedText = '';
+            let description = '';
+            let imageType = 'photo';
+
+            // If Gemini processing is requested and API key is provided
+            if (options.useGemini && options.geminiApiKey) {
+                try {
+                    // Dynamically import to avoid circular dependency
+                    const { createGeminiImageProcessor } = await import('./gemini-image-processor');
+
+                    // Convert file to base64 for Gemini API
+                    const arrayBuffer = await file.arrayBuffer();
+                    const base64Content = btoa(
+                        new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+                    );
+
+                    // Process with Gemini
+                    const processor = createGeminiImageProcessor(options.geminiApiKey);
+                    const result = await processor.processImage(file, base64Content, {
+                        extractText: true,
+                        generateDescription: true,
+                        analyzeStructure: true,
+                        onProgress: (progress) => {
+                            options.onProgress?.(progress.stage);
+                        },
+                    });
+
+                    extractedText = result.text;
+                    description = result.description;
+                    imageType = result.imageType;
+                } catch (error) {
+                    console.error('[Image Import] Gemini processing failed, using basic extraction:', error);
+                    // Continue with basic metadata if Gemini fails
+                }
+            }
+
+            // Create source record
+            const record: SourceRecord = {
+                id: sourceId,
+                projectId: options.projectId,
+                type: 'image',
+                title: file.name.replace(/\.[^/.]+$/, ''), // Remove extension
+                content: extractedText || description || `Image: ${file.name}`,
+                wordCount: extractedText ? extractedText.split(/\s+/).filter((w: string) => w.length > 0).length : 0,
+                charCount: extractedText?.length || 0,
+                fileSize: file.size,
+                mimeType: file.type,
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                processingStatus: 'pending',
+                // Store image metadata
+                metadata: {
+                    description,
+                    imageType,
+                    hasGeminiData: options.useGemini && !!extractedText,
+                } as Record<string, unknown>,
+            };
+
+            // Persist to IndexedDB
+            await db.sources.put(record);
+
+            // Emit SOURCE_IMPORTED event for SourceRAGBridge
+            emitStoreEvent(STORE_EVENTS.SOURCE_IMPORTED, {
+                sourceId,
+                sourceType: 'image',
+                collectionId: options.projectId,
+                timestamp: Date.now()
+            });
+
+            // Trigger metadata extraction for additional analysis
+            if (extractedText) {
+                this.triggerMetadataExtraction(sourceId, extractedText);
+            }
+
+            // Trigger chunking if enabled (Story 7-2)
+            if (options.autoChunk && extractedText) {
+                await this.triggerChunking(sourceId, extractedText, options.chunkingOptions);
+            }
+
+            this.emitEvent('import.completed', { sourceId, record });
+            return record;
+        } catch (error) {
+            this.emitEvent('import.error', { sourceId, error: error as Error });
+            throw error;
+        }
+    }
+
+    /**
      * Validate PDF file
      *
      * @param file - File to validate
@@ -305,6 +417,41 @@ export class SourceImportPipeline {
             new URL(url);
         } catch {
             throw new Error('Invalid URL format. Please enter a complete URL (e.g., https://example.com).');
+        }
+    }
+
+    /**
+     * Validate image file
+     *
+     * @param file - File to validate
+     * @throws Error if file is invalid
+     */
+    private validateImage(file: File): void {
+        // Check file type
+        const validImageTypes = [
+            'image/png',
+            'image/jpeg',
+            'image/jpg',
+            'image/gif',
+            'image/webp',
+            'image/bmp',
+        ];
+
+        // Also check by extension
+        const validExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
+
+        const isValidType = validImageTypes.includes(file.type);
+        const isValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+
+        if (!isValidType && !isValidExtension) {
+            throw new Error('Invalid file type. Only PNG, JPEG, GIF, WebP, and BMP images are supported.');
+        }
+
+        // Check file size (20MB limit for images)
+        const MAX_SIZE_MB = 20;
+        const fileSizeMB = getFileSizeMB(file);
+        if (fileSizeMB > MAX_SIZE_MB) {
+            throw new Error(`Image too large (${fileSizeMB.toFixed(1)}MB). Maximum size is ${MAX_SIZE_MB}MB.`);
         }
     }
 

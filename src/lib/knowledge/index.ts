@@ -52,3 +52,62 @@ export {
 export {
     SynthesisFrontmatterSchema,
 } from './synthesis-types';
+
+export {
+    KnowledgeGraphService,
+    createKnowledgeGraphService,
+} from './knowledge-graph';
+
+export type {
+    GraphNode,
+    GraphEdge,
+    GraphCluster,
+    GraphPath,
+    GraphQueryResult,
+    GraphStatistics,
+    KnowledgeGraph,
+    NodeCreationOptions,
+    EdgeCreationOptions,
+    TraversalOptions,
+    ClusterDetectionOptions,
+    GraphQueryOptions,
+} from './knowledge-graph-types';
+
+export {
+    SubjectClassifier,
+    createSubjectClassifier,
+} from './subject-classifier';
+
+export type {
+    SubjectCategory,
+    ClassificationResult,
+    ClassificationOptions,
+    SourceData,
+    SubjectStatistics,
+} from './subject-classifier';
+
+export {
+    RelevancyScorer,
+    createRelevancyScorer,
+} from './relevancy-scorer';
+
+export type {
+    RelevancyScore,
+    ScorableDocument,
+    ScoringOptions,
+    RelatedDocument,
+} from './relevancy-scorer';
+
+export {
+    OrganizationEngine,
+    createOrganizationEngine,
+} from './organization-engine';
+
+export type {
+    OrganizationType,
+    OrganizationRecommendation,
+    OrganizedDocument,
+    OrganizationResult,
+    VaultAnalysis,
+    OrganizationOptions,
+} from './organization-engine';

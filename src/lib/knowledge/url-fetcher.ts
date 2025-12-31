@@ -1,13 +1,14 @@
 /**
  * @fileoverview URL Fetcher for Client-Side Web Content Extraction
  * @module lib/knowledge/url-fetcher
- * @governance EPIC-6-1
+ * @governance EPIC-6-1, PHASE-5
  * @ai-observable true
  *
  * Client-side URL fetching with main content extraction.
  * Removes navigation, ads, and other non-content elements.
  *
  * Story 6.1: Source Import Pipeline
+ * Phase 5: Gemini Multimodal URL Content Integration
  *
  * @example
  * ```tsx
@@ -16,6 +17,13 @@
  * const fetcher = new URLFetcher();
  * const result = await fetcher.fetchURL('https://example.com/article');
  * console.log(`Extracted ${result.wordCount} words`);
+ *
+ * // With Gemini enhancement
+ * const enhanced = await fetcher.fetchURLWithGemini(
+ *   'https://example.com/article',
+ *   geminiApiKey
+ * );
+ * console.log(enhanced.summary, enhanced.tags);
  * ```
  */
 
@@ -31,6 +39,31 @@ export interface URLFetchResult {
     wordCount: number;
     /** Original URL */
     url: string;
+    /** Optional enhanced metadata from Gemini */
+    metadata?: {
+        author?: string;
+        publishedDate?: string;
+        contentType?: string;
+        readingTimeMinutes?: number;
+        summary?: string;
+        tags?: string[];
+        relatedLinks?: Array<{
+            url: string;
+            title?: string;
+            relevance: string;
+        }>;
+        mainImageUrl?: string;
+    };
+}
+
+/**
+ * URL fetch options
+ */
+export interface URLFetchOptions {
+    /** Use Gemini for enhanced analysis (requires API key) */
+    useGemini?: boolean;
+    /** Gemini API key (required if useGemini is true) */
+    geminiApiKey?: string;
 }
 
 /**
@@ -285,6 +318,73 @@ export class URLFetcher {
         } catch {
             return false;
         }
+    }
+
+    /**
+     * Fetch URL with Gemini-enhanced analysis
+     *
+     * @param url - URL to fetch and analyze
+     * @param options - Fetch options including Gemini API key
+     * @returns Enhanced URLFetchResult with metadata
+     * @throws Error if URL is invalid, blocked by CORS, or unreachable
+     */
+    async fetchURLWithGemini(
+        url: string,
+        options: URLFetchOptions = {}
+    ): Promise<URLFetchResult> {
+        // First, do basic extraction
+        const basicResult = await this.fetchURL(url);
+
+        // If Gemini processing is requested and API key is provided
+        if (options.useGemini && options.geminiApiKey) {
+            try {
+                // Fetch the HTML content for Gemini analysis
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch URL: ${response.status}`);
+                }
+                const html = await response.text();
+
+                // Dynamically import to avoid circular dependency
+                const { createGeminiURLProcessor } = await import('./gemini-url-processor');
+
+                // Process with Gemini
+                const processor = createGeminiURLProcessor(options.geminiApiKey);
+                const enhanced = await processor.processURL(url, html, {
+                    generateSummary: true,
+                    detectLinks: true,
+                    inferMetadata: true,
+                    onProgress: (progress) => {
+                        console.log(`[URL Fetcher] ${progress.stage}`);
+                    },
+                });
+
+                // Merge results
+                return {
+                    ...basicResult,
+                    title: enhanced.title || basicResult.title,
+                    content: enhanced.cleanContent || basicResult.content,
+                    wordCount: enhanced.cleanContent
+                        ? enhanced.cleanContent.split(/\s+/).filter(w => w.length > 0).length
+                        : basicResult.wordCount,
+                    metadata: {
+                        author: enhanced.author,
+                        publishedDate: enhanced.publishedDate,
+                        contentType: enhanced.contentType,
+                        readingTimeMinutes: enhanced.readingTimeMinutes,
+                        summary: enhanced.summary,
+                        tags: enhanced.tags,
+                        relatedLinks: enhanced.relatedLinks,
+                        mainImageUrl: enhanced.mainImageUrl,
+                    },
+                };
+            } catch (error) {
+                console.error('[URL Fetcher] Gemini processing failed, using basic extraction:', error);
+                // Continue with basic result if Gemini fails
+            }
+        }
+
+        return basicResult;
     }
 }
 
