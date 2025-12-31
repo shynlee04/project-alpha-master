@@ -20,6 +20,8 @@
  * ```
  */
 
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
+
 /**
  * Enhanced URL analysis result
  */
@@ -115,13 +117,29 @@ interface GeminiResponse {
  */
 export class GeminiURLProcessor {
   private config: GeminiConfig;
+  private providerId: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.0-flash-latest',
+      model: 'gemini-2.5-flash',
       apiKey,
     };
+    this.providerId = providerId;
+  }
+
+  /**
+   * Create URL processor with API key from credential vault
+   */
+  static async create(providerId: string = 'gemini'): Promise<GeminiURLProcessor> {
+    await credentialVault.initialize();
+    const apiKey = await credentialVault.getCredentials(providerId);
+
+    if (!apiKey) {
+      throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
+    }
+
+    return new GeminiURLProcessor(apiKey, providerId);
   }
 
   /**

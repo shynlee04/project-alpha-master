@@ -32,6 +32,7 @@ import type {
 } from './gemini-pdf-types';
 import { buildExtractionPrompt } from './gemini-pdf-prompts';
 import { callGeminiAPI } from './gemini-pdf-api';
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 // Re-export types for convenience
 export type {
@@ -52,13 +53,29 @@ export type {
  */
 export class GeminiPDFProcessor {
   private config: GeminiConfig;
+  private providerId: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.0-flash-latest', // Use latest multimodal model
+      model: 'gemini-2.5-flash', // Use latest multimodal model
       apiKey,
     };
+    this.providerId = providerId;
+  }
+
+  /**
+   * Create PDF processor with API key from credential vault
+   */
+  static async create(providerId: string = 'gemini'): Promise<GeminiPDFProcessor> {
+    await credentialVault.initialize();
+    const apiKey = await credentialVault.getCredentials(providerId);
+
+    if (!apiKey) {
+      throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
+    }
+
+    return new GeminiPDFProcessor(apiKey, providerId);
   }
 
   /**

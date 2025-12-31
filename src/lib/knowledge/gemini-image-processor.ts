@@ -29,6 +29,7 @@ import type {
 } from './gemini-image-types';
 import { buildAnalysisPrompt } from './gemini-image-prompts';
 import { getMockImageResult } from './gemini-image-mocks';
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 /**
  * Gemini Image Processor
@@ -38,13 +39,29 @@ import { getMockImageResult } from './gemini-image-mocks';
  */
 export class GeminiImageProcessor {
   private config: GeminiConfig;
+  private providerId: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.0-flash-latest', // Use latest multimodal model
+      model: 'gemini-2.5-flash', // Use latest multimodal model
       apiKey,
     };
+    this.providerId = providerId;
+  }
+
+  /**
+   * Create image processor with API key from credential vault
+   */
+  static async create(providerId: string = 'gemini'): Promise<GeminiImageProcessor> {
+    await credentialVault.initialize();
+    const apiKey = await credentialVault.getCredentials(providerId);
+
+    if (!apiKey) {
+      throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
+    }
+
+    return new GeminiImageProcessor(apiKey, providerId);
   }
 
   /**

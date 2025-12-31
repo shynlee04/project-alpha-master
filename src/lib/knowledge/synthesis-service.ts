@@ -26,6 +26,7 @@ import type {
 import { getMimeType } from './synthesis-api-types';
 import { getPromptForType } from './synthesis-prompts';
 import { getMockFrontmatter } from './synthesis-mocks';
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 /**
  * Synthesis Service
@@ -35,14 +36,30 @@ import { getMockFrontmatter } from './synthesis-mocks';
  */
 export class SynthesisService {
   private config: GeminiConfig;
+  private providerId: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      model: 'gemini-2.0-flash-latest',
+      model: 'gemini-2.5-flash',
       apiKey,
       temperature: 0.4,
     };
+    this.providerId = providerId;
+  }
+
+  /**
+   * Create synthesis service with API key from credential vault
+   */
+  static async create(providerId: string = 'gemini'): Promise<SynthesisService> {
+    await credentialVault.initialize();
+    const apiKey = await credentialVault.getCredentials(providerId);
+
+    if (!apiKey) {
+      throw new Error(`No API key found for provider: ${providerId}. Please configure your API key in Settings.`);
+    }
+
+    return new SynthesisService(apiKey, providerId);
   }
 
   /**
