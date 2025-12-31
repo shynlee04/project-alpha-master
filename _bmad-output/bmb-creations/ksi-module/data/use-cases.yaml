@@ -1,0 +1,434 @@
+# Knowledge Synthesis Platform - 4 Core Use Cases
+# Detailed specifications for validation and demonstration
+# Generated: 2025-12-31T19:22:10+07:00
+
+---
+# Overview
+overview:
+  platform: "Knowledge Synthesis Station"
+  target_market: "Vietnamese education market"
+  architecture: "Local-first, RAG-powered, AI-enhanced"
+  goal: "Transform heterogeneous learning materials into interconnected knowledge graphs"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# USE CASE 1: Initial Vault Population and Baseline Synthesis
+# ═══════════════════════════════════════════════════════════════════════════
+use_case_1:
+  id: "UC-001"
+  name: "Initial Vault Population and Baseline Synthesis"
+  priority: "P0-CRITICAL"
+  description: |
+    User creates a new knowledge vault (e.g., "Fall Semester 2024") and populates
+    it with diverse learning materials. The system processes each material,
+    generates AI synthesis with structured frontmatter, and creates initial
+    organization based on detected subject domains.
+
+  personas:
+    - name: "Minh"
+      role: "CS undergraduate student"
+      context: "Preparing for exams, has notes in various formats"
+
+  entry_conditions:
+    - "User has Gemini API key configured"
+    - "User has learning materials ready (files, URLs)"
+
+  main_flow:
+    - step: 1
+      action: "User clicks 'Create Knowledge Vault'"
+      system: "Creates vault container in IndexedDB"
+      ui: "Vault creation dialog appears"
+      
+    - step: 2
+      action: "User names vault 'Fall Semester 2024'"
+      system: "Vault record saved with metadata"
+      ui: "Vault appears in sidebar, opens empty state"
+      
+    - step: 3
+      action: "User clicks 'Import Sources'"
+      system: "SourceImportDialog opens"
+      ui: "Multi-format upload zone visible"
+      
+    - step: 4
+      action: "User selects 5 PDFs, 3 images (handwritten notes), 2 audio files"
+      system: "File validation, size check, format detection"
+      ui: "Files listed with type icons, ready to import"
+      
+    - step: 5
+      action: "User clicks 'Import All'"
+      system: |
+        - Parallel processing pipelines start
+        - Each file type routed to appropriate processor
+        - PDF.js for PDFs, Gemini Vision for images, Live API for audio
+        - Content extracted, chunked, embedded
+      ui: "Progress indicators per file, estimated time shown"
+      
+    - step: 6
+      action: "User clicks 'Synthesize All' or individual 'Synthesize' buttons"
+      system: |
+        - SynthesisService called for each source
+        - Gemini API generates structured frontmatter
+        - Summary, tags, key concepts, metadata extracted
+        - Results stored in Dexie with source linkage
+      ui: "Processing animation, 'Synthesized' badge appears per source"
+      
+    - step: 7
+      action: "System auto-organizes sources"
+      system: |
+        - Subject classification runs on all synthesized sources
+        - Groupings created (Mathematics, Computer Science, Literature, etc.)
+        - Sources linked to groups
+      ui: "Subject folders appear in sidebar, sources organized under them"
+
+  exit_conditions:
+    - "All sources imported and accessible"
+    - "All sources have synthesis frontmatter"
+    - "Sources searchable via RAG"
+    - "Subject groupings visible"
+
+  acceptance_criteria:
+    - "AC1: Batch import handles 10+ files without timeout"
+    - "AC2: Each file type (PDF, image, audio, URL, markdown) processes correctly"
+    - "AC3: Synthesis generates valid frontmatter per schema"
+    - "AC4: Sources indexed and searchable within 10s of import"
+    - "AC5: Subject groups auto-created based on content"
+
+  test_data:
+    pdfs:
+      - "calculus_chapter_5.pdf"
+      - "algorithms_lecture_notes.pdf"
+    images:
+      - "handwritten_math_notes.jpg"
+      - "diagram_data_structures.png"
+    audio:
+      - "lecture_recording_20min.mp3"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# USE CASE 2: Interactive Canvas Knowledge Linkage Discovery
+# ═══════════════════════════════════════════════════════════════════════════
+use_case_2:
+  id: "UC-002"
+  name: "Interactive Canvas Knowledge Linkage Discovery"
+  priority: "P1-HIGH"
+  description: |
+    User opens the knowledge canvas, adds synthesized documents as nodes,
+    and the system analyzes semantic relationships to propose connections.
+    User accepts or dismisses proposals, building a knowledge graph.
+
+  personas:
+    - name: "Linh"
+      role: "Graduate student"
+      context: "Researching interdisciplinary topic, exploring connections"
+
+  entry_conditions:
+    - "Vault has 5+ synthesized sources"
+    - "User is in Knowledge workspace"
+
+  main_flow:
+    - step: 1
+      action: "User opens Knowledge Canvas"
+      system: "Canvas workspace loads with React Flow"
+      ui: "Empty canvas with sidebar showing sources"
+      
+    - step: 2
+      action: "User drags 3 source cards onto canvas"
+      system: |
+        - SourceNode created for each
+        - Node positioned at drop location
+        - Source data linked to node
+      ui: "Nodes appear with title and synthesis summary preview"
+      
+    - step: 3
+      action: "System triggers linkage analysis"
+      system: |
+        - When 3+ nodes present, LinkageAnalyzer invoked
+        - Embeddings compared pairwise
+        - Relationship types classified (conceptual, sequential, contrastive)
+        - Confidence scores calculated
+      ui: "Brief 'Analyzing...' indicator"
+      
+    - step: 4
+      action: "System shows connection recommendations"
+      system: |
+        - Recommended edges rendered as dashed lines
+        - Edge labels show relationship type
+        - Confidence badge on each proposal
+      ui: "Dashed edges appear between related nodes with 'Accept/Dismiss' buttons"
+      
+    - step: 5
+      action: "User accepts one connection, dismisses another"
+      system: |
+        - Accepted: Edge converted to solid, stored in canvas state
+        - Dismissed: Edge removed, noted in user preferences
+      ui: "Solid edge with label, dismissed edge fades away"
+      
+    - step: 6
+      action: "User adds 2 more nodes, forming cluster"
+      system: |
+        - Re-analysis triggered
+        - Cluster detected (5 nodes with high inter-connectivity)
+        - Cluster synthesis opportunity identified
+      ui: "Cluster highlight, 'Synthesize Cluster' button appears"
+      
+    - step: 7
+      action: "User clicks 'Synthesize Cluster'"
+      system: |
+        - Gemini API called with all cluster content
+        - New synthesis document created combining insights
+        - New source added to vault
+      ui: "New synthesis node added to canvas, linked to cluster members"
+
+  exit_conditions:
+    - "Canvas saved with nodes and edges"
+    - "User-accepted connections persisted"
+    - "Synthesis from cluster created (if applicable)"
+
+  acceptance_criteria:
+    - "AC1: Drag-drop sources to canvas works"
+    - "AC2: Analysis triggers automatically with 3+ nodes"
+    - "AC3: Recommendations show confidence scores"
+    - "AC4: Accept/dismiss actions work correctly"
+    - "AC5: Cluster synthesis creates new document"
+    - "AC6: Canvas state persists across sessions"
+
+  edge_cases:
+    - "All sources unrelated (low similarity): Show 'No connections found'"
+    - "User dismisses all recommendations: Track for learning"
+    - "Canvas has 50+ nodes: Virtualization + batch analysis"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# USE CASE 3: Conversational Knowledge Exploration Session
+# ═══════════════════════════════════════════════════════════════════════════
+use_case_3:
+  id: "UC-003"
+  name: "Conversational Knowledge Exploration Session"
+  priority: "P0-CRITICAL"
+  description: |
+    User opens chat interface, toggles to hybrid mode, and asks questions
+    about their knowledge base. The system retrieves relevant context,
+    generates responses with citations, and can create new synthesis
+    documents on request.
+
+  personas:
+    - name: "Duc"
+      role: "Medical student"
+      context: "Reviewing for OSCE, needs to connect concepts across subjects"
+
+  entry_conditions:
+    - "Vault has synthesized sources"
+    - "RAG index populated"
+    - "User in Knowledge or IDE workspace"
+
+  main_flow:
+    - step: 1
+      action: "User opens chat panel"
+      system: "ChatPanel component renders"
+      ui: "Chat interface with mode toggle visible"
+      
+    - step: 2
+      action: "User toggles mode to 'Hybrid'"
+      system: "Mode stored in localStorage, useRAGChat configured"
+      ui: "Hybrid mode active indicator, 'Using your knowledge' badge"
+      
+    - step: 3
+      action: "User asks: 'How do calculus concepts connect to physics materials?'"
+      system: |
+        - Intent classified as 'exploration'
+        - hybrid-retriever retrieves relevant chunks
+        - Context injected into system prompt
+        - Gemini generates response with [1][2] citations
+      ui: "Loading indicator, response streams in with citation markers"
+      
+    - step: 4
+      action: "Response displays with citations"
+      system: |
+        - Citations extracted from response
+        - Sidebar populated with source references
+        - Click handlers attached
+      ui: "Response text with [1], [2], CitationSidebar shows source cards"
+      
+    - step: 5
+      action: "User clicks citation [1]"
+      system: "Source preview panel opens with highlighted excerpt"
+      ui: "Split view or modal showing source document"
+      
+    - step: 6
+      action: "User asks: 'Create a comparison between my literature documents'"
+      system: |
+        - Intent classified as 'synthesis_request'
+        - Relevant literature sources retrieved
+        - Synthesis prompt sent to Gemini
+        - New comparison document generated
+        - Stored as new source in vault
+      ui: "'Creating synthesis...' → 'Synthesis created!' toast with link"
+      
+    - step: 7
+      action: "User views new synthesis document"
+      system: "Opens in source preview"
+      ui: "New document with comparison table, insights, citations to original sources"
+
+  exit_conditions:
+    - "User questions answered with knowledge context"
+    - "Citations linked to sources"
+    - "New synthesis created if requested"
+
+  acceptance_criteria:
+    - "AC1: Mode toggle persists across sessions"
+    - "AC2: Queries routed through RAG in hybrid mode"
+    - "AC3: Responses include [n] citations"
+    - "AC4: CitationSidebar shows source references"
+    - "AC5: Click citation opens source preview"
+    - "AC6: Synthesis requests create new documents"
+    - "AC7: Response latency <5s for typical queries"
+
+  query_types:
+    - type: "factual_lookup"
+      example: "What are the key points in Chapter 5?"
+      routing: "RAG direct"
+      
+    - type: "exploration"
+      example: "How does X relate to Y?"
+      routing: "Hybrid (RAG + reasoning)"
+      
+    - type: "synthesis_request"
+      example: "Create a summary of all my biology notes"
+      routing: "Multi-source synthesis"
+      
+    - type: "comparison"
+      example: "Compare the approaches in these three papers"
+      routing: "Multi-source analysis"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# USE CASE 4: Dynamic Knowledge Matrix Evolution and Auto-Organization
+# ═══════════════════════════════════════════════════════════════════════════
+use_case_4:
+  id: "UC-004"
+  name: "Dynamic Knowledge Matrix Evolution and Auto-Organization"
+  priority: "P2-MEDIUM"
+  description: |
+    As the user's knowledge vault grows, the system analyzes the entire
+    corpus, calculates inter-document relationships, classifies subjects,
+    and proposes reorganization strategies. User can apply different
+    organizational views simultaneously.
+
+  personas:
+    - name: "Hoa"
+      role: "Researcher"
+      context: "Has 100+ sources accumulated over months, vault is chaotic"
+
+  entry_conditions:
+    - "Vault has 20+ synthesized sources"
+    - "Sources span multiple subjects"
+
+  main_flow:
+    - step: 1
+      action: "User opens Knowledge page"
+      system: "KnowledgePage renders with current organization"
+      ui: "Source grid/list view, 'Reorganize' button visible"
+      
+    - step: 2
+      action: "User clicks 'Reorganize Knowledge'"
+      system: |
+        - KnowledgeGraph service activated
+        - All source embeddings analyzed
+        - Pairwise relevancy scores calculated
+        - Subject classifications determined
+        - Cluster detection runs
+      ui: "'Analyzing your knowledge...' progress indicator"
+      
+    - step: 3
+      action: "Analysis completes"
+      system: |
+        - 3 organization strategies generated:
+          1. Chronological (by study period)
+          2. Conceptual (by topic cluster)
+          3. Hybrid (priority + topic)
+        - Efficiency metrics calculated for each
+        - Primary recommendation determined
+      ui: "OrganizationRecommendations panel opens with 3 options"
+      
+    - step: 4
+      action: "User previews 'Conceptual' organization"
+      system: "Virtual reorganization displayed without committing"
+      ui: "Sources rearranged into topic folders, preview badge visible"
+      
+    - step: 5
+      action: "User applies 'Conceptual' organization"
+      system: |
+        - Source groupings updated in Dexie
+        - Sidebar folders reorganized
+        - Knowledge graph edges recalculated
+      ui: "Sources animate to new positions, 'Organization applied' toast"
+      
+    - step: 6
+      action: "User toggles to 'Chronological' view without losing 'Conceptual'"
+      system: |
+        - Multiple view modes supported
+        - Same sources, different organization overlays
+        - User can switch instantly
+      ui: "View toggle shows both options, sources reorder based on selection"
+      
+    - step: 7
+      action: "System suggests new connections post-reorganization"
+      system: |
+        - After reorganization, linkage discovery re-runs
+        - New insights surfaced based on new proximity
+      ui: "'We found new connections in your Biology cluster' notification"
+
+  exit_conditions:
+    - "At least one organization strategy applied"
+    - "Multiple views available"
+    - "New insights surfaced"
+
+  acceptance_criteria:
+    - "AC1: Analysis completes in <30s for 100 sources"
+    - "AC2: 3 organization strategies presented"
+    - "AC3: Preview mode works without committing"
+    - "AC4: Apply reorganization updates all related state"
+    - "AC5: Multiple views switchable"
+    - "AC6: Post-reorg insights surfaced"
+
+  organization_types:
+    - type: "chronological"
+      criteria: "By creation date, study period, semester"
+      ui: "Timeline view, date folders"
+      
+    - type: "conceptual"
+      criteria: "By topic cluster, semantic similarity"
+      ui: "Topic folders, nested by domain"
+      
+    - type: "hybrid"
+      criteria: "Priority subjects + chronological within"
+      ui: "Main subjects prominent, timeline within"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Cross-Cutting Concerns
+# ═══════════════════════════════════════════════════════════════════════════
+cross_cutting:
+  i18n:
+    languages: ["en", "vi"]
+    all_ui_strings_externalized: true
+    date_format_localized: true
+
+  mobile:
+    demo_mode: "Read-only on mobile"
+    touch_targets: "≥44px"
+    responsive_breakpoints:
+      mobile: "<640px"
+      tablet: "640-1024px"
+      desktop: "≥1024px"
+
+  offline:
+    local_first: true
+    indexeddb_storage: true
+    graceful_degradation: "When offline, queued operations sync later"
+
+  performance:
+    rag_query: "<500ms"
+    synthesis: "<10s typical"
+    canvas_render: "60fps"
+    large_vault: "100+ sources without degradation"
+
+  security:
+    api_keys: "Encrypted in IndexedDB via AES-256-GCM"
+    content_privacy: "Only sent to AI provider for processing"
+    local_fs: "Files stay on device"
