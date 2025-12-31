@@ -5,8 +5,8 @@
 
 import { create } from 'zustand';
 import Dexie from 'dexie';
-import type { Flashcard } from '../knowledge/types';
-import type { SRSData, SRSRating, StudySession, StudyStats } from '../study/srs-types';
+import type { Flashcard } from '@/lib/knowledge/types';
+import type { SRSData, SRSRating, StudySession, StudyStats } from '@/lib/study/srs-types';
 import {
   calculateNextReview,
   isCardDue,
@@ -15,7 +15,7 @@ import {
   createStudySession,
   completeStudySession,
   DEFAULT_SRS_DATA,
-} from '../study/srs-types';
+} from '@/lib/study/srs-types';
 
 // ============================================================
 // IndexedDB database for study session persistence

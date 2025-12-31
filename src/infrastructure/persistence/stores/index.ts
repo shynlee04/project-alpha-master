@@ -11,50 +11,51 @@
 
 export {
   useAgentsStore,
-  addAgent,
-  updateAgent,
-  removeAgent,
-  type AgentState
+  useAgentsStoreHydration,
+  DEFAULT_AGENT,
+  type AgentsState
 } from './agents-store';
 
 export {
   useAgentSelection,
-  activeAgentId,
-  setActiveAgent,
+  useActiveAgent,
   type AgentSelectionState
-} from '../agent-selection-store';
+} from './agent-selection-store';
 
 export {
   useProviderModelsStore,
-  setApiKey,
-  fetchModels,
-  type ProviderModelState
+  useProviderModels,
+  useSelectedProviderModel,
+  type ProviderModelsState
 } from './provider-models-store';
 
 export {
   useAutoApproveStore,
-  shouldAutoApprove,
-  type AutoApproveState
-} from '../auto-approve-store';
+  TOOL_CATEGORY_MAP,
+  type AutoApproveState,
+  type ToolCategory
+} from './auto-approve-store';
 
 export {
   usePromptEnhancementStore,
-  isEnabled,
-  toggle,
   type PromptEnhancementState
-} from '../prompt-enhancement-store';
+} from './prompt-enhancement-store';
 
 export {
   useThreadsStore,
-  createThread,
-  setActiveThread,
-  type ThreadsState
-} from '../conversation-threads-store';
+  useActiveThread,
+  useProjectThreads,
+  useThreadsHydration,
+  type ThreadsState,
+  type ThreadMessage,
+  type ThreadToolCall,
+  type ConversationThread
+} from './conversation-threads-store';
 
 export {
   useOpenAICompatibleStore,
   type OpenAICompatibleState
-} from '../openai-compatible-store';
+} from './openai-compatible-store';
 
 // ============================================================================
 // IDE & UI STORES (from src/lib/state/)
@@ -158,7 +159,7 @@ export {
 } from '../dexie-db';
 
 export { createDexieStorage } from '../dexie-storage';
-export { DexieDB } from '../dexie-db-class';
+export { ViaGentDatabase } from '../dexie-db-class';
 
 // ============================================================================
 // HELPERS

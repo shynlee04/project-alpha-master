@@ -10,10 +10,10 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from './dexie-storage';
-import { PROVIDERS, type ProviderConfig, type ModelInfo } from '../agent/providers/types';
-import { credentialVault } from '../agent/providers/credential-vault';
-import { modelRegistry } from '../agent/providers/model-registry';
+import { createDexieStorage } from '../dexie-storage';
+import { PROVIDERS, type ProviderConfig, type ModelInfo } from '@/lib/agent/providers/types';
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
+import { modelRegistry } from '@/lib/agent/providers/model-registry';
 
 /**
  * Settings specific to a provider's model usage

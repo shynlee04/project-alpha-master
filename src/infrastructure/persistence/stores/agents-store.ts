@@ -19,7 +19,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
-import type { Agent } from '../mocks/agents';
+import type { Agent } from '@/core/entities/Agent';
 
 /**
  * Default agent created on first load

@@ -21,8 +21,8 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from './dexie-storage';
-import type { SourceRecord, CollectionRecord, SourceMetadata } from './dexie-db';
+import { createDexieStorage } from '../dexie-storage';
+import type { SourceRecord, CollectionRecord, SourceMetadata } from '../dexie-db';
 import {
     db,
     getCollectionsForProject as dbGetCollectionsForProject,
@@ -30,7 +30,7 @@ import {
     deleteCollection as dbDeleteCollection,
     addSourceToCollection as dbAddSourceToCollection,
     removeSourceFromCollection as dbRemoveSourceFromCollection,
-} from './dexie-db';
+} from '../dexie-db';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 
 // ============================================================================

@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import Dexie from 'dexie';
 import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflow/react';
 import type { Node, Edge, Viewport } from '@xyflow/react';
-import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData, CanvasRelationshipType, CanvasMetadata, CanvasExport } from '../canvas/types';
+import type { CanvasStoreState, CanvasNodeData, CanvasEdgeData, CanvasRelationshipType, CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
 
 // ============================================================
 // IndexedDB database for canvas persistence

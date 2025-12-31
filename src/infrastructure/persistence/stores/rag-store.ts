@@ -21,7 +21,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from './dexie-storage';
+import { createDexieStorage } from '../dexie-storage';
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
 import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
@@ -34,8 +34,8 @@ import {
 import { documentChunker } from '@/lib/rag/document-chunker';
 
 // Import types and helpers
-import { IndexStatus, IndexOperation } from './rag-store-types';
-import type { RAGStoreState, CachedSearchResult } from './rag-store-types';
+import { IndexStatus, IndexOperation } from '../rag-store-types';
+import type { RAGStoreState, CachedSearchResult } from '../rag-store-types';
 import {
     generateCacheKey,
     isCacheValid,
@@ -44,8 +44,8 @@ import {
     enforceCacheLimit,
     // SEARCH_CACHE_TTL,
     // MAX_CACHE_SIZE,
-} from './rag-store-helpers';
-import { db } from './dexie-db';
+} from '../rag-store-helpers';
+import { db } from '../dexie-db';
 
 // ============================================================================
 // Store
@@ -314,8 +314,8 @@ export const useRAGStore = create<RAGStoreState>()(
             // Embedding Actions (Story 7-3)
 
             detectEmbeddingCapability: async () => {
-                const { createEmbeddingService } = await import('../rag/embedding-service');
-                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const { createEmbeddingService } = await import('@/lib/rag/embedding-service');
+                const vault = await import('@/lib/agent/providers').then((m) => m.credentialVault);
                 const apiKey = vault.getCredential('google')?.apiKey;
 
                 try {
@@ -340,8 +340,8 @@ export const useRAGStore = create<RAGStoreState>()(
                 set({ loading: true, error: null });
 
                 try {
-                    const { createEmbeddingService } = await import('../rag/embedding-service');
-                    const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                    const { createEmbeddingService } = await import('@/lib/rag/embedding-service');
+                    const vault = await import('@/lib/agent/providers').then((m) => m.credentialVault);
                     const apiKey = vault.getCredential('google')?.apiKey;
 
                     const service = await createEmbeddingService(apiKey);
@@ -393,10 +393,10 @@ export const useRAGStore = create<RAGStoreState>()(
             // Search Actions (Story 7-4)
 
             performSearch: async (query: string, mode?: import('@/lib/rag/types').SearchMode, _limit?: number) => {
-                const { HybridRetriever } = await import('../rag/hybrid-retriever');
-                const { createEmbeddingService } = await import('../rag/embedding-service');
-                const { loadOrCreateIndex } = await import('../rag/orama-index');
-                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const { HybridRetriever } = await import('@/lib/rag/hybrid-retriever');
+                const { createEmbeddingService } = await import('@/lib/rag/embedding-service');
+                const { loadOrCreateIndex } = await import('@/lib/rag/orama-index');
+                const vault = await import('@/lib/agent/providers').then((m) => m.credentialVault);
                 const apiKey = vault.getCredential('google')?.apiKey;
 
                 set({ loading: true, error: null, searchQuery: query });
@@ -470,11 +470,11 @@ export const useRAGStore = create<RAGStoreState>()(
 
             // RAG Chat actions (Story 7-5)
             sendRAGMessage: async (query: string) => {
-                const { HybridRetriever } = await import('../rag/hybrid-retriever');
-                const { createEmbeddingService } = await import('../rag/embedding-service');
-                const { loadOrCreateIndex } = await import('../rag/orama-index');
-                const { formatCitations, /* buildContext, */ createCitationsMap } = await import('../rag/citation-formatter');
-                const vault = await import('../state').then((m) => m.useCredentialVault.getState());
+                const { HybridRetriever } = await import('@/lib/rag/hybrid-retriever');
+                const { createEmbeddingService } = await import('@/lib/rag/embedding-service');
+                const { loadOrCreateIndex } = await import('@/lib/rag/orama-index');
+                const { formatCitations, /* buildContext, */ createCitationsMap } = await import('@/lib/rag/citation-formatter');
+                const vault = await import('@/lib/agent/providers').then((m) => m.credentialVault);
                 const apiKey = vault.getCredential('google')?.apiKey;
 
                 set({ loading: true, error: null });

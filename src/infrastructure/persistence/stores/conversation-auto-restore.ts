@@ -1,5 +1,5 @@
-import type { ConversationThreadRecord } from './dexie-db';
-import { db, getConversationThread, saveConversationThread } from './dexie-db';
+import type { ConversationThreadRecord } from '../dexie-db';
+import { db, getConversationThread, saveConversationThread } from '../dexie-db';
 import { useConversationStore } from './conversation-store';
 
 /**

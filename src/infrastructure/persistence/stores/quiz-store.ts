@@ -6,7 +6,7 @@
 import Dexie, { type Table } from 'dexie';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Quiz, QuizQuestion, QuizFilter, QuizSettings } from '../study/quiz-types';
+import type { Quiz, QuizQuestion, QuizFilter, QuizSettings } from '@/lib/study/quiz-types';
 
 /**
  * Dexie database for quiz persistence

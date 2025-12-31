@@ -5,7 +5,7 @@
 
 import { create } from 'zustand';
 import Dexie from 'dexie';
-import type { Flashcard, FlashcardSet, FlashcardFilter, FlashcardDifficulty } from '../knowledge/types';
+import type { Flashcard, FlashcardSet, FlashcardFilter, FlashcardDifficulty } from '@/lib/knowledge/types';
 
 // ============================================================
 // IndexedDB database for flashcard persistence

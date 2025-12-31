@@ -5,8 +5,8 @@
 
 import Dexie, { type Table } from 'dexie';
 import { create } from 'zustand';
-import type { QuizResult } from '../study/quiz-session';
-import type { QuizHistoryRecord } from '../study/quiz-session';
+import type { QuizResult } from '@/lib/study/quiz-session';
+import type { QuizHistoryRecord } from '@/lib/study/quiz-session';
 
 /**
  * Dexie database for quiz history
