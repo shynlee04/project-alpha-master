@@ -22,6 +22,7 @@ import { createDexieStorage } from '@/lib/state/dexie-storage';
 import type { Agent } from '../mocks/agents';
 import { DEFAULT_TOOLS, DEFAULT_WORKSPACE_BINDINGS } from '../mocks/agents';
 import { useProviderStore } from '@/lib/state/provider-store';
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 
 /**
  * Default agent created on first load
@@ -161,6 +162,14 @@ export const useAgentsStore = create<AgentsState>()(
 
                 console.log('[AgentsStore] Adding agent:', newAgent.id, newAgent.name);
                 set((state) => ({ agents: [...state.agents, newAgent] }));
+
+                // WB-8.3: Emit cross-workspace event
+                crossWorkspaceEventBus.emitAgentConfigChange({
+                    workspaceId: 'ide', // TODO: Detect actual workspace
+                    agentId: newAgent.id,
+                    changeType: 'created',
+                });
+
                 return newAgent;
             },
 
@@ -180,6 +189,13 @@ export const useAgentsStore = create<AgentsState>()(
                         agents: filteredAgents,
                         activeAgentId: newActiveId
                     };
+                });
+
+                // WB-8.3: Emit cross-workspace event
+                crossWorkspaceEventBus.emitAgentConfigChange({
+                    workspaceId: 'ide', // TODO: Detect actual workspace
+                    agentId: id,
+                    changeType: 'deleted',
                 });
             },
 
@@ -213,6 +229,13 @@ export const useAgentsStore = create<AgentsState>()(
                             : a
                     ),
                 }));
+
+                // WB-8.3: Emit cross-workspace event (BF-01 FIX: Hot-reload)
+                crossWorkspaceEventBus.emitAgentConfigChange({
+                    workspaceId: 'ide', // TODO: Detect actual workspace
+                    agentId: id,
+                    changeType: 'updated',
+                });
             },
 
             updateAgentStatus: (id, status) => {

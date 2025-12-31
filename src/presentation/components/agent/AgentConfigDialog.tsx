@@ -19,7 +19,7 @@
  * @see _bmad-output/design-system-8bit-2025-12-25.md
  */
 
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bot, Loader2, Key, CheckCircle2, XCircle, RefreshCw, Settings2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -44,7 +44,6 @@ import {
     SelectValue,
 } from '@/presentation/components/ui/select'
 import { cn } from '@/lib/utils'
-import type { Agent } from '@/core/entities/Agent'
 
 // Security utilities for safe logging (RC-028-010)
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
@@ -62,22 +61,6 @@ import {
 // Removed local ProviderConfig interface in favor of @/lib/agent/providers type
 import { useProviderStore } from '@/lib/state/provider-store'
 import { useAgentsStore } from '@/stores/agents-store'
-
-/**
- * Map provider display name (from Agent interface) to store ID
- * Fixes: Agent edits not reflecting existing values
- */
-const mapProviderNameToId = (providerName: string): string => {
-    const nameToIdMap: Record<string, string> = {
-        'OpenRouter': 'openrouter',
-        'OpenAI': 'openai',
-        'Anthropic': 'anthropic',
-        'Mistral': 'mistral',
-        'Google': 'google',
-        'OpenAI Compatible': 'openai-compatible',
-    }
-    return nameToIdMap[providerName] || 'openrouter'
-}
 
 /**
  * Extensible provider configurations
@@ -144,42 +127,46 @@ type ConfigTab = 'basic' | 'advanced'
 interface AgentConfigDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSuccess?: (agent: Agent) => void // Changed from onSubmit to onSuccess
-    agent?: Agent
+    onSuccess?: (agentId: string) => void
+    agentId: string | null  // BF-01 FIX: Read from store instead of prop
 }
 
 export function AgentConfigDialog({
     open,
     onOpenChange,
     onSuccess,
-    agent,
+    agentId,
 }: AgentConfigDialogProps) {
     const { t } = useTranslation()
 
-    // Form state
+    // BF-01 FIX: UI-only state (tabs, loading, errors, API key input)
     const [activeTab, setActiveTab] = useState<ConfigTab>('basic')
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
-    const [providerId, setProviderId] = useState<string>('openrouter')
-    const [modelId, setModelId] = useState('')
-    const [apiKey, setApiKey] = useState('')
+    const [apiKey, setApiKey] = useState('') // API key is NOT stored in agent config (credential vault only)
 
-    // Advanced settings state
+    // Advanced settings state (not in agent config yet)
     const [customBaseURL, setCustomBaseURL] = useState('')
     const [customModelId, setCustomModelId] = useState('')
     const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
     const [enableNativeTools, setEnableNativeTools] = useState(true)
     const [isLoadingCustomModels, setIsLoadingCustomModels] = useState(false)
 
-    // CC-2025-12-29: LLM Parameters State
-    const [temperature, setTemperature] = useState(0.7)
-    const [maxTokens, setMaxTokens] = useState(4096)
-    const [topP, setTopP] = useState(0.95)
-    const [topK, setTopK] = useState<number | undefined>(undefined)
-    const [systemPrompt, setSystemPrompt] = useState('')
-
     // Store actions
     const { addAgent, updateAgent, removeAgent } = useAgentsStore()
+
+    // BF-01 FIX: Read agent from store (single source of truth)
+    const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
+
+    // BF-01 FIX: Derived form values from agent (replaces useState)
+    // When agent changes, these values update automatically
+    const name = agent?.name || ''
+    const description = agent?.description || ''
+    const providerId = agent?.providerId || 'openrouter'
+    const modelId = agent?.modelId || ''
+    const temperature = agent?.temperature ?? 0.7
+    const maxTokens = agent?.maxTokens ?? 4096
+    const topP = agent?.topP ?? 0.95
+    const topK = agent?.topK
+    const systemPrompt = agent?.systemPrompt || ''
 
     // Loading states
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -219,9 +206,6 @@ export function AgentConfigDialog({
     // NOTE: loadModels is now replaced by storeFetchModels from useProviderStore
     // This ensures single source of truth for models across the entire app
 
-    // Ref to track agent being edited (for model restoration after loadModels)
-    const editingAgentRef = useRef<Agent | undefined>(undefined)
-
     // CC-2025-12-29: Check credentials and load models from STORE (single source of truth)
     useEffect(() => {
         if (!open || !providerId) return
@@ -242,11 +226,7 @@ export function AgentConfigDialog({
                 await storeFetchModels(providerId)
                 console.log('[AgentConfigDialog] Models fetched via store, count:', models.length)
 
-                // Restore model from agent being edited after models load
-                if (editingAgentRef.current && editingAgentRef.current.modelId) {
-                    console.log('[AgentConfigDialog] Restoring modelId from edit:', editingAgentRef.current.modelId)
-                    setModelId(editingAgentRef.current.modelId)
-                }
+                // BF-01 FIX: modelId now comes from store (derived value), no restoration needed
             } catch (error) {
                 console.error('[AgentConfigDialog] Error loading provider data:', error)
                 setApiKey('')
@@ -257,72 +237,6 @@ export function AgentConfigDialog({
 
         loadProviderData()
     }, [providerId, open, storeFetchModels])
-
-    /**
-     * Populate form when editing an existing agent
-     * Fixes: Agent config edits not reflecting existing values (CC-2025-12-29)
-     */
-    useEffect(() => {
-        console.log('[AgentConfigDialog] Form effect triggered - open:', open, 'agent:', agent?.name || 'null')
-
-        if (!open) {
-            // Reset ref when dialog closes
-            editingAgentRef.current = undefined
-            return
-        }
-
-        if (agent) {
-            // Edit mode: store agent ref for modelId restoration
-            editingAgentRef.current = agent
-            console.log('[AgentConfigDialog] Edit mode - populating from agent:', {
-                name: agent.name,
-                description: agent.description,
-                providerId: agent.providerId,
-                modelId: agent.modelId
-            })
-
-            // Populate form from agent data
-            setName(agent.name)
-            setDescription(agent.description || '')
-            const mappedProviderId = mapProviderNameToId(agent.providerId)
-            setProviderId(mappedProviderId)
-            setModelId(agent.modelId || '')
-
-            // Custom provider fields (NOTE: These are NOT part of Agent entity per Sprint Change Proposal v2.0)
-            // They're kept here for OpenAI-compatible providers which may need them
-            // These will be stored separately, not on the Agent entity itself
-
-            // CC-2025-12-29: LLM Parameters
-            if (agent.temperature !== undefined) setTemperature(agent.temperature)
-            if (agent.maxTokens !== undefined) setMaxTokens(agent.maxTokens)
-            if (agent.topP !== undefined) setTopP(agent.topP)
-            if (agent.topK !== undefined) setTopK(agent.topK)
-            if (agent.systemPrompt) setSystemPrompt(agent.systemPrompt)
-
-            console.log('[AgentConfigDialog] Populated form for edit:', agent.name, 'mapped provider:', mappedProviderId)
-        } else {
-            // Create mode: reset to defaults
-            editingAgentRef.current = undefined
-            setName('')
-            setDescription('')
-            setProviderId('openrouter')
-            setModelId('')
-            setApiKey('')
-            setCustomBaseURL('')
-            setCustomHeaders([])
-            setCustomModelId('')
-            setEnableNativeTools(true)
-            setErrors({})
-            setConnectionStatus('idle')
-            // LLM Parameters defaults
-            setTemperature(0.7)
-            setMaxTokens(4096)
-            setTopP(0.95)
-            setTopK(undefined)
-            setSystemPrompt('')
-            // setShowAdvancedParams(false)
-        }
-    }, [agent, open])
 
     // Validate form using Zod
     const validateForm = useCallback((): boolean => {
@@ -440,29 +354,29 @@ export function AgentConfigDialog({
 
     // Handle provider change
     const handleProviderChange = useCallback((value: string) => {
-        setProviderId(value)
-        setModelId('')
+        // BF-01 FIX: Immediate store update (hot-reload)
+        if (agentId) {
+            updateAgent(agentId, {
+                providerId: value,
+                modelId: '' // Reset model when provider changes
+            })
+        }
         setErrors(prev => ({ ...prev, provider: undefined, modelId: undefined }))
         setConnectionStatus('idle')
-    }, [])
+    }, [agentId, updateAgent])
 
     // Handle modelId change
     const handleModelChange = useCallback((value: string) => {
-        setModelId(value)
+        // BF-01 FIX: Immediate store update (hot-reload)
+        if (agentId) {
+            updateAgent(agentId, { modelId: value })
+        }
         if (errors.modelId) setErrors(prev => ({ ...prev, modelId: undefined }))
-    }, [errors.modelId])
+    }, [agentId, updateAgent, errors.modelId])
 
     // Handle cancel
+    // BF-01 FIX: With hot-reload, cancel just closes dialog (changes already saved)
     const handleCancel = useCallback(() => {
-        setName('')
-        setDescription('')
-        setProviderId('openrouter')
-        setModelId('')
-        setApiKey('')
-        setCustomBaseURL('')
-        setCustomHeaders([])
-        setCustomModelId('')
-        setEnableNativeTools(true)
         setErrors({})
         setConnectionStatus('idle')
         onOpenChange(false)
@@ -502,14 +416,6 @@ export function AgentConfigDialog({
                 await credentialVault.storeCredentials(providerId, apiKey.trim())
             }
 
-            // Convert custom headers array to object (for OpenAI-compatible providers)
-            const headersObj = customHeaders.reduce((acc, h) => {
-                if (h.key.trim() && h.value.trim()) {
-                    acc[h.key.trim()] = h.value.trim()
-                }
-                return acc
-            }, {} as Record<string, string>)
-
             // Prepare agent data following Sprint Change Proposal v2.0 Agent entity
             // NOTE: customBaseURL, customHeaders, enableNativeTools are NOT part of Agent entity
             // They are provider-level configuration, NOT agent-level
@@ -538,22 +444,23 @@ export function AgentConfigDialog({
 
             safeDebug('[AgentConfigDialog] Saving agent:', sanitizeForLogging(agentData))
 
-            let savedAgent: Agent | undefined;
+            let savedAgentId: string | undefined;
 
-            if (agent) {
-                // Update existing
-                updateAgent(agent.id, agentData)
-                savedAgent = { ...agent, ...agentData }
+            if (agentId) {
+                // BF-01 FIX: Update existing (data already in store via hot-reload)
+                updateAgent(agentId, agentData)
+                savedAgentId = agentId
                 toast.success(t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: agentData.name }))
             } else {
                 // Add new
-                savedAgent = addAgent(agentData)
+                const newAgent = addAgent(agentData)
+                savedAgentId = newAgent.id
                 toast.success(t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: agentData.name }))
             }
 
-            // Trigger success callback
-            if (onSuccess && savedAgent) {
-                onSuccess(savedAgent)
+            // Trigger success callback with agentId
+            if (onSuccess && savedAgentId) {
+                onSuccess(savedAgentId)
             }
 
             // Close dialog
@@ -569,7 +476,7 @@ export function AgentConfigDialog({
             setIsSubmitting(false)
         }
 
-    }, [name, description, providerId, modelId, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agent, t, handleCancel, customModelId])
+    }, [name, description, providerId, modelId, customBaseURL, customHeaders, enableNativeTools, temperature, maxTokens, topP, topK, systemPrompt, validateForm, addAgent, updateAgent, onSuccess, onOpenChange, agentId, t, handleCancel, customModelId])
 
 
 
@@ -674,7 +581,8 @@ export function AgentConfigDialog({
                                     id="agent-name"
                                     value={name}
                                     onChange={(e) => {
-                                        setName(e.target.value)
+                                        // BF-01 FIX: Immediate store update (hot-reload)
+                                        if (agentId) updateAgent(agentId, { name: e.target.value })
                                         if (errors.name) setErrors(prev => ({ ...prev, name: undefined }))
                                     }}
                                     placeholder={t('agents.config.namePlaceholder', 'Enter agent name...')}
@@ -693,7 +601,10 @@ export function AgentConfigDialog({
                                 <Input
                                     id="agent-description"
                                     value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    onChange={(e) => {
+                                        // BF-01 FIX: Immediate store update (hot-reload)
+                                        if (agentId) updateAgent(agentId, { description: e.target.value })
+                                    }}
                                     placeholder={t('agents.config.descriptionPlaceholder', 'e.g., Frontend Developer')}
                                     className="rounded-none"
                                 />
@@ -949,7 +860,8 @@ export function AgentConfigDialog({
                                                 value={customModelId}
                                                 onChange={(e) => {
                                                     setCustomModelId(e.target.value)
-                                                    setModelId(e.target.value)
+                                                    // BF-01 FIX: Update modelId in store (hot-reload)
+                                                    if (agentId) updateAgent(agentId, { modelId: e.target.value })
                                                 }}
                                                 placeholder={t('agents.config.openaiCompatible.modelIdPlaceholder', 'e.g., llama-3.1-8b or gpt-4o')}
                                                 className="rounded-none flex-1"
@@ -969,6 +881,8 @@ export function AgentConfigDialog({
                                                         if (models.length > 0) {
                                                             const modelId = models[0].id
                                                             setCustomModelId(modelId)
+                                                            // BF-01 FIX: Update modelId in store (hot-reload)
+                                                            if (agentId) updateAgent(agentId, { modelId })
                                                             toast.success(t('agents.config.openaiCompatible.modelsLoaded', 'Found {{count}} models', { count: models.length }))
                                                         } else {
                                                             toast.info(t('agents.config.openaiCompatible.noModels', 'No models found'))

@@ -31,8 +31,9 @@ function SettingsPage() {
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();
 
-    const handleAgentSuccess = () => {
-        console.log('[SettingsPage] Agent created/updated successfully');
+    const handleAgentSuccess = (agentId: string) => {
+        // BF-01 FIX: Callback receives agentId instead of full agent
+        console.log('[SettingsPage] Agent created/updated successfully, ID:', agentId);
         setIsDialogOpen(false);
     };
 
@@ -115,6 +116,7 @@ function SettingsPage() {
                     open={isDialogOpen}
                     onOpenChange={setIsDialogOpen}
                     onSuccess={handleAgentSuccess}
+                    agentId={null} // BF-01 FIX: Create mode (no agent selected)
                 />
             </div>
         </MainLayout>

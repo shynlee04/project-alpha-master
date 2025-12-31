@@ -33,12 +33,13 @@ export type FormErrors = {
 
 /**
  * Agent configuration dialog props
+ * BF-01 FIX: Changed from agent prop to agentId for hot-reload support
  */
 export interface AgentConfigDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSuccess?: (agent: Agent) => void
-    agent?: Agent
+    onSuccess?: (agentId: string) => void // BF-01 FIX: Return agentId instead of full agent
+    agentId: string | null // BF-01 FIX: Read from store by ID (single source of truth)
 }
 
 /**

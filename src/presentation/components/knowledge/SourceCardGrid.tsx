@@ -88,7 +88,7 @@ export function SourceCardGrid({ projectId, collectionId, onOpenImport }: Source
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        <div className="grid grid-cols-1 gap-4 p-4 auto-rows-max" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
             {filteredSources.map((source) => (
                 <SourceCard
                     key={source.id}

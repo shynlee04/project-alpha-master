@@ -125,7 +125,7 @@ export function AgentsPanel({
                 open={isConfigDialogOpen}
                 onOpenChange={setIsConfigDialogOpen}
                 onSuccess={handleSuccess}
-                agent={editingAgent}
+                agentId={editingAgent?.id || null}
             />
         </div>
     )

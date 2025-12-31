@@ -31,12 +31,12 @@ function CanvasEmptyState() {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-8">
-      <div className="mb-4 text-4xl">📝</div>
-      <h3 className="text-lg font-medium text-foreground mb-2">
+    <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-surface/50 backdrop-blur-sm">
+      <div className="mb-4 text-4xl animate-bounce">📝</div>
+      <h3 className="text-xl font-bold text-foreground mb-3">
         {t('canvas.emptyState.title', 'Drop sources here to start')}
       </h3>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground max-w-sm mx-auto">
         {t('canvas.emptyState.hint', 'Drag and drop sources from the sidebar to create your knowledge map')}
       </p>
     </div>

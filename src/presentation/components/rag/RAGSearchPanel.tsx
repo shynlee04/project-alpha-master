@@ -125,15 +125,14 @@ export const RAGSearchPanel = memo(function RAGSearchPanel({
           />
         </div>
 
-        {/* Search Input */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 mb-2">
           <div className="flex-1 relative">
             <Input
               value={localQuery}
               onChange={(e) => handleQueryChange(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t('rag.search.placeholder', 'Search your knowledge base...')}
-              className="pr-10 border-2 border-input rounded-none"
+              className="pr-10 border-2 border-input rounded-none focus-visible:ring-2 focus-visible:ring-primary"
               disabled={loading}
             />
             {loading && (
@@ -146,19 +145,16 @@ export const RAGSearchPanel = memo(function RAGSearchPanel({
           <Button
             onClick={handleSearch}
             disabled={loading || !localQuery.trim()}
-            className="border-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-none"
+            className="border-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-none w-24"
           >
             {t('action.search', 'Search')}
           </Button>
         </div>
 
-        {/* Search Mode Selector */}
-        <div className="flex items-center gap-2 mt-2">
-          <label className="text-xs text-muted-foreground">
-            {t('rag.search.mode.label', 'Search Mode')}
-          </label>
+        <div className="flex items-center justify-end gap-2">
           <Select value={mode} onValueChange={handleModeChange}>
-            <SelectTrigger className="h-7 text-xs border-2 rounded-none w-auto min-w-[120px]">
+            <SelectTrigger className="h-7 text-xs border-2 rounded-none w-[140px] bg-background">
+              <span className="text-muted-foreground mr-2">{t('rag.search.mode.label', 'Mode')}:</span>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -241,7 +237,7 @@ function IndexStatusBadge({
 
   if (status === 'building' && totalDocuments) {
     return (
-      <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 border border-blue-300 rounded-none animate-pulse">
+      <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-none animate-pulse">
         {t('rag.index.status.building', 'Indexing: {{current}} of {{total}}', {
           current: documentCount,
           total: totalDocuments,
@@ -252,7 +248,7 @@ function IndexStatusBadge({
 
   if (status === 'ready' && documentCount > 0) {
     return (
-      <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 border border-green-300 rounded-none">
+      <span className="text-xs px-2 py-0.5 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded-none">
         {t('rag.index.status.ready', 'Index Ready')}
       </span>
     );
@@ -260,14 +256,14 @@ function IndexStatusBadge({
 
   if (status === 'error') {
     return (
-      <span className="text-xs px-2 py-0.5 bg-red-100 text-red-800 border border-red-300 rounded-none">
+      <span className="text-xs px-2 py-0.5 bg-destructive/10 text-destructive border border-destructive/20 rounded-none">
         {t('rag.index.status.error', 'Index Error')}
       </span>
     );
   }
 
   return (
-    <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-800 border border-gray-300 rounded-none">
+    <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground border border-border rounded-none">
       {t('rag.index.status.empty', 'No Index')}
     </span>
   );

@@ -19,6 +19,7 @@ const Canvas = lazy(() => {
 import { SourceImportDialog } from '@/presentation/components/knowledge/SourceImportDialog';
 import { RAGPanelContainer } from '@/presentation/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
+import { useRAGStore } from '@/lib/state/rag-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification
@@ -27,10 +28,9 @@ import { AgentSelector } from '@/presentation/components/chat';
 // KSI Module: Source → RAG Bridge
 import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';
 import { DocumentChunker } from '@/lib/rag/document-chunker';
-import { EmbeddingService } from '@/lib/rag/embedding-service';
-import { indexSource, searchIndex } from '@/lib/rag/orama-index';
+import { createEmbeddingService, type EmbeddingService } from '@/lib/rag/embedding-service';
+import { indexSource, searchIndex, createIndex } from '@/lib/rag/orama-index';
 import { storeEvents } from '@/lib/events/store-events';
-import type { EmbeddedChunk } from '@/lib/rag/types';
 
 export function KnowledgePage() {
     const { t } = useTranslation();
@@ -41,6 +41,7 @@ export function KnowledgePage() {
     // State
     const [importDialogOpen, setImportDialogOpen] = useState(false);
     const [isAiAvailable, setIsAiAvailable] = useState(false);
+    const [embeddingService, setEmbeddingService] = useState<EmbeddingService | null>(null);
 
     // Check Gemini API availability
     useEffect(() => {
@@ -51,31 +52,62 @@ export function KnowledgePage() {
         checkAiStatus();
     }, []);
 
-    // KSI Module: Initialize Source → RAG Bridge
+    // Initialize RAG services
     useEffect(() => {
+        const initRAG = async () => {
+            try {
+                // Initialize embedding service
+                const service = await createEmbeddingService();
+                setEmbeddingService(service);
+
+                // Initialize search index
+                await createIndex({
+                    projectId: projectId,
+                    enableVectorSearch: true,
+                });
+
+                // Load server-side stats into store
+                useRAGStore.getState().loadIndexMetadata(projectId);
+
+            } catch (error) {
+                console.error('Failed to initialize RAG services:', error);
+                useRAGStore.getState().setError((error as Error).message);
+            }
+        };
+
+        if (!embeddingService) {
+            initRAG();
+        }
+    }, [embeddingService, projectId]);
+
+    // KSI Module: Source → RAG Bridge
+    useEffect(() => {
+        if (!embeddingService) {
+            return; // Wait for embedding service to be initialized
+        }
+
         // Initialize RAG dependencies
         const documentChunker = new DocumentChunker();
-        const embeddingService = new EmbeddingService();
 
         // Create OramaIndex adapter class
         class OramaIndexAdapter {
-            constructor(private projectId: string) {}
+            constructor(private projectId: string) { }
 
-            async indexBatch(chunks: EmbeddedChunk[]): Promise<void> {
+            async indexBatch(chunks: any[]): Promise<void> {
                 // Group chunks by source and index
                 for (const chunk of chunks) {
-                    await indexSource(this.projectId, {
-                        id: chunk.id,
-                        content: chunk.content,
+                    // Adapter for mismatched types in SourceRAGBridge
+                    await indexSource(this.projectId, chunk.sourceId || 'unknown', chunk.content, {
                         title: chunk.title,
-                        metadata: chunk.metadata
+                        embedding: chunk.embedding
                     });
                 }
+                // Update global store with new stats
+                useRAGStore.getState().loadIndexMetadata(this.projectId);
             }
 
             async search(query: string, limit?: number): Promise<any[]> {
-                const results = await searchIndex(this.projectId, {
-                    query,
+                const results = await searchIndex(this.projectId, query, {
                     limit: limit || 10
                 });
                 return results;
@@ -102,7 +134,7 @@ export function KnowledgePage() {
             bridge.dispose();
             console.log('[KSI] SourceRAGBridge disposed');
         };
-    }, [projectId]);
+    }, [projectId, embeddingService]); // Added embeddingService dependency
 
     const handleOpenImport = () => setImportDialogOpen(true);
 
@@ -153,7 +185,7 @@ export function KnowledgePage() {
         <MainLayout>
             <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
                 {/* Left Panel: Source Library - 20% */}
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                <ResizablePanel defaultSize={20} minSize={20} maxSize={30} className="min-w-[280px]">
                     <div className="h-full border-r border-border flex flex-col bg-background">
                         <div className="p-3 border-b border-border flex items-center justify-between">
                             <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>

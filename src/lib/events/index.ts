@@ -19,3 +19,24 @@ export {
   type ProviderModelsLoadedPayload,
   type AgentSelectedPayload,
 } from './store-events'
+
+// ============================================================================
+// WB-8.3: Cross-Workspace Event System
+// ============================================================================
+
+export {
+  crossWorkspaceEventBus,
+} from './cross-workspace-event-bus'
+
+export type {
+  WorkspaceId,
+  FileChangeEvent,
+  AgentConfigChangeEvent,
+  SyncStatusEvent,
+  ProjectStateChangeEvent,
+} from './cross-workspace-event-bus'
+
+export {
+  useCrossWorkspaceAgentConfigEvents,
+  useAllCrossWorkspaceEvents,
+} from './use-cross-workspace-events'

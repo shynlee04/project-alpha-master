@@ -19,11 +19,11 @@ import { cn } from "@/lib/utils";
  */
 const overlayVariants = cva(
   [
-    "fixed inset-0 z-50",
+    "fixed left-[50%] top-[50%] z-[100] translate-x-[-50%] translate-y-[-50%]",
     "bg-background/95 backdrop-blur-sm",
     "border-2 border-border",
     "rounded-none shadow-lg",
-    "max-w-2xl max-h-[80vh]",
+    "w-full max-w-2xl max-h-[80vh]",
     "overflow-hidden",
   ],
   {
@@ -144,7 +144,7 @@ export function KeyboardShortcutsOverlay({
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-black/50" />
         <DialogPrimitive.Content
           className={cn(overlayVariants(), className)}
           onPointerDownOutside={(e) => {

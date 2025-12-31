@@ -117,7 +117,7 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="search" className="m-0">
+            <TabsContent value="search" className="m-0 flex-1 h-[calc(100%-40px)]">
               <RAGSearchPanel
                 query={searchQuery}
                 results={searchResults}
@@ -132,7 +132,7 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
               />
             </TabsContent>
 
-            <TabsContent value="chat" className="m-0">
+            <TabsContent value="chat" className="m-0 flex-1 h-[calc(100%-40px)]">
               <RAGChatPanel
                 messages={chatMessages}
                 activeCitation={displayCitation}
