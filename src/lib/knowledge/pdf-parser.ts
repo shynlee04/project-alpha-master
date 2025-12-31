@@ -1,7 +1,7 @@
 /**
  * @fileoverview PDF Parser for Client-Side PDF Text Extraction
  * @module lib/knowledge/pdf-parser
- * @governance EPIC-6-1
+ * @governance EPIC-6-1, PHASE-5
  * @ai-observable true
  *
  * PDF.js wrapper for extracting text content from PDF files client-side.
@@ -9,6 +9,7 @@
  * Cloudflare Edge-compatible implementation using runtime loading.
  *
  * Story 6.1: Source Import Pipeline
+ * Phase 5: Gemini Multimodal PDF Processing Integration
  */
 
 import { useState } from 'react';
@@ -30,6 +31,30 @@ export interface PDFParseResult {
         subject?: string;
         keywords?: string[];
     };
+    /** Optional structured elements from Gemini processing */
+    structuredData?: {
+        headings: Array<{ level: number; text: string; pageNumber: number }>;
+        tables: Array<{ id: string; caption?: string; rows: string[][]; pageNumber: number }>;
+        figures: Array<{ id: string; caption?: string; type: string; description?: string; pageNumber: number }>;
+        citations: Array<{ id: string; text: string; type: string; pageNumber: number }>;
+        sections: Array<{ startPage: number; endPage: number; heading?: { level: number; text: string }; content: string }>;
+    };
+}
+
+/**
+ * PDF parsing options
+ */
+export interface PDFParseOptions {
+    /** Use Gemini multimodal processing for structural extraction (requires API key) */
+    useGemini?: boolean;
+    /** Gemini API key (required if useGemini is true) */
+    geminiApiKey?: string;
+    /** Extract tables with Gemini (default: true) */
+    extractTables?: boolean;
+    /** Extract figures with Gemini (default: true) */
+    extractFigures?: boolean;
+    /** Extract citations with Gemini (default: true) */
+    extractCitations?: boolean;
 }
 
 /**
@@ -198,6 +223,112 @@ export function usePdfParser() {
         setError(null);
         try {
             const result = await parsePDF(file, onProgress);
+            return result;
+        } catch (e) {
+            const message = e instanceof Error ? e.message : 'Failed to parse PDF';
+            setError(message);
+            throw e;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { parse, isLoading, error, isAvailable: isPdfParsingAvailable() };
+}
+
+/**
+ * Enhanced PDF parsing with Gemini multimodal processing option
+ *
+ * @param file - PDF file to parse
+ * @param options - Parsing options including Gemini processing
+ * @param onProgress - Progress callback
+ * @returns PDF parse result with optional structured data
+ *
+ * @example
+ * ```tsx
+ * // Basic text extraction (PDF.js only)
+ * const result = await parsePDFWithOptions(file);
+ *
+ * // With Gemini structural extraction
+ * const result = await parsePDFWithOptions(file, {
+ *   useGemini: true,
+ *   geminiApiKey: 'your-api-key',
+ *   extractTables: true,
+ *   extractFigures: true,
+ * });
+ * console.log(result.structuredData.headings, result.structuredData.tables);
+ * ```
+ */
+export async function parsePDFWithOptions(
+    file: File | Blob,
+    options: PDFParseOptions = {},
+    onProgress?: PDFProgressCallback
+): Promise<PDFParseResult> {
+    // First, do basic text extraction with PDF.js
+    const basicResult = await parsePDF(file, onProgress);
+
+    // If Gemini processing is requested and API key is provided
+    if (options.useGemini && options.geminiApiKey) {
+        try {
+            // Dynamically import to avoid circular dependency
+            const { createGeminiPDFProcessor } = await import('./gemini-pdf-processor');
+
+            // Convert file to base64 for Gemini API
+            const arrayBuffer = await file.arrayBuffer();
+            const base64Content = btoa(
+                new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+            );
+
+            // Process with Gemini
+            const processor = createGeminiPDFProcessor(options.geminiApiKey);
+            const geminiResult = await processor.processPDF(file as File, base64Content, {
+                extractTables: options.extractTables !== false,
+                extractFigures: options.extractFigures !== false,
+                extractCitations: options.extractCitations !== false,
+                onProgress: (progress) => {
+                    // Map Gemini progress to same callback format
+                    const page = Math.floor((progress.progress / 100) * basicResult.pageCount);
+                    onProgress?.(page, basicResult.pageCount);
+                },
+            });
+
+            // Merge results
+            return {
+                ...basicResult,
+                metadata: {
+                    ...basicResult.metadata,
+                    title: geminiResult.title || basicResult.metadata?.title,
+                    author: geminiResult.authors?.[0] || basicResult.metadata?.author,
+                },
+                structuredData: {
+                    headings: geminiResult.headings,
+                    tables: geminiResult.tables,
+                    figures: geminiResult.figures,
+                    citations: geminiResult.citations,
+                    sections: geminiResult.sections,
+                },
+            };
+        } catch (error) {
+            console.error('[PDF Parser] Gemini processing failed, falling back to basic extraction:', error);
+            // Continue with basic result if Gemini fails
+        }
+    }
+
+    return basicResult;
+}
+
+/**
+ * Enhanced React hook with Gemini support
+ */
+export function usePdfParserWithOptions() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const parse = async (file: File, options?: PDFParseOptions, onProgress?: PDFProgressCallback) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const result = await parsePDFWithOptions(file, options, onProgress);
             return result;
         } catch (e) {
             const message = e instanceof Error ? e.message : 'Failed to parse PDF';
