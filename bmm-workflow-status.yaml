@@ -1,13 +1,13 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2025-12-31T16:45:00+07:00
+# Updated: 2026-01-01T01:48:19+07:00
 
-# CURRENT WORKFLOW: Architectural Consolidation + EPIC-32 Integration
-current_workflow: "architectural-consolidation-2025-12-31-v3"
-current_story: "AC-03-chat-panel-cross-workspace"
-phase: "phase-0-showcase-critical"
-last_updated: "2025-12-31T16:45:00+07:00"
+# CURRENT WORKFLOW: NRM Course Correction → Project Workspace Binding
+current_workflow: "project-workspace-binding-2026-01-01"
+current_story: "WB-1-project-metadata-enhancement"
+phase: "course-correction-analysis"
+last_updated: "2026-01-01T01:48:19+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # COURSE CORRECTION - MAJOR SPRINT CHANGE
@@ -135,7 +135,122 @@ notes_remediation_module:
       file: "_bmad-output/bmb-creations/notes-remediation-module/workflows/validate-phase.md"
       description: "Phase validation gate workflow"
   
-  next_action: "Module complete - all stories executed and validated"
+  next_action: "Module complete - proceed to Project Workspace Binding course correction"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROJECT WORKSPACE BINDING - COURSE CORRECTION (NEW)
+# Triggered by: NRM Completion Review - Gap Analysis
+# Status: PROPOSED - AWAITING APPROVAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+project_workspace_binding:
+  id: "workspace-binding-2026-01-01"
+  version: "1.0.0"
+  status: "PROPOSED"
+  created_at: "2026-01-01T01:48:19+07:00"
+  updated_at: "2026-01-01T01:48:19+07:00"
+  scope: "MAJOR"
+  priority: "P0"
+  
+  documents:
+    sprint_change_proposal: "_bmad-output/project-planning-artifacts/sprint-change-proposal-project-workspace-binding-2026-01-01.md"
+    epic_definition: "_bmad-output/epics/epic-wb-workspace-binding-project-persistence.md"
+  
+  trigger:
+    source: "NRM Course Correction"
+    gap_analysis: "Project Management disconnected from workspaces"
+    requirement: "Hub → Project → Workspace Selection → Persistent State"
+  
+  gaps_identified:
+    - id: "G1"
+      name: "No Workspace Binding Model"
+      severity: "CRITICAL"
+      description: "Projects only open in IDE - no workspace selection"
+      
+    - id: "G2"
+      name: "No File Snapshot Persistence"
+      severity: "CRITICAL"
+      description: "Files re-read from FSA on every reload (slow)"
+      
+    - id: "G3"
+      name: "No Cross-Workspace Project Context"
+      severity: "HIGH"
+      description: "Switching workspaces loses project state"
+      
+    - id: "G4"
+      name: "Hub Missing Workspace Selection"
+      severity: "HIGH"
+      description: "No dialog to choose workspaces on project open"
+      
+    - id: "G5"
+      name: "No Lazy Content Loading"
+      severity: "MEDIUM"
+      description: "All file content loaded upfront, no caching"
+  
+  epic:
+    id: "WB"
+    name: "Workspace Binding & Project Persistence"
+    priority: "P0"
+    effort_hours: 42
+    stories_count: 8
+    
+  stories:
+    - id: "WB-1"
+      name: "Project Metadata Enhancement"
+      status: "NOT_STARTED"
+      effort_hours: 4
+      priority: "P0"
+      
+    - id: "WB-2"
+      name: "File Snapshot Store"
+      status: "NOT_STARTED"
+      effort_hours: 6
+      priority: "P0"
+      
+    - id: "WB-3"
+      name: "Project Context Provider"
+      status: "NOT_STARTED"
+      effort_hours: 8
+      priority: "P0"
+      
+    - id: "WB-4"
+      name: "Workspace Binding Dialog"
+      status: "NOT_STARTED"
+      effort_hours: 6
+      priority: "P0"
+      
+    - id: "WB-5"
+      name: "Hub Project Card Enhancement"
+      status: "NOT_STARTED"
+      effort_hours: 4
+      priority: "P1"
+      
+    - id: "WB-6"
+      name: "Cross-Workspace Navigation"
+      status: "NOT_STARTED"
+      effort_hours: 6
+      priority: "P1"
+      
+    - id: "WB-7"
+      name: "Lazy Content Loading"
+      status: "NOT_STARTED"
+      effort_hours: 4
+      priority: "P1"
+      
+    - id: "WB-8"
+      name: "Snapshot Refresh Strategy"
+      status: "NOT_STARTED"
+      effort_hours: 4
+      priority: "P2"
+  
+  success_criteria:
+    - "Project opens in <1s when snapshot exists"
+    - "Workspace switching is instant (<200ms navigation)"
+    - "Content cache hit rate >90% after first access"
+    - "Users can bind projects to multiple workspaces"
+    - "All existing tests pass"
+  
+  next_action: "AWAITING APPROVAL - Review Sprint Change Proposal"
 
 # 4-Phase Implementation Plan (On Approval)
 implementation_phases:
