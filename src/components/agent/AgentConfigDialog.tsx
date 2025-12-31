@@ -117,7 +117,7 @@ const agentFormSchema = z.object({
     enableNativeTools: z.boolean().optional(),
 })
 
-type AgentFormData = z.infer<typeof agentFormSchema>
+// type AgentFormData = z.infer<typeof agentFormSchema>
 
 /**
  * Form validation errors type
@@ -324,7 +324,7 @@ export function AgentConfigDialog({
             setTopP(0.95)
             setTopK(undefined)
             setSystemPrompt('')
-            setShowAdvancedParams(false)
+            // setShowAdvancedParams(false)
         }
     }, [agent, open])
 

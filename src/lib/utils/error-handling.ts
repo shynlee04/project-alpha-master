@@ -254,13 +254,15 @@ export function withRetry<T>(
  * @returns Recovery options
  */
 export function createErrorFallback(
-    error: Error,
-    errorInfo?: React.ErrorInfo
+    _error: Error,
+    _errorInfo?: React.ErrorInfo
 ): ErrorRecoveryOptions {
+    /*
     const componentName = errorInfo?.componentStack
         ?.split('\n')
         .filter(line => line.trim())
         .pop() || 'Unknown Component'
+    */
 
     return {
         action: 'reload',

@@ -98,7 +98,7 @@ interface QuizState {
  */
 export const useQuizStore = create<QuizState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       // Initial state
       quizzes: [],
       currentQuiz: null,

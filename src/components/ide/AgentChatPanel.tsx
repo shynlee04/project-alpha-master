@@ -561,11 +561,11 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
             // Increment reset key to force useChat hook remount via key change
             // This clears the internal hook state (messages, streaming state, etc.)
-            setChatResetKey(prev => prev + 1);
+            // setChatResetKey(prev => prev + 1);
 
             toast.success(t('agent.cleared', 'Conversation cleared'));
         }
-    }, [projectId, createThread, setActiveThread, t, setChatResetKey]);
+    }, [projectId, createThread, setActiveThread, t]); //, setChatResetKey]);
     const [approvalMode, setApprovalMode] = useState<'batch' | 'individual'>('batch');
     const [currentApprovalIndex, setCurrentApprovalIndex] = useState(0);
 

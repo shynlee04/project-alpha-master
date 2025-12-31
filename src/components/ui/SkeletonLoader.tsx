@@ -147,7 +147,7 @@ export function SkeletonLoader({
     return null
 }
 
-export type SkeletonLoaderVariants = VariantProps<typeof skeletonVariants>
+// export type SkeletonLoaderVariants = VariantProps<typeof skeletonVariants>
 
 /**
  * Skeleton Card Component

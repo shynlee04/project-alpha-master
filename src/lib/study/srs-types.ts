@@ -85,7 +85,7 @@ const RATING_QUALITY_MAP: Record<SRSRating, number> = {
 /**
  * SM-2 algorithm constants
  */
-const DEFAULT_EASE_FACTOR = 2.5;
+// const DEFAULT_EASE_FACTOR = 2.5;
 const MIN_EASE_FACTOR = 1.3;
 
 /**

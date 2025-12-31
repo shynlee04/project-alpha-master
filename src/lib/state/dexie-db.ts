@@ -165,7 +165,7 @@ export function getDb(): ViaGentDatabase | null {
  * @deprecated Use getDb() instead
  */
 export const db = new Proxy({} as ViaGentDatabase, {
-  get(target, prop) {
+  get(_target, prop) {
     const instance = getDb();
     if (!instance) {
       throw new Error('[Dexie] Database not available during SSR. Use getDb() and check for null.');

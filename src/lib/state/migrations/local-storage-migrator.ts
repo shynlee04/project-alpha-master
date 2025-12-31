@@ -183,7 +183,7 @@ const LEGACY_STORES: LegacyLocalStorageStore[] = [
     {
         key: 'sync-status-store',
         tableName: 'syncStatus',
-        transform: (data: unknown) => {
+        transform: (_data: unknown) => {
             // This is handled separately in dexie-db.ts v8 migration
             return {
                 id: 'legacy-sync-status',

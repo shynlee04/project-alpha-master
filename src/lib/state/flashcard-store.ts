@@ -432,8 +432,8 @@ export interface FlashcardOperations {
 
 export const useFlashcardOperations = () => {
   const { addFlashcards, clearFlashcards: clearStoreFlashcards } = useFlashcardStore();
-  const { loadFlashcardSets } = useFlashcardSetStore();
-  const flashcardDb = getFlashcardDb();
+  // const { loadFlashcardSets } = useFlashcardSetStore();
+  // const flashcardDb = getFlashcardDb();
 
   return {
     saveGeneratedFlashcards: async (cards: Flashcard[], sourceIds: string[]): Promise<string> => {

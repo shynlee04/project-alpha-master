@@ -214,7 +214,8 @@ export const useStudyStore = create<StudyStoreState>((set, get) => ({
   },
 
   completeSession: () => {
-    const { currentSession, cards, cardSrsData } = get();
+    const { currentSession } = get();
+    // const { cards, cardSrsData } = get();
 
     if (!currentSession) {
       throw new Error('No active session');

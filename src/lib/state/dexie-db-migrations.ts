@@ -11,8 +11,8 @@
  */
 
 import type { ViaGentDatabase } from './dexie-db-class';
-import type { SyncStatusRecord } from './dexie-db-session-types';
-import { queueItemToSyncStatus } from './dexie-db-helpers';
+// import type { SyncStatusRecord } from './dexie-db-session-types';
+// import { queueItemToSyncStatus } from './dexie-db-helpers';
 
 // ============================================================================
 // Migration Logging (RC-011)

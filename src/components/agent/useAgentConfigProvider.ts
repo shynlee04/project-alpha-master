@@ -135,7 +135,7 @@ export function useAgentConfigProvider({
      */
     const handleSaveApiKey = useCallback(async () => {
         // Don't try to save masked value - only save real new keys
-        const currentApiKey = '' // Would need to be passed in or managed differently
+        const currentApiKey: string = '' // Would need to be passed in or managed differently
 
         if (!currentApiKey.trim() || currentApiKey === '••••') {
             if (currentApiKey === '••••') {

@@ -12,7 +12,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 import { cva } from 'class-variance-authority';
-import { clsx, type ClassValue } from 'clsx';
+// import { clsx, type ClassValue } from 'clsx';
 import { twMerge, type ClassNameValue } from 'tailwind-merge';
 
 const breadcrumbVariants = cva(

@@ -325,11 +325,11 @@ export class FixedSizeChunker implements ChunkStrategy {
 export class SemanticChunker implements ChunkStrategy {
     chunk(
         source: Pick<SourceRecord, 'id' | 'content'>,
-        options: ChunkingOptions = DEFAULT_CHUNKING_OPTIONS,
+        _options: ChunkingOptions = DEFAULT_CHUNKING_OPTIONS,
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        // const { minChunkSize, maxChunkSize, preserveFormatting } = options;
+        // const { minChunkSize, maxChunkSize, preserveFormatting } = _options;
 
         const chunks: ChunkMetadata[] = [];
 
@@ -465,11 +465,11 @@ export class SemanticChunker implements ChunkStrategy {
 export class RecursiveChunker implements ChunkStrategy {
     chunk(
         source: Pick<SourceRecord, 'id' | 'content'>,
-        options: ChunkingOptions = DEFAULT_CHUNKING_OPTIONS,
+        _options: ChunkingOptions = DEFAULT_CHUNKING_OPTIONS,
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        // const { minChunkSize, maxChunkSize } = options;
+        // const { minChunkSize, maxChunkSize } = _options;
 
         const chunks: ChunkMetadata[] = [];
         let chunkIndex = 0;

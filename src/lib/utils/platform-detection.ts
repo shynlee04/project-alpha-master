@@ -100,7 +100,7 @@ function detectPlatformType(): 'desktop' | 'mobile' | 'tablet' | 'unknown' {
     return 'unknown';
   }
 
-  const userAgent = navigator.userAgent.toLowerCase();
+  // const userAgent = navigator.userAgent.toLowerCase();
   const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   const screenWidth = window.screen.width;
 

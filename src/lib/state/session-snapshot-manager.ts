@@ -93,7 +93,7 @@ export interface SnapshotOptions {
  */
 export class SessionSnapshotManager {
   private snapshotTimeout: ReturnType<typeof setTimeout> | null = null;
-  private lastSnapshotTime = 0;
+  // private lastSnapshotTime = 0;
   private maxAgeMs: number;
 
   constructor(

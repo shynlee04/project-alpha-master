@@ -9,7 +9,7 @@
 
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useDeviceType } from '@/hooks/useMediaQuery'
+// import { useDeviceType } from '@/hooks/useMediaQuery'
 
 /**
  * Error type for workspace operations
@@ -117,7 +117,7 @@ export function showMobileWorkspaceError(
   type: WorkspaceErrorType,
   onAction?: () => void
 ): void {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
   const messages = getMobileWorkspaceErrorMessages(type)
   
   toast.error(messages.title, {

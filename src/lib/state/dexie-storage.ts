@@ -8,7 +8,7 @@
  * This allows Zustand stores to be persisted to IndexedDB instead of localStorage.
  */
 
-import { type StateStorage } from 'zustand/middleware';
+// import { type StateStorage } from 'zustand/middleware';
 import { getDb, db, type PersistedStateRecord } from './dexie-db';
 import type { Table } from 'dexie';
 

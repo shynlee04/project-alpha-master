@@ -19,7 +19,7 @@ import { SettingsIcon, PlusIcon } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-import type { Agent } from '@/mocks/agents';
+// import type { Agent } from '@/mocks/agents';
 import { ProviderSettings } from '@/components/agent/ProviderSettings';
 
 export const Route = createFileRoute('/settings')({

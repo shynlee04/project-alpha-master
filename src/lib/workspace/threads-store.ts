@@ -9,7 +9,7 @@
  * @story MVP-2 - Chat Interface with Rich Streaming
  */
 
-import { db, type ConversationThreadRecord, type ThreadMessageRecord } from '../state/dexie-db';
+import { db, type ConversationThreadRecord /*, type ThreadMessageRecord */ } from '../state/dexie-db';
 import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store';
 
 /**

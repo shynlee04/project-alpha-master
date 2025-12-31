@@ -27,7 +27,7 @@ import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag
 import type { ChatMessage, Citation } from '@/lib/rag/types';
 import {
     getIndexMetadata,
-    getIndexSize,
+    // getIndexSize,
     getAllIndexesMetadata,
     cleanupOrphanedIndexes,
 } from '@/lib/rag/orama-index';
@@ -42,8 +42,8 @@ import {
     cleanExpiredCache,
     base64ToArrayBuffer,
     enforceCacheLimit,
-    SEARCH_CACHE_TTL,
-    MAX_CACHE_SIZE,
+    // SEARCH_CACHE_TTL,
+    // MAX_CACHE_SIZE,
 } from './rag-store-helpers';
 import { db } from './dexie-db';
 
@@ -242,7 +242,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     };
 
                     // Track chunking progress
-                    const chunks: ChunkMetadata[] = [];
+                    // const chunks: ChunkMetadata[] = [];
 
                     // Chunk with progress tracking
                     const result = documentChunker.chunkSource(
@@ -296,7 +296,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 }
             },
 
-            getChunksForSource: (sourceId: string) => {
+            getChunksForSource: (_sourceId: string) => {
                 // For now, this is a placeholder. In a full implementation,
                 // chunks would be stored in IndexedDB and retrieved here.
                 // The chunkingProgress map only stores progress, not the actual chunks.
@@ -336,7 +336,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 }
             },
 
-            generateEmbeddings: async (chunks, options) => {
+            generateEmbeddings: async (chunks, _options) => {
                 set({ loading: true, error: null });
 
                 try {
@@ -392,7 +392,7 @@ export const useRAGStore = create<RAGStoreState>()(
 
             // Search Actions (Story 7-4)
 
-            performSearch: async (query: string, mode?: import('./rag/types').SearchMode, limit?: number) => {
+            performSearch: async (query: string, mode?: import('./rag/types').SearchMode, _limit?: number) => {
                 const { HybridRetriever } = await import('../rag/hybrid-retriever');
                 const { createEmbeddingService } = await import('../rag/embedding-service');
                 const { loadOrCreateIndex } = await import('../rag/orama-index');
@@ -450,7 +450,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 });
             },
 
-            sendMessage: async (message: string, projectId: string) => {
+            sendMessage: async (message: string, _projectId: string) => {
                 // Delegate to existing sendRAGMessage implementation
                 await get().sendRAGMessage(message);
             },
@@ -473,7 +473,7 @@ export const useRAGStore = create<RAGStoreState>()(
                 const { HybridRetriever } = await import('../rag/hybrid-retriever');
                 const { createEmbeddingService } = await import('../rag/embedding-service');
                 const { loadOrCreateIndex } = await import('../rag/orama-index');
-                const { formatCitations, buildContext, createCitationsMap } = await import('../rag/citation-formatter');
+                const { formatCitations, /* buildContext, */ createCitationsMap } = await import('../rag/citation-formatter');
                 const vault = await import('../state').then((m) => m.useCredentialVault.getState());
                 const apiKey = vault.getCredential('google')?.apiKey;
 
@@ -502,7 +502,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     const citationsMap = createCitationsMap(citations);
 
                     // Step 3: Build context
-                    const context = buildContext(results, query);
+                    // const context = buildContext(results, query);
 
                     // Step 4: Add user message
                     const userMessage: ChatMessage = {
@@ -594,7 +594,7 @@ export const useRAGStore = create<RAGStoreState>()(
             // Voice Mode Actions (Story 10-1)
 
             startVoiceMode: async () => {
-                const { getLiveApiWebSocketManager, getAudioCapture, getAudioPlayback } = await import('@/lib/rag');
+                const { getLiveApiWebSocketManager /*, getAudioCapture */, getAudioPlayback } = await import('@/lib/rag');
                 const apiKey = 'YOUR_GEMINI_API_KEY'; // TODO: Get from credential vault
 
                 // Check platform first
@@ -647,6 +647,7 @@ export const useRAGStore = create<RAGStoreState>()(
                     await wsManager.connect();
 
                     // Initialize audio capture and playback
+                    /*
                     const audioCapture = getAudioCapture({
                         onChunk: (chunk) => {
                             if (get().voiceMicrophoneEnabled) {
@@ -657,6 +658,7 @@ export const useRAGStore = create<RAGStoreState>()(
                             get().setVoiceVolumeLevel(level);
                         },
                     });
+                    */
 
                     const audioPlayback = getAudioPlayback();
 

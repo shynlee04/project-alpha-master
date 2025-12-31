@@ -11,7 +11,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cva } from 'class-variance-authority';
-import { clsx, type ClassValue } from 'clsx';
+// import { clsx, type ClassValue } from 'clsx';
 import { twMerge, type ClassNameValue } from 'tailwind-merge';
 
 const topicCardVariants = cva(
