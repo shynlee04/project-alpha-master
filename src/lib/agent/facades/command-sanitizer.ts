@@ -19,7 +19,7 @@ export interface CommandValidationResult {
     /** Error message if not allowed */
     error?: string;
     /** Reason for rejection */
-    reason: 'dangerous_command' | 'suspicious_argument' | 'blocked_by_policy' | 'invalid_input';
+    reason?: 'dangerous_command' | 'suspicious_argument' | 'blocked_by_policy' | 'invalid_input';
     /** Suggested safe alternative if available */
     suggestedCommand?: string;
 }
@@ -102,7 +102,7 @@ const SAFE_COMMANDS = new Set([
 /**
  * Default configuration
  */
-const DEFAULT_CONFIG: Required<CommandSanitizerConfig> = {
+const DEFAULT_CONFIG: CommandSanitizerConfig = {
     mode: 'blocklist',
     allowedCommands: Array.from(SAFE_COMMANDS),
     additionalBlockedCommands: [],
@@ -115,7 +115,7 @@ const DEFAULT_CONFIG: Required<CommandSanitizerConfig> = {
  * CommandSanitizer - Validates and sanitizes commands to prevent injection
  */
 export class CommandSanitizer {
-    private config: Required<CommandSanitizerConfig>;
+    private config: CommandSanitizerConfig;
     private blockedCommands: Set<string>;
 
     constructor(config: Partial<CommandSanitizerConfig> = {}) {
@@ -160,12 +160,13 @@ export class CommandSanitizer {
         // Mode-specific validation
         if (this.config.mode === 'allowlist') {
             // Allowlist mode: only allow specified commands
-            if (!this.config.allowedCommands.map(c => c.toLowerCase()).includes(baseCommand)) {
+            const allowedCommands = this.config.allowedCommands || [];
+            if (!allowedCommands.map(c => c.toLowerCase()).includes(baseCommand)) {
                 return {
                     allowed: false,
                     reason: 'blocked_by_policy',
                     error: `Command '${baseCommand}' is not in the allowed list`,
-                    suggestedCommand: this.config.allowedCommands[0],
+                    suggestedCommand: allowedCommands[0],
                 };
             }
         } else {
@@ -230,7 +231,7 @@ export class CommandSanitizer {
             }
         }
 
-        return { allowed: true, reason: 'allowed' };
+        return { allowed: true };
     }
 
     /**
@@ -261,7 +262,7 @@ export class CommandSanitizer {
      */
     getAllowedCommands(): string[] {
         if (this.config.mode === 'allowlist') {
-            return this.config.allowedCommands;
+            return this.config.allowedCommands || [];
         }
         return Array.from(SAFE_COMMANDS);
     }

@@ -73,9 +73,23 @@ export interface SearchOptions {
 }
 
 /**
+ * Orama schema for conversation memory
+ */
+interface ConversationSchema {
+  threadId: string;
+  summary: string;
+  insights: string[];
+  tags: string[];
+  createdAt: number;
+  accessedAt: number;
+  messageCount: number;
+  isExcluded: boolean;
+}
+
+/**
  * Global Orama index instance
  */
-let memoryIndex: Orama | null = null;
+let memoryIndex: Orama<ConversationSchema> | null = null;
 
 /**
  * Initialize Orama memory index
@@ -85,7 +99,7 @@ let memoryIndex: Orama | null = null;
  */
 export async function initializeMemoryIndex(
   options: MemoryIndexOptions = {}
-): Promise<Orama> {
+): Promise<Orama<ConversationSchema>> {
   if (memoryIndex) {
     return memoryIndex;
   }

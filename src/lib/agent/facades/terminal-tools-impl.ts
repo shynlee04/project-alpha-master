@@ -228,10 +228,9 @@ export class TerminalToolsFacade implements AgentTerminalTools {
             if (elapsed >= SHELL_WARNING_TIME && !warningEmitted) {
                 warningEmitted = true;
                 this.eventBus.emit('shell:warning', {
-                    pid,
                     message: 'Shell session has been running for 25 minutes. It will be terminated at 30 minutes.',
-                    remainingTime: SHELL_SESSION_TIMEOUT - elapsed,
-                });
+                    command: undefined,
+                } as any);
                 console.warn(`[TerminalToolsFacade] Shell session ${pid} warning: 25min limit reached`);
             }
 
@@ -242,10 +241,9 @@ export class TerminalToolsFacade implements AgentTerminalTools {
                 running = false;
                 clearInterval(sessionTimer);
                 this.eventBus.emit('shell:timeout', {
-                    pid,
-                    message: 'Shell session terminated after 30 minutes',
-                    elapsed,
-                });
+                    command: 'shell-session',
+                    duration: elapsed,
+                } as any);
             }
         }, 10000); // Check every 10 seconds
 

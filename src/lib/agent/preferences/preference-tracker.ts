@@ -8,7 +8,7 @@
  * Story 31.2: User Preference Learning & Personalization
  */
 
-import type { CoreMessage } from '@tanstack/ai';
+import type { CoreMessage } from '../memory/insight-extractor';
 import {
   setPreference,
   getPreference,

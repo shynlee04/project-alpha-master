@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import type { Agent } from '@/stores/agents';
+import type { Agent } from '@/mocks/agents';
 
 // Map agent provider display names to provider IDs
 const PROVIDER_ID_MAP: Record<string, string> = {

@@ -84,15 +84,15 @@ export interface RAGStoreState {
     chunkingProgress: Map<string, ChunkingProgress>;
 
     /** Embedding progress tracking (Story 7-3) */
-    embeddingProgress: Map<string, import('./rag/types').EmbeddingProgress>;
+    embeddingProgress: Map<string, import('@/lib/rag/types').EmbeddingProgress>;
 
     /** Current embedding mode (Story 7-3) */
-    embeddingMode: import('./rag/types').EmbeddingMode;
+    embeddingMode: import('@/lib/rag/types').EmbeddingMode;
 
     /** Search state (Story 7-4) */
     searchQuery: string;
-    searchResults: import('./rag/types').ExtendedSearchResult[];
-    searchMode: import('./rag/types').SearchMode;
+    searchResults: import('@/lib/rag/types').ExtendedSearchResult[];
+    searchMode: import('@/lib/rag/types').SearchMode;
 
     /** Chat state (Story 7-5) */
     chatMessages: ChatMessage[];
@@ -100,8 +100,8 @@ export interface RAGStoreState {
     activeCitation: Citation | null;
 
     /** Voice mode state (Story 10-1) */
-    voiceState: import('./rag/live-api-types').VoiceModeState;
-    voiceConnection: import('./rag/live-api-types').ConnectionState;
+    voiceState: import('@/lib/rag/live-api-types').VoiceModeState;
+    voiceConnection: import('@/lib/rag/live-api-types').ConnectionState;
     voiceMicrophoneEnabled: boolean;
     voiceIsDesktop: boolean;
     voiceVolumeLevel: number;

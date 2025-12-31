@@ -9,7 +9,25 @@
  * Story 31.1: Conversation Memory & Long-Term Context
  */
 
-import type { CoreMessage } from '@tanstack/ai';
+/**
+ * Multimodal content types
+ */
+export type MultimodalContent =
+  | { type: 'text'; text: string }
+  | {
+      type: 'image';
+      source: { type: 'data'; value: string };
+      metadata: { mimeType: 'image/jpeg' | 'image/png' | 'image/webp' };
+    };
+
+/**
+ * Core message structure for AI conversations
+ * Supports both simple string content and multimodal content arrays
+ */
+export interface CoreMessage {
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string | MultimodalContent[];
+}
 
 export interface InsightExtractionOptions {
   /**

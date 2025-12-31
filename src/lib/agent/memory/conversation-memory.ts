@@ -278,11 +278,9 @@ export async function pruneOldConversations(options: {
     collection = collection.filter((memory) => !memory.isExcluded);
   }
 
-  // Sort by access time (LRU)
-  const toPrune = await collection
-    .sortBy('accessedAt')
-    .limit(maxCount || Number.MAX_SAFE_INTEGER)
-    .toArray();
+  // Sort by access time (LRU) and limit
+  const allSorted = await collection.sortBy('accessedAt');
+  const toPrune = allSorted.slice(0, maxCount || Number.MAX_SAFE_INTEGER);
 
   // Delete pruned conversations
   const ids = toPrune.map((m: any) => m.id!).filter((id: any) => id !== undefined);

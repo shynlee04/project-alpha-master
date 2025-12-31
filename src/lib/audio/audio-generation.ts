@@ -9,7 +9,7 @@
  * Story 10.3: Audio Overview Generator
  */
 
-import type { CoreMessage } from '@tanstack/ai';
+import type { CoreMessage } from '../agent/memory/insight-extractor';
 
 export interface AudioGenerationOptions {
   /**

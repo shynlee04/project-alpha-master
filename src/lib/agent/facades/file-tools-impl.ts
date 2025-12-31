@@ -429,7 +429,8 @@ export class FileToolsFacade implements AgentFileTools {
         let extension = '';
 
         // Find where the extension starts (after the last ** or *)
-        const lastWildcardIndex = parts.findLastIndex((p: string) => p.includes('*'));
+        // Workaround for ES2022: use reverse + findIndex instead of findLastIndex (ES2023)
+        const lastWildcardIndex = parts.length - 1 - [...parts].reverse().findIndex((p: string) => p.includes('*'));
 
         if (lastWildcardIndex !== -1) {
             // Directory pattern is everything up to and including the last wildcard segment

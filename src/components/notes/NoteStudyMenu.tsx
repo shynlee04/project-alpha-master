@@ -32,6 +32,7 @@ import { generateQuiz } from '@/lib/study/quiz-generator';
 import { useFlashcardOperations } from '@/lib/state/flashcard-store';
 import { useQuizStore } from '@/lib/state/quiz-store';
 import { useIDEStore } from '@/lib/state/ide-store';
+import type { QuizQuestion } from '@/lib/study/quiz-types';
 
 interface NoteStudyMenuProps {
     noteId: string;

@@ -13,7 +13,7 @@
  * @story 4.3 - Tool Permissions & Trust Levels
  */
 
-import type { EventEmitter3 } from 'eventemitter3';
+import type { EventEmitter } from 'eventemitter3';
 
 /**
  * Trust level for a tool - determines when user approval is required

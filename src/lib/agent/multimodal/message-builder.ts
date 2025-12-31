@@ -9,7 +9,7 @@
  * Story 10.2: Multimodal Source Vision (Desktop Only)
  */
 
-import type { CoreMessage } from '@tanstack/ai';
+import type { CoreMessage, MultimodalContent } from '../memory/insight-extractor';
 
 export interface ImageContent {
   /**
@@ -22,14 +22,6 @@ export interface ImageContent {
    */
   mimeType?: 'image/jpeg' | 'image/png' | 'image/webp';
 }
-
-export type MultimodalContent =
-  | { type: 'text'; text: string }
-  | {
-      type: 'image';
-      source: { type: 'data'; value: string };
-      metadata: { mimeType: 'image/jpeg' | 'image/png' | 'image/webp' };
-    };
 
 /**
  * Build a multimodal message with text and optional image
@@ -167,8 +159,9 @@ export function extractTextContent(
     return message.content;
   }
 
-  if (Array.isArray(message.content)) {
-    const textItem = message.content.find(
+  const contentArray = message.content;
+  if (Array.isArray(contentArray)) {
+    const textItem = contentArray.find(
       (item: any) => item.type === 'text'
     ) as { type: 'text'; text: string } | undefined;
 
@@ -189,8 +182,9 @@ export function extractImages(message: CoreMessage): string[] {
     return [];
   }
 
-  if (Array.isArray(message.content)) {
-    return message.content
+  const contentArray = message.content;
+  if (Array.isArray(contentArray)) {
+    return contentArray
       .filter((item: any) => item.type === 'image')
       .map((item: any) => {
         const img = item as {
@@ -226,8 +220,9 @@ export function estimateMessageSize(message: CoreMessage): number {
     return message.content.length;
   }
 
-  if (Array.isArray(message.content)) {
-    for (const item of message.content) {
+  const contentArray = message.content;
+  if (Array.isArray(contentArray)) {
+    for (const item of contentArray) {
       if (item.type === 'text') {
         size += item.text.length;
       } else if (item.type === 'image') {

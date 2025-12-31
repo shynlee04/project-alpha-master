@@ -60,9 +60,9 @@ export const useCanvasDrop = () => {
         setNodes([...currentNodes, newNode]);
 
         // Clear any selection and select new node
-        storeApi.setState(() => ({
+        storeApi.setState({
           nodesSelection: null,
-        }));
+        } as any);
       } catch (error) {
         console.error('Failed to parse drag data:', error);
       }

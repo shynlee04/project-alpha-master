@@ -471,14 +471,14 @@ export class SystemPromptComposer {
   /**
    * Generate hash of configuration for cache key
    */
-  private generateConfigHash(config: Partial<PromptComposerConfig>): string {
-    const agentModeId = config.agentMode?.id || 'default';
-    const toolConstitution = config.toolConstitution || DEFAULT_CONFIG.toolConstitution;
-    // Include actual tool constitution content in hash for uniqueness
-    // Use first 100 chars to avoid overly long hashes
-    const toolConstitutionHash = toolConstitution.substring(0, 100);
-    return `agent:${agentModeId}|tool:${toolConstitutionHash}`;
-  }
+  // private generateConfigHash(config: Partial<PromptComposerConfig>): string {
+  //   const agentModeId = config.agentMode?.id || 'default';
+  //   const toolConstitution = config.toolConstitution || DEFAULT_CONFIG.toolConstitution;
+  //   // Include actual tool constitution content in hash for uniqueness
+  //   // Use first 100 chars to avoid overly long hashes
+  //   const toolConstitutionHash = toolConstitution.substring(0, 100);
+  //   return `agent:${agentModeId}|tool:${toolConstitutionHash}`;
+  // }
 
   /**
    * Handle file system changes with debounce
