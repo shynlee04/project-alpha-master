@@ -3,8 +3,8 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
-import { useConversationStore } from '@/lib/state/conversation-store';
-import { useThreadsStore } from '@/stores/conversation-threads-store';
+import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/conversation-store';
+import { useThreadsStore } from '@/infrastructure/persistence/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '@/lib/agent/hooks/use-agent-chat-with-tools';

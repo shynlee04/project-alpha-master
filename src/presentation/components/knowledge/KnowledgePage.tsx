@@ -19,7 +19,7 @@ const Canvas = lazy(() => {
 import { SourceImportDialog } from '@/presentation/components/knowledge/SourceImportDialog';
 import { RAGPanelContainer } from '@/presentation/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
-import { useRAGStore } from '@/lib/state/rag-store';
+import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification

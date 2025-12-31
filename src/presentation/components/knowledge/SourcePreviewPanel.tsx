@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { Edit, X, Grid3x3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
-import { useRAGStore } from '@/lib/state/rag-store';
+import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { PDFIcon, URLIcon, TextIcon } from '@/presentation/components/ui/icons';
 import { MetadataDisplay } from './MetadataDisplay';
 import { MetadataEditor } from './MetadataEditor';

@@ -16,7 +16,7 @@ import { ChatConversation } from './ChatConversation';
 import {
     useThreadsStore,
     useActiveThread,
-} from '@/stores/conversation-threads-store';
+} from '@/infrastructure/persistence/stores/conversation-threads-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useAgentSelection } from '@/stores/agent-selection-store';
 import type { Agent } from '@/mocks/agents';

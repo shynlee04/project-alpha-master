@@ -18,7 +18,7 @@ import { Plus, MessageSquarePlus, ChevronLeft, ChevronRight } from 'lucide-react
 import { cn } from '@/lib/utils';
 import { Button } from '@/presentation/components/ui/button';
 import { ThreadCard } from './ThreadCard';
-import type { ConversationThread } from '@/stores/conversation-threads-store';
+import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation-threads-store';
 import { useTranslation } from 'react-i18next';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 

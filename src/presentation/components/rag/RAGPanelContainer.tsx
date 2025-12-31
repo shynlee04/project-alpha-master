@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/presentation/compone
 import { RAGSearchPanel } from './RAGSearchPanel';
 import { RAGChatPanel } from './RAGChatPanel';
 import { CitationSidebar } from './CitationSidebar';
-import { useRAGStore } from '@/lib/state/rag-store';
+import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import type { SearchMode, Citation } from '@/lib/rag/types';
 
 interface RAGPanelContainerProps {

@@ -58,20 +58,38 @@ export const useConversationStore = create<ConversationStoreState>()(
       conversations: {},
       scrollPositions: {},
       pendingToolApprovals: [],
+      currentWorkspaceType: 'ide', // NEW: Default workspace
+      currentProjectId: null, // NEW: Default project
       _hasHydrated: false,
 
       setHasHydrated: (state: boolean) => {
         set({ _hasHydrated: state });
       },
 
+      // ========== Workspace & Project Actions ==========
+
+      setCurrentWorkspace: (workspaceType: WorkspaceType) => {
+        console.log('[ConversationStore] Setting workspace:', workspaceType);
+        set({ currentWorkspaceType: workspaceType });
+      },
+
+      setCurrentProject: (projectId: string | null) => {
+        console.log('[ConversationStore] Setting project:', projectId);
+        set({ currentProjectId: projectId });
+      },
+
       createConversation: (projectId = null, agentId = null) => {
         const id = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const now = Date.now();
+
+        // Use current workspace from store
+        const workspaceType = get().currentWorkspaceType;
 
         const newConversation: ConversationState = {
           metadata: {
             id,
             projectId,
+            workspaceType, // NEW: Store workspace type
             title: 'New Conversation',
             preview: '',
             agentId,
@@ -83,7 +101,7 @@ export const useConversationStore = create<ConversationStoreState>()(
           messages: [],
         };
 
-        console.log('[ConversationStore] Creating conversation:', id);
+        console.log('[ConversationStore] Creating conversation:', id, 'workspace:', workspaceType);
 
         set((state) => ({
           conversations: {
@@ -312,6 +330,17 @@ export const useConversationStore = create<ConversationStoreState>()(
         });
       },
 
+      // ========== Queries ==========
+
+      getConversationsForWorkspace: (workspaceType: WorkspaceType, projectId = null) => {
+        const { conversations } = get();
+        return Object.values(conversations).filter(conv => {
+          const matchesWorkspace = conv.metadata.workspaceType === workspaceType;
+          const matchesProject = projectId === null || conv.metadata.projectId === projectId;
+          return matchesWorkspace && matchesProject;
+        }).sort((a, b) => b.metadata.updatedAt - a.metadata.updatedAt);
+      },
+
       reset: () => {
         console.log('[ConversationStore] Resetting to empty state');
         set({
@@ -319,6 +348,8 @@ export const useConversationStore = create<ConversationStoreState>()(
           conversations: {},
           scrollPositions: {},
           pendingToolApprovals: [],
+          currentWorkspaceType: 'ide', // Reset to default workspace
+          currentProjectId: null,
         });
       },
     }),
@@ -332,6 +363,8 @@ export const useConversationStore = create<ConversationStoreState>()(
         activeConversationId: state.activeConversationId,
         conversations: state.conversations,
         scrollPositions: state.scrollPositions,
+        currentWorkspaceType: state.currentWorkspaceType, // NEW
+        currentProjectId: state.currentProjectId, // NEW
         // Don't persist pending approvals - they should be reprocessed on reload
       }),
 
