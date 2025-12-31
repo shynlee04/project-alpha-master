@@ -1,97 +1,71 @@
 ---
 name: architectural-consolidation
 description: >
-  Systematic refactoring workflow for Provider->Model->Agent data flow,
-  layer boundary enforcement, and cross-workspace reactivity.
-  Integrates story-dev-cycle, sweeping-validation, and 12-level framework.
-version: 2.0
-author: bmad-core-bmad-master + morgan
+  Systematic architectural refinement workflow focused on Provider→Model→Agent data flow,
+  cross-workspace reactivity, and unified state management.
+web_bundle: false
+installed_path: '{project-root}/_bmad/bmm/workflows/4-implementation/architectural-consolidation'
+version: 2.0.0
+author: bmad-core-bmad-master + morgan (module-builder)
 created: 2025-12-31
-installed_path: "{project-root}/_bmad/bmm/workflows/4-implementation/architectural-consolidation"
-web_bundle: true
 ---
 
-# Architectural Consolidation Workflow v2.0
+# Architectural Consolidation Workflow (ARC) v2.0
 
-**Goal:** Transform the BMAD platform architecture by implementing the corrected 5-Layer VIA-GENT Architecture, focused on unified Provider->Model->Agent data flows.
+**Goal:** To execute the "5-Layer VIA-GENT Architecture" consolidation, strictly adhering to the immutable contracts defined for Providers, Agents, Conversation, and State management.
 
-**Your Role:** You are an Architectural Consolidation Specialist executing the "sprint-change-proposal-2025-12-31-v2" to establish a single source of truth for AI configuration and consistent user experience across workspaces.
-
----
+**Your Role:** You are the **ARC Orchestrator**. You rigidly enforce the architectural boundaries defined in the Sprint Change Proposal. You do not allow shortcuts. You prioritize data integrity, clean contracts, and reactive state flows over feature speed.
 
 ## WORKFLOW ARCHITECTURE
 
 ### Core Principles
 
-- **Data Flow First**: Provider -> Model -> Agent flow is the absolute truth.
-- **Reactivity**: Changes in configuration must propagate via event bus immediately.
-- **Phased Execution**: Phase 0 (Showcase) is critical and prioritized.
-- **Validation**: Sweeping validation + 12-level gates after each phase.
+- **Micro-file Constraints**: Adhere to the < 300 lines per file rule.
+- **Contract First**: No implementation without a defined interface/type contract.
+- **State Sovereignty**: Store holds state; UI reflects state. Never local state for shared data.
+- **Layered Strictness**: Layer 1 (Persistence) -> Layer 2 (Provider) -> Layer 3 (Agent) -> Layer 4 (Services) -> Layer 5 (UI). Dependency flows UP only.
 
-### Step Processing Rules
+### 5-Layer Stack Definition
 
-1. **READ COMPLETELY**: Always read the step file and referenced contracts first.
-2. **STRICT SEQUENCE**: AC-01 -> AC-02 -> AC-03 -> Gate. No skipping.
-3. **VALIDATION GATES**: Must verify fix on 3 devices (simulated if needed).
-4. **HANDOFF ARTIFACTS**: Generate evidence of testing after each story.
-
----
-
-## WORKFLOW PHASES
-
-### Phase 0: Showcase Critical (Priority 1 - TODAY)
-
-**Stories:**
-1. **AC-01: Provider Configuration Foundation** (`step-02-story-ac01.md`)
-   - Hardcoded built-in providers
-   - Key save -> Reactive model loading
-   - `provider-models-store.ts` refactor
-
-2. **AC-02: Agent Configuration Vault** (`step-03-story-ac02.md`)
-   - Agent entity with Provider/Model linkage
-   - Central `agents-store.ts` (IndexedDB)
-   - Tool binding with workspace permissions
-
-3. **AC-03: Cross-Workspace Chat Unification** (`step-04-story-ac03.md`)
-   - Unified `ChatPanel` across IDE, Knowledge, Study, Notes
-   - AgentSelector wiring verification
-   - Context consistency
-
-**Validation:**
-- Gate: `step-05-phase0-validation.md`
-- Success: Agent configured in settings appears in Knowledge workspace and can chat.
+1. **Layer 1: Persistence & Infrastructure** (Dexie, CredentialVault, EventBus)
+2. **Layer 2: LLM Provider Configuration** (Hardcoded vs Custom, Model Loading)
+3. **Layer 3: Agent Configuration Vault** (Provider+Model+Tools, CRUD, Workspace Bindings)
+4. **Layer 4: Cross-Workspace Services** (Conversation, Thread, Context Managers)
+5. **Layer 5: UI/UX Presentation** (AgentSelector, ChatPanel, Workspace Layouts)
 
 ---
 
-### Phase 1: Foundation (Jan 1-3)
+## INITIALIZATION SEQUENCE
 
-**Stories:**
-1. **Store Reorganization** (Core/Feature/Workspace splits)
-2. **Event Bus Implementation** (Standardized events)
-3. **Data Contracts** (Zod schemas at boundaries)
+### 1. Configuration Check
+Load `_bmad-output/sprint-change-proposal-2025-12-31.md` and verify "READY FOR EXECUTION" status.
 
----
-
-### Phase 2: Full Scope (Jan 4-10)
-
-**Stories:**
-1. **Code Hygiene Sweep** (Files < 300 lines)
-2. **Brownfield Integration** (FileTree -> Knowledge RAG)
-3. **Test Coverage** (> 80%)
+### 2. Startup Execution
+Load, read full file, and execute `{installed_path}/steps/step-01-init.md`.
 
 ---
 
-## AGENT COORDINATION
+## WORKFLOW STEPS
 
-| Agent | Responsibility | Phases |
-|-------|----------------|--------|
-| `@bmad-core-bmad-master` | Orchestration, status | All |
-| `@bmad-bmm-architect` | Contract validation | 0, 1 |
-| `@bmad-bmm-dev` | Implementation | 0, 1, 2 |
-| `@bmad-bmm-tea` | Testing | 1, 2 |
+### Phase 0: Showcase Critical (AC-01, AC-02, AC-03)
+1. **init**: Context loading and validation of contracts.
+2. **provider-foundation**: (AC-01) Implementing `ProviderConfigDialog` and `provider-models-store`.
+3. **agent-vault**: (AC-02) Implementing `AgentSelector` with `useAgentsStore`.
+4. **chat-unification**: (AC-03) Unifying `ChatPanel` across all 4 workspaces.
+
+### Phase 1: Foundation (AC-04, AC-05, AC-06)
+5. **store-reorg**: (AC-04) Migrating to `src/stores/{core,agent,conversation,workspace,sync}/`.
+6. **data-flow**: (AC-05 & AC-06) Implementing Event Bus and Tool Binding system.
+
+### Phase 2: Full Scope & Cleanup (AC-07, AC-08, AC-09)
+7. **brownfield**: (AC-07) Connecting Project/FileTree to Knowledge.
+8. **hygiene**: (AC-08) Breaking down files > 300 lines.
+9. **finalize**: (AC-09) Test coverage and final validation.
 
 ---
 
-## INITIALIZATION
+## REFERENCE ARTIFACTS
 
-Load and execute: `{installed_path}/steps/step-01-init.md`
+- **Sprint Proposal**: `_bmad-output/sprint-change-proposal-2025-12-31.md` (Source of Truth)
+- **Module Definition**: `_bmad-output/bmb-creations/arc-module/module-definition.md`
+- **Architecture Doc**: `_bmad-output/project-planning-artifacts/architecture.md`
