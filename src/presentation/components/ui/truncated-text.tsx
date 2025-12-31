@@ -46,6 +46,7 @@ export function TruncatedText({
                 <TooltipTrigger asChild>
                     <span
                         className={cn("truncate block max-w-full", className)}
+                        suppressHydrationWarning
                     >
                         {text}
                     </span>

@@ -35,3 +35,13 @@ export {
 } from './sync-event-bus';
 
 export { createSyncEventBus as syncEventBus } from './sync-event-bus';
+
+// Reverse Sync Service
+export {
+  ReverseSyncService,
+  createReverseSyncService,
+  type ReverseSyncOptions,
+  type ReverseSyncProgress,
+  type ReverseSyncError,
+  type ConflictResolutionStrategy,
+} from './reverse-sync-service';

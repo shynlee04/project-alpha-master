@@ -3,23 +3,26 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { formatDistanceToNow } from 'date-fns';
-import { 
-  Folder, 
-  Plus, 
-  Terminal, 
-  Cpu, 
-  BookOpen, 
-  Settings, 
-  Clock, 
+import {
+  Folder,
+  Plus,
+  Terminal,
+  Cpu,
+  BookOpen,
+  Settings,
   HardDrive,
-  CheckCircle2,
-  ChevronRight
+  Clock,
+  CheckCircle2
 } from 'lucide-react';
 
 import { db } from '@/lib/state/dexie-db';
-import { useLayoutStore } from '@/lib/state/layout-store';
 import { cn } from '@/lib/utils';
-import { useDeviceType } from '@/hooks/useMediaQuery';
+import {
+  saveProject,
+  generateProjectId,
+  updateProjectLastOpened,
+  type ProjectMetadata
+} from '@/lib/workspace/project-store';
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
@@ -68,8 +71,6 @@ const BootSequence = ({ onComplete }: { onComplete: () => void }) => {
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isMobile } = useDeviceType();
-  const { setMobileMenuOpen } = useLayoutStore();
 
   const [booting, setBooting] = useState(true);
   const [showContent, setShowContent] = useState(false);
@@ -81,7 +82,7 @@ export const HubHomePage: React.FC = () => {
 
   useEffect(() => {
     if (booting) return;
-    
+
     let index = 0;
     const typeInterval = setInterval(() => {
       setTypedText((prev) => {
@@ -108,9 +109,65 @@ export const HubHomePage: React.FC = () => {
 
   const recentProjects = useMemo(() => {
     return (projects || [])
-      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .sort((a, b) => {
+        const timeA = a.lastOpened ? new Date(a.lastOpened).getTime() : 0;
+        const timeB = b.lastOpened ? new Date(b.lastOpened).getTime() : 0;
+        return timeB - timeA;
+      })
       .slice(0, 5);
   }, [projects]);
+
+  // -- Handlers --
+
+  const handleNewProject = async () => {
+    try {
+      // 1. Open Directory Picker
+      // @ts-ignore - showDirectoryPicker is valid in supported browsers
+      const handle = await window.showDirectoryPicker({
+        mode: 'readwrite',
+      });
+
+      // 2. Create Project Metadata
+      const newProjectId = generateProjectId();
+      const project: ProjectMetadata = {
+        id: newProjectId,
+        name: handle.name,
+        folderPath: handle.name,
+        fsaHandle: handle,
+        lastOpened: new Date(),
+        autoSync: true,
+      };
+
+      // 3. Save to Dexie
+      await saveProject(project);
+
+      // 4. Navigate to Workspace
+      await navigate({
+        to: '/workspace/$projectId',
+        params: { projectId: newProjectId }
+      });
+
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        console.error('Failed to create project:', error);
+      }
+    }
+  };
+
+  const handleOpenRecentProject = async (projectId: string) => {
+    try {
+      // 1. Update timestamp
+      await updateProjectLastOpened(projectId);
+
+      // 2. Navigate
+      await navigate({
+        to: '/workspace/$projectId',
+        params: { projectId }
+      });
+    } catch (error) {
+      console.error('Failed to open recent project:', error);
+    }
+  };
 
   // -- Bento Cards Configuration --
   const bentoCards: BentoCardProps[] = useMemo(() => [
@@ -121,7 +178,7 @@ export const HubHomePage: React.FC = () => {
       description: t('hub.newProjectDesc', 'Initialize a new workspace entry'),
       icon: <Plus className="h-8 w-8" />,
       topic: 'Workspace',
-      onClick: () => navigate({ to: '/workspace' }),
+      onClick: handleNewProject,
       className: 'bg-primary/5 border-primary/20 hover:border-primary/50',
     },
     {
@@ -149,13 +206,13 @@ export const HubHomePage: React.FC = () => {
       topic: 'About',
       onClick: () => navigate({ to: '/study' }),
     },
-     {
+    {
       id: 'terminal',
       size: 'small',
       title: t('hub.terminal', 'TERMINAL'),
       icon: <Terminal className="h-6 w-6" />,
       topic: 'Terminal',
-      onClick: () => {}, // Future: Open global terminal
+      onClick: () => { },
     },
     {
       id: 'settings',
@@ -165,7 +222,7 @@ export const HubHomePage: React.FC = () => {
       topic: 'Settings',
       onClick: () => navigate({ to: '/settings' }),
     },
-  ], [t, navigate]);
+  ], [t, navigate, handleNewProject]);
 
   const handleBootComplete = () => {
     setBooting(false);
@@ -181,14 +238,14 @@ export const HubHomePage: React.FC = () => {
       "flex flex-col min-h-full p-4 md:p-8 space-y-8 bg-background text-foreground font-sans transition-opacity duration-700",
       showContent ? "opacity-100" : "opacity-0"
     )}>
-      
+
       {/* -- Hero Section -- */}
       <section className="space-y-2 mb-4 pt-4 md:pt-0">
         <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-1">
           <Terminal className="w-3 h-3" />
           <span>{t('hub.subtitle', 'v2.5.0-BETA // READY FOR INPUT')}</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-pixel text-primary tracking-tight h-[1.2em] flex items-center">
+        <h1 className="text-3xl md:text-5xl font-pixel text-primary tracking-tight h-auto min-h-[1.2em] flex flex-wrap items-center break-words">
           {typedText}
           <span className={cn("inline-block w-[0.6em] h-[1em] bg-primary ml-1", cursorVisible ? "opacity-100" : "opacity-0")} />
         </h1>
@@ -206,7 +263,7 @@ export const HubHomePage: React.FC = () => {
             <Folder className="h-5 w-5 text-primary" />
             {t('hub.recent.title', 'RECENT_DIRECTORIES')}
           </h2>
-          <button 
+          <button
             onClick={() => navigate({ to: '/workspace' })}
             className="text-xs font-mono text-muted-foreground hover:text-primary hover:underline flex items-center gap-1 transition-colors"
           >
@@ -215,15 +272,15 @@ export const HubHomePage: React.FC = () => {
         </div>
 
         {isLoading ? (
-           <div className="space-y-2">
-             <SkeletonLoader variant="list" lines={3} />
-           </div>
+          <div className="space-y-2">
+            <SkeletonLoader variant="list" lines={3} />
+          </div>
         ) : (!recentProjects || recentProjects.length === 0) ? (
-          <EmptyState 
+          <EmptyState
             variant="no-projects"
             message={t('hub.noProjects', 'No directories found in local storage.')}
             action="create"
-            onAction={() => navigate({ to: '/workspace' })}
+            onAction={handleNewProject}
           />
         ) : (
           <div className="border-2 border-border/60 bg-card/50 backdrop-blur-sm shadow-pixel">
@@ -238,9 +295,9 @@ export const HubHomePage: React.FC = () => {
             {/* Project Rows */}
             <div className="divide-y-2 divide-border/20">
               {recentProjects.map((project) => (
-                <div 
+                <div
                   key={project.id}
-                  onClick={() => navigate({ to: `/ide`, search: { projectId: project.id } })}
+                  onClick={() => handleOpenRecentProject(project.id)}
                   className="grid grid-cols-12 gap-4 p-3 items-center hover:bg-primary/5 cursor-pointer group transition-all duration-200"
                   role="button"
                   tabIndex={0}
@@ -255,22 +312,22 @@ export const HubHomePage: React.FC = () => {
 
                   {/* Status (Desktop only) */}
                   <div className="col-span-3 md:col-span-2 hidden md:block">
-                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase font-pixel bg-green-500/10 text-green-500 border border-green-500/30 rounded-none">
-                       <CheckCircle2 className="w-3 h-3" />
-                       ACTIVE
-                     </span>
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase font-pixel bg-green-500/10 text-green-500 border border-green-500/30 rounded-none">
+                      <CheckCircle2 className="w-3 h-3" />
+                      ACTIVE
+                    </span>
                   </div>
 
                   {/* Date */}
                   <div className="col-span-4 md:col-span-3 text-right">
                     <span className="text-xs font-mono text-muted-foreground flex items-center justify-end gap-1 group-hover:text-foreground transition-colors">
                       <Clock className="h-3 w-3 md:hidden" />
-                      {formatDistanceToNow(project.updatedAt, { addSuffix: true })}
+                      {project.lastOpened ? formatDistanceToNow(project.lastOpened, { addSuffix: true }) : ''}
                     </span>
                   </div>
 
-                   {/* Size (Desktop only placeholder) */}
-                   <div className="col-span-2 md:col-span-2 text-right hidden md:block pr-2">
+                  {/* Size (Desktop only placeholder) */}
+                  <div className="col-span-2 md:col-span-2 text-right hidden md:block pr-2">
                     <span className="text-xs font-mono text-muted-foreground group-hover:text-foreground transition-colors">
                       --
                     </span>
@@ -278,11 +335,11 @@ export const HubHomePage: React.FC = () => {
                 </div>
               ))}
             </div>
-            
+
             {/* Footer Row */}
-             <div className="bg-muted/40 p-2 font-mono text-[10px] text-muted-foreground text-center border-t-2 border-border/40">
-                Total Directories: {recentProjects.length}
-             </div>
+            <div className="bg-muted/40 p-2 font-mono text-[10px] text-muted-foreground text-center border-t-2 border-border/40">
+              Total Directories: {recentProjects.length}
+            </div>
           </div>
         )}
       </section>

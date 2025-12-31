@@ -245,7 +245,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
                   >
                     <Icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
                     {!sidebarCollapsed && (
-                      <span className="truncate">{item.label}</span>
+                      <TruncatedText text={item.label} className="truncate" />
                     )}
 
                     {/* Active Indicator Pulse */}

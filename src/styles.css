@@ -35,8 +35,10 @@ code {
 }
 
 .font-pixel-heavy {
-  font-family: 'Press Start 2P', 'VT323', monospace;
-  letter-spacing: 0.1em;
+  font-family: 'VT323', monospace;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .font-mono {

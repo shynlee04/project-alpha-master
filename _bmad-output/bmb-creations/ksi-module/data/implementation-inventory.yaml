@@ -1,0 +1,459 @@
+# KSI Module - Implementation Inventory
+# Generated: 2025-12-31T20:05:00+07:00
+# Purpose: Catalog all knowledge-related source files with metadata
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY STATISTICS
+# ═══════════════════════════════════════════════════════════════════════════
+summary:
+  total_files: 120
+  total_lines_of_code: 21556
+  files_over_300_loc: 13
+  average_loc_per_file: 180
+
+# ═══════════════════════════════════════════════════════════════════════════
+# LIBRARY LAYER (src/lib/*)
+# ═══════════════════════════════════════════════════════════════════════════
+library_layer:
+  knowledge_lib:
+    path: "src/lib/knowledge"
+    files: 14
+    total_loc: 2301
+    implementations:
+      - file: "source-import.ts"
+        loc: 365
+        exports: 12
+        dependencies: ["metadata-extractor", "pdf-parser", "url-fetcher"]
+        status: "IMPLEMENTED"
+        notes: "Core import pipeline with PDF/image/audio/URL support"
+
+      - file: "metadata-extractor.ts"
+        loc: 261
+        exports: 8
+        dependencies: ["@google/genai"]
+        status: "IMPLEMENTED"
+        notes: "AI-powered metadata extraction using Gemini"
+
+      - file: "pdf-parser.ts"
+        loc: 212
+        exports: 5
+        dependencies: ["pdfjs-dist"]
+        status: "IMPLEMENTED"
+        notes: "PDF text extraction with structural parsing"
+
+      - file: "url-fetcher.ts"
+        loc: 294
+        exports: 4
+        dependencies: []
+        status: "IMPLEMENTED"
+        notes: "URL content fetching with metadata inference"
+
+      - file: "flashcard-generator.ts"
+        loc: 284
+        exports: 6
+        dependencies: ["@google/genai"]
+        status: "IMPLEMENTED"
+        notes: "AI flashcard generation from source content"
+
+      - file: "flashcard-utils.ts"
+        loc: 229
+        exports: 15
+        dependencies: []
+        status: "IMPLEMENTED"
+        notes: "Flashcard utilities and formatting helpers"
+
+    gaps:
+      - "No synthesis service for frontmatter generation"
+      - "No connection to Orama indexing after import"
+      - "No auto-embedding during import flow"
+
+  rag_lib:
+    path: "src/lib/rag"
+    files: 37
+    total_loc: 8935
+    implementations:
+      - file: "orama-index.ts"
+        loc: 551
+        exports: 18
+        dependencies: ["@orama/orama", "@orama/cloud"]
+        status: "IMPLEMENTED"
+        notes: "Vector database with Orama WASM"
+
+      - file: "embedding-service.ts"
+        loc: 482
+        exports: 12
+        dependencies: ["@xenova/transformers"]
+        status: "IMPLEMENTED"
+        notes: "Local embedding generation with caching"
+
+      - file: "hybrid-retriever.ts"
+        loc: 488
+        exports: 8
+        dependencies: ["orama-index", "embedding-service"]
+        status: "IMPLEMENTED"
+        notes: "Combined vector + keyword search"
+
+      - file: "document-chunker.ts"
+        loc: 493
+        exports: 10
+        dependencies: ["chunk-strategies"]
+        status: "IMPLEMENTED"
+        notes: "Document chunking with multiple strategies"
+
+      - file: "citation-formatter.ts"
+        loc: 140
+        exports: 6
+        dependencies: []
+        status: "IMPLEMENTED"
+        notes: "Citation formatting for RAG responses"
+
+    gaps:
+      - "No wiring between source-import and orama-index"
+      - "No citation sidebar integration with chat"
+      - "Chat modes not implemented (agent/rag/hybrid)"
+
+  notes_lib:
+    path: "src/lib/notes"
+    files: 14
+    total_loc: 3434
+    implementations:
+      - file: "note-store.ts"
+        loc: 525
+        exports: 20
+        dependencies: ["dexie"]
+        status: "IMPLEMENTED"
+        notes: "Note state management with persistence"
+
+      - file: "note-indexer.ts"
+        loc: 381
+        exports: 8
+        dependencies: ["@orama/orama"]
+        status: "IMPLEMENTED"
+        notes: "Note indexing with Orama"
+
+      - file: "note-ai-service.ts"
+        loc: 180
+        exports: 5
+        dependencies: ["@tanstack/ai"]
+        status: "IMPLEMENTED"
+        notes: "AI-powered note operations"
+
+    gaps:
+      - "No synthesis integration for notes"
+      - "No canvas linkage for note clusters"
+
+  study_lib:
+    path: "src/lib/study"
+    files: 7
+    total_loc: 1298
+    implementations:
+      - file: "quiz-generator.ts"
+        loc: 301
+        exports: 6
+        dependencies: ["@google/genai"]
+        status: "IMPLEMENTED"
+        notes: "AI quiz generation from content"
+
+      - file: "quiz-session.ts"
+        loc: 250
+        exports: 10
+        dependencies: ["srs-types"]
+        status: "IMPLEMENTED"
+        notes: "Quiz session management with SRS"
+
+      - file: "srs-types.ts"
+        loc: 257
+        exports: 12
+        dependencies: []
+        status: "IMPLEMENTED"
+        notes: "Spaced Repetition System types"
+
+    gaps:
+      - "No synthesis workflow for quiz content"
+
+  canvas_lib:
+    path: "src/lib/canvas"
+    files: 2
+    total_loc: 150
+    implementations:
+      - file: "types.ts"
+        loc: 100
+        exports: 15
+        dependencies: ["@xyflow/react"]
+        status: "IMPLEMENTED"
+        notes: "Canvas node and edge types"
+
+    gaps:
+      - "CRITICAL: No linkage analyzer implementation"
+      - "No AI-powered connection discovery"
+      - "No knowledge graph service"
+      - "No relevancy scoring"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRESENTATION LAYER (src/presentation/components/*)
+# ═══════════════════════════════════════════════════════════════════════════
+presentation_layer:
+  knowledge_components:
+    path: "src/presentation/components/knowledge"
+    files: 26
+    total_loc: 4289
+    implementations:
+      - file: "SourceImportDialog.tsx"
+        loc: 239
+        status: "IMPLEMENTED"
+        notes: "Import dialog with file picker"
+
+      - file: "SourceCard.tsx"
+        loc: 255
+        status: "IMPLEMENTED"
+        notes: "Source card display component"
+
+      - file: "KnowledgePage.tsx"
+        loc: 180
+        status: "IMPLEMENTED"
+        notes: "Main knowledge workspace page"
+
+    gaps:
+      - "No 'Synthesize' button on SourceCard"
+      - "No synthesis service integration"
+      - "No drag-from-sources to canvas"
+
+  rag_components:
+    path: "src/presentation/components/rag"
+    files: 7
+    total_loc: 892
+    implementations:
+      - file: "RAGChatPanel.tsx"
+        loc: 281
+        status: "IMPLEMENTED"
+        notes: "RAG-only chat panel"
+
+      - file: "RAGSearchPanel.tsx"
+        loc: 320
+        status: "IMPLEMENTED"
+        notes: "Search panel with retrieval"
+
+      - file: "CitationSidebar.tsx"
+        loc: 200
+        status: "IMPLEMENTED"
+        notes: "Citation display sidebar"
+
+    gaps:
+      - "Not wired to main ChatPanel"
+      - "No mode toggle implementation"
+      - "No citation click-to-source linking"
+
+  notes_components:
+    path: "src/presentation/components/notes"
+    files: 10
+    total_loc: 1456
+    implementations:
+      - file: "NoteEditor.tsx"
+        loc: 254
+        status: "IMPLEMENTED"
+        notes: "Rich text note editor"
+
+      - file: "NotesPage.tsx"
+        loc: 208
+        status: "IMPLEMENTED"
+        notes: "Notes workspace page"
+
+    gaps:
+      - "No synthesis integration for note clusters"
+
+  study_components:
+    path: "src/presentation/components/study"
+    files: 12
+    total_loc: 2890
+    implementations:
+      - file: "StudyPage.tsx"
+        loc: 272
+        status: "IMPLEMENTED"
+        notes: "Study workspace page"
+
+      - file: "study-session.tsx"
+        loc: 381
+        status: "IMPLEMENTED"
+        notes: "Study session management UI"
+
+    gaps:
+      - "No auto-generated quizzes from knowledge matrix"
+
+  canvas_components:
+    path: "src/presentation/components/canvas"
+    files: 15
+    total_loc: 1120
+    implementations:
+      - file: "Canvas.tsx"
+        loc: 232
+        status: "IMPLEMENTED"
+        notes: "React Flow canvas wrapper"
+
+      - file: "nodes/SourceNode.tsx"
+        loc: 180
+        status: "IMPLEMENTED"
+        notes: "Source node component"
+
+      - file: "nodes/ConceptNode.tsx"
+        loc: 170
+        status: "IMPLEMENTED"
+        notes: "Concept node component"
+
+      - file: "edges/RelationshipEdge.tsx"
+        loc: 256
+        status: "IMPLEMENTED"
+        notes: "Relationship edge component"
+
+    gaps:
+      - "No AI recommendation overlay"
+      - "No accept/dismiss UI for proposals"
+      - "No drag-from-sources gesture"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# FILE SIZE VIOLATIONS (>300 LOC)
+# ═══════════════════════════════════════════════════════════════════════════
+file_size_violations:
+  critical_over_500_loc:
+    - file: "src/lib/rag/orama-index.ts"
+      loc: 551
+      priority: "P1"
+      recommendation: "Split into manager + storage + query modules"
+
+    - file: "src/lib/notes/note-store.ts"
+      loc: 525
+      priority: "P1"
+      recommendation: "Split into store + actions + queries"
+
+    - file: "src/lib/rag/types.ts"
+      loc: 517
+      priority: "P2"
+      recommendation: "Split into domain-types + api-types"
+
+    - file: "src/lib/rag/query-optimizer.ts"
+      loc: 515
+      priority: "P2"
+      recommendation: "Already split into 4 companion files"
+
+    - file: "src/lib/rag/document-chunker.ts"
+      loc: 493
+      priority: "P2"
+      recommendation: "Already split into chunk-strategies module"
+
+    - file: "src/lib/rag/hybrid-retriever.ts"
+      loc: 488
+      priority: "P2"
+      recommendation: "Split into retriever + fusion + ranking"
+
+    - file: "src/lib/rag/embedding-service.ts"
+      loc: 482
+      priority: "P2"
+      recommendation: "Split into service + cache + batch"
+
+  moderate_300_to_500_loc:
+    - "src/lib/rag/pagination.ts (437 LOC)"
+    - "src/lib/rag/live-api-websocket.ts (387 LOC)"
+    - "src/lib/rag/audio-playback.ts (386 LOC)"
+    - "src/presentation/components/study/study-session.tsx (381 LOC)"
+    - "src/lib/notes/note-indexer.ts (381 LOC)"
+    - "src/lib/notes/embedding-worker-bridge.ts (367 LOC)"
+    - "src/lib/knowledge/source-import.ts (365 LOC)"
+    - "src/lib/rag/transformers-loader.ts (354 LOC)"
+    - "src/presentation/components/knowledge/SourcePreviewPanel.tsx (338 LOC)"
+    - "src/lib/notes/note-tree-utils.ts (337 LOC)"
+    - "src/presentation/components/study/quiz-preview.tsx (329 LOC)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCY MAPPING
+# ═══════════════════════════════════════════════════════════════════════════
+dependencies:
+  external_libraries:
+    - package: "@orama/orama"
+      used_by: ["orama-index", "note-indexer"]
+      purpose: "Vector database WASM"
+
+    - package: "@xenova/transformers"
+      used_by: ["embedding-service"]
+      purpose: "Local embedding generation"
+
+    - package: "@google/genai"
+      used_by: ["metadata-extractor", "flashcard-generator", "quiz-generator"]
+      purpose: "Gemini API for AI operations"
+
+    - package: "@xyflow/react"
+      used_by: ["canvas/types"]
+      purpose: "React Flow for canvas visualization"
+
+    - package: "dexie"
+      used_by: ["note-store"]
+      purpose: "IndexedDB wrapper"
+
+  internal_dependencies:
+    - from: "knowledge/source-import"
+      to: "knowledge/metadata-extractor"
+      status: "WIRED"
+
+    - from: "knowledge/source-import"
+      to: "knowledge/pdf-parser"
+      status: "WIRED"
+
+    - from: "knowledge/source-import"
+      to: "knowledge/url-fetcher"
+      status: "WIRED"
+
+    - from: "knowledge/source-import"
+      to: "rag/orama-index"
+      status: "MISSING - GAP-001"
+
+    - from: "chat/ChatPanel"
+      to: "rag/hybrid-retriever"
+      status: "MISSING - GAP-002"
+
+    - from: "knowledge/SourceCard"
+      to: "knowledge/synthesis-service"
+      status: "MISSING - GAP-003"
+
+    - from: "canvas/Canvas"
+      to: "canvas/linkage-analyzer"
+      status: "MISSING - GAP-004"
+
+    - from: "chat/ChatConversation"
+      to: "rag/CitationSidebar"
+      status: "MISSING - GAP-005"
+
+    - from: "knowledge/KnowledgePage"
+      to: "knowledge/knowledge-graph"
+      status: "MISSING - GAP-006"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXPORT ANALYSIS
+# ═══════════════════════════════════════════════════════════════════════════
+export_analysis:
+  knowledge_lib_exports: 45
+  rag_lib_exports: 124
+  notes_lib_exports: 68
+  study_lib_exports: 38
+  canvas_lib_exports: 15
+
+  unused_exports:
+    - "citation-formatter exports not used in chat"
+    - "RAGChatPanel not connected to main chat flow"
+    - "CitationSidebar exists but not wired to responses"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEXT STEPS
+# ═══════════════════════════════════════════════════════════════════════════
+next_steps:
+  - task: "map-use-cases"
+    priority: "P0"
+    effort: "2h"
+    description: "Map existing implementations to 4 use cases"
+
+  - task: "identify-broken-connections"
+    priority: "P0"
+    effort: "2h"
+    description: "Document 6 integration gaps with root causes"
+
+  - task: "document-integration-gaps"
+    priority: "P0"
+    effort: "1h"
+    description: "Create prioritized gap list with estimates"

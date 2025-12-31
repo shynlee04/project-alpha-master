@@ -64,17 +64,22 @@ export function BentoCard({
 }: BentoCardProps) {
   const { t } = useTranslation();
 
-  // Size-based styling
+  // Size-based styling - optimized for 120px base row height
   const sizeStyles: Record<BentoCardSize, string> = {
-    small: 'col-span-1 row-span-1',
-    medium: 'col-span-2 row-span-2',
-    large: 'col-span-3 row-span-3',
-    'extra-large': 'col-span-4 row-span-4',
-    wide: 'col-span-2 row-span-1',
-    tall: 'col-span-1 row-span-2',
+    small: 'col-span-1 row-span-1',         // 1x1 (Standard square)
+    medium: 'col-span-2 row-span-2',        // 2x2 (Featured item)
+    large: 'col-span-3 row-span-3',         // 3x3 (Hero content)
+    'extra-large': 'col-span-4 row-span-4', // 4x4 (Full dashboard)
+    wide: 'col-span-2 row-span-1',          // 2x1 (Banner/Header)
+    tall: 'col-span-1 row-span-2',          // 1x2 (Sidebar/List)
   };
 
   const gridClass = sizeStyles[size] || 'col-span-2 row-span-2';
+
+  // Dynamic typography based on card size
+  const titleSizeClass = size === 'small' || size === 'tall'
+    ? 'text-base'
+    : 'text-lg md:text-xl';
 
   return (
     <div
@@ -82,7 +87,7 @@ export function BentoCard({
       className={`
         relative bg-card border-2 border-border
         shadow-pixel hover:shadow-pixel-lg
-        hover:scale-[1.02] hover:border-primary/50
+        hover:scale-[1.01] hover:border-primary/50
         focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-2
         transition-all duration-200 ease-out
         ${gridClass} ${className}
@@ -92,47 +97,52 @@ export function BentoCard({
         outline-none
         focus:outline-none
         group
+        flex flex-col
       `}
       role="button"
       tabIndex={0}
       onClick={onClick}
       aria-label={t('bentoCard.ariaLabel', { title })}
     >
-      {/* Topic Badge */}
+      {/* Topic Badge - Subtle placement */}
       {topic && (
-        <div className="absolute top-3 right-3">
-          <span className="inline-block px-2 py-1 text-xs font-pixel text-primary bg-background/80 border border-border/50">
+        <div className="absolute top-2 right-2 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
+          <span className="inline-block px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-pixel text-muted-foreground bg-background/50 border border-border/50 backdrop-blur-sm">
             {topic}
           </span>
         </div>
       )}
 
-      {/* Card Content */}
-      <div className="h-full flex flex-col p-2">
-        {/* Header with icon and title */}
-        <div className="flex items-start gap-4 mb-3">
+      {/* Card Content Container */}
+      <div className="flex-1 flex flex-col h-full relative z-0">
+
+        {/* Header: Icon + Title */}
+        <div className="flex flex-col gap-3 mb-2">
           {icon && (
-            <div className="text-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-              {icon}
+            <div className="text-primary/80 group-hover:text-primary transition-colors duration-300 group-hover:scale-110 origin-left">
+              {React.cloneElement(icon as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
+                className: `w-6 h-6 ${size === 'medium' ? 'md:w-8 md:h-8' : ''}`
+              })}
             </div>
           )}
-          <div className="flex-1">
-            <h3 className="text-foreground font-pixel-heavy text-lg leading-tight group-hover:text-primary transition-colors">
+
+          <div className="pr-12">
+            <h3 className={`text-foreground font-pixel-heavy leading-tight group-hover:text-primary transition-colors break-words line-clamp-2 ${titleSizeClass}`}>
               {title}
             </h3>
           </div>
         </div>
 
-        {/* Description */}
-        {description && (
-          <p className="text-muted-foreground text-sm mb-4 line-clamp-3 font-sans leading-relaxed">
+        {/* Description - Shown mainly on larger cards */}
+        {description && size !== 'small' && (
+          <p className="text-muted-foreground text-xs md:text-sm font-sans leading-relaxed line-clamp-3 mt-1">
             {description}
           </p>
         )}
 
-        {/* Interactive Content */}
+        {/* Custom Content Slot */}
         {content && (
-          <div className="mt-auto">
+          <div className="mt-auto pt-4">
             {content}
           </div>
         )}
@@ -152,7 +162,7 @@ export function BentoGrid({
 }: BentoGridProps) {
   const { t } = useTranslation();
 
-  // Filter cards by topic and search query
+  // Filter cards logic remains same...
   const filteredCards = React.useMemo(() => {
     return cards.filter(card => {
       if (selectedTopic && card.topic !== selectedTopic) return false;
@@ -176,83 +186,74 @@ export function BentoGrid({
   };
 
   return (
-    <div className={`flex flex-col gap-8 ${className}`}>
-      {/* Search and Topic Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-6 items-start md:items-end justify-between">
-        {/* Search Input */}
-        <div className="flex-1 w-full md:w-auto md:max-w-md">
-          <div className="relative group">
-            <input
-              type="text"
-              placeholder={t('bentoGrid.searchPlaceholder', 'Type command or search...')}
-              value={searchQuery}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              className="w-full px-4 py-3 bg-background border-2 border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none shadow-pixel group-hover:shadow-pixel-primary transition-all font-mono text-sm"
-              aria-label={t('bentoGrid.searchAriaLabel')}
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
-              <span className="text-xs font-pixel bg-muted px-1.5 py-0.5 border border-border">/</span>
-            </div>
+    <div className={`flex flex-col gap-6 ${className}`}>
+
+      {/* Controls Bar: Unified visual line */}
+      <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between border-b-2 border-border/50 pb-4">
+
+        {/* Search Input - Compact design */}
+        <div className="relative w-full md:w-64 group transition-all duration-300 focus-within:md:w-80">
+          <input
+            type="text"
+            placeholder={t('bentoGrid.searchPlaceholder', 'SEARCH_PORTAL...')}
+            value={searchQuery}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+            className="w-full pl-3 pr-10 py-2 bg-background/50 border-2 border-border text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:bg-background outline-none transition-all font-mono text-xs uppercase"
+            aria-label={t('bentoGrid.searchAriaLabel')}
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <span className="text-[10px] text-muted-foreground font-pixel opacity-50">/</span>
           </div>
         </div>
 
-        {/* Topic Filter Tabs */}
+        {/* Topic Filter Tabs - Minimalist */}
         <div
-          className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-thin"
+          className="flex gap-1 overflow-x-auto scrollbar-none pb-1 md:pb-0"
           role="tablist"
-          aria-label={t('bentoGrid.topicFilterAriaLabel')}
         >
           <button
             onClick={() => onTopicSelect?.('')}
-            className={`px-4 py-2 text-sm font-pixel transition-all duration-200 ease-out border-2 shrink-0 ${!selectedTopic
-              ? 'bg-primary text-primary-foreground border-primary shadow-pixel-sm'
-              : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-foreground'
+            className={`px-3 py-1.5 text-xs font-pixel uppercase tracking-wide transition-all border-2 shrink-0 ${!selectedTopic
+              ? 'bg-primary/10 border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-accent'
               }`}
-            role="tab"
-            aria-selected={!selectedTopic}
           >
-            {t('bentoGrid.allTopics', 'ALL.SYS')}
+            {t('bentoGrid.allTopics', 'ALL')}
           </button>
           {topics.map((topic) => (
             <button
               key={topic}
               onClick={() => onTopicSelect?.(topic)}
-              className={`px-4 py-2 text-sm font-pixel transition-all duration-200 ease-out border-2 shrink-0 ${selectedTopic === topic
-                ? 'bg-primary text-primary-foreground border-primary shadow-pixel-sm'
-                : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-foreground'
+              className={`px-3 py-1.5 text-xs font-pixel uppercase tracking-wide transition-all border-2 shrink-0 ${selectedTopic === topic
+                ? 'bg-primary/10 border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
-              role="tab"
-              aria-selected={selectedTopic === topic}
             >
-              {topic.toUpperCase()}
+              {topic}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Bento Grid */}
+      {/* Bento Grid - Tighter gaps and rows */}
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[minmax(180px,auto)]"
-        aria-label={t('bentoGrid.gridAriaLabel')}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-[minmax(120px,auto)]"
       >
         {filteredCards.map((card) => (
           <BentoCard
             key={card.id}
             {...card}
             onKeyDown={(e) => handleKeyDown(e, card)}
-            className="focus-visible:ring-2 focus-visible:ring-primary"
+            className="h-full w-full"
           />
         ))}
       </div>
 
-      {/* Empty State */}
+      {/* Empty State - Minimal */}
       {filteredCards.length === 0 && (
-        <div className="text-center py-16 border-2 border-dashed border-border bg-card/30">
-          <p className="text-muted-foreground text-xl font-pixel">
-            {t('bentoGrid.noResults', 'NO_DATA_FOUND')}
-          </p>
-          <p className="text-muted-foreground/60 text-sm mt-2 font-mono">
-            {t('bentoGrid.tryDifferentSearch', 'Check your query syntax...')}
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-border/50 opacity-70">
+          <p className="text-muted-foreground font-pixel text-lg">
+            {t('bentoGrid.noResults', 'VOID_DETECTED')}
           </p>
         </div>
       )}

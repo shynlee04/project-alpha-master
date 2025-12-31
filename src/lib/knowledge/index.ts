@@ -28,3 +28,11 @@ export {
     metadataExtractor,
     type ExtractedMetadata,
 } from './metadata-extractor';
+
+export {
+    SourceRAGBridge,
+    createSourceRAGBridge,
+    type SourceIndexingStatus,
+    type SourceIndexingResult,
+    type SourceRAGBridgeConfig,
+} from './source-rag-bridge';

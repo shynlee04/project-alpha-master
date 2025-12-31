@@ -9,7 +9,7 @@
  * - useWorkspace() hook for component access
  */
 
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { WorkspaceContextValue, WorkspaceProviderProps } from './workspace-types';
 import { useWorkspaceState } from './hooks/useWorkspaceState';
@@ -17,6 +17,7 @@ import { useSyncOperations } from './hooks/useSyncOperations';
 import { useEventBusEffects } from './hooks/useEventBusEffects';
 import { useInitialSync } from './hooks/useInitialSync';
 import { useWorkspaceActions } from './hooks/useWorkspaceActions';
+import { getProject } from './project-store';
 
 // Re-export types for consumers
 export type { WorkspaceContextValue, WorkspaceProviderProps, WorkspaceState, SyncStatus, WorkspaceActions } from './workspace-types';
@@ -57,6 +58,44 @@ export function WorkspaceProvider({
     // 1. Initialize State and Refs
     const { state, setters, refs } = useWorkspaceState(initialProject);
 
+    // 1b. Load Project if missing (Fix for broken persistence)
+    // Story 13-5: Ensure handle restoration
+    const { setProjectMetadata, setDirectoryHandle, setAutoSyncState, setExclusionPatterns, setPermissionState } = setters;
+
+    // Using an effect to load the project if we have an ID but no metadata
+    // This allows the route to just pass the ID and let the provider hydrate
+    useEffect(() => {
+        if (!projectId || state.projectMetadata?.id === projectId) return;
+
+        let active = true;
+        const load = async () => {
+            try {
+                const project = await getProject(projectId);
+                if (!active) return;
+
+                if (project) {
+                    console.log('[WorkspaceProvider] Hydrated project:', project.name);
+                    setProjectMetadata(project);
+                    setDirectoryHandle(project.fsaHandle);
+                    setPermissionState('prompt'); // Reset to prompt just in case, verify later
+
+                    if (project.autoSync !== undefined) {
+                        setAutoSyncState(project.autoSync);
+                    }
+                    if (project.exclusionPatterns) {
+                        setExclusionPatterns(project.exclusionPatterns);
+                    }
+                } else {
+                    console.warn('[WorkspaceProvider] Project not found:', projectId);
+                }
+            } catch (err) {
+                console.error('[WorkspaceProvider] Failed to load project:', err);
+            }
+        };
+        load();
+        return () => { active = false; };
+    }, [projectId, state.projectMetadata?.id, setProjectMetadata, setDirectoryHandle, setAutoSyncState, setExclusionPatterns, setPermissionState]);
+
     // 2. Initialize Sync Operations (performSync, syncNow)
     const syncOperations = useSyncOperations(setters, refs);
 
@@ -67,7 +106,7 @@ export function WorkspaceProvider({
         setters,
         refs,
         syncOperations,
-        projectId
+        projectId || '' // Pass empty string if undefined to satisfy type
     );
 
     // 4. Register Effects
