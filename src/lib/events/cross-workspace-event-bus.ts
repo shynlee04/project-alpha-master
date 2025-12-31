@@ -79,6 +79,20 @@ export interface ProjectStateChangeEvent {
     timestamp: Date
 }
 
+/**
+ * Workspace change event
+ *
+ * Emitted when user switches between workspaces (IDE → Knowledge, etc.)
+ * Stores and components can react to workspace transitions (e.g., filter data, update UI).
+ */
+export interface WorkspaceChangeEvent {
+    /** Previous workspace */
+    from: WorkspaceId
+    /** New workspace */
+    to: WorkspaceId
+    timestamp: string
+}
+
 // ============================================================================
 // Event Bus Class
 // ============================================================================
@@ -101,6 +115,7 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
         AGENT_CONFIG_CHANGE: 'agent:config:change',
         SYNC_STATUS: 'sync:status',
         PROJECT_STATE_CHANGE: 'project:state:change',
+        WORKSPACE_CHANGED: 'workspace:changed',
     } as const;
 
     // ========================================================================
@@ -254,6 +269,47 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
     }
 
     // ========================================================================
+    // Workspace Change Events
+    // ========================================================================
+
+    /**
+     * Emit workspace change event
+     *
+     * Called when user switches between workspaces (e.g., IDE → Knowledge).
+     * Other stores can filter data, update UI state, or reload configurations.
+     */
+    emitWorkspaceChanged(event: WorkspaceChangeEvent): void {
+        console.log('[CrossWorkspaceEventBus] Workspace changed:', event);
+        this.emit(CrossWorkspaceEventBus.EVENTS.WORKSPACE_CHANGED, event);
+    }
+
+    /**
+     * Subscribe to workspace change events
+     *
+     * Use this to react when the user switches workspaces.
+     *
+     * @example
+     * ```ts
+     * crossWorkspaceEventBus.onWorkspaceChanged((event) => {
+     *   console.log(`User switched from ${event.from} to ${event.to}`);
+     *   // Filter agents for new workspace
+     *   // Update active project
+     *   // Reload workspace-specific configuration
+     * })
+     * ```
+     */
+    onWorkspaceChanged(listener: (event: WorkspaceChangeEvent) => void): void {
+        this.on(CrossWorkspaceEventBus.EVENTS.WORKSPACE_CHANGED, listener);
+    }
+
+    /**
+     * Unsubscribe from workspace change events
+     */
+    offWorkspaceChanged(listener: (event: WorkspaceChangeEvent) => void): void {
+        this.off(CrossWorkspaceEventBus.EVENTS.WORKSPACE_CHANGED, listener);
+    }
+
+    // ========================================================================
     // Utility Methods
     // ========================================================================
 
@@ -287,4 +343,5 @@ export type {
     AgentConfigChangeEvent,
     SyncStatusEvent,
     ProjectStateChangeEvent,
+    WorkspaceChangeEvent,
 };

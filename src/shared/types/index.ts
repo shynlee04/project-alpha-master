@@ -7,10 +7,8 @@
  * @module shared/types
  */
 
-/**
- * Workspace type enum
- */
-export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
+// Re-export WorkspaceType from domain layer (single source of truth)
+export type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
  * Common status types

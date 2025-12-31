@@ -18,7 +18,7 @@
  */
 
 import { useEffect } from 'react';
-import { crossWorkspaceEventBus, type AgentConfigChangeEvent } from './cross-workspace-event-bus';
+import { crossWorkspaceEventBus, type AgentConfigChangeEvent, type WorkspaceChangeEvent, type FileChangeEvent, type SyncStatusEvent, type ProjectStateChangeEvent } from './cross-workspace-event-bus';
 import { useAgentsStore } from '@/stores/agents-store';
 
 /**
@@ -108,6 +108,116 @@ export function useAllCrossWorkspaceEvents(): void {
             // crossWorkspaceEventBus.offFileChange(handlers.fileChange);
             // crossWorkspaceEventBus.offSyncStatus(handlers.syncStatus);
             // crossWorkspaceEventBus.offProjectStateChange(handlers.projectStateChange);
+        };
+    }, []);
+}
+
+/**
+ * Subscribe to workspace change events
+ *
+ * Use this hook in components that need to react to workspace transitions.
+ * Automatically triggers when user switches between workspaces (IDE ↔ Knowledge ↔ Study ↔ Notes).
+ *
+ * @governance WB-8.3
+ *
+ * @example
+ * ```tsx
+ * function AgentSelector() {
+ *   useWorkspaceChangedEvents();
+ *   const agents = useAgentsStore(state => state.getAgentsForWorkspace(currentWorkspace));
+ *   return <Select>{agents.map(...)}</Select>
+ * }
+ * ```
+ */
+export function useWorkspaceChangedEvents(): void {
+    useEffect(() => {
+        const handleWorkspaceChanged = (event: WorkspaceChangeEvent) => {
+            console.log('[CrossWorkspaceEvents] Workspace changed:', event);
+
+            // Trigger store re-render for filtered agents
+            // Components using getAgentsForWorkspace() will automatically update
+            useAgentsStore.getState();
+
+            // Optional: Show toast notification
+            // import { toast } from 'sonner';
+            // toast.info(`Switched to ${event.to} workspace`);
+        };
+
+        crossWorkspaceEventBus.onWorkspaceChanged(handleWorkspaceChanged);
+
+        return () => {
+            crossWorkspaceEventBus.offWorkspaceChanged(handleWorkspaceChanged);
+        };
+    }, []);
+}
+
+/**
+ * Subscribe to file change events from other workspaces
+ *
+ * Use this to react when files are created/modified/deleted in other workspaces.
+ *
+ * @governance WB-8.3
+ */
+export function useFileChangeEvents(): void {
+    useEffect(() => {
+        const handleFileChange = (event: FileChangeEvent) => {
+            console.log('[CrossWorkspaceEvents] File changed:', event);
+
+            // Trigger re-render for file trees, editors, etc.
+            // Components can subscribe to specific file paths or projects
+        };
+
+        crossWorkspaceEventBus.onFileChange(handleFileChange);
+
+        return () => {
+            crossWorkspaceEventBus.offFileChange(handleFileChange);
+        };
+    }, []);
+}
+
+/**
+ * Subscribe to sync status events from other workspaces
+ *
+ * Use this to show sync progress/status indicators.
+ *
+ * @governance WB-8.3
+ */
+export function useSyncStatusEvents(): void {
+    useEffect(() => {
+        const handleSyncStatus = (event: SyncStatusEvent) => {
+            console.log('[CrossWorkspaceEvents] Sync status:', event);
+
+            // Update sync status UI
+            // Show progress indicators, error messages, etc.
+        };
+
+        crossWorkspaceEventBus.onSyncStatus(handleSyncStatus);
+
+        return () => {
+            crossWorkspaceEventBus.offSyncStatus(handleSyncStatus);
+        };
+    }, []);
+}
+
+/**
+ * Subscribe to project state change events from other workspaces
+ *
+ * Use this to react when projects are opened/closed or bindings change.
+ *
+ * @governance WB-8.3
+ */
+export function useProjectStateChangeEvents(): void {
+    useEffect(() => {
+        const handleProjectStateChange = (event: ProjectStateChangeEvent) => {
+            console.log('[CrossWorkspaceEvents] Project state changed:', event);
+
+            // Update project lists, binding UIs, etc.
+        };
+
+        crossWorkspaceEventBus.onProjectStateChange(handleProjectStateChange);
+
+        return () => {
+            crossWorkspaceEventBus.offProjectStateChange(handleProjectStateChange);
         };
     }, []);
 }

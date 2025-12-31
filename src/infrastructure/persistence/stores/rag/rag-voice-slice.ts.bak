@@ -53,24 +53,20 @@ export const createRAGVoiceSlice: StateCreator<RAGVoiceState> = (set, get) => ({
   },
 
   incrementRetryCount: () => {
-    set((state) => {
-      return {
-        voiceConnection: {
-          ...state.voiceConnection,
-          retryCount: state.voiceConnection.retryCount + 1,
-        },
-      } as Partial<RAGVoiceState>;
-    });
+    set((state) => ({
+      voiceConnection: {
+        ...state.voiceConnection,
+        retryCount: state.voiceConnection.retryCount + 1,
+      },
+    } as Partial<RAGVoiceState>);
   },
 
   resetRetryCount: () => {
-    set((state) => {
-      return {
-        voiceConnection: {
-          ...state.voiceConnection,
-          retryCount: 0,
-        },
-      } as Partial<RAGVoiceState>;
-    });
+    set((state) => ({
+      voiceConnection: {
+        ...state.voiceConnection,
+        retryCount: 0,
+      },
+    } as Partial<RAGVoiceState>);
   },
 });

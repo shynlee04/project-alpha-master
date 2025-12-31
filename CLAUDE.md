@@ -153,7 +153,7 @@ pnpm i18n:extract
 pnpm tsc --noEmit
 ```
 
-## Key Directories & Files
+## Key Directories & Files (Updated 2026-01-01)
 
 ```
 src/
@@ -166,30 +166,60 @@ src/
 │   ├── ui/              # Reusable UI components (Button, Dialog, Input, etc.)
 │   │   └── icons/       # Icon components (AIIcon, TerminalIcon, etc.)
 │   └── layout/          # Layout components (IDELayout, IDEHeaderBar, etc.)
+├── core/                # ✅ NEW: Domain layer entities (Agent, Provider, Tool, Conversation)
+│   ├── entities/        # Business entities with workspace bindings
+│   ├── rules/           # Business rules and validation
+│   └── value-objects/   # Immutable value types
+├── domain/              # ✅ NEW: Domain services and use cases
+│   ├── entities/        # Domain-specific entities
+│   ├── services/        # Orchestration services
+│   └── use-cases/       # Business use cases
+├── infrastructure/      # ✅ NEW: Infrastructure layer (persistence, events)
+│   ├── persistence/
+│   │   ├── stores/
+│   │   │   ├── agents/          # ✅ NEW: Agent store slices
+│   │   │   ├── canvas/          # ✅ NEW: Canvas store slices
+│   │   │   ├── conversation/    # ✅ NEW: Conversation store slices
+│   │   │   ├── providers/       # ✅ NEW: Provider store slices (consolidated)
+│   │   │   └── rag/             # ✅ NEW: RAG store slices
+│   │   └── dexie/          # IndexedDB database definitions
+│   └── events/         # Event system (cross-workspace event bus)
 ├── lib/
 │   ├── agent/           # AI agent infrastructure
 │   │   ├── facades/    # Agent tool facades (FileTools, TerminalTools)
 │   │   ├── providers/  # Provider adapters, model registry, credential vault
 │   │   ├── tools/      # Individual agent tools (read, write, execute)
-│   │   └── hooks/      # React hooks for agent operations
+│   │   ├── hooks/      # React hooks for agent operations
+│   │   ├── tool-permission-manager.ts       # ✅ Tool permission checking
+│   │   ├── workspace-permission-manager.ts  # ✅ Workspace-specific permissions
+│   │   └── workspace-tool-filter.ts         # ✅ Workspace filtering logic
 │   ├── filesystem/     # File system sync and FSA utilities
 │   ├── webcontainer/   # WebContainer lifecycle and process management
 │   ├── workspace/      # Workspace state and project persistence
 │   ├── editor/         # Monaco editor integration
-│   ├── events/         # Event system
+│   ├── events/         # Event system (store-events, workspace-events)
 │   ├── state/          # Zustand stores (IDE, statusbar, navigation, file-sync-status)
 │   └── utils/          # Utilities including error-handling.ts
-├── routes/              # TanStack Router file-based routes
+├── presentation/       # ✅ NEW: Presentation layer components
+│   └── components/     # UI components (moved from src/components)
+├── routes/             # TanStack Router file-based routes
 │   └── api/            # API endpoints (/api/chat)
 ├── hooks/              # Custom React hooks
 ├── i18n/               # Internationalization files (en.json, vi.json)
-├── stores/             # Agent-specific stores (agents.ts, agent-selection.ts)
+├── stores/             # ✅ DEPRECATED: Moving to infrastructure/persistence/stores/
 └── styles/             # Global styles including design-tokens.css, animations.css
 
 .agent/rules/            # AI agent rules and prompts
 _bmad-output/           # BMAD method artifacts and sprint tracking
 docs/2025-12-23/        # Comprehensive technical documentation
 ```
+
+**Architecture Changes (Ralph Loop 2026-01-01)**:
+- ✅ **Four-Layer Architecture**: Core (Domain) → Domain (Services) → Infrastructure (Persistence) → Presentation (UI)
+- ✅ **Provider Store Consolidated**: 3 duplicate stores (765 lines) → 1 store (4 slices, 850 lines)
+- ✅ **Agent Workspace Bindings**: Added workspace filtering to agents-store.ts
+- ✅ **Cross-Workspace Events**: Added WorkspaceChangeEvent to event bus
+- ✅ **December 2025 Zustand Patterns**: Slice pattern, persist on combined store, partialize for selective persistence
 
 ## Architecture & Key Components
 

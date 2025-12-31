@@ -1,0 +1,473 @@
+src/
+|-- __tests__
+|   `-- chat.test.ts
+|-- application
+|   |-- dtos
+|   |-- services
+|   |   |-- AgentService.ts
+|   |   `-- ProviderService.ts
+|   `-- use-cases
+|-- components
+|   `-- rag
+|       |-- CitationCountBadge.tsx
+|       |-- CitationSidebar.tsx
+|       |-- __tests__
+|       `-- index.ts
+|-- core
+|   |-- entities
+|   |   |-- Agent.ts
+|   |   |-- Conversation.ts
+|   |   |-- Provider.ts
+|   |   `-- Tool.ts
+|   |-- index.ts
+|   |-- rules
+|   `-- value-objects
+|-- data
+|   |-- demo.punk-songs.ts
+|   `-- mock-sources.json
+|-- domain
+|   |-- entities
+|   |   `-- agent.ts
+|   |-- services
+|   |   |-- agent-orchestration-service.ts
+|   |   `-- workspace-transition-service.ts
+|   |-- use-cases
+|   |   `-- switch-workspace-use-case.ts
+|   `-- value-objects
+|       |-- tool-permission.ts
+|       |-- workspace-binding.ts
+|       `-- workspace-type.ts
+|-- hooks
+|   |-- __tests__
+|   |   |-- useCanvasDrop.test.ts
+|   |   `-- useResponsive.test.ts
+|   |-- useAgents.ts
+|   |-- useCanvasDrop.ts
+|   |-- useCapabilityDetection.test.ts
+|   |-- useCapabilityDetection.ts
+|   |-- useIdeStatePersistence.ts
+|   |-- useMediaQuery.ts
+|   |-- useProcessManager.ts
+|   |-- useQuizSession.ts
+|   |-- useQuizTimer.ts
+|   |-- useResponsive.ts
+|   `-- useUnsavedWorkPreservation.ts
+|-- i18n
+|   |-- LocaleProvider.tsx
+|   |-- __tests__
+|   |   `-- config.test.ts
+|   |-- config.ts
+|   |-- en
+|   |   `-- rag.json
+|   |-- en.json
+|   |-- vi
+|   |   `-- rag.json
+|   `-- vi.json
+|-- infrastructure
+|   |-- events
+|   |   |-- cross-workspace-event-bus.ts
+|   |   |-- cross-workspace-event-bus.ts.bak
+|   |   |-- event-bus.ts
+|   |   |-- index.ts
+|   |   `-- index.ts.bak
+|   |-- external
+|   |-- framework
+|   `-- persistence
+|       |-- conversation-store.test.ts
+|       |-- dexie-db-ai-types.ts
+|       |-- dexie-db-class.ts
+|       |-- dexie-db-core-types.ts
+|       |-- dexie-db-helpers.ts
+|       |-- dexie-db-knowledge-types.ts
+|       |-- dexie-db-migrations.ts
+|       |-- dexie-db-session-types.ts
+|       |-- dexie-db.ts
+|       |-- dexie-storage.ts
+|       |-- index.ts
+|       |-- provider-store.test.ts
+|       |-- rag-store-helpers.ts
+|       |-- rag-store-types.ts
+|       |-- state-orchestrator.ts
+|       `-- stores
+|-- lib
+|   |-- agent
+|   |   |-- __tests__
+|   |   |-- deep-think
+|   |   |-- facades
+|   |   |-- factory.ts
+|   |   |-- hooks
+|   |   |-- memory
+|   |   |-- multimodal
+|   |   |-- preferences
+|   |   |-- prompt-composer-config.ts
+|   |   |-- prompt-composer-types.ts
+|   |   |-- prompt-composer.ts
+|   |   |-- providers
+|   |   |-- routes
+|   |   |-- suggestions
+|   |   |-- system-prompt.ts
+|   |   |-- tool-permission-manager.ts
+|   |   |-- tools
+|   |   |-- workspace-execution-context.ts
+|   |   |-- workspace-permission-manager.ts
+|   |   `-- workspace-tool-filter.ts
+|   |-- audio
+|   |   |-- audio-generation.ts
+|   |   `-- audio-storage.ts
+|   |-- canvas
+|   |   |-- index.ts
+|   |   |-- linkage-analyzer.ts
+|   |   |-- linkage-types.ts
+|   |   `-- types.ts
+|   |-- demo
+|   |   `-- sample-conversations.json
+|   |-- editor
+|   |   |-- __tests__
+|   |   |-- index.ts
+|   |   `-- language-utils.ts
+|   |-- events
+|   |   |-- __tests__
+|   |   |-- cross-workspace-event-bus.ts
+|   |   |-- index.ts
+|   |   |-- store-events.ts
+|   |   |-- use-cross-workspace-events.ts
+|   |   |-- use-workspace-event.ts
+|   |   `-- workspace-events.ts
+|   |-- filesync
+|   |   |-- file-sync-service.ts
+|   |   |-- ide-file-sync-service.ts
+|   |   |-- index.ts
+|   |   |-- knowledge-file-sync-service.ts
+|   |   `-- project-knowledge-sync.ts
+|   |-- filesystem
+|   |   |-- __tests__
+|   |   |-- constants.ts
+|   |   |-- dir-ops.ts
+|   |   |-- directory-walker.ts
+|   |   |-- exclusion-config.ts
+|   |   |-- file-ops.ts
+|   |   |-- file-snapshot-store.ts
+|   |   |-- fs-errors.ts
+|   |   |-- fs-types.ts
+|   |   |-- fsa-handle-manager.ts
+|   |   |-- handle-utils.ts
+|   |   |-- hash-utils.ts
+|   |   |-- index.ts
+|   |   |-- local-fs-adapter.ts
+|   |   |-- path-guard.ts
+|   |   |-- path-utils.ts
+|   |   |-- permission-lifecycle.test.ts
+|   |   |-- permission-lifecycle.ts
+|   |   |-- project-context-provider.ts
+|   |   |-- sync-executor.ts
+|   |   |-- sync-manager
+|   |   |-- sync-manager.test.ts
+|   |   |-- sync-manager.ts
+|   |   |-- sync-operations.ts
+|   |   |-- sync-planner.ts
+|   |   |-- sync-transaction
+|   |   |-- sync-transaction-log.ts
+|   |   |-- sync-types.ts
+|   |   |-- sync-utils.ts
+|   |   `-- validation.ts
+|   |-- init
+|   |   |-- seed-api-keys.ts
+|   |   `-- seed-workspace-permissions.ts
+|   |-- knowledge
+|   |   |-- __tests__
+|   |   |-- flashcard-generator.ts
+|   |   |-- flashcard-utils.ts
+|   |   |-- gemini-image-mocks.ts
+|   |   |-- gemini-image-processor.ts
+|   |   |-- gemini-image-prompts.ts
+|   |   |-- gemini-image-types.ts
+|   |   |-- gemini-pdf-api.ts
+|   |   |-- gemini-pdf-mocks.ts
+|   |   |-- gemini-pdf-processor.ts
+|   |   |-- gemini-pdf-processor.ts.backup
+|   |   |-- gemini-pdf-prompts.ts
+|   |   |-- gemini-pdf-types.ts
+|   |   |-- gemini-url-processor.ts
+|   |   |-- graph
+|   |   |-- index.ts
+|   |   |-- knowledge-graph-types.ts
+|   |   |-- knowledge-graph.ts
+|   |   |-- metadata-extractor.ts
+|   |   |-- organization-engine.ts
+|   |   |-- organization-strategies.ts
+|   |   |-- organization-types.ts
+|   |   |-- pdf-parser.ts
+|   |   |-- recommendation-generator.ts
+|   |   |-- relevancy-factors.ts
+|   |   |-- relevancy-scorer.ts
+|   |   |-- relevancy-types.ts
+|   |   |-- source-import-handlers.ts
+|   |   |-- source-import-types.ts
+|   |   |-- source-import-validators.ts
+|   |   |-- source-import.ts
+|   |   |-- source-import.ts.backup
+|   |   |-- source-rag-bridge.ts
+|   |   |-- subject-classifier-types.ts
+|   |   |-- subject-classifier.ts
+|   |   |-- subject-scoring.ts
+|   |   |-- subject-taxonomy.ts
+|   |   |-- synthesis-api-types.ts
+|   |   |-- synthesis-mocks.ts
+|   |   |-- synthesis-prompts.ts
+|   |   |-- synthesis-service.ts
+|   |   |-- synthesis-types.ts
+|   |   |-- types.ts
+|   |   |-- url-fetcher-content-extractor.ts
+|   |   |-- url-fetcher-types.ts
+|   |   |-- url-fetcher.ts
+|   |   |-- vault-analyzer.ts
+|   |   `-- verify-rag-bridge.ts
+|   |-- mocks
+|   |   `-- empty.ts
+|   |-- monitoring
+|   |   |-- __tests__
+|   |   |-- performance-monitor.ts
+|   |   `-- sentry.ts
+|   |-- notes
+|   |   |-- __tests__
+|   |   |-- ai-prompt-store.ts
+|   |   |-- embedding-worker-bridge.ts
+|   |   |-- index.ts
+|   |   |-- markdown-converter.ts
+|   |   |-- note-ai-service.ts
+|   |   |-- note-event-emitter.ts
+|   |   |-- note-file-sync.ts
+|   |   |-- note-indexer.ts
+|   |   |-- note-navigation-store.ts
+|   |   |-- note-retriever.ts
+|   |   |-- note-store.ts
+|   |   |-- note-tree-utils.ts
+|   |   |-- types-embedding.ts
+|   |   `-- types.ts
+|   |-- pdf
+|   |   |-- pdf-vision-capture.ts
+|   |   |-- pdf-vision-hook.ts
+|   |   |-- pdf-vision-manager.ts
+|   |   `-- pdf-vision-types.ts
+|   |-- persistence
+|   |   |-- __tests__
+|   |   |-- db.ts
+|   |   `-- index.ts
+|   |-- rag
+|   |   |-- __tests__
+|   |   |-- audio-capture.ts
+|   |   |-- audio-playback.ts
+|   |   |-- chunk-strategies
+|   |   |-- chunk-strategies.ts
+|   |   |-- citation-formatter.ts
+|   |   |-- citation-types.ts
+|   |   |-- cloud-embedder.ts
+|   |   |-- document-chunker.ts
+|   |   |-- embedding-cache.ts
+|   |   |-- embedding-service.ts
+|   |   |-- hybrid-retriever.ts
+|   |   |-- index.ts
+|   |   |-- indexeddb-storage.ts
+|   |   |-- live-api-types.ts
+|   |   |-- live-api-websocket.ts
+|   |   |-- orama-index.ts
+|   |   |-- pagination.ts
+|   |   |-- query-cache.ts
+|   |   |-- query-optimizer-config.ts
+|   |   |-- query-optimizer-helpers.ts
+|   |   |-- query-optimizer-types.ts
+|   |   |-- query-optimizer.ts
+|   |   |-- rag-chat.ts
+|   |   |-- rrf-fusion.ts
+|   |   |-- search-highlighter.ts
+|   |   |-- token-counter.ts
+|   |   |-- transformers-loader.ts
+|   |   `-- types.ts
+|   |-- state
+|   |   |-- __tests__
+|   |   |-- canvas-store.ts
+|   |   |-- canvas-store.ts.bak
+|   |   |-- conversation-auto-restore.ts
+|   |   |-- conversation-store.test.ts
+|   |   |-- conversation-store.ts
+|   |   |-- dexie-db-ai-types.ts
+|   |   |-- dexie-db-class.ts
+|   |   |-- dexie-db-core-types.ts
+|   |   |-- dexie-db-helpers.ts
+|   |   |-- dexie-db-knowledge-types.ts
+|   |   |-- dexie-db-migrations.ts
+|   |   |-- dexie-db-session-types.ts
+|   |   |-- dexie-db.ts
+|   |   |-- dexie-db.ts.backup
+|   |   |-- dexie-storage.ts
+|   |   |-- flashcard-store.ts
+|   |   |-- hub-store.ts
+|   |   |-- hydration-manager.ts
+|   |   |-- ide-store.ts
+|   |   |-- index.ts
+|   |   |-- knowledge-store.ts
+|   |   |-- layout-store.ts
+|   |   |-- migrations
+|   |   |-- navigation-store.ts
+|   |   |-- provider-store.test.ts
+|   |   |-- provider-store.ts
+|   |   |-- quiz-history-store.ts
+|   |   |-- quiz-store.ts
+|   |   |-- rag-store-helpers.ts
+|   |   |-- rag-store-types.ts
+|   |   |-- rag-store.ts
+|   |   |-- rag-store.ts.backup
+|   |   |-- rag-store.ts.refactored
+|   |   |-- session-snapshot-manager.ts
+|   |   |-- statusbar-store.ts
+|   |   |-- study-store.ts
+|   |   |-- workspace-store.ts
+|   |   `-- workspace-types.ts
+|   |-- study
+|   |   |-- __tests__
+|   |   |-- index.ts
+|   |   |-- quiz-generator.ts
+|   |   |-- quiz-session.ts
+|   |   |-- quiz-types.ts
+|   |   `-- srs-types.ts
+|   |-- sync
+|   |   |-- __tests__
+|   |   |-- event-types.ts
+|   |   |-- file-metadata-cache.ts
+|   |   |-- index.ts
+|   |   |-- reverse-sync-service.ts
+|   |   `-- sync-event-bus.ts
+|   |-- utils
+|   |   |-- __tests__
+|   |   |-- dynamic-imports.ts
+|   |   |-- error-classification.ts
+|   |   |-- error-handling.ts
+|   |   |-- mobile-error-handling.ts
+|   |   |-- platform-detection.ts
+|   |   `-- security.ts
+|   |-- utils.ts
+|   |-- validation
+|   |   `-- chat-request.ts
+|   |-- webcontainer
+|   |   |-- __tests__
+|   |   |-- crash-recovery.ts
+|   |   |-- index.ts
+|   |   |-- manager.ts
+|   |   |-- process-manager.ts
+|   |   |-- terminal-adapter.ts
+|   |   `-- types.ts
+|   `-- workspace
+|       |-- ProjectContext.tsx
+|       |-- WorkspaceContext.test.tsx
+|       |-- WorkspaceContext.tsx
+|       |-- __tests__
+|       |-- conversation-store.test.ts
+|       |-- conversation-store.ts
+|       |-- file-sync-status-store.ts
+|       |-- hooks
+|       |-- ide-state-store.test.ts
+|       |-- ide-state-store.ts
+|       |-- index.ts
+|       |-- project-store.test.ts
+|       |-- project-store.ts
+|       |-- session-snapshot.ts
+|       |-- threads-store.ts
+|       |-- workspace-transition-manager.ts
+|       `-- workspace-types.ts
+|-- logo.svg
+|-- mocks
+|   `-- agents.ts
+|-- presentation
+|   `-- components
+|       |-- Header.tsx
+|       |-- LanguageSwitcher.tsx
+|       |-- __tests__
+|       |-- about
+|       |-- agent
+|       |-- audio
+|       |-- canvas
+|       |-- chat
+|       |-- common
+|       |-- dashboard
+|       |-- debug
+|       |-- hub
+|       |-- ide
+|       |-- knowledge
+|       |-- layout
+|       |-- notes
+|       |-- rag
+|       |-- study
+|       |-- ui
+|       `-- workspace
+|-- routeTree.gen.ts
+|-- router.tsx
+|-- routes
+|   |-- __root.tsx
+|   |-- about.lazy.tsx
+|   |-- about.tsx
+|   |-- agents.tsx
+|   |-- api
+|   |   |-- chat.ts
+|   |   |-- flashcards
+|   |   `-- quizzes
+|   |-- ide.$projectId.tsx
+|   |-- ide.tsx
+|   |-- index.tsx
+|   |-- knowledge.$projectId.lazy.tsx
+|   |-- knowledge.lazy.tsx
+|   |-- notes.$projectId.lazy.tsx
+|   |-- notes.lazy.tsx
+|   |-- settings.tsx
+|   |-- study.$projectId.lazy.tsx
+|   |-- study.lazy.tsx
+|   |-- test-fs-adapter.tsx
+|   |-- webcontainer.$.tsx
+|   `-- workspace
+|       |-- $projectId.tsx
+|       `-- index.tsx
+|-- server.ts
+|-- shared
+|   |-- constants
+|   |-- errors
+|   |-- types
+|   |   `-- index.ts
+|   `-- utils
+|-- src-tree.md
+|-- stores
+|   |-- __tests__
+|   |   `-- hotReload-validation.test.ts
+|   |-- agent-selection-store.ts
+|   |-- agents-store.test.ts
+|   |-- agents-store.ts
+|   |-- auto-approve-store.ts
+|   |-- conversation-threads-store.ts
+|   |-- index.ts
+|   |-- models-loader-store.ts
+|   |-- openai-compatible-store.ts
+|   |-- prompt-enhancement-store.ts
+|   |-- provider-config-store.ts
+|   `-- provider-models-store.ts
+|-- styles
+|   |-- animations.css
+|   |-- design-tokens.css
+|   `-- design-tokens.ts
+|-- styles.css
+|-- test
+|   `-- setup.ts
+|-- tree-2025-12-24.md
+|-- tree.txt
+|-- types
+|   |-- tool-call.ts
+|   `-- vitest-axe.d.ts
+|-- utils
+|   |-- __tests__
+|   |   `-- export-utils.test.ts
+|   `-- export-utils.ts
+|-- workers
+|   `-- note-embedding.worker.ts
+`-- workspaces
+    |-- ide
+    |-- knowledge
+    `-- project
+
+129 directories, 342 files

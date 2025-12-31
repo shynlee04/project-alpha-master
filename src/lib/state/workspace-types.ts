@@ -3,12 +3,11 @@
  * @module lib/state/workspace-types
  *
  * Centralized workspace type definitions for type safety.
+ * WorkspaceType imported from domain layer (single source of truth).
  */
 
-/**
- * Supported workspace types
- */
-export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
+// Import WorkspaceType from domain layer (single source of truth)
+export type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
  * Workspace metadata

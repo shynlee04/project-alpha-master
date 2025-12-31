@@ -17,7 +17,7 @@ import {
     credentialVault,
     providerAdapterFactory,
 } from '@/lib/agent/providers'
-import { useProviderStore } from '@/lib/state/provider-store'
+import { useProviderStore } from '@/infrastructure/persistence/stores/providers'
 import type { ConnectionStatus } from './agent-config-types'
 
 interface UseAgentConfigProviderProps {

@@ -62,7 +62,7 @@ import {
  * Provider configuration interface for extensibility
  */
 // Removed local ProviderConfig interface in favor of @/lib/agent/providers type
-import { useProviderStore } from '@/lib/state/provider-store'
+import { useProviderStore } from '@/infrastructure/persistence/stores/providers'
 import { useAgentsStore } from '@/stores/agents-store'
 
 /**

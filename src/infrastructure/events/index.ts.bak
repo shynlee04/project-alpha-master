@@ -63,7 +63,7 @@ function registerStoreReferences(orchestrator: StateOrchestrator): void {
 
   // Agents store
   try {
-    const { useAgentsStore } = require('@/stores/agents-store');
+    const { useAgentsStore } = require('@/infrastructure/persistence/stores/agents/agents-store');
     orchestrator.registerStore('agentsStore', useAgentsStore);
   } catch (error) {
     console.warn('[EventSystem] Agents store not available:', error);

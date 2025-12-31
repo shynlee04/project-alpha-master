@@ -213,6 +213,235 @@ pnpm i18n:extract
 pnpm tsc --noEmit
 ```
 
+---
+
+## State Management Architecture (Updated 2026-01-01)
+
+### December 2025 Zustand Patterns
+
+The project follows **December 2025 Zustand best practices** for state management:
+
+**Core Patterns**:
+1. **Slice Pattern**: Split stores into focused slices (<120 lines each)
+2. **Persist on Combined Store**: Apply persist middleware ONLY to combined store, not individual slices
+3. **partialize**: Selective persistence (API keys yes, UI state no)
+4. **version + migrate**: Schema evolution support with migration functions
+5. **Workspace-Aware State**: Multi-workspace architecture native support
+6. **Typed Hooks**: Best-in-class DX with typed hooks (useProviderCredentials, useProviderSelection)
+
+**Example**:
+```typescript
+// ✅ RIGHT - Persist on combined store only
+export const useProviderStore = create<ProviderStoreState>()(
+  persist(
+    (...a) => ({
+      ...createCoreSlice(...a),
+      ...createCredentialsSlice(...a),
+      ...createWorkspaceSlice(...a),
+    }),
+    {
+      name: 'provider-config',
+      partialize: (state) => ({
+        credentials: state.credentials, // ✅ Persist
+        // uiState: state.uiState, // ❌ Don't persist (transient)
+      }),
+    }
+  )
+);
+
+// ❌ WRONG - Applying persist to individual slices
+// const coreSlice = create(persist(coreSliceFn, { name: 'provider-core' }));
+// This causes multiple hydration cycles + conflicts!
+```
+
+### Provider Configuration Architecture
+
+**Single Source of Truth** (Consolidated 2026-01-01):
+
+The provider configuration system has been **consolidated from 3 duplicate stores (765 lines) into 1 unified store (850 lines)**:
+
+**Before**:
+```typescript
+// ❌ 3 duplicate stores causing API key confusion
+src/lib/agent/providers/index.ts (333 lines)
+src/stores/provider-store.ts (216 lines)
+src/infrastructure/persistence/stores/provider-config-store.ts (216 lines)
+```
+
+**After**:
+```typescript
+// ✅ Single consolidated store with workspace awareness
+src/infrastructure/persistence/stores/providers/
+├── provider-store-core.ts (97 lines) - Core state + UI state
+├── provider-store-credentials.ts (178 lines) - Encrypted API key vault
+├── provider-store-workspace.ts (169 lines) - Workspace-scoped selection
+├── provider-store-events.ts (206 lines) - Event emission + React hooks
+├── index.ts (305 lines) - Combined store with Dexie persist
+├── migrate.ts (308 lines) - Migration script (3 old stores → 1 new)
+└── use-provider-migration.ts (200 lines) - React hook for one-time migration
+```
+
+**Usage**:
+```typescript
+// Use typed hooks for best DX
+import { useProviderCredentials, useProviderSelection } from '@/infrastructure/persistence/stores/providers';
+
+const { getCredential, setCredential } = useProviderCredentials();
+const { activeProvider, setActiveProvider } = useProviderSelection();
+const { isProviderAvailableInWorkspace } = useProviderWorkspaces();
+
+// Save API key (encrypted automatically)
+await setCredential('openrouter', { providerId: 'openrouter', apiKey: 'sk-or-v1-...' });
+
+// Set active provider for current workspace
+setActiveProvider('openrouter'); // Uses current workspace automatically
+
+// Check availability
+const available = isProviderAvailableInWorkspace('anthropic', 'knowledge');
+```
+
+**Migration**:
+- Automatic on app mount (useProviderMigration hook)
+- Creates backup before migration
+- Merges data from 3 old stores (last write wins)
+- Clears old localStorage entries
+- Sets migration-complete flag
+
+### Agent Configuration Architecture
+
+**Workspace Bindings** (Added 2026-01-01):
+
+Agents now have **workspace-specific availability** and **tool permissions**:
+
+```typescript
+// Core entity: src/core/entities/Agent.ts
+interface Agent {
+  id: string;
+  name: string;
+  workspaceBindings: WorkspaceBinding[]; // ✅ Per-workspace availability
+  tools: AgentToolBinding[]; // ✅ Workspace-scoped tool permissions
+}
+
+interface WorkspaceBinding {
+  workspaceType: 'ide' | 'knowledge' | 'study' | 'notes';
+  isAvailable: boolean;
+  uiVariant: 'full' | 'compact' | 'minimal';
+  isDefault: boolean;
+}
+
+interface AgentToolBinding {
+  toolId: string;
+  toolName: string;
+  isEnabled: boolean;
+  workspacePermissions: {
+    ide: boolean;
+    knowledge: boolean;
+    study: boolean;
+    notes: boolean;
+  };
+}
+```
+
+**Usage**:
+```typescript
+import { useAgentsStore } from '@/stores/agents-store';
+
+const { getAgentsForWorkspace, updateWorkspaceBinding } = useAgentsStore();
+
+// Get agents available in IDE workspace
+const ideAgents = getAgentsForWorkspace('ide');
+
+// Update agent availability
+updateWorkspaceBinding('agent-1', 'knowledge', true); // Enable in Knowledge
+```
+
+### Tool Permissions System
+
+**Workspace-Aware Permission Checking** (Fully Implemented):
+
+The tool permissions system ensures agents only execute tools in allowed workspaces:
+
+```typescript
+// Permission manager: src/lib/agent/workspace-permission-manager.ts
+class WorkspacePermissionManager {
+  // 3-step permission check
+  checkWorkspacePermission(toolId, tools, workspaceBindings, workspaceType) {
+    // Step 1: Check agent available in workspace
+    // Step 2: Check tool enabled for workspace
+    // Step 3: Check trust level (auto/prompt/block)
+  }
+}
+
+// Usage in agent execution
+const permission = permissionManager.checkWorkspacePermission(
+  'file-read',
+  agent.tools,
+  agent.workspaceBindings,
+  'knowledge'
+);
+
+if (!permission.canExecute) {
+  return createBlockedToolResult('file-read');
+}
+```
+
+**Trust Levels**:
+- `auto`: Execute without asking (safe operations like reading)
+- `prompt`: Ask user for approval (risky operations like writing)
+- `block`: Never execute (dangerous operations like deleting)
+
+### Cross-Workspace Event System
+
+**Event Bus** (Enhanced 2026-01-01):
+
+All stores emit events via **CrossWorkspaceEventBus** for system-wide sync:
+
+```typescript
+// Event bus: src/lib/events/cross-workspace-event-bus.ts
+crossWorkspaceEventBus.emitWorkspaceChanged({ from: 'ide', to: 'knowledge' });
+crossWorkspaceEventBus.emitProviderConfigChange({ workspaceId: 'ide', providerId: 'openrouter' });
+crossWorkspaceEventBus.emitAgentConfigChange({ workspaceId: 'knowledge', agentId: 'agent-1' });
+```
+
+**React Hooks for Event Subscriptions**:
+```typescript
+// Auto-subscribe to workspace changes
+import { useWorkspaceChangedEvents, useProviderEvents } from '@/lib/events/use-cross-workspace-events';
+
+function MyComponent() {
+  useProviderEvents(); // Auto-start + cleanup
+  // ...
+}
+```
+
+### Four-Layer Architecture
+
+**Compliance** (Achieved 2026-01-01):
+
+The codebase now follows **strict four-layer architecture**:
+
+```
+PRESENTATION (UI Components)
+  AgentConfigDialog.tsx, ProviderConfigDialog.tsx
+        ↓ uses hooks
+APPLICATION (React Hooks + Services)
+  useProviderCredentials(), AgentService.ts
+        ↓ calls store
+DOMAIN (Business Logic)
+  ProviderCredential entity, Agent entity, ProviderVault service
+        ↓ persists to
+INFRASTRUCTURE (Persistence + Events)
+  provider-store-*.ts slices, Dexie storage, CrossWorkspaceEventBus
+```
+
+**Component Size Limits**:
+- Max 120 lines per component (enforced)
+- Max 3 functions per module
+- Max 5 dependencies per component
+- Max 3 nesting levels
+
+---
+
 ## Key Directories & Files
 
 ```

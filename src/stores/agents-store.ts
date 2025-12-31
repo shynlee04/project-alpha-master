@@ -19,10 +19,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
-import type { Agent } from '../mocks/agents';
+import type { Agent, WorkspaceBinding } from '@/core/entities/Agent';
 import { DEFAULT_TOOLS, DEFAULT_WORKSPACE_BINDINGS } from '../mocks/agents';
 import { useProviderStore } from '@/lib/state/provider-store';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
+
+// Import WorkspaceType from domain layer (single source of truth)
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
  * Default agent created on first load
@@ -104,6 +107,23 @@ interface AgentsState {
 
     /** Reset to default agents */
     resetToDefaults: () => void;
+
+    // ✨ Ralph Loop Gap Resolution: Workspace filtering
+
+    /** Get agents available in specific workspace */
+    getAgentsForWorkspace: (workspaceType: WorkspaceType) => Agent[];
+
+    /** Update workspace binding for an agent */
+    updateWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, isAvailable: boolean) => void;
+
+    /** Update workspace binding with partial data (enhanced) */
+    updateAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, binding: Partial<WorkspaceBinding>) => void;
+
+    /** Get specific workspace binding for an agent */
+    getAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType) => WorkspaceBinding | undefined;
+
+    /** Check if agent is available in workspace */
+    isAgentAvailableInWorkspace: (agentId: string, workspaceType: WorkspaceType) => boolean;
 }
 
 /**
@@ -264,6 +284,87 @@ export const useAgentsStore = create<AgentsState>()(
                     agents: [DEFAULT_AGENT],
                     activeAgentId: DEFAULT_AGENT.id
                 });
+            },
+
+            // ========== Ralph Loop Gap Resolution: Workspace Filtering ==========
+
+            getAgentsForWorkspace: (workspaceType: WorkspaceType) => {
+                const { agents } = get();
+                return agents.filter(agent => {
+                    const binding = agent.workspaceBindings.find(b => b.workspaceType === workspaceType);
+                    return binding?.isAvailable === true;
+                });
+            },
+
+            updateWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, isAvailable: boolean) => {
+                console.log('[AgentsStore] Updating workspace binding:', agentId, workspaceType, isAvailable);
+                set((state) => ({
+                    agents: state.agents.map(agent => {
+                        if (agent.id !== agentId) return agent;
+
+                        const updatedBindings = agent.workspaceBindings.map(binding =>
+                            binding.workspaceType === workspaceType
+                                ? { ...binding, isAvailable }
+                                : binding
+                        );
+
+                        return { ...agent, workspaceBindings: updatedBindings };
+                    }),
+                }));
+
+                // WB-8.3: Emit cross-workspace event
+                crossWorkspaceEventBus.emitAgentConfigChange({
+                    workspaceId: workspaceType,
+                    agentId,
+                    changeType: 'updated',
+                });
+            },
+
+            /**
+             * Update workspace binding with partial data (enhanced method)
+             * Allows updating any field in WorkspaceBinding: isAvailable, uiConfig, isDefault
+             */
+            updateAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, binding: Partial<WorkspaceBinding>) => {
+                console.log('[AgentsStore] Updating agent workspace binding (partial):', agentId, workspaceType, binding);
+                set((state) => ({
+                    agents: state.agents.map(agent => {
+                        if (agent.id !== agentId) return agent;
+
+                        const updatedBindings = agent.workspaceBindings.map(existingBinding =>
+                            existingBinding.workspaceType === workspaceType
+                                ? { ...existingBinding, ...binding }
+                                : existingBinding
+                        );
+
+                        return { ...agent, workspaceBindings: updatedBindings };
+                    }),
+                }));
+
+                // WB-8.3: Emit cross-workspace event
+                crossWorkspaceEventBus.emitAgentConfigChange({
+                    workspaceId: workspaceType,
+                    agentId,
+                    changeType: 'updated',
+                });
+            },
+
+            /**
+             * Get specific workspace binding for an agent
+             * Returns undefined if agent or binding not found
+             */
+            getAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType) => {
+                const agent = get().agents.find(a => a.id === agentId);
+                if (!agent) return undefined;
+
+                return agent.workspaceBindings.find(b => b.workspaceType === workspaceType);
+            },
+
+            isAgentAvailableInWorkspace: (agentId: string, workspaceType: WorkspaceType) => {
+                const agent = get().agents.find(a => a.id === agentId);
+                if (!agent) return false;
+
+                const binding = agent.workspaceBindings.find(b => b.workspaceType === workspaceType);
+                return binding?.isAvailable === true;
             },
         }),
         {

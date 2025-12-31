@@ -29,11 +29,13 @@ export const createRAGChatSlice: StateCreator<RAGChatState> = (set, get) => ({
   },
 
   updateChatMessage: (messageId: string, updates: Partial<ChatMessage>) => {
-    set((state) => ({
-      chatMessages: state.chatMessages.map(msg =>
-        msg.id === messageId ? { ...msg, ...updates } : msg
-      ),
-    } as Partial<RAGChatState>);
+    set((state) => {
+      return {
+        chatMessages: state.chatMessages.map(msg =>
+          msg.id === messageId ? { ...msg, ...updates } : msg
+        ),
+      } as Partial<RAGChatState>;
+    });
   },
 
   clearChatMessages: () => {
