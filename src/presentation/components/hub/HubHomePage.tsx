@@ -23,12 +23,15 @@ import {
   saveProject,
   generateProjectId,
   updateProjectLastOpened,
+  updateProjectBindings,
   type ProjectMetadata
 } from '@/lib/workspace/project-store';
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
+import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+import type { WorkspaceBindings } from '@/lib/workspace/project-store';
 import { toast } from 'sonner';
 
 // --- Components ---
@@ -77,6 +80,10 @@ export const HubHomePage: React.FC = () => {
 
   const [booting, setBooting] = useState(true);
   const [showContent, setShowContent] = useState(false);
+
+  // Workspace Binding Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<ProjectMetadata | null>(null);
 
   // -- Text Typing Effect --
   const fullText = t('hub.welcome', 'INITIALIZING SYSTEM...');
@@ -159,16 +166,42 @@ export const HubHomePage: React.FC = () => {
 
   const handleOpenRecentProject = async (projectId: string) => {
     try {
-      // 1. Update timestamp
-      await updateProjectLastOpened(projectId);
+      // Find project from list
+      const project = (projects || []).find((p) => p.id === projectId);
+      if (!project) return;
 
-      // 2. Navigate
-      await navigate({
-        to: '/workspace/$projectId',
-        params: { projectId }
-      });
+      // Open workspace binding dialog
+      setSelectedProject(project);
+      setDialogOpen(true);
     } catch (error) {
       console.error('Failed to open recent project:', error);
+    }
+  };
+
+  const handleWorkspaceBindingConfirm = async (
+    bindings: WorkspaceBindings,
+    initialWorkspace: string
+  ) => {
+    if (!selectedProject) return;
+
+    try {
+      // 1. Save workspace bindings
+      await updateProjectBindings(selectedProject.id, bindings);
+
+      // 2. Update timestamp
+      await updateProjectLastOpened(selectedProject.id);
+
+      // 3. Close dialog
+      setDialogOpen(false);
+
+      // 4. Navigate to selected workspace
+      await navigate({
+        to: `/${initialWorkspace}/$projectId`,
+        params: { projectId: selectedProject.id }
+      });
+    } catch (error) {
+      console.error('Failed to open project:', error);
+      toast.error('Failed to open project');
     }
   };
 
@@ -367,6 +400,16 @@ export const HubHomePage: React.FC = () => {
           </div>
         )}
       </section>
+
+      {/* Workspace Binding Dialog */}
+      {selectedProject && (
+        <WorkspaceBindingDialog
+          project={selectedProject}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onConfirm={handleWorkspaceBindingConfirm}
+        />
+      )}
     </div>
   );
 };

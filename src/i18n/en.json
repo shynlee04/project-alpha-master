@@ -1407,5 +1407,45 @@
       "title": "Technical Capabilities",
       "subtitle": "Expertise across the full engineering stack with specialized focus on multi-agent systems"
     }
+  },
+  "hub": {
+    "welcome": "INITIALIZING SYSTEM...",
+    "subtitle": "v2.5.0-BETA // READY FOR INPUT",
+    "menu": {
+      "workspace": "WORKSPACE_MOUNT",
+      "notes": "FIELD_NOTES",
+      "agents": "NEURAL_AGENTS",
+      "knowledge": "DATA_BANK",
+      "study": "STUDY_CORE",
+      "settings": "CONFIG_SYS",
+      "about": "SYS_INFO"
+    },
+    "newProjectDesc": "Initialize a new workspace entry",
+    "notesDesc": "Quick access to scratchpad",
+    "terminal": "TERMINAL",
+    "recent": {
+      "title": "RECENT_DIRECTORIES",
+      "status": "STATUS",
+      "lastMod": "LAST_MOD",
+      "size": "SIZE"
+    },
+    "actions": {
+      "viewAll": "VIEW_ALL >>"
+    },
+    "noProjects": "No directories found in local storage.",
+    "workspaceBinding": {
+      "title": "WORKSPACE_BINDING",
+      "description": "SELECT_WORKSPACES_TO_SYNC_PROJECT",
+      "selectWorkspaces": "ENABLE_WORKSPACES",
+      "openIn": "OPEN_IN_WORKSPACE",
+      "openProject": "OPEN_PROJECT",
+      "workspaces": {
+        "ide": "IDE",
+        "notes": "NOTES",
+        "knowledge": "KNOWLEDGE",
+        "study": "STUDY",
+        "canvas": "CANVAS"
+      }
+    }
   }
 }

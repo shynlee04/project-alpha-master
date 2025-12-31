@@ -363,6 +363,37 @@ export async function updateProjectLastOpened(id: string): Promise<boolean> {
 }
 
 /**
+ * Update workspace bindings for a project.
+ * Story WB-4: Workspace Binding Dialog persistence.
+ *
+ * @param id - Project ID
+ * @param bindings - Workspace bindings configuration
+ * @returns true if updated successfully, false otherwise
+ */
+export async function updateProjectBindings(
+    id: string,
+    bindings: WorkspaceBindings
+): Promise<boolean> {
+    const db = await getDB();
+    if (!db) return false;
+
+    try {
+        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
+        if (!project) {
+            console.warn('[ProjectStore] Project not found for update:', id);
+            return false;
+        }
+
+        project.workspaceBindings = bindings;
+        await db.put(STORE_NAME, project);
+        return true;
+    } catch (error) {
+        console.error('[ProjectStore] Failed to update workspaceBindings:', id, error);
+        return false;
+    }
+}
+
+/**
  * Check permission state for a stored project's handle.
  *
  * @param id - Project ID

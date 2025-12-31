@@ -12,4 +12,6 @@ export { TopicCard } from './TopicCard';
 export { TopicPortalCard } from './TopicPortalCard';
 export { HubHomePage } from './HubHomePage';
 export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
+export { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+export type { WorkspaceBindingDialogProps } from './WorkspaceBindingDialog';
 

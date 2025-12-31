@@ -91,11 +91,11 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
 
   // State: workspace bindings (checkboxes)
   const [bindings, setBindings] = useState<WorkspaceBindings>({
-    ide: { enabled: true },
-    notes: { enabled: false },
-    knowledge: { enabled: false },
-    study: { enabled: false },
-    canvas: { enabled: false },
+    ide: true,
+    notes: false,
+    knowledge: false,
+    study: false,
+    canvas: false,
   });
 
   // State: initial workspace selection (radio buttons)
@@ -108,7 +108,7 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
 
       // Set initial workspace to first enabled workspace, default to 'ide'
       const firstEnabled = WORKSPACES.find(
-        (ws) => project.workspaceBindings?.[ws.id]?.enabled
+        (ws) => project.workspaceBindings?.[ws.id] === true
       );
       setInitialWorkspace((firstEnabled?.id as WorkspaceId) || 'ide');
     }
@@ -118,13 +118,13 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
   const handleWorkspaceToggle = (workspaceId: WorkspaceId, checked: boolean) => {
     setBindings((prev) => ({
       ...prev,
-      [workspaceId]: { ...prev[workspaceId], enabled: checked },
+      [workspaceId]: checked,
     }));
 
     // If disabling current initial workspace, switch to first enabled
     if (!checked && initialWorkspace === workspaceId) {
       const firstEnabled = WORKSPACES.find((ws) => {
-        return ws.id !== workspaceId && bindings[ws.id]?.enabled;
+        return ws.id !== workspaceId && bindings[ws.id] === true;
       });
       if (firstEnabled) {
         setInitialWorkspace(firstEnabled.id as WorkspaceId);
@@ -132,7 +132,7 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
     }
 
     // If enabling first workspace, auto-select as initial
-    if (checked && !Object.values(bindings).some((b) => b.enabled)) {
+    if (checked && !Object.values(bindings).some((b) => b === true)) {
       setInitialWorkspace(workspaceId);
     }
   };
@@ -143,10 +143,10 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
   };
 
   // Check if at least one workspace is enabled
-  const hasEnabledWorkspaces = Object.values(bindings).some((b) => b.enabled);
+  const hasEnabledWorkspaces = Object.values(bindings).some((b) => b === true);
 
   // Filter enabled workspaces for radio group
-  const enabledWorkspaces = WORKSPACES.filter((ws) => bindings[ws.id]?.enabled);
+  const enabledWorkspaces = WORKSPACES.filter((ws) => bindings[ws.id] === true);
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -191,7 +191,7 @@ export const WorkspaceBindingDialog: React.FC<WorkspaceBindingDialogProps> = ({
             </label>
             <div className="grid grid-cols-1 gap-2">
               {WORKSPACES.map((workspace) => {
-                const isEnabled = bindings[workspace.id]?.enabled ?? false;
+                const isEnabled = bindings[workspace.id] ?? false;
 
                 return (
                   <div key={workspace.id} className="flex items-center gap-3 group">
