@@ -1,0 +1,23 @@
+src/domain
+|-- entities
+|   `-- agent.ts
+|-- services
+|   |-- agent-orchestration-service.ts
+|   `-- workspace-transition-service.ts
+|-- use-cases
+|   `-- switch-workspace-use-case.ts
+`-- value-objects
+    |-- tool-permission.ts
+    |-- workspace-binding.ts
+    `-- workspace-type.ts
+src/infrastructure/events
+`-- event-bus.ts
+src/infrastructure/persistence/state-orchestrator.ts  [error opening dir]
+src/infrastructure/persistence/stores/agents
+|-- agent-selection-store.ts
+|-- agents-store.ts
+`-- provider-config-store.ts
+src/lib/agent/providers/agent-validation-service.ts  [error opening dir]
+src/presentation/components/agent/WorkspacePermissionManager.tsx  [error opening dir]
+
+7 directories, 14 files
