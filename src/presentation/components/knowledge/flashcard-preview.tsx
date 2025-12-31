@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Flashcard, FlashcardGenerationResult } from '../../lib/knowledge/types';
+import type { Flashcard, FlashcardGenerationResult } from '@/lib/knowledge/types';
 
 interface FlashcardPreviewProps {
   preview: FlashcardGenerationResult;

@@ -9,11 +9,11 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useTranslation } from 'react-i18next';
-import { useCanvasStore } from '../../lib/state/canvas-store';
-import { useResponsive } from '../../hooks/useResponsive';
+import { useCanvasStore } from '@/lib/state/canvas-store';
+import { useResponsive } from '@/hooks/useResponsive';
 import { nodeTypes } from './nodes/nodeTypes';
 import { edgeTypes, defaultEdgeOptions } from './edges/edgeTypes';
-import { useCanvasDrop } from '../../hooks/useCanvasDrop';
+import { useCanvasDrop } from '@/hooks/useCanvasDrop';
 
 // Default viewport options
 const defaultViewportOptions = {

@@ -7,7 +7,7 @@
  * Extracted from IDELayout.tsx for code organization.
  */
 
-import type { ProjectMetadata } from '../../lib/workspace';
+import type { ProjectMetadata } from '@/lib/workspace';
 
 interface PermissionOverlayProps {
     /** Project metadata for display */

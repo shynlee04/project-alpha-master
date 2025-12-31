@@ -20,8 +20,8 @@
 import { Suspense, lazy, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { cn } from '../../lib/utils';
-import { type TerminalTab } from '../../lib/workspace';
+import { cn } from '@/lib/utils';
+import { type TerminalTab } from '@/lib/workspace';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 

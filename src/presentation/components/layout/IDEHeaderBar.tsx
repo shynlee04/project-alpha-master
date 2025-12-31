@@ -19,7 +19,7 @@
 import { FolderOpen, Loader2 } from 'lucide-react';
 import { ChatIcon, RefreshIcon } from '@/presentation/components/ui/icons';
 import { useTranslation } from 'react-i18next';
-import { useWorkspace } from '../../lib/workspace';
+import { useWorkspace } from '@/lib/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
 import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 import { useNavigate } from '@tanstack/react-router';

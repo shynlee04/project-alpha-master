@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Check, Loader2, AlertTriangle } from 'lucide-react'
-import type { SyncProgress } from '../../lib/filesystem'
+import type { SyncProgress } from '@/lib/filesystem'
 import { useTranslation } from 'react-i18next'
 import { TruncatedText } from '@/presentation/components/ui/truncated-text'
 
