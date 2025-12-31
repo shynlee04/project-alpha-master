@@ -1,149 +1,372 @@
 ---
 step: 3
 id: step-03-agent-vault
-name: Agent Vault & Configuration
+name: Agent Configuration Enhancement (AC-02, AC-03)
 workflow: architectural-consolidation
+real_world_aligned: true
 ---
 
-# Step 3: Agent Vault & Configuration (Layer 3)
+# Step 3: Agent Configuration Enhancement (Stories AC-02, AC-03)
 
-**Objective**: Implement the strict `Agent` contract (Layer 3), fixing the "mock data" issues in AC-02. Ensure Agent Selector creates valid L3 entities with proper Provider+Model linkage and conditional Tool bindings.
+**Objective**: Add provider/model selection UI and tool binding with workspace permissions.
+
+**Current State** (REAL-WORLD ASSESSED):
+- ✅ `AgentConfigDialog` exists in `src/components/agent/AgentConfigDialog.tsx`
+- ✅ Agents have `providerId` and `modelId` fields
+- ✅ `useAgentsStore` works with Zustand + Dexie
+- ❌ Missing: Provider dropdown (filtered by hasApiKey)
+- ❌ Missing: Model dropdown (filtered by provider)
+- ❌ Missing: Tool permissions matrix
+- ❌ Missing: Workspace bindings UI
+
+**This step focuses on ADDING MISSING UI COMPONENTS to `AgentConfigDialog`.**
 
 ---
 
-## 1. ARCHITECTURAL ANALYSIS & CORRECTION of "Architectural Refactor"
+## 1. IMPLEMENTATION TASKS
 
-**Previous Error**: usage of `src/mocks/agents.ts` and `mockAgents`.
-**Previous Error**: `AgentSelector` used a partial implementation that didn't fully support workspace-specific tool permissions.
-**Previous Error**: `Agent` interface lacked `providerId` and `modelId` distinct fields, blurring the linkage.
+### Task 1.1: Add Provider/Model Dropdowns (AC-02)
 
-**Corrective Action**:
-We will rewrite `src/stores/agents-store.ts` to strictly implement the L3 Contracts defined in Step 01, resolving the "God Component" anti-pattern by splitting concerns.
+**File**: `src/components/agent/AgentConfigDialog.tsx`
 
----
+**Current State**: The dialog likely has basic agent config fields but NOT proper provider/model selection.
 
-## 2. DATA CONTRACT REFACTORING
-
-### 2.1 Update `src/stores/agents-store.ts`
-
-**Transform** the `Agent` interface to matching the Locked Contract:
+**Required Changes**:
 
 ```typescript
-// TARGET STATE: src/stores/agents-store.ts
+// ADD THESE IMPORTS
+import { useProviderModelsStore } from '@/stores/provider-models-store';
+import { emitStoreEvent } from '@/lib/events/store-events';
 
-export interface Agent {
-  id: string;
-  name: string;
-  description: string;
-  
-  // Linkage (Required)
-  providerId: string;
-  modelId: string;
-  
-  // LLM Params
-  systemPrompt: string;
-  temperature: number;
-  maxTokens: number; // e.g. 4000
-  
-  // Bindings
-  tools: AgentToolBinding[];
-  workspaceBindings: WorkspaceBinding[]; // e.g. { workspace: 'ide', uiVariant: 'full' }
-  
-  // Metrics
-  tasksCompleted: number;
-  successRate: number; 
-  tokensUsed: number;
-  status: 'online' | 'offline' | 'busy' | 'error';
-  lastActive: Date;
-  createdAt: Date;
+// ADD THESE STATE VARIABLES
+const providers = useProviderModelsStore(s =>
+  s.providers.filter(p => p.hasApiKey)  // Only show providers with keys
+);
+
+const [selectedProviderId, setSelectedProviderId] = useState(
+  agent?.providerId || providers[0]?.id || ''
+);
+
+// Filter models by selected provider
+const availableModels = useProviderModelsStore(s =>
+  s.models.filter(m => m.providerId === selectedProviderId)
+);
+
+const [selectedModelId, setSelectedModelId] = useState(
+  agent?.modelId || availableModels[0]?.id || ''
+);
+
+// ADD PROVIDER DROPDOWN UI
+<div className="form-field">
+  <label>Provider</label>
+  <Select
+    value={selectedProviderId}
+    onChange={(value) => {
+      setSelectedProviderId(value);
+      // Reset model when provider changes
+      setSelectedModelId('');
+    }}
+    options={providers.map(p => ({
+      value: p.id,
+      label: p.name
+    }))}
+  />
+</div>
+
+// ADD MODEL DROPDOWN UI
+<div className="form-field">
+  <label>Model</label>
+  <Select
+    value={selectedModelId}
+    onChange={setSelectedModelId}
+    options={availableModels.map(m => ({
+      value: m.id,
+      label: m.name
+    }))}
+    disabled={!selectedProviderId}
+  />
+</div>
+```
+
+**Validation on Save**:
+
+```typescript
+const handleSave = async () => {
+  // Verify model belongs to provider
+  const model = availableModels.find(m => m.id === selectedModelId);
+  if (!model || model.providerId !== selectedProviderId) {
+    toast.error('Selected model does not belong to selected provider');
+    return;
+  }
+
+  await updateAgent(agentId, {
+    providerId: selectedProviderId,
+    modelId: selectedModelId,
+    // ... other fields
+  });
+
+  emitStoreEvent('agent:updated', {
+    agentId,
+    timestamp: Date.now()
+  });
+};
+```
+
+### Task 1.2: Add Tool Binding with Workspace Permissions (AC-03)
+
+**File 1**: `src/stores/agents-store.ts` - Update Types
+
+```typescript
+// UPDATE AgentToolBinding TYPE
+export interface AgentToolBinding {
+  toolId: string;
+  toolName: string;
+  isEnabled: boolean;
+
+  // ✅ ADD THIS: Workspace permissions
+  workspacePermissions: {
+    ide: boolean;
+    knowledge: boolean;
+    study: boolean;
+    notes: boolean;
+  };
+
+  configuration?: Record<string, unknown>;
 }
 
-// ... Store Definition using create<AgentsState>() ...
+// ✅ ADD THIS: Workspace bindings
+export interface WorkspaceBinding {
+  workspaceType: 'ide' | 'knowledge' | 'study' | 'notes';
+  isAvailable: boolean;
+  uiVariant: 'full' | 'compact' | 'minimal';
+  isDefault: boolean;
+}
+
+// UPDATE Agent INTERFACE
+export interface Agent {
+  // ... existing fields ...
+  tools: AgentToolBinding[];        // Now includes workspacePermissions
+  workspaceBindings: WorkspaceBinding[];  // NEW FIELD
+  // ... existing fields ...
+}
 ```
 
-**Crucial**: Drop any import from `mocks`. The store IS the source of truth.
+**File 2**: `src/components/agent/AgentConfigDialog.tsx` - Add UI
 
-### 2.2 Default Agent Seeding (`src/lib/defaults/initial-agents.ts`)
-
-Create a dedicated file for the default "Via-Gent Coder".
-- **Provider**: 'openrouter' (hardcoded ID)
-- **Model**: 'mistralai/mistral-7b-instruct:free' (or similar robust free model)
-- **Tools**: Enable 'basic-coding' for IDE.
-
-This ensures the user has a *working* agent out of the box without hitting the API immediately if they haven't set keys (though it will fail gracefully).
-
----
-
-## 3. COMPONENT REFACTORING (L3/L5 Boundary)
-
-### 3.1 `AgentSelector.tsx` (The Consumer)
-
-- **Responsibility**: pure selection.
-- **Input**: `useAgentsStore()`.
-- **Output**: `setActiveAgent(id)` + `emitStoreEvent(AGENT_SELECTED)`.
-- **Display**: Show `agent.name`, `provider.name` (lookup via store), and `model.name`.
-
-**Correction**: Ensure it reads `providerId` from the agent, then queries `useProviderModelsStore` to get the Provider Name properly. Don't store "OpenRouter" string in the agent. Store `providerId: 'openrouter'`.
-
-### 3.2 `AgentConfigDialog.tsx` (The Editor)
-
-- **Responsibility**: Create/Edit Agent Entity.
-- **Inputs**:
-    - `useProviderModelsStore` (to list available providers/models).
-    - `useToolsStore` (to list available tools).
-- **Validation**:
-    - User selects Provider -> Dropdown updates to show ONLY models for that provider.
-    - `modelId` MUST belong to `providerId`.
-    - Tools must be compatible (e.g., no vision tools for text-only models).
-
----
-
-## 4. WORKSPACE BINDING LOGIC
-
-Implement the logic that restricts agents per workspace.
-
-**In `AgentSelector`:**
 ```typescript
-const { currentWorkspace } = useWorkspaceStore(); // or derived from props
-const agents = useAgentsStore(s => s.agents);
+// ADD TOOL PERMISSIONS MATRIX
+const availableTools = [
+  { id: 'file-read', name: 'Read Files' },
+  { id: 'file-write', name: 'Write Files' },
+  { id: 'terminal', name: 'Terminal Commands' },
+  { id: 'web-search', name: 'Web Search' },
+  { id: 'rag-query', name: 'Knowledge Query' },
+];
 
-// Filter: Only show agents bound to this workspace
-const availableAgents = agents.filter(a => 
-  a.workspaceBindings.some(b => b.workspaceType === currentWorkspace && b.isAvailable)
-);
+const workspaceTypes = [
+  { id: 'ide', label: 'IDE' },
+  { id: 'knowledge', label: 'Knowledge' },
+  { id: 'study', label: 'Study' },
+  { id: 'notes', label: 'Notes' },
+];
+
+// Render tool permissions matrix
+<div className="tool-permissions-section">
+  <h3>Tool Permissions (per Workspace)</h3>
+  <table className="permissions-matrix">
+    <thead>
+      <tr>
+        <th>Tool</th>
+        {workspaceTypes.map(ws => (
+          <th key={ws.id}>{ws.label}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {availableTools.map(tool => {
+        const binding = agent?.tools.find(t => t.toolId === tool.id);
+        return (
+          <tr key={tool.id}>
+            <td>{tool.name}</td>
+            {workspaceTypes.map(ws => (
+              <td key={ws.id}>
+                <Checkbox
+                  checked={binding?.workspacePermissions?.[ws.id] || false}
+                  onChange={(checked) =>
+                    updateToolPermission(tool.id, ws.id, checked)
+                  }
+                />
+              </td>
+            ))}
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+
+// Helper function
+const updateToolPermission = (toolId: string, workspace: string, enabled: boolean) => {
+  setAgent(prev => {
+    const tools = [...prev.tools];
+    const toolIndex = tools.findIndex(t => t.toolId === toolId);
+
+    if (toolIndex >= 0) {
+      tools[toolIndex] = {
+        ...tools[toolIndex],
+        workspacePermissions: {
+          ...tools[toolIndex].workspacePermissions,
+          [workspace]: enabled
+        }
+      };
+    } else {
+      tools.push({
+        toolId,
+        toolName: availableTools.find(t => t.id === toolId)?.name || toolId,
+        isEnabled: true,
+        workspacePermissions: {
+          ide: enabled,
+          knowledge: enabled,
+          study: enabled,
+          notes: enabled,
+        }
+      });
+    }
+
+    return { ...prev, tools };
+  });
+};
 ```
 
-This enforces the L3 constraint: "Agents are configured per workspace".
+### Task 1.3: Add Workspace Bindings Section
+
+**File**: `src/components/agent/AgentConfigDialog.tsx`
+
+```typescript
+<div className="workspace-bindings-section">
+  <h3>Workspace Availability</h3>
+  {workspaceTypes.map(ws => {
+    const binding = agent?.workspaceBindings?.find(b => b.workspaceType === ws.id);
+    return (
+      <div key={ws.id} className="workspace-binding-item">
+        <Checkbox
+          label={ws.label}
+          checked={binding?.isAvailable || false}
+          onChange={(checked) =>
+            updateWorkspaceBinding(ws.id, 'isAvailable', checked)
+          }
+        />
+        {binding?.isAvailable && (
+          <Select
+            value={binding?.uiVariant || 'full'}
+            onChange={(value) =>
+              updateWorkspaceBinding(ws.id, 'uiVariant', value)
+            }
+            options={[
+              { value: 'full', label: 'Full' },
+              { value: 'compact', label: 'Compact' },
+              { value: 'minimal', label: 'Minimal' },
+            ]}
+          />
+        )}
+        <Checkbox
+          label="Default for this workspace"
+          checked={binding?.isDefault || false}
+          onChange={(checked) =>
+            updateWorkspaceBinding(ws.id, 'isDefault', checked)
+          }
+        />
+      </div>
+    );
+  })}
+</div>
+
+// Helper function
+const updateWorkspaceBinding = (
+  workspaceType: string,
+  field: string,
+  value: boolean | string
+) => {
+  setAgent(prev => {
+    const bindings = [...(prev.workspaceBindings || [])];
+    const index = bindings.findIndex(b => b.workspaceType === workspaceType);
+
+    if (index >= 0) {
+      bindings[index] = { ...bindings[index], [field]: value };
+    } else {
+      bindings.push({
+        workspaceType,
+        isAvailable: field === 'isAvailable' ? value as boolean : true,
+        uiVariant: 'full',
+        isDefault: false,
+      });
+    }
+
+    return { ...prev, workspaceBindings: bindings };
+  });
+};
+```
 
 ---
 
-## 5. VALIDATION CHECKLIST (AC-02)
+## 2. VALIDATION CRITERIA
 
-- [ ] **Data Structure**: Inspect IndexedDB (Application tab). Are agents stored with `providerId` (string) and `tools` (array)?
-- [ ] **Default Agent**: Does "Via-Gent Coder" appear on fresh load?
-- [ ] **Linkage**:
-    1.  Create new Agent "TestAgent".
-    2.  Select Provider: "Anthropic".
-    3.  Select Model: "claude-3-sonnet".
-    4.  Save.
-    5.  Check Store: `providerId` === 'anthropic', `modelId` === 'claude-...'?
-- [ ] **Reactivity**: Select "TestAgent" in IDE. Go to Knowledge. Is "TestAgent" selected?
+### Manual Testing Steps
+
+1. **Open Agent Config Dialog** (create new agent)
+2. **Verify Provider Dropdown**:
+   - [ ] Only shows providers with API keys
+   - [ ] Selecting provider filters model dropdown
+3. **Verify Model Dropdown**:
+   - [ ] Shows only models for selected provider
+   - [ ] Validation prevents mismatch
+4. **Verify Tool Permissions**:
+   - [ ] Matrix renders with all tools × workspaces
+   - [ ] Checkboxes save correctly
+   - [ ] Permissions persist to store
+5. **Verify Workspace Bindings**:
+   - [ ] All 4 workspaces listed
+   - [ ] Can enable/disable per workspace
+   - [ ] UI variant selection works
+
+### Type Checking
+
+```bash
+pnpm tsc --noEmit
+```
+
+Expected: No type errors
 
 ---
 
-## 6. EXECUTION INSTRUCTIONS
+## 3. SUCCESS METRICS
 
-1.  **CREATE** `src/lib/defaults/initial-agents.ts`.
-2.  **REWRITE** `src/stores/agents-store.ts` with correct types.
-3.  **UPDATE** `AgentSelector` to handle the new schema (fetching names via IDs).
-4.  **CONNECT** `AgentConfigDialog` (Integration Step).
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Provider dropdown render | < 100ms | React render time |
+| Model filter update | < 50ms | Array filter execution |
+| Tool permissions render | < 200ms | Matrix table render |
+| Save validation | Instant | Form submission |
 
 ---
 
-## 7. NEXT STEP
+## 4. FILES CHANGED
 
-Once Agents are correctly structured (L3), we unify the Chat Interface (L4/L5) to use them.
+| File | Change Type | Lines Added |
+|------|-------------|-------------|
+| `src/stores/agents-store.ts` | Update AgentToolBinding, add WorkspaceBinding | ~20 |
+| `src/components/agent/AgentConfigDialog.tsx` | Add provider/model dropdowns, tool matrix, workspace bindings | ~150 |
 
-**Menu:**
-1.  **[CU] Proceed to Step 4 (Chat Unification)** - If Agent Vault is secure.
-2.  **[RE] Retry Step 3** - If data integrity fails.
+---
+
+## 5. NEXT STEP
+
+Once AC-02/AC-03 are verified (agent config dialog has all UI components), proceed to **Step 4 (Chat Unification)** which standardizes ChatPanel across all workspaces.
+
+**Validation Gate Checklist**:
+- [ ] Provider dropdown shows only providers with keys
+- [ ] Model dropdown filters by provider
+- [ ] Tool permissions matrix works
+- [ ] Workspace bindings UI works
+- [ ] No type errors
+- [ ] Build passes: `pnpm build`

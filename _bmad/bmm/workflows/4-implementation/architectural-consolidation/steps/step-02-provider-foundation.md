@@ -1,154 +1,182 @@
 ---
 step: 2
 id: step-02-provider-foundation
-name: Provider Foundation & Reactivity
+name: Provider → Models Reactivity (AC-01)
 workflow: architectural-consolidation
+real_world_aligned: true
 ---
 
-# Step 2: Provider Foundation & Reactivity (Layer 2)
+# Step 2: Provider → Models Reactivity (Story AC-01)
 
-**Objective**: Implement the strict `LLMProvider` and `ProviderModel` contracts, ensuring correct data flow from API Key input to Model Loading via the Event Bus. This fixes "Refactor Provider Store" shortcomings.
+**Objective**: Implement event-driven model loading when API keys are saved.
 
----
+**Current State** (REAL-WORLD ASSESSED):
+- ✅ `setApiKey()` exists in `src/stores/provider-models-store.ts`
+- ✅ `fetchModels()` exists and works
+- ✅ `ProviderConfigDialog` has readonly baseURL for built-in providers
+- ❌ Missing: Event emission on key save
+- ❌ Missing: Event listener for auto-loading
 
-## 1. ARCHITECTURAL ANALYSIS & CORRECTION of "Refactor Provider Store"
-
-**Previous Error**: The previous session created a `provider-models-store.ts` that:
-1. Defined local `ProviderState` instead of using the shared `LLMProvider` contract.
-2. Left `CustomProvider` as a separate, potentially conflicting interface.
-3. Did not fully enforce the `isHardcoded` constraint for built-in providers at the type level.
-
-**Corrective Action**:
-We will refactor `src/stores/provider-models-store.ts` to strictly implement the L2 Contracts defined in Step 01.
+**This step focuses on WIRING THE EVENT BUS for reactivity.**
 
 ---
 
-## 2. DATA CONTRACT REFACTORING
+## 1. IMPLEMENTATION TASKS
 
-### 2.1 Update `src/lib/agent/providers/types.ts`
-Establish the SINGLE SOURCE OF TRUTH types here.
+### Task 1.1: Add Event Emission to `setApiKey()`
 
+**File**: `src/stores/provider-models-store.ts`
+
+**Current Code** (approximately line 85-95):
 ```typescript
-// src/lib/agent/providers/types.ts (TARGET_STATE)
-
-export type ProviderType = 'openai' | 'anthropic' | 'gemini' | 'openai-compatible';
-
-export interface LLMProvider {
-  id: string;
-  name: string;
-  type: ProviderType;
-  baseUrl: string;
-  isHardcoded: boolean; // TRUE for built-ins
-  hasApiKey: boolean;
-  isEnabled: boolean;
-  capabilities: {
-    streaming: boolean;
-    functionCalling: boolean;
-    vision: boolean;
-    embeddings: boolean;
-  };
-}
-
-export interface ProviderModel {
-  id: string;
-  name: string;
-  providerId: string;
-  contextLength: number;
-  maxOutputTokens: number;
-  inputModalities: ('text' | 'image' | 'audio')[];
-  outputModalities: ('text' | 'image' | 'audio')[];
-}
-```
-
-### 2.2 Update `src/stores/provider-models-store.ts`
-Refactor the store to use these types directly.
-
-**Changes Required:**
-1.  **Replace** `ProviderState` with `LLMProvider`.
-2.  **Remove** redundant `CustomProvider` interface.
-3.  **Ensure** getters like `getModelsForProvider(id)` return `ProviderModel[]`.
-
----
-
-## 3. EVENT BUS IMPLEMENTATION (L1 Reactivity)
-
-### 3.1 Verify `src/lib/events/store-events.ts`
-Ensure the following events are defined and typed:
-
--   `PROVIDER_KEY_SET`: `{ providerId: string }`
--   `PROVIDER_MODELS_LOADED`: `{ providerId: string, count: number }`
-
-### 3.2 Wire Actions (Flow 1 Implementation)
-
-**In `provider-models-store.ts`:**
-
-`setApiKey(providerId, key)`:
-1.  Verify `providerId` exists.
-2.  Store key in `CredentialVault`.
-3.  Update state: `providers[id].hasApiKey = true`.
-4.  **Emit**: `PROVIDER_KEY_SET`.
-
-```typescript
-// Correct implementation pattern
-setApiKey: async (providerId, apiKey) => {
+setApiKey: async (providerId: string, apiKey: string) => {
+  // ... existing key persistence logic ...
   await credentialVault.storeCredentials(providerId, apiKey);
   set(produce(state => {
     state.providers[providerId].hasApiKey = true;
   }));
-  emitStoreEvent(STORE_EVENTS.PROVIDER_KEY_SET, { providerId });
-  // Auto-trigger fetch
-  get().refreshProviderModels(providerId);
+  // ❌ MISSING: Event emission
 }
 ```
 
-`refreshProviderModels(providerId)`:
-1.  Check `state.providers[providerId]`.
-2.  Fetch models from API (using `modelRegistry`).
-3.  Update state: `models = [...]`.
-4.  **Emit**: `PROVIDER_MODELS_LOADED`.
+**Required Change**:
+```typescript
+import { emitStoreEvent } from '@/lib/events/store-events';
+
+setApiKey: async (providerId: string, apiKey: string) => {
+  // ... existing key persistence logic ...
+  await credentialVault.storeCredentials(providerId, apiKey);
+  set(produce(state => {
+    state.providers[providerId].hasApiKey = true;
+  }));
+
+  // ✅ ADD THIS: Emit event for auto-loading
+  emitStoreEvent('provider:key-set', {
+    providerId,
+    timestamp: Date.now()
+  });
+}
+```
+
+### Task 1.2: Add Event Listener for Auto-Loading
+
+**File**: `src/stores/provider-models-store.ts`
+
+**Location**: Add at the end of the store definition, or in a component that uses the store
+
+**Required Code**:
+```typescript
+import { subscribeStoreEvent } from '@/lib/events/store-events';
+
+// Subscribe to provider:key-set events
+useEffect(() => {
+  const unsubscribe = subscribeStoreEvent('provider:key-set', async ({ providerId }) => {
+    const provider = get().providers.find(p => p.id === providerId);
+    if (provider && provider.hasApiKey) {
+      await get().fetchModels(providerId);
+    }
+  });
+
+  return () => {
+    unsubscribe?.();
+  };
+}, []);
+```
+
+**Alternative** (if in store):
+```typescript
+// At store initialization
+let unsubscribeProviderKeySet: (() => void) | undefined;
+
+const initializeEventListeners = () => {
+  unsubscribeProviderKeySet = subscribeStoreEvent('provider:key-set', async ({ providerId }) => {
+    const provider = get().providers.find(p => p.id === providerId);
+    if (provider && provider.hasApiKey) {
+      await get().fetchModels(providerId);
+    }
+  });
+};
+
+// Call this when store is created
+initializeEventListeners();
+```
+
+### Task 1.3: Emit Model Loaded Event
+
+**File**: `src/stores/provider-models-store.ts`
+
+**Find** `fetchModels` function and add event emission:
+
+```typescript
+fetchModels: async (providerId: string) => {
+  // ... existing fetch logic ...
+
+  // Store models
+  set({
+    models: [...get().models, ...newModels]
+  });
+
+  // ✅ ADD THIS: Emit models loaded event
+  emitStoreEvent('provider:models-loaded', {
+    providerId,
+    modelCount: newModels.length,
+    timestamp: Date.now()
+  });
+}
+```
 
 ---
 
-## 4. UI ENFORCEMENT (Layer 5)
+## 2. VALIDATION CRITERIA
 
-### 4.1 Update `ProviderConfigDialog.tsx`
-Ensure it strictly respects the `isHardcoded` property from `LLMProvider`.
+### Manual Testing Steps
 
--   **Logic**: `readOnly={provider.isHardcoded}` on the Base URL input.
--   **Correction**: Do not rely on specific IDs like 'openrouter'. Rely on the boolean flag. This makes the system data-driven.
+1. **Clear Application Storage** (DevTools → Application → Clear storage)
+2. **Open Settings → Providers**
+3. **Enter API Key** for OpenRouter
+4. **Click Save**
+5. **Verify** (within 2 seconds):
+   - [ ] Models dropdown populates automatically
+   - [ ] No page refresh needed
+   - [ ] Event `provider:key-set` was logged (check console)
+   - [ ] Event `provider:models-loaded` was logged
 
----
+### Type Checking
 
-## 5. VALIDATION CHECKLIST (AC-01)
+```bash
+pnpm tsc --noEmit
+```
 
-Execute these checks after refactoring:
-
-- [ ] **Type Check**: Run `tsc --noEmit`. No errors in `provider-models-store.ts`.
-- [ ] **Hardcoded Check**: Verify OpenRouter provider has `isHardcoded: true`.
-- [ ] **Custom Check**: Add a custom provider. Verify `isHardcoded: false`.
-- [ ] **Flow Check**:
-    1.  Clear Application Storage (Dexie).
-    2.  Open Settings -> Providers.
-    3.  Enter OpenRouter Key.
-    4.  Save.
-    5.  **Verify**: Models dropdown populates *automatically* without page refresh.
+Expected: No errors
 
 ---
 
-## 6. EXECUTION INSTRUCTIONS
+## 3. SUCCESS METRICS
 
-1.  **READ** `src/lib/agent/providers/types.ts` to ensure base types are correct.
-2.  **EDIT** `src/stores/provider-models-store.ts` to align with the 5-Layer architecture contracts.
-3.  **VERIFY** `ProviderConfigDialog` respects the contracts.
-
-**(Self-Correction Note)**: If you find circular dependencies between store and events, extract events to a pure library file.
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Key save → models visible | < 2s | Time from save button to models in dropdown |
+| Event propagation | < 100ms | Time from emit to listener execution |
+| React UI update | < 50ms | Component re-render time |
 
 ---
 
-## 7. NEXT STEP
+## 4. FILES CHANGED
 
-Once AC-01 is verified, we move to the Agent Vault (AC-02), which builds upon these providers.
+| File | Change Type | Lines Added |
+|------|-------------|-------------|
+| `src/stores/provider-models-store.ts` | Add event emission/listener | ~15 |
+| `src/lib/events/store-events.ts` | (Verify events exist) | 0 |
 
-**Menu:**
-1.  **[AV] Proceed to Step 3 (Agent Vault)** - If Provider Foundation is solid.
-2.  **[RE] Retry Step 2** - If validation fails.
+---
+
+## 5. NEXT STEP
+
+Once AC-01 is verified (models auto-load on key save), proceed to **Step 3 (Agent Vault Enhancement)** which adds provider/model selection UI to `AgentConfigDialog`.
+
+**Validation Gate Checklist**:
+- [ ] Event `provider:key-set` is emitted on key save
+- [ ] Event listener triggers `fetchModels`
+- [ ] Models appear in UI without refresh
+- [ ] No type errors
+- [ ] Build passes: `pnpm build`
