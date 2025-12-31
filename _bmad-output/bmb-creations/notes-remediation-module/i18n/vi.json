@@ -1,0 +1,191 @@
+{
+  "workflow": {
+    "fixEditorReactivity": {
+      "title": "Quy Trình Sửa Lỗi Phản Hồi Editor",
+      "objective": "Sửa lỗi khi chuyển đổi giữa các ghi chú trong thanh bên không cập nhật nội dung editor cho đến khi làm mới trang.",
+      "rootCauseAnalysis": "Phân Tích Nguyên Nhân Gốc",
+      "rootCauseDescription": "Thành phần `NoteEditor` sử dụng hook `useCreateBlockNote` tạo phiên bản editor với `initialContent`. Tuy nhiên:",
+      "cause1": "`initialContent` được ghi nhớ trên `note?.id`",
+      "cause2": "Khi `noteId` thay đổi, React kết xuất lại thành phần",
+      "cause3": "NHƯNG `useCreateBlockNote` KHÔNG khởi tạo lại editor - đây là hook tùy chỉnh chỉ tạo phiên bản một lần",
+      "cause4": "Kết quả: Nội dung cũ vẫn còn cho đến khi làm mới trang",
+      "solutionOptions": "Các Tùy Chọn Giải Pháp",
+      "optionA": {
+        "title": "Tùy Chọn A: Buộc Remount với Key (Khuyến Nghị)",
+        "description": "Thêm prop `key` vào thẻ div bao bọc để buộc React remount toàn bộ thành phần khi `noteId` thay đổi.",
+        "pros": "Đơn giản, đảm bảo hoạt động, môi trường sạch cho mỗi ghi chú",
+        "cons": "Mất trạng thái editor (vị trí con trỏ, lịch sử undo) - có thể chấp nhận cho ghi chú"
+      },
+      "optionB": {
+        "title": "Tùy Chọn B: Sử dụng replaceBlocks",
+        "description": "Gọi `editor.replaceBlocks()` trong useEffect khi noteId thay đổi.",
+        "pros": "Giữ nguyên phiên bản editor, có thể nhanh hơn",
+        "cons": "Phức tạp hơn, có thể có trường hợp biên với trạng thái nội bộ của BlockNote"
+      },
+      "implementationTitle": "Triển Khai (Tùy Chọn A - Khuyến Nghị)",
+      "step1": "Bước 1: Xác Định Vị Trí Lỗi",
+      "currentCode": "Mã Hiện Tại (khoảng dòng 182):",
+      "changeTo": "Thay Đổi Thành:",
+      "completeDiff": "Diff Hoàn Chỉnh:",
+      "step2": "Bước 2: Áp Dụng Sửa Lỗi",
+      "step3": "Bước 3: Kiểm Tra",
+      "typescriptValidation": "Xác thực TypeScript",
+      "manualTesting": "Kiểm Tra Thủ Công:",
+      "step4": "Bước 4: Cập Nhật Trạng Thái",
+      "afterImplementation": "Sau khi triển khai thành công, cập nhật LOOP_STATE.yaml:",
+      "alternativeImplementation": "Triển Khai Thay Thế (Tùy Chọn B)",
+      "ifOptionAFails": "Nếu Tùy Chọn A gây ra vấn đề, hãy sử dụng thay thế này:",
+      "acceptanceCriteria": "Danh Sách Kiểm Tra Tiêu Chí Chấp Nhận",
+      "edgeCases": "Các Trường Hợp Biên Cần Xác Minh",
+      "emptyNote": "Ghi chú trống: Chuyển sang ghi chú không có nội dung sẽ hiển thị editor trống",
+      "noteWithImages": "Ghi chú có hình ảnh/nhúng: Nội dung phức tạp tải đúng cách",
+      "rapidSwitching": "Chuyển đổi nhanh: Click nhiều ghi chú nhanh - hiển thị nội dung ghi chú cuối cùng",
+      "unsavedChanges": "Thay đổi chưa lưu: Nếu debounce đang chờ, vẫn nên lưu trước khi chuyển",
+      "rollbackPlan": "Kế Hoạch Rollback"
+    },
+    "notesRemediationLoop": {
+      "title": "Quy Trình Vòng Lặp Sửa Chữa Ghi Chú",
+      "overview": "Tổng Quan",
+      "overviewDescription": "Quy trình này điều phối việc sửa chữa hoàn chỉnh không gian làm việc Ghi Chú thông qua vòng lặp lặp đi lặp lại với chuyển giao agent tự động. Nó xử lý 8 câu chuyện qua 3 giai đoạn với các cổng xác thực giữa các giai đoạn.",
+      "prerequisites": "Điều Kiện Tiên Quyết",
+      "loopStateFile": "Tệp Trạng Thái Vòng Lặp",
+      "phase0": {
+        "title": "Giai Đoạn 0: Sửa Lỗi Ngay Lập Tức",
+        "nr01": {
+          "story": "Câu Chuyện NR-01: Kết Nối AI Service với Hệ Thống Agent",
+          "agent": "Agent:",
+          "objective": "Mục Tiêu:",
+          "steps": "Các Bước:",
+          "loadContext": "Tải Ngữ Cảnh",
+          "researchPatterns": "Nghiên Cứu Các Mẫu Yêu Cầu",
+          "implementChanges": "Triển Khai Các Thay Đổi",
+          "updateLoopState": "Cập Nhật Trạng Thái Vòng Lặp",
+          "validation": "Xác Thực",
+          "manualTest": "Thủ công: Mở /notes, sử dụng lệnh AI Magic slash, xác minh phản hồi AI thực"
+        },
+        "nr02": {
+          "story": "Câu Chuyện NR-02: Sửa Lỗi Phản Hồi Hot-Reload Editor",
+          "agent": "Agent:",
+          "objective": "Mục Tiêu:",
+          "steps": "Các Bước:",
+          "loadContext": "Tải Ngữ Cảnh",
+          "implementFix": "Triển Khai Sửa Lỗi",
+          "optionA": "Tùy Chọn A: Thêm prop `key` để buộc remount",
+          "optionB": "Tùy Chọn B: Sử dụng replaceBlocks khi noteId thay đổi",
+          "updateLoopState": "Cập Nhật Trạng Thái Vòng Lặp",
+          "validation": "Xác Thực",
+          "manualTest": "Thủ công: Tạo 2 ghi chú với nội dung khác nhau, chuyển đổi giữa chúng không cần làm mới"
+        },
+        "validationGate": "Cổng Xác Thực Giai Đoạn 0",
+        "beforeProceeding": "Trước khi tiến hành Giai Đoạn 1:",
+        "updateLoopState": "Cập Nhật Trạng Thái Vòng Lặp:"
+      },
+      "phase1": {
+        "title": "Giai Đoạn 1: Tích Hợp AI",
+        "nr03": {
+          "story": "Câu Chuyện NR-03: Kết Nối AgentSelector với AI Service",
+          "steps": "Các Bước:"
+        },
+        "nr04": {
+          "story": "Câu Chuyện NR-04: Thêm Chuyển Đổi AI cho Văn Bản Được Chọn",
+          "steps": "Các Bước:"
+        },
+        "nr05": {
+          "story": "Câu Chuyện NR-05: Triển Khai Hành Động AI trong Command Palette",
+          "steps": "Các Bước:"
+        }
+      },
+      "phase2": {
+        "title": "Giai Đoạn 2: Tích Hợp Hệ Sinh Thái",
+        "nr06": {
+          "story": "Câu Chuyện NR-06: Triển Khai Liên Kết Notes → FileSync",
+          "steps": "Các Bước:"
+        },
+        "nr07": {
+          "story": "Câu Chuyện NR-07: Truy Cập Ghi Chú Đa Không Gian Làm Việc",
+          "steps": "Các Bước:"
+        },
+        "nr08": {
+          "story": "Câu Chuyện NR-08: Giao Diện Nhập/Xuất Markdown",
+          "steps": "Các Bước:"
+        }
+      },
+      "completionSignal": "Tín Hiệu Hoàn Thành",
+      "whenAllStoriesDone": "Khi tất cả câu chuyện đã HOÀN THÀNH:",
+      "postCompletion": "Sau Hoàn Thành:",
+      "quickCommands": "Lệnh Nhanh"
+    },
+    "validatePhase": {
+      "title": "Quy Trình Xác Thực Giai Đoạn",
+      "usage": "Cách Sử Dụng",
+      "phase0": {
+        "title": "Xác Thực Giai Đoạn 0",
+        "automatedChecks": "Kiểm Tra Tự Động",
+        "manualChecks": "Kiểm Tra Thủ Công",
+        "aiMagicWorks": "AI Magic Hoạt Động",
+        "agentUsed": "Agent Được Sử Dụng",
+        "errorHandling": "Xử Lý Lỗi",
+        "noteSwitching": "Chuyển Đổi Ghi Chú",
+        "noRefreshNeeded": "Không Cần Làm Mới",
+        "updateLoopState": "Cập Nhật LOOP_STATE.yaml"
+      },
+      "phase1": {
+        "title": "Xác Thực Giai Đoạn 1",
+        "automatedChecks": "Kiểm Tra Tự Động",
+        "sameAsPhase0": "Giống Giai Đoạn 0, cộng thêm:",
+        "manualChecks": "Kiểm Tra Thủ Công",
+        "agentDialogShows": "Hộp thoại Agent Hiển thị Agent",
+        "agentSwitchEffect": "Hiệu Ứng Chuyển Đổi Agent",
+        "textSelectionMenu": "Menu Chọn Văn Bản",
+        "transformActions": "Hành Động Chuyển Đổi",
+        "commandPalette": "Command Palette",
+        "loadingStates": "Trạng Thái Tải",
+        "updateLoopState": "Cập Nhật LOOP_STATE.yaml"
+      },
+      "phase2": {
+        "title": "Xác Thực Giai Đoạn 2",
+        "automatedChecks": "Kiểm Tra Tự Động",
+        "manualChecks": "Kiểm Tra Thủ Công",
+        "exportNote": "Xuất Ghi Chú",
+        "importMarkdown": "Nhập Markdown",
+        "batchExport": "Xuất Hàng Loạt",
+        "eventEmission": "Phát Sự Kiện",
+        "crossWorkspace": "Đa Không Gian Làm Việc",
+        "updateLoopState": "Cập Nhật LOOP_STATE.yaml"
+      },
+      "validationFailure": "Xử Lý Lỗi Xác Thực",
+      "ifCheckFails": "Nếu bất kỳ kiểm tra nào thất bại:",
+      "documentFailure": "Ghi lại lỗi:",
+      "identifyStory": "Xác định câu chuyện:",
+      "loopBack": "Quay lại vòng lặp:",
+      "ifBlocked": "Nếu bị chặn:",
+      "completionChecklist": "Danh Sách Kiểm Tra Hoàn Thành",
+      "whenAllPhasesPass": "Khi tất cả các giai đoạn đều đạt:",
+      "celebrate": "Chúc Mừng! 🎉"
+    },
+    "wireAiService": {
+      "title": "Quy Trình Kết Nối AI Service",
+      "objective": "Mục Tiêu",
+      "objectiveDescription": "Thay thế `note-ai-service.ts` giả bằng triển khai thực tế để:",
+      "readsActiveAgent": "Đọc agent hoạt động từ `useAgentsStore`",
+      "getsApiKey": "Lấy API key từ `useProviderStore`",
+      "callsAiProvider": "Gọi API provider AI thực tế",
+      "returnsRealContent": "Trả về nội dung được tạo thực",
+      "prerequisites": "Điều Kiện Tiên Quyết",
+      "steps": "Các Bước",
+      "step1Analyze": "Bước 1: Phân Tích Triển Khai Hiện Tại",
+      "currentIssues": "Vấn Đề Hiện Tại:",
+      "step2Research": "Bước 2: Nghiên Cứu Phụ Thuộc",
+      "filesToUnderstand": "Các tệp cần hiểu:",
+      "keyApis": "API Chính:",
+      "step3Implement": "Bước 3: Triển Khai Service Mới",
+      "targetFile": "Tệp mục tiêu:",
+      "newImplementation": "Triển Khai Mới:",
+      "step4Test": "Bước 4: Kiểm Tra Triển Khai",
+      "step5UpdateState": "Bước 5: Cập Nhật Trạng Thái",
+      "afterImplementation": "Sau khi triển khai thành công, cập nhật LOOP_STATE.yaml:",
+      "acceptanceCriteria": "Danh Sách Kiểm Tra Tiêu Chí Chấp Nhận",
+      "rollbackPlan": "Kế Hoạch Rollback"
+    }
+  }
+}

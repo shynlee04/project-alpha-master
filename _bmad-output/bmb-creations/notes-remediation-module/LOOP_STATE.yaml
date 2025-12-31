@@ -1,0 +1,206 @@
+# Notes Remediation Loop State
+# Auto-generated: 2025-12-31T22:35:00+07:00
+# Module: notes-remediation-module
+
+loop_id: "notes-remediation-2025-12-31"
+current_iteration: 0
+current_phase: "phase_0"
+current_story: null
+
+# Phase status tracking
+phase_status:
+  phase_0: "IN_PROGRESS"
+  phase_1: "PENDING"
+  phase_2: "PENDING"
+
+# Story tracking
+stories:
+  NR-01:
+    name: "Wire AI Service to Agent System"
+    status: "PENDING"
+    priority: "P0"
+    effort_hours: 4
+    phase: "phase_0"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    acceptance_criteria:
+      - "AI Magic slash command produces real AI content"
+      - "Selected agent's model is used for generation"
+      - "API key from provider store is used"
+      - "Error messages shown if no agent/key configured"
+      - "Console logs show actual AI call, not mock"
+      
+  NR-02:
+    name: "Fix Editor Hot-Reload Reactivity"
+    status: "PENDING"
+    priority: "P0"
+    effort_hours: 2
+    phase: "phase_0"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    acceptance_criteria:
+      - "Clicking different note in sidebar immediately shows that note's content"
+      - "No page refresh required"
+      - "Previous note's content doesn't flash before new content"
+      
+  NR-03:
+    name: "Connect AgentSelector to AI Service"
+    status: "PENDING"
+    priority: "P1"
+    effort_hours: 3
+    phase: "phase_1"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    dependencies: ["NR-01"]
+    acceptance_criteria:
+      - "AI dialog shows which agent will be used"
+      - "Changing agent selector changes AI responses"
+      - "Agent's system prompt affects generation style"
+      
+  NR-04:
+    name: "Add Text Selection AI Transform"
+    status: "PENDING"
+    priority: "P1"
+    effort_hours: 4
+    phase: "phase_1"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    dependencies: ["NR-01", "NR-03"]
+    acceptance_criteria:
+      - "Selecting text shows floating AI menu"
+      - "Each action calls AI with appropriate prompt"
+      - "Result replaces selected text"
+      - "Loading state shown during generation"
+      - "Cancel option available"
+      
+  NR-05:
+    name: "Implement Command Palette AI Actions"
+    status: "PENDING"
+    priority: "P1"
+    effort_hours: 3
+    phase: "phase_1"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    dependencies: ["NR-01"]
+    acceptance_criteria:
+      - "Commands appear in slash menu under AI group"
+      - "Each command operates on full note content"
+      - "Results inserted at cursor position"
+      - "Progress indicator for long operations"
+      
+  NR-06:
+    name: "Implement Notes → FileSync Binding"
+    status: "PENDING"
+    priority: "P2"
+    effort_hours: 6
+    phase: "phase_2"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    dependencies: ["CW-01"]
+    acceptance_criteria:
+      - "Export to File option in note menu"
+      - "Import from Markdown option in notes sidebar"
+      - "Batch sync to directory working"
+      
+  NR-07:
+    name: "Cross-Workspace Note Access"
+    status: "PENDING"
+    priority: "P2"
+    effort_hours: 4
+    phase: "phase_2"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    dependencies: ["NR-06"]
+    acceptance_criteria:
+      - "Note changes emit events"
+      - "Knowledge workspace can list notes"
+      - "RAG can search across notes"
+      - "IDE workspace can reference notes"
+      
+  NR-08:
+    name: "Markdown Import/Export UI"
+    status: "PENDING"
+    priority: "P2"
+    effort_hours: 3
+    phase: "phase_2"
+    started_at: null
+    completed_at: null
+    files_changed: []
+    tests_added: []
+    review_status: null
+    dependencies: ["NR-06"]
+    acceptance_criteria:
+      - "Import button in sidebar header"
+      - "Export option in note context menu"
+      - "Batch export to markdown files"
+      - "Format preservation (headings, lists, code blocks)"
+
+# Validation gates
+validation_gates:
+  phase_0:
+    passed: null
+    validated_at: null
+    criteria:
+      - "pnpm exec tsc --noEmit passes"
+      - "pnpm build passes"
+      - "AI Magic returns real AI content"
+      - "Switching notes shows correct content immediately"
+    notes: null
+    
+  phase_1:
+    passed: null
+    validated_at: null
+    criteria:
+      - "All Phase 0 criteria still passing"
+      - "Agent selector affects AI output"
+      - "Text selection shows AI transform menu"
+      - "All AI actions functional"
+    notes: null
+    
+  phase_2:
+    passed: null
+    validated_at: null
+    criteria:
+      - "All previous criteria still passing"
+      - "Notes can be exported to markdown"
+      - "Markdown can be imported as notes"
+      - "Cross-workspace event emission working"
+      - "Sweeping Validation L1-L6 passes"
+    notes: null
+
+# Error tracking
+errors: []
+warnings: []
+
+# Metadata
+last_updated: "2025-12-31T22:35:00+07:00"
+completion_signal: false
+estimated_total_hours: 29
+actual_total_hours: 0
+
+# Linked documents
+linked_documents:
+  sprint_change_proposal: "_bmad-output/project-planning-artifacts/notes-remediation-sprint-change-proposal-2025-12-31.md"
+  module_manifest: "_bmad-output/bmb-creations/notes-remediation-module/module.yaml"
+  main_workflow: "_bmad-output/bmb-creations/notes-remediation-module/workflows/notes-remediation-loop.md"

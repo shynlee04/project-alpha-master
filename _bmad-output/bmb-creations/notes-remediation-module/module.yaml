@@ -1,0 +1,89 @@
+# Notes Remediation Module
+# Created: 2025-12-31T22:35:00+07:00
+# Author: BMAD Master (Team A)
+
+module:
+  id: notes-remediation-module
+  name: "Notes Remediation Module"
+  version: "1.0.0"
+  description: |
+    Automated workflow module for remediating the Notes workspace.
+    Coordinates agent handoffs across 8 stories in 3 phases to achieve
+    100% coverage of identified defects.
+  
+  trigger: "Sprint Change Proposal SCP-NOTES-2025-12-31"
+  scope: "MAJOR"
+  priority: "P0"
+  
+  # Linked documents
+  documents:
+    sprint_change_proposal: "_bmad-output/project-planning-artifacts/notes-remediation-sprint-change-proposal-2025-12-31.md"
+    architecture: "docs/architecture.md"
+    workflow_status: "bmm-workflow-status.yaml"
+  
+  # Phase structure
+  phases:
+    phase_0:
+      name: "Immediate Fixes"
+      target_date: "2025-12-31"
+      stories: ["NR-01", "NR-02"]
+      validation_gate: "build-passes + manual-test"
+      effort_hours: 6
+      
+    phase_1:
+      name: "AI Integration"
+      target_date: "2026-01-02"
+      stories: ["NR-03", "NR-04", "NR-05"]
+      validation_gate: "all-ai-features-functional"
+      effort_hours: 10
+      
+    phase_2:
+      name: "Ecosystem Integration"
+      target_date: "2026-01-05"
+      stories: ["NR-06", "NR-07", "NR-08"]
+      validation_gate: "sweeping-validation-L1-L6"
+      effort_hours: 13
+
+# Agents involved
+agents:
+  orchestrator:
+    id: "bmad-master"
+    role: "Workflow coordinator, handoff management"
+    
+  developer:
+    id: "bmad-bmm-dev"
+    role: "Implementation of code changes"
+    
+  architect:
+    id: "bmad-bmm-architect"
+    role: "Architecture review for Phase 2 integrations"
+    
+  code_reviewer:
+    id: "code-reviewer"
+    role: "Code review between stories"
+
+# Workflows in this module
+workflows:
+  - id: "notes-remediation-loop"
+    file: "workflows/notes-remediation-loop.md"
+    description: "Main iterative loop for story execution"
+    
+  - id: "wire-ai-service"
+    file: "workflows/wire-ai-service.md"
+    description: "Wire note-ai-service to agent system"
+    
+  - id: "fix-editor-reactivity"
+    file: "workflows/fix-editor-reactivity.md"
+    description: "Fix hot-reload when switching notes"
+    
+  - id: "validate-phase"
+    file: "workflows/validate-phase.md"
+    description: "Run validation gate for phase completion"
+
+# State tracking
+state:
+  current_phase: "phase_0"
+  current_story: null
+  stories_completed: []
+  validation_status: {}
+  last_updated: "2025-12-31T22:35:00+07:00"

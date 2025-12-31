@@ -24,6 +24,89 @@ sprint_change_proposal:
   triggered_at: "2025-12-31T16:45:00+07:00"
   triggered_by: "Project Health Assessment"
 
+# ═══════════════════════════════════════════════════════════════════════════
+# NOTES REMEDIATION MODULE - NEW SPRINT CHANGE
+# Proposal: _bmad-output/project-planning-artifacts/notes-remediation-sprint-change-proposal-2025-12-31.md
+# Status: CREATED - AWAITING EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+notes_remediation_module:
+  id: "notes-remediation-2025-12-31"
+  version: "1.0.0"
+  status: "CREATED"
+  created_at: "2025-12-31T22:35:00+07:00"
+  scope: "MAJOR"
+  priority: "P0"
+  
+  documents:
+    sprint_change_proposal: "_bmad-output/project-planning-artifacts/notes-remediation-sprint-change-proposal-2025-12-31.md"
+    module_manifest: "_bmad-output/bmb-creations/notes-remediation-module/module.yaml"
+    loop_state: "_bmad-output/bmb-creations/notes-remediation-module/LOOP_STATE.yaml"
+    workflow_registration: ".agent/workflows/notes-remediation-loop.md"
+  
+  defects_identified:
+    - id: "D1"
+      name: "Fake AI Service"
+      severity: "CRITICAL"
+      file: "src/lib/notes/note-ai-service.ts"
+    - id: "D2"
+      name: "Agent Selector Disconnected"
+      severity: "CRITICAL"
+      file: "src/presentation/components/notes/NotesPage.tsx"
+    - id: "D3"
+      name: "Editor Hot-Reload Failure"
+      severity: "HIGH"
+      file: "src/presentation/components/notes/NoteEditor.tsx"
+    - id: "D4"
+      name: "No File System Sync"
+      severity: "MEDIUM"
+      files: ["src/lib/notes/note-store.ts"]
+    - id: "D5"
+      name: "Text Selection AI Missing"
+      severity: "HIGH"
+      files: ["NOT_IMPLEMENTED"]
+    - id: "D6"
+      name: "Header AI Non-Functional"
+      severity: "HIGH"
+      files: ["src/presentation/components/notes/NoteEditor.tsx"]
+  
+  phases:
+    phase_0:
+      name: "Immediate Fixes"
+      status: "PENDING"
+      stories: ["NR-01", "NR-02"]
+      effort_hours: 6
+    phase_1:
+      name: "AI Integration"
+      status: "PENDING"
+      stories: ["NR-03", "NR-04", "NR-05"]
+      effort_hours: 10
+    phase_2:
+      name: "Ecosystem Integration"
+      status: "PENDING"
+      stories: ["NR-06", "NR-07", "NR-08"]
+      effort_hours: 13
+  
+  total_stories: 8
+  total_effort_hours: 29
+  target_completion: "2026-01-05"
+  
+  workflows_created:
+    - id: "notes-remediation-loop"
+      file: ".agent/workflows/notes-remediation-loop.md"
+      description: "Main iterative loop for story execution"
+    - id: "wire-ai-service"
+      file: "_bmad-output/bmb-creations/notes-remediation-module/workflows/wire-ai-service.md"
+      description: "NR-01 implementation guide"
+    - id: "fix-editor-reactivity"
+      file: "_bmad-output/bmb-creations/notes-remediation-module/workflows/fix-editor-reactivity.md"
+      description: "NR-02 implementation guide"
+    - id: "validate-phase"
+      file: "_bmad-output/bmb-creations/notes-remediation-module/workflows/validate-phase.md"
+      description: "Phase validation gate workflow"
+  
+  next_action: "Execute /notes-remediation-loop to start Phase 0"
+
 # 4-Phase Implementation Plan (On Approval)
 implementation_phases:
   phase_0:
