@@ -50,7 +50,7 @@ export function AgentDropdownItem({
         </div>
         <div className="flex items-center gap-1 text-[10px] text-slate-400">
           <Cpu className="h-3 w-3" />
-          <TruncatedText text={agent.model} />
+          <TruncatedText text={agent.modelId} />
         </div>
       </div>
     </div>

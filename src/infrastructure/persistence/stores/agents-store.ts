@@ -23,15 +23,36 @@ import type { Agent } from '@/core/entities/Agent';
 
 /**
  * Default agent created on first load
+ * IMMUTABLE CONTRACT: Must match Sprint Change Proposal v2.0 specification
  */
 const DEFAULT_AGENT: Agent = {
     id: 'agt_default_001',
     name: 'Via-Gent Coder',
-    role: 'AI Coding Assistant',
-    status: 'online',
-    provider: 'OpenRouter',
-    model: 'mistralai/devstral-2512:free',
     description: 'Default AI coding assistant powered by Devstral via OpenRouter',
+
+    // Provider + Model reference (foreign keys)
+    providerId: 'openrouter',
+    modelId: 'mistralai/devstral-2512:free',
+
+    // LLM Parameters
+    systemPrompt: 'You are a helpful AI coding assistant.',
+    temperature: 0.7,
+    maxTokens: 4096,
+    topP: 1.0,
+
+    // Tools and Workspaces
+    tools: [],
+    workspaceBindings: [
+        { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
+        { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
+        { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
+        { workspaceType: 'notes', isAvailable: true, uiVariant: 'minimal', isDefault: false },
+    ],
+
+    // Status
+    status: 'online',
+
+    // Metrics
     tasksCompleted: 0,
     successRate: 0,
     tokensUsed: 0,

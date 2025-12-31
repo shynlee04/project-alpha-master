@@ -205,7 +205,7 @@ export class AgentService {
      * Generate agent display name
      */
     static getDisplayName(agent: Agent): string {
-        return `${agent.name} (${agent.model.split('/').pop()})`;
+        return `${agent.name} (${agent.modelId.split('/').pop()})`;
     }
 }
 

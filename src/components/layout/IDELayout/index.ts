@@ -8,6 +8,7 @@
  * @component IDELayout
  */
 
+export { IDELayout } from '../IDELayoutMain';
 export { IDEDiscoveryMechanisms } from './IDEDiscoveryMechanisms';
 export { IDEEditorPanel } from './IDEEditorPanel';
 export { IDEPreviewPanel } from './IDEPreviewPanel';

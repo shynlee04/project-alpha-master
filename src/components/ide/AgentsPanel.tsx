@@ -178,7 +178,7 @@ function AgentItem({
                     {agent.name}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
-                    {agent.role} • {agent.model}
+                    {agent.role} • {agent.modelId}
                 </p>
             </div>
             {isSelected && (

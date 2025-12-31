@@ -44,7 +44,8 @@ export function IDEResizableLayout({
     terminalTools,
     eventBus,
     mainPanelGroupRef,
-    centerPanelGroupRef
+    centerPanelGroupRef,
+    editorPanelGroupRef
 }: IDEResizableLayoutProps) {
     return (
         <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
@@ -65,6 +66,7 @@ export function IDEResizableLayout({
                         handlePanelLayoutChange={handlePanelLayoutChange}
                         previewUrl={previewUrl}
                         previewPort={previewPort}
+                        editorPanelGroupRef={editorPanelGroupRef}
                     />
                     <IDETerminalPanel
                         terminalTab={terminalTab}

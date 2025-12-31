@@ -145,16 +145,16 @@ export function useAgentConfigForm({
             console.log('[useAgentConfigForm] Edit mode - populating from agent:', {
                 name: agent.name,
                 role: agent.role,
-                provider: agent.provider,
+                provider: agent.providerId,
                 model: agent.model
             })
 
             // Populate form from agent data
             setName(agent.name)
             setRole(agent.role || agent.description || '')
-            const mappedProviderId = mapProviderNameToId(agent.provider)
+            const mappedProviderId = mapProviderNameToId(agent.providerId)
             setProviderId(mappedProviderId)
-            setModel(agent.model || '')
+            setModel(agent.modelId || '')
 
             // Custom provider fields
             if (agent.customBaseURL) setCustomBaseURL(agent.customBaseURL)

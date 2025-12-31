@@ -7,11 +7,9 @@
  * @component IDEEditorPreviewGroup
  */
 
-import { useRef } from 'react';
 import {
     ResizablePanel,
     ResizablePanelGroup,
-    type ImperativePanelGroupHandle,
 } from '@/components/ui/resizable';
 import { IDEEditorPanel } from './IDEEditorPanel';
 import { IDEPreviewPanel } from './IDEPreviewPanel';
@@ -32,10 +30,9 @@ export function IDEEditorPreviewGroup({
     scheduleIdeStatePersistence,
     handlePanelLayoutChange,
     previewUrl,
-    previewPort
+    previewPort,
+    editorPanelGroupRef
 }: IDEEditorPreviewGroupProps) {
-    const editorPanelGroupRef = useRef<ImperativePanelGroupHandle | null>(null);
-
     return (
         <ResizablePanel id="ide-editor-preview-wrapper" defaultSize={70} minSize={30}>
             <ResizablePanelGroup ref={editorPanelGroupRef} direction="horizontal" onLayout={(layout) => handlePanelLayoutChange('editor', layout)}>

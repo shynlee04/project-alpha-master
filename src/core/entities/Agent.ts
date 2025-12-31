@@ -37,49 +37,47 @@ export interface WorkspaceBinding {
 /**
  * Agent - Domain Entity
  *
+ * IMMUTABLE CONTRACT from Sprint Change Proposal v2.0
  * Business rules:
- * - Agent must have provider and model
+ * - Agent must have providerId and modelId (foreign keys to LLMProvider and ProviderModel)
  * - Status transitions: offline → online → busy → error
  * - Tools are optional but must have permissions if present
  * - Workspace bindings define where agent is available
  */
 export interface Agent {
-    // Identity
+    // Core identity
     id: string;
     name: string;
-    role: string;
-    status: 'online' | 'offline' | 'busy' | 'error';
+    description: string;
 
-    // Configuration
-    provider: 'OpenRouter' | 'OpenAI' | 'Anthropic' | 'Mistral' | 'Google' | 'OpenAI Compatible';
-    model: string;
-    description?: string;
+    // Provider + Model reference (CRITICAL LINKAGE)
+    providerId: string;                // Foreign key to LLMProvider
+    modelId: string;                   // Foreign key to ProviderModel
 
     // LLM Parameters
-    systemPrompt?: string;
-    temperature?: number;
-    maxTokens?: number;
-    topP?: number;
-    topK?: number;
+    systemPrompt: string;
+    temperature: number;               // 0.0-2.0
+    maxTokens: number;
+    topP: number;                      // 0.0-1.0
+    topK?: number;                     // Optional (for Gemini/local)
     frequencyPenalty?: number;
     presencePenalty?: number;
-    stopSequences?: string[];
 
-    // Provider-specific
-    customBaseURL?: string;
-    customHeaders?: Record<string, string>;
-    enableNativeTools?: boolean;
+    // Tool Configuration (CONDITIONAL PER WORKSPACE)
+    tools: AgentToolBinding[];
 
-    // Tools and Workspaces
-    tools?: AgentToolBinding[];
-    workspaceBindings?: WorkspaceBinding[];
+    // Workspace Bindings (WHERE THIS AGENT IS AVAILABLE)
+    workspaceBindings: WorkspaceBinding[];
 
-    // Metadata
+    // Status
+    status: 'online' | 'offline' | 'busy' | 'error';
+
+    // Metrics
     tasksCompleted: number;
     successRate: number;
     tokensUsed: number;
-    lastActive: string;
-    createdAt: string;
+    lastActive: string;                // ISO 8601 date string
+    createdAt: string;                 // ISO 8601 date string
 }
 
 /**

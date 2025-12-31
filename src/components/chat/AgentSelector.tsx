@@ -296,10 +296,10 @@ export function AgentSelector({
                                 </div>
                                 <div className="flex items-center gap-1 text-[10px] text-slate-400">
                                     <Cpu className="h-3 w-3" />
-                                    <TruncatedText text={agent.model} />
+                                    <TruncatedText text={agent.modelId} />
                                 </div>
                                 <div className="text-[10px] text-slate-500">
-                                    {agent.provider}
+                                    {agent.providerId}
                                 </div>
                             </div>
                         </DropdownMenuItem>
@@ -395,7 +395,7 @@ function CompactAgentSelector({
                         )} />
                         <span className="flex-1 truncate">{agent.name}</span>
                         <span className="text-muted-foreground text-[10px]">
-                            {agent.provider}
+                            {agent.providerId}
                         </span>
                     </DropdownMenuItem>
                 ))}

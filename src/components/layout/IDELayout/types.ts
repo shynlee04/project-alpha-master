@@ -92,6 +92,7 @@ export interface IDEResizableLayoutProps {
     eventBus: any;
     mainPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
     centerPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
+    editorPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
 }
 
 export interface IDEEditorPreviewGroupProps {
@@ -107,4 +108,5 @@ export interface IDEEditorPreviewGroupProps {
     handlePanelLayoutChange: (group: string, layout: number[]) => void;
     previewUrl: string | undefined;
     previewPort: number | undefined;
+    editorPanelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
 }

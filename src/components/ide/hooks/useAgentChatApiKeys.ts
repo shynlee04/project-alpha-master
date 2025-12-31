@@ -46,7 +46,7 @@ export function useAgentChatApiKeys(agent: Agent | undefined): UseAgentChatApiKe
     // Get provider ID from agent's provider name
     const providerId = useMemo(() => {
         if (!agent?.provider) return 'openrouter';
-        return PROVIDER_ID_MAP[agent.provider] || 'openrouter';
+        return PROVIDER_ID_MAP[agent.providerId] || 'openrouter';
     }, [agent?.provider]);
 
     // Fetch API key
