@@ -2,6 +2,7 @@
  * Sync Event Bus - Unit Tests
  * 
  * Tests for the centralized event publishing service.
+ * Updated to match actual SyncEventBus API (2025-12-31)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -12,13 +13,16 @@ import type {
   FileEventPayload,
   TerminalEventPayload,
   NavigationEventPayload,
+  FileEventType,
+  TerminalEventType,
+  NavigationEventType,
 } from '../event-types';
 
 describe('SyncEventBus', () => {
   let bus: SyncEventBus;
 
   beforeEach(() => {
-    bus = new SyncEventBus({ debug: false });
+    bus = new SyncEventBus();
   });
 
   afterEach(() => {
@@ -54,6 +58,7 @@ describe('SyncEventBus', () => {
           operation: 'create',
         },
         source: 'test',
+        namespace: 'sync',
       };
       
       bus.emit('file:created', payload);
@@ -78,22 +83,13 @@ describe('SyncEventBus', () => {
           operation: 'create',
         },
         source: 'test',
+        namespace: 'sync',
       };
       
       bus.emit('file:created', payload);
       bus.emit('file:created', payload);
       
       expect(callback).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return event names with listeners', () => {
-      bus.on('file:created', vi.fn());
-      bus.on('file:modified', vi.fn());
-      
-      const eventNames = bus.eventNames();
-      
-      expect(eventNames).toContain('file:created');
-      expect(eventNames).toContain('file:modified');
     });
 
     it('should remove all listeners for a specific event', () => {
@@ -111,136 +107,9 @@ describe('SyncEventBus', () => {
       bus.on('file:created', vi.fn());
       bus.on('terminal:output', vi.fn());
       
-      expect(bus.eventNames().length).toBe(2);
-      
       bus.removeAllListeners();
       
-      expect(bus.eventNames().length).toBe(0);
-    });
-  });
-
-  describe('Convenience Methods', () => {
-    it('should emit file created events', () => {
-      const callback = vi.fn();
-      bus.on('file:created', callback);
-      
-      bus.emitFileCreated('/path/to/file.txt');
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.path).toBe('/path/to/file.txt');
-      expect(callArg.data.operation).toBe('create');
-    });
-
-    it('should emit file modified events', () => {
-      const callback = vi.fn();
-      bus.on('file:modified', callback);
-      
-      bus.emitFileModified('/path/to/file.txt');
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.path).toBe('/path/to/file.txt');
-      expect(callArg.data.operation).toBe('modify');
-    });
-
-    it('should emit file deleted events', () => {
-      const callback = vi.fn();
-      bus.on('file:deleted', callback);
-      
-      bus.emitFileDeleted('/path/to/file.txt');
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.path).toBe('/path/to/file.txt');
-      expect(callArg.data.operation).toBe('delete');
-    });
-
-    it('should emit terminal output events', () => {
-      const callback = vi.fn();
-      bus.on('terminal:output', callback);
-      
-      bus.emitTerminalOutput('session-123', 'test output', false);
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.sessionId).toBe('session-123');
-      expect(callArg.data.output).toBe('test output');
-      expect(callArg.data.isError).toBe(false);
-    });
-
-    it('should emit terminal error events', () => {
-      const callback = vi.fn();
-      bus.on('terminal:error', callback);
-      
-      bus.emitTerminalOutput('session-123', 'error message', true);
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.isError).toBe(true);
-    });
-
-    it('should emit navigation changed events', () => {
-      const callback = vi.fn();
-      bus.on('navigation:file_opened', callback);
-      
-      bus.emitNavigationChanged(null, 'file.txt', 'file.txt', 'open');
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      const callArg = callback.mock.calls[0][0];
-      expect(callArg.data.target).toBe('file.txt');
-      expect(callArg.data.action).toBe('open');
-    });
-  });
-
-  describe('Namespace Support', () => {
-    it('should track namespaces', () => {
-      const callback = vi.fn();
-      bus.on('file:created', callback, { namespace: 'local-fs' });
-      
-      expect(bus.listenerCount('file:created')).toBe(1);
-    });
-
-    it('should emit to namespace subscribers', () => {
-      const callback = vi.fn();
-      bus.onNamespace('local-fs', callback);
-      
-      const payload: BaseEventPayload<FileEventPayload> = {
-        type: 'file:created',
-        timestamp: Date.now(),
-        data: {
-          path: '/test/file.txt',
-          name: 'file.txt',
-          operation: 'create',
-        },
-        source: 'test',
-        namespace: 'local-fs:adapter',
-      };
-      
-      bus.emit('file:created', payload);
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not emit to non-matching namespaces', () => {
-      const callback = vi.fn();
-      bus.onNamespace('local-fs', callback);
-      
-      const payload: BaseEventPayload<FileEventPayload> = {
-        type: 'file:created',
-        timestamp: Date.now(),
-        data: {
-          path: '/test/file.txt',
-          name: 'file.txt',
-          operation: 'create',
-        },
-        source: 'test',
-        namespace: 'other-namespace',
-      };
-      
-      bus.emit('file:created', payload);
-      
-      expect(callback).not.toHaveBeenCalled();
+      expect(bus.listenerCount()).toBe(0);
     });
 
     it('should return unsubscribe function for on()', () => {
@@ -255,63 +124,359 @@ describe('SyncEventBus', () => {
     });
   });
 
+  describe('EmitFileEvent Method', () => {
+    it('should emit file created events using emitFileEvent', () => {
+      const callback = vi.fn();
+      bus.on('file:created', callback);
+      
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:created',
+        timestamp: Date.now(),
+        data: {
+          path: '/path/to/file.txt',
+          name: 'file.txt',
+          operation: 'create',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitFileEvent('file:created', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data.path).toBe('/path/to/file.txt');
+      expect(callArg.data.operation).toBe('create');
+    });
+
+    it('should emit file modified events using emitFileEvent', () => {
+      const callback = vi.fn();
+      bus.on('file:modified', callback);
+      
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:modified',
+        timestamp: Date.now(),
+        data: {
+          path: '/path/to/file.txt',
+          name: 'file.txt',
+          operation: 'modify',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitFileEvent('file:modified', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data.path).toBe('/path/to/file.txt');
+      expect(callArg.data.operation).toBe('modify');
+    });
+
+    it('should emit file deleted events using emitFileEvent', () => {
+      const callback = vi.fn();
+      bus.on('file:deleted', callback);
+      
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:deleted',
+        timestamp: Date.now(),
+        data: {
+          path: '/path/to/file.txt',
+          name: 'file.txt',
+          operation: 'delete',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitFileEvent('file:deleted', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data.path).toBe('/path/to/file.txt');
+      expect(callArg.data.operation).toBe('delete');
+    });
+  });
+
+  describe('EmitTerminalEvent Method', () => {
+    it('should emit terminal output events using emitTerminalEvent', () => {
+      const callback = vi.fn();
+      bus.on('terminal:output', callback);
+      
+      const payload: BaseEventPayload<TerminalEventPayload> = {
+        type: 'terminal:output',
+        timestamp: Date.now(),
+        data: {
+          sessionId: 'session-123',
+          output: 'test output',
+          isError: false,
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitTerminalEvent('terminal:output', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data.sessionId).toBe('session-123');
+      expect(callArg.data.output).toBe('test output');
+      expect(callArg.data.isError).toBe(false);
+    });
+
+    it('should emit terminal error events using emitTerminalEvent', () => {
+      const callback = vi.fn();
+      bus.on('terminal:error', callback);
+      
+      const payload: BaseEventPayload<TerminalEventPayload> = {
+        type: 'terminal:error',
+        timestamp: Date.now(),
+        data: {
+          sessionId: 'session-123',
+          output: 'error message',
+          isError: true,
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitTerminalEvent('terminal:error', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data.isError).toBe(true);
+    });
+  });
+
+  describe('EmitNavigationEvent Method', () => {
+    it('should emit navigation changed events using emitNavigationEvent', () => {
+      const callback = vi.fn();
+      bus.on('navigation:file_opened', callback);
+      
+      const payload: BaseEventPayload<NavigationEventPayload> = {
+        type: 'navigation:file_opened',
+        timestamp: Date.now(),
+        data: {
+          previousPath: null,
+          path: 'file.txt',
+          name: 'file.txt',
+          action: 'open',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitNavigationEvent('navigation:file_opened', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data.target).toBe('file.txt');
+      expect(callArg.data.action).toBe('open');
+    });
+  });
+
   describe('Type Safety', () => {
     it('should properly type file events', () => {
       const fileCallback = vi.fn<(payload: BaseEventPayload<FileEventPayload>) => void>();
       bus.on('file:created', fileCallback);
       
-      bus.emitFileCreated('/test.txt');
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:created',
+        timestamp: Date.now(),
+        data: {
+          path: '/test.txt',
+          name: 'test.txt',
+          operation: 'create',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitFileEvent('file:created', payload);
       
       expect(fileCallback).toHaveBeenCalled();
-      const payload = fileCallback.mock.calls[0][0];
-      expect(payload.data.name).toBe('test.txt');
+      const callPayload = fileCallback.mock.calls[0][0];
+      expect(callPayload.data.name).toBe('test.txt');
     });
 
     it('should properly type terminal events', () => {
       const terminalCallback = vi.fn<(payload: BaseEventPayload<TerminalEventPayload>) => void>();
       bus.on('terminal:output', terminalCallback);
       
-      bus.emitTerminalOutput('session-1', 'output', false);
+      const payload: BaseEventPayload<TerminalEventPayload> = {
+        type: 'terminal:output',
+        timestamp: Date.now(),
+        data: {
+          sessionId: 'session-1',
+          output: 'output',
+          isError: false,
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitTerminalEvent('terminal:output', payload);
       
       expect(terminalCallback).toHaveBeenCalled();
-      const payload = terminalCallback.mock.calls[0][0];
-      expect(payload.data.sessionId).toBe('session-1');
+      const callPayload = terminalCallback.mock.calls[0][0];
+      expect(callPayload.data.sessionId).toBe('session-1');
     });
 
     it('should properly type navigation events', () => {
       const navCallback = vi.fn<(payload: BaseEventPayload<NavigationEventPayload>) => void>();
       bus.on('navigation:file_opened', navCallback);
       
-      bus.emitNavigationChanged(null, 'file.txt', 'file.txt', 'open');
+      const payload: BaseEventPayload<NavigationEventPayload> = {
+        type: 'navigation:file_opened',
+        timestamp: Date.now(),
+        data: {
+          previousPath: null,
+          path: 'file.txt',
+          name: 'file.txt',
+          action: 'open',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitNavigationEvent('navigation:file_opened', payload);
       
       expect(navCallback).toHaveBeenCalled();
-      const payload = navCallback.mock.calls[0][0];
-      expect(payload.data.action).toBe('open');
+      const callPayload = navCallback.mock.calls[0][0];
+      expect(callPayload.data.action).toBe('open');
     });
   });
 
-  describe('Configuration', () => {
-    it('should respect maxListeners configuration', () => {
-      const limitedBus = new SyncEventBus({ maxListeners: 2 });
+  describe('Event Listener Methods', () => {
+    it('should support onFileEvent for typed file event subscriptions', () => {
+      const callback = vi.fn();
+      bus.onFileEvent('file:created', callback);
       
-      limitedBus.on('file:created', vi.fn());
-      limitedBus.on('file:created', vi.fn());
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:created',
+        timestamp: Date.now(),
+        data: {
+          path: '/test.txt',
+          name: 'test.txt',
+          operation: 'create',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
       
-      // Should not throw, but EventEmitter3 doesn't enforce by default
-      expect(limitedBus.listenerCount('file:created')).toBe(2);
+      bus.emitFileEvent('file:created', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
     });
 
-    it('should use custom default source', () => {
-      const customBus = new SyncEventBus({ defaultSource: 'custom-source' });
+    it('should support onTerminalEvent for typed terminal event subscriptions', () => {
+      const callback = vi.fn();
+      bus.onTerminalEvent('terminal:output', callback);
       
+      const payload: BaseEventPayload<TerminalEventPayload> = {
+        type: 'terminal:output',
+        timestamp: Date.now(),
+        data: {
+          sessionId: 'session-1',
+          output: 'test',
+          isError: false,
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitTerminalEvent('terminal:output', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support onNavigationEvent for typed navigation event subscriptions', () => {
+      const callback = vi.fn();
+      bus.onNavigationEvent('navigation:file_opened', callback);
+      
+      const payload: BaseEventPayload<NavigationEventPayload> = {
+        type: 'navigation:file_opened',
+        timestamp: Date.now(),
+        data: {
+          previousPath: null,
+          path: 'file.txt',
+          name: 'file.txt',
+          action: 'open',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitNavigationEvent('navigation:file_opened', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support onAny for wildcard subscriptions', () => {
+      const callback = vi.fn();
+      bus.onAny(callback);
+      
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:created',
+        timestamp: Date.now(),
+        data: {
+          path: '/test.txt',
+          name: 'test.txt',
+          operation: 'create',
+        },
+        source: 'test',
+        namespace: 'sync',
+      };
+      
+      bus.emitFileEvent('file:created', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      // onAny receives (type, payload)
+      expect(callback).toHaveBeenCalledWith('sync:file:created', expect.objectContaining(payload));
+    });
+  });
+
+  describe('Custom Namespace', () => {
+    it('should use custom namespace when provided', () => {
+      const customBus = new SyncEventBus('custom-ns');
       const callback = vi.fn();
       customBus.on('file:created', callback);
       
-      customBus.emitFileCreated('/test.txt');
+      const payload: BaseEventPayload<FileEventPayload> = {
+        type: 'file:created',
+        timestamp: Date.now(),
+        data: {
+          path: '/test.txt',
+          name: 'test.txt',
+          operation: 'create',
+        },
+        source: 'test',
+        namespace: 'custom-ns',
+      };
       
-      expect(callback).toHaveBeenCalled();
-      const payload = callback.mock.calls[0][0];
-      expect(payload.source).toBe('custom-source');
+      customBus.emitFileEvent('file:created', payload);
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('emitEvent Convenience Method', () => {
+    it('should emit events with data using emitEvent', () => {
+      const callback = vi.fn();
+      bus.on('file:created', callback);
+      
+      const fileData = {
+        path: '/test.txt',
+        name: 'test.txt',
+        operation: 'create' as const,
+      };
+      
+      bus.emitEvent('file:created', fileData, 'test-source');
+      
+      expect(callback).toHaveBeenCalledTimes(1);
+      const callArg = callback.mock.calls[0][0];
+      expect(callArg.data).toEqual(fileData);
+      expect(callArg.source).toBe('test-source');
     });
   });
 });
@@ -325,7 +490,19 @@ describe('syncEventBus Singleton', () => {
     const callback = vi.fn();
     syncEventBus.on('file:created', callback);
     
-    syncEventBus.emitFileCreated('/singleton-test.txt');
+    const payload: BaseEventPayload<FileEventPayload> = {
+      type: 'file:created',
+      timestamp: Date.now(),
+      data: {
+        path: '/singleton-test.txt',
+        name: 'singleton-test.txt',
+        operation: 'create',
+      },
+      source: 'test',
+      namespace: 'sync',
+    };
+    
+    syncEventBus.emitFileEvent('file:created', payload);
     
     expect(callback).toHaveBeenCalledTimes(1);
     
