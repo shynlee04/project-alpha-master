@@ -1,0 +1,145 @@
+/**
+ * Store Events Module
+ * 
+ * Event bus for cross-store communication.
+ * Prevents circular dependencies between Zustand stores.
+ * 
+ * @see architecture.md Section 4.2.2 - Event Bus Pattern
+ * @epic Sprint Change Proposal - Architectural Consolidation
+ * @story AC-01 - Provider Store Reactivity
+ * @created 2025-12-31
+ */
+
+import EventEmitter from 'eventemitter3';
+
+// Create singleton event bus for store communication
+// This is separate from workspace-events.ts which handles UI/file events
+export const storeEvents = new EventEmitter();
+
+// =============================================================================
+// Event Type Constants
+// =============================================================================
+
+export const STORE_EVENTS = {
+    // Provider events - for cross-workspace reactivity
+    PROVIDER_KEY_SET: 'provider:key-set',
+    PROVIDER_KEY_REMOVED: 'provider:key-removed',
+    PROVIDER_MODELS_LOADED: 'provider:models-loaded',
+    PROVIDER_MODELS_ERROR: 'provider:models-error',
+    PROVIDER_SELECTED: 'provider:selected',
+
+    // Model events
+    MODEL_SELECTED: 'model:selected',
+
+    // Agent events - for workspace synchronization
+    AGENT_SELECTED: 'agent:selected',
+    AGENT_UPDATED: 'agent:updated',
+    AGENT_REMOVED: 'agent:removed',
+
+    // Conversation events - for context management
+    CONVERSATION_CREATED: 'conversation:created',
+    CONVERSATION_UPDATED: 'conversation:updated',
+    CONVERSATION_DELETED: 'conversation:deleted',
+    MESSAGE_ADDED: 'message:added',
+
+    // File events - for sync coordination
+    FILE_SYNCED: 'file:synced',
+    FILE_CONFLICT: 'file:conflict',
+} as const;
+
+// Type-safe event types
+export type StoreEventType = typeof STORE_EVENTS[keyof typeof STORE_EVENTS];
+
+// =============================================================================
+// Event Payload Interfaces
+// =============================================================================
+
+export interface ProviderKeySetPayload {
+    providerId: string;
+    timestamp: number;
+}
+
+export interface ProviderKeyRemovedPayload {
+    providerId: string;
+    timestamp: number;
+}
+
+export interface ProviderModelsLoadedPayload {
+    providerId: string;
+    modelCount: number;
+    timestamp: number;
+}
+
+export interface ProviderModelsErrorPayload {
+    providerId: string;
+    error: string;
+    timestamp: number;
+}
+
+export interface ProviderSelectedPayload {
+    providerId: string;
+    previousProviderId: string | null;
+    timestamp: number;
+}
+
+export interface ModelSelectedPayload {
+    modelId: string;
+    providerId: string;
+    previousModelId: string | null;
+    timestamp: number;
+}
+
+export interface AgentSelectedPayload {
+    agentId: string;
+    workspaceType: 'ide' | 'knowledge' | 'study' | 'notes';
+    timestamp: number;
+}
+
+export interface AgentUpdatedPayload {
+    agentId: string;
+    changes: string[];
+    timestamp: number;
+}
+
+// =============================================================================
+// Type-Safe Event Helpers
+// =============================================================================
+
+/**
+ * Emit a store event with type-safe payload
+ */
+export function emitStoreEvent<T>(event: StoreEventType, payload: T): void {
+    console.debug(`[StoreEvents] Emitting ${event}`, payload);
+    storeEvents.emit(event, payload);
+}
+
+/**
+ * Subscribe to a store event with type-safe handler
+ * @returns Unsubscribe function
+ */
+export function onStoreEvent<T>(
+    event: StoreEventType,
+    handler: (payload: T) => void
+): () => void {
+    storeEvents.on(event, handler);
+    return () => storeEvents.off(event, handler);
+}
+
+/**
+ * Subscribe to a store event once
+ * @returns Unsubscribe function
+ */
+export function onceStoreEvent<T>(
+    event: StoreEventType,
+    handler: (payload: T) => void
+): () => void {
+    storeEvents.once(event, handler);
+    return () => storeEvents.off(event, handler);
+}
+
+/**
+ * Remove all listeners for an event
+ */
+export function offStoreEvent(event: StoreEventType): void {
+    storeEvents.removeAllListeners(event);
+}

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context workflow="architectural-consolidation" phase="0" created="2025-12-31T09:50:00+07:00">
+  <phase_info>
+    <name>Showcase Critical</name>
+    <deadline>2025-01-01</deadline>
+    <stories count="3">
+      <story id="AC-01" status="READY">Provider Store Reactivity</story>
+      <story id="AC-02" status="READY">Agent Selector Unification</story>
+      <story id="AC-03" status="READY">Chat Panel Standardization</story>
+    </stories>
+  </phase_info>
+  
+  <validation_config>
+    <sweeping_levels>1, 2, 3, 5, 6</sweeping_levels>
+    <gate_level>1</gate_level>
+    <device_test required="true">
+      <device>Desktop Chrome (macOS)</device>
+      <device>Mobile Safari (iOS 16+)</device>
+      <device>Android Chrome</device>
+    </device_test>
+  </validation_config>
+  
+  <architecture_patterns source="architecture.md">
+    <pattern name="Zustand + Dexie Middleware">
+      Use persist middleware with createDexieStorage for IndexedDB persistence
+    </pattern>
+    <pattern name="Event Bus Cross-Store">
+      Use EventEmitter3 for cross-store communication, avoid store imports
+    </pattern>
+    <pattern name="Selector Pattern">
+      Use Zustand selectors for reactive subscriptions, not full store access
+    </pattern>
+  </architecture_patterns>
+  
+  <code_state snapshot="2025-12-31T09:50:00+07:00">
+    <file path="src/stores/provider-models-store.ts">
+      <lines>337</lines>
+      <status>EXISTS</status>
+      <has_dexie_persistence>true</has_dexie_persistence>
+      <has_event_emission>false</has_event_emission>
+      <notes>Well-structured, needs event emission for AC-01</notes>
+    </file>
+    
+    <file path="src/lib/events/workspace-events.ts">
+      <lines>84</lines>
+      <status>EXISTS</status>
+      <event_types>file, sync, container, process, agent-tool</event_types>
+      <missing_events>provider:key-set, provider:models-loaded, agent:selected</missing_events>
+    </file>
+    
+    <file path="src/lib/events/store-events.ts">
+      <status>NOT_EXISTS</status>
+      <action>CREATE for AC-01</action>
+    </file>
+    
+    <file path="src/components/chat/AgentSelector.tsx">
+      <lines>206</lines>
+      <status>EXISTS</status>
+      <integration>Only in chat panel</integration>
+      <variant_prop>false</variant_prop>
+      <workspace_type_prop>false</workspace_type_prop>
+    </file>
+    
+    <file path="src/components/knowledge/KnowledgePage.tsx">
+      <lines>141</lines>
+      <status>EXISTS</status>
+      <has_agent_selector>false</has_agent_selector>
+      <has_chat_panel>false (uses RAGPanelContainer)</has_chat_panel>
+    </file>
+    
+    <file path="src/components/chat/index.ts">
+      <lines>32</lines>
+      <status>EXISTS</status>
+      <chatpanel_exported>false (commented)</chatpanel_exported>
+      <agentselector_exported>false (commented)</agentselector_exported>
+    </file>
+    
+    <file path="src/components/chat/ChatPanel.tsx">
+      <lines>estimated 200+</lines>
+      <status>EXISTS</status>
+      <workspace_agnostic>unknown - needs review</workspace_agnostic>
+    </file>
+  </code_state>
+  
+  <dependencies>
+    <dependency name="eventemitter3" installed="true" />
+    <dependency name="zustand" installed="true" />
+    <dependency name="dexie" installed="true" />
+  </dependencies>
+  
+  <parallel_work_warning>
+    <message>Another agent group is refactoring and splitting long code files</message>
+    <action>Search files and grep context before modifications</action>
+    <conflicts_detected>false</conflicts_detected>
+  </parallel_work_warning>
+</context>

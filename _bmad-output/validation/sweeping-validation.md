@@ -532,12 +532,12 @@ Per stop hook directive, for EVERY story in scoped epics:
 | Epic 8 | 5 | 1 (20%) | ⚠️ PARTIAL | 1 file size violation (canvas-store.ts 540 lines) |
 | Epic 9 | 4 | 4 (100%) | ⚠️ PARTIAL | 3 file size violations, 2 missing features |
 | Epic 10 | 3 | 3 (100%) | ❌ INCOMPLETE | 2 file size violations, 1 story NOT IMPLEMENTED (10.2) |
-| Epic 24 | 5 | 0 (0%) | 🔍 NOT STARTED | - |
-| Epic 26 | 5 | 0 (0%) | 🔍 NOT STARTED | - |
+| Epic 24 | 5 | 3 (60%) | ⚠️ PARTIAL | 2 file size violations (sync-manager.ts SEVERE), performance untested |
+| Epic 26 | 5 | 3 (60%) | ⚠️ PARTIAL | 2 file size violations, AI streaming placeholder, drag-drop missing |
 | Epic 27 | 0 | 0 (0%) | 🔍 NOT STARTED | - |
 
-**Total:** 31 stories, **13 validated (42%)**, **18 pending (58%)**
-**File Size Violations:** **31 files** exceed 300-line limit (101 total suspected)
+**Total:** 31 stories, **16 validated (52%)**, **15 pending (48%)**
+**File Size Violations:** **37 files** exceed 300-line limit (101 total suspected)
 
 ---
 
@@ -714,6 +714,141 @@ Per stop hook directive, for EVERY story in scoped epics:
 - Mobile background playback not validated ⚠️
 
 **Epic 10 cannot be marked complete** without implementing Story 10.2 or formally deferring it.
+
+---
+
+## **🔍 EPIC 24 VALIDATION FINDINGS**
+
+**Validation Report:** `_bmad-output/validation/epic-24-story-validation-2025-12-31.md`
+
+### **Summary**
+- **Stories:** 5 (24-1, 24-2, 24-3, 24-4, 24-5)
+- **Fully Validated:** 1 (24-4)
+- **Partially Validated:** 2 (24-1, 24-2)
+- **Not Tested:** 2 (24-3, 24-5)
+- **Health Score:** ~55% (strong infrastructure, severe violations, unvalidated performance)
+
+### **Critical Issues Found**
+
+#### **1. SEVERE File Size Violation**
+- ❌ `sync-manager.ts`: 667 lines (exceeds limit by 367 lines = 2.22x)
+- **Action Required:** Urgent refactoring needed
+- **Recommendation:** Split into sync-coordinator, file-sync, metadata-sync modules
+
+#### **2. File Size Violation (1 file)**
+- ❌ `session-snapshot-manager.ts`: 315 lines (exceeds limit by 15 lines)
+- **Action Required:** Minor refactoring needed
+
+#### **3. Performance Not Validated**
+- ⚠️ Story 24-1: <500ms incremental sync target not tested
+- ⚠️ Story 24-2: 90% session restoration rate not validated
+- ⚠️ Story 24-3: Restoration UX (skeletons → transitions) not tested
+- **Risk:** Critical performance targets may not be met
+
+### **Code Quality Assessment**
+
+**Strengths:**
+- ✅ **Excellent infrastructure** - file-metadata-cache.ts (109 lines), fsa-handle-manager.ts (131 lines)
+- ✅ **Complete audit trail** - tool-execution-logger.ts (212 lines)
+- ✅ **Proper FSA persistence** - Handle metadata stored for instant re-grant
+- ✅ **Session snapshots** - Complete state capture with debouncing
+
+**Weaknesses:**
+- ❌ **SEVERE God Class** - sync-manager.ts is 667 lines (2.22x limit)
+- ❌ **Performance untested** - No validation of sync latency or restoration success rate
+- ❌ **End-to-end flows untested** - Project restore cycle not validated
+
+### **Epic 24 Conclusion**
+**Status:** ⚠️ **PARTIAL - Strong Infrastructure, Severe Violations**
+
+**Key Finding:** Epic 24 has **excellent infrastructure** but **critical file size violation**:
+- File metadata cache well-implemented ✅
+- FSA handle persistence working ✅
+- Session snapshots complete ✅
+- sync-manager.ts is SEVERE violation (667 lines = 2.22x) ❌
+- Performance not validated ⚠️
+
+---
+
+## **🔍 EPIC 26 VALIDATION FINDINGS**
+
+**Validation Report:** `_bmad-output/validation/epic-26-story-validation-2025-12-31.md`
+
+### **Summary**
+- **Stories:** 5 (26.1, 26.2, 26.3, 26.4, 26.5)
+- **Fully Validated:** 1 (26.3)
+- **Partially Validated:** 2 (26.1, 26.2)
+- **Incomplete:** 2 (26.4, 26.5)
+- **Health Score:** ~65% (strong foundation, incomplete features)
+
+### **Critical Issues Found**
+
+#### **1. File Size Violations (2 files)**
+- ❌ `note-store.ts`: 525 lines (exceeds limit by 225 lines = 1.75x)
+- ❌ `note-indexer.ts`: 381 lines (exceeds limit by 81 lines = 1.27x)
+- **Good News:** NoteEditor.tsx (254), NoteTreeItem.tsx (148), NoteSidebar.tsx (115), note-embedding.worker.ts (173) all under limit
+- **Action Required:** Split stores into smaller modules
+
+#### **2. AI Streaming NOT IMPLEMENTED (Story 26.4)**
+- ❌ `note-ai-service.ts` is **placeholder only** (uses setTimeout instead of actual AI)
+- ❌ No TanStack AI integration
+- ❌ No streaming response (generates all at once)
+- ❌ Context menu actions missing ("Summarize", "Continue writing", "Explain this")
+- **Gap:** Story 26.4 is 40% complete (UI exists, AI integration stubbed)
+- **Action Required:** Replace placeholder with actual TanStack AI `generateText()` call
+
+#### **3. Drag-and-Drop NOT IMPLEMENTED (Story 26.5)**
+- ❌ State exists (`draggedNodeId`, `setDraggedNode()`) but **UI missing**
+- ❌ No drag event handlers on NoteTreeItem
+- ❌ `moveNote()` action not wired to UI
+- **Gap:** Tree navigation complete, but reordering impossible
+- **Action Required:** Implement drag-and-drop using @dnd-kit or react-dnd
+
+#### **4. Performance Not Validated (Story 26.2)**
+- ⚠️ <2s per chunk target not tested (code logs latency but no validation)
+- ⚠️ Search performance with 100+ notes not measured
+- ⚠️ UI responsiveness during indexing not validated
+- **Risk:** Critical performance targets may not be met
+
+#### **5. End-to-End Flows Not Tested**
+- ⚠️ Agent invoking search_notes tool not tested
+- ⚠️ Citation click-to-open not implemented
+- ⚠️ Create → Edit → Index → Search flow not validated
+
+### **Code Quality Assessment**
+
+**Strengths:**
+- ✅ **Excellent BlockNote integration** - Auto-save (500ms debounce), slash commands, dark theme
+- ✅ **Robust client-side embeddings** - Web Workers, Transformers.js, singleton pattern
+- ✅ **Well-implemented tree navigation** - Expand/collapse, search, favorites, keyboard nav
+- ✅ **Clean state management** - Zustand + Dexie persistence, proper TypeScript types
+- ✅ **Proper tool registration** - search_notes follows TanStack AI pattern with Zod schema
+
+**Weaknesses:**
+- ❌ **God Class stores** - note-store.ts is 525 lines (needs splitting)
+- ❌ **AI integration stubbed** - note-ai-service.ts returns fake content
+- ❌ **Drag-and-drop missing** - State exists but UI not implemented
+- ❌ **Performance untested** - No benchmarks for embeddings or search
+
+### **Epic 26 Conclusion**
+**Status:** ⚠️ **PARTIAL - Strong Architecture, Incomplete Features**
+
+**Key Finding:** Epic 26 has **strong architectural foundation** but **critical user-facing features incomplete**:
+- BlockNote editor fully functional ✅
+- Client-side embedding pipeline complete ✅
+- Search tool properly registered ✅
+- Tree navigation with search/favorites working ✅
+- AI streaming is placeholder (TanStack AI not integrated) ❌
+- Drag-and-drop reordering missing (state exists, no UI) ❌
+
+**Estimated Effort to Complete:**
+- TanStack AI integration: 4-6 hours
+- Drag-and-drop UI: 6-8 hours
+- Context menu actions: 4-6 hours
+- File size refactoring: 4-6 hours
+- End-to-end testing: 4-6 hours
+
+**Total:** ~22-32 hours of development work
 
 ---
 
