@@ -1,17 +1,18 @@
 /**
  * @fileoverview Note Sidebar Component
  * @module components/notes/NoteSidebar
- * @governance EPIC-26-5
+ * @governance EPIC-26-5, NR-06, NR-08
  *
- * Sidebar with search, favorites toggle, and note tree.
+ * Sidebar with search, favorites toggle, note tree, and import/export buttons.
  *
  * Story 26.5: Note Hierarchy & Sidebar Navigation
- * AC-02: Agent Selector Unification - Added agent selector support
+ * NR-06: Import/Export buttons in sidebar header
+ * NR-08: Markdown Import/Export UI integration
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
@@ -23,6 +24,10 @@ interface NoteSidebarProps {
     activeNoteId: string | null;
     onNoteSelect: (noteId: string) => void;
     onCreateNote: () => void;
+    /** NR-06: Import callback for markdown files */
+    onImport?: () => void;
+    /** NR-06: Export callback for markdown files */
+    onExport?: () => void;
     /** AC-02: Optional slot for agent selector */
     agentSelectorSlot?: React.ReactNode;
 }
@@ -34,10 +39,19 @@ interface NoteSidebarProps {
  * - Search input with debouncing (150ms)
  * - Favorites filter toggle
  * - Create note button
+ * - Import/Export buttons (NR-06)
  * - Note tree display
  * - Agent selector slot (AC-02)
  */
-export function NoteSidebar({ notes, activeNoteId, onNoteSelect, onCreateNote, agentSelectorSlot }: NoteSidebarProps) {
+export function NoteSidebar({
+    notes,
+    activeNoteId,
+    onNoteSelect,
+    onCreateNote,
+    onImport,
+    onExport,
+    agentSelectorSlot
+}: NoteSidebarProps) {
     const { t } = useTranslation();
     const { searchQuery, setSearchQuery, showFavoritesOnly, toggleFavoritesFilter } = useNoteNavigationStore();
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
@@ -72,12 +86,38 @@ export function NoteSidebar({ notes, activeNoteId, onNoteSelect, onCreateNote, a
                     <div className="flex items-center gap-1">
                         {/* AC-02: Agent Selector slot */}
                         {agentSelectorSlot}
+                        
+                        {/* NR-06: Import Button */}
+                        {onImport && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={onImport}
+                                aria-label={t('notes.import.fromMarkdown', 'Import from Markdown')}
+                                title={t('notes.import.fromMarkdown', 'Import from Markdown')}
+                            >
+                                <FileUp size={16} />
+                            </Button>
+                        )}
+                        
+                        {/* NR-06: Export Button */}
+                        {onExport && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={onExport}
+                                aria-label={t('notes.export.toMarkdown', 'Export to Markdown')}
+                                title={t('notes.export.toMarkdown', 'Export to Markdown')}
+                            >
+                                <FileDown size={16} />
+                            </Button>
+                        )}
+                        
                         <Button size="sm" variant="ghost" onClick={onCreateNote} aria-label={t('notes.create_new', 'Create new note')}>
                             <Plus size={16} />
                         </Button>
                     </div>
                 </div>
-
 
                 {/* Search Input */}
                 <div className="relative">
