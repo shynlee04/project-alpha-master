@@ -1,28 +1,26 @@
 /**
- * Agent Store Facade - Backward Compatibility Layer
+ * Agent Store Facade - Unified App Store Re-Export
  *
- * Re-exports everything from the new location to maintain
- * zero breaking changes for existing imports.
- *
- * This facade ensures all 19 integration points continue working
- * without any code changes.
- *
- * BEFORE: import { useAgentsStore } from '@/stores/agents-store';
- * AFTER:  import { useAgentsStore } from '@/stores/agents-store'; (same import path!)
- *
- * The only change is internal file structure.
+ * Re-exports from the unified app store (use-app-store.ts).
+ * Maintains zero breaking changes for existing imports.
  *
  * @module agents/index
- * @story AC-1.3 - Split agents-store.ts god store into 5 slices
+ * @story AC-1.8 - Update agents facade to use unified store
+ * @migration Migrated from agents-store to use-app-store
  */
 
-// Re-export everything for backward compatibility
+// Re-export from unified app store
 export {
-  useAgentsStore,
-  useAgentsStoreHydration,
-  DEFAULT_AGENT,
-  type AgentsState,
-} from './agents-store';
+  useAppStore as useAgentsStore,
+  useAppStoreHydration as useAgentsStoreHydration,
+  useAgents,
+  useActiveAgent,
+  useAgentsForWorkspace,
+  useProviders,
+  useActiveProvider,
+  useAvailableModels,
+  useValidationErrors,
+} from '../use-app-store';
 
 // Re-export slice creators for advanced usage
 export {
@@ -31,7 +29,10 @@ export {
   createAgentValidationSlice,
   createAgentEventsSlice,
   createAgentUtilsSlice,
+  createProviderSlice,
 } from './slices';
 
-// Export combined state type
+// Re-export types
 export type { CombinedAgentsState } from './types';
+export type { AppState, ProviderState } from '../types';
+export type { Agent } from '@/core/entities/Agent';
