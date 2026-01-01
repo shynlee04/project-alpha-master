@@ -276,14 +276,13 @@ describe('Conversation Validation Slice', () => {
       const threadId = store.getState().createThread(conversationId);
       const messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
 
-      // Manually corrupt the state
-      const state = store.getState() as any;
-      delete state.threads[threadId];
+      // Delete the thread (soft-delete)
+      store.getState().deleteThread(threadId);
 
       const result = store.getState().validateConversationIntegrity(conversationId);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('Thread') && e.includes('does not exist'))).toBe(true);
+      expect(result.errors.some(e => e.includes('Thread') && e.includes('is deleted'))).toBe(true);
     });
   });
 });

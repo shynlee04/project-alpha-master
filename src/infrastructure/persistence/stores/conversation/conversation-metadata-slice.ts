@@ -54,6 +54,7 @@ export const createConversationMetadataSlice: StateCreator<
       conversations: { ...state.conversations, [conversationId]: newConversation },
       ...(projectId ? { activeProjectConversationIds: { ...state.activeProjectConversationIds, [projectId]: conversationId } } : {}),
     }));
+    get().emitConversationCreated(conversationId, newConversation);
     return conversationId;
   },
 
@@ -67,11 +68,13 @@ export const createConversationMetadataSlice: StateCreator<
         [id]: { ...existing, ...updates, updatedAt: new Date().toISOString() },
       },
     }));
+    get().emitConversationUpdated(id, updates);
   },
 
   deleteConversation: (id) => {
     console.log('[ConversationMetadataSlice] Soft-deleting:', id);
     get().updateConversationMetadata(id, { status: 'deleted' });
+    get().emitConversationDeleted(id);
   },
 
   setActiveConversation: (id) => {

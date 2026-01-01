@@ -156,6 +156,23 @@ export interface CombinedConversationState {
     validateMessageThreadAssociation: (messageId: string) => import('./conversation-validation-slice').ValidationResult;
     validateConversationIntegrity: (conversationId: string) => import('./conversation-validation-slice').ValidationResult;
 
+    // ========== Conversation Events Slice (Story CC-1.6) ==========
+    eventHistory: import('./conversation-events-slice').ConversationEvent[];
+    emitEvent: (type: import('./conversation-events-slice').ConversationEventType, entityId: string, data?: unknown) => void;
+    emitConversationCreated: (id: string, conversation: import('./conversation-metadata-slice').ConversationMetadataWithId) => void;
+    emitConversationUpdated: (id: string, updates: Partial<import('./conversation-metadata-slice').ConversationMetadataWithId>) => void;
+    emitConversationDeleted: (id: string) => void;
+    emitThreadCreated: (id: string, thread: import('./thread-management-slice').ThreadWithId) => void;
+    emitThreadUpdated: (id: string, updates: Partial<import('./thread-management-slice').ThreadWithId>) => void;
+    emitThreadDeleted: (id: string) => void;
+    emitMessageAdded: (id: string, message: import('./message-crud-slice').MessageWithId) => void;
+    emitMessageUpdated: (id: string, updates: Partial<import('./message-crud-slice').MessageWithId>) => void;
+    emitMessageDeleted: (id: string) => void;
+    addEventListener: (eventType: import('./conversation-events-slice').ConversationEventType, listener: (event: import('./conversation-events-slice').ConversationEvent) => void) => () => void;
+    removeEventListener: (eventType: import('./conversation-events-slice').ConversationEventType, listener: (event: import('./conversation-events-slice').ConversationEvent) => void) => void;
+    getEventHistory: (filter?: { type?: import('./conversation-events-slice').ConversationEventType; entityId?: string; limit?: number }) => import('./conversation-events-slice').ConversationEvent[];
+    clearEventHistory: () => void;
+
     // ========== Placeholder for other slices ==========
     // These will be implemented in subsequent stories
 }

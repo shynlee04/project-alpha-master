@@ -53,6 +53,7 @@ export const createThreadManagementSlice: StateCreator<
       }
       return { threads: updated };
     });
+    get().emitThreadCreated(id, newThread);
     return id;
   },
 
@@ -77,6 +78,7 @@ export const createThreadManagementSlice: StateCreator<
       }
       return { threads: updated };
     });
+    toDelete.forEach((delId) => get().emitThreadDeleted(delId));
   },
 
   setActiveThread: (id) => {
