@@ -59,7 +59,7 @@ import {
 } from '@/lib/agent/providers'
 
 // Store imports
-import { useAgentsStore } from '@/stores/agents-store'
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 
 /**
  * Configuration tab type

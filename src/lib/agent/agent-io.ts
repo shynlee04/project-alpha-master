@@ -11,7 +11,7 @@
 import { z } from 'zod'
 import { toast } from 'sonner'
 import type { Agent } from '@/core/entities/Agent'
-import { useAgentsStore } from '@/stores/agents-store'
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 
 /**
  * Validation schema for agent import/export

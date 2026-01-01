@@ -688,4 +688,73 @@ export function registerMigrations(db: ViaGentDatabase): void {
                 details: 'Added fileSnapshots and fileContentCache tables'
             });
         });
+
+        // Schema version 19: Story AC-1.7 - Single Bounded Store (Unified App Store)
+        // Adds appState table for Zustand persist middleware with Dexie storage
+        // This table stores the combined agent + provider state from use-app-store.ts
+        db.version(19).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            synthesisResults: 'id, sourceId, projectId, status, synthesizedAt, [sourceId+projectId], [projectId+status]',
+            fileSnapshots: '++id, projectId, path, [projectId+path], expiresAt, lastCachedAt',
+            fileContentCache: '[projectId+path], projectId',
+            // Story AC-1.7: Unified app state table (combines agents + providers)
+            appState: 'id, updatedAt',
+        }).upgrade(async () => {
+            logDexieMigration(19, 'single-bounded-store', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(19)) {
+                logDexieMigration(19, 'single-bounded-store', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // Migrate data from agentConfigs and providerConfigs to appState
+            const agentData = await db.agentConfigs.toArray();
+            const providerData = await db.providerConfigs.toArray();
+
+            // Merge agent and provider state
+            const mergedState = {
+                ...(agentData[0]?.state || {}),
+                ...(providerData[0]?.state || {}),
+            };
+
+            // Store in appState table
+            if (Object.keys(mergedState).length > 0) {
+                await db.appState.put({
+                    id: 'app-state',
+                    state: mergedState,
+                    updatedAt: new Date()
+                });
+            }
+
+            // Mark migration as applied
+            markMigrationApplied(19);
+
+            logDexieMigration(19, 'single-bounded-store', 'completed', {
+                tableName: 'appState',
+                itemsCount: Object.keys(mergedState).length
+            });
+        });
 }

@@ -12,7 +12,7 @@
     "deploy:vercel": "npx vercel deploy --prod",
     "deploy:vercel:build": "npx vercel build --prod && npx vercel deploy --prebuilt --prod",
     "build:netlify": "NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=netlify vite build",
-    "deploy:netlify": "pnpm build:netlify && npx netlify deploy --prod --dir=dist/client --functions=.netlify/functions-internal",
+    "deploy:netlify": "pnpm build:netlify && npx netlify deploy --prod",
     "build:analyze": "pnpm build && node scripts/analyze-bundle.js",
     "preview": "vite preview",
     "test": "vitest run",

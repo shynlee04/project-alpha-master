@@ -16,7 +16,7 @@
  */
 
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/lib/state/workspace-types';
 

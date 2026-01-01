@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from 'react';
 import { Check, X, Globe, BookOpen, GraduationCap, Layout } from 'lucide-react';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { AgentToolBinding } from '@/domain/value-objects/tool-permission';

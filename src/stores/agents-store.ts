@@ -5,7 +5,7 @@
  * zero breaking changes for existing imports.
  *
  * All imports using the OLD path continue to work:
- * import { useAgentsStore } from '@/stores/agents-store';
+ * import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
  *
  * @deprecated Import from '@/infrastructure/persistence/stores/agents' instead
  * @story AC-1.3 - Split agents-store.ts god store into 5 slices

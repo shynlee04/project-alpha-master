@@ -24,7 +24,7 @@ import {
     DropdownMenuTrigger,
 } from '@/presentation/components/ui/dropdown-menu';
 import type { Agent } from '@/mocks/agents';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { useTranslation } from 'react-i18next';
 import { detectWorkspace } from '@/lib/workspace/workspace-detector';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';

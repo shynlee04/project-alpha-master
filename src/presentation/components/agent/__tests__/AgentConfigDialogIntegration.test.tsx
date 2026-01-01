@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { AgentConfigDialog } from '../AgentConfigDialog'
-import { useAgentsStore } from '@/stores/agents-store'
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({

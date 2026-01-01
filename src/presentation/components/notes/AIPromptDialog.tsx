@@ -14,7 +14,7 @@ import { Input } from '@/presentation/components/ui/input';
 import { Checkbox } from '@/presentation/components/ui/checkbox';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import type { Block } from '@blocknote/core';
 
 import { toast } from 'sonner';

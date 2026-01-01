@@ -10,7 +10,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Agent } from '@/core/entities/Agent'
-import { useAgentsStore } from '@/stores/agents-store'
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 import { toast } from 'sonner'
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
 import type {

@@ -12,9 +12,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAppStore } from '../use-app-store';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { Agent } from '@/domain/entities/agent';
+import type { Agent } from '@/core/entities/Agent';
 
 /**
  * Agent selection state
@@ -191,7 +191,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
        * @returns Agent or null
        */
       getAgentForWorkspace: (workspaceType: WorkspaceType): Agent | null => {
-        const agents = useAgentsStore.getState().agents;
+        const agents = useAppStore.getState().agents;
         const availableAgents = agents.filter(agent => agent.isAvailableIn(workspaceType));
 
         if (availableAgents.length === 0) {
@@ -340,7 +340,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
       onRehydrateStorage: (state) => {
         // Ensure valid agent IDs after hydration
         if (state) {
-          const agents = useAgentsStore.getState().agents;
+          const agents = useAppStore.getState().agents;
           const validAgentIds = new Set(agents.map(a => a.id));
 
           // Filter out invalid agent IDs

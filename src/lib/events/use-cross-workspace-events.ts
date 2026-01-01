@@ -19,7 +19,7 @@
 
 import { useEffect } from 'react';
 import { crossWorkspaceEventBus, type AgentConfigChangeEvent, type WorkspaceChangeEvent, type FileChangeEvent, type SyncStatusEvent, type ProjectStateChangeEvent } from './cross-workspace-event-bus';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 
 /**
  * Subscribe to agent configuration changes from other workspaces

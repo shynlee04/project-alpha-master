@@ -29,6 +29,7 @@ export {
   createAgentValidationSlice,
   createAgentEventsSlice,
   createAgentUtilsSlice,
+  DEFAULT_AGENT,
 } from './slices';
 
 // Re-export provider slice creators (for cross-store access)

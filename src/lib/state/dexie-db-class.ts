@@ -90,6 +90,7 @@ export class ViaGentDatabase extends Dexie {
     providerConfigs!: PersistedStateTable;
     agentConfigs!: PersistedStateTable;
     conversationState!: PersistedStateTable;
+    appState!: PersistedStateTable;
 
     // ========================================================================
     // Sync Status Tables (RC-005 - Sprint 27B)

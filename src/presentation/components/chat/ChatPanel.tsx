@@ -17,7 +17,7 @@ import {
     useThreadsStore,
     useActiveThread,
 } from '@/stores/conversation-threads-store';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/mocks/agents';
 import { useResponsive } from '@/hooks/useResponsive';

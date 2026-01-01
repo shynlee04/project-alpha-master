@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { toast } from 'sonner';
 import type { BlockNoteEditor } from '@blocknote/core';
 

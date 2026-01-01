@@ -5,7 +5,7 @@
  * @fixed 2025-12-31 - Connected to real agent system (replaces mock)
  */
 
-import { useAgentsStore } from '@/stores/agents-store';
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import type { Block } from '@blocknote/core';
 
