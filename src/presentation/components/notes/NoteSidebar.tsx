@@ -12,7 +12,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook, FileUp, FileDown } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
@@ -28,6 +28,8 @@ interface NoteSidebarProps {
     onImport?: () => void;
     /** NR-06: Export callback for markdown files */
     onExport?: () => void;
+    /** CW-1.4: File sync settings callback */
+    onFileSync?: () => void;
     /** AC-02: Optional slot for agent selector */
     agentSelectorSlot?: React.ReactNode;
 }
@@ -50,6 +52,7 @@ export function NoteSidebar({
     onCreateNote,
     onImport,
     onExport,
+    onFileSync,
     agentSelectorSlot
 }: NoteSidebarProps) {
     const { t } = useTranslation();
@@ -112,7 +115,20 @@ export function NoteSidebar({
                                 <FileDown size={16} />
                             </Button>
                         )}
-                        
+
+                        {/* CW-1.4: File Sync Settings Button */}
+                        {onFileSync && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={onFileSync}
+                                aria-label={t('notes.fileSync.settings', 'File Sync Settings')}
+                                title={t('notes.fileSync.settings', 'File Sync Settings')}
+                            >
+                                <FolderOpen size={16} />
+                            </Button>
+                        )}
+
                         <Button size="sm" variant="ghost" onClick={onCreateNote} aria-label={t('notes.create_new', 'Create new note')}>
                             <Plus size={16} />
                         </Button>

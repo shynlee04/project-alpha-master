@@ -19,6 +19,8 @@ import { Plus, Notebook, ArrowLeft } from 'lucide-react';
 import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
+import { NotesFilePicker } from './NotesFilePicker';
+import { FolderOpen } from 'lucide-react';
 
 // Lazy load NoteEditor to reduce bundle size
 const NoteEditor = lazy(() => import('./NoteEditor'));
@@ -48,6 +50,9 @@ export function NotesPage() {
     // Import/Export dialog state (NR-06, NR-08)
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+
+    // File sync state (CW-1.4)
+    const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
 
 
     useEffect(() => {
@@ -123,6 +128,7 @@ export function NotesPage() {
                             onCreateNote={handleCreateNote}
                             onImport={handleImport}
                             onExport={handleExport}
+                            onFileSync={() => setIsFilePickerOpen(true)}
                             agentSelectorSlot={
                                 <AgentManager
                                     variant="compact"
@@ -208,6 +214,7 @@ export function NotesPage() {
                         onCreateNote={handleCreateNote}
                         onImport={handleImport}
                         onExport={handleExport}
+                        onFileSync={() => setIsFilePickerOpen(true)}
                         agentSelectorSlot={
                             <AgentManager
                                 variant="compact"
@@ -259,6 +266,13 @@ export function NotesPage() {
                 open={isExportDialogOpen}
                 onOpenChange={setIsExportDialogOpen}
                 notes={notesArray}
+            />
+
+            {/* File Picker Dialog (CW-1.4) */}
+            <NotesFilePicker
+                open={isFilePickerOpen}
+                onOpenChange={setIsFilePickerOpen}
+                fileSyncService={null} // TODO: Initialize with NotesFileSyncService
             />
         </MainLayout>
     );
