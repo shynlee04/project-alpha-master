@@ -5,7 +5,8 @@
  * @fixed 2025-12-31 - Connected to real agent system (replaces mock)
  */
 
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import type { Block } from '@blocknote/core';
 
@@ -57,19 +58,26 @@ export async function generateNoteContent(
     prompt: string,
     options?: NoteAIOptions
 ): Promise<string> {
-    // 1. Get active agent from store
-    const { activeAgentId, getAgent } = useAgentsStore.getState();
-    const agentId = options?.agentId || activeAgentId;
+    // 1. Get active agent specifically for NOTES workspace
+    // This ensures consistency regardless of what the "global" active agent is
+    const { getAgentForWorkspace } = useAgentSelectionStore.getState();
+    const activeAgent = getAgentForWorkspace('notes');
 
-    if (!agentId) {
-        throw new NoteAIError(
-            'NO_AGENT',
-            'No active agent configured. Please select an agent first.'
-        );
-    }
+    // Allow override, otherwise use the notes workspace agent
+    const agent = options?.agentId
+        ? useAppStore.getState().getAgent(options.agentId)
+        : activeAgent;
 
-    const agent = getAgent(agentId);
+    // Determine the ID for error reporting
+    const agentId = agent?.id;
+
     if (!agent) {
+        if (!agentId) {
+            throw new NoteAIError(
+                'NO_AGENT',
+                'No active agent configured for Notes. Please select an agent in the sidebar.'
+            );
+        }
         throw new NoteAIError(
             'AGENT_NOT_FOUND',
             `Agent "${agentId}" not found in store.`

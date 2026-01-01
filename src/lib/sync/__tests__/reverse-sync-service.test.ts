@@ -103,7 +103,7 @@ describe('ReverseSyncService', () => {
     it('should create service with default options', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect(service).toBeInstanceOf(ReverseSyncService);
@@ -113,7 +113,7 @@ describe('ReverseSyncService', () => {
       const customExclusions = ['custom-folder', 'another-folder'];
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           exclusionPatterns: customExclusions,
         }
@@ -125,7 +125,7 @@ describe('ReverseSyncService', () => {
     it('should create service with custom debounce time', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 500,
         }
@@ -137,7 +137,7 @@ describe('ReverseSyncService', () => {
     it('should create service with webContainer option', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
         }
@@ -151,7 +151,7 @@ describe('ReverseSyncService', () => {
     it('should create service using factory function', () => {
       const service = createReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect(service).toBeInstanceOf(ReverseSyncService);
@@ -168,7 +168,7 @@ describe('ReverseSyncService', () => {
       
       const service = createReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         options
       );
       
@@ -180,7 +180,7 @@ describe('ReverseSyncService', () => {
     it('should start listening to file events when started', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       service.start();
@@ -194,7 +194,7 @@ describe('ReverseSyncService', () => {
     it('should not register listeners multiple times if already running', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       service.start();
@@ -207,7 +207,7 @@ describe('ReverseSyncService', () => {
     it('should stop listening to file events when stopped', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       service.start();
@@ -220,7 +220,7 @@ describe('ReverseSyncService', () => {
     it('should handle stop when not running', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       // Should not throw
@@ -230,7 +230,7 @@ describe('ReverseSyncService', () => {
     it('should report active status correctly', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect(service.isActive()).toBe(false);
@@ -247,7 +247,7 @@ describe('ReverseSyncService', () => {
     it('should exclude node_modules by default', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { isExcluded: (path: string) => boolean }).isExcluded('node_modules/package.json')).toBe(true);
@@ -257,7 +257,7 @@ describe('ReverseSyncService', () => {
     it('should exclude .git by default', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { isExcluded: (path: string) => boolean }).isExcluded('.git/config')).toBe(true);
@@ -267,7 +267,7 @@ describe('ReverseSyncService', () => {
     it('should exclude .DS_Store by default', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { isExcluded: (path: string) => boolean }).isExcluded('.DS_Store')).toBe(true);
@@ -276,7 +276,7 @@ describe('ReverseSyncService', () => {
     it('should exclude Thumbs.db by default', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { isExcluded: (path: string) => boolean }).isExcluded('Thumbs.db')).toBe(true);
@@ -285,7 +285,7 @@ describe('ReverseSyncService', () => {
     it('should not exclude regular files', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { isExcluded: (path: string) => boolean }).isExcluded('src/index.ts')).toBe(false);
@@ -296,7 +296,7 @@ describe('ReverseSyncService', () => {
     it('should support custom exclusion patterns', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           exclusionPatterns: ['dist/', 'build/', 'coverage/'],
         }
@@ -310,7 +310,7 @@ describe('ReverseSyncService', () => {
     it('should handle glob patterns like *.swp', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { isExcluded: (path: string) => boolean }).isExcluded('file.swp')).toBe(true);
@@ -320,7 +320,7 @@ describe('ReverseSyncService', () => {
     it('should handle path traversal attempts', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       // Normalized path should still be excluded
@@ -333,7 +333,7 @@ describe('ReverseSyncService', () => {
     it('should default to localWins strategy', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       expect((service as unknown as { conflictResolution: ConflictResolutionStrategy }).conflictResolution).toBe('localWins');
@@ -342,7 +342,7 @@ describe('ReverseSyncService', () => {
     it('should allow setting conflict resolution strategy', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       service.setConflictResolution('remoteWins');
@@ -358,7 +358,7 @@ describe('ReverseSyncService', () => {
     it('should reject invalid conflict resolution strategies at type level', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       // TypeScript would catch invalid strings at compile time
@@ -371,7 +371,7 @@ describe('ReverseSyncService', () => {
     it('should allow updating options at runtime', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       const newOnProgress = vi.fn();
@@ -392,7 +392,7 @@ describe('ReverseSyncService', () => {
     it('should merge options without overwriting unspecified ones', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 100,
         }
@@ -407,7 +407,7 @@ describe('ReverseSyncService', () => {
     it('should allow updating webContainer at runtime', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       const newWebContainer = createMockWebContainer();
@@ -422,7 +422,7 @@ describe('ReverseSyncService', () => {
     it('should handle file:created events', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
         }
@@ -435,9 +435,11 @@ describe('ReverseSyncService', () => {
       
       const payload: FileEventPayload = {
         path: 'new-file.ts',
-        content: new TextEncoder().encode('console.log("hello");'),
-        timestamp: Date.now(),
-        source: 'webcontainer',
+        name: 'new-file.ts',
+        operation: 'create',
+        size: 27,
+        mimeType: 'text/typescript',
+        lastModified: Date.now(),
       };
       
       mockSyncEventBus._simulateEvent('file:created', payload);
@@ -452,7 +454,7 @@ describe('ReverseSyncService', () => {
     it('should handle file:modified events', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
         }
@@ -465,9 +467,11 @@ describe('ReverseSyncService', () => {
       
       const payload: FileEventPayload = {
         path: 'existing-file.ts',
-        content: new TextEncoder().encode('updated content'),
-        timestamp: Date.now(),
-        source: 'webcontainer',
+        name: 'existing-file.ts',
+        operation: 'modify',
+        size: 15,
+        mimeType: 'text/typescript',
+        lastModified: Date.now(),
       };
       
       mockSyncEventBus._simulateEvent('file:modified', payload);
@@ -480,7 +484,7 @@ describe('ReverseSyncService', () => {
     it('should handle file:deleted events', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1]
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1]
       );
       
       const onProgress = vi.fn();
@@ -503,7 +507,7 @@ describe('ReverseSyncService', () => {
     it('should skip excluded files from event handling', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
         }
@@ -517,9 +521,11 @@ describe('ReverseSyncService', () => {
       // Try to sync a file in node_modules
       const payload: FileEventPayload = {
         path: 'node_modules/package/index.js',
-        content: new Uint8Array([1, 2, 3]),
-        timestamp: Date.now(),
-        source: 'webcontainer',
+        name: 'index.js',
+        operation: 'create',
+        size: 3,
+        mimeType: 'text/javascript',
+        lastModified: Date.now(),
       };
       
       mockSyncEventBus._simulateEvent('file:created', payload);
@@ -537,7 +543,7 @@ describe('ReverseSyncService', () => {
       const onProgress = vi.fn();
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 100,
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
@@ -576,7 +582,7 @@ describe('ReverseSyncService', () => {
       const onProgress = vi.fn();
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 50,
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
@@ -608,7 +614,7 @@ describe('ReverseSyncService', () => {
       const onProgress = vi.fn<(progress: ReverseSyncProgress) => void>();
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 0, // No debounce for immediate callback
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
@@ -639,7 +645,7 @@ describe('ReverseSyncService', () => {
     it('should track synced count correctly', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 0,
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
@@ -680,7 +686,7 @@ describe('ReverseSyncService', () => {
       
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 0,
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],
@@ -711,7 +717,7 @@ describe('ReverseSyncService', () => {
       
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 0,
           onError,
@@ -732,7 +738,7 @@ describe('ReverseSyncService', () => {
     it('should not throw when no error callback is provided', () => {
       const service = new ReverseSyncService(
         mockSyncEventBus as unknown as SyncEventBus,
-        mockLocalFSAdapter as unknown as Parameters<typeof ReverseSyncService>[1],
+        mockLocalFSAdapter as unknown as ConstructorParameters<typeof ReverseSyncService>[1],
         {
           debounceMs: 0,
           webContainer: mockWebContainer as unknown as ReverseSyncService['webContainer'],

@@ -9,7 +9,6 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { WorkspaceBinding } from '@/core/entities/Agent';
 import type { CombinedAgentsState } from '../types';

@@ -514,4 +514,5 @@ customModes:
       - browser
       - command
       - mcp
+      - edit
     source: project

@@ -9,7 +9,6 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { Agent } from '@/core/entities/Agent';
 import type { CombinedAgentsState } from '../types';
 import { AgentProviderValidator } from '@/domain/services/AgentProviderValidator';
 

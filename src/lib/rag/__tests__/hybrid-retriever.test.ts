@@ -9,16 +9,11 @@ import {
   hybridSearchWithEmbedding,
   type HybridSearchConfig,
   type SearchFilters,
-  type HybridSearchResult,
   DEFAULT_HYBRID_CONFIG,
 } from '../hybrid-retriever';
 
-// Mock orama-index module
-const mockVectorSearch = vi.fn();
-const mockFulltextSearch = vi.fn();
-
 vi.mock('../orama-index', () => ({
-  searchIndex: vi.fn(({ term, limit, filters }) => {
+  searchIndex: vi.fn(({ term: _term, limit: _limit, filters: _filters }: { term?: string; limit?: number; filters?: Record<string, unknown> }) => {
     // Simulate full-text search
     const mockFulltextResults = [
       {
@@ -69,12 +64,12 @@ describe('HybridRetriever', () => {
 
   describe('hybridSearch', () => {
     it('should return empty results when no matches found', async () => {
-      const results = await hybridSearch('nonexistent query', {});
+      const results = await hybridSearchWithEmbedding('test-project','nonexistent query', {});
       expect(results).toEqual([]);
     });
 
     it('should combine vector and fulltext scores with default weights', async () => {
-      const results = await hybridSearch('TypeScript', {});
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', {});
 
       // Should have results from fulltext search
       expect(results.length).toBeGreaterThan(0);
@@ -92,7 +87,7 @@ describe('HybridRetriever', () => {
         sourceType: ['pdf'],
       };
 
-      const results = await hybridSearch('TypeScript', filters);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', filters);
 
       // All results should have sourceType matching filter
       for (const result of results) {
@@ -105,7 +100,7 @@ describe('HybridRetriever', () => {
         tags: ['programming'],
       };
 
-      const results = await hybridSearch('TypeScript', filters);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', filters);
 
       // All results should have at least one matching tag
       for (const result of results) {
@@ -124,7 +119,7 @@ describe('HybridRetriever', () => {
         },
       };
 
-      const results = await hybridSearch('TypeScript', filters);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', filters);
 
       // Results should be within date range
       for (const result of results) {
@@ -144,7 +139,7 @@ describe('HybridRetriever', () => {
         limit: 3,
       };
 
-      const results = await hybridSearch('TypeScript', config);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', config);
       expect(results.length).toBeLessThanOrEqual(3);
     });
 
@@ -154,7 +149,7 @@ describe('HybridRetriever', () => {
         minScore: 0.5,
       };
 
-      const results = await hybridSearch('TypeScript', config);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', config);
 
       for (const result of results) {
         expect(result.combinedScore).toBeGreaterThanOrEqual(0.5);
@@ -168,7 +163,7 @@ describe('HybridRetriever', () => {
         weightFulltext: 0.8,
       };
 
-      const results = await hybridSearch('TypeScript', config);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', config);
 
       for (const result of results) {
         // Verify combined score calculation
@@ -178,7 +173,7 @@ describe('HybridRetriever', () => {
     });
 
     it('should include highlights in results', async () => {
-      const results = await hybridSearch('TypeScript', {});
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', {});
 
       for (const result of results) {
         expect(result.highlights).toBeDefined();
@@ -187,12 +182,12 @@ describe('HybridRetriever', () => {
     });
 
     it('should handle empty query gracefully', async () => {
-      const results = await hybridSearch('', {});
+      const results = await hybridSearchWithEmbedding('test-project','', {});
       expect(results).toEqual([]);
     });
 
     it('should handle whitespace-only query', async () => {
-      const results = await hybridSearch('   ', {});
+      const results = await hybridSearchWithEmbedding('test-project','   ', {});
       expect(results).toEqual([]);
     });
   });
@@ -235,12 +230,12 @@ describe('HybridRetriever', () => {
 
   describe('SearchFilters validation', () => {
     it('should handle undefined filters', async () => {
-      const results = await hybridSearch('TypeScript', undefined);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', undefined);
       expect(results.length).toBeGreaterThan(0);
     });
 
     it('should handle empty filters object', async () => {
-      const results = await hybridSearch('TypeScript', {});
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', {});
       expect(results.length).toBeGreaterThan(0);
     });
 
@@ -250,14 +245,14 @@ describe('HybridRetriever', () => {
         tags: ['nonexistent-tag'],
       };
 
-      const results = await hybridSearch('TypeScript', filters);
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', filters);
       expect(results).toEqual([]);
     });
   });
 
   describe('Result sorting', () => {
     it('should sort results by combined score descending', async () => {
-      const results = await hybridSearch('TypeScript', {});
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', {});
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i - 1].combinedScore).toBeGreaterThanOrEqual(
@@ -267,7 +262,7 @@ describe('HybridRetriever', () => {
     });
 
     it('should break ties using vector score', async () => {
-      const results = await hybridSearch('TypeScript', {});
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', {});
 
       for (let i = 1; i < results.length; i++) {
         if (results[i - 1].combinedScore === results[i].combinedScore) {
@@ -282,7 +277,7 @@ describe('HybridRetriever', () => {
   describe('Performance', () => {
     it('should complete search within 100ms', async () => {
       const start = performance.now();
-      await hybridSearch('TypeScript', {});
+      await hybridSearchWithEmbedding('test-project','TypeScript', {});
       const end = performance.now();
 
       expect(end - start).toBeLessThan(100);
@@ -306,7 +301,7 @@ describe('HybridRetriever', () => {
 
   describe('Type definitions', () => {
     it('should have correct HybridSearchResult structure', async () => {
-      const results = await hybridSearch('TypeScript', {});
+      const results = await hybridSearchWithEmbedding('test-project','TypeScript', {});
 
       for (const result of results) {
         expect(result).toHaveProperty('documentId');

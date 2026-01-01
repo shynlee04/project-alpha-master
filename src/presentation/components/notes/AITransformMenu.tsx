@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { toast } from 'sonner';
 import type { BlockNoteEditor } from '@blocknote/core';
 
@@ -91,10 +91,10 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
     const [loadingAction, setLoadingAction] = useState<string | null>(null);
     const [selectedText, setSelectedText] = useState('');
 
-    // Use individual selectors to avoid infinite re-renders
-    const activeAgentId = useAgentsStore(s => s.activeAgentId)
-    const getAgent = useAgentsStore(s => s.getAgent)
-    const hasAgent = activeAgentId && getAgent(activeAgentId);
+    // Get active agent info - SPECIFICALLY for Notes workspace
+    const getAgentForWorkspace = useAgentSelectionStore(s => s.getAgentForWorkspace);
+
+    const hasAgent = !!getAgentForWorkspace('notes');
 
     const actions = createTransformActions(t);
 

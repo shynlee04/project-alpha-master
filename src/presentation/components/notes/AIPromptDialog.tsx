@@ -14,7 +14,7 @@ import { Input } from '@/presentation/components/ui/input';
 import { Checkbox } from '@/presentation/components/ui/checkbox';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Block } from '@blocknote/core';
 
 import { toast } from 'sonner';
@@ -26,11 +26,11 @@ export function AIPromptDialog() {
     const [isLoading, setIsLoading] = useState(false);
     const [includeContext, setIncludeContext] = useState(true); // Default: include context
 
-    // Get active agent info for display
-    // Use individual selectors to avoid infinite re-renders
-    const activeAgentId = useAgentsStore(s => s.activeAgentId)
-    const getAgent = useAgentsStore(s => s.getAgent)
-    const activeAgent = activeAgentId ? getAgent(activeAgentId) : null;
+    // Get active agent info for display - SPECIFICALLY for Notes workspace
+    const getAgentForWorkspace = useAgentSelectionStore(s => s.getAgentForWorkspace);
+
+    // Derive the active agent for notes
+    const activeAgent = getAgentForWorkspace('notes');
 
     // Get all note content as context blocks
     const getContextBlocks = (): Block[] => {

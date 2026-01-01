@@ -23,7 +23,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+
 } from '@/presentation/components/ui/select';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Button } from '@/presentation/components/ui/button';
@@ -105,14 +105,17 @@ export function UnifiedAgentSelector({
   const agents = useAppStore((state) => state.agents);
 
   // Get agent selection state from the PROPER store (per-workspace)
-  const activeAgentId = useAgentSelectionStore((state) => state.activeAgentId);
-  const setActiveAgent = useAgentSelectionStore((state) => state.setActiveAgent);
   const getAgentForWorkspace = useAgentSelectionStore((state) => state.getAgentForWorkspace);
+  const setActiveAgent = useAgentSelectionStore((state) => state.setActiveAgent);
+  // Subscribe to changes that affect selection
+  const lastSelectedAgentIds = useAgentSelectionStore((state) => state.lastSelectedAgentIds);
+  const defaultAgentIds = useAgentSelectionStore((state) => state.defaultAgentIds);
 
-  // Get active agent for current workspace
+  // Get active agent for current workspace - REACTIVE to store changes
+  // We include dependencies that affect the result of getAgentForWorkspace
   const activeAgent = useMemo(() => {
-    return agents.find((a) => a.id === activeAgentId) || null;
-  }, [agents, activeAgentId]);
+    return getAgentForWorkspace(currentWorkspace);
+  }, [getAgentForWorkspace, currentWorkspace, lastSelectedAgentIds, defaultAgentIds, agents]);
 
   // Get agents available in current workspace
   const availableAgents = useMemo(() => {
@@ -204,7 +207,7 @@ export function UnifiedAgentSelector({
   if (variant === 'compact') {
     return (
       <Select
-        value={activeAgentId || undefined}
+        value={activeAgent?.id || undefined}
         onValueChange={handleSelectAgent}
         disabled={disabled}
       >
@@ -244,7 +247,7 @@ export function UnifiedAgentSelector({
   // Full variant (default)
   return (
     <Select
-      value={activeAgentId || undefined}
+      value={activeAgent?.id || undefined}
       onValueChange={handleSelectAgent}
       disabled={disabled}
     >

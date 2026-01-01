@@ -9,7 +9,6 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { CombinedAgentsState } from '../types';
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
@@ -29,7 +28,7 @@ export const createAgentEventsSlice: StateCreator<
   [],
   [],
   Omit<CombinedAgentsState, 'agents' | 'activeAgentId' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'setActiveAgent' | 'resetToDefaults' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getActiveAgent' | 'getAgentsCount'>
-> = (set, get) => ({
+> = (_set, get) => ({
   // ========================================================================
   // EVENT EMISSION OPERATIONS (wrap CRUD with event emission)
   // ========================================================================
