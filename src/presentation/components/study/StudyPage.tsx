@@ -18,9 +18,12 @@ import { useStudyStore } from '@/infrastructure/persistence/stores/study-store';
 import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
+import { StudyFilePicker } from './StudyFilePicker';
 import { useIDEStore } from '@/lib/state/ide-store';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
+import { FolderOpen } from 'lucide-react';
+import { Button } from '@/presentation/components/ui/button';
 
 export function StudyPage() {
     const { t } = useTranslation();
@@ -34,6 +37,7 @@ export function StudyPage() {
 
     // State
     const [activeTab, setActiveTab] = useState<'flashcards' | 'quizzes' | 'stats'>('flashcards');
+    const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
 
     // Count items
     const flashcardCount = flashcards.filter((f) => f.projectId === projectId).length;
@@ -53,11 +57,22 @@ export function StudyPage() {
                                 <BookOpen className="text-primary" size={20} />
                                 <h1 className="font-mono font-bold text-lg">{t('study.title')}</h1>
                             </div>
-                            {/* AC-02: Agent Manager - comprehensive agent management UI */}
-                            <AgentManager
-                                variant="compact"
-                                workspaceType="study"
-                            />
+                            <div className="flex items-center gap-2">
+                                {/* CW-1.4: File Picker Button */}
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => setIsFilePickerOpen(true)}
+                                    aria-label="Import study materials"
+                                >
+                                    <FolderOpen size={16} />
+                                </Button>
+                                {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                                <AgentManager
+                                    variant="compact"
+                                    workspaceType="study"
+                                />
+                            </div>
                         </div>
                         <p className="text-sm text-muted-foreground">{t('study.subtitle')}</p>
                     </div>
@@ -124,6 +139,13 @@ export function StudyPage() {
                         )}
                     </div>
                 </div>
+
+                {/* CW-1.4: Study File Picker Dialog */}
+                <StudyFilePicker
+                    open={isFilePickerOpen}
+                    onOpenChange={setIsFilePickerOpen}
+                    fileSyncService={null} // TODO: Initialize with StudyFileSyncService
+                />
             </MainLayout>
         );
     }
@@ -140,6 +162,15 @@ export function StudyPage() {
                             <h1 className="font-mono font-bold text-xl">{t('study.title')}</h1>
                         </div>
                         <div className="flex items-center gap-4">
+                            {/* CW-1.4: File Picker Button */}
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setIsFilePickerOpen(true)}
+                                aria-label="Import study materials"
+                            >
+                                <FolderOpen size={16} />
+                            </Button>
                             {/* AC-02: Agent Manager - comprehensive agent management UI */}
                             <AgentManager
                                 variant="compact"
@@ -236,6 +267,13 @@ export function StudyPage() {
                     )}
                 </div>
             </div>
+
+            {/* CW-1.4: Study File Picker Dialog */}
+            <StudyFilePicker
+                open={isFilePickerOpen}
+                onOpenChange={setIsFilePickerOpen}
+                fileSyncService={null} // TODO: Initialize with StudyFileSyncService
+            />
         </MainLayout>
     );
 }

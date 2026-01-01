@@ -309,6 +309,37 @@ export class WorkspacePermissionManager {
   }
 
   /**
+   * Check if source workspace can reference target workspace files
+   *
+   * This controls cross-workspace file reference permissions.
+   * For now: allow all references (can be restricted later via agent config).
+   *
+   * Future enhancement: Check agent's workspace binding configuration
+   * to restrict which workspaces can reference each other's files.
+   *
+   * @param sourceWorkspace - Workspace creating the reference
+   * @param targetWorkspace - Workspace being referenced
+   * @returns true if reference is allowed, false otherwise
+   */
+  public checkCrossWorkspaceFilePermission(
+    sourceWorkspace: WorkspaceType,
+    targetWorkspace: WorkspaceType
+  ): boolean {
+    // Phase 1: Allow all cross-workspace references
+    // This enables the file reference system to work immediately
+    // Phase 2: Add agent config restrictions (future story)
+    // Phase 3: Add user-level permission controls (future story)
+
+    // Prevent self-references (same workspace)
+    if (sourceWorkspace === targetWorkspace) {
+      return false;
+    }
+
+    // Allow all cross-workspace references for now
+    return true;
+  }
+
+  /**
    * Get underlying base permission manager
    */
   public getBaseManager(): ToolPermissionManager {

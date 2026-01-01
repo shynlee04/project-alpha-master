@@ -428,7 +428,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { level: 3, textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line.slice(4), styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             } else if (line.startsWith('- ')) {
                 blocks.push({
                     id: crypto.randomUUID(),
@@ -436,7 +436,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line.slice(2), styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             } else if (line.match(/^\d+\.\s/)) {
                 blocks.push({
                     id: crypto.randomUUID(),
@@ -444,7 +444,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line.replace(/^\d+\.\s/, ''), styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             } else if (line.startsWith('> ')) {
                 blocks.push({
                     id: crypto.randomUUID(),
@@ -452,7 +452,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line.slice(2), styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             } else if (line.trim() !== '') {
                 blocks.push({
                     id: crypto.randomUUID(),
@@ -460,7 +460,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line, styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             }
 
             i++;
@@ -538,7 +538,7 @@ export class NotesFileSyncService implements FileSyncService {
 
         // Convert blocks to markdown
         if (note.blocks && Array.isArray(note.blocks)) {
-            markdown += this.blocksToMarkdown(note.blocks as Block[]);
+            markdown += this.blocksToMarkdown(note.blocks as unknown as Block[]);
         }
 
         return markdown;

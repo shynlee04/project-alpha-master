@@ -194,7 +194,7 @@ export function NotesPage() {
                 <MarkdownExportDialog
                     open={isExportDialogOpen}
                     onOpenChange={setIsExportDialogOpen}
-                    notes={notesArray}
+                    notes={notesArray as any}
                 />
             </MainLayout>
         );
@@ -264,7 +264,7 @@ export function NotesPage() {
             <MarkdownExportDialog
                 open={isExportDialogOpen}
                 onOpenChange={setIsExportDialogOpen}
-                notes={notesArray}
+                notes={notesArray as any}
             />
 
             {/* File Picker Dialog (CW-1.4) */}

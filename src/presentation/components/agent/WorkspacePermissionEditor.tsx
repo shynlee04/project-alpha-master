@@ -37,6 +37,8 @@ import { Label } from '@/presentation/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useToolPermissionStore, type ToolTrustLevel } from '@/lib/state/tool-permission-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import { FilePermissionRow } from './WorkspacePermissions/FilePermissionRow';
+import type { WorkspaceFilePermission } from './WorkspacePermissions/types';
 
 /**
  * Props for WorkspacePermissionEditor component
@@ -330,6 +332,54 @@ export function WorkspacePermissionEditor({
         ))}
       </Tabs>
 
+      {/* File Access Section (CW-1.4) */}
+      {variant === 'full' && (
+        <div className="space-y-3 pt-4 border-t">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-sm font-semibold">Cross-Workspace File Access</h4>
+              <p className="text-xs text-muted-foreground">
+                Configure which workspaces can access files from other workspaces
+              </p>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {WORKSPACE_TYPES.length} workspaces
+            </Badge>
+          </div>
+
+          {/* File Permission Rows */}
+          <div className="space-y-2">
+            {WORKSPACE_TYPES.map((workspace) => {
+              // TODO: Integrate with actual file sync service state
+              // For now, showing placeholder unmounted state
+              const filePermission: WorkspaceFilePermission = {
+                workspace,
+                accessLevel: 'none', // Default: no cross-workspace access
+                mounted: false, // TODO: Get from file sync service
+                mountPath: undefined, // TODO: Get from file sync service
+              };
+
+              return (
+                <FilePermissionRow
+                  key={workspace}
+                  permission={filePermission}
+                  workspaceLabel={getWorkspaceName(workspace)}
+                  workspaceDescription={getWorkspaceDescription(workspace)}
+                  workspaceIcon={getWorkspaceIcon(workspace)}
+                  onAccessLevelChange={(workspace, level) => {
+                    // TODO: Persist to agent workspace binding config
+                    console.log(`File access for ${workspace}: ${level}`);
+                  }}
+                  // TODO: Connect to actual mount/unmount handlers
+                  // onMount={(workspace) => handleFileMount(workspace)}
+                  // onUnmount={(workspace) => handleFileUnmount(workspace)}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Legend */}
       {variant === 'full' && (
         <div className="flex items-center gap-4 text-xs text-muted-foreground px-2">
@@ -344,6 +394,32 @@ export function WorkspacePermissionEditor({
       )}
     </div>
   );
+}
+
+/**
+ * Get workspace icon emoji
+ */
+function getWorkspaceIcon(workspace: WorkspaceType): string {
+  const icons: Record<WorkspaceType, string> = {
+    ide: '💻',
+    knowledge: '📚',
+    study: '🎓',
+    notes: '📝',
+  };
+  return icons[workspace];
+}
+
+/**
+ * Get workspace description
+ */
+function getWorkspaceDescription(workspace: WorkspaceType): string {
+  const descriptions: Record<WorkspaceType, string> = {
+    ide: 'Development environment with file system access',
+    knowledge: 'Knowledge graph and PDF source management',
+    study: 'Study materials, flashcards, and quizzes',
+    notes: 'Note-taking and markdown editor',
+  };
+  return descriptions[workspace];
 }
 
 /**
