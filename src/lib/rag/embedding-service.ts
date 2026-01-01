@@ -10,9 +10,11 @@
  * desktop browser with WebGPU support.
  *
  * @story 7.3 - Embedding Service Integration (Hybrid Local/Cloud)
+ * @iteration 15 - Added RAG progress events (EMBEDDING_PROGRESS)
  */
 
 import { GEMINI_MODELS } from '../agent/providers/types';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 
 /**
  * Embedding provider type
@@ -309,6 +311,8 @@ async function generateCloudEmbedding(
 
 /**
  * Generate embeddings for multiple texts in batch
+ *
+ * Iteration 15: Added progress event emissions for UI feedback
  */
 export async function generateBatchEmbeddings(
     texts: string[],
@@ -316,23 +320,69 @@ export async function generateBatchEmbeddings(
 ): Promise<BatchEmbeddingResult> {
     const startTime = performance.now();
     const batchSize = config.batchSize || 32;
+    const total = texts.length;
 
     const results: EmbeddingResult[] = [];
 
-    // Process in batches
-    for (let i = 0; i < texts.length; i += batchSize) {
-        const batch = texts.slice(i, i + batchSize);
-        const batchResults = await Promise.all(
-            batch.map((text) => generateEmbedding(text, config))
-        );
-        results.push(...batchResults);
-    }
+    // Emit start event
+    eventBus.emitRAGEmbeddingProgress({
+        status: 'running',
+        progress: 0,
+        current: 0,
+        total,
+        message: `Starting embedding generation for ${total} texts...`
+    });
 
-    return {
-        results,
-        totalLatencyMs: performance.now() - startTime,
-        provider: config.provider,
-    };
+    try {
+        // Process in batches
+        for (let i = 0; i < texts.length; i += batchSize) {
+            const batch = texts.slice(i, i + batchSize);
+            const batchResults = await Promise.all(
+                batch.map((text) => generateEmbedding(text, config))
+            );
+            results.push(...batchResults);
+
+            // Emit progress event after each batch
+            const current = Math.min(i + batchSize, total);
+            const progress = (current / total) * 100;
+
+            eventBus.emitRAGEmbeddingProgress({
+                status: 'running',
+                progress: Math.round(progress),
+                current,
+                total,
+                message: `Processing: ${current}/${total} texts embedded`
+            });
+        }
+
+        // Emit completion event
+        eventBus.emitRAGEmbeddingProgress({
+            status: 'completed',
+            progress: 100,
+            current: total,
+            total,
+            message: 'All embeddings generated successfully'
+        });
+
+        return {
+            results,
+            totalLatencyMs: performance.now() - startTime,
+            provider: config.provider,
+        };
+    } catch (error: unknown) {
+        // Emit error event
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        eventBus.emitRAGEmbeddingProgress({
+            status: 'error',
+            progress: 0,
+            current: results.length,
+            total,
+            message: 'Embedding generation failed',
+            error: errorMessage
+        });
+
+        throw error;
+    }
 }
 
 /**

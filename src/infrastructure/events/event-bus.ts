@@ -18,6 +18,7 @@ import EventEmitter from 'eventemitter3';
  * - Conversation: Chat and thread management
  * - Provider: LLM provider configuration
  * - Sync: File synchronization
+ * - RAG: Knowledge synthesis operations (embedding, chunking, indexing)
  */
 export enum DomainEventType {
   // Workspace events
@@ -56,7 +57,13 @@ export enum DomainEventType {
   FILE_OPENED = 'file:opened',
   FILE_CLOSED = 'file:closed',
   FILE_SAVED = 'file:saved',
-  FILE_SYNCED = 'file:synced'
+  FILE_SYNCED = 'file:synced',
+
+  // RAG events (Iteration 15 - Knowledge synthesis operations)
+  RAG_EMBEDDING_PROGRESS = 'rag:embedding:progress',
+  RAG_CHUNKING_STATUS = 'rag:chunking:status',
+  RAG_DATABASE_INDEXING = 'rag:database:indexing',
+  RAG_SOURCE_PROCESSING = 'rag:source:processing'
 }
 
 /**
@@ -78,6 +85,30 @@ export interface DomainEvent<T = unknown> {
  * Type definition for event handler functions.
  */
 export type EventHandler<T = unknown> = (event: DomainEvent<T>) => void | Promise<void>;
+
+/**
+ * RAG Activity Status
+ *
+ * Status types for RAG operation progress tracking.
+ */
+export type RAGActivityStatus = 'idle' | 'running' | 'completed' | 'error';
+
+/**
+ * RAG Progress Event Payload
+ *
+ * Common payload structure for RAG operation progress events.
+ * Matches ActivityState interface from activity indicators.
+ */
+export interface RAGProgressPayload {
+  status: RAGActivityStatus;
+  progress?: number; // 0-100 percentage
+  current?: number; // Current item count
+  total?: number; // Total item count
+  message?: string; // Status message
+  error?: string; // Error message if status is 'error'
+  documentId?: string; // Optional document identifier
+  sourceId?: string; // Optional source identifier
+}
 
 /**
  * Event Bus Configuration
@@ -270,18 +301,100 @@ export class EventBus {
     timeout?: number
   ): Promise<DomainEvent<T>> {
     return new Promise((resolve, reject) => {
-      const timer = timeout
-        ? setTimeout(() => {
-          unsubscribe();
-          reject(new Error(`Timeout waiting for event: ${eventType}`));
-        }, timeout)
-        : null;
+      let timer: NodeJS.Timeout | null = null;
+      let unsubscribe: (() => void) | null = null;
 
-      const unsubscribe = this.once<T>((event) => {
+      const handler: EventHandler<T> = (event) => {
         if (timer) clearTimeout(timer);
+        if (unsubscribe) unsubscribe();
         resolve(event);
-      });
+      };
+
+      unsubscribe = this.on<T>(eventType, handler);
+
+      if (timeout) {
+        timer = setTimeout(() => {
+          if (unsubscribe) unsubscribe();
+          reject(new Error(`Timeout waiting for event: ${eventType}`));
+        }, timeout);
+      }
     });
+  }
+
+  /**
+   * Emit RAG embedding progress event
+   *
+   * Type-safe helper for RAG embedding progress events.
+   *
+   * @param payload - RAG progress payload
+   * @param correlationId - Optional correlation ID
+   */
+  emitRAGEmbeddingProgress(
+    payload: RAGProgressPayload,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.RAG_EMBEDDING_PROGRESS,
+      payload,
+      correlationId
+    );
+  }
+
+  /**
+   * Emit RAG chunking status event
+   *
+   * Type-safe helper for RAG chunking status events.
+   *
+   * @param payload - RAG progress payload
+   * @param correlationId - Optional correlation ID
+   */
+  emitRAGChunkingStatus(
+    payload: RAGProgressPayload,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.RAG_CHUNKING_STATUS,
+      payload,
+      correlationId
+    );
+  }
+
+  /**
+   * Emit RAG database indexing event
+   *
+   * Type-safe helper for RAG database indexing events.
+   *
+   * @param payload - RAG progress payload
+   * @param correlationId - Optional correlation ID
+   */
+  emitRAGDatabaseIndexing(
+    payload: RAGProgressPayload,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.RAG_DATABASE_INDEXING,
+      payload,
+      correlationId
+    );
+  }
+
+  /**
+   * Emit RAG source processing event
+   *
+   * Type-safe helper for RAG source processing events.
+   *
+   * @param payload - RAG progress payload
+   * @param correlationId - Optional correlation ID
+   */
+  emitRAGSourceProcessing(
+    payload: RAGProgressPayload,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.RAG_SOURCE_PROCESSING,
+      payload,
+      correlationId
+    );
   }
 }
 
