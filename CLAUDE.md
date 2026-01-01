@@ -494,13 +494,123 @@ Error Utilities (src/lib/utils/error-handling.ts)
 
 ### State Architecture (P1.10 Audit Complete + Ralph Loop 2026-01-01)
 
-**Current State (Iteration 14 Analysis):**
-- **Total Stores**: 50+ scattered across 3 locations (CRITICAL ISSUE)
-  - `src/stores/` → 6 stores
-  - `src/lib/state/` → 19 stores
-  - `src/infrastructure/persistence/stores/` → 25+ stores
-- **God Stores** (>300 lines): 13 files violating sweeping-validation.md
+**CRITICAL UPDATE (2026-01-01):**
+- ✅ **Phase 1 COMPLETE**: Infinite loop bugs fixed in agent/provider configuration dialogs
+- ✅ **Root Cause Identified**: Destructuring pattern causes infinite loops in Zustand v5
+- ✅ **Solution Applied**: Individual selector pattern across all components
+- ✅ **Verification**: Zero new TypeScript errors
+- See: `_bmad-output/zustand-migration-plan-2026-01-01.md` and `_bmad-output/zustand-patterns-guide-2026-01-01.md`
+
+**Current State (Iteration 64 Analysis):**
+- **Total Stores**: 71 total stores across 3 locations (CRITICAL ISSUE)
+  - `src/lib/state/` → 25 stores
+  - `src/stores/` → 8 stores (DEPRECATED)
+  - `src/infrastructure/persistence/stores/` → 38+ stores
+- **God Stores** (>300 lines): 16 files identified
+  - Worst: `rag-store.ts` (1,595 lines duplicated)
+  - `agents-store.ts` (430 lines with circular dependency)
+  - `conversation-threads-store.ts` (726 lines)
 - **Circular Dependencies**: 4 high-risk cycles identified
+
+## Zustand v5 Best Practices (January 2026)
+
+### 1. The Golden Rule: Individual Selectors
+
+**✅ CORRECT PATTERN** (Prevents infinite loops, stable references):
+```typescript
+// Single property selector
+const providers = useAppStore(s => s.providers)
+const removeProvider = useAppStore(s => s.removeProvider)
+
+// Multiple properties with useShallow
+import { useShallow } from 'zustand/shallow'
+const { providers, models } = useAppStore(
+  useShallow((s) => ({ providers: s.providers, models: s.models }))
+)
+```
+
+**❌ ANTI-PATTERN** (Causes infinite loops in v5):
+```typescript
+// NEVER destructure entire store - creates new object every render
+const { providers, removeProvider } = useProviderStore();
+```
+
+**Why This Matters**:
+- Zustand v5 uses stricter referential equality checks
+- Destructuring creates new object references on every render
+- React's `useSyncExternalStore` detects reference changes and triggers infinite re-renders
+- Individual selectors return stable references, preventing unnecessary re-renders
+
+### 2. Fixed Components (Phase 1 Complete)
+
+The following components were fixed to use individual selectors:
+- ✅ `ProviderConfigDialog.tsx:43-48` - LLM provider API key configuration
+- ✅ `ProviderSettings.tsx:19-25` - Provider CRUD interface
+- ✅ `useAgentFormState.ts:90-94` - Agent form state hook
+- ✅ `AgentConfigDialog.tsx:96` - Agent configuration dialog
+- ✅ `AgentWorkspaceBindingConfig.tsx:122-123,141` - Workspace permissions with stable useEffect
+- ✅ 13 other components across chat, notes, and agent workspaces
+
+**Pattern Applied**:
+```typescript
+// BEFORE (causing infinite loops):
+const { providers, removeProvider } = useProviderStore();
+
+// AFTER (stable selectors):
+const providers = useAppStore(s => s.providers)
+const removeProvider = useAppStore(s => s.removeProvider)
+```
+
+### 3. Store Architecture
+
+**Single Bounded Store** (`src/infrastructure/persistence/stores/use-app-store.ts`):
+```typescript
+export const useAppStore = create<AppState>()(
+  persist(
+    (...a) => ({
+      // Agent slices (5 slices)
+      ...createAgentCrudSlice(...a),
+      ...createAgentWorkspaceBindingsSlice(...a),
+      ...createAgentValidationSlice(...a),
+      ...createAgentEventsSlice(...a),
+      ...createAgentUtilsSlice(...a),
+
+      // Provider slices (3 slices)
+      ...createProviderCrudSlice(...a),
+      ...createProviderModelsSlice(...a),
+      ...createProviderUtilsSlice(...a),
+    }),
+    {
+      name: 'app-state',
+      storage: createJSONStorage(() => createDexieStorage('appState')),
+      partialize: (state) => ({
+        agents: state.agents,
+        providers: state.providers,
+        activeProviderId: state.activeProviderId,
+        modelSettings: state.modelSettings,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (!state.agents || state.agents.length === 0) {
+          state.agents = [DEFAULT_AGENT];
+        }
+        state._hasHydrated = true;
+      },
+    }
+  )
+)
+```
+
+**Store Locations**:
+- **Primary**: `src/infrastructure/persistence/stores/` (38+ stores, modern architecture)
+- **Legacy**: `src/lib/state/` (25 stores, being migrated)
+- **Deprecated**: `src/stores/` (8 stores, empty)
+
+**Migration Plan**: 5 phases, 42-58 hours total
+- Phase 1: ✅ COMPLETE - Infinite loop fixes
+- Phase 2: ⏳ READY - Store consolidation (9-12 hours)
+- Phase 3: ⏳ PENDING - God class elimination (20-25 hours)
+- Phase 4: ⏳ PENDING - Four-layer architecture alignment (8-12 hours)
+- Phase 5: ⏳ PENDING - Validation & documentation (5 hours)
 
 **Planned Consolidation (Epic AC-1):**
 See: `_bmad-output/sprint-artifacts/agent-config-consolidation-plan-2026-01-01.md`

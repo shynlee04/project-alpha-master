@@ -24,7 +24,8 @@ import { MarkdownExportDialog } from './MarkdownExportDialog';
 const NoteEditor = lazy(() => import('./NoteEditor'));
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
-import { AgentSelector } from '@/presentation/components/chat';
+// AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
+import { AgentManager } from '@/presentation/components/agent';
 import type { NoteRecord } from '@/lib/state/dexie-db';
 
 export function NotesPage() {
@@ -123,8 +124,8 @@ export function NotesPage() {
                             onImport={handleImport}
                             onExport={handleExport}
                             agentSelectorSlot={
-                                <AgentSelector
-                                    variant="minimal"
+                                <AgentManager
+                                    variant="compact"
                                     workspaceType="notes"
                                 />
                             }
@@ -208,8 +209,8 @@ export function NotesPage() {
                         onImport={handleImport}
                         onExport={handleExport}
                         agentSelectorSlot={
-                            <AgentSelector
-                                variant="minimal"
+                            <AgentManager
+                                variant="compact"
                                 workspaceType="notes"
                             />
                         }

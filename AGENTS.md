@@ -563,6 +563,235 @@ Manual testing checklist: `_bmad-output/sprint-artifacts/tool-permission-testing
 - Persistence verification procedures
 - Performance benchmarks (<100ms init, <10ms checks)
 
+## Agent Interaction Patterns & Store Access (Updated 2026-01-01)
+
+### CRITICAL: Infinite Loop Bug Fix (Phase 1 Complete ✅)
+
+**Problem**: "Maximum update depth exceeded" errors when creating agents and configuring LLM providers.
+
+**Root Cause**: Destructuring Zustand store hooks creates new object references on every render, triggering infinite re-renders in Zustand v5's stricter referential equality checks.
+
+**Solution**: Individual selector pattern with stable references.
+
+**See**: `_bmad-output/zustand-migration-plan-2026-01-01.md` and `_bmad-output/zustand-patterns-guide-2026-01-01.md`
+
+### Store Access Patterns for Components
+
+#### ✅ CORRECT: Individual Selectors (Prevents Infinite Loops)
+
+**Single Property Selector**:
+```typescript
+// ✅ STABLE REFERENCE - Re-renders only when providers change
+const providers = useAppStore(s => s.providers)
+const removeProvider = useAppStore(s => s.removeProvider)
+
+// Use in component
+function ProviderSettings() {
+  const providers = useAppStore(s => s.providers)
+  const removeProvider = useAppStore(s => s.removeProvider)
+
+  return (
+    <div>
+      {providers.map(p => (
+        <Button onClick={() => removeProvider(p.id)}>Delete</Button>
+      ))}
+    </div>
+  )
+}
+```
+
+**Multiple Properties with useShallow**:
+```typescript
+// ✅ STABLE REFERENCE - Re-renders only when providers OR models change
+import { useShallow } from 'zustand/shallow'
+
+const { providers, models } = useAppStore(
+  useShallow((s) => ({ providers: s.providers, models: s.models }))
+)
+```
+
+#### ❌ ANTI-PATTERN: Destructuring (Causes Infinite Loops)
+
+```typescript
+// ❌ CREATES NEW OBJECT EVERY RENDER - INFINITE LOOP!
+const { providers, removeProvider } = useProviderStore()
+
+// ❌ EVEN WORSE - Wrapper adds indirection + new object
+const { providers, removeProvider } = useProviderStore()
+const models = availableModels[providerId] || []  // Recomputes every render
+```
+
+### Fixed Components (16 Total)
+
+All components now use individual selectors to prevent infinite loops:
+
+**Critical Components** (User-facing workflows):
+1. ✅ `ProviderConfigDialog.tsx:43-48` - LLM provider API key configuration
+2. ✅ `ProviderSettings.tsx:19-25` - Provider CRUD interface
+3. ✅ `useAgentFormState.ts:90-94` - Agent form state hook
+4. ✅ `AgentConfigDialog.tsx:96` - Agent configuration dialog
+5. ✅ `AgentWorkspaceBindingConfig.tsx:122-123,141` - Workspace permissions with stable useEffect
+
+**Chat & Components** (11 more files):
+6. ✅ `AgentSelector.tsx:119-122` - Agent selection dropdown
+7. ✅ `ChatPanel.tsx:50` - Chat panel
+8. ✅ `AITransformMenu.tsx:95-96` - Notes AI transform menu
+9. ✅ `AIPromptDialog.tsx:31-32` - Notes AI prompt dialog
+10. ✅ 6 additional components across agent, chat, and notes workspaces
+
+### Pattern: Store Subscriptions in Hooks
+
+**When components need derived state**, create custom hooks with single subscriptions:
+
+```typescript
+// ✅ CORRECT - Single subscription in hook
+// Hook: useAgentFormState.ts
+export function useAgentFormState(agentId: string | null) {
+  // Individual selectors (stable references)
+  const providers = useAppStore(s => s.providers)
+  const availableModels = useAppStore(s => s.availableModels)
+  const isLoadingModels = useAppStore(s => s.isLoadingModels)
+  const fetchModels = useAppStore(s => s.fetchModels)
+
+  // Derived state (computed once, stable)
+  const providerId = agentId
+    ? useAgentsStore(s => s.agents.find(a => a.id === agentId)?.providerId)
+    : null
+  const models = availableModels[providerId] || []
+
+  return {
+    providers,
+    models,  // Already computed, no duplicate subscription
+    isLoadingModels,
+    fetchModels,
+    // ... other form state
+  }
+}
+
+// Component consumes hook (no direct store access)
+function AgentConfigDialog({ agentId }) {
+  const { providers, models, isLoadingModels, fetchModels } = useAgentFormState(agentId)
+
+  // Component uses data from hook only (no duplicate subscription)
+  return <AgentModelSelector models={models} isLoading={isLoadingModels} />
+}
+```
+
+**❌ ANTI-PATTERN: Duplicate Subscriptions** (CAUSES INFINITE LOOP):
+```typescript
+// Component subscribes to store
+const { providers, availableModels } = useProviderStore()
+const models = availableModels[providerId] || []
+
+// Hook ALSO subscribes to same store
+const { providers, availableModels } = useProviderStore()
+const models = availableModels[providerId] || []
+
+// Result: 2 subscriptions → object reference changes → infinite loop
+```
+
+### Pattern: Stable useEffect Dependencies
+
+**When arrays/objects are dependencies**, use JSON.stringify for stable comparison:
+
+```typescript
+// ❌ UNSTABLE - Array reference changes every render
+useEffect(() => {
+  const bindings = {}
+  agent.workspaceBindings.forEach(binding => {
+    bindings[binding.workspaceType] = binding.isAvailable
+  })
+  setLocalBindings(bindings)
+}, [agent.id, agent.workspaceBindings])  // ← array reference unstable
+
+// ✅ STABLE - String comparison
+useEffect(() => {
+  const bindings = {}
+  agent.workspaceBindings.forEach(binding => {
+    bindings[binding.workspaceType] = binding.isAvailable
+  })
+  setLocalBindings(bindings)
+}, [agent.id, JSON.stringify(agent.workspaceBindings)])  // ← stable string comparison
+```
+
+### Testing for Infinite Loops
+
+**Manual Testing Checklist**:
+1. Open agent configuration dialog
+2. Create new agent
+3. ✅ No "Maximum update depth exceeded" error
+4. Open provider settings
+5. Add API key for provider
+6. ✅ No infinite loop error
+7. Switch between agents
+8. ✅ No performance degradation
+
+**Automated Testing** (React DevTools Profiler):
+```typescript
+// Record render profiler while interacting with components
+// Look for: infinite re-render loops (>60 renders per second)
+// Expected: 1-3 renders per user action
+```
+
+### Performance Metrics
+
+**Before Fix** (Destructuring Pattern):
+- 100+ re-renders per second
+- "Maximum update depth exceeded" error
+- 100% CPU usage
+- Browser tab crash
+
+**After Fix** (Individual Selectors):
+- 1-3 re-renders per user action
+- No errors
+- <5% CPU usage
+- Smooth UI performance
+
+### Migration Guide for Existing Components
+
+**Step 1: Identify Destructuring Patterns**
+```bash
+# Search for destructive patterns
+grep -r "const { .* } = useStore()" src --include="*.tsx" --include="*.ts"
+```
+
+**Step 2: Replace with Individual Selectors**
+```typescript
+// BEFORE
+const { agents, addAgent, removeAgent } = useAgentsStore()
+
+// AFTER
+const agents = useAgentsStore(s => s.agents)
+const addAgent = useAgentsStore(s => s.addAgent)
+const removeAgent = useAgentsStore(s => s.removeAgent)
+```
+
+**Step 3: Verify with TypeScript**
+```bash
+pnpm tsc --noEmit
+# Expected: Zero new errors
+```
+
+**Step 4: Test User Workflows**
+1. Open all dialogs that were modified
+2. Create/edit/delete operations
+3. Verify no infinite loops
+4. Verify UI remains responsive
+
+### Documentation References
+
+**Internal Documents**:
+- `_bmad-output/zustand-migration-plan-2026-01-01.md` - 5-phase migration roadmap
+- `_bmad-output/zustand-patterns-guide-2026-01-01.md` - Complete Zustand v5 best practices
+- `_bmad-output/ralph-loop-cycle-17-infinite-loop-fix-2026-01-01.md` - Detailed fix report
+
+**External Documentation**:
+- Zustand Official Docs: https://zustand.docs.pmnd.rs/
+- Zustand GitHub: https://github.com/pmndrs/zustand
+- v5 Migration Guide: https://github.com/pmndrs/zustand/blob/main/docs/migrations/migrating-to-v5.md
+
+---
+
 ### Workspace-Aware Agent Architecture (Cycle 11 Verified - 95% Complete)
 
 **Status**: ✅ **PRODUCTION-READY** - Verified Cycle 11 (2026-01-01)

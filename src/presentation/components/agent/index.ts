@@ -57,6 +57,8 @@ export { ToolTrustLevelManager } from './ToolTrustLevelManager';
 export { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig';
 export { WorkspacePermissionManager } from './WorkspacePermissionManager';
 export { WorkspaceAwareAgentSelector } from './WorkspaceAwareAgentSelector';
+export { UnifiedAgentSelector } from './UnifiedAgentSelector';
+export { AgentManager } from './AgentManager';
 
 // Ralph Loop Cycle 17 Phase 2: WorkspacePermissions module (split from WorkspaceToolPermissionsConfig)
 // All components <120 lines, following December 2025 React patterns

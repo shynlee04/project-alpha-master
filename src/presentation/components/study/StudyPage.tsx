@@ -19,8 +19,8 @@ import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
 import { useIDEStore } from '@/lib/state/ide-store';
-// AC-02: Agent Selector Unification
-import { AgentSelector } from '@/presentation/components/chat';
+// AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
+import { AgentManager } from '@/presentation/components/agent';
 
 export function StudyPage() {
     const { t } = useTranslation();
@@ -53,9 +53,9 @@ export function StudyPage() {
                                 <BookOpen className="text-primary" size={20} />
                                 <h1 className="font-mono font-bold text-lg">{t('study.title')}</h1>
                             </div>
-                            {/* AC-02: Agent Selector - minimal for mobile */}
-                            <AgentSelector
-                                variant="minimal"
+                            {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                            <AgentManager
+                                variant="compact"
                                 workspaceType="study"
                             />
                         </div>
@@ -140,8 +140,8 @@ export function StudyPage() {
                             <h1 className="font-mono font-bold text-xl">{t('study.title')}</h1>
                         </div>
                         <div className="flex items-center gap-4">
-                            {/* AC-02: Agent Selector Unification */}
-                            <AgentSelector
+                            {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                            <AgentManager
                                 variant="compact"
                                 workspaceType="study"
                             />

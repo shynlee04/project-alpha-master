@@ -22,8 +22,8 @@ import { useIDEStore } from '@/lib/state/ide-store';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
-// AC-02: Agent Selector Unification
-import { AgentSelector } from '@/presentation/components/chat';
+// AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
+import { AgentManager } from '@/presentation/components/agent';
 
 // KSI Module: Source → RAG Bridge
 import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';
@@ -150,9 +150,9 @@ export function KnowledgePage() {
                                 <Sparkles size={16} className="text-primary" /> {t('knowledge.sources')}
                             </h2>
                             <div className="flex items-center gap-2">
-                                {/* AC-02: Agent Selector - minimal for mobile */}
-                                <AgentSelector
-                                    variant="minimal"
+                                {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                                <AgentManager
+                                    variant="compact"
                                     workspaceType="knowledge"
                                 />
                                 {isAiAvailable && (
@@ -190,8 +190,8 @@ export function KnowledgePage() {
                         <div className="p-3 border-b border-border flex items-center justify-between">
                             <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
                             <div className="flex items-center gap-2">
-                                {/* AC-02: Agent Selector Unification */}
-                                <AgentSelector
+                                {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                                <AgentManager
                                     variant="compact"
                                     workspaceType="knowledge"
                                 />
