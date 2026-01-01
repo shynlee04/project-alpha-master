@@ -1,6 +1,6 @@
 import type { ConversationThreadRecord } from '../dexie-db';
 import { db, getConversationThread, saveConversationThread } from '../dexie-db';
-import { useConversationStore } from './conversation-store';
+import { useConversationStore } from './conversation/conversation-store';
 
 /**
  * ConversationAutoRestore - Manages automatic conversation restoration on project load.

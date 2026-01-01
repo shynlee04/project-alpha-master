@@ -52,17 +52,6 @@ export {
 } from './prompt-enhancement-store';
 
 export {
-  useThreadsStore,
-  useActiveThread,
-  useProjectThreads,
-  useThreadsHydration,
-  type ThreadsState,
-  type ThreadMessage,
-  type ThreadToolCall,
-  type ConversationThread
-} from './conversation-threads-store';
-
-export {
   useOpenAICompatibleStore,
   type OpenAICompatibleState
 } from './openai-compatible-store';
@@ -95,15 +84,10 @@ export {
 // Note: useProviderStore is exported above from @/lib/state/provider-store (line 35)
 
 export {
-  useKnowledgeStore,
-  type KnowledgeState
-} from './knowledge-store';
-
-export {
   useQuizStore,
   initializeQuizStore,
   type QuizState
-} from './quiz/index';
+} from '@/lib/state/quiz-store';
 
 export {
   useFlashcardStore,
