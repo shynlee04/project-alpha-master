@@ -10,7 +10,7 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { Agent } from '@/core/entities/Agent';
+import type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
 import type { CombinedAgentsState } from '../types';
 
 /**
@@ -36,7 +36,7 @@ const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
 /**
  * Default agent created on first load
  */
-const DEFAULT_AGENT: Agent = {
+export const DEFAULT_AGENT: Agent = {
   id: 'agt_default_001',
   name: 'Via-Gent Coder',
   description: 'Default AI coding assistant powered by Devstral via OpenRouter',
@@ -70,21 +70,19 @@ function generateId(): string {
  * - addAgent: Add new agent (no validation, no events)
  * - removeAgent: Remove agent by ID (no event emission)
  * - updateAgent: Update existing agent (no validation, no events)
- * - setActiveAgent: Set active agent for chat
  * - resetToDefaults: Reset to initial state
  */
 export const createAgentCrudSlice: StateCreator<
   CombinedAgentsState,
   [],
   [],
-  Omit<CombinedAgentsState, 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getActiveAgent' | 'getAgentsCount'>
-> = (set, get) => ({
+  Omit<CombinedAgentsState, 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getAgentsCount'>
+> = (set) => ({
   // ========================================================================
   // STATE
   // ========================================================================
 
   agents: [DEFAULT_AGENT],
-  activeAgentId: DEFAULT_AGENT.id,
 
   // ========================================================================
   // CRUD OPERATIONS (pure, no validation, no events)
@@ -122,19 +120,12 @@ export const createAgentCrudSlice: StateCreator<
    */
   removeAgent: (id) => {
     console.log('[AgentCrudSlice] Removing agent:', id);
-    const currentActive = get().activeAgentId;
 
     set((state) => {
       const filteredAgents = state.agents.filter((a) => a.id !== id);
 
-      // If removing active agent, switch to first remaining agent
-      const newActiveId = currentActive === id
-        ? (filteredAgents[0]?.id || null)
-        : currentActive;
-
       return {
-        agents: filteredAgents,
-        activeAgentId: newActiveId
+        agents: filteredAgents
       };
     });
   },
@@ -158,21 +149,12 @@ export const createAgentCrudSlice: StateCreator<
   },
 
   /**
-   * Set active agent for chat
-   */
-  setActiveAgent: (id) => {
-    console.log('[AgentCrudSlice] Setting active agent:', id);
-    set({ activeAgentId: id });
-  },
-
-  /**
    * Reset to default agents
    */
   resetToDefaults: () => {
     console.log('[AgentCrudSlice] Resetting to defaults');
     set({
-      agents: [DEFAULT_AGENT],
-      activeAgentId: DEFAULT_AGENT.id
+      agents: [DEFAULT_AGENT]
     });
   },
 });

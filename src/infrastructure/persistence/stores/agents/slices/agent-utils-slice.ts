@@ -21,14 +21,13 @@ import type { CombinedAgentsState } from '../types';
  * - setHasHydrated: Set hydration status from IndexedDB
  * - getAgent: Get agent by ID
  * - updateAgentStatus: Update agent status
- * - getActiveAgent: Get active agent
  * - getAgentsCount: Get total agents count
  */
 export const createAgentUtilsSlice: StateCreator<
   CombinedAgentsState,
   [],
   [],
-  Omit<CombinedAgentsState, 'agents' | 'activeAgentId' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'setActiveAgent' | 'resetToDefaults' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent'>
+  Omit<CombinedAgentsState, 'agents' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'resetToDefaults' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent'>
 > = (set, get) => ({
   // ========================================================================
   // STATE
@@ -83,17 +82,6 @@ export const createAgentUtilsSlice: StateCreator<
           : a
       ),
     }));
-  },
-
-  /**
-   * Get active agent
-   *
-   * @returns Active agent or undefined if none set
-   */
-  getActiveAgent: () => {
-    const { activeAgentId, agents } = get();
-    if (!activeAgentId) return undefined;
-    return agents.find((a) => a.id === activeAgentId);
   },
 
   /**

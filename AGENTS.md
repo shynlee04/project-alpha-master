@@ -355,6 +355,42 @@ const ideAgents = getAgentsForWorkspace('ide');
 updateWorkspaceBinding('agent-1', 'knowledge', true); // Enable in Knowledge
 ```
 
+**Domain Services Pattern** (Ralph Loop Cycle 16 - Epic AC-1.5 ✅):
+
+Agent workspace operations use **domain service utilities** instead of methods on the Agent entity:
+
+```typescript
+// Location: src/domain/services/agent-workspace-utils.ts
+
+// Import domain utilities
+import {
+  isAgentAvailableIn,
+  isAgentDefaultFor,
+  getAgentsForWorkspace,
+  getDefaultAgentForWorkspace
+} from '@/domain/services';
+
+// Check if agent is available in workspace
+if (isAgentAvailableIn(agent, 'knowledge')) {
+  // Agent available in Knowledge workspace
+}
+
+// Filter agents by workspace
+const knowledgeAgents = getAgentsForWorkspace(allAgents, 'knowledge');
+
+// Find default agent for workspace
+const defaultAgent = getDefaultAgentForWorkspace(allAgents, 'ide');
+```
+
+**Design Principles**:
+- ✅ **Pure Functions**: No side effects, easier to test
+- ✅ **Separation of Concerns**: Agent entity (data) separate from business logic
+- ✅ **Testability**: Unit test without mocking stores or Zustand
+- ✅ **Reusability**: Same utilities can be used across multiple stores
+- ✅ **No Circular Dependencies**: Unidirectional data flow
+
+**Migration**: See `ralph-loop-cycle-16-migration-guide-2026-01-01.md` for complete migration guide from Agent methods to domain utilities.
+
 ### Tool Permissions System
 
 **Workspace-Aware Permission Checking** (Fully Implemented):

@@ -108,6 +108,10 @@ export class CrossWorkspaceEventBus {
     );
 
     // Agent selected → Update selection store
+    // REMOVED: Circular dependency loop. AgentSelectionStore emits this event,
+    // so listening to it and calling setActiveAgent causes an infinite loop.
+    // UI components call setActiveAgent directly.
+    /*
     const unsubscribeAgentSelected = eventBus.on<{ agentId: string; workspaceType: string }>(
       DomainEventType.AGENT_SELECTED,
       (event) => {
@@ -118,6 +122,7 @@ export class CrossWorkspaceEventBus {
         selectionStore.setActiveAgent(agentId, workspaceType as any);
       }
     );
+    */
 
     // Agent deleted → Update selection store
     const unsubscribeAgentDeleted = eventBus.on<{ agentId: string }>(
@@ -139,7 +144,7 @@ export class CrossWorkspaceEventBus {
     this.unsubscribers.push(
       unsubscribeAgentCreated,
       unsubscribeAgentUpdated,
-      unsubscribeAgentSelected,
+      // unsubscribeAgentSelected, // Removed circular loop
       unsubscribeAgentDeleted
     );
   }

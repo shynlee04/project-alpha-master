@@ -18,6 +18,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
+import { useAgentSelectionStore } from './agents/agent-selection-store';
 
 // Import agent slices
 import {
@@ -103,7 +104,6 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         // Agent state (persisted)
         agents: state.agents,
-        activeAgentId: state.activeAgentId,
 
         // Provider state (persisted)
         providers: state.providers,
@@ -133,13 +133,6 @@ export const useAppStore = create<AppState>()(
         if (!state.agents || state.agents.length === 0) {
           console.log('[AppStore] No agents found, restoring defaults');
           state.agents = [DEFAULT_AGENT];
-          state.activeAgentId = DEFAULT_AGENT.id;
-        }
-
-        // Ensure activeAgentId points to valid agent
-        if (state.activeAgentId && !state.agents.find(a => a.id === state.activeAgentId)) {
-          console.warn('[AppStore] Active agent ID invalid, resetting to first agent');
-          state.activeAgentId = state.agents[0]?.id || null;
         }
 
         // Ensure at least one provider exists
@@ -160,7 +153,6 @@ export const useAppStore = create<AppState>()(
         console.log('[AppStore] Hydration complete:', {
           agentsCount: state.agents.length,
           providersCount: state.providers.length,
-          activeAgentId: state.activeAgentId,
           activeProviderId: state.activeProviderId,
         });
       },
@@ -201,11 +193,13 @@ export const useAgents = () => useAppStore((state) => state.agents);
 /**
  * Get active agent
  */
-export const useActiveAgent = () => useAppStore((state) => {
-  const { activeAgentId, agents } = state;
+export const useActiveAgent = () => {
+  const activeAgentId = useAgentSelectionStore(state => state.activeAgentId);
+  const agents = useAppStore(state => state.agents);
+
   if (!activeAgentId) return undefined;
   return agents.find(a => a.id === activeAgentId);
-});
+};
 
 /**
  * Get agents for specific workspace

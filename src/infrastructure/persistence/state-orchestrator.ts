@@ -13,27 +13,22 @@ import { WorkspaceType } from '../../domain/value-objects/workspace-type';
 
 /**
  * Store references (lazy loaded to avoid circular dependencies)
+ * Note: Getters return Zustand store instances directly, not getState() results
  */
 interface StoreReferences {
   workspaceStore?: {
-    getState: () => {
-      currentWorkspace: WorkspaceType;
-      startTransition: (from: WorkspaceType) => void;
-      setCurrentWorkspace: (workspace: WorkspaceType) => void;
-      endTransition: () => void;
-    };
+    currentWorkspace: WorkspaceType;
+    startTransition: (from: WorkspaceType) => void;
+    setCurrentWorkspace: (workspace: WorkspaceType) => void;
+    endTransition: () => void;
   };
   agentsStore?: {
-    getState: () => {
-      agents: any[];
-      getAgent: (id: string) => any;
-    };
+    agents: any[];
+    getAgent: (id: string) => any;
   };
   agentSelectionStore?: {
-    getState: () => {
-      activeAgentId: string | null;
-      setActiveAgent: (agentId: string) => void;
-    };
+    activeAgentId: string | null;
+    setActiveAgent: (agentId: string | null, workspaceType: WorkspaceType) => void;
   };
 }
 
@@ -91,7 +86,9 @@ export class StateOrchestrator {
    * @param store - Store reference
    */
   registerStore(storeName: keyof StoreReferences, store: any): void {
-    this.stores[storeName] = store;
+    // Extract the state interface from the store's getState method
+    const state = store.getState();
+    this.stores[storeName] = state;
   }
 
   /**
@@ -170,10 +167,10 @@ export class StateOrchestrator {
       const agentSelectionStore = this.getAgentSelectionStore();
 
       // Step 1: Start transition in workspace store
-      workspaceStore.startTransition(from);
+      workspaceStore?.startTransition(from);
 
       // Step 2: Filter agents for new workspace
-      const allAgents = agentsStore.getState().agents;
+      const allAgents = agentsStore?.agents || [];
       const availableAgents = allAgents.filter((agent: any) =>
         this.isAgentAvailableInWorkspace(agent, to)
       );
@@ -181,9 +178,10 @@ export class StateOrchestrator {
       console.log(`[StateOrchestrator] Found ${availableAgents.length} agents available in ${to}`);
 
       // Step 3: Check if current agent needs re-selection
-      const currentAgentId = agentSelectionStore.getState().activeAgentId;
-      const currentAgent = currentAgentId
-        ? agentsStore.getState().getAgent(currentAgentId)
+      const currentAgentId = agentSelectionStore?.activeAgentId ?? null;
+      const getAgentFn = agentsStore?.getAgent;
+      const currentAgent = currentAgentId && getAgentFn
+        ? getAgentFn(currentAgentId)
         : null;
 
       const agentNeedsReselection = !currentAgent ||
@@ -195,7 +193,7 @@ export class StateOrchestrator {
 
         if (newAgent) {
           console.log(`[StateOrchestrator] Re-selecting agent: ${newAgent.name} (${newAgent.id})`);
-          agentSelectionStore.setActiveAgent(newAgent.id);
+          agentSelectionStore?.setActiveAgent(newAgent.id, to);
         } else {
           console.warn(`[StateOrchestrator] No agents available for workspace: ${to}`);
         }
@@ -207,7 +205,7 @@ export class StateOrchestrator {
         {
           from,
           to,
-          agentId: agentSelectionStore.getState().activeAgentId
+          agentId: agentSelectionStore?.activeAgentId ?? null
         },
         event.correlationId
       );
@@ -239,10 +237,10 @@ export class StateOrchestrator {
     const workspaceStore = this.getWorkspaceStore();
 
     // Update workspace store
-    workspaceStore.setCurrentWorkspace(event.payload.to);
+    workspaceStore?.setCurrentWorkspace(event.payload.to);
 
     // End transition state
-    workspaceStore.endTransition();
+    workspaceStore?.endTransition();
 
     this.isTransitioning = false;
 
@@ -260,7 +258,7 @@ export class StateOrchestrator {
     const workspaceStore = this.getWorkspaceStore();
 
     // End transition state
-    workspaceStore.endTransition();
+    workspaceStore?.endTransition();
 
     this.isTransitioning = false;
 
@@ -279,12 +277,12 @@ export class StateOrchestrator {
     const agentsStore = this.getAgentsStore();
     const workspaceStore = this.getWorkspaceStore();
 
-    const currentAgentId = agentSelectionStore.getState().activeAgentId;
-    const currentWorkspace = workspaceStore.getCurrentWorkspace();
+    const currentAgentId = agentSelectionStore?.activeAgentId ?? null;
+    const currentWorkspace = workspaceStore?.currentWorkspace ?? 'ide';
 
     // If updated agent is currently selected, emit re-selected event
-    if (currentAgentId === event.payload.agentId) {
-      const agent = agentsStore.getState().getAgent(event.payload.agentId);
+    if (currentAgentId === event.payload.agentId && agentsStore?.getAgent) {
+      const agent = agentsStore.getAgent(event.payload.agentId);
 
       if (agent && this.isAgentAvailableInWorkspace(agent, currentWorkspace)) {
         eventBus.emit(
@@ -308,13 +306,13 @@ export class StateOrchestrator {
     const agentSelectionStore = this.getAgentSelectionStore();
     const agentsStore = this.getAgentsStore();
 
-    const currentAgentId = agentSelectionStore.getState().activeAgentId;
+    const currentAgentId = agentSelectionStore?.activeAgentId ?? null;
 
     // If deleted agent was selected, select another agent
     if (currentAgentId === event.payload.agentId) {
-      const remainingAgents = agentsStore.getState().agents;
+      const remainingAgents = agentsStore?.agents ?? [];
       const workspaceStore = this.getWorkspaceStore();
-      const currentWorkspace = workspaceStore.getCurrentWorkspace();
+      const currentWorkspace = workspaceStore?.currentWorkspace ?? 'ide';
 
       const availableAgents = remainingAgents.filter((agent: any) =>
         this.isAgentAvailableInWorkspace(agent, currentWorkspace)
@@ -323,11 +321,11 @@ export class StateOrchestrator {
       if (availableAgents.length > 0) {
         const newAgent = this.selectAgentForWorkspace(availableAgents, currentWorkspace);
         if (newAgent) {
-          agentSelectionStore.setActiveAgent(newAgent.id);
+          agentSelectionStore?.setActiveAgent(newAgent.id, currentWorkspace);
         }
       } else {
         // No agents available, clear selection
-        agentSelectionStore.setActiveAgent(null);
+        agentSelectionStore?.setActiveAgent(null, currentWorkspace);
       }
     }
   }
@@ -392,9 +390,9 @@ export class StateOrchestrator {
     if (!this.stores.workspaceStore) {
       // Lazy load to avoid circular dependency
       const { useWorkspaceStore } = require('@/stores/workspace-store');
-      this.stores.workspaceStore = useWorkspaceStore;
+      this.stores.workspaceStore = useWorkspaceStore.getState();
     }
-    return this.stores.workspaceStore.getState();
+    return this.stores.workspaceStore;
   }
 
   /**
@@ -404,7 +402,7 @@ export class StateOrchestrator {
     if (!this.stores.agentsStore) {
       // Lazy load to avoid circular dependency
       const { useAgentsStore } = require('@/stores/agents-store');
-      this.stores.agentsStore = useAgentsStore;
+      this.stores.agentsStore = useAgentsStore.getState();
     }
     return this.stores.agentsStore;
   }
@@ -416,21 +414,11 @@ export class StateOrchestrator {
     if (!this.stores.agentSelectionStore) {
       // Lazy load to avoid circular dependency
       const { useAgentSelectionStore } = require('@/stores/agent-selection-store');
-      this.stores.agentSelectionStore = useAgentSelectionStore;
+      this.stores.agentSelectionStore = useAgentSelectionStore.getState();
     }
     return this.stores.agentSelectionStore;
   }
 }
 
-/**
- * Singleton state orchestrator instance
- *
- * @example
- * ```ts
- * import { stateOrchestrator } from '@/infrastructure/persistence/state-orchestrator';
- *
- * // Initialize orchestrator (call once at app startup)
- * stateOrchestrator.initialize();
- * ```
- */
+// Export singleton instance
 export const stateOrchestrator = new StateOrchestrator();

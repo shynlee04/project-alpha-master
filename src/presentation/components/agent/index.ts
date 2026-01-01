@@ -25,8 +25,9 @@ export { ApiKeyInputSection } from './ApiKeyInputSection';
 export type { ApiKeyInputSectionProps, ConnectionStatus } from './ApiKeyInputSection';
 export { AgentImportExport } from './AgentImportExport';
 export type { AgentImportExportProps } from './AgentImportExport';
-export { AgentBasicConfig } from './AgentBasicConfig';
-export type { AgentBasicConfigProps } from './AgentBasicConfig';
+// Ralph Loop Cycle 17: AgentBasicConfig deleted - use split components from AgentConfigForm/
+// export { AgentBasicConfig } from './AgentBasicConfig';
+// export type { AgentBasicConfigProps } from './AgentBasicConfig';
 
 // Hooks
 export { useAgentFormValidation } from './hooks/useAgentFormValidation';

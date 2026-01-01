@@ -18,6 +18,8 @@ import type {
     ProjectsTable,
     IDEStateTable,
     ConversationsTable,
+    FileSnapshotsTable,
+    FileContentCacheTable,
 } from './dexie-db-core-types';
 
 import type {
@@ -105,6 +107,13 @@ export class ViaGentDatabase extends Dexie {
     toolExecutionLogs!: ToolExecutionLogTable;
     fsaHandles!: FSAHandleTable;
     sessionSnapshots!: SessionSnapshotTable;
+
+    // ========================================================================
+    // Story WB-2: File Snapshot Store Tables
+    // ========================================================================
+
+    fileSnapshots!: FileSnapshotsTable;
+    fileContentCache!: FileContentCacheTable;
 
     // ========================================================================
     // Epic 6: Source Ingestion & Management Tables

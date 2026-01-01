@@ -2,17 +2,21 @@
  * AgentConfigDialog - Orchestrator for Agent Configuration
  *
  * Refactored in Ralph Loop Cycle 9 (P1-1g) to use extracted components:
- * - AgentBasicConfig: Name, description, provider, model selection
- * - ApiKeyInputSection: API key input with connection testing
  * - AgentImportExport: JSON export/import functionality
  * - useAgentFormValidation: Form validation hook
  * - useUnsavedChangesWarning: Unsaved changes warning hook
  *
+ * Ralph Loop Cycle 17 (Current): Replaced AgentBasicConfig (302 lines) with split components:
+ * - AgentBasicInfoTab: Name and description (67 lines)
+ * - AgentProviderSelector: Provider dropdown (78 lines)
+ * - AgentModelSelector: Model selection with refresh (100 lines)
+ *
  * @responsibility Dialog orchestration and advanced configuration
- * @size ~300 lines (down from 1,256 lines in original)
+ * @size 496 lines (target: <120 lines after hook extraction)
  *
  * @epic P0.5 - Redesign Agent Configuration Flow
  * @story P1-1g - Refactor to Orchestrator Pattern
+ * @story Cycle 17 - Phase 1: Replace AgentBasicConfig
  */
 
 import { useState, useCallback, useEffect } from 'react'
@@ -32,9 +36,12 @@ import {
 } from '@/presentation/components/ui/dialog'
 
 // P1-1: Import extracted components
+// Ralph Loop Cycle 17: Replace AgentBasicConfig with split components
 import {
-    AgentBasicConfig,
     AgentImportExport,
+    AgentBasicInfoTab,
+    AgentProviderSelector,
+    AgentModelSelector,
     useAgentFormValidation,
 } from '@/presentation/components/agent'
 
@@ -59,6 +66,7 @@ import {
 
 // Store imports
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store'
 
 /**
  * Configuration tab type
@@ -85,6 +93,11 @@ export function AgentConfigDialog({
 
     // Read agent from store for editing mode
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
+
+    // Ralph Loop Cycle 17: Subscribe to provider store for model list
+    const { providers, availableModels, isLoadingModels: storeLoadingModels, fetchModels } = useProviderStore()
+    const models = availableModels[providerId] || []
+    const isLoadingModels = storeLoadingModels[providerId] || false
 
     // BF-01 FIX + NEW AGENT FIX: Use local state for form fields
     // For new agents (agentId === null), we need local state since there's no store entry
@@ -402,16 +415,47 @@ export function AgentConfigDialog({
                         </TabsList>
 
                         <TabsContent value="basic" className="mt-4 space-y-4">
-                            {/* P1-1: Use AgentBasicConfig component */}
-                            <AgentBasicConfig
-                                name={name}
-                                description={description}
-                                providerId={providerId}
-                                modelId={modelId}
-                                agentId={agentId ?? undefined}
-                                errors={errors}
-                                onUpdateField={handleUpdateField}
-                            />
+                            {/* Ralph Loop Cycle 17: Use split components from AgentConfigForm */}
+                            <div className="space-y-4">
+                                {/* Agent Name and Description */}
+                                <AgentBasicInfoTab
+                                    name={name}
+                                    role={description} // Map: description → role prop
+                                    onNameChange={(value) => handleUpdateField('name', value)}
+                                    onRoleChange={(value) => handleUpdateField('description', value)}
+                                    errors={errors}
+                                />
+
+                                {/* Provider Selection */}
+                                <AgentProviderSelector
+                                    providers={providers}
+                                    selectedProviderId={providerId}
+                                    onProviderChange={(value) => handleUpdateField('providerId', value)}
+                                    error={errors.providerId}
+                                />
+
+                                {/* Model Selection */}
+                                <AgentModelSelector
+                                    models={models}
+                                    selectedModel={modelId}
+                                    onModelChange={(value) => handleUpdateField('modelId', value)}
+                                    onRefresh={async () => {
+                                        try {
+                                            await fetchModels(providerId)
+                                            toast.success(t('agents.config.modelsRefreshed', 'Models refreshed'))
+                                        } catch (err: any) {
+                                            toast.error(
+                                                t('agents.config.fetchFailed', 'Failed to fetch models: {{error}}', {
+                                                    error: err.message || 'Unknown error',
+                                                })
+                                            )
+                                        }
+                                    }}
+                                    isLoading={isLoadingModels}
+                                    disabled={!providerId}
+                                    error={errors.modelId}
+                                />
+                            </div>
 
                             {/* API Key Section - Placeholder until proper hook integration */}
                             <div className="space-y-2">

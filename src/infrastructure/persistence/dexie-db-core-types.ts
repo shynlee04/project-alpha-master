@@ -54,6 +54,32 @@ export interface ConversationRecord {
     updatedAt: Date;
 }
 
+/**
+ * File snapshot metadata (lightweight, for fast file tree loads)
+ * Story WB-2: File Snapshot Store
+ */
+export interface FileSnapshotRecord {
+    id?: number; // Auto-increment primary key
+    projectId: string;
+    path: string; // File path relative to project root
+    hash: string; // SHA-256 hash for change detection
+    size: number; // File size in bytes
+    version: number; // Snapshot format version
+    lastCachedAt: number; // Timestamp when cached
+    expiresAt: number; // Timestamp when cache expires
+    hasContent: boolean; // Whether content exists in fileContentCache table
+}
+
+/**
+ * File content cache (lazy-loaded, only when file is opened)
+ * Story WB-2: File Snapshot Store
+ */
+export interface FileContentCacheRecord {
+    projectId: string;
+    path: string; // File path relative to project root
+    content: string; // Full file content (potentially large)
+}
+
 // ============================================================================
 // Table Type Exports
 // ============================================================================
@@ -61,3 +87,5 @@ export interface ConversationRecord {
 export type ProjectsTable = Table<ProjectRecord, string>;
 export type IDEStateTable = Table<IDEStateRecord, string>;
 export type ConversationsTable = Table<ConversationRecord, string>;
+export type FileSnapshotsTable = Table<FileSnapshotRecord, number>;
+export type FileContentCacheTable = Table<FileContentCacheRecord, string>;

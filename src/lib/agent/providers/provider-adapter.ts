@@ -15,36 +15,49 @@ import type { ProviderConfig, AdapterConfig, ConnectionTestResult, OpenAICompati
 import { PROVIDERS } from './types';
 import { AnthropicAdapter, createAnthropicAdapter } from './anthropic-adapter';
 import type { AnthropicAdapterConfig } from './anthropic-adapter';
+import type { ProviderModel } from '@/core/entities/Provider';
+import { ModelRegistry } from './model-registry';
 
 // TanStack AI adapter type
 type OpenAIAdapter = ReturnType<typeof createOpenaiChat>;
 
-// Union type for all supported adapters
-type ProviderAdapter = OpenAIAdapter | AnthropicAdapter;
-
 /**
- * Extended adapter config for custom providers
+ * Custom adapter configuration with extended options
+ * Extends AdapterConfig to support custom headers
  */
 export interface CustomAdapterConfig extends AdapterConfig {
-    /** Custom headers to include in requests */
+    /** Custom HTTP headers for requests */
     headers?: Record<string, string>;
-    /** Whether this is a custom user-configured provider */
-    isCustom?: boolean;
 }
+
+/**
+ * Extended Provider Adapter interface with getModels and testConnection methods
+ * This wraps TanStack AI adapters to add provider-specific functionality
+ */
+export interface ExtendedProviderAdapter extends OpenAIAdapter {
+    /** Get available models for this provider */
+    getModels(): Promise<ProviderModel[]>;
+    /** Test connection to provider API */
+    testConnection(): Promise<{ success: boolean; latencyMs: number; error?: string }>;
+}
+
+// Union type for all supported adapters
+type ProviderAdapter = OpenAIAdapter | AnthropicAdapter | ExtendedProviderAdapter;
 
 /**
  * ProviderAdapterFactory - Creates TanStack AI adapters for various providers
  */
 export class ProviderAdapterFactory {
     private adapters = new Map<string, ProviderAdapter>();
+    private modelRegistry = new ModelRegistry();
 
     /**
      * Create an adapter for a provider
      * @param providerId - Provider ID from PROVIDERS config
      * @param config - Adapter configuration with API key
-     * @returns TanStack AI adapter instance
+     * @returns Extended adapter with getModels and testConnection methods
      */
-    createAdapter(providerId: string, config: CustomAdapterConfig): ProviderAdapter {
+    createAdapter(providerId: string, config: CustomAdapterConfig): ExtendedProviderAdapter {
         const providerConfig = PROVIDERS[providerId];
 
         // Handle Anthropic provider
@@ -52,14 +65,17 @@ export class ProviderAdapterFactory {
             if (!providerConfig.enabled) {
                 throw new Error(`Provider not enabled: ${providerId}`);
             }
-            const adapter = createAnthropicAdapter({
+            const baseAdapter = createAnthropicAdapter({
                 apiKey: config.apiKey,
                 baseURL: config.baseURL,
                 headers: config.headers,
                 dangerouslyAllowBrowser: true,
             } as AnthropicAdapterConfig);
-            this.adapters.set(providerId, adapter);
-            return adapter;
+
+            // Wrap with extended methods
+            const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
+            this.adapters.set(providerId, extendedAdapter);
+            return extendedAdapter;
         }
 
         // For openai-compatible providers, baseURL is required in config
@@ -67,7 +83,10 @@ export class ProviderAdapterFactory {
             if (!config.baseURL) {
                 throw new Error('baseURL is required for OpenAI Compatible providers');
             }
-            return this.createCustomAdapter(config);
+            const baseAdapter = this.createCustomAdapter(config);
+            const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
+            this.adapters.set(providerId, extendedAdapter);
+            return extendedAdapter;
         }
 
         if (!providerConfig) {
@@ -79,12 +98,15 @@ export class ProviderAdapterFactory {
         }
 
         // Create adapter based on provider type
-        const adapter = this.createOpenAICompatibleAdapter(providerConfig, config);
+        const baseAdapter = this.createOpenAICompatibleAdapter(providerConfig, config);
+
+        // Wrap with extended methods
+        const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
 
         // Cache adapter
-        this.adapters.set(providerId, adapter);
+        this.adapters.set(providerId, extendedAdapter);
 
-        return adapter;
+        return extendedAdapter;
     }
 
     /**
@@ -145,6 +167,35 @@ export class ProviderAdapterFactory {
         // Cast modelId as 'any' to allow arbitrary OpenRouter model strings
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return createOpenaiChat(modelId as any, config.apiKey, options as any);
+    }
+
+    /**
+     * Extend base adapter with getModels and testConnection methods
+     * @param baseAdapter - TanStack AI adapter to extend
+     * @param providerId - Provider ID for model fetching
+     * @param config - Adapter configuration with API key
+     * @returns Extended adapter with additional methods
+     */
+    private extendAdapter(
+        baseAdapter: OpenAIAdapter | AnthropicAdapter,
+        providerId: string,
+        config: CustomAdapterConfig
+    ): ExtendedProviderAdapter {
+        // Extend the base adapter with additional methods
+        const extended = {
+            ...baseAdapter,
+            getModels: async (): Promise<ProviderModel[]> => {
+                return this.modelRegistry.getModels(providerId, config.apiKey);
+            },
+            testConnection: async (): Promise<{ success: boolean; latencyMs: number; error?: string }> => {
+                return this.testConnection(providerId, config.apiKey, {
+                    baseURL: config.baseURL,
+                    headers: config.headers,
+                });
+            },
+        } as ExtendedProviderAdapter;
+
+        return extended;
     }
 
     /**

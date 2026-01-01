@@ -31,9 +31,6 @@ export interface AgentCrudState {
   /** List of configured agents */
   agents: Agent[];
 
-  /** Currently active agent ID for chat */
-  activeAgentId: string | null;
-
   /** Add a new agent (pure CRUD, no validation) */
   addAgent: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => Agent;
 
@@ -42,9 +39,6 @@ export interface AgentCrudState {
 
   /** Update an existing agent (pure CRUD, no validation) */
   updateAgent: (id: string, updates: Partial<Agent>) => void;
-
-  /** Set active agent for chat */
-  setActiveAgent: (id: string | null) => void;
 
   /** Reset to default agents */
   resetToDefaults: () => void;
@@ -127,9 +121,6 @@ export interface AgentUtilsState {
 
   /** Update agent status */
   updateAgentStatus: (id: string, status: Agent['status']) => void;
-
-  /** Get active agent */
-  getActiveAgent: () => Agent | undefined;
 
   /** Get total agents count */
   getAgentsCount: () => number;

@@ -119,6 +119,15 @@ const { isMobile, isTablet, isDesktop } = useResponsive();
 - Run `pnpm i18n:extract` after adding new strings
 
 ### Component Standards
+
+**Size Limits** (Updated 2026-01-01):
+- **Max 120 lines per component** (strictly enforced for new components)
+- **Max 3 functions per module** (exported functions only)
+- **Max 5 dependencies per component** (imports from different packages)
+- **Max 3 nesting levels** (if/for/function nesting)
+- **Max 5 parameters per function**
+
+**Quality Standards**:
 - Components logically routed and wired
 - Interfaces mapped to user journeys
 - Professional first impression with meticulous detail
@@ -482,6 +491,27 @@ See: `_bmad-output/sprint-artifacts/agent-config-consolidation-plan-2026-01-01.m
 - **Ephemeral**: Session trust cleared on reload (via `partialize`)
 - **Pattern**: Facade over Zustand store with Dexie persistence
 - **Integration**: 8 files use `ToolPermissionManager.getInstance()` (zero breaking changes)
+
+**Domain Services Pattern** (Ralph Loop Cycle 16 - Epic AC-1.5 ✅):
+- **Location**: `src/domain/services/agent-workspace-utils.ts` (106 lines)
+- **Purpose**: Encapsulates business logic for Agent workspace operations
+- **Pattern**: Pure functions (no side effects) operating on domain entities
+- **Export**: Barrel export at `src/domain/services/index.ts`
+- **Integration**: Used by agent-selection-store, eliminates circular dependencies
+- **Available Utilities**:
+  - `isAgentAvailableIn(agent, workspaceType)` - Check workspace availability
+  - `isAgentDefaultFor(agent, workspaceType)` - Check default status
+  - `getAgentsForWorkspace(agents, workspaceType)` - Filter agents by workspace
+  - `getDefaultAgentForWorkspace(agents, workspaceType)` - Find default agent
+
+**Key Design Principles**:
+- ✅ Agent entity remains pure (data only, no methods)
+- ✅ Business logic in domain service layer (testable, reusable)
+- ✅ Functions are composable (can be combined for complex logic)
+- ✅ Full JSDoc documentation with examples
+- ✅ Zero circular dependencies (unidirectional data flow)
+
+**Migration Guide**: See `_bmad-output/ralph-loop-cycle-16-migration-guide-2026-01-01.md`
 
 ### Discovery & Navigation Components
 - **Command Palette** (Ctrl+P/Cmd+P): Quick command access
