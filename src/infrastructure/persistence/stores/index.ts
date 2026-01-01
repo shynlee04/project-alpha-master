@@ -6,7 +6,7 @@
  */
 
 // ============================================================================
-// AGENT STORES (from src/stores/)
+// AGENT STORES (NEW: Ralph Loop Cycle 14 - Split into 5 slices)
 // ============================================================================
 
 export {
@@ -14,7 +14,7 @@ export {
   useAgentsStoreHydration,
   DEFAULT_AGENT,
   type AgentsState
-} from '@/stores/agents-store';
+} from './agents';
 
 export {
   useAgentSelectionStore,
