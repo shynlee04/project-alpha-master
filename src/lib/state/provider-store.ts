@@ -17,6 +17,10 @@ import { modelRegistry } from '../agent/providers/model-registry';
 import { crossWorkspaceEventBus } from '../events/cross-workspace-event-bus';
 import { detectWorkspace } from '../workspace/workspace-detector';
 
+// Ralph Loop Cycle 12, Epic AC-1.1: Break circular dependency with mediator
+import { AgentProviderValidator } from '@/domain/services/AgentProviderValidator';
+import type { Agent } from '@/core/entities/Agent';
+
 /**
  * Settings specific to a provider's model usage
  */
@@ -58,8 +62,8 @@ interface ProviderState {
     /** Update an existing provider */
     updateProvider: (id: string, config: Partial<ProviderConfig>) => void;
 
-    /** Remove a provider */
-    removeProvider: (id: string) => Promise<void>;
+    /** Remove a provider (optionally pass agents for dependency check) */
+    removeProvider: (id: string, agents?: Agent[]) => Promise<void>;
 
     /** Set the active provider */
     setActiveProvider: (id: string) => void;
@@ -111,23 +115,42 @@ export const useProviderStore = create<ProviderState>()(
                 }));
             },
 
-            removeProvider: async (id) => {
+            removeProvider: async (id, agents) => {
+                // ============================================================================
                 // P0 FIX: Check for dependent agents before deleting provider
-                // This prevents orphaned agent configurations (RALPH LOOP CYCLE 8)
+                // RALPH LOOP CYCLE 8: Prevents orphaned agent configurations
+                // RALPH LOOP CYCLE 12, EPIC AC-1.1: Use mediator + optional agents parameter
+                // ============================================================================
                 try {
-                    const { useAgentsStore } = await import('@/stores/agents-store');
-                    const agents = useAgentsStore.getState().agents;
-                    const dependentAgents = agents.filter(agent => agent.providerId === id);
+                    // ✅ NEW: Use agents parameter if provided (breaks circular dependency)
+                    let agentsToCheck: Agent[];
 
-                    if (dependentAgents.length > 0) {
-                        const agentNames = dependentAgents.map(a => a.name).join(', ');
-                        throw new Error(
-                            `Cannot delete provider "${id}". It is being used by ${dependentAgents.length} agent(s): ${agentNames}. ` +
-                            `Please reconfigure or delete these agents first.`
-                        );
+                    if (agents) {
+                        // Caller provided agents (no import needed)
+                        agentsToCheck = agents;
+                    } else {
+                        // Fallback: Dynamic import for backwards compatibility
+                        // TODO: Remove this fallback after all callers migrate to passing agents
+                        console.warn('[ProviderStore] removeProvider called without agents parameter - using dynamic import (slow)');
+                        const { useAgentsStore } = await import('@/stores/agents-store');
+                        agentsToCheck = useAgentsStore.getState().agents;
+                    }
+
+                    // ✅ NEW: Use mediator for validation logic (testable, reusable)
+                    const validationResult = AgentProviderValidator.validateProviderDeletion(
+                        id,
+                        agentsToCheck
+                    );
+
+                    if (!validationResult.isValid) {
+                        throw new Error(validationResult.error);
                     }
                 } catch (error) {
-                    // If agents store check fails, log but continue (fail-open for development)
+                    // If validation fails, re-throw (blocking deletion)
+                    if (error instanceof Error && error.message.includes('Cannot delete provider')) {
+                        throw error; // Re-throw validation errors
+                    }
+                    // If agents store check fails for other reasons, log but continue (fail-open for development)
                     console.error('[ProviderStore] Failed to check dependent agents:', error);
                 }
 

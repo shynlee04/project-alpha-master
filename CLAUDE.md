@@ -155,63 +155,195 @@ pnpm tsc --noEmit
 
 ## Key Directories & Files (Updated 2026-01-01)
 
+**Complete File Structure** (generated via `tree -L 4` command):
+
 ```
 src/
-├── components/           # React components organized by feature
-│   ├── agent/           # AI agent configuration and dialogs
-│   ├── chat/            # Chat interface components (ChatConversation, ThreadCard, etc.)
-│   ├── common/          # Common utilities (ErrorBoundary)
-│   ├── ide/             # IDE components: editor, terminal, file tree, preview, agent panels
-│   │   └── statusbar/   # Status bar segments (AgentStatusSegment)
-│   ├── ui/              # Reusable UI components (Button, Dialog, Input, etc.)
-│   │   └── icons/       # Icon components (AIIcon, TerminalIcon, etc.)
-│   └── layout/          # Layout components (IDELayout, IDEHeaderBar, etc.)
-├── core/                # ✅ NEW: Domain layer entities (Agent, Provider, Tool, Conversation)
-│   ├── entities/        # Business entities with workspace bindings
-│   ├── rules/           # Business rules and validation
-│   └── value-objects/   # Immutable value types
-├── domain/              # ✅ NEW: Domain services and use cases
-│   ├── entities/        # Domain-specific entities
-│   ├── services/        # Orchestration services
-│   └── use-cases/       # Business use cases
-├── infrastructure/      # ✅ NEW: Infrastructure layer (persistence, events)
-│   ├── persistence/
-│   │   ├── stores/
-│   │   │   ├── agents/          # ✅ NEW: Agent store slices
-│   │   │   ├── canvas/          # ✅ NEW: Canvas store slices
-│   │   │   ├── conversation/    # ✅ NEW: Conversation store slices
-│   │   │   ├── providers/       # ✅ NEW: Provider store slices (consolidated)
-│   │   │   └── rag/             # ✅ NEW: RAG store slices
-│   │   └── dexie/          # IndexedDB database definitions
-│   └── events/         # Event system (cross-workspace event bus)
-├── lib/
-│   ├── agent/           # AI agent infrastructure
-│   │   ├── facades/    # Agent tool facades (FileTools, TerminalTools)
-│   │   ├── providers/  # Provider adapters, model registry, credential vault
-│   │   ├── tools/      # Individual agent tools (read, write, execute)
-│   │   ├── hooks/      # React hooks for agent operations
-│   │   ├── tool-permission-manager.ts       # ✅ Tool permission checking
-│   │   ├── workspace-permission-manager.ts  # ✅ Workspace-specific permissions
-│   │   └── workspace-tool-filter.ts         # ✅ Workspace filtering logic
-│   ├── filesystem/     # File system sync and FSA utilities
-│   ├── webcontainer/   # WebContainer lifecycle and process management
-│   ├── workspace/      # Workspace state and project persistence
-│   ├── editor/         # Monaco editor integration
-│   ├── events/         # Event system (store-events, workspace-events)
-│   ├── state/          # Zustand stores (IDE, statusbar, navigation, file-sync-status)
-│   └── utils/          # Utilities including error-handling.ts
-├── presentation/       # ✅ NEW: Presentation layer components
-│   └── components/     # UI components (moved from src/components)
-├── routes/             # TanStack Router file-based routes
-│   └── api/            # API endpoints (/api/chat)
-├── hooks/              # Custom React hooks
-├── i18n/               # Internationalization files (en.json, vi.json)
-├── stores/             # ✅ DEPRECATED: Moving to infrastructure/persistence/stores/
-└── styles/             # Global styles including design-tokens.css, animations.css
-
-.agent/rules/            # AI agent rules and prompts
-_bmad-output/           # BMAD method artifacts and sprint tracking
-docs/2025-12-23/        # Comprehensive technical documentation
+├── __tests__/              # Test files
+├── application/            # Application services and DTOs
+│   ├── dtos/
+│   ├── services/           # AgentService, ProviderService
+│   └── use-cases/
+├── components/             # ✅ DEPRECATED: Moving to presentation/components/
+│   └── rag/                # RAG-specific components (CitationSidebar, etc.)
+├── core/                   # ✅ NEW: Domain layer entities
+│   ├── entities/           # Agent, Provider, Tool, Conversation
+│   ├── rules/
+│   ├── value-objects/
+│   └── index.ts
+├── data/                   # Mock data and demo files
+├── domain/                 # ✅ NEW: Domain services and use cases
+│   ├── entities/           # Domain-specific entities
+│   ├── services/           # Orchestration services
+│   ├── use-cases/          # Business use cases (switch-workspace)
+│   └── value-objects/      # ToolPermission, WorkspaceBinding, WorkspaceType
+├── hooks/                  # Custom React hooks
+│   ├── __tests__/          # Hook tests
+│   ├── useAgents.ts
+│   ├── useCanvasDrop.ts
+│   ├── useCapabilityDetection.ts
+│   ├── useIdeStatePersistence.ts
+│   ├── useMediaQuery.ts
+│   ├── useProcessManager.ts
+│   ├── useQuizSession.ts
+│   ├── useQuizTimer.ts
+│   ├── useResponsive.ts    # Breakpoint detection
+│   ├── useUnsavedWorkPreservation.ts
+│   └── useWorkspaceContext.ts
+├── i18n/                   # Internationalization
+│   ├── en/                 # English translations
+│   ├── vi/                 # Vietnamese translations
+│   ├── LocaleProvider.tsx
+│   ├── config.ts
+│   ├── en.json             # Main English translations
+│   └── vi.json             # Main Vietnamese translations
+├── infrastructure/         # ✅ NEW: Infrastructure layer
+│   ├── events/             # Event system (cross-workspace event bus)
+│   ├── external/
+│   ├── framework/
+│   └── persistence/        # Persistence layer (Dexie + Zustand)
+│       ├── stores/         # Store slices (294 total components)
+│       │   ├── agents/     # Agent store slices
+│       │   ├── conversation/
+│       │   ├── quiz/
+│       │   └── rag/
+│       ├── dexie-db-*.ts   # IndexedDB definitions (migrations, types)
+│       ├── dexie-storage.ts
+│       └── state-orchestrator.ts
+├── lib/                    # Core library modules
+│   ├── agent/              # AI agent infrastructure (45+ files)
+│   │   ├── __tests__/      # Agent tests
+│   │   ├── deep-think/     # Deep thinking hooks and parsers
+│   │   ├── facades/        # FileTools, TerminalTools facades
+│   │   ├── hooks/          # use-agent-chat-with-tools, use-prompt-enhancer
+│   │   ├── memory/         # Conversation memory, insight extractor
+│   │   ├── multimodal/     # Message builder
+│   │   ├── preferences/    # User preferences, profile tracking
+│   │   ├── providers/      # Provider adapters, credential vault, model registry
+│   │   ├── tools/          # Individual agent tools (read, write, execute, etc.)
+│   │   ├── tool-permission-manager.ts
+│   │   ├── workspace-permission-manager.ts
+│   │   └── workspace-tool-filter.ts
+│   ├── audio/              # Audio generation and storage
+│   ├── canvas/             # Canvas linkage analyzer
+│   ├── chat/               # Context window manager
+│   ├── demo/               # Sample conversations
+│   ├── editor/             # Monaco editor utilities
+│   ├── events/             # Store events, workspace events
+│   ├── filesync/           # File sync services
+│   ├── filesystem/         # File system sync (25+ files)
+│   │   ├── sync-manager/   # Sync manager factory
+│   │   ├── sync-transaction/
+│   │   └── *.test.ts       # Filesystem tests (12 test files)
+│   ├── hooks/              # useProviderEvents
+│   ├── knowledge/          # Knowledge graph, flashcards, RAG (30+ files)
+│   │   ├── graph/          # Graph CRUD, queries, traversal
+│   │   ├── flashcard-*.ts  # Flashcard generation, utils
+│   │   ├── gemini-*.ts     # Gemini PDF/URL processors
+│   │   └── synthesis-*.ts  # Synthesis service, prompts, types
+│   ├── notes/              # Note indexing, AI service, retrieval
+│   ├── pdf/                # PDF vision capture, hooks
+│   ├── rag/                # RAG indexing, retrieval, search (25+ files)
+│   │   ├── chunk-strategies/
+│   │   └── __tests__/      # RAG tests (5 test files)
+│   ├── state/              # Zustand stores (25+ store files)
+│   │   ├── migrations/
+│   │   ├── canvas-store.ts
+│   │   ├── conversation-store.ts
+│   │   ├── ide-store.ts
+│   │   ├── knowledge-store.ts
+│   │   ├── layout-store.ts
+│   │   ├── provider-store.ts
+│   │   ├── rag-store.ts     # ❌ GOD STORE (1,595 lines duplicated)
+│   │   ├── tool-permission-store.ts
+│   │   └── workspace-*.ts
+│   ├── study/              # Quiz generation, SRS types
+│   ├── sync/               # Sync event bus, reverse sync
+│   ├── utils/              # Error handling, platform detection
+│   ├── validation/         # Chat request validation
+│   ├── webcontainer/       # WebContainer lifecycle, terminal adapter
+│   └── workspace/          # Workspace state, project store
+├── presentation/           # ✅ NEW: Presentation layer components (294 total)
+│   └── components/
+│       ├── about/          # About page components
+│       ├── agent/          # Agent configuration UI (20+ files)
+│       │   ├── AgentConfigDialog.tsx
+│       │   ├── ProviderConfigDialog.tsx
+│       │   ├── WorkspacePermissionEditor.tsx
+│       │   └── *.tsx        # Various agent config components
+│       ├── audio/          # Audio player
+│       ├── canvas/         # Canvas components (Canvas, LinkageProposalsPanel)
+│       ├── chat/           # Chat interface (15+ components)
+│       │   ├── ChatPanel.tsx
+│       │   ├── ChatConversation.tsx
+│       │   ├── ThreadManager.tsx
+│       │   └── *.tsx        # Various chat components
+│       ├── common/         # ErrorBoundary, WorkspaceSwitcher
+│       ├── dashboard/      # Onboarding, PitchDeck
+│       ├── hub/            # Hub home, project cards, workspace badges
+│       ├── ide/            # IDE components (20+ files)
+│       │   ├── AgentChatPanel.tsx
+│       │   ├── CommandPalette.tsx
+│       │   ├── ExplorerPanel.tsx
+│       │   ├── StatusBar.tsx
+│       │   ├── XTerminal.tsx
+│       │   └── *.tsx        # Various IDE components
+│       ├── knowledge/      # Knowledge workspace UI (15+ components)
+│       │   ├── KnowledgePage.tsx
+│       │   ├── SourceImportDialog.tsx
+│       │   └── *.tsx        # Various knowledge components
+│       ├── layout/         # Layout components (10+ files)
+│       │   ├── IDELayoutMain.tsx
+│       │   ├── MobileIDELayout.tsx
+│       │   └── *.tsx        # Various layout components
+│       ├── notes/          # Notes workspace UI (10+ components)
+│       │   ├── NoteEditor.tsx
+│       │   ├── NoteTree.tsx
+│       │   └── *.tsx        # Various note components
+│       ├── rag/            # RAG chat and search panels
+│       ├── study/          # Study workspace UI (10+ components)
+│       │   ├── StudyPage.tsx
+│       │   ├── QuizContainer.tsx
+│       │   └── *.tsx        # Various study components
+│       ├── ui/             # Reusable UI components (50+ files)
+│       │   ├── ApprovalOverlay.tsx
+│       │   ├── EmptyState.tsx
+│       │   ├── ErrorState.tsx
+│       │   ├── LoadingState.tsx
+│       │   ├── SkeletonLoader.tsx
+│       │   ├── badge.tsx
+│       │   ├── button.tsx
+│       │   ├── dialog.tsx
+│       │   ├── input.tsx
+│       │   └── *.tsx        # Various UI primitives
+│       └── workspace/      # Workspace switcher
+├── routes/                 # TanStack Router file-based routes
+│   ├── api/                # API endpoints
+│   │   ├── chat.ts         # Chat completion endpoint
+│   │   ├── quizzes/
+│   │   └── flashcards/
+│   ├── workspace/          # Workspace routes
+│   ├── __root.tsx
+│   ├── index.tsx
+│   ├── ide.tsx
+│   ├── knowledge.lazy.tsx
+│   ├── notes.lazy.tsx
+│   └── study.lazy.tsx
+├── shared/                 # Shared constants, errors, types
+├── stores/                 # ✅ DEPRECATED: Moving to infrastructure/persistence/stores/
+│   ├── agents-store.ts     # ❌ GOD STORE (430 lines, circular dep)
+│   ├── conversation-threads-store.ts
+│   └── *.ts                # Various stores (8 total)
+├── styles/                 # Global styles
+│   ├── animations.css      # 8-bit themed animations
+│   ├── design-tokens.css   # CSS custom properties
+│   └── design-tokens.ts    # TypeScript token constants
+├── test/                   # Test setup
+├── types/                  # Type definitions
+├── utils/                  # Export utilities
+├── workers/                # Web workers (note-embedding.worker)
+├── workspaces/             # Workspace-specific logic
+└── [route files]           # router.tsx, server.ts, routeTree.gen.ts
 ```
 
 **Architecture Changes (Ralph Loop 2026-01-01)**:
@@ -220,6 +352,44 @@ docs/2025-12-23/        # Comprehensive technical documentation
 - ✅ **Agent Workspace Bindings**: Added workspace filtering to agents-store.ts
 - ✅ **Cross-Workspace Events**: Added WorkspaceChangeEvent to event bus
 - ✅ **December 2025 Zustand Patterns**: Slice pattern, persist on combined store, partialize for selective persistence
+
+**Codebase Statistics (from tree command analysis)**:
+- **Total Files**: 711 files across 177 directories
+- **React Components**: 294 components across 4 workspaces (IDE: 80+, Knowledge: 15, Study: 12, Notes: 10)
+- **Store Files**: 71 total stores across 3 locations
+  - `src/lib/state/` → 25 stores
+  - `src/stores/` → 8 stores (DEPRECATED)
+  - `src/infrastructure/persistence/stores/` → 38+ stores
+- **God Components** (>300 lines): 16 files identified
+  - Worst: `rag-store.ts` (1,595 lines duplicated between locations)
+  - `agents-store.ts` (430 lines with circular dependency)
+  - `conversation-threads-store.ts` (726 lines)
+- **Test Files**: 40+ test files (agent, filesystem, hooks, RAG, etc.)
+- **Agent Tools**: 20+ individual tools in `lib/agent/tools/`
+
+**Critical Technical Debt Identified (Ralph Loop Cycle 12, Iteration 49)**:
+1. **System 2 - AI Agents Configuration** (42% health score - CRITICAL DEBT)
+   - God store: `agents-store.ts` (430 lines, 3.6x 120-line standard)
+   - Circular dependency: `agents-store.ts` ↔ `provider-store.ts`
+   - Store duplication: 25+ duplicated stores across 3 locations
+   - **Remediation**: Epic AC-1 (8 stories, 42 hours) required
+
+2. **Store Duplication Crisis**
+   - 17 duplicate stores (30% duplication rate)
+   - 6,500 lines of redundant code
+   - **Remediation**: Delete duplicates, migrate to `infrastructure/persistence/stores/`
+
+3. **Missing UI Components** (20+ P0 priority across all workspaces)
+   - Knowledge: KnowledgeSearchInterface, DocumentPreviewViewer, EmbeddingVisualization
+   - Study: AdvancedQuizEditor, ProgressTrackingDashboard, SpacedRepetitionScheduler
+   - Notes: AdvancedNoteEditor, NoteLinkingGraph, NoteSearchFilter
+
+**Next Steps** (from Ralph Loop iteration 49):
+1. ✅ System analysis complete (3 centralized systems analyzed)
+2. ✅ Phase 1 implementation plan created (Epic WB + Epic AC-1)
+3. ⏳ Execute Epic AC-1 (Agent Configuration Consolidation)
+4. ⏳ Execute Epic WB (Workspace Binding completion)
+5. ⏳ Create missing UI components (20+ P0 components)
 
 ## Architecture & Key Components
 

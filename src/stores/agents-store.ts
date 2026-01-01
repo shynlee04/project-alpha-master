@@ -28,6 +28,9 @@ import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 // Import WorkspaceType from domain layer (single source of truth)
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
+// Ralph Loop Cycle 12, Epic AC-1.1: Break circular dependency with mediator
+import { AgentProviderValidator } from '@/domain/services/AgentProviderValidator';
+
 /**
  * Default agent created on first load
  *
@@ -153,21 +156,24 @@ export const useAgentsStore = create<AgentsState>()(
                 // ============================================================================
                 // STORY AC-02: Agent Configuration Vault - P0 VALIDATION
                 // Acceptance Criterion: "Validation: model must belong to provider"
+                // RALPH LOOP CYCLE 12, EPIC AC-1.1: Use mediator instead of direct store import
                 // ============================================================================
                 const { providerId, modelId } = agentData;
 
                 // Only validate if both providerId and modelId are provided (NEW schema)
                 // Skip validation for OLD schema or partial data (defensive programming)
                 if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
-                    // Get available models from provider store
+                    // ✅ NEW: Use mediator to validate (breaks circular dependency)
+                    // Pass availableModels as parameter instead of importing store
                     const availableModels = useProviderStore.getState().availableModels;
-                    const providerModels = availableModels[providerId] || [];
+                    const validationResult = AgentProviderValidator.validateProviderModel(
+                        providerId,
+                        modelId,
+                        availableModels
+                    );
 
-                    // Validate: modelId must exist in provider's available models
-                    const modelExists = providerModels.some(m => m.id === modelId);
-
-                    if (!modelExists) {
-                        throw new Error(`Model "${modelId}" is not available for provider "${providerId}"`);
+                    if (!validationResult.isValid) {
+                        throw new Error(validationResult.error);
                     }
                 }
 
@@ -226,21 +232,23 @@ export const useAgentsStore = create<AgentsState>()(
                 // ============================================================================
                 // STORY AC-02: Agent Configuration Vault - P0 VALIDATION
                 // Acceptance Criterion: "Validation: model must belong to provider"
+                // RALPH LOOP CYCLE 12, EPIC AC-1.1: Use mediator instead of direct store import
                 // ============================================================================
                 const { providerId, modelId } = updates;
 
                 // Only validate if both providerId and modelId are being updated (NEW schema)
                 // Skip validation for partial updates or OLD schema (defensive programming)
                 if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
-                    // Get available models from provider store
+                    // ✅ NEW: Use mediator to validate (breaks circular dependency)
                     const availableModels = useProviderStore.getState().availableModels;
-                    const providerModels = availableModels[providerId] || [];
+                    const validationResult = AgentProviderValidator.validateProviderModel(
+                        providerId,
+                        modelId,
+                        availableModels
+                    );
 
-                    // Validate: modelId must exist in provider's available models
-                    const modelExists = providerModels.some(m => m.id === modelId);
-
-                    if (!modelExists) {
-                        throw new Error(`Model "${modelId}" is not available for provider "${providerId}"`);
+                    if (!validationResult.isValid) {
+                        throw new Error(validationResult.error);
                     }
                 }
 

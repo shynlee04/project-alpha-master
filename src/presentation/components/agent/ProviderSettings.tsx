@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Plus, Trash2, Edit2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { useProviderStore } from '@/lib/state/provider-store';
+import { useAgentsStore } from '@/stores/agents-store';
 import { ProviderConfigDialog } from './ProviderConfigDialog';
 import { ProviderConfig } from '@/lib/agent/providers/types';
 import {
@@ -15,6 +16,8 @@ import {
 
 export function ProviderSettings() {
     const { providers, removeProvider } = useProviderStore();
+    // Ralph Loop Cycle 12, Epic AC-1.1: Pass agents to break circular dependency
+    const { agents } = useAgentsStore();
 
     // Edit/Add Dialog State
     const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -41,7 +44,8 @@ export function ProviderSettings() {
 
     const executeDelete = () => {
         if (providerToDelete) {
-            removeProvider(providerToDelete.id);
+            // Ralph Loop Cycle 12, Epic AC-1.1: Pass agents to break circular dependency
+            removeProvider(providerToDelete.id, agents);
             setProviderToDelete(undefined);
             setIsDeleteOpen(false);
         }

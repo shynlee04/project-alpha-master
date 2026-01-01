@@ -2139,6 +2139,182 @@ src/lib/events/agent-config-event-bus.ts
 - **Translation Keys**: `src/i18n/{en,vi}.json`
 - **Hooks**: `src/hooks/` (useResponsive, etc.)
 
+### AI Agent System File Mapping (Updated 2026-01-01)
+
+**Complete Agent Infrastructure** (45+ files organized by subsystem):
+
+```
+src/lib/agent/
+├── Core Factory & Hooks
+│   ├── factory.ts                    # AgentFactory (creates adapters)
+│   ├── agent-io.ts                   # Agent I/O interfaces
+│   ├── prompt-composer.ts            # Prompt composition logic
+│   ├── prompt-composer-types.ts
+│   ├── prompt-composer-config.ts
+│   ├── system-prompt.ts              # System prompt templates
+│   └── hooks/
+│       ├── use-agent-chat-with-tools.ts  # Main agent chat hook
+│       └── use-prompt-enhancer.ts        # Prompt enhancement
+│
+├── Providers (LLM Adapters)
+│   ├── provider-adapter.ts           # Base adapter interface
+│   ├── types.ts                      # Provider types
+│   ├── model-registry.ts             # Available models catalog
+│   ├── credential-vault.ts           # AES-256-GCM encrypted API key storage
+│   ├── credential-storage.ts         # Dexie persistence
+│   ├── credential-encryption.ts      # Encryption utilities
+│   ├── anthropic-adapter.ts          # Anthropic Claude adapter
+│   └── index.ts                      # Provider adapter factory
+│
+├── Tools (Individual Agent Capabilities)
+│   ├── read-file-tool.ts             # Read file contents
+│   ├── write-file-tool.ts            # Write/create files
+│   ├── list-files-tool.ts            # Directory listing
+│   ├── execute-command-tool.ts       # Shell command execution
+│   ├── execute-command-streaming.ts  # Streaming command output
+│   ├── search-notes-tool.ts          # Note search (RAG)
+│   ├── process-pdf-tool.ts           # PDF processing
+│   ├── process-url-tool.ts           # URL ingestion
+│   ├── process-image-tool.ts         # Image understanding
+│   ├── synthesize-tool.ts            # Knowledge synthesis
+│   ├── streaming.ts                  # Streaming utilities
+│   ├── tool-timeout.ts               # Tool timeout logic
+│   ├── tool-error.ts                 # Tool error handling
+│   ├── retry-queue.ts                # Retry logic
+│   ├── tool-execution-logger.ts      # Execution logging
+│   ├── tool-parser.ts                # Tool output parsing
+│   ├── permission-check.ts           # Permission validation
+│   ├── types.ts                      # Tool type definitions
+│   └── index.ts                      # Tool registry
+│
+├── Tool Facades (Abstraction Layer)
+│   ├── file-tools.ts                 # File operations facade
+│   ├── file-tools-impl.ts            # File tools implementation
+│   ├── terminal-tools.ts             # Terminal operations facade
+│   ├── terminal-tools-impl.ts        # Terminal tools implementation
+│   ├── knowledge-tools.ts            # Knowledge operations facade
+│   ├── knowledge-tools-impl.ts       # Knowledge tools implementation
+│   ├── file-lock.ts                  # File locking mechanism
+│   ├── command-sanitizer.ts          # Command sanitization
+│   └── index.ts                      # Facade exports
+│
+├── Permissions & Workspace Filtering
+│   ├── tool-permission-manager.ts    # Trust level management (facade)
+│   ├── workspace-permission-manager.ts  # Workspace-specific permissions
+│   └── workspace-tool-filter.ts      # Workspace tool filtering
+│
+├── Deep Thinking (Reasoning)
+│   ├── deep-think-hook.ts            # Deep thinking React hook
+│   ├── deep-think-parsers.ts         # Parse deep think responses
+│   └── deep-think-prompts.ts          # Deep think prompt templates
+│
+├── Memory & Context
+│   ├── conversation-memory.ts        # Conversation history
+│   ├── memory-index.ts               # Memory vector index
+│   └── insight-extractor.ts          # Extract insights from conversations
+│
+├── Preferences & Profile
+│   ├── preference-tracker.ts         # Track user preferences
+│   └── user-profile.ts               # User profile management
+│
+├── Multimodal
+│   └── message-builder.ts            # Multimodal message construction
+│
+├── Suggestions
+│   ├── suggestion-engine.ts          # Generate suggestions
+│   └── suggestion-tracker.ts         # Track suggestion history
+│
+└── Routes (deprecated)
+    └── __tests__/                    # Agent route tests
+```
+
+**Agent State & Persistence** (Store files):
+
+```
+src/infrastructure/persistence/stores/agents/
+├── agents-store-core.ts              # Core agent CRUD (TODO - split)
+├── agents-store-workspace.ts         # Workspace filtering (TODO - split)
+├── agents-store-selection.ts         # Active agent management (TODO - split)
+├── agents-store-events.ts            # Event emission (TODO - split)
+└── index.ts                          # Combined agents store
+
+src/stores/ (DEPRECATED - migrating to infrastructure/persistence/stores/)
+├── agents-store.ts                   # ❌ GOD STORE (430 lines, circular dep)
+├── conversation-threads-store.ts    # ❌ GOD STORE (726 lines)
+└── auto-approve-store.ts            # Auto-approve settings
+
+src/lib/state/ (Active Zustand stores)
+├── provider-store.ts                 # LLM provider configuration
+├── tool-permission-store.ts          # Tool trust levels (Dexie persisted)
+├── ide-store.ts                      # IDE state (panels, files, etc.)
+├── layout-store.ts                   # Layout persistence
+├── workspace-store.ts                # Workspace state
+└── rag-store.ts                      # ❌ GOD STORE (1,595 lines duplicated)
+```
+
+**Agent UI Components** (Presentation layer):
+
+```
+src/presentation/components/agent/ (20+ files)
+├── AgentConfigDialog.tsx             # Main agent configuration dialog
+├── AgentBasicConfig.tsx              # Basic agent settings form
+├── AgentConfigForm/                  # Form components
+├── ProviderConfigDialog.tsx          # LLM provider configuration UI
+├── ProviderSettings.tsx              # Provider settings panel
+├── ApiKeyInputSection.tsx            # API key input with encryption
+├── WorkspacePermissionEditor.tsx     # Workspace permission editor
+├── WorkspacePermissionManager.tsx    # Permission management UI
+├── WorkspaceAwareAgentSelector.tsx   # Workspace-aware agent selector
+├── ToolAvailabilityIndicator.tsx    # Show tool availability
+├── ToolPermissionsConfig.tsx         # Tool permission configuration
+├── ToolTrustLevelManager.tsx         # Trust level management UI
+├── AgentImportExport.tsx             # Import/export agent configs
+├── PreferenceSettings.tsx            # Agent preference settings
+├── DeepThinkUI.tsx                   # Deep thinking visualization
+├── MemorySearch.tsx                  # Memory search interface
+├── ConversationCard.tsx              # Conversation history card
+├── useAgentConfigForm.ts             # Form hook
+└── useAgentConfigProvider.ts         # Config context provider
+```
+
+**Agent Chat UI** (Chat interface):
+
+```
+src/presentation/components/chat/ (15+ files)
+├── ChatPanel.tsx                     # Main chat panel
+├── ChatConversation.tsx              # Chat conversation display
+├── AgentSelector.tsx                 # Agent selection dropdown
+├── ThreadManager.tsx                 # Thread management UI
+├── ThreadCard.tsx                    # Thread card component
+├── ThreadsList.tsx                   # Thread list view
+├── ApprovalOverlay.tsx               # Tool approval overlay
+├── BatchApprovalBar.tsx              # Batch approve tools
+├── AutoApproveSettings.tsx           # Auto-approve configuration
+├── ToolCallBadge.tsx                 # Tool call indicator
+├── ToolProgressIndicator.tsx         # Tool execution progress
+├── TimeoutWarning.tsx                # Request timeout warning
+├── SuggestionChips.tsx               # Suggestion chips
+├── StreamdownRenderer.tsx            # Markdown streaming renderer
+└── CodeBlock.tsx                     # Code syntax highlighting
+```
+
+**Test Files** (Agent system tests):
+
+```
+src/lib/agent/__tests__/
+├── factory.test.ts                   # AgentFactory tests
+├── prompt-composer.test.ts           # Prompt composition tests
+├── tool-permission-manager.test.ts   # Permission manager tests
+├── workspace-execution-context.test.ts  # Workspace context tests
+└── workspace-permission-manager.test.ts # Workspace permissions tests
+```
+
+**Critical Issues Identified (Ralph Loop Cycle 12, Iteration 49)**:
+1. **agents-store.ts** (430 lines) - God store with circular dependency to provider-store.ts
+2. **Store Duplication** - 25+ duplicate stores across 3 locations
+3. **Missing Tests** - God stores have 0% test coverage
+4. **Remediation** - Epic AC-1 (8 stories, 42 hours) required
+
 ### Project Planning Artifacts
 - **Sprint Status**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
 - **Parallel Development Strategy**: `_bmad-output/project-planning-artifacts/parallel-development-dual-agents-mode.md`
