@@ -24,7 +24,7 @@ import { Badge } from '@/presentation/components/ui/badge';
 import { Button } from '@/presentation/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
-import { useAgentsStore } from '@/infrastructure/persistence/stores';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 
 /**
  * Workspace type configuration
@@ -119,8 +119,8 @@ export function AgentWorkspaceBindingConfig({
 }: AgentWorkspaceBindingConfigProps) {
   const { t } = useTranslation();
   // Use individual selectors to avoid infinite re-renders
-  const updateWorkspaceBinding = useAgentsStore(s => s.updateWorkspaceBinding)
-  const updateAgentWorkspaceBinding = useAgentsStore(s => s.updateAgentWorkspaceBinding)
+  const updateWorkspaceBinding = useAppStore(s => s.updateWorkspaceBinding)
+  const updateAgentWorkspaceBinding = useAppStore(s => s.updateAgentWorkspaceBinding)
 
   // Local state for bindings (optimistic updates)
   const [localBindings, setLocalBindings] = useState<Record<string, boolean>>(() => {

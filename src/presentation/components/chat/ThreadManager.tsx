@@ -9,8 +9,6 @@
 
 import { useState } from 'react';
 import { Plus, Folder, MessageSquare, MoreHorizontal, Trash2, Edit2, Check, X } from 'lucide-react';
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
-import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 
 /**
  * Thread data structure

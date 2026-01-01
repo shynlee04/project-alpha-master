@@ -23,7 +23,7 @@ import { Loader2, CheckCircle, AlertCircle, Bot, ArrowRight } from 'lucide-react
 import { Badge } from '@/presentation/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
-import { useAgentsStore } from '@/infrastructure/persistence/stores';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
@@ -97,8 +97,8 @@ export function AgentWorkspaceSwitchingFeedback({
   const { t } = useTranslation();
   const { isTransitioning, currentWorkspace } = useWorkspaceStore();
   // Use individual selectors to avoid infinite re-renders
-  const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
-  const getActiveAgent = useAgentsStore(s => s.getActiveAgent)
+  const getAgentsForWorkspace = useAppStore(s => s.getAgentsForWorkspace)
+  const getActiveAgent = useAppStore(s => s.getActiveAgent)
 
   // Local state for transition feedback
   const [transitionState, setTransitionState] = useState<TransitionState>({
@@ -374,7 +374,7 @@ export function AgentAvailabilityBadge({
   className,
 }: AgentAvailabilityBadgeProps) {
   // Use individual selector to avoid infinite re-renders
-  const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
+  const getAgentsForWorkspace = useAppStore(s => s.getAgentsForWorkspace)
   const agents = getAgentsForWorkspace(workspace);
 
   const config = WORKSPACE_CONFIG[workspace];
@@ -420,8 +420,8 @@ export function WorkspaceAgentListSummary({
 }: WorkspaceAgentListSummaryProps) {
   const { currentWorkspace } = useWorkspaceStore();
   // Use individual selectors to avoid infinite re-renders
-  const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
-  const getActiveAgent = useAgentsStore(s => s.getActiveAgent)
+  const getAgentsForWorkspace = useAppStore(s => s.getAgentsForWorkspace)
+  const getActiveAgent = useAppStore(s => s.getActiveAgent)
 
   const agents = getAgentsForWorkspace(currentWorkspace);
   const activeAgent = getActiveAgent();

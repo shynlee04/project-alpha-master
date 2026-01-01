@@ -10,7 +10,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Agent } from '@/core/entities/Agent'
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
 import { toast } from 'sonner'
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
 import type {
@@ -97,8 +97,8 @@ export function useAgentConfigForm({
 }: UseAgentConfigFormProps): UseAgentConfigFormReturn {
     const { t } = useTranslation()
     // Use individual selectors to avoid infinite re-renders
-    const addAgent = useAgentsStore(s => s.addAgent)
-    const updateAgent = useAgentsStore(s => s.updateAgent)
+    const addAgent = useAppStore(s => s.addAgent)
+    const updateAgent = useAppStore(s => s.updateAgent)
 
     // Ref to track agent being edited (for model restoration after loadModels)
     const editingAgentRef = useRef<Agent | undefined>(undefined)

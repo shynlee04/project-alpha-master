@@ -17,7 +17,7 @@ import {
     useThreadsStore,
     useActiveThread,
 } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+import { useAgents } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/mocks/agents';
 import { useResponsive } from '@/hooks/useResponsive';
@@ -47,7 +47,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
 
     const activeThread = useActiveThread();
     // Use individual selectors to avoid infinite re-renders
-    const agents = useAgentsStore(s => s.agents)
+    const agents = useAgents();
     const { activeAgentId, setActiveAgent } = useAgentSelection();
 
     // Hooks for mobile/demo mode
