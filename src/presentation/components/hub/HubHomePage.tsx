@@ -33,6 +33,7 @@ import { HubHero } from './HubHero';
 import { RecentProjectsSection } from './RecentProjectsSection';
 import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
 import { SummaryCardsGrid } from './SummaryCardsGrid';
+import { ChartsGrid } from './ChartsGrid';
 import { useDashboardMetrics } from './useDashboardMetrics';
 
 export const HubHomePage: React.FC = () => {
@@ -234,6 +235,9 @@ export const HubHomePage: React.FC = () => {
         isLoading={isLoading}
         quotaLimitMB={50}
       />
+
+      {/* Charts Grid */}
+      <ChartsGrid metrics={metrics} />
 
       {/* Main Grid - Bento Cards */}
       <section>

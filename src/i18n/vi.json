@@ -1512,7 +1512,10 @@
         "noActivity": "Không có hoạt động gần đây.",
         "activeToday": "Tiến triển tốt! {{count}} dự án đã mở hôm nay.",
         "activeWeek": "{{count}} dự án đã mở trong tuần.",
-        "loading": "Đang tải số liệu..."
+        "loading": "Đang tải số liệu...",
+        "activityChart": "HOẠT_ĐỘNG_THEO_THỜI_GIAN",
+        "workspaceDistribution": "PHỦ_NỐNG_KHÔNG_GIẢN_LÀM_VIỆC",
+        "noWorkspaces": "Chưa có liên kết không gian làm việc."
       }
     }
   }

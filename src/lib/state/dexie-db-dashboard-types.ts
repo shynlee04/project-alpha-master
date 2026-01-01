@@ -62,12 +62,3 @@ export interface MetricsSnapshot {
  * ```
  */
 export type MetricsHistoryTable = Table<MetricsSnapshot, number>;
-
-// ============================================================================
-// Type Exports
-// ============================================================================
-
-export type {
-  MetricsSnapshot,
-  MetricsHistoryTable,
-};

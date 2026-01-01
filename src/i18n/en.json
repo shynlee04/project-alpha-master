@@ -1544,7 +1544,10 @@
       "noActivity": "No recent activity.",
       "activeToday": "Great progress! {{count}} project{{s}} opened today.",
       "activeWeek": "{{count}} project{{s}} opened this week.",
-      "loading": "Loading metrics..."
+      "loading": "Loading metrics...",
+      "activityChart": "ACTIVITY_OVER_TIME",
+      "workspaceDistribution": "WORKSPACE_DISTRIBUTION",
+      "noWorkspaces": "No workspace bindings yet."
     }
   }
 }

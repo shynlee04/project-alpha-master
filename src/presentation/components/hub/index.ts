@@ -56,6 +56,12 @@ export { StorageUsageCard } from './StorageUsageCard';
 export { ActivityCard } from './ActivityCard';
 export { useDashboardMetrics } from './useDashboardMetrics';
 
+// Dashboard charts (refactored January 2026)
+export { ChartsGrid } from './ChartsGrid';
+export { ActivityLineChart } from './ActivityLineChart';
+export { WorkspacePieChart } from './WorkspacePieChart';
+export { useMetricsCollection } from './useMetricsCollection';
+
 // Type exports
 export type { WorkspaceBindingDialogProps, WorkspaceId, WorkspaceConfig } from './WorkspaceBindingDialog.types';
 export type { WorkspaceBadgeProps } from './WorkspaceBadge';
@@ -77,6 +83,10 @@ export type { ProjectCountCardProps } from './ProjectCountCard';
 export type { StorageUsageCardProps } from './StorageUsageCard';
 export type { ActivityCardProps } from './ActivityCard';
 export type { DashboardMetrics, UseDashboardMetricsOptions } from './useDashboardMetrics';
+export type { ChartsGridProps } from './ChartsGrid';
+export type { ActivityLineChartProps } from './ActivityLineChart';
+export type { WorkspacePieChartProps } from './WorkspacePieChart';
+export type { UseMetricsCollectionOptions } from './useMetricsCollection';
 
 // Re-export WorkspaceId from canonical location (deprecated: use WorkspaceBindingDialog.types.ts)
 export type { WorkspaceId as WorkspaceIdLegacy } from '@/lib/workspace';

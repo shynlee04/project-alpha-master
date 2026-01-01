@@ -161,8 +161,9 @@ export const WorkspacePieChart: React.FC<WorkspacePieChartProps> = ({
               borderRadius: '4px',
               color: 'hsl(var(--foreground))',
             }}
-            formatter={(value: number, name: string, props: any) => {
+            formatter={(value: any, name: any) => {
               const item = chartData.find((d) => d.name === name);
+              if (!item) return [`${name}: ${value} projects`];
               return [`${item.icon} ${name}: ${value} projects`];
             }}
           />
@@ -170,8 +171,8 @@ export const WorkspacePieChart: React.FC<WorkspacePieChartProps> = ({
             verticalAlign="bottom"
             height={36}
             iconType="circle"
-            formatter={(value: number, entry: any) => {
-              return `${entry.icon} ${entry.value}`;
+            formatter={(name: string, entry: any) => {
+              return `${entry.payload?.icon || ''} ${name}`;
             }}
           />
         </PieChart>
