@@ -67,6 +67,10 @@ export interface ProjectMetadata {
     workspaceBindings?: WorkspaceBindings;
     /** Story WB-1: File snapshot feature flag */
     fileSnapshotEnabled?: boolean;
+    /** Soft delete flag (true = marked as deleted, recoverable for 30 days) */
+    deleted?: boolean;
+    /** Timestamp when project was soft deleted */
+    deletedAt?: Date;
 }
 
 /**
@@ -293,6 +297,17 @@ export async function listProjects(): Promise<ProjectMetadata[]> {
 }
 
 /**
+ * List only active (non-deleted) projects sorted by lastOpened descending.
+ * Iteration 45: Added for Hub UI to hide soft-deleted projects from dashboard.
+ *
+ * @returns Array of active ProjectMetadata
+ */
+export async function listActiveProjects(): Promise<ProjectMetadata[]> {
+    const allProjects = await listProjects();
+    return allProjects.filter(project => !project.deleted);
+}
+
+/**
  * List all projects with their current permission state.
  * Useful for dashboard display.
  *
@@ -316,18 +331,37 @@ export async function listProjectsWithPermission(): Promise<ProjectWithPermissio
 }
 
 /**
- * Delete project by ID.
+ * Delete project by ID with soft delete option.
+ *
+ * Iteration 45: Enhanced to support soft delete (mark as deleted, recoverable)
+ * vs hard delete (permanent removal from IndexedDB).
  *
  * @param id - Project ID
+ * @param softDelete - If true, mark as deleted (default: true for safety)
  * @returns true if deleted successfully, false otherwise
  */
-export async function deleteProject(id: string): Promise<boolean> {
+export async function deleteProject(id: string, softDelete: boolean = true): Promise<boolean> {
     const db = await getDB();
     if (!db) return false;
 
     try {
-        await db.delete(STORE_NAME, id);
-        console.log('[ProjectStore] Project deleted:', id);
+        if (softDelete) {
+            // Soft delete: Mark project as deleted with timestamp
+            const project = await db.get<ProjectMetadata>(STORE_NAME, id);
+            if (!project) {
+                console.warn('[ProjectStore] Project not found for soft delete:', id);
+                return false;
+            }
+
+            project.deleted = true;
+            project.deletedAt = new Date();
+            await db.put(STORE_NAME, project);
+            console.log('[ProjectStore] Project soft deleted (recoverable for 30 days):', id);
+        } else {
+            // Hard delete: Permanently remove from IndexedDB
+            await db.delete(STORE_NAME, id);
+            console.log('[ProjectStore] Project permanently deleted:', id);
+        }
         return true;
     } catch (error) {
         console.error('[ProjectStore] Failed to delete project:', id, error);
@@ -389,6 +423,52 @@ export async function updateProjectBindings(
         return true;
     } catch (error) {
         console.error('[ProjectStore] Failed to update workspaceBindings:', id, error);
+        return false;
+    }
+}
+
+/**
+ * Update project metadata (name, autoSync, exclusions).
+ * Iteration 45: Added for ProjectMetadataDialog integration.
+ *
+ * @param id - Project ID
+ * @param metadata - Partial metadata to update (name, autoSync, exclusionPatterns)
+ * @returns true if updated successfully, false otherwise
+ */
+export async function updateProjectMetadata(
+    id: string,
+    metadata: Partial<{
+        name: string;
+        autoSync: boolean;
+        exclusionPatterns: string[];
+    }>
+): Promise<boolean> {
+    const db = await getDB();
+    if (!db) return false;
+
+    try {
+        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
+        if (!project) {
+            console.warn('[ProjectStore] Project not found for metadata update:', id);
+            return false;
+        }
+
+        // Update only provided fields
+        if (metadata.name !== undefined) {
+            project.name = metadata.name;
+        }
+        if (metadata.autoSync !== undefined) {
+            project.autoSync = metadata.autoSync;
+        }
+        if (metadata.exclusionPatterns !== undefined) {
+            project.exclusionPatterns = metadata.exclusionPatterns;
+        }
+
+        await db.put(STORE_NAME, project);
+        console.log('[ProjectStore] Project metadata updated:', id);
+        return true;
+    } catch (error) {
+        console.error('[ProjectStore] Failed to update project metadata:', id, error);
         return false;
     }
 }

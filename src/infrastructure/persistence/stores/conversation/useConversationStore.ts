@@ -1,278 +1,218 @@
 /**
- * Conversation Store - Combined from Focused Slices
+ * @fileoverview Unified Conversation Store
+ * @module infrastructure/persistence/stores/conversation/useConversationStore
  *
- * December 2025 Zustand Pattern:
- * - Single store composed from focused slices
- * - Each slice is <165 lines (single responsibility)
- * - Persist middleware on combined store
- * - Dexie sync for background persistence
+ * Story CC-1.7: Unified Store Integration
+ * Epic CC-1: Conversation Consolidation
  *
- * @module conversation/useConversationStore
+ * January 2026 Zustand Pattern:
+ * - Single store composed from 6 focused slices (CC-1.1 through CC-1.6)
+ * - Each slice is ≤179 lines (single responsibility principle)
+ * - DexieIndexedDB persistence with partialize
+ * - Event emission for audit trail
+ * - Validation helpers for data integrity
+ *
+ * Slices:
+ * - CC-1.1: Conversation Metadata Slice (103 lines)
+ * - CC-1.2: Thread Management Slice (117 lines)
+ * - CC-1.3: Message CRUD Slice (68 lines)
+ * - CC-1.4: Utils Slice (70 lines)
+ * - CC-1.5: Validation Slice (179 lines)
+ * - CC-1.6: Events Slice (169 lines)
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type {
-    ThreadMessage,
-    ConversationThread,
-    ThreadHierarchyNode,
-    ContextWindowConfig,
-} from './types';
-import {
-    createThreadCrudSlice,
-    createMessageSlice,
-    createContextWindowSlice,
-    createHierarchySlice,
-    createMetadataSlice,
-    createProjectStateSlice,
-} from './slices';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import type { StateCreator } from 'zustand';
+import type { CombinedConversationState } from './types';
+import { createConversationMetadataSlice } from './conversation-metadata-slice';
+import { createThreadManagementSlice } from './thread-management-slice';
+import { createMessageCrudSlice } from './message-crud-slice';
+import { createConversationUtilsSlice } from './conversation-utils-slice';
+import { createConversationValidationSlice } from './conversation-validation-slice';
+import { createConversationEventsSlice } from './conversation-events-slice';
+import { createDexieStorage } from '@/lib/state/dexie-storage';
 
 // Re-export types for consumers
+export type { CombinedConversationState as ConversationStoreState } from './types';
 export type {
     ThreadMessage,
     ConversationThread,
     ThreadHierarchyNode,
     ContextWindowConfig,
-};
-
-/**
- * Combined Conversation Store State
- * Composed from all slices
- */
-export interface ConversationStoreState {
-    // Shared state across all slices
-    threads: Record<string, ConversationThread>;
-
-    // Project state slice
-    activeThreadId: string | null;
-    currentProjectId: string | null;
-    _hasHydrated: boolean;
-
-    // Thread CRUD actions
-    createThread: (projectId: string) => ConversationThread;
-    deleteThread: (threadId: string) => void;
-    updateThreadTitle: (threadId: string, title: string) => void;
-    getThreadsForProject: (projectId: string) => ConversationThread[];
-    getThread: (threadId: string) => ConversationThread | undefined;
-    clearProjectThreads: (projectId: string) => void;
-
-    // Message actions
-    addMessage: (threadId: string, message: Omit<ThreadMessage, 'id' | 'timestamp'>) => void;
-    updateMessage: (threadId: string, messageId: string, content: string) => void;
-
-    // Context window actions
-    pruneContextWindow: (threadId: string, targetTokens: number) => Promise<void>;
-
-    // Hierarchy actions
-    createChildThread: (parentId: string, title: string) => ConversationThread;
-    moveThread: (threadId: string, newParentId: string | null) => void;
-    getThreadHierarchy: (projectId: string) => ThreadHierarchyNode[];
-    getThreadDescendants: (threadId: string) => ConversationThread[];
-
-    // Metadata actions
-    updateThreadFolder: (threadId: string, folderPath: string) => void;
-
-    // Project state actions
-    setHasHydrated: (state: boolean) => void;
-    setCurrentProject: (projectId: string) => void;
-}
+} from './types';
+export type { ValidationResult } from './conversation-validation-slice';
+export type { ConversationEvent, ConversationEventType } from './conversation-events-slice';
 
 /**
  * Combined Conversation Store
  *
- * Composed from 6 focused slices using December 2025 Zustand pattern.
- * Persisted to localStorage with Dexie background sync.
+ * Composed from 6 focused slices using January 2026 Zustand pattern.
+ * Persisted to DexieIndexedDB with partial persistence (excludes events).
+ *
+ * Persistence Configuration:
+ * - Storage: DexieIndexedDB via createDexieStorage
+ * - Partialize: Conversations, threads, messages, active IDs only
+ * - Excluded: Event history (ephemeral), validation methods (computed)
  */
 export const useConversationStore = create<ConversationStoreState>()(
     persist(
-        (set, get, api) => ({
-            // Initialize shared state
-            threads: {},
+        (...args: Parameters<StateCreator<ConversationStoreState, [], []>>) => ({
+            // ========== Conversation Metadata Slice (CC-1.1) ==========
+            ...createConversationMetadataSlice(...args),
 
-            // Compose all slices
-            ...createProjectStateSlice(set, get, api),
-            ...createThreadCrudSlice(set, get, api),
-            ...createMessageSlice(set, get, api),
-            ...createContextWindowSlice(set, get, api),
-            ...createHierarchySlice(set, get, api),
-            ...createMetadataSlice(set, get, api),
+            // ========== Thread Management Slice (CC-1.2) ==========
+            ...createThreadManagementSlice(...args),
+
+            // ========== Message CRUD Slice (CC-1.3) ==========
+            ...createMessageCrudSlice(...args),
+
+            // ========== Utils Slice (CC-1.4) ==========
+            ...createConversationUtilsSlice(...args),
+
+            // ========== Validation Slice (CC-1.5) ==========
+            ...createConversationValidationSlice(...args),
+
+            // ========== Events Slice (CC-1.6) ==========
+            ...createConversationEventsSlice(...args),
         }),
         {
-            name: 'via-gent-threads',
-            version: 1,
+            name: 'conversation-store',
+            storage: createDexieStorage('conversation-store'),
+            version: 2,
+
+            // Partialize: Only persist core data, exclude ephemeral state
+            partialize: (state: ConversationStoreState) => ({
+                conversations: state.conversations,
+                activeConversationId: state.activeConversationId,
+                activeProjectConversationIds: state.activeProjectConversationIds,
+                threads: state.threads,
+                activeThreadId: state.activeThreadId,
+                messages: state.messages,
+            }),
+
+            // Hydration callback
             onRehydrateStorage: () => (state) => {
-                console.log('[ConversationStore] Rehydrated:', Object.keys(state?.threads || {}).length, 'threads');
-                state?.setHasHydrated(true);
+                if (!state) return;
+
+                console.log('[ConversationStore] Hydrated from IndexedDB', {
+                    conversations: Object.keys(state.conversations).length,
+                    threads: Object.keys(state.threads).length,
+                    messages: Object.keys(state.messages).length,
+                    activeConversationId: state.activeConversationId,
+                    activeThreadId: state.activeThreadId,
+                });
+
+                state._hasHydrated = true;
             },
         }
     )
 );
 
 // ============================================================================
-// Convenience Hooks (Matching Original Store API)
+// Convenience Hooks
 // ============================================================================
+
+/**
+ * Hook to get active conversation
+ */
+export function useActiveConversation() {
+    return useConversationStore((state) => {
+        if (!state.activeConversationId) return null;
+        return state.conversations[state.activeConversationId] || null;
+    });
+}
 
 /**
  * Hook to get active thread
  */
 export function useActiveThread() {
+    return useConversationStore((state) => {
+        if (!state.activeThreadId) return null;
+        return state.threads[state.activeThreadId] || null;
+    });
+}
+
+/**
+ * Hook to get all active conversations
+ */
+export function useActiveConversations() {
     return useConversationStore((state) =>
-        state.activeThreadId ? state.threads[state.activeThreadId] : null
+        Object.values(state.conversations).filter((c) => c.status === 'active')
     );
 }
 
 /**
- * Hook to get threads for current project
+ * Hook to get threads for a conversation
  */
-export function useProjectThreads(projectId: string) {
-    return useConversationStore((state) => state.getThreadsForProject(projectId));
+export function useConversationThreads(conversationId: string) {
+    return useConversationStore((state) =>
+        Object.values(state.threads).filter(
+            (t) => t.conversationId === conversationId && t.status === 'active'
+        )
+    );
+}
+
+/**
+ * Hook to get messages for a thread
+ */
+export function useThreadMessages(threadId: string) {
+    return useConversationStore((state) =>
+        Object.values(state.messages)
+            .filter((m) => m.threadId === threadId)
+            .sort((a, b) => a.timestamp - b.timestamp)
+    );
 }
 
 /**
  * Hook for hydration status
  */
-export function useThreadsHydration() {
+export function useHasHydrated() {
     return useConversationStore((state) => state._hasHydrated);
 }
 
-// ============================================================================
-// Ralph Loop Cycle 5: Cascade Flow Hooks
-// ============================================================================
-
 /**
- * Hook to get thread hierarchy as tree structure
+ * Hook to get event history
  */
-export function useThreadHierarchy(projectId: string) {
-    return useConversationStore((state) => state.getThreadHierarchy(projectId));
-}
-
-/**
- * Hook to get descendants of a thread
- */
-export function useThreadDescendants(threadId: string) {
-    return useConversationStore((state) => state.getThreadDescendants(threadId));
-}
-
-/**
- * Hook to create child thread
- */
-export function useCreateChildThread() {
-    return useConversationStore((state) => state.createChildThread);
-}
-
-/**
- * Hook to move thread to new parent
- */
-export function useMoveThread() {
-    return useConversationStore((state) => state.moveThread);
-}
-
-/**
- * Hook to update thread folder path
- */
-export function useUpdateThreadFolder() {
-    return useConversationStore((state) => state.updateThreadFolder);
-}
-
-/**
- * Hook to prune context window
- */
-export function usePruneContextWindow() {
-    return useConversationStore((state) => state.pruneContextWindow);
+export function useEventHistory(filter?: { type?: string; entityId?: string; limit?: number }) {
+    return useConversationStore((state) => state.getEventHistory(filter));
 }
 
 // ============================================================================
-// Dexie Sync (Background Persistence for Indexing)
+// Utilities
 // ============================================================================
 
 /**
- * Sync threads to Dexie for persistence and future indexing.
- * This runs in background after zustand/localStorage handles immediate state.
+ * Reset the conversation store to empty state
+ * Useful for testing or logout
  */
-async function syncThreadToDexie(thread: ConversationThread) {
-    try {
-        const { saveThread } = await import('@/lib/workspace/threads-store');
-        await saveThread(thread);
-        console.log('[ConversationStore] Synced to Dexie:', thread.id);
-    } catch (error) {
-        console.warn('[ConversationStore] Dexie sync failed:', error);
-    }
-}
-
-async function deleteThreadFromDexie(threadId: string) {
-    try {
-        const { deleteThread } = await import('@/lib/workspace/threads-store');
-        await deleteThread(threadId);
-        console.log('[ConversationStore] Deleted from Dexie:', threadId);
-    } catch (error) {
-        console.warn('[ConversationStore] Dexie delete failed:', error);
-    }
-}
-
-// Subscribe to store changes and sync to Dexie
-let lastThreads: Record<string, ConversationThread> = {};
-
-useConversationStore.subscribe((state) => {
-    const currentThreads = state.threads;
-
-    // Find new or updated threads
-    for (const [id, thread] of Object.entries(currentThreads)) {
-        const lastThread = lastThreads[id];
-        if (!lastThread || lastThread.updatedAt !== thread.updatedAt) {
-            // Thread is new or updated - sync to Dexie
-            syncThreadToDexie(thread);
-        }
-    }
-
-    // Find deleted threads
-    for (const id of Object.keys(lastThreads)) {
-        if (!currentThreads[id]) {
-            // Thread was deleted
-            deleteThreadFromDexie(id);
-        }
-    }
-
-    lastThreads = { ...currentThreads };
-});
-
-/**
- * Force sync all threads to Dexie (used on page close)
- */
-async function syncAllThreadsToDexie() {
-    const { threads } = useConversationStore.getState();
-    try {
-        const { bulkSaveThreads } = await import('@/lib/workspace/threads-store');
-        await bulkSaveThreads(Object.values(threads));
-        console.log('[ConversationStore] Bulk synced', Object.keys(threads).length, 'threads to Dexie');
-    } catch (error) {
-        console.warn('[ConversationStore] Bulk sync failed:', error);
-    }
-}
-
-// Save all threads on page close/refresh and periodically
-if (typeof window !== 'undefined') {
-    // Save on page unload
-    window.addEventListener('beforeunload', () => {
-        // Use synchronous localStorage as backup (Dexie async may not complete)
-        const { threads } = useConversationStore.getState();
-        try {
-            localStorage.setItem('via-gent-threads-backup', JSON.stringify({
-                state: { threads },
-                timestamp: Date.now()
-            }));
-            console.log('[ConversationStore] Saved backup on unload');
-        } catch (e) {
-            console.warn('[ConversationStore] Backup save failed:', e);
-        }
-        // Trigger async Dexie sync (best effort)
-        syncAllThreadsToDexie();
+export function resetConversationStore() {
+    useConversationStore.setState({
+        conversations: {},
+        activeConversationId: null,
+        activeProjectConversationIds: {},
+        threads: {},
+        activeThreadId: null,
+        messages: {},
+        _hasHydrated: false,
+        eventHistory: [],
     });
+}
 
-    // Periodic sync every 30 seconds as safety net
-    setInterval(() => {
-        const { threads } = useConversationStore.getState();
-        if (Object.keys(threads).length > 0) {
-            syncAllThreadsToDexie();
-        }
-    }, 30000);
+/**
+ * Get current store state (outside of React)
+ * Useful for debugging, testing, or non-React contexts
+ */
+export function getConversationStoreState() {
+    return useConversationStore.getState();
+}
+
+/**
+ * Subscribe to store changes (outside of React)
+ * Returns unsubscribe function
+ */
+export function subscribeToConversationStore(
+    listener: (state: ConversationStoreState, previousState: ConversationStoreState) => void
+) {
+    return useConversationStore.subscribe(listener);
 }
