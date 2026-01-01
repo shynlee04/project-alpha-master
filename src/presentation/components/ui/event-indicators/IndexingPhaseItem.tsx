@@ -8,7 +8,7 @@
  */
 
 import { cn } from '@/lib/utils/tw-merge'
-import type { IndexingPhase, IndexingStep } from './IndexingProgressIndicator'
+import type { IndexingStep } from './IndexingProgressIndicator'
 
 /**
  * Indexing Phase Item Component

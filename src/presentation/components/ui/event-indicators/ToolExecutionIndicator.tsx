@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils/tw-merge'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { ToolExecutionStepItem } from './ToolExecutionStep'
-import type { ToolExecutionStep, ToolExecutionState } from './ToolExecutionStep'
+import type { ToolExecutionState } from './ToolExecutionStep'
 
 /**
  * Tool execution indicator props

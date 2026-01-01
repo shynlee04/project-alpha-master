@@ -8,7 +8,7 @@
 
 import { useThreadsStore } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
 import { getThread as getDexieThread, saveThread as saveDexieThread, getThreadsForProject } from './threads-store';
-import type { ConversationThread, ThreadMessage, ThreadToolCall } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
 
 // ============================================================================
 // Types Mapped to New Infrastructure

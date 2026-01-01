@@ -27,8 +27,9 @@ type FetchState = 'idle' | 'loading' | 'success' | 'error';
 
 /**
  * Model fetch result
+ * @export
  */
-interface ModelFetchResult {
+export interface ModelFetchResult {
   providerId: string;
   providerName: string;
   state: FetchState;

@@ -8,7 +8,7 @@
  */
 
 import { cn } from '@/lib/utils/tw-merge'
-import type { WorkspaceTransitionStep, WorkspaceTransitionPhase } from './WorkspaceTransitionIndicator'
+import type { WorkspaceTransitionStep } from './WorkspaceTransitionIndicator'
 
 /**
  * Workspace Transition Step Item Component

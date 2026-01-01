@@ -15,7 +15,7 @@
 import { RefreshCw, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import { Progress } from '@/presentation/components/ui/progress'
 import { cn } from '@/lib/utils'
-import type { ActivityState, BaseActivityIndicatorProps } from './types'
+import type { BaseActivityIndicatorProps } from './types'
 
 /**
  * Sync Status Indicator Component

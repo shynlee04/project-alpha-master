@@ -8,7 +8,7 @@
  */
 
 import { cn } from '@/lib/utils/tw-merge'
-import type { QuizGenerationStep, QuizGenerationPhase } from './QuizGenerationIndicator'
+import type { QuizGenerationStep } from './QuizGenerationIndicator'
 
 /**
  * Quiz Generation Step Item Component

@@ -57,7 +57,7 @@ import {
 // Advanced configuration components (kept as-is)
 import { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig'
 import { ToolTrustLevelManager } from './ToolTrustLevelManager'
-import type { Agent, AgentToolBinding } from '@/core/entities/Agent'
+import type { AgentToolBinding } from '@/core/entities/Agent'
 
 // Security utilities for safe logging (RC-028-010)
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
