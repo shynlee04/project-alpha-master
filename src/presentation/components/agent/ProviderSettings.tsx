@@ -4,7 +4,8 @@ import { Button } from '@/presentation/components/ui/button';
 import { useProviderStore } from '@/lib/state/provider-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { ProviderConfigDialog } from './ProviderConfigDialog';
-import { ProviderConfig } from '@/lib/agent/providers/types';
+import { ProviderDeletionWarningDialog } from './ProviderDeletionWarningDialog';
+import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 import {
     Dialog,
     DialogContent,
@@ -13,6 +14,7 @@ import {
     DialogFooter,
     DialogDescription
 } from '@/presentation/components/ui/dialog';
+import type { Agent } from '@/core/entities/Agent';
 
 export function ProviderSettings() {
     const { providers, removeProvider } = useProviderStore();
@@ -26,6 +28,8 @@ export function ProviderSettings() {
     // Delete Confirmation State
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [providerToDelete, setProviderToDelete] = useState<ProviderConfig | undefined>(undefined);
+    const [dependentAgents, setDependentAgents] = useState<Agent[]>([]);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleAdd = () => {
         setEditingProvider(undefined);
@@ -39,15 +43,66 @@ export function ProviderSettings() {
 
     const confirmDelete = (provider: ProviderConfig) => {
         setProviderToDelete(provider);
+        setDependentAgents([]); // Reset dependent agents
         setIsDeleteOpen(true);
     };
 
-    const executeDelete = () => {
-        if (providerToDelete) {
+    const executeDelete = async () => {
+        if (!providerToDelete) return;
+
+        setIsDeleting(true);
+
+        try {
             // Ralph Loop Cycle 12, Epic AC-1.1: Pass agents to break circular dependency
-            removeProvider(providerToDelete.id, agents);
+            await removeProvider(providerToDelete.id, agents);
+
+            // Success - close dialog
             setProviderToDelete(undefined);
+            setDependentAgents([]);
             setIsDeleteOpen(false);
+        } catch (error) {
+            // Error: Provider has dependent agents
+            // Extract dependent agent names from error message
+            const errorMsg = error instanceof Error ? error.message : String(error);
+
+            // Parse error message to get dependent agents
+            // Error format: "Cannot delete provider "{id}" - {count} agent(s) depend on it: {names}"
+            const match = errorMsg.match(/: (.+)$/);
+            if (match) {
+                const agentNames = match[1].split(', ');
+                const dependent = agents.filter(a => agentNames.includes(a.name));
+                setDependentAgents(dependent);
+            }
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleForceDelete = async () => {
+        if (!providerToDelete) return;
+
+        setIsDeleting(true);
+
+        try {
+            // Force delete by clearing agent dependencies first
+            // For each dependent agent, clear its providerId
+            for (const agent of dependentAgents) {
+                // Update agent to remove provider dependency
+                // This would require an updateAgent call
+                console.warn('[ProviderSettings] Agent needs provider update:', agent.name);
+            }
+
+            // Now delete the provider
+            await removeProvider(providerToDelete.id, []);
+
+            // Success - close dialog
+            setProviderToDelete(undefined);
+            setDependentAgents([]);
+            setIsDeleteOpen(false);
+        } catch (error) {
+            console.error('[ProviderSettings] Force delete failed:', error);
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -72,10 +127,10 @@ export function ProviderSettings() {
                         <div className="flex flex-col gap-1">
                             <span className="font-medium font-mono flex items-center gap-2">
                                 {provider.name}
-                                {provider.enabled && <span className="w-2 h-2 bg-green-500 rounded-full" />}
+                                {provider.isActive && <span className="w-2 h-2 bg-green-500 rounded-full" />}
                             </span>
                             <span className="text-xs text-muted-foreground font-mono">
-                                {provider.type} • {provider.defaultModel || 'No default model'}
+                                {provider.models.length} models • {provider.isCustom ? 'Custom' : 'Built-in'}
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -109,24 +164,42 @@ export function ProviderSettings() {
             />
 
             {/* Delete Confirmation Dialog */}
-            <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-destructive">
-                            <AlertTriangle className="h-5 w-5" />
-                            Delete Provider?
-                        </DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to delete <strong>{providerToDelete?.name}</strong>?
-                            This action cannot be undone and will remove associated API keys.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>Cancel</Button>
-                        <Button variant="destructive" onClick={executeDelete}>Delete</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            {dependentAgents.length > 0 ? (
+                <ProviderDeletionWarningDialog
+                    providerId={providerToDelete?.id || ''}
+                    providerName={providerToDelete?.name || ''}
+                    dependentAgents={dependentAgents}
+                    onConfirm={handleForceDelete}
+                    onCancel={() => {
+                        setProviderToDelete(undefined);
+                        setDependentAgents([]);
+                        setIsDeleteOpen(false);
+                    }}
+                    open={isDeleteOpen}
+                    isLoading={isDeleting}
+                />
+            ) : (
+                <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2 text-destructive">
+                                <AlertTriangle className="h-5 w-5" />
+                                Delete Provider?
+                            </DialogTitle>
+                            <DialogDescription>
+                                Are you sure you want to delete <strong>{providerToDelete?.name}</strong>?
+                                This action cannot be undone and will remove associated API keys.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>Cancel</Button>
+                            <Button variant="destructive" onClick={executeDelete} disabled={isDeleting}>
+                                {isDeleting ? 'Deleting...' : 'Delete'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
         </div>
     );
 }

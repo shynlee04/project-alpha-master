@@ -22,15 +22,21 @@ export {
   useValidationErrors,
 } from '../use-app-store';
 
-// Re-export slice creators for advanced usage
+// Re-export agent slice creators for advanced usage
 export {
   createAgentCrudSlice,
   createAgentWorkspaceBindingsSlice,
   createAgentValidationSlice,
   createAgentEventsSlice,
   createAgentUtilsSlice,
-  createProviderSlice,
 } from './slices';
+
+// Re-export provider slice creators (for cross-store access)
+export {
+  createProviderCrudSlice,
+  createProviderModelsSlice,
+  createProviderUtilsSlice,
+} from '../providers';
 
 // Re-export types
 export type { CombinedAgentsState } from './types';

@@ -29,8 +29,10 @@ import {
   DEFAULT_AGENT,
 } from './agents/slices';
 
-// Import provider slice
-import { createProviderSlice } from './providers/provider-slice';
+// Import provider slices (split into 3 slices to meet 300-line limit)
+import { createProviderCrudSlice } from './providers/provider-crud-slice';
+import { createProviderModelsSlice } from './providers/provider-models-slice';
+import { createProviderUtilsSlice } from './providers/provider-utils-slice';
 
 // Import types
 import type { AppState } from './types';
@@ -79,11 +81,17 @@ export const useAppStore = create<AppState>()(
       ...createAgentUtilsSlice(...a),
 
       // ========================================================================
-      // PROVIDER SLICE (1 unified slice)
+      // PROVIDER SLICES (3 slices - split to meet 300-line limit)
       // ========================================================================
 
-      // Provider Slice (merges provider-store + models-loader-store)
-      ...createProviderSlice(...a),
+      // Provider CRUD Slice (add, update, remove, setActive, reset)
+      ...createProviderCrudSlice(...a),
+
+      // Provider Models Slice (fetchModels, loadModelsForProvider, caching)
+      ...createProviderModelsSlice(...a),
+
+      // Provider Utils Slice (updateModelSettings, getAvailableModels, setSelectedModel)
+      ...createProviderUtilsSlice(...a),
     }),
     {
       name: 'app-state',
