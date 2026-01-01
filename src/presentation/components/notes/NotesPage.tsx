@@ -20,7 +20,6 @@ import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
-import { FolderOpen } from 'lucide-react';
 
 // Lazy load NoteEditor to reduce bundle size
 const NoteEditor = lazy(() => import('./NoteEditor'));
@@ -122,7 +121,7 @@ export function NotesPage() {
                 <div className="flex flex-col h-full overflow-y-auto">
                     {mobileView === 'list' ? (
                         <NoteSidebar
-                            notes={notesArray}
+                            notes={notesArray as any}
                             activeNoteId={activeNoteId}
                             onNoteSelect={handleNoteSelect}
                             onCreateNote={handleCreateNote}
@@ -208,7 +207,7 @@ export function NotesPage() {
                 {/* Note Sidebar - 20% (min 15%, max 30%) */}
                 <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
                     <NoteSidebar
-                        notes={notesArray}
+                        notes={notesArray as any}
                         activeNoteId={activeNoteId}
                         onNoteSelect={handleNoteSelect}
                         onCreateNote={handleCreateNote}

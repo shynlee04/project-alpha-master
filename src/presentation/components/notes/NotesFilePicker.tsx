@@ -10,13 +10,12 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
-import { Loader2, FolderOpen, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Loader2, FolderOpen, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface NotesFilePickerProps {
@@ -30,7 +29,8 @@ interface NotesFilePickerProps {
 }
 
 export function NotesFilePicker({ open, onOpenChange, fileSyncService }: NotesFilePickerProps) {
-    const { t } = useTranslation();
+    // Translation hook available but not currently used
+    // const { t } = useTranslation();
     const [isMounted, setIsMounted] = useState(false);
     const [isMounting, setIsMounting] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);

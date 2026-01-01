@@ -85,7 +85,6 @@ export class NotesFileSyncService implements FileSyncService {
     constructor(config: NotesFileSyncConfig) {
         this.localAdapter = config.localAdapter;
         this.noteStore = config.noteStore;
-        this._options = config.syncOptions || {};
         this.changeListeners = new Set();
         this.disposed = false;
         this.syncInProgress = false;
@@ -134,7 +133,7 @@ export class NotesFileSyncService implements FileSyncService {
         if (!recursive) {
             // Non-recursive: just list immediate directory
             const entries = await this.localAdapter.listDirectory(path);
-            return entries.map(e => e.path);
+            return entries.map(e => path ? `${path}/${e.name}` : e.name);
         }
 
         // Recursive: manually traverse directories
@@ -148,10 +147,11 @@ export class NotesFileSyncService implements FileSyncService {
                 const entries = await this.localAdapter.listDirectory(currentPath);
 
                 for (const entry of entries) {
-                    results.push(entry.path);
+                    const entryPath = currentPath ? `${currentPath}/${entry.name}` : entry.name;
+                    results.push(entryPath);
 
                     if (entry.type === 'directory') {
-                        queue.push(entry.path);
+                        queue.push(entryPath);
                     }
                 }
             } catch (error) {
@@ -212,7 +212,7 @@ export class NotesFileSyncService implements FileSyncService {
         console.log('[NotesFileSyncService] Mounted directory for notes sync');
     }
 
-    async sync(options?: SyncOptions): Promise<SyncResult> {
+    async sync(_options?: SyncOptions): Promise<SyncResult> {
         this.checkDisposed();
         const startTime = Date.now();
 
@@ -242,7 +242,7 @@ export class NotesFileSyncService implements FileSyncService {
     getSyncStatus(): SyncStatus {
         return {
             syncing: this.syncInProgress,
-            lastSync: this.lastSyncTime > 0 ? new Date(this.lastSyncTime) : null,
+            lastSync: this.lastSyncTime > 0 ? this.lastSyncTime : null,
             filesProcessed: this.noteStore.notesArray.length,
             error: null
         };
@@ -412,7 +412,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { level: 1, textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line.slice(2), styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             } else if (line.startsWith('## ')) {
                 blocks.push({
                     id: crypto.randomUUID(),
@@ -420,7 +420,7 @@ export class NotesFileSyncService implements FileSyncService {
                     props: { level: 2, textColor: 'default', backgroundColor: 'default' },
                     content: [{ type: 'text', text: line.slice(3), styles: {} }],
                     children: []
-                } as Block);
+                } as unknown as Block);
             } else if (line.startsWith('### ')) {
                 blocks.push({
                     id: crypto.randomUUID(),
@@ -472,7 +472,7 @@ export class NotesFileSyncService implements FileSyncService {
             props: { textColor: 'default', backgroundColor: 'default' },
             content: [],
             children: []
-        } as Block];
+        } as unknown as Block];
     }
 
     /**
@@ -538,7 +538,7 @@ export class NotesFileSyncService implements FileSyncService {
 
         // Convert blocks to markdown
         if (note.blocks && Array.isArray(note.blocks)) {
-            markdown += this.blocksToMarkdown(note.blocks);
+            markdown += this.blocksToMarkdown(note.blocks as Block[]);
         }
 
         return markdown;
