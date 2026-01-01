@@ -8,7 +8,7 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { ConversationThread } from '../conversation-threads-store';
+import type { ConversationThread } from '../types';
 
 /**
  * Thread Metadata State & Actions

@@ -8,7 +8,7 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { ThreadMessage, ConversationThread } from '../conversation-threads-store';
+import type { ThreadMessage, ConversationThread } from '../types';
 
 /**
  * Message State & Actions

@@ -8,7 +8,7 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { ConversationThread, ThreadHierarchyNode } from '../conversation-threads-store';
+import type { ConversationThread, ThreadHierarchyNode } from '../types';
 
 /**
  * Thread Hierarchy State & Actions
