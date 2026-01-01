@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import { createDexieStorage } from './dexie-storage';
 import type { ThreadMessageRecord, ConversationThreadRecord } from './dexie-db';
 import { saveThread, getThread, deleteThread as deleteDexieThread } from '../workspace/threads-store';
-import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 
 // ============================================================================
 // Types

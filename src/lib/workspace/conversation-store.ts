@@ -6,9 +6,9 @@
  * to maintain compatibility during refactoring.
  */
 
-import { useThreadsStore } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { getThread as getDexieThread, saveThread as saveDexieThread, getThreadsForProject } from './threads-store';
-import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 
 // ============================================================================
 // Types Mapped to New Infrastructure

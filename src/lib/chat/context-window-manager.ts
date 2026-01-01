@@ -12,7 +12,7 @@
  * @module lib/chat/context-window-manager
  */
 
-import type { ThreadMessage, ContextWindowConfig } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import type { ThreadMessage, ContextWindowConfig } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 
 /**
  * Simple token counter (approximate)

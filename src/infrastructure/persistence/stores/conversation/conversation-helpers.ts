@@ -6,7 +6,7 @@
 import { toast } from 'sonner';
 import type { ConversationState } from './conversation-types';
 import { saveThread } from '@/lib/workspace/threads-store';
-import type { ConversationThread } from './conversation-threads-store';
+import type { ConversationThread } from './useConversationStore';
 import type { ConversationThreadRecord } from '../../dexie-db';
 
 /** Maximum number of conversations to prevent unbounded growth */
