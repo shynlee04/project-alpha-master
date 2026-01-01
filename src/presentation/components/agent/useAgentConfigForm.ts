@@ -96,7 +96,9 @@ export function useAgentConfigForm({
     open,
 }: UseAgentConfigFormProps): UseAgentConfigFormReturn {
     const { t } = useTranslation()
-    const { addAgent, updateAgent } = useAgentsStore()
+    // Use individual selectors to avoid infinite re-renders
+    const addAgent = useAgentsStore(s => s.addAgent)
+    const updateAgent = useAgentsStore(s => s.updateAgent)
 
     // Ref to track agent being edited (for model restoration after loadModels)
     const editingAgentRef = useRef<Agent | undefined>(undefined)

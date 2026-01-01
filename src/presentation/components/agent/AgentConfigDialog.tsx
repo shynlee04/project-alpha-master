@@ -92,8 +92,8 @@ export function AgentConfigDialog({
 }: AgentConfigDialogProps) {
     const { t } = useTranslation()
 
-    // Store actions
-    const { removeAgent } = useAgentsStore()
+    // Store actions (use individual selectors to avoid infinite loops)
+    const removeAgent = useAgentsStore(s => s.removeAgent)
 
     // Read agent from store for editing mode
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))

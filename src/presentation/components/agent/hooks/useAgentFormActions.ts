@@ -39,7 +39,9 @@ export function useAgentFormActions({
     onExportSuccess,
 }: UseAgentFormActionsProps) {
     const { t } = useTranslation()
-    const { addAgent, removeAgent } = useAgentsStore()
+    // Use individual selectors to avoid infinite re-renders
+    const addAgent = useAgentsStore(s => s.addAgent)
+    const removeAgent = useAgentsStore(s => s.removeAgent)
 
     // Read agent from store for delete operation
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))

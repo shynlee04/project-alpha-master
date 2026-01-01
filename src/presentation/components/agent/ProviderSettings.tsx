@@ -17,9 +17,11 @@ import {
 import type { Agent } from '@/core/entities/Agent';
 
 export function ProviderSettings() {
+    // useProviderStore is now stable with useMemo
     const { providers, removeProvider } = useProviderStore();
     // Ralph Loop Cycle 12, Epic AC-1.1: Pass agents to break circular dependency
-    const { agents } = useAgentsStore();
+    // Use individual selector to avoid infinite re-renders
+    const agents = useAgentsStore(s => s.agents)
 
     // Edit/Add Dialog State
     const [isConfigOpen, setIsConfigOpen] = useState(false);

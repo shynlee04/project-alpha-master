@@ -96,9 +96,11 @@ export const createProviderModelsSlice: StateCreator<
       // Get API key from credential vault
       const apiKey = await credentialVault.getCredentials(providerId);
       if (!apiKey) {
-        console.warn('[ProviderModelsSlice] No API key for provider:', providerId);
+        console.warn('[ProviderModelsSlice] No API key for provider:', providerId, '- loading defaults');
+        // Load default models as fallback (user-friendly behavior)
+        const defaultModels = await modelRegistry.getModels(providerId);
         set((state) => ({
-          availableModels: { ...state.availableModels, [providerId]: [] },
+          availableModels: { ...state.availableModels, [providerId]: defaultModels },
           isLoadingModels: { ...state.isLoadingModels, [providerId]: false },
         }));
         return;

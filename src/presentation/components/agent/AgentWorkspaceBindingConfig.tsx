@@ -118,7 +118,9 @@ export function AgentWorkspaceBindingConfig({
   compact = false,
 }: AgentWorkspaceBindingConfigProps) {
   const { t } = useTranslation();
-  const { updateWorkspaceBinding, updateAgentWorkspaceBinding } = useAgentsStore();
+  // Use individual selectors to avoid infinite re-renders
+  const updateWorkspaceBinding = useAgentsStore(s => s.updateWorkspaceBinding)
+  const updateAgentWorkspaceBinding = useAgentsStore(s => s.updateAgentWorkspaceBinding)
 
   // Local state for bindings (optimistic updates)
   const [localBindings, setLocalBindings] = useState<Record<string, boolean>>(() => {
@@ -129,14 +131,14 @@ export function AgentWorkspaceBindingConfig({
     return bindings;
   });
 
-  // Sync with agent changes
+  // Sync with agent changes - use JSON stringify for stable array comparison
   useEffect(() => {
     const bindings: Record<string, boolean> = {};
     agent.workspaceBindings.forEach(binding => {
       bindings[binding.workspaceType] = binding.isAvailable;
     });
     setLocalBindings(bindings);
-  }, [agent.id, agent.workspaceBindings]);
+  }, [agent.id, JSON.stringify(agent.workspaceBindings)]);
 
   const handleBindingChange = async (workspaceType: string, checked: boolean) => {
     // Optimistic update

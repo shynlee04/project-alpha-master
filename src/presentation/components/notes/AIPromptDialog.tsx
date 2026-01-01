@@ -27,7 +27,9 @@ export function AIPromptDialog() {
     const [includeContext, setIncludeContext] = useState(true); // Default: include context
 
     // Get active agent info for display
-    const { activeAgentId, getAgent } = useAgentsStore();
+    // Use individual selectors to avoid infinite re-renders
+    const activeAgentId = useAgentsStore(s => s.activeAgentId)
+    const getAgent = useAgentsStore(s => s.getAgent)
     const activeAgent = activeAgentId ? getAgent(activeAgentId) : null;
 
     // Get all note content as context blocks

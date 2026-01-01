@@ -46,7 +46,8 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
     } = useThreadsStore();
 
     const activeThread = useActiveThread();
-    const { agents } = useAgentsStore();
+    // Use individual selectors to avoid infinite re-renders
+    const agents = useAgentsStore(s => s.agents)
     const { activeAgentId, setActiveAgent } = useAgentSelection();
 
     // Hooks for mobile/demo mode

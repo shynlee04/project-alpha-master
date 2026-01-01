@@ -43,23 +43,25 @@ export function AppInitializer({ children }: AppInitializerProps) {
 
                 console.log('[AppInitializer] Checking credentials for providers:', providers.map(p => p.id));
 
-                // execute in parallel
+                // Execute in parallel
                 await Promise.all(providers.map(async (provider) => {
-                    // if (!provider.enabled) return; // 'enabled' property removed from ProviderConfig
-
                     try {
                         const apiKey = await credentialVault.getCredentials(provider.id);
                         if (apiKey) {
+                            // Provider has API key - fetch live models
                             console.log(`[AppInitializer] Pre-fetching models for ${provider.id}...`);
                             await fetchModels(provider.id);
                             console.log(`[AppInitializer] Models loaded for ${provider.id}`);
-                        } else if (provider.id === 'openrouter') {
-                            // Ensure free models are loaded for OpenRouter even without key
+                        } else {
+                            // Provider has no API key - load default models as fallback
+                            // This ensures users see models immediately (better UX)
                             console.log(`[AppInitializer] Loading default models for ${provider.id}...`);
                             await fetchModels(provider.id);
+                            console.log(`[AppInitializer] Default models loaded for ${provider.id}`);
                         }
                     } catch (err) {
                         console.warn(`[AppInitializer] Failed to load ${provider.id}:`, err);
+                        // Continue with other providers even if one fails
                     }
                 }));
 

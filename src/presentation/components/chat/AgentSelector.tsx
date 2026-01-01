@@ -115,7 +115,11 @@ export function AgentSelector({
     const currentWorkspace = detectWorkspace() as WorkspaceType;
 
     // Use real agents from store instead of mock data
-    const { agents: storeAgents, activeAgentId, setActiveAgent, getAgentsForWorkspace } = useAgentsStore();
+    // Use individual selectors to avoid infinite re-renders
+    const storeAgents = useAgentsStore(s => s.agents)
+    const activeAgentId = useAgentsStore(s => s.activeAgentId)
+    const setActiveAgent = useAgentsStore(s => s.setActiveAgent)
+    const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
 
     // Filter agents to only show those available in current workspace
     const workspaceFilteredAgents = getAgentsForWorkspace(currentWorkspace);

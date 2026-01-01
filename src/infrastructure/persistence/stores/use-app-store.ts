@@ -18,6 +18,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { shallow } from 'zustand/shallow';
+import { useMemo } from 'react';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
 import { useAgentSelectionStore } from './agents/agent-selection-store';
 
@@ -238,25 +239,43 @@ export const useValidationErrors = (agentId: string) =>
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
- * Backward Compatibility Alias: useProviderStore
+ * Individual Provider Hooks - Stable Selectors (for useProviderStore backward compatibility)
  *
- * Some components still import useProviderStore from this module.
- * This hook provides a provider-focused view of the app store.
+ * These hooks use individual selectors to avoid infinite loops.
+ * Each hook returns a stable value that won't cause unnecessary re-renders.
  *
  * @deprecated Use useAppStore directly with selectors instead
  */
-export const useProviderStore = () => useAppStore(
-  (state) => ({
-    providers: state.providers,
-    availableModels: state.availableModels,
-    isLoadingModels: state.isLoadingModels,
-    activeProviderId: state.activeProviderId,
-    addProvider: state.addProvider,
-    updateProvider: state.updateProvider,
-    removeProvider: state.removeProvider,
-    fetchModels: state.fetchModels,
-    setActiveProvider: state.setActiveProvider,
-  }),
-  shallow
-);
+
+// Provider data selectors (state only, no functions)
+// Note: useProviders and useAvailableModels(providerId) already exist above
+export const useAllAvailableModels = () => useAppStore((state) => state.availableModels);
+export const useIsLoadingModels = () => useAppStore((state) => state.isLoadingModels);
+export const useActiveProviderId = () => useAppStore((state) => state.activeProviderId);
+
+// Provider action selectors (functions only)
+export const useProviderActions = () => useAppStore((state) => ({
+  addProvider: state.addProvider,
+  updateProvider: state.updateProvider,
+  removeProvider: state.removeProvider,
+  fetchModels: state.fetchModels,
+  setActiveProvider: state.setActiveProvider,
+}));
+
+// Combined hook for backward compatibility (uses individual selectors + useMemo for stability)
+export const useProviderStore = () => {
+  const providers = useProviders();
+  const availableModels = useAllAvailableModels();
+  const isLoadingModels = useIsLoadingModels();
+  const activeProviderId = useActiveProviderId();
+  const providerActions = useProviderActions();
+
+  return useMemo(() => ({
+    providers,
+    availableModels,
+    isLoadingModels,
+    activeProviderId,
+    ...providerActions,
+  }), [providers, availableModels, isLoadingModels, activeProviderId, providerActions]);
+};
 

@@ -59,7 +59,9 @@ export function useAgentFormSubmission({
     formData,
 }: UseAgentFormSubmissionProps) {
     const { t } = useTranslation()
-    const { addAgent, updateAgent } = useAgentsStore()
+    // Use individual selectors to avoid infinite re-renders
+    const addAgent = useAgentsStore(s => s.addAgent)
+    const updateAgent = useAgentsStore(s => s.updateAgent)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     /**

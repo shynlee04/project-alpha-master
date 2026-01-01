@@ -96,7 +96,9 @@ export function AgentWorkspaceSwitchingFeedback({
 }: AgentWorkspaceSwitchingFeedbackProps) {
   const { t } = useTranslation();
   const { isTransitioning, currentWorkspace } = useWorkspaceStore();
-  const { getAgentsForWorkspace, getActiveAgent } = useAgentsStore();
+  // Use individual selectors to avoid infinite re-renders
+  const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
+  const getActiveAgent = useAgentsStore(s => s.getActiveAgent)
 
   // Local state for transition feedback
   const [transitionState, setTransitionState] = useState<TransitionState>({
@@ -371,7 +373,8 @@ export function AgentAvailabilityBadge({
   showLabel = true,
   className,
 }: AgentAvailabilityBadgeProps) {
-  const { getAgentsForWorkspace } = useAgentsStore();
+  // Use individual selector to avoid infinite re-renders
+  const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
   const agents = getAgentsForWorkspace(workspace);
 
   const config = WORKSPACE_CONFIG[workspace];
@@ -416,7 +419,9 @@ export function WorkspaceAgentListSummary({
   className,
 }: WorkspaceAgentListSummaryProps) {
   const { currentWorkspace } = useWorkspaceStore();
-  const { getAgentsForWorkspace, getActiveAgent } = useAgentsStore();
+  // Use individual selectors to avoid infinite re-renders
+  const getAgentsForWorkspace = useAgentsStore(s => s.getAgentsForWorkspace)
+  const getActiveAgent = useAgentsStore(s => s.getActiveAgent)
 
   const agents = getAgentsForWorkspace(currentWorkspace);
   const activeAgent = getActiveAgent();

@@ -81,11 +81,13 @@ export interface AgentFormSetters {
  */
 export function useAgentFormState(agentId: string | null) {
     // Store subscriptions (SELECTIVE - prevent infinite loops)
-    const { addAgent, updateAgent, removeAgent } = useAgentsStore()
+    // Use individual selectors to avoid infinite re-renders
+    const addAgent = useAgentsStore(s => s.addAgent)
+    const updateAgent = useAgentsStore(s => s.updateAgent)
+    const removeAgent = useAgentsStore(s => s.removeAgent)
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
 
-    // ✅ useProviderStore already has selective subscription built-in (see use-app-store.ts:247)
-    // No need for additional selectors - the hook already returns only provider state
+    // ✅ useProviderStore now uses individual selectors (fixed infinite loop)
     const { providers, availableModels, isLoadingModels: storeLoadingModels, fetchModels } = useProviderStore() as {
         providers: any[]
         availableModels: Record<string, any[]>

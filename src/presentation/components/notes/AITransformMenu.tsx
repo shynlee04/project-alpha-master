@@ -91,7 +91,9 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
     const [loadingAction, setLoadingAction] = useState<string | null>(null);
     const [selectedText, setSelectedText] = useState('');
 
-    const { activeAgentId, getAgent } = useAgentsStore();
+    // Use individual selectors to avoid infinite re-renders
+    const activeAgentId = useAgentsStore(s => s.activeAgentId)
+    const getAgent = useAgentsStore(s => s.getAgent)
     const hasAgent = activeAgentId && getAgent(activeAgentId);
 
     const actions = createTransformActions(t);
