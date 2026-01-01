@@ -26,7 +26,7 @@ import { Shield } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Agent } from '@/core/entities/Agent'
 import type { WorkspaceType } from '@/lib/state/workspace-types'
-import { PixelBadge } from '@/presentation/components/ui/badge'
+import { Badge } from '@/presentation/components/ui/badge'
 import {
     PermissionGridHeader,
     ToolPermissionRow,
@@ -166,9 +166,9 @@ export function WorkspacePermissionsSummary({
     return (
         <div className={cn('flex flex-wrap gap-2', className)}>
             {counts.map(({ workspace, enabled, total, percentage }) => (
-                <PixelBadge key={workspace} variant="outline" className="text-xs">
+                <Badge key={workspace} variant="outline" className="text-xs">
                     {WORKSPACE_LABELS[workspace]}: {enabled}/{total} ({percentage}%)
-                </PixelBadge>
+                </Badge>
             ))}
         </div>
     )

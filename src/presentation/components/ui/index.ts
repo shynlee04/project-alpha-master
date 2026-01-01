@@ -32,6 +32,10 @@ export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
 export { LoadingState } from './LoadingState';
 export { ProgressIndicator } from './progress-indicator';
+export * from './progress';
+
+// Ralph Loop Cycle 17: Event Activity Indicators (P1: User Journey Gap)
+export * from './activity-indicators';
 
 // VIA-GENT Loading & Feedback Components (P0-3: UI/UX Gap Analysis)
 export { ModelLoadingSpinner, ModelLoadingSpinnerInline } from './ModelLoadingSpinner';

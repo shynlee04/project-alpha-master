@@ -49,6 +49,18 @@ export { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig
 export { WorkspacePermissionManager } from './WorkspacePermissionManager';
 export { WorkspaceAwareAgentSelector } from './WorkspaceAwareAgentSelector';
 
+// Ralph Loop Cycle 17 Phase 2: WorkspacePermissions module (split from WorkspaceToolPermissionsConfig)
+// All components <120 lines, following December 2025 React patterns
+export * from './WorkspacePermissions';
+export type {
+    WorkspaceToolPermissionsConfigProps,
+    WorkspacePermissionsSummaryProps,
+} from './WorkspaceToolPermissionsConfig';
+
+// Ralph Loop Cycle 17 Phase 3: ToolTrustLevels module (split from ToolTrustLevelManager)
+// All components <120 lines, following December 2025 React patterns
+export * from './ToolTrustLevels';
+
 // Chat and Conversation Components
 export { ConversationCard } from './ConversationCard';
 export { DeepThinkUI } from './DeepThinkUI';

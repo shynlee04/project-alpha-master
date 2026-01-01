@@ -58,7 +58,16 @@ export interface AgentWorkspaceBindingsState {
 // SLICE 3: Validation
 // ============================================================================
 
+/**
+ * Agent Validation State
+ *
+ * Validation logic for agent operations.
+ * Note: availableModels is a cross-slice reference from provider state.
+ */
 export interface AgentValidationState {
+  /** Available models by provider ID (from provider state for validation) */
+  availableModels: Record<string, { id: string; name: string }[]>;
+
   /** Validation errors by agent ID */
   validationErrors: Record<string, string[]>;
 

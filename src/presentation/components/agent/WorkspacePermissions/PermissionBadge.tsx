@@ -14,7 +14,7 @@
  */
 
 import { Check, X } from 'lucide-react'
-import { PixelBadge } from '@/presentation/components/ui/badge'
+import { Badge } from '@/presentation/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 interface PermissionBadgeProps {
@@ -36,9 +36,9 @@ export function PermissionBadge({ enabled, children }: PermissionBadgeProps) {
     const Icon = enabled ? Check : X
 
     return (
-        <PixelBadge variant="outline" className={cn('text-xs', config)}>
+        <Badge variant="outline" className={cn('text-xs', config)}>
             <Icon className="w-3 h-3 mr-1" />
             {children || (enabled ? 'Enabled' : 'Disabled')}
-        </PixelBadge>
+        </Badge>
     )
 }
