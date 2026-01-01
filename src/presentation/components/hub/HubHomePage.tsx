@@ -32,6 +32,8 @@ import { BootSequence } from './BootSequence';
 import { HubHero } from './HubHero';
 import { RecentProjectsSection } from './RecentProjectsSection';
 import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+import { SummaryCardsGrid } from './SummaryCardsGrid';
+import { useDashboardMetrics } from './useDashboardMetrics';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -46,6 +48,9 @@ export const HubHomePage: React.FC = () => {
   // Data fetching
   const projects = useLiveQuery(() => db.projects.toArray());
   const isLoading = projects === undefined;
+
+  // Dashboard metrics
+  const metrics = useDashboardMetrics({ projects: projects || [] });
 
   const recentProjects = useMemo(() => {
     return (projects || [])
@@ -222,6 +227,13 @@ export const HubHomePage: React.FC = () => {
 
       {/* Hero Section */}
       <HubHero />
+
+      {/* Summary Cards Grid */}
+      <SummaryCardsGrid
+        metrics={metrics}
+        isLoading={isLoading}
+        quotaLimitMB={50}
+      />
 
       {/* Main Grid - Bento Cards */}
       <section>

@@ -877,7 +877,7 @@
   "about.hero.location": "Based in Vietnam",
   "about.hero.title": "Building the Future of",
   "about.hero.titleHighlight": "Digital Intelligence",
-  "about.hero.subtitle": "Senior AI Agent Developer & Multi-Agent Systems Architect. Transforming complex workflows into autonomous intelligence with the BMAD Framework.",
+  "about.hero.subtitle": "Building the future of AI-powered development tools",
   "about.hero.viewProjects": "View Projects",
   "about.hero.downloadCV": "Download CV",
   "about.showcase.featured": "Featured Project",
@@ -889,7 +889,7 @@
   "about.showcase.edgeCapableDesc": "Deploys to Cloudflare Workers in seconds.",
   "about.showcase.viewSource": "View Source Code",
   "about.showcase.usingProject": "You are currently using this project.",
-  "about.skills.title": "Competency",
+  "about.skills.title": "Skills & Expertise",
   "about.skills.titleHighlight": "Constellation",
   "about.skills.subtitle": "Interactive map of technical expertise.",
   "about.journey.title": "From",
@@ -1194,14 +1194,12 @@
   "about.hero.greeting": "Hello, I'm",
   "about.hero.name": "Via-gent Developer",
   "about.hero.tagline": "From solo developer to multi-agent orchestra conductor",
-  "about.hero.subtitle": "Building the future of AI-powered development tools",
   "about.hero.primaryCTA": "View Projects",
   "about.hero.secondaryCTA": "Contact Me",
   "about.story.title": "My Journey",
   "about.story.background": "Education Management & English Language",
   "about.story.transition": "Transition to AI Development",
   "about.story.achievement": "Built Via-gent in < 1 month",
-  "about.skills.title": "Skills & Expertise",
   "about.skills.frontend": "Frontend Development",
   "about.skills.backend": "Backend & AI",
   "about.skills.framework": "BMAD V6 Framework",
@@ -1494,7 +1492,59 @@
           "nameRequired": "Project name is required",
           "invalidGlob": "Invalid glob patterns: {{patterns}}"
         }
+      },
+      "delete": {
+        "title": "DELETE_PROJECT",
+        "description": "This action cannot be undone",
+        "projectLabel": "Project",
+        "softDeleteBadge": "RECOVERABLE",
+        "hardDeleteBadge": "PERMANENT",
+        "softDeleteLabel": "Soft delete (recoverable for 30 days)",
+        "softDeleteDescription": "Project will be marked as deleted but can be recovered within 30 days",
+        "hardDeleteLabel": "Hard delete (permanent)",
+        "hardDeleteDescription": "Project will be permanently deleted from the database",
+        "softDeleteWarning": "You can recover this project within 30 days from the trash",
+        "hardDeleteWarning": "This will permanently delete the project. This action cannot be undone.",
+        "cancel": "Cancel",
+        "softDeleteButton": "Move to Trash",
+        "hardDeleteButton": "Delete Permanently"
       }
+    },
+    "projectSearch": {
+      "placeholder": "Search projects...",
+      "noResults": "No projects found",
+      "results": "Projects",
+      "navigate": "to navigate",
+      "select": "to select",
+      "close": "to close"
+    },
+    "workspaceFilter": {
+      "filter": "Filter",
+      "none": "None",
+      "all": "All",
+      "selected": "selected",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "clearAll": "Clear All"
+    },
+    "dashboard": {
+      "projectCount": "PROJECTS",
+      "total": "Total",
+      "active": "Active",
+      "deleted": "Deleted",
+      "storage": "STORAGE",
+      "used": "Used",
+      "quota": "Quota",
+      "storageGood": "Storage usage is good.",
+      "storageWarning": "Storage usage is moderate.",
+      "storageCritical": "Storage usage is high!",
+      "activity": "ACTIVITY",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "noActivity": "No recent activity.",
+      "activeToday": "Great progress! {{count}} project{{s}} opened today.",
+      "activeWeek": "{{count}} project{{s}} opened this week.",
+      "loading": "Loading metrics..."
     }
   }
 }

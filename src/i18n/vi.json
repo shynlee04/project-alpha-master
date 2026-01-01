@@ -1460,7 +1460,59 @@
             "nameRequired": "Tên dự án là bắt buộc",
             "invalidGlob": "Mẫu glob không hợp lệ: {{patterns}}"
           }
+        },
+        "delete": {
+          "title": "XÓA_DỰ_ÁN",
+          "description": "Hành động này không thể hoàn tác",
+          "projectLabel": "Dự án",
+          "softDeleteBadge": "CÓ_THỤ_PHỤC_HỒI",
+          "hardDeleteBadge": "VĨNH_VIỄN",
+          "softDeleteLabel": "Xóa mềm (có thể khôi phục trong 30 ngày)",
+          "softDeleteDescription": "Dự án sẽ được đánh dấu là đã xóa nhưng có thể khôi phục trong 30 ngày",
+          "hardDeleteLabel": "Xóa cứng (vĩnh viễn)",
+          "hardDeleteDescription": "Dự án sẽ bị xóa vĩnh viễn khỏi cơ sở dữ liệu",
+          "softDeleteWarning": "Bạn có thể khôi phục dự án này trong vòng 30 ngày từ thùng rác",
+          "hardDeleteWarning": "Hành động này sẽ xóa vĩnh viễn dự án. Không thể hoàn tác.",
+          "cancel": "Hủy",
+          "softDeleteButton": "Chuyển vào Thùng Rác",
+          "hardDeleteButton": "Xóa Vĩnh Viễn"
         }
+      },
+      "projectSearch": {
+        "placeholder": "Tìm kiếm dự án...",
+        "noResults": "Không tìm thấy dự án",
+        "results": "Dự Án",
+        "navigate": "để điều hướng",
+        "select": "để chọn",
+        "close": "để đóng"
+      },
+      "workspaceFilter": {
+        "filter": "Bộ lọc",
+        "none": "Không có",
+        "all": "Tất cả",
+        "selected": "được chọn",
+        "selectAll": "Chọn Tất Cả",
+        "deselectAll": "Bỏ Chọn Tất Cả",
+        "clearAll": "Xóa Tất Cả"
+      },
+      "dashboard": {
+        "projectCount": "DỰ_ÁN",
+        "total": "Tổng",
+        "active": "Hoạt Động",
+        "deleted": "Đã Xóa",
+        "storage": "LƯU_TRỮ",
+        "used": "Đã Dùng",
+        "quota": "Hạn Ngạch",
+        "storageGood": "Sử dụng lưu trữ tốt.",
+        "storageWarning": "Sử dụng lưu trữ trung bình.",
+        "storageCritical": "Sử dụng lưu trữ cao!",
+        "activity": "HOẠT_ĐỘNG",
+        "today": "Hôm Nay",
+        "thisWeek": "Tuần Này",
+        "noActivity": "Không có hoạt động gần đây.",
+        "activeToday": "Tiến triển tốt! {{count}} dự án đã mở hôm nay.",
+        "activeWeek": "{{count}} dự án đã mở trong tuần.",
+        "loading": "Đang tải số liệu..."
       }
     }
   }

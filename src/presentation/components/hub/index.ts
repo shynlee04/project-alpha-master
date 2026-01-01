@@ -41,6 +41,21 @@ export { InitialWorkspaceSelector } from './InitialWorkspaceSelector';
 export { WorkspaceBindingFooter } from './WorkspaceBindingFooter';
 export { useWorkspaceBindingState } from './useWorkspaceBindingState';
 
+// Project search (refactored January 2026)
+export { ProjectSearchBar } from './ProjectSearchBar';
+export { useProjectSearch } from './useProjectSearch';
+
+// Workspace filter (refactored January 2026)
+export { WorkspaceFilter } from './WorkspaceFilter';
+export { useWorkspaceFilters } from './useWorkspaceFilters';
+
+// Dashboard metrics (refactored January 2026)
+export { SummaryCardsGrid } from './SummaryCardsGrid';
+export { ProjectCountCard } from './ProjectCountCard';
+export { StorageUsageCard } from './StorageUsageCard';
+export { ActivityCard } from './ActivityCard';
+export { useDashboardMetrics } from './useDashboardMetrics';
+
 // Type exports
 export type { WorkspaceBindingDialogProps, WorkspaceId, WorkspaceConfig } from './WorkspaceBindingDialog.types';
 export type { WorkspaceBadgeProps } from './WorkspaceBadge';
@@ -53,6 +68,15 @@ export type { WorkspaceCheckboxListProps } from './WorkspaceCheckboxList';
 export type { InitialWorkspaceSelectorProps } from './InitialWorkspaceSelector';
 export type { WorkspaceBindingFooterProps } from './WorkspaceBindingFooter';
 export type { UseWorkspaceBindingStateResult } from './useWorkspaceBindingState';
+export type { ProjectSearchBarProps, UseProjectSearchResult } from './ProjectSearchBar';
+export type { UseProjectSearchResult as UseProjectSearchHookResult } from './useProjectSearch';
+export type { WorkspaceFilterProps } from './WorkspaceFilter';
+export type { UseWorkspaceFiltersResult, WorkspaceFilters, WorkspaceFilterType } from './useWorkspaceFilters';
+export type { SummaryCardsGridProps } from './SummaryCardsGrid';
+export type { ProjectCountCardProps } from './ProjectCountCard';
+export type { StorageUsageCardProps } from './StorageUsageCard';
+export type { ActivityCardProps } from './ActivityCard';
+export type { DashboardMetrics, UseDashboardMetricsOptions } from './useDashboardMetrics';
 
 // Re-export WorkspaceId from canonical location (deprecated: use WorkspaceBindingDialog.types.ts)
 export type { WorkspaceId as WorkspaceIdLegacy } from '@/lib/workspace';
