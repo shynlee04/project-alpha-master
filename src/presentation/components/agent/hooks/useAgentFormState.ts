@@ -11,7 +11,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
-import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store'
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
 import { credentialVault } from '@/lib/agent/providers'
 import type { Agent, AgentToolBinding } from '@/core/entities/Agent'
 
@@ -87,13 +87,11 @@ export function useAgentFormState(agentId: string | null) {
     const removeAgent = useAgentsStore(s => s.removeAgent)
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
 
-    // ✅ useProviderStore now uses individual selectors (fixed infinite loop)
-    const { providers, availableModels, isLoadingModels: storeLoadingModels, fetchModels } = useProviderStore() as {
-        providers: any[]
-        availableModels: Record<string, any[]>
-        isLoadingModels: Record<string, boolean>
-        fetchModels: (providerId: string) => Promise<void>
-    }
+    // ✅ useAppStore with individual selectors (fixed infinite loop)
+    const providers = useAppStore(s => s.providers)
+    const availableModels = useAppStore(s => s.availableModels)
+    const storeLoadingModels = useAppStore(s => s.isLoadingModels)
+    const fetchModels = useAppStore(s => s.fetchModels)
 
     // Default workspace bindings (WB-8.3)
     const defaultWorkspaceBindings: Agent['workspaceBindings'] = [

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Edit2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { ProviderConfigDialog } from './ProviderConfigDialog';
 import { ProviderDeletionWarningDialog } from './ProviderDeletionWarningDialog';
@@ -17,8 +17,9 @@ import {
 import type { Agent } from '@/core/entities/Agent';
 
 export function ProviderSettings() {
-    // useProviderStore is now stable with useMemo
-    const { providers, removeProvider } = useProviderStore();
+    // Use individual selectors to prevent infinite re-render loops
+    const providers = useAppStore(s => s.providers)
+    const removeProvider = useAppStore(s => s.removeProvider)
     // Ralph Loop Cycle 12, Epic AC-1.1: Pass agents to break circular dependency
     // Use individual selector to avoid infinite re-renders
     const agents = useAgentsStore(s => s.agents)

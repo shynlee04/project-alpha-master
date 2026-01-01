@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';
@@ -42,7 +42,10 @@ function getBuiltInBaseUrl(providerId: string): string {
 
 export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderConfigDialogProps) {
     const { t } = useTranslation();
-    const { addProvider, updateProvider, fetchModels } = useProviderStore();
+    // Use individual selectors to prevent infinite re-render loops
+    const addProvider = useAppStore(s => s.addProvider)
+    const updateProvider = useAppStore(s => s.updateProvider)
+    const fetchModels = useAppStore(s => s.fetchModels)
 
     // Determine if this is a built-in provider (edit API key only) vs custom (full config)
     const isBuiltIn = provider ? isBuiltInProvider(provider.id) : false;
