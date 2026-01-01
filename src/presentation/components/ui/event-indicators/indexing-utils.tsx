@@ -8,7 +8,7 @@
  */
 
 import type { EventStatus } from './EventIndicator'
-import type { IndexingState, IndexingPhase } from './IndexingProgressIndicator'
+import type { IndexingState } from './IndexingProgressIndicator'
 
 /**
  * Get status from indexing state

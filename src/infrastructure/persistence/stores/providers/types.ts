@@ -25,8 +25,11 @@ export interface ProviderConfig {
   /** Display name for UI */
   name: string;
 
+  /** Provider type for adapter selection */
+  type: import('@/lib/agent/providers/types').ProviderType;
+
   /** Base URL for API endpoints */
-  baseUrl: string;
+  baseURL: string;
 
   /** API key (empty string if not configured) */
   apiKey: string;
@@ -35,13 +38,19 @@ export interface ProviderConfig {
   models: ModelInfo[];
 
   /** Whether provider is currently active */
-  isActive: boolean;
+  enabled: boolean;
+
+  /** Legacy: Whether provider is currently active (deprecated, use enabled) */
+  isActive?: boolean;
 
   /** Custom provider flag (user-added vs built-in) */
   isCustom?: boolean;
 
   /** Custom headers for OpenAI-compatible providers */
   headers?: Record<string, string>;
+
+  /** Whether the provider supports native tool calling */
+  supportsNativeTools?: boolean;
 }
 
 /**

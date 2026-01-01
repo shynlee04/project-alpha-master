@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useThreadsStore } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
-import { useConversationStore } from '@/lib/state/conversation-store';
+import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/conversation-store';
 import { ChatMessage } from '../EnhancedChatInterface';
 import { mapHookMessages, mapStoreMessages } from './message-mappers';
 

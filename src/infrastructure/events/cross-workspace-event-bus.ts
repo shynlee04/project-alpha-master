@@ -55,24 +55,7 @@ export class CrossWorkspaceEventBus {
    */
   private subscribeProviderEvents(): void {
     // OBSOLETE: Ralph Loop Cycle 4 replaced this with direct event emission
-    // The new cross-workspace events don't use the old eventBus.on() pattern
-    // Provider config changes are now emitted from provider-store.ts and credential save flow
-
-    // Legacy event subscriptions (commented out - using non-existent event types)
-    // const unsubscribeKeySet = eventBus.on<{ providerId: string }>(
-    //   DomainEventType.PROVIDER_KEY_SET,
-    //   async ({ providerId }) => {
-    //     console.log(`[CrossWorkspaceEventBus] Provider key set: ${providerId}`);
-    //     try {
-    //       await useProviderStore.getState().fetchModels(providerId);
-    //     } catch (error) {
-    //       console.error(`[CrossWorkspaceEventBus] Failed to fetch models for ${providerId}:`, error);
-    //     }
-    //   }
-    // );
-
-    // Note: PROVIDER_ADDED, PROVIDER_UPDATED, PROVIDER_REMOVED don't exist in DomainEventType enum
-    // These subscriptions would cause TypeScript errors
+    // New cross-workspace events are emitted directly via crossWorkspaceEventBus
   }
 
   /**
@@ -107,22 +90,7 @@ export class CrossWorkspaceEventBus {
       }
     );
 
-    // Agent selected → Update selection store
-    // REMOVED: Circular dependency loop. AgentSelectionStore emits this event,
-    // so listening to it and calling setActiveAgent causes an infinite loop.
-    // UI components call setActiveAgent directly.
-    /*
-    const unsubscribeAgentSelected = eventBus.on<{ agentId: string; workspaceType: string }>(
-      DomainEventType.AGENT_SELECTED,
-      (event) => {
-        const { agentId, workspaceType } = event.payload;
-        console.log(`[CrossWorkspaceEventBus] Agent selected: ${agentId} for ${workspaceType}`);
 
-        const selectionStore = useAgentSelectionStore.getState();
-        selectionStore.setActiveAgent(agentId, workspaceType as any);
-      }
-    );
-    */
 
     // Agent deleted → Update selection store
     const unsubscribeAgentDeleted = eventBus.on<{ agentId: string }>(

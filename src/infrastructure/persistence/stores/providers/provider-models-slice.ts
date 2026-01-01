@@ -94,7 +94,7 @@ export const createProviderModelsSlice: StateCreator<
       }
 
       // Get API key from credential vault
-      const apiKey = await credentialVault.getCredential(providerId, 'default');
+      const apiKey = await credentialVault.getCredentials(providerId);
       if (!apiKey) {
         console.warn('[ProviderModelsSlice] No API key for provider:', providerId);
         set((state) => ({
@@ -105,7 +105,7 @@ export const createProviderModelsSlice: StateCreator<
       }
 
       // Fetch models from registry
-      const models = await modelRegistry.fetchModels(providerId, apiKey);
+      const models = await modelRegistry.getModels(providerId, apiKey);
 
       // Update state with fetched models
       set((state) => ({

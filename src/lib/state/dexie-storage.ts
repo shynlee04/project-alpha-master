@@ -36,6 +36,10 @@ export function createDexieStorage(tableName: keyof typeof db): { getItem: (name
                 const database = getDb();
                 if (!database) return null;
                 const table = database[tableName] as Table<PersistedStateRecord, string>;
+                if (!table) {
+                    console.warn(`[DexieStorage] Table '${tableName}' not found in database`);
+                    return null;
+                }
                 const record = await table.get(name);
                 return record ? JSON.stringify(record.state) : null;
             } catch (error) {

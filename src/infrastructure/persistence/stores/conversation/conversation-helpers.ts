@@ -79,6 +79,7 @@ export async function persistToDexie(conversation: ConversationState): Promise<v
       messages: conversation.messages,
       agentsUsed: conversation.metadata.agentId ? [conversation.metadata.agentId] : [],
       messageCount: conversation.messages.length,
+      scrollPosition: conversation.scrollPosition || 0,
       createdAt: conversation.metadata.createdAt,
       updatedAt: conversation.metadata.updatedAt,
     };

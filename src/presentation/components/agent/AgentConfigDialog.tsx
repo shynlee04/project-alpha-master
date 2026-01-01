@@ -37,11 +37,16 @@ import {
 
 // P1-1: Import extracted components
 // Ralph Loop Cycle 17: Replace AgentBasicConfig with split components
+// Ralph Loop Cycle 17 Phase 5: Import extracted hooks
 import {
     AgentImportExport,
     AgentBasicInfoTab,
     AgentProviderSelector,
     AgentModelSelector,
+    AgentAdvancedSettingsTab,
+    useAgentFormState,
+    useAgentFormSubmission,
+    useAgentFormActions,
     useAgentFormValidation,
 } from '@/presentation/components/agent'
 
@@ -66,7 +71,6 @@ import {
 
 // Store imports
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
-import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store'
 
 /**
  * Configuration tab type
@@ -89,84 +93,43 @@ export function AgentConfigDialog({
     const { t } = useTranslation()
 
     // Store actions
-    const { addAgent, updateAgent, removeAgent } = useAgentsStore()
+    const { removeAgent } = useAgentsStore()
 
     // Read agent from store for editing mode
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
 
-    // Ralph Loop Cycle 17: Subscribe to provider store for model list
-    const { providers, availableModels, isLoadingModels: storeLoadingModels, fetchModels } = useProviderStore()
-    const models = availableModels[providerId] || []
-    const isLoadingModels = storeLoadingModels[providerId] || false
+    // Ralph Loop Cycle 17 Phase 5: Use extracted form state hook
+    // Updated to match actual hook signature (flat return)
+    const {
+        // Form state
+        name, setName,
+        description, setDescription,
+        providerId, setProviderId,
+        modelId, setModelId,
+        customBaseURL, setCustomBaseURL,
+        customModelId, setCustomModelId,
+        customHeaders, setCustomHeaders,
+        enableNativeTools, setEnableNativeTools,
+        temperature, setTemperature,
+        maxTokens, setMaxTokens,
+        topP, setTopP,
+        topK, setTopK,
+        systemPrompt, setSystemPrompt,
+        tools, setTools,
+        workspaceBindings, setWorkspaceBindings,
+        // Provider data (from hook - no duplicate subscription)
+        providers,
+        models,
+        isLoadingModels,
+        fetchModels,
+    } = useAgentFormState(agentId)
 
-    // BF-01 FIX + NEW AGENT FIX: Use local state for form fields
-    // For new agents (agentId === null), we need local state since there's no store entry
-    // For editing, we sync local state with store on mount and update store on changes
-    const [name, setName] = useState(agent?.name || '')
-    const [description, setDescription] = useState(agent?.description || '')
-    const [providerId, setProviderId] = useState(agent?.providerId || 'openrouter')
-    const [modelId, setModelId] = useState(agent?.modelId || '')
-    const [temperature, setTemperature] = useState(agent?.temperature ?? 0.7)
-    const [maxTokens, setMaxTokens] = useState(agent?.maxTokens ?? 4096)
-    const [topP, setTopP] = useState(agent?.topP ?? 0.95)
-    const [topK, setTopK] = useState<number | undefined>(agent?.topK)
-    const [systemPrompt, setSystemPrompt] = useState(agent?.systemPrompt || '')
-
-    // Sync local state when agent changes (e.g., switching between agents)
-    useEffect(() => {
-        if (agent) {
-            setName(agent.name || '')
-            setDescription(agent.description || '')
-            setProviderId(agent.providerId || 'openrouter')
-            setModelId(agent.modelId || '')
-            setTemperature(agent.temperature ?? 0.7)
-            setMaxTokens(agent.maxTokens ?? 4096)
-            setTopP(agent.topP ?? 0.95)
-            setTopK(agent.topK)
-            setSystemPrompt(agent.systemPrompt || '')
-        } else if (!agentId) {
-            // Reset to defaults for new agent
-            setName('')
-            setDescription('')
-            setProviderId('openrouter')
-            setModelId('')
-            setTemperature(0.7)
-            setMaxTokens(4096)
-            setTopP(0.95)
-            setTopK(undefined)
-            setSystemPrompt('')
-        }
-    }, [agent, agentId])
-
-    // Advanced settings state (not in agent config yet)
-    const [customBaseURL, setCustomBaseURL] = useState('')
-    const [customModelId, setCustomModelId] = useState('')
-    const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
-    const [enableNativeTools, setEnableNativeTools] = useState(true)
-
-    // WB-8.3: Workspace bindings state
-    const [workspaceBindings, setWorkspaceBindings] = useState<Agent['workspaceBindings']>([
-        { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
-        { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
-        { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
-        { workspaceType: 'notes', isAvailable: true, uiVariant: 'minimal', isDefault: false },
-    ])
-
-    // WB-8.3: Tools array state (for workspace permissions)
-    const [tools, setTools] = useState<AgentToolBinding[]>([
-        { toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
-        { toolId: 'write_file', toolName: 'Write File', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: true } },
-        { toolId: 'list_files', toolName: 'List Files', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
-        { toolId: 'execute_command', toolName: 'Execute Command', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: false } },
-        { toolId: 'synthesize', toolName: 'Synthesize', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
-        { toolId: 'process_pdf', toolName: 'Process PDF', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
-        { toolId: 'process_image', toolName: 'Process Image', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
-        { toolId: 'process_url', toolName: 'Process URL', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
-    ])
+    // ✅ FIXED: Provider data comes from hook (no duplicate subscription)
+    // The hook already returns computed models and isLoadingModels for the current provider
+    // No need to recompute - prevents infinite re-render loops
 
     // UI state
     const [activeTab, setActiveTab] = useState<ConfigTab>('basic')
-    const [isSubmitting, setIsSubmitting] = useState(false)
 
     // P1-1: Use extracted validation hook
     const { errors, isValid, validate } = useAgentFormValidation({
@@ -202,52 +165,6 @@ export function AgentConfigDialog({
     }, [])
 
     /**
-     * Handle field updates - update local state (and optionally sync to store for existing agents)
-     */
-    const handleUpdateField = useCallback((field: string, value: any) => {
-        // Update local state first (enables form input for new agents)
-        switch (field) {
-            case 'name':
-                setName(value)
-                break
-            case 'description':
-                setDescription(value)
-                break
-            case 'providerId':
-                setProviderId(value)
-                setModelId('') // Reset model when provider changes
-                break
-            case 'modelId':
-                setModelId(value)
-                break
-            case 'temperature':
-                setTemperature(value)
-                break
-            case 'maxTokens':
-                setMaxTokens(value)
-                break
-            case 'topP':
-                setTopP(value)
-                break
-            case 'topK':
-                setTopK(value)
-                break
-            case 'systemPrompt':
-                setSystemPrompt(value)
-                break
-        }
-
-        // For existing agents, also sync to store (hot-reload for edit mode)
-        if (agentId) {
-            if (field === 'providerId') {
-                updateAgent(agentId, { [field]: value, modelId: '' })
-            } else {
-                updateAgent(agentId, { [field]: value })
-            }
-        }
-    }, [agentId, updateAgent])
-
-    /**
      * Handle dialog close with unsaved changes check
      */
     const handleRequestClose = useCallback((shouldOpen: boolean) => {
@@ -258,110 +175,51 @@ export function AgentConfigDialog({
         }
     }, [hasUnsavedChanges, onOpenChange])
 
-    /**
-     * Form submission
-     */
-    const handleSubmit = useCallback(async () => {
-        if (!validate()) return
+    // Ralph Loop Cycle 17 Phase 5: Use extracted submission hook
+    const { isSubmitting, handleSubmit } = useAgentFormSubmission({
+        agentId,
+        onSuccess,
+        onOpenChange,
+        validate,
+        formData: {
+            name,
+            description,
+            providerId,
+            modelId,
+            customModelId,
+            temperature,
+            maxTokens,
+            topP,
+            topK,
+            systemPrompt,
+            tools,
+            workspaceBindings,
+        },
+    })
 
-        setIsSubmitting(true)
+    // Ralph Loop Cycle 17 Phase 5: Use extracted actions hook
+    const { handleDelete, handleImportSuccess, handleExportSuccess } = useAgentFormActions({
+        agentId,
+        onOpenChange,
+    })
 
-        try {
-            // Prepare agent data following Sprint Change Proposal v2.0 Agent entity
-            const effectiveModelId = providerId === 'openai-compatible' ? customModelId : modelId
-
-            const agentData = {
-                name: name.trim(),
-                description: description.trim(),
-                providerId: providerId,
-                modelId: effectiveModelId,
-                // LLM Parameters (required per Sprint Change Proposal v2.0)
-                temperature,
-                maxTokens,
-                topP,
-                topK: topK !== undefined ? topK : undefined,
-                systemPrompt: systemPrompt.trim() || 'You are a helpful AI assistant.',
-                // WB-8.3: Tools with workspace permissions (from state)
-                tools,
-                // WB-8.3: Workspace bindings (from state)
-                workspaceBindings,
-                // Status (auto-generated fields)
-                status: 'offline' as const,
-            }
-
-            safeDebug('[AgentConfigDialog] Saving agent:', sanitizeForLogging(agentData))
-
-            let savedAgentId: string | undefined
-
-            if (agentId) {
-                // BF-01 FIX: Update existing (data already in store via hot-reload)
-                updateAgent(agentId, agentData)
-                savedAgentId = agentId
-                toast.success(t('agents.config.updateSuccess', "Agent '{{name}}' updated successfully!", { name: agentData.name }))
-            } else {
-                // Add new
-                const newAgent = addAgent(agentData)
-                savedAgentId = newAgent.id
-                toast.success(t('agents.config.successToast', "Agent '{{name}}' created successfully!", { name: agentData.name }))
-            }
-
-            // Trigger success callback with agentId
-            if (onSuccess && savedAgentId) {
-                onSuccess(savedAgentId)
-            }
-
-            // Close dialog
-            onOpenChange(false)
-
-        } catch (error) {
-            console.error('[AgentConfigDialog] Save failed:', error)
-            toast.error(t('agents.config.error.save', 'Failed to save agent'))
-        } finally {
-            setIsSubmitting(false)
+    // Helper for field updates (adapter to unify setters)
+    const handleUpdateField = useCallback((field: string, value: any) => {
+        switch (field) {
+            case 'name': setName(value); break
+            case 'description': setDescription(value); break
+            case 'providerId':
+                setProviderId(value)
+                setModelId('') // Reset model when provider changes
+                break
+            case 'modelId': setModelId(value); break
+            case 'customBaseURL': setCustomBaseURL(value); break
+            case 'customModelId': setCustomModelId(value); break
+            case 'customHeaders': setCustomHeaders(value); break
+            case 'enableNativeTools': setEnableNativeTools(value); break
+            // Add other fields as needed
         }
-    }, [name, description, providerId, modelId, customModelId, temperature, maxTokens, topP, topK, systemPrompt, validate, addAgent, updateAgent, onSuccess, onOpenChange, agentId, t, tools, workspaceBindings])
-
-    /**
-     * Handle agent delete
-     */
-    const handleDelete = useCallback(async () => {
-        if (!agentId) return
-
-        const agentToDelete = agent
-        if (!agentToDelete) return
-
-        // Store copy for undo
-        const { id, ...restoreData } = agentToDelete
-
-        // Delete from store
-        removeAgent(id)
-
-        // Close dialog
-        onOpenChange(false)
-
-        // Show undo toast
-        toast.success(t('agents.config.deleted', 'Agent deleted'), {
-            action: {
-                label: t('actions.undo', 'Undo'),
-                onClick: () => {
-                    addAgent(restoreData)
-                    toast.success(t('agents.config.restored', 'Agent restored'))
-                }
-            },
-            duration: 5000,
-        })
-    }, [agentId, agent, removeAgent, onOpenChange, addAgent, t])
-
-    /**
-     * Handle import/export success callbacks
-     */
-    const handleImportSuccess = useCallback((count: number) => {
-        toast.success(t('agents.config.importSuccess', 'Imported {{count}} agents', { count }))
-    }, [t])
-
-    const handleExportSuccess = useCallback(() => {
-        toast.success(t('agents.config.exportSuccess', 'Agents exported'))
-    }, [t])
+    }, [setName, setDescription, setProviderId, setModelId, setCustomBaseURL, setCustomModelId, setCustomHeaders, setEnableNativeTools])
 
     return (
         <>
@@ -420,7 +278,7 @@ export function AgentConfigDialog({
                                 {/* Agent Name and Description */}
                                 <AgentBasicInfoTab
                                     name={name}
-                                    role={description} // Map: description → role prop
+                                    role={description} // Map: description -> role prop
                                     onNameChange={(value) => handleUpdateField('name', value)}
                                     onRoleChange={(value) => handleUpdateField('description', value)}
                                     errors={errors}
@@ -471,7 +329,7 @@ export function AgentConfigDialog({
                                     agent={agent}
                                     onPermissionsChange={(toolId, workspaceType, isEnabled) => {
                                         // Update tools state with new permission
-                                        setTools(prev => prev.map(t =>
+                                        setTools((prev: AgentToolBinding[]) => prev.map((t: AgentToolBinding) =>
                                             t.toolId === toolId
                                                 ? { ...t, workspacePermissions: { ...t.workspacePermissions, [workspaceType]: isEnabled } }
                                                 : t
@@ -486,15 +344,23 @@ export function AgentConfigDialog({
                         </TabsContent>
 
                         <TabsContent value="advanced" className="mt-4 space-y-4">
-                            {/* ToolTrustLevelManager manages its own state globally */}
-                            <ToolTrustLevelManager />
+                            <AgentAdvancedSettingsTab
+                                providerId={providerId}
+                                customBaseURL={customBaseURL}
+                                customModelId={customModelId}
+                                customHeaders={customHeaders}
+                                enableNativeTools={enableNativeTools}
+                                onCustomBaseURLChange={(val) => handleUpdateField('customBaseURL', val)}
+                                onCustomModelIdChange={(val) => handleUpdateField('customModelId', val)}
+                                onCustomHeadersChange={(val) => handleUpdateField('customHeaders', val)}
+                                onEnableNativeToolsChange={(val) => handleUpdateField('enableNativeTools', val)}
+                                onModelChange={(val) => handleUpdateField('modelId', val)}
+                                errors={errors}
+                            />
 
-                            <div className="space-y-4">
-                                <Label>{t('agents.config.advancedSettings', 'Advanced Settings')}</Label>
-                                <p className="text-sm text-muted-foreground">
-                                    {t('agents.config.advancedSettingsDescription', 'Additional configuration options')}
-                                </p>
-                                {/* TODO: Add advanced settings UI here */}
+                            <div className="space-y-4 border-t pt-4">
+                                <Label>{t('agents.config.trustSettings', 'Tool Trust Settings')}</Label>
+                                <ToolTrustLevelManager />
                             </div>
                         </TabsContent>
                     </Tabs>
@@ -524,7 +390,6 @@ export function AgentConfigDialog({
                 </DialogContent>
             </Dialog>
 
-            {/* P0 Fix: Unsaved changes dialog */}
             <UnsavedChangesDialog
                 open={showUnsavedDialog}
                 onStay={() => setShowUnsavedDialog(false)}

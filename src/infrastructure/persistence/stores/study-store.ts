@@ -85,7 +85,7 @@ const getSafeStudyDb = (): StudyDatabase | null => {
 // Study Store State
 // ============================================================
 
-interface StudyStoreState {
+export interface StudyStoreState {
   // Study session
   currentSession: StudySession | null;
   cards: Flashcard[];
@@ -112,6 +112,8 @@ interface StudyStoreState {
   resetCurrentSession: () => void;
   clearAll: () => Promise<void>;
 }
+
+export type StudyState = StudyStoreState;
 
 // ============================================================
 // Study Store Implementation

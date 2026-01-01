@@ -29,7 +29,16 @@ export type { AgentImportExportProps } from './AgentImportExport';
 // export { AgentBasicConfig } from './AgentBasicConfig';
 // export type { AgentBasicConfigProps } from './AgentBasicConfig';
 
-// Hooks
+// Hooks (Ralph Loop Cycle 17 Phase 5: Extracted from AgentConfigDialog)
+export { useAgentFormState } from './hooks/useAgentFormState';
+export type { AgentFormState, AgentFormSetters } from './hooks/useAgentFormState';
+
+export { useAgentFormSubmission } from './hooks/useAgentFormSubmission';
+export type { UseAgentFormSubmissionProps } from './hooks/useAgentFormSubmission';
+
+export { useAgentFormActions } from './hooks/useAgentFormActions';
+export type { UseAgentFormActionsProps } from './hooks/useAgentFormActions';
+
 export { useAgentFormValidation } from './hooks/useAgentFormValidation';
 export type {
     UseAgentFormValidationProps,

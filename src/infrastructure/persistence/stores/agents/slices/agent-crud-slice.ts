@@ -78,9 +78,12 @@ export const createAgentCrudSlice: StateCreator<
   [],
   Omit<CombinedAgentsState, 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getAgentsCount'>
 > = (set) => ({
-  // ========================================================================
+  // =================================================================════===
   // STATE
   // ========================================================================
+
+  /** Available models by provider ID (required by CombinedAgentsState) */
+  availableModels: {},
 
   agents: [DEFAULT_AGENT],
 

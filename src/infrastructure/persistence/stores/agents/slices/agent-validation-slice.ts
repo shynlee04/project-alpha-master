@@ -31,6 +31,8 @@ export const createAgentValidationSlice: StateCreator<
   // STATE
   // ========================================================================
 
+
+
   validationErrors: {},
 
   // ========================================================================
@@ -53,7 +55,8 @@ export const createAgentValidationSlice: StateCreator<
     // Skip validation for OLD schema or partial data (defensive programming)
     if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
       // Use mediator to validate (breaks circular dependency)
-      const availableModels = get().availableModels;
+      // Cast get() to any to access availableModels from ProviderState (not in CombinedAgentsState)
+      const availableModels = (get() as any).availableModels;
       const validationResult = AgentProviderValidator.validateProviderModel(
         providerId,
         modelId,
@@ -91,7 +94,8 @@ export const createAgentValidationSlice: StateCreator<
     // Skip validation for partial updates or OLD schema (defensive programming)
     if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
       // Use mediator to validate (breaks circular dependency)
-      const availableModels = get().availableModels;
+      // Cast get() to any to access availableModels from ProviderState (not in CombinedAgentsState)
+      const availableModels = (get() as any).availableModels;
       const validationResult = AgentProviderValidator.validateProviderModel(
         providerId,
         modelId,

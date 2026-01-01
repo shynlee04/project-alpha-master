@@ -40,6 +40,6 @@ export {
 } from '../providers';
 
 // Re-export types
-export type { CombinedAgentsState } from './types';
+export type { CombinedAgentsState, CombinedAgentsState as AgentsState } from './types';
 export type { AppState, ProviderState } from '../types';
 export type { Agent } from '@/core/entities/Agent';

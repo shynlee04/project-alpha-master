@@ -35,13 +35,13 @@ export const createAgentEventsSlice: StateCreator<
   // ========================================================================
 
   /**
-   * Add agent with event emission
-   *
-   * Calls addAgent from CRUD slice, then emits cross-workspace event.
-   *
-   * @param agent - Agent data (without id, createdAt, etc.)
-   * @returns Created agent
-   */
+  * Add agent with event emission
+  *
+  * Calls addAgent from CRUD slice, then emits cross-workspace event.
+  *
+  * @param agent - Agent data (without id, createdAt, etc.)
+  * @returns Created agent
+  */
   addAgentWithEvent: (agent) => {
     // Call CRUD slice's addAgent method (cross-slice communication via get())
     const result = get().addAgent(agent);

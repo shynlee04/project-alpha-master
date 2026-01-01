@@ -31,6 +31,13 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
   Omit<CombinedAgentsState, 'agents' | 'activeAgentId' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'setActiveAgent' | 'resetToDefaults' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getActiveAgent' | 'getAgentsCount'>
 > = (set, get) => ({
   // ========================================================================
+  // STATE (required by CombinedAgentsState)
+  // ========================================================================
+
+  /** Available models by provider ID */
+  availableModels: {},
+
+  // ========================================================================
   // WORKSPACE BINDING OPERATIONS
   // ========================================================================
 

@@ -156,7 +156,7 @@ export const useToolPermissionStore = create<ToolPermissionState>()(
     }),
     {
       name: 'tool-permission-store',
-      storage: createJSONStorage(() => createDexieStorage('persistedState')),
+      storage: createJSONStorage(() => createDexieStorage('agentConfigs')),
 
       /**
        * Partialize - Selective field persistence

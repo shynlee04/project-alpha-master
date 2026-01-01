@@ -12,7 +12,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface PromptEnhancementState {
+export interface PromptEnhancementState {
     isEnabled: boolean;
     toggle: () => void;
     setEnabled: (value: boolean) => void;

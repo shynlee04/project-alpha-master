@@ -30,34 +30,38 @@ const INITIAL_PROVIDERS: ProviderConfig[] = [
   {
     id: 'openrouter',
     name: 'OpenRouter',
-    baseUrl: 'https://openrouter.ai/api/v1',
+    type: 'openai-compatible',
+    baseURL: 'https://openrouter.ai/api/v1',
     apiKey: '',
     models: [],
-    isActive: true,
+    enabled: true,
   },
   {
     id: 'anthropic',
     name: 'Anthropic',
-    baseUrl: 'https://api.anthropic.com/v1',
+    type: 'anthropic',
+    baseURL: 'https://api.anthropic.com/v1',
     apiKey: '',
     models: [],
-    isActive: true,
+    enabled: true,
   },
   {
     id: 'openai',
     name: 'OpenAI',
-    baseUrl: 'https://api.openai.com/v1',
+    type: 'openai',
+    baseURL: 'https://api.openai.com/v1',
     apiKey: '',
     models: [],
-    isActive: true,
+    enabled: true,
   },
   {
     id: 'google',
     name: 'Google Gemini',
-    baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+    type: 'gemini',
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta',
     apiKey: '',
     models: [],
-    isActive: true,
+    enabled: true,
   },
 ];
 
@@ -144,7 +148,7 @@ export const createProviderCrudSlice: StateCreator<
     console.log('[ProviderCrudSlice] Removing provider:', id);
 
     // Check if agents are using this provider (cross-slice communication)
-    const agentsToCheck = agents || get().agents;
+    const agentsToCheck = agents || get().agents || [];
     const dependentAgents = agentsToCheck.filter((a: any) => a.providerId === id);
 
     if (dependentAgents.length > 0) {

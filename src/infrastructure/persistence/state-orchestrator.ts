@@ -388,9 +388,12 @@ export class StateOrchestrator {
    */
   private getWorkspaceStore() {
     if (!this.stores.workspaceStore) {
-      // Lazy load to avoid circular dependency
-      const { useWorkspaceStore } = require('@/stores/workspace-store');
-      this.stores.workspaceStore = useWorkspaceStore.getState();
+      try {
+        const { useWorkspaceStore } = require('@/infrastructure/persistence/stores/workspace-store');
+        this.stores.workspaceStore = useWorkspaceStore.getState();
+      } catch (e) {
+        console.warn('[StateOrchestrator] Failed to load workspace store:', e);
+      }
     }
     return this.stores.workspaceStore;
   }

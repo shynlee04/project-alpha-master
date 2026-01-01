@@ -17,6 +17,7 @@ interface FlashcardRecord {
   answer: string;
   difficulty: FlashcardDifficulty;
   topic: string;
+  projectId: string; // Added to align with Flashcard type
   sourceIds: string[];
   createdAt: number;
 }
@@ -194,6 +195,7 @@ export const useFlashcardStore = create<FlashcardStoreState>((set, get) => ({
         answer: record.answer,
         difficulty: record.difficulty,
         topic: record.topic,
+        projectId: record.projectId,
         sourceIds: record.sourceIds,
         createdAt: record.createdAt,
       }));
@@ -220,6 +222,7 @@ export const useFlashcardStore = create<FlashcardStoreState>((set, get) => ({
             answer: fc.answer,
             difficulty: fc.difficulty,
             topic: fc.topic,
+            projectId: fc.projectId,
             sourceIds: fc.sourceIds,
             createdAt: fc.createdAt,
           }));
@@ -335,10 +338,10 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
       flashcardSets: state.flashcardSets.map((s) =>
         s.id === setId
           ? {
-              ...s,
-              cardIds: [...new Set([...s.cardIds, ...cardIds])],
-              updatedAt: Date.now(),
-            }
+            ...s,
+            cardIds: [...new Set([...s.cardIds, ...cardIds])],
+            updatedAt: Date.now(),
+          }
           : s
       ),
     }));
@@ -364,10 +367,10 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
       flashcardSets: state.flashcardSets.map((s) =>
         s.id === setId
           ? {
-              ...s,
-              cardIds: s.cardIds.filter((id) => !cardIdSet.has(id)),
-              updatedAt: Date.now(),
-            }
+            ...s,
+            cardIds: s.cardIds.filter((id) => !cardIdSet.has(id)),
+            updatedAt: Date.now(),
+          }
           : s
       ),
     }));
@@ -408,7 +411,8 @@ export const useFlashcardSetStore = create<FlashcardSetStoreState>((set, get) =>
   },
 
   getCardsForSet: (setId: string) => {
-    const { flashcardSets, flashcards } = get();
+    const { flashcardSets } = get();
+    const flashcards = useFlashcardStore.getState().flashcards;
     const set = flashcardSets.find((s) => s.id === setId);
     if (!set) return [];
     return flashcards.filter((fc: Flashcard) => set.cardIds.includes(fc.id));
@@ -461,6 +465,7 @@ export const useFlashcardOperations = () => {
           answer: fc.answer,
           difficulty: fc.difficulty,
           topic: fc.topic,
+          projectId: fc.projectId,
           sourceIds: fc.sourceIds,
           createdAt: fc.createdAt,
         }));

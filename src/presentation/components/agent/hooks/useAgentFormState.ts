@@ -1,0 +1,229 @@
+/**
+ * useAgentFormState - Agent Form State Management Hook
+ *
+ * Extracted from AgentConfigDialog (Phase 5: 539 → ~200 lines refactoring).
+ * Manages all form state, store subscriptions, and local↔store synchronization.
+ *
+ * @module presentation/components/agent/hooks
+ * @governance Ralph Loop Cycle 17, Phase 5
+ * @pattern December 2025 React Hooks (single responsibility, shallow comparison)
+ */
+
+import { useState, useEffect, useMemo } from 'react'
+import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store'
+import { credentialVault } from '@/lib/agent/providers'
+import type { Agent, AgentToolBinding } from '@/core/entities/Agent'
+
+/**
+ * Agent form state interface
+ */
+export interface AgentFormState {
+    // Basic fields
+    name: string
+    description: string
+    providerId: string
+    modelId: string
+    temperature: number
+    maxTokens: number
+    topP: number
+    topK: number | undefined
+    systemPrompt: string
+
+    // Advanced settings
+    customBaseURL: string
+    customModelId: string
+    customHeaders: Array<{ key: string; value: string }>
+    enableNativeTools: boolean
+
+    // Workspace bindings (WB-8.3)
+    workspaceBindings: Agent['workspaceBindings']
+
+    // Tools array (WB-8.3)
+    tools: AgentToolBinding[]
+
+    // UI state
+    activeTab: 'basic' | 'workspace' | 'advanced'
+    isSubmitting: boolean
+}
+
+/**
+ * Agent form setters interface
+ */
+export interface AgentFormSetters {
+    setName: (value: string) => void
+    setDescription: (value: string) => void
+    setProviderId: (value: string) => void
+    setModelId: (value: string) => void
+    setTemperature: (value: number) => void
+    setMaxTokens: (value: number) => void
+    setTopP: (value: number) => void
+    setTopK: (value: number | undefined) => void
+    setSystemPrompt: (value: string) => void
+    setCustomBaseURL: (value: string) => void
+    setCustomModelId: (value: string) => void
+    setCustomHeaders: (value: Array<{ key: string; value: string }>) => void
+    setEnableNativeTools: (value: boolean) => void
+    setWorkspaceBindings: (value: Agent['workspaceBindings']) => void
+    setTools: (value: AgentToolBinding[]) => void
+    setActiveTab: (value: 'basic' | 'workspace' | 'advanced') => void
+    setIsSubmitting: (value: boolean) => void
+}
+
+/**
+ * useAgentFormState Hook
+ *
+ * Manages agent form state with local↔store synchronization.
+ * Handles new agent creation vs. existing agent editing modes.
+ *
+ * @param agentId - Agent ID for editing mode (null for new agent)
+ * @returns Form state and setters
+ */
+export function useAgentFormState(agentId: string | null) {
+    // Store subscriptions (SELECTIVE - prevent infinite loops)
+    const { addAgent, updateAgent, removeAgent } = useAgentsStore()
+    const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
+
+    // ✅ useProviderStore already has selective subscription built-in (see use-app-store.ts:247)
+    // No need for additional selectors - the hook already returns only provider state
+    const { providers, availableModels, isLoadingModels: storeLoadingModels, fetchModels } = useProviderStore() as {
+        providers: any[]
+        availableModels: Record<string, any[]>
+        isLoadingModels: Record<string, boolean>
+        fetchModels: (providerId: string) => Promise<void>
+    }
+
+    // Default workspace bindings (WB-8.3)
+    const defaultWorkspaceBindings: Agent['workspaceBindings'] = [
+        { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
+        { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
+        { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
+        { workspaceType: 'notes', isAvailable: true, uiVariant: 'minimal', isDefault: false },
+    ]
+
+    // Default tools array (WB-8.3)
+    const defaultTools: AgentToolBinding[] = [
+        { toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
+        { toolId: 'write_file', toolName: 'Write File', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: true } },
+        { toolId: 'list_files', toolName: 'List Files', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
+        { toolId: 'execute_command', toolName: 'Execute Command', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: false } },
+        { toolId: 'synthesize', toolName: 'Synthesize', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+        { toolId: 'process_pdf', toolName: 'Process PDF', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+        { toolId: 'process_image', toolName: 'Process Image', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+        { toolId: 'process_url', toolName: 'Process URL', isEnabled: true, workspacePermissions: { ide: false, knowledge: true, study: true, notes: false } },
+    ]
+
+    // Form state
+    const [name, setName] = useState(agent?.name || '')
+    const [description, setDescription] = useState(agent?.description || '')
+    const [providerId, setProviderId] = useState(agent?.providerId || 'openrouter')
+    const [modelId, setModelId] = useState(agent?.modelId || '')
+    const [temperature, setTemperature] = useState(agent?.temperature ?? 0.7)
+    const [maxTokens, setMaxTokens] = useState(agent?.maxTokens ?? 4096)
+    const [topP, setTopP] = useState(agent?.topP ?? 0.95)
+    const [topK, setTopK] = useState<number | undefined>(agent?.topK)
+    const [systemPrompt, setSystemPrompt] = useState(agent?.systemPrompt || '')
+    const [customBaseURL, setCustomBaseURL] = useState('')
+    const [customModelId, setCustomModelId] = useState('')
+    const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
+    const [enableNativeTools, setEnableNativeTools] = useState(true)
+    const [workspaceBindings, setWorkspaceBindings] = useState<Agent['workspaceBindings']>(
+        agent?.workspaceBindings || defaultWorkspaceBindings
+    )
+    const [tools, setTools] = useState<AgentToolBinding[]>(agent?.tools || defaultTools)
+    const [activeTab, setActiveTab] = useState<'basic' | 'workspace' | 'advanced'>('basic')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    // Initialize credentialVault on mount
+    useEffect(() => {
+        credentialVault.initialize().catch(console.error)
+    }, [])
+
+    // Sync local state when agent changes (e.g., switching between agents)
+    useEffect(() => {
+        if (agent) {
+            setName(agent.name || '')
+            setDescription(agent.description || '')
+            setProviderId(agent.providerId || 'openrouter')
+            setModelId(agent.modelId || '')
+            setTemperature(agent.temperature ?? 0.7)
+            setMaxTokens(agent.maxTokens ?? 4096)
+            setTopP(agent.topP ?? 0.95)
+            setTopK(agent.topK)
+            setSystemPrompt(agent.systemPrompt || '')
+            setWorkspaceBindings(agent.workspaceBindings || defaultWorkspaceBindings)
+            setTools(agent.tools || defaultTools)
+        } else if (!agentId) {
+            // Reset to defaults for new agent
+            setName('')
+            setDescription('')
+            setProviderId('openrouter')
+            setModelId('')
+            setTemperature(0.7)
+            setMaxTokens(4096)
+            setTopP(0.95)
+            setTopK(undefined)
+            setSystemPrompt('')
+            setWorkspaceBindings(defaultWorkspaceBindings)
+            setTools(defaultTools)
+        }
+    }, [agent, agentId])
+
+    // Get models for current provider - use useMemo to stabilize array reference
+    // CRITICAL: Only watch availableModels[providerId], NOT the entire availableModels object
+    // Otherwise, loading models for ANY provider triggers re-render for ALL agents
+    const models = useMemo(() => availableModels[providerId] || [], [availableModels[providerId], providerId])
+    const isLoadingModels = useMemo(() => storeLoadingModels[providerId] || false, [storeLoadingModels[providerId], providerId])
+
+    return {
+        // Store methods
+        addAgent,
+        updateAgent,
+        removeAgent,
+        agent,
+
+        // Provider data
+        providers,
+        models,
+        isLoadingModels,
+        fetchModels,
+
+        // Form state
+        name,
+        description,
+        providerId,
+        modelId,
+        temperature,
+        maxTokens,
+        topP,
+        topK,
+        systemPrompt,
+        customBaseURL,
+        customModelId,
+        customHeaders,
+        enableNativeTools,
+        workspaceBindings,
+        tools,
+        activeTab,
+        isSubmitting,
+
+        // Setters
+        setName,
+        setDescription,
+        setProviderId,
+        setModelId,
+        setTemperature,
+        setMaxTokens,
+        setTopP,
+        setTopK,
+        setSystemPrompt,
+        setCustomBaseURL,
+        setCustomModelId,
+        setCustomHeaders,
+        setEnableNativeTools,
+        setWorkspaceBindings,
+        setTools,
+        setActiveTab,
+        setIsSubmitting,
+    } as const
+}

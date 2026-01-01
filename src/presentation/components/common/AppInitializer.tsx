@@ -14,7 +14,7 @@
 
 import { useEffect, type ReactNode } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -25,7 +25,7 @@ interface AppInitializerProps {
  * before any components that depend on them mount.
  */
 export function AppInitializer({ children }: AppInitializerProps) {
-    const fetchModels = useProviderStore(s => s.fetchModels);
+    const fetchModels = useAppStore(s => s.fetchModels);
 
     useEffect(() => {
         // Initialize all critical services on app boot
@@ -39,13 +39,13 @@ export function AppInitializer({ children }: AppInitializerProps) {
 
                 // 2. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection
-                const { providers } = useProviderStore.getState();
+                const { providers } = useAppStore.getState();
 
                 console.log('[AppInitializer] Checking credentials for providers:', providers.map(p => p.id));
 
                 // execute in parallel
                 await Promise.all(providers.map(async (provider) => {
-                    if (!provider.enabled) return;
+                    // if (!provider.enabled) return; // 'enabled' property removed from ProviderConfig
 
                     try {
                         const apiKey = await credentialVault.getCredentials(provider.id);

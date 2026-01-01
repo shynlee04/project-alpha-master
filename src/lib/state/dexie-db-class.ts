@@ -89,6 +89,7 @@ export class ViaGentDatabase extends Dexie {
 
     providerConfigs!: PersistedStateTable;
     agentConfigs!: PersistedStateTable;
+    agentSelection!: PersistedStateTable;
     conversationState!: PersistedStateTable;
     appState!: PersistedStateTable;
 

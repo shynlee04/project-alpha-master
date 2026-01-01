@@ -14,10 +14,48 @@ import { cn } from '@/lib/utils/tw-merge'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { IndexingPhaseItem } from './IndexingPhaseItem'
 import { getIndexingStatus, getIndexingMessage, getIndexingProgress } from './indexing-utils'
-import type { IndexingState, IndexingPhase, IndexingStep } from './IndexingProgressIndicator'
 
-// Re-export types for backward compatibility
-export type { IndexingState, IndexingPhase, IndexingStep }
+/**
+ * Indexing operation phase
+ */
+export type IndexingPhase = 'pending' | 'chunking' | 'embedding' | 'storing' | 'complete' | 'error'
+
+/**
+ * Indexing operation step
+ */
+export interface IndexingStep {
+    phase: IndexingPhase
+    message: string
+    progress: number
+    timestamp: number
+}
+
+/**
+ * Indexing state
+ */
+export interface IndexingState {
+    isIndexing: boolean
+    currentPhase: IndexingPhase
+    totalDocuments: number
+    processedDocuments: number
+    totalChunks: number
+    processedChunks: number
+    steps: IndexingStep[]
+    startTime: number | null
+    error?: string
+}
+
+/**
+ * Indexing progress indicator props
+ */
+export interface IndexingProgressIndicatorProps {
+    /** Indexing state from RAG store */
+    indexing?: IndexingState
+    /** Optional CSS class name */
+    className?: string
+    /** Show compact version */
+    compact?: boolean
+}
 
 /**
  * Indexing Progress Indicator Component
