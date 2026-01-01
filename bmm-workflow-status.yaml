@@ -2286,3 +2286,359 @@ phase_1_foundation_stabilization:
   implementation_readiness: "READY FOR DEVELOPMENT"
   user_approval_required: true
   recommendation: "Execute Epic AC-1 to fix critical System 2 debt (42% health score), then Epic WB for UX improvements"
+
+# =============================================================================
+# GRAND UNIFICATION REFACTOR (Ralph Wiggum Cycle)
+# =============================================================================
+# Trigger: Architectural drift between legacy IDE and Knowledge Synthesis systems
+# Framework: BMAD V6 + Ralph Wiggum Refactoring Cycle
+# Start Date: 2026-01-02
+# Status: COORDINATION COMPLETE - READY FOR EXECUTION
+# =============================================================================
+
+grand_unification:
+  status: in_progress
+  phase: "Foundation Stabilization"
+  started_at: "2026-01-02T12:00:00+07:00"
+  module: "grand-unification-refactor"
+  
+  framework_integration:
+    ralph_wiggum_prompt: "PROMPT.md"
+    coordination_plan: "_bmad-output/grand-unification-coordination-plan-2026-01-02.md"
+    cycle_18_corrected_course: "_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md"
+  
+  # TARGET A: LLM & Agent Config Unification (3 days)
+  target_a:
+    name: "LLM & Agent Config Unification"
+    status: backlog
+    priority: "P0"
+    goal: "One persistent LLMStore for all workspaces"
+    estimated_days: 3
+    tech_spec: "pending"
+    iterations:
+      a-1:
+        name: "Migrate API keys to useLLMStore"
+        description: "Find all useState for API keys and migrate to unified useLLMStore"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "All useState for API keys replaced with useLLMStore"
+          - "Key change in Settings updates Chat agent immediately"
+          - "No reload required for changes to take effect"
+      a-2:
+        name: "Migrate Model selection to useLLMStore"
+        description: "Find all useState for Model selection and migrate to unified useLLMStore"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "All useState for Model selection replaced with useLLMStore"
+          - "Model change propagates to all workspaces"
+          - "Zero TypeScript errors introduced"
+      a-3:
+        name: "Migrate agent capabilities to AgentStore"
+        description: "Find hardcoded agent capabilities and migrate to AgentStore"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "Agents have capabilities (canEditFiles, canSearchWeb)"
+          - "Workspaces filter agents by capability"
+          - "No arbitrary hardcoding"
+  
+  # TARGET B: File System Unification (4 days)
+  target_b:
+    name: "File System Unification"
+    status: backlog
+    priority: "P0"
+    goal: "Single useFileSystem hook for all workspaces"
+    estimated_days: 4
+    tech_spec: "pending"
+    iterations:
+      b-1:
+        name: "Unify IDE file tree with SourceManager"
+        description: "Identify FileTree component usage and abstract to useFileSystem hook"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "FileTree uses unified useFileSystem hook"
+          - "File created in IDE shows in Knowledge Source list"
+          - "Single source of truth for file operations"
+      b-2:
+        name: "Create unified OPFS/FSA adapter facade"
+        description: "Find all LocalFSAdapter usage and create unified facade"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "All file operations go through unified adapter"
+          - "Drag PDF to Knowledge → appears in IDE filetree"
+          - "OPFS and FSA properly abstracted"
+      b-3:
+        name: "Synchronize file metadata across workspaces"
+        description: "Find file metadata stores and create unified store"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "Edit .md in IDE → updates Knowledge node content"
+          - "Metadata synchronized across all workspaces"
+          - "Single source of truth for file metadata"
+  
+  # TARGET C: Chat & Thread Unification (3 days)
+  target_c:
+    name: "Chat & Thread Unification"
+    status: backlog
+    priority: "P0"
+    goal: "Single GlobalChatOrchestrator for all workspaces"
+    estimated_days: 3
+    tech_spec: "pending"
+    iterations:
+      c-1:
+        name: "Create GlobalChatOrchestrator"
+        description: "Check ChatPanel vs KnowledgeChat and create unified orchestrator"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "Single GlobalChatOrchestrator component exists"
+          - "Accepts context prop (Codebase vs Vault)"
+          - "Chat history persists when switching tabs"
+      c-2:
+        name: "Unify thread persistence with context"
+        description: "Find all thread stores and migrate to ThreadStore with context"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "ThreadStore supports context switching"
+          - "Thread context switches (Codebase ↔ Vault)"
+          - "No data loss when switching workspaces"
+      c-3:
+        name: "Create unified message renderer"
+        description: "Find message components and create unified renderer"
+        status: "backlog"
+        started_at: null
+        completed_at: null
+        acceptance_criteria:
+          - "Consistent chat UI across all workspaces"
+          - "Single message renderer component"
+          - "Zero visual inconsistencies"
+  
+  # EPICS (Spec-Driven Use Cases)
+  epics:
+    gu-01:
+      id: "GU-01"
+      name: "Unified Vault Ingestion & Synthesis"
+      use_case: "Initial Vault Population & Baseline Synthesis"
+      status: backlog
+      priority: "P0"
+      team: "Team B"
+      estimated_days: 5
+      stories: 4
+      dependencies: ["Target B", "Epic 7"]
+      stories_list:
+        - id: "GU-01-1"
+          name: "Multi-Format File Parser"
+          description: "Detect file types (PDF, IMG, MD, Audio) and dispatch to parsers"
+          estimate: "1 day"
+        - id: "GU-01-2"
+          name: "Raw Content Indexer"
+          description: "SHA-256 hashing, OPFS storage, 512-token chunking, Orama embedding"
+          estimate: "2 days"
+        - id: "GU-01-3"
+          name: "Synthesis Agent Orchestrator"
+          description: "Agent with Synthesizer capability, metadata extraction, sidecar JSON"
+          estimate: "1.5 days"
+        - id: "GU-01-4"
+          name: "Source Manager UI Integration"
+          description: "Real-time updates, parsing → embedding → synthesized status"
+          estimate: "0.5 days"
+    
+    gu-02:
+      id: "GU-02"
+      name: "Unified Knowledge Graph Linkage"
+      use_case: "Interactive Canvas Knowledge Linkage Discovery"
+      status: backlog
+      priority: "P1"
+      team: "Team A"
+      estimated_days: 4
+      stories: 4
+      dependencies: ["Epic 8", "GU-01"]
+      stories_list:
+        - id: "GU-02-1"
+          name: "Multi-Node Context Retrieval"
+          description: "Extract metadata from 3+ selected nodes"
+          estimate: "1 day"
+        - id: "GU-02-2"
+          name: "Semantic Intersection Engine"
+          description: "Cosine similarity calculation, concept extraction"
+          estimate: "1.5 days"
+        - id: "GU-02-3"
+          name: "Dynamic Edge Renderer"
+          description: "4 relationship types (Strong, Sequential, Contrast, Prerequisite)"
+          estimate: "1 day"
+        - id: "GU-02-4"
+          name: "Synthesis Proposal UI"
+          description: "Create Integrative Summary prompt with cluster highlight"
+          estimate: "0.5 days"
+    
+    gu-03:
+      id: "GU-03"
+      name: "Unified Chat Orchestration"
+      use_case: "Conversational Knowledge Exploration Session"
+      status: backlog
+      priority: "P0"
+      team: "Team B"
+      estimated_days: 3
+      stories: 4
+      dependencies: ["Target C", "Epic 32"]
+      stories_list:
+        - id: "GU-03-1"
+          name: "Intent Classification Layer"
+          description: "Detect Retrieval + Cross-Reference intents"
+          estimate: "0.5 days"
+        - id: "GU-03-2"
+          name: "Multi-Hop Retrieval Engine"
+          description: "Query 1 → VectorStore → Query 2 → VectorStore"
+          estimate: "1.5 days"
+        - id: "GU-03-3"
+          name: "Context Construction Pipeline"
+          description: "Assemble chunks + metadata + citations"
+          estimate: "0.5 days"
+        - id: "GU-03-4"
+          name: "Artifact Creation Flow"
+          description: "Shall I create comparison table with file tree integration"
+          estimate: "0.5 days"
+    
+    gu-04:
+      id: "GU-04"
+      name: "Adaptive Knowledge Taxonomy"
+      use_case: "Dynamic Knowledge Matrix Evolution"
+      status: backlog
+      priority: "P2"
+      team: "Team A"
+      estimated_days: 4
+      stories: 4
+      dependencies: ["GU-02", "Target B"]
+      stories_list:
+        - id: "GU-04-1"
+          name: "Clustering Algorithm Integration"
+          description: "K-Means on embeddings, taxonomy labeling"
+          estimate: "1.5 days"
+        - id: "GU-04-2"
+          name: "Connectivity Score Calculator"
+          description: "Degree of centrality for each node"
+          estimate: "1 day"
+        - id: "GU-04-3"
+          name: "View Proposal Engine"
+          description: "Chronological, Conceptual, Hybrid views"
+          estimate: "1 day"
+        - id: "GU-04-4"
+          name: "Virtual Taxonomy Persistence"
+          description: "Virtual folders in ProjectMeta, physical files untouched"
+          estimate: "0.5 days"
+  
+  # VALIDATION & COMPLETION
+  completion_promise: >
+    All 4 Workspaces (IDE, Knowledge, Study, Notes) share unified Zustand stores,
+    identical LLM/Agent config, and synchronized file access.
+  
+  validation_command: "pnpm tsc --noEmit && pnpm test"
+  
+  success_metrics:
+    typescript_errors:
+      current: 1172
+      target: "<100"
+      validation: "pnpm tsc --noEmit"
+    file_size_violations:
+      current: "17 files >300 lines"
+      target: "0 files"
+      validation: "Automated lint check"
+    store_consolidation:
+      current: "71 stores across 3 locations"
+      target: "<20 stores in 1 location"
+      validation: "Manual count"
+    circular_dependencies:
+      current: "4 high-risk cycles"
+      target: "0 cycles"
+      validation: "Dependency analysis"
+    data_loss_risk:
+      current: "P0 (79 files no quota handling)"
+      target: "P0 resolved"
+      validation: "Safe wrapper implementation"
+    silent_failures:
+      current: "23 instances"
+      target: "0 instances"
+      validation: "Error handling audit"
+  
+  # INTEGRATION WITH RALPH LOOP CYCLE 18
+  ralph_loop_integration:
+    phase_0_foundation_stabilization:
+      weeks: "1-2"
+      mapping:
+        ts_001: "Ralph Wiggum Iteration A-1 (Fix TypeScript Errors)"
+        db_001: "Ralph Wiggum Iteration B-3 (Safe IndexedDB Operations)"
+        ui_001: "Ralph Wiggum Iteration A-3 (Extract AgentConfigDialog Hooks)"
+    
+    phase_1_store_refactoring:
+      weeks: "3-4"
+      mapping:
+        split_god_stores: "Ralph Wiggum Targets A, B, C"
+        eliminate_circular_deps: "Architect mode dependency mapping"
+    
+    phase_2_infrastructure_hardening:
+      weeks: "5-6"
+      mapping:
+        fix_p1_gaps: "Code reviewer validation"
+        implement_error_handling: "Error handling audit"
+    
+    phase_3_architecture_transformation:
+      weeks: "7-8"
+      mapping:
+        four_layer_architecture: "Epic GU-01 through GU-04"
+  
+  completion_signal: "DONE"
+  
+  # GOVERNANCE
+  governance:
+    daily_validation:
+      before_starting:
+        - "Read PROMPT.md for current iteration number"
+        - "Review tech spec for target"
+        - "Identify specific store/component chain to fix"
+      during_implementation:
+        - "Follow atomic fix principle (one chain per iteration)"
+        - "Remove all commented-out legacy code"
+        - "Maintain max 300 lines per file"
+      after_iteration:
+        - "Run pnpm tsc --noEmit (zero TypeScript errors)"
+        - "Run pnpm test (all tests passing)"
+        - "Manual verification (completion signal met)"
+        - "Update PROMPT.md iteration counter"
+        - "Update bmm-workflow-status.yaml"
+    
+    coordination_documents:
+      prompt_md: "PROMPT.md"
+      coordination_plan: "_bmad-output/grand-unification-coordination-plan-2026-01-02.md"
+      cycle_18_workflow: "_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md"
+      cycle_18_gap_summary: "_bmad-output/ralph-loop-cycle-18-gap-summary-2026-01-01.md"
+    
+    next_actions:
+      immediate:
+        - "✅ PROMPT.md Created - Saved to root directory"
+        - "✅ Coordination Plan Created - _bmad-output/grand-unification-coordination-plan-2026-01-02.md"
+        - "✅ bmm-workflow-status.yaml Updated - This section"
+        - "⏳ Delegate to Architect Mode - Create Target A tech spec"
+      this_week:
+        - "Target A Technical Spec - Architect mode creates unified LLMStore design"
+        - "Target B Technical Spec - Architect mode creates useFileSystem design"
+        - "Target C Technical Spec - Architect mode creates GlobalChatOrchestrator design"
+        - "Sprint Planning - PM mode breaks down Targets A/B/C into stories"
+      next_week:
+        - "Start Target A Implementation - Dev mode begins Iteration A-1"
+        - "Daily Ralph Loop Cycles - Validate after each iteration"
+        - "Code Reviews - Code reviewer validates each iteration"
+        - "Progress Tracking - Update bmm-workflow-status.yaml daily"
