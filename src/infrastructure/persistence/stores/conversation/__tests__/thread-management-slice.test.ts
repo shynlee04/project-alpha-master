@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { CombinedConversationState } from '../types';
 import { createThreadManagementSlice, ThreadWithId } from '../thread-management-slice';
+import { createConversationEventsSlice } from '../conversation-events-slice';
 
 vi.mock('@/lib/state/dexie-storage', () => ({
   createDexieStorage: () => ({
@@ -12,6 +13,7 @@ vi.mock('@/lib/state/dexie-storage', () => ({
 
 const createTestStore = () => create<CombinedConversationState>()((set, get, api) => ({
   ...createThreadManagementSlice(set, get, api),
+  ...createConversationEventsSlice(set, get, api),
   conversations: {},
   activeConversationId: null,
   activeProjectConversationIds: {},

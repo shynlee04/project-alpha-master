@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { CombinedConversationState } from '../types';
 import { createConversationMetadataSlice, ConversationMetadataWithId } from '../conversation-metadata-slice';
+import { createConversationEventsSlice } from '../conversation-events-slice';
 
 // Mock Dexie Storage to behave synchronously/in-memory for tests
 vi.mock('@/lib/state/dexie-storage', () => ({
@@ -11,9 +12,10 @@ vi.mock('@/lib/state/dexie-storage', () => ({
   })
 }));
 
-// Create test store with only the metadata slice
+// Create test store with metadata and events slices
 const createTestStore = () => create<CombinedConversationState>()((set, get, api) => ({
   ...createConversationMetadataSlice(set, get, api),
+  ...createConversationEventsSlice(set, get, api),
   // Placeholder for other slices (will be implemented in CC-1.2, CC-1.3, etc.)
   threads: {},
   activeThreadId: null,

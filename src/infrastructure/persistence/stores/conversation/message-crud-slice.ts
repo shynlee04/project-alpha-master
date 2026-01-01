@@ -33,6 +33,7 @@ export const createMessageCrudSlice: StateCreator<
     const newMessage: MessageWithId = { ...message, id, threadId, timestamp };
     console.log('[MessageSlice] Adding:', id, 'to thread:', threadId);
     set((state) => ({ messages: { ...state.messages, [id]: newMessage } }));
+    get().emitMessageAdded(id, newMessage);
     return id;
   },
 
@@ -43,6 +44,7 @@ export const createMessageCrudSlice: StateCreator<
     set((state) => ({
       messages: { ...state.messages, [id]: { ...existing, ...updates } },
     }));
+    get().emitMessageUpdated(id, updates);
   },
 
   deleteMessage: (id) => {
@@ -52,6 +54,7 @@ export const createMessageCrudSlice: StateCreator<
       delete updated[id];
       return { messages: updated };
     });
+    get().emitMessageDeleted(id);
   },
 
   getMessage: (id) => get().messages[id],

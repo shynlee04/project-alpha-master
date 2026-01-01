@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { CombinedConversationState } from '../types';
 import type { ThreadMessage } from '../types';
 import { createMessageCrudSlice, MessageWithId } from '../message-crud-slice';
+import { createConversationEventsSlice } from '../conversation-events-slice';
 
 vi.mock('@/lib/state/dexie-storage', () => ({
   createDexieStorage: () => ({
@@ -13,6 +14,7 @@ vi.mock('@/lib/state/dexie-storage', () => ({
 
 const createTestStore = () => create<CombinedConversationState>()((set, get, api) => ({
   ...createMessageCrudSlice(set, get, api),
+  ...createConversationEventsSlice(set, get, api),
   conversations: {},
   activeConversationId: null,
   activeProjectConversationIds: {},
