@@ -7,7 +7,7 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import { DialogTitle, DialogDescription } from '@/presentation/components/ui/dialog';
+import { DialogTitle, DialogDescription, DialogHeader } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { AgentImportExport } from './AgentImportExport';

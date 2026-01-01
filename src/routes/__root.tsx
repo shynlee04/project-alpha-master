@@ -10,6 +10,7 @@ import { AppInitializer } from '@/presentation/components/common/AppInitializer'
 import { initSentry } from '../lib/monitoring/sentry'
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
 import { TooltipProvider } from '@/presentation/components/ui/tooltip'
+import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 
 import appCss from '../styles.css?url'
 
@@ -78,6 +79,8 @@ export const Route = createRootRoute({
             </TooltipProvider>
           </LocaleProvider>
         </ThemeProvider>
+        {/* Migration Status Overlay */}
+        <MigrationStatus />
         <Scripts />
       </body>
     </html>

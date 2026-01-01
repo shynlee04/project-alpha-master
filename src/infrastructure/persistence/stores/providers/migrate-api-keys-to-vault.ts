@@ -28,6 +28,7 @@ import type { ProviderConfig } from './types';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { migrationBackup } from './migration-backup';
 import type { BackupResult } from './migration-backup';
+import { useMigrationState } from './use-migration-state';
 
 /**
  * Migration result
@@ -98,6 +99,9 @@ export async function migrateApiKeysToVault(
   const startTime = Date.now();
   console.log('[Migration] Starting API key migration...');
 
+  // Get migration state store
+  const setState = useMigrationState.getState();
+
   const stats: Partial<MigrationStats> = {
     timestamp: startTime,
     totalProviders: providers.length,
@@ -133,12 +137,16 @@ export async function migrateApiKeysToVault(
 
   // Phase 1: Create backup
   console.log('[Migration] Phase 1: Creating backup...');
+  setState.setPhase('backup');
+  setState.setProgress(0, 'Creating backup...');
+
   const backupResult = await migrationBackup.createBackups(providers, activeProviderId);
   stats.backupCreated = backupResult.success;
 
   if (!backupResult.success) {
     const error = 'Backup creation failed - migration aborted for safety';
     console.error('[Migration]', error);
+    setState.setError(error);
     return {
       success: false,
       migratedCount: 0,
@@ -150,10 +158,14 @@ export async function migrateApiKeysToVault(
   }
 
   console.log('[Migration] ✅ Backup created successfully');
+  setState.setProgress(25, 'Backup created');
 
   // Phase 2: Migrate each provider
   console.log('[Migration] Phase 2: Migrating API keys to credential vault...');
+  setState.setPhase('migrating');
   const failedProviders: Array<{ id: string; name: string; error: string }> = [];
+  const totalToMigrate = providers.filter(p => 'apiKey' in p && typeof (p as any).apiKey === 'string' && (p as any).apiKey).length;
+  let migratedSoFar = 0;
 
   for (const provider of providers) {
     // Check if provider has apiKey field (old structure)
@@ -173,6 +185,11 @@ export async function migrateApiKeysToVault(
       try {
         // Store in credential vault
         console.log(`[Migration] Migrating ${provider.id}...`);
+        setState.setProgress(
+          25 + Math.floor((migratedSoFar / totalToMigrate) * 50),
+          `Migrating ${provider.name}...`
+        );
+
         await credentialVault.storeCredentials(provider.id, apiKey);
 
         // Update provider state (remove apiKey, set hasApiKey)
@@ -182,6 +199,7 @@ export async function migrateApiKeysToVault(
         });
 
         stats.providersMigrated = (stats.providersMigrated || 0) + 1;
+        migratedSoFar++;
         console.log(`[Migration] ✅ ${provider.id} migrated successfully`);
 
       } catch (error) {
@@ -197,8 +215,13 @@ export async function migrateApiKeysToVault(
     }
   }
 
+  setState.setProgress(75, 'Migration complete');
+
   // Phase 3: Verify migration
   console.log('[Migration] Phase 3: Verifying migration...');
+  setState.setPhase('verifying');
+  setState.setProgress(80, 'Verifying migration...');
+
   const providersNeedingMigration = providers.filter(
     p => 'apiKey' in p && typeof (p as any).apiKey === 'string' && (p as any).apiKey.length > 0
   );
@@ -209,6 +232,9 @@ export async function migrateApiKeysToVault(
 
     // Rollback on verification failure
     console.log('[Migration] Rolling back due to verification failure...');
+    setState.setPhase('rollback');
+    setState.setProgress(0, 'Rolling back...');
+
     await rollbackMigration(providers, activeProviderId, updateProvider);
     stats.rollbackPerformed = true;
 
@@ -223,12 +249,16 @@ export async function migrateApiKeysToVault(
   }
 
   console.log('[Migration] ✅ Migration verified successfully');
+  setState.setProgress(90, 'Verification complete');
 
   // Phase 4: Clean up old fields (already done in Phase 2)
   console.log('[Migration] Phase 4: Cleanup complete (apiKey fields removed)');
 
   const duration = Date.now() - startTime;
   console.log(`[Migration] ✅ Migration complete in ${duration}ms`);
+
+  setState.setPhase('complete');
+  setState.setProgress(100, 'Migration complete!');
 
   return {
     success: failedProviders.length === 0,
@@ -255,20 +285,29 @@ export async function rollbackMigration(
 ): Promise<boolean> {
   console.log('[Migration] Rolling back migration...');
 
+  // Get migration state store
+  const setState = useMigrationState.getState();
+
   try {
+    setState.setProgress(10, 'Restoring from backup...');
+
     // Verify backup exists and is valid
     const restoreResult = await migrationBackup.restoreFromBackup();
 
     if (!restoreResult.success) {
       console.error('[Migration] ❌ Rollback failed:', restoreResult.error);
+      setState.setError(`Rollback failed: ${restoreResult.error}`);
       return false;
     }
+
+    setState.setProgress(50, 'Backup restored');
 
     // Get backup data from backup system
     const backupData = await migrationBackup.getLatestBackup();
 
     if (!backupData) {
       console.error('[Migration] ❌ Backup data not found');
+      setState.setError('Backup data not found');
       return false;
     }
 
@@ -276,16 +315,27 @@ export async function rollbackMigration(
     const restoredProviders = backupData.providers;
     console.log(`[Migration] Restoring ${restoredProviders.length} providers from backup...`);
 
+    setState.setProgress(75, 'Restoring providers...');
+
     // Restore each provider from backup
     for (const provider of restoredProviders) {
       updateProvider(provider.id, provider);
     }
 
     console.log('[Migration] ✅ Rollback complete');
+    setState.setProgress(100, 'Rollback complete');
+
+    // Auto-reset after successful rollback (with delay for UI visibility)
+    setTimeout(() => {
+      setState.reset();
+    }, 3000);
+
     return true;
 
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     console.error('[Migration] ❌ Rollback failed:', error);
+    setState.setError(errorMsg);
     return false;
   }
 }
