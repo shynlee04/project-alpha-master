@@ -106,7 +106,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
         }
 
         // Get agent from agents store
-        const agent = useAgentsStore.getState().getAgent(agentId);
+        const agent = useAppStore.getState().getAgent(agentId);
         if (!agent) {
           throw new Error(`Agent not found: ${agentId}`);
         }
@@ -143,7 +143,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
        */
       setDefaultAgent: (agentId: string, workspaceType: WorkspaceType) => {
         // Get agent from agents store
-        const agent = useAgentsStore.getState().getAgent(agentId);
+        const agent = useAppStore.getState().getAgent(agentId);
         if (!agent) {
           throw new Error(`Agent not found: ${agentId}`);
         }
@@ -176,7 +176,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
         const { activeAgentId } = get();
         if (!activeAgentId) return null;
 
-        return useAgentsStore.getState().getAgent(activeAgentId) || null;
+        return useAppStore.getState().getAgent(activeAgentId) || null;
       },
 
       /**
@@ -406,7 +406,7 @@ export function selectAgentForWorkspace(workspaceType: WorkspaceType): void {
 export const useAgentSelection = useAgentSelectionStore;
 
 /**
- * @deprecated Use useAgentsStore instead
+ * @deprecated Use useAppStore instead
  * Helper hook for getting active agent from agents list
  * This is maintained for backward compatibility
  */

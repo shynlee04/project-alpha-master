@@ -7,8 +7,8 @@
  */
 
 import { useCallback } from 'react';
-import { useAgentsStore, useAgentsStoreHydration } from '../stores/agents-store';
-import type { Agent } from '../mocks/agents';
+import { useAgentsStore, useAgentsStoreHydration } from '@/infrastructure/persistence/stores/agents';
+import type { Agent } from '@/core/entities/Agent';
 
 interface UseAgentsReturn {
     /** List of configured agents */

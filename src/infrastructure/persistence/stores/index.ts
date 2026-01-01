@@ -27,9 +27,12 @@ export {
 // Provider slices: provider-crud-slice, provider-models-slice, provider-utils-slice
 export {
   useAppStore as useProviderStore,
-  type ProviderState,
-  type ModelSettings
 } from './use-app-store';
+
+export type {
+  ProviderState,
+  ModelSettings
+} from './providers/types';
 
 // Models-loader-store was merged into provider-store (Story AC-1.6)
 // Use useAppStore or useProviderStore instead

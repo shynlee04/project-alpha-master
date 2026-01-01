@@ -28,6 +28,8 @@ export enum DomainEventType {
 
   // Agent events
   AGENT_SELECTED = 'agent:selected',
+  AGENT_DESELECTED = 'agent:deselected',
+  DEFAULT_AGENT_CHANGED = 'agent:default:changed',
   AGENT_CONFIG_UPDATED = 'agent:config:updated',
   AGENT_CREATED = 'agent:created',
   AGENT_DELETED = 'agent:deleted',

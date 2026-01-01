@@ -8,6 +8,9 @@
  */
 
 import { z } from 'zod'
+
+// Re-export FormErrors for backward compatibility
+export type { FormErrors } from './agent-config-types'
 import type { FormErrors } from './agent-config-types'
 
 /**

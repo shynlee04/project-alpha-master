@@ -10,7 +10,7 @@
  */
 
 import { db, type ConversationThreadRecord /*, type ThreadMessageRecord */ } from '../state/dexie-db';
-import type { ConversationThread, ThreadMessage } from '@/stores/conversation-threads-store';
+import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
 
 /**
  * Convert Zustand thread to Dexie record

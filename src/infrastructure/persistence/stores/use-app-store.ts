@@ -241,3 +241,24 @@ export const useValidationErrors = (agentId: string) =>
 
 // Import WorkspaceType for selector
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+
+/**
+ * Backward Compatibility Alias: useProviderStore
+ * 
+ * Some components still import useProviderStore from this module.
+ * This hook provides a provider-focused view of the app store.
+ * 
+ * @deprecated Use useAppStore directly with selectors instead
+ */
+export const useProviderStore = () => useAppStore((state) => ({
+  providers: state.providers,
+  availableModels: state.availableModels,
+  isLoadingModels: state.isLoadingModels,
+  activeProviderId: state.activeProviderId,
+  addProvider: state.addProvider,
+  updateProvider: state.updateProvider,
+  removeProvider: state.removeProvider,
+  fetchModels: state.fetchModels,
+  setActiveProvider: state.setActiveProvider,
+}));
+

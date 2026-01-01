@@ -25,7 +25,7 @@ export function logDexieMigration(
     version: number,
     operation: string,
     status: 'started' | 'completed' | 'failed',
-    details?: { tableName?: string; itemsCount?: number; error?: string }
+    details?: { tableName?: string; itemsCount?: number; error?: string } | string
 ): void {
     const entry = {
         timestamp: Date.now(),

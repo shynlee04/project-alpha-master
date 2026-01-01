@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { AgentChatPanel } from '../ide/AgentChatPanel';
 import { ThreadCard } from '../chat/ThreadCard';
-import { useThreadsStore, useActiveThread } from '@/stores/conversation-threads-store';
+import { useThreadsStore, useActiveThread } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
 /**

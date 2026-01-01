@@ -34,7 +34,6 @@ import {
 // P1-1: Import extracted components
 import {
     AgentBasicConfig,
-    ApiKeyInputSection,
     AgentImportExport,
     useAgentFormValidation,
 } from '@/presentation/components/agent'
@@ -84,19 +83,47 @@ export function AgentConfigDialog({
     // Store actions
     const { addAgent, updateAgent, removeAgent } = useAgentsStore()
 
-    // BF-01 FIX: Read agent from store (single source of truth)
+    // Read agent from store for editing mode
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
 
-    // BF-01 FIX: Derived form values from agent (replaces useState)
-    const name = agent?.name || ''
-    const description = agent?.description || ''
-    const providerId = agent?.providerId || 'openrouter'
-    const modelId = agent?.modelId || ''
-    const temperature = agent?.temperature ?? 0.7
-    const maxTokens = agent?.maxTokens ?? 4096
-    const topP = agent?.topP ?? 0.95
-    const topK = agent?.topK
-    const systemPrompt = agent?.systemPrompt || ''
+    // BF-01 FIX + NEW AGENT FIX: Use local state for form fields
+    // For new agents (agentId === null), we need local state since there's no store entry
+    // For editing, we sync local state with store on mount and update store on changes
+    const [name, setName] = useState(agent?.name || '')
+    const [description, setDescription] = useState(agent?.description || '')
+    const [providerId, setProviderId] = useState(agent?.providerId || 'openrouter')
+    const [modelId, setModelId] = useState(agent?.modelId || '')
+    const [temperature, setTemperature] = useState(agent?.temperature ?? 0.7)
+    const [maxTokens, setMaxTokens] = useState(agent?.maxTokens ?? 4096)
+    const [topP, setTopP] = useState(agent?.topP ?? 0.95)
+    const [topK, setTopK] = useState<number | undefined>(agent?.topK)
+    const [systemPrompt, setSystemPrompt] = useState(agent?.systemPrompt || '')
+
+    // Sync local state when agent changes (e.g., switching between agents)
+    useEffect(() => {
+        if (agent) {
+            setName(agent.name || '')
+            setDescription(agent.description || '')
+            setProviderId(agent.providerId || 'openrouter')
+            setModelId(agent.modelId || '')
+            setTemperature(agent.temperature ?? 0.7)
+            setMaxTokens(agent.maxTokens ?? 4096)
+            setTopP(agent.topP ?? 0.95)
+            setTopK(agent.topK)
+            setSystemPrompt(agent.systemPrompt || '')
+        } else if (!agentId) {
+            // Reset to defaults for new agent
+            setName('')
+            setDescription('')
+            setProviderId('openrouter')
+            setModelId('')
+            setTemperature(0.7)
+            setMaxTokens(4096)
+            setTopP(0.95)
+            setTopK(undefined)
+            setSystemPrompt('')
+        }
+    }, [agent, agentId])
 
     // Advanced settings state (not in agent config yet)
     const [customBaseURL, setCustomBaseURL] = useState('')
@@ -162,24 +189,47 @@ export function AgentConfigDialog({
     }, [])
 
     /**
-     * Handle field updates with immediate hot-reload
+     * Handle field updates - update local state (and optionally sync to store for existing agents)
      */
     const handleUpdateField = useCallback((field: string, value: any) => {
-        // BF-01 FIX: Immediate store update (hot-reload)
+        // Update local state first (enables form input for new agents)
+        switch (field) {
+            case 'name':
+                setName(value)
+                break
+            case 'description':
+                setDescription(value)
+                break
+            case 'providerId':
+                setProviderId(value)
+                setModelId('') // Reset model when provider changes
+                break
+            case 'modelId':
+                setModelId(value)
+                break
+            case 'temperature':
+                setTemperature(value)
+                break
+            case 'maxTokens':
+                setMaxTokens(value)
+                break
+            case 'topP':
+                setTopP(value)
+                break
+            case 'topK':
+                setTopK(value)
+                break
+            case 'systemPrompt':
+                setSystemPrompt(value)
+                break
+        }
+
+        // For existing agents, also sync to store (hot-reload for edit mode)
         if (agentId) {
-            switch (field) {
-                case 'name':
-                    updateAgent(agentId, { [field]: value })
-                    break
-                case 'description':
-                    updateAgent(agentId, { [field]: value })
-                    break
-                case 'providerId':
-                    updateAgent(agentId, { [field]: value, modelId: '' })
-                    break
-                case 'modelId':
-                    updateAgent(agentId, { [field]: value })
-                    break
+            if (field === 'providerId') {
+                updateAgent(agentId, { [field]: value, modelId: '' })
+            } else {
+                updateAgent(agentId, { [field]: value })
             }
         }
     }, [agentId, updateAgent])
@@ -358,33 +408,42 @@ export function AgentConfigDialog({
                                 description={description}
                                 providerId={providerId}
                                 modelId={modelId}
-                                agentId={agentId}
+                                agentId={agentId ?? undefined}
                                 errors={errors}
                                 onUpdateField={handleUpdateField}
                             />
 
-                            {/* P1-1: Use ApiKeyInputSection component */}
-                            <ApiKeyInputSection
-                                providerId={providerId}
-                                onUpdateField={handleUpdateField}
-                                errors={errors}
-                            />
+                            {/* API Key Section - Placeholder until proper hook integration */}
+                            <div className="space-y-2">
+                                <p className="text-sm text-muted-foreground">
+                                    {t('agents.config.apiKeyNote', 'API keys are managed in Provider Settings')}
+                                </p>
+                            </div>
                         </TabsContent>
 
                         <TabsContent value="workspace" className="mt-4 space-y-4">
-                            <WorkspaceToolPermissionsConfig
-                                workspaceBindings={workspaceBindings}
-                                onWorkspaceBindingsChange={setWorkspaceBindings}
-                                tools={tools}
-                                onToolsChange={setTools}
-                            />
+                            {agent ? (
+                                <WorkspaceToolPermissionsConfig
+                                    agent={agent}
+                                    onPermissionsChange={(toolId, workspaceType, isEnabled) => {
+                                        // Update tools state with new permission
+                                        setTools(prev => prev.map(t =>
+                                            t.toolId === toolId
+                                                ? { ...t, workspacePermissions: { ...t.workspacePermissions, [workspaceType]: isEnabled } }
+                                                : t
+                                        ))
+                                    }}
+                                />
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    <p>{t('agents.config.saveFirstForWorkspace', 'Save the agent first to configure workspace permissions')}</p>
+                                </div>
+                            )}
                         </TabsContent>
 
                         <TabsContent value="advanced" className="mt-4 space-y-4">
-                            <ToolTrustLevelManager
-                                tools={tools}
-                                onToolsChange={setTools}
-                            />
+                            {/* ToolTrustLevelManager manages its own state globally */}
+                            <ToolTrustLevelManager />
 
                             <div className="space-y-4">
                                 <Label>{t('agents.config.advancedSettings', 'Advanced Settings')}</Label>
