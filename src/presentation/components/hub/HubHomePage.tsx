@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
-  Folder,
   Plus,
   Terminal,
   Cpu,
@@ -23,95 +22,28 @@ import {
   updateProjectBindings,
   type ProjectMetadata
 } from '@/lib/workspace/project-store';
+import type { WorkspaceBindings } from '@/lib/workspace/project-store';
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
-import { EmptyState } from '@/presentation/components/ui/EmptyState';
-import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
-import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
-import { ProjectCard } from './ProjectCard';
-import type { WorkspaceBindings } from '@/lib/workspace/project-store';
 import { toast } from 'sonner';
 
-// --- Components ---
-
-const BootSequence = ({ onComplete }: { onComplete: () => void }) => {
-  const [lines, setLines] = useState<string[]>([]);
-  const bootLines = [
-    "BIOS CHECK... OK",
-    "LOADING KERNEL... OK",
-    "MOUNTING VIRTUAL FILESYSTEM...",
-    "INITIALIZING NEURAL INTERFACE...",
-    "ACCESS GRANTED."
-  ];
-
-  useEffect(() => {
-    let delay = 0;
-    bootLines.forEach((line, i) => {
-      delay += Math.random() * 300 + 100;
-      setTimeout(() => {
-        setLines(prev => [...prev, line]);
-        if (i === bootLines.length - 1) {
-          setTimeout(onComplete, 500);
-        }
-      }, delay);
-    });
-  }, []);
-
-  return (
-    <div className="fixed inset-0 bg-background z-50 flex items-start justify-start p-8 font-mono text-primary text-sm md:text-base">
-      <div className="space-y-1">
-        {lines.map((line, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="text-muted-foreground">{`> `}</span>
-            <span>{line}</span>
-          </div>
-        ))}
-        <div className="animate-pulse">_</div>
-      </div>
-    </div>
-  );
-};
+// Hub subcomponents
+import { BootSequence } from './BootSequence';
+import { HubHero } from './HubHero';
+import { RecentProjectsSection } from './RecentProjectsSection';
+import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // State management
   const [booting, setBooting] = useState(true);
   const [showContent, setShowContent] = useState(false);
-
-  // Workspace Binding Dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectMetadata | null>(null);
 
-  // -- Text Typing Effect --
-  const fullText = t('hub.welcome', 'INITIALIZING SYSTEM...');
-  const [typedText, setTypedText] = useState('');
-  const [cursorVisible, setCursorVisible] = useState(true);
-
-  useEffect(() => {
-    if (booting) return;
-
-    let index = 0;
-    const typeInterval = setInterval(() => {
-      setTypedText((prev) => {
-        if (index < fullText.length) {
-          index++;
-          return fullText.slice(0, index);
-        }
-        clearInterval(typeInterval);
-        return prev;
-      });
-    }, 40);
-
-    return () => clearInterval(typeInterval);
-  }, [fullText, booting]);
-
-  useEffect(() => {
-    const blinkInterval = setInterval(() => setCursorVisible(v => !v), 530);
-    return () => clearInterval(blinkInterval);
-  }, []);
-
-  // -- Data Fetching --
+  // Data fetching
   const projects = useLiveQuery(() => db.projects.toArray());
   const isLoading = projects === undefined;
 
@@ -122,7 +54,7 @@ export const HubHomePage: React.FC = () => {
         const timeB = b.lastOpened ? new Date(b.lastOpened).getTime() : 0;
         return timeB - timeA;
       })
-      .slice(0, 5);
+      .slice(0, 5) as unknown as ProjectMetadata[];
   }, [projects]);
 
   // -- Handlers --
@@ -162,18 +94,12 @@ export const HubHomePage: React.FC = () => {
     }
   };
 
-  const handleOpenRecentProject = async (projectId: string) => {
-    try {
-      // Find project from list
-      const project = (projects || []).find((p) => p.id === projectId);
-      if (!project) return;
+  const handleOpenRecentProject = (projectId: string) => {
+    const project = (projects || []).find(p => p.id === projectId);
+    if (!project) return;
 
-      // Open workspace binding dialog
-      setSelectedProject(project as unknown as ProjectMetadata);
-      setDialogOpen(true);
-    } catch (error) {
-      console.error('Failed to open recent project:', error);
-    }
+    setSelectedProject(project as unknown as ProjectMetadata);
+    setDialogOpen(true);
   };
 
   const handleWorkspaceBindingConfirm = async (
@@ -294,77 +220,21 @@ export const HubHomePage: React.FC = () => {
       showContent ? "opacity-100" : "opacity-0"
     )}>
 
-      {/* -- Hero Section -- */}
-      <section className="space-y-2 mb-4 pt-4 md:pt-0">
-        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-1">
-          <Terminal className="w-3 h-3" />
-          <span>{t('hub.subtitle', 'v2.5.0-BETA // READY FOR INPUT')}</span>
-        </div>
-        <h1 className="text-3xl md:text-5xl font-pixel text-primary tracking-tight h-auto min-h-[1.2em] flex flex-wrap items-center break-words">
-          {typedText}
-          <span className={cn("inline-block w-[0.6em] h-[1em] bg-primary ml-1", cursorVisible ? "opacity-100" : "opacity-0")} />
-        </h1>
-      </section>
+      {/* Hero Section */}
+      <HubHero />
 
-      {/* -- Main Grid -- */}
+      {/* Main Grid - Bento Cards */}
       <section>
         <BentoGrid cards={bentoCards} />
       </section>
 
-      {/* -- Recent Projects (File Directory Style) -- */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between border-b-2 border-border/50 pb-2">
-          <h2 className="text-xl font-pixel text-foreground flex items-center gap-2">
-            <Folder className="h-5 w-5 text-primary" />
-            {t('hub.recent.title', 'RECENT_DIRECTORIES')}
-          </h2>
-          <button
-            onClick={() => navigate({ to: '/workspace' })}
-            className="text-xs font-mono text-muted-foreground hover:text-primary hover:underline flex items-center gap-1 transition-colors"
-          >
-            {t('hub.actions.viewAll', 'VIEW_ALL >>')}
-          </button>
-        </div>
-
-        {isLoading ? (
-          <div className="space-y-2">
-            <SkeletonLoader variant="list" lines={3} />
-          </div>
-        ) : (!recentProjects || recentProjects.length === 0) ? (
-          <EmptyState
-            variant="no-projects"
-            message={t('hub.noProjects', 'No directories found in local storage.')}
-            action="create"
-            onAction={handleNewProject}
-          />
-        ) : (
-          <div className="border-2 border-border/60 bg-card/50 backdrop-blur-sm shadow-pixel">
-            {/* Header Row */}
-            <div className="grid grid-cols-12 gap-4 p-3 border-b-2 border-border/40 bg-muted/40 font-pixel text-xs text-muted-foreground uppercase tracking-widest">
-              <div className="col-span-8 md:col-span-5 pl-2">Name</div>
-              <div className="col-span-3 md:col-span-2 hidden md:block">{t('hub.recent.status', 'STATUS')}</div>
-              <div className="col-span-4 md:col-span-3 text-right">{t('hub.recent.lastMod', 'LAST_MOD')}</div>
-              <div className="col-span-2 md:col-span-2 text-right hidden md:block pr-2">{t('hub.recent.size', 'SIZE')}</div>
-            </div>
-
-            {/* Project Rows */}
-            <div className="divide-y-2 divide-border/20">
-              {recentProjects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onOpen={handleOpenRecentProject}
-                />
-              ))}
-            </div>
-
-            {/* Footer Row */}
-            <div className="bg-muted/40 p-2 font-mono text-[10px] text-muted-foreground text-center border-t-2 border-border/40">
-              Total Directories: {recentProjects.length}
-            </div>
-          </div>
-        )}
-      </section>
+      {/* Recent Projects Section */}
+      <RecentProjectsSection
+        recentProjects={recentProjects}
+        isLoading={isLoading}
+        onNewProject={handleNewProject}
+        onOpenProject={handleOpenRecentProject}
+      />
 
       {/* Workspace Binding Dialog */}
       {selectedProject && (
