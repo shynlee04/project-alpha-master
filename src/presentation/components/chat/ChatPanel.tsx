@@ -14,9 +14,9 @@ import { cn } from '@/lib/utils';
 import { ThreadsList } from './ThreadsList';
 import { ChatConversation } from './ChatConversation';
 import {
-    useThreadsStore,
+    useConversationStore as useThreadsStore,
     useActiveThread,
-} from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+} from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { useAgents } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/mocks/agents';

@@ -16,8 +16,8 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, MessageSquare } from 'lucide-react';
-import type { ThreadHierarchyNode } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
-import { useActiveThread } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import type { ThreadHierarchyNode } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ThreadFolderTreeProps {

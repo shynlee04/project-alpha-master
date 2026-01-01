@@ -15,7 +15,7 @@ import { memo } from 'react';
 import { MessageSquare, Trash2, Bot, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/presentation/components/ui/button';
-import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
+import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { useTranslation } from 'react-i18next';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 
