@@ -23,7 +23,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '../dexie-storage';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import type { RAGStoreState } from './rag-types';
 import { createRAGIndexSlice } from './rag-index-slice';
 import { createRAGSearchSlice } from './rag-search-slice';

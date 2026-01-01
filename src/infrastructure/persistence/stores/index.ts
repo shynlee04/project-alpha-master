@@ -98,10 +98,7 @@ export {
   type PendingToolApproval,
 } from './conversation/index';
 
-export {
-  useProviderStore,
-  type ProviderState
-} from './provider-store';
+// Note: useProviderStore is exported above from @/lib/state/provider-store (line 35)
 
 export {
   useKnowledgeStore,

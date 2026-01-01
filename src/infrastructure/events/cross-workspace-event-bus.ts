@@ -45,64 +45,35 @@ export class CrossWorkspaceEventBus {
   /**
    * Subscribe to provider configuration events
    *
-   * When provider changes, notify agent stores to update available models
+   * Ralph Loop Cycle 4: This method is obsolete.
+   * New cross-workspace events are emitted directly via:
+   * - crossWorkspaceEventBus.emitProviderConfigChange()
+   * - crossWorkspaceEventBus.emitModelsUpdated()
+   *
+   * Subscribe to these events using:
+   * - crossWorkspaceEventBus.onProviderConfigChange()
+   * - crossWorkspaceEventBus.onModelsUpdated()
    */
   private subscribeProviderEvents(): void {
-    // Provider key set → Fetch models
-    const unsubscribeKeySet = eventBus.on<{ providerId: string }>(
-      DomainEventType.PROVIDER_KEY_SET,
-      async ({ providerId }) => {
-        console.log(`[CrossWorkspaceEventBus] Provider key set: ${providerId}`);
+    // OBSOLETE: Ralph Loop Cycle 4 replaced this with direct event emission
+    // The new cross-workspace events don't use the old eventBus.on() pattern
+    // Provider config changes are now emitted from provider-store.ts and credential save flow
 
-        // Fetch models for provider
-        try {
-          await useProviderStore.getState().fetchModels(providerId);
-        } catch (error) {
-          console.error(`[CrossWorkspaceEventBus] Failed to fetch models for ${providerId}:`, error);
-        }
-      }
-    );
+    // Legacy event subscriptions (commented out - using non-existent event types)
+    // const unsubscribeKeySet = eventBus.on<{ providerId: string }>(
+    //   DomainEventType.PROVIDER_KEY_SET,
+    //   async ({ providerId }) => {
+    //     console.log(`[CrossWorkspaceEventBus] Provider key set: ${providerId}`);
+    //     try {
+    //       await useProviderStore.getState().fetchModels(providerId);
+    //     } catch (error) {
+    //       console.error(`[CrossWorkspaceEventBus] Failed to fetch models for ${providerId}:`, error);
+    //     }
+    //   }
+    // );
 
-    // Provider added → Notify all workspaces
-    const unsubscribeProviderAdded = eventBus.on<{ providerId: string }>(
-      DomainEventType.PROVIDER_ADDED,
-      ({ providerId }) => {
-        console.log(`[CrossWorkspaceEventBus] Provider added: ${providerId}`);
-        // Agent stores will reactively update via subscription
-      }
-    );
-
-    // Provider updated → Notify all workspaces
-    const unsubscribeProviderUpdated = eventBus.on<{ providerId: string }>(
-      DomainEventType.PROVIDER_UPDATED,
-      ({ providerId }) => {
-        console.log(`[CrossWorkspaceEventBus] Provider updated: ${providerId}`);
-      }
-    );
-
-    // Provider removed → Remove from agents
-    const unsubscribeProviderRemoved = eventBus.on<{ providerId: string }>(
-      DomainEventType.PROVIDER_REMOVED,
-      ({ providerId }) => {
-        console.log(`[CrossWorkspaceEventBus] Provider removed: ${providerId}`);
-
-        // Update all agents using this provider
-        const agentsStore = useAgentsStore.getState();
-        const agents = agentsStore.agents.filter(a => a.providerId === providerId);
-
-        for (const agent of agents) {
-          // Disable or reconfigure agents
-          console.warn(`[CrossWorkspaceEventBus] Agent ${agent.name} uses removed provider ${providerId}`);
-        }
-      }
-    );
-
-    this.unsubscribers.push(
-      unsubscribeKeySet,
-      unsubscribeProviderAdded,
-      unsubscribeProviderUpdated,
-      unsubscribeProviderRemoved
-    );
+    // Note: PROVIDER_ADDED, PROVIDER_UPDATED, PROVIDER_REMOVED don't exist in DomainEventType enum
+    // These subscriptions would cause TypeScript errors
   }
 
   /**
