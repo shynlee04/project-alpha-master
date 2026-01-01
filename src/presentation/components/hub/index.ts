@@ -7,6 +7,7 @@
  * @created 2025-12-26T12:50:00Z
  * @updated 2026-01-02T20:10:00+07:00 - Added BootSequence, HubHero, RecentProjectsSection
  * @updated 2026-01-02T21:30:00+07:00 - Added DeleteProjectDialog
+ * @updated 2026-01-02T23:00:00+07:00 - Refactored WorkspaceBindingDialog subcomponents
  */
 
 // Main hub components
@@ -31,13 +32,28 @@ export { ProjectCard } from './ProjectCard';
 export { ProjectActionsMenu } from './ProjectActionsMenu';
 export { ProjectMetadataDialog } from './ProjectMetadataDialog';
 export { DeleteProjectDialog } from './DeleteProjectDialog';
-export type { WorkspaceBindingDialogProps } from './WorkspaceBindingDialog';
+
+// WorkspaceBindingDialog subcomponents (refactored January 2026)
+export { WorkspaceBindingHeader } from './WorkspaceBindingHeader';
+export { WorkspaceCheckboxList } from './WorkspaceCheckboxList';
+export { WorkspaceCheckboxItem } from './WorkspaceCheckboxItem';
+export { InitialWorkspaceSelector } from './InitialWorkspaceSelector';
+export { WorkspaceBindingFooter } from './WorkspaceBindingFooter';
+export { useWorkspaceBindingState } from './useWorkspaceBindingState';
+
+// Type exports
+export type { WorkspaceBindingDialogProps, WorkspaceId, WorkspaceConfig } from './WorkspaceBindingDialog.types';
 export type { WorkspaceBadgeProps } from './WorkspaceBadge';
 export type { ProjectCardProps } from './ProjectCard';
 export type { ProjectActionsMenuProps } from './ProjectActionsMenu';
 export type { ProjectMetadataDialogProps, ProjectMetadata } from './ProjectMetadataDialog';
 export type { DeleteProjectDialogProps } from './DeleteProjectDialog';
+export type { WorkspaceBindingHeaderProps } from './WorkspaceBindingHeader';
+export type { WorkspaceCheckboxListProps } from './WorkspaceCheckboxList';
+export type { InitialWorkspaceSelectorProps } from './InitialWorkspaceSelector';
+export type { WorkspaceBindingFooterProps } from './WorkspaceBindingFooter';
+export type { UseWorkspaceBindingStateResult } from './useWorkspaceBindingState';
 
-// Re-export WorkspaceId from canonical location
-export type { WorkspaceId } from '@/lib/workspace';
+// Re-export WorkspaceId from canonical location (deprecated: use WorkspaceBindingDialog.types.ts)
+export type { WorkspaceId as WorkspaceIdLegacy } from '@/lib/workspace';
 
