@@ -19,7 +19,6 @@ import { useTranslation } from 'react-i18next'
 import {
   Settings,
   Check,
-  X,
   Info,
   Zap,
   Shield,
@@ -32,11 +31,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/presentation/components/ui/tooltip'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/presentation/components/ui/popover'
 import { Badge } from '@/presentation/components/ui/badge'
 import { UnifiedAgentSelector } from './UnifiedAgentSelector'
 import { AgentConfigDialog } from './AgentConfigDialog'
@@ -113,7 +107,6 @@ export function AgentManager({
 }: AgentManagerProps) {
   const { t } = useTranslation()
   const [configDialogOpen, setConfigDialogOpen] = useState(false)
-  const [statusPopoverOpen, setStatusPopoverOpen] = useState(false)
 
   // Get current agent info from UnifiedAgentSelector's store access
   // We'll use a ref to track the selected agent
@@ -141,6 +134,11 @@ export function AgentManager({
 
   // Quick config button handler
   const handleQuickConfig = useCallback(() => {
+    setConfigDialogOpen(true)
+  }, [])
+
+  // View agent details (opens config dialog with details tab)
+  const handleViewDetails = useCallback(() => {
     setConfigDialogOpen(true)
   }, [])
 
@@ -260,54 +258,26 @@ export function AgentManager({
           </TooltipProvider>
         )}
 
-        {/* Status Popover (full only) */}
-        {variant === 'full' && (
-          <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 w-7 p-0"
-                disabled={disabled}
-              >
-                <Info className="h-3.5 w-3.5" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72" align="end">
-              <div className="space-y-2">
-                <h4 className="font-medium text-sm">{selectedAgent.name}</h4>
-                <p className="text-xs text-muted-foreground">{selectedAgent.description}</p>
-
-                {selectedAgent.providerId && selectedAgent.modelId && (
-                  <div className="text-xs">
-                    <span className="font-medium">{t('agent.manager.provider', 'Provider')}:</span>{' '}
-                    {selectedAgent.providerId} / {selectedAgent.modelId}
-                  </div>
-                )}
-
-                <div className="flex flex-wrap gap-1 pt-2">
-                  {capabilities.hasTools && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Zap className="h-3 w-3 mr-1" />
-                      {t('agent.manager.tools', 'Tools')}
-                    </Badge>
-                  )}
-                  {capabilities.hasDeepThink && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Brain className="h-3 w-3 mr-1" />
-                      {t('agent.manager.deepThink', 'DeepThink')}
-                    </Badge>
-                  )}
-                  {capabilities.hasMemory && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Info className="h-3 w-3 mr-1" />
-                      {t('agent.manager.memory', 'Memory')}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+        {/* View Details Button (full variant only) */}
+        {variant === 'full' && selectedAgent && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  onClick={handleViewDetails}
+                  disabled={disabled}
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t('agent.manager.viewDetails', 'View agent details and configuration')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
     )

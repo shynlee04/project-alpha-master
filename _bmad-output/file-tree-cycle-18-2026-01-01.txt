@@ -1,0 +1,1483 @@
+/Users/apple/Documents/coding-projects/project-alpha-master
+|-- AGENTS.md
+|-- CLAUDE.md
+|-- CLAUDE.md.update
+|-- DEPLOYMENT.md
+|-- KSI_MODULE_API_KEY_SETUP.md
+|-- README.md
+|-- _bmad
+|   |-- _config
+|   |   |-- agent-manifest.csv
+|   |   |-- agents
+|   |   |-- custom
+|   |   |-- files-manifest.csv
+|   |   |-- ides
+|   |   |-- manifest.yaml
+|   |   |-- task-manifest.csv
+|   |   |-- tool-manifest.csv
+|   |   `-- workflow-manifest.csv
+|   |-- _memory
+|   |   |-- config.yaml
+|   |   `-- storyteller-sidecar
+|   |-- bmb
+|   |   |-- README.md
+|   |   |-- agents
+|   |   |-- config.yaml
+|   |   |-- docs
+|   |   |-- reference
+|   |   |-- workflows
+|   |   `-- workflows-legacy
+|   |-- bmm
+|   |   |-- README.md
+|   |   |-- README.md.bak
+|   |   |-- agents
+|   |   |-- config.yaml
+|   |   |-- data
+|   |   |-- docs
+|   |   |-- teams
+|   |   |-- testarch
+|   |   `-- workflows
+|   |-- cis
+|   |   |-- agents
+|   |   |-- config.yaml
+|   |   |-- docs
+|   |   |-- readme.md.bak
+|   |   |-- teams
+|   |   `-- workflows
+|   |-- core
+|   |   |-- agents
+|   |   |-- config.yaml
+|   |   |-- resources
+|   |   |-- tasks
+|   |   |-- tools
+|   |   `-- workflows
+|   `-- custom
+|       |-- config.yaml
+|       `-- src
+|-- _bmad-output
+|   |-- Coordinate_CodeBlock_Component_2025_22_12.md
+|   |-- FINAL-PROJECT-COMPLETION-2025-12-31.md
+|   |-- GOVERNANCE-INDEX.md
+|   |-- GRAND-WHOLE-PRODUCTION-READY-VALIDATION.md
+|   |-- PRODUCTION-READINESS-GAP-ANALYSIS.md
+|   |-- WHOLE-PROJECT-COMPLETION-2025-12-31.md
+|   |-- WHOLE-PROJECT-COMPLETION-CERTIFICATION-2025-12-31.md
+|   |-- agent-instructions
+|   |   |-- dependency-libraries-usage.md
+|   |   |-- project-fugu-integration-guide.md
+|   |   `-- roo-code-agent-patterns.md
+|   |-- ai-sdk-agents-design
+|   |   |-- ai-sdk-agent-patterns-tools.md
+|   |   |-- bmm-bundles
+|   |   `-- tools-concepts-roo-code.md
+|   |-- analysis
+|   |   |-- course-corrections-p0-critical-2025-12-23.md
+|   |   |-- epic-28-holistic-integration-analysis.md
+|   |   |-- node-module-sync-2025-12-21.md
+|   |   |-- post-mvp-0-research-gaps.md
+|   |   |-- product-brief-via-gent-2025-12-10-architectural-slice.md
+|   |   |-- research
+|   |   |-- retrospectives
+|   |   |-- spike-to-cluster-mapping.md
+|   |   |-- spikes
+|   |   |-- stack-enhancement-report-2025-12-21.md
+|   |   |-- tech-debt-architecture-gaps-report-2025-12-21-corrected-updates.md
+|   |   |-- tech-debt-architecture-gaps-report-2025-12-21.md
+|   |   `-- tech-debt-epic-27-28-analysis-2025-12-23.md
+|   |-- api-contracts.md
+|   |-- arc-module-gap-analysis-2025-12-31.md
+|   |-- architectural-analysis-viagent-2026-01-01.md
+|   |-- architectural-consolidation-analysis-2025-12-31.md
+|   |-- architectural-gap-analysis-2025-12-31.md
+|   |-- architectural-refactoring-summary-2025-12-31.md
+|   |-- architectural-remediation-progress-2025-12-31.md
+|   |-- architectural-specification-v3-2026-01-01.md
+|   |-- architectural-stabilization-proposal-v1-2025-12-21.md
+|   |-- architecture
+|   |   |-- agent-architecture-guidelines-2025-12-24.md
+|   |   |-- agent-tool-architecture-epic-6-prep.md
+|   |   |-- agent-tool-facade-layer-epic-12.md
+|   |   |-- architecture-completion-summary.md
+|   |   |-- architecture-validation-results.md
+|   |   |-- architecture.md
+|   |   |-- canvas-node-types-enhancement-2025-12-31.md
+|   |   |-- code-quality-standards-course-correction-v3.md
+|   |   |-- code-quality-standards-mandatory-course-correction-v3.md
+|   |   |-- core-architectural-decisions.md
+|   |   |-- data-and-contracts-2025-12-22-1105.md
+|   |   |-- epic-3-validated-implementation-patterns.md
+|   |   |-- event-bus-architecture-epic-10.md
+|   |   |-- file-tools-edge-case-analysis-2025-12-25.md
+|   |   |-- flows-and-workflows-2025-12-22-1121.md
+|   |   |-- homepage-layout-redesign-2025-12-27.md
+|   |   |-- implementation-patterns-consistency-rules.md
+|   |   |-- index.md
+|   |   |-- lessons-learned-retrospectives-synthesis.md
+|   |   |-- mcp-research-protocol-mandatory.md
+|   |   |-- multi-root-workspace-roadmap-epic-9-post-mvp.md
+|   |   |-- phase2-architectural-slices-completion-2025-12-22-1132.md
+|   |   |-- project-context-analysis.md
+|   |   |-- project-fugu-enhancement-layer-epic-45.md
+|   |   |-- project-structure-boundaries.md
+|   |   |-- related-documents.md
+|   |   |-- starter-template-evaluation.md
+|   |   |-- tech-context-2025-12-22-1127.md
+|   |   |-- terminal-integration-epic-13-course-correction-v5.md
+|   |   |-- via-gent-foundational-architectural-slice-project-alpha.md
+|   |   |-- workspace-context-layer-epic-3-hotfix.md
+|   |   `-- workspaceorchestrator-layer.md
+|   |-- architecture-analysis
+|   |   |-- agent-store-architecture-comprehensive-analysis-2026-01-01.md
+|   |   |-- codebase-metrics-summary-2026-01-01.md
+|   |   |-- complete-system-architecture-analysis-2026-01-01.md
+|   |   |-- comprehensive-codebase-analysis-2026-01-01.md
+|   |   |-- comprehensive-system-analysis-iteration-49-2026-01-01.md
+|   |   |-- epic-ac-1.2-duplicate-stores-remediation-plan-2026-01-01.md
+|   |   |-- provider-store-analysis-summary-2026-01-01.md
+|   |   |-- provider-store-architecture-analysis-2026-01-01.md
+|   |   |-- provider-store-dependency-diagram-2026-01-01.md
+|   |   |-- provider-store-migration-quick-reference-2026-01-01.md
+|   |   `-- provider-store-validation-checklist-2026-01-01.md
+|   |-- architecture-tree-structure-2026-01-01.txt
+|   |-- architecture.md
+|   |-- archive
+|   |   |-- 2025-12-28-pre-pivot
+|   |   |-- architecture.md
+|   |   |-- epics.md
+|   |   `-- sprint-status-legacy-viagent-2025-12-27.yaml
+|   |-- autonomous-cycle-2-final-completion-2026-01-01.md
+|   |-- autonomous-cycle-2-phase-3-completion-2026-01-01.md
+|   |-- autonomous-cycle-2-phase-4-completion-2026-01-01.md
+|   |-- autonomous-cycle-2-phase-5-completion-2026-01-01.md
+|   |-- backend-frontend-integration-gap-analysis-2025-12-30.md
+|   |-- bento-grid-implementation-2025-12-26.md
+|   |-- bmb-creations
+|   |   |-- arc-gap-remediation
+|   |   |-- arc-module
+|   |   |-- ksi-module
+|   |   `-- notes-remediation-module
+|   |-- bmm-epics.md
+|   |-- bmm-workflow-status
+|   |   `-- autonomous-cycle-1-completion-2026-01-01.md
+|   |-- bmm-workflow-status-consolidated.yaml
+|   |-- bmm-workflow-status-original-backup.yaml
+|   |-- bmm-workflow-status.yaml
+|   |-- bmm-workflows
+|   |   |-- correct-course-12-level-validation-2025-12-30.md
+|   |   |-- correct-course-2025-12-29-sweep.md
+|   |   |-- correct-course-2025-12-29.md
+|   |   `-- correct-course-build-error-2025-12-30.md
+|   |-- bug-fixes
+|   |   `-- mobile-error-messages-fix-2025-12-28.md
+|   |-- build-error-2.log
+|   |-- build-error-node.log
+|   |-- build-error.log
+|   |-- career
+|   |   `-- vietnam-job-market-analysis-2025-12-30.md
+|   |-- cis
+|   |   `-- knowledge-synthesis-station-concept-2025-12-26.md
+|   |-- code-reviews
+|   |   `-- STORY-2-4-Review.md
+|   |-- codebase-analysis
+|   |   `-- agents-store-validation-2026-01-01.md
+|   |-- codebase-analysis-report-2026-01-01.md
+|   |-- codebase-tree-structure-2026-01-01.txt
+|   |-- complete-new-approach
+|   |   |-- prd-draft.md
+|   |   `-- spec-draft.md
+|   |-- component-inventory.md
+|   |-- component-library-specifications-2025-12-25.md
+|   |-- components
+|   |   |-- button-design-2025-12-25.md
+|   |   `-- input-design-2025-12-25.md
+|   |-- comprehensive-architecture-synthesis-2025-12-31.md
+|   |-- comprehensive-codebase-architecture-analysis-2026-01-01.md
+|   |-- consolidation
+|   |   |-- dead-artifacts-inventory.md
+|   |   |-- epic-overlap-analysis.md
+|   |   |-- final-consolidation-report.md
+|   |   `-- user-journey-definition.md
+|   |-- context
+|   |   `-- 2025-12-31-002-context-validation.md
+|   |-- coordination
+|   |   `-- team-coordination-recommendations-2025-12-29.md
+|   |-- correct-course
+|   |   `-- epic-27-duplicate-sync-store-fix-2025-12-30.md
+|   |-- correct-course-plan-comprehensive-2026-01-01.md
+|   |-- course-correction
+|   |   `-- navigation-layout-vision-alignment-2025-12-27.md
+|   |-- course-correction-epic-23-ux-modernization-2025-12-21.md
+|   |-- course-correction-report-2025-12-31.md
+|   |-- course-corrections
+|   |   |-- agentic-loop-missing-2025-12-25.md
+|   |   |-- comprehensive-investigation-consolidation-2025-12-27.md
+|   |   |-- list-files-root-path-fix-2025-12-25.md
+|   |   |-- mvp-3-agentic-execution-loop-2025-12-25.md
+|   |   |-- mvp-3-path-handling-bugs-2025-12-25.md
+|   |   |-- mvp-3-usememo-deps-bug-2025-12-25.md
+|   |   |-- openrouter-401-fix-2025-12-25.md
+|   |   |-- project-management-system-enhancement-2025-12-31.md
+|   |   |-- read-file-and-agentic-execution-analysis-2025-12-25.md
+|   |   `-- systematic-course-correction-2025-12-26.md
+|   |-- crisis-response
+|   |   `-- crisis-resolution-summary-2025-12-26.md
+|   |-- critical-incidents
+|   |   `-- root-cause-analysis-e2e-validation-failure-2025-12-24.md
+|   |-- custom-assets-2025-12-26.md
+|   |-- cw-03-implementation-complete.md
+|   |-- cycle-reports
+|   |   |-- phase-2-3a-agent-selector-fix-completion-2026-01-01.md
+|   |   `-- ralph-loop-cycle-17-phase-4-completion-2026-01-01.md
+|   |-- data-models.md
+|   |-- deferred-tasks
+|   |   |-- cw-01-file-sync-service-epic.md
+|   |   |-- cw-02-rag-integration-epic.md
+|   |   `-- cw-03-unified-chatpanel-epic.md
+|   |-- deployment-log
+|   |   `-- cloudflare-21-dec-2025.md
+|   |-- design
+|   |   `-- ux-ui-navigation-overhaul-spec-2025-12-27.md
+|   |-- design-system-8bit-2025-12-25.md
+|   |-- dev-artifacts
+|   |   `-- 38-10-verification-2025-12-31.md
+|   |-- development-guide.md
+|   |-- docs
+|   |   |-- 2025-12-28
+|   |   |-- 2026-01-01
+|   |   |-- E2E_VALIDATION_CHECKLIST.md
+|   |   |-- architecture-analysis-2025-12-28.md
+|   |   |-- development-patterns-conventions-2025-12-28.md
+|   |   |-- index.md
+|   |   |-- project-overview-2025-12-28.md
+|   |   |-- source-tree-analysis-2025-12-28.md
+|   |   `-- tech-stack-documentation-2025-12-28.md
+|   |-- documentation
+|   |   |-- development-workflow-2025-12-27.md
+|   |   |-- index.md
+|   |   |-- internationalization-setup-2025-12-27.md
+|   |   |-- project-architecture-analysis-2025-12-27.md
+|   |   `-- testing-infrastructure-2025-12-27.md
+|   |-- documentation-consolidation-validation.md
+|   |-- e2e-screenshots-2025-12-26
+|   |-- e2e-verification
+|   |   |-- CHECKLIST-TEMPLATE.md
+|   |   |-- MVP-E2E-verification-guide-2025-12-27.md
+|   |   |-- course-correction-2025-12-27
+|   |   |-- mvp-1
+|   |   `-- mvp-2
+|   |-- e2e-verification-results-2025-12-26.md
+|   |-- epic-10-retrospective-2025-12-31.md
+|   |-- epic-23-P1.3-information-architecture-audit-2025-12-25-2102.md
+|   |-- epic-23-P1.5-navigation-audit-2025-12-25-2158.md
+|   |-- epic-23-p1.7-responsive-design-audit-2025-12-25.md
+|   |-- epic-23-p1.8-accessibility-audit-2025-12-25.md
+|   |-- epic-23-p1.9-error-handling-audit-2025-12-25.md
+|   |-- epic-24-retrospective-2025-12-31.md
+|   |-- epic-26-retrospective-2025-12-31.md
+|   |-- epic-29-retrospective-2025-12-31.md
+|   |-- epic-31-complete-2025-12-31.md
+|   |-- epic-31-retrospective-2025-12-31.md
+|   |-- epic-5-retrospective-2025-12-31.md
+|   |-- epic-9-retrospective-2025-12-31.md
+|   |-- epic-retrospectives
+|   |   |-- README.md
+|   |   |-- epic-10-retrospective-2025-12-30.md
+|   |   |-- epic-24-retrospective-2025-12-31.md
+|   |   |-- epic-3-retrospective-2025-12-29.md
+|   |   |-- epic-31-retrospective-2025-12-31.md
+|   |   |-- epic-4-retrospective-2025-12-29.md
+|   |   |-- epic-5-retrospective-2025-12-29.md
+|   |   |-- epic-5-retrospective-2025-12-31.md
+|   |   |-- epic-7-retrospective-2025-12-30.md
+|   |   |-- epic-7-retrospective-2025-12-31.md
+|   |   |-- epic-8-retrospective-2025-12-30.md
+|   |   `-- epic-9-retrospective-2025-12-31.md
+|   |-- epics
+|   |   |-- epic-1-project-foundation-ide-shell.md
+|   |   |-- epic-10-sync-architecture-refactor.md
+|   |   |-- epic-11-code-splitting-module-refactor.md
+|   |   |-- epic-12-agent-tool-interface-layer.md
+|   |   |-- epic-13-terminal-sync-stability.md
+|   |   |-- epic-14-ide-theming-accessibility.md
+|   |   |-- epic-15-performance-optimization.md
+|   |   |-- epic-16-test-framework-quality-gates.md
+|   |   |-- epic-17-open-source-documentation.md
+|   |   |-- epic-18-static-deployment-pwa.md
+|   |   |-- epic-19-client-side-security.md
+|   |   |-- epic-2-webcontainers-integration.md
+|   |   |-- epic-20-advanced-ide-features.md
+|   |   |-- epic-2025-12-31-001-sprint-change-proposal-compliance.md
+|   |   |-- epic-21-client-side-localization-envi.md
+|   |   |-- epic-22-production-hardening-new-course-correction-v6.md
+|   |   |-- epic-23-uxui-modernization-new-course-correction-v6.md
+|   |   |-- epic-24-smart-dependency-sync-new-2025-12-21.md
+|   |   |-- epic-25-ai-foundation-sprint-new-2025-12-21.md
+|   |   |-- epic-26-agent-management-dashboard-new-2025-12-21.md
+|   |   |-- epic-27-state-architecture-stabilization.md
+|   |   |-- epic-28-ux-brand-identity-design-system.md
+|   |   |-- epic-29-about-me-redesign.md
+|   |   |-- epic-29-agentic-execution-loop.md
+|   |   |-- epic-3-file-system-access-layer-reopened.md
+|   |   |-- epic-3-file-system-access-layer.md
+|   |   |-- epic-30-personal-portfolio.md
+|   |   |-- epic-33-desktop-local-filesystem-sync.md
+|   |   |-- epic-4-ide-components.md
+|   |   |-- epic-45-project-fugu-enhancements-new.md
+|   |   |-- epic-5-persistence-layer.md
+|   |   |-- epic-6-ai-agent-integration.md
+|   |   |-- epic-7-extended-git-integration-enhancements.md
+|   |   |-- epic-7-git-integration.md
+|   |   |-- epic-8-validation-polish.md
+|   |   |-- epic-9-multi-root-workspace-support-post-mvp.md
+|   |   |-- epic-list.md
+|   |   |-- epic-summary-updates.md
+|   |   |-- epic-wb-workspace-binding-project-persistence.md
+|   |   |-- index.md
+|   |   |-- multi-root-workspace-architecture-reference.md
+|   |   |-- overview.md
+|   |   |-- recommended-implementation-order-updated-2025-12-20.md
+|   |   |-- recommended-implementation-order-updated-2025-12-21.md
+|   |   `-- requirements-inventory.md
+|   |-- epics-latest.md
+|   |-- epics.md
+|   |-- epics_backup.md
+|   |-- execution-plan-phase-0-2025-12-31.md
+|   |-- file-structure-tree-2026-01-01.txt
+|   |-- file-tree-2026-01-01.txt
+|   |-- file-tree-cycle-18-2026-01-01.txt
+|   |-- file-tree-iteration-13-2026-01-01.txt
+|   |-- file-tree-iteration-14-2026-01-01.txt
+|   |-- final-session-report-epic-31-complete-2025-12-31.md
+|   |-- fixes
+|   |   |-- agent-state-fix-2025-01-01.md
+|   |   |-- build-fix-badge-component-2-2025-01-01.md
+|   |   |-- build-fix-badge-component-2025-01-01.md
+|   |   |-- build-fix-progress-component-2025-01-01.md
+|   |   `-- build-fix-rag-import-2025-01-01.md
+|   |-- frontend-fixes-summary-2025-12-27.md
+|   |-- gap-correction-report-cycle-11-2026-01-01.md
+|   |-- governance
+|   |   |-- GOVERNANCE-INDEX-2025-12-26.md
+|   |   |-- HANDOFF-INDEX-2025-12-26.md
+|   |   |-- HANDOFF-PROTOCOL-2025-12-26.md
+|   |   |-- STATUS-SYNC-PROCEDURE-2025-12-26.md
+|   |   |-- handoff-mcp-validation-2025-12-26.md
+|   |   |-- mcp-guidelines-by-mode-2025-12-26.md
+|   |   |-- mcp-research-enforcement-checklist-2025-12-26.md
+|   |   |-- mcp-research-template-2025-12-26.md
+|   |   |-- mvp-traceability-matrix-2025-12-26.md
+|   |   |-- status-correction-log-2025-12-26.md
+|   |   `-- status-update-procedure-2025-12-26.md
+|   |-- governance-audit
+|   |   |-- governance-audit-executive-summary-2025-12-26.md
+|   |   |-- governance-audit-part1-executive-summary-2025-12-26.md
+|   |   |-- governance-audit-part2-ai-agent-system-2025-12-26.md
+|   |   |-- governance-audit-part3-components-architecture-2025-12-26.md
+|   |   |-- governance-audit-part4-configuration-2025-12-26.md
+|   |   |-- governance-audit-part5-documentation-2025-12-26.md
+|   |   |-- governance-audit-part6-remediation-2025-12-26.md
+|   |   |-- governance-audit-part7-governance-infrastructure-2025-12-26.md
+|   |   |-- governance-audit-part8-mcp-research-protocol-2025-12-26.md
+|   |   |-- governance-audit-report-2025-12-26.md
+|   |   `-- remediation-plan-2025-12-26.md
+|   |-- guidelines
+|   |   |-- mcp-research-protocol-2025-12-24.md
+|   |   `-- mcp-servers.json
+|   |-- handoff-validation
+|   |   `-- HANDOFF-VALIDATION-CHECKLIST.md
+|   |-- handoffs
+|   |   |-- analyst-evaluation-framework-2025-12-31.md
+|   |   |-- analyst-to-master-integration-guide-2025-12-31.md
+|   |   |-- architect-multimodal-2025-12-31.md
+|   |   |-- architect-phase2-completion-2025-12-22-1157.md
+|   |   |-- architect-to-bmad-master-ux-ui-overhaul-2025-12-27.md
+|   |   |-- architect-to-dev-canvas-nodes-2025-12-31.md
+|   |   |-- architect-to-master-homepage-layout-2025-12-27.md
+|   |   |-- architect-to-master-multimodal-2025-12-31.md
+|   |   |-- architect-to-pm-epic-38-2025-12-31.md
+|   |   |-- architect-to-pm-governance-fixes-2025-12-26.md
+|   |   |-- bmad-bmm-architect-epic-38-tech-spec-2025-12-31.md
+|   |   |-- bmad-bmm-dev-32-2-hybrid-search-2025-12-31.md
+|   |   |-- bmad-bmm-dev-32-4-rag-query-optimization-2025-12-31.md
+|   |   |-- bmad-bmm-dev-epic-38-story-1-2025-12-31.md
+|   |   |-- bmad-bmm-dev-to-code-reviewer-32-4-rag-query-optimization-2025-12-31.md
+|   |   |-- bmad-bmm-pm-epic-32-sprint-execution-2025-12-31.md
+|   |   |-- bmad-bmm-pm-knowledge-synthesis-sprint-planning-2025-12-31.md
+|   |   |-- bmad-bmm-sm-story-32-2-2025-12-31.md
+|   |   |-- bmad-master-32-3-semantic-citation-system-handoff-2025-12-31.md
+|   |   |-- bmad-master-epic23-p1.13-hub-based-navigation-2025-12-26.md
+|   |   |-- bmad-master-to-architect-homepage-layout-redesign-2025-12-27.md
+|   |   |-- bmad-master-to-dev-2025-12-20-1631.md
+|   |   |-- bmad-master-to-dev-23-3-2025-12-20-1934.md
+|   |   |-- bmad-master-to-dev-23-3-2025-12-20-1945.md
+|   |   |-- bmad-master-to-dev-28-22-2025-12-22-1741.md
+|   |   |-- bmad-master-to-dev-28-24-2025-12-24.md
+|   |   |-- bmad-master-to-dev-epic25-2025-12-22-1200.md
+|   |   |-- bmad-master-to-dev-mvp-3-tool-execution-files-2025-12-25.md
+|   |   |-- bmad-master-to-dev-tool-wiring-implementation-2025-12-26.md
+|   |   |-- bmad-master-to-pm-requirements-rescoping-2025-12-24.md
+|   |   |-- bmad-master-to-pm-sprint-planning-mvp-2025-12-24.md
+|   |   |-- bmad-master-to-sm-pm-emergency-course-correction-2025-12-24.md
+|   |   |-- code-review-25-6-2025-12-24.md
+|   |   |-- code-reviewer-2025-12-20-1615.md
+|   |   |-- completion-story-32-3-2025-12-31.md
+|   |   |-- dev-2025-12-20-1445.md
+|   |   |-- dev-32-3-semantic-citation-system-2025-12-31.md
+|   |   |-- dev-completion-2025-12-20-1603.md
+|   |   |-- dev-completion-tool-wiring-2025-12-26.md
+|   |   |-- dev-epic-2-story-0-2025-12-28.md
+|   |   |-- dev-epic-23-story-23-6-2025-12-21-1615.md
+|   |   |-- dev-epic-23-story-23-6-completion-2025-12-21-1656.md
+|   |   |-- dev-epic-27-story-27-1x-2025-12-21.md
+|   |   |-- dev-epic-4-story-1-2025-12-28.md
+|   |   |-- dev-integration-guide-2025-12-31.md
+|   |   |-- dev-to-code-reviewer-2025-12-20-1534.md
+|   |   |-- dev-to-code-reviewer-2025-12-20-1755.md
+|   |   |-- dev-to-code-reviewer-2025-12-21-0302.md
+|   |   |-- dev-to-reviewer-29-2-2025-12-30.md
+|   |   |-- dev-to-reviewer-32-2-2025-12-31.md
+|   |   |-- dev-to-reviewer-32-3-2025-12-31-0945.md
+|   |   |-- dev-to-reviewer-32-3-2025-12-31-094500.md
+|   |   |-- dev-to-reviewer-32-3-2025-12-31-v2.md
+|   |   |-- dev-to-reviewer-32-3-2025-12-31.md
+|   |   |-- dev-to-reviewer-38-11-2025-12-31.md
+|   |   |-- dev-to-reviewer-P1.4-2025-12-25T21-50.md
+|   |   |-- dev-to-reviewer-epic-32-story-32-1-2025-12-31.md
+|   |   |-- dev-to-reviewer-epic-4-story-1-2025-12-28.md
+|   |   |-- epic-27-integration-impact-report-2025-12-21.md
+|   |   |-- handoff-29-2-hero-section-2025-12-30.md
+|   |   |-- handoff-bmad-bmm-architect-knowledge-synthesis-platform-2025-12-31.md
+|   |   |-- master-to-analyst-integration-guide-2025-12-31.md
+|   |   |-- master-to-dev-layout-4-2025-12-27.md
+|   |   |-- master-to-dev-layout-5-2025-12-27.md
+|   |   |-- master-to-dev-layout-6-2025-12-27.md
+|   |   |-- master-to-dev-layout-7-2025-12-27.md
+|   |   |-- master-to-sm-story-38-11-2025-12-31.md
+|   |   |-- pm-epic-32-sprint-planning-2025-12-31.md
+|   |   |-- pm-to-dev-story-38-10-2025-12-31.md
+|   |   |-- reviewer-approval-32-3-v2-2025-12-31.md
+|   |   |-- standards-consolidation-handoff-2025-12-31.md
+|   |   |-- team-coordination-anchor-2025-12-29.md
+|   |   |-- tech-writer-artifacts-2-and-4-2025-12-31.md
+|   |   |-- tech-writer-pedagogical-framework-2025-12-31.md
+|   |   |-- ux-designer-2025-12-20-1332.md
+|   |   |-- ux-designer-theming-continuation-2025-12-21.md
+|   |   `-- validation-framework-enhancement-completion-2025-12-29.md
+|   |-- implementation
+|   |   |-- ralph-loop-cycle-4-phase-1-4-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-4-phase-5-6-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-4-phase-5-6-plan-2026-01-01.md
+|   |   |-- ralph-loop-cycle-4-priority-1-consolidation-plan-2026-01-01.md
+|   |   |-- ralph-loop-cycle-5-completion-2026-01-01.md
+|   |   `-- ralph-loop-cycle-6-completion-2026-01-01.md
+|   |-- implementation-artifacts
+|   |   `-- sprint-change-proposal-fix-resizable-2025-12-31.md
+|   |-- implementation-complete
+|   |   `-- single-bounded-store-complete-2026-01-01.md
+|   |-- implementation-plans
+|   |   |-- phase-1-executive-summary-2026-01-01.md
+|   |   |-- phase-1-foundation-stabilization-2026-01-01.md
+|   |   |-- single-bounded-store-implementation-2026-01-01.md
+|   |   `-- workspace-permission-integration-2026-01-01.md
+|   |-- implementation-progress
+|   |   `-- single-bounded-store-progress-2026-01-01.md
+|   |-- index.md
+|   |-- information-architecture-2025-12-25.md
+|   |-- investigation
+|   |   |-- agentic-two-layer-architecture-2025-12-27.md
+|   |   |-- agentic-workflow-bugs-2025-12-27.md
+|   |   |-- agentic-workflow-gap-analysis-2025-12-26.md
+|   |   |-- governance-failure-root-causes-2025-12-26.md
+|   |   |-- navigation-routing-investigation-2025-12-27.md
+|   |   |-- rag-multimodal-current-state-analysis-2025-12-27.md
+|   |   `-- tech-stack-knowledge-synthesis-2025-12-26.md
+|   |-- knowledge
+|   |   `-- validated-agentic-loop-knowledge-2025-12-25.md
+|   |-- knowledge-synthesis-platform
+|   |   `-- knowledge-synthesis-platform-tech-spec-2025-12-31.md
+|   |-- marketing-content
+|   |   `-- blog-series
+|   |-- marketing-plan
+|   |   |-- marketing-focus.md
+|   |   `-- via-gent-marketing-strategy-vietnam-2025-12-24.md
+|   |-- mcp-research
+|   |   `-- MCP-RESEARCH-TEMPLATE.md
+|   |-- new-ADR-total-client-side
+|   |   |-- facing-issues
+|   |   |-- high-level-architecture-proposal.md
+|   |   |-- prd-proposal.md
+|   |   `-- validation-and-recommendation.md
+|   |-- p0-1-provider-deletion-warning-complete-2026-01-01.md
+|   |-- p0-3-model-loading-spinner-implementation-2026-01-01.md
+|   |-- p0-error-fixes-summary-2026-01-01.md
+|   |-- p0-fixes
+|   |   `-- p0-fixes-implementation-2025-12-26.md
+|   |-- p0-ui-components-implementation-plan-2026-01-01.md
+|   |-- p1-fixes
+|   |   `-- p1-fixes-implementation-2025-12-26.md
+|   |-- p1-governance-fixes-completed-2025-12-26.md
+|   |-- p2-fixes
+|   |   |-- consolidation-mapping-2025-12-26.md
+|   |   |-- naming-convention-guidelines-2025-12-26.md
+|   |   |-- p2-fixes-implementation-2025-12-26.md
+|   |   `-- persistence-strategy-2025-12-26.md
+|   |-- p2-minor-improvements-analysis-2025-12-26.md
+|   |-- p2-minor-improvements-implementation-2025-12-26.md
+|   |-- parallel-execution-strategy.md
+|   |-- perplexity-advisor-system-instruction.md
+|   |-- phase-1-completion-report-2026-01-01.md
+|   |-- phase-2-completion-report-2026-01-01.md
+|   |-- phase-2b-completion-report-2026-01-01.md
+|   |-- phase-6-1-workspace-ui-integration-complete-2026-01-01.md
+|   |-- phase-6-2-test-plan-2026-01-01.md
+|   |-- prd-v2-knowledge-synthesis-station.md
+|   |-- prd.md
+|   |-- production-readiness-certification-2025-12-31.md
+|   |-- project-context.md
+|   |-- project-overview.md
+|   |-- project-planning-artifacts
+|   |   |-- architecture-enhanced-2025-12-29.md
+|   |   |-- architecture.md
+|   |   |-- complete-system-integration-roadmap-2026-01-01.md
+|   |   |-- comprehensive-architecture-refinement-plan-2025-12-31.md
+|   |   |-- cross-workspace-file-sync-gap-analysis-2026-01-01.md
+|   |   |-- epics-enhanced-2025-12-29.md
+|   |   |-- notes-remediation-sprint-change-proposal-2025-12-31.md
+|   |   |-- parallel-development-dual-agents-mode.md
+|   |   |-- prd-enhanced-2025-12-29.md
+|   |   |-- prd.md
+|   |   |-- project-context.md
+|   |   |-- research
+|   |   |-- roadmap-execution-tracker-2026-01-01.md
+|   |   |-- sprint-change-proposal-2025-12-31-v2.1-CORRECTED.md
+|   |   |-- sprint-change-proposal-2025-12-31.md
+|   |   |-- sprint-change-proposal-arc-module-gaps-2025-12-31.md
+|   |   |-- sprint-change-proposal-deployment-fix-2025-12-31.md
+|   |   |-- sprint-change-proposal-ksi-validation-2026-01-01.md
+|   |   |-- sprint-change-proposal-nrm-course-correction-2026-01-01.md
+|   |   |-- sprint-change-proposal-project-workspace-binding-2026-01-01.md
+|   |   |-- sprint-change-proposal-resizable-panels-2025-12-31.md
+|   |   |-- ux-design-specification-enhanced-2025-12-29.md
+|   |   `-- ux-design-specification.md
+|   |-- project-scan-report.json
+|   |-- prompts
+|   |   |-- 2025-12-24
+|   |   |-- 2025-12-25
+|   |   |-- 2025-12-28
+|   |   |-- 2025-12-29
+|   |   |-- 2025-12-30
+|   |   |-- 2025-12-31
+|   |   |-- ai-agent-readiness-for-e2e-analysis-feedback-2025-12-24.md
+|   |   |-- ai-agent-readiness-for-e2e-review.md
+|   |   |-- dev-tasks.md
+|   |   |-- epic-28-dev-cycle.md
+|   |   |-- epic-28-suggestions.md
+|   |   `-- foundational-ai-agent-dev-validation.md
+|   |-- proposal
+|   |   |-- project-fugu.md
+|   |   |-- roo-code-custom-instruction.md
+|   |   |-- roo-code-modes-agents.md
+|   |   |-- roo-code-samples.md
+|   |   |-- roo-code-slashes-commands.md
+|   |   `-- roo-code-tools.md
+|   |-- provider-slice-split-12-level-validation-2026-01-01.md
+|   |-- ralph-loop-comprehensive-validation-2025-12-31.md
+|   |-- ralph-loop-cycle-11-completion-summary-2026-01-01.md
+|   |-- ralph-loop-cycle-12-epic-ac-1.1-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-12-epic-ac-1.2-phase-1-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-12-epic-ac-1.2-phase-2-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-12-iteration-49-comprehensive-analysis-2026-01-01.md
+|   |-- ralph-loop-cycle-13-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-13-three-systems-validation-2026-01-01.md
+|   |-- ralph-loop-cycle-13-ui-component-gaps-2026-01-01.md
+|   |-- ralph-loop-cycle-14-agents-store-refactoring-plan-2026-01-01.md
+|   |-- ralph-loop-cycle-14-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-14-final-summary-2026-01-01.md
+|   |-- ralph-loop-cycle-14-provider-split-success-2026-01-01.md
+|   |-- ralph-loop-cycle-14-provider-store-validation-2026-01-01.md
+|   |-- ralph-loop-cycle-14-session-summary-2026-01-01.md
+|   |-- ralph-loop-cycle-14-story-ac-1-2-ac-1-3-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-14-system-wide-summary-2026-01-01.md
+|   |-- ralph-loop-cycle-14-zustand-patterns-validation-2026-01-01.md
+|   |-- ralph-loop-cycle-15-correct-course-2026-01-01.md
+|   |-- ralph-loop-cycle-15-epic-ac-1-2-provider-store-consolidation-2026-01-01.md
+|   |-- ralph-loop-cycle-15-session-summary-2026-01-01.md
+|   |-- ralph-loop-cycle-16-completion-report-2026-01-01.md
+|   |-- ralph-loop-cycle-16-epic-ac-1-5-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-16-integration-test-plan-2026-01-01.md
+|   |-- ralph-loop-cycle-16-migration-guide-2026-01-01.md
+|   |-- ralph-loop-cycle-16-session-summary-2026-01-01.md
+|   |-- ralph-loop-cycle-17-component-refactoring-plan-2026-01-01.md
+|   |-- ralph-loop-cycle-17-final-session-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-17-iteration-2-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-17-iteration-3-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-17-p0-fixes-complete-2026-01-01.md
+|   |-- ralph-loop-cycle-17-phase-1-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-17-phase-2-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-17-phase-2-plan-2026-01-01.md
+|   |-- ralph-loop-cycle-17-phase-3-completion-2026-01-01.md
+|   |-- ralph-loop-cycle-17-session-status-2026-01-01.md
+|   |-- ralph-loop-cycle-17-session-summary-2026-01-01.md
+|   |-- ralph-loop-epic-31-creation-2025-12-31.md
+|   |-- ralph-loop-gap-analysis-2025-12-31.md
+|   |-- ralph-loop-implementation-plan-2025-12-31.md
+|   |-- ralph-loop-progress-stories-10-2-10-3-7-6-complete-2025-12-31.md
+|   |-- ralph-loop-progress-story-26-5-complete-2025-12-31.md
+|   |-- ralph-loop-validation-report-2025-12-29-final.md
+|   |-- ralph-loop-validation-report-2025-12-29.md
+|   |-- remediation
+|   |   |-- frontend-remediation-2025-12-27.md
+|   |   |-- mvp-3-e2e-verification-checklist-2025-12-26.md
+|   |   |-- post-mvp-3-remediation-plan-2025-12-26.md
+|   |   |-- remediation-execution-roadmap-2025-12-26.md
+|   |   |-- remediation-plan-2025-12-24-v1.md
+|   |   |-- remediation-plan-2025-12-24-v2.md
+|   |   |-- remediation-plan-2025-12-24.md
+|   |   `-- remediation-prioritization-matrix-2025-12-26.md
+|   |-- repomix-via-gent-complete-2026-01-01.xml
+|   |-- requirements-rescoped-e2e-integration-2025-12-24.md
+|   |-- research
+|   |   |-- 20205-12-25
+|   |   |-- advanced-ide-spike-tanstack-ai-tools-application-2025-12-10.md
+|   |   |-- agentic-coding-deep-research-2025-12-27.md
+|   |   |-- agentic-execution-loop-deep-research-2025-12-25.md
+|   |   |-- client-side-git-architecture.md
+|   |   |-- coding-agent-architecture-analysis.md
+|   |   |-- coding-agent-comprehensive-design.md
+|   |   |-- coding-agent-knowledge-synthesis-v2-2025-12-24.md
+|   |   |-- context-engineering-multi-agent-orchestration-2025-12-27.md
+|   |   |-- ddd-eda-patterns-2025-12-09.md
+|   |   |-- deep-research-tool-design-2025-12-27.md
+|   |   |-- epic-26-knowledge-base-research-2025-12-30.md
+|   |   |-- indexeddb-persistence-patterns-2025-12-10.md
+|   |   |-- knowledge-synthesis-tanstack-ai.md
+|   |   |-- llm-provider-configuration-research-2025-12-27.md
+|   |   |-- mobile-file-access-research-2025-12-28.md
+|   |   |-- roo-code-synthesis-2025-12-25.md
+|   |   |-- tanstack-ai-agentic-cycle-2025-12-10.md
+|   |   |-- tanstack-ai-orchestration-2025-12-09.md
+|   |   |-- tanstack-ai-patterns-synthesized-2025-12-27.md
+|   |   |-- tanstack-ai-streaming-2025-12-10.md
+|   |   |-- tanstack-ai-tools-2025-12-10.md
+|   |   |-- tanstack-ai-usechat-2025-12-10.md
+|   |   |-- tanstack-router-search-params-2025-12-10.md
+|   |   |-- tanstack-start-patterns-2025-12-09.md
+|   |   |-- webcontainer-local-fs-sync-architecture.md
+|   |   |-- webcontainers-fs-patterns-2025-12-09.md
+|   |   `-- webcontainers-terminal-patterns-2025-12-10.md
+|   |-- research-artifacts
+|   |   |-- agent-interaction-protocols-2025-12-31.md
+|   |   |-- implementation-playbook-2025-12-31.md
+|   |   |-- integration-guide-2025-12-31.md
+|   |   |-- knowledge-synthesis-platform-2025-12-31
+|   |   |-- ksi-validation
+|   |   |-- multimodal-processing-specification-2025-12-31.md
+|   |   |-- pedagogical-framework-design-2025-12-31.md
+|   |   |-- rag-pipeline-optimization-report-2025-12-31.md
+|   |   `-- system-architecture-specification-2025-12-31.md
+|   |-- research-epic-22-tech-stack.md
+|   |-- research-report.md
+|   |-- research-synthesis-ai-agent-patterns-2025-12-24.md
+|   |-- retrospectives
+|   |   `-- EPIC-2-RETRO.md
+|   |-- reviews
+|   |   |-- agent-schema-code-review-2025-12-31.md
+|   |   `-- story-ac-02-p0-validation-code-review.md
+|   |-- setting-for-minimax.md
+|   |-- shadcn-ui-mcp-server-guide.md
+|   |-- source-tree-analysis.md
+|   |-- source-tree-structure-2026-01-01.txt
+|   |-- sprint-artifacts
+|   |   |-- 1-1-responsive-breakpoint-foundation-context.xml
+|   |   |-- 1-1-responsive-breakpoint-foundation.md
+|   |   |-- 1-2-dark-light-theme-system-context.xml
+|   |   |-- 1-2-dark-light-theme-system.md
+|   |   |-- 1-3-mobile-demo-mode-context.xml
+|   |   |-- 1-3-mobile-demo-mode.md
+|   |   |-- 1-4-accessibility-foundation-context.xml
+|   |   |-- 1-4-accessibility-foundation.md
+|   |   |-- 10-1-live-api-websocket-context.xml
+|   |   |-- 10-1-live-api-websocket.md
+|   |   |-- 10-2-multimodal-source-vision.md
+|   |   |-- 10-3-audio-overview-generator.md
+|   |   |-- 12-1-create-agentfiletools-facade-context.xml
+|   |   |-- 12-1-create-agentfiletools-facade.md
+|   |   |-- 12-1b-add-concurrency-control-context.xml
+|   |   |-- 12-1b-add-concurrency-control.md
+|   |   |-- 12-2-create-agentterminaltools-facade-context.xml
+|   |   |-- 12-2-create-agentterminaltools-facade.md
+|   |   |-- 12-5-wire-facades-to-tanstack-ai-tools-context.xml
+|   |   |-- 12-5-wire-facades-to-tanstack-ai-tools.md
+|   |   |-- 13-1-fix-terminal-working-directory-context.xml
+|   |   |-- 13-1-fix-terminal-working-directory.md
+|   |   |-- 13-2-fix-auto-sync-on-project-load-context.xml
+|   |   |-- 13-2-fix-auto-sync-on-project-load.md
+|   |   |-- 13-3-add-sync-progress-indicator-context.xml
+|   |   |-- 13-3-add-sync-progress-indicator.md
+|   |   |-- 13-4-preserve-file-tree-state-context.xml
+|   |   |-- 13-4-preserve-file-tree-state.md
+|   |   |-- 13-5-improve-permission-restoration-context.xml
+|   |   |-- 13-5-improve-permission-restoration.md
+|   |   |-- 13-6-fix-preview-in-new-tab-context.xml
+|   |   |-- 13-6-fix-preview-in-new-tab.md
+|   |   |-- 2-0-credential-vault-implementation-context.xml
+|   |   |-- 2-0-credential-vault-implementation.md
+|   |   |-- 2-1-zustand-dexie-state-migration-context.xml
+|   |   |-- 2-1-zustand-dexie-state-migration.md
+|   |   |-- 2-2-agent-crud-operations-context.xml
+|   |   |-- 2-2-agent-crud-operations.md
+|   |   |-- 2-3-streaming-chat-tool-approval-context.xml
+|   |   |-- 2-3-streaming-chat-tool-approval.md
+|   |   |-- 2-4-conversation-persistence-context.xml
+|   |   |-- 2-4-conversation-persistence.md
+|   |   |-- 21-1-locale-aware-routing-and-html-lang-context.xml
+|   |   |-- 21-1-locale-aware-routing-and-html-lang.md
+|   |   |-- 21-3-language-switcher-and-persistence-context.xml
+|   |   |-- 21-3-language-switcher-and-persistence.md
+|   |   |-- 21-5-ui-migration-wave-2-ide-surfaces-context.xml
+|   |   |-- 21-5-ui-migration-wave-2-ide-surfaces.md
+|   |   |-- 21-8-complete-localization-coverage.md
+|   |   |-- 22-1-implement-security-headers-context.xml
+|   |   |-- 22-1-implement-security-headers.md
+|   |   |-- 22-2-create-cicd-pipeline-context.xml
+|   |   |-- 22-2-create-cicd-pipeline.md
+|   |   |-- 22-3-add-integration-tests-context.xml
+|   |   |-- 22-3-add-integration-tests.md
+|   |   |-- 22-4-configure-error-monitoring-context.xml
+|   |   |-- 22-4-configure-error-monitoring.md
+|   |   |-- 22-5-create-deployment-docs-context.xml
+|   |   |-- 22-5-create-deployment-docs.md
+|   |   |-- 22-6-establish-performance-benchmarks.md
+|   |   |-- 22-7-enable-typescript-strict.md
+|   |   |-- 22-7-fix-cloudflare-deployment.md
+|   |   |-- 22-8-add-eslint-prettier.md
+|   |   |-- 23-1-install-tailwindcss-4-context.xml
+|   |   |-- 23-1-install-tailwindcss-4.md
+|   |   |-- 23-2-initialize-shadcnui-context.xml
+|   |   |-- 23-2-initialize-shadcnui.md
+|   |   |-- 23-3-migrate-layout-components-context.xml
+|   |   |-- 23-3-migrate-layout-components.md
+|   |   |-- 23-4-migrate-ide-panel-components-context.xml
+|   |   |-- 23-4-migrate-ide-panel-components.md
+|   |   |-- 23-5-implement-theme-toggle-context.xml
+|   |   |-- 23-5-implement-theme-toggle.md
+|   |   |-- 24-1-incremental-sync-metadata-cache-context.xml
+|   |   |-- 24-1-incremental-sync-metadata-cache.md
+|   |   |-- 24-2-fsa-handle-persistence-context.xml
+|   |   |-- 24-2-fsa-handle-persistence.md
+|   |   |-- 24-3-conversation-history-auto-restore-context.xml
+|   |   |-- 24-3-conversation-history-auto-restore.md
+|   |   |-- 24-4-tool-execution-context-persistence-context.xml
+|   |   |-- 24-4-tool-execution-context-persistence.md
+|   |   |-- 24-5-session-state-snapshot.md
+|   |   |-- 25-0-create-provideradapterfactory-context.xml
+|   |   |-- 25-0-create-provideradapterfactory.md
+|   |   |-- 25-1-tanstack-ai-integration-setup-context.xml
+|   |   |-- 25-1-tanstack-ai-integration-setup.md
+|   |   |-- 25-2-implement-file-tools-context.xml
+|   |   |-- 25-2-implement-file-tools.md
+|   |   |-- 25-3-implement-terminal-tools-context.xml
+|   |   |-- 25-3-implement-terminal-tools.md
+|   |   |-- 25-4-wire-tool-execution-to-ui-context.xml
+|   |   |-- 25-4-wire-tool-execution-to-ui.md
+|   |   |-- 25-5-implement-approval-flow-context.xml
+|   |   |-- 25-5-implement-approval-flow.md
+|   |   |-- 25-6-wire-agent-ui-to-providers-context.xml
+|   |   |-- 25-6-wire-agent-ui-to-providers.md
+|   |   |-- 25-R1-integrate-useagentchat-to-chatpanel-context.xml
+|   |   |-- 25-R1-integrate-useagentchat-to-chatpanel.md
+|   |   |-- 27-1-migrate-state-zustand-dexie-context.xml
+|   |   |-- 27-1-migrate-state-zustand-dexie.md
+|   |   |-- 27-1b-component-migration-zustand-dexie-context.xml
+|   |   |-- 27-1b-component-migration-zustand-dexie.md
+|   |   |-- 27-1c-persistence-migration-dexie-context.xml
+|   |   |-- 27-1c-persistence-migration-dexie.md
+|   |   |-- 27-2-event-bus-integration-context.xml
+|   |   |-- 27-2-event-bus-integration.md
+|   |   |-- 27-5a-refactor-idelayout-context.xml
+|   |   |-- 27-5a-refactor-idelayout.md
+|   |   |-- 27-I-complete-state-integration-context.xml
+|   |   |-- 27-I-complete-state-integration.md
+|   |   |-- 28-1-override-design-tokens.md
+|   |   |-- 28-13-full-ui-integration-audit.md
+|   |   |-- 28-14-wire-icon-sidebar.md
+|   |   |-- 28-16-agent-config-flow-context.xml
+|   |   |-- 28-16-agent-config-flow.md
+|   |   |-- 28-18-statusbar-connection-indicators-context.xml
+|   |   |-- 28-18-statusbar-connection-indicators.md
+|   |   |-- 28-19-chat-tool-call-badge-context.xml
+|   |   |-- 28-19-chat-tool-call-badge.md
+|   |   |-- 28-2-configure-8bit-typography.md
+|   |   |-- 28-20-chat-code-block-with-actions-context.xml
+|   |   |-- 28-20-chat-code-block-with-actions.md
+|   |   |-- 28-21-diff-preview-component-context.xml
+|   |   |-- 28-21-diff-preview-component.md
+|   |   |-- 28-22-approval-overlay-component-context.xml
+|   |   |-- 28-22-approval-overlay-component.md
+|   |   |-- 28-23-streaming-message-container-context.xml
+|   |   |-- 28-23-streaming-message-container.md
+|   |   |-- 28-24-filetree-event-subscriptions-context.xml
+|   |   |-- 28-24-filetree-event-subscriptions.md
+|   |   |-- 28-25-monaco-event-subscriptions-context.xml
+|   |   |-- 28-25-monaco-event-subscriptions.md
+|   |   |-- 28-26-terminal-event-subscriptions.md
+|   |   |-- 3-1-fsa-permission-lifecycle.md
+|   |   |-- 3-2-webcontainer-boot.md
+|   |   |-- 3-3-dual-write-sync.md
+|   |   |-- 3-4-terminal-integration.md
+|   |   |-- 38-1-reverse-sync-infrastructure-context.xml
+|   |   |-- 38-1-reverse-sync-infrastructure.md
+|   |   |-- 38-10-state-management-cleanup-context.xml
+|   |   |-- 38-10-state-management-cleanup.md
+|   |   |-- 38-11-sync-event-bus-implementation-context.xml
+|   |   |-- 38-11-sync-event-bus-implementation.md
+|   |   |-- 4-1-system-prompt-composer-context.xml
+|   |   |-- 4-1-system-prompt-composer.md
+|   |   |-- 4-3-tool-permissions-context.xml
+|   |   |-- 4-3-tool-permissions.md
+|   |   |-- 4-4-tool-error-handling.md
+|   |   |-- 5-1-sync-queue-visualizer.md
+|   |   |-- 5-2-webcontainer-crash-recovery.md
+|   |   |-- 5-3-performance-telemetry.md
+|   |   |-- 5-4-robust-state-hydration.md
+|   |   |-- 6-1-source-import-pipeline-context.xml
+|   |   |-- 6-1-source-import-pipeline.md
+|   |   |-- 6-2-source-card-ui-context.xml
+|   |   |-- 6-2-source-card-ui.md
+|   |   |-- 6-3-source-management.md
+|   |   |-- 6-4-source-metadata-extraction-context.xml
+|   |   |-- 6-4-source-metadata-extraction.md
+|   |   |-- 7-1-orama-index-management.md
+|   |   |-- 7-2-document-chunking-context.xml
+|   |   |-- 7-2-document-chunking.md
+|   |   |-- 7-3-embedding-service-context.xml
+|   |   |-- 7-3-embedding-service.md
+|   |   |-- 7-4-hybrid-retrieval-context.xml
+|   |   |-- 7-4-hybrid-retrieval.md
+|   |   |-- 7-5-rag-chat-integration-context.xml
+|   |   |-- 7-5-rag-chat-integration.md
+|   |   |-- 7-6-deep-think-synthesis.md
+|   |   |-- 8-1-react-flow-canvas-setup-context.xml
+|   |   |-- 8-1-react-flow-canvas-setup.md
+|   |   |-- 8-2-source-node-creation-context.xml
+|   |   |-- 8-2-source-node-creation.md
+|   |   |-- 8-3-concept-node-creation-context.xml
+|   |   |-- 8-3-concept-node-creation.md
+|   |   |-- 8-4-connection-lines-context.xml
+|   |   |-- 8-4-connection-lines.md
+|   |   |-- 8-5-canvas-persistence-context.xml
+|   |   |-- 8-5-canvas-persistence.md
+|   |   |-- 9-1-flashcard-generator-context.xml
+|   |   |-- 9-1-flashcard-generator.md
+|   |   |-- 9-2-quiz-generator-context.xml
+|   |   |-- 9-2-quiz-generator.md
+|   |   |-- 9-3-flashcard-study-interface-context.xml
+|   |   |-- 9-3-flashcard-study-interface.md
+|   |   |-- 9-4-quiz-taking-interface-context.xml
+|   |   |-- 9-4-quiz-taking-interface.md
+|   |   |-- AI-25-1-migrate-provider-config-context.xml
+|   |   |-- AI-25-1-migrate-provider-config.md
+|   |   |-- AI-25-2-complete-crud-provider-configs-context.xml
+|   |   |-- AI-25-2-complete-crud-provider-configs.md
+|   |   |-- AI-25-3-hot-load-config-changes-context.xml
+|   |   |-- AI-25-3-hot-load-config-changes.md
+|   |   |-- EPIC-2-RETRO.md
+|   |   |-- MRT-4-filetree-mobile-adaptation-context.xml
+|   |   |-- MRT-4-filetree-mobile-adaptation.md
+|   |   |-- MRT-5-monaco-mobile-optimization.md
+|   |   |-- MVP-1-E2E-agent-config-verification-context.xml
+|   |   |-- MVP-1-E2E-agent-config-verification.md
+|   |   |-- MVP-2-E2E-chat-interface-verification-context.xml
+|   |   |-- MVP-2-E2E-chat-interface-verification.md
+|   |   |-- MVP-E2E-verification-checklist-2025-12-27.md
+|   |   |-- NR-01-wire-ai-service.md
+|   |   |-- P0-store-duplication-crisis-technical-debt-2026-01-01.md
+|   |   |-- WB-8.3-cross-workspace-event-system-implementation-2026-01-01.md
+|   |   |-- WB-PR-1-architectural-fix-plan-2026-01-01.md
+|   |   |-- WB-PR-1-completion-summary-2026-01-01.md
+|   |   |-- WB-PR-1-hot-reload-bug-report-2026-01-01.md
+|   |   |-- WB-PR-1-state-consolidation-p0-3-2026-01-01.md
+|   |   |-- WB-PR-2-completion-summary-2026-01-01.md
+|   |   |-- agent-config-consolidation-plan-2026-01-01.md
+|   |   |-- agent-config-validation-cycle12-2026-01-01.md
+|   |   |-- agent-configuration-system-analysis-2026-01-01.md
+|   |   |-- agentconfig-dialog-refactoring-plan-2026-01-01.md
+|   |   |-- architectural-consolidation-phase-0-context.xml
+|   |   |-- architectural-gap-validation-2026-01-01.md
+|   |   |-- canvas-store-consolidation-plan-2026-01-01.md
+|   |   |-- centralized-systems-architecture-analysis-2026-01-01.md
+|   |   |-- centralized-systems-architecture-diagram-2026-01-01.md
+|   |   |-- centralized-systems-comprehensive-analysis-iteration-10-2026-01-01.md
+|   |   |-- conversation-store-consolidation-2026-01-01.md
+|   |   |-- course-correction-deliverables-2025-12-27.md
+|   |   |-- course-correction-mfa-2025-12-28.md
+|   |   |-- cycle-12-iteration-2-summary-2026-01-01.md
+|   |   |-- cycle-12-iteration-3-summary-2026-01-01.md
+|   |   |-- cycle-12-session-summary-2026-01-01.md
+|   |   |-- epic-1-retro-2025-12-28.md
+|   |   |-- epic-1-retrospective.md
+|   |   |-- epic-10-retrospective.md
+|   |   |-- epic-13-retrospective.md
+|   |   |-- epic-2-retrospective.md
+|   |   |-- epic-22-retrospective.md
+|   |   |-- epic-25-11-06-research-analysis-request.md
+|   |   |-- epic-25-12-06-multilingual-ai-agent-support.md
+|   |   |-- epic-25-12-06-openaicompatible-support.md
+|   |   |-- epic-25-12-28-master-implementation-plan.md
+|   |   |-- epic-25-12-28-readiness-analysis.md
+|   |   |-- epic-25-retrospective.md
+|   |   |-- epic-3-code-review.md
+|   |   |-- epic-3-retrospective.md
+|   |   |-- epic-32-story-32-1-orama-wasm-vector-store-enhancement-context.xml
+|   |   |-- epic-32-story-32-1-orama-wasm-vector-store-enhancement.md
+|   |   |-- epic-38-sprint-plan-2025-12-31.md
+|   |   |-- epic-4-retrospective.md
+|   |   |-- epic-5-retrospective.md
+|   |   |-- epic-6-retrospective-2025-12-30.md
+|   |   |-- epic-6-retrospective.md
+|   |   |-- epic-9-retrospective.md
+|   |   |-- epic-AI-25-retro-phase-1.md
+|   |   |-- epic-MVP-ai-agent.md
+|   |   |-- epic-wb-1-completion-report-2026-01-01.md
+|   |   |-- epic-wb-1-context.xml
+|   |   |-- epic-wb-1-project-metadata-enhancement.md
+|   |   |-- epic-wb-2-completion-report-2026-01-01.md
+|   |   |-- epic-wb-implementation-decision-2026-01-01.md
+|   |   |-- epic-wb-story-3-completion-report-2026-01-01.md
+|   |   |-- epic-wb-story-4-completion-report-2026-01-01.md
+|   |   |-- epic-wb-story-5-completion-report-2026-01-01.md
+|   |   |-- epic-wb-story-6-completion-report-2026-01-01.md
+|   |   |-- epic-wb-story-7-completion-report-2026-01-01.md
+|   |   |-- epics-and-stories-completion-audit-2025-12-22.md
+|   |   |-- full-project-audit-185-2025-12-31.md
+|   |   |-- homepage-layout-redesign-sprint-plan-2025-12-27.md
+|   |   |-- iteration-17-executive-summary-2026-01-01.md
+|   |   |-- knowledge-synthesis-sprint-planning-2025-12-31.md
+|   |   |-- llm-provider-system-analysis-2026-01-01.md
+|   |   |-- llm-provider-vault-validation-cycle12-2026-01-01.md
+|   |   |-- mvp-1-agent-configuration-context.xml
+|   |   |-- mvp-1-agent-configuration.md
+|   |   |-- mvp-2-chat-interface-streaming-context.xml
+|   |   |-- mvp-2-chat-interface-streaming.md
+|   |   |-- mvp-3-agentic-loop-basic-iteration-2025-12-25.md
+|   |   |-- mvp-3-tool-execution-files-context.xml
+|   |   |-- mvp-3-tool-execution-files-implementation-2025-12-25.md
+|   |   |-- mvp-3-tool-execution-files.md
+|   |   |-- mvp-4-tool-execution-terminal-context.xml
+|   |   |-- mvp-4-tool-execution-terminal.md
+|   |   |-- mvp-risk-register-2025-12-24.md
+|   |   |-- mvp-sprint-plan-2025-12-24.md
+|   |   |-- mvp-story-validation-2025-12-24.md
+|   |   |-- p0-critical-fixes-summary-2026-01-01.md
+|   |   |-- p0-governance-fixes-2025-12-26.md
+|   |   |-- phase-2-comprehensive-validation-sweep-2025-12-30.md
+|   |   |-- production-readiness-epic-13-report.md
+|   |   |-- provider-config-consolidation-phase-1-complete-2026-01-01.md
+|   |   |-- provider-config-consolidation-plan-2026-01-01.md
+|   |   |-- provider-import-migration-complete-2026-01-01.md
+|   |   |-- rag-store-consolidation-2026-01-01.md
+|   |   |-- ralph-loop-consolidation-plan-2026-01-01.md
+|   |   |-- ralph-loop-course-correction-179-2025-12-31.md
+|   |   |-- ralph-loop-cycle-10-summary-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-10-summary-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-11-typescript-fixes-summary-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-12-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-14-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-15-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-16-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-17-completion-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-iteration-17-final-report-2026-01-01.md
+|   |   |-- ralph-loop-cycle-12-validation-2026-01-01.md
+|   |   |-- ralph-loop-cycle-2-phase-2-complete-2026-01-01.md
+|   |   |-- ralph-loop-cycle-7-summary-2026-01-01.md
+|   |   |-- ralph-loop-cycle-8-summary-2026-01-01.md
+|   |   |-- ralph-loop-cycle-9-summary-2026-01-01.md
+|   |   |-- ralph-loop-documentation-sync-180-2025-12-31.md
+|   |   |-- ralph-loop-documentation-updates-complete-184-2025-12-31.md
+|   |   |-- ralph-loop-final-certification-182-2025-12-31.md
+|   |   |-- ralph-loop-iteration-176-2025-12-31.md
+|   |   |-- ralph-loop-phase-1-complete-2026-01-01.md
+|   |   |-- ralph-loop-phase2-code-verification-2025-12-30.md
+|   |   |-- ralph-loop-phase2-final-2025-12-30.md
+|   |   |-- ralph-loop-phase2-fresh-sweep-2025-12-30.md
+|   |   |-- ralph-loop-phase2-validation-2025-12-30.md
+|   |   |-- ralph-loop-revalidation-2025-12-29.md
+|   |   |-- ralph-loop-story-validation-177-2025-12-31.md
+|   |   |-- rc-001-hook-violation-fix-2025-12-29.md
+|   |   |-- rc-002-file-size-validation-2025-12-29.md
+|   |   |-- rc-003-routing-fixes-2025-12-30.md
+|   |   |-- rc-004-routing-iteration-2-2025-12-30.md
+|   |   |-- rc-005-i18n-fixes-2025-12-30.md
+|   |   |-- rc-006-dev-vs-prod-2025-12-30.md
+|   |   |-- rc-007-root-cause-resolved-2025-12-31.md
+|   |   |-- rc-final-status-2025-12-30.md
+|   |   |-- refactored-sprint-plan-2025-12-27.md
+|   |   |-- refinement-sprint-knowledge-hub-2025-12-30.md
+|   |   |-- sprint-status-enhanced-2025-12-29.yaml
+|   |   |-- sprint-status.yaml
+|   |   |-- stories
+|   |   |-- story-1.1-agent-slice-context-2026-01-01.md
+|   |   |-- story-1.2-provider-slice-context-2026-01-01.md
+|   |   |-- story-1.3-event-bus-context-2026-01-01.md
+|   |   |-- story-10-2-complete-2025-12-31.md
+|   |   |-- story-10-2-multimodal-source-vision.md
+|   |   |-- story-10-3-audio-overview-generator.md
+|   |   |-- story-10-3-complete-2025-12-31.md
+|   |   |-- story-26-1-integrated-blocknote-editor-context.xml
+|   |   |-- story-26-1-integrated-blocknote-editor.md
+|   |   |-- story-26-2-client-side-embedding-pipeline-context.xml
+|   |   |-- story-26-2-client-side-embedding-pipeline.md
+|   |   |-- story-26-3-ask-my-notes-rag-tool-context.xml
+|   |   |-- story-26-3-ask-my-notes-rag-tool.md
+|   |   |-- story-26-4-inline-ai-magic-context.xml
+|   |   |-- story-26-4-inline-ai-magic.md
+|   |   |-- story-26-5-complete-2025-12-31.md
+|   |   |-- story-26-5-note-hierarchy-sidebar.md
+|   |   |-- story-29-1-about-me-context-validation.md
+|   |   |-- story-29-2-hero-section-design.md
+|   |   |-- story-31-4-tool-timeout.md
+|   |   |-- story-32-2-code-review-report.md
+|   |   |-- story-32-2-hybrid-search-engine-context.xml
+|   |   |-- story-32-2-hybrid-search-engine.md
+|   |   |-- story-32-3-semantic-citation-system-context.xml
+|   |   |-- story-32-3-semantic-citation-system.md
+|   |   |-- story-32-4-rag-query-optimization-context.xml
+|   |   |-- story-32-4-rag-query-optimization.md
+|   |   |-- story-7-6-deep-think-synthesis.md
+|   |   |-- story-ac01-handoff-2025-12-31.md
+|   |   |-- story-wb-1-test-specification.md
+|   |   |-- story-wb-1-test-summary.md
+|   |   |-- tech-spec-branding-overhaul-context.xml
+|   |   |-- tech-spec-branding-overhaul.md
+|   |   |-- tech-spec-mvp-completion-2025-12-27.md
+|   |   |-- tool-permission-implementation-plan-2026-01-01.md
+|   |   |-- tool-permission-refactoring-plan-2026-01-01.md
+|   |   |-- tool-permission-testing-checklist-2026-01-01.md
+|   |   |-- tool-permissions-system-analysis-2026-01-01.md
+|   |   |-- tool-permissions-validation-cycle12-2026-01-01.md
+|   |   |-- tools-permissions-persistence-refactor-plan-2026-01-01.md
+|   |   |-- typescript-fix-progress-cycle-12-2026-01-01.md
+|   |   |-- ui-ux-overhaul-plan-2025-12-27.md
+|   |   `-- workflow.yaml
+|   |-- sprint-change-proposal-2025-12-25.md
+|   |-- sprint-change-proposal-2025-12-27.md
+|   |-- sprint-change-proposal-2025-12-28.md
+|   |-- sprint-change-proposal-2025-12-29-v2.md
+|   |-- sprint-change-proposal-2025-12-29.md
+|   |-- sprint-change-proposal-2025-12-31.md
+|   |-- sprint-change-proposal-v5-2025-12-20.md
+|   |-- sprint-change-proposal-v6-2025-12-20.md
+|   |-- sprint-change-proposal-v7-2025-12-21.md
+|   |-- sprint-change-proposal-v8-2025-12-24.md
+|   |-- state-management-audit-2025-12-24.md
+|   |-- state-management-audit-p1.10-2025-12-26.md
+|   |-- state-management.md
+|   |-- store-audit-report-2026-01-01.md
+|   |-- store-consolidation-map-2026-01-01.md
+|   |-- store-dependency-graph-2026-01-01.md
+|   |-- stories
+|   |   |-- 2025-12-31-002-comprehensive-story-agent-architecture.md
+|   |   |-- 2025-12-31-002-story-foreign-key-validation.md
+|   |   |-- 2025-12-31-003-story-ac-01-provider-config-foundation.md
+|   |   |-- agent-schema-alignment-context-validation.md
+|   |   |-- agent-schema-alignment-context.md
+|   |   |-- agent-schema-alignment-implementation-summary.md
+|   |   |-- agent-schema-alignment-story.md
+|   |   |-- agent-schema-alignment-validation.md
+|   |   |-- agent-schema-course-correction-2025-12-31.md
+|   |   |-- agent-schema-loop-completion-2025-12-31.md
+|   |   |-- agent-schema-manual-testing-protocol-2025-12-31.md
+|   |   |-- agent-schema-story-final-status-2025-12-31.md
+|   |   |-- story-1.1-component-migration-completion-2025-12-31.md
+|   |   `-- story-ac-02-p0-completion-report.md
+|   |-- story-24-5-complete-2025-12-31.md
+|   |-- story-29-3-complete-2025-12-31.md
+|   |-- story-29-4-complete-2025-12-31.md
+|   |-- story-29-5-complete-2025-12-31.md
+|   |-- story-29-6-complete-2025-12-31.md
+|   |-- story-31-1-complete-2025-12-31.md
+|   |-- story-31-2-complete-2025-12-31.md
+|   |-- story-31-3-complete-2025-12-31.md
+|   |-- story-6-3-status.md
+|   |-- story-9-5-code-review-2025-12-30.md
+|   |-- story-9-5-completion-summary-2025-12-30.md
+|   |-- structure-map.md
+|   |-- sweeping-validation-report-cycle-12-2026-01-01.md
+|   |-- system-architecture-complete-reference-2026-01-01.md
+|   |-- system-context-analysis
+|   |   `-- comprehensive-architecture-analysis-2026-01-01.md
+|   |-- team-b
+|   |   |-- epic-29-specifications-2025-12-27.md
+|   |   |-- state-management-requirements-2025-12-27.md
+|   |   `-- team-b-coordination-plan-2025-12-27.md
+|   |-- tech-debt
+|   |   `-- TODO-tracking-2025-12-26.md
+|   |-- tech-specs
+|   |   `-- epic-38-tech-spec-2025-12-31.md
+|   |-- technical-dead
+|   |   `-- component-inventory-2025-12-26.md
+|   |-- technical-debt
+|   |   |-- architecture-conflicts-2025-12-26.md
+|   |   |-- component-inventory-2025-12-26.md
+|   |   |-- naming-violations-2025-12-26.md
+|   |   |-- state-refactoring-plan-2025-12-26.md
+|   |   `-- tool-wiring-spec-2025-12-26.md
+|   |-- technical-roadmap-course-correction-2025-12-27.md
+|   |-- technology-stack.md
+|   |-- test-reports
+|   |   `-- epic23-p1.13-hub-navigation-e2e-verification-2025-12-26.md
+|   |-- testing
+|   |   `-- e2e-testing-foundation-2025-12-24.md
+|   |-- tree.txt
+|   |-- typescript-type-mismatch-known-issues-2026-01-01.md
+|   |-- ui-ux-gap-analysis-2026-01-01.md
+|   |-- unified_ide_workspace_ux_ui
+|   |   `-- stitch_unified_ide_workspace
+|   |-- ux-design.md
+|   |-- ux-specification
+|   |   |-- 1-agent-management-dashboard.md
+|   |   |-- 2-enhanced-project-management-ui.md
+|   |   |-- 3-unified-ide-workspace-with-collapsible-sidebar.md
+|   |   |-- 4-robust-agent-chat-interface.md
+|   |   |-- 5-component-library-design-system.md
+|   |   |-- 6-responsive-layouts-navigation.md
+|   |   |-- 7-i18n-implementation.md
+|   |   |-- custom-assets-audit-2025-12-26.md
+|   |   |-- hub-based-navigation-vision-aligned-onboarding-2025-12-26.md
+|   |   |-- implementation-roadmap.md
+|   |   |-- index.md
+|   |   `-- table-of-contents.md
+|   |-- ux-specification.md
+|   |-- ux-ui-audit-2025-12-25.md
+|   |-- validation
+|   |   |-- 12-level-framework-integration-2025-12-29.md
+|   |   |-- 2025-12-31-002-context-validation.md
+|   |   |-- 2025-12-31-002-story-validation.md
+|   |   |-- 2025-12-31-story-ac-01-validation.md
+|   |   |-- BRUTAL-HONEST-validation-2025-12-31.md
+|   |   |-- agent-schema-comprehensive-gap-analysis-2025-12-31.md
+|   |   |-- architectural-gap-analysis-2025-12-31.md
+|   |   |-- centralized-systems-validation-report-2026-01-01.md
+|   |   |-- complete-system-12-level-validation-2026-01-01.md
+|   |   |-- controlled-documents-validation-report-2025-12-29.md
+|   |   |-- correct-course-resolution-2025-12-30.md
+|   |   |-- course-correction-validation-2025-12-27.md
+|   |   |-- e2e-testing-readiness-validation-2025-12-24.md
+|   |   |-- end-to-end-validation-2025-12-31.md
+|   |   |-- epic-10-story-validation-2025-12-31.md
+|   |   |-- epic-24-story-validation-2025-12-31.md
+|   |   |-- epic-26-story-validation-2025-12-31.md
+|   |   |-- epic-6-9-validation-summary-2025-12-30.md
+|   |   |-- epic-6-story-validation-2025-12-31.md
+|   |   |-- epic-7-story-validation-2025-12-31.md
+|   |   |-- epic-8-story-validation-2025-12-31.md
+|   |   |-- epic-9-story-validation-2025-12-31.md
+|   |   |-- file-size-violations-2025-12-31.md
+|   |   |-- infrastructure-validation-2025-12-31.md
+|   |   |-- level-2-4-validation-report-2026-01-01.md
+|   |   |-- phase-2-notes-validation-report-2025-12-31.md
+|   |   |-- production-readiness-sweep-2025-12-31.md
+|   |   |-- project-alpha-validation-compliance-report-2026-01-01.md
+|   |   |-- ralph-loop-phase2-integration-validation-2025-12-30.md
+|   |   |-- ralph-loop-phase2-sweep-2025-12-30.md
+|   |   |-- ralph-loop-phase2-sweep-completion-2025-12-30.md
+|   |   |-- sweeping-validation.md
+|   |   |-- three-centralized-systems-cross-validation-2026-01-01.md
+|   |   `-- tool-permissions-system-12-level-validation-2026-01-01.md
+|   |-- validation-critical-violations-2025-12-31.md
+|   |-- validation-reports
+|   |   |-- bidirectional-traceability-matrix-2025-12-29.md
+|   |   |-- cross-document-consistency-validation-2025-12-29.md
+|   |   |-- epic-24-validation-sweep-2025-12-29.md
+|   |   `-- final-integration-validation-2025-12-29.md
+|   |-- validation-sweep-2025-12-29.md
+|   |-- via-gent-codebase-context-analysis-2026-01-01.md
+|   |-- via-gent-comprehensive-architectural-map-2026-01-01.md
+|   |-- via-gent-visual-summary-2026-01-01.md
+|   |-- whole-project-completion-final-status-2025-12-31.md
+|   |-- whole-project-completion-summary-2025-12-31.md
+|   |-- whole-project-completion-validation-2025-12-31.md
+|   |-- whole-project-gap-analysis-2025-12-31.md
+|   |-- zustand-migration-plan-2026-01-01.md
+|   `-- zustand-patterns-guide-2026-01-01.md
+|-- agent-os
+|   |-- commands
+|   |   |-- create-tasks
+|   |   |-- implement-tasks
+|   |   |-- orchestrate-tasks
+|   |   |-- plan-product
+|   |   |-- shape-spec
+|   |   `-- write-spec
+|   |-- config.yml
+|   |-- product
+|   |   |-- mission.md
+|   |   |-- roadmap.md
+|   |   `-- tech-stack.md
+|   `-- standards
+|       |-- backend
+|       |-- frontend
+|       |-- global
+|       `-- testing
+|-- api
+|   `-- index.js
+|-- bmm-workflow-status-enhanced-2025-12-29.yaml
+|-- bmm-workflow-status.yaml
+|-- build_log.txt
+|-- check_exports.cjs
+|-- chutes_bogus_model.txt
+|-- chutes_response.txt
+|-- codebase-analysis.xml
+|-- codebase_analysis.md
+|-- components.json
+|-- comprehensive-codebase-analysis-report.md
+|-- correct-course
+|-- create
+|-- deno.lock
+|-- dev-story
+|-- docs
+|   |-- 2025-12-23
+|   |   |-- architecture.md
+|   |   |-- data-and-contracts.md
+|   |   |-- flows-and-workflows.md
+|   |   |-- improvement-opportunities.md
+|   |   |-- project-overview.md
+|   |   |-- roadmap-and-planning.md
+|   |   |-- structure-map.md
+|   |   |-- tech-context.md
+|   |   `-- tech-debt.md
+|   |-- 2025-12-24
+|   |   `-- chat-ui-components-usage.md
+|   |-- 2025-12-25
+|   |   `-- roo-code-system-prompt.xml
+|   |-- 2025-12-26
+|   |   `-- concept-for-knowledge-synthesis-station-2025-12-26.md
+|   |-- 2025-12-27
+|   |   |-- capturing-in-chat-responses-sample-2025-12-27.md
+|   |   |-- context-managing-go-beyond-2025-12-27.md
+|   |   |-- correct-course-mvp-agentic-master-plan-2025-12-27.md
+|   |   |-- initial-prompt-examples-use-cases-2025-12-27.md
+|   |   `-- solo-dev-mode-2025-12-27.md
+|   |-- 2025-12-28
+|   |   |-- gemini-api-integration.md
+|   |   |-- investigation-report.md
+|   |   |-- rag-infrastructure.md
+|   |   |-- target-architecture.md
+|   |   `-- version-2
+|   |-- 2025-12-31
+|   |   `-- research-artifacts
+|   |-- Fix\ IDE\ Theming\ and\ Layout.md
+|   |-- api-contracts.md
+|   |-- architecture.md
+|   |-- component-inventory.md
+|   |-- daily-report
+|   |   |-- Fixing\ Chat\ API\ 404-24-12-2025.md
+|   |   |-- Fixing\ Chat\ API\ Adapter\ Error-24-12-2025.md
+|   |   |-- ai-agent-foundational-phase-readiness-check-list-2025-12-23.md
+|   |   |-- coordination-story-25-6-2025-12-24.md
+|   |   |-- ux-ui-implementation-plan-2025-12-22.md
+|   |   `-- walkthrough-report-2025-12-22.md
+|   |-- data-models.md
+|   |-- deployment
+|   |   |-- README.md
+|   |   |-- environment-variables.md
+|   |   |-- netlify-setup.md
+|   |   `-- troubleshooting.md
+|   |-- development-guide.md
+|   |-- index.md
+|   |-- performance
+|   |   `-- benchmarks.md
+|   |-- project-context.md
+|   |-- project-overview.md
+|   |-- source-tree-analysis.md
+|   |-- specify.md
+|   |-- system-instruction.md
+|   `-- workspace-permission-system.md
+|-- eslint.config.mjs
+|-- failure_output.txt
+|-- following
+|-- i18next-scanner.config.cjs
+|-- iterate
+|-- loop
+|-- make
+|-- migration
+|-- netlify
+|   `-- edge-functions
+|       `-- add-headers.ts
+|-- netlify.toml
+|-- next
+|-- package.json
+|-- pnpm-lock.yaml
+|-- public
+|   |-- _headers
+|   |-- assets
+|   |   |-- agent-team.svg
+|   |   |-- empty-project.svg
+|   |   `-- knowledge-hub.svg
+|   |-- favicon.ico
+|   |-- logo192.png
+|   |-- logo512.png
+|   |-- manifest.json
+|   |-- robots.txt
+|   |-- tanstack-circle-logo.png
+|   |-- tanstack-word-logo-white.svg
+|   `-- via-gent-logo.svg
+|-- repomix-analysis.xml
+|-- run
+|-- scripts
+|   `-- analyze-bundle.js
+|-- server
+|   `-- middleware
+|       `-- security-headers.ts
+|-- src
+|   |-- __tests__
+|   |   `-- chat.test.ts
+|   |-- application
+|   |   |-- dtos
+|   |   |-- services
+|   |   `-- use-cases
+|   |-- components
+|   |   `-- rag
+|   |-- core
+|   |   |-- entities
+|   |   |-- index.ts
+|   |   |-- rules
+|   |   `-- value-objects
+|   |-- data
+|   |   |-- demo.punk-songs.ts
+|   |   `-- mock-sources.json
+|   |-- domain
+|   |   |-- entities
+|   |   |-- services
+|   |   |-- use-cases
+|   |   `-- value-objects
+|   |-- hooks
+|   |   |-- __tests__
+|   |   |-- index.ts
+|   |   |-- useAgents.ts
+|   |   |-- useCanvasDrop.ts
+|   |   |-- useCapabilityDetection.test.ts
+|   |   |-- useCapabilityDetection.ts
+|   |   |-- useIdeStatePersistence.ts
+|   |   |-- useMediaQuery.ts
+|   |   |-- useProcessManager.ts
+|   |   |-- useQuizSession.ts
+|   |   |-- useQuizTimer.ts
+|   |   |-- useResponsive.ts
+|   |   |-- useUnsavedWorkPreservation.ts
+|   |   `-- useWorkspaceContext.ts
+|   |-- i18n
+|   |   |-- LocaleProvider.tsx
+|   |   |-- __tests__
+|   |   |-- config.ts
+|   |   |-- en
+|   |   |-- en.json
+|   |   |-- vi
+|   |   `-- vi.json
+|   |-- infrastructure
+|   |   |-- events
+|   |   |-- external
+|   |   |-- framework
+|   |   `-- persistence
+|   |-- lib
+|   |   |-- agent
+|   |   |-- audio
+|   |   |-- canvas
+|   |   |-- chat
+|   |   |-- demo
+|   |   |-- editor
+|   |   |-- events
+|   |   |-- filesync
+|   |   |-- filesystem
+|   |   |-- hooks
+|   |   |-- init
+|   |   |-- knowledge
+|   |   |-- mocks
+|   |   |-- monitoring
+|   |   |-- notes
+|   |   |-- pdf
+|   |   |-- persistence
+|   |   |-- rag
+|   |   |-- state
+|   |   |-- study
+|   |   |-- sync
+|   |   |-- utils
+|   |   |-- utils.ts
+|   |   |-- validation
+|   |   |-- webcontainer
+|   |   `-- workspace
+|   |-- logo.svg
+|   |-- mocks
+|   |   `-- agents.ts
+|   |-- presentation
+|   |   `-- components
+|   |-- routeTree.gen.ts
+|   |-- router.tsx
+|   |-- routes
+|   |   |-- __root.tsx
+|   |   |-- about.lazy.tsx
+|   |   |-- about.tsx
+|   |   |-- agents.tsx
+|   |   |-- api
+|   |   |-- ide.$projectId.tsx
+|   |   |-- ide.tsx
+|   |   |-- index.tsx
+|   |   |-- knowledge.$projectId.lazy.tsx
+|   |   |-- knowledge.lazy.tsx
+|   |   |-- notes.$projectId.lazy.tsx
+|   |   |-- notes.lazy.tsx
+|   |   |-- settings.tsx
+|   |   |-- study.$projectId.lazy.tsx
+|   |   |-- study.lazy.tsx
+|   |   |-- test-fs-adapter.tsx
+|   |   |-- webcontainer.$.tsx
+|   |   `-- workspace
+|   |-- server.ts
+|   |-- shared
+|   |   |-- constants
+|   |   |-- errors
+|   |   |-- types
+|   |   `-- utils
+|   |-- src-tree.md
+|   |-- stores
+|   |-- styles
+|   |   |-- animations.css
+|   |   |-- design-tokens.css
+|   |   `-- design-tokens.ts
+|   |-- styles.css
+|   |-- test
+|   |   `-- setup.ts
+|   |-- tree-2025-12-24.md
+|   |-- tree.txt
+|   |-- types
+|   |   |-- tool-call.ts
+|   |   `-- vitest-axe.d.ts
+|   |-- utils
+|   |   |-- __tests__
+|   |   `-- export-utils.ts
+|   |-- workers
+|   |   `-- note-embedding.worker.ts
+|   `-- workspaces
+|       |-- ide
+|       |-- knowledge
+|       `-- project
+|-- story
+|-- system-analysis.xml
+|-- test-output.txt
+|-- test-output2.txt
+|-- test-result.json
+|-- test-result.txt
+|-- test_capture.txt
+|-- test_debug.txt
+|-- test_output.txt
+|-- test_plain.txt
+|-- test_plain_2.txt
+|-- tree.txt
+|-- tsconfig.json
+|-- validation
+|-- vercel.json
+|-- vite.config.ts
+|-- vitest.config.ts
+`-- wrangler.jsonc
+
+253 directories, 1228 files
