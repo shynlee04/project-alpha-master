@@ -31,37 +31,235 @@ See: `_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
 
 **Mission**: Transform fragmented codebase into unified platform with 5 cornerstones as single-source-of-truth
 
-**Current Phase**: Phase 1 Complete (Iterations 1-20) - Codebase Analysis & Gap Documentation ✅
+**Current Phase**: Phase 1 Complete (Iterations 1-20) - Analysis & Gap Documentation ✅
+**Next Phase**: Phase 3 (Iterations 31-150) - Implementation - Cornerstones
 
-**Key Findings**:
-- Overall Health: 5.9/100 (CRITICAL)
-- 17 god components identified (>300 lines)
-- 17 duplicate stores (30% duplication)
-- 51 critical gaps across 5 cornerstones
-- Estimated remediation: 250-300 hours
+---
 
-**Research Artifacts Created** (8 documents):
+## Cornerstone Health Scores (Updated Iteration 15)
+
+| Cornerstone | Health Score | Status | Action Required | Epic |
+|-------------|--------------|--------|-----------------|------|
+| **CS1: Provider Configuration** | 9/10 ✅ | Production-ready | None | Complete |
+| **CS2: Agent Vault** | 9/10 ✅ | Production-ready | None | Complete |
+| **CS3: Conversation System** | 3/10 ❌ | Critical debt | **Epic CC-1**: 127 hours (16 days) | READY |
+| **CS4: Project Management** | 6/10 ⚠️ | Moderate issues | **Epic CP-1**: 80-100 hours (12-15 days) | READY |
+| **CS5: RAG Pipeline** | 8/10 ✅ | Production-ready | Minor enhancements | Complete |
+
+**Average Health Score**: (9+9+3+6+8) / 5 = **7/10** ⚠️ (Target: 9/10)
+
+**After Implementation**: (9+9+9+9+8) / 5 = **8.8/10** ✅
+
+---
+
+## Epic Breakdowns Created (Iterations 11-14)
+
+### Epic CC-1: Conversation Consolidation (HIGHEST PRIORITY)
+
+**Status**: ✅ **READY FOR IMPLEMENTATION** (15 stories, 91 points, 127 hours)
+
+**Goal**: Refactor 2 conversation god stores (1,352 lines) into 6 modular slices (630 lines, 53% reduction)
+
+**Current Issues**:
+- 2 god stores: conversation-store.ts (626 lines) + conversation-threads-store.ts (726 lines)
+- 20+ components using both stores (cognitive load + data duplication risk)
+- Critical health score: 3/10 ❌
+
+**Target Architecture**:
+```
+Single Bounded Store (6 slices, ~630 lines):
+├── conversation-metadata-slice.ts (120 lines) - CRUD operations
+├── thread-management-slice.ts (120 lines) - Thread hierarchy
+├── message-crud-slice.ts (120 lines) - Message operations
+├── conversation-utils-slice.ts (120 lines) - Query helpers
+├── conversation-validation-slice.ts (120 lines) - Pre-execution validation
+└── conversation-events-slice.ts (120 lines) - Activity tracking
+```
+
+**15 User Stories** (91 story points):
+- Foundation (7 stories): CC-1.1 through CC-1.7 - Create 6 slices + unified store
+- Migration (6 stories): CC-1.8 through CC-1.13 - Data migration + component updates (5 batches)
+- Cleanup (2 stories): CC-1.14 and CC-1.15 - Delete old stores + documentation
+
+**Test Requirements**: 105 tests (70 unit + 20 integration + 15 E2E)
+
+**Documentation**: See `_bmad-output/research/platform-unification-2026-01-02/epic-cc-1-conversation-consolidation-breakdown.md`
+
+---
+
+### Epic CP-1: Project Consolidation (HIGH PRIORITY)
+
+**Status**: ✅ **READY FOR IMPLEMENTATION** (18 stories, 78 points, 80-100 hours)
+
+**Goal**: Refactor 2 project god stores (959 lines) into 9 modular slices (880 lines, 8% reduction + better architecture) + fix Hub routing
+
+**Current Issues**:
+- 2 god stores: project-store.ts (450 lines) + file-snapshot-store.ts (509 lines)
+- Hub not discoverable (no hub.tsx route file)
+- Fragmented file sync services (4 services, 1,421 lines)
+- Moderate health score: 6/10 ⚠️
+
+**Target Architecture**:
+```
+Project Store (5 slices, ~500 lines):
+├── project-crud-slice.ts (120 lines) - Project CRUD
+├── project-workspace-bindings-slice.ts (100 lines) - WB-1 bindings
+├── project-permissions-slice.ts (110 lines) - Permission state
+├── project-layout-slice.ts (80 lines) - Layout persistence
+└── project-utils-slice.ts (90 lines) - Query helpers
+
+File Snapshot Store (4 slices, ~380 lines):
+├── snapshot-metadata-slice.ts (100 lines) - Snapshot CRUD
+├── snapshot-cache-slice.ts (110 lines) - Cache management
+├── snapshot-bulk-ops-slice.ts (90 lines) - Bulk operations
+└── snapshot-quota-slice.ts (80 lines) - Quota management
+
+Hub Routing (NEW):
+└── hub.tsx route file - Hub accessible via /hub URL
+```
+
+**18 User Stories** (78 story points):
+- Project Store (6 stories): CP-1.1 through CP-1.6 - Create 5 slices + unified store
+- Snapshot Store (5 stories): CP-1.7 through CP-1.11 - Create 4 slices + unified store
+- Hub & Migration (7 stories): CP-1.12 through CP-1.18 - Hub route + component migrations + cleanup
+
+**Test Requirements**: 95 tests (60 unit + 20 integration + 15 E2E)
+
+**Documentation**: See `_bmad-output/research/platform-unification-2026-01-02/epic-cp-1-project-consolidation-breakdown.md`
+
+---
+
+## Phase 1 Deliverables (Iterations 1-20)
+
+**Total Documents Created**: 20+ documents, ~12,000+ lines
+
+### Cornerstone Analyses (Iterations 1-5)
 ```
 _bmad-output/research/platform-unification-2026-01-02/
-├── cornerstone-1-provider-analysis.md       (Health: 83/100)
-├── cornerstone-2-agent-analysis.md          (Health: 70/100)
-├── cornerstone-3-conversation-analysis.md   (Health: 60/100)
-├── cornerstone-4-project-analysis.md        (Health: 75/100)
-├── cornerstone-5-rag-analysis.md            (Health: 50/100)
-├── workspace-integration-gaps.md            (Health: 40/100)
-├── use-case-implementation-gaps.md         (Health: 35/100)
-├── file-inventory.md                       (711 files catalogued)
-└── prioritized-remediation-plan.md         (6-phase plan)
+├── cornerstone-1-provider-analysis.md       (600+ lines, Health: 9/10)
+├── cornerstone-2-agent-analysis.md          (650+ lines, Health: 9/10)
+├── cornerstone-3-conversation-analysis.md   (600+ lines, Health: 3/10)
+├── cornerstone-4-project-analysis.md        (650+ lines, Health: 6/10)
+└── cornerstone-5-rag-analysis.md            (700+ lines, Health: 8/10)
 ```
 
-**Next Phase**: Phase 2 (Iterations 21-30) - Architecture Decisions (ADR creation)
+### Architecture Decision Records (Iterations 5-8)
+```
+_bmad-output/research/platform-unification-2026-01-02/adrs/
+├── ADR-001-zustand-v5-migration-strategy.md (560 lines)
+├── ADR-002-agent-vault-architecture.md (429 lines)
+├── ADR-003-store-consolidation.md (650+ lines)
+└── ADR-004-clean-architecture.md (620+ lines)
+```
+
+### Detailed Gap Documentation (Iterations 11 & 13)
+```
+├── cornerstone-3-detailed-gap-documentation.md (900+ lines)
+│   ├── Current state: 2 god stores (1,352 lines)
+│   ├── Target architecture: 6 slices (630 lines)
+│   ├── 4-phase migration plan
+│   ├── Component migration order (5 batches)
+│   └── Test requirements: 105 tests
+│
+└── cornerstone-4-detailed-gap-documentation.md (900+ lines)
+    ├── Current state: 2 god stores (959 lines) + 4 sync services (1,421 lines)
+    ├── Target architecture: 9 slices (880 lines) + hub.tsx
+    ├── 6-phase migration plan (Phase 4 optional)
+    ├── Component migration order (4 batches)
+    └── Test requirements: 95 tests
+```
+
+### Epic User Story Breakdowns (Iterations 12 & 14)
+```
+├── epic-cc-1-conversation-consolidation-breakdown.md (900+ lines)
+│   ├── 15 user stories (91 points, 127 hours)
+│   ├── All stories with acceptance criteria
+│   ├── Story dependencies mapped
+│   ├── Risk mitigation strategies
+│   └── Timeline: 16 days (with parallel development)
+│
+└── epic-cp-1-project-consolidation-breakdown.md (900+ lines)
+    ├── 18 user stories (78 points, 80-100 hours)
+    ├── All stories with acceptance criteria
+    ├── Story dependencies mapped
+    ├── Risk mitigation strategies
+    └── Timeline: 12-15 days (with parallel development)
+```
+
+### Iteration Summaries (Iterations 11-15)
+```
+├── iteration-11-completion-summary.md (600+ lines)
+├── iteration-12-completion-summary.md (600+ lines)
+├── iteration-13-completion-summary.md (600+ lines)
+├── iteration-14-completion-summary.md (600+ lines)
+└── iteration-15-completion-summary.md (500+ lines)
+```
+
+### Comprehensive Roadmap (Iteration 15)
+```
+└── comprehensive-implementation-roadmap.md (700+ lines)
+    ├── Coordinated execution order
+    ├── Timeline: 30-37 days for both epics
+    ├── Expected outcomes: 8.8/10 health score
+    └── Risk management + rollback plans
+```
+
+---
+
+## Implementation Timeline (Phase 3: Iterations 31-150)
+
+### Week 1-2: Epic CC-1 Foundation (Cornerstone 3)
+- Iteration 31-38: Stories CC-1.1 through CC-1.7
+- Create 6 conversation slices + unified store
+- Write 80 unit tests
+- **Duration**: 58-68 hours
+
+### Week 3: Epic CC-1 Migration (Cornerstone 3)
+- Iteration 39-42: Stories CC-1.8 through CC-1.13
+- Data migration script + component migrations (5 batches)
+- Write 25 migration + integration tests
+- **Duration**: 45 hours
+
+### Week 4-5: Epic CP-1 Foundation (Cornerstone 4)
+- Iteration 43-50: Stories CP-1.1 through CP-1.11
+- Create 9 project/snapshot slices + unified stores (parallel development)
+- Write 126 unit tests
+- **Duration**: 73-95 hours (parallel)
+
+### Week 6: Epic CP-1 Migration (Cornerstone 4)
+- Iteration 51-54: Stories CP-1.12 through CP-1.18
+- Hub route + component migrations + cleanup
+- Write 20 integration + E2E tests
+- **Duration**: 19-24 hours
+
+### Week 7: Validation & Polish
+- Iteration 55+: Comprehensive testing + documentation
+- Build verification + performance benchmarks
+- **Duration**: 8-10 hours
+
+**Total Duration**: 243-315 hours (30-37 days) for both epics
+
+---
+
+## Expected Outcomes (After Both Epics)
+
+✅ **Zero god stores** (all files ≤300 lines)
+✅ **Zero circular dependencies**
+✅ **All stores follow December 2025 Zustand patterns**
+✅ **Test coverage ≥80%**
+✅ **Health score improvement**: 7/10 → 8.8/10
+✅ **Hub accessible** via /hub URL
+✅ **Data integrity**: Zero data loss migrations
+✅ **Performance**: No regression, <2x acceptable
+
+---
 
 **5 Cornerstones**:
-1. **Provider Configuration** - Single store, reactive, persistent
-2. **Agent Vault** - Centralized with workspace bindings
-3. **Conversation System** - Unified across workspaces
-4. **Project Management** - Hub integration, file sync
-5. **RAG Pipeline** - Document processing, synthesis, canvas
+1. ✅ **Provider Configuration** (9/10) - Single store, reactive, persistent
+2. ✅ **Agent Vault** (9/10) - Centralized with workspace bindings
+3. ⏳ **Conversation System** (3/10 → 9/10) - Epic CC-1: 127 hours
+4. ⏳ **Project Management** (6/10 → 9/10) - Epic CP-1: 80-100 hours
+5. ✅ **RAG Pipeline** (8/10) - Document processing, synthesis, canvas
 
 **4 Workspaces**: IDE, Knowledge, Notes, Study (seamless unification)
 
@@ -317,6 +515,223 @@ export const useProviderStore = create<ProviderStoreState>()(
 // const coreSlice = create(persist(coreSliceFn, { name: 'provider-core' }));
 // This causes multiple hydration cycles + conflicts!
 ```
+
+### God Store Refactoring Patterns (Learned from Iterations 11-15)
+
+**Definition**: A **god store** is any Zustand store file exceeding **300 lines** with too many responsibilities.
+
+**Anti-Patterns** (What to Avoid):
+- ❌ Single file with 400+ lines
+- ❌ 10+ methods in one store
+- ❌ Multiple unrelated concerns (CRUD + permissions + layout + events)
+- ❌ Direct cross-store imports (circular dependencies)
+- ❌ No clear separation between domain logic and state management
+
+**Refactoring Methodology** (From Epic CC-1 & CP-1):
+
+**Step 1: Identify Responsibilities** (1-2 hours)
+```typescript
+// BEFORE: God Store (450 lines)
+// project-store.ts with 20+ methods:
+├── Project CRUD (create, read, update, delete)
+├── Workspace bindings management
+├── Permission state tracking
+├── Layout state persistence
+└── Legacy migration utilities
+
+// Analysis: 5 distinct responsibilities → 5 focused slices
+```
+
+**Step 2: Design Slice Boundaries** (2-3 hours)
+```typescript
+// AFTER: 5 Slices (each <120 lines)
+├── project-crud-slice.ts (120 lines) - Project CRUD operations
+├── project-workspace-bindings-slice.ts (100 lines) - WB management
+├── project-permissions-slice.ts (110 lines) - Permission state
+├── project-layout-slice.ts (80 lines) - Layout persistence
+└── project-utils-slice.ts (90 lines) - Query helpers
+```
+
+**Step 3: Implement Slices** (8-12 hours per slice)
+```typescript
+// Example: project-crud-slice.ts
+export interface ProjectCrudState {
+  // State (minimal)
+  projects: Record<string, ProjectMetadata>;
+  activeProjectId: string | null;
+
+  // Actions (focused, single responsibility)
+  createProject: (metadata: Omit<ProjectMetadata, 'id' | 'lastOpened'>) => Promise<string>;
+  getProject: (id: string) => ProjectMetadata | undefined;
+  updateProject: (id: string, updates: Partial<ProjectMetadata>) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
+  getAllProjects: () => ProjectMetadata[];
+  setActiveProject: (id: string) => void;
+  getRecentProjects: (limit?: number) => ProjectMetadata[];
+}
+
+export const createProjectCrudSlice = (set: StoreApi<ProjectStore>['setState'], get: StoreApi<ProjectStore>['getState']) => ({
+  // Implementation...
+});
+```
+
+**Step 4: Combine into Single Bounded Store** (2-4 hours)
+```typescript
+// ✅ CORRECT: Single bounded store with slice composition
+export const useProjectStore = create<ProjectStore>()(
+  persist(
+    (...a) => ({
+      ...createProjectCrudSlice(...a),
+      ...createProjectWorkspaceBindingsSlice(...a),
+      ...createProjectPermissionsSlice(...a),
+      ...createProjectLayoutSlice(...a),
+      ...createProjectUtilsSlice(...a),
+    }),
+    {
+      name: 'project-state',
+      storage: createDexieStorage('projectState'),
+      partialize: (state) => ({
+        projects: state.projects,
+        activeProjectId: state.activeProjectId,
+        // layoutState excluded (transient)
+      }),
+    }
+  )
+);
+```
+
+**Cross-Slice Communication** (Critical Pattern):
+
+When one slice needs to call another slice's method, **use `get()` instead of direct imports**:
+
+```typescript
+// ❌ WRONG - Direct import causes circular dependency
+import { updateProject } from './project-crud-slice';
+
+export const createProjectWorkspaceBindingsSlice = (set, get) => ({
+  updateWorkspaceBinding: (projectId, workspaceType, binding) => {
+    updateProject(projectId, { workspaceBindings: updatedBindings }); // Circular!
+  }
+});
+
+// ✅ CORRECT - Use get() for cross-slice communication
+export const createProjectWorkspaceBindingsSlice = (set, get) => ({
+  updateWorkspaceBinding: (projectId, workspaceType, binding) => {
+    const project = get().getProject(projectId);
+    const updatedBindings = project.workspaceBindings || [];
+    // ... update logic
+
+    // Call CRUD slice via get() (no circular dependency)
+    get().updateProject(projectId, { workspaceBindings: updatedBindings });
+  }
+});
+```
+
+**Domain Service Pattern** (Alternative to Cross-Slice Calls):
+
+For complex business logic, **use domain service utilities** instead of cross-slice calls:
+
+```typescript
+// Domain service: src/domain/services/project-workspace-validator.ts
+export function validateWorkspaceBinding(project, workspaceType, binding) {
+  // Pure function (no side effects, easier to test)
+  if (workspaceType === 'ide' && !binding.isAvailable) {
+    throw new Error('IDE workspace must be available');
+  }
+  return { isValid: true };
+}
+
+// Slice uses domain service
+export const createProjectWorkspaceBindingsSlice = (set, get) => ({
+  updateWorkspaceBinding: (projectId, workspaceType, binding) => {
+    const project = get().getProject(projectId);
+
+    // Use domain service (no cross-slice call)
+    const validation = validateWorkspaceBinding(project, workspaceType, binding);
+    if (!validation.isValid) {
+      throw new Error(validation.error);
+    }
+
+    // Update state
+    set((state) => ({
+      projects: {
+        ...state.projects,
+        [projectId]: { ...project, workspaceBindings: updatedBindings }
+      }
+    }));
+  }
+});
+```
+
+**Testing Strategy** (From Epic CC-1 & CP-1):
+
+**Unit Tests** (60-70 tests per god store):
+```typescript
+describe('project-crud-slice', () => {
+  it('should create project with auto-generated ID', () => {
+    const store = createProjectCrudSlice();
+    const projectId = store.getState().createProject({ name: 'Test Project' });
+    expect(projectId).toBeDefined();
+    expect(projectId).toMatch(/^project_/);
+  });
+
+  it('should update project timestamp', () => {
+    const store = createProjectCrudSlice();
+    const projectId = store.getState().createProject({ name: 'Test' });
+    const before = store.getState().getProject(projectId).lastOpened;
+
+    // Wait 1ms, then update
+    await new Promise(r => setTimeout(r, 1));
+    store.getState().updateProject(projectId, { name: 'Updated' });
+
+    const after = store.getState().getProject(projectId).lastOpened;
+    expect(after.getTime()).toBeGreaterThan(before.getTime());
+  });
+});
+```
+
+**Integration Tests** (10-20 tests):
+```typescript
+describe('project-store integration', () => {
+  it('should update workspace binding across slices', () => {
+    const store = useProjectStore.getState();
+    const projectId = store.createProject({ name: 'Test' });
+
+    // Update binding in workspace-bindings slice
+    store.updateWorkspaceBinding(projectId, 'knowledge', { isAvailable: true });
+
+    // Verify CRUD slice reflects the change
+    const project = store.getProject(projectId);
+    expect(project.workspaceBindings.knowledge.isAvailable).toBe(true);
+  });
+});
+```
+
+**Migration Checklist** (Before Refactoring):
+- [ ] Read god store code thoroughly
+- [ ] Identify all responsibilities (use comments to mark sections)
+- [ ] Design slice boundaries (each slice ≤120 lines)
+- [ ] Create slice files in parallel (no breaking changes yet)
+- [ ] Write tests for each slice (≥80% coverage)
+- [ ] Create unified store with slice composition
+- [ ] Test cross-slice communication (if needed)
+- [ ] Create data migration script (for existing data)
+- [ ] Update components incrementally (batches, lowest risk first)
+- [ ] Delete old store only after 100% migration complete
+
+**Reference Implementation**:
+- **Cornerstones 1 & 2** (already refactored): See `ADR-002-agent-vault-architecture.md`
+- **Epic CC-1** (ready to implement): `epic-cc-1-conversation-consolidation-breakdown.md`
+- **Epic CP-1** (ready to implement): `epic-cp-1-project-consolidation-breakdown.md`
+
+**Expected Outcomes** (From Iterations 11-15):
+- **Code Reduction**: 8-53% reduction (varies by store complexity)
+- **Testability**: Easier to unit test (pure functions, single responsibility)
+- **Maintainability**: Each slice ≤120 lines, focused on one concern
+- **No Circular Dependencies**: Cross-slice via `get()` or domain services
+- **Zero Breaking Changes**: Facade exports preserve backwards compatibility
+
+---
 
 ### Provider Configuration Architecture
 
