@@ -7,6 +7,7 @@
  *
  * @epic WB-8.3 - Cross-Workspace Event System
  * @story WB-8.3.2 - Workspace-Scoped Permissions
+ * @story Ralph Loop 51-3 - Workspace-Scoped Tool Permissions
  * @constitution P0 - Accessibility & User Feedback
  *
  * December 2025 Patterns:
@@ -14,6 +15,11 @@
  * - Accessible tabs and selects (ARIA labels)
  * - Clear visual hierarchy (grouped by workspace)
  * - Optimized re-renders (Zustand selectors)
+ *
+ * Ralph Loop 51-3: Workspace-scoped permissions now live
+ * - Each workspace tab shows independent permission levels
+ * - Changes affect only the active workspace
+ * - UI fully supports per-workspace tool configuration
  */
 
 import { useState, useMemo } from 'react';
@@ -30,7 +36,7 @@ import {
 import { Label } from '@/presentation/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useToolPermissionStore, type ToolTrustLevel } from '@/lib/state/tool-permission-store';
-import type { WorkspaceType } from '@/lib/state/workspace-types';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
  * Props for WorkspacePermissionEditor component
@@ -133,7 +139,12 @@ const TRUST_LEVELS: { value: ToolTrustLevel; label: string; color: string }[] = 
  * Workspace Permission Editor Component
  *
  * Provides tabbed interface to edit tool permissions per workspace.
- * Currently uses global permissions (Phase 1), prepared for workspace scoping (Phase 2).
+ * Each workspace has independent tool trust levels.
+ *
+ * Ralph Loop 51-3: Workspace-scoped permissions
+ * - IDE: Can allow terminal (execute_command)
+ * - Knowledge/Notes/Study: Can block terminal (no execute_command)
+ * - Each workspace tab shows and edits that workspace's permissions
  *
  * @example
  * ```tsx
@@ -159,8 +170,9 @@ export function WorkspacePermissionEditor({
   const { t } = useTranslation();
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceType>('ide');
 
-  // Get current trust levels from Zustand store
+  // Get current trust levels and default level from Zustand store
   const trustLevels = useToolPermissionStore((state) => state.trustLevels);
+  const defaultTrustLevel = useToolPermissionStore((state) => state.defaultTrustLevel);
   const setTrustLevel = useToolPermissionStore((state) => state.setTrustLevel);
 
   /**
@@ -181,10 +193,14 @@ export function WorkspacePermissionEditor({
   }, []);
 
   /**
-   * Handle trust level change
+   * Handle trust level change for a workspace
+   *
+   * Ralph Loop 51-3: Workspace-scoped permission setting
+   * - Updates trust level only for the active workspace
+   * - Does not affect other workspaces
    */
   const handleLevelChange = (toolId: string, newLevel: ToolTrustLevel) => {
-    setTrustLevel(toolId, newLevel);
+    setTrustLevel(toolId, activeWorkspace, newLevel);
     onChange?.(activeWorkspace, toolId, newLevel);
   };
 
@@ -203,9 +219,12 @@ export function WorkspacePermissionEditor({
 
   /**
    * Render tool row
+   *
+   * Ralph Loop 51-3: Displays workspace-scoped trust level
    */
   const renderToolRow = (tool: ToolDefinition) => {
-    const currentLevel = trustLevels[tool.id] ?? tool.defaultLevel;
+    // Get trust level for the active workspace, fallback to default
+    const currentLevel = trustLevels[tool.id]?.[activeWorkspace] ?? defaultTrustLevel;
     const levelConfig = TRUST_LEVELS.find((level) => level.value === currentLevel);
 
     return (
@@ -238,7 +257,7 @@ export function WorkspacePermissionEditor({
           value={currentLevel}
           onValueChange={(value) => handleLevelChange(tool.id, value as ToolTrustLevel)}
         >
-          <SelectTrigger className="w-[140px] h-8" aria-label={`Set ${tool.name} permission`}>
+          <SelectTrigger className="w-[140px] h-8" aria-label={`Set ${tool.name} permission for ${getWorkspaceName(activeWorkspace)} workspace`}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -288,7 +307,7 @@ export function WorkspacePermissionEditor({
         </div>
         <p className="text-sm text-muted-foreground">
           Configure which tools can execute automatically, require approval, or are blocked.
-          Permissions are currently global (all workspaces).
+          Each workspace has independent permission settings.
         </p>
       </div>
 
@@ -329,12 +348,17 @@ export function WorkspacePermissionEditor({
 
 /**
  * Compact badge version for quick permission overview
+ *
+ * Ralph Loop 51-3: Now aggregates across all workspaces
+ * Shows total count of tools at each trust level across all 4 workspaces
  */
 export interface PermissionOverviewBadgeProps {
   className?: string;
+  /** Optional: filter by specific workspace */
+  workspaceType?: WorkspaceType;
 }
 
-export function PermissionOverviewBadge({ className }: PermissionOverviewBadgeProps) {
+export function PermissionOverviewBadge({ className, workspaceType }: PermissionOverviewBadgeProps) {
   const trustLevels = useToolPermissionStore((state) => state.trustLevels);
 
   const counts = useMemo(() => {
@@ -342,14 +366,26 @@ export function PermissionOverviewBadge({ className }: PermissionOverviewBadgePr
     let prompt = 0;
     let block = 0;
 
-    for (const level of Object.values(trustLevels)) {
-      if (level === 'auto') auto++;
-      else if (level === 'prompt') prompt++;
-      else if (level === 'block') block++;
+    // Iterate through workspace-scoped trust levels
+    for (const workspaceMap of Object.values(trustLevels)) {
+      // If workspaceType specified, only count that workspace's levels
+      if (workspaceType) {
+        const level = workspaceMap[workspaceType];
+        if (level === 'auto') auto++;
+        else if (level === 'prompt') prompt++;
+        else if (level === 'block') block++;
+      } else {
+        // Aggregate across all workspaces
+        for (const level of Object.values(workspaceMap)) {
+          if (level === 'auto') auto++;
+          else if (level === 'prompt') prompt++;
+          else if (level === 'block') block++;
+        }
+      }
     }
 
     return { auto, prompt, block };
-  }, [trustLevels]);
+  }, [trustLevels, workspaceType]);
 
   return (
     <div className={cn('flex items-center gap-2', className)}>

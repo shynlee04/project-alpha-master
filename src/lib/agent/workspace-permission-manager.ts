@@ -135,7 +135,8 @@ export class WorkspacePermissionManager {
     }
 
     // Step 3: Check base permission manager (trust levels)
-    const baseResult = this.basePermissionManager.checkPermission(toolId);
+    // Ralph Loop 51-3: Pass workspace context for workspace-scoped permission check
+    const baseResult = this.basePermissionManager.checkPermission(toolId, currentWorkspace);
 
     return {
       ...baseResult,
@@ -187,7 +188,8 @@ export class WorkspacePermissionManager {
       }
 
       // Check base permission (not blocked)
-      const baseCheck = this.basePermissionManager.checkPermission(tool.toolId);
+      // Ralph Loop 51-3: Pass workspace context for workspace-scoped permission check
+      const baseCheck = this.basePermissionManager.checkPermission(tool.toolId, workspace);
 
       if (!baseCheck.canExecute) {
         continue;

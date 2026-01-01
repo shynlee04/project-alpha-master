@@ -21,6 +21,7 @@ import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 import { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 export { PathValidationError };
 
@@ -54,23 +55,28 @@ export class ToolPermissionDeniedError extends Error {
  */
 export class FileToolsFacade implements AgentFileTools {
     private readonly permissionManager: ToolPermissionManager;
+    private readonly workspaceType: WorkspaceType;
 
     constructor(
         private readonly localFS: LocalFSAdapter,
         private readonly syncManager: SyncManager,
         private readonly eventBus: WorkspaceEventEmitter,
         private readonly fileLock: FileLock = defaultFileLock,
-        permissionManager?: ToolPermissionManager
+        permissionManager?: ToolPermissionManager,
+        workspaceType?: WorkspaceType
     ) {
         this.permissionManager = permissionManager || ToolPermissionManager.getInstance();
+        // Ralph Loop 51-3: Default to 'ide' workspace for backward compatibility
+        this.workspaceType = workspaceType ?? 'ide';
     }
 
     /**
      * Check permission before tool execution
+     * Ralph Loop 51-3: Now checks workspace-scoped permissions
      * @throws ToolPermissionDeniedError if tool cannot execute
      */
     private checkPermission(toolId: string): void {
-        const result = this.permissionManager.checkPermission(toolId);
+        const result = this.permissionManager.checkPermission(toolId, this.workspaceType);
 
         if (!result.canExecute) {
             let userMessage: string;
@@ -565,14 +571,16 @@ export class FileToolsFacade implements AgentFileTools {
 /**
  * Factory function to create FileToolsFacade
  * @param permissionManager - Optional permission manager for testing
+ * @param workspaceType - Optional workspace type for workspace-scoped permissions (defaults to 'ide')
  */
 export function createFileToolsFacade(
     localFS: LocalFSAdapter,
     syncManager: SyncManager,
     eventBus: WorkspaceEventEmitter,
     fileLock: FileLock = defaultFileLock,
-    permissionManager?: ToolPermissionManager
+    permissionManager?: ToolPermissionManager,
+    workspaceType?: WorkspaceType
 ): AgentFileTools {
-    return new FileToolsFacade(localFS, syncManager, eventBus, fileLock, permissionManager);
+    return new FileToolsFacade(localFS, syncManager, eventBus, fileLock, permissionManager, workspaceType);
 }
 

@@ -2,7 +2,7 @@
  * @fileoverview Tool Permission Manager
  * @module lib/agent/tool-permission-manager
  *
- * Manages tool execution trust levels and permissions for AI agents.
+ * Manages workspace-scoped tool execution trust levels and permissions for AI agents.
  * NOW USES: Zustand store with Dexie persistence for cross-session survival.
  *
  * Trust Levels:
@@ -12,6 +12,7 @@
  *
  * @epic WB-8.3 - Cross-Workspace Event System
  * @story WB-8.3.1 - Tool Permission Persistence
+ * @story Ralph Loop 51-3 - Workspace-Scoped Tool Permissions
  * @prio P0 - Critical UX Fix
  *
  * MIGRATION-2026-01-01: Refactored to use Zustand store
@@ -19,9 +20,16 @@
  * - Session trust remains ephemeral (cleared on reload)
  * - Public API preserved for backwards compatibility
  * - All 8 integration points continue to work without changes
+ *
+ * MIGRATION-2026-01-03 (Ralph Loop 51-3): Workspace-scoped permissions
+ * - All methods now accept workspaceType parameter
+ * - Each workspace has independent tool trust levels
+ * - Backward compatibility layer for legacy API (defaults to 'ide' workspace)
+ * - Zero breaking changes - all existing consumers continue to work
  */
 
 import { useToolPermissionStore } from '@/lib/state/tool-permission-store';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 // import type { EventEmitter } from 'eventemitter3'; // Reserved for future use
 
 /**
@@ -31,6 +39,8 @@ export type ToolTrustLevel = 'auto' | 'prompt' | 'block';
 
 /**
  * Result of a permission check
+ *
+ * Ralph Loop 51-3: Now includes workspace context
  */
 export interface PermissionCheckResult {
   /** Whether the tool needs user approval before execution */
@@ -39,6 +49,8 @@ export interface PermissionCheckResult {
   canExecute: boolean;
   /** Reason for the permission decision */
   reason: 'auto' | 'prompt' | 'block' | 'session';
+  /** Workspace context for this permission check */
+  workspace: WorkspaceType;
   /** Tool name for display */
   toolName: string;
   /** Tool identifier */
@@ -84,18 +96,38 @@ export class ToolPermissionManager {
   /**
    * Create a new instance (for testing or custom configurations)
    *
+   * Ralph Loop 51-3: Workspace-scoped initial permissions
+   *
    * NOTE: Custom initial permissions will override store defaults
    */
   public static createInstance(
-    initialPermissions?: Record<string, ToolTrustLevel>
+    initialPermissions?: Record<string, ToolTrustLevel> | Record<string, Record<WorkspaceType, ToolTrustLevel>>
   ): ToolPermissionManager {
     const instance = new ToolPermissionManager();
 
     // Apply custom permissions to store if provided
     if (initialPermissions) {
-      Object.entries(initialPermissions).forEach(([toolId, level]) => {
-        useToolPermissionStore.getState().setTrustLevel(toolId, level);
-      });
+      const store = useToolPermissionStore.getState();
+
+      // Check if flat (legacy) or nested (workspace-scoped) format
+      const firstToolId = Object.keys(initialPermissions)[0];
+      const isWorkspaceScoped = firstToolId && typeof initialPermissions[firstToolId] === 'object';
+
+      if (isWorkspaceScoped) {
+        // Workspace-scoped format: Record<string, Record<WorkspaceType, ToolTrustLevel>>
+        Object.entries(initialPermissions).forEach(([toolId, workspaceLevels]) => {
+          Object.entries(workspaceLevels as Record<WorkspaceType, ToolTrustLevel>).forEach(([workspace, level]) => {
+            store.setTrustLevel(toolId, workspace as WorkspaceType, level);
+          });
+        });
+      } else {
+        // Legacy flat format: Record<string, ToolTrustLevel> - apply to all workspaces
+        Object.entries(initialPermissions).forEach(([toolId, level]) => {
+          for (const workspace of ['ide', 'knowledge', 'notes', 'study'] as WorkspaceType[]) {
+            store.setTrustLevel(toolId, workspace, level);
+          }
+        });
+      }
     }
 
     return instance;
@@ -118,20 +150,32 @@ export class ToolPermissionManager {
   }
 
   /**
-   * Get the trust level for a tool
+   * Get the trust level for a tool in a workspace
+   *
+   * Ralph Loop 51-3: Workspace-aware trust level lookup
+   *
+   * @param toolId - Tool to check
+   * @param workspaceType - Workspace context
+   * @returns Trust level for the tool in this workspace
    */
-  public getTrustLevel(toolId: string): ToolTrustLevel {
-    return useToolPermissionStore.getState().getTrustLevel(toolId);
+  public getTrustLevel(toolId: string, workspaceType: WorkspaceType): ToolTrustLevel {
+    return useToolPermissionStore.getState().getTrustLevel(toolId, workspaceType);
   }
 
   /**
-   * Set the trust level for a tool (persisted)
+   * Set the trust level for a tool in a workspace (persisted)
+   *
+   * Ralph Loop 51-3: Workspace-scoped trust level setting
+   *
+   * @param toolId - Tool to configure
+   * @param workspaceType - Workspace context
+   * @param level - Trust level to set
    */
-  public setTrustLevel(toolId: string, level: ToolTrustLevel): void {
-    const previousLevel = this.getTrustLevel(toolId);
+  public setTrustLevel(toolId: string, workspaceType: WorkspaceType, level: ToolTrustLevel): void {
+    const previousLevel = this.getTrustLevel(toolId, workspaceType);
 
     // Update store (persisted automatically)
-    useToolPermissionStore.getState().setTrustLevel(toolId, level);
+    useToolPermissionStore.getState().setTrustLevel(toolId, workspaceType, level);
 
     // Emit event if level changed (for backwards compatibility)
     if (previousLevel !== level) {
@@ -140,37 +184,79 @@ export class ToolPermissionManager {
   }
 
   /**
-   * Check if a tool has session-based trust
+   * Set the trust level for a tool (legacy API - defaults to 'ide' workspace)
+   *
+   * @deprecated Use setTrustLevel(toolId, workspaceType, level) instead
+   * Preserved for backwards compatibility - defaults to 'ide' workspace
+   *
+   * @param toolId - Tool to configure
+   * @param level - Trust level to set
    */
-  public hasSessionTrust(toolId: string): boolean {
-    const state = useToolPermissionStore.getState();
-    return state.sessionTrust.includes(toolId);
+  public setTrustLevelLegacy(toolId: string, level: ToolTrustLevel): void {
+    this.setTrustLevel(toolId, 'ide', level);
   }
 
   /**
-   * Add session-based trust for a tool (ephemeral)
+   * Check if a tool has session-based trust in a workspace
+   *
+   * Ralph Loop 51-3: Workspace-scoped session trust check
    */
-  public addSessionTrust(toolId: string): void {
+  public hasSessionTrust(toolId: string, workspaceType: WorkspaceType): boolean {
+    const state = useToolPermissionStore.getState();
+    const sessionKey = `${toolId}:${workspaceType}`;
+    return state.sessionTrust.includes(sessionKey);
+  }
+
+  /**
+   * Add session-based trust for a tool in a workspace (ephemeral)
+   *
+   * Ralph Loop 51-3: Workspace-scoped session trust
+   */
+  public addSessionTrust(toolId: string, workspaceType: WorkspaceType): void {
     const store = useToolPermissionStore.getState();
+    const sessionKey = `${toolId}:${workspaceType}`;
 
     // Check if already has session trust (avoid duplicate event)
-    if (!store.sessionTrust.includes(toolId)) {
-      store.addSessionTrust(toolId);
+    if (!store.sessionTrust.includes(sessionKey)) {
+      store.addSessionTrust(toolId, workspaceType);
       this.eventBus?.emit('session:trust:added', toolId);
     }
   }
 
   /**
-   * Remove session-based trust for a tool
+   * Add session-based trust for a tool (legacy API - defaults to 'ide' workspace)
+   *
+   * @deprecated Use addSessionTrust(toolId, workspaceType) instead
+   * Preserved for backwards compatibility - defaults to 'ide' workspace
    */
-  public removeSessionTrust(toolId: string): void {
+  public addSessionTrustLegacy(toolId: string): void {
+    this.addSessionTrust(toolId, 'ide');
+  }
+
+  /**
+   * Remove session-based trust for a tool in a workspace
+   *
+   * Ralph Loop 51-3: Workspace-scoped session trust removal
+   */
+  public removeSessionTrust(toolId: string, workspaceType: WorkspaceType): void {
     const store = useToolPermissionStore.getState();
+    const sessionKey = `${toolId}:${workspaceType}`;
 
     // Check if has session trust (avoid unnecessary event)
-    if (store.sessionTrust.includes(toolId)) {
-      store.removeSessionTrust(toolId);
+    if (store.sessionTrust.includes(sessionKey)) {
+      store.removeSessionTrust(toolId, workspaceType);
       this.eventBus?.emit('session:trust:removed', toolId);
     }
+  }
+
+  /**
+   * Remove session-based trust for a tool (legacy API - defaults to 'ide' workspace)
+   *
+   * @deprecated Use removeSessionTrust(toolId, workspaceType) instead
+   * Preserved for backwards compatibility - defaults to 'ide' workspace
+   */
+  public removeSessionTrustLegacy(toolId: string): void {
+    this.removeSessionTrust(toolId, 'ide');
   }
 
   /**
@@ -182,14 +268,22 @@ export class ToolPermissionManager {
   }
 
   /**
-   * Check permission for a tool execution
+   * Check permission for a tool execution in a workspace
    *
-   * Reads from Zustand store and returns permission result
+   * Ralph Loop 51-3: Workspace-aware permission check
+   * - Checks trust level for specific workspace
+   * - Returns workspace context in result
+   * - Session trust checked in workspace-scoped format
+   *
+   * @param toolId - Tool to check
+   * @param workspaceType - Workspace context
+   * @returns Permission check result with workspace context
    */
-  public checkPermission(toolId: string): PermissionCheckResult {
+  public checkPermission(toolId: string, workspaceType: WorkspaceType): PermissionCheckResult {
     const state = useToolPermissionStore.getState();
-    const trustLevel = state.trustLevels[toolId] ?? 'prompt';
-    const hasSession = state.sessionTrust.includes(toolId);
+    const trustLevel = state.trustLevels[toolId]?.[workspaceType] ?? state.defaultTrustLevel;
+    const sessionKey = `${toolId}:${workspaceType}`;
+    const hasSession = state.sessionTrust.includes(sessionKey);
 
     // Check block first (highest priority)
     if (trustLevel === 'block') {
@@ -197,6 +291,7 @@ export class ToolPermissionManager {
         needsApproval: false,
         canExecute: false,
         reason: 'block',
+        workspace: workspaceType,
         toolName: this.getToolDisplayName(toolId),
         toolId,
       };
@@ -208,6 +303,7 @@ export class ToolPermissionManager {
         needsApproval: false,
         canExecute: true,
         reason: 'session',
+        workspace: workspaceType,
         toolName: this.getToolDisplayName(toolId),
         toolId,
       };
@@ -219,6 +315,7 @@ export class ToolPermissionManager {
         needsApproval: false,
         canExecute: true,
         reason: 'auto',
+        workspace: workspaceType,
         toolName: this.getToolDisplayName(toolId),
         toolId,
       };
@@ -229,28 +326,81 @@ export class ToolPermissionManager {
       needsApproval: true,
       canExecute: true,
       reason: 'prompt',
+      workspace: workspaceType,
       toolName: this.getToolDisplayName(toolId),
       toolId,
     };
   }
 
   /**
-   * Get all trust levels (for persistence/UI)
+   * Check permission for a tool execution (legacy API - defaults to 'ide' workspace)
    *
-   * NOTE: Now returns from Zustand store
+   * @deprecated Use checkPermission(toolId, workspaceType) instead
+   * Preserved for backwards compatibility - defaults to 'ide' workspace
+   *
+   * @param toolId - Tool to check
+   * @returns Permission check result (workspace defaults to 'ide')
    */
-  public getAllTrustLevels(): Record<string, ToolTrustLevel> {
-    return { ...useToolPermissionStore.getState().trustLevels };
+  public checkPermissionLegacy(toolId: string): Omit<PermissionCheckResult, 'workspace'> {
+    const result = this.checkPermission(toolId, 'ide');
+    // Exclude workspace field for legacy API
+    const { workspace, ...legacyResult } = result;
+    return legacyResult;
   }
 
   /**
-   * Get default trust levels
+   * Get all trust levels for a workspace (for persistence/UI)
    *
-   * NOTE: Hardcoded defaults removed (managed by store)
+   * Ralph Loop 51-3: Workspace-scoped trust levels
+   *
+   * @param workspaceType - Workspace to get levels for
+   * @returns Record of toolId -> trustLevel for the workspace
    */
-  public getDefaultTrustLevels(): Record<string, ToolTrustLevel> {
-    // Store manages defaults - return current state for backwards compatibility
-    return { ...useToolPermissionStore.getState().trustLevels };
+  public getAllTrustLevels(workspaceType: WorkspaceType): Record<string, ToolTrustLevel> {
+    const state = useToolPermissionStore.getState();
+    const workspaceLevels: Record<string, ToolTrustLevel> = {};
+
+    for (const [toolId, workspaceMap] of Object.entries(state.trustLevels)) {
+      workspaceLevels[toolId] = workspaceMap[workspaceType] ?? state.defaultTrustLevel;
+    }
+
+    return workspaceLevels;
+  }
+
+  /**
+   * Get all trust levels (legacy API - returns 'ide' workspace only)
+   *
+   * @deprecated Use getAllTrustLevels(workspaceType) instead
+   * Preserved for backwards compatibility - returns 'ide' workspace levels
+   *
+   * @returns Record of toolId -> trustLevel for 'ide' workspace
+   */
+  public getAllTrustLevelsLegacy(): Record<string, ToolTrustLevel> {
+    return this.getAllTrustLevels('ide');
+  }
+
+  /**
+   * Get default trust levels for a workspace
+   *
+   * Ralph Loop 51-3: Workspace-scoped defaults
+   *
+   * @param workspaceType - Workspace to get defaults for
+   * @returns Record of toolId -> trustLevel for the workspace
+   */
+  public getDefaultTrustLevels(workspaceType: WorkspaceType): Record<string, ToolTrustLevel> {
+    return this.getAllTrustLevels(workspaceType);
+  }
+
+  /**
+   * Get default trust levels (legacy API - returns 'ide' workspace only)
+   *
+   * @deprecated Use getDefaultTrustLevels(workspaceType) instead
+   * Preserved for backwards compatibility - returns 'ide' workspace levels
+   *
+   * @returns Record of toolId -> trustLevel for 'ide' workspace
+   */
+  public getDefaultTrustLevelsLegacy(): Record<string, ToolTrustLevel> {
+    return this.getDefaultTrustLevels('ide');
   }
 
   /**
@@ -317,28 +467,61 @@ export class ToolPermissionManager {
   }
 
   /**
-   * Get tools by trust level
+   * Get tools by trust level in a workspace
    *
-   * NOTE: Now reads from Zustand store
+   * Ralph Loop 51-3: Workspace-scoped tool filtering
+   *
+   * @param workspaceType - Workspace to filter by
+   * @param level - Trust level to filter by
+   * @returns Array of tool IDs with the specified trust level in this workspace
    */
-  public getToolsByLevel(level: ToolTrustLevel): string[] {
+  public getToolsByLevel(workspaceType: WorkspaceType, level: ToolTrustLevel): string[] {
     const state = useToolPermissionStore.getState();
-    return Object.entries(state.trustLevels)
-      .filter(([_, trustLevel]) => trustLevel === level)
-      .map(([toolId]) => toolId);
+    const tools: string[] = [];
+
+    for (const [toolId, workspaceMap] of Object.entries(state.trustLevels)) {
+      if (workspaceMap[workspaceType] === level) {
+        tools.push(toolId);
+      }
+    }
+
+    return tools;
   }
 
   /**
-   * Check if any tools require approval (for UI indicator)
+   * Get tools by trust level (legacy API - returns 'ide' workspace only)
+   *
+   * @deprecated Use getToolsByLevel(workspaceType, level) instead
+   * Preserved for backwards compatibility - returns 'ide' workspace tools
+   *
+   * @param level - Trust level to filter by
+   * @returns Array of tool IDs with the specified trust level in 'ide' workspace
    */
-  public hasPromptTools(): boolean {
-    return this.getToolsByLevel('prompt').length > 0;
+  public getToolsByLevelLegacy(level: ToolTrustLevel): string[] {
+    return this.getToolsByLevel('ide', level);
   }
 
   /**
-   * Check if any tools are blocked (for UI indicator)
+   * Check if any tools require approval in a workspace (for UI indicator)
+   *
+   * Ralph Loop 51-3: Workspace-scoped approval check
+   *
+   * @param workspaceType - Workspace to check
+   * @returns True if any tools in this workspace require approval
    */
-  public hasBlockedTools(): boolean {
-    return this.getToolsByLevel('block').length > 0;
+  public hasPromptTools(workspaceType: WorkspaceType): boolean {
+    return this.getToolsByLevel(workspaceType, 'prompt').length > 0;
+  }
+
+  /**
+   * Check if any tools are blocked in a workspace (for UI indicator)
+   *
+   * Ralph Loop 51-3: Workspace-scoped block check
+   *
+   * @param workspaceType - Workspace to check
+   * @returns True if any tools in this workspace are blocked
+   */
+  public hasBlockedTools(workspaceType: WorkspaceType): boolean {
+    return this.getToolsByLevel(workspaceType, 'block').length > 0;
   }
 }

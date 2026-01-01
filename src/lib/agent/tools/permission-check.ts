@@ -6,27 +6,35 @@
  * before execution in the agent workflow.
  *
  * @story 4-3 - Tool Permissions & Trust Levels
+ * Ralph Loop 51-3: Now supports workspace-scoped permission checks
  */
 
 import type { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
  * Check if a tool needs user approval before execution
  *
+ * Ralph Loop 51-3: Now supports workspace-scoped permission checks
+ *
  * @param permissionManager - The permission manager instance
  * @param toolName - Name of the tool to check
+ * @param workspaceType - Optional workspace type (defaults to 'ide' for backward compatibility)
  * @returns Object with permission check result and execution status
  */
 export function checkToolPermission(
   permissionManager: ToolPermissionManager,
-  toolName: string
+  toolName: string,
+  workspaceType?: WorkspaceType
 ): {
   canExecute: boolean;
   needsApproval: boolean;
   blocked: boolean;
   result: PermissionCheckResult;
 } {
-  const result = permissionManager.checkPermission(toolName);
+  // Ralph Loop 51-3: Default to 'ide' workspace for backward compatibility
+  const workspace = workspaceType ?? 'ide';
+  const result = permissionManager.checkPermission(toolName, workspace);
 
   return {
     canExecute: result.canExecute,
@@ -39,15 +47,21 @@ export function checkToolPermission(
 /**
  * Get the appropriate risk level for UI display based on trust level
  *
+ * Ralph Loop 51-3: Now supports workspace-scoped trust level checks
+ *
  * @param permissionManager - The permission manager instance
  * @param toolName - Name of the tool
+ * @param workspaceType - Optional workspace type (defaults to 'ide' for backward compatibility)
  * @returns Risk level for UI: 'low', 'medium', or 'high'
  */
 export function getToolRiskLevel(
   permissionManager: ToolPermissionManager,
-  toolName: string
+  toolName: string,
+  workspaceType?: WorkspaceType
 ): 'low' | 'medium' | 'high' {
-  const trustLevel = permissionManager.getTrustLevel(toolName);
+  // Ralph Loop 51-3: Default to 'ide' workspace for backward compatibility
+  const workspace = workspaceType ?? 'ide';
+  const trustLevel = permissionManager.getTrustLevel(toolName, workspace);
 
   // Map trust levels to risk levels for UI
   switch (trustLevel) {
@@ -107,10 +121,18 @@ function getToolDisplayName(toolName: string): string {
 /**
  * Filter tools based on permission status
  * Returns lists of allowed, blocked, and approval-required tools
+ *
+ * Ralph Loop 51-3: Now supports workspace-scoped permission categorization
+ *
+ * @param permissionManager - The permission manager instance
+ * @param toolNames - Array of tool names to categorize
+ * @param workspaceType - Optional workspace type (defaults to 'ide' for backward compatibility)
+ * @returns Categorized tool lists
  */
 export function categorizeTools(
   permissionManager: ToolPermissionManager,
-  toolNames: string[]
+  toolNames: string[],
+  workspaceType?: WorkspaceType
 ): {
   allowed: string[];
   blocked: string[];
@@ -121,7 +143,8 @@ export function categorizeTools(
   const approvalRequired: string[] = [];
 
   for (const toolName of toolNames) {
-    const check = checkToolPermission(permissionManager, toolName);
+    // Ralph Loop 51-3: Pass workspace context for workspace-scoped permission check
+    const check = checkToolPermission(permissionManager, toolName, workspaceType);
 
     if (check.blocked) {
       blocked.push(toolName);

@@ -23,6 +23,7 @@ import type {
 import { TerminalToolsError } from './terminal-tools';
 import { createDefaultSanitizer } from './command-sanitizer';
 import { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 // Command execution timeout (30 seconds)
 const DEFAULT_TIMEOUT = 30000;
@@ -53,17 +54,25 @@ export class TerminalToolsFacade implements AgentTerminalTools {
     private processes = new Map<string, { kill: () => void }>();
     private sanitizer = createDefaultSanitizer();
     private readonly permissionManager: ToolPermissionManager;
+    private readonly workspaceType: WorkspaceType;
 
-    constructor(private readonly eventBus: WorkspaceEventEmitter, permissionManager?: ToolPermissionManager) {
+    constructor(
+        private readonly eventBus: WorkspaceEventEmitter,
+        permissionManager?: ToolPermissionManager,
+        workspaceType?: WorkspaceType
+    ) {
         this.permissionManager = permissionManager || ToolPermissionManager.getInstance();
+        // Ralph Loop 51-3: Default to 'ide' workspace for backward compatibility
+        this.workspaceType = workspaceType ?? 'ide';
     }
 
     /**
      * Check permission before tool execution
+     * Ralph Loop 51-3: Now checks workspace-scoped permissions
      * @throws ToolPermissionDeniedError if tool cannot execute
      */
     private checkPermission(toolId: string): void {
-        const result = this.permissionManager.checkPermission(toolId);
+        const result = this.permissionManager.checkPermission(toolId, this.workspaceType);
 
         if (!result.canExecute) {
             let userMessage: string;
@@ -297,10 +306,12 @@ export class TerminalToolsFacade implements AgentTerminalTools {
 /**
  * Factory function to create TerminalToolsFacade
  * @param permissionManager - Optional permission manager for testing
+ * @param workspaceType - Optional workspace type for workspace-scoped permissions (defaults to 'ide')
  */
 export function createTerminalToolsFacade(
     eventBus: WorkspaceEventEmitter,
-    permissionManager?: ToolPermissionManager
+    permissionManager?: ToolPermissionManager,
+    workspaceType?: WorkspaceType
 ): AgentTerminalTools {
-    return new TerminalToolsFacade(eventBus, permissionManager);
+    return new TerminalToolsFacade(eventBus, permissionManager, workspaceType);
 }
