@@ -70,7 +70,7 @@ However, due to some constraints and reality check there are few things that nee
 
 ## Regarding UX-UI
 
-- A complete upgrade of the UX/UI that impresses and fixes current flaws.
+- A complete upgrade of the UX/UI that impresses and fixes current flaws. (UX/UI must include the event activities indicators like status of database indexing, embedding, chunking, synchronizing , and of those what are being done, also the progress and so on)
 - All components logically routed, wired, and extended with modern frontend practices.
 - Interfaces that are wired, routed, and logically mapped to boost user experience.
 - Clear demonstration of user journeys and use cases through well-articulated e2e expectations.
