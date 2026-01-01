@@ -45,6 +45,10 @@ import type {
     SynthesisResultsTable,
 } from './dexie-db-knowledge-types';
 
+import type {
+    MetricsHistoryTable,
+} from './dexie-db-dashboard-types';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -134,6 +138,12 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     synthesisResults!: SynthesisResultsTable;
+
+    // ========================================================================
+    // Dashboard Metrics Table (Iteration 50)
+    // ========================================================================
+
+    metricsHistory!: MetricsHistoryTable;
 
     // ========================================================================
     // Constructor

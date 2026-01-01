@@ -757,4 +757,68 @@ export function registerMigrations(db: ViaGentDatabase): void {
                 itemsCount: Object.keys(mergedState).length
             });
         });
+
+        // Schema version 20: Add metrics history table for dashboard charts
+        db.version(20).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            synthesisResults: 'id, sourceId, projectId, status, synthesizedAt, [sourceId+projectId], [projectId+status]',
+            fileSnapshots: '++id, projectId, path, [projectId+path], expiresAt, lastCachedAt',
+            fileContentCache: '[projectId+path], projectId',
+            // Story AC-1.7: Unified app state table (combines agents + providers)
+            appState: 'id, updatedAt',
+            // Iteration 50: Dashboard metrics history table
+            metricsHistory: '++id, timestamp, [workspaceType+metricName+timestamp]',
+        }).upgrade(async () => {
+            logDexieMigration(20, 'dashboard-metrics-history', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(20)) {
+                logDexieMigration(20, 'dashboard-metrics-history', 'completed', {
+                    details: 'Already applied, skipping'
+                });
+                return;
+            }
+
+            // No data migration needed (new table)
+            // Create initial snapshot if projects exist
+            const projectCount = await db.projects.count();
+            if (projectCount > 0) {
+                const now = new Date().toISOString();
+                await db.metricsHistory.put({
+                    timestamp: now,
+                    workspaceType: 'all',
+                    metricName: 'projectCount',
+                    value: projectCount,
+                    metadata: JSON.stringify({ active: projectCount, deleted: 0 }),
+                });
+            }
+
+            // Mark migration as applied
+            markMigrationApplied(20);
+
+            logDexieMigration(20, 'dashboard-metrics-history', 'completed', {
+                tableName: 'metricsHistory',
+                itemsCount: 1
+            });
+        });
 }
