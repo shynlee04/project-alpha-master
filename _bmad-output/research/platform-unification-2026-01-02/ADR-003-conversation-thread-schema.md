@@ -1,6 +1,6 @@
 ---
 title: ADR-003: Conversation Thread Schema
-status: Proposed
+status: Accepted ⏳ PENDING IMPLEMENTATION (Phase 3)
 date: 2026-01-02
 iteration: 8
 cornerstone: 3
@@ -9,13 +9,14 @@ priority: P0 (CRITICAL - System Stability)
 
 # ADR-003: Conversation Thread Schema
 
-**Status:** Proposed
+**Status:** ✅ **ACCEPTED** - ⏳ **PENDING IMPLEMENTATION** (Phase 3, Iterations 31-150)
 **Date:** 2026-01-02
 **Iteration:** 8
 **Cornerstone:** 3 - Conversation System
 **Priority:** P0 (CRITICAL - System Stability)
 **Estimated Effort:** 20-30 hours
 **Risk Level:** HIGH (potential for data loss if migration fails)
+**Target Phase**: Phase 3 - Cornerstone Implementation (Iterations 31-150)
 
 ---
 

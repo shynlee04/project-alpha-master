@@ -1,15 +1,15 @@
 ---
 title: ADR-004: Project Workspace Binding
-status: Proposed
+status: Accepted ⏳ PENDING IMPLEMENTATION (Phase 3)
 date: 2026-01-02
 iteration: 9
 cornerstone: 4
-priority: P2 (Maintainability)
+priority: P1 (Foundation for Workspace Integration)
 ---
 
 # ADR-004: Project Workspace Binding
 
-**Status:** Proposed
+**Status:** ✅ **ACCEPTED** - ⏳ **PENDING IMPLEMENTATION** (Phase 3, Iterations 31-150)
 **Date:** 2026-01-02
 **Iteration:** 9
 **Cornerstone:** 4 - Project & File System
@@ -659,7 +659,7 @@ describe('Project Bindings', () => {
 
 ---
 
-**Status:** Proposed (Optional Enhancement)
+**Status:** ✅ **ACCEPTED** - ⏳ **PENDING IMPLEMENTATION** (Phase 3, Iterations 31-150) (Optional Enhancement)
 **Next Step:** Implementation Phase 1 (Split Project Store) - OPTIONAL
 **Estimated Completion:** Iterations 61-65 (Sprint 2 - P1-P2 Refinement)
 **Risk Level:** LOW (current architecture is excellent)

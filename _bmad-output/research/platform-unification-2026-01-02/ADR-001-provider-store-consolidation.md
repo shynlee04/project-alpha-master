@@ -1,6 +1,6 @@
 ---
 title: ADR-001: Provider Store Consolidation
-status: Proposed
+status: Accepted ✅ IMPLEMENTED
 date: 2026-01-02
 iteration: 6
 cornerstone: 1
@@ -9,12 +9,13 @@ priority: P0 (Security)
 
 # ADR-001: Provider Store Consolidation
 
-**Status:** Proposed
+**Status:** ✅ **ACCEPTED & IMPLEMENTED** (Story 3.2 Complete)
 **Date:** 2026-01-02
 **Iteration:** 6
 **Cornerstone:** 1 - Provider Configuration
 **Priority:** P0 (Security)
-**Estimated Effort:** 18-24 hours
+**Actual Effort:** ~14 hours (estimated 30 hours)
+**Completion Date:** 2026-01-02
 
 ---
 

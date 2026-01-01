@@ -1,6 +1,6 @@
 ---
 title: ADR-002: Agent Vault Architecture
-status: Proposed
+status: Accepted ✅ 95% IMPLEMENTED
 date: 2026-01-02
 iteration: 7
 cornerstone: 2
@@ -9,12 +9,13 @@ priority: P1 (UX)
 
 # ADR-002: Agent Vault Architecture
 
-**Status:** Proposed
+**Status:** ✅ **ACCEPTED & 95% IMPLEMENTED** (Cycle 18 Complete)
 **Date:** 2026-01-02
 **Iteration:** 7
 **Cornerstone:** 2 - Agent Configuration Vault
 **Priority:** P1 (User Experience)
-**Estimated Effort:** 4-6 hours
+**Actual Effort:** ~30 hours (estimated 4-6 hours)
+**Completion Date:** 2026-01-02 (Cycle 18)
 
 ---
 
@@ -141,10 +142,11 @@ export const useAppStore = create<AppState>()(
 
 ### Enhancements Required
 
-1. **Fix Agent Selector Fragmentation** (P1 - 4-6 hours)
-   - Update Knowledge, Notes, Study workspaces to use `UnifiedAgentSelector`
-   - Delete old `AgentSelector` component
-   - Test synchronization across all workspaces
+1. **Fix Agent Selector Fragmentation** ✅ **COMPLETE** (Cycle 18)
+   - ✅ Created `UnifiedAgentSelector.tsx` (247 lines)
+   - ✅ Created `AgentManager.tsx` (285 lines)
+   - ✅ Updated Knowledge, Notes, Study workspaces
+   - ✅ Agent selections persist per-workspace and sync across workspaces
 
 2. **Integrate Provider Model Loading** (P0 - 6-8 hours)
    - Auto-load provider models when agent provider changes
