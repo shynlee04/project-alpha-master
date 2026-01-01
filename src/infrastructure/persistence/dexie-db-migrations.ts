@@ -33,7 +33,7 @@ export function logDexieMigration(
         version,
         operation,
         status,
-        ...details,
+        ...(typeof details === 'string' ? { message: details } : details),
     };
 
     if (status === 'failed') {

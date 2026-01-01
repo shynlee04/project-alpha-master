@@ -15,6 +15,7 @@ import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import { useAppStore } from '../use-app-store';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { Agent } from '@/core/entities/Agent';
+import { isAgentAvailableIn, isAgentDefaultFor } from '@/domain/services/agent-workspace-utils';
 
 /**
  * Agent selection state
@@ -31,13 +32,26 @@ interface AgentSelectionState {
 
   // Hydration flag
   _hasHydrated: boolean;
+
+  // Actions
+  setActiveAgent: (agentId: string | null, workspaceType: WorkspaceType) => void;
+  setDefaultAgent: (agentId: string, workspaceType: WorkspaceType) => void;
+  getActiveAgent: () => Agent | null;
+  getAgentForWorkspace: (workspaceType: WorkspaceType) => Agent | null;
+  selectAgentForWorkspace: (workspaceType: WorkspaceType) => void;
+  needsReselection: (workspaceType: WorkspaceType) => boolean;
+  emitAgentSelected: (agent: Agent, workspaceType: WorkspaceType) => void;
+  emitAgentDeselected: (workspaceType: WorkspaceType) => void;
+  emitDefaultAgentChanged: (agent: Agent, workspaceType: WorkspaceType) => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
+  reset: () => void;
 }
 
 /**
  * Create Dexie storage for agent selection
  */
 function createAgentSelectionDexieStorage() {
-  return createDexieStorage<AgentSelectionState>('agent-selection');
+  return createDexieStorage('agent-selection');
 }
 
 /**
@@ -77,13 +91,13 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
         ide: null,
         knowledge: null,
         study: null,
-        canvas: null,
+        notes: null,
       },
       lastSelectedAgentIds: {
         ide: null,
         knowledge: null,
         study: null,
-        canvas: null,
+        notes: null,
       },
       _hasHydrated: false,
 
@@ -112,7 +126,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
         }
 
         // Validate agent is available in workspace
-        if (!agent.isAvailableIn(workspaceType)) {
+        if (!isAgentAvailableIn(agent, workspaceType)) {
           throw new Error(
             `Agent "${agent.name}" is not available in workspace: ${workspaceType}`
           );
@@ -149,7 +163,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
         }
 
         // Validate agent is available in workspace
-        if (!agent.isAvailableIn(workspaceType)) {
+        if (!isAgentAvailableIn(agent, workspaceType)) {
           throw new Error(
             `Agent "${agent.name}" is not available in workspace: ${workspaceType}`
           );
@@ -192,7 +206,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
        */
       getAgentForWorkspace: (workspaceType: WorkspaceType): Agent | null => {
         const agents = useAppStore.getState().agents;
-        const availableAgents = agents.filter(agent => agent.isAvailableIn(workspaceType));
+        const availableAgents = agents.filter(agent => isAgentAvailableIn(agent, workspaceType));
 
         if (availableAgents.length === 0) {
           return null;
@@ -217,7 +231,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
         }
 
         // Rule 3: Fall back to first available agent marked as default
-        const markedDefault = availableAgents.find(agent => agent.isDefaultFor(workspaceType));
+        const markedDefault = availableAgents.find(agent => isAgentDefaultFor(agent, workspaceType));
         if (markedDefault) {
           return markedDefault;
         }
@@ -256,7 +270,7 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
           return true;
         }
 
-        return !activeAgent.isAvailableIn(workspaceType);
+        return !isAgentAvailableIn(activeAgent, workspaceType);
       },
 
       // ========== EVENTS ==========
@@ -317,13 +331,13 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
             ide: null,
             knowledge: null,
             study: null,
-            canvas: null,
+            notes: null,
           },
           lastSelectedAgentIds: {
             ide: null,
             knowledge: null,
             study: null,
-            canvas: null,
+            notes: null,
           },
           _hasHydrated: false,
         });
@@ -331,13 +345,13 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
     }),
     {
       name: 'agent-selection-store',
-      storage: createAgentSelectionDexieStorage(),
+      storage: createAgentSelectionDexieStorage() as any, // Type coercion for Dexie storage
       partialize: (state) => ({
         activeAgentId: state.activeAgentId,
         defaultAgentIds: state.defaultAgentIds,
         lastSelectedAgentIds: state.lastSelectedAgentIds,
-      }),
-      onRehydrateStorage: (state) => {
+      }) as any, // Type coercion for persist middleware
+      onRehydrateStorage: () => (state) => {
         // Ensure valid agent IDs after hydration
         if (state) {
           const agents = useAppStore.getState().agents;

@@ -159,6 +159,32 @@ export { createDexieStorage } from '../dexie-storage';
 export { ViaGentDatabase } from '../dexie-db-class';
 
 // ============================================================================
+// DOMAIN SERVICES (NEW: Ralph Loop Cycle 16 - AC-1.5)
+// ============================================================================
+
+/**
+ * Domain service utilities for Agent workspace business logic.
+ *
+ * These services encapsulate business rules for workspace-aware agent operations.
+ * Use these utilities instead of calling methods on Agent entities (which are pure interfaces).
+ *
+ * @example
+ * ```ts
+ * import { isAgentAvailableIn } from '@/domain/services';
+ *
+ * if (isAgentAvailableIn(agent, 'knowledge')) {
+ *   // Agent is available in Knowledge workspace
+ * }
+ * ```
+ */
+export {
+  isAgentAvailableIn,
+  isAgentDefaultFor,
+  getAgentsForWorkspace,
+  getDefaultAgentForWorkspace,
+} from '@/domain/services';
+
+// ============================================================================
 // HELPERS
 // ============================================================================
 

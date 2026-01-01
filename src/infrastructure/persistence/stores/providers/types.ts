@@ -65,6 +65,9 @@ export interface ModelInfo {
   /** Maximum output tokens */
   maxTokens?: number;
 
+  /** Whether this is a free model (e.g., OpenRouter free tier) */
+  isFree?: boolean;
+
   /** Whether model supports streaming responses */
   supportsStreaming?: boolean;
 

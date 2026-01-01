@@ -14,6 +14,26 @@ import type { Agent } from '@/core/entities/Agent';
 import type { CombinedAgentsState } from '../types';
 
 /**
+ * Default tool bindings for the default agent
+ */
+const DEFAULT_TOOL_BINDINGS: AgentToolBinding[] = [
+  { toolId: 'read', toolName: 'File Read', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
+  { toolId: 'write', toolName: 'File Write', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: false, notes: true } },
+  { toolId: 'execute', toolName: 'Terminal', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: false } },
+  { toolId: 'browse', toolName: 'Web Browse', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
+];
+
+/**
+ * Default workspace bindings for the default agent
+ */
+const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
+  { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
+  { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
+  { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
+  { workspaceType: 'notes', isAvailable: true, uiVariant: 'compact', isDefault: false },
+];
+
+/**
  * Default agent created on first load
  */
 const DEFAULT_AGENT: Agent = {
@@ -26,12 +46,8 @@ const DEFAULT_AGENT: Agent = {
   temperature: 0.7,
   maxTokens: 4096,
   topP: 1.0,
-  tools: ['read', 'write', 'execute', 'browse'],
-  workspaceBindings: [
-    { workspaceType: 'ide', isAvailable: true, isDefault: true },
-    { workspaceType: 'chat', isAvailable: true, isDefault: false },
-    { workspaceType: 'terminal', isAvailable: true, isDefault: false },
-  ],
+  tools: DEFAULT_TOOL_BINDINGS,
+  workspaceBindings: DEFAULT_WORKSPACE_BINDINGS,
   status: 'online',
   tasksCompleted: 0,
   successRate: 0,
