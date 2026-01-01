@@ -16,6 +16,7 @@ import type {
     ThreadMessage,
     ConversationThread,
     ThreadHierarchyNode,
+    ContextWindowConfig,
 } from './types';
 import {
     createThreadCrudSlice,
@@ -27,7 +28,12 @@ import {
 } from './slices';
 
 // Re-export types for consumers
-export type { ThreadMessage, ConversationThread, ThreadHierarchyNode };
+export type {
+    ThreadMessage,
+    ConversationThread,
+    ThreadHierarchyNode,
+    ContextWindowConfig,
+};
 
 /**
  * Combined Conversation Store State
