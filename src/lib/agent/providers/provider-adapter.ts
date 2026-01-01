@@ -296,14 +296,16 @@ export class ProviderAdapterFactory {
     /**
      * Test connection to a custom OpenAI-compatible endpoint
      * @param customConfig - Custom provider configuration
+     * @param apiKey - API key to test (fetched from credential vault or provided by user)
      * @returns Connection test result
      */
     async testCustomConnection(
-        customConfig: OpenAICompatibleConfig
+        customConfig: OpenAICompatibleConfig,
+        apiKey: string
     ): Promise<ConnectionTestResult> {
         return this.testConnection(
             'openai-compatible',
-            customConfig.apiKey || '',
+            apiKey,
             {
                 baseURL: customConfig.baseURL,
                 headers: customConfig.headers,

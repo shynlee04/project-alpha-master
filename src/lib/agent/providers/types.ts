@@ -15,6 +15,7 @@ export type ProviderType = 'openai' | 'openai-compatible' | 'anthropic' | 'gemin
 
 /**
  * Provider configuration
+ * Matches infrastructure store type for consistency
  */
 export interface ProviderConfig {
     /** Unique provider identifier */
@@ -33,6 +34,15 @@ export interface ProviderConfig {
     isCustom?: boolean;
     /** Whether the provider supports native tool calling */
     supportsNativeTools?: boolean;
+    /**
+     * API Key existence flag (true if key stored in credential vault)
+     * @security Actual API key stored in encrypted credential-vault.ts
+     */
+    hasApiKey: boolean;
+    /** Available models for this provider */
+    models: ModelInfo[];
+    /** Timestamp when models were last fetched (Unix timestamp) */
+    lastModelFetchAt?: number;
 }
 
 /**
@@ -46,8 +56,11 @@ export interface OpenAICompatibleConfig {
     name: string;
     /** Base URL for the API (e.g., http://localhost:1234/v1) */
     baseURL: string;
-    /** API Key (optional for local providers like LM Studio/Ollama) */
-    apiKey?: string;
+    /**
+     * API Key existence flag (true if key stored in credential vault)
+     * @security Actual API key stored in encrypted credential-vault.ts
+     */
+    hasApiKey: boolean;
     /** Custom headers to send with requests */
     headers?: Record<string, string>;
     /** Default model ID */
@@ -69,9 +82,13 @@ export interface OpenAICompatibleConfig {
 
 /**
  * Adapter configuration for creating instances
+ * @internal Used by ProviderAdapterFactory after fetching key from vault
  */
 export interface AdapterConfig {
-    /** API key (decrypted) */
+    /**
+     * API key (decrypted)
+     * @security Fetched from credential-vault.ts at runtime, NOT stored in provider state
+     */
     apiKey: string;
     /** Optional model ID override */
     model?: string;
@@ -161,6 +178,9 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         defaultModel: 'gpt-4o',
         enabled: true,
         supportsNativeTools: true,
+        hasApiKey: false,
+        models: [],
+        lastModelFetchAt: undefined,
     },
     openrouter: {
         id: 'openrouter',
@@ -170,6 +190,9 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         defaultModel: 'meta-llama/llama-3.1-8b-instruct:free',
         enabled: true,
         supportsNativeTools: true,
+        hasApiKey: false,
+        models: [],
+        lastModelFetchAt: undefined,
     },
     'openai-compatible': {
         id: 'openai-compatible',
@@ -178,6 +201,9 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         enabled: true,
         isCustom: true,
         supportsNativeTools: false, // User can override
+        hasApiKey: false,
+        models: [],
+        lastModelFetchAt: undefined,
     },
     anthropic: {
         id: 'anthropic',
@@ -186,6 +212,9 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         defaultModel: 'claude-3-5-sonnet-20241022',
         enabled: true, // ENABLED - Anthropic adapter implemented
         supportsNativeTools: true, // Supports native tool use via beta tool runner
+        hasApiKey: false,
+        models: [],
+        lastModelFetchAt: undefined,
     },
     gemini: {
         id: 'gemini',
@@ -194,6 +223,9 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         defaultModel: 'gemini-3.0-flash',
         enabled: true,
         supportsNativeTools: true,
+        hasApiKey: false,
+        models: [],
+        lastModelFetchAt: undefined,
     },
 };
 

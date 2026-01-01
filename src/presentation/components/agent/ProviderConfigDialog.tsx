@@ -7,7 +7,8 @@ import { Button } from '@/presentation/components/ui/button';
 import { Input } from '@/presentation/components/ui/input';
 import { Label } from '@/presentation/components/ui/label';
 import { ModelLoadingSpinner } from '@/presentation/components/ui';
-import { ProviderConfig, PROVIDERS } from '@/lib/agent/providers/types';
+import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
+import { PROVIDERS } from '@/lib/agent/providers/types';
 import { toast } from 'sonner';
 import { Lock, Key, Globe, Server } from 'lucide-react';
 
@@ -132,6 +133,9 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                     enabled: true,
                     isCustom: true,
                     supportsNativeTools: false,
+                    hasApiKey: !!apiKey, // True if API key provided
+                    models: [], // Will be populated after key saved
+                    lastModelFetchAt: undefined,
                 };
 
                 addProvider(config);

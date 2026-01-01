@@ -17,6 +17,9 @@
  *
  * Represents an LLM provider (OpenRouter, Anthropic, OpenAI, etc.)
  * with base URL, authentication, and metadata.
+ *
+ * SECURITY: API keys are stored in encrypted credential vault (credential-vault.ts)
+ * This interface only contains a FLAG indicating whether a key exists.
  */
 export interface ProviderConfig {
   /** Unique provider identifier (e.g., 'openrouter', 'anthropic') */
@@ -31,11 +34,20 @@ export interface ProviderConfig {
   /** Base URL for API endpoints */
   baseURL: string;
 
-  /** API key (empty string if not configured) */
-  apiKey: string;
+  /** Default model ID for this provider */
+  defaultModel?: string;
+
+  /**
+   * API Key existence flag (true if key stored in credential vault)
+   * @security Actual API key stored in encrypted credential-vault.ts
+   */
+  hasApiKey: boolean;
 
   /** Available models for this provider */
   models: ModelInfo[];
+
+  /** Timestamp when models were last fetched (Unix timestamp) */
+  lastModelFetchAt?: number;
 
   /** Whether provider is currently active */
   enabled: boolean;

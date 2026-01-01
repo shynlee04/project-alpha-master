@@ -12,11 +12,17 @@ export interface LLMProvider {
   // Configuration
   baseUrl: string;
   isHardcoded: boolean;  // TRUE for built-in providers (readonly URL)
-  apiKey: string;        // Encrypted in storage
+  /**
+   * API Key existence flag (true if key stored in credential vault)
+   * @security Actual API key stored in encrypted credential-vault.ts (NOT here)
+   */
+  hasApiKey: boolean;
   isEnabled: boolean;
 
   // Models
   models: ProviderModel[];
+  /** Timestamp when models were last fetched from provider API */
+  lastModelFetchAt?: Date;
 
   // Capabilities
   capabilities: ProviderCapabilities;

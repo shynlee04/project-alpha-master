@@ -56,7 +56,7 @@ export { ToolAvailabilityIndicator } from './ToolAvailabilityIndicator';
 export { ToolTrustLevelManager } from './ToolTrustLevelManager';
 export { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig';
 export { WorkspacePermissionManager } from './WorkspacePermissionManager';
-export { WorkspaceAwareAgentSelector } from './WorkspaceAwareAgentSelector';
+// WorkspaceAwareAgentSelector removed - replaced by UnifiedAgentSelector (Story 3.3 complete)
 export { UnifiedAgentSelector } from './UnifiedAgentSelector';
 export { AgentManager } from './AgentManager';
 
