@@ -17,7 +17,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { useProviderStore } from '@/lib/state/provider-store';
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import type { ProviderConfigChangeEvent, ModelsUpdatedEvent } from '@/lib/events/cross-workspace-event-bus';
 

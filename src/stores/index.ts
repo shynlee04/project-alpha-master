@@ -9,7 +9,7 @@ export {
   useAgentsStoreHydration,
   DEFAULT_AGENT,
   type AgentsState
-} from '@/infrastructure/persistence/stores/agents-store';
+} from '@/infrastructure/persistence/stores/agents';
 
 export {
   useAgentSelection,
@@ -45,7 +45,7 @@ export {
   type ThreadMessage,
   type ThreadToolCall,
   type ConversationThread
-} from '@/stores/conversation-threads-store';
+} from '@/infrastructure/persistence/stores/conversation/conversation-threads-store';
 
 export {
   useOpenAICompatibleStore,

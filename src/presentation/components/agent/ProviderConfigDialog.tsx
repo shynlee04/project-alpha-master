@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProviderStore } from '@/lib/state/provider-store';
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';

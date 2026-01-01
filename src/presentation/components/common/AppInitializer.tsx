@@ -14,7 +14,7 @@
 
 import { useEffect, type ReactNode } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import { useProviderStore } from '@/lib/state/provider-store';
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 
 interface AppInitializerProps {
     children: ReactNode;

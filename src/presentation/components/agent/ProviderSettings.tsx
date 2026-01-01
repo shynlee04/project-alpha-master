@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Edit2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { useProviderStore } from '@/lib/state/provider-store';
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { ProviderConfigDialog } from './ProviderConfigDialog';
 import { ProviderDeletionWarningDialog } from './ProviderDeletionWarningDialog';

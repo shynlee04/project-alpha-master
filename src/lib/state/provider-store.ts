@@ -29,7 +29,7 @@ import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
  *
  * @example
  * // Old import (still works)
- * import { useProviderStore } from '@/lib/state/provider-store';
+ * import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
  * const providers = useProviderStore((state) => state.providers);
  *
  * // New import (recommended for new code)

@@ -26,7 +26,7 @@ import {
     SelectValue,
 } from '@/presentation/components/ui/select';
 import { Button } from '@/presentation/components/ui/button';
-import { useProviderStore } from '@/lib/state/provider-store';
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { cn } from '@/lib/utils';
 import type { FormErrors } from './agent-config-validation';
 

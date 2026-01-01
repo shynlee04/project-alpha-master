@@ -23,13 +23,13 @@ export {
   type AgentSelectionState
 } from './agents/agent-selection-store';
 
-// Ralph Loop Cycle 4: Consolidated provider store (single source of truth)
-// Replaces provider-config-store.ts and provider-models-store.ts
+// Ralph Loop Cycle 15: Provider store consolidated into use-app-store
+// Provider slices: provider-crud-slice, provider-models-slice, provider-utils-slice
 export {
-  useProviderStore,
+  useAppStore as useProviderStore,
   type ProviderState,
   type ModelSettings
-} from '@/lib/state/provider-store';
+} from './use-app-store';
 
 // Models-loader-store was merged into provider-store (Story AC-1.6)
 // Use useAppStore or useProviderStore instead

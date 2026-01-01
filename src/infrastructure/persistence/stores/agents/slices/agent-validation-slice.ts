@@ -11,7 +11,6 @@
 import { StateCreator } from 'zustand';
 import type { Agent } from '@/core/entities/Agent';
 import type { CombinedAgentsState } from '../types';
-import { useProviderStore } from '@/lib/state/provider-store';
 import { AgentProviderValidator } from '@/domain/services/AgentProviderValidator';
 
 /**
@@ -54,7 +53,7 @@ export const createAgentValidationSlice: StateCreator<
     // Skip validation for OLD schema or partial data (defensive programming)
     if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
       // Use mediator to validate (breaks circular dependency)
-      const availableModels = useProviderStore.getState().availableModels;
+      const availableModels = get().availableModels;
       const validationResult = AgentProviderValidator.validateProviderModel(
         providerId,
         modelId,
@@ -92,7 +91,7 @@ export const createAgentValidationSlice: StateCreator<
     // Skip validation for partial updates or OLD schema (defensive programming)
     if (providerId && modelId && typeof providerId === 'string' && typeof modelId === 'string') {
       // Use mediator to validate (breaks circular dependency)
-      const availableModels = useProviderStore.getState().availableModels;
+      const availableModels = get().availableModels;
       const validationResult = AgentProviderValidator.validateProviderModel(
         providerId,
         modelId,

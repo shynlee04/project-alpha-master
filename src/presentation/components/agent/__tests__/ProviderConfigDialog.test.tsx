@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ProviderConfigDialog } from '../ProviderConfigDialog';
-import { useProviderStore } from '@/lib/state/provider-store';
+import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 // Mock dependencies
