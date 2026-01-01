@@ -97,9 +97,9 @@ export class MigrationBackupSystem {
     if (!this.crypto) {
       // Handle both browser and test/SSR environments
       if (typeof window !== 'undefined' && (window as any).crypto?.subtle) {
-        this.crypto = (window as any).crypto.subtle;
+        this.crypto = (window as any).crypto.subtle as SubtleCrypto;
       } else if (typeof global !== 'undefined' && (global as any).crypto?.subtle) {
-        this.crypto = (global as any).crypto.subtle;
+        this.crypto = (global as any).crypto.subtle as SubtleCrypto;
       } else {
         throw new Error('Web Crypto API not available in this environment');
       }
@@ -258,6 +258,45 @@ export class MigrationBackupSystem {
     } catch (error) {
       console.error('[MigrationBackup] Verification failed:', error);
       return false;
+    }
+  }
+
+  /**
+   * Get the latest backup data from IndexedDB
+   *
+   * Returns the complete backup data structure for restoration.
+   *
+   * @returns Latest backup data or null if not found
+   */
+  async getLatestBackup(): Promise<ProviderBackup | null> {
+    try {
+      const db = await this.openBackupDatabase();
+      const tx = db.transaction(INDEXED_DB_STORE, 'readonly');
+      const store = tx.objectStore(INDEXED_DB_STORE);
+      const request = store.get('latest');
+
+      const result = await new Promise<any>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+
+      db.close();
+
+      if (!result || !result.backup) {
+        return null;
+      }
+
+      // Verify backup integrity before returning
+      const isValid = await this.verifyBackup(result.backup);
+      if (!isValid) {
+        console.error('[MigrationBackup] Latest backup is corrupted');
+        return null;
+      }
+
+      return result.backup;
+    } catch (error) {
+      console.error('[MigrationBackup] Failed to get latest backup:', error);
+      return null;
     }
   }
 

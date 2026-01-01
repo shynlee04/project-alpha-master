@@ -7,6 +7,8 @@
  * - Progress tracking for long documents
  * - Figure/table detection for PDFs
  * - Error handling for edge cases
+ *
+ * @iteration 15 - Added RAG progress events (CHUNKING_STATUS)
  */
 
 import type { SourceRecord } from '@/lib/state/dexie-db';
@@ -18,6 +20,7 @@ import type {
 } from './types';
 import { DEFAULT_CHUNKING_OPTIONS } from './types';
 import { createChunker } from './chunk-strategies';
+import { eventBus } from '@/infrastructure/events/event-bus';
 
 /**
  * Pattern for detecting figures in PDF text
@@ -62,6 +65,8 @@ export class DocumentChunker {
   /**
    * Chunk a complete source record
    *
+   * Iteration 15: Added progress event emissions for UI feedback
+   *
    * @param source - Source record to chunk
    * @param options - Chunking options (defaults to DEFAULT_CHUNKING_OPTIONS)
    * @param onProgress - Optional progress callback
@@ -74,53 +79,89 @@ export class DocumentChunker {
   ): ChunkingResult {
     const startTime = performance.now();
 
-    // Validate source
-    if (!source) {
-      throw new Error('Source is required');
+    // Emit start event
+    eventBus.emitRAGChunkingStatus({
+      status: 'running',
+      progress: 0,
+      current: 0,
+      total: 0,
+      message: `Starting chunking for source: ${source.id}`,
+      sourceId: source.id
+    });
+
+    try {
+      // Validate source
+      if (!source) {
+        throw new Error('Source is required');
+      }
+
+      if (!source.content || source.content.length === 0) {
+        throw new Error(`Source ${source.id} has no content to chunk`);
+      }
+
+      // Route to appropriate chunking method based on source type
+      let chunks: ChunkMetadata[];
+      switch (source.type) {
+        case 'pdf':
+          chunks = this.chunkPDF(source.content, options, onProgress);
+          break;
+        case 'text':
+          chunks = this.chunkText(source.content, options, onProgress);
+          break;
+        case 'url':
+          // URLs are fetched as text, chunk as text
+          chunks = this.chunkText(source.content, options, onProgress);
+          break;
+        default:
+          throw new Error(`Unsupported source type: ${source.type}`);
+      }
+
+      // Calculate metadata
+      const totalTokens = chunks.reduce((sum, chunk) => sum + chunk.tokenCount, 0);
+      const figureCount = chunks.filter(
+        (c) => c.metadata.type === 'figure'
+      ).length;
+      const tableCount = chunks.filter(
+        (c) => c.metadata.type === 'table'
+      ).length;
+      const processingTimeMs = Math.round(performance.now() - startTime);
+
+      // Emit completion event
+      eventBus.emitRAGChunkingStatus({
+        status: 'completed',
+        progress: 100,
+        current: chunks.length,
+        total: chunks.length,
+        message: `Document chunked into ${chunks.length} chunks`,
+        sourceId: source.id
+      });
+
+      return {
+        chunks,
+        totalChunks: chunks.length,
+        totalTokens,
+        metadata: {
+          strategy: options.strategy,
+          figureCount,
+          tableCount,
+          processingTimeMs,
+        },
+      };
+    } catch (error: unknown) {
+      // Emit error event
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      eventBus.emitRAGChunkingStatus({
+        status: 'error',
+        progress: 0,
+        current: 0,
+        total: 0,
+        message: 'Chunking failed',
+        error: errorMessage,
+        sourceId: source.id
+      });
+
+      throw error;
     }
-
-    if (!source.content || source.content.length === 0) {
-      throw new Error(`Source ${source.id} has no content to chunk`);
-    }
-
-    // Route to appropriate chunking method based on source type
-    let chunks: ChunkMetadata[];
-    switch (source.type) {
-      case 'pdf':
-        chunks = this.chunkPDF(source.content, options, onProgress);
-        break;
-      case 'text':
-        chunks = this.chunkText(source.content, options, onProgress);
-        break;
-      case 'url':
-        // URLs are fetched as text, chunk as text
-        chunks = this.chunkText(source.content, options, onProgress);
-        break;
-      default:
-        throw new Error(`Unsupported source type: ${source.type}`);
-    }
-
-    // Calculate metadata
-    const totalTokens = chunks.reduce((sum, chunk) => sum + chunk.tokenCount, 0);
-    const figureCount = chunks.filter(
-      (c) => c.metadata.type === 'figure'
-    ).length;
-    const tableCount = chunks.filter(
-      (c) => c.metadata.type === 'table'
-    ).length;
-    const processingTimeMs = Math.round(performance.now() - startTime);
-
-    return {
-      chunks,
-      totalChunks: chunks.length,
-      totalTokens,
-      metadata: {
-        strategy: options.strategy,
-        figureCount,
-        tableCount,
-        processingTimeMs,
-      },
-    };
   }
 
   /**
@@ -304,6 +345,8 @@ export class DocumentChunker {
   /**
    * Chunk plain text content
    *
+   * Iteration 15: Added progress event emissions
+   *
    * @param text - Text content to chunk
    * @param options - Chunking options
    * @param onProgress - Optional progress callback
@@ -344,6 +387,15 @@ export class DocumentChunker {
         status: 'completed',
       });
 
+      // Emit progress event
+      eventBus.emitRAGChunkingStatus({
+        status: 'running',
+        progress: 100,
+        current: 1,
+        total: 1,
+        message: 'Text chunked (content smaller than min chunk size)',
+      });
+
       console.log(
         `Text chunked in ${Math.round(performance.now() - startTime)}ms: ` +
           `1 chunk (content smaller than min chunk size)`
@@ -352,12 +404,30 @@ export class DocumentChunker {
       return [chunk];
     }
 
+    // Emit chunking in progress event
+    eventBus.emitRAGChunkingStatus({
+      status: 'running',
+      progress: 10,
+      current: 0,
+      total: 0,
+      message: 'Chunking text content...',
+    });
+
     // Chunk using selected strategy
     const chunker = createChunker(options.strategy);
     const chunks = chunker.chunk(
       { id: 'text-temp', content: text },
       options,
       (progress) => {
+        // Emit progress events during chunking
+        eventBus.emitRAGChunkingStatus({
+          status: 'running',
+          progress: Math.round((progress.current / progress.total) * 50 + 10), // 10-60% range
+          current: progress.current,
+          total: progress.total,
+          message: `Chunking: ${progress.current}/${progress.total}`,
+        });
+
         onProgress?.({
           sourceId: 'text',
           currentChunk: progress.current,
@@ -379,6 +449,15 @@ export class DocumentChunker {
       currentChunk: chunks.length,
       totalChunks: chunks.length,
       status: 'completed',
+    });
+
+    // Emit completion event
+    eventBus.emitRAGChunkingStatus({
+      status: 'running',
+      progress: 90,
+      current: chunks.length,
+      total: chunks.length,
+      message: `Text chunked into ${chunks.length} chunks`,
     });
 
     console.log(

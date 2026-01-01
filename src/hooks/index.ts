@@ -11,3 +11,12 @@ export {
     useCurrentWorkspace,
     useIsInWorkspace,
 } from './useWorkspaceContext';
+
+// Cross-workspace events hooks (Iteration 15)
+export {
+    useRAGEmbeddingProgress,
+    useRAGChunkingStatus,
+    useRAGDatabaseIndexing,
+    useRAGSourceProcessing,
+    useCrossWorkspaceEvent,
+} from './use-cross-workspace-events';

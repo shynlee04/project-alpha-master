@@ -21,32 +21,25 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '@/presentation/components/ui/button'
-import { Label } from '@/presentation/components/ui/label'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/presentation/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/presentation/components/ui/tabs'
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
 } from '@/presentation/components/ui/dialog'
 
 // P1-1: Import extracted components
 // Ralph Loop Cycle 17: Replace AgentBasicConfig with split components
 // Ralph Loop Cycle 17 Phase 5: Import extracted hooks
+// Iteration 15 Phase 4: Import header, footer, and tab content components
 import { AgentImportExport } from './AgentImportExport'
-import { AgentBasicInfoTab } from './AgentConfigForm/AgentBasicInfoTab'
-import { AgentProviderSelector } from './AgentConfigForm/AgentProviderSelector'
-import { AgentModelSelector } from './AgentConfigForm/AgentModelSelector'
-import { AgentAdvancedSettingsTab } from './AgentConfigForm/AgentAdvancedSettingsTab'
+import { AgentConfigDialogHeader } from './AgentConfigDialogHeader'
+import { AgentConfigDialogFooter } from './AgentConfigDialogFooter'
+import { BasicTabContent, WorkspaceTabContent, AdvancedTabContent } from './AgentConfigTabContents'
 import { useAgentFormState } from './hooks/useAgentFormState'
 import { useAgentFormSubmission } from './hooks/useAgentFormSubmission'
 import { useAgentFormActions } from './hooks/useAgentFormActions'
 import { useAgentFormValidation } from './hooks/useAgentFormValidation'
+import { useAgentFieldUpdate } from './hooks/useAgentFieldUpdate'
 
 // P0 Fix: Import unsaved changes warning
 import {
@@ -54,10 +47,7 @@ import {
     UnsavedChangesDialog,
 } from '@/presentation/components/common'
 
-// Advanced configuration components (kept as-is)
-import { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig'
-import { ToolTrustLevelManager } from './ToolTrustLevelManager'
-import type { AgentToolBinding } from '@/core/entities/Agent'
+// Advanced configuration components (moved to AgentConfigTabContents)
 
 // Security utilities for safe logging (RC-028-010)
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
@@ -201,61 +191,39 @@ export function AgentConfigDialog({
         onOpenChange,
     })
 
-    // Helper for field updates (adapter to unify setters)
+    // Iteration 15 Phase 4: Use extracted field update hook
+    const handleUpdateFieldBase = useAgentFieldUpdate({
+        setName,
+        setDescription,
+        setProviderId,
+        setModelId,
+        setCustomBaseURL,
+        setCustomModelId,
+        setCustomHeaders,
+        setEnableNativeTools,
+    })
+
+    // Wrapper for providerId to handle model reset
     const handleUpdateField = useCallback((field: string, value: any) => {
-        switch (field) {
-            case 'name': setName(value); break
-            case 'description': setDescription(value); break
-            case 'providerId':
-                setProviderId(value)
-                setModelId('') // Reset model when provider changes
-                break
-            case 'modelId': setModelId(value); break
-            case 'customBaseURL': setCustomBaseURL(value); break
-            case 'customModelId': setCustomModelId(value); break
-            case 'customHeaders': setCustomHeaders(value); break
-            case 'enableNativeTools': setEnableNativeTools(value); break
-            // Add other fields as needed
+        if (field === 'providerId') {
+            setProviderId(value)
+            setModelId('') // Reset model when provider changes
+        } else {
+            handleUpdateFieldBase(field, value)
         }
-    }, [setName, setDescription, setProviderId, setModelId, setCustomBaseURL, setCustomModelId, setCustomHeaders, setEnableNativeTools])
+    }, [setProviderId, setModelId, handleUpdateFieldBase])
 
     return (
         <>
             <Dialog open={open} onOpenChange={handleRequestClose}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-none">
-                    <DialogHeader>
-                        <div className="flex items-center justify-between">
-                            <DialogTitle className="font-pixel">
-                                {agentId
-                                    ? t('agents.config.editAgent', 'Edit Agent')
-                                    : t('agents.config.newAgent', 'New Agent')
-                                }
-                            </DialogTitle>
-
-                            <div className="flex items-center gap-2">
-                                {agentId && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={handleDelete}
-                                        className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
-                                    >
-                                        <Trash2 className="w-4 h-4 mr-1" />
-                                        {t('actions.delete', 'Delete')}
-                                    </Button>
-                                )}
-
-                                {/* P1-1: Use AgentImportExport component */}
-                                <AgentImportExport
-                                    onImportSuccess={handleImportSuccess}
-                                    onExportSuccess={handleExportSuccess}
-                                />
-                            </div>
-                        </div>
-                        <DialogDescription>
-                            {t('agents.config.description', 'Configure your AI agent settings')}
-                        </DialogDescription>
-                    </DialogHeader>
+                    {/* Iteration 15 Phase 4: Extracted header component */}
+                    <AgentConfigDialogHeader
+                        agentId={agentId}
+                        onDelete={handleDelete}
+                        onImportSuccess={handleImportSuccess}
+                        onExportSuccess={handleExportSuccess}
+                    />
 
                     <Tabs value={activeTab} onValueChange={(value: string) => setActiveTab(value as ConfigTab)}>
                         <TabsList className="w-full">
@@ -270,121 +238,51 @@ export function AgentConfigDialog({
                             </TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="basic" className="mt-4 space-y-4">
-                            {/* Ralph Loop Cycle 17: Use split components from AgentConfigForm */}
-                            <div className="space-y-4">
-                                {/* Agent Name and Description */}
-                                <AgentBasicInfoTab
-                                    name={name}
-                                    role={description} // Map: description -> role prop
-                                    onNameChange={(value) => handleUpdateField('name', value)}
-                                    onRoleChange={(value) => handleUpdateField('description', value)}
-                                    errors={errors}
-                                />
+                        {/* Iteration 15 Phase 4: Extracted tab content components */}
+                        <BasicTabContent
+                            name={name}
+                            description={description}
+                            providerId={providerId}
+                            providers={providers}
+                            modelId={modelId}
+                            models={models}
+                            isLoadingModels={isLoadingModels}
+                            fetchModels={fetchModels}
+                            errors={errors}
+                            onFieldUpdate={handleUpdateField}
+                        />
 
-                                {/* Provider Selection */}
-                                <AgentProviderSelector
-                                    providers={providers}
-                                    selectedProviderId={providerId}
-                                    onProviderChange={(value) => handleUpdateField('providerId', value)}
-                                    error={errors.provider}
-                                />
+                        <WorkspaceTabContent
+                            agent={agent}
+                            onPermissionsChange={(toolId, workspaceType, isEnabled) => {
+                                setTools((prev: any[]) => prev.map((t: any) =>
+                                    t.toolId === toolId
+                                        ? { ...t, workspacePermissions: { ...t.workspacePermissions, [workspaceType]: isEnabled } }
+                                        : t
+                                ))
+                            }}
+                        />
 
-                                {/* Model Selection */}
-                                <AgentModelSelector
-                                    models={models}
-                                    selectedModel={modelId}
-                                    onModelChange={(value) => handleUpdateField('modelId', value)}
-                                    onRefresh={async () => {
-                                        try {
-                                            await fetchModels(providerId)
-                                            toast.success(t('agents.config.modelsRefreshed', 'Models refreshed'))
-                                        } catch (err: any) {
-                                            toast.error(
-                                                t('agents.config.fetchFailed', 'Failed to fetch models: {{error}}', {
-                                                    error: err.message || 'Unknown error',
-                                                })
-                                            )
-                                        }
-                                    }}
-                                    isLoading={isLoadingModels}
-                                    disabled={!providerId}
-                                    error={errors.modelId}
-                                />
-                            </div>
-
-                            {/* API Key Section - Placeholder until proper hook integration */}
-                            <div className="space-y-2">
-                                <p className="text-sm text-muted-foreground">
-                                    {t('agents.config.apiKeyNote', 'API keys are managed in Provider Settings')}
-                                </p>
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="workspace" className="mt-4 space-y-4">
-                            {agent ? (
-                                <WorkspaceToolPermissionsConfig
-                                    agent={agent}
-                                    onPermissionsChange={(toolId, workspaceType, isEnabled) => {
-                                        // Update tools state with new permission
-                                        setTools((prev: AgentToolBinding[]) => prev.map((t: AgentToolBinding) =>
-                                            t.toolId === toolId
-                                                ? { ...t, workspacePermissions: { ...t.workspacePermissions, [workspaceType]: isEnabled } }
-                                                : t
-                                        ))
-                                    }}
-                                />
-                            ) : (
-                                <div className="text-center py-8 text-muted-foreground">
-                                    <p>{t('agents.config.saveFirstForWorkspace', 'Save the agent first to configure workspace permissions')}</p>
-                                </div>
-                            )}
-                        </TabsContent>
-
-                        <TabsContent value="advanced" className="mt-4 space-y-4">
-                            <AgentAdvancedSettingsTab
-                                providerId={providerId}
-                                customBaseURL={customBaseURL}
-                                customModelId={customModelId}
-                                customHeaders={customHeaders}
-                                enableNativeTools={enableNativeTools}
-                                onCustomBaseURLChange={(val) => handleUpdateField('customBaseURL', val)}
-                                onCustomModelIdChange={(val) => handleUpdateField('customModelId', val)}
-                                onCustomHeadersChange={(val) => handleUpdateField('customHeaders', val)}
-                                onEnableNativeToolsChange={(val) => handleUpdateField('enableNativeTools', val)}
-                                onModelChange={(val) => handleUpdateField('modelId', val)}
-                                errors={errors}
-                            />
-
-                            <div className="space-y-4 border-t pt-4">
-                                <Label>{t('agents.config.trustSettings', 'Tool Trust Settings')}</Label>
-                                <ToolTrustLevelManager />
-                            </div>
-                        </TabsContent>
+                        <AdvancedTabContent
+                            providerId={providerId}
+                            customBaseURL={customBaseURL}
+                            customModelId={customModelId}
+                            customHeaders={customHeaders}
+                            enableNativeTools={enableNativeTools}
+                            modelId={modelId}
+                            errors={errors}
+                            onFieldUpdate={handleUpdateField}
+                        />
                     </Tabs>
 
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleRequestClose(false)}
-                            disabled={isSubmitting}
-                            className="rounded-none font-pixel"
-                        >
-                            {t('actions.cancel', 'Cancel')}
-                        </Button>
-                        <Button
-                            onClick={handleSubmit}
-                            disabled={isSubmitting || !isValid}
-                            className="rounded-none font-pixel"
-                        >
-                            {isSubmitting
-                                ? t('actions.saving', 'Saving...')
-                                : agentId
-                                    ? t('actions.save', 'Save')
-                                    : t('actions.create', 'Create')
-                            }
-                        </Button>
-                    </DialogFooter>
+                    {/* Iteration 15 Phase 4: Extracted footer component */}
+                    <AgentConfigDialogFooter
+                        agentId={agentId}
+                        isSubmitting={isSubmitting}
+                        isValid={isValid}
+                        onCancel={() => handleRequestClose(false)}
+                        onSubmit={handleSubmit}
+                    />
                 </DialogContent>
             </Dialog>
 

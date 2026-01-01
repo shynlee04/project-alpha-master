@@ -14,7 +14,7 @@
  */
 
 import { GEMINI_MODELS } from '../agent/providers/types';
-import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import { eventBus } from '@/infrastructure/events/event-bus';
 
 /**
  * Embedding provider type

@@ -13,6 +13,8 @@
  * - Full-text and vector hybrid search
  * - IndexedDB persistence using @orama/plugin-data-persistence
  * - Source attribution in search results
+ *
+ * @iteration 15 - Added RAG progress events (DATABASE_INDEXING)
  */
 
 import { create, insert, insertMultiple, remove, search, type Orama } from '@orama/orama';
@@ -23,6 +25,7 @@ import type {
   OramaSchema,
   SearchResult,
 } from './types';
+import { eventBus } from '@/infrastructure/events/event-bus';
 
 // Lazy load persistence plugin to avoid SSR issues with dpack (Node.js streams dependency)
 let persistPlugin: typeof import('@orama/plugin-data-persistence') | null = null;
@@ -246,20 +249,56 @@ export async function indexDocument(
   projectId: string,
   document: DocumentSchema
 ): Promise<void> {
-  // Get or create index (use full-text only if no embedding provided)
-  let db = activeIndexes.get(projectId);
-  if (!db) {
-    // Create index with vector search only if document has embedding
-    db = await createIndex({
-      projectId,
-      enableVectorSearch: !!document.embedding,
+  // Emit start event
+  eventBus.emitRAGDatabaseIndexing({
+    status: 'running',
+    progress: 0,
+    current: 0,
+    total: 1,
+    message: `Indexing document: ${document.id}`,
+    documentId: document.id
+  });
+
+  try {
+    // Get or create index (use full-text only if no embedding provided)
+    let db = activeIndexes.get(projectId);
+    if (!db) {
+      // Create index with vector search only if document has embedding
+      db = await createIndex({
+        projectId,
+        enableVectorSearch: !!document.embedding,
+      });
+    }
+
+    // Insert document into index
+    await insert(db, document as any); // Type assertion for Orama compatibility
+
+    // Emit completion event
+    eventBus.emitRAGDatabaseIndexing({
+      status: 'completed',
+      progress: 100,
+      current: 1,
+      total: 1,
+      message: 'Document indexed successfully',
+      documentId: document.id
     });
+
+    console.log(`[OramaIndex] Indexed document "${document.id}" for project "${projectId}"`);
+  } catch (error: unknown) {
+    // Emit error event
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    eventBus.emitRAGDatabaseIndexing({
+      status: 'error',
+      progress: 0,
+      current: 0,
+      total: 1,
+      message: 'Document indexing failed',
+      error: errorMessage,
+      documentId: document.id
+    });
+
+    throw error;
   }
-
-  // Insert document into index
-  await insert(db, document as any); // Type assertion for Orama compatibility
-
-  console.log(`[OramaIndex] Indexed document "${document.id}" for project "${projectId}"`);
 }
 
 /**
@@ -293,36 +332,83 @@ export async function indexSource(
 ): Promise<number> {
   const { title, chunkSize = 1000, chunkOverlap = 200, embedding } = options;
 
-  // Chunk the content (simple implementation - Story 7-2 will add proper chunking)
-  const chunks = chunkContent(content, chunkSize, chunkOverlap);
+  // Emit start event
+  eventBus.emitRAGDatabaseIndexing({
+    status: 'running',
+    progress: 0,
+    current: 0,
+    total: 0,
+    message: `Starting source indexing: ${sourceId}`,
+    sourceId
+  });
 
-  // Get or create index (use full-text only if no embedding provided)
-  let db = activeIndexes.get(projectId);
-  if (!db) {
-    db = await createIndex({
-      projectId,
-      enableVectorSearch: !!embedding,
+  try {
+    // Chunk the content (simple implementation - Story 7-2 will add proper chunking)
+    const chunks = chunkContent(content, chunkSize, chunkOverlap);
+
+    // Emit chunking progress
+    eventBus.emitRAGDatabaseIndexing({
+      status: 'running',
+      progress: 20,
+      current: 0,
+      total: chunks.length,
+      message: `Content chunked into ${chunks.length} parts`,
+      sourceId
     });
+
+    // Get or create index (use full-text only if no embedding provided)
+    let db = activeIndexes.get(projectId);
+    if (!db) {
+      db = await createIndex({
+        projectId,
+        enableVectorSearch: !!embedding,
+      });
+    }
+
+    // Insert all chunks as documents
+    const documents = chunks.map((chunk, index) => ({
+      id: `${sourceId}-chunk-${index}`,
+      sourceId,
+      content: chunk.text,
+      title,
+      position: index,
+      ...(embedding ? { embedding } : {}),
+      metadata: {
+        chunkIndex: index,
+        totalChunks: chunks.length,
+      },
+    }));
+
+    // Insert in batches with progress updates
+    await insertMultiple(db, documents as any); // Type assertion for Orama compatibility
+
+    // Emit completion event
+    eventBus.emitRAGDatabaseIndexing({
+      status: 'completed',
+      progress: 100,
+      current: chunks.length,
+      total: chunks.length,
+      message: `Indexed ${documents.length} chunks from source`,
+      sourceId
+    });
+
+    console.log(`[OramaIndex] Indexed ${documents.length} chunks from source "${sourceId}" for project "${projectId}"`);
+    return documents.length;
+  } catch (error: unknown) {
+    // Emit error event
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    eventBus.emitRAGDatabaseIndexing({
+      status: 'error',
+      progress: 0,
+      current: 0,
+      total: 0,
+      message: 'Source indexing failed',
+      error: errorMessage,
+      sourceId
+    });
+
+    throw error;
   }
-
-  // Insert all chunks as documents
-  const documents = chunks.map((chunk, index) => ({
-    id: `${sourceId}-chunk-${index}`,
-    sourceId,
-    content: chunk.text,
-    title,
-    position: index,
-    ...(embedding ? { embedding } : {}),
-    metadata: {
-      chunkIndex: index,
-      totalChunks: chunks.length,
-    },
-  }));
-
-  await insertMultiple(db, documents as any); // Type assertion for Orama compatibility
-
-  console.log(`[OramaIndex] Indexed ${documents.length} chunks from source "${sourceId}" for project "${projectId}"`);
-  return documents.length;
 }
 
 /**

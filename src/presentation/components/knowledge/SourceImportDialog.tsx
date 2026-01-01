@@ -5,6 +5,8 @@
  *
  * Dialog for importing new sources (PDF, URL, Text).
  * Uses SourceImportPipeline for processing and persistence.
+ *
+ * @iteration 15 - Added RAG progress event indicators
  */
 
 import { useState } from 'react';
@@ -18,6 +20,18 @@ import { Label } from '@/presentation/components/ui/label';
 import { Upload, Link as LinkIcon, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { sourceImportPipeline } from '@/lib/knowledge/source-import';
 import { toast } from 'sonner';
+
+// RAG progress hooks and indicators (Iteration 15)
+import {
+    useRAGEmbeddingProgress,
+    useRAGChunkingStatus,
+    useRAGDatabaseIndexing,
+} from '@/hooks';
+import {
+    EmbeddingProgressIndicator,
+    ChunkingStatusIndicator,
+    DatabaseIndexingIndicator,
+} from '@/presentation/components/ui/activity-indicators';
 
 interface SourceImportDialogProps {
     open: boolean;
@@ -35,6 +49,11 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
     const [textTitle, setTextTitle] = useState('');
     const [textContent, setTextContent] = useState('');
     const [error, setError] = useState<string | null>(null);
+
+    // RAG progress states (Iteration 15)
+    const embeddingState = useRAGEmbeddingProgress();
+    const chunkingState = useRAGChunkingStatus();
+    const indexingState = useRAGDatabaseIndexing();
 
     const resetForm = () => {
         setFile(null);
@@ -145,6 +164,21 @@ export function SourceImportDialog({ open, onOpenChange, projectId }: SourceImpo
                         <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-none border border-destructive/20 mt-4 flex items-center gap-2">
                             <AlertCircle size={16} />
                             {error}
+                        </div>
+                    )}
+
+                    {/* RAG Progress Indicators (Iteration 15) */}
+                    {(embeddingState.status !== 'idle' || chunkingState.status !== 'idle' || indexingState.status !== 'idle') && (
+                        <div className="space-y-3 mt-4">
+                            {embeddingState.status !== 'idle' && (
+                                <EmbeddingProgressIndicator state={embeddingState} />
+                            )}
+                            {chunkingState.status !== 'idle' && (
+                                <ChunkingStatusIndicator state={chunkingState} />
+                            )}
+                            {indexingState.status !== 'idle' && (
+                                <DatabaseIndexingIndicator state={indexingState} />
+                            )}
                         </div>
                     )}
 
