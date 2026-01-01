@@ -106,8 +106,8 @@ export {
 
 export {
   useRAGStore,
-  type RAGState
-} from './rag-store';
+  type RAGStoreState as RAGState
+} from './rag';
 
 export {
   useCanvasStore,

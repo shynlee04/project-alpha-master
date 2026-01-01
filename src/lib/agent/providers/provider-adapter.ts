@@ -185,13 +185,33 @@ export class ProviderAdapterFactory {
         const extended = {
             ...baseAdapter,
             getModels: async (): Promise<ProviderModel[]> => {
-                return this.modelRegistry.getModels(providerId, config.apiKey);
+                const modelInfos = await this.modelRegistry.getModels(providerId, config.apiKey);
+                // Map ModelInfo to ProviderModel
+                return modelInfos.map((info): ProviderModel => ({
+                    id: info.id,
+                    name: info.name,
+                    providerId: info.providerId,
+                    contextWindow: info.contextLength || 4096,
+                    maxOutputTokens: info.maxOutputTokens || 4096,
+                    inputModalities: (info.inputModalities || ['text']) as Array<'text' | 'image' | 'audio' | 'video' | 'code'>,
+                    outputModalities: (info.outputModalities || ['text']) as Array<'text' | 'image' | 'audio' | 'video' | 'code'>,
+                    isEnabled: true,
+                    pricing: info.pricing ? {
+                        promptPer1M: info.pricing.prompt,
+                        completionPer1M: info.pricing.completion,
+                    } : undefined,
+                }));
             },
             testConnection: async (): Promise<{ success: boolean; latencyMs: number; error?: string }> => {
-                return this.testConnection(providerId, config.apiKey, {
+                const result = await this.testConnection(providerId, config.apiKey, {
                     baseURL: config.baseURL,
                     headers: config.headers,
                 });
+                return {
+                    success: result.success,
+                    latencyMs: result.latencyMs,
+                    error: result.error,
+                };
             },
         } as ExtendedProviderAdapter;
 

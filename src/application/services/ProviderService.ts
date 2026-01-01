@@ -61,7 +61,7 @@ export class ProviderService {
    * Remove API key for provider
    */
   async removeApiKey(providerId: string): Promise<void> {
-    await credentialVault.removeCredentials(providerId);
+    await credentialVault.deleteCredentials(providerId);
 
     emitStoreEvent(STORE_EVENTS.PROVIDER_KEY_REMOVED, {
       providerId,

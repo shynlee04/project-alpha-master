@@ -158,6 +158,3 @@ export const createAgentCrudSlice: StateCreator<
     });
   },
 });
-
-// Export DEFAULT_AGENT for reference
-export { DEFAULT_AGENT };
