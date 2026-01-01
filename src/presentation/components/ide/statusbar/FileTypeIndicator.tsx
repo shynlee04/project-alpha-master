@@ -7,7 +7,7 @@
  * Displays current file type/language based on file extension.
  */
 
-import { useStatusBarStore } from '@/lib/state/statusbar-store';
+import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 
 // ============================================================================

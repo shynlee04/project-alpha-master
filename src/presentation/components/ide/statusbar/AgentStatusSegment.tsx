@@ -11,7 +11,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, Loader2, Zap, AlertCircle } from 'lucide-react';
-import { useStatusBarStore } from '@/lib/state/statusbar-store';
+import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
 

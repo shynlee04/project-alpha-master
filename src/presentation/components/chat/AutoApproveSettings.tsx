@@ -14,7 +14,7 @@ import { ChevronDown, ChevronUp, Eye, Edit, Trash2, Terminal, Globe, Zap, Layers
 import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
 import { cn } from '@/lib/utils';
-import { useAutoApproveStore, type ToolCategory } from '@/stores/auto-approve-store';
+import { useAutoApproveStore, type ToolCategory } from '@/infrastructure/persistence/stores/auto-approve-store';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 
 interface CategoryConfig {

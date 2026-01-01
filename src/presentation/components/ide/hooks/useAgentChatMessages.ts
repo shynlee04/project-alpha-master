@@ -12,7 +12,7 @@ import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ChatMessage, ToolExecution } from '../EnhancedChatInterface';
 import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/conversation-store';
-import { usePromptEnhancementStore } from '@/stores/prompt-enhancement-store';
+import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
 import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
 
 export interface UseAgentChatMessagesProps {

@@ -18,7 +18,7 @@
 import React from 'react';
 import { Outlet } from '@tanstack/react-router';
 import { Menu } from 'lucide-react';
-import { useLayoutStore } from '@/lib/state/layout-store';
+import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { MainSidebar } from './MainSidebar';
 import { cn } from '@/lib/utils';
 

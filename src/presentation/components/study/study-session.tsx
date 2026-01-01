@@ -9,7 +9,7 @@ import type { Flashcard } from '@/lib/knowledge/types';
 import type { SRSRating } from '@/lib/study/srs-types';
 import { FlashcardView } from './flashcard';
 import { StudyStatsDisplay } from './study-stats';
-import { useStudySession, useStudyStore } from '@/lib/state/study-store';
+import { useStudySession, useStudyStore } from '@/infrastructure/persistence/stores/study-store';
 import { cn } from '@/lib/utils';
 
 /**

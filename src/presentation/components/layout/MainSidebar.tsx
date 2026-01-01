@@ -28,7 +28,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/presentation/components/ui/tooltip';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
-import { useLayoutStore } from '@/lib/state/layout-store';
+import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useTheme } from 'next-themes';
 import { useLocalePreference } from '@/i18n/LocaleProvider';
 

@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
 import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/conversation-store';
-import { useThreadsStore } from '@/infrastructure/persistence/stores/conversation-threads-store';
+import { useThreadsStore } from '@/stores/conversation-threads-store';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '@/lib/agent/hooks/use-agent-chat-with-tools';
-import { useAutoApproveStore } from '@/stores/auto-approve-store';
+import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-approve-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
-import { usePromptEnhancementStore } from '@/stores/prompt-enhancement-store';
+import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
 import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
 
 // Import sub-components

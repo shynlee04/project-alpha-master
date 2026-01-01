@@ -33,6 +33,10 @@ export { ErrorState } from './ErrorState';
 export { LoadingState } from './LoadingState';
 export { ProgressIndicator } from './progress-indicator';
 
+// VIA-GENT Loading & Feedback Components (P0-3: UI/UX Gap Analysis)
+export { ModelLoadingSpinner, ModelLoadingSpinnerInline } from './ModelLoadingSpinner';
+export type { ModelLoadingSpinnerProps, ModelLoadingSpinnerInlineProps } from './ModelLoadingSpinner';
+
 // VIA-GENT Information Architecture Components (P1.3)
 export { ContextTooltip } from './context-tooltip';
 export { CollapsibleSection } from './collapsible-section';

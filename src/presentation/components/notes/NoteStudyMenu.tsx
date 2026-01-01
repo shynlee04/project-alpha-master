@@ -29,7 +29,7 @@ import { useNoteStore } from '@/lib/notes';
 import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
 import { generateFlashcards } from '@/lib/knowledge/flashcard-generator';
 import { generateQuiz } from '@/lib/study/quiz-generator';
-import { useFlashcardOperations } from '@/lib/state/flashcard-store';
+import { useFlashcardOperations } from '@/infrastructure/persistence/stores/flashcard-store';
 import { useQuizStore } from '@/lib/state/quiz-store';
 import { useIDEStore } from '@/lib/state/ide-store';
 import type { QuizQuestion } from '@/lib/study/quiz-types';

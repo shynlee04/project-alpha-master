@@ -11,7 +11,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Check, RefreshCw, AlertTriangle, CloudOff } from 'lucide-react';
-import { useStatusBarStore } from '@/lib/state/statusbar-store';
+import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 
 // ============================================================================

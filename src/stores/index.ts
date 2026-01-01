@@ -45,7 +45,7 @@ export {
   type ThreadMessage,
   type ThreadToolCall,
   type ConversationThread
-} from '@/infrastructure/persistence/stores/conversation-threads-store';
+} from '@/stores/conversation-threads-store';
 
 export {
   useOpenAICompatibleStore,

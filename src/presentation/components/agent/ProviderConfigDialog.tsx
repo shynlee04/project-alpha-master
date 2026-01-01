@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Button } from '@/presentation/components/ui/button';
 import { Input } from '@/presentation/components/ui/input';
 import { Label } from '@/presentation/components/ui/label';
+import { ModelLoadingSpinner } from '@/presentation/components/ui';
 import { ProviderConfig, PROVIDERS } from '@/lib/agent/providers/types';
 import { toast } from 'sonner';
 import { Lock, Key, Globe, Server } from 'lucide-react';
@@ -54,6 +55,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
     const [apiKey, setApiKey] = useState('');
     const [headers, setHeaders] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isFetchingModels, setIsFetchingModels] = useState(false);
+    const [fetchError, setFetchError] = useState<string | undefined>();
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
@@ -92,14 +95,25 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
         }
 
         setIsSubmitting(true);
+        setFetchError(undefined);
         try {
             if (isBuiltIn && provider) {
                 // BUILT-IN PROVIDER: Only save API key
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
                     // CRITICAL: Trigger model loading after key is saved (Ralph Loop Cycle 4: emits event)
-                    await fetchModels(provider.id);
-                    toast.success(`${provider.name} API key saved - loading models...`);
+                    setIsFetchingModels(true);
+                    try {
+                        await fetchModels(provider.id);
+                        toast.success(`${provider.name} API key saved - loading models...`);
+                    } catch (error) {
+                        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
+                        setFetchError(errorMessage);
+                        toast.error(`Failed to load models: ${errorMessage}`);
+                        throw error; // Re-throw to prevent dialog from closing
+                    } finally {
+                        setIsFetchingModels(false);
+                    }
                 } else {
                     toast.info('No API key provided - existing key kept');
                 }
@@ -121,7 +135,17 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
-                    await fetchModels(id); // Ralph Loop Cycle 4: emits event
+                    setIsFetchingModels(true);
+                    try {
+                        await fetchModels(id); // Ralph Loop Cycle 4: emits event
+                    } catch (error) {
+                        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
+                        setFetchError(errorMessage);
+                        toast.error(`Failed to load models: ${errorMessage}`);
+                        throw error; // Re-throw to prevent dialog from closing
+                    } finally {
+                        setIsFetchingModels(false);
+                    }
                 }
 
                 toast.success(`Custom provider "${name}" added`);
@@ -137,7 +161,17 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
-                    await fetchModels(provider.id); // Ralph Loop Cycle 4: emits event
+                    setIsFetchingModels(true);
+                    try {
+                        await fetchModels(provider.id); // Ralph Loop Cycle 4: emits event
+                    } catch (error) {
+                        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
+                        setFetchError(errorMessage);
+                        toast.error(`Failed to load models: ${errorMessage}`);
+                        throw error; // Re-throw to prevent dialog from closing
+                    } finally {
+                        setIsFetchingModels(false);
+                    }
                 }
 
                 toast.success(`Provider "${name}" updated`);
@@ -247,6 +281,14 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                         </span>
                     </div>
                 </div>
+
+                {/* Model Loading Feedback */}
+                <ModelLoadingSpinner
+                    providerName={provider?.name || name}
+                    isLoading={isFetchingModels}
+                    error={fetchError}
+                    onRetry={handleSubmit}
+                />
 
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>

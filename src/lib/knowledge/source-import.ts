@@ -172,7 +172,7 @@ export class SourceImportPipeline {
         content: string,
         options?: ChunkingOptions
     ): Promise<void> {
-        const { useRAGStore } = await import('@/lib/state/rag-store');
+        const { useRAGStore } = await import('@/infrastructure/persistence/stores/rag/rag-store');
         const ragStore = useRAGStore.getState();
 
         const chunkingOptions = options || DEFAULT_CHUNKING_OPTIONS;

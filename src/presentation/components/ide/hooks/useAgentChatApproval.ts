@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { PendingApprovalInfo } from '@/lib/agent/hooks/use-agent-chat-with-tools';
-import { useAutoApproveStore } from '@/stores/auto-approve-store';
+import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-approve-store';
 
 export type ApprovalMode = 'batch' | 'individual';
 
