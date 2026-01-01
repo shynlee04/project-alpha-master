@@ -27,9 +27,11 @@ export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 export { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
 export { WorkspaceBadge } from './WorkspaceBadge';
 export { ProjectCard } from './ProjectCard';
+export { ProjectActionsMenu } from './ProjectActionsMenu';
 export type { WorkspaceBindingDialogProps } from './WorkspaceBindingDialog';
 export type { WorkspaceBadgeProps } from './WorkspaceBadge';
 export type { ProjectCardProps } from './ProjectCard';
+export type { ProjectActionsMenuProps } from './ProjectActionsMenu';
 
 // Re-export WorkspaceId from canonical location
 export type { WorkspaceId } from '@/lib/workspace';

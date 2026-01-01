@@ -20,7 +20,7 @@ type ConversationMetadataSliceState = Pick<CombinedConversationState,
 // Slice methods
 type ConversationMetadataSliceMethods = {
   createConversation: (workspaceType: WorkspaceType, projectId: string | null, agentId: string) => string;
-  updateConversationMetadata: (id: string, updates: Partial<ConversationMetadataWithId>) => void;
+  updateConversationMetadata: (id: string, updates: Partial<ConversationMetadata>) => void;
   deleteConversation: (id: string) => void;
   setActiveConversation: (id: string) => void;
   getConversation: (id: string) => ConversationMetadataWithId | undefined;
@@ -29,7 +29,7 @@ type ConversationMetadataSliceMethods = {
   getConversationsByProject: (projectId: string) => ConversationMetadataWithId[];
 };
 
-const generateId = () => `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateId = () => `conv_${nanoid()}`;
 
 export const createConversationMetadataSlice: StateCreator<
   CombinedConversationState,
@@ -52,7 +52,7 @@ export const createConversationMetadataSlice: StateCreator<
     console.log('[ConversationMetadataSlice] Creating:', conversationId);
     set((state) => ({
       conversations: { ...state.conversations, [conversationId]: newConversation },
-      ...(projectId ? { activeProjectConversationIds: { ...state.activeProjectConversationIds, [projectId]: conversationId }} : {}),
+      ...(projectId ? { activeProjectConversationIds: { ...state.activeProjectConversationIds, [projectId]: conversationId } } : {}),
     }));
     return conversationId;
   },

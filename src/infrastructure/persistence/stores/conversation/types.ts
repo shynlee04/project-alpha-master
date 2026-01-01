@@ -114,11 +114,37 @@ export interface CombinedConversationState {
     getConversationsByProject: (projectId: string) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
 
     // ========== Thread Management Slice (Story CC-1.2) ==========
-    threads: Record<string, any>; // TODO: Implement ThreadWithId type in CC-1.2
+    threads: Record<string, import('./thread-management-slice').ThreadWithId>;
     activeThreadId: string | null;
 
+    // ========== Thread Management Methods ==========
+    createThread: (conversationId: string, parentThreadId?: string) => string;
+    deleteThread: (threadId: string) => void;
+    setActiveThread: (threadId: string | null) => void;
+    getThread: (threadId: string) => import('./thread-management-slice').ThreadWithId | undefined;
+    getThreadsByConversation: (conversationId: string) => import('./thread-management-slice').ThreadWithId[];
+    getRootThread: (conversationId: string) => import('./thread-management-slice').ThreadWithId | undefined;
+    getChildThreads: (parentThreadId: string) => import('./thread-management-slice').ThreadWithId[];
+    getThreadHierarchy: (threadId: string) => import('./thread-management-slice').ThreadWithId[];
+
     // ========== Message CRUD Slice (Story CC-1.3) ==========
-    messages: Record<string, any>; // TODO: Implement MessageWithId type in CC-1.3
+    messages: Record<string, import('./message-crud-slice').MessageWithId>;
+
+    // ========== Message CRUD Methods ==========
+    addMessage: (threadId: string, message: Omit<import('./types').ThreadMessage, 'id' | 'timestamp'>) => string;
+    updateMessage: (messageId: string, updates: Partial<import('./types').ThreadMessage>) => void;
+    deleteMessage: (messageId: string) => void;
+    getMessage: (messageId: string) => import('./message-crud-slice').MessageWithId | undefined;
+    getMessagesByThread: (threadId: string) => import('./message-crud-slice').MessageWithId[];
+    getLastMessage: (threadId: string) => import('./message-crud-slice').MessageWithId | undefined;
+
+    // ========== Conversation Utils Slice (Story CC-1.4) ==========
+    filterConversations: (predicate: (conv: import('./conversation-metadata-slice').ConversationMetadataWithId) => boolean) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    sortConversations: (comparator: (a: import('./conversation-metadata-slice').ConversationMetadataWithId, b: import('./conversation-metadata-slice').ConversationMetadataWithId) => number) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    searchConversations: (query: string) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    searchConversationsByTag: (tags: string[]) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    getConversationStats: (conversationId: string) => import('./conversation-utils-slice').ConversationStats;
+    getRecentConversations: (limit?: number) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
 
     // ========== Placeholder for other slices ==========
     // These will be implemented in subsequent stories
