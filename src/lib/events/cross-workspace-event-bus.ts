@@ -433,13 +433,5 @@ export const crossWorkspaceEventBus = new CrossWorkspaceEventBus();
 // ============================================================================
 // Re-exports
 // ============================================================================
-
-export type {
-    FileChangeEvent,
-    AgentConfigChangeEvent,
-    SyncStatusEvent,
-    ProjectStateChangeEvent,
-    WorkspaceChangeEvent,
-    ProviderConfigChangeEvent,
-    ModelsUpdatedEvent,
-};
+// Note: Event types are already exported at their interface definitions above
+// No need for duplicate exports here

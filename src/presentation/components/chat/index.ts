@@ -23,8 +23,7 @@ export { BatchApprovalBar } from './BatchApprovalBar';
 export type { BatchApprovalBarProps } from './BatchApprovalBar';
 
 // AC-02: Agent Selector Unification - Now exported for cross-workspace use
-export { AgentSelector } from './AgentSelector';
-export type { WorkspaceType, AgentSelectorVariant } from './AgentSelector';
+// Unified Agent Selector is now used instead of legacy component
 
 // CW-03: Unified Chat Panel - Single entry point for all chat interfaces
 export { UnifiedChatPanel } from './UnifiedChatPanel';

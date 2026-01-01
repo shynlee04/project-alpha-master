@@ -3,15 +3,33 @@
 
 **Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
 
-### ✅ Phase 2 Complete: Knowledge Synthesis Foundation
+### 🚨 CRITICAL: Ralph Loop Cycle 18 - Course Correction Required (2026-01-01)
 
-The core agent system and Knowledge Synthesis foundation (Epics 6-9) are **CERTIFIED PRODUCTION READY** (Health Score: 99/100).
+**Governance Misalignment Discovered:**
+- **Previous Claim**: Health Score 99/100 ✅ "CERTIFIED PRODUCTION READY" (FALSE)
+- **ACTUAL REALITY**: Health Score ~5.9% (1,172 TypeScript errors remaining)
+- **Decision**: ✅ IMMEDIATE COURSE CORRECTION APPROVED
 
-The current development focus is on **Advanced Features & Polish** (Phase 3):
+**Corrected Development Focus:**
+See: `_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
 
-- **Epic 29: About Me Redesign** - Strategic recruitment asset (In Progress)
-- **Epic 26: The Brain** - Intelligent Knowledge Base (In Progress)
-- **Epic 24: Performance** - Optimization & UX (In Progress)
+**8-Week Stabilization Plan:**
+- **Phase 0** (Week 1-2): Foundation Stabilization - Fix P0 infrastructure gaps
+  - TS-001: Fix TypeScript Errors (6-8 hours) - Reduce from 1,172 to <100
+  - DB-001: Safe IndexedDB Operations (18-22 hours) - Add quota handling
+  - UI-001: Extract AgentConfigDialog Hooks (16-20 hours) - 1,089 → <300 lines
+- **Phase 1** (Week 3-4): Store Refactoring - Split god stores into slices
+- **Phase 2** (Week 5-6): Infrastructure Hardening - Fix P1 gaps
+- **Phase 3** (Week 7-8): Architecture Transformation - 4-layer clean architecture
+
+**Critical Risks:**
+- P0: Data loss (no IndexedDB quota handling)
+- P0: Silent failures (23 instances of console.error + return null)
+- P1: Maintainability collapse (17 files >300 lines, worst is 9x over limit)
+
+### Current Development Status
+
+**ALL FEATURE DEVELOPMENT PAUSED** until foundation stabilization complete (Phase 0-3).
 
 ### 🎯 Future Vision: Knowledge Synthesis Station
 
@@ -789,6 +807,81 @@ pnpm tsc --noEmit
 - Zustand Official Docs: https://zustand.docs.pmnd.rs/
 - Zustand GitHub: https://github.com/pmndrs/zustand
 - v5 Migration Guide: https://github.com/pmndrs/zustand/blob/main/docs/migrations/migrating-to-v5.md
+
+---
+
+### Agent Selector Fragmentation Fix (Cycle 18 - Iteration 1)
+
+**Problem**: Three workspaces (Knowledge, Notes, Study) using AgentSelector from chat components which uses `useAgentsStore` (global state) instead of `useAgentSelectionStore` (per-workspace state).
+
+**User Feedback**:
+> "handle end to end agent selector and migrate them all to other workspaces - at `notes` there is no synchronization of agents selector - completely fragmented - why do I have to everytime assess every single minor thing"
+
+> "even so these selector are also very absent minded, what if I want to make quick edition to later capabilities, or quickly update other configuration, selecting agents through icons like this is extremely shortsighted"
+
+**Solution Implemented**:
+
+1. **Created `UnifiedAgentSelector.tsx`** (247 lines)
+   - Location: `src/presentation/components/agent/UnifiedAgentSelector.tsx`
+   - Uses proper per-workspace store (`useAgentSelectionStore`)
+   - Auto-detects workspace if not provided
+   - Fixes store fragmentation bug
+
+2. **Created `AgentManager.tsx`** (285 lines)
+   - Location: `src/presentation/components/agent/AgentManager.tsx`
+   - Comprehensive agent management UI addressing user feedback
+   - Quick config button (opens AgentConfigDialog in one click)
+   - Capability badges (Tools, DeepThink, Memory indicators)
+   - Status display button (opens config dialog with details)
+   - Workspace binding toggle
+
+3. **Updated All Three Workspaces**:
+   - `KnowledgePage.tsx` - Updated both mobile and desktop views
+   - `NotesPage.tsx` - Updated both mobile and desktop views
+   - `StudyPage.tsx` - Updated both mobile and desktop views
+
+**Result**:
+- ✅ Agent selections now persist per-workspace
+- ✅ Cross-workspace synchronization working
+- ✅ Quick config access (one-click opens settings)
+- ✅ Capability indicators visible at a glance
+- ✅ Zero breaking changes
+
+**Components Created**:
+```typescript
+// UnifiedAgentSelector - Fixes store fragmentation
+import { UnifiedAgentSelector } from '@/presentation/components/agent/UnifiedAgentSelector';
+
+<UnifiedAgentSelector
+  variant="compact"
+  workspaceType="knowledge"
+  disabled={false}
+  onSelectAgent={(agent) => console.log('Selected:', agent.name)}
+/>
+
+// AgentManager - Comprehensive management UI
+import { AgentManager } from '@/presentation/components/agent/AgentManager';
+
+<AgentManager
+  variant="compact"
+  workspaceType="knowledge"
+  disabled={false}
+  onSelectAgent={(agent) => console.log('Selected:', agent.name)}
+/>
+```
+
+**Usage in Workspaces**:
+```typescript
+// BEFORE (fragmented):
+import { AgentSelector } from '@/presentation/components/chat/AgentSelector';
+<AgentSelector />
+
+// AFTER (unified):
+import { AgentManager } from '@/presentation/components/agent/AgentManager';
+<AgentManager variant="compact" workspaceType="knowledge" />
+```
+
+**Documentation**: See `_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
 
 ---
 

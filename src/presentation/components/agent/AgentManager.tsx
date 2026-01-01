@@ -36,6 +36,8 @@ import { UnifiedAgentSelector } from './UnifiedAgentSelector'
 import { AgentConfigDialog } from './AgentConfigDialog'
 import type { Agent } from '@/core/entities/Agent'
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type'
+import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
 
 /**
  * Display variants for different contexts
@@ -108,13 +110,20 @@ export function AgentManager({
   const { t } = useTranslation()
   const [configDialogOpen, setConfigDialogOpen] = useState(false)
 
-  // Get current agent info from UnifiedAgentSelector's store access
-  // We'll use a ref to track the selected agent
-  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
+  // Get active agent ID from selection store
+  const activeAgentId = useAgentSelectionStore((state) => state.activeAgentId)
+
+  // Get all agents from app store
+  const agents = useAppStore((state) => state.agents)
+
+  // Derive selected agent
+  const selectedAgent = useMemo(() => {
+    return agents.find(a => a.id === activeAgentId) || null
+  }, [agents, activeAgentId])
 
   // Handle agent selection from UnifiedAgentSelector
   const handleSelectAgent = useCallback((agent: Agent) => {
-    setSelectedAgent(agent)
+    // Local state update removed as store handles it via UnifiedAgentSelector
     onSelectAgent?.(agent)
   }, [onSelectAgent])
 

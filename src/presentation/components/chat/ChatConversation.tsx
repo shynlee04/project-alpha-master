@@ -19,12 +19,13 @@ import { ArrowLeft, Send, Bot, User, Loader2, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/presentation/components/ui/button'
 import { StreamdownRenderer } from './StreamdownRenderer'
-import { AgentSelector } from './AgentSelector'
+import { UnifiedAgentSelector } from '../agent/UnifiedAgentSelector'
 import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/conversation-threads-store'
 import type { Agent } from '@/mocks/agents'
 import { useTranslation } from 'react-i18next'
 import { List } from 'react-window'
 import { TruncatedText } from '@/presentation/components/ui/truncated-text'
+import { useActiveAgent } from '@/infrastructure/persistence/stores/use-app-store'
 
 /**
  * Format message timestamp
@@ -175,8 +176,6 @@ interface RowProps {
  */
 export function ChatConversation({
     thread,
-    agents,
-    selectedAgent,
     onSelectAgent,
     onSendMessage,
     onBack,
@@ -190,6 +189,9 @@ export function ChatConversation({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<ReturnType<typeof List> | null>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const activeAgent = useActiveAgent();
+    // Allow selectedAgent alias for backward compatibility with existing code in this file
+    const selectedAgent = activeAgent;
 
     // Auto-scroll to bottom on new messages
     useEffect(() => {
@@ -290,11 +292,10 @@ export function ChatConversation({
                     </div>
 
                     {/* Agent selector */}
-                    <AgentSelector
-                        agents={agents}
-                        selectedAgent={selectedAgent}
+                    <UnifiedAgentSelector
                         onSelectAgent={onSelectAgent}
                         disabled={isStreaming}
+                        variant="full"
                     />
                 </div>
 
@@ -406,11 +407,10 @@ export function ChatConversation({
                 </div>
 
                 {/* Agent selector */}
-                <AgentSelector
-                    agents={agents}
-                    selectedAgent={selectedAgent}
+                <UnifiedAgentSelector
                     onSelectAgent={onSelectAgent}
                     disabled={isStreaming}
+                    variant="full"
                 />
             </div>
 

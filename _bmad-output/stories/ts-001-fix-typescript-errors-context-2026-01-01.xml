@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Story Context XML
+Story: TS-001 - Fix TypeScript Errors
+Created: 2026-01-01
+Phase: Phase 0 - Foundation Stabilization
+Methodology: BMAD dev-cycle-prompt.md
+-->
+
+<story>
+  <metadata>
+    <id>TS-001</id>
+    <name>Fix TypeScript Errors</name>
+    <phase>Phase 0: Foundation Stabilization</phase>
+    <priority>P0 - CRITICAL</priority>
+    <estimatedEffort>6-8 hours</estimatedEffort>
+    <status>In Progress</status>
+    <lastUpdated>2026-01-01T16:00:00+07:00</lastUpdated>
+  </metadata>
+
+  <description>
+    Fix 1,172 TypeScript errors across the codebase to improve build quality and type safety.
+    This is a critical foundation stabilization task that must be completed before any
+    feature development can proceed.
+  </description>
+
+  <acceptanceCriteria>
+    <criterion id="AC-001">TypeScript errors reduced from 1,172 to &lt;100</criterion>
+    <criterion id="AC-002">Build passes without warnings</criterion>
+    <criterion id="AC-003">All test files use proper vitest global imports</criterion>
+    <criterion id="AC-004">RAG component barrel exports fixed</criterion>
+    <criterion id="AC-005">DomainEvent handler payload access fixed</criterion>
+    <criterion id="AC-006">Unused imports removed (TS6196 errors)</criterion>
+    <criterion id="AC-007">tailwind-merge v3 API updated</criterion>
+    <criterion id="AC-008">Zero breaking changes to existing functionality</criterion>
+  </acceptanceCriteria>
+
+  <!-- MCP RESEARCH FINDINGS (5 Tool Turns Completed) -->
+  <researchFindings>
+    <toolTurn id="1">
+      <tool>Context7 - Resolve Library</tool>
+      <query>TypeScript</query>
+      <finding>
+        Selected /websites/typescriptlang (Benchmark Score: 91.3, High Reputation)
+        Comprehensive TypeScript documentation with 2,391 code snippets
+      </finding>
+    </toolTurn>
+
+    <toolTurn id="2">
+      <tool>Context7 - Resolve Library</tool>
+      <query>Vitest</query>
+      <finding>
+        Selected /vitest-dev/vitest (Benchmark Score: 90.4, High Reputation)
+        Vitest v4.0.7 available with 2,776 code snippets
+      </finding>
+    </toolTurn>
+
+    <toolTurn id="3">
+      <tool>Web Search (MiniMax)</tool>
+      <query>TypeScript error resolution best practices 2026 vitest global imports</query>
+      <finding>
+        Key insight: Vitest globals require specific TypeScript configuration
+        - Add "types": ["vitest/globals"] to tsconfig.json
+        - Common error: Cannot find type definition file for 'vitest/globals'
+        - Solution: Ensure globals: true in vitest.config.ts
+      </finding>
+    </toolTurn>
+
+    <toolTurn id="4">
+      <tool>Context7 - Get Library Docs</tool>
+      <library>/websites/typescriptlang</library>
+      <topic>error handling common issues fixes</topic>
+      <mode>code</mode>
+      <findings>
+        <finding id="F-001">
+          <title>Missing Return Expressions</title>
+          <solution>Arrow functions with curly braces must have explicit return</solution>
+          <code>let f2 = () => { return 42; };</code>
+        </finding>
+        <finding id="F-002">
+          <title>Property Access on Undefined</title>
+          <solution>TypeScript catches typos during static analysis</solution>
+        </finding>
+        <finding id="F-003">
+          <title>Null Type Checking</title>
+          <solution>Use type guards: typeof strs === "object" still possibly null</solution>
+        </finding>
+        <finding id="F-004">
+          <title>Promise Error Handling</title>
+          <solution>Always use await with Promises, TypeScript detects missing .then()</solution>
+        </finding>
+      </findings>
+    </toolTurn>
+
+    <toolTurn id="5">
+      <tool>Context7 - Get Library Docs</tool>
+      <library>/vitest-dev/vitest</library>
+      <topic>global imports typescript configuration</topic>
+      <mode>code</mode>
+      <findings>
+        <finding id="V-001">
+          <title>Configure TypeScript types for Vitest globals</title>
+          <solution>
+            Add to tsconfig.json:
+            {
+              "compilerOptions": {
+                "types": ["vitest/globals"]
+              }
+            }
+          </solution>
+          <code>{"compilerOptions": {"types": ["vitest/globals"]}}</code>
+        </finding>
+        <finding id="V-002">
+          <title>Custom typeRoots configuration</title>
+          <solution>
+            Include node_modules in typeRoots array:
+            {
+              "compilerOptions": {
+                "typeRoots": ["./types", "./node_modules/@types", "./node_modules"],
+                "types": ["vitest/globals"]
+              }
+            }
+          </solution>
+        </finding>
+        <finding id="V-003">
+          <title>Enable globals in Vitest config</title>
+          <solution>
+            Set globals: true in vitest.config.ts:
+            export default defineConfig({
+              test: { globals: true }
+            });
+          </solution>
+        </finding>
+        <finding id="V-004">
+          <title>Configure TypeScript for jsdom Environment</title>
+          <solution>
+            Add to tsconfig.json:
+            {
+              "compilerOptions": {
+                "types": ["vitest/jsdom"]
+              }
+            }
+          </solution>
+        </finding>
+      </findings>
+    </toolTurn>
+  </researchFindings>
+
+  <!-- CURRENT STATE ANALYSIS -->
+  <currentState>
+    <typescriptErrors>
+      <total>1172</total>
+      <breakdown>
+        <productionCode>306</productionCode>
+        <testFiles>866</testFiles>
+      </breakdown>
+      <categories>
+        <category name="Vitest Global Imports" count="57" files="17">
+          <description>Test files using global describe/it/expect without proper types</description>
+          <severity>Medium</severity>
+        </category>
+        <category name="RAG Component Exports" count="10">
+          <description>Barrel export issues in RAG components</description>
+          <severity>High</severity>
+        </category>
+        <category name="DomainEvent Handler Access" count="10">
+          <description>Payload access pattern in cross-workspace-event-bus.ts</description>
+          <severity>High</severity>
+        </category>
+        <category name="Unused Imports (TS6196)" count="90">
+          <description>Bulk unused import statements across codebase</description>
+          <severity>Low</severity>
+        </category>
+        <category name="tailwind-merge v3 API" count="5">
+          <description>Import name change: tailwindMerge → twMerge</description>
+          <severity>Medium</severity>
+        </category>
+        <category name="Other Issues" count="905">
+          <description>Various type mismatches, missing types, etc.</description>
+          <severity>Varies</severity>
+        </category>
+      </categories>
+    </typescriptErrors>
+
+    <buildStatus>
+      <command>pnpm build</command>
+      <currentResult>FAIL - 1,172 TypeScript errors</currentResult>
+      <targetResult>PASS with &lt;100 errors</targetResult>
+    </buildStatus>
+
+    <testStatus>
+      <framework>Vitest</framework>
+      <testFiles>17 files affected by global import errors</testFiles>
+      <configuration>
+        <hasGlobalsConfig>true</hasGlobalsConfig>
+        <tsconfigTypes>
+          <status>NEEDS_UPDATE</status>
+          <current>Missing "vitest/globals" in types array</current>
+          <required>Add "types": ["vitest/globals"] to tsconfig.json</required>
+        </tsconfigTypes>
+      </configuration>
+    </testStatus>
+  </currentState>
+
+  <!-- IMPLEMENTATION PLAN -->
+  <implementationPlan>
+    <phase id="1" name="Fix Vitest Global Imports" estimatedTime="2 hours">
+      <tasks>
+        <task id="T1-1">
+          <description>Update tsconfig.json to include vitest/globals types</description>
+          <files>
+            <file>tsconfig.json</file>
+          </files>
+          <changes>
+            <change>Add "types": ["vitest/globals"] to compilerOptions</change>
+            <change>If typeRoots exists, ensure "./node_modules" is included</change>
+          </changes>
+          <verification>
+            <step>Restart TypeScript server in IDE</step>
+            <step>Verify test files show no errors for describe/it/expect</step>
+          </verification>
+        </task>
+        <task id="T1-2">
+          <description>Verify vitest.config.ts has globals: true</description>
+          <files>
+            <file>vitest.config.ts</file>
+          </files>
+          <changes>
+            <change>Ensure globals: true is set in test configuration</change>
+          </changes>
+        </task>
+      </tasks>
+      <expectedErrorsFixed>57</expectedErrorsFixed>
+    </phase>
+
+    <phase id="2" name="Fix RAG Component Barrel Exports" estimatedTime="1 hour">
+      <tasks>
+        <task id="T2-1">
+          <description>Fix barrel exports in RAG components</description>
+          <affectedFiles count="10">
+            <file>src/presentation/components/rag/index.ts</file>
+            <file>src/components/rag/*/index.ts</file>
+          </affectedFiles>
+          <approach>
+            <step>Identify missing exports in barrel files</step>
+            <step>Add missing component exports to index.ts files</step>
+            <step>Verify imports use correct paths</step>
+          </approach>
+        </task>
+      </tasks>
+      <expectedErrorsFixed>10</expectedErrorsFixed>
+    </phase>
+
+    <phase id="3" name="Fix DomainEvent Handler Payload Access" estimatedTime="1 hour">
+      <tasks>
+        <task id="T3-1">
+          <description>Fix event handler payload access pattern</description>
+          <files>
+            <file>src/infrastructure/events/cross-workspace-event-bus.ts</file>
+          </files>
+          <approach>
+            <step>Review DomainEvent handler implementation</step>
+            <step>Fix payload type access pattern</step>
+            <step>Add proper type guards if needed</step>
+          </approach>
+        </task>
+      </tasks>
+      <expectedErrorsFixed>10</expectedErrorsFixed>
+    </phase>
+
+    <phase id="4" name="Update tailwind-merge v3 API" estimatedTime="30 minutes">
+      <tasks>
+        <task id="T4-1">
+          <description>Update tailwind-merge imports to use twMerge</description>
+          <affectedFiles count="2">
+            <file>src/presentation/components/ui/*/.tsx</file>
+          </affectedFiles>
+          <approach>
+            <step>Replace tailwindMerge with twMerge in imports</step>
+            <step>Update function calls to use twMerge instead</step>
+          </approach>
+        </task>
+      </tasks>
+      <expectedErrorsFixed>5</expectedErrorsFixed>
+    </phase>
+
+    <phase id="5" name="Remove Unused Imports" estimatedTime="2 hours">
+      <tasks>
+        <task id="T5-1">
+          <description>Bulk remove unused TS6196 errors</description>
+          <approach>
+            <step>Run ESLint with no-unused-vars rule to identify all unused imports</step>
+            <step>Review each unused import to ensure safe removal</step>
+            <step>Remove unused imports in batches</step>
+            <step>Run pnpm build to verify fixes</step>
+          </approach>
+          <automation>
+            <tool>ESLint</tool>
+            <command>pnpm eslint src/ --rule 'no-unused-vars: error'</command>
+          </automation>
+        </task>
+      </tasks>
+      <expectedErrorsFixed>90</expectedErrorsFixed>
+    </phase>
+
+    <phase id="6" name="Fix Remaining Errors" estimatedTime="2-3 hours">
+      <tasks>
+        <task id="T6-1">
+          <description>Address remaining 905 TypeScript errors</description>
+          <approach>
+            <step>Categorize remaining errors by type</step>
+            <step>Prioritize critical errors first</step>
+            <step>Fix errors in batches to avoid breaking changes</step>
+            <step>Run build after each batch to verify progress</step>
+          </approach>
+        </task>
+      </tasks>
+      <targetErrorsRemaining>&lt;100</targetErrorsRemaining>
+    </phase>
+  </implementationPlan>
+
+  <!-- RISK ASSESSMENT -->
+  <riskAssessment>
+    <risk id="R-001" level="LOW">
+      <description>Breaking changes during refactoring</description>
+      <mitigation>
+        - Make incremental changes
+        - Run build after each batch of fixes
+        - Commit frequently with descriptive messages
+      </mitigation>
+    </risk>
+    <risk id="R-002" level="MEDIUM">
+      <description>Test file configuration may affect other test setups</description>
+      <mitigation>
+        - Verify all test environments still work
+        - Check both unit tests and integration tests
+        - Document any side effects
+      </mitigation>
+    </risk>
+    <risk id="R-003" level="LOW">
+      <description>Unused import removal may affect dynamic imports</description>
+      <mitigation>
+        - Review each unused import before removal
+        - Check for side effects in imported modules
+        - Test application after bulk removal
+      </mitigation>
+    </risk>
+  </riskAssessment>
+
+  <!-- SUCCESS CRITERIA VALIDATION -->
+  <successCriteriaValidation>
+    <criterion id="SC-001">
+      <description>TypeScript error count &lt; 100</description>
+      <validationMethod>
+        <step>Run pnpm tsc --noEmit</step>
+        <step>Count total errors</step>
+        <step>Verify count is &lt; 100</step>
+      </validationMethod>
+    </criterion>
+    <criterion id="SC-002">
+      <description>Build passes without warnings</description>
+      <validationMethod>
+        <step>Run pnpm build</step>
+        <step>Verify zero TypeScript errors in build output</step>
+        <step>Verify zero build warnings</step>
+      </validationMethod>
+    </criterion>
+    <criterion id="SC-003">
+      <description>All test files use proper vitest globals</description>
+      <validationMethod>
+        <step>Open test files in IDE</step>
+        <step>Verify no errors on describe/it/expect</step>
+        <step>Run pnpm test to verify tests execute</step>
+      </validationMethod>
+    </criterion>
+    <criterion id="SC-004">
+      <description>Zero breaking changes</description>
+      <validationMethod>
+        <step>Manual smoke test of all workspaces</step>
+        <step>Verify agent configuration works</step>
+        <step>Verify file operations work</step>
+        <step>Verify chat functionality works</step>
+      </validationMethod>
+    </criterion>
+  </successCriteriaValidation>
+
+  <!-- DEPENDENCIES -->
+  <dependencies>
+    <blocks>None</blocks>
+    <relatedStories>
+      <story>DB-001 - Safe IndexedDB Operations</story>
+      <story>UI-001 - Extract AgentConfigDialog Hooks</story>
+    </relatedStories>
+  </dependencies>
+
+  <!-- DEFINITION OF DONE -->
+  <definitionOfDone>
+    <checklist>
+      <item>✅ All acceptance criteria met (AC-001 through AC-008)</item>
+      <item>✅ TypeScript errors reduced to &lt;100</item>
+      <item>✅ Build passes with zero errors</item>
+      <item>✅ All tests pass with vitest globals configured</item>
+      <item>✅ Code review completed</item>
+      <item>✅ Zero breaking changes verified</item>
+      <item>✅ Governance files updated (CLAUDE.md, AGENTS.md)</item>
+    </checklist>
+  </definitionOfDone>
+</story>

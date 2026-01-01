@@ -6,15 +6,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
 
-### 🚨 Phase 1 Priority: Core Stabilization
+### 🚨 CRITICAL: Ralph Loop Cycle 18 - Course Correction Required (2026-01-01)
 
-The current development focus is stabilizing the core agent system before expanding to Knowledge Synthesis features:
+**Governance Misalignment Discovered:**
+- **Previous Claim:** Health Score 100/100 ✅ (Iteration 177)
+- **ACTUAL REALITY:** Health Score ~5.9% (1,172 TypeScript errors remaining)
+- **Decision:** ✅ IMMEDIATE COURSE CORRECTION APPROVED
 
-- **Chat Cascade System**: Fix composable architecture issues
-- **LLM Provider Configuration**: Resolve hot-reload visibility bugs
-- **State Management**: Unify Zustand + Dexie, remove Context mixing
-- **Mobile Support**: Responsive layout with mobile-specific error states
-- **Database Persistence**: Schema refinement for IndexedDB
+**Corrected Development Focus:**
+See: `_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
+
+**8-Week Stabilization Plan:**
+- **Phase 0** (Week 1-2): Foundation Stabilization - Fix P0 infrastructure gaps
+  - TS-001: Fix TypeScript Errors (6-8 hours) - Reduce from 1,172 to <100
+  - DB-001: Safe IndexedDB Operations (18-22 hours) - Add quota handling
+  - UI-001: Extract AgentConfigDialog Hooks (16-20 hours) - 1,089 → <300 lines
+- **Phase 1** (Week 3-4): Store Refactoring - Split god stores into slices
+- **Phase 2** (Week 5-6): Infrastructure Hardening - Fix P1 gaps
+- **Phase 3** (Week 7-8): Architecture Transformation - 4-layer clean architecture
+
+**Critical Risks:**
+- P0: Data loss (no IndexedDB quota handling)
+- P0: Silent failures (23 instances of console.error + return null)
+- P1: Maintainability collapse (17 files >300 lines, worst is 9x over limit)
 
 ### 🎯 Future Vision: Knowledge Synthesis Station
 
@@ -276,7 +290,9 @@ src/
 │   └── components/
 │       ├── about/          # About page components
 │       ├── agent/          # Agent configuration UI (20+ files)
-│       │   ├── AgentConfigDialog.tsx
+│       │   ├── AgentConfigDialog.tsx  # ❌ GOD COMPONENT (1,089 lines - Phase 0 target)
+│       │   ├── AgentManager.tsx  # ✅ NEW: Comprehensive agent management UI (285 lines)
+│       │   ├── UnifiedAgentSelector.tsx  # ✅ NEW: Fixes store fragmentation bug (247 lines)
 │       │   ├── ProviderConfigDialog.tsx
 │       │   ├── WorkspacePermissionEditor.tsx
 │       │   ├── WorkspacePermissions/  # ✅ NEW: Modular workspace permissions (Phase 2)
@@ -964,6 +980,46 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 4. Check for async operation failures
 
 ## Recent Updates (Updated: 2026-01-01)
+
+### 🚨 Ralph Loop Cycle 18: Governance Misalignment & Course Correction (2026-01-01)
+- **Critical Finding**: Previous validation claimed 100/100 health score, actual reality is ~5.9%
+- **TypeScript Errors**: 1,172 remaining (306 production + 866 test)
+- **File Size Violations**: 17 files exceed 300-line limit
+- **Infrastructure Gaps**: P0 data loss risks (no quota handling, silent failures)
+- **Decision**: ✅ IMMEDIATE COURSE CORRECTION APPROVED
+- **8-Week Stabilization Plan**:
+  - Phase 0 (Week 1-2): Foundation Stabilization
+    - TS-001: Fix TypeScript Errors (6-8 hours) - Reduce from 1,172 to <100
+    - DB-001: Safe IndexedDB Operations (18-22 hours) - Add quota handling
+    - UI-001: Extract AgentConfigDialog Hooks (16-20 hours) - 1,089 → <300 lines
+  - Phase 1 (Week 3-4): Store Refactoring - Split god stores into slices
+  - Phase 2 (Week 5-6): Infrastructure Hardening - Fix P1 gaps
+  - Phase 3 (Week 7-8): Architecture Transformation - 4-layer clean architecture
+- **MCP Research Completed**: 5 tool turns (Context7 x3, Deepwiki x1, Web Search x1)
+  - Zustand v5 patterns (persist, slices, middleware)
+  - Dexie.js patterns (transactions, quotas, errors)
+  - React 2025 patterns (error boundaries, Suspense)
+  - TanStack repository patterns
+  - God component elimination strategies (2025)
+- **Documentation Created**:
+  - `ralph-loop-cycle-18-gap-summary-2026-01-01.md`
+  - `ralph-loop-cycle-18-mcp-research-findings-2026-01-01.md`
+  - `ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
+- **Reference**: See correct-course workflow for complete stabilization plan
+
+### Agent Selector Fragmentation Fix (Cycle 18 - Iteration 1)
+- **Problem**: Three workspaces (Knowledge, Notes, Study) using AgentSelector from chat components which uses `useAgentsStore` (global state) instead of `useAgentSelectionStore` (per-workspace state)
+- **User Feedback**:
+  > "handle end to end agent selector and migrate them all to other workspaces - at `notes` there is no synchronization of agents selector - completely fragmented"
+- **Solution Implemented**:
+  - Created `UnifiedAgentSelector.tsx` (247 lines) - Uses proper per-workspace store
+  - Created `AgentManager.tsx` (285 lines) - Comprehensive management UI addressing user feedback about short-sighted dropdown design
+  - Updated all three workspaces (Knowledge, Notes, Study) to use new components
+- **Result**: Agent selections now persist per-workspace and sync across workspaces
+- **Components Created**:
+  - `UnifiedAgentSelector.tsx` - Fixes store fragmentation bug
+  - `AgentManager.tsx` - Quick config, capability badges, status display, workspace binding toggle
+- **Documentation**: See `_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
 
 ### Ralph Loop Cycle 17: God Component Elimination (87.5% COMPLETE)
 - **Session**: Recursive auto-loop with ultrathink systematized cycles

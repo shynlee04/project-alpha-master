@@ -34,9 +34,7 @@ import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-im
 import { WithErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 
 // IDE components (lazy loaded for performance)
-const FileTree = lazy(() =>
-    import('../ide/FileTree').then((m) => ({ default: m.FileTree }))
-);
+import { FileTree } from '../ide/FileTree';
 const MonacoEditor = lazy(() =>
     import('../ide/MonacoEditor').then((m) => ({ default: m.MonacoEditor }))
 );

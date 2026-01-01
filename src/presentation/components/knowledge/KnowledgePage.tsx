@@ -23,7 +23,7 @@ import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
-import { AgentManager } from '@/presentation/components/agent';
+import { AgentManager } from '@/presentation/components/agent/AgentManager';
 
 // KSI Module: Source → RAG Bridge
 import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';

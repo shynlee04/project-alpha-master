@@ -38,17 +38,15 @@ import {
 // P1-1: Import extracted components
 // Ralph Loop Cycle 17: Replace AgentBasicConfig with split components
 // Ralph Loop Cycle 17 Phase 5: Import extracted hooks
-import {
-    AgentImportExport,
-    AgentBasicInfoTab,
-    AgentProviderSelector,
-    AgentModelSelector,
-    AgentAdvancedSettingsTab,
-    useAgentFormState,
-    useAgentFormSubmission,
-    useAgentFormActions,
-    useAgentFormValidation,
-} from '@/presentation/components/agent'
+import { AgentImportExport } from './AgentImportExport'
+import { AgentBasicInfoTab } from './AgentConfigForm/AgentBasicInfoTab'
+import { AgentProviderSelector } from './AgentConfigForm/AgentProviderSelector'
+import { AgentModelSelector } from './AgentConfigForm/AgentModelSelector'
+import { AgentAdvancedSettingsTab } from './AgentConfigForm/AgentAdvancedSettingsTab'
+import { useAgentFormState } from './hooks/useAgentFormState'
+import { useAgentFormSubmission } from './hooks/useAgentFormSubmission'
+import { useAgentFormActions } from './hooks/useAgentFormActions'
+import { useAgentFormValidation } from './hooks/useAgentFormValidation'
 
 // P0 Fix: Import unsaved changes warning
 import {
@@ -151,7 +149,7 @@ export function AgentConfigDialog({
 
     // P0 Fix: Use unsaved changes warning
     const hasUnsavedChanges = !isValid
-    const { confirmNavigation } = useUnsavedChangesWarning({
+    useUnsavedChangesWarning({
         hasUnsavedChanges,
         message: t('agents.config.unsavedChanges', 'You have unsaved changes. Are you sure you want to close?'),
     })
@@ -289,7 +287,7 @@ export function AgentConfigDialog({
                                     providers={providers}
                                     selectedProviderId={providerId}
                                     onProviderChange={(value) => handleUpdateField('providerId', value)}
-                                    error={errors.providerId}
+                                    error={errors.provider}
                                 />
 
                                 {/* Model Selection */}
