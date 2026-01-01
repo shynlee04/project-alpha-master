@@ -57,8 +57,7 @@ const DEFAULT_EXCLUSIONS = [
 export class IDEFileSyncService implements FileSyncService {
     private localAdapter: LocalFSAdapter;
     private syncManager: SyncManager;
-    private projectId: string;
-    private options: SyncOptions;
+    private _options: SyncOptions;
     private changeListeners: Set<(event: FileChangeEvent) => void>;
     private disposed: boolean;
 
@@ -68,8 +67,7 @@ export class IDEFileSyncService implements FileSyncService {
             config.localAdapter,
             config.syncOptions
         );
-        this.projectId = config.projectId;
-        this.options = config.syncOptions || {};
+        this._options = config.syncOptions || {};
         this.changeListeners = new Set();
         this.disposed = false;
     }
@@ -137,7 +135,7 @@ export class IDEFileSyncService implements FileSyncService {
         };
     }
 
-    async mount(source: FileSystemDirectoryHandle): Promise<void> {
+    async mount(_source: FileSystemDirectoryHandle): Promise<void> {
         this.checkDisposed();
         // LocalFSAdapter is already initialized with directory handle
         // This is a no-op but kept for interface consistency
@@ -147,14 +145,13 @@ export class IDEFileSyncService implements FileSyncService {
     async sync(options?: SyncOptions): Promise<SyncResult> {
         this.checkDisposed();
         const startTime = Date.now();
-        const errors: Array<{ path: string; error: string; code?: string }> = [];
 
         try {
             // Perform full sync to WebContainer
             const result = await this.syncManager.syncToWebContainer({
                 exclusions: [
                     ...DEFAULT_EXCLUSIONS,
-                    ...(this.options.exclusions || []),
+                    ...(this._options.exclusions || []),
                     ...(options?.exclusions || [])
                 ]
             });

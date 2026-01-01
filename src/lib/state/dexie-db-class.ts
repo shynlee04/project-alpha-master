@@ -13,57 +13,36 @@
 
 import Dexie, { /* type Table */ } from 'dexie';
 
-// Import all record types
+// Import table types (Record types not used directly in this file)
 import type {
-    ProjectRecord,
-    IDEStateRecord,
-    ConversationRecord,
-    type ProjectsTable,
-    type IDEStateTable,
-    type ConversationsTable,
+    ProjectsTable,
+    IDEStateTable,
+    ConversationsTable,
 } from './dexie-db-core-types';
 
 import type {
-    TaskContextRecord,
-    ToolExecutionRecord,
-    CredentialRecord,
-    ConversationThreadRecord,
-    ThreadToolCallRecord,
-    ThreadMessageRecord,
-    type TaskContextTable,
-    type ToolExecutionTable,
-    type CredentialsTable,
-    type ConversationThreadsTable,
+    TaskContextTable,
+    ToolExecutionTable,
+    CredentialsTable,
+    ConversationThreadsTable,
 } from './dexie-db-ai-types';
 
 import type {
-    PersistedStateRecord,
-    SyncStatusRecord,
-    FileMetadataRecord,
-    ToolExecutionLogRecord,
-    FSAHandleRecord,
-    SessionSnapshotRecord,
-    type PersistedStateTable,
-    type SyncStatusTable,
-    type FileMetadataTable,
-    type ToolExecutionLogTable,
-    type FSAHandleTable,
-    type SessionSnapshotTable,
+    PersistedStateTable,
+    SyncStatusTable,
+    FileMetadataTable,
+    ToolExecutionLogTable,
+    FSAHandleTable,
+    SessionSnapshotTable,
 } from './dexie-db-session-types';
 
 import type {
-    SourceRecord,
-    CollectionRecord,
-    OramaIndexRecord,
-    EmbeddingModelRecord,
-    NoteRecord,
-    SynthesisResultRecord,
-    type SourcesTable,
-    type CollectionsTable,
-    type OramaIndexesTable,
-    type EmbeddingModelsTable,
-    type NotesTable,
-    type SynthesisResultsTable,
+    SourcesTable,
+    CollectionsTable,
+    OramaIndexesTable,
+    EmbeddingModelsTable,
+    NotesTable,
+    SynthesisResultsTable,
 } from './dexie-db-knowledge-types';
 
 // Import migrations

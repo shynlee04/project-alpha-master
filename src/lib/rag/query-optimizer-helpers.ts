@@ -30,10 +30,8 @@ export function createWeightedQuery(
   weights: QueryWeightConfig = {}
 ): string {
   const {
-    phraseWeight = 2.0,
     keywordWeight = 1.0,
     entityWeight = 1.5,
-    negationWeight = -1.0,
   } = weights;
 
   const optimizer = new QueryOptimizer();

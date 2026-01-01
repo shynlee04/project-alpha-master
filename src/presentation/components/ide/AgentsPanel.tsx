@@ -6,7 +6,7 @@ import { Button } from '@/presentation/components/ui/button'
 import { StatusDot } from '@/presentation/components/ui'
 import { cn } from '@/lib/utils'
 import { useAgents } from '@/hooks/useAgents'
-import { useAgentSelection } from '@/stores/agent-selection-store'
+import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
 import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog'
 import type { Agent } from '@/mocks/agents'
 

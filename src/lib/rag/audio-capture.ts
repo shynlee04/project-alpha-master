@@ -7,11 +7,13 @@
  * Optimized for voice recognition at 16kHz.
  */
 
+// Type declaration for WebKit-prefixed AudioContext
+declare const webkitAudioContext: typeof AudioContext;
+
 import type {
   AudioChunk,
   AudioConfig,
   AudioCaptureError,
-  DEFAULT_AUDIO_CONFIG,
 } from './live-api-types';
 
 /**

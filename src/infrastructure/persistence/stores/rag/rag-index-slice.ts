@@ -8,14 +8,13 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { IndexMetadata } from '@/lib/rag/types';
 import { getIndexMetadata } from '@/lib/rag/orama-index';
-import type { RAGIndexState, IndexStatus, IndexOperation } from './rag-types';
+import type { RAGIndexState, IndexStatus, IndexOperation, WorkspaceType } from './rag-types';
 
 /**
  * Index slice - manages index lifecycle and metadata
  */
-export const createRAGIndexSlice: StateCreator<RAGIndexState> = (set, get) => ({
+export const createRAGIndexSlice: StateCreator<RAGIndexState> = (set, _get) => ({
   // Initial state
   currentWorkspaceType: 'ide',
   currentProjectId: null,

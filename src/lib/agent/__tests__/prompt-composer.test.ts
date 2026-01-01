@@ -3,9 +3,8 @@
  */
 
 import type { EventEmitter3 } from 'eventemitter3';
-import type { SystemMessage } from '@tanstack/ai';
 import { SystemPromptComposer } from '../prompt-composer';
-import type { PromptLayer, LayerContext } from '../prompt-composer';
+import type { LayerContext } from '../prompt-composer';
 
 // Mock event bus
 const mockEventBus: EventEmitter3 = {

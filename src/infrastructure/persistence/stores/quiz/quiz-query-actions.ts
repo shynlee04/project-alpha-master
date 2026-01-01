@@ -4,7 +4,6 @@
  */
 
 import type { Quiz, QuizFilter } from '@/lib/study/quiz-types';
-import type { QuizRecord } from './quiz-database';
 import { getQuizDB } from './quiz-database';
 
 /**

@@ -8,7 +8,6 @@
  * @story WB-8.3 - Agent Configuration Sync
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import { WorkspacePermissionManager } from '../workspace-permission-manager';
 import { ToolPermissionManager } from '../tool-permission-manager';
 import type { AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';

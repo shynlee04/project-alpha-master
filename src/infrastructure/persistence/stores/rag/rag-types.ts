@@ -8,7 +8,7 @@
  */
 
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
-import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
+import type { ChunkingProgress } from '@/lib/rag/types';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
 import type { VoiceModeState, ConnectionState } from '@/lib/rag/live-api-types';
 

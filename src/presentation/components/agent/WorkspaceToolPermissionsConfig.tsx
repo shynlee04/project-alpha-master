@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Check, X, Shield } from 'lucide-react';
 import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
-import { Badge } from '@/presentation/components/ui/badge';
+import { PixelBadge } from '@/presentation/components/ui/pixel-badge';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/lib/state/workspace-types';
@@ -42,16 +42,6 @@ const WORKSPACE_DESCRIPTIONS: Record<WorkspaceType, string> = {
   study: 'Focused study mode with limited tools',
   notes: 'Minimal note-taking interface',
 };
-
-/**
- * Permission configuration for a single tool in a workspace
- */
-interface ToolPermissionConfig {
-  toolId: string;
-  toolName: string;
-  workspaceType: WorkspaceType;
-  isEnabled: boolean;
-}
 
 /**
  * Props for WorkspaceToolPermissionsConfig component
@@ -203,7 +193,7 @@ export function WorkspaceToolPermissionsConfig({
                 >
                   <div className="flex items-center gap-3">
                     {/* Permission Status Badge */}
-                    <Badge
+                    <PixelBadge
                       variant="outline"
                       className={cn(
                         'text-xs',
@@ -221,7 +211,7 @@ export function WorkspaceToolPermissionsConfig({
                           Disabled
                         </>
                       )}
-                    </Badge>
+                    </PixelBadge>
 
                     {/* Permission Toggle Switch */}
                     <Switch
@@ -313,13 +303,13 @@ export function WorkspacePermissionsSummary({
         const percentage = Math.round((enabled / total) * 100);
 
         return (
-          <Badge
+          <PixelBadge
             key={workspace}
             variant="outline"
             className="text-xs"
           >
             {WORKSPACE_LABELS[workspace]}: {enabled}/{total} ({percentage}%)
-          </Badge>
+          </PixelBadge>
         );
       })}
     </div>

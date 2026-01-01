@@ -4,7 +4,6 @@
  * @module lib/webcontainer/__tests__/webcontainer.mock
  */
 
-import { vi } from 'vitest';
 
 /**
  * Create a mock WebContainerProcess

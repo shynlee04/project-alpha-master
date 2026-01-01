@@ -412,7 +412,7 @@ export class NoteFileSyncService {
      *
      * @param path - Directory path
      */
-    private async ensureDirectory(path: string): Promise<void> {
+    private async ensureDirectory(_path: string): Promise<void> {
         // Note: FileSyncService doesn't have mkdir, we rely on writeFile creating directories
         // This is a placeholder for any pre-sync directory setup
     }

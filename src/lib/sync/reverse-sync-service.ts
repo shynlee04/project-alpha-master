@@ -10,13 +10,12 @@
  */
 
 import { SyncEventBus } from './sync-event-bus';
-import type { 
-  FileEventType, 
-  BaseEventPayload, 
+import type {
+  FileEventType,
+  BaseEventPayload,
   FileEventPayload,
-  FileEventMap 
 } from './event-types';
-import { SyncError, type SyncErrorCode } from '../filesystem/sync-types';
+import type { SyncErrorCode } from '../filesystem/sync-types';
 
 // =============================================================================
 // Configuration
@@ -359,7 +358,7 @@ export class ReverseSyncService {
    * @param wcPath - WebContainer file path
    * @param eventType - The event type for progress tracking
    */
-  private async syncFileToLocal(wcPath: string, eventType: FileEventType): Promise<void> {
+  private async syncFileToLocal(wcPath: string, _eventType: FileEventType): Promise<void> {
     // Check conflict resolution strategy
     const shouldSync = await this.applyConflictResolution(wcPath);
     

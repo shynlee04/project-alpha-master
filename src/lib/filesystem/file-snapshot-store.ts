@@ -16,7 +16,7 @@
  */
 
 import { db } from '../state/dexie-db';
-import type { FileSnapshotRecord, FileContentCacheRecord } from '../state/dexie-db-core-types';
+import type { FileSnapshotRecord } from '../state/dexie-db-core-types';
 
 // ============================================================================
 // Configuration

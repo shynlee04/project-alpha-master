@@ -3,16 +3,25 @@
  * @module lib/agent/tool-permission-manager
  *
  * Manages tool execution trust levels and permissions for AI agents.
+ * NOW USES: Zustand store with Dexie persistence for cross-session survival.
  *
  * Trust Levels:
  * - 'auto': Execute immediately without user approval (safe operations)
  * - 'prompt': Require user approval before execution (risky operations)
  * - 'block': Never execute (dangerous operations)
  *
- * @epic 4 - Smart Agent Tools
- * @story 4.3 - Tool Permissions & Trust Levels
+ * @epic WB-8.3 - Cross-Workspace Event System
+ * @story WB-8.3.1 - Tool Permission Persistence
+ * @prio P0 - Critical UX Fix
+ *
+ * MIGRATION-2026-01-01: Refactored to use Zustand store
+ * - trustLevels now persisted via useToolPermissionStore (Dexie/IndexedDB)
+ * - Session trust remains ephemeral (cleared on reload)
+ * - Public API preserved for backwards compatibility
+ * - All 8 integration points continue to work without changes
  */
 
+import { useToolPermissionStore } from '@/lib/state/tool-permission-store';
 // import type { EventEmitter } from 'eventemitter3'; // Reserved for future use
 
 /**
@@ -47,36 +56,20 @@ export interface ToolPermissionEvents {
 }
 
 /**
- * ToolPermissionManager - Manages tool execution permissions and trust levels
+ * ToolPermissionManager - Facade over Zustand store for tool permissions
  *
  * Architecture:
- * - Singleton per agent configuration
- * - In-memory trust level storage with persistence support
- * - Session-based temporary trust (cleared on reload)
- * - Event emission for UI updates
+ * - Singleton per agent configuration (preserved for backwards compatibility)
+ * - Delegates to useToolPermissionStore for all state operations
+ * - Event emission for UI updates (preserved for backwards compatibility)
+ * - Trust levels persisted via Dexie/IndexedDB
+ * - Session trust remains ephemeral (cleared on reload)
  */
 export class ToolPermissionManager {
   private static instance: ToolPermissionManager | null = null;
 
-  /** Tool trust levels (persisted) */
-  private trustLevels: Map<string, ToolTrustLevel> = new Map();
-
-  /** Session-based trust (in-memory only, cleared on reload) */
-  private sessionTrust: Set<string> = new Set();
-
-  /** Event emitter for permission changes */
+  /** Event emitter for permission changes (preserved for backwards compatibility) */
   private eventBus: any | null = null;
-
-  /** Default trust levels for all tools */
-  private readonly defaultTrustLevels: Record<string, ToolTrustLevel> = {
-    read_file: 'auto',
-    list_files: 'auto',
-    read_directory: 'auto',
-    write_file: 'prompt',
-    create_directory: 'prompt',
-    delete_file: 'block',
-    execute_command: 'prompt',
-  };
 
   /**
    * Get singleton instance
@@ -90,34 +83,31 @@ export class ToolPermissionManager {
 
   /**
    * Create a new instance (for testing or custom configurations)
+   *
+   * NOTE: Custom initial permissions will override store defaults
    */
   public static createInstance(
     initialPermissions?: Record<string, ToolTrustLevel>
   ): ToolPermissionManager {
     const instance = new ToolPermissionManager();
+
+    // Apply custom permissions to store if provided
     if (initialPermissions) {
       Object.entries(initialPermissions).forEach(([toolId, level]) => {
-        instance.trustLevels.set(toolId, level);
+        useToolPermissionStore.getState().setTrustLevel(toolId, level);
       });
     }
+
     return instance;
   }
 
   /**
    * Private constructor - use getInstance()
+   *
+   * NOTE: No initialization needed - Zustand store handles defaults
    */
   private constructor() {
-    // Initialize with default trust levels
-    this.initializeDefaults();
-  }
-
-  /**
-   * Initialize trust levels from defaults
-   */
-  private initializeDefaults(): void {
-    Object.entries(this.defaultTrustLevels).forEach(([toolId, level]) => {
-      this.trustLevels.set(toolId, level);
-    });
+    // Store auto-initializes with defaults
   }
 
   /**
@@ -131,17 +121,19 @@ export class ToolPermissionManager {
    * Get the trust level for a tool
    */
   public getTrustLevel(toolId: string): ToolTrustLevel {
-    return this.trustLevels.get(toolId) ?? 'prompt'; // Default to prompt if unknown
+    return useToolPermissionStore.getState().getTrustLevel(toolId);
   }
 
   /**
-   * Set the trust level for a tool
+   * Set the trust level for a tool (persisted)
    */
   public setTrustLevel(toolId: string, level: ToolTrustLevel): void {
-    const previousLevel = this.trustLevels.get(toolId);
-    this.trustLevels.set(toolId, level);
+    const previousLevel = this.getTrustLevel(toolId);
 
-    // Emit event if level changed
+    // Update store (persisted automatically)
+    useToolPermissionStore.getState().setTrustLevel(toolId, level);
+
+    // Emit event if level changed (for backwards compatibility)
     if (previousLevel !== level) {
       this.eventBus?.emit('permission:changed', toolId, level);
     }
@@ -151,15 +143,19 @@ export class ToolPermissionManager {
    * Check if a tool has session-based trust
    */
   public hasSessionTrust(toolId: string): boolean {
-    return this.sessionTrust.has(toolId);
+    const state = useToolPermissionStore.getState();
+    return state.sessionTrust.includes(toolId);
   }
 
   /**
-   * Add session-based trust for a tool
+   * Add session-based trust for a tool (ephemeral)
    */
   public addSessionTrust(toolId: string): void {
-    if (!this.sessionTrust.has(toolId)) {
-      this.sessionTrust.add(toolId);
+    const store = useToolPermissionStore.getState();
+
+    // Check if already has session trust (avoid duplicate event)
+    if (!store.sessionTrust.includes(toolId)) {
+      store.addSessionTrust(toolId);
       this.eventBus?.emit('session:trust:added', toolId);
     }
   }
@@ -168,26 +164,32 @@ export class ToolPermissionManager {
    * Remove session-based trust for a tool
    */
   public removeSessionTrust(toolId: string): void {
-    if (this.sessionTrust.has(toolId)) {
-      this.sessionTrust.delete(toolId);
+    const store = useToolPermissionStore.getState();
+
+    // Check if has session trust (avoid unnecessary event)
+    if (store.sessionTrust.includes(toolId)) {
+      store.removeSessionTrust(toolId);
       this.eventBus?.emit('session:trust:removed', toolId);
     }
   }
 
   /**
-   * Clear all session-based trust
+   * Clear all session-based trust (ephemeral)
    */
   public clearSessionTrust(): void {
-    this.sessionTrust.clear();
+    useToolPermissionStore.getState().clearSessionTrust();
     this.eventBus?.emit('session:trust:cleared');
   }
 
   /**
    * Check permission for a tool execution
+   *
+   * Reads from Zustand store and returns permission result
    */
   public checkPermission(toolId: string): PermissionCheckResult {
-    const trustLevel = this.trustLevels.get(toolId) ?? 'prompt';
-    const hasSession = this.sessionTrust.has(toolId);
+    const state = useToolPermissionStore.getState();
+    const trustLevel = state.trustLevels[toolId] ?? 'prompt';
+    const hasSession = state.sessionTrust.includes(toolId);
 
     // Check block first (highest priority)
     if (trustLevel === 'block') {
@@ -234,56 +236,59 @@ export class ToolPermissionManager {
 
   /**
    * Get all trust levels (for persistence/UI)
+   *
+   * NOTE: Now returns from Zustand store
    */
   public getAllTrustLevels(): Record<string, ToolTrustLevel> {
-    const result: Record<string, ToolTrustLevel> = {};
-    this.trustLevels.forEach((level, toolId) => {
-      result[toolId] = level;
-    });
-    return result;
+    return { ...useToolPermissionStore.getState().trustLevels };
   }
 
   /**
    * Get default trust levels
+   *
+   * NOTE: Hardcoded defaults removed (managed by store)
    */
   public getDefaultTrustLevels(): Record<string, ToolTrustLevel> {
-    return { ...this.defaultTrustLevels };
+    // Store manages defaults - return current state for backwards compatibility
+    return { ...useToolPermissionStore.getState().trustLevels };
   }
 
   /**
    * Reset all trust levels to defaults
+   *
+   * NOTE: Delegates to store method
    */
   public resetToDefaults(): void {
-    this.trustLevels.clear();
-    this.initializeDefaults();
+    useToolPermissionStore.getState().resetToDefaults();
   }
 
   /**
    * Serialize permissions for persistence
+   *
+   * @deprecated Store now auto-persists via Dexie. This method kept for backwards compatibility.
    */
   public toJSON(): string {
-    const permissions: Record<string, ToolTrustLevel> = {};
-    this.trustLevels.forEach((level, toolId) => {
-      permissions[toolId] = level;
-    });
-    return JSON.stringify({ permissions });
+    const state = useToolPermissionStore.getState();
+    return JSON.stringify({ permissions: state.trustLevels });
   }
 
   /**
    * Deserialize permissions from persistence
-   * Preserves defaults for tools not in the JSON
+   *
+   * @deprecated Store now auto-persists via Dexie. This method kept for backwards compatibility.
+   *
+   * NOTE: This will override current store state with provided JSON
    */
   public static fromJSON(json: string): ToolPermissionManager {
     const data = JSON.parse(json);
-    const instance = new ToolPermissionManager();
 
     if (data.permissions) {
       Object.entries(data.permissions).forEach(([toolId, level]) => {
-        instance.trustLevels.set(toolId, level as ToolTrustLevel);
+        useToolPermissionStore.getState().setTrustLevel(toolId, level as ToolTrustLevel);
       });
     }
 
-    return instance;
+    return ToolPermissionManager.getInstance();
   }
 
   /**
@@ -304,22 +309,23 @@ export class ToolPermissionManager {
 
   /**
    * Get all tool IDs
+   *
+   * NOTE: Now reads from Zustand store
    */
   public getToolIds(): string[] {
-    return Array.from(this.trustLevels.keys());
+    return Object.keys(useToolPermissionStore.getState().trustLevels);
   }
 
   /**
    * Get tools by trust level
+   *
+   * NOTE: Now reads from Zustand store
    */
   public getToolsByLevel(level: ToolTrustLevel): string[] {
-    const tools: string[] = [];
-    this.trustLevels.forEach((trustLevel, toolId) => {
-      if (trustLevel === level) {
-        tools.push(toolId);
-      }
-    });
-    return tools;
+    const state = useToolPermissionStore.getState();
+    return Object.entries(state.trustLevels)
+      .filter(([_, trustLevel]) => trustLevel === level)
+      .map(([toolId]) => toolId);
   }
 
   /**

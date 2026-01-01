@@ -25,8 +25,6 @@ export { ViaGentDatabase } from './dexie-db-class';
 import type {
     ProjectRecord,
     IDEStateRecord,
-    ConversationRecord,
-    WorkspaceBindings,
 } from './dexie-db-core-types';
 
 export type {
@@ -46,8 +44,11 @@ export type {
 // AI Foundation Types
 // ============================================================================
 
+import type {
+    ConversationThreadRecord,
+} from './dexie-db-ai-types';
+
 export type {
-    TaskStatus,
     TaskContextRecord,
     ToolExecutionRecord,
     CredentialRecord,
@@ -68,7 +69,6 @@ export type {
 // ============================================================================
 
 import type {
-    PersistedStateRecord,
     SyncStatusRecord,
     FileMetadataRecord,
     ToolExecutionLogRecord,
@@ -105,12 +105,7 @@ export {
 
 import type {
     SourceRecord,
-    SourceMetadata,
     CollectionRecord,
-    Collection,
-    OramaIndexRecord,
-    EmbeddingModelRecord,
-    NoteRecord,
     SynthesisResultRecord,
 } from './dexie-db-knowledge-types';
 

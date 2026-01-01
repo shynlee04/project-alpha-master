@@ -4,7 +4,6 @@
  * @description Unit tests for hybrid search functionality
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   hybridSearch,
   hybridSearchWithEmbedding,

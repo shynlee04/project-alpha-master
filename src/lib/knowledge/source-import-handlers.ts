@@ -15,7 +15,6 @@ import { emitStoreEvent } from '@/lib/events/store-events';
 import { STORE_EVENTS } from '@/lib/events/store-events';
 import type { SourceImportOptions } from './source-import-types';
 import type { ChunkingOptions } from '@/lib/rag/types';
-import { DEFAULT_CHUNKING_OPTIONS } from '@/lib/rag/types';
 
 /**
  * Import handler dependencies interface

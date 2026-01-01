@@ -117,15 +117,13 @@ interface GeminiResponse {
  */
 export class GeminiURLProcessor {
   private config: GeminiConfig;
-  private providerId: string;
 
-  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, _providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       model,
       apiKey,
     };
-    this.providerId = providerId;
   }
 
   /**
@@ -163,8 +161,6 @@ export class GeminiURLProcessor {
     htmlContent: string,
     options: GeminiURLOptions = {}
   ): Promise<GeminiURLResult> {
-    const startTime = Date.now();
-
     try {
       // Validate API key
       if (!this.config.apiKey) {
@@ -396,27 +392,6 @@ Respond ONLY with valid JSON matching this structure:
     }
 
     throw new Error('Max retries exceeded for Gemini URL API call');
-  }
-
-  /**
-   * Generate mock result for development
-   */
-  private getMockResult(): GeminiURLResult {
-    return {
-      cleanContent: 'This is the mock clean content extracted from the web page.',
-      title: 'Mock Article Title',
-      author: 'Mock Author',
-      publishedDate: '2025-12-31',
-      contentType: 'article',
-      readingTimeMinutes: 5,
-      summary: 'This is a mock summary of the article content, typically 3-5 sentences long.',
-      tags: ['mock', 'development', 'test'],
-      relatedLinks: [
-        { url: 'https://example.com/related1', title: 'Related Article 1', relevance: 'high' },
-        { url: 'https://example.com/related2', title: 'Related Article 2', relevance: 'medium' },
-      ],
-      mainImageUrl: 'https://example.com/image.jpg',
-    };
   }
 }
 

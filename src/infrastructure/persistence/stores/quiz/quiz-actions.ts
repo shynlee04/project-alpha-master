@@ -3,8 +3,7 @@
  * @module infrastructure/persistence/stores/quiz/quiz-actions
  */
 
-import type { Quiz, QuizFilter, QuizSettings } from '@/lib/study/quiz-types';
-import type { QuizRecord } from './quiz-database';
+import type { Quiz, QuizSettings } from '@/lib/study/quiz-types';
 import { getQuizDB } from './quiz-database';
 
 /**

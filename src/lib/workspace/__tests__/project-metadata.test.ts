@@ -16,8 +16,8 @@
  * - "Cannot find name 'DEFAULT_WORKSPACE_BINDINGS'"
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { db } from '@/lib/state/dexie-db';
+import type { ProjectMetadata } from '../project-store';
 import {
     saveProject,
     getProject,

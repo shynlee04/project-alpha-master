@@ -9,9 +9,8 @@
  * @epic KSI-01: Source → RAG Wiring
  */
 
-import type { DocumentSchema, ChunkingStrategy } from '../rag/types';
+import type { ChunkingStrategy } from '../rag/types';
 import type { SourceRecord } from '../state/dexie-db';
-import type { EmbeddingResult } from '../rag/embedding-service';
 
 import EventEmitter from 'eventemitter3';
 import { STORE_EVENTS } from '../events/store-events';
@@ -25,8 +24,6 @@ export interface OramaIndex {
     indexBatch(chunks: any[]): Promise<void>;
     search(options: { query: string; limit: number }): Promise<any[]>;
 }
-
-import { chunkStrategies } from '../rag/chunk-strategies';
 
 /**
  * Source indexing status
@@ -201,11 +198,10 @@ export class SourceRAGBridge {
     /**
      * Check if source is indexed
      */
-    async isSourceIndexed(sourceId: string): Promise<boolean> {
+    async isSourceIndexed(_sourceId: string): Promise<boolean> {
         try {
-            const docId = `source-${sourceId}`;
             // Search returns any[] based on OramaIndex interface, we assume it has matches
-            // In KnowledgePage adapter: search returns Orama results. 
+            // In KnowledgePage adapter: search returns Orama results.
             // We need to check if the adapter result contains what we need.
             // Actually Orama search result is complex.
             // Let's assume the adapter verifies existence.

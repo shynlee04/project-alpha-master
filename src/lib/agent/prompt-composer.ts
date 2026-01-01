@@ -17,7 +17,6 @@
 
 import type { WorkspaceEventEmitter } from '../events/workspace-events';
 import type {
-  LayerType,
   PromptLayer,
   LayerContext,
   PromptComposerConfig,

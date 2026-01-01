@@ -9,7 +9,7 @@
  * @story KSI Agent Integration
  */
 
-import type { SynthesisFrontmatter, SynthesisResult } from '@/lib/knowledge/synthesis-types';
+import type { SynthesisResult } from '@/lib/knowledge/synthesis-types';
 import type { GeminiPDFResult } from '@/lib/knowledge/gemini-pdf-types';
 import type { GeminiImageResult } from '@/lib/knowledge/gemini-image-types';
 import type { GeminiURLResult } from '@/lib/knowledge/gemini-url-processor';

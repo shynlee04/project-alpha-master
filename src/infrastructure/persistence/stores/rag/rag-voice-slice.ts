@@ -14,7 +14,7 @@ import type { RAGVoiceState } from './rag-types';
 /**
  * Voice slice - manages voice mode state (Story 10-1)
  */
-export const createRAGVoiceSlice: StateCreator<RAGVoiceState> = (set, get) => ({
+export const createRAGVoiceSlice: StateCreator<RAGVoiceState> = (set, _get) => ({
   // Initial state
   voiceState: 'idle',
   voiceConnection: {

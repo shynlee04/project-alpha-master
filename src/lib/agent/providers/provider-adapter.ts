@@ -13,9 +13,14 @@
 import { createOpenaiChat } from '@tanstack/ai-openai';
 import type { ProviderConfig, AdapterConfig, ConnectionTestResult, OpenAICompatibleConfig } from './types';
 import { PROVIDERS } from './types';
+import { AnthropicAdapter, createAnthropicAdapter } from './anthropic-adapter';
+import type { AnthropicAdapterConfig } from './anthropic-adapter';
 
 // TanStack AI adapter type
 type OpenAIAdapter = ReturnType<typeof createOpenaiChat>;
+
+// Union type for all supported adapters
+type ProviderAdapter = OpenAIAdapter | AnthropicAdapter;
 
 /**
  * Extended adapter config for custom providers
@@ -31,7 +36,7 @@ export interface CustomAdapterConfig extends AdapterConfig {
  * ProviderAdapterFactory - Creates TanStack AI adapters for various providers
  */
 export class ProviderAdapterFactory {
-    private adapters = new Map<string, OpenAIAdapter>();
+    private adapters = new Map<string, ProviderAdapter>();
 
     /**
      * Create an adapter for a provider
@@ -39,8 +44,23 @@ export class ProviderAdapterFactory {
      * @param config - Adapter configuration with API key
      * @returns TanStack AI adapter instance
      */
-    createAdapter(providerId: string, config: CustomAdapterConfig): OpenAIAdapter {
+    createAdapter(providerId: string, config: CustomAdapterConfig): ProviderAdapter {
         const providerConfig = PROVIDERS[providerId];
+
+        // Handle Anthropic provider
+        if (providerConfig?.type === 'anthropic') {
+            if (!providerConfig.enabled) {
+                throw new Error(`Provider not enabled: ${providerId}`);
+            }
+            const adapter = createAnthropicAdapter({
+                apiKey: config.apiKey,
+                baseURL: config.baseURL,
+                headers: config.headers,
+                dangerouslyAllowBrowser: true,
+            } as AnthropicAdapterConfig);
+            this.adapters.set(providerId, adapter);
+            return adapter;
+        }
 
         // For openai-compatible providers, baseURL is required in config
         if (providerId === 'openai-compatible') {
@@ -132,7 +152,7 @@ export class ProviderAdapterFactory {
      * @param providerId - Provider ID
      * @returns Cached adapter or undefined
      */
-    getAdapter(providerId: string): OpenAIAdapter | undefined {
+    getAdapter(providerId: string): ProviderAdapter | undefined {
         return this.adapters.get(providerId);
     }
 
@@ -152,6 +172,18 @@ export class ProviderAdapterFactory {
 
         try {
             const provider = PROVIDERS[providerId];
+
+            // Handle Anthropic provider test
+            if (provider?.type === 'anthropic') {
+                const adapter = createAnthropicAdapter({
+                    apiKey,
+                    baseURL: customConfig?.baseURL || provider.baseURL,
+                    headers: customConfig?.headers,
+                    dangerouslyAllowBrowser: true,
+                } as AnthropicAdapterConfig);
+                return adapter.testConnection();
+            }
+
             let baseURL: string;
 
             if (providerId === 'openai-compatible' && customConfig?.baseURL) {
@@ -248,7 +280,7 @@ export const providerAdapterFactory = new ProviderAdapterFactory();
 export function createProviderAdapter(
     providerId: string,
     config: CustomAdapterConfig
-): OpenAIAdapter {
+): ProviderAdapter {
     return providerAdapterFactory.createAdapter(providerId, config);
 }
 

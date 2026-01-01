@@ -82,7 +82,8 @@ export function ToolAvailabilityIndicator({
   showToolNames = true,
   className,
 }: ToolAvailabilityIndicatorProps) {
-  const { t } = useTranslation();
+  // Translation hook reserved for future i18n implementation
+  useTranslation();
 
   /**
    * Calculate tool availability for current workspace
@@ -161,20 +162,6 @@ export function ToolAvailabilityIndicator({
         return <XCircle className="w-4 h-4 text-red-500" />;
       case 'unknown':
         return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-    }
-  };
-
-  /**
-   * Get status badge variant
-   */
-  const getStatusBadgeVariant = (status: ToolAvailabilityStatus) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-500/20 text-green-500 border-green-500/30 hover:bg-green-500/30';
-      case 'blocked':
-        return 'bg-red-500/20 text-red-500 border-red-500/30 hover:bg-red-500/30';
-      case 'unknown':
-        return 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/30';
     }
   };
 

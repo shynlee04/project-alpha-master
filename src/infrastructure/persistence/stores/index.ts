@@ -14,20 +14,14 @@ export {
   useAgentsStoreHydration,
   DEFAULT_AGENT,
   type AgentsState
-} from './agents-store';
+} from '@/stores/agents-store';
 
 export {
+  useAgentSelectionStore,
   useAgentSelection,
   useActiveAgent,
   type AgentSelectionState
-} from './agent-selection-store';
-
-export {
-  useProviderModelsStore,
-  useProviderModels,
-  useSelectedProviderModel,
-  type ProviderModelsState
-} from './provider-models-store';
+} from './agents/agent-selection-store';
 
 // Ralph Loop Cycle 4: Consolidated provider store (single source of truth)
 // Replaces provider-config-store.ts and provider-models-store.ts
@@ -86,7 +80,7 @@ export {
   createIsExpandedSelector,
   type IDEState,
   type TerminalTab,
-} from './ide-store';
+} from '@/lib/state/ide-store';
 
 export {
   useConversationStore,

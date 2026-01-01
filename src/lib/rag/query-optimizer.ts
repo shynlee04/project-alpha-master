@@ -275,7 +275,7 @@ export class QueryOptimizer {
   /**
    * Extract multi-word entities
    */
-  private extractEntities(query: string, keywords: string[]): string[] {
+  private extractEntities(query: string, _keywords: string[]): string[] {
     const entities: string[] = [];
     const lowerQuery = query.toLowerCase();
 
@@ -348,8 +348,8 @@ export class QueryOptimizer {
    */
   private suggestFilters(
     query: string,
-    keywords: string[],
-    entities: string[]
+    _keywords: string[],
+    _entities: string[]
   ): SearchFilters {
     const filters: SearchFilters = {};
 

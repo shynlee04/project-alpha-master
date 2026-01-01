@@ -40,17 +40,6 @@ const SUPPORTED_FORMATS = [
 ];
 
 /**
- * Default exclusions for Knowledge workspace
- */
-const DEFAULT_EXCLUSIONS = [
-    'node_modules/',
-    '.git/',
-    'package-lock.json',
-    'yarn.lock',
-    '.DS_Store'
-];
-
-/**
  * In-memory document storage (simplified implementation)
  * In production, this would use IndexedDB via the knowledge store
  */
@@ -92,7 +81,6 @@ class DocumentStore {
  */
 export class KnowledgeFileSyncService implements FileSyncService {
     private projectId: string;
-    private options: SyncOptions;
     private documentStore: DocumentStore;
     private onDocumentImport?: (document: Document) => Promise<void>;
     private changeListeners: Set<(event: FileChangeEvent) => void>;
@@ -101,7 +89,6 @@ export class KnowledgeFileSyncService implements FileSyncService {
 
     constructor(config: KnowledgeFileSyncConfig) {
         this.projectId = config.projectId;
-        this.options = config.syncOptions || {};
         this.onDocumentImport = config.onDocumentImport;
         this.documentStore = new DocumentStore();
         this.changeListeners = new Set();
@@ -155,7 +142,7 @@ export class KnowledgeFileSyncService implements FileSyncService {
         this.emitChange({ type: 'deleted', path, timestamp: Date.now() });
     }
 
-    async listFiles(path: string, recursive = false): Promise<string[]> {
+    async listFiles(path: string, _recursive = false): Promise<string[]> {
         this.checkDisposed();
         const docs = await this.documentStore.list();
 

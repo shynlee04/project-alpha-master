@@ -7,7 +7,6 @@
  * @see src/lib/sync/reverse-sync-service.ts
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ReverseSyncService, createReverseSyncService } from '../reverse-sync-service';
 import { SyncEventBus } from '../sync-event-bus';
 import type { 

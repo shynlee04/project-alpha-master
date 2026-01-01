@@ -10,10 +10,8 @@
 import type {
   SynthesisFrontmatter,
   SynthesisResult,
-  SynthesisProgress,
   SynthesisOptions,
   SourceDocument,
-  SynthesizableSourceType,
 } from './synthesis-types';
 import { SynthesisFrontmatterSchema } from './synthesis-types';
 import { emitStoreEvent } from '@/lib/events/store-events';
@@ -25,7 +23,6 @@ import type {
 } from './synthesis-api-types';
 import { getMimeType } from './synthesis-api-types';
 import { getPromptForType } from './synthesis-prompts';
-import { getMockFrontmatter } from './synthesis-mocks';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 /**
@@ -36,16 +33,14 @@ import { credentialVault } from '@/lib/agent/providers/credential-vault';
  */
 export class SynthesisService {
   private config: GeminiConfig;
-  private providerId: string;
 
-  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, _providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       model,
       apiKey,
       temperature: 0.4,
     };
-    this.providerId = providerId;
   }
 
   /**

@@ -16,10 +16,8 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { credentialVault } from './credential-vault';
 import type { Agent } from '@/domain/entities/agent';
 import type { AgentToolBinding } from '@/domain/value-objects/tool-permission';
-import type { WorkspaceBinding } from '@/domain/value-objects/workspace-binding';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**

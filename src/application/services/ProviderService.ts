@@ -12,7 +12,7 @@
 import { emitStoreEvent } from '@/lib/events/store-events';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { providerAdapterFactory } from '@/lib/agent/providers/provider-adapter';
-import type { LLMProvider, ProviderModel } from '@/core/entities/Provider';
+import type { ProviderModel } from '@/core/entities/Provider';
 import { STORE_EVENTS } from '@/lib/events/store-events';
 
 export class ProviderService {

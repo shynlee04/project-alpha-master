@@ -122,12 +122,12 @@ export class CredentialEncryption {
     /**
      * Generate a new master key for encrypting credentials
      *
-     * @returns New AES-256-GCM CryptoKey
+     * @returns New AES-256-GCM CryptoKey (non-extractable for security)
      */
     async generateMasterKey(): Promise<CryptoKey> {
         return crypto.subtle.generateKey(
             { name: ENCRYPTION_ALGORITHM, length: KEY_LENGTH },
-            true,
+            false, // NON-EXTRACTABLE: 2025 security best practice
             ['encrypt', 'decrypt']
         );
     }

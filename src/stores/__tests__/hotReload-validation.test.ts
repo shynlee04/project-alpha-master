@@ -12,7 +12,6 @@
  * @test WB-PR-1
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useAgentsStore } from '../agents-store';
 import type { Agent } from '@/mocks/agents';

@@ -19,7 +19,7 @@ import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType, WorkspaceTransitionEvent } from '../state/workspace-types';
 import { useWorkspaceStore } from '../state/workspace-store';
 import { useAgentsStore } from '@/stores/agents-store';
-import { useAgentSelection } from '@/stores/agent-selection-store';
+import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { crossWorkspaceEventBus } from '../events/cross-workspace-event-bus';
 import { WorkspacePermissionManager } from '../agent/workspace-permission-manager';
 import { ToolPermissionManager } from '../agent/tool-permission-manager';
@@ -107,7 +107,7 @@ export class WorkspaceTransitionManager {
         if (newAgent) {
           console.log('[WorkspaceTransitionManager] Re-selecting agent:', newAgent.name);
           const agentSelectionStore = useAgentSelection.getState();
-          agentSelectionStore.setActiveAgent(newAgent.id);
+          agentSelectionStore.setActiveAgent(newAgent.id, workspace);
         } else {
           console.warn('[WorkspaceTransitionManager] No agents available in', workspace);
         }

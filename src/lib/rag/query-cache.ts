@@ -57,7 +57,6 @@ export class RAGQueryCache {
   private cache: Map<string, QueryCacheEntry>;
   private ttl: number;
   private maxEntries: number;
-  private autoPrune: boolean;
 
   /**
    * Create a new RAG query cache
@@ -67,7 +66,6 @@ export class RAGQueryCache {
     this.cache = new Map();
     this.ttl = config.ttl ?? 5 * 60 * 1000; // 5 minutes default
     this.maxEntries = config.maxEntries ?? 100;
-    this.autoPrune = config.autoPrune ?? true;
   }
 
   /**

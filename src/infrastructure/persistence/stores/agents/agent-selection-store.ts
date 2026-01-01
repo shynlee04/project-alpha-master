@@ -9,10 +9,10 @@
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
-import { useAgentsStore } from './agents-store';
+import { useAgentsStore } from '@/stores/agents-store';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { Agent } from '@/domain/entities/agent';
 
@@ -393,4 +393,24 @@ export function getAgentForWorkspace(workspaceType: WorkspaceType): Agent | null
 
 export function selectAgentForWorkspace(workspaceType: WorkspaceType): void {
   useAgentSelectionStore.getState().selectAgentForWorkspace(workspaceType);
+}
+
+// ============================================================================
+// BACKWARD COMPATIBILITY EXPORTS
+// ============================================================================
+
+/**
+ * @deprecated Use useAgentSelectionStore instead
+ * Alias for backward compatibility with simple agent-selection-store
+ */
+export const useAgentSelection = useAgentSelectionStore;
+
+/**
+ * @deprecated Use useAgentsStore instead
+ * Helper hook for getting active agent from agents list
+ * This is maintained for backward compatibility
+ */
+export function useActiveAgent(agents: Agent[]) {
+  const { activeAgentId } = useAgentSelectionStore();
+  return agents.find(agent => agent.id === activeAgentId) || null;
 }

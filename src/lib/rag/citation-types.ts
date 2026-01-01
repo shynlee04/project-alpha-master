@@ -6,8 +6,6 @@
  * Type definitions for citation generation and display.
  */
 
-import type { Citation } from './types';
-
 /**
  * Citation style options for inline formatting
  */

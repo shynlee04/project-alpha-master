@@ -9,6 +9,9 @@
  */
 
 // Import domain entities as single source of truth
+import type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
+
+// Re-export for external consumers
 export type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
 
 /**

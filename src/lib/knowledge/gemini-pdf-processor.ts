@@ -53,15 +53,13 @@ export type {
  */
 export class GeminiPDFProcessor {
   private config: GeminiConfig;
-  private providerId: string;
 
-  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, _providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       model,
       apiKey,
     };
-    this.providerId = providerId;
   }
 
   /**
@@ -95,12 +93,10 @@ export class GeminiPDFProcessor {
    * @throws Error if API key is missing or processing fails
    */
   async processPDF(
-    file: File,
+    _file: File,
     base64Content: string,
     options: GeminiPDFOptions = {}
   ): Promise<GeminiPDFResult> {
-    const startTime = Date.now();
-
     try {
       // Validate API key
       if (!this.config.apiKey) {

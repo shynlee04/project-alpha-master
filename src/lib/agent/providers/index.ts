@@ -26,6 +26,11 @@ export {
     providerAdapterFactory,
     createProviderAdapter,
 } from './provider-adapter';
+export type { CustomAdapterConfig } from './provider-adapter';
+
+// Anthropic Adapter
+export { AnthropicAdapter, createAnthropicAdapter } from './anthropic-adapter';
+export type { AnthropicAdapterConfig } from './anthropic-adapter';
 
 // Credential Vault
 export { CredentialVault, credentialVault } from './credential-vault';

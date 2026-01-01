@@ -6,10 +6,8 @@
  * Comprehensive test suite for CitationSidebar and CitationCountBadge components.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useTranslation } from 'react-i18next';
 
 // Mock i18next before importing components
 vi.mock('react-i18next', () => ({

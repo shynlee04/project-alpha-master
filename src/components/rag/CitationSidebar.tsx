@@ -8,17 +8,13 @@
 
 import { useState, useMemo } from 'react';
 
-import { X, Link2, FileText, Search, Filter } from 'lucide-react';
+import { X, Link2, FileText, Search } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
 
-import { clsx } from 'clsx';
-
-import { tailwindMerge } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge';
 
 import type { DisplayCitation, CitationSidebarProps } from '@/lib/rag/citation-types';
-
-import type { Citation } from '@/lib/rag/types';
 
 /**
  * Formats the relevance score as a percentage
@@ -58,7 +54,7 @@ function CitationCard({
     <button
       type="button"
       onClick={onClick}
-      className={tailwindMerge(
+      className={twMerge(
         'w-full text-left p-3 rounded-lg border transition-all duration-200',
         'hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-surface-hover)]',
         isSelected
@@ -116,7 +112,6 @@ function FilterSection({
   }, [citations]);
 
   const allSelected = uniqueSources.length === selectedSources.length;
-  const someSelected = selectedSources.length > 0 && !allSelected;
 
   const handleToggleAll = () => {
     if (allSelected) {
@@ -156,7 +151,7 @@ function FilterSection({
             key={citation.sourceId}
             type="button"
             onClick={() => handleToggleSource(citation.sourceId)}
-            className={tailwindMerge(
+            className={twMerge(
               'px-2 py-1 text-xs rounded-full border transition-colors',
               selectedSources.includes(citation.sourceId)
                 ? 'bg-[var(--color-accent-primary)] border-[var(--color-accent-primary)] text-white'

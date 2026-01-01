@@ -7,7 +7,6 @@
  * @test Credential Encryption Module
  */
 
-import { describe, it, expect } from 'vitest';
 import {
     CredentialEncryption,
     credentialEncryption,

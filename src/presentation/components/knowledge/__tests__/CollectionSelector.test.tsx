@@ -5,6 +5,7 @@
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
+import type { Mock } from 'vitest';
 import { CollectionSelector } from '../CollectionSelector';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 import type { Collection } from '@/lib/state/dexie-db';

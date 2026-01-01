@@ -5,12 +5,9 @@ import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflo
 import type { Node, Edge, Viewport } from '@xyflow/react';
 import type {
   CanvasStoreState,
-  CanvasNodeData,
-  CanvasEdgeData,
   CanvasRelationshipType,
   CanvasMetadata,
   CanvasExport,
-  LinkageProposal,
 } from '../canvas/types';
 import { createLinkageAnalyzer } from '../canvas/linkage-analyzer';
 

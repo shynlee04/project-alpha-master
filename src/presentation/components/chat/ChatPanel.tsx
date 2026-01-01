@@ -18,7 +18,7 @@ import {
     useActiveThread,
 } from '@/infrastructure/persistence/stores/conversation-threads-store';
 import { useAgentsStore } from '@/stores/agents-store';
-import { useAgentSelection } from '@/stores/agent-selection-store';
+import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/mocks/agents';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTranslation } from 'react-i18next';

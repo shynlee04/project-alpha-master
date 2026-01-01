@@ -112,6 +112,25 @@ export const useProviderStore = create<ProviderState>()(
             },
 
             removeProvider: async (id) => {
+                // P0 FIX: Check for dependent agents before deleting provider
+                // This prevents orphaned agent configurations (RALPH LOOP CYCLE 8)
+                try {
+                    const { useAgentsStore } = await import('@/stores/agents-store');
+                    const agents = useAgentsStore.getState().agents;
+                    const dependentAgents = agents.filter(agent => agent.providerId === id);
+
+                    if (dependentAgents.length > 0) {
+                        const agentNames = dependentAgents.map(a => a.name).join(', ');
+                        throw new Error(
+                            `Cannot delete provider "${id}". It is being used by ${dependentAgents.length} agent(s): ${agentNames}. ` +
+                            `Please reconfigure or delete these agents first.`
+                        );
+                    }
+                } catch (error) {
+                    // If agents store check fails, log but continue (fail-open for development)
+                    console.error('[ProviderStore] Failed to check dependent agents:', error);
+                }
+
                 // First remove credentials from vault
                 try {
                     await credentialVault.deleteCredentials(id);

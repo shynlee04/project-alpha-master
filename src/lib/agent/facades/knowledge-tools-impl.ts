@@ -12,7 +12,6 @@
 import type {
   AgentKnowledgeTools,
   SynthesisInput,
-  SynthesisOptions,
   PDFProcessingOptions,
   ImageProcessingOptions,
   URLProcessingOptions,

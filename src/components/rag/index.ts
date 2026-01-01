@@ -7,7 +7,9 @@
  */
 
 export { CitationSidebar } from './CitationSidebar';
-export type { CitationSidebarProps } from './CitationSidebar';
-
 export { CitationCountBadge } from './CitationCountBadge';
-export type { CitationCountBadgeProps } from './CitationCountBadge';
+
+export type {
+  CitationSidebarProps,
+  CitationCountBadgeProps
+} from '@/lib/rag/citation-types';

@@ -41,6 +41,14 @@ export {
   isThreadedModeProps
 } from './UnifiedChatPanel';
 
+// Ralph Loop Cycle 5: Cascade Flow Components
+export { ThreadFolderTree } from './ThreadFolderTree';
+export type { ThreadFolderTreeProps } from './ThreadFolderTree';
+
+// Ralph Loop Cycle 5: Real-Time Tool Streaming
+export { ToolProgressIndicator, useToolProgress } from './ToolProgressIndicator';
+export type { ToolProgressIndicatorProps } from './ToolProgressIndicator';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';

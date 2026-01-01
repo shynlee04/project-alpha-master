@@ -10,8 +10,7 @@
  * @test-coverage 28 tests
  */
 
-import { chat, toServerSentEventsStream } from '@tanstack/ai';
-import { createOpenaiChat } from '@tanstack/ai-openai';
+import { chat } from '@tanstack/ai';
 
 // Use hoisted functions for mock definitions to avoid initialization order issues
 const { mockChat, mockToServerSentEventsStream, mockCreateOpenaiChat } = vi.hoisted(() => ({

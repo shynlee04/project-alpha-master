@@ -17,7 +17,6 @@ import type {
   GraphStatistics,
   GraphQueryOptions,
   ClusterDetectionOptions,
-  TraversalOptions,
 } from '../knowledge-graph-types';
 
 /**

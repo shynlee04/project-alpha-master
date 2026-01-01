@@ -184,7 +184,8 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         name: 'Anthropic',
         type: 'anthropic',
         defaultModel: 'claude-3-5-sonnet-20241022',
-        enabled: false, // Not implemented yet
+        enabled: true, // ENABLED - Anthropic adapter implemented
+        supportsNativeTools: true, // Supports native tool use via beta tool runner
     },
     gemini: {
         id: 'gemini',

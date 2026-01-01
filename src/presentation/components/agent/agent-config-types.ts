@@ -7,9 +7,10 @@
  * Integrated with domain layer (entities, value objects).
  */
 
-import type { Agent } from '@/domain/entities/agent';
-import type { WorkspaceBinding } from '@/domain/value-objects/workspace-binding';
-import type { AgentToolBinding } from '@/domain/value-objects/tool-permission';
+// Note: Agent, WorkspaceBinding, AgentToolBinding imports removed - were unused
+// import type { Agent } from '@/domain/entities/agent';
+// import type { WorkspaceBinding } from '@/domain/value-objects/workspace-binding';
+// import type { AgentToolBinding } from '@/domain/value-objects/tool-permission';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**

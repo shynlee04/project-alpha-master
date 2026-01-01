@@ -50,7 +50,7 @@ export class KnowledgeGraphCRUD {
    */
   async addNode(
     node: Omit<GraphNode, 'id'>,
-    options: NodeCreationOptions = {}
+    _options: NodeCreationOptions = {}
   ): Promise<GraphNode> {
     const newNode: GraphNode = {
       id: generateId('node'),

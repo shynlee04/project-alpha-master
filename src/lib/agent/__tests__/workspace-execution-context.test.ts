@@ -8,7 +8,6 @@
  * @story WB-8.3 - Agent Configuration Sync
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getWorkspaceExecutionContext } from '../workspace-execution-context';
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
 import { useAgentsStore } from '@/stores/agents-store';

@@ -46,7 +46,18 @@ export interface ThreadToolCall {
 }
 
 /**
- * Conversation thread
+ * Context window configuration for thread
+ * Ralph Loop Cycle 5: Cascade Flow Support
+ */
+export interface ContextWindowConfig {
+    maxTokens: number;
+    currentTokens: number;
+    compressionStrategy: 'drop_oldest' | 'summarize' | 'truncate';
+}
+
+/**
+ * Conversation thread with cascade hierarchy support
+ * Ralph Loop Cycle 5: Folder-based organization for conversations
  */
 export interface ConversationThread {
     id: string;
@@ -59,6 +70,30 @@ export interface ConversationThread {
     messageCount: number;
     createdAt: number;
     updatedAt: number;
+
+    // ========== Ralph Loop Cycle 5: Cascade Flow Fields ==========
+
+    /** Parent thread ID for hierarchical organization (null = root level) */
+    parentId?: string | null;
+
+    /** Child thread IDs for cascade navigation */
+    children?: string[];
+
+    /** Folder path for thread organization (e.g., "/Frontend/Components") */
+    folderPath?: string;
+
+    /** Context window management for long conversations */
+    contextWindow?: ContextWindowConfig;
+}
+
+/**
+ * Thread hierarchy node for tree navigation
+ * Ralph Loop Cycle 5: Cascade Flow Support
+ */
+export interface ThreadHierarchyNode {
+    thread: ConversationThread;
+    children: ThreadHierarchyNode[];
+    depth: number;
 }
 
 /**
@@ -104,6 +139,26 @@ interface ThreadsState {
 
     /** Clear all threads for project */
     clearProjectThreads: (projectId: string) => void;
+
+    // ========== Ralph Loop Cycle 5: Cascade Flow Operations ==========
+
+    /** Create child thread under parent */
+    createChildThread: (parentId: string, title: string) => ConversationThread;
+
+    /** Move thread to new parent or root */
+    moveThread: (threadId: string, newParentId: string | null) => void;
+
+    /** Get thread hierarchy (tree structure) */
+    getThreadHierarchy: (projectId: string) => ThreadHierarchyNode[];
+
+    /** Get all descendants of a thread */
+    getThreadDescendants: (threadId: string) => ConversationThread[];
+
+    /** Update folder path for thread */
+    updateThreadFolder: (threadId: string, folderPath: string) => void;
+
+    /** Prune context window for long conversations */
+    pruneContextWindow: (threadId: string, targetTokens: number) => Promise<void>;
 }
 
 /**
@@ -292,6 +347,207 @@ export const useThreadsStore = create<ThreadsState>()(
                     };
                 });
             },
+
+            // ========== Ralph Loop Cycle 5: Cascade Flow Operations ==========
+
+            createChildThread: (parentId: string, title: string) => {
+                const id = generateId('thread');
+                const now = Date.now();
+                const parent = get().threads[parentId];
+
+                if (!parent) {
+                    console.error('[ThreadsStore] Parent thread not found:', parentId);
+                    throw new Error(`Parent thread ${parentId} not found`);
+                }
+
+                const childThread: ConversationThread = {
+                    id,
+                    projectId: parent.projectId,
+                    title,
+                    preview: '',
+                    messages: [],
+                    agentsUsed: [],
+                    messageCount: 0,
+                    createdAt: now,
+                    updatedAt: now,
+                    parentId: parent.id,
+                    children: [],
+                    folderPath: parent.folderPath,
+                };
+
+                console.log('[ThreadsStore] Creating child thread:', id, 'under parent:', parentId);
+
+                set((state) => {
+                    // Add child thread
+                    const newThreads = {
+                        ...state.threads,
+                        [id]: childThread,
+                    };
+
+                    // Update parent's children array
+                    const parentChildren = state.threads[parentId]?.children || [];
+                    newThreads[parentId] = {
+                        ...state.threads[parentId],
+                        children: [...parentChildren, id],
+                        updatedAt: now,
+                    };
+
+                    return {
+                        threads: newThreads,
+                        activeThreadId: id,
+                    };
+                });
+
+                return childThread;
+            },
+
+            moveThread: (threadId: string, newParentId: string | null) => {
+                console.log('[ThreadsStore] Moving thread:', threadId, 'to parent:', newParentId);
+                set((state) => {
+                    const thread = state.threads[threadId];
+                    if (!thread) {
+                        console.error('[ThreadsStore] Thread not found:', threadId);
+                        return state;
+                    }
+
+                    const oldParentId = thread.parentId;
+                    if (oldParentId === newParentId) {
+                        return state; // No change needed
+                    }
+
+                    const newThreads = { ...state.threads };
+
+                    // Remove from old parent's children
+                    if (oldParentId && newThreads[oldParentId]) {
+                        const oldParentChildren = newThreads[oldParentId].children || [];
+                        newThreads[oldParentId] = {
+                            ...newThreads[oldParentId],
+                            children: oldParentChildren.filter((id) => id !== threadId),
+                            updatedAt: Date.now(),
+                        };
+                    }
+
+                    // Add to new parent's children
+                    if (newParentId && newThreads[newParentId]) {
+                        const newParentChildren = newThreads[newParentId].children || [];
+                        newThreads[newParentId] = {
+                            ...newThreads[newParentId],
+                            children: [...newParentChildren, threadId],
+                            updatedAt: Date.now(),
+                        };
+                    }
+
+                    // Update thread's parentId
+                    newThreads[threadId] = {
+                        ...thread,
+                        parentId: newParentId,
+                        updatedAt: Date.now(),
+                    };
+
+                    return { threads: newThreads };
+                });
+            },
+
+            getThreadHierarchy: (projectId: string) => {
+                const { threads } = get();
+                const projectThreads = Object.values(threads).filter((t) => t.projectId === projectId);
+
+                // Build lookup map
+                const threadMap = new Map(projectThreads.map((t) => [t.id, t]));
+
+                // Build tree recursively
+                function buildTree(parentId: string | null, depth: number): ThreadHierarchyNode[] {
+                    const children = projectThreads.filter((t) => t.parentId === parentId);
+                    return children.map((thread) => ({
+                        thread,
+                        children: buildTree(thread.id, depth + 1),
+                        depth,
+                    }));
+                }
+
+                return buildTree(null, 0);
+            },
+
+            getThreadDescendants: (threadId: string) => {
+                const { threads } = get();
+                const descendants: ConversationThread[] = [];
+
+                function collectDescendants(parentId: string) {
+                    const children = Object.values(threads).filter((t) => t.parentId === parentId);
+                    for (const child of children) {
+                        descendants.push(child);
+                        collectDescendants(child.id);
+                    }
+                }
+
+                collectDescendants(threadId);
+                return descendants;
+            },
+
+            updateThreadFolder: (threadId: string, folderPath: string) => {
+                console.log('[ThreadsStore] Updating folder for thread:', threadId, 'to:', folderPath);
+                set((state) => {
+                    const thread = state.threads[threadId];
+                    if (!thread) return state;
+
+                    return {
+                        threads: {
+                            ...state.threads,
+                            [threadId]: {
+                                ...thread,
+                                folderPath,
+                                updatedAt: Date.now(),
+                            },
+                        },
+                    };
+                });
+            },
+
+            pruneContextWindow: async (threadId: string, targetTokens: number) => {
+                console.log('[ThreadsStore] Pruning context window for thread:', threadId, 'target:', targetTokens);
+                const thread = get().threads[threadId];
+                if (!thread) {
+                    console.error('[ThreadsStore] Thread not found:', threadId);
+                    return;
+                }
+
+                // Import context window manager dynamically
+                const { pruneContextWindow, countMessageTokens } = await import('@/lib/chat/context-window-manager');
+
+                // Get current token count
+                const currentTokens = countMessageTokens(thread.messages);
+                console.log('[ThreadsStore] Current tokens:', currentTokens, 'target:', targetTokens);
+
+                if (currentTokens <= targetTokens) {
+                    console.log('[ThreadsStore] No pruning needed');
+                    return;
+                }
+
+                // Get compression strategy from thread config (default to drop_oldest)
+                const strategy = thread.contextWindow?.compressionStrategy || 'drop_oldest';
+
+                // Prune messages
+                const prunedMessages = await pruneContextWindow(thread.messages, {
+                    maxTokens: targetTokens,
+                    currentTokens,
+                    compressionStrategy: strategy,
+                });
+
+                console.log('[ThreadsStore] Pruned messages:', thread.messages.length, '→', prunedMessages.length);
+
+                // Update thread with pruned messages
+                set((state) => ({
+                    threads: {
+                        ...state.threads,
+                        [threadId]: {
+                            ...thread,
+                            messages: prunedMessages,
+                            messageCount: prunedMessages.length,
+                            updatedAt: Date.now(),
+                        },
+                    },
+                }));
+            },
         }),
         {
             name: 'via-gent-threads',
@@ -325,6 +581,52 @@ export function useProjectThreads(projectId: string) {
  */
 export function useThreadsHydration() {
     return useThreadsStore((state) => state._hasHydrated);
+}
+
+// ============================================================================
+// Ralph Loop Cycle 5: Cascade Flow Hooks
+// ============================================================================
+
+/**
+ * Hook to get thread hierarchy as tree structure
+ */
+export function useThreadHierarchy(projectId: string) {
+    return useThreadsStore((state) => state.getThreadHierarchy(projectId));
+}
+
+/**
+ * Hook to get descendants of a thread
+ */
+export function useThreadDescendants(threadId: string) {
+    return useThreadsStore((state) => state.getThreadDescendants(threadId));
+}
+
+/**
+ * Hook to create child thread
+ */
+export function useCreateChildThread() {
+    return useThreadsStore((state) => state.createChildThread);
+}
+
+/**
+ * Hook to move thread to new parent
+ */
+export function useMoveThread() {
+    return useThreadsStore((state) => state.moveThread);
+}
+
+/**
+ * Hook to update thread folder path
+ */
+export function useUpdateThreadFolder() {
+    return useThreadsStore((state) => state.updateThreadFolder);
+}
+
+/**
+ * Hook to prune context window
+ */
+export function usePruneContextWindow() {
+    return useThreadsStore((state) => state.pruneContextWindow);
 }
 
 // ============================================================================

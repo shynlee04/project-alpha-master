@@ -22,7 +22,6 @@ import {
     classifyForRetry,
     DEFAULT_RETRY_QUEUE_CONFIG,
     type RetryQueueConfig,
-    type RetryQueueItem,
 } from '../retry-queue';
 import { ToolError } from '../tool-error';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';

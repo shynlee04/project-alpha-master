@@ -22,8 +22,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from './dexie-storage';
-import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
-import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
+import type { SearchResult } from '@/lib/rag/types';
+import type { ChunkingProgress, ChunkingOptions } from '@/lib/rag/types';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
 import {
     getIndexMetadata,

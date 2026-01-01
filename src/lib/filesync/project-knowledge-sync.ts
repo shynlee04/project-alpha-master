@@ -147,7 +147,7 @@ export class ProjectKnowledgeSync {
     /**
      * Discover documents in project
      */
-    private async discoverDocuments(config: SyncConfig): Promise<string[]> {
+    private async discoverDocuments(_config: SyncConfig): Promise<string[]> {
         const allFiles = await this.fileSyncService.listFiles('.', true);
         return allFiles;
     }

@@ -10,7 +10,7 @@ import { Link2 } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
 
-import { tailwindMerge } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge';
 
 import type { CitationCountBadgeProps } from '@/lib/rag/citation-types';
 
@@ -56,7 +56,7 @@ export function CitationCountBadge({
     <button
       type="button"
       onClick={onClick}
-      className={tailwindMerge(
+      className={twMerge(
         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full',
         'font-mono text-xs font-medium transition-all duration-200',
         'border focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-[var(--color-surface)]',
@@ -71,7 +71,7 @@ export function CitationCountBadge({
       aria-expanded={isOpen}
     >
       <Link2
-        className={tailwindMerge(
+        className={twMerge(
           'w-3.5 h-3.5',
           isOpen ? 'text-white' : 'text-[var(--color-accent-primary)]',
         )}

@@ -7,12 +7,14 @@
  * Handles network variability and audio underruns.
  */
 
+// Type declaration for WebKit-prefixed AudioContext
+declare const webkitAudioContext: typeof AudioContext;
+
 import type {
   AudioChunk,
   AudioConfig,
   AudioPlaybackError,
   JitterBufferConfig,
-  DEFAULT_JITTER_CONFIG,
 } from './live-api-types';
 
 /**

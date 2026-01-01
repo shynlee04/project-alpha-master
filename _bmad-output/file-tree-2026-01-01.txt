@@ -1,0 +1,129 @@
+_bmad-output
+|-- agent-instructions
+|-- ai-sdk-agents-design
+|   `-- bmm-bundles
+|       |-- agents
+|       `-- teams
+|-- analysis
+|   |-- research
+|   |-- retrospectives
+|   `-- spikes
+|-- architecture
+|-- archive
+|   `-- 2025-12-28-pre-pivot
+|-- bmb-creations
+|   |-- arc-gap-remediation
+|   |   |-- _module-installer
+|   |   |-- agents
+|   |   |-- data
+|   |   `-- workflows
+|   |-- arc-module
+|   |   |-- agents
+|   |   `-- workflows
+|   |-- ksi-module
+|   |   |-- agents
+|   |   |-- data
+|   |   |-- templates
+|   |   `-- workflows
+|   `-- notes-remediation-module
+|       |-- i18n
+|       `-- workflows
+|-- bmm-workflow-status
+|-- bmm-workflows
+|-- bug-fixes
+|-- career
+|-- cis
+|-- code-reviews
+|-- complete-new-approach
+|-- components
+|-- consolidation
+|-- context
+|-- coordination
+|-- correct-course
+|-- course-correction
+|-- course-corrections
+|-- crisis-response
+|-- critical-incidents
+|-- deferred-tasks
+|-- deployment-log
+|-- design
+|-- dev-artifacts
+|-- docs
+|   `-- 2025-12-28
+|       |-- correct-course
+|       `-- version-2
+|-- documentation
+|-- e2e-screenshots-2025-12-26
+|-- e2e-verification
+|   |-- course-correction-2025-12-27
+|   |-- mvp-1
+|   `-- mvp-2
+|-- epic-retrospectives
+|-- epics
+|-- governance
+|-- governance-audit
+|-- guidelines
+|-- handoff-validation
+|-- handoffs
+|-- implementation
+|-- implementation-artifacts
+|-- implementation-plans
+|-- investigation
+|-- knowledge
+|-- knowledge-synthesis-platform
+|-- marketing-content
+|   `-- blog-series
+|-- marketing-plan
+|-- mcp-research
+|-- new-ADR-total-client-side
+|   `-- facing-issues
+|-- p0-fixes
+|-- p1-fixes
+|-- p2-fixes
+|-- project-planning-artifacts
+|   `-- research
+|-- prompts
+|   |-- 2025-12-24
+|   |-- 2025-12-25
+|   |-- 2025-12-28
+|   |-- 2025-12-29
+|   |-- 2025-12-30
+|   `-- 2025-12-31
+|-- proposal
+|-- remediation
+|-- research
+|   `-- 20205-12-25
+|-- research-artifacts
+|   |-- knowledge-synthesis-platform-2025-12-31
+|   `-- ksi-validation
+|-- retrospectives
+|-- reviews
+|-- sprint-artifacts
+|   `-- stories
+|-- stories
+|-- system-context-analysis
+|-- team-b
+|-- tech-debt
+|-- tech-specs
+|-- technical-dead
+|-- technical-debt
+|-- test-reports
+|-- testing
+|-- unified_ide_workspace_ux_ui
+|   `-- stitch_unified_ide_workspace
+|       |-- ide_agent_management_panel
+|       |-- unified_ide_workspace_1
+|       |-- unified_ide_workspace_2
+|       |-- unified_ide_workspace_3
+|       |-- unified_ide_workspace_4
+|       |-- unified_ide_workspace_5
+|       |-- unified_ide_workspace_6
+|       |-- unified_ide_workspace_7
+|       |-- unified_ide_workspace_8
+|       |-- unified_ide_workspace_9
+|       `-- via-gent_unified_workspace_prototype
+|-- ux-specification
+|-- validation
+`-- validation-reports
+
+127 directories

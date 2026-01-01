@@ -21,14 +21,12 @@
 
 import type {
   GeminiImageResult,
-  ImageProcessingProgress,
   GeminiImageOptions,
   GeminiConfig,
   GeminiRequest,
   GeminiResponse,
 } from './gemini-image-types';
 import { buildAnalysisPrompt } from './gemini-image-prompts';
-import { getMockImageResult } from './gemini-image-mocks';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 /**
@@ -39,15 +37,13 @@ import { credentialVault } from '@/lib/agent/providers/credential-vault';
  */
 export class GeminiImageProcessor {
   private config: GeminiConfig;
-  private providerId: string;
 
-  constructor(apiKey: string, model: string, providerId: string = 'gemini') {
+  constructor(apiKey: string, model: string, _providerId: string = 'gemini') {
     this.config = {
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       model,
       apiKey,
     };
-    this.providerId = providerId;
   }
 
   /**
@@ -85,8 +81,6 @@ export class GeminiImageProcessor {
     base64Content: string,
     options: GeminiImageOptions = {}
   ): Promise<GeminiImageResult> {
-    const startTime = Date.now();
-
     try {
       // Validate API key
       if (!this.config.apiKey) {

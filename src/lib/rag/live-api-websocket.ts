@@ -14,7 +14,6 @@ import type {
   RetryConfig,
   ServerContent,
   WebSocketError,
-  WebSocketMessage,
 } from './live-api-types';
 
 /**

@@ -28,7 +28,6 @@ import {
     emitNoteTitleChanged,
     emitNoteMoved,
     emitNoteFavoriteChanged,
-    emitNotesListed
 } from './note-event-emitter';
 
 // ============================================================================
@@ -338,6 +337,13 @@ export const useNoteStore = create<NoteStoreState>()(
             deleteNote: async (noteId: string) => {
                 try {
                     const projectId = get().currentProjectId;
+
+                    // Capture the note before deletion for event emission
+                    const deletedNote = get().notes.get(noteId);
+                    if (!deletedNote) {
+                        console.warn(`[NoteStore] Note ${noteId} not found, skipping deletion`);
+                        return;
+                    }
 
                     // Also delete all children recursively
                     const deleteRecursive = async (id: string) => {

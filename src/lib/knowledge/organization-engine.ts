@@ -49,7 +49,7 @@ export class OrganizationEngine {
   }
 
   async generateRecommendations(
-    vaultId: string,
+    _vaultId: string,
     documents: Array<{
       id: string;
       title?: string;

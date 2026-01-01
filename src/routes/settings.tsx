@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog';
+import { ErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 import { SettingsIcon, PlusIcon } from '@/presentation/components/ui/icons';
 import { Button } from '@/presentation/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -111,13 +112,30 @@ function SettingsPage() {
                     </div>
                 </section>
 
-                {/* Agent Config Dialog */}
-                <AgentConfigDialog
-                    open={isDialogOpen}
-                    onOpenChange={setIsDialogOpen}
-                    onSuccess={handleAgentSuccess}
-                    agentId={null} // BF-01 FIX: Create mode (no agent selected)
-                />
+                {/* P0 FIX: Agent Config Dialog wrapped with ErrorBoundary */}
+                <ErrorBoundary
+                    fallback={
+                        <div className="p-6 text-center">
+                            <h2 className="text-lg font-bold mb-2">Agent Configuration Failed</h2>
+                            <p className="text-muted-foreground mb-4">
+                                The agent configuration dialog encountered an unexpected error.
+                            </p>
+                            <Button onClick={() => setIsDialogOpen(false)}>
+                                Close Dialog
+                            </Button>
+                        </div>
+                    }
+                    onError={(error) => {
+                        console.error('[SettingsPage] AgentConfigDialog error:', error);
+                    }}
+                >
+                    <AgentConfigDialog
+                        open={isDialogOpen}
+                        onOpenChange={setIsDialogOpen}
+                        onSuccess={handleAgentSuccess}
+                        agentId={null} // BF-01 FIX: Create mode (no agent selected)
+                    />
+                </ErrorBoundary>
             </div>
         </MainLayout>
     );

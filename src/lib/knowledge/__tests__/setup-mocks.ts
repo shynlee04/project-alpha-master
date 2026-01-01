@@ -2,7 +2,6 @@
  * @fileoverview Setup mocks for metadata extraction tests
  */
 
-import { vi } from 'vitest';
 
 // Mock Gemini API functions
 export const mockGenerateContent = vi.fn();

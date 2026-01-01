@@ -68,8 +68,6 @@ import { GraphPersistence } from './graph/graph-persistence';
  */
 export class KnowledgeGraphService {
   private graph: KnowledgeGraph;
-  private graphId: string;
-  private persistenceKey: string;
 
   // Module instances
   private crud: KnowledgeGraphCRUD;
@@ -78,9 +76,6 @@ export class KnowledgeGraphService {
   private persistence: GraphPersistence;
 
   constructor(graphId: string) {
-    this.graphId = graphId;
-    this.persistenceKey = `knowledge-graph-${graphId}`;
-
     // Initialize persistence and empty graph
     this.persistence = new GraphPersistence(this.graph, graphId);
     this.graph = this.persistence.initializeEmptyGraph();

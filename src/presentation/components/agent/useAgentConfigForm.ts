@@ -279,8 +279,8 @@ export function useAgentConfigForm({
         setIsSubmitting(true)
 
         try {
-            // Convert custom headers array to object (for OpenAI-compatible providers)
-            const headersObj = customHeaders.reduce((acc, h) => {
+            // Convert custom headers array to object (reserved for future use in provider config)
+            void customHeaders.reduce((acc, h) => {
                 if (h.key.trim() && h.value.trim()) {
                     acc[h.key.trim()] = h.value.trim()
                 }

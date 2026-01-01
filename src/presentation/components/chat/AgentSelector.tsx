@@ -26,16 +26,13 @@ import {
 import type { Agent } from '@/mocks/agents';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useTranslation } from 'react-i18next';
+import { detectWorkspace } from '@/lib/workspace/workspace-detector';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import {
     STORE_EVENTS,
     emitStoreEvent,
     type AgentSelectedPayload,
 } from '@/lib/events/store-events';
-
-/**
- * Workspace types for cross-workspace agent synchronization
- */
-export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
 
 /**
  * Display variants for different contexts
@@ -114,11 +111,17 @@ export function AgentSelector({
     // const [configDialogOpen, setConfigDialogOpen] = useState(false);
     // const [editingAgent, setEditingAgent] = useState<Agent | undefined>(undefined);
 
-    // Use real agents from store instead of mock data
-    const { agents: storeAgents, activeAgentId, setActiveAgent } = useAgentsStore();
+    // Ralph Loop Cycle 4 Phase 6: Workspace-aware agent filtering
+    const currentWorkspace = detectWorkspace() as WorkspaceType;
 
-    // Allow prop override for backwards compatibility, but default to store agents
-    const agents = propAgents ?? storeAgents;
+    // Use real agents from store instead of mock data
+    const { agents: storeAgents, activeAgentId, setActiveAgent, getAgentsForWorkspace } = useAgentsStore();
+
+    // Filter agents to only show those available in current workspace
+    const workspaceFilteredAgents = getAgentsForWorkspace(currentWorkspace);
+
+    // Allow prop override for backwards compatibility, but default to filtered store agents
+    const agents = propAgents ?? workspaceFilteredAgents;
 
     // Get selected agent from store or from prop
     const selectedAgent = propSelectedAgent ??

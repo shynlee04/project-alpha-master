@@ -157,6 +157,11 @@ describe('CredentialVault', () => {
     });
 
     it.skip('should throw error if master key is invalid', async () => {
+      const mockJwkKey = {
+        kty: 'oct',
+        k: 'mock-key-data',
+        alg: 'A256GCM',
+      };
       const localStorageMock = {
         getItem: vi.fn().mockReturnValue('invalid-json'),
         setItem: vi.fn().mockImplementation(() => {}),

@@ -103,7 +103,8 @@ export function WorkspaceAwareAgentSelector({
   className,
   disabled = false,
 }: WorkspaceAwareAgentSelectorProps) {
-  const { t } = useTranslation();
+  // Translation hook reserved for future i18n implementation
+  useTranslation();
 
   /**
    * Filter agents by workspace availability

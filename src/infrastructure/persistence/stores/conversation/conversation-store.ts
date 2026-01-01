@@ -17,14 +17,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { toast } from 'sonner';
-import type { ThreadMessageRecord, ConversationThreadRecord } from '../../dexie-db';
+import type { ThreadMessageRecord } from '../../dexie-db';
 import { createDexieStorage } from '../../dexie-storage';
 import { getThread, deleteThread as deleteDexieThread } from '@/lib/workspace/threads-store';
-import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation-threads-store';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type {
   ConversationState,
   ConversationStoreState,
-  ConversationMetadata,
 } from './conversation-types';
 import {
   MAX_CONVERSATIONS,

@@ -27,7 +27,7 @@ import {
     unregisterLegacyStore,
     createMigrationLogger,
 } from '../migrations/local-storage-migrator';
-import type { MigrationLogger, LegacyLocalStorageStore } from '../migrations/local-storage-migrator';
+import type { LegacyLocalStorageStore } from '../migrations/local-storage-migrator';
 
 // ============================================================================
 // Mock Setup

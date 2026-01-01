@@ -9,7 +9,7 @@ import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '@/lib/agent/hooks/use-agent-chat-with-tools';
 import { useAutoApproveStore } from '@/stores/auto-approve-store';
-import { useAgentSelection } from '@/stores/agent-selection-store';
+import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';

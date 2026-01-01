@@ -10,7 +10,6 @@
  * @date 2026-01-01
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
 import { createSynthesisService } from '../synthesis-service';
 import { createGeminiPDFProcessor } from '../gemini-pdf-processor';
 import { createGeminiImageProcessor } from '../gemini-image-processor';

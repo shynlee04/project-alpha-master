@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/test-i18n';
 import { RAGSearchPanel } from '../RAGSearchPanel';
-import type { ExtendedSearchResult, SearchMode } from '@/lib/rag/types';
+import type { ExtendedSearchResult } from '@/lib/rag/types';
 
 // Mock the rag-store
 const mockSetSearchQuery = vi.fn();

@@ -5,7 +5,7 @@ import { STORE_EVENTS } from '../events/store-events';
 
 // Mocks
 class MockDocumentChunker {
-    chunkSource(source: any, options: any) {
+    chunkSource(source: any, _options: any) {
         console.log('[MockChunker] Chunking source:', source.title);
         return {
             chunks: [

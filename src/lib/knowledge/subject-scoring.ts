@@ -27,11 +27,9 @@ interface SubjectScore {
 
 export class SubjectScoring {
   private subjects: Map<string, SubjectCategory>;
-  private taxonomy: any;
 
-  constructor(subjects: Map<string, SubjectCategory>, taxonomy: any) {
+  constructor(subjects: Map<string, SubjectCategory>, _taxonomy: any) {
     this.subjects = subjects;
-    this.taxonomy = taxonomy;
   }
 
   extractFeatures(source: {

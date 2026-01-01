@@ -8,7 +8,6 @@
  * @test AES-256-GCM Compliance
  */
 
-import { describe, it, expect } from 'vitest';
 import { credentialEncryption } from '../credential-encryption';
 
 describe('AES-256-GCM Encryption Compliance Validation', () => {

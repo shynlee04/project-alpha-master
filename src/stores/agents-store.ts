@@ -22,6 +22,7 @@ import { createDexieStorage } from '@/lib/state/dexie-storage';
 import type { Agent, WorkspaceBinding } from '@/core/entities/Agent';
 import { DEFAULT_TOOLS, DEFAULT_WORKSPACE_BINDINGS } from '../mocks/agents';
 import { useProviderStore } from '@/lib/state/provider-store';
+import { useWorkspaceStore } from '@/lib/state/workspace-store';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 
 // Import WorkspaceType from domain layer (single source of truth)
@@ -183,9 +184,10 @@ export const useAgentsStore = create<AgentsState>()(
                 console.log('[AgentsStore] Adding agent:', newAgent.id, newAgent.name);
                 set((state) => ({ agents: [...state.agents, newAgent] }));
 
-                // WB-8.3: Emit cross-workspace event
+                // WB-8.3: Emit cross-workspace event with dynamic workspace detection
+                const currentWorkspace = useWorkspaceStore.getState().currentWorkspace;
                 crossWorkspaceEventBus.emitAgentConfigChange({
-                    workspaceId: 'ide', // TODO: Detect actual workspace
+                    workspaceId: currentWorkspace,
                     agentId: newAgent.id,
                     changeType: 'created',
                 });
@@ -211,9 +213,10 @@ export const useAgentsStore = create<AgentsState>()(
                     };
                 });
 
-                // WB-8.3: Emit cross-workspace event
+                // WB-8.3: Emit cross-workspace event with dynamic workspace detection
+                const currentWorkspace = useWorkspaceStore.getState().currentWorkspace;
                 crossWorkspaceEventBus.emitAgentConfigChange({
-                    workspaceId: 'ide', // TODO: Detect actual workspace
+                    workspaceId: currentWorkspace,
                     agentId: id,
                     changeType: 'deleted',
                 });
@@ -250,9 +253,10 @@ export const useAgentsStore = create<AgentsState>()(
                     ),
                 }));
 
-                // WB-8.3: Emit cross-workspace event (BF-01 FIX: Hot-reload)
+                // WB-8.3: Emit cross-workspace event (BF-01 FIX: Hot-reload) with dynamic workspace detection
+                const currentWorkspace = useWorkspaceStore.getState().currentWorkspace;
                 crossWorkspaceEventBus.emitAgentConfigChange({
-                    workspaceId: 'ide', // TODO: Detect actual workspace
+                    workspaceId: currentWorkspace,
                     agentId: id,
                     changeType: 'updated',
                 });

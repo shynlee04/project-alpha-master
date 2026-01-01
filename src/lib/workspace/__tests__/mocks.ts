@@ -3,7 +3,6 @@
  * @governance EPIC-WB-1
  */
 
-import { vi } from 'vitest';
 
 /**
  * Mock File System Access API handle

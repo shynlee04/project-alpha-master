@@ -7,7 +7,7 @@
  * @component AgentModelSelector
  */
 
-import { Loader2, RefreshCw } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/presentation/components/ui/select'
 import { Label } from '@/presentation/components/ui/label'
 import { Button } from '@/presentation/components/ui/button'

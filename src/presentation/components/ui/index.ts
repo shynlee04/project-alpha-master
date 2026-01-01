@@ -2,6 +2,7 @@ export * from './Toast';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export * from './button';
+export * from './badge';
 
 export * from './card';
 export * from './dropdown-menu';

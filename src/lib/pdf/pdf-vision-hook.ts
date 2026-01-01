@@ -63,6 +63,7 @@ export function usePdfVision(options: UsePdfVisionOptions): UsePdfVisionResult {
   const [isLoaded, setIsLoaded] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<CapturedPage | null>(null);
+  const [_currentUrl, _setCurrentUrl] = useState<string | null>(null);
 
   // Platform detection
   const isDesktop = isDesktopPlatform();

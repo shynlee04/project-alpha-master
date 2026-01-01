@@ -29,7 +29,7 @@ interface AgentApiKeySectionProps {
  */
 export function AgentApiKeySection({
     providerId,
-    providerName,
+    providerName: _providerName, // Intentionally unused (reserved for future use)
     hasApiKey,
     isCheckingKey,
     onSetApiKey,

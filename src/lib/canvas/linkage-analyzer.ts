@@ -58,18 +58,15 @@ export class LinkageAnalyzer {
       (node) => node.type === 'source' || node.type === 'concept'
     );
 
-    // Calculate total possible pairs
-    const totalPairs = (validNodes.length * (validNodes.length - 1)) / 2;
-
     // Analyze each node
-    const nodeAnalyses = new Map<string, NodeAnalysis>();
+    const _nodeAnalyses = new Map<string, NodeAnalysis>();
     for (const node of validNodes) {
       const analysis = await this.analyzeNode(node);
-      nodeAnalyses.set(node.id, analysis);
+      _nodeAnalyses.set(node.id, analysis);
     }
 
     // Generate proposals
-    const proposals = await this.generateProposals(validNodes, nodeAnalyses);
+    const proposals = await this.generateProposals(validNodes, _nodeAnalyses);
 
     const duration = Date.now() - startTime;
 
@@ -401,7 +398,7 @@ export class LinkageAnalyzer {
    */
   private async enhanceWithAI(
     proposals: LinkageProposal[],
-    nodeAnalyses: Map<string, NodeAnalysis>
+    _nodeAnalyses: Map<string, NodeAnalysis>
   ): Promise<LinkageProposal[]> {
     // TODO: Implement AI enhancement using TanStack AI
     // For now, return the heuristic proposals as-is

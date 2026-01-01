@@ -138,7 +138,7 @@ export class OrganizationStrategies {
       labels?: string[];
       embedding?: number[];
     }>,
-    options: OrganizationOptions
+    _options: OrganizationOptions
   ): OrganizedDocument[] {
     const groups: Map<string, OrganizedDocument[]> = new Map();
 
@@ -175,7 +175,7 @@ export class OrganizationStrategies {
       labels?: string[];
       embedding?: number[];
     }>,
-    options: OrganizationOptions
+    _options: OrganizationOptions
   ): OrganizedDocument[] {
     const subjectGroups: Map<string, typeof documents> = new Map();
 

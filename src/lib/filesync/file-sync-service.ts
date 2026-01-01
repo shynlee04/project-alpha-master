@@ -7,9 +7,6 @@
  * @epic CW-01 - Abstract File Sync Service
  */
 
-import type { LocalFSAdapter } from '../filesystem/local-fs-adapter';
-import type { SyncManager } from '../filesystem/sync-manager/sync-manager';
-
 /**
  * File metadata from sync operations
  */

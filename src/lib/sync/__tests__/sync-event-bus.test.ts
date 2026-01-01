@@ -5,10 +5,8 @@
  * Updated to match actual SyncEventBus API (2025-12-31)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { SyncEventBus, getSyncEventBus, resetSyncEventBus } from '../sync-event-bus';
 import type {
-  SyncEventType,
   BaseEventPayload,
   FileEventPayload,
   TerminalEventPayload,

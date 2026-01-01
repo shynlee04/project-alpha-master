@@ -7,7 +7,6 @@
  * @test Credential Storage Module
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { CredentialStorage } from '../credential-storage';
 import {
     arrayBufferToBase64,

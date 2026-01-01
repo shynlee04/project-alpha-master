@@ -14,7 +14,7 @@ import type { RAGChunkingState } from './rag-types';
 /**
  * Chunking slice - manages chunking progress and embedding mode
  */
-export const createRAGChunkingSlice: StateCreator<RAGChunkingState> = (set, get) => ({
+export const createRAGChunkingSlice: StateCreator<RAGChunkingState> = (set, _get) => ({
   // Initial state
   chunkingProgress: new Map(),
   embeddingProgress: new Map(),

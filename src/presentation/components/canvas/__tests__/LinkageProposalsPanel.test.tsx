@@ -10,7 +10,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import '@testing-library/jest-dom';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LinkageProposalsPanel } from '../LinkageProposalsPanel';
 import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import type { Node } from '@xyflow/react';

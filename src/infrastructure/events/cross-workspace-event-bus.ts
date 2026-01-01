@@ -11,7 +11,6 @@
  */
 
 import { eventBus, DomainEventType } from './event-bus';
-import { useProviderStore } from '@/lib/state/provider-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 
@@ -85,7 +84,8 @@ export class CrossWorkspaceEventBus {
     // Agent created → Update selection store
     const unsubscribeAgentCreated = eventBus.on<{ agentId: string }>(
       DomainEventType.AGENT_CREATED,
-      ({ agentId }) => {
+      (event) => {
+        const { agentId } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Agent created: ${agentId}`);
 
         // If this is first agent, set as active
@@ -100,7 +100,8 @@ export class CrossWorkspaceEventBus {
     // Agent updated → Notify all workspaces
     const unsubscribeAgentUpdated = eventBus.on<{ agentId: string }>(
       DomainEventType.AGENT_CONFIG_UPDATED,
-      ({ agentId }) => {
+      (event) => {
+        const { agentId } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Agent updated: ${agentId}`);
         // All workspaces using this agent will reactively update
       }
@@ -109,7 +110,8 @@ export class CrossWorkspaceEventBus {
     // Agent selected → Update selection store
     const unsubscribeAgentSelected = eventBus.on<{ agentId: string; workspaceType: string }>(
       DomainEventType.AGENT_SELECTED,
-      ({ agentId, workspaceType }) => {
+      (event) => {
+        const { agentId, workspaceType } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Agent selected: ${agentId} for ${workspaceType}`);
 
         const selectionStore = useAgentSelectionStore.getState();
@@ -120,7 +122,8 @@ export class CrossWorkspaceEventBus {
     // Agent deleted → Update selection store
     const unsubscribeAgentDeleted = eventBus.on<{ agentId: string }>(
       DomainEventType.AGENT_DELETED,
-      ({ agentId }) => {
+      (event) => {
+        const { agentId } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Agent deleted: ${agentId}`);
 
         const selectionStore = useAgentSelectionStore.getState();
@@ -153,7 +156,8 @@ export class CrossWorkspaceEventBus {
       to: string;
     }>(
       DomainEventType.WORKSPACE_TRANSITION_STARTED,
-      ({ from, to }) => {
+      (event) => {
+        const { from, to } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Workspace transition: ${from} → ${to}`);
 
         // Notify all stores to prepare for transition
@@ -167,7 +171,8 @@ export class CrossWorkspaceEventBus {
       to: string;
     }>(
       DomainEventType.WORKSPACE_TRANSITION_COMPLETED,
-      ({ from, to }) => {
+      (event) => {
+        const { from, to } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Workspace transition completed: ${from} → ${to}`);
 
         // Trigger workspace-specific agent selection
@@ -181,7 +186,8 @@ export class CrossWorkspaceEventBus {
       workspaceType: string;
     }>(
       DomainEventType.WORKSPACE_CHANGED,
-      ({ workspaceType }) => {
+      (event) => {
+        const { workspaceType } = event.payload;
         console.log(`[CrossWorkspaceEventBus] Workspace changed to: ${workspaceType}`);
       }
     );

@@ -20,7 +20,6 @@ import type {
   DocumentSchema,
   IndexConfig,
   IndexMetadata,
-  IndexStatus,
   OramaSchema,
   SearchResult,
 } from './types';

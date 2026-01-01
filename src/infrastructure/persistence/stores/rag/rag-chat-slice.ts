@@ -14,7 +14,7 @@ import type { RAGChatState } from './rag-types';
 /**
  * Chat slice - manages chat messages and citations
  */
-export const createRAGChatSlice: StateCreator<RAGChatState> = (set, get) => ({
+export const createRAGChatSlice: StateCreator<RAGChatState> = (set, _get) => ({
   // Initial state
   chatMessages: [],
   citations: new Map(),

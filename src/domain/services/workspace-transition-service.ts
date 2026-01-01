@@ -200,7 +200,7 @@ export class WorkspaceTransitionService {
    * @param context - Transition context
    * @returns True if transition is safe
    */
-  isTransitionSafe(context: TransitionContext): boolean {
+  isTransitionSafe(_context: TransitionContext): boolean {
     // Transition is safe if:
     // 1. No active operations in progress
     // 2. Current work is saved

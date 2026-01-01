@@ -4,7 +4,6 @@ import 'fake-indexeddb/auto';
 
 import React from 'react';
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
 
 // Mock react-i18next for all tests
 vi.mock('react-i18next', () => ({

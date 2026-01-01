@@ -269,12 +269,49 @@ Error State UI (src/components/ui/ErrorState.tsx)
 Error Utilities (src/lib/utils/error-handling.ts)
 ```
 
-### State Architecture (P1.10 Audit Complete)
-- **Persisted State** (IndexedDB): `useIDEStore` - open files, active file, panels, terminal tab, chat visibility
-- **Ephemeral State** (in-memory): `useStatusBarStore`, `useFileSyncStatusStore`, `useNavigationStore`
-- **Agent State** (localStorage): `useAgentsStore`, `useAgentSelectionStore`
-- **UI State** (React Context): Workspace context, theme context
-- **Prompt Enhancement**: `usePromptEnhancementStore`, `conversationThreadsStore`
+### State Architecture (P1.10 Audit Complete + Ralph Loop 2026-01-01)
+
+**Current State (Iteration 14 Analysis):**
+- **Total Stores**: 50+ scattered across 3 locations (CRITICAL ISSUE)
+  - `src/stores/` → 6 stores
+  - `src/lib/state/` → 19 stores
+  - `src/infrastructure/persistence/stores/` → 25+ stores
+- **God Stores** (>300 lines): 13 files violating sweeping-validation.md
+- **Circular Dependencies**: 4 high-risk cycles identified
+
+**Planned Consolidation (Epic AC-1):**
+See: `_bmad-output/sprint-artifacts/agent-config-consolidation-plan-2026-01-01.md`
+
+**Target Architecture (December 2025 Zustand Patterns):**
+- **Unified Global Store**: Single `useAppStore` with domain slices
+  - `src/stores/use-app-store.ts` (NEW - consolidates 50+ files)
+  - Slices: ide, agent, provider, conversation, rag, tool-permission, orchestration
+- **Event-Driven Orchestration**: Cross-store communication via event bus (zero circular deps)
+- **Layer Separation**:
+  - Layer 1 (Infrastructure): Dexie database, repositories
+  - Layer 2 (Domain): Business entities, rules
+  - Layer 3 (Application): Services, DTOs, use cases
+  - Layer 4 (Presentation): UI components (React)
+
+**Current Persisted State** (IndexedDB):
+- `useIDEStore` - open files, active file, panels, terminal tab, chat visibility
+- `useToolPermissionStore` ✅ NEW (Cycle 12) - tool trust levels with Dexie persistence
+- Agent state via `useAgentsStore`, `useAgentSelectionStore` (localStorage)
+- Provider state via `provider-config-store.ts` (Dexie)
+
+**Current Ephemeral State** (in-memory):
+- `useStatusBarStore`, `useFileSyncStatusStore`, `useNavigationStore`
+- Session trust (ephemeral part of `useToolPermissionStore`)
+- Workspace context, theme context (React Context)
+
+**Tool Permission System** (Ralph Loop Cycle 12 - Phase 1 Complete ✅):
+- **Store**: `src/lib/state/tool-permission-store.ts` (Zustand + Dexie)
+- **Facade**: `src/lib/agent/tool-permission-manager.ts` (preserves backwards compatibility)
+- **UI**: `src/presentation/components/agent/WorkspacePermissionEditor.tsx`
+- **Persistence**: Trust levels survive browser reloads
+- **Ephemeral**: Session trust cleared on reload (via `partialize`)
+- **Pattern**: Facade over Zustand store with Dexie persistence
+- **Integration**: 8 files use `ToolPermissionManager.getInstance()` (zero breaking changes)
 
 ### Discovery & Navigation Components
 - **Command Palette** (Ctrl+P/Cmd+P): Quick command access
@@ -572,7 +609,50 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 3. Verify component props are valid
 4. Check for async operation failures
 
-## Recent Updates (Updated: 2025-12-28)
+## Recent Updates (Updated: 2026-01-01)
+
+### Ralph Loop Cycle 12, Iteration 17: Three Centralized Systems Analysis (2026-01-01)
+- **Comprehensive Analysis**: 4-turn MCP research cycle analyzing LLM provider, agent configuration, and tool permissions systems
+- **System 1 - LLM Provider Key Vault**: ✅ EXCELLENT (10/12 levels passed, 83% health score)
+  - 3-Module Facade Pattern: credential-vault + credential-storage + credential-encryption
+  - AES-256-GCM encryption, PBKDF2 key derivation (100,000 iterations)
+  - Graceful fallback with validateStorageKeys() before decryption
+  - **Status**: Production-ready, no action needed
+- **System 2 - AI Agents Configuration**: ❌ CRITICAL DEBT (5/12 levels passed, 42% health score)
+  - God store: agents-store.ts (429 lines, 3.6x 120-line standard)
+  - Circular dependency: agents-store.ts ↔ provider-store.ts
+  - Store duplication: 25+ duplicated stores across 3 locations
+  - **Recommendation**: Execute Epic AC-1 (8 stories, 42 hours)
+- **System 3 - Tools Use Permissions**: ✅ GOOD (10/12 levels passed, 83% health score)
+  - Facade pattern with zero breaking changes
+  - Zustand + Dexie persistence with partialize for selective persistence
+  - **Status**: Production-ready (fixed in Cycle 12)
+- **Codebase Statistics**: 172,582 lines across 4,094 files, 135 god classes, 40 critical files
+- **Two Epics Ready for Implementation**:
+  - Epic WB (Workspace Binding): 8 stories, 42 hours, 100% story readiness
+  - Epic AC-1 (Agent Consolidation): 8 stories, 42 hours, 100% story readiness
+- **Documentation Created**: 6 comprehensive artifacts (~5,000 total lines)
+- **MCP Tool Usage**: 4 tool turns (Repomix, Zustand docs, Dexie docs, Context7)
+- **Analysis Documents**:
+  - `complete-system-architecture-analysis-2026-01-01.md` (1,248 lines)
+  - `llm-provider-system-analysis-2026-01-01.md` (~500 lines)
+  - `agent-configuration-system-analysis-2026-01-01.md` (~700 lines)
+  - `tool-permissions-system-analysis-2026-01-01.md` (~600 lines)
+  - `architectural-gap-validation-2026-01-01.md` (~900 lines)
+  - `ralph-loop-cycle-12-iteration-17-completion-2026-01-01.md` (~550 lines)
+
+### Ralph Loop Cycle 12: TypeScript Remediation (2026-01-01)
+- **Autonomous Execution**: 2-hour session, 87 TypeScript errors fixed (6.5% reduction: 1340 → 1253)
+- **Vitest Import Fixes**: Removed global imports from 17 test files (57 errors)
+- **Component Exports**: Fixed barrel exports in RAG components (10 errors)
+- **DomainEvent Pattern**: Fixed event handler payload access in cross-workspace-event-bus.ts (~10 errors)
+- **tailwind-merge v3**: Updated import API (tailwindMerge → twMerge) in 2 components
+- **Type Imports**: Removed redundant `type` keywords in dexie-db-class.ts (5 errors)
+- **Package Installation**: Added @testing-library/user-event@14.6.1 (3 errors)
+- **MCP Tool Usage**: 4 tool turns (Context7 TypeScript docs, Web Search ESLint automation)
+- **Documentation Created**: Session summary, progress report, validation report (v1.1.0)
+- **Files Modified**: 25 files (core architecture, UI components, 17 test files, package.json)
+- **Next Session**: Bulk removal of unused imports (~90 TS6196 errors)
 
 ### Phase 1: Core Stabilization (Current Focus)
 - **Responsive Design**: `useResponsive` hook for breakpoint detection
@@ -659,3 +739,4 @@ Reference specific agents/tools/workflows with `@bmad/{module}/{type}/{name}` pa
 - **Tech Documentation**: `docs/2025-12-23/`
 - **Brownfield Analysis**: `_bmad-output/docs/`
 - **Version 2 Research**: `_bmad-output/docs/2025-12-28/version-2/`
+- **Iteration 17 Analysis**: `_bmad-output/architecture-analysis/`, `_bmad-output/sprint-artifacts/`
