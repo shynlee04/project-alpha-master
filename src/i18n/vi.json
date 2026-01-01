@@ -1382,6 +1382,72 @@
         "title": "Năng lực Kỹ thuật",
         "subtitle": "Chuyên môn toàn diện với trọng tâm vào hệ thống multi-agent"
       }
+    },
+    "hub": {
+      "welcome": "KHỞI TẠO HỆ THỐNG...",
+      "subtitle": "v2.5.0-BETA // SẴN SÀNG NHẬN DỮ LIỆU",
+      "menu": {
+        "workspace": "KHỞI_TẠO_WORKSPACE",
+        "notes": "GHI_CHÚ",
+        "agents": "TÁC_NHĂN_AI",
+        "knowledge": "KHO_DỮ_LIỆU",
+        "study": "HỌC_TẬP",
+        "settings": "CẤU_HÌNH",
+        "about": "THÔNG_TIN"
+      },
+      "newProjectDesc": "Khởi tạo mục nhập workspace mới",
+      "notesDesc": "Truy cập nhanh vào ghi chú nháp",
+      "terminal": "TERMINAL",
+      "recent": {
+        "title": "THƯ_MỤC_GẦN_ĐÂY",
+        "status": "TRẠNG_THÁI",
+        "lastMod": "CẬP_NHẬT",
+        "size": "KÍCH_THƯỚC"
+      },
+      "actions": {
+        "viewAll": "XEM_TẤT_CẢ >>"
+      },
+      "noProjects": "Không tìm thấy thư mục trong bộ nhớ cục bộ.",
+      "workspaceBinding": {
+        "title": "LIÊN_KẾT_WORKSPACE",
+        "description": "CHỌN_WORKSPACE ĐỂ_ĐỒNG_BỘ_DỰ_ÁN",
+        "selectWorkspaces": "BẬT_WORKSPACE",
+        "openIn": "MỞ_TRONG_WORKSPACE",
+        "openProject": "MỞ_DỰ_ÁN",
+        "workspaces": {
+          "ide": "IDE",
+          "notes": "GHI_CHÚ",
+          "knowledge": "KIẾN_THỨC",
+          "study": "HỌC_TẬP",
+          "canvas": "CANVAS"
+        }
+      },
+      "project": {
+        "actions": {
+          "menuTrigger": "Hành động dự án",
+          "open": "Mở",
+          "edit": "Chỉnh sửa",
+          "delete": "Xóa",
+          "settings": "Cài đặt"
+        },
+        "metadata": {
+          "title": "Chỉnh Sửa Dự Án",
+          "description": "Cập nhật cấu hình và cài đặt dự án",
+          "nameLabel": "Tên",
+          "namePlaceholder": "Dự Án Của Tôi",
+          "autoSyncLabel": "Đồng Bộ Tự Động",
+          "autoSyncDescription": "Tự động đồng bộ các thay đổi dự án",
+          "exclusionsLabel": "Loại Trừ",
+          "exclusionsPlaceholder": "node_modules, .git, dist",
+          "exclusionsHint": "Các mẫu glob được phân tách bằng dấu phẩy (ví dụ: *.log, node_modules)",
+          "cancel": "Hủy",
+          "save": "Lưu Thay Đổi",
+          "errors": {
+            "nameRequired": "Tên dự án là bắt buộc",
+            "invalidGlob": "Mẫu glob không hợp lệ: {{patterns}}"
+          }
+        }
+      }
     }
   }
 }

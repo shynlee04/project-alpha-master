@@ -28,10 +28,12 @@ export { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
 export { WorkspaceBadge } from './WorkspaceBadge';
 export { ProjectCard } from './ProjectCard';
 export { ProjectActionsMenu } from './ProjectActionsMenu';
+export { ProjectMetadataDialog } from './ProjectMetadataDialog';
 export type { WorkspaceBindingDialogProps } from './WorkspaceBindingDialog';
 export type { WorkspaceBadgeProps } from './WorkspaceBadge';
 export type { ProjectCardProps } from './ProjectCard';
 export type { ProjectActionsMenuProps } from './ProjectActionsMenu';
+export type { ProjectMetadataDialogProps, ProjectMetadata } from './ProjectMetadataDialog';
 
 // Re-export WorkspaceId from canonical location
 export type { WorkspaceId } from '@/lib/workspace';

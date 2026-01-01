@@ -1455,6 +1455,32 @@
         "study": "STUDY",
         "canvas": "CANVAS"
       }
+    },
+    "project": {
+      "actions": {
+        "menuTrigger": "Project actions",
+        "open": "Open",
+        "edit": "Edit",
+        "delete": "Delete",
+        "settings": "Settings"
+      },
+      "metadata": {
+        "title": "Edit Project",
+        "description": "Update project configuration and settings",
+        "nameLabel": "Name",
+        "namePlaceholder": "My Project",
+        "autoSyncLabel": "Auto Sync",
+        "autoSyncDescription": "Automatically sync project changes",
+        "exclusionsLabel": "Exclusions",
+        "exclusionsPlaceholder": "node_modules, .git, dist",
+        "exclusionsHint": "Comma-separated glob patterns (e.g., *.log, node_modules)",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "errors": {
+          "nameRequired": "Project name is required",
+          "invalidGlob": "Invalid glob patterns: {{patterns}}"
+        }
+      }
     }
   }
 }

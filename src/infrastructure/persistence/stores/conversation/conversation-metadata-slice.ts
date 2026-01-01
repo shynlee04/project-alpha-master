@@ -29,7 +29,7 @@ type ConversationMetadataSliceMethods = {
   getConversationsByProject: (projectId: string) => ConversationMetadataWithId[];
 };
 
-const generateId = () => `conv_${nanoid()}`;
+const generateId = () => `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 export const createConversationMetadataSlice: StateCreator<
   CombinedConversationState,

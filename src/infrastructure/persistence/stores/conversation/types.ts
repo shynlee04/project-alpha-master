@@ -146,6 +146,16 @@ export interface CombinedConversationState {
     getConversationStats: (conversationId: string) => import('./conversation-utils-slice').ConversationStats;
     getRecentConversations: (limit?: number) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
 
+    // ========== Conversation Validation Slice (Story CC-1.5) ==========
+    validateConversationId: (id: string) => import('./conversation-validation-slice').ValidationResult;
+    validateThreadId: (id: string) => import('./conversation-validation-slice').ValidationResult;
+    validateMessageId: (id: string) => import('./conversation-validation-slice').ValidationResult;
+    validateConversationStatus: (id: string, newStatus: 'active' | 'archived' | 'deleted') => import('./conversation-validation-slice').ValidationResult;
+    validateThreadStatus: (id: string, newStatus: 'active' | 'archived' | 'deleted') => import('./conversation-validation-slice').ValidationResult;
+    validateThreadHierarchy: (threadId: string) => import('./conversation-validation-slice').ValidationResult;
+    validateMessageThreadAssociation: (messageId: string) => import('./conversation-validation-slice').ValidationResult;
+    validateConversationIntegrity: (conversationId: string) => import('./conversation-validation-slice').ValidationResult;
+
     // ========== Placeholder for other slices ==========
     // These will be implemented in subsequent stories
 }
