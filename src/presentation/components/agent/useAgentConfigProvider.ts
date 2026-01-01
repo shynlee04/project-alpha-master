@@ -17,8 +17,12 @@ import {
     credentialVault,
     providerAdapterFactory,
 } from '@/lib/agent/providers'
-import { useProviderStore } from '@/infrastructure/persistence/stores/providers'
+import { useProviderStore } from '@/lib/state/provider-store'
 import type { ConnectionStatus } from './agent-config-types'
+
+// Ralph Loop Cycle 4: Cross-workspace events
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus'
+import { detectWorkspace } from '@/lib/workspace/workspace-detector'
 
 interface UseAgentConfigProviderProps {
     providerId: string
@@ -153,6 +157,13 @@ export function useAgentConfigProvider({
             await credentialVault.storeCredentials(providerId, keyToSave)
             setApiKey('••••')
             toast.success(t('agents.config.apiKey.saveSuccess', 'API key saved successfully'))
+
+            // ✅ Ralph Loop Cycle 4: Emit provider config change event
+            crossWorkspaceEventBus.emitProviderConfigChange({
+                workspaceId: detectWorkspace(),
+                providerId,
+                changeType: 'credentials_updated',
+            })
 
             // Reload models using the STORE (single source of truth)
             await storeFetchModels(providerId)

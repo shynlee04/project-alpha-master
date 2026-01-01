@@ -93,6 +93,32 @@ export interface WorkspaceChangeEvent {
     timestamp: string
 }
 
+/**
+ * Provider configuration change event
+ *
+ * Emitted when LLM provider configuration is updated (API key saved, etc.)
+ * Other workspaces can refresh their provider models/configuration.
+ */
+export interface ProviderConfigChangeEvent {
+    workspaceId: WorkspaceId
+    providerId: string
+    changeType: 'credentials_updated' | 'provider_added' | 'provider_removed' | 'config_updated'
+    timestamp: Date
+}
+
+/**
+ * Models updated event
+ *
+ * Emitted when available models list is refreshed for a provider.
+ * Other workspaces can update their model selectors.
+ */
+export interface ModelsUpdatedEvent {
+    workspaceId: WorkspaceId
+    providerId: string
+    models: any[] // ModelInfo[] but avoiding import
+    timestamp: Date
+}
+
 // ============================================================================
 // Event Bus Class
 // ============================================================================
@@ -116,6 +142,8 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
         SYNC_STATUS: 'sync:status',
         PROJECT_STATE_CHANGE: 'project:state:change',
         WORKSPACE_CHANGED: 'workspace:changed',
+        PROVIDER_CONFIG_CHANGE: 'provider:config:change',
+        MODELS_UPDATED: 'models:updated',
     } as const;
 
     // ========================================================================
@@ -310,6 +338,74 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
     }
 
     // ========================================================================
+    // Provider Configuration Events
+    // ========================================================================
+
+    /**
+     * Emit provider configuration change event
+     *
+     * Called when provider API key is saved or provider config is updated.
+     * Other workspaces can refresh their provider models.
+     */
+    emitProviderConfigChange(event: Omit<ProviderConfigChangeEvent, 'timestamp'>): void {
+        const fullEvent: ProviderConfigChangeEvent = {
+            ...event,
+            timestamp: new Date(),
+        };
+
+        console.log('[CrossWorkspaceEventBus] Provider config change:', fullEvent);
+        this.emit(CrossWorkspaceEventBus.EVENTS.PROVIDER_CONFIG_CHANGE, fullEvent);
+    }
+
+    /**
+     * Subscribe to provider configuration changes
+     *
+     * Use this to refresh provider models when configuration changes in other workspaces.
+     */
+    onProviderConfigChange(listener: (event: ProviderConfigChangeEvent) => void): void {
+        this.on(CrossWorkspaceEventBus.EVENTS.PROVIDER_CONFIG_CHANGE, listener);
+    }
+
+    /**
+     * Unsubscribe from provider configuration changes
+     */
+    offProviderConfigChange(listener: (event: ProviderConfigChangeEvent) => void): void {
+        this.off(CrossWorkspaceEventBus.EVENTS.PROVIDER_CONFIG_CHANGE, listener);
+    }
+
+    /**
+     * Emit models updated event
+     *
+     * Called when available models list is fetched/updated for a provider.
+     * Other workspaces can update their model selectors.
+     */
+    emitModelsUpdated(event: Omit<ModelsUpdatedEvent, 'timestamp'>): void {
+        const fullEvent: ModelsUpdatedEvent = {
+            ...event,
+            timestamp: new Date(),
+        };
+
+        console.log('[CrossWorkspaceEventBus] Models updated:', fullEvent);
+        this.emit(CrossWorkspaceEventBus.EVENTS.MODELS_UPDATED, fullEvent);
+    }
+
+    /**
+     * Subscribe to models updated events
+     *
+     * Use this to update model selectors when models are fetched in other workspaces.
+     */
+    onModelsUpdated(listener: (event: ModelsUpdatedEvent) => void): void {
+        this.on(CrossWorkspaceEventBus.EVENTS.MODELS_UPDATED, listener);
+    }
+
+    /**
+     * Unsubscribe from models updated events
+     */
+    offModelsUpdated(listener: (event: ModelsUpdatedEvent) => void): void {
+        this.off(CrossWorkspaceEventBus.EVENTS.MODELS_UPDATED, listener);
+    }
+
+    // ========================================================================
     // Utility Methods
     // ========================================================================
 
@@ -344,4 +440,6 @@ export type {
     SyncStatusEvent,
     ProjectStateChangeEvent,
     WorkspaceChangeEvent,
+    ProviderConfigChangeEvent,
+    ModelsUpdatedEvent,
 };

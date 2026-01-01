@@ -11,7 +11,7 @@
  */
 
 import { eventBus, DomainEventType } from './event-bus';
-import { useProviderStore } from '@/infrastructure/persistence/stores/providers';
+import { useProviderStore } from '@/lib/state/provider-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 

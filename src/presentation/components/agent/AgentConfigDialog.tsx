@@ -58,11 +58,15 @@ import {
     modelRegistry,
 } from '@/lib/agent/providers'
 
+// Ralph Loop Cycle 4: Cross-workspace events
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus'
+import { detectWorkspace } from '@/lib/workspace/workspace-detector'
+
 /**
  * Provider configuration interface for extensibility
  */
 // Removed local ProviderConfig interface in favor of @/lib/agent/providers type
-import { useProviderStore } from '@/infrastructure/persistence/stores/providers'
+import { useProviderStore } from '@/lib/state/provider-store'
 import { useAgentsStore } from '@/stores/agents-store'
 
 /**
@@ -344,6 +348,13 @@ export function AgentConfigDialog({
             await credentialVault.storeCredentials(providerId, keyToSave)
             setApiKey('••••')
             toast.success(t('agents.config.apiKey.saveSuccess', 'API key saved successfully'))
+
+            // ✅ Ralph Loop Cycle 4: Emit provider config change event
+            crossWorkspaceEventBus.emitProviderConfigChange({
+                workspaceId: detectWorkspace(),
+                providerId,
+                changeType: 'credentials_updated',
+            })
 
             // CC-2025-12-29: Reload models using the STORE (single source of truth)
             await storeFetchModels(providerId)

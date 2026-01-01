@@ -29,15 +29,13 @@ export {
   type ProviderModelsState
 } from './provider-models-store';
 
-// New split stores (FC-01: Foundation Consolidation)
-// These replace provider-models-store.ts - split into provider and models concerns
+// Ralph Loop Cycle 4: Consolidated provider store (single source of truth)
+// Replaces provider-config-store.ts and provider-models-store.ts
 export {
-  useProviderConfigStore,
-  useProviderState,
-  useSelectedProvider,
-  type ProviderConfigState,
-  type CustomProvider
-} from '@/stores/provider-config-store';
+  useProviderStore,
+  type ProviderState,
+  type ModelSettings
+} from '@/lib/state/provider-store';
 
 export {
   useModelsStore,

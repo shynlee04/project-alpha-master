@@ -14,6 +14,8 @@ import { createDexieStorage } from './dexie-storage';
 import { PROVIDERS, type ProviderConfig, type ModelInfo } from '../agent/providers/types';
 import { credentialVault } from '../agent/providers/credential-vault';
 import { modelRegistry } from '../agent/providers/model-registry';
+import { crossWorkspaceEventBus } from '../events/cross-workspace-event-bus';
+import { detectWorkspace } from '../workspace/workspace-detector';
 
 /**
  * Settings specific to a provider's model usage
@@ -146,6 +148,7 @@ export const useProviderStore = create<ProviderState>()(
             /**
              * Fetch available models for a provider from the API
              * CC-2025-12-29: Auto-load models on credential availability
+             * RL4-2026-01-01: Emit cross-workspace events after fetch
              */
             fetchModels: async (providerId) => {
                 set((state) => ({
@@ -160,6 +163,13 @@ export const useProviderStore = create<ProviderState>()(
                         availableModels: { ...state.availableModels, [providerId]: models },
                         isLoadingModels: { ...state.isLoadingModels, [providerId]: false }
                     }));
+
+                    // ✅ Ralph Loop Cycle 4: Emit models updated event
+                    crossWorkspaceEventBus.emitModelsUpdated({
+                        workspaceId: detectWorkspace(),
+                        providerId,
+                        models,
+                    });
                 } catch (error) {
                     console.error(`[ProviderStore] Failed to fetch models for ${providerId}:`, error);
 

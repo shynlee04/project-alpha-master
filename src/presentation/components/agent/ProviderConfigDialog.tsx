@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProviderStore } from '@/lib/state/provider-store';
-import { useProviderModelsStore } from '@/stores/provider-models-store';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';
@@ -42,8 +41,7 @@ function getBuiltInBaseUrl(providerId: string): string {
 
 export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderConfigDialogProps) {
     const { t } = useTranslation();
-    const { addProvider, updateProvider } = useProviderStore();
-    const { setApiKey: setProviderApiKey } = useProviderModelsStore();
+    const { addProvider, updateProvider, fetchModels } = useProviderStore();
 
     // Determine if this is a built-in provider (edit API key only) vs custom (full config)
     const isBuiltIn = provider ? isBuiltInProvider(provider.id) : false;
@@ -99,8 +97,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 // BUILT-IN PROVIDER: Only save API key
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
-                    // CRITICAL: Trigger model loading after key is saved
-                    await setProviderApiKey(provider.id, apiKey);
+                    // CRITICAL: Trigger model loading after key is saved (Ralph Loop Cycle 4: emits event)
+                    await fetchModels(provider.id);
                     toast.success(`${provider.name} API key saved - loading models...`);
                 } else {
                     toast.info('No API key provided - existing key kept');
@@ -123,7 +121,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
-                    await setProviderApiKey(id, apiKey);
+                    await fetchModels(id); // Ralph Loop Cycle 4: emits event
                 }
 
                 toast.success(`Custom provider "${name}" added`);
@@ -139,7 +137,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
-                    await setProviderApiKey(provider.id, apiKey);
+                    await fetchModels(provider.id); // Ralph Loop Cycle 4: emits event
                 }
 
                 toast.success(`Provider "${name}" updated`);
