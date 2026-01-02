@@ -14,7 +14,7 @@ import type { RAGChatState } from './rag-types';
 /**
  * Chat slice - manages chat messages and citations
  */
-export const createRAGChatSlice: StateCreator<RAGChatState> = (set, _get) => ({
+export const createRAGChatSlice: StateCreator<RAGChatState> = (set, get) => ({
   // Initial state
   chatMessages: [],
   citations: new Map(),
@@ -32,7 +32,7 @@ export const createRAGChatSlice: StateCreator<RAGChatState> = (set, _get) => ({
     set((state) => {
       return {
         chatMessages: state.chatMessages.map(msg =>
-          msg.timestamp === messageId ? { ...msg, ...updates } : msg
+          msg.timestamp && msg.timestamp.toString() === messageId ? { ...msg, ...updates } : msg
         ),
       } as Partial<RAGChatState>;
     });
@@ -54,6 +54,37 @@ export const createRAGChatSlice: StateCreator<RAGChatState> = (set, _get) => ({
   setActiveCitation: (citationId: string | null) => {
     console.log('[RAGChatSlice] Active citation:', citationId);
     set({ activeCitation: citationId } as Partial<RAGChatState>);
+  },
+
+  /**
+   * Alias for clearChatMessages - matches component API
+   */
+  clearChat: () => {
+    set({ chatMessages: [] } as Partial<RAGChatState>);
+  },
+
+  /**
+   * Composed message operation - wrapper for business logic
+   * Handles adding user message and triggering AI response
+   */
+  sendMessage: async (_content: string, _projectId: string) => {
+    const message: ChatMessage = {
+      role: 'user',
+      content: _content,
+      timestamp: Date.now(),
+    };
+
+    get().addChatMessage(message);
+
+    // TODO: Trigger AI response with RAG context
+    // This will be implemented by the chat service layer
+  },
+
+  /**
+   * Select citation for display - wrapper for setActiveCitation
+   */
+  selectCitation: (citationId: string) => {
+    get().setActiveCitation(citationId);
   },
 
   clearCitations: () => {

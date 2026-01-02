@@ -105,4 +105,24 @@ export const createRAGSearchSlice: StateCreator<RAGSearchState> = (set, get) => 
   clearError: () => {
     set({ error: null } as Partial<RAGSearchState>);
   },
+
+  /**
+   * Composed search operation - wrapper for business logic
+   * Handles search with default options and error handling
+   */
+  performSearch: async (
+    projectId: string,
+    query: string,
+    _mode: import('@/lib/rag/types').SearchMode,
+    _limit: number = 10
+  ) => {
+    // Get search function based on mode
+    const searchFn = async (): Promise<SearchResult[]> => {
+      // This will be implemented by the Orama integration layer
+      // For now, return empty array to avoid type errors
+      return [];
+    };
+
+    return get().search(projectId, query, searchFn);
+  },
 });

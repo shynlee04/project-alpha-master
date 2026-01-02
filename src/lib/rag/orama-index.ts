@@ -101,11 +101,11 @@ export async function createIndex(config: IndexConfig): Promise<Orama<OramaSchem
     schema: schemaDefinition,
   });
 
-  // Cache in memory
-  activeIndexes.set(projectId, db);
+  // Cache in memory (type assertion for Orama compatibility)
+  activeIndexes.set(projectId, db as unknown as Orama<OramaSchema>);
 
   console.log(`[OramaIndex] Created new index for project "${projectId}"`);
-  return db;
+  return db as unknown as Orama<OramaSchema>;
 }
 
 /**
@@ -145,7 +145,10 @@ export async function loadIndex(projectId: string): Promise<Orama<OramaSchema> |
       console.warn(`[OramaIndex] Cannot load index during SSR`);
       return null;
     }
-    const db = await plugin.restore('json', persistedData);
+
+    // Ensure persistedData is in correct format for restore
+    const dataStr = typeof persistedData === 'string' ? persistedData : JSON.stringify(persistedData);
+    const db = await plugin.restore('json', dataStr) as unknown as Orama<OramaSchema>;
 
     // Cache in memory
     activeIndexes.set(projectId, db);
@@ -271,7 +274,8 @@ export async function indexDocument(
     }
 
     // Insert document into index
-    await insert(db, document as any); // Type assertion for Orama compatibility
+    // @ts-expect-error - Orama library type strictness: dynamic schema based on enableVectorSearch
+    await insert(db as any, document as any);
 
     // Emit completion event
     eventBus.emitRAGDatabaseIndexing({
@@ -438,7 +442,8 @@ export async function removeFromIndex(projectId: string, sourceId: string): Prom
 
   // Remove matching documents
   for (const hit of results.hits) {
-    if (hit.document.sourceId === sourceId) {
+    const doc = hit.document as Record<string, unknown>;
+    if (doc.sourceId === sourceId) {
       await remove(db, hit.id);
     }
   }
@@ -503,14 +508,17 @@ export async function searchIndex(
   });
 
   // Transform results with source attribution
-  const searchResults: SearchResult[] = results.hits.map((hit) => ({
-    document: hit.document as unknown as DocumentSchema,
-    score: hit.score,
-    source: {
-      id: hit.document.sourceId,
-      title: hit.document.title,
-    },
-  }));
+  const searchResults: SearchResult[] = results.hits.map((hit) => {
+    const doc = hit.document as Record<string, unknown>;
+    return {
+      document: doc as unknown as DocumentSchema,
+      score: hit.score,
+      source: {
+        id: String(doc.sourceId || ''),
+        title: String(doc.title || ''),
+      },
+    };
+  });
 
   console.log(`[OramaIndex] Found ${searchResults.length} results for query "${query}" in project "${projectId}"`);
   return searchResults;

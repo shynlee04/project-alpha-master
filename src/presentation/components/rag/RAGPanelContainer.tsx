@@ -15,7 +15,7 @@ import { RAGSearchPanel } from './RAGSearchPanel';
 import { RAGChatPanel } from './RAGChatPanel';
 import { CitationSidebar } from './CitationSidebar';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
-import type { SearchMode, Citation } from '@/lib/rag/types';
+import type { SearchMode, Citation, ExtendedSearchResult } from '@/lib/rag/types';
 
 interface RAGPanelContainerProps {
   /** Current project ID */
@@ -36,7 +36,7 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
 }: RAGPanelContainerProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabValue>('search');
-  const [activeCitation, setActiveCitation] = useState<Citation | null>(null);
+  const [localActiveCitation, setLocalActiveCitation] = useState<Citation | null>(null);
 
   // RAG Store selectors and actions
   const {
@@ -58,9 +58,9 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
 
   const handleSearch = useCallback(
     async (query: string) => {
-      await performSearch(query, searchMode, 10);
+      await performSearch(projectId, query, searchMode, 10);
     },
-    [performSearch, searchMode]
+    [performSearch, searchMode, projectId]
   );
 
   const handleModeChange = useCallback(
@@ -78,17 +78,16 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
   );
 
   const handleCitationClick = useCallback((citation: Citation) => {
-    setActiveCitation(citation);
-    selectCitation(citation.id.toString());
+    setLocalActiveCitation(citation);
+    selectCitation(String(citation.id));
   }, [selectCitation]);
 
   const handleCloseCitation = useCallback(() => {
-    setActiveCitation(null);
+    setLocalActiveCitation(null);
   }, []);
 
-  // Get active citation from store for sidebar
-  const storeActiveCitation = useRAGStore((s) => s.activeCitation);
-  const displayCitation = activeCitation || storeActiveCitation;
+  // Use local citation state for sidebar display
+  const displayCitation = localActiveCitation;
 
   // Check if we have sources to search (for future EmptyState usage)
   // const _hasSources = documentCount > 0;
@@ -120,7 +119,7 @@ export const RAGPanelContainer = memo(function RAGPanelContainer({
             <TabsContent value="search" className="m-0 flex-1 h-[calc(100%-40px)]">
               <RAGSearchPanel
                 query={searchQuery}
-                results={searchResults}
+                results={searchResults as ExtendedSearchResult[]}
                 mode={searchMode}
                 onQueryChange={setSearchQuery}
                 onSearch={handleSearch}

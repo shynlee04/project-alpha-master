@@ -74,6 +74,15 @@ export interface RAGSearchState {
 
   loading: boolean;
   error: string | null;
+
+  // Actions
+  setSearchQuery: (query: string) => void;
+  setSearchMode: (mode: import('@/lib/rag/types').SearchMode) => void;
+  search: (projectId: string, query: string, searchFn: () => Promise<SearchResult[]>) => Promise<SearchResult[]>;
+  performSearch: (projectId: string, query: string, mode: import('@/lib/rag/types').SearchMode, limit?: number) => Promise<SearchResult[]>;
+  clearSearchCache: () => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
 }
 
 /**
@@ -103,6 +112,17 @@ export interface RAGChatState {
   chatMessages: ChatMessage[];
   citations: Map<string, Citation[]>;
   activeCitation: string | null;
+
+  // Actions
+  addChatMessage: (message: ChatMessage) => void;
+  updateChatMessage: (messageId: string, updates: Partial<ChatMessage>) => void;
+  clearChatMessages: () => void;
+  clearChat: () => void;
+  sendMessage: (content: string, projectId: string) => Promise<void>;
+  addCitation: (messageId: string, citation: Citation) => void;
+  setActiveCitation: (citationId: string | null) => void;
+  selectCitation: (citationId: string) => void;
+  clearCitations: () => void;
 }
 
 // ============================================================================
