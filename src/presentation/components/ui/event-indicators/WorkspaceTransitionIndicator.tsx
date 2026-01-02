@@ -10,7 +10,6 @@
  */
 
 import { useEffect, useState } from 'react'
-import { cn } from 'tailwind-merge'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { WorkspaceTransitionStepItem } from './WorkspaceTransitionStepItem'
 import { getWorkspaceTransitionStatus, getWorkspaceTransitionMessage } from './workspace-transition-utils'

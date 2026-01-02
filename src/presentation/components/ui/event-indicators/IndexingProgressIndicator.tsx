@@ -10,7 +10,6 @@
  */
 
 import { useEffect, useState } from 'react'
-import { cn } from 'tailwind-merge'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { IndexingPhaseItem } from './IndexingPhaseItem'
 import { getIndexingStatus, getIndexingMessage, getIndexingProgress } from './indexing-utils'
