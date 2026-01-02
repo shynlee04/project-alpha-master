@@ -7,7 +7,7 @@
  * Provides automatic cleanup on unmount.
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { eventBus, type RAGProgressPayload } from '@/infrastructure/events/event-bus';
 import { DomainEventType } from '@/infrastructure/events/event-bus';
 

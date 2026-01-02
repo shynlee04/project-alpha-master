@@ -7,7 +7,6 @@
  * @story P2 Remediation - Cornerstone 2 Schema Versioning
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
 import type { AppState } from '../types';
 import {
   CURRENT_SCHEMA_VERSION,

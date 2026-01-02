@@ -408,15 +408,6 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
     // ========================================================================
     // Utility Methods
     // ========================================================================
-
-    /**
-     * Remove all event listeners
-     *
-     * Use this for cleanup (e.g., when workspace unmounts).
-     */
-    removeAllListeners(): void {
-        this.removeAllListeners();
-    }
 }
 
 // ============================================================================

@@ -6,7 +6,6 @@
  * @epic CC-1 - Conversation Consolidation
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { runConversationMigration, hasMigrationRun, getMigrationStatus, type MigrationResult, type LegacyConversationState } from '../migration/conversation-migration';
 import { useConversationStore } from '../useConversationStore';
 import type { WorkspaceType } from '@/core/entities/Conversation';

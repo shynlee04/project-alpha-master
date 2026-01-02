@@ -29,8 +29,8 @@ vi.mock('react-i18next', () => ({
 
 // Import after mocking
 import { CitationSidebar } from '../CitationSidebar';
-import { CitationCountBadge, type CitationCountBadgeProps } from '../CitationCountBadge';
-import type { DisplayCitation } from '@/lib/rag/citation-types';
+import { CitationCountBadge } from '../CitationCountBadge';
+import type { CitationCountBadgeProps, DisplayCitation } from '@/lib/rag/citation-types';
 
 // Test data with correct DisplayCitation structure
 const mockCitations: DisplayCitation[] = [
