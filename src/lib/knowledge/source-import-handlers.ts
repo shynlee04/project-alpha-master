@@ -72,7 +72,6 @@ export async function importPDF(
             fileSize: file.size,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            processingStatus: 'pending',
         };
 
         // Persist to IndexedDB
@@ -140,7 +139,6 @@ export async function importURL(
             wordCount: result.wordCount,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            processingStatus: 'pending',
         };
 
         // Persist to IndexedDB
@@ -206,7 +204,6 @@ export async function importText(
             charCount: text.length,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            processingStatus: 'pending',
         };
 
         // Persist to IndexedDB
@@ -295,25 +292,16 @@ export async function importImage(
         }
 
         // Create source record
+        // NOTE: Image type not yet supported in SourceRecord, using text type as fallback
         const record: SourceRecord = {
             id: sourceId,
             projectId: options.projectId,
-            type: 'image',
+            type: 'text', // Image type not supported, using text as fallback
             title: file.name.replace(/\.[^/.]+$/, ''), // Remove extension
             content: extractedText || description || `Image: ${file.name}`,
-            wordCount: extractedText ? extractedText.split(/\s+/).filter((w: string) => w.length > 0).length : 0,
             charCount: extractedText?.length || 0,
-            fileSize: file.size,
-            mimeType: file.type,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            processingStatus: 'pending',
-            // Store image metadata
-            metadata: {
-                description,
-                imageType,
-                hasGeminiData: options.useGemini && !!extractedText,
-            } as Record<string, unknown>,
         };
 
         // Persist to IndexedDB

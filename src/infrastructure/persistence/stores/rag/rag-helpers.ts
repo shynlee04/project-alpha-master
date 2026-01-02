@@ -71,7 +71,11 @@ export function enforceCacheLimit(
  */
 export async function getStorageQuota(): Promise<{ quota: number; usage: number } | undefined> {
   if (navigator.storage && navigator.storage.estimate) {
-    return await navigator.storage.estimate();
+    const estimate = await navigator.storage.estimate();
+    // Extract quota and usage, converting bigint to number if needed
+    const quota = estimate.quota !== undefined ? Number(estimate.quota) : 0;
+    const usage = estimate.usage !== undefined ? Number(estimate.usage) : 0;
+    return { quota, usage };
   }
   console.warn('[RAGHelpers] StorageManager not available');
   return undefined;

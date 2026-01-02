@@ -290,15 +290,16 @@ export async function migrateStore(
             };
 
         // Check if data already exists in Dexie (idempotency)
-        const existing = await db[store.tableName].get(store.key);
+        const table = db[store.tableName] as { get: (key: string) => Promise<PersistedStateRecord | undefined>; put: (record: PersistedStateRecord) => Promise<string>; add: (record: PersistedStateRecord) => Promise<string> };
+        const existing = await table.get(store.key);
         if (existing) {
             logger.info(`Store '${store.key}' already exists in Dexie, updating`);
-            await db[store.tableName].put({
+            await table.put({
                 ...transformed,
                 updatedAt: Date.now(),
-            });
+            } as PersistedStateRecord);
         } else {
-            await db[store.tableName].add({
+            await table.add({
                 ...transformed,
                 updatedAt: Date.now(),
             } as PersistedStateRecord);
@@ -410,7 +411,7 @@ export async function backupDexieTables(
 
     for (const tableName of tableNames) {
         try {
-            const table = db[tableName];
+            const table = db[tableName] as { toArray?: () => Promise<unknown[]> };
             if (table && typeof table.toArray === 'function') {
                 backup[tableName as string] = await table.toArray();
             }

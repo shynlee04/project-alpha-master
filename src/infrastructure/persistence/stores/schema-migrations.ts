@@ -25,6 +25,7 @@
 
 import type { AppState } from './types';
 import { useMigrationState } from './providers/use-migration-state';
+import type { MigrationState } from './providers/use-migration-state';
 
 /**
  * Current schema version
@@ -80,7 +81,7 @@ const MIGRATIONS: Migration[] = [
   {
     version: 1,
     description: 'Initial schema version - Add version tracking',
-    migrate: (state) => {
+    migrate: (_state) => {
       // No transformation needed, just establish version baseline
       console.log('[SchemaMigration] v1: Initial version tracking established');
     },
@@ -195,13 +196,16 @@ export async function runMigrations(state: AppState): Promise<MigrationResult> {
   });
 
   // Track migration state for UI feedback (optional, may not exist in tests)
-  const migrationState = useMigrationState?.getState?.();
+  const migrationState = useMigrationState?.getState?.() as MigrationState & {
+    startMigration?: (type: string, estimatedDuration: number) => void;
+    updateMigrationProgress?: (type: string, current: number, total: number) => void;
+    completeMigration?: (type: string, success: boolean, error?: string) => void;
+  };
   if (migrationState?.startMigration) {
     migrationState.startMigration('schema', estimateMigrationDuration(fromVersion));
   }
 
   let migrationsRun = 0;
-  let error: string | undefined;
 
   try {
     // Run migrations sequentially

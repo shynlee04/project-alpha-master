@@ -71,16 +71,14 @@ export class AnthropicAdapter {
             });
 
             for await (const message of runner) {
+                const content = message.content as Array<{ type: string; text?: string } | undefined>;
                 yield {
                     type: 'text',
-                    // @ts-expect-error - Beta stream event types
-                    text: message.content?.[0]?.text || '',
+                    text: content[0]?.text || '',
                 };
 
                 // Check if message has tool use
-                // @ts-expect-error - Beta stream event types
                 if (message.stop_reason === 'tool_use') {
-                    // @ts-expect-error - Beta stream event types
                     for (const block of message.content || []) {
                         if (block.type === 'tool_use') {
                             yield {
@@ -93,8 +91,7 @@ export class AnthropicAdapter {
             }
 
             // Get final message
-            // @ts-expect-error - Beta finalMessage method not typed
-            const finalMessage = await runner.finalMessage();
+            const finalMessage = await (runner as any).finalMessage();
             yield {
                 type: 'final',
                 message: finalMessage,
@@ -110,9 +107,11 @@ export class AnthropicAdapter {
 
             for await (const event of stream) {
                 if (event.type === 'content_block_delta') {
+                    // Cast delta to access text property
+                    const delta = event.delta as { type: string; text?: string };
                     yield {
                         type: 'text',
-                        text: event.delta?.text || '',
+                        text: delta.text || '',
                     };
                 } else if (event.type === 'message_stop') {
                     yield {
@@ -154,11 +153,13 @@ export class AnthropicAdapter {
                 tools: options.tools as Anthropic.Tool[],
             });
 
+            // Extract text from response content
+            const content = response.content as Array<{ type: string; text?: string }>;
+            const textBlock = content.find((block: { type: string }) => block.type === 'text');
+
             return {
-                // @ts-expect-error - Beta response structure
-                content: response.content?.[0]?.text || '',
-                // @ts-expect-error - Beta response structure
-                stopReason: response.stop_reason,
+                content: textBlock?.text || '',
+                stopReason: response.stop_reason as string | undefined,
             };
         } else {
             // Regular message
@@ -168,9 +169,13 @@ export class AnthropicAdapter {
                 messages: messages as Anthropic.Message[],
             });
 
+            // Extract text from response content
+            const content = response.content as Array<{ type: string; text?: string }>;
+            const textBlock = content.find((block) => block.type === 'text');
+
             return {
-                content: response.content[0]?.text || '',
-                stopReason: response.stop_reason,
+                content: textBlock?.text || '',
+                stopReason: response.stop_reason as string | undefined,
             };
         }
     }
