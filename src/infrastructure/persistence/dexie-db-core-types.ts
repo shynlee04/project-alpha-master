@@ -80,6 +80,17 @@ export interface FileContentCacheRecord {
     content: string; // Full file content (potentially large)
 }
 
+/**
+ * Workspace binding configuration for project association.
+ * Story WB-1: Multi-workspace project support.
+ */
+export interface WorkspaceBindings {
+    ide?: boolean;
+    notes?: boolean;
+    knowledge?: boolean;
+    study?: boolean;
+}
+
 // ============================================================================
 // Table Type Exports
 // ============================================================================

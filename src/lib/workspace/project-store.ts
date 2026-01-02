@@ -16,6 +16,7 @@ import {
     _resetPersistenceDBForTesting,
 } from '../persistence';
 import { getPermissionState, type FsaPermissionState } from '../filesystem/permission-lifecycle';
+import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
 
 // ============================================================================
 // Types
@@ -29,17 +30,6 @@ export interface LayoutConfig {
     panelSizes?: number[];
     openFiles?: string[];
     activeFile?: string | null;
-}
-
-/**
- * Workspace binding configuration for project association.
- * Story WB-1: Multi-workspace project support.
- */
-export interface WorkspaceBindings {
-    ide?: boolean;
-    notes?: boolean;
-    knowledge?: boolean;
-    study?: boolean;
 }
 
 /**
@@ -72,12 +62,6 @@ export interface ProjectMetadata {
     /** Timestamp when project was soft deleted */
     deletedAt?: Date;
 }
-
-/**
- * Export WorkspaceBindings and WorkspaceId types for use in other modules.
- * Story WB-1: Multi-workspace project support.
- */
-export type { WorkspaceBindings, WorkspaceId } from '../state/dexie-db-core-types';
 
 /**
  * Project with permission state for dashboard display.

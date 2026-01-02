@@ -178,6 +178,13 @@ export function useEventHistory(filter?: { type?: string; entityId?: string; lim
     return useConversationStore((state) => state.getEventHistory(filter));
 }
 
+/**
+ * Hook to get pending tool approvals
+ */
+export function usePendingApprovals() {
+    return useConversationStore((state) => state.pendingToolApprovals);
+}
+
 // ============================================================================
 // Utilities
 // ============================================================================

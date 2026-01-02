@@ -74,7 +74,7 @@ const getSafeFlashcardDb = (): FlashcardDatabase | null => {
 // Flashcard Store with Persistence
 // ============================================================
 
-interface FlashcardStoreState {
+export interface FlashcardStoreState {
   // Flashcards
   flashcards: Flashcard[];
   activeSetId: string | null;
@@ -501,6 +501,16 @@ export const useFlashcardOperations = () => {
     },
   };
 };
+
+// ============================================================
+// Type Exports
+// ============================================================
+
+/**
+ * Type alias for backwards compatibility
+ * @deprecated Use FlashcardStoreState instead
+ */
+export type FlashcardState = FlashcardStoreState;
 
 // ============================================================
 // Initialize stores on module load

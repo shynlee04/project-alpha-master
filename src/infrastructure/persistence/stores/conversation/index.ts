@@ -8,6 +8,17 @@ export {
   useConversationStore,
 } from './conversation-store';
 
+// Re-export hydration hook with consistent naming (matches agents store pattern)
+export {
+  useHasHydrated as useConversationStoreHydration,
+} from './useConversationStore';
+
+// Re-export convenience hooks
+export {
+  useActiveConversation,
+  usePendingApprovals,
+} from './useConversationStore';
+
 // Types
 export type {
   PendingToolApproval,

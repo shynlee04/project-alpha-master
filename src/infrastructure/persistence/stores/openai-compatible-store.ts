@@ -15,7 +15,7 @@ import type { OpenAICompatibleConfig } from '@/lib/agent/providers';
 /**
  * Store state interface
  */
-interface OpenAICompatibleState {
+export interface OpenAICompatibleState {
     /** List of saved custom provider configurations */
     configs: OpenAICompatibleConfig[];
     /** Currently selected custom provider ID for form */
