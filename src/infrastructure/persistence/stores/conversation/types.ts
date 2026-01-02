@@ -173,7 +173,26 @@ export interface CombinedConversationState {
     getEventHistory: (filter?: { type?: import('./conversation-events-slice').ConversationEventType; entityId?: string; limit?: number }) => import('./conversation-events-slice').ConversationEvent[];
     clearEventHistory: () => void;
 
-    // ========== Placeholder for other slices ==========
-    // These will be implemented in subsequent stories
+    // ========== Hydration & Tool Approval State (Story 51-3) ==========
+    /** Hydration status for Zustand persist middleware */
+    _hasHydrated: boolean;
+
+    /** Pending tool approvals for conversation UI */
+    pendingToolApprovals: PendingToolApproval[];
+}
+
+/**
+ * Pending Tool Approval
+ * Used to track tools awaiting user approval in the conversation UI
+ */
+export interface PendingToolApproval {
+    id: string;
+    toolName: string;
+    toolArgs: Record<string, unknown>;
+    conversationId: string;
+    threadId: string;
+    messageId: string;
+    createdAt: number;
+    status: 'pending' | 'approved' | 'denied';
 }
 

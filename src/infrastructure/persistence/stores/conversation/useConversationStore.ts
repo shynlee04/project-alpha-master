@@ -79,6 +79,10 @@ export const useConversationStore = create<ConversationStoreState>()(
 
             // ========== Events Slice (CC-1.6) ==========
             ...createConversationEventsSlice(...args),
+
+            // ========== Hydration & Tool Approval State (Story 51-3) ==========
+            _hasHydrated: false,
+            pendingToolApprovals: [],
         }),
         {
             name: 'conversation-store',
