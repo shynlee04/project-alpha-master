@@ -48,12 +48,17 @@ export {
     createSynthesisService,
     type SynthesisFrontmatter,
     type SynthesisResult,
-    type SynthesisProgress,
     type SynthesisOptions,
-    type SynthesisStatus,
-    type SourceDocument,
-    type SynthesizableSourceType,
 } from './synthesis-service';
+
+// Re-export synthesis types
+export type {
+    SynthesisProgress,
+    SynthesisStatus,
+    SourceDocument,
+    SynthesizableSourceType,
+    ArtifactType,
+} from './synthesis-types';
 
 export {
     SynthesisFrontmatterSchema,
