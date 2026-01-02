@@ -66,8 +66,8 @@ export const appendConversationMessage = async (conversationId: string, message:
  * NOTE: This is a complex operation in the new store (finding message, updating tool call).
  * For now, we assume the agent runtime handles state updates via updateMessage.
  */
-export const appendToolResult = async (conversationId: string, _toolResult: ToolResultRecord): Promise<void> => {
-    // TODO: Implement proper tool result appending in ThreadsStore
+export const appendToolResult = async (_conversationId: string, _toolResult: ToolResultRecord): Promise<void> => {
+    // TODO: Implement proper tool result appending in ThreadsStore (Story 51-3)
     console.warn('[ConversationStore Adapter] appendToolResult is deprecated. Use useThreadsStore actions.');
 };
 
@@ -82,10 +82,17 @@ export const clearConversation = async (conversationId: string): Promise<void> =
  * List recent conversations
  */
 export const listRecentConversations = async (projectId: string, limit: number = 20): Promise<ConversationState[]> => {
-    // Try store first if project matches
+    // Get conversations from store (Story 51-3: Use getConversationsByProject)
     const store = useThreadsStore.getState();
-    if (store.currentProjectId === projectId) {
-        return store.getThreadsForProject(projectId).slice(0, limit);
+    const conversations = store.getConversationsByProject(projectId);
+
+    if (conversations.length > 0) {
+        // Convert conversations to threads (return root threads for each conversation)
+        const threads = conversations
+            .map(conv => store.getRootThread(conv.id))
+            .filter((thread): thread is Exclude<typeof thread, undefined> => thread !== undefined);
+
+        return threads.slice(0, limit);
     }
 
     // Fallback to Dexie

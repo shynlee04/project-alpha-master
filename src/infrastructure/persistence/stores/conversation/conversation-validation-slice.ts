@@ -36,7 +36,7 @@ export const createConversationValidationSlice: StateCreator<
   [],
   [],
   ConversationValidationSliceMethods
-> = (set, get) => ({
+> = (_set, get) => ({
   validateConversationId: (id) => {
     const conversation = get().conversations[id];
     if (!conversation) {

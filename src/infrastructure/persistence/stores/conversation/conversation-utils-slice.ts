@@ -27,7 +27,7 @@ export const createConversationUtilsSlice: StateCreator<
   [],
   [],
   ConversationUtilsSliceMethods
-> = (set, get) => ({
+> = (_set, get) => ({
   filterConversations: (predicate) =>
     get().getAllConversations().filter(predicate),
 

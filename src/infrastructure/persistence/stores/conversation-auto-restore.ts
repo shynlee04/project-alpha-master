@@ -43,23 +43,23 @@ export class ConversationAutoRestore {
    */
   async restoreOnProjectLoad(projectId: string): Promise<void> {
     try {
-      const recentThread = await this.getMostRecentThread(projectId);
+      // Check if any conversations exist for this project
+      const conversationStore = useConversationStore.getState();
+      const existingConversations = conversationStore.getConversationsByProject(projectId);
 
-      if (!recentThread) {
+      if (existingConversations.length === 0) {
         // No conversations exist, create a new one
-        const conversationStore = useConversationStore.getState();
-        conversationStore.createConversation('ide', projectId, 'default'); // Story 51-3: Fix args
+        conversationStore.createConversation('ide', projectId, 'default');
         return;
       }
 
-      // Load the most recent conversation
-      const conversationStore = useConversationStore.getState();
-      await conversationStore.loadConversation(recentThread.conversationId); // Story 51-3: Use conversationId
+      // Load the most recent conversation for this project (Story 51-3)
+      await conversationStore.loadConversationByProject(projectId);
     } catch (error) {
       console.error('[ConversationAutoRestore] Failed to restore conversation:', error);
       // Graceful degradation - create new conversation on error
       const conversationStore = useConversationStore.getState();
-      conversationStore.createConversation('ide', projectId, 'default'); // Story 51-3: Fix args
+      conversationStore.createConversation('ide', projectId, 'default');
     }
   }
 

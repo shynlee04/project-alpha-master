@@ -345,16 +345,23 @@ async function transformLegacyData(
         const threadId = `thread_${conversationId}_root`;
 
         const thread: ThreadWithId = {
+            // ThreadWithId properties (Story 51-3)
             id: threadId,
             conversationId: conversationId,
             parentThreadId: null,
-            isRoot: true, // Changed from 'root' to 'isRoot' (Story 51-3)
+            isRoot: true,
+            childThreadIds: [],
             status: 'active',
-            name: legacyConversation.metadata.title || 'Root Thread',
-            createdAt: legacyConversation.metadata.createdAt, // Keep as number
-            updatedAt: legacyConversation.metadata.updatedAt, // Keep as number
+
+            // ConversationThread properties
+            projectId: legacyConversation.metadata.projectId || '',
+            title: legacyConversation.metadata.title || 'Root Thread',
+            preview: legacyConversation.metadata.preview || '',
+            messages: [],
+            agentsUsed: [legacyConversation.metadata.agentId || 'default'],
             messageCount: legacyConversation.metadata.messageCount,
-            branchFromMessageId: null,
+            createdAt: legacyConversation.metadata.createdAt,
+            updatedAt: legacyConversation.metadata.updatedAt,
         };
 
         threads.push(thread);
