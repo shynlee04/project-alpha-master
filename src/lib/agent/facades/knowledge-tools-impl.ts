@@ -86,7 +86,7 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
 
     // Convert options
     const options: SynthesisProgress = {
-      onProgress: (progress) => {
+      onProgress: (progress: SynthesisProgress) => {
         console.log(`[KnowledgeTools] Synthesis progress: ${progress.stage} ${progress.progress}%`);
       },
     };

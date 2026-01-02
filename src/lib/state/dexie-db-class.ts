@@ -18,6 +18,8 @@ import type {
     ProjectsTable,
     IDEStateTable,
     ConversationsTable,
+    FileSnapshotsTable,
+    FileContentCacheTable,
 } from './dexie-db-core-types';
 
 import type {
@@ -73,6 +75,13 @@ export class ViaGentDatabase extends Dexie {
     projects!: ProjectsTable;
     ideState!: IDEStateTable;
     conversations!: ConversationsTable;
+
+    // ========================================================================
+    // Story WB-2: File Snapshot Store Tables
+    // ========================================================================
+
+    fileSnapshots!: FileSnapshotsTable;
+    fileContentCache!: FileContentCacheTable;
 
     // ========================================================================
     // AI Foundation Tables (Epic 25 Prep)

@@ -129,7 +129,6 @@ describe('Story WB-1: Project Metadata Enhancement - FAILING TESTS', () => {
 
                 // Act - This will fail because workspaceBindings doesn't exist on ProjectMetadata
                 if (updatedProject) {
-                    // @ts-expect-error - workspaceBindings doesn't exist yet
                     updatedProject.workspaceBindings = {
                         ide: false,
                         notes: true,
@@ -209,7 +208,6 @@ describe('Story WB-1: Project Metadata Enhancement - FAILING TESTS', () => {
 
                 // Act - This will fail because fileSnapshotEnabled doesn't exist on ProjectMetadata
                 if (updatedProject) {
-                    // @ts-expect-error - fileSnapshotEnabled doesn't exist yet
                     updatedProject.fileSnapshotEnabled = true;
                     await saveProject(updatedProject);
                 }
@@ -247,7 +245,6 @@ describe('Story WB-1: Project Metadata Enhancement - FAILING TESTS', () => {
                 await dbInstance.open();
 
                 // Assert - Will fail because migration doesn't exist
-                // @ts-expect-error - verno might not exist or migration not applied
                 expect(dbInstance.verno).toBeGreaterThanOrEqual(4); // New schema version
                 const count = await db.projects.count();
                 expect(count).toBe(0); // No projects migrated
@@ -283,9 +280,7 @@ describe('Story WB-1: Project Metadata Enhancement - FAILING TESTS', () => {
                 expect(migratedProjects).toHaveLength(3);
 
                 for (const project of migratedProjects) {
-                    // @ts-expect-error - workspaceBindings doesn't exist in migrated records
                     expect(project.workspaceBindings).toEqual(DEFAULT_WORKSPACE_BINDINGS);
-                    // @ts-expect-error - fileSnapshotEnabled doesn't exist in migrated records
                     expect(project.fileSnapshotEnabled).toBe(DEFAULT_FILE_SNAPSHOT_ENABLED);
                 }
             });
@@ -405,7 +400,6 @@ describe('Story WB-1: Project Metadata Enhancement - FAILING TESTS', () => {
 
                 // Check that valid projects were migrated
                 const validMigrated = projects.find(p => p.id === validProject.id);
-                // @ts-expect-error - workspaceBindings doesn't exist yet
                 expect(validMigrated?.workspaceBindings).toEqual(DEFAULT_WORKSPACE_BINDINGS);
             });
         });
@@ -446,7 +440,6 @@ describe('Story WB-1: Project Metadata Enhancement - FAILING TESTS', () => {
                 // The current implementation doesn't have workspaceBindings as optional
                 // This test should fail because accessing without check would be an error
 
-                // @ts-expect-error - workspaceBindings doesn't exist on ProjectMetadata
                 if (project.workspaceBindings) {
                     const ideEnabled = project.workspaceBindings.ide;
                     expect(typeof ideEnabled).toBe('boolean');

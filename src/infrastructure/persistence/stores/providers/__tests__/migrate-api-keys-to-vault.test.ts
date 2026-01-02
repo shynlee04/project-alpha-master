@@ -121,7 +121,6 @@ describe('migrateApiKeysToVault', () => {
         type: 'openai-compatible',
         baseURL: 'https://openrouter.ai/api/v1',
         defaultModel: 'meta-llama/llama-3.1-8b-instruct:free',
-        // @ts-expect-error - Old field structure
         apiKey: 'sk-test-openrouter-123',
         models: [],
         enabled: true,
@@ -136,7 +135,6 @@ describe('migrateApiKeysToVault', () => {
         models: [],
         enabled: true,
         lastModelFetchAt: undefined,
-        // @ts-expect-error - Old field structure
         apiKey: 'sk-ant-123',
         hasApiKey: false,
       },
@@ -162,7 +160,6 @@ describe('migrateApiKeysToVault', () => {
         enabled: true,
         lastModelFetchAt: undefined,
         // Empty API key (should be skipped)
-        // @ts-expect-error - Old field structure
         apiKey: '',
         hasApiKey: false,
       },

@@ -95,7 +95,6 @@ describe('MigrationBackupSystem', () => {
         models: [],
         enabled: true,
         lastModelFetchAt: undefined,
-        // @ts-expect-error - Old field structure
         hasApiKey: false,
       },
     ];
