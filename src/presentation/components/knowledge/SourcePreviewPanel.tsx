@@ -13,6 +13,7 @@ import { Edit, X, Grid3x3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+import type { ChunkMetadata } from '@/lib/rag/types';
 import { PDFIcon, URLIcon, TextIcon } from '@/presentation/components/ui/icons';
 import { MetadataDisplay } from './MetadataDisplay';
 import { MetadataEditor } from './MetadataEditor';
@@ -288,7 +289,7 @@ export function SourcePreviewPanel({ projectId: _projectId }: SourcePreviewPanel
                         // Chunked view
                         chunks && chunks.length > 0 ? (
                             <div className="p-4 space-y-4">
-                                {chunks.map((chunk) => (
+                                {chunks.map((chunk: ChunkMetadata) => (
                                     <div key={chunk.chunkId} className="border-b border-border-dark pb-4 last:border-b-0">
                                         <ChunkBoundaryBadge
                                             index={chunk.chunkIndex}

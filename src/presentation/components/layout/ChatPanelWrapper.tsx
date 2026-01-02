@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { AgentChatPanel } from '../ide/AgentChatPanel';
 import { ThreadCard } from '../chat/ThreadCard';
 import { useConversationStore as useThreadsStore, useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/types';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 
 /**
@@ -225,7 +226,7 @@ export function ChatPanelWrapper({
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-2">
-                        {paginatedThreads.map((thread) => (
+                        {paginatedThreads.map((thread: ConversationThread) => (
                             <ThreadCard
                                 key={thread.id}
                                 thread={thread}

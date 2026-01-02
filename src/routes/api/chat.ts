@@ -290,7 +290,7 @@ export const Route = createFileRoute('/api/chat')({
                         abortController,
                         {
                             onComplete: cleanup,
-                            onError: (error) => {
+                            onError: (error: unknown) => {
                                 console.log('[/api/chat] Stream error:', error);
                                 cleanup();
                             },

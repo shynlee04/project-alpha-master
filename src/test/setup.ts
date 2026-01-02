@@ -128,7 +128,7 @@ vi.mock('../../lib/workspace', () => ({
 
 // Mock useIDEStore (Zustand store)
 vi.mock('@/lib/state', () => ({
-  useIDEStore: vi.fn((selector) => {
+  useIDEStore: vi.fn((selector: (state: unknown) => unknown) => {
     const state = {
       projectId: 'test-project',
       openFiles: [],
@@ -163,7 +163,7 @@ vi.mock('@/lib/state', () => ({
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation((query) => ({
+    value: vi.fn().mockImplementation((query: string) => ({
       matches: false,
       media: query,
       onchange: null,
