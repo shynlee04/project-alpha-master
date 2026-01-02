@@ -183,6 +183,93 @@ Content: ${content}`;
     });
     return map;
   }
+
+  /**
+   * Format citation in APA 7th edition style
+   *
+   * Format: Author. (Year). *Title*. Source. URL
+   *
+   * @param citation - Citation to format
+   * @returns APA-formatted citation string
+   */
+  formatAPA(citation: Citation): string {
+    const parts: string[] = [];
+
+    // Author (not available in current schema, using source as placeholder)
+    // In production, this would extract author from metadata
+    parts.push(citation.title || 'Unknown Source');
+
+    // Year (not available in current schema, would use document metadata)
+    // parts.push(`(${year})`);
+
+    // Page number if available
+    if (citation.pageNumber !== undefined) {
+      parts.push(`(p. ${citation.pageNumber})`);
+    }
+
+    // Source ID (as placeholder for URL/accession info)
+    if (citation.sourceId) {
+      parts.push(`Source ID: ${citation.sourceId}`);
+    }
+
+    return parts.join('. ');
+  }
+
+  /**
+   * Format citation in MLA 9th edition style
+   *
+   * Format: Author. "*Title*." *Container*, Version, Number, Publisher, Date, Location.
+   *
+   * @param citation - Citation to format
+   * @returns MLA-formatted citation string
+   */
+  formatMLA(citation: Citation): string {
+    const parts: string[] = [];
+
+    // Title (in quotes)
+    const title = citation.title || 'Unknown Source';
+    parts.push(`"${title}"`);
+
+    // Source ID (as placeholder for container info)
+    if (citation.sourceId) {
+      parts.push(`${citation.sourceId}`);
+    }
+
+    // Page number if available
+    if (citation.pageNumber !== undefined) {
+      parts.push(`p. ${citation.pageNumber}`);
+    }
+
+    return parts.join('. ');
+  }
+
+  /**
+   * Format citation in Chicago style (author-date)
+   *
+   * Format: Author. Year. *Title*. Publisher/Source.
+   *
+   * @param citation - Citation to format
+   * @returns Chicago-formatted citation string
+   */
+  formatChicago(citation: Citation): string {
+    const parts: string[] = [];
+
+    // Title (in italics in production)
+    const title = citation.title || 'Unknown Source';
+    parts.push(title);
+
+    // Source ID (as placeholder for publisher)
+    if (citation.sourceId) {
+      parts.push(`${citation.sourceId}`);
+    }
+
+    // Page number if available
+    if (citation.pageNumber !== undefined) {
+      parts.push(`${citation.pageNumber}`);
+    }
+
+    return parts.join('. ');
+  }
 }
 
 /**
@@ -208,4 +295,16 @@ export function extractCitationReferences(response: string): number[] {
 
 export function createCitationsMap(citations: Citation[]): Map<string, Citation> {
   return formatterInstance.createCitationsMap(citations);
+}
+
+export function formatAPA(citation: Citation): string {
+  return formatterInstance.formatAPA(citation);
+}
+
+export function formatMLA(citation: Citation): string {
+  return formatterInstance.formatMLA(citation);
+}
+
+export function formatChicago(citation: Citation): string {
+  return formatterInstance.formatChicago(citation);
 }

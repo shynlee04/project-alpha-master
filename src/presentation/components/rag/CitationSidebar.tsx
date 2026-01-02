@@ -6,10 +6,13 @@
  * Displays full citation passage with highlighting and source attribution.
  */
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, BookOpen, ExternalLink } from 'lucide-react';
+import { X, BookOpen, ExternalLink, Copy, Check } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import type { Citation } from '@/lib/rag/types';
+import { formatAPA, formatMLA, formatChicago } from '@/lib/rag/citation-formatter';
+import { toast } from 'sonner';
 
 interface CitationSidebarProps {
   /** Citation to display */
@@ -32,6 +35,27 @@ export function CitationSidebar({
   onOpenSource,
 }: CitationSidebarProps) {
   const { t } = useTranslation();
+  const [copiedFormat, setCopiedFormat] = useState<string | null>(null);
+
+  const handleCopyCitation = async (format: 'apa' | 'mla' | 'chicago', formattedText: string) => {
+    try {
+      await navigator.clipboard.writeText(formattedText);
+      setCopiedFormat(format);
+
+      // Show success toast
+      toast.success(t('rag.citation.copied', 'Citation copied to clipboard'), {
+        description: `${format.toUpperCase()} ${t('rag.citation.format', 'format')}`,
+      });
+
+      // Reset icon after 2 seconds
+      setTimeout(() => setCopiedFormat(null), 2000);
+    } catch (error) {
+      // Show error toast
+      toast.error(t('rag.citation.copyFailed', 'Failed to copy citation'), {
+        description: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-surface border-l-2 border-border rounded-none">
@@ -147,7 +171,53 @@ export function CitationSidebar({
       </div>
 
       {/* Actions */}
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-border space-y-2">
+        {/* Copy Citation Buttons */}
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleCopyCitation('apa', formatAPA(citation))}
+            className="border-2 bg-background hover:bg-surface text-foreground rounded-none text-xs"
+          >
+            {copiedFormat === 'apa' ? (
+              <Check size={14} className="mr-1 text-green-600" />
+            ) : (
+              <Copy size={14} className="mr-1" />
+            )}
+            {t('rag.citation.copyAPA', 'Copy APA')}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleCopyCitation('mla', formatMLA(citation))}
+            className="border-2 bg-background hover:bg-surface text-foreground rounded-none text-xs"
+          >
+            {copiedFormat === 'mla' ? (
+              <Check size={14} className="mr-1 text-green-600" />
+            ) : (
+              <Copy size={14} className="mr-1" />
+            )}
+            {t('rag.citation.copyMLA', 'Copy MLA')}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleCopyCitation('chicago', formatChicago(citation))}
+            className="border-2 bg-background hover:bg-surface text-foreground rounded-none text-xs"
+          >
+            {copiedFormat === 'chicago' ? (
+              <Check size={14} className="mr-1 text-green-600" />
+            ) : (
+              <Copy size={14} className="mr-1" />
+            )}
+            {t('rag.citation.copyChicago', 'Copy Chicago')}
+          </Button>
+        </div>
+
+        {/* Close Button */}
         <Button
           onClick={onClose}
           className="w-full border-2 bg-background hover:bg-surface text-foreground rounded-none"
