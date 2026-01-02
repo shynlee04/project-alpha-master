@@ -101,7 +101,7 @@ export interface RAGVoiceState {
  */
 export interface RAGChatState {
   chatMessages: ChatMessage[];
-  citations: Map<string, Citation>;
+  citations: Map<string, Citation[]>;
   activeCitation: string | null;
 }
 

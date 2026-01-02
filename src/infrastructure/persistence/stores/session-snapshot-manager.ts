@@ -164,7 +164,7 @@ export class SessionSnapshotManager {
     };
 
     // Store in IndexedDB via dexie
-    const { saveSessionSnapshot } = await import('./dexie-db');
+    const { saveSessionSnapshot } = await import('../dexie-db');
     await saveSessionSnapshot(snapshot);
   }
 
@@ -178,7 +178,7 @@ export class SessionSnapshotManager {
     const now = Date.now();
 
     // Get from IndexedDB
-    const { getLatestSessionSnapshot } = await import('./dexie-db');
+    const { getLatestSessionSnapshot } = await import('../dexie-db');
     const snapshotRecord = await getLatestSessionSnapshot(projectPath);
 
     if (!snapshotRecord) {
@@ -242,7 +242,7 @@ export class SessionSnapshotManager {
    * Clear all snapshots for project
    */
   async clearSnapshots(): Promise<void> {
-    const { clearProjectSessionSnapshots } = await import('./dexie-db');
+    const { clearProjectSessionSnapshots } = await import('../dexie-db');
     await clearProjectSessionSnapshots(this.options.projectPath);
   }
 

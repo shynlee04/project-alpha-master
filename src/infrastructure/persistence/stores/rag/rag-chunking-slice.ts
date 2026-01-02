@@ -34,7 +34,8 @@ export const createRAGChunkingSlice: StateCreator<RAGChunkingState> = (set, _get
     set((state) => {
       const newProgress = new Map(state.chunkingProgress);
       newProgress.set(documentId, progress);
-      console.log(`[RAGChunkingSlice] Chunking progress: ${documentId} - ${progress.percentage}%`);
+      const percentage = Math.round((progress.currentChunk / progress.totalChunks) * 100);
+      console.log(`[RAGChunkingSlice] Chunking progress: ${documentId} - ${percentage}%`);
       return { chunkingProgress: newProgress } as Partial<RAGChunkingState>;
     });
   },

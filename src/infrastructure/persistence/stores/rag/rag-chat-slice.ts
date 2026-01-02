@@ -32,7 +32,7 @@ export const createRAGChatSlice: StateCreator<RAGChatState> = (set, _get) => ({
     set((state) => {
       return {
         chatMessages: state.chatMessages.map(msg =>
-          msg.id === messageId ? { ...msg, ...updates } : msg
+          msg.timestamp === messageId ? { ...msg, ...updates } : msg
         ),
       } as Partial<RAGChatState>;
     });
