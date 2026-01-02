@@ -9,7 +9,7 @@
  * @story Create event activity indicator UI components
  */
 
-import { cn } from '@/lib/utils/tw-merge'
+import { cn } from 'tailwind-merge'
 import { StatusIcon, getStatusStyles } from './event-indicator-utils'
 import type { EventStatus, ActivityType } from './EventIndicator'
 

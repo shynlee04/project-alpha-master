@@ -8,7 +8,7 @@
  */
 
 import { Wrench, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react'
-import { cn } from '@/lib/utils/tw-merge'
+import { cn } from 'tailwind-merge'
 
 /**
  * Tool execution step

@@ -7,7 +7,7 @@
  * @story P2 Remediation - Readonly enforcement at store level
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+// Vitest globals available
 import { createProviderCrudSlice } from '../provider-crud-slice';
 import type { ProviderConfig } from '../types';
 

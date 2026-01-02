@@ -12,7 +12,7 @@
  * - Partial persistence excludes ephemeral state
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+// Vitest globals available (no import needed)
 import {
   useConversationStore,
   resetConversationStore,

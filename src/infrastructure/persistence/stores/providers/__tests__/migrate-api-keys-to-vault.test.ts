@@ -8,7 +8,7 @@
  * @priority P0 CRITICAL (Data modification)
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// Vitest globals available
 import {
   migrateApiKeysToVault,
   isMigrationNeeded,

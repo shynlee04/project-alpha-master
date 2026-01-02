@@ -7,7 +7,7 @@
  * @module presentation/components/ui/event-indicators
  */
 
-import { cn } from '@/lib/utils/tw-merge'
+import { cn } from 'tailwind-merge'
 import type { IndexingStep } from './IndexingProgressIndicator'
 
 /**

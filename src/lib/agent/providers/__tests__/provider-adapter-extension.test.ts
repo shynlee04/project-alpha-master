@@ -5,7 +5,6 @@
  * Validates that ExtendedProviderAdapter interface is correctly implemented
  */
 
-import { describe, it, expect, vi } from 'vitest';
 import { providerAdapterFactory } from '../provider-adapter';
 import type { ExtendedProviderAdapter } from '../provider-adapter';
 

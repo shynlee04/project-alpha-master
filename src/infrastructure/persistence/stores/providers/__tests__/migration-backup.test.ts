@@ -57,7 +57,7 @@ if (typeof (global as any).window === 'undefined') {
 }
 (global as any).window.crypto = (global as any).crypto;
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// Vitest globals available
 import {
   MigrationBackupSystem,
   migrationBackup,

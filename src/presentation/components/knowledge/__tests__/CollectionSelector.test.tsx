@@ -4,8 +4,8 @@
  * @governance EPIC-6-3
  */
 
+// Vitest globals available
 import { render, screen, fireEvent } from '@testing-library/react';
-import type { Mock } from 'vitest';
 import { CollectionSelector } from '../CollectionSelector';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
 import type { Collection } from '@/lib/state/dexie-db';
@@ -15,7 +15,7 @@ vi.mock('@/lib/state/knowledge-store', () => ({
     useKnowledgeStore: vi.fn(),
 }));
 
-const mockedUseKnowledgeStore = useKnowledgeStore as Mock;
+const mockedUseKnowledgeStore = useKnowledgeStore as any;
 
 const mockCollections: Collection[] = [
     {

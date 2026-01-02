@@ -6,7 +6,7 @@
  * @story CW-1.4 - File System Access Expansion
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+// Vitest globals available
 import type { FileSyncService } from '../file-sync-service';
 import {
     CrossWorkspaceReferenceManager,

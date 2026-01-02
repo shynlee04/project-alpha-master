@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import type { ThreadMessage, ThreadToolCall } from './types';
+import type { ThreadMessage } from './types';
 import type { CombinedConversationState } from './types';
 
 export interface MessageWithId extends ThreadMessage {

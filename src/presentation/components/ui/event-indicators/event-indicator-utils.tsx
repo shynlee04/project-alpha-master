@@ -8,7 +8,7 @@
  */
 
 import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, LucideIcon } from 'lucide-react'
-import { cn } from '@/lib/utils/tw-merge'
+import { cn } from 'tailwind-merge'
 import type { EventStatus, ActivityType } from './EventIndicator'
 
 /**

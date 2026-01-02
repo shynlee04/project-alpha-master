@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils/tw-merge'
+import { cn } from 'tailwind-merge'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { getNoteIndexingStatus, getNoteIndexingMessage, getNoteIndexingProgress } from './note-indexing-utils'
 

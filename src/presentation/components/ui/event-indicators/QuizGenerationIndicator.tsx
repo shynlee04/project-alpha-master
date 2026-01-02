@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils/tw-merge'
+import { cn } from 'tailwind-merge'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { QuizGenerationStepItem } from './QuizGenerationStepItem'
 import { getQuizGenerationStatus, getQuizGenerationMessage, getQuizGenerationProgress } from './quiz-generation-utils'

@@ -20,10 +20,7 @@ import {
 } from '@/presentation/components/ui/dialog';
 import { Link, AlertCircle, FileText, Loader2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
-import type {
-    CrossWorkspaceFileReference,
-    ResolvedReference
-} from '@/lib/filesync/cross-workspace-file-references';
+import type { ResolvedReference } from '@/lib/filesync/cross-workspace-file-references';
 import { getCrossWorkspaceReferenceManager } from '@/lib/filesync/cross-workspace-file-references';
 
 interface CrossWorkspaceFileReferenceButtonProps {
