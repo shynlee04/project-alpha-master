@@ -436,8 +436,17 @@ export interface Citation {
   /** Passage content with highlighting */
   passage: string;
 
+  /** Context before passage (2-3 sentences before) */
+  contextBefore?: string;
+
+  /** Context after passage (2-3 sentences after) */
+  contextAfter?: string;
+
   /** Position in source document */
   position?: number;
+
+  /** Page number in source document */
+  pageNumber?: number;
 
   /** Relevance score */
   score?: number;

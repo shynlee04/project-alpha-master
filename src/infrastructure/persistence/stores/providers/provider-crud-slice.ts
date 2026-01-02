@@ -130,11 +130,29 @@ export const createProviderCrudSlice: StateCreator<
   /**
    * Update an existing provider
    *
+   * SECURITY: Built-in provider endpoints are readonly and cannot be modified.
+   * This prevents users from accidentally breaking pre-configured integrations.
+   *
    * @param id - Provider ID to update
    * @param config - Partial provider configuration
+   * @throws Error if attempting to modify built-in provider's base URL
    */
   updateProvider: (id: string, config: Partial<ProviderConfig>) => {
     console.log('[ProviderCrudSlice] Updating provider:', id, config);
+
+    // Get current provider state
+    const currentProvider = get().providers.find(p => p.id === id);
+
+    // SECURITY: Enforce readonly base URL for built-in providers
+    // Built-in providers have isCustom !== true (undefined or false)
+    const isBuiltIn = currentProvider && !currentProvider.isCustom;
+
+    if (isBuiltIn && config.baseURL && config.baseURL !== currentProvider.baseURL) {
+      throw new Error(
+        `Cannot modify built-in provider endpoint. Provider "${id}" is a built-in integration and its base URL cannot be changed.`
+      );
+    }
+
     set((state) => ({
       providers: state.providers.map(p =>
         p.id === id ? { ...p, ...config } : p

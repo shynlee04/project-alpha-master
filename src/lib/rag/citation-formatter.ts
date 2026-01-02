@@ -21,14 +21,68 @@ export class CitationFormatter {
    * @returns Array of citations (1-indexed)
    */
   formatCitations(results: ExtendedSearchResult[]): Citation[] {
-    return results.map((result, index) => ({
-      id: index + 1, // 1-indexed for display: [1], [2], [3]
-      sourceId: result.document.id,
-      title: result.document.title,
-      passage: result.highlightedText || result.document.content,
-      position: result.document.position,
-      score: result.score,
-    }));
+    return results.map((result, index) => {
+      const passage = result.highlightedText || result.document.content;
+      const fullContent = result.document.content;
+
+      return {
+        id: index + 1, // 1-indexed for display: [1], [2], [3]
+        sourceId: result.document.id,
+        title: result.document.title,
+        passage,
+        contextBefore: this.extractContextBefore(fullContent, passage),
+        contextAfter: this.extractContextAfter(fullContent, passage),
+        position: result.document.position,
+        score: result.score,
+      };
+    });
+  }
+
+  /**
+   * Extract text before the passage (±500 chars)
+   *
+   * @param fullContent - Full document content
+   * @param passage - The passage to find context for
+   * @returns Text before the passage (up to 500 chars)
+   */
+  private extractContextBefore(fullContent: string, passage: string): string {
+    const passageIndex = fullContent.indexOf(passage);
+    if (passageIndex === -1) return '';
+
+    const contextStart = Math.max(0, passageIndex - 500);
+    const contextBefore = fullContent.slice(contextStart, passageIndex).trim();
+
+    // Ensure we break at sentence boundary
+    const lastSentenceEnd = contextBefore.lastIndexOf('. ');
+    if (lastSentenceEnd !== -1 && contextBefore.length - lastSentenceEnd < 200) {
+      return contextBefore.slice(lastSentenceEnd + 2).trim();
+    }
+
+    return contextBefore.slice(-200).trim(); // Last 200 chars max
+  }
+
+  /**
+   * Extract text after the passage (±500 chars)
+   *
+   * @param fullContent - Full document content
+   * @param passage - The passage to find context for
+   * @returns Text after the passage (up to 500 chars)
+   */
+  private extractContextAfter(fullContent: string, passage: string): string {
+    const passageIndex = fullContent.indexOf(passage);
+    if (passageIndex === -1) return '';
+
+    const passageEnd = passageIndex + passage.length;
+    const contextEnd = Math.min(fullContent.length, passageEnd + 500);
+    const contextAfter = fullContent.slice(passageEnd, contextEnd).trim();
+
+    // Ensure we break at sentence boundary
+    const firstSentenceEnd = contextAfter.indexOf('. ');
+    if (firstSentenceEnd !== -1 && firstSentenceEnd < 200) {
+      return contextAfter.slice(0, firstSentenceEnd + 1).trim();
+    }
+
+    return contextAfter.slice(0, 200).trim(); // First 200 chars max
   }
 
   /**

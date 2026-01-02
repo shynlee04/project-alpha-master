@@ -16,6 +16,9 @@ import { z } from 'zod';
  * Used for knowledge organization, search, and recommendations.
  */
 export const SynthesisFrontmatterSchema = z.object({
+  /** Document title */
+  title: z.string().optional(),
+
   /** Summary of document content (150-1000 words) */
   summary: z.string().min(100).max(1000),
 
@@ -33,16 +36,32 @@ export const SynthesisFrontmatterSchema = z.object({
   ]),
 
   /** Subject area (e.g., "Mathematics", "Physics") */
-  subject: z.string(),
+  subject: z.string().optional(),
 
   /** Key concepts with definitions */
   keyConcepts: z.array(z.object({
     term: z.string(),
     definition: z.string(),
-  })).min(3).max(15),
+  })).min(3).max(15).optional(),
 
   /** Semantic tags for search and organization */
-  tags: z.array(z.string()).min(3).max(10),
+  tags: z.array(z.string()).min(3).max(10).optional(),
+
+  /** Generated flashcards */
+  flashcards: z.array(z.object({
+    front: z.string(),
+    back: z.string(),
+  })).optional(),
+
+  /** Generated quiz questions */
+  quiz: z.array(z.object({
+    question: z.string(),
+    options: z.array(z.string()).min(2),
+    correctIndex: z.number().min(0),
+    explanation: z.string().optional(),
+    type: z.enum(['multiple-choice', 'true-false', 'short-answer']).optional(),
+    difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  })).optional(),
 
   /** Document structure metadata */
   structure: z.object({
@@ -139,6 +158,11 @@ export type SynthesizableSourceType =
   | 'url'
   | 'markdown'
   | 'text';
+
+/**
+ * Study artifact types that can be generated
+ */
+export type ArtifactType = 'flashcards' | 'quiz';
 
 /**
  * Source document interface for synthesis

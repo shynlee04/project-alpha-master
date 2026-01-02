@@ -84,6 +84,7 @@ export interface CanvasStoreState {
   resetCanvas: () => void;
 
   // Linkage proposal operations
+  setProposals: (proposals: LinkageProposal[]) => void;
   generateLinkageProposals: () => Promise<void>;
   acceptProposal: (proposalId: string) => void;
   dismissProposal: (proposalId: string) => void;

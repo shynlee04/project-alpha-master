@@ -30,6 +30,6 @@ export * from './rag-store-helpers';
 export * from './rag-store-types';
 
 // Helpers
-export * from './conversation-auto-restore';
+export * from './stores/conversation-auto-restore';
 export * from './session-snapshot-manager';
 export * from './hydration-manager';

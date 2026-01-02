@@ -22,5 +22,11 @@ export { FlashcardPreview } from './flashcard-preview';
 export { SourceImportDialog } from './SourceImportDialog';
 export { CreateCollectionDialog } from './CreateCollectionDialog';
 
+// UC1: Synthesis UI Components
+export { SynthesisDialog } from './SynthesisDialog';
+export { FlashcardPreviewPanel } from './FlashcardPreviewPanel';
+export { QuizPreviewPanel } from './QuizPreviewPanel';
+export { StudyArtifactExportDialog } from './StudyArtifactExportDialog';
+
 // Main Knowledge Page
 export { KnowledgePage } from './KnowledgePage';

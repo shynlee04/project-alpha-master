@@ -76,6 +76,20 @@ export function CitationSidebar({
           )}
         </div>
 
+        {/* Page Number */}
+        {citation.pageNumber !== undefined && (
+          <div className="mb-4">
+            <p className="text-xs text-muted-foreground mb-1">
+              {t('rag.citation.pageNumber', 'Page Number')}
+            </p>
+            <p className="text-sm font-medium">
+              {t('rag.citation.page', 'Page {{pageNumber}}', {
+                pageNumber: citation.pageNumber,
+              })}
+            </p>
+          </div>
+        )}
+
         {/* Relevance Score */}
         {citation.score !== undefined && (
           <div className="mb-4">
@@ -94,14 +108,32 @@ export function CitationSidebar({
           </div>
         )}
 
-        {/* Passage */}
+        {/* Context Preview (Before + Passage + After) */}
         <div>
           <p className="text-xs text-muted-foreground mb-2">
-            {t('rag.citation.passage', 'Relevant Passage')}
+            {t('rag.citation.contextPreview', 'Context Preview')}
           </p>
-          <blockquote className="pl-3 border-l-2 border-primary/50 text-sm italic text-foreground bg-background p-3 rounded-none">
-            {citation.passage}
-          </blockquote>
+
+          <div className="space-y-3">
+            {/* Context Before */}
+            {citation.contextBefore && (
+              <div className="text-xs text-muted-foreground italic">
+                {citation.contextBefore}
+              </div>
+            )}
+
+            {/* Highlighted Passage */}
+            <blockquote className="pl-3 border-l-2 border-primary text-sm font-medium text-foreground bg-primary/5 p-3 rounded-none">
+              {citation.passage}
+            </blockquote>
+
+            {/* Context After */}
+            {citation.contextAfter && (
+              <div className="text-xs text-muted-foreground italic">
+                {citation.contextAfter}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Position */}

@@ -175,6 +175,10 @@ export const useCanvasStore = create<CanvasStoreState>()(
       },
 
       // Linkage proposal operations
+      setProposals: (proposals: LinkageProposal[]) => {
+        set({ linkageProposals: proposals });
+      },
+
       generateLinkageProposals: async () => {
         const { nodes } = get();
 

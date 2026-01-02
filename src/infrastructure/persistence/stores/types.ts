@@ -214,13 +214,24 @@ export interface ProviderState {
  * - Slice pattern for modularity
  * - Cross-slice communication via get()
  * - No circular imports
+ * - Schema versioning for safe migrations
  *
  * @example
  * ```tsx
  * const { agents, providers, addAgent, fetchModels } = useAppStore();
  * ```
  */
-export type AppState = AgentCrudState
+export interface AppStateBase {
+  /**
+   * Schema version for safe migrations
+   * Incremented when breaking changes are introduced to persisted state
+   * Migrations run automatically on rehydration when version changes
+   */
+  version: number;
+}
+
+export type AppState = AppStateBase
+  & AgentCrudState
   & AgentWorkspaceBindingsState
   & AgentValidationState
   & AgentEventsState

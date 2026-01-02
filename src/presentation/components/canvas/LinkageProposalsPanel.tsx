@@ -5,6 +5,7 @@
  *
  * Displays AI-generated linkage proposals for canvas nodes.
  * Allows users to accept or dismiss proposed connections.
+ * Enhanced UC2: RAG-aware analysis with semantic similarity.
  */
 
 import React, { useState } from 'react';
@@ -14,6 +15,11 @@ import { Button } from '../ui/button';
 import { PixelBadge } from '../ui/pixel-badge';
 import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import { useCanvasStore } from '@/infrastructure/persistence/stores';
+import { useIDEStore } from '@/lib/state/ide-store';
+import { createRAGLinkageAnalyzer } from '@/lib/canvas/rag-linkage-analyzer';
+import { createLinkageAIEnhancer } from '@/lib/canvas/linkage-ai-enhancer';
+import type { EnhancedProposal } from '@/lib/canvas/linkage-ai-enhancer';
+import { Sparkles, Loader2 } from 'lucide-react';
 
 interface LinkageProposalsPanelProps {
   className?: string;
@@ -56,19 +62,38 @@ interface ProposalCardProps {
 function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
   const { t } = useTranslation();
 
+  // Check if this is an enhanced proposal
+  const isEnhanced = (proposal as any).aiRationale !== undefined;
+  const confidenceRefined = (proposal as any).confidenceRefined;
+  const aiRationale = (proposal as any).aiRationale;
+  const entities = (proposal as any).entities as string[] | undefined;
+  const keywords = (proposal as any).keywords as string[] | undefined;
+
+  // Use refined confidence if available, otherwise use base confidence
+  const displayConfidence = confidenceRefined ?? proposal.confidence;
+  const displayRationale = aiRationale ?? proposal.rationale;
+
   return (
     <div className="bg-gray-900/90 border border-gray-700 rounded p-3 mb-2 hover:border-gray-600 transition-colors">
       {/* Header: Type + Confidence */}
       <div className="flex items-center justify-between mb-2">
-        <PixelBadge
-          size="sm"
-          className={getLinkageTypeColor(proposal.linkageType)}
-        >
-          {t(`canvas.linkage.type.${proposal.linkageType}`)}
-        </PixelBadge>
+        <div className="flex items-center gap-2">
+          <PixelBadge
+            size="sm"
+            className={getLinkageTypeColor(proposal.linkageType)}
+          >
+            {t(`canvas.linkage.type.${proposal.linkageType}`)}
+          </PixelBadge>
+          {isEnhanced && (
+            <PixelBadge size="sm" variant="default" className="bg-purple-500/20 text-purple-300 border-purple-500">
+              <Sparkles size={10} className="inline mr-1" />
+              AI
+            </PixelBadge>
+          )}
+        </div>
         <PixelBadge size="sm" variant="outline">
-          {t(`canvas.linkage.confidence.${getConfidenceLabel(proposal.confidence)}`)}
-          ({Math.round(proposal.confidence * 100)}%)
+          {t(`canvas.linkage.confidence.${getConfidenceLabel(displayConfidence)}`)}
+          ({Math.round(displayConfidence * 100)}%)
         </PixelBadge>
       </div>
 
@@ -77,13 +102,33 @@ function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
         {proposal.suggestedLabel}
       </div>
 
-      {/* Rationale */}
+      {/* Rationale (AI or heuristic) */}
       <div className="text-gray-400 text-xs mb-3">
-        {proposal.rationale}
+        {displayRationale}
       </div>
 
+      {/* Enhanced data: Entities/Keywords */}
+      {isEnhanced && (entities || keywords) && (
+        <div className="text-xs text-gray-500 mb-3 space-y-1">
+          {entities && entities.length > 0 && (
+            <div>
+              <span className="font-semibold">{t('canvas.linkage.entities')}: </span>
+              {entities.slice(0, 3).join(', ')}
+              {entities.length > 3 && '...'}
+            </div>
+          )}
+          {keywords && keywords.length > 0 && (
+            <div>
+              <span className="font-semibold">{t('canvas.linkage.keywords')}: </span>
+              {keywords.slice(0, 3).join(', ')}
+              {keywords.length > 3 && '...'}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Evidence */}
-      {proposal.evidence.length > 0 && (
+      {proposal.evidence.length > 0 && !isEnhanced && (
         <div className="text-xs text-gray-500 mb-3">
           <span className="font-semibold">{t('canvas.linkage.evidence')}: </span>
           {proposal.evidence.slice(0, 3).join(', ')}
@@ -119,10 +164,12 @@ function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
  */
 export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelProps) {
   const { t } = useTranslation();
-  const { linkageProposals, acceptProposal, dismissProposal, clearProposals, nodes } = useCanvasStore();
+  const { linkageProposals, acceptProposal, dismissProposal, clearProposals, nodes, setProposals } = useCanvasStore();
+  const projectId = useIDEStore((s) => s.projectId) || 'default';
 
   const [isExpanded, setIsExpanded] = useState(true);
   const [filter, setFilter] = useState<'all' | 'conceptual' | 'sequential' | 'contrastive'>('all');
+  const [isEnhancing, setIsEnhancing] = useState(false);
 
   // Auto-generate proposals when we have 3+ nodes
   React.useEffect(() => {
@@ -130,6 +177,48 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
       useCanvasStore.getState().generateLinkageProposals();
     }
   }, [nodes.length, linkageProposals.length]);
+
+  // RAG + AI Enhancement handler
+  const handleRAGEnhancement = React.useCallback(async () => {
+    if (nodes.length < 2) return;
+
+    setIsEnhancing(true);
+    try {
+      // Use RAG-aware analyzer with embeddings
+      const analyzer = createRAGLinkageAnalyzer({
+        projectId,
+        useEmbeddings: true,
+        semanticWeight: 0.5,
+        conceptWeight: 0.3,
+        keywordWeight: 0.2,
+      });
+
+      const analysis = await analyzer.analyze(nodes);
+
+      if (analysis.proposals.length > 0) {
+        // Enhance with Gemini AI
+        const enhancer = createLinkageAIEnhancer({
+          apiKey: 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ',
+          maxProposals: 10,
+          modelId: 'gemini-1.5-flash',
+        });
+
+        const enhancedProposals = await enhancer.enhanceProposals(
+          analysis.proposals,
+          analysis.nodeAnalyses
+        );
+
+        // Set enhanced proposals to store
+        setProposals(enhancedProposals);
+      }
+    } catch (error) {
+      console.error('RAG enhancement failed:', error);
+      // Fallback to heuristic if enhancement fails
+      useCanvasStore.getState().generateLinkageProposals();
+    } finally {
+      setIsEnhancing(false);
+    }
+  }, [nodes, projectId, setProposals]);
 
   const filteredProposals = linkageProposals.filter((p) =>
     filter === 'all' || p.linkageType === filter
@@ -166,6 +255,19 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
               aria-label={isExpanded ? t('common.collapse') : t('common.expand')}
             >
               {isExpanded ? '▼' : '▶'}
+            </button>
+            <button
+              onClick={handleRAGEnhancement}
+              disabled={isEnhancing || nodes.length < 2}
+              className="flex items-center gap-1 text-gray-400 hover:text-white text-xs px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Enhance with AI"
+              title="Enhance proposals with RAG embeddings and AI"
+            >
+              {isEnhancing ? (
+                <><Loader2 size={12} className="animate-spin" />Enhancing...</>
+              ) : (
+                <><Sparkles size={12} />AI</>
+              )}
             </button>
             <button
               onClick={clearProposals}

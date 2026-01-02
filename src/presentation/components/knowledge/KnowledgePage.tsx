@@ -32,6 +32,14 @@ import { createEmbeddingService, type EmbeddingService } from '@/lib/rag/embeddi
 import { indexSource, searchIndex, createIndex } from '@/lib/rag/orama-index';
 import { storeEvents } from '@/lib/events/store-events';
 
+// UC1: Synthesis Components
+import { SynthesisDialog } from '@/presentation/components/knowledge/SynthesisDialog';
+import { FlashcardPreviewPanel } from '@/presentation/components/knowledge/FlashcardPreviewPanel';
+import { QuizPreviewPanel } from '@/presentation/components/knowledge/QuizPreviewPanel';
+import { useSynthesisStore } from '@/infrastructure/persistence/stores/synthesis-store';
+import type { SynthesisResult } from '@/lib/knowledge/synthesis-types';
+import type { ArtifactType } from '@/lib/knowledge/synthesis-types';
+
 export function KnowledgePage() {
     const { t } = useTranslation();
     // Get current project ID, default to 'default' if not set
@@ -42,6 +50,10 @@ export function KnowledgePage() {
     const [importDialogOpen, setImportDialogOpen] = useState(false);
     const [isAiAvailable, setIsAiAvailable] = useState(false);
     const [embeddingService, setEmbeddingService] = useState<EmbeddingService | null>(null);
+
+    // UC1: Synthesis state
+    const [synthesisResult, setSynthesisResult] = useState<SynthesisResult | null>(null);
+    const [previewType, setPreviewType] = useState<ArtifactType | null>(null);
 
     // Check Gemini API availability
     useEffect(() => {
@@ -138,6 +150,30 @@ export function KnowledgePage() {
 
     const handleOpenImport = () => setImportDialogOpen(true);
 
+    // UC1: Synthesis handlers
+    const handleSynthesisComplete = (synthesisId: string) => {
+        // Get synthesis result from store
+        const { syntheses } = useSynthesisStore.getState();
+
+        const synthesis = syntheses.find(s => s.id === synthesisId);
+        if (synthesis?.result) {
+            setSynthesisResult(synthesis.result);
+            setPreviewType(synthesis.artifactType);
+        }
+    };
+
+    const handlePreviewSave = () => {
+        // Clear preview state after saving
+        setSynthesisResult(null);
+        setPreviewType(null);
+    };
+
+    const handlePreviewDiscard = () => {
+        // Clear preview state without saving
+        setSynthesisResult(null);
+        setPreviewType(null);
+    };
+
     if (isMobile) {
         // Mobile Layout: Simplified Stack (MVP)
         return (
@@ -161,6 +197,10 @@ export function KnowledgePage() {
                                 <Button size="sm" onClick={handleOpenImport}>
                                     <Plus size={16} />
                                 </Button>
+                                <SynthesisDialog
+                                    sourceIds={[]}
+                                    onComplete={handleSynthesisComplete}
+                                />
                             </div>
                         </div>
                         <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
@@ -174,6 +214,24 @@ export function KnowledgePage() {
                             <Canvas />
                         </Suspense>
                     </div>
+                    {/* UC1: Synthesis Preview Panel */}
+                    {synthesisResult && previewType && (
+                        <div className="flex-1 border-b border-border">
+                            {previewType === 'flashcards' ? (
+                                <FlashcardPreviewPanel
+                                    synthesisResult={synthesisResult}
+                                    onSave={handlePreviewSave}
+                                    onDiscard={handlePreviewDiscard}
+                                />
+                            ) : (
+                                <QuizPreviewPanel
+                                    synthesisResult={synthesisResult}
+                                    onSave={handlePreviewSave}
+                                    onDiscard={handlePreviewDiscard}
+                                />
+                            )}
+                        </div>
+                    )}
                 </div>
                 <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
             </MainLayout>
@@ -210,10 +268,33 @@ export function KnowledgePage() {
                                 <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
                                     <Plus className="h-3 w-3" />
                                 </Button>
+                                <SynthesisDialog
+                                    sourceIds={[]}
+                                    onComplete={handleSynthesisComplete}
+                                />
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto">
-                            <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
+                            {/* UC1: Show preview panel when synthesis is complete */}
+                            {synthesisResult && previewType ? (
+                                <div className="h-full">
+                                    {previewType === 'flashcards' ? (
+                                        <FlashcardPreviewPanel
+                                            synthesisResult={synthesisResult}
+                                            onSave={handlePreviewSave}
+                                            onDiscard={handlePreviewDiscard}
+                                        />
+                                    ) : (
+                                        <QuizPreviewPanel
+                                            synthesisResult={synthesisResult}
+                                            onSave={handlePreviewSave}
+                                            onDiscard={handlePreviewDiscard}
+                                        />
+                                    )}
+                                </div>
+                            ) : (
+                                <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
+                            )}
                         </div>
                     </div>
                 </ResizablePanel>

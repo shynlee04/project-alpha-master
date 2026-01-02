@@ -21,6 +21,7 @@ import { shallow } from 'zustand/shallow';
 import { useMemo } from 'react';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
 import { useAgentSelectionStore } from './agents/agent-selection-store';
+import { runMigrations, validateMigratedState, CURRENT_SCHEMA_VERSION } from './schema-migrations';
 
 // Import agent slices
 import {
@@ -65,6 +66,12 @@ export const useAppStore = create<AppState>()(
   persist(
     (...a) => ({
       // ========================================================================
+      // SCHEMA VERSION (for migrations)
+      // ========================================================================
+
+      version: CURRENT_SCHEMA_VERSION,
+
+      // ========================================================================
       // AGENT SLICES (5 slices)
       // ========================================================================
 
@@ -104,6 +111,9 @@ export const useAppStore = create<AppState>()(
 
       // Selective persistence (only critical data, not ephemeral state)
       partialize: (state) => ({
+        // Schema version (for migrations)
+        version: state.version,
+
         // Agent state (persisted)
         agents: state.agents,
 
@@ -130,6 +140,50 @@ export const useAppStore = create<AppState>()(
           console.warn('[AppStore] Hydration failed - state is null');
           return;
         }
+
+        // ========================================================================
+        // PHASE 1: Schema Migrations (runs BEFORE defaults are restored)
+        // ========================================================================
+
+        const currentVersion = state.version || 0;
+        console.log(`[AppStore] Current schema version: v${currentVersion}`);
+
+        if (currentVersion < CURRENT_SCHEMA_VERSION) {
+          console.log(`[AppStore] Schema migration needed: v${currentVersion} → v${CURRENT_SCHEMA_VERSION}`);
+
+          try {
+            const migrationResult = await runMigrations(state);
+
+            if (!migrationResult.success) {
+              console.error('[AppStore] ❌ Schema migration failed:', migrationResult.error);
+              // App may be in inconsistent state, but try to continue
+              // Consider showing migration error to user
+            } else {
+              console.log('[AppStore] ✅ Schema migration complete:', {
+                from: migrationResult.fromVersion,
+                to: migrationResult.toVersion,
+                migrations: migrationResult.migrationsRun,
+                duration: `${migrationResult.duration.toFixed(2)}ms`,
+              });
+            }
+
+            // Validate migrated state
+            if (!validateMigratedState(state)) {
+              console.error('[AppStore] ❌ State validation failed after migration');
+              // This is critical - state may be corrupted
+              // Consider resetting to defaults
+            }
+          } catch (error) {
+            console.error('[AppStore] ❌ Migration failed with exception:', error);
+            // App should still be functional even if migration fails
+          }
+        } else {
+          console.log('[AppStore] Schema version is current, no migration needed');
+        }
+
+        // ========================================================================
+        // PHASE 2: Default Values Restoration
+        // ========================================================================
 
         // Ensure at least one agent exists
         if (!state.agents || state.agents.length === 0) {

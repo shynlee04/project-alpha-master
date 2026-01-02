@@ -30,7 +30,10 @@ vi.mock('@/lib/agent/tool-permission-manager', () => ({
 vi.mock('@/lib/agent/workspace-permission-manager', () => ({
     WorkspacePermissionManager: class {
         constructor(private readonly baseManager: any) {}
-        checkCrossWorkspaceFilePermission = vi.fn(() => true);
+        checkCrossWorkspaceFilePermission = vi.fn((source: string, target: string) => {
+            // Return false for self-references to test permission_denied case
+            return source !== target;
+        });
     },
 }));
 
@@ -228,7 +231,8 @@ describe('CrossWorkspaceReferenceManager', () => {
                 referenceType: 'link',
             });
 
-            vi.mocked(mockFileSyncService.readFile).mockRejectedValue(
+            // Mock getFileMetadata to throw error for missing file
+            vi.mocked(mockFileSyncService.getFileMetadata).mockRejectedValue(
                 new Error('Not found')
             );
 
@@ -302,7 +306,7 @@ describe('CrossWorkspaceReferenceManager', () => {
 
             await manager.deleteReference(referenceId);
 
-            expect(manager.getReference(referenceId)).toBeNull();
+            expect(manager.getReference(referenceId)).toBeUndefined();
         });
     });
 
@@ -326,9 +330,15 @@ describe('CrossWorkspaceReferenceManager', () => {
                 referenceType: 'link',
             });
 
-            vi.mocked(mockFileSyncService.readFile)
+            // Mock getFileMetadata to throw error for missing file
+            vi.mocked(mockFileSyncService.getFileMetadata)
                 .mockImplementation((path) => {
-                    if (path === '/existing.txt') return Promise.resolve('content');
+                    if (path === '/existing.txt') return Promise.resolve({
+                        path: '/existing.txt',
+                        size: 7,
+                        lastModified: Date.now(),
+                        contentType: 'text/plain',
+                    });
                     throw new Error('Not found');
                 });
 

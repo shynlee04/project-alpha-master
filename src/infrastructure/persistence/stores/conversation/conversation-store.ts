@@ -14,11 +14,11 @@
 
 export {
     useConversationStore,
+    type ConversationStoreState,
 } from './useConversationStore';
 
 // Re-export commonly used hooks for convenience
 export type {
-    ConversationStoreState,
     ThreadMessage,
     ConversationThread,
     ThreadHierarchyNode,

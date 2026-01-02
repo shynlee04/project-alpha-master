@@ -6,9 +6,6 @@
 // Main store
 export {
   useConversationStore,
-  useConversationStoreHydration,
-  useActiveConversation,
-  usePendingApprovals,
 } from './conversation-store';
 
 // Types
@@ -18,6 +15,16 @@ export type {
   ConversationState,
   ConversationStoreState,
 } from './conversation-types';
+
+export type {
+  ThreadMessage,
+  ConversationThread,
+  ThreadHierarchyNode,
+  ContextWindowConfig,
+} from './types';
+
+export type { ValidationResult } from './conversation-validation-slice';
+export type { ConversationEvent, ConversationEventType } from './conversation-events-slice';
 
 // Helpers
 export {
