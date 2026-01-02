@@ -177,7 +177,6 @@ export async function migrateApiKeysToVault(
         console.log(`[Migration] Provider ${provider.id} has empty apiKey, skipping`);
         updateProvider(provider.id, {
           hasApiKey: false,
-          apiKey: undefined,
         });
         continue;
       }
@@ -192,10 +191,9 @@ export async function migrateApiKeysToVault(
 
         await credentialVault.storeCredentials(provider.id, apiKey);
 
-        // Update provider state (remove apiKey, set hasApiKey)
+        // Update provider state (set hasApiKey flag)
         updateProvider(provider.id, {
           hasApiKey: true,
-          apiKey: undefined, // Remove old field
         });
 
         stats.providersMigrated = (stats.providersMigrated || 0) + 1;
@@ -235,7 +233,7 @@ export async function migrateApiKeysToVault(
     setState.setPhase('rollback');
     setState.setProgress(0, 'Rolling back...');
 
-    await rollbackMigration(providers, activeProviderId, updateProvider);
+    await rollbackMigration(updateProvider);
     stats.rollbackPerformed = true;
 
     return {
@@ -279,8 +277,6 @@ export async function migrateApiKeysToVault(
  * @returns True if rollback succeeded
  */
 export async function rollbackMigration(
-  providers: ProviderConfig[],
-  activeProviderId: string | null,
   updateProvider: (id: string, config: Partial<ProviderConfig>) => void
 ): Promise<boolean> {
   console.log('[Migration] Rolling back migration...');

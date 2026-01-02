@@ -87,7 +87,7 @@ describe('ProviderCrudSlice - Readonly Enforcement', () => {
         slice.updateProvider('openrouter', {
           baseURL: 'https://malicious-endpoint.com/api/v1',
         });
-      }).toThrowError('Cannot modify built-in provider endpoint');
+      }).toThrow('Cannot modify built-in provider endpoint');
     });
 
     it('should allow setting base URL to same value (idempotent)', () => {
@@ -108,7 +108,8 @@ describe('ProviderCrudSlice - Readonly Enforcement', () => {
         slice.updateProvider('openrouter', {
           baseURL: 'https://evil.com/api',
         });
-        expect.fail('Should have thrown error');
+        // If we reach here, test should fail
+        throw new Error('Expected error was not thrown');
       } catch (error) {
         expect((error as Error).message).toContain('openrouter');
         expect((error as Error).message).toContain('built-in');
@@ -186,7 +187,7 @@ describe('ProviderCrudSlice - Readonly Enforcement', () => {
         slice.updateProvider('legacy-provider', {
           baseURL: 'https://malicious.com/api',
         });
-      }).toThrowError('Cannot modify built-in provider endpoint');
+      }).toThrow('Cannot modify built-in provider endpoint');
     });
   });
 

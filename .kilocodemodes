@@ -510,9 +510,7 @@ customModes:
       6. Update status
       7. Return to step 1
     groups:
-      - read
       - browser
       - command
       - mcp
-      - edit
     source: project

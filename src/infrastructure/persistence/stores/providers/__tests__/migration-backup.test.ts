@@ -8,7 +8,7 @@
  */
 
 // Set up crypto mock BEFORE importing the class
-const mockDigest = vi.fn(async (algorithm: string, data: Uint8Array) => {
+const mockDigest = vi.fn(async (_algorithm: string, _data: Uint8Array) => {
   // Return a mock hash (32 bytes of zeros)
   const hash = new Uint8Array(32);
   return hash.buffer;
@@ -192,7 +192,7 @@ describe('MigrationBackupSystem', () => {
 
   describe('verifyBackup', () => {
     it('should verify valid backup', async () => {
-      const result = await backupSystem.createBackups(mockProviders, 'openrouter');
+      await backupSystem.createBackups(mockProviders, 'openrouter');
 
       // Get backup from IndexedDB
       const db = await backupSystem['openBackupDatabase']();

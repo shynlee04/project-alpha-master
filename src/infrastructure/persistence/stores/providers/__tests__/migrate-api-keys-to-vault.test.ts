@@ -14,14 +14,14 @@ import {
   isMigrationNeeded,
   countProvidersNeedingMigration,
   rollbackMigration,
-  type ProviderConfig,
 } from '../migrate-api-keys-to-vault';
+import type { ProviderConfig } from '../types';
 
 // Mock credential vault at module level
 vi.mock('@/lib/agent/providers/credential-vault', () => ({
   credentialVault: {
-    storeCredentials: vi.fn(async (providerId: string, apiKey: string) => {
-      console.log(`[MockCredentialVault] Storing credentials for ${providerId}`);
+    storeCredentials: vi.fn(async (_providerId: string, _apiKey: string) => {
+      console.log(`[MockCredentialVault] Storing credentials`);
     }),
     getCredentials: vi.fn(async (providerId: string) => {
       return `mock-api-key-for-${providerId}`;
@@ -30,7 +30,7 @@ vi.mock('@/lib/agent/providers/credential-vault', () => ({
 }));
 
 // Mock crypto API (for both Node.js and jsdom environments)
-const mockDigest = vi.fn(async (algorithm: string, data: Uint8Array) => {
+const mockDigest = vi.fn(async (_algorithm: string, _data: Uint8Array) => {
   const hash = new Uint8Array(32);
   return hash.buffer;
 });
@@ -114,6 +114,7 @@ describe('migrateApiKeysToVault', () => {
     updateProviderCalls = [];
 
     // Mock provider data with old structure (apiKey field)
+    // Use 'as any' to simulate old data structure before migration
     mockProviders = [
       {
         id: 'openrouter',
@@ -121,11 +122,11 @@ describe('migrateApiKeysToVault', () => {
         type: 'openai-compatible',
         baseURL: 'https://openrouter.ai/api/v1',
         defaultModel: 'meta-llama/llama-3.1-8b-instruct:free',
-        apiKey: 'sk-test-openrouter-123',
+        apiKey: 'sk-test-openrouter-123', // Old field (simulated)
         models: [],
         enabled: true,
         lastModelFetchAt: undefined,
-      },
+      } as any,
       {
         id: 'anthropic',
         name: 'Anthropic',
@@ -135,9 +136,9 @@ describe('migrateApiKeysToVault', () => {
         models: [],
         enabled: true,
         lastModelFetchAt: undefined,
-        apiKey: 'sk-ant-123',
+        apiKey: 'sk-ant-123', // Old field (simulated)
         hasApiKey: false,
-      },
+      } as any,
       {
         id: 'openai',
         name: 'OpenAI',
@@ -160,9 +161,9 @@ describe('migrateApiKeysToVault', () => {
         enabled: true,
         lastModelFetchAt: undefined,
         // Empty API key (should be skipped)
-        apiKey: '',
+        apiKey: '', // Old field (simulated)
         hasApiKey: false,
-      },
+      } as any,
     ];
 
     // Clear localStorage
@@ -255,13 +256,8 @@ describe('migrateApiKeysToVault', () => {
     });
 
     it('should successfully migrate all providers with API keys', async () => {
-      const updateProvider = vi.fn((id, config) => {
-        updateProviderCalls.push({ id, config });
-        // Actually modify the mockProviders array for verification
-        const providerIndex = mockProviders.findIndex(p => p.id === id);
-        if (providerIndex !== -1) {
-          mockProviders[providerIndex] = { ...mockProviders[providerIndex], ...config };
-        }
+      const updateProvider = vi.fn((_id: string, _config: Partial<ProviderConfig>) => {
+        // Mock implementation - parameters intentionally unused
       });
 
       const result = await migrateApiKeysToVault(
@@ -291,13 +287,8 @@ describe('migrateApiKeysToVault', () => {
     });
 
     it('should skip providers with empty API keys', async () => {
-      const updateProvider = vi.fn((id, config) => {
-        updateProviderCalls.push({ id, config });
-        // Actually modify the mockProviders array for verification
-        const providerIndex = mockProviders.findIndex(p => p.id === id);
-        if (providerIndex !== -1) {
-          mockProviders[providerIndex] = { ...mockProviders[providerIndex], ...config };
-        }
+      const updateProvider = vi.fn((_id: string, _config: any) => {
+        // Mock implementation - parameters intentionally unused
       });
 
       const result = await migrateApiKeysToVault(
@@ -407,7 +398,7 @@ describe('migrateApiKeysToVault', () => {
     it('should successfully rollback from backup', async () => {
       const updateProvider = vi.fn();
 
-      const success = await rollbackMigration(mockProviders, 'openrouter', updateProvider);
+      const success = await rollbackMigration(updateProvider);
 
       expect(success).toBe(true);
       expect(updateProvider).toHaveBeenCalled();
@@ -426,7 +417,7 @@ describe('migrateApiKeysToVault', () => {
       });
 
       const updateProvider = vi.fn();
-      const success = await rollbackMigration(mockProviders, 'openrouter', updateProvider);
+      const success = await rollbackMigration(updateProvider);
 
       expect(success).toBe(false);
       expect(updateProvider).not.toHaveBeenCalled();
