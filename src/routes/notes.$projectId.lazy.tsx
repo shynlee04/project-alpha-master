@@ -22,9 +22,9 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
-  ssr: false,
   // Loader: Fetch project metadata for ProjectProvider
   loader: async ({ params }: { params: { projectId: string } }) => {
     const project = await getProject(params.projectId);
@@ -38,7 +38,9 @@ function NotesWorkspace() {
 
   return (
     <ProjectProvider project={project} workspace="notes">
-      <NotesPage />
+      <WorkspaceProvider initialWorkspace="notes" initialProjectId={project?.id}>
+        <NotesPage />
+      </WorkspaceProvider>
     </ProjectProvider>
   );
 }

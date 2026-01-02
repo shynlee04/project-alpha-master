@@ -12,7 +12,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast'
-import { WorkspaceProvider } from '../lib/workspace'
+import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 
 // Lazy load IDELayout to reduce initial bundle size
 const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayout').then(m => ({ default: m.IDELayout })))
@@ -71,7 +71,7 @@ function IDEWorkspace() {
 
     return (
         <ToastProvider>
-            <WorkspaceProvider projectId={projectId}>
+            <WorkspaceProvider initialWorkspace="ide" initialProjectId={projectId}>
                 <Suspense fallback={
                     <div className="h-screen w-screen flex items-center justify-center bg-background">
                         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />

@@ -17,6 +17,7 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 // Placeholder component (Knowledge workspace not implemented yet)
 function KnowledgePlaceholder() {
@@ -36,7 +37,6 @@ function KnowledgePlaceholder() {
 }
 
 export const Route = createLazyFileRoute('/knowledge/$projectId')({
-  ssr: false,
   // Loader: Fetch project metadata for ProjectProvider
   loader: async ({ params }: { params: { projectId: string } }) => {
     const project = await getProject(params.projectId);
@@ -50,7 +50,9 @@ function KnowledgeWorkspace() {
 
   return (
     <ProjectProvider project={project} workspace="knowledge">
-      <KnowledgePlaceholder />
+      <WorkspaceProvider initialWorkspace="knowledge" initialProjectId={project?.id}>
+        <KnowledgePlaceholder />
+      </WorkspaceProvider>
     </ProjectProvider>
   );
 }
