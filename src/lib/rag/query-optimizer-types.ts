@@ -6,7 +6,7 @@
  * Type definitions for query parsing and optimization.
  */
 
-import type { SearchFilters } from './types';
+import type { SearchFilters } from '.';
 
 /**
  * Parsed query components

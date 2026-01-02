@@ -7,13 +7,14 @@
  * Supports compound queries, keyword extraction, and query enhancement.
  */
 
-import type { SearchFilters } from './types';
+import type { SearchFilters } from '.';
 import type {
   ParsedQuery,
   QueryOperator,
   QueryType,
   OptimizedQuery,
   QueryParserConfig,
+  QueryWeightConfig,
 } from './query-optimizer-types';
 import { DEFAULT_CONFIG } from './query-optimizer-config';
 
@@ -24,6 +25,7 @@ export type {
   QueryType,
   OptimizedQuery,
   QueryParserConfig,
+  QueryWeightConfig,
 } from './query-optimizer-types';
 
 // Re-export helpers

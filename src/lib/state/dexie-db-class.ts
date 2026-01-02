@@ -166,3 +166,13 @@ export class ViaGentDatabase extends Dexie {
         registerMigrations(this);
     }
 }
+
+// ============================================================================
+// Singleton Instance
+// ============================================================================
+
+/**
+ * Singleton database instance for application-wide access.
+ * Provides a single connection point to the IndexedDB database.
+ */
+export const dexieDB = new ViaGentDatabase();

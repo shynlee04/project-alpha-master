@@ -176,3 +176,22 @@ export interface SourceDocument {
   mimeType?: string;
   metadata?: Record<string, unknown>;
 }
+
+// ============================================================================
+// Re-exports: Gemini-specific types
+// ============================================================================
+
+/**
+ * Re-export Gemini PDF options for convenient imports
+ */
+export type { GeminiPDFOptions } from './gemini-pdf-types';
+
+/**
+ * Re-export Gemini image options for convenient imports
+ */
+export type { GeminiImageOptions } from './gemini-image-types';
+
+/**
+ * Re-export Gemini URL options for convenient imports
+ */
+export type { GeminiURLOptions } from './gemini-url-processor';

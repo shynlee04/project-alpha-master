@@ -70,6 +70,9 @@ export interface ProjectWithPermission extends ProjectMetadata {
     permissionState: FsaPermissionState;
 }
 
+// Re-export WorkspaceBindings for component imports
+export type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+
 // ============================================================================
 // Legacy Migration (Story 5-1)
 // ============================================================================
