@@ -22,8 +22,7 @@
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { StateCreator } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { CombinedConversationState } from './types';
 
 // Local type alias for internal use (also re-exported below)
@@ -61,24 +60,24 @@ export type { ConversationEvent, ConversationEventType } from './conversation-ev
  */
 export const useConversationStore = create<ConversationStoreState>()(
     persist(
-        (...args: Parameters<StateCreator<ConversationStoreState, [], []>>) => ({
+        (...a) => ({
             // ========== Conversation Metadata Slice (CC-1.1) ==========
-            ...createConversationMetadataSlice(...args),
+            ...createConversationMetadataSlice(...a),
 
             // ========== Thread Management Slice (CC-1.2) ==========
-            ...createThreadManagementSlice(...args),
+            ...createThreadManagementSlice(...a),
 
             // ========== Message CRUD Slice (CC-1.3) ==========
-            ...createMessageCrudSlice(...args),
+            ...createMessageCrudSlice(...a),
 
             // ========== Utils Slice (CC-1.4) ==========
-            ...createConversationUtilsSlice(...args),
+            ...createConversationUtilsSlice(...a),
 
             // ========== Validation Slice (CC-1.5) ==========
-            ...createConversationValidationSlice(...args),
+            ...createConversationValidationSlice(...a),
 
             // ========== Events Slice (CC-1.6) ==========
-            ...createConversationEventsSlice(...args),
+            ...createConversationEventsSlice(...a),
 
             // ========== Hydration & Tool Approval State (Story 51-3) ==========
             _hasHydrated: false,
@@ -86,7 +85,7 @@ export const useConversationStore = create<ConversationStoreState>()(
         }),
         {
             name: 'conversation-store',
-            storage: createDexieStorage('conversation-store'),
+            storage: createDexieStorage('conversationState') as any, // Type assertion for Dexie storage compatibility
             version: 2,
 
             // Partialize: Only persist core data, exclude ephemeral state
@@ -182,7 +181,7 @@ export function useHasHydrated() {
 /**
  * Hook to get event history
  */
-export function useEventHistory(filter?: { type?: string; entityId?: string; limit?: number }) {
+export function useEventHistory(filter?: { type?: import('./conversation-events-slice').ConversationEventType; entityId?: string; limit?: number }) {
     return useConversationStore((state) => state.getEventHistory(filter));
 }
 

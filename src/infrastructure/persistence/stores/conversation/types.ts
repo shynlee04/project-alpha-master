@@ -145,6 +145,8 @@ export interface CombinedConversationState {
     searchConversationsByTag: (tags: string[]) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
     getConversationStats: (conversationId: string) => import('./conversation-utils-slice').ConversationStats;
     getRecentConversations: (limit?: number) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
+    loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
 
     // ========== Conversation Validation Slice (Story CC-1.5) ==========
     validateConversationId: (id: string) => import('./conversation-validation-slice').ValidationResult;

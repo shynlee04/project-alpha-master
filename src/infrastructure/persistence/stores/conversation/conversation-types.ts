@@ -72,6 +72,7 @@ export interface ConversationMetadata {
 export interface ConversationState {
   metadata: ConversationMetadata;
   messages: ThreadMessageRecord[];
+  scrollPosition?: number; // Scroll position for conversation restoration (Story 51-3)
 }
 
 /**

@@ -130,8 +130,8 @@ development_status:
 
   # Phase 1: State Consolidation
   51-1-provider-store-unification: done # COMPLETED 2026-01-02T22:00:00+07:00 - Zero provider store TS errors, reactivity verified
-  51-2-agent-store-consolidation: in-progress # STARTED 2026-01-02T22:00:00+07:00
-  51-3-conversation-store-merge: backlog
+  51-2-agent-store-consolidation: done # COMPLETED 2026-01-02T23:30:00+07:00 - Zero agent store TS errors, 95% health score, all ACs met
+  51-3-conversation-store-merge: in-progress # STARTED 2026-01-02T23:30:00+07:00
   51-4-workspace-state-binding: backlog
   
   # Phase 2: Workspace Integration
@@ -147,13 +147,13 @@ development_status:
   
   epic-51-progress:
     phase_0_complete: true # COMPLETED 2026-01-02T21:30:00+07:00
-    phase_1_complete: false # In progress (1 of 4 stories complete)
+    phase_1_complete: false # In progress (2 of 4 stories complete: 51-0, 51-1, 51-2)
     phase_2_complete: false
     phase_3_complete: false
-    typescript_errors: "972"  # Reduced from 983 to 972 (11 errors fixed in Story 51-1)
+    typescript_errors: "1292"  # Re-counted 2026-01-02T23:30:00+07:00 (agent store: 0 errors)
     workspaces_functional: "1/4"  # Only IDE partially works
     use_cases_complete: "0/4"
-    completion_percentage: "17%"  # Phase 0 + Story 51-1 complete (2 of 12 stories)
+    completion_percentage: "25%"  # Phase 0 + Stories 51-1, 51-2 complete (3 of 12 stories)
 
   # CORRECTIVE SPRINTS (Remediation Cycle 1)
   # Triggered by Ralph Loop Validation 2025-12-29

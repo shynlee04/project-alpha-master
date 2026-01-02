@@ -332,11 +332,11 @@ async function transformLegacyData(
             status: 'active',
             createdAt: timestampToISO(legacyConversation.metadata.createdAt),
             updatedAt: timestampToISO(legacyConversation.metadata.updatedAt),
-            lastActiveAt: timestampToISO(legacyConversation.metadata.updatedAt),
+            // lastActiveAt removed - duplicates updatedAt (Story 51-3)
             title: legacyConversation.metadata.title,
             tags: [],
             pinned: false,
-            messageCount: legacyConversation.metadata.messageCount,
+            // messageCount removed - not in new schema (Story 51-3)
         };
 
         conversations.push(conversation);
@@ -348,11 +348,11 @@ async function transformLegacyData(
             id: threadId,
             conversationId: conversationId,
             parentThreadId: null,
-            root: true,
+            isRoot: true, // Changed from 'root' to 'isRoot' (Story 51-3)
             status: 'active',
             name: legacyConversation.metadata.title || 'Root Thread',
-            createdAt: timestampToISO(legacyConversation.metadata.createdAt),
-            updatedAt: timestampToISO(legacyConversation.metadata.updatedAt),
+            createdAt: legacyConversation.metadata.createdAt, // Keep as number
+            updatedAt: legacyConversation.metadata.updatedAt, // Keep as number
             messageCount: legacyConversation.metadata.messageCount,
             branchFromMessageId: null,
         };
@@ -369,9 +369,9 @@ async function transformLegacyData(
                 agentId: legacyMessage.agentId || agentId,
                 agentName: legacyMessage.agentName,
                 agentModel: legacyMessage.agentModel,
-                timestamp: timestampToISO(legacyMessage.timestamp),
+                timestamp: legacyMessage.timestamp, // Keep as number
                 toolCalls: legacyMessage.toolCalls,
-                status: 'complete',
+                // status removed - not in new schema (Story 51-3)
             };
 
             messages.push(message);

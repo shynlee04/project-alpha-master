@@ -18,6 +18,8 @@ type ConversationUtilsSliceMethods = {
   searchConversationsByTag: (tags: string[]) => ConversationMetadataWithId[];
   getConversationStats: (conversationId: string) => ConversationStats;
   getRecentConversations: (limit?: number) => ConversationMetadataWithId[];
+  loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
+  loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
 };
 
 export const createConversationUtilsSlice: StateCreator<
@@ -67,4 +69,40 @@ export const createConversationUtilsSlice: StateCreator<
     [...get().getAllConversations()]
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, limit),
+
+  loadConversation: async (conversationId: string) => {
+    // Load conversation from Dexie and populate store (Story 51-3)
+    const conversation = get().getConversation(conversationId);
+    if (!conversation) {
+      console.warn(`[ConversationUtils] Conversation ${conversationId} not found`);
+      return;
+    }
+
+    // Set as active conversation
+    get().setActiveConversation(conversationId);
+
+    // Load threads for this conversation
+    const threads = get().getThreadsByConversation(conversationId);
+    if (threads.length > 0) {
+      // Set root thread as active
+      const rootThread = threads.find(t => t.isRoot) || threads[0];
+      get().setActiveThread(rootThread.id);
+    }
+  },
+
+  loadConversationByProject: async (projectId: string) => {
+    // Load most recent conversation for a project (Story 51-3)
+    const conversations = get().getConversationsByProject(projectId);
+    if (conversations.length === 0) {
+      console.warn(`[ConversationUtils] No conversations found for project ${projectId}`);
+      return;
+    }
+
+    // Get most recent conversation by updatedAt
+    const mostRecent = conversations.sort((a, b) =>
+      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    )[0];
+
+    await get().loadConversation(mostRecent.id);
+  },
 });

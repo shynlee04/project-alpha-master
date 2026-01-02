@@ -48,18 +48,18 @@ export class ConversationAutoRestore {
       if (!recentThread) {
         // No conversations exist, create a new one
         const conversationStore = useConversationStore.getState();
-        conversationStore.createConversation(projectId);
+        conversationStore.createConversation('ide', projectId, 'default'); // Story 51-3: Fix args
         return;
       }
 
       // Load the most recent conversation
       const conversationStore = useConversationStore.getState();
-      await conversationStore.loadConversation(recentThread.id);
+      await conversationStore.loadConversation(recentThread.conversationId); // Story 51-3: Use conversationId
     } catch (error) {
       console.error('[ConversationAutoRestore] Failed to restore conversation:', error);
       // Graceful degradation - create new conversation on error
       const conversationStore = useConversationStore.getState();
-      conversationStore.createConversation(projectId);
+      conversationStore.createConversation('ide', projectId, 'default'); // Story 51-3: Fix args
     }
   }
 
