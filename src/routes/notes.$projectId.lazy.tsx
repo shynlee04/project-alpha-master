@@ -26,7 +26,7 @@ import { getProject } from '@/lib/workspace/project-store';
 export const Route = createLazyFileRoute('/notes/$projectId')({
   ssr: false,
   // Loader: Fetch project metadata for ProjectProvider
-  loader: async ({ params }) => {
+  loader: async ({ params }: { params: { projectId: string } }) => {
     const project = await getProject(params.projectId);
     return { project };
   },

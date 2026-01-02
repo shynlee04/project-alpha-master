@@ -214,7 +214,7 @@ export function AgentWorkspaceBindingConfig({
                   id={`workspace-${agent.id}-${workspace.type}`}
                   checked={isChecked}
                   disabled={disabled || isSaving}
-                  onCheckedChange={(checked) => handleBindingChange(workspace.type, checked)}
+                  onCheckedChange={(checked: boolean) => handleBindingChange(workspace.type, checked)}
                   aria-label={`Make ${agent.name} available in ${workspace.label} workspace`}
                 />
               </div>

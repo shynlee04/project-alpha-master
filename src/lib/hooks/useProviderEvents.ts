@@ -20,6 +20,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import type { ProviderConfigChangeEvent, ModelsUpdatedEvent } from '@/lib/events/cross-workspace-event-bus';
+import type { AppState } from '@/infrastructure/persistence/stores/types';
+import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 
 /**
  * Subscribe to provider configuration changes across all workspaces
@@ -63,9 +65,9 @@ export function useProviderModels(providerId: string) {
   const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const storeModels = useProviderStore((state) => state.availableModels[providerId] || []);
-  const storeIsLoading = useProviderStore((state) => state.isLoadingModels[providerId] || false);
-  const fetchModels = useProviderStore((state) => state.fetchModels);
+  const storeModels = useProviderStore((state: AppState) => state.availableModels[providerId] || []);
+  const storeIsLoading = useProviderStore((state: AppState) => state.isLoadingModels[providerId] || false);
+  const fetchModels = useProviderStore((state: AppState) => state.fetchModels);
 
   // Initialize from store
   useEffect(() => {
@@ -122,8 +124,8 @@ export function useProviderEvents(providerId: string) {
   const [modelsUpdate] = useState<ModelsUpdatedEvent | null>(null);
 
   const { models, isLoadingModels, lastUpdated, refetch } = useProviderModels(providerId);
-  const provider = useProviderStore((state) =>
-    state.providers.find(p => p.id === providerId)
+  const provider = useProviderStore((state: AppState) =>
+    state.providers.find((p: ProviderConfig) => p.id === providerId)
   );
 
   // Subscribe to config changes
@@ -166,7 +168,7 @@ export function useProviderEvents(providerId: string) {
  * @returns All providers and utility functions
  */
 export function useAllProviders() {
-  const providers = useProviderStore((state) => state.providers);
+  const providers = useProviderStore((state: AppState) => state.providers);
   const [lastConfigChange, setLastConfigChange] = useState<ProviderConfigChangeEvent | null>(null);
 
   useEffect(() => {

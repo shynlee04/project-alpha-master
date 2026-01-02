@@ -20,6 +20,7 @@ import {
 import { useAgents } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/mocks/agents';
+import type { ThreadMessage } from '@/infrastructure/persistence/stores/conversation/types';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
 
@@ -180,8 +181,8 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
                 body: JSON.stringify({
                     messages: [
                         ...useThreadsStore.getState().threads[activeThreadId]?.messages
-                            .filter(m => m.role !== 'system')
-                            .map(m => ({ role: m.role, content: m.content })) || []
+                            .filter((m: ThreadMessage) => m.role !== 'system')
+                            .map((m: ThreadMessage) => ({ role: m.role, content: m.content })) || []
                     ],
                     provider: selectedAgent.providerId.toLowerCase(),
                     model: selectedAgent.modelId,

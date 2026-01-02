@@ -51,7 +51,7 @@ export function MarkdownExportDialog({
     setError(null)
 
     try {
-      const result = await syncService.exportAllNotes(notes, exportPath, (p) => setProgress(p))
+      const result = await syncService.exportAllNotes(notes, exportPath, (p: number) => setProgress(p))
       setExportResult(result)
       
       if (result.success) {

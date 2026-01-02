@@ -113,7 +113,7 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
 
     // Convert options
     const pdfOptions: GeminiPDFOptions = {
-      onProgress: (progress) => {
+      onProgress: (progress: SynthesisProgress) => {
         console.log(`[KnowledgeTools] PDF progress: ${progress.stage} ${progress.progress}%`);
       },
       extractHeadings: options?.extractHeadings ?? true,
@@ -144,7 +144,7 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
 
     // Convert options
     const imageOptions: GeminiImageOptions = {
-      onProgress: (progress) => {
+      onProgress: (progress: SynthesisProgress) => {
         console.log(`[KnowledgeTools] Image progress: ${progress.stage} ${progress.progress}%`);
       },
       extractText: options?.extractText ?? true,
@@ -175,7 +175,7 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
 
     // Convert options
     const urlOptions: GeminiURLOptions = {
-      onProgress: (progress) => {
+      onProgress: (progress: SynthesisProgress) => {
         console.log(`[KnowledgeTools] URL progress: ${progress.stage} ${progress.progress}%`);
       },
       generateSummary: options?.generateSummary ?? true,

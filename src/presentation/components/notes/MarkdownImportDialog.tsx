@@ -51,7 +51,7 @@ export function MarkdownImportDialog({
     setError(null)
 
     try {
-      const result = await syncService.importAllNotes(importPath, (p) => setProgress(p))
+      const result = await syncService.importAllNotes(importPath, (p: number) => setProgress(p))
       setImportResult(result)
       
       if (result.success) {

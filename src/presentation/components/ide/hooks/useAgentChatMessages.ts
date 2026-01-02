@@ -12,6 +12,7 @@ import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ChatMessage, ToolExecution } from '../EnhancedChatInterface';
 import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/conversation-store';
+import type { ThreadMessage, ThreadToolCall } from '@/infrastructure/persistence/stores/conversation/types';
 import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
 import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
 
@@ -175,12 +176,12 @@ export function useAgentChatMessages({
         const storeMessages = conversations[activeConversationId]?.messages || [];
 
         // Map ThreadMessageRecord to ChatMessage
-        const history: ChatMessage[] = storeMessages.map(m => ({
+        const history: ChatMessage[] = storeMessages.map((m: ThreadMessage) => ({
             id: m.id,
             role: m.role as 'user' | 'assistant',
             content: m.content,
             timestamp: new Date(m.timestamp),
-            toolExecutions: m.toolCalls?.map(tc => ({
+            toolExecutions: m.toolCalls?.map((tc: ThreadToolCall) => ({
                 id: tc.id,
                 name: tc.name,
                 status: tc.status as any,
