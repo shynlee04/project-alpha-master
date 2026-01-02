@@ -8,11 +8,12 @@
  * @epic CW-02 - Project → Knowledge Sync
  */
 
-import type { Document } from '../rag/types';
+import type { DocumentSchema } from '../rag/types';
 import type { FileSyncService } from './file-sync-service';
 import type { DocumentChunker } from '../rag/document-chunker';
 import type { EmbeddingService } from '../rag/embedding-service';
-import type { OramaIndex } from '../rag/orama-index';
+import type { Orama } from '@orama/orama';
+import type { OramaSchema } from '../rag/types';
 
 /**
  * Sync configuration
@@ -50,14 +51,14 @@ export class ProjectKnowledgeSync {
     private fileSyncService: FileSyncService;
     private documentChunker: DocumentChunker;
     private embeddingService: EmbeddingService;
-    private oramaIndex: OramaIndex;
+    private oramaIndex: Orama<OramaSchema>;
     private synced: boolean;
 
     constructor(dependencies: {
         fileSyncService: FileSyncService;
         documentChunker: DocumentChunker;
         embeddingService: EmbeddingService;
-        oramaIndex: OramaIndex;
+        oramaIndex: Orama<OramaSchema>;
     }) {
         this.fileSyncService = dependencies.fileSyncService;
         this.documentChunker = dependencies.documentChunker;
@@ -217,7 +218,7 @@ export function createProjectKnowledgeSync(dependencies: {
     fileSyncService: FileSyncService;
     documentChunker: DocumentChunker;
     embeddingService: EmbeddingService;
-    oramaIndex: OramaIndex;
+    oramaIndex: Orama<OramaSchema>;
 }): ProjectKnowledgeSync {
     return new ProjectKnowledgeSync(dependencies);
 }

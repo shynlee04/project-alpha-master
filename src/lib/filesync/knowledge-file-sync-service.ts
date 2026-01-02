@@ -17,13 +17,13 @@ import type {
     SyncOptions,
     FileSyncConfig
 } from './file-sync-service';
-import type { Document } from '../rag/types';
+import type { DocumentSchema } from '../rag/types';
 
 /**
  * Configuration for Knowledge file sync service
  */
 export interface KnowledgeFileSyncConfig extends FileSyncConfig {
-    onDocumentImport?: (document: Document) => Promise<void>;
+    onDocumentImport?: (document: DocumentSchema) => Promise<void>;
 }
 
 /**

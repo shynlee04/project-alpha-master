@@ -4,9 +4,15 @@
  */
 
 export {
-    PDFParser,
-    pdfParser,
+    usePdfParser,
+    parsePDF,
+    isPdfParsingAvailable,
+    isPDF,
+    getFileSizeMB,
+    usePdfParserWithOptions,
+    parsePDFWithOptions,
     type PDFParseResult,
+    type PDFParseOptions,
     type PDFProgressCallback,
 } from './pdf-parser';
 
