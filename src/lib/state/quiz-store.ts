@@ -61,7 +61,7 @@ function getDB(): QuizDatabase {
 /**
  * Quiz state interface
  */
-interface QuizState {
+export interface QuizState {
   // Quizzes list
   quizzes: Quiz[];
   currentQuiz: Quiz | null;

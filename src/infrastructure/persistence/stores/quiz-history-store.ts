@@ -35,7 +35,7 @@ function getDB(): QuizHistoryDatabase {
 /**
  * Quiz history state interface
  */
-interface QuizHistoryState {
+export interface QuizHistoryState {
   history: QuizHistoryRecord[];
   isLoading: boolean;
   error: string | null;

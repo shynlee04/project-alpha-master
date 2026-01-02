@@ -21,7 +21,7 @@ export type HubSection = 'home' | 'ide' | 'agents' | 'knowledge' | 'settings';
 /**
  * Hub state interface
  */
-interface HubState {
+export interface HubState {
   /** Currently active navigation section */
   activeSection: HubSection;
   /** Sidebar collapsed state */

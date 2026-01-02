@@ -25,6 +25,10 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { StateCreator } from 'zustand';
 import type { CombinedConversationState } from './types';
+
+// Local type alias for internal use (also re-exported below)
+type ConversationStoreState = CombinedConversationState;
+
 import { createConversationMetadataSlice } from './conversation-metadata-slice';
 import { createThreadManagementSlice } from './thread-management-slice';
 import { createMessageCrudSlice } from './message-crud-slice';

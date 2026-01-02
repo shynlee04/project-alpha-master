@@ -14,7 +14,7 @@
 export * from './stores/index';
 
 // Database
-export { default as DexieDB } from './dexie-db';
+export { ViaGentDatabase as DexieDB } from './dexie-db';
 export * from './dexie-db-class';
 export * from './dexie-storage';
 export * from './dexie-db-migrations';
@@ -24,12 +24,9 @@ export * from './dexie-db-session-types';
 export * from './dexie-db-knowledge-types';
 export * from './dexie-db-helpers';
 
-// RAG Store
-export * from './rag-store';
+// RAG Store (types and helpers only - store moved to stores/)
 export * from './rag-store-helpers';
 export * from './rag-store-types';
 
 // Helpers
 export * from './stores/conversation-auto-restore';
-export * from './session-snapshot-manager';
-export * from './hydration-manager';
