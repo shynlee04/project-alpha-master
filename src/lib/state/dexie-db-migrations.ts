@@ -25,7 +25,7 @@ export function logDexieMigration(
     version: number,
     operation: string,
     status: 'started' | 'completed' | 'failed',
-    details?: { tableName?: string; itemsCount?: number; error?: string }
+    details?: { tableName?: string; itemsCount?: number; error?: string } | string
 ): void {
     const entry = {
         timestamp: Date.now(),
@@ -33,7 +33,7 @@ export function logDexieMigration(
         version,
         operation,
         status,
-        ...details,
+        ...(typeof details === 'string' ? { message: details } : details),
     };
 
     if (status === 'failed') {
@@ -193,9 +193,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(8)) {
-                logDexieMigration(8, 'sync-status-migration', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(8, 'sync-status-migration', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -274,9 +272,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(9)) {
-                logDexieMigration(9, 'epic-24-schema', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(9, 'epic-24-schema', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -345,9 +341,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(11)) {
-                logDexieMigration(11, 'epic-6-source-ingestion', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(11, 'epic-6-source-ingestion', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -389,9 +383,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(12)) {
-                logDexieMigration(12, 'epic-6-source-management', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(12, 'epic-6-source-management', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -433,9 +425,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(13)) {
-                logDexieMigration(13, 'epic-7-orama-indexes', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(13, 'epic-7-orama-indexes', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -477,9 +467,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(14)) {
-                logDexieMigration(14, 'epic-7-3-embedding-models', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(14, 'epic-7-3-embedding-models', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -523,9 +511,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(15)) {
-                logDexieMigration(15, 'epic-26-notes', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(15, 'epic-26-notes', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -570,9 +556,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(16)) {
-                logDexieMigration(16, 'ksi-synthesis-results', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(16, 'ksi-synthesis-results', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -616,9 +600,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(17)) {
-                logDexieMigration(17, 'project-metadata-enhancement', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(17, 'project-metadata-enhancement', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -684,9 +666,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
             fileSnapshots: '++id, projectId, path, [projectId+path], expiresAt, lastCachedAt',
             fileContentCache: '[projectId+path], projectId',
         }).upgrade(async () => {
-            logDexieMigration(18, 'file-snapshot-store', 'completed', {
-                details: 'Added fileSnapshots and fileContentCache tables'
-            });
+            logDexieMigration(18, 'file-snapshot-store', 'completed', 'Added fileSnapshots and fileContentCache tables');
         });
 
         // Schema version 19: Story AC-1.7 - Single Bounded Store (Unified App Store)
@@ -724,9 +704,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(19)) {
-                logDexieMigration(19, 'single-bounded-store', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(19, 'single-bounded-store', 'completed', 'Already applied, skipping');
                 return;
             }
 
@@ -793,9 +771,7 @@ export function registerMigrations(db: ViaGentDatabase): void {
 
             // Check if already applied (idempotency)
             if (isMigrationApplied(20)) {
-                logDexieMigration(20, 'dashboard-metrics-history', 'completed', {
-                    details: 'Already applied, skipping'
-                });
+                logDexieMigration(20, 'dashboard-metrics-history', 'completed', 'Already applied, skipping');
                 return;
             }
 
