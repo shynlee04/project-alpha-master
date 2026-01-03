@@ -16,12 +16,12 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 | 04 | [filesystem-sync-audit.md](./04-filesystem-sync-audit.md) | FSA integration, offline queue, conflict resolution | **Complete** |
 | 05 | [agent-tooling-audit.md](./05-agent-tooling-audit.md) | Permissions, injection safety, CRUD boundaries | **Complete** |
 | 06 | [ux-gap-report-desktop.md](./06-ux-gap-report-desktop.md) | Desktop flow completeness vs PRD | **Complete** |
-| 07 | [ux-gap-report-mobile.md](./07-ux-gap-report-mobile.md) | Mobile constraints, touch targets, offline UX | Pending |
-| 08 | [top-25-issues.md](./08-top-25-issues.md) | Prioritized remediation list | Pending |
+| 07 | [ux-gap-report-mobile.md](./07-ux-gap-report-mobile.md) | Mobile constraints, touch targets, offline UX | **Complete** |
+| 08 | [top-25-issues.md](./08-top-25-issues.md) | Prioritized remediation list | **Complete** |
 
 ## Global Findings Summary
-*(To be populated as scan progresses)*
-- **Pass 1:** Architecture is Layer-First Clean Architecture. Workspaces are isolated presentation components.
-- **Pass 2:** Store topology is feature-sliced. Persistence (Dexie) is healthy but mislocated.
-- **Pass 3:** Filesystem sync is mature (offline-ready) but complex. Agent system has strong permissioning but needs strict input sanitization audit.
-- **Pass 4:** Routing is type-safe (TanStack Router) but lacks polish (loading states/404). IDE components are functional but miss "Happy Path" on-boarding states.
+- **Architecture:** Layer-First Clean Architecture. Sound, but strictness varies.
+- **State:** `knowledge-store.ts` is a critical hotspot ("God Store"). Persistence (Dexie) is misplaced in `lib/state`.
+- **Offline:** Robust `FSA` integration, but conflict resolution and mobile resilience are basic.
+- **Security:** Agent permission model is strong; input sanitization needs audit.
+- **UX:** Mobile-ready layout but lacks "Mobile-First" optimizations (toolbar, swipe gestures).
