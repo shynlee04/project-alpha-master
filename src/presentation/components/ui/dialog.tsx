@@ -1,5 +1,16 @@
 "use client"
 
+/**
+ * 8-bit Dialog Component
+ * 
+ * Features:
+ * - Rounded corners (rounded-[4px])
+ * - Soft shadows (shadow-[4px_4px_0_0_rgba(0,0,0,0.1)])
+ * - CSS custom properties for light/dark theme support
+ * - Size and State variants
+ * - i18n support
+ */
+
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
@@ -7,17 +18,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
-
-/**
- * 8-bit Dialog Component
- * 
- * Features:
- * - Square corners (rounded-none)
- * - Hard shadows (shadow-[4px_4px_0_0_#000])
- * - 8-bit specific color tokens
- * - Size and State variants
- * - i18n support
- */
 
 function Dialog({
   ...props
@@ -51,7 +51,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        "fixed inset-0 z-50 bg-[var(--foreground)]/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-opacity duration-200",
         className
       )}
       {...props}
@@ -59,8 +59,13 @@ function DialogOverlay({
   )
 }
 
+/**
+ * CVA variants for DialogContent component
+ * Uses CSS custom properties for light/dark theme support
+ */
 const dialogContentVariants = cva(
-  "fixed left-[50%] top-[50%] z-50 grid w-[95vw] md:w-full translate-x-[-50%] translate-y-[-50%] gap-4 border-2 p-6 shadow-[4px_4px_0_0_rgba(0,0,0,1)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-none outline-none max-h-[85vh] overflow-y-auto overflow-x-hidden",
+  // Base styles with 8-bit aesthetic and theme-aware colors
+  "fixed left-[50%] top-[50%] z-50 grid w-[95vw] md:w-full translate-x-[-50%] translate-y-[-50%] gap-4 border-2 p-6 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-[4px] outline-none max-h-[85vh] overflow-y-auto overflow-x-hidden focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   {
     variants: {
       size: {
@@ -71,10 +76,14 @@ const dialogContentVariants = cva(
         full: "max-w-[calc(100vw-2rem)] h-[calc(100vh-2rem)]",
       },
       variant: {
-        default: "bg-neutral-900 text-neutral-100 border-neutral-700",
-        error: "bg-neutral-900 text-error-500 border-error-500 shadow-error",
-        success: "bg-neutral-900 text-success-500 border-success-500 shadow-success",
-        warning: "bg-neutral-900 text-warning-500 border-warning-500 shadow-warning",
+        // Default variant: card-like appearance
+        default: "bg-[var(--card)] text-[var(--card-foreground)] border-[var(--border)]",
+        // Error variant: red tinted
+        error: "bg-[var(--card)] text-[var(--destructive)] border-[var(--destructive)] shadow-[4px_4px_0_0_rgba(239,68,68,0.2)]",
+        // Success variant: green tinted
+        success: "bg-[var(--card)] text-[var(--success)] border-[var(--success)] shadow-[4px_4px_0_0_rgba(34,197,94,0.2)]",
+        // Warning variant: yellow tinted
+        warning: "bg-[var(--card)] text-[var(--warning)] border-[var(--warning)] shadow-[4px_4px_0_0_rgba(245,158,11,0.2)]",
       },
     },
     defaultVariants: {
@@ -111,8 +120,8 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close
-            className="absolute right-4 top-4 rounded-none opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-800 data-[state=open]:text-muted-foreground p-1"
-            aria-label={t("common.close", { defaultValue: "Close" })} // Use translation here
+            className="absolute right-4 top-4 rounded-[4px] opacity-70 ring-offset-background transition-opacity duration-150 hover:opacity-100 hover:bg-[var(--muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-[var(--muted)] data-[state=open]:text-[var(--muted-foreground)] p-1"
+            aria-label={t("common.close", { defaultValue: "Close" })}
           >
             <XIcon className="h-4 w-4" />
             <span className="sr-only">Close</span>
@@ -127,7 +136,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      className={cn("flex flex-col gap-2 text-center sm:text-left text-[var(--foreground)]", className)}
       {...props}
     />
   )
@@ -153,7 +162,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg font-semibold leading-tight tracking-tight", className)}
+      className={cn("text-lg font-semibold leading-tight tracking-tight text-[var(--foreground)]", className)}
       {...props}
     />
   )
@@ -166,7 +175,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm text-[var(--muted-foreground)]", className)}
       {...props}
     />
   )

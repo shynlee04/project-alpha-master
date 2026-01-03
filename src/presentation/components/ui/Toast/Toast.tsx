@@ -1,6 +1,9 @@
 /**
  * Toast notification component
  * @module components/ui/Toast
+ * @story LT-3.17 (Light Theme Migration)
+ *
+ * Uses CSS custom properties for light/dark theme support.
  */
 
 import { useEffect, useState } from 'react';
@@ -13,11 +16,18 @@ interface ToastItemProps {
     onDismiss: (id: string) => void;
 }
 
+/**
+ * CVA-style variant styles using CSS custom properties
+ */
 const variantStyles: Record<ToastVariant, string> = {
-    success: 'bg-emerald-900/90 border-emerald-500/50 text-emerald-100',
-    error: 'bg-red-900/90 border-red-500/50 text-red-100',
-    warning: 'bg-amber-900/90 border-amber-500/50 text-amber-100',
-    info: 'bg-card/90 border-border/50 text-card-foreground',
+    // Success variant: green tinted
+    success: 'bg-[var(--success-50)] border-[var(--success-200)] text-[var(--success)]',
+    // Error variant: red tinted
+    error: 'bg-[var(--destructive-50)] border-[var(--destructive-200)] text-[var(--destructive)]',
+    // Warning variant: yellow tinted
+    warning: 'bg-[var(--warning-50)] border-[var(--warning-200)] text-[var(--warning)]',
+    // Info variant: neutral with border
+    info: 'bg-[var(--card)] border-[var(--border)] text-[var(--card-foreground)]',
 };
 
 const variantIcons: Record<ToastVariant, typeof CheckCircle> = {
@@ -49,7 +59,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     return (
         <div
             className={`
-                flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg backdrop-blur-sm
+                flex items-center gap-3 px-4 py-3 rounded-[4px] border shadow-lg backdrop-blur-sm
                 transition-all duration-150 ease-out
                 ${variantStyles[toast.variant]}
                 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}
@@ -59,7 +69,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
             <span className="text-sm font-medium flex-1">{toast.message}</span>
             <button
                 onClick={handleDismiss}
-                className="p-1 hover:bg-white/10 rounded transition-colors"
+                className="p-1 hover:bg-[var(--muted)] rounded-[4px] transition-colors"
                 aria-label="Dismiss notification"
             >
                 <X className="w-4 h-4" />
@@ -82,7 +92,7 @@ export function ToastContainer() {
     if (!mounted) return null;
 
     return createPortal(
-        <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
+        <div className="fixed bottom-4 right-4 z-[var(--z-toast)] flex flex-col gap-2 max-w-sm">
             {toasts.map((toast) => (
                 <ToastItem key={toast.id} toast={toast} onDismiss={dismiss} />
             ))}

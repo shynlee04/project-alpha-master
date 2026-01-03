@@ -139,6 +139,63 @@
 
 ---
 
+### Story ARC-1.1: Split dexie-db.ts (🟡 IN_PROGRESS)
+
+**Duration**: 8-12 hours (estimated)
+**Status**: 🟡 DRAFTED → READY FOR CONTEXT
+**Health Score Impact**: +0.5 (estimated)
+**Agent**: @store-refactorer
+**Workflow**: eliminate-god-stores
+
+#### Skills Coordination
+- **Primary Skill**: store-refactorer
+- **Workflow**: eliminate-god-stores (4-step process: analysis → extraction → migration → validation)
+- **Auto-Load Triggers**: ["dexie-db.ts", "god store", "1,267 lines", "split database"]
+- **Quality Standards**:
+  - Max lines per slice: 120
+  - Max functions per slice: 10
+  - Max dependencies per slice: 5
+
+#### Quality Gates
+- **TypeScript Errors**: { before: 1172, target: 0, after: null }
+- **Test Coverage**: { before: null, target: 80%, after: null }
+- **File Size Compliance**: { before: "1,267 lines", target: "≤120 lines", after: null }
+- **Breaking Changes**: { target: 0, after: null }
+
+#### Acceptance Criteria (7 Total)
+- AC-1: Database Schema Slice (≤120 lines) - Given: dexie-db.ts is 1,267 lines - When: split into schema slice - Then: slice ≤120 lines
+- AC-2: Migrations Slice (≤120 lines) - Given: dexie-db.ts contains migrations - When: split into migrations slice - Then: slice ≤120 lines
+- AC-3: Utilities Slice (≤120 lines) - Given: dexie-db.ts has utilities - When: split into utils slice - Then: slice ≤120 lines
+- AC-4: Unified Store (≤300 lines) - Given: slices created - When: combined in unified store - Then: total ≤300 lines
+- AC-5: Facade Pattern - Given: old import paths exist - When: facade exports added - Then: zero breaking changes
+- AC-6: Test Coverage (≥80%) - Given: new slices created - When: tests written - Then: coverage ≥80%
+- AC-7: Documentation - Given: refactoring complete - When: docs updated - Then: AGENTS.md reflects changes
+
+#### Task Breakdown (34 Tasks)
+- **Research (5 tasks)**: T0-T4 - Context7/DeepWiki queries for Dexie.js patterns
+- **Analysis (5 tasks)**: T5-T9 - Import location mapping, slice boundary identification
+- **Slice Extraction (5 tasks)**: T10-T14 - Create schema, migrations, utils slices (≤120 each)
+- **Store Unification (5 tasks)**: T15-T19 - Compose slices in unified store (≤300 total)
+- **Facade Implementation (3 tasks)**: T20-T22 - Re-exports for zero breaking changes
+- **Testing (6 tasks)**: T23-T28 - 12 unit tests, ≥80% coverage
+- **Validation (6 tasks)**: T29-T34 - TypeScript, AC verification, documentation
+
+#### Current Progress
+- **Tasks Completed**: 0/34 (0%)
+- **Phase**: create-story (DONE) → ready-for-context (NEXT)
+- **Story File**: `_bmad-output/sprint-artifacts/ARC-1.1-split-dexie-db.md` (506 lines)
+- **Context XML**: Not yet created (Phase 2)
+
+#### Next Action
+Execute Phase 2 (create-context) with @/sm agent:
+1. Create ARC-1.1-split-dexie-db-context.xml
+2. Document current code state (dexie-db.ts structure)
+3. Document research findings from MCP tools
+4. Add architecture patterns and technical notes
+5. Validate context XML (6 checkpoints)
+
+---
+
 ## Phase 1: Store Refactoring (Week 3-4)
 
 **Status**: 🔴 NOT STARTED

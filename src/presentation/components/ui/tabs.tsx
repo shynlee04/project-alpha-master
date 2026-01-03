@@ -1,9 +1,20 @@
+/**
+ * Tabs Component
+ *
+ * @story LT-3.18 (Light Theme Migration)
+ *
+ * Uses CSS custom properties for light/dark theme support.
+ */
+
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Base tabs container
+ */
 const tabsVariants = cva(
   "flex flex-col gap-2",
   {
@@ -16,24 +27,34 @@ const tabsVariants = cva(
   }
 )
 
+/**
+ * CVA variants for TabsList component
+ * Uses CSS custom properties for light/dark theme support
+ */
 const tabsListVariants = cva(
-  "inline-flex items-center justify-center p-1 border",
+  // Base styles with 8-bit aesthetic and theme-aware colors
+  "inline-flex items-center justify-center p-1 border rounded-[4px] transition-[background-color,border-color] duration-150",
   {
     variants: {
       orientation: {
-        horizontal: "w-fit h-9 rounded-md",
-        vertical: "h-fit w-12 rounded-md",
+        horizontal: "w-fit h-9",
+        vertical: "h-fit w-12",
       },
       theme: {
-        dark: "bg-neutral-900 border-neutral-700",
-        light: "bg-neutral-100 border-neutral-300",
+        dark: "bg-[var(--neutral-900)] border-[var(--neutral-700)]",
+        light: "bg-[var(--neutral-100)] border-[var(--neutral-300)]",
       },
     },
   }
 )
 
+/**
+ * CVA variants for TabsTrigger component
+ * Uses CSS custom properties for light/dark theme support
+ */
 const tabsTriggerVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 border border-transparent font-medium whitespace-nowrap transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50",
+  // Base styles with theme-aware colors
+  "inline-flex items-center justify-center gap-1.5 border border-transparent font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   {
     variants: {
       orientation: {
@@ -46,19 +67,18 @@ const tabsTriggerVariants = cva(
         lg: "text-base",
       },
       state: {
-        default: "text-neutral-500 hover:text-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-500",
-        active: "bg-primary-500 text-white border-primary-500 shadow-sm",
-        disabled: "text-neutral-400 cursor-not-allowed dark:text-neutral-600",
-      },
-      theme: {
-        dark: "focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:outline-2 focus-visible:outline-primary-500",
-        light: "focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:outline-2 focus-visible:outline-primary-500",
+        // Default state: muted text
+        default: "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]",
+        // Active state: primary background
+        active: "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[0_2px_4px_rgba(0,0,0,0.1)]",
+        // Disabled state
+        disabled: "text-[var(--muted-foreground)] cursor-not-allowed opacity-50",
       },
     },
   }
 )
 
-const tabsContentVariants = cva("flex-1 outline-none")
+const tabsContentVariants = cva("flex-1 outline-none transition-[color] duration-150")
 
 interface TabsProps extends React.ComponentProps<typeof TabsPrimitive.Root> {
   orientation?: 'horizontal' | 'vertical'
@@ -118,9 +138,9 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        tabsTriggerVariants({ size, state: 'default', orientation, theme: 'dark' }),
-        "data-[state=active]:" + tabsTriggerVariants({ size, state: 'active', orientation, theme: 'dark' }),
-        "data-[state=disabled]:" + tabsTriggerVariants({ size, state: 'disabled', orientation, theme: 'dark' }),
+        tabsTriggerVariants({ size, state: 'default', orientation }),
+        "data-[state=active]:" + tabsTriggerVariants({ size, state: 'active', orientation }),
+        "data-[disabled]:" + tabsTriggerVariants({ size, state: 'disabled', orientation }),
         className
       )}
       {...props}

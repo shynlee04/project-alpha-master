@@ -1,6 +1,6 @@
 ---
 # Sprint Status - Architecture Remediation
-# Last Updated: 2026-01-04T02:22+07:00
+# Last Updated: 2026-01-04T15:30+07:00
 # Team: Team A (Primary)
 # Agent Mode: @bmad-core-bmad-master v2.0 (Autonomous)
 
@@ -10,15 +10,123 @@ sprint:
   start_date: 2026-01-04
   end_date: 2026-01-10
   status: IN_PROGRESS
-  
-phase: course_correction_complete
+
+phase: sprint_tracking_active
+
+# Skills Coordination Matrix
+skills_coordination:
+  master_skill: "architecture-remediation"
+  agents:
+    store-refactorer:
+      stories: ["ARC-1.1", "ARC-1.2", "ARC-1.3"]
+      specialty: "God store elimination and modularization"
+      quality_standards:
+        max_lines_per_slice: 120
+        max_functions_per_slice: 10
+        max_dependencies_per_slice: 5
+    component-splitter:
+      stories: ["ARC-1.4"]
+      specialty: "Component size normalization and hook extraction"
+      quality_standards:
+        max_lines_per_component: 300
+        max_functions_per_component: 15
+        max_props_per_component: 5
+    typescript-fixer:
+      stories: []
+      specialty: "Batch TypeScript error remediation"
+      quality_standards:
+        max_errors_target: 10
+        final_target: 0
+    test-writer:
+      stories: ["ARC-1.1", "ARC-1.2", "ARC-1.3", "ARC-1.4"]
+      specialty: "Test coverage improvement"
+      quality_standards:
+        min_coverage_target: 80
+        p0_critical_coverage: 90
+    workspace-architect:
+      stories: ["ARC-2.1", "ARC-2.2", "ARC-2.3", "ARC-2.4", "ARC-3.1", "ARC-3.2", "ARC-3.3", "ARC-3.4", "ARC-4.1", "ARC-4.2", "ARC-4.3", "ARC-4.4"]
+      specialty: "Workspace-specific architecture"
+    file-sync-specialist:
+      stories: ["ARC-3.1", "ARC-3.2", "ARC-3.3", "ARC-3.4", "ARC-4.1", "ARC-4.2", "ARC-4.3", "ARC-4.4"]
+      specialty: "File system synchronization"
+  workflows:
+    eliminate-god-stores:
+      stories: ["ARC-1.1", "ARC-1.2", "ARC-1.3"]
+      steps: ["analysis", "extraction", "migration", "validation"]
+      time_estimates:
+        analysis: "2-3h"
+        extraction: "4-8h"
+        migration: "3-6h"
+        validation: "1-2h"
+    normalize-components:
+      stories: ["ARC-1.4"]
+      steps: ["analysis", "split", "test", "validate"]
+      time_estimates:
+        analysis: "1-2h"
+        split: "3-6h"
+        test: "2-4h"
+        validate: "1-2h"
+    fix-typescript-errors:
+      stories: []
+      steps: ["analyze", "fix", "validate"]
+      time_estimates:
+        analyze: "1-2h"
+        fix: "4-8h"
+        validate: "1-2h"
+    improve-test-coverage:
+      stories: ["ARC-1.1", "ARC-1.2", "ARC-1.3", "ARC-1.4"]
+      steps: ["analyze", "write", "validate"]
+      time_estimates:
+        analyze: "1-2h"
+        write: "4-10h"
+        validate: "1-2h"
+    workspace-file-system-e2e:
+      stories: ["ARC-2.1", "ARC-2.2", "ARC-2.3", "ARC-2.4", "ARC-3.1", "ARC-3.2", "ARC-3.3", "ARC-3.4", "ARC-4.1", "ARC-4.2", "ARC-4.3", "ARC-4.4"]
+      steps: ["audit", "implement", "test", "validate"]
+      time_estimates:
+        audit: "2-4h"
+        implement: "8-16h"
+        test: "4-8h"
+        validate: "2-4h"
+
+# Workflow Execution Log
+workflow_execution_log:
+  - timestamp: "2026-01-04T02:22+07:00"
+    story_id: "CD-001"
+    phase: "done"
+    status: "completed"
+    agent: "@bmad-bmm-dev"
+    hours_burned: 10
+    notes: "Eliminated circular dependencies (28 → 2 cycles)"
+
+# Quality Gates Tracking
+quality_gates:
+  baselines:
+    typescript_errors: 1172
+    test_coverage: 45
+    god_stores: 30
+    component_violations: 45
+    circular_dependencies: 2
+  targets:
+    typescript_errors: 0
+    test_coverage: 80
+    god_stores: 0
+    component_violations: 0
+    circular_dependencies: 0
+  current_metrics:
+    typescript_errors: 1172
+    test_coverage: 45
+    god_stores: 30
+    component_violations: 45
+    circular_dependencies: 2
 
 current_epic:
   id: ARC-1
   name: Foundation Stabilization
   status: IN_PROGRESS
   progress: 0%
-  
+  workflow_phase: "ready-for-dev"
+
 epics:
   - id: ARC-1
     name: Foundation Stabilization
@@ -28,51 +136,118 @@ epics:
     stories:
       - id: ARC-1.1
         name: Split dexie-db.ts (1,267 lines)
-        status: TODO
+        status: READY_FOR_DEV
         priority: P0
-        estimated_hours: 8
-        assignee: "@bmad-bmm-dev"
+        estimated_hours: 10
+        assignee: "@store-refactorer"
+        # Skills Coordination
+        skills:
+          primary: "store-refactorer"
+          workflow: "eliminate-god-stores"
+          auto_load_triggers:
+            - "dexie-db.ts"
+            - "god store"
+            - "1,267 lines"
+            - "split database"
+          quality_gates:
+            typescript_errors: { before: 1172, target: 0, after: null }
+            test_coverage: { before: null, target: 80, after: null }
+            file_size_compliance: { before: "1,267 lines", target: "≤120 lines", after: null }
+            breaking_changes: { target: 0, after: null }
+        # Workflow Phase Tracking
+        workflow_phase: "ready-for-dev"
+        workflow_started_at: "2026-01-04T15:30+07:00"
+        current_agent: null
+        # Acceptance Criteria
         acceptance_criteria:
-          - "dexie-db.ts < 300 lines"
-          - "Slices created for: tables, migrations, utils"
-          - "Facade pattern for backward compatibility"
-          - "TypeScript passes (code files)"
-          - "All imports updated"
-        
+          - "AC-1: Database Schema Slice (≤120 lines) - Given: dexie-db.ts is 1,267 lines - When: split into schema slice - Then: slice ≤120 lines"
+          - "AC-2: Migrations Slice (≤120 lines) - Given: dexie-db.ts contains migrations - When: split into migrations slice - Then: slice ≤120 lines"
+          - "AC-3: Utilities Slice (≤120 lines) - Given: dexie-db.ts has utilities - When: split into utils slice - Then: slice ≤120 lines"
+          - "AC-4: Unified Store (≤300 lines) - Given: slices created - When: combined in unified store - Then: total ≤300 lines"
+          - "AC-5: Facade Pattern - Given: old import paths exist - When: facade exports added - Then: zero breaking changes"
+          - "AC-6: Test Coverage (≥80%) - Given: new slices created - When: tests written - Then: coverage ≥80%"
+          - "AC-7: Documentation - Given: refactoring complete - When: docs updated - Then: AGENTS.md reflects changes"
+
       - id: ARC-1.2
         name: Split rag-store.ts (1,595 lines)
         status: TODO
         priority: P0
         estimated_hours: 10
-        assignee: "@bmad-bmm-dev"
+        assignee: "@store-refactorer"
+        skills:
+          primary: "store-refactorer"
+          workflow: "eliminate-god-stores"
+          auto_load_triggers:
+            - "rag-store.ts"
+            - "god store"
+            - "1,595 lines"
+            - "split RAG store"
+          quality_gates:
+            typescript_errors: { before: null, target: 0, after: null }
+            test_coverage: { before: null, target: 80, after: null }
+            file_size_compliance: { before: "1,595 lines", target: "≤120 lines", after: null }
+            breaking_changes: { target: 0, after: null }
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
         acceptance_criteria:
           - "rag-store.ts < 300 lines"
           - "Slices: indexing, query, embedding, retrieval"
           - "Unified store composes slices"
           - "TypeScript passes"
-          
+
       - id: ARC-1.3
         name: Split conversation stores (25 duplicates)
         status: TODO
         priority: P0
         estimated_hours: 12
-        assignee: "@bmad-bmm-dev"
+        assignee: "@store-refactorer"
+        skills:
+          primary: "store-refactorer"
+          workflow: "eliminate-god-stores"
+          auto_load_triggers:
+            - "conversation store"
+            - "duplicate stores"
+            - "consolidate"
+          quality_gates:
+            typescript_errors: { before: null, target: 0, after: null }
+            test_coverage: { before: null, target: 80, after: null }
+            duplicate_count: { before: 25, target: 1, after: null }
+            breaking_changes: { target: 0, after: null }
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
         acceptance_criteria:
           - "Single source of truth for conversations"
           - "Workspace bindings via context"
           - "No duplicate stores"
-          
+
       - id: ARC-1.4
         name: Component Normalization (top 10)
         status: TODO
         priority: P1
         estimated_hours: 16
-        assignee: "@bmad-bmm-dev"
+        assignee: "@component-splitter"
+        skills:
+          primary: "component-splitter"
+          workflow: "normalize-components"
+          auto_load_triggers:
+            - "component too large"
+            - "normalize components"
+            - "extract hooks"
+          quality_gates:
+            typescript_errors: { before: null, target: 0, after: null }
+            test_coverage: { before: null, target: 80, after: null }
+            component_violations: { before: 10, target: 0, after: null }
+            breaking_changes: { target: 0, after: null }
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
         acceptance_criteria:
           - "All components < 300 lines"
           - "Hooks extracted"
           - "Tests added for each"
-          
+
   - id: ARC-2
     name: IDE Workspace E2E
     priority: P0
@@ -84,22 +259,68 @@ epics:
         status: TODO
         priority: P0
         estimated_hours: 8
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "file system permissions"
+            - "IDE workspace"
+            - "harden permissions"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-2.2
         name: WebContainer error recovery
         status: TODO
         priority: P0
         estimated_hours: 6
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "error recovery"
+            - "WebContainer"
+            - "resilience"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-2.3
         name: Terminal permission safety
         status: TODO
         priority: P1
         estimated_hours: 4
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "terminal permissions"
+            - "security"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-2.4
         name: E2E validation testing
         status: TODO
         priority: P1
         estimated_hours: 6
-        
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "E2E testing"
+            - "validation"
+            - "IDE workspace"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
   - id: ARC-3
     name: Notes Workspace E2E
     priority: P0
@@ -111,22 +332,66 @@ epics:
         status: TODO
         priority: P0
         estimated_hours: 8
+        assignee: "@file-sync-specialist"
+        skills:
+          primary: "file-sync-specialist"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "notes sync"
+            - "sync store"
+            - "file system"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-3.2
         name: Implement sync engine
         status: TODO
         priority: P0
         estimated_hours: 10
+        assignee: "@file-sync-specialist"
+        skills:
+          primary: "file-sync-specialist"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "sync engine"
+            - "implementation"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-3.3
         name: Conflict resolution UI
         status: TODO
         priority: P0
         estimated_hours: 6
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "conflict resolution"
+            - "UI"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-3.4
         name: Integration with notes-store
         status: TODO
         priority: P1
         estimated_hours: 4
-        
+        assignee: "@file-sync-specialist"
+        skills:
+          primary: "file-sync-specialist"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "integration"
+            - "notes store"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
   - id: ARC-4
     name: Knowledge Workspace E2E
     priority: P0
@@ -138,21 +403,64 @@ epics:
         status: TODO
         priority: P0
         estimated_hours: 6
+        assignee: "@file-sync-specialist"
+        skills:
+          primary: "file-sync-specialist"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "knowledge import"
+            - "import store"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-4.2
         name: Implement import engine
         status: TODO
         priority: P0
         estimated_hours: 8
+        assignee: "@file-sync-specialist"
+        skills:
+          primary: "file-sync-specialist"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "import engine"
+            - "knowledge workspace"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-4.3
         name: Duplicate detection
         status: TODO
         priority: P0
         estimated_hours: 4
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "duplicate detection"
+            - "knowledge"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
+
       - id: ARC-4.4
         name: RAG integration verification
         status: TODO
         priority: P1
         estimated_hours: 6
+        assignee: "@workspace-architect"
+        skills:
+          primary: "workspace-architect"
+          workflow: "workspace-file-system-e2e"
+          auto_load_triggers:
+            - "RAG integration"
+            - "verification"
+        workflow_phase: "backlog"
+        workflow_started_at: null
+        current_agent: null
 
 completed_work:
   - id: CD-001
@@ -168,7 +476,11 @@ next_action:
   name: "Split dexie-db.ts"
   workflow: "eliminate-god-stores"
   agent: "@store-refactorer"
-  command: "Load store-refactorer agent and execute on dexie-db.ts"
+  command: "Split dexie-db.ts using eliminate-god-stores workflow"
+  auto_load_triggers:
+    - "architecture-remediation master skill"
+    - "store-refactorer agent skill"
+    - "eliminate-god-stores workflow skill"
 
 blockers: []
 
@@ -177,3 +489,6 @@ notes:
   - "Use incremental TS checking for speed"
   - "Facade pattern required for all god store splits"
   - "Workspace priority: IDE → Notes → Knowledge"
+  - "Skills auto-load based on context keywords"
+  - "Follow story-dev-cycle.md workflow strictly"
+  - "Update sprint status after each phase transition"
