@@ -2472,8 +2472,621 @@ All components use the phase 1 design tokens:
 
 ---
 
-**Document End (Phase 2 Complete)**
+## Phase 3: Theme Transition Design
 
-*Proceeding to Phase 3: Theme Transition Design...*
+### Overview
+
+Phase 3 defines smooth, performant animations and transitions for switching between dark and light themes. The goal is to achieve a seamless, glitch-free experience that maintains visual continuity while respecting user accessibility preferences.
+
+### Design Principles
+
+1. **Performance First**: Transitions should complete within 200-300ms maximum
+2. **Smoothness**: Use appropriate easing functions for natural feel
+3. **Accessibility**: Respect `prefers-reduced-motion` setting
+4. **Consistency**: All properties should transition with similar timing
+5. **State Preservation**: No layout shifts or visual flickering during transition
+
+---
+
+### 31. Theme Switch Transition System
+
+#### 31.1 Global Transition Properties
+
+**Theme Toggle Duration**
+- **Normal**: 200ms
+- **Slow**: 400ms (accessibility preference)
+- **Instant**: 0ms (explicit user request or prefers-reduced-motion)
+
+**Transition Timing Function**
+- **Easing**: cubic-bezier(0.4, 0, 0.2, 1) (ease-out)
+- **Alternative**: cubic-bezier(0.25, 0.46, 0.45, 0.94) (ease-in-out for larger changes)
+
+**CSS Implementation**
+```css
+:root {
+  --theme-transition-duration: 200ms;
+  --theme-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-transition-duration: 0ms;
+  }
+}
+
+/* Apply transition to all themed properties */
+*,
+*::before,
+*::after {
+  transition-property:
+    color,
+    background-color,
+    background-image,
+    border-color,
+    outline-color,
+    box-shadow,
+    fill,
+    stroke;
+  transition-duration: var(--theme-transition-duration);
+  transition-timing-function: var(--theme-transition-easing);
+}
+```
+
+**Properties to Transition**
+- **Colors**: All color tokens (background, foreground, borders, etc.)
+- **Shadows**: All box-shadow values
+- **Gradients**: All linear/radial gradients
+- **Images**: SVG fill and stroke colors
+- **Scrollbars**: Custom scrollbar colors
+
+**Properties NOT to Transition**
+- **Layout**: Width, height, margins, padding (causes layout shift)
+- **Transform**: Transformations (performance cost)
+- **Opacity**: Except for specific fade effects
+- **Position**: Top, left, bottom, right (causes reflow)
+
+---
+
+### 32. Component-Specific Transitions
+
+#### 32.1 Color Interpolation Strategy
+
+**Primary Color Transitions**
+```
+Dark (#f97316) → Light (#f97316)
+- Direct mapping: No interpolation needed (same value)
+- Alpha channel: Maintain 100% opacity
+```
+
+**Background Color Transitions**
+```
+Dark (#0f0f11) → Light (#ffffff)
+- Interpolation: Linear RGB interpolation
+- Duration: 200ms
+- Easing: ease-out
+- Steps: ~16-20 color steps for smooth gradient
+```
+
+**Text Color Transitions**
+```
+Dark (#fafafa) → Light (#0f0f11)
+- Interpolation: Linear RGB interpolation
+- Duration: 200ms
+- Preserve readability throughout (never below 4.5:1 contrast)
+```
+
+**Border Color Transitions**
+```
+Dark (#27272a) → Light (#e5e5e5)
+- Interpolation: Linear RGB interpolation
+- Duration: 200ms
+- Edge preservation: Maintain visible borders at all times
+```
+
+#### 32.2 Shadow Transitions
+
+**Shadow Intensity Mapping**
+
+| Element | Dark Theme Shadow | Light Theme Shadow | Duration |
+|---------|------------------|-------------------|----------|
+| **Card** | `0 4px 6px -1px rgba(0,0,0,0.3)` | `0 1px 3px rgba(0,0,0,0.1)` | 200ms |
+| **Button** | `0 4px 12px rgba(249,115,22,0.4)` | `0 4px 12px rgba(249,115,22,0.3)` | 150ms |
+| **Dialog** | `0 25px 50px -12px rgba(0,0,0,0.5)` | `0 25px 50px -12px rgba(0,0,0,0.25)` | 200ms |
+| **Tooltip** | `0 10px 15px rgba(0,0,0,0.4)` | `0 10px 15px rgba(0,0,0,0.1)` | 150ms |
+
+**Shadow Transition Implementation**
+```css
+.card {
+  transition: box-shadow var(--theme-transition-duration) var(--theme-transition-easing);
+}
+
+.dark .card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.light .card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+```
+
+#### 32.3 Icon Color Transitions
+
+**Icon Color Mapping**
+
+| Icon State | Dark Theme | Light Theme | Duration |
+|------------|-----------|-------------|----------|
+| **Default** | `#a3a3a3` (neutral-400) | `#525252` (neutral-600) | 200ms |
+| **Hover** | `#e5e5e5` (neutral-200) | `#262626` (neutral-800) | 150ms |
+| **Active** | `#f97316` (primary-500) | `#f97316` (primary-500) | 150ms |
+| **Disabled** | `#525252` (neutral-600) | `#d4d4d4` (neutral-300) | 200ms |
+
+**SVG Fill/Stroke Transitions**
+```css
+.icon {
+  transition: fill var(--theme-transition-duration), stroke var(--theme-transition-duration);
+}
+```
+
+---
+
+### 33. Transition Timing & Easing
+
+#### 33.1 Transition Duration Guidelines
+
+| Transition Type | Duration | Use Case |
+|----------------|----------|----------|
+| **Instant** | 0ms | prefers-reduced-motion, explicit instant mode |
+| **Fast** | 100ms | Subtle micro-interactions (hover on small icons) |
+| **Normal** | 200ms | Standard component transitions (buttons, cards) |
+| **Slow** | 300ms | Large area transitions (background, dialogs) |
+| **Extra Slow** | 400ms | Full-page transitions (with user preference) |
+
+**Implementation Strategy**
+```css
+:root {
+  --transition-instant: 0ms;
+  --transition-fast: 100ms;
+  --transition-normal: 200ms;
+  --transition-slow: 300ms;
+  --transition-extra-slow: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-normal: 0ms;
+    --transition-slow: 0ms;
+    --transition-extra-slow: 0ms;
+  }
+}
+```
+
+#### 33.2 Easing Function Guidelines
+
+| Easing Function | Curve | Use Case |
+|-----------------|-------|----------|
+| **Linear** | `linear` | Simple color changes |
+| **Ease** | `ease` | Default smooth transitions |
+| **Ease-In** | `ease-in` | Elements entering viewport |
+| **Ease-Out** | `ease-out` | Elements leaving viewport (preferred) |
+| **Ease-In-Out** | `ease-in-out` | Full back-and-forth transitions |
+| **Custom Bezier** | `cubic-bezier(0.4, 0, 0.2, 1)` | Theme transitions (preferred) |
+
+**Recommended Easing**
+```css
+:root {
+  --easing-theme: cubic-bezier(0.4, 0, 0.2, 1); /* For theme toggle */
+  --easing-component: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* For components */
+  --easing-popup: cubic-bezier(0.16, 1, 0.3, 1); /* For modals/popovers */
+}
+```
+
+---
+
+### 34. State Preservation During Transition
+
+#### 34.1 Layout Shift Prevention
+
+**Challenge**: Color transitions can cause layout shifts if not handled properly
+
+**Solution**: Use color-inverted approach for critical elements
+
+**Strategy**
+1. **Text Elements**: Ensure text remains readable throughout transition
+2. **Borders**: Maintain visible border contrast at all stages
+3. **Shadows**: Adjust shadow opacity inversely with background
+4. **Images**: Use opacity-based transitions instead of color where possible
+
+**Example: Readable Text During Transition**
+```css
+/* Ensure text never drops below 4.5:1 contrast during transition */
+body {
+  /* Start: Dark background, light text (13.2:1) */
+  color: #fafafa;
+  background: #0f0f11;
+  transition: color 200ms ease-out, background 200ms ease-out;
+}
+
+body.light {
+  /* End: Light background, dark text (13.2:1) */
+  color: #0f0f11;
+  background: #ffffff;
+}
+
+/* Mid-transition: Text remains readable (maintains >4.5:1) */
+```
+
+#### 34.2 Scrollbar Transitions
+
+**Custom Scrollbar Styling**
+```css
+/* Scrollbar thumb color transition */
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-600);
+  transition: background var(--theme-transition-duration);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #525252; /* neutral-600 in dark */
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #a3a3a3; /* neutral-400 in light */
+}
+
+/* Scrollbar track color transition */
+::-webkit-scrollbar-track {
+  background: var(--neutral-900);
+  transition: background var(--theme-transition-duration);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #171717; /* neutral-900 */
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #f5f5f5; /* neutral-100 */
+}
+```
+
+---
+
+### 35. Component Transition Guidelines
+
+#### 35.1 Button Transition Example
+
+```css
+.btn-primary {
+  /* Properties transitioning */
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); /* Dark theme shadow */
+  
+  /* Transition settings */
+  transition:
+    background-color var(--theme-transition-duration) var(--easing-theme),
+    color var(--theme-transition-duration) var(--easing-theme),
+    box-shadow var(--theme-transition-duration) var(--easing-theme),
+    transform 150ms var(--easing-component);
+  
+  /* Separate hover transition for snappier feel */
+}
+
+.light .btn-primary {
+  /* Light theme shadow adjustment */
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+}
+```
+
+#### 35.2 Input Field Transition Example
+
+```css
+.input-text {
+  background-color: var(--background);
+  border-color: var(--input);
+  color: var(--foreground);
+  
+  transition:
+    background-color var(--theme-transition-duration) var(--easing-theme),
+    border-color var(--theme-transition-duration) var(--easing-theme),
+    color var(--theme-transition-duration) var(--easing-theme),
+    box-shadow 150ms var(--easing-component); /* Faster for focus state */
+}
+
+.input-text:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.input-text::placeholder {
+  color: var(--muted-foreground);
+  transition: color var(--theme-transition-duration) var(--easing-theme);
+}
+```
+
+#### 35.3 Card Transition Example
+
+```css
+.card {
+  background-color: var(--card);
+  border-color: var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Light theme shadow */
+  
+  transition:
+    background-color var(--theme-transition-duration) var(--easing-theme),
+    border-color var(--theme-transition-duration) var(--easing-theme),
+    box-shadow 200ms var(--easing-theme),
+    transform 150ms var(--easing-component); /* Faster for hover */
+}
+
+.dark .card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); /* Dark theme shadow */
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.dark .card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4); /* Dark theme hover */
+}
+
+.light .card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Light theme hover */
+}
+```
+
+---
+
+### 36. Performance Optimization
+
+#### 36.1 GPU Acceleration
+
+**Use transform and opacity for best performance**
+```css
+/* ✅ GOOD: GPU-accelerated properties */
+.animation-element {
+  transform: translateZ(0);
+  opacity: 0.5;
+  will-change: transform, opacity;
+}
+
+/* ❌ AVOID: Layout-triggering properties during theme transition */
+.animation-element {
+  /* Don't transition width, height, margin, padding */
+  width: 200px;
+  height: 200px;
+  margin: 16px;
+  padding: 16px;
+}
+```
+
+#### 36.2 Reduce Reflows
+
+**Batch DOM operations**
+```javascript
+// ✅ GOOD: Batch class updates
+function toggleTheme() {
+  const root = document.documentElement;
+  
+  // Single batch update
+  root.classList.toggle('light');
+  
+  // Update custom properties in one go
+  root.style.setProperty('--theme-transition-duration', '200ms');
+}
+
+// ❌ AVOID: Multiple DOM touches
+function toggleTheme() {
+  // Multiple individual updates
+  document.getElementById('header').classList.add('light');
+  document.getElementById('sidebar').classList.add('light');
+  document.getElementById('content').classList.add('light');
+}
+```
+
+#### 36.3 Will-Change Optimization
+
+**Use sparingly and remove after animation**
+```css
+/* Apply during transition only */
+.transitioning {
+  will-change: color, background-color, border-color, box-shadow;
+}
+
+/* Clean up after transition */
+.transitioned {
+  will-change: auto;
+}
+```
+
+---
+
+### 37. Accessibility Considerations
+
+#### 37.1 Reduced Motion Support
+
+**System Preferences**
+```css
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all theme transitions */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+  }
+  
+  /* Respect user preference for less motion */
+  .btn-primary:hover {
+    transform: none;
+  }
+  
+  .card:hover {
+    transform: none;
+  }
+}
+```
+
+**User Toggle** (Optional preference setting)
+```javascript
+// Store user preference
+const userPreferences = {
+  reducedMotion: false
+};
+
+// Apply during theme toggle
+function toggleTheme() {
+  const duration = userPreferences.reducedMotion ? '0ms' : '200ms';
+  document.documentElement.style.setProperty('--theme-transition-duration', duration);
+}
+```
+
+#### 37.2 Color Blindness Support
+
+**Ensure transitions don't compromise other accessibility features**
+
+**Strategies**
+1. **Maintain contrast**: Contrast ratio must not drop below 4.5:1 during transition
+2. **Shape + Color**: Don't rely solely on color for meaning
+3. **Text labels**: Ensure text labels remain readable without color
+4. **Patterns**: Use patterns where possible in addition to color
+
+**Example: Status Badge with Shape Indicator**
+```css
+.badge {
+  background-color: var(--badge-color);
+  border-radius: 4px; /* Always keep radius for shape */
+}
+
+.badge-error::before {
+  /* Add icon for users who can't see color */
+  content: '×';
+  color: var(--badge-foreground);
+}
+```
+
+---
+
+### 38. Testing & Validation
+
+#### 38.1 Visual Regression Testing
+
+**Automated Testing Checklist**
+- [ ] Theme toggle works in all browsers (Chrome, Firefox, Safari, Edge)
+- [ ] No color flashes during transition
+- [ ] No layout shifts during transition
+- [ ] All interactive elements remain clickable during transition
+- [ ] Scrollbar colors transition smoothly
+- [ ] Shadow intensities look correct in both themes
+- [ ] Text contrast never drops below 4.5:1
+
+**Manual Testing Checklist**
+- [ ] Toggle theme 10+ times rapidly (stability test)
+- [ ] Test with large text/small text (accessibility)
+- [ ] Test on mobile touch device (feel/timing)
+- [ ] Test with multiple monitors (consistency)
+- [ ] Test with high-DPI/Retina displays (sharpness)
+- [ ] Test with system color schemes (if supported)
+
+#### 38.2 Performance Testing
+
+**Metrics to Track**
+- **First Paint**: Time to first render
+- **Theme Toggle Time**: Time from click to transition complete
+- **Frame Rate**: Maintain 60fps during transition
+- **CPU Usage**: Monitor during transitions (should be <10%)
+- **Memory Usage**: No memory leaks with repeated toggles
+
+**Performance Budget**
+- Theme toggle completes in <200ms
+- Frame rate never drops below 30fps
+- No jank or stuttering
+- CPU usage spike lasts <100ms after trigger
+
+---
+
+### 39. Implementation Examples
+
+#### 39.1 React Integration Example
+
+```jsx
+// useThemeTransition.js
+import { useEffect } from 'react';
+
+export function useThemeTransition(isReducedMotion = false) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const duration = isReducedMotion ? '0ms' : '200ms';
+    
+    // Set transition duration
+    root.style.setProperty('--theme-transition-duration', duration);
+    
+    // Cleanup
+    return () => {
+      root.style.removeProperty('--theme-transition-duration');
+    };
+  }, [isReducedMotion]);
+}
+
+// ThemeToggle.jsx
+import { useThemeTransition } from './useThemeTransition';
+import { useDarkMode } from './useDarkMode';
+
+export function ThemeToggle({ userReducedMotion }) {
+  const { isDark, toggle } = useDarkMode();
+  useThemeTransition(userReducedMotion);
+  
+  return (
+    <button 
+      onClick={toggle}
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
+    >
+      {isDark ? '☀️' : '🌙'}
+    </button>
+  );
+}
+```
+
+#### 39.2 Vue Integration Example
+
+```vue
+<!-- ThemeTransition.vue -->
+<script setup>
+import { watch, onMounted } from 'vue';
+import { useDarkMode } from './composables/useDarkMode';
+
+const { isDark } = useDarkMode();
+
+const setThemeTransition = (reducedMotion) => {
+  const duration = reducedMotion ? '0ms' : '200ms';
+  document.documentElement.style.setProperty(
+    '--theme-transition-duration', 
+    duration
+  );
+};
+
+onMounted(() => {
+  setThemeTransition(false);
+});
+
+watch(isDark, () => {
+  // Transition happens automatically via CSS
+});
+</script>
+```
+
+---
+
+**Document End (Phase 3 Complete)**
+
+*Proceeding to Phase 4: Platform-Specific Requirements...*
+
+*This document is part of the Via-gent Light Theme Design System. For questions or clarifications, please refer to the project documentation or contact the UX Design team.*
 
 *This document is part of the Via-gent Light Theme Design System. For questions or clarifications, please refer to the project documentation or contact the UX Design team.*

@@ -12,7 +12,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
-import type { IndexStatus, IndexOperation } from '@/infrastructure/persistence/stores/rag/rag-types';
+import { IndexStatus, IndexOperation } from '@/infrastructure/persistence/stores/rag/rag-types';
 
 /**
  * IndexingProgressPanel props
@@ -58,7 +58,7 @@ export function IndexingProgressPanel({ className = '' }: IndexingProgressPanelP
     const indexingOperation = useRAGStore((s) => s.indexingOperation);
 
     // Hide panel when index is idle or ready
-    if (indexStatus === 'idle' || indexStatus === 'ready') {
+    if (indexStatus === IndexStatus.IDLE || indexStatus === IndexStatus.READY) {
         return null;
     }
 
@@ -68,13 +68,13 @@ export function IndexingProgressPanel({ className = '' }: IndexingProgressPanelP
     // Get operation label
     const getOperationLabel = (operation: IndexOperation): string => {
         switch (operation) {
-            case 'embedding':
+            case IndexOperation.EMBEDDING:
                 return t('rag.indexing.embedding', 'Generating Embeddings');
-            case 'chunking':
+            case IndexOperation.CHUNKING:
                 return t('rag.indexing.chunking', 'Chunking Content');
-            case 'search':
+            case IndexOperation.INDEXING:
                 return t('rag.indexing.searching', 'Searching Index');
-            case 'idle':
+            case IndexOperation.IDLE:
             default:
                 return t('rag.indexing.processing', 'Processing');
         }
