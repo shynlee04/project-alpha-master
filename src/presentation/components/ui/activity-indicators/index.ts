@@ -11,6 +11,7 @@
  * - EmbeddingProgressIndicator: Embedding generation progress
  * - ChunkingStatusIndicator: Document chunking progress
  * - SyncStatusIndicator: File synchronization progress
+ * - SyncStatusPanel: Container component (event bus integration)
  *
  * December 2025 Patterns:
  * - Single responsibility (one status per component)
@@ -23,4 +24,5 @@ export { DatabaseIndexingIndicator } from './DatabaseIndexingIndicator'
 export { EmbeddingProgressIndicator } from './EmbeddingProgressIndicator'
 export { ChunkingStatusIndicator } from './ChunkingStatusIndicator'
 export { SyncStatusIndicator } from './SyncStatusIndicator'
+export { SyncStatusPanel } from './SyncStatusPanel'
 export type { ActivityState, ActivityStatus, BaseActivityIndicatorProps } from './types'

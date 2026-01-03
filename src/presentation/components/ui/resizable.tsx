@@ -99,24 +99,41 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       startLayout: number[]
     } | null>(null)
 
+    // Collapse/expand state tracking
+    const [collapsedPanels, setCollapsedPanels] = React.useState<Set<string>>(new Set())
+    const previousSizesRef = React.useRef<Map<string, number>>(new Map())
+    const panelIdToIndexRef = React.useRef<Map<string, number>>(new Map())
+
     // Flatten children to handle Fragments
     const flatChildren = React.useMemo(() => flattenChildren(children), [children])
 
-    // Count panels and collect default sizes
-    const { panelCount, defaultSizes } = React.useMemo(() => {
+    // Count panels and collect default sizes + IDs
+    const { panelCount, defaultSizes, panelIds } = React.useMemo(() => {
       let count = 0
       const sizes: number[] = []
+      const ids: (string | undefined)[] = []
 
       flatChildren.forEach((child) => {
         if (React.isValidElement(child) && isResizablePanel(child)) {
           const props = child.props as ResizablePanelProps
           sizes.push(props.defaultSize ?? 0)
+          ids.push(props.id)
           count++
         }
       })
 
-      return { panelCount: count, defaultSizes: sizes }
+      return { panelCount: count, defaultSizes: sizes, panelIds: ids }
     }, [flatChildren])
+
+    // Build panel ID to index mapping
+    React.useEffect(() => {
+      panelIdToIndexRef.current.clear()
+      panelIds.forEach((id, index) => {
+        if (id) {
+          panelIdToIndexRef.current.set(id, index)
+        }
+      })
+    }, [panelIds])
 
     // Initialize/update layout when panel count changes
     React.useLayoutEffect(() => {
@@ -172,9 +189,101 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
           onLayout?.(newLayout)
         }
       },
-      collapse: (_id) => { /* TODO: implement collapse */ },
-      expand: (_id) => { /* TODO: implement expand */ }
-    }))
+      collapse: (panelId: string) => {
+        const panelIndex = panelIdToIndexRef.current.get(panelId)
+        if (panelIndex === undefined || layout.length === 0) return
+
+        // Already collapsed?
+        if (collapsedPanels.has(panelId)) return
+
+        // Save current size before collapsing
+        previousSizesRef.current.set(panelId, layout[panelIndex])
+
+        // Get min size for this panel (default to 0 for collapse)
+        const panelConfig = panelConfigsRef.current.get(panelIndex)
+        const collapsedSize = panelConfig?.minSize ?? 0
+
+        // Calculate space to redistribute
+        const spaceToRedistribute = layout[panelIndex] - collapsedSize
+
+        // Find non-collapsed panels to expand
+        const expandablePanels = layout
+          .map((size, idx) => ({ size, idx }))
+          .filter(p => p.idx !== panelIndex && !Array.from(collapsedPanels).some(
+            id => panelIdToIndexRef.current.get(id) === p.idx
+          ))
+
+        if (expandablePanels.length === 0) return
+
+        // Distribute space proportionally to other panels
+        const totalExpandableSize = expandablePanels.reduce((sum, p) => sum + p.size, 0)
+        const newLayout = [...layout]
+        newLayout[panelIndex] = collapsedSize
+
+        expandablePanels.forEach(p => {
+          const proportion = totalExpandableSize > 0 ? p.size / totalExpandableSize : 1 / expandablePanels.length
+          newLayout[p.idx] = p.size + (spaceToRedistribute * proportion)
+        })
+
+        setCollapsedPanels(prev => new Set(prev).add(panelId))
+        setLayout(newLayout)
+        onLayout?.(newLayout)
+      },
+      expand: (panelId: string) => {
+        const panelIndex = panelIdToIndexRef.current.get(panelId)
+        if (panelIndex === undefined || layout.length === 0) return
+
+        // Not collapsed?
+        if (!collapsedPanels.has(panelId)) return
+
+        // Get the size to restore (or default to equal share)
+        const previousSize = previousSizesRef.current.get(panelId) ?? (100 / layout.length)
+
+        // Current collapsed size
+        const currentSize = layout[panelIndex]
+        const spaceNeeded = previousSize - currentSize
+
+        // Find non-collapsed panels to shrink
+        const shrinkablePanels = layout
+          .map((size, idx) => ({ size, idx }))
+          .filter(p => {
+            if (p.idx === panelIndex) return false
+            const config = panelConfigsRef.current.get(p.idx)
+            const minSize = config?.minSize ?? 5
+            return p.size > minSize
+          })
+
+        if (shrinkablePanels.length === 0) return
+
+        // Shrink other panels proportionally
+        const totalShrinkableSize = shrinkablePanels.reduce((sum, p) => {
+          const config = panelConfigsRef.current.get(p.idx)
+          const minSize = config?.minSize ?? 5
+          return sum + (p.size - minSize)
+        }, 0)
+
+        const newLayout = [...layout]
+        newLayout[panelIndex] = previousSize
+
+        shrinkablePanels.forEach(p => {
+          const config = panelConfigsRef.current.get(p.idx)
+          const minSize = config?.minSize ?? 5
+          const shrinkableAmount = p.size - minSize
+          const proportion = totalShrinkableSize > 0 ? shrinkableAmount / totalShrinkableSize : 1 / shrinkablePanels.length
+          const shrinkAmount = Math.min(spaceNeeded * proportion, shrinkableAmount)
+          newLayout[p.idx] = p.size - shrinkAmount
+        })
+
+        setCollapsedPanels(prev => {
+          const next = new Set(prev)
+          next.delete(panelId)
+          return next
+        })
+        previousSizesRef.current.delete(panelId)
+        setLayout(newLayout)
+        onLayout?.(newLayout)
+      }
+    }), [layout, onLayout, collapsedPanels])
 
     const registerPanel = React.useCallback((index: number, config: PanelConfig) => {
       panelConfigsRef.current.set(index, config)
@@ -322,6 +431,9 @@ function ResizablePanel({
 }: ResizablePanelProps & { _size?: number; _index?: number }) {
   const context = React.useContext(ResizableContext)
 
+  // Determine if panel is collapsed (size is at or near minSize)
+  const isCollapsed = _size !== undefined && _size <= (minSize + 0.5)
+
   // Register panel config
   React.useEffect(() => {
     if (context && _index !== undefined) {
@@ -332,7 +444,8 @@ function ResizablePanel({
   return (
     <div
       data-slot="resizable-panel"
-      className={cn("relative overflow-hidden", className)}
+      data-collapsed={isCollapsed ? 'true' : undefined}
+      className={cn("relative overflow-hidden transition-[flex-basis] duration-200 ease-out", className)}
       style={{
         flexBasis: `${_size}%`,
         flexGrow: 0,

@@ -47,12 +47,35 @@ export interface FileSyncCounts {
   total: number;
 }
 
+/**
+ * Sync progress state for event bus integration
+ *
+ * Runtime-only state (not persisted to IndexedDB)
+ */
+export interface SyncProgress {
+  /** Whether a sync operation is currently running */
+  isRunning: boolean;
+  /** Current file being synced */
+  current: number;
+  /** Total files to sync */
+  total: number;
+  /** Progress percentage (0-100) */
+  progress: number;
+  /** Optional status message */
+  message?: string;
+  /** Optional error message */
+  error?: string;
+}
+
 interface SyncStatusState {
   /** Map of file path to sync status */
   statuses: Record<string, FileSyncStatus>;
 
   /** Computed counts (derived from statuses) */
   counts: FileSyncCounts;
+
+  /** Sync operation progress (event bus integration, not persisted) */
+  syncProgress: SyncProgress;
 
   /** Whether the store has finished hydrating from persistence */
   _hasHydrated: boolean;
@@ -74,6 +97,12 @@ interface SyncStatusState {
 
   /** Set hydration status */
   setHasHydrated: (hydrated: boolean) => void;
+
+  /** Sync progress actions (event bus integration) */
+  setSyncStarted: (total: number) => void;
+  setSyncProgress: (current: number, total: number, message?: string) => void;
+  setSyncCompleted: (message?: string) => void;
+  setSyncFailed: (error: string) => void;
 }
 
 // ============================================================================
@@ -113,6 +142,12 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
       (set, get) => ({
         statuses: {},
         counts: { synced: 0, pending: 0, error: 0, total: 0 },
+        syncProgress: {
+          isRunning: false,
+          current: 0,
+          total: 0,
+          progress: 0,
+        },
         _hasHydrated: false,
 
         setFileSyncPending: (path) => {
@@ -189,6 +224,52 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
         setHasHydrated: (hydrated) => {
           set({ _hasHydrated: hydrated } as Partial<SyncStatusState>);
         },
+
+        // Sync progress actions (event bus integration)
+        setSyncStarted: (total) => {
+          set({
+            syncProgress: {
+              isRunning: true,
+              current: 0,
+              total,
+              progress: 0,
+              message: `Starting sync of ${total} files...`,
+            },
+          });
+        },
+
+        setSyncProgress: (current, total, message) => {
+          set((state) => ({
+            syncProgress: {
+              ...state.syncProgress,
+              current,
+              total,
+              progress: total > 0 ? (current / total) * 100 : 0,
+              message: message || `Syncing ${current}/${total} files...`,
+            },
+          }));
+        },
+
+        setSyncCompleted: (message) => {
+          set((state) => ({
+            syncProgress: {
+              ...state.syncProgress,
+              isRunning: false,
+              progress: 100,
+              message: message || `Synced ${state.syncProgress.total} files successfully`,
+            },
+          }));
+        },
+
+        setSyncFailed: (error) => {
+          set((state) => ({
+            syncProgress: {
+              ...state.syncProgress,
+              isRunning: false,
+              error,
+            },
+          }));
+        },
       }),
     ),
     {
@@ -197,6 +278,7 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
       partialize: (state) => ({
         statuses: state.statuses,
         // counts are recomputed from statuses on hydration
+        // syncProgress is NOT persisted (runtime-only state)
       }),
       onRehydrateStorage: () => {
         console.log('[FileSyncStatusStore] Hydration starting...');

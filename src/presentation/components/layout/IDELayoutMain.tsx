@@ -24,6 +24,7 @@ import { IDEHeaderBar } from './IDEHeaderBar';
 import { StatusBar } from '../ide/StatusBar';
 import { MobileIDELayout } from './MobileIDELayout';
 import { useResponsive } from '@/hooks/useResponsive';
+import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
 import {
     useIDEKeyboardShortcuts,
     useWebContainerBoot,
@@ -241,6 +242,11 @@ export function IDELayout(): React.JSX.Element {
 
                     {/* VS Code-style footer StatusBar */}
                     <StatusBar />
+
+                    {/* Sync Status Panel (P1-2: Event Bus Integration) */}
+                    <div className="fixed bottom-4 right-4 z-50 w-96">
+                        <SyncStatusPanel />
+                    </div>
                 </div>
             </SidebarProvider>
         </StatusAnnouncerProvider>
