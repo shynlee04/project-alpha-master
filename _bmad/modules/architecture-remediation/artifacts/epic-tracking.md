@@ -26,26 +26,35 @@
 
 ---
 
-## Phase 0: Foundation Stabilization (Week 1-2)
+## Phase 0: Foundation Stabilization (Week 1-2) - **REVISED STRATEGY**
 
-**Status**: 🔴 NOT STARTED
-**Duration**: 42-48 hours
-**Target**: Foundation stabilized for systematic refactoring
+**Status**: 🟡 IN PROGRESS (Course Corrected 2026-01-04)
+**Duration**: 60-80 hours (revised)
+**Target**: Foundation stabilized - God stores eliminated, file system E2E working
 
-### Story Status
+**⚠️ COURSE CORRECTION (2026-01-04 00:45)**:
+- **ABANDONED**: TS-001 (Test file TypeScript errors - NOT IMPORTANT)
+- **NEW PRIORITY**: God store splitting > File system E2E > Component splitting
+- **STRATEGY**: Foundation First - split large files, split god classes, then file system E2E
+- **WORKSPACES**: IDE → Notes → Knowledge (each 100% health before proceeding)
+- **REFERENCE**: `_bmad-output/ralph-loop-course-correction-20260104.md`
+
+### Story Status (REVISED)
 
 | Story ID | Story Name | Status | Assignee | Hours | Progress |
 |----------|------------|--------|----------|-------|----------|
 | CD-001 | Eliminate Circular Dependencies | 🟢 DONE | @bmad-bmm-dev | 10 | 100% |
-| TS-001 | Fix TypeScript Errors | 🔴 TODO | @bmad-bmm-dev | 6-8 | 0% |
-| DB-001 | Safe IndexedDB Operations | 🔴 TODO | @bmad-bmm-dev | 18-22 | 0% |
-| UI-001 | Extract AgentConfigDialog Hooks | 🔴 TODO | @bmad-bmm-dev | 16-20 | 0% |
+| ~~TS-001~~ | ~~Fix TypeScript Errors~~ | ⚪ ABANDONED | @bmad-bmm-dev | - | - |
+| GS-001 | Split God Stores (69 files) | 🔴 NEW PRIORITY | @bmad-bmm-dev | 40-50 | 0% |
+| FS-001 | File System E2E - IDE Workspace | 🔴 NEW PRIORITY | @bmad-bmm-dev | 20-25 | 0% |
+| UI-001 | Extract AgentConfigDialog Hooks | 🟡 LOW PRIORITY | @bmad-bmm-dev | 16-20 | 0% |
 
-### Phase Metrics
+### Phase Metrics (UPDATED)
 - **Stories Completed**: 1/4 (25%)
-- **Hours Burned**: 10/58 hours (17%)
+- **Hours Burned**: 10/95-110 hours (9-11%)
 - **Health Score Improvement**: +3.0
 - **Blockers**: None
+- **Next Action**: Split `rag-store.ts` (1,595 lines - WORST OFFENDER)
 
 ---
 
