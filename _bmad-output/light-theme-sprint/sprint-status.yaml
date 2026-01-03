@@ -13,8 +13,9 @@ metrics:
   total_stories: 23
   completed_stories: 7
   in_progress_stories: 1
+  drafted_stories: 1
   blocked_stories: 0
-  pending_stories: 15
+  pending_stories: 14
 
   total_hours: 88
   hours_completed: 23
@@ -154,12 +155,13 @@ stories:
     priority: P0
     estimated_hours: 3
     phase: "Week 2: P0 Components"
-    status: pending
+    status: ready-for-dev
     assignee: light-theme-dev-agent
     started_at: null
     completed_at: null
     dependencies: [LT-1.7]
     dependency_status: "LT-1.7 complete - Week 2 ready to start"
+    handoff_document: "_bmad-output/light-theme-sprint/stories/LT-2.9.md"
 
   LT-2.10:
     id: "LT-2.10"

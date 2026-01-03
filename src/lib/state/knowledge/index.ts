@@ -11,13 +11,13 @@
 // Types
 export * from './types';
 
-// Slices (will be added as they are created)
-// export * from './slices/knowledge-source-crud-slice';
-// export * from './slices/knowledge-preview-slice';
-// export * from './slices/knowledge-collection-slice';
-// export * from './slices/knowledge-metadata-slice';
-// export * from './slices/knowledge-synthesis-slice';
-// export * from './slices/knowledge-undo-slice';
+// Slices
+export * from './slices/knowledge-source-crud-slice';
+export * from './slices/knowledge-preview-slice';
+export * from './slices/knowledge-collection-slice';
+export * from './slices/knowledge-metadata-slice';
+export * from './slices/knowledge-synthesis-slice';
+export * from './slices/knowledge-undo-slice';
 
-// Main store (will be created after all slices)
-// export { useKnowledgeStore } from './knowledge-store';
+// Main store
+export { useKnowledgeStore } from './knowledge-store';

@@ -49,14 +49,6 @@
   /* #f97316 - Orange accent */
   --primary-foreground: 0 0% 100%;
   /* White */
-   DARK THEME (DEFAULT)
-   ============================================================================= */
-:root {
-  /* ===== Core Brand Colors ===== */
-  --primary: 24.6 95% 53.1%;
-  /* #f97316 - Orange accent */
-  --primary-foreground: 0 0% 100%;
-  /* White */
 
   /* ===== Surface Colors ===== */
   --background: 240 6% 4%;
