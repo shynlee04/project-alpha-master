@@ -29,6 +29,8 @@ import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
+// P0-3: File Sync Service Initialization
+import { useFileSyncService } from '@/lib/filesync/hooks';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -54,9 +56,25 @@ export function NotesPage() {
     // File sync state (CW-1.4)
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
 
-    // NOTE: File sync service initialization disabled - requires FileSyncService dependency
-    // The service will be initialized when file sync feature is fully implemented
-    // TODO: Initialize syncService when FileSyncService is available as a dependency
+    // P0-3: Initialize file sync service
+    const {
+        service: notesSyncService,
+        isInitializing: isNotesSyncInitializing,
+        error: notesSyncError,
+        initializeService: initializeNotesSync,
+        isReady: isNotesSyncReady,
+        isSupported: isNotesSyncSupported,
+    } = useFileSyncService({
+        projectId,
+        workspaceType: 'notes',
+        noteStore: {
+            notes: useNoteStore.getState().notes,
+            notesArray: notesArray,
+            updateNote: useNoteStore.getState().updateNote,
+            createNote: useNoteStore.getState().createNote,
+            loadNotes: useNoteStore.getState().loadNotes,
+        },
+    });
 
 
     useEffect(() => {
@@ -200,7 +218,12 @@ export function NotesPage() {
                     open={isExportDialogOpen}
                     onOpenChange={setIsExportDialogOpen}
                     notes={notesArray as any}
-                    syncService={undefined} // TODO: Initialize with NotesFileSyncService when FileSyncService is available
+                    syncService={notesSyncService}
+                    onInitialize={initializeNotesSync}
+                    isInitializing={isNotesSyncInitializing}
+                    error={notesSyncError}
+                    isReady={isNotesSyncReady}
+                    isSupported={isNotesSyncSupported}
                 />
             </MainLayout>
         );
@@ -271,14 +294,24 @@ export function NotesPage() {
                 open={isExportDialogOpen}
                 onOpenChange={setIsExportDialogOpen}
                 notes={notesArray as any}
-                syncService={undefined} // TODO: Initialize with NotesFileSyncService when FileSyncService is available
+                syncService={notesSyncService}
+                onInitialize={initializeNotesSync}
+                isInitializing={isNotesSyncInitializing}
+                error={notesSyncError}
+                isReady={isNotesSyncReady}
+                isSupported={isNotesSyncSupported}
             />
 
             {/* File Picker Dialog (CW-1.4) */}
             <NotesFilePicker
                 open={isFilePickerOpen}
                 onOpenChange={setIsFilePickerOpen}
-                fileSyncService={null} // TODO: Initialize with NotesFileSyncService
+                fileSyncService={notesSyncService}
+                onInitialize={initializeNotesSync}
+                isInitializing={isNotesSyncInitializing}
+                error={notesSyncError}
+                isReady={isNotesSyncReady}
+                isSupported={isNotesSyncSupported}
             />
         </MainLayout>
     );

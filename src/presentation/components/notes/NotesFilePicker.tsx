@@ -26,9 +26,23 @@ interface NotesFilePickerProps {
         getSyncStatus: () => { syncing: boolean; lastSync: Date | null };
         sync: () => Promise<void>;
     } | null;
+    onInitialize?: () => Promise<void>;
+    isInitializing?: boolean;
+    error?: string | null;
+    isReady?: boolean;
+    isSupported?: boolean;
 }
 
-export function NotesFilePicker({ open, onOpenChange, fileSyncService }: NotesFilePickerProps) {
+export function NotesFilePicker({
+    open,
+    onOpenChange,
+    fileSyncService,
+    onInitialize,
+    isInitializing = false,
+    error,
+    isReady = false,
+    isSupported = true,
+}: NotesFilePickerProps) {
     // Translation hook available but not currently used
     // const { t } = useTranslation();
     const [isMounted, setIsMounted] = useState(false);
@@ -108,8 +122,37 @@ export function NotesFilePicker({ open, onOpenChange, fileSyncService }: NotesFi
                 </DialogHeader>
 
                 <div className="space-y-4">
+                    {/* Mobile/Unsupported Browser Fallback */}
+                    {!isSupported && (
+                        <div className="p-4 bg-muted rounded-lg">
+                            <p className="text-sm text-muted-foreground">
+                                File sync requires a desktop browser (Chrome, Edge, Opera). Mobile browsers are not supported.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Initialization Section */}
+                    {isSupported && !isReady && (
+                        <div className="flex flex-col items-center justify-center p-6 border rounded-lg space-y-4">
+                            <FolderOpen className="w-12 h-12 text-muted-foreground" />
+                            <div className="text-center">
+                                <p className="font-medium mb-1">Select Directory</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Choose a folder to sync notes as Markdown files
+                                </p>
+                            </div>
+                            <Button onClick={onInitialize} disabled={isInitializing}>
+                                {isInitializing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                {isInitializing ? 'Initializing...' : 'Select Directory'}
+                            </Button>
+                            {error && (
+                                <p className="text-xs text-destructive text-center">{error}</p>
+                            )}
+                        </div>
+                    )}
+
                     {/* Mount Section */}
-                    {!isMounted ? (
+                    {isReady && !isMounted ? (
                         <div className="flex items-center justify-between p-4 border rounded-lg">
                             <div className="flex items-center gap-2">
                                 <FolderOpen className="w-5 h-5 text-muted-foreground" />

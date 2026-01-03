@@ -12,7 +12,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { ProgressIndicator } from "../ui/progress-indicator"
-import { FileDown, FolderOpen, Check, X, AlertCircle } from "lucide-react"
+import { FileDown, FolderOpen, Check, X, AlertCircle, Loader2 } from "lucide-react"
 import { createNoteFileSyncService, type NoteSyncResult } from "@/lib/notes"
 import type { NoteRecord } from "@/lib/notes/types"
 
@@ -21,6 +21,11 @@ interface MarkdownExportDialogProps {
   onOpenChange: (open: boolean) => void
   notes: NoteRecord[]
   syncService?: ReturnType<typeof createNoteFileSyncService>
+  onInitialize?: () => Promise<void>
+  isInitializing?: boolean
+  error?: string | null
+  isReady?: boolean
+  isSupported?: boolean
 }
 
 export function MarkdownExportDialog({
@@ -28,6 +33,11 @@ export function MarkdownExportDialog({
   onOpenChange,
   notes,
   syncService,
+  onInitialize,
+  isInitializing = false,
+  error: initError,
+  isReady = false,
+  isSupported = true,
 }: MarkdownExportDialogProps) {
   const { t } = useTranslation()
   const [exportPath, setExportPath] = useState("")
@@ -142,32 +152,63 @@ export function MarkdownExportDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Export Path Input */}
-          <div className="space-y-2">
-            <Label htmlFor="export-path">{t("notes.export.directory")}</Label>
-            <div className="flex gap-2">
-              <Input
-                id="export-path"
-                value={exportPath}
-                onChange={(e) => setExportPath(e.target.value)}
-                placeholder="/path/to/export"
-                disabled={isLoading}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  // In a real implementation, this would open a directory picker
-                  const path = prompt(t("notes.export.directory"))
-                  if (path) setExportPath(path)
-                }}
-                disabled={isLoading}
-                title={t("notes.export.directory")}
-              >
-                <FolderOpen className="w-4 h-4" />
-              </Button>
+          {/* Mobile/Unsupported Browser Fallback */}
+          {!isSupported && (
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                File sync requires a desktop browser (Chrome, Edge, Opera). Mobile browsers are not supported.
+              </p>
             </div>
-          </div>
+          )}
+
+          {/* Initialization Section */}
+          {isSupported && !isReady && (
+            <div className="flex flex-col items-center justify-center p-6 border rounded-lg space-y-4">
+              <FolderOpen className="w-12 h-12 text-muted-foreground" />
+              <div className="text-center">
+                <p className="font-medium mb-1">Initialize File Sync</p>
+                <p className="text-sm text-muted-foreground">
+                  Select a directory to enable note export functionality
+                </p>
+              </div>
+              <Button onClick={onInitialize} disabled={isInitializing}>
+                {isInitializing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {isInitializing ? 'Initializing...' : 'Select Directory'}
+              </Button>
+              {initError && (
+                <p className="text-xs text-destructive text-center">{initError}</p>
+              )}
+            </div>
+          )}
+
+          {/* Export Path Input */}
+          {isReady && (
+            <div className="space-y-2">
+              <Label htmlFor="export-path">{t("notes.export.directory")}</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="export-path"
+                  value={exportPath}
+                  onChange={(e) => setExportPath(e.target.value)}
+                  placeholder="/path/to/export"
+                  disabled={isLoading}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // In a real implementation, this would open a directory picker
+                    const path = prompt(t("notes.export.directory"))
+                    if (path) setExportPath(path)
+                  }}
+                  disabled={isLoading}
+                  title={t("notes.export.directory")}
+                >
+                  <FolderOpen className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Notes Selection Info */}
           <div className="p-3 bg-zinc-800/50 rounded-md">
