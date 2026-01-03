@@ -1,8 +1,5 @@
 import { StateCreator } from 'zustand';
-import type { ConversationMetadataWithId } from './conversation-metadata-slice';
-import type { ThreadWithId } from './thread-management-slice';
-import type { MessageWithId } from './message-crud-slice';
-import type { CombinedConversationState } from './types';
+import type { CombinedConversationState, ConversationMetadataWithId, ThreadWithId, MessageWithId } from './types';
 
 export interface ConversationStats {
   messageCount: number;

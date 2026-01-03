@@ -24,7 +24,7 @@
  */
 
 import { db as dexieDb, resetDatabaseForTesting } from '../state/dexie-db';
-import type { ProjectMetadata } from '../workspace/project-store';
+import type { ProjectMetadata } from '../workspace/project-types'; // Import from domain types to break circular dependency
 
 // ============================================================================
 // Legacy Types (Backward Compatibility)

@@ -5,7 +5,7 @@
 
 import { FileSystemError } from './fs-errors';
 import { parsePathSegments } from './path-utils';
-import { walkDirectorySegments } from './directory-walker';
+import { walkDirectorySegments } from './fs-handle-utils'; // Moved from directory-walker to break circular dependency
 
 /**
  * Get a file handle from a root directory handle and a path.

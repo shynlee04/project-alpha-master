@@ -96,83 +96,108 @@ export interface ThreadHierarchyNode {
  * - conversation-utils-slice: Utility functions (Story CC-1.4)
  * - conversation-validation-slice: Validation logic (Story CC-1.5)
  * - conversation-events-slice: Event emission (Story CC-1.6)
+ *
+ * NOTE: Using type-only imports to avoid circular dependencies.
+ * These types are erased by TypeScript and don't exist at runtime.
  */
+import type { ConversationMetadata, WorkspaceType } from '@/core/entities/Conversation';
+import type { ConversationEvent, ConversationEventType } from './conversation-events-slice';
+
+// Define slice-specific types inline using utility types to avoid circular imports
+// Each slice will provide the actual implementation
+export type ConversationMetadataWithId = ConversationMetadata & { id: string };
+export type ThreadWithId = ConversationThread & { id: string };
+export type MessageWithId = ThreadMessage & { id: string };
+
+// Additional domain types moved here to avoid circular dependencies
+export interface ConversationStats {
+  messageCount: number;
+  threadCount: number;
+  totalTokens: number;
+  durationMs: number;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
 export interface CombinedConversationState {
     // ========== Conversation Metadata Slice ==========
-    conversations: Record<string, import('./conversation-metadata-slice').ConversationMetadataWithId>;
+    conversations: Record<string, ConversationMetadataWithId>;
     activeConversationId: string | null;
     activeProjectConversationIds: Record<string, string>;
 
     // ========== Conversation Metadata Methods ==========
-    createConversation: (workspaceType: import('@/core/entities/Conversation').WorkspaceType, projectId: string | null, agentId: string) => string;
-    updateConversationMetadata: (id: string, updates: Partial<import('./conversation-metadata-slice').ConversationMetadataWithId>) => void;
+    createConversation: (workspaceType: WorkspaceType, projectId: string | null, agentId: string) => string;
+    updateConversationMetadata: (id: string, updates: Partial<ConversationMetadataWithId>) => void;
     deleteConversation: (id: string) => void;
     setActiveConversation: (id: string) => void;
-    getConversation: (id: string) => import('./conversation-metadata-slice').ConversationMetadataWithId | undefined;
-    getAllConversations: () => import('./conversation-metadata-slice').ConversationMetadataWithId[];
-    getConversationsByWorkspace: (workspaceType: import('@/core/entities/Conversation').WorkspaceType) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
-    getConversationsByProject: (projectId: string) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    getConversation: (id: string) => ConversationMetadataWithId | undefined;
+    getAllConversations: () => ConversationMetadataWithId[];
+    getConversationsByWorkspace: (workspaceType: WorkspaceType) => ConversationMetadataWithId[];
+    getConversationsByProject: (projectId: string) => ConversationMetadataWithId[];
 
     // ========== Thread Management Slice (Story CC-1.2) ==========
-    threads: Record<string, import('./thread-management-slice').ThreadWithId>;
+    threads: Record<string, ThreadWithId>;
     activeThreadId: string | null;
 
     // ========== Thread Management Methods ==========
     createThread: (conversationId: string, parentThreadId?: string) => string;
     deleteThread: (threadId: string) => void;
     setActiveThread: (threadId: string | null) => void;
-    getThread: (threadId: string) => import('./thread-management-slice').ThreadWithId | undefined;
-    getThreadsByConversation: (conversationId: string) => import('./thread-management-slice').ThreadWithId[];
-    getRootThread: (conversationId: string) => import('./thread-management-slice').ThreadWithId | undefined;
-    getChildThreads: (parentThreadId: string) => import('./thread-management-slice').ThreadWithId[];
-    getThreadHierarchy: (threadId: string) => import('./thread-management-slice').ThreadWithId[];
+    getThread: (threadId: string) => ThreadWithId | undefined;
+    getThreadsByConversation: (conversationId: string) => ThreadWithId[];
+    getRootThread: (conversationId: string) => ThreadWithId | undefined;
+    getChildThreads: (parentThreadId: string) => ThreadWithId[];
+    getThreadHierarchy: (threadId: string) => ThreadWithId[];
 
     // ========== Message CRUD Slice (Story CC-1.3) ==========
-    messages: Record<string, import('./message-crud-slice').MessageWithId>;
+    messages: Record<string, MessageWithId>;
 
     // ========== Message CRUD Methods ==========
-    addMessage: (threadId: string, message: Omit<import('./types').ThreadMessage, 'id' | 'timestamp'>) => string;
-    updateMessage: (messageId: string, updates: Partial<import('./types').ThreadMessage>) => void;
+    addMessage: (threadId: string, message: Omit<ThreadMessage, 'id' | 'timestamp'>) => string;
+    updateMessage: (messageId: string, updates: Partial<ThreadMessage>) => void;
     deleteMessage: (messageId: string) => void;
-    getMessage: (messageId: string) => import('./message-crud-slice').MessageWithId | undefined;
-    getMessagesByThread: (threadId: string) => import('./message-crud-slice').MessageWithId[];
-    getLastMessage: (threadId: string) => import('./message-crud-slice').MessageWithId | undefined;
+    getMessage: (messageId: string) => MessageWithId | undefined;
+    getMessagesByThread: (threadId: string) => MessageWithId[];
+    getLastMessage: (threadId: string) => MessageWithId | undefined;
 
     // ========== Conversation Utils Slice (Story CC-1.4) ==========
-    filterConversations: (predicate: (conv: import('./conversation-metadata-slice').ConversationMetadataWithId) => boolean) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
-    sortConversations: (comparator: (a: import('./conversation-metadata-slice').ConversationMetadataWithId, b: import('./conversation-metadata-slice').ConversationMetadataWithId) => number) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
-    searchConversations: (query: string) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
-    searchConversationsByTag: (tags: string[]) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
-    getConversationStats: (conversationId: string) => import('./conversation-utils-slice').ConversationStats;
-    getRecentConversations: (limit?: number) => import('./conversation-metadata-slice').ConversationMetadataWithId[];
+    filterConversations: (predicate: (conv: ConversationMetadataWithId) => boolean) => ConversationMetadataWithId[];
+    sortConversations: (comparator: (a: ConversationMetadataWithId, b: ConversationMetadataWithId) => number) => ConversationMetadataWithId[];
+    searchConversations: (query: string) => ConversationMetadataWithId[];
+    searchConversationsByTag: (tags: string[]) => ConversationMetadataWithId[];
+    getConversationStats: (conversationId: string) => ConversationStats;
+    getRecentConversations: (limit?: number) => ConversationMetadataWithId[];
     loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
     loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
 
     // ========== Conversation Validation Slice (Story CC-1.5) ==========
-    validateConversationId: (id: string) => import('./conversation-validation-slice').ValidationResult;
-    validateThreadId: (id: string) => import('./conversation-validation-slice').ValidationResult;
-    validateMessageId: (id: string) => import('./conversation-validation-slice').ValidationResult;
-    validateConversationStatus: (id: string, newStatus: 'active' | 'archived' | 'deleted') => import('./conversation-validation-slice').ValidationResult;
-    validateThreadStatus: (id: string, newStatus: 'active' | 'archived' | 'deleted') => import('./conversation-validation-slice').ValidationResult;
-    validateThreadHierarchy: (threadId: string) => import('./conversation-validation-slice').ValidationResult;
-    validateMessageThreadAssociation: (messageId: string) => import('./conversation-validation-slice').ValidationResult;
-    validateConversationIntegrity: (conversationId: string) => import('./conversation-validation-slice').ValidationResult;
+    validateConversationId: (id: string) => ValidationResult;
+    validateThreadId: (id: string) => ValidationResult;
+    validateMessageId: (id: string) => ValidationResult;
+    validateConversationStatus: (id: string, newStatus: 'active' | 'archived' | 'deleted') => ValidationResult;
+    validateThreadStatus: (id: string, newStatus: 'active' | 'archived' | 'deleted') => ValidationResult;
+    validateThreadHierarchy: (threadId: string) => ValidationResult;
+    validateMessageThreadAssociation: (messageId: string) => ValidationResult;
+    validateConversationIntegrity: (conversationId: string) => ValidationResult;
 
     // ========== Conversation Events Slice (Story CC-1.6) ==========
-    eventHistory: import('./conversation-events-slice').ConversationEvent[];
-    emitEvent: (type: import('./conversation-events-slice').ConversationEventType, entityId: string, data?: unknown) => void;
-    emitConversationCreated: (id: string, conversation: import('./conversation-metadata-slice').ConversationMetadataWithId) => void;
-    emitConversationUpdated: (id: string, updates: Partial<import('./conversation-metadata-slice').ConversationMetadataWithId>) => void;
+    eventHistory: ConversationEvent[];
+    emitEvent: (type: ConversationEventType, entityId: string, data?: unknown) => void;
+    emitConversationCreated: (id: string, conversation: ConversationMetadataWithId) => void;
+    emitConversationUpdated: (id: string, updates: Partial<ConversationMetadataWithId>) => void;
     emitConversationDeleted: (id: string) => void;
-    emitThreadCreated: (id: string, thread: import('./thread-management-slice').ThreadWithId) => void;
-    emitThreadUpdated: (id: string, updates: Partial<import('./thread-management-slice').ThreadWithId>) => void;
+    emitThreadCreated: (id: string, thread: ThreadWithId) => void;
+    emitThreadUpdated: (id: string, updates: Partial<ThreadWithId>) => void;
     emitThreadDeleted: (id: string) => void;
-    emitMessageAdded: (id: string, message: import('./message-crud-slice').MessageWithId) => void;
-    emitMessageUpdated: (id: string, updates: Partial<import('./message-crud-slice').MessageWithId>) => void;
+    emitMessageAdded: (id: string, message: MessageWithId) => void;
+    emitMessageUpdated: (id: string, updates: Partial<MessageWithId>) => void;
     emitMessageDeleted: (id: string) => void;
-    addEventListener: (eventType: import('./conversation-events-slice').ConversationEventType, listener: (event: import('./conversation-events-slice').ConversationEvent) => void) => () => void;
-    removeEventListener: (eventType: import('./conversation-events-slice').ConversationEventType, listener: (event: import('./conversation-events-slice').ConversationEvent) => void) => void;
-    getEventHistory: (filter?: { type?: import('./conversation-events-slice').ConversationEventType; entityId?: string; limit?: number }) => import('./conversation-events-slice').ConversationEvent[];
+    addEventListener: (eventType: ConversationEventType, listener: (event: ConversationEvent) => void) => () => void;
+    removeEventListener: (eventType: ConversationEventType, listener: (event: ConversationEvent) => void) => void;
+    getEventHistory: (filter?: { type?: ConversationEventType; entityId?: string; limit?: number }) => ConversationEvent[];
     clearEventHistory: () => void;
 
     // ========== Auto-Persist (P0-4: Fix Conversation Auto-Persist) ==========

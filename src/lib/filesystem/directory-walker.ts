@@ -1,28 +1,14 @@
 import { FileSystemError } from './fs-errors';
 import type { DirectoryEntry } from './fs-types';
 import type { LocalFSAdapter } from './local-fs-adapter';
+import { walkDirectorySegments } from './fs-handle-utils'; // Re-export from fs-handle-utils to break circular dependency
 
 export interface WalkDirectoryEntry extends DirectoryEntry {
     path: string;
 }
 
-export async function walkDirectorySegments(
-    root: FileSystemDirectoryHandle | null,
-    segments: string[],
-    create = false
-): Promise<FileSystemDirectoryHandle> {
-    if (!root) {
-        throw new FileSystemError('No directory access granted.', 'NO_DIRECTORY_ACCESS');
-    }
-
-    let current = root;
-
-    for (const segment of segments) {
-        current = await current.getDirectoryHandle(segment, { create });
-    }
-
-    return current;
-}
+// Re-export walkDirectorySegments for backward compatibility
+export { walkDirectorySegments } from './fs-handle-utils';
 
 export async function* walkDirectory(
     adapter: Pick<LocalFSAdapter, 'listDirectory'>,
