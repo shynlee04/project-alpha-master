@@ -3,35 +3,59 @@
 
 **Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
 
-### 🚨 CRITICAL: Ralph Loop Cycle 18 - Course Correction Required (2026-01-01)
+### 🚨 ARCHITECTURE REMEDIATION MODULE - COURSE CORRECTION (2026-01-04)
 
-**Governance Misalignment Discovered:**
-- **Previous Claim**: Health Score 99/100 ✅ "CERTIFIED PRODUCTION READY" (FALSE)
-- **ACTUAL REALITY**: Health Score ~5.9% (1,172 TypeScript errors remaining)
-- **Decision**: ✅ IMMEDIATE COURSE CORRECTION APPROVED
+**Status**: ✅ Course Correction Complete - Structured Epic Approach Activated
 
-**Corrected Development Focus:**
-See: `_bmad-output/ralph-loop-cycle-18-correct-course-workflow-2026-01-01.md`
+**Module Location**: `_bmad/modules/architecture-remediation/`
 
-**8-Week Stabilization Plan:**
-- **Phase 0** (Week 1-2): Foundation Stabilization - Fix P0 infrastructure gaps
-  - TS-001: Fix TypeScript Errors (6-8 hours) - Reduce from 1,172 to <100
-  - DB-001: Safe IndexedDB Operations (18-22 hours) - Add quota handling
-  - UI-001: Extract AgentConfigDialog Hooks (16-20 hours) - 1,089 → <300 lines
-- **Phase 1** (Week 3-4): Store Refactoring - Split god stores into slices
-- **Phase 2** (Week 5-6): Infrastructure Hardening - Fix P1 gaps
-- **Phase 3** (Week 7-8): Architecture Transformation - 4-layer clean architecture
+**Agent Mode**: @bmad-core-bmad-master v2.0 (Autonomous)
 
-**Critical Risks:**
-- P0: Data loss (no IndexedDB quota handling)
-- P0: Silent failures (23 instances of console.error + return null)
-- P1: Maintainability collapse (17 files >300 lines, worst is 9x over limit)
+**Key Changes**:
+- Ralph Loop HALTED - unsystematic execution replaced with structured epics
+- TypeScript errors in TEST FILES now EXCLUDED from counts
+- Workspace priority: IDE (harden) → Notes (E2E) → Knowledge (E2E)
+- Governance enforcement after every structural workflow
 
-### 🔄 Platform Unification Initiative (IN PROGRESS - 2026-01-02)
+**Active Epics (ARC-1 through ARC-4)**:
+| Epic | Name | Status | Week |
+|------|------|--------|------|
+| ARC-1 | Foundation Stabilization | 🟡 IN_PROGRESS | 1 |
+| ARC-2 | IDE Workspace E2E | 🔴 TODO | 2 |
+| ARC-3 | Notes Workspace E2E | 🔴 TODO | 3 |
+| ARC-4 | Knowledge Workspace E2E | 🔴 TODO | 4 |
+
+**Sprint Status**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
+**Epic Tracking**: `_bmad/modules/architecture-remediation/artifacts/epic-tracking.md`
+
+**ARC Module Agents**:
+- `@store-refactorer` - God store elimination (slices + facades)
+- `@component-splitter` - Component normalization (<300 lines)
+- `@typescript-fixer` - TS error remediation (code files only)
+- `@test-writer` - Test coverage improvement
+- `@workspace-architect` - Workspace E2E implementation
+- `@file-sync-specialist` - Sync strategies, conflict resolution
+
+**ARC Module Workflows**:
+- `/bmad-arc-eliminate-god-stores` - Split oversized stores
+- `/bmad-arc-normalize-components` - Split oversized components
+- `/bmad-arc-workspace-e2e` - Workspace file system implementation
+- `/bmad-arc-notes-sync` - Notes local filesystem sync
+- `/bmad-arc-knowledge-sync` - Knowledge source import sync
+
+**⚠️ GOVERNANCE ENFORCEMENT**:
+After ANY structural workflow, MUST run:
+1. `/governance-enforcement` workflow
+2. Update AGENTS.md with new paths
+3. Run `/bmad-bmm-workflows-generate-project-context`
+
+---
+
+### 🔄 Platform Unification Initiative (ACTIVE - 2026-01-02)
 
 **Mission**: Transform fragmented codebase into unified platform with 5 cornerstones as single-source-of-truth
 
-**Current Phase**: Phase 1 Complete (Iterations 1-20) - Analysis & Gap Documentation ✅
+**Current Phase**: ARC Module Integration (Foundation before features)
 **Next Phase**: Phase 3 (Iterations 31-150) - Implementation - Cornerstones
 
 ---

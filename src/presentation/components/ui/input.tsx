@@ -3,10 +3,12 @@
  *
  * EPIC_ID: Epic-23
  * STORY_ID: P1.2
+ * STORY: LT-2.9 (Light Theme Migration)
  * CREATED_AT: 2025-12-25T20:55:00Z
+ * UPDATED_AT: 2026-01-04T00:00:00Z
  *
  * Production-ready Input component following 8-bit design system.
- * Implements all variants, sizes, states with accessibility and i18n support.
+ * Implements all variants, sizes, states with accessibility and light/dark theme support.
  */
 
 import * as React from "react"
@@ -27,11 +29,12 @@ export interface InputProps
 
 /**
  * CVA variants for Input component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
+ * Migrated to follow December 2025 Zustand patterns
  */
 const inputVariants = cva(
-  // Base styles with 8-bit aesthetic
-  "flex h-10 w-full items-center gap-2 rounded-none border-2 bg-neutral-950 text-neutral-100 px-3 py-2 text-sm transition-all outline-none placeholder:text-neutral-500 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 disabled:cursor-not-allowed disabled:opacity-50 file:border-0 file:bg-transparent file:text-sm file:font-medium",
+  // Base styles with 8-bit aesthetic and theme-aware colors
+  "flex h-10 w-full items-center gap-2 rounded-[4px] border bg-[var(--background)] text-[var(--foreground)] px-3 py-2 text-sm transition-[border-color] duration-150 outline-none placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-50 file:border-0 file:bg-transparent file:text-sm file:font-medium",
   {
     variants: {
       size: {
@@ -40,10 +43,10 @@ const inputVariants = cva(
         lg: "h-12 px-4 text-base min-h-[48px]",
       },
       state: {
-        default: "border-neutral-700 focus-visible:border-primary-500 focus-visible:ring-primary-500/50 hover:border-neutral-600",
-        error: "border-error-500 focus-visible:border-error-500 focus-visible:ring-error-500/50 hover:border-error-600",
-        success: "border-success-500 focus-visible:border-success-500 focus-visible:ring-success-500/50 hover:border-success-600",
-        disabled: "border-neutral-800 bg-neutral-900 text-neutral-600 cursor-not-allowed",
+        default: "border-[var(--input)] hover:border-[var(--border)] focus-visible:border-[var(--primary)] focus-visible:ring-[var(--primary)]",
+        error: "border-[var(--destructive)] hover:border-[var(--destructive)] focus-visible:border-[var(--destructive)] focus-visible:ring-[var(--destructive)]",
+        success: "border-[var(--success)] hover:border-[var(--success)] focus-visible:border-[var(--success)] focus-visible:ring-[var(--success)]",
+        disabled: "border-[var(--neutral-200)] bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed",
       },
     },
     defaultVariants: {
@@ -58,6 +61,7 @@ const inputVariants = cva(
  *
  * Production-ready input component following 8-bit design system.
  * Supports size variants (sm, md, lg) and state variants (default, error, success, disabled).
+ * Fully theme-aware with CSS custom properties for light/dark mode support.
  *
  * @example
  * ```tsx
@@ -73,7 +77,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative flex items-center w-full">
         {leftIcon && (
-          <div className="absolute left-3 z-10 flex items-center justify-center text-neutral-500 pointer-events-none">
+          <div className="absolute left-3 z-10 flex items-center justify-center text-[var(--muted-foreground)] pointer-events-none">
             {leftIcon}
           </div>
         )}
@@ -89,7 +93,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
         />
         {rightIcon && (
-          <div className="absolute right-3 z-10 flex items-center justify-center text-neutral-500 pointer-events-none">
+          <div className="absolute right-3 z-10 flex items-center justify-center text-[var(--muted-foreground)] pointer-events-none">
             {rightIcon}
           </div>
         )}

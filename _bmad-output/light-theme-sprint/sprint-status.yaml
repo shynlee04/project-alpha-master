@@ -155,9 +155,9 @@ stories:
     priority: P0
     estimated_hours: 3
     phase: "Week 2: P0 Components"
-    status: ready-for-dev
+    status: review
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-1.7]
     dependency_status: "LT-1.7 complete - Week 2 ready to start"
@@ -173,7 +173,7 @@ stories:
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-1.7]
 
@@ -187,7 +187,7 @@ stories:
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-1.7]
 
@@ -201,7 +201,7 @@ stories:
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-1.7]
 
@@ -215,7 +215,7 @@ stories:
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-sm-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-2.8, LT-2.9, LT-2.10, LT-2.11, LT-2.12]
 
@@ -230,7 +230,7 @@ stories:
     phase: "Week 3: P1 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-2.13]
 
@@ -244,7 +244,7 @@ stories:
     phase: "Week 3: P1 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-2.13]
 
@@ -258,7 +258,7 @@ stories:
     phase: "Week 3: P1 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-2.13]
 
@@ -272,7 +272,7 @@ stories:
     phase: "Week 3: P1 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-2.13]
 
@@ -286,7 +286,7 @@ stories:
     phase: "Week 3: P1 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-2.13]
 
@@ -301,7 +301,7 @@ stories:
     phase: "Week 4: Workspaces"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-3.18]
 
@@ -315,7 +315,7 @@ stories:
     phase: "Week 4: Workspaces"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-3.18]
 
@@ -329,7 +329,7 @@ stories:
     phase: "Week 4: Workspaces"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-3.18]
 
@@ -343,7 +343,7 @@ stories:
     phase: "Week 4: Workspaces"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-3.18]
 
@@ -357,7 +357,7 @@ stories:
     phase: "Week 4: Workspaces"
     status: pending
     assignee: light-theme-sm-agent
-    started_at: null
+    started_at: "2026-01-04T00:00:00Z"
     completed_at: null
     dependencies: [LT-4.19, LT-4.20, LT-4.21, LT-4.22]
 

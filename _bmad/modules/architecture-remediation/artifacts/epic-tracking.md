@@ -1,60 +1,88 @@
 # Epic Tracking Dashboard
 
 **Module**: architecture-remediation
-**Last Updated**: 2026-01-03
-**Purpose**: Real-time epic progress tracking across all phases
-
-## Overall Progress
-
-### Health Score Trend
-| Date | Health Score | Change | Status |
-|------|--------------|--------|--------|
-| 2026-01-01 (Baseline) | 3.8/10 | - | 🔴 CRITICAL |
-| 2026-01-03 (Module Created) | 3.8/10 | - | 🔴 CRITICAL |
-| 2026-01-03 (Ralph Loop CD-001) | 6.8/10 | +3.0 | 🟡 MEDIUM |
-| Target (Week 8) | 8.8/10 | +5.0 | 🟢 HEALTHY |
-
-### Key Metrics
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| **TypeScript Errors** | 1,172 | <10 | 🔴 P0 |
-| **God Stores** | 69 (25 duplicated) | 0 | 🔴 P0 |
-| **Components >300 lines** | 45 | 0 | 🔴 P0 |
-| **Test Coverage** | 16.6% | ≥80% | 🔴 P0 |
-| **Circular Dependencies** | 2 acceptable cycles | 0 | 🟢 P1 (93% reduced) |
-| **Silent Failures** | 23 instances | 0 | 🟡 P1 |
+**Last Updated**: 2026-01-04T14:30+07:00
+**Purpose**: Real-time epic progress tracking - AUTONOMOUS EXECUTION ACTIVE
+**Team**: Team A (Primary)
+**Agent Mode**: @bmad-core-bmad-master v2.0 (Autonomous)
+**Sprint Status**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
 
 ---
 
-## Phase 0: Foundation Stabilization (Week 1-2) - **REVISED STRATEGY**
+## ⚠️ COURSE CORRECTION NOTICE (2026-01-04T00:45+07:00)
 
-**Status**: 🟡 IN PROGRESS (Course Corrected 2026-01-04)
-**Duration**: 60-80 hours (revised)
+**Reason**: Ralph Loop executing unsystematically - halted for structured epic approach
+**Decision**: Switch to structured ARC-1 through ARC-4 epics with workspace priority
+**Workspace Order**: IDE (harden) → Notes (E2E) → Knowledge (E2E)
+**TypeScript Strategy**: Code files only - test files EXCLUDED from error counts
+
+---
+
+## New Epic Structure
+
+| Epic ID | Epic Name | Priority | Duration | Status |
+|---------|-----------|----------|----------|--------|
+| ARC-1 | Foundation Stabilization | P0 | Week 1 | 🟡 IN_PROGRESS |
+| ARC-2 | IDE Workspace E2E | P0 | Week 2 | 🔴 TODO |
+| ARC-3 | Notes Workspace E2E | P0 | Week 3 | 🔴 TODO |
+| ARC-4 | Knowledge Workspace E2E | P0 | Week 4 | 🔴 TODO |
+
+---
+
+## Health Score Trend
+
+| Date | Score | Change | Status |
+|------|-------|--------|--------|
+| 2026-01-01 (Baseline) | 3.8/10 | - | 🔴 CRITICAL |
+| 2026-01-03 (CD-001 Done) | 6.8/10 | +3.0 | 🟡 MEDIUM |
+| Target (ARC-4 Complete) | 8.8/10 | +5.0 | 🟢 HEALTHY |
+
+### Key Metrics (Code Files Only)
+
+| Metric | Current | Target | Status |
+|--------|---------|--------|--------|
+| **TS Errors (code)** | ~200 | <10 | 🔴 P0 |
+| **God Stores >500 lines** | 30+ | 0 | 🔴 P0 |
+| **Components >300 lines** | 45 | 0 | 🔴 P0 |
+| **Circular Dependencies** | 2 | 0 | 🟢 93% reduced |
+| **Workspace E2E** | IDE partial | 3/3 | 🔴 P0 |
+
+---
+
+## Phase 0: Foundation Stabilization (Week 1-2) - **AUTONOMOUS EXECUTION**
+
+**Status**: 🟢 READY FOR EXECUTION (2026-01-04 14:30)
+**Duration**: 60-80 hours (systematic epic approach)
 **Target**: Foundation stabilized - God stores eliminated, file system E2E working
 
-**⚠️ COURSE CORRECTION (2026-01-04 00:45)**:
-- **ABANDONED**: TS-001 (Test file TypeScript errors - NOT IMPORTANT)
-- **NEW PRIORITY**: God store splitting > File system E2E > Component splitting
-- **STRATEGY**: Foundation First - split large files, split god classes, then file system E2E
-- **WORKSPACES**: IDE → Notes → Knowledge (each 100% health before proceeding)
-- **REFERENCE**: `_bmad-output/ralph-loop-course-correction-20260104.md`
+**🚀 BMAD MASTER v2.0 ACTIVE**:
+- **MODE**: Autonomous workflow orchestration
+- **STRATEGY**: Systematic epic-based execution (ARC-1 → ARC-2 → ARC-3 → ARC-4)
+- **NEXT**: ARC-1.1 - Split dexie-db.ts (1,267 lines)
+- **WORKFLOWS**: eliminate-god-stores, normalize-components, workspace-file-system-e2e
+- **AGENTS**: store-refactorer, component-splitter, workspace-architect, file-sync-specialist
+- **REFERENCE**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
 
-### Story Status (REVISED)
+### Story Status (SYSTEMATIC EPIC APPROACH)
+
+**Epic ARC-1: Foundation Stabilization** (Week 1)
 
 | Story ID | Story Name | Status | Assignee | Hours | Progress |
 |----------|------------|--------|----------|-------|----------|
 | CD-001 | Eliminate Circular Dependencies | 🟢 DONE | @bmad-bmm-dev | 10 | 100% |
-| ~~TS-001~~ | ~~Fix TypeScript Errors~~ | ⚪ ABANDONED | @bmad-bmm-dev | - | - |
-| GS-001 | Split God Stores (69 files) | 🔴 NEW PRIORITY | @bmad-bmm-dev | 40-50 | 0% |
-| FS-001 | File System E2E - IDE Workspace | 🔴 NEW PRIORITY | @bmad-bmm-dev | 20-25 | 0% |
-| UI-001 | Extract AgentConfigDialog Hooks | 🟡 LOW PRIORITY | @bmad-bmm-dev | 16-20 | 0% |
+| ARC-1.1 | Split dexie-db.ts (1,267 lines) | 🟢 READY | @store-refactorer | 8-12 | 0% |
+| ARC-1.2 | Consolidate duplicate dexie-db.ts | 🔴 TODO | @store-refactorer | 4-6 | 0% |
+| ARC-1.3 | Refactor event-bus.ts (644 lines) | 🔴 TODO | @store-refactorer | 6-8 | 0% |
+| ARC-1.4 | Create workspace-specific store facades | 🔴 TODO | @store-refactorer | 8-10 | 0% |
 
-### Phase Metrics (UPDATED)
-- **Stories Completed**: 1/4 (25%)
-- **Hours Burned**: 10/95-110 hours (9-11%)
+### Phase Metrics (AUTONOMOUS MODE ACTIVE)
+- **Stories Completed**: 1/5 (20%)
+- **Hours Burned**: 10/62-82 hours (12-16%)
 - **Health Score Improvement**: +3.0
 - **Blockers**: None
-- **Next Action**: Split `rag-store.ts` (1,595 lines - WORST OFFENDER)
+- **Next Action**: ARC-1.1 - Split `dexie-db.ts` using `eliminate-god-stores` workflow
+- **Autonomous Agent**: @store-refactorer
+- **Trigger Command**: "Split dexie-db.ts using eliminate-god-stores workflow"
 
 ---
 
