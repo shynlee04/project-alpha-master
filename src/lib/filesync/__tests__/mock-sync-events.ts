@@ -21,7 +21,6 @@
  */
 
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
-import { WorkspaceEventType } from '@/infrastructure/events/event-bus';
 
 /**
  * Mock sync event emitter - simulates successful sync operation
@@ -45,8 +44,9 @@ export function mockSyncEmit() {
   console.log('[mockSyncEmit] Starting mock sync operation...');
 
   // Simulate sync started
-  eventBus.emit(WorkspaceEventType.SYNC_STARTED, {
-    total: 10,
+  eventBus.emit('sync:started', {
+    fileCount: 10,
+    direction: 'bidirectional',
   });
 
   // Simulate progress updates
@@ -56,18 +56,20 @@ export function mockSyncEmit() {
   const interval = setInterval(() => {
     current += 1;
 
-    eventBus.emit(WorkspaceEventType.SYNC_PROGRESS, {
+    eventBus.emit('sync:progress', {
       current,
       total,
-      message: `Syncing file ${current}/${total}...`,
+      currentFile: `file-${current}.txt`,
     });
 
     console.log(`[mockSyncEmit] Progress: ${current}/${total} (${(current / total) * 100}%)`);
 
     if (current >= total) {
       clearInterval(interval);
-      eventBus.emit(WorkspaceEventType.SYNC_COMPLETED, {
-        message: `Synced ${total} files successfully`,
+      eventBus.emit('sync:completed', {
+        success: true,
+        timestamp: new Date(),
+        filesProcessed: total,
       });
       console.log('[mockSyncEmit] Mock sync completed');
     }
@@ -93,14 +95,15 @@ export function mockSyncError() {
 
   console.log('[mockSyncError] Starting mock sync error...');
 
-  eventBus.emit(WorkspaceEventType.SYNC_STARTED, {
-    total: 10,
+  eventBus.emit('sync:started', {
+    fileCount: 10,
+    direction: 'bidirectional',
   });
 
   // Simulate immediate failure
   setTimeout(() => {
-    eventBus.emit(WorkspaceEventType.SYNC_FAILED, {
-      error: 'Network connection lost during sync',
+    eventBus.emit('sync:error', {
+      error: new Error('Network connection lost during sync'),
     });
     console.log('[mockSyncError] Mock sync error emitted');
   }, 100);
@@ -135,8 +138,9 @@ export function mockSyncCustom({
 
   console.log(`[mockSyncCustom] Starting custom mock sync (total=${total}, duration=${duration}ms, fail=${shouldFail})`);
 
-  eventBus.emit(WorkspaceEventType.SYNC_STARTED, {
-    total,
+  eventBus.emit('sync:started', {
+    fileCount: total,
+    direction: 'bidirectional',
   });
 
   if (shouldFail) {
@@ -148,16 +152,16 @@ export function mockSyncCustom({
     const interval = setInterval(() => {
       current += 1;
 
-      eventBus.emit(WorkspaceEventType.SYNC_PROGRESS, {
+      eventBus.emit('sync:progress', {
         current,
         total,
-        message: `Syncing file ${current}/${total}...`,
+        currentFile: `file-${current}.txt`,
       });
 
       if (current >= failAt) {
         clearInterval(interval);
-        eventBus.emit(WorkspaceEventType.SYNC_FAILED, {
-          error: errorMessage,
+        eventBus.emit('sync:error', {
+          error: new Error(errorMessage),
         });
         console.log(`[mockSyncCustom] Mock sync failed at ${current}/${total}`);
       }
@@ -170,16 +174,18 @@ export function mockSyncCustom({
     const interval = setInterval(() => {
       current += 1;
 
-      eventBus.emit(WorkspaceEventType.SYNC_PROGRESS, {
+      eventBus.emit('sync:progress', {
         current,
         total,
-        message: `Syncing file ${current}/${total}...`,
+        currentFile: `file-${current}.txt`,
       });
 
       if (current >= total) {
         clearInterval(interval);
-        eventBus.emit(WorkspaceEventType.SYNC_COMPLETED, {
-          message: `Synced ${total} files successfully`,
+        eventBus.emit('sync:completed', {
+          success: true,
+          timestamp: new Date(),
+          filesProcessed: total,
         });
         console.log(`[mockSyncCustom] Mock sync completed (${total} files in ${duration}ms)`);
       }

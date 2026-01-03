@@ -26,7 +26,6 @@ import { useEffect } from 'react';
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
 import { useFileSyncStatusStore } from '@/lib/workspace/file-sync-status-store';
 import { SyncStatusIndicator } from './SyncStatusIndicator';
-import { WorkspaceEventType } from '@/infrastructure/events/event-bus';
 
 // ============================================================================
 // Component
@@ -41,11 +40,11 @@ import { WorkspaceEventType } from '@/infrastructure/events/event-bus';
  * - Renders SyncStatusIndicator with store state
  * - Auto-hides after sync completes (3s for success, 5s for error)
  *
- * Event Payloads:
- * - SYNC_STARTED: { total: number }
- * - SYNC_PROGRESS: { current: number, total: number, message?: string }
- * - SYNC_COMPLETED: { message?: string }
- * - SYNC_FAILED: { error: string }
+ * Event Payloads (from workspace-events.ts):
+ * - sync:started: { fileCount, direction, operationId }
+ * - sync:progress: { current, total, currentFile, operationId }
+ * - sync:completed: { success, timestamp, filesProcessed }
+ * - sync:error: { error, file, operationId }
  */
 export function SyncStatusPanel() {
   const { eventBus } = useWorkspace();
@@ -64,29 +63,29 @@ export function SyncStatusPanel() {
     console.log('[SyncStatusPanel] Event bus available, registering listeners');
 
     // Handle sync started event
-    const handleSyncStarted = ({ total }: { total: number }) => {
-      console.log('[SyncStatusPanel] Sync started:', total);
-      setSyncStarted(total);
+    const handleSyncStarted = ({ fileCount }: { fileCount: number }) => {
+      console.log('[SyncStatusPanel] Sync started:', fileCount);
+      setSyncStarted(fileCount);
     };
 
     // Handle sync progress event
     const handleSyncProgress = ({
       current,
       total,
-      message
+      currentFile
     }: {
       current: number;
       total: number;
-      message?: string;
+      currentFile: string;
     }) => {
-      console.log('[SyncStatusPanel] Sync progress:', current, '/', total);
-      setSyncProgress(current, total, message);
+      console.log('[SyncStatusPanel] Sync progress:', current, '/', total, currentFile);
+      setSyncProgress(current, total, `Syncing ${currentFile} (${current}/${total})`);
     };
 
     // Handle sync completed event
-    const handleSyncCompleted = ({ message }: { message?: string }) => {
-      console.log('[SyncStatusPanel] Sync completed');
-      setSyncCompleted(message);
+    const handleSyncCompleted = ({ filesProcessed }: { filesProcessed: number }) => {
+      console.log('[SyncStatusPanel] Sync completed, files processed:', filesProcessed);
+      setSyncCompleted(`Synced ${filesProcessed} files successfully`);
 
       // Auto-hide after 3 seconds
       const timeout = setTimeout(() => {
@@ -98,10 +97,10 @@ export function SyncStatusPanel() {
       return () => clearTimeout(timeout);
     };
 
-    // Handle sync failed event
-    const handleSyncFailed = ({ error }: { error: string }) => {
+    // Handle sync error event
+    const handleSyncFailed = ({ error }: { error: Error }) => {
       console.error('[SyncStatusPanel] Sync failed:', error);
-      setSyncFailed(error);
+      setSyncFailed(error.message);
 
       // Auto-hide after 5 seconds (longer for errors)
       const timeout = setTimeout(() => {
@@ -113,20 +112,20 @@ export function SyncStatusPanel() {
       return () => clearTimeout(timeout);
     };
 
-    // Register event listeners
-    eventBus.on(WorkspaceEventType.SYNC_STARTED, handleSyncStarted as any);
-    eventBus.on(WorkspaceEventType.SYNC_PROGRESS, handleSyncProgress as any);
-    eventBus.on(WorkspaceEventType.SYNC_COMPLETED, handleSyncCompleted as any);
-    eventBus.on(WorkspaceEventType.SYNC_FAILED, handleSyncFailed as any);
+    // Register event listeners (using string literals as per workspace-events.ts)
+    eventBus.on('sync:started', handleSyncStarted as any);
+    eventBus.on('sync:progress', handleSyncProgress as any);
+    eventBus.on('sync:completed', handleSyncCompleted as any);
+    eventBus.on('sync:error', handleSyncFailed as any);
 
     console.log('[SyncStatusPanel] Event listeners registered');
 
     // Cleanup function
     return () => {
-      eventBus.off(WorkspaceEventType.SYNC_STARTED, handleSyncStarted as any);
-      eventBus.off(WorkspaceEventType.SYNC_PROGRESS, handleSyncProgress as any);
-      eventBus.off(WorkspaceEventType.SYNC_COMPLETED, handleSyncCompleted as any);
-      eventBus.off(WorkspaceEventType.SYNC_FAILED, handleSyncFailed as any);
+      eventBus.off('sync:started', handleSyncStarted as any);
+      eventBus.off('sync:progress', handleSyncProgress as any);
+      eventBus.off('sync:completed', handleSyncCompleted as any);
+      eventBus.off('sync:error', handleSyncFailed as any);
       console.log('[SyncStatusPanel] Event listeners cleaned up');
     };
   }, [eventBus, setSyncStarted, setSyncProgress, setSyncCompleted, setSyncFailed]);

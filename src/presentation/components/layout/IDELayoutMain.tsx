@@ -248,6 +248,9 @@ export function IDELayout(): React.JSX.Element {
                     <div className="fixed bottom-4 right-4 z-50 w-96">
                         <SyncStatusPanel />
                     </div>
+
+                    {/* Dev Tools (development mode only) */}
+                    <SyncDevTools />
                 </div>
             </SidebarProvider>
         </StatusAnnouncerProvider>
