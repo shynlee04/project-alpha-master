@@ -6,8 +6,9 @@ status: in_progress
 summary:
   total_stories: 23
   total_estimate_hours: 88-90
-  pending: 22
-  drafted: 1
+  pending: 21
+  drafted: 0
+  ready_for_dev: 1
   in_progress: 0
   completed: 0
   blocked: 0
@@ -15,7 +16,8 @@ summary:
 stories:
   LT-1.1:
     title: Create light theme token file
-    status: drafted
+    status: ready_for_dev
+    context_xml: _bmad-artifacts/LT-1-1-light-theme-token-file-context.xml
     created_at: "2026-01-03T00:00:00Z"
     started_at: null
     completed_at: null
@@ -249,6 +251,7 @@ metadata:
   approved_by: TBD
   approval_date: 2026-01-03
   modified_by: BMAD Coordinator (SM Agent)
-  last_updated: "2026-01-03T00:00:00Z"
+  last_updated: "2026-01-03T17:12:00Z"
   stories_created: 1
   stories_remaining: 22
+  stories_ready_for_dev: 1

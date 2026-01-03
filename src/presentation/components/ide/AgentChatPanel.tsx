@@ -2,8 +2,7 @@ import { useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-import { Bug } from 'lucide-react';
-import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import { eventBus as crossWorkspaceEventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { DebugSessionData } from '@/infrastructure/events/event-bus';
 
 import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
@@ -282,7 +281,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
             .join('\n\n');
 
         // Collect terminal output if available
-        const terminalOutput = ''; // TODO: Integrate with terminal output capture
+        // TODO: Integrate with terminal output capture
+        // const terminalOutput = '';
 
         // Collect stack traces from error messages
         const stackTrace = recentErrors.includes('Stack trace')
@@ -314,7 +314,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         };
 
         // Publish event to cross-workspace event bus
-        eventBus.emit(DomainEventType.IDE_DEBUG_SESSION_CAPTURED, debugData);
+        crossWorkspaceEventBus.emit(DomainEventType.IDE_DEBUG_SESSION_CAPTURED, debugData);
 
         toast.success('Debug session captured', {
             description: 'Creating Debug Note in Knowledge workspace...'

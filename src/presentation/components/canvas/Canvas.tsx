@@ -136,10 +136,8 @@ function KeyboardShortcutsPanel() {
 
 /**
  * Main canvas content component
- *
- * @param props - CanvasContent props including optional indexMetadata
  */
-function CanvasContent(props?: { indexMetadata?: IndexMetadata | null }) {
+function CanvasContent() {
   const { isMobile } = useResponsive();
 
   // Get store state and actions
@@ -248,7 +246,7 @@ function CanvasContent(props?: { indexMetadata?: IndexMetadata | null }) {
 
         {/* Panels */}
         {isMobile ? <TouchGesturesPanel /> : <KeyboardShortcutsPanel />}
-        <LinkageProposalsPanel indexMetadata={props?.indexMetadata} />
+        <LinkageProposalsPanel />
 
         {/* Empty state */}
         {isEmpty && (
