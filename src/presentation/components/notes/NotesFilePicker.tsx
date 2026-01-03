@@ -17,15 +17,13 @@ import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
 import { Loader2, FolderOpen, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import type { FileSyncService } from '@/lib/filesync/file-sync-service';
+import type { SyncStatus } from '@/lib/filesync/file-sync-service';
 
 interface NotesFilePickerProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    fileSyncService: {
-        mount: (source: FileSystemDirectoryHandle) => Promise<void>;
-        getSyncStatus: () => { syncing: boolean; lastSync: Date | null };
-        sync: () => Promise<void>;
-    } | null;
+    fileSyncService: FileSyncService | null;
     onInitialize?: () => Promise<void>;
     isInitializing?: boolean;
     error?: string | null;
@@ -49,9 +47,11 @@ export function NotesFilePicker({
     const [isMounting, setIsMounting] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
     const [autoSync, setAutoSync] = useState(true);
-    const [syncStatus, setSyncStatus] = useState<{ syncing: boolean; lastSync: Date | null }>({
+    const [syncStatus, setSyncStatus] = useState<SyncStatus>({
         syncing: false,
-        lastSync: null
+        lastSync: null,
+        filesProcessed: 0,
+        error: null
     });
 
     // Update sync status periodically
@@ -60,7 +60,13 @@ export function NotesFilePicker({
 
         const updateStatus = () => {
             if (fileSyncService) {
-                setSyncStatus(fileSyncService.getSyncStatus());
+                const status = fileSyncService.getSyncStatus();
+                // Convert lastSync from number to Date if needed
+                const adjustedStatus: SyncStatus = {
+                    ...status,
+                    lastSync: status.lastSync ? new Date(status.lastSync) : null
+                };
+                setSyncStatus(adjustedStatus);
             }
         };
 

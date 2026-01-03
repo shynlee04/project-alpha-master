@@ -15,12 +15,13 @@ import { ProgressIndicator } from "../ui/progress-indicator"
 import { FileDown, FolderOpen, Check, X, AlertCircle, Loader2 } from "lucide-react"
 import { createNoteFileSyncService, type NoteSyncResult } from "@/lib/notes"
 import type { NoteRecord } from "@/lib/notes/types"
+import type { FileSyncService } from "@/lib/filesync/file-sync-service"
 
 interface MarkdownExportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   notes: NoteRecord[]
-  syncService?: ReturnType<typeof createNoteFileSyncService>
+  syncService?: FileSyncService | null
   onInitialize?: () => Promise<void>
   isInitializing?: boolean
   error?: string | null

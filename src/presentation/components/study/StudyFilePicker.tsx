@@ -16,11 +16,12 @@ import { Badge } from '@/presentation/components/ui/badge';
 import { Loader2, FolderOpen, FileText, BookOpen, ScrollText } from 'lucide-react';
 import { toast } from 'sonner';
 import type { StudyFileSyncService, ImportResult } from '@/lib/filesync/study-file-sync-service';
+import type { FileSyncService } from '@/lib/filesync/file-sync-service';
 
 interface StudyFilePickerProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    fileSyncService: StudyFileSyncService | null;
+    fileSyncService: FileSyncService | null;
     onInitialize?: () => Promise<void>;
     isInitializing?: boolean;
     error?: string | null;
@@ -112,7 +113,9 @@ export function StudyFilePicker({
 
         try {
             setIsImporting(true);
-            const result = await fileSyncService.importStudyMaterials('');
+            // Type guard for StudyFileSyncService
+            const studyService = fileSyncService as StudyFileSyncService;
+            const result = await studyService.importStudyMaterials('');
             setImportResult(result);
 
             if (result.success) {
@@ -137,7 +140,9 @@ export function StudyFilePicker({
 
         try {
             if (material.type === 'quiz') {
-                const quiz = await fileSyncService.importQuizJSON(material.path);
+                // Type guard for StudyFileSyncService
+                const studyService = fileSyncService as StudyFileSyncService;
+                const quiz = await studyService.importQuizJSON(material.path);
                 if (quiz) {
                     toast.success(`Quiz imported: ${quiz.title}`, {
                         description: `${quiz.questions.length} questions`
