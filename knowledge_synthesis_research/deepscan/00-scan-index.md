@@ -10,7 +10,7 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 ## Artifacts Plan
 | ID | Artifact | Focus Area | Status |
 |---|---|---|---|
-| 01 | [workspace-boundaries.md](./01-workspace-boundaries.md) | Module responsibilities, cross-imports, isolation | Pending |
+| 01 | [workspace-boundaries.md](./01-workspace-boundaries.md) | Module responsibilities, cross-imports, isolation | **Complete** |
 | 02 | [state-store-audit.md](./02-state-store-audit.md) | Zustand topology, persistence, anti-patterns | Pending |
 | 03 | [persistence-indexing-audit.md](./03-persistence-indexing-audit.md) | Dexie/Orama schemas, cache drift, perf | Pending |
 | 04 | [filesystem-sync-audit.md](./04-filesystem-sync-audit.md) | FSA integration, offline queue, conflict resolution | Pending |
@@ -21,3 +21,4 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 
 ## Global Findings Summary
 *(To be populated as scan progresses)*
+- **Pass 1:** Architecture is Layer-First Clean Architecture. Workspaces (IDE, Knowledge, Notes, Study) are Presentation-layer components sharing Domain services. No Module-First organization detected.
