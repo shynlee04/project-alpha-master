@@ -15,7 +15,7 @@
  * - Provides variant prop for different UI contexts (full/compact/minimal)
  */
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, ChevronDown } from 'lucide-react';
 import {
@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { detectWorkspace } from '@/lib/workspace/workspace-detector';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { Agent } from '@/core/entities/Agent';
 
@@ -116,6 +117,57 @@ export function UnifiedAgentSelector({
   const activeAgent = useMemo(() => {
     return getAgentForWorkspace(currentWorkspace);
   }, [getAgentForWorkspace, currentWorkspace, lastSelectedAgentIds, defaultAgentIds, agents]);
+
+  // Listen to cross-workspace agent selection events
+  useEffect(() => {
+    // eventBus is a singleton, always available
+
+    console.log('[UnifiedAgentSelector] Setting up event bus listeners for workspace:', currentWorkspace);
+
+    /**
+     * Handle agent selected event from another workspace
+     * Updates local state if the event is for the current workspace
+     */
+    const handleAgentSelected = (event: any) => {
+      const { workspaceType, agentId } = event.payload;
+      console.log('[UnifiedAgentSelector] AGENT_SELECTED event received:', { workspaceType, agentId, currentWorkspace });
+
+      // Only update if this event is for the current workspace
+      if (workspaceType === currentWorkspace && agentId !== activeAgent?.id) {
+        console.log('[UnifiedAgentSelector] Updating agent selection to:', agentId);
+        setActiveAgent(agentId, currentWorkspace);
+      }
+    };
+
+    /**
+     * Handle default agent changed event
+     * Updates local state if the event is for the current workspace
+     */
+    const handleDefaultAgentChanged = (event: any) => {
+      const { workspaceType, agentId } = event.payload;
+      console.log('[UnifiedAgentSelector] DEFAULT_AGENT_CHANGED event received:', { workspaceType, agentId, currentWorkspace });
+
+      // Only update if this event is for the current workspace
+      if (workspaceType === currentWorkspace) {
+        console.log('[UnifiedAgentSelector] Default agent changed to:', agentId);
+        // Default agent changes don't necessarily update the active selection
+        // They just update the default agent ID in the store
+      }
+    };
+
+    // Register listeners
+    const unsubscribeAgentSelected = eventBus.on(DomainEventType.AGENT_SELECTED, handleAgentSelected as any);
+    const unsubscribeDefaultAgentChanged = eventBus.on(DomainEventType.DEFAULT_AGENT_CHANGED, handleDefaultAgentChanged as any);
+
+    console.log('[UnifiedAgentSelector] Event bus listeners registered');
+
+    // Cleanup: remove listeners on unmount
+    return () => {
+      console.log('[UnifiedAgentSelector] Cleaning up event bus listeners');
+      unsubscribeAgentSelected();
+      unsubscribeDefaultAgentChanged();
+    };
+  }, [eventBus, currentWorkspace, activeAgent?.id, setActiveAgent]);
 
   // Get agents available in current workspace
   const availableAgents = useMemo(() => {

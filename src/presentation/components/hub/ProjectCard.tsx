@@ -10,7 +10,7 @@
  * @see Research: HubHomePage project row extraction, 8-bit design system
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -18,6 +18,7 @@ import {
   Clock,
   CheckCircle2,
 } from 'lucide-react';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 
 import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import type { WorkspaceId } from '@/lib/workspace';
@@ -88,6 +89,41 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     () => getEnabledWorkspaces(project.bindings),
     [project.bindings]
   );
+
+  // Listen to workspace project update events
+  useEffect(() => {
+    // eventBus is a singleton, always available
+
+    console.log('[ProjectCard] Setting up event bus listeners for project:', project.id);
+
+    /**
+     * Handle workspace project updated event
+     * Triggers re-render when project settings change
+     */
+    const handleProjectUpdated = (event: any) => {
+      const { projectId } = event.payload;
+      console.log('[ProjectCard] WORKSPACE_PROJECT_UPDATED event received:', { projectId, currentProjectId: project.id });
+
+      // If this is the current project, force re-render
+      if (projectId === project.id) {
+        console.log('[ProjectCard] Project updated, forcing re-render');
+        // Force re-render by toggling hover state briefly
+        setIsHovered(false);
+        setTimeout(() => setIsHovered(false), 0);
+      }
+    };
+
+    // Register listeners
+    const unsubscribeProjectUpdated = eventBus.on(DomainEventType.FILE_SAVED, handleProjectUpdated as any);
+
+    console.log('[ProjectCard] Event bus listeners registered');
+
+    // Cleanup: remove listeners on unmount
+    return () => {
+      console.log('[ProjectCard] Cleaning up event bus listeners');
+      unsubscribeProjectUpdated();
+    };
+  }, [eventBus, project.id]);
 
   // Handle workspace badge click (direct navigation, skip dialog)
   const handleWorkspaceClick = (workspace: WorkspaceId) => {

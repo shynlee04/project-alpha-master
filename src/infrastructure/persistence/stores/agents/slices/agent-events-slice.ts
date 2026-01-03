@@ -13,6 +13,7 @@ import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { CombinedAgentsState } from '../types';
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 
 /**
  * Agent Events Slice
@@ -53,6 +54,13 @@ export const createAgentEventsSlice: StateCreator<
       changeType: 'created',
     });
 
+    // Also emit to main event bus for component listeners
+    eventBus.emit(DomainEventType.AGENT_CREATED, {
+      agentId: result.id,
+      agentName: result.name,
+      workspaceType: currentWorkspace,
+    });
+
     return result;
   },
 
@@ -74,6 +82,12 @@ export const createAgentEventsSlice: StateCreator<
       agentId: id,
       changeType: 'deleted',
     });
+
+    // Also emit to main event bus for component listeners
+    eventBus.emit(DomainEventType.AGENT_DELETED, {
+      agentId: id,
+      workspaceType: currentWorkspace,
+    });
   },
 
   /**
@@ -94,6 +108,13 @@ export const createAgentEventsSlice: StateCreator<
       workspaceId: currentWorkspace,
       agentId: id,
       changeType: 'updated',
+    });
+
+    // Also emit to main event bus for component listeners
+    eventBus.emit(DomainEventType.AGENT_CONFIG_UPDATED, {
+      agentId: id,
+      workspaceType: currentWorkspace,
+      updates,
     });
   },
 

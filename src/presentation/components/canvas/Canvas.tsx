@@ -38,17 +38,46 @@ const defaultViewportOptions = {
  */
 function CanvasEmptyState() {
   const { t } = useTranslation();
+  const { isMobile } = useResponsive();
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-surface/50 backdrop-blur-sm">
-      <div className="mb-4 text-4xl animate-bounce">📝</div>
-      <h3 className="text-xl font-bold text-foreground mb-3">
+      <div className={`mb-4 ${isMobile ? 'text-3xl' : 'text-4xl'} animate-bounce`}>
+        📝
+      </div>
+      <h3 className={`font-bold text-foreground mb-3 ${isMobile ? 'text-base' : 'text-xl'}`}>
         {t('canvas.emptyState.title', 'Drop sources here to start')}
       </h3>
-      <p className="text-base text-muted-foreground max-w-sm mx-auto">
+      <p className={`text-muted-foreground max-w-sm mx-auto ${isMobile ? 'text-sm' : 'text-base'}`}>
         {t('canvas.emptyState.hint', 'Drag and drop sources from the sidebar to create your knowledge map')}
       </p>
     </div>
+  );
+}
+
+/**
+ * Touch gestures help panel for mobile devices
+ */
+function TouchGesturesPanel() {
+  const { t } = useTranslation();
+
+  const gestures = [
+    { icon: '👆', desc: t('canvas.gesture.pan', 'Pan canvas') },
+    { icon: '🤏', desc: t('canvas.gesture.zoom', 'Pinch to zoom') },
+    { icon: '👆👆', desc: t('canvas.gesture.tap', 'Double-tap to reset') },
+  ];
+
+  return (
+    <Panel position="bottom-right">
+      <div className="flex flex-col gap-2 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm p-2 rounded">
+        {gestures.map(({ icon, desc }) => (
+          <div key={icon} className="flex items-center gap-2">
+            <span className="text-sm">{icon}</span>
+            <span>{desc}</span>
+          </div>
+        ))}
+      </div>
+    </Panel>
   );
 }
 
@@ -164,7 +193,7 @@ function CanvasContent(props?: { indexMetadata?: IndexMetadata | null }) {
 
   return (
     <div
-      className="w-full h-full min-h-[400px] relative"
+      className={`w-full h-full relative ${isMobile ? 'min-h-[300px]' : 'min-h-[400px]'}`}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
@@ -193,17 +222,22 @@ function CanvasContent(props?: { indexMetadata?: IndexMetadata | null }) {
         nodesConnectable={!isReadOnly}
         elementsSelectable={!isReadOnly}
         // Performance optimization
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+        defaultViewport={{ x: 0, y: 0, zoom: isMobile ? 0.5 : 1 }}
+        // Mobile-specific: Pan on scroll (disabled), use touch gestures instead
+        panOnScroll={false}
+        panOnScrollSpeed={0.5}
         // Attribution position
         attributionPosition="bottom-left"
       >
-        {/* Controls */}
-        <Controls
-          showZoom={true}
-          showFitView={true}
-          showInteractive={true}
-          position="bottom-left"
-        />
+        {/* Controls - hide on mobile in read-only mode */}
+        {!isReadOnly && (
+          <Controls
+            showZoom={true}
+            showFitView={true}
+            showInteractive={true}
+            position="bottom-left"
+          />
+        )}
 
         {/* Background grid */}
         <Background
@@ -213,7 +247,7 @@ function CanvasContent(props?: { indexMetadata?: IndexMetadata | null }) {
         />
 
         {/* Panels */}
-        <KeyboardShortcutsPanel />
+        {isMobile ? <TouchGesturesPanel /> : <KeyboardShortcutsPanel />}
         <LinkageProposalsPanel indexMetadata={props?.indexMetadata} />
 
         {/* Empty state */}

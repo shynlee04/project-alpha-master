@@ -14,7 +14,7 @@
  * @priority HIGH - User explicitly requested comprehensive management UI
  */
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Settings,
@@ -38,6 +38,7 @@ import type { Agent } from '@/core/entities/Agent'
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type'
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus'
 
 /**
  * Display variants for different contexts
@@ -120,6 +121,41 @@ export function AgentManager({
   const selectedAgent = useMemo(() => {
     return agents.find(a => a.id === activeAgentId) || null
   }, [agents, activeAgentId])
+
+  // Listen to agent configuration update events
+  useEffect(() => {
+    // eventBus is a singleton, always available
+
+    console.log('[AgentManager] Setting up event bus listeners');
+
+    /**
+     * Handle agent configuration updated event
+     * Triggers re-render when agent config changes in another workspace
+     */
+    const handleAgentConfigUpdated = (event: any) => {
+      const { agentId } = event.payload;
+      console.log('[AgentManager] AGENT_CONFIG_UPDATED event received:', { agentId, selectedAgentId: selectedAgent?.id });
+
+      // If this is the currently displayed agent, trigger re-render
+      // by updating local state (forces component to re-fetch agent data)
+      if (agentId === selectedAgent?.id) {
+        console.log('[AgentManager] Agent config updated for current agent, forcing re-render');
+        // Force re-render by updating config dialog state briefly
+        setConfigDialogOpen(false);
+      }
+    };
+
+    // Register listeners
+    const unsubscribeAgentConfigUpdated = eventBus.on(DomainEventType.AGENT_CONFIG_UPDATED, handleAgentConfigUpdated as any);
+
+    console.log('[AgentManager] Event bus listeners registered');
+
+    // Cleanup: remove listeners on unmount
+    return () => {
+      console.log('[AgentManager] Cleaning up event bus listeners');
+      unsubscribeAgentConfigUpdated();
+    };
+  }, [eventBus, selectedAgent?.id]);
 
   // Handle agent selection from UnifiedAgentSelector
   const handleSelectAgent = useCallback((agent: Agent) => {
