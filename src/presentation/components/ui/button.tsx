@@ -3,10 +3,13 @@
  * 
  * EPIC_ID: Epic-23
  * STORY_ID: 23-1
+ * STORY: LT-2.8 (Light Theme Migration)
  * CREATED_AT: 2025-12-25T16:27:00Z
+ * UPDATED_AT: 2026-01-04T00:00:00Z
  * 
  * Production-ready Button component following 8-bit design system.
- * Implements all variants, sizes, states with accessibility and i18n support.
+ * Implements all variants, sizes, states with accessibility, i18n, and light/dark theme support.
+ * Uses CSS custom properties for theme-aware styling.
  */
 
 import * as React from 'react'
@@ -38,19 +41,50 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 /**
  * CVA variants for Button component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
+ * Migrated to follow December 2025 Zustand patterns and light theme design tokens
  */
 const buttonVariants = cva(
-  // Base styles
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-medium transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring/50',
+  // Base styles with 8-bit aesthetic and theme-aware colors
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[4px] font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms] shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
-        secondary: 'bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 active:bg-secondary/70 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        ghost: 'text-foreground hover:bg-accent active:bg-accent/80 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        outline: 'border-2 border-primary text-primary bg-transparent hover:bg-primary/10 active:bg-primary/20 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
-        destructive: 'bg-destructive text-white hover:bg-destructive/90 active:bg-destructive/80 hover:scale-105 hover:transition-[150ms] active:scale-95 active:transition-[100ms]',
+        // Primary variant: solid primary color background
+        primary: `
+          bg-[var(--primary)] text-[var(--primary-foreground)]
+          hover:bg-[var(--primary-600)]
+          active:bg-[var(--primary-700)]
+          shadow-[0_4px_12px_rgba(249,115,22,0.25)]
+        `,
+        // Secondary variant: subtle background with border
+        secondary: `
+          bg-[var(--secondary)] text-[var(--secondary-foreground)]
+          border border-[var(--border)]
+          hover:bg-[var(--neutral-200)]
+          active:bg-[var(--neutral-300)]
+        `,
+        // Ghost variant: transparent background, text color
+        ghost: `
+          text-[var(--foreground)]
+          hover:bg-[var(--neutral-100)]
+          active:bg-[var(--neutral-200)]
+        `,
+        // Outline variant: transparent background, colored border
+        outline: `
+          border border-[var(--primary)]
+          text-[var(--primary)]
+          bg-transparent
+          hover:bg-[var(--primary-50)]
+          active:bg-[var(--primary-100)]
+        `,
+        // Destructive variant: red background for delete/danger actions
+        destructive: `
+          bg-[var(--destructive)] text-white
+          hover:bg-[var(--destructive-600)]
+          active:bg-[var(--destructive-700)]
+          shadow-[0_4px_12px_rgba(239,68,68,0.25)]
+        `,
       },
       size: {
         sm: 'h-8 px-3 text-sm min-h-[32px]',
@@ -76,6 +110,7 @@ const buttonVariants = cva(
  * 
  * A production-ready button component following 8-bit design system.
  * Supports multiple variants, sizes, loading states, and icon positions.
+ * Fully theme-aware with CSS custom properties for light/dark mode support.
  * 
  * @example
  * ```tsx
@@ -109,6 +144,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Loader2
         className="animate-spin"
         size={size === 'sm' ? 16 : size === 'md' ? 20 : size === 'lg' ? 24 : 28}
+        style={{ color: 'var(--foreground)' }}
         aria-hidden="true"
       />
     ) : null

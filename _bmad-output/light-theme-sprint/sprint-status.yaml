@@ -11,15 +11,19 @@ phase: "Week 2: P0 Components"
 # Sprint Metrics
 metrics:
   total_stories: 23
-  completed_stories: 7
+  completed_stories: 8
   in_progress_stories: 1
-  drafted_stories: 1
+  drafted_stories: 0
   blocked_stories: 0
   pending_stories: 14
 
   total_hours: 88
-  hours_completed: 23
-  hours_remaining: 65
+  hours_completed: 25
+  hours_remaining: 63
+
+  # Epic 1 velocity: 79% under estimates
+  # Epic 2 adjusted estimates: 0.5x multiplier applied
+  velocity_multiplier: 0.5
 
 # Stories
 stories:
@@ -154,14 +158,16 @@ stories:
     description: "Update Input component to support light theme styling with proper focus indicators."
     priority: P0
     estimated_hours: 3
+    actual_hours: 1
     phase: "Week 2: P0 Components"
-    status: review
+    status: complete
     assignee: light-theme-dev-agent
     started_at: "2026-01-04T00:00:00Z"
-    completed_at: null
+    completed_at: "2026-01-04T01:00:00Z"
     dependencies: [LT-1.7]
     dependency_status: "LT-1.7 complete - Week 2 ready to start"
-    handoff_document: "_bmad-output/light-theme-sprint/stories/LT-2.9.md"
+    handoff_document: "_bmad-output/light-theme-sprint/stories/LT-2.9-story-handoff.md"
+    code_review: "_bmad-output/light-theme-sprint/reports/LT-2.9-code-review-2026-01-04.md"
 
   LT-2.10:
     id: "LT-2.10"
@@ -170,10 +176,11 @@ stories:
     description: "Update Select component to support light theme dropdown styling."
     priority: P0
     estimated_hours: 4
+    adjusted_hours: 2
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: "2026-01-04T00:00:00Z"
+    started_at: null
     completed_at: null
     dependencies: [LT-1.7]
 
@@ -184,10 +191,11 @@ stories:
     description: "Update Checkbox and Radio components to support light theme styling."
     priority: P0
     estimated_hours: 3
+    adjusted_hours: 1.5
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: "2026-01-04T00:00:00Z"
+    started_at: null
     completed_at: null
     dependencies: [LT-1.7]
 
@@ -198,10 +206,11 @@ stories:
     description: "Update Toggle/Switch component to support light theme with smooth thumb transitions."
     priority: P0
     estimated_hours: 3
+    adjusted_hours: 1.5
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-dev-agent
-    started_at: "2026-01-04T00:00:00Z"
+    started_at: null
     completed_at: null
     dependencies: [LT-1.7]
 
@@ -212,10 +221,11 @@ stories:
     description: "Comprehensive testing of all P0 components in both themes with QA validation."
     priority: P0
     estimated_hours: 6
+    adjusted_hours: 3
     phase: "Week 2: P0 Components"
     status: pending
     assignee: light-theme-sm-agent
-    started_at: "2026-01-04T00:00:00Z"
+    started_at: null
     completed_at: null
     dependencies: [LT-2.8, LT-2.9, LT-2.10, LT-2.11, LT-2.12]
 
@@ -376,13 +386,16 @@ progress:
   week_2:
     phase: "P0 Components - In Progress"
     stories_total: 6
-    stories_completed: 0
+    stories_completed: 1
     stories_in_progress: 1
-    hours_total: 23
-    hours_completed: 0
-    hours_remaining: 23
+    hours_total_estimated: 23
+    hours_total_adjusted: 11.5
+    hours_completed: 1
+    hours_remaining: 10.5
     status: in_progress
     current_story: "LT-2.8: Migrate Button component"
+    velocity_multiplier: 0.5
+    epic_1_lessons: "79% under estimates - apply 0.5x multiplier"
 
   week_3:
     phase: "P1 Components"
@@ -435,11 +448,12 @@ next_actions:
   - "Week 1 Foundation Complete - 7/7 stories finished ✅"
   - "Week 2 P0 Components - In Progress"
   - "LT-2.8: Migrate Button component - IN PROGRESS"
-  - "LT-2.9: Migrate Input component - pending"
+  - "LT-2.9: Migrate Input component - COMPLETE ✅"
   - "LT-2.10: Migrate Select component - pending"
   - "LT-2.11: Migrate Checkbox/Radio components - pending"
   - "LT-2.12: Migrate Toggle/Switch component - pending"
   - "LT-2.13: Test all P0 components (QA) - pending"
+  - "Applied 0.5x estimate multiplier from Epic 1 velocity"
 
 # Resource Isolation
 resource_isolation:
