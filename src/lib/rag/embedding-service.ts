@@ -19,7 +19,7 @@ import { eventBus } from '@/infrastructure/events/event-bus';
 /**
  * Embedding provider type
  */
-export type EmbeddingProvider = 'local' | 'cloud' | 'none';
+export type EmbeddingProvider = 'auto' | 'local' | 'cloud' | 'none';
 
 /**
  * Embedding configuration
@@ -110,8 +110,8 @@ export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
     // Check for WebGPU
     let hasWebGPU = false;
     try {
-        if (navigator.gpu) {
-            const adapter = await navigator.gpu.requestAdapter();
+        if ((navigator as Navigator & { gpu?: GPU }).gpu) {
+            const adapter = await (navigator as Navigator & { gpu: GPU }).gpu.requestAdapter();
             hasWebGPU = !!adapter;
         }
     } catch {

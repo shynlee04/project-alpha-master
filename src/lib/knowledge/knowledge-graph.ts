@@ -76,9 +76,37 @@ export class KnowledgeGraphService {
   private persistence: GraphPersistence;
 
   constructor(graphId: string) {
-    // Initialize persistence and empty graph
+    // Initialize empty graph
+    this.graph = {
+      nodes: new Map(),
+      edges: new Map(),
+      adjacency: new Map(),
+      reverseAdjacency: new Map(),
+      statistics: {
+        nodeCount: 0,
+        edgeCount: 0,
+        nodesByType: {
+          source: 0,
+          concept: 0,
+          cluster: 0,
+        },
+        edgesByType: {
+          conceptual: 0,
+          sequential: 0,
+          contrastive: 0,
+          citation: 0,
+          temporal: 0,
+          hierarchical: 0,
+        },
+        avgDegree: 0,
+        clusterCount: 0,
+        density: 0,
+      },
+      updatedAt: Date.now(),
+    };
+
+    // Initialize persistence
     this.persistence = new GraphPersistence(this.graph, graphId);
-    this.graph = this.persistence.initializeEmptyGraph();
 
     // Initialize modules (order matters: traversal → queries → crud)
     this.traversal = new GraphTraversal(this.graph);

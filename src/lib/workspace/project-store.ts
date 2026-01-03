@@ -256,6 +256,8 @@ export async function getProject(id: string): Promise<ProjectMetadata | null> {
 
     try {
         const project = await db.get<ProjectMetadata>(STORE_NAME, id);
+        // Cast to ProjectMetadata for backwards compatibility
+        // The actual data in IndexedDB may have additional fields from the Project type
         return project ?? null;
     } catch (error) {
         console.error('[ProjectStore] Failed to get project:', id, error);

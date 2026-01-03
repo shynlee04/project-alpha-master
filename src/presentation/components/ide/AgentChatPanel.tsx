@@ -93,7 +93,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         eventBus: eventBus || null,
         systemMessage: systemPrompt,
         providerId,
-        modelId: activeAgent?.modelId,
+        modelId: activeAgent?.modelId ?? undefined,
         apiKey: apiKey || undefined,
         // NOTE: customBaseURL, customHeaders, enableNativeTools are NOT part of Agent entity
         // They are provider-level configuration, NOT agent-level
@@ -101,9 +101,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     });
 
     // Conversation management
-    const { isInitialized, scrollRef, allMessages, handleScroll } = useAgentChatConversationManager({
+    const { scrollRef, allMessages, handleScroll } = useAgentChatConversationManager({
         projectId,
-        activeAgentId,
         hookMessages,
         rawMessages
     });
@@ -124,7 +123,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     }), [projectName, t]);
 
     // Effect to sync completed messages from hook to store
-    const { addMessage, activeConversationId } = useConversationStore();
+    const { addMessage, activeConversationId } = useThreadsStore();
 
     useEffect(() => {
         if (!activeConversationId) return;
@@ -257,8 +256,8 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
 
     const handleClear = useCallback(async () => {
         if (projectId) {
-            const newThread = createThread(projectId);
-            setActiveThread(newThread.id);
+            const threadId = createThread(projectId);
+            setActiveThread(threadId);
             toast.success(t('agent.cleared', 'Conversation cleared'));
         }
     }, [projectId, createThread, setActiveThread, t]);

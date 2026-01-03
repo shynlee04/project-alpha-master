@@ -16,17 +16,16 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronsUpDown } from 'lucide-react';
 
 import { useProjectContext } from '@/lib/workspace/ProjectContext';
-import type { WorkspaceId } from '@/lib/workspace/project-store';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import { cn } from '@/lib/utils';
 import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
-import type { WorkspaceType } from '@/lib/state/workspace-types';
 
 // ============================================================================
 // Workspace Configuration
 // ============================================================================
 
 const WORKSPACE_CONFIG: Record<
-  WorkspaceId,
+  WorkspaceType,
   { icon: string; labelKey: string; color: string }
 > = {
   ide: {
@@ -108,7 +107,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
    * - Agent selection store (re-select if needed)
    * - Cross-workspace event bus (emit events)
    */
-  const handleWorkspaceSwitch = async (workspace: WorkspaceId) => {
+  const handleWorkspaceSwitch = async (workspace: WorkspaceType) => {
     console.log('[WorkspaceSwitcher] Switching to workspace:', workspace);
 
     try {

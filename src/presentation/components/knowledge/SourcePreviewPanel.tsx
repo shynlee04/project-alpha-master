@@ -12,7 +12,8 @@ import { useEffect, useState } from 'react';
 import { Edit, X, Grid3x3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useKnowledgeStore } from '@/lib/state/knowledge-store';
-import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+// NOTE: useRAGStore import removed - getChunksForSource not implemented yet
+// import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import type { ChunkMetadata } from '@/lib/rag/types';
 import { PDFIcon, URLIcon, TextIcon } from '@/presentation/components/ui/icons';
 import { MetadataDisplay } from './MetadataDisplay';
@@ -122,12 +123,11 @@ export function SourcePreviewPanel({ projectId: _projectId }: SourcePreviewPanel
     const { t } = useTranslation();
     const { selectedSource, isPreviewOpen, closePreview, updateMetadata, extractingMetadata } =
         useKnowledgeStore();
-    const { getChunksForSource } = useRAGStore();
     const [isEditingMetadata, setIsEditingMetadata] = useState(false);
     const [showChunkBoundaries, setShowChunkBoundaries] = useState(false);
-
-    // Get chunks for source if available
-    const chunks = selectedSource ? getChunksForSource(selectedSource.id) : undefined;
+    // NOTE: getChunksForSource not implemented yet - chunk boundaries feature disabled
+    // Feature not available - chunks will always be empty array
+    const chunks = [] as ChunkMetadata[];
 
     // Handle Escape key to close
     useEffect(() => {

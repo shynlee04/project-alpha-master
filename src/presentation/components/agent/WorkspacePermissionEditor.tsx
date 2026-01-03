@@ -23,7 +23,6 @@
  */
 
 import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/presentation/components/ui/tabs';
 import { Badge } from '@/presentation/components/ui/badge';
 import {
@@ -33,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/presentation/components/ui/select';
-import { Label } from '@/presentation/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useToolPermissionStore, type ToolTrustLevel } from '@/lib/state/tool-permission-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
@@ -169,7 +167,6 @@ export function WorkspacePermissionEditor({
   showDescriptions = true,
   onChange,
 }: WorkspacePermissionEditorProps) {
-  const { t } = useTranslation();
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceType>('ide');
 
   // Get current trust levels and default level from Zustand store

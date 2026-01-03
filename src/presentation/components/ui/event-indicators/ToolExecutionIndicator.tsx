@@ -9,6 +9,7 @@
  * @gap G-003 - AgentChatPanel tool execution progress
  */
 
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { ToolExecutionStepItem } from './ToolExecutionStep'

@@ -214,7 +214,7 @@ describe('Schema Migrations', () => {
       mockState.version = 0;
 
       // Mock a migration that throws
-      const originalMigrations = (await import('../schema-migrations')).MIGRATIONS;
+      const _originalMigrations = (await import('../schema-migrations'));
       // We can't easily test this without modifying the migration system
       // So we'll just verify the error handling structure exists
 
@@ -335,13 +335,13 @@ describe('Schema Migrations', () => {
         id: 'test-agent',
         name: 'Test Agent',
         providerId: 'openrouter',
-        status: 'idle',
-        workspaceBindings: {},
-        createdAt: Date.now(),
+        status: 'online',
+        workspaceBindings: [],
+        createdAt: new Date().toISOString(),
         tasksCompleted: 0,
         successRate: 0,
         tokensUsed: 0,
-        lastActive: Date.now(),
+        lastActive: new Date().toISOString(),
       }];
       mockState.providers = [{
         id: 'openrouter',

@@ -7,21 +7,20 @@
  * @hook useAgentChatConversationManager
  */
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { ChatMessage } from '../EnhancedChatInterface';
 import { mapHookMessages, mapStoreMessages } from './message-mappers';
 
 interface ConversationManagerProps {
     projectId: string | null;
-    activeAgentId: string | undefined;
     hookMessages: any[];
     rawMessages: unknown[];
 }
 
 interface ConversationManagerResult {
     isInitialized: boolean;
-    scrollRef: React.RefObject<HTMLDivElement>;
+    scrollRef: React.RefObject<HTMLDivElement | null>;
     allMessages: ChatMessage[];
     handleScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 }
@@ -31,7 +30,6 @@ interface ConversationManagerResult {
  */
 export function useAgentChatConversationManager({
     projectId,
-    activeAgentId,
     hookMessages,
     rawMessages
 }: ConversationManagerProps): ConversationManagerResult {
@@ -39,14 +37,9 @@ export function useAgentChatConversationManager({
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const {
-        activeConversationId,
-        conversations,
-        updateScrollPosition,
-        createConversation
-    } = useConversationStore();
-
-    const createThread = useThreadsStore(state => state.createThread);
-    const setActiveThread = useThreadsStore(state => state.setActiveThread);
+        activeThreadId,
+        threads,
+    } = useThreadsStore();
 
     // Load persisted conversation on mount
     useEffect(() => {
@@ -59,12 +52,12 @@ export function useAgentChatConversationManager({
                     return;
                 }
 
-                if (activeConversationId) {
+                if (activeThreadId) {
                     setIsInitialized(true);
                     return;
                 }
 
-                createConversation(projectId, activeAgentId);
+                // No active thread - will be created when user sends first message
                 setIsInitialized(true);
             } catch (err) {
                 console.error('[AgentChatPanel] Failed to load threads:', err);
@@ -75,30 +68,16 @@ export function useAgentChatConversationManager({
 
         load();
         return () => { isCancelled = true; };
-    }, [projectId, activeConversationId, activeAgentId, createConversation]);
-
-    // Sync scroll position on conversation switch
-    useEffect(() => {
-        const activeConversation = activeConversationId ? conversations[activeConversationId] : null;
-        if (activeConversation?.metadata.scrollPosition && scrollRef.current) {
-            scrollRef.current.scrollTop = activeConversation.metadata.scrollPosition;
-        }
-    }, [activeConversationId, conversations]);
-
-    // Scroll tracker
-    const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-        if (activeConversationId) {
-            updateScrollPosition(activeConversationId, e.currentTarget.scrollTop);
-        }
-    }, [activeConversationId, updateScrollPosition]);
+    }, [projectId, activeThreadId]);
 
     // Combine persisted messages with hook messages for display
     const allMessages = useMemo((): ChatMessage[] => {
-        if (!isInitialized || !activeConversationId) {
+        if (!isInitialized || !activeThreadId) {
             return [];
         }
 
-        const storeMessages = conversations[activeConversationId]?.messages || [];
+        const thread = threads[activeThreadId];
+        const storeMessages = thread?.messages || [];
         const history = mapStoreMessages(storeMessages);
         const currentSessionMessages = mapHookMessages(hookMessages, rawMessages);
 
@@ -113,7 +92,7 @@ export function useAgentChatConversationManager({
             seen.add(msg.id);
             return true;
         });
-    }, [activeConversationId, conversations, hookMessages, rawMessages, isInitialized]);
+    }, [activeThreadId, threads, hookMessages, rawMessages, isInitialized]);
 
-    return { isInitialized, scrollRef, allMessages, handleScroll };
+    return { isInitialized, scrollRef, allMessages, handleScroll: () => {} };
 }

@@ -9,7 +9,7 @@
 
 import { useState, useMemo } from 'react';
 import { useIDEStore } from '@/lib/state';
-import type { OpenFile } from '../../ide/Monaco';
+import type { OpenFile } from '@/presentation/components/ide/MonacoEditor/EditorTabBar';
 
 interface UseIDELayoutFileStateResult {
     openFilePaths: string[];
@@ -84,7 +84,7 @@ export function useIDELayoutFileState(): UseIDELayoutFileStateResult {
 
     return {
         openFilePaths,
-        activeFilePath,
+        activeFilePath: activeFilePath ?? undefined,
         setActiveFilePath,
         addOpenFile,
         removeOpenFile,

@@ -18,9 +18,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/presentation/components/ui/dialog';
-import { Link, AlertCircle, FileText, Loader2, Eye } from 'lucide-react';
+import { AlertCircle, FileText, Loader2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
-import type { ResolvedReference } from '@/lib/filesync/cross-workspace-file-references';
+import type { ResolvedReference, BrokenReferenceReason } from '@/lib/filesync/cross-workspace-file-references';
 import { getCrossWorkspaceReferenceManager } from '@/lib/filesync/cross-workspace-file-references';
 
 interface CrossWorkspaceFileReferenceButtonProps {

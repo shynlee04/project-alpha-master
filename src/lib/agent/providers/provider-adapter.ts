@@ -209,7 +209,7 @@ export class ProviderAdapterFactory {
                 });
                 return {
                     success: result.success,
-                    latencyMs: result.latencyMs,
+                    latencyMs: result.latencyMs ?? 0,
                     error: result.error,
                 };
             },

@@ -1,6 +1,27 @@
 /**
  * @fileoverview Quiz store with Dexie persistence and Zustand state management
  * @module lib/state/quiz-store
+ * 
+ * @deprecated This store uses a separate Dexie database (ProjectAlphaQuizDB).
+ * Future migrations should move quiz functionality to:
+ * `@/infrastructure/persistence/stores/quiz/` using the unified ViaGentDatabase.
+ * 
+ * NOTE: This store handles Quiz CRUD operations (create, update, delete quizzes).
+ * It is COMPLEMENTARY to study-store.ts which handles:
+ * - Study sessions (SRS/Spaced Repetition System)
+ * - Flashcard progress tracking
+ * - Session statistics
+ * 
+ * Do NOT merge quiz-store into study-store - they serve different purposes.
+ * 
+ * @consumers
+ * - src/infrastructure/persistence/stores/index.ts (barrel export)
+ * - src/presentation/components/study/StudyPage.tsx
+ * - src/presentation/components/notes/NoteStudyMenu.tsx
+ * - src/presentation/components/knowledge/QuizPreviewPanel.tsx
+ * 
+ * @migration-status LEGACY (Epic 51 Platform Unification)
+ * @last-reviewed 2026-01-03
  */
 
 import Dexie, { type Table } from 'dexie';
@@ -260,6 +281,7 @@ export const useQuizStore = create<QuizState>()(
 
           const quiz: Quiz = {
             id: quizRecord.id,
+            projectId: '', // TODO: Load from project context
             title: quizRecord.title,
             description: quizRecord.description,
             questions: questions.map((q) => ({
@@ -274,6 +296,7 @@ export const useQuizStore = create<QuizState>()(
               createdAt: q.createdAt,
             })),
             sourceIds: quizRecord.sourceIds,
+            sourcesUsed: [], // TODO: Load from source metadata
             settings: quizRecord.settings,
             createdAt: quizRecord.createdAt,
             updatedAt: quizRecord.updatedAt,
@@ -303,6 +326,7 @@ export const useQuizStore = create<QuizState>()(
 
               return {
                 id: quizRecord.id,
+                projectId: '', // TODO: Load from project context
                 title: quizRecord.title,
                 description: quizRecord.description,
                 questions: questions.map((q) => ({
@@ -317,6 +341,7 @@ export const useQuizStore = create<QuizState>()(
                   createdAt: q.createdAt,
                 })),
                 sourceIds: quizRecord.sourceIds,
+                sourcesUsed: [], // TODO: Load from source metadata
                 settings: quizRecord.settings,
                 createdAt: quizRecord.createdAt,
                 updatedAt: quizRecord.updatedAt,
@@ -391,10 +416,10 @@ export const useQuizStore = create<QuizState>()(
             currentQuiz:
               state.currentQuiz?.id === quizId
                 ? {
-                    ...state.currentQuiz,
-                    questions: [...state.currentQuiz.questions, question],
-                    updatedAt: now,
-                  }
+                  ...state.currentQuiz,
+                  questions: [...state.currentQuiz.questions, question],
+                  updatedAt: now,
+                }
                 : state.currentQuiz,
             isLoading: false,
           }));
@@ -434,15 +459,15 @@ export const useQuizStore = create<QuizState>()(
                   questions: q.questions.map((qq) =>
                     qq.id === questionId
                       ? {
-                          ...qq,
-                          question: updatedQuestion.question,
-                          options: updatedQuestion.options,
-                          correctIndex: updatedQuestion.correctIndex,
-                          explanation: updatedQuestion.explanation,
-                          difficulty: updatedQuestion.difficulty,
-                          topic: updatedQuestion.topic,
-                          sourceIds: updatedQuestion.sourceIds,
-                        }
+                        ...qq,
+                        question: updatedQuestion.question,
+                        options: updatedQuestion.options,
+                        correctIndex: updatedQuestion.correctIndex,
+                        explanation: updatedQuestion.explanation,
+                        difficulty: updatedQuestion.difficulty,
+                        topic: updatedQuestion.topic,
+                        sourceIds: updatedQuestion.sourceIds,
+                      }
                       : qq
                   ),
                 };
@@ -452,22 +477,22 @@ export const useQuizStore = create<QuizState>()(
             currentQuiz:
               state.currentQuiz?.id === question.quizId
                 ? {
-                    ...state.currentQuiz,
-                    questions: state.currentQuiz.questions.map((qq) =>
-                      qq.id === questionId
-                        ? {
-                            ...qq,
-                            question: updatedQuestion.question,
-                            options: updatedQuestion.options,
-                            correctIndex: updatedQuestion.correctIndex,
-                            explanation: updatedQuestion.explanation,
-                            difficulty: updatedQuestion.difficulty,
-                            topic: updatedQuestion.topic,
-                            sourceIds: updatedQuestion.sourceIds,
-                          }
-                        : qq
-                    ),
-                  }
+                  ...state.currentQuiz,
+                  questions: state.currentQuiz.questions.map((qq) =>
+                    qq.id === questionId
+                      ? {
+                        ...qq,
+                        question: updatedQuestion.question,
+                        options: updatedQuestion.options,
+                        correctIndex: updatedQuestion.correctIndex,
+                        explanation: updatedQuestion.explanation,
+                        difficulty: updatedQuestion.difficulty,
+                        topic: updatedQuestion.topic,
+                        sourceIds: updatedQuestion.sourceIds,
+                      }
+                      : qq
+                  ),
+                }
                 : state.currentQuiz,
             isLoading: false,
           }));
@@ -519,9 +544,9 @@ export const useQuizStore = create<QuizState>()(
             currentQuiz:
               state.currentQuiz?.id === quizId
                 ? {
-                    ...state.currentQuiz,
-                    questions: state.currentQuiz.questions.filter((qq) => qq.id !== questionId),
-                  }
+                  ...state.currentQuiz,
+                  questions: state.currentQuiz.questions.filter((qq) => qq.id !== questionId),
+                }
                 : state.currentQuiz,
             isLoading: false,
           }));
@@ -561,10 +586,12 @@ export const useQuizStore = create<QuizState>()(
 
           return quizzes.map((q) => ({
             id: q.id,
+            projectId: '', // TODO: Load from project context
             title: q.title,
             description: q.description,
             questions: [],
             sourceIds: q.sourceIds,
+            sourcesUsed: [], // TODO: Load from source metadata
             settings: q.settings,
             createdAt: q.createdAt,
             updatedAt: q.updatedAt,
@@ -584,16 +611,18 @@ export const useQuizStore = create<QuizState>()(
           const quizzes = await db.quizzes
             .filter((quiz) =>
               quiz.title.toLowerCase().includes(lowerQuery) ||
-              quiz.description?.toLowerCase().includes(lowerQuery)
+              (quiz.description !== undefined && quiz.description.toLowerCase().includes(lowerQuery))
             )
             .toArray();
 
           return quizzes.map((q) => ({
             id: q.id,
+            projectId: '', // TODO: Load from project context
             title: q.title,
             description: q.description,
             questions: [],
             sourceIds: q.sourceIds,
+            sourcesUsed: [], // TODO: Load from source metadata
             settings: q.settings,
             createdAt: q.createdAt,
             updatedAt: q.updatedAt,

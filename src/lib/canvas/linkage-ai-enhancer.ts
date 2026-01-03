@@ -8,6 +8,7 @@
  */
 
 import type { LinkageProposal, NodeAnalysis } from './linkage-types';
+import { LinkageType } from './linkage-types';
 
 /**
  * AI enhancement options
@@ -180,24 +181,26 @@ JSON response:
    * @returns Enhanced proposals from AI
    */
   private async callGeminiAPI(prompt: string): Promise<EnhancedProposal[]> {
-    let GoogleGenerativeAI: any;
+    let GoogleGenAI: any;
 
     try {
       // Dynamic import to avoid loading Gemini SDK when not needed
       const module = await import('@google/genai');
-      GoogleGenerativeAI = module.GoogleGenerativeAI;
+      GoogleGenAI = module.GoogleGenAI;
     } catch (error) {
       console.error('[LinkageAIEnhancer] Failed to import Gemini SDK:', error);
       throw new Error('Gemini SDK not available');
     }
 
-    const genAI = new GoogleGenerativeAI(this.options.apiKey);
-    const model = genAI.getGenerativeModel({
+    const genAI = new GoogleGenAI({ apiKey: this.options.apiKey });
+
+    // Use models.generateContent() instead of getGenerativeModel()
+    const result = await genAI.models.generateContent({
       model: this.options.modelId,
+      contents: prompt,
     });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response.text();
+    const response = result.response?.text() || result.text();
 
     console.log('[LinkageAIEnhancer] Gemini API response received, parsing...');
 
@@ -227,22 +230,23 @@ JSON response:
       }
 
       // Validate and transform
-      return enhanced.map((e: any) => ({
+      return enhanced.map((e: any): EnhancedProposal => ({
         id: e.id,
         sourceNodeId: '', // Will be filled in mergeWithOriginal
         targetNodeId: '', // Will be filled in mergeWithOriginal
-        linkageType: 'conceptual' as const, // Will be filled in mergeWithOriginal
+        linkageType: LinkageType.CONCEPTUAL, // Will be filled in mergeWithOriginal
         confidence: e.confidenceRefined,
+        rationale: e.aiRationale || e.rationale || '',
+        evidence: [] as string[],
+        suggestedLabel: e.suggestedLabel || 'Related',
+        suggestedRelationship: 'relates' as const,
+        reviewed: false,
+        createdAt: Date.now(),
+        // EnhancedProposal-specific fields
         aiRationale: e.aiRationale || e.rationale || 'AI rationale not provided',
         confidenceRefined: e.confidenceRefined,
         entities: Array.isArray(e.entities) ? e.entities : [],
         keywords: Array.isArray(e.keywords) ? e.keywords : [],
-        suggestedLabel: e.suggestedLabel || 'Related',
-        suggestedRelationship: 'relates' as const,
-        rationale: e.aiRationale || e.rationale || '',
-        evidence: [],
-        reviewed: false,
-        createdAt: Date.now(),
       }));
     } catch (error) {
       console.error('[LinkageAIEnhancer] Failed to parse AI response:', error);

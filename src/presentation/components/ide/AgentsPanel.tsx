@@ -110,7 +110,7 @@ export function AgentsPanel({
                                 agent={agent}
                                 isSelected={activeAgentId === agent.id}
                                 onClick={() => {
-                                    setActiveAgent(agent.id)
+                                    setActiveAgent(agent.id, 'ide')
                                     onSelectAgent?.(agent)
                                 }}
                                 onEdit={(e) => handleEditAgent(agent, e)}

@@ -54,6 +54,10 @@ export interface SearchFilters {
   tags?: string[];
   /** Source ID filter (exclude specific sources) */
   excludeSourceIds?: string[];
+  /** Language filter */
+  language?: string;
+  /** Content type filter */
+  contentType?: string[];
 }
 
 /** Individual search result */

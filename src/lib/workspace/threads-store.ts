@@ -3,8 +3,17 @@
  * @module lib/workspace/thread-store
  * @governance MVP-2
  * 
- * Provides async persistence for conversation threads using Dexie.
- * This replaces the Zustand localStorage persist for future indexing.
+ * @deprecated PERSISTENCE UTILITY - Not a Zustand store.
+ * This module provides async Dexie persistence for conversation threads.
+ * Future migrations should move to:
+ * `@/infrastructure/persistence/stores/conversation/persistence/`
+ * 
+ * @consumers
+ * - src/lib/workspace/conversation-store.ts (adapter layer)
+ * - src/infrastructure/persistence/stores/conversation/conversation-helpers.ts
+ * 
+ * @migration-status LEGACY (Epic 51 Platform Unification)
+ * @last-reviewed 2026-01-03
  * 
  * @story MVP-2 - Chat Interface with Rich Streaming
  */
@@ -40,6 +49,7 @@ function toRecord(thread: ConversationThread): ConversationThreadRecord {
         })),
         agentsUsed: thread.agentsUsed,
         messageCount: thread.messageCount,
+        scrollPosition: 0, // Default scroll position (Story 24-3 feature)
         createdAt: thread.createdAt,
         updatedAt: thread.updatedAt,
     };

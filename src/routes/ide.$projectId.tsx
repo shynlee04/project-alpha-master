@@ -20,6 +20,7 @@ import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
 import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 // Lazy load IDELayout
 const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayout').then(m => ({ default: m.IDELayout })));
@@ -39,7 +40,7 @@ function IDEWorkspace() {
   const { project } = Route.useLoaderData();
 
   return (
-    <ProjectProvider project={project} workspace="ide">
+    <ProjectProvider project={project as Project | null} workspace="ide">
       <ToastProvider>
         <WorkspaceProvider initialWorkspace="ide" initialProjectId={projectId}>
           <Suspense fallback={

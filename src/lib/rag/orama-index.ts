@@ -274,7 +274,7 @@ export async function indexDocument(
     }
 
     // Insert document into index
-    // @ts-expect-error - Orama library type strictness: dynamic schema based on enableVectorSearch
+    // Cast to any due to Orama library type strictness: dynamic schema based on enableVectorSearch
     await insert(db as any, document as any);
 
     // Emit completion event

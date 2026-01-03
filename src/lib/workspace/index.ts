@@ -22,8 +22,10 @@ export {
     type ProjectMetadata,
     type ProjectWithPermission,
     type LayoutConfig,
-    type WorkspaceId,
 } from './project-store';
+
+// WorkspaceId type from core types
+export type { WorkspaceId } from '../state/dexie-db-core-types';
 
 // Story 5-3: Conversation Store
 export {

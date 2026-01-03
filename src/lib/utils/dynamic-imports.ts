@@ -1,9 +1,11 @@
 /**
  * Dynamic Import Utilities for Large Dependencies
- * 
+ *
  * This module provides lazy loading for heavy client-side dependencies
  * to reduce initial bundle size and improve deployment success rates.
  */
+
+import * as React from 'react';
 
 // Monaco Editor (lazy load)
 export const loadMonacoEditor = async () => {
@@ -31,15 +33,17 @@ export const loadTransformers = async () => {
 };
 
 // PDF.js (lazy load)
-export const loadPDFJS = async () => {
-  const pdfjs = await import('pdfjs-dist');
-  return pdfjs;
-};
+// TODO: Uncomment after installing pdfjs-dist package
+// @see https://www.npmjs.com/package/pdfjs-dist
+// export const loadPDFJS = async () => {
+//   const pdfjs = await import('pdfjs-dist');
+//   return pdfjs;
+// };
 
 // BlockNote Editor (lazy load)
 export const loadBlockNote = async () => {
   const { BlockNoteEditor } = await import('@blocknote/core');
-  const { BlockNoteView } = await import('@blocknote/react');
+  const { BlockNoteView } = await import('@blocknote/mantine');
   return { BlockNoteEditor, BlockNoteView };
 };
 

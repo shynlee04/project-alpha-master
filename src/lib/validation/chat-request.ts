@@ -47,8 +47,8 @@ export const chatRequestSchema = z.object({
     disableTools: z.boolean().optional(),
 
     // Custom provider support
-    customBaseURL: z.string().url('Invalid custom base URL').optional().or(z.literal('')),
-    customHeaders: z.record(z.string()).optional(),
+    customBaseURL: z.string().url('Invalid custom base URL').or(z.literal('')).optional(),
+    customHeaders: z.record(z.string(), z.string()).optional(),
 
     // Context - optional
     context: chatContextSchema.optional(),
@@ -73,7 +73,7 @@ export interface ValidationResult {
     data?: ChatRequest;
     error?: {
         message: string;
-        details?: z.ZodErrorDetails;
+        details?: z.ZodIssue[];
     };
 }
 
@@ -91,7 +91,7 @@ export function validateChatRequest(body: unknown): ValidationResult {
     }
 
     // Format error message
-    const firstError = result.error.errors[0];
+    const firstError = result.error.issues[0];
     let message = 'Invalid request';
 
     if (firstError) {
@@ -102,7 +102,7 @@ export function validateChatRequest(body: unknown): ValidationResult {
         success: false,
         error: {
             message,
-            details: result.error.flatten(),
+            details: result.error.issues,
         },
     };
 }

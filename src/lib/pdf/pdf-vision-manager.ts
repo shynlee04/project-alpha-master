@@ -7,9 +7,13 @@
  * Manages PDF document loading, page caching, and bandwidth tracking.
  *
  * Story 10.2: Multimodal Source Vision (Desktop Only)
+ *
+ * @deprecated TODO: Install pdfjs-dist package to enable PDF vision manager
+ * @see https://www.npmjs.com/package/pdfjs-dist
  */
 
-import * as pdfjsLib from 'pdfjs-dist';
+// TODO: Uncomment after installing pdfjs-dist package
+// import * as pdfjsLib from 'pdfjs-dist';
 import { capturePdfPage, type CapturedPage, type CaptureOptions, estimateBandwidthCost } from './pdf-vision-capture';
 
 export interface PdfVisionManagerOptions {
@@ -42,8 +46,7 @@ export interface CachedPage extends CapturedPage {
  * Manages PDF documents and cached page captures for efficient multimodal vision.
  */
 export class PdfVisionManager {
-  private pdfDocument: pdfjsLib.PDFDocumentProxy | null = null;
-  // private documentUrl: string | null = null;
+  private pdfDocument: any = null;
   private pageCache = new Map<number, CachedPage>();
   private maxCacheSize: number;
   private captureOptions: CaptureOptions;
@@ -61,19 +64,8 @@ export class PdfVisionManager {
    * @param url - PDF URL or ArrayBuffer
    * @returns Promise resolving when document is loaded
    */
-  async loadDocument(url: string | ArrayBuffer): Promise<void> {
-    // Clear previous document and cache
-    this.clearCache();
-    this.pdfDocument = null;
-    // this.documentUrl = null;
-
-    // Load new document
-    const loadingTask = typeof url === 'string'
-      ? pdfjsLib.getDocument(url)
-      : pdfjsLib.getDocument({ data: url });
-
-    this.pdfDocument = await loadingTask.promise;
-    this.documentUrl = typeof url === 'string' ? url : null;
+  async loadDocument(_url: string | ArrayBuffer): Promise<void> {
+    throw new Error('loadDocument: pdfjs-dist package not installed. Run: pnpm add pdfjs-dist');
   }
 
   /**
@@ -266,7 +258,6 @@ export class PdfVisionManager {
   dispose(): void {
     this.clearCache();
     this.pdfDocument = null;
-    this.documentUrl = null;
     this.totalBandwidthUsed = 0;
   }
 }

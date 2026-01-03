@@ -9,6 +9,7 @@
  * @gap G-006 - StudySession quiz generation progress
  */
 
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { QuizGenerationStepItem } from './QuizGenerationStepItem'

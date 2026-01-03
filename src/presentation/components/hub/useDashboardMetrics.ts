@@ -10,7 +10,7 @@
  */
 
 import { useMemo } from 'react';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 export interface DashboardMetrics {
   // Project counts
@@ -25,7 +25,7 @@ export interface DashboardMetrics {
   // Activity metrics
   projectsOpenedToday: number;
   projectsOpenedThisWeek: number;
-  recentlyActiveProjects: ProjectMetadata[];
+  recentlyActiveProjects: Project[];
 
   // Workspace distribution (percentages)
   ideWorkspaceCount: number;
@@ -36,7 +36,7 @@ export interface DashboardMetrics {
 
 export interface UseDashboardMetricsOptions {
   /** Projects to aggregate metrics from */
-  projects: ProjectMetadata[];
+  projects: Project[];
   /** Number of days to consider "recently active" (default: 7) */
   recentDays?: number;
 }
@@ -82,7 +82,7 @@ export function useDashboardMetrics({
     let notesWorkspaceCount = 0;
     let studyWorkspaceCount = 0;
 
-    const recentlyActiveProjects: ProjectMetadata[] = [];
+    const recentlyActiveProjects: Project[] = [];
 
     // Aggregate metrics from projects
     if (Array.isArray(projects)) {
@@ -120,11 +120,11 @@ export function useDashboardMetrics({
         }
 
         // Workspace distribution (based on bindings)
-        if (project.workspaceBindings) {
-          if (project.workspaceBindings.ide) ideWorkspaceCount++;
-          if (project.workspaceBindings.knowledge) knowledgeWorkspaceCount++;
-          if (project.workspaceBindings.notes) notesWorkspaceCount++;
-          if (project.workspaceBindings.study) studyWorkspaceCount++;
+        if (project.bindings) {
+          if (project.bindings.ide) ideWorkspaceCount++;
+          if (project.bindings.knowledge) knowledgeWorkspaceCount++;
+          if (project.bindings.notes) notesWorkspaceCount++;
+          if (project.bindings.study) studyWorkspaceCount++;
         }
       }
     }

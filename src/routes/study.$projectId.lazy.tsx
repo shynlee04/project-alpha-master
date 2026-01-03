@@ -14,9 +14,11 @@
  * @epic Future: Knowledge Synthesis Station
  */
 
+import { useEffect, useState } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 // Placeholder component (Study workspace not implemented yet)
@@ -37,16 +39,16 @@ function StudyPlaceholder() {
 }
 
 export const Route = createLazyFileRoute('/study/$projectId')({
-  // Loader: Fetch project metadata for ProjectProvider
-  loader: async ({ params }: { params: { projectId: string } }) => {
-    const project = await getProject(params.projectId);
-    return { project };
-  },
   component: StudyWorkspace,
 });
 
 function StudyWorkspace() {
-  const { project } = Route.useLoaderData();
+  const { projectId } = Route.useParams();
+  const [project, setProject] = useState<Project | null>(null);
+
+  useEffect(() => {
+    getProject(projectId).then((p) => setProject(p as Project | null));
+  }, [projectId]);
 
   return (
     <ProjectProvider project={project} workspace="study">

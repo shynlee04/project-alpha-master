@@ -9,6 +9,7 @@
  * @gap G-004 - RAGSearchPanel vector search progress
  */
 
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { IndexingPhaseItem } from './IndexingPhaseItem'

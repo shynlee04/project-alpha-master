@@ -18,12 +18,12 @@ import type { Agent } from '@/core/entities/Agent'
 import type { WorkspaceType } from '@/lib/state/workspace-types'
 import type { ToolPermission, PermissionChecker, PermissionToggleHandler } from '../types'
 
-interface UseWorkspacePermissionsParams {
+export interface UseWorkspacePermissionsParams {
     agent: Agent
     onPermissionsChange: (toolId: string, workspaceType: WorkspaceType, isEnabled: boolean) => void
 }
 
-interface UseWorkspacePermissionsReturn {
+export interface UseWorkspacePermissionsReturn {
     tools: ToolPermission[]
     workspaceTypes: WorkspaceType[]
     isToolEnabledInWorkspace: PermissionChecker

@@ -426,12 +426,12 @@ export class FileSnapshotStore {
         const oldestSnapshots = await db.fileSnapshots
             .where('projectId')
             .equals(projectId)
-            .sortBy('lastCachedAt')
-            .limit(Math.ceil(targetKB / 100)) // Evict roughly targetKB
-            .toArray();
+            .sortBy('lastCachedAt');
+
+        const toEvict = oldestSnapshots.slice(0, Math.ceil(targetKB / 100)); // Evict roughly targetKB
 
         await db.transaction('rw', db.fileSnapshots, db.fileContentCache, async () => {
-            for (const snapshot of oldestSnapshots) {
+            for (const snapshot of toEvict) {
                 await db.fileSnapshots.delete(snapshot.id!);
                 await db.fileContentCache.where('[projectId+path]').equals([snapshot.projectId, snapshot.path]).delete();
             }

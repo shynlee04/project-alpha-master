@@ -605,7 +605,7 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                         title: source.title,
                         type: source.type,
                         content: source.content,
-                        metadata: source.metadata || {},
+                        metadata: {} as Record<string, unknown>,
                     };
 
                     // Synthesize with progress callbacks
@@ -619,7 +619,7 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                     await dbUpdateSynthesisResultStatus(
                         synthesisId,
                         'completed',
-                        result.frontmatter
+                        result.frontmatter as SynthesisResultRecord['frontmatter']
                     );
 
                     // Load and cache the result

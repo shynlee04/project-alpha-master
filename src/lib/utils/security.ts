@@ -102,7 +102,7 @@ export function sanitizeForLogging<T>(obj: T): T {
 
     if (typeof obj === 'string') {
         // Mask any API key patterns found in string
-        let sanitized = obj;
+        let sanitized = obj as string;
         for (const pattern of API_KEY_PATTERNS) {
             sanitized = sanitized.replace(pattern, (match) => maskApiKey(match));
         }

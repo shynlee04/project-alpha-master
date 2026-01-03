@@ -105,7 +105,7 @@ export const useSynthesisStore = create<SynthesisStoreState>((set, get) => ({
             progress: {
               status: progress.status as 'processing' | 'completed' | 'failed',
               progress: progress.progress,
-              stage: progress.stage,
+              stage: progress.stage || '',
               error: progress.error,
             },
           });

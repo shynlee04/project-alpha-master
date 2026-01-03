@@ -13,7 +13,7 @@ import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { FileMetadata } from './file-sync-service';
 import type { FileSyncService } from './file-sync-service';
 import { WorkspacePermissionManager } from '@/lib/agent/workspace-permission-manager';
-import { getToolPermissionManager } from '@/lib/agent/tool-permission-manager';
+import { ToolPermissionManager } from '@/lib/agent/tool-permission-manager';
 
 /**
  * Cross-workspace file reference types
@@ -105,7 +105,7 @@ export class CrossWorkspaceReferenceManager {
         this.references = new Map();
         this.fileSyncServices = new Map();
         // Initialize workspace permission manager
-        const basePermissionManager = getToolPermissionManager();
+        const basePermissionManager = ToolPermissionManager.getInstance();
         this.permissionManager = new WorkspacePermissionManager(basePermissionManager);
     }
 

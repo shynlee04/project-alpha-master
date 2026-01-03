@@ -93,9 +93,9 @@ function getCapabilityIndicators(agent: Agent | null): CapabilityIndicators {
   }
 
   return {
-    hasTools: agent.toolBindings && agent.toolBindings.length > 0,
-    hasDeepThink: agent.preferences?.useDeepThink ?? false,
-    hasMemory: agent.preferences?.useMemory ?? false,
+    hasTools: agent.tools && agent.tools.length > 0,
+    hasDeepThink: false, // TODO: Implement deep think flag in Agent entity
+    hasMemory: false, // TODO: Implement memory flag in Agent entity
     isDefault: agent.workspaceBindings.some(b => b.isDefault),
   }
 }
@@ -170,7 +170,7 @@ export function AgentManager({
                 </Badge>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{selectedAgent.toolBindings?.length ?? 0} {t('agent.manager.toolsActive', 'tools enabled')}</p>
+                <p>{selectedAgent.tools?.length ?? 0} {t('agent.manager.toolsActive', 'tools enabled')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

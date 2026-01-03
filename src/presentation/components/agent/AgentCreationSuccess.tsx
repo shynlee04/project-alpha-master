@@ -35,7 +35,7 @@ interface AgentCreationSuccessProps {
  */
 export function AgentCreationSuccess({
   agentName,
-  agentId,
+  agentId: _agentId,
   onDismiss,
   onConfigureTools,
 }: AgentCreationSuccessProps) {

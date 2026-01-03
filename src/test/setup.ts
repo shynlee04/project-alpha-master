@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 // Mock react-i18next for all tests
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, opts?: Record<string, unknown>) => {
+    t: (key: string) => {
       // Simple mock that returns the key or a proper mock value
       const translations: Record<string, string> = {
         // IDE layout

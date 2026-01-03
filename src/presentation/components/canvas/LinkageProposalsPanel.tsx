@@ -18,7 +18,6 @@ import { useCanvasStore } from '@/infrastructure/persistence/stores';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { createRAGLinkageAnalyzer } from '@/lib/canvas/rag-linkage-analyzer';
 import { createLinkageAIEnhancer } from '@/lib/canvas/linkage-ai-enhancer';
-import type { EnhancedProposal } from '@/lib/canvas/linkage-ai-enhancer';
 import { Sparkles, Loader2 } from 'lucide-react';
 
 interface LinkageProposalsPanelProps {
@@ -91,7 +90,7 @@ function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
             </PixelBadge>
           )}
         </div>
-        <PixelBadge size="sm" variant="outline">
+        <PixelBadge size="sm" variant="muted">
           {t(`canvas.linkage.confidence.${getConfidenceLabel(displayConfidence)}`)}
           ({Math.round(displayConfidence * 100)}%)
         </PixelBadge>
@@ -205,7 +204,7 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
 
         const enhancedProposals = await enhancer.enhanceProposals(
           analysis.proposals,
-          analysis.nodeAnalyses
+          new Map() // Node analyses (optional, not used for now)
         );
 
         // Set enhanced proposals to store

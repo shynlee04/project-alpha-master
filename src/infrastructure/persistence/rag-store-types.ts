@@ -10,7 +10,7 @@
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
 import type { ChunkingProgress, ChunkingOptions, ChunkMetadata } from '@/lib/rag/types';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
-import type { VoiceModeState, ConnectionState } from '@/lib/rag/live-api-types';
+import type { VoiceModeStoreState, ConnectionState } from '@/lib/rag/live-api-types';
 
 // ============================================================================
 // Enums
@@ -101,7 +101,7 @@ export interface RAGStoreState {
     activeCitation: Citation | null;
 
     /** Voice mode state (Story 10-1) */
-    voiceState: import('@/lib/rag/live-api-types').VoiceModeState;
+    voiceState: import('@/lib/rag/live-api-types').VoiceModeStoreState;
     voiceConnection: import('@/lib/rag/live-api-types').ConnectionState;
     voiceMicrophoneEnabled: boolean;
     voiceIsDesktop: boolean;
@@ -230,7 +230,7 @@ export interface RAGStoreState {
     toggleVoiceMicrophone: () => void;
 
     /** Set voice state */
-    setVoiceState: (state: VoiceModeState) => void;
+    setVoiceState: (state: VoiceModeStoreState) => void;
 
     /** Set voice connection state */
     setVoiceConnectionState: (state: ConnectionState) => void;

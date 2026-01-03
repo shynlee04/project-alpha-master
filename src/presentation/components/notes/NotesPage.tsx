@@ -20,6 +20,8 @@ import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
+// NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
+// import { createNoteFileSyncService } from '@/lib/notes';
 
 // Lazy load NoteEditor to reduce bundle size
 const NoteEditor = lazy(() => import('./NoteEditor'));
@@ -27,7 +29,6 @@ import { useIDEStore } from '@/lib/state/ide-store';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
-import type { NoteRecord } from '@/lib/state/dexie-db';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -52,6 +53,10 @@ export function NotesPage() {
 
     // File sync state (CW-1.4)
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
+
+    // NOTE: File sync service initialization disabled - requires FileSyncService dependency
+    // The service will be initialized when file sync feature is fully implemented
+    // TODO: Initialize syncService when FileSyncService is available as a dependency
 
 
     useEffect(() => {
@@ -99,7 +104,7 @@ export function NotesPage() {
         }
     };
 
-    const handleImportComplete = (_notes: NoteRecord[]) => {
+    const handleImportComplete = (_noteIds: string[]) => {
         // Refresh notes list
         if (projectId) {
             loadNotes(projectId);
@@ -195,6 +200,7 @@ export function NotesPage() {
                     open={isExportDialogOpen}
                     onOpenChange={setIsExportDialogOpen}
                     notes={notesArray as any}
+                    syncService={undefined} // TODO: Initialize with NotesFileSyncService when FileSyncService is available
                 />
             </MainLayout>
         );
@@ -265,6 +271,7 @@ export function NotesPage() {
                 open={isExportDialogOpen}
                 onOpenChange={setIsExportDialogOpen}
                 notes={notesArray as any}
+                syncService={undefined} // TODO: Initialize with NotesFileSyncService when FileSyncService is available
             />
 
             {/* File Picker Dialog (CW-1.4) */}

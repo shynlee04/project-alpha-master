@@ -8,14 +8,14 @@
  * Fallback to heuristic if embeddings unavailable.
  */
 
-import { LinkageAnalyzer, LinkageAnalyzerOptions } from './linkage-analyzer';
+import { LinkageAnalyzer } from './linkage-analyzer';
 import type {
-  Node,
+  LinkageAnalyzerOptions,
   NodeAnalysis,
   SimilarityScore,
   LinkageAnalysis,
 } from './linkage-types';
-import type { SourceNodeData } from './types';
+import type { Node } from '@xyflow/react';
 
 /**
  * RAG-aware analyzer options
@@ -54,20 +54,22 @@ export interface HybridSimilarityScore extends SimilarityScore {
  * Falls back to heuristic scoring if embeddings unavailable.
  */
 export class RAGLinkageAnalyzer extends LinkageAnalyzer {
-  private options: Required<RAGLinkageAnalyzerOptions>;
+  private ragOptions: Required<RAGLinkageAnalyzerOptions>;
   private embeddingCache = new Map<string, number[]>();
 
   constructor(options: RAGLinkageAnalyzerOptions) {
-    super(options);
+    // Pass base options to parent constructor
+    super(options as LinkageAnalyzerOptions);
 
-    this.options = {
+    // Initialize RAG-specific options with defaults
+    // Spread base options first, then apply RAG-specific defaults
+    this.ragOptions = {
       ...options,
       useEmbeddings: options.useEmbeddings ?? true,
       semanticWeight: options.semanticWeight ?? 0.5,
       conceptWeight: options.conceptWeight ?? 0.3,
       keywordWeight: options.keywordWeight ?? 0.2,
-      projectId: options.projectId, // Required
-    };
+    } as Required<RAGLinkageAnalyzerOptions>;
   }
 
   /**
@@ -80,7 +82,7 @@ export class RAGLinkageAnalyzer extends LinkageAnalyzer {
     // Fetch embeddings if enabled
     let embeddings: Map<string, number[]> = new Map();
 
-    if (this.options.useEmbeddings) {
+    if (this.ragOptions.useEmbeddings) {
       try {
         embeddings = await this.fetchNodeEmbeddings(nodes);
         console.log(`[RAGLinkageAnalyzer] Fetched ${embeddings.size} embeddings for ${nodes.length} nodes`);
@@ -100,8 +102,12 @@ export class RAGLinkageAnalyzer extends LinkageAnalyzer {
   /**
    * Fetch embeddings from RAG Orama index for source nodes
    *
+   * TODO: SearchResult does not include embedding property.
+   * This feature requires Orama index schema enhancement to return embeddings.
+   * For now, embeddings are not available and the analyzer falls back to heuristic scoring.
+   *
    * @param nodes - Nodes to fetch embeddings for
-   * @returns Map of node ID to embedding vector
+   * @returns Map of node ID to embedding vector (always empty until schema is updated)
    */
   private async fetchNodeEmbeddings(nodes: Node[]): Promise<Map<string, number[]>> {
     const embeddings = new Map<string, number[]>();
@@ -113,31 +119,15 @@ export class RAGLinkageAnalyzer extends LinkageAnalyzer {
       return embeddings;
     }
 
-    try {
-      // Import Orama search functions
-      const { searchIndex } = await import('@/lib/rag/orama-index');
+    // NOTE: Embeddings are not currently available in SearchResult
+    // This is an acknowledged architectural limitation
+    // The analyzer will fall back to heuristic scoring (concept + keyword overlap)
 
-      for (const node of sourceNodes) {
-        const data = node.data as SourceNodeData;
-
-        try {
-          // Query RAG search for source chunks (limit to 1 most relevant)
-          const results = await searchIndex(this.options.projectId, data.title, {
-            limit: 1,
-          });
-
-          // Get embedding from first result (most relevant chunk)
-          if (results.length > 0 && results[0].embedding) {
-            embeddings.set(node.id, results[0].embedding);
-            console.log(`[RAGLinkageAnalyzer] Found embedding for node ${node.id} (${data.title})`);
-          }
-        } catch (error) {
-          console.warn(`[RAGLinkageAnalyzer] Failed to fetch embedding for node ${node.id}:`, error);
-        }
-      }
-    } catch (error) {
-      console.error('[RAGLinkageAnalyzer] Failed to import Orama search:', error);
-    }
+    console.warn(
+      '[RAGLinkageAnalyzer] Embeddings not available in SearchResult schema. ' +
+      'Falling back to heuristic scoring. To enable semantic similarity, ' +
+      'update Orama index to return embeddings in search results.'
+    );
 
     return embeddings;
   }
@@ -174,26 +164,29 @@ export class RAGLinkageAnalyzer extends LinkageAnalyzer {
    * Calculate hybrid similarity combining semantic, concept, and keyword overlap
    *
    * This method overrides the parent class calculateSimilarity to add RAG-aware scoring.
+   * Note: Embeddings are not currently available in SearchResult schema, so semantic
+   * similarity is disabled until the Orama index is updated.
    *
    * @param analysis1 - First node analysis
    * @param analysis2 - Second node analysis
    * @returns Hybrid similarity score with weight breakdown
    */
-  protected async calculateSimilarity(
+  protected calculateSimilarity(
     analysis1: NodeAnalysis,
     analysis2: NodeAnalysis
-  ): Promise<SimilarityScore> {
+  ): SimilarityScore {
     let similarity = 0;
     let semanticSimilarity: number | undefined = undefined;
     const weights = { semantic: 0, concept: 0, keyword: 0 };
 
-    // Get embeddings if available
+    // Get embeddings if available (currently always empty due to schema limitation)
     const embedding1 = this.embeddingCache.get(analysis1.nodeId);
     const embedding2 = this.embeddingCache.get(analysis2.nodeId);
 
     // Semantic similarity (embeddings) - highest weight
-    if (embedding1 && embedding2 && this.options.useEmbeddings) {
-      weights.semantic = this.options.semanticWeight;
+    // NOTE: This code path is currently unreachable due to schema limitation
+    if (embedding1 && embedding2 && this.ragOptions.useEmbeddings) {
+      weights.semantic = this.ragOptions.semanticWeight;
       semanticSimilarity = this.calculateCosineSimilarity(embedding1, embedding2);
       similarity += semanticSimilarity * weights.semantic;
       console.log(
@@ -205,7 +198,7 @@ export class RAGLinkageAnalyzer extends LinkageAnalyzer {
     const sharedConcepts = analysis1.concepts.filter((c) => analysis2.concepts.includes(c));
 
     if (analysis1.concepts.length > 0 && analysis2.concepts.length > 0) {
-      weights.concept = this.options.conceptWeight;
+      weights.concept = this.ragOptions.conceptWeight;
       const conceptOverlap =
         (sharedConcepts.length * 2) / (analysis1.concepts.length + analysis2.concepts.length);
       similarity += conceptOverlap * weights.concept;
@@ -215,7 +208,7 @@ export class RAGLinkageAnalyzer extends LinkageAnalyzer {
     const sharedKeywords = analysis1.keywords.filter((k) => analysis2.keywords.includes(k));
 
     if (analysis1.keywords.length > 0 && analysis2.keywords.length > 0) {
-      weights.keyword = this.options.keywordWeight;
+      weights.keyword = this.ragOptions.keywordWeight;
       const keywordOverlap =
         (sharedKeywords.length * 2) / (analysis1.keywords.length + analysis2.keywords.length);
       similarity += keywordOverlap * weights.keyword;
@@ -280,7 +273,7 @@ export function createRAGLinkageAnalyzer(
 let defaultAnalyzer: RAGLinkageAnalyzer | null = null;
 
 export function getRAGLinkageAnalyzer(projectId: string): RAGLinkageAnalyzer {
-  if (!defaultAnalyzer || defaultAnalyzer['options'].projectId !== projectId) {
+  if (!defaultAnalyzer || defaultAnalyzer['ragOptions'].projectId !== projectId) {
     defaultAnalyzer = new RAGLinkageAnalyzer({ projectId });
   }
   return defaultAnalyzer;

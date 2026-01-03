@@ -16,7 +16,7 @@
 import type { WorkspaceType } from '@/lib/state/workspace-types'
 import type { WorkspaceLabels, WorkspaceDescriptions } from './types'
 
-interface PermissionGridHeaderProps {
+export interface PermissionGridHeaderProps {
     workspaceTypes: WorkspaceType[]
     workspaceLabels: WorkspaceLabels
     workspaceDescriptions: WorkspaceDescriptions

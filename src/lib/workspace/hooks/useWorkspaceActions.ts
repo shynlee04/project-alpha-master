@@ -97,7 +97,7 @@ export function useWorkspaceActions(
             setPermissionState('granted');
 
             // Save to legacy permission-lifecycle store
-            await saveDirectoryHandleReference(handle, projectId);
+            await saveDirectoryHandleReference(handle, projectId, handle.name);
 
             // Save to ProjectStore (Story 3-7)
             const project: ProjectMetadata = {
@@ -161,7 +161,7 @@ export function useWorkspaceActions(
             setAutoSyncState(true);
 
             // Save to legacy permission-lifecycle store
-            await saveDirectoryHandleReference(handle, newProjectId);
+            await saveDirectoryHandleReference(handle, newProjectId, handle.name);
 
             // Save to ProjectStore
             const project: ProjectMetadata = {

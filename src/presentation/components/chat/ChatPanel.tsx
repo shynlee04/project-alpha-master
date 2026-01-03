@@ -19,7 +19,7 @@ import {
 } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { useAgents } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
-import type { Agent } from '@/mocks/agents';
+import type { Agent } from '@/core/entities/Agent';
 import type { ThreadMessage } from '@/infrastructure/persistence/stores/conversation/types';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +43,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
         createThread,
         deleteThread,
         addMessage,
-        getThreadsForProject,
+        getThreadsByConversation,
     } = useThreadsStore();
 
     const activeThread = useActiveThread();
@@ -53,7 +53,6 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
 
     // Hooks for mobile/demo mode
     const { isMobile } = useResponsive();
-    const { updateThreadTitle } = useThreadsStore();
     const { t } = useTranslation();
 
     // Local state
@@ -63,8 +62,8 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
 
     // Get threads for this project
     const projectThreads = useMemo(
-        () => getThreadsForProject(projectId),
-        [getThreadsForProject, projectId]
+        () => getThreadsByConversation(projectId),
+        [getThreadsByConversation, projectId]
     );
 
     // Get selected agent
@@ -76,7 +75,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
     // Ensure an agent is selected if we have agents
     useEffect(() => {
         if (!activeAgentId && agents.length > 0) {
-            setActiveAgent(agents[0].id);
+            setActiveAgent(agents[0].id, 'ide');
         }
     }, [activeAgentId, agents, setActiveAgent]);
 
@@ -90,12 +89,11 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
                     const demoData = await import('@/lib/demo/sample-conversations.json');
 
                     for (const conv of demoData.conversations) {
-                        const thread = createThread(projectId);
-                        updateThreadTitle(thread.id, conv.title);
+                        const threadId = createThread(projectId);
 
                         // Add messages in sequence
                         for (const msg of conv.messages) {
-                            addMessage(thread.id, {
+                            addMessage(threadId, {
                                 role: msg.role as 'user' | 'assistant',
                                 content: msg.content
                             });
@@ -108,14 +106,14 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
         };
 
         seedDemoData();
-    }, [isMobile, projectThreads.length, activeAgentId, agents.length, projectId, createThread, updateThreadTitle, addMessage]);
+    }, [isMobile, projectThreads.length, activeAgentId, agents.length, projectId, createThread, addMessage]);
 
     /**
      * Create new thread and enter it
      */
     const handleNewThread = useCallback(() => {
-        const thread = createThread(projectId);
-        setActiveThread(thread.id);
+        const threadId = createThread(projectId);
+        setActiveThread(threadId);
         setError(null);
     }, [createThread, projectId, setActiveThread]);
 
@@ -148,7 +146,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
      * Select an agent
      */
     const handleSelectAgent = useCallback((agent: Agent) => {
-        setActiveAgent(agent.id);
+        setActiveAgent(agent.id, 'ide');
     }, [setActiveAgent]);
 
     /**

@@ -54,7 +54,7 @@ export function createExecuteCommandStreamingExecutor(
                 timeout: timeout ?? DEFAULT_TIMEOUT,
                 cwd,
             }),
-            getEventBus?.(),
+            getEventBus?.() ?? null,
             { command, cwd }
         );
     };
@@ -64,7 +64,7 @@ export function createExecuteCommandStreamingExecutor(
  * Stream command execution with progress updates
  */
 async function* streamCommandExecution(
-    executeFn: () => Promise<{ stdout: string; stderr: string; exitCode: number; pid: number }>,
+    executeFn: () => Promise<{ stdout: string; exitCode: number; pid: string }>,
     eventBus: WorkspaceEventEmitter | null,
     metadata: { command: string; cwd?: string }
 ): StreamingExecutor {
@@ -95,19 +95,7 @@ async function* streamCommandExecution(
             }
         }
 
-        // Stream stderr in chunks
-        if (result.stderr) {
-            const lines = result.stderr.split('\n');
-            for (const line of lines) {
-                if (line.length > 0) {
-                    yield {
-                        type: 'stderr',
-                        content: line + '\n',
-                        timestamp: Date.now(),
-                    };
-                }
-            }
-        }
+        // Note: CommandResult doesn't have stderr, so we skip stderr streaming
 
         // Emit completion
         yield {

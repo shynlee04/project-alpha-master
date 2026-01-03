@@ -2,8 +2,19 @@
  * @fileoverview Conversation Store Adapter (Backward Compatibility)
  * @module lib/workspace/conversation-store
  * 
- * Adapts old conversation store API to new Infrastructure Threads Store
- * to maintain compatibility during refactoring.
+ * @deprecated ADAPTER LAYER - Do not add new functionality here.
+ * This module adapts the old conversation store API to the new Infrastructure 
+ * persistence layer. All new code should use:
+ * 
+ * ```typescript
+ * import { useConversationStore } from '@/infrastructure/persistence/stores/conversation';
+ * ```
+ * 
+ * This adapter will be removed after all consumers migrate.
+ * 
+ * @consumers None documented (all should migrate to infrastructure)
+ * @migration-status LEGACY (Epic 51 Platform Unification)
+ * @last-reviewed 2026-01-03
  */
 
 import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';

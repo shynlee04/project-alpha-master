@@ -8,7 +8,6 @@ import { Input } from '@/presentation/components/ui/input';
 import { Label } from '@/presentation/components/ui/label';
 import { ModelLoadingSpinner } from '@/presentation/components/ui';
 import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
-import { PROVIDERS } from '@/lib/agent/providers/types';
 import { toast } from 'sonner';
 import { Lock, Key, Globe, Server } from 'lucide-react';
 
@@ -57,7 +56,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
     const [baseURL, setBaseURL] = useState('');
     const [defaultModel, setDefaultModel] = useState('');
     const [apiKey, setApiKey] = useState('');
-    const [headers, setHeaders] = useState('');
+    const [_headers, setHeaders] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFetchingModels, setIsFetchingModels] = useState(false);
     const [fetchError, setFetchError] = useState<string | undefined>();

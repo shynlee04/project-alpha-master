@@ -170,8 +170,9 @@ export class GeminiPDFProcessor {
  * Factory function to create Gemini PDF processor
  *
  * @param apiKey - Gemini API key from credential vault
+ * @param model - Model identifier (e.g., 'gemini-2.5-flash'). Defaults to 'gemini-2.5-flash'.
  * @returns Gemini PDF processor instance
  */
-export function createGeminiPDFProcessor(apiKey: string): GeminiPDFProcessor {
-  return new GeminiPDFProcessor(apiKey);
+export function createGeminiPDFProcessor(apiKey: string, model: string = 'gemini-2.5-flash'): GeminiPDFProcessor {
+  return new GeminiPDFProcessor(apiKey, model);
 }

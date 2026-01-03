@@ -18,7 +18,8 @@ export type { StreamingStatusIndicatorProps, StreamingState } from './StreamingS
 
 // G-003: AgentChatPanel tool execution progress
 export { ToolExecutionIndicator } from './ToolExecutionIndicator'
-export type { ToolExecutionIndicatorProps, ToolExecutionState, ToolExecutionStep } from './ToolExecutionIndicator'
+export type { ToolExecutionIndicatorProps } from './ToolExecutionIndicator'
+export type { ToolExecutionState, ToolExecutionStep } from './ToolExecutionStep'
 export { ToolExecutionStepItem } from './ToolExecutionStep'
 
 // G-004: RAGSearchPanel vector search progress

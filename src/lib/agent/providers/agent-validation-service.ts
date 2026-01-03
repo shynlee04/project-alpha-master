@@ -15,10 +15,10 @@
  * - Workspace binding integrity
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import type { Agent } from '@/domain/entities/agent';
 import type { AgentToolBinding } from '@/domain/value-objects/tool-permission';
-import { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import { WorkspaceType, WorkspaceTypeUtils } from '@/domain/value-objects/workspace-type';
 
 /**
  * Real Gemini API key (from user-provided configuration)
@@ -99,13 +99,13 @@ export interface ToolPermissionResult {
  * ```
  */
 export class AgentValidationService {
-  private genAI: GoogleGenerativeAI | null = null;
+  private genAI: GoogleGenAI | null = null;
   private modelCache = new Map<string, ModelAvailabilityResult>();
 
   constructor() {
     // Initialize Gemini AI client with real API key
     try {
-      this.genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      this.genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
       console.log('[AgentValidationService] Initialized with Gemini API');
     } catch (error) {
       console.error('[AgentValidationService] Failed to initialize Gemini AI:', error);
@@ -225,15 +225,14 @@ export class AgentValidationService {
       }
 
       // Use Gemini API to list models
-      // Note: @google/generative-ai doesn't have a direct model list API
-      // So we verify by attempting to get the model
-      const model = this.genAI.getGenerativeModel({ model: modelId });
+      // Note: @google/genai v1.34.0 uses models.generateContent()
+      // So we verify by attempting to generate content with the model
+      const result = await this.genAI.models.generateContent({
+        model: modelId,
+        contents: 'test',
+      });
 
-      // Test model with minimal prompt to verify it exists
-      const result = await model.generateContent('test');
-      const response = await result.response;
-
-      if (response) {
+      if (result) {
         const availabilityResult: ModelAvailabilityResult = {
           isAvailable: true,
           modelId,
@@ -280,7 +279,7 @@ export class AgentValidationService {
 
       // Check if tool has any workspace permissions
       const workspaces: WorkspaceType[] = [];
-      for (const workspace of Object.values(WorkspaceType)) {
+      for (const workspace of WorkspaceTypeUtils.all()) {
         if (tool.workspacePermissions[workspace]) {
           workspaces.push(workspace);
         }
@@ -340,7 +339,7 @@ export class AgentValidationService {
     // Check each workspace binding
     for (const binding of agent.workspaceBindings) {
       // Check if workspace type is valid
-      if (!Object.values(WorkspaceType).includes(binding.workspaceType)) {
+      if (!WorkspaceTypeUtils.all().includes(binding.workspaceType)) {
         errors.push({
           code: 'INVALID_WORKSPACE_TYPE',
           message: `Invalid workspace type: ${binding.workspaceType}`,

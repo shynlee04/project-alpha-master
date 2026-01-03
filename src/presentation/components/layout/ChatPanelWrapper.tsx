@@ -30,12 +30,6 @@ export interface ChatPanelWrapperProps {
     projectName: string;
     /** Callback to close chat panel */
     onClose: () => void;
-    /** File tools facade for agent */
-    fileTools?: any;
-    /** Terminal tools facade for agent */
-    terminalTools?: any;
-    /** Event bus for tool operations */
-    eventBus?: any;
 }
 
 /**
@@ -54,9 +48,6 @@ export function ChatPanelWrapper({
     projectId,
     projectName,
     onClose,
-    fileTools,
-    terminalTools,
-    eventBus,
 }: ChatPanelWrapperProps): React.JSX.Element {
     const { t } = useTranslation();
     // MRT-7: Mobile responsive detection for touch targets
@@ -71,7 +62,7 @@ export function ChatPanelWrapper({
         setActiveThread,
         createThread,
         deleteThread,
-        getThreadsForProject,
+        getThreadsByConversation,
     } = useThreadsStore();
 
     const activeThread = useActiveThread();
@@ -79,8 +70,8 @@ export function ChatPanelWrapper({
     // Get threads for current project
     const projectThreads = useMemo(() => {
         if (!projectId) return [];
-        return getThreadsForProject(projectId);
-    }, [getThreadsForProject, projectId]);
+        return getThreadsByConversation(projectId);
+    }, [getThreadsByConversation, projectId]);
 
     // Pagination
     const totalPages = Math.ceil(projectThreads.length / pageSize);
@@ -92,8 +83,8 @@ export function ChatPanelWrapper({
     // Handlers
     const handleNewThread = useCallback(() => {
         if (!projectId) return;
-        const thread = createThread(projectId);
-        setActiveThread(thread.id);
+        const threadId = createThread(projectId);
+        setActiveThread(threadId);
     }, [createThread, projectId, setActiveThread]);
 
     const handleSelectThread = useCallback((threadId: string) => {
@@ -151,9 +142,6 @@ export function ChatPanelWrapper({
                     <AgentChatPanel
                         projectId={projectId}
                         projectName={projectName}
-                        fileTools={fileTools}
-                        terminalTools={terminalTools}
-                        eventBus={eventBus}
                     />
                 </div>
             </div>

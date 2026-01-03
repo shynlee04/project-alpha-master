@@ -256,7 +256,7 @@ export function withRetry<T>(
 export function createErrorFallback(
     _error: Error,
     _errorInfo?: React.ErrorInfo
-): ErrorRecoveryOptions {
+): ErrorRecoveryAction {
     /*
     const componentName = errorInfo?.componentStack
         ?.split('\n')
@@ -264,11 +264,7 @@ export function createErrorFallback(
         .pop() || 'Unknown Component'
     */
 
-    return {
-        action: 'reload',
-        showDetails: import.meta.env.DEV,
-        onAction: () => window.location.reload(),
-    }
+    return 'reload' as ErrorRecoveryAction;
 }
 
 /**
@@ -386,7 +382,7 @@ export function createAsyncErrorHandler<T>(
     return {
         onError: (error: unknown, options?: ErrorToastOptions) => {
             logError(error, { operation: operationName })
-            showErrorToast(error, {
+            showErrorToast(error instanceof Error ? error : String(error), {
                 action: 'retry',
                 id: `${operationName}-error`,
                 ...options,

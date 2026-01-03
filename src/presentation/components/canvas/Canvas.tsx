@@ -15,6 +15,15 @@ import { nodeTypes } from './nodes/nodeTypes';
 import { edgeTypes, defaultEdgeOptions } from './edges/edgeTypes';
 import { useCanvasDrop } from '@/hooks/useCanvasDrop';
 import { LinkageProposalsPanel } from './LinkageProposalsPanel';
+import type { IndexMetadata } from '@/lib/rag/types';
+
+/**
+ * Canvas component props
+ */
+export interface CanvasProps {
+    /** Optional RAG index metadata for knowledge graph integration */
+    indexMetadata?: IndexMetadata | null;
+}
 
 // Default viewport options
 const defaultViewportOptions = {
@@ -98,8 +107,10 @@ function KeyboardShortcutsPanel() {
 
 /**
  * Main canvas content component
+ *
+ * @param props - CanvasContent props including optional indexMetadata
  */
-function CanvasContent() {
+function CanvasContent(props?: { indexMetadata?: IndexMetadata | null }) {
   const { isMobile } = useResponsive();
 
   // Get store state and actions
@@ -203,7 +214,7 @@ function CanvasContent() {
 
         {/* Panels */}
         <KeyboardShortcutsPanel />
-        <LinkageProposalsPanel />
+        <LinkageProposalsPanel indexMetadata={props?.indexMetadata} />
 
         {/* Empty state */}
         {isEmpty && (
@@ -222,11 +233,13 @@ function CanvasContent() {
 /**
  * Knowledge Canvas component with React Flow integration
  * Supports desktop (full editing) and mobile (read-only) modes
+ *
+ * @param props - Canvas props including optional indexMetadata
  */
-export function Canvas() {
+export function Canvas(props?: CanvasProps) {
   return (
     <ReactFlowProvider>
-      <CanvasContent />
+      <CanvasContent indexMetadata={props?.indexMetadata} />
     </ReactFlowProvider>
   );
 }

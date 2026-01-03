@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import type { ProjectMetadata, WorkspaceBindings } from '@/lib/workspace/project-store';
+import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 
 type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
 
@@ -50,7 +50,7 @@ export interface UseWorkspaceBindingStateResult {
  * @returns State and handlers for workspace binding dialog
  */
 export function useWorkspaceBindingState(
-  project: ProjectMetadata
+  project: Project
 ): UseWorkspaceBindingStateResult {
   // State: workspace bindings (checkboxes)
   const [bindings, setBindings] = useState<WorkspaceBindings>({
@@ -65,12 +65,12 @@ export function useWorkspaceBindingState(
 
   // Initialize state from project's existing bindings
   useEffect(() => {
-    if (project?.workspaceBindings) {
-      setBindings(project.workspaceBindings);
+    if (project?.bindings) {
+      setBindings(project.bindings);
 
       // Set initial workspace to first enabled workspace, default to 'ide'
       const firstEnabled = WORKSPACES.find(
-        (ws) => project.workspaceBindings?.[ws.id] === true
+        (ws) => project.bindings?.[ws.id] === true
       );
       setInitialWorkspace((firstEnabled?.id as WorkspaceId) || 'ide');
     }
@@ -80,7 +80,7 @@ export function useWorkspaceBindingState(
    * Handle workspace checkbox toggle with auto-selection logic.
    */
   const handleWorkspaceToggle = (workspaceId: WorkspaceId, checked: boolean) => {
-    setBindings((prev) => ({
+    setBindings((prev: WorkspaceBindings) => ({
       ...prev,
       [workspaceId]: checked,
     }));

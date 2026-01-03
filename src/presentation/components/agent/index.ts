@@ -43,8 +43,8 @@ export { useAgentFormValidation } from './hooks/useAgentFormValidation';
 export type {
     UseAgentFormValidationProps,
     ValidationState,
-    AgentFormData,
 } from './hooks/useAgentFormValidation';
+export type { AgentFormData } from './hooks';
 
 // Agent Settings Components
 export { ProviderSettings } from './ProviderSettings';

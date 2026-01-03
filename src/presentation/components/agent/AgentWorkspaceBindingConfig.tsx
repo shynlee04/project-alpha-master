@@ -16,12 +16,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Check, Monitor, BookOpen, GraduationCap, FileText } from 'lucide-react';
 import { Label } from '@/presentation/components/ui/label';
 import { Checkbox } from '@/presentation/components/ui/checkbox';
 import { Badge } from '@/presentation/components/ui/badge';
-import { Button } from '@/presentation/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
@@ -117,10 +115,8 @@ export function AgentWorkspaceBindingConfig({
   className,
   compact = false,
 }: AgentWorkspaceBindingConfigProps) {
-  const { t } = useTranslation();
   // Use individual selectors to avoid infinite re-renders
   const updateWorkspaceBinding = useAppStore(s => s.updateWorkspaceBinding)
-  const updateAgentWorkspaceBinding = useAppStore(s => s.updateAgentWorkspaceBinding)
 
   // Local state for bindings (optimistic updates)
   const [localBindings, setLocalBindings] = useState<Record<string, boolean>>(() => {
@@ -157,10 +153,6 @@ export function AgentWorkspaceBindingConfig({
       console.error('[AgentWorkspaceBindingConfig] Update failed:', error);
       setLocalBindings(prev => ({ ...prev, [workspaceType]: !checked }));
     }
-  };
-
-  const getWorkspaceIcon = (workspaceType: string) => {
-    return WORKSPACE_CONFIGS.find(w => w.type === workspaceType)?.icon || Monitor;
   };
 
   const enabledCount = Object.values(localBindings).filter(Boolean).length;
@@ -214,7 +206,7 @@ export function AgentWorkspaceBindingConfig({
                   id={`workspace-${agent.id}-${workspace.type}`}
                   checked={isChecked}
                   disabled={disabled || isSaving}
-                  onCheckedChange={(checked: boolean) => handleBindingChange(workspace.type, checked)}
+                  onChange={(e) => handleBindingChange(workspace.type, e.target.checked)}
                   aria-label={`Make ${agent.name} available in ${workspace.label} workspace`}
                 />
               </div>

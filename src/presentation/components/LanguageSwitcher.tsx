@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useLocalePreference } from '../i18n/LocaleProvider';
+import { useLocalePreference } from '@/i18n/LocaleProvider';
 import { Languages } from 'lucide-react';
 
 export const LanguageSwitcher = () => {

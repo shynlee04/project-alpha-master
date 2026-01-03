@@ -51,8 +51,8 @@ export function useSyncOperations(
                             },
                             onError: (error) => {
                                 // Check if mobile/tablet and show appropriate error
-                                if (deviceType === 'mobile' || deviceType === 'tablet') {
-                                    showMobileWorkspaceError('syncFailed');
+                                if (deviceType.isMobile || deviceType.isTablet) {
+                                    showMobileWorkspaceError('openFailed');
                                     return;
                                 }
                                 console.warn('[Workspace] Sync error:', error.message, error.filePath);
@@ -88,8 +88,8 @@ export function useSyncOperations(
                 return true;
             } catch (error) {
                 // Check if mobile/tablet and show appropriate error
-                if (deviceType === 'mobile' || deviceType === 'tablet') {
-                    showMobileWorkspaceError('syncFailed');
+                if (deviceType.isMobile || deviceType.isTablet) {
+                    showMobileWorkspaceError('openFailed');
                     setSyncError('Sync failed on mobile device');
                     setSyncStatus('error');
                     setSyncProgress(null);

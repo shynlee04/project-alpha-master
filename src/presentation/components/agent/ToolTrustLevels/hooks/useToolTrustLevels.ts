@@ -34,7 +34,7 @@ const DEFAULT_TOOLS: ToolTrustConfig[] = [
     { toolId: 'web-search', toolName: 'Web Search', trustLevel: 'auto' },
 ]
 
-interface UseToolTrustLevelsReturn {
+export interface UseToolTrustLevelsReturn {
     tools: ToolTrustConfig[]
     hasChanges: boolean
     handleTrustLevelChange: (toolId: string, newLevel: ToolTrustLevel) => void

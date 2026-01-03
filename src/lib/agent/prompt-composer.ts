@@ -18,10 +18,11 @@
 import type { WorkspaceEventEmitter } from '../events/workspace-events';
 import type {
   PromptLayer,
-  LayerContext,
   PromptComposerConfig,
   CacheEntry,
 } from './prompt-composer-types';
+import type { LayerContext } from './prompt-composer-types';
+export type { LayerContext };
 import { DEFAULT_CONFIG } from './prompt-composer-config';
 
 /**

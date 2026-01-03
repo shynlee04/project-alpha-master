@@ -47,95 +47,12 @@ export function useMetricsCollection({
   debounceDelay = 5000,
   collectionInterval = 60000,
 }: UseMetricsCollectionOptions = {}): void {
-  const timeoutRef = useRef<number>();
-  const intervalRef = useRef<number>();
+  const timeoutRef = useRef<number | undefined>(undefined);
+  const intervalRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!enabled) return;
 
-    // Debounced write function
-    const debouncedWrite = (() => {
-      let timeoutId: number | undefined;
-
-      return (metrics: DashboardMetrics) => {
-        if (timeoutId !== undefined) {
-          clearTimeout(timeoutId);
-        }
-
-        timeoutId = window.setTimeout(async () => {
-          try {
-            const now = new Date().toISOString();
-
-            // Collect project count metrics
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'projectCount',
-              value: metrics.totalProjects,
-              metadata: JSON.stringify({
-                active: metrics.activeProjects,
-                deleted: metrics.deletedProjects,
-              }),
-            });
-
-            // Collect storage usage metrics (in KB)
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'storageUsage',
-              value: metrics.estimatedStorageKB,
-              metadata: JSON.stringify({
-                mb: metrics.estimatedStorageMB,
-              }),
-            });
-
-            // Collect activity metrics
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'activity',
-              value: metrics.projectsOpenedToday,
-              metadata: JSON.stringify({
-                thisWeek: metrics.projectsOpenedThisWeek,
-              }),
-            });
-
-            // Collect workspace distribution
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'workspaceIde',
-              value: metrics.ideWorkspaceCount,
-            });
-
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'workspaceKnowledge',
-              value: metrics.knowledgeWorkspaceCount,
-            });
-
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'workspaceNotes',
-              value: metrics.notesWorkspaceCount,
-            });
-
-            await db.metricsHistory.put({
-              timestamp: now,
-              workspaceType: 'all',
-              metricName: 'workspaceStudy',
-              value: metrics.studyWorkspaceCount,
-            });
-
-            console.log('[Metrics Collection] Snapshot saved:', now);
-          } catch (error) {
-            console.error('[Metrics Collection] Failed to save snapshot:', error);
-          }
-        }, debounceDelay);
-      };
-    })();
 
     // Cleanup function
     return () => {

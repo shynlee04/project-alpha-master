@@ -123,17 +123,21 @@ const DEFAULT_DEBOUNCE_MS = 100;
 export class ReverseSyncService {
   private readonly syncEventBus: SyncEventBus;
   private readonly localFSAdapter: LocalFSAdapterLike;
-  private readonly webContainer?: ReverseSyncService['webContainer'];
-  private readonly exclusionPatterns: string[];
-  private readonly conflictResolution: ConflictResolutionStrategy;
-  private readonly debounceMs: number;
-  private readonly onError?: (error: ReverseSyncError) => void;
-  private readonly onProgress?: (progress: ReverseSyncProgress) => void;
-  
+  private webContainer?: {
+    fs: {
+      readFile: (path: string, encoding?: string) => Promise<Uint8Array | string>;
+    };
+  };
+  private exclusionPatterns: string[];
+  private conflictResolution: ConflictResolutionStrategy;
+  private debounceMs: number;
+  private onError?: (error: ReverseSyncError) => void;
+  private onProgress?: (progress: ReverseSyncProgress) => void;
+
   private isRunning: boolean;
   private debounceTimers: Map<string, NodeJS.Timeout | number>;
   private syncedCount: number;
-  private readonly eventListeners: Map<FileEventType, () => void>;
+  private readonly eventListeners: Map<FileEventType, (payload: BaseEventPayload<FileEventPayload>) => void>;
 
   /**
    * Create a new ReverseSyncService instance
@@ -244,7 +248,7 @@ export class ReverseSyncService {
    */
   private unsubscribeFromEvents(): void {
     for (const [eventType, listener] of this.eventListeners) {
-      this.syncEventBus.off(eventType, listener);
+      this.syncEventBus.off(eventType, listener as () => void);
     }
     this.eventListeners.clear();
   }

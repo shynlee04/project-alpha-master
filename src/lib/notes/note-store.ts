@@ -194,7 +194,7 @@ export const useNoteStore = create<NoteStoreState>()(
                     console.log(`[NoteStore] Created note ${noteId}`);
 
                     // Emit event for cross-workspace note access (NR-07)
-                    emitNoteCreated(newNote);
+                    emitNoteCreated(newNote, currentProjectId);
 
                     // Trigger indexing (fire and forget)
                     indexNote(newNote as any, currentProjectId)
@@ -278,10 +278,10 @@ export const useNoteStore = create<NoteStoreState>()(
                     });
 
                     // Emit events for cross-workspace note access (NR-07)
-                    emitNoteUpdated(updatedNote);
+                    emitNoteUpdated(updatedNote, updatedNote.projectId, updates);
                     if (contentChanged) {
-                        emitNoteContentChanged(updatedNote);
-                        emitNoteTitleChanged(updatedNote);
+                        emitNoteContentChanged(updatedNote.id, updatedNote.projectId, typeof updatedNote.blocks === 'string' ? updatedNote.blocks : '[blocks updated]');
+                        emitNoteTitleChanged(updatedNote.id, updatedNote.projectId, note.title, updatedNote.title);
                     }
 
                     // Reset save status after 2 seconds
@@ -396,8 +396,8 @@ export const useNoteStore = create<NoteStoreState>()(
                 const note = noteId ? get().notes.get(noteId) : null;
                 set({ activeNoteId: noteId });
                 // Emit event for cross-workspace note access (NR-07)
-                if (note) {
-                    emitNoteSelected(note);
+                if (noteId) {
+                    emitNoteSelected(noteId, note || undefined);
                 }
             },
 
@@ -425,7 +425,7 @@ export const useNoteStore = create<NoteStoreState>()(
                     });
 
                     // Emit event for cross-workspace note access (NR-07)
-                    emitNoteFavoriteChanged({ ...note, isFavorite: newIsFavorite });
+                    emitNoteFavoriteChanged(noteId, note.projectId, newIsFavorite);
                 } catch (error) {
                     set({ error: (error as Error).message });
                 }
@@ -458,7 +458,7 @@ export const useNoteStore = create<NoteStoreState>()(
                     });
 
                     // Emit event for cross-workspace note access (NR-07)
-                    emitNoteMoved({ ...note, parentId: newParentId ?? undefined, order: newOrder });
+                    emitNoteMoved(noteId, note.projectId, note.parentId ?? null, newParentId ?? null);
                 } catch (error) {
                     set({ error: (error as Error).message });
                 }

@@ -21,7 +21,7 @@ import { SynthesisService } from '@/lib/knowledge/synthesis-service';
 import { GeminiPDFProcessor } from '@/lib/knowledge/gemini-pdf-processor';
 import { GeminiImageProcessor } from '@/lib/knowledge/gemini-image-processor';
 import { GeminiURLProcessor } from '@/lib/knowledge/gemini-url-processor';
-import type { SynthesisProgress, GeminiPDFOptions, GeminiImageOptions, GeminiURLOptions } from '@/lib/knowledge/synthesis-types';
+import type { SynthesisProgress, SynthesisResult, SynthesisOptions, GeminiPDFOptions, GeminiImageOptions, GeminiURLOptions } from '@/lib/knowledge/synthesis-types';
 
 /**
  * KnowledgeToolsFacade - Implementation of AgentKnowledgeTools
@@ -67,7 +67,7 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
   /**
    * Synthesize knowledge from source document
    */
-  async synthesize(input: SynthesisInput): Promise<SourceDocument & { frontmatter: any }> {
+  async synthesize(input: SynthesisInput): Promise<SynthesisResult> {
     await this.ensureServices();
 
     if (!this.synthesisService) {
@@ -81,11 +81,13 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
       title: input.title,
       content: input.content,
       mimeType: input.mimeType,
-      createdAt: new Date().toISOString(),
+      metadata: {
+        createdAt: new Date().toISOString(),
+      },
     };
 
     // Convert options
-    const options: SynthesisProgress = {
+    const options: SynthesisOptions = {
       onProgress: (progress: SynthesisProgress) => {
         console.log(`[KnowledgeTools] Synthesis progress: ${progress.stage} ${progress.progress}%`);
       },
@@ -116,7 +118,6 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
       onProgress: (progress: SynthesisProgress) => {
         console.log(`[KnowledgeTools] PDF progress: ${progress.stage} ${progress.progress}%`);
       },
-      extractHeadings: options?.extractHeadings ?? true,
       extractTables: options?.extractTables ?? true,
       extractFigures: options?.extractFigures ?? true,
       extractCitations: options?.extractCitations ?? true,
@@ -150,7 +151,7 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
       extractText: options?.extractText ?? true,
       generateDescription: options?.generateDescription ?? true,
       detectObjects: options?.detectObjects ?? true,
-      detectHandwriting: options?.detectHandwriting ?? true,
+      analyzeStructure: true,
     };
 
     // Call image processor
@@ -198,5 +199,5 @@ export class KnowledgeToolsFacade implements AgentKnowledgeTools {
  * @returns Knowledge tools facade instance
  */
 export function createKnowledgeToolsFacade(providerId: string = 'gemini', model?: string): AgentKnowledgeTools {
-  return new KnowledgeToolsFacade(providerId, model);
+  return new KnowledgeToolsFacade(providerId, model) as unknown as AgentKnowledgeTools;
 }

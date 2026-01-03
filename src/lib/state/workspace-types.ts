@@ -3,11 +3,19 @@
  * @module lib/state/workspace-types
  *
  * Centralized workspace type definitions for type safety.
- * WorkspaceType imported from domain layer (single source of truth).
+ * Workspace type enumeration for the four workspaces.
  */
 
-// Import WorkspaceType from domain layer (single source of truth)
-export type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+/**
+ * Workspace Type Enumeration
+ *
+ * Represents the four workspace types in the application:
+ * - ide: Code development workspace
+ * - knowledge: Knowledge synthesis workspace
+ * - study: Study and flashcard workspace
+ * - notes: Note-taking workspace
+ */
+export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
 
 /**
  * Workspace metadata

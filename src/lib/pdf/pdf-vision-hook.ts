@@ -128,7 +128,7 @@ export function usePdfVision(options: UsePdfVisionOptions): UsePdfVisionResult {
 
       setPageCount(count);
       setIsLoaded(true);
-      setCurrentUrl(url);
+      _setCurrentUrl(typeof url === 'string' ? url : null);
 
       onPdfLoaded?.(count);
     } catch (error) {

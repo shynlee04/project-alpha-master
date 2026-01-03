@@ -17,7 +17,7 @@ const Canvas = lazy(() => {
     return import('@/presentation/components/canvas/Canvas');
 });
 import { SourceImportDialog } from '@/presentation/components/knowledge/SourceImportDialog';
-import { RAGPanelContainer } from '@/presentation/components/rag';
+import { RAGPanelContainer, IndexingProgressPanel } from '@/presentation/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
@@ -29,7 +29,8 @@ import { AgentManager } from '@/presentation/components/agent/AgentManager';
 import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';
 import { DocumentChunker } from '@/lib/rag/document-chunker';
 import { createEmbeddingService, type EmbeddingService } from '@/lib/rag/embedding-service';
-import { indexSource, searchIndex, createIndex } from '@/lib/rag/orama-index';
+import { createIndex } from '@/lib/rag/orama-index';
+import { getOramaIndexAdapter } from '@/lib/rag/orama-index-adapter';
 import { storeEvents } from '@/lib/events/store-events';
 
 // UC1: Synthesis Components
@@ -45,6 +46,9 @@ export function KnowledgePage() {
     // Get current project ID, default to 'default' if not set
     const projectId = useIDEStore((state) => state.projectId) || 'default';
     const { isMobile } = useResponsive();
+
+    // P0-2: Get RAG store state for Canvas integration
+    const indexMetadata = useRAGStore((s) => s.indexMetadata);
 
     // State
     const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -78,8 +82,12 @@ export function KnowledgePage() {
                     enableVectorSearch: true,
                 });
 
-                // Load server-side stats into store
-                useRAGStore.getState().loadIndexMetadata(projectId);
+                // P0-2: Initialize RAG store state
+                useRAGStore.getState().setCurrentProject(projectId);
+                useRAGStore.getState().setCurrentWorkspace('knowledge');
+
+                // Load existing index metadata
+                await useRAGStore.getState().loadIndexMetadata(projectId);
 
             } catch (error) {
                 console.error('Failed to initialize RAG services:', error);
@@ -101,45 +109,21 @@ export function KnowledgePage() {
         // Initialize RAG dependencies
         const documentChunker = new DocumentChunker();
 
-        // Create OramaIndex adapter class
-        class OramaIndexAdapter {
-            constructor(private projectId: string) { }
-
-            async indexBatch(chunks: any[]): Promise<void> {
-                // Group chunks by source and index
-                for (const chunk of chunks) {
-                    // Adapter for mismatched types in SourceRAGBridge
-                    await indexSource(this.projectId, chunk.sourceId || 'unknown', chunk.content, {
-                        title: chunk.title,
-                        embedding: chunk.embedding
-                    });
-                }
-                // Update global store with new stats
-                useRAGStore.getState().loadIndexMetadata(this.projectId);
-            }
-
-            async search(query: string, limit?: number): Promise<any[]> {
-                const results = await searchIndex(this.projectId, query, {
-                    limit: limit || 10
-                });
-                return results;
-            }
-        }
-
-        const oramaIndex = new OramaIndexAdapter(projectId);
+        // P0-2: Use shared OramaIndexAdapter instead of local class
+        const oramaIndex = getOramaIndexAdapter(projectId);
 
         // Create and start the bridge
         const bridge = createSourceRAGBridge({
             documentChunker,
             embeddingService,
-            oramaIndex,
+            oramaIndex: oramaIndex as unknown as import('@/lib/knowledge/source-rag-bridge').OramaIndex,
             eventBus: storeEvents
         });
 
         // Start listening for source import events
         bridge.start();
 
-        console.log('[KSI] SourceRAGBridge initialized and started');
+        console.log('[KSI] SourceRAGBridge initialized with shared OramaIndexAdapter');
 
         // Cleanup on unmount
         return () => {
@@ -203,6 +187,8 @@ export function KnowledgePage() {
                                 />
                             </div>
                         </div>
+                        {/* P0-2: Indexing Progress Panel */}
+                        <IndexingProgressPanel className="mb-4" />
                         <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
                     </div>
                     {/* Canvas Section - Read Only/Preview */}
@@ -211,7 +197,7 @@ export function KnowledgePage() {
                             {t('knowledge.canvas.preview')}
                         </div>
                         <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
-                            <Canvas />
+                            <Canvas indexMetadata={indexMetadata} />
                         </Suspense>
                     </div>
                     {/* UC1: Synthesis Preview Panel */}
@@ -274,6 +260,8 @@ export function KnowledgePage() {
                                 />
                             </div>
                         </div>
+                        {/* P0-2: Indexing Progress Panel */}
+                        <IndexingProgressPanel className="px-3 pb-3" />
                         <div className="flex-1 overflow-y-auto">
                             {/* UC1: Show preview panel when synthesis is complete */}
                             {synthesisResult && previewType ? (
@@ -305,7 +293,7 @@ export function KnowledgePage() {
                 <ResizablePanel defaultSize={50} minSize={30}>
                     <div className="h-full relative">
                         <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
-                            <Canvas />
+                            <Canvas indexMetadata={indexMetadata} />
                         </Suspense>
                     </div>
                 </ResizablePanel>

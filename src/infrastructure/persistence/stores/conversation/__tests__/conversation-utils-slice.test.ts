@@ -1,10 +1,4 @@
-import { create } from 'zustand';
-import type { CombinedConversationState } from '../types';
-import { createConversationUtilsSlice } from '../conversation-utils-slice';
-import { createConversationMetadataSlice } from '../conversation-metadata-slice';
-import { createThreadManagementSlice } from '../thread-management-slice';
-import { createMessageCrudSlice } from '../message-crud-slice';
-import { createConversationEventsSlice } from '../conversation-events-slice';
+import { createTestConversationStore } from './test-helper';
 
 vi.mock('@/lib/state/dexie-storage', () => ({
   createDexieStorage: () => ({
@@ -14,13 +8,7 @@ vi.mock('@/lib/state/dexie-storage', () => ({
   })
 }));
 
-const createTestStore = () => create<CombinedConversationState>()((set, get, api) => ({
-  ...createConversationMetadataSlice(set, get, api),
-  ...createThreadManagementSlice(set, get, api),
-  ...createMessageCrudSlice(set, get, api),
-  ...createConversationUtilsSlice(set, get, api),
-  ...createConversationEventsSlice(set, get, api),
-}));
+const createTestStore = createTestConversationStore;
 
 describe('Conversation Utils Slice', () => {
   let store: ReturnType<typeof createTestStore>;

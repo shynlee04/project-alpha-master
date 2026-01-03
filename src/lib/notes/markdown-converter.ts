@@ -58,8 +58,8 @@ function blockToMarkdown(block: Block): string {
             return `- ${content}\n`;
 
         case 'numberedListItem':
-            const num = (block.props?.num as number) || 1;
-            return `${num}. ${content}\n`;
+            // BlockNote doesn't use num prop, just use content
+            return `1. ${content}\n`;
 
         case 'checkListItem':
             const checked = block.props?.checked as boolean;
@@ -83,19 +83,9 @@ function blockToMarkdown(block: Block): string {
 
         case 'table':
             return tableToMarkdown(block);
-            
-        case 'tableRow':
-            // Tables are handled at the table level
-            return '';
 
-        case 'tableCell':
-            // Tables are handled at the table level
-            return '';
-
-        case 'callout':
-            const calloutIcon = (block.props?.icon as string) || 'ℹ️';
-            const calloutText = (block.props?.text as string) || content;
-            return `> ${calloutIcon} ${calloutText}\n\n`;
+        // Note: tableRow, tableCell, callout are not supported in current BlockNote version
+        // These block types are removed from the switch statement
 
         case 'file':
             const fileUrl = content || (block.props?.url as string) || '';
@@ -115,7 +105,13 @@ function getBlockTextContent(block: Block): string {
 
     if (Array.isArray(block.content)) {
         return block.content
-            .map((item: { text?: string }) => item.text || '')
+            .map((item: { text?: string; type?: string }) => {
+                // Handle text content with potential styling
+                if (item.type === 'text') {
+                    return item.text || '';
+                }
+                return item.text || '';
+            })
             .join('');
     }
 

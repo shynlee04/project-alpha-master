@@ -89,9 +89,25 @@ export function createProcessImageClientTool(getKnowledgeTools: () => AgentKnowl
       const tools = getKnowledgeTools();
       const result = await tools.processImage(args.file, args.base64Content, args.options);
 
+      // Map GeminiImageResult to ProcessImageOutput schema
+      const mappedResult: ProcessImageOutput = {
+        extractedText: result.text,
+        description: result.description,
+        detectedObjects: result.detectedObjects?.map(obj => ({
+          name: obj.label,
+          confidence: obj.confidence,
+        })),
+        isHandwriting: result.imageType === 'handwriting',
+        metadata: {
+          mimeType: args.file.type,
+          width: undefined,
+          height: undefined,
+        },
+      };
+
       return {
         success: true,
-        data: result,
+        data: mappedResult,
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown image processing error';

@@ -19,7 +19,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-import type { ProjectMetadata, WorkspaceBindings } from '@/lib/workspace/project-store';
+import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import type { WorkspaceId } from '@/lib/workspace';
 import { WorkspaceBadge } from './WorkspaceBadge';
 import { cn } from '@/lib/utils';
@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils';
 
 export interface ProjectCardProps {
   /** Project metadata */
-  project: ProjectMetadata;
+  project: Project;
   /** Click handler for opening project (shows dialog) */
   onOpen: (projectId: string) => void;
   /** Additional className */
@@ -85,8 +85,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
   // Get enabled workspaces from bindings
   const boundWorkspaces = useMemo(
-    () => getEnabledWorkspaces(project.workspaceBindings),
-    [project.workspaceBindings]
+    () => getEnabledWorkspaces(project.bindings),
+    [project.bindings]
   );
 
   // Handle workspace badge click (direct navigation, skip dialog)

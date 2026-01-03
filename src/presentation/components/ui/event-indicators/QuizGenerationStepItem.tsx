@@ -7,6 +7,7 @@
  * @module presentation/components/ui/event-indicators
  */
 
+import { cn } from '@/lib/utils';
 import type { QuizGenerationStep } from './QuizGenerationIndicator'
 
 /**

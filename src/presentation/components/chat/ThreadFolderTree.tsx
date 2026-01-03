@@ -20,7 +20,7 @@ import type { ThreadHierarchyNode } from '@/infrastructure/persistence/stores/co
 import { useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { formatDistanceToNow } from 'date-fns';
 
-interface ThreadFolderTreeProps {
+export interface ThreadFolderTreeProps {
     /** Thread hierarchy tree */
     hierarchy: ThreadHierarchyNode[];
     /** Thread selection callback */
@@ -52,11 +52,6 @@ function TreeNode({ node, activeThreadId, onSelectThread, onCreateChild, depth =
     const handleToggle = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsExpanded(!isExpanded);
-    };
-
-    const handleCreateChild = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onCreateChild?.(node.thread.id);
     };
 
     return (

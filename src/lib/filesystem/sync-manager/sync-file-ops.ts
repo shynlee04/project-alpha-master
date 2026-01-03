@@ -7,7 +7,7 @@
 
 import type { LocalFSAdapter } from '../local-fs-adapter';
 import { getFileSystem, isBooted } from '../../webcontainer';
-import type { WorkspaceEventEmitter } from '../events';
+import type { WorkspaceEventEmitter } from '../../events';
 import type { SyncConfig } from '../sync-types';
 import { SyncError } from '../sync-types';
 import { validateFileSize, shouldWarnFileSize, formatFileSize } from '../validation';

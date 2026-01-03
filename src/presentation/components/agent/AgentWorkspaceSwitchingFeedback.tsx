@@ -24,6 +24,7 @@ import { Badge } from '@/presentation/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
@@ -95,10 +96,10 @@ export function AgentWorkspaceSwitchingFeedback({
   onClick,
 }: AgentWorkspaceSwitchingFeedbackProps) {
   const { t } = useTranslation();
-  const { isTransitioning, currentWorkspace } = useWorkspaceStore();
+  const { currentWorkspace } = useWorkspaceStore();
   // Use individual selectors to avoid infinite re-renders
   const getAgentsForWorkspace = useAppStore(s => s.getAgentsForWorkspace)
-  const getActiveAgent = useAppStore(s => s.getActiveAgent)
+  const getActiveAgent = useAgentSelectionStore(s => s.getActiveAgent)
 
   // Local state for transition feedback
   const [transitionState, setTransitionState] = useState<TransitionState>({
@@ -421,7 +422,7 @@ export function WorkspaceAgentListSummary({
   const { currentWorkspace } = useWorkspaceStore();
   // Use individual selectors to avoid infinite re-renders
   const getAgentsForWorkspace = useAppStore(s => s.getAgentsForWorkspace)
-  const getActiveAgent = useAppStore(s => s.getActiveAgent)
+  const getActiveAgent = useAgentSelectionStore(s => s.getActiveAgent)
 
   const agents = getAgentsForWorkspace(currentWorkspace);
   const activeAgent = getActiveAgent();

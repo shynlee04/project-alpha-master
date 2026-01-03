@@ -8,12 +8,11 @@
  * @epic CW-02 - Project → Knowledge Sync
  */
 
-import type { DocumentSchema } from '../rag/types';
 import type { FileSyncService } from './file-sync-service';
 import type { DocumentChunker } from '../rag/document-chunker';
 import type { EmbeddingService } from '../rag/embedding-service';
-import type { Orama } from '@orama/orama';
-import type { OramaSchema } from '../rag/types';
+import type { OramaIndex } from '../knowledge/source-rag-bridge';
+import type { SourceRecord } from '@/lib/state/dexie-db-knowledge-types';
 
 /**
  * Sync configuration
@@ -51,14 +50,14 @@ export class ProjectKnowledgeSync {
     private fileSyncService: FileSyncService;
     private documentChunker: DocumentChunker;
     private embeddingService: EmbeddingService;
-    private oramaIndex: Orama<OramaSchema>;
+    private oramaIndex: OramaIndex;
     private synced: boolean;
 
     constructor(dependencies: {
         fileSyncService: FileSyncService;
         documentChunker: DocumentChunker;
         embeddingService: EmbeddingService;
-        oramaIndex: Orama<OramaSchema>;
+        oramaIndex: OramaIndex;
     }) {
         this.fileSyncService = dependencies.fileSyncService;
         this.documentChunker = dependencies.documentChunker;
@@ -90,14 +89,14 @@ export class ProjectKnowledgeSync {
                     // Read file content
                     const content = await this.fileSyncService.readFile(filePath);
 
-                    // Create document
-                    const doc: Document = {
+                    // Create source record
+                    const source: SourceRecord = {
                         id: `doc-${filePath}`,
                         projectId: config.projectId,
+                        type: 'text',
                         title: this.extractTitle(filePath),
                         content,
-                        source: filePath,
-                        sourceType: 'project',
+                        charCount: content.length,
                         createdAt: Date.now(),
                         updatedAt: Date.now()
                     };
@@ -107,7 +106,7 @@ export class ProjectKnowledgeSync {
                     documentsSynced++;
 
                     // Process through RAG pipeline
-                    const ragResult = await this.processThroughRAG(doc);
+                    const ragResult = await this.processThroughRAG(source);
                     chunksCreated += ragResult.chunks;
                     embeddingsGenerated += ragResult.embeddings;
 
@@ -173,24 +172,27 @@ export class ProjectKnowledgeSync {
     }
 
     /**
-     * Process document through RAG pipeline
+     * Process source through RAG pipeline
      */
-    private async processThroughRAG(doc: Document): Promise<{
+    private async processThroughRAG(source: SourceRecord): Promise<{
         chunks: number;
         embeddings: number;
     }> {
-        // Chunk document
-        const chunks = await this.documentChunker.chunkDocument(doc);
+        // Chunk source
+        const chunkingResult = await this.documentChunker.chunkSource(source);
+        const chunks = chunkingResult.chunks;
 
         // Generate embeddings
-        const embeddings = await this.embeddingService.embedBatch(chunks);
+        const embeddingResult = await this.embeddingService.embedBatch(
+            chunks.map(c => c.content)
+        );
 
         // Index in Orama
-        await this.oramaIndex.indexBatch(embeddings);
+        await this.oramaIndex.indexBatch(embeddingResult.results);
 
         return {
             chunks: chunks.length,
-            embeddings: embeddings.length
+            embeddings: embeddingResult.results.length
         };
     }
 
@@ -218,7 +220,7 @@ export function createProjectKnowledgeSync(dependencies: {
     fileSyncService: FileSyncService;
     documentChunker: DocumentChunker;
     embeddingService: EmbeddingService;
-    oramaIndex: Orama<OramaSchema>;
+    oramaIndex: OramaIndex;
 }): ProjectKnowledgeSync {
     return new ProjectKnowledgeSync(dependencies);
 }

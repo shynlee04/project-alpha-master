@@ -8,7 +8,7 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { VoiceModeState, ConnectionState } from '@/lib/rag/live-api-types';
+import type { ConnectionState, VoiceModeState as VoiceModeStateEnum } from '@/lib/rag/live-api-types';
 import type { RAGVoiceState } from './rag-types';
 
 /**
@@ -27,7 +27,7 @@ export const createRAGVoiceSlice: StateCreator<RAGVoiceState> = (set, _get) => (
 
   // Actions
 
-  setVoiceState: (state: VoiceModeState) => {
+  setVoiceState: (state: VoiceModeStateEnum) => {
     console.log('[RAGVoiceSlice] Voice state:', state);
     set({ voiceState: state } as Partial<RAGVoiceState>);
   },

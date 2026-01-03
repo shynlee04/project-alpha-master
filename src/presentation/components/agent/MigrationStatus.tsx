@@ -30,7 +30,7 @@ import { useMigrationState, useMigrationMessage, useIsMigrating } from '@/infras
  * }
  * ```
  */
-export function MigrationStatus(): JSX.Element | null {
+export function MigrationStatus(): React.ReactElement | null {
   const phase = useMigrationState((state) => state.phase);
   const progress = useMigrationState((state) => state.progress);
   const message = useMigrationMessage();
@@ -127,7 +127,7 @@ export function MigrationStatus(): JSX.Element | null {
  * }
  * ```
  */
-export function MigrationBanner(): JSX.Element | null {
+export function MigrationBanner(): React.ReactElement | null {
   const isMigrating = useIsMigrating();
   const message = useMigrationMessage();
 
@@ -202,7 +202,7 @@ export function useMigrationStatus() {
  * }
  * ```
  */
-export function MigrationBlocker({ children }: { children: React.ReactNode }): JSX.Element {
+export function MigrationBlocker({ children }: { children: React.ReactNode }): React.ReactElement {
   const isMigrating = useIsMigrating();
 
   return (

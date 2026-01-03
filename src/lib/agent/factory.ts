@@ -368,7 +368,7 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
                     synthesisId: result.id,
                     sourceId: result.sourceId,
                     frontmatter: result.frontmatter,
-                    timestamp: result.timestamp,
+                    timestamp: result.synthesizedAt,
                 },
             };
         } catch (error) {
@@ -575,7 +575,7 @@ export function createAgentClientTools(options: ToolFactoryOptions) {
                 fileTools.writeFile,
                 fileTools.listFiles,
                 terminalTools.executeCommand
-            );
+            ) as unknown[];
 
             // Add knowledge tools if available
             if (knowledgeTools.synthesize) {
@@ -591,7 +591,7 @@ export function createAgentClientTools(options: ToolFactoryOptions) {
                 tools.push(knowledgeTools.processURL);
             }
 
-            return tools;
+            return tools as any;
         },
     };
 }

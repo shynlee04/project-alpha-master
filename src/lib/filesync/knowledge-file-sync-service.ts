@@ -17,13 +17,14 @@ import type {
     SyncOptions,
     FileSyncConfig
 } from './file-sync-service';
-import type { DocumentSchema } from '../rag/types';
+import type { SourceRecord } from '@/lib/state/dexie-db-knowledge-types';
+import { SyncError } from '@/lib/filesystem/sync-types';
 
 /**
  * Configuration for Knowledge file sync service
  */
 export interface KnowledgeFileSyncConfig extends FileSyncConfig {
-    onDocumentImport?: (document: DocumentSchema) => Promise<void>;
+    onDocumentImport?: (source: SourceRecord) => Promise<void>;
 }
 
 /**
@@ -40,30 +41,30 @@ const SUPPORTED_FORMATS = [
 ];
 
 /**
- * In-memory document storage (simplified implementation)
+ * In-memory source storage (simplified implementation)
  * In production, this would use IndexedDB via the knowledge store
  */
-class DocumentStore {
-    private documents = new Map<string, Document>();
+class SourceStore {
+    private sources = new Map<string, SourceRecord>();
 
-    async get(path: string): Promise<Document | undefined> {
-        return this.documents.get(path);
+    async get(path: string): Promise<SourceRecord | undefined> {
+        return this.sources.get(path);
     }
 
-    async set(path: string, doc: Document): Promise<void> {
-        this.documents.set(path, doc);
+    async set(path: string, source: SourceRecord): Promise<void> {
+        this.sources.set(path, source);
     }
 
     async delete(path: string): Promise<void> {
-        this.documents.delete(path);
+        this.sources.delete(path);
     }
 
-    async list(): Promise<Document[]> {
-        return Array.from(this.documents.values());
+    async list(): Promise<SourceRecord[]> {
+        return Array.from(this.sources.values());
     }
 
     async clear(): Promise<void> {
-        this.documents.clear();
+        this.sources.clear();
     }
 }
 
@@ -81,8 +82,8 @@ class DocumentStore {
  */
 export class KnowledgeFileSyncService implements FileSyncService {
     private projectId: string;
-    private documentStore: DocumentStore;
-    private onDocumentImport?: (document: Document) => Promise<void>;
+    private sourceStore: SourceStore;
+    private onDocumentImport?: (source: SourceRecord) => Promise<void>;
     private changeListeners: Set<(event: FileChangeEvent) => void>;
     private disposed: boolean;
     private lastSync: number | null;
@@ -90,7 +91,7 @@ export class KnowledgeFileSyncService implements FileSyncService {
     constructor(config: KnowledgeFileSyncConfig) {
         this.projectId = config.projectId;
         this.onDocumentImport = config.onDocumentImport;
-        this.documentStore = new DocumentStore();
+        this.sourceStore = new SourceStore();
         this.changeListeners = new Set();
         this.disposed = false;
         this.lastSync = null;
@@ -98,11 +99,11 @@ export class KnowledgeFileSyncService implements FileSyncService {
 
     async readFile(path: string): Promise<string> {
         this.checkDisposed();
-        const doc = await this.documentStore.get(path);
-        if (!doc) {
-            throw new Error(`Document not found: ${path}`);
+        const source = await this.sourceStore.get(path);
+        if (!source) {
+            throw new Error(`Source not found: ${path}`);
         }
-        return doc.content;
+        return source.content;
     }
 
     async writeFile(path: string, content: string): Promise<void> {
@@ -113,24 +114,24 @@ export class KnowledgeFileSyncService implements FileSyncService {
             throw new Error(`Unsupported file format: ${path}`);
         }
 
-        // Create document
-        const doc: Document = {
+        // Create source record
+        const source: SourceRecord = {
             id: `${this.projectId}-${path}`,
             projectId: this.projectId,
+            type: 'text',
             title: this.extractTitle(path),
             content,
-            source: path,
-            sourceType: 'imported',
+            charCount: content.length,
             createdAt: Date.now(),
             updatedAt: Date.now()
         };
 
-        // Store document
-        await this.documentStore.set(path, doc);
+        // Store source
+        await this.sourceStore.set(path, source);
 
         // Trigger RAG pipeline import
         if (this.onDocumentImport) {
-            await this.onDocumentImport(doc);
+            await this.onDocumentImport(source);
         }
 
         this.emitChange({ type: 'created', path, timestamp: Date.now() });
@@ -138,36 +139,36 @@ export class KnowledgeFileSyncService implements FileSyncService {
 
     async deleteFile(path: string): Promise<void> {
         this.checkDisposed();
-        await this.documentStore.delete(path);
+        await this.sourceStore.delete(path);
         this.emitChange({ type: 'deleted', path, timestamp: Date.now() });
     }
 
     async listFiles(path: string, _recursive = false): Promise<string[]> {
         this.checkDisposed();
-        const docs = await this.documentStore.list();
+        const sources = await this.sourceStore.list();
 
         if (path === '' || path === '.') {
-            // List all documents
-            return docs.map(d => d.source);
+            // List all sources
+            return sources.map(s => s.id);
         }
 
         // Filter by path prefix
-        return docs
-            .filter(d => d.source.startsWith(path))
-            .map(d => d.source);
+        return sources
+            .filter(s => s.id.startsWith(path))
+            .map(s => s.id);
     }
 
     async getFileMetadata(path: string): Promise<FileMetadata> {
         this.checkDisposed();
-        const doc = await this.documentStore.get(path);
-        if (!doc) {
-            throw new Error(`Document not found: ${path}`);
+        const source = await this.sourceStore.get(path);
+        if (!source) {
+            throw new Error(`Source not found: ${path}`);
         }
 
         return {
             path,
-            size: doc.content.length,
-            lastModified: doc.updatedAt,
+            size: source.content.length,
+            lastModified: source.updatedAt,
             contentType: this.getContentType(path)
         };
     }
@@ -175,7 +176,7 @@ export class KnowledgeFileSyncService implements FileSyncService {
     async writeBatch(operations: Array<{ path: string; content: string }>): Promise<SyncResult> {
         this.checkDisposed();
         const startTime = Date.now();
-        const errors: Array<{ path: string; error: string; code?: string }> = [];
+        const errors: SyncError[] = [];
         let processed = 0;
 
         for (const op of operations) {
@@ -183,10 +184,11 @@ export class KnowledgeFileSyncService implements FileSyncService {
                 await this.writeFile(op.path, op.content);
                 processed++;
             } catch (error) {
-                errors.push({
-                    path: op.path,
-                    error: error instanceof Error ? error.message : 'Unknown error'
-                });
+                errors.push(new SyncError(
+                    error instanceof Error ? error.message : 'Unknown error',
+                    'FILE_WRITE_FAILED',
+                    op.path
+                ));
             }
         }
 
@@ -208,13 +210,13 @@ export class KnowledgeFileSyncService implements FileSyncService {
     async sync(_options?: SyncOptions): Promise<SyncResult> {
         this.checkDisposed();
         const startTime = Date.now();
-        const docs = await this.documentStore.list();
+        const sources = await this.sourceStore.list();
 
         this.lastSync = Date.now();
 
         return {
             success: true,
-            filesProcessed: docs.length,
+            filesProcessed: sources.length,
             errors: [],
             duration: Date.now() - startTime
         };
@@ -239,7 +241,7 @@ export class KnowledgeFileSyncService implements FileSyncService {
 
     async dispose(): Promise<void> {
         this.disposed = true;
-        await this.documentStore.clear();
+        await this.sourceStore.clear();
         this.changeListeners.clear();
     }
 

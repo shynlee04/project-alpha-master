@@ -6,7 +6,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { Folder } from 'lucide-react';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
@@ -18,7 +18,7 @@ export interface RecentProjectsSectionProps {
   /** Handler for opening a project */
   onOpenProject: (projectId: string) => void;
   /** Recent projects to display (sorted, top 5) */
-  recentProjects: ProjectMetadata[];
+  recentProjects: Project[];
   /** Loading state */
   isLoading: boolean;
 }

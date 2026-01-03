@@ -33,7 +33,7 @@ interface AudioCaptureConfig {
 /**
  * Default configuration
  */
-const DEFAULT_CAPTURE_CONFIG = {
+const DEFAULT_CAPTURE_CONFIG: AudioCaptureConfig = {
   audioConfig: {
     sampleRate: 16000,
     channels: 1,
@@ -235,7 +235,7 @@ export class AudioCaptureHandler {
    * Get current configuration
    */
   getConfig(): AudioConfig {
-    return { ...DEFAULT_CAPTURE_CONFIG.audioConfig!, ...this.config.audioConfig };
+    return { ...DEFAULT_CAPTURE_CONFIG.audioConfig, ...this.config.audioConfig } as AudioConfig;
   }
 }
 

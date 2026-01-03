@@ -164,11 +164,11 @@ export function WorkspaceEnhancedSwitcher({
   activeAgent,
   onSelectWorkspace,
   showToolCounts = true,
-  showAgentAvailability = true,
+  showAgentAvailability: _showAgentAvailability = true,
   compact = false,
   className,
 }: WorkspaceEnhancedSwitcherProps) {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
 
   /**
    * Calculate workspace availability metrics
@@ -201,7 +201,6 @@ export function WorkspaceEnhancedSwitcher({
   ) => {
     const Icon = metadata.icon;
     const isAvailable = metrics.isAvailable;
-    const percentage =
       metrics.total > 0 ? Math.round((metrics.available / metrics.total) * 100) : 0;
 
     return (
@@ -209,8 +208,8 @@ export function WorkspaceEnhancedSwitcher({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              variant={isActive ? 'default' : 'outline'}
-              size={compact ? 'sm' : 'default'}
+              variant={isActive ? 'secondary' : 'outline'}
+              size={compact ? 'sm' : 'md'}
               onClick={() => onSelectWorkspace(workspace)}
               disabled={!isAvailable}
               className={cn(
@@ -260,7 +259,7 @@ export function WorkspaceEnhancedSwitcher({
                   )}
                 >
                   {metrics.available}/{metrics.total}
-                  {!compact && ` (${percentage}%)`}
+                  {!compact && ` (${Math.round((metrics.available / metrics.total) * 100)}%)`}
                 </Badge>
               )}
 
@@ -366,7 +365,6 @@ export function WorkspaceBadge({ workspace, agent, className }: WorkspaceBadgePr
   const metrics = calculateWorkspaceToolAvailability(agent, workspace);
 
   const isAvailable = metrics.isAvailable;
-  const percentage =
     metrics.total > 0 ? Math.round((metrics.available / metrics.total) * 100) : 0;
 
   return (

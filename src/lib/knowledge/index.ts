@@ -46,9 +46,6 @@ export {
 export {
     SynthesisService,
     createSynthesisService,
-    type SynthesisFrontmatter,
-    type SynthesisResult,
-    type SynthesisOptions,
 } from './synthesis-service';
 
 // Re-export synthesis types
@@ -58,6 +55,9 @@ export type {
     SourceDocument,
     SynthesizableSourceType,
     ArtifactType,
+    SynthesisFrontmatter,
+    SynthesisResult,
+    SynthesisOptions,
 } from './synthesis-types';
 
 export {

@@ -48,7 +48,7 @@ interface ProviderContextSlice {
 }
 
 /**
- * Agent state slice (from useAppStore)
+ * Agent state slice (from useAppStore + agentSelectionStore)
  */
 interface AgentContextSlice {
     activeAgentId: string | null;
@@ -57,6 +57,8 @@ interface AgentContextSlice {
     updateAgent: (id: string, updates: any) => void;
     removeAgent: (id: string) => void;
     setActiveAgent: (id: string) => void;
+    getActiveAgent: () => any | null;
+    getAgentForWorkspace: (workspaceType: WorkspaceType) => any | null;
 }
 
 /**

@@ -129,13 +129,13 @@ describe('Unified Conversation Store', () => {
       const events: string[] = [];
 
       // Subscribe to events
-      state.addEventListener('conversation:created', (event) => {
+      state.addEventListener('conversation:created', (_event) => {
         events.push('conversation:created');
       });
-      state.addEventListener('thread:created', (event) => {
+      state.addEventListener('thread:created', (_event) => {
         events.push('thread:created');
       });
-      state.addEventListener('message:added', (event) => {
+      state.addEventListener('message:added', (_event) => {
         events.push('message:added');
       });
 

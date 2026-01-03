@@ -12,6 +12,7 @@
 
 import type { NoteRecord } from '@/lib/state/dexie-db';
 import type { FileSyncService, SyncResult } from '@/lib/filesync/file-sync-service';
+import { SyncError } from '@/lib/filesystem/sync-types';
 
 /**
  * Note file sync options
@@ -248,11 +249,15 @@ export class NoteFileSyncService {
 
         return {
             success: result.failureCount === 0,
-            syncedCount: result.successCount,
-            failedCount: result.failureCount,
+            filesProcessed: result.operations.length,
             errors: result.operations
                 .filter(op => !op.success)
-                .map(op => op.error || 'Unknown error'),
+                .map(op => new SyncError(
+                    op.error || 'Unknown error',
+                    'UNKNOWN',
+                    op.filePath || ''
+                )),
+            duration: 0,
         };
     }
 
@@ -276,11 +281,9 @@ export class NoteFileSyncService {
 
         // Convert blocks to markdown
         if (note.blocks && Array.isArray(note.blocks)) {
-            markdown += this.blocksToMarkdown(note.blocks);
-        } else if (note.content) {
-            // Fallback to plain content
-            markdown += note.content;
+            markdown += this.blocksToMarkdown(note.blocks as Array<{ type: string; content?: string; props?: Record<string, unknown> }>);
         }
+        // NoteRecord uses blocks, not content property
 
         return markdown;
     }
@@ -296,8 +299,8 @@ export class NoteFileSyncService {
             id: note.id,
             created: note.createdAt,
             updated: note.updatedAt,
-            favorite: note.favorite || false,
-            tags: note.tags || [],
+            favorite: note.isFavorite || false,
+            tags: [], // NoteRecord doesn't have tags property
         };
 
         if (note.parentId) {

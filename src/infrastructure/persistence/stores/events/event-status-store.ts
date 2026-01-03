@@ -11,7 +11,6 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { StoreApi } from 'zustand'
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus'
 
 /**
@@ -146,7 +145,7 @@ export interface EventStatusState {
  */
 export const useEventStatusStore = create<EventStatusState>()(
     persist(
-        (set, get) => ({
+        (set, _get) => ({
             // Initial states
             streaming: null,
             toolExecution: null,
@@ -235,7 +234,7 @@ export function initializeEventStatusListeners() {
         }
     )
 
-    eventBus.on(DomainEventType.WORKSPACE_TRANSITION_COMPLETED, (event) => {
+    eventBus.on(DomainEventType.WORKSPACE_TRANSITION_COMPLETED, (_event) => {
         store.updateWorkspaceTransition({
             isTransitioning: false,
             currentPhase: 'complete',

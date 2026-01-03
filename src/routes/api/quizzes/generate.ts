@@ -92,16 +92,20 @@ export const Route = createFileRoute('/api/quizzes/generate')({
 
           // For now, use mock generation if no API key
           if (!apiKey) {
-            const mockQuiz = generator.generateMockQuiz(
-              'Sample content for quiz generation',
-              sourceIds[0],
-              options?.questionCount || 5
-            );
+            // Type guard to check if it's MockQuizGenerator
+            const mockGenerator = generator as any;
+            if (typeof mockGenerator.generateMockQuiz === 'function') {
+              const mockQuiz = mockGenerator.generateMockQuiz(
+                'Sample content for quiz generation',
+                sourceIds[0],
+                options?.questionCount || 5
+              );
 
-            return json({
-              success: true,
-              data: mockQuiz,
-            });
+              return json({
+                success: true,
+                data: mockQuiz,
+              });
+            }
           }
 
           // TODO: Fetch source content from database

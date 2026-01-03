@@ -70,7 +70,7 @@ export const WorkspaceFilter: React.FC<WorkspaceFilterProps> = ({
     activeCount,
     allSelected,
     noneSelected,
-    partiallySelected,
+    partiallySelected: _partiallySelected,
     activeWorkspaces,
   } = useWorkspaceFilters(defaultFilters, syncWithURL);
 

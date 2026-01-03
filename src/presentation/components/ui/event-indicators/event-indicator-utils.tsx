@@ -7,7 +7,8 @@
  * @module presentation/components/ui/event-indicators
  */
 
-import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, LucideIcon } from 'lucide-react'
+import { cn } from '@/lib/utils';
+import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, Circle, LucideIcon } from 'lucide-react'
 import type { EventStatus, ActivityType } from './EventIndicator'
 
 /**
@@ -25,7 +26,7 @@ export function getStatusIcon(status: EventStatus, activity?: ActivityType): Luc
             return AlertTriangle
         case 'idle':
         default:
-            return activity === 'streaming' ? Loader2 : () => null
+            return activity === 'streaming' ? Loader2 : Circle
     }
 }
 

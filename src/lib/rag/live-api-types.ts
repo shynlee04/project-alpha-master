@@ -138,7 +138,7 @@ export const DEFAULT_JITTER_CONFIG: JitterBufferConfig = {
 /**
  * Voice mode store state
  */
-export interface VoiceModeState {
+export interface VoiceModeStoreState {
   /** Current voice mode state */
   voiceState: VoiceModeState;
   /** WebSocket connection state */

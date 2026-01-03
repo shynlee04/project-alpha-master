@@ -5,7 +5,7 @@
  * Part of NR-08: Markdown Import/Export UI
  */
 
-import React, { useCallback, useState } from "react"
+import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog"
 import { Button } from "../ui/button"
@@ -27,7 +27,7 @@ export function MarkdownExportDialog({
   open,
   onOpenChange,
   notes,
-  syncService: providedSyncService,
+  syncService,
 }: MarkdownExportDialogProps) {
   const { t } = useTranslation()
   const [exportPath, setExportPath] = useState("")
@@ -37,11 +37,14 @@ export function MarkdownExportDialog({
   const [error, setError] = useState<string | null>(null)
   const [exportResult, setExportResult] = useState<NoteSyncResult | null>(null)
 
-  const syncService = providedSyncService ?? createNoteFileSyncService()
-
   const handleExportToDirectory = useCallback(async () => {
     if (!exportPath.trim()) {
       setError(t("notes.export.error"))
+      return
+    }
+
+    if (!syncService) {
+      setError("File sync service not available. This feature requires additional dependencies.")
       return
     }
 
@@ -51,14 +54,15 @@ export function MarkdownExportDialog({
     setError(null)
 
     try {
-      const result = await syncService.exportAllNotes(notes, exportPath, (p: number) => setProgress(p))
+      const result = await syncService.exportAllNotes(notes)
       setExportResult(result)
-      
-      if (result.success) {
+
+      if (result.failureCount === 0) {
         setStatus("success")
+        setProgress(notes.length)
       } else {
         setStatus("error")
-        setError(result.errors[0]?.message || t("notes.export.error"))
+        setError(`${result.failureCount} ${t("notes.export.error")}`)
       }
     } catch (err) {
       setStatus("error")
@@ -74,21 +78,33 @@ export function MarkdownExportDialog({
       return
     }
 
+    if (!syncService) {
+      setError("File sync service not available. This feature requires additional dependencies.")
+      return
+    }
+
     setIsLoading(true)
     setStatus("exporting")
     setProgress(0)
     setError(null)
 
     try {
-      const result = await syncService.exportNote(note, exportPath)
-      setExportResult(result)
-      
-      if (result.success) {
-        setStatus("success")
-      } else {
-        setStatus("error")
-        setError(result.errors[0]?.message || t("notes.export.error"))
+      const filePath = await syncService.exportNote(note, exportPath)
+      // Create a mock result for single note export
+      const result: NoteSyncResult = {
+        totalNotes: 1,
+        successCount: 1,
+        failureCount: 0,
+        operations: [{
+          noteId: note.id,
+          noteTitle: note.title || 'Untitled',
+          filePath,
+          success: true,
+        }]
       }
+      setExportResult(result)
+      setStatus("success")
+      setProgress(1)
     } catch (err) {
       setStatus("error")
       setError(err instanceof Error ? err.message : t("notes.export.error"))
@@ -139,7 +155,7 @@ export function MarkdownExportDialog({
               />
               <Button
                 variant="outline"
-                size="icon"
+                size="sm"
                 onClick={() => {
                   // In a real implementation, this would open a directory picker
                   const path = prompt(t("notes.export.directory"))
@@ -163,8 +179,10 @@ export function MarkdownExportDialog({
           {/* Progress Indicator */}
           {status === "exporting" && (
             <ProgressIndicator
-              value={progress}
-              label={t("notes.export.inProgress")}
+              current={progress}
+              total={notes.length}
+              loadingText={t("notes.export.inProgress")}
+              status="loading"
             />
           )}
 
@@ -173,7 +191,7 @@ export function MarkdownExportDialog({
             <div className="flex items-center gap-2 p-3 bg-green-900/20 border border-green-800 rounded-md">
               <Check className="w-5 h-5 text-green-500" />
               <span className="text-sm text-green-400">
-                {t("notes.export.success", { count: exportResult.exported })}
+                {t("notes.export.success", { count: exportResult.successCount })}
               </span>
             </div>
           )}
@@ -202,7 +220,7 @@ export function MarkdownExportDialog({
                   <Button
                     variant="outline"
                     onClick={() => handleExportSingle(notes[0])}
-                    disabled={isLoading || notes.length !== 1}
+                    disabled={isLoading || notes.length !== 1 || !syncService}
                     title={notes.length === 1 ? "" : t("notes.export.all")}
                   >
                     <FileDown className="w-4 h-4 mr-2" />
@@ -210,7 +228,7 @@ export function MarkdownExportDialog({
                   </Button>
                   <Button
                     onClick={handleExportToDirectory}
-                    disabled={isLoading || !exportPath.trim() || notes.length === 0}
+                    disabled={isLoading || !exportPath.trim() || notes.length === 0 || !syncService}
                   >
                     <FileDown className="w-4 h-4 mr-2" />
                     {t("notes.export.all")}

@@ -2,12 +2,12 @@
  * @vitest-environment jsdom
  */
 
-import type { EventEmitter3 } from 'eventemitter3';
+import type { EventEmitter } from 'eventemitter3';
 import { SystemPromptComposer } from '../prompt-composer';
 import type { LayerContext } from '../prompt-composer';
 
 // Mock event bus
-const mockEventBus: EventEmitter3 = {
+const mockEventBus: EventEmitter = {
   on: vi.fn(),
   emit: vi.fn(),
   off: vi.fn(),
@@ -22,9 +22,8 @@ describe('SystemPromptComposer', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     vi.clearAllMocks();
-    // Reset composer instance to default state
-    // Force a new instance to avoid test pollution
-    composer = new SystemPromptComposer();
+    // Get singleton instance
+    composer = SystemPromptComposer.getInstance();
   });
 
   describe('Singleton Pattern', () => {
@@ -37,7 +36,15 @@ describe('SystemPromptComposer', () => {
     it('should create new instance when config is provided', () => {
       const instance1 = SystemPromptComposer.getInstance();
       const instance2 = SystemPromptComposer.getInstance({
-        agentMode: { id: 'test-mode', name: 'Test Mode', prompt: 'Test' },
+        agentMode: {
+          id: 'test-mode',
+          name: 'Test Mode',
+          icon: '🧪',
+          cognitivePhase: 'Test Phase',
+          persona: 'Test Persona',
+          communicationStyle: 'Test Style',
+          rules: 'Test Rules',
+        },
       });
       expect(instance1).not.toBe(instance2);
     });

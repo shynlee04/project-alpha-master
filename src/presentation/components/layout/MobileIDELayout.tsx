@@ -26,10 +26,6 @@ import { IDEHeaderBar } from './IDEHeaderBar';
 import { MobileTabBar, useMobilePanel } from './MobileTabBar';
 import { PermissionOverlay } from './PermissionOverlay';
 
-// Agent tool facades
-import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
-import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';
-
 // Error boundary
 import { WithErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 
@@ -108,7 +104,7 @@ export function MobileIDELayout(): React.JSX.Element {
         permissionState,
         // syncStatus - unused for now, but will be needed for status indicators
         initialSyncCompleted,
-        localAdapterRef,
+        localAdapterRef: _localAdapterRef,
         syncManagerRef,
         eventBus,
         setIsWebContainerBooted,
@@ -196,17 +192,6 @@ export function MobileIDELayout(): React.JSX.Element {
         // Auto-switch to editor after file selection for better mobile UX
         setActivePanel('editor');
     };
-
-    // Tool facades for agent
-    const fileTools = useMemo(() => {
-        if (!localAdapterRef.current || !syncManagerRef.current) return null;
-        return createFileToolsFacade(localAdapterRef.current, syncManagerRef.current, eventBus);
-    }, [localAdapterRef.current, syncManagerRef.current, eventBus]);
-
-    const terminalTools = useMemo(() => {
-        // createTerminalToolsFacade expects WorkspaceEventEmitter
-        return createTerminalToolsFacade(eventBus);
-    }, [eventBus]);
 
     // Event subscriptions
     useFileTreeEventSubscriptions(eventBus, () => setFileTreeRefreshKey((k) => k + 1));
@@ -312,9 +297,6 @@ export function MobileIDELayout(): React.JSX.Element {
                                     projectId={projectId}
                                     projectName={projectMetadata?.name ?? projectId ?? 'Project'}
                                     onClose={() => setActivePanel('files')}
-                                    fileTools={fileTools}
-                                    terminalTools={terminalTools}
-                                    eventBus={eventBus}
                                 />
                             </div>
                         </WithErrorBoundary>

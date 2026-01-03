@@ -17,7 +17,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import type { ProviderConfigChangeEvent, ModelsUpdatedEvent } from '@/lib/events/cross-workspace-event-bus';
 import type { AppState } from '@/infrastructure/persistence/stores/types';
@@ -65,9 +65,9 @@ export function useProviderModels(providerId: string) {
   const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const storeModels = useProviderStore((state: AppState) => state.availableModels[providerId] || []);
-  const storeIsLoading = useProviderStore((state: AppState) => state.isLoadingModels[providerId] || false);
-  const fetchModels = useProviderStore((state: AppState) => state.fetchModels);
+  const storeModels = useAppStore((state: AppState) => state.availableModels[providerId] || []);
+  const storeIsLoading = useAppStore((state: AppState) => state.isLoadingModels[providerId] || false);
+  const fetchModels = useAppStore((state: AppState) => state.fetchModels);
 
   // Initialize from store
   useEffect(() => {
@@ -124,7 +124,7 @@ export function useProviderEvents(providerId: string) {
   const [modelsUpdate] = useState<ModelsUpdatedEvent | null>(null);
 
   const { models, isLoadingModels, lastUpdated, refetch } = useProviderModels(providerId);
-  const provider = useProviderStore((state: AppState) =>
+  const provider = useAppStore((state: AppState) =>
     state.providers.find((p: ProviderConfig) => p.id === providerId)
   );
 
@@ -168,7 +168,7 @@ export function useProviderEvents(providerId: string) {
  * @returns All providers and utility functions
  */
 export function useAllProviders() {
-  const providers = useProviderStore((state: AppState) => state.providers);
+  const providers = useAppStore((state: AppState) => state.providers);
   const [lastConfigChange, setLastConfigChange] = useState<ProviderConfigChangeEvent | null>(null);
 
   useEffect(() => {

@@ -49,7 +49,7 @@ export function ProjectShowcase({ className }: ProjectShowcaseProps) {
           // Single project for now, but prepared for multiple
           'grid-cols-1'
         )}>
-          <ViaGentCard showArchitecture={false} />
+          <ViaGentCard />
         </div>
 
         {/* Architecture Diagram Placeholder */}

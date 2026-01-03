@@ -21,6 +21,7 @@ import type {
 import type { LocalFSAdapter } from '../filesystem/local-fs-adapter';
 import type { NoteRecord } from '../state/dexie-db';
 import type { Block } from '@blocknote/core';
+import { SyncError } from '../filesystem/sync-types';
 
 /**
  * Configuration for Notes file sync service
@@ -183,7 +184,7 @@ export class NotesFileSyncService implements FileSyncService {
     async writeBatch(operations: Array<{ path: string; content: string }>): Promise<SyncResult> {
         this.checkDisposed();
         const startTime = Date.now();
-        const errors: Array<{ path: string; error: string; code?: string }> = [];
+        const errors: SyncError[] = [];
         let processed = 0;
 
         for (const op of operations) {
@@ -191,10 +192,11 @@ export class NotesFileSyncService implements FileSyncService {
                 await this.writeFile(op.path, op.content);
                 processed++;
             } catch (error) {
-                errors.push({
-                    path: op.path,
-                    error: error instanceof Error ? error.message : 'Unknown error'
-                });
+                errors.push(new SyncError(
+                    error instanceof Error ? error.message : 'Unknown error',
+                    'FILE_WRITE_FAILED',
+                    op.path
+                ));
             }
         }
 
@@ -229,11 +231,11 @@ export class NotesFileSyncService implements FileSyncService {
             return {
                 success: false,
                 filesProcessed: 0,
-                errors: [{
-                    path: 'root',
-                    error: error instanceof Error ? error.message : 'Sync failed',
-                    code: 'SYNC_ERROR'
-                }],
+                errors: [new SyncError(
+                    error instanceof Error ? error.message : 'Sync failed',
+                    'SYNC_FAILED',
+                    'root'
+                )],
                 duration: Date.now() - startTime
             };
         }

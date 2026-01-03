@@ -77,10 +77,10 @@ export const TopicPortalCard: React.FC<TopicPortalCardProps> = ({
         <div className="flex items-start gap-4 mb-3">
           {/* Icon */}
           <div className="flex-shrink-0 text-[var(--color-primary)]">
-            {React.cloneElement(icon as React.ReactElement, {
-              size: 24,
-              className: 'fill-current',
-            })}
+            {React.cloneElement(
+              icon as React.ReactElement<any>,
+              { size: 24, className: 'fill-current' }
+            )}
           </div>
 
           {/* Badge (optional) */}

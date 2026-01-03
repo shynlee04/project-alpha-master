@@ -14,7 +14,7 @@ import { Terminal, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import type { StreamingChunk } from '@/lib/agent/tools/streaming';
 import { ProgressiveOutputBuffer } from '@/lib/agent/tools/streaming';
 
-interface ToolProgressIndicatorProps {
+export interface ToolProgressIndicatorProps {
     /** Tool name being executed */
     toolName: string;
     /** Streaming chunks to display */

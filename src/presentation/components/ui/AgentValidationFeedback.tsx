@@ -301,7 +301,7 @@ export function AgentValidationFeedbackBanner({
                 </Button>
               )}
               {onRetry && (
-                <Button variant="default" size="sm" onClick={onRetry} className="h-8">
+                <Button variant="secondary" size="sm" onClick={onRetry} className="h-8">
                   Retry
                 </Button>
               )}

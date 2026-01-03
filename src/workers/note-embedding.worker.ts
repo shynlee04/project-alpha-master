@@ -10,7 +10,7 @@
  * Implements singleton pattern for model reuse.
  */
 
-import { pipeline, type Pipeline } from '@xenova/transformers';
+import { pipeline, type FeatureExtractionPipeline } from '@xenova/transformers';
 import type {
     EmbeddingWorkerRequest,
     EmbeddingWorkerProgress,
@@ -29,23 +29,23 @@ import type {
 class EmbeddingPipeline {
     static task: 'feature-extraction' = 'feature-extraction';
     static model = 'Xenova/all-MiniLM-L6-v2';
-    static instance: Promise<Pipeline> | null = null;
+    static instance: Promise<FeatureExtractionPipeline> | null = null;
 
     /**
      * Get or create the embedding pipeline instance
-     * 
+     *
      * @param progressCallback - Callback for model loading progress
      * @returns Promise resolving to the pipeline instance
      */
     static async getInstance(
         progressCallback?: (data: { status: string; progress?: number; file?: string }) => void
-    ): Promise<Pipeline> {
+    ): Promise<FeatureExtractionPipeline> {
         if (!this.instance) {
             console.log('[EmbeddingWorker] Loading embedding model...');
             this.instance = pipeline(this.task, this.model, {
                 quantized: true, // Use Q4 quantized model (~90MB)
                 progress_callback: progressCallback,
-            });
+            }) as Promise<FeatureExtractionPipeline>;
         }
         return this.instance;
     }

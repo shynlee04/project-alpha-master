@@ -167,6 +167,11 @@ interface ChatConversationProps {
  * Virtual scrolling row renderer
  */
 interface RowProps {
+    ariaAttributes?: {
+        'aria-posinset': number;
+        'aria-setsize': number;
+        role: 'listitem';
+    };
     index: number;
     style: React.CSSProperties;
 }
@@ -232,7 +237,7 @@ export function ChatConversation({
     }, [handleSubmit]);
 
     // Row renderer for virtual list
-    const Row = useCallback(({ index, style }: RowProps) => {
+    function Row({ index, style }: RowProps) {
         const message = thread.messages[index];
         const isStreamingMessage =
             isStreaming &&
@@ -247,7 +252,7 @@ export function ChatConversation({
                 />
             </div>
         );
-    }, [thread.messages, isStreaming]);
+    }
 
     // Calculate row height for virtual list
     const getItemSize = useCallback(() => {
@@ -420,11 +425,11 @@ export function ChatConversation({
                     <List
                         ref={listRef}
                         height={600} // Fixed height for virtual list
-                        itemCount={thread.messages.length}
-                        itemSize={getItemSize}
+                        rowCount={thread.messages.length}
+                        rowHeight={getItemSize()}
                         width="100%"
                         overscanCount={5} // Render 5 extra rows for smooth scrolling
-                        children={Row}
+                        {...({ rowComponent: Row } as any)}
                     />
                 </div>
 

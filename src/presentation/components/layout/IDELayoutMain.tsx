@@ -14,7 +14,7 @@
  * @integration Responsive branching for mobile/desktop layouts
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { SidebarProvider, ActivityBar, SidebarContent } from '../ide/IconSidebar';
 import { StatusAnnouncerProvider } from '@/presentation/components/ui/StatusAnnouncer';
 import { SkipLinks } from '@/presentation/components/ui/SkipLinks';
@@ -70,20 +70,18 @@ export function IDELayout(): React.JSX.Element {
         centerPanelGroupRef,
         editorPanelGroupRef,
         projectId,
-        openFiles,
+        openFiles: openFilesDerived,
         openFilePaths,
         activeFilePath,
         selectedFilePath,
         fileTreeRefreshKey,
         chatVisible,
         terminalTab,
-        fileContentCache,
         isCommandPaletteOpen,
         isFeatureSearchOpen,
         eventBus,
         permissionState,
         syncStatus,
-        restoredIdeState,
         localAdapterRef,
         syncManagerRef,
         toast,
@@ -99,7 +97,6 @@ export function IDELayout(): React.JSX.Element {
         restoreAccess,
         addOpenFile,
         removeOpenFile,
-        openFiles: openFilesDerived,
         setOpenFiles
     } = layoutState;
 
@@ -113,7 +110,8 @@ export function IDELayout(): React.JSX.Element {
         terminalTabRef,
         chatVisibleRef,
         scheduleIdeStatePersistence,
-        handlePanelLayoutChange
+        handlePanelLayoutChange,
+        restoredIdeState
     } = useIdeStatePersistence({ projectId });
 
     // Extracted hooks
@@ -124,14 +122,14 @@ export function IDELayout(): React.JSX.Element {
 
     const { previewUrl, previewPort } = useWebContainerBoot({ onBooted: () => setIsWebContainerBooted(true) });
 
-    const { handleFileSelect, handleSave, handleContentChange, handleTabClose } = useIDEFileHandlers({
+    const { handleFileSelect, handleContentChange, handleTabClose } = useIDEFileHandlers({
         openFiles: openFilesDerived,
         openFilePaths,
-        activeFilePath,
-        setActiveFilePath,
+        activeFilePath: activeFilePath ?? null,
+        setActiveFilePath: (path) => { if (path) setActiveFilePath(path); },
         addOpenFile,
         removeOpenFile,
-        setSelectedFilePath,
+        setSelectedFilePath: (path) => { if (typeof path === 'string') setSelectedFilePath(path); },
         setFileTreeRefreshKey,
         setFileContentCache,
         syncManagerRef,
@@ -146,7 +144,7 @@ export function IDELayout(): React.JSX.Element {
     useMonacoEditorEventSubscriptions({
         eventBus,
         openFiles: openFilesDerived,
-        activeFilePath,
+        activeFilePath: activeFilePath ?? null,
         setOpenFiles,
     });
 
@@ -166,7 +164,7 @@ export function IDELayout(): React.JSX.Element {
         editorPanelGroupRef,
         setChatVisible,
         setTerminalTab,
-        setActiveFilePath,
+        setActiveFilePath: (path) => { if (path) setActiveFilePath(path); },
         setSelectedFilePath,
         setOpenFiles: (files) => {
             setFileContentCache(new Map(files.map((f) => [f.path, f.content] as [string, string])));
@@ -176,7 +174,7 @@ export function IDELayout(): React.JSX.Element {
     // State sync with refs
     const openFilePathsKey = openFilePaths.join('\0');
     useEffect(() => { openFilePathsRef.current = openFilePaths; }, [openFilePathsKey, openFilePathsRef]);
-    useEffect(() => { activeFilePathRef.current = activeFilePath; }, [activeFilePath, activeFilePathRef]);
+    useEffect(() => { activeFilePathRef.current = activeFilePath ?? null; }, [activeFilePath, activeFilePathRef]);
     useEffect(() => { terminalTabRef.current = terminalTab; }, [terminalTab, terminalTabRef]);
     useEffect(() => { chatVisibleRef.current = chatVisible; }, [chatVisible, chatVisibleRef]);
     useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
@@ -222,7 +220,7 @@ export function IDELayout(): React.JSX.Element {
                             permissionState={permissionState}
                             openFiles={openFilesDerived}
                             activeFilePath={activeFilePath}
-                            onSave={handleSave}
+                            onSave={() => {}}
                             onActiveFileChange={setActiveFilePath}
                             onTabClose={handleTabClose}
                             onContentChange={handleContentChange}
@@ -230,8 +228,8 @@ export function IDELayout(): React.JSX.Element {
                             activeFileScrollTopRef={activeFileScrollTopRef}
                             scheduleIdeStatePersistence={scheduleIdeStatePersistence}
                             handlePanelLayoutChange={handlePanelLayoutChange}
-                            previewUrl={previewUrl}
-                            previewPort={previewPort}
+                            previewUrl={previewUrl ?? undefined}
+                            previewPort={previewPort ?? undefined}
                             fileTools={fileTools}
                             terminalTools={terminalTools}
                             eventBus={eventBus}

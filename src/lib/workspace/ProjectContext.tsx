@@ -5,7 +5,7 @@
  *
  * React Context provider for sharing project state across workspaces.
  * Wraps all workspace routes (IDE, Notes, Knowledge, Study) to provide:
- * - ProjectMetadata (name, bindings, lastOpened)
+ * - Project (name, bindings, lastOpened)
  * - Current workspace identifier
  * - Workspace switcher function (navigate without re-loading project)
  * - Last workspace persistence (localStorage)
@@ -15,7 +15,8 @@
 
 import * as React from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import type { ProjectMetadata, WorkspaceId } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import type { WorkspaceId } from '@/lib/state/dexie-db-core-types';
 
 // ============================================================================
 // Constants
@@ -36,7 +37,7 @@ const DEFAULT_WORKSPACE: WorkspaceId = 'ide';
  */
 export interface ProjectContextValue {
   /** Current project metadata */
-  project: ProjectMetadata | null;
+  project: Project | null;
   /** Current workspace identifier */
   currentWorkspace: WorkspaceId;
   /** All enabled workspaces for this project */
@@ -59,7 +60,7 @@ const ProjectContext = React.createContext<ProjectContextValue | undefined>(unde
 
 export interface ProjectProviderProps {
   /** Project metadata (from route loader or parent) */
-  project: ProjectMetadata | null;
+  project: Project | null;
   /** Current workspace identifier (from route params) */
   workspace: WorkspaceId;
   /** Child components */
@@ -76,7 +77,7 @@ export interface ProjectProviderProps {
  * @returns Array of enabled workspace IDs
  */
 function getEnabledWorkspaces(
-  bindings: ProjectMetadata['workspaceBindings']
+  bindings: Project['bindings']
 ): WorkspaceId[] {
   if (!bindings) return [];
 
@@ -168,7 +169,7 @@ export function useProjectContext(): ProjectContextValue {
  * ProjectProvider - Cross-workspace project state sharing
  *
  * Features:
- * - Provides ProjectMetadata to all workspace routes
+ * - Provides Project to all workspace routes
  * - Tracks current workspace
  * - Exposes switchWorkspace() function (navigate without re-loading project)
  * - Persists last workspace to localStorage
@@ -206,8 +207,8 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
 
   /** All enabled workspaces for this project */
   const enabledWorkspaces = React.useMemo(
-    () => getEnabledWorkspaces(project?.workspaceBindings),
-    [project?.workspaceBindings]
+    () => getEnabledWorkspaces(project?.bindings || {}),
+    [project?.bindings]
   );
 
   // ---------------------------------------------------------------------

@@ -62,7 +62,7 @@ export interface ProjectActionsMenuProps {
  */
 export const ProjectActionsMenu: React.FC<ProjectActionsMenuProps> = ({
   projectId,
-  projectName,
+  projectName: _projectName,
   onEdit,
   onDelete,
   onOpen,

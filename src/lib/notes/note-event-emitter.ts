@@ -243,32 +243,34 @@ export function useNoteEvents() {
  * Hook to get all notes for a project (listens to notes:listed event)
  */
 export function useNotesListener(projectId: string, callback: (notes: NoteRecord[]) => void) {
-    const eventBus = getNoteEventBus();
-
     useEffect(() => {
+        const eventBus = getNoteEventBus();
         const handler = (data: { projectId: string; notes: NoteRecord[] }) => {
             if (data.projectId === projectId) {
                 callback(data.notes);
             }
         };
         eventBus.on('notes:listed', handler);
-        return () => eventBus.off('notes:listed', handler);
-    }, [eventBus, projectId, callback]);
+        return () => {
+            eventBus.off('notes:listed', handler);
+        };
+    }, [projectId, callback]);
 }
 
 /**
  * Hook to search notes (listens to notes:search event)
  */
 export function useNoteSearch(projectId: string, query: string, callback: (results: NoteRecord[]) => void) {
-    const eventBus = getNoteEventBus();
-
     useEffect(() => {
+        const eventBus = getNoteEventBus();
         const handler = (data: { query: string; projectId: string; results: NoteRecord[] }) => {
             if (data.projectId === projectId && data.query === query) {
                 callback(data.results);
             }
         };
         eventBus.on('notes:search', handler);
-        return () => eventBus.off('notes:search', handler);
-    }, [eventBus, projectId, query, callback]);
+        return () => {
+            eventBus.off('notes:search', handler);
+        };
+    }, [projectId, query, callback]);
 }

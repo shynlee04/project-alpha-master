@@ -22,14 +22,14 @@ import {
   CommandList,
 } from 'cmdk';
 import { cn } from '@/lib/utils';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
-import { useProjectSearch, type UseProjectSearchResult } from './useProjectSearch';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { useProjectSearch } from './useProjectSearch';
 
 export interface ProjectSearchBarProps {
   /** All projects to search through */
-  projects: ProjectMetadata[];
+  projects: Project[];
   /** Callback when project is selected */
-  onProjectSelect: (project: ProjectMetadata) => void;
+  onProjectSelect: (project: Project) => void;
   /** Placeholder text for search input */
   placeholder?: string;
   /** Optional additional CSS classes for trigger button */
@@ -78,7 +78,7 @@ export const ProjectSearchBar: React.FC<ProjectSearchBarProps> = ({
     close,
   } = useProjectSearch(projects, false);
 
-  const handleProjectSelect = (project: ProjectMetadata) => {
+  const handleProjectSelect = (project: Project) => {
     onProjectSelect(project);
     close();
   };
@@ -194,9 +194,9 @@ export const ProjectSearchBar: React.FC<ProjectSearchBarProps> = ({
                         <div className="font-medium text-foreground">
                           {project.name}
                         </div>
-                        {project.path && (
+                        {project.folderPath && (
                           <div className="text-xs text-muted-foreground truncate">
-                            {project.path}
+                            {project.folderPath}
                           </div>
                         )}
                       </div>

@@ -7,7 +7,7 @@
 
 import type { LocalFSAdapter } from '../local-fs-adapter';
 import { boot, mount, getFileSystem, isBooted } from '../../webcontainer';
-import type { WorkspaceEventEmitter } from '../events';
+import type { WorkspaceEventEmitter } from '../../events';
 import type { SyncConfig, SyncResult } from '../sync-types';
 import { countFilesToSync, buildFileSystemTree } from '../sync-operations';
 import type { FileMetadataRecord } from '../../state/dexie-db';

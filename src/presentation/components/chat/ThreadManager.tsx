@@ -8,7 +8,7 @@
  */
 
 import { useState } from 'react';
-import { Plus, Folder, MessageSquare, MoreHorizontal, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Plus, Folder, MessageSquare, Trash2, Edit2, Check, X } from 'lucide-react';
 
 /**
  * Thread data structure

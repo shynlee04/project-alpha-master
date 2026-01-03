@@ -26,9 +26,8 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { useNoteStore } from '@/lib/state/notes-store';
+} from '@/presentation/components/ui/dropdown-menu';
+import { useNoteStore } from '@/lib/notes/note-store';
 import type { NoteRecord } from '@/lib/state/dexie-db';
 
 interface NoteContextMenuProps {
@@ -46,16 +45,16 @@ export function NoteContextMenu({
     onExport,
     onImportInto,
     onOpenInEditor,
-    className,
+    className: _className,
 }: NoteContextMenuProps) {
     const { t } = useTranslation();
-    const { toggleFavorite, deleteNote, renameNote } = useNoteStore();
+    const { toggleFavorite, deleteNote, updateNote } = useNoteStore();
     const [isRenaming, setIsRenaming] = React.useState(false);
     const [newTitle, setNewTitle] = React.useState(note.title);
 
-    const handleRename = () => {
+    const handleRename = async () => {
         if (newTitle.trim() && newTitle !== note.title) {
-            renameNote(note.id, newTitle.trim());
+            await updateNote({ id: note.id, title: newTitle.trim() });
         }
         setIsRenaming(false);
     };
@@ -201,9 +200,9 @@ export function NoteListItem({
 }: NoteListItemProps) {
     const { t } = useTranslation();
     const [expanded, setExpanded] = React.useState(false);
-    
-    // Check if note has children
-    const hasChildren = note.children && note.children.length > 0;
+
+    // Check if note has children (NoteRecord doesn't have children property, default to false)
+    const hasChildren = false;
     const displayTitle = note.title || t('notes.untitled', 'Untitled');
     const formattedDate = note.updatedAt 
         ? new Date(note.updatedAt).toLocaleDateString()

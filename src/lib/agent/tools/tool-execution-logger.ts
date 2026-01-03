@@ -50,9 +50,8 @@ export class ToolExecutionLogger {
     logId: string,
     updates: {
       status: 'executed' | 'error' | 'denied';
-      result?: { success: boolean; output?: unknown; error?: string };
+      result?: { success: boolean; output?: string; error?: string; duration?: number };
       approved?: boolean;
-      duration?: number;
     }
   ): Promise<void> {
     await updateToolExecutionLog(logId, updates);
@@ -69,9 +68,12 @@ export class ToolExecutionLogger {
   ): Promise<void> {
     await this.updateExecution(logId, {
       status: 'executed',
-      result: { success: true, output: result },
-      approved: (context as any).wasApproved || false,
-      duration
+      result: {
+        success: true,
+        output: typeof result === 'string' ? result : JSON.stringify(result),
+        duration
+      },
+      approved: (context as any).wasApproved || false
     });
   }
 
@@ -86,9 +88,12 @@ export class ToolExecutionLogger {
   ): Promise<void> {
     await this.updateExecution(logId, {
       status: 'error',
-      result: { success: false, error },
-      approved: (context as any).wasApproved || false,
-      duration
+      result: {
+        success: false,
+        error,
+        duration
+      },
+      approved: (context as any).wasApproved || false
     });
   }
 
@@ -173,8 +178,8 @@ export class ToolExecutionLogger {
     const errorLogs = logs.filter(log => log.status === 'error');
 
     const durations = logs
-      .filter((log: any) => log.duration !== undefined)
-      .map((log: any) => log.duration!);
+      .filter(log => log.result?.duration !== undefined)
+      .map(log => log.result!.duration!);
 
     const averageDuration = durations.length > 0
       ? durations.reduce((a, b) => a + b, 0) / durations.length

@@ -9,16 +9,8 @@ export default defineConfig({
   ],
   test: {
     environment: 'node',
-    environmentMatchGlobs: [
-      ['**/*.test.tsx', 'jsdom'],
-      ['src/lib/state/**/*.test.ts', 'jsdom'],
-      ['src/lib/rag/**/*.test.ts', 'jsdom'],
-      ['src/lib/agent/**/*.test.ts', 'jsdom'],
-      ['src/lib/filesystem/**/*.test.ts', 'jsdom'],
-      ['src/lib/webcontainer/**/*.test.ts', 'jsdom'],
-      ['src/lib/workspace/**/__tests__/**/*.test.ts', 'jsdom'],
-      ['src/lib/workspace/**/*.test.ts', 'jsdom'],
-    ],
+    // Note: environmentMatchGlobs not supported in current Vitest version
+    // Tests requiring jsdom environment should use // @vitest-environment jsdom comment
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
   },

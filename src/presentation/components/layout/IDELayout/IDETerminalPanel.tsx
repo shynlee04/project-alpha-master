@@ -7,7 +7,7 @@
  * @component IDETerminalPanel
  */
 
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/presentation/components/ui/card';
 import { WithErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 

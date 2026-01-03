@@ -40,9 +40,8 @@ interface AdvancedTabContentProps {
     providerId: string;
     customBaseURL: string;
     customModelId: string;
-    customHeaders: string;
+    customHeaders: Array<{ key: string; value: string }>;
     enableNativeTools: boolean;
-    modelId: string;
     errors: any;
     onFieldUpdate: (field: string, value: any) => void;
 }
@@ -139,7 +138,6 @@ export function AdvancedTabContent({
     customModelId,
     customHeaders,
     enableNativeTools,
-    modelId,
     errors,
     onFieldUpdate,
 }: AdvancedTabContentProps) {

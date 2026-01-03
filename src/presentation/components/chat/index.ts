@@ -30,14 +30,11 @@ export { UnifiedChatPanel } from './UnifiedChatPanel';
 export type {
   ChatMode,
   UnifiedChatPanelProps,
-  ThreadedModeProps,
-  SimpleModeProps,
-  AgentModeProps
 } from './UnifiedChatPanel';
-export {
-  isSimpleModeProps,
-  isAgentModeProps,
-  isThreadedModeProps
+export type {
+  isThreadedModeProps as ThreadedModeProps,
+  isSimpleModeProps as SimpleModeProps,
+  isAgentModeProps as AgentModeProps
 } from './UnifiedChatPanel';
 
 // Ralph Loop Cycle 5: Cascade Flow Components

@@ -30,6 +30,7 @@ import { useWorkspaceStore } from '@/lib/state/workspace-store';
 import { useAppStore } from '../use-app-store';
 import { useConversationStore } from '../conversation';
 import { useRAGStore } from '../rag';
+import { useAgentSelectionStore } from '../agents/agent-selection-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
@@ -68,6 +69,9 @@ export function WorkspaceProvider({
 
     // Get cornerstone stores from useAppStore (providers + agents)
     const appStore = useAppStore();
+
+    // Get agent selection store (for active agent selection)
+    const agentSelectionStore = useAgentSelectionStore();
 
     // Get conversation store
     const conversationStore = useConversationStore();
@@ -123,17 +127,23 @@ export function WorkspaceProvider({
                 setActiveProvider: appStore.setActiveProvider,
             },
 
-            // Cornerstone 2: Agent Configuration (from useAppStore)
+            // Cornerstone 2: Agent Configuration (from useAppStore + agentSelectionStore)
             agents: {
-                activeAgentId: null, // TODO: Add activeAgentId to agents store
+                activeAgentId: agentSelectionStore.activeAgentId,
                 agents: appStore.agents,
                 addAgent: appStore.addAgent,
                 updateAgent: appStore.updateAgent,
                 removeAgent: appStore.removeAgent,
-                setActiveAgent: (_id: string) => {
-                    // TODO: Implement setActiveAgent
-                    console.warn('[WorkspaceProvider] setActiveAgent not yet implemented');
+                setActiveAgent: (agentId: string) => {
+                    if (!currentWorkspace) {
+                        console.warn('[WorkspaceProvider] Cannot set active agent: no current workspace');
+                        return;
+                    }
+                    agentSelectionStore.setActiveAgent(agentId, currentWorkspace);
                 },
+                getActiveAgent: () => agentSelectionStore.getActiveAgent(),
+                getAgentForWorkspace: (workspaceType: WorkspaceType) =>
+                    agentSelectionStore.getAgentForWorkspace(workspaceType),
             },
 
             // Cornerstone 3: Conversation/Chat (from useConversationStore)
@@ -170,6 +180,7 @@ export function WorkspaceProvider({
             handleSetActiveWorkspace,
             handleSetActiveProjectId,
             appStore,
+            agentSelectionStore,
             conversationStore,
             ragStore,
         ]

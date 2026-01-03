@@ -8,8 +8,8 @@ import type {
   CanvasRelationshipType,
   CanvasMetadata,
   CanvasExport,
-  LinkageProposal
 } from '@/lib/canvas/types';
+import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import { createLinkageAnalyzer } from '@/lib/canvas/linkage-analyzer';
 
 // ============================================================

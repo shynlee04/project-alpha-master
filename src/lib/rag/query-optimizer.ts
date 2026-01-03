@@ -14,7 +14,6 @@ import type {
   QueryType,
   OptimizedQuery,
   QueryParserConfig,
-  QueryWeightConfig,
 } from './query-optimizer-types';
 import { DEFAULT_CONFIG } from './query-optimizer-config';
 

@@ -128,7 +128,8 @@ export function useAgentChatMessages({
 
     // Store state
     const { activeConversationId, conversations } = useConversationStore();
-    const activeConversation = activeConversationId ? conversations[activeConversationId] : null;
+    // NOTE: activeConversation removed - metadata structure changed, not currently used
+    // const activeConversation = activeConversationId ? conversations[activeConversationId] : null;
 
     // Prompt Enhancement State
     const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();
@@ -161,11 +162,14 @@ export function useAgentChatMessages({
     }, [activeConversationId, updateScrollPosition]);
 
     // Restore scroll position when conversation switches
+    // NOTE: Scroll position feature disabled - conversation metadata structure changed
+    // TODO: Re-implement using new conversation store architecture
     useEffect(() => {
-        if (activeConversation?.metadata.scrollPosition && scrollRef.current) {
-            scrollRef.current.scrollTop = activeConversation.metadata.scrollPosition;
-        }
-    }, [activeConversation?.metadata.id]);
+        // Scroll position restoration disabled - metadata.scrollPosition doesn't exist in new structure
+        // if (activeConversation?.metadata.scrollPosition && scrollRef.current) {
+        //     scrollRef.current.scrollTop = activeConversation.metadata.scrollPosition;
+        // }
+    }, [activeConversationId]);
 
     // Combine persisted messages with hook messages for display
     const allMessages = useMemo((): ChatMessage[] => {
@@ -173,7 +177,9 @@ export function useAgentChatMessages({
             return [createWelcomeMessage()];
         }
 
-        const storeMessages = conversations[activeConversationId]?.messages || [];
+        // NOTE: Message persistence disabled - conversations don't have messages property in new structure
+        // Messages are managed by the chat hook and passed via hookMessages prop
+        const storeMessages: ThreadMessage[] = []; // conversations[activeConversationId]?.messages || [];
 
         // Map ThreadMessageRecord to ChatMessage
         const history: ChatMessage[] = storeMessages.map((m: ThreadMessage) => ({

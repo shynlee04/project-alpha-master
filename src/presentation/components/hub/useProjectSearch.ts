@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 export interface UseProjectSearchResult {
   /** Current search query */
@@ -18,7 +18,7 @@ export interface UseProjectSearchResult {
   /** Is search debounced (waiting for timeout) */
   isDebouncing: boolean;
   /** Filtered projects based on debounced query */
-  filteredProjects: ProjectMetadata[];
+  filteredProjects: Project[];
   /** Is command palette open */
   isOpen: boolean;
   /** Open command palette */
@@ -54,7 +54,7 @@ export interface UseProjectSearchResult {
  * ```
  */
 export function useProjectSearch(
-  projects: ProjectMetadata[],
+  projects: Project[],
   initialOpenState: boolean = false
 ): UseProjectSearchResult {
   const [searchQuery, setSearchQueryState] = useState('');
@@ -93,7 +93,7 @@ export function useProjectSearch(
 
     return projects.filter((project) => {
       const nameMatch = project.name?.toLowerCase().includes(query) ?? false;
-      const pathMatch = project.path?.toLowerCase().includes(query) ?? false;
+      const pathMatch = project.folderPath?.toLowerCase().includes(query) ?? false;
 
       return nameMatch || pathMatch;
     });

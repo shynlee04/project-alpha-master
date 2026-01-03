@@ -123,7 +123,7 @@ export class FSAHandleManager {
     if (!record) return false;
 
     // Check if we have valid stored data
-    return record.permissionStatus === 'granted' && !!record.name;
+    return record.permissionStatus === 'granted' && !!record.directoryPath;
   }
 }
 

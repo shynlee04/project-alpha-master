@@ -14,12 +14,14 @@ export type {
     FileMetadata,
     FileChangeEvent,
     SyncResult,
-    SyncError,
     SyncOptions,
     WorkspaceType,
     SyncStatus,
     FileSyncConfig
 } from './file-sync-service';
+
+// Re-export SyncError from canonical location
+export type { SyncError } from '@/lib/filesystem/sync-types';
 
 // IDE Implementation
 export { IDEFileSyncService, createIDEFileSyncService } from './ide-file-sync-service';

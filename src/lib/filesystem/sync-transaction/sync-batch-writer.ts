@@ -123,7 +123,6 @@ export async function writeMultipleWithRollback(
                     operationId,
                     error: new Error(result.error),
                     file: file.path,
-                    rolledBack: result.rolledBackFiles,
                 });
 
                 // Throw wrapped error
@@ -170,7 +169,9 @@ export async function writeMultipleWithRollback(
         if (completedOps.length > 0) {
             eventBus?.emit('sync:rollback', {
                 operationId,
-                filesToRevert: completedOps.map((op) => op.path),
+                transactionId: operationId,
+                initiator: 'system',
+                reason: result.error,
             });
 
             const rollbackResult = await rollbackExecutor.rollback(completedOps, options);
@@ -184,7 +185,10 @@ export async function writeMultipleWithRollback(
             'BATCH_ERROR',
             operationId,
             error,
-            result
+            {
+                syncedFiles: result.syncedFiles,
+                rolledBackFiles: result.rolledBackFiles,
+            }
         );
     }
 }

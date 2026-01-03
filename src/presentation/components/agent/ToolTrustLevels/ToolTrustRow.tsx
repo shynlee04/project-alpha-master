@@ -45,7 +45,7 @@ interface ToolTrustConfig {
     trustLevel: ToolTrustLevel
 }
 
-interface ToolTrustRowProps {
+export interface ToolTrustRowProps {
     tool: ToolTrustConfig
     onTrustLevelChange: (toolId: string, newLevel: ToolTrustLevel) => void
 }

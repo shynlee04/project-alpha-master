@@ -92,9 +92,9 @@ export interface CanvasStoreState {
 }
 
 /**
- * Linkage proposal type (re-exported from linkage-types for convenience)
+ * Linkage proposal type (imported from linkage-types)
  */
-export type LinkageProposal = import('./linkage-types').LinkageProposal;
+type LinkageProposal = import('./linkage-types').LinkageProposal;
 
 /**
  * Initial viewport settings

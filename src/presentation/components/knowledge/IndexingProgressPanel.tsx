@@ -30,7 +30,7 @@ import {
   Zap,
   Database,
   Pause,
-  X,
+  Clock,
 } from 'lucide-react';
 import { Progress } from '@/presentation/components/ui/progress';
 

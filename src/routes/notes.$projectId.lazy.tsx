@@ -18,23 +18,25 @@
  * @story 26-4 Inline AI Magic
  */
 
+import { useEffect, useState } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
-  // Loader: Fetch project metadata for ProjectProvider
-  loader: async ({ params }: { params: { projectId: string } }) => {
-    const project = await getProject(params.projectId);
-    return { project };
-  },
   component: NotesWorkspace,
 });
 
 function NotesWorkspace() {
-  const { project } = Route.useLoaderData();
+  const { projectId } = Route.useParams();
+  const [project, setProject] = useState<Project | null>(null);
+
+  useEffect(() => {
+    getProject(projectId).then((p) => setProject(p as Project | null));
+  }, [projectId]);
 
   return (
     <ProjectProvider project={project} workspace="notes">

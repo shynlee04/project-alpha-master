@@ -6,7 +6,7 @@
  * @epic CC-1 - Conversation Consolidation
  */
 
-import { runConversationMigration, hasMigrationRun, getMigrationStatus, type MigrationResult, type LegacyConversationState } from '../migration/conversation-migration';
+import { runConversationMigration, hasMigrationRun, getMigrationStatus, type MigrationResult } from '../migration/conversation-migration';
 import { useConversationStore } from '../useConversationStore';
 import type { WorkspaceType } from '@/core/entities/Conversation';
 
@@ -56,7 +56,6 @@ describe('Conversation Migration', () => {
                 messagesMigrated: 0,
                 errors: [],
                 duration: 0,
-                backupCreated: false,
             };
 
             // Since we can't actually call runConversationMigration without proper IndexedDB,
@@ -236,20 +235,14 @@ describe('Conversation Migration', () => {
                 threadsMigrated: 0,
                 messagesMigrated: 0,
                 errors: [
-                    {
-                        type: 'data_integrity',
-                        message: 'Conversation count mismatch: 5 vs 4',
-                        details: { legacyCount: 5, newCount: 4 },
-                    },
+                    'Conversation count mismatch: 5 vs 4',
                 ],
                 duration: 100,
-                backupCreated: true,
             };
 
             expect(errorResult.success).toBe(false);
             expect(errorResult.errors).toHaveLength(1);
-            expect(errorResult.errors[0].type).toBe('data_integrity');
-            expect(errorResult.errors[0].message).toContain('Conversation count mismatch');
+            expect(errorResult.errors[0]).toContain('Conversation count mismatch');
         });
 
         it('should handle corrupted data gracefully', () => {
@@ -259,18 +252,13 @@ describe('Conversation Migration', () => {
                 threadsMigrated: 0,
                 messagesMigrated: 0,
                 errors: [
-                    {
-                        type: 'corrupted_data',
-                        message: 'Invalid conversation data',
-                        details: { conversationId: 'invalid' },
-                    },
+                    'Invalid conversation data: conversationId=invalid',
                 ],
                 duration: 50,
-                backupCreated: true,
             };
 
             expect(corruptedResult.success).toBe(false);
-            expect(corruptedResult.errors[0].type).toBe('corrupted_data');
+            expect(corruptedResult.errors[0]).toContain('Invalid conversation data');
         });
     });
 
@@ -414,14 +402,14 @@ describe('Conversation Migration', () => {
                         threadId: 'thread_root_conv_1',
                         role: 'user',
                         content: 'Hello',
-                        timestamp: 1704067200000,
+                        timestamp: '2024-01-01T00:00:00.000Z',
                     },
                     msg_2: {
                         id: 'msg_2',
                         threadId: 'thread_root_conv_1',
                         role: 'assistant',
                         content: 'Hi!',
-                        timestamp: 1704067260000,
+                        timestamp: '2024-01-01T00:01:00.000Z',
                     },
                 },
                 eventHistory: [],

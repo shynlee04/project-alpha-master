@@ -84,9 +84,11 @@ export class WorkspaceTransitionManager {
       const currentState = this.getCurrentState();
       console.log('[WorkspaceTransitionManager] Transitioning from', currentState.workspace, 'to', workspace);
 
-      // Step 2: Start transition
+      // Step 2: Start transition (only if we have a current workspace)
       const workspaceStore = useWorkspaceStore.getState();
-      workspaceStore.startTransition(currentState.workspace);
+      if (currentState.workspace) {
+        workspaceStore.startTransition(currentState.workspace);
+      }
 
       // Step 3: Update workspace store (this will emit workspace:changed event)
       workspaceStore.setCurrentWorkspace(workspace);
@@ -115,8 +117,10 @@ export class WorkspaceTransitionManager {
         console.log('[WorkspaceTransitionManager] Current agent still available:', currentAgent?.name);
       }
 
-      // Step 7: Emit transition complete event
-      this.emitTransitionCompleteEvent(currentState.workspace, workspace);
+      // Step 7: Emit transition complete event (only if we had a previous workspace)
+      if (currentState.workspace) {
+        this.emitTransitionCompleteEvent(currentState.workspace, workspace);
+      }
 
       // Step 8: End transition
       workspaceStore.endTransition();
@@ -178,14 +182,18 @@ export class WorkspaceTransitionManager {
   /**
    * Get current state snapshot
    */
-  private getCurrentState() {
+  private getCurrentState(): {
+    workspace: WorkspaceType | null;
+    projectId: string | null;
+    activeAgentId: string | null;
+  } {
     const workspaceStore = useWorkspaceStore.getState();
-    const agentsStore = useAgentsStore.getState();
+    const agentSelectionStore = useAgentSelection.getState();
 
     return {
       workspace: workspaceStore.currentWorkspace,
       projectId: workspaceStore.currentProjectId,
-      activeAgentId: agentsStore.activeAgentId,
+      activeAgentId: agentSelectionStore.activeAgentId,
     };
   }
 

@@ -7,12 +7,16 @@
  * Uses PDF.js to render pages to canvas, then converts to base64.
  *
  * Story 10.2: Multimodal Source Vision (Desktop Only)
+ *
+ * @deprecated TODO: Install pdfjs-dist package to enable PDF vision capture
+ * @see https://www.npmjs.com/package/pdfjs-dist
  */
 
-import * as pdfjsLib from 'pdfjs-dist';
-
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+// TODO: Uncomment after installing pdfjs-dist package
+// import * as pdfjsLib from 'pdfjs-dist';
+//
+// // Configure PDF.js worker
+// pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 export interface CaptureOptions {
   /**
@@ -76,66 +80,11 @@ export interface CapturedPage {
  * ```
  */
 export async function capturePdfPage(
-  pdfDocument: pdfjsLib.PDFDocumentProxy,
-  pageNumber: number,
-  options: CaptureOptions = {}
+  _pdfDocument: any,
+  _pageNumber: number,
+  _options: CaptureOptions = {}
 ): Promise<CapturedPage> {
-  const {
-    scale = 1.5,
-    quality = 0.85,
-    // fullPage = true,
-  } = options;
-
-  // Validate page number
-  if (pageNumber < 1 || pageNumber > pdfDocument.numPages) {
-    throw new Error(
-      `Invalid page number: ${pageNumber}. PDF has ${pdfDocument.numPages} pages.`
-    );
-  }
-
-  // Get the page
-  const page = await pdfDocument.getPage(pageNumber);
-
-  // Calculate viewport
-  const viewport = page.getViewport({ scale });
-
-  // Create invisible canvas for rendering
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d', { alpha: false });
-
-  if (!context) {
-    throw new Error('Failed to get 2D context from canvas');
-  }
-
-  // Set canvas dimensions
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
-
-  // Render PDF page to canvas
-  const renderContext = {
-    canvasContext: context,
-    viewport: viewport,
-  };
-
-  await page.render(renderContext).promise;
-
-  // Convert canvas to base64 JPEG
-  const base64 = canvas.toDataURL('image/jpeg', quality);
-
-  // Calculate approximate size (base64 is ~33% larger than binary)
-  const sizeBytes = Math.round((base64.length * 3) / 4);
-
-  // Clean up
-  canvas.remove();
-
-  return {
-    base64,
-    mimeType: 'image/jpeg',
-    sizeBytes,
-    pageNumber,
-    width: viewport.width,
-    height: viewport.height,
-  };
+  throw new Error('capturePdfPage: pdfjs-dist package not installed. Run: pnpm add pdfjs-dist');
 }
 
 /**
@@ -154,23 +103,11 @@ export async function capturePdfPage(
  * ```
  */
 export async function capturePdfPages(
-  pdfDocument: pdfjsLib.PDFDocumentProxy,
-  pageNumbers: number[],
-  options: CaptureOptions = {}
+  _pdfDocument: any,
+  _pageNumbers: number[],
+  _options: CaptureOptions = {}
 ): Promise<CapturedPage[]> {
-  const captures: CapturedPage[] = [];
-
-  for (const pageNumber of pageNumbers) {
-    try {
-      const captured = await capturePdfPage(pdfDocument, pageNumber, options);
-      captures.push(captured);
-    } catch (error) {
-      console.error(`Failed to capture page ${pageNumber}:`, error);
-      // Continue with other pages
-    }
-  }
-
-  return captures;
+  throw new Error('capturePdfPages: pdfjs-dist package not installed. Run: pnpm add pdfjs-dist');
 }
 
 /**

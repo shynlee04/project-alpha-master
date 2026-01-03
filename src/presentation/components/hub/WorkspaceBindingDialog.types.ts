@@ -7,7 +7,7 @@
  * January 2026 pattern: Feature-specific types in separate file.
  */
 
-import type { ProjectMetadata, WorkspaceBindings } from '@/lib/workspace/project-store';
+import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 
 /** Workspace ID type for binding selections */
 export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
@@ -25,7 +25,7 @@ export interface WorkspaceConfig {
 /** Props for WorkspaceBindingDialog component */
 export interface WorkspaceBindingDialogProps {
   /** Project to configure workspace bindings for */
-  project: ProjectMetadata;
+  project: Project;
   /** Dialog open state */
   open: boolean;
   /** Callback when dialog open state changes */

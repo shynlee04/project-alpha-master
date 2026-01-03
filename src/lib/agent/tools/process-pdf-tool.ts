@@ -102,9 +102,38 @@ export function createProcessPDFClientTool(getKnowledgeTools: () => AgentKnowled
       const tools = getKnowledgeTools();
       const result = await tools.processPDF(args.file, args.base64Content, args.options);
 
+      // Map GeminiPDFResult to ProcessPDFOutput schema
+      const mappedResult: ProcessPDFOutput = {
+        headings: result.headings.map(h => ({
+          level: h.level,
+          title: h.text,
+          page: h.pageNumber,
+        })),
+        tables: result.tables.map(t => ({
+          rows: t.rows.length,
+          columns: t.rows.length > 0 ? t.rows[0].length : 0,
+          caption: t.caption,
+          data: t.rows,
+        })),
+        figures: result.figures.map(f => ({
+          caption: f.caption,
+          type: f.type,
+          page: f.pageNumber,
+        })),
+        citations: result.citations.map(c => ({
+          title: c.metadata?.title || c.text,
+          author: c.metadata?.authors?.join(', '),
+          year: c.metadata?.year,
+        })),
+        metadata: {
+          totalPages: undefined,
+          hasColor: undefined,
+        },
+      };
+
       return {
         success: true,
-        data: result,
+        data: mappedResult,
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown PDF processing error';

@@ -35,6 +35,7 @@ export class SyncRollbackExecutor {
     ): Promise<{ rolledBack: number; failed: number }> {
         let rolledBack = 0;
         let failed = 0;
+        const transactionId = completedOps.length > 0 ? completedOps[0].id : '';
 
         for (const op of completedOps) {
             try {
@@ -42,7 +43,7 @@ export class SyncRollbackExecutor {
                 rolledBack++;
 
                 (this.eventBus as any)?.emit('sync:rollback:success', {
-                    transactionId: this.transactionId,
+                    transactionId,
                     filesReverted: 1,
                     path: op.path,
                     type: op.type,
@@ -53,7 +54,7 @@ export class SyncRollbackExecutor {
                 failed++;
 
                 (this.eventBus as any)?.emit('sync:rollback:failed', {
-                    transactionId: this.transactionId,
+                    transactionId,
                     error: error instanceof Error ? error.message : 'Unknown error',
                     path: op.path,
                     type: op.type,

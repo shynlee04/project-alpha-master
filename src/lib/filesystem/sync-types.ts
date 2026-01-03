@@ -20,6 +20,8 @@ export type SyncErrorCode =
     | 'FILE_NOT_FOUND'
     | 'FILE_READ_FAILED'
     | 'FILE_WRITE_FAILED'
+    | 'DIR_CREATE_FAILED'
+    | 'DIR_DELETE_FAILED'
     | 'DISK_FULL'
     | 'WEBCONTAINER_ERROR'
     | 'WEBCONTAINER_NOT_BOOTED'

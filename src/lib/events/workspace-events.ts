@@ -14,16 +14,16 @@ export interface WorkspaceEvents {
 
   // Sync Events
   'sync:started': [
-    { fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional' },
+    { fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional'; operationId?: string },
   ]
-  'sync:start': [{ fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional' }]
-  'sync:progress': [{ current: number; total: number; currentFile: string }]
+  'sync:start': [{ fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional'; operationId?: string }]
+  'sync:progress': [{ current: number; total: number; currentFile: string; operationId?: string }]
   'sync:completed': [{ success: boolean; timestamp: Date; filesProcessed: number }]
-  'sync:error': [{ error: Error; file?: string }]
+  'sync:error': [{ error: Error; file?: string; operationId?: string }]
   'sync:warning': [{ message: string; file?: string }]
   'sync:paused': [{ reason: 'user' | 'error' | 'permission' }]
   'sync:resumed': []
-  'sync:rollback': [{ transactionId: string; initiator: 'user' | 'system'; reason?: string }]
+  'sync:rollback': [{ transactionId: string; initiator: 'user' | 'system'; reason?: string; operationId?: string }]
   'sync:rollback:success': [{ transactionId: string; filesReverted: number }]
   'sync:rollback:failed': [{ transactionId: string; error: string }]
 

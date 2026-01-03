@@ -48,9 +48,6 @@ import {
 
 // Advanced configuration components (moved to AgentConfigTabContents)
 
-// Security utilities for safe logging (RC-028-010)
-import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
-
 // Epic 25 Provider Infrastructure
 import {
     credentialVault,
@@ -79,9 +76,6 @@ export function AgentConfigDialog({
 }: AgentConfigDialogProps) {
     const { t } = useTranslation()
 
-    // Store actions (use individual selectors to avoid infinite loops)
-    const removeAgent = useAgentsStore(s => s.removeAgent)
-
     // Read agent from store for editing mode
     const agent = useAgentsStore(s => s.agents.find(a => a.id === agentId))
 
@@ -97,13 +91,13 @@ export function AgentConfigDialog({
         customModelId, setCustomModelId,
         customHeaders, setCustomHeaders,
         enableNativeTools, setEnableNativeTools,
-        temperature, setTemperature,
-        maxTokens, setMaxTokens,
-        topP, setTopP,
-        topK, setTopK,
-        systemPrompt, setSystemPrompt,
+        temperature,
+        maxTokens,
+        topP,
+        topK,
+        systemPrompt,
         tools, setTools,
-        workspaceBindings, setWorkspaceBindings,
+        workspaceBindings,
         // Provider data (from hook - no duplicate subscription)
         providers,
         models,
@@ -198,7 +192,7 @@ export function AgentConfigDialog({
         setModelId,
         setCustomBaseURL,
         setCustomModelId,
-        setCustomHeaders,
+        setCustomHeaders: (value: string) => setCustomHeaders(JSON.parse(value)),
         setEnableNativeTools,
     })
 
@@ -218,10 +212,10 @@ export function AgentConfigDialog({
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-none">
                     {/* Iteration 15 Phase 4: Extracted header component */}
                     <AgentConfigDialogHeader
-                        agentId={agentId}
+                        agentId={agentId ?? undefined}
                         onDelete={handleDelete}
-                        onImportSuccess={handleImportSuccess}
-                        onExportSuccess={handleExportSuccess}
+                        onImportSuccess={() => handleImportSuccess(0)}
+                        onExportSuccess={() => handleExportSuccess()}
                     />
 
                     <Tabs value={activeTab} onValueChange={(value: string) => setActiveTab(value as ConfigTab)}>
@@ -252,7 +246,7 @@ export function AgentConfigDialog({
                         />
 
                         <WorkspaceTabContent
-                            agent={agent}
+                            agent={agent ?? null}
                             onPermissionsChange={(toolId, workspaceType, isEnabled) => {
                                 setTools((prev: any[]) => prev.map((t: any) =>
                                     t.toolId === toolId
@@ -268,7 +262,6 @@ export function AgentConfigDialog({
                             customModelId={customModelId}
                             customHeaders={customHeaders}
                             enableNativeTools={enableNativeTools}
-                            modelId={modelId}
                             errors={errors}
                             onFieldUpdate={handleUpdateField}
                         />
@@ -276,7 +269,7 @@ export function AgentConfigDialog({
 
                     {/* Iteration 15 Phase 4: Extracted footer component */}
                     <AgentConfigDialogFooter
-                        agentId={agentId}
+                        agentId={agentId ?? undefined}
                         isSubmitting={isSubmitting}
                         isValid={isValid}
                         onCancel={() => handleRequestClose(false)}

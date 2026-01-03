@@ -7,7 +7,7 @@
  * @hook useIDELayoutWorkspaceState
  */
 
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useWorkspace } from '@/lib/workspace';
 import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
 import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';

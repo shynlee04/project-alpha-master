@@ -102,7 +102,7 @@ function TestFSAdapter() {
           setStatus('✅ Path validation working - traversal attack blocked')
         } else {
           const deviceType = useDeviceType()
-          if (deviceType === 'mobile' || deviceType === 'tablet') {
+          if (deviceType.isMobile || deviceType.isTablet) {
             setStatus('❌ Desktop Feature: File System Access API requires a desktop browser (Chrome, Edge, or Safari)')
           } else {
             setStatus(`❌ Unexpected error: ${error.message}`)
@@ -111,7 +111,7 @@ function TestFSAdapter() {
       }
     } catch (error: any) {
       const deviceType = useDeviceType()
-      if (deviceType === 'mobile' || deviceType === 'tablet') {
+      if (deviceType.isMobile || deviceType.isTablet) {
         setStatus('❌ Desktop Feature: File System Access API requires a desktop browser (Chrome, Edge, or Safari)')
       } else {
         setStatus(`❌ Error: ${error.message}`)

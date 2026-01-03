@@ -16,7 +16,7 @@
  */
 
 import { useWorkspaceStore } from '@/lib/state/workspace-store';
-import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/lib/state/workspace-types';
 
@@ -75,11 +75,11 @@ export function getWorkspaceExecutionContext(): WorkspaceExecutionContext {
   // Get current workspace from Zustand store
   const workspaceState = useWorkspaceStore.getState();
 
-  // Get active agent from agents store
-  const agentsState = useAgentsStore.getState();
+  // Get active agent from agent selection store
+  const agentSelectionState = useAgentSelectionStore.getState();
 
-  const agent = agentsState.activeAgentId
-    ? agentsState.getAgent(agentsState.activeAgentId) || null
+  const agent = agentSelectionState.activeAgentId
+    ? agentSelectionState.getActiveAgent() || null
     : null;
 
   const workspaceType: WorkspaceType = workspaceState.currentWorkspace;
@@ -127,6 +127,7 @@ export function checkToolWorkspacePermission(
       reason: 'block',
       toolName: toolId,
       toolId,
+      workspace: context.workspaceType,
       workspaceType: context.workspaceType,
       enabledInWorkspace: false,
       agentAvailableInWorkspace: false,

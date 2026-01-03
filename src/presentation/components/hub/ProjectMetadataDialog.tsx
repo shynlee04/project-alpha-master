@@ -64,7 +64,7 @@ export const ProjectMetadataDialog: React.FC<ProjectMetadataDialogProps> = ({
   onSave,
   open,
   onOpenChange,
-  className,
+  className: _className,
 }) => {
   const { t } = useTranslation();
 

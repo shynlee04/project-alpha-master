@@ -15,14 +15,8 @@ import {
 
 import { db } from '@/lib/state/dexie-db';
 import { cn } from '@/lib/utils';
-import {
-  saveProject,
-  generateProjectId,
-  updateProjectLastOpened,
-  updateProjectBindings,
-  type ProjectMetadata
-} from '@/lib/workspace/project-store';
-import type { WorkspaceBindings } from '@/lib/workspace/project-store';
+import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+import type { ProjectRecord } from '@/lib/state/dexie-db-core-types';
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
@@ -44,14 +38,14 @@ export const HubHomePage: React.FC = () => {
   const [booting, setBooting] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<ProjectMetadata | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   // Data fetching
   const projects = useLiveQuery(() => db.projects.toArray());
   const isLoading = projects === undefined;
 
   // Dashboard metrics
-  const metrics = useDashboardMetrics({ projects: projects || [] });
+  const metrics = useDashboardMetrics({ projects: (projects || []) as unknown as Project[] });
 
   const recentProjects = useMemo(() => {
     return (projects || [])
@@ -60,7 +54,7 @@ export const HubHomePage: React.FC = () => {
         const timeB = b.lastOpened ? new Date(b.lastOpened).getTime() : 0;
         return timeB - timeA;
       })
-      .slice(0, 5) as unknown as ProjectMetadata[];
+      .slice(0, 5) as unknown as Project[];
   }, [projects]);
 
   // -- Handlers --
@@ -74,18 +68,26 @@ export const HubHomePage: React.FC = () => {
       });
 
       // 2. Create Project Metadata
-      const newProjectId = generateProjectId();
-      const project: ProjectMetadata = {
+      const newProjectId = `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const project: Project = {
         id: newProjectId,
         name: handle.name,
         folderPath: handle.name,
         fsaHandle: handle,
         lastOpened: new Date(),
+        createdAt: new Date(),
         autoSync: true,
+        bindings: {
+          ide: true,
+          knowledge: false,
+          notes: false,
+          study: false,
+        },
+        tags: [],
       };
 
       // 3. Save to Dexie
-      await saveProject(project);
+      await db.projects.add(project as unknown as ProjectRecord);
 
       // 4. Navigate to Workspace
       await navigate({
@@ -104,7 +106,7 @@ export const HubHomePage: React.FC = () => {
     const project = (projects || []).find(p => p.id === projectId);
     if (!project) return;
 
-    setSelectedProject(project as unknown as ProjectMetadata);
+    setSelectedProject(project as unknown as Project);
     setDialogOpen(true);
   };
 
@@ -115,16 +117,21 @@ export const HubHomePage: React.FC = () => {
     if (!selectedProject) return;
 
     try {
-      // 1. Save workspace bindings
-      await updateProjectBindings(selectedProject.id, bindings);
+      // 1. Fetch project, update bindings, and save back
+      const project = await db.projects.get(selectedProject.id);
+      if (project) {
+        const updated = {
+          ...project,
+          bindings,
+          lastOpened: new Date(),
+        };
+        await db.projects.put(updated);
+      }
 
-      // 2. Update timestamp
-      await updateProjectLastOpened(selectedProject.id);
-
-      // 3. Close dialog
+      // 2. Close dialog
       setDialogOpen(false);
 
-      // 4. Navigate to selected workspace
+      // 3. Navigate to selected workspace
       await navigate({
         to: `/${initialWorkspace}/$projectId`,
         params: { projectId: selectedProject.id }

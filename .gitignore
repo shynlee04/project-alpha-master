@@ -18,3 +18,10 @@ todos.json
 .claude
 .claude/ralph-loop.local.md
 .vercel
+
+# Large repomix/codebase packs (exceed GitHub 100MB limit)
+*.xml
+repomix-*.xml
+_bmad-output/*.xml
+_bmad-output/repomix-packs/
+

@@ -135,17 +135,19 @@ export class SourceRAGBridge {
             const chunks = chunkingResult.chunks;
 
             // Generate embeddings
-            const embeddings = await this.embeddingService.embedBatch(chunks);
+            const embeddingResult = await this.embeddingService.embedBatch(
+                chunks.map(c => c.content)
+            );
 
             // Index in Orama
-            await this.oramaIndex.indexBatch(embeddings);
+            await this.oramaIndex.indexBatch(embeddingResult.results);
 
             // Notify progress
             const result: SourceIndexingResult = {
                 sourceId: source.id,
                 status: 'indexed',
                 chunksCreated: chunks.length,
-                embeddingsGenerated: embeddings.length,
+                embeddingsGenerated: embeddingResult.results.length,
                 indexedAt: Date.now()
             };
 

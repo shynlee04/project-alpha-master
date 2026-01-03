@@ -40,9 +40,9 @@ function PanelLoading({ label }: { label: string }) {
 export function IDEChatPanel({
     projectId,
     projectName,
-    fileTools,
-    terminalTools,
-    eventBus,
+    fileTools: _fileTools,
+    terminalTools: _terminalTools,
+    eventBus: _eventBus,
     onClose
 }: IDEChatPanelProps) {
     return (
@@ -68,9 +68,6 @@ export function IDEChatPanel({
                             projectId={projectId}
                             projectName={projectName}
                             onClose={onClose}
-                            fileTools={fileTools}
-                            terminalTools={terminalTools}
-                            eventBus={eventBus}
                         />
                     </Suspense>
                 </WithErrorBoundary>

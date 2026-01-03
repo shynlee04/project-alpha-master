@@ -1,10 +1,4 @@
-import { create } from 'zustand';
-import type { CombinedConversationState } from '../types';
-import { createConversationValidationSlice } from '../conversation-validation-slice';
-import { createConversationMetadataSlice } from '../conversation-metadata-slice';
-import { createThreadManagementSlice } from '../thread-management-slice';
-import { createMessageCrudSlice } from '../message-crud-slice';
-import { createConversationEventsSlice } from '../conversation-events-slice';
+import { createTestConversationStore } from './test-helper';
 
 vi.mock('@/lib/state/dexie-storage', () => ({
   createDexieStorage: () => ({
@@ -14,14 +8,7 @@ vi.mock('@/lib/state/dexie-storage', () => ({
   })
 }));
 
-const createTestStore = () => create<CombinedConversationState>()((set, get, api) => ({
-  ...createConversationMetadataSlice(set, get, api),
-  ...createThreadManagementSlice(set, get, api),
-  ...createMessageCrudSlice(set, get, api),
-  ...createConversationValidationSlice(set, get, api),
-  ...createConversationEventsSlice(set, get, api),
-  activeProjectConversationIds: {},
-}));
+const createTestStore = createTestConversationStore;
 
 describe('Conversation Validation Slice', () => {
   let store: ReturnType<typeof createTestStore>;
@@ -83,7 +70,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should validate existing message ID', () => {
       const threadId = store.getState().createThread('conv-1');
-      const messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
+      const _messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
       const result = store.getState().validateMessageId(messageId);
 
       expect(result.isValid).toBe(true);
@@ -158,7 +145,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should validate child thread hierarchy', () => {
       const parentId = store.getState().createThread('conv-1');
-      const childId = store.getState().createThread('conv-1', parentId);
+      const _childId = store.getState().createThread('conv-1', parentId);
       const result = store.getState().validateThreadHierarchy(childId);
 
       expect(result.isValid).toBe(true);
@@ -167,7 +154,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should detect missing parent thread', () => {
       const parentId = store.getState().createThread('conv-1');
-      const childId = store.getState().createThread('conv-1', parentId);
+      const _childId = store.getState().createThread('conv-1', parentId);
 
       // Manually corrupt the state to simulate missing parent
       const state = store.getState() as any;
@@ -181,7 +168,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should detect parent not referencing child', () => {
       const parentId = store.getState().createThread('conv-1');
-      const childId = store.getState().createThread('conv-1', parentId);
+      const _childId = store.getState().createThread('conv-1', parentId);
 
       // Manually corrupt the state to simulate parent not referencing child
       const state = store.getState() as any;
@@ -195,7 +182,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should detect child not referencing parent', () => {
       const parentId = store.getState().createThread('conv-1');
-      const childId = store.getState().createThread('conv-1', parentId);
+      const _childId = store.getState().createThread('conv-1', parentId);
 
       // Manually corrupt the state to simulate child not referencing parent
       const state = store.getState() as any;
@@ -211,7 +198,7 @@ describe('Conversation Validation Slice', () => {
   describe('Message-Thread Association Validation', () => {
     it('should validate message-thread association', () => {
       const threadId = store.getState().createThread('conv-1');
-      const messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
+      const _messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
       const result = store.getState().validateMessageThreadAssociation(messageId);
 
       expect(result.isValid).toBe(true);
@@ -220,7 +207,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should detect message referencing non-existent thread', () => {
       const threadId = store.getState().createThread('conv-1');
-      const messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
+      const _messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
 
       // Manually corrupt the state to simulate message referencing deleted thread
       const state = store.getState() as any;
@@ -234,7 +221,7 @@ describe('Conversation Validation Slice', () => {
 
     it('should detect message referencing deleted thread', () => {
       const threadId = store.getState().createThread('conv-1');
-      const messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
+      const _messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
       store.getState().deleteThread(threadId);
 
       const result = store.getState().validateMessageThreadAssociation(messageId);
@@ -276,7 +263,7 @@ describe('Conversation Validation Slice', () => {
     it('should detect corrupted message associations in conversation', () => {
       const conversationId = store.getState().createConversation('ide', null, 'agent-1');
       const threadId = store.getState().createThread(conversationId);
-      const messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
+      const _messageId = store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
 
       // Delete the thread (soft-delete)
       store.getState().deleteThread(threadId);

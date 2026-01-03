@@ -8,7 +8,7 @@ const mockGetNodes = vi.fn();
 const mockSetNodes = vi.fn();
 
 vi.mock('@xyflow/react', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@xyflow/react')>();
+  const actual = await importOriginal() as typeof import('@xyflow/react');
   return {
     ...actual,
     useReactFlow: vi.fn(() => ({
@@ -144,7 +144,11 @@ describe('useSidebarDrag', () => {
         effectAllowed: '',
       },
     } as unknown as React.DragEvent;
-    const item = {
+    const item: {
+      type: string;
+      sourceId: string;
+      data: { title: string };
+    } = {
       type: 'source',
       sourceId: 'src-1',
       data: { title: 'Test Source' },

@@ -150,7 +150,7 @@ export class CrashRecoveryManager {
       this.setState('failed');
       if (this.onRecoveryFailure) {
         this.onRecoveryFailure(
-          error || new WebContainerError('Max crash recovery attempts reached', 'MAX_CRASHES')
+          error || new WebContainerError('Max crash recovery attempts reached', 'BOOT_FAILED')
         );
       }
       return false;

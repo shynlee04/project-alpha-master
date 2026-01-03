@@ -8,7 +8,6 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { useSearchParams } from '@tanstack/react-router';
 
 export type WorkspaceFilterType = 'ide' | 'knowledge' | 'notes' | 'study';
 
@@ -111,9 +110,9 @@ function filtersToURL(filters: WorkspaceFilters): string | null {
  */
 export function useWorkspaceFilters(
   defaultFilters: WorkspaceFilters = DEFAULT_FILTERS,
-  syncWithURL: boolean = true
+  syncWithURL: boolean = false  // Disabled: TanStack Router URL sync needs implementation
 ): UseWorkspaceFiltersResult {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useState(new URLSearchParams());
 
   // Initialize filters from URL or defaults
   const [filters, setFiltersState] = useState<WorkspaceFilters>(() => {

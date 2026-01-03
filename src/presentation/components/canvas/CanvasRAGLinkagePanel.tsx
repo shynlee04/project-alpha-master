@@ -39,8 +39,6 @@ export interface CanvasRAGLinkagePanelProps {
  */
 export function CanvasRAGLinkagePanel({
   onProposalsGenerated,
-  onProposalAccepted,
-  onProposalDismissed,
 }: CanvasRAGLinkagePanelProps) {
   const { t } = useTranslation();
 
@@ -48,8 +46,6 @@ export function CanvasRAGLinkagePanel({
   const nodes = useCanvasStore((s) => s.nodes);
   const linkageProposals = useCanvasStore((s) => s.linkageProposals);
   const setProposals = useCanvasStore((s) => s.setProposals);
-  const acceptProposal = useCanvasStore((s) => s.acceptProposal);
-  const dismissProposal = useCanvasStore((s) => s.dismissProposal);
 
   // Get project ID from IDE store
   const projectId = useIDEStore((s) => s.projectId) || 'default';
@@ -65,22 +61,6 @@ export function CanvasRAGLinkagePanel({
     medium: linkageProposals.filter((p) => p.confidence >= 0.7 && p.confidence < 0.85).length,
     low: linkageProposals.filter((p) => p.confidence < 0.7).length,
   };
-
-  // Handle node selection (toggle)
-  const handleToggleNode = useCallback(
-    (nodeId: string) => {
-      setSelectedNodeIds((prev) => {
-        const newSet = new Set(prev);
-        if (newSet.has(nodeId)) {
-          newSet.delete(nodeId);
-        } else {
-          newSet.add(nodeId);
-        }
-        return newSet;
-      });
-    },
-    []
-  );
 
   // Select all source/concept nodes
   const handleSelectAllNodes = useCallback(() => {

@@ -10,7 +10,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import type { WorkspaceBindings, WorkspaceId } from '@/lib/workspace/project-store';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import type { WorkspaceConfig } from './WorkspaceBindingDialog.types';
 import { WorkspaceCheckboxItem } from './WorkspaceCheckboxItem';
 
@@ -18,7 +19,7 @@ export interface WorkspaceCheckboxListProps {
   /** Current workspace bindings state */
   bindings: WorkspaceBindings;
   /** Callback when workspace checkbox is toggled */
-  onWorkspaceToggle: (workspaceId: WorkspaceId, checked: boolean) => void;
+  onWorkspaceToggle: (workspaceId: WorkspaceType, checked: boolean) => void;
   /** Available workspace configurations */
   workspaces: WorkspaceConfig[];
   /** Optional additional CSS classes */

@@ -95,7 +95,7 @@ export interface UseAgentFormValidationProps {
  * }
  * ```
  */
-export function useAgentFormValidation(props: UseAgentFormValidationProps): ValidationState & { validate: () => boolean } {
+export function useAgentFormValidation(props: UseAgentFormValidationProps): ValidationState & { validate: () => boolean; validateField: <K extends keyof AgentFormData>(fieldName: K, value: AgentFormData[K]) => string | undefined } {
     const {
         name,
         description,
@@ -126,15 +126,13 @@ export function useAgentFormValidation(props: UseAgentFormValidationProps): Vali
      * @returns true if valid, false otherwise
      */
     const validate = useCallback((): boolean => {
-        // Variable for error messages (reserved for future error display)
-        let _errorMessage: string | undefined;
-
-        // Build form data object
+        // Build form data object with field mapping
+        // Props use 'description' and 'modelId', schema uses 'role' and 'model'
         const formData: AgentFormData = {
             name,
-            description,
+            role: description,        // Map description -> role for schema
             providerId,
-            modelId,
+            model: modelId,           // Map modelId -> model for schema
             apiKey,
             customBaseURL,
             customModelId,
@@ -156,15 +154,12 @@ export function useAgentFormValidation(props: UseAgentFormValidationProps): Vali
         // Step 2: Business rule - Model selection required for most providers
         const modelError = validateModelSelection(providerId, modelId);
         if (modelError) {
-            // Error message available for future use in error display
-            _errorMessage = t(modelError);
             return false;
         }
 
         // Step 3: Business rule - OpenAI Compatible provider requirements
         const openAIError = validateOpenAICompatible(providerId, customBaseURL, customModelId);
         if (openAIError) {
-            _errorMessage = t(openAIError);
             return false;
         }
 
@@ -203,7 +198,7 @@ export function useAgentFormValidation(props: UseAgentFormValidationProps): Vali
         value: AgentFormData[K]
     ): string | undefined => {
         // Partial validation for single field
-        const partialData = { [fieldName]: value } as Partial<AgentFormData>;
+        void ({ [fieldName]: value } as Partial<AgentFormData>);
 
         try {
             // Try to parse just this field

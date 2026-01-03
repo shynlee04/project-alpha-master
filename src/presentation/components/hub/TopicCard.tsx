@@ -81,20 +81,20 @@ export const TopicCard: React.FC<TopicCardProps> = ({
     >
       {/* Icon */}
       <div className="absolute top-4 right-4 text-[var(--color-primary-foreground)] opacity-80">
-        {React.cloneElement(icon as React.ReactElement, {
-          size: 24,
-          className: 'fill-current',
-        })}
+        {React.cloneElement(
+          icon as React.ReactElement<any>,
+          { size: 24, className: 'fill-current' }
+        )}
       </div>
 
       {/* Content */}
       <div className="p-6 text-[var(--color-primary-foreground)]">
         {/* Title */}
         <h3 className="text-2xl font-bold mb-3 flex items-start gap-3">
-          {React.cloneElement(icon as React.ReactElement, {
-            size: 28,
-            className: 'fill-current flex-shrink-0',
-          })}
+          {React.cloneElement(
+            icon as React.ReactElement<any>,
+            { size: 28, className: 'fill-current flex-shrink-0' }
+          )}
           <span>{t(titleKey)}</span>
         </h3>
 

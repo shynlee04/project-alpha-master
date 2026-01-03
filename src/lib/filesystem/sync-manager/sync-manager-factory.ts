@@ -6,7 +6,7 @@
  */
 
 import type { LocalFSAdapter } from '../local-fs-adapter';
-import type { WorkspaceEventEmitter } from '../events';
+import type { WorkspaceEventEmitter } from '../../events';
 import type { SyncConfig } from './sync-manager-types';
 import { SyncManager } from './sync-manager';
 

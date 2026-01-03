@@ -9,6 +9,7 @@
  * @gap G-007 - WorkspaceSwitcher workspace transition loading
  */
 
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { WorkspaceTransitionStepItem } from './WorkspaceTransitionStepItem'

@@ -10,10 +10,10 @@
 import { useState, useEffect } from 'react';
 import { Check, X, Globe, BookOpen, GraduationCap, Layout } from 'lucide-react';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
-import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { AgentToolBinding } from '@/domain/value-objects/tool-permission';
-import type { WorkspaceBinding } from '@/domain/value-objects/workspace-binding';
+import { WorkspaceTypeUtils } from '@/domain/value-objects/workspace-type';
+import type { AgentToolBinding } from '@/core/entities/Agent';
+import type { WorkspaceBinding } from '@/core/entities/Agent';
 
 /**
  * Workspace icon mapping
@@ -22,7 +22,7 @@ const WORKSPACE_ICONS: Record<WorkspaceType, React.ReactNode> = {
   ide: <Globe className="w-4 h-4" />,
   knowledge: <BookOpen className="w-4 h-4" />,
   study: <GraduationCap className="w-4 h-4" />,
-  canvas: <Layout className="w-4 h-4" />,
+  notes: <Layout className="w-4 h-4" />,
 };
 
 /**
@@ -32,7 +32,7 @@ const WORKSPACE_NAMES: Record<WorkspaceType, string> = {
   ide: 'IDE Workspace',
   knowledge: 'Knowledge Workspace',
   study: 'Study Workspace',
-  canvas: 'Canvas Workspace',
+  notes: 'Notes Workspace',
 };
 
 /**
@@ -82,7 +82,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
   ) => {
     const updatedBindings = localBindings.map((binding) =>
       binding.workspaceType === workspaceType
-        ? binding.withAvailability(isAvailable)
+        ? { ...binding, isAvailable }
         : binding
     );
 
@@ -99,7 +99,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
   ) => {
     const updatedBindings = localBindings.map((binding) =>
       binding.workspaceType === workspaceType
-        ? binding.withUIVariant(uiVariant)
+        ? { ...binding, uiVariant }
         : binding
     );
 
@@ -114,11 +114,11 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
     const updatedBindings = localBindings.map((binding) => {
       // Unset default for all other workspaces
       if (binding.workspaceType === workspaceType) {
-        return binding.withDefault(!binding.isDefault);
+        return { ...binding, isDefault: !binding.isDefault };
       }
       // Ensure only one default agent per workspace
       if (binding.isDefault && binding.workspaceType !== workspaceType) {
-        return binding.withDefault(false);
+        return { ...binding, isDefault: false };
       }
       return binding;
     });
@@ -137,7 +137,13 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
   ) => {
     const updatedTools = localTools.map((tool) =>
       tool.toolId === toolId
-        ? tool.withWorkspacePermission(workspaceType, permitted)
+        ? {
+            ...tool,
+            workspacePermissions: {
+              ...tool.workspacePermissions,
+              [workspaceType]: permitted
+            }
+          }
         : tool
     );
 
@@ -212,7 +218,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
         <h4 className="text-sm font-medium">Workspace Availability</h4>
 
         <div className="grid gap-4">
-          {Object.values(WorkspaceType).map((workspaceType) => {
+          {WorkspaceTypeUtils.all().map((workspaceType) => {
             const binding = localBindings.find((b) => b.workspaceType === workspaceType);
 
             if (!binding) return null;
@@ -306,7 +312,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
-                  {Object.values(WorkspaceType).map((workspaceType) => {
+                  {WorkspaceTypeUtils.all().map((workspaceType) => {
                     const binding = localBindings.find((b) => b.workspaceType === workspaceType);
                     const permitted = tool.workspacePermissions[workspaceType] ?? false;
 

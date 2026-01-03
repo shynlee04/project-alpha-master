@@ -73,7 +73,9 @@ export class PerformanceMonitor {
 
     return () => {
       const duration = performance.now() - startTime;
-      this.record({ name, duration });
+      const config = this.configs.get(name);
+      const target = config?.target ?? DEFAULT_CONFIG.target;
+      this.record({ name, duration, target });
     };
   }
 

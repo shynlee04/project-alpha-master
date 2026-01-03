@@ -5,7 +5,7 @@
  * Part of NR-08: Markdown Import/Export UI
  */
 
-import React, { useCallback, useState } from "react"
+import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog"
 import { Button } from "../ui/button"
@@ -19,15 +19,17 @@ import type { NoteRecord } from "@/lib/notes/types"
 interface MarkdownImportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onImportComplete: (notes: NoteRecord[]) => void
+  onImportComplete: (noteIds: string[]) => void
   syncService?: ReturnType<typeof createNoteFileSyncService>
+  noteCreator?: (content: string, title: string, metadata?: Record<string, unknown>) => Promise<NoteRecord>
 }
 
 export function MarkdownImportDialog({
   open,
   onOpenChange,
   onImportComplete,
-  syncService: providedSyncService,
+  syncService,
+  noteCreator,
 }: MarkdownImportDialogProps) {
   const { t } = useTranslation()
   const [importPath, setImportPath] = useState("")
@@ -37,11 +39,14 @@ export function MarkdownImportDialog({
   const [error, setError] = useState<string | null>(null)
   const [importResult, setImportResult] = useState<NoteImportResult | null>(null)
 
-  const syncService = providedSyncService ?? createNoteFileSyncService()
-
   const handleImportFromDirectory = useCallback(async () => {
     if (!importPath.trim()) {
       setError(t("notes.import.error"))
+      return
+    }
+
+    if (!syncService || !noteCreator) {
+      setError("File sync service not available. This feature requires additional dependencies.")
       return
     }
 
@@ -51,15 +56,15 @@ export function MarkdownImportDialog({
     setError(null)
 
     try {
-      const result = await syncService.importAllNotes(importPath, (p: number) => setProgress(p))
+      const result = await syncService.importAllNotes(noteCreator)
       setImportResult(result)
-      
-      if (result.success) {
+
+      if (result.errors.length === 0) {
         setStatus("success")
-        onImportComplete(result.notes)
+        onImportComplete(result.createdNoteIds)
       } else {
         setStatus("error")
-        setError(result.errors[0]?.message || t("notes.import.error"))
+        setError(result.errors[0]?.error || t("notes.import.error"))
       }
     } catch (err) {
       setStatus("error")
@@ -67,7 +72,7 @@ export function MarkdownImportDialog({
     } finally {
       setIsLoading(false)
     }
-  }, [importPath, syncService, t, onImportComplete])
+  }, [importPath, syncService, noteCreator, t, onImportComplete])
 
   const handleReset = useCallback(() => {
     setImportPath("")
@@ -111,7 +116,7 @@ export function MarkdownImportDialog({
               />
               <Button
                 variant="outline"
-                size="icon"
+                size="md"
                 onClick={() => {
                   // In a real implementation, this would open a directory picker
                   // For now, we'll use a simple prompt
@@ -141,8 +146,10 @@ export function MarkdownImportDialog({
           {/* Progress Indicator */}
           {status === "importing" && (
             <ProgressIndicator
-              value={progress}
-              label={t("notes.import.inProgress")}
+              current={progress}
+              total={100}
+              loadingText={t("notes.import.inProgress")}
+              status="loading"
             />
           )}
 
@@ -151,7 +158,7 @@ export function MarkdownImportDialog({
             <div className="flex items-center gap-2 p-3 bg-green-900/20 border border-green-800 rounded-md">
               <Check className="w-5 h-5 text-green-500" />
               <span className="text-sm text-green-400">
-                {t("notes.import.success", { count: importResult.notes.length })}
+                {t("notes.import.success", { count: importResult.importedCount })}
               </span>
             </div>
           )}
@@ -178,7 +185,7 @@ export function MarkdownImportDialog({
                 </Button>
                 <Button
                   onClick={handleImportFromDirectory}
-                  disabled={isLoading || !importPath.trim()}
+                  disabled={isLoading || !importPath.trim() || !syncService || !noteCreator}
                 >
                   <FileUp className="w-4 h-4 mr-2" />
                   {t("notes.import.fromMarkdown")}

@@ -51,35 +51,6 @@ interface FilePermissionRowProps {
 }
 
 /**
- * Workspace metadata constants
- */
-const WORKSPACE_METADATA: Record<
-    WorkspaceType,
-    { icon: string; label: string; description: string }
-> = {
-    ide: {
-        icon: '💻',
-        label: 'IDE',
-        description: 'Development environment with file access',
-    },
-    knowledge: {
-        icon: '📚',
-        label: 'Knowledge',
-        description: 'Knowledge graph and source management',
-    },
-    notes: {
-        icon: '📝',
-        label: 'Notes',
-        description: 'Note-taking and markdown editor',
-    },
-    study: {
-        icon: '🎓',
-        label: 'Study',
-        description: 'Flashcards and quiz materials',
-    },
-};
-
-/**
  * File Permission Row Component
  *
  * Displays workspace file permission configuration with:
@@ -97,14 +68,6 @@ export function FilePermissionRow({
     onMount,
     onUnmount,
 }: FilePermissionRowProps) {
-    const metadata = WORKSPACE_METADATA[permission.workspace];
-
-    const accessLevelLabels: Record<FileAccessLevel, string> = {
-        none: 'No Access',
-        'read-only': 'Read Only',
-        'read-write': 'Read/Write',
-    };
-
     return (
         <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
             {/* Workspace Info */}

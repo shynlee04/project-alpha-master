@@ -9,7 +9,6 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Node } from '@xyflow/react';
 import { FileText, Lightbulb, Check } from 'lucide-react';
 import { useCanvasStore } from '@/infrastructure/persistence/stores/canvas-store';
 
@@ -96,7 +95,6 @@ export function NodeSourcePicker({
     filteredNodes.length > 0 && filteredNodes.every((n) => selectedIds.includes(n.id));
 
   // Some but not all selected
-  const someSelected = filteredNodes.some((n) => selectedIds.includes(n.id));
 
   return (
     <div className="flex flex-col gap-2">

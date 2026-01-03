@@ -38,7 +38,7 @@ interface AudioPlaybackConfig {
 /**
  * Default configuration
  */
-const DEFAULT_PLAYBACK_CONFIG = {
+const DEFAULT_PLAYBACK_CONFIG: AudioPlaybackConfig = {
   audioConfig: {
     sampleRate: 16000,
     channels: 1,
@@ -345,8 +345,8 @@ export class AudioPlaybackHandler {
    */
   getConfig(): { audioConfig: AudioConfig; jitterConfig: JitterBufferConfig } {
     return {
-      audioConfig: { ...DEFAULT_PLAYBACK_CONFIG.audioConfig!, ...this.config.audioConfig },
-      jitterConfig: { ...DEFAULT_PLAYBACK_CONFIG.jitterConfig!, ...this.config.jitterConfig },
+      audioConfig: { ...DEFAULT_PLAYBACK_CONFIG.audioConfig, ...this.config.audioConfig } as AudioConfig,
+      jitterConfig: { ...DEFAULT_PLAYBACK_CONFIG.jitterConfig, ...this.config.jitterConfig } as JitterBufferConfig,
     };
   }
 

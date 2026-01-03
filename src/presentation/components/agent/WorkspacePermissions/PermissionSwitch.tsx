@@ -16,7 +16,7 @@
 import { Switch } from '@/presentation/components/ui/switch'
 import { PermissionBadge } from './PermissionBadge'
 
-interface PermissionSwitchProps {
+export interface PermissionSwitchProps {
     toolId: string
     toolName: string
     workspace: string

@@ -108,7 +108,7 @@ export class FixedSizeChunker implements ChunkStrategy {
         onProgress?: (progress: { current: number; total: number }) => void
     ): ChunkMetadata[] {
         const { id: sourceId, content } = source;
-        const { minChunkSize, maxChunkSize, overlap } = options;
+        const { minChunkSize, maxChunkSize } = options;
 
         const chunks: ChunkMetadata[] = [];
         let chunkIndex = 0;
@@ -188,7 +188,6 @@ export class FixedSizeChunker implements ChunkStrategy {
                     segment.start,
                     minChunkSize,
                     maxChunkSize,
-                    overlap,
                     chunkIndex
                 );
                 chunks.push(...textChunks);

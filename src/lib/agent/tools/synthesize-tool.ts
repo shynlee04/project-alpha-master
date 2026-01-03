@@ -42,7 +42,7 @@ const SynthesizeOutputSchema = z.object({
     subject: z.string(),
     tags: z.array(z.string()),
     contentType: z.string().optional(),
-    extractedMetadata: z.record(z.unknown()).optional(),
+    extractedMetadata: z.record(z.string(), z.unknown()).optional(),
   }),
   timestamp: z.string(),
 });
@@ -96,9 +96,25 @@ export function createSynthesizeClientTool(getKnowledgeTools: () => AgentKnowled
         options: args.options,
       });
 
+      // Map SynthesisResult to SynthesizeOutput format
       return {
         success: true,
-        data: result,
+        data: {
+          synthesisId: result.id,
+          frontmatter: {
+            summary: result.frontmatter.summary,
+            keyConcepts: result.frontmatter.keyConcepts?.map(kc => `${kc.term}: ${kc.definition}`) || [],
+            subject: result.frontmatter.subject || '',
+            tags: result.frontmatter.tags || [],
+            contentType: result.frontmatter.documentType,
+            extractedMetadata: {
+              documentType: result.frontmatter.documentType,
+              difficultyLevel: result.frontmatter.difficultyLevel,
+              estimatedStudyTimeMinutes: result.frontmatter.estimatedStudyTimeMinutes,
+            },
+          },
+          timestamp: result.synthesizedAt,
+        },
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown synthesis error';

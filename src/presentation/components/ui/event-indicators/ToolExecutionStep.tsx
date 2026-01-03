@@ -7,7 +7,8 @@
  * @module presentation/components/ui/event-indicators
  */
 
-import { Wrench, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react'
+import { cn } from '@/lib/utils';
+import { Wrench, CheckCircle2, XCircle, Circle, type LucideIcon } from 'lucide-react'
 
 /**
  * Tool execution step
@@ -44,7 +45,7 @@ function getStepIcon(status: ToolExecutionStep['status']): LucideIcon {
         case 'running':
             return Wrench
         default:
-            return () => null
+            return Circle
     }
 }
 

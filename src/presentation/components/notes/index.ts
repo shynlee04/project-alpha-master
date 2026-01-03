@@ -12,7 +12,7 @@ export { NoteTreeItem } from './NoteTreeItem';
 
 // AI Features
 export { AIPromptDialog } from './AIPromptDialog';
-export { AISlashCommand } from './AISlashCommand';
+export { getCustomSlashMenuItems } from './AISlashCommand';
 export { AITransformMenu } from './AITransformMenu';
 export { NoteStudyMenu } from './NoteStudyMenu';
 

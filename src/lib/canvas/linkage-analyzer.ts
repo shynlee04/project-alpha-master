@@ -58,6 +58,9 @@ export class LinkageAnalyzer {
       (node) => node.type === 'source' || node.type === 'concept'
     );
 
+    // Calculate total possible pairs for all node combinations
+    const totalPossiblePairs = (validNodes.length * (validNodes.length - 1)) / 2;
+
     // Analyze each node
     const _nodeAnalyses = new Map<string, NodeAnalysis>();
     for (const node of validNodes) {
@@ -85,7 +88,7 @@ export class LinkageAnalyzer {
    * @returns Node analysis result
    */
   private async analyzeNode(node: Node): Promise<NodeAnalysis> {
-    const data = node.data as SourceNodeData | ConceptNodeData;
+    const data = node.data as unknown as SourceNodeData | ConceptNodeData;
 
     if (node.type === 'source') {
       return this.analyzeSourceNode(node.id, data as SourceNodeData);
@@ -118,19 +121,15 @@ export class LinkageAnalyzer {
       };
     }
 
-    // Extract concepts from synthesis frontmatter if available
-    const concepts = source.synthesisResult?.frontmatter?.keyConcepts?.map(
-      (kc: { term: string }) => kc.term
-    ) || [];
+    // Extract concepts from source metadata if available
+    const concepts = source.keyConcepts || [];
 
     // Extract keywords from title
     const keywords = this.extractKeywords(source.title);
 
-    // Get subject from frontmatter
-    const subject = source.synthesisResult?.frontmatter?.subject;
-
-    // Get document type
-    const documentType = source.synthesisResult?.frontmatter?.documentType;
+    // Subject and document type not available in SourceRecord
+    const subject = undefined;
+    const documentType = undefined;
 
     return {
       nodeId,
@@ -223,7 +222,7 @@ export class LinkageAnalyzer {
    * @param analysis2 - Second node analysis
    * @returns Similarity score and shared concepts
    */
-  private calculateSimilarity(
+  protected calculateSimilarity(
     analysis1: NodeAnalysis,
     analysis2: NodeAnalysis
   ): SimilarityScore {

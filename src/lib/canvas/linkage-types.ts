@@ -6,8 +6,6 @@
  * Type definitions for AI-powered linkage discovery between canvas nodes.
  */
 
-import type { Node, Edge } from '@xyflow/react';
-
 /**
  * Linkage type categories
  */

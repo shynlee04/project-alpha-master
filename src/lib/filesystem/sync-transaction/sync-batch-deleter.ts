@@ -44,8 +44,8 @@ export async function deleteMultipleWithRollback(
 
     eventBus?.emit('sync:start', {
         operationId,
-        type: 'batch-delete',
-        count: paths.length,
+        fileCount: paths.length,
+        direction: 'to-local',
     });
 
     try {
@@ -93,7 +93,9 @@ export async function deleteMultipleWithRollback(
 
                 eventBus?.emit('sync:rollback', {
                     operationId,
-                    filesToRevert: completedOps.map((op) => op.path),
+                    transactionId: operationId,
+                    initiator: 'system',
+                    reason: error instanceof Error ? error.message : 'Unknown error',
                 });
 
                 const rollbackResult = await rollbackExecutor.rollback(completedOps, options);
@@ -107,7 +109,10 @@ export async function deleteMultipleWithRollback(
                     'BATCH_DELETE_FAILED',
                     operationId,
                     error,
-                    result
+                    {
+                        syncedFiles: result.syncedFiles,
+                        rolledBackFiles: result.rolledBackFiles,
+                    }
                 );
             }
         }
@@ -138,7 +143,9 @@ export async function deleteMultipleWithRollback(
         if (completedOps.length > 0) {
             eventBus?.emit('sync:rollback', {
                 operationId,
-                filesToRevert: completedOps.map((op) => op.path),
+                transactionId: operationId,
+                initiator: 'system',
+                reason: result.error,
             });
 
             const rollbackResult = await rollbackExecutor.rollback(completedOps, options);
@@ -152,7 +159,10 @@ export async function deleteMultipleWithRollback(
             'BATCH_ERROR',
             operationId,
             error,
-            result
+            {
+                syncedFiles: result.syncedFiles,
+                rolledBackFiles: result.rolledBackFiles,
+            }
         );
     }
 }

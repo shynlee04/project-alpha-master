@@ -1,9 +1,5 @@
-import { create } from 'zustand';
-import type { CombinedConversationState } from '../types';
-import { createConversationEventsSlice, ConversationEvent } from '../conversation-events-slice';
-import { createConversationMetadataSlice } from '../conversation-metadata-slice';
-import { createThreadManagementSlice } from '../thread-management-slice';
-import { createMessageCrudSlice } from '../message-crud-slice';
+import type { ConversationEvent } from '../conversation-events-slice';
+import { createTestConversationStore } from './test-helper';
 
 vi.mock('@/lib/state/dexie-storage', () => ({
   createDexieStorage: () => ({
@@ -13,13 +9,7 @@ vi.mock('@/lib/state/dexie-storage', () => ({
   })
 }));
 
-const createTestStore = () => create<CombinedConversationState>()((set, get, api) => ({
-  ...createConversationMetadataSlice(set, get, api),
-  ...createThreadManagementSlice(set, get, api),
-  ...createMessageCrudSlice(set, get, api),
-  ...createConversationEventsSlice(set, get, api),
-  activeProjectConversationIds: {},
-}));
+const createTestStore = createTestConversationStore;
 
 describe('Conversation Events Slice', () => {
   let store: ReturnType<typeof createTestStore>;
@@ -126,8 +116,8 @@ describe('Conversation Events Slice', () => {
 
     it('should filter event history by type', () => {
       store.getState().createConversation('ide', null, 'agent-1');
-      const threadId = store.getState().createThread('conv-1');
-      store.getState().addMessage(threadId, { role: 'user', content: 'Test' });
+      const _threadId = store.getState().createThread('conv-1');
+      store.getState().addMessage(_threadId, { role: 'user', content: 'Test' });
 
       const threadEvents = store.getState().getEventHistory({ type: 'thread:created' });
       const messageEvents = store.getState().getEventHistory({ type: 'message:added' });
@@ -149,8 +139,8 @@ describe('Conversation Events Slice', () => {
 
     it('should limit event history', () => {
       store.getState().createConversation('ide', null, 'agent-1');
-      const thread1 = store.getState().createThread('conv-1');
-      const thread2 = store.getState().createThread('conv-1');
+      const _thread1 = store.getState().createThread('conv-1');
+      const _thread2 = store.getState().createThread('conv-1');
 
       const history = store.getState().getEventHistory({ limit: 2 });
 
@@ -293,7 +283,7 @@ describe('Conversation Events Slice', () => {
     });
 
     it('should include entity data in events', () => {
-      const conversationId = store.getState().createConversation('ide', null, 'agent-1');
+      const _conversationId = store.getState().createConversation('ide', null, 'agent-1');
       const history = store.getState().getEventHistory({ type: 'conversation:created' });
 
       expect(history[0].data).toBeDefined();

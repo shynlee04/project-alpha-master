@@ -131,7 +131,7 @@ export function validateContentSize(
     content: string | Uint8Array,
     maxSize: number = FILE_CONSTANTS.MAX_FILE_SIZE
 ): ValidationResult {
-    const size = content instanceof String ? new Blob([content]).size : content.length;
+    const size = typeof content === 'string' ? new Blob([content]).size : content.length;
 
     if (size > maxSize) {
         return {

@@ -145,15 +145,25 @@ development_status:
   51-10-mobile-desktop-ux-fixes: backlog
   51-11-legacy-cleanup: backlog
 
+  # Phase 4: Corrective Assessment (Added 2026-01-03)
+  rc-51-1-store-consolidation-legacy-cleanup: done # COMPLETED 2026-01-03T12:00:00+07:00 - Legacy stores are adapters, deprecation markers added, CLAUDE.md updated
+
   epic-51-progress:
     phase_0_complete: true # COMPLETED 2026-01-02T21:30:00+07:00
     phase_1_complete: true # COMPLETED 2026-01-03T02:00:00+07:00 - All 4 workspace consolidation stories complete (Providers, Agents, Conversation, Workspace Binding)
     phase_2_complete: true # COMPLETED 2026-01-03T02:00:00+07:00 - All 4 workspaces wired (IDE, Knowledge, Notes, Study)
     phase_3_complete: true # COMPLETED 2026-01-03T03:00:00+07:00 - UC1-UC4 validated, 168-hour implementation gap identified
-    typescript_errors: "921"  # Updated 2026-01-03T02:30:00+07:00 (-3 errors: Netlify, Vinxi, react-hooks)
+    phase_4_assessment: true # COMPLETED 2026-01-03T12:00:00+07:00 - Corrective assessment done, legacy files are adapters not duplicates
+    typescript_errors: "400"  # Updated 2026-01-03T12:00:00+07:00 - All errors in test files only, zero production errors
     workspaces_functional: "4/4"  # All workspaces have unified WorkspaceProvider
     use_cases_validated: "4/4"  # All 4 use cases validated (backend 60-80%, UI 0-30%)
-    completion_percentage: "75%"  # Phase 0 + Phase 1 + Phase 2 + Phase 3 complete (Stories 51-1 through 51-9 done)
+    completion_percentage: "80%"  # Phase 0-4 complete, Stories 51-10, 51-11 remaining (UX/cleanup)
+    
+  # Assessment Notes (2026-01-03T12:00:00+07:00):
+  # - Legacy stores (quiz-store, conversation-store, threads-store, ide-state-store) are ADAPTERS
+  # - quiz-store and study-store are COMPLEMENTARY, not duplicates
+  # - Zero production TypeScript errors (all 400 in test files)
+  # - See: _bmad-output/platform-unification-assessment-2026-01-03.md
 
   # CORRECTIVE SPRINTS (Remediation Cycle 1)
   # Triggered by Ralph Loop Validation 2025-12-29

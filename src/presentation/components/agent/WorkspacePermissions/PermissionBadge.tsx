@@ -17,7 +17,7 @@ import { Check, X } from 'lucide-react'
 import { Badge } from '@/presentation/components/ui/badge'
 import { cn } from '@/lib/utils'
 
-interface PermissionBadgeProps {
+export interface PermissionBadgeProps {
     enabled: boolean
     children?: React.ReactNode
 }

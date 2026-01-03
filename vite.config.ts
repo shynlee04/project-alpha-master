@@ -73,6 +73,8 @@ async function getDeploymentPlugin() {
 
 // Note: TS type error is expected - Vite 7's defineConfig types don't fully support async + environments.
 // The config runs correctly at runtime. This is a known Vite 7 type definition limitation.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - Vite 7 async config not fully typed
 const config = defineConfig(async () => {
   const deployPlugin = await getDeploymentPlugin()
 
@@ -82,7 +84,7 @@ const config = defineConfig(async () => {
       {
         name: 'ssr-alias-resolve',
         enforce: 'pre',
-        resolveId(source: string, importer: any, options: any) {
+        resolveId(source: string, _importer: any, options: any) {
           // Check for SSR build using options.ssr (Vite 6/classic) or environment name (Vite 7)
           const isSsr = options?.ssr === true || (this.environment as any)?.name === 'ssr'
 

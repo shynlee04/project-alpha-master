@@ -30,7 +30,12 @@ const AgentExportSchema = z.object({
         toolId: z.string(),
         toolName: z.string(),
         isEnabled: z.boolean(),
-        workspacePermissions: z.record(z.boolean())
+        workspacePermissions: z.object({
+            ide: z.boolean(),
+            knowledge: z.boolean(),
+            study: z.boolean(),
+            notes: z.boolean()
+        })
     })),
     workspaceBindings: z.array(z.object({
         workspaceType: z.enum(['ide', 'knowledge', 'study', 'notes']),

@@ -11,14 +11,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { cn } from '@/lib/utils';
-import type { WorkspaceBindings, WorkspaceId } from '@/lib/workspace/project-store';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import type { WorkspaceConfig } from './WorkspaceBindingDialog.types';
 
 export interface InitialWorkspaceSelectorProps {
   /** Currently selected initial workspace */
-  initialWorkspace: WorkspaceId;
+  initialWorkspace: WorkspaceType;
   /** Callback when initial workspace is changed */
-  onInitialWorkspaceChange: (workspaceId: WorkspaceId) => void;
+  onInitialWorkspaceChange: (workspaceId: WorkspaceType) => void;
   /** Current workspace bindings (to filter enabled workspaces) */
   bindings: WorkspaceBindings;
   /** Available workspace configurations */
@@ -70,7 +71,7 @@ export const InitialWorkspaceSelector: React.FC<InitialWorkspaceSelectorProps> =
       </label>
       <RadioGroup.Root
         value={initialWorkspace}
-        onValueChange={(value) => onInitialWorkspaceChange(value as WorkspaceId)}
+        onValueChange={(value) => onInitialWorkspaceChange(value as WorkspaceType)}
         className="grid grid-cols-1 gap-2"
       >
         {enabledWorkspaces.map((workspace) => (

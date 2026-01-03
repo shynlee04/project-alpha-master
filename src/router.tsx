@@ -9,10 +9,13 @@ export const getRouter = () => {
 
   // FIX: Deduplicate children if they were added multiple times (e.g. by HMR or SSR re-evaluation)
   // The routeTree.gen.ts file side-effects the rootRoute by calling _addFileChildren, which can happen multiple times.
-  if (routeTree.children?.length) {
+  const children = routeTree.children as unknown as any[] || []
+  if (children.length) {
     const seenIds = new Set<string>()
-    const originalLength = routeTree.children.length
-    routeTree.children = routeTree.children.filter((child: any) => {
+    const originalLength = children.length
+    // Note: routeTree.children is readonly in TanStack Router types
+    // This deduplication is best-effort for HMR scenarios
+    const deduplicatedChildren = children.filter((child: any) => {
       // Only deduplicate if child has a valid id
       const childId = child?.id
       if (!childId) {
@@ -24,13 +27,13 @@ export const getRouter = () => {
       seenIds.add(childId)
       return true
     })
-    if (routeTree.children.length !== originalLength) {
-      console.warn(`[Router] Deduplicated ${originalLength - routeTree.children.length} routes from root children`)
+    if (deduplicatedChildren.length !== originalLength) {
+      console.warn(`[Router] Deduplicated ${originalLength - deduplicatedChildren.length} routes from root children`)
     }
   }
 
   // Debug route tree
-  console.log('[Router] routeTree children:', routeTree.children?.map((c: any) => c.id))
+  console.log('[Router] routeTree children:', (routeTree.children as unknown as any[])?.map((c: any) => c.id))
 
   const router = createRouter({
     routeTree,

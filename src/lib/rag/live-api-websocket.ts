@@ -142,7 +142,10 @@ export class LiveApiWebSocketManager {
       this.ws.onclose = this.handleClose.bind(this);
 
     } catch (error) {
-      this.handleConnectionError(error, 'CONNECTION_FAILED');
+      this.handleConnectionError(
+        error instanceof Error ? error : new Error(String(error)),
+        'CONNECTION_FAILED'
+      );
     }
   }
 
@@ -306,12 +309,12 @@ export class LiveApiWebSocketManager {
     this.onErrorCallback?.(wsError);
 
     // Retry logic
-    if (retryable && this.retryCount < this.config.retryConfig.maxAttempts) {
+    if (retryable && this.retryCount < this.config.retryConfig!.maxAttempts!) {
       this.retryCount++;
       const delay = Math.min(
-        this.config.retryConfig.initialDelay *
-          Math.pow(this.config.retryConfig.backoffFactor, this.retryCount - 1),
-        this.config.retryConfig.maxDelay
+        this.config.retryConfig!.initialDelay! *
+          Math.pow(this.config.retryConfig!.backoffFactor!, this.retryCount - 1),
+        this.config.retryConfig!.maxDelay!
       );
 
       this.updateState({
@@ -356,7 +359,7 @@ export class LiveApiWebSocketManager {
   /**
    * Convert ArrayBuffer to base64
    */
-  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+  private arrayBufferToBase64(buffer: ArrayBufferLike): string {
     const bytes = new Uint8Array(buffer);
     let binary = '';
     for (let i = 0; i < bytes.byteLength; i++) {

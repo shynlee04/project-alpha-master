@@ -9,8 +9,18 @@
  * @story Create event activity indicator UI components
  */
 
+import { cn } from '@/lib/utils'
 import { StatusIcon, getStatusStyles } from './event-indicator-utils'
-import type { EventStatus, ActivityType } from './EventIndicator'
+
+/**
+ * Event status types
+ */
+export type EventStatus = 'idle' | 'loading' | 'success' | 'error' | 'warning'
+
+/**
+ * Activity types
+ */
+export type ActivityType = 'general' | 'indexing' | 'streaming' | 'sync' | 'quiz-generation' | 'workspace-transition'
 
 /**
  * Event indicator props
@@ -100,6 +110,3 @@ export function EventIndicator({
         </div>
     )
 }
-
-// Export types
-export type { EventStatus, ActivityType }

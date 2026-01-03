@@ -257,7 +257,7 @@ export async function importImage(
 
         let extractedText = '';
         let description = '';
-        let imageType = 'photo';
+        // let imageType = 'photo'; // Unused
 
         // If Gemini processing is requested and API key is provided
         if (options.useGemini && options.geminiApiKey) {
@@ -284,7 +284,7 @@ export async function importImage(
 
                 extractedText = result.text;
                 description = result.description;
-                imageType = result.imageType;
+                // imageType = result.imageType; // Unused
             } catch (error) {
                 console.error('[Image Import] Gemini processing failed, using basic extraction:', error);
                 // Continue with basic metadata if Gemini fails

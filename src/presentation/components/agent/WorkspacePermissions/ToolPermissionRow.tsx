@@ -18,7 +18,7 @@ import type { WorkspaceType } from '@/lib/state/workspace-types'
 import type { ToolPermission, PermissionChecker, PermissionToggleHandler } from './types'
 import { PermissionSwitch } from './PermissionSwitch'
 
-interface ToolPermissionRowProps {
+export interface ToolPermissionRowProps {
     tool: ToolPermission
     workspaceTypes: WorkspaceType[]
     workspaceLabels: Record<WorkspaceType, string>

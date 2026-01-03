@@ -262,7 +262,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
             <Checkbox
               id="session-trust"
               checked={trustForSession}
-              onCheckedChange={handleTrustChange}
+              onChange={(e) => handleTrustChange(e.target.checked)}
               className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
             <div className="flex items-center gap-2">

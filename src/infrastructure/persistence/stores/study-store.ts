@@ -260,7 +260,7 @@ export const useStudyStore = create<StudyStoreState>((set, get) => ({
       },
     }));
 
-    return getDueCards(cardsWithSrs as readonly { id: string; srsData: SRSData }[]).map(
+    return getDueCards(cardsWithSrs as { id: string; srsData: SRSData }[]).map(
       (c) => {
         const card = cards.find((card) => card.id === c.id);
         if (!card) {

@@ -8,7 +8,7 @@
  */
 
 import { useState } from 'react';
-import { Settings, FileText, Database, Zap, Sliders, Check, X } from 'lucide-react';
+import { FileText, Database, Zap, Sliders, Check, X } from 'lucide-react';
 
 /**
  * Chunking strategy types

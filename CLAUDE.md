@@ -616,14 +616,39 @@ export const useAppStore = create<AppState>()(
 )
 ```
 
-**Store Locations**:
-- **Primary**: `src/infrastructure/persistence/stores/` (38+ stores, modern architecture)
-- **Legacy**: `src/lib/state/` (25 stores, being migrated)
-- **Deprecated**: `src/stores/` (8 stores, empty)
+**Store Locations** (Updated 2026-01-03 - Epic 51 Assessment):
+- **Canonical**: `src/infrastructure/persistence/stores/` (51+ stores, modern architecture)
+  - Agents: `agents/` (5 slices + barrel)
+  - Providers: `providers/` (3 slices + barrel)
+  - Conversation: `conversation/` (8 slices + barrel)
+  - RAG: `rag/` (4 slices)
+  - Study: `study-store.ts` (SRS sessions)
+  - Canvas: `canvas-store.ts`
+  - Flashcard: `flashcard-store.ts`
+  
+- **Legacy Adapters** (marked @deprecated, function as re-export bridges):
+  - `src/lib/workspace/conversation-store.ts` → Adapter to `infrastructure/persistence/stores/conversation/`
+  - `src/lib/workspace/threads-store.ts` → Dexie persistence utility (not a Zustand store)
+  - `src/lib/workspace/ide-state-store.ts` → Adapter to `lib/state/ide-store.ts`
+  - `src/lib/state/quiz-store.ts` → Standalone quiz CRUD (separate from study-store)
+
+- **Active Library Stores** (pending migration):
+  - `src/lib/state/ide-store.ts` → IDE panel state
+  - `src/lib/state/knowledge-store.ts` → Knowledge workspace state
+  - `src/lib/state/rag-store.ts` → RAG indexing/search (1,595 lines - GOD STORE)
+
+- **Deprecated**: `src/stores/` (8 stores, empty - DELETE)
+
+**Store Consolidation Notes (Epic 51)**:
+- quiz-store.ts and study-store.ts are COMPLEMENTARY (not duplicates)
+  - quiz-store: Quiz CRUD operations (create, edit, delete quizzes)
+  - study-store: SRS sessions (spaced repetition, flashcard progress)
+- Most "legacy" stores already function as adapters - no migration needed
+- See: `_bmad-output/platform-unification-assessment-2026-01-03.md`
 
 **Migration Plan**: 5 phases, 42-58 hours total
 - Phase 1: ✅ COMPLETE - Infinite loop fixes
-- Phase 2: ⏳ READY - Store consolidation (9-12 hours)
+- Phase 2: ✅ PARTIAL - Store consolidation (Legacy files are adapters, not duplicates)
 - Phase 3: ⏳ PENDING - God class elimination (20-25 hours)
 - Phase 4: ⏳ PENDING - Four-layer architecture alignment (8-12 hours)
 - Phase 5: ⏳ PENDING - Validation & documentation (5 hours)

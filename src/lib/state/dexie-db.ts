@@ -269,7 +269,7 @@ export async function setSyncStatus(record: Omit<SyncStatusRecord, 'id' | 'creat
     await db.syncStatus.put({
         ...record,
         id,
-        createdAt: record.createdAt || Date.now(),
+        createdAt: Date.now(),
         updatedAt: Date.now(),
     });
 }

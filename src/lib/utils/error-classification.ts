@@ -458,7 +458,7 @@ const TOOL_ERROR_CLASSIFICATIONS: Record<string, RetryClass> = {
  * Classify a ToolError by its code
  */
 export function classifyToolError(error: ToolError): ClassificationResult {
-    const code = error.code || 'UNKNOWN';
+    const code = error.errorCode || 'UNKNOWN';
     const classification = TOOL_ERROR_CLASSIFICATIONS[code] || 'NON_RETRYABLE';
 
     return {
@@ -553,8 +553,8 @@ export function isToolError(error: unknown): error is ToolError {
     return (
         typeof error === 'object' &&
         error !== null &&
-        'code' in error &&
-        typeof (error as ToolError).code === 'string'
+        'errorCode' in error &&
+        typeof (error as ToolError).errorCode === 'string'
     );
 }
 

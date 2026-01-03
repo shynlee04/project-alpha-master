@@ -17,7 +17,6 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { shallow } from 'zustand/shallow';
 import { useMemo } from 'react';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
 import { useAgentSelectionStore } from './agents/agent-selection-store';

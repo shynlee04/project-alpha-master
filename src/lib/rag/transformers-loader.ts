@@ -142,7 +142,7 @@ export class TransformersLoader {
                 quantized: true, // Q4 quantized model (~90MB)
                 progress_callback: progressHandler,
             }
-        );
+        ) as Pipeline;
 
         const loadTimeMs = performance.now() - startTime;
 
@@ -153,7 +153,7 @@ export class TransformersLoader {
         const modelSize = await this.getModelSize();
 
         return {
-            pipeline: this.pipeline,
+            pipeline: this.pipeline!,
             loadTimeMs,
             modelSize,
         };

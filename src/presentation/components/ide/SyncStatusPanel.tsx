@@ -17,6 +17,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Button } from '@/presentation/components/ui/button';
 import { RefreshCw, AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react';
@@ -59,16 +60,16 @@ function formatTimestamp(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
 
   if (seconds < 60) {
-    return t('sync.time.justNow');
+    return i18next.t('sync.time.justNow');
   }
 
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) {
-    return t('sync.time.minutesAgo', { count: minutes });
+    return i18next.t('sync.time.minutesAgo', { count: minutes });
   }
 
   const hours = Math.floor(minutes / 60);
-  return t('sync.time.hoursAgo', { count: hours });
+  return i18next.t('sync.time.hoursAgo', { count: hours });
 }
 
 /**

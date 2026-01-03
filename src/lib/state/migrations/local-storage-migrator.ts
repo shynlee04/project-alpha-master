@@ -297,12 +297,12 @@ export async function migrateStore(
             await table.put({
                 ...transformed,
                 updatedAt: Date.now(),
-            } as PersistedStateRecord);
+            } as unknown as PersistedStateRecord);
         } else {
             await table.add({
                 ...transformed,
                 updatedAt: Date.now(),
-            } as PersistedStateRecord);
+            } as unknown as PersistedStateRecord);
         }
 
         // Optionally remove from localStorage (commented out for safety)

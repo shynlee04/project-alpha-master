@@ -10,7 +10,8 @@
 import type { IndexMetadata, SearchResult } from '@/lib/rag/types';
 import type { ChunkingProgress } from '@/lib/rag/types';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
-import type { VoiceModeState, ConnectionState } from '@/lib/rag/live-api-types';
+import type { ConnectionState } from '@/lib/rag/live-api-types';
+import type { VoiceModeState as VoiceModeStateEnum } from '@/lib/rag/live-api-types';
 
 // ============================================================================
 // Enums
@@ -98,7 +99,7 @@ export interface RAGChunkingState {
  * Voice slice state - manages voice mode (Story 10-1)
  */
 export interface RAGVoiceState {
-  voiceState: VoiceModeState;
+  voiceState: VoiceModeStateEnum;
   voiceConnection: ConnectionState;
   voiceMicrophoneEnabled: boolean;
   voiceIsDesktop: boolean;

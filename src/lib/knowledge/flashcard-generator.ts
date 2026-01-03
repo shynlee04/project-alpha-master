@@ -4,7 +4,6 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
-// import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { flashcardGenerationSchema } from './types';
 import type { Flashcard, FlashcardGenerationResult, FlashcardDifficulty } from './types';
@@ -67,7 +66,7 @@ export class FlashcardGenerator {
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
-        responseJsonSchema: zodToJsonSchema(flashcardGenerationSchema),
+        responseJsonSchema: zodToJsonSchema(flashcardGenerationSchema as any),
       },
     });
 
@@ -128,7 +127,7 @@ export class FlashcardGenerator {
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
-        responseJsonSchema: zodToJsonSchema(flashcardGenerationSchema),
+        responseJsonSchema: zodToJsonSchema(flashcardGenerationSchema as any),
       },
     });
 

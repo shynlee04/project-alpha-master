@@ -208,7 +208,10 @@ export const Route = createFileRoute('/api/chat')({
                     // Determine headers: custom headers OR OpenRouter defaults
                     let defaultHeaders: Record<string, string> | undefined;
                     if (validatedBody.customHeaders && Object.keys(validatedBody.customHeaders).length > 0) {
-                        defaultHeaders = validatedBody.customHeaders;
+                        // Convert unknown values to strings for headers
+                        defaultHeaders = Object.fromEntries(
+                            Object.entries(validatedBody.customHeaders).map(([k, v]) => [k, String(v)])
+                        );
                     } else if (providerId === 'openrouter') {
                         defaultHeaders = {
                             'HTTP-Referer': 'https://via-gent.dev',
@@ -260,10 +263,11 @@ export const Route = createFileRoute('/api/chat')({
 
                     // Create streaming chat with the adapter
                     // NOTE: Some free models may not support tools
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const stream = chat({
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         adapter: adapter as any,
-                        messages: finalMessages,
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        messages: finalMessages as any,
                         // Only pass tools if enabled and model supports them
                         ...(enableTools && { tools }),
                     });
@@ -277,24 +281,11 @@ export const Route = createFileRoute('/api/chat')({
                         abortController.abort(new Error('Client disconnected'));
                     });
 
-                    // Ensure cleanup when stream completes or errors
-                    const cleanup = () => {
-                        if (!abortController.signal.aborted) {
-                            abortController.abort(new Error('Stream completed'));
-                        }
-                    };
-
                     // Create SSE stream with abort controller
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const readableStream = toServerSentEventsStream(
-                        stream,
-                        abortController,
-                        {
-                            onComplete: cleanup,
-                            onError: (error: unknown) => {
-                                console.log('[/api/chat] Stream error:', error);
-                                cleanup();
-                            },
-                        }
+                        stream as any,
+                        abortController as any
                     );
 
                     return new Response(readableStream, {

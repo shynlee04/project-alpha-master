@@ -7,6 +7,8 @@
  * @epic CW-01 - Abstract File Sync Service
  */
 
+import type { SyncError } from '@/lib/filesystem/sync-types';
+
 /**
  * File metadata from sync operations
  */
@@ -34,15 +36,6 @@ export interface SyncResult {
     filesProcessed: number;
     errors: SyncError[];
     duration: number;
-}
-
-/**
- * Sync error details
- */
-export interface SyncError {
-    path: string;
-    error: string;
-    code?: string;
 }
 
 /**
