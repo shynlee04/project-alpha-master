@@ -10,7 +10,7 @@ import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Textarea } from '@/presentation/components/ui/textarea';
 import { Label } from '@/presentation/components/ui/label';
-import { ArrowLeft, ArrowRight, Save, Download, Trash2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Save, Download, Trash2, FileText } from 'lucide-react';
 import { useFlashcardStore } from '@/infrastructure/persistence/stores/flashcard-store';
 import type { Flashcard } from '@/lib/knowledge/types';
 import type { SynthesisResult } from '@/lib/knowledge/synthesis-types';
@@ -19,12 +19,14 @@ interface FlashcardPreviewPanelProps {
   synthesisResult: SynthesisResult;
   onSave?: () => void;
   onDiscard?: () => void;
+  onExportToNotes?: () => void;
 }
 
 export function FlashcardPreviewPanel({
   synthesisResult,
   onSave,
   onDiscard,
+  onExportToNotes,
 }: FlashcardPreviewPanelProps) {
   const { t } = useTranslation();
   const addFlashcard = useFlashcardStore((s) => s.addFlashcard);
@@ -140,6 +142,12 @@ export function FlashcardPreviewPanel({
             <Download className="h-4 w-4 mr-2" />
             {t('common.export')}
           </Button>
+          {onExportToNotes && (
+            <Button variant="ghost" size="sm" onClick={onExportToNotes}>
+              <FileText className="h-4 w-4 mr-2" />
+              To Notes
+            </Button>
+          )}
           <Button variant="ghost" size="sm" onClick={handleDiscard}>
             <Trash2 className="h-4 w-4 mr-2" />
             {t('common.discard')}

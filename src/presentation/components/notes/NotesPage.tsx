@@ -33,6 +33,13 @@ import { AgentManager } from '@/presentation/components/agent';
 // P0-3: File Sync Service Initialization
 import { useFileSyncService } from '@/lib/filesync/hooks';
 
+// P2-7: Import Knowledge → Notes event types
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import type { SynthesisExportData } from '@/infrastructure/events/event-bus';
+import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
+import { toast } from 'sonner';
+import { Search } from 'lucide-react';
+
 export function NotesPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
@@ -109,6 +116,85 @@ export function NotesPage() {
         }
     }, [activeNote, isMobile]);
 
+    // P2-7: Listen to Knowledge synthesis export events
+    useEffect(() => {
+        console.log('[NotesPage] Setting up Knowledge export event listener');
+
+        /**
+         * Handle Synthesis Export Requested event from Knowledge workspace
+         * Creates a new Note in Notes workspace from synthesis content
+         */
+        const handleSynthesisExport = (event: any) => {
+            const exportData: SynthesisExportData = event;
+            console.log('[NotesPage] KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED event received:', exportData);
+
+            // Transform synthesis data to Note format
+            const noteTitle = exportData.data.title || 'Untitled Synthesis';
+            const noteContent = exportData.data.content || '';
+            const tags = exportData.data.frontmatter.tags || [];
+
+            // Create a simple blocks array from Markdown content
+            // TODO: Phase 4 - Use proper Markdown to BlockNote parser
+            const blocks = [
+                {
+                    id: `block-${Date.now()}-1`,
+                    type: 'paragraph' as const,
+                    content: noteContent.split('\n').map(line => ({ type: 'text' as const, text: line })),
+                },
+            ];
+
+            // Create note with synthesis data
+            createNote({
+                title: noteTitle,
+                emoji: '📝', // Knowledge-sourced note
+                blocks,
+                tags,
+                metadata: {
+                    source: 'knowledge',
+                    sourceNodeId: exportData.nodeId,
+                    createdAt: exportData.data.frontmatter.createdAt,
+                    sources: exportData.data.frontmatter.sources,
+                },
+            }).then((noteId) => {
+                // Set as active note
+                setActiveNote(noteId);
+
+                // Show toast notification
+                toast.success('Note created from Knowledge workspace', {
+                    description: noteTitle,
+                    action: {
+                        label: 'View',
+                        onClick: () => {
+                            // Note is already set as active
+                            console.log('[NotesPage] Viewing note:', noteId);
+                        },
+                    },
+                });
+
+                console.log('[NotesPage] Note created from synthesis:', noteId);
+            }).catch((error) => {
+                console.error('[NotesPage] Failed to create note from synthesis:', error);
+                toast.error('Failed to create note', {
+                    description: error instanceof Error ? error.message : 'Unknown error',
+                });
+            });
+        };
+
+        // Register Knowledge export event listener
+        const unsubscribe = eventBus.on(
+            DomainEventType.KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED,
+            handleSynthesisExport as any
+        );
+
+        console.log('[NotesPage] Knowledge export event listener registered');
+
+        // Cleanup: remove listener on unmount
+        return () => {
+            console.log('[NotesPage] Cleaning up Knowledge export event listener');
+            unsubscribe();
+        };
+    }, [eventBus, createNote, setActiveNote]);
+
     const handleCreateNote = async () => {
         try {
             await createNote({
@@ -148,6 +234,33 @@ export function NotesPage() {
         }
     };
 
+    // P2-8: Index notes for RAG in Knowledge workspace
+    const handleIndexForRAG = async (noteIds?: string[]) => {
+        const notesToIndex = noteIds || notesArray.map(n => n.id);
+
+        if (notesToIndex.length === 0) {
+            toast.error('No notes to index');
+            return;
+        }
+
+        // Publish event to cross-workspace event bus
+        const indexData: NotesRAGIndexData = {
+            workspaceType: 'notes',
+            noteIds: notesToIndex,
+            timestamp: new Date(),
+            projectId,
+            mode: noteIds ? 'incremental' : 'batch',
+        };
+
+        eventBus.emit(DomainEventType.NOTES_RAG_INDEX_REQUESTED, indexData);
+
+        toast.success('Indexing notes for RAG', {
+            description: `Indexing ${notesToIndex.length} note${notesToIndex.length > 1 ? 's' : ''}...`,
+        });
+
+        console.log('[NotesPage] RAG index requested:', indexData);
+    };
+
     const handleExport = () => {
         setIsExportDialogOpen(true);
     };
@@ -169,6 +282,7 @@ export function NotesPage() {
                             onCreateNote={handleCreateNote}
                             onImport={handleImport}
                             onExport={handleExport}
+                            onIndexForRAG={handleIndexForRAG}
                             onFileSync={() => setIsFilePickerOpen(true)}
                             agentSelectorSlot={
                                 <AgentManager
@@ -284,6 +398,7 @@ export function NotesPage() {
                             onCreateNote={handleCreateNote}
                             onImport={handleImport}
                             onExport={handleExport}
+                            onIndexForRAG={handleIndexForRAG}
                             onFileSync={() => setIsFilePickerOpen(true)}
                             agentSelectorSlot={
                                 <AgentManager

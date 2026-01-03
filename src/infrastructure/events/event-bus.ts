@@ -68,7 +68,13 @@ export enum DomainEventType {
   // IDE events (P2-6 - IDE → Knowledge bridge)
   IDE_DEBUG_SESSION_CAPTURED = 'ide:debug:session:captured',
   IDE_REFACTOR_JOURNAL_CREATED = 'ide:refactor:journal:created',
-  IDE_DEPENDENCY_AUDIT_COMPLETE = 'ide:dependency:audit:complete'
+  IDE_DEPENDENCY_AUDIT_COMPLETE = 'ide:dependency:audit:complete',
+
+  // Knowledge events (P2-7 - Knowledge → Notes export)
+  KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED = 'knowledge:synthesis:export:request',
+
+  // Notes events (P2-8 - Notes → Knowledge RAG indexing)
+  NOTES_RAG_INDEX_REQUESTED = 'notes:rag:index:request'
 }
 
 /**
@@ -218,6 +224,51 @@ export interface DependencyAuditData {
   };
   riskLevel: 'low' | 'medium' | 'high';
   tags: string[]; // e.g., ["react", "major-version", "hooks"]
+}
+
+/**
+ * Synthesis Export Data (P2-7 - Knowledge → Notes)
+ *
+ * Generated when user exports knowledge node to Notes workspace
+ */
+export interface SynthesisExportData {
+  workspaceType: 'knowledge';
+  nodeId: string;
+  timestamp: Date;
+  data: {
+    nodeId: string;
+    title: string;
+    content: string; // Markdown content
+    frontmatter: {
+      createdAt: string;
+      updatedAt: string;
+      workspaceType: 'knowledge';
+      tags: string[];
+      sources?: Array<{
+        type: 'pdf' | 'url' | 'note';
+        path: string;
+        title?: string;
+      }>;
+    };
+    blocks?: Array<{
+      type: 'paragraph' | 'heading' | 'list' | 'code';
+      content: string;
+      level?: number;
+    }>;
+  };
+}
+
+/**
+ * Notes RAG Index Data (P2-8 - Notes → Knowledge)
+ *
+ * Generated when user indexes notes for RAG in Knowledge workspace
+ */
+export interface NotesRAGIndexData {
+  workspaceType: 'notes';
+  noteIds: string[]; // Array of note IDs to index
+  timestamp: Date;
+  projectId: string;
+  mode: 'batch' | 'incremental'; // Batch all notes or single note
 }
 
 /**

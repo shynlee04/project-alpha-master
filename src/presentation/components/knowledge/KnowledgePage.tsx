@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles, Plus, Bot } from 'lucide-react';
 import { toast } from 'sonner';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
-import type { DebugSessionData } from '@/infrastructure/events/event-bus';
+import type { DebugSessionData, SynthesisExportData } from '@/infrastructure/events/event-bus';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import {
     ResizableHandle,
@@ -355,6 +355,42 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
         setPreviewType(null);
     };
 
+    // P2-7: Export synthesis to Notes workspace
+    const handleExportToNotes = () => {
+        if (!synthesisResult) {
+            toast.error('No synthesis to export');
+            return;
+        }
+
+        // Create synthesis export data
+        const exportData: SynthesisExportData = {
+            workspaceType: 'knowledge',
+            nodeId: synthesisResult.id,
+            timestamp: new Date(),
+            data: {
+                nodeId: synthesisResult.id,
+                title: synthesisResult.frontmatter.title || 'Untitled Synthesis',
+                content: synthesisResult.content || '',
+                frontmatter: {
+                    createdAt: synthesisResult.frontmatter.createdAt || new Date().toISOString(),
+                    updatedAt: synthesisResult.frontmatter.updatedAt || new Date().toISOString(),
+                    workspaceType: 'knowledge',
+                    tags: synthesisResult.frontmatter.tags || [],
+                    sources: synthesisResult.frontmatter.sources,
+                },
+            },
+        };
+
+        // Publish event to cross-workspace event bus
+        eventBus.emit(DomainEventType.KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED, exportData);
+
+        toast.success('Exporting to Notes workspace', {
+            description: `${exportData.data.title}`,
+        });
+
+        console.log('[KnowledgePage] Synthesis export requested:', exportData);
+    };
+
     if (isMobile) {
         // Mobile Layout: Simplified Stack (MVP)
         return (
@@ -405,12 +441,14 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                                     synthesisResult={synthesisResult}
                                     onSave={handlePreviewSave}
                                     onDiscard={handlePreviewDiscard}
+                                    onExportToNotes={handleExportToNotes}
                                 />
                             ) : (
                                 <QuizPreviewPanel
                                     synthesisResult={synthesisResult}
                                     onSave={handlePreviewSave}
                                     onDiscard={handlePreviewDiscard}
+                                    onExportToNotes={handleExportToNotes}
                                 />
                             )}
                         </div>
@@ -478,12 +516,14 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                                                 synthesisResult={synthesisResult}
                                                 onSave={handlePreviewSave}
                                                 onDiscard={handlePreviewDiscard}
+                                                onExportToNotes={handleExportToNotes}
                                             />
                                         ) : (
                                             <QuizPreviewPanel
                                                 synthesisResult={synthesisResult}
                                                 onSave={handlePreviewSave}
                                                 onDiscard={handlePreviewDiscard}
+                                                onExportToNotes={handleExportToNotes}
                                             />
                                         )}
                                     </div>

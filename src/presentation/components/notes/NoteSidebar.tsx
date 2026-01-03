@@ -28,6 +28,8 @@ interface NoteSidebarProps {
     onImport?: () => void;
     /** NR-06: Export callback for markdown files */
     onExport?: () => void;
+    /** P2-8: Index for RAG callback */
+    onIndexForRAG?: () => void;
     /** CW-1.4: File sync settings callback */
     onFileSync?: () => void;
     /** AC-02: Optional slot for agent selector */
@@ -52,6 +54,7 @@ export function NoteSidebar({
     onCreateNote,
     onImport,
     onExport,
+    onIndexForRAG,
     onFileSync,
     agentSelectorSlot
 }: NoteSidebarProps) {
@@ -126,6 +129,19 @@ export function NoteSidebar({
                                 title={t('notes.fileSync.settings', 'File Sync Settings')}
                             >
                                 <FolderOpen size={16} />
+                            </Button>
+                        )}
+
+                        {/* P2-8: Index for RAG Button */}
+                        {onIndexForRAG && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={onIndexForRAG}
+                                aria-label={t('notes.rag.indexForRAG', 'Index notes for RAG search')}
+                                title={t('notes.rag.indexForRAG', 'Index notes for RAG search in Knowledge workspace')}
+                            >
+                                <Search size={16} />
                             </Button>
                         )}
 
