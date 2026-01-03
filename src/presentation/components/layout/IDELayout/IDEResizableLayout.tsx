@@ -7,6 +7,7 @@
  * @component IDEResizableLayout
  */
 
+import { useState } from 'react';
 import {
     ResizablePanelGroup,
     ResizablePanel,
@@ -48,6 +49,8 @@ export function IDEResizableLayout({
     centerPanelGroupRef,
     editorPanelGroupRef
 }: IDEResizableLayoutProps) {
+    // P2-2: Terminal panel collapse state
+    const [terminalCollapsed, setTerminalCollapsed] = useState(false);
     return (
         <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
             {/* Center Panel (Editor + Preview + Terminal) */}
@@ -77,14 +80,30 @@ export function IDEResizableLayout({
                         className="h-2 bg-border hover:bg-accent transition-colors cursor-row-resize focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
                     />
 
-                    {/* Terminal Panel */}
-                    <ResizablePanel id="ide-terminal-panel" order={2} defaultSize={30} minSize={10}>
-                        <IDETerminalPanel
-                            terminalTab={terminalTab}
-                            onTabChange={setTerminalTab}
-                            initialSyncCompleted={initialSyncCompleted}
-                            permissionState={permissionState}
-                        />
+                    {/* Terminal Panel - P2-2: Collapsible */}
+                    <ResizablePanel
+                        id="ide-terminal-panel"
+                        order={2}
+                        defaultSize={30}
+                        minSize={10}
+                        collapsible={true}
+                        collapsedSize={5}
+                        onCollapse={setTerminalCollapsed}
+                    >
+                        {terminalCollapsed ? (
+                            <div className="h-full flex items-center justify-center border-t border-border bg-muted/30">
+                                <div className="text-center">
+                                    <span className="text-xs text-muted-foreground">Terminal</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <IDETerminalPanel
+                                terminalTab={terminalTab}
+                                onTabChange={setTerminalTab}
+                                initialSyncCompleted={initialSyncCompleted}
+                                permissionState={permissionState}
+                            />
+                        )}
                     </ResizablePanel>
                 </ResizablePanelGroup>
             </ResizablePanel>

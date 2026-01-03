@@ -50,6 +50,9 @@ export function NotesPage() {
     const activeNote = useActiveNote();
     const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
 
+    // P2-2: Panel collapse state
+    const [noteSidebarCollapsed, setNoteSidebarCollapsed] = useState(false);
+
     // Import/Export dialog state (NR-06, NR-08)
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
@@ -239,23 +242,42 @@ export function NotesPage() {
     return (
         <MainLayout>
             <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
-                {/* Note Sidebar - 20% (min 15%, max 30%) */}
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-                    <NoteSidebar
-                        notes={notesArray as any}
-                        activeNoteId={activeNoteId}
-                        onNoteSelect={handleNoteSelect}
-                        onCreateNote={handleCreateNote}
-                        onImport={handleImport}
-                        onExport={handleExport}
-                        onFileSync={() => setIsFilePickerOpen(true)}
-                        agentSelectorSlot={
-                            <AgentManager
-                                variant="compact"
-                                workspaceType="notes"
-                            />
-                        }
-                    />
+                {/* Note Sidebar - 20% (min 15%, max 30%) - P2-2: Collapsible */}
+                <ResizablePanel
+                    id="notes-sidebar"
+                    defaultSize={20}
+                    minSize={15}
+                    maxSize={30}
+                    collapsible={true}
+                    collapsedSize={3}
+                    onCollapse={setNoteSidebarCollapsed}
+                >
+                    {noteSidebarCollapsed ? (
+                        <div className="h-full flex items-center justify-center border-r border-border bg-muted/30">
+                            <div className="text-center">
+                                <Notebook className="mx-auto h-4 w-4 text-muted-foreground mb-1" />
+                                <span className="text-xs text-muted-foreground">
+                                    {t('notes.notes', 'Notes')}
+                                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <NoteSidebar
+                            notes={notesArray as any}
+                            activeNoteId={activeNoteId}
+                            onNoteSelect={handleNoteSelect}
+                            onCreateNote={handleCreateNote}
+                            onImport={handleImport}
+                            onExport={handleExport}
+                            onFileSync={() => setIsFilePickerOpen(true)}
+                            agentSelectorSlot={
+                                <AgentManager
+                                    variant="compact"
+                                    workspaceType="notes"
+                                />
+                            }
+                        />
+                    )}
                 </ResizablePanel>
 
                 <ResizableHandle withHandle />
