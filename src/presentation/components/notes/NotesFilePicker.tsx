@@ -60,13 +60,7 @@ export function NotesFilePicker({
 
         const updateStatus = () => {
             if (fileSyncService) {
-                const status = fileSyncService.getSyncStatus();
-                // Convert lastSync from number to Date if needed
-                const adjustedStatus: SyncStatus = {
-                    ...status,
-                    lastSync: status.lastSync ? new Date(status.lastSync) : null
-                };
-                setSyncStatus(adjustedStatus);
+                setSyncStatus(fileSyncService.getSyncStatus());
             }
         };
 
@@ -108,16 +102,16 @@ export function NotesFilePicker({
         }
     };
 
-    const formatLastSync = (date: Date | null) => {
-        if (!date) return 'Never';
-        const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
+    const formatLastSync = (timestamp: number | null) => {
+        if (!timestamp) return 'Never';
+        const now = Date.now();
+        const diffMs = now - timestamp;
         const diffMins = Math.floor(diffMs / 60000);
         if (diffMins < 1) return 'Just now';
         if (diffMins < 60) return `${diffMins}m ago`;
         const diffHours = Math.floor(diffMins / 60);
         if (diffHours < 24) return `${diffHours}h ago`;
-        return date.toLocaleDateString();
+        return new Date(timestamp).toLocaleDateString();
     };
 
     return (

@@ -18,8 +18,6 @@ import { NotesFileSyncService } from '../notes-file-sync-service';
 import type { StudyFileSyncConfig } from '../study-file-sync-service';
 import type { NotesFileSyncConfig } from '../notes-file-sync-service';
 import type { FileSyncService } from '../file-sync-service';
-import type { NoteRecord } from '../../state/dexie-db';
-import type { Block } from '@blocknote/core';
 
 export interface UseFileSyncServiceOptions {
     /** Current project ID */
@@ -105,13 +103,16 @@ export function useFileSyncService({
             // Prompt user to select directory (must be user-triggered)
             const directoryHandle = await window.showDirectoryPicker();
 
-            // Create LocalFSAdapter with the directory handle
-            const adapter = new LocalFSAdapter(directoryHandle);
+            // Create LocalFSAdapter and set directory handle
+            const adapter = new LocalFSAdapter();
+            await adapter.setDirectoryHandle(directoryHandle);
             adapterRef.current = adapter;
 
             // Create appropriate service based on workspace type
             if (workspaceType === 'study') {
                 const studyConfig: StudyFileSyncConfig = {
+                    workspaceType: 'study',
+                    projectId,
                     localAdapter: adapter,
                 };
                 const studyService = new StudyFileSyncService(studyConfig);
@@ -119,6 +120,8 @@ export function useFileSyncService({
                 console.log('[useFileSyncService] Study file sync service initialized');
             } else if (workspaceType === 'notes' && noteStore) {
                 const notesConfig: NotesFileSyncConfig = {
+                    workspaceType: 'notes',
+                    projectId,
                     localAdapter: adapter,
                     noteStore,
                     targetDirectory: '/notes',
