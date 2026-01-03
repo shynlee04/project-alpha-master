@@ -33,7 +33,6 @@ export type { WorkspaceId } from '../state/dexie-db-core-types';
 
 export type {
     ConversationMessage as ThreadMessage,
-    ConversationMessageRole,
     ConversationState,
     ConversationMetadata,
 } from '@/infrastructure/persistence/stores/conversation';

@@ -129,7 +129,7 @@ export const useConversationStore = create<ConversationStoreState>()(
                             projectId: conversation.projectId,
                             workspaceType: conversation.workspaceType,
                             title: conversation.title || 'New Conversation',
-                            preview: conversation.preview || '',
+                            preview: '', // Preview not available in ConversationMetadataWithId
                             agentId: conversation.agentId,
                             messageCount: conversationMessages.length,
                             scrollPosition: 0,
