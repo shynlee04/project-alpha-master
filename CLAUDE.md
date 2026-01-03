@@ -1614,6 +1614,29 @@ Before marking a story as complete, verify:
 - **P0 Issue Identified**: `IDELayout.tsx` duplicates IDE state (deferred refactoring)
 - **Architecture Documented**: Clear separation of persisted, ephemeral, agent, and UI state
 
+### Workspace Context Migration (Epic 51 - P2-9, 2026-01-04)
+- **Status**: ✅ COMPLETE - All IDE-only components marked, OLD context deprecated
+- **Migration Required**: For cross-workspace components, migrate from OLD `useWorkspace()` to NEW `useWorkspaceStore()`
+- **IDE-Only Components** (may continue using OLD context):
+  - `src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx` - @workspace ide-only
+  - `src/presentation/components/ide/AgentChatPanel.tsx` - @workspace ide-only
+  - `src/presentation/components/ide/FileTree/FileTree.tsx` - @workspace ide-only
+  - `src/presentation/components/ide/statusbar/AgentStatusSegment.tsx` - @workspace ide-only
+  - `src/presentation/components/layout/IDEHeaderBar.tsx` - @workspace ide-only
+  - `src/presentation/components/layout/MobileIDELayout.tsx` - @workspace ide-only
+- **OLD Context** (deprecated):
+  - `src/lib/workspace/WorkspaceContext.tsx` - @deprecated IDE-ONLY CONTEXT
+  - **DO NOT USE** for new cross-workspace components
+- **NEW Store** (use for cross-workspace components):
+  - `src/infrastructure/persistence/stores/workspace/workspace-provider.tsx`
+  - **Import**: `import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace'`
+  - **Usage**: Individual selectors only (Zustand v5 pattern):
+    ```typescript
+    const projectId = useWorkspaceStore(s => s.projectId);
+    const workspaceType = useWorkspaceStore(s => s.workspaceType);
+    ```
+- **Reference**: `_bmad-output/p2-9-workspace-context-audit-2026-01-04.md`
+
 ### Internationalization
 - **Vietnamese**: Comprehensive Vietnamese translations added
 - **Command Palette**: Full i18n support for discovery components

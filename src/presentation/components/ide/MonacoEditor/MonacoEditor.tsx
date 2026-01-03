@@ -11,6 +11,15 @@ import Editor, { type OnMount, type OnChange } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { getLanguageFromPath } from '@/lib/editor/language-utils';
 import { EditorTabBar, type OpenFile } from './EditorTabBar';
+/**
+ * @workspace ide-only
+ *
+ * This component uses the legacy WorkspaceContext (IDE-only).
+ * Do NOT use this component outside of IDE workspace routes.
+ *
+ * For cross-workspace components, use useWorkspaceStore instead:
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ */
 import { useWorkspace } from '@/lib/workspace';
 import { SyncEditWarning } from '../SyncEditWarning';
 import { useTranslation } from 'react-i18next';

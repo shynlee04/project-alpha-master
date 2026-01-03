@@ -17,6 +17,15 @@
 
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useIDEStore } from '@/lib/state';
+/**
+ * @workspace ide-only
+ *
+ * This component uses the legacy WorkspaceContext (IDE-only).
+ * Do NOT use this component outside of IDE workspace routes.
+ *
+ * For cross-workspace components, use useWorkspaceStore instead:
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ */
 import { useWorkspace } from '@/lib/workspace';
 import { useToast } from '@/presentation/components/ui/Toast';
 import { MobileCapabilityBanner } from '@/presentation/components/ui/MobileCapabilityBanner';

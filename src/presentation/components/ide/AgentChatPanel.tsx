@@ -13,6 +13,15 @@ import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-ap
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
+/**
+ * @workspace ide-only
+ *
+ * This component uses the legacy WorkspaceContext (IDE-only).
+ * Do NOT use this component outside of IDE workspace routes.
+ *
+ * For cross-workspace components, use useWorkspaceStore instead:
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ */
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
 import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
 import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';

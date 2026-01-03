@@ -6,7 +6,9 @@
 @import "./styles/light-theme-tokens.css";
 @import "./styles/animations.css";
 
-@custom-variant dark (&:is(.dark *));
+/* Custom variants for dark/light mode - Tailwind CSS 4 approach */
+@custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
+@custom-variant light (&:is(.light *, [data-theme="light"] *));
 
 /* =============================================================================
    VIA-GENT Typography System
@@ -267,9 +269,90 @@ code {
 
   /* VIA-GENT Brand Extensions */
   --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
   --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
   --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
   --color-editor-bg: hsl(var(--editor-bg));
+
+  /* Primary color scale (50-950) */
+  --color-primary-50: hsl(var(--primary-50));
+  --color-primary-100: hsl(var(--primary-100));
+  --color-primary-200: hsl(var(--primary-200));
+  --color-primary-300: hsl(var(--primary-300));
+  --color-primary-400: hsl(var(--primary-400));
+  --color-primary-500: hsl(var(--primary-500));
+  --color-primary-600: hsl(var(--primary-600));
+  --color-primary-700: hsl(var(--primary-700));
+  --color-primary-800: hsl(var(--primary-800));
+  --color-primary-900: hsl(var(--primary-900));
+  --color-primary-950: hsl(var(--primary-950));
+
+  /* Success color scale (50-950) */
+  --color-success-50: hsl(var(--success-50));
+  --color-success-100: hsl(var(--success-100));
+  --color-success-200: hsl(var(--success-200));
+  --color-success-300: hsl(var(--success-300));
+  --color-success-400: hsl(var(--success-400));
+  --color-success-500: hsl(var(--success-500));
+  --color-success-600: hsl(var(--success-600));
+  --color-success-700: hsl(var(--success-700));
+  --color-success-800: hsl(var(--success-800));
+  --color-success-900: hsl(var(--success-900));
+  --color-success-950: hsl(var(--success-950));
+
+  /* Warning color scale (50-950) */
+  --color-warning-50: hsl(var(--warning-50));
+  --color-warning-100: hsl(var(--warning-100));
+  --color-warning-200: hsl(var(--warning-200));
+  --color-warning-300: hsl(var(--warning-300));
+  --color-warning-400: hsl(var(--warning-400));
+  --color-warning-500: hsl(var(--warning-500));
+  --color-warning-600: hsl(var(--warning-600));
+  --color-warning-700: hsl(var(--warning-700));
+  --color-warning-800: hsl(var(--warning-800));
+  --color-warning-900: hsl(var(--warning-900));
+  --color-warning-950: hsl(var(--warning-950));
+
+  /* Destructive color scale (50-950) */
+  --color-destructive-50: hsl(var(--destructive-50));
+  --color-destructive-100: hsl(var(--destructive-100));
+  --color-destructive-200: hsl(var(--destructive-200));
+  --color-destructive-300: hsl(var(--destructive-300));
+  --color-destructive-400: hsl(var(--destructive-400));
+  --color-destructive-500: hsl(var(--destructive-500));
+  --color-destructive-600: hsl(var(--destructive-600));
+  --color-destructive-700: hsl(var(--destructive-700));
+  --color-destructive-800: hsl(var(--destructive-800));
+  --color-destructive-900: hsl(var(--destructive-900));
+  --color-destructive-950: hsl(var(--destructive-950));
+
+  /* Info color scale (50-950) */
+  --color-info-50: hsl(var(--info-50));
+  --color-info-100: hsl(var(--info-100));
+  --color-info-200: hsl(var(--info-200));
+  --color-info-300: hsl(var(--info-300));
+  --color-info-400: hsl(var(--info-400));
+  --color-info-500: hsl(var(--info-500));
+  --color-info-600: hsl(var(--info-600));
+  --color-info-700: hsl(var(--info-700));
+  --color-info-800: hsl(var(--info-800));
+  --color-info-900: hsl(var(--info-900));
+  --color-info-950: hsl(var(--info-950));
+
+  /* Neutral color scale (50-950) */
+  --color-neutral-50: hsl(var(--neutral-50));
+  --color-neutral-100: hsl(var(--neutral-100));
+  --color-neutral-200: hsl(var(--neutral-200));
+  --color-neutral-300: hsl(var(--neutral-300));
+  --color-neutral-400: hsl(var(--neutral-400));
+  --color-neutral-500: hsl(var(--neutral-500));
+  --color-neutral-600: hsl(var(--neutral-600));
+  --color-neutral-700: hsl(var(--neutral-700));
+  --color-neutral-800: hsl(var(--neutral-800));
+  --color-neutral-900: hsl(var(--neutral-900));
+  --color-neutral-950: hsl(var(--neutral-950));
 
   /* Pixel Shadow Utilities */
   --shadow-pixel: var(--shadow-pixel);

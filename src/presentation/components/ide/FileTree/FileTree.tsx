@@ -42,6 +42,15 @@ import {
 
 // State and types
 // Story 27-1b: Migrated to Zustand
+/**
+ * @workspace ide-only
+ *
+ * This component uses the legacy WorkspaceContext (IDE-only).
+ * Do NOT use this component outside of IDE workspace routes.
+ *
+ * For cross-workspace components, use useWorkspaceStore instead:
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ */
 import { useFileSyncStatusStore, useWorkspace } from '@/lib/workspace';
 import type { TreeNode } from './types';
 

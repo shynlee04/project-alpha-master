@@ -1,7 +1,54 @@
 /**
  * WorkspaceContext - Centralized state management for IDE workspace.
  *
- * Story 3-8: Implement Workspace Context
+ * @deprecated IDE-ONLY CONTEXT - DO NOT USE FOR NEW COMPONENTS
+ *
+ * **⚠️ LEGACY CONTEXT - IDE-ONLY USAGE ⚠️**
+ *
+ * This legacy WorkspaceContext is maintained for IDE-only components.
+ * For all new components and cross-workspace components, use:
+ *
+ * ```typescript
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ *
+ * // Individual selectors (Zustand v5 pattern):
+ * const projectId = useWorkspaceStore(s => s.projectId);
+ * const workspaceType = useWorkspaceStore(s => s.workspaceType);
+ * ```
+ *
+ * **Migration Guide:**
+ *
+ * **BEFORE (OLD context - IDE-ONLY):**
+ * ```typescript
+ * import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
+ *
+ * function MyComponent() {
+ *   const { projectId, workspaceType } = useWorkspace();
+ * }
+ * ```
+ *
+ * **AFTER (NEW store - Cross-Workspace):**
+ * ```typescript
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ *
+ * function MyComponent() {
+ *   const projectId = useWorkspaceStore(s => s.projectId);
+ *   const workspaceType = useWorkspaceStore(s => s.workspaceType);
+ * }
+ * ```
+ *
+ * **Components marked @workspace ide-only** may continue using this context:
+ * - MonacoEditor.tsx
+ * - AgentChatPanel.tsx
+ * - FileTree.tsx
+ * - AgentStatusSegment.tsx
+ * - IDEHeaderBar.tsx
+ * - MobileIDELayout.tsx
+ *
+ * @migration_guide See: `.claude/ralph-loop.local.md` Section 2
+ * @workspace ide-only
+ * @story 3-8: Implement Workspace Context
+ * @epic Epic 51: Platform Unification (Phase 4: Corrective Assessment)
  *
  * This context provides:
  * - Workspace state (project, handle, sync status, permissions)
@@ -34,6 +81,18 @@ const WorkspaceContext = createContext<WorkspaceContextValue | undefined>(undefi
 
 /**
  * Hook to access workspace state and actions.
+ *
+ * @deprecated IDE-ONLY - Use useWorkspaceStore for cross-workspace components
+ *
+ * **⚠️ LEGACY HOOK - IDE-ONLY USAGE ⚠️**
+ *
+ * This hook is maintained for IDE-only components marked with `@workspace ide-only`.
+ *
+ * For cross-workspace components, migrate to:
+ * ```typescript
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ * ```
+ *
  * Must be used within WorkspaceProvider.
  */
 export function useWorkspace(): WorkspaceContextValue {

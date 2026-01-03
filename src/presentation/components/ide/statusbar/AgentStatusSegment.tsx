@@ -13,6 +13,15 @@ import { useTranslation } from 'react-i18next';
 import { Bot, Loader2, Zap, AlertCircle } from 'lucide-react';
 import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
+/**
+ * @workspace ide-only
+ *
+ * This component uses the legacy WorkspaceContext (IDE-only).
+ * Do NOT use this component outside of IDE workspace routes.
+ *
+ * For cross-workspace components, use useWorkspaceStore instead:
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ */
 import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
 
 // ============================================================================

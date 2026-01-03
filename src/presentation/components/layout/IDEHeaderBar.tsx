@@ -19,6 +19,15 @@
 import { FolderOpen, Loader2 } from 'lucide-react';
 import { ChatIcon, RefreshIcon } from '@/presentation/components/ui/icons';
 import { useTranslation } from 'react-i18next';
+/**
+ * @workspace ide-only
+ *
+ * This component uses the legacy WorkspaceContext (IDE-only).
+ * Do NOT use this component outside of IDE workspace routes.
+ *
+ * For cross-workspace components, use useWorkspaceStore instead:
+ * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ */
 import { useWorkspace } from '@/lib/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
 import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
