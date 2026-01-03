@@ -49,7 +49,7 @@ export enum IndexOperation {
  */
 export interface RAGIndexState {
   // Workspace & Project tracking
-  currentWorkspaceType: WorkspaceType; // NEW: Workspace awareness
+  currentWorkspaceType: WorkspaceType;
   currentProjectId: string | null;
 
   // Index status
@@ -62,6 +62,14 @@ export interface RAGIndexState {
 
   // Hydration
   _hasHydrated: boolean;
+
+  // Index slice actions
+  setHasHydrated: (state: boolean) => void;
+  setCurrentWorkspace: (workspaceType: WorkspaceType) => void;
+  setCurrentProject: (projectId: string | null) => void;
+  loadIndexMetadata: (projectId: string) => Promise<void>;
+  setIndexStatus: (status: IndexStatus, operation?: IndexOperation) => void;
+  updateIndexingProgress: (documentCount: number, totalDocuments: number) => void;
 }
 
 /**

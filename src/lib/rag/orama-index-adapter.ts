@@ -17,7 +17,7 @@
 
 import { indexSource, searchIndex } from './orama-index';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
-import type { DocumentSchema } from './types';
+import { IndexStatus, IndexOperation } from '@/infrastructure/persistence/stores/rag/rag-types';
 
 /**
  * OramaIndexAdapter - Shared service for RAG index operations
@@ -72,7 +72,7 @@ export class OramaIndexAdapter {
         const store = useRAGStore.getState();
 
         // Update RAG store status
-        store.setIndexStatus('indexing', 'embedding');
+        store.setIndexStatus(IndexStatus.BUILDING, IndexOperation.EMBEDDING);
         store.updateIndexingProgress(0, chunks.length);
 
         console.log(`[OramaIndexAdapter] Indexing batch of ${chunks.length} chunks`);
@@ -98,12 +98,12 @@ export class OramaIndexAdapter {
             } catch (error) {
                 console.error('[OramaIndexAdapter] Failed to index chunk:', error);
                 store.setError((error as Error).message);
-                store.setIndexStatus('error', 'embedding');
+                store.setIndexStatus(IndexStatus.ERROR, IndexOperation.EMBEDDING);
             }
         }
 
         // Mark as ready and load metadata
-        store.setIndexStatus('ready', 'idle');
+        store.setIndexStatus(IndexStatus.READY, IndexOperation.IDLE);
         await store.loadIndexMetadata(this.projectId);
 
         console.log(`[OramaIndexAdapter] Completed indexing ${chunks.length} chunks`);
@@ -129,21 +129,21 @@ export class OramaIndexAdapter {
         const store = useRAGStore.getState();
 
         // Update RAG store status
-        store.setIndexStatus('searching', 'search');
+        store.setIndexStatus(IndexStatus.BUILDING, IndexOperation.INDEXING);
 
         try {
             const results = await searchIndex(this.projectId, query, {
                 limit: limit || 10
             });
 
-            store.setIndexStatus('ready', 'idle');
+            store.setIndexStatus(IndexStatus.READY, IndexOperation.IDLE);
             console.log(`[OramaIndexAdapter] Search returned ${results.length} results`);
             return results;
 
         } catch (error) {
             console.error('[OramaIndexAdapter] Search failed:', error);
             store.setError((error as Error).message);
-            store.setIndexStatus('error', 'search');
+            store.setIndexStatus(IndexStatus.ERROR, IndexOperation.INDEXING);
             return [];
         }
     }
