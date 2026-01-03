@@ -21,6 +21,11 @@ interface StudyFilePickerProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     fileSyncService: StudyFileSyncService | null;
+    onInitialize?: () => Promise<void>;
+    isInitializing?: boolean;
+    error?: string | null;
+    isReady?: boolean;
+    isSupported?: boolean;
 }
 
 interface StudyMaterial {
@@ -29,7 +34,16 @@ interface StudyMaterial {
     name: string;
 }
 
-export function StudyFilePicker({ open, onOpenChange, fileSyncService }: StudyFilePickerProps) {
+export function StudyFilePicker({
+    open,
+    onOpenChange,
+    fileSyncService,
+    onInitialize,
+    isInitializing = false,
+    error,
+    isReady = false,
+    isSupported = true,
+}: StudyFilePickerProps) {
     const [isMounted, setIsMounted] = useState(false);
     const [isMounting, setIsMounting] = useState(false);
     const [isScanning, setIsScanning] = useState(false);

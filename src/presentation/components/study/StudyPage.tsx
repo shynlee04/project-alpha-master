@@ -24,6 +24,8 @@ import { useIDEStore } from '@/lib/state/ide-store';
 import { AgentManager } from '@/presentation/components/agent';
 import { FolderOpen } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
+// P0-3: File Sync Service Initialization
+import { useFileSyncService } from '@/lib/filesync/hooks';
 
 export function StudyPage() {
     const { t } = useTranslation();
@@ -38,6 +40,19 @@ export function StudyPage() {
     // State
     const [activeTab, setActiveTab] = useState<'flashcards' | 'quizzes' | 'stats'>('flashcards');
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
+
+    // P0-3: Initialize file sync service
+    const {
+        service: fileSyncService,
+        isInitializing: isFileSyncInitializing,
+        error: fileSyncError,
+        initializeService,
+        isReady: isFileSyncReady,
+        isSupported: isFileSyncSupported,
+    } = useFileSyncService({
+        projectId,
+        workspaceType: 'study',
+    });
 
     // Count items
     const flashcardCount = flashcards.filter((f) => f.projectId === projectId).length;
@@ -144,7 +159,12 @@ export function StudyPage() {
                 <StudyFilePicker
                     open={isFilePickerOpen}
                     onOpenChange={setIsFilePickerOpen}
-                    fileSyncService={null} // TODO: Initialize with StudyFileSyncService
+                    fileSyncService={fileSyncService}
+                    onInitialize={initializeService}
+                    isInitializing={isFileSyncInitializing}
+                    error={fileSyncError}
+                    isReady={isFileSyncReady}
+                    isSupported={isFileSyncSupported}
                 />
             </MainLayout>
         );
@@ -272,7 +292,12 @@ export function StudyPage() {
             <StudyFilePicker
                 open={isFilePickerOpen}
                 onOpenChange={setIsFilePickerOpen}
-                fileSyncService={null} // TODO: Initialize with StudyFileSyncService
+                fileSyncService={fileSyncService}
+                onInitialize={initializeService}
+                isInitializing={isFileSyncInitializing}
+                error={fileSyncError}
+                isReady={isFileSyncReady}
+                isSupported={isFileSyncSupported}
             />
         </MainLayout>
     );
