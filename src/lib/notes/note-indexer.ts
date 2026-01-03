@@ -185,6 +185,7 @@ class NoteIndexer {
                         metadata: {
                             chunkIndex: i,
                             totalChunks: chunks.length,
+                            sourceType: 'note', // P2-8: Mark as note source for Knowledge search
                         },
                     };
 
@@ -202,6 +203,7 @@ class NoteIndexer {
                         metadata: {
                             chunkIndex: i,
                             totalChunks: chunks.length,
+                            sourceType: 'note', // P2-8: Mark as note source for Knowledge search
                         },
                     };
 

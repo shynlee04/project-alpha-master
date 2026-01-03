@@ -38,6 +38,8 @@ export interface DocumentSchema {
     chunkIndex: number;
     /** Total chunks in document */
     totalChunks: number;
+    /** Source type (e.g., 'note' for Notes workspace) - P2-8 */
+    sourceType?: string;
   };
 }
 
@@ -54,6 +56,7 @@ export interface OramaSchema {
   metadata?: {
     chunkIndex: number;
     totalChunks: number;
+    sourceType?: string;
   };
 }
 

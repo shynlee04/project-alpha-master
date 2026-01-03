@@ -23,3 +23,6 @@ export { MarkdownExportDialog } from './MarkdownExportDialog';
 // NR-07/NR-08: Context Menu and Event System
 export { NoteContextMenu, NoteListItem } from './NoteContextMenu';
 
+// P2-8: Notes → Knowledge RAG Indexing
+export { NotesIndexingButton } from './NotesIndexingButton';
+

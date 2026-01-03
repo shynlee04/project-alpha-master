@@ -287,9 +287,17 @@ function SearchResultCard({
       className="w-full text-left p-3 border-2 border-border bg-surface hover:bg-surface-darker transition-colors rounded-none group"
     >
       <div className="flex items-start justify-between gap-2 mb-1">
-        <h4 className="font-medium text-sm group-hover:text-primary transition-colors">
-          {result.document.title || t('rag.search.untitled', 'Untitled')}
-        </h4>
+        <div className="flex items-center gap-2">
+          <h4 className="font-medium text-sm group-hover:text-primary transition-colors">
+            {result.document.title || t('rag.search.untitled', 'Untitled')}
+          </h4>
+          {/* P2-8: Show "NOTE" badge for notes indexed from Notes workspace */}
+          {result.document.metadata?.sourceType === 'note' && (
+            <span className="text-xs px-1.5 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-none font-medium">
+              NOTE
+            </span>
+          )}
+        </div>
         <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-none flex-shrink-0">
           {formatScore(result.score)}
         </span>

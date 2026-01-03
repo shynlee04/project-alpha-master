@@ -17,6 +17,7 @@ import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
 import { NoteTree } from './NoteTree';
+import { NotesIndexingButton } from './NotesIndexingButton';
 import type { NoteRecord } from '@/lib/state/dexie-db';
 
 interface NoteSidebarProps {
@@ -28,7 +29,7 @@ interface NoteSidebarProps {
     onImport?: () => void;
     /** NR-06: Export callback for markdown files */
     onExport?: () => void;
-    /** P2-8: Index for RAG callback */
+    /** P2-8: Index for RAG callback - DEPRECATED: Now handled internally by NotesIndexingButton */
     onIndexForRAG?: () => void;
     /** CW-1.4: File sync settings callback */
     onFileSync?: () => void;
@@ -54,7 +55,7 @@ export function NoteSidebar({
     onCreateNote,
     onImport,
     onExport,
-    onIndexForRAG,
+    onIndexForRAG: _onIndexForRAG, // P2-8: DEPRECATED - Now handled internally by NotesIndexingButton
     onFileSync,
     agentSelectorSlot
 }: NoteSidebarProps) {
@@ -132,18 +133,10 @@ export function NoteSidebar({
                             </Button>
                         )}
 
-                        {/* P2-8: Index for RAG Button */}
-                        {onIndexForRAG && (
-                            <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={onIndexForRAG}
-                                aria-label={t('notes.rag.indexForRAG', 'Index notes for RAG search')}
-                                title={t('notes.rag.indexForRAG', 'Index notes for RAG search in Knowledge workspace')}
-                            >
-                                <Search size={16} />
-                            </Button>
-                        )}
+                        {/* P2-8: Index for RAG Button - uses NotesIndexingButton component */}
+                        <NotesIndexingButton
+                            className="h-7 px-2 text-xs"
+                        />
 
                         <Button size="sm" variant="ghost" onClick={onCreateNote} aria-label={t('notes.create_new', 'Create new note')}>
                             <Plus size={16} />
