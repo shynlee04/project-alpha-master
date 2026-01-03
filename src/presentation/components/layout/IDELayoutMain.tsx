@@ -25,6 +25,7 @@ import { StatusBar } from '../ide/StatusBar';
 import { MobileIDELayout } from './MobileIDELayout';
 import { useResponsive } from '@/hooks/useResponsive';
 import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
+import { SyncDevTools } from '@/presentation/components/dev/SyncDevTools';
 import {
     useIDEKeyboardShortcuts,
     useWebContainerBoot,

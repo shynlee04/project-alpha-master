@@ -20,6 +20,7 @@ import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
+import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
 // NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
 // import { createNoteFileSyncService } from '@/lib/notes';
 
@@ -225,6 +226,11 @@ export function NotesPage() {
                     isReady={isNotesSyncReady}
                     isSupported={isNotesSyncSupported}
                 />
+
+                {/* Sync Status Panel (P1-2: Event Bus Integration) */}
+                <div className="fixed bottom-4 right-4 z-50 w-96">
+                    <SyncStatusPanel />
+                </div>
             </MainLayout>
         );
     }
@@ -313,6 +319,11 @@ export function NotesPage() {
                 isReady={isNotesSyncReady}
                 isSupported={isNotesSyncSupported}
             />
+
+            {/* Sync Status Panel (P1-2: Event Bus Integration) */}
+            <div className="fixed bottom-4 right-4 z-50 w-96">
+                <SyncStatusPanel />
+            </div>
         </MainLayout>
     );
 }
