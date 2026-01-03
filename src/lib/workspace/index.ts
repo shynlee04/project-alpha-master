@@ -32,7 +32,7 @@ export type { WorkspaceId } from '../state/dexie-db-core-types';
 // It has been deleted. Re-export types from the new location for backwards compatibility.
 
 export type {
-    ConversationMessage as ThreadMessage,
+    ThreadMessage,
     ConversationState,
     ConversationMetadata,
 } from '@/infrastructure/persistence/stores/conversation';
@@ -44,6 +44,9 @@ export type {
 // The old ide-state-store.ts was deleted as it was a deprecated backward compatibility layer
 // Use Zustand store instead: import { useIDEStore } from '@/lib/state/ide-store'
 // Or from infrastructure: import { useIDEStore } from '@/infrastructure/persistence/stores/ide/useIDEStore'
+
+// Re-export TerminalTab type for backwards compatibility
+export type { TerminalTab } from '../state/ide-store';
 
 // Story 3-8: Workspace Context
 export {

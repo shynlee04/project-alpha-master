@@ -1,0 +1,254 @@
+sprint_id: LT-2026-01-03
+project: Via-gent Light Theme Design System
+start_date: 2026-01-03
+status: in_progress
+
+summary:
+  total_stories: 23
+  total_estimate_hours: 88-90
+  pending: 22
+  drafted: 1
+  in_progress: 0
+  completed: 0
+  blocked: 0
+
+stories:
+  LT-1.1:
+    title: Create light theme token file
+    status: drafted
+    created_at: "2026-01-03T00:00:00Z"
+    started_at: null
+    completed_at: null
+    assignee: sm
+    phase: 1
+
+  LT-1.2:
+    title: Update design-tokens.css with transition styles
+    status: pending
+    started_at: null
+    completed_at: null
+    depends_on: LT-1.1
+    assignee: sm
+    phase: 1
+
+  LT-1.3:
+    title: Update Tailwind config for class-based themes
+    status: pending
+    started_at: null
+    completed_at: null
+    depends_on: LT-1.1
+    assignee: sm
+    phase: 1
+
+  LT-1.4:
+    title: Create TypeScript theme types
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: sm
+    phase: 1
+
+  LT-1.5:
+    title: Implement useTheme hook
+    status: pending
+    started_at: null
+    completed_at: null
+    depends_on: LT-1.4
+    assignee: sm
+    phase: 1
+
+  LT-1.6:
+    title: Create ThemeProvider component
+    status: pending
+    started_at: null
+    completed_at: null
+    depends_on: LT-1.5
+    assignee: sm
+    phase: 1
+
+  LT-1.7:
+    title: Create ThemeToggle component
+    status: pending
+    started_at: null
+    completed_at: null
+    depends_on: LT-1.6
+    assignee: sm
+    phase: 1
+
+  LT-2.8:
+    title: Migrate Button component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 2
+
+  LT-2.9:
+    title: Migrate Input component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 2
+
+  LT-2.10:
+    title: Migrate Select component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 2
+
+  LT-2.11:
+    title: Migrate Checkbox/Radio components
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 2
+
+  LT-2.12:
+    title: Migrate Toggle/Switch component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 2
+
+  LT-2.13:
+    title: Test all P0 components in both themes
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: sm
+    phase: 2
+
+  LT-3.14:
+    title: Migrate Badge component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 3
+
+  LT-3.15:
+    title: Migrate Card component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 3
+
+  LT-3.16:
+    title: Migrate Dialog component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 3
+
+  LT-3.17:
+    title: Migrate Toast component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 3
+
+  LT-3.18:
+    title: Migrate Tabs component
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 3
+
+  LT-4.19:
+    title: Update IDE workspace
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 4
+
+  LT-4.20:
+    title: Update Knowledge workspace
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 4
+
+  LT-4.21:
+    title: Update Study workspace
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 4
+
+  LT-4.22:
+    title: Update Notes workspace
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: dev
+    phase: 4
+
+  LT-4.23:
+    title: Integration testing across all workspaces
+    status: pending
+    started_at: null
+    completed_at: null
+    assignee: sm
+    phase: 4
+
+metrics:
+  stories_completed:
+    target: 23
+    current: 0
+    status: waiting
+  hours_spent:
+    target: 88-90
+    current: 0
+    status: waiting
+  typescript_errors:
+    target: 0
+    current: 0
+    status: ok
+  test_coverage:
+    target: 200
+    cases: 0
+    status: waiting
+  bugs_found:
+    target: 0
+    current: 0
+    status: ok
+
+next_actions:
+  - execute @/sm *validate-create-story for LT-1.1
+  - validate story file against 12-level validation checklist
+  - switch to Dev agent for development
+  - execute @/dev *develop-story for LT-1.1
+  - repeat for remaining stories
+
+constraints:
+  ralph_loop:
+    status: active
+    description: Platform unification work in progress - DO NOT interfere
+    protection: resource_isolation
+  branch:
+    name: feature/light-theme
+    created: false
+    action: create before starting development
+  coordination:
+    check_with_ralph_loop_team: true
+    merge_conflicts: review_before_merge
+
+metadata:
+  approved_by: TBD
+  approval_date: 2026-01-03
+  modified_by: BMAD Coordinator (SM Agent)
+  last_updated: "2026-01-03T00:00:00Z"
+  stories_created: 1
+  stories_remaining: 22
