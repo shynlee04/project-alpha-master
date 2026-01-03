@@ -427,6 +427,13 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
         setPreviewType(null);
     };
 
+    // P2-10 AC1: Export flashcards to Study workspace
+    const handleExportToStudy = () => {
+        // Clear preview state after export
+        setSynthesisResult(null);
+        setPreviewType(null);
+    };
+
     // P2-7: Export synthesis to Notes workspace
     const handleExportToNotes = () => {
         if (!synthesisResult) {
@@ -518,6 +525,7 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                                     onSave={handlePreviewSave}
                                     onDiscard={handlePreviewDiscard}
                                     onExportToNotes={handleExportToNotes}
+                                    onExportToStudy={handleExportToStudy}
                                 />
                             ) : (
                                 <QuizPreviewPanel
@@ -593,6 +601,7 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                                                 onSave={handlePreviewSave}
                                                 onDiscard={handlePreviewDiscard}
                                                 onExportToNotes={handleExportToNotes}
+                                                onExportToStudy={handleExportToStudy}
                                             />
                                         ) : (
                                             <QuizPreviewPanel

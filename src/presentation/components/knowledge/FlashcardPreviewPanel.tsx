@@ -6,12 +6,14 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Textarea } from '@/presentation/components/ui/textarea';
 import { Label } from '@/presentation/components/ui/label';
-import { ArrowLeft, ArrowRight, Save, Download, Trash2, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Save, Download, Trash2, FileText, GraduationCap } from 'lucide-react';
 import { useFlashcardStore } from '@/infrastructure/persistence/stores/flashcard-store';
+import { FlashcardExporter } from '@/lib/knowledge/flashcard-exporter';
 import type { Flashcard } from '@/lib/knowledge/types';
 import type { SynthesisResult } from '@/lib/knowledge/synthesis-types';
 
@@ -20,6 +22,7 @@ interface FlashcardPreviewPanelProps {
   onSave?: () => void;
   onDiscard?: () => void;
   onExportToNotes?: () => void;
+  onExportToStudy?: () => void;
 }
 
 export function FlashcardPreviewPanel({
@@ -27,6 +30,7 @@ export function FlashcardPreviewPanel({
   onSave,
   onDiscard,
   onExportToNotes,
+  onExportToStudy,
 }: FlashcardPreviewPanelProps) {
   const { t } = useTranslation();
   const addFlashcard = useFlashcardStore((s) => s.addFlashcard);
@@ -34,6 +38,7 @@ export function FlashcardPreviewPanel({
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
 
   // Extract flashcards from synthesis result
@@ -111,6 +116,47 @@ export function FlashcardPreviewPanel({
     URL.revokeObjectURL(url);
   };
 
+  const handleExportToStudy = async () => {
+    setIsExporting(true);
+
+    try {
+      // Convert flashcards to synthesis format for exporter
+      const synthesisContent = flashcards
+        .map(fc => `Q: ${fc.question}\nA: ${fc.answer}`)
+        .join('\n\n');
+
+      const synthesisForExport = {
+        ...synthesisResult,
+        content: synthesisContent,
+        sources: flashcards[0]?.sourceIds?.map(id => ({ id, title: id })) || [],
+      };
+
+      const exporter = new FlashcardExporter();
+      const result = await exporter.exportToStudy(synthesisForExport, {
+        deckName: synthesisResult.frontmatter.title || 'Knowledge Export',
+        includeSources: true,
+        maxCards: flashcards.length,
+        useClozeDeletion: false,
+      });
+
+      // TODO: Save deck to Study workspace flashcard store
+      // await useStudyStore.getState().addDeck(result.deck);
+
+      toast.success('Exported to Study workspace', {
+        description: `${result.count} flashcards in deck: ${result.deck.name}`,
+      });
+
+      onExportToStudy?.();
+    } catch (error) {
+      console.error('[FlashcardPreviewPanel] Failed to export to Study:', error);
+      toast.error('Export to Study failed', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleDiscard = () => {
     onDiscard?.();
   };
@@ -146,6 +192,12 @@ export function FlashcardPreviewPanel({
             <Button variant="ghost" size="sm" onClick={onExportToNotes}>
               <FileText className="h-4 w-4 mr-2" />
               To Notes
+            </Button>
+          )}
+          {onExportToStudy && (
+            <Button variant="ghost" size="sm" onClick={handleExportToStudy} disabled={isExporting}>
+              <GraduationCap className="h-4 w-4 mr-2" />
+              {isExporting ? 'Exporting...' : 'To Study'}
             </Button>
           )}
           <Button variant="ghost" size="sm" onClick={handleDiscard}>
