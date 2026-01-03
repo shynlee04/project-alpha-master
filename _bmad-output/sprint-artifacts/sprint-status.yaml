@@ -2057,6 +2057,32 @@ ralph_loop_iteration_174:
       - "AC2: IDE-only components marked - ✅ COMPLETE (all 6 marked with @workspace ide-only)"
       - "AC3: Cross-workspace components refactored - ✅ COMPLETE (N/A - already done in P0/P1)"
       - "AC4: OLD context deprecated - ✅ COMPLETE (@deprecated tags + migration guide)"
+      - "AC5: Zero runtime errors - ✅ COMPLETE (0 TypeScript errors, dev server starts)"
+
+  # Story: Complete Critical Cross-Workspace Connections (IN PROGRESS ⏳ - 2026-01-04)
+  p2-10-cross-workspace-connections: in_progress # AC1 COMPLETE - 4 remaining acceptance criteria
+    status: "in_progress"
+    priority: "P2"
+    estimate_hours: 10
+    team: "Team A"
+    dependencies: []
+    file: "_bmad-output/sprint-artifacts/story-p2-10-cross-workspace-connections.md"
+    acceptance_criteria: 5
+    acceptance_criteria_met: 1
+    started_at: "2026-01-04T01:30:00+07:00"
+    files_created:
+      - "_bmad-output/sprint-artifacts/story-p2-10-cross-workspace-connections.md (191 lines)"
+      - "_bmad-output/p2-10-AC1-completion-summary-2026-01-04.md (275 lines)"
+      - "src/lib/knowledge/flashcard-exporter.ts (322 lines)"
+    files_modified:
+      - "src/presentation/components/knowledge/FlashcardPreviewPanel.tsx (added export to Study functionality)"
+      - "src/presentation/components/knowledge/KnowledgePage.tsx (wired up onExportToStudy handler)"
+    implementation_summary:
+      - "AC1: Knowledge → Study Flashcards Export - ✅ COMPLETE (flashcard-exporter.ts + UI integration)"
+      - "AC2: IDE → Knowledge Code Analysis Bridge - ⏳ PENDING"
+      - "AC3: Knowledge → Study Batch Flashcards - ⏳ PENDING"
+      - "AC4: Cross-Workspace Keyboard Navigation - ⏳ PENDING"
+      - "AC5: Integration Testing - ⏳ PENDING"
       - "AC5: Zero runtime errors - ✅ COMPLETE (0 TS errors, dev server starts successfully)"
     validation_results:
       - "Zero production TypeScript errors ✅"

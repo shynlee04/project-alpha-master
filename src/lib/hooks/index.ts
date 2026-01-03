@@ -6,6 +6,9 @@
  * and cross-workspace reactivity.
  */
 
+// Theme management
+export { useTheme } from './use-theme';
+
 // Cross-workspace provider event subscriptions
 export {
   useProviderConfigChange,

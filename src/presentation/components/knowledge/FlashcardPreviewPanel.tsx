@@ -120,30 +120,21 @@ export function FlashcardPreviewPanel({
     setIsExporting(true);
 
     try {
-      // Convert flashcards to synthesis format for exporter
-      const synthesisContent = flashcards
-        .map(fc => `Q: ${fc.question}\nA: ${fc.answer}`)
-        .join('\n\n');
-
-      const synthesisForExport = {
-        ...synthesisResult,
-        content: synthesisContent,
-        sources: flashcards[0]?.sourceIds?.map(id => ({ id, title: id })) || [],
-      };
-
       const exporter = new FlashcardExporter();
-      const result = await exporter.exportToStudy(synthesisForExport, {
+      const result = await exporter.exportToStudy(synthesisResult, {
         deckName: synthesisResult.frontmatter.title || 'Knowledge Export',
         includeSources: true,
         maxCards: flashcards.length,
         useClozeDeletion: false,
       });
 
-      // TODO: Save deck to Study workspace flashcard store
-      // await useStudyStore.getState().addDeck(result.deck);
+      // TODO: Save flashcard set to Study workspace
+      // await useStudyStore.getState().addFlashcardSet(result.flashcardSet);
+      // For now, just log the result
+      console.log('[FlashcardPreviewPanel] Exported flashcard set:', result.flashcardSet);
 
       toast.success('Exported to Study workspace', {
-        description: `${result.count} flashcards in deck: ${result.deck.name}`,
+        description: `${result.count} flashcards in set: ${result.flashcardSet.name}`,
       });
 
       onExportToStudy?.();

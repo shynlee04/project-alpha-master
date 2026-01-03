@@ -84,16 +84,22 @@ export class FlashcardExporter {
     options: FlashcardExportOptions = {}
   ): Promise<FlashcardExportResult> {
     const {
-      deckName = synthesis.title || 'Knowledge Export',
+      deckName = synthesis.frontmatter.title || 'Knowledge Export',
       includeSources = true,
       maxCards = 20,
       useClozeDeletion = true
     } = options;
 
-    // Generate flashcards from synthesis content
+    // Generate flashcards from synthesis summary
+    const content = synthesis.frontmatter.summary || '';
+    const sources = [{
+      id: synthesis.sourceId,
+      title: synthesis.frontmatter.title || 'Source Document'
+    }];
+
     const flashcards = this.generateFlashcards(
-      synthesis.content,
-      synthesis.sources,
+      content,
+      sources,
       {
         includeSources,
         maxCards,
@@ -101,23 +107,19 @@ export class FlashcardExporter {
       }
     );
 
-    // Create flashcard deck
-    const deck: FlashcardDeck = {
+    // Create flashcard set
+    const flashcardSet: FlashcardSet = {
       id: this.generateDeckId(deckName),
       name: deckName,
       description: this.generateDeckDescription(synthesis),
-      flashcards,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      metadata: {
-        source: 'knowledge-workspace',
-        synthesisId: synthesis.id,
-        sourceCount: synthesis.sources?.length || 0
-      }
+      cardIds: flashcards.map(fc => fc.id),
+      sourceIds: [synthesis.sourceId],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
     return {
-      deck,
+      flashcardSet,
       count: flashcards.length,
       exportedAt: new Date()
     };
@@ -143,8 +145,13 @@ export class FlashcardExporter {
 
     // Aggregate content from all search results
     const allFlashcards: Flashcard[] = [];
+    const sourceIds: string[] = [];
 
     for (const result of results.slice(0, maxCards)) {
+      if (result.metadata?.sourceId && !sourceIds.includes(result.metadata.sourceId)) {
+        sourceIds.push(result.metadata.sourceId);
+      }
+
       const cards = this.generateFlashcards(
         result.content,
         result.metadata?.sourceId ? [{ id: result.metadata.sourceId, title: result.metadata.title || 'Unknown' }] : [],
@@ -158,22 +165,19 @@ export class FlashcardExporter {
       allFlashcards.push(...cards);
     }
 
-    // Create deck from batch results
-    const deck: FlashcardDeck = {
+    // Create flashcard set from batch results
+    const flashcardSet: FlashcardSet = {
       id: this.generateDeckId(deckName),
       name: deckName,
       description: `Generated from ${results.length} RAG search results`,
-      flashcards: allFlashcards,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      metadata: {
-        source: 'rag-search',
-        resultCount: results.length
-      }
+      cardIds: allFlashcards.map(fc => fc.id),
+      sourceIds,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
     return {
-      deck,
+      flashcardSet,
       count: allFlashcards.length,
       exportedAt: new Date()
     };
@@ -196,14 +200,16 @@ export class FlashcardExporter {
     const flashcards: Flashcard[] = [];
     const sentences = this.extractKeySentences(content);
 
-    for (const sentence of sentences.slice(0, options.maxCards)) {
+    for (let i = 0; i < Math.min(sentences.length, options.maxCards); i++) {
+      const sentence = sentences[i];
+
       if (options.useClozeDeletion) {
         // Generate cloze deletion card
-        const cloze = this.generateClozeCard(sentence, sources, options.includeSources);
+        const cloze = this.generateClozeCard(sentence, sources, options.includeSources, i);
         flashcards.push(cloze);
       } else {
         // Generate Q&A card
-        const qa = this.generateQACard(sentence, sources, options.includeSources);
+        const qa = this.generateQACard(sentence, sources, options.includeSources, i);
         flashcards.push(qa);
       }
     }
@@ -234,7 +240,8 @@ export class FlashcardExporter {
   private generateClozeCard(
     sentence: string,
     sources: Array<{ id: string; title: string }>,
-    includeSources: boolean
+    includeSources: boolean,
+    index: number
   ): Flashcard {
     // Find key term to cloze (first word > 5 chars)
     const words = sentence.split(' ');
@@ -245,12 +252,14 @@ export class FlashcardExporter {
     clozedWords[clozeIndex] = '{{c1::' + clozedWords[clozeIndex] + '}}';
 
     return {
-      id: this.generateCardId(),
-      type: 'cloze',
+      id: this.generateCardId(index),
+      projectId: 'default', // Will be updated by caller
       question: clozedWords.join(' '),
       answer: words[clozeIndex],
-      context: includeSources ? sources.map(s => s.title).join(', ') : undefined,
-      createdAt: new Date()
+      difficulty: 'medium',
+      topic: sources[0]?.title || 'General',
+      sourceIds: includeSources ? sources.map(s => s.id) : [],
+      createdAt: Date.now()
     };
   }
 
@@ -262,18 +271,21 @@ export class FlashcardExporter {
   private generateQACard(
     sentence: string,
     sources: Array<{ id: string; title: string }>,
-    includeSources: boolean
+    includeSources: boolean,
+    index: number
   ): Flashcard {
     // Convert statement to question
     const question = `What is described: ${sentence.slice(0, 50)}...?`;
 
     return {
-      id: this.generateCardId(),
-      type: 'basic',
+      id: this.generateCardId(index),
+      projectId: 'default', // Will be updated by caller
       question,
       answer: sentence,
-      context: includeSources ? sources.map(s => s.title).join(', ') : undefined,
-      createdAt: new Date()
+      difficulty: 'medium',
+      topic: sources[0]?.title || 'General',
+      sourceIds: includeSources ? sources.map(s => s.id) : [],
+      createdAt: Date.now()
     };
   }
 
@@ -292,8 +304,8 @@ export class FlashcardExporter {
    *
    * @private
    */
-  private generateCardId(): string {
-    return `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  private generateCardId(index: number): string {
+    return `card_${Date.now()}_${index}`;
   }
 
   /**
@@ -302,9 +314,8 @@ export class FlashcardExporter {
    * @private
    */
   private generateDeckDescription(synthesis: SynthesisResult): string {
-    const sourceCount = synthesis.sources?.length || 0;
-    return `Flashcards generated from: ${synthesis.title}\n` +
-           `Sources: ${sourceCount} document${sourceCount !== 1 ? 's' : ''}\n` +
-           `Created: ${new Date().toLocaleDateString()}`;
+    return `Flashcards generated from: ${synthesis.frontmatter.title || 'Knowledge Synthesis'}\n` +
+           `Source: ${synthesis.sourceId}\n` +
+           `Created: ${new Date(synthesis.synthesizedAt).toLocaleDateString()}`;
   }
 }
