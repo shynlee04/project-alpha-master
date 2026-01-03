@@ -133,14 +133,18 @@ export interface IDETerminalState {
  * - projectId: Current project ID (scopes all IDE state)
  * - setProjectId: Set current project
  * - reset: Reset all state (for project change)
+ * - _hasHydrated: Track hydration completion
+ * - setHasHydrated: Set hydration flag
  */
 export interface IDEProjectState {
   // State
   projectId: string | null;
+  _hasHydrated: boolean;
 
   // Actions
   setProjectId: (projectId: string | null) => void;
   reset: () => void;
+  setHasHydrated: (hydrated: boolean) => void;
 }
 
 /**

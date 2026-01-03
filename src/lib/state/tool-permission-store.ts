@@ -90,6 +90,11 @@ export interface ToolPermissionState {
    */
   version: number;
 
+  /**
+   * Whether the store has finished hydrating from persistence
+   */
+  _hasHydrated: boolean;
+
   /** Actions */
   setTrustLevel: (toolId: string, workspaceType: WorkspaceType, level: ToolTrustLevel) => void;
   getTrustLevel: (toolId: string, workspaceType: WorkspaceType) => ToolTrustLevel;
@@ -97,6 +102,7 @@ export interface ToolPermissionState {
   removeSessionTrust: (toolId: string, workspaceType: WorkspaceType) => void;
   clearSessionTrust: () => void;
   resetToDefaults: () => void;
+  setHasHydrated: (hydrated: boolean) => void;
 }
 
 /**
@@ -193,6 +199,7 @@ export const useToolPermissionStore = create<ToolPermissionState>()(
       defaultTrustLevel: 'prompt',
       sessionTrust: [],
       version: 2,
+      _hasHydrated: false,
 
       /**
        * Set the trust level for a tool in a specific workspace (persisted)
@@ -275,6 +282,14 @@ export const useToolPermissionStore = create<ToolPermissionState>()(
           sessionTrust: [],
         });
       },
+
+      /**
+       * Set hydration completion status
+       * Called by persist middleware after rehydration
+       */
+      setHasHydrated: (hydrated: boolean) => {
+        set({ _hasHydrated: hydrated } as Partial<ToolPermissionState>);
+      },
     }),
     {
       name: 'tool-permission-store',
@@ -354,6 +369,18 @@ export const useToolPermissionStore = create<ToolPermissionState>()(
 
         // Already v2 or higher - return as-is
         return persistedState as ToolPermissionState;
+      },
+
+      onRehydrateStorage: () => {
+        console.log('[ToolPermissionStore] Hydration starting...');
+        return (state, error) => {
+          if (error) {
+            console.error('[ToolPermissionStore] Hydration error:', error);
+          } else {
+            console.log('[ToolPermissionStore] Hydration complete');
+            state!._hasHydrated = true;
+          }
+        };
       },
     }
   )

@@ -50,6 +50,9 @@ interface WorkspaceState {
   transitionFrom: WorkspaceType | null;
   transitionStartedAt: number | null;
 
+  // Hydration tracking
+  _hasHydrated: boolean;
+
   // Actions
   setCurrentWorkspace: (workspace: WorkspaceType) => void;
   setCurrentProject: (projectId: string | null) => void;
@@ -59,6 +62,9 @@ interface WorkspaceState {
   // Computed values (for convenience)
   getWorkspaceLabel: (workspace: WorkspaceType) => string;
   getWorkspaceIcon: (workspace: WorkspaceType) => string;
+
+  // Hydration action
+  setHasHydrated: (hydrated: boolean) => void;
 }
 
 /**
@@ -81,6 +87,7 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       isTransitioning: false,
       transitionFrom: null,
       transitionStartedAt: null,
+      _hasHydrated: false,
 
       // Set current workspace (with event emission)
       setCurrentWorkspace: (workspace: WorkspaceType) => {
@@ -156,6 +163,11 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         };
         return icons[workspace] || '🔷';
       },
+
+      // Set hydration completion status
+      setHasHydrated: (hydrated: boolean) => {
+        set({ _hasHydrated: hydrated } as Partial<WorkspaceState>);
+      },
     }),
     {
       name: 'workspace-state',
@@ -164,6 +176,17 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         currentWorkspace: state.currentWorkspace,
         currentProjectId: state.currentProjectId,
       }),
+      onRehydrateStorage: () => {
+        console.log('[WorkspaceStore] Hydration starting...');
+        return (state, error) => {
+          if (error) {
+            console.error('[WorkspaceStore] Hydration error:', error);
+          } else {
+            console.log('[WorkspaceStore] Hydration complete');
+            state!._hasHydrated = true;
+          }
+        };
+      },
     }
   )
 );

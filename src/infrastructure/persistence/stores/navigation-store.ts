@@ -20,18 +20,21 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 export interface NavigationState {
   /** Currently active panel (explorer, agents, search, terminal, settings) */
   activePanel: string | null;
-  
+
   /** Currently focused element identifier */
   focusedElement: string | null;
-  
+
   /** Selected items by component ID */
   selectedItems: Map<string, string>;
-  
+
   /** Keyboard navigation enabled */
   keyboardNavigationEnabled: boolean;
-  
+
   /** Last active timestamp */
   lastActiveAt: number | null;
+
+  /** Whether the store has finished hydrating from persistence */
+  _hasHydrated: boolean;
 }
 
 /**
@@ -61,6 +64,9 @@ export interface NavigationActions {
   
   /** Reset navigation state */
   reset: () => void;
+
+  /** Set hydration status */
+  setHasHydrated: (hydrated: boolean) => void;
 }
 
 /**
@@ -72,6 +78,7 @@ const initialState: NavigationState = {
   selectedItems: new Map(),
   keyboardNavigationEnabled: true,
   lastActiveAt: null,
+  _hasHydrated: false,
 };
 
 /**
@@ -88,33 +95,38 @@ export const useNavigationStore = create<NavigationStore>()(
       selectedItems: initialState.selectedItems,
       keyboardNavigationEnabled: initialState.keyboardNavigationEnabled,
       lastActiveAt: initialState.lastActiveAt,
-      
+      _hasHydrated: false,
+
       // Actions
       setActivePanel: (panel) => set({ activePanel: panel }),
-      
+
       setFocusedElement: (elementId) => set({ focusedElement: elementId }),
-      
+
       setSelectedItem: (componentId, itemId) =>
         set((state) => {
           const selectedItems = new Map(state.selectedItems);
           selectedItems.set(componentId, itemId);
           return { selectedItems };
         }),
-      
+
       clearSelectedItems: (componentId) =>
         set((state) => {
           const selectedItems = new Map(state.selectedItems);
           selectedItems.delete(componentId);
           return { selectedItems };
         }),
-      
+
       enableKeyboardNavigation: () => set({ keyboardNavigationEnabled: true }),
-      
+
       disableKeyboardNavigation: () => set({ keyboardNavigationEnabled: false }),
-      
+
       updateLastActiveAt: () => set({ lastActiveAt: Date.now() }),
-      
+
       reset: () => set(initialState),
+
+      setHasHydrated: (hydrated) => {
+        set({ _hasHydrated: hydrated } as Partial<NavigationStore>);
+      },
     }),
     {
       name: 'via-gent-navigation-storage',
@@ -123,10 +135,21 @@ export const useNavigationStore = create<NavigationStore>()(
         ...state,
         selectedItems: Array.from(state.selectedItems.entries()),
       }),
-      onRehydrateStorage: () => (state) => {
-        if (state?.selectedItems && Array.isArray(state.selectedItems)) {
-          state.selectedItems = new Map(state.selectedItems);
-        }
+      onRehydrateStorage: () => {
+        console.log('[NavigationStore] Hydration starting...');
+        return (state, error) => {
+          if (error) {
+            console.error('[NavigationStore] Hydration error:', error);
+          } else {
+            console.log('[NavigationStore] Hydration complete');
+            if (state?.selectedItems && Array.isArray(state.selectedItems)) {
+              state.selectedItems = new Map(state.selectedItems);
+            }
+            if (state) {
+              state._hasHydrated = true;
+            }
+          }
+        };
       },
     }
   )

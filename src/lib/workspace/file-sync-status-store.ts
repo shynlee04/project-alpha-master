@@ -54,6 +54,9 @@ interface SyncStatusState {
   /** Computed counts (derived from statuses) */
   counts: FileSyncCounts;
 
+  /** Whether the store has finished hydrating from persistence */
+  _hasHydrated: boolean;
+
   /** Set a file's status to pending */
   setFileSyncPending: (path: string) => void;
 
@@ -68,6 +71,9 @@ interface SyncStatusState {
 
   /** Clear all file sync statuses */
   clearAllFileSyncStatuses: () => void;
+
+  /** Set hydration status */
+  setHasHydrated: (hydrated: boolean) => void;
 }
 
 // ============================================================================
@@ -107,6 +113,7 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
       (set, get) => ({
         statuses: {},
         counts: { synced: 0, pending: 0, error: 0, total: 0 },
+        _hasHydrated: false,
 
         setFileSyncPending: (path) => {
           if (!path) return;
@@ -178,6 +185,10 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
             counts: { synced: 0, pending: 0, error: 0, total: 0 },
           });
         },
+
+        setHasHydrated: (hydrated) => {
+          set({ _hasHydrated: hydrated } as Partial<SyncStatusState>);
+        },
       }),
     ),
     {
@@ -187,11 +198,20 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
         statuses: state.statuses,
         // counts are recomputed from statuses on hydration
       }),
-      onRehydrateStorage: () => (state) => {
-        if (state && state.statuses) {
-          // Recompute counts from hydrated statuses
-          state.counts = computeCounts(state.statuses);
-        }
+      onRehydrateStorage: () => {
+        console.log('[FileSyncStatusStore] Hydration starting...');
+        return (state, error) => {
+          if (error) {
+            console.error('[FileSyncStatusStore] Hydration error:', error);
+          } else {
+            console.log('[FileSyncStatusStore] Hydration complete');
+            if (state && state.statuses) {
+              // Recompute counts from hydrated statuses
+              state.counts = computeCounts(state.statuses);
+            }
+            state!._hasHydrated = true;
+          }
+        };
       },
     }
   )

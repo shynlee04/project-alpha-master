@@ -103,13 +103,22 @@ export const useIDEStore = create<CombinedIDEState>()(
       },
 
       // Hydration handler
-      onRehydrateStorage: () => (state) => {
-        if (!state) return;
-        console.log('[IDESlice] Rehydrated from storage', {
-          openFilesCount: state.openFiles.length,
-          activeFile: state.activeFile,
-          projectId: state.projectId,
-        });
+      onRehydrateStorage: () => {
+        console.log('[IDESlice] Hydration starting...');
+        return (state, error) => {
+          if (error) {
+            console.error('[IDESlice] Hydration error:', error);
+          } else {
+            console.log('[IDESlice] Hydration complete', {
+              openFilesCount: state?.openFiles.length,
+              activeFile: state?.activeFile,
+              projectId: state?.projectId,
+            });
+            if (state) {
+              state._hasHydrated = true;
+            }
+          }
+        };
       },
     }
   )

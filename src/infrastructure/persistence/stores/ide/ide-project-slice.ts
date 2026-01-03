@@ -28,6 +28,7 @@ export const createIDEProjectSlice: StateCreator<
   // =========================================================================
 
   projectId: null,
+  _hasHydrated: false,
 
   // =========================================================================
   // Actions
@@ -66,5 +67,15 @@ export const createIDEProjectSlice: StateCreator<
 
     // TODO: Signal other slices to reset via event bus
     console.log('[IDESlice] Project state reset');
+  },
+
+  /**
+   * Set hydration completion status
+   * Called by persist middleware after rehydration
+   *
+   * @param hydrated - Whether store has finished hydrating
+   */
+  setHasHydrated: (hydrated: boolean) => {
+    set({ _hasHydrated: hydrated } as Partial<IDEProjectState>);
   },
 });

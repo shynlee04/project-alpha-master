@@ -72,6 +72,9 @@ export interface IDEState {
     /** Current project ID for scoping state */
     projectId: string | null;
 
+    /** Whether the store has finished hydrating from persistence */
+    _hasHydrated: boolean;
+
     // =========================================================================
     // Actions
     // =========================================================================
@@ -111,6 +114,9 @@ export interface IDEState {
 
     /** Reset all state (for project change) */
     reset: () => void;
+
+    /** Set hydration status */
+    setHasHydrated: (hydrated: boolean) => void;
 }
 
 // ============================================================================
@@ -126,6 +132,7 @@ const defaultState = {
     chatVisible: true,
     activeFileScrollTop: 0,
     projectId: null,
+    _hasHydrated: false,
 };
 
 // ============================================================================
@@ -233,6 +240,10 @@ export const useIDEStore = create<IDEState>()(
             reset: () => {
                 set(defaultState);
             },
+
+            setHasHydrated: (hydrated) => {
+                set({ _hasHydrated: hydrated } as Partial<IDEState>);
+            },
         }),
         {
             name: 'via-gent-ide-state', // Will be overridden per-project
@@ -258,6 +269,20 @@ export const useIDEStore = create<IDEState>()(
                     ...persistedState,
                     // Convert array back to Set
                     expandedPaths: new Set(persistedState.expandedPaths ?? []),
+                };
+            },
+
+            onRehydrateStorage: () => {
+                console.log('[IDEStore] Hydration starting...');
+                return (state, error) => {
+                    if (error) {
+                        console.error('[IDEStore] Hydration error:', error);
+                    } else {
+                        console.log('[IDEStore] Hydration complete');
+                        if (state) {
+                            state._hasHydrated = true;
+                        }
+                    }
                 };
             },
         },
