@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles, Plus, Bot } from 'lucide-react';
 import { toast } from 'sonner';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
-import type { DebugSessionData, SynthesisExportData } from '@/infrastructure/events/event-bus';
+import type { DebugSessionData, SynthesisExportData, NotesRAGIndexData } from '@/infrastructure/events/event-bus';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import {
     ResizableHandle,
@@ -23,6 +23,7 @@ import { SourceImportDialog } from '@/presentation/components/knowledge/SourceIm
 import { RAGPanelContainer, IndexingProgressPanel } from '@/presentation/components/rag';
 import { useIDEStore } from '@/lib/state/ide-store';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+import { useNoteStore } from '@/lib/notes/note-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
@@ -253,6 +254,119 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
             unsubscribeDebugSession();
         };
     }, [eventBus]);
+
+    // P2-8: Listen to Notes events for Notes → Knowledge RAG indexing
+    useEffect(() => {
+        console.log('[KnowledgePage] Setting up Notes RAG index event listener');
+
+        /**
+         * Handle Notes RAG Index Requested event from Notes workspace
+         * Indexes notes for RAG search in Knowledge workspace
+         */
+        const handleNotesRAGIndex = async (event: any) => {
+            const indexData: NotesRAGIndexData = event;
+            console.log('[KnowledgePage] NOTES_RAG_INDEX_REQUESTED event received:', indexData);
+
+            // Get notes from Notes workspace
+            const { notes } = useNoteStore.getState();
+            const indexedCount = 0;
+            const totalCount = indexData.noteIds.length;
+
+            try {
+                // Initialize RAG services if not already initialized
+                if (!embeddingService) {
+                    toast.error('RAG services not initialized');
+                    return;
+                }
+
+                const documentChunker = new DocumentChunker();
+                const oramaIndex = getOramaIndexAdapter(projectId);
+
+                toast.info(`Indexing ${totalCount} note${totalCount > 1 ? 's' : ''}...`, {
+                    description: `Processing notes for RAG search`,
+                });
+
+                // Process each note
+                for (const noteId of indexData.noteIds) {
+                    // 1. Fetch note content
+                    const note = notes[noteId];
+                    if (!note) {
+                        console.warn(`[KnowledgePage] Note ${noteId} not found`);
+                        continue;
+                    }
+
+                    // Convert note blocks to plain text
+                    const noteContent = note.blocks?.map((block: any) => {
+                        if (block.type === 'paragraph' && block.content) {
+                            return block.content.map((c: any) => c.text || '').join('');
+                        }
+                        return '';
+                    }).join('\n\n') || '';
+
+                    if (!noteContent.trim()) {
+                        console.warn(`[KnowledgePage] Note ${noteId} has no content`);
+                        continue;
+                    }
+
+                    // 2. Chunk into segments
+                    const chunks = documentChunker.chunk({
+                        id: noteId,
+                        content: noteContent,
+                        metadata: {
+                            title: note.title,
+                            type: 'note',
+                            source: 'notes',
+                            tags: note.tags || [],
+                            createdAt: note.createdAt,
+                        },
+                    });
+
+                    // 3. Generate embeddings for each chunk
+                    for (const chunk of chunks) {
+                        const embedding = await embeddingService.generateEmbedding(chunk.content);
+
+                        // 4. Store in Orama database
+                        await oramaIndex.insert({
+                            id: `${noteId}-${chunk.id}`,
+                            content: chunk.content,
+                            embedding: embedding,
+                            metadata: {
+                                ...chunk.metadata,
+                                noteId,
+                                chunkId: chunk.id,
+                            },
+                        });
+                    }
+
+                    console.log(`[KnowledgePage] Indexed note: ${note.title} (${noteId})`);
+                }
+
+                toast.success('Notes indexed for RAG', {
+                    description: `Successfully indexed ${totalCount} note${totalCount > 1 ? 's' : ''}`,
+                });
+
+            } catch (error) {
+                console.error('[KnowledgePage] Failed to index notes for RAG:', error);
+                toast.error('Failed to index notes', {
+                    description: error instanceof Error ? error.message : 'Unknown error',
+                });
+            }
+        };
+
+        // Register Notes RAG index event listener
+        const unsubscribeNotesRAG = eventBus.on(
+            DomainEventType.NOTES_RAG_INDEX_REQUESTED,
+            handleNotesRAGIndex as any
+        );
+
+        console.log('[KnowledgePage] Notes RAG index event listener registered');
+
+        // Cleanup: remove listener on unmount
+        return () => {
+            console.log('[KnowledgePage] Cleaning up Notes RAG index event listener');
+            unsubscribeNotesRAG();
+        };
+    }, [eventBus, projectId, embeddingService]);
 
     // Check Gemini API availability
     useEffect(() => {
