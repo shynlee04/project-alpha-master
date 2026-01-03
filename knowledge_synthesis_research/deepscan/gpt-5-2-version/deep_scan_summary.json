@@ -1,0 +1,121 @@
+{
+  "scan_metadata": {
+    "timestamp": "2026-01-03T12:32:28.623351",
+    "repository": "shynlee04/project-alpha-master",
+    "branch": "dev",
+    "scan_type": "comprehensive_end_to_end_analysis",
+    "scope": [
+      "architecture",
+      "infrastructure",
+      "persistence",
+      "state_management",
+      "workspaces",
+      "filesystem",
+      "agents",
+      "rag",
+      "ui_ux",
+      "performance",
+      "security",
+      "testing",
+      "documentation"
+    ]
+  },
+  "executive_summary": {
+    "overall_health_score": "7.0/10",
+    "critical_issues": 5,
+    "high_priority_issues": 12,
+    "medium_priority_issues": 18,
+    "low_priority_issues": 8,
+    "total_issues_detected": 43,
+    "key_findings": [
+      "Platform Unification Initiative in progress - 2 epics ready for implementation",
+      "God store refactoring needed - 2 stores exceed 300 lines (1,352 + 959 lines)",
+      "TypeScript errors reduced from 1,172 to ~100 (91% improvement)",
+      "Zustand v5 infinite loop bugs fixed in 16 components",
+      "Provider consolidation complete - 3 stores \u2192 1 unified store",
+      "Tool permissions now persist across browser sessions",
+      "Workspace binding system fully operational",
+      "Missing: IndexedDB quota handling (P0 data loss risk)",
+      "Missing: Hub routing - Hub not discoverable via URL",
+      "Fragmented file sync services - 4 services with 1,421 lines"
+    ]
+  },
+  "cornerstone_health": {
+    "cs1_provider_config": {
+      "health_score": "9/10",
+      "status": "Production Ready",
+      "strengths": [
+        "Consolidated from 3 duplicate stores into 1 unified store",
+        "Encrypted API key vault with workspace awareness",
+        "Migration script with automatic backup",
+        "December 2025 Zustand patterns applied",
+        "Typed hooks for best DX"
+      ],
+      "issues": [
+        "Minor: Migration hook runs on every mount (should be once per session)"
+      ]
+    },
+    "cs2_agent_vault": {
+      "health_score": "9/10",
+      "status": "Production Ready",
+      "strengths": [
+        "Workspace binding system operational",
+        "Tool permissions with workspace-scoped permissions",
+        "Domain service utilities for agent operations",
+        "Agent entity separated from business logic",
+        "Zero circular dependencies"
+      ],
+      "issues": [
+        "Minor: AgentConfigDialog exceeds 300 lines (1,089 lines - 363% over limit)"
+      ]
+    },
+    "cs3_conversation": {
+      "health_score": "3/10",
+      "status": "Critical Technical Debt",
+      "issues": [
+        "2 god stores totaling 1,352 lines (626 + 726)",
+        "20+ components using both stores (cognitive load)",
+        "Data duplication risk between stores",
+        "No slice boundaries - single responsibility violated",
+        "Epic CC-1 ready: 15 stories, 127 hours, 16 days"
+      ],
+      "target_architecture": {
+        "slices": 6,
+        "total_lines": 630,
+        "reduction": "53%",
+        "test_requirements": 105
+      }
+    },
+    "cs4_project_management": {
+      "health_score": "6/10",
+      "status": "Moderate Technical Debt",
+      "issues": [
+        "2 god stores totaling 959 lines (450 + 509)",
+        "Hub not discoverable - no /hub route file",
+        "Fragmented file sync - 4 services with 1,421 lines",
+        "Project workspace bindings exist but underutilized",
+        "Epic CP-1 ready: 18 stories, 80-100 hours, 12-15 days"
+      ],
+      "target_architecture": {
+        "slices": 9,
+        "total_lines": 880,
+        "reduction": "8%",
+        "test_requirements": 95
+      }
+    },
+    "cs5_rag_pipeline": {
+      "health_score": "8/10",
+      "status": "Production Ready",
+      "strengths": [
+        "Document processing operational",
+        "Knowledge synthesis working",
+        "Canvas linking functional",
+        "Research artifacts complete (7 documents, 87% confidence)"
+      ],
+      "issues": [
+        "Minor: Research phase complete but not yet implemented",
+        "EPIC-32 through EPIC-37 ready for Sprint Planning"
+      ]
+    }
+  }
+}

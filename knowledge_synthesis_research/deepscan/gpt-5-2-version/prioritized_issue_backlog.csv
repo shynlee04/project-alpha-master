@@ -1,0 +1,57 @@
+Issue ID,Priority,Severity,Description,Category,Files Affected,Remediation,Impact
+ARCH-001,P0,Critical,"Conversation god stores (1,352 lines)",State Management,"conversation-store.ts, conversation-threads-store.ts",Epic CC-1 (127 hours),"Maintainability collapse, cognitive overload"
+PERSIST-001,P0,Critical,No IndexedDB quota handling,Persistence,All stores using Dexie,DB-001 (18-22 hours),Data loss risk when storage full
+TEST-001,P0,Critical,No tests for conversation store,Testing,conversation-store.ts,Include in Epic CC-1,"Refactoring blocked, regression risk"
+TEST-002,P0,Critical,No tests for project store,Testing,project-store.ts,Include in Epic CP-1,"Refactoring blocked, regression risk"
+AGENT-001,P0,Critical,"AgentConfigDialog exceeds 300 lines (1,089 lines)",UI,AgentConfigDialog.tsx,UI-001 (16-20 hours),"Maintainability nightmare, 363% over limit"
+ARCH-002,P1,High,Project god stores (959 lines),State Management,"project-store.ts, file-snapshot-store.ts",Epic CP-1 (80-100 hours),"Scattered state, inconsistent APIs"
+WS-001,P1,High,Hub not discoverable - no /hub route,Routing,Route configuration,CP-1.12 (2-3 hours),Users cannot access Hub via URL
+XW-001,P1,High,No workspace context passed to agent tools,Agent System,Tool execution engine,4-6 hours,Tools cannot adapt behavior per workspace
+UI-001,P1,High,Hardcoded strings in 23 components,I18N,Multiple components,Sweep Level 8 (8 hours),Cannot internationalize
+UI-002,P1,High,Mobile touch targets <44px,Accessibility,"Button, IconButton components",Sweep Level 7 (6 hours),Accessibility violation
+PERF-001,P1,High,No code splitting - 3MB+ JS bundle,Performance,Vite config,8 hours,Slow initial load (5s+ on 3G)
+PERF-002,P1,High,Large lists not virtualized,Performance,"ConversationList, FileTree",12 hours,UI freezes with >100 items
+PERSIST-002,P1,High,No bulk delete operations,Persistence,Dexie storage layer,6 hours,Cannot efficiently clear old data
+TEST-003,P1,High,No E2E tests for critical flows,Testing,N/A,16 hours,Cannot verify features work end-to-end
+ARCH-003,P2,Medium,20+ components subscribe to both conversation stores,State Management,"ChatPanel, ConversationList, etc.",Part of Epic CC-1,"Duplicate subscriptions, performance risk"
+PERSIST-003,P2,Medium,Session snapshots not auto-cleaned,Persistence,session-snapshot-manager.ts,4 hours,Disk usage grows unbounded
+PERSIST-004,P2,Medium,No persistence health monitoring,Persistence,All persistent stores,6 hours,Silent failures undetected
+FS-001,P2,Medium,"File sync services fragmented (1,421 lines)",Filesystem,filesystem/ directory,Epic CP-1 Phase 4 (optional),"Duplicate logic, inconsistent behavior"
+FS-002,P2,Medium,No incremental sync,Filesystem,Sync services,8 hours,Performance hit on large files
+WS-002,P2,Medium,Workspace state not preserved,Navigation,Navigation store,4 hours,"User loses scroll position, filters"
+WS-003,P2,Medium,No workspace-specific keyboard shortcuts,UX,Keyboard shortcut manager,6 hours,Power users cannot optimize workflow
+XW-002,P2,Medium,Cross-workspace agent switching clears conversation,Conversation,Conversation store,4 hours,User loses context when switching
+AGENT-002,P2,Medium,No agent performance metrics,Observability,Agent execution engine,8 hours,Cannot detect slow/broken agents
+AGENT-003,P2,Medium,Agent error messages not user-friendly,UX,Error handling layer,4 hours,Users see raw error stack traces
+TOOL-001,P2,Medium,Tool registry not type-safe,Type Safety,Tool registry,6 hours,Runtime errors if tool schema changes
+TOOL-002,P2,Medium,No tool execution timeout,Reliability,Tool executor,3 hours,Hung tools block agent indefinitely
+RAG-001,P2,Medium,Research complete but not implemented,RAG,N/A,EPIC-32 through EPIC-37,Features planned but not accessible
+RAG-002,P2,Medium,No chunking strategy for large documents,RAG,Document processor,6 hours,Vector search quality degrades
+UI-003,P2,Medium,Inconsistent spacing units,Design System,Global styles,4 hours,Visual inconsistencies
+UI-004,P2,Medium,No dark/light theme toggle,UX,Theme system,8 hours,Users cannot customize
+PERF-003,P2,Medium,No lazy loading for images,Performance,Image components,3 hours,"Bandwidth waste, slow loads"
+PERF-004,P2,Medium,IndexedDB operations not batched,Performance,Store hydration,6 hours,100+ individual writes on startup
+TEST-004,P2,Medium,No visual regression tests,Testing,N/A,12 hours,UI breaks undetected
+TS-001,P2,Medium,100 TypeScript errors remaining,Type Safety,Multiple files,TS-001 (6-8 hours),"Build warnings, IDE noise"
+SEC-001,P2,Medium,API keys not rotatable,Security,Provider store,4 hours,Cannot update compromised keys easily
+DOC-001,P2,Medium,No onboarding guide,Documentation,N/A,6 hours,High barrier to entry
+ARCH-004,P3,Low,No domain service pattern for conversations,Architecture,Multiple files,Part of Epic CC-1,Business logic mixed with state
+PERSIST-005,P3,Low,No migration rollback mechanism,Persistence,schema-migrations.ts,4 hours,Failed migrations corrupt state
+FS-003,P3,Low,File watcher doesn't detect renames,Filesystem,File watcher service,3 hours,Sync breaks on file rename
+FS-004,P3,Low,No conflict resolution for concurrent edits,Filesystem,Sync manager,12 hours,Last write wins (data loss potential)
+WS-004,P3,Low,Workspace transitions lack animations,UX,Layout components,4 hours,"Feels abrupt, not polished"
+XW-003,P3,Low,No workspace-specific agent configs,Agent System,Agent config,6 hours,Agent behaves same everywhere
+AGENT-004,P3,Low,No agent version management,Agent System,Agent store,8 hours,Cannot rollback config changes
+TOOL-003,P3,Low,Tool descriptions not LLM-optimized,Agent System,Tool definitions,4 hours,Agents struggle to select tools
+TOOL-004,P3,Low,No tool usage analytics,Observability,Tool tracking,6 hours,Cannot identify underused tools
+RAG-003,P3,Low,No embedding cache,RAG,Embedding service,4 hours,Recomputes embeddings unnecessarily
+RAG-004,P3,Low,No metadata filtering in vector search,RAG,Orama config,3 hours,"Cannot filter by date, author, tags"
+UI-005,P3,Low,Component library not documented,Documentation,N/A,12 hours,New devs cannot find components
+PERF-005,P3,Low,No service worker,Performance,N/A,16 hours,App unusable offline
+TEST-005,P3,Low,CI not running tests on PR,CI/CD,GitHub Actions,2 hours,Broken code reaches main
+TS-002,P3,Low,@ts-ignore used in 12 places,Type Safety,Various,4 hours,Masking real issues
+TS-003,P3,Low,Implicit any in 15 functions,Type Safety,Various,3 hours,Type safety compromised
+SEC-002,P3,Low,No key expiration warnings,Security,Provider UI,2 hours,Users don't know when to rotate
+SEC-003,P3,Low,Encryption key stored in code,Security,Encryption service,6 hours,Should use Web Crypto API
+DOC-002,P3,Low,API documentation missing,Documentation,N/A,8 hours,Devs must read source
+DOC-003,P3,Low,No changelog,Documentation,N/A,2 hours,Users don't know what changed
