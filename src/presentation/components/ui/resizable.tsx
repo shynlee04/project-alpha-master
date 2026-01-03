@@ -25,13 +25,18 @@ type ResizablePanelProps = React.HTMLAttributes<HTMLDivElement> & {
   defaultSize?: number
   minSize?: number
   maxSize?: number
+  collapsedSize?: number
   order?: number
   id?: string
+  collapsible?: boolean
+  onCollapse?: (collapsed: boolean) => void
 }
 
 type ResizableHandleProps = React.HTMLAttributes<HTMLDivElement> & {
   withHandle?: boolean
   orientation?: 'horizontal' | 'vertical'
+  collapsedSize?: number
+  onCollapse?: (collapsed: boolean) => void
 }
 
 // --- Context ---
@@ -42,12 +47,17 @@ type ResizableContextType = {
   startResize: (handleIndex: number, startPos: number) => void
   updateResize: (currentPos: number) => void
   endResize: () => void
+  toggleCollapse: (handleIndex: number) => void
+  isPanelCollapsed: (panelIndex: number) => boolean
 }
 
 type PanelConfig = {
   defaultSize?: number
   minSize: number
   maxSize: number
+  collapsedSize?: number
+  collapsible?: boolean
+  onCollapse?: (collapsed: boolean) => void
 }
 
 const ResizableContext = React.createContext<ResizableContextType | null>(null)
@@ -368,6 +378,108 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       resizeStateRef.current = null
     }, [])
 
+    const toggleCollapse = React.useCallback((handleIndex: number) => {
+      // Collapse the panel to the LEFT of the handle (for horizontal)
+      // or ABOVE the handle (for vertical)
+      const panelIndex = handleIndex
+      if (panelIndex < 0 || panelIndex >= panelIds.length) return
+
+      const panelId = panelIds[panelIndex]
+      if (!panelId) return
+
+      const isCurrentlyCollapsed = collapsedPanels.has(panelId)
+
+      if (isCurrentlyCollapsed) {
+        // Expand
+        const config = panelConfigsRef.current.get(panelIndex)
+        config?.onCollapse?.(false)
+
+        // Get the size to restore
+        const previousSize = previousSizesRef.current.get(panelId) ?? (100 / layout.length)
+        const currentSize = layout[panelIndex]
+        const spaceNeeded = previousSize - currentSize
+
+        // Find non-collapsed panels to shrink
+        const shrinkablePanels = layout
+          .map((size, idx) => ({ size, idx }))
+          .filter(p => {
+            if (p.idx === panelIndex) return false
+            const config = panelConfigsRef.current.get(p.idx)
+            const minSize = config?.minSize ?? 5
+            return p.size > minSize
+          })
+
+        if (shrinkablePanels.length === 0) return
+
+        // Shrink other panels proportionally
+        const totalShrinkableSize = shrinkablePanels.reduce((sum, p) => {
+          const config = panelConfigsRef.current.get(p.idx)
+          const minSize = config?.minSize ?? 5
+          return sum + (p.size - minSize)
+        }, 0)
+
+        const newLayout = [...layout]
+        newLayout[panelIndex] = previousSize
+
+        shrinkablePanels.forEach(p => {
+          const config = panelConfigsRef.current.get(p.idx)
+          const minSize = config?.minSize ?? 5
+          const shrinkableAmount = p.size - minSize
+          const proportion = totalShrinkableSize > 0 ? shrinkableAmount / totalShrinkableSize : 1 / shrinkablePanels.length
+          const shrinkAmount = Math.min(spaceNeeded * proportion, shrinkableAmount)
+          newLayout[p.idx] = p.size - shrinkAmount
+        })
+
+        setCollapsedPanels(prev => {
+          const next = new Set(prev)
+          next.delete(panelId)
+          return next
+        })
+        previousSizesRef.current.delete(panelId)
+        setLayout(newLayout)
+        onLayout?.(newLayout)
+      } else {
+        // Collapse
+        const config = panelConfigsRef.current.get(panelIndex)
+        const collapsedSize = config?.collapsedSize ?? config?.minSize ?? 0
+
+        // Save current size before collapsing
+        previousSizesRef.current.set(panelId, layout[panelIndex])
+
+        // Calculate space to redistribute
+        const spaceToRedistribute = layout[panelIndex] - collapsedSize
+
+        // Find non-collapsed panels to expand
+        const expandablePanels = layout
+          .map((size, idx) => ({ size, idx }))
+          .filter(p => p.idx !== panelIndex && !Array.from(collapsedPanels).some(
+            id => panelIdToIndexRef.current.get(id) === p.idx
+          ))
+
+        if (expandablePanels.length === 0) return
+
+        // Distribute space proportionally to other panels
+        const totalExpandableSize = expandablePanels.reduce((sum, p) => sum + p.size, 0)
+        const newLayout = [...layout]
+        newLayout[panelIndex] = collapsedSize
+
+        expandablePanels.forEach(p => {
+          const proportion = totalExpandableSize > 0 ? p.size / totalExpandableSize : 1 / expandablePanels.length
+          newLayout[p.idx] = p.size + (spaceToRedistribute * proportion)
+        })
+
+        config?.onCollapse?.(true)
+        setCollapsedPanels(prev => new Set(prev).add(panelId))
+        setLayout(newLayout)
+        onLayout?.(newLayout)
+      }
+    }, [layout, onLayout, collapsedPanels, panelIds])
+
+    const isPanelCollapsed = React.useCallback((panelIndex: number) => {
+      const panelId = panelIds[panelIndex]
+      return panelId ? collapsedPanels.has(panelId) : false
+    }, [collapsedPanels, panelIds])
+
     // Render children with proper indices
     const renderedChildren = React.useMemo(() => {
       let panelIndex = 0
@@ -399,7 +511,7 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
     }, [flatChildren, layout])
 
     return (
-      <ResizableContext.Provider value={{ direction, registerPanel, startResize, updateResize, endResize }}>
+      <ResizableContext.Provider value={{ direction, registerPanel, startResize, updateResize, endResize, toggleCollapse, isPanelCollapsed }}>
         <div
           ref={containerRef}
           data-slot="resizable-panel-group"
@@ -423,6 +535,9 @@ function ResizablePanel({
   defaultSize,
   minSize = 5,
   maxSize = 100,
+  collapsedSize,
+  collapsible,
+  onCollapse,
   id,
   children,
   _size,
@@ -437,9 +552,16 @@ function ResizablePanel({
   // Register panel config
   React.useEffect(() => {
     if (context && _index !== undefined) {
-      context.registerPanel(_index, { defaultSize, minSize, maxSize })
+      context.registerPanel(_index, {
+        defaultSize,
+        minSize,
+        maxSize,
+        collapsedSize,
+        collapsible,
+        onCollapse
+      })
     }
-  }, [context, _index, defaultSize, minSize, maxSize])
+  }, [context, _index, defaultSize, minSize, maxSize, collapsedSize, collapsible, onCollapse])
 
   return (
     <div
@@ -470,6 +592,24 @@ function ResizableHandle({
 }: ResizableHandleProps & { _index?: number }) {
   const context = React.useContext(ResizableContext)
   const [isDragging, setIsDragging] = React.useState(false)
+
+  // Check if the panel to the left/above of this handle is collapsible
+  const canCollapse = React.useMemo(() => {
+    if (_index === undefined || !context) return false
+    return context.isPanelCollapsed(_index) !== undefined
+  }, [_index, context])
+
+  const isCollapsed = React.useMemo(() => {
+    if (_index === undefined || !context) return false
+    return context.isPanelCollapsed(_index)
+  }, [_index, context])
+
+  const handleDoubleClick = React.useCallback((e: React.MouseEvent) => {
+    if (!context || _index === undefined) return
+    e.preventDefault()
+    e.stopPropagation()
+    context.toggleCollapse(_index)
+  }, [context, _index])
 
   const handleMouseDown = React.useCallback((e: React.MouseEvent) => {
     if (!context || _index === undefined) return
@@ -549,6 +689,7 @@ function ResizableHandle({
         className
       )}
       onMouseDown={handleMouseDown}
+      onDoubleClick={handleDoubleClick}
       onTouchStart={handleTouchStart}
       {...props}
     >
@@ -561,6 +702,39 @@ function ResizableHandle({
             "size-2.5 text-muted-foreground",
             context?.direction === 'vertical' && "rotate-90"
           )} />
+        </div>
+      )}
+      {/* Collapse indicator */}
+      {canCollapse && (
+        <div
+          className={cn(
+            "absolute z-30 flex items-center justify-center pointer-events-none opacity-0 hover:opacity-100 transition-opacity",
+            context?.direction === 'vertical'
+              ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          )}
+          title={isCollapsed ? "Double-click to expand" : "Double-click to collapse"}
+        >
+          <div className={cn(
+            "bg-primary text-primary-foreground rounded-full p-0.5 shadow-sm",
+            context?.direction === 'vertical' ? "w-4 h-4" : "w-4 h-4"
+          )}>
+            {isCollapsed ? (
+              <div className={cn(
+                "w-full h-full flex items-center justify-center",
+                context?.direction === 'vertical' ? "rotate-0" : "rotate-0"
+              )}>
+                <span className="text-[8px] font-bold">+</span>
+              </div>
+            ) : (
+              <div className={cn(
+                "w-full h-full flex items-center justify-center",
+                context?.direction === 'vertical' ? "rotate-90" : "rotate-0"
+              )}>
+                <span className="text-[8px] font-bold">−</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -625,12 +625,14 @@ export const useAppStore = create<AppState>()(
   - Study: `study-store.ts` (SRS sessions)
   - Canvas: `canvas-store.ts`
   - Flashcard: `flashcard-store.ts`
-  
-- **Legacy Adapters** (marked @deprecated, function as re-export bridges):
-  - `src/lib/workspace/conversation-store.ts` → Adapter to `infrastructure/persistence/stores/conversation/`
-  - `src/lib/workspace/threads-store.ts` → Dexie persistence utility (not a Zustand store)
-  - `src/lib/workspace/ide-state-store.ts` → Adapter to `lib/state/ide-store.ts`
-  - `src/lib/state/quiz-store.ts` → Standalone quiz CRUD (separate from study-store)
+
+- **Deleted (Story 51-12 - 2026-01-03)**:
+  - `src/lib/workspace/conversation-store.ts` → ✅ DELETED (no consumers, was adapter to infrastructure)
+  - `src/lib/workspace/ide-state-store.ts` → ✅ DELETED (no consumers, was deprecated backward compatibility layer)
+
+- **Dexie Utilities** (database persistence, not Zustand stores):
+  - `src/lib/workspace/threads-store.ts` → Thread persistence utility (used by infrastructure)
+  - `src/lib/state/quiz-store.ts` → Standalone quiz CRUD (complementary to study-store, not a duplicate)
 
 - **Active Library Stores** (pending migration):
   - `src/lib/state/ide-store.ts` → IDE panel state

@@ -60,6 +60,9 @@ export function KnowledgePage() {
     const [synthesisResult, setSynthesisResult] = useState<SynthesisResult | null>(null);
     const [previewType, setPreviewType] = useState<ArtifactType | null>(null);
 
+    // Panel collapse state
+    const [sourceLibraryCollapsed, setSourceLibraryCollapsed] = useState(false);
+
     // Listen to RAG progress events from other workspaces
     useEffect(() => {
         // eventBus is a singleton, always available
@@ -323,62 +326,84 @@ export function KnowledgePage() {
     return (
         <MainLayout>
             <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
-                {/* Left Panel: Source Library - 20% */}
-                <ResizablePanel defaultSize={20} minSize={20} maxSize={30} className="min-w-[280px]">
+                {/* Left Panel: Source Library - 20% (collapsible) */}
+                <ResizablePanel
+                    id="knowledge-source-library"
+                    defaultSize={20}
+                    minSize={20}
+                    maxSize={30}
+                    collapsible={true}
+                    collapsedSize={3}
+                    onCollapse={setSourceLibraryCollapsed}
+                    className="min-w-[280px]">
                     <div className="h-full border-r border-border flex flex-col bg-background">
-                        <div className="p-3 border-b border-border flex items-center justify-between">
-                            <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
-                            <div className="flex items-center gap-2">
-                                {/* AC-02: Agent Manager - comprehensive agent management UI */}
-                                <AgentManager
-                                    variant="compact"
-                                    workspaceType="knowledge"
-                                />
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                                <Bot size={14} />
-                                            </div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                                <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
-                                    <Plus className="h-3 w-3" />
-                                </Button>
-                                <SynthesisDialog
-                                    sourceIds={[]}
-                                    onComplete={handleSynthesisComplete}
-                                />
-                            </div>
-                        </div>
-                        {/* P0-2: Indexing Progress Panel */}
-                        <IndexingProgressPanel className="px-3 pb-3" />
-                        <div className="flex-1 overflow-y-auto">
-                            {/* UC1: Show preview panel when synthesis is complete */}
-                            {synthesisResult && previewType ? (
-                                <div className="h-full">
-                                    {previewType === 'flashcards' ? (
-                                        <FlashcardPreviewPanel
-                                            synthesisResult={synthesisResult}
-                                            onSave={handlePreviewSave}
-                                            onDiscard={handlePreviewDiscard}
-                                        />
-                                    ) : (
-                                        <QuizPreviewPanel
-                                            synthesisResult={synthesisResult}
-                                            onSave={handlePreviewSave}
-                                            onDiscard={handlePreviewDiscard}
-                                        />
-                                    )}
+                        {!sourceLibraryCollapsed && (
+                            <>
+                            <div className="p-3 border-b border-border flex items-center justify-between">
+                                <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
+                                <div className="flex items-center gap-2">
+                                    {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                                    <AgentManager
+                                        variant="compact"
+                                        workspaceType="knowledge"
+                                    />
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                                                    <Bot size={14} />
+                                                </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                    <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
+                                        <Plus className="h-3 w-3" />
+                                    </Button>
+                                    <SynthesisDialog
+                                        sourceIds={[]}
+                                        onComplete={handleSynthesisComplete}
+                                    />
                                 </div>
-                            ) : (
-                                <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
-                            )}
-                        </div>
+                            </div>
+                            {/* P0-2: Indexing Progress Panel */}
+                            <IndexingProgressPanel className="px-3 pb-3" />
+                            <div className="flex-1 overflow-y-auto">
+                                {/* UC1: Show preview panel when synthesis is complete */}
+                                {synthesisResult && previewType ? (
+                                    <div className="h-full">
+                                        {previewType === 'flashcards' ? (
+                                            <FlashcardPreviewPanel
+                                                synthesisResult={synthesisResult}
+                                                onSave={handlePreviewSave}
+                                                onDiscard={handlePreviewDiscard}
+                                            />
+                                        ) : (
+                                            <QuizPreviewPanel
+                                                synthesisResult={synthesisResult}
+                                                onSave={handlePreviewSave}
+                                                onDiscard={handlePreviewDiscard}
+                                            />
+                                        )}
+                                    </div>
+                                ) : (
+                                    <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
+                                )}
+                            </div>
+                            </>
+                        )}
+                        {sourceLibraryCollapsed && (
+                            <div className="flex-1 flex items-center justify-center border-r border-border bg-muted/30">
+                                <div className="text-center">
+                                    <Sparkles className="mx-auto h-4 w-4 text-muted-foreground mb-1" />
+                                    <span className="text-xs text-muted-foreground">
+                                        {t('knowledge.sources')}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </ResizablePanel>
 
