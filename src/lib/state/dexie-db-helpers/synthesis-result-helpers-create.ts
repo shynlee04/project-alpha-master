@@ -23,7 +23,7 @@ export async function createSynthesisResult(
     sourceId: string,
     projectId: string,
     sourceType: 'pdf' | 'url' | 'text',
-    initialStatus: 'pending' | 'in_progress' | 'completed' | 'failed' = 'pending'
+    initialStatus: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed' = 'pending'
 ): Promise<string> {
     const id = crypto.randomUUID();
     const now = Date.now();
@@ -52,7 +52,7 @@ export async function createSynthesisResult(
  */
 export async function updateSynthesisResultStatus(
     resultId: string,
-    newStatus: 'pending' | 'in_progress' | 'completed' | 'failed',
+    newStatus: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed',
     frontmatter?: SynthesisResultRecord['frontmatter']
 ): Promise<SynthesisResultRecord | undefined> {
     const result = await db.synthesisResults.get(resultId);

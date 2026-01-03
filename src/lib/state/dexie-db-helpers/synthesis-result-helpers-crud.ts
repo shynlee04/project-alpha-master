@@ -63,7 +63,7 @@ export async function getSynthesisResultsForProject(
  */
 export async function getSynthesisResultsByStatus(
     projectId: string,
-    status: 'pending' | 'in_progress' | 'completed' | 'failed'
+    status: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed'
 ): Promise<SynthesisResultRecord[]> {
     return db.synthesisResults
         .where('[projectId+status]')
