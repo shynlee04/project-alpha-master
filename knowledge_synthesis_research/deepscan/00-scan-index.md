@@ -15,7 +15,7 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 | 03 | [persistence-indexing-audit.md](./03-persistence-indexing-audit.md) | Dexie/Orama schemas, cache drift, perf | *Skipped (Merged into 02)* |
 | 04 | [filesystem-sync-audit.md](./04-filesystem-sync-audit.md) | FSA integration, offline queue, conflict resolution | **Complete** |
 | 05 | [agent-tooling-audit.md](./05-agent-tooling-audit.md) | Permissions, injection safety, CRUD boundaries | **Complete** |
-| 06 | [ux-gap-report-desktop.md](./06-ux-gap-report-desktop.md) | Desktop flow completeness vs PRD | Pending |
+| 06 | [ux-gap-report-desktop.md](./06-ux-gap-report-desktop.md) | Desktop flow completeness vs PRD | **Complete** |
 | 07 | [ux-gap-report-mobile.md](./07-ux-gap-report-mobile.md) | Mobile constraints, touch targets, offline UX | Pending |
 | 08 | [top-25-issues.md](./08-top-25-issues.md) | Prioritized remediation list | Pending |
 
@@ -24,3 +24,4 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 - **Pass 1:** Architecture is Layer-First Clean Architecture. Workspaces are isolated presentation components.
 - **Pass 2:** Store topology is feature-sliced. Persistence (Dexie) is healthy but mislocated.
 - **Pass 3:** Filesystem sync is mature (offline-ready) but complex. Agent system has strong permissioning but needs strict input sanitization audit.
+- **Pass 4:** Routing is type-safe (TanStack Router) but lacks polish (loading states/404). IDE components are functional but miss "Happy Path" on-boarding states.
