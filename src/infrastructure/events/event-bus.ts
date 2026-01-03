@@ -63,7 +63,12 @@ export enum DomainEventType {
   RAG_EMBEDDING_PROGRESS = 'rag:embedding:progress',
   RAG_CHUNKING_STATUS = 'rag:chunking:status',
   RAG_DATABASE_INDEXING = 'rag:database:indexing',
-  RAG_SOURCE_PROCESSING = 'rag:source:processing'
+  RAG_SOURCE_PROCESSING = 'rag:source:processing',
+
+  // IDE events (P2-6 - IDE → Knowledge bridge)
+  IDE_DEBUG_SESSION_CAPTURED = 'ide:debug:session:captured',
+  IDE_REFACTOR_JOURNAL_CREATED = 'ide:refactor:journal:created',
+  IDE_DEPENDENCY_AUDIT_COMPLETE = 'ide:dependency:audit:complete'
 }
 
 /**
@@ -108,6 +113,111 @@ export interface RAGProgressPayload {
   error?: string; // Error message if status is 'error'
   documentId?: string; // Optional document identifier
   sourceId?: string; // Optional source identifier
+}
+
+/**
+ * IDE → Knowledge Event Payloads (P2-6 - IDE ↔ Knowledge Bridge)
+ *
+ * These payloads carry IDE context to Knowledge workspace for:
+ * - UC-02: IDE Debugging Vault
+ * - UC-11: Agentic Refactor Validation
+ * - UC-13: Dependency Audit Upgrade
+ */
+
+/**
+ * Debug Session Data (UC-02)
+ *
+ * Captured from IDE when user clicks "Capture Debug Session"
+ */
+export interface DebugSessionData {
+  workspaceType: 'ide';
+  projectId: string;
+  timestamp: Date;
+  errorType: string; // e.g., "TypeError", "ReferenceError"
+  errorMessage: string; // Human-readable error message
+  stackTrace: string; // Full stack trace
+  environment: {
+    nodeVersion?: string;
+    browser?: string;
+    os?: string;
+    framework?: string; // e.g., "React 18.2.0"
+  };
+  codeContext: {
+    filePath: string;
+    lineNumber: number;
+    snippet: string; // Surrounding code
+  };
+  attemptedFixes: string[]; // List of attempted solutions
+  finalFix: string; // What actually worked
+  symptoms: string; // User's description of the problem
+  tags: string[]; // Auto-generated tags (framework, error family, language feature)
+}
+
+/**
+ * Refactor Journal Data (UC-11)
+ *
+ * Created when agent completes multi-file refactor
+ */
+export interface RefactorJournalData {
+  workspaceType: 'ide';
+  projectId: string;
+  timestamp: Date;
+  title: string; // e.g., "Refactor: useAppStore → 3 slices"
+  originalState: {
+    storeName: string;
+    lineCount: number;
+    sliceCount: number;
+  };
+  migrationPlan: string[]; // Step-by-step migration plan
+  changedFiles: Array<{
+    filePath: string;
+    action: 'created' | 'updated' | 'deleted';
+    diffSummary: string;
+  }>;
+  validationResults: Array<{
+    step: number;
+    description: string;
+    status: 'pass' | 'fail' | 'warning';
+    output?: string;
+  }>;
+  rollbackCheckpoints: Array<{
+    step: number;
+    gitCommand: string; // e.g., "git checkout HEAD~1 -- src/store.ts"
+    description: string;
+  }>;
+  tags: string[]; // e.g., ["zustand", "store-split", "migration"]
+}
+
+/**
+ * Dependency Audit Data (UC-13)
+ *
+ * Generated when agent completes dependency research phase
+ */
+export interface DependencyAuditData {
+  workspaceType: 'ide';
+  projectId: string;
+  timestamp: Date;
+  packageName: string; // e.g., "react"
+  fromVersion: string; // e.g., "18.2.0"
+  toVersion: string; // e.g., "19.0.0"
+  breakingChanges: Array<{
+    description: string;
+    affectedCode: string[]; // File paths
+    migrationGuide?: string; // URL to migration guide
+  }>;
+  codebaseImpact: {
+    totalFilesAffected: number;
+    filesByImportType: Record<string, number>; // e.g., { "useState": 15, "useEffect": 8 }
+  };
+  upgradePlan: string[]; // Step-by-step upgrade plan
+  externalLinks: {
+    changelog?: string;
+    migrationGuide?: string;
+    releaseNotes?: string;
+    githubDiscussion?: string;
+  };
+  riskLevel: 'low' | 'medium' | 'high';
+  tags: string[]; // e.g., ["react", "major-version", "hooks"]
 }
 
 /**

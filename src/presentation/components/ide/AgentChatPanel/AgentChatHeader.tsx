@@ -8,7 +8,7 @@
  * @component AgentChatHeader
  */
 
-import { Bot, Sparkles } from 'lucide-react';
+import { Bot, Sparkles, Bug } from 'lucide-react';
 import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
@@ -19,6 +19,7 @@ interface AgentChatHeaderProps {
     isEnhancementEnabled: boolean;
     onToggleEnhancement: () => void;
     onClear: () => void;
+    onCaptureDebugSession: () => void;
 }
 
 /**
@@ -29,7 +30,8 @@ export function AgentChatHeader({
     toolsAvailable,
     isEnhancementEnabled,
     onToggleEnhancement,
-    onClear
+    onClear,
+    onCaptureDebugSession
 }: AgentChatHeaderProps) {
     // Truncate model ID for display
     const displayModel = modelId.split('/').pop()?.substring(0, 20) || '';
@@ -75,6 +77,15 @@ export function AgentChatHeader({
                     text={displayModel}
                     className="text-[10px] text-muted-foreground font-mono max-w-[100px]"
                 />
+                {/* P2-6: Capture Debug Session button */}
+                <button
+                    onClick={onCaptureDebugSession}
+                    title="Capture Debug Session to Knowledge workspace"
+                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors px-2 py-1 flex items-center gap-1"
+                >
+                    <Bug className="w-3 h-3" />
+                    Capture
+                </button>
                 <button
                     onClick={onClear}
                     title="Clear conversation"

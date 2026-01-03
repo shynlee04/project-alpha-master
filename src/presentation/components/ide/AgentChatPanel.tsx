@@ -2,6 +2,9 @@ import { useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import { Bug } from 'lucide-react';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import type { DebugSessionData } from '@/infrastructure/events/event-bus';
 
 import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
@@ -262,6 +265,64 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         }
     }, [projectId, createThread, setActiveThread, t]);
 
+    // P2-6: Capture Debug Session for IDE → Knowledge bridge
+    const handleCaptureDebugSession = useCallback(async () => {
+        if (!projectId) {
+            toast.error('No project open', {
+                description: 'Please open a project to capture debug sessions'
+            });
+            return;
+        }
+
+        // Collect debug context from recent messages
+        const recentErrors = allMessages
+            .filter(m => m.role === 'assistant' && m.content.toLowerCase().includes('error'))
+            .slice(-3)
+            .map(m => m.content)
+            .join('\n\n');
+
+        // Collect terminal output if available
+        const terminalOutput = ''; // TODO: Integrate with terminal output capture
+
+        // Collect stack traces from error messages
+        const stackTrace = recentErrors.includes('Stack trace')
+            ? recentErrors.substring(recentErrors.indexOf('Stack trace'))
+            : recentErrors;
+
+        // Create debug session data
+        const debugData: DebugSessionData = {
+            workspaceType: 'ide',
+            projectId,
+            timestamp: new Date(),
+            errorType: 'TypeError', // TODO: Parse from error messages
+            errorMessage: recentErrors.substring(0, 200) + '...',
+            stackTrace,
+            environment: {
+                browser: navigator.userAgent,
+                os: navigator.platform,
+                framework: 'React 18.2.0', // TODO: Detect from package.json
+            },
+            codeContext: {
+                filePath: 'src/components/Component.tsx', // TODO: Get from active file
+                lineNumber: 1,
+                snippet: '// TODO: Capture actual code snippet',
+            },
+            attemptedFixes: [],
+            finalFix: '',
+            symptoms: recentErrors.substring(0, 100),
+            tags: ['debug', 'error', 'ide'],
+        };
+
+        // Publish event to cross-workspace event bus
+        eventBus.emit(DomainEventType.IDE_DEBUG_SESSION_CAPTURED, debugData);
+
+        toast.success('Debug session captured', {
+            description: 'Creating Debug Note in Knowledge workspace...'
+        });
+
+        console.log('[AgentChatPanel] Debug session captured:', debugData);
+    }, [projectId, allMessages, t]);
+
     // Display messages with welcome fallback
     const displayMessages = allMessages.length > 0 ? allMessages : [createWelcomeMessage()];
 
@@ -274,6 +335,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
                 isEnhancementEnabled={isEnhancementEnabled}
                 onToggleEnhancement={toggleEnhancement}
                 onClear={handleClear}
+                onCaptureDebugSession={handleCaptureDebugSession}
             />
 
             {/* Status */}

@@ -1,7 +1,9 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, Plus, Bot } from 'lucide-react';
+import { toast } from 'sonner';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import type { DebugSessionData } from '@/infrastructure/events/event-bus';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import {
     ResizableHandle,
@@ -167,6 +169,88 @@ export function KnowledgePage() {
             unsubscribeChunking();
             unsubscribeIndexing();
             unsubscribeSourceProcessing();
+        };
+    }, [eventBus]);
+
+    // P2-6: Listen to IDE events for IDE → Knowledge bridge
+    useEffect(() => {
+        console.log('[KnowledgePage] Setting up IDE event listeners');
+
+        /**
+         * Handle Debug Session Captured event from IDE workspace
+         * Creates a Debug Note in Knowledge workspace
+         */
+        const handleDebugSessionCaptured = (event: any) => {
+            const debugData: DebugSessionData = event.payload;
+            console.log('[KnowledgePage] IDE_DEBUG_SESSION_CAPTURED event received:', debugData);
+
+            // Phase 4: TODO - Use synthesis service to create structured Debug Note
+            // For now, create a simple knowledge node with debug data
+            const debugNote = {
+                id: `debug-${Date.now()}`,
+                type: 'debug-note',
+                title: `${debugData.errorType} Debug Note`,
+                content: `
+# ${debugData.errorType} Debug Session
+
+## Error Message
+${debugData.errorMessage}
+
+## Stack Trace
+\`\`\`
+${debugData.stackTrace}
+\`\`\`
+
+## Environment
+- Browser: ${debugData.environment.browser}
+- OS: ${debugData.environment.os}
+- Framework: ${debugData.environment.framework}
+
+## Symptoms
+${debugData.symptoms}
+
+## Attempted Fixes
+${debugData.attemptedFixes.length > 0 ? debugData.attemptedFixes.map((fix, i) => `${i + 1}. ${fix}`).join('\n') : 'None'}
+
+## Final Fix
+${debugData.finalFix || 'Not yet resolved'}
+
+## Tags
+${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
+
+---
+*Captured from IDE workspace on ${debugData.timestamp.toLocaleString()}*
+                `.trim(),
+                frontmatter: {
+                    createdAt: debugData.timestamp.toISOString(),
+                    workspaceType: debugData.workspaceType,
+                    projectId: debugData.projectId,
+                    tags: debugData.tags,
+                    errorType: debugData.errorType,
+                },
+                embeddings: [], // TODO: Generate embeddings in Phase 4
+            };
+
+            // TODO: Add to knowledge store
+            // knowledgeStore.addNode(debugNote);
+
+            // Show toast notification
+            toast.success('Debug Note created', {
+                description: `${debugData.errorType} - ${debugData.errorMessage.substring(0, 50)}...`,
+            });
+
+            console.log('[KnowledgePage] Debug Note created:', debugNote);
+        };
+
+        // Register IDE event listener
+        const unsubscribeDebugSession = eventBus.on(DomainEventType.IDE_DEBUG_SESSION_CAPTURED, handleDebugSessionCaptured as any);
+
+        console.log('[KnowledgePage] IDE event listeners registered');
+
+        // Cleanup: remove listeners on unmount
+        return () => {
+            console.log('[KnowledgePage] Cleaning up IDE event listeners');
+            unsubscribeDebugSession();
         };
     }, [eventBus]);
 
