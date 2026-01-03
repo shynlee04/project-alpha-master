@@ -11,8 +11,8 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 | ID | Artifact | Focus Area | Status |
 |---|---|---|---|
 | 01 | [workspace-boundaries.md](./01-workspace-boundaries.md) | Module responsibilities, cross-imports, isolation | **Complete** |
-| 02 | [state-store-audit.md](./02-state-store-audit.md) | Zustand topology, persistence, anti-patterns | Pending |
-| 03 | [persistence-indexing-audit.md](./03-persistence-indexing-audit.md) | Dexie/Orama schemas, cache drift, perf | Pending |
+| 02 | [state-store-audit.md](./02-state-store-audit.md) | Zustand topology, persistence, anti-patterns | **Complete** |
+| 03 | [persistence-indexing-audit.md](./03-persistence-indexing-audit.md) | Dexie/Orama schemas, cache drift, perf | *Skipped (Merged into 02)* |
 | 04 | [filesystem-sync-audit.md](./04-filesystem-sync-audit.md) | FSA integration, offline queue, conflict resolution | Pending |
 | 05 | [agent-tooling-audit.md](./05-agent-tooling-audit.md) | Permissions, injection safety, CRUD boundaries | Pending |
 | 06 | [ux-gap-report-desktop.md](./06-ux-gap-report-desktop.md) | Desktop flow completeness vs PRD | Pending |
@@ -21,4 +21,5 @@ The scan is conducted in passes, prioritizing infrastructure foundations before 
 
 ## Global Findings Summary
 *(To be populated as scan progresses)*
-- **Pass 1:** Architecture is Layer-First Clean Architecture. Workspaces (IDE, Knowledge, Notes, Study) are Presentation-layer components sharing Domain services. No Module-First organization detected.
+- **Pass 1:** Architecture is Layer-First Clean Architecture. Workspaces are isolated presentation components.
+- **Pass 2:** Store topology is feature-sliced and healthy. Persistence layer (Dexie) is strongly typed but misplaced in `src/lib/state` (should be `src/infrastructure`). `knowledge-store.ts` is a potential "God Store" risk.
