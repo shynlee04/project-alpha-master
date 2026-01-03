@@ -64,6 +64,8 @@ export enum DomainEventType {
   RAG_CHUNKING_STATUS = 'rag:chunking:status',
   RAG_DATABASE_INDEXING = 'rag:database:indexing',
   RAG_SOURCE_PROCESSING = 'rag:source:processing',
+  RAG_INDEXING_CANCEL_REQUESTED = 'rag:indexing:cancel:request',
+  RAG_INDEXING_RETRY_REQUESTED = 'rag:indexing:retry:request',
 
   // IDE events (P2-6 - IDE → Knowledge bridge)
   IDE_DEBUG_SESSION_CAPTURED = 'ide:debug:session:captured',
@@ -269,6 +271,28 @@ export interface NotesRAGIndexData {
   timestamp: Date;
   projectId: string;
   mode: 'batch' | 'incremental'; // Batch all notes or single note
+}
+
+/**
+ * RAG Indexing Cancel Data
+ *
+ * Generated when user cancels an ongoing RAG indexing operation
+ */
+export interface RAGIndexingCancelData {
+  documentId: string; // Document ID to cancel
+  projectId: string;
+  timestamp: Date;
+}
+
+/**
+ * RAG Indexing Retry Data
+ *
+ * Generated when user retries a failed RAG indexing operation
+ */
+export interface RAGIndexingRetryData {
+  documentId: string; // Document ID to retry
+  projectId: string;
+  timestamp: Date;
 }
 
 /**

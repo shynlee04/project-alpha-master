@@ -33,6 +33,9 @@ import {
   Clock,
 } from 'lucide-react';
 import { Progress } from '@/presentation/components/ui/progress';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import type { RAGProgressPayload, RAGIndexingCancelData, RAGIndexingRetryData } from '@/infrastructure/events/event-bus';
+import { useIDEStore } from '@/lib/state/ide-store';
 
 /**
  * Indexing stage
@@ -101,6 +104,7 @@ function formatDuration(seconds: number): string {
  */
 export function IndexingProgressPanel() {
   const { t } = useTranslation();
+  const projectId = useIDEStore((state) => state.projectId) || 'default';
   const [indexingState, setIndexingState] = useState<IndexingState>({
     documents: [],
     totalDocuments: 0,
@@ -114,51 +118,157 @@ export function IndexingProgressPanel() {
 
   // Subscribe to indexing events from RAG module
   useEffect(() => {
-    // TODO: Subscribe to RAG indexing events
-    // This is a placeholder - actual implementation will connect to RAG indexing service
-    const mockState: IndexingState = {
-      documents: [
-        {
-          id: '1',
-          fileName: 'machine-learning.pdf',
-          fileType: 'pdf',
-          stage: 'embedding',
-          chunkingProgress: { current: 100, total: 100 },
-          embeddingProgress: { current: 450, total: 1000 },
-          indexingProgress: 55,
-          vectorsCount: 450,
-          estimatedTimeRemaining: 120,
-        },
-        {
-          id: '2',
-          fileName: 'react-notes.md',
-          fileType: 'md',
-          stage: 'chunking',
-          chunkingProgress: { current: 25, total: 80 },
-          embeddingProgress: { current: 0, total: 0 },
-          indexingProgress: 25,
-          vectorsCount: 0,
-          estimatedTimeRemaining: 180,
-        },
-      ],
-      totalDocuments: 2,
-      completedDocuments: 0,
-      failedDocuments: 0,
-      totalVectors: 450,
-      currentIndexingStage: 'embedding',
-      startTime: Date.now() - 60000,
-      endTime: null,
+    console.log('[IndexingProgressPanel] Setting up RAG indexing event listeners');
+
+    // Map RAG event payload to DocumentProgress
+    const updateDocumentProgress = (payload: RAGProgressPayload) => {
+      const documentId = payload.documentId || payload.sourceId || 'unknown';
+
+      setIndexingState((prevState) => {
+        const existingDoc = prevState.documents.find((d) => d.id === documentId);
+
+        if (existingDoc) {
+          // Update existing document
+          return {
+            ...prevState,
+            documents: prevState.documents.map((doc) =>
+              doc.id === documentId
+                ? {
+                    ...doc,
+                    stage: mapStatusToStage(payload.status),
+                    chunkingProgress: {
+                      current: payload.current || doc.chunkingProgress.current,
+                      total: payload.total || doc.chunkingProgress.total,
+                    },
+                    embeddingProgress: {
+                      current: payload.current || doc.embeddingProgress.current,
+                      total: payload.total || doc.embeddingProgress.total,
+                    },
+                    indexingProgress: payload.progress || doc.indexingProgress,
+                    vectorsCount: payload.current || doc.vectorsCount,
+                    error: payload.error,
+                  }
+                : doc
+            ),
+          };
+        } else {
+          // Add new document
+          const newDoc: DocumentProgress = {
+            id: documentId,
+            fileName: payload.message || `Document ${documentId}`,
+            fileType: 'pdf', // Default type
+            stage: mapStatusToStage(payload.status),
+            chunkingProgress: {
+              current: payload.current || 0,
+              total: payload.total || 0,
+            },
+            embeddingProgress: {
+              current: payload.current || 0,
+              total: payload.total || 0,
+            },
+            indexingProgress: payload.progress || 0,
+            vectorsCount: payload.current || 0,
+            error: payload.error,
+          };
+
+          return {
+            ...prevState,
+            documents: [...prevState.documents, newDoc],
+            totalDocuments: prevState.totalDocuments + 1,
+          };
+        }
+      });
     };
 
-    setIndexingState(mockState);
+    // Subscribe to chunking status events
+    const unsubscribeChunking = eventBus.on(
+      DomainEventType.RAG_CHUNKING_STATUS,
+      (event: any) => {
+        console.log('[IndexingProgressPanel] RAG_CHUNKING_STATUS:', event);
+        updateDocumentProgress(event);
+      }
+    );
+
+    // Subscribe to embedding progress events
+    const unsubscribeEmbedding = eventBus.on(
+      DomainEventType.RAG_EMBEDDING_PROGRESS,
+      (event: any) => {
+        console.log('[IndexingProgressPanel] RAG_EMBEDDING_PROGRESS:', event);
+        updateDocumentProgress(event);
+      }
+    );
+
+    // Subscribe to database indexing events
+    const unsubscribeIndexing = eventBus.on(
+      DomainEventType.RAG_DATABASE_INDEXING,
+      (event: any) => {
+        console.log('[IndexingProgressPanel] RAG_DATABASE_INDEXING:', event);
+        updateDocumentProgress(event);
+      }
+    );
+
+    // Subscribe to source processing events
+    const unsubscribeSource = eventBus.on(
+      DomainEventType.RAG_SOURCE_PROCESSING,
+      (event: any) => {
+        console.log('[IndexingProgressPanel] RAG_SOURCE_PROCESSING:', event);
+        updateDocumentProgress(event);
+      }
+    );
+
+    console.log('[IndexingProgressPanel] RAG indexing event listeners registered');
+
+    // Cleanup: remove all listeners on unmount
+    return () => {
+      console.log('[IndexingProgressPanel] Cleaning up RAG indexing event listeners');
+      unsubscribeChunking();
+      unsubscribeEmbedding();
+      unsubscribeIndexing();
+      unsubscribeSource();
+    };
   }, []);
+
+  /**
+   * Map RAG status to indexing stage
+   */
+  const mapStatusToStage = (status: RAGProgressPayload['status']): IndexingStage => {
+    switch (status) {
+      case 'idle':
+        return 'idle';
+      case 'running':
+        return 'embedding';
+      case 'completed':
+        return 'completed';
+      case 'error':
+        return 'failed';
+      default:
+        return 'idle';
+    }
+  };
 
   /**
    * Cancel indexing operation
    */
   const handleCancel = (documentId: string) => {
     console.log('[IndexingProgressPanel] Cancelling indexing:', documentId);
-    // TODO: Emit cancel event to RAG indexing service
+
+    const cancelData: RAGIndexingCancelData = {
+      documentId,
+      projectId,
+      timestamp: new Date(),
+    };
+
+    eventBus.emit(DomainEventType.RAG_INDEXING_CANCEL_REQUESTED, cancelData);
+
+    // Update local state
+    setIndexingState((prevState) => ({
+      ...prevState,
+      documents: prevState.documents.map((doc) =>
+        doc.id === documentId
+          ? { ...doc, stage: 'cancelled' as IndexingStage }
+          : doc
+      ),
+    }));
   };
 
   /**
@@ -166,7 +276,28 @@ export function IndexingProgressPanel() {
    */
   const handleRetry = (documentId: string) => {
     console.log('[IndexingProgressPanel] Retrying indexing:', documentId);
-    // TODO: Emit retry event to RAG indexing service
+
+    const retryData: RAGIndexingRetryData = {
+      documentId,
+      projectId,
+      timestamp: new Date(),
+    };
+
+    eventBus.emit(DomainEventType.RAG_INDEXING_RETRY_REQUESTED, retryData);
+
+    // Update local state to reset document to idle
+    setIndexingState((prevState) => ({
+      ...prevState,
+      documents: prevState.documents.map((doc) =>
+        doc.id === documentId
+          ? {
+              ...doc,
+              stage: 'idle' as IndexingStage,
+              error: undefined,
+            }
+          : doc
+      ),
+    }));
   };
 
   /**
