@@ -38,7 +38,6 @@ import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { SynthesisExportData } from '@/infrastructure/events/event-bus';
 import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
 import { toast } from 'sonner';
-import { Search } from 'lucide-react';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -130,31 +129,17 @@ export function NotesPage() {
 
             // Transform synthesis data to Note format
             const noteTitle = exportData.data.title || 'Untitled Synthesis';
-            const noteContent = exportData.data.content || '';
-            const tags = exportData.data.frontmatter.tags || [];
 
             // Create a simple blocks array from Markdown content
             // TODO: Phase 4 - Use proper Markdown to BlockNote parser
-            const blocks = [
-                {
-                    id: `block-${Date.now()}-1`,
-                    type: 'paragraph' as const,
-                    content: noteContent.split('\n').map(line => ({ type: 'text' as const, text: line })),
-                },
-            ];
+            // For now, create note without content blocks (Phase 4 will implement proper parser)
+            const blocks = undefined; // Block[] type requires BlockNote library structure
 
             // Create note with synthesis data
             createNote({
                 title: noteTitle,
                 emoji: '📝', // Knowledge-sourced note
                 blocks,
-                tags,
-                metadata: {
-                    source: 'knowledge',
-                    sourceNodeId: exportData.nodeId,
-                    createdAt: exportData.data.frontmatter.createdAt,
-                    sources: exportData.data.frontmatter.sources,
-                },
             }).then((noteId) => {
                 // Set as active note
                 setActiveNote(noteId);

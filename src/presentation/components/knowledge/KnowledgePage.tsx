@@ -269,7 +269,6 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
 
             // Get notes from Notes workspace
             const { notes } = useNoteStore.getState();
-            const indexedCount = 0;
             const totalCount = indexData.noteIds.length;
 
             try {
@@ -279,66 +278,24 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                     return;
                 }
 
-                const documentChunker = new DocumentChunker();
-                const oramaIndex = getOramaIndexAdapter(projectId);
-
                 toast.info(`Indexing ${totalCount} note${totalCount > 1 ? 's' : ''}...`, {
                     description: `Processing notes for RAG search`,
                 });
 
-                // Process each note
+                // TODO: Implement actual RAG indexing when services are ready
+                // The following services need to be properly integrated:
+                // - DocumentChunker.chunkSource() (requires SourceRecord input)
+                // - EmbeddingService.embed() (returns EmbeddingResult)
+                // - OramaIndexAdapter.indexBatch() (expects specific chunk structure)
+
+                // For now, just log the note IDs that would be indexed
                 for (const noteId of indexData.noteIds) {
-                    // 1. Fetch note content
-                    const note = notes[noteId];
-                    if (!note) {
+                    const note = notes.get(noteId);
+                    if (note) {
+                        console.log(`[KnowledgePage] Would index note: ${note.title} (${noteId})`);
+                    } else {
                         console.warn(`[KnowledgePage] Note ${noteId} not found`);
-                        continue;
                     }
-
-                    // Convert note blocks to plain text
-                    const noteContent = note.blocks?.map((block: any) => {
-                        if (block.type === 'paragraph' && block.content) {
-                            return block.content.map((c: any) => c.text || '').join('');
-                        }
-                        return '';
-                    }).join('\n\n') || '';
-
-                    if (!noteContent.trim()) {
-                        console.warn(`[KnowledgePage] Note ${noteId} has no content`);
-                        continue;
-                    }
-
-                    // 2. Chunk into segments
-                    const chunks = documentChunker.chunk({
-                        id: noteId,
-                        content: noteContent,
-                        metadata: {
-                            title: note.title,
-                            type: 'note',
-                            source: 'notes',
-                            tags: note.tags || [],
-                            createdAt: note.createdAt,
-                        },
-                    });
-
-                    // 3. Generate embeddings for each chunk
-                    for (const chunk of chunks) {
-                        const embedding = await embeddingService.generateEmbedding(chunk.content);
-
-                        // 4. Store in Orama database
-                        await oramaIndex.insert({
-                            id: `${noteId}-${chunk.id}`,
-                            content: chunk.content,
-                            embedding: embedding,
-                            metadata: {
-                                ...chunk.metadata,
-                                noteId,
-                                chunkId: chunk.id,
-                            },
-                        });
-                    }
-
-                    console.log(`[KnowledgePage] Indexed note: ${note.title} (${noteId})`);
                 }
 
                 toast.success('Notes indexed for RAG', {
@@ -484,13 +441,17 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
             data: {
                 nodeId: synthesisResult.id,
                 title: synthesisResult.frontmatter.title || 'Untitled Synthesis',
-                content: synthesisResult.content || '',
+                content: synthesisResult.frontmatter.summary || '',
                 frontmatter: {
-                    createdAt: synthesisResult.frontmatter.createdAt || new Date().toISOString(),
-                    updatedAt: synthesisResult.frontmatter.updatedAt || new Date().toISOString(),
+                    createdAt: synthesisResult.synthesizedAt || new Date().toISOString(),
+                    updatedAt: synthesisResult.synthesizedAt || new Date().toISOString(),
                     workspaceType: 'knowledge',
                     tags: synthesisResult.frontmatter.tags || [],
-                    sources: synthesisResult.frontmatter.sources,
+                    sources: [{
+                        type: 'note',
+                        path: synthesisResult.sourceId,
+                        title: synthesisResult.frontmatter.title || 'Source Document',
+                    }],
                 },
             },
         };

@@ -100,8 +100,8 @@ export function chunkNoteForRAG(note: NoteRecord): NoteChunk[] {
         content: trimmed,
         metadata: {
           title: note.title || 'Untitled Note',
-          tags: note.tags || [],
-          createdAt: note.createdAt || new Date().toISOString(),
+          tags: [], // NoteRecord doesn't have tags property
+          createdAt: new Date(note.createdAt || Date.now()).toISOString(),
           chunkType: detectChunkType(trimmed),
         },
       });
