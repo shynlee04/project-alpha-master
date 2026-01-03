@@ -55,6 +55,10 @@ export const createConversationMetadataSlice: StateCreator<
       ...(projectId ? { activeProjectConversationIds: { ...state.activeProjectConversationIds, [projectId]: conversationId } } : {}),
     }));
     get().emitConversationCreated(conversationId, newConversation);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
+
     return conversationId;
   },
 
@@ -69,12 +73,18 @@ export const createConversationMetadataSlice: StateCreator<
       },
     }));
     get().emitConversationUpdated(id, updates);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
   },
 
   deleteConversation: (id) => {
     console.log('[ConversationMetadataSlice] Soft-deleting:', id);
     get().updateConversationMetadata(id, { status: 'deleted' });
     get().emitConversationDeleted(id);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
   },
 
   setActiveConversation: (id) => {

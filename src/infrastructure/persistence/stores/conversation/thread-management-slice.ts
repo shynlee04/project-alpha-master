@@ -54,6 +54,10 @@ export const createThreadManagementSlice: StateCreator<
       return { threads: updated };
     });
     get().emitThreadCreated(id, newThread);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
+
     return id;
   },
 
@@ -79,6 +83,9 @@ export const createThreadManagementSlice: StateCreator<
       return { threads: updated };
     });
     toDelete.forEach((delId) => get().emitThreadDeleted(delId));
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
   },
 
   setActiveThread: (id) => {

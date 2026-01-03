@@ -175,6 +175,13 @@ export interface CombinedConversationState {
     getEventHistory: (filter?: { type?: import('./conversation-events-slice').ConversationEventType; entityId?: string; limit?: number }) => import('./conversation-events-slice').ConversationEvent[];
     clearEventHistory: () => void;
 
+    // ========== Auto-Persist (P0-4: Fix Conversation Auto-Persist) ==========
+    /** Auto-persist current conversation to IndexedDB (debounced 500ms) */
+    persistConversation: () => Promise<void>;
+
+    /** Get current conversation state for persistence */
+    getCurrentConversation: () => import('./conversation-types').ConversationState | null;
+
     // ========== Hydration & Tool Approval State (Story 51-3) ==========
     /** Hydration status for Zustand persist middleware */
     _hasHydrated: boolean;

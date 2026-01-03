@@ -24,6 +24,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { CombinedConversationState } from './types';
+import { createDebouncedPersist } from './conversation-helpers';
+import type { ConversationState } from './conversation-types';
 
 // Local type alias for internal use (also re-exported below)
 type ConversationStoreState = CombinedConversationState;
@@ -53,6 +55,8 @@ export type { ConversationEvent, ConversationEventType } from './conversation-ev
  * Composed from 6 focused slices using January 2026 Zustand pattern.
  * Persisted to DexieIndexedDB with partial persistence (excludes events).
  *
+ * P0-4: Auto-persist functionality added to prevent message loss on workspace switch
+ *
  * Persistence Configuration:
  * - Storage: DexieIndexedDB via createDexieStorage
  * - Partialize: Conversations, threads, messages, active IDs only
@@ -60,29 +64,96 @@ export type { ConversationEvent, ConversationEventType } from './conversation-ev
  */
 export const useConversationStore = create<ConversationStoreState>()(
     persist(
-        (...a) => ({
-            // ========== Conversation Metadata Slice (CC-1.1) ==========
-            ...createConversationMetadataSlice(...a),
+        (...a) => {
+            // Create debounced persist function (500ms delay to avoid excessive IndexedDB writes)
+            const debouncedPersist = createDebouncedPersist(500);
 
-            // ========== Thread Management Slice (CC-1.2) ==========
-            ...createThreadManagementSlice(...a),
+            return {
+                // ========== Conversation Metadata Slice (CC-1.1) ==========
+                ...createConversationMetadataSlice(...a),
 
-            // ========== Message CRUD Slice (CC-1.3) ==========
-            ...createMessageCrudSlice(...a),
+                // ========== Thread Management Slice (CC-1.2) ==========
+                ...createThreadManagementSlice(...a),
 
-            // ========== Utils Slice (CC-1.4) ==========
-            ...createConversationUtilsSlice(...a),
+                // ========== Message CRUD Slice (CC-1.3) ==========
+                ...createMessageCrudSlice(...a),
 
-            // ========== Validation Slice (CC-1.5) ==========
-            ...createConversationValidationSlice(...a),
+                // ========== Utils Slice (CC-1.4) ==========
+                ...createConversationUtilsSlice(...a),
 
-            // ========== Events Slice (CC-1.6) ==========
-            ...createConversationEventsSlice(...a),
+                // ========== Validation Slice (CC-1.5) ==========
+                ...createConversationValidationSlice(...a),
 
-            // ========== Hydration & Tool Approval State (Story 51-3) ==========
-            _hasHydrated: false,
-            pendingToolApprovals: [],
-        }),
+                // ========== Events Slice (CC-1.6) ==========
+                ...createConversationEventsSlice(...a),
+
+                // ========== P0-4: Auto-Persist Methods ==========
+                /**
+                 * Auto-persist current conversation to IndexedDB (debounced 500ms)
+                 * This ensures conversations survive workspace switches and page refreshes
+                 */
+                persistConversation: async () => {
+                    const get = a[0] as () => ConversationStoreState;
+                    const conversation = get().getCurrentConversation();
+                    if (conversation) {
+                        await debouncedPersist(conversation);
+                    }
+                },
+
+                /**
+                 * Get current conversation state for persistence
+                 * Aggregates metadata, threads, and messages into a single ConversationState object
+                 */
+                getCurrentConversation: (): ConversationState | null => {
+                    const get = a[0] as () => ConversationStoreState;
+                    const { activeConversationId, conversations, threads, messages } = get();
+
+                    if (!activeConversationId) {
+                        return null;
+                    }
+
+                    const conversation = conversations[activeConversationId];
+                    if (!conversation) {
+                        return null;
+                    }
+
+                    const conversationThreads = Object.values(threads)
+                        .filter((t) => t.conversationId === activeConversationId && t.status !== 'deleted');
+
+                    const conversationMessages = Object.values(messages)
+                        .filter((m) => conversationThreads.some((t) => t.id === m.threadId));
+
+                    return {
+                        metadata: {
+                            id: conversation.id,
+                            projectId: conversation.projectId,
+                            workspaceType: conversation.workspaceType,
+                            title: conversation.title || 'New Conversation',
+                            preview: conversation.preview || '',
+                            agentId: conversation.agentId,
+                            messageCount: conversationMessages.length,
+                            scrollPosition: 0,
+                            createdAt: new Date(conversation.createdAt).getTime(),
+                            updatedAt: new Date(conversation.updatedAt).getTime(),
+                        },
+                        messages: conversationMessages.map((m) => ({
+                            id: m.id,
+                            role: m.role,
+                            content: m.content,
+                            agentId: m.agentId,
+                            agentName: m.agentName,
+                            agentModel: m.agentModel,
+                            timestamp: m.timestamp,
+                            toolCalls: m.toolCalls,
+                        })),
+                    };
+                },
+
+                // ========== Hydration & Tool Approval State (Story 51-3) ==========
+                _hasHydrated: false,
+                pendingToolApprovals: [],
+            };
+        },
         {
             name: 'conversation-store',
             storage: createDexieStorage('conversationState') as any, // Type assertion for Dexie storage compatibility

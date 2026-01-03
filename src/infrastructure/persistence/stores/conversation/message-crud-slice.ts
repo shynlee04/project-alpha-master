@@ -34,6 +34,10 @@ export const createMessageCrudSlice: StateCreator<
     console.log('[MessageSlice] Adding:', id, 'to thread:', threadId);
     set((state) => ({ messages: { ...state.messages, [id]: newMessage } }));
     get().emitMessageAdded(id, newMessage);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
+
     return id;
   },
 
@@ -45,6 +49,9 @@ export const createMessageCrudSlice: StateCreator<
       messages: { ...state.messages, [id]: { ...existing, ...updates } },
     }));
     get().emitMessageUpdated(id, updates);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
   },
 
   deleteMessage: (id) => {
@@ -55,6 +62,9 @@ export const createMessageCrudSlice: StateCreator<
       return { messages: updated };
     });
     get().emitMessageDeleted(id);
+
+    // P0-4: Auto-persist conversation to IndexedDB (debounced 500ms)
+    get().persistConversation();
   },
 
   getMessage: (id) => get().messages[id],
