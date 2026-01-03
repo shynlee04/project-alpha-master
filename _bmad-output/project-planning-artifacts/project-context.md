@@ -1,11 +1,12 @@
 ---
 project_name: 'Project Alpha v2.0 - Knowledge Synthesis Station'
 user_name: 'Admin'
-date: '2025-12-29'
-sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality', 'workflow_rules', 'critical_rules', 'phase_2_technical_constraints', 'epic_24_schema']
+date: '2026-01-04'
+sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'code_quality', 'workflow_rules', 'critical_rules', 'phase_2_technical_constraints', 'epic_24_schema', 'architecture_remediation_module']
 generated_from: 'architecture.md'
 phase: 'Phase 2'
-last_updated: '2025-12-29T19:24:42+07:00'
+last_updated: '2026-01-04T14:30+07:00'
+autonomous_mode: 'BMad Master v2.0'
 ---
 
 # Project Context for AI Agents
@@ -1497,6 +1498,134 @@ const migrateModule = async (moduleName: string) => {
 
 ---
 
+## Architecture Remediation Module (NEW - 2026-01-04)
+
+**Module Location**: `_bmad/modules/architecture-remediation/`
+
+**Purpose**: Systematic elimination of god stores, component normalization, and workspace E2E implementation.
+
+### Autonomous Execution Mode (BMad Master v2.0)
+
+**Agent**: `@bmad-core-bmad-master`
+**Mode**: Autonomous workflow orchestration
+**Activation**: Load agent, state intent → auto-select workflows → chain execution
+
+**Intent Classification**:
+```yaml
+refactor|split|god.*(store|class) → eliminate-god-stores workflow
+component.*(large|split) → normalize-components workflow
+workspace.*(file|sync|e2e) → workspace-file-system-e2e workflow
+typescript|ts.?error → typescript-fixer workflow
+test|coverage → test-writer workflow
+```
+
+### Current Epic Structure
+
+| Epic ID | Name | Priority | Duration | Status |
+|---------|------|----------|----------|--------|
+| ARC-1 | Foundation Stabilization | P0 | Week 1 | 🟢 IN_PROGRESS |
+| ARC-2 | IDE Workspace E2E | P0 | Week 2 | 🔴 TODO |
+| ARC-3 | Notes Workspace E2E | P0 | Week 3 | 🔴 TODO |
+| ARC-4 | Knowledge Workspace E2E | P0 | Week 4 | 🔴 TODO |
+
+### Epic ARC-1 Stories (Week 1)
+
+| Story ID | Task | Hours | Status |
+|----------|------|-------|--------|
+| ARC-1.1 | Split dexie-db.ts (1,267 lines) | 8-12 | 🟢 READY |
+| ARC-1.2 | Consolidate duplicate dexie-db.ts | 4-6 | 🔴 TODO |
+| ARC-1.3 | Refactor event-bus.ts (644 lines) | 6-8 | 🔴 TODO |
+| ARC-1.4 | Create workspace-specific store facades | 8-10 | 🔴 TODO |
+
+**Sprint Status**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
+**Epic Tracking**: `_bmad/modules/architecture-remediation/artifacts/epic-tracking.md`
+
+### Store Architecture (CRITICAL)
+
+**Canonical Location**: `src/infrastructure/persistence/stores/`
+**Deprecated**: `src/lib/state/` (migrate to canonical)
+**Deleted**: `src/stores/` (2026-01-03)
+
+**God Stores Identified** (>500 lines):
+- `dexie-db.ts` - 1,267 lines (DATABASE SCHEMA, not Zustand)
+- `canvas-store.ts` - 623 lines → split into 6 slices
+- `flashcard-store.ts` - 531 lines → split into 4-5 slices
+- `study-store.ts` - 458 lines → split into 4-5 slices
+
+**Store Splitting Strategy** (eliminate-god-stores workflow):
+```typescript
+// Target architecture (max 120 lines per slice)
+src/infrastructure/persistence/stores/{domain}/
+├── {domain}-crud-slice.ts          (120 lines)
+├── {domain}-workspace-bindings-slice.ts  (100 lines)
+├── {domain}-permissions-slice.ts    (110 lines)
+├── {domain}-events-slice.ts         (90 lines)
+├── {domain}-utils-slice.ts          (90 lines)
+└── index.ts (unified store)         (150 lines)
+```
+
+**Facade Pattern** (MANDATORY for backward compatibility):
+```typescript
+// Old export path continues to work
+export * from './infrastructure/persistence/stores/{domain}';
+```
+
+### Component Size Limits
+
+**Rules**:
+- React components: ≤300 lines
+- Custom hooks: ≤150 lines
+- Store slices: ≤120 lines
+- Utility files: ≤200 lines
+
+**Violations Found**: 41 components exceed 300 lines (13.9%)
+**Critical Violations** (>600 lines):
+- `resizable.tsx` - 745 lines
+- `KnowledgePage.tsx` - 658 lines
+- `IndexingProgressPanel.tsx` - 593 lines
+
+**Action**: Use `normalize-components` workflow to split
+
+### TypeScript Error Strategy
+
+**Code Files** (ENFORCE): Fix all errors
+- Use incremental checking: `pnpm exec tsc --noEmit --incremental`
+- Filter out test files: `grep -v "\.test\." | grep -v "__tests__"`
+
+**Test Files** (EXCLUDE): Errors are non-blocking
+- Do not count in metrics
+- Focus on production code quality
+
+### Workflow Execution Pattern
+
+**Example**: "Split dexie-db.ts using eliminate-god-stores workflow"
+
+1. BMad Master detects intent → loads `@store-refactorer`
+2. Executes workflow with validation loops
+3. Uses incremental TypeScript checking (excludes tests)
+4. Generates handoff artifacts between phases
+5. Updates sprint status on completion
+6. Auto-runs `/governance-enforcement` workflow
+
+### Available Workflows
+
+- `eliminate-god-stores` - Split large stores into slices
+- `normalize-components` - Split oversized components
+- `workspace-file-system-e2e` - E2E validation for workspaces
+- `notes-sync-strategy` - Notes local filesystem sync
+- `knowledge-sync-strategy` - Knowledge source import sync
+
+### Available Agents
+
+- `@store-refactorer` - God store elimination specialist
+- `@component-splitter` - Component normalization expert
+- `@typescript-fixer` - TS error remediation
+- `@test-writer` - Test coverage improvement
+- `@workspace-architect` - Workspace E2E architect
+- `@file-sync-specialist` - Sync strategies expert
+
+---
+
 ## Reference Documents
 
 - **Architecture:** [`architecture.md`](../architecture.md)
@@ -1524,3 +1653,4 @@ _Strict execution order required to prevent blockers._
 _Generated: 2025-12-28T20:46+07:00_
 _Enhanced: 2025-12-29T23:29+07:00_
 _This document is optimized for LLM context efficiency. Keep it lean.
+_Autonomous Mode Update: 2026-01-04T14:30+07:00_

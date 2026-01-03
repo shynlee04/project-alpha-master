@@ -3,10 +3,13 @@
  *
  * EPIC_ID: Epic-23
  * STORY_ID: 23-1
+ * STORY: LT-2.10 (Light Theme Migration)
  * CREATED_AT: 2025-12-25T17:44:00Z
+ * UPDATED_AT: 2026-01-04T00:00:00Z
  *
  * Production-ready Select component following 8-bit design system.
- * Implements all variants, sizes, states with accessibility and i18n support.
+ * Implements all variants, sizes, states with accessibility, i18n, and light/dark theme support.
+ * Uses CSS custom properties for theme-aware styling.
  */
 
 import * as React from "react"
@@ -46,11 +49,11 @@ export interface SelectTriggerProps extends React.ComponentProps<typeof SelectPr
 
 /**
  * CVA variants for SelectTrigger component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
  */
 const selectTriggerVariants = cva(
-  // Base styles
-  'flex items-center justify-between gap-2 whitespace-nowrap rounded-none font-medium transition-all outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950',
+  // Base styles with theme-aware colors
+  'flex items-center justify-between gap-2 whitespace-nowrap rounded-[4px] font-medium transition-[border-color,background-color] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
   {
     variants: {
       size: {
@@ -59,10 +62,10 @@ const selectTriggerVariants = cva(
         lg: 'h-12 px-6 text-lg min-h-[48px]',
       },
       state: {
-        default: 'border-2 border-neutral-700 bg-neutral-950 text-neutral-100 hover:bg-neutral-900 focus:border-primary-500',
-        error: 'border-2 border-error-500 bg-neutral-950 text-neutral-100 hover:bg-neutral-900 focus:border-error-500 focus:ring-error-500',
-        success: 'border-2 border-success-500 bg-neutral-950 text-neutral-100 hover:bg-neutral-900 focus:border-success-500 focus:ring-success-500',
-        warning: 'border-2 border-warning-500 bg-neutral-950 text-neutral-100 hover:bg-neutral-900 focus:border-warning-500 focus:ring-warning-500',
+        default: 'border border-[var(--input)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--primary)]',
+        error: 'border border-[var(--destructive)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--destructive)] focus:ring-[var(--destructive)]',
+        success: 'border border-[var(--success)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--success)] focus:ring-[var(--success)]',
+        warning: 'border border-[var(--warning)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--warning)] focus:ring-[var(--warning)]',
       },
     },
     defaultVariants: {
@@ -89,7 +92,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 opacity-50" />
+        <ChevronDownIcon className="size-4 text-[var(--muted-foreground)]" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -97,11 +100,11 @@ function SelectTrigger({
 
 /**
  * CVA variants for SelectContent component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
  */
 const selectContentVariants = cva(
-  // Base styles
-  'bg-neutral-950 text-neutral-100 border-2 border-neutral-700 shadow-lg relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-x-hidden overflow-y-auto rounded-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+  // Base styles with theme-aware colors
+  'bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] shadow-lg relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-x-hidden overflow-y-auto rounded-[4px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
   {
     variants: {
       position: {
@@ -146,21 +149,10 @@ function SelectContent({
 
 /**
  * CVA variants for SelectLabel component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
  */
 const selectLabelVariants = cva(
-  'px-2 py-1.5 text-xs font-semibold',
-  {
-    variants: {
-      theme: {
-        dark: 'text-neutral-400',
-        light: 'text-neutral-600',
-      },
-    },
-    defaultVariants: {
-      theme: 'dark',
-    },
-  }
+  'px-2 py-1.5 text-xs font-semibold text-[var(--muted-foreground)]'
 )
 
 function SelectLabel({
@@ -178,21 +170,10 @@ function SelectLabel({
 
 /**
  * CVA variants for SelectItem component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
  */
 const selectItemVariants = cva(
-  'relative flex w-full cursor-default items-center gap-2 rounded-none py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2',
-  {
-    variants: {
-      theme: {
-        dark: 'hover:bg-neutral-800 focus:bg-primary-500 focus:text-neutral-950',
-        light: 'hover:bg-neutral-200 focus:bg-primary-500 focus:text-white',
-      },
-    },
-    defaultVariants: {
-      theme: 'dark',
-    },
-  }
+  'relative flex w-full cursor-default items-center gap-2 rounded-[4px] py-1.5 pr-8 pl-2 text-sm outline-hidden select-none transition-[background-color] duration-150 ease-out data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] focus:bg-[var(--primary)] focus:text-[var(--primary-foreground)]'
 )
 
 function SelectItem({
@@ -211,7 +192,7 @@ function SelectItem({
         className="absolute right-2 flex size-3.5 items-center justify-center"
       >
         <SelectPrimitive.ItemIndicator>
-          <CheckIcon className="size-4" />
+          <CheckIcon className="size-4 text-[var(--foreground)]" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -221,21 +202,10 @@ function SelectItem({
 
 /**
  * CVA variants for SelectSeparator component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
  */
 const selectSeparatorVariants = cva(
-  'pointer-events-none -mx-1 my-1 h-px',
-  {
-    variants: {
-      theme: {
-        dark: 'bg-neutral-700',
-        light: 'bg-neutral-200',
-      },
-    },
-    defaultVariants: {
-      theme: 'dark',
-    },
-  }
+  'pointer-events-none -mx-1 my-1 h-px bg-[var(--border)]'
 )
 
 function SelectSeparator({

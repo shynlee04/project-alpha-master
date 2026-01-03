@@ -9,5 +9,6 @@
       "Bash(pnpm build:*)",
       "Bash(pnpm tsc --noEmit)"
     ]
-  }
+  },
+  "outputStyle": "critical-code-reviewer"
 }

@@ -3,10 +3,13 @@
  * 
  * EPIC_ID: Epic-23
  * STORY_ID: 23-1
+ * STORY: LT-2.11 (Light Theme Migration)
  * CREATED_AT: 2025-12-25T17:16:00Z
+ * UPDATED_AT: 2026-01-04T00:00:00Z
  * 
  * Production-ready Checkbox component following 8-bit design system.
- * Implements all variants, sizes, states with accessibility and i18n support.
+ * Implements all variants, sizes, states with accessibility, i18n, and light/dark theme support.
+ * Uses CSS custom properties for theme-aware styling.
  */
 
 import * as React from 'react'
@@ -45,19 +48,19 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 
 /**
  * CVA variants for Checkbox component
- * Uses design tokens from 8-bit design system
+ * Uses CSS custom properties for light/dark theme support
  */
 const checkboxVariants = cva(
-  // Base styles
-  'inline-flex items-center justify-center rounded-none border-2 transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2',
+  // Base styles with theme-aware colors
+  'inline-flex items-center justify-center rounded-[4px] border border-[var(--border)] transition-[background-color,border-color] duration-150 ease-out outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
   {
     variants: {
       variant: {
-        default: 'border-neutral-700 bg-neutral-900/80 text-neutral-100 focus-visible:border-primary-500 focus-visible:ring-primary-500/50',
-        primary: 'border-primary-700 bg-primary-900/80 text-primary-100 focus-visible:border-primary-400 focus-visible:ring-primary-500/50',
-        success: 'border-success-700 bg-success-900/80 text-success-100 focus-visible:border-success-400 focus-visible:ring-success-500/50',
-        warning: 'border-warning-700 bg-warning-900/80 text-warning-100 focus-visible:border-warning-400 focus-visible:ring-warning-500/50',
-        error: 'border-error-700 bg-error-900/80 text-error-100 focus-visible:border-error-400 focus-visible:ring-error-500/50',
+        default: 'bg-[var(--background)] text-[var(--foreground)] focus-visible:border-[var(--primary)]',
+        primary: 'bg-[var(--primary)] text-[var(--primary-foreground)] border-[var(--primary)]',
+        success: 'bg-[var(--success)] text-white border-[var(--success)]',
+        warning: 'bg-[var(--warning)] text-white border-[var(--warning)]',
+        error: 'bg-[var(--destructive)] text-white border-[var(--destructive)]',
       },
       size: {
         sm: 'w-4 h-4',
@@ -159,7 +162,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 checkboxVariants({ variant, size }),
                 checked && 'bg-opacity-100',
                 !checked && !indeterminate && 'bg-opacity-0',
-                error && 'border-error-500 ring-2 ring-error-500/50',
+                error && 'border-[var(--destructive)] ring-2 ring-[var(--destructive)]/50',
                 'cursor-pointer',
                 disabled && 'cursor-not-allowed'
               )}
@@ -184,12 +187,12 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               className={cn(
                 'text-sm font-medium cursor-pointer select-none',
                 disabled && 'cursor-not-allowed opacity-50',
-                error ? 'text-error-400' : 'text-neutral-300'
+                error ? 'text-[var(--destructive)]' : 'text-[var(--foreground)]'
               )}
             >
               {labelContent}
               {required && (
-                <span className="text-error-500 ml-1" aria-hidden="true">
+                <span className="text-[var(--destructive)] ml-1" aria-hidden="true">
                   *
                 </span>
               )}
@@ -201,7 +204,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         {error && (
           <p
             id={errorId}
-            className="text-sm text-error-400 mt-1 flex items-center gap-1"
+            className="text-sm text-[var(--destructive)] mt-1 flex items-center gap-1"
             role="alert"
             aria-live="polite"
           >
@@ -213,7 +216,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         {helperText && !error && (
           <p
             id={helperTextId}
-            className="text-sm text-neutral-500 mt-1"
+            className="text-sm text-[var(--muted-foreground)] mt-1"
           >
             {helperText}
           </p>

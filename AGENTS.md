@@ -43,6 +43,51 @@
 - `/bmad-arc-notes-sync` - Notes local filesystem sync
 - `/bmad-arc-knowledge-sync` - Knowledge source import sync
 
+**🎯 CLAUDE SKILLS INTEGRATION**:
+
+All ARC agents and workflows are available as Claude Skills for auto-loading:
+
+**Skills Location**: `.claude/skills/architecture-remediation/`
+
+**Master Skill**:
+- `architecture-remediation/SKILL.md` - Main orchestrator (loads all sub-skills)
+
+**Agent Skills** (auto-load when mentioned):
+- `store-refactorer/SKILL.md` - God store elimination
+- `component-splitter/SKILL.md` - Component normalization
+- `typescript-fixer/SKILL.md` - TypeScript error fixing
+- `test-writer/SKILL.md` - Test coverage improvement
+- `workspace-architect/SKILL.md` - Workspace E2E implementation
+- `file-sync-specialist/SKILL.md` - Sync strategies
+
+**Workflow Skills** (auto-load when invoked):
+- `workflows/eliminate-god-stores/SKILL.md` - Store refactoring workflow
+- `workflows/normalize-components/SKILL.md` - Component splitting workflow
+- `workflows/workspace-file-system-e2e/SKILL.md` - Workspace E2E validation
+- `workflows/notes-sync-strategy/SKILL.md` - Notes sync implementation
+- `workflows/knowledge-sync-strategy/SKILL.md` - Knowledge sync implementation
+
+**Auto-Loading Triggers**:
+- "Split this store" / "Refactor god store" → Loads store-refactorer skill
+- "This component is too large" → Loads component-splitter skill
+- "Fix TypeScript errors" → Loads typescript-fixer skill
+- "Implement workspace file system" → Loads workspace-architect skill
+- "Create sync strategy" → Loads file-sync-specialist skill
+
+**Usage Example**:
+```
+User: "Split src/lib/state/rag-store.ts using the eliminate-god-stores workflow"
+
+Claude Code:
+1. Auto-loads: architecture-remediation → store-refactorer → eliminate-god-stores
+2. Executes workflow steps (analysis → extraction → migration → validation)
+3. Applies facade pattern for backward compatibility
+4. Validates with incremental TypeScript (excludes test files)
+5. Updates sprint status (arc-sprint-status.yaml)
+```
+
+**Skills Documentation**: `_bmad-output/claude-skills-creation-summary-2026-01-04.md`
+
 **⚠️ GOVERNANCE ENFORCEMENT**:
 After ANY structural workflow, MUST run:
 1. `/governance-enforcement` workflow
