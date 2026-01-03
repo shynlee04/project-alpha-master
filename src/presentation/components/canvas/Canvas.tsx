@@ -266,12 +266,12 @@ function CanvasContent() {
  * Knowledge Canvas component with React Flow integration
  * Supports desktop (full editing) and mobile (read-only) modes
  *
- * @param props - Canvas props including optional indexMetadata
+ * @param _props - Canvas props (forwarding compat)
  */
-export function Canvas(props?: CanvasProps) {
+export function Canvas(_props?: CanvasProps) {
   return (
     <ReactFlowProvider>
-      <CanvasContent indexMetadata={props?.indexMetadata} />
+      <CanvasContent />
     </ReactFlowProvider>
   );
 }

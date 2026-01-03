@@ -97,17 +97,18 @@ export function KnowledgePage() {
 
             // Update RAG store with progress information
             if (status === 'running') {
-                // TODO: Fix RAG store methods - these don't exist yet
-                // useRAGStore.getState().setIndexingStatus(true);
-                // useRAGStore.getState().setIndexingProgress(progress || 0);
+                useRAGStore.getState().setIndexing(true);
+                if (progress !== undefined) {
+                    useRAGStore.getState().setIndexingProgress(progress);
+                }
                 console.log('[KnowledgePage] Embedding running:', progress || 0);
             } else if (status === 'completed') {
-                // useRAGStore.getState().setIndexingStatus(false);
-                // useRAGStore.getState().setIndexingProgress(100);
+                useRAGStore.getState().setIndexing(false);
+                useRAGStore.getState().setIndexingProgress(100);
                 console.log('[KnowledgePage] Embedding completed');
             } else if (status === 'error') {
-                // useRAGStore.getState().setIndexingStatus(false);
-                // useRAGStore.getState().setError(message || 'Embedding failed');
+                useRAGStore.getState().setIndexing(false);
+                useRAGStore.getState().setError(message || 'Embedding failed');
                 console.error('[KnowledgePage] Embedding error:', message);
             }
         };

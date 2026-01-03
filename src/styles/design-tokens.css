@@ -2,18 +2,23 @@
  * VIA-GENT Brand Design Tokens
  * ============================
  * Overrides ShadcnUI defaults with MistralAI-inspired 8-bit aesthetic.
- * 
+ *
  * Color Palette:
  * - Primary: Orange (#f97316) - MistralAI inspired
  * - Background: Deep black (#0f0f11) - Premium dark theme
  * - Surface: Dark zinc (#18181b) - Panels and cards
  * - Editor: Near-black (#09090b) - Monaco editor
- * 
+ *
  * Aesthetic:
  * - Squared corners (--radius: 0px)
  * - Pixel shadows (2px hard drop shadow)
  * - 8-bit gaming feel without kitsch
  */
+
+/* =============================================================================
+   IMPORTS
+   ============================================================================= */
+@import "./light-theme-tokens.css";
 
 /* =============================================================================
    DARK THEME (DEFAULT)

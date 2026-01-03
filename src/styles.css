@@ -3,6 +3,7 @@
 
 /* VIA-GENT Design System Imports */
 @import "./styles/design-tokens.css";
+@import "./styles/light-theme-tokens.css";
 @import "./styles/animations.css";
 
 @custom-variant dark (&:is(.dark *));

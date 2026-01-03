@@ -90,4 +90,29 @@ export const createRAGIndexSlice: StateCreator<RAGIndexState> = (set, _get) => (
   updateIndexingProgress: (documentCount: number, totalDocuments: number) => {
     set({ documentCount, totalDocuments } as Partial<RAGIndexState>);
   },
+
+  // Convenience wrappers for KnowledgePage event handlers
+  setIndexing: (isIndexing: boolean) => {
+    set({
+      indexStatus: isIndexing ? 'indexing' : 'ready',
+    } as Partial<RAGIndexState>);
+  },
+
+  setIndexingProgress: (progress: number) => {
+    // Progress is 0-100, map to documentCount/totalDocuments if available
+    const currentState = _get() as RAGIndexState;
+    if (currentState.totalDocuments > 0) {
+      const documentCount = Math.round((progress / 100) * currentState.totalDocuments);
+      set({ documentCount } as Partial<RAGIndexState>);
+    }
+    // Store raw progress percentage for UI display
+    set({ indexSize: progress } as Partial<RAGIndexState>);
+  },
+
+  setError: (message: string) => {
+    set({
+      error: message,
+      indexStatus: 'error',
+    } as Partial<RAGIndexState>);
+  },
 });

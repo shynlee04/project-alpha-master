@@ -70,6 +70,11 @@ export interface RAGIndexState {
   loadIndexMetadata: (projectId: string) => Promise<void>;
   setIndexStatus: (status: IndexStatus, operation?: IndexOperation) => void;
   updateIndexingProgress: (documentCount: number, totalDocuments: number) => void;
+
+  // Convenience wrappers for KnowledgePage event handlers (P0-3)
+  setIndexing: (isIndexing: boolean) => void;
+  setIndexingProgress: (progress: number) => void;
+  setError: (message: string) => void;
 }
 
 /**
