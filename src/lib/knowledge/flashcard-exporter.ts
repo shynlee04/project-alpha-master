@@ -9,9 +9,19 @@
  * @cross_workspace Knowledge → Study
  */
 
-import type { Flashcard, FlashcardDeck } from '@/core/entities/Flashcard';
+import type { Flashcard, FlashcardSet } from '@/lib/knowledge/types';
 import type { SynthesisResult } from '@/lib/knowledge/synthesis-types';
-import type { SearchResult } from '@/lib/rag/search-types';
+
+/**
+ * Simple search result interface for RAG batch exports
+ */
+export interface SearchResult {
+  content: string;
+  metadata?: {
+    sourceId?: string;
+    title?: string;
+  };
+}
 
 /**
  * Flashcard generation options
@@ -31,8 +41,8 @@ export interface FlashcardExportOptions {
  * Export result
  */
 export interface FlashcardExportResult {
-  /** Generated flashcard deck */
-  deck: FlashcardDeck;
+  /** Generated flashcard set */
+  flashcardSet: FlashcardSet;
   /** Number of flashcards generated */
   count: number;
   /** Export timestamp */

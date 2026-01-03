@@ -6,11 +6,11 @@ status: in_progress
 summary:
   total_stories: 23
   total_estimate_hours: 88-90
-  pending: 21
-  drafted: 0
+  pending: 20
+  drafted: 1
   ready_for_dev: 1
   in_progress: 0
-  completed: 0
+  completed: 1
   blocked: 0
 
 stories:
