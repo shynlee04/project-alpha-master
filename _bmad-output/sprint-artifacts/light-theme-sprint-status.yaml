@@ -12,6 +12,7 @@ summary:
   in_progress: 0
   completed: 2
   blocked: 0
+  code_reviewed: 2
 
 stories:
   LT-1.1:
@@ -52,10 +53,12 @@ stories:
 
   LT-1.5:
     title: Implement useTheme hook
-    status: completed
+    status: done
     story_file: _bmad-output/light-theme-sprint/stories/LT-1.5-story.md
     context_xml: _bmad-output/light-theme-sprint/stories/LT-1.5-context.xml
     execution_record: _bmad-output/light-theme-sprint/stories/LT-1.5-execution.md
+    code_review_date: "2026-01-03T20:15:00Z"
+    code_review_status: approved
     created_at: "2026-01-03T18:30:00Z"
     context_created_at: "2026-01-03T19:00:00Z"
     started_at: "2026-01-03T19:05:00Z"
@@ -233,9 +236,9 @@ metrics:
     status: ok
 
 next_actions:
-  - code review for LT-1.5 (implement useTheme hook)
-  - switch to Dev agent for code-review phase
-  - continue with next story: LT-1.1 (light theme token file)
+  - Load SM agent to create next story (LT-1.6 - Create ThemeProvider)
+  - Execute story-dev-cycle for remaining Phase 1 stories
+  - Continue with LT-1.1 when Story creation caught up
 
 constraints:
   ralph_loop:
@@ -254,8 +257,9 @@ metadata:
   approved_by: TBD
   approval_date: 2026-01-03
   modified_by: BMAD Coordinator (SM Agent)
-  last_updated: "2026-01-03T20:00:00Z"
+  last_updated: "2026-01-03T20:15:00Z"
   stories_created: 2
   stories_remaining: 21
   stories_ready_for_dev: 1
   stories_completed: 2
+  stories_code_reviewed: 2
