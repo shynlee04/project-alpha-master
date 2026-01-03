@@ -6,32 +6,35 @@ status: in_progress
 summary:
   total_stories: 23
   total_estimate_hours: 88-90
-  pending: 20
+  pending: 17
   drafted: 0
-  ready_for_dev: 1
+  ready_for_dev: 2
   in_progress: 0
-  completed: 2
+  completed: 4
   blocked: 0
-  code_reviewed: 2
+  code_reviewed: 4
 
 stories:
   LT-1.1:
     title: Create light theme token file
-    status: ready_for_dev
+    status: done
     context_xml: _bmad-artifacts/LT-1-1-light-theme-token-file-context.xml
     created_at: "2026-01-03T00:00:00Z"
-    started_at: null
-    completed_at: null
-    assignee: sm
+    started_at: "2026-01-03T18:00:00Z"
+    completed_at: "2026-01-03T23:59:00Z"
+    assignee: dev
     phase: 1
 
   LT-1.2:
     title: Update design-tokens.css with transition styles
-    status: pending
-    started_at: null
-    completed_at: null
+    status: done
+    story_file: _bmad-output/light-theme-sprint/stories/LT-1.2-story.md
+    context_xml: _bmad-artifacts/LT-1-2-design-tokens-transitions-context.xml
+    created_at: "2026-01-03T21:00:00Z"
+    started_at: "2026-01-03T23:00:00Z"
+    completed_at: "2026-01-03T23:15:00Z"
     depends_on: LT-1.1
-    assignee: sm
+    assignee: dev
     phase: 1
 
   LT-1.3:
@@ -261,5 +264,5 @@ metadata:
   stories_created: 2
   stories_remaining: 21
   stories_ready_for_dev: 1
-  stories_completed: 2
+  stories_completed: 3
   stories_code_reviewed: 2

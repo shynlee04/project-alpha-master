@@ -7,8 +7,8 @@
  * @module presentation/components/ui/event-indicators
  */
 
-import type { EventStatus } from './EventIndicator'
-import type { QuizGenerationState } from './QuizGenerationIndicator'
+import type { EventStatus } from './types'
+import type { QuizGenerationState } from './types'
 
 /**
  * Get status from quiz generation state

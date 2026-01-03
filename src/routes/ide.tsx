@@ -15,7 +15,7 @@ import { ToastProvider, Toast } from '@/presentation/components/ui/Toast'
 import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 
 // Lazy load IDELayout to reduce initial bundle size
-const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayout').then(m => ({ default: m.IDELayout })))
+const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayoutMain').then(m => ({ default: m.IDELayout })))
 
 export const Route = createFileRoute('/ide')({
     ssr: false,

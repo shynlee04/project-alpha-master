@@ -7,8 +7,8 @@
  * @module presentation/components/ui/event-indicators
  */
 
-import type { EventStatus } from './EventIndicator'
-import type { WorkspaceTransitionState } from './WorkspaceTransitionIndicator'
+import type { EventStatus } from './types'
+import type { WorkspaceTransitionState } from './types'
 
 /**
  * Get status from workspace transition state

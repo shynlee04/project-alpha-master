@@ -9,7 +9,7 @@
 
 import { cn } from '@/lib/utils';
 import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, Circle, LucideIcon } from 'lucide-react'
-import type { EventStatus, ActivityType } from './EventIndicator'
+import type { EventStatus, ActivityType } from './types'
 
 /**
  * Get status icon for event status

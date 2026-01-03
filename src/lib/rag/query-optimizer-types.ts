@@ -6,7 +6,7 @@
  * Type definitions for query parsing and optimization.
  */
 
-import type { SearchFilters } from '.';
+import type { SearchFilters } from './hybrid-retriever';
 
 /**
  * Parsed query components

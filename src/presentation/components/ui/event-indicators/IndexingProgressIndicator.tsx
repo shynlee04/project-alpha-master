@@ -11,7 +11,7 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './EventIndicator'
+import { EventIndicator, type EventStatus } from './types'
 import { IndexingPhaseItem } from './IndexingPhaseItem'
 import { getIndexingStatus, getIndexingMessage, getIndexingProgress } from './indexing-utils'
 

@@ -6,9 +6,11 @@
  *
  * @layer Presentation
  * @component IDELayout
+ *
+ * Note: IDELayout is not re-exported from barrel to avoid circular dependency.
+ * Import IDELayout directly from '../IDELayoutMain' if needed.
  */
 
-export { IDELayout } from '../IDELayoutMain';
 export { IDEDiscoveryMechanisms } from './IDEDiscoveryMechanisms';
 export { IDEEditorPanel } from './IDEEditorPanel';
 export { IDEPreviewPanel } from './IDEPreviewPanel';

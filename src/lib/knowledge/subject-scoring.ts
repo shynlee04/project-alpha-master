@@ -5,7 +5,7 @@
  * @ai-observable true
  */
 
-import type { SubjectCategory } from './subject-classifier';
+import type { SubjectCategory } from './subject-classifier-types';
 
 interface SourceFeatures {
   keywords: string[];

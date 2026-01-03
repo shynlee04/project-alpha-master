@@ -8,7 +8,7 @@
  */
 
 import { cn } from '@/lib/utils';
-import type { WorkspaceTransitionStep } from './WorkspaceTransitionIndicator'
+import type { WorkspaceTransitionStep } from './types'
 
 /**
  * Workspace Transition Step Item Component

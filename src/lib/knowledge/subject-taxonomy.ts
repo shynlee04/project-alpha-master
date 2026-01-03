@@ -8,7 +8,7 @@
  * Handles predefined subjects, hierarchy building, and dynamic category creation.
  */
 
-import type { SubjectCategory } from './subject-classifier';
+import type { SubjectCategory } from './subject-classifier-types';
 
 /**
  * Subject Taxonomy Manager

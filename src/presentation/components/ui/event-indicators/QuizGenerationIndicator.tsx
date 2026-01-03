@@ -11,7 +11,7 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './EventIndicator'
+import { EventIndicator, type EventStatus } from './types'
 import { QuizGenerationStepItem } from './QuizGenerationStepItem'
 import { getQuizGenerationStatus, getQuizGenerationMessage, getQuizGenerationProgress } from './quiz-generation-utils'
 

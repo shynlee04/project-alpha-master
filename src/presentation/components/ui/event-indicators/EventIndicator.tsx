@@ -11,36 +11,10 @@
 
 import { cn } from '@/lib/utils'
 import { StatusIcon, getStatusStyles } from './event-indicator-utils'
+import type { EventStatus, ActivityType, EventIndicatorProps } from './types'
 
-/**
- * Event status types
- */
-export type EventStatus = 'idle' | 'loading' | 'success' | 'error' | 'warning'
-
-/**
- * Activity types
- */
-export type ActivityType = 'general' | 'indexing' | 'streaming' | 'sync' | 'quiz-generation' | 'workspace-transition'
-
-/**
- * Event indicator props
- */
-export interface EventIndicatorProps {
-    /** Current status */
-    status: EventStatus
-    /** Type of activity */
-    activity?: ActivityType
-    /** Status message (e.g., "Indexing documents...") */
-    message: string
-    /** Optional progress percentage (0-100) */
-    progress?: number
-    /** Optional error/warning message */
-    errorDetail?: string
-    /** Optional CSS class name */
-    className?: string
-    /** Show compact version (for inline display) */
-    compact?: boolean
-}
+// Re-export types for backward compatibility
+export type { EventStatus, ActivityType, EventIndicatorProps }
 
 /**
  * EventIndicator Component

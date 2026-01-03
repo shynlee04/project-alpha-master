@@ -7,8 +7,8 @@
  * @module presentation/components/ui/event-indicators
  */
 
-import type { EventStatus } from './EventIndicator'
-import type { IndexingState } from './IndexingProgressIndicator'
+import type { EventStatus } from './types'
+import type { IndexingState } from './types'
 
 /**
  * Get status from indexing state

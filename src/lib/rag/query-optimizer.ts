@@ -7,13 +7,14 @@
  * Supports compound queries, keyword extraction, and query enhancement.
  */
 
-import type { SearchFilters } from '.';
+import type { SearchFilters } from './hybrid-retriever';
 import type {
   ParsedQuery,
   QueryOperator,
   QueryType,
   OptimizedQuery,
   QueryParserConfig,
+  QueryWeightConfig,
 } from './query-optimizer-types';
 import { DEFAULT_CONFIG } from './query-optimizer-config';
 
@@ -27,8 +28,8 @@ export type {
   QueryWeightConfig,
 } from './query-optimizer-types';
 
-// Re-export helpers
-export { createWeightedQuery } from './query-optimizer-helpers';
+// Re-export helpers (backward compatibility - re-export from static method)
+export const createWeightedQuery = QueryOptimizer.createWeightedQuery.bind(QueryOptimizer);
 
 /**
  * Query parser and optimizer class
@@ -512,5 +513,55 @@ export class QueryOptimizer {
    */
   private escapeRegex(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  /**
+   * Create a weighted query for relevance tuning (static method)
+   *
+   * @param query - Base query
+   * @param weights - Weight configuration
+   * @returns Weighted query string
+   *
+   * @example
+   * ```typescript
+   * const weighted = QueryOptimizer.createWeightedQuery("machine learning", {
+   *   entityWeight: 2.0,
+   *   keywordWeight: 1.0,
+   * });
+   * // Returns: '"machine learning"^2.0'
+   * ```
+   */
+  static createWeightedQuery(
+    query: string,
+    weights: QueryWeightConfig = {}
+  ): string {
+    const {
+      keywordWeight = 1.0,
+      entityWeight = 1.5,
+    } = weights;
+
+    const optimizer = new QueryOptimizer();
+    const parsed = optimizer.parseQuery(query);
+
+    let weightedQuery = '';
+
+    // Add phrase weight for entities
+    for (const entity of parsed.entities) {
+      weightedQuery += `"${entity}"^${entityWeight} `;
+    }
+
+    // Add keyword weights
+    for (const keyword of parsed.keywords) {
+      if (!parsed.entities.some(e => keyword.includes(e) || e.includes(keyword))) {
+        weightedQuery += `${keyword}^${keywordWeight} `;
+      }
+    }
+
+    // Handle negations
+    for (const negation of parsed.negations) {
+      weightedQuery += `NOT ${negation} `;
+    }
+
+    return weightedQuery.trim();
   }
 }

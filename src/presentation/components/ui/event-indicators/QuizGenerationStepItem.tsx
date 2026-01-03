@@ -8,7 +8,7 @@
  */
 
 import { cn } from '@/lib/utils';
-import type { QuizGenerationStep } from './QuizGenerationIndicator'
+import type { QuizGenerationStep } from './types'
 
 /**
  * Quiz Generation Step Item Component

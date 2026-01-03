@@ -8,7 +8,7 @@
  */
 
 import { cn } from '@/lib/utils';
-import type { IndexingStep } from './IndexingProgressIndicator'
+import type { IndexingStep } from './types'
 
 /**
  * Indexing Phase Item Component

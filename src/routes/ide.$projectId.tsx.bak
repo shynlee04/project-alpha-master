@@ -23,11 +23,7 @@ import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 // Lazy load IDELayout
-const IDELayout = lazy(() =>
-  import('@/presentation/components/layout/IDELayoutMain').then(m => ({
-    default: m.IDELayout,
-  }))
-);
+const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayoutMain).then(m => ({ default: m.IDELayout })));
 
 export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,

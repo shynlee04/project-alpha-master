@@ -15,7 +15,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './EventIndicator'
+import { EventIndicator, type EventStatus } from './types'
 
 /**
  * Streaming state

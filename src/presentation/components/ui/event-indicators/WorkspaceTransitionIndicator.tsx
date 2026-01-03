@@ -14,45 +14,10 @@ import { useEffect, useState } from 'react'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { WorkspaceTransitionStepItem } from './WorkspaceTransitionStepItem'
 import { getWorkspaceTransitionStatus, getWorkspaceTransitionMessage } from './workspace-transition-utils'
+import type { WorkspaceTransitionState, WorkspaceTransitionStep, WorkspaceTransitionIndicatorProps } from './types'
 
-/**
- * Workspace transition phase
- */
-export type WorkspaceTransitionPhase = 'pending' | 'persisting' | 'cleanup' | 'loading' | 'restoring' | 'complete' | 'error'
-
-/**
- * Workspace transition step
- */
-export interface WorkspaceTransitionStep {
-    phase: WorkspaceTransitionPhase
-    message: string
-    timestamp: number
-}
-
-/**
- * Workspace transition state
- */
-export interface WorkspaceTransitionState {
-    isTransitioning: boolean
-    currentPhase: WorkspaceTransitionPhase
-    fromWorkspace: string
-    toWorkspace: string
-    steps: WorkspaceTransitionStep[]
-    startTime: number | null
-    error?: string
-}
-
-/**
- * Workspace transition indicator props
- */
-export interface WorkspaceTransitionIndicatorProps {
-    /** Workspace transition state from workspace store */
-    transition?: WorkspaceTransitionState
-    /** Optional CSS class name */
-    className?: string
-    /** Show compact version */
-    compact?: boolean
-}
+// Re-export types for backward compatibility
+export type { WorkspaceTransitionPhase, WorkspaceTransitionStep, WorkspaceTransitionState, WorkspaceTransitionIndicatorProps }
 
 /**
  * Workspace Transition Indicator Component
