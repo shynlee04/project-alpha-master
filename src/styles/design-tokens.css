@@ -506,3 +506,36 @@
   background-color: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
 }
+
+/* =============================================================================
+   THEME TRANSITIONS
+   Smooth color transitions for theme switching
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  transition-property: background-color, color, border-color, outline-color,
+                    text-decoration-color, fill, stroke, opacity, box-shadow,
+                    transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Exclude these elements from transitions to prevent FOUC */
+:root,
+html,
+body {
+  transition: none !important;
+}
+
+/* Support for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

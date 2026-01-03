@@ -1975,3 +1975,80 @@ ralph_loop_iteration_174:
   epic-38-sprint-plan: done # _bmad-output/sprint-artifacts/epic-38-sprint-plan-2025-12-31.md
   epic-38-tech-spec: done # _bmad-output/tech-specs/epic-38-tech-spec-2025-12-31.md
 
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # EPIC 52: UX/UI Integration Gaps (Course Correction 2026-01-03)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Added: 2026-01-03T23:59:00+07:00
+  # Trigger: UX/UI Workspace Integration Assessment
+  # Priority: P2 (Medium Priority) - Blocks use cases
+  # Assessment: _bmad-output/ux-ui-workspace-integration-assessment-2026-01-03.md
+  # Current State: Platform Integration Score 25%, Use Case Feasibility 17%
+  # Target State: Platform Integration Score 50%, Use Case Feasibility 35%
+  epic-52: in-progress
+  epic-52-meta:
+    name: "UX/UI Integration Gaps"
+    priority: "P2"
+    estimate_points: "22"
+    stories: 3
+    execution_mode: "sequential"
+    started_at: "2026-01-03T23:59:00+07:00"
+    
+  # Story 1: Fix Workspace Context Clashes (BLOCKS OTHER STORIES)
+  p2-9-fix-workspace-context-clashes: ready-for-dev # READY FOR DEV
+    status: "ready-for-dev"
+    priority: "P2"
+    estimate_hours: 4
+    team: "Team A"
+    dependencies: []
+    file: "_bmad-output/sprint-artifacts/story-p2-9-fix-workspace-context-clashes.md"
+    acceptance_criteria: 5
+    blocks: ["p2-8", "p2-10"]
+  
+  # Story 2: Notes → Knowledge RAG Indexing
+  p2-8-notes-knowledge-rag-indexing: ready-for-dev # READY FOR DEV
+    status: "ready-for-dev"
+    priority: "P2"
+    estimate_hours: 8
+    team: "Team A"
+    dependencies: ["p2-9"]
+    file: "_bmad-output/sprint-artifacts/story-p2-8-notes-knowledge-rag-indexing.md"
+    acceptance_criteria: 5
+    unblocks: ["p2-10"]
+  
+  # Story 3: Complete Critical Cross-Workspace Connections
+  p2-10-cross-workspace-connections: ready-for-dev # READY FOR DEV
+    status: "ready-for-dev"
+    priority: "P2"
+    estimate_hours: 10
+    team: "Team A + Team B"
+    dependencies: ["p2-8", "p2-9"]
+    file: "_bmad-output/sprint-artifacts/story-p2-10-cross-workspace-connections.md"
+    acceptance_criteria: 5
+    
+  epic-52-progress:
+    stories_created: 3
+    stories_ready: 3
+    stories_in_progress: 0
+    stories_done: 0
+    total_hours: 22
+    completion_percentage: "0%"
+    target_integration_score: "50%"
+    target_use_case_feasibility: "35%"
+    
+  epic-52-validation_status:
+    assessment_document: "_bmad-output/ux-ui-workspace-integration-assessment-2026-01-03.md"
+    current_integration_score: "25%"
+    current_use_case_feasibility: "17%"
+    target_integration_score: "50%"
+    target_use_case_feasibility: "35%"
+    critical_components_fixed:
+      - "SyncStatusPanel.tsx - Removed useWorkspace dependency (2026-01-03)"
+    remaining_issues:
+      - "7 components using OLD useWorkspace context"
+      - "Notes → Knowledge RAG indexing missing"
+      - "12/24 workspace connections missing"
+    use_cases_unblocked:
+      - "UC-01: Exam Sprint (will be FEASIBLE after P2-8)"
+      - "UC-03: Citation Grade (will be FEASIBLE after P2-8)"
+      - "UC-02, UC-11, UC-13: IDE Debugging (will be PARTIAL after P2-10)"
