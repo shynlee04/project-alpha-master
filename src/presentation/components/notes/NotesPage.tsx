@@ -53,6 +53,20 @@ export function NotesPage() {
     // P2-2: Panel collapse state
     const [noteSidebarCollapsed, setNoteSidebarCollapsed] = useState(false);
 
+    // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Check for Cmd/Ctrl + [ (left bracket)
+            if ((event.metaKey || event.ctrlKey) && event.key === '[') {
+                event.preventDefault();
+                setNoteSidebarCollapsed(prev => !prev);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     // Import/Export dialog state (NR-06, NR-08)
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);

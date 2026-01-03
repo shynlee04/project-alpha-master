@@ -63,6 +63,20 @@ export function KnowledgePage() {
     // Panel collapse state
     const [sourceLibraryCollapsed, setSourceLibraryCollapsed] = useState(false);
 
+    // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Check for Cmd/Ctrl + [ (left bracket)
+            if ((event.metaKey || event.ctrlKey) && event.key === '[') {
+                event.preventDefault();
+                setSourceLibraryCollapsed(prev => !prev);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     // Listen to RAG progress events from other workspaces
     useEffect(() => {
         // eventBus is a singleton, always available

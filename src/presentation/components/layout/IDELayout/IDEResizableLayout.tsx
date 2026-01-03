@@ -7,7 +7,7 @@
  * @component IDEResizableLayout
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     ResizablePanelGroup,
     ResizablePanel,
@@ -51,6 +51,21 @@ export function IDEResizableLayout({
 }: IDEResizableLayoutProps) {
     // P2-2: Terminal panel collapse state
     const [terminalCollapsed, setTerminalCollapsed] = useState(false);
+
+    // P2-3: Keyboard shortcut for terminal panel collapse/expand (Cmd/Ctrl + Shift + [)
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Check for Cmd/Ctrl + Shift + [ (left bracket with Shift)
+            if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === '[') {
+                event.preventDefault();
+                setTerminalCollapsed(prev => !prev);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     return (
         <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
             {/* Center Panel (Editor + Preview + Terminal) */}
