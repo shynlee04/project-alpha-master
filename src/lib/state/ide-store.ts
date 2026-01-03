@@ -60,6 +60,9 @@ export interface IDEState {
     /** Panel layout sizes by group ID */
     panelLayouts: Record<string, number[]>;
 
+    /** P2-4: Panel collapse states by panel ID */
+    panelCollapsed: Record<string, boolean>;
+
     /** Active terminal panel tab */
     terminalTab: TerminalTab;
 
@@ -100,6 +103,9 @@ export interface IDEState {
     /** Update panel layout for a group */
     setPanelLayout: (groupId: string, layout: number[]) => void;
 
+    /** P2-4: Set panel collapse state */
+    setPanelCollapsed: (panelId: string, collapsed: boolean) => void;
+
     /** Set terminal tab */
     setTerminalTab: (tab: TerminalTab) => void;
 
@@ -128,6 +134,7 @@ const defaultState = {
     activeFile: null,
     expandedPaths: new Set<string>(),
     panelLayouts: {},
+    panelCollapsed: {} as Record<string, boolean>,
     terminalTab: 'terminal' as TerminalTab,
     chatVisible: true,
     activeFileScrollTop: 0,
@@ -217,6 +224,13 @@ export const useIDEStore = create<IDEState>()(
                 const { panelLayouts } = get();
                 set({
                     panelLayouts: { ...panelLayouts, [groupId]: layout },
+                });
+            },
+
+            setPanelCollapsed: (panelId, collapsed) => {
+                const { panelCollapsed } = get();
+                set({
+                    panelCollapsed: { ...panelCollapsed, [panelId]: collapsed },
                 });
             },
 

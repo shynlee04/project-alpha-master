@@ -50,8 +50,9 @@ export function NotesPage() {
     const activeNote = useActiveNote();
     const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
 
-    // P2-2: Panel collapse state
-    const [noteSidebarCollapsed, setNoteSidebarCollapsed] = useState(false);
+    // P2-4: Panel collapse state (persisted in IDE store)
+    const noteSidebarCollapsed = useIDEStore((s) => s.panelCollapsed['notes-sidebar'] ?? false);
+    const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -59,13 +60,13 @@ export function NotesPage() {
             // Check for Cmd/Ctrl + [ (left bracket)
             if ((event.metaKey || event.ctrlKey) && event.key === '[') {
                 event.preventDefault();
-                setNoteSidebarCollapsed(prev => !prev);
+                setPanelCollapsed('notes-sidebar', !noteSidebarCollapsed);
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [noteSidebarCollapsed, setPanelCollapsed]);
 
     // Import/Export dialog state (NR-06, NR-08)
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
@@ -264,7 +265,7 @@ export function NotesPage() {
                     maxSize={30}
                     collapsible={true}
                     collapsedSize={3}
-                    onCollapse={setNoteSidebarCollapsed}
+                    onCollapse={(collapsed) => setPanelCollapsed('notes-sidebar', collapsed)}
                 >
                     {noteSidebarCollapsed ? (
                         <div className="h-full flex items-center justify-center border-r border-border bg-muted/30">

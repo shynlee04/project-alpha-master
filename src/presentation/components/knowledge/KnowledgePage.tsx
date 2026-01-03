@@ -60,8 +60,9 @@ export function KnowledgePage() {
     const [synthesisResult, setSynthesisResult] = useState<SynthesisResult | null>(null);
     const [previewType, setPreviewType] = useState<ArtifactType | null>(null);
 
-    // Panel collapse state
-    const [sourceLibraryCollapsed, setSourceLibraryCollapsed] = useState(false);
+    // P2-4: Panel collapse state (persisted in IDE store)
+    const sourceLibraryCollapsed = useIDEStore((s) => s.panelCollapsed['knowledge-sources'] ?? false);
+    const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -69,13 +70,13 @@ export function KnowledgePage() {
             // Check for Cmd/Ctrl + [ (left bracket)
             if ((event.metaKey || event.ctrlKey) && event.key === '[') {
                 event.preventDefault();
-                setSourceLibraryCollapsed(prev => !prev);
+                setPanelCollapsed('knowledge-sources', !sourceLibraryCollapsed);
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [sourceLibraryCollapsed, setPanelCollapsed]);
 
     // Listen to RAG progress events from other workspaces
     useEffect(() => {
@@ -348,7 +349,7 @@ export function KnowledgePage() {
                     maxSize={30}
                     collapsible={true}
                     collapsedSize={3}
-                    onCollapse={setSourceLibraryCollapsed}
+                    onCollapse={(collapsed) => setPanelCollapsed('knowledge-sources', collapsed)}
                     className="min-w-[280px]">
                     <div className="h-full border-r border-border flex flex-col bg-background">
                         {!sourceLibraryCollapsed && (

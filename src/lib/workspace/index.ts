@@ -27,31 +27,24 @@ export {
 // WorkspaceId type from core types
 export type { WorkspaceId } from '../state/dexie-db-core-types';
 
-// Story 5-3: Conversation Store
-export {
-    getConversation,
-    saveConversation,
-    appendConversationMessage,
-    appendToolResult,
-    clearConversation,
-    listRecentConversations,
-    type ConversationMessage,
-    type ConversationMessageRole,
-    type ConversationState,
-    type ToolResultRecord,
-} from './conversation-store';
+// Story 5-3: Conversation Store (MIGRATED - Story 51-12)
+// The old conversation-store.ts was an adapter to infrastructure/persistence/stores/conversation
+// It has been deleted. Re-export types from the new location for backwards compatibility.
 
-// Story 5-4: IDE State Store
-export {
-    getIdeState,
-    saveIdeState,
-    updateIdeState,
-    clearIdeState,
-    listRecentIdeStates,
-    type IdeState,
-    type IdeStatePatch,
-    type TerminalTab,
-} from './ide-state-store';
+export type {
+    ConversationMessage as ThreadMessage,
+    ConversationMessageRole,
+    ConversationState,
+    ConversationMetadata,
+} from '@/infrastructure/persistence/stores/conversation';
+
+// Note: Imperative functions (getConversation, saveConversation, etc.) removed
+// Use Zustand store instead: import { useConversationStore } from '@/infrastructure/persistence/stores/conversation'
+
+// Story 5-4: IDE State Store (DEPRECATED - Story 51-12)
+// The old ide-state-store.ts was deleted as it was a deprecated backward compatibility layer
+// Use Zustand store instead: import { useIDEStore } from '@/lib/state/ide-store'
+// Or from infrastructure: import { useIDEStore } from '@/infrastructure/persistence/stores/ide/useIDEStore'
 
 // Story 3-8: Workspace Context
 export {

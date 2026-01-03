@@ -7,7 +7,7 @@
  * @component IDEResizableLayout
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
     ResizablePanelGroup,
     ResizablePanel,
@@ -16,6 +16,7 @@ import {
 import { IDEEditorPreviewGroup } from './IDEEditorPreviewGroup';
 import { IDETerminalPanel } from './IDETerminalPanel';
 import { IDEChatPanel } from './IDEChatPanel';
+import { useIDEStore } from '@/lib/state/ide-store';
 import type { IDEResizableLayoutProps } from './types';
 
 /**
@@ -49,8 +50,9 @@ export function IDEResizableLayout({
     centerPanelGroupRef,
     editorPanelGroupRef
 }: IDEResizableLayoutProps) {
-    // P2-2: Terminal panel collapse state
-    const [terminalCollapsed, setTerminalCollapsed] = useState(false);
+    // P2-4: Terminal panel collapse state (persisted in IDE store)
+    const terminalCollapsed = useIDEStore((s) => s.panelCollapsed['ide-terminal'] ?? false);
+    const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
 
     // P2-3: Keyboard shortcut for terminal panel collapse/expand (Cmd/Ctrl + Shift + [)
     useEffect(() => {
@@ -58,13 +60,13 @@ export function IDEResizableLayout({
             // Check for Cmd/Ctrl + Shift + [ (left bracket with Shift)
             if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === '[') {
                 event.preventDefault();
-                setTerminalCollapsed(prev => !prev);
+                setPanelCollapsed('ide-terminal', !terminalCollapsed);
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [terminalCollapsed, setPanelCollapsed]);
 
     return (
         <ResizablePanelGroup ref={mainPanelGroupRef} direction="horizontal" className="flex-1" onLayout={(layout) => handlePanelLayoutChange('main', layout)}>
@@ -103,7 +105,7 @@ export function IDEResizableLayout({
                         minSize={10}
                         collapsible={true}
                         collapsedSize={5}
-                        onCollapse={setTerminalCollapsed}
+                        onCollapse={(collapsed) => setPanelCollapsed('ide-terminal', collapsed)}
                     >
                         {terminalCollapsed ? (
                             <div className="h-full flex items-center justify-center border-t border-border bg-muted/30">
