@@ -209,7 +209,9 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
               // Recompute counts from hydrated statuses
               state.counts = computeCounts(state.statuses);
             }
-            state!._hasHydrated = true;
+            if (state) {
+              state._hasHydrated = true;
+            }
           }
         };
       },

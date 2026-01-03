@@ -378,7 +378,9 @@ export const useToolPermissionStore = create<ToolPermissionState>()(
             console.error('[ToolPermissionStore] Hydration error:', error);
           } else {
             console.log('[ToolPermissionStore] Hydration complete');
-            state!._hasHydrated = true;
+            if (state) {
+              state._hasHydrated = true;
+            }
           }
         };
       },

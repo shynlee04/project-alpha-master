@@ -183,7 +183,9 @@ export const useWorkspaceStore = create<WorkspaceState>()(
             console.error('[WorkspaceStore] Hydration error:', error);
           } else {
             console.log('[WorkspaceStore] Hydration complete');
-            state!._hasHydrated = true;
+            if (state) {
+              state._hasHydrated = true;
+            }
           }
         };
       },
