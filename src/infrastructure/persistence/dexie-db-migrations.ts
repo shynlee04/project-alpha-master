@@ -10,7 +10,7 @@
  * Story 27-1c: Persistence Migration (idb → Dexie)
  */
 
-import type { ViaGentDatabase } from './dexie-db-class';
+import type { Dexie } from 'dexie';
 // import type { SyncStatusRecord } from './dexie-db-session-types';
 // import { queueItemToSyncStatus } from './dexie-db-helpers';
 
@@ -78,8 +78,10 @@ export function markMigrationApplied(version: number): void {
 /**
  * Register all migrations with the database instance.
  * This function is called from the ViaGentDatabase constructor.
+ *
+ * @param db - Dexie database instance (ViaGentDatabase extends Dexie)
  */
-export function registerMigrations(db: ViaGentDatabase): void {
+export function registerMigrations(db: Dexie): void {
         db.version(1).stores({
             projects: 'id, lastOpened, name',
             ideState: 'projectId, updatedAt',
