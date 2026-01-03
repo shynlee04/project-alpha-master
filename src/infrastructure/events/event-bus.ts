@@ -72,6 +72,9 @@ export enum DomainEventType {
   IDE_REFACTOR_JOURNAL_CREATED = 'ide:refactor:journal:created',
   IDE_DEPENDENCY_AUDIT_COMPLETE = 'ide:dependency:audit:complete',
 
+  // IDE → Knowledge events (P2-10 AC2 - Code Analysis Bridge)
+  IDE_CODE_ANALYSIS_REQUESTED = 'ide:code:analysis:request',
+
   // Knowledge events (P2-7 - Knowledge → Notes export)
   KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED = 'knowledge:synthesis:export:request',
 
@@ -226,6 +229,45 @@ export interface DependencyAuditData {
   };
   riskLevel: 'low' | 'medium' | 'high';
   tags: string[]; // e.g., ["react", "major-version", "hooks"]
+}
+
+/**
+ * Code Analysis Data (P2-10 AC2 - IDE → Knowledge Bridge)
+ *
+ * Generated when user analyzes code file from IDE for Knowledge workspace
+ */
+export interface CodeAnalysisData {
+  workspaceType: 'ide';
+  projectId: string;
+  timestamp: Date;
+  filePath: string;
+  fileName: string;
+  analysis: {
+    language: string;
+    linesOfCode: number;
+    functionCount: number;
+    classCount: number;
+    complexity: {
+      cyclomaticComplexity: number;
+      averageNestingDepth: number;
+      maxNestingDepth: number;
+      longestFunction: number;
+      complexityScore: number;
+    };
+    dependencies: Array<{
+      importPath: string;
+      importType: 'local' | 'external' | 'builtin';
+      moduleName?: string;
+    }>;
+    concepts: Array<{
+      type: 'function' | 'class' | 'interface' | 'type' | 'variable' | 'enum';
+      name: string;
+      line: number;
+      description?: string;
+      relatedTo: string[];
+    }>;
+  };
+  sourceCode?: string; // Optional: full source code for reference
 }
 
 /**

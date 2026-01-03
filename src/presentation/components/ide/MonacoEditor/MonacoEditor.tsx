@@ -25,6 +25,7 @@ import { SyncEditWarning } from '../SyncEditWarning';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { useTheme } from 'next-themes';
+import { codeAnalysisBridge } from '@/lib/ide/code-analysis-bridge';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -169,6 +170,32 @@ export function MonacoEditor({
                 onSave(currentPath, currentContent);
                 pendingChangesRef.current.delete(currentPath);
             }
+        });
+
+        // P2-10 AC2: Add "Analyze in Knowledge" context menu action
+        editor.addAction({
+            id: 'analyze-in-knowledge',
+            label: 'Analyze in Knowledge',
+            contextMenuGroupId: 'navigation',
+            contextMenuOrder: 1,
+            run: (ed) => {
+                const currentPath = activeFilePath;
+                const currentContent = ed.getValue();
+
+                if (!currentPath) {
+                    console.warn('[MonacoEditor] No active file to analyze');
+                    return;
+                }
+
+                console.log('[MonacoEditor] Analyzing in Knowledge:', currentPath);
+
+                // Request code analysis via bridge
+                codeAnalysisBridge.requestCodeAnalysis(
+                    currentPath,
+                    currentContent,
+                    'default' // TODO: Get actual project ID
+                );
+            },
         });
 
         // Focus the editor on mount
