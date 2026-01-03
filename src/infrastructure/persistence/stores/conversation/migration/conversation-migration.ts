@@ -17,7 +17,7 @@
  * 6. Clear old stores (if verification succeeds)
  */
 
-import { dexieDB } from '@/lib/state/dexie-db-class';
+import { dexieDB } from '@/infrastructure/persistence/dexie-db-class';
 import { useConversationStore } from '../useConversationStore';
 import type { ConversationMetadataWithId } from '../conversation-metadata-slice';
 import type { ThreadWithId } from '../thread-management-slice';

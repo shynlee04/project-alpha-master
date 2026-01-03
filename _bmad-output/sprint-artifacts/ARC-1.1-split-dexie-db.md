@@ -402,6 +402,367 @@ grep -r "import.*dexie-db" src/
 - Story ARC-1.2: Split rag-store.ts (1,595 lines) - Next story
 - Story ARC-1.3: Split conversation stores (25 duplicates) - Future story
 
+---
+
+## 🔴 POST-IMPLEMENTATION CODE REVIEW FINDINGS (2026-01-04)
+
+### Executive Summary
+
+**Story Status**: 75% Complete - Core Functionality Works, But Critical Issues Remain
+
+**Claimed vs Reality**:
+- **Claimed**: "Split dexie-db.ts (1,267 lines) → 14 helper modules, 100% complete"
+- **Reality**: Created 15 helper files, reduced to 333 lines (11% over AC target), 3/7 acceptance criteria failed
+
+**Overall Assessment**: Story ARC-1.1 successfully eliminated the god store anti-pattern by extracting 75 functions into 15 focused helper modules (74% line reduction). However, critical acceptance criteria failures (AC-3, AC-6, AC-7), code quality issues, and missing test coverage prevent this story from being marked as DONE.
+
+---
+
+### What Story ARC-1.1 Actually Accomplished ✅
+
+#### 1. Helper Files Created (Exceeds Target)
+- **Claim**: Create 8-14 helper files
+- **Actual**: Created **15 helper files** in `src/lib/state/dexie-db-helpers/`
+- **Max File Size**: 128 lines (`synthesis-result-helpers-crud.ts`) - 7% over 120-line target
+- **Assessment**: ⚠️ PARTIAL - Exceeded target count but 1 file exceeds size limit
+
+**All Helper Files Created**:
+```
+additional-file-metadata-helpers.ts (45 lines)
+collection-helpers-basic.ts (91 lines)
+collection-helpers-sources.ts (75 lines)
+conversation-thread-helpers.ts (97 lines)
+file-metadata-helpers.ts (113 lines)
+fsa-handle-helpers.ts (102 lines)
+ide-state-helpers.ts (68 lines)
+session-snapshot-helpers.ts (83 lines)
+source-helpers-basic.ts (93 lines)
+source-helpers-search.ts (56 lines)
+sync-status-helpers-basic.ts (74 lines)
+sync-status-helpers-query.ts (73 lines)
+synthesis-result-helpers-create.ts (77 lines)
+synthesis-result-helpers-crud.ts (128 lines) ⚠️ 7% over limit
+tool-execution-log-helpers.ts (118 lines)
+```
+
+#### 2. Main File Reduction (74% Reduction)
+- **Before**: 1,267 lines (god store, 10.6x over 120-line limit)
+- **After**: 333 lines
+- **Reduction**: 934 lines eliminated (74% reduction)
+- **Assessment**: ❌ FAILED - 333 lines exceeds 300-line AC target by 11% (AC-3 violated)
+
+**Why 333 lines?**
+The main file is now a barrel export with 75 re-exported functions:
+
+```typescript
+// Barrel export pattern (75 functions)
+export * from './dexie-db-helpers/additional-file-metadata-helpers';
+export * from './dexie-db-helpers/collection-helpers-basic';
+// ... 13 more re-exports
+
+export async function getDb() { /* database initialization */ }
+export function isDefaultProject() { /* default check */ }
+export { db } from './dexie-db-class';
+export type { DbClasses, DbTables } from './dexie-db-class';
+export * from './dexie-db-class';
+export * from './dexie-db-core-types';
+export * from './dexie-db-migrations';
+// ... 8 more re-exports
+```
+
+#### 3. Zero Breaking Changes ✅
+- **Import Locations**: 52 files importing from old location
+- **Facade Pattern**: All re-exports work correctly
+- **TypeScript**: Zero new errors
+- **Assessment**: ✅ PASSED - Backwards compatibility maintained (AC-5 met)
+
+---
+
+### 🔴 CRITICAL ISSUES DISCOVERED (Not in Story Scope)
+
+**These issues were discovered during comprehensive codebase analysis after story completion.**
+
+#### Issue 1: Dexie Storage Duplication Crisis (P0 - Data Loss Risk)
+
+**Problem**: TWO VERSIONS of `dexie-storage.ts` with DIFFERENT CODE
+
+**Version 1** (`src/lib/state/dexie-storage.ts` - 84 lines):
+- Simple implementation
+- ❌ NO quota handling
+- ❌ NO proactive cleanup
+- ❌ NO retry mechanism
+- Used by: 7 files (mostly stores)
+
+**Version 2** (`src/infrastructure/persistence/dexie-storage.ts` - 207 lines):
+- Advanced implementation
+- ✅ HAS quota handling (Ralph Loop Cycle 18 DB-001 requirement)
+- ✅ HAS proactive cleanup
+- ✅ HAS retry mechanism
+- Used by: 1 file (rag-store.ts)
+
+**Impact**: 7 files using the 84-line version are missing P0 data loss protection. This is a **CRITICAL DATA LOSS RISK** identified in Ralph Loop Cycle 18.
+
+**Recommendation**: URGENT - Consolidate to 207-line version (Phase 1 of cleanup plan).
+
+---
+
+#### Issue 2: Dexie Type Files Duplicated (8 Files)
+
+**Problem**: 8 dexie type files exist in BOTH locations:
+- `src/lib/state/` (legacy, 68 imports)
+- `src/infrastructure/persistence/` (modern, 14 imports)
+
+**Duplicated Files**:
+```
+dexie-db-ai-types.ts
+dexie-db-class.ts
+dexie-db-core-types.ts
+dexie-db-helpers.ts
+dexie-db-knowledge-types.ts
+dexie-db-migrations.ts
+dexie-db-session-types.ts
+dexie-db.ts
+```
+
+**Impact**: Confusion about canonical location, maintenance burden, developers don't know where to import from.
+
+**Recommendation**: Consolidate to infrastructure/persistence with facade (Phase 2 of cleanup plan).
+
+---
+
+#### Issue 3: God Store Crisis Discovered (6 Stores)
+
+**Problem**: Discovered 6 god stores violating 300-line limit during codebase analysis:
+
+1. **`canvas-store.ts`**: 18,954 lines (63x over limit!) - HIGHEST PRIORITY
+2. **`flashcard-store.ts`**: 15,726 lines (52x over limit!)
+3. **`use-app-store.ts`**: 13,174 lines (43x over limit!)
+4. **`study-store.ts`**: 11,864 lines (39x over limit!)
+5. **`rag-store.ts`**: Large (not measured yet, likely god store)
+6. **`conversation-store.ts`**: 626 lines (2x over limit)
+
+**Impact**: Massive technical debt, unmaintainable code, violates architectural standards.
+
+**Recommendation**: NEW EPIC required - "Epic ARC-GOD: God Store Elimination" (48-72 hours, 6 stores).
+
+---
+
+#### Issue 4: Three-Layer Architecture Chaos
+
+**Problem**: Discovered codebase has 3 competing layers for state management:
+
+**Layer 1** (`src/infrastructure/persistence/stores/`):
+- 45 slice files organized by domain (agents, conversation, ide, knowledge, project, providers, rag, filesystem)
+- 18 standalone stores
+- **Status**: PRIMARY LOCATION - Current active implementation
+
+**Layer 2** (`src/lib/state/`):
+- 16 files: 11 dexie type files + 5 store files
+- dexie-db-helpers/ (15 helper files from Story ARC-1.1)
+- **Status**: BACKWARDS COMPATIBILITY - Should be consolidated
+
+**Layer 3** (`src/lib/workspace/`):
+- 10 files: project-store.ts (DUPLICATE), threads-store.ts, session-snapshot.ts, etc.
+- **Status**: UTILITY FOCUS - project-store is duplicate
+
+**Impact**: Developers don't know where to put new code, architectural confusion, maintenance burden.
+
+**Recommendation**: Create architectural decision document (Phase 6 of cleanup plan).
+
+---
+
+### 📋 CODE REVIEW FINDINGS (10 Specific Issues)
+
+#### HIGH Severity Issues
+
+**1. AC-3 VIOLATED: Main File Exceeds 300-Line Target**
+- **Location**: `src/lib/state/dexie-db.ts` (333 lines)
+- **Requirement**: <300 lines for unified store
+- **Actual**: 333 lines (11% over target)
+- **Root Cause**: 75 verbose re-export statements
+- **Fix**: Reduce to concise barrel export or split further
+
+**2. CRITICAL SSR BUG: Line 285 Environment Check**
+- **Location**: `src/lib/state/dexie-db.ts:285`
+- **Code**:
+  ```typescript
+  if (typeof window === 'undefined' && typeof indexedDB === 'undefined') return null;
+  ```
+- **Problem**: Uses `&&` (AND) instead of `||` (OR)
+- **Impact**: Returns null on server AND when indexedDB is missing, but should return null on server OR when indexedDB is missing
+- **Fix**: Change `&&` to `||`
+
+**3. DANGEROUS TEST FUNCTION: No Safety Checks**
+- **Location**: `src/lib/state/dexie-db.ts:327-332`
+- **Code**:
+  ```typescript
+  export async function resetDatabaseForTesting(): Promise<void> {
+      const instance = getDb();
+      if (!instance) return;
+      await instance.delete(); // ⚠️ Deletes ALL data with no confirmation
+      await instance.open();
+  }
+  ```
+- **Problem**: Deletes entire IndexedDB database without:
+  - Confirmation prompt
+  - Backup creation
+  - Environment check (could run in production)
+- **Fix**: Add environment guard, confirmation, or delete entirely
+
+**4. ZERO TEST FILES CREATED: AC-6 Failed**
+- **Requirement**: "Test Coverage (≥80%)" with 3 test files
+- **Actual**: 0 test files created
+- **Impact**: Cannot verify AC-6, no test coverage metrics
+- **Fix**: Write tests for all 15 helper files (Story ARC-1.1.3)
+
+**5. STORY DOCUMENTATION MISMATCH: Wrong Directory Structure**
+- **Story Expects**: `src/lib/workspace/dexie-db/` (slices + index.ts)
+- **Actual Implementation**: `src/lib/state/dexie-db-helpers/` (helper files, not slices)
+- **Impact**: Confusion for future developers reading story
+- **Fix**: Update story documentation to match actual implementation
+
+#### MEDIUM Severity Issues
+
+**6. AMBIGUOUS EXPORT: Import from Directory**
+- **Location**: `src/lib/state/dexie-db.ts:18`
+- **Code**:
+  ```typescript
+  export { queueItemToSyncStatus } from './dexie-db-helpers';
+  ```
+- **Problem**: Imports from directory instead of specific file
+- **Fix**: Specify file path: `from './dexie-db-helpers/sync-status-helpers-basic'`
+
+**7. ONE FILE EXCEEDS 120-LINE LIMIT**
+- **Location**: `synthesis-result-helpers-crud.ts` (128 lines)
+- **Requirement**: Helper files ≤120 lines
+- **Actual**: 128 lines (7% over limit)
+- **Fix**: Split into 2 files or refactor to reduce lines
+
+**8. ALL CHANGES UNCOMMITTED: Git State**
+- **Modified Files**: 9 files
+- **New Files**: 2 files
+- **Status**: Not committed to git
+- **Fix**: Commit changes with proper message
+
+**9. 34 TASKS MARKED INCOMPLETE**
+- **Story Status**: Claims "done" in sprint-status.yaml
+- **Task List**: All 34 tasks marked `[ ]` (incomplete)
+- **Impact**: Inconsistent story tracking
+- **Fix**: Update task checklist or remove claims of completion
+
+**10. dexie-storage.ts VERSION CONFLICT**
+- **Issue**: Two versions with different code (84 vs 207 lines)
+- **Impact**: Confusion about which to use, missing quota handling
+- **Fix**: Consolidate to 207-line version (Issue 1)
+
+---
+
+### ✅ ACCEPTANCE CRITERIA STATUS (Updated)
+
+| AC | Requirement | Status | Notes |
+|----|------------|--------|-------|
+| AC-1 | Helper Files Created (≤120 lines) | ⚠️ PARTIAL | 15 files created, but 1 exceeds 120 by 7% |
+| AC-2 | File Size Compliance (≤120 lines) | ⚠️ PARTIAL | 128 lines (synthesis-result-helpers-crud.ts) |
+| AC-3 | Main File Reduction (<300 lines) | ❌ FAILED | 333 lines (11% over target) |
+| AC-4 | Barrel Export Pattern | ✅ PASSED | All 75 functions re-exported |
+| AC-5 | Zero Breaking Changes | ✅ PASSED | 52 import locations verified |
+| AC-6 | Test Coverage (≥80%) | ❌ FAILED | 0 test files created |
+| AC-7 | Documentation Updated | ❌ FAILED | Story doesn't match implementation |
+
+**Final Assessment**: Story ARC-1.1 is **75% complete**. Core functionality works, but AC-3, AC-6, and AC-7 failed.
+
+---
+
+### 🎯 RECOMMENDATIONS FOR FOLLOW-UP WORK
+
+Based on code review findings, recommend creating these stories:
+
+#### Epic ARC-DUP: Eliminate Dexie Duplication (5 stories, 8-12 hours)
+
+**Story ARC-DUP.1**: Consolidate dexie-storage.ts versions (2-3 hours) - P0 URGENT
+- Copy 207-line version (with quota handling) to lib/state
+- Update all 7 imports
+- Delete duplicate from infrastructure/persistence
+- Test quota handling works
+
+**Story ARC-DUP.2**: Move dexie type files to infrastructure/persistence (3-4 hours)
+- Move 8 dexie type files
+- Create facade in lib/state for backwards compatibility
+- Update 68 imports
+- Verify zero breaking changes
+
+**Story ARC-DUP.3**: Delete knowledge-store.ts facade (1-2 hours)
+- Update all imports to direct path
+- Verify 10-15 files work
+- Test knowledge workspace
+
+**Story ARC-DUP.4**: Delete workspace/project-store.ts duplicate (1-2 hours)
+- Update 5-10 imports
+- Verify project workspace works
+- Test project CRUD
+
+**Story ARC-DUP.5**: Create architectural decision document (2-3 hours)
+- Document 3-layer chaos
+- Define canonical locations
+- Update AGENTS.md, CLAUDE.md
+
+#### Epic ARC-GOD: God Store Elimination (6 stories, 48-72 hours)
+
+**Story ARC-GOD.1**: Split canvas-store.ts (18,954 lines, 8-12 hours) - HIGHEST PRIORITY
+**Story ARC-GOD.2**: Split flashcard-store.ts (15,726 lines, 8-12 hours)
+**Story ARC-GOD.3**: Split use-app-store.ts (13,174 lines, 8-12 hours)
+**Story ARC-GOD.4**: Split study-store.ts (11,864 lines, 8-12 hours)
+**Story ARC-GOD.5**: Split rag-store.ts (large, 8-12 hours)
+**Story ARC-GOD.6**: Split conversation-store.ts (626 lines, 8-12 hours)
+
+#### Story ARC-1.1 Follow-Ups (4 stories, 6-8 hours)
+
+**Story ARC-1.1.1**: Fix dexie-db.ts SSR bug (Line 285, 30 minutes)
+- Change `&&` to `||` for environment check
+- Test SSR works correctly
+
+**Story ARC-1.1.2**: Reduce dexie-db.ts to ≤300 lines (1 hour)
+- Remove verbose re-exports
+- Use concise barrel export pattern
+
+**Story ARC-1.1.3**: Write tests for 15 helper files (4-6 hours)
+- Target ≥80% test coverage
+- Test all helper functions
+- Verify AC-6 passes
+
+**Story ARC-1.1.4**: Commit and push changes (30 minutes)
+- Commit all 11 modified/new files
+- Use conventional commit message
+- Push to feature branch
+
+---
+
+### 📚 LESSONS LEARNED
+
+1. **✅ Story Approach Was Correct**:
+   - Splitting 1,267-line file was the right call
+   - 15 helper files are well-organized
+   - Facade pattern worked perfectly
+
+2. **⚠️ Process Improvements Needed**:
+   - Code review should happen BEFORE marking story DONE
+   - Should analyze codebase context BEFORE implementation
+   - Need to check for duplicates in other locations
+
+3. **🔴 Deeper Problems Exposed**:
+   - Story ARC-1.1 was just the tip of the iceberg
+   - Codebase has 3-layer architecture chaos
+   - God store crisis is MUCH worse than expected
+   - Need comprehensive cleanup epic (60-85 hours)
+
+---
+
+**Analysis Performed By**: Critical Code Review Agent (Adversarial Review)
+**Analysis Date**: 2026-01-04
+**Comprehensive Plan**: See `/Users/apple/.claude/plans/magical-booping-allen.md`
+
+---
+
 ## Dev Agent Record
 
 *(This section will be populated during development phase)*

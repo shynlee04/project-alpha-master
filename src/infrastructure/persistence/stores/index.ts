@@ -155,7 +155,7 @@ export {
   type ConversationRecord,
 } from '../dexie-db';
 
-export { createDexieStorage } from '../dexie-storage';
+export { createDexieStorage } from '@/lib/state/dexie-storage';
 export { ViaGentDatabase } from '../dexie-db-class';
 
 // ============================================================================

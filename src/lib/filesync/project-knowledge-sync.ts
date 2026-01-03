@@ -12,7 +12,7 @@ import type { FileSyncService } from './file-sync-service';
 import type { DocumentChunker } from '../rag/document-chunker';
 import type { EmbeddingService } from '../rag/embedding-service';
 import type { OramaIndex } from '../knowledge/source-rag-bridge';
-import type { SourceRecord } from '@/lib/state/dexie-db-knowledge-types';
+import type { SourceRecord } from '@/lib/state/dexie-db-types';
 
 /**
  * Sync configuration

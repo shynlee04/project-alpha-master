@@ -10,7 +10,7 @@
  * Story 27-1c: Persistence Migration (idb → Dexie)
  */
 
-import type { SyncStatusRecord } from './dexie-db-session-types';
+import type { SyncStatusRecord } from './dexie-db-types';
 
 // ============================================================================
 // Helper Functions

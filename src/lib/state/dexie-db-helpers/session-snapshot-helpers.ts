@@ -7,7 +7,7 @@
  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
  */
 
-import type { SessionSnapshotRecord } from '../dexie-db-session-types';
+import type { SessionSnapshotRecord } from '../dexie-db-types';
 import { db } from '../dexie-db';
 
 /**

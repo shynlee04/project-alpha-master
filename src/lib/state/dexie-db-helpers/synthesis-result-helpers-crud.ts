@@ -7,7 +7,7 @@
  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
  */
 
-import type { SynthesisResultRecord } from '../dexie-db-knowledge-types';
+import type { SynthesisResultRecord } from '../dexie-db';
 import { db } from '../dexie-db';
 
 /**

@@ -7,7 +7,7 @@
  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
  */
 
-import type { IDEStateRecord, ProjectRecord } from '../dexie-db-core-types';
+import type { IDEStateRecord, ProjectRecord } from '../dexie-db-types';
 import { db } from '../dexie-db';
 
 /**

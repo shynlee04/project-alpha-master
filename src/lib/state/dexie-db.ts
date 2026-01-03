@@ -8,105 +8,51 @@
  * Re-exports all types and the database instance.
  *
  * Story ARC-1.1: Split dexie-db.ts (1,267 lines → barrel export pattern)
- * Part of Story ARC-1.1: Split dexie-db.ts into helper modules
+ * Story ARC-DUP.2: Move dexie type files to infrastructure/persistence
+ *
+ * **Architecture Change**:
+ * - Type files now consolidated in infrastructure/persistence (canonical)
+ * - This file re-exports types via dexie-db-types facade for backwards compatibility
+ * - Helper modules (dexie-db-helpers/) remain in lib/state
+ * - Dashboard-specific types remain in lib/state
  */
 
 // ============================================================================
-// Database Class
+// Database Types (re-exported from infrastructure/persistence via facade)
 // ============================================================================
 
-import { ViaGentDatabase } from './dexie-db-class';
-export { ViaGentDatabase } from './dexie-db-class';
+export * from './dexie-db-types';
 
 // ============================================================================
-// Core Types
+// Dashboard Types (unique to lib/state)
 // ============================================================================
 
-import type { ProjectRecord } from './dexie-db-core-types';
-
-export type {
-    ProjectRecord,
-    IDEStateRecord,
-    ConversationRecord,
-    WorkspaceBindings,
-} from './dexie-db-core-types';
-
-export type {
-    ProjectsTable,
-    IDEStateTable,
-    ConversationsTable,
-} from './dexie-db-core-types';
+export type * from './dexie-db-dashboard-types';
 
 // ============================================================================
-// AI Foundation Types
+// Synthesis Results Types (lib/state specific - not in infrastructure/persistence)
 // ============================================================================
+// NOTE: These types are lib/state specific and are not part of the
+// infrastructure/persistence consolidation. The synthesisResults table
+// does not exist in infrastructure/persistence/dexie-db-class.ts.
+//
+// TODO: Investigate if synthesis results should be:
+// 1. Added to infrastructure/persistence as a new table
+// 2. Kept as lib/state specific functionality
+// 3. Refactored to use a different storage mechanism
 
-export type {
-    TaskContextRecord,
-    ToolExecutionRecord,
-    CredentialRecord,
-    ThreadToolCallRecord,
-    ThreadMessageRecord,
-    ConversationThreadRecord,
-} from './dexie-db-ai-types';
+export interface SynthesisResultRecord {
+    id: string;
+    sourceId: string;
+    projectId: string;
+    status: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed';
+    synthesisResult?: string;
+    errorMessage?: string;
+    createdAt: number;
+    updatedAt: number;
+}
 
-export type {
-    TaskContextTable,
-    ToolExecutionTable,
-    CredentialsTable,
-    ConversationThreadsTable,
-} from './dexie-db-ai-types';
-
-// ============================================================================
-// Session Types
-// ============================================================================
-
-export type {
-    PersistedStateRecord,
-    SyncStatusRecord,
-    FileMetadataRecord,
-    ToolExecutionLogRecord,
-    FSAHandleRecord,
-    SessionSnapshotRecord,
-} from './dexie-db-session-types';
-
-export type {
-    PersistedStateTable,
-    SyncStatusTable,
-    FileMetadataTable,
-    ToolExecutionLogTable,
-    FSAHandleTable,
-    SessionSnapshotTable,
-} from './dexie-db-session-types';
-
-export {
-    generateSyncStatusId,
-    generateFileMetadataId,
-} from './dexie-db-session-types';
-
-// ============================================================================
-// Knowledge Types
-// ============================================================================
-
-export type {
-    SourceRecord,
-    SourceMetadata,
-    CollectionRecord,
-    Collection,
-    OramaIndexRecord,
-    EmbeddingModelRecord,
-    NoteRecord,
-    SynthesisResultRecord,
-} from './dexie-db-knowledge-types';
-
-export type {
-    SourcesTable,
-    CollectionsTable,
-    OramaIndexesTable,
-    EmbeddingModelsTable,
-    NotesTable,
-    SynthesisResultsTable,
-} from './dexie-db-knowledge-types';
+export type SynthesisResultsTable = Table<SynthesisResultRecord, string>;
 
 // ============================================================================
 // Helper Functions - Re-exported from dexie-db-helpers/
@@ -242,91 +188,3 @@ export {
 
 // Legacy Helper (for backwards compatibility)
 export { queueItemToSyncStatus } from './dexie-db-helpers';
-
-// ============================================================================
-// Migration Functions
-// ============================================================================
-
-export {
-    logDexieMigration,
-    isMigrationApplied,
-    markMigrationApplied,
-} from './dexie-db-migrations';
-
-// ============================================================================
-// Database Instance & Core Project Functions
-// ============================================================================
-
-/**
- * Singleton database instance - lazily initialized to avoid SSR issues
- *
- * @example
- * ```tsx
- * import { getDb } from '@/lib/state';
- *
- * // CRUD operations
- * const db = getDb();
- * if (db) {
- *   await db.projects.add({ id: '1', name: 'My Project', ... });
- *   const project = await db.projects.get('1');
- * }
- * ```
- */
-
-// Internal singleton instance
-let dbInstance: ViaGentDatabase | null = null;
-
-/**
- * Get the database instance (SSR-safe)
- * Returns null during server-side rendering
- */
-export function getDb(): ViaGentDatabase | null {
-    // Check for browser or test environment (has IndexedDB)
-    if (typeof window === 'undefined' && typeof indexedDB === 'undefined') return null;
-    if (!dbInstance) {
-        dbInstance = new ViaGentDatabase();
-    }
-    return dbInstance;
-}
-
-/**
- * Legacy export for backwards compatibility
- * @deprecated Use getDb() instead
- */
-export const db = new Proxy({} as ViaGentDatabase, {
-    get(_target, prop) {
-        const instance = getDb();
-        if (!instance) {
-            throw new Error('[Dexie] Database not available during SSR. Use getDb() and check for null.');
-        }
-        return instance[prop as keyof ViaGentDatabase];
-    }
-});
-
-/**
- * Get all projects, sorted by last opened
- *
- * @param limit - Maximum number of projects to return (default: 10)
- * @returns Array of project records
- */
-export async function getRecentProjects(limit = 10): Promise<ProjectRecord[]> {
-    const instance = getDb();
-    if (!instance) return [];
-    return instance.projects
-        .orderBy('lastOpened')
-        .reverse()
-        .limit(limit)
-        .toArray();
-}
-
-/**
- * Reset database for testing (delete all data)
- *
- * @warning This will delete all data from the database
- */
-export async function resetDatabaseForTesting(): Promise<void> {
-    const instance = getDb();
-    if (!instance) return;
-    await instance.delete();
-    await instance.open();
-}

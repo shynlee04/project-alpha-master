@@ -17,7 +17,7 @@ import type {
     SyncOptions,
     FileSyncConfig
 } from './file-sync-service';
-import type { SourceRecord } from '@/lib/state/dexie-db-knowledge-types';
+import type { SourceRecord } from '@/lib/state/dexie-db-types';
 import { SyncError } from '@/lib/filesystem/sync-types';
 
 /**

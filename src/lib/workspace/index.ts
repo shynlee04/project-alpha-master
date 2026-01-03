@@ -25,7 +25,7 @@ export {
 } from './project-store';
 
 // WorkspaceId type from core types
-export type { WorkspaceId } from '../state/dexie-db-core-types';
+export type { WorkspaceId } from '../state/dexie-db-types';
 
 // Story 5-3: Conversation Store (MIGRATED - Story 51-12)
 // The old conversation-store.ts was an adapter to infrastructure/persistence/stores/conversation
