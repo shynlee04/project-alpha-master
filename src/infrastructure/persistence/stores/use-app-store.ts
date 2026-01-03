@@ -19,7 +19,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useMemo } from 'react';
 import { createDexieStorage } from '@/lib/state/dexie-storage';
-import { useAgentSelectionStore } from './agents/agent-selection-store';
 import { runMigrations, validateMigratedState, CURRENT_SCHEMA_VERSION } from './schema-migrations';
 
 // Import agent slices
@@ -285,16 +284,6 @@ export function useAppStoreHydration() {
  */
 export const useAgents = () => useAppStore((state) => state.agents);
 
-/**
- * Get active agent
- */
-export const useActiveAgent = () => {
-  const activeAgentId = useAgentSelectionStore(state => state.activeAgentId);
-  const agents = useAppStore(state => state.agents);
-
-  if (!activeAgentId) return undefined;
-  return agents.find(a => a.id === activeAgentId);
-};
 
 /**
  * Get agents for specific workspace
