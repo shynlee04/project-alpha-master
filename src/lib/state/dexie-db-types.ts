@@ -101,3 +101,6 @@ export {
 } from '@/infrastructure/persistence/dexie-db-migrations';
 
 export { db, getDb, getRecentProjects, resetDatabaseForTesting } from '@/infrastructure/persistence/dexie-db';
+
+// Re-export WorkspaceId for backwards compatibility
+export type { WorkspaceId } from '@/lib/events/cross-workspace-event-bus';

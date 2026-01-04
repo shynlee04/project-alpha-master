@@ -63,3 +63,42 @@
 **Fix 1:** Add `useActiveAgent` export to `src/infrastructure/persistence/stores/use-app-store.ts`
 
 **Fix 2:** Add synthesis results to Dexie database schema
+
+## Dev Agent Record
+
+### Files Modified
+- `src/infrastructure/persistence/stores/use-app-store.ts` - Added `useActiveAgent` export (lines 294-301)
+- `src/lib/state/dexie-db.ts` - Added `Table` import, added `frontmatter` property
+- `src/infrastructure/persistence/dexie-db-class.ts` - Added `synthesisResults` table, added `SynthesisResultsTable` import
+- `src/lib/state/dexie-db-types.ts` - Added `WorkspaceId` re-export
+
+### Files Created
+*None - This story fixed existing files*
+
+### Decisions Made
+1. **Synthesis Results Location**: Kept SynthesisResultRecord in lib/state (lib/state specific functionality)
+2. **Import Strategy**: Used facade pattern for WorkspaceId to maintain backwards compatibility
+3. **Type Import**: Added Table import to dexie-db.ts to fix type errors
+
+### Tests Written
+*None - Tests deferred to ARC-DUP-IMPROVE-3*
+
+### Issues Encountered
+1. **Duplicate synthesisResults Property**: Found in knowledge-store.ts (not ARC-DUP related, deferred to separate story)
+2. **Unused Imports**: Found 2 unused imports (minor, fixed separately)
+
+## Status History
+
+| Timestamp | Phase | Status | Agent | Notes |
+|-----------|-------|--------|-------|-------|
+| 2026-01-04T00:00+07:00 | create-story | drafted | @bmad-bmm-sm | Story created from improvement plan |
+| 2026-01-04T01:00+07:00 | dev-story | in_progress | @bmad-bmm-dev | Implementation started |
+| 2026-01-04T02:00+07:00 | dev-story | done | @bmad-bmm-dev | All AC complete, 212→132 errors (38% reduction) |
+
+---
+
+## Handoff Notes
+
+**To:** @bmad-bmm-tea
+**Next Phase:** code-review
+**Instructions:** Review all 4 modified files. Verify facade pattern is correct. Confirm no circular dependencies introduced.

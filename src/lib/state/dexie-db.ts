@@ -17,6 +17,8 @@
  * - Dashboard-specific types remain in lib/state
  */
 
+import { type Table } from 'dexie';
+
 // ============================================================================
 // Database Types (re-exported from infrastructure/persistence via facade)
 // ============================================================================
