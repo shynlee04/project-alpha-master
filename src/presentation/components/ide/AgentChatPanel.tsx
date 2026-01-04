@@ -12,7 +12,7 @@ import { useAgentChatWithTools, type PendingApprovalInfo } from '@/lib/agent/hoo
 import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-approve-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
-import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
+import { getCodingAgentSystemPrompt, getNotesAgentSystemPrompt } from '@/lib/agent/system-prompt';
 /**
  * @workspace ide-only
  *
@@ -35,6 +35,11 @@ import {
 } from './AgentChatPanel/index';
 
 /**
+ * Workspace type for chat context
+ */
+export type WorkspaceType = 'ide' | 'notes' | 'knowledge' | 'study';
+
+/**
  * Props for AgentChatPanel component
  */
 interface AgentChatPanelProps {
@@ -42,6 +47,8 @@ interface AgentChatPanelProps {
     projectId: string | null;
     /** Project name for display */
     projectName?: string;
+    /** Workspace type for context-aware system prompt */
+    workspaceType?: WorkspaceType;
 }
 
 /**
@@ -51,8 +58,13 @@ interface AgentChatPanelProps {
  * instead of mock setTimeout responses.
  *
  * @story 25-R1 - Replace mock with real hook integration
+ * @story E1-2 - Workspace-specific chat context
  */
-export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChatPanelProps) {
+export function AgentChatPanel({
+    projectId,
+    projectName = 'Project',
+    workspaceType = 'ide'
+}: AgentChatPanelProps) {
     const { t } = useTranslation();
     const { isMobile, isTablet } = useDeviceType();
 
@@ -66,21 +78,29 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
         agentProviderId: activeAgent?.providerId
     });
 
-    // Get workspace context for tool facades
+    // Get workspace context for tool facades (IDE workspace only)
     const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspaceSync();
 
     // Create tool facades when workspace is ready
-    const { fileTools, terminalTools } = useAgentChatToolFacades({
+    // Notes workspace only gets file read tools, not write/terminal
+    const { fileTools, terminalTools } = useAgentChatToolFades({
         localAdapterRef,
         syncManagerRef,
         eventBus,
-        initialSyncCompleted
+        initialSyncCompleted,
+        workspaceType
     });
 
-    // Get system prompt
+    // Get workspace-specific system prompt
     const systemPrompt = useMemo(() => {
-        return getCodingAgentSystemPrompt(`Project: ${projectName}`);
-    }, [projectName]);
+        const context = workspaceType === 'notes'
+            ? `Notebook: ${projectName}`
+            : `Project: ${projectName}`;
+
+        return workspaceType === 'notes'
+            ? getNotesAgentSystemPrompt(context)
+            : getCodingAgentSystemPrompt(context);
+    }, [projectName, workspaceType]);
 
     // Use the real TanStack AI hook with tools
     const {

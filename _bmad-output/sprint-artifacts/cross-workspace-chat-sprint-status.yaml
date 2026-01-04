@@ -19,8 +19,8 @@ stories:
     title: "Integrate UnifiedChatPanel into NotesPage"
     epic: "E1"
     points: 8
-    owner: "TBD"
-    status: "TODO"
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
     priority: "P0"
     dependencies: []
     blocks: ["E1-3", "E1-4", "E1-9"]
@@ -39,12 +39,12 @@ stories:
       - "Unit test: Render test for chat panel in NotesPage"
       - "E2E test: Chat panel visible and functional in Notes workspace"
     validation:
-      typecheck: pending
-      test_coverage: pending
-      i18n_complete: pending
-      code_review: pending
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pass"
     created_at: "2026-01-05"
-    completed_at: null
+    completed_at: "2026-01-05"
 
   - id: "E1-2"
     title: "Create Notes-specific Chat Context"

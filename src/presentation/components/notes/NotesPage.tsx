@@ -1,8 +1,9 @@
 /**
  * NotesPage.tsx
- * 
- * Main notes page with import/export functionality.
+ *
+ * Main notes page with import/export functionality and chat panel.
  * Part of NR-06, NR-08: FileSync Binding and Markdown Import/Export UI
+ * Part of E1-1: UnifiedChatPanel integration
  */
 
 import { useEffect, useState, lazy, Suspense } from 'react';
@@ -15,12 +16,14 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from '@/presentation/components/ui/resizable';
-import { Plus, Notebook, ArrowLeft } from 'lucide-react';
+import { Plus, Notebook, ArrowLeft, MessageSquare } from 'lucide-react';
 import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
 import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
+// E1-1: UnifiedChatPanel integration
+import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPanel';
 // NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
 // import { createNoteFileSyncService } from '@/lib/notes';
 
@@ -59,6 +62,10 @@ export function NotesPage() {
     // P2-4: Panel collapse state (persisted in IDE store)
     const noteSidebarCollapsed = useIDEStore((s) => s.panelCollapsed['notes-sidebar'] ?? false);
     const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
+
+    // E1-1: Chat panel collapse state (persisted in IDE store)
+    const notesChatCollapsed = useIDEStore((s) => s.panelCollapsed['notes-chat'] ?? false);
+    const notesChatVisible = useIDEStore((s) => s.chatVisible ?? true);
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -352,7 +359,8 @@ export function NotesPage() {
         );
     }
 
-    // Desktop Layout: 2-Column Resizable (NoteSidebar + Editor)
+    // Desktop Layout: 3-Column Resizable (NoteSidebar + Editor + Chat)
+    // E1-1: Added chat panel (30% default, collapsible)
     return (
         <MainLayout>
             <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
@@ -397,8 +405,12 @@ export function NotesPage() {
 
                 <ResizableHandle withHandle />
 
-                {/* Main Editor Area - Remaining */}
-                <ResizablePanel defaultSize={80}>
+                {/* Main Editor Area - 50% (E1-1: Reduced from 80% to accommodate chat) */}
+                <ResizablePanel
+                    id="notes-editor"
+                    defaultSize={50}
+                    minSize={30}
+                >
                     <div className="h-full bg-background flex flex-col">
                         {activeNote ? (
                             <Suspense fallback={
@@ -423,6 +435,38 @@ export function NotesPage() {
                         )}
                     </div>
                 </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                {/* E1-1: Chat Panel - 30% (min 20%, max 40%, collapsible) */}
+                {notesChatVisible && (
+                    <ResizablePanel
+                        id="notes-chat"
+                        defaultSize={30}
+                        minSize={20}
+                        maxSize={40}
+                        collapsible={true}
+                        collapsedSize={3}
+                        onCollapse={(collapsed) => setPanelCollapsed('notes-chat', collapsed)}
+                    >
+                        {notesChatCollapsed ? (
+                            <div className="h-full flex items-center justify-center border-l border-border bg-muted/30">
+                                <div className="text-center">
+                                    <MessageSquare className="mx-auto h-4 w-4 text-muted-foreground mb-1" />
+                                    <span className="text-xs text-muted-foreground">
+                                        {t('chat.chat', 'Chat')}
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            <UnifiedChatPanel
+                                mode="agent"
+                                projectId={projectId}
+                                className="h-full"
+                            />
+                        )}
+                    </ResizablePanel>
+                )}
             </ResizablePanelGroup>
 
             {/* Import Dialog */}
