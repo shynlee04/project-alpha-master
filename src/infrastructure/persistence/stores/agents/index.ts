@@ -14,13 +14,16 @@ export {
   useAppStore as useAgentsStore,
   useAppStoreHydration as useAgentsStoreHydration,
   useAgents,
-  useActiveAgent,
   useAgentsForWorkspace,
   useProviders,
   useActiveProvider,
   useAvailableModels,
   useValidationErrors,
 } from '../use-app-store';
+
+// Re-export useActiveAgent from agent-selection-store (not use-app-store)
+// NOTE: useActiveAgent(agents) requires agents array parameter
+export { useActiveAgent } from './agent-selection-store';
 
 // Re-export agent slice creators for advanced usage
 export {

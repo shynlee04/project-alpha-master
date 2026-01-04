@@ -5,7 +5,7 @@
  * Exports all layout components for IDE.
  */
 
-export { IDELayout } from './IDELayout';
+export { IDELayout } from './IDELayoutMain';
 
 export { IDEHeaderBar, type IDEHeaderBarProps } from './IDEHeaderBar';
 export { TerminalPanel, type TerminalPanelProps } from './TerminalPanel';

@@ -29,7 +29,7 @@ export interface CollectionState {
     filterByCollection: (collectionId: string | null) => void;
 }
 
-export const createCollectionSlice: StateCreator<KnowledgeStoreState, [], []> = (set, get, _api) => ({
+export const createCollectionSlice: StateCreator<KnowledgeStoreState, [], [], CollectionState> = (set, get, _api) => ({
     loadCollections: async (projectId: string) => {
         set({ loading: true, error: null });
         try {

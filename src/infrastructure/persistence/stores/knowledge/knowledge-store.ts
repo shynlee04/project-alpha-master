@@ -19,32 +19,41 @@ import { createMetadataSlice } from './slices/knowledge-metadata-slice';
 import { createSynthesisSlice } from './slices/knowledge-synthesis-slice';
 import { createUndoSlice } from './slices/knowledge-undo-slice';
 
+// Initial state (separate to avoid TypeScript duplicate property warnings)
+const initialState: Pick<KnowledgeStoreState,
+    | 'sources'
+    | 'selectedSource'
+    | 'isPreviewOpen'
+    | 'loading'
+    | 'error'
+    | '_hasHydrated'
+    | 'collections'
+    | 'filteredCollectionId'
+    | 'undoQueue'
+    | 'extractingMetadata'
+    | 'synthesizingSources'
+    | 'synthesisResults'
+> = {
+    sources: [],
+    selectedSource: null,
+    isPreviewOpen: false,
+    loading: false,
+    error: null,
+    _hasHydrated: false,
+    collections: [],
+    filteredCollectionId: null,
+    undoQueue: [],
+    extractingMetadata: new Set<string>(),
+    synthesizingSources: new Set<string>(),
+    synthesisResults: new Map<string, any>(),
+};
+
 export const useKnowledgeStore = create<KnowledgeStoreState>()(
     persist(
         (set, get, api) => ({
-            // Initial state
-            sources: [],
-            selectedSource: null,
-            isPreviewOpen: false,
-            loading: false,
-            error: null,
-            _hasHydrated: false,
-            collections: [],
-            filteredCollectionId: null,
-            undoQueue: [],
-            extractingMetadata: new Set<string>(),
-            synthesizingSources: new Set<string>(),
-            synthesisResults: new Map<string, any>(),
+            // Initial state (spread first)
+            ...initialState,
 
-            // Combine all slices
-            ...createSourceCrudSlice(set, get, api),
-            ...createPreviewSlice(set, get, api),
-            ...createCollectionSlice(set, get, api),
-            ...createMetadataSlice(set, get, api),
-            ...createSynthesisSlice(set, get, api),
-            ...createUndoSlice(set, get, api),
-
-            // Common actions
             setHasHydrated: (state: boolean) => {
                 set({ _hasHydrated: state });
             },
@@ -64,6 +73,14 @@ export const useKnowledgeStore = create<KnowledgeStoreState>()(
                     synthesisResults: new Map<string, any>(),
                 });
             },
+
+            // Combine all slices (must be last to avoid TypeScript "specified more than once" errors)
+            ...createSourceCrudSlice(set, get, api),
+            ...createPreviewSlice(set, get, api),
+            ...createCollectionSlice(set, get, api),
+            ...createMetadataSlice(set, get, api),
+            ...createSynthesisSlice(set, get, api),
+            ...createUndoSlice(set, get, api),
         }),
         {
             name: 'knowledge-state',

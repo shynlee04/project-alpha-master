@@ -174,9 +174,21 @@ export class CodeAnalyzer {
     let maxNestingDepth = 0;
     let currentNestingDepth = 0;
     let longestFunction = 0;
+    let functionCount = 0; // Count functions for complexity calculation
     const lines = content.split('\n');
 
     const visit = (node: ts.Node) => {
+      // Count functions
+      if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
+        functionCount++;
+        const start = node.getStart(sourceFile);
+        const end = node.getEnd();
+        const startLine = sourceFile.getLineAndCharacterOfPosition(start).line;
+        const endLine = sourceFile.getLineAndCharacterOfPosition(end).line;
+        const functionLength = endLine - startLine + 1;
+        longestFunction = Math.max(longestFunction, functionLength);
+      }
+
       // Count decision points
       if (
         ts.isIfStatement(node) ||
@@ -189,16 +201,6 @@ export class CodeAnalyzer {
         cyclomaticComplexity++;
         currentNestingDepth++;
         maxNestingDepth = Math.max(maxNestingDepth, currentNestingDepth);
-      }
-
-      // Track function length
-      if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
-        const start = node.getStart(sourceFile);
-        const end = node.getEnd();
-        const startLine = sourceFile.getLineAndCharacterOfPosition(start).line;
-        const endLine = sourceFile.getLineAndCharacterOfPosition(end).line;
-        const functionLength = endLine - startLine + 1;
-        longestFunction = Math.max(longestFunction, functionLength);
       }
 
       ts.forEachChild(node, (child) => {
@@ -253,7 +255,7 @@ export class CodeAnalyzer {
       const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line;
 
       if (ts.isFunctionDeclaration(node)) {
-        const name = node.name.getText();
+        const name = node.name?.getText() || '<anonymous>';
         concepts.push({
           type: 'function',
           name,

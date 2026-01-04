@@ -16,7 +16,7 @@ export interface UndoState {
     undoDelete: (sourceId: string) => Promise<void>;
 }
 
-export const createUndoSlice: StateCreator<KnowledgeStoreState, [], []> = (set, get, _api) => ({
+export const createUndoSlice: StateCreator<KnowledgeStoreState, [], [], UndoState> = (set, get, _api) => ({
     undoDelete: async (sourceId: string) => {
         try {
             await db.sources.update(sourceId, { deleted: false, deletedAt: undefined });

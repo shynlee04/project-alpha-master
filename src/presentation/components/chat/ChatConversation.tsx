@@ -25,7 +25,7 @@ import type { Agent } from '@/mocks/agents'
 import { useTranslation } from 'react-i18next'
 import { List } from 'react-window'
 import { TruncatedText } from '@/presentation/components/ui/truncated-text'
-import { useActiveAgent } from '@/infrastructure/persistence/stores/use-app-store'
+import { useActiveAgent, useAgentsStore } from '@/infrastructure/persistence/stores'
 
 /**
  * Format message timestamp
@@ -194,7 +194,8 @@ export function ChatConversation({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<ReturnType<typeof List> | null>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
-    const activeAgent = useActiveAgent();
+    const agents = useAgentsStore((state) => state.agents);
+    const activeAgent = useActiveAgent(agents);
     // Allow selectedAgent alias for backward compatibility with existing code in this file
     const selectedAgent = activeAgent;
 

@@ -20,7 +20,7 @@ export interface SourceCrudState {
     updateSourceMetadata: (sourceId: string, metadata: SourceMetadata) => Promise<void>;
 }
 
-export const createSourceCrudSlice: StateCreator<KnowledgeStoreState, [], []> = (set, get, _api) => ({
+export const createSourceCrudSlice: StateCreator<KnowledgeStoreState, [], [], SourceCrudState> = (set, get, _api) => ({
     loadSources: async (projectId: string) => {
         set({ loading: true, error: null });
         try {

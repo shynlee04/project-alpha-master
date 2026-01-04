@@ -106,7 +106,7 @@ export class CodeAnalysisBridge {
     fileName: string,
     filePath: string,
     analysis: CodeAnalysis,
-    projectId: string
+    _projectId: string
   ): void {
     const canvasStore = useCanvasStore.getState();
 

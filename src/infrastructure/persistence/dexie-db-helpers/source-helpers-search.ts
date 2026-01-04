@@ -8,7 +8,6 @@
  */
 
 import type { SourceRecord } from '../dexie-db-types';
-import { db } from '../dexie-db';
 import { getSourcesForProject } from './source-helpers-basic';
 
 /**

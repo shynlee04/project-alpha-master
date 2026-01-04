@@ -1,5 +1,5 @@
 import type { FileMetadataRecord } from '../state/dexie-db';
-import { db, getChangedFilesSince, clearFileMetadataCache as clearCache } from '../state/dexie-db';
+import { db, getChangedFilesSince, clearFileMetadataCache as clearCache } from '../../infrastructure/persistence/dexie-db';
 
 /**
  * FileMetadataCache service for managing file metadata cache.

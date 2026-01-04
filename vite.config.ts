@@ -131,8 +131,14 @@ const config = defineConfig(async () => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    // Build configuration
+    build: {
+      // Increase warning limit since we have large vendor chunks
+      chunkSizeWarningLimit: 600,
+      // Let Vite handle code splitting automatically - custom manualChunks was causing build issues
+      // TODO: Re-enable manual chunking after fixing circular dependencies (Epic 53/STAB-25)
+    },
     // Dependency optimization config - exclude native modules from pre-bundling
-    // These packages contain .node native modules that esbuild cannot process
     optimizeDeps: {
       exclude: [
         'sharp',

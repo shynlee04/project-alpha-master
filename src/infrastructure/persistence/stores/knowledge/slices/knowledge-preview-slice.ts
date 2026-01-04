@@ -19,7 +19,7 @@ export interface PreviewState {
     closePreview: () => void;
 }
 
-export const createPreviewSlice: StateCreator<KnowledgeStoreState, [], []> = (set, _get, _api) => ({
+export const createPreviewSlice: StateCreator<KnowledgeStoreState, [], [], PreviewState> = (set, _get, _api) => ({
     openPreview: (source) => {
         set({ selectedSource: source, isPreviewOpen: true });
     },

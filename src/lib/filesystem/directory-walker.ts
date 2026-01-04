@@ -1,7 +1,5 @@
-import { FileSystemError } from './fs-errors';
 import type { DirectoryEntry } from './fs-types';
 import type { LocalFSAdapter } from './local-fs-adapter';
-import { walkDirectorySegments } from './fs-handle-utils'; // Re-export from fs-handle-utils to break circular dependency
 
 export interface WalkDirectoryEntry extends DirectoryEntry {
     path: string;

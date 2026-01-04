@@ -105,7 +105,8 @@ export const useAppStore = create<AppState>()(
       name: 'app-state',
 
       // Use Dexie storage adapter for IndexedDB persistence
-      storage: createJSONStorage(() => createDexieStorage('appState')),
+      // Note: Using 'providerConfigs' table as generic storage for app state
+      storage: createJSONStorage(() => createDexieStorage('providerConfigs' as keyof typeof import('../dexie-db').db)),
 
       // Selective persistence (only critical data, not ephemeral state)
       partialize: (state) => ({
@@ -291,14 +292,8 @@ export const useAgents = () => useAppStore((state) => state.agents);
 export const useAgentsForWorkspace = (workspaceType: WorkspaceType) =>
   useAppStore((state) => state.getAgentsForWorkspace(workspaceType));
 
-/**
- * Get active agent
- */
-export const useActiveAgent = () => useAppStore((state) => {
-  const activeAgentId = state.activeAgentId;
-  if (!activeAgentId) return undefined;
-  return state.agents.find(a => a.id === activeAgentId);
-});
+// NOTE: useActiveAgent is available from agent-selection-store
+// AppState doesn't have activeAgentId property - that's in AgentSelectionState
 
 /**
  * Get all providers

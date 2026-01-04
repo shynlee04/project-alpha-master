@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { Code2, FileCode, GitBranch, Package } from 'lucide-react';
 import type { CodeAnalysis } from '@/lib/ide/code-analyzer';

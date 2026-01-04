@@ -28,9 +28,6 @@ export type {
   QueryWeightConfig,
 } from './query-optimizer-types';
 
-// Re-export helpers (backward compatibility - re-export from static method)
-export const createWeightedQuery = QueryOptimizer.createWeightedQuery.bind(QueryOptimizer);
-
 /**
  * Query parser and optimizer class
  */
@@ -565,3 +562,7 @@ export class QueryOptimizer {
     return weightedQuery.trim();
   }
 }
+
+// Re-export helpers (backward compatibility - re-export from static method)
+export const createWeightedQuery = QueryOptimizer.createWeightedQuery.bind(QueryOptimizer);
+
