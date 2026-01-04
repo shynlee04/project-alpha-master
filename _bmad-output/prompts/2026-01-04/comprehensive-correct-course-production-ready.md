@@ -1113,3 +1113,150 @@ src/
 │   │   └── index.ts             # Deprecated re-exports
 │   └── ...
 
+---
+
+
+# Current Challenges
+
+The codebase is currently in an unstable transitional state. The primary issues include:
+
+- **Integration Failures:** When agents create new components or split existing code, they frequently fail to correctly wire the new components to the rest of the system.
+- **Legacy Debt:** The removal of legacy code has left the system in a disorganized state ("messy"), creating risks for future development.
+- **Agent Design Limitations:** There is a lack of standardized certification or guidelines for how agents should construct and connect domains, leading to inconsistent architecture.
+
+# Strategic Objective
+
+The immediate goal is **not** to address all features simultaneously. Instead, the objective is to reach a **stabilized, safe architectural state**. The architecture must be firm and resilient, serving as a solid foundation for future development. Once stabilized, the system will be ready to systematically address individual workspaces to implement real-life use case features without requiring structural rework.
+
+# Required Action
+
+Based on the provided scan artifacts, please execute the following:
+
+1. **Assess Stability:** Review the `MASTER-RISK-REGISTER.md` and `ARCHITECTURE-SCAN-REPORT.md` to identify critical structural weaknesses and wiring failures.
+2. **Define Systematic Adjustments:** Provide a precise, actionable course to edit and iterate on the architecture. This plan must address how to properly wire components and resolve legacy remnants.
+3. **Establish a Safe Baseline:** Outline the steps required to transition the architecture from its current "awkward phase" to a firm, production-ready state.
+4. **Prepare for Feature Implementation:** Describe how the stabilized architecture will facilitate the next phase of implementing features within specific workspaces.
+
+/bmad:bmm:workflows:correct-course /project-management-suite:sprint-planning (make a seperate one like the EPIC 53)
+
+## Propose the most viable combo that is efficient and really harness the infrastructure and architecture (There will be no more changing of tech, architectures, states, persistence, eventbus, file system - though minor changes in indexing RAG, tools (the concepts persist but may be will be changes when designs ) --- Meaning conduct epics and stories of a sprint that therr should not be any silly crash, mis-import, misssing modules, functions etc or UX UI disaster with all the
+foundational features functional
+
+## as for after this I want it is totally stable (no more conflict, trash, redundancy, or those that may kick me back to adjust the architecture and fix the broken page again) and it is safe to collaboratively build and pilot agents and workflows to scaffold, complexity layer upon features (which needs more fine-tunning, and observing with prompts, instructions and edge cases
+
+Make use of this module after creating /bmad:bmm:workflows:correct-course  -> load /bmad:bmb:agents:workflow-builder /bmad:bmb:workflows:create-workflow (create few automative iterations, that handoff context, artifacts, coordinate works between agents/sub-agents while being able to detect drift, missing items, validation, gatekeeping and improve productivity (instead of keep asking between workflows)
+
+```
+_bmad/modules/architecture-remediation
+_bmad/modules/architecture-remediation/agents
+_bmad/modules/architecture-remediation/agents/component-splitter.md
+_bmad/modules/architecture-remediation/agents/file-sync-specialist.md
+_bmad/modules/architecture-remediation/agents/store-refactorer.md
+_bmad/modules/architecture-remediation/agents/test-writer.md
+_bmad/modules/architecture-remediation/agents/typescript-fixer.md
+_bmad/modules/architecture-remediation/agents/workspace-architect.md
+_bmad/modules/architecture-remediation/artifacts
+_bmad/modules/architecture-remediation/artifacts/epic-tracking.md
+_bmad/modules/architecture-remediation/artifacts/validation-gates.md
+_bmad/modules/architecture-remediation/config
+_bmad/modules/architecture-remediation/config/priorities.yaml
+_bmad/modules/architecture-remediation/config/thresholds.yaml
+_bmad/modules/architecture-remediation/workflows
+_bmad/modules/architecture-remediation/workflows/eliminate-god-stores.md
+_bmad/modules/architecture-remediation/workflows/knowledge-sync-strategy.md
+_bmad/modules/architecture-remediation/workflows/normalize-components.md
+_bmad/modules/architecture-remediation/workflows/notes-sync-strategy.md
+_bmad/modules/architecture-remediation/workflows/state-consolidation-cycle.md
+_bmad/modules/architecture-remediation/workflows/workspace-file-system-e2e.md
+_bmad/modules/architecture-remediation/MODULE-CREATION-SUMMARY.md
+_bmad/modules/architecture-remediation/README.md
+
+```
+
+As for me to really tackle this for having a really firm and strong architecture and foundation would be evaluating from users’ use case from each workspace and across each other
+
+## The central entities (the core concepts of this project) are
+
+## 1.  From my project (which is the files of different formats, in sub-folders) → I can synchronize (CRUD permissions) them across various  AI-Powerd workspaces and interfaces
+
+- And as my file changes - on both side (my local or from certain workspaces) will update with changes → as some workplaces (IDE and Note → I am as a user can have tools, or AI (agentic) powered tools → CRUD operation for different file types
+- You will have to manage states for UI, and persistence considerably
+
+## 2. The workspaces (These are 4 at the current but we will manage to target these 3 `IDE` , `Notes,`  and the `Knowledge`
+
+### a. IDE Workspace
+
+I will leave **…** here because there are many slices from terminal, filetree, monaco editor, preview, agent chat platforms, agentic agent who use tools
+
+→ But for the logic and reasoning of yours can be deep enough there is one use case that you must overcome to make IDE workspace an ok (60% pass) → When I am a pretentious marketing executive, want to code a full-stack landing page with React front end → I have some of my notes, in doc, in md, some images on my local drive → By conversing with AI agent → he helps me brainstorm in vietnamese for ideas → auto complete a full-spec-driven plan → use vision for images of my screenshots for inspiration → as I selection YOLO allowing all tools auto execution → I have seen AI agent start to run command for NextJs boilerplate → start calling read, write, edit tools. show diff → as he does so → file synchronization get activated by a few seconds → new files on my local drive → he does it for about 15 turns at turn 12 he runs out of context → auto compact → ask me for continue → completed at 15 or 16th turns → in the chat dialog I can see the AI agent thought, his assistant messages - > the contents are rendered in various forms (code blocks, rich texts, artifacts (htmlcss that can open in new browser for UXUI purpose), diagram overlay for questions, permissions, instant quizzes → these actions are continuous → one after another but I can always see the AI agent status → steaming thought, streaming tools, how many times, results from tools etc
+
+### b. Note workspace
+
+- this is the Notion-like note but buffed as the following
+    - sync file system → move easily between workspaces (as I am using the IDE workspace → on the same mark down file I can switch to my Note workspace to use AI features → generate contents
+    - I can also generate quick images, edit them → edit , transform text → the project also synchronize here and if I am using phone I will use its alpha storage
+    - so basically note workspace will improve features, synchronize to file system, render more file types and across workspaces
+
+## 3. The Agentic chat platforms (I put this as number 3 here because this is the common and it should appears in all workspaces. This is not just a component , these are a junction of RAG and indexed thread → using tools (various ones) and granted permissions
+
+- Why I say it is everywhere → because even for multimodality features (input and output) or even chat completion (note transformation commands, note generation) → these can be sync with agents → as for notes features → user can chat with AI agents, AI agents can use tools to edit right on the notes of users when allowed - generate images on to the notes and video too
+- Yet the configurations and llm key providers need refactor → but that’s why we must understand the concepts
+- As for agents → they are divided into 2 types the coding/RAG and the multimodality (most SOTA multimodality models can also do coding and RAG but some models are just pure coding)( → refactored ux and ui
+
+## 4. RAG, Index and The GoogleLLM-like Knowledge synthesis workspace
+
+- this does not harsh but you understand what I am trying to express right
+
+---
+
+- Hence here we the IDE filetree
+
+Act as a Senior System Architect and Developer. Before addressing any specific features or implementation details, you must first clearly define and demonstrate your understanding of the following core concepts: File System Synchronization, Workspaces, Persistence, and States. Explicitly explain what they are, when they are used, and their specific purposes within the system architecture.
+
+Once these foundational concepts are established, proceed to address the following functional requirements and workflow specifications:
+
+**1. File Synchronization and Data Types**
+
+- Describe the exact process that occurs when I synchronize local folders containing a high volume of files.
+- Categorize and specify the handling for the following file types: Markdown (Md), Text (txt), Images, PDFs, Voice Memos, Audio, and Video.
+
+**2. Note Creation and AI Integration**
+
+- Detail the workflow when I create a note.
+- Explain the mechanism and timing of when and how a note is utilized by the AI.
+
+**3. IDE Data Management**
+
+- Specify how data is persisted and managed within the IDE environment.
+- Clarify the relationship between the IDE, local files, and AI interactions.
+
+**4. Retrieval-Augmented Generation (RAG)**
+
+- Define the specific scenarios in which RAG is employed.
+- Ensure that the implementation prevents data fragmentation; data must not be "all over the place" but contextually organized.
+
+**5. AI Agents, Tools, and Permissions**
+
+- Outline how and when AI agents utilize tools across different workspaces.
+- Define the permission models governing these interactions.
+- Address CRUD (Create, Read, Update, Delete) permissions specifically.
+- Explain the purpose and lifecycle of chat conversation threads.
+
+**6. Development Methodology and Refactoring Strategy**
+You are required to structure the work into Epics and Stories adhering to the following protocol:
+
+- **End-to-End Resolution:** Each Story within the Epic must address a complete, testable slice of related issues.
+- **Systematic Connectivity:** Ensure that each group of issues is logically connected to the next.
+- **Refinement Process:** For each domain or slice you address:
+    1. Analyze and grasp the related codebase.
+    2. Provide the reasoning behind necessary changes.
+    3. Propose specific changes and justify why they are needed.
+    4. **Wait for authorization** before proceeding.
+    5. Once authorized, gradually scaffold and implement the changes.
+
+**Immediate Action Required**
+Begin by presenting your investigation, planning, and research, starting with the definitions of the core concepts (Sync, Workspaces, Persistence, States) as requested above.
+
+---
+
+Of all the things above you can see that everything is either broken or superficial → as long as we gradually overcome each difficulty → we will grasp the ones that are blocking, legacy, conflict → so we refactor with consideration and more completion progressively
