@@ -1,0 +1,400 @@
+{
+  "scan_date": "2026-01-04",
+  "scanner": "architecture-scanner",
+  "phase": "inventory",
+  "scan_methodology": "Repomix codebase analysis with grep pattern matching and wc line counting",
+  "repomix_output_id": "416250b50a2316ab",
+
+  "layers": {
+    "presentation": {
+      "path": "src/presentation/components/",
+      "total_files": 371,
+      "total_components": 371,
+      "description": "React UI components organized by workspace (about, agent, audio, canvas, chat, common, dashboard, hub, ide, knowledge, layout, notes, rag, study, ui, workspace)"
+    },
+    "application": {
+      "path": "src/application/",
+      "total_files": 2,
+      "description": "Application services and DTOs (minimal - 2 files only)"
+    },
+    "domain": {
+      "path": "src/domain/",
+      "total_files": 10,
+      "description": "Domain entities, value objects, and services"
+    },
+    "infrastructure": {
+      "path": "src/infrastructure/",
+      "total_files": 159,
+      "description": "Persistence (Dexie, Zustand stores), events, external adapters"
+    }
+  },
+
+  "god_components": [
+    {
+      "rank": 1,
+      "path": "src/presentation/components/ui/resizable.tsx",
+      "loc": 745,
+      "layer": "presentation",
+      "violation_severity": "critical",
+      "standard_limit": 300,
+      "excess": 445,
+      "excess_percentage": 148.3,
+      "notes": "Largest presentation component - likely wraps react-resizable-panels with extensive configuration"
+    },
+    {
+      "rank": 2,
+      "path": "src/presentation/components/knowledge/KnowledgePage.tsx",
+      "loc": 658,
+      "layer": "presentation",
+      "violation_severity": "critical",
+      "standard_limit": 300,
+      "excess": 358,
+      "excess_percentage": 119.3,
+      "notes": "Knowledge workspace main page - excessive complexity indicates feature creep"
+    },
+    {
+      "rank": 3,
+      "path": "src/presentation/components/knowledge/IndexingProgressPanel.tsx",
+      "loc": 593,
+      "layer": "presentation",
+      "violation_severity": "critical",
+      "standard_limit": 300,
+      "excess": 293,
+      "excess_percentage": 97.7,
+      "notes": "Indexing progress UI - should be split into phase-specific components"
+    },
+    {
+      "rank": 4,
+      "path": "src/presentation/components/chat/ChatConversation.tsx",
+      "loc": 521,
+      "layer": "presentation",
+      "violation_severity": "critical",
+      "standard_limit": 300,
+      "excess": 221,
+      "excess_percentage": 73.7,
+      "notes": "Chat conversation UI - message rendering logic should be extracted"
+    },
+    {
+      "rank": 5,
+      "path": "src/presentation/components/agent/WorkspacePermissionEditor.tsx",
+      "loc": 479,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 179,
+      "excess_percentage": 59.7,
+      "notes": "Agent workspace permission configuration - should use modular permission components"
+    },
+    {
+      "rank": 6,
+      "path": "src/presentation/components/notes/NotesPage.tsx",
+      "loc": 466,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 166,
+      "excess_percentage": 55.3,
+      "notes": "Notes workspace main page - editor integration logic should be extracted"
+    },
+    {
+      "rank": 7,
+      "path": "src/presentation/components/chat/CodeBlock.tsx",
+      "loc": 465,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 165,
+      "excess_percentage": 55.0,
+      "notes": "Code block rendering component - syntax highlighting logic should be extracted"
+    },
+    {
+      "rank": 8,
+      "path": "src/presentation/components/agent/AgentWorkspaceSwitchingFeedback.tsx",
+      "loc": 458,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 158,
+      "excess_percentage": 52.7,
+      "notes": "Agent workspace switching feedback UI - transition logic should be extracted"
+    },
+    {
+      "rank": 9,
+      "path": "src/presentation/components/ui/ApprovalOverlay.tsx",
+      "loc": 443,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 143,
+      "excess_percentage": 47.7,
+      "notes": "Tool approval overlay UI - approval workflow logic should be extracted"
+    },
+    {
+      "rank": 10,
+      "path": "src/presentation/components/agent/PreferenceSettings.tsx",
+      "loc": 433,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 133,
+      "excess_percentage": 44.3,
+      "notes": "Agent preference settings UI - settings categories should be split"
+    },
+    {
+      "rank": 11,
+      "path": "src/presentation/components/chat/DiffPreview.tsx",
+      "loc": 432,
+      "layer": "presentation",
+      "violation_severity": "high",
+      "standard_limit": 300,
+      "excess": 132,
+      "excess_percentage": 44.0,
+      "notes": "Diff preview component - diff rendering logic should be extracted"
+    },
+    {
+      "rank": 12,
+      "path": "src/presentation/components/about/HeroSection.tsx",
+      "loc": 424,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 124,
+      "excess_percentage": 41.3,
+      "notes": "About page hero section - animation/visual effects should be extracted"
+    },
+    {
+      "rank": 13,
+      "path": "src/presentation/components/agent/ToolPermissionsConfig.tsx",
+      "loc": 402,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 102,
+      "excess_percentage": 34.0,
+      "notes": "Tool permissions configuration UI - should use modular permission components"
+    },
+    {
+      "rank": 14,
+      "path": "src/presentation/components/workspace/WorkspaceEnhancedSwitcher.tsx",
+      "loc": 393,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 93,
+      "excess_percentage": 31.0,
+      "notes": "Workspace switcher UI - workspace navigation logic should be extracted"
+    },
+    {
+      "rank": 15,
+      "path": "src/presentation/components/ide/AgentChatPanel.tsx",
+      "loc": 385,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 85,
+      "excess_percentage": 28.3,
+      "notes": "IDE agent chat panel - chat UI composition should be simplified"
+    },
+    {
+      "rank": 16,
+      "path": "src/presentation/components/agent/UnifiedAgentSelector.tsx",
+      "loc": 384,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 84,
+      "excess_percentage": 28.0,
+      "notes": "Unified agent selector UI - agent selection logic should be extracted"
+    },
+    {
+      "rank": 17,
+      "path": "src/presentation/components/study/study-session.tsx",
+      "loc": 381,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 81,
+      "excess_percentage": 27.0,
+      "notes": "Study session UI - SRS session logic should be extracted"
+    },
+    {
+      "rank": 18,
+      "path": "src/presentation/components/canvas/LinkageProposalsPanel.tsx",
+      "loc": 375,
+      "layer": "presentation",
+      "violation_severity": "moderate",
+      "standard_limit": 300,
+      "excess": 75,
+      "excess_percentage": 25.0,
+      "notes": "Canvas linkage proposals panel - proposal rendering should be extracted"
+    },
+    {
+      "rank": 19,
+      "path": "src/infrastructure/persistence/dexie-db.ts",
+      "loc": 1072,
+      "layer": "infrastructure",
+      "violation_severity": "critical",
+      "standard_limit": 500,
+      "excess": 572,
+      "excess_percentage": 114.4,
+      "notes": "Dexie database schema definition - contains migrations, table definitions, and types (infrastructure god file)"
+    },
+    {
+      "rank": 20,
+      "path": "src/infrastructure/persistence/stores/study/quiz-store.ts",
+      "loc": 658,
+      "layer": "infrastructure",
+      "violation_severity": "high",
+      "standard_limit": 500,
+      "excess": 158,
+      "excess_percentage": 31.6,
+      "notes": "Quiz CRUD store - should be split into slices (CRUD, validation, migrations)"
+    }
+  ],
+
+  "layer_violations": {
+    "presentation_to_infrastructure": {
+      "total_violations": 100,
+      "description": "Presentation components directly importing from infrastructure layer (acceptable via Zustand stores)",
+      "severity": "low",
+      "notes": "These are Zustand store imports, which is the correct pattern for state management in React components"
+    },
+    "presentation_to_domain": {
+      "total_violations": 9,
+      "description": "Presentation components directly importing from domain layer",
+      "severity": "low",
+      "notes": "These are type imports (WorkspaceType, Agent, WorkspaceBinding), which is acceptable for type safety"
+    },
+    "presentation_to_application": {
+      "total_violations": 0,
+      "description": "No violations - application layer is minimal (2 files)",
+      "severity": "none"
+    }
+  },
+
+  "architecture_compliance": {
+    "four_layer_adherence": {
+      "score": 85,
+      "notes": "Strong adherence to 4-layer architecture. Minor violations are acceptable (type imports, store usage)",
+      "layer_separation": "excellent",
+      "dependency_flow": "unidirectional (Presentation → Domain/Infrastructure)"
+    },
+    "component_size_compliance": {
+      "score": 55,
+      "notes": "19 god components identified (13 critical/high, 6 moderate). 95% of components (352/371) comply with 300-line limit",
+      "total_components": 371,
+      "compliant_components": 352,
+      "violating_components": 19,
+      "violation_rate": 5.1
+    },
+    "store_organization": {
+      "score": 70,
+      "notes": "Zustand stores partially consolidated in infrastructure layer. Some legacy stores remain in lib/state/",
+      "infrastructure_stores": 159,
+      "legacy_stores": "~25",
+      "consolidation_progress": "Epic 53 in progress (1/8 stories complete)"
+    }
+  },
+
+  "critical_findings": [
+    {
+      "id": "FINDING-001",
+      "type": "god_component",
+      "severity": "critical",
+      "summary": "Largest presentation component (resizable.tsx) is 745 lines - 148% over limit",
+      "recommendation": "Extract react-resizable-panels configuration into separate hooks/composables",
+      "epic_reference": null,
+      "estimated_effort": "8-12 hours"
+    },
+    {
+      "id": "FINDING-002",
+      "type": "god_component",
+      "severity": "critical",
+      "summary": "KnowledgePage.tsx is 658 lines - 119% over limit",
+      "recommendation": "Split into workspace-level components (SourceGrid, IndexingPanel, CollectionManager, etc.)",
+      "epic_reference": null,
+      "estimated_effort": "12-16 hours"
+    },
+    {
+      "id": "FINDING-003",
+      "type": "god_component",
+      "severity": "critical",
+      "summary": "IndexingProgressPanel.tsx is 593 lines - 98% over limit",
+      "recommendation": "Extract phase-specific components (ChunkingPhase, EmbeddingPhase, IndexingPhase)",
+      "epic_reference": null,
+      "estimated_effort": "8-10 hours"
+    },
+    {
+      "id": "FINDING-004",
+      "type": "infrastructure_bloat",
+      "severity": "high",
+      "summary": "Dexie database file (dexie-db.ts) is 1072 lines - infrastructure god file",
+      "recommendation": "Split into schema, migrations, and types files (already partially done)",
+      "epic_reference": "Epic 53-1 (DONE - Dexie DB consolidation)",
+      "estimated_effort": "Completed"
+    },
+    {
+      "id": "FINDING-005",
+      "type": "layer_anomaly",
+      "severity": "low",
+      "summary": "Application layer is minimal (2 files) - business logic scattered across lib/",
+      "recommendation": "Consider moving business logic from lib/* to domain/services/ or application/use-cases/",
+      "epic_reference": null,
+      "estimated_effort": "40-60 hours (large refactor)"
+    }
+  ],
+
+  "recommendations": {
+    "immediate_actions": [
+      {
+        "priority": "P0",
+        "action": "Split resizable.tsx (745 lines) into composable hooks",
+        "effort": "8-12 hours",
+        "impact": "Reduces largest presentation component by 60%"
+      },
+      {
+        "priority": "P0",
+        "action": "Refactor KnowledgePage.tsx (658 lines) into workspace components",
+        "effort": "12-16 hours",
+        "impact": "Improves knowledge workspace maintainability"
+      },
+      {
+        "priority": "P1",
+        "action": "Extract IndexingProgressPanel.tsx (593 lines) phase components",
+        "effort": "8-10 hours",
+        "impact": "Simplifies RAG indexing UI"
+      }
+    ],
+    "medium_term": [
+      {
+        "priority": "P1",
+        "action": "Continue Epic 53 (State Management Consolidation) - 7 stories remaining",
+        "effort": "42-58 hours",
+        "impact": "Completes infrastructure layer organization"
+      },
+      {
+        "priority": "P2",
+        "action": "Eliminate remaining god components (16 files > 300 lines)",
+        "effort": "80-120 hours",
+        "impact": "95%+ component size compliance"
+      },
+      {
+        "priority": "P2",
+        "action": "Consolidate business logic from lib/* into application/use-cases/",
+        "effort": "40-60 hours",
+        "impact": "Clearer 4-layer separation"
+      }
+    ]
+  },
+
+  "metadata": {
+    "total_source_files_analyzed": 542,
+    "total_presentation_components": 371,
+    "total_infrastructure_files": 159,
+    "total_domain_files": 10,
+    "total_application_files": 2,
+    "scan_duration_seconds": 45,
+    "analysis_tools": ["repomix", "grep", "wc", "find"],
+    "adr_reference": "ADR-024: State Management Consolidation (2026-01-04)"
+  }
+}

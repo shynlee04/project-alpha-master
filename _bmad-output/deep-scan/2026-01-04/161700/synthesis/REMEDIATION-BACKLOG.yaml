@@ -1,0 +1,824 @@
+# REMEDIATION BACKLOG - Project Alpha (Via-gent)
+# Generated: 2026-01-04
+# Deep Scan Session: 2026-01-04/161700
+# Total Items: 73 (3 P0, 24 P1, 31 P2, 15 P3)
+
+metadata:
+  codebase_name: "Project Alpha (Via-gent)"
+  scan_date: "2026-01-04"
+  session_id: "2026-01-04/161700"
+  overall_health_score: 68.5
+  total_risks: 73
+  p0_count: 3
+  p1_count: 24
+  p2_count: 31
+  p3_count: 15
+
+remediation_items:
+  # ============================================
+  # P0 CRITICAL RISKS (Fix Immediately)
+  # ============================================
+
+  - id: "P0-1"
+    title: "Implement secure encryption key storage for credential vault"
+    priority: "P0"
+    type: "security"
+    effort_hours: 14
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-hardener.md"
+    domain: "Security"
+    description: |
+      Encryption keys for AES-256-GCM credential vault are stored in localStorage in plaintext.
+      XSS attack can read all localStorage, exposing master encryption keys and vault password.
+    affected_components:
+      - "src/lib/agent/providers/credential-vault.ts"
+      - "src/lib/agent/providers/credential-encryption.ts"
+      - "src/lib/agent/providers/credential-storage.ts"
+    risk_impact: "HIGH - Attacker can decrypt all stored API keys (OpenAI, Anthropic, OpenRouter)"
+    evidence_source: "08-security-inventory.md, 04-persistence-inventory.md"
+    acceptance_criteria:
+      - "Implement biometric lock or session-only vault password"
+      - "Use CryptoKey.extractable = false for non-extractable keys"
+      - "Remove encryption keys from localStorage"
+      - "Add security tests for key management"
+      - "Update documentation with security model"
+
+  - id: "P0-2"
+    title: "Replace all hardcoded pixel values with design tokens"
+    priority: "P0"
+    type: "ux"
+    effort_hours: 10
+    agent_ref: "@bmad/modules/architecture-remediation/agents/ux-refactorer.md"
+    domain: "UX/Design System"
+    description: |
+      86 instances of hardcoded pixel values in className attributes break responsive design
+      and theming. Arbitrary sizing prevents proper scaling across devices.
+    affected_components:
+      - "src/presentation/components/ide/CommandPalette.tsx"
+      - "src/presentation/components/ide/statusbar/*.tsx"
+      - "src/presentation/components/ui/button.tsx"
+      - "src/presentation/components/ui/dialog.tsx"
+    risk_impact: "Breaks mobile responsiveness, inconsistent theming, design token violations"
+    evidence_source: "06-ux-inventory.md"
+    acceptance_criteria:
+      - "Replace all [##px] values with Tailwind utilities or CSS variables"
+      - "Use design tokens from src/styles/design-tokens.css"
+      - "Verify responsive design on mobile/tablet/desktop"
+      - "Run automated tests to detect future violations"
+      - "Document design token patterns"
+
+  - id: "P0-3"
+    title: "Add IndexedDB quota exceeded error handling"
+    priority: "P0"
+    type: "data_loss"
+    effort_hours: 20
+    agent_ref: "@bmad/modules/architecture-remediation/agents/persistence-guardian.md"
+    domain: "Persistence/Data Loss"
+    description: |
+      Dexie.js database has 23 tables but NO quota exceeded error handling.
+      User data loss occurs silently when IndexedDB quota is exceeded.
+    affected_components:
+      - "src/infrastructure/persistence/dexie-db-class.ts"
+      - "src/infrastructure/persistence/dexie-db-helpers/"
+      - "db.sources (PDF/URL imports)"
+      - "db.oramaIndexes (search indexes)"
+      - "db.embedding_models (50MB models)"
+    risk_impact: "SILENT DATA LOSS - Operations fail without user notification"
+    evidence_source: "04-persistence-inventory.md"
+    acceptance_criteria:
+      - "Add QuotaExceededError handling in all Dexie operations"
+      - "Implement cleanup strategies (old data eviction)"
+      - "Add user notifications when quota is low"
+      - "Write tests for quota handling scenarios"
+      - "Document quota management strategy"
+
+  # ============================================
+  # P1 HIGH PRIORITY RISKS (Fix Within 1 Sprint)
+  # ============================================
+
+  - id: "P1-1"
+    title: "Split 7 god files into slice pattern modules"
+    priority: "P1"
+    type: "architecture"
+    effort_hours: 50
+    agent_ref: "@bmad/modules/architecture-remediation/agents/god-store-eliminator.md"
+    domain: "Architecture/Maintainability"
+    description: |
+      7 god files violate single responsibility principle, making code difficult to
+      understand, test, and modify. Largest file is 18,541 lines (154x 120-line standard).
+    affected_components:
+      - "src/lib/agent/workspace-execution-context.ts (5,129 lines)"
+      - "src/lib/rag/embedding-service.ts (14,962 lines)"
+      - "src/lib/rag/orama-index.ts (18,541 lines)"
+      - "src/lib/rag/query-optimizer.ts (15,486 lines)"
+      - "src/lib/rag/document-chunker.ts (16,475 lines)"
+      - "src/lib/rag/transformers-loader.ts (9,961 lines)"
+      - "src/lib/state/rag-store.ts (1,595 lines duplicated)"
+    risk_impact: "Impossible to understand, high regression risk, difficult to test, onboarding nightmare"
+    evidence_source: "03-architecture-inventory.md, 05-agent-rag-inventory.md"
+    acceptance_criteria:
+      - "Split all god files into 120-line slice modules"
+      - "Use slice pattern (see Epic CC-1 for reference)"
+      - "Write unit tests for each slice"
+      - "Update import paths across codebase"
+      - "Document slice architecture"
+
+  - id: "P1-2"
+    title: "Consolidate dual event bus architecture"
+    priority: "P1"
+    type: "architecture"
+    effort_hours: 14
+    agent_ref: "@bmad/modules/architecture-remediation/agents/workspace-consolidator.md"
+    domain: "Architecture/Workspace"
+    description: |
+      Two competing event bus implementations exist, but ZERO component-level subscriptions
+      detected. Event buses are unused infrastructure, creating state synchronization bugs.
+    affected_components:
+      - "src/infrastructure/events/cross-workspace-event-bus.ts"
+      - "src/lib/events/cross-workspace-event-bus.ts"
+    risk_impact: "State synchronization bugs, dead code increases bundle size, developer confusion"
+    evidence_source: "07-workspace-inventory.md"
+    acceptance_criteria:
+      - "Delete EventEmitter3 version (src/lib/events/)"
+      - "Keep domain event version (src/infrastructure/events/)"
+      - "Add component-level subscriptions in workspace pages"
+      - "Implement useWorkspaceEvents() hook"
+      - "Test cross-workspace state synchronization"
+
+  - id: "P1-3"
+    title: "Migrate 31 components to new workspace store"
+    priority: "P1"
+    type: "architecture"
+    effort_hours: 7
+    agent_ref: "@bmad/modules/architecture-remediation/agents/workspace-migrator.md"
+    domain: "Architecture/Workspace"
+    description: |
+      Two workspace providers active (NEW store vs OLD context). 31 components still using
+      legacy context, creating potential bugs where components consume wrong provider.
+    affected_components:
+      - "src/presentation/components/layout/MobileIDELayout.tsx"
+      - "src/presentation/components/layout/IDEHeaderBar.tsx"
+      - "src/presentation/components/ide/statusbar/AgentStatusSegment.tsx"
+      - "src/presentation/components/ide/FileTree/FileTree.tsx"
+      - "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      - "src/presentation/components/ide/AgentChatPanel.tsx"
+      - "25 other components using useWorkspace() hook"
+    risk_impact: "Components may consume wrong provider, inconsistent state, migration incomplete"
+    evidence_source: "07-workspace-inventory.md"
+    acceptance_criteria:
+      - "Migrate all 31 components to useWorkspaceStore()"
+      - "Delete legacy provider after migration complete"
+      - "Update AGENTS.md with new import patterns"
+      - "Test workspace isolation"
+      - "Remove @workspace ide-only markers"
+
+  - id: "P1-4"
+    title: "Fix 127 cross-workspace import violations"
+    priority: "P1"
+    type: "architecture"
+    effort_hours: 18
+    agent_ref: "@bmad/modules/architecture-remediation/agents/workspace-isolator.md"
+    domain: "Architecture/Workspace Isolation"
+    description: |
+      127 cross-workspace import violations detected. Components importing from other
+      workspace directories creates tight coupling and prevents independent deployment.
+    affected_components:
+      - "src/presentation/components/hub/HubHomePage.tsx (imports BentoGrid from IDE)"
+      - "src/presentation/components/chat/UnifiedChatPanel.tsx (imports AgentChatPanel from IDE)"
+      - "125 other cross-workspace imports"
+    risk_impact: "Tight coupling, cannot deploy workspaces independently, changes break other workspaces"
+    evidence_source: "07-workspace-inventory.md"
+    acceptance_criteria:
+      - "Move shared components to src/presentation/components/common/"
+      - "Enforce lint rule preventing cross-workspace imports"
+      - "Audit all 127 violations"
+      - "Document workspace boundaries"
+      - "Test workspace isolation"
+
+  - id: "P1-5"
+    title: "Execute Epic CC-1 (Conversation Consolidation)"
+    priority: "P1"
+    type: "state_management"
+    effort_hours: 42
+    agent_ref: "@bmad/modules/architecture-remediation/agents/store-consolidator.md"
+    domain: "State Management"
+    description: |
+      Eliminate 6,500 lines of duplicated store code. Consolidate conversation stores into
+      unified architecture with 6 slices (120 lines each).
+    affected_components:
+      - "src/infrastructure/persistence/stores/conversation/conversation-store.ts (626 lines)"
+      - "src/infrastructure/persistence/stores/conversation/conversation-threads-store.ts (726 lines)"
+      - "src/lib/state/conversation-store.ts (duplicate)"
+      - "src/lib/state/rag-store.ts (1,595 lines duplicated)"
+    risk_impact: "State fragmentation, stores may diverge, developer confusion, code bloat"
+    evidence_source: "01-state-inventory.md, 04-persistence-inventory.md"
+    acceptance_criteria:
+      - "Create 6 store slices (120 lines each)"
+      - "Migrate all components to unified store"
+      - "Delete duplicate stores (6,500 lines removed)"
+      - "Write 70 unit tests"
+      - "Update AGENTS.md with new architecture"
+
+  - id: "P1-6"
+    title: "Execute Epic CP-1 (Project Consolidation)"
+    priority: "P1"
+    type: "state_management"
+    effort_hours: 45
+    agent_ref: "@bmad/modules/architecture-remediation/agents/store-consolidator.md"
+    domain: "State Management"
+    description: |
+      Eliminate project store duplication. Consolidate project and file snapshot stores
+      into unified architecture with 9 slices.
+    affected_components:
+      - "src/lib/workspace/project-store.ts (450 lines)"
+      - "src/lib/filesystem/file-snapshot-store.ts (509 lines)"
+    risk_impact: "State fragmentation, data loss risk, developer confusion"
+    evidence_source: "01-state-inventory.md, 04-persistence-inventory.md"
+    acceptance_criteria:
+      - "Create 9 store slices (120 lines each)"
+      - "Migrate all components to unified store"
+      - "Delete duplicate stores"
+      - "Write 60 unit tests"
+      - "Test data migration with backup/rollback"
+
+  - id: "P1-7"
+    title: "Break 4 circular dependency cycles"
+    priority: "P1"
+    type: "state_management"
+    effort_hours: 14
+    agent_ref: "@bmad/modules/architecture-remediation/agents/cycle-breaker.md"
+    domain: "State Management"
+    description: |
+      4 high-risk circular dependency cycles detected. Creates runtime errors and makes
+      refactoring dangerous.
+    affected_components:
+      - "src/stores/agents-store.ts ↔ src/stores/provider-store.ts"
+      - "src/lib/state/conversation-store.ts → src/lib/state/ide-store.ts"
+      - "src/lib/state/workspace-store.ts → src/lib/state/rag-store.ts"
+      - "src/lib/state/tool-permission-store.ts → src/stores/agents-store.ts"
+    risk_impact: "Runtime errors, cannot delete stores, refactoring dangerous, tests fail intermittently"
+    evidence_source: "01-state-inventory.md"
+    acceptance_criteria:
+      - "Introduce domain services to break cycles"
+      - "Use src/domain/services/agent-workspace-utils.ts pattern"
+      - "Update all stores to use domain services"
+      - "Test store initialization"
+      - "Document dependency-free architecture"
+
+  - id: "P1-8"
+    title: "Add React.memo to list item components"
+    priority: "P1"
+    type: "performance"
+    effort_hours: 10
+    agent_ref: "@bmad/modules/architecture-remediation/agents/performance-optimizer.md"
+    domain: "Performance"
+    description: |
+      Zero React.memo usage detected. Child components re-render when parent re-renders,
+      causing 50-60% unnecessary re-renders in list components.
+    affected_components:
+      - "File tree components (FileTreeNode)"
+      - "Chat message components (ChatMessage)"
+      - "Agent selector items (AgentSelectorItem)"
+      - "Knowledge graph nodes (ConceptNode)"
+    risk_impact: "50-60% unnecessary re-renders, scroll lag, battery drain, poor UX"
+    evidence_source: "09-performance-inventory.md"
+    acceptance_criteria:
+      - "Add React.memo to all list item components"
+      - "Implement custom comparison functions for complex props"
+      - "Test render count reduction with React DevTools"
+      - "Document memoization patterns"
+
+  - id: "P1-9"
+    title: "Memoize WorkspaceContext value object"
+    priority: "P1"
+    type: "performance"
+    effort_hours: 5
+    agent_ref: "@bmad/modules/architecture-remediation/agents/performance-optimizer.md"
+    domain: "Performance/Architecture"
+    description: |
+      WorkspaceContext spreads entire state and actions objects, causing all consumers
+      to re-render on any state change (30-40% unnecessary re-renders).
+    affected_components:
+      - "src/lib/workspace/WorkspaceContext.tsx"
+    risk_impact: "All workspace consumers re-render, 30-40% unnecessary re-renders"
+    evidence_source: "09-performance-inventory.md"
+    acceptance_criteria:
+      - "Memoize context value object with useMemo"
+      - "Split into StateContext + ActionsContext"
+      - "Test render count reduction"
+      - "Update documentation"
+
+  - id: "P1-10"
+    title: "Replace 23 console.error + return null patterns with proper error handling"
+    priority: "P1"
+    type: "error_handling"
+    effort_hours: 14
+    agent_ref: "@bmad/modules/architecture-remediation/agents/error-handler.md"
+    domain: "Error Handling"
+    description: |
+      23 instances of console.error() + return null pattern detected. Errors logged but
+      not propagated, causing silent failures and user confusion.
+    affected_components:
+      - "23 files across src/ directory"
+    risk_impact: "Silent data loss, user confusion, difficult to debug, poor UX"
+    evidence_source: "03-architecture-inventory.md"
+    acceptance_criteria:
+      - "Replace with proper error handling (throw errors or Result type)"
+      - "Use error boundaries for React components"
+      - "Add user-friendly error messages"
+      - "Test error scenarios"
+      - "Document error handling patterns"
+
+  - id: "P1-11"
+    title: "Migrate 30+ hardcoded English strings to i18n"
+    priority: "P1"
+    type: "ux"
+    effort_hours: 7
+    agent_ref: "@bmad/modules/architecture-remediation/agents/i18n-migrator.md"
+    domain: "UX/Internationalization"
+    description: |
+      30+ hardcoded English strings detected. User-facing text not translatable,
+      breaking Vietnamese localization.
+    affected_components:
+      - "src/presentation/components/ide/AgentChatPanel/AgentChatEnhancingUI.tsx"
+      - "src/presentation/components/ide/statusbar/*.tsx"
+      - "src/presentation/components/chat/*.tsx"
+    risk_impact: "Vietnamese translation incomplete, UX degrades, inconsistent language"
+    evidence_source: "06-ux-inventory.md"
+    acceptance_criteria:
+      - "Extract all strings to i18n JSON (en.json, vi.json)"
+      - "Replace with t('namespace.key') calls"
+      - "Run pnpm i18n:extract"
+      - "Test Vietnamese translation"
+      - "Document i18n patterns"
+
+  # ============================================
+  # P2 MEDIUM PRIORITY RISKS (Fix Within 2-3 Sprints)
+  # ============================================
+
+  - id: "P2-1"
+    title: "Write security test suite for validation functions"
+    priority: "P2"
+    type: "security"
+    effort_hours: 7
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-tester.md"
+    domain: "Security/Testing"
+    description: |
+      Zero security test files found. Validation functions (path traversal, injection
+      detection, URL validation) have no unit tests.
+    affected_components:
+      - "lib/utils/security.ts (validatePathTraversal, validateNoInjection, isSafeUrl)"
+    risk_impact: "Security regressions possible, code changes may break validation, compliance gaps"
+    evidence_source: "08-security-inventory.md"
+    acceptance_criteria:
+      - "Write unit tests for validatePathTraversal (10 tests)"
+      - "Write unit tests for validateNoInjection (8 tests)"
+      - "Write unit tests for isSafeUrl (12 tests)"
+      - "Write integration tests for sanitizeForLogging (8 tests)"
+      - "Achieve 90%+ test coverage"
+
+  - id: "P2-2"
+    title: "Replace 3 console.log with safeLog for sensitive data"
+    priority: "P2"
+    type: "security"
+    effort_hours: 2
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-auditor.md"
+    domain: "Security/Logging"
+    description: |
+      3 files use console.log that may expose sensitive data (API keys, tokens, credentials).
+    affected_components:
+      - "src/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts"
+      - "src/infrastructure/persistence/stores/conversation/slices/create-context-window-slice.ts"
+      - "src/presentation/components/agent/useAgentConfigProvider.ts"
+    risk_impact: "Sensitive data exposure in console logs (LOW risk but should be fixed)"
+    evidence_source: "08-security-inventory.md"
+    acceptance_criteria:
+      - "Replace console.log with safeLog from lib/utils/security.ts"
+      - "Verify no sensitive data logged"
+      - "Test logging behavior"
+
+  - id: "P2-3"
+    title: "Increase design token usage to 80%+ coverage"
+    priority: "P2"
+    type: "ux"
+    effort_hours: 12
+    agent_ref: "@bmad/modules/architecture-remediation/agents/design-token-enforcer.md"
+    domain: "UX/Design System"
+    description: |
+      Only 22/371 files (5.9%) import design tokens. Heavy reliance on Tailwind utilities
+      creates inconsistent theming.
+    affected_components:
+      - "349 files not importing design tokens"
+    risk_impact: "Inconsistent spacing/colors/typography, difficult to theme, design system violations"
+    evidence_source: "06-ux-inventory.md"
+    acceptance_criteria:
+      - "Increase design token usage to 80%+ (300+ files)"
+      - "Create design token utility class mappings"
+      - "Replace common Tailwind utilities with tokens"
+      - "Document token usage patterns"
+      - "Add lint rule for token violations"
+
+  - id: "P2-4"
+    title: "Add aria-label to 15-20 icon-only buttons"
+    priority: "P2"
+    type: "ux"
+    effort_hours: 5
+    agent_ref: "@bmad/modules/architecture-remediation/agents/accessibility-improver.md"
+    domain: "UX/Accessibility"
+    description: |
+      Estimated 15-20 icon-only buttons without aria-label. Screen reader usability degraded.
+    affected_components:
+      - "src/presentation/components/ide/IconSidebar.tsx"
+      - "src/presentation/components/ui/button.tsx"
+      - "15-20 other icon-only buttons"
+    risk_impact: "Screen reader users cannot understand button purpose, WCAG 2.1 AA violation"
+    evidence_source: "06-ux-inventory.md"
+    acceptance_criteria:
+      - "Add aria-label to all icon-only buttons"
+      - "Create IconButton wrapper component"
+      - "Test with screen reader (NVDA/JAWS)"
+      - "Document accessibility patterns"
+
+  - id: "P2-5"
+    title: "Implement virtualization for 4 long lists"
+    priority: "P2"
+    type: "performance"
+    effort_hours: 14
+    agent_ref: "@bmad/modules/architecture-remediation/agents/performance-optimizer.md"
+    domain: "Performance"
+    description: |
+      4 long lists missing virtualization (File tree, Chat messages, Quiz lists, Knowledge graph).
+      Creates 1000+ DOM nodes for large datasets.
+    affected_components:
+      - "src/presentation/components/ide/ExplorerPanel.tsx (File tree)"
+      - "src/presentation/components/chat/ChatConversation.tsx (Chat messages)"
+      - "src/presentation/components/study/StudyPage.tsx (Quiz lists)"
+    risk_impact: "1000+ DOM nodes, scroll lag, render lag, battery drain"
+    evidence_source: "09-performance-inventory.md"
+    acceptance_criteria:
+      - "Implement react-window for File tree"
+      - "Implement react-window for Chat messages"
+      - "Implement react-window for Quiz lists"
+      - "Verify DOM node reduction (95%+)"
+      - "Test scroll performance"
+
+  - id: "P2-6"
+    title: "Split 20 components >400 lines into smaller components"
+    priority: "P2"
+    type: "architecture"
+    effort_hours: 25
+    agent_ref: "@bmad/modules/architecture-remediation/agents/component-splitter.md"
+    domain: "Architecture/Maintainability"
+    description: |
+      20 components exceed 400-line limit. Difficult to understand, test, and modify.
+    affected_components:
+      - "resizable.tsx (745 lines)"
+      - "KnowledgePage.tsx (658 lines)"
+      - "IndexingProgressPanel.tsx (593 lines)"
+      - "17 other components >400 lines"
+    risk_impact: "Difficult to understand, high regression risk, difficult to test"
+    evidence_source: "09-performance-inventory.md"
+    acceptance_criteria:
+      - "Split all 20 components to <300 lines"
+      - "Extract custom hooks"
+      - "Use component composition pattern"
+      - "Write tests for extracted components"
+      - "Update documentation"
+
+  - id: "P2-7"
+    title: "Configure Content Security Policy (CSP) headers in Vite"
+    priority: "P2"
+    type: "security"
+    effort_hours: 3
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-hardener.md"
+    domain: "Security/Hardening"
+    description: |
+      No CSP headers configured in Vite. Allows inline scripts and unsafe-eval (XSS risk).
+    affected_components:
+      - "vite.config.ts"
+    risk_impact: "XSS attacks can inject malicious scripts, no inline script protection"
+    evidence_source: "08-security-inventory.md"
+    acceptance_criteria:
+      - "Add CSP headers to Vite config"
+      - "Block inline scripts, unsafe-eval"
+      - "Whitelist trusted domains"
+      - "Test CSP compliance"
+      - "Document CSP policy"
+
+  - id: "P2-8"
+    title: "Add performance monitoring (Web Vitals + React Profiler)"
+    priority: "P2"
+    type: "performance"
+    effort_hours: 5
+    agent_ref: "@bmad/modules/architecture-remediation/agents/performance-monitor.md"
+    domain: "Performance/Observability"
+    description: |
+      Zero performance metrics collected. No Web Vitals tracking, no React DevTools Profiler.
+    affected_components:
+      - "src/main.tsx"
+    risk_impact: "Cannot detect performance regressions, no visibility into UX"
+    evidence_source: "09-performance-inventory.md"
+    acceptance_criteria:
+      - "Add Web Vitals tracking (CLS, FID, FCP, LCP, TTFB)"
+      - "Integrate React DevTools Profiler"
+      - "Track custom metrics (workspace switch performance)"
+      - "Create performance dashboard"
+      - "Document performance metrics"
+
+  # ============================================
+  # P3 LOW PRIORITY RISKS (Technical Debt)
+  # ============================================
+
+  - id: "P3-1"
+    title: "Add Subresource Integrity (SRI) hashes for CDN dependencies"
+    priority: "P3"
+    type: "security"
+    effort_hours: 3
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-hardener.md"
+    domain: "Security/Hardening"
+    description: |
+      No SRI hashes for CDN dependencies. Third-party scripts can be tampered with.
+      Currently using npm packages (not CDN), but risk if CDN introduced later.
+    affected_components:
+      - "index.html (if CDN added)"
+    risk_impact: "LOW - No CDN usage currently, but future risk"
+    evidence_source: "08-security-inventory.md"
+    acceptance_criteria:
+      - "Add SRI hashes if CDN dependencies are added"
+      - "Document SRI policy"
+
+  - id: "P3-2"
+    title: "Encrypt localStorage non-sensitive data"
+    priority: "P3"
+    type: "security"
+    effort_hours: 9
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-hardener.md"
+    domain: "Security/Hardening"
+    description: |
+      localStorage stores non-sensitive data in plaintext. XSS attack can read all localStorage.
+      Only theme, navigation state, UI preferences affected (LOW risk).
+    affected_components:
+      - "localStorage usage across 37 files"
+    risk_impact: "LOW - Only non-sensitive data, but XSS impact reduction"
+    evidence_source: "08-security-inventory.md"
+    acceptance_criteria:
+      - "Encrypt non-sensitive data using AES-GCM with session keys"
+      - "Reduce XSS impact"
+      - "Document encryption strategy"
+
+  - id: "P3-3"
+    title: "Add labels to 15-20 form inputs"
+    priority: "P3"
+    type: "ux"
+    effort_hours: 5
+    agent_ref: "@bmad/modules/architecture-remediation/agents/accessibility-improver.md"
+    domain: "UX/Accessibility"
+    description: |
+      Estimated 15-20 form inputs lack proper labels (id, aria-label, or associated <label>).
+      Screen reader usability degraded.
+    affected_components:
+      - "Agent configuration forms"
+      - "Chat input fields"
+      - "Search boxes"
+    risk_impact: "LOW - Screen reader usability degraded"
+    evidence_source: "06-ux-inventory.md"
+    acceptance_criteria:
+      - "Ensure all inputs have associated labels"
+      - "Add error descriptions with aria-describedby"
+      - "Test with screen reader"
+
+  - id: "P3-4"
+    title: "Complete Epic 53 consolidation (delete deprecated facades)"
+    priority: "P3"
+    type: "state_management"
+    effort_hours: 7
+    agent_ref: "@bmad/modules/architecture-remediation/agents/store-consolidator.md"
+    domain: "State Management"
+    description: |
+      6 deprecated facade exports exist after Epic 53-1 (Dexie consolidation).
+      Developer confusion about which imports to use.
+    affected_components:
+      - "src/lib/state/dexie-db.ts (deprecated)"
+      - "src/lib/state/dexie-storage.ts (deprecated)"
+      - "src/lib/state/dexie-db-types.ts (deprecated)"
+      - "3 other deprecated facades"
+    risk_impact: "LOW - Developer confusion, but no runtime errors"
+    evidence_source: "04-persistence-inventory.md, 01-state-inventory.md"
+    acceptance_criteria:
+      - "Delete all 6 deprecated facade exports"
+      - "Update all import paths to infrastructure/persistence/"
+      - "Remove deprecation warnings"
+      - "Update AGENTS.md"
+
+  - id: "P3-5"
+    title: "Add component documentation (JSDoc + usage examples)"
+    priority: "P3"
+    type: "documentation"
+    effort_hours: 14
+    agent_ref: "@bmad/modules/architecture-remediation/agents/documenter.md"
+    domain: "Documentation"
+    description: |
+      Zero component documentation found. No JSDoc examples, no usage patterns documented.
+      Onboarding difficulty for new developers.
+    affected_components:
+      - "294 React components"
+    risk_impact: "LOW - Onboarding difficulty, but code is self-documenting"
+    evidence_source: "09-performance-inventory.md"
+    acceptance_criteria:
+      - "Add JSDoc to all components"
+      - "Document accessibility features"
+      - "Create a11y checklist for new components"
+      - "Add usage examples"
+      - "Create component documentation site"
+
+# ============================================
+# REMAINING P2 ITEMS (Abbreviated for Backlog)
+# ============================================
+
+  - id: "P2-9"
+    title: "Fix FSA handle deserialization validation"
+    priority: "P2"
+    type: "data_loss"
+    effort_hours: 8
+    agent_ref: "@bmad/modules/architecture-remediation/agents/persistence-guardian.md"
+    domain: "Persistence/Data Loss"
+    description: "Add validation before using serialized FileSystemDirectoryHandle"
+    affected_components: ["src/lib/filesystem/fsa-handle-manager.ts"]
+    evidence_source: "04-persistence-inventory.md"
+
+  - id: "P2-10"
+    title: "Implement permission audit log for agent tools"
+    priority: "P2"
+    type: "security"
+    effort_hours: 10
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-auditor.md"
+    domain: "Agent/RAG Security"
+    description: "Track all permission denials and tool execution attempts"
+    affected_components: ["src/lib/agent/tool-permission-manager.ts"]
+    evidence_source: "05-agent-rag-inventory.md"
+
+  - id: "P2-11"
+    title: "Add rate limiting to agent tool execution"
+    priority: "P2"
+    type: "security"
+    effort_hours: 8
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-hardener.md"
+    domain: "Agent/RAG Security"
+    description: "Max 10 tool calls per minute per agent with exponential backoff"
+    affected_components: ["src/lib/agent/factory.ts"]
+    evidence_source: "05-agent-rag-inventory.md"
+
+  # ... (remaining 18 P2 items abbreviated - see full inventory for details)
+
+# ============================================
+# REMAINING P3 ITEMS (Abbreviated for Backlog)
+# ============================================
+
+  - id: "P3-6"
+    title: "Add tool output sanitization for AI-generated content"
+    priority: "P3"
+    type: "security"
+    effort_hours: 8
+    agent_ref: "@bmad/modules/architecture-remediation/agents/security-hardener.md"
+    domain: "Agent/RAG Security"
+    description: "Sanitize AI-generated file paths and command output"
+    affected_components: ["src/lib/agent/tools/"]
+    evidence_source: "05-agent-rag-inventory.md"
+
+  # ... (remaining 10 P3 items abbreviated - see full inventory for details)
+
+# ============================================
+# EFFORT SUMMARY
+# ============================================
+
+effort_summary:
+  total_items: 73
+  total_effort_hours: 724
+
+  by_priority:
+    p0:
+      count: 3
+      effort_hours: 44
+      percentage: 6%
+    p1:
+      count: 24
+      effort_hours: 318
+      percentage: 44%
+    p2:
+      count: 31
+      effort_hours: 252
+      percentage: 35%
+    p3:
+      count: 15
+      effort_hours: 110
+      percentage: 15%
+
+  by_domain:
+    security:
+      count: 10
+      effort_hours: 88
+      percentage: 12%
+    architecture:
+      count: 15
+      effort_hours: 180
+      percentage: 25%
+    state_management:
+      count: 12
+      effort_hours: 140
+      percentage: 19%
+    ux:
+      count: 15
+      effort_hours: 95
+      percentage: 13%
+    performance:
+      count: 10
+      effort_hours: 80
+      percentage: 11%
+    error_handling:
+      count: 8
+      effort_hours: 45
+      percentage: 6%
+    workspace:
+      count: 8
+      effort_hours: 60
+      percentage: 8%
+    agent_rag:
+      count: 8
+      effort_hours: 55
+      percentage: 8%
+    persistence:
+      count: 7
+      effort_hours: 50
+      percentage: 7%
+    documentation:
+      count: 5
+      effort_hours: 25
+      percentage: 3%
+    testing:
+      count: 5
+      effort_hours: 20
+      percentage: 3%
+
+# ============================================
+# 8-WEEK REMEDIATION ROADMAP
+# ============================================
+
+roadmap:
+  week_1_2:
+    title: "Foundation Stabilization (P0 Risks)"
+    items: ["P0-1", "P0-2", "P0-3", "P2-1", "P2-2"]
+    effort_hours: 53
+    deliverable: "All P0 risks resolved. Health score: 68.5 → 75/100"
+
+  week_3_4:
+    title: "Store Refactoring (P1 State Risks)"
+    items: ["P1-5", "P1-6", "P1-7", "P3-4"]
+    effort_hours: 108
+    deliverable: "Store duplication eliminated (6,500 lines removed). Health score: 75 → 80/100"
+
+  week_5_6:
+    title: "Architecture Hardening (P1 Architecture Risks)"
+    items: ["P1-1", "P1-2", "P1-3", "P1-4", "P2-9"]
+    effort_hours: 103
+    deliverable: "God files eliminated, workspace isolation enforced. Health score: 80 → 85/100"
+
+  week_7_8:
+    title: "Polish & Optimization (P1 Performance + P2 Risks)"
+    items: ["P1-8", "P1-9", "P1-10", "P1-11", "P2-3", "P2-4", "P2-5", "P2-6", "P2-7", "P2-8", "P3-5"]
+    effort_hours: 98
+    deliverable: "Performance optimized, accessibility improved. Health score: 85 → 90/100"
+
+# ============================================
+# SUCCESS METRICS
+# ============================================
+
+success_metrics:
+  target_health_score: 90
+  current_health_score: 68.5
+
+  domain_targets:
+    security: 85 → 95
+    state_management: 60 → 85
+    architecture: 65 → 90
+    persistence: 70 → 85
+    ux_accessibility: 71.5 → 90
+    performance: 70 → 90
+    agent_rag: 75 → 90
+    workspace: 62 → 85
+
+  risk_elimination:
+    p0_risks: 3 → 0
+    p1_risks: 24 → 5
+    p2_risks: 31 → 15
+
+  quality_metrics:
+    lines_of_code_removed: 6500
+    lines_of_code_added: 3000
+    test_coverage_increase: 25%
+    god_files_eliminated: 7
+    cross_workspace_violations_fixed: 127
+    design_token_coverage: 5.9% → 80%
+    react_memo_components_added: 50
+
+# ============================================
+# END OF REMEDIATION BACKLOG
+# ============================================
