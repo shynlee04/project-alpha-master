@@ -8,7 +8,7 @@
  */
 
 import EventEmitter from 'eventemitter3';
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Event Types

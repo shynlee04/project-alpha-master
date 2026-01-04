@@ -36,7 +36,8 @@ export interface ActivityLineChartProps {
  * ```
  */
 export const ActivityLineChart: React.FC<ActivityLineChartProps> = ({
-  days, // Unused but kept for API compatibility
+  // @ts-expect-error - Unused parameter kept for API compatibility when feature is implemented
+  days,
   className,
 }) => {
   const { t } = useTranslation();

@@ -18,7 +18,7 @@ import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
 import { NoteTree } from './NoteTree';
 import { NotesIndexingButton } from './NotesIndexingButton';
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 interface NoteSidebarProps {
     notes: NoteRecord[];

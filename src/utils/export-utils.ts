@@ -6,7 +6,7 @@
  * Utility functions for exporting knowledge sources as downloadable files.
  */
 
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 const MAX_FILENAME_LENGTH = 100;
 

@@ -15,7 +15,7 @@ import { CollectionSelector } from './CollectionSelector';
 import { SourceMetadataDialog } from './SourceMetadataDialog';
 import { exportText, exportPDF } from '@/utils/export-utils';
 import { toast } from 'sonner';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import { useTranslation } from 'react-i18next';
 

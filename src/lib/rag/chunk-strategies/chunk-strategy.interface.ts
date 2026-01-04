@@ -7,7 +7,7 @@
  */
 
 import type { ChunkMetadata, ChunkingOptions } from '../types';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Base interface for chunking strategies

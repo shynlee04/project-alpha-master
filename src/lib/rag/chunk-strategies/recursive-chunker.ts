@@ -13,7 +13,7 @@ import type { ChunkMetadata, ChunkingOptions } from '../types';
 import { DEFAULT_CHUNKING_OPTIONS } from '../types';
 import { countTokens } from '../token-counter';
 import type { ChunkStrategy } from './chunk-strategy.interface';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Recursive chunking for long documents

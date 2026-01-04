@@ -13,7 +13,7 @@ import {
   Info
 } from 'lucide-react';
 
-import { db } from '@/lib/state/dexie-db';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import type { ProjectRecord } from '@/lib/state/dexie-db-types';

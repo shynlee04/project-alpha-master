@@ -11,7 +11,7 @@
 import { useMemo } from 'react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { buildTree, filterTreeBySearch, filterTreeByFavorites } from '@/lib/notes/note-tree-utils';
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import { NoteTreeItem } from './NoteTreeItem';
 
 interface NoteTreeProps {

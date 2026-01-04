@@ -8,7 +8,7 @@
  */
 
 import type { Block } from '@blocknote/core';
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Types

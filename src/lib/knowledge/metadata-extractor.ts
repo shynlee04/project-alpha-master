@@ -21,7 +21,7 @@
 
 import { GoogleGenAI } from '@google/genai';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Extracted metadata result

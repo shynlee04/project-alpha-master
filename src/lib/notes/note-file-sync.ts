@@ -10,7 +10,7 @@
  * - Integration with FileSyncService from ARC module
  */
 
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import type { FileSyncService, SyncResult } from '@/lib/filesync/file-sync-service';
 import { SyncError } from '@/lib/filesystem/sync-types';
 

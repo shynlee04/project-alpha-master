@@ -8,7 +8,7 @@
  * Story 26.5: Note Hierarchy & Sidebar Navigation
  */
 
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Tree node structure

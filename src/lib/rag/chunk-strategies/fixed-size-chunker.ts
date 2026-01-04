@@ -11,7 +11,7 @@ import type { ChunkMetadata, ChunkingOptions } from '../types';
 import { DEFAULT_CHUNKING_OPTIONS } from '../types';
 import { countTokens, findChunkBoundary, calculateOverlap } from '../token-counter';
 import type { ChunkStrategy } from './chunk-strategy.interface';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Fixed-size token chunking with overlap

@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { PlusIcon } from '@/presentation/components/ui/icons';
 import { CreateCollectionDialog } from './CreateCollectionDialog';
 import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
-import type { Collection } from '@/lib/state/dexie-db';
+import type { Collection } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 
 export interface CollectionManagerProps {

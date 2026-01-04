@@ -11,7 +11,7 @@
  * @iteration 15 - Added RAG progress events (CHUNKING_STATUS)
  */
 
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import type {
   ChunkMetadata,
   ChunkingOptions,

@@ -15,7 +15,7 @@ import { Textarea } from '@/presentation/components/ui/textarea';
 import { Input } from '@/presentation/components/ui/input';
 import { Label } from '@/presentation/components/ui/label';
 import { Plus, Save, Edit2, Loader2, RefreshCw, X } from 'lucide-react';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import { toast } from 'sonner';
 

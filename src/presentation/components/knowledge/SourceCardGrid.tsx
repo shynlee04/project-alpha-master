@@ -9,7 +9,7 @@
 import { useEffect } from 'react';
 import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import { SourceCard } from './SourceCard';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 interface SourceCardGridProps {
     projectId: string;

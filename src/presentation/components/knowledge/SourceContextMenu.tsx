@@ -15,7 +15,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/presentation/components/ui/dropdown-menu';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 
 export interface SourceContextMenuProps {

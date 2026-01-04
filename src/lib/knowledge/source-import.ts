@@ -13,7 +13,7 @@
  * @example
  * ```tsx
  * import { sourceImportPipeline } from '@/lib/knowledge/source-import';
- * import { db } from '@/lib/state/dexie-db';
+ * import { db } from '@/infrastructure/persistence/dexie-db';
  *
  * const record = await sourceImportPipeline.importPDF(file, {
  *   projectId: currentProject.id,
@@ -23,7 +23,7 @@
  */
 
 import { URLFetcher } from './url-fetcher';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { metadataExtractor } from './metadata-extractor';
 import type { WorkspaceEventEmitter, WorkspaceEvents } from '@/lib/events/workspace-events';
 import type { ChunkingOptions } from '@/lib/rag/types';

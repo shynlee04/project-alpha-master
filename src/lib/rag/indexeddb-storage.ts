@@ -7,7 +7,7 @@
  * Stores serialized Orama indexes in IndexedDB.
  */
 
-import { db, type OramaIndexRecord } from '@/lib/state/dexie-db';
+import { db, type OramaIndexRecord } from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Re-export Types

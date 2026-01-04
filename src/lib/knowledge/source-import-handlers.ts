@@ -9,8 +9,8 @@
 
 import { parsePDF } from './pdf-parser';
 import { URLFetcher } from './url-fetcher';
-import type { SourceRecord } from '@/lib/state/dexie-db';
-import { db } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import { emitStoreEvent } from '@/lib/events/store-events';
 import { STORE_EVENTS } from '@/lib/events/store-events';
 import type { SourceImportOptions } from './source-import-types';

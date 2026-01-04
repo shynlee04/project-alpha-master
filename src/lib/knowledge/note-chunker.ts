@@ -4,7 +4,7 @@
  * Chunks notes for RAG indexing with heading-aware splitting
  */
 
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 export interface NoteChunk {
   id: string;

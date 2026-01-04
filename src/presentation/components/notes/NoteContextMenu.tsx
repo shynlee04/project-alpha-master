@@ -28,7 +28,7 @@ import {
     DropdownMenuTrigger,
 } from '@/presentation/components/ui/dropdown-menu';
 import { useNoteStore } from '@/lib/notes/note-store';
-import type { NoteRecord } from '@/lib/state/dexie-db';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 interface NoteContextMenuProps {
     note: NoteRecord;

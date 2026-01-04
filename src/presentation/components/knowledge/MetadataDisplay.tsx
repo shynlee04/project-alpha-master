@@ -11,7 +11,7 @@
  */
 
 import { SkeletonLoader } from '@/presentation/components/ui/SkeletonLoader';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { useTranslation } from 'react-i18next';
 
 export interface MetadataDisplayProps {
