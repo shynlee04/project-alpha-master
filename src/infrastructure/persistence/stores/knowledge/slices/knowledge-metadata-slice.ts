@@ -19,7 +19,7 @@ export interface MetadataState {
     updateProcessingStatus: (sourceId: string, status: 'pending' | 'processing' | 'completed' | 'failed', error?: string) => Promise<void>;
 }
 
-export const createMetadataSlice: StateCreator<KnowledgeStoreState> = (set, get, _api) => ({
+export const createMetadataSlice: StateCreator<KnowledgeStoreState, [], []> = (set, get, _api) => ({
     extractMetadata: async (sourceId: string) => {
         const source = get().sources.find(s => s.id === sourceId);
         if (!source || !source.content) {

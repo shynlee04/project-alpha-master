@@ -10,27 +10,12 @@
  */
 
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './types'
+import { EventIndicator } from './EventIndicator'
+import { type EventStatus, type NoteIndexingPhase, type NoteIndexingState } from './types'
 import { getNoteIndexingStatus, getNoteIndexingMessage, getNoteIndexingProgress } from './note-indexing-utils'
 
-/**
- * Note indexing phase
- */
-export type NoteIndexingPhase = 'pending' | 'parsing' | 'embedding' | 'storing' | 'complete' | 'error'
-
-/**
- * Note indexing state
- */
-export interface NoteIndexingState {
-    isIndexing: boolean
-    currentPhase: NoteIndexingPhase
-    noteId: string
-    noteTitle: string
-    totalBlocks: number
-    processedBlocks: number
-    startTime: number | null
-    error?: string
-}
+// Re-export types for convenience
+export type { NoteIndexingPhase, NoteIndexingState }
 
 /**
  * Note indexing indicator props

@@ -19,7 +19,7 @@ export interface SynthesisState {
     loadSynthesisResult: (sourceId: string) => Promise<void>;
 }
 
-export const createSynthesisSlice: StateCreator<KnowledgeStoreState> = (set, get, _api) => ({
+export const createSynthesisSlice: StateCreator<KnowledgeStoreState, [], []> = (set, get, _api) => ({
     synthesizeSource: async (sourceId: string) => {
         const source = get().sources.find(s => s.id === sourceId);
         if (!source || !source.content) {

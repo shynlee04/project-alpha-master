@@ -11,38 +11,13 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './types'
+import { EventIndicator } from './EventIndicator'
+import { type EventStatus, type QuizGenerationPhase, type QuizGenerationStep, type QuizGenerationState } from './types'
 import { QuizGenerationStepItem } from './QuizGenerationStepItem'
 import { getQuizGenerationStatus, getQuizGenerationMessage, getQuizGenerationProgress } from './quiz-generation-utils'
 
-/**
- * Quiz generation phase
- */
-export type QuizGenerationPhase = 'pending' | 'analyzing' | 'generating' | 'validating' | 'storing' | 'complete' | 'error'
-
-/**
- * Quiz generation step
- */
-export interface QuizGenerationStep {
-    phase: QuizGenerationPhase
-    message: string
-    timestamp: number
-}
-
-/**
- * Quiz generation state
- */
-export interface QuizGenerationState {
-    isGenerating: boolean
-    currentPhase: QuizGenerationPhase
-    sourceId: string
-    sourceTitle: string
-    totalQuestions: number
-    generatedQuestions: number
-    steps: QuizGenerationStep[]
-    startTime: number | null
-    error?: string
-}
+// Re-export types for convenience
+export type { QuizGenerationPhase, QuizGenerationStep, QuizGenerationState }
 
 /**
  * Quiz generation indicator props

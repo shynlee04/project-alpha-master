@@ -1,0 +1,354 @@
+---
+# Stabilization Sprint Status Tracker
+# Generated: 2026-01-04T18:35:00+07:00
+# Sprint: Foundation Lock-In (8 weeks)
+# Workflow: /stabilization-sprint
+
+sprint_meta:
+  name: "Foundation Lock-In Sprint"
+  start_date: "2026-01-04"
+  target_end_date: "2026-02-28"
+  current_phase: "Phase 2 - P0 Elimination"
+  team_a_focus: "UI/Frontend - STAB-24.3"
+  team_b_focus: "Backend/State - STAB-24.1, STAB-24.2"
+
+health_score:
+  baseline: 68.5
+  current: 68.5
+  phase_2_target: 75
+  phase_3_target: 80
+  phase_4_target: 85
+  final_target: 90
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 2: P0 Critical Risk Elimination (Week 1-2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_stab_24:
+  id: "STAB-24"
+  name: "P0 Foundation Stabilization"
+  priority: P0
+  status: IN_PROGRESS
+  started_at: "2026-01-04T18:35:00+07:00"
+  target_completion: "2026-01-11"
+  team: "A+B (Parallel)"
+  hours_estimated: 44
+  hours_actual: 0
+  
+  stories:
+    stab-24-1-encrypt-localstorage:
+      id: "STAB-24.1"
+      name: "Encrypt localStorage Keys"
+      status: backlog
+      priority: P0
+      team: B
+      agent: "@bmad-bmm-dev"
+      hours_estimated: 14
+      hours_actual: 0
+      risk: "P0-1: API keys in plaintext"
+      acceptance_criteria:
+        ac1_key_audit: pending
+        ac2_encrypted_storage: pending
+        ac3_migration_complete: pending
+        ac4_deprecation_warning: pending
+        ac5_zero_data_loss: pending
+      validation:
+        typescript_errors: null
+        build_passed: null
+        tests_passed: null
+      notes: []
+      
+    stab-24-2-indexeddb-quota:
+      id: "STAB-24.2"
+      name: "IndexedDB Quota Handling"
+      status: backlog
+      priority: P0
+      team: B
+      agent: "@bmad-bmm-dev"
+      hours_estimated: 20
+      hours_actual: 0
+      risk: "P0-3: Silent data loss on quota exceeded"
+      acceptance_criteria:
+        ac1_quota_detection: pending
+        ac2_quota_handler: pending
+        ac3_all_tables_protected: pending
+        ac4_user_notification: pending
+        ac5_graceful_degradation: pending
+      validation:
+        typescript_errors: null
+        build_passed: null
+        tests_passed: null
+      notes: []
+      
+    stab-24-3-design-tokens:
+      id: "STAB-24.3"
+      name: "Replace Hardcoded Pixels"
+      status: backlog
+      priority: P0
+      team: A
+      agent: "@bmad-bmm-dev"
+      hours_estimated: 10
+      hours_actual: 0
+      risk: "P0-2: 86 pixel violations breaking mobile"
+      acceptance_criteria:
+        ac1_token_system: pending
+        ac2_pixels_reduced: pending
+        ac3_mobile_responsive: pending
+        ac4_tablet_responsive: pending
+        ac5_desktop_responsive: pending
+      validation:
+        typescript_errors: null
+        build_passed: null
+        tests_passed: null
+      notes: []
+
+  phase_2_gate:
+    status: pending
+    health_score_delta: null
+    p0_risks_remaining: 3
+    validation_date: null
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 3: Store Consolidation (Week 3-4)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_stab_25:
+  id: "STAB-25"
+  name: "Store Consolidation & Circular Dependency Resolution"
+  priority: P1
+  status: backlog
+  target_start: "2026-01-12"
+  target_completion: "2026-01-21"
+  team: B
+  hours_estimated: 96
+  hours_actual: 0
+  dependencies:
+    - "STAB-24 complete"
+  
+  stories:
+    stab-25-1-conversation-consolidation:
+      id: "STAB-25.1"
+      name: "Execute Epic CC-1"
+      status: backlog
+      priority: P1
+      hours_estimated: 40
+      reference: "CC-1 in priorities.yaml"
+      
+    stab-25-2-project-consolidation:
+      id: "STAB-25.2"
+      name: "Execute Epic CP-1"
+      status: backlog
+      priority: P1
+      hours_estimated: 38
+      reference: "CP-1 in priorities.yaml"
+      
+    stab-25-3-circular-dependencies:
+      id: "STAB-25.3"
+      name: "Break 4 Circular Dependencies"
+      status: backlog
+      priority: P1
+      hours_estimated: 14
+      
+    stab-25-4-facade-cleanup:
+      id: "STAB-25.4"
+      name: "Complete Epic 53 Facade Cleanup"
+      status: backlog
+      priority: P1
+      hours_estimated: 7
+      reference: "ADR-024"
+
+  phase_3_gate:
+    status: pending
+    store_duplication_removed: null
+    circular_deps_remaining: 4
+    health_score_target: 80
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 4: God File Splitting & Workspace Isolation (Week 5-6)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_stab_26:
+  id: "STAB-26"
+  name: "God File Elimination & Workspace Boundaries"
+  priority: P1
+  status: backlog
+  target_start: "2026-01-22"
+  target_completion: "2026-02-04"
+  team: "A+B (Coordinated)"
+  hours_estimated: 78
+  hours_actual: 0
+  dependencies:
+    - "STAB-25 complete"
+  
+  stories:
+    stab-26-1-split-god-files:
+      id: "STAB-26.1"
+      name: "Split 7 God Files"
+      status: backlog
+      priority: P1
+      hours_estimated: 50
+      files_to_split:
+        - "orama-index.ts (18,541 lines)"
+        - "query-optimizer.ts (15,486 lines)"
+        - "document-chunker.ts (16,475 lines)"
+        - "embedding-service.ts (14,962 lines)"
+        - "transformers-loader.ts (9,961 lines)"
+        - "workspace-execution-context.ts (5,129 lines)"
+        - "rag-store.ts (1,595 lines)"
+        
+    stab-26-2-workspace-migration:
+      id: "STAB-26.2"
+      name: "Migrate 31 Workspace Components"
+      status: backlog
+      priority: P1
+      hours_estimated: 7
+      
+    stab-26-3-cross-workspace-violations:
+      id: "STAB-26.3"
+      name: "Fix 127 Cross-Workspace Import Violations"
+      status: backlog
+      priority: P1
+      hours_estimated: 18
+      
+    stab-26-4-event-bus-consolidation:
+      id: "STAB-26.4"
+      name: "Consolidate Dual Event Bus"
+      status: backlog
+      priority: P1
+      hours_estimated: 14
+
+  phase_4_gate:
+    status: pending
+    files_over_300_lines: null
+    workspace_violations: 127
+    health_score_target: 85
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 5: Performance & Polish (Week 7-8)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_stab_27:
+  id: "STAB-27"
+  name: "Performance & UX Polish"
+  priority: P1-P2
+  status: backlog
+  target_start: "2026-02-05"
+  target_completion: "2026-02-18"
+  team: A
+  hours_estimated: 42
+  hours_actual: 0
+  dependencies:
+    - "STAB-26 complete"
+  
+  stories:
+    stab-27-1-react-memo:
+      id: "STAB-27.1"
+      name: "Add React.memo to List Components"
+      status: backlog
+      priority: P1
+      hours_estimated: 10
+      
+    stab-27-2-context-re-renders:
+      id: "STAB-27.2"
+      name: "Fix WorkspaceContext Re-renders"
+      status: backlog
+      priority: P1
+      hours_estimated: 5
+      
+    stab-27-3-virtualize-lists:
+      id: "STAB-27.3"
+      name: "Virtualize Long Lists"
+      status: backlog
+      priority: P1
+      hours_estimated: 14
+      
+    stab-27-4-safe-log:
+      id: "STAB-27.4"
+      name: "Replace console.log with safeLog"
+      status: backlog
+      priority: P2
+      hours_estimated: 2
+      
+    stab-27-5-accessibility:
+      id: "STAB-27.5"
+      name: "Accessibility Improvements"
+      status: backlog
+      priority: P2
+      hours_estimated: 10
+
+  phase_5_gate:
+    status: pending
+    components_memoized: 0
+    console_logs_remaining: null
+    wcag_compliance: null
+    health_score_target: 90
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT METRICS & BURNDOWN
+# ═══════════════════════════════════════════════════════════════════════════
+
+metrics:
+  total_stories: 16
+  stories_done: 0
+  stories_in_progress: 0
+  stories_blocked: 0
+  
+  total_hours_estimated: 260
+  total_hours_actual: 0
+  
+  velocity:
+    target_hours_per_week: 40
+    actual_hours_per_week: null
+    
+  risk_elimination:
+    p0_initial: 3
+    p0_remaining: 3
+    p1_initial: 24
+    p1_remaining: 24
+    
+  code_quality:
+    lines_to_remove: 6500
+    lines_removed: 0
+    god_files_initial: 7
+    god_files_remaining: 7
+    circular_deps_initial: 4
+    circular_deps_remaining: 4
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SESSION LOG
+# ═══════════════════════════════════════════════════════════════════════════
+
+session_log:
+  - timestamp: "2026-01-04T18:35:00+07:00"
+    agent: "@bmad-core-bmad-master"
+    action: "Stabilization Sprint initialized"
+    notes: "Created STAB-24 through STAB-27 epics, workflow registered"
+    
+# ═══════════════════════════════════════════════════════════════════════════
+# NEXT ACTIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+next_actions:
+  immediate:
+    - "Start STAB-24.1: Audit localStorage keys"
+    - "Start STAB-24.3: Audit hardcoded pixel values"
+  pending_approval: []
+  blocked: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AUTONOMOUS ITERATION CONFIG
+# ═══════════════════════════════════════════════════════════════════════════
+
+autonomous_config:
+  enabled: true
+  drift_detection:
+    typescript_error_threshold: 10
+    build_must_pass: true
+    regression_test_required: true
+  auto_continue:
+    on_story_complete: true
+    on_phase_complete: false  # Require manual validation gate
+  handoff_recipients:
+    minor_scope: "@bmad-bmm-dev"
+    moderate_scope: "@bmad-bmm-sm"
+    major_scope: "@bmad-bmm-architect"

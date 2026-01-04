@@ -51,9 +51,9 @@ export type IndexingPhase = 'pending' | 'chunking' | 'embedding' | 'storing' | '
  */
 export interface IndexingStep {
     phase: IndexingPhase
-    label: string
-    status: 'pending' | 'in-progress' | 'complete' | 'error'
-    error?: string
+    message: string
+    progress: number
+    timestamp: number
 }
 
 /**
@@ -62,7 +62,12 @@ export interface IndexingStep {
 export interface IndexingState {
     isIndexing: boolean
     currentPhase: IndexingPhase
+    totalDocuments: number
+    processedDocuments: number
+    totalChunks: number
+    processedChunks: number
     steps: IndexingStep[]
+    startTime: number | null
     progress: number
     error?: string
 }
@@ -91,9 +96,8 @@ export type QuizGenerationPhase = 'pending' | 'analyzing' | 'generating' | 'vali
  */
 export interface QuizGenerationStep {
     phase: QuizGenerationPhase
-    label: string
-    status: 'pending' | 'in-progress' | 'complete' | 'error'
-    error?: string
+    message: string
+    timestamp: number
 }
 
 /**
@@ -102,7 +106,12 @@ export interface QuizGenerationStep {
 export interface QuizGenerationState {
     isGenerating: boolean
     currentPhase: QuizGenerationPhase
+    sourceId: string
+    sourceTitle: string
+    totalQuestions: number
+    generatedQuestions: number
     steps: QuizGenerationStep[]
+    startTime: number | null
     progress: number
     error?: string
 }
@@ -175,6 +184,11 @@ export type NoteIndexingPhase = 'pending' | 'parsing' | 'embedding' | 'storing' 
 export interface NoteIndexingState {
     isIndexing: boolean
     currentPhase: NoteIndexingPhase
+    noteId: string
+    noteTitle: string
+    totalBlocks: number
+    processedBlocks: number
+    startTime: number | null
     progress: number
     error?: string
 }

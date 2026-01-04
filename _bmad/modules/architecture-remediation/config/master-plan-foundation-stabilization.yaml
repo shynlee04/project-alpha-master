@@ -1,0 +1,990 @@
+# ============================================================================
+# MASTER PLAN: Foundation Stabilization (Epic 54)
+# ============================================================================
+# Purpose: Framework/skeleton guiding all stabilization phases
+# Pattern: Workflows → Validation → Routing → Correction → 100% Complete
+# Created: 2026-01-04
+# Status: ACTIVE
+# ============================================================================
+
+plan_metadata:
+  id: EPIC-54-FOUNDATION-STABILIZATION
+  name: Foundation Stabilization Master Plan
+  priority: P0-CRITICAL
+  health_baseline: 3.8/10
+  health_target: 8.5/10
+  estimated_duration: 4 weeks
+  approval_status: PENDING
+
+# ============================================================================
+# CONTEXT DOCUMENTS (Reference Sources)
+# ============================================================================
+context_documents:
+  primary:
+    - path: _bmad-output/sprint-artifacts/sprint-status.yaml
+      purpose: Single source of truth for epic/story status
+    - path: _bmad/modules/architecture-remediation/config/priorities.yaml
+      purpose: P0-P3 priority definitions
+
+  deep_scan_artifacts:
+    - path: _bmad-output/deep-scan/MASTER-RISK-REGISTER.md
+      purpose: 73 total risks, health score baseline
+    - path: _bmad-output/deep-scan/ARCHITECTURE-SCAN-REPORT.md
+      purpose: God components, layer violations
+    - path: _bmad-output/deep-scan/STATE-INVENTORY-REPORT.md
+      purpose: 68 stores, 10 god stores identified
+    - path: _bmad-output/deep-scan/REMEDIATION-BACKLOG.yaml
+      purpose: 724 total hours effort estimation
+
+  architecture_references:
+    - path: _bmad-output/project-planning-artifacts/architecture.md
+      purpose: System architecture decisions
+    - path: CLAUDE.md
+      purpose: Project overview, ADR-024 state consolidation
+
+# ============================================================================
+# VALIDATION CHECKPOINTS (Gates for progression)
+# ============================================================================
+validation_checkpoints:
+  V0-BASELINE:
+    description: Initial health assessment
+    measures:
+      - typescript_errors_production <= 306
+      - health_score >= 3.8/10
+      - god_stores >= 69
+      - god_components >= 49
+    on_fail: RESTART_PHASE
+
+  V1-GOVERNANCE:
+    description: Governance rules established
+    measures:
+      - governance_rules_updated: true
+      - eslint_rules_added: true
+      - precommit_hooks_added: true
+    on_fail: REPEAT_STORY
+
+  V2-CRITICAL_FIXES:
+    description: Critical issues resolved
+    measures:
+      - crashes_fixed: 100%
+      - data_loss_prevented: true
+      - circular_dependencies: 0
+    on_fail: REPEAT_STORY
+
+  V3-IMPORT_CLEANUP:
+    description: Import paths canonicalized
+    measures:
+      - old_paths_removed: true
+      - canonical_imports: 100%
+      - no_duplicates: true
+    on_fail: REPEAT_PHASE
+
+  V4-GOD_ELIMINATION:
+    description: God stores/components split
+    measures:
+      - god_stores < 10
+      - god_components < 5
+      - max_file_size: 300 lines
+    on_fail: REPEAT_STORY
+
+  V5-FINAL_TARGET:
+    description: Target health achieved
+    measures:
+      - typescript_errors_production < 50
+      - health_score >= 8.5/10
+      - test_coverage >= 60%
+    on_fail: RETROSPECTIVE
+
+# ============================================================================
+# ROUTING DECISIONS (If validation fails)
+# ============================================================================
+routing_decisions:
+  RESTART_PHASE:
+    action: "Re-start current phase from beginning"
+    checkpoint: V0-BASELINE
+    max_retries: 3
+    on_exhausted: ESCALATE_TO_ARCHITECT
+
+  REPEAT_STORY:
+    action: "Re-execute current story"
+    checkpoint: Story acceptance criteria
+    max_retries: 2
+    on_exhausted: SKIP_TO_NEXT_STORY
+
+  REPEAT_PHASE:
+    action: "Re-execute entire phase"
+    checkpoint: Phase exit criteria
+    max_retries: 1
+    on_exhausted: DOCUMENT_BLOCKER
+
+  SKIP_TO_NEXT_STORY:
+    action: "Mark story as BLOCKED, continue to next"
+    creates: blocker_entry in sprint-status.yaml
+    requires: approval from @bmad-bmm-architect
+
+  DOCUMENT_BLOCKER:
+    action: "Create blocker documentation, pause phase"
+    creates: blocker-report-YYYY-MM-DD.md
+    requires: retrospective meeting
+
+  ESCALATE_TO_ARCHITECT:
+    action: "Architecture decision required"
+    triggers: ADR creation workflow
+    creates: architecture-decision-records/ADR-XXX.md
+
+# ============================================================================
+# PHASE STAB-24: Governance Enforcement (Week 1)
+# ============================================================================
+# Goal: Establish rules and stop the bleeding
+# Exit Criteria: V2-CRITICAL_FIXES passed
+# ============================================================================
+phase_STAB_24:
+  name: Governance Enforcement
+  duration: 1 week
+  entrance_checkpoint: V0-BASELINE
+  exit_checkpoint: V2-CRITICAL_FIXES
+
+  tasks:
+    # ========================================================================
+    # TASK 54-0: Governance Rules Setup
+    # ========================================================================
+    task_54_0:
+      id: 54-0
+      name: Governance Rules Setup
+      priority: P0
+      estimated_hours: 4
+      status: backlog
+
+      sub_tasks:
+        - id: 54-0-1
+          name: Update governance-rules.md
+          action: |
+            Add stabilization-specific rules to .claude/rules/governance-rules.md
+          acceptance_criteria:
+            - File updated with stabilization rules
+            - All AI agents must read before code changes
+          artifacts: []
+          on_complete: PROCEED
+
+        - id: 54-0-2
+          name: Add ESLint rules for imports
+          action: |
+            Add eslint-plugin-import rules to enforce canonical paths
+          acceptance_criteria:
+            - .eslintrc.cjs updated
+            - Lint blocks old import paths
+          artifacts:
+            - .eslintrc.cjs
+          on_complete: PROCEED
+
+        - id: 54-0-3
+          name: Add pre-commit hooks
+          action: |
+            Add husky pre-commit hooks for file size validation
+          acceptance_criteria:
+            - .husky/pre-commit file created
+            - Blocks commits for files >300 lines
+          artifacts:
+            - .husky/pre-commit
+          on_complete: PROCEED
+
+        - id: 54-0-4
+          name: Update CI with TS error blocking
+          action: |
+            Add TypeScript check to GitHub Actions CI
+          acceptance_criteria:
+            - .github/workflows/ci.yml updated
+            - Build fails if TS errors > threshold
+          artifacts:
+            - .github/workflows/ci.yml
+          on_complete: PROCEED
+
+      validation: V1-GOVERNANCE
+
+    # ========================================================================
+    # TASK 54-1a: IndexedDB Quota Handling (P0 - DATA LOSS)
+    # ========================================================================
+    task_54_1a:
+      id: 54-1a
+      name: IndexedDB Quota Handling
+      priority: P0
+      estimated_hours: 8
+      risk: "DATA LOSS if not fixed"
+      status: backlog
+
+      sub_tasks:
+        - id: 54-1a-1
+          name: Audit IndexedDB usage
+          action: |
+            Search all Dexie write operations for quota handling
+          files_to_audit:
+            - src/infrastructure/persistence/dexie-*.ts
+            - src/lib/state/*store.ts
+          acceptance_criteria:
+            - List of all write operations created
+            - Gap analysis documented
+          artifacts:
+            - _bmad-output/indexedb-audit-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-1a-2
+          name: Implement quota detection utility
+          action: |
+            Create quota detection utility using navigator.storage.estimate()
+          acceptance_criteria:
+            - Utility detects quota before writes
+            - Returns remaining bytes available
+          artifacts:
+            - src/infrastructure/persistence/quota-detector.ts
+          on_complete: PROCEED
+
+        - id: 54-1a-3
+          name: Add quota error handling to all writes
+          action: |
+            Wrap all Dexie writes with quota error handling
+          acceptance_criteria:
+            - All writes check quota first
+            - Graceful error on quota exceeded
+          artifacts:
+            - Updated dexie-*.ts files
+          on_complete: PROCEED
+
+        - id: 54-1a-4
+          name: Add user notification for quota
+          action: |
+            Create UI component for quota exceeded warnings
+          acceptance_criteria:
+            - User sees clear error message
+            - Recovery action suggested (clear old data)
+          artifacts:
+            - src/presentation/components/ui/QuotaWarning.tsx
+          on_complete: PROCEED
+
+      validation: V2-CRITICAL_FIXES
+
+    # ========================================================================
+    # TASK 54-1b: Silent Failures Elimination (P0)
+    # ========================================================================
+    task_54_1b:
+      id: 54-1b
+      name: Silent Failures Elimination
+      priority: P0
+      estimated_hours: 12
+      risk: "23 instances of console.error + return null"
+      status: backlog
+
+      sub_tasks:
+        - id: 54-1b-1
+          name: Find all silent failures
+          action: |
+            Grep for "console.error" followed by "return null"
+          acceptance_criteria:
+            - Complete list of silent failures
+            - Categorized by severity (P0/P1/P2)
+          artifacts:
+            - _bmad-output/silent-failures-audit-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-1b-2
+          name: Fix P0 silent failures
+          action: |
+            Replace with explicit error handling + user notification
+          acceptance_criteria:
+            - All P0 failures have user-facing error messages
+            - Recovery actions suggested
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+        - id: 54-1b-3
+          name: Fix P1 silent failures
+          action: |
+            Replace with proper error propagation
+          acceptance_criteria:
+            - All P1 failures propagate to error boundary
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+        - id: 54-1b-4
+          name: Document P2 silent failures
+          action: |
+            Create tech debt tickets for P2 items
+          acceptance_criteria:
+            - P2 items logged as debt
+            - Scheduled for future sprint
+          artifacts:
+            - Updated sprint-status.yaml
+          on_complete: PROCEED
+
+      validation: V2-CRITICAL_FIXES
+
+    # ========================================================================
+    # TASK 54-1c: Circular Dependency Removal (P0)
+    # ========================================================================
+    task_54_1c:
+      id: 54-1c
+      name: Circular Dependency Removal
+      priority: P0
+      estimated_hours: 6
+      risk: "4 circular dependencies detected"
+      status: backlog
+
+      sub_tasks:
+        - id: 54-1c-1
+          name: Map all circular dependencies
+          action: |
+            Use madge to detect circular dependencies
+          acceptance_criteria:
+            - Dependency graph created
+            - All cycles identified
+          artifacts:
+            - _bmad-output/dependency-graph-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-1c-2
+          name: Break agents-store ↔ provider-store cycle
+          action: |
+            Extract shared logic to domain service
+          reference: src/domain/services/agent-workspace-utils.ts
+          acceptance_criteria:
+            - No circular import between stores
+            - Functionality preserved
+          artifacts:
+            - Updated stores
+            - ADR-029-circular-dependency-resolution.md
+          on_complete: PROCEED
+
+        - id: 54-1c-3
+          name: Break remaining cycles
+          action: |
+            Apply facade pattern for other cycles
+          acceptance_criteria:
+            - Zero circular dependencies
+            - All imports validated
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+      validation: V2-CRITICAL_FIXES
+
+    # ========================================================================
+    # TASK 54-1-typescript: Critical TS Errors (Crashes)
+    # ========================================================================
+    task_54_1_ts:
+      id: 54-1-typescript
+      name: Critical TypeScript Errors
+      priority: P0
+      estimated_hours: 10
+      risk: "306 production TS errors causing crashes"
+      status: backlog
+
+      sub_tasks:
+        - id: 54-1-ts-1
+          name: Categorize TS errors
+          action: |
+            Run pnpm typecheck and categorize by severity
+          acceptance_criteria:
+            - P0: Errors causing crashes (fix first)
+            - P1: Type mismatches blocking dev
+            - P2: Minor type issues
+          artifacts:
+            - _bmad-output/ts-errors-categorization-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-1-ts-2
+          name: Fix P0 missing imports
+          action: |
+            Fix TS2304/TS2305 errors (missing imports)
+          acceptance_criteria:
+            - All P0 missing imports resolved
+            - Zero new errors introduced
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+        - id: 54-1-ts-3
+          name: Fix P0 type mismatches
+          action: |
+            Fix TS2322/TS2345 errors (type mismatches)
+          acceptance_criteria:
+            - All P0 type errors resolved
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+        - id: 54-1-ts-4
+          name: Validate with pnpm typecheck
+          action: |
+            Run full typecheck, verify zero regressions
+          acceptance_criteria:
+            - pnpm typecheck passes
+            - Error count reduced by >50%
+          artifacts:
+            - Validation report
+          on_complete: PROCEED
+
+      validation: V2-CRITICAL_FIXES
+
+# ============================================================================
+# PHASE STAB-25: Risk Elimination (Week 2)
+# ============================================================================
+# Goal: Remove P0 risks blocking development
+# Exit Criteria: V4-GOD_ELIMINATION passed
+# ============================================================================
+phase_STAB_25:
+  name: Risk Elimination
+  duration: 1 week
+  entrance_checkpoint: V2-CRITICAL_FIXES
+  exit_checkpoint: V4-GOD_ELIMINATION
+
+  tasks:
+    # ========================================================================
+    # TASK 54-2: Import Path Canonicalization
+    # ========================================================================
+    task_54_2:
+      id: 54-2
+      name: Import Path Canonicalization
+      priority: P1
+      estimated_hours: 8
+      status: backlog
+
+      sub_tasks:
+        - id: 54-2-1
+          name: Create canonical path mapping
+          action: |
+            Document all old → new path mappings
+          acceptance_criteria:
+            - Complete mapping document created
+            - No orphaned imports
+          artifacts:
+            - _bmad-output/import-path-mapping-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-2-2
+          name: Update all imports to canonical paths
+          action: |
+            Find and replace old import paths
+          acceptance_criteria:
+            - All imports use canonical paths
+            - ESLint validates paths
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+        - id: 54-2-3
+          name: Remove old export facades
+          action: |
+            Delete backward compatibility exports
+          acceptance_criteria:
+            - Old paths no longer exist
+            - Zero breaking changes (all consumers updated)
+          artifacts:
+            - Deleted facade files
+          on_complete: PROCEED
+
+      validation: V3-IMPORT_CLEANUP
+
+    # ========================================================================
+    # TASK 54-3a: God Store Splitting
+    # ========================================================================
+    task_54_3a:
+      id: 54-3a
+      name: God Store Splitting
+      priority: P1
+      estimated_hours: 16
+      status: backlog
+
+      sub_tasks:
+        - id: 54-3a-1
+          name: Identify worst 10 god stores
+          action: |
+            Rank stores by line count, prioritize top 10
+          reference: _bmad-output/deep-scan/STATE-INVENTORY-REPORT.md
+          acceptance_criteria:
+            - List of 10 target stores created
+            - Each store >300 lines
+          artifacts:
+            - _bmad-output/god-stores-ranking-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-3a-2
+          name: Split stores into slices (≤120 lines each)
+          action: |
+            Apply store-refactorer agent to each god store
+          acceptance_criteria:
+            - All slices ≤120 lines
+            - Facade exports for backward compatibility
+            - Zero breaking changes
+          artifacts:
+            - New slice files
+            - ADR-030-god-store-refactoring.md
+          on_complete: PROCEED
+
+        - id: 54-3a-3
+          name: Validate split stores
+          action: |
+            Run tests, verify no functionality lost
+          acceptance_criteria:
+            - All tests passing
+            - No new TS errors
+          artifacts:
+            - Validation report
+          on_complete: PROCEED
+
+      validation: V4-GOD_ELIMINATION
+
+    # ========================================================================
+    # TASK 54-3b: God Component Splitting
+    # ========================================================================
+    task_54_3b:
+      id: 54-3b
+      name: God Component Splitting
+      priority: P1
+      estimated_hours: 12
+      status: backlog
+
+      sub_tasks:
+        - id: 54-3b-1
+          name: Identify worst 10 god components
+          action: |
+            Rank components by line count, prioritize top 10
+          reference: _bmad-output/deep-scan/ARCHITECTURE-SCAN-REPORT.md
+          acceptance_criteria:
+            - List of 10 target components created
+            - Each component >300 lines
+          artifacts:
+            - _bmad-output/god-components-ranking-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-3b-2
+          name: Split components using component-splitter
+          action: |
+            Apply component-splitter agent to each god component
+          acceptance_criteria:
+            - All components ≤300 lines
+            - Extract hooks where applicable
+            - Zero breaking changes
+          artifacts:
+            - New component files
+            - New hook files
+          on_complete: PROCEED
+
+        - id: 54-3b-3
+          name: Validate split components
+          action: |
+            Run tests, verify UI unchanged
+          acceptance_criteria:
+            - All tests passing
+            - Visual regression passes
+          artifacts:
+            - Validation report
+          on_complete: PROCEED
+
+      validation: V4-GOD_ELIMINATION
+
+    # ========================================================================
+    # TASK 54-4: Sync Manager Consolidation
+    # ========================================================================
+    task_54_4:
+      id: 54-4
+      name: Sync Manager Consolidation
+      priority: P1
+      estimated_hours: 10
+      status: backlog
+
+      sub_tasks:
+        - id: 54-4-1
+          name: Audit all sync managers
+          action: |
+            Find all sync manager implementations
+          acceptance_criteria:
+            - Complete list of sync managers
+            - Overlap analysis documented
+          artifacts:
+            - _bmad-output/sync-managers-audit-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-4-2
+          name: Create unified SyncManager facade
+          action: |
+            Create single SyncManager with unified interface
+          acceptance_criteria:
+            - Single entry point for all sync operations
+            - Backward compatible via facades
+          artifacts:
+            - src/lib/filesync/SyncManager.ts
+            - ADR-028-sync-manager-unification.md
+          on_complete: PROCEED
+
+        - id: 54-4-3
+          name: Migrate consumers to unified manager
+          action: |
+            Update all sync operation calls
+          acceptance_criteria:
+            - All consumers use unified manager
+            - Old managers deprecated
+          artifacts:
+            - Updated source files
+          on_complete: PROCEED
+
+      validation: V4-GOD_ELIMINATION
+
+# ============================================================================
+# PHASE STAB-26: Architecture Hardening (Week 3)
+# ============================================================================
+# Goal: Document and enforce safe boundaries
+# Exit Criteria: V5-FINAL_TARGET passed
+# ============================================================================
+phase_STAB_26:
+  name: Architecture Hardening
+  duration: 1 week
+  entrance_checkpoint: V4-GOD_ELIMINATION
+  exit_checkpoint: V5-FINAL_TARGET
+
+  tasks:
+    # ========================================================================
+    # TASK 54-3-baseline: Architecture Baseline Specification
+    # ========================================================================
+    task_54_3_baseline:
+      id: 54-3-baseline
+      name: Architecture Baseline Specification
+      priority: P0
+      estimated_hours: 6
+      status: backlog
+
+      sub_tasks:
+        - id: 54-3-bl-1
+          name: Document four-layer architecture
+          action: |
+            Create architecture baseline document
+          acceptance_criteria:
+            - Four layers clearly defined
+            - Dependencies documented (unidirectional)
+          artifacts:
+            - _bmad-output/architecture-baseline-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-3-bl-2
+          name: Document store architecture
+          action: |
+            Create store architecture specification
+          acceptance_criteria:
+            - Canonical store locations documented
+            - Zustand v5 patterns specified
+          artifacts:
+            - _bmad-output/store-architecture-spec-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-3-bl-3
+          name: Document component architecture
+          action: |
+            Create component architecture specification
+          acceptance_criteria:
+            - Component size limits enforced
+            - Store usage patterns documented
+          artifacts:
+            - _bmad-output/component-architecture-spec-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+      validation: V5-FINAL_TARGET
+
+    # ========================================================================
+    # TASK 54-5a: Store Facade Pattern Enforcement
+    # ========================================================================
+    task_54_5a:
+      id: 54-5a
+      name: Store Facade Pattern Enforcement
+      priority: P1
+      estimated_hours: 8
+      status: backlog
+
+      sub_tasks:
+        - id: 54-5a-1
+          name: Audit store usage patterns
+          action: |
+            Find components not using stores correctly
+          acceptance_criteria:
+            - List of anti-patterns documented
+            - Components tagged for refactoring
+          artifacts:
+            - _bmad-output/store-usage-audit-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-5a-2
+          name: Refactor components to use stores
+          action: |
+            Update components to use stores instead of props
+          acceptance_criteria:
+            - Components use useWorkspaceStore correctly
+            - Props hell eliminated
+          artifacts:
+            - Updated component files
+          on_complete: PROCEED
+
+      validation: V5-FINAL_TARGET
+
+    # ========================================================================
+    # TASK 54-5b: Component Store Usage Audit
+    # ========================================================================
+    task_54_5b:
+      id: 54-5b
+      name: Component Store Usage Audit
+      priority: P1
+      estimated_hours: 10
+      status: backlog
+
+      sub_tasks:
+        - id: 54-5b-1
+          name: Audit IDE workspace components
+          action: |
+            Check all IDE components for proper store usage
+          reference: src/presentation/components/ide/
+          acceptance_criteria:
+            - All components audited
+            - Anti-patterns documented
+          artifacts:
+            - _bmad-output/ide-components-audit-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-5b-2
+          name: Audit other workspace components
+          action: |
+            Check Knowledge, Notes, Study components
+          acceptance_criteria:
+            - All workspace components audited
+          artifacts:
+            - _bmad-output/workspace-components-audit-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-5b-3
+          name: Fix critical anti-patterns
+          action: |
+            Refactor components with worst violations
+          acceptance_criteria:
+            - Critical violations fixed
+            - Remaining logged as tech debt
+          artifacts:
+            - Updated component files
+          on_complete: PROCEED
+
+      validation: V5-FINAL_TARGET
+
+    # ========================================================================
+    # TASK 54-6: Error Boundary Coverage
+    # ========================================================================
+    task_54_6:
+      id: 54-6
+      name: Error Boundary Coverage
+      priority: P1
+      estimated_hours: 8
+      status: backlog
+
+      sub_tasks:
+        - id: 54-6-1
+          name: Audit error boundary coverage
+          action: |
+            Find routes/components without error boundaries
+          acceptance_criteria:
+            - Coverage gap analysis complete
+            - Critical paths identified
+          artifacts:
+            - _bmad-output/error-boundary-coverage-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-6-2
+          name: Add error boundaries to critical paths
+          action: |
+            Wrap workspace routes with error boundaries
+          acceptance_criteria:
+            - All workspace routes protected
+            - Error state UI implemented
+          artifacts:
+            - Updated route files
+            - ErrorBoundary components
+          on_complete: PROCEED
+
+        - id: 54-6-3
+          name: Configure error logging
+          action: |
+            Set up Sentry for production error tracking
+          acceptance_criteria:
+            - Errors logged to Sentry
+            - Source maps configured
+          artifacts:
+            - Sentry configuration
+          on_complete: PROCEED
+
+      validation: V5-FINAL_TARGET
+
+# ============================================================================
+# PHASE STAB-27: Quality Polish (Week 4)
+# ============================================================================
+# Goal: Reach target health score
+# Exit Criteria: V5-FINAL_TARGET passed
+# ============================================================================
+phase_STAB_27:
+  name: Quality Polish
+  duration: 1 week
+  entrance_checkpoint: V5-FINAL_TARGET
+  exit_checkpoint: V5-FINAL_TARGET
+
+  tasks:
+    # ========================================================================
+    # TASK 54-7: Test Coverage (Critical Paths)
+    # ========================================================================
+    task_54_7:
+      id: 54-7
+      name: Test Coverage Critical Paths
+      priority: P2
+      estimated_hours: 12
+      status: backlog
+
+      sub_tasks:
+        - id: 54-7-1
+          name: Identify critical paths
+          action: |
+            Map out user journeys for each workspace
+          acceptance_criteria:
+            - Critical path list created
+            - Coverage gaps identified
+          artifacts:
+            - _bmad-output/critical-paths-mapping-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-7-2
+          name: Write tests for critical paths
+          action: |
+            Create tests for IDE, Knowledge, Notes, Study workspaces
+          acceptance_criteria:
+            - Critical paths have tests
+            - Coverage >= 60%
+          artifacts:
+            - New test files
+          on_complete: PROCEED
+
+        - id: 54-7-3
+          name: Validate test coverage
+          action: |
+            Run coverage report, verify target met
+          acceptance_criteria:
+            - Coverage >= 60%
+            - All tests passing
+          artifacts:
+            - Coverage report
+          on_complete: PROCEED
+
+      validation: V5-FINAL_TARGET
+
+    # ========================================================================
+    # TASK 54-8: Retrospective & Documentation
+    # ========================================================================
+    task_54_8:
+      id: 54-8
+      name: Retrospective and Documentation
+      priority: P0
+      estimated_hours: 6
+      status: backlog
+
+      sub_tasks:
+        - id: 54-8-1
+          name: Create retrospective report
+          action: |
+            Document what went well, what didn't
+          acceptance_criteria:
+            - Retrospective document created
+            - Lessons learned captured
+          artifacts:
+            - _bmad-output/epic-54-retrospective-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-8-2
+          name: Update CLAUDE.md and AGENTS.md
+          action: |
+            Update project documentation with changes
+          acceptance_criteria:
+            - CLAUDE.md reflects new architecture
+            - AGENTS.md updated with patterns
+          artifacts:
+            - Updated documentation
+          on_complete: PROCEED
+
+        - id: 54-8-3
+          name: Create handoff artifacts
+          action: |
+            Create artifacts for next sprint
+          acceptance_criteria:
+            - Handoff document created
+            - Blockers documented
+          artifacts:
+            - _bmad-output/epic-54-handoff-YYYY-MM-DD.md
+          on_complete: PROCEED
+
+        - id: 54-8-4
+          name: Mark Epic 54 complete
+          action: |
+            Update sprint-status.yaml with completion
+          acceptance_criteria:
+            - epic-54 marked as done
+            - Health score >= 8.5/10
+          artifacts:
+            - Updated sprint-status.yaml
+          on_complete: COMPLETE
+
+      validation: V5-FINAL_TARGET
+
+# ============================================================================
+# PROGRESS TRACKING
+# ============================================================================
+progress_tracking:
+  current_phase: STAB_24
+  current_task: 54-0
+  overall_progress: 12.5% # 1/8 stories in Epic 54
+  health_score: 3.8/10
+  last_updated: 2026-01-04T18:00:00+07:00
+
+  phase_progress:
+    STAB_24: 0% # Not started
+    STAB_25: 0% # Blocked by STAB_24
+    STAB_26: 0% # Blocked by STAB_25
+    STAB_27: 0% # Blocked by STAB_26
+
+# ============================================================================
+# ARTIFACTS TO BE GENERATED (Per Phase)
+# ============================================================================
+artifacts_registry:
+  phase_STAB_24:
+    - _bmad-output/indexedb-audit-YYYY-MM-DD.md
+    - _bmad-output/silent-failures-audit-YYYY-MM-DD.md
+    - _bmad-output/dependency-graph-YYYY-MM-DD.md
+    - _bmad-output/ts-errors-categorization-YYYY-MM-DD.md
+
+  phase_STAB_25:
+    - _bmad-output/import-path-mapping-YYYY-MM-DD.md
+    - _bmad-output/god-stores-ranking-YYYY-MM-DD.md
+    - _bmad-output/god-components-ranking-YYYY-MM-DD.md
+    - _bmad-output/sync-managers-audit-YYYY-MM-DD.md
+
+  phase_STAB_26:
+    - _bmad-output/architecture-baseline-YYYY-MM-DD.md
+    - _bmad-output/store-architecture-spec-YYYY-MM-DD.md
+    - _bmad-output/component-architecture-spec-YYYY-MM-DD.md
+    - _bmad-output/store-usage-audit-YYYY-MM-DD.md
+    - _bmad-output/error-boundary-coverage-YYYY-MM-DD.md
+
+  phase_STAB_27:
+    - _bmad-output/critical-paths-mapping-YYYY-MM-DD.md
+    - _bmad-output/epic-54-retrospective-YYYY-MM-DD.md
+    - _bmad-output/epic-54-handoff-YYYY-MM-DD.md
+
+  architecture_decision_records:
+    - ADR-025-foundation-stabilization-strategy.md
+    - ADR-026-import-path-governance.md
+    - ADR-027-indexeddb-quota-management.md
+    - ADR-028-sync-manager-unification.md
+    - ADR-029-circular-dependency-resolution.md
+    - ADR-030-god-store-refactoring.md
+
+# ============================================================================
+# END OF MASTER PLAN
+# ============================================================================

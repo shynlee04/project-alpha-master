@@ -11,39 +11,13 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './types'
+import { EventIndicator } from './EventIndicator'
+import { type EventStatus, type IndexingPhase, type IndexingStep, type IndexingState } from './types'
 import { IndexingPhaseItem } from './IndexingPhaseItem'
 import { getIndexingStatus, getIndexingMessage, getIndexingProgress } from './indexing-utils'
 
-/**
- * Indexing operation phase
- */
-export type IndexingPhase = 'pending' | 'chunking' | 'embedding' | 'storing' | 'complete' | 'error'
-
-/**
- * Indexing operation step
- */
-export interface IndexingStep {
-    phase: IndexingPhase
-    message: string
-    progress: number
-    timestamp: number
-}
-
-/**
- * Indexing state
- */
-export interface IndexingState {
-    isIndexing: boolean
-    currentPhase: IndexingPhase
-    totalDocuments: number
-    processedDocuments: number
-    totalChunks: number
-    processedChunks: number
-    steps: IndexingStep[]
-    startTime: number | null
-    error?: string
-}
+// Re-export types for convenience
+export type { IndexingPhase, IndexingStep, IndexingState }
 
 /**
  * Indexing progress indicator props

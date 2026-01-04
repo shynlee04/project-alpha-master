@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react'
 import { EventIndicator, type EventStatus } from './EventIndicator'
 import { WorkspaceTransitionStepItem } from './WorkspaceTransitionStepItem'
 import { getWorkspaceTransitionStatus, getWorkspaceTransitionMessage } from './workspace-transition-utils'
-import type { WorkspaceTransitionState, WorkspaceTransitionStep, WorkspaceTransitionIndicatorProps } from './types'
+import type { WorkspaceTransitionState, WorkspaceTransitionStep, WorkspaceTransitionIndicatorProps, WorkspaceTransitionPhase } from './types'
 
 // Re-export types for backward compatibility
 export type { WorkspaceTransitionPhase, WorkspaceTransitionStep, WorkspaceTransitionState, WorkspaceTransitionIndicatorProps }

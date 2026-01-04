@@ -20,6 +20,19 @@
 
 ## New Epic Structure
 
+| Epic ID | Epic Name | Priority | Duration | Status | Master Plan |
+|---------|-----------|----------|----------|--------|-------------|
+| **Epic 54** | **Foundation Stabilization** | **P0** | **4 weeks** | **🟡 IN_PROGRESS** | **master-plan-foundation-stabilization.yaml** |
+| Epic 54-0 | Governance Enforcement | P0 | Week 1 | 🟡 IN_PROGRESS | Phase STAB-24 |
+| Epic 54-1 | Risk Elimination | P0 | Week 2 | 🔴 TODO | Phase STAB-25 |
+| Epic 54-2 | Architecture Hardening | P1 | Week 3 | 🔴 TODO | Phase STAB-26 |
+| Epic 54-3 | Quality Polish | P2 | Week 4 | 🔴 TODO | Phase STAB-27 |
+
+### Master Plan Reference
+**Location**: `_bmad/modules/architecture-remediation/config/master-plan-foundation-stabilization.yaml`
+**Purpose**: Framework/skeleton guiding all Epic 54 phases with tasks, sub-tasks, validation checkpoints, and routing decisions.
+
+### Legacy Epic Structure (Deprecated)
 | Epic ID | Epic Name | Priority | Duration | Status |
 |---------|-----------|----------|----------|--------|
 | ARC-1 | Foundation Stabilization | P0 | Week 1 | 🟡 IN_PROGRESS |

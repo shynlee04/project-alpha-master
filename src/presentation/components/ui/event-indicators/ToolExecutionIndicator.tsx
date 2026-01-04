@@ -11,7 +11,8 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react'
-import { EventIndicator, type EventStatus } from './types'
+import { EventIndicator } from './EventIndicator'
+import { type EventStatus } from './types'
 import { ToolExecutionStepItem } from './ToolExecutionStep'
 import type { ToolExecutionState } from './ToolExecutionStep'
 
