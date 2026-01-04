@@ -5,6 +5,7 @@
  *
  * Tests for FSA (File System Access) handle helpers.
  * P0 critical helpers - requires 80% coverage.
+ * @vitest-environment jsdom
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';

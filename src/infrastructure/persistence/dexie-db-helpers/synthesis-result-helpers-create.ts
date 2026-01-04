@@ -1,13 +1,13 @@
 /**
  * @fileoverview Synthesis Result Helper Functions (Create & Update)
  * @module infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-create
- * @governance ARC-1.1
+ * @governance Epic 53 Story 53-2
  *
  * Helper functions for synthesis result creation and status updates (Part 2 of 2).
- * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+ * Part of Story 53-2: Move Dexie Helpers to Infrastructure
  */
 
-import type { SynthesisResultRecord } from '../dexie-db';
+import type { SynthesisResultRecord } from '../dexie-db-types';
 import { db } from '../dexie-db';
 
 /**
@@ -15,14 +15,12 @@ import { db } from '../dexie-db';
  *
  * @param sourceId - The source ID being synthesized
  * @param projectId - The project ID
- * @param sourceType - The source type (pdf, url, or text)
  * @param initialStatus - The initial synthesis status (default: 'pending')
  * @returns The ID of the created synthesis result
  */
 export async function createSynthesisResult(
     sourceId: string,
     projectId: string,
-    sourceType: 'pdf' | 'url' | 'text',
     initialStatus: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed' = 'pending'
 ): Promise<string> {
     const id = crypto.randomUUID();
@@ -32,9 +30,8 @@ export async function createSynthesisResult(
         id,
         sourceId,
         projectId,
-        sourceType,
         status: initialStatus,
-        frontmatter: null,
+        frontmatter: undefined,
         createdAt: now,
         updatedAt: now,
     });

@@ -79,6 +79,25 @@ export interface CollectionRecord {
 // Type alias for backward compatibility
 export type Collection = CollectionRecord;
 
+/**
+ * Synthesis result record for AI-generated summaries
+ * Stores synthesis results from AI processing.
+ *
+ * @epic Epic 53 - State Management Consolidation
+ * @story 53-2 - Move Dexie Helpers to Infrastructure
+ */
+export interface SynthesisResultRecord {
+    id: string;
+    sourceId: string;
+    projectId: string;
+    status: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed';
+    synthesisResult?: string;
+    errorMessage?: string;
+    frontmatter?: Record<string, unknown>;
+    createdAt: number;
+    updatedAt: number;
+}
+
 // ============================================================================
 // Epic 7: RAG Infrastructure Tables
 // ============================================================================

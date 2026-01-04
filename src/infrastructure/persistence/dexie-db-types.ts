@@ -32,8 +32,9 @@ export type {
     SessionSnapshotRecord,
 } from './dexie-db-session-types';
 
-// Knowledge Types (Sources, Collections)
+// Knowledge Types (Sources, Collections, Synthesis)
 export type {
     SourceRecord,
     CollectionRecord,
+    SynthesisResultRecord,
 } from './dexie-db-knowledge-types';

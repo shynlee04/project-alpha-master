@@ -1,13 +1,13 @@
 /**
  * @fileoverview Synthesis Result Helper Functions (CRUD Operations)
  * @module infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-crud
- * @governance ARC-1.1
+ * @governance Epic 53 Story 53-2
  *
  * Helper functions for synthesis result CRUD operations (Part 1 of 2).
- * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+ * Part of Story 53-2: Move Dexie Helpers to Infrastructure
  */
 
-import type { SynthesisResultRecord } from '../dexie-db';
+import type { SynthesisResultRecord } from '../dexie-db-types';
 import { db } from '../dexie-db';
 
 /**

@@ -5,6 +5,7 @@
  *
  * Tests for file metadata helpers.
  * P0 critical helpers - requires 80% coverage.
+ * @vitest-environment jsdom
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';

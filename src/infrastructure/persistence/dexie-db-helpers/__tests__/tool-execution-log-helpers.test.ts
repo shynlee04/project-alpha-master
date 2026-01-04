@@ -5,6 +5,7 @@
  *
  * Tests for tool execution log helpers.
  * P1 important file - requires 80% coverage.
+ * @vitest-environment jsdom
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
