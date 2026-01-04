@@ -139,7 +139,7 @@ export function EnhancedChatInterface({
                             }
                         }}
                         placeholder={t('chat.placeholder', 'Type a message...')}
-                        className="flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto"
+                        className="flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none text-base md:text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto"
                         disabled={isTyping}
                         rows={1}
                     />

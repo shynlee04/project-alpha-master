@@ -7,7 +7,7 @@ export function HeroSection() {
     const { t } = useTranslation();
 
     return (
-        <SectionContainer className="min-h-screen flex flex-col justify-center overflow-hidden py-20 lg:py-0">
+        <SectionContainer className="min-h-[100dvh] flex flex-col justify-center overflow-hidden py-20 lg:py-0">
             {/* Background Decor Elements */}
             <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10 pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/30 rounded-full blur-[100px]" />

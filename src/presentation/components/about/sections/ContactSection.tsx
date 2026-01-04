@@ -28,7 +28,7 @@ export function ContactSection() {
     };
 
     return (
-        <SectionContainer className="min-h-[60vh] flex flex-col items-center justify-center">
+        <SectionContainer className="min-h-[60dvh] flex flex-col items-center justify-center">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

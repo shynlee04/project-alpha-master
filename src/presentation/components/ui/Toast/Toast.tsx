@@ -92,7 +92,7 @@ export function ToastContainer() {
     if (!mounted) return null;
 
     return createPortal(
-        <div className="fixed bottom-4 right-4 z-[var(--z-toast)] flex flex-col gap-2 max-w-sm">
+        <div className="fixed bottom-4 right-4 left-4 md:left-auto z-[var(--z-toast)] flex flex-col gap-2 w-auto md:w-96 max-w-full">
             {toasts.map((toast) => (
                 <ToastItem key={toast.id} toast={toast} onDismiss={dismiss} />
             ))}

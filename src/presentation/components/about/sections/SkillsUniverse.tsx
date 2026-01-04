@@ -44,7 +44,7 @@ export function SkillsUniverse() {
     };
 
     return (
-        <SectionContainer className="min-h-[80vh] flex flex-col items-center justify-center overflow-hidden">
+        <SectionContainer className="min-h-[80dvh] flex flex-col items-center justify-center overflow-hidden">
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-5xl font-bold mb-4">{t('about.skills.title')} <span className="text-primary">{t('about.skills.titleHighlight')}</span></h2>
                 <p className="text-muted-foreground">{t('about.skills.subtitle')}</p>
