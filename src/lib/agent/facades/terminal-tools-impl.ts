@@ -95,8 +95,9 @@ export class TerminalToolsFacade implements AgentTerminalTools {
             );
         }
 
-        // Log for debugging (auto-approved or session-trusted tools)
-        if (result.reason === 'auto' || result.reason === 'session') {
+        // Log for debugging (auto-approved, session-trusted, YOLO, or category-approved tools)
+        // ARCH-01.4: Added YOLO mode and category approval logging
+        if (result.reason === 'auto' || result.reason === 'session' || result.reason === 'yolo' || result.reason === 'category') {
             console.log(`[TerminalToolsFacade] Permission granted for ${result.toolName} (reason: ${result.reason})`);
         }
     }

@@ -4,6 +4,7 @@
 
 import type { EventEmitter3 } from 'eventemitter3';
 import { ToolPermissionManager } from '../tool-permission-manager';
+import { useToolPermissionStore } from '@/infrastructure/persistence/stores/permissions/tool-permission-store';
 
 // Mock event bus
 const mockEventBus: EventEmitter3 = {
@@ -679,6 +680,414 @@ describe('ToolPermissionManager', () => {
         // Use new API for knowledge
         const knowledgeResult = manager.checkPermission('write_file', 'knowledge');
         expect(knowledgeResult.reason).toBe('auto');
+      });
+    });
+  });
+
+  // ==========================================================================
+  // ARCH-01.4: YOLO Mode Tests
+  // ==========================================================================
+
+  describe('YOLO Mode (ARCH-01.4)', () => {
+    // Reset YOLO state once before all tests in this suite
+    beforeAll(async () => {
+      // Wait for hydration to complete, then reset YOLO state
+      await new Promise<void>((resolve) => {
+        const check = () => {
+          if (useToolPermissionStore.getState()._hasHydrated) {
+            // Hydration complete, now reset YOLO state
+            useToolPermissionStore.setState({
+              yoloMode: { enabled: false, expiryTime: null, durationHours: 24 },
+            });
+            resolve();
+          } else {
+            setTimeout(check, 10);
+          }
+        };
+        check();
+      });
+    });
+
+    // Also reset before each test to handle state changes within the suite
+    beforeEach(() => {
+      // Ensure YOLO mode is disabled before each test
+      // This runs after hydration, so it should override any persisted state
+      useToolPermissionStore.setState({
+        yoloMode: { enabled: false, expiryTime: null, durationHours: 24 },
+      });
+    });
+
+    describe('YOLO mode toggle', () => {
+      it('should enable YOLO mode with default 24 hour expiry', () => {
+        manager.toggleYOLO();
+
+        const yoloMode = manager.getYOLOMode();
+        expect(yoloMode.enabled).toBe(true);
+        expect(yoloMode.durationHours).toBe(24);
+        expect(yoloMode.expiryTime).not.toBeNull();
+      });
+
+      it('should disable YOLO mode when already enabled', () => {
+        manager.toggleYOLO();
+        expect(manager.isYOLOActive()).toBe(true);
+
+        manager.toggleYOLO();
+        expect(manager.isYOLOActive()).toBe(false);
+      });
+
+      it('should enable YOLO mode with custom duration', () => {
+        manager.toggleYOLO(12);
+
+        const yoloMode = manager.getYOLOMode();
+        expect(yoloMode.enabled).toBe(true);
+        expect(yoloMode.durationHours).toBe(12);
+      });
+
+      it('should emit yolo:mode:toggled event when toggled', () => {
+        manager.setEventBus(mockEventBus as any);
+
+        // Clear mock
+        (mockEventBus.emit as any).mockClear();
+
+        // Toggle YOLO and verify an event was emitted
+        manager.toggleYOLO();
+
+        // Verify the event was emitted with the correct name
+        expect(mockEventBus.emit).toHaveBeenCalled();
+        const calls = (mockEventBus.emit as any).mock.calls;
+        expect(calls.length).toBeGreaterThan(0);
+        expect(calls[0][0]).toBe('yolo:mode:toggled');
+      });
+
+      it('should emit yolo:mode:toggled events with correct states', () => {
+        manager.setEventBus(mockEventBus as any);
+
+        // Clear mock
+        (mockEventBus.emit as any).mockClear();
+
+        // Toggle twice and verify the events
+        manager.toggleYOLO(); // First toggle
+        const firstCallArgs = (mockEventBus.emit as any).mock.calls[0];
+        const firstEnabled = firstCallArgs[1]; // true if was disabled, false if was enabled
+
+        (mockEventBus.emit as any).mockClear();
+
+        manager.toggleYOLO(); // Second toggle (should be opposite of first)
+        const secondCallArgs = (mockEventBus.emit as any).mock.calls[0];
+        const secondEnabled = secondCallArgs[1]; // Should be opposite of first
+
+        // Verify the toggles worked correctly (opposite states)
+        expect(secondEnabled).toBe(!firstEnabled);
+      });
+    });
+
+    describe('YOLO mode permission bypass', () => {
+      it('should bypass all permission checks when YOLO mode is active', () => {
+        // Enable YOLO mode
+        manager.toggleYOLO();
+
+        // Check a tool that normally requires approval
+        const writeResult = manager.checkPermission('write_file');
+        expect(writeResult.canExecute).toBe(true);
+        expect(writeResult.needsApproval).toBe(false);
+        expect(writeResult.reason).toBe('yolo');
+
+        // Check a tool that is normally blocked
+        const deleteResult = manager.checkPermission('delete_file');
+        expect(deleteResult.canExecute).toBe(true);
+        expect(deleteResult.needsApproval).toBe(false);
+        expect(deleteResult.reason).toBe('yolo');
+
+        // Check a tool that is normally auto
+        const readResult = manager.checkPermission('read_file');
+        expect(readResult.reason).toBe('yolo');
+      });
+
+      it('should return category in permission result when YOLO mode is active', () => {
+        manager.toggleYOLO();
+
+        const result = manager.checkPermission('write_file');
+        expect(result.category).toBe('files');
+      });
+
+      it('should check YOLO mode expiry automatically', () => {
+        // Enable YOLO mode with 1 hour expiry
+        manager.toggleYOLO(1);
+
+        expect(manager.isYOLOActive()).toBe(true);
+
+        // Manually set expiry to past to simulate expiration
+        const pastTime = Date.now() - 1000;
+        manager.setYOLOExpiry(pastTime);
+
+        // Check expiry should detect expired state
+        manager.checkYOLOExpiry();
+
+        expect(manager.isYOLOActive()).toBe(false);
+      });
+    });
+
+    describe('YOLO mode with workspace-scoped permissions', () => {
+      it('should bypass permissions across all workspaces when YOLO mode is active', () => {
+        manager.toggleYOLO();
+
+        const ideResult = manager.checkPermission('execute_command', 'ide');
+        const knowledgeResult = manager.checkPermission('execute_command', 'knowledge');
+        const notesResult = manager.checkPermission('write_file', 'notes');
+
+        // All should be approved via YOLO mode
+        expect(ideResult.reason).toBe('yolo');
+        expect(knowledgeResult.reason).toBe('yolo');
+        expect(notesResult.reason).toBe('yolo');
+      });
+
+      it('should bypass workspace-specific blocks when YOLO mode is active', () => {
+        // delete_file is blocked in all workspaces by default
+        manager.toggleYOLO();
+
+        const result = manager.checkPermission('delete_file', 'study');
+        expect(result.canExecute).toBe(true);
+        expect(result.reason).toBe('yolo');
+      });
+    });
+
+    describe('YOLO mode expiry', () => {
+      it('should not be active when expired', () => {
+        manager.toggleYOLO(1);
+
+        // Set expiry to past
+        manager.setYOLOExpiry(Date.now() - 1000);
+
+        expect(manager.isYOLOActive()).toBe(false);
+      });
+
+      it('should auto-disable after expiry time when checkYOLOExpiry is called', () => {
+        manager.toggleYOLO(1);
+        expect(manager.isYOLOActive()).toBe(true);
+
+        // Set expiry to past
+        manager.setYOLOExpiry(Date.now() - 1000);
+
+        // Check expiry
+        manager.checkYOLOExpiry();
+
+        expect(manager.isYOLOActive()).toBe(false);
+      });
+    });
+  });
+
+  // ==========================================================================
+  // ARCH-01.4: Category Approval Tests
+  // ==========================================================================
+
+  describe('Category Approvals (ARCH-01.4)', () => {
+    describe('Category approval basics', () => {
+      it('should get category for tool', () => {
+        const filesCategory = manager.getToolCategory('read_file');
+        const terminalCategory = manager.getToolCategory('execute_command');
+
+        expect(filesCategory).toBe('files');
+        expect(terminalCategory).toBe('terminal');
+      });
+
+      it('should return default category for unknown tool', () => {
+        const category = manager.getToolCategory('unknown_tool');
+        expect(category).toBe('files'); // Default fallback is 'files' (safest assumption)
+      });
+    });
+
+    describe('Category approval permission bypass', () => {
+      it('should bypass approval for tools in approved category', () => {
+        // Approve 'files' category for IDE workspace
+        manager.setCategoryApproval('files', 'ide', true);
+
+        const writeResult = manager.checkPermission('write_file', 'ide');
+        const readResult = manager.checkPermission('read_file', 'ide');
+
+        expect(writeResult.canExecute).toBe(true);
+        expect(writeResult.needsApproval).toBe(false);
+        expect(writeResult.reason).toBe('category');
+
+        expect(readResult.canExecute).toBe(true);
+        expect(readResult.needsApproval).toBe(false);
+        expect(readResult.reason).toBe('category');
+      });
+
+      it('should return category in permission result', () => {
+        manager.setCategoryApproval('files', 'ide', true);
+
+        const result = manager.checkPermission('write_file', 'ide');
+        expect(result.category).toBe('files');
+      });
+
+      it('should not bypass approval for tools in non-approved category', () => {
+        // Approve 'files' category
+        manager.setCategoryApproval('files', 'ide', true);
+
+        // Check terminal tool (different category)
+        const result = manager.checkPermission('execute_command', 'ide');
+
+        expect(result.reason).not.toBe('category');
+        expect(result.needsApproval).toBe(true); // execute_command is prompt by default
+      });
+
+      it('should override blocks with category approval', () => {
+        // Approve 'files' category
+        // Note: Category approval overrides ALL tool-level checks including blocks
+        // This is the design - users who approve a category take responsibility
+        manager.setCategoryApproval('files', 'ide', true);
+
+        // delete_file is blocked by default, but category approval overrides
+        const result = manager.checkPermission('delete_file', 'ide');
+
+        expect(result.canExecute).toBe(true);
+        expect(result.reason).toBe('category');
+      });
+    });
+
+    describe('Category approval workspace isolation', () => {
+      it('should only apply category approval to specified workspace', () => {
+        // Approve 'files' category for IDE only
+        manager.setCategoryApproval('files', 'ide', true);
+
+        const ideResult = manager.checkPermission('write_file', 'ide');
+        const knowledgeResult = manager.checkPermission('write_file', 'knowledge');
+
+        expect(ideResult.reason).toBe('category');
+        expect(knowledgeResult.reason).toBe('block'); // write_file is blocked in knowledge
+      });
+
+      it('should allow different category approvals per workspace', () => {
+        // Approve 'terminal' in IDE, 'files' in knowledge
+        manager.setCategoryApproval('terminal', 'ide', true);
+        manager.setCategoryApproval('files', 'knowledge', true);
+
+        const ideTerminalResult = manager.checkPermission('execute_command', 'ide');
+        const ideFilesResult = manager.checkPermission('write_file', 'ide');
+
+        expect(ideTerminalResult.reason).toBe('category');
+        expect(ideFilesResult.reason).toBe('prompt'); // Not approved in IDE
+      });
+
+      it('should get category approval status for workspace', () => {
+        manager.setCategoryApproval('files', 'ide', true);
+
+        expect(manager.getCategoryApproval('files', 'ide')).toBe(true);
+        expect(manager.getCategoryApproval('files', 'knowledge')).toBe(false);
+      });
+
+      it('should check if tool is category-approved', () => {
+        manager.setCategoryApproval('files', 'ide', true);
+
+        expect(manager.isCategoryApproved('read_file', 'ide')).toBe(true);
+        expect(manager.isCategoryApproved('execute_command', 'ide')).toBe(false);
+      });
+    });
+
+    describe('Get all category approvals', () => {
+      it('should return all category approvals for workspace', () => {
+        manager.setCategoryApproval('files', 'ide', true);
+        manager.setCategoryApproval('terminal', 'ide', true);
+
+        const approvals = manager.getAllCategoryApprovals('ide');
+
+        expect(approvals.files).toBe(true);
+        expect(approvals.terminal).toBe(true);
+        expect(approvals.knowledge).toBe(false);
+        expect(approvals.vision).toBe(false);
+      });
+
+      it('should return empty approvals for workspace with no approvals', () => {
+        const approvals = manager.getAllCategoryApprovals('notes');
+
+        expect(approvals.files).toBe(false);
+        expect(approvals.terminal).toBe(false);
+        expect(approvals.knowledge).toBe(false);
+      });
+    });
+
+    describe('Reset category approvals', () => {
+      it('should reset all category approvals for workspace', () => {
+        manager.setCategoryApproval('files', 'ide', true);
+        manager.setCategoryApproval('terminal', 'ide', true);
+        manager.setCategoryApproval('files', 'knowledge', true);
+
+        manager.resetCategoryApprovals('ide');
+
+        const ideApprovals = manager.getAllCategoryApprovals('ide');
+        expect(ideApprovals.files).toBe(false);
+        expect(ideApprovals.terminal).toBe(false);
+
+        // Knowledge should be unaffected
+        const knowledgeApprovals = manager.getAllCategoryApprovals('knowledge');
+        expect(knowledgeApprovals.files).toBe(true);
+      });
+
+      it('should reset category approvals across all workspaces when no workspace specified', () => {
+        manager.setCategoryApproval('files', 'ide', true);
+        manager.setCategoryApproval('files', 'knowledge', true);
+
+        manager.resetCategoryApprovals();
+
+        expect(manager.getCategoryApproval('files', 'ide')).toBe(false);
+        expect(manager.getCategoryApproval('files', 'knowledge')).toBe(false);
+      });
+    });
+
+    describe('Category approval with session trust', () => {
+      it('should prioritize category approval over session trust', () => {
+        // Note: Category approval comes BEFORE session trust in priority
+        manager.setCategoryApproval('files', 'ide', true);
+        manager.addSessionTrust('write_file', 'ide');
+
+        const result = manager.checkPermission('write_file', 'ide');
+
+        // Category approval takes priority over session trust
+        expect(result.reason).toBe('category');
+      });
+    });
+
+    describe('All permission checks priority order', () => {
+      it('should check in order: YOLO > category > session trust > block > auto > prompt', () => {
+        // Reset state first to ensure clean slate
+        manager.resetToDefaults();
+
+        // Setup: YOLO off, category approved, prompt level tool, no session trust
+        manager.setCategoryApproval('terminal', 'ide', true);
+
+        // Normal case - category approval should apply
+        let result = manager.checkPermission('execute_command', 'ide');
+        expect(result.reason).toBe('category');
+
+        // Clear category approval to test session trust
+        manager.setCategoryApproval('terminal', 'ide', false);
+        manager.addSessionTrust('execute_command', 'ide');
+        result = manager.checkPermission('execute_command', 'ide');
+        expect(result.reason).toBe('session');
+
+        // Clear session trust for YOLO test
+        manager.clearSessionTrust();
+
+        // Enable YOLO mode - should override everything
+        manager.toggleYOLO();
+        result = manager.checkPermission('execute_command', 'ide');
+        expect(result.reason).toBe('yolo');
+
+        // Verify YOLO bypasses blocked tools
+        const deleteResult = manager.checkPermission('delete_file', 'ide');
+        expect(deleteResult.reason).toBe('yolo');
+      });
+
+      it('should have YOLO bypass everything including blocks', () => {
+        // Reset state
+        manager.resetToDefaults();
+
+        manager.toggleYOLO();
+
+        const result = manager.checkPermission('delete_file', 'ide');
+        // Current implementation: YOLO bypasses everything
+        expect(result.canExecute).toBe(true);
+        expect(result.reason).toBe('yolo');
       });
     });
   });

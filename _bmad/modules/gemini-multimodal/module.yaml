@@ -1,0 +1,29 @@
+name: gemini-multimodal
+description: Google Gemini 1.5 Multimodal Integration Module
+version: 1.0.0
+category: provider-adapter
+tags: [gemini, multimodal, ai, google]
+
+components:
+  - name: GeminiAdapter
+    path: src/lib/agent/providers/gemini-adapter.ts
+    type: class
+    description: Implementation of ProviderAdapter for Google Generative AI
+  
+  - name: GeminiConfig
+    path: src/lib/agent/providers/gemini-config.ts
+    type: interface
+    description: Configuration types for Gemini safety settings and generation config
+
+  - name: MultimodalInputMapper
+    path: src/lib/agent/providers/mappers/gemini-mapper.ts
+    type: utility
+    description: Maps internal Part types to Gemini Content types
+
+dependencies:
+  - "@google/generative-ai"
+  - src/lib/agent/providers/provider-adapter.ts
+
+integration:
+  register_in: src/lib/agent/providers/index.ts
+  config_key: google

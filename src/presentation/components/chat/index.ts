@@ -45,6 +45,10 @@ export type { ThreadFolderTreeProps } from './ThreadFolderTree';
 export { ToolProgressIndicator, useToolProgress } from './ToolProgressIndicator';
 export type { ToolProgressIndicatorProps } from './ToolProgressIndicator';
 
+// ARCH-01.4: Tool Execution Indicator - Inline status in chat stream
+export { ToolExecutionIndicator, CompactToolExecutionIndicator, ToolExecutionIndicatorGroup } from './ToolExecutionIndicator';
+export type { ToolExecutionIndicatorProps, ToolExecutionIndicatorGroupProps } from './ToolExecutionIndicator';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';

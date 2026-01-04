@@ -13,6 +13,7 @@
  * @epic WB-8.3 - Cross-Workspace Event System
  * @story WB-8.3.1 - Tool Permission Persistence
  * @story Ralph Loop 51-3 - Workspace-Scoped Tool Permissions
+ * @story ARCH-01.4 - Agent Tool Permission Matrix (YOLO mode, category approvals)
  * @prio P0 - Critical UX Fix
  *
  * MIGRATION-2026-01-01: Refactored to use Zustand store
@@ -26,9 +27,15 @@
  * - Each workspace has independent tool trust levels
  * - Backward compatibility layer for legacy API (defaults to 'ide' workspace)
  * - Zero breaking changes - all existing consumers continue to work
+ *
+ * MIGRATION-2026-01-05 (ARCH-01.4): YOLO mode and category approvals
+ * - YOLO mode: Global bypass for all tool permissions with auto-expiry
+ * - Category approvals: Workspace-scoped bulk tool permissions by category
+ * - Updated checkPermission to check YOLO → category → tool level → session
+ * - New methods: toggleYOLO, isYOLOActive, setCategoryApproval, isCategoryApproved
  */
 
-import { useToolPermissionStore } from '@/lib/state/tool-permission-store';
+import { useToolPermissionStore, getToolCategory, type ToolCategory, type YOLOMode } from '@/infrastructure/persistence/stores/permissions/tool-permission-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 // import type { EventEmitter } from 'eventemitter3'; // Reserved for future use
 
@@ -41,6 +48,7 @@ export type ToolTrustLevel = 'auto' | 'prompt' | 'block';
  * Result of a permission check
  *
  * Ralph Loop 51-3: Now includes workspace context
+ * ARCH-01.4: Added 'yolo' and 'category' reason types
  */
 export interface PermissionCheckResult {
   /** Whether the tool needs user approval before execution */
@@ -48,23 +56,30 @@ export interface PermissionCheckResult {
   /** Whether the tool can execute (false if blocked) */
   canExecute: boolean;
   /** Reason for the permission decision */
-  reason: 'auto' | 'prompt' | 'block' | 'session';
+  reason: 'auto' | 'prompt' | 'block' | 'session' | 'yolo' | 'category';
   /** Workspace context for this permission check */
   workspace: WorkspaceType;
   /** Tool name for display */
   toolName: string;
   /** Tool identifier */
   toolId: string;
+  /** Tool category (ARCH-01.4) */
+  category?: ToolCategory;
 }
 
 /**
  * Events emitted by ToolPermissionManager
+ *
+ * ARCH-01.4: Added YOLO mode and category approval events
  */
 export interface ToolPermissionEvents {
   'permission:changed': (toolId: string, newLevel: ToolTrustLevel) => void;
   'session:trust:added': (toolId: string) => void;
   'session:trust:removed': (toolId: string) => void;
   'session:trust:cleared': () => void;
+  'yolo:mode:toggled': (enabled: boolean, expiryTime: number | null) => void;
+  'yolo:mode:expired': () => void;
+  'category:approval:changed': (category: ToolCategory, workspace: WorkspaceType, approved: boolean) => void;
 }
 
 /**
@@ -308,6 +323,11 @@ export class ToolPermissionManager {
    * - Session trust checked in workspace-scoped format
    * - Defaults to 'ide' workspace for backward compatibility
    *
+   * ARCH-01.4: Updated priority check order
+   * - YOLO mode (global bypass) → Category approval → Tool level → Session trust
+   * - YOLO mode bypasses ALL permission checks
+   * - Category approval bypasses tool-level checks
+   *
    * @param toolId - Tool to check
    * @param workspaceType - Workspace context (defaults to 'ide' for backward compatibility)
    * @returns Permission check result with workspace context
@@ -319,8 +339,35 @@ export class ToolPermissionManager {
     const trustLevel = state.trustLevels[toolId]?.[workspace] ?? state.defaultTrustLevel;
     const sessionKey = `${toolId}:${workspace}`;
     const hasSession = state.sessionTrust.includes(sessionKey);
+    const category = getToolCategory(toolId);
 
-    // Check block first (highest priority)
+    // ARCH-01.4: Check YOLO mode first (highest priority - global bypass)
+    if (state.isYOLOActive()) {
+      return {
+        needsApproval: false,
+        canExecute: true,
+        reason: 'yolo',
+        workspace: workspace,
+        toolName: this.getToolDisplayName(toolId),
+        toolId,
+        category,
+      };
+    }
+
+    // ARCH-01.4: Check category approval (workspace-scoped bulk approval)
+    if (state.isCategoryApproved(toolId, workspace)) {
+      return {
+        needsApproval: false,
+        canExecute: true,
+        reason: 'category',
+        workspace: workspace,
+        toolName: this.getToolDisplayName(toolId),
+        toolId,
+        category,
+      };
+    }
+
+    // Check block first (highest priority for tool-level)
     if (trustLevel === 'block') {
       return {
         needsApproval: false,
@@ -329,6 +376,7 @@ export class ToolPermissionManager {
         workspace: workspace,
         toolName: this.getToolDisplayName(toolId),
         toolId,
+        category,
       };
     }
 
@@ -341,6 +389,7 @@ export class ToolPermissionManager {
         workspace: workspace,
         toolName: this.getToolDisplayName(toolId),
         toolId,
+        category,
       };
     }
 
@@ -353,6 +402,7 @@ export class ToolPermissionManager {
         workspace: workspace,
         toolName: this.getToolDisplayName(toolId),
         toolId,
+        category,
       };
     }
 
@@ -364,6 +414,7 @@ export class ToolPermissionManager {
       workspace: workspace,
       toolName: this.getToolDisplayName(toolId),
       toolId,
+      category,
     };
   }
 
@@ -580,5 +631,230 @@ export class ToolPermissionManager {
   public hasBlockedTools(workspaceType?: WorkspaceType): boolean {
     const workspace = workspaceType ?? 'ide';
     return this.getToolsByLevel(workspace, 'block').length > 0;
+  }
+
+  // ============================================================
+  // YOLO Mode Methods (ARCH-01.4)
+  // ============================================================
+
+  /**
+   * Check if YOLO mode is currently active
+   *
+   * ARCH-01.4: YOLO mode bypasses all permission checks
+   * Auto-disables after expiry time
+   *
+   * @returns True if YOLO mode is enabled and not expired
+   */
+  public isYOLOActive(): boolean {
+    return useToolPermissionStore.getState().isYOLOActive();
+  }
+
+  /**
+   * Get YOLO mode state
+   *
+   * @returns Current YOLO mode state
+   */
+  public getYOLOMode(): YOLOMode {
+    return useToolPermissionStore.getState().yoloMode;
+  }
+
+  /**
+   * Toggle YOLO mode on/off
+   *
+   * ARCH-01.4: YOLO mode bypasses all permission checks
+   * Auto-disables after expiry time (default: 24 hours)
+   *
+   * @param durationHours - Duration in hours (default: 24)
+   * @returns New YOLO mode state
+   */
+  public toggleYOLO(durationHours?: number): YOLOMode {
+    const store = useToolPermissionStore.getState();
+    store.toggleYOLO(durationHours);
+
+    // Emit event
+    const newState = store.yoloMode;
+    this.eventBus?.emit('yolo:mode:toggled', newState.enabled, newState.expiryTime);
+
+    return newState;
+  }
+
+  /**
+   * Enable YOLO mode for a specific duration
+   *
+   * @param durationHours - Duration in hours (default: 24)
+   * @returns New YOLO mode state
+   */
+  public enableYOLO(durationHours: number = 24): YOLOMode {
+    const store = useToolPermissionStore.getState();
+
+    if (!store.yoloMode.enabled) {
+      store.toggleYOLO(durationHours);
+      const newState = store.yoloMode;
+      this.eventBus?.emit('yolo:mode:toggled', true, newState.expiryTime);
+      return newState;
+    }
+
+    // Already enabled, just update expiry
+    const now = Date.now();
+    const expiryTime = now + durationHours * 60 * 60 * 1000;
+    store.setYOLOExpiry(expiryTime);
+    this.eventBus?.emit('yolo:mode:toggled', true, expiryTime);
+    return store.yoloMode;
+  }
+
+  /**
+   * Disable YOLO mode
+   */
+  public disableYOLO(): void {
+    const store = useToolPermissionStore.getState();
+    if (store.yoloMode.enabled) {
+      store.toggleYOLO(); // Toggle off
+      this.eventBus?.emit('yolo:mode:toggled', false, null);
+    }
+  }
+
+  /**
+   * Check YOLO mode expiry and disable if expired
+   *
+   * Called automatically on store rehydration
+   */
+  public checkYOLOExpiry(): void {
+    const store = useToolPermissionStore.getState();
+    const wasActive = store.yoloMode.enabled;
+
+    store.checkYOLOExpiry();
+
+    // Emit event if YOLO mode expired
+    if (wasActive && !store.yoloMode.enabled) {
+      this.eventBus?.emit('yolo:mode:expired');
+    }
+  }
+
+  /**
+   * Set YOLO mode expiry time
+   *
+   * Primarily for testing purposes - allows setting expiry to past to test expiration
+   *
+   * @param expiryTime - Timestamp when YOLO mode should expire
+   */
+  public setYOLOExpiry(expiryTime: number): void {
+    useToolPermissionStore.getState().setYOLOExpiry(expiryTime);
+  }
+
+  // ============================================================
+  // Category Approval Methods (ARCH-01.4)
+  // ============================================================
+
+  /**
+   * Get approval status for a category in a workspace
+   *
+   * ARCH-01.4: Category approvals allow bulk tool permissions
+   *
+   * @param category - Tool category to check
+   * @param workspaceType - Workspace context (defaults to 'ide')
+   * @returns True if category is approved in this workspace
+   */
+  public getCategoryApproval(category: ToolCategory, workspaceType?: WorkspaceType): boolean {
+    const workspace = workspaceType ?? 'ide';
+    return useToolPermissionStore.getState().getCategoryApproval(category, workspace);
+  }
+
+  /**
+   * Set approval status for a category in a workspace
+   *
+   * ARCH-01.4: Category approvals allow bulk tool permissions
+   * When approved, all tools in that category bypass permission checks
+   *
+   * @param category - Tool category to approve/disapprove
+   * @param workspaceType - Workspace context (defaults to 'ide')
+   * @param approved - Whether the category is approved
+   */
+  public setCategoryApproval(category: ToolCategory, workspaceType: WorkspaceType, approved: boolean): void {
+    const store = useToolPermissionStore.getState();
+    const previousValue = store.getCategoryApproval(category, workspaceType);
+
+    if (previousValue !== approved) {
+      store.setCategoryApproval(category, workspaceType, approved);
+      this.eventBus?.emit('category:approval:changed', category, workspaceType, approved);
+    }
+  }
+
+  /**
+   * Check if a tool's category is approved in a workspace
+   *
+   * Combines tool-to-category mapping with category approval state
+   *
+   * @param toolId - Tool to check
+   * @param workspaceType - Workspace context (defaults to 'ide')
+   * @returns True if tool's category is approved in this workspace
+   */
+  public isCategoryApproved(toolId: string, workspaceType?: WorkspaceType): boolean {
+    const workspace = workspaceType ?? 'ide';
+    return useToolPermissionStore.getState().isCategoryApproved(toolId, workspace);
+  }
+
+  /**
+   * Set approval status for a category (defaults to 'ide' workspace)
+   *
+   * @param category - Tool category to approve/disapprove
+   * @param approved - Whether the category is approved
+   */
+  public setCategoryApprovalIde(category: ToolCategory, approved: boolean): void {
+    this.setCategoryApproval(category, 'ide', approved);
+  }
+
+  /**
+   * Get all category approvals for a workspace
+   *
+   * @param workspaceType - Workspace to get approvals for (defaults to 'ide')
+   * @returns Record of category to approval status
+   */
+  public getAllCategoryApprovals(workspaceType?: WorkspaceType): Record<ToolCategory, boolean> {
+    const workspace = workspaceType ?? 'ide';
+    return useToolPermissionStore.getState().categoryApprovals[workspace] ?? {
+      files: false,
+      terminal: false,
+      knowledge: false,
+      vision: false,
+      search: false,
+      web: false,
+    };
+  }
+
+  /**
+   * Reset all category approvals to false (for a workspace or all workspaces)
+   *
+   * @param workspaceType - Workspace to reset (if not provided, resets all workspaces)
+   */
+  public resetCategoryApprovals(workspaceType?: WorkspaceType): void {
+    const store = useToolPermissionStore.getState();
+    const categories: ToolCategory[] = ['files', 'terminal', 'knowledge', 'vision', 'search', 'web'];
+
+    if (workspaceType) {
+      // Reset specific workspace
+      categories.forEach(category => {
+        store.setCategoryApproval(category, workspaceType, false);
+      });
+    } else {
+      // Reset all workspaces
+      const workspaces: WorkspaceType[] = ['ide', 'knowledge', 'notes', 'study'];
+      workspaces.forEach(workspace => {
+        categories.forEach(category => {
+          store.setCategoryApproval(category, workspace, false);
+        });
+      });
+    }
+  }
+
+  /**
+   * Get the category for a tool
+   *
+   * ARCH-01.4: Tool-to-category mapping for category-level approvals
+   *
+   * @param toolId - Tool identifier
+   * @returns Tool category (defaults to 'search' for unknown tools)
+   */
+  public getToolCategory(toolId: string): ToolCategory {
+    return getToolCategory(toolId);
   }
 }
