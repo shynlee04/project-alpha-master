@@ -50,8 +50,8 @@ stories:
     title: "Create Notes-specific Chat Context"
     epic: "E1"
     points: 8
-    owner: "TBD"
-    status: "TODO"
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
     priority: "P0"
     dependencies: []
     blocks: []
@@ -62,27 +62,28 @@ stories:
       - "Chat settings (temperature, model) persist per workspace"
       - "Previous conversation history accessible in Notes"
     tech_notes:
-      - "Extend ChatContext to include workspace type"
-      - "Create workspace-specific tool filter"
-      - "Use existing useConversationStore with workspace filter"
+      - "Added MODE_NOTES agent mode to system-prompt.ts"
+      - "Extended buildSystemPrompt() with workspaceType parameter"
+      - "Modified useAgentChatToolFacades to filter tools by workspace"
+      - "Added workspaceType prop to AgentChatPanel and UnifiedChatPanel"
     test_strategy:
       - "Unit test: Workspace context detection"
       - "Integration test: Tool availability per workspace"
     validation:
-      typecheck: pending
-      test_coverage: pending
-      i18n_complete: pending
-      code_review: pending
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pass"
     created_at: "2026-01-05"
-    completed_at: null
+    completed_at: "2026-01-05"
 
 # Sprint 1 Metrics
 velocity:
   planned: 16
-  actual: 0
-  completed: 0
-  remaining: 16
-  burndown: []
+  actual: 16
+  completed: 16
+  remaining: 0
+  burndown: [16, 0]
 
 # Sprint 1 Risks
 risks:
@@ -165,11 +166,11 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 0
+    progress: 17 # 2/12 stories = 16.67% → 17%
     stories_total: 12
-    stories_completed: 0
+    stories_completed: 2
     points_total: 89
-    points_completed: 0
+    points_completed: 16
   - id: "E2"
     name: "Multimodal Input System"
     status: "PENDING"
