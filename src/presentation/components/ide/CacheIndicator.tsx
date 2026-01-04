@@ -3,6 +3,9 @@
  * @module presentation/components/ide/CacheIndicator
  * @governance Story WB-7: Lazy Content Loading
  *
+ * Story: LT-4.19 (Light Theme Migration)
+ * UPDATED_AT: 2026-01-04T10:30:00Z
+ *
  * Visual indicator for cache hit/miss status on file tree items.
  * Shows whether file content was loaded from cache (instant) or FSA (slower).
  *
@@ -11,6 +14,7 @@
  * - Tooltip with cache status details
  * - 8-bit styling (pixel borders, hard colors)
  * - Accessibility: ARIA labels, keyboard navigation
+ * - Light/dark theme support via CSS custom properties
  *
  * @see Research: VS Code file tree cache indicators
  */
@@ -70,15 +74,15 @@ export const CacheIndicator: React.FC<CacheIndicatorProps> = ({
 
   if (fromCache && cacheHit) {
     // Cache hit - fresh snapshot
-    colorClass = 'bg-green-500';
+    colorClass = 'bg-[var(--success)]';
     label = t('cacheIndicator.cached', 'CACHED');
   } else if (fromCache && !cacheHit) {
     // Cache miss - stale or no snapshot
-    colorClass = 'bg-yellow-500';
+    colorClass = 'bg-[var(--warning)]';
     label = t('cacheIndicator.stale', 'STALE');
   } else {
     // Loaded from FSA - not cached
-    colorClass = 'bg-orange-500';
+    colorClass = 'bg-[var(--primary)]';
     label = t('cacheIndicator.loaded', 'LOADED');
   }
 

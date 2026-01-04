@@ -213,8 +213,8 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                                             key={frame}
                                             onClick={() => setDeviceFrame(frame)}
                                             className={`p-1 rounded transition-colors ${deviceFrame === frame
-                                                ? 'text-cyan-400 bg-slate-800'
-                                                : 'text-slate-500 hover:text-slate-300'
+                                                ? 'text-[var(--info)] bg-[var(--secondary)]'
+                                                : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
                                                 }`}
                                             title={
                                                 frame === 'desktop'

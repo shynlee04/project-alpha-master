@@ -1,9 +1,48 @@
+/**
+ * XTerminal Component
+ *
+ * Story: LT-4.19 (Light Theme Migration)
+ * CREATED_AT: 2026-01-04T10:00:00Z
+ * UPDATED_AT: 2026-01-04T10:00:00Z
+ *
+ * Terminal component using xterm.js with light/dark theme support.
+ * Uses CSS custom properties for theme-aware styling.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 import { createTerminalAdapter, boot, isBooted } from '@/lib/webcontainer';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'next-themes';
+
+/**
+ * xterm.js theme configuration for light and dark themes
+ * Maps CSS custom properties to xterm.js colors
+ */
+const getXtermTheme = (isLight: boolean) => ({
+    background: isLight ? '#ffffff' : '#020617',
+    foreground: isLight ? '#171717' : '#e2e8f0',
+    cursor: isLight ? '#f97316' : '#22d3ee',
+    selectionBackground: isLight ? 'rgba(249, 115, 22, 0.3)' : 'rgba(34, 211, 238, 0.3)',
+    black: isLight ? '#e5e5e5' : '#020617',
+    red: isLight ? '#dc2626' : '#ef4444',
+    green: isLight ? '#16a34a' : '#22c55e',
+    yellow: isLight ? '#d97706' : '#eab308',
+    blue: isLight ? '#2563eb' : '#3b82f6',
+    magenta: isLight ? '#a855f7' : '#d946ef',
+    cyan: isLight ? '#0891b2' : '#06b6d4',
+    white: isLight ? '#a3a3a3' : '#f8fafc',
+    brightBlack: isLight ? '#737373' : '#475569',
+    brightRed: isLight ? '#f87171' : '#fca5a5',
+    brightGreen: isLight ? '#4ade80' : '#86efac',
+    brightYellow: isLight ? '#fbbf24' : '#fde047',
+    brightBlue: isLight ? '#60a5fa' : '#93c5fd',
+    brightMagenta: isLight ? '#c084fc' : '#f0abfc',
+    brightCyan: isLight ? '#22d3ee' : '#67e8f9',
+    brightWhite: isLight ? '#ffffff' : '#ffffff',
+});
 
 interface XTerminalProps {
     /**
@@ -40,6 +79,8 @@ export function XTerminal({ className, initialSyncCompleted = false, permissionS
     const shellStartedRef = useRef(false);
     const [isReady, setIsReady] = useState(false);
     const { t } = useTranslation();
+    const { resolvedTheme } = useTheme();
+    const isLightTheme = resolvedTheme === 'light';
 
     // Initialize terminal UI when component mounts
     useEffect(() => {
@@ -51,33 +92,12 @@ export function XTerminal({ className, initialSyncCompleted = false, permissionS
 
         console.log('[XTerminal] Initializing terminal UI...');
 
-        // 1. Initialize xterm.js
+        // 1. Initialize xterm.js with theme-aware colors
         const term = new Terminal({
             fontFamily: '"JetBrains Mono", monospace',
             fontSize: 13,
             cursorBlink: true,
-            theme: {
-                background: '#020617', // slate-950
-                foreground: '#e2e8f0', // slate-200
-                cursor: '#22d3ee',     // cyan-400
-                selectionBackground: 'rgba(34, 211, 238, 0.3)', // cyan-400/30
-                black: '#020617',
-                red: '#ef4444',
-                green: '#22c55e',
-                yellow: '#eab308',
-                blue: '#3b82f6',
-                magenta: '#d946ef',
-                cyan: '#06b6d4',
-                white: '#f8fafc',
-                brightBlack: '#475569',
-                brightRed: '#fca5a5',
-                brightGreen: '#86efac',
-                brightYellow: '#fde047',
-                brightBlue: '#93c5fd',
-                brightMagenta: '#f0abfc',
-                brightCyan: '#67e8f9',
-                brightWhite: '#ffffff',
-            },
+            theme: getXtermTheme(isLightTheme),
             allowProposedApi: true,
         });
 
@@ -155,7 +175,15 @@ export function XTerminal({ className, initialSyncCompleted = false, permissionS
             initializedRef.current = false;
             shellStartedRef.current = false;
         };
-    }, [t]);
+    }, [t, isLightTheme]);
+
+    // Theme change handler - update xterm.js theme when theme changes
+    useEffect(() => {
+        if (!terminalRef.current) return;
+
+        const term = terminalRef.current;
+        term.options.theme = getXtermTheme(isLightTheme);
+    }, [isLightTheme]);
 
     // Start shell when sync completes OR after timeout/error (Story 27-I)
     useEffect(() => {

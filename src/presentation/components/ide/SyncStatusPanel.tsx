@@ -1,8 +1,11 @@
 /**
  * Sync Status Panel - Real-time File Synchronization Monitoring
  *
+ * Story: LT-4.19 (Light Theme Migration)
+ * UPDATED_AT: 2026-01-04T10:30:00Z
+ *
  * Displays comprehensive sync status across all workspaces with event activity indicators.
- * Shows pending/in-progress/failed operations with progress bars and retry controls.
+ * Uses CSS custom properties for light/dark theme support.
  *
  * User Journey:
  * 1. User saves file in IDE → Sync shows "1 file pending"
@@ -226,7 +229,7 @@ export function SyncStatusPanel() {
               {operation.status === 'in-progress' && (
                 <div className="mt-1.5 h-1.5 bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-500 transition-all duration-300"
+                    className="h-full bg-[var(--info)] transition-all duration-300"
                     style={{ width: `${operation.progress}%` }}
                   />
                 </div>
@@ -234,7 +237,7 @@ export function SyncStatusPanel() {
 
               {/* Error message */}
               {operation.status === 'failed' && operation.error && (
-                <p className="text-xs text-red-500 mt-1">{operation.error}</p>
+                <p className="text-xs text-[var(--destructive)] mt-1">{operation.error}</p>
               )}
             </div>
 
@@ -255,7 +258,7 @@ export function SyncStatusPanel() {
         {/* Empty state */}
         {syncState.operations.length === 0 && (
           <div className="text-center py-6 text-sm text-muted-foreground">
-            <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+            <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-[var(--success)]" />
             <p>{t('sync.empty')}</p>
           </div>
         )}

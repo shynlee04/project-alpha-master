@@ -4,13 +4,16 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * BentoCardPreview - Interactive document preview component for bento cards
- * 
+ *
+ * Story: LT-4.19 (Light Theme Migration)
+ * UPDATED_AT: 2026-01-04T10:30:00Z
+ *
  * Features:
  * - Expand/collapse functionality
  * - Code snippet previews using CodeBlock component
  * - Configuration examples
  * - Tutorial content with quick start actions
- * - 8-bit design system styling
+ * - 8-bit design system styling with light/dark theme support
  */
 
 export interface BentoCardPreviewProps {
@@ -42,14 +45,14 @@ export function BentoCardPreview({
       {/* Preview Header */}
       <button
         onClick={toggleExpanded}
-        className="flex items-center justify-between w-full px-3 py-2 bg-[#27272a] border-b border-[#3f3f46] hover:bg-[#3f3f46] transition-colors duration-150 ease-out rounded-none"
+        className="flex items-center justify-between w-full px-3 py-2 bg-[var(--secondary)] border-b border-[var(--border)] hover:bg-[var(--secondary-600)] transition-colors duration-150 ease-out rounded-none"
         aria-expanded={isExpanded ? 'true' : 'false'}
         aria-controls={`preview-content-${title}`}
       >
-        <span className="text-[#f97316] font-semibold text-sm">
+        <span className="text-[var(--primary)] font-semibold text-sm">
           {title}
         </span>
-        <span className="text-[#71717a]">
+        <span className="text-[var(--muted-foreground)]">
           {isExpanded ? '−' : '+'}
         </span>
       </button>
@@ -66,18 +69,18 @@ export function BentoCardPreview({
             <CodeBlock
               code={content}
               language={language}
-              className="bg-[#09090b] border border-[#27272a] rounded-none"
+              className="bg-[var(--background)] border border-[var(--border)] rounded-none"
             />
           )}
           
           {type === 'config' && (
-            <pre className="text-[#a1a1aa] text-sm whitespace-pre-wrap bg-[#09090b] border border-[#27272a] p-3 rounded-none overflow-x-auto">
+            <pre className="text-[var(--foreground)] text-sm whitespace-pre-wrap bg-[var(--background)] border border-[var(--border)] p-3 rounded-none overflow-x-auto">
               {content}
             </pre>
           )}
           
           {type === 'tutorial' && (
-            <div className="text-[#a1a1aa] text-sm leading-relaxed">
+            <div className="text-[var(--foreground)] text-sm leading-relaxed">
               {content}
             </div>
           )}
@@ -88,7 +91,7 @@ export function BentoCardPreview({
       {onQuickStart && (
         <button
           onClick={onQuickStart}
-          className="w-full mt-2 px-4 py-2 bg-[#f97316] text-white font-medium hover:bg-[#fb923c] transition-colors duration-150 ease-out rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+          className="w-full mt-2 px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] font-medium hover:bg-[var(--primary-600)] transition-colors duration-150 ease-out rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
           aria-label={t('bentoCardPreview.quickStart')}
         >
           {t('bentoCardPreview.quickStart')}

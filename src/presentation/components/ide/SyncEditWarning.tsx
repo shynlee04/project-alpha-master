@@ -1,10 +1,12 @@
 /**
  * SyncEditWarning Component
  *
- * Story 13-3: Add Sync Progress Indicator
+ * Story: LT-4.19 (Light Theme Migration)
+ * UPDATED_AT: 2026-01-04T10:30:00Z
  *
  * Displays a dismissible warning toast when user attempts to edit
  * during an active sync operation.
+ * Uses CSS custom properties for light/dark theme support.
  */
 
 import React, { useEffect, useState } from 'react'
@@ -61,17 +63,17 @@ export function SyncEditWarning({
 
     return (
         <div
-            className="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-950/90 px-4 py-3 text-sm text-amber-100 shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-2 fade-in"
+            className="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning-950)]/90 px-4 py-3 text-sm text-[var(--warning-100)] shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-2 fade-in"
             role="alert"
         >
-            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-amber-400" />
+            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-[var(--warning)]" />
             <span>{t('editor.input.syncWarning')}</span>
             <button
                 onClick={() => {
                     setVisible(false)
                     onDismiss()
                 }}
-                className="ml-2 rounded-sm p-1 text-amber-400 hover:bg-amber-800/50 hover:text-amber-200 transition-colors"
+                className="ml-2 rounded-sm p-1 text-[var(--warning)] hover:bg-[var(--warning-800)]/50 hover:text-[var(--warning-200)] transition-colors"
                 aria-label={t('common.dismiss')}
             >
                 <X className="h-3 w-3" />

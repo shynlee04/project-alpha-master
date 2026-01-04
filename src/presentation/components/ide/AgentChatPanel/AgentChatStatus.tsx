@@ -1,7 +1,11 @@
 /**
  * Agent Chat Status Component
  *
+ * Story: LT-4.19 (Light Theme Migration)
+ * UPDATED_AT: 2026-01-04T10:30:00Z
+ *
  * Displays error messages and API key warnings.
+ * Uses CSS custom properties for light/dark theme support.
  *
  * @layer Presentation
  * @component AgentChatStatus
@@ -38,11 +42,11 @@ export function AgentChatStatus({ error, apiKeyError, providerId }: AgentChatSta
 
             {/* API Key Missing Warning */}
             {apiKeyError && (
-                <div className="px-4 py-2 bg-yellow-500/10 border-b border-yellow-500/30 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                <div className="px-4 py-2 bg-[var(--warning)]/10 border-b border-[var(--warning)]/30 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-[var(--warning)] flex-shrink-0" />
                     <TruncatedText
                         text={`API Key missing for ${providerId}. Please configure it in the Agents panel.`}
-                        className="text-xs text-yellow-500 font-medium"
+                        className="text-xs text-[var(--warning)] font-medium"
                     />
                 </div>
             )}
