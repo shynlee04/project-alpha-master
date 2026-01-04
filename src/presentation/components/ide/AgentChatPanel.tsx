@@ -16,13 +16,10 @@ import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
 /**
  * @workspace ide-only
  *
- * This component uses the legacy WorkspaceContext (IDE-only).
+ * This component uses the unified workspace context (IDE-only).
  * Do NOT use this component outside of IDE workspace routes.
- *
- * For cross-workspace components, use useWorkspaceStore instead:
- * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
  */
-import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
 import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
 
@@ -70,7 +67,7 @@ export function AgentChatPanel({ projectId, projectName = 'Project' }: AgentChat
     });
 
     // Get workspace context for tool facades
-    const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspace();
+    const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspaceSync();
 
     // Create tool facades when workspace is ready
     const { fileTools, terminalTools } = useAgentChatToolFacades({

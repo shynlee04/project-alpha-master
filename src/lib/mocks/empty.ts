@@ -133,6 +133,9 @@ export const Controls = () => null;
 export const MiniMap = () => null;
 export const Handle = () => null;
 export const Position = { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' };
+export const applyNodeChanges = () => [];
+export const applyEdgeChanges = () => [];
+export const addEdge = () => [];
 
 // Sharp Mock
 export const sharp = () => ({
@@ -168,6 +171,8 @@ export const BarChart = () => null;
 export const Bar = () => null;
 export const PieChart = () => null;
 export const Pie = () => null;
+export const Cell = () => null;
+export const Sector = () => null;
 export const XAxis = () => null;
 export const YAxis = () => null;
 export const CartesianGrid = () => null;

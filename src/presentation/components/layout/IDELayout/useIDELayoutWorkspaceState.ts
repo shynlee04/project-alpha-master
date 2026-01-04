@@ -8,7 +8,7 @@
  */
 
 import { useMemo } from 'react';
-import { useWorkspace } from '@/lib/workspace';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { createFileToolsFacade } from '@/lib/agent/facades/file-tools-impl';
 import { createTerminalToolsFacade } from '@/lib/agent/facades/terminal-tools-impl';
 
@@ -37,7 +37,6 @@ interface UseIDELayoutWorkspaceStateResult {
  */
 export function useIDELayoutWorkspaceState(): UseIDELayoutWorkspaceStateResult {
     const {
-        projectId,
         projectMetadata,
         permissionState,
         syncStatus,
@@ -47,7 +46,10 @@ export function useIDELayoutWorkspaceState(): UseIDELayoutWorkspaceStateResult {
         eventBus,
         setIsWebContainerBooted,
         restoreAccess
-    } = useWorkspace();
+    } = useWorkspaceSync();
+
+    // Derive projectId from projectMetadata
+    const projectId = projectMetadata?.id || null;
 
     // Story MVP-3: Create tool facades for agent
     const fileTools = useMemo(() => {

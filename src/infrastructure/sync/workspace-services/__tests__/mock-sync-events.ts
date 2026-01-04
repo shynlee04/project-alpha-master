@@ -20,7 +20,7 @@
  * ```
  */
 
-import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 
 /**
  * Mock sync event emitter - simulates successful sync operation
@@ -34,7 +34,7 @@ import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
  * Duration: ~5 seconds
  */
 export function mockSyncEmit() {
-  const { eventBus } = useWorkspace();
+  const { eventBus } = useWorkspaceSync();
 
   if (!eventBus) {
     console.warn('[mockSyncEmit] No event bus available');
@@ -86,7 +86,7 @@ export function mockSyncEmit() {
  * Purpose: Test error state display and auto-hide (5s timeout)
  */
 export function mockSyncError() {
-  const { eventBus } = useWorkspace();
+  const { eventBus } = useWorkspaceSync();
 
   if (!eventBus) {
     console.warn('[mockSyncError] No event bus available');
@@ -129,7 +129,7 @@ export function mockSyncCustom({
   shouldFail?: boolean;
   errorMessage?: string;
 } = {}) {
-  const { eventBus } = useWorkspace();
+  const { eventBus } = useWorkspaceSync();
 
   if (!eventBus) {
     console.warn('[mockSyncCustom] No event bus available');

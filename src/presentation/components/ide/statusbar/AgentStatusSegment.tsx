@@ -16,13 +16,10 @@ import { StatusBarSegment } from './StatusBarSegment';
 /**
  * @workspace ide-only
  *
- * This component uses the legacy WorkspaceContext (IDE-only).
+ * This component uses the unified workspace context (IDE-only).
  * Do NOT use this component outside of IDE workspace routes.
- *
- * For cross-workspace components, use useWorkspaceStore instead:
- * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
  */
-import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 
 // ============================================================================
 // Component
@@ -39,7 +36,7 @@ import { useWorkspace } from '@/lib/workspace/WorkspaceContext';
  */
 export function AgentStatusSegment() {
     const { t } = useTranslation();
-    const { eventBus } = useWorkspace();
+    const { eventBus } = useWorkspaceSync();
     const agentStatus = useStatusBarStore((s) => s.agentStatus);
     const setAgentStatus = useStatusBarStore((s) => s.setAgentStatus);
 

@@ -39,7 +39,7 @@ export const Route = createFileRoute('/ide/$projectId')({
 });
 
 function IDEWorkspace() {
-  const { projectId } = Route.useParams();
+  const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
 
   return (

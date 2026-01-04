@@ -38,12 +38,11 @@ import type { ProjectMetadata } from '@/lib/workspace/project-store';
 // Import file system infrastructure types for refs
 import type { LocalFSAdapter, SyncManager } from '@/lib/filesystem';
 
-// Workspace event bus type (placeholder for event bus interface)
-export interface WorkspaceEventEmitter {
-    on(event: string, handler: (...args: any[]) => void): void;
-    off(event: string, handler: (...args: any[]) => void): void;
-    emit(event: string, ...args: any[]): void;
-}
+// Import canonical event bus type
+import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
+
+// Re-export the event bus type for consumers
+export type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 
 // Re-export types from their canonical sources
 export type { SyncStatus, SyncProgress } from '@/lib/filesystem/sync-types';
@@ -107,9 +106,9 @@ export interface WorkspaceFileSystemActions {
  */
 export interface WorkspaceRefs {
     /** LocalFSAdapter instance */
-    localAdapterRef: React.RefObject<LocalFSAdapter | null>;
+    localAdapterRef: RefObject<LocalFSAdapter | null>;
     /** SyncManager instance */
-    syncManagerRef: React.RefObject<SyncManager | null>;
+    syncManagerRef: RefObject<SyncManager | null>;
     /** Workspace event bus */
     eventBus: WorkspaceEventEmitter;
 }

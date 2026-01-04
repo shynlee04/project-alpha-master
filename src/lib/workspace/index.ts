@@ -48,16 +48,26 @@ export type {
 // Re-export TerminalTab type for backwards compatibility
 export type { TerminalTab } from '../state/ide-store';
 
-// Story 3-8: Workspace Context
+// Story 3-8: Workspace Context (MIGRATED - Story ARCH-01.3)
+// The old WorkspaceContext.tsx has been migrated to infrastructure/persistence/stores/workspace
+// Re-export from new location for backwards compatibility
+
 export {
-    WorkspaceProvider,
+    UnifiedWorkspaceProvider as WorkspaceProvider,
     useWorkspace,
-    type WorkspaceState,
-    type WorkspaceActions,
-    type WorkspaceContextValue,
-    type WorkspaceProviderProps,
-    type SyncStatus,
-} from './WorkspaceContext';
+    useWorkspaceSync,
+    useWorkspaceAgent,
+    useWorkspaceSwitcher,
+    useUnifiedWorkspaceContext,
+} from '@/infrastructure/persistence/stores/workspace';
+
+// Re-export types (avoiding duplicate ProjectMetadata from project-store above)
+export type {
+    UnifiedWorkspaceContextValue as WorkspaceContextValue,
+    SyncStatus,
+    SyncProgress,
+    FsaPermissionState,
+} from '@/infrastructure/persistence/stores/workspace';
 
 // Story WB-6: Cross-Workspace Navigation
 export {
