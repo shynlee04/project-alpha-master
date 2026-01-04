@@ -97,6 +97,7 @@ export interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
   VariantProps<typeof dialogContentVariants> {
   showCloseButton?: boolean
+  hideOverlay?: boolean
 }
 
 function DialogContent({
@@ -105,13 +106,14 @@ function DialogContent({
   size,
   variant,
   showCloseButton = true,
+  hideOverlay = false,
   ...props
 }: DialogContentProps) {
   const { t } = useTranslation()
 
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+      {!hideOverlay && <DialogOverlay />}
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(dialogContentVariants({ size, variant }), className)}

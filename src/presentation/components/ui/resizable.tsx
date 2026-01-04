@@ -677,8 +677,8 @@ function ResizableHandle({
       aria-orientation={context?.direction === 'vertical' ? 'horizontal' : 'vertical'}
       tabIndex={0}
       className={cn(
-        "bg-border relative flex items-center justify-center transition-colors z-50",
-        isDragging ? "bg-primary/60" : "hover:bg-primary/30",
+        "bg-border relative flex items-center justify-center transition-colors",
+        isDragging ? "z-50 bg-primary/60" : "z-10 hover:bg-primary/30",
         context?.direction === 'vertical'
           ? "h-1 w-full cursor-row-resize"
           : "w-1 h-full cursor-col-resize",

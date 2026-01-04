@@ -22,6 +22,8 @@ _Standards for creating responsive layouts that adapt across desktop, tablet, an
 | **Progressive Enhancement** | Core functionality works everywhere | Feature detection with graceful degradation |
 | **Content-Driven** | Layout adapts to content, not fixed breakpoints | Flexible units, intrinsic design |
 | **Touch-Friendly** | Mobile targets are 44x44px minimum | Finger-friendly interactive elements |
+| **Viewport Stability** | Use `dvh` instead of `vh` | Prevents layout jumps on mobile browsers |
+| **Input Zoom Prevention** | Mobile inputs must be `16px` (`text-base`) | Prevents iOS auto-zoom on focus |
 
 ### 1.2 Device Target Matrix
 
@@ -303,6 +305,15 @@ export function ExplorerPanel() {
   .text-3xl { font-size: 30px; }
   .text-4xl { font-size: 36px; }
 }
+
+### 4.5 Mobile Input Typography
+To prevent iOS from zooming in when an input is focused, the font size must be at least 16px (`text-base`). Use `text-base md:text-sm` pattern:
+
+```tsx
+<input 
+  className="text-base md:text-sm ..."
+/>
+```
 ```
 
 ### 4.4 Responsive Spacing

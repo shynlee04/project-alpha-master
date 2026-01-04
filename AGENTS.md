@@ -593,9 +593,13 @@ Research documents informing current implementation:
 All UI work must follow these standards:
 
 ### Design Principles
-- **8-bit Gaming Style**: Dark-themed aesthetic with pixel-perfect styling
-- **Responsive First**: Mobile detection with appropriate layouts
-- **No Hardcoded Values**: All styles via design tokens, all strings via i18n
+### Design Principles
+- **8-bit Gaming Style**: Dark-themed aesthetic with pixel-perfect styling. **NO GLASSMORPHISM/BLUR**.
+- **Solid Retro Styling**: Use solid, opaque backgrounds (e.g., `bg-card`, `bg-background`).
+- **Responsive First**: Mobile detection with appropriate layouts.
+  - Use `dvh` (Dynamic Viewport Height) for full-screen containers on mobile.
+  - Use `text-base` (16px) for inputs on mobile to prevent iOS auto-zoom.
+- **No Hardcoded Values**: All styles via design tokens, all strings via i18n.
 
 ### Device Detection
 ```typescript

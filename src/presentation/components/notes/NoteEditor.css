@@ -37,7 +37,8 @@
   padding: 8px 16px;
   border-bottom: 1px solid var(--color-border, #262626);
   background-color: var(--color-surface-elevated, #171717);
-  min-height: 44px; /* Touch-friendly */
+  min-height: 44px;
+  /* Touch-friendly */
 }
 
 .note-editor__emoji {
@@ -60,7 +61,8 @@
 .note-editor__status {
   font-size: 0.75rem;
   padding: 4px 8px;
-  border-radius: 0; /* 8-bit: squared corners */
+  border-radius: 0;
+  /* 8-bit: squared corners */
 }
 
 .note-editor__status--saving {
@@ -114,10 +116,12 @@
   color: var(--color-text-primary, #e5e5e5);
   background-color: var(--color-primary, #3b82f6);
   border: none;
-  border-radius: 0; /* 8-bit: squared corners */
+  border-radius: 0;
+  /* 8-bit: squared corners */
   cursor: pointer;
   transition: background-color 200ms ease-out;
-  min-height: 44px; /* Touch-friendly */
+  min-height: 44px;
+  /* Touch-friendly */
 }
 
 .note-editor__create-btn:hover {
@@ -164,7 +168,8 @@
 .note-editor [data-content-type="codeBlock"] {
   background-color: var(--color-surface-elevated, #171717);
   border: 1px solid var(--color-border, #262626);
-  border-radius: 0; /* 8-bit */
+  border-radius: 0;
+  /* 8-bit */
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
@@ -198,11 +203,11 @@
   .note-editor__status-bar {
     padding: 8px 12px;
   }
-  
+
   .note-editor__content {
     padding: 12px;
   }
-  
+
   /* Ensure touch targets are at least 44px */
   .note-editor .bn-side-menu-button,
   .note-editor .bn-drag-handle,
@@ -210,7 +215,7 @@
     min-width: 44px;
     min-height: 44px;
   }
-  
+
   /* Bottom-docked formatting toolbar on mobile */
   .note-editor .bn-formatting-toolbar {
     position: fixed;
@@ -220,7 +225,7 @@
     background-color: var(--color-surface-elevated, #171717);
     border-top: 1px solid var(--color-border, #262626);
     padding: 8px;
-    z-index: 100;
+    z-index: 20;
   }
 }
 

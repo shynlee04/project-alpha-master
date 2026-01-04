@@ -8,7 +8,7 @@ agent_mode: 'bmad-core-bmad-master'
 
 # Frontend CSS Standards
 
-_Standards for styling the Via-gent IDE using Tailwind CSS v4, CSS custom properties, and the 8-bit gaming aesthetic. This document defines design tokens, utility patterns, animation standards, and responsive styling guidelines._
+_Standards for styling the Via-gent IDE using Tailwind CSS v4, CSS custom properties, and the 8-bit gaming aesthetic. This document defines solid retro styling (no glassmorphism), design tokens, utility patterns, animation standards, and responsive styling guidelines._
 
 ---
 

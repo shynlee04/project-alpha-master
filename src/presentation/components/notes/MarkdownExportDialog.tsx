@@ -37,8 +37,8 @@ export function MarkdownExportDialog({
   }, [onOpenChange])
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={handleClose} modal={false}>
+      <DialogContent className="sm:max-w-md shadow-2xl border-2" hideOverlay>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileDown className="w-5 h-5" />
