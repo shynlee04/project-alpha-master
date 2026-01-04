@@ -1,4 +1,37 @@
 
+## 📐 DEFINITIVE ARCHITECTURE REFERENCE
+
+> **⚠️ AUTHORITATIVE**: These documents are the single source of truth for all architectural decisions.
+> Any confusion about file locations, data flow, or cross-dependencies should be resolved by consulting these documents.
+
+| Document | Purpose | Location |
+|----------|---------|----------|
+| **Platform Architecture** | 5-layer architecture, canonical file locations, contracts | `_bmad-output/architecture/platform-architecture-definitive-2026-01-04.md` |
+| **Data Flow Visual** | Visual diagrams for all layer interactions, sync lifecycles, RAG pipeline | `_bmad-output/architecture/data-flow-visual-2026-01-04.md` |
+
+### Quick Reference: Canonical Locations
+
+| Layer | Category | Location |
+|-------|----------|----------|
+| **Persistence** | Dexie Helpers | `src/lib/state/dexie-db-helpers/` |
+| **Persistence** | Dexie Storage | `src/lib/state/dexie-storage.ts` |
+| **Stores** | All Zustand | `src/infrastructure/persistence/stores/` |
+| **Domain** | Agent Tools | `src/lib/agent/tools/` |
+| **Domain** | RAG Pipeline | `src/lib/rag/` |
+| **Events** | Cross-Workspace | `src/infrastructure/events/` |
+
+### Size Limits
+
+| File Type | Max Lines |
+|-----------|-----------|
+| Slice file | 120 |
+| Store facade | 300 |
+| Component | 300 |
+| Hook | 150 |
+| Helper | 120 |
+
+---
+
 ## Project Overview
 
 **Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.

@@ -25,7 +25,7 @@ import {
 import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Wand2, Loader2 } from 'lucide-react';
-import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import { useSynthesisStore } from '@/infrastructure/persistence/stores/synthesis-store';
 import type { ArtifactType } from '@/lib/knowledge/synthesis-types';
 

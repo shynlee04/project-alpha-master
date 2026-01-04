@@ -9,7 +9,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
-import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import type { Collection } from '@/lib/state/dexie-db';
 
 export interface CollectionSelectorProps {

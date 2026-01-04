@@ -6,7 +6,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MetadataEditor } from '../MetadataEditor';
 import type { SourceRecord } from '@/lib/state/dexie-db';
-import type { SourceMetadataFields } from '@/lib/state/knowledge-store';
+import type { SourceMetadataFields } from '@/lib/state/knowledge/knowledge-store';
 
 // Mock sonner toast
 vi.mock('sonner', () => ({

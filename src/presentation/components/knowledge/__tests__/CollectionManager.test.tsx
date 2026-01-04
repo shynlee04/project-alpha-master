@@ -6,7 +6,7 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CollectionManager } from '../CollectionManager';
-import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import type { Collection } from '@/lib/state/dexie-db';
 
 // Mock knowledge store

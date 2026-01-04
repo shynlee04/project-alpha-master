@@ -7,7 +7,7 @@
 // Vitest globals available
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CollectionSelector } from '../CollectionSelector';
-import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import type { Collection } from '@/lib/state/dexie-db';
 
 // Mock knowledge store

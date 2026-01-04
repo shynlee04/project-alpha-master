@@ -6,7 +6,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SourceCard } from '../SourceCard';
-import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 
 // Mock knowledge store

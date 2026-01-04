@@ -6,7 +6,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { SourceCardGrid } from '../SourceCardGrid';
-import { useKnowledgeStore } from '@/lib/state/knowledge-store';
+import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
 import type { SourceRecord } from '@/lib/state/dexie-db';
 
 // Mock knowledge store
