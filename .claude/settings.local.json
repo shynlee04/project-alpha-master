@@ -8,7 +8,10 @@
       "Bash(git push:*)",
       "Bash(pnpm build:*)",
       "Bash(pnpm tsc --noEmit)",
-      "Bash(pnpm tsc:*)"
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm test:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm vitest:*)"
     ]
   },
   "outputStyle": "critical-code-reviewer"

@@ -7,6 +7,10 @@
  * TDD Red Phase: All tests should fail initially.
  */
 
+/**
+ * @vitest-environment jsdom
+ */
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useFileSyncStatusStore } from '@/lib/workspace/file-sync-status-store';
@@ -28,10 +32,12 @@ vi.mock('@webcontainer/api', () => ({
 describe('Sync Status Visibility - AC1', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   describe('Syncing indicator', () => {
@@ -144,8 +150,8 @@ describe('Sync Status Visibility - AC1', () => {
       });
 
       expect(result.current.status).toBe('complete');
-      expect(result.current.message).toContain('250');
-      expect(result.current.message).toContain('files');
+      expect(result.current.syncProgress.message).toContain('250');
+      expect(result.current.syncProgress.message).toContain('files');
     });
 
     it('should show "1 file" singular when syncing one file', async () => {
@@ -156,7 +162,7 @@ describe('Sync Status Visibility - AC1', () => {
         result.current.completeSync(1);
       });
 
-      expect(result.current.message).toContain('1 file');
+      expect(result.current.syncProgress.message).toContain('1 file');
     });
 
     it('should show elapsed time for sync', async () => {
@@ -185,14 +191,16 @@ describe('Sync Status Visibility - AC1', () => {
       });
 
       expect(result.current.status).toBe('error');
-      expect(result.current.error).toBeTruthy();
-      expect(result.current.error?.message).toContain('Permission denied');
+      expect(result.current.syncProgress.error).toBeTruthy();
+      expect(result.current.syncProgress.error).toContain('Permission denied');
     });
 
     it('should show user-friendly quota exceeded message', async () => {
       const { result } = renderHook(() => useFileSyncStatusStore());
 
-      const error = new Error('QuotaExceededError: IndexedDB quota exceeded');
+      // Create error with proper name for mapping
+      const error = new Error('IndexedDB quota exceeded');
+      (error as any).name = 'QuotaExceededError';
 
       act(() => {
         result.current.startSync();
@@ -207,7 +215,9 @@ describe('Sync Status Visibility - AC1', () => {
     it('should show user-friendly permission denied message', async () => {
       const { result } = renderHook(() => useFileSyncStatusStore());
 
-      const error = new Error('NotAllowedError: User denied permission');
+      // Create error with proper name for mapping
+      const error = new Error('User denied permission');
+      (error as any).name = 'NotAllowedError';
 
       act(() => {
         result.current.startSync();
@@ -215,13 +225,15 @@ describe('Sync Status Visibility - AC1', () => {
       });
 
       expect(result.current.status).toBe('error');
-      expect(result.current.userMessage).toContain('permission');
+      expect(result.current.userMessage.toLowerCase()).toContain('permission');
     });
 
     it('should suggest recovery action for each error type', async () => {
       const { result } = renderHook(() => useFileSyncStatusStore());
 
-      const error = new Error('NotAllowedError: User denied permission');
+      // Create error with proper name for mapping
+      const error = new Error('User denied permission');
+      (error as any).name = 'NotAllowedError';
 
       act(() => {
         result.current.startSync();

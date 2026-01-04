@@ -31,7 +31,39 @@ import { createDexieStorage } from '../state/dexie-storage';
 // Types
 // ============================================================================
 
+/** Overall sync operation status (Story 54-2 - AC1) */
+export type SyncStatusType = 'idle' | 'syncing' | 'complete' | 'error';
+
 export type FileSyncState = 'synced' | 'pending' | 'error';
+
+/**
+ * User-friendly error messages for common sync errors (Story 54-2 - AC1)
+ */
+interface ErrorMapping {
+  [key: string]: {
+    userMessage: string;
+    recoveryAction: string;
+  };
+}
+
+const ERROR_MAPPINGS: ErrorMapping = {
+  'QuotaExceededError': {
+    userMessage: 'Storage quota exceeded. Some files could not be saved.',
+    recoveryAction: 'Clear browser data or free up storage space.',
+  },
+  'NotAllowedError': {
+    userMessage: 'Permission denied. Please grant file system access.',
+    recoveryAction: 'Grant permission when prompted and try again.',
+  },
+  'PermissionDenied': {
+    userMessage: 'Permission denied to access directory.',
+    recoveryAction: 'Grant permission when prompted and try again.',
+  },
+  'NotFoundError': {
+    userMessage: 'File or directory not found.',
+    recoveryAction: 'Refresh the file list and try again.',
+  },
+};
 
 export interface FileSyncStatus {
   state: FileSyncState;
@@ -77,8 +109,39 @@ interface SyncStatusState {
   /** Sync operation progress (event bus integration, not persisted) */
   syncProgress: SyncProgress;
 
+  /** Overall sync status type (Story 54-2 - AC1) */
+  status: SyncStatusType;
+
+  /** Sync start time for elapsed time calculation (Story 54-2 - AC1) */
+  syncStartTime: number;
+
+  /** Elapsed sync time in milliseconds (Story 54-2 - AC1) */
+  elapsedTime: number;
+
   /** Whether the store has finished hydrating from persistence */
   _hasHydrated: boolean;
+
+  // ========== Computed Properties (Story 54-2 - AC1) ==========
+
+  /** Whether sync is currently running */
+  isSyncing: boolean;
+
+  /** Files processed count (same as syncProgress.current) */
+  filesProcessed: number;
+
+  /** Total files count (same as syncProgress.total) */
+  totalFiles: number;
+
+  /** Progress percentage (same as syncProgress.progress) */
+  progressPercent: number;
+
+  /** User-friendly error message (Story 54-2 - AC1) */
+  userMessage: string;
+
+  /** Recovery action suggestion (Story 54-2 - AC1) */
+  recoveryAction: string;
+
+  // ========== File Status Methods ==========
 
   /** Set a file's status to pending */
   setFileSyncPending: (path: string) => void;
@@ -98,11 +161,27 @@ interface SyncStatusState {
   /** Set hydration status */
   setHasHydrated: (hydrated: boolean) => void;
 
+  // ========== Legacy Sync Progress Methods ==========
+
   /** Sync progress actions (event bus integration) */
   setSyncStarted: (total: number) => void;
   setSyncProgress: (current: number, total: number, message?: string) => void;
   setSyncCompleted: (message?: string) => void;
   setSyncFailed: (error: string) => void;
+
+  // ========== New Sync Methods (Story 54-2 - AC1) ==========
+
+  /** Start sync operation */
+  startSync: () => void;
+
+  /** Update sync progress (files processed, total files) */
+  updateProgress: (filesProcessed: number, totalFiles: number) => void;
+
+  /** Complete sync operation with file count */
+  completeSync: (fileCount: number) => void;
+
+  /** Fail sync operation with error */
+  failSync: (error: Error) => void;
 }
 
 // ============================================================================
@@ -148,6 +227,16 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
           total: 0,
           progress: 0,
         },
+        // Story 54-2 - AC1: New state values
+        status: 'idle' as SyncStatusType,
+        syncStartTime: 0,
+        elapsedTime: 0,
+        isSyncing: false,
+        filesProcessed: 0,
+        totalFiles: 0,
+        progressPercent: 0,
+        userMessage: '',
+        recoveryAction: '',
         _hasHydrated: false,
 
         setFileSyncPending: (path) => {
@@ -270,6 +359,112 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
             },
           }));
         },
+
+        // ========== Story 54-2 - AC1: New Sync Methods ==========
+
+        /**
+         * Start sync operation (Story 54-2 - AC1)
+         * Sets status to 'syncing' and records start time
+         */
+        startSync: () => {
+          const startTime = Date.now();
+          set({
+            status: 'syncing' as SyncStatusType,
+            syncStartTime: startTime,
+            elapsedTime: 0,
+            isSyncing: true,
+            syncProgress: {
+              isRunning: true,
+              current: 0,
+              total: 0,
+              progress: 0,
+              message: 'Syncing...',
+            },
+          });
+        },
+
+        /**
+         * Update sync progress (Story 54-2 - AC1)
+         * @param filesProcessed - Number of files processed so far
+         * @param totalFiles - Total number of files to sync
+         */
+        updateProgress: (filesProcessed, totalFiles) => {
+          const progress = totalFiles > 0
+            ? Math.min((filesProcessed / totalFiles) * 100, 100)
+            : 0;
+
+          set((state) => ({
+            syncProgress: {
+              ...state.syncProgress,
+              current: filesProcessed,
+              total: totalFiles,
+              progress,
+              message: `Syncing ${filesProcessed}/${totalFiles} files...`,
+            },
+            // Update computed properties
+            filesProcessed,
+            totalFiles,
+            progressPercent: progress,
+            elapsedTime: state.syncStartTime ? Date.now() - state.syncStartTime : 0,
+          }));
+        },
+
+        /**
+         * Complete sync operation (Story 54-2 - AC1)
+         * @param fileCount - Total number of files synced
+         */
+        completeSync: (fileCount) => {
+          const elapsed = get().syncStartTime ? Date.now() - get().syncStartTime : 0;
+          const message = fileCount === 1
+            ? 'Sync complete: 1 file'
+            : `Sync complete: ${fileCount} files`;
+
+          set({
+            status: 'complete' as SyncStatusType,
+            isSyncing: false,
+            syncProgress: {
+              isRunning: false,
+              current: fileCount,
+              total: fileCount,
+              progress: 100,
+              message,
+            },
+            filesProcessed: fileCount,
+            totalFiles: fileCount,
+            progressPercent: 100,
+            elapsedTime: elapsed,
+            userMessage: message,
+            recoveryAction: '',
+          });
+        },
+
+        /**
+         * Fail sync operation (Story 54-2 - AC1)
+         * @param error - The error that caused the failure
+         */
+        failSync: (error) => {
+          const elapsed = get().syncStartTime ? Date.now() - get().syncStartTime : 0;
+          const errorName = error.name || '';
+          const errorMapping = ERROR_MAPPINGS[errorName] || {
+            userMessage: error.message || 'Sync failed',
+            recoveryAction: 'Try again or check file permissions.',
+          };
+
+          set({
+            status: 'error' as SyncStatusType,
+            isSyncing: false,
+            syncProgress: {
+              isRunning: false,
+              error: error.message,
+              current: get().syncProgress.current,
+              total: get().syncProgress.total,
+              progress: get().syncProgress.progress,
+            },
+            elapsedTime: elapsed,
+            userMessage: errorMapping.userMessage,
+            recoveryAction: errorMapping.recoveryAction,
+          });
+        },
       }),
     ),
     {
@@ -279,6 +474,7 @@ export const useFileSyncStatusStore = create<SyncStatusState>()(
         statuses: state.statuses,
         // counts are recomputed from statuses on hydration
         // syncProgress is NOT persisted (runtime-only state)
+        // New AC1 fields are also runtime-only
       }),
       onRehydrateStorage: () => {
         console.log('[FileSyncStatusStore] Hydration starting...');

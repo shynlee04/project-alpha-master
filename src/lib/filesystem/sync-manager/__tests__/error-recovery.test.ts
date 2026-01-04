@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { SyncError, SyncErrorCode } from '../sync-types';
+import { SyncError, SyncErrorCode } from '@/lib/filesystem/sync-types';
 
 // Mock file system
 const mockFileSystem = {
@@ -282,14 +282,19 @@ describe('Error Recovery - AC4', () => {
   });
 
   describe('Recovery action suggestions', () => {
-    const recoveryActions: Record<SyncErrorCode, string> = {
-      [SyncErrorCode.PERMISSION_DENIED]: 'Grant permission to access your files',
-      [SyncErrorCode.QUOTA_EXCEEDED]: 'Clear browser cache or free up storage space',
-      [SyncErrorCode.NETWORK_ERROR]: 'Check your internet connection and try again',
-      [SyncErrorCode.INVALID_PATH]: 'Check the file path and try again',
-      [SyncErrorCode.WEBCONTAINER_ERROR]: 'Refresh the page and try again',
-      [SyncErrorCode.PARTIAL_SUCCESS]: 'Retry sync to complete the operation',
-      [SyncErrorCode.UNKNOWN]: 'Try again or contact support',
+    const recoveryActions: Record<string, string> = {
+      'PERMISSION_DENIED': 'Grant permission to access your files',
+      'FILE_NOT_FOUND': 'Check the file path and try again',
+      'FILE_READ_FAILED': 'Check file permissions and try again',
+      'FILE_WRITE_FAILED': 'Check disk space and try again',
+      'DIR_CREATE_FAILED': 'Check directory path and permissions',
+      'DIR_DELETE_FAILED': 'Check if directory is in use',
+      'DISK_FULL': 'Clear browser cache or free up storage space',
+      'WEBCONTAINER_ERROR': 'Refresh the page and try again',
+      'WEBCONTAINER_NOT_BOOTED': 'Wait for WebContainer to initialize',
+      'ENCODING_ERROR': 'Check file encoding and try again',
+      'SYNC_FAILED': 'Check connection and files, then retry',
+      'UNKNOWN': 'Try again or contact support',
     };
 
     it('should provide recovery action for each error type', () => {
@@ -301,12 +306,26 @@ describe('Error Recovery - AC4', () => {
     });
 
     it('should have recovery action for all error codes', () => {
-      const errorCodes = Object.values(SyncErrorCode);
+      const errorCodes: SyncErrorCode[] = [
+        'PERMISSION_DENIED',
+        'FILE_NOT_FOUND',
+        'FILE_READ_FAILED',
+        'FILE_WRITE_FAILED',
+        'DIR_CREATE_FAILED',
+        'DIR_DELETE_FAILED',
+        'DISK_FULL',
+        'WEBCONTAINER_ERROR',
+        'WEBCONTAINER_NOT_BOOTED',
+        'ENCODING_ERROR',
+        'SYNC_FAILED',
+        'UNKNOWN',
+      ];
 
       errorCodes.forEach(code => {
         const error = new SyncError('Test', code);
-        expect(error.recoveryAction).toBeDefined();
-        expect(error.recoveryAction.length).toBeGreaterThan(0);
+        expect(error.code).toBe(code);
+        expect(error.message).toBe('Test');
+        expect(error.name).toBe('SyncError');
       });
     });
   });

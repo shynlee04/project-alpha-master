@@ -8,7 +8,11 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { shouldReadAsBinary, BINARY_EXTENSIONS } from '../sync-utils';
+import { isBinaryFile } from '@/lib/filesystem/sync-utils';
+import { BINARY_EXTENSIONS } from '@/lib/filesystem/sync-types';
+
+// Facade for test compatibility - wraps the existing isBinaryFile function
+export const shouldReadAsBinary = isBinaryFile;
 
 describe('File Type Handling - AC3', () => {
   describe('Text file detection', () => {

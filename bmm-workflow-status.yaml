@@ -2716,71 +2716,104 @@ epic_52_next_actions:
   - "Validate all 18 use cases post-implementation"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# WORKFLOW STATUS UPDATE - STABILIZATION SPRINT ACTIVE
+# WORKFLOW STATUS UPDATE - FOUNDATION ARCHITECTURE SPRINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-current_workflow: "stabilization-sprint-foundation-lock-in-2026-01-04"
-current_story: "STAB-24.1" # Starting P0 Foundation Stabilization
-phase: "Phase 2 - P0 Elimination"
-last_updated: "2026-01-04T18:25:00+07:00"
+current_workflow: "foundation-architecture-sprint-2026-01-04"
+current_story: "ARCH-01.1" # Starting Unified Sync Manager
+phase: "Phase 1 - Core Architecture"
+last_updated: "2026-01-04T21:00:00+07:00"
 
 workflow_status:
   epic_51: "done" # Platform Unification
-  epic_52: "paused" # UX/UI Integration Gaps (P2-10 deferred to post-stabilization)
-  epic_53: "in_progress" # State Management Consolidation (1/8 stories done)
-  stab_24: "in_progress" # P0 Foundation Stabilization (NEW - Week 1-2)
-  stab_25: "backlog" # Store Consolidation (Week 3-4)
-  stab_26: "backlog" # God File Splitting (Week 5-6)
-  stab_27: "backlog" # Performance Polish (Week 7-8)
+  epic_52: "paused" # UX/UI Integration Gaps (deferred to post-architecture)
+  epic_53: "superseded" # State Management Consolidation (absorbed into ARCH-01.2)
+  arch_01: "in_progress" # Foundation Architecture (NEW - Primary)
+  stab_24: "in_progress" # P0 Foundation Stabilization (Parallel with ARCH-01)
+  stab_25: "superseded" # Store Consolidation (absorbed into ARCH-01.2)
+  stab_26: "backlog" # God File Splitting (Post-architecture)
+  stab_27: "backlog" # Performance Polish (Post-architecture)
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# STABILIZATION SPRINT - FOUNDATION LOCK-IN (8 WEEKS)
-# Deep Scan: 68.5/100 health → Target: 90/100 health
-# Reference: _bmad/modules/architecture-remediation/workflows/stabilization-sprint.md
+# FOUNDATION ARCHITECTURE SPRINT (6 WEEKS)
+# Deep Scan: 68.5/100 health → Target: 85/100 health
+# Sprint Change Proposal: _bmad-output/sprint-artifacts/sprint-change-proposal-2026-01-04.md
+# Epic Definition: _bmad-output/epics/epic-arch-01-foundation-architecture.md
 # ═══════════════════════════════════════════════════════════════════════════════
 
-stabilization_sprint:
-  id: "foundation-lock-in-2026-01-04"
-  status: "ACTIVE"
-  started_at: "2026-01-04T18:25:00+07:00"
-  target_end: "2026-02-28"
+foundation_architecture_sprint:
+  id: "foundation-architecture-2026-01-04"
+  status: "PLANNING_COMPLETE"
+  created_at: "2026-01-04T21:00:00+07:00"
+  target_end: "2026-02-14"
   
   health_score:
     baseline: 68.5
     current: 68.5
-    target: 90
+    target: 85
     
-  p0_risks:
-    initial: 3
-    remaining: 3
-    target: 0
+  core_objective: |
+    Establish rock-solid foundation by consolidating fragmented systems,
+    enforcing Clean Architecture, and enabling the "Marketing Executive" 
+    use case where a non-technical user can create a full-stack landing 
+    page through agentic AI with bidirectional file synchronization.
     
   active_epics:
+    - id: "ARCH-01"
+      name: "Foundation Architecture Refactoring"
+      status: "pending_authorization"
+      priority: "P0"
+      estimated_hours: 320
+      stories:
+        - "ARCH-01.1: Unified Sync Manager (64h) - Team A"
+        - "ARCH-01.2: Complete State Consolidation (40h) - Team B"
+        - "ARCH-01.3: Workspace Context Unification (48h) - Team A"
+        - "ARCH-01.4: Agent Tool Permission Matrix (40h) - Team B"
+        - "ARCH-01.5: RAG Auto-Indexing on Sync (56h) - Team A"
+        - "ARCH-01.6: Cross-Workspace Context Sharing (48h) - Team B"
+      epic_document: "_bmad-output/epics/epic-arch-01-foundation-architecture.md"
+      
     - id: "STAB-24"
       name: "P0 Foundation Stabilization"
-      status: "in_progress"
+      status: "ready"
       priority: "P0"
-      team: "A+B (Parallel)"
+      estimated_hours: 44
+      notes: "Running in parallel with ARCH-01.1 and ARCH-01.2"
       stories:
-        - "STAB-24.1: Encrypt localStorage Keys (Team B)"
-        - "STAB-24.2: IndexedDB Quota Handling (Team B)"
-        - "STAB-24.3: Replace Hardcoded Pixels (Team A)"
+        - "STAB-24.1: Encrypt localStorage Keys (16h) - Team B"
+        - "STAB-24.2: IndexedDB Quota Handling (22h) - Team B"
+        - "STAB-24.3: Replace Hardcoded Pixels (12h) - Team A"
       epic_document: "_bmad-output/epics/epic-stab-24-foundation-stabilization.md"
       
   tracking_files:
-    sprint_status: "_bmad-output/sprint-artifacts/stabilization-sprint-status.yaml"
-    workflow: "_bmad/modules/architecture-remediation/workflows/stabilization-sprint.md"
+    sprint_status: "_bmad-output/sprint-artifacts/sprint-status.yaml"
+    sprint_change_proposal: "_bmad-output/sprint-artifacts/sprint-change-proposal-2026-01-04.md"
+    stabilization_workflow: "_bmad/modules/architecture-remediation/workflows/stabilization-sprint.md"
     priorities: "_bmad/modules/architecture-remediation/config/priorities.yaml"
 
-next_priority: "STAB-24.1: Encrypt localStorage Keys + STAB-24.3: Design Tokens (Parallel)"
-next_action: "Execute P0 stories in parallel - Team A (UI) + Team B (Backend)"
+next_priority: "AUTHORIZATION REQUIRED: Approve Sprint Change Proposal (SCP-2026-01-04)"
+next_action: |
+  After approval:
+  - Team A: ARCH-01.1 (Unified Sync Manager) + STAB-24.3 (Design Tokens)
+  - Team B: ARCH-01.2 (State Consolidation) + STAB-24.1 (localStorage) + STAB-24.2 (Quota)
 
 ralph_loop_status:
-  iteration: 1134
-  module: "architecture-remediation-stabilization"
-  phase: "phase_2_p0_elimination"
+  iteration: 1135
+  module: "foundation-architecture"
+  phase: "planning_complete"
   team: "Team A + Team B"
-  last_completed: "2026-01-04T18:25:00+07:00"
-  current_task: "Initialize STAB-24 execution"
+  last_completed: "2026-01-04T21:00:00+07:00"
+  current_task: "Awaiting user authorization for Sprint Change Proposal"
   
-completion_promise: "Foundation Stable: 90/100 health score, zero P0 risks, all workspaces functional, safe for feature development"
+completion_promise: |
+  Foundation Stable: 
+  - 85/100 health score
+  - Zero P0 risks
+  - Single unified SyncEngine
+  - All stores consolidated
+  - Workspace context unified
+  - Tool permissions complete
+  - RAG auto-indexing on sync
+  - Cross-workspace context sharing
+  - "Marketing Executive" use case functional
+

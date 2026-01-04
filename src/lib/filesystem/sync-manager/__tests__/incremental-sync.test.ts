@@ -11,29 +11,80 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { FileMetadataCache } from '@/lib/sync/file-metadata-cache';
 import type { FileMetadataRecord } from '@/lib/state/dexie-db';
 
-// Mock Dexie DB
-vi.mock('@/infrastructure/persistence/dexie-db', () => ({
-  db: {
-    fileMetadata: {
-      where: vi.fn(() => ({
-        equals: vi.fn(() => ({
-          first: vi.fn(),
-        })),
-      })),
-      toArray: vi.fn(),
-      put: vi.fn(),
-      bulkPut: vi.fn(),
-    }),
-  },
-  getChangedFilesSince: vi.fn(),
-  clearFileMetadataCache: vi.fn(),
-}));
+// In-memory storage for mock database
+const mockMetadataStore = new Map<string, FileMetadataRecord>();
+
+// Mock Dexie DB with in-memory storage
+vi.mock('@/infrastructure/persistence/dexie-db', () => {
+  const mockWhere = vi.fn((field: string) => {
+    return {
+      equals: vi.fn((value: string | [string, string]) => {
+        // Handle compound index queries [projectId+path]
+        if (Array.isArray(value)) {
+          const [projectId, path] = value;
+          const found = Array.from(mockMetadataStore.values()).find(
+            (m) => m.projectId === projectId && m.path === path
+          );
+          return {
+            first: () => Promise.resolve(found || undefined),
+            delete: () => Promise.resolve(),
+          };
+        }
+        // Handle simple path queries
+        const found = mockMetadataStore.get(value);
+        return {
+          first: () => Promise.resolve(found || undefined),
+          delete: () => {
+            mockMetadataStore.delete(value);
+            return Promise.resolve();
+          },
+        };
+      }),
+    };
+  });
+
+  return {
+    db: {
+      fileMetadata: {
+        where: mockWhere,
+        toArray: () => Promise.resolve(Array.from(mockMetadataStore.values())),
+        put: (metadata: FileMetadataRecord) => {
+          mockMetadataStore.set(metadata.path, metadata);
+          return Promise.resolve();
+        },
+        bulkPut: (files: FileMetadataRecord[]) => {
+          for (const file of files) {
+            mockMetadataStore.set(file.path, file);
+          }
+          return Promise.resolve();
+        },
+        orderBy: () => ({
+          last: () => {
+            const values = Array.from(mockMetadataStore.values());
+            return Promise.resolve(values[values.length - 1] || undefined);
+          },
+        }),
+      },
+    },
+    getChangedFilesSince: (sinceTimestamp: number) => {
+      return Promise.resolve(
+        Array.from(mockMetadataStore.values()).filter(
+          (m) => m.lastModified > sinceTimestamp
+        )
+      );
+    },
+    clearFileMetadataCache: () => {
+      mockMetadataStore.clear();
+      return Promise.resolve();
+    },
+  };
+});
 
 describe('Incremental Sync - AC2', () => {
   let fileMetadataCache: FileMetadataCache;
-  const mockDb = (await import('@/infrastructure/persistence/dexie-db')).db;
 
   beforeEach(() => {
+    mockMetadataStore.clear(); // Clear store before each test
     fileMetadataCache = new FileMetadataCache();
     vi.clearAllMocks();
   });
