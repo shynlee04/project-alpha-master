@@ -11,7 +11,8 @@
       "Bash(pnpm tsc:*)",
       "Bash(pnpm test:*)",
       "Bash(cat:*)",
-      "Bash(pnpm vitest:*)"
+      "Bash(pnpm vitest:*)",
+      "Bash(pnpm typecheck:*)"
     ]
   },
   "outputStyle": "critical-code-reviewer"
