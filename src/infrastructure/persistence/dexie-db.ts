@@ -117,6 +117,7 @@ export type {
     OramaIndexRecord,
     EmbeddingModelRecord,
     NoteRecord,
+    SynthesisResultRecord,
 } from './dexie-db-knowledge-types';
 
 export type {
