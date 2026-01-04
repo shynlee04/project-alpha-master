@@ -37,7 +37,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ className, children }) =
   return (
     // CRITICAL FIX: Use flex-col for mobile, flex-row for desktop
     // Added 'bg-background' and 'text-foreground' explicitly
-    <div className={cn('flex flex-col md:flex-row h-screen w-full bg-background text-foreground overflow-hidden font-sans', className)}>
+    <div className={cn('flex flex-col md:flex-row h-dvh w-full bg-background text-foreground overflow-hidden font-sans', className)}>
 
       {/* Mobile Header - Visible only on mobile */}
       <header className="md:hidden flex items-center justify-between h-14 border-b-2 border-border px-4 bg-background z-20 shrink-0 shadow-sm">

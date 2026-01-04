@@ -107,7 +107,7 @@ export function BentoCard({
       {/* Topic Badge - Subtle placement */}
       {topic && (
         <div className="absolute top-2 right-2 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
-          <span className="inline-block px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-pixel text-muted-foreground bg-background/50 border border-border/50 backdrop-blur-sm">
+          <span className="inline-block px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-pixel text-muted-foreground bg-background border border-border/50">
             {topic}
           </span>
         </div>

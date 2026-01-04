@@ -63,7 +63,7 @@ export function SyncEditWarning({
 
     return (
         <div
-            className="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning-950)]/90 px-4 py-3 text-sm text-[var(--warning-100)] shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-2 fade-in"
+            className="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning-950)] px-4 py-3 text-sm text-[var(--warning-100)] shadow-lg animate-in slide-in-from-bottom-2 fade-in"
             role="alert"
         >
             <AlertTriangle className="h-4 w-4 flex-shrink-0 text-[var(--warning)]" />

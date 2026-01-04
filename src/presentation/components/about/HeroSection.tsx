@@ -31,49 +31,49 @@ export interface HeroSectionProps {
    * If not provided, avatar section is hidden
    */
   avatarUrl?: string;
-  
+
   /**
    * Avatar alt text for accessibility
    * Required if avatarUrl is provided
    */
   avatarAlt?: string;
-  
+
   /**
    * Primary CTA label
    * Defaults to "View Projects" via i18n
    */
   primaryCTALabel?: string;
-  
+
   /**
    * Primary CTA navigation target
    * Defaults to "#projects"
    */
   primaryCTATarget?: string;
-  
+
   /**
    * Secondary CTA label
    * Defaults to "Contact Me" via i18n
    */
   secondaryCTALabel?: string;
-  
+
   /**
    * Secondary CTA navigation target
    * Defaults to "#contact"
    */
   secondaryCTATarget?: string;
-  
+
   /**
    * Particle animation enabled
    * Defaults to true
    */
   enableParticles?: boolean;
-  
+
   /**
    * Particle count (performance optimization)
    * Defaults to 50 (desktop), 25 (mobile)
    */
   particleCount?: number;
-  
+
   /**
    * Custom className for styling overrides
    */
@@ -106,7 +106,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   const { t } = useTranslation();
   const { isMobile } = useResponsive();
-  
+
   /**
    * Determine particle count based on screen size
    * Uses useResponsive hook for consistent breakpoint detection
@@ -277,23 +277,23 @@ export function HeroSection({
                 fontWeight: 600,
                 lineHeight: 1,
                 border: '2px solid hsl(var(--border))',
-              borderRadius: 'var(--radius)',
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-pixel)',
-              transition: 'all var(--animation-duration-medium) var(--animation-easing-8bit)',
-              minWidth: '180px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '4px 4px 0px 0px rgba(0, 0, 0, 0.5)';
-              e.currentTarget.style.borderColor = 'hsl(var(--primary))';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-pixel)';
-              e.currentTarget.style.borderColor = 'hsl(var(--border))';
-            }}
-          >
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-pixel)',
+                transition: 'all var(--animation-duration-medium) var(--animation-easing-8bit)',
+                minWidth: '180px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '4px 4px 0px 0px rgba(0, 0, 0, 0.5)';
+                e.currentTarget.style.borderColor = 'hsl(var(--primary))';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-pixel)';
+                e.currentTarget.style.borderColor = 'hsl(var(--border))';
+              }}
+            >
               {secondaryCTALabel || t('about.hero.secondaryCTA')}
             </button>
           )}
@@ -320,7 +320,7 @@ export function HeroSection({
           }
           
           #hero-heading {
-            font-size: 32px !important;
+            font-size: 2rem !important;
           }
           
           .hero-content p {
@@ -339,8 +339,8 @@ export function HeroSection({
           }
           
           img {
-            width: 80px !important;
-            height: 80px !important;
+            width: 5rem !important;
+            height: 5rem !important;
             margin-bottom: var(--spacing-mobile) * 2 !important;
           }
         }
@@ -352,7 +352,7 @@ export function HeroSection({
           }
           
           #hero-heading {
-            font-size: 40px !important;
+            font-size: 2.5rem !important;
           }
           
           .hero-content p {
@@ -369,8 +369,8 @@ export function HeroSection({
           }
           
           img {
-            width: 100px !important;
-            height: 100px !important;
+            width: 6.25rem !important;
+            height: 6.25rem !important;
             margin-bottom: var(--spacing-tablet) * 2 !important;
           }
         }

@@ -209,7 +209,7 @@ export function AgentConfigDialog({
     return (
         <>
             <Dialog open={open} onOpenChange={handleRequestClose}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-none">
+                <DialogContent className="max-w-2xl max-h-[90dvh] overflow-y-auto rounded-none">
                     {/* Iteration 15 Phase 4: Extracted header component */}
                     <AgentConfigDialogHeader
                         agentId={agentId ?? undefined}
