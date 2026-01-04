@@ -86,6 +86,23 @@ import { db, getDb } from '@/infrastructure/persistence/dexie-db';
 
 ---
 
+### 🔍 DEEP-SCAN MODULE (DIAGNOSTICS)
+
+**Module Location**: `_bmad/modules/deep-scan/`
+**Status**: ✅ ACTIVE
+**Purpose**: Comprehensive architectural diagnostics & evidence-based auditing.
+
+**Key Capabilities**:
+- **9 Specialized Scanners**: State, Types, Architecture, Persistence, Agent/RAG, UX, Workspace, Security, Performance.
+- **Audit-Grade Evidence**: All findings backed by file paths, line numbers, and reproducible proofs.
+- **Risk Prioritization**: Automated P0-P3 ranking based on blast radius and severity.
+
+**Integration**:
+- Feeds directly into **Architecture Remediation** module (Diagnosis → Remediation).
+- Available via `/deep-scan-full` and `/deep-scan-targeted` commands.
+
+---
+
 ## Project Overview
 
 **Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.

@@ -1,0 +1,15 @@
+# Evidence Block Template
+# Standard format for reporting technical findings
+
+id: "EV-{DOMAIN}-{SEQ}" # e.g., EV-STATE-001
+type: "{Violation Type}" # e.g., God Store, Layer Violation
+severity: "{Critical|High|Medium|Low}"
+target: "{file_path}"
+loc: {line_of_code}
+proof:
+  - line: {line_number}
+    content: "{code_snippet}"
+analysis: |
+  {Description of why this is an issue}
+  {Impact statement}
+remediation_ref: "{related_agent_or_doc}"
