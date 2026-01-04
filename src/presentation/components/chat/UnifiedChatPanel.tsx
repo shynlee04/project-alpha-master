@@ -68,6 +68,8 @@ interface AgentModeProps extends BaseProps {
   mode: 'agent';
   /** Project name for system prompt */
   projectName?: string;
+  /** Workspace type for context-aware chat */
+  workspaceType?: 'ide' | 'notes' | 'knowledge' | 'study';
 }
 
 /**
@@ -108,6 +110,14 @@ export type UnifiedChatPanelProps = ThreadedModeProps | SimpleModeProps | AgentM
  *   projectId={projectId}
  *   projectName="MyProject"
  * />
+ *
+ * // Agent mode (Notes workspace - limited tools)
+ * <UnifiedChatPanel
+ *   mode="agent"
+ *   projectId={projectId}
+ *   projectName="MyNotes"
+ *   workspaceType="notes"
+ * />
  * ```
  */
 export const UnifiedChatPanel = memo(function UnifiedChatPanel(
@@ -141,6 +151,7 @@ export const UnifiedChatPanel = memo(function UnifiedChatPanel(
         <AgentChatPanel
           projectId={projectId}
           projectName={props.projectName}
+          workspaceType={props.workspaceType}
         />
       );
 

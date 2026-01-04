@@ -30,7 +30,7 @@ const TooltipContent = React.forwardRef<
                 "z-50 overflow-hidden px-3 py-1.5 text-xs",
                 // Pixel aesthetic - squared corners
                 "rounded-none border border-border",
-                "bg-popover text-popover-foreground",
+                "bg-popover text-popover-foreground !bg-opacity-100",
                 // Pixel shadow
                 "shadow-sm",
                 // Animation

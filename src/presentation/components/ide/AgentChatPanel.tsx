@@ -83,7 +83,7 @@ export function AgentChatPanel({
 
     // Create tool facades when workspace is ready
     // Notes workspace only gets file read tools, not write/terminal
-    const { fileTools, terminalTools } = useAgentChatToolFades({
+    const { fileTools, terminalTools } = useAgentChatToolFacades({
         localAdapterRef,
         syncManagerRef,
         eventBus,
