@@ -462,6 +462,8 @@ export function NotesPage() {
                             <UnifiedChatPanel
                                 mode="agent"
                                 projectId={projectId}
+                                projectName={projectId}
+                                workspaceType="notes"
                                 className="h-full"
                             />
                         )}
