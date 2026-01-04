@@ -189,8 +189,8 @@ development_status:
   53-1-consolidate-dexie-database: done # COMPLETED 2026-01-04T09:45:00+07:00 - Facade created with deprecation warning, db/getDb exported
   53-2-move-dexie-helpers: done # COMPLETED 2026-01-04T10:05:00+07:00 - Helpers moved to infrastructure/persistence/dexie-db-helpers/, barrel file created, SynthesisResultRecord added
   53-3-merge-knowledge-store: done # COMPLETED 2026-01-04T13:20:00+07:00 - All lib/state/knowledge files now facades, canonical at infrastructure/persistence/stores/knowledge
-  53-4-migrate-ide-store: backlog # Merge lib/state/ide-store with infrastructure/persistence/stores/ide
-  53-5-migrate-quiz-permission-stores: backlog # Move quiz-store, tool-permission-store, workspace-store
+  53-4-migrate-ide-store: done # COMPLETED 2026-01-04T14:00:00+07:00 - Added panelCollapsed to infra slices, created facade at lib/state/ide-store.ts, 14 consumers via facade
+  53-5-migrate-quiz-permission-stores: in-progress # Move quiz-store, tool-permission-store, workspace-store
   53-6-move-dexie-storage: backlog # Move dexie-storage.ts to infrastructure/persistence
   53-7-update-all-imports: backlog # Update production code to use canonical paths
   53-8-documentation-cleanup: backlog # Update AGENTS.md, architecture.md, project-context.md
@@ -199,9 +199,10 @@ development_status:
     phase_1_complete: true # COMPLETED 2026-01-04T09:45:00+07:00 - Story 53-1 done (Dexie database facade)
     phase_2_complete: true # COMPLETED 2026-01-04T10:05:00+07:00 - Story 53-2 done (Dexie helpers migration)
     phase_3_complete: true # COMPLETED 2026-01-04T13:20:00+07:00 - Story 53-3 done (Knowledge store merge)
-    stories_done: 3
+    phase_4_complete: true # COMPLETED 2026-01-04T14:00:00+07:00 - Story 53-4 done (IDE store migration)
+    stories_done: 4
     stories_total: 8
-    completion_percentage: "37.5%"
+    completion_percentage: "50%"
 
 
 
