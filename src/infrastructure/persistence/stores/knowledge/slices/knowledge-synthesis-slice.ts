@@ -10,11 +10,8 @@
 
 import { StateCreator } from 'zustand';
 import type { KnowledgeStoreState } from '../types';
-import {
-    createSynthesisResult as dbCreateSynthesisResult,
-    updateSynthesisResultStatus as dbUpdateSynthesisResultStatus,
-    getSynthesisResultForSource as dbGetSynthesisResultForSource,
-} from '../../../dexie-db-helpers';
+import { createSynthesisResult as dbCreateSynthesisResult, updateSynthesisResultStatus as dbUpdateSynthesisResultStatus } from '../../../dexie-db-helpers/synthesis-result-helpers-create';
+import { getSynthesisResultForSource as dbGetSynthesisResultForSource } from '../../../dexie-db-helpers/synthesis-result-helpers-crud';
 import { SynthesisService } from '@/lib/knowledge/synthesis-service';
 
 export interface SynthesisState {
@@ -33,8 +30,7 @@ export const createSynthesisSlice: StateCreator<KnowledgeStoreState> = (set, get
         set((state) => ({ synthesizingSources: new Set([...state.synthesizingSources, sourceId]) }));
 
         try {
-            const synthesisId = await dbCreateSynthesisResult(sourceId, source.projectId, source.type);
-            await dbUpdateSynthesisResultStatus(synthesisId, 'pending');
+            const synthesisId = await dbCreateSynthesisResult(sourceId, source.projectId, 'pending');
 
             const providerId = 'gemini';
             const modelId = undefined;
@@ -70,9 +66,7 @@ export const createSynthesisSlice: StateCreator<KnowledgeStoreState> = (set, get
             if (synthesisResult) {
                 await dbUpdateSynthesisResultStatus(
                     synthesisResult.id,
-                    'failed',
-                    undefined,
-                    (error as Error).message
+                    'failed'
                 );
             }
         } finally {
