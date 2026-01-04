@@ -1,0 +1,44 @@
+src/presentation/components/common/CrossWorkspaceFileReference.tsx: * UI component for displaying and interacting with cross-workspace file references.
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:import type { ResolvedReference, BrokenReferenceReason } from '@/lib/filesync/cross-workspace-file-references';
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:import { getCrossWorkspaceReferenceManager } from '@/lib/filesync/cross-workspace-file-references';
+src/presentation/components/common/CrossWorkspaceFileReference.tsx: * Displays a clickable link to a cross-workspace file reference.
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:    const workspaceBadges: Record<string, string> = {
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:                    {resolved.brokenReason === 'workspace_not_mounted' && 'Workspace Not Mounted'}
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:                    {workspaceBadges[reference.targetWorkspace]}
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:                                    {workspaceBadges[reference.sourceWorkspace]}
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:                                    {workspaceBadges[reference.targetWorkspace]}
+src/presentation/components/common/CrossWorkspaceFileReference.tsx:        workspace_not_mounted: 'Workspace Unavailable'
+src/presentation/components/common/AppErrorBoundary.tsx:                        ? t('errors.workspace.openFailed.mobileTitle', 'Desktop Feature')
+src/presentation/components/common/AppErrorBoundary.tsx:                        ? t('errors.workspace.openFailed.mobileDescription', 'Opening projects requires a desktop browser. Please use Chrome, Edge, or Safari on your computer to access full IDE features.')
+src/presentation/components/common/WorkspaceSwitcher.tsx: * Dropdown menu for switching between workspaces (IDE, Notes, Knowledge, Study).
+src/presentation/components/common/WorkspaceSwitcher.tsx: * Shows workspace icons and highlights current workspace.
+src/presentation/components/common/WorkspaceSwitcher.tsx: * Integrates with ProjectContext for cross-workspace navigation.
+src/presentation/components/common/WorkspaceSwitcher.tsx:import { useProjectContext } from '@/lib/workspace/ProjectContext';
+src/presentation/components/common/WorkspaceSwitcher.tsx:import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+src/presentation/components/common/WorkspaceSwitcher.tsx:import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
+src/presentation/components/common/WorkspaceSwitcher.tsx:    labelKey: 'hub.workspaceBinding.workspaces.ide',
+src/presentation/components/common/WorkspaceSwitcher.tsx:    labelKey: 'hub.workspaceBinding.workspaces.notes',
+src/presentation/components/common/WorkspaceSwitcher.tsx:    labelKey: 'hub.workspaceBinding.workspaces.knowledge',
+src/presentation/components/common/WorkspaceSwitcher.tsx:    labelKey: 'hub.workspaceBinding.workspaces.study',
+src/presentation/components/common/WorkspaceSwitcher.tsx: * WorkspaceSwitcher - Dropdown menu for workspace switching
+src/presentation/components/common/WorkspaceSwitcher.tsx: * - Shows current workspace icon + label
+src/presentation/components/common/WorkspaceSwitcher.tsx: * - Dropdown menu with all enabled workspaces
+src/presentation/components/common/WorkspaceSwitcher.tsx: * - Checkmark indicator for current workspace
+src/presentation/components/common/WorkspaceSwitcher.tsx:   * Handle workspace switch using WorkspaceTransitionManager
+src/presentation/components/common/WorkspaceSwitcher.tsx:   * - Workspace store (current workspace)
+src/presentation/components/common/WorkspaceSwitcher.tsx:   * - Cross-workspace event bus (emit events)
+src/presentation/components/common/WorkspaceSwitcher.tsx:  const handleWorkspaceSwitch = async (workspace: WorkspaceType) => {
+src/presentation/components/common/WorkspaceSwitcher.tsx:    console.log('[WorkspaceSwitcher] Switching to workspace:', workspace);
+src/presentation/components/common/WorkspaceSwitcher.tsx:      await workspaceTransitionManager.transitionTo(workspace as WorkspaceType);
+src/presentation/components/common/WorkspaceSwitcher.tsx:      switchWorkspace(workspace);
+src/presentation/components/common/WorkspaceSwitcher.tsx:      console.error('[WorkspaceSwitcher] Failed to switch workspace:', error);
+src/presentation/components/common/WorkspaceSwitcher.tsx:  // Guard: Hide if no workspaces enabled (shouldn't happen in practice)
+src/presentation/components/common/WorkspaceSwitcher.tsx:  // Guard: Show as static text if only one workspace enabled
+src/presentation/components/common/WorkspaceSwitcher.tsx:              {t('workspaceSwitcher.selectWorkspace', 'SELECT_WORKSPACE')}
+src/presentation/components/common/WorkspaceSwitcher.tsx:          {enabledWorkspaces.map((workspace) => {
+src/presentation/components/common/WorkspaceSwitcher.tsx:            const config = WORKSPACE_CONFIG[workspace];
+src/presentation/components/common/WorkspaceSwitcher.tsx:            const isActive = workspace === currentWorkspace;
+src/presentation/components/common/WorkspaceSwitcher.tsx:                key={workspace}
+src/presentation/components/common/WorkspaceSwitcher.tsx:                onClick={() => handleWorkspaceSwitch(workspace)}
+src/presentation/components/common/WorkspaceSwitcher.tsx:                  {t(config.labelKey, workspace.toUpperCase())}
+src/presentation/components/common/WorkspaceSwitcher.tsx:              {t('workspaceSwitcher.lastWorkspacePersisted', 'PREFERENCE_SAVED')}

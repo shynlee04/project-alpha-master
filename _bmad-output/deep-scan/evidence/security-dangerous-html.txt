@@ -1,0 +1,3 @@
+src/presentation/components/chat/StreamdownRenderer.tsx:            dangerouslySetInnerHTML={{ __html: svg }}
+src/presentation/components/agent/DeepThinkUI.tsx:              dangerouslySetInnerHTML={{
+src/presentation/components/rag/RAGSearchPanel.tsx:  return <span dangerouslySetInnerHTML={{ __html: text }} />;

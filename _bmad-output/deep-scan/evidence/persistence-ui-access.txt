@@ -1,0 +1,6 @@
+src/presentation/components/hub/HubHomePage.tsx:  const projects = useLiveQuery(() => db.projects.toArray());
+src/presentation/components/hub/HubHomePage.tsx:      await db.projects.add(project as unknown as ProjectRecord);
+src/presentation/components/hub/HubHomePage.tsx:      const project = await db.projects.get(selectedProject.id);
+src/presentation/components/hub/HubHomePage.tsx:        await db.projects.put(updated);
+src/presentation/components/hub/useDashboardMetrics.ts: * const projects = useLiveQuery(() => db.projects.toArray());
+src/presentation/components/hub/SummaryCardsGrid.tsx: * const projects = useLiveQuery(() => db.projects.toArray());

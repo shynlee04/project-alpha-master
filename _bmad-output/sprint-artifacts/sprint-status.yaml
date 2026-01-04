@@ -1,7 +1,7 @@
 # Sprint Status: Foundation Architecture Sprint
 # Generated: 2026-01-04T21:00:00+07:00
-# Updated: 2026-01-04T23:15:00+07:00
-# Updated by: @bmad-bmm-agents-quick-flow-solo-dev
+# Updated: 2026-01-04T23:45:00+07:00
+# Updated by: @component-splitter (Story 1.1 Complete)
 
 sprint:
   name: "Foundation Architecture Sprint"
@@ -14,9 +14,9 @@ sprint:
 
 # Health Metrics
 health:
-  current_score: 72.0
+  current_score: 75.0
   target_score: 85
-  delta_required: 13.0
+  delta_required: 10.0
   measurement_method: "Architecture analyzer + manual review"
 
 # Epic Overview
@@ -28,7 +28,7 @@ epics:
     estimated_hours: 320
     stories:
        - id: ARCH-01.1
-        title: "Unified Sync Manager"
+        title: "Unified Sync Manager - Workspace Services Cleanup"
         status: IN_PROGRESS
         priority: P0
         estimated_hours: 64
@@ -36,33 +36,56 @@ epics:
         dependencies: []
         blocks: [ARCH-01.5, ARCH-01.6]
         progress:
-          phase: "REMEDIATION IN PROGRESS - Fileync Migration Complete"
-          completion_pct: 45
-          god_files_remaining: 4
+          phase: "WORKSPACE SERVICES REMEDIATION - Story 1.1 COMPLETE"
+          completion_pct: 55
+          stories_complete: "1/4 (Story 1.1: notes-file-sync-service split)"
+          god_files_remaining: 3
           notes: |
-            ✅ COMPLETED 2026-01-04: Fileync migration to workspace-services/
-            - 8 service files migrated to src/infrastructure/sync/workspace-services/
-            - 11 import paths updated with backward-compatible facades
-            - 4 test files migrated
-            - Zero TypeScript errors
-            - 4 files still exceed 300-line limit:
-            - idb-adapter-core.ts: 660 lines (needs split to 3 modules)
-            - fsa-adapter-core.ts: 497 lines (needs split to 2 modules)
-            - bidirectional-sync-core.ts: 470 lines (needs split to 2 modules)
-            - sync-engine-core.ts: 371 lines (needs split to 2 modules)
+            ✅ COMPLETED 2026-01-04: Original sync god files ALREADY SPLIT
+            - idb-adapter-core.ts: 660 → 281 lines ✅
+            - fsa-adapter-core.ts: 497 → 291 lines ✅
+            - bidirectional-sync-core.ts: 470 → 218 lines ✅
+            - sync-engine-core.ts: 371 → 207 lines ✅
+
+            ✅ COMPLETED 2026-01-04: Story 1.1 - notes-file-sync-service split
+            - Original: 659 lines (GOD FILE)
+            - Split into: 6 focused modules (all ≤250 lines)
+            - TypeScript: 0 errors (fixed Block[] type compatibility)
+            - Barrel export: notes/index.ts
+            - Facade: Backward compatible
+
+            ⏳ REMAINING: 3 workspace services still exceed 300-line limit
+            - cross-workspace-file-references.ts: 359 lines (Story 1.2)
+            - study-file-sync-service.ts: 330 lines (Story 1.3)
+            - knowledge-file-sync-service.ts: 300 lines (Story 1.4 - borderline)
           validation_report: "_bmad-output/sprint-artifacts/arch-01-1-validation-report-2026-01-04.md"
-          course_correction: "_bmad-output/sprint-artifacts/arch-01-1-course-correction-2026-01-04.md"
-          migration_report: "_bmad-output/sprint-artifacts/filesync-migration-report-2026-01-04.md"
-        
+
       - id: ARCH-01.2
         title: "Complete State Consolidation"
-        status: NOT_STARTED
+        status: IN_PROGRESS
         priority: P0
         estimated_hours: 40
         assigned_team: B
         dependencies: []
         blocks: [ARCH-01.3]
-        
+        progress:
+          phase: "Sub-story 1: Audit & Migration Plan"
+          completion_pct: 15
+          sub_stories:
+            - id: ARCH-01.2-1
+              title: "State Audit & Migration Plan"
+              status: IN_PROGRESS
+              story_file: "_bmad-output/sprint-artifacts/arch-01-2-1-state-audit.md"
+              context_file: "_bmad-output/sprint-artifacts/arch-01-2-1-state-audit-context.xml"
+          notes: |
+            TEAM B PARALLEL EXECUTION STARTED 2026-01-05
+            Audit Complete:
+            - 30+ files importing from @/lib/state
+            - 6 FACADE files (keep until migration)
+            - 8+ DUPLICATE files (delete after migration)
+            - 2 LEGACY files (migrate to infrastructure)
+            - 1 DEAD file (delete immediately)
+
       - id: ARCH-01.3
         title: "Workspace Context Unification"
         status: NOT_STARTED
@@ -71,7 +94,7 @@ epics:
         assigned_team: A
         dependencies: [ARCH-01.2]
         blocks: [ARCH-01.6]
-        
+
       - id: ARCH-01.4
         title: "Agent Tool Permission Matrix"
         status: NOT_STARTED
@@ -80,7 +103,7 @@ epics:
         assigned_team: B
         dependencies: [ARCH-01.2]
         blocks: []
-        
+
       - id: ARCH-01.5
         title: "RAG Auto-Indexing on Sync"
         status: NOT_STARTED
@@ -89,7 +112,7 @@ epics:
         assigned_team: A
         dependencies: [ARCH-01.1]
         blocks: []
-        
+
       - id: ARCH-01.6
         title: "Cross-Workspace Context Sharing"
         status: NOT_STARTED
@@ -113,7 +136,7 @@ epics:
         estimated_hours: 16
         assigned_team: B
         dependencies: []
-        
+
       - id: STAB-24.2
         title: "IndexedDB Quota Handling"
         status: READY
@@ -121,7 +144,7 @@ epics:
         estimated_hours: 22
         assigned_team: B
         dependencies: []
-        
+
       - id: STAB-24.3
         title: "Replace Hardcoded Pixels"
         status: READY
@@ -130,23 +153,57 @@ epics:
         assigned_team: A
         dependencies: []
 
+# Workspace Services Remediation Stories (Sub-epic under ARCH-01.1)
+workspace_services_stories:
+  - id: STORY-1.1
+    title: "Split notes-file-sync-service.ts"
+    status: COMPLETE
+    lines_before: 659
+    lines_after: "6 modules (max 250 lines)"
+    completed_at: "2026-01-04T23:45:00+07:00"
+
+  - id: STORY-1.2
+    title: "Split cross-workspace-file-references.ts"
+    status: READY_FOR_DEV
+    lines_before: 359
+    target: "2 modules (~180 lines each)"
+    story_file: "_bmad-output/sprint-artifacts/arch-01-1-2-cross-workspace-references-split.md"
+    context_xml: "_bmad-output/sprint-artifacts/arch-01-1-2-cross-workspace-references-split-context.xml"
+    drafted_at: "2026-01-05T00:00:00+07:00"
+    ready_for_dev_at: "2026-01-05T01:00:00+07:00"
+
+  - id: STORY-1.3
+    title: "Split study-file-sync-service.ts"
+    status: PENDING
+    lines_before: 330
+    target: "2 modules (~165 lines each)"
+
+  - id: STORY-1.4
+    title: "Review knowledge-file-sync-service.ts"
+    status: PENDING
+    lines_before: 300
+    target: "At 300-line limit, evaluate if split needed"
+
 # Parallel Execution Plan
 execution_plan:
   week_1_2:
     team_a:
-      - ARCH-01.1 (Unified Sync Manager)
+      - ARCH-01.1 (Unified Sync Manager) - IN PROGRESS
+      - STORY-1.2: cross-workspace-file-references split
+      - STORY-1.3: study-file-sync-service split
+      - STORY-1.4: knowledge-file-sync-service review
       - STAB-24.3 (Design Tokens) - low effort, parallel
     team_b:
       - ARCH-01.2 (State Consolidation)
       - STAB-24.1 (localStorage) - parallel
       - STAB-24.2 (IndexedDB Quota) - parallel
-      
+
   week_3_4:
     team_a:
       - ARCH-01.3 (Workspace Context)
     team_b:
       - ARCH-01.4 (Tool Permissions)
-      
+
   week_5_6:
     team_a:
       - ARCH-01.5 (RAG Auto-Index)
@@ -162,8 +219,9 @@ validation_gates:
       - "0 duplicate sync files"
       - "Integration tests pass"
       - "Bidirectional sync works IDE ↔ local"
+      - "All workspace services ≤300 lines"
     blocking: true
-    
+
   after_arch_01_2:
     name: "State Consolidation Validation"
     criteria:
@@ -172,7 +230,7 @@ validation_gates:
       - "TypeScript builds with 0 errors"
       - "No runtime hydration errors"
     blocking: true
-    
+
   after_arch_01_3:
     name: "Workspace Unification Validation"
     criteria:
@@ -180,7 +238,7 @@ validation_gates:
       - "All hooks use unified context"
       - "Workspace transitions preserve context"
     blocking: true
-    
+
   sprint_complete:
     name: "Foundation Complete"
     criteria:
@@ -206,23 +264,52 @@ autonomous_iteration:
 daily_status:
   - date: "2026-01-04"
     summary: |
-      ARCH-01.1 PROGRESS: Fileync migration complete. 8 service files migrated to
-      src/infrastructure/sync/workspace-services/ with backward-compatible facades.
-      11 import paths updated via facades. Zero TypeScript errors.
-      4 GOD FILES still exceed 300-line limit - next priority.
+      ARCH-01.1 PROGRESS: Workspace Services Remediation (1/4 stories complete)
+
+      ✅ STORY 1.1 COMPLETE: Split notes-file-sync-service.ts (659 → 6 modules)
+      - notes-file-sync-service.ts: 222 lines (orchestrator)
+      - notes-file-sync-core.ts: 246 lines (core utilities)
+      - note-markdown-parser.ts: 167 lines (MD → blocks)
+      - note-markdown-writer.ts: 116 lines (blocks → MD)
+      - note-crud-operations.ts: 138 lines (CRUD + persistence)
+      - note-file-watcher.ts: 164 lines (file watching)
+      - TypeScript: 0 errors (fixed Block[] type compatibility)
+
+      ⏳ REMAINING: 3 workspace services over 300-line limit
+      - cross-workspace-file-references.ts: 359 lines (Story 1.2)
+      - study-file-sync-service.ts: 330 lines (Story 1.3)
+      - knowledge-file-sync-service.ts: 300 lines (Story 1.4)
     completed:
-      - "Fileync migration: 8 files moved to src/infrastructure/sync/workspace-services/"
-      - "11 import paths updated with backward-compatible facades"
-      - "4 test files migrated"
+      - "Story 1.1: notes-file-sync-service.ts split (659 → 6 modules)"
       - "TypeScript validation: 0 errors"
-    blockers:
-      - "4 god files over 300 lines (idb-adapter-core.ts, fsa-adapter-core.ts, bidirectional-sync-core.ts, sync-engine-core.ts)"
+      - "Block[] type compatibility fixed in NoteSyncStore"
+    blockers: []
     next_actions:
-      - "PRIORITY 1: Split idb-adapter-core.ts (660 → 3 modules)"
-      - "PRIORITY 2: Split fsa-adapter-core.ts (497 → 2 modules)"
-      - "PRIORITY 3: Split bidirectional-sync-core.ts (470 → 2 modules)"
-      - "PRIORITY 4: Split sync-engine-core.ts (371 → 2 modules)"
-      - "VALIDATE: All files ≤300 lines, build passes"
+      - "STORY 1.2: Create context XML → dev-story → code-review"
+      - "STORY 1.3: Split study-file-sync-service.ts (330 → 2 modules)"
+      - "STORY 1.4: Review knowledge-file-sync-service.ts (at 300-line limit)"
+
+# Daily Tracking 2026-01-05
+daily_status:
+  - date: "2026-01-05"
+    summary: |
+      ARCH-01.1 PROGRESS: Workspace Services Remediation Story 1.2 Created
+
+      ✅ STORY 1.1 COMPLETE: Split notes-file-sync-service.ts (659 → 6 modules)
+      - All modules under 250 lines ✅
+      - TypeScript: 0 errors ✅
+
+      📝 STORY 1.2 DRAFTED: Split cross-workspace-file-references.ts (359 → 2 modules)
+      - Story file created: arch-01-1-2-cross-workspace-references-split.md
+      - 6 acceptance criteria defined
+      - 8 tasks outlined
+      - Research requirements documented
+    completed:
+      - "Story 1.2 file created with all required sections"
+      - "Sprint status updated"
+    blockers: []
+    next_actions:
+      - "STORY 1.2: Create context XML → dev-story → code-review"
 
 # Links
 artifacts:
@@ -230,6 +317,4 @@ artifacts:
   epic_definition: "_bmad-output/epics/epic-arch-01-foundation-architecture.md"
   stabilization_epic: "_bmad-output/epics/epic-stab-24-foundation-stabilization.md"
   workflow_status: "bmm-workflow-status.yaml"
-  validation_report: "_bmad-output/sprint-artifacts/arch-01-1-validation-report-2026-01-04.md"
-  course_correction: "_bmad-output/sprint-artifacts/arch-01-1-course-correction-2026-01-04.md"
-
+  story_1_1_report: "_bmad-output/sprint-artifacts/story-1-1-notes-split-report-2026-01-04.md"

@@ -40,7 +40,7 @@ export interface NoteStore {
  */
 export interface FileAdapter {
     readFile: (path: string) => Promise<{ content: string }>;
-    writeFile: (path: string, content: string) => Promise<void>;
+    writeFile?: (path: string, content: string) => Promise<void>;
 }
 
 /**
@@ -110,7 +110,9 @@ export async function syncNoteChanges(
     for (const note of notes) {
         const filePath = noteToFilePath(note, targetDirectory);
         const markdown = noteToMarkdown(note);
-        await fileAdapter.writeFile(filePath, markdown);
+        if (fileAdapter.writeFile) {
+            await fileAdapter.writeFile(filePath, markdown);
+        }
     }
 
     console.log(`[NotesFileSyncService] Synced ${notes.length} notes to files`);

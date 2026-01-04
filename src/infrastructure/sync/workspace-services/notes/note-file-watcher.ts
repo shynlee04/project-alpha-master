@@ -10,7 +10,7 @@
  */
 
 import type { FileMetadata } from '../file-sync-service';
-import { importFileAsNote } from './note-crud-operations';
+import { importFileAsNote, type NoteStore } from './note-crud-operations';
 
 /**
  * File change tracking record
@@ -34,9 +34,7 @@ export interface FileWatcherDependencies {
         readFile: (path: string) => Promise<{ content: string }>;
         writeFile?: (path: string, content: string) => Promise<void>;
     };
-    noteStore: {
-        notes: Map<string, unknown>;
-    };
+    noteStore: NoteStore;
     listFiles: (path: string, recursive?: boolean) => Promise<string[]>;
     getFileMetadata: (path: string) => Promise<FileMetadata>;
 }

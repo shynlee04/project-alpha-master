@@ -1,0 +1,56 @@
+# Remediation Backlog
+
+items:
+  - id: REM-STATE-001
+    title: Refactor Quiz God Store
+    type: refactor
+    priority: critical
+    effort: high
+    target: src/infrastructure/persistence/stores/study/quiz-store.ts
+    description: Split 658-line store into managed slices (QuizAttempt, QuizAuthoring, QuizHistory).
+    owner: "@store-refactorer"
+
+  - id: REM-STATE-002
+    title: Refactor Canvas God Store
+    type: refactor
+    priority: critical
+    effort: high
+    target: src/infrastructure/persistence/stores/canvas-store.ts
+    description: Split 623-line store. Canvas logic is complex and needs separation of concerns (Nodes, Edges, Viewport).
+    owner: "@store-refactorer"
+
+  - id: REM-ARCH-001
+    title: Fix ChatConversation Component
+    type: refactor
+    priority: high
+    effort: medium
+    target: src/presentation/components/chat/ChatConversation.tsx
+    description: Decompose 522-line component. Extract `MessageList`, `MessageInput`, and `ThreadHeader` sub-components.
+    owner: "@component-splitter"
+
+  - id: REM-ARCH-002
+    title: Hub Page DB Access
+    type: architecture
+    priority: high
+    effort: medium
+    target: src/presentation/components/hub/HubHomePage.tsx
+    description: Remove direct `db.` calls. Create/Use `HubStore` or `ProjectRepository`.
+    owner: "@store-refactorer"
+
+  - id: REM-SEC-001
+    title: Audit Dangerous HTML
+    type: security
+    priority: medium
+    effort: low
+    target: src/presentation/components/chat/StreamdownRenderer.tsx
+    description: Verify `dompurify` usage before `dangerouslySetInnerHTML`.
+    owner: "@security-scanner"
+
+  - id: REM-TYPE-001
+    title: TypeScript 'Any' Reduction
+    type: technical-debt
+    priority: medium
+    effort: ongoing
+    target: global
+    description: Reduce 263 'any' usages. Focus on `src/core` and `src/infrastructure` first.
+    owner: "@typescript-fixer"

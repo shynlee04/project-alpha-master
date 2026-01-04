@@ -1,0 +1,114 @@
+src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx: * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+src/presentation/components/ide/AgentChatPanel/AgentChatConversationManager.tsx:import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/ide/AgentChatPanel.tsx:import { eventBus as crossWorkspaceEventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+src/presentation/components/ide/AgentChatPanel.tsx:import type { DebugSessionData } from '@/infrastructure/events/event-bus';
+src/presentation/components/ide/AgentChatPanel.tsx:import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/ide/AgentChatPanel.tsx:import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-approve-store';
+src/presentation/components/ide/AgentChatPanel.tsx:import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+src/presentation/components/ide/AgentChatPanel.tsx: * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+src/presentation/components/ide/AgentChatPanel.tsx:import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
+src/presentation/components/ide/FileTree/FileTree.tsx: * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+src/presentation/components/ide/statusbar/SyncStatusSegment.tsx:import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+src/presentation/components/ide/statusbar/WebContainerStatus.tsx:import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+src/presentation/components/ide/statusbar/AgentStatusSegment.tsx:import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+src/presentation/components/ide/statusbar/AgentStatusSegment.tsx: * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+src/presentation/components/ide/statusbar/CursorPosition.tsx:import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+src/presentation/components/ide/statusbar/FileTypeIndicator.tsx:import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+src/presentation/components/ide/statusbar/ProviderStatus.tsx:import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+src/presentation/components/ide/hooks/useAgentChatMessages.ts:import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/conversation-store';
+src/presentation/components/ide/hooks/useAgentChatMessages.ts:import type { ThreadMessage, ThreadToolCall } from '@/infrastructure/persistence/stores/conversation/types';
+src/presentation/components/ide/hooks/useAgentChatMessages.ts:import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
+src/presentation/components/ide/hooks/useAgentChatApproval.ts:import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-approve-store';
+src/presentation/components/ide/AgentsPanel.tsx:import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
+src/presentation/components/study/study-session.tsx:import { useStudySession, useStudyStore } from '@/infrastructure/persistence/stores/study-store';
+src/presentation/components/study/StudyPage.tsx:import { useFlashcardStore } from '@/infrastructure/persistence/stores/flashcard-store';
+src/presentation/components/study/StudyPage.tsx:import { useStudyStore } from '@/infrastructure/persistence/stores/study-store';
+src/presentation/components/chat/ThreadsList.tsx:import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/chat/ThreadFolderTree.tsx:import type { ThreadHierarchyNode } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/chat/ThreadFolderTree.tsx:import { useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/chat/ThreadCard.tsx:import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/chat/ChatConversation.tsx:import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/useConversationStore'
+src/presentation/components/chat/ChatConversation.tsx:import { useActiveAgent, useAgentsStore } from '@/infrastructure/persistence/stores'
+src/presentation/components/chat/ChatPanel.tsx:} from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/chat/ChatPanel.tsx:import { useAgents } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/chat/ChatPanel.tsx:import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+src/presentation/components/chat/ChatPanel.tsx:import type { ThreadMessage } from '@/infrastructure/persistence/stores/conversation/types';
+src/presentation/components/chat/AutoApproveSettings.tsx:import { useAutoApproveStore, type ToolCategory } from '@/infrastructure/persistence/stores/auto-approve-store';
+src/presentation/components/layout/MainSidebar.tsx:import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
+src/presentation/components/layout/IDEHeaderBar.tsx: * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+src/presentation/components/layout/MobileIDELayout.tsx: * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+src/presentation/components/layout/MainLayout.tsx:import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
+src/presentation/components/layout/ChatPanelWrapper.tsx:import { useConversationStore as useThreadsStore, useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+src/presentation/components/layout/ChatPanelWrapper.tsx:import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/types';
+src/presentation/components/agent/AgentWorkspaceBindingConfig.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/AgentWorkspaceSwitchingFeedback.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/AgentWorkspaceSwitchingFeedback.tsx:import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+src/presentation/components/agent/useAgentConfigForm.ts:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
+src/presentation/components/agent/AgentConfigDialog.tsx:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+src/presentation/components/agent/UnifiedAgentSelector.tsx:import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+src/presentation/components/agent/UnifiedAgentSelector.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/UnifiedAgentSelector.tsx:import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+src/presentation/components/agent/ProviderSettings.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/ProviderSettings.tsx:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+src/presentation/components/agent/ProviderSettings.tsx:import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
+src/presentation/components/agent/__tests__/AgentConfigDialogIntegration.test.tsx:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+src/presentation/components/agent/__tests__/ProviderSettings.test.tsx:import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/__tests__/ProviderConfigDialog.test.tsx:import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/hooks/useAgentFormSubmission.ts:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+src/presentation/components/agent/hooks/useAgentFormActions.ts:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+src/presentation/components/agent/hooks/useAgentFormState.ts:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
+src/presentation/components/agent/hooks/useAgentFormState.ts:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
+src/presentation/components/agent/ProviderConfigDialog.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/agent/ProviderConfigDialog.tsx:import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
+src/presentation/components/agent/AgentManager.tsx:import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
+src/presentation/components/agent/AgentManager.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
+src/presentation/components/agent/AgentManager.tsx:import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus'
+src/presentation/components/agent/MigrationStatus.tsx:import { useMigrationState, useMigrationMessage, useIsMigrating } from '@/infrastructure/persistence/stores/providers/use-migration-state';
+src/presentation/components/agent/useAgentConfigProvider.ts:import { useProviderStore } from '@/infrastructure/persistence/stores/use-app-store'
+src/presentation/components/agent/WorkspacePermissionManager.tsx:import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
+src/presentation/components/rag/RAGPanelContainer.tsx:import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+src/presentation/components/rag/IndexingProgressPanel.tsx:import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+src/presentation/components/rag/IndexingProgressPanel.tsx:import { IndexStatus, IndexOperation } from '@/infrastructure/persistence/stores/rag/rag-types';
+src/presentation/components/canvas/NodeSourcePicker.tsx:import { useCanvasStore } from '@/infrastructure/persistence/stores/canvas-store';
+src/presentation/components/canvas/CanvasRAGLinkagePanel.tsx:import { useCanvasStore } from '@/infrastructure/persistence/stores/canvas-store';
+src/presentation/components/canvas/LinkageProposalsPanel.tsx:import { useCanvasStore } from '@/infrastructure/persistence/stores';
+src/presentation/components/canvas/Canvas.tsx:import { useCanvasStore } from '@/infrastructure/persistence/stores';
+src/presentation/components/common/AppInitializer.tsx:import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+src/presentation/components/notes/NoteStudyMenu.tsx:import { useFlashcardOperations } from '@/infrastructure/persistence/stores/flashcard-store';
+src/presentation/components/notes/NoteContextMenu.tsx:import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/notes/NoteTree.tsx:import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/notes/AIPromptDialog.tsx:import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+src/presentation/components/notes/AITransformMenu.tsx:import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+src/presentation/components/notes/NoteSidebar.tsx:import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/notes/NotesPage.tsx:import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+src/presentation/components/notes/NotesPage.tsx:import type { SynthesisExportData } from '@/infrastructure/events/event-bus';
+src/presentation/components/notes/NotesPage.tsx:import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
+src/presentation/components/knowledge/CollectionManager.tsx:import type { Collection } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/CollectionSelector.tsx:import type { Collection } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/MetadataDisplay.tsx:import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/SynthesisDialog.tsx:import { useSynthesisStore } from '@/infrastructure/persistence/stores/synthesis-store';
+src/presentation/components/knowledge/MetadataEditor.tsx:import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/IndexingProgressPanel.tsx:import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+src/presentation/components/knowledge/IndexingProgressPanel.tsx:import type { RAGProgressPayload, RAGIndexingCancelData, RAGIndexingRetryData } from '@/infrastructure/events/event-bus';
+src/presentation/components/knowledge/SourcePreviewPanel.tsx:// import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+src/presentation/components/knowledge/FlashcardPreviewPanel.tsx:import { useFlashcardStore } from '@/infrastructure/persistence/stores/flashcard-store';
+src/presentation/components/knowledge/SourceMetadataDialog.tsx:import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/SourceCardGrid.tsx:import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/KnowledgePage.tsx:import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+src/presentation/components/knowledge/KnowledgePage.tsx:import type { DebugSessionData, SynthesisExportData, NotesRAGIndexData } from '@/infrastructure/events/event-bus';
+src/presentation/components/knowledge/KnowledgePage.tsx:import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
+src/presentation/components/knowledge/KnowledgePage.tsx:import { useSynthesisStore } from '@/infrastructure/persistence/stores/synthesis-store';
+src/presentation/components/knowledge/SourceCard.tsx:import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/knowledge/SourceContextMenu.tsx:import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/hub/ProjectSearchBar.tsx:import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/useProjectSearch.ts:import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/InitialWorkspaceSelector.tsx:import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/WorkspaceCheckboxList.tsx:import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/HubHomePage.tsx:import { db } from '@/infrastructure/persistence/dexie-db';
+src/presentation/components/hub/HubHomePage.tsx:import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/ProjectCard.tsx:import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+src/presentation/components/hub/ProjectCard.tsx:import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/RecentProjectsSection.tsx:import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/WorkspaceBindingDialog.types.ts:import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/useDashboardMetrics.ts:import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+src/presentation/components/hub/useWorkspaceBindingState.ts:import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';

@@ -16,28 +16,42 @@ import type {
     SyncResult
 } from '../file-sync-service';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { Block } from '@blocknote/core';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import { SyncError } from '@/lib/filesystem/sync-types';
 import type { FileChangeTracker } from './note-file-watcher';
+
+/**
+ * Note store interface for file sync operations
+ *
+ * Uses proper Block[] type for type compatibility with notes store.
+ */
+export interface NoteSyncStore {
+    /** Notes map from store */
+    notes: Map<string, NoteRecord>;
+    /** Notes array from store */
+    notesArray: NoteRecord[];
+    /** Update note method */
+    updateNote: (params: {
+        id: string;
+        title?: string;
+        blocks?: Block[];
+    }) => Promise<void>;
+    /** Create note method */
+    createNote: (params?: {
+        title?: string;
+        blocks?: Block[];
+    }) => Promise<string>;
+    /** Optional load notes method */
+    loadNotes?: (projectId: string) => Promise<void>;
+}
 
 /**
  * Dependencies required by NotesFileSyncService
  */
 export interface NotesFileSyncDependencies {
     localAdapter: LocalFSAdapter;
-    noteStore: {
-        notes: Map<string, unknown>;
-        notesArray: unknown[];
-        updateNote: (params: {
-            id: string;
-            title?: string;
-            blocks?: unknown[];
-        }) => Promise<void>;
-        createNote: (params?: {
-            title?: string;
-            blocks?: unknown[];
-        }) => Promise<string>;
-        loadNotes?: (projectId: string) => Promise<void>;
-    };
+    noteStore: NoteSyncStore;
 }
 
 /**

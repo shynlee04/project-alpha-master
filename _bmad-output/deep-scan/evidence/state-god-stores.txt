@@ -1,0 +1,14 @@
+     509 src/lib/state/migrations/local-storage-migrator.ts
+     658 src/infrastructure/persistence/stores/study/quiz-store.ts
+     367 src/infrastructure/persistence/stores/use-app-store.ts
+     388 src/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts
+     549 src/infrastructure/persistence/stores/providers/migration-backup.ts
+     314 src/infrastructure/persistence/stores/schema-migrations.ts
+     493 src/infrastructure/persistence/stores/permissions/tool-permission-store.ts
+     458 src/infrastructure/persistence/stores/study-store.ts
+     623 src/infrastructure/persistence/stores/canvas-store.ts
+     531 src/infrastructure/persistence/stores/flashcard-store.ts
+     321 src/infrastructure/persistence/stores/session-snapshot-manager.ts
+     303 src/infrastructure/persistence/stores/conversation/useConversationStore.ts
+     554 src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts
+   18599 total

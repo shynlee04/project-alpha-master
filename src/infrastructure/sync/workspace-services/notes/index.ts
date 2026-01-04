@@ -22,7 +22,8 @@ export {
     checkDisposed,
     createFileSyncServiceImplementation,
     type NotesFileSyncState,
-    type NotesFileSyncDependencies
+    type NotesFileSyncDependencies,
+    type NoteSyncStore
 } from './notes-file-sync-core';
 
 // CRUD operations

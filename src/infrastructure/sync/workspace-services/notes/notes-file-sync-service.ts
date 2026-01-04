@@ -14,24 +14,24 @@ import type {
     FileChangeEvent,
     SyncResult,
     SyncStatus,
-    SyncOptions
+    SyncOptions,
+    FileSyncConfig
 } from '../file-sync-service';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import { SyncError } from '@/lib/filesystem/sync-types';
 import {
     createFileSyncServiceImplementation,
     checkDisposed,
-    type NotesFileSyncConfig as NotesFileSyncConfigCore,
-    type NotesFileSyncDependencies,
-    type NotesFileSyncState
+    type NotesFileSyncState,
+    type NoteSyncStore
 } from './notes-file-sync-core';
 
 /**
  * Configuration for Notes file sync service
  */
-export interface NotesFileSyncConfig extends NotesFileSyncConfigCore {
+export interface NotesFileSyncConfig extends FileSyncConfig {
     localAdapter: LocalFSAdapter;
-    noteStore: NotesFileSyncDependencies['noteStore'];
+    noteStore: NoteSyncStore;
     targetDirectory?: string;
     autoSync?: boolean;
     syncInterval?: number;
@@ -53,7 +53,7 @@ export interface NotesFileSyncConfig extends NotesFileSyncConfigCore {
  */
 export class NotesFileSyncService implements FileSyncService {
     private localAdapter: LocalFSAdapter;
-    private noteStore: NotesFileSyncDependencies['noteStore'];
+    private noteStore: NoteSyncStore;
     private state: NotesFileSyncState;
     private syncTimer?: ReturnType<typeof setInterval>;
     private cleanupFileWatcher?: () => void;
