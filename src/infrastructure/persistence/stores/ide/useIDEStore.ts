@@ -80,6 +80,7 @@ export const useIDEStore = create<CombinedIDEState>()(
 
         // Layout state
         panelLayouts: state.panelLayouts,
+        panelCollapsed: state.panelCollapsed,
         chatVisible: state.chatVisible,
 
         // Terminal state
@@ -158,6 +159,10 @@ export function useExpandedPaths() {
 
 export function usePanelLayouts() {
   return useIDEStore((s) => s.panelLayouts);
+}
+
+export function usePanelCollapsed() {
+  return useIDEStore((s) => s.panelCollapsed);
 }
 
 export function useChatVisible() {

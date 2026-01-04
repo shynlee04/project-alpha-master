@@ -10,3 +10,6 @@
 
 // Re-export main store from canonical location
 export { useKnowledgeStore } from '@/infrastructure/persistence/stores/knowledge';
+
+// Re-export types for backward compatibility with components importing from this file
+export type { SourceMetadataFields, KnowledgeStoreState } from '@/infrastructure/persistence/stores/knowledge';

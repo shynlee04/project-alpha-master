@@ -22,6 +22,7 @@ export {
 
   // Layout hooks
   usePanelLayouts,
+  usePanelCollapsed,
   useChatVisible,
 
   // Terminal hooks

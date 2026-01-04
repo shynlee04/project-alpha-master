@@ -1,0 +1,6 @@
+{
+  "plugin": [
+    "@nick-vi/opencode-type-inject"
+  ],
+  "$schema": "https://opencode.ai/config.json"
+}

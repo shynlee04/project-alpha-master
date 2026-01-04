@@ -98,15 +98,18 @@ export interface IDEExplorerState {
  *
  * Manages IDE panel layout and visibility:
  * - panelLayouts: Panel sizes for each panel group
+ * - panelCollapsed: Panel collapse states by panel ID
  * - chatVisible: Chat panel visibility
  */
 export interface IDELayoutState {
   // State
   panelLayouts: Record<string, number[]>;
+  panelCollapsed: Record<string, boolean>;
   chatVisible: boolean;
 
   // Actions
   setPanelLayout: (groupId: string, layout: number[]) => void;
+  setPanelCollapsed: (panelId: string, collapsed: boolean) => void;
   setChatVisible: (visible: boolean) => void;
   toggleChatVisible: () => void;
 }

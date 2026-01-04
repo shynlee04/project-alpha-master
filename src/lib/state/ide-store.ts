@@ -1,378 +1,126 @@
 /**
- * @fileoverview Main IDE State Store
+ * @fileoverview IDE Store Facade - DEPRECATED
  * @module lib/state/ide-store
- * @governance EPIC-27-1, EPIC-27-1c
- * @ai-observable true
- * 
- * Unified Zustand store for all IDE state with automatic Dexie.js persistence.
- * This replaces the previous fragmented state management approach.
- * 
- * Story 27-1: State Architecture Stabilization
- * Story 27-1c: Persistence Migration with AI readiness
- * 
- * @ai-contracts
- * - selectForAIContext: Provides complete workspace context for AI agents
- * - selectFileContext: Minimal file context for AI tools
- * - getIDEStoreState: Direct state access for non-React AI tools
- * 
- * @example
- * ```tsx
- * import { useIDEStore, selectForAIContext } from '@/lib/state';
- * 
- * function Component() {
- *   // Select specific state
- *   const openFiles = useIDEStore((s) => s.openFiles);
- *   const addOpenFile = useIDEStore((s) => s.addOpenFile);
- *   
- *   // For AI agents
- *   const aiContext = useIDEStore(selectForAIContext);
- * }
- * ```
+ * @deprecated Use `@/infrastructure/persistence/stores/ide` instead
+ *
+ * This file is a backward-compatibility facade that re-exports from the
+ * canonical location in infrastructure/persistence/stores/ide.
+ *
+ * Migration (ADR-024, Epic 53):
+ * - Old import: `import { useIDEStore } from '@/lib/state/ide-store'`
+ * - New import: `import { useIDEStore } from '@/infrastructure/persistence/stores/ide'`
+ *
+ * This facade will be removed after Story 53-7 (Update All Import Paths).
  */
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from './dexie-storage';
-
-// ============================================================================
-// Types
-// ============================================================================
-
-export type TerminalTab = 'terminal' | 'output' | 'problems';
-
-/**
- * IDE State shape
- */
-export interface IDEState {
-    // =========================================================================
-    // State
-    // =========================================================================
-
-    /** Currently open file paths */
-    openFiles: string[];
-
-    /** Path of the currently active/focused file */
-    activeFile: string | null;
-
-    /** Set of expanded folder paths in FileTree */
-    expandedPaths: Set<string>;
-
-    /** Panel layout sizes by group ID */
-    panelLayouts: Record<string, number[]>;
-
-    /** P2-4: Panel collapse states by panel ID */
-    panelCollapsed: Record<string, boolean>;
-
-    /** Active terminal panel tab */
-    terminalTab: TerminalTab;
-
-    /** Whether chat panel is visible */
-    chatVisible: boolean;
-
-    /** Scroll position of active file in editor */
-    activeFileScrollTop: number;
-
-    /** Current project ID for scoping state */
-    projectId: string | null;
-
-    /** Whether the store has finished hydrating from persistence */
-    _hasHydrated: boolean;
-
-    // =========================================================================
-    // Actions
-    // =========================================================================
-
-    /** Set the current project ID (scopes state to this project) */
-    setProjectId: (projectId: string | null) => void;
-
-    /** Add a file to open files list */
-    addOpenFile: (path: string) => void;
-
-    /** Remove a file from open files list */
-    removeOpenFile: (path: string) => void;
-
-    /** Set the active file */
-    setActiveFile: (path: string | null) => void;
-
-    /** Toggle a folder's expanded state */
-    toggleExpanded: (path: string) => void;
-
-    /** Set multiple folders as expanded */
-    setExpandedPaths: (paths: string[]) => void;
-
-    /** Update panel layout for a group */
-    setPanelLayout: (groupId: string, layout: number[]) => void;
-
-    /** P2-4: Set panel collapse state */
-    setPanelCollapsed: (panelId: string, collapsed: boolean) => void;
-
-    /** Set terminal tab */
-    setTerminalTab: (tab: TerminalTab) => void;
-
-    /** Toggle chat visibility */
-    toggleChatVisible: () => void;
-
-    /** Set chat visibility explicitly */
-    setChatVisible: (visible: boolean) => void;
-
-    /** Set scroll position */
-    setActiveFileScrollTop: (scrollTop: number) => void;
-
-    /** Reset all state (for project change) */
-    reset: () => void;
-
-    /** Set hydration status */
-    setHasHydrated: (hydrated: boolean) => void;
+// Emit deprecation warning in development
+if (process.env.NODE_ENV === 'development') {
+  console.warn(
+    '[DEPRECATED] Import from @/lib/state/ide-store is deprecated.\n' +
+      'Please update your import to: @/infrastructure/persistence/stores/ide\n' +
+      'See: ADR-024, Epic 53 - State Management Consolidation'
+  );
 }
 
-// ============================================================================
-// Default State
-// ============================================================================
+// Re-export everything from canonical location
+export {
+  // Main store
+  useIDEStore,
 
-const defaultState = {
-    openFiles: [],
-    activeFile: null,
-    expandedPaths: new Set<string>(),
-    panelLayouts: {},
-    panelCollapsed: {} as Record<string, boolean>,
-    terminalTab: 'terminal' as TerminalTab,
-    chatVisible: true,
-    activeFileScrollTop: 0,
-    projectId: null,
-    _hasHydrated: false,
-};
+  // Convenience hooks
+  useOpenFiles,
+  useActiveFile,
+  useActiveFileScrollTop,
+  useExpandedPaths,
+  usePanelLayouts,
+  usePanelCollapsed,
+  useChatVisible,
+  useTerminalTab,
+  useProjectId,
+  useAIContext,
+  useFileContext,
 
-// ============================================================================
-// Store
-// ============================================================================
+  // Utilities
+  resetIDEStore,
+  getIDEStoreState,
+} from '@/infrastructure/persistence/stores/ide';
 
-/**
- * Create the store with a project-scoped key
- */
-/**
- * Main IDE state store with persistence
- * 
- * Uses Zustand with persist middleware connected to Dexie.js (IndexedDB).
- * State is automatically saved on every change and restored on initialization.
- */
-export const useIDEStore = create<IDEState>()(
-    persist(
-        (set, get) => ({
-            // Initial state
-            ...defaultState,
-
-            // =========================================================
-            // Actions
-            // =========================================================
-
-            setProjectId: (projectId) => {
-                // When project changes, update the projectId in state
-                // Future: Could trigger rehydration from project-specific storage
-                set({ projectId });
-            },
-
-            addOpenFile: (path) => {
-                const { openFiles } = get();
-                if (!openFiles.includes(path)) {
-                    set({
-                        openFiles: [...openFiles, path],
-                        activeFile: path, // Auto-activate new file
-                    });
-                } else {
-                    // File already open, just activate it
-                    set({ activeFile: path });
-                }
-            },
-
-            removeOpenFile: (path) => {
-                const { openFiles, activeFile } = get();
-                const newOpenFiles = openFiles.filter((f) => f !== path);
-
-                // If closing active file, activate the last file or null
-                const newActiveFile = activeFile === path
-                    ? newOpenFiles[newOpenFiles.length - 1] ?? null
-                    : activeFile;
-
-                set({
-                    openFiles: newOpenFiles,
-                    activeFile: newActiveFile,
-                });
-            },
-
-            setActiveFile: (path) => {
-                set({ activeFile: path });
-            },
-
-            toggleExpanded: (path) => {
-                const { expandedPaths } = get();
-                const next = new Set(expandedPaths);
-
-                if (next.has(path)) {
-                    next.delete(path);
-                } else {
-                    next.add(path);
-                }
-
-                set({ expandedPaths: next });
-            },
-
-            setExpandedPaths: (paths) => {
-                set({ expandedPaths: new Set(paths) });
-            },
-
-            setPanelLayout: (groupId, layout) => {
-                const { panelLayouts } = get();
-                set({
-                    panelLayouts: { ...panelLayouts, [groupId]: layout },
-                });
-            },
-
-            setPanelCollapsed: (panelId, collapsed) => {
-                const { panelCollapsed } = get();
-                set({
-                    panelCollapsed: { ...panelCollapsed, [panelId]: collapsed },
-                });
-            },
-
-            setTerminalTab: (tab) => {
-                set({ terminalTab: tab });
-            },
-
-            toggleChatVisible: () => {
-                const { chatVisible } = get();
-                set({ chatVisible: !chatVisible });
-            },
-
-            setChatVisible: (visible) => {
-                set({ chatVisible: visible });
-            },
-
-            setActiveFileScrollTop: (scrollTop) => {
-                set({ activeFileScrollTop: scrollTop });
-            },
-
-            reset: () => {
-                set(defaultState);
-            },
-
-            setHasHydrated: (hydrated) => {
-                set({ _hasHydrated: hydrated } as Partial<IDEState>);
-            },
-        }),
-        {
-            name: 'via-gent-ide-state', // Will be overridden per-project
-            storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
-
-            // Only persist data, not functions
-            partialize: (state) => ({
-                openFiles: state.openFiles,
-                activeFile: state.activeFile,
-                // Convert Set to Array for JSON serialization
-                expandedPaths: Array.from(state.expandedPaths),
-                panelLayouts: state.panelLayouts,
-                terminalTab: state.terminalTab,
-                chatVisible: state.chatVisible,
-                activeFileScrollTop: state.activeFileScrollTop,
-            }),
-
-            // Convert expandedPaths array back to Set on rehydration
-            merge: (persisted, current) => {
-                const persistedState = persisted as Partial<IDEState> & { expandedPaths?: string[] };
-                return {
-                    ...current,
-                    ...persistedState,
-                    // Convert array back to Set
-                    expandedPaths: new Set(persistedState.expandedPaths ?? []),
-                };
-            },
-
-            onRehydrateStorage: () => {
-                console.log('[IDEStore] Hydration starting...');
-                return (state, error) => {
-                    if (error) {
-                        console.error('[IDEStore] Hydration error:', error);
-                    } else {
-                        console.log('[IDEStore] Hydration complete');
-                        if (state) {
-                            state._hasHydrated = true;
-                        }
-                    }
-                };
-            },
-        },
-    ),
-);
+// Re-export types
+export type {
+  EditorTab,
+  FileTreeNode,
+  PanelLayout,
+  AIContext,
+  FileContext,
+  IDEEditorState,
+  IDEExplorerState,
+  IDELayoutState,
+  IDETerminalState,
+  IDEProjectState,
+  CombinedIDEState,
+  TerminalTab,
+} from '@/infrastructure/persistence/stores/ide';
 
 // ============================================================================
-// Selectors (for performance optimization)
+// Legacy Exports for Backward Compatibility
 // ============================================================================
 
 /**
- * Select only open files
+ * @deprecated Use CombinedIDEState from infrastructure instead
+ * This type alias maintains backward compatibility with existing code
+ * that imports IDEState from this module.
  */
-export const selectOpenFiles = (state: IDEState) => state.openFiles;
+export type { CombinedIDEState as IDEState } from '@/infrastructure/persistence/stores/ide';
+
+// Legacy selectors (re-export as convenience)
+// These match the original file's export pattern
+
+import { useIDEStore as _useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import type { CombinedIDEState } from '@/infrastructure/persistence/stores/ide';
 
 /**
- * Select only active file
+ * @deprecated Use useIDEStore((s) => s.openFiles) instead
  */
-export const selectActiveFile = (state: IDEState) => state.activeFile;
+export const selectOpenFiles = (state: CombinedIDEState) => state.openFiles;
 
 /**
- * Select only expanded paths
+ * @deprecated Use useIDEStore((s) => s.activeFile) instead
  */
-export const selectExpandedPaths = (state: IDEState) => state.expandedPaths;
+export const selectActiveFile = (state: CombinedIDEState) => state.activeFile;
 
 /**
- * Select panel layouts
+ * @deprecated Use useIDEStore((s) => s.expandedPaths) instead
  */
-export const selectPanelLayouts = (state: IDEState) => state.panelLayouts;
+export const selectExpandedPaths = (state: CombinedIDEState) => state.expandedPaths;
 
 /**
- * Check if a path is expanded
+ * @deprecated Use useIDEStore((s) => s.panelLayouts) instead
  */
-export const createIsExpandedSelector = (path: string) =>
-    (state: IDEState) => state.expandedPaths.has(path);
-
-// ============================================================================
-// AI-Observable Selectors (Epic 25 Prep)
-// ============================================================================
+export const selectPanelLayouts = (state: CombinedIDEState) => state.panelLayouts;
 
 /**
- * Select complete context for AI agents
- * 
- * This selector provides all information an AI agent needs to understand
- * the current workspace state. Used by AI tools to build context.
- * 
- * @ai-observable
- * @epic Epic 25 - AI Foundation Sprint
- * @contracts Used by: file_read, file_write, execute_command tools
+ * @deprecated Use useIDEStore((s) => s.isExpanded(path)) instead
  */
-export const selectForAIContext = (state: IDEState) => ({
-    // Current working context
-    projectId: state.projectId,
-    activeFile: state.activeFile,
-    openFiles: state.openFiles,
+export const createIsExpandedSelector = (path: string) => (state: CombinedIDEState) =>
+  state.expandedPaths.has(path);
 
-    // Visible structure
-    expandedPaths: Array.from(state.expandedPaths),
-
-    // UI state (for understanding user intent)
-    chatVisible: state.chatVisible,
-    terminalTab: state.terminalTab,
+/**
+ * @deprecated Use useAIContext() hook instead
+ */
+export const selectForAIContext = (state: CombinedIDEState) => ({
+  projectId: state.projectId,
+  activeFile: state.activeFile,
+  openFiles: state.openFiles,
+  expandedPaths: Array.from(state.expandedPaths),
+  chatVisible: state.chatVisible,
+  terminalTab: state.terminalTab,
 });
 
 /**
- * Select minimal file context for AI tools
- * @ai-observable
+ * @deprecated Use useFileContext() hook instead
  */
-export const selectFileContext = (state: IDEState) => ({
-    activeFile: state.activeFile,
-    openFiles: state.openFiles,
-    projectId: state.projectId,
+export const selectFileContext = (state: CombinedIDEState) => ({
+  activeFile: state.activeFile,
+  openFiles: state.openFiles,
+  projectId: state.projectId,
 });
-
-/**
- * Get the store state directly (for non-React contexts like AI tools)
- * @ai-observable
- */
-export const getIDEStoreState = () => useIDEStore.getState();

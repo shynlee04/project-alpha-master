@@ -1,10 +1,11 @@
 /**
  * @fileoverview IDE Layout Slice
  * @module infrastructure/persistence/stores/ide/ide-layout-slice
- * @governance EPIC-CP-1
+ * @governance EPIC-CP-1, EPIC-53
  *
  * Manages IDE panel layout and visibility:
  * - panelLayouts: Panel sizes for each panel group
+ * - panelCollapsed: Panel collapse states by panel ID
  * - chatVisible: Chat panel visibility
  *
  * Integration with react-resizable-panels:
@@ -21,6 +22,7 @@ export const createIDELayoutSlice: StateCreator<IDELayoutState> = (set, get) => 
   // =========================================================================
 
   panelLayouts: {},
+  panelCollapsed: {},
   chatVisible: true,
 
   // =========================================================================
@@ -40,6 +42,23 @@ export const createIDELayoutSlice: StateCreator<IDELayoutState> = (set, get) => 
     const { panelLayouts } = get();
     set({
       panelLayouts: { ...panelLayouts, [groupId]: layout },
+    });
+  },
+
+  /**
+   * Set panel collapse state
+   *
+   * @param panelId - Panel identifier
+   * @param collapsed - true to collapse panel, false to expand
+   *
+   * @example
+   * setPanelCollapsed('sidebar', true)  // Collapse sidebar
+   * setPanelCollapsed('sidebar', false) // Expand sidebar
+   */
+  setPanelCollapsed: (panelId: string, collapsed: boolean) => {
+    const { panelCollapsed } = get();
+    set({
+      panelCollapsed: { ...panelCollapsed, [panelId]: collapsed },
     });
   },
 

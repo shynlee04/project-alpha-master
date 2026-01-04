@@ -188,7 +188,7 @@ development_status:
   # Epic 53 Stories
   53-1-consolidate-dexie-database: done # COMPLETED 2026-01-04T09:45:00+07:00 - Facade created with deprecation warning, db/getDb exported
   53-2-move-dexie-helpers: done # COMPLETED 2026-01-04T10:05:00+07:00 - Helpers moved to infrastructure/persistence/dexie-db-helpers/, barrel file created, SynthesisResultRecord added
-  53-3-merge-knowledge-store: backlog # Merge lib/state/knowledge with infrastructure/persistence/stores/knowledge
+  53-3-merge-knowledge-store: done # COMPLETED 2026-01-04T13:20:00+07:00 - All lib/state/knowledge files now facades, canonical at infrastructure/persistence/stores/knowledge
   53-4-migrate-ide-store: backlog # Merge lib/state/ide-store with infrastructure/persistence/stores/ide
   53-5-migrate-quiz-permission-stores: backlog # Move quiz-store, tool-permission-store, workspace-store
   53-6-move-dexie-storage: backlog # Move dexie-storage.ts to infrastructure/persistence
@@ -198,9 +198,10 @@ development_status:
   epic-53-progress:
     phase_1_complete: true # COMPLETED 2026-01-04T09:45:00+07:00 - Story 53-1 done (Dexie database facade)
     phase_2_complete: true # COMPLETED 2026-01-04T10:05:00+07:00 - Story 53-2 done (Dexie helpers migration)
-    stories_done: 2
+    phase_3_complete: true # COMPLETED 2026-01-04T13:20:00+07:00 - Story 53-3 done (Knowledge store merge)
+    stories_done: 3
     stories_total: 8
-    completion_percentage: "25%"
+    completion_percentage: "37.5%"
 
 
 
