@@ -49,3 +49,13 @@ export {
   createBidirectionalSync,
   bidirectionalSync,
 } from './bidirectional-sync-core.js';
+
+// ============================================================================
+// Re-exports from sync-operation-executor module
+// ============================================================================
+
+export {
+  generateOperations,
+  executeOperation,
+  getDirectionForOperation,
+} from './sync-operation-executor.js';

@@ -50,6 +50,97 @@ import { db, getDb } from '@/infrastructure/persistence/dexie-db';
 
 ---
 
+## 🏗️ SYNC INFRASTRUCTURE REFACTORING (2026-01-04)
+
+**Status:** Phase 1 Complete - God Files Eliminated
+**Epic:** ARCH-01.1 (Unified Sync Manager)
+**Reference:** `_bmad-output/epics/epic-arch-01-foundation-architecture.md`
+
+### Achievement: All God Files Split Under 300-Line Limit
+
+All 8 sync infrastructure god files have been successfully split into focused modules:
+
+| Original File | Lines | Split Into | Status |
+|---------------|-------|------------|--------|
+| sync-types.ts | 612 | 4 type modules | ✅ |
+| base-adapter.ts | 373 | 2 modules | ✅ |
+| sync-events.ts | 486 | 3 modules | ✅ |
+| conflict-resolution.ts | 368 | 2 modules | ✅ |
+| bidirectional-sync.ts | 509 | 3 modules | ✅ |
+| sync-engine.ts | 415 | 2 modules | ✅ |
+| idb-adapter.ts | 787 | 4 modules | ✅ |
+| fsa-adapter.ts | 560 | 3 modules | ✅ |
+
+### New Sync Infrastructure Structure
+
+```
+src/infrastructure/sync/
+├── index.ts                          # Public exports barrel
+├── core/                             # Core types and events
+│   ├── sync-core-types.ts            # WorkspaceType, SyncDirection, enums
+│   ├── file-types.ts                 # FileMetadata, FileContent
+│   ├── sync-result-types.ts          # SyncOptions, SyncResult
+│   ├── event-types.ts                # All event data types
+│   ├── sync-event-bus.ts             # Event emission infrastructure
+│   ├── event-emitters.ts             # Convenience emit functions
+│   └── file-watcher.ts               # File change detection
+├── adapters/                         # Storage backends
+│   ├── base-adapter.ts               # Abstract base class
+│   ├── adapter-errors.ts             # Error classes
+│   ├── idb-adapter-types.ts          # IDB configuration types
+│   ├── idb-adapter-utils.ts          # Eviction, encoding helpers
+│   ├── idb-adapter-core.ts           # IndexedDB implementation
+│   ├── idb-adapter.ts                # IDB barrel export
+│   ├── fsa-adapter-types.ts          # FSA configuration types
+│   ├── fsa-adapter-utils.ts          # Path, glob helpers
+│   ├── fsa-adapter-core.ts           # File System Access implementation
+│   └── fsa-adapter.ts                # FSA barrel export
+├── strategies/                       # Sync strategies
+│   ├── conflict-resolver.ts          # Resolution logic
+│   ├── conflict-detection.ts         # Detection utilities
+│   ├── file-comparison-types.ts      # Comparison types
+│   ├── bidirectional-sync-core.ts    # Bidirectional sync
+│   ├── bidirectional-sync.ts         # Strategy barrel export
+│   └── index.ts                      # Strategies barrel
+└── workspace-bindings/               # Workspace-specific bindings
+    ├── base.ts                       # Base binding class
+    ├── ide.ts                        # IDE workspace binding
+    ├── notes.ts                      # Notes workspace binding
+    ├── knowledge.ts                  # Knowledge workspace binding
+    ├── study.ts                      # Study workspace binding
+    └── index.ts                      # Bindings barrel
+```
+
+### Key Features Preserved
+
+**IDBAdapter** (IndexedDB Storage):
+- P0-critical quota checking before writes (prevents data loss)
+- Automatic eviction when storage is full
+- Base64 encoding for Uint8Array content
+- Event emission for `quota:warning` and `quota:exceeded`
+
+**FSAAdapter** (File System Access API):
+- Permission denial handling with user-friendly errors
+- File change detection via experimental watch API
+- Binary and text content support
+- Automatic content type detection
+
+### Barrel Export Pattern
+
+All split files use barrel exports for 100% backwards compatibility:
+
+```typescript
+// Import from barrel (old path still works)
+import { IDBAdapter, createIDBAdapter } from '@/infrastructure/sync/adapters/idb-adapter';
+import { FSAAdapter } from '@/infrastructure/sync/adapters/fsa-adapter';
+
+// Or import from specific modules (new pattern)
+import { IDBAdapter } from '@/infrastructure/sync/adapters/idb-adapter-core';
+import type { IDBAdapterConfig } from '@/infrastructure/sync/adapters/idb-adapter-types';
+```
+
+---
+
 
 ### 🚨 CRITICAL: Ralph Loop Cycle 18 - Course Correction Required (2026-01-01)
 

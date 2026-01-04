@@ -41,3 +41,16 @@ export {
   SyncEngine,
   createSyncEngine,
 } from './sync-engine-core.js';
+
+// ============================================================================
+// Re-exports from sync-engine-state module
+// ============================================================================
+
+export {
+  createInitialState,
+  subscribeToEvents,
+  isReady,
+  isAdapterAvailable,
+  getAdapter,
+  resetState as resetEngineState,
+} from './sync-engine-state.js';
