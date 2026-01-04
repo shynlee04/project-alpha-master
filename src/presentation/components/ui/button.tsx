@@ -143,7 +143,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Spinner = loading ? (
       <Loader2
         className="animate-spin"
-        size={size === 'sm' ? 16 : size === 'md' ? 20 : size === 'lg' ? 24 : 28}
+        size={size === 'sm' ? 'var(--icon-size-sm)' : size === 'md' ? 'var(--icon-size-md)' : size === 'lg' ? 'var(--icon-size-lg)' : 'var(--icon-size-xl)'}
         style={{ color: 'var(--foreground)' }}
         aria-hidden="true"
       />

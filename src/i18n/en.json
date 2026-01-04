@@ -357,12 +357,12 @@
   "chat.approvalOverlay.risk.medium": "Medium Risk",
   "chat.approvalOverlay.risk.low": "Low Risk",
   "chat.approvalOverlay.title": "Tool Approval Required",
-  "chat.approvalOverlay.close": "Close",
-  "chat.approvalOverlay.description": "The AI wants to use this tool",
+  "chat.approvalOverlay.close": "Close approval overlay",
+  "chat.approvalOverlay.description": "The AI agent wants to execute the following tool:",
   "chat.approvalOverlay.codePreview": "Code Preview",
   "chat.approvalOverlay.changesPreview": "Changes Preview",
   "chat.approvalOverlay.warning.title": "Warning",
-  "chat.approvalOverlay.warning.message": "This action may modify your files",
+  "chat.approvalOverlay.warning.message": "This tool may modify files or system state",
   "chat.approvalOverlay.sessionTrust": "Trust for this session",
   "chat.approvalOverlay.sessionTrustDescription": "Automatically approve this tool for the rest of this session",
   "chat.approvalOverlay.reject": "Reject",
@@ -404,7 +404,7 @@
   "suggestions.title": "Suggested actions",
   "suggestions.dismissAll": "Dismiss all",
   "chat.deleteThreadConfirm": "Delete this conversation?",
-  "chat.newConversation": "New Conversation",
+  "chat.newConversation": "NEW CHAT",
   "chat.noMessages": "No messages yet",
   "chat.conversations": "CONVERSATIONS",
   "chat.noConversations": "No conversations yet",
@@ -1152,5 +1152,6 @@
   "canvas.linkage.type.contrastive": "Contrastive",
   "canvas.linkage.confidence.high": "High",
   "canvas.linkage.confidence.medium": "Medium",
-  "canvas.linkage.confidence.low": "Low"
+  "canvas.linkage.confidence.low": "Low",
+  "chat.diff.linesHidden": "{{count}} lines hidden"
 }

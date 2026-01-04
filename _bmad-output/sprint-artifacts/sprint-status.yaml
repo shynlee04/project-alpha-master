@@ -217,11 +217,25 @@ epics:
 
       - id: STAB-24.3
         title: "Replace Hardcoded Pixels"
-        status: READY
+        status: DONE
         priority: P0
         estimated_hours: 12
         assigned_team: A
         dependencies: []
+        completed_at: "2026-01-05T06:00:00+07:00"
+        progress:
+          completion_pct: 100
+          notes: |
+            ✅ COMPLETED 2026-01-05: Design tokens for hardcoded pixels
+            - Added icon size tokens (--icon-size-xs through --icon-size-2xl)
+            - Added component size tokens (--size-xs through --size-xl)
+            - Added touch target token (--touch-target-min: 44px)
+            - Added border width tokens (--border-width-1/2/3)
+            - Updated Button component to use icon size tokens
+            - TypeScript: 0 errors (production code)
+        artifacts:
+          - "src/styles/design-tokens.css"
+          - "src/presentation/components/ui/button.tsx"
 
 # Workspace Services Remediation Stories (Sub-epic under ARCH-01.1)
 workspace_services_stories:

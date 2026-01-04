@@ -125,19 +125,24 @@ export const drag = () => ({ on: () => drag() });
 
 // React Flow Mocks
 export const ReactFlow = () => null;
+export const ReactFlowProvider = ({ children }: { children?: React.ReactNode }) => children;
 export const useReactFlow = () => ({});
 export const useNodes = () => [];
 export const useEdges = () => [];
+export const useStoreApi = () => ({});
 export const Background = () => null;
 export const Controls = () => null;
 export const MiniMap = () => null;
+export const Panel = ({ children }: { children?: React.ReactNode }) => children;
 export const Handle = () => null;
+export const BaseEdge = () => null;
+export const EdgeLabelRenderer = ({ children }: { children?: React.ReactNode }) => children;
 export const Position = { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' };
 export const applyNodeChanges = () => [];
 export const applyEdgeChanges = () => [];
 export const addEdge = () => [];
 export const NodeResizer = () => null; // Mock for removed v12 component (SSR compatibility)
-export const MarkerType = { Arrow: 'arrow' };
+export const MarkerType = { Arrow: 'arrow', ArrowClosed: 'arrowclosed' };
 
 // React Flow utility function mocks (SSR compatibility)
 export const getBezierPath = () => ['', '', ''];
@@ -145,6 +150,18 @@ export const getSmoothStepPath = () => ['', '', ''];
 export const getMarkerEnd = () => undefined;
 export const getEdgeCenter = () => ({ x: 0, y: 0 });
 export const calcNextPosition = () => ({ x: 0, y: 0 });
+
+// React Flow type mocks (SSR compatibility)
+export type Node = any;
+export type Edge = any;
+export type Viewport = any;
+export type NodeTypes = any;
+export type EdgeTypes = any;
+export type NodeProps = any;
+export type EdgeProps = any;
+export type OnNodesChange = any;
+export type OnEdgesChange = any;
+export type OnConnect = any;
 
 // Sharp Mock
 export const sharp = () => ({
