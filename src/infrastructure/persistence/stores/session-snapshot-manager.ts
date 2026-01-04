@@ -9,7 +9,7 @@
  * Story 24.5: Session State Snapshot System
  */
 
-import type { IDEState } from '@/lib/state/ide-store';
+import type { CombinedIDEState as IDEState } from '@/infrastructure/persistence/stores/ide';
 
 export interface SessionSnapshot {
   /**

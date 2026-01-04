@@ -6,11 +6,13 @@
  * Custom hook for collecting and persisting dashboard metrics.
  * Debounced writes to IndexedDB to prevent performance issues.
  *
+ * NOTE: Metrics history table not yet implemented in database schema.
+ * This is a placeholder for future implementation.
+ *
  * @see Research: _bmad-output/dashboard-charts-research-january-2026.md
  */
 
 import { useEffect, useRef } from 'react';
-import { db } from '@/lib/state/dexie-db';
 import type { DashboardMetrics } from './useDashboardMetrics';
 
 export interface UseMetricsCollectionOptions {
@@ -25,11 +27,13 @@ export interface UseMetricsCollectionOptions {
 /**
  * Hook for collecting dashboard metrics at regular intervals.
  *
- * Features:
- * - Automatic collection on mount (creates initial snapshot)
- * - Periodic collection (default: every minute)
- * - Debounced writes to IndexedDB (5-second default)
- * - Respects timestamp boundaries (collects on minute/hour/day changes)
+ * NOTE: This feature is not yet implemented. The metricsHistory database
+ * table does not exist. This is a placeholder for future implementation.
+ *
+ * To implement metrics history, add:
+ * 1. Table definition in dexie-db-class.ts
+ * 2. Migration in dexie-db-migrations.ts
+ * 3. Collection logic in this hook
  *
  * @example
  * ```tsx
@@ -44,39 +48,30 @@ export interface UseMetricsCollectionOptions {
  */
 export function useMetricsCollection({
   enabled = true,
-  debounceDelay = 5000,
-  collectionInterval = 60000,
 }: UseMetricsCollectionOptions = {}): void {
-  const timeoutRef = useRef<number | undefined>(undefined);
   const intervalRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!enabled) return;
 
+    // NOTE: Metrics collection not yet implemented
+    // When implemented, add periodic collection logic here
 
     // Cleanup function
     return () => {
-      if (timeoutRef.current !== undefined) {
-        clearTimeout(timeoutRef.current);
-      }
       if (intervalRef.current !== undefined) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [enabled, debounceDelay, collectionInterval]);
-
-  // Note: This hook doesn't actually collect metrics on its own.
-  // It provides the debounced write function that should be called
-  // when metrics change (e.g., when projects change).
-  //
-  // For automatic collection, integrate this into useDashboardMetrics
-  // or call it from a parent component when metrics update.
+  }, [enabled]);
 }
 
 /**
  * Save metrics snapshot immediately (bypasses debounce).
  *
- * Use this for critical moments like project creation/deletion.
+ * NOTE: This function is a placeholder. The metricsHistory table
+ * does not exist yet. When implemented, this will save metrics
+ * to IndexedDB for historical tracking.
  *
  * @example
  * ```tsx
@@ -85,24 +80,11 @@ export function useMetricsCollection({
  * }
  * ```
  */
-export async function saveMetricsSnapshot(metrics: DashboardMetrics): Promise<void> {
-  try {
-    const now = new Date().toISOString();
+export async function saveMetricsSnapshot(_metrics: DashboardMetrics): Promise<void> {
+  // NOTE: Metrics history feature not yet implemented
+  // The metricsHistory table doesn't exist in the database schema.
+  // This is a placeholder for future implementation.
 
-    await db.metricsHistory.put({
-      timestamp: now,
-      workspaceType: 'all',
-      metricName: 'projectCount',
-      value: metrics.totalProjects,
-      metadata: JSON.stringify({
-        active: metrics.activeProjects,
-        deleted: metrics.deletedProjects,
-      }),
-    });
-
-    console.log('[Metrics Collection] Immediate snapshot saved:', now);
-  } catch (error) {
-    console.error('[Metrics Collection] Failed to save immediate snapshot:', error);
-    throw error;
-  }
+  console.warn('[Metrics Collection] Feature not yet implemented - metricsHistory table does not exist');
+  return Promise.resolve();
 }

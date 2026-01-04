@@ -214,6 +214,7 @@ export interface NoteRecord {
 
 export type SourcesTable = Table<SourceRecord, string>;
 export type CollectionsTable = Table<CollectionRecord, string>;
+export type SynthesisResultsTable = Table<SynthesisResultRecord, string>;
 export type OramaIndexesTable = Table<OramaIndexRecord, string>;
 export type EmbeddingModelsTable = Table<EmbeddingModelRecord, string>;
 export type NotesTable = Table<NoteRecord, string>;

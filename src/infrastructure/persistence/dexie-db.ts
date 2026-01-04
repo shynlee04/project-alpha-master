@@ -175,11 +175,21 @@ let dbInstance: ViaGentDatabase | null = null;
 /**
  * Get the database instance (SSR-safe)
  * Returns null during server-side rendering
+ *
+ * NOTE: Database is automatically opened on first access to ensure
+ * table properties (projects, ideState, etc.) are available.
  */
 export function getDb(): ViaGentDatabase | null {
   if (typeof window === 'undefined') return null;
   if (!dbInstance) {
     dbInstance = new ViaGentDatabase();
+    // CRITICAL: Open database synchronously to ensure table properties
+    // are available immediately. Without this, accessing db.projects
+    // returns undefined because Dexie doesn't attach tables until open().
+    // We fire-and-forget since useLiveQuery will handle the async state.
+    dbInstance.open().catch((err) => {
+      console.error('[Dexie] Failed to open database:', err);
+    });
   }
   return dbInstance;
 }

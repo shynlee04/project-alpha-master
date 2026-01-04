@@ -41,13 +41,11 @@ import type {
 import type {
     SourcesTable,
     CollectionsTable,
+    SynthesisResultsTable,
     OramaIndexesTable,
     EmbeddingModelsTable,
     NotesTable,
 } from './dexie-db-knowledge-types';
-
-// Import synthesis results type (lib/state specific)
-import type { SynthesisResultsTable } from '@/lib/state/dexie-db';
 
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
