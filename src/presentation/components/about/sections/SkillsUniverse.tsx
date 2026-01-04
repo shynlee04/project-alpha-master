@@ -50,7 +50,7 @@ export function SkillsUniverse() {
                 <p className="text-muted-foreground">{t('about.skills.subtitle')}</p>
             </div>
 
-            <div className="relative w-full max-w-4xl aspect-[4/3] md:aspect-[16/9] border border-border/50 rounded-xl bg-background/50 backdrop-blur-sm shadow-2xl overflow-hidden">
+            <div className="relative w-full max-w-4xl aspect-[4/3] md:aspect-[16/9] border border-border/50 rounded-xl bg-background shadow-2xl overflow-hidden">
                 {/* Background Grid */}
                 <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
@@ -67,7 +67,7 @@ export function SkillsUniverse() {
                     <motion.div
                         key={skill.id}
                         className={cn(
-                            "absolute flex items-center justify-center rounded-full border cursor-pointer transition-all duration-300 backdrop-blur-md shadow-lg font-mono font-bold text-xs md:text-sm text-center px-4",
+                            "absolute flex items-center justify-center rounded-full border cursor-pointer transition-all duration-300 shadow-lg font-mono font-bold text-xs md:text-sm text-center px-4",
                             getCategoryColor(skill.category)
                         )}
                         style={{

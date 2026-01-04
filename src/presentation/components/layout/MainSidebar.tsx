@@ -89,7 +89,7 @@ const mobileSidebarVariants = cva(
 );
 
 const backdropVariants = cva(
-  'fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300',
+  'fixed inset-0 bg-black/50 z-40 transition-opacity duration-300',
   {
     variants: {
       open: {

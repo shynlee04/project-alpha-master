@@ -123,7 +123,7 @@ export const ProjectSearchBar: React.FC<ProjectSearchBarProps> = ({
         <Dialog.Portal>
           <Dialog.Overlay
             className={cn(
-              "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm",
+              "fixed inset-0 z-50 bg-background/95",
               "data-[state=open]:animate-in",
               "data-[state=closed]:animate-out",
               "data-[state=closed]:fade-out-0",

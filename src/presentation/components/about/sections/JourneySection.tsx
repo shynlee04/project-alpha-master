@@ -39,7 +39,7 @@ const TimelineItem = ({ icon: Icon, year, title, description, skills, align, del
                 className={cn("w-full md:w-5/12 pl-12 md:pl-0",
                     align === 'left' ? 'md:pr-8 text-right' : 'md:pl-8 text-left')}
             >
-                <div className="bg-card/50 backdrop-blur-sm border border-border/50 p-6 rounded-xl hover:border-primary/20 transition-colors">
+                <div className="bg-card border border-border/50 p-6 rounded-xl hover:border-primary/20 transition-colors">
                     <div className={cn("flex items-center gap-3 mb-2", align === 'left' ? 'md:flex-row-reverse' : '')}>
                         <span className="font-mono text-sm text-primary/80">{year}</span>
                     </div>

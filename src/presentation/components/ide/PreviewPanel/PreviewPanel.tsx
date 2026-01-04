@@ -122,9 +122,9 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
         <>
             {/* Focus Mode Modal */}
             {isFocusMode && previewUrl && (
-                <div className="fixed inset-0 z-50 bg-background/95 flex flex-col">
+                <div className="fixed inset-0 z-50 bg-background flex flex-col">
                     {/* Modal Header */}
-                    <div className="h-12 px-4 flex items-center justify-between border-b border-border bg-card/80 backdrop-blur shrink-0">
+                    <div className="h-12 px-4 flex items-center justify-between border-b border-border bg-card shrink-0">
                         <div className="flex items-center gap-4">
                             <TruncatedText
                                 text={t('ide.preview')}

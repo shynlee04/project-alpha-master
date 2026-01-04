@@ -187,7 +187,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           {project.lastOpened
             ? formatDistanceToNow(new Date(project.lastOpened), { addSuffix: true })
             : ''
-        }
+          }
         </span>
       </div>
 
@@ -200,7 +200,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
       {/* Quick-Open Buttons (Hover only, desktop) */}
       {isHovered && boundWorkspaces.length > 0 && (
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 bg-background/95 backdrop-blur-sm border-2 border-border p-1 shadow-pixel z-10">
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 bg-background border-2 border-border p-1 shadow-pixel z-10">
           {boundWorkspaces.map((workspace) => (
             <WorkspaceBadge
               key={`quick-${workspace}`}

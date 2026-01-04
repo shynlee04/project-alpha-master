@@ -87,7 +87,7 @@ export const RecentProjectsSection: React.FC<RecentProjectsSectionProps> = ({
         />
       ) : (
         // Projects table
-        <div className="border-2 border-border/60 bg-card/50 backdrop-blur-sm shadow-pixel">
+        <div className="border-2 border-border/60 bg-card shadow-pixel">
           {/* Header Row */}
           <div className="grid grid-cols-12 gap-4 p-3 border-b-2 border-border/40 bg-muted/40 font-pixel text-xs text-muted-foreground uppercase tracking-widest">
             <div className="col-span-8 md:col-span-5 pl-2">

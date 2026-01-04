@@ -21,8 +21,8 @@ import type { IndexMetadata } from '@/lib/rag/types';
  * Canvas component props
  */
 export interface CanvasProps {
-    /** Optional RAG index metadata for knowledge graph integration */
-    indexMetadata?: IndexMetadata | null;
+  /** Optional RAG index metadata for knowledge graph integration */
+  indexMetadata?: IndexMetadata | null;
 }
 
 // Default viewport options
@@ -41,7 +41,7 @@ function CanvasEmptyState() {
   const { isMobile } = useResponsive();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-surface/50 backdrop-blur-sm">
+    <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-background">
       <div className={`mb-4 ${isMobile ? 'text-3xl' : 'text-4xl'} animate-bounce`}>
         📝
       </div>
@@ -69,7 +69,7 @@ function TouchGesturesPanel() {
 
   return (
     <Panel position="bottom-right">
-      <div className="flex flex-col gap-2 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm p-2 rounded">
+      <div className="flex flex-col gap-2 text-xs text-muted-foreground bg-background p-2 rounded border border-border shadow-pixel">
         {gestures.map(({ icon, desc }) => (
           <div key={icon} className="flex items-center gap-2">
             <span className="text-sm">{icon}</span>
@@ -122,7 +122,7 @@ function KeyboardShortcutsPanel() {
 
   return (
     <Panel position="bottom-right">
-      <div className="flex flex-col gap-1 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm p-2 rounded">
+      <div className="flex flex-col gap-1 text-xs text-muted-foreground bg-background p-2 rounded border border-border shadow-pixel">
         {shortcuts.map(({ key, action }) => (
           <div key={key} className="flex gap-2">
             <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">{key}</kbd>

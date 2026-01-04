@@ -271,7 +271,7 @@ export function XTerminal({ className, initialSyncCompleted = false, permissionS
 
             {/* Sync waiting overlay */}
             {showOverlay && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
                     <div className="flex items-center gap-3 text-muted-foreground">
                         {/* Loading spinner */}
                         <svg

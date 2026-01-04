@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 const overlayVariants = cva(
   [
     "fixed left-[50%] top-[50%] z-[100] translate-x-[-50%] translate-y-[-50%]",
-    "bg-background/95 backdrop-blur-sm",
+    "bg-background",
     "border-2 border-border",
     "rounded-none shadow-lg",
     "w-full max-w-2xl max-h-[80vh]",

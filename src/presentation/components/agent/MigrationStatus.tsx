@@ -42,7 +42,7 @@ export function MigrationStatus(): React.ReactElement | null {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface border border-border rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl">
         {/* Loading indicator */}
         <div className="flex items-center justify-center mb-4">

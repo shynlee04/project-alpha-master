@@ -190,11 +190,10 @@ const RelationshipEdgeComponent = ({
           ) : (
             <button
               type="button"
-              className={`px-2 py-1 text-xs bg-background/90 backdrop-blur-sm border rounded cursor-pointer hover:bg-accent transition-colors ${
-                selected
+              className={`px-2 py-1 text-xs bg-background border rounded cursor-pointer hover:bg-accent transition-colors ${selected
                   ? 'border-primary text-primary'
                   : 'border-border text-muted-foreground'
-              }`}
+                }`}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsEditing(true);
