@@ -25,7 +25,7 @@ import { modelRegistry } from '@/lib/agent/providers/model-registry';
 
 // Import infrastructure (no circular deps)
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 
 // ============================================================================
 // PROVIDER MODELS SLICE

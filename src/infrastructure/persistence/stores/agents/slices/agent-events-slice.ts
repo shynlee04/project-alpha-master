@@ -11,7 +11,7 @@
 import { StateCreator } from 'zustand';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { CombinedAgentsState } from '../types';
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 

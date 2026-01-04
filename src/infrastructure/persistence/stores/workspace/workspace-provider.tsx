@@ -26,7 +26,7 @@
 
 import { useState, useCallback, useMemo, ReactNode } from 'react';
 import { WorkspaceContext, type WorkspaceContextValue } from './workspace-context';
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from './workspace-store';
 import { useAppStore } from '../use-app-store';
 import { useConversationStore } from '../conversation';
 import { useRAGStore } from '../rag';
