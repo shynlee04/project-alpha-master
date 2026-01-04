@@ -115,7 +115,7 @@ export const createConversationValidationSlice: StateCreator<
         errors.push(`Parent thread ${thread.parentThreadId} does not exist`);
       } else if (parent.status === 'deleted') {
         errors.push(`Parent thread ${thread.parentThreadId} is deleted`);
-      } else if (!parent.childThreadIds.includes(threadId)) {
+      } else if (!parent.childThreadIds?.includes(threadId)) {
         errors.push(`Parent thread ${thread.parentThreadId} does not reference ${threadId} as child`);
       }
     }

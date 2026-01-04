@@ -292,6 +292,15 @@ export const useAgentsForWorkspace = (workspaceType: WorkspaceType) =>
   useAppStore((state) => state.getAgentsForWorkspace(workspaceType));
 
 /**
+ * Get active agent
+ */
+export const useActiveAgent = () => useAppStore((state) => {
+  const activeAgentId = state.activeAgentId;
+  if (!activeAgentId) return undefined;
+  return state.agents.find(a => a.id === activeAgentId);
+});
+
+/**
  * Get all providers
  */
 export const useProviders = () => useAppStore((state) => state.providers);

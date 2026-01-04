@@ -46,6 +46,9 @@ import type {
     NotesTable,
 } from './dexie-db-knowledge-types';
 
+// Import synthesis results type (lib/state specific)
+import type { SynthesisResultsTable } from '@/lib/state/dexie-db';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -121,6 +124,7 @@ export class ViaGentDatabase extends Dexie {
 
     sources!: SourcesTable;
     collections!: CollectionsTable;
+    synthesisResults!: SynthesisResultsTable;
 
     // ========================================================================
     // Epic 7: RAG Infrastructure Tables

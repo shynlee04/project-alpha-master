@@ -97,9 +97,12 @@ export const createThreadManagementSlice: StateCreator<
   getThread: (id) => { const t = get().threads[id] as any; return t?.status !== 'deleted' ? t : undefined; },
 
   getThreadsByConversation: (conversationId) =>
-    Object.values(get().threads).filter((t: any) => t.conversationId === conversationId && t.status !== 'deleted') as ThreadWithId[],
+    Object.values(get().threads).filter(
+      (t) => t.conversationId === conversationId && t.status !== 'deleted'
+    ) as ThreadWithId[],
 
-  getRootThread: (conversationId) => get().getThreadsByConversation(conversationId).find((t) => t.isRoot),
+  getRootThread: (conversationId) =>
+    get().getThreadsByConversation(conversationId).find((t) => t.isRoot) as ThreadWithId | undefined,
 
   getChildThreads: (parentThreadId) => {
     const parent = get().threads[parentThreadId] as any;

@@ -573,8 +573,11 @@ pnpm test
 # Extract translation keys
 pnpm i18n:extract
 
-# Type checking
-pnpm tsc --noEmit
+# Type checking (production code only, ~3x faster)
+pnpm typecheck
+
+# Type checking (includes test files)
+pnpm typecheck:all
 ```
 
 ---
@@ -1349,8 +1352,8 @@ const removeAgent = useAgentsStore(s => s.removeAgent)
 
 **Step 3: Verify with TypeScript**
 ```bash
-pnpm tsc --noEmit
-# Expected: Zero new errors
+pnpm typecheck
+# Expected: Zero new errors (production code only)
 ```
 
 **Step 4: Test User Workflows**

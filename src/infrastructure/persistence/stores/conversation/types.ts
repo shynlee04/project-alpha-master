@@ -105,9 +105,37 @@ import type { ConversationEvent, ConversationEventType } from './conversation-ev
 
 // Define slice-specific types inline using utility types to avoid circular imports
 // Each slice will provide the actual implementation
-export type ConversationMetadataWithId = ConversationMetadata & { id: string };
-export type ThreadWithId = ConversationThread & { id: string };
-export type MessageWithId = ThreadMessage & { id: string };
+
+// Extend ConversationMetadata with store-specific properties
+export interface ConversationMetadataExtended extends ConversationMetadata {
+  id: string;
+  projectId: string | null;  // Project association (null = no project)
+  status: 'active' | 'archived' | 'deleted';
+  workspaceType: WorkspaceType;
+  updatedAt: string;  // ISO string for storage
+  createdAt: string;  // ISO string for storage
+  agentId: string;
+}
+
+// Extend ConversationThread with store-specific properties
+export interface ThreadExtended extends ConversationThread {
+  id: string;
+  status: 'active' | 'archived' | 'deleted';
+  conversationId: string;  // Back-reference to conversation
+  parentThreadId?: string | null;
+  childThreadIds?: string[];
+  isRoot?: boolean;
+}
+
+// Extend ThreadMessage with store-specific properties
+export interface MessageExtended extends ThreadMessage {
+  id: string;
+  threadId: string;  // Association with thread
+}
+
+export type ConversationMetadataWithId = ConversationMetadataExtended;
+export type ThreadWithId = ThreadExtended;
+export type MessageWithId = MessageExtended;
 
 // Additional domain types moved here to avoid circular dependencies
 export interface ConversationStats {

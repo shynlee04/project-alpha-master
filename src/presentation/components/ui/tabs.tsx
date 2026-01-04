@@ -2,13 +2,16 @@
  * Tabs Component
  *
  * @story LT-3.18 (Light Theme Migration)
+ * @story LT-FIX-1 (Bug Fix - Hardcoded Theme)
  *
  * Uses CSS custom properties for light/dark theme support.
+ * Fixed hardcoded theme: 'dark' to use resolvedTheme from next-themes.
  */
 
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 import { cva } from "class-variance-authority"
+import { useTheme } from "next-themes"
 
 import { cn } from "@/lib/utils"
 
@@ -119,10 +122,13 @@ function TabsList({
   orientation = 'horizontal',
   ...props
 }: TabsListProps) {
+  const { resolvedTheme } = useTheme()
+  const theme = resolvedTheme === 'dark' ? 'dark' : 'light'
+
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn(tabsListVariants({ orientation, theme: 'dark' }), className)}
+      className={cn(tabsListVariants({ orientation, theme }), className)}
       {...props}
     />
   )

@@ -48,6 +48,7 @@ export interface SynthesisResultRecord {
     status: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed';
     synthesisResult?: string;
     errorMessage?: string;
+    frontmatter?: Record<string, unknown>; // Frontmatter for synthesis
     createdAt: number;
     updatedAt: number;
 }

@@ -172,8 +172,11 @@ pnpm test
 # Extract translation keys
 pnpm i18n:extract
 
-# Type checking
-pnpm tsc --noEmit
+# Type checking (production code only, ~3x faster)
+pnpm typecheck
+
+# Type checking (includes test files)
+pnpm typecheck:all
 ```
 
 ## Key Directories & Files (Updated 2026-01-01)
@@ -1017,9 +1020,9 @@ pnpm test conversation-metadata-slice.test.ts
 # Verify all tests pass
 # Expected: 10/10 tests passing
 
-# Run TypeScript check
-pnpm tsc --noEmit
-# Expected: Zero new errors
+# Run TypeScript check (production code only)
+pnpm typecheck
+# Expected: Zero new errors (test files excluded)
 ```
 
 **Step 6: Verify Acceptance Criteria** (30 minutes)
@@ -1323,7 +1326,7 @@ Before marking a story as complete, verify:
 
 **Code Quality**:
 - [ ] File ≤120 lines (excluding imports/comments)
-- [ ] Zero TypeScript errors (`pnpm tsc --noEmit`)
+- [ ] Zero TypeScript errors (`pnpm typecheck` - production code only)
 - [ ] Zero ESLint warnings
 - [ ] All functions have JSDoc comments
 - [ ] No `any` types (strict typing)
