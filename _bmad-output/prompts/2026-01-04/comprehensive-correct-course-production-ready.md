@@ -1356,18 +1356,49 @@ All findings are backed by evidence blocks with file
 
 ===
 
+# ULTRA IMPORTANT - LOAD THIS WORKFLOW EVERY CYCLE
+
+_bmad/modules/cross-workspace-chat/workflows/MASTER-WORKFLOW.md
+
 ## Correction:
 
 - all the Google Gemini is at model 2.5 at least (some are at 3.0) -> everytime dealing with these models, the constantly changing information -> you must check with internet MCP servers tools 
 
-## Before starting the work
-- conduct deepscan of the relevant slices, domains, aspect, architectures, structures, consitutions and so on (vi and en as duo languages for UI ) of this codebase -> make sure to follow and strictly apply the findings to the work.
+## Deep-scan context of the codebase (2026-01-05)
+```
 
-- Use @deep-scan module to first - gain enough information -> generate module that include workflows, agents, sub-agents, using your skills and research with MCP server tools for every cycle of your loops -> generate you own master workflows (that include details of bigger cycles like updating sprint-status -> adjusting stories - epics -> creating-correct-course if errors encounterd)
+_bmad-output/deep-scan/architecture-ux
+_bmad-output/deep-scan/architecture-ux/deep-scan-report-2026-01-05.md
+_bmad-output/deep-scan/architecture-ux/issues.json
+_bmad-output/deep-scan/architecture-ux/summary.json
+_bmad-output/deep-scan/cross-workspace-chat
+_bmad-output/deep-scan/cross-workspace-chat/deep-scan-report.md
+_bmad-output/deep-scan/cross-workspace-chat/file-inventory.json
+_bmad-output/deep-scan/cross-workspace-chat/QUICK-REFERENCE.md
+_bmad-output/deep-scan/cross-workspace-chat/risk-matrix.json
+_bmad-output/deep-scan/evidence
+_bmad-output/deep-scan/inventory
+_bmad-output/deep-scan/inventory/architecture-inventory.json
+_bmad-output/deep-scan/inventory/STATE-INVENTORY-REPORT.md
+_bmad-output/deep-scan/inventory/state-inventory.json
+_bmad-output/deep-scan/reports
+_bmad-output/deep-scan/reports/MASTER-RISK-REGISTER.md
+_bmad-output/deep-scan/reports/REMEDIATION-BACKLOG.yaml
+_bmad-output/deep-scan/state-management
+_bmad-output/deep-scan/state-management/cross-store-dependencies.json
+_bmad-output/deep-scan/state-management/deep-scan-report-2026-01-05.md
+_bmad-output/deep-scan/state-management/persistence-patterns.md
+_bmad-output/deep-scan/state-management/slice-line-counts.json
+_bmad-output/deep-scan/state-management/SUMMARY.md
+
+```
+
+
+-> generate module that include workflows, agents, sub-agents, using your skills and research with MCP server tools for every cycle of your loops -> generate you own master workflows (that include details of bigger cycles like updating sprint-status -> adjusting stories - epics -> creating-correct-course if errors encounterd)
 
 - For development cycle will be the iterative and loop (of validation and review step) of these agents /sm and /dev following these cycles of workflows (load BMAD wowrkflows and instruction to follow strictly)
 1, Generate story (create-story) -> 2. validate-create-story (loop still 100%) -> 3. create-story-context -> 4. validate-create-story-context (loop still 100%) -> 5. dev-story (check and track with dev notes, check with accpetance criteria, requirements) -> both story documents and code files implemented - check with @sweeping-validation.md -> /dev for /code-review -> loop til 100% then  Starting the next cycle
 
--once an Epic off all 100% implemented stories are completed -> run /restrospective
+-once an Epic and all 100% implemented stories are completed -> run /restrospective
 
 - run /sprint-planning and next till all epeics and stories are implementd and tracked with 100% coverage.

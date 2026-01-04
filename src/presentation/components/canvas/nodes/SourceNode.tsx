@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Handle, Position, NodeProps, NodeResizer } from '@xyflow/react';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import { FileText, Globe, FileJson } from 'lucide-react';
 import { SourceNodeData } from '@/lib/canvas/types';
 
@@ -92,14 +92,6 @@ const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
         position={Position.Bottom}
         className="!bg-blue-500 !w-3 !h-3 !border-2 !border-gray-900"
       />
-
-      {/* Selection resizer */}
-      {selected && (
-        <NodeResizer
-          minWidth={150}
-          minHeight={80}
-        />
-      )}
     </div>
   );
 };

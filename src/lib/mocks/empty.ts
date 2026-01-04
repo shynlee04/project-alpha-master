@@ -136,6 +136,8 @@ export const Position = { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'ri
 export const applyNodeChanges = () => [];
 export const applyEdgeChanges = () => [];
 export const addEdge = () => [];
+export const NodeResizer = () => null; // Mock for removed v12 component (SSR compatibility)
+export const MarkerType = { Arrow: 'arrow' };
 
 // Sharp Mock
 export const sharp = () => ({

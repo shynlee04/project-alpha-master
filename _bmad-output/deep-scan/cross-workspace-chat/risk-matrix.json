@@ -1,0 +1,194 @@
+{
+  "metadata": {
+    "generated": "2026-01-05",
+    "totalRisks": 13,
+    "criticalCount": 3,
+    "highCount": 5,
+    "mediumCount": 5,
+    "lowCount": 3
+  },
+  "critical": [
+    {
+      "id": "P0-1",
+      "finding": "God Store: tool-permission-manager.ts",
+      "location": "src/lib/agent/tool-permission-manager.ts",
+      "lines": 860,
+      "exceedsLimitBy": "186%",
+      "riskLevel": "CRITICAL",
+      "impact": "High cognitive load, difficult to test, potential for bugs",
+      "remediationEffortHours": 8,
+      "remediationStrategy": "Split into 3 slices: trust-level-slice, permission-check-slice, permission-events-slice"
+    },
+    {
+      "id": "P0-2",
+      "finding": "God Store: unified-workspace-provider.tsx",
+      "location": "src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx",
+      "lines": 734,
+      "exceedsLimitBy": "145%",
+      "riskLevel": "CRITICAL",
+      "impact": "Performance issues, difficult to maintain",
+      "remediationEffortHours": 8,
+      "remediationStrategy": "Extract WorkspaceContext, useWorkspace hook, move provider logic to slices"
+    },
+    {
+      "id": "P0-3",
+      "finding": "Duplicate Event Bus Implementations",
+      "location": "src/lib/events/ vs src/infrastructure/events/",
+      "lines": "N/A",
+      "exceedsLimitBy": "N/A",
+      "riskLevel": "CRITICAL",
+      "impact": "Confusion about canonical source, potential for sync issues",
+      "remediationEffortHours": 4,
+      "remediationStrategy": "Keep lib/events/cross-workspace-event-bus.ts as canonical, remove infrastructure wrapper"
+    }
+  ],
+  "high": [
+    {
+      "id": "P1-1",
+      "finding": "God Store: prompt-composer.ts",
+      "location": "src/lib/agent/prompt-composer.ts",
+      "lines": 467,
+      "exceedsLimitBy": "56%",
+      "riskLevel": "HIGH",
+      "impact": "Single file complexity",
+      "remediationEffortHours": 6,
+      "remediationStrategy": "Extract layer implementations to separate files"
+    },
+    {
+      "id": "P1-2",
+      "finding": "God Store: workspace-permission-manager.ts",
+      "location": "src/lib/agent/workspace-permission-manager.ts",
+      "lines": 351,
+      "exceedsLimitBy": "17%",
+      "riskLevel": "HIGH",
+      "impact": "Single file complexity",
+      "remediationEffortHours": 4,
+      "remediationStrategy": "Extract permission checking logic to separate module"
+    },
+    {
+      "id": "P1-3",
+      "finding": "RAG Chat Placeholder Implementation",
+      "location": "src/lib/rag/rag-chat.ts",
+      "lines": 256,
+      "exceedsLimitBy": "N/A",
+      "riskLevel": "HIGH",
+      "impact": "RAG chat not functional until integration completed",
+      "remediationEffortHours": 16,
+      "remediationStrategy": "Wire rag-chat.ts to TanStack AI, remove placeholder responses"
+    },
+    {
+      "id": "P1-4",
+      "finding": "God Store: AgentConfigTabContents.tsx",
+      "location": "src/presentation/components/agent/AgentConfigTabContents.tsx",
+      "lines": 400,
+      "exceedsLimitBy": "33%",
+      "riskLevel": "HIGH",
+      "impact": "Component complexity",
+      "remediationEffortHours": 4,
+      "remediationStrategy": "Extract each tab content to separate component file"
+    },
+    {
+      "id": "P1-5",
+      "finding": "God Store: orama-index.ts",
+      "location": "src/lib/rag/orama-index.ts",
+      "lines": 645,
+      "exceedsLimitBy": "115%",
+      "riskLevel": "HIGH",
+      "impact": "Single file complexity",
+      "remediationEffortHours": 6,
+      "remediationStrategy": "Extract index-management, document-indexing, search-operations modules"
+    }
+  ],
+  "medium": [
+    {
+      "id": "P2-1",
+      "finding": "Factory Code Duplication",
+      "location": "src/lib/agent/factory.ts",
+      "lines": 612,
+      "exceedsLimitBy": "104%",
+      "riskLevel": "MEDIUM",
+      "impact": "Code duplication, maintenance burden",
+      "remediationEffortHours": 4,
+      "remediationStrategy": "Extract permission checking to reusable function"
+    },
+    {
+      "id": "P2-2",
+      "finding": "Incomplete Vietnamese i18n",
+      "location": "src/i18n/vi.json",
+      "lines": 1155,
+      "exceedsLimitBy": "N/A",
+      "riskLevel": "MEDIUM",
+      "impact": "Poor UX for Vietnamese users",
+      "remediationEffortHours": 8,
+      "remediationStrategy": "Complete translation of all missing keys"
+    },
+    {
+      "id": "P2-3",
+      "finding": "Conversation Store Migration Backward Compatibility",
+      "location": "src/infrastructure/persistence/stores/conversation/",
+      "lines": "N/A",
+      "exceedsLimitBy": "N/A",
+      "riskLevel": "MEDIUM",
+      "impact": "Legacy code paths may cause subtle bugs",
+      "remediationEffortHours": 2,
+      "remediationStrategy": "Remove backward compatibility facade after all consumers migrated"
+    },
+    {
+      "id": "P2-4",
+      "finding": "God Store: quiz-store.ts",
+      "location": "src/infrastructure/persistence/stores/study/quiz-store.ts",
+      "lines": 658,
+      "exceedsLimitBy": "119%",
+      "riskLevel": "MEDIUM",
+      "impact": "Single file complexity",
+      "remediationEffortHours": 4,
+      "remediationStrategy": "Split into CRUD, validation, UI state slices"
+    },
+    {
+      "id": "P2-5",
+      "finding": "God Store: canvas-store.ts",
+      "location": "src/infrastructure/persistence/stores/canvas-store.ts",
+      "lines": 623,
+      "exceedsLimitBy": "108%",
+      "riskLevel": "MEDIUM",
+      "impact": "Single file complexity",
+      "remediationEffortHours": 4,
+      "remediationStrategy": "Split into block, connection, selection slices"
+    }
+  ],
+  "low": [
+    {
+      "id": "P3-1",
+      "finding": "Factory.ts Size Warning",
+      "location": "src/lib/agent/factory.ts",
+      "lines": 612,
+      "exceedsLimitBy": "104%",
+      "riskLevel": "LOW",
+      "impact": "Technical debt",
+      "remediationEffortHours": 2,
+      "remediationStrategy": "Refactor to reduce below 300 lines"
+    },
+    {
+      "id": "P3-2",
+      "finding": "ChatConversation.tsx Size Warning",
+      "location": "src/presentation/components/chat/ChatConversation.tsx",
+      "lines": 339,
+      "exceedsLimitBy": "13%",
+      "riskLevel": "LOW",
+      "impact": "Technical debt",
+      "remediationEffortHours": 2,
+      "remediationStrategy": "Extract message rendering to separate component"
+    },
+    {
+      "id": "P3-3",
+      "finding": "Use-app-store.ts Size Warning",
+      "location": "src/infrastructure/persistence/stores/use-app-store.ts",
+      "lines": 367,
+      "exceedsLimitBy": "22%",
+      "riskLevel": "LOW",
+      "impact": "Technical debt",
+      "remediationEffortHours": 2,
+      "remediationStrategy": "Split into domain-specific slices"
+    }
+  ]
+}

@@ -258,12 +258,13 @@ describe('IncrementalIndexingService - Integration', () => {
         processing: false,
       };
 
-      const sourceId = `${task.projectId}:${task.filePath}`;
       const result = await service.processTask(task);
 
       expect(result.chunksIndexed).toBeGreaterThan(0);
 
-      const cachedChunks = service.getCachedChunks(sourceId as any);
+      // Use public method to get cached chunks
+      const sourceId = `${task.projectId}:${task.filePath}`;
+      const cachedChunks = service.getCachedChunks(sourceId);
       expect(cachedChunks.length).toBe(result.chunksIndexed);
     });
 
@@ -283,9 +284,9 @@ describe('IncrementalIndexingService - Integration', () => {
       await service.processTask(task);
 
       const sourceId = `${task.projectId}:${task.filePath}`;
-      service.clearCache(sourceId as any);
+      service.clearCache(sourceId);
 
-      const cachedChunks = service.getCachedChunks(sourceId as any);
+      const cachedChunks = service.getCachedChunks(sourceId);
       expect(cachedChunks).toEqual([]);
     });
 
@@ -319,8 +320,8 @@ describe('IncrementalIndexingService - Integration', () => {
 
       service.clearCache();
 
-      const chunks1 = service.getCachedChunks(`${task1.projectId}:${task1.filePath}` as any);
-      const chunks2 = service.getCachedChunks(`${task2.projectId}:${task2.filePath}` as any);
+      const chunks1 = service.getCachedChunks(`${task1.projectId}:${task1.filePath}`);
+      const chunks2 = service.getCachedChunks(`${task2.projectId}:${task2.filePath}`);
 
       expect(chunks1).toEqual([]);
       expect(chunks2).toEqual([]);
@@ -328,7 +329,7 @@ describe('IncrementalIndexingService - Integration', () => {
   });
 
   describe('Hash Calculation', () => {
-    it('should generate consistent hashes for same content', () => {
+    it('should generate consistent hashes for same content', async () => {
       const content = 'Test content for hashing';
 
       const task1: IndexingTask = {

@@ -1,0 +1,72 @@
+{
+  "scan_date": "2026-01-05",
+  "scope": "cross_store_dependencies",
+  "findings": [
+    {
+      "id": "DEP-001",
+      "from_store": "agent-selection-store.ts",
+      "to_store": "useAppStore (agents)",
+      "dependency_type": "direct_read",
+      "pattern": "useAppStore.getState().getAgent(agentId)",
+      "location": "line 89",
+      "risk_level": "LOW",
+      "rationale": "Uses .getState() for read-only access, no subscription",
+      "status": "SAFE"
+    },
+    {
+      "id": "DEP-002",
+      "from_store": "conversation-auto-restore.ts",
+      "to_store": "useConversationStore",
+      "dependency_type": "method_call",
+      "pattern": "useConversationStore.getState().createConversation(...)",
+      "location": "line 52",
+      "risk_level": "LOW",
+      "rationale": "Initialization-time access only, no ongoing subscription",
+      "status": "SAFE"
+    },
+    {
+      "id": "DEP-003",
+      "from_store": "unified-workspace-context.ts",
+      "to_store": "useAppStore, useConversationStore, useAgentSelectionStore",
+      "dependency_type": "context_composition",
+      "pattern": "Provider state slice, Agent state slice, Conversation state slice",
+      "location": "lines 117-143",
+      "risk_level": "LOW",
+      "rationale": "Context composition with selectors for subscriptions",
+      "status": "SAFE"
+    },
+    {
+      "id": "DEP-004",
+      "from_store": "useConversationStore slices",
+      "to_store": "Other slices in same store",
+      "dependency_type": "cross_slice_via_get",
+      "pattern": "get().emitConversationCreated(...)",
+      "location": "All slice files",
+      "risk_level": "NONE",
+      "rationale": "Uses get() from StateCreator, no import dependencies",
+      "status": "SAFE"
+    }
+  ],
+  "circular_dependency_check": {
+    "status": "CLEAN",
+    "findings": "No circular dependencies detected in conversation store architecture",
+    "details": [
+      "Slices use get() for cross-slice communication",
+      "No imports between slice files",
+      "Type-only imports in types.ts to avoid circular references"
+    ]
+  },
+  "summary": {
+    "total_dependencies": 4,
+    "high_risk": 0,
+    "medium_risk": 0,
+    "low_risk": 4,
+    "circular_dependencies": 0
+  },
+  "recommendations": [
+    "Continue using .getState() for cross-store reads (no subscriptions)",
+    "Avoid store-to-store subscriptions to prevent cascading updates",
+    "Use event bus for cross-store communication when needed",
+    "Document any new cross-store dependencies in this file"
+  ]
+}
