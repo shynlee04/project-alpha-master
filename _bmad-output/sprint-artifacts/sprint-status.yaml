@@ -29,17 +29,18 @@ epics:
     stories:
        - id: ARCH-01.1
         title: "Unified Sync Manager - Workspace Services Cleanup"
-        status: IN_PROGRESS
+        status: DONE
+        completed_at: "2026-01-05T01:30:00+07:00"
         priority: P0
         estimated_hours: 64
         assigned_team: A
         dependencies: []
-        blocks: [ARCH-01.5, ARCH-01.6]
+        blocks: []
         progress:
-          phase: "WORKSPACE SERVICES REMEDIATION - Story 1.1 COMPLETE"
-          completion_pct: 55
-          stories_complete: "1/4 (Story 1.1: notes-file-sync-service split)"
-          god_files_remaining: 3
+          phase: "WORKSPACE SERVICES REMEDIATION - ALL STORIES COMPLETE"
+          completion_pct: 100
+          stories_complete: "4/4 (All workspace services split)"
+          god_files_remaining: 0
           notes: |
             ✅ COMPLETED 2026-01-04: Original sync god files ALREADY SPLIT
             - idb-adapter-core.ts: 660 → 281 lines ✅
@@ -50,27 +51,39 @@ epics:
             ✅ COMPLETED 2026-01-04: Story 1.1 - notes-file-sync-service split
             - Original: 659 lines (GOD FILE)
             - Split into: 6 focused modules (all ≤250 lines)
-            - TypeScript: 0 errors (fixed Block[] type compatibility)
-            - Barrel export: notes/index.ts
-            - Facade: Backward compatible
+            - TypeScript: 0 errors
 
-            ⏳ REMAINING: 3 workspace services still exceed 300-line limit
-            - cross-workspace-file-references.ts: 359 lines (Story 1.2)
-            - study-file-sync-service.ts: 330 lines (Story 1.3)
-            - knowledge-file-sync-service.ts: 300 lines (Story 1.4 - borderline)
+            ✅ COMPLETED 2026-01-05: Story 1.2 - cross-workspace-file-references split
+            - Original: 359 lines
+            - Split into: 3 modules (max 167 lines) + facade
+
+            ✅ COMPLETED 2026-01-05: Story 1.3 - study-file-sync-service split
+            - Original: 330 lines
+            - Split into: 4 modules (max 249 lines) + facade
+
+            ✅ COMPLETED 2026-01-05: Story 1.4 - knowledge-file-sync-service split
+            - Original: 300 lines
+            - Split into: 4 modules (max 266 lines) + facade
+
+            📊 RESULT: 100% COMPLETE - All god files split under 300-line limit
+            - TypeScript validation: 0 errors ✅
+            - Facade exports for backward compatibility ✅
+            - Zero breaking changes ✅
           validation_report: "_bmad-output/sprint-artifacts/arch-01-1-validation-report-2026-01-04.md"
+          completion_report: "_bmad-output/sprint-artifacts/arch-01-1-completion-2026-01-05.md"
 
       - id: ARCH-01.2
         title: "Complete State Consolidation"
-        status: IN_PROGRESS
+        status: DONE
+        completed_at: "2026-01-05T04:00:00+07:00"
         priority: P0
         estimated_hours: 40
-        assigned_team: B
+        assigned_team: A
         dependencies: []
         blocks: [ARCH-01.3]
         progress:
-          phase: "Sub-story 2: Execute Migration (PENDING)"
-          completion_pct: 25
+          phase: "COMPLETE - All state stores consolidated to infrastructure"
+          completion_pct: 100
           sub_stories:
             - id: ARCH-01.2-1
               title: "State Audit & Migration Plan"
@@ -83,16 +96,29 @@ epics:
                 - "scripts/validate-state-consolidation.sh"
             - id: ARCH-01.2-2
               title: "Execute Migration (Move workspace-store, workspace-types)"
-              status: PENDING
-              blocked_by: []
+              status: DONE
+              completed_at: "2026-01-05T00:48:00+07:00"
+              story_file: "_bmad-output/sprint-artifacts/arch-01-2-2-execute-migration.md"
+            - id: ARCH-01.2-3
+              title: "Fix Store Re-exports & Documentation"
+              status: DONE
+              completed_at: "2026-01-05T01:05:00+07:00"
+              story_file: "_bmad-output/sprint-artifacts/arch-01-2-3-fix-store-reexports.md"
           notes: |
-            ✅ STORY 1 COMPLETE (2026-01-05):
-            - 87 imports audited across 58 files
-            - 8 circular dependencies identified
-            - Migration plan with 3 phases created
-            - Validation script ready
-            
-            ⏳ NEXT: ARCH-01.2-2 (Execute Migration)
+            ✅ STORY 1 COMPLETE: Audit & Migration Plan
+            ✅ STORY 2 COMPLETE: workspace-store + workspace-types migrated
+            ✅ STORY 3 COMPLETE: Documented facade pattern, fixed deploy error
+            - ide-store & quiz-store already facades (pre-completed in Epic 53)
+            - All stores in canonical infrastructure location
+            - Facades in src/lib/state/ for backward compatibility
+            - Fixed Cloudflare deploy: require() → ESM imports
+            - TypeScript: 0 errors ✅
+            - Build: PASS (51.94s) ✅
+
+            📊 ARCH-01.2 RESULT: 100% COMPLETE
+            - ide-store: 6 slices at infrastructure/ide/ + facade
+            - quiz-store: infrastructure/study/quiz-store.ts + facade
+            - workspace-store: infrastructure/workspace/ + facade
 
       - id: ARCH-01.3
         title: "Workspace Context Unification"
@@ -184,15 +210,33 @@ workspace_services_stories:
 
   - id: STORY-1.3
     title: "Split study-file-sync-service.ts"
-    status: PENDING
+    status: COMPLETE
     lines_before: 330
+    lines_after: "4 modules (max 249 lines) + facade"
     target: "2 modules (~165 lines each)"
+    completed_at: "2026-01-05T01:00:00+07:00"
+    notes: |
+      Split into:
+      - study-sync-types.ts (30 lines) - Type definitions
+      - study-import-utils.ts (121 lines) - Import utilities
+      - study-sync-service-core.ts (249 lines) - Core service + factory
+      - index.ts (18 lines) - Barrel export
+      - Original file converted to facade (33 lines)
 
   - id: STORY-1.4
     title: "Review knowledge-file-sync-service.ts"
-    status: PENDING
+    status: COMPLETE
     lines_before: 300
+    lines_after: "4 modules (max 266 lines) + facade"
     target: "At 300-line limit, evaluate if split needed"
+    completed_at: "2026-01-05T01:15:00+07:00"
+    notes: |
+      Split into:
+      - knowledge-sync-types.ts (37 lines) - Types + constants
+      - knowledge-source-store.ts (53 lines) - Source store class
+      - knowledge-sync-service-core.ts (266 lines) - Core service + factory
+      - index.ts (17 lines) - Barrel export
+      - Original file converted to facade (33 lines)
 
 # Parallel Execution Plan
 execution_plan:
@@ -303,23 +347,49 @@ daily_status:
 daily_status:
   - date: "2026-01-05"
     summary: |
-      ARCH-01.1 PROGRESS: Workspace Services Remediation Story 1.2 Created
+      ARCH-01.1 PROGRESS: Workspace Services Remediation - ALL STORIES COMPLETE ✅
 
       ✅ STORY 1.1 COMPLETE: Split notes-file-sync-service.ts (659 → 6 modules)
       - All modules under 250 lines ✅
       - TypeScript: 0 errors ✅
 
-      📝 STORY 1.2 DRAFTED: Split cross-workspace-file-references.ts (359 → 2 modules)
-      - Story file created: arch-01-1-2-cross-workspace-references-split.md
-      - 6 acceptance criteria defined
-      - 8 tasks outlined
-      - Research requirements documented
+      ✅ STORY 1.2 COMPLETE: Split cross-workspace-file-references.ts (359 → 3 modules)
+      - cross-workspace-file-references.ts: 167 lines (facade)
+      - cross-workspace-types.ts: 80 lines (type definitions)
+      - cross-workspace-manager.ts: 155 lines (manager class)
+
+      ✅ STORY 1.3 COMPLETE: Split study-file-sync-service.ts (330 → 4 modules)
+      - study-sync-types.ts: 30 lines (types)
+      - study-import-utils.ts: 121 lines (import utilities)
+      - study-sync-service-core.ts: 249 lines (core service)
+      - index.ts: 18 lines (barrel export)
+      - Original converted to facade: 33 lines
+
+      ✅ STORY 1.4 COMPLETE: Split knowledge-file-sync-service.ts (300 → 4 modules)
+      - knowledge-sync-types.ts: 37 lines (types + constants)
+      - knowledge-source-store.ts: 53 lines (source store)
+      - knowledge-sync-service-core.ts: 266 lines (core service)
+      - index.ts: 17 lines (barrel export)
+      - Original converted to facade: 33 lines
+
+      📊 ARCH-01.1 STATUS: 100% COMPLETE - All 4 god files split under 300-line limit
+      - TypeScript validation: 0 errors ✅
+      - All modules under 300 lines ✅
+      - Facade exports for backward compatibility ✅
     completed:
-      - "Story 1.2 file created with all required sections"
-      - "Sprint status updated"
+      - "Story 1.1: notes-file-sync-service.ts split (659 → 6 modules)"
+      - "Story 1.2: cross-workspace-file-references.ts split (359 → 3 modules)"
+      - "Story 1.3: study-file-sync-service.ts split (330 → 4 modules)"
+      - "Story 1.4: knowledge-file-sync-service.ts split (300 → 4 modules)"
+      - "TypeScript validation: 0 errors"
+      - "Fixed StudyFilePicker component type issues"
+      - "All original files converted to facade exports"
+      - "Sprint status updated with completion records"
     blockers: []
     next_actions:
-      - "STORY 1.2: Create context XML → dev-story → code-review"
+      - "Update ARCH-01.1 epic status to DONE"
+      - "Create completion report artifact"
+      - "Proceed to next epic (ARCH-01.2 or ARCH-01.3)"
 
 # Links
 artifacts:

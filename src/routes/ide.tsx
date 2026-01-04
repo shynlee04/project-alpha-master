@@ -12,7 +12,8 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast'
-import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
+import { ProjectProvider } from '@/lib/workspace/ProjectContext'
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types'
 
 // Lazy load IDELayout to reduce initial bundle size
 const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayoutMain').then(m => ({ default: m.IDELayout })))
@@ -23,7 +24,7 @@ export const Route = createFileRoute('/ide')({
 })
 
 function IDEWorkspace() {
-    const [projectId, setProjectId] = useState<string | undefined>(undefined);
+    const [project, setProject] = useState<Project | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -35,7 +36,7 @@ function IDEWorkspace() {
             const projects = await listProjects();
             if (projects.length > 0) {
                 // projects are sorted by lastOpened descending
-                setProjectId(projects[0].id);
+                setProject(projects[0] as Project);
             }
             setIsLoading(false);
         };
@@ -53,7 +54,7 @@ function IDEWorkspace() {
         );
     }
 
-    if (!projectId) {
+    if (!project) {
         return (
             <div className="h-screen w-screen flex items-center justify-center bg-background text-foreground">
                 <div className="flex flex-col items-center gap-4 max-w-md text-center p-6 border rounded-lg shadow-sm">
@@ -70,8 +71,8 @@ function IDEWorkspace() {
     }
 
     return (
-        <ToastProvider>
-            <WorkspaceProvider initialWorkspace="ide" initialProjectId={projectId}>
+        <ProjectProvider project={project} workspace="ide">
+            <ToastProvider>
                 <Suspense fallback={
                     <div className="h-screen w-screen flex items-center justify-center bg-background">
                         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -79,8 +80,8 @@ function IDEWorkspace() {
                 }>
                     <IDELayout />
                 </Suspense>
-            </WorkspaceProvider>
-            <Toast />
-        </ToastProvider>
+                <Toast />
+            </ToastProvider>
+        </ProjectProvider>
     )
 }

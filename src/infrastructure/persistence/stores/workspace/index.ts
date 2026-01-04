@@ -3,31 +3,60 @@
  * @module infrastructure/persistence/stores/workspace
  * @governance Epic 51 - Platform Unification
  * @story 51-4 - Workspace State Binding
+ * @governance ARCH-01.3 - Workspace Context Unification
  *
- * Unified workspace context provider integrating all 5 cornerstones.
- * Replaces fragmented workspace contexts across IDE, Knowledge, Notes, Study.
+ * Two providers are exported:
+ * 1. WorkspaceProvider - Original 5-cornerstone provider
+ * 2. UnifiedWorkspaceProvider - Complete provider with IDE file operations
  *
  * @example
  * ```tsx
- * import { WorkspaceProvider, useWorkspaceContext } from '@/infrastructure/persistence/stores/workspace'
+ * // Use UnifiedWorkspaceProvider for full functionality
+ * import { UnifiedWorkspaceProvider, useWorkspace, useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace'
  *
  * function App() {
  *     return (
- *         <WorkspaceProvider initialWorkspace="ide">
+ *         <UnifiedWorkspaceProvider initialWorkspace="hub">
  *             <IDEWorkspace />
  *             <KnowledgeWorkspace />
  *             <NotesWorkspace />
- *             <StudyWorkspace />
- *         </WorkspaceProvider>
+ *         </UnifiedWorkspaceProvider>
  *     )
  * }
  *
- * function ChatPanel() {
- *     const { providers, agents, conversations } = useWorkspaceContext()
- *     // Access all 5 cornerstones seamlessly
+ * function MyComponent() {
+ *     const { activeWorkspace } = useWorkspace()
+ *     const { syncNow, syncStatus } = useWorkspaceSync()
+ *     const { activeAgent } = useWorkspaceAgent()
  * }
  * ```
  */
+
+// ============================================================================
+// Unified Workspace Provider (ARCH-01.3 - Complete Integration)
+// ============================================================================
+
+export { UnifiedWorkspaceProvider } from './unified-workspace-provider';
+export type { UnifiedWorkspaceProviderProps } from './unified-workspace-provider';
+
+export {
+    useUnifiedWorkspaceContext,
+    useWorkspace,
+    useWorkspaceSync,
+    useWorkspaceAgent,
+    useWorkspaceSwitcher,
+} from './unified-workspace-context';
+export type {
+    UnifiedWorkspaceContextValue,
+    ProjectMetadata,
+    SyncStatus,
+    SyncProgress,
+    FsaPermissionState,
+} from './unified-workspace-context';
+
+// ============================================================================
+// Original WorkspaceProvider (5 Cornerstones Only)
+// ============================================================================
 
 // Provider
 export { WorkspaceProvider } from './workspace-provider';

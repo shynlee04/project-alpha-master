@@ -64,7 +64,7 @@
 
 ## Phase 0: Foundation Stabilization (Week 1-2) - **AUTONOMOUS EXECUTION**
 
-**Status**: 🟢 READY FOR EXECUTION (2026-01-04 14:30)
+**Status**: 🟢 IN PROGRESS (2026-01-05 04:00)
 **Duration**: 60-80 hours (systematic epic approach)
 **Target**: Foundation stabilized - God stores eliminated, file system E2E working
 
@@ -78,19 +78,29 @@
 
 ### Story Status (SYSTEMATIC EPIC APPROACH)
 
-**Epic ARC-1: Foundation Stabilization** (Week 1)
+**Epic ARCH-01: Foundation Architecture Refactoring** (In Progress)
 
 | Story ID | Story Name | Status | Assignee | Hours | Progress |
 |----------|------------|--------|----------|-------|----------|
-| CD-001 | Eliminate Circular Dependencies | 🟢 DONE | @bmad-bmm-dev | 10 | 100% |
-| ARC-1.1 | Split dexie-db.ts (1,267 lines) | 🟢 READY | @store-refactorer | 8-12 | 0% |
-| ARC-1.2 | Consolidate duplicate dexie-db.ts | 🔴 TODO | @store-refactorer | 4-6 | 0% |
-| ARC-1.3 | Refactor event-bus.ts (644 lines) | 🔴 TODO | @store-refactorer | 6-8 | 0% |
-| ARC-1.4 | Create workspace-specific store facades | 🔴 TODO | @store-refactorer | 8-10 | 0% |
+| ARCH-01.1 | Unified Sync Manager - Workspace Services | 🟢 DONE | Team A | 64 | 100% |
+| ARCH-01.2 | Complete State Consolidation | 🟢 DONE | Team A | 40 | 100% |
+| ARCH-01.3 | Workspace Context Unification | 🔴 TODO | Team A | 48 | 0% |
+| ARCH-01.4 | Agent Tool Permission Matrix | 🔴 TODO | Team B | 40 | 0% |
+| ARCH-01.5 | RAG Auto-Indexing on Sync | 🔴 TODO | Team A | 56 | 0% |
+| ARCH-01.6 | Cross-Workspace Context Sharing | 🔴 TODO | Team B | 48 | 0% |
+
+**Epic ARC-1 Sub-Stories (State Consolidation - ARCH-01.2)**
+
+| Story ID | Story Name | Status | Hours | Progress |
+|----------|------------|--------|-------|----------|
+| ARCH-01.2-1 | State Audit & Migration Plan | 🟢 DONE | 2 | 100% |
+| ARCH-01.2-2 | Execute Migration (workspace-store) | 🟢 DONE | 4 | 100% |
+| ARCH-01.2-3 | Migrate ide-store, quiz-store | 🟢 DONE | 0 | 100% (Pre-completed Epic 53) |
 
 ### Phase Metrics (AUTONOMOUS MODE ACTIVE)
-- **Stories Completed**: 1/5 (20%)
-- **Hours Burned**: 10/62-82 hours (12-16%)
+- **ARCH-01 Stories Completed**: 2/6 (33%)
+- **ARCH-01.2 Sub-Stories**: 3/3 (100%)
+- **Hours Burned**: ~104/352 hours (30%)
 - **Health Score Improvement**: +3.0
 - **Blockers**: None
 - **Next Action**: ARC-1.1 - Split `dexie-db.ts` using `eliminate-god-stores` workflow

@@ -17,12 +17,7 @@
 
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
-import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 export const Route = createLazyFileRoute('/notes')({
-  component: () => (
-    <WorkspaceProvider initialWorkspace="notes">
-      <NotesPage />
-    </WorkspaceProvider>
-  ),
+  component: NotesPage,
 });

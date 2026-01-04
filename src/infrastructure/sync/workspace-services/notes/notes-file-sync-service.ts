@@ -25,6 +25,9 @@ import {
     type NotesFileSyncState,
     type NoteSyncStore
 } from './notes-file-sync-core';
+// ESM imports for Cloudflare Workers compatibility
+import { setupFileWatcher, type FileChangeTracker } from './note-file-watcher';
+import { syncNoteChanges } from './note-crud-operations';
 
 /**
  * Configuration for Notes file sync service
@@ -167,9 +170,7 @@ export class NotesFileSyncService implements FileSyncService {
      * Setup file watcher for external changes
      */
     private setupFileWatcher(): void {
-        const { setupFileWatcher: createWatcher } = require('./note-file-watcher');
-
-        this.cleanupFileWatcher = createWatcher(
+        this.cleanupFileWatcher = setupFileWatcher(
             {
                 targetDirectory: this.state.targetDirectory,
                 fileAdapter: {
@@ -179,7 +180,7 @@ export class NotesFileSyncService implements FileSyncService {
                 listFiles: (path: string, recursive?: boolean) => this.listFiles(path, recursive),
                 getFileMetadata: (path: string) => this.getFileMetadata(path)
             },
-            (trackers: Map<string, import('./note-file-watcher').FileChangeTracker>) => {
+            (trackers: Map<string, FileChangeTracker>) => {
                 this.state.fileChangeTrackers = trackers;
             }
         );
@@ -197,8 +198,7 @@ export class NotesFileSyncService implements FileSyncService {
         this.state.syncInProgress = true;
 
         try {
-            const { syncNoteChanges: syncChanges } = require('./note-crud-operations');
-            await syncChanges(
+            await syncNoteChanges(
                 this.noteStore,
                 {
                     readFile: (path: string) => this.localAdapter.readFile(path),

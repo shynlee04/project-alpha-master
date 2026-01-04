@@ -19,7 +19,6 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 // Placeholder component (Study workspace not implemented yet)
 function StudyPlaceholder() {
@@ -52,9 +51,7 @@ function StudyWorkspace() {
 
   return (
     <ProjectProvider project={project} workspace="study">
-      <WorkspaceProvider initialWorkspace="study" initialProjectId={project?.id}>
-        <StudyPlaceholder />
-      </WorkspaceProvider>
+      <StudyPlaceholder />
     </ProjectProvider>
   );
 }

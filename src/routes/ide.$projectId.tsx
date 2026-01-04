@@ -17,7 +17,6 @@ import { lazy, Suspense } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 // IDELayout lazy loaded below
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
-import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
@@ -46,15 +45,13 @@ function IDEWorkspace() {
   return (
     <ProjectProvider project={project as Project | null} workspace="ide">
       <ToastProvider>
-        <WorkspaceProvider initialWorkspace="ide" initialProjectId={projectId}>
-          <Suspense fallback={
-            <div className="h-screen w-screen flex items-center justify-center bg-background">
-              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-            </div>
-          }>
-            <IDELayout />
-          </Suspense>
-        </WorkspaceProvider>
+        <Suspense fallback={
+          <div className="h-screen w-screen flex items-center justify-center bg-background">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+          </div>
+        }>
+          <IDELayout />
+        </Suspense>
         <Toast />
       </ToastProvider>
     </ProjectProvider>

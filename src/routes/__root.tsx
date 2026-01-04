@@ -11,6 +11,7 @@ import { initSentry } from '../lib/monitoring/sentry'
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
 import { TooltipProvider } from '@/presentation/components/ui/tooltip'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
+import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 
 import appCss from '../styles.css?url'
 
@@ -72,9 +73,11 @@ export const Route = createRootRoute({
           <LocaleProvider>
             <TooltipProvider>
               <AppInitializer>
-                <AppErrorBoundary>
-                  <Outlet />
-                </AppErrorBoundary>
+                <UnifiedWorkspaceProvider initialWorkspace="hub">
+                  <AppErrorBoundary>
+                    <Outlet />
+                  </AppErrorBoundary>
+                </UnifiedWorkspaceProvider>
               </AppInitializer>
             </TooltipProvider>
           </LocaleProvider>

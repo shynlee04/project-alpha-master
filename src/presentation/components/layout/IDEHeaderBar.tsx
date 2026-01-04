@@ -22,13 +22,10 @@ import { useTranslation } from 'react-i18next';
 /**
  * @workspace ide-only
  *
- * This component uses the legacy WorkspaceContext (IDE-only).
- * Do NOT use this component outside of IDE workspace routes.
- *
- * For cross-workspace components, use useWorkspaceStore instead:
- * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ * This component uses the unified workspace context.
+ * Provides IDE-specific file system operations and sync controls.
  */
-import { useWorkspace } from '@/lib/workspace';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { QuickActionsMenu } from '../ide/QuickActionsMenu';
 import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 import { useNavigate } from '@tanstack/react-router';
@@ -84,7 +81,7 @@ export function IDEHeaderBar({
         switchFolder,
         syncNow,
         setAutoSync,
-    } = useWorkspace();
+    } = useWorkspaceSync();
 
     const isSyncing = syncStatus === 'syncing';
     const isDisabled = isOpeningFolder || isSyncing;

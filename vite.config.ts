@@ -89,25 +89,75 @@ const config = defineConfig(async () => {
           const isSsr = options?.ssr === true || (this.environment as any)?.name === 'ssr'
 
           if (isSsr) {
-            if (
-              source === 'mermaid' ||
-              source === 'cytoscape' ||
-              source === 'dagre-d3' ||
-              source === 'd3' ||
-              source === 'khroma' ||
-              source === 'stylis' ||
-              source === '@blocknote/react' ||
-              source === '@blocknote/core' ||
-              source === '@blocknote/mantine' ||
-              source === '@xenova/transformers' ||
-              source === 'pdfjs-dist' ||
-              source === 'react-resizable-panels' ||
-              source === '@monaco-editor/react' ||
-              source === 'monaco-editor' ||
-              source === '@xterm/xterm' ||
-              source === '@xterm/addon-fit'
-            ) {
+            // Exact matches for heavy client-side libraries
+            const heavyLibraries = [
+              // Mermaid ecosystem (~500KB)
+              'mermaid',
+              'cytoscape',
+              'cytoscape-dagre',
+              'dagre-d3',
+              'dagre-d3-es',
+              'khroma',
+              'stylis',
+              // D3 ecosystem (~400KB total)
+              'd3',
+              'd3-array',
+              'd3-color',
+              'd3-format',
+              'd3-interpolate',
+              'd3-path',
+              'd3-scale',
+              'd3-selection',
+              'd3-shape',
+              'd3-time',
+              'd3-time-format',
+              'd3-transition',
+              'd3-zoom',
+              'd3-drag',
+              'd3-ease',
+              'd3-force',
+              // BlockNote editor (~400KB)
+              '@blocknote/react',
+              '@blocknote/core',
+              '@blocknote/mantine',
+              // ML/AI transformers (~800KB)
+              '@xenova/transformers',
+              'onnxruntime-node',
+              'onnxruntime-web',
+              // PDF parsing
+              'pdfjs-dist',
+              // Resizable panels
+              'react-resizable-panels',
+              // Monaco Editor (~5MB)
+              '@monaco-editor/react',
+              'monaco-editor',
+              // XTerm (~300KB)
+              '@xterm/xterm',
+              '@xterm/addon-fit',
+              '@xterm/addon-web-links',
+              '@xterm/addon-webgl',
+              // React Flow (~200KB)
+              '@xyflow/react',
+              '@xyflow/system',
+              // WebContainer - browser only
+              '@webcontainer/api',
+              // Image processing
+              'sharp',
+              // KaTeX - math rendering (~200KB)
+              'katex',
+            ]
+
+            // Check exact match
+            if (heavyLibraries.includes(source)) {
               return path.resolve(__dirname, './src/lib/mocks/empty.ts')
+            }
+
+            // Check prefix match (for sub-paths like 'd3/src/...')
+            const heavyPrefixes = ['d3-', 'mermaid/', 'cytoscape', '@blocknote/', '@xyflow/', '@xterm/', 'monaco-editor/']
+            for (const prefix of heavyPrefixes) {
+              if (source.startsWith(prefix)) {
+                return path.resolve(__dirname, './src/lib/mocks/empty.ts')
+              }
             }
           }
         }
@@ -165,23 +215,37 @@ const config = defineConfig(async () => {
       },
     },
     // SSR Configuration
-    // Cloudflare plugin handles externals/bundling automatically when using viteEnvironment: { name: 'ssr' }
-    // We only specify 'noExternal' to bundle specific client-side libraries
-    ssr: (DEPLOY_TARGET === 'cloudflare' || DEPLOY_TARGET === 'vercel')
+    // NOTE: Cloudflare Vite plugin does NOT support ssr.external - it handles bundling itself
+    // For Cloudflare, we rely on the ssr-alias-resolve plugin above to redirect heavy libs to empty.ts
+    // For other targets (node, vercel), we use external to exclude heavy libs
+    ssr: DEPLOY_TARGET === 'cloudflare'
       ? {
-        // Bundle everything for Cloudflare/Vercel EXCEPT large client-side-only libraries
-        noExternal: /^(?!(@monaco-editor|monaco-editor|@xterm|@xenova|pdfjs-dist|@blocknote|sharp|onnxruntime-node|onnxruntime-web|react-resizable-panels|@xyflow|mermaid|cytoscape|dagre|d3|khroma|stylis)).*$/,
+        // Cloudflare plugin handles everything - just set noExternal to bundle all
+        // The alias plugin redirects heavy libs to empty.ts during SSR resolution
+        noExternal: true as const,
       }
       : {
+        // For node/vercel, explicitly externalize heavy client-only libraries
         external: [
-          '@xterm/xterm',
-          '@xterm/addon-fit',
           '@monaco-editor/react',
           'monaco-editor',
+          '@xterm/xterm',
+          '@xterm/addon-fit',
+          '@xenova/transformers',
+          'onnxruntime-node',
+          'onnxruntime-web',
+          'pdfjs-dist',
+          '@blocknote/core',
+          '@blocknote/react',
+          '@blocknote/mantine',
+          '@xyflow/react',
+          'react-resizable-panels',
+          'cytoscape',
+          'mermaid',
+          'khroma',
+          'stylis',
           '@webcontainer/api',
           'sharp',
-          'onnxruntime-node',
-          '@xenova/transformers',
         ],
         noExternal: [],
       },

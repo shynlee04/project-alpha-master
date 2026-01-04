@@ -62,7 +62,12 @@ export {
 } from './openai-compatible-store';
 
 // ============================================================================
-// IDE & UI STORES (from src/lib/state/)
+// IDE & UI STORES (Facade Re-exports for Backward Compatibility)
+// Note: These import from lib/state facades which re-export from infrastructure.
+// This is intentional - facades provide legacy selector functions that
+// infrastructure doesn't have (selectOpenFiles, selectActiveFile, etc.)
+// NOT a circular dependency - facades → infrastructure, not the reverse.
+// See: ADR-024, ARCH-01.2 for migration plan.
 // ============================================================================
 
 export {
@@ -86,8 +91,8 @@ export {
   type PendingToolApproval,
 } from './conversation/index';
 
-// Note: useProviderStore is exported above from @/lib/state/provider-store (line 35)
-
+// Quiz store - uses facade for backward compatibility
+// Canonical location: @/infrastructure/persistence/stores/study
 export {
   useQuizStore,
   initializeQuizStore,

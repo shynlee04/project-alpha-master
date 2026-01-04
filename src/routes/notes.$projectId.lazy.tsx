@@ -24,7 +24,6 @@ import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import { WorkspaceProvider } from '@/infrastructure/persistence/stores/workspace';
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
   component: NotesWorkspace,
@@ -40,9 +39,7 @@ function NotesWorkspace() {
 
   return (
     <ProjectProvider project={project} workspace="notes">
-      <WorkspaceProvider initialWorkspace="notes" initialProjectId={project?.id}>
-        <NotesPage />
-      </WorkspaceProvider>
+      <NotesPage />
     </ProjectProvider>
   );
 }
