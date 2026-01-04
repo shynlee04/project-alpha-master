@@ -238,6 +238,32 @@
   /* Desktop spacing */
   --spacing-lg: 1.25rem;
   /* Large desktop spacing */
+
+  /* ===== Icon Sizes ===== */
+  /* Standard icon sizes for UI components */
+  --icon-size-xs: 12px;
+  --icon-size-sm: 16px;
+  --icon-size-md: 20px;
+  --icon-size-lg: 24px;
+  --icon-size-xl: 28px;
+  --icon-size-2xl: 32px;
+
+  /* ===== Component Sizes ===== */
+  /* Standard heights and widths for form elements */
+  --size-xs: 32px;
+  --size-sm: 40px;
+  --size-md: 48px;
+  --size-lg: 56px;
+  --size-xl: 64px;
+
+  /* ===== Touch Targets ===== */
+  /* Minimum touch target sizes for mobile accessibility */
+  --touch-target-min: 44px;
+
+  /* ===== Border Widths ===== */
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-3: 3px;
 }
 
 /* =============================================================================

@@ -1360,6 +1360,12 @@ All findings are backed by evidence blocks with file
 
 _bmad/modules/cross-workspace-chat/workflows/MASTER-WORKFLOW.md
 
+## SPRINT STATUS
+
+_bmad-output/sprint-artifacts/cross-workspace-chat-sprint-status.yaml
+_bmad-output/sprint-artifacts/cross-workspace-chat-master-status.md
+
+
 ## Correction:
 
 - all the Google Gemini is at model 2.5 at least (some are at 3.0) -> everytime dealing with these models, the constantly changing information -> you must check with internet MCP servers tools 
@@ -1394,7 +1400,7 @@ _bmad-output/deep-scan/state-management/SUMMARY.md
 ```
 
 
--> generate module that include workflows, agents, sub-agents, using your skills and research with MCP server tools for every cycle of your loops -> generate you own master workflows (that include details of bigger cycles like updating sprint-status -> adjusting stories - epics -> creating-correct-course if errors encounterd)
+-> Use your generated module of workflows and agentsthat include workflows, agents, sub-agents, using your skills and research with MCP server tools for every cycle of your loops -> generate you own master workflows (that include details of bigger cycles like updating sprint-status -> adjusting stories - epics -> creating-correct-course if errors encounterd)
 
 - For development cycle will be the iterative and loop (of validation and review step) of these agents /sm and /dev following these cycles of workflows (load BMAD wowrkflows and instruction to follow strictly)
 1, Generate story (create-story) -> 2. validate-create-story (loop still 100%) -> 3. create-story-context -> 4. validate-create-story-context (loop still 100%) -> 5. dev-story (check and track with dev notes, check with accpetance criteria, requirements) -> both story documents and code files implemented - check with @sweeping-validation.md -> /dev for /code-review -> loop til 100% then  Starting the next cycle

@@ -139,6 +139,13 @@ export const addEdge = () => [];
 export const NodeResizer = () => null; // Mock for removed v12 component (SSR compatibility)
 export const MarkerType = { Arrow: 'arrow' };
 
+// React Flow utility function mocks (SSR compatibility)
+export const getBezierPath = () => ['', '', ''];
+export const getSmoothStepPath = () => ['', '', ''];
+export const getMarkerEnd = () => undefined;
+export const getEdgeCenter = () => ({ x: 0, y: 0 });
+export const calcNextPosition = () => ({ x: 0, y: 0 });
+
 // Sharp Mock
 export const sharp = () => ({
     resize: () => sharp(),
