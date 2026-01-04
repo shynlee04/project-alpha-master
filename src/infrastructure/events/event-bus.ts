@@ -59,6 +59,11 @@ export enum DomainEventType {
   FILE_SAVED = 'file:saved',
   FILE_SYNCED = 'file:synced',
 
+  // File change events (ARCH-01.5 - RAG Auto-Indexing on Sync)
+  FILE_CREATED = 'file:created',
+  FILE_UPDATED = 'file:updated',
+  FILE_DELETED = 'file:deleted',
+
   // RAG events (Iteration 15 - Knowledge synthesis operations)
   RAG_EMBEDDING_PROGRESS = 'rag:embedding:progress',
   RAG_CHUNKING_STATUS = 'rag:chunking:status',
@@ -335,6 +340,64 @@ export interface RAGIndexingRetryData {
   documentId: string; // Document ID to retry
   projectId: string;
   timestamp: Date;
+}
+
+/**
+ * File Change Data (ARCH-01.5 - RAG Auto-Indexing on Sync)
+ *
+ * Generated when files are created, updated, or deleted during sync.
+ * Triggers RAG indexing to keep search index synchronized with file system.
+ */
+export interface FileChangeData {
+  /** Workspace type where change occurred */
+  workspaceType: 'ide' | 'knowledge' | 'notes' | 'study';
+  /** Project ID */
+  projectId: string;
+  /** File path relative to project root */
+  filePath: string;
+  /** File content (for created/updated files) */
+  content?: string;
+  /** File size in bytes */
+  fileSize?: number;
+  /** MIME type if available */
+  mimeType?: string;
+  /** Timestamp of change */
+  timestamp: Date;
+  /** Whether file should be indexed for RAG */
+  shouldIndex: boolean;
+}
+
+/**
+ * File Created Data
+ *
+ * Emitted when a new file is synced to the local filesystem.
+ */
+export interface FileCreatedData extends FileChangeData {
+  changeType: 'created';
+}
+
+/**
+ * File Updated Data
+ *
+ * Emitted when an existing file is modified.
+ */
+export interface FileUpdatedData extends FileChangeData {
+  changeType: 'updated';
+  /** Previous content hash for change detection */
+  previousHash?: string;
+  /** New content hash */
+  newHash?: string;
+}
+
+/**
+ * File Deleted Data
+ *
+ * Emitted when a file is removed from the filesystem.
+ */
+export interface FileDeletedData extends Omit<FileChangeData, 'content'> {
+  changeType: 'deleted';
+  /** Chunk IDs that need to be removed from index */
+  chunkIds?: string[];
 }
 
 /**
@@ -619,6 +682,63 @@ export class EventBus {
   ): void {
     this.emit(
       DomainEventType.RAG_SOURCE_PROCESSING,
+      payload,
+      correlationId
+    );
+  }
+
+  /**
+   * Emit file created event (ARCH-01.5 - RAG Auto-Indexing on Sync)
+   *
+   * Type-safe helper for file created events that trigger RAG indexing.
+   *
+   * @param payload - File created data
+   * @param correlationId - Optional correlation ID
+   */
+  emitFileCreated(
+    payload: FileCreatedData,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.FILE_CREATED,
+      payload,
+      correlationId
+    );
+  }
+
+  /**
+   * Emit file updated event (ARCH-01.5 - RAG Auto-Indexing on Sync)
+   *
+   * Type-safe helper for file updated events that trigger RAG re-indexing.
+   *
+   * @param payload - File updated data
+   * @param correlationId - Optional correlation ID
+   */
+  emitFileUpdated(
+    payload: FileUpdatedData,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.FILE_UPDATED,
+      payload,
+      correlationId
+    );
+  }
+
+  /**
+   * Emit file deleted event (ARCH-01.5 - RAG Auto-Indexing on Sync)
+   *
+   * Type-safe helper for file deleted events that trigger RAG cleanup.
+   *
+   * @param payload - File deleted data
+   * @param correlationId - Optional correlation ID
+   */
+  emitFileDeleted(
+    payload: FileDeletedData,
+    correlationId?: string
+  ): void {
+    this.emit(
+      DomainEventType.FILE_DELETED,
       payload,
       correlationId
     );

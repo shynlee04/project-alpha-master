@@ -1260,3 +1260,114 @@ Begin by presenting your investigation, planning, and research, starting with th
 ---
 
 Of all the things above you can see that everything is either broken or superficial → as long as we gradually overcome each difficulty → we will grasp the ones that are blocking, legacy, conflict → so we refactor with consideration and more completion progressively
+
+---
+I've completed a comprehensive investigation and planning for your cross-workspace AI agent conversation platform. Here's a summary of what was delivered:
+📊 Investigation Summary
+What I Found (Current State)
+Using the Deep-Scan Module and MCP research tools, I analyzed your codebase and discovered:
+✅ Fully Implemented (Ready to Leverage)
+1. Cross-Workspace Event Bus (src/lib/events/cross-workspace-event-bus.ts) - 429 lines with typed events
+2. Dexie Persistence Layer - Full IndexedDB with conversation threads, sources, collections
+3. Conversation Store - 6-slice architecture (600+ lines)
+4. UnifiedChatPanel - Supports 3 modes (threaded, simple, agent)
+5. Agent Tools Registry - File, terminal, and knowledge tools
+6. RAG Pipeline - Orama-based vector store with hybrid retriever
+❌ Missing Features (Your Requirements Gap)
+1. Voice Input (STT) - 90% gap
+2. Multimodal File Attachments - 85% gap  
+3. Notes Chat Integration - 75% gap
+4. Context-Aware Chat - 100% gap
+5. Agentic Workflows - 80% gap
+6. Rich Media Output - 100% gap
+7. Deep Research Mode - 100% gap
+8. Web Grounding - 100% gap
+9. Perplexity-style Expansion - 100% gap
+10. Auto Model Selection - 100% gap
+---
+🎯 10 Wow-Factor Features Identified
+Based on my research (including Perplexity AI patterns, Gemini SDK capabilities, and Notion UX), I identified 10 transformative features:
+| # | Feature | Effort | Impact |
+|---|---------|--------|--------|
+| 1 | Voice-First Multimodal Conversations | 24-32h | High |
+| 2 | Context-Aware Notes Chat | 32-40h | High |
+| 3 | Perplexity-Style Expandable Panel | 16-24h | Medium |
+| 4 | Agentic Multi-Step Workflows | 48-64h | Very High |
+| 5 | Rich Media Output (Images/Audio) | 32-48h | High |
+| 6 | Deep Research Mode | 40-56h | High |
+| 7 | Web Grounding | 24-32h | Medium |
+| 8 | Notion-Style Chat Bubble | 8-16h | Low |
+| 9 | Smart Auto Model Selection | 16-24h | Medium |
+| 10 | Live Paper Format | 40-56h | High |
+---
+
+## Anchoring context
+📁 Deliverables Created
+I created 3 comprehensive documents in _bmad-output/:
+1. Comprehensive Research Document
+/research/2026-01-05/cross-workspace-agent-platform-comprehensive-research.md
+- Deep-scan module analysis results
+- 10 wow-factor features with implementation details
+- Technical architecture design
+- Data flow diagrams
+- Risk assessment
+2. Sprint Planning Document
+/sprint-planning/2026-01-05-cross-workspace-chat-sprint-plan.md
+- 13-week timeline
+- 10 epics with priorities
+- Sprint-by-sprint breakdown
+- Velocity tracking
+- Team capacity allocation
+3. Detailed User Stories
+/sprint-planning/2026-01-05-cross-workspace-chat-stories.md
+- 73 user stories with acceptance criteria
+- Technical notes for each story
+- Test strategies
+- Dependencies matrix
+- 506 total story points
+---
+📈 Key Metrics
+| Metric | Value |
+|--------|-------|
+| Total Epics | 10 |
+| Total Stories | 73 |
+| Total Story Points | 506 |
+| Sprint Duration | 13 weeks |
+| P0 Features | 4 epics (265 points) |
+| P1 Features | 4 epics (220 points) |
+| P2 Features | 2 epics (77 points) |
+---
+🎯 Next Steps
+Immediate Actions (Week 1)
+1. Review these documents and provide feedback
+2. Prioritize if capacity is limited (P0 features recommended first)
+3. Assign team members to epics
+4. Set up development environment for the new module
+Recommended Start
+1. Epic 1 (Cross-Workspace Chat) - Foundation for all other features
+2. Epic 2 (Multimodal Input) - Enables voice and file attachments
+3. Epic 3 (Context Awareness) - Unique differentiator for Notes workspace
+Research Sources Used
+- Deep-Scan Module: 9 specialized agents scanning codebase
+- Exa-code MCP: Gemini SDK documentation
+- Web Search: Perplexity AI features 2025
+- Deepwiki: Architecture patterns
+All findings are backed by evidence blocks with file 
+
+===
+
+## Correction:
+
+- all the Google Gemini is at model 2.5 at least (some are at 3.0) -> everytime dealing with these models, the constantly changing information -> you must check with internet MCP servers tools 
+
+## Before starting the work
+- conduct deepscan of the relevant slices, domains, aspect, architectures, structures, consitutions and so on (vi and en as duo languages for UI ) of this codebase -> make sure to follow and strictly apply the findings to the work.
+
+- Use @deep-scan module to first - gain enough information -> generate module that include workflows, agents, sub-agents, using your skills and research with MCP server tools for every cycle of your loops -> generate you own master workflows (that include details of bigger cycles like updating sprint-status -> adjusting stories - epics -> creating-correct-course if errors encounterd)
+
+- For development cycle will be the iterative and loop (of validation and review step) of these agents /sm and /dev following these cycles of workflows (load BMAD wowrkflows and instruction to follow strictly)
+1, Generate story (create-story) -> 2. validate-create-story (loop still 100%) -> 3. create-story-context -> 4. validate-create-story-context (loop still 100%) -> 5. dev-story (check and track with dev notes, check with accpetance criteria, requirements) -> both story documents and code files implemented - check with @sweeping-validation.md -> /dev for /code-review -> loop til 100% then  Starting the next cycle
+
+-once an Epic off all 100% implemented stories are completed -> run /restrospective
+
+- run /sprint-planning and next till all epeics and stories are implementd and tracked with 100% coverage.

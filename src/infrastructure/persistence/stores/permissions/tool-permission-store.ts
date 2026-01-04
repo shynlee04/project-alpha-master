@@ -686,7 +686,6 @@ export const useToolPermissionStore = create<ToolPermissionState>()(
                 }
               }
               // TEST: Reset YOLO mode in test environment to ensure clean state
-              // @ts-expect-error - process.env.NODE_ENV may not be defined in all environments
               if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
                 if (state.yoloMode?.enabled) {
                   state.yoloMode = { ...state.yoloMode, enabled: false, expiryTime: null };

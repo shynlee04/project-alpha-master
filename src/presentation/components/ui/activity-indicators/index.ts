@@ -13,6 +13,9 @@
  * - SyncStatusIndicator: File synchronization progress
  * - SyncStatusPanel: Container component (event bus integration)
  *
+ * ARCH-01.5.6 - RAG Auto-Indexing:
+ * - RAGAutoIndexingIndicator: Background indexing on file sync
+ *
  * December 2025 Patterns:
  * - Single responsibility (one status per component)
  * - Accessible (ARIA labels)
@@ -25,4 +28,6 @@ export { EmbeddingProgressIndicator } from './EmbeddingProgressIndicator'
 export { ChunkingStatusIndicator } from './ChunkingStatusIndicator'
 export { SyncStatusIndicator } from './SyncStatusIndicator'
 export { SyncStatusPanel } from './SyncStatusPanel'
+export { RAGAutoIndexingIndicator } from './RAGAutoIndexingIndicator'
 export type { ActivityState, ActivityStatus, BaseActivityIndicatorProps } from './types'
+export type { RAGIndexingState } from './RAGAutoIndexingIndicator'

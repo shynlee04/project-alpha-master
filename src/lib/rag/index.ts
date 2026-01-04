@@ -64,3 +64,23 @@ export {
 // ============================================================================
 export { CloudEmbedder } from './cloud-embedder';
 export { EmbeddingCache } from './embedding-cache';
+
+// ============================================================================
+// ARCH-01.5: RAG Auto-Indexing on Sync
+// ============================================================================
+export {
+  RAGSyncSubscriptionService,
+  getRAGSyncSubscriptionService,
+  resetRAGSyncSubscriptionService,
+  type IndexingTask,
+  type SubscriptionConfig,
+} from './sync-subscription-service';
+export {
+  IncrementalIndexingService,
+  getIncrementalIndexingService,
+  resetIncrementalIndexingService,
+  type ContentDiff,
+  type IndexingResult,
+  type IndexingProgressCallback,
+  type IncrementalIndexingConfig,
+} from './incremental-indexing-service';
