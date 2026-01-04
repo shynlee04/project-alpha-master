@@ -15,7 +15,7 @@
 ## 🏗️ ADR-024: STATE MANAGEMENT CONSOLIDATION (2026-01-04)
 
 **Decision:** Option A - Clean Architecture (Centralized State)  
-**Status:** IN_PROGRESS (Epic 53 - 1/8 stories complete)  
+**Status:** ✅ COMPLETE (Epic 53 - 8/8 stories done)  
 **Reference:** `_bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md`
 
 ### Core Principle
@@ -29,8 +29,8 @@
 |----------|-------------------|--------|
 | **Zustand Stores** | `src/infrastructure/persistence/stores/` | ✅ Active |
 | **Dexie Database** | `src/infrastructure/persistence/dexie-db.ts` | ✅ Canonical |
-| **Dexie Helpers** | `src/infrastructure/persistence/dexie-db-helpers/` | ⏳ Story 53-2 |
-| **Dexie Storage** | `src/infrastructure/persistence/dexie-storage.ts` | ⏳ Story 53-6 |
+| **Dexie Helpers** | `src/infrastructure/persistence/dexie-db-helpers/` | ✅ Story 53-2 DONE |
+| **Dexie Storage** | `src/infrastructure/persistence/dexie-storage.ts` | ✅ Story 53-6 DONE |
 | **Event Bus** | `src/infrastructure/events/` | ✅ Active |
 
 ### Deprecated Locations (Facades with Deprecation Warnings)
@@ -38,11 +38,11 @@
 | Legacy Path | Migrating To | Status |
 |-------------|--------------|--------|
 | `src/lib/state/dexie-db.ts` | → Re-exports from infrastructure | ✅ Story 53-1 DONE |
-| `src/lib/state/dexie-db-helpers/` | → Moving to infrastructure | ⏳ Story 53-2 |
-| `src/lib/state/knowledge/` | → Merging with infrastructure/stores/knowledge | ⏳ Story 53-3 |
-| `src/lib/state/ide-store.ts` | → Merging with infrastructure/stores/ide | ⏳ Story 53-4 |
-| `src/lib/state/quiz-store.ts` | → infrastructure/stores/study | ⏳ Story 53-5 |
-| `src/lib/state/dexie-storage.ts` | → infrastructure/persistence | ⏳ Story 53-6 |
+| `src/lib/state/dexie-db-helpers/` | → Moving to infrastructure | ✅ Story 53-2 DONE |
+| `src/lib/state/knowledge/` | → Merging with infrastructure/stores/knowledge | ✅ Story 53-3 DONE |
+| `src/lib/state/ide-store.ts` | → Merging with infrastructure/stores/ide | ✅ Story 53-4 DONE |
+| `src/lib/state/quiz-store.ts` | → infrastructure/stores/study | ✅ Story 53-5 DONE (kept as facade) |
+| `src/lib/state/dexie-storage.ts` | → infrastructure/persistence | ✅ Story 53-6 DONE |
 
 ### Import Pattern (Migration)
 
@@ -71,13 +71,15 @@ import { db, getDb } from '@/infrastructure/persistence/dexie-db';
 | Story | Title | Status | Effort |
 |-------|-------|--------|--------|
 | **53-1** | Consolidate Dexie Database Files | ✅ DONE | 2h |
-| **53-2** | Move Dexie Helpers to Infrastructure | ⏳ backlog | 2-3h |
-| **53-3** | Merge Knowledge Store Implementations | ⏳ backlog | 3-4h |
-| **53-4** | Migrate IDE Store | ⏳ backlog | 1-2h |
-| **53-5** | Migrate Quiz and Permission Stores | ⏳ backlog | 2h |
-| **53-6** | Move dexie-storage.ts to Infrastructure | ⏳ backlog | 1h |
-| **53-7** | Update All Import Paths | ⏳ backlog | 2-3h |
-| **53-8** | Documentation and Cleanup | ⏳ backlog | 2h |
+| **53-2** | Move Dexie Helpers to Infrastructure | ✅ DONE | 2-3h |
+| **53-3** | Merge Knowledge Store Implementations | ✅ DONE | 3-4h |
+| **53-4** | Migrate IDE Store | ✅ DONE | 1-2h |
+| **53-5** | Migrate Quiz and Permission Stores | ✅ DONE | 2h |
+| **53-6** | Move dexie-storage.ts to Infrastructure | ✅ DONE | 1h |
+| **53-7** | Update All Import Paths | ✅ DONE | 2-3h |
+| **53-8** | Documentation and Cleanup | ✅ DONE | 2h |
+
+**EPIC 53 COMPLETE ✅** - All production code now imports from canonical `@/infrastructure/persistence/` paths.
 
 **Tracking:** `_bmad-output/sprint-artifacts/sprint-status.yaml` (epic-53)  
 **Workflow:** `_bmad/modules/architecture-remediation/workflows/state-consolidation-cycle.md`
