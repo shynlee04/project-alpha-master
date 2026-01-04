@@ -18,7 +18,12 @@
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.check.json --noEmit --incremental",
     "typecheck:all": "tsc --noEmit",
-    "i18n:extract": "i18next-scanner --config i18next-scanner.config.cjs"
+    "i18n:extract": "i18next-scanner --config i18next-scanner.config.cjs",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "governance": "node .scripts/check-size-limits.js && node .scripts/check-import-paths.js",
+    "governance:size": "node .scripts/check-size-limits.js",
+    "governance:imports": "node .scripts/check-import-paths.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

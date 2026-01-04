@@ -1,6 +1,6 @@
 ---
 name: deep-scan
-description: Comprehensive codebase diagnostic module with 9 specialized scanners. Auto-activates on: "scan codebase", "audit architecture", "technical debt", "health check"
+description: 'Comprehensive codebase diagnostic module with 9 specialized scanners. Auto-activates on: scan codebase, audit architecture, technical debt, health check'
 
 triggers:
   - "scan codebase"
