@@ -13,8 +13,8 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '@/lib/state/dexie-storage';
-import { db, type NoteRecord } from '@/lib/state/dexie-db';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+import { db, type NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import type { NoteSaveStatus, CreateNoteParams, UpdateNoteParams } from './types';
 import { generateNoteId, extractTitleFromBlocks, DEFAULT_NOTE_BLOCKS } from './types';
 import type { Block } from '@blocknote/core';

@@ -36,7 +36,7 @@ import { createMessageCrudSlice } from './message-crud-slice';
 import { createConversationUtilsSlice } from './conversation-utils-slice';
 import { createConversationValidationSlice } from './conversation-validation-slice';
 import { createConversationEventsSlice } from './conversation-events-slice';
-import { createDexieStorage } from '@/lib/state/dexie-storage';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 
 // Re-export types for consumers
 export type { CombinedConversationState as ConversationStoreState } from './types';

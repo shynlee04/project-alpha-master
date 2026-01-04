@@ -16,7 +16,7 @@ export * from './stores/index';
 // Database
 export { ViaGentDatabase as DexieDB } from './dexie-db';
 export * from './dexie-db-class';
-export { createDexieStorage } from '@/lib/state/dexie-storage';
+export { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 export * from './dexie-db-migrations';
 export * from './dexie-db-core-types';
 export * from './dexie-db-ai-types';

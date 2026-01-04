@@ -10,7 +10,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '@/lib/state/dexie-storage';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import type { KnowledgeStoreState } from './types';
 import { createSourceCrudSlice } from './slices/knowledge-source-crud-slice';
 import { createPreviewSlice } from './slices/knowledge-preview-slice';

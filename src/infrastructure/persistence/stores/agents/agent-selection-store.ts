@@ -10,7 +10,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '@/lib/state/dexie-storage';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import { useAppStore } from '../use-app-store';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';

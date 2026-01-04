@@ -18,7 +18,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { useMemo } from 'react';
-import { createDexieStorage } from '@/lib/state/dexie-storage';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import { runMigrations, validateMigratedState, CURRENT_SCHEMA_VERSION } from './schema-migrations';
 
 // Import agent slices
