@@ -20,13 +20,10 @@ import { useIDEStore } from '@/lib/state';
 /**
  * @workspace ide-only
  *
- * This component uses the legacy WorkspaceContext (IDE-only).
- * Do NOT use this component outside of IDE workspace routes.
- *
- * For cross-workspace components, use useWorkspaceStore instead:
- * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ * This component uses the unified workspace context.
+ * Provides IDE-specific file system operations and sync controls.
  */
-import { useWorkspace } from '@/lib/workspace';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { useToast } from '@/presentation/components/ui/Toast';
 import { MobileCapabilityBanner } from '@/presentation/components/ui/MobileCapabilityBanner';
 
@@ -108,17 +105,28 @@ function PanelErrorFallback({ label }: { label: string }) {
 export function MobileIDELayout(): React.JSX.Element {
     const { toast } = useToast();
     const {
-        projectId,
-        projectMetadata,
+        directoryHandle,
         permissionState,
-        // syncStatus - unused for now, but will be needed for status indicators
-        initialSyncCompleted,
+        syncStatus,
+        syncError,
+        autoSync,
+        isOpeningFolder,
+        projectMetadata,
         localAdapterRef: _localAdapterRef,
         syncManagerRef,
         eventBus,
-        setIsWebContainerBooted,
+        openFolder,
+        switchFolder,
+        syncNow,
+        setAutoSync,
+        closeProject,
         restoreAccess,
-    } = useWorkspace();
+        setIsWebContainerBooted,
+    } = useWorkspaceSync();
+
+    // Derived projectId from projectMetadata
+    const projectId = projectMetadata?.id || null;
+    const initialSyncCompleted = syncStatus !== 'idle';
 
     // Mobile panel state
     const [activePanel, setActivePanel] = useMobilePanel('files');

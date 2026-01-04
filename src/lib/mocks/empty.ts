@@ -148,4 +148,29 @@ export const katex = {
 };
 export const renderToString = () => '';
 export const render = () => { };
+// D3-shape symbols (for recharts compatibility)
+export const symbol = () => ({ size: () => symbol(), type: () => symbol() });
+export const symbolCircle = { draw: () => { } };
+export const symbolCross = { draw: () => { } };
+export const symbolDiamond = { draw: () => { } };
+export const symbolSquare = { draw: () => { } };
+export const symbolStar = { draw: () => { } };
+export const symbolTriangle = { draw: () => { } };
+export const symbolWye = { draw: () => { } };
+export const curveBasis = () => { };
+export const curveLinear = () => { };
+export const curveStep = () => { };
 
+// Recharts mocks
+export const LineChart = () => null;
+export const Line = () => null;
+export const BarChart = () => null;
+export const Bar = () => null;
+export const PieChart = () => null;
+export const Pie = () => null;
+export const XAxis = () => null;
+export const YAxis = () => null;
+export const CartesianGrid = () => null;
+export const Tooltip = () => null;
+export const Legend = () => null;
+export const ResponsiveContainer = () => null;

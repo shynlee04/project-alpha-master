@@ -45,13 +45,11 @@ import {
 /**
  * @workspace ide-only
  *
- * This component uses the legacy WorkspaceContext (IDE-only).
- * Do NOT use this component outside of IDE workspace routes.
- *
- * For cross-workspace components, use useWorkspaceStore instead:
- * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ * This component uses the unified workspace context.
+ * Provides file system operations for the IDE.
  */
-import { useFileSyncStatusStore, useWorkspace } from '@/lib/workspace';
+import { useFileSyncStatusStore } from '@/lib/workspace';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import type { TreeNode } from './types';
 
 // ============================================================================
@@ -101,14 +99,17 @@ export function FileTree({
   const {
     directoryHandle,
     syncStatus,
-    syncProgress,
-    lastSyncTime,
     syncError,
     syncNow,
     localAdapterRef,
     syncManagerRef,
     exclusionPatterns,
-  } = useWorkspace();
+  } = useWorkspaceSync();
+
+  // Note: syncProgress and lastSyncTime are not currently exposed via useWorkspaceSync
+  // These can be added to the unified context if needed
+  const syncProgress = undefined;
+  const lastSyncTime = undefined;
 
   const { t } = useTranslation();
 

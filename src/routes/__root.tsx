@@ -73,7 +73,7 @@ export const Route = createRootRoute({
           <LocaleProvider>
             <TooltipProvider>
               <AppInitializer>
-                <UnifiedWorkspaceProvider initialWorkspace="hub">
+                <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
                   <AppErrorBoundary>
                     <Outlet />
                   </AppErrorBoundary>

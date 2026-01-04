@@ -29,18 +29,21 @@ import { useConversationStore } from '../conversation';
 import { useRAGStore } from '../rag';
 import { useAgentSelectionStore } from '../agents/agent-selection-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+
+// Import types from canonical sources
 import type {
-    ProjectMetadata,
     SyncStatus,
     SyncProgress,
-    FsaPermissionState,
-} from './unified-workspace-context';
+    SyncResult,
+} from '@/lib/filesystem/sync-types';
+import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+import type { ProjectMetadata as LibProjectMetadata } from '@/lib/workspace/project-store';
 
 // ============================================================================
 // Imports for IDE file system operations (from OLD provider hooks)
 // ============================================================================
 
-import { LocalFSAdapter, SyncManager, type SyncResult } from '@/lib/filesystem';
+import { LocalFSAdapter, SyncManager } from '@/lib/filesystem';
 import {
     getProject,
     saveProject,
@@ -59,9 +62,29 @@ import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 // Types
 // ============================================================================
 
+/**
+ * Extended workspace type including 'hub' landing page
+ */
+type ExtendedWorkspaceType = WorkspaceType | 'hub';
+
+/**
+ * Local ProjectMetadata with nullable fsaHandle for internal state
+ * The lib version requires non-null fsaHandle, so we cast when calling saveProject
+ */
+interface ProjectMetadata {
+    id: string;
+    name: string;
+    folderPath: string;
+    fsaHandle: FileSystemDirectoryHandle | null;
+    lastOpened: Date;
+    autoSync: boolean;
+    exclusionPatterns?: string[];
+    lastKnownPermissionState?: FsaPermissionState;
+}
+
 export interface UnifiedWorkspaceProviderProps {
     children: ReactNode;
-    initialWorkspace?: WorkspaceType;
+    initialWorkspace?: ExtendedWorkspaceType;
     initialProjectId?: string | null;
 }
 
@@ -70,24 +93,10 @@ export interface UnifiedWorkspaceProviderProps {
 // ============================================================================
 
 const LAST_WORKSPACE_KEY = (projectId: string) => `project_${projectId}_last_workspace`;
-const DEFAULT_WORKSPACE: WorkspaceType = 'hub' as WorkspaceType;
 
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-function loadLastWorkspace(projectId: string): WorkspaceType {
-    if (typeof window === 'undefined') return DEFAULT_WORKSPACE;
-    try {
-        const stored = localStorage.getItem(LAST_WORKSPACE_KEY(projectId));
-        if (stored) {
-            return stored as WorkspaceType;
-        }
-    } catch (error) {
-        console.warn('[WorkspaceProvider] Failed to load last workspace:', error);
-    }
-    return DEFAULT_WORKSPACE;
-}
 
 function persistLastWorkspace(projectId: string, workspace: WorkspaceType): void {
     if (typeof window === 'undefined') return;
@@ -148,7 +157,7 @@ export function UnifiedWorkspaceProvider({
     const [isOpeningFolder, setIsOpeningFolder] = useState(false);
     const [exclusionPatterns, setExclusionPatterns] = useState<string[]>([]);
     const [isWebContainerBooted, setIsWebContainerBooted] = useState(false);
-    const [initialSyncCompleted, setInitialSyncCompleted] = useState(false);
+    const [initialSyncCompleted, _setInitialSyncCompleted] = useState(false);
 
     // ========================================================================
     // Refs
@@ -162,10 +171,10 @@ export function UnifiedWorkspaceProvider({
     // Initialization Effects
     // ========================================================================
 
-    // Initialize workspace from props
+    // Initialize workspace from props (only set valid WorkspaceType, not 'hub')
     useEffect(() => {
-        if (initialWorkspace && currentWorkspace !== initialWorkspace) {
-            setCurrentWorkspace(initialWorkspace);
+        if (initialWorkspace && initialWorkspace !== 'hub' && currentWorkspace !== initialWorkspace) {
+            setCurrentWorkspace(initialWorkspace as WorkspaceType);
         }
     }, [initialWorkspace, currentWorkspace, setCurrentWorkspace]);
 
@@ -342,7 +351,7 @@ export function UnifiedWorkspaceProvider({
             // Save to legacy permission-lifecycle store
             await saveDirectoryHandleReference(handle, projectId, handle.name);
 
-            // Save to ProjectStore
+            // Save to ProjectStore (cast to LibProjectMetadata since fsaHandle is non-null here)
             const project: ProjectMetadata = {
                 id: projectId,
                 name: handle.name,
@@ -351,7 +360,7 @@ export function UnifiedWorkspaceProvider({
                 lastOpened: new Date(),
                 autoSync,
             };
-            await saveProject(project);
+            await saveProject(project as LibProjectMetadata);
             setProjectMetadata(project);
             setCurrentProject(projectId);
 
@@ -410,7 +419,7 @@ export function UnifiedWorkspaceProvider({
                 lastOpened: new Date(),
                 autoSync: true,
             };
-            await saveProject(project);
+            await saveProject(project as LibProjectMetadata);
             setProjectMetadata(project);
             setCurrentProject(newProjectId);
 
@@ -444,8 +453,13 @@ export function UnifiedWorkspaceProvider({
                 autoSync: enabled,
             };
 
-            const saved = await saveProject(updatedProject);
-            if (saved) {
+            // Only save if we have a valid fsaHandle (required by LibProjectMetadata)
+            if (updatedProject.fsaHandle) {
+                const saved = await saveProject(updatedProject as LibProjectMetadata);
+                if (saved) {
+                    setProjectMetadata(updatedProject);
+                }
+            } else {
                 setProjectMetadata(updatedProject);
             }
         },
@@ -467,8 +481,13 @@ export function UnifiedWorkspaceProvider({
                 exclusionPatterns: patterns,
             };
 
-            const saved = await saveProject(updatedProject);
-            if (saved) {
+            // Only save if we have a valid fsaHandle (required by LibProjectMetadata)
+            if (updatedProject.fsaHandle) {
+                const saved = await saveProject(updatedProject as LibProjectMetadata);
+                if (saved) {
+                    setProjectMetadata(updatedProject);
+                }
+            } else {
                 setProjectMetadata(updatedProject);
             }
         },
@@ -495,7 +514,10 @@ export function UnifiedWorkspaceProvider({
                 ...projectMetadata,
                 lastKnownPermissionState: result,
             };
-            await saveProject(updatedProject);
+            // Only save if we have a valid fsaHandle (required by LibProjectMetadata)
+            if (updatedProject.fsaHandle) {
+                await saveProject(updatedProject as LibProjectMetadata);
+            }
             setProjectMetadata(updatedProject);
         }
 
@@ -511,11 +533,11 @@ export function UnifiedWorkspaceProvider({
     const enabledWorkspaces = useMemo(() => {
         // For now, all workspaces are enabled
         // In future, this would be derived from project.bindings
-        return ['hub', 'ide', 'notes', 'knowledge', 'study'] as WorkspaceType[];
+        return ['hub', 'ide', 'notes', 'knowledge', 'study'] as ExtendedWorkspaceType[];
     }, []);
 
     const switchWorkspace = useCallback(
-        (newWorkspace: WorkspaceType) => {
+        (newWorkspace: ExtendedWorkspaceType) => {
             if (!projectMetadata?.id) {
                 console.warn('[WorkspaceProvider] Cannot switch workspace: no project loaded');
                 return;
@@ -529,7 +551,10 @@ export function UnifiedWorkspaceProvider({
             }
 
             console.log(`[WorkspaceProvider] Switching workspace: ${currentWorkspace} → ${newWorkspace}`);
-            persistLastWorkspace(projectMetadata.id, newWorkspace);
+            // Only persist valid WorkspaceType (not 'hub')
+            if (newWorkspace !== 'hub') {
+                persistLastWorkspace(projectMetadata.id, newWorkspace as WorkspaceType);
+            }
 
             navigate({
                 to: `/${
@@ -627,16 +652,16 @@ export function UnifiedWorkspaceProvider({
 
             // Project State (from ProjectProvider)
             workspaceProject: {
-                project: projectMetadata,
+                project: projectMetadata as LibProjectMetadata | null,
                 currentWorkspace,
-                enabledWorkspaces,
+                enabledWorkspaces: enabledWorkspaces as WorkspaceType[],
                 switchWorkspace,
             },
 
             // IDE File System Operations (from OLD WorkspaceProvider)
             fileSystem: {
                 // State
-                projectMetadata,
+                projectMetadata: projectMetadata as LibProjectMetadata | null,
                 directoryHandle,
                 permissionState,
                 syncStatus,

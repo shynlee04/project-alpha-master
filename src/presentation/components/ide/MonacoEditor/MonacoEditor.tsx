@@ -14,13 +14,10 @@ import { EditorTabBar, type OpenFile } from './EditorTabBar';
 /**
  * @workspace ide-only
  *
- * This component uses the legacy WorkspaceContext (IDE-only).
- * Do NOT use this component outside of IDE workspace routes.
- *
- * For cross-workspace components, use useWorkspaceStore instead:
- * import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
+ * This component uses the unified workspace context.
+ * Provides IDE sync status for edit warning functionality.
  */
-import { useWorkspace } from '@/lib/workspace';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { SyncEditWarning } from '../SyncEditWarning';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
@@ -87,7 +84,7 @@ export function MonacoEditor({
     const activeFile = openFiles.find(f => f.path === activeFilePath);
 
     // Story 13-3: Sync edit warning state
-    const { syncStatus } = useWorkspace();
+    const { syncStatus } = useWorkspaceSync();
     const [showSyncWarning, setShowSyncWarning] = useState(false);
     const syncWarningShownRef = useRef(false);
 

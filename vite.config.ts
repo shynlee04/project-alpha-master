@@ -145,6 +145,9 @@ const config = defineConfig(async () => {
               'sharp',
               // KaTeX - math rendering (~200KB)
               'katex',
+              // Recharts - charting library (~200KB)
+              'recharts',
+              'victory-vendor',
             ]
 
             // Check exact match
@@ -153,7 +156,18 @@ const config = defineConfig(async () => {
             }
 
             // Check prefix match (for sub-paths like 'd3/src/...')
-            const heavyPrefixes = ['d3-', 'mermaid/', 'cytoscape', '@blocknote/', '@xyflow/', '@xterm/', 'monaco-editor/']
+            const heavyPrefixes = [
+              'd3-',
+              'd3/',
+              'mermaid/',
+              'cytoscape',
+              '@blocknote/',
+              '@xyflow/',
+              '@xterm/',
+              'monaco-editor/',
+              'victory-vendor/',
+              'recharts/',
+            ]
             for (const prefix of heavyPrefixes) {
               if (source.startsWith(prefix)) {
                 return path.resolve(__dirname, './src/lib/mocks/empty.ts')

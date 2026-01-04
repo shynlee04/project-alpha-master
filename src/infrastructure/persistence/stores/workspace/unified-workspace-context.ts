@@ -27,31 +27,28 @@
  * ```
  */
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, type RefObject } from 'react';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
-// ============================================================================
-// Types
-// ============================================================================
+// Import types from canonical sources for internal use
+import type { SyncStatus, SyncProgress } from '@/lib/filesystem/sync-types';
+import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+import type { ProjectMetadata } from '@/lib/workspace/project-store';
 
-/**
- * Sync status for IDE workspace
- */
-export type SyncStatus = 'idle' | 'syncing' | 'error';
+// Import file system infrastructure types for refs
+import type { LocalFSAdapter, SyncManager } from '@/lib/filesystem';
 
-/**
- * Sync progress during sync operation
- */
-export interface SyncProgress {
-    total: number;
-    completed: number;
-    currentFile?: string;
+// Workspace event bus type (placeholder for event bus interface)
+export interface WorkspaceEventEmitter {
+    on(event: string, handler: (...args: any[]) => void): void;
+    off(event: string, handler: (...args: any[]) => void): void;
+    emit(event: string, ...args: any[]): void;
 }
 
-/**
- * File system permission state
- */
-export type FsaPermissionState = 'prompt' | 'granted' | 'denied';
+// Re-export types from their canonical sources
+export type { SyncStatus, SyncProgress } from '@/lib/filesystem/sync-types';
+export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+export type { ProjectMetadata } from '@/lib/workspace/project-store';
 
 /**
  * Workspace state (from OLD WorkspaceProvider)
@@ -81,20 +78,6 @@ export interface WorkspaceFileSystemState {
     isWebContainerBooted: boolean;
     /** Initial sync complete */
     initialSyncCompleted: boolean;
-}
-
-/**
- * Simple project metadata (from lib/workspace/project-store)
- */
-export interface ProjectMetadata {
-    id: string;
-    name: string;
-    folderPath: string;
-    fsaHandle: FileSystemDirectoryHandle | null;
-    lastOpened: Date;
-    autoSync: boolean;
-    exclusionPatterns?: string[];
-    lastKnownPermissionState?: FsaPermissionState;
 }
 
 /**
@@ -329,15 +312,32 @@ export function useWorkspace() {
 export function useWorkspaceSync() {
     const ctx = useUnifiedWorkspaceContext();
     return {
+        // State
         syncStatus: ctx.fileSystem.syncStatus,
         syncProgress: ctx.fileSystem.syncProgress,
         lastSyncTime: ctx.fileSystem.lastSyncTime,
         syncError: ctx.fileSystem.syncError,
         autoSync: ctx.fileSystem.autoSync,
+        isOpeningFolder: ctx.fileSystem.isOpeningFolder,
+        projectMetadata: ctx.fileSystem.projectMetadata,
+        directoryHandle: ctx.fileSystem.directoryHandle,
+        permissionState: ctx.fileSystem.permissionState,
+        exclusionPatterns: ctx.fileSystem.exclusionPatterns,
+        isWebContainerBooted: ctx.fileSystem.isWebContainerBooted,
+        initialSyncCompleted: ctx.fileSystem.initialSyncCompleted,
+        // Actions
         syncNow: ctx.fileSystem.syncNow,
         setAutoSync: ctx.fileSystem.setAutoSync,
         openFolder: ctx.fileSystem.openFolder,
+        switchFolder: ctx.fileSystem.switchFolder,
         closeProject: ctx.fileSystem.closeProject,
+        restoreAccess: ctx.fileSystem.restoreAccess,
+        setExclusionPatterns: ctx.fileSystem.setExclusionPatterns,
+        setIsWebContainerBooted: ctx.fileSystem.setIsWebContainerBooted,
+        // Refs
+        localAdapterRef: ctx.refs.localAdapterRef,
+        syncManagerRef: ctx.refs.syncManagerRef,
+        eventBus: ctx.refs.eventBus,
     };
 }
 
@@ -365,22 +365,4 @@ export function useWorkspaceSwitcher() {
         enabledWorkspaces: ctx.workspaceProject.enabledWorkspaces,
         switchWorkspace: ctx.workspaceProject.switchWorkspace,
     };
-}
-
-// ============================================================================
-// Type Placeholder References (for compilation)
-// ============================================================================
-
-// These are defined elsewhere but referenced for type completeness
-interface LocalFSAdapter {
-    setDirectoryHandle(handle: FileSystemDirectoryHandle): void;
-}
-
-interface SyncManager {
-    syncToWebContainer(): Promise<void>;
-    setExcludePatterns(patterns: string[]): void;
-}
-
-interface WorkspaceEventEmitter {
-    // Event bus methods
 }
