@@ -39,5 +39,7 @@ export { useWorkspaceContext } from './workspace-context';
 export type { WorkspaceContextValue } from './workspace-context';
 
 // Workspace store - now local (migrated from lib/state)
-export { useWorkspaceStore } from './workspace-store';
-export type { WorkspaceType, WorkspaceState, WorkspaceDataBindings } from './workspace-types';
+export { useWorkspaceStore, useWorkspaceContext as useWorkspaceStoreContext, useWorkspaceMetadata } from './workspace-store';
+export type { WorkspaceState, ToolAvailability } from './workspace-store';
+export type { WorkspaceType, WorkspaceMetadata, WorkspaceTransitionEvent } from './workspace-types';
+export { WORKSPACES } from './workspace-types';

@@ -36,7 +36,7 @@ export interface ToolAvailability {
 /**
  * Workspace state interface
  */
-interface WorkspaceState {
+export interface WorkspaceState {
   // Current workspace
   currentWorkspace: WorkspaceType;
   currentProjectId: string | null;
