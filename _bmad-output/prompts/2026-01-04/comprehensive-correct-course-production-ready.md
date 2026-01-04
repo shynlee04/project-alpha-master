@@ -554,20 +554,299 @@ Status: 🟢 SYSTEM READY FOR AUTO-LOADING The architecture remediation module i
 
 ### Besides BMAD core and BMM module agents consider loading these specific agents (consider to run them either in parallel or in sequence or isolated them as sub-agents for isolated context)
 
+- The below are agents (run as main or sub-agents with control sub-tasks), SKILLS, commands/workflows which you can call automatically, switch, coordinate -> speedup and improve the efficiency of your workflows
+
 ```
-.claude/agents
-.claude/agents/agent-os
-.claude/agents/arc-agents
-.claude/agents/bmad-analysis
-.claude/agents/bmad-planning
-.claude/agents/bmad-research
-.claude/agents/bmad-review
-.claude/agents/agent-profile-loader.md
-.claude/agents/architecture-remediation-orchestrator.md
-.claude/agents/component-splitter.md
-.claude/agents/file-sync-specialist.md
-.claude/agents/store-refactorer-loader.md
-.claude/agents/workspace-architect.md
+.
+├── .archive
+│   ├── ksi-loop.local.md
+├── agents
+│   ├── agent-os
+│   │   ├── implementation-verifier.md
+│   │   ├── implementer.md
+│   │   ├── product-planner.md
+│   │   ├── spec-initializer.md
+│   │   ├── spec-shaper.md
+│   │   ├── spec-verifier.md
+│   │   ├── spec-writer.md
+│   │   └── tasks-list-creator.md
+│   ├── arc-agents
+│   │   ├── file-sync-specialist.md
+│   │   └── workspace-architect.md
+│   ├── bmad-analysis
+│   │   ├── api-documenter.md
+│   │   ├── codebase-analyzer.md
+│   │   ├── data-analyst.md
+│   │   └── pattern-detector.md
+│   ├── bmad-planning
+│   │   ├── dependency-mapper.md
+│   │   ├── epic-optimizer.md
+│   │   ├── requirements-analyst.md
+│   │   ├── technical-decisions-curator.md
+│   │   ├── trend-spotter.md
+│   │   ├── user-journey-mapper.md
+│   │   └── user-researcher.md
+│   ├── bmad-research
+│   │   ├── market-researcher.md
+│   │   └── tech-debt-auditor.md
+│   ├── bmad-review
+│   │   ├── document-reviewer.md
+│   │   └── technical-evaluator.md
+│   ├── agent-profile-loader.md
+│   ├── architecture-remediation-orchestrator.md
+│   ├── component-splitter.md
+│   ├── file-sync-specialist.md
+│   ├── store-refactorer-loader.md
+│   └── workspace-architect.md
+├── commands
+│   ├── agent-os
+│   │   ├── create-tasks.md
+│   │   ├── implement-tasks.md
+│   │   ├── improve-skills.md
+│   │   ├── orchestrate-tasks.md
+│   │   ├── plan-product.md
+│   │   ├── shape-spec.md
+│   │   └── write-spec.md
+│   ├── bmad
+│   │   ├── arc
+│   │   │   ├── normalize-components.md
+│   │   │   └── workspace-e2e.md
+│   │   ├── bmb
+│   │   │   ├── agents
+│   │   │   │   ├── agent-builder.md
+│   │   │   │   ├── module-builder.md
+│   │   │   │   └── workflow-builder.md
+│   │   │   └── workflows
+│   │   │       ├── create-agent.md
+│   │   │       ├── create-module.md
+│   │   │       ├── create-workflow.md
+│   │   │       ├── edit-agent.md
+│   │   │       ├── edit-workflow.md
+│   │   │       ├── Meal Prep & Nutrition Plan.md
+│   │   │       └── workflow-compliance-check.md
+│   │   ├── bmm
+│   │   │   ├── agents
+│   │   │   │   ├── analyst.md
+│   │   │   │   ├── architect.md
+│   │   │   │   ├── dev.md
+│   │   │   │   ├── pm.md
+│   │   │   │   ├── quick-flow-solo-dev.md
+│   │   │   │   ├── sm.md
+│   │   │   │   ├── tea.md
+│   │   │   │   ├── tech-writer.md
+│   │   │   │   └── ux-designer.md
+│   │   │   └── workflows
+│   │   │       ├── check-implementation-readiness.md
+│   │   │       ├── code-review.md
+│   │   │       ├── correct-course.md
+│   │   │       ├── create-architecture.md
+│   │   │       ├── create-epics-and-stories.md
+│   │   │       ├── create-excalidraw-dataflow.md
+│   │   │       ├── create-excalidraw-diagram.md
+│   │   │       ├── create-excalidraw-flowchart.md
+│   │   │       ├── create-excalidraw-wireframe.md
+│   │   │       ├── create-prd.md
+│   │   │       ├── create-product-brief.md
+│   │   │       ├── create-story.md
+│   │   │       ├── create-tech-spec.md
+│   │   │       ├── create-ux-design.md
+│   │   │       ├── dev-story.md
+│   │   │       ├── document-project.md
+│   │   │       ├── eliminate-god-stores.md
+│   │   │       ├── generate-project-context.md
+│   │   │       ├── quick-dev.md
+│   │   │       ├── research.md
+│   │   │       ├── retrospective.md
+│   │   │       ├── sprint-planning.md
+│   │   │       ├── sprint-status.md
+│   │   │       ├── systematic-refactoring-execution.md
+│   │   │       ├── workflow-init.md
+│   │   │       └── workflow-status.md
+│   │   ├── cis
+│   │   │   ├── agents
+│   │   │   │   ├── brainstorming-coach.md
+│   │   │   │   ├── creative-problem-solver.md
+│   │   │   │   ├── design-thinking-coach.md
+│   │   │   │   ├── innovation-strategist.md
+│   │   │   │   ├── presentation-master.md
+│   │   │   │   └── storyteller.md
+│   │   │   └── workflows
+│   │   │       ├── design-thinking.md
+│   │   │       ├── innovation-strategy.md
+│   │   │       ├── problem-solving.md
+│   │   │       └── storytelling.md
+│   │   └── core
+│   │       ├── agents
+│   │       │   └── bmad-master.md
+│   │       ├── tasks
+│   │       │   ├── advanced-elicitation.md
+│   │       │   └── index-docs.md
+│   │       ├── tools
+│   │       │   └── shard-doc.md
+│   │       └── workflows
+│   │           ├── brainstorming.md
+│   │           └── party-mode.md
+│   ├── ado-discovery.md
+│   ├── ado-implementation.md
+│   ├── ado-planning.md
+│   ├── ado-research.md
+│   ├── ado-status.md
+│   ├── ado.md
+│   ├── orchestrate-implement.md
+│   └── ralph-loop-platform-unification.md
+├── context
+│   └── epic-arc-dup-completion-2026-01-04.md
+├── plugins
+├── rules
+│   ├── general-rules.md
+│   ├── governance-enforcement.md
+│   └── governance-rules.md
+├── skills
+│   ├── architecture-remediation
+│   │   ├── component-splitter
+│   │   │   └── SKILL.md
+│   │   ├── file-sync-specialist
+│   │   │   └── SKILL.md
+│   │   ├── store-refactorer
+│   │   │   └── SKILL.md
+│   │   ├── typescript-fixer
+│   │   │   └── SKILL.md
+│   │   ├── workflows
+│   │   │   ├── eliminate-god-stores
+│   │   │   │   └── SKILL.md
+│   │   │   ├── knowledge-sync-strategy
+│   │   │   │   └── SKILL.md
+│   │   │   ├── normalize-components
+│   │   │   │   └── SKILL.md
+│   │   │   ├── notes-sync-strategy
+│   │   │   │   └── SKILL.md
+│   │   │   └── workspace-file-system-e2e
+│   │   │       └── SKILL.md
+│   │   ├── workspace-architect
+│   │   │   └── SKILL.md
+│   │   └── SKILL.md
+│   ├── backend-api
+│   │   └── SKILL.md
+│   ├── backend-migrations
+│   │   └── SKILL.md
+│   ├── backend-models
+│   │   └── SKILL.md
+│   ├── backend-queries
+│   │   └── SKILL.md
+│   ├── brainstorming
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── dispatching-parallel-agents
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── executing-plans
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── finishing-a-development-branch
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── frontend-accessibility
+│   │   └── SKILL.md
+│   ├── frontend-components
+│   │   └── SKILL.md
+│   ├── frontend-css
+│   │   └── SKILL.md
+│   ├── frontend-responsive
+│   │   └── SKILL.md
+│   ├── global-coding-style
+│   │   └── SKILL.md
+│   ├── global-commenting
+│   │   └── SKILL.md
+│   ├── global-conventions
+│   │   └── SKILL.md
+│   ├── global-error-handling
+│   │   └── SKILL.md
+│   ├── global-tech-stack
+│   │   └── SKILL.md
+│   ├── global-validation
+│   │   └── SKILL.md
+│   ├── receiving-code-review
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── requesting-code-review
+│   │   ├── .orphaned_at
+│   │   ├── code-reviewer.md
+│   │   └── SKILL.md
+│   ├── subagent-driven-development
+│   │   ├── .orphaned_at
+│   │   ├── code-quality-reviewer-prompt.md
+│   │   ├── implementer-prompt.md
+│   │   ├── SKILL.md
+│   │   └── spec-reviewer-prompt.md
+│   ├── systematic-debugging
+│   │   ├── .orphaned_at
+│   │   ├── condition-based-waiting-example.ts
+│   │   ├── condition-based-waiting.md
+│   │   ├── CREATION-LOG.md
+│   │   ├── defense-in-depth.md
+│   │   ├── find-polluter.sh
+│   │   ├── root-cause-tracing.md
+│   │   └── SKILL.md
+│   ├── using-git-worktrees
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── using-superpowers
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── verification-before-completion
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── writing-plans
+│   │   ├── .orphaned_at
+│   │   └── SKILL.md
+│   ├── writing-skills
+│   │   ├── examples
+│   │   │   └── CLAUDE_MD_TESTING.md
+│   │   ├── .orphaned_at
+│   │   ├── anthropic-best-practices.md
+│   │   ├── graphviz-conventions.dot
+│   │   ├── persuasion-principles.md
+│   │   ├── render-graphs.js
+│   │   └── SKILL.md
+│   └── state-consolidation.md
+├── codetree-2026-01-04.md
+├── mcp-config.json
+├── MCP-SERVERS-README.md
+├── MCP-SERVERS-STATUS.md
+├── settings.json
+├── settings.local.json
+└── SYSTEM-COPY-SUMMARY.md
+
+71 directories, 212 files
+
+```
+
+## The module created for this architecture remediation 
+
+```
+_bmad/modules/architecture-remediation
+_bmad/modules/architecture-remediation/agents
+_bmad/modules/architecture-remediation/agents/component-splitter.md
+_bmad/modules/architecture-remediation/agents/file-sync-specialist.md
+_bmad/modules/architecture-remediation/agents/store-refactorer.md
+_bmad/modules/architecture-remediation/agents/test-writer.md
+_bmad/modules/architecture-remediation/agents/typescript-fixer.md
+_bmad/modules/architecture-remediation/agents/workspace-architect.md
+_bmad/modules/architecture-remediation/artifacts
+_bmad/modules/architecture-remediation/artifacts/epic-tracking.md
+_bmad/modules/architecture-remediation/artifacts/validation-gates.md
+_bmad/modules/architecture-remediation/config
+_bmad/modules/architecture-remediation/config/priorities.yaml
+_bmad/modules/architecture-remediation/config/thresholds.yaml
+_bmad/modules/architecture-remediation/workflows
+_bmad/modules/architecture-remediation/workflows/eliminate-god-stores.md
+_bmad/modules/architecture-remediation/workflows/knowledge-sync-strategy.md
+_bmad/modules/architecture-remediation/workflows/normalize-components.md
+_bmad/modules/architecture-remediation/workflows/notes-sync-strategy.md
+_bmad/modules/architecture-remediation/workflows/state-consolidation-cycle.md
+_bmad/modules/architecture-remediation/workflows/workspace-file-system-e2e.md
+_bmad/modules/architecture-remediation/MODULE-CREATION-SUMMARY.md
+_bmad/modules/architecture-remediation/README.md
 ```
 
 
@@ -577,3 +856,260 @@ Status: 🟢 SYSTEM READY FOR AUTO-LOADING The architecture remediation module i
 .claude/rules/governance-rules.md```)
 
 - with strict guardrails, tracking, following BMAD framework, gaining full context, understand the project and the workflows. As I will guide you through these iteration
+
+
+---
+---
+
+
+## ADR changes 
+
+Due to this ```
+
+Thought for 1s
+
+Let me research modern React/TypeScript architecture patterns to give you an informed recommendation:
+
+MCP Tool:
+context7 / resolve-library-id
+Show Details
+
+
+
+MCP Tool:
+exa / get_code_context_exa
+Show Details
+
+
+Now I have the research. Let me provide my analysis:
+
+🏆 ARCHITECTURAL COMPARISON: Option A vs Option B
+Research Results Summary
+Based on Zustand official docs and industry best practices (2024-2025):
+
+Source	Recommendation
+Zustand Docs	"Your application's global state should be located in a single Zustand store... supports splitting into slices"
+Clean Architecture	domain/ + infrastructure/ + presentation/ separation
+Large-Scale React	Domain-based modules with co-located state
+DDD Frontend	domain/ → application/ → infrastructure/ → ui/
+📊 Option A: Clean Architecture (Centralized State)
+src/
+├── core/                    # Entities, pure business logic
+├── domain/                  # Use cases, value objects
+├── application/             # Services, orchestration
+├── infrastructure/
+│   ├── persistence/         # ALL Zustand stores, ALL Dexie
+│   │   ├── stores/          # Every store here
+│   │   │   ├── agents/
+│   │   │   ├── conversation/
+│   │   │   ├── ide/
+│   │   │   ├── knowledge/   # Store slices
+│   │   │   ├── notes/       # <-- NEW, moved from lib
+│   │   │   ├── rag/
+│   │   │   ├── study/       # <-- NEW
+│   │   │   └── project/
+│   │   ├── dexie-*.ts       # Database schema
+│   │   └── dexie-helpers/   # <-- MOVE from lib/state
+│   ├── events/              # Event bus
+│   └── providers/           # External APIs
+├── lib/                     # Pure utilities, NO STATE
+│   ├── agent/               # Agent logic only, no store
+│   ├── rag/                 # RAG pipeline, no store
+│   ├── knowledge/           # Knowledge logic, no store
+│   └── filesystem/          # FS operations, no store
+└── presentation/            # React components
+Pros ✅
+Single source of truth for all state (Zustand-recommended)
+Clear layer boundaries - lib/ is pure, infrastructure/ has state
+Easier to reason about data flow
+Better for large teams - clear ownership
+Aligns with Zustand docs: "Single store, split into slices"
+Cons ❌
+Major refactoring - need to move ~50 files
+Domain logic separated from domain state - context switches
+Longer import paths for domain-specific state
+Performance: ⭐⭐⭐⭐⭐
+Single store = single subscription point
+Slices compose efficiently
+No duplicate stores
+Extensibility: ⭐⭐⭐⭐
+Adding domain = add folder in infrastructure/persistence/stores/
+Clear pattern to follow
+Need to update two places (domain logic + domain store)
+📊 Option B: Domain-Driven Design (Co-located State)
+src/
+├── core/                    # Shared entities
+├── domain/                  # Value objects, shared use cases
+├── domains/                 # <-- NEW: Domain modules
+│   ├── knowledge/
+│   │   ├── store/           # Knowledge store slices
+│   │   ├── services/        # Knowledge services
+│   │   ├── types.ts
+│   │   └── index.ts
+│   ├── notes/
+│   │   ├── store/
+│   │   ├── services/
+│   │   └── index.ts
+│   ├── rag/
+│   │   ├── store/
+│   │   ├── services/
+│   │   └── index.ts
+│   └── study/
+│       ├── store/
+│       └── services/
+├── infrastructure/
+│   ├── persistence/
+│   │   ├── stores/          # Cross-cutting stores ONLY
+│   │   │   ├── agents/      # Used by all domains
+│   │   │   ├── conversation/ # Used by all domains
+│   │   │   ├── project/     # Used by all domains
+│   │   │   └── providers/   # Used by all domains
+│   │   ├── dexie-*.ts       # Database schema
+│   │   └── dexie-helpers/
+│   └── events/
+├── lib/                     # Shared utilities ONLY
+│   ├── utils/
+│   ├── filesystem/          # Shared FS operations
+│   └── editor/              # Shared editor utils
+└── presentation/
+Pros ✅
+High cohesion - domain logic + state together
+Easier onboarding - find everything in one place
+Feature isolation - domains can be worked on independently
+Micro-frontend ready - domains can be extracted later
+Cons ❌
+Multiple stores - harder to share state between domains
+Cross-domain state - how does knowledge access rag store?
+Not Zustand-recommended - docs prefer single store
+Import complexity - need to import from multiple domain stores
+Performance: ⭐⭐⭐
+Multiple stores = multiple subscription points
+Cross-domain communication overhead
+Each domain creates its own store instance
+Extensibility: ⭐⭐⭐⭐⭐
+Adding domain = add folder, self-contained
+Teams can work independently
+But cross-domain features get complex
+🎯 MY RECOMMENDATION: Option A (Clean Architecture)
+Rationale
+Factor	Option A	Option B	Winner
+Zustand Best Practice	Single store + slices	Multiple stores	A
+Via-Gent Workspaces	Workspaces share state	Each workspace isolated	A
+Cross-workspace events	Single event bus	Multiple buses	A
+Performance	Single subscription	Multiple subscriptions	A
+Current Codebase	Closer to existing pattern	Major restructure	A
+Team Size	Works for small teams	Better for large teams	Tie
+Extensibility	Clear pattern	High cohesion	Tie
+Key Insight for Via-Gent
+Your workspaces (IDE, Notes, Knowledge, Study) share state:
+
+All use the same agents store
+All use the same conversation store
+All use the same project store
+RAG is used by Knowledge AND Notes
+Domain-Driven (Option B) would create artificial boundaries between tightly coupled features.
+
+Clean Architecture (Option A) acknowledges the reality: workspaces are views of shared state, not isolated domains.
+
+🚀 RECOMMENDED IMPLEMENTATION PLAN
+Phase 1: Consolidate Dexie Layer (2-3 hours)
+bash
+# Move dexie-helpers from lib/state to infrastructure/persistence
+mv src/lib/state/dexie-db-helpers/ src/infrastructure/persistence/dexie-db-helpers/
+# Update imports (15+ files reference these)
+# Create facade in old location for backwards compatibility
+Phase 2: Consolidate Knowledge Store (3-4 hours)
+You have TWO knowledge stores:
+
+src/lib/state/knowledge/ (6 slices)
+src/infrastructure/persistence/stores/knowledge/ (7 files)
+Decision needed: Which is canonical? Merge them.
+
+Phase 3: Remove lib/state Store Files (2-3 hours)
+Move these to infrastructure/persistence/stores/:
+
+ide-store.ts → merge with /stores/ide/
+quiz-store.ts → create /stores/quiz/
+tool-permission-store.ts → create /stores/tool-permissions/
+workspace-store.ts → merge with /stores/workspace/
+Phase 4: Purify lib/ Directory (4-6 hours)
+After Phase 1-3, lib/ should be pure utilities:
+
+No Zustand stores
+No Dexie operations (use helpers via import)
+Only pure functions and services```
+
+==> And I choose A --> Lead to new correct-course
+
+## Context
+
+- _bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md
+
+_bmad-output/project-planning-artifacts/sprint-change-proposal-state-consolidation-2026-01-04.md
+
+
+📄 Artifacts Created
+1. Architecture Decision Record (ADR-024)
+File: 
+_bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md
+
+Summary:
+
+Attribute	Value
+ADR ID	ADR-024
+Title	State Management Consolidation - Clean Architecture Pattern
+Decision	Option A: Clean Architecture (Centralized State)
+Key Principle	All state in infrastructure/persistence/, lib/ = pure utilities only
+Migration Strategy	Facade pattern for zero breaking changes
+Research Sources	Zustand Docs, GitHub, Clean Architecture principles
+2. Sprint Change Proposal (SCP-2026-01-04-STATE-CONSOLIDATION)
+File: 
+_bmad-output/project-planning-artifacts/sprint-change-proposal-state-consolidation-2026-01-04.md
+
+Summary:
+
+Attribute	Value
+Proposal ID	SCP-2026-01-04-STATE-CONSOLIDATION
+Epic ID	EPIC-024 (NEW)
+Priority	P1-HIGH
+Total Stories	8 stories
+Estimated Effort	14-18 hours (2-3 days focused work)
+Breaking Changes	NONE (facade pattern)
+📋 Epic 24 Story Summary
+Story	Title	Priority	Effort	Dependencies
+24-1	Consolidate Dexie Database Files	P0	2h	None
+24-2	Move Dexie Helpers to Infrastructure	P0	2-3h	24-1
+24-3	Merge Knowledge Store Implementations	P1	3-4h	24-2
+24-4	Migrate IDE Store	P1	1-2h	24-2
+24-5	Migrate Quiz and Permission Stores	P1	2h	24-2
+24-6	Move dexie-storage.ts to Infrastructure	P2	1h	24-2
+24-7	Update All Import Paths	P2	2-3h	24-1-6
+24-8	Documentation and Cleanup	P2	2h	24-7
+🔄 Target Architecture (After Consolidation)
+src/
+├── infrastructure/
+│   └── persistence/              # ✅ ALL STATE HERE
+│       ├── stores/               # Zustand stores (sliced)
+│       │   ├── agents/
+│       │   ├── conversation/
+│       │   ├── filesystem/
+│       │   ├── ide/             # Merged from lib/state
+│       │   ├── knowledge/       # Merged from lib/state
+│       │   ├── permissions/     # NEW - from lib/state
+│       │   ├── project/
+│       │   ├── providers/
+│       │   ├── rag/
+│       │   ├── study/           # NEW - quiz-store
+│       │   └── workspace/       # Merged from lib/state
+│       ├── dexie-db-helpers/    # Moved from lib/state
+│       ├── dexie-db.ts          # CANONICAL
+│       └── dexie-storage.ts     # Moved from lib/state
+│
+├── lib/                         # ✅ PURE UTILITIES ONLY
+│   ├── agent/                   # No stores
+│   ├── knowledge/               # No stores
+│   ├── rag/                     # No stores
+│   ├── state/                   # FACADES ONLY (re-exports)
+│   │   └── index.ts             # Deprecated re-exports
+│   └── ...
+

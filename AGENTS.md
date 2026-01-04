@@ -8,17 +8,51 @@
 |----------|---------|----------|
 | **Platform Architecture** | 5-layer architecture, canonical file locations, contracts | `_bmad-output/architecture/platform-architecture-definitive-2026-01-04.md` |
 | **Data Flow Visual** | Visual diagrams for all layer interactions, sync lifecycles, RAG pipeline | `_bmad-output/architecture/data-flow-visual-2026-01-04.md` |
+| **ADR-024** | State Management Consolidation - Clean Architecture | `_bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md` |
 
-### Quick Reference: Canonical Locations
+---
 
-| Layer | Category | Location |
-|-------|----------|----------|
-| **Persistence** | Dexie Helpers | `src/lib/state/dexie-db-helpers/` |
-| **Persistence** | Dexie Storage | `src/lib/state/dexie-storage.ts` |
-| **Stores** | All Zustand | `src/infrastructure/persistence/stores/` |
-| **Domain** | Agent Tools | `src/lib/agent/tools/` |
-| **Domain** | RAG Pipeline | `src/lib/rag/` |
-| **Events** | Cross-Workspace | `src/infrastructure/events/` |
+## 🏗️ ADR-024: STATE MANAGEMENT CONSOLIDATION (2026-01-04)
+
+**Decision:** Option A - Clean Architecture (Centralized State)  
+**Status:** IN_PROGRESS (Epic 53 - 1/8 stories complete)  
+**Reference:** `_bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md`
+
+### Core Principle
+
+> **ALL state management lives in `src/infrastructure/persistence/`.**  
+> **`src/lib/` = pure utilities only, NO Zustand stores or Dexie operations.**
+
+### Canonical Locations (After Consolidation)
+
+| Category | Canonical Location | Status |
+|----------|-------------------|--------|
+| **Zustand Stores** | `src/infrastructure/persistence/stores/` | ✅ Active |
+| **Dexie Database** | `src/infrastructure/persistence/dexie-db.ts` | ✅ Canonical |
+| **Dexie Helpers** | `src/infrastructure/persistence/dexie-db-helpers/` | ⏳ Story 53-2 |
+| **Dexie Storage** | `src/infrastructure/persistence/dexie-storage.ts` | ⏳ Story 53-6 |
+| **Event Bus** | `src/infrastructure/events/` | ✅ Active |
+
+### Deprecated Locations (Facades with Deprecation Warnings)
+
+| Legacy Path | Migrating To | Status |
+|-------------|--------------|--------|
+| `src/lib/state/dexie-db.ts` | → Re-exports from infrastructure | ✅ Story 53-1 DONE |
+| `src/lib/state/dexie-db-helpers/` | → Moving to infrastructure | ⏳ Story 53-2 |
+| `src/lib/state/knowledge/` | → Merging with infrastructure/stores/knowledge | ⏳ Story 53-3 |
+| `src/lib/state/ide-store.ts` | → Merging with infrastructure/stores/ide | ⏳ Story 53-4 |
+| `src/lib/state/quiz-store.ts` | → infrastructure/stores/study | ⏳ Story 53-5 |
+| `src/lib/state/dexie-storage.ts` | → infrastructure/persistence | ⏳ Story 53-6 |
+
+### Import Pattern (Migration)
+
+```typescript
+// ❌ DEPRECATED (shows console warning in dev mode)
+import { db, getDb } from '@/lib/state/dexie-db';
+
+// ✅ CORRECT (new canonical path)
+import { db, getDb } from '@/infrastructure/persistence/dexie-db';
+```
 
 ### Size Limits
 
@@ -29,6 +63,24 @@
 | Component | 300 |
 | Hook | 150 |
 | Helper | 120 |
+
+---
+
+## 📋 Epic 53: State Management Consolidation Progress
+
+| Story | Title | Status | Effort |
+|-------|-------|--------|--------|
+| **53-1** | Consolidate Dexie Database Files | ✅ DONE | 2h |
+| **53-2** | Move Dexie Helpers to Infrastructure | ⏳ backlog | 2-3h |
+| **53-3** | Merge Knowledge Store Implementations | ⏳ backlog | 3-4h |
+| **53-4** | Migrate IDE Store | ⏳ backlog | 1-2h |
+| **53-5** | Migrate Quiz and Permission Stores | ⏳ backlog | 2h |
+| **53-6** | Move dexie-storage.ts to Infrastructure | ⏳ backlog | 1h |
+| **53-7** | Update All Import Paths | ⏳ backlog | 2-3h |
+| **53-8** | Documentation and Cleanup | ⏳ backlog | 2h |
+
+**Tracking:** `_bmad-output/sprint-artifacts/sprint-status.yaml` (epic-53)  
+**Workflow:** `_bmad/modules/architecture-remediation/workflows/state-consolidation-cycle.md`
 
 ---
 

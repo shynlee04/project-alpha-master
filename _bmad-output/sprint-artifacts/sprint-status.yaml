@@ -165,6 +165,43 @@ development_status:
   # - Zero production TypeScript errors (all 400 in test files)
   # - See: _bmad-output/platform-unification-assessment-2026-01-03.md
 
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # EPIC 53: State Management Consolidation (Course Correction 2026-01-04)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Added: 2026-01-04T09:30:00+07:00
+  # Trigger: ARC-DUP validation revealed duplicate state locations
+  # Priority: P1-HIGH - Architectural cleanup for maintainability
+  # Reference: 
+  #   - ADR: _bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md
+  #   - SCP: _bmad-output/project-planning-artifacts/sprint-change-proposal-state-consolidation-2026-01-04.md
+  epic-53: in-progress
+  epic-53-meta:
+    name: "State Management Consolidation"
+    priority: "P1-HIGH"
+    estimate_hours: "14-18"
+    phases: 4
+    stories: 8
+    execution_mode: "story-dev-cycle"
+    started_at: "2026-01-04T09:30:00+07:00"
+    adr_id: "ADR-024"
+    
+  # Epic 53 Stories
+  53-1-consolidate-dexie-database: done # COMPLETED 2026-01-04T09:45:00+07:00 - Facade created with deprecation warning, db/getDb exported
+  53-2-move-dexie-helpers: backlog # Move dexie-db-helpers/ to infrastructure/persistence
+  53-3-merge-knowledge-store: backlog # Merge lib/state/knowledge with infrastructure/persistence/stores/knowledge
+  53-4-migrate-ide-store: backlog # Merge lib/state/ide-store with infrastructure/persistence/stores/ide
+  53-5-migrate-quiz-permission-stores: backlog # Move quiz-store, tool-permission-store, workspace-store
+  53-6-move-dexie-storage: backlog # Move dexie-storage.ts to infrastructure/persistence
+  53-7-update-all-imports: backlog # Update production code to use canonical paths
+  53-8-documentation-cleanup: backlog # Update AGENTS.md, architecture.md, project-context.md
+
+  epic-53-progress:
+    phase_1_complete: true # COMPLETED 2026-01-04T09:45:00+07:00 - Story 53-1 done (Dexie database facade)
+    stories_done: 1
+    stories_total: 8
+    completion_percentage: "12.5%"
+
+
   # CORRECTIVE SPRINTS (Remediation Cycle 1)
   # Triggered by Ralph Loop Validation 2025-12-29
   # Health Score: 74/100 - Sprint 27A complete, Sprint 27B required for Phase 2

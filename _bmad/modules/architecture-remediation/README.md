@@ -105,16 +105,21 @@ Execute systematic 8-week stabilization plan across 5 phases:
 ```
 _bmad/modules/architecture-remediation/
 ├── README.md (this file)
+├── MODULE-CREATION-SUMMARY.md
 ├── agents/
-│   ├── store-refactorer.md (god store elimination specialist)
+│   ├── store-refactorer.md (god store + state consolidation specialist)
 │   ├── component-splitter.md (component size normalization specialist)
 │   ├── typescript-fixer.md (TS error remediation specialist)
-│   └── test-writer.md (test coverage improvement specialist)
+│   ├── test-writer.md (test coverage improvement specialist)
+│   ├── workspace-architect.md (workspace E2E specialist)
+│   └── file-sync-specialist.md (file sync strategy specialist)
 ├── workflows/
 │   ├── eliminate-god-stores.md (systematic store refactoring)
 │   ├── normalize-components.md (component size reduction)
-│   ├── fix-typescript-errors.md (batch TS error fixing)
-│   └── improve-test-coverage.md (test writing workflow)
+│   ├── state-consolidation-cycle.md (NEW - Epic 53 ADR-024 implementation)
+│   ├── knowledge-sync-strategy.md (knowledge workspace sync)
+│   ├── notes-sync-strategy.md (notes workspace sync)
+│   └── workspace-file-system-e2e.md (E2E file system testing)
 ├── config/
 │   ├── thresholds.yaml (line limits, complexity limits)
 │   └── priorities.yaml (P0/P1/P2/P3 categorization)
@@ -122,6 +127,28 @@ _bmad/modules/architecture-remediation/
     ├── epic-tracking.md (epic progress dashboard)
     └── validation-gates.md (acceptance criteria checklists)
 ```
+
+## Active Epics
+
+### Epic 53: State Management Consolidation (NEW - 2026-01-04)
+**Priority**: P1-HIGH  
+**Status**: IN_PROGRESS (1/8 stories done)  
+**Reference**: ADR-024, SCP-2026-01-04-STATE-CONSOLIDATION
+
+Consolidates fragmented state management into Clean Architecture pattern:
+- Dexie database files → infrastructure/persistence (canonical)
+- Knowledge stores → infrastructure/persistence/stores/knowledge
+- lib/state stores → infrastructure/persistence/stores/
+
+**Stories**:
+1. ✅ **53-1**: Consolidate Dexie Database Files (DONE)
+2. ⏳ **53-2**: Move Dexie Helpers to Infrastructure
+3. ⏳ **53-3**: Merge Knowledge Store Implementations
+4. ⏳ **53-4**: Migrate IDE Store
+5. ⏳ **53-5**: Migrate Quiz and Permission Stores
+6. ⏳ **53-6**: Move dexie-storage.ts to Infrastructure
+7. ⏳ **53-7**: Update All Import Paths
+8. ⏳ **53-8**: Documentation and Cleanup
 
 ## Critical Success Factors
 

@@ -1,23 +1,53 @@
 /**
- * @fileoverview Dexie Database Main Export
+ * @fileoverview Dexie Database Main Export - FACADE
  * @module lib/state/dexie-db
- * @governance EPIC-27-1c
+ * @governance EPIC-24-SMC (State Management Consolidation)
  * @ai-observable true
+ * @deprecated This module is deprecated. Import from '@/infrastructure/persistence/dexie-db' instead.
  *
- * Main export file for Dexie database.
- * Re-exports all types and the database instance.
+ * FACADE MODULE - Re-exports from canonical location for backwards compatibility.
+ * 
+ * CANONICAL LOCATION: src/infrastructure/persistence/dexie-db.ts
+ * 
+ * Story 24-SMC-1: Consolidate Dexie Database Files
+ * ADR-024: State Management Consolidation - Clean Architecture Pattern
  *
- * Story ARC-1.1: Split dexie-db.ts (1,267 lines → barrel export pattern)
- * Story ARC-DUP.2: Move dexie type files to infrastructure/persistence
+ * **Migration Guide**:
+ * - OLD: import { db, getDb, SomeType } from '@/lib/state/dexie-db';
+ * - NEW: import { db, getDb, SomeType } from '@/infrastructure/persistence/dexie-db';
  *
- * **Architecture Change**:
- * - Type files now consolidated in infrastructure/persistence (canonical)
- * - This file re-exports types via dexie-db-types facade for backwards compatibility
- * - Helper modules (dexie-db-helpers/) remain in lib/state
- * - Dashboard-specific types remain in lib/state
+ * **What this module provides**:
+ * - Re-exports from infrastructure/persistence/dexie-db (canonical)
+ * - Dashboard-specific types (unique to lib/state)
+ * - SynthesisResultRecord type (unique to lib/state)
+ * - Helper function re-exports from dexie-db-helpers/
  */
 
+// ============================================================================
+// DEPRECATION WARNING (Development Mode Only)
+// ============================================================================
+
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.warn(
+        '[DEPRECATED] @/lib/state/dexie-db is deprecated.\n' +
+        'Please migrate imports to: @/infrastructure/persistence/dexie-db\n' +
+        'See ADR-024: State Management Consolidation for migration guide.'
+    );
+}
+
 import { type Table } from 'dexie';
+
+// ============================================================================
+// Database Instance & Class (re-exported from CANONICAL source)
+// ============================================================================
+
+export {
+    db,
+    getDb,
+    ViaGentDatabase,
+    resetDatabaseForTesting,
+    getRecentProjects,
+} from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Database Types (re-exported from infrastructure/persistence via facade)
@@ -58,7 +88,7 @@ export interface SynthesisResultRecord {
 export type SynthesisResultsTable = Table<SynthesisResultRecord, string>;
 
 // ============================================================================
-// Helper Functions - Re-exported from dexie-db-helpers/
+// Helper Functions - Re-exported from infrastructure/persistence/dexie-db-helpers/
 // ============================================================================
 
 // IDE State Helpers
@@ -66,7 +96,7 @@ export {
     getIDEState,
     saveIDEState,
     deleteIDEState,
-} from './dexie-db-helpers/ide-state-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/ide-state-helpers';
 
 // Sync Status Helpers
 export {
@@ -75,14 +105,14 @@ export {
     updateSyncStatus,
     deleteSyncStatus,
     getSyncStatusByStatus,
-} from './dexie-db-helpers/sync-status-helpers-basic';
+} from '@/infrastructure/persistence/dexie-db-helpers/sync-status-helpers-basic';
 
 export {
     getPendingSyncStatus,
     getErrorSyncStatus,
     clearOldSyncStatus,
     getSyncStatusStats,
-} from './dexie-db-helpers/sync-status-helpers-query';
+} from '@/infrastructure/persistence/dexie-db-helpers/sync-status-helpers-query';
 
 // File Metadata Helpers
 export {
@@ -93,13 +123,13 @@ export {
     deleteFileMetadata,
     clearProjectFileMetadata,
     getFilesNeedingSync,
-} from './dexie-db-helpers/file-metadata-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/file-metadata-helpers';
 
 // Additional File Metadata Helpers
 export {
     getChangedFilesSince,
     clearFileMetadataCache,
-} from './dexie-db-helpers/additional-file-metadata-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/additional-file-metadata-helpers';
 
 // Tool Execution Log Helpers
 export {
@@ -110,7 +140,7 @@ export {
     getApprovedTools,
     clearOldToolExecutionLogs,
     clearToolExecutionLogs,
-} from './dexie-db-helpers/tool-execution-log-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/tool-execution-log-helpers';
 
 // FSA Handle Helpers
 export {
@@ -121,7 +151,7 @@ export {
     updateFSAHandlePermission,
     clearAllFSAHandles,
     getAllValidFSAHandles,
-} from './dexie-db-helpers/fsa-handle-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers';
 
 // Session Snapshot Helpers
 export {
@@ -130,7 +160,7 @@ export {
     deleteSessionSnapshot,
     clearExpiredSessionSnapshots,
     clearProjectSessionSnapshots,
-} from './dexie-db-helpers/session-snapshot-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/session-snapshot-helpers';
 
 // Conversation Thread Helpers
 export {
@@ -140,7 +170,7 @@ export {
     getThreadsForProject,
     deleteConversationThread,
     updateThreadScrollPosition,
-} from './dexie-db-helpers/conversation-thread-helpers';
+} from '@/infrastructure/persistence/dexie-db-helpers/conversation-thread-helpers';
 
 // Source Helpers
 export {
@@ -150,12 +180,12 @@ export {
     getSourcesByType,
     deleteSource,
     clearProjectSources,
-} from './dexie-db-helpers/source-helpers-basic';
+} from '@/infrastructure/persistence/dexie-db-helpers/source-helpers-basic';
 
 export {
     searchSources,
     getSourceStats,
-} from './dexie-db-helpers/source-helpers-search';
+} from '@/infrastructure/persistence/dexie-db-helpers/source-helpers-search';
 
 // Collection Helpers
 export {
@@ -164,13 +194,13 @@ export {
     saveCollection,
     createCollection,
     deleteCollection,
-} from './dexie-db-helpers/collection-helpers-basic';
+} from '@/infrastructure/persistence/dexie-db-helpers/collection-helpers-basic';
 
 export {
     addSourceToCollection,
     removeSourceFromCollection,
     getSourcesForCollection,
-} from './dexie-db-helpers/collection-helpers-sources';
+} from '@/infrastructure/persistence/dexie-db-helpers/collection-helpers-sources';
 
 // Synthesis Result Helpers
 export {
@@ -182,12 +212,13 @@ export {
     deleteSynthesisResult,
     deleteSynthesisResultForSource,
     clearProjectSynthesisResults,
-} from './dexie-db-helpers/synthesis-result-helpers-crud';
+} from '@/infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-crud';
 
 export {
     createSynthesisResult,
     updateSynthesisResultStatus,
-} from './dexie-db-helpers/synthesis-result-helpers-create';
+} from '@/infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-create';
 
 // Legacy Helper (for backwards compatibility)
-export { queueItemToSyncStatus } from './dexie-db-helpers';
+export { queueItemToSyncStatus } from '@/infrastructure/persistence/dexie-db-helpers';
+

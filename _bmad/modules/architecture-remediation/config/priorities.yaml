@@ -1,8 +1,18 @@
 # Architecture Remediation Module - Priorities
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Created**: 2026-01-03
+**Updated**: 2026-01-04
 **Purpose**: Categorize all remediation tasks by priority (P0/P1/P2/P3)
+
+## Active Epics Summary
+
+| Epic | Priority | Status | Est. Hours |
+|------|----------|--------|------------|
+| EPIC-53 | P1-HIGH | IN_PROGRESS (1/8) | 14-18h |
+| CC-1 | P0 | BACKLOG | 127h |
+| CP-1 | P0 | BACKLOG | 100h |
+| AC-1 | P0 | BACKLOG | 42h |
 
 ## Priority Definitions
 
@@ -12,9 +22,10 @@
 **Approval**: Auto-approved (no approval needed)
 
 ### P1: HIGH
-**Risk**: Maintainability collapse, user-facing issues
+**Risk**: Maintainability collapse, user-facing issues, architectural cleanup
 **Timeline**: Short-term (within 3-4 weeks)
 **Approval**: Requires @bmad-bmm-architect approval
+**Examples**: Epic 53 (State Management Consolidation)
 
 ### P2: MEDIUM
 **Risk**: Technical debt accumulation, code quality
@@ -25,6 +36,47 @@
 **Risk**: Nice to have, code style consistency
 **Timeline**: Long-term (deferred to Phase 4)
 **Approval**: Requires @bmad-core-bmad-master approval
+
+---
+
+## Epic 53: State Management Consolidation (NEW - 2026-01-04)
+
+**Duration**: 14-18 hours
+**Priority**: P1 - HIGH
+**Reference**: ADR-024, SCP-2026-01-04-STATE-CONSOLIDATION
+
+### SMC-001: Consolidate Dexie Database Files (2 hours)
+**Priority**: P1 - HIGH
+**Status**: ✅ DONE (2026-01-04)
+**Risk**: Duplicate database instances can cause data corruption
+**Acceptance Criteria**:
+- Create facade in lib/state/dexie-db.ts
+- Add deprecation warning for development mode
+- Re-export db, getDb, ViaGentDatabase from infrastructure
+- Zero TypeScript errors on modified file
+
+### SMC-002: Move Dexie Helpers to Infrastructure (2-3 hours)
+**Priority**: P1 - HIGH
+**Status**: ⏳ BACKLOG
+**Risk**: Helpers scattered across two locations
+**Acceptance Criteria**:
+- Move dexie-db-helpers/ to infrastructure/persistence
+- Create re-export facade in old location
+- Zero breaking changes
+
+### SMC-003: Merge Knowledge Store Implementations (3-4 hours)
+**Priority**: P1 - HIGH
+**Status**: ⏳ BACKLOG
+**Risk**: Duplicate knowledge stores cause state inconsistency
+**Acceptance Criteria**:
+- Merge lib/state/knowledge with infrastructure/persistence/stores/knowledge
+- Preserve all unique functionality
+- Zero breaking changes
+
+### SMC-004 through SMC-008: (See SCP-2026-01-04)
+**Priority**: P1 - HIGH
+**Status**: ⏳ BACKLOG
+**Reference**: sprint-change-proposal-state-consolidation-2026-01-04.md
 
 ---
 

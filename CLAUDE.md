@@ -6,6 +6,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Via-gent** (Project Alpha v2.0) is a browser-based IDE that runs code locally using WebContainers with integrated AI agent capabilities. The project is evolving toward a **Knowledge Synthesis Station** — a local-first platform that merges Google NotebookLM-style AI synthesis with Notion-like knowledge organization.
 
+---
+
+## 🏗️ ADR-024: STATE MANAGEMENT CONSOLIDATION (2026-01-04)
+
+**Decision:** Option A - Clean Architecture (Centralized State)  
+**Status:** IN_PROGRESS (Epic 53 - 1/8 stories complete)  
+**Reference:** `_bmad-output/project-planning-artifacts/adr-state-consolidation-2026-01-04.md`
+
+### Core Principle
+
+> **ALL state management lives in `src/infrastructure/persistence/`.**  
+> **`src/lib/` = pure utilities only, NO Zustand stores or Dexie operations.**
+
+### Canonical Locations
+
+| Category | Canonical Location |
+|----------|-------------------|
+| **Zustand Stores** | `src/infrastructure/persistence/stores/` |
+| **Dexie Database** | `src/infrastructure/persistence/dexie-db.ts` |
+| **Dexie Helpers** | `src/infrastructure/persistence/dexie-db-helpers/` |
+| **Dexie Storage** | `src/infrastructure/persistence/dexie-storage.ts` |
+| **Event Bus** | `src/infrastructure/events/` |
+
+### Import Pattern
+
+```typescript
+// ❌ DEPRECATED (shows console warning in dev mode)
+import { db, getDb } from '@/lib/state/dexie-db';
+
+// ✅ CORRECT (new canonical path)
+import { db, getDb } from '@/infrastructure/persistence/dexie-db';
+```
+
+### Epic 53 Progress
+
+- ✅ **53-1**: Consolidate Dexie Database Files (DONE)
+- ⏳ **53-2**: Move Dexie Helpers to Infrastructure
+- ⏳ **53-3**: Merge Knowledge Store Implementations
+- ⏳ **53-4 to 53-8**: Remaining consolidation stories
+
+**Tracking:** `_bmad-output/sprint-artifacts/sprint-status.yaml`
+
+---
+
+
 ### 🚨 CRITICAL: Ralph Loop Cycle 18 - Course Correction Required (2026-01-01)
 
 **Governance Misalignment Discovered:**
