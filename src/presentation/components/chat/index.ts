@@ -37,6 +37,10 @@ export type {
   isAgentModeProps as AgentModeProps
 } from './UnifiedChatPanel';
 
+// E1-3: Perplexity-style Expandable Panel
+export { ExpandableChatPanel } from './ExpandableChatPanel';
+export type { ExpandableChatPanelProps } from './ExpandableChatPanel';
+
 // Ralph Loop Cycle 5: Cascade Flow Components
 export { ThreadFolderTree } from './ThreadFolderTree';
 export type { ThreadFolderTreeProps } from './ThreadFolderTree';

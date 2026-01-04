@@ -1,24 +1,67 @@
 /**
  * Tool Permission Manager - Facade Class
- * Manages workspace-scoped tool execution trust levels for AI agents
+ *
+ * This file is a backwards-compatible facade that imports from modular slices.
+ * The original god class (378 lines) has been split into:
+ * - tool-permission-singleton.ts: Singleton & factory methods
+ * - tool-permission-trust.ts: Trust level CRUD, session trust, permission checking
+ * - tool-permission-queries.ts: Query methods, YOLO mode, category approvals
+ *
+ * All existing API calls continue to work without any code changes.
  *
  * Trust Levels:
  * - 'auto': Execute immediately without user approval
  * - 'prompt': Require user approval before execution
  * - 'block': Never execute
- *
- * Uses Zustand store with Dexie persistence
  */
 
-import { useToolPermissionStore } from '@/infrastructure/persistence/stores/permissions/tool-permission-store';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { ToolTrustLevel, ToolCategory, YOLOMode, PermissionCheckResult } from './types';
-import { getToolCategory } from './constants';
-import { getToolDisplayName } from './helpers';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import {
+  createPermissionInstance,
+  setPermissionEventBus,
+  type PermissionManagerContext
+} from './tool-permission-singleton';
+import {
+  getTrustLevel,
+  setTrustLevel as setTrustLevelInternal,
+  hasSessionTrust,
+  addSessionTrust as addSessionTrustInternal,
+  removeSessionTrust as removeSessionTrustInternal,
+  clearSessionTrust as clearSessionTrustInternal,
+  checkPermission,
+  checkPermissionLegacy
+} from './tool-permission-trust';
+import {
+  getAllTrustLevels,
+  getToolsByLevel,
+  hasPromptTools,
+  hasBlockedTools,
+  isYOLOActive,
+  getYOLOMode,
+  toggleYOLO as toggleYOLOInternal,
+  enableYOLO as enableYOLOInternal,
+  disableYOLO as disableYOLOInternal,
+  checkYOLOExpiry as checkYOLOExpiryInternal,
+  setYOLOExpiry,
+  getCategoryApproval,
+  setCategoryApproval as setCategoryApprovalInternal,
+  isCategoryApproved,
+  getAllCategoryApprovals,
+  resetCategoryApprovals,
+  getToolCategory
+} from './tool-permission-queries';
+import { useToolPermissionStore } from '@/infrastructure/persistence/stores/permissions/tool-permission-store';
 
+/**
+ * ToolPermissionManager - Singleton facade class
+ *
+ * Maintains 100% backwards compatibility with existing code.
+ * Delegates to modular slice functions internally.
+ */
 export class ToolPermissionManager {
   private static instance: ToolPermissionManager | null = null;
-  private eventBus: ((event: string, ...args: unknown[]) => void) | null = null;
+  private readonly context: PermissionManagerContext = { eventBus: null };
 
   public static getInstance(): ToolPermissionManager {
     if (!ToolPermissionManager.instance) {
@@ -31,81 +74,38 @@ export class ToolPermissionManager {
     initialPermissions?: Record<string, ToolTrustLevel> | Record<string, Record<WorkspaceType, ToolTrustLevel>>
   ): ToolPermissionManager {
     const instance = new ToolPermissionManager();
-
-    if (initialPermissions) {
-      const store = useToolPermissionStore.getState();
-      const firstToolId = Object.keys(initialPermissions)[0];
-      const isWorkspaceScoped = firstToolId && typeof initialPermissions[firstToolId] === 'object';
-
-      if (isWorkspaceScoped) {
-        Object.entries(initialPermissions).forEach(([toolId, workspaceLevels]) => {
-          Object.entries(workspaceLevels as Record<WorkspaceType, ToolTrustLevel>).forEach(([workspace, level]) => {
-            store.setTrustLevel(toolId, workspace as WorkspaceType, level);
-          });
-        });
-      } else {
-        Object.entries(initialPermissions).forEach(([toolId, level]) => {
-          for (const workspace of ['ide', 'knowledge', 'notes', 'study'] as WorkspaceType[]) {
-            store.setTrustLevel(toolId, workspace, level);
-          }
-        });
-      }
-    }
-
+    createPermissionInstance(initialPermissions, instance.context);
     return instance;
   }
 
   private constructor() {}
 
   public setEventBus(eventBus: (event: string, ...args: unknown[]) => void): void {
-    this.eventBus = eventBus;
+    setPermissionEventBus(this.context, eventBus);
   }
 
+  // Trust Level Methods (from tool-permission-trust.ts)
+
   public getTrustLevel(toolId: string, workspaceType?: WorkspaceType): ToolTrustLevel {
-    const workspace = workspaceType ?? 'ide';
-    return useToolPermissionStore.getState().getTrustLevel(toolId, workspace);
+    return getTrustLevel(toolId, workspaceType);
   }
 
   public setTrustLevel(toolId: string, workspaceOrLevel: WorkspaceType | ToolTrustLevel, level?: ToolTrustLevel): void {
-    let workspace: WorkspaceType;
-    let trustLevel: ToolTrustLevel;
-
-    if (level === undefined) {
-      workspace = 'ide';
-      trustLevel = workspaceOrLevel as ToolTrustLevel;
-    } else {
-      workspace = workspaceOrLevel as WorkspaceType;
-      trustLevel = level;
-    }
-
-    const previousLevel = this.getTrustLevel(toolId, workspace);
-    useToolPermissionStore.getState().setTrustLevel(toolId, workspace, trustLevel);
-
-    if (previousLevel !== trustLevel && this.eventBus) {
-      this.eventBus('permission:changed', toolId, trustLevel);
-    }
+    setTrustLevelInternal(toolId, workspaceOrLevel, level, this.context);
   }
 
   public setTrustLevelLegacy(toolId: string, level: ToolTrustLevel): void {
     this.setTrustLevel(toolId, 'ide', level);
   }
 
+  // Session Trust Methods (from tool-permission-trust.ts)
+
   public hasSessionTrust(toolId: string, workspaceType?: WorkspaceType): boolean {
-    const workspace = workspaceType ?? 'ide';
-    const state = useToolPermissionStore.getState();
-    const sessionKey = `${toolId}:${workspace}`;
-    return state.sessionTrust.includes(sessionKey);
+    return hasSessionTrust(toolId, workspaceType);
   }
 
   public addSessionTrust(toolId: string, workspaceType?: WorkspaceType): void {
-    const workspace = workspaceType ?? 'ide';
-    const store = useToolPermissionStore.getState();
-    const sessionKey = `${toolId}:${workspace}`;
-
-    if (!store.sessionTrust.includes(sessionKey)) {
-      store.addSessionTrust(toolId, workspace);
-      this.eventBus?.('session:trust:added', toolId);
-    }
+    addSessionTrustInternal(toolId, workspaceType, this.context);
   }
 
   public addSessionTrustLegacy(toolId: string): void {
@@ -113,14 +113,7 @@ export class ToolPermissionManager {
   }
 
   public removeSessionTrust(toolId: string, workspaceType?: WorkspaceType): void {
-    const workspace = workspaceType ?? 'ide';
-    const store = useToolPermissionStore.getState();
-    const sessionKey = `${toolId}:${workspace}`;
-
-    if (store.sessionTrust.includes(sessionKey)) {
-      store.removeSessionTrust(toolId, workspace);
-      this.eventBus?.('session:trust:removed', toolId);
-    }
+    removeSessionTrustInternal(toolId, workspaceType, this.context);
   }
 
   public removeSessionTrustLegacy(toolId: string): void {
@@ -128,76 +121,23 @@ export class ToolPermissionManager {
   }
 
   public clearSessionTrust(): void {
-    useToolPermissionStore.getState().clearSessionTrust();
-    this.eventBus?.('session:trust:cleared');
+    clearSessionTrustInternal(this.context);
   }
 
+  // Permission Check Methods (from tool-permission-trust.ts)
+
   public checkPermission(toolId: string, workspaceType?: WorkspaceType): PermissionCheckResult {
-    const workspace = workspaceType ?? 'ide';
-    const state = useToolPermissionStore.getState();
-    const trustLevel = state.trustLevels[toolId]?.[workspace] ?? state.defaultTrustLevel;
-    const sessionKey = `${toolId}:${workspace}`;
-    const hasSession = state.sessionTrust.includes(sessionKey);
-    const category = getToolCategory(toolId);
-
-    if (state.isYOLOActive()) {
-      return this.createResult(toolId, workspace, category, false, true, 'yolo');
-    }
-
-    if (state.isCategoryApproved(toolId, workspace)) {
-      return this.createResult(toolId, workspace, category, false, true, 'category');
-    }
-
-    if (trustLevel === 'block') {
-      return this.createResult(toolId, workspace, category, false, false, 'block');
-    }
-
-    if (hasSession) {
-      return this.createResult(toolId, workspace, category, false, true, 'session');
-    }
-
-    if (trustLevel === 'auto') {
-      return this.createResult(toolId, workspace, category, false, true, 'auto');
-    }
-
-    return this.createResult(toolId, workspace, category, true, true, 'prompt');
+    return checkPermission(toolId, workspaceType);
   }
 
   public checkPermissionLegacy(toolId: string): Omit<PermissionCheckResult, 'workspace'> {
-    const result = this.checkPermission(toolId, 'ide');
-    const { workspace, ...legacyResult } = result;
-    return legacyResult;
+    return checkPermissionLegacy(toolId);
   }
 
-  private createResult(
-    toolId: string,
-    workspace: WorkspaceType,
-    category: ToolCategory | undefined,
-    needsApproval: boolean,
-    canExecute: boolean,
-    reason: 'auto' | 'prompt' | 'block' | 'session' | 'yolo' | 'category'
-  ): PermissionCheckResult {
-    return {
-      needsApproval,
-      canExecute,
-      reason,
-      workspace,
-      toolName: getToolDisplayName(toolId),
-      toolId,
-      category,
-    };
-  }
+  // Query Methods (from tool-permission-queries.ts)
 
   public getAllTrustLevels(workspaceType?: WorkspaceType): Record<string, ToolTrustLevel> {
-    const workspace = workspaceType ?? 'ide';
-    const state = useToolPermissionStore.getState();
-    const workspaceLevels: Record<string, ToolTrustLevel> = {};
-
-    for (const [toolId, workspaceMap] of Object.entries(state.trustLevels)) {
-      workspaceLevels[toolId] = workspaceMap[workspace] ?? state.defaultTrustLevel;
-    }
-
-    return workspaceLevels;
+    return getAllTrustLevels(workspaceType);
   }
 
   public getAllTrustLevelsLegacy(): Record<string, ToolTrustLevel> {
@@ -223,13 +163,11 @@ export class ToolPermissionManager {
 
   public static fromJSON(json: string): ToolPermissionManager {
     const data = JSON.parse(json);
-
     if (data.permissions) {
       Object.entries(data.permissions).forEach(([toolId, level]) => {
         useToolPermissionStore.getState().setTrustLevel(toolId, 'ide', level as ToolTrustLevel);
       });
     }
-
     return ToolPermissionManager.getInstance();
   }
 
@@ -238,27 +176,7 @@ export class ToolPermissionManager {
   }
 
   public getToolsByLevel(workspaceType: WorkspaceType | ToolTrustLevel, level?: ToolTrustLevel): string[] {
-    let workspace: WorkspaceType;
-    let trustLevel: ToolTrustLevel;
-
-    if (level === undefined) {
-      workspace = 'ide';
-      trustLevel = workspaceType as ToolTrustLevel;
-    } else {
-      workspace = workspaceType as WorkspaceType;
-      trustLevel = level;
-    }
-
-    const state = useToolPermissionStore.getState();
-    const tools: string[] = [];
-
-    for (const [toolId, workspaceMap] of Object.entries(state.trustLevels)) {
-      if (workspaceMap[workspace] === trustLevel) {
-        tools.push(toolId);
-      }
-    }
-
-    return tools;
+    return getToolsByLevel(workspaceType, level);
   }
 
   public getToolsByLevelLegacy(level: ToolTrustLevel): string[] {
@@ -266,87 +184,55 @@ export class ToolPermissionManager {
   }
 
   public hasPromptTools(workspaceType?: WorkspaceType): boolean {
-    const workspace = workspaceType ?? 'ide';
-    return this.getToolsByLevel(workspace, 'prompt').length > 0;
+    return hasPromptTools(workspaceType);
   }
 
   public hasBlockedTools(workspaceType?: WorkspaceType): boolean {
-    const workspace = workspaceType ?? 'ide';
-    return this.getToolsByLevel(workspace, 'block').length > 0;
+    return hasBlockedTools(workspaceType);
   }
 
+  // YOLO Mode Methods (from tool-permission-queries.ts)
+
   public isYOLOActive(): boolean {
-    return useToolPermissionStore.getState().isYOLOActive();
+    return isYOLOActive();
   }
 
   public getYOLOMode(): YOLOMode {
-    return useToolPermissionStore.getState().yoloMode;
+    return getYOLOMode();
   }
 
   public toggleYOLO(durationHours?: number): YOLOMode {
-    const store = useToolPermissionStore.getState();
-    store.toggleYOLO(durationHours);
-    const newState = store.yoloMode;
-    this.eventBus?.('yolo:mode:toggled', newState.enabled, newState.expiryTime);
-    return newState;
+    return toggleYOLOInternal(durationHours, this.context);
   }
 
   public enableYOLO(durationHours: number = 24): YOLOMode {
-    const store = useToolPermissionStore.getState();
-
-    if (!store.yoloMode.enabled) {
-      store.toggleYOLO(durationHours);
-      const newState = store.yoloMode;
-      this.eventBus?.('yolo:mode:toggled', true, newState.expiryTime);
-      return newState;
-    }
-
-    const now = Date.now();
-    const expiryTime = now + durationHours * 60 * 60 * 1000;
-    store.setYOLOExpiry(expiryTime);
-    this.eventBus?.('yolo:mode:toggled', true, expiryTime);
-    return store.yoloMode;
+    return enableYOLOInternal(durationHours, this.context);
   }
 
   public disableYOLO(): void {
-    const store = useToolPermissionStore.getState();
-    if (store.yoloMode.enabled) {
-      store.toggleYOLO();
-      this.eventBus?.('yolo:mode:toggled', false, null);
-    }
+    disableYOLOInternal(this.context);
   }
 
   public checkYOLOExpiry(): void {
-    const store = useToolPermissionStore.getState();
-    const wasActive = store.yoloMode.enabled;
-    store.checkYOLOExpiry();
-    if (wasActive && !store.yoloMode.enabled) {
-      this.eventBus?.('yolo:mode:expired');
-    }
+    checkYOLOExpiryInternal(this.context);
   }
 
   public setYOLOExpiry(expiryTime: number): void {
-    useToolPermissionStore.getState().setYOLOExpiry(expiryTime);
+    setYOLOExpiry(expiryTime);
   }
 
+  // Category Approval Methods (from tool-permission-queries.ts)
+
   public getCategoryApproval(category: ToolCategory, workspaceType?: WorkspaceType): boolean {
-    const workspace = workspaceType ?? 'ide';
-    return useToolPermissionStore.getState().getCategoryApproval(category, workspace);
+    return getCategoryApproval(category, workspaceType);
   }
 
   public setCategoryApproval(category: ToolCategory, workspaceType: WorkspaceType, approved: boolean): void {
-    const store = useToolPermissionStore.getState();
-    const previousValue = store.getCategoryApproval(category, workspaceType);
-
-    if (previousValue !== approved) {
-      store.setCategoryApproval(category, workspaceType, approved);
-      this.eventBus?.('category:approval:changed', category, workspaceType, approved);
-    }
+    setCategoryApprovalInternal(category, workspaceType, approved, this.context);
   }
 
   public isCategoryApproved(toolId: string, workspaceType?: WorkspaceType): boolean {
-    const workspace = workspaceType ?? 'ide';
-    return useToolPermissionStore.getState().isCategoryApproved(toolId, workspace);
+    return isCategoryApproved(toolId, workspaceType);
   }
 
   public setCategoryApprovalIde(category: ToolCategory, approved: boolean): void {
@@ -354,22 +240,11 @@ export class ToolPermissionManager {
   }
 
   public getAllCategoryApprovals(workspaceType?: WorkspaceType): Record<string, boolean> {
-    const workspace = workspaceType ?? 'ide';
-    return useToolPermissionStore.getState().categoryApprovals[workspace] ?? {};
+    return getAllCategoryApprovals(workspaceType);
   }
 
   public resetCategoryApprovals(workspaceType?: WorkspaceType): void {
-    const store = useToolPermissionStore.getState();
-    const categories: ToolCategory[] = ['files', 'terminal', 'knowledge', 'vision', 'search', 'web'];
-
-    if (workspaceType) {
-      categories.forEach(category => store.setCategoryApproval(category, workspaceType, false));
-    } else {
-      const workspaces: WorkspaceType[] = ['ide', 'knowledge', 'notes', 'study'];
-      workspaces.forEach(workspace => {
-        categories.forEach(category => store.setCategoryApproval(category, workspace, false));
-      });
-    }
+    resetCategoryApprovals(workspaceType);
   }
 
   public getToolCategory(toolId: string): ToolCategory {

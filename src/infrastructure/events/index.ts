@@ -9,7 +9,7 @@
 
 import { eventBus } from './event-bus';
 import { stateOrchestrator, StateOrchestrator } from '../persistence/state-orchestrator';
-import { crossWorkspaceEventBus, initializeCrossWorkspaceEvents } from './cross-workspace-event-bus';
+import { crossWorkspaceEventBus } from './cross-workspace-event-bus';
 
 /**
  * Initialize complete event system
@@ -37,10 +37,7 @@ export function initializeEventSystem(): void {
   // Step 1: Initialize state orchestrator
   stateOrchestrator.initialize();
 
-  // Step 2: Initialize cross-workspace event subscriptions
-  initializeCrossWorkspaceEvents();
-
-  // Step 3: Register store references with orchestrator
+  // Step 2: Register store references with orchestrator
   registerStoreReferences(stateOrchestrator);
 
   console.log('[EventSystem] Complete event system initialized');

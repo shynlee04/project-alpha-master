@@ -1,7 +1,7 @@
 # Cross-Workspace AI Agent Platform - Sprint Status
 # Document ID: cwac-sprint-status-2026-01-05
-# Version: 1.0.0
-# Created: 2026-01-05
+# Version: 1.1.0
+# Updated: 2026-01-05T12:30:00Z
 # Status: ACTIVE
 
 sprint:
@@ -12,6 +12,41 @@ sprint:
   end_date: "2026-01-10"
   status: "IN_PROGRESS"
   sprint_goal: "Establish foundation for cross-workspace chat integration"
+
+# P0 Issues Resolution (2026-01-05)
+p0_resolution:
+  completed_at: "2026-01-05T12:00:00Z"
+  total_effort_hours: 20
+  issues_resolved:
+    - id: "P0-1"
+      title: "God Store tool-permission-manager.ts"
+      status: "RESOLVED"
+      effort_hours: 8
+      outcome: "378 lines → 4 files (3 slices + facade)"
+      files_created:
+        - "src/lib/agent/tool-permission/tool-permission-singleton.ts (85 lines)"
+        - "src/lib/agent/tool-permission/tool-permission-trust.ts (202 lines)"
+        - "src/lib/agent/tool-permission/tool-permission-queries.ts (279 lines)"
+      files_modified:
+        - "src/lib/agent/tool-permission-manager.ts (253 lines, facade)"
+    - id: "P0-2"
+      title: "God Store unified-workspace-provider.tsx"
+      status: "RESOLVED"
+      effort_hours: 8
+      outcome: "734 lines → 138 lines (81% reduction)"
+      files_created:
+        - "src/infrastructure/persistence/stores/workspace/useCornerstoneStores.ts (151 lines)"
+        - "src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts (468 lines)"
+        - "src/infrastructure/persistence/stores/workspace/useWorkspaceSwitching.ts (113 lines)"
+      files_modified:
+        - "src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx (138 lines)"
+    - id: "P0-3"
+      title: "Duplicate Event Bus implementations"
+      status: "RESOLVED"
+      effort_hours: 4
+      outcome: "230 lines → 31 lines (87% reduction)"
+      canonical_source: "src/lib/events/cross-workspace-event-bus.ts"
+      facade_location: "src/infrastructure/events/cross-workspace-event-bus.ts"
 
 # Stories for Sprint 1
 stories:
@@ -77,13 +112,49 @@ stories:
     created_at: "2026-01-05"
     completed_at: "2026-01-05"
 
+  - id: "E1-3"
+    title: "Implement Perplexity-style Expandable Panel"
+    epic: "E1"
+    points: 10
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: ["E1-1"]
+    blocks: []
+    acceptance_criteria:
+      - "Chat panel expands from collapsed (30%) to expanded (60%)"
+      - "Smooth CSS transition (300ms cubic-bezier)"
+      - "Panel can be collapsed back to original size"
+      - "Chat history preserved during expansion"
+      - "Drag handle for custom sizing"
+      - "Arrow indicator shows expansion state"
+    tech_notes:
+      - "Component: ExpandableChatPanel.tsx (198 lines)"
+      - "Uses existing ResizablePanel infrastructure"
+      - "CSS transition: duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+      - "i18n: common.expand, common.collapse"
+    artifacts_created:
+      - "src/presentation/components/chat/ExpandableChatPanel.tsx (198 lines)"
+      - "_bmad-output/story-contexts/E1-3-story-context-2026-01-05.md"
+    test_strategy:
+      - "Unit test: Expansion state toggles correctly"
+      - "Visual regression test: Expansion animation"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T12:30:00Z"
+    completed_at: "2026-01-05T13:00:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 16
-  actual: 16
-  completed: 16
+  planned: 26
+  actual: 26
+  completed: 26
   remaining: 0
-  burndown: [16, 0]
+  burndown: [26, 0]
 
 # Sprint 1 Risks
 risks:
@@ -91,7 +162,8 @@ risks:
     description: "P0 issues (god stores, duplicate event bus) may block progress"
     severity: "HIGH"
     mitigation: "Fix P0 issues before starting stories"
-    status: "OPEN"
+    status: "RESOLVED"
+    resolution: "All P0 issues resolved 2026-01-05"
   - id: "R2"
     description: "Missing chat i18n namespace (P1-1) may cause delays"
     severity: "MEDIUM"
@@ -154,9 +226,9 @@ remaining_sprints:
 
 # Velocity tracking
 velocity_tracking:
-  average_velocity: 0
+  average_velocity: 16
   target_velocity: 39
-  total_planned: 344
+  total_planned: 506
   total_capacity: 344
   over_allocation: 162
   notes: "506 total points exceed 344 capacity - prioritization required"
@@ -166,11 +238,13 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 17 # 2/12 stories = 16.67% → 17%
+    progress: 25 # 3/12 stories = 25%
     stories_total: 12
-    stories_completed: 2
+    stories_completed: 3
+    stories_in_progress: 0
     points_total: 89
-    points_completed: 16
+    points_completed: 26
+    points_in_progress: 0
   - id: "E2"
     name: "Multimodal Input System"
     status: "PENDING"
@@ -250,9 +324,9 @@ project_summary:
   total_stories: 73
   total_points: 506
   completed_epics: 0
-  completed_stories: 0
-  completed_points: 0
-  overall_progress: 0
+  completed_stories: 3
+  completed_points: 26
+  overall_progress: 4
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"
