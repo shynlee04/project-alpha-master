@@ -7,46 +7,161 @@
  *
  * @epic CW-01 - Abstract File Sync Service
  * @story S-007 - Fix Notes Workspace Project File Loading
+ * 
+ * FIX-2026-01-06: Added proper error handling with user feedback
+ * - Errors are now surfaced via toast notifications
+ * - Progress tracking for large imports
+ * - Structured error collection for partial failures
  */
 
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { NoteSyncStore } from './notes-file-sync-core';
 import { importFileAsNote } from './note-crud-operations';
+import {
+    showErrorToast,
+    showSuccessToast,
+    showWarningToast,
+    showLoadingToast,
+    dismissToast
+} from '@/lib/utils/error-handling';
+
+/**
+ * Import result with detailed error tracking
+ */
+export interface ImportResult {
+    success: boolean;
+    totalFiles: number;
+    importedCount: number;
+    failedFiles: Array<{ path: string; error: string }>;
+    duration: number;
+}
+
+/**
+ * Progress callback for import operations
+ */
+export type ImportProgressCallback = (current: number, total: number, currentFile: string) => void;
 
 export class NoteFolderBridge {
     constructor(
         private localAdapter: LocalFSAdapter,
         private noteStore: NoteSyncStore
-    ) {}
+    ) { }
 
     /**
      * Recursively scan directory and import all markdown files as notes.
      * 
+     * FIX-2026-01-06: Now surfaces errors properly with user feedback
+     * 
      * @param rootPath - Root path to start scanning from (relative to mount point)
+     * @param onProgress - Optional progress callback for UI updates
+     * @returns Import result with success/failure details
      */
-    async importDirectory(rootPath: string = ''): Promise<void> {
+    async importDirectory(
+        rootPath: string = '',
+        onProgress?: ImportProgressCallback
+    ): Promise<ImportResult> {
         console.log(`[NoteFolderBridge] Starting import from: ${rootPath || 'root'}`);
         const startTime = Date.now();
         let importedCount = 0;
+        const failedFiles: Array<{ path: string; error: string }> = [];
+
+        // Show loading toast
+        const loadingToastId = 'notes-import-progress';
+        showLoadingToast('Scanning folder for notes...', loadingToastId);
 
         try {
             const files = await this.listMarkdownFiles(rootPath);
             console.log(`[NoteFolderBridge] Found ${files.length} markdown files to import`);
 
-            for (const filePath of files) {
+            if (files.length === 0) {
+                dismissToast(loadingToastId);
+                showWarningToast('No markdown files found in the selected folder');
+                return {
+                    success: true,
+                    totalFiles: 0,
+                    importedCount: 0,
+                    failedFiles: [],
+                    duration: Date.now() - startTime,
+                };
+            }
+
+            // Import each file with progress tracking
+            for (let i = 0; i < files.length; i++) {
+                const filePath = files[i];
+
+                // Update progress callback if provided
+                if (onProgress) {
+                    onProgress(i + 1, files.length, filePath);
+                }
+
                 try {
                     await importFileAsNote(filePath, this.localAdapter, this.noteStore);
                     importedCount++;
                 } catch (error) {
+                    const errorMessage = error instanceof Error ? error.message : String(error);
                     console.error(`[NoteFolderBridge] Failed to import ${filePath}:`, error);
+                    failedFiles.push({ path: filePath, error: errorMessage });
                 }
             }
 
             const duration = Date.now() - startTime;
+            dismissToast(loadingToastId);
+
+            // Show result toast based on outcome
+            if (failedFiles.length === 0) {
+                showSuccessToast(`Successfully imported ${importedCount} notes`);
+            } else if (importedCount > 0) {
+                showWarningToast(
+                    `Imported ${importedCount}/${files.length} notes. ${failedFiles.length} files failed.`
+                );
+            } else {
+                showErrorToast(
+                    new Error(`Failed to import any notes. ${failedFiles.length} files had errors.`),
+                    {
+                        action: 'retry',
+                        actionLabel: 'Try Again',
+                        id: 'notes-import-failed',
+                    }
+                );
+            }
+
             console.log(`[NoteFolderBridge] Import complete. Imported ${importedCount}/${files.length} notes in ${duration}ms`);
+
+            return {
+                success: failedFiles.length === 0,
+                totalFiles: files.length,
+                importedCount,
+                failedFiles,
+                duration,
+            };
+
         } catch (error) {
+            const duration = Date.now() - startTime;
+            dismissToast(loadingToastId);
+
             console.error('[NoteFolderBridge] Directory import failed:', error);
-            throw error;
+
+            // Surface error to user with retry option
+            showErrorToast(
+                error instanceof Error ? error : new Error('Failed to read folder'),
+                {
+                    action: 'retry',
+                    actionLabel: 'Try Again',
+                    id: 'notes-import-error',
+                    showDetails: true,
+                }
+            );
+
+            return {
+                success: false,
+                totalFiles: 0,
+                importedCount: 0,
+                failedFiles: [{
+                    path: rootPath || 'root',
+                    error: error instanceof Error ? error.message : String(error)
+                }],
+                duration,
+            };
         }
     }
 
@@ -56,16 +171,17 @@ export class NoteFolderBridge {
     private async listMarkdownFiles(dirPath: string): Promise<string[]> {
         const results: string[] = [];
         const queue: string[] = [dirPath];
+        const failedDirs: string[] = [];
 
         while (queue.length > 0) {
             const currentPath = queue.shift()!;
-            
+
             try {
                 const entries = await this.localAdapter.listDirectory(currentPath);
 
                 for (const entry of entries) {
                     // Handle root path logic (empty string vs actual path)
-                    const entryPath = currentPath 
+                    const entryPath = currentPath
                         ? `${currentPath}/${entry.name}`
                         : entry.name;
 
@@ -79,7 +195,13 @@ export class NoteFolderBridge {
                 }
             } catch (error) {
                 console.warn(`[NoteFolderBridge] Failed to list contents of ${currentPath}:`, error);
+                failedDirs.push(currentPath);
             }
+        }
+
+        // If some directories failed to list, warn user
+        if (failedDirs.length > 0) {
+            console.warn(`[NoteFolderBridge] ${failedDirs.length} directories could not be read`);
         }
 
         return results;
@@ -90,3 +212,4 @@ export class NoteFolderBridge {
         return ext === 'md' || ext === 'markdown';
     }
 }
+

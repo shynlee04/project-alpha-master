@@ -77,7 +77,7 @@ artifacts:
     
     references:
       - "_bmad/modules/architecture-remediation/README.md"
-      - "_bmad/modules/deep-scan/README.md"
+      - "_bmad/modules/quality/README.md"
       - "_bmad-output/design-system-8bit-2025-12-25.md"
       - "_bmad-output/ux-specification.md"
       

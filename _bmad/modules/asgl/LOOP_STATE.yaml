@@ -1,332 +1,399 @@
-# ASGL Loop State v2.0
+# ASGL Loop State v2.1 - COURSE CORRECTION ACTIVE
 # Autonomous Self-Governing Loop Orchestrator - Current Session State
 # This file is MUTABLE - updated by loop execution
 # SINGLE SOURCE OF TRUTH FOR GOVERNANCE: AGENTS.md
 
-version: "2.0.0"
-last_updated: "2026-01-05T20:20:00+07:00"
+version: "2.1.0"
+last_updated: "2026-01-06T02:20:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION INFORMATION
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: "ASGL-20260105-155500"
-  started_at: "2026-01-05T15:55:00+07:00"
-  status: "RUNNING"  # INITIALIZED | RUNNING | PAUSED | COMPLETED | FAILED
+  id: "ASGL-20260106-021651-COURSE-CORRECTION"
+  started_at: "2026-01-06T02:16:51+07:00"
+  status: "COURSE_CORRECTION"  # INITIALIZED | RUNNING | PAUSED | COMPLETED | FAILED | COURSE_CORRECTION
   platform: "bmad"
-  triggered_by: "project-health-assessment-2026-01-05.md"
+  triggered_by: "user-request-2026-01-06 + root-cause-analysis"
   
   # ASGL role
-  role: "ORCHESTRATOR - invokes modules, does not replace them"
+  role: "ORCHESTRATOR - VERIFICATION-FIRST DEVELOPMENT"
   
   # Governance (AGENTS.md is single source of truth)
   governance_source: "AGENTS.md"
   claude_md_role: "POINTER to AGENTS.md only"
+  
+  # Course Correction
+  course_correction:
+    reason: "Stories marked DONE without E2E validation - fundamental verification gap"
+    initiated_at: "2026-01-06T02:16:51+07:00"
+    artifact: "_bmad-output/course-corrections/strategic-course-correction-2026-01-06.md"
+    root_cause_analysis: "_bmad-output/root-cause-analysis/critical-root-cause-analysis-2026-01-06.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT PHASE
+# CURRENT PHASE - COURSE CORRECTION PHASE 0
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_phase:
-  id: "COMPREHENSIVE-ARCH-95"
-  name: "Comprehensive Architecture Remediation (Target: 95% Health)"
-  source: "_bmad-output/sprint-artifacts/comprehensive-remediation-sprint-2026-01-05.yaml"
+  id: "CC-PHASE-0"
+  name: "Verification Infrastructure Setup"
+  description: "Create E2E test suites to validate claimed completions"
+  days: [1, 2]
   
-  # Health targets
-  current_health: 46.4
-  target_health: 95.0
-  
-  # Phase progression
-  phase_number: 3
-  phase_name: "Architectural Remediation"
-  total_phases: 7
-  
+  # Previous sprint HALTED
+  previous_sprint:
+    id: "COMPREHENSIVE-ARCH-95"
+    status: "HALTED_FOR_VERIFICATION"
+    halt_date: "2026-01-06T02:16:51+07:00"
+    stories_claimed_complete: 12
+    stories_verified: 0  # CRITICAL: Zero verified
+    
 current_story:
-  id: "S-012-b"
-  title: "Split flashcard-store.ts (531 lines) into slices"
-  type: "GOD_STORE_SPLIT"
+  id: "V-002"
+  title: "File Sync E2E Validation Suite"
+  type: "VALIDATION"
   status: "IN_PROGRESS"
-
-  # Module routing (architecture-remediation → eliminate-god-stores)
-  routed_to:
-    module: "architecture-remediation"
-    workflow: "eliminate-god-stores"
-    agent: "architect"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PROGRESS TRACKING
-# ═══════════════════════════════════════════════════════════════════════════
-
-progress:
-  # Overall
-  total_stories: 33
-  stories_completed: 12
-  stories_remaining: 21
+  priority: "P0"
+  hours: 6
+  validates: ["S-007", "S-008"]
   
-  # Time
-  estimated_hours_total: 135
-  estimated_hours_remaining: 90-95
-  estimated_days_remaining: 12
-  
-  # Governance trigger tracking
-  stories_since_agents_md_update: 6  # S-002, S-003, S-007, S-010, S-011, S-012-a completed
-  governance_update_required: true  # DUE NOW (trigger at 6 stories)
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PHASE OVERVIEW
-# ═══════════════════════════════════════════════════════════════════════════
-
-phases:
-  - id: 1
-    name: "Critical Blockers Resolution"
-    stories: ["S-001", "S-002", "S-003", "S-004", "S-005", "S-006"]
-    days: [1, 2]
-    hours: 15
+  previous_story:
+    id: "V-001"
     status: "COMPLETE"
+    completed_at: "2026-01-06T02:28:00+07:00"
+    result: "180 tests discovered across 6 browsers"
+  
+  routed_to:
+    module: "quality"
+    workflow: "validation-scan"
+    agent: "workspace-scanner"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COURSE CORRECTION PHASES
+# ═══════════════════════════════════════════════════════════════════════════
+
+course_correction_phases:
+  - id: 0
+    name: "Verification Infrastructure"
+    stories: ["V-001", "V-002", "V-003", "V-004"]
+    days: [1, 2]
+    hours: 18
+    status: "IN_PROGRESS"
+    description: "Create E2E test suites for each claimed completion"
+    
+  - id: 1
+    name: "Error Recovery Architecture"
+    stories: ["ER-001", "ER-002", "ER-003"]
+    days: [3, 4]
+    hours: 13
+    status: "NOT_STARTED"
+    description: "Replace silent failures with structured error handling"
     
   - id: 2
-    name: "Workspace Integration Fixes"
-    stories: ["S-007", "S-008", "S-009", "S-010"]
-    days: [3, 4]
-    hours: 16
-    status: "COMPLETE"
-
+    name: "User Feedback Infrastructure"
+    stories: ["UF-001", "UF-002", "UF-003"]
+    days: [5, 6]
+    hours: 10
+    status: "NOT_STARTED"
+    description: "Add progress indicators with cancel/pause/retry"
+    
   - id: 3
-    name: "Architectural Remediation"
-    stories: ["S-011", "S-012", "S-013", "S-014", "S-015", "S-016"]
-    days: [5, 6, 7, 8]
-    hours: 40
-    status: "IN_PROGRESS"
+    name: "i18n and Responsive"
+    stories: ["I18N-001", "I18N-002", "RESP-001"]
+    days: [7, 8]
+    hours: 13
+    status: "NOT_STARTED"
+    description: "Fix hardcoded strings and mobile layouts"
     
   - id: 4
-    name: "Store Consolidation & Cleanup"
-    stories: ["S-017", "S-018", "S-019", "S-020", "S-021"]
+    name: "Re-verify File Sync Stories"
+    stories: ["RE-S-007", "RE-S-008"]
     days: [9, 10]
-    hours: 20
+    hours: 10
     status: "NOT_STARTED"
+    description: "Run E2E tests against S-007, S-008"
     
   - id: 5
-    name: "Infrastructure Hardening"
-    stories: ["S-022", "S-023", "S-024", "S-025"]
+    name: "Re-verify API Key Stories"
+    stories: ["RE-S-001", "RE-S-002", "RE-S-003"]
     days: [11, 12]
-    hours: 16
-    status: "NOT_STARTED"
-    
-  - id: 6
-    name: "Testing & Validation"
-    stories: ["S-026", "S-027", "S-028", "S-029"]
-    days: [13, 14]
-    hours: 20
-    status: "NOT_STARTED"
-    
-  - id: 7
-    name: "Governance Finalization"
-    stories: ["S-030", "S-031", "S-032", "S-033"]
-    days: [15]
     hours: 8
     status: "NOT_STARTED"
+    description: "Run E2E tests against S-001, S-002, S-003"
+    
+  - id: 6
+    name: "Re-verify Agent Persistence"
+    stories: ["RE-S-009"]
+    days: [13, 14]
+    hours: 6
+    status: "NOT_STARTED"
+    description: "Run E2E tests against S-009"
+    
+  - id: 7
+    name: "File Type Support Architecture"
+    stories: ["FT-001", "FT-002", "FT-003", "FT-004", "FT-005", "FT-006", "FT-007", "FT-008"]
+    days: [15, 16, 17, 18]
+    hours: 40
+    status: "NOT_STARTED"
+    description: "Multi-format file type handling (PDF, images, code, YAML, etc.)"
+    
+  - id: 8
+    name: "Final Validation & Documentation"
+    stories: ["FINAL-001", "FINAL-002"]
+    days: [19, 20]
+    hours: 8
+    status: "NOT_STARTED"
+    description: "Full regression + documentation update"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# STORIES QUEUE (Phase 1)
+# STORIES QUEUE - PHASE 0 (VERIFICATION INFRASTRUCTURE)
 # ═══════════════════════════════════════════════════════════════════════════
 
 stories_queue:
-  - id: "S-011"
-    title: "Accurate God Store Inventory (Validation Required)"
-    type: "VALIDATION"
-    routed_to: "deep-scan → targeted-scan"
-    status: "COMPLETE"
-    hours: 2
-    completed_at: "2026-01-05T18:45:00+07:00"
-
-  - id: "S-012"
-    title: "Split Tier 1 God Stores (>500 LOC) - CORRECTED SCOPE"
-    type: "GOD_STORE_SPLIT"
-    routed_to: "architecture-remediation → eliminate-god-stores"
+  - id: "V-001"
+    title: "Create E2E Validation Suite Framework"
+    type: "INFRASTRUCTURE"
     status: "IN_PROGRESS"
-    hours: 30-40
-    sub_stories:
-      sub_stories:
-        - id: "S-012-a"
-          title: "Split canvas-store.ts (623 lines) into 6 slices"
-          estimated_hours: "8-10"
-          status: "COMPLETE"
-          completed_at: "2026-01-05T20:15:00+07:00"
-          file_path: "infrastructure/persistence/stores/canvas-store.ts"
-          results:
-            god_stores_eliminated: 1
-            typescript_errors: 0
-            breaking_changes: 0
-            slices_created: 5
-            max_slice_lines: 176
-        
-        - id: "S-012-b"
-          title: "Split flashcard-store.ts (531 lines) into slices"
-          estimated_hours: "6-8"
-          status: "IN_PROGRESS"
-          file_path: "infrastructure/persistence/stores/flashcard-store.ts"
-        
-        - id: "S-012-c"
-          title: "Split project-store.ts (519 lines) into slices"
-          estimated_hours: "6-8"
-          status: "PENDING"
-        
-        - id: "S-012-d"
-          title: "Verify note-store.ts status (566 lines - EPIC-26-1)"
-          estimated_hours: "2-3"
-          status: "PENDING"
-        
-        - id: "S-012-e"
-          title: "Handle file-sync-status and file-snapshot (in-progress migrations)"
-          estimated_hours: "4-6"
-          status: "PENDING"
+    hours: 4
+    priority: "P0"
+    routed_to: "quality → validation-scan"
+    acceptance_criteria:
+      - "Playwright installed and configured"
+      - "Test structure mirrors user journeys"
+      - "Each test can run independently"
+    
+  - id: "V-002"
+    title: "File Sync E2E Validation Suite"
+    type: "VALIDATION"
+    status: "PENDING"
+    hours: 6
+    priority: "P0"
+    validates: ["S-007", "S-008"]
+    test_cases:
+      - "FSA-001: User can mount local folder in Notes"
+      - "FSA-002: Mounted files can be opened and edited"
+      - "FSA-003: Edits persist to local filesystem"
+      - "FSA-004: External file changes sync to Notes"
+      - "FSA-005: New external files appear in sidebar"
+      - "FSA-006: Deleted external files removed from Notes"
+      - "FSA-007: Large folder syncs with progress"
+      - "FSA-008: User can cancel long-running sync"
+      - "FSA-009: Sync failure shows actionable error"
+      - "FSA-010: Mobile file sync works on touch devices"
+    
+  - id: "V-003"
+    title: "API Key Management E2E Validation Suite"
+    type: "VALIDATION"
+    status: "PENDING"
+    hours: 4
+    priority: "P0"
+    validates: ["S-001", "S-002", "S-003"]
+    test_cases:
+      - "KEY-001: User can configure API key in settings"
+      - "KEY-002: Configured key persists after refresh"
+      - "KEY-003: Models load after key configuration"
+      - "KEY-004: Key works across workspaces"
+      - "KEY-005: Chat works with configured key"
+      - "KEY-006: Invalid key shows clear error"
+      - "KEY-007: SSR does not break key persistence"
+    
+  - id: "V-004"
+    title: "Cross-Workspace Agent E2E Validation"
+    type: "VALIDATION"
+    status: "PENDING"
+    hours: 4
+    priority: "P0"
+    validates: ["S-009"]
+    test_cases:
+      - "AGENT-001: Agent selection persists after refresh"
+      - "AGENT-002: Per-workspace agent memory"
+      - "AGENT-003: Agent tool permissions persist"
+      - "AGENT-004: Agent config changes sync"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PENDING ITEMS
+# HALTED STORIES (FROM PREVIOUS SPRINT)
 # ═══════════════════════════════════════════════════════════════════════════
 
-pending:
-  wires: 0
-  governance_updates: 0
-  
+halted_stories:
+  claimed_complete_unverified:
+    - id: "S-001"
+      title: "Debug and Fix Model Loading Flow"
+      claimed_status: "COMPLETE"
+      verified_status: "PENDING_E2E_VALIDATION"
+      
+    - id: "S-002"
+      title: "Fix Credential Vault SSR Compatibility"
+      claimed_status: "COMPLETE"
+      verified_status: "PENDING_E2E_VALIDATION"
+      
+    - id: "S-003"
+      title: "Add API Key Status Visual Indicators"
+      claimed_status: "COMPLETE"
+      verified_status: "PENDING_E2E_VALIDATION"
+      
+    - id: "S-007"
+      title: "Create Note-Folder Bridge"
+      claimed_status: "COMPLETE"
+      verified_status: "PENDING_E2E_VALIDATION"
+      
+    - id: "S-008"
+      title: "Wire Bridge to Workspace Init"
+      claimed_status: "COMPLETE"
+      verified_status: "PENDING_E2E_VALIDATION"
+      
+    - id: "S-009"
+      title: "Fix Agent Selection Persistence"
+      claimed_status: "COMPLETE"
+      verified_status: "PENDING_E2E_VALIDATION"
+
 # ═══════════════════════════════════════════════════════════════════════════
-# GOVERNANCE STATUS
+# ROOT CAUSE CATEGORIES IDENTIFIED
+# ═══════════════════════════════════════════════════════════════════════════
+
+root_causes:
+  - id: 1
+    category: "File Synchronization"
+    evidence: "NoteFolderBridge.importDirectory() swallows errors silently"
+    resolution: "Add structured error handling + user feedback"
+    
+  - id: 2
+    category: "LLM/API Key Management"
+    evidence: "Per-workspace vault isolation, no cross-workspace carry-over"
+    resolution: "Centralize key storage with event-based sync"
+    
+  - id: 3
+    category: "Agent Configuration"
+    evidence: "No unified persistence pattern across workspaces"
+    resolution: "Implement per-workspace agent memory with sync"
+    
+  - id: 4
+    category: "Error Handling"
+    evidence: "console.error + return null pattern throughout codebase"
+    resolution: "Structured RecoverableError with recovery actions"
+    
+  - id: 5
+    category: "User Feedback"
+    evidence: "No cancel/pause mechanism for long operations"
+    resolution: "OperationProgressStore with full lifecycle control"
+    
+  - id: 6
+    category: "i18n and Responsive"
+    evidence: "0 useTranslation calls in Notes, 0 useResponsive calls"
+    resolution: "Full i18n extraction + mobile-first layouts"
+    
+  - id: 7
+    category: "Multi-Format File Types"
+    evidence: "Only .md files handled, PDF/images/code unsupported"
+    resolution: "FileTypeRegistry with per-type handlers + AI integration"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MODULES TO INVOKE
+# ═══════════════════════════════════════════════════════════════════════════
+
+module_routing:
+  V-001:
+    module: "quality"
+    workflow: "validation-scan"
+    agent: "test-writer"
+    
+  V-002:
+    module: "quality"
+    workflow: "validation-scan"
+    agent: "workspace-scanner"
+    
+  V-003:
+    module: "quality"
+    workflow: "validation-scan"
+    agent: "security-scanner"
+    
+  V-004:
+    module: "quality"
+    workflow: "validation-scan"
+    agent: "agent-rag-scanner"
+    
+  ER-001:
+    module: "architecture-remediation"
+    workflow: "workspace-file-system-e2e"
+    agent: "workspace-architect"
+    
+  UF-001:
+    module: "architecture-remediation"
+    workflow: "state-consolidation-cycle"
+    agent: "store-refactorer"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE
 # ═══════════════════════════════════════════════════════════════════════════
 
 governance:
-  # Single source of truth
   authoritative_doc: "AGENTS.md"
+  update_frequency: "Every 3 stories"
+  last_updated: "2026-01-04"
+  update_required: true
   
-  agents_md:
-    last_updated: "2026-01-04"
-    stories_since_update: 3
-    update_due: true
-    next_update_at_story: 3
-    
-  claude_md:
-    role: "POINTER_ONLY"
-    points_to: "AGENTS.md"
-    needs_simplification: true  # Part of S-004
-    
-  child_agents_md:
-    infrastructure: "not_exists"
-    presentation: "not_exists"
-    lib: "not_exists"
-    bmad_output: "not_exists"
-    
-  all_platforms_configured: false  # Part of S-004
-
-# ═══════════════════════════════════════════════════════════════════════════
-# VALIDATION STATUS
-# ═══════════════════════════════════════════════════════════════════════════
-
-validation:
-  design:
-    status: "NOT_CHECKED"
-    violations: 0
-    
-  mobile:
-    status: "NOT_CHECKED"
-    failures: 0
-    
-  i18n:
-    status: "NOT_CHECKED"
-    gaps: 0
-    
-  typescript:
-    status: "NOT_CHECKED"
-    errors: 306
-    
-  build:
-    status: "NOT_CHECKED"
-    result: null
-    
-  god_stores:
-    status: "69 identified"
-    target: 0
-    
-  god_components:
-    status: "45 identified"
-    target: 0
-    
-  test_coverage:
-    current: "16.6%"
-    target: "80%"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# MODULE INVOCATIONS (ASGL Orchestrator Tracking)
-# ═══════════════════════════════════════════════════════════════════════════
-
-module_invocations: []
-
-# ═══════════════════════════════════════════════════════════════════════════
-# ARTIFACTS CREATED THIS SESSION
-# ═══════════════════════════════════════════════════════════════════════════
-
-artifacts_created:
-  - path: "_bmad-output/health-assessments/project-health-assessment-2026-01-05.md"
-    type: "health-assessment"
-    status: "ACTIVE"
-    
-  - path: "_bmad-output/sprint-artifacts/comprehensive-remediation-sprint-2026-01-05.yaml"
-    type: "sprint-plan"
-    status: "ACTIVE"
-    
-  - path: "_bmad/modules/asgl/README.md"
-    type: "module-documentation"
-    status: "ACTIVE"
+  pending_updates:
+    - "Add verification-first development process"
+    - "Add completion gate checklist"
+    - "Update health assessment with root cause findings"
+    - "Document file type handling architecture"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONTINUATION PROTOCOL
 # ═══════════════════════════════════════════════════════════════════════════
 
 continuation:
-  next_action: "Execute S-012-b: Split flashcard-store.ts (531 lines) + GOVERNANCE UPDATE (AGENTS.md)"
+  next_action: "Execute V-001: Create E2E Validation Suite Framework"
   blocked_by: null
   user_approval_needed: false
-
+  
   resume_prompt: |
-    Resume ASGL loop from session ASGL-20260105-155500:
-    - Sprint: Comprehensive Architecture Remediation (95% Health Target)
-    - Phase: 2 COMPLETE ✅ (Workspace Integration Fixes)
-    - Phase: 3 IN_PROGRESS (Architectural Remediation)
-    - ✅ S-011 COMPLETE: Accurate god store inventory across all workspaces
-    - ✅ S-012-a COMPLETE: canvas-store.ts split (623 → 5-6 files, 1 god store eliminated)
-    - 🔴 S-012-b NEXT: flashcard-store.ts splitting (531 lines)
-    - Governance Update DUE: AGENTS.md needs update after 6th story
+    COURSE CORRECTION IN PROGRESS - Session ASGL-20260106-021651-COURSE-CORRECTION
     
-    S-012 SUB-STORIES STATUS:
-    ✅ quiz-store.ts: ALREADY REFACTORED (658 → 64 lines in 7 files)
-    ✅ canvas-store.ts: COMPLETE (623 → 5-6 files, god store eliminated)
-    🔴 flashcard-store.ts: IN PROGRESS (531 lines)
-    🔴 project-store.ts: PENDING (519 lines)
-    🟡 note-store.ts: PENDING (566 lines - has EPIC-26-1 governance)
-    🟡 file-sync-status-store.ts: PENDING (554 lines - has "Zustand Migration" comment)
-    🟡 file-snapshot-store.ts: PENDING (509 lines - has Story WB-2 governance)
+    HALTED: Comprehensive Architecture Remediation Sprint
+    REASON: Stories marked DONE without E2E validation
+    EVIDENCE: _bmad-output/root-cause-analysis/critical-root-cause-analysis-2026-01-06.md
     
-    GOVERNANCE UPDATE DUE NOW (6th story completed):
-    - Update AGENTS.md with corrected god store inventory
-    - Document canvas-store refactoring
-    - Update architectural decision records
+    PHASE 0: Verification Infrastructure (Days 1-2)
+    - 🔴 V-001: Create E2E Validation Suite Framework (IN_PROGRESS)
+    - 🔴 V-002: File Sync E2E Validation Suite
+    - 🔴 V-003: API Key Management E2E Validation Suite
+    - 🔴 V-004: Cross-Workspace Agent E2E Validation
     
-    To continue: Proceed with S-012-b execution
-
-# ═══════════════════════════════════════════════════════════════════════════
-# ERROR LOG
-# ═══════════════════════════════════════════════════════════════════════════
-
-errors: []
+    ROOT CAUSES IDENTIFIED: 7 categories
+    1. File Sync (silent failures)
+    2. API Key Management (per-workspace isolation)
+    3. Agent Config (no cross-workspace persistence)
+    4. Error Handling (console.error + return null)
+    5. User Feedback (no cancel/pause)
+    6. i18n/Responsive (hardcoded strings, no mobile)
+    7. File Types (only .md supported)
+    
+    NEW REQUIREMENT: Multi-format file type support
+    - PDF, images, audio, video, code files, YAML, XML, JSON
+    - Per-type rendering strategy
+    - Per-type agent interaction model
+    - Per-type CRUD permissions
+    
+    To continue: Proceed with V-001 execution
 
 # ═══════════════════════════════════════════════════════════════════════════
 # METRICS
 # ═══════════════════════════════════════════════════════════════════════════
 
 metrics:
-  session_duration_minutes: 145
-  modules_invoked: 1
+  session_duration_minutes: 0
+  modules_invoked: 0
   governance_updates: 0
-  artifacts_created: 4  # Added canvas-store-analysis-2026-01-05.md
-  health_score_start: 46.4
-  health_score_current: 47.5  # +1.1% from S-012-a (canvas-store split)
-  health_score_target: 95.0
+  artifacts_created: 2  # root-cause-analysis + course-correction
+  
+  previous_sprint:
+    health_score_start: 46.4
+    stories_claimed_complete: 12
+    stories_verified: 0
+    
+  course_correction:
+    phases: 9
+    stories: 26
+    estimated_days: 20
+    file_types_to_support: 10

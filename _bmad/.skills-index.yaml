@@ -41,14 +41,14 @@ skills:
     description: "Updates AGENTS.md and CLAUDE.md documentation"
 
   # ==========================================================================
-  # DEEP-SCAN - Diagnostics
+  # QUALITY - Diagnostics (upgraded from deep-scan)
   # ==========================================================================
   full-scan:
     name: "Full Codebase Scan"
-    module: "deep-scan"
+    module: "quality"
     workflow: "workflows/full-scan"
     agent: "orchestrator"
-    base_path: "_bmad/modules/deep-scan/"
+    base_path: "_bmad/modules/quality/"
     triggers:
       - "diagnose codebase"
       - "full scan"
@@ -58,10 +58,10 @@ skills:
 
   targeted-scan:
     name: "Targeted Domain Scan"
-    module: "deep-scan"
+    module: "quality"
     workflow: "workflows/targeted-scan"
     agent: "domain-scanner"
-    base_path: "_bmad/modules/deep-scan/"
+    base_path: "_bmad/modules/quality/"
     triggers:
       - "scan stores"
       - "scan types"
@@ -71,9 +71,9 @@ skills:
 
   state-scan:
     name: "State Scanner"
-    module: "deep-scan"
+    module: "quality"
     agent: "state-scanner"
-    base_path: "_bmad/modules/deep-scan/agents/"
+    base_path: "_bmad/modules/quality/scanners/"
     triggers:
       - "god stores"
       - "store duplication"
@@ -83,9 +83,9 @@ skills:
 
   types-scan:
     name: "TypeScript Scanner"
-    module: "deep-scan"
+    module: "quality"
     agent: "types-scanner"
-    base_path: "_bmad/modules/deep-scan/agents/"
+    base_path: "_bmad/modules/quality/scanners/"
     triggers:
       - "typescript errors"
       - "type issues"
@@ -94,9 +94,9 @@ skills:
 
   architecture-scan:
     name: "Architecture Scanner"
-    module: "deep-scan"
+    module: "quality"
     agent: "architecture-scanner"
-    base_path: "_bmad/modules/deep-scan/agents/"
+    base_path: "_bmad/modules/quality/scanners/"
     triggers:
       - "layer violations"
       - "god components"
@@ -105,9 +105,9 @@ skills:
 
   ux-scan:
     name: "UX Scanner"
-    module: "deep-scan"
+    module: "quality"
     agent: "ux-scanner"
-    base_path: "_bmad/modules/deep-scan/agents/"
+    base_path: "_bmad/modules/quality/scanners/"
     triggers:
       - "mobile issues"
       - "i18n coverage"
@@ -116,9 +116,9 @@ skills:
 
   persistence-scan:
     name: "Persistence Scanner"
-    module: "deep-scan"
+    module: "quality"
     agent: "persistence-scanner"
-    base_path: "_bmad/modules/deep-scan/agents/"
+    base_path: "_bmad/modules/quality/scanners/"
     triggers:
       - "indexeddb"
       - "dexie"
@@ -295,6 +295,272 @@ skills:
       - "Test coverage ≥80%"
       - "All tests passing"
 
+  # ==========================================================================
+  # GLOBAL STANDARDS - Agent Coding Standards
+  # ==========================================================================
+  global-coding-style:
+    name: "Global Coding Style"
+    module: "standards"
+    standard: "agent-os/standards/global/coding-style.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "coding style"
+      - "code formatting"
+      - "naming conventions"
+    description: "Global coding style standards (naming, formatting, DRY)"
+
+  global-commenting:
+    name: "Global Commenting Standards"
+    module: "standards"
+    standard: "agent-os/standards/global/commenting.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "comments"
+      - "documentation"
+      - "code comments"
+    description: "Self-documenting code with minimal comments"
+
+  global-conventions:
+    name: "Global Conventions"
+    module: "standards"
+    standard: "agent-os/standards/global/conventions.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "conventions"
+      - "project structure"
+      - "environment config"
+    description: "General development conventions and patterns"
+
+  global-error-handling:
+    name: "Global Error Handling"
+    module: "standards"
+    standard: "agent-os/standards/global/error-handling.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "error handling"
+      - "exceptions"
+      - "error boundaries"
+      - "graceful degradation"
+    description: "Robust error handling with fallbacks"
+
+  global-validation:
+    name: "Global Validation Standards"
+    module: "standards"
+    standard: "agent-os/standards/global/validation.md"
+    base_path: "agent-os/standards/global/"
+    triggers:
+      - "input validation"
+      - "server-side validation"
+      - "allowlist"
+      - "sanitization"
+    description: "Robust input validation with specific error messages"
+
+  # ==========================================================================
+  # FRONTEND STANDARDS
+  # ==========================================================================
+  frontend-components:
+    name: "Frontend Components"
+    module: "standards"
+    standard: "agent-os/standards/frontend/components.md"
+    base_path: "agent-os/standards/frontend/"
+    triggers:
+      - "react components"
+      - "component design"
+      - "ui components"
+    description: "Build reusable, composable UI components"
+
+  frontend-css:
+    name: "Frontend CSS"
+    module: "standards"
+    standard: "agent-os/standards/frontend/css.md"
+    base_path: "agent-os/standards/frontend/"
+    triggers:
+      - "css"
+      - "styling"
+      - "tailwind"
+      - "design tokens"
+    description: "Maintainable CSS following established methodologies"
+
+  frontend-accessibility:
+    name: "Frontend Accessibility"
+    module: "standards"
+    standard: "agent-os/standards/frontend/accessibility.md"
+    base_path: "agent-os/standards/frontend/"
+    triggers:
+      - "a11y"
+      - "accessibility"
+      - "wcag"
+      - "screen reader"
+    description: "Accessible UI following WCAG guidelines"
+
+  # ==========================================================================
+  # BACKEND STANDARDS
+  # ==========================================================================
+  backend-queries:
+    name: "Backend Queries"
+    module: "standards"
+    standard: "agent-os/standards/backend/queries.md"
+    base_path: "agent-os/standards/backend/"
+    triggers:
+      - "database queries"
+      - "sql"
+      - "query optimization"
+      - "n+1 problem"
+    description: "Efficient, secure database queries"
+
+  backend-migrations:
+    name: "Backend Migrations"
+    module: "standards"
+    standard: "agent-os/standards/backend/migrations.md"
+    base_path: "agent-os/standards/backend/"
+    triggers:
+      - "database migration"
+      - "schema change"
+      - "zero-downtime"
+      - "rollback"
+    description: "Reversible database migrations with safe rollbacks"
+
+  # ==========================================================================
+  # DEVELOPMENT WORKFLOWS
+  # ==========================================================================
+  brainstorming:
+    name: "Brainstorming"
+    module: "bmad-core"
+    workflow: "bmm/workflows/3-discovery/brainstorming"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "brainstorm"
+      - "ideation"
+      - "explore ideas"
+    description: "Explore options before creative work"
+
+  writing-plans:
+    name: "Writing Plans"
+    module: "bmad-core"
+    workflow: "bmm/workflows/2-planning/writing-plans"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "write plan"
+      - "create spec"
+      - "technical design"
+    description: "Create technical specifications before implementation"
+
+  requesting-code-review:
+    name: "Requesting Code Review"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/code-review"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "request review"
+      - "code review"
+      - "pr review"
+    description: "Request review after completing tasks"
+
+  receiving-code-review:
+    name: "Receiving Code Review"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "review feedback"
+      - "review comments"
+      - "address review"
+    description: "Handle code review feedback with technical rigor"
+
+  test-driven-development:
+    name: "Test Driven Development"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "tdd"
+      - "test driven"
+      - "test first"
+    description: "Write tests before implementation code"
+
+  systematic-debugging:
+    name: "Systematic Debugging"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "debug"
+      - "bug"
+      - "fix error"
+      - "troubleshoot"
+    description: "Systematic problem analysis before fixes"
+
+  executing-plans:
+    name: "Executing Plans"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/executing-plans"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "execute plan"
+      - "implement spec"
+      - "follow plan"
+    description: "Execute written implementation plans"
+
+  finishing-a-development-branch:
+    name: "Finishing Development Branch"
+    module: "bmad-core"
+    workflow: "bmm/workflows/4-implementation/finishing"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "finish branch"
+      - "complete feature"
+      - "done with branch"
+    description: "Complete development work and decide integration"
+
+  verification-before-completion:
+    name: "Verification Before Completion"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "verify completion"
+      - "check done"
+      - "validate before commit"
+    description: "Run verification commands before claiming work complete"
+
+  dispatching-parallel-agents:
+    name: "Dispatching Parallel Agents"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "parallel agents"
+      - "concurrent tasks"
+      - "dispatch agents"
+    description: "Execute 2+ independent tasks in parallel"
+
+  architecture-remediation:
+    name: "Architecture Remediation"
+    module: "architecture-remediation"
+    workflow: "workflows/eliminate-god-stores"
+    base_path: "_bmad/modules/architecture-remediation/"
+    triggers:
+      - "god store"
+      - "god component"
+      - "remediation"
+      - "technical debt"
+    description: "Systematic elimination of technical debt"
+
+  using-git-worktrees:
+    name: "Using Git Worktrees"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "worktree"
+      "git worktree"
+      - "parallel branches"
+    description: "Use isolated git worktrees for feature work"
+
+  using-superpowers:
+    name: "Using Superpowers"
+    module: "bmad-core"
+    base_path: "_bmad/bmm/"
+    triggers:
+      - "superpower"
+      - "skill"
+      - "abilities"
+    description: "Find and use skills for enhanced capabilities"
+
 # ═══════════════════════════════════════════════════════════════════════════
 # AGENT LOADER REFERENCE
 # ═══════════════════════════════════════════════════════════════════════════
@@ -346,27 +612,27 @@ epic_mappings:
 
 consolidation:
   skills_total: 42
-  skills_indexed: 20  # This file
-  skills_pending: 22  # To be added from .claude/skills/
+  skills_indexed: 42  # All skills now indexed
+  skills_pending: 0   # All consolidated ✓
 
-  # Skills to consolidate (replace with reference):
-  pending_consolidation:
-    - "frontend-components"
-    - "frontend-css"
-    - "backend-queries"
+  # Skills consolidated (added to index):
+  consolidated_2026_01_06:
     - "global-coding-style"
     - "global-commenting"
     - "global-conventions"
     - "global-error-handling"
     - "global-validation"
+    - "frontend-components"
+    - "frontend-css"
     - "frontend-accessibility"
+    - "backend-queries"
+    - "backend-migrations"
     - "brainstorming"
     - "writing-plans"
     - "requesting-code-review"
     - "receiving-code-review"
     - "test-driven-development"
     - "systematic-debugging"
-    - "backend-migrations"
     - "executing-plans"
     - "finishing-a-development-branch"
     - "verification-before-completion"

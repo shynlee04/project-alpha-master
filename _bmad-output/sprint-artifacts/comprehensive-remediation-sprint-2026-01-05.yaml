@@ -64,6 +64,108 @@ governance:
 
 issues:
   # ---------------------------------------------------------------------------
+  # TIER 0: USER JOURNEY LIFECYCLE GAPS (P0) - PRIORITY INJECTION
+  # Added: 2026-01-06T02:45:00+07:00 via Course Correction
+  # ---------------------------------------------------------------------------
+  tier_0_user_journey:
+    - id: "UJ-001"
+      title: "SyncStatusPanel Uses Mock Data"
+      priority: "P0"
+      severity: "CRITICAL"
+      category: "FUNCTIONALITY_BROKEN"
+      blocks:
+        - "Users cannot see real sync status"
+        - "No feedback during file operations"
+      root_cause:
+        - "TODO placeholder in useEffect (lines 94-125)"
+        - "No subscription to crossWorkspaceEventBus"
+      files_affected:
+        - "src/presentation/components/ide/SyncStatusPanel.tsx"
+      remediation_stories: ["UJ-001"]
+      
+    - id: "UJ-002"
+      title: "Mobile FSA Throws Error"
+      priority: "P0"
+      severity: "CRITICAL"
+      category: "FUNCTIONALITY_BROKEN"
+      blocks:
+        - "Mobile users cannot mount folders"
+        - "App crashes on mount attempt"
+      root_cause:
+        - "No feature detection for showDirectoryPicker"
+        - "No graceful fallback UI"
+      files_affected:
+        - "src/presentation/components/hub/HubHomePage.tsx"
+      remediation_stories: ["UJ-002"]
+      
+    - id: "UJ-003"
+      title: "Notes Don't Save to Filesystem"
+      priority: "P0"
+      severity: "CRITICAL"
+      category: "DATA_LOSS"
+      blocks:
+        - "Note edits lost on workspace switch"
+        - "No bidirectional sync with IDE"
+      root_cause:
+        - "NoteFolderBridge has import only, no export"
+        - "No auto-save to .md file"
+      files_affected:
+        - "src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts"
+      remediation_stories: ["UJ-003"]
+      
+    - id: "UJ-004"
+      title: "Cross-Workspace Reactivity Missing"
+      priority: "P0"
+      severity: "HIGH"
+      category: "UX_BROKEN"
+      blocks:
+        - "IDE file saves not reflected in Notes"
+        - "Note saves not reflected in IDE"
+      root_cause:
+        - "No event subscription for FILE_SAVED in NotesPage"
+        - "No event emission from note save"
+      files_affected:
+        - "src/presentation/components/notes/NotesPage.tsx"
+        - "src/lib/notes/note-store.ts"
+      remediation_stories: ["UJ-004"]
+
+  # ---------------------------------------------------------------------------
+  # TIER 0.5: USER JOURNEY IMPROVEMENTS (P1)
+  # ---------------------------------------------------------------------------
+  tier_0_5_user_journey_p1:
+    - id: "UJ-005"
+      title: "No Incremental Sync"
+      priority: "P1"
+      severity: "HIGH"
+      category: "PERFORMANCE"
+      impact: "Slow sync for large projects"
+      remediation_stories: ["UJ-005"]
+      
+    - id: "UJ-006"
+      title: "No Per-File Sync Indicators"
+      priority: "P1"
+      severity: "MEDIUM"
+      category: "UX"
+      impact: "Confusion about which files are synced"
+      remediation_stories: ["UJ-006"]
+      
+    - id: "UJ-007"
+      title: "Only Markdown Files Supported"
+      priority: "P1"
+      severity: "MEDIUM"
+      category: "FUNCTIONALITY"
+      impact: "Code files, images not handled in Notes"
+      remediation_stories: ["UJ-007"]
+      
+    - id: "UJ-008"
+      title: "Permission Restoration Flow Incomplete"
+      priority: "P1"
+      severity: "MEDIUM"
+      category: "UX"
+      impact: "Returning users may lose access"
+      remediation_stories: ["UJ-008"]
+
+  # ---------------------------------------------------------------------------
   # TIER 1: CRITICAL BLOCKERS (P0) - Days 1-2
   # ---------------------------------------------------------------------------
   tier_1_blockers:
@@ -305,11 +407,144 @@ issues:
 
 stories:
   # ---------------------------------------------------------------------------
-  # PHASE 1: CRITICAL BLOCKERS (Days 1-2, ~15 hours)
+  # PHASE 0.5: USER JOURNEY CRITICAL FIXES (Day 0, ~20 hours)
+  # Added: 2026-01-06T02:45:00+07:00 via Course Correction
+  # ---------------------------------------------------------------------------
+  phase_0_5:
+    name: "User Journey Critical Fixes"
+    days: [0]
+    estimated_hours: 20
+    priority: "P0 - EXECUTE FIRST"
+    stories:
+      - id: "UJ-001"
+        title: "Wire SyncStatusPanel to Real Events"
+        issues: ["UJ-001"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        status: "backlog"
+        acceptance_criteria:
+          - "SyncStatusPanel subscribes to crossWorkspaceEventBus"
+          - "Real sync operations displayed (not mock)"
+          - "Progress bar updates during sync"
+          - "Retry button triggers real retry action"
+        files_to_modify:
+          - "src/presentation/components/ide/SyncStatusPanel.tsx"
+        
+      - id: "UJ-002"
+        title: "Mobile FSA Graceful Degradation"
+        issues: ["UJ-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 2
+        status: "backlog"
+        acceptance_criteria:
+          - "Feature detection for showDirectoryPicker"
+          - "Helpful toast on mobile explaining limitation"
+          - "Notes workspace usable without mount"
+          - "Tested on iOS Safari and Android Chrome"
+        files_to_modify:
+          - "src/presentation/components/hub/HubHomePage.tsx"
+        
+      - id: "UJ-003"
+        title: "Notes Save to Filesystem (Bidirectional)"
+        issues: ["UJ-003"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 8
+        status: "backlog"
+        acceptance_criteria:
+          - "NoteFolderBridge.saveNoteToFile() method created"
+          - "Note edits persist to .md file"
+          - "Auto-save with 2s debounce"
+          - "Dirty indicator shows unsaved changes"
+          - "Manual save button available"
+        files_to_modify:
+          - "src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts"
+          - "src/lib/notes/note-store.ts"
+        
+      - id: "UJ-004"
+        title: "Cross-Workspace Reactivity"
+        issues: ["UJ-004"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 6
+        status: "backlog"
+        acceptance_criteria:
+          - "IDE file save reflects in Notes within 1s"
+          - "Note save reflects in IDE file tree within 1s"
+          - "useStoreEvent hook used for subscriptions"
+          - "No duplicate event loops"
+        files_to_modify:
+          - "src/presentation/components/notes/NotesPage.tsx"
+          - "src/lib/events/store-events.ts"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 0.5B: USER JOURNEY IMPROVEMENTS (Day 1, ~17 hours)
+  # ---------------------------------------------------------------------------
+  phase_0_5b:
+    name: "User Journey Improvements"
+    days: [1]
+    estimated_hours: 17
+    priority: "P1"
+    stories:
+      - id: "UJ-005"
+        title: "Incremental Sync with File Watching"
+        issues: ["UJ-005"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 6
+        status: "backlog"
+        acceptance_criteria:
+          - "Only changed files synced on subsequent mounts"
+          - "File watcher detects external changes"
+          - "Performance: <100ms for 1 file change vs full scan"
+        
+      - id: "UJ-006"
+        title: "Per-File Sync Indicator in FileTree"
+        issues: ["UJ-006"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        status: "backlog"
+        acceptance_criteria:
+          - "✓ icon next to synced files"
+          - "↻ icon next to syncing files"
+          - "⚠ icon next to failed files"
+          - "Status updates in real-time"
+        
+      - id: "UJ-007"
+        title: "Multi-Format File Type Support"
+        issues: ["UJ-007"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        status: "backlog"
+        acceptance_criteria:
+          - ".txt files import as plaintext notes"
+          - "Code files show in Monaco preview panel"
+          - "Images show as embeds"
+          - "Unsupported files show graceful message"
+        
+      - id: "UJ-008"
+        title: "Permission Restoration Flow"
+        issues: ["UJ-008"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 3
+        status: "backlog"
+        acceptance_criteria:
+          - "Returning to project prompts for permission"
+          - "Clear UI explains why permission needed"
+          - "Remember for session option works"
+          - "Graceful handling of denied permission"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 1: CRITICAL BLOCKERS (Days 2-3, ~15 hours)
   # ---------------------------------------------------------------------------
   phase_1:
     name: "Critical Blockers Resolution"
-    days: [1, 2]
+    days: [2, 3]
     estimated_hours: 15
     stories:
       - id: "S-001"

@@ -230,14 +230,14 @@ Reference: `_bmad-output/design-system-8bit-2025-12-25.md`
 
 ## Integration with Existing Modules
 
-### Invoking deep-scan
+### Invoking quality module
 
 ```yaml
-# ASGL does NOT replace deep-scan, it INVOKES it
+# ASGL does NOT replace quality, it INVOKES it
 invoke_scan:
-  module: "deep-scan"
+  module: "quality"
   workflow: "full-scan"
-  output_location: "_bmad/modules/deep-scan/artifacts/scan-results/"
+  output_location: "_bmad/modules/quality/artifacts/scan-results/"
   integration:
     - "Feed results to architecture-remediation for planning"
     - "Feed results to sprint-planning for prioritization"

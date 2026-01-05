@@ -1,0 +1,67 @@
+# Governance Module MANIFEST
+# Purpose: Artifact lifecycle, naming conventions, and status synchronization
+
+version: "1.0.0"
+module_id: "governance"
+name: "Governance Module"
+created: "2026-01-06"
+status: "ACTIVE"
+
+description: |
+  Central governance for all BMAD artifacts including:
+  - Four-tier artifact lifecycle management
+  - Naming convention enforcement
+  - Stale artifact validation and recovery
+  - Status file single source of truth
+
+purpose:
+  - "Artifact lifecycle management"
+  - "Naming convention enforcement"
+  - "Stale context recovery"
+  - "Status file SSOT"
+
+domains:
+  artifacts:
+    description: "Artifact tracking, naming, archiving"
+    triggers: ["artifact creation", "handoff", "validation"]
+    agent: "governance-agent"
+
+  status:
+    description: "Status file synchronization"
+    triggers: ["status update", "sprint completion"]
+    agent: "status-sync-agent"
+
+  validation:
+    description: "Stale artifact detection and recovery"
+    triggers: ["artifact >24h old", "metadata disconnected"]
+    agent: "validation-agent"
+
+workflows:
+  - id: "artifact-lifecycle"
+    path: "workflows/artifact-lifecycle.md"
+  - id: "naming-enforcement"
+    path: "workflows/naming-enforcement.md"
+  - id: "archive-cycle"
+    path: "workflows/archive-cycle.md"
+  - id: "stale-artifact-validation"
+    path: "workflows/stale-artifact-validation.md"
+  - id: "status-synchronization"
+    path: "workflows/status-synchronization.md"
+
+agents:
+  - id: "governance-agent"
+    path: "agents/governance-agent.md"
+  - id: "status-sync-agent"
+    path: "agents/status-sync-agent.md"
+  - id: "validation-agent"
+    path: "agents/validation-agent.md"
+
+routing:
+  auto_route: true
+  fallback_domain: "artifacts"
+
+quality_gates:
+  - all_artifacts_have_frontmatter: true
+  - naming_convention_followed: true
+  - orphans_detected_daily: true
+  - status_file_ssot_maintained: true

@@ -1,0 +1,478 @@
+# Course Correction Sprint Plan
+# Verification-First Development
+# Created: 2026-01-06T02:23:09+07:00
+# Status: ACTIVE
+
+---
+sprint:
+  id: "CC-SPRINT-2026-01-06"
+  name: "Course Correction: Verification-First Development"
+  type: "remediation"
+  priority: "P0"
+  status: "IN_PROGRESS"
+  created_at: "2026-01-06T02:23:09+07:00"
+  
+  # Source documents
+  triggered_by:
+    - "_bmad-output/root-cause-analysis/critical-root-cause-analysis-2026-01-06.md"
+    - "_bmad-output/course-corrections/strategic-course-correction-2026-01-06.md"
+  
+  # Target outcomes
+  outcomes:
+    - "All claimed stories verified with E2E tests"
+    - "Error handling with recovery UI"
+    - "Progress indicators with cancel/pause"
+    - "i18n complete for vi/en"
+    - "Mobile responsive layouts"
+    - "Multi-format file type support"
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 0: VERIFICATION INFRASTRUCTURE (Days 1-2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_0:
+  id: "PHASE-0"
+  name: "Verification Infrastructure"
+  status: "IN_PROGRESS"
+  days: [1, 2]
+  hours: 18
+  
+  stories:
+    - id: "V-001"
+      title: "Create E2E Validation Suite Framework"
+      type: "INFRASTRUCTURE"
+      status: "COMPLETE"
+      priority: "P0"
+      hours: 4
+      started_at: "2026-01-06T02:23:09+07:00"
+      completed_at: "2026-01-06T02:28:00+07:00"
+      
+      tasks:
+        - id: "V-001-T1"
+          task: "Install Playwright and dependencies"
+          status: "DONE"
+          command: "pnpm add -D @playwright/test"
+          result: "@playwright/test 1.57.0"
+          
+        - id: "V-001-T2"
+          task: "Create playwright.config.ts"
+          status: "DONE"
+          file: "playwright.config.ts"
+          
+        - id: "V-001-T3"
+          task: "Create e2e directory structure"
+          status: "DONE"
+          directories:
+            - "e2e/fixtures"
+            - "e2e/journeys"
+            - "e2e/utils"
+            - "e2e/results"
+            
+        - id: "V-001-T4"
+          task: "Create test fixtures (project, user, mock-fsa)"
+          status: "DONE"
+          files_created:
+            - "e2e/fixtures/test-project.fixture.ts"
+            - "e2e/fixtures/mock-fsa.fixture.ts"
+          
+        - id: "V-001-T5"
+          task: "Create sanity test to verify framework"
+          status: "DONE"
+          file: "e2e/journeys/sanity.journey.spec.ts"
+          
+        - id: "V-001-T6"
+          task: "Verify tests run with `pnpm exec playwright test --list`"
+          status: "DONE"
+          result: "180 tests discovered across 6 browsers"
+          
+      validation_gate:
+        automated_test: true
+        manual_smoke: false
+        command: "pnpm exec playwright test --list"
+        expected: "Lists test files"
+        actual: "180 tests listed (30 per browser x 6 browsers)"
+        
+    - id: "V-002"
+      title: "File Sync E2E Validation Suite"
+      type: "VALIDATION"
+      status: "PENDING"
+      priority: "P0"
+      hours: 6
+      validates: ["S-007", "S-008"]
+      
+      test_cases:
+        - id: "FSA-001"
+          name: "User can mount local folder in Notes"
+          status: "PENDING"
+        - id: "FSA-002"
+          name: "Mounted files can be opened and edited"
+          status: "PENDING"
+        - id: "FSA-003"
+          name: "Edits persist to local filesystem"
+          status: "PENDING"
+        - id: "FSA-004"
+          name: "External file changes sync to Notes"
+          status: "PENDING"
+        - id: "FSA-005"
+          name: "New external files appear in sidebar"
+          status: "PENDING"
+        - id: "FSA-006"
+          name: "Deleted external files removed from Notes"
+          status: "PENDING"
+        - id: "FSA-007"
+          name: "Large folder syncs with progress"
+          status: "PENDING"
+        - id: "FSA-008"
+          name: "User can cancel long-running sync"
+          status: "PENDING"
+        - id: "FSA-009"
+          name: "Sync failure shows actionable error"
+          status: "PENDING"
+        - id: "FSA-010"
+          name: "Mobile file sync works"
+          status: "PENDING"
+          
+      validation_gate:
+        minimum_pass: 8
+        total: 10
+        
+    - id: "V-003"
+      title: "API Key Management E2E Validation Suite"
+      type: "VALIDATION"
+      status: "PENDING"
+      priority: "P0"
+      hours: 4
+      validates: ["S-001", "S-002", "S-003"]
+      
+      test_cases:
+        - id: "KEY-001"
+          name: "User can configure API key"
+          status: "PENDING"
+        - id: "KEY-002"
+          name: "Key persists after refresh"
+          status: "PENDING"
+        - id: "KEY-003"
+          name: "Models load after key config"
+          status: "PENDING"
+        - id: "KEY-004"
+          name: "Key works across workspaces"
+          status: "PENDING"
+        - id: "KEY-005"
+          name: "Chat works with configured key"
+          status: "PENDING"
+        - id: "KEY-006"
+          name: "Invalid key shows error"
+          status: "PENDING"
+        - id: "KEY-007"
+          name: "SSR compatibility"
+          status: "PENDING"
+          
+      validation_gate:
+        minimum_pass: 7
+        total: 7
+        
+    - id: "V-004"
+      title: "Cross-Workspace Agent E2E Validation"
+      type: "VALIDATION"
+      status: "PENDING"
+      priority: "P0"
+      hours: 4
+      validates: ["S-009"]
+      
+      test_cases:
+        - id: "AGENT-001"
+          name: "Agent persists after refresh"
+          status: "PENDING"
+        - id: "AGENT-002"
+          name: "Per-workspace agent memory"
+          status: "PENDING"
+        - id: "AGENT-003"
+          name: "Permissions persist"
+          status: "PENDING"
+        - id: "AGENT-004"
+          name: "Config sync across tabs"
+          status: "PENDING"
+          
+      validation_gate:
+        minimum_pass: 4
+        total: 4
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 1: ERROR RECOVERY ARCHITECTURE (Days 3-4)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_1:
+  id: "PHASE-1"
+  name: "Error Recovery Architecture"
+  status: "NOT_STARTED"
+  days: [3, 4]
+  hours: 13
+  
+  stories:
+    - id: "ER-001"
+      title: "Define Error Types and Recovery Patterns"
+      type: "ARCHITECTURE"
+      status: "PENDING"
+      hours: 3
+      file: "src/infrastructure/errors/error-types.ts"
+      
+    - id: "ER-002"
+      title: "Create RecoverableErrorBoundary Component"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 4
+      file: "src/presentation/components/common/RecoverableErrorBoundary.tsx"
+      
+    - id: "ER-003"
+      title: "Replace Silent Failures with Error Events"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 6
+      scope: "All console.error + return null patterns"
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 2: USER FEEDBACK INFRASTRUCTURE (Days 5-6)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_2:
+  id: "PHASE-2"
+  name: "User Feedback Infrastructure"
+  status: "NOT_STARTED"
+  days: [5, 6]
+  hours: 10
+  
+  stories:
+    - id: "UF-001"
+      title: "Operation Progress Store"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 3
+      file: "src/infrastructure/persistence/stores/operation-progress-store.ts"
+      
+    - id: "UF-002"
+      title: "Universal Progress Panel Component"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 4
+      file: "src/presentation/components/ui/activity-indicators/UniversalProgressPanel.tsx"
+      
+    - id: "UF-003"
+      title: "Wire File Sync to Progress Store"
+      type: "INTEGRATION"
+      status: "PENDING"
+      hours: 3
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 3: I18N AND RESPONSIVE (Days 7-8)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_3:
+  id: "PHASE-3"
+  name: "i18n and Responsive"
+  status: "NOT_STARTED"
+  days: [7, 8]
+  hours: 13
+  
+  stories:
+    - id: "I18N-001"
+      title: "Extract Hardcoded Strings in Notes"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 4
+      scope: "src/presentation/components/notes/"
+      
+    - id: "I18N-002"
+      title: "Complete Vietnamese Translations"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 3
+      files:
+        - "src/locales/vi.json"
+        - "public/locales/vi/translation.json"
+      
+    - id: "RESP-001"
+      title: "Fix Mobile Layouts"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 6
+      viewports:
+        - width: 375
+          name: "Mobile Portrait"
+        - width: 768
+          name: "Tablet"
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 4-6: RE-VERIFICATION (Days 9-14)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_4:
+  id: "PHASE-4"
+  name: "Re-verify File Sync"
+  status: "NOT_STARTED"
+  days: [9, 10]
+  hours: 10
+  stories:
+    - id: "RE-S-007"
+      title: "Verify Note-Folder Bridge with E2E"
+      validates: "S-007"
+      status: "PENDING"
+    - id: "RE-S-008"
+      title: "Verify Bridge Workspace Init with E2E"
+      validates: "S-008"
+      status: "PENDING"
+
+phase_5:
+  id: "PHASE-5"
+  name: "Re-verify API Keys"
+  status: "NOT_STARTED"
+  days: [11, 12]
+  hours: 8
+  stories:
+    - id: "RE-S-001"
+      title: "Verify Model Loading with E2E"
+      validates: "S-001"
+      status: "PENDING"
+    - id: "RE-S-002"
+      title: "Verify Credential Vault SSR with E2E"
+      validates: "S-002"
+      status: "PENDING"
+    - id: "RE-S-003"
+      title: "Verify API Key Indicators with E2E"
+      validates: "S-003"
+      status: "PENDING"
+
+phase_6:
+  id: "PHASE-6"
+  name: "Re-verify Agent Persistence"
+  status: "NOT_STARTED"
+  days: [13, 14]
+  hours: 6
+  stories:
+    - id: "RE-S-009"
+      title: "Verify Agent Selection with E2E"
+      validates: "S-009"
+      status: "PENDING"
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 7: FILE TYPE SUPPORT (Days 15-18)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_7:
+  id: "PHASE-7"
+  name: "Multi-Format File Type Support"
+  status: "NOT_STARTED"
+  days: [15, 16, 17, 18]
+  hours: 40
+  
+  stories:
+    - id: "FT-001"
+      title: "Create File Type Registry"
+      type: "ARCHITECTURE"
+      status: "PENDING"
+      hours: 4
+      file: "src/infrastructure/files/file-type-registry.ts"
+      
+    - id: "FT-002"
+      title: "PDF Renderer with PDF.js"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 6
+      
+    - id: "FT-003"
+      title: "Code File Renderer with Monaco"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 5
+      
+    - id: "FT-004"
+      title: "Image Gallery Renderer"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 3
+      
+    - id: "FT-005"
+      title: "Audio/Video Player Components"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 5
+      
+    - id: "FT-006"
+      title: "File Type CRUD Permission Model"
+      type: "ARCHITECTURE"
+      status: "PENDING"
+      hours: 6
+      
+    - id: "FT-007"
+      title: "Wire AI Agents to File Type Handlers"
+      type: "INTEGRATION"
+      status: "PENDING"
+      hours: 8
+      
+    - id: "FT-008"
+      title: "RAG Chunking per File Type"
+      type: "IMPLEMENTATION"
+      status: "PENDING"
+      hours: 8
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 8: FINAL VALIDATION (Days 19-20)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_8:
+  id: "PHASE-8"
+  name: "Final Validation & Documentation"
+  status: "NOT_STARTED"
+  days: [19, 20]
+  hours: 8
+  
+  stories:
+    - id: "FINAL-001"
+      title: "Full E2E Regression Suite"
+      type: "VALIDATION"
+      status: "PENDING"
+      hours: 4
+      
+    - id: "FINAL-002"
+      title: "Update AGENTS.md and Documentation"
+      type: "DOCUMENTATION"
+      status: "PENDING"
+      hours: 4
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# EXECUTION LOG
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution_log:
+  - timestamp: "2026-01-06T02:23:09+07:00"
+    action: "Sprint created"
+    story: null
+    result: "SUCCESS"
+    notes: "Course correction initiated"
+
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════
+
+summary:
+  total_phases: 9
+  total_stories: 30
+  total_hours: 126
+  total_days: 20
+  
+  by_type:
+    INFRASTRUCTURE: 1
+    VALIDATION: 4
+    ARCHITECTURE: 3
+    IMPLEMENTATION: 18
+    INTEGRATION: 2
+    DOCUMENTATION: 1
+    RE_VERIFICATION: 6

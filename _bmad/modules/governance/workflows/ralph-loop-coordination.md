@@ -294,4 +294,4 @@ Before any cycle execution, governance module validates:
 - `.claude/ralph-loop.local.md` - Loop state canonical file
 - `.claude/hooks/ralph-loop.sh` - Stop hook handler
 - `_bmad/core/agents/bmad-master.md` - Primary coordinator
-- `_bmad/modules/implementation/agents/domain-router.md` - Phase tracker
+- `_bmad/modules/architecture-remediation/agents/` - Remediation agents

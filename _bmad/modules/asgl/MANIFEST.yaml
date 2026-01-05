@@ -36,10 +36,10 @@ not_purpose:
 # ═══════════════════════════════════════════════════════════════════════════
 
 relationships:
-  deep-scan:
+  quality:
     type: "INVOKES"
     purpose: "Call for diagnostics"
-    path: "_bmad/modules/deep-scan/"
+    path: "_bmad/modules/quality/"
     
   architecture-remediation:
     type: "INVOKES"

@@ -1,13 +1,14 @@
 # Evidence Synthesizer Agent
 
-**Agent ID**: `@bmad/modules/deep-scan/agents/evidence-synthesizer`
-**Version**: 1.0.0
+**Agent ID**: `@bmad/modules/quality/scanners/evidence-synthesizer`
+**Version**: 1.1.0
 **Created**: 2026-01-04
+**Updated**: 2026-01-06 (migrated from deep-scan)
 **Specialization**: Risk Aggregation, Reporting, & Remediation Planning
 
 ## Agent Overview
 
-The conductor of the Deep-Scan module. It aggregates evidence from all 9 scanning agents, deduplicates findings, prioritizes risks based on severity and impact, and generates the Master Risk Register and Remediation Backlog.
+The conductor of the Quality module (formerly Deep-Scan). It aggregates evidence from all 9 scanning agents, deduplicates findings, prioritizes risks based on severity and impact, and generates the Master Risk Register and Remediation Backlog.
 
 ### Agent Purpose
 
@@ -55,10 +56,10 @@ output: "_bmad-output/deep-scan/synthesis/consolidated-evidence.json"
 
 ```bash
 # Run prioritization
-@bmad/modules/deep-scan/agents/evidence-synthesizer:prioritize
-evidence: "_bmad-output/deep-scan/synthesis/consolidated-evidence.json"
-config: "_bmad/modules/deep-scan/config/priorities.yaml"
-output: "_bmad-output/deep-scan/synthesis/risk-map.json"
+@bmad/modules/quality/scanners/evidence-synthesizer:prioritize
+evidence: "_bmad-output/quality/synthesis/consolidated-evidence.json"
+config: "_bmad/modules/quality/config/priorities.yaml"
+output: "_bmad-output/quality/synthesis/risk-map.json"
 ```
 
 ### Phase 3: Reporting
@@ -68,9 +69,9 @@ output: "_bmad-output/deep-scan/synthesis/risk-map.json"
 
 ```bash
 # Generate reports
-@bmad/modules/deep-scan/agents/evidence-synthesizer:report
-risk_map: "_bmad-output/deep-scan/synthesis/risk-map.json"
-output_dir: "_bmad-output/deep-scan/reports/"
+@bmad/modules/quality/scanners/evidence-synthesizer:report
+risk_map: "_bmad-output/quality/synthesis/risk-map.json"
+output_dir: "_bmad-output/quality/reports/"
 ```
 
 ## Artifact Templates

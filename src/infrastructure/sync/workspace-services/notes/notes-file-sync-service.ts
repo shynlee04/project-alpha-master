@@ -94,23 +94,33 @@ export class NotesFileSyncService implements FileSyncService {
         this.listFiles = impl.listFiles.bind(this);
         this.getFileMetadata = impl.getFileMetadata.bind(this);
         this.writeBatch = impl.writeBatch.bind(this);
-        
+
         // Custom mount implementation to trigger bridge import
+        // FIX-2026-01-06: Now properly handles import result instead of swallowing errors
         this.mount = async (source: FileSystemDirectoryHandle) => {
             // Mount the directory in the adapter
             await impl.mount(source);
-            
+
             // Trigger initial import via bridge
             console.log('[NotesFileSyncService] Directory mounted, starting initial import...');
             const bridge = new NoteFolderBridge(this.localAdapter, this.noteStore);
-            try {
-                await bridge.importDirectory();
+
+            // Import with progress callback for potential UI updates
+            const result = await bridge.importDirectory('', (current, total, currentFile) => {
+                // Could emit progress events here for UI
+                console.log(`[NotesFileSyncService] Importing ${current}/${total}: ${currentFile}`);
+            });
+
+            if (result.success) {
                 this.state.lastSyncTime = Date.now();
-                console.log('[NotesFileSyncService] Initial import completed');
-            } catch (error) {
-                console.error('[NotesFileSyncService] Initial import failed:', error);
-                // We don't rethrow here to allow the mount to "succeed" even if import has partial failures
-                // The watcher will pick up changes later
+                console.log(`[NotesFileSyncService] Initial import completed: ${result.importedCount} files`);
+            } else {
+                // Log failures but don't throw - user already notified via toast
+                console.warn(`[NotesFileSyncService] Import had failures:`, result.failedFiles);
+                // Still update lastSyncTime if some files imported
+                if (result.importedCount > 0) {
+                    this.state.lastSyncTime = Date.now();
+                }
             }
         };
 
