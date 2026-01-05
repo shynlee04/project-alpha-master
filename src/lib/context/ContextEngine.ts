@@ -13,7 +13,6 @@
 import { useNoteStore } from '@/lib/notes/note-store';
 import { searchNotes } from '@/lib/notes/note-retriever';
 import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
-import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Types
@@ -212,8 +211,13 @@ export async function buildNoteContext(
         // Stop if we've exceeded max total chars
         if (totalChars >= maxTotalChars) break;
 
-        // Truncate content if needed
+        // Truncate content to max per-note limit
         let content = note.content;
+        if (content.length > maxCharsPerNote) {
+            content = content.substring(0, maxCharsPerNote - 3) + '...';
+        }
+
+        // Also respect total remaining chars
         const remainingChars = maxTotalChars - totalChars;
         if (content.length > remainingChars) {
             content = content.substring(0, remainingChars - 3) + '...';
