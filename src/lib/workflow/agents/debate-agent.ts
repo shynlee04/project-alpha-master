@@ -254,10 +254,10 @@ export class DebateAgent {
             throw new DebateError('Topic must be at least 10 characters', DEBATE_ERRORS.INVALID_TOPIC);
         }
 
-        const arguments: DebateArgument[] = [];
-        const personas = this.config.personas.filter(p => p !== DebatePersona.SYNTHESIZER);
+        const personas = this.config.personas.filter((p) => p !== DebatePersona.SYNTHESIZER);
 
         // Conduct debate rounds
+        const debateArguments: DebateArgument[] = [];
         for (let round = 1; round <= this.config.rounds; round++) {
             for (const persona of personas) {
                 const argument = await this.generateArgument({
@@ -265,33 +265,33 @@ export class DebateAgent {
                     domain,
                     round,
                     persona,
-                    previousArguments: arguments,
+                    priorArguments: debateArguments,
                     conversationHistory,
                 });
 
                 if (argument) {
-                    arguments.push(argument);
+                    debateArguments.push(argument);
                 }
             }
         }
 
-        if (arguments.length === 0) {
+        if (debateArguments.length === 0) {
             throw new DebateError('No arguments were generated', DEBATE_ERRORS.NO_ARGUMENTS);
         }
 
         // Analyze agreements
-        const agreementMatrix = await this.analyzeAgreements(arguments, topic);
+        const agreementMatrix = await this.analyzeAgreements(debateArguments, topic);
 
         // Synthesize final answer
         const synthesis = await this.synthesizeResults({
             topic,
-            arguments,
+            arguments: debateArguments,
             agreementMatrix,
         });
 
         return {
             topic,
-            arguments,
+            arguments: debateArguments,
             agreementMatrix,
             synthesis,
             roundsCompleted: this.config.rounds,
@@ -395,7 +395,7 @@ Respond in JSON format:
         response: string,
         persona: DebatePersona,
         round: number,
-        previousArguments: DebateArgument[]
+        priorArguments: DebateArgument[]
     ): DebateArgument | null {
         try {
             // Extract JSON from response
@@ -406,7 +406,7 @@ Respond in JSON format:
 
             // Validate respondsTo IDs exist
             const validRespondsTo = (parsed.respondsTo || []).filter((id: string) =>
-                previousArguments.some(a => a.id === id)
+                priorArguments.some((a) => a.id === id)
             );
 
             return {
@@ -428,7 +428,7 @@ Respond in JSON format:
     /**
      * Analyze agreement between arguments
      */
-    private async analyzeAgreements(arguments: DebateArgument[], topic: string): Promise<AgreementMatrix> {
+    private async analyzeAgreements(debateArgs: DebateArgument[], _topic: string): Promise<AgreementMatrix> {
         // Group arguments by persona
         const byPersona: Record<DebatePersona, DebateArgument[]> = {
             [DebatePersona.OPTIMIST]: [],
@@ -438,7 +438,7 @@ Respond in JSON format:
             [DebatePersona.SYNTHESIZER]: [],
         };
 
-        for (const arg of arguments) {
+        for (const arg of debateArgs) {
             byPersona[arg.persona].push(arg);
         }
 
@@ -501,13 +501,12 @@ Respond in JSON format:
      */
     private identifyDisagreement(
         args1: DebateArgument[],
-        args2: DebateArgument[],
+        _args2: DebateArgument[],
         p1: DebatePersona,
         p2: DebatePersona
     ): AgreementMatrix['disagreements'][number] | null {
         // Find contrasting key points
-        const allPoints1 = args1.flatMap(a => a.keyPoints);
-        const allPoints2 = args2.flatMap(a => a.keyPoints);
+        const allPoints1 = args1.flatMap((a) => a.keyPoints);
 
         // Simple heuristic: look for negation words
         const negationWords = ['not', 'no', 'never', 'cannot', 'impossible', 'wrong', 'false'];

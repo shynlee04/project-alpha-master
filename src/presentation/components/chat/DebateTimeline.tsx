@@ -13,7 +13,6 @@ import {
     DebateResults,
     DebateArgument,
     DebatePersona,
-    AgreementMatrix,
 } from '@/lib/workflow/agents/debate-agent';
 import { ThumbsUp, ThumbsDown, MessageSquare, CheckCircle2, AlertTriangle } from 'lucide-react';
 
@@ -86,7 +85,7 @@ function getPersonaInfo(persona: DebatePersona) {
 // ============================================================================
 
 export function DebateLoading({
-    topic,
+    topic: _topic,
     currentRound,
     totalRounds,
     currentPersona,

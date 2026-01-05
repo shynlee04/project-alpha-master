@@ -93,13 +93,26 @@ export const useIDEStore = create<CombinedIDEState>()(
       }),
 
       // Convert expandedPaths array back to Set on rehydration
+      // FIX-2026-01-05: Add null checks to prevent hydration crash
       merge: (persisted, current) => {
+        // Guard against null/undefined persisted state
+        if (!persisted || typeof persisted !== 'object') {
+          console.warn('[IDESlice] merge: persisted state is null/invalid, using current');
+          return current;
+        }
+
         const persistedState = persisted as Partial<CombinedIDEState> & { expandedPaths?: string[] };
+
+        // Safely get expandedPaths array with fallback
+        const expandedPathsArray = Array.isArray(persistedState.expandedPaths)
+          ? persistedState.expandedPaths
+          : [];
+
         return {
           ...current,
           ...persistedState,
           // Convert array back to Set
-          expandedPaths: new Set(persistedState.expandedPaths ?? []),
+          expandedPaths: new Set(expandedPathsArray),
         };
       },
 
