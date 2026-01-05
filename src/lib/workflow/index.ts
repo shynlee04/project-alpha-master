@@ -60,3 +60,19 @@ export type {
     WorkflowExecution as WorkflowExecutionType,
     StepResult as StepResultType,
 } from './types';
+
+// Agents (E4-2: Sequential Expansion Agent)
+export {
+    SequentialExpansionAgent,
+    ExpansionError,
+    createExpansionAgent,
+    generateThreadExpansions,
+    EXPANSION_ERRORS,
+} from './agents';
+
+export type {
+    ExpansionQuestion,
+    ExpansionResult,
+    ExpansionConfig,
+    ExpansionContext,
+} from './agents';

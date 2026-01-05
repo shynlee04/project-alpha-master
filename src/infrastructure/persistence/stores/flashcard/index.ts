@@ -164,14 +164,8 @@ export type { FlashcardOperations } from './slices/flashcard-operations-slice';
 // Export useFlashcardOperations as denoted operation(s)
 // ============================================================
 
-export {
-  createFlashcardCrudSlice,
-  createFlashcardFilterSlice,
-  createFlashcardPersistenceSlice,
-  createFlashcardSetCrudSlice,
-  createFlashcardSetPersistenceSlice,
-  createFlashcardOperations,
-} from './slices/flashcard-crud-slice';
+// Slice creators (each from its correct source file)
+export { createFlashcardCrudSlice } from './slices/flashcard-crud-slice';
 export { createFlashcardFilterSlice } from './slices/flashcard-filter-slice';
 export {
   createFlashcardPersistenceSlice,

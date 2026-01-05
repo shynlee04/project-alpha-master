@@ -32,3 +32,13 @@ export { ApprovalOverlay } from './ApprovalOverlay';
 export { BatchApprovalBar } from './BatchApprovalBar';
 export { AutoApproveSettings } from './AutoApproveSettings';
 export { UnifiedChatPanel } from './UnifiedChatPanel';
+
+// Sequential Expansion (E4-2)
+export {
+    SequentialExpansionOptions,
+    SequentialExpansionLoading,
+} from './SequentialExpansionOptions';
+export type {
+    SequentialExpansionOptionsProps,
+    SequentialExpansionLoadingProps,
+} from './SequentialExpansionOptions';
