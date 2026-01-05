@@ -3,6 +3,19 @@ name: continuous-monitoring
 description: Lightweight health checks for PR and scheduled audits
 web_bundle: true
 installed_path: '{project-root}/.bmad/custom/src/modules/cham/workflows/continuous-monitoring'
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "WF-CHAM-002"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+expires_at: "2099-12-31T23:59:59+07:00"
+status: "ACTIVE"
+team: "shared"
+parent_id: "governance-foundation-001"
+related_artifacts: []
 ---
 
 # Continuous Monitoring Workflow

@@ -3,9 +3,9 @@ name: brainstorming
 description: Facilitate interactive brainstorming sessions using diverse creative techniques and ideation methods
 context_file: '' # Optional context file path for project-specific guidance
 
-# ═══════════════════════════════════════════════════════════════════════════════
+# ============================================================
 # GOVERNANCE FRONTMATTER (REQUIRED)
-# ═══════════════════════════════════════════════════════════════════════════════
+# ============================================================
 workflow_id: "WF-CORE-001"
 workflow_type: "workflow"
 governance_version: "1.0.0"

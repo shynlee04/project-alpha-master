@@ -2,6 +2,19 @@
 name: create-architecture
 description: Collaborative architectural decision facilitation for AI-agent consistency. Replaces template-driven architecture with intelligent, adaptive conversation that produces a decision-focused architecture document optimized for preventing agent conflicts.
 web_bundle: true
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "WF-BMM-007"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+expires_at: "2099-12-31T23:59:59+07:00"
+status: "ACTIVE"
+team: "shared"
+parent_id: "governance-foundation-001"
+related_artifacts: []
 ---
 
 # Architecture Workflow

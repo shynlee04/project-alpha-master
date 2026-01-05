@@ -2,6 +2,19 @@
 name: edit-workflow
 description: Intelligent workflow editor that helps modify existing workflows while following best practices
 web_bundle: true
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "WF-BMB-003"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+expires_at: "2099-12-31T23:59:59+07:00"
+status: "ACTIVE"
+team: "shared"
+parent_id: "governance-foundation-001"
+related_artifacts: []
 ---
 
 # Edit Workflow

@@ -3,6 +3,19 @@ name: master-orchestration
 description: Master orchestration workflow for sequential agent/workflow execution with feedback loops
 web_bundle: true
 installed_path: '{project-root}/.bmad/custom/src/modules/cham/workflows/master-orchestration'
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "WF-CHAM-001"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+expires_at: "2099-12-31T23:59:59+07:00"
+status: "ACTIVE"
+team: "shared"
+parent_id: "governance-foundation-001"
+related_artifacts: []
 ---
 
 # Master Orchestration Workflow
