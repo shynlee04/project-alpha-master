@@ -24,6 +24,8 @@ import type {
   SyncProgress,
   SyncResult,
 } from '@/lib/filesystem/sync-types';
+import { createWorkspaceEventBus } from '@/lib/events/workspace-events';
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 import type { ProjectMetadata as LibProjectMetadata } from '@/lib/workspace/project-store';
 import {
@@ -131,6 +133,66 @@ export function useWorkspaceFileSystem({
     load();
     return () => { active = false; };
   }, [initialProjectId, projectMetadata?.id]);
+
+  // Initialize event bus and bridge to cross-workspace events
+  // This bridge forwards workspace sync events to the cross-workspace event bus
+  // so SyncStatusPanel can receive real-time sync updates
+  useEffect(() => {
+    // Create workspace event bus if not exists
+    if (!eventBusRef.current) {
+      eventBusRef.current = createWorkspaceEventBus();
+    }
+
+    const eventBus = eventBusRef.current;
+    const projectId = projectMetadata?.id || 'unknown';
+
+    // Bridge: Listen to workspace sync events and emit to crossWorkspaceEventBus
+    const handleSyncStarted = () => {
+      crossWorkspaceEventBus.emitSyncStatus({
+        workspaceId: 'ide',
+        projectPath: projectId,
+        status: 'syncing',
+      });
+    };
+
+    const handleSyncCompleted = (data: { success: boolean }) => {
+      if (data.success) {
+        crossWorkspaceEventBus.emitSyncStatus({
+          workspaceId: 'ide',
+          projectPath: projectId,
+          status: 'synced',
+        });
+      } else {
+        crossWorkspaceEventBus.emitSyncStatus({
+          workspaceId: 'ide',
+          projectPath: projectId,
+          status: 'error',
+          error: 'Sync completed with errors',
+        });
+      }
+    };
+
+    const handleSyncError = (data: { error: Error }) => {
+      crossWorkspaceEventBus.emitSyncStatus({
+        workspaceId: 'ide',
+        projectPath: projectId,
+        status: 'error',
+        error: data.error.message,
+      });
+    };
+
+    // Subscribe to workspace events
+    eventBus.on('sync:started', handleSyncStarted);
+    eventBus.on('sync:completed', handleSyncCompleted);
+    eventBus.on('sync:error', handleSyncError);
+
+    // Cleanup on unmount or projectId change
+    return () => {
+      eventBus.off('sync:started', handleSyncStarted);
+      eventBus.off('sync:completed', handleSyncCompleted);
+      eventBus.off('sync:error', handleSyncError);
+    };
+  }, [projectMetadata?.id]);
 
   // Sync operations
   const performSync = useCallback(

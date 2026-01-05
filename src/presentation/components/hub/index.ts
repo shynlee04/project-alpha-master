@@ -8,6 +8,7 @@
  * @updated 2026-01-02T20:10:00+07:00 - Added BootSequence, HubHero, RecentProjectsSection
  * @updated 2026-01-02T21:30:00+07:00 - Added DeleteProjectDialog
  * @updated 2026-01-02T23:00:00+07:00 - Refactored WorkspaceBindingDialog subcomponents
+ * @updated 2026-01-06T00:00:00+07:00 - Added WorkspaceBindingToggle (Phase 1A)
  */
 
 // Main hub components
@@ -27,6 +28,7 @@ export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 
 // Workspace management
 export { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+export { WorkspaceBindingToggle, WorkspaceBindingList } from './WorkspaceBindingToggle';
 export { WorkspaceBadge } from './WorkspaceBadge';
 export { ProjectCard } from './ProjectCard';
 export { ProjectActionsMenu } from './ProjectActionsMenu';
@@ -64,6 +66,7 @@ export { useMetricsCollection } from './useMetricsCollection';
 
 // Type exports
 export type { WorkspaceBindingDialogProps, WorkspaceId, WorkspaceConfig } from './WorkspaceBindingDialog.types';
+export type { WorkspaceBindingToggleProps, WorkspaceBindingListProps, WorkspaceId as ToggleWorkspaceId } from './WorkspaceBindingToggle';
 export type { WorkspaceBadgeProps } from './WorkspaceBadge';
 export type { ProjectCardProps } from './ProjectCard';
 export type { ProjectActionsMenuProps } from './ProjectActionsMenu';

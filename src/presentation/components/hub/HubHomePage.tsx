@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from 'react';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   Plus,
@@ -32,20 +31,20 @@ import { SummaryCardsGrid } from './SummaryCardsGrid';
 import { ChartsGrid } from './ChartsGrid';
 import { useDashboardMetrics } from './useDashboardMetrics';
 
-// Import useSearch for accessing route search params
-import { useSearch } from '@tanstack/react-router';
-
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Access route search params for project picker triggering
-  const searchParams = useSearch({ from: '/hub' });
-  const { workspace, action, message } = searchParams as { 
+  // Use useRouterState() which works in nested components (useSearch requires route context)
+  const routerState = useRouterState();
+  const searchParams = routerState.location.search as {
     workspace?: 'ide' | 'notes' | 'knowledge' | 'study' | 'agents';
     action?: string;
     message?: string;
   };
+
+  const { workspace, action, message } = searchParams;
 
   // State management
   const [booting, setBooting] = useState(true);

@@ -53,11 +53,12 @@ export function useWorkspaceBindingState(
   project: Project
 ): UseWorkspaceBindingStateResult {
   // State: workspace bindings (checkboxes)
+  // All workspaces enabled by default (fixes P0 blocker where Notes was inaccessible)
   const [bindings, setBindings] = useState<WorkspaceBindings>({
     ide: true,
-    notes: false,
-    knowledge: false,
-    study: false,
+    notes: true,
+    knowledge: true,
+    study: true,
   });
 
   // State: initial workspace selection (radio buttons)

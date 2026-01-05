@@ -2,6 +2,7 @@
  * @fileoverview Unified IDE Workspace Store
  * @module infrastructure/persistence/stores/ide/useIDEStore
  * @governance EPIC-CP-1
+ * @updated 2026-01-06 - Fixed Dexie persistence with custom storage adapter
  *
  * Composed Zustand store for all IDE workspace state.
  * Combines 6 focused slices with persist middleware.
@@ -9,7 +10,7 @@
  * Architecture:
  * - Compose slices with spread operator
  * - Persist middleware on combined store (not individual slices)
- * - Dexie storage adapter for IndexedDB persistence
+ * - Custom IDE state storage adapter for IndexedDB persistence
  * - Cross-slice communication via get()
  * - Set<string> serialization in partialize/merge
  *
@@ -18,11 +19,16 @@
  * - Individual selectors (no destructuring)
  * - Persist on combined store only
  * - Convenience hooks for common use cases
+ *
+ * CRITICAL FIX (2026-01-06):
+ * The generic createDexieStorage() was incompatible with ideState table schema.
+ * ideState uses 'projectId' as key path, not 'id'. Custom adapter required.
+ * @see ide-state-storage.ts for implementation details.
  */
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+import { createIDEStateStorage, setIDEStoreRef } from './ide-state-storage';
 
 // Import slices
 import { createIDEEditorSlice } from './ide-editor-slice';
@@ -66,10 +72,15 @@ export const useIDEStore = create<CombinedIDEState>()(
     }),
     {
       name: 'ide-state',
-      storage: createJSONStorage(() => createDexieStorage('ideState')),
+      // Custom storage adapter that handles ideState table's 'projectId' key path
+      storage: createJSONStorage(createIDEStateStorage),
 
-      // Selective persistence (only critical data)
+      // CRITICAL: projectId MUST be persisted for state recovery on refresh
+      // Without this, store can't know which project's state to load
       partialize: (state) => ({
+        // Project ID - MUST be persisted to identify which project's state this is
+        projectId: state.projectId,
+
         // Editor state
         openFiles: state.openFiles,
         activeFile: state.activeFile,
@@ -85,9 +96,6 @@ export const useIDEStore = create<CombinedIDEState>()(
 
         // Terminal state
         terminalTab: state.terminalTab,
-
-        // Project state
-        projectId: state.projectId,
 
         // Selectors are pure functions, not persisted
       }),
@@ -137,6 +145,10 @@ export const useIDEStore = create<CombinedIDEState>()(
     }
   )
 );
+
+// Set the store reference for the custom storage adapter
+// This allows the storage adapter to access the current projectId
+setIDEStoreRef(() => useIDEStore.getState());
 
 // ============================================================================
 // Convenience Hooks
