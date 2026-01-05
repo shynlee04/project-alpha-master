@@ -18,6 +18,7 @@ import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } fr
 import { SystemPromptComposer, type LayerContext } from '../prompt-composer';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';
+import { buildMultimodalMessage, type ImageContent } from '../multimodal/message-builder';
 
 /**
  * Options for useAgentChatWithTools hook
@@ -77,8 +78,11 @@ export interface UseAgentChatWithToolsReturn {
     messages: Array<{ role: 'user' | 'assistant' | 'system' | 'tool'; content: string }>;
     /** Raw TanStack AI messages with parts */
     rawMessages: unknown[];
-    /** Send a new message */
-    sendMessage: (content: string) => void;
+    /**
+     * Send a new message
+     * E2-8: Supports optional images for multimodal chat
+     */
+    sendMessage: (content: string, images?: ImageContent[]) => void;
     /** Whether a message is being processed */
     isLoading: boolean;
     /** Error state if any */
@@ -364,12 +368,23 @@ export function useAgentChatWithTools(
     }, [rawMessages]);
 
     // Wrap sendMessage for simple string input
-    const sendMessage = useCallback((content: string) => {
+    // E2-8: Support multimodal messages with images
+    const sendMessage = useCallback((content: string, images?: ImageContent[]) => {
         console.log('[useAgentChat] sendMessage called:', {
             contentLength: content.length,
-            content: content.substring(0, 100)
+            content: content.substring(0, 100),
+            imageCount: images?.length || 0
         });
-        rawSendMessage(content);
+
+        // If images are provided, use buildMultimodalMessage
+        if (images && images.length > 0) {
+            const multimodalMessage = buildMultimodalMessage(content, images);
+            // TanStack AI accepts CoreMessage format directly
+            rawSendMessage(multimodalMessage as any);
+        } else {
+            // Text-only message (original behavior)
+            rawSendMessage(content);
+        }
     }, [rawSendMessage]);
 
     // Approve tool call - uses { id, approved } object format

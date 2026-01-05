@@ -7,9 +7,11 @@ import { toast } from 'sonner'
 
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
-import { FileAttachmentInput, type Attachment } from '@/presentation/components/chat/FileAttachmentInput'
+import { FileAttachmentInput, type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { useTranslation } from 'react-i18next'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
+import { convertImageAttachments, type ImageAttachmentData } from '@/lib/media/image-attachments'
+import type { ImageContent } from '@/lib/agent/multimodal/message-builder'
 
 /**
  * @fileoverview Enhanced Chat Interface with Mobile Optimization
@@ -53,7 +55,11 @@ interface ChatMessage {
 interface EnhancedChatProps {
     messages: ChatMessage[]
     isTyping?: boolean
-    onSendMessage: (content: string) => void
+    /**
+     * E2-8: Send message callback (supports optional images)
+     * When images are provided, builds multimodal message for AI
+     */
+    onSendMessage: (content: string, images?: ImageContent[]) => void
     className?: string
     onPreviewArtifact?: (code: string) => void
     onSaveArtifact?: (code: string, language: string) => void
@@ -146,20 +152,43 @@ export function EnhancedChatInterface({
         });
     }, [messages]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    /**
+     * E2-8: Handle form submission with multimodal support
+     * - Converts image attachments to base64 for AI transmission
+     * - Allows sending with just text, just images, or both
+     */
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault()
-        if (input.trim()) {
-            onSendMessage(input.trim())
-            setInput('')
-            // E2-4: Clear attachments after sending (type guard for preview property)
-            attachments.forEach(a => {
-                if ('preview' in a && a.preview) {
-                    URL.revokeObjectURL(a.preview)
-                }
-            })
-            setAttachments([])
+
+        // Check if we have content to send (text OR attachments)
+        const hasContent = input.trim() || attachments.length > 0
+        if (!hasContent) {
+            return
         }
-    }
+
+        // E2-8: Convert image attachments to base64 for multimodal message
+        const imageData = await convertImageAttachments(
+            attachments.filter((a): a is FileAttachment => a.type === 'image')
+        )
+
+        // Convert ImageAttachmentData to ImageContent format
+        const images: ImageContent[] = imageData.map((data) => ({
+            base64: data.base64,
+            mimeType: data.mimeType,
+        }))
+
+        // Send message with optional images
+        onSendMessage(input.trim(), images.length > 0 ? images : undefined)
+        setInput('')
+
+        // E2-4: Clear attachments after sending (type guard for preview property)
+        attachments.forEach(a => {
+            if ('preview' in a && a.preview) {
+                URL.revokeObjectURL(a.preview)
+            }
+        })
+        setAttachments([])
+    }, [input, attachments, onSendMessage])
 
     // E2-4: Handle file/URL attachment addition (accepts union type)
     const handleAddAttachment = useCallback((attachment: Attachment) => {
@@ -307,13 +336,30 @@ export function EnhancedChatInterface({
                             e.target.style.height = 'auto'
                             e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
                         }}
-                        onKeyDown={(e) => {
-                            // Submit on Enter (without Shift)
+                        onKeyDown={async (e) => {
+                            // E2-8: Submit on Enter (without Shift) - supports attachments
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault()
-                                if (input.trim() && !isTyping) {
-                                    onSendMessage(input.trim())
+                                const hasContent = input.trim() || attachments.length > 0
+                                if (hasContent && !isTyping) {
+                                    // Convert image attachments to base64
+                                    const imageData = await convertImageAttachments(
+                                        attachments.filter((a): a is FileAttachment => a.type === 'image')
+                                    )
+                                    const images: ImageContent[] = imageData.map((data) => ({
+                                        base64: data.base64,
+                                        mimeType: data.mimeType,
+                                    }))
+                                    // Send with optional images
+                                    onSendMessage(input.trim(), images.length > 0 ? images : undefined)
                                     setInput('')
+                                    // Clear attachments
+                                    attachments.forEach(a => {
+                                        if ('preview' in a && a.preview) {
+                                            URL.revokeObjectURL(a.preview)
+                                        }
+                                    })
+                                    setAttachments([])
                                     e.currentTarget.style.height = 'auto'
                                 }
                             }
@@ -338,7 +384,8 @@ export function EnhancedChatInterface({
                             // E1-10: Touch targets ≥44x44px on mobile
                             isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-10 w-10"
                         )}
-                        disabled={!input.trim() || isTyping}
+                        // E2-8: Allow sending with just attachments
+                        disabled={(!input.trim() && attachments.length === 0) || isTyping}
                         aria-label={t('chat.send', 'Send message')}
                     >
                         <Send className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />

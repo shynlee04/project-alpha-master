@@ -71,6 +71,13 @@
     "gifPreserved": "Animated GIF preserved",
     "processingError": "Failed to process image"
   },
+  "multimodal": {
+    "processing": "Processing images...",
+    "converting": "Converting to base64...",
+    "sending": "Sending with {{count}} image(s)...",
+    "sendError": "Failed to send with images",
+    "noProvider": "Current provider doesn't support images"
+  },
   "placeholder": "Type a message...",
   "send": "Send message",
   "attach": "Attach file (coming soon)",

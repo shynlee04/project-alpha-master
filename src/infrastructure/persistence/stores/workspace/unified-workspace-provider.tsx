@@ -36,16 +36,6 @@ import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 // ... (rest of imports/types)
 
-// ...
-
-return (
-  <UnifiedWorkspaceContext.Provider value={contextValue}>
-    <AgentWorkspaceSync />
-    {children}
-  </UnifiedWorkspaceContext.Provider>
-);
-}
-
 /**
  * Extended workspace type including 'hub' landing page
  */
