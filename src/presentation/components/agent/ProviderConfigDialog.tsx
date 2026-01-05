@@ -148,25 +148,27 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 addProvider(config);
 
+                // FIX-2026-01-05: Show success immediately, then try models
+                toast.success(`✓ Custom provider "${name}" added`);
+
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
-                    // FIX-2026-01-05: Update hasApiKey flag for visual feedback
                     updateProvider(id, { hasApiKey: true });
+                    toast.success(`✓ API key saved for ${name}`);
 
                     setIsFetchingModels(true);
                     try {
-                        await fetchModels(id); // Ralph Loop Cycle 4: emits event
+                        await fetchModels(id);
+                        toast.success(`Models loaded for ${name}`);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
-                        toast.error(`Failed to load models: ${errorMessage}`);
-                        throw error; // Re-throw to prevent dialog from closing
+                        toast.warning(`Provider added, but models couldn't load: ${errorMessage}`);
+                        // Don't re-throw - provider and key are saved
                     } finally {
                         setIsFetchingModels(false);
                     }
                 }
-
-                toast.success(`Custom provider "${name}" added`);
             } else if (provider?.isCustom) {
                 // EDITING EXISTING CUSTOM PROVIDER
                 const config: Partial<ProviderConfig> = {
@@ -177,25 +179,27 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 updateProvider(provider.id, config);
 
+                // FIX-2026-01-05: Show success immediately
+                toast.success(`✓ Provider "${name}" updated`);
+
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
-                    // FIX-2026-01-05: Update hasApiKey flag for visual feedback
                     updateProvider(provider.id, { hasApiKey: true });
+                    toast.success(`✓ API key updated for ${name}`);
 
                     setIsFetchingModels(true);
                     try {
-                        await fetchModels(provider.id); // Ralph Loop Cycle 4: emits event
+                        await fetchModels(provider.id);
+                        toast.success(`Models loaded for ${name}`);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
-                        toast.error(`Failed to load models: ${errorMessage}`);
-                        throw error; // Re-throw to prevent dialog from closing
+                        toast.warning(`Config saved, but models couldn't load: ${errorMessage}`);
+                        // Don't re-throw
                     } finally {
                         setIsFetchingModels(false);
                     }
                 }
-
-                toast.success(`Provider "${name}" updated`);
             }
 
             onOpenChange(false);
