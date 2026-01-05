@@ -194,46 +194,61 @@ export function NoteSidebar({
                     </div>
                 </div>
 
-                {/* Search Input */}
-                <div className="relative">
-                    <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        type="text"
-                        placeholder={t('notes.search_placeholder', 'Search notes...')}
-                        value={localSearchQuery}
-                        onChange={handleSearchChange}
-                        className="pl-8 h-8 text-sm font-mono"
-                        aria-label={t('notes.search_notes', 'Search notes')}
+                {/* Search Input - only show in notes view */}
+                {sidebarView === 'notes' && (
+                    <div className="relative">
+                        <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            type="text"
+                            placeholder={t('notes.search_placeholder', 'Search notes...')}
+                            value={localSearchQuery}
+                            onChange={handleSearchChange}
+                            className="pl-8 h-8 text-sm font-mono"
+                            aria-label={t('notes.search_notes', 'Search notes')}
+                        />
+                        {localSearchQuery && (
+                            <button
+                                onClick={handleClearSearch}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
+                                aria-label={t('notes.clear_search', 'Clear search')}
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {/* Favorites Filter - only show in notes view */}
+                {sidebarView === 'notes' && (
+                    <button
+                        onClick={toggleFavoritesFilter}
+                        className={`
+                            mt-2 w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md
+                            ${showFavoritesOnly ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}
+                        `}
+                        aria-pressed={showFavoritesOnly}
+                    >
+                        <Star size={14} className={showFavoritesOnly ? 'text-yellow-500 fill-yellow-500' : ''} />
+                        {t('notes.favorites', 'Favorites')}
+                    </button>
+                )}
+            </div>
+
+            {/* Content Area - Conditionally render notes list or chat */}
+            {sidebarView === 'chat' ? (
+                /* E1-9: Chat Panel */
+                <div className="flex-1 overflow-hidden">
+                    <NoteSidebarChat
+                        projectId={projectId || 'default'}
+                        projectName={projectName || t('notes.title', 'Notes')}
                     />
-                    {localSearchQuery && (
-                        <button
-                            onClick={handleClearSearch}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
-                            aria-label={t('notes.clear_search', 'Clear search')}
-                        >
-                            ✕
-                        </button>
-                    )}
                 </div>
-
-                {/* Favorites Filter */}
-                <button
-                    onClick={toggleFavoritesFilter}
-                    className={`
-                        mt-2 w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md
-                        ${showFavoritesOnly ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}
-                    `}
-                    aria-pressed={showFavoritesOnly}
-                >
-                    <Star size={14} className={showFavoritesOnly ? 'text-yellow-500 fill-yellow-500' : ''} />
-                    {t('notes.favorites', 'Favorites')}
-                </button>
-            </div>
-
-            {/* Note Tree */}
-            <div className="flex-1 overflow-y-auto">
-                <NoteTree notes={notes} activeNoteId={activeNoteId} onNoteSelect={onNoteSelect} />
-            </div>
+            ) : (
+                /* Notes List */
+                <div className="flex-1 overflow-y-auto">
+                    <NoteTree notes={notes} activeNoteId={activeNoteId} onNoteSelect={onNoteSelect} />
+                </div>
+            )}
         </div>
     );
 }

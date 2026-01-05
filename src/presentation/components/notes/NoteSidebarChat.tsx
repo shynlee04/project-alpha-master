@@ -11,16 +11,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Bot, Minus } from 'lucide-react';
+import { Send, Bot } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { Input } from '@/presentation/components/ui/input';
 import { useAgentChatWithTools } from '@/lib/agent/hooks/use-agent-chat-with-tools';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { getNotesAgentSystemPrompt } from '@/lib/agent/system-prompt';
-import { AgentChatToolFacades, useAgentChatToolFacades } from '../ide/AgentChatPanel';
+import { useAgentChatToolFacades } from '../ide/AgentChatPanel/index';
 import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
-import { getCodingAgentSystemPrompt } from '@/lib/agent/system-prompt';
 import { toast } from 'sonner';
 
 interface NoteSidebarChatProps {
@@ -37,7 +35,7 @@ interface ChatMessage {
 }
 
 export function NoteSidebarChat({
-    projectId,
+    projectId: _projectId, // Reserved for future context-based features
     projectName = 'Notes',
     className = '',
 }: NoteSidebarChatProps) {
@@ -51,8 +49,8 @@ export function NoteSidebarChat({
     const { agents } = useAgents();
     const activeAgent = agents.find(a => a.id === activeAgentId);
 
-    // API key management - using the same pattern as AgentChatPanel
-    const apiKey = activeAgent?.apiKeyId ? 'placeholder' : undefined; // TODO: proper API key handling
+    // API key management - providerId is sufficient for useAgentChatWithTools
+    // The hook handles API key lookup internally via credential-vault
     const providerId = activeAgent?.providerId;
 
     // Get workspace context for tool facades (Notes workspace only gets file read tools)
@@ -75,7 +73,6 @@ export function NoteSidebarChat({
         messages: hookMessages,
         sendMessage,
         isLoading,
-        error,
     } = useAgentChatWithTools({
         fileTools,
         terminalTools: undefined, // Notes workspace doesn't get terminal tools
@@ -83,7 +80,7 @@ export function NoteSidebarChat({
         systemMessage: systemPrompt,
         providerId,
         modelId: activeAgent?.modelId ?? undefined,
-        apiKey: apiKey || undefined,
+        apiKey: undefined, // Credential-vault handles API key lookup
         enableTools: true,
     });
 
@@ -121,12 +118,14 @@ export function NoteSidebarChat({
         setInput('');
 
         // Send via AI hook
-        sendMessage(messageToSend).catch(err => {
+        try {
+            sendMessage(messageToSend);
+        } catch (err) {
             console.error('[NoteSidebarChat] Failed to send message:', err);
             toast.error('Failed to send message', {
                 description: err instanceof Error ? err.message : 'Unknown error',
             });
-        });
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

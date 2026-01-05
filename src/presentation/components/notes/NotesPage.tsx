@@ -282,6 +282,8 @@ export function NotesPage() {
                                     workspaceType="notes"
                                 />
                             }
+                            projectId={projectId}
+                            projectName={projectId}
                         />
                     ) : (
                         <>
@@ -399,6 +401,8 @@ export function NotesPage() {
                                     workspaceType="notes"
                                 />
                             }
+                            projectId={projectId}
+                            projectName={projectId}
                         />
                     )}
                 </ResizablePanel>
