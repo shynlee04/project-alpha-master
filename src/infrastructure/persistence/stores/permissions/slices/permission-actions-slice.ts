@@ -28,6 +28,7 @@ type PermissionActions = Pick<ToolPermissionState,
     | 'setCategoryApproval'
     | 'getCategoryApproval'
     | 'isCategoryApproved'
+    | 'getTrustLevel'
 >;
 
 // Helper for initial state if needed, but actions usually mutate state
@@ -156,7 +157,7 @@ export const createPermissionActionsSlice = (
     },
 
     // Reset Actions - Moved logic here but `resetToDefaults` uses constants which we need to import
-    // But wait, resetToDefaults also resets sessionTrust and states.
+    // But wait, resetToDefaults also resets sessionTrust and states. 
     // It relies on constants `createDefaultTrustLevels` etc.
 
     resetToDefaults: () => {
@@ -168,5 +169,10 @@ export const createPermissionActionsSlice = (
             // ARCH-01.4: Reset all category approvals
             categoryApprovals: createDefaultCategoryApprovals(),
         });
-    }
+    },
+
+    getTrustLevel: (toolId: string, workspaceType: WorkspaceType) => {
+        const state = get();
+        return state.trustLevels[toolId]?.[workspaceType] ?? state.defaultTrustLevel;
+    },
 });

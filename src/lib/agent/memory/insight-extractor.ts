@@ -11,13 +11,14 @@
 
 /**
  * Multimodal content types
+ * E2-8: Extended MIME type support including GIF
  */
 export type MultimodalContent =
   | { type: 'text'; text: string }
   | {
       type: 'image';
       source: { type: 'data'; value: string };
-      metadata: { mimeType: 'image/jpeg' | 'image/png' | 'image/webp' };
+      metadata: { mimeType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' };
     };
 
 /**
