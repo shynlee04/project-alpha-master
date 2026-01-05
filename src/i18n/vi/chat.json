@@ -71,6 +71,13 @@
     "gifPreserved": "Đã giữ nguyên GIF động",
     "processingError": "Không thể xử lý hình ảnh"
   },
+  "multimodal": {
+    "processing": "Đang xử lý hình ảnh...",
+    "converting": "Đang chuyển đổi sang base64...",
+    "sending": "Đang gửi với {{count}} hình ảnh...",
+    "sendError": "Không thể gửi với hình ảnh",
+    "noProvider": "Nhà cung cấp hiện tại không hỗ trợ hình ảnh"
+  },
   "placeholder": "Nhập tin nhắn...",
   "send": "Gửi tin nhắn",
   "attach": "Đính kèm tệp (sắp có)",

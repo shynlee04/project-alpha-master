@@ -10,7 +10,7 @@ import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRen
 import { FileAttachmentInput, type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { useTranslation } from 'react-i18next'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
-import { convertImageAttachments, type ImageAttachmentData } from '@/lib/media/image-attachments'
+import { convertImageAttachments } from '@/lib/media/image-attachments'
 import type { ImageContent } from '@/lib/agent/multimodal/message-builder'
 
 /**

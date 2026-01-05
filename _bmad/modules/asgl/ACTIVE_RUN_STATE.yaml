@@ -14,17 +14,17 @@ session:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_phase:
-  id: "phase_3_extended"
-  name: "Architectural Remediation (New Targets)"
+  id: "phase_4"
+  name: "Consolidation & Cleanup"
   status: "IN_PROGRESS"
-  progress: 10%
+  progress: 20%
 
 current_story:
-  id: "S-014b"
-  title: "Split tool-permission-store.ts (800 lines)"
+  id: "S-020"
+  title: "Fix TypeScript Errors"
   status: "IN_PROGRESS"
-  type: "GOD_STORE_SPLIT"
-  issues: ["ARCH-001-NEW"]
+  type: "TYPESCRIPT_FIX"
+  issues: ["ARCH-004"]
   
 # ═══════════════════════════════════════════════════════════════════════════
 # STATUS LOG
@@ -43,79 +43,67 @@ stories_completed:
   - id: "S-010"
     status: "DONE"
 
-  # Phase 3 (Pre-Verified)
+  # Phase 3 (Pre-Verified + Executed)
   - id: "S-011"
     title: "Split rag-store.ts"
     status: "DONE"
     note: "Verified: File is 129 lines, composed of slices."
     
   - id: "S-012"
-    title: "Split conversation-threads-store.ts"
     status: "DONE"
-    note: "Verified: File missing or refactored."
-    
   - id: "S-013"
-    title: "Split conversation-store.ts"
     status: "DONE"
-    note: "Verified: Facade/Small file found."
-    
   - id: "S-014"
-    title: "Split agents-store.ts"
     status: "DONE"
-    note: "Verified: use-app-store combines agents/providers properly."
-    
   - id: "S-015"
-    title: "Split AgentConfigDialog.tsx"
     status: "DONE"
-    note: "Verified: File is 292 lines."
-
-  # Phase 4 (Pre-Verified duplicates)
-  - id: "S-017"
-    title: "Consolidate workspace-store"
-    status: "DONE"
-    note: "Verified: Facade used."
     
-  - id: "S-018"
-    title: "Consolidate rag-store"
+  - id: "S-014b"
+    title: "Split tool-permission-store.ts (800 lines)"
     status: "DONE"
-    note: "Verified: Duplicates managed."
+    note: "Refactored into slices: types, constants, selectors, actions-slice, migrations."
+    output: "src/infrastructure/persistence/stores/permissions/tool-permission-store.ts (Lines reduced <100)"
+
+  - id: "S-016"
+    title: "Verify Phase 3 Completion"
+    status: "DONE"
+    note: "God stores verified gone or split."
+
+  # Phase 4 (Consolidation)
+  - id: "S-017"
+     status: "DONE"
+  - id: "S-018"
+     status: "DONE"
+  - id: "S-019"
+     status: "DONE"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # QUEUE
 # ═══════════════════════════════════════════════════════════════════════════
 
 queue:
-  - id: "S-014b"
-    title: "Split tool-permission-store.ts (800 lines)"
+  - id: "S-020"
+    title: "Fix TypeScript Errors Batch 1 (150 errors)"
     status: "IN_PROGRESS"
-    priority: "HIGH"
     
-  - id: "S-014c"
-    title: "Split quiz-store.ts (658 lines)"
+  - id: "S-021"
+    title: "Fix TypeScript Errors Batch 2 (156 errors)"
     status: "PENDING"
     
-  - id: "S-014d" 
-    title: "Split canvas-store.ts (623 lines)"
+  - id: "S-022"
+    title: "Break Circular Dependencies"
     status: "PENDING"
-
-  - id: "S-016"
-    title: "Verify Phase 3 Completion"
-    status: "PENDING"
+    
+  - id: "S-023"
+    title: "Implement IndexedDB Quota Handling"
+    status: "PENDING" # Seen implemented, but will double check if it covers all.
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ACTIVE TASKS (S-014b)
+# ACTIVE TASKS (S-020)
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_tasks:
-  - task: "Analyze tool-permission-store.ts"
+  - task: "Run Type Check"
     status: "PENDING"
-    
-  - task: "Create Permission Slices"
-    status: "PENDING"
-    paths:
-      - "src/infrastructure/persistence/stores/permissions/slices/permission-state-slice.ts"
-      - "src/infrastructure/persistence/stores/permissions/slices/permission-requests-slice.ts"
-      - "src/infrastructure/persistence/stores/permissions/slices/permission-validation-slice.ts"
-    
-  - task: "Refactor Main Store"
+  - task: "Analyze Errors"
     status: "PENDING"

@@ -19,8 +19,9 @@ export interface ImageContent {
 
   /**
    * MIME type (default: image/jpeg)
+   * E2-8: Added GIF support for animated images
    */
-  mimeType?: 'image/jpeg' | 'image/png' | 'image/webp';
+  mimeType?: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
 }
 
 /**
