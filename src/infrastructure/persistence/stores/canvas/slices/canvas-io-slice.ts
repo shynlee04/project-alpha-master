@@ -1,9 +1,9 @@
 /**
- * @fileoverview Canvas and Import/Export Operations Slice
+ * @fileoverview Canvas CRUD and Import/Export Slice
  * @module infrastructure/persistence/stores/canvas/slices/canvas-io-slice
  * @governance S-012-a (God Store Elimination)
  *
- * Canvas CRUD operations (create/delete/rename) and import/export.
+ * Canvas CRUD operations (create/delete/rename/load) and import/export.
  * Part of canvas-store.ts refactoring to eliminate god store anti-pattern.
  *
  * Responsibility:
@@ -12,14 +12,13 @@
  * - Import canvas data from JSON
  * - Load canvas list from IndexedDB
  *
- * Line Count: ~100 (target: ≤120 lines)
+ * Line Count: ~110 (target: ≤120 lines)
  *
  * @see aggregation: canvas/index.ts (unified store)
  */
 
 import type { StateCreator } from 'zustand';
-import type { CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
-import { getCanvasDb } from '../canvas-db';
+import type { CanvasMetadata, CanvasExport, Node, Edge, Viewport } from '@/lib/canvas/types';
 import { getSafeCanvasDb } from '../canvas-db';
 import { generateCanvasId } from '../canvas-utils';
 
@@ -43,7 +42,17 @@ export interface CanvasIOSlice {
 /**
  * Canvas IO slice creator
  */
-export const createCanvasIOSlice: StateCreator<CanvasIOSlice> = (set, get) => ({
+export const createCanvasIOSlice: StateCreator<
+  {
+    canvasList: CanvasMetadata[];
+    nodes: Node<any>[];
+    edges: Edge<any>[];
+    viewport: Viewport;
+  },
+  [],
+  [],
+  CanvasIOSlice
+> = (set, get) => ({
   canvasList: [],
 
   createCanvas: async (name?: string) => {
@@ -116,6 +125,7 @@ export const createCanvasIOSlice: StateCreator<CanvasIOSlice> = (set, get) => ({
   exportCanvas: async () => {
     const db = getSafeCanvasDb();
     if (!db) throw new Error('Database not available');
+    const { nodes, edges, viewport } = get();
     const stored = localStorage.getItem('canvas-active-id');
     const activeCanvasId = stored || 'default';
 
@@ -127,6 +137,9 @@ export const createCanvasIOSlice: StateCreator<CanvasIOSlice> = (set, get) => ({
       canvas: {
         id: activeCanvasId,
         name: metadata?.name || 'Untitled',
+        nodes,
+        edges,
+        viewport,
       },
     };
   },

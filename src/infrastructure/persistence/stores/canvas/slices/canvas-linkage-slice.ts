@@ -1,5 +1,5 @@
 /**
- * @fileoverview Canvas Linkage Activity Recording Slice
+ * @fileoverview Canvas Linkage Slice
  * @module infrastructure/persistence/stores/canvas/slices/canvas-linkage-slice
  * @governance S-012-a (God Store Elimination)
  *
@@ -7,42 +7,43 @@
  * Part of canvas-store.ts refactoring to eliminate god store anti-pattern.
  *
  * Responsibility:
- * - Generate linkage proposals using linkage analyzer
+ * - Generate linkage proposals using linkage
  * - Accept/dismiss proposals
- * - Clear proposals
+ * - Create edges from accepted proposals
  *
- * Line Count: ~80 (target: ≤120 lines)
+ * Line Count: ~90 (target: ≤120 lines)
  *
  * @see aggregation: canvas/index.ts (unified store)
  */
 
 import type { StateCreator } from 'zustand';
 import type { LinkageProposal } from '@/lib/canvas/linkage-types';
-import type { CanvasStoreState } from '@/lib/canvas/types';
+import type { Edge } from '@xyflow/react';
 import { createLinkageAnalyzer } from '@/lib/canvas/linkage-analyzer';
 
 /**
  * Canvas linkage slice interface
  */
 export interface CanvasLinkageSlice {
-  linkageProposals: LinkageProposal[];
-
-  // Operations
-  setProposals: (proposals: LinkageProposal[]) => void;
   generateLinkageProposals: () => Promise<void>;
   acceptProposal: (proposalId: string) => void;
   dismissProposal: (proposalId: string) => void;
-  clearProposals: () => void;
 }
 
 /**
  * Canvas linkage slice creator
+ * Accepts a state that includes nodes, edges, and linkageProposals
  */
-export const createCanvasLinkageSlice: StateCreator<CanvasStoreState & CanvasLinkageSlice> = (set, get) => ({
-  linkageProposals: [],
-
-  setProposals: (proposals: LinkageProposal[]) => set({ linkageProposals: proposals }),
-
+export const createCanvasLinkageSlice: StateCreator<
+  {
+    nodes: any[];
+    edges: Edge<any>[];
+    linkageProposals: LinkageProposal[];
+  },
+  [],
+  [],
+  CanvasLinkageSlice
+> = (set, get) => ({
   generateLinkageProposals: async () => {
     const { nodes } = get();
 
@@ -63,17 +64,17 @@ export const createCanvasLinkageSlice: StateCreator<CanvasStoreState & CanvasLin
   },
 
   acceptProposal: (proposalId: string) => {
-    const { linkageProposals, edges } = get() as CanvasLinkageSlice & { edges: Edge<any>[] };
+    const { linkageProposals, edges } = get();
     const proposal = linkageProposals.find((p) => p.id === proposalId);
 
     if (!proposal) return;
 
     // Create edge from proposal
-    const newEdge = {
+    const newEdge: Edge<any> = {
       id: `edge-${proposal.sourceNodeId}-${proposal.targetNodeId}-${Date.now()}`,
       source: proposal.sourceNodeId,
       target: proposal.targetNodeId,
-      type: 'relationship' as const,
+      type: 'relationship',
       label: proposal.suggestedLabel,
       data: {
         relationship: proposal.suggestedRelationship,
@@ -85,7 +86,7 @@ export const createCanvasLinkageSlice: StateCreator<CanvasStoreState & CanvasLin
     set({
       edges: [...edges, newEdge],
       linkageProposals: linkageProposals.filter((p) => p.id !== proposalId),
-    } as Partial<CanvasStoreState & CanvasLinkageSlice>);
+    });
   },
 
   dismissProposal: (proposalId: string) => {
@@ -93,9 +94,5 @@ export const createCanvasLinkageSlice: StateCreator<CanvasStoreState & CanvasLin
     set({
       linkageProposals: linkageProposals.filter((p) => p.id !== proposalId),
     });
-  },
-
-  clearProposals: () => {
-    set({ linkageProposals: [] });
   },
 });

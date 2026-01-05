@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, ChevronDown, ChevronUp, Code, Mic, MicOff } from 'lucide-react'
+import { Bot, User, Send, ChevronDown, ChevronUp, Code, Mic, MicOff, BookOpen } from 'lucide-react'
 import { Button } from '@/presentation/components/ui/button'
 import { useDeviceType } from '@/hooks/useMediaQuery'
 import { toast } from 'sonner'
@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
 import { FileAttachmentInput, type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
+import { NoteReferencePicker, useNoteReferencePicker } from '@/presentation/components/chat/NoteReferencePicker'
 import { useTranslation } from 'react-i18next'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
 import { convertImageAttachments } from '@/lib/media/image-attachments'
@@ -22,6 +23,11 @@ import type { ImageContent } from '@/lib/agent/multimodal/message-builder'
  * - Smooth scrolling with -webkit-overflow-scrolling: touch
  * - Touch targets ≥44x44px on mobile
  * - Attachment and voice input button placeholders
+ *
+ * E3-5: Note Reference Support
+ * - /note slash command detection
+ * - Note reference picker dialog
+ * - Insert note reference format into chat input
  */
 
 /**
@@ -95,6 +101,32 @@ export function EnhancedChatInterface({
         maxDuration: 30000,
         autoSendAfterSilence: 2000,
     })
+
+    // E3-5: Note reference picker
+    const notePicker = useNoteReferencePicker()
+
+    // E3-5: Detect /note slash command and open picker
+    useEffect(() => {
+        const trimmedInput = input.trim()
+        // Check if user typed /note or /note with trailing space
+        if (trimmedInput === '/note' || trimmedInput === '/note ') {
+            // Open the note picker
+            notePicker.openPicker((noteId: string, noteTitle: string) => {
+                // Insert note reference format into input
+                const reference = `📌 [${noteTitle}]#${noteId} `
+                setInput(reference)
+                // Focus back on textarea after selection
+                setTimeout(() => {
+                    const textarea = document.querySelector('textarea:not([disabled])') as HTMLTextAreaElement
+                    textarea?.focus()
+                    // Move cursor to end of input
+                    textarea?.setSelectionRange(reference.length, reference.length)
+                }, 100)
+            })
+            // Clear the /note command from input
+            setInput('')
+        }
+    }, [input, notePicker])
 
     // E1-10: Visual viewport API for keyboard avoidance (iOS Safari fix)
     // Prevents keyboard from hiding input on mobile devices
@@ -392,6 +424,13 @@ export function EnhancedChatInterface({
                     </Button>
                 </div>
             </form>
+
+            {/* E3-5: Note Reference Picker Dialog */}
+            <NoteReferencePicker
+                open={notePicker.open}
+                onClose={notePicker.onClose}
+                onSelectNote={notePicker.onSelectNote}
+            />
         </div>
     )
 }

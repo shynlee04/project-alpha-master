@@ -3,7 +3,7 @@
  * @module infrastructure/persistence/stores/canvas/slices/canvas-state-slice
  * @governance S-012-a (God Store Elimination)
  *
- * Canvas node and edge management with React Flow integration.
+ * Canvas node, edge, viewport, and linkage proposal management with React Flow.
  * Part of canvas-store.ts refactoring to eliminate god store anti-pattern.
  *
  * Responsibility:
@@ -11,8 +11,9 @@
  * - Edge CRUD operations (add, remove, set, connect)
  * - Viewport management
  * - React Flow change handlers
+ * - Linkage proposal state (set, clear)
  *
- * Line Count: ~100 (target: ≤120 lines)
+ * Line Count: ~120 (target: ≤120 lines)
  *
  * @see aggregation: canvas/index.ts (unified store)
  */
@@ -20,10 +21,8 @@
 import type { StateCreator } from 'zustand';
 import { applyNodeChanges, applyEdgeChanges, addEdge as rfAddEdge } from '@xyflow/react';
 import type { Node, Edge, Viewport, Connection, NodeChange, EdgeChange } from '@xyflow/react';
-import type {
-  CanvasStoreState,
-  CanvasRelationshipType,
-} from '@/lib/canvas/types';
+import type { CanvasRelationshipType } from '@/lib/canvas/types';
+import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 
 /**
  * Canvas state slice interface
@@ -34,6 +33,7 @@ export interface CanvasStateSlice {
   edges: Edge<any>[];
   viewport: Viewport;
   isReadOnly: boolean;
+  linkageProposals: LinkageProposal[];
 
   // Node operations
   setNodes: (nodes: Node<any>[]) => void;
@@ -52,11 +52,15 @@ export interface CanvasStateSlice {
     relationship: CanvasRelationshipType,
   ) => void;
 
-  // Viewport operations
+  // Viewport
   setViewport: (viewport: Viewport) => void;
 
-  // Read-only mode
+  // Read-only
   setReadOnly: (readOnly: boolean) => void;
+
+  // Proposals
+  setProposals: (proposals: LinkageProposal[]) => void;
+  clearProposals: () => void;
 
   // Reset
   resetCanvas: () => void;
@@ -65,56 +69,33 @@ export interface CanvasStateSlice {
 /**
  * Canvas state slice creator
  */
-export const createCanvasStateSlice: StateCreator<CanvasStoreState> = (set, get) => ({
-  // Initial state
+export const createCanvasStateSlice: StateCreator<CanvasStateSlice> = (set, get) => ({
   nodes: [],
   edges: [],
   viewport: { x: 0, y: 0, zoom: 1 },
   isReadOnly: false,
+  linkageProposals: [],
 
-  // Node operations
   setNodes: (nodes: Node<any>[]) => set({ nodes }),
-
   onNodesChange: (changes: NodeChange[]) => {
     const { nodes } = get();
-    const newNodes = applyNodeChanges(changes, nodes) as Node<any>[];
-    set({ nodes: newNodes });
+    set({ nodes: applyNodeChanges(changes, nodes) as Node<any>[] });
   },
+  addNode: (node: Node<any>) => set((state) => ({ nodes: [...state.nodes, node] })),
+  removeNode: (nodeId: string) => set((state) => ({ nodes: state.nodes.filter((n) => n.id !== nodeId) })),
 
-  addNode: (node: Node<any>) => {
-    const { nodes } = get();
-    set({ nodes: [...nodes, node] });
-  },
-
-  removeNode: (nodeId: string) => {
-    const { nodes } = get();
-    set({ nodes: nodes.filter((n) => n.id !== nodeId) });
-  },
-
-  // Edge operations
   setEdges: (edges: Edge<any>[]) => set({ edges }),
-
   onEdgesChange: (changes: EdgeChange[]) => {
     const { edges } = get();
-    const newEdges = applyEdgeChanges(changes, edges) as Edge<any>[];
-    set({ edges: newEdges });
+    set({ edges: applyEdgeChanges(changes, edges) as Edge<any>[] });
   },
-
   onConnect: (connection: Connection) => {
     const { edges } = get();
-    const newEdge = rfAddEdge(
-      { ...connection, type: 'relationship', animated: true },
-      edges,
-    );
+    const newEdge = rfAddEdge({ ...connection, type: 'relationship', animated: true }, edges);
     const edgeArray = Array.isArray(newEdge) ? newEdge : [newEdge];
     set({ edges: [...edges, ...edgeArray] as Edge<any>[] });
   },
-
-  addEdgeWithRelationship: (
-    connection: { source: string; target: string },
-    relationship: CanvasRelationshipType,
-  ) => {
-    const { edges } = get();
+  addEdgeWithRelationship: (connection, relationship) => {
     const newEdge: Edge<any> = {
       id: `edge-${connection.source}-${connection.target}-${Date.now()}`,
       source: connection.source,
@@ -123,31 +104,16 @@ export const createCanvasStateSlice: StateCreator<CanvasStoreState> = (set, get)
       data: { relationship },
       animated: true,
     };
-    set({ edges: [...edges, newEdge] });
+    set((state) => ({ edges: [...state.edges, newEdge] }));
   },
+  addEdge: (edge: Edge<any>) => set((state) => ({ edges: [...state.edges, edge] })),
+  removeEdge: (edgeId: string) => set((state) => ({ edges: state.edges.filter((e) => e.id !== edgeId) })),
 
-  addEdge: (edge: Edge<any>) => {
-    const { edges } = get();
-    set({ edges: [...edges, edge] });
-  },
-
-  removeEdge: (edgeId: string) => {
-    const { edges } = get();
-    set({ edges: edges.filter((e) => e.id !== edgeId) });
-  },
-
-  // Viewport
   setViewport: (viewport: Viewport) => set({ viewport }),
-
-  // Read-only mode
   setReadOnly: (readOnly: boolean) => set({ isReadOnly: readOnly }),
 
-  // Reset
-  resetCanvas: () => {
-    set({
-      nodes: [],
-      edges: [],
-      viewport: { x: 0, y: 0, zoom: 1 },
-    });
-  },
+  setProposals: (proposals: LinkageProposal[]) => set({ linkageProposals: proposals }),
+  clearProposals: () => set({ linkageProposals: [] }),
+
+  resetCanvas: () => set({ nodes: [], edges: [], linkageProposals: [], viewport: { x: 0, y: 0, zoom: 1 } }),
 });
