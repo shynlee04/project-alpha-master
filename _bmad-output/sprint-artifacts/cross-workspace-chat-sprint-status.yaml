@@ -915,6 +915,180 @@ stories:
     created_at: "2026-01-06"
     started_at: "2026-01-06T01:00:00Z"
     completed_at: "2026-01-06T01:15:00Z"
+  - id: "E3-1"
+    title: "ContextEngine Service"
+    epic: "E3"
+    points: 10
+    owner: "@bmad-bmm-dev"
+    status: "TODO"
+    priority: "P0"
+    dependencies: []
+    blocks: ["E3-2", "E3-3", "E3-4"]
+    acceptance_criteria:
+      - "Service retrieves current note"
+      - "Service fetches related notes via RAG"
+      - "Service manages context window"
+      - "Service handles context injection"
+      - "No performance impact on typing"
+      - "Caches context for 5 minutes"
+    tech_notes:
+      - "Location: src/lib/context/ContextEngine.ts"
+      - "Cache: In-memory with TTL"
+      - "Use existing RAG store"
+    test_strategy:
+      - "Unit test: Context retrieval"
+      - "Performance test: Latency < 100ms"
+    validation:
+      typecheck: "pending"
+      test_coverage: "pending"
+      i18n_complete: "pending"
+      code_review: "pending"
+    created_at: "2026-01-06"
+  - id: "E3-2"
+    title: "Note Content Retrieval"
+    epic: "E3"
+    points: 8
+    owner: "@bmad-bmm-dev"
+    status: "TODO"
+    priority: "P0"
+    dependencies: ["E3-1"]
+    blocks: ["E3-3"]
+    acceptance_criteria:
+      - "Gets BlockNote blocks"
+      - "Extracts text content"
+      - "Handles large notes (chunking)"
+      - "Preserves formatting (headers, lists)"
+      - "Respects privacy (no sensitive data)"
+      - "Fallback for empty notes"
+    tech_notes:
+      - "Use NoteStore methods"
+      - "Chunk size: 8000 tokens"
+      - "Format: Markdown or plaintext"
+    test_strategy:
+      - "Test with various note sizes"
+      - "Test formatting preservation"
+    validation:
+      typecheck: "pending"
+      test_coverage: "pending"
+      i18n_complete: "pending"
+      code_review: "pending"
+    created_at: "2026-01-06"
+  - id: "E3-3"
+    title: "RAG Query Integration"
+    epic: "E3"
+    points: 8
+    owner: "@bmad-bmm-dev"
+    status: "TODO"
+    priority: "P0"
+    dependencies: ["E3-1", "E3-2"]
+    blocks: ["E3-4"]
+    acceptance_criteria:
+      - "Embed current note content"
+      - "Query vector store"
+      - "Return top 5 related notes"
+      - "Include relevance scores"
+      - "Exclude current note"
+      - "Timeout after 2 seconds"
+    tech_notes:
+      - "Use existing RAG pipeline"
+      - "Embedding: transformers.js"
+      - "Vector store: Orama or existing"
+    test_strategy:
+      - "Test query accuracy"
+      - "Test performance"
+    validation:
+      typecheck: "pending"
+      test_coverage: "pending"
+      i18n_complete: "pending"
+      code_review: "pending"
+    created_at: "2026-01-06"
+  - id: "E3-4"
+    title: "Context Injection System"
+    epic: "E3"
+    points: 8
+    owner: "@bmad-bmm-dev"
+    status: "TODO"
+    priority: "P0"
+    dependencies: ["E3-1", "E3-3"]
+    blocks: ["E3-5"]
+    acceptance_criteria:
+      - "System prompt includes context"
+      - "Context formatted for readability"
+      - "Context length optimized (truncate if needed)"
+      - "Clear separation between context and user message"
+      - "Works with different model token limits"
+      - "Toggle to enable/disable context"
+    tech_notes:
+      - "Template: Current Note:\\n{content}\\n\\nRelated:\\n{related}"
+      - "Token counting via cl100k_base"
+      - "Settings: Toggle in chat header"
+    test_strategy:
+      - "Test with various context sizes"
+      - "Test toggle functionality"
+    validation:
+      typecheck: "pending"
+      test_coverage: "pending"
+      i18n_complete: "pending"
+      code_review: "pending"
+    created_at: "2026-01-06"
+  - id: "E3-5"
+    title: "Note Reference Support"
+    epic: "E3"
+    points: 4
+    owner: "@bmad-bmm-dev"
+    status: "TODO"
+    priority: "P1"
+    dependencies: ["E3-4"]
+    blocks: []
+    acceptance_criteria:
+      - "/note slash command"
+      - "Shows list of recent notes"
+      - "Inserts selected note title"
+      - "Bot can cite specific notes"
+      - "Clickable note references in responses"
+      - "Navigation to referenced note"
+    tech_notes:
+      - "Component: NoteReference.tsx"
+      - "Slash command: /note [query]"
+      - "Click handler: Navigate to note"
+    test_strategy:
+      - "Test slash command"
+      - "Test reference click"
+    validation:
+      typecheck: "pending"
+      test_coverage: "pending"
+      i18n_complete: "pending"
+      code_review: "pending"
+    created_at: "2026-01-06"
+  - id: "E3-6"
+    title: "Inline AI Commands"
+    epic: "E3"
+    points: 4
+    owner: "@bmad-bmm-dev"
+    status: "TODO"
+    priority: "P1"
+    dependencies: ["E3-4"]
+    blocks: []
+    acceptance_criteria:
+      - "Selection shows AI menu"
+      - "Commands: Summarize, Improve, Translate"
+      - "AI processes selection"
+      - "Result replaces or appends"
+      - "Keyboard shortcuts (Cmd+/)"
+      - "Animation on processing"
+    tech_notes:
+      - "Component: AISlashCommand.tsx"
+      - "Use existing NoteEditor integration"
+      - "Animation: Framer Motion"
+    test_strategy:
+      - "Test menu visibility"
+      - "Test command execution"
+    validation:
+      typecheck: "pending"
+      test_coverage: "pending"
+      i18n_complete: "pending"
+      code_review: "pending"
+    created_at: "2026-01-06"
 
 # Sprint 1 Metrics
 velocity:
@@ -1016,15 +1190,16 @@ epics:
     completed_at: "2026-01-05T21:45:00Z"
   - id: "E2"
     name: "Multimodal Input System"
-    status: "IN_PROGRESS"
-    progress: 87.5 # 7/8 stories = 87.5%
+    status: "DONE"
+    progress: 100 # 8/8 stories = 100%
     stories_total: 8
-    stories_completed: 7
+    stories_completed: 8
     stories_in_progress: 0
     points_total: 56
-    points_completed: 59
+    points_completed: 64
     points_in_progress: 0
     started_at: "2026-01-05T22:00:00Z"
+    completed_at: "2026-01-06T01:15:00Z"
   - id: "E3"
     name: "Context Awareness Engine"
     status: "PENDING"

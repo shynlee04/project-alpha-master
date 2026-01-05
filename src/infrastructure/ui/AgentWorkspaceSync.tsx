@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
-import { crossWorkspaceEventBus, DomainEventType } from '@/infrastructure/events/event-bus';
-import type { WorkspaceChangeEvent } from '@/lib/events';
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
+import type { WorkspaceChangeEvent } from '@/lib/events/cross-workspace-event-bus';
 
 /**
  * AgentWorkspaceSync Component
@@ -29,14 +29,10 @@ export function AgentWorkspaceSync() {
         };
 
         // Subscribe to workspace changes
-        // Using the cross-workspace event bus which handles both local and cross-tab events
-        const unsubscribe = crossWorkspaceEventBus.on(
-            DomainEventType.WORKSPACE_CHANGED,
-            (event: unknown) => handleWorkspaceChange(event as WorkspaceChangeEvent)
-        );
+        crossWorkspaceEventBus.onWorkspaceChanged(handleWorkspaceChange);
 
         return () => {
-            unsubscribe();
+            crossWorkspaceEventBus.offWorkspaceChanged(handleWorkspaceChange);
         };
     }, [selectAgentForWorkspace, _hasHydrated]);
 

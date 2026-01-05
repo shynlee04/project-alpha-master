@@ -17,14 +17,12 @@ current_phase:
   id: "phase_4"
   name: "Consolidation & Cleanup"
   status: "IN_PROGRESS"
-  progress: 20%
+  progress: 25%
 
 current_story:
-  id: "S-020"
-  title: "Fix TypeScript Errors"
+  id: "S-012"
+  title: "Split Tier 1 God Stores"
   status: "IN_PROGRESS"
-  type: "TYPESCRIPT_FIX"
-  issues: ["ARCH-004"]
   
 # ═══════════════════════════════════════════════════════════════════════════
 # STATUS LOG
@@ -50,7 +48,7 @@ stories_completed:
     note: "Verified: File is 129 lines, composed of slices."
     
   - id: "S-012"
-    status: "DONE"
+    status: "IN_PROGRESS" # Re-opened as per user request (Split Tier 1 Stores)
   - id: "S-013"
     status: "DONE"
   - id: "S-014"
@@ -77,33 +75,32 @@ stories_completed:
   - id: "S-019"
      status: "DONE"
 
+  - id: "S-020"
+     title: "Fix TypeScript Errors (Permissions Store Fixed)"
+     status: "IN_PROGRESS"
+     note: "Targeted fix for permissions store done. General project TS fix pending."
+    
+  - id: "S-021"
+    title: "Circular Dependencies (Workspace-Sync Validated)"
+    status: "DONE"
+    
+  - id: "S-023"
+    title: "Implement IndexedDB Quota Handling (Dexie Validated)"
+    status: "DONE"
+
 # ═══════════════════════════════════════════════════════════════════════════
 # QUEUE
 # ═══════════════════════════════════════════════════════════════════════════
 
 queue:
-  - id: "S-020"
-    title: "Fix TypeScript Errors Batch 1 (150 errors)"
+  - id: "S-012"
+    title: "Split quiz-store.ts (658 lines)"
     status: "IN_PROGRESS"
-    
-  - id: "S-021"
-    title: "Fix TypeScript Errors Batch 2 (156 errors)"
-    status: "PENDING"
-    
-  - id: "S-022"
-    title: "Break Circular Dependencies"
-    status: "PENDING"
-    
-  - id: "S-023"
-    title: "Implement IndexedDB Quota Handling"
-    status: "PENDING" # Seen implemented, but will double check if it covers all.
 
-# ═══════════════════════════════════════════════════════════════════════════
-# ACTIVE TASKS (S-020)
-# ═══════════════════════════════════════════════════════════════════════════
-
-current_tasks:
-  - task: "Run Type Check"
+  - id: "S-012b"
+    title: "Split canvas-store.ts (623 lines)"
     status: "PENDING"
-  - task: "Analyze Errors"
+    
+  - id: "S-026"
+    title: "Comprehensive Testing"
     status: "PENDING"
