@@ -306,13 +306,55 @@ stories:
     started_at: "2026-01-05T16:30:00Z"
     completed_at: "2026-01-05T17:30:00Z"
 
+  - id: "E1-8"
+    title: "Workspace-Specific Chat Settings"
+    epic: "E1"
+    points: 5
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: ["E1-7"]
+    blocks: []
+    acceptance_criteria:
+      - "Model selection persists per workspace"
+      - "Temperature setting persists per workspace"
+      - "Auto-scroll setting persists per workspace"
+      - "Settings UI shows workspace name"
+      - "Default settings applied for new workspaces"
+    tech_notes:
+      - "Created chat-settings-store.ts with workspace-scoped settings"
+      - "Added chat.json i18n namespace (P1-1 fix)"
+      - "Integrated autoScroll setting into EnhancedChatInterface"
+      - "Zustand persist with localStorage for settings"
+    artifacts_created:
+      - "src/infrastructure/persistence/stores/chat/chat-settings-store.ts (170 lines, NEW)"
+      - "src/infrastructure/persistence/stores/chat/index.ts (32 lines, barrel)"
+      - "src/i18n/en/chat.json (35 lines, NEW)"
+      - "src/i18n/vi/chat.json (35 lines, NEW)"
+      - "_bmad-output/story-contexts/E1-8-story-context-2026-01-05.md"
+    files_modified:
+      - "src/presentation/components/ide/AgentChatPanel.tsx (+2 lines, useWorkspaceChatSettings)"
+      - "src/presentation/components/ide/EnhancedChatInterface.tsx (+6 lines, autoScroll prop)"
+    test_strategy:
+      - "Manual test: Toggle auto-scroll in IDE, verify persists across workspace switch"
+      - "Manual test: Verify IDE and Notes have independent settings"
+      - "Manual test: Refresh page, verify settings restored from localStorage"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T18:00:00Z"
+    completed_at: "2026-01-05T18:30:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 58
-  actual: 58
-  completed: 58
+  planned: 63
+  actual: 63
+  completed: 63
   remaining: 0
-  burndown: [58, 0]
+  burndown: [63, 0]
 
 # Sprint 1 Risks
 risks:
@@ -396,12 +438,12 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 58 # 7/12 stories = 58%
+    progress: 63 # 8/12 stories = 63%
     stories_total: 12
-    stories_completed: 7
+    stories_completed: 8
     stories_in_progress: 0
-    points_total: 101
-    points_completed: 58
+    points_total: 106
+    points_completed: 63
     points_in_progress: 0
   - id: "E2"
     name: "Multimodal Input System"
@@ -482,9 +524,9 @@ project_summary:
   total_stories: 73
   total_points: 518
   completed_epics: 0
-  completed_stories: 7
-  completed_points: 58
-  overall_progress: 11
+  completed_stories: 8
+  completed_points: 63
+  overall_progress: 12
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

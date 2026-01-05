@@ -17,6 +17,8 @@ import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-ap
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { getCodingAgentSystemPrompt, getNotesAgentSystemPrompt } from '@/lib/agent/system-prompt';
+// E1-8: Workspace-specific chat settings
+import { useWorkspaceChatSettings } from '@/infrastructure/persistence/stores/chat';
 /**
  * @workspace ide-only
  *
@@ -145,6 +147,9 @@ export function AgentChatPanel({
 
     // Auto-Approve Settings
     const { shouldAutoApprove } = useAutoApproveStore();
+
+    // E1-8: Workspace-specific chat settings (model, temperature, autoScroll)
+    const chatSettings = useWorkspaceChatSettings(workspaceType);
 
     // Create welcome message
     const createWelcomeMessage = useCallback((): ChatMessage => ({
@@ -496,6 +501,7 @@ export function AgentChatPanel({
                     onSaveArtifact={handleSaveArtifact}
                     onScroll={handleScroll}
                     setScrollRef={scrollRef}
+                    autoScroll={chatSettings.autoScroll} // E1-8: Workspace-specific auto-scroll
                 />
             </div>
 

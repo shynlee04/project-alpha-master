@@ -44,6 +44,8 @@ interface EnhancedChatProps {
     onSaveArtifact?: (code: string, language: string) => void
     onScroll?: (e: React.UIEvent<HTMLDivElement>) => void
     setScrollRef?: React.RefObject<HTMLDivElement | null>
+    /** E1-8: Auto-scroll to bottom on new messages */
+    autoScroll?: boolean
 }
 
 export function EnhancedChatInterface({
@@ -55,15 +57,18 @@ export function EnhancedChatInterface({
     onSaveArtifact,
     onScroll,
     setScrollRef,
+    autoScroll = true, // E1-8: Default to true for backward compatibility
 }: EnhancedChatProps) {
     const { t } = useTranslation()
     const [input, setInput] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    // Auto-scroll to bottom on new messages
+    // E1-8: Auto-scroll to bottom on new messages (only if autoScroll is enabled)
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages, isTyping])
+        if (autoScroll) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [messages, isTyping, autoScroll])
 
     // DEBUG: Log messages received
     useEffect(() => {

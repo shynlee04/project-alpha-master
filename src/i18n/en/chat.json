@@ -1,0 +1,40 @@
+{
+  "settings": {
+    "title": "Chat Settings",
+    "description": "Configure chat behavior for this workspace",
+    "workspaceLabel": "Settings for {{workspace}}",
+    "model": {
+      "label": "Model",
+      "description": "AI model to use for responses"
+    },
+    "temperature": {
+      "label": "Temperature",
+      "description": "Higher values make responses more creative"
+    },
+    "autoScroll": {
+      "label": "Auto-scroll",
+      "description": "Automatically scroll to new messages"
+    },
+    "systemPrompt": {
+      "label": "System Prompt",
+      "description": "Custom instructions for the AI"
+    },
+    "reset": {
+      "label": "Reset to Defaults",
+      "description": "Reset all settings to default values"
+    },
+    "saved": "Settings saved for {{workspace}} workspace",
+    "resetConfirm": "Are you sure you want to reset all settings to defaults?"
+  },
+  "state": {
+    "loading": "Loading chat settings...",
+    "error": "Failed to load chat settings",
+    "saving": "Saving settings..."
+  },
+  "workspace": {
+    "ide": "IDE",
+    "notes": "Notes",
+    "knowledge": "Knowledge",
+    "study": "Study"
+  }
+}
