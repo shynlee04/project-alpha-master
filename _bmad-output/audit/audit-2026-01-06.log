@@ -1,0 +1,39 @@
+[2026-01-06 03:23:35] [INFO] ==========================================
+[2026-01-06 03:23:35] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 03:23:35] [INFO] ==========================================
+[2026-01-06 03:23:35] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 03:23:36] [INFO] Active artifacts: 5
+[2026-01-06 03:23:36] [INFO] Stale artifacts: 0
+[2026-01-06 03:23:36] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 03:23:37] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 03:23:37] [INFO] Total files checked: 28
+[2026-01-06 03:23:37] [INFO] Files missing governance: 1
+[2026-01-06 03:23:37] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 03:23:37] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 03:23:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 03:23:58] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 03:24:06] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 03:24:15] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 03:24:23] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 03:24:33] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/ralph-loop-final-certification-182-2025-12-31.md[0m
+[2026-01-06 03:24:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/cwac-p0-story-context.md[0m
+[2026-01-06 03:24:54] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/WB-8.3-cross-workspace-event-system-implementation-2026-01-01.md[0m
+[2026-01-06 03:25:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/provider-config-consolidation-plan-2026-01-01.md[0m
+[2026-01-06 03:25:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/rc-001-hook-violation-fix-2025-12-29.md[0m
+[2026-01-06 03:25:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/epic-22-retrospective.md[0m
+[2026-01-06 03:25:40] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/24-2-fsa-handle-persistence.md[0m
+[2026-01-06 03:25:52] [INFO] ==========================================
+[2026-01-06 03:25:52] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 03:25:53] [INFO] ==========================================
+[2026-01-06 03:25:53] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 03:25:53] [INFO] Active artifacts: 5
+[2026-01-06 03:25:53] [INFO] Stale artifacts: 0
+[2026-01-06 03:25:53] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 03:25:54] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 03:25:55] [INFO] Total files checked: 28
+[2026-01-06 03:25:55] [INFO] Files missing governance: 1
+[2026-01-06 03:25:55] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 03:25:55] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 03:25:56] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/23-3-migrate-layout-components.md[0m
+[2026-01-06 03:26:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/epic-wb-2-completion-report-2026-01-01.md[0m
+[2026-01-06 03:26:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m

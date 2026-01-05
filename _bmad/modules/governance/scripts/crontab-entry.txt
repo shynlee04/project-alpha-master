@@ -1,0 +1,10 @@
+# BMAD Governance Daily Audit Cron Job
+# Add this to your crontab with: crontab -e
+# Or install with: crontab _bmad/modules/governance/scripts/crontab-entry.txt
+
+# Daily governance audit at midnight (+07:00 timezone)
+# Adjust the hour (0-23) based on your preferred timezone
+0 0 * * * /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/modules/governance/scripts/daily-audit.sh >> /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/governance/audits/cron.log 2>&1
+
+# Alternative: Run at 2 AM local time (common maintenance window)
+# 0 2 * * * /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/modules/governance/scripts/daily-audit.sh >> /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/governance/audits/cron.log 2>&1

@@ -14,7 +14,8 @@
       "Bash(pnpm vitest:*)",
       "Bash(pnpm typecheck:*)",
       "Bash(wc:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(find:*)"
     ]
   },
   "outputStyle": "critical-code-reviewer"

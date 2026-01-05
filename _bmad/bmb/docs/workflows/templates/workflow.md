@@ -2,6 +2,19 @@
 name: { { workflowDisplayName } }
 description: { { workflowDescription } }
 web_bundle: { { webBundleFlag } }
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "{{workflowId}}"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "{{createdAt}}"
+expires_at: "{{expiresAt}}"
+status: "ACTIVE"
+team: "{{team}}"
+parent_id: "{{parentId}}"
+related_artifacts: []
 ---
 
 # {{workflowDisplayName}}
