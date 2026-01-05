@@ -21,10 +21,10 @@ last_updated: "2026-01-05T15:20:00+07:00"
 # ═══════════════════════════════════════════════════════════════════════════
 
 summary:
-  total_artifacts: 4
+  total_artifacts: 6
   by_state:
     DRAFT: 0
-    ACTIVE: 4
+    ACTIVE: 6
     SUSPECT: 0
     REVIEW: 0
     ARCHIVED: 0
@@ -93,6 +93,37 @@ artifacts:
     
     references:
       - "_bmad/modules/asgl/README.md"
+      
+    referenced_by:
+      - "_bmad/modules/asgl/LOOP_STATE.yaml"
+
+  - id: "ART-20260105-005"
+    path: "_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md"
+    type: "story-handoff"
+    session: "ASGL-20260105-155500"
+    state: "ACTIVE"
+    created_at: "2026-01-05T17:00:00+07:00"
+    last_updated: "2026-01-05T17:00:00+07:00"
+    
+    references:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      
+    referenced_by:
+      - "_bmad/modules/asgl/LOOP_STATE.yaml"
+
+  - id: "ART-20260105-006"
+    path: "_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md"
+    type: "story-handoff"
+    session: "ASGL-20260105-155500"
+    state: "ACTIVE"
+    created_at: "2026-01-05T16:35:00+07:00"
+    last_updated: "2026-01-05T16:35:00+07:00"
+    
+    references:
+      - "AGENTS.md"
+      - "_bmad-output/health-assessments/project-health-assessment-2026-01-05.md"
+      - "_bmad-output/sprint-artifacts/comprehensive-remediation-sprint-2026-01-05.yaml"
       
     referenced_by:
       - "_bmad/modules/asgl/LOOP_STATE.yaml"

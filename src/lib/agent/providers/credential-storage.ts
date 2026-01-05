@@ -5,11 +5,13 @@
  * Handles all IndexedDB operations for encrypted credential storage.
  * Separates storage concerns from encryption and vault management logic.
  *
+ * FIX-2026-01-05: Made SSR-safe by using getDb() instead of db directly
+ *
  * @epic WB-PR-2 - Refactor Credential Vault
  * @story WB-PR-2.1 - Split credential-vault.ts into 3 modules
  */
 
-import { db, type CredentialRecord } from '../../state/dexie-db';
+import { getDb, type CredentialRecord } from '../../state/dexie-db';
 
 /**
  * Result of credential storage operation
@@ -30,8 +32,17 @@ export interface StorageResult {
  * - Delete credentials
  * - Clear all credentials
  * - List all provider IDs with stored credentials
+ *
+ * SSR Safety: All methods check for window/IndexedDB availability
  */
 export class CredentialStorage {
+    /**
+     * Check if we're in a browser environment with IndexedDB
+     */
+    private isAvailable(): boolean {
+        return typeof window !== 'undefined' && typeof indexedDB !== 'undefined';
+    }
+
     /**
      * Store encrypted credentials for a provider
      *
@@ -45,6 +56,16 @@ export class CredentialStorage {
         encrypted: string,
         iv: string
     ): Promise<StorageResult> {
+        if (!this.isAvailable()) {
+            console.warn('[CredentialStorage] Not available during SSR');
+            return { success: false, providerId, timestamp: new Date() };
+        }
+
+        const db = getDb();
+        if (!db) {
+            throw new Error('[CredentialStorage] Database not available');
+        }
+
         const credential: CredentialRecord = {
             providerId,
             encrypted,
@@ -69,6 +90,10 @@ export class CredentialStorage {
      * @returns Credential record or null if not found
      */
     async getCredential(providerId: string): Promise<CredentialRecord | null> {
+        if (!this.isAvailable()) return null;
+        const db = getDb();
+        if (!db) return null;
+
         const credential = await db.credentials.get(providerId);
         return credential || null;
     }
@@ -80,6 +105,10 @@ export class CredentialStorage {
      * @returns True if credentials exist
      */
     async hasCredentials(providerId: string): Promise<boolean> {
+        if (!this.isAvailable()) return false;
+        const db = getDb();
+        if (!db) return false;
+
         const credential = await db.credentials.get(providerId);
         return credential !== undefined;
     }
@@ -90,6 +119,10 @@ export class CredentialStorage {
      * @param providerId - Unique provider identifier
      */
     async deleteCredentials(providerId: string): Promise<void> {
+        if (!this.isAvailable()) return;
+        const db = getDb();
+        if (!db) return;
+
         await db.credentials.delete(providerId);
         console.log('[CredentialStorage] Deleted credentials for:', providerId);
     }
@@ -98,6 +131,10 @@ export class CredentialStorage {
      * Clear all credentials from storage
      */
     async clearAll(): Promise<void> {
+        if (!this.isAvailable()) return;
+        const db = getDb();
+        if (!db) return;
+
         console.log('[CredentialStorage] Clearing all credentials...');
         await db.credentials.clear();
         console.log('[CredentialStorage] All credentials cleared');
@@ -109,6 +146,10 @@ export class CredentialStorage {
      * @returns Array of provider IDs
      */
     async getAllProviderIds(): Promise<string[]> {
+        if (!this.isAvailable()) return [];
+        const db = getDb();
+        if (!db) return [];
+
         const credentials = await db.credentials.toArray();
         return credentials.map((c: CredentialRecord) => c.providerId);
     }
@@ -119,6 +160,10 @@ export class CredentialStorage {
      * @returns Number of stored credentials
      */
     async getCredentialCount(): Promise<number> {
+        if (!this.isAvailable()) return 0;
+        const db = getDb();
+        if (!db) return 0;
+
         return await db.credentials.count();
     }
 }

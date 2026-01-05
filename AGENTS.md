@@ -91,6 +91,114 @@ import { db, getDb } from '@/infrastructure/persistence/dexie-db';
 
 ---
 
+## 🏥 PROJECT HEALTH STATUS (2026-01-05)
+
+> **⚠️ CRITICAL**: Project health assessment identified significant gaps between sprint claims and production reality.
+
+### Health Score Overview
+
+| Metric | Score | Status |
+|--------|-------|--------|
+| **State Integrity** | 45% | 🔴 FAILING |
+| **Code Hygiene** | 72% | 🟡 NEEDS WORK |
+| **Integration Reality** | 25% | 🔴 CRITICAL |
+| **Documentation Sync** | 60% | 🟡 DRIFT DETECTED |
+| **Production Stability** | 30% | 🔴 CRITICAL |
+| **Overall Health** | **46.4%** | 🔴 DOWN from claimed 82.5% |
+
+### Critical Blockers (P0)
+
+| ID | Issue | Root Cause | Status |
+|----|-------|------------|--------|
+| **CRIT-001** | LLM Models Not Loading After API Key Save | Model fetch fails silently, credential vault SSR issues | 🔴 S-001, S-002 |
+| **CRIT-002** | Notes Workspace Not Loading Project Files | No file-to-note conversion exists | 🔴 S-007, S-008 |
+| **CRIT-003** | Cross-Workspace State Inconsistency | Multiple overlapping stores, event bus sync incomplete | 🔴 S-009, S-010 |
+
+### Architecture Debt (P1)
+
+| Category | Count | Target | Worst Offenders |
+|----------|-------|--------|-----------------|
+| **God Stores** (>300 lines) | 69 | 0 | `rag-store.ts` (1595 lines), `conversation-threads-store.ts` (726 lines) |
+| **God Components** (>300 lines) | 45 | 0 | `AgentConfigDialog.tsx` (1089 lines) |
+| **Store Duplicates** | 3 | 0 | workspace-store, rag-store, knowledge-store |
+| **TypeScript Errors** | 306 | 0 | Production code only (test files excluded) |
+
+**Assessment Document:** `_bmad-output/health-assessments/project-health-assessment-2026-01-05.md`
+
+---
+
+## 🚀 ACTIVE SPRINT: Comprehensive Architecture Remediation
+
+> **Target**: 95% Health Score  
+> **Duration**: 15 Days  
+> **Stories**: 33 total  
+> **Mode**: AUTONOMOUS (ASGL Orchestrated)
+
+### Phase Overview
+
+| Phase | Name | Days | Stories | Status |
+|-------|------|------|---------|--------|
+| **1** | Critical Blockers Resolution | 1-2 | S-001 to S-006 | 🟡 IN_PROGRESS (4/6 done) |
+| **2** | Workspace Integration Fixes | 3-4 | S-007 to S-010 | 🔴 NOT_STARTED |
+| **3** | Architectural Remediation | 5-8 | S-011 to S-016 | 🔴 NOT_STARTED |
+| **4** | Store Consolidation & Cleanup | 9-10 | S-017 to S-021 | 🔴 NOT_STARTED |
+| **5** | Infrastructure Hardening | 11-12 | S-022 to S-025 | 🔴 NOT_STARTED |
+| **6** | Testing & Validation | 13-14 | S-026 to S-029 | 🔴 NOT_STARTED |
+| **7** | Governance Finalization | 15 | S-030 to S-033 | 🔴 NOT_STARTED |
+
+### Sprint Tracking
+
+**Sprint Plan:** `_bmad-output/sprint-artifacts/comprehensive-remediation-sprint-2026-01-05.yaml`  
+**Loop State:** `_bmad/modules/asgl/LOOP_STATE.yaml`
+
+---
+
+## 🔄 ASGL MODULE: Autonomous Self-Governing Loop Orchestrator
+
+**Module Location:** `_bmad/modules/asgl/`  
+**Version:** 2.0.0  
+**Status:** ✅ ACTIVE  
+**Role:** Loop orchestrator (INVOKES modules, does NOT replace them)
+
+### Purpose
+
+- **Loop Orchestration**: Manage autonomous development cycles
+- **Governance Enforcement**: Keep AGENTS.md updated per frequency
+- **Module Integration**: Invoke deep-scan, architecture-remediation, bmad-core as needed
+- **Wire Tracking**: Ensure no forgotten migrations
+
+### Module Routing
+
+| Story Type | Module | Workflow |
+|------------|--------|----------|
+| DIAGNOSTIC | deep-scan | targeted-scan |
+| GOD_STORE_SPLIT | architecture-remediation | eliminate-god-stores |
+| COMPONENT_SPLIT | architecture-remediation | normalize-components |
+| TYPESCRIPT_FIX | architecture-remediation | fix-typescript-errors |
+| IMPLEMENTATION | bmad-core | dev-story |
+| DOCUMENTATION | asgl | governance-update |
+
+### Governance Frequency
+
+| Document | Update Frequency |
+|----------|------------------|
+| **AGENTS.md** | Every 3 stories |
+| **Child AGENTS.md** | When layer changes >5 files |
+
+### User Commands
+
+| Command | Action |
+|---------|--------|
+| `pause` | Save state, pause loop |
+| `stop` | Complete current, generate report |
+| `status` | Show current state |
+| `override [check]` | Skip validation (requires reason) |
+
+**Master Prompt:** `_bmad/modules/asgl/MASTER_PROMPT.md`  
+**Manifest:** `_bmad/modules/asgl/MANIFEST.yaml`
+
+---
+
 ### 🔍 DEEP-SCAN MODULE (DIAGNOSTICS)
 
 **Module Location**: `_bmad/modules/deep-scan/`

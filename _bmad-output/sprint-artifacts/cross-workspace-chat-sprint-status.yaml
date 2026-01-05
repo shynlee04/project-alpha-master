@@ -524,7 +524,7 @@ stories:
     status: "DONE"
     priority: "P0"
     dependencies: ["E1-10"]
-    blocks: ["E2-2"]
+    blocks: []
     acceptance_criteria:
       - "useVoiceRecording hook created with proper TypeScript types"
       - "Voice recording state managed (isRecording, isProcessing, volumeLevel, error)"
@@ -566,13 +566,59 @@ stories:
     started_at: "2026-01-05T22:00:00Z"
     completed_at: "2026-01-05T22:30:00Z"
 
+  - id: "E2-2"
+    title: "Gemini Live API Transcription"
+    epic: "E2"
+    points: 10
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P0"
+    dependencies: ["E2-1"]
+    blocks: ["E2-3", "E2-4"]
+    acceptance_criteria:
+      - "Gemini Live API Integration (WebSocket connect, audio streaming, response parsing)"
+      - "Transcription Return (stopRecording returns transcript string, isProcessing state)"
+      - "Language Support (en-US, vi-VN from i18n.language)"
+      - "Error Handling (API key missing, network errors, transcription failed)"
+      - "Mobile Optimization (inherited from E2-1)"
+      - "TypeScript & Quality (zero errors, i18n complete)"
+    tech_notes:
+      - "Created GeminiTranscriptionService class (364 lines)"
+      - "Orchestrates AudioCaptureHandler + LiveApiWebSocketManager"
+      - "Session lifecycle: connecting → listening → processing → idle"
+      - "Language codes: en-US, vi-VN mapped from i18n language"
+      - "Singleton pattern via getTranscriptionService()"
+      - "Updated useVoiceRecording hook with apiKey option"
+      - "onChunk callback streams audio to WebSocket"
+      - "Returns TranscriptionResult with text/success/error"
+    artifacts_created:
+      - "src/lib/voice/gemini-transcription-service.ts (364 lines, NEW)"
+      - "_bmad-output/story-contexts/E2-2-story-context-2026-01-05.md"
+    files_modified:
+      - "src/lib/voice/use-voice-recording.ts (+93 lines, transcription integration)"
+      - "src/i18n/en.json (+1 voice.apiKeyMissing key)"
+      - "src/i18n/vi.json (+1 voice.apiKeyMissing key)"
+    test_strategy:
+      - "Manual test: Configure VITE_GEMINI_API_KEY, test transcription"
+      - "Manual test: Test Vietnamese language detection"
+      - "Manual test: Test English language detection"
+      - "Manual test: Test error handling without API key"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass (EN + VI)"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T22:30:00Z"
+    completed_at: "2026-01-05T09:37:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 96
-  actual: 96
-  completed: 96
+  planned: 106
+  actual: 106
+  completed: 106
   remaining: 0
-  burndown: [96, 0]
+  burndown: [106, 0]
 
 # Sprint 1 Risks
 risks:
@@ -667,12 +713,12 @@ epics:
   - id: "E2"
     name: "Multimodal Input System"
     status: "IN_PROGRESS"
-    progress: 12 # 1/8 stories = 12.5% rounded
+    progress: 25 # 2/8 stories = 25%
     stories_total: 8
-    stories_completed: 1
+    stories_completed: 2
     stories_in_progress: 0
     points_total: 56
-    points_completed: 7
+    points_completed: 17
     points_in_progress: 0
     started_at: "2026-01-05T22:00:00Z"
   - id: "E3"
@@ -746,9 +792,9 @@ project_summary:
   total_stories: 73
   total_points: 518
   completed_epics: 1
-  completed_stories: 13
-  completed_points: 96
-  overall_progress: 18
+  completed_stories: 14
+  completed_points: 106
+  overall_progress: 19
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

@@ -23,6 +23,9 @@ import {
 } from '@/lib/voice/gemini-transcription-service';
 import { GeminiTranscriptionService } from '@/lib/voice/gemini-transcription-service';
 
+// Type alias for the ref
+type TranscriptionService = GeminiTranscriptionService;
+
 /**
  * Voice recording state
  */
