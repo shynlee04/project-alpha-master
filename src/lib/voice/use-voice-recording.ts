@@ -2,19 +2,26 @@
  * useVoiceRecording Hook
  *
  * Chat-optimized voice recording hook for speech-to-text input.
- * Wraps AudioCaptureHandler from EPIC-10-1 for simplified chat integration.
+ * Integrates AudioCaptureHandler and GeminiTranscriptionService for full speech-to-text.
  *
  * @module voice/use-voice-recording
+ * @governance E2-1, E2-2
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import type { AudioChunk } from '@/lib/rag/live-api-types';
 import {
   AudioCaptureHandler,
   getAudioCapture,
   type AudioCaptureConfig,
 } from '@/lib/rag/audio-capture';
+import {
+  getTranscriptionService,
+  type TranscriptionResult,
+} from '@/lib/voice/gemini-transcription-service';
+import { GeminiTranscriptionService } from '@/lib/voice/gemini-transcription-service';
 
 /**
  * Voice recording state
@@ -65,6 +72,8 @@ export interface UseVoiceRecordingOptions {
   sampleRate?: number;
   /** Number of audio channels (default: 1) */
   channels?: number;
+  /** Gemini API key (required for transcription) */
+  apiKey?: string;
 }
 
 /**
@@ -76,6 +85,7 @@ const DEFAULT_CONFIG: Required<UseVoiceRecordingOptions> = {
   autoSendAfterSilence: 2000,
   sampleRate: 16000,
   channels: 1,
+  apiKey: '',
 };
 
 /**
@@ -93,11 +103,13 @@ function checkBrowserSupport(): boolean {
  * Hook for voice recording in chat interfaces.
  *
  * Provides a simplified API for voice-to-text input in chat.
- * Wraps the existing AudioCaptureHandler from EPIC-10-1.
+ * Integrates AudioCaptureHandler and GeminiTranscriptionService.
  *
  * @example
  * ```tsx
- * const { isRecording, startRecording, stopRecording, error } = useVoiceRecording();
+ * const { isRecording, startRecording, stopRecording, error } = useVoiceRecording({
+ *   apiKey: import.meta.env.VITE_GEMINI_API_KEY,
+ * });
  *
  * <MicButton
  *   isRecording={isRecording}
@@ -109,24 +121,54 @@ function checkBrowserSupport(): boolean {
 export function useVoiceRecording(
   options: UseVoiceRecordingOptions = {}
 ): UseVoiceRecordingResult {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const config = { ...DEFAULT_CONFIG, ...options };
 
-  // State
-  const [state, setState] = useState<UseVoiceRecordingState>({
+  // State - isSupported is static per session, so separate it
+  const isSupported = checkBrowserSupport();
+  const [state, setState] = useState<Omit<UseVoiceRecordingState, 'isSupported'>>({
     isRecording: false,
     isProcessing: false,
     volumeLevel: 0,
     error: null,
-    isSupported: checkBrowserSupport(),
   });
 
   // Refs
   const audioHandlerRef = useRef<AudioCaptureHandler | null>(null);
+  const transcriptionServiceRef = useRef<TranscriptionService | null>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recordingStartTimeRef = useRef<number>(0);
   const lastVolumeTimeRef = useRef<number>(Date.now());
-  const stopRecordingRef = useRef<(() => Promise<string | null>) | null>(null);
+  const transcriptResultRef = useRef<TranscriptionResult | null>(null);
+
+  // Create transcription service with API key
+  const transcriptionService = useMemo(() => {
+    const apiKey = config.apiKey || import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      return null;
+    }
+    return getTranscriptionService({
+      apiKey,
+      onStateChange: (transcriptionState) => {
+        // Map transcription state to hook state
+        if (transcriptionState === 'processing') {
+          setState((prev) => ({ ...prev, isProcessing: true }));
+        }
+      },
+      onError: (errorMessage) => {
+        setState((prev) => ({
+          ...prev,
+          error: errorMessage || t('voice.error'),
+          isRecording: false,
+          isProcessing: false,
+        }));
+      },
+      onPartialTranscript: () => {
+        // Optional: Show partial transcript in real-time
+        // For now, we wait for final result
+      },
+    });
+  }, [config.apiKey, t]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -134,6 +176,10 @@ export function useVoiceRecording(
       if (audioHandlerRef.current) {
         audioHandlerRef.current.stop();
         audioHandlerRef.current = null;
+      }
+      if (transcriptionServiceRef.current) {
+        transcriptionServiceRef.current.cancel();
+        transcriptionServiceRef.current = null;
       }
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
@@ -146,6 +192,8 @@ export function useVoiceRecording(
    */
   const stopRecordingImpl = useCallback(async (): Promise<string | null> => {
     const handler = audioHandlerRef.current;
+    const service = transcriptionServiceRef.current;
+
     if (!handler) {
       return null;
     }
@@ -162,10 +210,12 @@ export function useVoiceRecording(
       }));
       handler.stop();
       audioHandlerRef.current = null;
+      service?.cancel();
+      transcriptionServiceRef.current = null;
       return null;
     }
 
-    // Stop recording
+    // Stop audio capture
     handler.stop();
     audioHandlerRef.current = null;
 
@@ -174,8 +224,22 @@ export function useVoiceRecording(
       silenceTimerRef.current = null;
     }
 
-    // For now, return null - transcript will be added in E2-2
-    // This hook provides the recording foundation
+    // Get transcription from service
+    let transcript = '';
+    if (service) {
+      const result: TranscriptionResult = await service.stop();
+      transcriptResultRef.current = result;
+
+      if (!result.success) {
+        setState((prev) => ({
+          ...prev,
+          error: result.error || t('voice.error'),
+        }));
+      }
+      transcript = result.text;
+      transcriptionServiceRef.current = null;
+    }
+
     setState((prev) => ({
       ...prev,
       isRecording: false,
@@ -183,18 +247,14 @@ export function useVoiceRecording(
       volumeLevel: 0,
     }));
 
-    // TODO: E2-2 will integrate with Gemini Live API for transcription
-    return null;
+    return transcript || null;
   }, [config.minDuration, t]);
-
-  // Keep ref updated
-  stopRecordingRef.current = stopRecordingImpl;
 
   /**
    * Start recording audio
    */
   const startRecording = useCallback(async () => {
-    if (!state.isSupported) {
+    if (!isSupported) {
       setState((prev) => ({
         ...prev,
         error: t('voice.notSupported'),
@@ -202,14 +262,31 @@ export function useVoiceRecording(
       return;
     }
 
+    if (!transcriptionService) {
+      setState((prev) => ({
+        ...prev,
+        error: t('voice.apiKeyMissing', 'Gemini API key not configured'),
+      }));
+      return;
+    }
+
     try {
       setState((prev) => ({ ...prev, isRecording: true, error: null, isProcessing: false }));
+      transcriptResultRef.current = null;
+
+      // Start transcription service
+      await transcriptionService.start(i18n.language);
+      transcriptionServiceRef.current = transcriptionService;
 
       // Get or create audio handler with chat-optimized config
       const audioConfig: AudioCaptureConfig = {
         audioConfig: {
           sampleRate: config.sampleRate,
           channels: config.channels,
+        },
+        onChunk: (chunk: AudioChunk) => {
+          // Stream audio chunk to transcription service
+          transcriptionServiceRef.current?.sendAudioChunk(chunk);
         },
         onVolumeChange: (level: number) => {
           setState((prev) => ({ ...prev, volumeLevel: level }));
@@ -239,7 +316,7 @@ export function useVoiceRecording(
       audioHandlerRef.current = handler;
       recordingStartTimeRef.current = Date.now();
 
-      // Set up auto-stop after max duration using ref to avoid circular dependency
+      // Set up auto-stop after max duration
       silenceTimerRef.current = setTimeout(async () => {
         if (audioHandlerRef.current) {
           await stopRecordingImpl();
@@ -255,6 +332,7 @@ export function useVoiceRecording(
             isProcessing: false,
             error: t('voice.permissionDenied'),
           }));
+          transcriptionService?.cancel();
           return;
         }
       }
@@ -264,8 +342,9 @@ export function useVoiceRecording(
         isProcessing: false,
         error: t('voice.error'),
       }));
+      transcriptionService?.cancel();
     }
-  }, [state.isSupported, config, t, stopRecordingImpl]);
+  }, [isSupported, config, transcriptionService, i18n.language, t, stopRecordingImpl]);
 
   /**
    * Stop recording and return transcript
@@ -279,9 +358,16 @@ export function useVoiceRecording(
    */
   const cancelRecording = useCallback(() => {
     const handler = audioHandlerRef.current;
+    const service = transcriptionServiceRef.current;
+
     if (handler) {
       handler.stop();
       audioHandlerRef.current = null;
+    }
+
+    if (service) {
+      service.cancel();
+      transcriptionServiceRef.current = null;
     }
 
     if (silenceTimerRef.current) {
@@ -307,6 +393,7 @@ export function useVoiceRecording(
 
   return {
     ...state,
+    isSupported,
     startRecording,
     stopRecording,
     cancelRecording,

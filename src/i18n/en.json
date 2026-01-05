@@ -1,4 +1,8 @@
 {
+  "providers.status.configured": "Configured",
+  "providers.status.missing": "Missing Key",
+  "providers.status.error": "Error",
+  "providers.status.loading": "Checking...",
   "citation.badge.ariaLabel_one": "{{count}} citation",
   "citation.badge.ariaLabel_other": "{{count}} citations",
   "citation.badge.srCitations": "Citations",
@@ -1172,5 +1176,6 @@
   "voice.voiceInput": "Voice Input",
   "voice.duration": "{{seconds}}s",
   "voice.tooShort": "Recording too short",
-  "voice.autoSent": "Auto-sent after {{seconds}}s of silence"
+  "voice.autoSent": "Auto-sent after {{seconds}}s of silence",
+  "voice.apiKeyMissing": "Gemini API key not configured"
 }

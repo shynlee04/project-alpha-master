@@ -1,4 +1,8 @@
 {
+  "providers.status.configured": "Đã cấu hình",
+  "providers.status.missing": "Thiếu Key",
+  "providers.status.error": "Lỗi",
+  "providers.status.loading": "Đang kiểm tra...",
   "citation.badge.ariaLabel_one": "{{count}} trích dẫn",
   "citation.badge.ariaLabel_other": "{{count}} trích dẫn",
   "citation.badge.srCitations": "Trích dẫn",
@@ -1172,5 +1176,6 @@
   "voice.voiceInput": "Nhập Giọng Nói",
   "voice.duration": "{{seconds}}giây",
   "voice.tooShort": "Ghi âm quá ngắn",
-  "voice.autoSent": "Tự động gửi sau {{seconds}}giây im lặng"
+  "voice.autoSent": "Tự động gửi sau {{seconds}}giây im lặng",
+  "voice.apiKeyMissing": "Chưa cấu hình khóa API Gemini"
 }

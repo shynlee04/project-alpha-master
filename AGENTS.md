@@ -1,4 +1,9 @@
-
+## Ultra important: all teams must manage resources efficiently
+- no more than 2 background tasks on-going at the same time
+- kill background tasks after and before every new run
+- do not run build or run whole project test/type/linter checking -> they are resource-demanding ->
+ run only on what you have implemented -> more strategic dry-running for double-checking, proof-reading before running any sorts of tests, tools that depend too much or machines' resource.
+ 
 ## 📐 DEFINITIVE ARCHITECTURE REFERENCE
 
 > **⚠️ AUTHORITATIVE**: These documents are the single source of truth for all architectural decisions.
