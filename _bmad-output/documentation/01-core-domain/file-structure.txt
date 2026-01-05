@@ -1,0 +1,18 @@
+src/core/
+├── index.ts (16 lines) - Barrel export for domain entities
+├── entities/
+│   ├── Agent.ts (95 lines) - Agent entity with workspace bindings
+│   ├── Provider.ts (66 lines) - LLM Provider and Model entities
+│   ├── Conversation.ts (124 lines) - Conversation, Message, Thread entities
+│   └── Tool.ts (95 lines) - Tool entity and execution interfaces
+├── rules/ (EMPTY) - Domain services not implemented
+└── value-objects/ (EMPTY) - Value objects not defined
+
+SUMMARY:
+- Total files: 5
+- Total lines of code: 396
+- Entities: 4 (Agent, LLMProvider, Conversation, Tool)
+- Interfaces: 22
+- Types: 10
+- Domain services: 0 (rules/ directory empty)
+- Value objects: 0 (value-objects/ directory empty)

@@ -5,11 +5,13 @@
  * Handles workspace switching logic and enabled workspaces.
  *
  * Part of P0-2 refactoring: Extracted from unified-workspace-provider.tsx
+ * E1-6: Added conversation persistence support
  */
 
 import { useMemo, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 
 /**
  * Extended workspace type including 'hub' landing page
@@ -63,8 +65,10 @@ export function useWorkspaceSwitching(
   }, []);
 
   // Switch to a different workspace
+  // @param newWorkspace - Target workspace to switch to
+  // @param onBeforeSwitch - Optional callback before switch (for saving state)
   const switchWorkspace = useCallback(
-    (newWorkspace: ExtendedWorkspaceType) => {
+    async (newWorkspace: ExtendedWorkspaceType, onBeforeSwitch?: () => void | Promise<void>) => {
       if (!projectId) {
         console.warn('[WorkspaceProvider] Cannot switch workspace: no project loaded');
         return;
@@ -78,6 +82,26 @@ export function useWorkspaceSwitching(
       }
 
       console.log(`[WorkspaceProvider] Switching workspace: ${currentWorkspace} → ${newWorkspace}`);
+
+      // E1-6: Call pre-switch callback (for conversation persistence)
+      if (onBeforeSwitch) {
+        try {
+          await onBeforeSwitch();
+          console.log('[WorkspaceProvider] Pre-switch callback completed');
+        } catch (error) {
+          console.error('[WorkspaceProvider] Pre-switch callback failed:', error);
+          // Continue with switch even if save fails
+        }
+      }
+
+      // Emit workspace changed event for cross-workspace listeners
+      if (currentWorkspace && (currentWorkspace as ExtendedWorkspaceType) !== 'hub') {
+        crossWorkspaceEventBus.emitWorkspaceChanged({
+          from: currentWorkspace,
+          to: newWorkspace as WorkspaceType,
+          timestamp: new Date().toISOString(),
+        });
+      }
 
       // Only persist valid WorkspaceType (not 'hub')
       if (newWorkspace !== 'hub') {

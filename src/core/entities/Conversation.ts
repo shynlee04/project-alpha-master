@@ -93,6 +93,8 @@ export interface ConversationMetadata {
   title?: string;
   tags?: string[];
   pinned?: boolean;
+  /** E1-6: Scroll position in pixels (for restoring conversation view) */
+  scrollPosition?: number;
 }
 
 export interface Attachment {

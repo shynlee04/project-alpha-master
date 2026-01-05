@@ -1,0 +1,73 @@
+{
+  "scan_metadata": {
+    "scan_id": "DOC-SCAN-2026-01-05",
+    "started_at": "2026-01-05T00:00:00Z",
+    "status": "in_progress",
+    "total_domains": 9,
+    "completed_domains": 0,
+    "documentation_languages": ["en", "vi"]
+  },
+  "domains": {
+    "01-core-domain": {
+      "status": "pending",
+      "path": "src/core",
+      "scan_results": null,
+      "documentation": null
+    },
+    "02-lib-domain": {
+      "status": "pending",
+      "path": "src/lib",
+      "scan_results": null,
+      "documentation": null
+    },
+    "03-presentation-domain": {
+      "status": "pending",
+      "path": "src/presentation",
+      "scan_results": null,
+      "documentation": null
+    },
+    "04-infrastructure-domain": {
+      "status": "pending",
+      "path": "src/infrastructure",
+      "scan_results": null,
+      "documentation": null
+    },
+    "05-routes-domain": {
+      "status": "pending",
+      "path": "src/routes",
+      "scan_results": null,
+      "documentation": null
+    },
+    "06-shared-domain": {
+      "status": "pending",
+      "path": "src/shared",
+      "scan_results": null,
+      "documentation": null
+    },
+    "07-tests-domain": {
+      "status": "pending",
+      "path": "src/__tests__",
+      "scan_results": null,
+      "documentation": null
+    },
+    "08-config-domain": {
+      "status": "pending",
+      "path": "src",
+      "scan_results": null,
+      "documentation": null
+    },
+    "09-public-assets": {
+      "status": "pending",
+      "path": "public",
+      "scan_results": null,
+      "documentation": null
+    }
+  },
+  "documentation_artifacts": {
+    "readmes": [],
+    "api_docs": [],
+    "developer_guides": [],
+    "architecture_docs": [],
+    "configuration_docs": []
+  }
+}

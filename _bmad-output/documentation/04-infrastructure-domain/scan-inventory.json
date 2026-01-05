@@ -1,0 +1,177 @@
+{
+  "scanMetadata": {
+    "timestamp": "2026-01-05T00:00:00.000Z",
+    "targetDomain": "src/infrastructure",
+    "language": "English",
+    "scannerVersion": "1.0.0"
+  },
+  "overview": {
+    "totalFiles": 248,
+    "totalLinesOfCode": 45000,
+    "modules": [
+      "persistence",
+      "events",
+      "sync"
+    ]
+  },
+  "modules": {
+    "persistence": {
+      "files": 120,
+      "description": "Dexie IndexedDB persistence layer with type-safe schemas",
+      "keyComponents": [
+        "ViaGentDatabase",
+        "Dexie migrations",
+        "Helper functions",
+        "Store slices"
+      ]
+    },
+    "events": {
+      "files": 8,
+      "description": "Cross-cutting event system for state coordination",
+      "keyComponents": [
+        "EventBus",
+        "CrossWorkspaceEventBus",
+        "DomainEventType enum"
+      ]
+    },
+    "sync": {
+      "files": 120,
+      "description": "File synchronization system with FSA and IndexedDB adapters",
+      "keyComponents": [
+        "SyncEngine",
+        "FSA Adapter",
+        "IndexedDB Adapter",
+        "Conflict Resolution"
+      ]
+    }
+  },
+  "databaseSchema": {
+    "version": 15,
+    "tables": [
+      {
+        "name": "projects",
+        "indexes": ["id", "lastOpened", "name"],
+        "purpose": "Project metadata storage"
+      },
+      {
+        "name": "ideState",
+        "indexes": ["projectId", "updatedAt"],
+        "purpose": "IDE state persistence"
+      },
+      {
+        "name": "conversations",
+        "indexes": ["id", "projectId", "updatedAt"],
+        "purpose": "Conversation history"
+      },
+      {
+        "name": "taskContexts",
+        "indexes": ["id", "projectId", "agentId", "status", "[projectId+status]"],
+        "purpose": "AI agent task tracking"
+      },
+      {
+        "name": "toolExecutions",
+        "indexes": ["id", "taskId", "toolName", "status", "[taskId+status]"],
+        "purpose": "AI tool execution audit"
+      },
+      {
+        "name": "credentials",
+        "indexes": ["providerId", "createdAt"],
+        "purpose": "Encrypted API credentials"
+      },
+      {
+        "name": "threads",
+        "indexes": ["id", "projectId", "updatedAt", "[projectId+updatedAt]"],
+        "purpose": "Conversation threads"
+      },
+      {
+        "name": "providerConfigs",
+        "indexes": ["id", "updatedAt"],
+        "purpose": "Zustand store persistence"
+      },
+      {
+        "name": "agentConfigs",
+        "indexes": ["id", "updatedAt"],
+        "purpose": "Agent configuration"
+      },
+      {
+        "name": "conversationState",
+        "indexes": ["id", "updatedAt"],
+        "purpose": "Conversation state"
+      },
+      {
+        "name": "syncStatus",
+        "indexes": ["id", "path", "syncStatus", "lastSyncedAt", "[path+syncStatus]"],
+        "purpose": "Sync status tracking"
+      },
+      {
+        "name": "fileMetadata",
+        "indexes": ["[projectId+path]", "projectId", "lastModified", "syncedAt"],
+        "purpose": "Incremental sync cache"
+      },
+      {
+        "name": "toolExecutionLogs",
+        "indexes": ["id", "conversationId", "messageId", "toolName", "timestamp", "[conversationId+timestamp]"],
+        "purpose": "Tool context persistence"
+      },
+      {
+        "name": "fsaHandles",
+        "indexes": ["projectId", "lastAccessedAt"],
+        "purpose": "FSA handle persistence"
+      },
+      {
+        "name": "sessionSnapshots",
+        "indexes": ["id", "projectId", "createdAt", "expiresAt", "[projectId+createdAt]"],
+        "purpose": "Session restoration"
+      },
+      {
+        "name": "fileSyncStatus",
+        "indexes": ["id", "updatedAt"],
+        "purpose": "File sync status"
+      },
+      {
+        "name": "sources",
+        "indexes": ["id", "projectId", "type", "createdAt", "deleted", "[projectId+type]", "[projectId+createdAt]", "[projectId+deleted]"],
+        "purpose": "Knowledge sources (PDF, URL, text)"
+      },
+      {
+        "name": "collections",
+        "indexes": ["id", "projectId", "name", "createdAt", "[projectId+name]"],
+        "purpose": "Source organization"
+      },
+      {
+        "name": "oramaIndexes",
+        "indexes": ["projectId", "lastUpdated", "schemaVersion"],
+        "purpose": "RAG search index"
+      },
+      {
+        "name": "embedding_models",
+        "indexes": ["modelId", "name", "version", "quantization", "downloadedAt"],
+        "purpose": "Local embedding models"
+      },
+      {
+        "name": "notes",
+        "indexes": ["id", "projectId", "parentId", "isFavorite", "order", "createdAt", "updatedAt", "[projectId+parentId]", "[projectId+isFavorite]", "[projectId+createdAt]"],
+        "purpose": "BlockNote editor data"
+      }
+    ]
+  },
+  "eventTypes": {
+    "workspace": ["WORKSPACE_TRANSITION_STARTED", "WORKSPACE_TRANSITION_COMPLETED", "WORKSPACE_CHANGED"],
+    "agent": ["AGENT_SELECTED", "AGENT_CONFIG_UPDATED", "AGENT_CREATED", "AGENT_DELETED"],
+    "conversation": ["CONVERSATION_CREATED", "CONVERSATION_MESSAGE_ADDED", "CONVERSATION_TITLE_UPDATED"],
+    "provider": ["PROVIDER_KEY_SET", "PROVIDER_KEY_REMOVED", "PROVIDER_MODELS_FETCHED"],
+    "sync": ["SYNC_STARTED", "SYNC_COMPLETED", "SYNC_FAILED", "SYNC_PROGRESS"],
+    "rag": ["RAG_EMBEDDING_PROGRESS", "RAG_CHUNKING_STATUS", "RAG_DATABASE_INDEXING"]
+  },
+  "syncArchitecture": {
+    "adapters": ["FSA (File System Access API)", "IndexedDB", "WebContainer"],
+    "strategies": ["Bidirectional sync", "Last-write-wins", "Manual conflict resolution"],
+    "features": ["Incremental sync", "Quota management", "File watching"]
+  },
+  "securityFeatures": [
+    "AES-256-GCM encryption for credentials",
+    "FSA handle persistence for permissions",
+    "Migration audit logging",
+    "LocalStorage-based migration tracking"
+  ]
+}

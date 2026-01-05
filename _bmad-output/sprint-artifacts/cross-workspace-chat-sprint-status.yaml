@@ -1,7 +1,7 @@
 # Cross-Workspace AI Agent Platform - Sprint Status
 # Document ID: cwac-sprint-status-2026-01-05
-# Version: 1.1.0
-# Updated: 2026-01-05T12:30:00Z
+# Version: 1.2.0
+# Updated: 2026-01-05T16:00:00Z
 # Status: ACTIVE
 
 sprint:
@@ -220,13 +220,57 @@ stories:
     started_at: "2026-01-05T13:45:00Z"
     completed_at: "2026-01-05T14:15:00Z"
 
+  - id: "E1-6"
+    title: "Conversation Persistence Across Workspaces"
+    epic: "E1"
+    points: 8
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P0"
+    dependencies: ["E1-5"]
+    blocks: ["E1-7"]
+    acceptance_criteria:
+      - "Conversations save before workspace switch"
+      - "Conversations restore when entering workspace"
+      - "Scroll position preserved across workspace switches"
+      - "Active conversation restored on workspace return"
+      - "IndexedDB persistence bypasses debounce for explicit saves"
+    tech_notes:
+      - "Created useConversationPersistence hook (237 lines)"
+      - "Added scrollPosition to ConversationMetadata entity"
+      - "Added setScrollPosition to conversation metadata slice"
+      - "Updated useWorkspaceSwitching to support onBeforeSwitch callback"
+      - "Integrated persistence hook into AgentChatPanel"
+    artifacts_created:
+      - "src/lib/events/use-conversation-persistence.ts (237 lines, NEW)"
+      - "_bmad-output/story-contexts/E1-6-story-context-2026-01-05.md"
+    files_modified:
+      - "src/core/entities/Conversation.ts (added scrollPosition to metadata)"
+      - "src/infrastructure/persistence/stores/conversation/conversation-metadata-slice.ts (added setScrollPosition method)"
+      - "src/infrastructure/persistence/stores/conversation/types.ts (added setScrollPosition to state)"
+      - "src/infrastructure/persistence/stores/workspace/useWorkspaceSwitching.ts (added onBeforeSwitch support)"
+      - "src/presentation/components/ide/AgentChatPanel.tsx (integrated persistence)"
+      - "src/presentation/components/ide/AgentChatPanel/AgentChatConversationManager.tsx (scroll tracking)"
+    test_strategy:
+      - "Manual test: Switch workspaces and verify conversation persists"
+      - "Manual test: Verify scroll position restoration"
+      - "Integration test: Workspace switch save/restore cycle"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T15:00:00Z"
+    completed_at: "2026-01-05T16:00:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 38
-  actual: 38
-  completed: 38
+  planned: 46
+  actual: 46
+  completed: 46
   remaining: 0
-  burndown: [38, 0]
+  burndown: [46, 0]
 
 # Sprint 1 Risks
 risks:
@@ -310,12 +354,12 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 42 # 5/12 stories = 42%
+    progress: 50 # 6/12 stories = 50%
     stories_total: 12
-    stories_completed: 5
+    stories_completed: 6
     stories_in_progress: 0
     points_total: 89
-    points_completed: 38
+    points_completed: 46
     points_in_progress: 0
   - id: "E2"
     name: "Multimodal Input System"
@@ -396,9 +440,9 @@ project_summary:
   total_stories: 73
   total_points: 506
   completed_epics: 0
-  completed_stories: 5
-  completed_points: 38
-  overall_progress: 7
+  completed_stories: 6
+  completed_points: 46
+  overall_progress: 8
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

@@ -7,7 +7,7 @@
  * @hook useAgentChatConversationManager
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { ChatMessage } from '../EnhancedChatInterface';
 import { mapHookMessages, mapStoreMessages } from './message-mappers';
@@ -23,6 +23,7 @@ interface ConversationManagerResult {
     scrollRef: React.RefObject<HTMLDivElement | null>;
     allMessages: ChatMessage[];
     handleScroll: (e: React.UIEvent<HTMLDivElement>) => void;
+    currentScrollPosition: number;
 }
 
 /**
@@ -35,11 +36,18 @@ export function useAgentChatConversationManager({
 }: ConversationManagerProps): ConversationManagerResult {
     const [isInitialized, setIsInitialized] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [currentScrollPosition, setCurrentScrollPosition] = useState(0);
 
     const {
         activeThreadId,
         threads,
     } = useThreadsStore();
+
+    // E1-6: Handle scroll events and track position
+    const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget;
+        setCurrentScrollPosition(target.scrollTop);
+    }, []);
 
     // Load persisted conversation on mount
     useEffect(() => {
@@ -94,5 +102,5 @@ export function useAgentChatConversationManager({
         });
     }, [activeThreadId, threads, hookMessages, rawMessages, isInitialized]);
 
-    return { isInitialized, scrollRef, allMessages, handleScroll: () => {} };
+    return { isInitialized, scrollRef, allMessages, handleScroll, currentScrollPosition };
 }

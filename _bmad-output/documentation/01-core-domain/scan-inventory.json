@@ -1,0 +1,179 @@
+{
+  "scanMetadata": {
+    "timestamp": "2026-01-05T13:01:00+07:00",
+    "targetDirectory": "src/core",
+    "scanVersion": "1.0.0",
+    "language": "en"
+  },
+  "inventory": {
+    "totalFiles": 5,
+    "totalLinesOfCode": 396,
+    "entitiesCount": 4,
+    "servicesCount": 0,
+    "valueObjectsCount": 0,
+    "interfacesCount": 22,
+    "typesCount": 10
+  },
+  "files": [
+    {
+      "path": "src/core/index.ts",
+      "name": "index.ts",
+      "purpose": "Main barrel export for core domain layer",
+      "type": "barrel",
+      "lines": 16,
+      "exports": ["Agent", "Provider", "Conversation"],
+      "dependencies": {
+        "internal": ["./entities/Agent", "./entities/Provider", "./entities/Conversation"],
+        "external": []
+      }
+    },
+    {
+      "path": "src/core/entities/Agent.ts",
+      "name": "Agent.ts",
+      "purpose": "Defines the Agent entity with workspace bindings and tool permissions",
+      "type": "entity",
+      "lines": 95,
+      "interfaces": ["Agent", "AgentToolBinding", "WorkspaceBinding"],
+      "types": ["AgentCreateParams", "AgentUpdateParams"],
+      "exports": ["Agent", "AgentToolBinding", "WorkspaceBinding", "AgentCreateParams", "AgentUpdateParams"],
+      "dependencies": {
+        "internal": [],
+        "external": []
+      }
+    },
+    {
+      "path": "src/core/entities/Provider.ts",
+      "name": "Provider.ts",
+      "purpose": "Defines LLM Provider and Model entities for AI configuration",
+      "type": "entity",
+      "lines": 66,
+      "interfaces": ["LLMProvider", "ProviderModel", "ProviderCapabilities"],
+      "types": ["Modality"],
+      "exports": ["LLMProvider", "ProviderModel", "ProviderCapabilities", "Modality"],
+      "dependencies": {
+        "internal": [],
+        "external": []
+      }
+    },
+    {
+      "path": "src/core/entities/Conversation.ts",
+      "name": "Conversation.ts",
+      "purpose": "Defines Conversation, Message, and Thread entities for chat system",
+      "type": "entity",
+      "lines": 124,
+      "interfaces": ["Conversation", "Message", "Thread", "ConversationContext", "ContextSummary", "ConversationMetadata", "Attachment", "ToolCall", "ToolResult"],
+      "types": ["MessageContent", "MessageStatus", "WorkspaceType"],
+      "exports": ["Conversation", "Message", "Thread", "ConversationContext", "ContextSummary", "ConversationMetadata", "Attachment", "ToolCall", "ToolResult", "MessageContent", "MessageStatus", "WorkspaceType"],
+      "dependencies": {
+        "internal": [],
+        "external": []
+      }
+    },
+    {
+      "path": "src/core/entities/Tool.ts",
+      "name": "Tool.ts",
+      "purpose": "Defines Tool entity and execution interfaces for agent capabilities",
+      "type": "entity",
+      "lines": 95,
+      "interfaces": ["Tool", "ToolConfigSchema", "ToolConfigProperty", "ToolExecutionRequest", "ToolExecutionResult"],
+      "types": ["ToolCategory", "WorkspaceType"],
+      "exports": ["Tool", "ToolCategory", "ToolConfigSchema", "ToolConfigProperty", "WorkspaceType", "ToolExecutionRequest", "ToolExecutionResult"],
+      "dependencies": {
+        "internal": [],
+        "external": []
+      }
+    }
+  ],
+  "entities": [
+    {
+      "name": "Agent",
+      "file": "src/core/entities/Agent.ts",
+      "description": "Core business entity representing AI agents",
+      "businessRules": [
+        "Agent must have providerId and modelId (foreign keys to LLMProvider and ProviderModel)",
+        "Status transitions: offline → online → busy → error",
+        "Tools are optional but must have permissions if present",
+        "Workspace bindings define where agent is available"
+      ],
+      "properties": {
+        "coreIdentity": ["id", "name", "description"],
+        "providerModel": ["providerId", "modelId"],
+        "llmParameters": ["systemPrompt", "temperature", "maxTokens", "topP", "topK", "frequencyPenalty", "presencePenalty"],
+        "toolConfiguration": ["tools"],
+        "workspaceBindings": ["workspaceBindings"],
+        "status": ["status"],
+        "metrics": ["tasksCompleted", "successRate", "tokensUsed", "lastActive", "createdAt"]
+      }
+    },
+    {
+      "name": "LLMProvider",
+      "file": "src/core/entities/Provider.ts",
+      "description": "Single source of truth for provider configuration",
+      "businessRules": [
+        "API key stored in encrypted credential-vault.ts (NOT in this entity)",
+        "isHardcoded=TRUE for built-in providers (readonly URL)",
+        "hasApiKey indicates if key exists in credential vault"
+      ],
+      "properties": {
+        "identity": ["id", "name", "providerType"],
+        "configuration": ["baseUrl", "isHardcoded", "hasApiKey", "isEnabled"],
+        "models": ["models", "lastModelFetchAt"],
+        "capabilities": ["capabilities"],
+        "metadata": ["createdAt", "updatedAt"]
+      }
+    },
+    {
+      "name": "Conversation",
+      "file": "src/core/entities/Conversation.ts",
+      "description": "Conversation entity for chat sessions with agent participation",
+      "businessRules": [
+        "Supports multimodal content (text, code, image, file)",
+        "Tracks tool calls and results for transparency",
+        "Manages context window with summarization for long conversations",
+        "Supports thread branching for conversation forks"
+      ],
+      "properties": {
+        "core": ["id", "workspaceType", "threadId", "agentId"],
+        "messages": ["messages"],
+        "context": ["context"],
+        "metadata": ["metadata"],
+        "timestamps": ["createdAt", "updatedAt"]
+      }
+    },
+    {
+      "name": "Tool",
+      "file": "src/core/entities/Tool.ts",
+      "description": "Tool entity representing capabilities agents can use",
+      "businessRules": [
+        "Tools have workspace-specific availability",
+        "Tools can be enabled/disabled per agent",
+        "Tools may have configuration options via configSchema"
+      ],
+      "properties": {
+        "identity": ["id", "name", "description", "category"],
+        "capabilities": ["requiresAuth", "supportedWorkspaces"],
+        "configuration": ["configSchema"],
+        "availability": ["isEnabled"]
+      }
+    }
+  ],
+  "sharedTypes": {
+    "WorkspaceType": {
+      "values": ["ide", "knowledge", "study", "notes"],
+      "usedBy": ["Agent.ts", "Conversation.ts", "Tool.ts"]
+    },
+    "Modality": {
+      "values": ["text", "image", "audio", "video", "code"],
+      "usedBy": ["Provider.ts"]
+    },
+    "MessageContent": {
+      "variants": ["text", "code", "image", "file"],
+      "usedBy": ["Conversation.ts"]
+    }
+  },
+  "knownIssues": {
+    "missingDomainServices": "No domain services found in src/core/rules/ - business logic may be scattered",
+    "emptyDirectories": ["src/core/rules/", "src/core/value-objects/"],
+    "duplicateWorkspaceType": "WorkspaceType defined in both Agent.ts and Tool.ts"
+  }
+}

@@ -54,3 +54,14 @@ export type {
   UseChatEventBridgeOptions,
   UseChatEventBridgeResult,
 } from './use-chat-event-bridge'
+
+// E1-6: Conversation persistence hook
+export {
+  useConversationPersistence,
+  useWorkspaceAutoSave,
+} from './use-conversation-persistence'
+
+export type {
+  UseConversationPersistenceOptions,
+  UseConversationPersistenceResult,
+} from './use-conversation-persistence'

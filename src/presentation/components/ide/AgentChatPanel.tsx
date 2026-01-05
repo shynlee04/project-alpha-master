@@ -5,9 +5,10 @@ import { useDeviceType } from '@/hooks/useMediaQuery';
 import { eventBus as crossWorkspaceEventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { DebugSessionData } from '@/infrastructure/events/event-bus';
 import { useChatEventBridge } from '@/lib/events/use-chat-event-bridge';
+import { useConversationPersistence } from '@/lib/events/use-conversation-persistence';
 import type { WorkspaceChangeEvent } from '@/lib/events';
 
-import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useConversationStore as useThreadsStore, getConversationStoreState } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '@/lib/agent/hooks/use-agent-chat-with-tools';
@@ -131,7 +132,7 @@ export function AgentChatPanel({
     });
 
     // Conversation management
-    const { scrollRef, allMessages, handleScroll } = useAgentChatConversationManager({
+    const { scrollRef, allMessages, handleScroll, currentScrollPosition } = useAgentChatConversationManager({
         projectId,
         hookMessages,
         rawMessages
@@ -161,12 +162,36 @@ export function AgentChatPanel({
         projectId,
         agentId: activeAgentId || null,
         conversationId: activeConversationId || null,
-        onWorkspaceChange: useCallback((event: WorkspaceChangeEvent) => {
+        onWorkspaceChange: useCallback(async (event: WorkspaceChangeEvent) => {
             console.log('[AgentChatPanel] Workspace changing:', event);
-            // Future: Save conversation state before workspace switch
-            // Future: Reload workspace-specific conversation on switch
+            // E1-6: Save conversation state before workspace switch
+            try {
+                const store = getConversationStoreState();
+                const currentConversation = store.getCurrentConversation();
+                if (currentConversation) {
+                    // Capture scroll position before saving
+                    if (scrollRef.current) {
+                        store.setScrollPosition(currentConversation.metadata.id, scrollRef.current.scrollTop);
+                    }
+                    await store.persistConversation();
+                    console.log('[AgentChatPanel] Conversation saved before workspace switch');
+                }
+            } catch (error) {
+                console.error('[AgentChatPanel] Failed to save conversation before switch:', error);
+            }
         }, []),
     });
+
+    // E1-6: Conversation persistence - restore on mount, track scroll position
+    const { restoreConversation, setScrollPosition, getScrollPosition } = useConversationPersistence({
+        workspaceId: workspaceType,
+        projectId,
+    });
+
+    // E1-6: Restore conversation when component mounts or workspace/project changes
+    useEffect(() => {
+        restoreConversation();
+    }, [workspaceType, projectId, restoreConversation]);
 
     useEffect(() => {
         if (!activeConversationId) return;
@@ -199,6 +224,35 @@ export function AgentChatPanel({
             });
         }
     }, [isLoading, hookMessages, activeConversationId, addMessage, activeAgentId]);
+
+    // E1-6: Restore scroll position when conversation changes
+    useEffect(() => {
+        if (!activeConversationId || !scrollRef.current) return;
+
+        const savedScrollPosition = getScrollPosition(activeConversationId);
+        if (savedScrollPosition > 0) {
+            // Small delay to ensure messages are rendered first
+            const timeoutId = setTimeout(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = savedScrollPosition;
+                    console.log('[AgentChatPanel] Restored scroll position:', savedScrollPosition);
+                }
+            }, 100);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [activeConversationId, getScrollPosition]);
+
+    // E1-6: Save scroll position when user scrolls (debounced)
+    useEffect(() => {
+        if (!activeConversationId || currentScrollPosition === 0) return;
+
+        const timeoutId = setTimeout(() => {
+            setScrollPosition(activeConversationId, currentScrollPosition);
+        }, 500); // Debounce scroll position saves
+
+        return () => clearTimeout(timeoutId);
+    }, [activeConversationId, currentScrollPosition, setScrollPosition]);
 
     // Handle sending messages with prompt enhancement
     const handleSendMessage = useCallback(async (content: string) => {

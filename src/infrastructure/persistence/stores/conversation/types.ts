@@ -166,6 +166,10 @@ export interface CombinedConversationState {
     getConversationsByWorkspace: (workspaceType: WorkspaceType) => ConversationMetadataWithId[];
     getConversationsByProject: (projectId: string) => ConversationMetadataWithId[];
 
+    // ========== E1-6: Conversation Persistence Across Workspaces ==========
+    /** Set scroll position for a conversation (pixels from top) */
+    setScrollPosition: (id: string, scrollPosition: number) => void;
+
     // ========== Thread Management Slice (Story CC-1.2) ==========
     threads: Record<string, ThreadWithId>;
     activeThreadId: string | null;
