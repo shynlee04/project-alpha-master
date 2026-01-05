@@ -75,9 +75,19 @@ export function AgentChatPanel({
     const { isMobile, isTablet } = useDeviceType();
 
     // Get selected agent from Zustand store
-    const { activeAgentId } = useAgentSelection();
+    const { activeAgentId, selectAgentForWorkspace } = useAgentSelection();
     const { agents } = useAgents();
     const activeAgent = agents.find(a => a.id === activeAgentId);
+
+    // S-009: Ensure correct agent is selected for the current workspace
+    // This restores the last selected agent for this workspace from persistence
+    // Must wait for store hydration to ensure we have the persisted selection data
+    const { _hasHydrated } = useAgentSelection.getState();
+    useEffect(() => {
+        if (workspaceType && _hasHydrated) {
+            selectAgentForWorkspace(workspaceType);
+        }
+    }, [workspaceType, selectAgentForWorkspace, _hasHydrated]);
 
     // API key management
     const { apiKey, apiKeyError, providerId } = useAgentChatAPIKeyManager({

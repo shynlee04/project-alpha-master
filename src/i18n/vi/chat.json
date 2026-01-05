@@ -58,6 +58,19 @@
     "openLink": "Mở liên kết",
     "preview": "Xem trước"
   },
+  "image": {
+    "preview": "Xem trước",
+    "processing": "Đang xử lý...",
+    "compressing": "Đã nén {{percent}}%",
+    "originalSize": "Gốc: {{size}}",
+    "compressedSize": "Đã nén: {{size}}",
+    "altText": "Mô tả (tùy chọn)",
+    "altTextPlaceholder": "Mô tả hình ảnh này...",
+    "closePreview": "Đóng xem trước",
+    "unsupportedFormat": "Định dạng hình ảnh không được hỗ trợ",
+    "gifPreserved": "Đã giữ nguyên GIF động",
+    "processingError": "Không thể xử lý hình ảnh"
+  },
   "placeholder": "Nhập tin nhắn...",
   "send": "Gửi tin nhắn",
   "attach": "Đính kèm tệp (sắp có)",

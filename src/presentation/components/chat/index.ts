@@ -68,6 +68,10 @@ export type { FileAttachment, FileAttachmentInputProps, Attachment } from './Fil
 export { URLInputDialog } from './URLInputDialog';
 export type { URLAttachment } from './URLInputDialog';
 
+// E2-7: Image Processing and Preview
+export { ImagePreviewDialog, ImagePreviewDialogWithState } from './ImagePreviewDialog';
+export type { ImagePreviewDialogProps, ImagePreviewWithStateProps } from './ImagePreviewDialog';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';

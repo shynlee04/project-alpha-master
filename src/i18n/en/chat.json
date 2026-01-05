@@ -58,6 +58,19 @@
     "openLink": "Open link",
     "preview": "Preview"
   },
+  "image": {
+    "preview": "Preview",
+    "processing": "Processing...",
+    "compressing": "Compressed by {{percent}}%",
+    "originalSize": "Original: {{size}}",
+    "compressedSize": "Compressed: {{size}}",
+    "altText": "Description (optional)",
+    "altTextPlaceholder": "Describe this image...",
+    "closePreview": "Close preview",
+    "unsupportedFormat": "Unsupported image format",
+    "gifPreserved": "Animated GIF preserved",
+    "processingError": "Failed to process image"
+  },
   "placeholder": "Type a message...",
   "send": "Send message",
   "attach": "Attach file (coming soon)",

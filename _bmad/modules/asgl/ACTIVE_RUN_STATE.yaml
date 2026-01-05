@@ -1,0 +1,95 @@
+# RECOVERED LOOP STATE - COMPREHENSIVE REMEDIATION SPRINT
+# DATE: 2026-01-05
+# RECOVERY REASON: User correction (previous state was template)
+
+session:
+  id: "RECOVERY-20260105-1725"
+  started_at: "2026-01-05T17:25:00+07:00"
+  status: "RUNNING"
+  role: "ORCHESTRATOR"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT CONTEXT
+# ═══════════════════════════════════════════════════════════════════════════
+
+current_phase:
+  id: "phase_2"
+  name: "Workspace Integration Fixes"
+  status: "IN_PROGRESS"
+  progress: 75%
+
+current_story:
+  id: "S-009"
+  title: "Fix Agent Selection Persistence"
+  status: "IN_PROGRESS"
+  issues: ["CRIT-003"]
+  
+# ═══════════════════════════════════════════════════════════════════════════
+# STATUS LOG
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories_completed:
+  - id: "S-001"
+    status: "DONE" # Assumed purely based on sprint position (Phase 1)
+  - id: "S-002" 
+    status: "DONE"
+  - id: "S-003"
+    status: "DONE"
+  - id: "S-004"
+    status: "DONE"
+  - id: "S-005"
+    status: "DONE"
+  - id: "S-006"
+    status: "DONE"
+    
+  # Recently Completed by Agent
+  - id: "S-007"
+    title: "Create Note-Folder Bridge"
+    status: "DONE"
+    output: "src/infrastructure/sync/bridges/note-folder-bridge.ts"
+    
+  - id: "S-008"
+    title: "Wire Bridge to Workspace Init"
+    status: "DONE"
+    output: "src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# QUEUE
+# ═══════════════════════════════════════════════════════════════════════════
+
+queue:
+  - id: "S-009"
+    title: "Fix Agent Selection Persistence"
+    status: "IN_PROGRESS"
+    
+  - id: "S-010"
+    title: "Verify Phase 2 Completion"
+    status: "PENDING"
+    
+  # Phase 3
+  - id: "S-011"
+    title: "Split rag-store.ts"
+    status: "PENDING"
+    
+  # ... (Rest of sprint)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ACTIVE TASKS (S-009)
+# ═══════════════════════════════════════════════════════════════════════════
+
+current_tasks:
+  - task: "Analyze WorkspaceSwitching logic for event emission"
+    status: "DONE"
+    findings: "useWorkspaceSwitching emits WORKSPACE_CHANGED correctly."
+    
+  - task: "Analyze AgentChatPanel for selection logic"
+    status: "DONE" 
+    findings: "AgentChatPanel calls selectAgentForWorkspace on mount/update."
+    
+  - task: "Identify Missing Link"
+    status: "IN_PROGRESS"
+    hypothesis: "When switching routes, persistence might not be triggering update in global store fast enough or UI is mounting before store updates."
+    
+  - task: "Implement WorkspaceAgentSync"
+    status: "PENDING"
+    description: "Create a dedicated component to listen to WORKSPACE_CHANGED and force agent selection."

@@ -39,6 +39,7 @@ import {
 } from '@/lib/filesystem/permission-lifecycle';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
+import { noteFolderBridge } from '@/infrastructure/sync/bridges/note-folder-bridge';
 
 /**
  * Local ProjectMetadata with nullable fsaHandle for internal state
@@ -133,7 +134,7 @@ export function useWorkspaceFileSystem({
 
   // Sync operations
   const performSync = useCallback(
-    async (handle: FileSystemDirectoryHandle, options?: { fullSync?: boolean }): Promise<boolean> => {
+    async (handle: FileSystemDirectoryHandle, options?: { fullSync?: boolean; projectId?: string }): Promise<boolean> => {
       const fullSync = options?.fullSync ?? true;
 
       try {
@@ -182,6 +183,14 @@ export function useWorkspaceFileSystem({
 
         await syncManager.syncToWebContainer();
 
+        // S-008: Bridge to Notes (Story 27-2)
+        const pid = options?.projectId || projectMetadata?.id;
+        if (pid && adapter) {
+          // Non-blocking sync to notes
+          noteFolderBridge.syncFromAdapter(pid, adapter)
+            .catch((err: unknown) => console.error('[Workspace] Note bridge sync failed:', err));
+        }
+
         setLastSyncTime(new Date());
         setSyncStatus('idle');
         setSyncProgress(null);
@@ -201,7 +210,7 @@ export function useWorkspaceFileSystem({
         return false;
       }
     },
-    [deviceType]
+    [deviceType, projectMetadata?.id]
   );
 
   const syncNow = useCallback(
@@ -278,7 +287,7 @@ export function useWorkspaceFileSystem({
       setCurrentProject(projectId);
 
       // Perform initial sync
-      await performSync(handle, { fullSync: autoSync });
+      await performSync(handle, { fullSync: autoSync, projectId });
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         const { isMobile, isTablet } = deviceType;
@@ -337,7 +346,7 @@ export function useWorkspaceFileSystem({
       setCurrentProject(newProjectId);
 
       // Perform sync with new folder
-      await performSync(handle, { fullSync: true });
+      await performSync(handle, { fullSync: true, projectId: newProjectId });
 
       // Navigate to new project
       navigate({ to: '/workspace/$projectId', params: { projectId: newProjectId } });

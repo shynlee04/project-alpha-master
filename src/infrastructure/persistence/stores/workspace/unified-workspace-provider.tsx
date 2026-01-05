@@ -31,7 +31,20 @@ import { useWorkspaceStore } from './workspace-store';
 import { useCornerstoneStores } from './useCornerstoneStores';
 import { useWorkspaceFileSystem } from './useWorkspaceFileSystem';
 import { useWorkspaceSwitching } from './useWorkspaceSwitching';
+import { AgentWorkspaceSync } from '@/infrastructure/ui/AgentWorkspaceSync';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+
+// ... (rest of imports/types)
+
+// ...
+
+return (
+  <UnifiedWorkspaceContext.Provider value={contextValue}>
+    <AgentWorkspaceSync />
+    {children}
+  </UnifiedWorkspaceContext.Provider>
+);
+}
 
 /**
  * Extended workspace type including 'hub' landing page
@@ -130,8 +143,11 @@ export function UnifiedWorkspaceProvider({
     [cornerstoneData, fileSystem, workspaceSwitching]
   );
 
+  // ...
+
   return (
     <UnifiedWorkspaceContext.Provider value={contextValue}>
+      <AgentWorkspaceSync />
       {children}
     </UnifiedWorkspaceContext.Provider>
   );

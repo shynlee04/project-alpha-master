@@ -799,6 +799,65 @@ stories:
     started_at: "2026-01-05T23:30:00Z"
     completed_at: "2026-01-06T00:15:00Z"
 
+  - id: "E2-7"
+    title: "Image Processing"
+    epic: "E2"
+    points: 6
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: ["E2-4"]
+    blocks: []
+    acceptance_criteria:
+      - "Image compression (>2MB compressed using Canvas API)"
+      - "Target quality: 0.8 (80% JPEG quality)"
+      - "Maximum dimension: 1920px (scale down if larger)"
+      - "EXIF stripping via Canvas re-encoding"
+      - "Full-size preview dialog (click thumbnail to open)"
+      - "Close button, click outside, Escape key to close"
+      - "Mobile full-screen support"
+      - "Format support: JPEG, PNG, WebP (compressed), GIF (preserved)"
+      - "Unsupported formats rejected with error"
+      - "Alt text input for accessibility"
+      - "i18n complete (EN + VI, 11 image.* keys)"
+      - "TypeScript zero errors"
+      - "Memory cleanup (URL.revokeObjectURL)"
+    tech_notes:
+      - "Created image-processor.ts (267 lines)"
+      - "Canvas API for re-encoding (automatically strips EXIF)"
+      - "GIF preservation (no processing for animated GIFs)"
+      - "Compression threshold: 2MB"
+      - "Created ImagePreviewDialog component (213 lines)"
+      - "ImagePreviewDialogWithState wrapper with internal state"
+      - "Alt text input with blur save"
+      - "FileAttachment extended with image metadata (width, height, originalSize, wasCompressed, altText)"
+      - "Toast notifications for processing status"
+    artifacts_created:
+      - "src/lib/media/image-processor.ts (267 lines, NEW)"
+      - "src/presentation/components/chat/ImagePreviewDialog.tsx (213 lines, NEW)"
+      - "_bmad-output/story-contexts/E2-7-story-context-2026-01-06.md"
+    files_modified:
+      - "src/presentation/components/chat/FileAttachmentInput.tsx (+180 lines, image processing + preview)"
+      - "src/presentation/components/chat/index.ts (+4 lines, exports)"
+      - "src/i18n/en/chat.json (+11 lines, image namespace)"
+      - "src/i18n/vi/chat.json (+11 lines, image namespace)"
+    test_strategy:
+      - "Manual test: Attach 3MB+ JPEG, verify compression indicator"
+      - "Manual test: Verify processed image <2MB"
+      - "Manual test: Attach photo with GPS, verify EXIF stripped"
+      - "Manual test: Attach animated GIF, verify animation preserved"
+      - "Manual test: Click thumbnail, verify preview dialog opens"
+      - "Manual test: Test close button, click outside, Escape key"
+      - "Manual test: Test mobile full-screen preview"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass (image.*, EN + VI)"
+      code_review: "pass"
+    created_at: "2026-01-06"
+    started_at: "2026-01-06T00:30:00Z"
+    completed_at: "2026-01-06T01:00:00Z"
+
 # Sprint 1 Metrics
 velocity:
   planned: 114
@@ -900,12 +959,12 @@ epics:
   - id: "E2"
     name: "Multimodal Input System"
     status: "IN_PROGRESS"
-    progress: 75 # 6/8 stories = 75%
+    progress: 87.5 # 7/8 stories = 87.5%
     stories_total: 8
-    stories_completed: 6
+    stories_completed: 7
     stories_in_progress: 0
     points_total: 56
-    points_completed: 53
+    points_completed: 59
     points_in_progress: 0
     started_at: "2026-01-05T22:00:00Z"
   - id: "E3"
@@ -979,9 +1038,9 @@ project_summary:
   total_stories: 73
   total_points: 518
   completed_epics: 1
-  completed_stories: 18
-  completed_points: 142
-  overall_progress: 25
+  completed_stories: 19
+  completed_points: 148
+  overall_progress: 26
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

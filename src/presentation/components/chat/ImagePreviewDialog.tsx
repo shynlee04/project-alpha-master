@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 import { X, Info } from 'lucide-react'
-import { Button } from '@/presentation/components/ui/button'
 import { Dialog, DialogContent } from '@/presentation/components/ui/dialog'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'

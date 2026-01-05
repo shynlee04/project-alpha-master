@@ -163,7 +163,6 @@ export async function processImage(
     maxWidth = 1920,
     maxHeight = 1920,
     quality = 0.8,
-    stripExif = true,
     maxFileSize = 2 * 1024 * 1024 // 2MB
   } = options
 
