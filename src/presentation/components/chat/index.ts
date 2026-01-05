@@ -26,3 +26,9 @@ export { StreamdownRenderer } from './StreamdownRenderer';
 // File attachments
 export { FileAttachmentInput } from './FileAttachmentInput';
 export type { Attachment, FileAttachment, URLAttachment } from './FileAttachmentInput';
+
+// Agent Approvals
+export { ApprovalOverlay } from './ApprovalOverlay';
+export { BatchApprovalBar } from './BatchApprovalBar';
+export { AutoApproveSettings } from './AutoApproveSettings';
+export { UnifiedChatPanel } from './UnifiedChatPanel';

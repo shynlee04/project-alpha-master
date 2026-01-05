@@ -18,7 +18,8 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { CanvasMetadata, CanvasExport, Node, Edge, Viewport } from '@/lib/canvas/types';
+import type { CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
+import type { Node, Edge, Viewport } from '@xyflow/react';
 import { getSafeCanvasDb } from '../canvas-db';
 import { generateCanvasId } from '../canvas-utils';
 
@@ -48,6 +49,7 @@ export const createCanvasIOSlice: StateCreator<
     nodes: Node<any>[];
     edges: Edge<any>[];
     viewport: Viewport;
+    loadCanvasList: () => Promise<void>;
   },
   [],
   [],

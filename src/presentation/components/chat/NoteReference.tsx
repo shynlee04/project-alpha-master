@@ -17,9 +17,15 @@ import { useNoteStore } from '@/lib/notes/note-store';
 import { toast } from 'sonner';
 
 // ============================================================================
-// Types
+// Component
 // ============================================================================
 
+/**
+ * Note Reference Component
+ *
+ * Displays a clickable note reference with navigation support.
+ * When clicked, navigates to the notes workspace and opens the referenced note.
+ */
 export interface NoteReferenceProps {
     /** Note ID being referenced */
     noteId: string;
@@ -31,16 +37,6 @@ export interface NoteReferenceProps {
     showIcon?: boolean;
 }
 
-// ============================================================================
-// Component
-// ============================================================================
-
-/**
- * Note Reference Component
- *
- * Displays a clickable note reference with navigation support.
- * When clicked, navigates to the notes workspace and opens the referenced note.
- */
 export function NoteReference({
     noteId,
     noteTitle,
@@ -49,8 +45,7 @@ export function NoteReference({
 }: NoteReferenceProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const selectNote = useNoteStore((state) => state.selectNote);
-    const setCurrentNote = useNoteStore((state) => state.setCurrentNote);
+    const setActiveNote = useNoteStore((state) => state.setActiveNote);
 
     // Handle click to navigate to note
     const handleClick = useCallback(() => {
@@ -62,19 +57,18 @@ export function NoteReference({
                 return;
             }
 
-            // Select the note in the store
-            selectNote(noteId);
-            setCurrentNote(note);
+            // Set as active note in the store
+            setActiveNote(noteId);
 
             // Navigate to notes workspace
-            navigate({ to: '/notes', search: { note: noteId } });
+            navigate({ to: '/notes' });
 
             toast.success(t('noteReference.opened', 'Opened note: {title}', { title: noteTitle }));
         } catch (error) {
             console.error('[NoteReference] Failed to navigate to note:', error);
             toast.error(t('noteReference.error', 'Failed to open note'));
         }
-    }, [noteId, noteTitle, selectNote, setCurrentNote, navigate, t]);
+    }, [noteId, noteTitle, setActiveNote, navigate, t]);
 
     return (
         <button
@@ -189,6 +183,3 @@ export function renderTextWithNoteReferences(
 
     return result;
 }
-
-// Re-export types
-export type { NoteReferenceProps };

@@ -10,7 +10,6 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import { Command } from 'cmdk';
 import { Search, FileText, Clock, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -57,13 +56,11 @@ export function NoteReferencePicker({
     query = '',
 }: NoteReferencePickerProps) {
     const { t } = useTranslation();
-    const navigate = useNavigate();
     const [search, setSearch] = useState(query);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     // Get notes from store
     const notes = useNoteStore((state) => state.notesArray);
-    const currentProjectId = useNoteStore((state) => state.currentProjectId);
 
     // Convert notes to list items
     const noteList: NoteListItem[] = useMemo(() => {
@@ -77,14 +74,14 @@ export function NoteReferencePicker({
                 );
             })
             .sort((a, b) => {
-                // Sort by updated date (most recent first)
-                return b.updatedAt.getTime() - a.updatedAt.getTime();
+                // Sort by updated date (most recent first) - updatedAt is number timestamp
+                return b.updatedAt - a.updatedAt;
             })
             .slice(0, 20) // Limit to 20 most recent
             .map((note) => ({
                 id: note.id,
                 title: note.title,
-                preview: getNotePreview(note.content),
+                preview: getNotePreview(note.blocks),
                 updatedAt: new Date(note.updatedAt),
             }));
     }, [notes, search]);

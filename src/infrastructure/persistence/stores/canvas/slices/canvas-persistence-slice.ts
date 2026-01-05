@@ -4,27 +4,26 @@
  * @governance S-012-a (God Store Elimination)
  *
  * IndexedDB read/write for canvas state persistence.
- * Part of canvas-store.ts refactoring to eliminate god store anti-pattern.
+ * Provides custom storage implementation for Zustand persist middleware.
  *
  * Responsibility:
  * - Save canvas state to IndexedDB
  * - Load canvas state from IndexedDB
- * - Auto-save on state changes (handled by persist middleware)
+ * - Clear canvas state from IndexedDB
  *
- * Line Count: ~100 (target: ≤120 lines)
+ * Line Count: ~90 (target: ≤120 lines)
  *
  * @see aggregation: canvas/index.ts (unified store)
  */
 
-import type { StateCreator } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
-import type { CanvasStoreState } from '@/lib/canvas/types';
+import type { Node, Edge, Viewport } from '@xyflow/react';
+import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import { getSafeCanvasDb } from '../canvas-db';
 
 /**
- * Custom storage implementation for IndexedDB
+ * Custom IndexedDB storage implementation for Zustand persist middleware
  */
-const createIndexedDBStorage = () => {
+export const createIndexedDBStorage = () => {
   return {
     getItem: async (_name: string) => {
       try {
@@ -56,7 +55,6 @@ const createIndexedDBStorage = () => {
         const parsed = JSON.parse(value);
 
         await db.transaction('rw', 'canvasStates', 'canvases', async () => {
-          // Save canvas state
           await db.table('canvasStates').put({
             canvasId: activeCanvasId,
             nodes: parsed.nodes || [],
@@ -65,7 +63,6 @@ const createIndexedDBStorage = () => {
             linkageProposals: parsed.linkageProposals || [],
           });
 
-          // Update canvas metadata
           const metadata = await db.table('canvases').get(activeCanvasId);
           if (metadata) {
             await db.table('canvases').update(activeCanvasId, {
@@ -95,23 +92,4 @@ const createIndexedDBStorage = () => {
       }
     },
   };
-};
-
-/**
- * Create canvas persistence slice (for use in store composition)
- * This returns the persist middleware configuration
- */
-export const createCanvasPersistMiddleware = (
-  config: StateCreator<CanvasStoreState>,
-) => {
-  return persist(config, {
-    name: 'canvas-storage',
-    storage: createJSONStorage(() => createIndexedDBStorage()),
-    partialize: (state) => ({
-      nodes: state.nodes,
-      edges: state.edges,
-      viewport: state.viewport,
-      linkageProposals: state.linkageProposals,
-    }),
-  });
 };
