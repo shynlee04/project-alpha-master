@@ -4,7 +4,7 @@
  */
 
 import type { QuizState } from '../types';
-import type { Quiz, QuizQuestion } from '@/lib/study/quiz-types';
+import type { Quiz, QuizQuestion } from '../../../../../../lib/study/quiz-types';
 
 export type QuizUISlice = Pick<QuizState, 'setCurrentQuiz' | 'setCurrentQuestion' | 'clearError'>;
 

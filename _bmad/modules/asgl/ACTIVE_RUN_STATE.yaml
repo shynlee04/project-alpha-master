@@ -17,7 +17,7 @@ current_phase:
   id: "phase_4"
   name: "Consolidation & Cleanup"
   status: "IN_PROGRESS"
-  progress: 25%
+  progress: 30%
 
 current_story:
   id: "S-012"
@@ -48,7 +48,14 @@ stories_completed:
     note: "Verified: File is 129 lines, composed of slices."
     
   - id: "S-012"
-    status: "IN_PROGRESS" # Re-opened as per user request (Split Tier 1 Stores)
+    status: "IN_PROGRESS"
+    tasks:
+      - title: "Split quiz-store.ts (658 lines)"
+        status: "DONE"
+        note: "Reduced to <80 lines. Slices: types, db, quiz-mgmt, question-mgmt, query, ui."
+      - title: "Split canvas-store.ts (623 lines)"
+        status: "PENDING"
+        
   - id: "S-013"
     status: "DONE"
   - id: "S-014"
@@ -59,13 +66,10 @@ stories_completed:
   - id: "S-014b"
     title: "Split tool-permission-store.ts (800 lines)"
     status: "DONE"
-    note: "Refactored into slices: types, constants, selectors, actions-slice, migrations."
-    output: "src/infrastructure/persistence/stores/permissions/tool-permission-store.ts (Lines reduced <100)"
 
   - id: "S-016"
     title: "Verify Phase 3 Completion"
     status: "DONE"
-    note: "God stores verified gone or split."
 
   # Phase 4 (Consolidation)
   - id: "S-017"
@@ -76,16 +80,16 @@ stories_completed:
      status: "DONE"
 
   - id: "S-020"
-     title: "Fix TypeScript Errors (Permissions Store Fixed)"
+     title: "Fix TypeScript Errors"
      status: "IN_PROGRESS"
-     note: "Targeted fix for permissions store done. General project TS fix pending."
+     note: "Fixed AgentWorkspaceSync import error."
     
   - id: "S-021"
-    title: "Circular Dependencies (Workspace-Sync Validated)"
+    title: "Circular Dependencies"
     status: "DONE"
     
   - id: "S-023"
-    title: "Implement IndexedDB Quota Handling (Dexie Validated)"
+    title: "Implement IndexedDB Quota Handling"
     status: "DONE"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -93,13 +97,9 @@ stories_completed:
 # ═══════════════════════════════════════════════════════════════════════════
 
 queue:
-  - id: "S-012"
-    title: "Split quiz-store.ts (658 lines)"
-    status: "IN_PROGRESS"
-
   - id: "S-012b"
     title: "Split canvas-store.ts (623 lines)"
-    status: "PENDING"
+    status: "NEXT"
     
   - id: "S-026"
     title: "Comprehensive Testing"

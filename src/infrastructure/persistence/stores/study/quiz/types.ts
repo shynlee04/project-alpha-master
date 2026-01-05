@@ -3,7 +3,7 @@
  * @module infrastructure/persistence/stores/study/quiz/types
  */
 
-import type { Quiz, QuizQuestion, QuizFilter } from '@/lib/study/quiz-types';
+import type { Quiz, QuizQuestion, QuizFilter } from '../../../../../lib/study/quiz-types';
 
 export interface QuizState {
     // Quizzes list

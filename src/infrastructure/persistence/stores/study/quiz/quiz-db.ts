@@ -4,7 +4,7 @@
  */
 
 import Dexie, { type Table } from 'dexie';
-import type { QuizSettings } from '@/lib/study/quiz-types';
+import type { QuizSettings } from '../../../../../lib/study/quiz-types';
 
 /**
  * Quiz Record Interface

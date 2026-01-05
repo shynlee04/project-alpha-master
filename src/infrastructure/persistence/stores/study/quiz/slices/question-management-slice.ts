@@ -5,7 +5,7 @@
 
 import type { QuizState } from '../types';
 import { getQuizDB, type QuizQuestionRecord } from '../quiz-db';
-import type { QuizQuestion } from '@/lib/study/quiz-types';
+import type { QuizQuestion } from '../../../../../../lib/study/quiz-types';
 
 export type QuestionManagementSlice = Pick<QuizState, 'addQuestion' | 'updateQuestion' | 'deleteQuestion'>;
 
