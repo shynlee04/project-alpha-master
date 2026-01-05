@@ -1,0 +1,283 @@
+{
+  "scanMetadata": {
+    "timestamp": "2026-01-05T00:00:00Z",
+    "targetDomain": "src (styles, hooks, i18n)",
+    "language": "English and Vietnamese",
+    "scannerVersion": "1.0.0"
+  },
+  "inventory": {
+    "styles": {
+      "totalFiles": 5,
+      "totalLines": 1284,
+      "files": [
+        {
+          "path": "src/styles/design-tokens.css",
+          "lines": 611,
+          "purpose": "CSS design tokens with MistralAI-inspired 8-bit aesthetic",
+          "type": "css",
+          "keyFeatures": [
+            "Dark theme default with orange accent (#f97316)",
+            "CSS custom properties for colors, spacing, typography",
+            "Responsive breakpoints and layout tokens",
+            "Pixel shadows and squared corners aesthetic"
+          ]
+        },
+        {
+          "path": "src/styles/design-tokens.ts",
+          "lines": 451,
+          "purpose": "TypeScript type definitions for design tokens",
+          "type": "typescript",
+          "keyFeatures": [
+            "Type-safe token access functions",
+            "Color, typography, spacing, layout, border, shadow, transition, z-index tokens",
+            "Utility functions: getToken(), getColor(), getSpacing(), getLayout()"
+          ]
+        },
+        {
+          "path": "src/styles/animations.css",
+          "lines": 621,
+          "purpose": "8-bit themed custom animations",
+          "type": "css",
+          "keyFeatures": [
+            "Micro-interactions (button press, hover, tab switch)",
+            "Panel and modal animations",
+            "3D flip animations for flashcards",
+            "Accessibility support (prefers-reduced-motion)"
+          ]
+        },
+        {
+          "path": "src/styles/light-theme-tokens.css",
+          "lines": null,
+          "purpose": "Light theme color overrides",
+          "type": "css",
+          "keyFeatures": [
+            "Light theme variants for all design tokens",
+            "Contrast-adjusted primary colors"
+          ]
+        }
+      ]
+    },
+    "hooks": {
+      "totalFiles": 17,
+      "totalLines": null,
+      "files": [
+        {
+          "path": "src/hooks/index.ts",
+          "lines": 23,
+          "purpose": "Central barrel exports for hooks",
+          "type": "typescript",
+          "exports": [
+            "useWorkspaceContext",
+            "useCurrentWorkspace",
+            "useIsInWorkspace",
+            "useRAGEmbeddingProgress",
+            "useRAGChunkingStatus",
+            "useRAGDatabaseIndexing",
+            "useRAGSourceProcessing",
+            "useCrossWorkspaceEvent"
+          ]
+        },
+        {
+          "path": "src/hooks/useResponsive.ts",
+          "lines": 39,
+          "purpose": "Semantic responsive breakpoints detection",
+          "type": "typescript",
+          "keyFeatures": [
+            "Breakpoints: Mobile < 768px, Tablet 768-1023px, Desktop >= 1024px",
+            "Touch device detection",
+            "Ready state for hydration"
+          ]
+        },
+        {
+          "path": "src/hooks/useCapabilityDetection.ts",
+          "lines": 34,
+          "purpose": "Browser capability detection",
+          "type": "typescript",
+          "keyFeatures": [
+            "WebContainer boot capability (SharedArrayBuffer + crossOriginIsolated)",
+            "File System Access API support detection",
+            "Mobile device detection"
+          ]
+        },
+        {
+          "path": "src/hooks/useWorkspaceContext.ts",
+          "lines": null,
+          "purpose": "Workspace context management",
+          "type": "typescript",
+          "keyFeatures": [
+            "Current workspace state",
+            "Workspace presence detection",
+            "Workspace transition handling"
+          ]
+        },
+        {
+          "path": "src/hooks/use-cross-workspace-events.ts",
+          "lines": null,
+          "purpose": "Cross-workspace event subscriptions",
+          "type": "typescript",
+          "keyFeatures": [
+            "RAG embedding progress events",
+            "RAG chunking status events",
+            "Database indexing events",
+            "Source processing events"
+          ]
+        },
+        {
+          "path": "src/hooks/__tests__/useResponsive.test.ts",
+          "lines": null,
+          "purpose": "Tests for useResponsive hook",
+          "type": "typescript"
+        },
+        {
+          "path": "src/hooks/__tests__/useCanvasDrop.test.ts",
+          "lines": null,
+          "purpose": "Tests for useCanvasDrop hook",
+          "type": "typescript"
+        }
+      ]
+    },
+    "i18n": {
+      "totalFiles": 8,
+      "totalTranslationKeys": 1161,
+      "files": [
+        {
+          "path": "src/i18n/config.ts",
+          "lines": 28,
+          "purpose": "i18next initialization and configuration",
+          "type": "typescript",
+          "keyFeatures": [
+            "English and Vietnamese language support",
+            "Browser language detection",
+            "localStorage-based persistence"
+          ]
+        },
+        {
+          "path": "src/i18n/en.json",
+          "lines": 1161,
+          "purpose": "English translation strings",
+          "type": "json",
+          "keyFeatures": [
+            "Complete UI strings in English",
+            "Pluralization support",
+            "Interpolation support"
+          ]
+        },
+        {
+          "path": "src/i18n/vi.json",
+          "lines": null,
+          "purpose": "Vietnamese translation strings",
+          "type": "json",
+          "keyFeatures": [
+            "Complete UI strings in Vietnamese",
+            "Culturally appropriate translations",
+            "Same structure as en.json"
+          ]
+        },
+        {
+          "path": "src/i18n/LocaleProvider.tsx",
+          "lines": null,
+          "purpose": "React context provider for locale",
+          "type": "typescript",
+          "keyFeatures": [
+            "Language switching",
+            "Locale state management"
+          ]
+        },
+        {
+          "path": "src/i18n/__tests__/config.test.ts",
+          "lines": null,
+          "purpose": "Tests for i18n configuration",
+          "type": "typescript"
+        },
+        {
+          "path": "src/i18n/en/rag.json",
+          "lines": null,
+          "purpose": "RAG-specific English strings",
+          "type": "json"
+        },
+        {
+          "path": "src/i18n/vi/rag.json",
+          "lines": null,
+          "purpose": "RAG-specific Vietnamese strings",
+          "type": "json"
+        }
+      ]
+    },
+    "configuration": {
+      "package.json": {
+        "lines": 132,
+        "scripts": {
+          "dev": "Development server with port 3000",
+          "build": "Production build with 8GB heap size",
+          "typecheck": "TypeScript checking (production code only)",
+          "typecheck:all": "TypeScript checking (including tests)",
+          "i18n:extract": "Extract translation keys",
+          "lint": "ESLint with 0 warnings",
+          "lint:fix": "Auto-fix ESLint issues"
+        },
+        "keyDependencies": [
+          "i18next ^25.7.3",
+          "react-i18next ^16.5.0",
+          "i18next-browser-languagedetector ^8.2.0",
+          "tailwindcss ^4.1.18",
+          "@tailwindcss/vite ^4.1.18"
+        ]
+      },
+      "vite.config.ts": {
+        "lines": 270,
+        "keyFeatures": [
+          "Cross-Origin Isolation headers for WebContainers",
+          "Dynamic deployment plugin loading (Cloudflare/Netlify/Vercel)",
+          "SSR optimization with heavy library aliasing",
+          "Tailwind CSS 4 integration",
+          "Vite 7 environment-specific config"
+        ]
+      },
+      "tsconfig.json": {
+        "lines": 29,
+        "keySettings": {
+          "target": "ES2022",
+          "jsx": "react-jsx",
+          "moduleResolution": "bundler",
+          "strict": true,
+          "noUnusedLocals": true,
+          "noUnusedParameters": true,
+          "pathAlias": "@/* -> ./src/*"
+        }
+      }
+    }
+  },
+  "languageCoverage": {
+    "english": {
+      "status": "Complete",
+      "keys": 1161,
+      "domains": [
+        "common",
+        "actions",
+        "chat",
+        "agents",
+        "knowledge",
+        "study",
+        "notes",
+        "canvas",
+        "rag",
+        "hub",
+        "preferences",
+        "providers",
+        "memory",
+        "deepThink",
+        "audio",
+        "indexing",
+        "sync",
+        "terminal",
+        "validation",
+        "errors"
+      ]
+    },
+    "vietnamese": {
+      "status": "Complete",
+      "keys": 1161,
+      "domains": "Same as English"
+    }
+  }
+}

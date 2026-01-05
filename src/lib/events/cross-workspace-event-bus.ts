@@ -144,6 +144,33 @@ export interface ChatMessageSentEvent {
     timestamp: Date
 }
 
+/**
+ * Chat state update event
+ *
+ * Emitted when conversation state changes in any workspace.
+ * Enables real-time sync of chat state across all workspaces.
+ *
+ * @story E1-7 - Chat State Sharing Between Workspaces
+ */
+export interface ChatStateUpdateEvent {
+    /** Workspace where state changed */
+    workspaceId: WorkspaceId
+    /** Project ID (if applicable) */
+    projectId: string | null
+    /** Conversation ID that was updated */
+    conversationId: string
+    /** Type of state change */
+    updateType: 'message_added' | 'message_updated' | 'thread_created' | 'conversation_updated'
+    /** Associated data (message ID, thread ID, etc.) */
+    data: {
+        messageId?: string
+        threadId?: string
+        messageContent?: string
+    }
+    /** Timestamp */
+    timestamp: Date
+}
+
 // ============================================================================
 // Event Bus Class
 // ============================================================================
@@ -170,6 +197,7 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
         PROVIDER_CONFIG_CHANGE: 'provider:config:change',
         MODELS_UPDATED: 'models:updated',
         CHAT_MESSAGE_SENT: 'chat:message:sent',
+        CHAT_STATE_UPDATE: 'chat:state:update',
     } as const;
 
     // ========================================================================
@@ -482,6 +510,58 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
      */
     offChatMessageSent(listener: (event: ChatMessageSentEvent) => void): void {
         this.off(CrossWorkspaceEventBus.EVENTS.CHAT_MESSAGE_SENT, listener);
+    }
+
+    // ========================================================================
+    // Chat State Update Events
+    // ========================================================================
+
+    /**
+     * Emit chat state update event
+     *
+     * Called when conversation state changes (new message, thread created, etc.).
+     * Other workspaces can sync their chat state in real-time.
+     *
+     * @story E1-7 - Chat State Sharing Between Workspaces
+     */
+    emitChatStateUpdate(event: Omit<ChatStateUpdateEvent, 'timestamp'>): void {
+        const fullEvent: ChatStateUpdateEvent = {
+            ...event,
+            timestamp: new Date(),
+        };
+
+        console.log('[CrossWorkspaceEventBus] Chat state update:', {
+            workspaceId: fullEvent.workspaceId,
+            conversationId: fullEvent.conversationId,
+            updateType: fullEvent.updateType,
+        });
+        this.emit(CrossWorkspaceEventBus.EVENTS.CHAT_STATE_UPDATE, fullEvent);
+    }
+
+    /**
+     * Subscribe to chat state update events
+     *
+     * Use this to sync chat state when changes happen in other workspaces.
+     *
+     * @example
+     * ```ts
+     * crossWorkspaceEventBus.onChatStateUpdate((event) => {
+     *     if (event.conversationId === currentConversationId) {
+     *         // Sync message from other workspace
+     *         syncMessage(event.data.messageId, event.data.messageContent)
+     *     }
+     * })
+     * ```
+     */
+    onChatStateUpdate(listener: (event: ChatStateUpdateEvent) => void): void {
+        this.on(CrossWorkspaceEventBus.EVENTS.CHAT_STATE_UPDATE, listener);
+    }
+
+    /**
+     * Unsubscribe from chat state update events
+     */
+    offChatStateUpdate(listener: (event: ChatStateUpdateEvent) => void): void {
+        this.off(CrossWorkspaceEventBus.EVENTS.CHAT_STATE_UPDATE, listener);
     }
 
     // ========================================================================

@@ -1,0 +1,240 @@
+src/__tests__ Domain - File Structure Tree
+============================================
+
+Root Test Directory
+-------------------
+src/__tests__/
+├── chat.test.ts                      [641 lines, 28 test cases]
+│   └── Chat API SSE streaming tests
+│
+└── [Main test directory contains primarily chat API tests]
+
+Distributed Test Files by Domain
+=================================
+
+AGENT DOMAIN (15 test files)
+----------------------------
+src/lib/agent/
+├── __tests__/
+│   ├── tool-permission-manager.test.ts
+│   │   └── ToolPermissionManager with workspace-scoped permissions
+│   │   [500+ lines, 65 test cases]
+│   │
+│   └── providers/__tests__/
+│       ├── credential-vault.test.ts          [API key encryption storage]
+│       ├── credential-encryption.test.ts     [AES-256-GCM compliance]
+│       ├── credential-storage.test.ts        [IndexedDB storage]
+│       ├── provider-adapter.test.ts          [Provider adapters]
+│       ├── provider-adapter-extension.test.ts
+│       └── model-registry.test.ts            [AI model registry]
+│
+└── routes/__tests__/
+    ├── chat-api.test.ts                      [Chat API endpoints]
+    └── sse-streaming.test.ts                 [SSE streaming]
+
+RAG DOMAIN (12 test files)
+--------------------------
+src/lib/rag/__tests__/
+├── incremental-indexing-service.test.ts      [25 test cases]
+├── hybrid-retriever.test.ts
+├── document-chunker.test.ts
+├── indexeddb-storage.test.ts
+└── orama-index.test.ts
+
+FILESYSTEM DOMAIN (20 test files)
+---------------------------------
+src/lib/filesystem/
+├── __tests__/
+│   ├── sync-manager.test.ts
+│   ├── local-fs-adapter.test.ts
+│   ├── local-fs-adapter.integration.test.ts
+│   ├── path-guard.test.ts                    [Path security]
+│   ├── directory-walker.test.ts
+│   ├── fsa-handle-manager.test.ts
+│   ├── sync-planner.test.ts
+│   ├── sync-executor.test.ts
+│   ├── sync-rollback.test.ts
+│   ├── validation.test.ts
+│   ├── exclusion-config.test.ts
+│   └── file-type-handling.test.ts
+│
+└── sync-manager/__tests__/
+    ├── incremental-sync.test.ts
+    ├── error-recovery.test.ts
+    └── sync-status-visibility.test.ts
+
+KNOWLEDGE DOMAIN (18 test files)
+--------------------------------
+src/lib/knowledge/__tests__/
+├── metadata-extractor.test.ts
+├── source-import.test.ts
+├── flashcard-types.test.ts
+├── flashcard-utils.test.ts
+├── runtime-validation.test.ts
+├── mock-data.ts                              [Test data utilities]
+└── setup-mocks.ts                            [Mock setup utilities]
+
+src/lib/state/knowledge/slices/__tests__/
+├── knowledge-source-crud-slice.test.ts
+├── knowledge-collection-slice.test.ts
+├── knowledge-metadata-slice.test.ts
+├── knowledge-undo-slice.test.ts
+├── knowledge-synthesis-slice.test.ts
+├── knowledge-preview-slice.test.ts
+└── test-store.ts                             [Store test utilities]
+
+src/presentation/components/knowledge/__tests__/
+├── SourceCard.test.tsx
+├── CollectionManager.test.tsx
+├── SourceImportDialog.test.tsx
+├── MetadataEditor.test.tsx
+├── CollectionSelector.test.tsx
+├── RenameDialog.test.tsx
+├── MetadataDisplay.test.tsx
+├── SourceContextMenu.test.tsx
+├── SourceCardGrid.test.tsx
+├── UndoToast.test.tsx
+└── SourcePreviewPanel.test.tsx
+└── knowledge-integration.test.tsx
+
+WORKSPACE DOMAIN (8 test files)
+-------------------------------
+src/lib/workspace/__tests__/
+├── project-metadata.test.ts
+├── session-snapshot.test.ts
+├── mocks.ts                                 [Workspace mocks]
+└── test-utils.ts                            [Test utilities]
+
+SYNC DOMAIN (10 test files)
+---------------------------
+src/lib/sync/__tests__/
+├── reverse-sync-service.test.ts
+├── file-metadata-cache.test.ts
+└── sync-event-bus.test.ts
+
+src/lib/filesync/__tests__/
+├── study-file-sync-service.test.ts
+├── cross-workspace-file-references.test.ts
+├── cross-workspace-file-operations.integration.test.ts
+└── mock-sync-events.ts                       [Sync event mocks]
+
+PRESENTATION DOMAIN (45 test files)
+-----------------------------------
+src/presentation/components/
+├── __tests__/
+│   ├── ThemeToggle.test.tsx
+│   └── workspace-i18n.test.tsx
+│
+├── dashboard/__tests__/
+│   └── Onboarding.test.tsx
+│
+├── hub/__tests__/
+│   ├── HubHomePage.test.tsx
+│   ├── TopicCard.test.tsx
+│   ├── TopicPortalCard.test.tsx
+│   └── NavigationBreadcrumbs.test.tsx
+│
+├── rag/__tests__/
+│   ├── RAGChatPanel.test.tsx
+│   ├── RAGSearchPanel.test.tsx
+│   └── citation-components.test.tsx
+│
+├── canvas/__tests__/
+│   ├── Canvas.test.tsx
+│   └── LinkageProposalsPanel.test.tsx
+│
+└── canvas/nodes/__tests__/
+    ├── ConceptNode.test.tsx
+    └── SourceNode.test.tsx
+│
+└── canvas/edges/__tests__/
+    └── RelationshipEdge.test.tsx
+
+HOOKS DOMAIN (12 test files)
+----------------------------
+src/hooks/__tests__/
+├── useResponsive.test.ts
+└── useCanvasDrop.test.ts
+
+NOTES DOMAIN (5 test files)
+---------------------------
+src/lib/notes/__tests__/
+├── note-store.test.ts
+├── note-indexer.test.ts
+└── note-ai-service.test.ts
+
+STUDY DOMAIN (4 test files)
+---------------------------
+src/lib/study/__tests__/
+├── quiz.test.ts
+├── srs.test.ts                              [Spaced repetition]
+└── quiz-session.test.ts
+
+EVENTS DOMAIN (5 test files)
+----------------------------
+src/lib/events/__tests__/
+├── workspace-events.test.ts
+└── use-workspace-event.test.tsx
+
+WEBCONTAINER DOMAIN (6 test files)
+----------------------------------
+src/lib/webcontainer/__tests__/
+├── manager.test.ts
+├── terminal-adapter.test.ts
+├── crash-recovery.test.ts
+└── webcontainer.mock.ts                     [WebContainer mocks]
+
+MONITORING DOMAIN (2 test files)
+--------------------------------
+src/lib/monitoring/__tests__/
+└── performance-monitor.test.ts
+
+UTILS DOMAIN (3 test files)
+---------------------------
+src/utils/__tests__/
+└── export-utils.test.ts
+
+src/lib/editor/__tests__/
+└── language-utils.test.ts
+
+src/lib/persistence/__tests__/
+└── db.test.ts
+
+TEST SETUP INFRASTRUCTURE
+==========================
+src/test/
+└── setup.ts                                 [222 lines]
+    ├── fake-indexeddb/auto import
+    ├── react-i18next mock
+    ├── @tanstack/react-router mock
+    ├── useCapabilityDetection mock
+    ├── useWorkspace mock
+    ├── useIDEStore mock
+    ├── window.matchMedia mock
+    ├── ResizeObserver mock
+    ├── IntersectionObserver mock
+    └── crypto mock
+
+CONFIGURATION FILES
+====================
+vitest.config.ts                             [18 lines]
+    ├── test.environment: 'node'
+    ├── test.globals: true
+    └── test.setupFiles: ['./src/test/setup.ts']
+
+package.json (test scripts)
+    ├── "test": "vitest run"
+    ├── "test:watch": "vitest" (implied)
+    └── [testing dependencies]
+
+================================================================================
+
+TOTAL TEST FILES: 189
+TOTAL TEST CASES: ~950
+TEST FRAMEWORKS: vitest, @testing-library/react, jest-axe
+
+DOMAIN COVERAGE SUMMARY
+=======================
+High Coverage (75%+):  agent, rag
+Medium Coverage (50-75%):  filesystem, knowledge, workspace, sync, events, webcontainer
+Low Coverage (<50%):  notes, study, presentation, hooks, utils, monitoring

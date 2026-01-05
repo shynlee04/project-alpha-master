@@ -38,6 +38,7 @@ export type {
   ProviderConfigChangeEvent,
   ModelsUpdatedEvent,
   ChatMessageSentEvent,
+  ChatStateUpdateEvent,
 } from './cross-workspace-event-bus'
 
 export {
@@ -65,3 +66,14 @@ export type {
   UseConversationPersistenceOptions,
   UseConversationPersistenceResult,
 } from './use-conversation-persistence'
+
+// E1-7: Chat state sync hook
+export {
+  useChatStateSync,
+  useChatStateEmitter,
+} from './use-chat-state-sync'
+
+export type {
+  UseChatStateSyncOptions,
+  UseChatStateSyncResult,
+} from './use-chat-state-sync'

@@ -1,0 +1,240 @@
+{
+  "scanMetadata": {
+    "scanDate": "2026-01-05",
+    "scanTarget": "src/routes",
+    "scanTool": "Deep Scan Module",
+    "framework": "TanStack Router v1.144.0"
+  },
+  "summary": {
+    "totalFiles": 23,
+    "totalRoutes": 20,
+    "apiEndpoints": 3,
+    "lazyLoadedRoutes": 8,
+    "workspaceRoutes": 6,
+    "legacyRoutes": 2
+  },
+  "fileInventory": [
+    {
+      "filePath": "src/routes/__root.tsx",
+      "purpose": "Root route - Application entry point with providers and error boundaries",
+      "lines": 93,
+      "type": "root",
+      "features": ["Sentry initialization", "ThemeProvider", "LocaleProvider", "AppErrorBoundary", "AppInitializer", "MigrationStatus"]
+    },
+    {
+      "filePath": "src/routes/index.tsx",
+      "purpose": "Home route - Landing page with HubHomePage",
+      "lines": 12,
+      "type": "page",
+      "wraps": ["MainLayout", "HubHomePage"]
+    },
+    {
+      "filePath": "src/routes/hub.tsx",
+      "purpose": "Hub route - Alternative hub landing page",
+      "lines": 12,
+      "type": "page",
+      "wraps": ["MainLayout", "HubHomePage"]
+    },
+    {
+      "filePath": "src/routes/ide.tsx",
+      "purpose": "IDE workspace index - Loads last active project",
+      "lines": 88,
+      "type": "workspace",
+      "features": ["Lazy IDELayout", "Project loading", "Loading states"],
+      "ssr": false
+    },
+    {
+      "filePath": "src/routes/ide.$projectId.tsx",
+      "purpose": "IDE workspace with project context - Primary IDE route",
+      "lines": 60,
+      "type": "workspace",
+      "params": ["projectId"],
+      "features": ["ProjectProvider", "Loader", "Lazy IDELayout"],
+      "ssr": false
+    },
+    {
+      "filePath": "src/routes/workspace/index.tsx",
+      "purpose": "Workspace index - Placeholder when no project selected",
+      "lines": 36,
+      "type": "legacy",
+      "features": ["Redirect to /ide"]
+    },
+    {
+      "filePath": "src/routes/workspace/$projectId.tsx",
+      "purpose": "Legacy workspace route - Migrated to /ide/$projectId",
+      "lines": 53,
+      "type": "legacy",
+      "params": ["projectId"],
+      "features": ["ProjectProvider", "IDELayout"],
+      "ssr": false
+    },
+    {
+      "filePath": "src/routes/knowledge.lazy.tsx",
+      "purpose": "Knowledge workspace - Lazy loaded KnowledgePage",
+      "lines": 23,
+      "type": "workspace",
+      "features": ["Lazy loading", "KnowledgePage"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/knowledge.$projectId.lazy.tsx",
+      "purpose": "Knowledge workspace with project - Lazy loaded with ProjectProvider",
+      "lines": 58,
+      "type": "workspace",
+      "params": ["projectId"],
+      "features": ["ProjectProvider", "KnowledgePlaceholder"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/notes.lazy.tsx",
+      "purpose": "Notes workspace - Lazy loaded NotesPage (BlockNote editor)",
+      "lines": 24,
+      "type": "workspace",
+      "features": ["Lazy loading", "NotesPage"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/notes.$projectId.lazy.tsx",
+      "purpose": "Notes workspace with project - Lazy loaded with ProjectProvider",
+      "lines": 46,
+      "type": "workspace",
+      "params": ["projectId"],
+      "features": ["ProjectProvider", "NotesPage"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/study.lazy.tsx",
+      "purpose": "Study workspace - Lazy loaded StudyPage (flashcards/quizzes)",
+      "lines": 25,
+      "type": "workspace",
+      "features": ["Lazy loading", "StudyPage"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/study.$projectId.lazy.tsx",
+      "purpose": "Study workspace with project - Lazy loaded with ProjectProvider",
+      "lines": 58,
+      "type": "workspace",
+      "params": ["projectId"],
+      "features": ["ProjectProvider", "StudyPlaceholder"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/agents.tsx",
+      "purpose": "Agent management center - AgentsPanel integration",
+      "lines": 47,
+      "type": "page",
+      "features": ["MainLayout", "AgentsPanel", "Mobile responsive"]
+    },
+    {
+      "filePath": "src/routes/settings.tsx",
+      "purpose": "Settings page - Provider/Agent configuration",
+      "lines": 143,
+      "type": "page",
+      "features": ["MainLayout", "AgentConfigDialog", "ProviderSettings", "ErrorBoundary"]
+    },
+    {
+      "filePath": "src/routes/about.tsx",
+      "purpose": "Redirect to lazy route",
+      "lines": 5,
+      "type": "redirect"
+    },
+    {
+      "filePath": "src/routes/about.lazy.tsx",
+      "purpose": "About page - Lazy loaded AboutPage",
+      "lines": 7,
+      "type": "page",
+      "features": ["Lazy loading", "AboutPage"],
+      "lazy": true
+    },
+    {
+      "filePath": "src/routes/test-fs-adapter.tsx",
+      "purpose": "FSA adapter testing - Development utility",
+      "lines": 210,
+      "type": "utility",
+      "features": ["API support check", "Permission tests", "File operations", "Security tests"]
+    },
+    {
+      "filePath": "src/routes/webcontainer.$.tsx",
+      "purpose": "WebContainer splat route - Catch-all for WebContainer",
+      "lines": 6,
+      "type": "splat",
+      "ssr": false
+    },
+    {
+      "filePath": "src/routes/api/chat.ts",
+      "purpose": "AI chat API - Streaming SSE endpoint",
+      "lines": 310,
+      "type": "api",
+      "features": ["TanStack AI", "Tool definitions", "Validation", "Streaming"]
+    },
+    {
+      "filePath": "src/routes/api/quizzes/generate.ts",
+      "purpose": "Quiz generation API - Study artifact endpoint",
+      "lines": 131,
+      "type": "api",
+      "features": ["Zod validation", "Mock generation"]
+    },
+    {
+      "filePath": "src/routes/api/flashcards/generate.ts",
+      "purpose": "Flashcard generation API - Study artifact endpoint",
+      "lines": 152,
+      "type": "api",
+      "features": ["Validation", "Mock generator", "Real generator"]
+    }
+  ],
+  "routeHierarchy": {
+    "root": {
+      "path": "/",
+      "type": "root",
+      "children": [
+        { "id": "/", "path": "/", "component": "HubHomePage" },
+        { "id": "/hub", "path": "/hub", "component": "HubHomePage" },
+        { "id": "/about", "path": "/about", "component": "AboutPage (lazy)" },
+        { "id": "/agents", "path": "/agents", "component": "AgentsPanel" },
+        { "id": "/settings", "path": "/settings", "component": "SettingsPage" },
+        { "id": "/test-fs-adapter", "path": "/test-fs-adapter", "component": "TestFSAdapter" },
+        { "id": "/workspace", "path": "/workspace", "component": "WorkspaceIndex" },
+        { "id": "/ide", "path": "/ide", "component": "IDELayout", "children": [
+          { "id": "/ide/$projectId", "path": "/$projectId", "component": "IDEWorkspace" }
+        ]},
+        { "id": "/knowledge", "path": "/knowledge", "component": "KnowledgePage (lazy)", "children": [
+          { "id": "/knowledge/$projectId", "path": "/$projectId", "component": "KnowledgeWorkspace" }
+        ]},
+        { "id": "/notes", "path": "/notes", "component": "NotesPage (lazy)", "children": [
+          { "id": "/notes/$projectId", "path": "/$projectId", "component": "NotesWorkspace" }
+        ]},
+        { "id": "/study", "path": "/study", "component": "StudyPage (lazy)", "children": [
+          { "id": "/study/$projectId", "path": "/$projectId", "component": "StudyWorkspace" }
+        ]},
+        { "id": "/webcontainer/$", "path": "/webcontainer/$", "component": "splat" },
+        { "id": "/api/chat", "path": "/api/chat", "handlers": ["GET", "POST"] },
+        { "id": "/api/quizzes/generate", "path": "/api/quizzes/generate", "handlers": ["POST"] },
+        { "id": "/api/flashcards/generate", "path": "/api/flashcards/generate", "handlers": ["POST"] }
+      ]
+    }
+  },
+  "configuration": {
+    "routerOptions": {
+      "scrollRestoration": true,
+      "defaultPreloadStaleTime": 0,
+      "defaultNotFoundComponent": "p Not Found"
+    },
+    "ssrExcludedRoutes": [
+      "/ide",
+      "/ide/$projectId",
+      "/workspace/$projectId",
+      "/webcontainer/$"
+    ]
+  },
+  "middleware": {
+    "providers": [
+      "ThemeProvider",
+      "LocaleProvider", 
+      "TooltipProvider",
+      "AppInitializer",
+      "UnifiedWorkspaceProvider",
+      "AppErrorBoundary"
+    ]
+  }
+}

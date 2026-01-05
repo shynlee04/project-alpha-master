@@ -1,0 +1,37 @@
+src/routes/
+├── __root.tsx                          [93 lines]  Root route with providers and error boundaries
+├── index.tsx                           [12 lines]  Home page (HubHomePage)
+├── hub.tsx                             [12 lines]  Hub page (HubHomePage alternative)
+├── ide.tsx                             [88 lines]  IDE workspace index
+├── ide.$projectId.tsx                  [60 lines]  IDE workspace with project context
+├── workspace/
+│   ├── index.tsx                       [36 lines]  Workspace index (placeholder)
+│   └── $projectId.tsx                  [53 lines]  Legacy workspace route
+├── knowledge/
+│   ├── knowledge.lazy.tsx              [23 lines]  Knowledge workspace (lazy)
+│   └── knowledge.$projectId.lazy.tsx   [58 lines]  Knowledge workspace with project (lazy)
+├── notes/
+│   ├── notes.lazy.tsx                  [24 lines]  Notes workspace (lazy, BlockNote)
+│   └── notes.$projectId.lazy.tsx       [46 lines]  Notes workspace with project (lazy)
+├── study/
+│   ├── study.lazy.tsx                  [25 lines]  Study workspace (lazy)
+│   └── study.$projectId.lazy.tsx       [58 lines]  Study workspace with project (lazy)
+├── agents.tsx                          [47 lines]  Agent management center
+├── settings.tsx                        [143 lines] Settings page with agent/provider config
+├── about.tsx                           [5 lines]   Redirect to about.lazy.tsx
+├── about.lazy.tsx                      [7 lines]   About page (lazy)
+├── test-fs-adapter.tsx                 [210 lines] FSA adapter testing utility
+├── webcontainer.$.tsx                  [6 lines]   WebContainer splat route
+└── api/
+    ├── chat.ts                         [310 lines] AI chat API (streaming SSE)
+    ├── quizzes/
+    │   └── generate.ts                 [131 lines] Quiz generation API
+    └── flashcards/
+        └── generate.ts                 [152 lines] Flashcard generation API
+
+Generated Files:
+├── routeTree.gen.ts                    [521 lines] Auto-generated route tree
+└── router.tsx                          [47 lines]  Router configuration
+
+Total Files: 24
+Total Lines of Code: ~1,650

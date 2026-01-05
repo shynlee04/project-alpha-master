@@ -1,0 +1,198 @@
+{
+  "scanMetadata": {
+    "generatedAt": "2026-01-05T00:00:00Z",
+    "targetDirectory": "src/presentation",
+    "language": "en",
+    "version": "1.0.0"
+  },
+  "summary": {
+    "totalFiles": 479,
+    "totalLinesOfCode": 72334,
+    "componentCategories": 20,
+    "uiComponents": 48,
+    "hooks": 89,
+    "layouts": 16,
+    "pages": 19,
+    "i18nUsageCount": 387,
+    "interfacesDefined": 100
+  },
+  "categories": {
+    "components": {
+      "count": 43,
+      "subcategories": {
+        "about": { "files": 20, "description": "About page components" },
+        "agent": { "files": 43, "description": "AI agent configuration and management" },
+        "audio": { "files": 2, "description": "Audio player components" },
+        "canvas": { "files": 11, "description": "Knowledge canvas visualization" },
+        "chat": { "files": 25, "description": "Chat interface and conversation" },
+        "common": { "files": 10, "description": "Common UI utilities" },
+        "dashboard": { "files": 2, "description": "Dashboard components" },
+        "dev": { "files": 1, "description": "Development tools" },
+        "hub": { "files": 38, "description": "Hub and project management" },
+        "ide": { "files": 31, "description": "IDE workspace components" },
+        "knowledge": { "files": 25, "description": "Knowledge management" },
+        "layout": { "files": 16, "description": "Layout components" },
+        "notes": { "files": 18, "description": "Notes editor components" },
+        "rag": { "files": 9, "description": "RAG search and indexing" },
+        "study": { "files": 14, "description": "Study and quiz components" },
+        "ui": { "files": 49, "description": "Base UI components" },
+        "workspace": { "files": 1, "description": "Workspace components" }
+      }
+    },
+    "layouts": {
+      "count": 16,
+      "primaryLayouts": [
+        {
+          "name": "IDELayout",
+          "path": "src/presentation/components/layout/IDELayout",
+          "description": "Main IDE workspace layout with resizable panels",
+          "features": ["Responsive", "Resizable", "Keyboard Shortcuts", "State Restoration"]
+        },
+        {
+          "name": "MobileIDELayout",
+          "path": "src/presentation/components/layout/MobileIDELayout.tsx",
+          "description": "Mobile-optimized IDE layout",
+          "features": ["Mobile-first", "Touch-friendly", "Reduced functionality"]
+        },
+        {
+          "name": "MainLayout",
+          "path": "src/presentation/components/layout/MainLayout.tsx",
+          "description": "Main application layout wrapper",
+          "features": ["Global state", "Navigation", "Theme provider"]
+        },
+        {
+          "name": "PortfolioLayout",
+          "path": "src/presentation/components/about/layout/PortfolioLayout.tsx",
+          "description": "Portfolio/about page layout",
+          "features": ["Hero section", "Sections", "Navigation"]
+        }
+      ]
+    },
+    "pages": {
+      "count": 19,
+      "primaryPages": [
+        {
+          "name": "KnowledgePage",
+          "path": "src/presentation/components/knowledge/KnowledgePage.tsx",
+          "description": "Knowledge management workspace"
+        },
+        {
+          "name": "NotesPage",
+          "path": "src/presentation/components/notes/NotesPage.tsx",
+          "description": "Notes editor workspace"
+        },
+        {
+          "name": "StudyPage",
+          "path": "src/presentation/components/study/StudyPage.tsx",
+          "description": "Study and quiz workspace"
+        },
+        {
+          "name": "HubHomePage",
+          "path": "src/presentation/components/hub/HubHomePage.tsx",
+          "description": "Main hub landing page"
+        },
+        {
+          "name": "AboutPage",
+          "path": "src/presentation/components/about/AboutPage.tsx",
+          "description": "About/portfolio page"
+        }
+      ]
+    },
+    "hooks": {
+      "count": 89,
+      "categories": {
+        "ide": 8,
+        "agent": 5,
+        "layout": 5,
+        "common": 1,
+        "fileTree": 6,
+        "terminal": 1,
+        "monaco": 2
+      }
+    }
+  },
+  "designSystem": {
+    "theme": "8-bit dark aesthetic",
+    "principles": [
+      "Pixel-perfect styling",
+      "No glassmorphism/blur effects",
+      "Solid retro styling",
+      "Design tokens for consistency"
+    ],
+    "colorPalette": {
+      "type": "CSS custom properties",
+      "location": "src/styles/design-tokens.css"
+    },
+    "typography": {
+      "baseSize": "16px",
+      "mobileBaseSize": "16px",
+      "family": "System fonts"
+    }
+  },
+  "i18n": {
+    "supportedLanguages": ["en", "vi"],
+    "fileLocation": "src/i18n/",
+    "usagePattern": "useTranslation hook",
+    "extractionCommand": "pnpm i18n:extract",
+    "coverage": {
+      "estimated": 387 components using i18n,
+      "keyDomains": [
+        "agents.config",
+        "memory",
+        "deepThink",
+        "actions",
+        "citation",
+        "about",
+        "errors.workspace",
+        "webcontainer"
+      ]
+    }
+  },
+  "accessibility": {
+    "patterns": [
+      "ARIA labels and roles",
+      "Keyboard navigation",
+      "Screen reader support",
+      "Skip links",
+      "Focus management",
+      "Status announcers"
+    ],
+    "components": [
+      "SkipLinks",
+      "StatusAnnouncer",
+      "KeyboardShortcutsOverlay"
+    ]
+  },
+  "responsiveDesign": {
+    "hook": "useResponsive",
+    "breakpoints": ["mobile", "tablet", "desktop"],
+    "mobileOptimizations": [
+      "Touch-friendly targets (44px minimum)",
+      "Dynamic viewport height (dvh)",
+      "Mobile-specific layouts",
+      "Feature restrictions on mobile"
+    ]
+  },
+  "stateManagement": {
+    "pattern": "Zustand stores with React hooks",
+    "keyStores": [
+      "useIDEStore",
+      "useConversationStore",
+      "useAgentsStore",
+      "useProviderStore"
+    ],
+    "persistence": "IndexedDB via Dexie"
+  },
+  "keyDependencies": [
+    "react",
+    "react-dom",
+    "zustand",
+    "i18next",
+    "react-i18next",
+    "@radix-ui/react-*",
+    "lucide-react",
+    "class-variance-authority",
+    "clsx",
+    "tailwind-merge"
+  ]
+}

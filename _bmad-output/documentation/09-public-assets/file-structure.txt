@@ -1,0 +1,16 @@
+public/
+├── _headers                          (1,192 bytes) - Netlify security headers configuration
+├── robots.txt                        (67 bytes) - Web crawler access control
+├── manifest.json                     (498 bytes) - PWA manifest for installation
+├── favicon.ico                       (3,870 bytes) - Legacy browser favicon (multi-resolution)
+├── logo192.png                       (5,347 bytes) - PWA icon 192x192 PNG
+├── logo512.png                       (9,664 bytes) - PWA icon 512x512 PNG
+├── via-gent-logo.svg                 (13,247 bytes) - Primary brand logo (500x120 SVG)
+├── tanstack-word-logo-white.svg      (15,002 bytes) - TanStack wordmark (3178x660 SVG)
+├── tanstack-circle-logo.png          (265,387 bytes) - TanStack circular logo (600x600 PNG)
+└── assets/
+    ├── agent-team.svg                (2,450 bytes) - Multi-agent illustration (200x200)
+    ├── knowledge-hub.svg             (1,712 bytes) - Knowledge hub illustration (200x200)
+    └── empty-project.svg             (1,125 bytes) - Empty state illustration (200x200)
+
+Total: 12 files, 320,387 bytes (~313 KB)

@@ -1,0 +1,199 @@
+src/infrastructure/
+├── events/
+│   ├── cross-workspace-event-bus.ts    # Cross-workspace event propagation
+│   ├── event-bus.ts                    # Main event bus implementation
+│   └── index.ts                        # Barrel exports
+│
+├── persistence/
+│   ├── dexie-db.ts                     # Main database export
+│   ├── dexie-db-class.ts               # ViaGentDatabase class
+│   ├── dexie-db-core-types.ts          # Core table types
+│   ├── dexie-db-ai-types.ts            # AI-related table types
+│   ├── dexie-db-session-types.ts       # Session/state table types
+│   ├── dexie-db-knowledge-types.ts     # Knowledge/RAG table types
+│   ├── dexie-db-migrations.ts          # Schema migrations (v1-v15)
+│   ├── dexie-db-helpers/               # Database helper functions
+│   │   ├── index.ts
+│   │   ├── collection-helpers-basic.ts
+│   │   ├── collection-helpers-sources.ts
+│   │   ├── conversation-thread-helpers.ts
+│   │   ├── file-metadata-helpers.ts
+│   │   ├── fsa-handle-helpers.ts
+│   │   ├── ide-state-helpers.ts
+│   │   ├── session-snapshot-helpers.ts
+│   │   ├── source-helpers-basic.ts
+│   │   ├── source-helpers-search.ts
+│   │   ├── sync-status-helpers-basic.ts
+│   │   ├── sync-status-helpers-query.ts
+│   │   ├── synthesis-result-helpers-*.ts
+│   │   ├── tool-execution-log-helpers.ts
+│   │   └── __tests__/
+│   ├── dexie-storage.ts                # Storage utilities
+│   ├── state-orchestrator.ts            # State management
+│   ├── rag-store-helpers.ts             # RAG store helpers
+│   ├── __tests__/
+│   │   └── dexie-db-class.test.ts
+│   │
+│   └── stores/                         # Zustand store slices
+│       ├── agents/
+│       │   ├── index.ts
+│       │   ├── agent-selection-store.ts
+│       │   ├── types.ts
+│       │   └── slices/
+│       │       ├── index.ts
+│       │       ├── agent-crud-slice.ts
+│       │       ├── agent-events-slice.ts
+│       │       ├── agent-utils-slice.ts
+│       │       ├── agent-validation-slice.ts
+│       │       └── agent-workspace-bindings-slice.ts
+│       │
+│       ├── auto-approve-store.ts
+│       ├── conversation-auto-restore.ts
+│       ├── hydrate.ts
+│       ├── hub-store.ts
+│       ├── navigation-store.ts
+│       ├── permissions/
+│       │   ├── index.ts
+│       │   └── tool-permission-store.ts
+│       │
+│       ├── providers/
+│       │   ├── index.ts
+│       │   ├── migrate-api-keys-to-vault.ts
+│       │   ├── migration-backup.ts
+│       │   ├── provider-crud-slice.ts
+│       │   ├── provider-models-slice.ts
+│       │   ├── provider-utils-slice.ts
+│       │   ├── types.ts
+│       │   ├── use-migration-state.ts
+│       │   └── __tests__/
+│       │
+│       ├── quiz-history-store.ts
+│       ├── study-store.ts
+│       │   ├── index.ts
+│       │   ├── quiz-store.ts
+│       │   └── __tests__/
+│       │
+│       ├── filesystem/
+│       │   ├── index.ts
+│       │   ├── snapshot-*.ts
+│       │   ├── snapshot-types.ts
+│       │   └── useFileSnapshotStore.ts
+│       │
+│       ├── ide/
+│       │   ├── index.ts
+│       │   ├── ide-*.ts
+│       │   ├── ide-types.ts
+│       │   ├── __tests__/
+│       │   │   └── ide-state-persistence.test.ts
+│       │   └── useIDEStore.ts
+│       │
+│       ├── project/
+│       │   ├── index.ts
+│       │   ├── project-*.ts
+│       │   ├── project-types.ts
+│       │   └── useProjectStore.ts
+│       │
+│       ├── rag/
+│       │   ├── index.ts
+│       │   ├── rag-*.ts
+│       │   ├── rag-types.ts
+│       │   └── rag-store.ts
+│       │
+│       ├── schema-migrations.ts
+│       ├── synthesis-store.ts
+│       ├── use-app-store.ts
+│       ├── workspace/
+│       │   ├── index.ts
+│       │   ├── unified-*.tsx
+│       │   ├── useCornerstoneStores.ts
+│       │   ├── useWorkspaceFileSystem.ts
+│       │   ├── useWorkspaceSwitching.ts
+│       │   ├── workspace-context.ts
+│       │   ├── workspace-provider.tsx
+│       │   ├── workspace-store.ts
+│       │   ├── workspace-types.ts
+│       │   └── __tests__/
+│       │       └── workspace-switch-isolation.test.ts
+│       │
+│       └── index.ts
+│
+└── sync/
+    ├── adapters/
+    │   ├── adapter-errors.ts
+    │   ├── base-adapter.ts
+    │   ├── fsa-adapter-*.ts
+    │   ├── fsa-adapter-types.ts
+    │   ├── fsa-permission-manager.ts
+    │   ├── idb-adapter-*.ts
+    │   ├── idb-adapter-types.ts
+    │   ├── idb-crud.ts
+    │   ├── idb-database.ts
+    │   ├── idb-eviction.ts
+    │   └── idb-quota-manager.ts
+    │
+    ├── core/
+    │   ├── event-emitters.ts
+    │   ├── event-types.ts
+    │   ├── file-types.ts
+    │   ├── file-watcher.ts
+    │   ├── quota-types.ts
+    │   ├── sync-config.ts
+    │   ├── sync-core-types.ts
+    │   ├── sync-engine.ts              # Barrel export
+    │   ├── sync-engine-core.ts
+    │   ├── sync-engine-state.ts
+    │   ├── sync-engine-types.ts
+    │   ├── sync-events.ts
+    │   ├── sync-event-bus.ts
+    │   ├── sync-result-types.ts
+    │   └── sync-types.ts
+    │
+    ├── strategies/
+    │   ├── bidirectional-sync.ts       # Barrel export
+    │   ├── bidirectional-sync-core.ts
+    │   ├── conflict-detection.ts
+    │   ├── conflict-resolution.ts
+    │   ├── conflict-resolver.ts
+    │   ├── file-comparison-types.ts
+    │   ├── index.ts
+    │   ├── sync-operation-*.ts
+    │   └── sync-operation-types.ts
+    │
+    ├── workspace-bindings/
+    │   ├── index.ts
+    │   ├── base.ts
+    │   ├── ide.ts
+    │   ├── knowledge.ts
+    │   ├── notes.ts
+    │   └── study.ts
+    │
+    ├── workspace-services/
+    │   ├── cross-workspace-file-references.ts
+    │   ├── cross-workspace-file-references/
+    │   │   ├── cross-workspace-reference-*.ts
+    │   │   └── index.ts
+    │   ├── file-sync-service.ts
+    │   ├── hooks/
+    │   │   ├── index.ts
+    │   │   └── use-file-sync-service.ts
+    │   ├── ide-file-sync-service.ts
+    │   ├── index.ts
+    │   ├── knowledge-file-sync-service.ts
+    │   ├── knowledge-sync/
+    │   │   ├── index.ts
+    │   │   ├── knowledge-source-store.ts
+    │   │   ├── knowledge-sync-*.ts
+    │   │   └── knowledge-sync-types.ts
+    │   ├── notes-file-sync-service.ts
+    │   ├── project-knowledge-sync.ts
+    │   ├── study-file-sync-service.ts
+    │   ├── study-sync/
+    │   │   ├── index.ts
+    │   │   ├── study-import-utils.ts
+    │   │   ├── study-sync-*.ts
+    │   │   └── study-sync-types.ts
+    │   └── __tests__/
+    │
+    └── index.ts
+
+Total: 248 TypeScript files across 3 main modules
