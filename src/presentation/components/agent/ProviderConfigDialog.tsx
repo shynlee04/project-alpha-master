@@ -104,6 +104,9 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 // BUILT-IN PROVIDER: Only save API key
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
+                    // FIX-2026-01-05: Update hasApiKey flag to true for visual feedback
+                    updateProvider(provider.id, { hasApiKey: true });
+
                     // CRITICAL: Trigger model loading after key is saved (Ralph Loop Cycle 4: emits event)
                     setIsFetchingModels(true);
                     try {
@@ -141,6 +144,9 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
+                    // FIX-2026-01-05: Update hasApiKey flag for visual feedback
+                    updateProvider(id, { hasApiKey: true });
+
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(id); // Ralph Loop Cycle 4: emits event
@@ -167,6 +173,9 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
+                    // FIX-2026-01-05: Update hasApiKey flag for visual feedback
+                    updateProvider(provider.id, { hasApiKey: true });
+
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id); // Ralph Loop Cycle 4: emits event

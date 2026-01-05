@@ -61,16 +61,16 @@ current_story:
 progress:
   # Overall
   total_stories: 33
-  stories_completed: 5
-  stories_remaining: 28
+  stories_completed: 7
+  stories_remaining: 26
   
   # Time
   estimated_hours_total: 135
-  estimated_hours_remaining: 122
-  estimated_days_remaining: 14
+  estimated_hours_remaining: 114
+  estimated_days_remaining: 13
   
   # Governance trigger tracking
-  stories_since_agents_md_update: 0  # Reset after S-005 update
+  stories_since_agents_md_update: 2  # S-002, S-003 completed
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PHASE OVERVIEW

@@ -77,10 +77,19 @@ export const createProviderModelsSlice: StateCreator<
    *
    * Emits cross-workspace event on success.
    *
+   * FIX-2026-01-05: Enhanced diagnostic logging for production debugging
+   *
    * @param providerId - Provider ID to fetch models for
    */
   fetchModels: async (providerId: string) => {
-    console.log('[ProviderModelsSlice] Fetching models for provider:', providerId);
+    console.log('[ProviderModelsSlice] fetchModels called for:', providerId);
+    console.log('[ProviderModelsSlice] SSR check: typeof window =', typeof window);
+
+    // SSR guard
+    if (typeof window === 'undefined') {
+      console.warn('[ProviderModelsSlice] Skipping fetchModels during SSR');
+      return;
+    }
 
     set((state) => ({
       isLoadingModels: { ...state.isLoadingModels, [providerId]: true }
@@ -89,12 +98,21 @@ export const createProviderModelsSlice: StateCreator<
     try {
       // Get provider configuration (cross-slice communication)
       const provider = get().providers?.find(p => p.id === providerId);
+      console.log('[ProviderModelsSlice] Provider found:', !!provider, provider?.name);
       if (!provider) {
         throw new Error(`Provider ${providerId} not found`);
       }
 
+      // Ensure credential vault is initialized
+      console.log('[ProviderModelsSlice] Initializing credential vault...');
+      await credentialVault.initialize();
+      console.log('[ProviderModelsSlice] Vault ready:', credentialVault.isReady());
+
       // Get API key from credential vault
+      console.log('[ProviderModelsSlice] Getting credentials for:', providerId);
       const apiKey = await credentialVault.getCredentials(providerId);
+      console.log('[ProviderModelsSlice] API key retrieved:', !!apiKey, apiKey ? `(${apiKey.length} chars)` : '(none)');
+
       if (!apiKey) {
         console.warn('[ProviderModelsSlice] No API key for provider:', providerId, '- loading defaults');
         // Load default models as fallback (user-friendly behavior)
@@ -107,7 +125,9 @@ export const createProviderModelsSlice: StateCreator<
       }
 
       // Fetch models from registry
+      console.log('[ProviderModelsSlice] Fetching models from registry with API key...');
       const models = await modelRegistry.getModels(providerId, apiKey);
+      console.log('[ProviderModelsSlice] Models received:', models.length);
 
       // Update state with fetched models
       set((state) => ({
@@ -115,7 +135,7 @@ export const createProviderModelsSlice: StateCreator<
         isLoadingModels: { ...state.isLoadingModels, [providerId]: false },
       }));
 
-      console.log('[ProviderModelsSlice] Models fetched successfully:', providerId, models.length, 'models');
+      console.log('[ProviderModelsSlice] ✅ Models fetched successfully:', providerId, models.length, 'models');
 
       // Emit cross-workspace event (for other workspaces to react)
       const currentWorkspace = useWorkspaceStore.getState().currentWorkspace;
@@ -127,7 +147,7 @@ export const createProviderModelsSlice: StateCreator<
       });
 
     } catch (error) {
-      console.error('[ProviderModelsSlice] Error fetching models:', providerId, error);
+      console.error('[ProviderModelsSlice] ❌ Error fetching models:', providerId, error);
       set((state) => ({
         isLoadingModels: { ...state.isLoadingModels, [providerId]: false },
       }));
