@@ -10,7 +10,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { AudioCaptureHandler, type AudioCaptureConfig } from '@/lib/rag/audio-capture';
+import {
+  AudioCaptureHandler,
+  getAudioCapture,
+  type AudioCaptureConfig,
+} from '@/lib/rag/audio-capture';
 
 /**
  * Voice recording state
@@ -117,11 +121,12 @@ export function useVoiceRecording(
     isSupported: checkBrowserSupport(),
   });
 
-  // Audio handler ref
+  // Refs
   const audioHandlerRef = useRef<AudioCaptureHandler | null>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recordingStartTimeRef = useRef<number>(0);
   const lastVolumeTimeRef = useRef<number>(Date.now());
+  const stopRecordingRef = useRef<(() => Promise<string | null>) | null>(null);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -136,100 +141,12 @@ export function useVoiceRecording(
     };
   }, []);
 
-  // Update volume level from audio handler
-  useEffect(() => {
-    const handler = audioHandlerRef.current;
-    if (!handler || !state.isRecording) return;
-
-    const updateVolume = () => {
-      const volume = handler.getVolumeLevel();
-      setState((prev) => ({ ...prev, volumeLevel: volume }));
-      lastVolumeTimeRef.current = Date.now();
-
-      // Check for silence to auto-send
-      if (volume < 0.01 && Date.now() - recordingStartTimeRef.current > config.minDuration) {
-        // Silence detected, could auto-send here
-        // For now, just track the last silence time
-      }
-    };
-
-    const interval = setInterval(updateVolume, 100);
-    return () => clearInterval(interval);
-  }, [state.isRecording, config.minDuration]);
-
   /**
-   * Start recording audio
+   * Internal stop implementation (not exposed)
    */
-  const startRecording = useCallback(async () => {
-    if (!state.isSupported) {
-      setState((prev) => ({
-        ...prev,
-        error: t('voice.notSupported'),
-      }));
-      return;
-    }
-
-    try {
-      setState((prev) => ({ ...prev, isRecording: true, error: null, isProcessing: false }));
-
-      // Create audio handler with chat-optimized config
-      const audioConfig: AudioCaptureConfig = {
-        audioConfig: {
-          sampleRate: config.sampleRate,
-          channels: config.channels,
-        },
-        onAudioData: (_chunk) => {
-          // Audio data received - volume tracking handled separately
-        },
-        onError: (error) => {
-          setState((prev) => ({
-            ...prev,
-            isRecording: false,
-            isProcessing: false,
-            error: error.message || t('voice.error'),
-          }));
-        },
-      };
-
-      const handler = new AudioCaptureHandler(audioConfig);
-      await handler.start();
-      audioHandlerRef.current = handler;
-      recordingStartTimeRef.current = Date.now();
-
-      // Set up auto-stop after max duration
-      silenceTimerRef.current = setTimeout(() => {
-        if (state.isRecording) {
-          stopRecording();
-        }
-      }, config.maxDuration);
-    } catch (err) {
-      if (err instanceof Error) {
-        // Check for permission denied
-        if (err.name === 'NotAllowedError' || err.message.includes('Permission')) {
-          setState((prev) => ({
-            ...prev,
-            isRecording: false,
-            isProcessing: false,
-            error: t('voice.permissionDenied'),
-          }));
-          return;
-        }
-      }
-      setState((prev) => ({
-        ...prev,
-        isRecording: false,
-        isProcessing: false,
-        error: t('voice.error'),
-      }));
-    }
-  }, [state.isSupported, config, t]);
-
-  /**
-   * Stop recording and return transcript
-   */
-  const stopRecording = useCallback(async (): Promise<string | null> => {
+  const stopRecordingImpl = useCallback(async (): Promise<string | null> => {
     const handler = audioHandlerRef.current;
-    if (!handler || !state.isRecording) {
+    if (!handler) {
       return null;
     }
 
@@ -268,7 +185,94 @@ export function useVoiceRecording(
 
     // TODO: E2-2 will integrate with Gemini Live API for transcription
     return null;
-  }, [state.isRecording, config.minDuration, config.maxDuration, t]);
+  }, [config.minDuration, t]);
+
+  // Keep ref updated
+  stopRecordingRef.current = stopRecordingImpl;
+
+  /**
+   * Start recording audio
+   */
+  const startRecording = useCallback(async () => {
+    if (!state.isSupported) {
+      setState((prev) => ({
+        ...prev,
+        error: t('voice.notSupported'),
+      }));
+      return;
+    }
+
+    try {
+      setState((prev) => ({ ...prev, isRecording: true, error: null, isProcessing: false }));
+
+      // Get or create audio handler with chat-optimized config
+      const audioConfig: AudioCaptureConfig = {
+        audioConfig: {
+          sampleRate: config.sampleRate,
+          channels: config.channels,
+        },
+        onVolumeChange: (level: number) => {
+          setState((prev) => ({ ...prev, volumeLevel: level }));
+          lastVolumeTimeRef.current = Date.now();
+
+          // Check for silence to auto-send
+          if (
+            level < 0.01 &&
+            Date.now() - recordingStartTimeRef.current > config.minDuration
+          ) {
+            // Silence detected, could auto-send here
+            // For now, just track the last silence time
+          }
+        },
+        onError: (error) => {
+          setState((prev) => ({
+            ...prev,
+            isRecording: false,
+            isProcessing: false,
+            error: error.message || t('voice.error'),
+          }));
+        },
+      };
+
+      const handler = getAudioCapture(audioConfig);
+      await handler.start();
+      audioHandlerRef.current = handler;
+      recordingStartTimeRef.current = Date.now();
+
+      // Set up auto-stop after max duration using ref to avoid circular dependency
+      silenceTimerRef.current = setTimeout(async () => {
+        if (audioHandlerRef.current) {
+          await stopRecordingImpl();
+        }
+      }, config.maxDuration);
+    } catch (err) {
+      if (err instanceof Error) {
+        // Check for permission denied
+        if (err.name === 'NotAllowedError' || err.message.includes('Permission')) {
+          setState((prev) => ({
+            ...prev,
+            isRecording: false,
+            isProcessing: false,
+            error: t('voice.permissionDenied'),
+          }));
+          return;
+        }
+      }
+      setState((prev) => ({
+        ...prev,
+        isRecording: false,
+        isProcessing: false,
+        error: t('voice.error'),
+      }));
+    }
+  }, [state.isSupported, config, t, stopRecordingImpl]);
+
+  /**
+   * Stop recording and return transcript
+   */
+  const stopRecording = useCallback(async (): Promise<string | null> => {
+    return stopRecordingImpl();
+  }, [stopRecordingImpl]);
 
   /**
    * Cancel recording

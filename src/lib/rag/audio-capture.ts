@@ -19,7 +19,7 @@ import type {
 /**
  * Audio capture handler configuration
  */
-interface AudioCaptureConfig {
+export interface AudioCaptureConfig {
   /** Audio configuration */
   audioConfig?: Partial<AudioConfig>;
   /** Callback when audio chunk is captured */
