@@ -8,7 +8,7 @@
 export {
     WorkflowExecutor,
     WorkflowExecutionError,
-    ExecutionState as WorkflowExecutionState,
+    WorkflowExecutionStatus,
     EXECUTION_ERRORS,
     type ExecutionState,
     type ExecutionConfig,

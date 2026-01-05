@@ -10,7 +10,7 @@
 
 import type { Workflow, WorkflowStep } from '../builder/types';
 import { StepType } from '../builder/types';
-import { DebateAgent, type DebateConfig, type DebateResults } from '../agents/debate-agent';
+import { DebateAgent, DebatePersona, type DebateConfig, type DebateResults } from '../agents/debate-agent';
 import { SequentialExpansionAgent, type ExpansionConfig, type ExpansionResult } from '../agents/sequential-expansion-agent';
 
 // ============================================================================
@@ -18,9 +18,9 @@ import { SequentialExpansionAgent, type ExpansionConfig, type ExpansionResult } 
 // ============================================================================
 
 /**
- * Execution state for a workflow
+ * Execution status for a workflow
  */
-export enum ExecutionState {
+export enum WorkflowExecutionStatus {
     /** Ready to execute */
     IDLE = 'idle',
     /** Currently executing */
@@ -59,8 +59,8 @@ export interface StepResult {
 export interface ExecutionState {
     /** Current workflow being executed */
     workflow: Workflow;
-    /** Current execution state */
-    status: ExecutionState;
+    /** Current execution status */
+    status: WorkflowExecutionStatus;
     /** ID of currently executing step */
     currentStepId: string | null;
     /** IDs of completed steps in order */
@@ -206,7 +206,7 @@ export class WorkflowExecutor {
         // Initialize execution state
         const state: ExecutionState = {
             workflow,
-            status: ExecutionState.RUNNING,
+            status: WorkflowExecutionStatus.RUNNING,
             currentStepId: workflow.startStepId,
             completedSteps: [],
             stepResults: new Map(),
@@ -226,7 +226,7 @@ export class WorkflowExecutor {
             await this.executeSteps(state, config);
 
             // Mark as completed
-            state.status = ExecutionState.COMPLETED;
+            state.status = WorkflowExecutionStatus.COMPLETED;
             state.endedAt = Date.now();
             this.emit({ type: 'completed', state });
 
@@ -235,13 +235,13 @@ export class WorkflowExecutor {
         } catch (error) {
             // Handle pause signal
             if (error instanceof WorkflowExecutionError && error.code === EXECUTION_ERRORS.PAUSED) {
-                state.status = ExecutionState.PAUSED;
+                state.status = WorkflowExecutionStatus.PAUSED;
                 this.emit({ type: 'paused', state });
                 return state;
             }
 
             // Handle execution failure
-            state.status = ExecutionState.FAILED;
+            state.status = WorkflowExecutionStatus.FAILED;
             state.error = error instanceof Error ? error.message : String(error);
             state.endedAt = Date.now();
             this.emit({ type: 'failed', state });
@@ -255,7 +255,7 @@ export class WorkflowExecutor {
      * Pause a running workflow
      */
     pause(): void {
-        if (!this.currentState || this.currentState.status !== ExecutionState.RUNNING) {
+        if (!this.currentState || this.currentState.status !== WorkflowExecutionStatus.RUNNING) {
             throw new WorkflowExecutionError('Cannot pause: workflow is not running');
         }
 
@@ -270,12 +270,12 @@ export class WorkflowExecutor {
      * @param config - Optional new config for resumption
      */
     async resume(config: ExecutionConfig = {}): Promise<ExecutionState> {
-        if (!this.currentState || this.currentState.status !== ExecutionState.PAUSED) {
+        if (!this.currentState || this.currentState.status !== WorkflowExecutionStatus.PAUSED) {
             throw new WorkflowExecutionError('Cannot resume: workflow is not paused');
         }
 
         // Update state to running
-        this.currentState.status = ExecutionState.RUNNING;
+        this.currentState.status = WorkflowExecutionStatus.RUNNING;
         this.emit({ type: 'resumed', state: this.currentState });
 
         // Create new abort controller
@@ -286,7 +286,7 @@ export class WorkflowExecutor {
             await this.executeSteps(this.currentState, config);
 
             // Mark as completed
-            this.currentState.status = ExecutionState.COMPLETED;
+            this.currentState.status = WorkflowExecutionStatus.COMPLETED;
             this.currentState.endedAt = Date.now();
             this.emit({ type: 'completed', state: this.currentState });
 
@@ -295,13 +295,13 @@ export class WorkflowExecutor {
         } catch (error) {
             // Handle pause signal again
             if (error instanceof WorkflowExecutionError && error.code === EXECUTION_ERRORS.PAUSED) {
-                this.currentState.status = ExecutionState.PAUSED;
+                this.currentState.status = WorkflowExecutionStatus.PAUSED;
                 this.emit({ type: 'paused', state: this.currentState });
                 return this.currentState;
             }
 
             // Handle execution failure
-            this.currentState.status = ExecutionState.FAILED;
+            this.currentState.status = WorkflowExecutionStatus.FAILED;
             this.currentState.error = error instanceof Error ? error.message : String(error);
             this.currentState.endedAt = Date.now();
             this.emit({ type: 'failed', state: this.currentState });
@@ -327,7 +327,7 @@ export class WorkflowExecutor {
      * Execute workflow steps sequentially
      */
     private async executeSteps(state: ExecutionState, config: ExecutionConfig): Promise<void> {
-        while (state.currentStepId && state.status === ExecutionState.RUNNING) {
+        while (state.currentStepId && state.status === WorkflowExecutionStatus.RUNNING) {
             // Check for abort signal
             if (this.abortController?.signal.aborted) {
                 throw new WorkflowExecutionError(
@@ -386,8 +386,6 @@ export class WorkflowExecutor {
         config: ExecutionConfig
     ): Promise<StepResult> {
         this.emit({ type: 'step_started', stepId: step.id, stepName: step.name });
-
-        const startTime = Date.now();
 
         try {
             let output: unknown;
@@ -467,12 +465,13 @@ export class WorkflowExecutor {
     private async executeSendMessage(
         step: WorkflowStep,
         _state: ExecutionState,
-        config: ExecutionConfig
+        _config: ExecutionConfig
     ): Promise<{ message: string; response: string }> {
         // Extract prompt from config
         const prompt = step.config.prompt as string || 'Process the following input';
         const temperature = (step.config.temperature as number) ?? 0.7;
-        const maxTokens = (step.config.maxTokens as number) ?? config.maxTokens ?? 1000;
+        // Temperature used in simulated response below
+        void temperature;
 
         // In a real implementation, this would call the LLM
         // For now, return a simulated response
@@ -488,7 +487,7 @@ export class WorkflowExecutor {
     private async executeRoute(
         step: WorkflowStep,
         state: ExecutionState,
-        config: ExecutionConfig
+        _config: ExecutionConfig
     ): Promise<{ nextStepId: string; intent: string }> {
         // Get intents from config
         const intents = step.config.intents as string[] || [];
@@ -522,7 +521,7 @@ export class WorkflowExecutor {
         _config: ExecutionConfig
     ): Promise<{ nextStepId: string; condition: string }> {
         // Get conditions from config
-        const conditions = step.config.conditions || [];
+        const conditions = (step.config.conditions || []) as Array<{ expression: string; targetStepId: string }>;
         const stateData = state.workflowState;
 
         // Evaluate each condition
@@ -555,10 +554,10 @@ export class WorkflowExecutor {
             providerId: config.providerId || 'gemini',
             model: config.modelId || 'gemini-2.0-flash',
             rounds: (step.config.rounds as number) ?? 3,
-            personas: (step.config.personas as string[]) || ['optimist', 'skeptic', 'expert'],
+            personas: (step.config.personas as DebatePersona[]) || ['optimist', 'skeptic', 'expert'],
         };
 
-        const topic = (step.config.topic as string) || state.workflowState.input as string || 'Default debate topic';
+        const topic = (step.config.topic as string) || _state.workflowState.input as string || 'Default debate topic';
 
         const agent = new DebateAgent(debateConfig);
         return agent.conductDebate({ topic });
@@ -603,8 +602,8 @@ export class WorkflowExecutor {
         _state: ExecutionState,
         _config: ExecutionConfig
     ): Promise<{ input: string }> {
-        const prompt = step.config.prompt as string || 'Please provide input:';
-        const required = step.config.required as boolean ?? false;
+        const prompt = (step.config.prompt as string) || 'Please provide input:';
+        void (step.config.required as boolean ?? false); // Used for validation in real implementation
 
         // In a real implementation, this would pause execution and show UI
         // For now, return a placeholder

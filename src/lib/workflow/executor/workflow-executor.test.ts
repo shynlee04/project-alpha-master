@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { WorkflowExecutor, WorkflowExecutionError, ExecutionState, EXECUTION_ERRORS, type StepResult } from './workflow-executor';
+import { WorkflowExecutor, WorkflowExecutionError, WorkflowExecutionStatus, EXECUTION_ERRORS, type StepResult } from './workflow-executor';
 import type { Workflow, WorkflowStep } from '../builder/types';
 import { StepType } from '../builder/types';
 
@@ -102,7 +102,7 @@ describe('WorkflowExecutor', () => {
                 onStepComplete: (result) => stepResults.push(result),
             });
 
-            expect(executor.state?.status).toBe(ExecutionState.COMPLETED);
+            expect(executor.state?.status).toBe(WorkflowExecutionStatus.COMPLETED);
             expect(executor.state?.completedSteps).toHaveLength(2);
             expect(stepResults).toHaveLength(2);
         });
@@ -188,7 +188,7 @@ describe('WorkflowExecutor', () => {
             await executor.execute(workflow);
 
             // Should complete without errors
-            expect(executor.state?.status).toBe(ExecutionState.COMPLETED);
+            expect(executor.state?.status).toBe(WorkflowExecutionStatus.COMPLETED);
         });
 
         it('should follow correct branch path', async () => {
@@ -333,7 +333,7 @@ describe('WorkflowExecutor', () => {
             const state = await execution;
 
             // Should be paused or completed (too fast to catch)
-            expect([ExecutionState.PAUSED, ExecutionState.COMPLETED]).toContain(state.status);
+            expect([WorkflowExecutionStatus.PAUSED, WorkflowExecutionStatus.COMPLETED]).toContain(state.status);
         });
 
         it('should resume paused workflow', async () => {
@@ -343,9 +343,9 @@ describe('WorkflowExecutor', () => {
             await executor.execute(workflow);
             // Most simple workflows complete before pause can take effect
             // This test validates the resume API exists and doesn't error
-            if (executor.state?.status === ExecutionState.PAUSED) {
+            if (executor.state?.status === WorkflowExecutionStatus.PAUSED) {
                 const resumedState = await executor.resume();
-                expect(resumedState.status).toBe(ExecutionState.COMPLETED);
+                expect(resumedState.status).toBe(WorkflowExecutionStatus.COMPLETED);
             }
         });
 
@@ -367,7 +367,7 @@ describe('WorkflowExecutor', () => {
             workflow.startStepId = 'non-existent';
 
             await expect(executor.execute(workflow)).resolves.toBeDefined();
-            expect(executor.state?.status).toBe(ExecutionState.FAILED);
+            expect(executor.state?.status).toBe(WorkflowExecutionStatus.FAILED);
         });
 
         it('should handle invalid workflow structure', async () => {
@@ -382,7 +382,7 @@ describe('WorkflowExecutor', () => {
             } as Workflow;
 
             const state = await executor.execute(invalidWorkflow);
-            expect(state.status).toBe(ExecutionState.FAILED);
+            expect(state.status).toBe(WorkflowExecutionStatus.FAILED);
         });
 
         it('should call onError callback on failure', async () => {
@@ -428,7 +428,7 @@ describe('WorkflowExecutor', () => {
 
             // Should complete with error rather than throw
             const state = await executor.execute(workflow);
-            expect([ExecutionState.COMPLETED, ExecutionState.FAILED]).toContain(state.status);
+            expect([WorkflowExecutionStatus.COMPLETED, WorkflowExecutionStatus.FAILED]).toContain(state.status);
         });
 
         it('should preserve error state after failure', async () => {
@@ -527,7 +527,7 @@ describe('WorkflowExecutor', () => {
 
             expect(onComplete).toHaveBeenCalledTimes(1);
             expect(onComplete).toHaveBeenCalledWith(
-                expect.objectContaining({ status: ExecutionState.COMPLETED })
+                expect.objectContaining({ status: WorkflowExecutionStatus.COMPLETED })
             );
         });
 
@@ -573,7 +573,7 @@ describe('WorkflowExecutor', () => {
                 input: { path: 'a' },
             });
 
-            expect(executor.state?.status).toBe(ExecutionState.COMPLETED);
+            expect(executor.state?.status).toBe(WorkflowExecutionStatus.COMPLETED);
         });
 
         it('should handle linear workflow with many steps', async () => {
@@ -625,7 +625,7 @@ describe('WorkflowExecutor', () => {
 
             await executor.execute(workflow);
 
-            expect(executor.state?.status).toBe(ExecutionState.COMPLETED);
+            expect(executor.state?.status).toBe(WorkflowExecutionStatus.COMPLETED);
             expect(executor.state?.completedSteps).toContain('only');
         });
 
@@ -645,7 +645,7 @@ describe('WorkflowExecutor', () => {
 
             await executor.execute(workflow);
 
-            expect(executor.state?.status).toBe(ExecutionState.COMPLETED);
+            expect(executor.state?.status).toBe(WorkflowExecutionStatus.COMPLETED);
         });
 
         it('should handle circular reference detection', async () => {
@@ -666,7 +666,7 @@ describe('WorkflowExecutor', () => {
             // After max iterations, it should complete or fail
             await executor.execute(workflow);
 
-            expect([ExecutionState.COMPLETED, ExecutionState.FAILED]).toContain(executor.state?.status);
+            expect([WorkflowExecutionStatus.COMPLETED, WorkflowExecutionStatus.FAILED]).toContain(executor.state?.status);
         });
     });
 
