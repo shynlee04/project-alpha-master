@@ -100,6 +100,10 @@ export function SequentialExpansionOptions({
                 {expansion.questions.map((question, index) => {
                     const isExpanded = expandedThreads.has(index);
                     const isExpanding = expandingIndex === index;
+                    // Compute display title outside JSX to avoid syntax issues
+                    const displayTitle = question.threadTitle.length > 20
+                        ? `${question.threadTitle.slice(0, 20)}...`
+                        : question.threadTitle;
 
                     return (
                         <button
@@ -151,10 +155,7 @@ export function SequentialExpansionOptions({
                             {/* Thread title indicator */}
                             {!isExpanded && (
                                 <span className="text-xs text-muted-foreground flex-shrink-0">
-                                    {question.threadTitle}
-                                        .length > 20
-                                        ? question.threadTitle.slice(0, 20) + '...'
-                                        : question.threadTitle}
+                                    {displayTitle}
                                 </span>
                             )}
                         </button>

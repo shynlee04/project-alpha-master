@@ -55,11 +55,11 @@
             const db = event.target.result;
             console.log('   Database version:', db.version);
             console.log('   Object stores:', [...db.objectStoreNames].join(', '));
-            
+
             // Check if credentials table exists
             const hasCredentials = db.objectStoreNames.contains('credentials');
             console.log(`   credentials table: ${hasCredentials ? '✅ exists' : '❌ MISSING'}`);
-            
+
             // If exists, count entries
             if (hasCredentials) {
                 const tx = db.transaction('credentials', 'readonly');
@@ -68,7 +68,7 @@
                 countReq.onsuccess = () => {
                     console.log(`   Credentials stored: ${countReq.result}`);
                 };
-                
+
                 // List all credential provider IDs
                 const getAllReq = store.getAllKeys();
                 getAllReq.onsuccess = () => {
@@ -83,7 +83,7 @@
     } catch (e) {
         console.log('   ❌ Database check failed:', e.message);
     }
-    
+
     // Give IDB time to complete
     await new Promise((r) => setTimeout(r, 500));
     console.log('');
