@@ -1,23 +1,26 @@
 /**
  * @fileoverview Note Sidebar Component
  * @module components/notes/NoteSidebar
- * @governance EPIC-26-5, NR-06, NR-08
+ * @governance EPIC-26-5, NR-06, NR-08, E1-9
  *
  * Sidebar with search, favorites toggle, note tree, and import/export buttons.
+ * E1-9: Added compact chat panel for quick AI access within sidebar.
  *
  * Story 26.5: Note Hierarchy & Sidebar Navigation
  * NR-06: Import/Export buttons in sidebar header
  * NR-08: Markdown Import/Export UI integration
+ * E1-9: Add chat to Notes sidebar
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Bot } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
 import { NoteTree } from './NoteTree';
 import { NotesIndexingButton } from './NotesIndexingButton';
+import { NoteSidebarChat } from './NoteSidebarChat';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 interface NoteSidebarProps {
@@ -35,7 +38,16 @@ interface NoteSidebarProps {
     onFileSync?: () => void;
     /** AC-02: Optional slot for agent selector */
     agentSelectorSlot?: React.ReactNode;
+    /** E1-9: Project ID for chat context */
+    projectId?: string;
+    /** E1-9: Project name for chat context */
+    projectName?: string;
 }
+
+/**
+ * Sidebar view type
+ */
+type SidebarView = 'notes' | 'chat';
 
 /**
  * Note sidebar component
@@ -47,6 +59,7 @@ interface NoteSidebarProps {
  * - Import/Export buttons (NR-06)
  * - Note tree display
  * - Agent selector slot (AC-02)
+ * - E1-9: Compact chat panel with view toggle
  */
 export function NoteSidebar({
     notes,
@@ -57,11 +70,16 @@ export function NoteSidebar({
     onExport,
     onIndexForRAG: _onIndexForRAG, // P2-8: DEPRECATED - Now handled internally by NotesIndexingButton
     onFileSync,
-    agentSelectorSlot
+    agentSelectorSlot,
+    projectId,
+    projectName
 }: NoteSidebarProps) {
     const { t } = useTranslation();
     const { searchQuery, setSearchQuery, showFavoritesOnly, toggleFavoritesFilter } = useNoteNavigationStore();
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+
+    // E1-9: View toggle state (notes list vs chat panel)
+    const [sidebarView, setSidebarView] = useState<SidebarView>('notes');
 
     // Debounced search (150ms)
     useEffect(() => {
@@ -86,10 +104,42 @@ export function NoteSidebar({
             {/* Header */}
             <div className="p-3 border-b border-border">
                 <div className="flex items-center justify-between mb-2">
-                    <h2 className="font-mono font-bold text-sm flex items-center gap-2">
-                        <Notebook size={16} className="text-primary" />
-                        {t('notes.title', 'Notes')}
-                    </h2>
+                    {/* Title with View Toggle (E1-9) */}
+                    <div className="flex items-center gap-2">
+                        {/* Notes View Toggle Button */}
+                        <button
+                            onClick={() => setSidebarView('notes')}
+                            className={`
+                                flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-mono font-bold
+                                ${sidebarView === 'notes'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                                }
+                            `}
+                            aria-pressed={sidebarView === 'notes'}
+                            aria-label={t('notes.view.notes', 'Notes view')}
+                        >
+                            <Notebook size={14} />
+                            {t('notes.title', 'Notes')}
+                        </button>
+
+                        {/* Chat View Toggle Button (E1-9) */}
+                        <button
+                            onClick={() => setSidebarView('chat')}
+                            className={`
+                                flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-mono font-bold
+                                ${sidebarView === 'chat'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                                }
+                            `}
+                            aria-pressed={sidebarView === 'chat'}
+                            aria-label={t('notes.view.chat', 'Chat view')}
+                        >
+                            <Bot size={14} />
+                            {t('chat.title', 'Chat')}
+                        </button>
+                    </div>
                     <div className="flex items-center gap-1">
                         {/* AC-02: Agent Selector slot */}
                         {agentSelectorSlot}
