@@ -14,13 +14,14 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Bot } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Bot, Folder } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
 import { NoteTree } from './NoteTree';
 import { NotesIndexingButton } from './NotesIndexingButton';
 import { NoteSidebarChat } from './NoteSidebarChat';
+import { ProjectFilesPanel } from './ProjectFilesPanel';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 interface NoteSidebarProps {
@@ -47,7 +48,7 @@ interface NoteSidebarProps {
 /**
  * Sidebar view type
  */
-type SidebarView = 'notes' | 'chat';
+type SidebarView = 'notes' | 'chat' | 'files';
 
 /**
  * Note sidebar component
@@ -139,11 +140,28 @@ export function NoteSidebar({
                             <Bot size={14} />
                             {t('chat.title', 'Chat')}
                         </button>
+
+                        {/* Files View Toggle Button (S-007) */}
+                        <button
+                            onClick={() => setSidebarView('files')}
+                            className={`
+                                flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-mono font-bold
+                                ${sidebarView === 'files'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                                }
+                            `}
+                            aria-pressed={sidebarView === 'files'}
+                            aria-label={t('notes.view.files', 'Files view')}
+                        >
+                            <Folder size={14} />
+                            {t('notes.title_files', 'Files')}
+                        </button>
                     </div>
                     <div className="flex items-center gap-1">
                         {/* AC-02: Agent Selector slot */}
                         {agentSelectorSlot}
-                        
+
                         {/* NR-06: Import Button */}
                         {onImport && (
                             <Button
@@ -156,7 +174,7 @@ export function NoteSidebar({
                                 <FileUp size={16} />
                             </Button>
                         )}
-                        
+
                         {/* NR-06: Export Button */}
                         {onExport && (
                             <Button
@@ -242,6 +260,11 @@ export function NoteSidebar({
                         projectId={projectId || 'default'}
                         projectName={projectName || t('notes.title', 'Notes')}
                     />
+                </div>
+            ) : sidebarView === 'files' ? (
+                /* S-007: Project Files Panel */
+                <div className="flex-1 overflow-hidden">
+                    <ProjectFilesPanel />
                 </div>
             ) : (
                 /* Notes List */

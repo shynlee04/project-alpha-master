@@ -612,13 +612,200 @@ stories:
     started_at: "2026-01-05T22:30:00Z"
     completed_at: "2026-01-05T09:37:00Z"
 
+  - id: "E2-3"
+    title: "Vietnamese Voice Recognition"
+    epic: "E2"
+    points: 8
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P0"
+    dependencies: ["E2-1", "E2-2"]
+    blocks: ["E2-4"]
+    acceptance_criteria:
+      - "Vietnamese language detection (i18n.language='vi' sets vi-VN code)"
+      - "Vietnamese transcription quality (≥85% accuracy)"
+      - "Tone marks preserved (á, à, ả, ã, ạ)"
+      - "Diacritics recognized (đ, Ă, Â, Ê, Ô, Ơ, Ư)"
+      - "Fallback to English if Vietnamese fails"
+      - "Vietnamese error messages"
+      - "Mobile Vietnamese support"
+      - "TypeScript zero errors, i18n complete"
+    tech_notes:
+      - "Language code mapping: vi → vi-VN, en → en-US"
+      - "Test phrases for Vietnamese accuracy validation"
+      - "Gemini Live API supports Vietnamese with vi-VN code"
+      - "Error handling with Vietnamese fallback"
+    artifacts_created:
+      - "_bmad-output/story-contexts/E2-3-story-context-2026-01-05.md"
+    test_strategy:
+      - "Manual test: Record Vietnamese greeting, verify accuracy"
+      - "Manual test: Test tone mark preservation"
+      - "Manual test: Test technical terms in Vietnamese"
+      - "Manual test: Verify fallback behavior"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pass"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T09:45:00Z"
+    completed_at: "2026-01-05T09:50:00Z"
+
+  - id: "E2-4"
+    title: "File Attachment UI"
+    epic: "E2"
+    points: 8
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: []
+    blocks: []
+    acceptance_criteria:
+      - "Paperclip icon button in chat input area"
+      - "File picker opens on click (supports images, audio, PDF)"
+      - "File preview thumbnails for images, file icons for documents"
+      - "Remove attachment button"
+      - "File size limit (25MB per file)"
+      - "Multiple files support"
+      - "Mobile touch targets ≥44x44px"
+      - "TypeScript zero errors, i18n complete (EN + VI)"
+    tech_notes:
+      - "Created FileAttachmentInput component (243 lines)"
+      - "File type detection (image, audio, pdf, other)"
+      - "Image thumbnail previews using URL.createObjectURL"
+      - "File size formatting (B, KB, MB)"
+      - "Memory cleanup on attachment remove (URL.revokeObjectURL)"
+      - "Attachment state management in EnhancedChatInterface"
+      - "Attachments cleared after message send"
+    artifacts_created:
+      - "src/presentation/components/chat/FileAttachmentInput.tsx (243 lines, NEW)"
+      - "_bmad-output/story-contexts/E2-4-story-context-2026-01-05.md"
+    files_modified:
+      - "src/presentation/components/chat/index.ts (+3 lines, export)"
+      - "src/presentation/components/ide/EnhancedChatInterface.tsx (+25 lines, integration)"
+      - "src/i18n/en/chat.json (+13 lines, attachment namespace)"
+      - "src/i18n/vi/chat.json (+13 lines, attachment namespace)"
+    test_strategy:
+      - "Manual test: Click attachment button, verify file picker opens"
+      - "Manual test: Select image file, verify thumbnail preview"
+      - "Manual test: Select file >25MB, verify error toast"
+      - "Manual test: Click remove button, verify attachment removed"
+      - "Manual test: Send message, verify attachments cleared"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass (attachment.*, EN + VI)"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T23:00:00Z"
+    completed_at: "2026-01-05T23:15:00Z"
+
+  - id: "E2-5"
+    title: "Audio Output Playback"
+    epic: "E2"
+    points: 6
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: ["E2-2"]
+    blocks: []
+    acceptance_criteria:
+      - "Audio player component for TTS playback"
+      - "Play/pause controls"
+      - "Volume control"
+      - "Playback progress indicator"
+      - "Vietnamese audio output"
+      - "English audio output"
+      - "Audio player attached to AI messages"
+      - "Auto-play setting (default: off)"
+      - "Mobile touch targets ≥44x44px"
+      - "TypeScript zero errors, i18n complete"
+    tech_notes:
+      - "AudioPlayer component already exists (290 lines)"
+      - "AudioPlaybackHandler for streaming (389 lines)"
+      - "Gemini Live API supports audio output in responses"
+      - "Audio format: MP3/WAV, 24kHz sample rate, mono"
+      - "Autoplay policy: requires user interaction first"
+    artifacts_created:
+      - "_bmad-output/story-contexts/E2-5-story-context-2026-01-05.md"
+    test_strategy:
+      - "Manual test: Click play button, verify audio plays"
+      - "Manual test: Test pause/resume functionality"
+      - "Manual test: Test volume control"
+      - "Manual test: Test Vietnamese TTS output"
+      - "Manual test: Test mobile compatibility"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pass"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T09:55:00Z"
+    completed_at: "2026-01-05T10:00:00Z"
+
+  - id: "E2-6"
+    title: "URL Fetching and Preview"
+    epic: "E2"
+    points: 6
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: []
+    blocks: []
+    acceptance_criteria:
+      - "URL input dialog with validation"
+      - "Metadata fetching (title, description, image)"
+      - "Open Graph parsing"
+      - "Preview card with favicon fallback"
+      - "CORS handling (proxy for MVP)"
+      - "Error handling (timeout, CORS blocks, invalid URL)"
+      - "Click to open URL in new tab"
+      - "i18n complete (EN + VI, 9 url.* keys)"
+      - "TypeScript zero errors"
+      - "Mobile touch targets ≥44x44px"
+    tech_notes:
+      - "Created fetch-url-metadata.ts (188 lines)"
+      - "Open Graph tag parsing with regex"
+      - "CORS proxy: allorigins.win for MVP"
+      - "10 second timeout with AbortController"
+      - "Fallback to domain-only metadata if proxy fails"
+      - "Created URLInputDialog component (199 lines)"
+      - "Updated FileAttachmentInput to support URL attachments"
+      - "Discriminated union: Attachment = FileAttachment | URLAttachment"
+      - "Type guards for preview property access"
+    artifacts_created:
+      - "src/lib/metadata/fetch-url-metadata.ts (188 lines, NEW)"
+      - "src/presentation/components/chat/URLInputDialog.tsx (199 lines, NEW)"
+      - "_bmad-output/story-contexts/E2-6-story-context-2026-01-05.md"
+    files_modified:
+      - "src/presentation/components/chat/FileAttachmentInput.tsx (+85 lines, URL support)"
+      - "src/presentation/components/chat/index.ts (+4 lines, exports)"
+      - "src/presentation/components/ide/EnhancedChatInterface.tsx (+3 lines, Attachment type)"
+      - "src/i18n/en/chat.json (+9 lines, url namespace)"
+      - "src/i18n/vi/chat.json (+9 lines, url namespace)"
+    test_strategy:
+      - "Manual test: Click URL button, verify dialog opens"
+      - "Manual test: Paste URL, verify metadata fetches"
+      - "Manual test: Verify Open Graph image displays"
+      - "Manual test: Click preview card, verify opens in new tab"
+      - "Manual test: Test invalid URL error"
+      - "Manual test: Test timeout error handling"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass (url.*, EN + VI)"
+      code_review: "pass"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T23:30:00Z"
+    completed_at: "2026-01-06T00:15:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 106
-  actual: 106
-  completed: 106
+  planned: 114
+  actual: 114
+  completed: 114
   remaining: 0
-  burndown: [106, 0]
+  burndown: [114, 0]
 
 # Sprint 1 Risks
 risks:
@@ -713,12 +900,12 @@ epics:
   - id: "E2"
     name: "Multimodal Input System"
     status: "IN_PROGRESS"
-    progress: 25 # 2/8 stories = 25%
+    progress: 75 # 6/8 stories = 75%
     stories_total: 8
-    stories_completed: 2
+    stories_completed: 6
     stories_in_progress: 0
     points_total: 56
-    points_completed: 17
+    points_completed: 53
     points_in_progress: 0
     started_at: "2026-01-05T22:00:00Z"
   - id: "E3"
@@ -792,9 +979,9 @@ project_summary:
   total_stories: 73
   total_points: 518
   completed_epics: 1
-  completed_stories: 14
-  completed_points: 106
-  overall_progress: 19
+  completed_stories: 18
+  completed_points: 142
+  overall_progress: 25
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
-import { FileAttachmentInput, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
+import { FileAttachmentInput, type Attachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { useTranslation } from 'react-i18next'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
 
@@ -79,7 +79,7 @@ export function EnhancedChatInterface({
     const [input, setInput] = useState('')
     const [keyboardHeight, setKeyboardHeight] = useState(0)
     // E2-4: File attachments state
-    const [attachments, setAttachments] = useState<FileAttachment[]>([])
+    const [attachments, setAttachments] = useState<Attachment[]>([])
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const formRef = useRef<HTMLFormElement>(null)
 
@@ -151,25 +151,27 @@ export function EnhancedChatInterface({
         if (input.trim()) {
             onSendMessage(input.trim())
             setInput('')
-            // E2-4: Clear attachments after sending
+            // E2-4: Clear attachments after sending (type guard for preview property)
             attachments.forEach(a => {
-                if (a.preview) URL.revokeObjectURL(a.preview)
+                if ('preview' in a && a.preview) {
+                    URL.revokeObjectURL(a.preview)
+                }
             })
             setAttachments([])
         }
     }
 
-    // E2-4: Handle file attachment addition
-    const handleAddAttachment = useCallback((attachment: FileAttachment) => {
+    // E2-4: Handle file/URL attachment addition (accepts union type)
+    const handleAddAttachment = useCallback((attachment: Attachment) => {
         setAttachments(prev => [...prev, attachment])
     }, [])
 
-    // E2-4: Handle file attachment removal
+    // E2-4: Handle file/URL attachment removal
     const handleRemoveAttachment = useCallback((id: string) => {
         setAttachments(prev => {
             const attachment = prev.find(a => a.id === id)
-            // Revoke object URL to free memory
-            if (attachment?.preview) {
+            // Revoke object URL to free memory (type guard for preview property)
+            if (attachment && 'preview' in attachment && attachment.preview) {
                 URL.revokeObjectURL(attachment.preview)
             }
             return prev.filter(a => a.id !== id)

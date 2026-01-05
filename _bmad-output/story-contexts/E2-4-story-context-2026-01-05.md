@@ -3,9 +3,10 @@
 **Document ID**: `cwac-story-e2-4-2026-01-05`
 **Epic**: E2 (Multimodal Input System)
 **Story**: E2-4
-**Status**: `IN_PROGRESS`
+**Status**: `DONE`
 **Points**: 8
 **Created**: 2026-01-05T23:00:00Z
+**Completed**: 2026-01-05T23:15:00Z
 
 ---
 

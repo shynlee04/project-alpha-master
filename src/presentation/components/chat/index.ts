@@ -62,7 +62,11 @@ export type { ToolExecutionIndicatorProps, ToolExecutionIndicatorGroupProps } fr
 
 // E2-4: File Attachment Input for chat messages
 export { FileAttachmentInput } from './FileAttachmentInput';
-export type { FileAttachment, FileAttachmentInputProps } from './FileAttachmentInput';
+export type { FileAttachment, FileAttachmentInputProps, Attachment } from './FileAttachmentInput';
+
+// E2-6: URL Fetching and Preview
+export { URLInputDialog } from './URLInputDialog';
+export type { URLAttachment } from './URLInputDialog';
 
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';

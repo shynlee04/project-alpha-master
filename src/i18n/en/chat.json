@@ -47,6 +47,17 @@
     "pdf": "PDF document",
     "file": "File"
   },
+  "url": {
+    "add": "Add link",
+    "pasteUrl": "Paste URL...",
+    "invalid": "Invalid URL",
+    "fetching": "Fetching link info...",
+    "fetchError": "Could not fetch link info",
+    "timeout": "Request timed out",
+    "blocked": "Link access blocked by browser",
+    "openLink": "Open link",
+    "preview": "Preview"
+  },
   "placeholder": "Type a message...",
   "send": "Send message",
   "attach": "Attach file (coming soon)",

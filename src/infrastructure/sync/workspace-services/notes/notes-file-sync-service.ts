@@ -28,6 +28,7 @@ import {
 // ESM imports for Cloudflare Workers compatibility
 import { setupFileWatcher, type FileChangeTracker } from './note-file-watcher';
 import { syncNoteChanges } from './note-crud-operations';
+import { NoteFolderBridge } from './note-folder-bridge';
 
 /**
  * Configuration for Notes file sync service
@@ -93,7 +94,25 @@ export class NotesFileSyncService implements FileSyncService {
         this.listFiles = impl.listFiles.bind(this);
         this.getFileMetadata = impl.getFileMetadata.bind(this);
         this.writeBatch = impl.writeBatch.bind(this);
-        this.mount = impl.mount.bind(this);
+        
+        // Custom mount implementation to trigger bridge import
+        this.mount = async (source: FileSystemDirectoryHandle) => {
+            // Mount the directory in the adapter
+            await impl.mount(source);
+            
+            // Trigger initial import via bridge
+            console.log('[NotesFileSyncService] Directory mounted, starting initial import...');
+            const bridge = new NoteFolderBridge(this.localAdapter, this.noteStore);
+            try {
+                await bridge.importDirectory();
+                this.state.lastSyncTime = Date.now();
+                console.log('[NotesFileSyncService] Initial import completed');
+            } catch (error) {
+                console.error('[NotesFileSyncService] Initial import failed:', error);
+                // We don't rethrow here to allow the mount to "succeed" even if import has partial failures
+                // The watcher will pick up changes later
+            }
+        };
 
         // Setup auto-sync if enabled
         if (config.autoSync !== false) {

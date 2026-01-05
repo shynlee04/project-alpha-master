@@ -47,6 +47,17 @@
     "pdf": "Tài liệu PDF",
     "file": "Tệp"
   },
+  "url": {
+    "add": "Thêm liên kết",
+    "pasteUrl": "Dán URL...",
+    "invalid": "URL không hợp lệ",
+    "fetching": "Đang lấy thông tin liên kết...",
+    "fetchError": "Không thể lấy thông tin liên kết",
+    "timeout": "Yêu cầu hết hạn thời gian",
+    "blocked": "Truy cập liên kết bị trình duyệt chặn",
+    "openLink": "Mở liên kết",
+    "preview": "Xem trước"
+  },
   "placeholder": "Nhập tin nhắn...",
   "send": "Gửi tin nhắn",
   "attach": "Đính kèm tệp (sắp có)",
