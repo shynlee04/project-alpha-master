@@ -1,0 +1,184 @@
+# ASGL Module Manifest v2.0
+# Autonomous Self-Governing Loop ORCHESTRATOR
+# NOTE: ASGL orchestrates, it does NOT replace existing modules
+
+version: "2.0.0"
+module_id: "asgl"
+name: "Autonomous Self-Governing Loop Orchestrator"
+created: "2026-01-05"
+updated: "2026-01-05T15:40:00+07:00"
+status: "ACTIVE"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MODULE IDENTITY
+# ═══════════════════════════════════════════════════════════════════════════
+
+description: |
+  Loop orchestrator that initiates and governs autonomous development cycles
+  by assembling teams of agents and INVOKING existing modules (not replacing them).
+
+purpose:
+  - "Loop orchestration - manage autonomous development cycles"
+  - "Governance enforcement - keep AGENTS.md/CLAUDE.md up-to-date"
+  - "Team assembly - coordinate agents across platforms"
+  - "Integration layer - invoke deep-scan, architecture-remediation, bmad-core"
+  - "Artifact lifecycle - prevent orphans and context poisoning"
+  - "Wire tracking - ensure no forgotten migrations"
+
+not_purpose:
+  - "NOT a replacement for deep-scan (diagnostics)"
+  - "NOT a replacement for architecture-remediation (fixes)"
+  - "NOT a duplication of existing workflows"
+  - "NOT a standalone execution engine"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RELATIONSHIP TO OTHER MODULES
+# ═══════════════════════════════════════════════════════════════════════════
+
+relationships:
+  deep-scan:
+    type: "INVOKES"
+    purpose: "Call for diagnostics"
+    path: "_bmad/modules/deep-scan/"
+    
+  architecture-remediation:
+    type: "INVOKES"
+    purpose: "Call for remediation execution"
+    path: "_bmad/modules/architecture-remediation/"
+    
+  bmad-core:
+    type: "INVOKES"
+    purpose: "Call for standard development workflows"
+    path: "_bmad/bmm/"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance:
+  root_documents:
+    - path: "AGENTS.md"
+      update_frequency: "Every 3 stories"
+      max_lines: 4000
+      
+    - path: "CLAUDE.md"
+      update_frequency: "Every 5 stories"
+      max_lines: 2500
+      
+  child_documents:
+    enabled: true
+    locations:
+      - "src/infrastructure/AGENTS.md"
+      - "src/presentation/AGENTS.md"
+      - "src/lib/AGENTS.md"
+      - "_bmad-output/AGENTS.md"
+    create_when: "layer_files_changed > 5"
+    
+  artifact_lifecycle:
+    states: ["DRAFT", "ACTIVE", "SUSPECT", "STALE", "ARCHIVED", "DELETED"]
+    stale_threshold_days: 7
+    archive_retention_days: 365
+    delete_retention_days: 30
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKFLOWS
+# ═══════════════════════════════════════════════════════════════════════════
+
+workflows:
+  - id: "main-loop"
+    path: "workflows/main-loop.md"
+    purpose: "Primary autonomous loop - orchestrates modules"
+    
+  - id: "governance-update"
+    path: "workflows/governance-update.md"
+    purpose: "Update AGENTS.md, CLAUDE.md, child docs"
+    
+  - id: "artifact-lifecycle"
+    path: "workflows/artifact-lifecycle.md"
+    purpose: "Manage artifact states and cleanup"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONFIGURATION FILES
+# ═══════════════════════════════════════════════════════════════════════════
+
+config:
+  - id: "governance"
+    path: "config/governance.yaml"
+    purpose: "Update triggers, naming conventions, lifecycle rules"
+    
+  - id: "module-integration"
+    path: "config/module-integration.yaml"
+    purpose: "How to invoke other modules"
+    
+  - id: "design-rules"
+    path: "config/design-rules.yaml"
+    purpose: "8-bit design compliance checks"
+    status: "TO_BE_CREATED"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SCRATCHPAD (MUTABLE STATE)
+# ═══════════════════════════════════════════════════════════════════════════
+
+scratchpad:
+  directory: "scratchpad/"
+  files:
+    - id: "pending-wires"
+      path: "scratchpad/pending-wires.yaml"
+      purpose: "Track unfired migrations"
+      
+    - id: "artifact-registry"
+      path: "scratchpad/artifact-registry.yaml"
+      purpose: "Track all artifacts with lifecycle"
+      
+    - id: "research-cache"
+      path: "scratchpad/research-cache.yaml"
+      purpose: "Cache MCP research findings"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PLATFORM INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+platforms:
+  claude_code:
+    enabled: true
+    sync_target: ".claude/skills/asgl/SKILL.md"
+    
+  opencode:
+    enabled: true
+    sync_target: ".opencode/skill/asgl/SKILL.md"
+    
+  bmad_master:
+    enabled: true
+    integration: "Intent detection routes to ASGL"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  loop_completion:
+    - "All stories in phase complete"
+    - "Pending wires = 0"
+    - "TypeScript errors = 0"
+    - "Build PASSING"
+    
+  governance_health:
+    - "AGENTS.md updated per frequency"
+    - "CLAUDE.md updated per frequency"
+    - "No orphan artifacts"
+    - "Child docs current"
+    
+  integration_health:
+    - "Module invocations successful"
+    - "Handoffs tracked"
+    - "Cross-refs valid"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+metadata:
+  owner: "@bmad-core-bmad-master"
+  maintainers:
+    - "@bmad-bmb-agents-module-builder"
+    - "@bmad-bmb-agents-workflow-builder"

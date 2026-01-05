@@ -1,0 +1,58 @@
+# Implementation Module MANIFEST
+# Purpose: Domain-specific development workflows
+
+version: "1.0.0"
+module_id: "implementation"
+name: "Implementation Module"
+created: "2026-01-06"
+status: "ACTIVE"
+migrated_from: ["architecture-remediation"]
+
+description: |
+  Situation-oriented and purpose-oriented development workflows
+  organized by domain for specific use cases.
+
+purpose:
+  - "Domain-specific development"
+  - "Store consolidation"
+  - "Component normalization"
+  - "Error handling with fallbacks"
+  - "i18n implementation"
+
+domains:
+  sync:
+    description: "File synchronization, workspace persistence"
+    triggers: ["file sync", "workspace persistence", "FSA", "WebContainer"]
+    agent: "sync-specialist"
+    
+  state:
+    description: "Store management, god store elimination"
+    triggers: ["god store", "store consolidation", "Zustand", "state management"]
+    agent: "state-architect"
+    
+  ui:
+    description: "Component splitting, responsive fixes"
+    triggers: ["god component", "responsive", "mobile layout", "component split"]
+    agent: "ui-refactorer"
+    
+  error:
+    description: "Error handling, fallback strategies"
+    triggers: ["error handling", "fallback", "mobile error", "silent failure"]
+    agent: "error-handler"
+    
+  i18n:
+    description: "Localization, language support"
+    triggers: ["translation", "i18n", "Vietnamese", "localization"]
+    agent: "i18n-specialist"
+
+workflows:
+  - id: "dev-story"
+    path: "workflows/dev-story.md"
+  - id: "eliminate-god-stores"
+    path: "workflows/eliminate-god-stores.md"
+  - id: "normalize-components"
+    path: "workflows/normalize-components.md"
+
+routing:
+  auto_route: true
+  fallback_domain: "state"

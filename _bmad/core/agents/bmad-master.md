@@ -323,6 +323,104 @@ You must fully embody this agent's persona and follow all activation instruction
 </agent>
 ```
 
+## Ralph Loop Coordination (v3.1 Enhancement)
+
+**Purpose**: Auto-update `.claude/ralph-loop.local.md` after cycle completion
+
+### Loop State File Location
+```
+.claude/ralph-loop.local.md
+```
+
+### When BMAD Master Updates Loop State
+
+1. **After Cycle Completion**: When a full cycle completes
+2. **After Sub-cycle**: When a sub-cycle finishes
+3. **On Artifact Creation**: When new completion artifact is written
+
+### Update Protocol
+
+```bash
+# Read current state
+CURRENT_CYCLE=$(grep "^current_cycle:" .claude/ralph-loop.local.md | cut -d: -f2 | xargs)
+
+# After cycle completion, update:
+sed -i.bak 's/^last_completed_cycle: .*/last_completed_cycle: N/' .claude/ralph-loop.local.md
+sed -i.bak 's/^current_cycle: .*/current_cycle: N+1/' .claude/ralph-loop.local.md
+
+# Update artifact reference
+sed -i.bak "s|^  cycle_N: \".*\"|  cycle_N: \"_bmad-output/artifacts/YYYY-MM-DD/cycle-N-...md\"|" .claude/ralph-loop.local.md
+```
+
+### Fields Updated by BMAD Master
+
+| Field | When Updated | Example Value |
+|-------|--------------|---------------|
+| `last_completed_cycle` | Cycle completes | `2` |
+| `current_cycle` | Ready for next | `3` |
+| `current_subcycle` | Sub-cycle starts | `"3A"` |
+| `next_actions` | Plan next cycle | `["execute_cycle_3", ...]` |
+| `latest_artifacts.cycle_{n}` | Artifact created | `"_bmad-output/.../cycle-2-..."` |
+| `validation.last_check` | After validation | `"2026-01-06T12:00:00+07:00"` |
+
+### Cycle Completion Update Template
+
+```bash
+#!/bin/bash
+# BMAD Master - Update Ralph Loop after cycle completion
+
+CYCLE_NUM="$1"
+ARTIFACT_PATH="$2"
+NEXT_ACTIONS="$3"
+
+RALPH_FILE=".claude/ralph-loop.local.md"
+
+# Update cycle tracking
+sed -i.bak "s/^last_completed_cycle: .*/last_completed_cycle: ${CYCLE_NUM}/" "$RALPH_FILE"
+sed -i.bak "s/^current_cycle: .*/current_cycle: $((CYCLE_NUM + 1))/" "$RALPH_FILE"
+
+# Update artifact reference
+sed -i.bak "s|^  cycle_${CYCLE_NUM}: \".*\"|  cycle_${CYCLE_NUM}: \"${ARTIFACT_PATH}\"|" "$RALPH_FILE"
+
+# Update next actions (complex - use perl/python for multi-line)
+# See _bmad/modules/governance/workflows/ralph-loop-coordination.md for details
+```
+
+### Coordination with Other Agents
+
+| Agent | Trigger | Fields Updated |
+|--------|---------|----------------|
+| **Governance** | Validates before cycle | `validation.status`, `gates_passed` |
+| **Domain Router** | Phase transitions | `current_subcycle`, `phase` |
+| **Any Agent** | On error | `errors_encountered`, `rollback_points` |
+
+**BMAD Master only updates its assigned fields** - does not override other agents' fields.
+
+### Ralph Loop State Reading
+
+Before any cycle execution, BMAD Master must:
+
+```bash
+# Read current cycle context
+CURRENT_CYCLE=$(grep "^current_cycle:" .claude/ralph-loop.local.md | cut -d: -f2 | xargs)
+CURRENT_SUBCYCLE=$(grep "^current_subcycle:" .claude/ralph-loop.local.md | cut -d: -f2 | xargs)
+LAST_COMPLETED=$(grep "^last_completed_cycle:" .claude/ralph-loop.local.md | cut -d: -f2 | xargs)
+
+# Load latest artifact for context
+ARTIFACT=$(grep "cycle_${LAST_COMPLETED}:" .claude/ralph-loop.local.md | cut -d: -f2 | xargs | tr -d '"')
+if [ -f "$ARTIFACT" ]; then
+    head -50 "$ARTIFACT"
+fi
+```
+
+### Related Files
+
+- `_bmad/modules/governance/workflows/ralph-loop-coordination.md` - Full coordination protocol
+- `.claude/hooks/ralph-loop.sh` - Stop hook handler (increments iteration)
+- `.claude/ralph-loop.local.md` - Loop state canonical file
+
+---
+
 ## Execution Protocol
 
 When user provides natural language input:
