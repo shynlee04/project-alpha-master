@@ -161,6 +161,22 @@ export function useProjectContext(): ProjectContextValue {
   return context;
 }
 
+/**
+ * Safe version of useProjectContext that returns null instead of throwing
+ * when used outside of ProjectProvider.
+ * 
+ * Use this in components that may be rendered both inside and outside
+ * of ProjectProvider (e.g., WorkspaceSwitcher in header).
+ * 
+ * @returns Project context value or null if outside ProjectProvider
+ * 
+ * FIX-2026-01-05: Added for components that can be rendered in non-project routes
+ */
+export function useProjectContextSafe(): ProjectContextValue | null {
+  const context = React.useContext(ProjectContext);
+  return context ?? null;
+}
+
 // ============================================================================
 // Provider Component
 // ============================================================================

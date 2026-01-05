@@ -20,3 +20,21 @@ export type {
 
 // Re-export errors
 export { EXPANSION_ERRORS } from './sequential-expansion-agent';
+
+// Content-Based Routing Agent (E4-3)
+export {
+    ContentRoutingAgent,
+    RoutingError,
+    createRoutingAgent,
+    classifyQuery,
+    classifyQueryWithContext,
+    ROUTING_ERRORS,
+} from './content-routing-agent';
+
+export type {
+    IntentType,
+    RoutingDecision,
+    RoutingConfig,
+    RoutingContext,
+    RoutingFeedback,
+} from './content-routing-agent';

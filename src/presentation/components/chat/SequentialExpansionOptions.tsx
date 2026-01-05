@@ -14,7 +14,6 @@ import { useState } from 'react';
 import { ChevronRight, Sparkles, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
-import { Button } from '@/presentation/components/ui/button';
 import type { ExpansionQuestion, ExpansionResult } from '@/lib/workflow';
 
 // ============================================================================
@@ -52,28 +51,35 @@ export function SequentialExpansionOptions({
     const [expandingIndex, setExpandingIndex] = useState<number | null>(null);
     const [expandedThreads, setExpandedThreads] = useState<Set<number>>(new Set());
 
-    // Get thread creation method from store
-    const createChildThread = useConversationStore((state) => state.createChildThread);
+    // Get thread methods from store
+    const getThread = useConversationStore((state) => state.getThread);
+    const createThread = useConversationStore((state) => state.createThread);
 
     /**
      * Handle clicking an expansion question
      * Creates a child thread and initializes it with the question
      */
-    const handleExpand = async (index: number, question: ExpansionQuestion) => {
+    const handleExpand = async (index: number, _question: ExpansionQuestion) => {
         if (expandingIndex !== null) return; // Already expanding
 
         setExpandingIndex(index);
 
         try {
+            // Get parent thread to extract conversationId
+            const parentThread = getThread(parentThreadId);
+            if (!parentThread) {
+                throw new Error('Parent thread not found');
+            }
+
             // Create child thread with the question as title
-            const childThread = createChildThread(parentThreadId, question.threadTitle);
+            const childThreadId = createThread(parentThread.conversationId, parentThreadId);
 
             // TODO: Initialize the new thread with the question as the first user message
             // This requires the addMessage method from the store
             // For now, just notify completion
 
             setExpandedThreads((prev) => new Set(prev).add(index));
-            onExpansionComplete?.(childThread.id);
+            onExpansionComplete?.(childThreadId);
         } catch (error) {
             console.error('[SequentialExpansionOptions] Expansion failed:', error);
             onError?.(error as Error);

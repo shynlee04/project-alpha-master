@@ -73,6 +73,7 @@ export type {
 export {
     ProjectProvider,
     useProjectContext,
+    useProjectContextSafe,
     type ProjectContextValue,
     type ProjectProviderProps,
 } from './ProjectContext';

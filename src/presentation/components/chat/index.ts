@@ -42,3 +42,13 @@ export type {
     SequentialExpansionOptionsProps,
     SequentialExpansionLoadingProps,
 } from './SequentialExpansionOptions';
+
+// Content-Based Routing (E4-3)
+export {
+    RoutingDecisionDisplay,
+    RoutingLoading,
+} from './RoutingDecision';
+export type {
+    RoutingDecisionProps,
+    RoutingLoadingProps,
+} from './RoutingDecision';

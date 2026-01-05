@@ -135,10 +135,10 @@ export const createFlashcardSetCrudSlice = (
       flashcardSets: state.flashcardSets.map((s) =>
         s.id === setId
           ? {
-              ...s,
-              cardIds: [...new Set([...s.cardIds, ...cardIds])],
-              updatedAt: Date.now(),
-            }
+            ...s,
+            cardIds: [...new Set([...s.cardIds, ...cardIds])],
+            updatedAt: Date.now(),
+          }
           : s
       ),
     }));
@@ -167,10 +167,10 @@ export const createFlashcardSetCrudSlice = (
       flashcardSets: state.flashcardSets.map((s) =>
         s.id === setId
           ? {
-              ...s,
-              cardIds: s.cardIds.filter((id) => !cardIdSet.has(id)),
-              updatedAt: Date.now(),
-            }
+            ...s,
+            cardIds: s.cardIds.filter((id) => !cardIdSet.has(id)),
+            updatedAt: Date.now(),
+          }
           : s
       ),
     }));
@@ -195,16 +195,21 @@ export const createFlashcardSetCrudSlice = (
   /**
    * Get cards for a specific flashcard set
    * Cross-store coordination with flashcardStore
+   * 
+   * NOTE: This is a synchronous getter that returns empty array initially.
+   * For proper cross-store access, use the helper function getCardsForSet 
+   * exported from the index.ts file.
    */
   getCardsForSet: (setId: string) => {
     const { flashcardSets } = get();
-    // Dynamic import to avoid circular dependency
-    import('@/infrastructure/persistence/stores/flashcard-flashcard-store-facade').then(({ useFlashcardStoreFacade }) => {
-      const flashcards = useFlashcardStoreFacade.getState().flashcards;
-      const set = flashcardSets.find((s) => s.id === setId);
-      if (!set) return [];
-      return flashcards.filter((fc) => set.cardIds.includes(fc.id));
-    });
+    const set = flashcardSets.find((s) => s.id === setId);
+    if (!set) return [];
+
+    // To avoid circular dependency, we return an empty array here.
+    // The actual cross-store coordination is handled by the 
+    // getCardsForSet helper function in the index.ts file.
+    // Components should use that helper instead.
+    console.warn('[flashcard-set-crud-slice] getCardsForSet called directly - use getCardsForSet from index.ts instead');
     return [];
   },
 });

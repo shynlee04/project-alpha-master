@@ -78,8 +78,9 @@ export function useFileSyncService({
     const [error, setError] = useState<string | null>(null);
     const adapterRef = useRef<LocalFSAdapter | null>(null);
 
-    // Check for File System Access API support
-    const isSupported = 'showDirectoryPicker' in window;
+    // Check for File System Access API support (SSR-safe)
+    // FIX-2026-01-05: Guard against SSR where window is undefined
+    const isSupported = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
     /**
      * Initialize file sync service

@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronsUpDown } from 'lucide-react';
 
-import { useProjectContext } from '@/lib/workspace/ProjectContext';
+import { useProjectContextSafe } from '@/lib/workspace/ProjectContext';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import { cn } from '@/lib/utils';
 import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
@@ -73,6 +73,7 @@ export interface WorkspaceSwitcherProps {
  * - 8-bit styling (bordered, pixel corners)
  * - Desktop only (hidden on mobile)
  * - Integrates with ProjectContext for navigation
+ * - FIX-2026-01-05: Safe to render outside ProjectProvider (returns null)
  *
  * @example
  * ```tsx
@@ -91,8 +92,16 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
   className,
 }) => {
   const { t } = useTranslation();
-  const { currentWorkspace, enabledWorkspaces, switchWorkspace } =
-    useProjectContext();
+
+  // FIX-2026-01-05: Use safe version that returns null outside ProjectProvider
+  const projectContext = useProjectContextSafe();
+
+  // Guard: Not inside ProjectProvider (Hub, About, etc.) - hide component
+  if (!projectContext) {
+    return null;
+  }
+
+  const { currentWorkspace, enabledWorkspaces, switchWorkspace } = projectContext;
 
   // ============================================================================
   // WB-8.3: Workspace Transition with State Orchestration

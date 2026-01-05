@@ -61,13 +61,19 @@ export type {
     StepResult as StepResultType,
 } from './types';
 
-// Agents (E4-2: Sequential Expansion Agent)
+// Agents (E4-2: Sequential Expansion Agent, E4-3: Content-Based Routing Agent)
 export {
     SequentialExpansionAgent,
     ExpansionError,
     createExpansionAgent,
     generateThreadExpansions,
     EXPANSION_ERRORS,
+    ContentRoutingAgent,
+    RoutingError,
+    createRoutingAgent,
+    classifyQuery,
+    classifyQueryWithContext,
+    ROUTING_ERRORS,
 } from './agents';
 
 export type {
@@ -75,4 +81,9 @@ export type {
     ExpansionResult,
     ExpansionConfig,
     ExpansionContext,
+    IntentType,
+    RoutingDecision,
+    RoutingConfig,
+    RoutingContext,
+    RoutingFeedback,
 } from './agents';
