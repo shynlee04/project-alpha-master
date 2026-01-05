@@ -103,6 +103,7 @@ export class ModelRegistry {
         // Fetch from appropriate API
         try {
             let models: ModelInfo[];
+            console.log(`[ModelRegistry] Fetching models for ${providerId}...`);
 
             if (providerId === 'gemini' || providerId === 'google') {
                 models = await this.fetchGeminiModels(apiKey);
@@ -128,37 +129,44 @@ export class ModelRegistry {
      * Endpoint: GET https://openrouter.ai/api/v1/models
      */
     private async fetchOpenRouterModels(apiKey: string): Promise<ModelInfo[]> {
-        const response = await fetch('https://openrouter.ai/api/v1/models', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'HTTP-Referer': 'https://via-gent.dev',
-                'X-Title': 'VIA-GENT',
-            },
-        });
+        try {
+            const response = await fetch('https://openrouter.ai/api/v1/models', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'HTTP-Referer': 'https://via-gent.dev',
+                    'X-Title': 'VIA-GENT',
+                },
+            });
 
-        if (!response.ok) {
-            throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`[ModelRegistry] OpenRouter API error: ${response.status} ${response.statusText}`, errorText);
+                throw new Error(`OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+
+            const data: { data: OpenRouterModel[] } = await response.json();
+
+            return data.data.map((m): ModelInfo => ({
+                id: m.id,
+                name: m.name || m.id,
+                isFree: m.id.endsWith(':free'),
+                providerId: 'openrouter',
+                contextLength: m.context_length || m.top_provider?.context_length,
+                maxOutputTokens: m.top_provider?.max_completion_tokens,
+                inputModalities: m.architecture?.input_modalities || ['text'],
+                outputModalities: m.architecture?.output_modalities || ['text'],
+                supportsTools: m.supported_parameters?.includes('tools') ||
+                    m.supported_parameters?.includes('tool_choice'),
+                pricing: m.pricing ? {
+                    prompt: parseFloat(m.pricing.prompt) * 1000000,
+                    completion: parseFloat(m.pricing.completion) * 1000000,
+                } : undefined,
+            }));
+        } catch (error) {
+            console.error('[ModelRegistry] OpenRouter fetch failed:', error);
+            throw error;
         }
-
-        const data: { data: OpenRouterModel[] } = await response.json();
-
-        return data.data.map((m): ModelInfo => ({
-            id: m.id,
-            name: m.name || m.id,
-            isFree: m.id.endsWith(':free'),
-            providerId: 'openrouter',
-            contextLength: m.context_length || m.top_provider?.context_length,
-            maxOutputTokens: m.top_provider?.max_completion_tokens,
-            inputModalities: m.architecture?.input_modalities || ['text'],
-            outputModalities: m.architecture?.output_modalities || ['text'],
-            supportsTools: m.supported_parameters?.includes('tools') ||
-                m.supported_parameters?.includes('tool_choice'),
-            pricing: m.pricing ? {
-                prompt: parseFloat(m.pricing.prompt) * 1000000,
-                completion: parseFloat(m.pricing.completion) * 1000000,
-            } : undefined,
-        }));
     }
 
     /**
@@ -166,38 +174,45 @@ export class ModelRegistry {
      * Endpoint: GET https://generativelanguage.googleapis.com/v1beta/models
      */
     private async fetchGeminiModels(apiKey: string): Promise<ModelInfo[]> {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
-            { method: 'GET' }
-        );
+        try {
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+                { method: 'GET' }
+            );
 
-        if (!response.ok) {
-            throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`[ModelRegistry] Gemini API error: ${response.status} ${response.statusText}`, errorText);
+                throw new Error(`Gemini API error: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+
+            const data: { models: GeminiModel[] } = await response.json();
+
+            // Filter to only include generateContent-capable models
+            const generativeModels = data.models.filter(m =>
+                m.supportedGenerationMethods?.includes('generateContent')
+            );
+
+            return generativeModels.map((m): ModelInfo => ({
+                // Extract model ID from "models/gemini-1.5-flash" format
+                id: m.name.replace('models/', ''),
+                name: m.displayName || m.name.replace('models/', ''),
+                providerId: 'gemini',
+                contextLength: m.inputTokenLimit,
+                maxOutputTokens: m.outputTokenLimit,
+                temperature: m.temperature,
+                maxTemperature: m.maxTemperature,
+                topP: m.topP,
+                topK: m.topK,
+                supportedMethods: m.supportedGenerationMethods,
+                supportsTools: m.supportedGenerationMethods?.includes('generateContent'),
+                inputModalities: ['text'], // Gemini Pro Vision handles images
+                outputModalities: ['text'],
+            }));
+        } catch (error) {
+            console.error('[ModelRegistry] Gemini fetch failed:', error);
+            throw error;
         }
-
-        const data: { models: GeminiModel[] } = await response.json();
-
-        // Filter to only include generateContent-capable models
-        const generativeModels = data.models.filter(m =>
-            m.supportedGenerationMethods?.includes('generateContent')
-        );
-
-        return generativeModels.map((m): ModelInfo => ({
-            // Extract model ID from "models/gemini-1.5-flash" format
-            id: m.name.replace('models/', ''),
-            name: m.displayName || m.name.replace('models/', ''),
-            providerId: 'gemini',
-            contextLength: m.inputTokenLimit,
-            maxOutputTokens: m.outputTokenLimit,
-            temperature: m.temperature,
-            maxTemperature: m.maxTemperature,
-            topP: m.topP,
-            topK: m.topK,
-            supportedMethods: m.supportedGenerationMethods,
-            supportsTools: m.supportedGenerationMethods?.includes('generateContent'),
-            inputModalities: ['text'], // Gemini Pro Vision handles images
-            outputModalities: ['text'],
-        }));
     }
 
     /**
@@ -208,30 +223,39 @@ export class ModelRegistry {
         providerId: string,
         apiKey: string
     ): Promise<ModelInfo[]> {
-        const provider = PROVIDERS[providerId];
-        if (!provider) {
-            throw new Error(`Unknown provider: ${providerId}`);
+        try {
+            const provider = PROVIDERS[providerId];
+            if (!provider) {
+                throw new Error(`Unknown provider: ${providerId}`);
+            }
+
+            const baseURL = provider.baseURL || 'https://api.openai.com/v1';
+            console.log(`[ModelRegistry] Fetching generic models from ${baseURL}`);
+
+            const response = await fetch(`${baseURL}/models`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`[ModelRegistry] Generic API error: ${response.status}`, errorText);
+                throw new Error(`API error: ${response.status} - ${errorText}`);
+            }
+
+            const data: { data: Array<{ id: string; created?: number }> } = await response.json();
+
+            return data.data.map((m): ModelInfo => ({
+                id: m.id,
+                name: m.id,
+                providerId,
+            }));
+        } catch (error) {
+            console.error(`[ModelRegistry] Generic fetch for ${providerId} failed:`, error);
+            throw error;
         }
-
-        const baseURL = provider.baseURL || 'https://api.openai.com/v1';
-        const response = await fetch(`${baseURL}/models`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-        }
-
-        const data: { data: Array<{ id: string; created?: number }> } = await response.json();
-
-        return data.data.map((m): ModelInfo => ({
-            id: m.id,
-            name: m.id,
-            providerId,
-        }));
     }
 
     /**

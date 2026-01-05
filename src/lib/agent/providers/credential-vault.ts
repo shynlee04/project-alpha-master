@@ -80,16 +80,36 @@ export class CredentialVault {
     }
 
     /**
+     * Helper to safely access localStorage
+     */
+    private getLocalStorageItem(key: string): string | null {
+        if (typeof window === 'undefined') return null;
+        return localStorage.getItem(key);
+    }
+
+    private setLocalStorageItem(key: string, value: string): void {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(key, value);
+        }
+    }
+
+    private removeLocalStorageItem(key: string): void {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem(key);
+        }
+    }
+
+    /**
      * Get the current vault status (for debugging)
      */
     async getStatus(): Promise<VaultStatus> {
         const providers = await this.storage.getAllProviderIds();
         return {
             isInitialized: this.initialized,
-            hasPassword: !!localStorage.getItem(VAULT_PASSWORD_STORAGE),
-            hasEncryptedKey: !!localStorage.getItem(ENCRYPTED_KEY_STORAGE),
-            hasSalt: !!localStorage.getItem(SALT_STORAGE),
-            hasVersion: localStorage.getItem(KEY_VERSION_STORAGE) === '3',
+            hasPassword: !!this.getLocalStorageItem(VAULT_PASSWORD_STORAGE),
+            hasEncryptedKey: !!this.getLocalStorageItem(ENCRYPTED_KEY_STORAGE),
+            hasSalt: !!this.getLocalStorageItem(SALT_STORAGE),
+            hasVersion: this.getLocalStorageItem(KEY_VERSION_STORAGE) === '3',
             credentialCount: providers.length,
             lastError: this.initError?.message || null,
         };
@@ -108,16 +128,16 @@ export class CredentialVault {
     private validateStorageKeys(): { valid: boolean; missing: string[] } {
         const missing: string[] = [];
 
-        if (!localStorage.getItem(VAULT_PASSWORD_STORAGE)) {
+        if (!this.getLocalStorageItem(VAULT_PASSWORD_STORAGE)) {
             missing.push(VAULT_PASSWORD_STORAGE);
         }
-        if (!localStorage.getItem(ENCRYPTED_KEY_STORAGE)) {
+        if (!this.getLocalStorageItem(ENCRYPTED_KEY_STORAGE)) {
             missing.push(ENCRYPTED_KEY_STORAGE);
         }
-        if (!localStorage.getItem(SALT_STORAGE)) {
+        if (!this.getLocalStorageItem(SALT_STORAGE)) {
             missing.push(SALT_STORAGE);
         }
-        const version = localStorage.getItem(KEY_VERSION_STORAGE);
+        const version = this.getLocalStorageItem(KEY_VERSION_STORAGE);
         if (version !== '3') {
             missing.push(`${KEY_VERSION_STORAGE} (found: ${version || 'null'})`);
         }
@@ -218,7 +238,7 @@ export class CredentialVault {
         this.storeEncryptedKey(encryptedKey);
 
         // Store version
-        localStorage.setItem(KEY_VERSION_STORAGE, '3');
+        this.setLocalStorageItem(KEY_VERSION_STORAGE, '3');
 
         // Store password hint
         this.storeVaultPasswordHint();
@@ -252,14 +272,14 @@ export class CredentialVault {
      * Securely store the vault password in localStorage
      */
     private storeSessionPassword(password: string): void {
-        localStorage.setItem(VAULT_PASSWORD_STORAGE, password);
+        this.setLocalStorageItem(VAULT_PASSWORD_STORAGE, password);
     }
 
     /**
      * Retrieve the vault password
      */
     private getSessionPassword(): string | null {
-        return localStorage.getItem(VAULT_PASSWORD_STORAGE);
+        return this.getLocalStorageItem(VAULT_PASSWORD_STORAGE);
     }
 
     /**
@@ -280,7 +300,7 @@ export class CredentialVault {
      * Store encrypted master key
      */
     private storeEncryptedKey(encrypted: string): void {
-        localStorage.setItem(ENCRYPTED_KEY_STORAGE, encrypted);
+        this.setLocalStorageItem(ENCRYPTED_KEY_STORAGE, encrypted);
     }
 
     /**
@@ -288,8 +308,8 @@ export class CredentialVault {
      */
     private getStoredEncryptedKey(): string | null {
         try {
-            const stored = localStorage.getItem(ENCRYPTED_KEY_STORAGE);
-            const version = localStorage.getItem(KEY_VERSION_STORAGE);
+            const stored = this.getLocalStorageItem(ENCRYPTED_KEY_STORAGE);
+            const version = this.getLocalStorageItem(KEY_VERSION_STORAGE);
 
             if (version !== '3') return null;
             if (!stored) return null;
@@ -305,7 +325,7 @@ export class CredentialVault {
      */
     private storeSalt(salt: Uint8Array): void {
         const binary = Array.from(salt, (b) => String.fromCharCode(b)).join('');
-        localStorage.setItem(SALT_STORAGE, btoa(binary));
+        this.setLocalStorageItem(SALT_STORAGE, btoa(binary));
     }
 
     /**
@@ -313,7 +333,7 @@ export class CredentialVault {
      */
     private getStoredSalt(): Uint8Array | null {
         try {
-            const stored = localStorage.getItem(SALT_STORAGE);
+            const stored = this.getLocalStorageItem(SALT_STORAGE);
             if (!stored) return null;
 
             const binary = atob(stored);
@@ -331,7 +351,7 @@ export class CredentialVault {
      * Store vault password hint
      */
     private storeVaultPasswordHint(): void {
-        localStorage.setItem('vg_vph_v3', 'Persistent encryption active');
+        this.setLocalStorageItem('vg_vph_v3', 'Persistent encryption active');
     }
 
     /**
@@ -417,11 +437,11 @@ export class CredentialVault {
         await this.storage.clearAll();
 
         // Clear all localStorage keys
-        localStorage.removeItem(ENCRYPTED_KEY_STORAGE);
-        localStorage.removeItem(SALT_STORAGE);
-        localStorage.removeItem(KEY_VERSION_STORAGE);
-        localStorage.removeItem(VAULT_PASSWORD_STORAGE);
-        localStorage.removeItem('vg_vph_v3');
+        this.removeLocalStorageItem(ENCRYPTED_KEY_STORAGE);
+        this.removeLocalStorageItem(SALT_STORAGE);
+        this.removeLocalStorageItem(KEY_VERSION_STORAGE);
+        this.removeLocalStorageItem(VAULT_PASSWORD_STORAGE);
+        this.removeLocalStorageItem('vg_vph_v3');
 
         // Clear in-memory state
         this.masterKey = null;

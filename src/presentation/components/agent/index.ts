@@ -19,6 +19,8 @@
 // Main Configuration Dialogs
 export { AgentConfigDialog } from './AgentConfigDialog';
 export { ProviderConfigDialog } from './ProviderConfigDialog';
+export { ProviderStatusBadge } from './ProviderStatusBadge';
+export type { ProviderStatus } from './ProviderStatusBadge';
 
 // Configuration Sub-Components
 export { ApiKeyInputSection } from './ApiKeyInputSection';

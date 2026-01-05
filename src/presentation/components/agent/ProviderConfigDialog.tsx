@@ -185,8 +185,9 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
             onOpenChange(false);
         } catch (error) {
-            console.error('Failed to save provider:', error);
-            toast.error('Failed to save provider configuration');
+            console.error('[ProviderConfigDialog] Failed to save provider:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            toast.error(`Failed to save provider configuration: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
         }
