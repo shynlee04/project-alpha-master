@@ -42,15 +42,15 @@ export const Route = createFileRoute('/ide/$projectId')({
 function IDEWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
-  const setProjectId = useIDEStore((s) => s.setProjectId);
 
   // Set projectId in IDE store when component mounts
+  // Using getState() to avoid infinite loop (selector returns new fn reference each render)
   useEffect(() => {
     if (_projectId) {
-      setProjectId(_projectId);
+      useIDEStore.getState().setProjectId(_projectId);
       console.log('[IDERoute] Project ID set in store:', _projectId);
     }
-  }, [_projectId, setProjectId]);
+  }, [_projectId]);
 
   return (
     <ProjectProvider project={project as Project | null} workspace="ide">

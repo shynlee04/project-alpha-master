@@ -2,14 +2,14 @@
  * @fileoverview IDE Workspace Route
  * @module routes/ide
  * @governance Story UJ-000: ProjectPickerDialog & Empty States
- * @updated 2026-01-06T04:00:00+07:00
+ * @updated 2026-01-06T06:15:00+07:00
  *
  * Route to access IDE workspace when no project is specified.
  * Shows empty state or redirects to hub with project picker.
  *
  * User flow:
  * 1. User navigates to /ide without projectId
- * 2. Check for projects with bindings.ide === true
+ * 2. Check for projects with bindings.ide === true (from Dexie)
  * 3. If 0 IDE-enabled projects: Show empty state with "Create Project" button
  * 4. If 1+ IDE-enabled projects: Redirect to /hub?workspace=ide with project picker
  * 5. User selects project → navigates to /ide/$projectId
@@ -17,11 +17,12 @@
  * Does NOT load Monaco/editor in empty state.
  */
 
-import { useEffect } from 'react';
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { useEffect, useMemo } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Plus } from 'lucide-react';
-import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { FolderOpen, Plus, Loader2 } from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/infrastructure/persistence/dexie-db';
 
 export const Route = createFileRoute('/ide')({
   ssr: false,
@@ -38,24 +39,39 @@ function IDEEmptyState() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Get projects with IDE workspace binding enabled
-  const ideProjects = useProjectStore((state) => state.getProjectsByWorkspace('ide'));
-  const allProjects = useProjectStore((state) => Object.values(state.projects));
+  // FIX-2026-01-06: Use Dexie via useLiveQuery (same source as Hub)
+  // This ensures consistency - Hub and IDE read from the same data source
+  const allProjects = useLiveQuery(() => db.projects.toArray(), []) ?? [];
+
+  // Derive IDE-enabled projects
+  const ideProjects = useMemo(() => {
+    return allProjects.filter(p => p.bindings?.ide === true);
+  }, [allProjects]);
 
   const hasIdeProjects = ideProjects.length > 0;
   const hasAnyProjects = allProjects.length > 0;
+  const isLoading = allProjects === undefined;
 
   useEffect(() => {
     // If IDE-enabled projects exist, redirect to hub with project picker
-    if (hasIdeProjects) {
-      redirect({
+    if (!isLoading && hasIdeProjects) {
+      navigate({
         to: '/hub',
         search: {
           workspace: 'ide',
         },
       });
     }
-  }, [hasIdeProjects]);
+  }, [hasIdeProjects, isLoading, navigate]);
+
+  // Show loading state while Dexie query runs
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-background text-foreground">

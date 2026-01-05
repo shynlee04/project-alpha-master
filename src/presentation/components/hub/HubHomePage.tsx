@@ -15,8 +15,9 @@ import {
 
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
-import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+import type { Project, WorkspaceBindings, CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
 import type { ProjectRecord } from '@/lib/state/dexie-db-types';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
@@ -139,15 +140,11 @@ export const HubHomePage: React.FC = () => {
         mode: 'readwrite',
       });
 
-      // 2. Create Project Metadata
-      const newProjectId = `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const project: Project = {
-        id: newProjectId,
+      // 2. Create Project via Zustand Store (syncs to Dexie)
+      const projectInput: CreateProjectInput = {
         name: handle.name,
         folderPath: handle.name,
         fsaHandle: handle,
-        lastOpened: new Date(),
-        createdAt: new Date(),
         autoSync: true,
         bindings: {
           ide: true,
@@ -158,12 +155,20 @@ export const HubHomePage: React.FC = () => {
         tags: [],
       };
 
-      // 3. Save to Dexie
-      await db.projects.add(project as unknown as ProjectRecord);
+      // Use the store's createProject method to ensure Zustand state is updated
+      const newProjectId = useProjectStore.getState().createProject(projectInput);
+      console.log('[HubHomePage] Created project:', newProjectId);
 
-      // 4. Navigate to Workspace
+      // Also persist to Dexie for permanent storage
+      const project = useProjectStore.getState().getProject(newProjectId);
+      if (project) {
+        await db.projects.put(project as unknown as ProjectRecord);
+        console.log('[HubHomePage] Persisted project to Dexie:', newProjectId);
+      }
+
+      // 3. Navigate to IDE Workspace
       await navigate({
-        to: '/workspace/$projectId',
+        to: '/ide/$projectId',
         params: { projectId: newProjectId }
       });
 

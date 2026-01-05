@@ -15,6 +15,7 @@ import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as HubRouteImport } from './routes/hub'
+import { Route as DebugRouteImport } from './routes/debug'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -68,6 +69,11 @@ const IdeRoute = IdeRouteImport.update({
 const HubRoute = HubRouteImport.update({
   id: '/hub',
   path: '/hub',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DebugRoute = DebugRouteImport.update({
+  id: '/debug',
+  path: '/debug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgentsRoute = AgentsRouteImport.update({
@@ -146,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
+  '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
+  '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
+  '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/agents'
+    | '/debug'
     | '/hub'
     | '/ide'
     | '/settings'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/agents'
+    | '/debug'
     | '/hub'
     | '/ide'
     | '/settings'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/agents'
+    | '/debug'
     | '/hub'
     | '/ide'
     | '/settings'
@@ -282,6 +294,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
+  DebugRoute: typeof DebugRoute
   HubRoute: typeof HubRoute
   IdeRoute: typeof IdeRouteWithChildren
   SettingsRoute: typeof SettingsRoute
@@ -346,6 +359,13 @@ declare module '@tanstack/react-router' {
       path: '/hub'
       fullPath: '/hub'
       preLoaderRoute: typeof HubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug': {
+      id: '/debug'
+      path: '/debug'
+      fullPath: '/debug'
+      preLoaderRoute: typeof DebugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agents': {
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
+  DebugRoute: DebugRoute,
   HubRoute: HubRoute,
   IdeRoute: IdeRouteWithChildren,
   SettingsRoute: SettingsRoute,

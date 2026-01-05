@@ -33,19 +33,19 @@ export const Route = createLazyFileRoute('/notes/$projectId')({
 function NotesWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const [project, setProject] = useState<Project | null>(null);
-  const setProjectId = useIDEStore((s) => s.setProjectId);
 
   useEffect(() => {
     getProject(_projectId).then((p) => setProject(p as Project | null));
   }, [_projectId]);
 
   // Set projectId in IDE store when component mounts
+  // Using getState() to avoid infinite loop (selector returns new fn reference each render)
   useEffect(() => {
     if (_projectId) {
-      setProjectId(_projectId);
+      useIDEStore.getState().setProjectId(_projectId);
       console.log('[NotesRoute] Project ID set in store:', _projectId);
     }
-  }, [_projectId, setProjectId]);
+  }, [_projectId]);
 
   return (
     <ProjectProvider project={project} workspace="notes">

@@ -17,8 +17,10 @@
 import React, { useMemo } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Plus } from 'lucide-react';
+import { FolderOpen, Plus, Loader2 } from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
@@ -117,15 +119,17 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Get projects from Zustand store (stable reference - prevents infinite loops in v5)
-  // Then filter by workspace binding using useMemo
-  const allProjects = useProjectStore((state) => state.projects);
+  // FIX-2026-01-06: Read from Dexie directly (same source as Hub)
+  // This ensures consistency - Hub and ProjectPicker see the same data
+  const allProjectsFromDexie = useLiveQuery(() => db.projects.toArray(), []);
+  const isLoading = allProjectsFromDexie === undefined;
 
   const projects = useMemo(() => {
-    return Object.values(allProjects).filter((project) =>
-      project.bindings[targetWorkspace as keyof import('@/infrastructure/persistence/dexie-db-core-types').WorkspaceBindings] === true
+    if (!allProjectsFromDexie) return [];
+    return allProjectsFromDexie.filter((project) =>
+      project.bindings?.[targetWorkspace as keyof typeof project.bindings] === true
     );
-  }, [allProjects, targetWorkspace]);
+  }, [allProjectsFromDexie, targetWorkspace]);
 
   const workspaceConfig = WORKSPACE_CONFIG[targetWorkspace];
 

@@ -18,7 +18,6 @@
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type {
   ProjectState,
   ProjectMethods,
@@ -47,46 +46,24 @@ type CombinedProjectState = ProjectState &
  * Composed from 5 focused slices following January 2026 Zustand pattern.
  * Persists to Dexie IndexedDB with selective partialize.
  */
+// FIX-2026-01-06: REMOVED localStorage persist - causes dual storage chaos
+// Dexie is the SINGLE SOURCE OF TRUTH for projects
+// Hub reads from Dexie, all components should read from Dexie
+// This store is now a transient in-memory cache, NOT persisted
 export const useProjectStore = create<CombinedProjectState>()(
-  persist(
-    (set, get, api) => ({
-      // State initialization
-      projects: {},
-      activeProjectId: null,
+  (set, get, api) => ({
+    // State initialization
+    projects: {},
+    activeProjectId: null,
+    _hasHydrated: false,
 
-      // Compose all slices
-      ...createProjectCrudSlice(set, get, api),
-      ...createProjectBindingsSlice(set, get, api),
-      ...createProjectPermissionsSlice(set, get, api),
-      ...createProjectLayoutSlice(set, get, api),
-      ...createProjectUtilsSlice(set, get, api),
-    }),
-    {
-      name: 'project-state',
-
-      // TODO: Add Dexie storage adapter
-      // For now using localStorage as temporary storage
-      // storage: createDexieStorage('projectState'),
-
-      // Selective persistence (only critical data)
-      partialize: (state) => ({
-        projects: state.projects,
-        activeProjectId: state.activeProjectId,
-        // NOT persisted:
-        // - Validation results (computed)
-        // - Stats (computed)
-      }),
-
-      // Hydration handler
-      onRehydrateStorage: () => (state) => {
-        if (!state) return;
-        console.log('[ProjectStore] Rehydrated from storage', {
-          projectsCount: Object.keys(state.projects || {}).length,
-          activeProjectId: state.activeProjectId,
-        });
-      },
-    }
-  )
+    // Compose all slices
+    ...createProjectCrudSlice(set, get, api),
+    ...createProjectBindingsSlice(set, get, api),
+    ...createProjectPermissionsSlice(set, get, api),
+    ...createProjectLayoutSlice(set, get, api),
+    ...createProjectUtilsSlice(set, get, api),
+  })
 );
 
 // ============================================================================
