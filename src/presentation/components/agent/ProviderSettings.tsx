@@ -5,6 +5,7 @@ import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { ProviderConfigDialog } from './ProviderConfigDialog';
 import { ProviderDeletionWarningDialog } from './ProviderDeletionWarningDialog';
+import { ProviderStatusBadge, type ProviderStatus } from './ProviderStatusBadge';
 import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 import {
     Dialog,
@@ -127,11 +128,16 @@ export function ProviderSettings() {
             <div className="border border-border rounded-none divide-y divide-border bg-background">
                 {providers.map(provider => (
                     <div key={provider.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
-                        <div className="flex flex-col gap-1">
-                            <span className="font-medium font-mono flex items-center gap-2">
-                                {provider.name}
-                                {provider.isActive && <span className="w-2 h-2 bg-green-500 rounded-full" />}
-                            </span>
+                        <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium font-mono flex items-center gap-2">
+                                    {provider.name}
+                                    {provider.isActive && <span className="w-2 h-2 bg-green-500 rounded-full" />}
+                                </span>
+                                <ProviderStatusBadge 
+                                    status={provider.hasApiKey ? 'configured' : 'missing' as ProviderStatus} 
+                                />
+                            </div>
                             <span className="text-xs text-muted-foreground font-mono">
                                 {provider.models.length} models • {provider.isCustom ? 'Custom' : 'Built-in'}
                             </span>

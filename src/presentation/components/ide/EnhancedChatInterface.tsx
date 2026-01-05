@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, ChevronDown, ChevronUp, Code, Paperclip, Mic } from 'lucide-react'
+import { Bot, User, Send, ChevronDown, ChevronUp, Code, Paperclip, Mic, MicOff } from 'lucide-react'
 import { Button } from '@/presentation/components/ui/button'
 import { useDeviceType } from '@/hooks/useMediaQuery'
 import { toast } from 'sonner'
@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
 import { useTranslation } from 'react-i18next'
+import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
 
 /**
  * @fileoverview Enhanced Chat Interface with Mobile Optimization
@@ -79,6 +80,13 @@ export function EnhancedChatInterface({
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const formRef = useRef<HTMLFormElement>(null)
 
+    // E2-1: Voice recording hook for speech-to-text input
+    const voiceRecording = useVoiceRecording({
+        minDuration: 500,
+        maxDuration: 30000,
+        autoSendAfterSilence: 2000,
+    })
+
     // E1-10: Visual viewport API for keyboard avoidance (iOS Safari fix)
     // Prevents keyboard from hiding input on mobile devices
     useEffect(() => {
@@ -119,6 +127,14 @@ export function EnhancedChatInterface({
         }
     }, [messages, isTyping, autoScroll])
 
+    // E2-1: Handle voice recording errors
+    useEffect(() => {
+        if (voiceRecording.error) {
+            toast.error(voiceRecording.error)
+            voiceRecording.clearError()
+        }
+    }, [voiceRecording.error, voiceRecording.clearError])
+
     // DEBUG: Log messages received
     useEffect(() => {
         console.log('[EnhancedChatInterface] Messages received:', {
@@ -143,13 +159,25 @@ export function EnhancedChatInterface({
         })
     }, [])
 
-    // E1-10: Handle voice input click (placeholder for E2-1)
-    const handleVoiceClick = useCallback(() => {
-        // TODO: E2-1 Web Speech API Integration
-        toast.info('Voice input coming soon in Epic E2', {
-            description: 'Speech-to-text will be available soon.'
-        })
-    }, [])
+    // E2-1: Handle voice recording toggle
+    const handleVoiceClick = useCallback(async () => {
+        if (!voiceRecording.isSupported) {
+            toast.error(t('voice.notSupported'))
+            return
+        }
+
+        if (voiceRecording.isRecording) {
+            // Stop recording and get transcript
+            const transcript = await voiceRecording.stopRecording()
+            if (transcript) {
+                // Append transcript to input (preserving existing text)
+                setInput(prev => prev ? `${prev} ${transcript}` : transcript)
+            }
+        } else {
+            // Start recording
+            await voiceRecording.startRecording()
+        }
+    }, [voiceRecording, t])
 
     return (
         <div className={cn("flex flex-col h-full bg-background", className)}>
@@ -219,20 +247,44 @@ export function EnhancedChatInterface({
                         <Paperclip className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
                     </Button>
 
-                    {/* E1-10: Voice input button (placeholder for E2-1) */}
+                    {/* E2-1: Voice input button with recording state */}
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant={voiceRecording.isRecording ? "destructive" : "ghost"}
                         onClick={handleVoiceClick}
                         className={cn(
-                            "shrink-0",
+                            "shrink-0 relative",
+                            // E2-1: Pulsing animation when recording
+                            voiceRecording.isRecording && "animate-pulse",
                             // E1-10: Touch targets ≥44x44px on mobile, prominent on mobile
                             isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-9 w-9"
                         )}
-                        aria-label={t('chat.voice', 'Voice input')}
-                        title={t('chat.voice', 'Voice input (coming soon)')}
+                        aria-label={
+                            voiceRecording.isRecording
+                                ? t('voice.tapToStop', 'Tap to stop')
+                                : t('voice.tapToRecord', 'Tap to record')
+                        }
+                        title={
+                            voiceRecording.isRecording
+                                ? t('voice.recording', 'Listening...')
+                                : t('voice.record', 'Tap to speak')
+                        }
                     >
-                        <Mic className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
+                        {voiceRecording.isRecording ? (
+                            <MicOff className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
+                        ) : (
+                            <Mic className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
+                        )}
+                        {/* E2-1: Volume level indicator */}
+                        {voiceRecording.isRecording && voiceRecording.volumeLevel > 0.01 && (
+                            <span
+                                className="absolute inset-0 rounded-full bg-primary/20"
+                                style={{
+                                    transform: `scale(${0.8 + voiceRecording.volumeLevel * 0.4})`,
+                                    transition: 'transform 100ms ease-out',
+                                }}
+                            />
+                        )}
                     </Button>
 
                     {/* Text input */}

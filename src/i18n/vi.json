@@ -1157,5 +1157,20 @@
   "chat.open": "Mở chat",
   "chat.close": "Đóng chat",
   "chat.unread": "{{count}} chưa đọc",
-  "chat.diff.linesHidden": "{{count}} dòng đã ẩn"
+  "chat.diff.linesHidden": "{{count}} dòng đã ẩn",
+  "voice.record": "Chạm để nói",
+  "voice.recording": "Đang nghe...",
+  "voice.processing": "Đang xử lý...",
+  "voice.error": "Nhập giọng nói không khả dụng",
+  "voice.permissionDenied": "Quyền micro bị từ chối",
+  "voice.notSupported": "Nhập giọng nói không được hỗ trợ trên trình duyệt này",
+  "voice.cancel": "Hủy",
+  "voice.send": "Gửi",
+  "voice.tapToRecord": "Chạm để ghi âm",
+  "voice.tapToStop": "Chạm để dừng",
+  "voice.recordingReady": "Đã sẵn sàng ghi âm",
+  "voice.voiceInput": "Nhập Giọng Nói",
+  "voice.duration": "{{seconds}}giây",
+  "voice.tooShort": "Ghi âm quá ngắn",
+  "voice.autoSent": "Tự động gửi sau {{seconds}}giây im lặng"
 }
