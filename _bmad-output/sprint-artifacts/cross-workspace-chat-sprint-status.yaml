@@ -148,13 +148,49 @@ stories:
     started_at: "2026-01-05T12:30:00Z"
     completed_at: "2026-01-05T13:00:00Z"
 
+  - id: "E1-4"
+    title: "Add Notion-style Chat Bubble"
+    epic: "E1"
+    points: 6
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: []
+    blocks: []
+    acceptance_criteria:
+      - "Chat bubble renders in bottom-right corner"
+      - "Tapping bubble opens chat overlay"
+      - "Chat overlay takes full screen on mobile"
+      - "Unread message count badge on bubble"
+      - "Bubble dismisses with swipe or tap outside"
+      - "Accessible (keyboard navigation, ARIA labels)"
+    tech_notes:
+      - "Components: ChatBubble.tsx (148 lines), ChatBubbleOverlay.tsx (128 lines)"
+      - "Uses useDeviceType() hook for mobile detection"
+      - "i18n: chat.title, chat.open, chat.close, chat.unread"
+    artifacts_created:
+      - "src/presentation/components/chat/ChatBubble.tsx (148 lines)"
+      - "src/presentation/components/chat/ChatBubbleOverlay.tsx (128 lines)"
+      - "_bmad-output/story-contexts/E1-4-story-context-2026-01-05.md"
+    test_strategy:
+      - "Manual test: Touch interactions on mobile"
+      - "Accessibility test: Screen reader support"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T13:15:00Z"
+    completed_at: "2026-01-05T13:30:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 26
-  actual: 26
-  completed: 26
+  planned: 32
+  actual: 32
+  completed: 32
   remaining: 0
-  burndown: [26, 0]
+  burndown: [32, 0]
 
 # Sprint 1 Risks
 risks:
@@ -238,12 +274,12 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 25 # 3/12 stories = 25%
+    progress: 33 # 4/12 stories = 33%
     stories_total: 12
-    stories_completed: 3
+    stories_completed: 4
     stories_in_progress: 0
     points_total: 89
-    points_completed: 26
+    points_completed: 32
     points_in_progress: 0
   - id: "E2"
     name: "Multimodal Input System"

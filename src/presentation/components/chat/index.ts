@@ -41,6 +41,13 @@ export type {
 export { ExpandableChatPanel } from './ExpandableChatPanel';
 export type { ExpandableChatPanelProps } from './ExpandableChatPanel';
 
+// E1-4: Notion-style Chat Bubble (mobile)
+export { ChatBubble } from './ChatBubble';
+export type { ChatBubbleProps } from './ChatBubble';
+
+export { ChatBubbleOverlay } from './ChatBubbleOverlay';
+export type { ChatBubbleOverlayProps } from './ChatBubbleOverlay';
+
 // Ralph Loop Cycle 5: Cascade Flow Components
 export { ThreadFolderTree } from './ThreadFolderTree';
 export type { ThreadFolderTreeProps } from './ThreadFolderTree';

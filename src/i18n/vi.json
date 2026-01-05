@@ -1153,5 +1153,9 @@
   "canvas.linkage.confidence.high": "Cao",
   "canvas.linkage.confidence.medium": "Trung bình",
   "canvas.linkage.confidence.low": "Thấp",
+  "chat.title": "Chat",
+  "chat.open": "Mở chat",
+  "chat.close": "Đóng chat",
+  "chat.unread": "{{count}} chưa đọc",
   "chat.diff.linesHidden": "{{count}} dòng đã ẩn"
 }

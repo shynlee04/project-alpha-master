@@ -1153,5 +1153,9 @@
   "canvas.linkage.confidence.high": "High",
   "canvas.linkage.confidence.medium": "Medium",
   "canvas.linkage.confidence.low": "Low",
+  "chat.title": "Chat",
+  "chat.open": "Open chat",
+  "chat.close": "Close chat",
+  "chat.unread": "{{count}} unread",
   "chat.diff.linesHidden": "{{count}} lines hidden"
 }
