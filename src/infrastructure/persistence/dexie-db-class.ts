@@ -47,6 +47,10 @@ import type {
     NotesTable,
 } from './dexie-db-knowledge-types';
 
+import type {
+    WorkflowsTable,
+} from './dexie-db-workflow-types';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -136,6 +140,12 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     notes!: NotesTable;
+
+    // ========================================================================
+    // Epic E4-7: Workflow Builder Tables
+    // ========================================================================
+
+    workflows!: WorkflowsTable;
 
     // ========================================================================
     // Constructor

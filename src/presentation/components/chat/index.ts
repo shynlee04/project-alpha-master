@@ -72,3 +72,13 @@ export type {
     WorkflowBuilderProps,
     WorkflowBuilderModalProps,
 } from './WorkflowBuilder';
+
+// Workflow Visualization (E4-6)
+export {
+    WorkflowVisualizer,
+    WorkflowViewer,
+} from './WorkflowVisualizer';
+export type {
+    WorkflowVisualizerProps,
+    WorkflowViewerProps,
+} from './WorkflowVisualizer';

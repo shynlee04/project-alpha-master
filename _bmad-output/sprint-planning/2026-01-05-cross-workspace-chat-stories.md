@@ -833,17 +833,29 @@
 
 **Description**: Display workflow as flowchart
 
+**Status**: ✅ DONE (2026-01-06)
+
 **Acceptance Criteria**:
-- [ ] SVG or canvas rendering
-- [ ] Shows step relationships
-- [ ] Highlights current step
-- [ ] Supports branching visualization
-- [ ] Zoom and pan controls
-- [ ] Export as image
+- [x] SVG or canvas rendering (using @xyflow/react)
+- [x] Shows step relationships (edges with smoothstep)
+- [x] Highlights current step (executingStepId prop)
+- [x] Supports branching visualization (BFS layout algorithm)
+- [x] Zoom and pan controls (custom + Controls component)
+- [x] Export as image (SVG export)
 
 **Technical Notes**:
-- Library: React Flow or Mermaid
-- Component: `WorkflowVisualizer.tsx`
+- Library: @xyflow/react (React Flow)
+- Component: `WorkflowVisualizer.tsx` (360 lines)
+- Also exports: `WorkflowViewer` for standalone viewing
+
+**Implementation Details**:
+- Custom StepNode component with step type styling
+- Step info mapping for 7 step types with icons and colors
+- BFS-based auto-layout algorithm for node positioning
+- MiniMap, Background (dots variant), and Controls
+- Custom ZoomControls with zoom in/out/fit view
+- SVG export using XMLSerializer
+- Legend showing all step types
 
 **Test Strategy**:
 - Test rendering

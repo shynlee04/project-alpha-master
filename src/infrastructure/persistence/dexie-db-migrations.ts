@@ -526,4 +526,49 @@ export function registerMigrations(db: Dexie): void {
                 itemsCount: 0
             });
         });
+
+        // Schema version 16: Epic E4-7 - Workflow Builder Persistence
+        // Adds workflows table for visual workflow builder
+        db.version(16).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            // NEW: Workflows table for workflow builder (Epic E4-7)
+            workflows: 'id, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+        }).upgrade(async () => {
+            logDexieMigration(16, 'epic-e4-7-workflows', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(16)) {
+                logDexieMigration(16, 'epic-e4-7-workflows', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(16);
+
+            logDexieMigration(16, 'epic-e4-7-workflows', 'completed', {
+                tableName: 'workflows',
+                itemsCount: 0
+            });
+        });
 }

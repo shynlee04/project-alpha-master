@@ -1,10 +1,12 @@
 /**
  * @fileoverview Workflow Builder Store
  * @module lib/workflow/builder/workflow-builder-store
- * @governance EPIC-E4-5
+ * @governance EPIC-E4-5, EPIC-E4-7
  * @created 2026-01-06
+ * @updated 2026-01-06
  *
  * Zustand store for workflow builder state management.
+ * Uses Dexie for persistence via workflow-persistence service.
  */
 
 import { create } from 'zustand';
@@ -17,6 +19,20 @@ import type {
     PaletteItem,
 } from './types';
 import { StepType, STEP_PALETTE, WORKFLOW_TEMPLATES, STEP_VALIDATION_ERRORS } from './types';
+import {
+    saveWorkflow as saveWorkflowToDb,
+    getWorkflow,
+    getAllWorkflows,
+    deleteWorkflow as deleteWorkflowFromDb,
+    duplicateWorkflow,
+    exportWorkflows,
+    importWorkflows,
+    searchWorkflows,
+    migrateFromLocalStorage,
+} from '@/infrastructure/persistence/workflow-persistence';
+
+// Migration flag - run once on store initialization
+let migrationRun = false;
 
 // ============================================================================
 // Helpers
@@ -68,6 +84,10 @@ function createEmptyWorkflow(): Workflow {
 // ============================================================================
 
 interface WorkflowBuilderStore extends WorkflowBuilderState {
+    // Additional state for caching
+    savedWorkflowsCache: Workflow[];
+    setSavedWorkflowsCache: (workflows: Workflow[]) => void;
+
     // Actions
     createWorkflow: () => void;
     loadWorkflow: (workflow: Workflow) => void;
@@ -82,9 +102,14 @@ interface WorkflowBuilderStore extends WorkflowBuilderState {
     moveStep: (stepId: string, newIndex: number) => void;
     setDragging: (isDragging: boolean, stepId?: string) => void;
     validateWorkflow: () => boolean;
-    saveWorkflow: () => void;
-    loadSavedWorkflow: (workflowId: string) => void;
-    deleteSavedWorkflow: (workflowId: string) => void;
+    saveWorkflow: () => Promise<void>;
+    loadSavedWorkflow: (workflowId: string) => Promise<void>;
+    deleteSavedWorkflow: (workflowId: string) => Promise<void>;
+    duplicateSavedWorkflow: (workflowId: string) => Promise<string | undefined>;
+    exportWorkflowsToJson: (workflowIds?: string[]) => Promise<string>;
+    importWorkflowsFromJson: (json: string, overwrite?: boolean) => Promise<{ imported: number; skipped: number; errors: string[] }>;
+    searchWorkflows: (filters: { query?: string; tags?: string[]; limit?: number }) => Promise<Workflow[]>;
+    refreshSavedWorkflows: () => Promise<void>;
     togglePreview: () => void;
     reset: () => void;
 
