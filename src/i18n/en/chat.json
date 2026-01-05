@@ -36,5 +36,20 @@
     "notes": "Notes",
     "knowledge": "Knowledge",
     "study": "Study"
-  }
+  },
+  "attachment": {
+    "add": "Attach file",
+    "remove": "Remove attachment",
+    "tooLarge": "File too large (max 25MB)",
+    "unsupported": "Unsupported file type",
+    "image": "Image",
+    "audio": "Audio",
+    "pdf": "PDF document",
+    "file": "File"
+  },
+  "placeholder": "Type a message...",
+  "send": "Send message",
+  "attach": "Attach file (coming soon)",
+  "startConversation": "Start a conversation",
+  "toolsUsed": "tools used"
 }

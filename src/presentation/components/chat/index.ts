@@ -60,6 +60,10 @@ export type { ToolProgressIndicatorProps } from './ToolProgressIndicator';
 export { ToolExecutionIndicator, CompactToolExecutionIndicator, ToolExecutionIndicatorGroup } from './ToolExecutionIndicator';
 export type { ToolExecutionIndicatorProps, ToolExecutionIndicatorGroupProps } from './ToolExecutionIndicator';
 
+// E2-4: File Attachment Input for chat messages
+export { FileAttachmentInput } from './FileAttachmentInput';
+export type { FileAttachment, FileAttachmentInputProps } from './FileAttachmentInput';
+
 // MVP-2: Chat Platform Components (not wired yet - keep for future use)
 // export { ChatPanel } from './ChatPanel';
 // export { ChatConversation } from './ChatConversation';

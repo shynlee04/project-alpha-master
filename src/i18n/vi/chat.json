@@ -36,5 +36,20 @@
     "notes": "Ghi chú",
     "knowledge": "Kiến thức",
     "study": "Học tập"
-  }
+  },
+  "attachment": {
+    "add": "Đính kèm tệp",
+    "remove": "Xóa tệp đính kèm",
+    "tooLarge": "Tệp quá lớn (tối đa 25MB)",
+    "unsupported": "Loại tệp không được hỗ trợ",
+    "image": "Hình ảnh",
+    "audio": "Âm thanh",
+    "pdf": "Tài liệu PDF",
+    "file": "Tệp"
+  },
+  "placeholder": "Nhập tin nhắn...",
+  "send": "Gửi tin nhắn",
+  "attach": "Đính kèm tệp (sắp có)",
+  "startConversation": "Bắt đầu trò chuyện",
+  "toolsUsed": "công cụ đã dùng"
 }

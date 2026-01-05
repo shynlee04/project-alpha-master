@@ -38,21 +38,21 @@ current_phase:
   target_health: 95.0
   
   # Phase progression
-  phase_number: 1
-  phase_name: "Critical Blockers Resolution"
+  phase_number: 2
+  phase_name: "Workspace Integration Fixes"
   total_phases: 7
   
 current_story:
-  id: "S-006"
-  title: "Verify Phase 1 Completion"
-  type: "VALIDATION"
+  id: "S-007"
+  title: "Fix Notes Workspace Project File Loading"
+  type: "IMPLEMENTATION"
   status: "NOT_STARTED"
   
   # Module routing
   routed_to:
-    module: "deep-scan"
-    workflow: "targeted-scan"
-    agent: "deep-scan"
+    module: "bmad-core"
+    workflow: "dev-story"
+    agent: "dev"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PROGRESS TRACKING
@@ -144,6 +144,7 @@ stories_queue:
     routed_to: "bmad-core → dev-story"
     status: "COMPLETE"
     hours: 3
+    completed_at: "2026-01-05T17:15:00+07:00"
     
   - id: "S-003"
     title: "Add API Key Status Visual Indicators"
@@ -151,6 +152,7 @@ stories_queue:
     routed_to: "bmad-core → dev-story"
     status: "COMPLETE"
     hours: 2
+    completed_at: "2026-01-05T17:20:00+07:00"
     
   - id: "S-004"
     title: "Consolidate Governance to AGENTS.md"
@@ -172,8 +174,9 @@ stories_queue:
     title: "Verify Phase 1 Completion"
     type: "VALIDATION"
     routed_to: "deep-scan → targeted-scan"
-    status: "NOT_STARTED"
+    status: "COMPLETE"
     hours: 2
+    completed_at: "2026-01-05T17:30:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PENDING ITEMS

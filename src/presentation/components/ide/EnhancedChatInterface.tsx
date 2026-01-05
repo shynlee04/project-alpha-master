@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, ChevronDown, ChevronUp, Code, Paperclip, Mic, MicOff } from 'lucide-react'
+import { Bot, User, Send, ChevronDown, ChevronUp, Code, Mic, MicOff } from 'lucide-react'
 import { Button } from '@/presentation/components/ui/button'
 import { useDeviceType } from '@/hooks/useMediaQuery'
 import { toast } from 'sonner'
 
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
+import { FileAttachmentInput, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { useTranslation } from 'react-i18next'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
 
@@ -77,6 +78,8 @@ export function EnhancedChatInterface({
     const { isMobile } = useDeviceType()
     const [input, setInput] = useState('')
     const [keyboardHeight, setKeyboardHeight] = useState(0)
+    // E2-4: File attachments state
+    const [attachments, setAttachments] = useState<FileAttachment[]>([])
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const formRef = useRef<HTMLFormElement>(null)
 
@@ -148,14 +151,28 @@ export function EnhancedChatInterface({
         if (input.trim()) {
             onSendMessage(input.trim())
             setInput('')
+            // E2-4: Clear attachments after sending
+            attachments.forEach(a => {
+                if (a.preview) URL.revokeObjectURL(a.preview)
+            })
+            setAttachments([])
         }
     }
 
-    // E1-10: Handle attachment button click (placeholder for E2-4)
-    const handleAttachmentClick = useCallback(() => {
-        // TODO: E2-4 File Attachment UI
-        toast.info('File attachments coming soon in Epic E2', {
-            description: 'Voice input and file uploads will be available soon.'
+    // E2-4: Handle file attachment addition
+    const handleAddAttachment = useCallback((attachment: FileAttachment) => {
+        setAttachments(prev => [...prev, attachment])
+    }, [])
+
+    // E2-4: Handle file attachment removal
+    const handleRemoveAttachment = useCallback((id: string) => {
+        setAttachments(prev => {
+            const attachment = prev.find(a => a.id === id)
+            // Revoke object URL to free memory
+            if (attachment?.preview) {
+                URL.revokeObjectURL(attachment.preview)
+            }
+            return prev.filter(a => a.id !== id)
         })
     }, [])
 
@@ -231,21 +248,13 @@ export function EnhancedChatInterface({
                     // E1-10: Stack buttons vertically on mobile for better touch targets
                     isMobile ? "flex-wrap" : ""
                 )}>
-                    {/* E1-10: Attachment button (placeholder for E2-4) */}
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={handleAttachmentClick}
-                        className={cn(
-                            "shrink-0",
-                            // E1-10: Touch targets ≥44x44px on mobile
-                            isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-9 w-9"
-                        )}
-                        aria-label={t('chat.attach', 'Attach file')}
-                        title={t('chat.attach', 'Attach file (coming soon)')}
-                    >
-                        <Paperclip className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
-                    </Button>
+                    {/* E2-4: File attachment input */}
+                    <FileAttachmentInput
+                        attachments={attachments}
+                        onAdd={handleAddAttachment}
+                        onRemove={handleRemoveAttachment}
+                        disabled={isTyping}
+                    />
 
                     {/* E2-1: Voice input button with recording state */}
                     <Button
