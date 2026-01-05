@@ -24,18 +24,28 @@ import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
   component: NotesWorkspace,
 });
 
 function NotesWorkspace() {
-  const { projectId } = Route.useParams();
+  const { projectId: _projectId } = Route.useParams();
   const [project, setProject] = useState<Project | null>(null);
+  const setProjectId = useIDEStore((s) => s.setProjectId);
 
   useEffect(() => {
-    getProject(projectId).then((p) => setProject(p as Project | null));
-  }, [projectId]);
+    getProject(_projectId).then((p) => setProject(p as Project | null));
+  }, [_projectId]);
+
+  // Set projectId in IDE store when component mounts
+  useEffect(() => {
+    if (_projectId) {
+      setProjectId(_projectId);
+      console.log('[NotesRoute] Project ID set in store:', _projectId);
+    }
+  }, [_projectId, setProjectId]);
 
   return (
     <ProjectProvider project={project} workspace="notes">

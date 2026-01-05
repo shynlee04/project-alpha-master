@@ -29,7 +29,7 @@ import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPane
 
 // Lazy load NoteEditor to reduce bundle size
 const NoteEditor = lazy(() => import('./NoteEditor'));
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
@@ -41,11 +41,15 @@ import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { SynthesisExportData } from '@/infrastructure/events/event-bus';
 import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
 import { toast } from 'sonner';
+// Use ProjectContext for projectId instead of IDE store
+import { useProjectContext } from '@/lib/workspace/ProjectContext';
 
 export function NotesPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
-    const projectId = useIDEStore((state) => state.projectId) || 'default';
+    // Get projectId from ProjectContext (set by route)
+    const { project } = useProjectContext();
+    const projectId = project?.id || 'default';
     const {
         notesArray,
         currentProjectId,
@@ -283,7 +287,7 @@ export function NotesPage() {
                                 />
                             }
                             projectId={projectId}
-                            projectName={projectId}
+                            projectName={project?.name || projectId}
                         />
                     ) : (
                         <>
@@ -402,7 +406,7 @@ export function NotesPage() {
                                 />
                             }
                             projectId={projectId}
-                            projectName={projectId}
+                            projectName={project?.name || projectId}
                         />
                     )}
                 </ResizablePanel>
@@ -466,7 +470,7 @@ export function NotesPage() {
                             <UnifiedChatPanel
                                 mode="agent"
                                 projectId={projectId}
-                                projectName={projectId}
+                                projectName={project?.name || projectId}
                                 workspaceType="notes"
                                 className="h-full"
                             />

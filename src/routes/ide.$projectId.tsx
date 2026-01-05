@@ -13,13 +13,14 @@
  * - WorkspaceSwitcher in header allows switching to Notes/Knowledge/Study
  */
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 // IDELayout lazy loaded below
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 
 // Lazy load IDELayout
 const IDELayout = lazy(() =>
@@ -41,6 +42,15 @@ export const Route = createFileRoute('/ide/$projectId')({
 function IDEWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
+  const setProjectId = useIDEStore((s) => s.setProjectId);
+
+  // Set projectId in IDE store when component mounts
+  useEffect(() => {
+    if (_projectId) {
+      setProjectId(_projectId);
+      console.log('[IDERoute] Project ID set in store:', _projectId);
+    }
+  }, [_projectId, setProjectId]);
 
   return (
     <ProjectProvider project={project as Project | null} workspace="ide">

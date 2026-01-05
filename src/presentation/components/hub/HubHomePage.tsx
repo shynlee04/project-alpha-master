@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -26,18 +27,32 @@ import { BootSequence } from './BootSequence';
 import { HubHero } from './HubHero';
 import { RecentProjectsSection } from './RecentProjectsSection';
 import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
+import { ProjectPickerDialog } from './ProjectPickerDialog';
 import { SummaryCardsGrid } from './SummaryCardsGrid';
 import { ChartsGrid } from './ChartsGrid';
 import { useDashboardMetrics } from './useDashboardMetrics';
+
+// Import useSearch for accessing route search params
+import { useSearch } from '@tanstack/react-router';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // Access route search params for project picker triggering
+  const searchParams = useSearch({ from: '/hub' });
+  const { workspace, action, message } = searchParams as { 
+    workspace?: 'ide' | 'notes' | 'knowledge' | 'study' | 'agents';
+    action?: string;
+    message?: string;
+  };
+
   // State management
   const [booting, setBooting] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [projectPickerOpen, setProjectPickerOpen] = useState(false);
+  const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes' | 'knowledge' | 'study' | 'agents'>('ide');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   // Data fetching
@@ -56,6 +71,48 @@ export const HubHomePage: React.FC = () => {
       })
       .slice(0, 5) as unknown as Project[];
   }, [projects]);
+
+  // Handle route query params - show project picker or toast
+  useEffect(() => {
+    if (workspace) {
+      // User clicked workspace from sidebar without project - show picker
+      setProjectPickerWorkspace(workspace);
+      setProjectPickerOpen(true);
+    } else if (action === 'create-project' && message) {
+      // Redirected because no projects or action needed
+      toast.info(message || 'Create or mount a project to continue', {
+        duration: 6000,
+      });
+    }
+  }, [workspace, action, message]);
+
+  // -- Project Picker Handler --
+  const openProjectPicker = (targetWorkspace: 'ide' | 'notes' | 'knowledge' | 'study' | 'agents') => {
+    setProjectPickerWorkspace(targetWorkspace);
+    setProjectPickerOpen(true);
+  };
+
+  // -- Workspace Navigation with Project Picker --
+  const navigateToWorkspace = async (workspace: 'notes' | 'knowledge' | 'study' | 'agents') => {
+    if (!projects || projects.length === 0) {
+      toast.info(`No projects yet`, {
+        description: `Create or mount a project first to access the ${workspace} workspace.`,
+        duration: 5000,
+      });
+      return;
+    }
+
+    if (projects.length === 1) {
+      // Only one project - navigate directly
+      await navigate({
+        to: `/${workspace}/$projectId`,
+        params: { projectId: projects[0].id }
+      });
+    } else {
+      // Multiple projects - show picker
+      openProjectPicker(workspace);
+    }
+  };
 
   // -- Handlers --
 
@@ -180,7 +237,7 @@ export const HubHomePage: React.FC = () => {
       description: t('hub.notesDesc', 'Quick access to scratchpad'),
       icon: <Notebook className="h-8 w-8" />,
       topic: 'Notes',
-      onClick: () => navigate({ to: '/notes' }),
+      onClick: () => navigateToWorkspace('notes'),
       className: 'bg-green-500/5 border-green-500/20 hover:border-green-500/50',
     },
     {
@@ -189,7 +246,7 @@ export const HubHomePage: React.FC = () => {
       title: t('hub.menu.agents', 'NEURAL_AGENTS'),
       icon: <Cpu className="h-6 w-6" />,
       topic: 'Agents',
-      onClick: () => navigate({ to: '/agents' }),
+      onClick: () => navigateToWorkspace('agents'),
     },
     {
       id: 'knowledge',
@@ -197,7 +254,7 @@ export const HubHomePage: React.FC = () => {
       title: t('hub.menu.knowledge', 'DATA_BANK'),
       icon: <HardDrive className="h-6 w-6" />,
       topic: 'Knowledge',
-      onClick: () => navigate({ to: '/knowledge' }),
+      onClick: () => navigateToWorkspace('knowledge'),
     },
     {
       id: 'docs',
@@ -205,7 +262,7 @@ export const HubHomePage: React.FC = () => {
       title: t('hub.menu.study', 'STUDY_CORE'),
       icon: <BookOpen className="h-6 w-6" />,
       topic: 'Study',
-      onClick: () => navigate({ to: '/study' }),
+      onClick: () => navigateToWorkspace('study'),
     },
     {
       id: 'terminal',
@@ -235,7 +292,7 @@ export const HubHomePage: React.FC = () => {
       topic: 'About',
       onClick: () => navigate({ to: '/about' }), // Assuming /about exists or will be caught
     }
-  ], [t, navigate, handleNewProject]);
+  ], [t, navigate, handleNewProject, navigateToWorkspace]);
 
   const handleBootComplete = () => {
     setBooting(false);
@@ -287,6 +344,13 @@ export const HubHomePage: React.FC = () => {
           onConfirm={handleWorkspaceBindingConfirm}
         />
       )}
+
+      {/* Project Picker Dialog for workspace navigation */}
+      <ProjectPickerDialog
+        open={projectPickerOpen}
+        onOpenChange={setProjectPickerOpen}
+        targetWorkspace={projectPickerWorkspace}
+      />
     </div>
   );
 };
