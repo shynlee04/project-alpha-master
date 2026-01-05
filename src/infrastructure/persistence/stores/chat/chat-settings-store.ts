@@ -11,6 +11,7 @@
  * - temperature: Response creativity (0-1)
  * - autoScroll: Auto-scroll to new messages
  * - systemPrompt: Custom system prompt
+ * - contextEnabled: Enable context-aware AI (Notes only)
  */
 
 import { create } from 'zustand';
@@ -33,6 +34,8 @@ export interface WorkspaceChatSettings {
   autoScroll: boolean;
   /** Custom system prompt override */
   systemPrompt?: string;
+  /** Enable context-aware AI (includes current + related notes) */
+  contextEnabled?: boolean;
 }
 
 /**
@@ -43,6 +46,7 @@ export const DEFAULT_CHAT_SETTINGS: WorkspaceChatSettings = {
   temperature: 0.7,
   autoScroll: true,
   systemPrompt: undefined,
+  contextEnabled: false,
 };
 
 /**

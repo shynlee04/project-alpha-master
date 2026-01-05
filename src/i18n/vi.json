@@ -1177,5 +1177,19 @@
   "voice.duration": "{{seconds}}giây",
   "voice.tooShort": "Ghi âm quá ngắn",
   "voice.autoSent": "Tự động gửi sau {{seconds}}giây im lặng",
-  "voice.apiKeyMissing": "Chưa cấu hình khóa API Gemini"
+  "voice.apiKeyMissing": "Chưa cấu hình khóa API Gemini",
+  "noteReference.selectNote": "Chọn Ghi Chú Để Tham Chiếu",
+  "noteReference.searchPlaceholder": "Tìm kiếm ghi chú...",
+  "noteReference.noNotesFound": "Không tìm thấy ghi chú nào",
+  "noteReference.noNotes": "Chưa có ghi chú nào. Hãy tạo ghi chú trước.",
+  "noteReference.justNow": "vừa xong",
+  "noteReference.minutesAgo_one": "{{count}} phút trước",
+  "noteReference.minutesAgo_other": "{{count}} phút trước",
+  "noteReference.hoursAgo_one": "{{count}} giờ trước",
+  "noteReference.hoursAgo_other": "{{count}} giờ trước",
+  "noteReference.daysAgo_one": "{{count}} ngày trước",
+  "noteReference.daysAgo_other": "{{count}} ngày trước",
+  "noteReference.insertReference": "📌 [{title}]",
+  "noteReference.clickToView": "Nhấp để xem ghi chú",
+  "noteReference.referenceHint": "Gõ /note để tham chiếu ghi chú trong tin nhắn"
 }

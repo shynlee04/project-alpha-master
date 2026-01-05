@@ -340,13 +340,13 @@ export function getBlockContent(
  * Get chunks for large notes (convenience function)
  *
  * @param blocks - BlockNote blocks
- * @param maxChars - Maximum characters per chunk
+ * @param maxCharsPerChunk - Maximum characters per chunk
  * @returns Content chunks
  */
 export function getBlockChunks(
     blocks: unknown[],
-    maxChars?: number
+    maxCharsPerChunk?: number
 ): ContentChunk[] {
-    const result = retrieveNoteContent(blocks, { maxChars });
+    const result = retrieveNoteContent(blocks, { maxCharsPerChunk });
     return result.chunks;
 }

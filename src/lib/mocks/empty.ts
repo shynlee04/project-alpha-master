@@ -205,3 +205,32 @@ export const CartesianGrid = () => null;
 export const Tooltip = () => null;
 export const Legend = () => null;
 export const ResponsiveContainer = () => null;
+
+// Transformers.js Mock
+export const pipeline = async () => (() => []);
+export const env = { allowLocalModels: false, useBrowserCache: false };
+export const AutoModel = { from_pretrained: async () => ({}) };
+export const AutoTokenizer = { from_pretrained: async () => ({}) };
+
+// ONNX Runtime Mock
+export const InferenceSession = {
+    create: async () => ({
+        run: async () => ({}),
+    }),
+};
+export const Tensor = class {
+    constructor() { }
+};
+
+// PDF.js Mock
+export const getDocument = () => ({
+    promise: Promise.resolve({
+        numPages: 0,
+        getPage: async () => ({
+            getTextContent: async () => ({ items: [] }),
+            getViewport: () => ({ width: 0, height: 0 }),
+            render: () => ({ promise: Promise.resolve() }),
+        }),
+    }),
+});
+export const GlobalWorkerOptions = { workerSrc: '' };

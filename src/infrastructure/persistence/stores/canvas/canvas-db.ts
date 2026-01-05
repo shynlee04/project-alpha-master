@@ -15,6 +15,8 @@
  */
 
 import Dexie from 'dexie';
+import type { Node, Edge, Viewport } from '@xyflow/react';
+import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 
 /**
  * IndexedDB record types

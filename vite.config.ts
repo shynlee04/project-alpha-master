@@ -152,6 +152,7 @@ const config = defineConfig(async () => {
 
             // Check exact match
             if (heavyLibraries.includes(source)) {
+              console.log(`[SSR-ALIAS] Excluding exact match: ${source}`)
               return path.resolve(__dirname, './src/lib/mocks/empty.ts')
             }
 
@@ -167,10 +168,24 @@ const config = defineConfig(async () => {
               'monaco-editor/',
               'victory-vendor/',
               'recharts/',
+              'pdfjs-dist/',
+              '@xenova/',
+              'onnxruntime-',
             ]
             for (const prefix of heavyPrefixes) {
               if (source.startsWith(prefix)) {
+                console.log(`[SSR-ALIAS] Excluding prefix match: ${source}`)
                 return path.resolve(__dirname, './src/lib/mocks/empty.ts')
+              }
+            }
+
+            // Check for absolute paths (node_modules)
+            if (source.includes('node_modules')) {
+              for (const lib of heavyLibraries) {
+                if (source.includes(`/node_modules/${lib}/`) || source.endsWith(`/node_modules/${lib}`)) {
+                  console.log(`[SSR-ALIAS] Excluding absolute match: ${source}`)
+                  return path.resolve(__dirname, './src/lib/mocks/empty.ts')
+                }
               }
             }
           }

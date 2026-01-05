@@ -24,7 +24,9 @@ export function generateCanvasId(): string {
  * Initialize default canvas in database
  */
 export async function initializeDefaultCanvas(): Promise<void> {
-  const db = await import('./canvas-db').then((m) => m.getSafeCanvasDb());
+  // Lazy import to avoid SSR issues
+  const { getSafeCanvasDb } = await import('./canvas-db');
+  const db = getSafeCanvasDb();
   if (!db) return;
 
   const existing = await db.table('canvases').get('default');
@@ -52,6 +54,8 @@ export async function initializeDefaultCanvas(): Promise<void> {
 }
 
 // Initialize on module load
-importDefault().catch(() => {
-  // Silently fail if called during SSR
-});
+if (typeof window !== 'undefined') {
+  initializeDefaultCanvas().catch(() => {
+    // Silently fail
+  });
+}

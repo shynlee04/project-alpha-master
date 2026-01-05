@@ -11,8 +11,8 @@
  */
 
 import { useNoteStore } from '@/lib/notes/note-store';
-import { searchNotes } from '@/lib/notes/note-retriever';
 import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
+import { queryRelatedNotes } from './RAGQueryService';
 
 // ============================================================================
 // Types
@@ -119,7 +119,7 @@ export function getCurrentNoteContent(noteId: string): string {
  * Get related notes via RAG search
  *
  * Searches for semantically related notes using the current note content as query.
- * Excludes the current note from results.
+ * Excludes the current note from results. Uses 2-second timeout.
  *
  * @param currentNoteContent - Content of current note to use as query
  * @param currentNoteId - Current note ID to exclude from results
@@ -134,17 +134,23 @@ async function getRelatedNotes(
     if (!currentNoteContent.trim()) return [];
 
     try {
-        const results = await searchNotes(currentNoteContent, limit);
+        // Use RAGQueryService with timeout protection (2 second default)
+        const response = await queryRelatedNotes(currentNoteContent, currentNoteId, {
+            maxResults: limit,
+            timeout: 2000, // 2 second timeout
+        });
 
-        // Filter out current note and map results
-        return results
-            .filter(r => r.id !== currentNoteId)
-            .map(r => ({
-                id: r.id,
-                title: r.title,
-                content: r.content,
-                score: r.score
-            }));
+        if (response.timedOut) {
+            console.warn('[ContextEngine] RAG query timed out, returning no related notes');
+            return [];
+        }
+
+        return response.results.map(r => ({
+            id: r.id,
+            title: r.title,
+            content: r.content,
+            score: r.score
+        }));
     } catch (error) {
         console.error('[ContextEngine] Failed to fetch related notes:', error);
         return [];

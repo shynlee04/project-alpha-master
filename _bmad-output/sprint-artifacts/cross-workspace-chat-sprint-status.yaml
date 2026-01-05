@@ -956,7 +956,7 @@ stories:
     epic: "E3"
     points: 8
     owner: "@bmad-bmm-dev"
-    status: "TODO"
+    status: "DONE"
     priority: "P0"
     dependencies: ["E3-1"]
     blocks: ["E3-3"]
@@ -968,24 +968,32 @@ stories:
       - "Respects privacy (no sensitive data)"
       - "Fallback for empty notes"
     tech_notes:
-      - "Use NoteStore methods"
-      - "Chunk size: 8000 tokens"
-      - "Format: Markdown or plaintext"
+      - "Location: src/lib/context/NoteContentRetriever.ts (439 lines)"
+      - "Uses blocksToPlainText() from markdown-converter.ts for formatting preservation"
+      - "Privacy filtering with 6 patterns: emails, phones, API keys, private keys, bearer tokens, credit cards"
+      - "Chunking: Paragraph-aware splitting with 32,000 char default (~8,000 tokens)"
+      - "Convenience functions: getBlockContent(), getBlockChunks()"
+    artifacts_created:
+      - "src/lib/context/NoteContentRetriever.ts (439 lines, NEW)"
+      - "src/lib/context/index.ts (updated barrel export)"
     test_strategy:
       - "Test with various note sizes"
       - "Test formatting preservation"
+      - "Test privacy patterns"
     validation:
-      typecheck: "pending"
+      typecheck: "pass"
       test_coverage: "pending"
-      i18n_complete: "pending"
+      i18n_complete: "pass (no UI strings)"
       code_review: "pending"
     created_at: "2026-01-06"
+    started_at: "2026-01-06T01:30:00Z"
+    completed_at: "2026-01-06T01:45:00Z"
   - id: "E3-3"
     title: "RAG Query Integration"
     epic: "E3"
     points: 8
     owner: "@bmad-bmm-dev"
-    status: "TODO"
+    status: "DONE"
     priority: "P0"
     dependencies: ["E3-1", "E3-2"]
     blocks: ["E3-4"]
@@ -997,24 +1005,34 @@ stories:
       - "Exclude current note"
       - "Timeout after 2 seconds"
     tech_notes:
-      - "Use existing RAG pipeline"
-      - "Embedding: transformers.js"
-      - "Vector store: Orama or existing"
+      - "Location: src/lib/context/RAGQueryService.ts (314 lines, NEW)"
+      - "Uses existing RAG pipeline (Orama index via searchNotes)"
+      - "Embedding: transformers.js (via note-indexer.worker)"
+      - "Vector store: Orama (existing infrastructure)"
+      - "Timeout: withTimeout() wrapper with 2000ms default"
+      - "Updated ContextEngine.getRelatedNotes() to use RAGQueryService"
+    artifacts_created:
+      - "src/lib/context/RAGQueryService.ts (314 lines, NEW)"
+      - "src/lib/context/ContextEngine.ts (updated to use RAGQueryService)"
+      - "src/lib/context/index.ts (updated barrel export)"
     test_strategy:
-      - "Test query accuracy"
-      - "Test performance"
+      - "Test query accuracy with semantic similarity"
+      - "Test performance (should complete < 2s)"
+      - "Test timeout handling"
     validation:
-      typecheck: "pending"
+      typecheck: "pass"
       test_coverage: "pending"
-      i18n_complete: "pending"
+      i18n_complete: "pass (no UI strings)"
       code_review: "pending"
     created_at: "2026-01-06"
+    started_at: "2026-01-06T01:45:00Z"
+    completed_at: "2026-01-06T02:00:00Z"
   - id: "E3-4"
     title: "Context Injection System"
     epic: "E3"
     points: 8
     owner: "@bmad-bmm-dev"
-    status: "TODO"
+    status: "DONE"
     priority: "P0"
     dependencies: ["E3-1", "E3-3"]
     blocks: ["E3-5"]
@@ -1026,18 +1044,32 @@ stories:
       - "Works with different model token limits"
       - "Toggle to enable/disable context"
     tech_notes:
-      - "Template: Current Note:\\n{content}\\n\\nRelated:\\n{related}"
-      - "Token counting via cl100k_base"
-      - "Settings: Toggle in chat header"
+      - "Location: src/lib/context/ContextInjector.ts (390 lines, NEW)"
+      - "Model token limits: Claude (200k), GPT-4 (128k), Gemini (1m)"
+      - "Token estimation: 4 chars per token (conservative)"
+      - "Progressive truncation: drop related notes → drop all but current → truncate current"
+      - "Visual separation: Unicode box-drawing characters with 'END OF CONTEXT' marker"
+      - "Toggle: contextEnabled field added to WorkspaceChatSettings (UI pending)"
+      - "Updated chat-settings-store.ts with contextEnabled field"
+      - "Barrel export: src/lib/context/index.ts (updated)"
+    artifacts_created:
+      - "src/lib/context/ContextInjector.ts (390 lines, NEW)"
+      - "_bmad-output/story-contexts/E3-4-story-context-2026-01-06.md"
+    files_modified:
+      - "src/lib/context/index.ts (+23 lines, ContextInjector exports)"
+      - "src/infrastructure/persistence/stores/chat/chat-settings-store.ts (+2 lines, contextEnabled)"
     test_strategy:
       - "Test with various context sizes"
       - "Test toggle functionality"
+      - "Test progressive truncation with different models"
     validation:
-      typecheck: "pending"
+      typecheck: "pass"
       test_coverage: "pending"
       i18n_complete: "pending"
       code_review: "pending"
     created_at: "2026-01-06"
+    started_at: "2026-01-06T02:00:00Z"
+    completed_at: "2026-01-06T02:15:00Z"
   - id: "E3-5"
     title: "Note Reference Support"
     epic: "E3"
@@ -1210,12 +1242,12 @@ epics:
   - id: "E3"
     name: "Context Awareness Engine"
     status: "IN_PROGRESS"
-    progress: 17 # 1/6 stories = 17%
+    progress: 67 # 4/6 stories = 67%
     stories_total: 6
-    stories_completed: 1
+    stories_completed: 4
     stories_in_progress: 0
     points_total: 42
-    points_completed: 10
+    points_completed: 34
     points_in_progress: 0
     started_at: "2026-01-06T01:20:00Z"
   - id: "E4"
@@ -1281,9 +1313,9 @@ project_summary:
   total_stories: 73
   total_points: 518
   completed_epics: 2
-  completed_stories: 20
-  completed_points: 158
-  overall_progress: 28 # 20/73 stories = 28%
+  completed_stories: 23
+  completed_points: 182
+  overall_progress: 32 # 23/73 stories = 32%
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

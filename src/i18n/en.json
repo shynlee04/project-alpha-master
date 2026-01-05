@@ -1177,5 +1177,19 @@
   "voice.duration": "{{seconds}}s",
   "voice.tooShort": "Recording too short",
   "voice.autoSent": "Auto-sent after {{seconds}}s of silence",
-  "voice.apiKeyMissing": "Gemini API key not configured"
+  "voice.apiKeyMissing": "Gemini API key not configured",
+  "noteReference.selectNote": "Select a Note to Reference",
+  "noteReference.searchPlaceholder": "Search notes...",
+  "noteReference.noNotesFound": "No notes found matching your search",
+  "noteReference.noNotes": "No notes available. Create a note first.",
+  "noteReference.justNow": "just now",
+  "noteReference.minutesAgo_one": "{{count}}m ago",
+  "noteReference.minutesAgo_other": "{{count}}m ago",
+  "noteReference.hoursAgo_one": "{{count}}h ago",
+  "noteReference.hoursAgo_other": "{{count}}h ago",
+  "noteReference.daysAgo_one": "{{count}}d ago",
+  "noteReference.daysAgo_other": "{{count}}d ago",
+  "noteReference.insertReference": "📌 [{title}]",
+  "noteReference.clickToView": "Click to view note",
+  "noteReference.referenceHint": "Type /note to reference a note in your message"
 }
