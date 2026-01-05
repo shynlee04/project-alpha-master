@@ -25,7 +25,7 @@ export { StreamdownRenderer } from './StreamdownRenderer';
 
 // File attachments
 export { FileAttachmentInput } from './FileAttachmentInput';
-export type { Attachment, FileAttachment, URLAttachment } from './FileAttachmentInput';
+export type { Attachment, FileAttachment } from './FileAttachmentInput';
 
 // Agent Approvals
 export { ApprovalOverlay } from './ApprovalOverlay';

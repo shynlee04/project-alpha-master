@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, ChevronDown, ChevronUp, Code, Mic, MicOff, BookOpen } from 'lucide-react'
+import { Bot, User, Send, ChevronDown, ChevronUp, Code, Mic, MicOff } from 'lucide-react'
 import { Button } from '@/presentation/components/ui/button'
 import { useDeviceType } from '@/hooks/useMediaQuery'
 import { toast } from 'sonner'

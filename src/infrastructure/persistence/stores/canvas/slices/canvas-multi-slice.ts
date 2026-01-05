@@ -12,40 +12,41 @@
  * - Load new canvas state
  * - Update active canvas ID in localStorage
  *
- * Line Count: ~80 (target: ≤120 lines)
+ * Line Count: ~100 (target: ≤120 lines)
  *
  * @see aggregation: canvas/index.ts (unified store)
  */
 
 import type { StateCreator } from 'zustand';
-import type { CanvasMetadata, CanvasStoreState } from '@/lib/canvas/types';
 import { getSafeCanvasDb } from '../canvas-db';
-import type { useCanvasStore } from '../canvas-index';
 
 /**
  * Multi-canvas management slice interface
  */
 export interface CanvasMultiSlice {
   activeCanvasId: string | null;
-
-  // Operations
   setActiveCanvas: (canvasId: string) => Promise<void>;
 }
 
 /**
  * Multi-canvas slice creator
  */
-export const createCanvasMultiSlice: StateCreator<CanvasMultiSlice> = (set, get) => ({
+export const createCanvasMultiSlice: StateCreator<
+  { activeCanvasId: string | null; loadCanvasList?: () => Promise<void> },
+  [],
+  [],
+  CanvasMultiSlice
+> = (set, get) => ({
   activeCanvasId: null,
 
   setActiveCanvas: async (canvasId: string) => {
     const db = getSafeCanvasDb();
     if (!db) return;
 
-    // Lazy-import useCanvasStore to avoid circular dependency at module load time
-    const { getState: getCanvasState, setState: setCanvasState } = await import('../canvas-index').then(
-      (m) => m.useCanvasStore.getState(),
-    );
+    // Import useCanvasStore dynamically to avoid circular dependency
+    const { useCanvasStore } = await import('../index');
+    const getCanvasState = useCanvasStore.getState;
+    const setCanvasState = useCanvasStore.setState;
 
     // Save current canvas state before switching
     const currentState = getCanvasState();
@@ -101,7 +102,9 @@ export const createCanvasMultiSlice: StateCreator<CanvasMultiSlice> = (set, get)
       console.error('Failed to load canvas:', error);
     }
 
-    // Refresh canvas list
-    await get().loadCanvasList();
+    // Refresh canvas list if method exists
+    if (get().loadCanvasList) {
+      await get().loadCanvasList();
+    }
   },
 });
