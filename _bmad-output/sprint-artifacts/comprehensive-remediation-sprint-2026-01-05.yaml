@@ -422,7 +422,8 @@ stories:
         type: "IMPLEMENTATION"
         route_to: "bmad-core → dev-story"
         hours: 4
-        status: "backlog"
+        status: "in-progress"
+        started_at: "2026-01-06T02:55:00+07:00"
         acceptance_criteria:
           - "SyncStatusPanel subscribes to crossWorkspaceEventBus"
           - "Real sync operations displayed (not mock)"
@@ -437,7 +438,8 @@ stories:
         type: "IMPLEMENTATION"
         route_to: "bmad-core → dev-story"
         hours: 2
-        status: "backlog"
+        status: "done"
+        completed_at: "2026-01-06T03:15:00+07:00"
         acceptance_criteria:
           - "Feature detection for showDirectoryPicker"
           - "Helpful toast on mobile explaining limitation"

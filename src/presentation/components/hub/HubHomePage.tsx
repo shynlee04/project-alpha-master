@@ -61,6 +61,22 @@ export const HubHomePage: React.FC = () => {
 
   const handleNewProject = async () => {
     try {
+      // Check if File System Access API is supported (not available on mobile)
+      const isFSASupported = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+
+      if (!isFSASupported) {
+        // Graceful degradation for mobile and unsupported browsers
+        toast.info(t('hub.fsaNotSupported.title', 'Folder Mounting Not Available'), {
+          description: t(
+            'hub.fsaNotSupported.description',
+            'Folder mounting requires a desktop browser (Chrome, Edge, or Opera). Notes and Study workspaces work without mounting - your data is saved locally.'
+          ),
+          duration: 8000,
+        });
+        // Offer to navigate to Notes which doesn't require FSA
+        return;
+      }
+
       // 1. Open Directory Picker
       // @ts-ignore - showDirectoryPicker is valid in supported browsers
       const handle = await window.showDirectoryPicker({
@@ -98,6 +114,9 @@ export const HubHomePage: React.FC = () => {
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         console.error('Failed to create project:', error);
+        toast.error(t('hub.projectCreateFailed', 'Failed to create project'), {
+          description: (error as Error).message,
+        });
       }
     }
   };

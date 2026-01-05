@@ -1,11 +1,17 @@
 # Governance Module MANIFEST
 # Purpose: Artifact lifecycle, naming conventions, and status synchronization
 
-version: "1.0.0"
+version: "1.1.0"
 module_id: "governance"
 name: "Governance Module"
 created: "2026-01-06"
+updated: "2026-01-06"
 status: "ACTIVE"
+
+governance:
+  constitution_version: "1.0.0"
+  acknowledged_at: "2026-01-06"
+  compliance_level: "full"
 
 description: |
   Central governance for all BMAD artifacts including:
@@ -13,12 +19,16 @@ description: |
   - Naming convention enforcement
   - Stale artifact validation and recovery
   - Status file single source of truth
+  - Project-wide enforcement protocols
+  - Pre-execution hook specifications
 
 purpose:
   - "Artifact lifecycle management"
   - "Naming convention enforcement"
   - "Stale context recovery"
   - "Status file SSOT"
+  - "Multi-team coordination"
+  - "Constitution enforcement"
 
 domains:
   artifacts:
@@ -36,6 +46,11 @@ domains:
     triggers: ["artifact >24h old", "metadata disconnected"]
     agent: "validation-agent"
 
+  coordination:
+    description: "Multi-team conflict detection and resolution"
+    triggers: ["shared epic", "artifact conflict"]
+    agent: "coordination-agent"
+
 workflows:
   - id: "artifact-lifecycle"
     path: "workflows/artifact-lifecycle.md"
@@ -45,16 +60,49 @@ workflows:
     path: "workflows/archive-cycle.md"
   - id: "stale-artifact-validation"
     path: "workflows/stale-artifact-validation.md"
+    version: "2.0.0"
   - id: "status-synchronization"
     path: "workflows/status-synchronization.md"
+  - id: "template-enforcement"
+    path: "workflows/template-enforcement.md"
+  - id: "ralph-loop-coordination"
+    path: "workflows/ralph-loop-coordination.md"
+
+protocols:
+  - id: "project-wide-enforcement"
+    path: "protocols/project-wide-enforcement.md"
+  - id: "pre-execution-specification"
+    path: "hooks/pre-execution-specification.md"
+
+constitutions:
+  - id: "BMAD-Governance-Constitution"
+    path: "CONSTITUTION.md"
+    version: "1.0.0"
+    authority: "supreme"
 
 agents:
   - id: "governance-agent"
     path: "agents/governance-agent.md"
+    status: "pending"
   - id: "status-sync-agent"
     path: "agents/status-sync-agent.md"
+    status: "pending"
   - id: "validation-agent"
     path: "agents/validation-agent.md"
+    status: "pending"
+
+hooks:
+  - id: "ralph-loop-hook"
+    path: "../.claude/hooks/ralph-loop.sh"
+    trigger: "stop_event"
+  - id: "pre-execution-hook-claude"
+    path: "hooks/pre-execution-specification.md"
+    trigger: "pre_execution"
+    platform: "claude-code"
+  - id: "pre-execution-hook-opencode"
+    path: "hooks/pre-execution-specification.md"
+    trigger: "pre_execution"
+    platform: "opencode"
 
 routing:
   auto_route: true
@@ -65,3 +113,11 @@ quality_gates:
   - naming_convention_followed: true
   - orphans_detected_daily: true
   - status_file_ssot_maintained: true
+  - agents_acknowledge_constitution: true
+  - workflows_have_validation_gates: true
+  - hooks_deployed_and_executable: true
+
+integration_points:
+  - ralph_loop_state: "../.claude/ralph-loop.local.md"
+  - bmm_workflow_status: "../../bmm-workflow-status.yaml"
+  - sprint_status: "../../_bmad-output/sprint-artifacts/arc-sprint-status.yaml"

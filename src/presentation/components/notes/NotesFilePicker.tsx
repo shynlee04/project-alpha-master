@@ -70,6 +70,15 @@ export function NotesFilePicker({
     }, [open, fileSyncService]);
 
     const handleMount = async () => {
+        // Check FSA support before attempting to mount
+        const isFSASupported = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+        if (!isFSASupported) {
+            toast.info('Folder mounting requires a desktop browser', {
+                description: 'Chrome, Edge, or Opera on desktop is required. Notes work without mounting.',
+            });
+            return;
+        }
+
         try {
             setIsMounting(true);
             const handle = await window.showDirectoryPicker();
@@ -79,8 +88,10 @@ export function NotesFilePicker({
                 toast.success('Directory mounted successfully');
             }
         } catch (error) {
-            console.error('Failed to mount directory:', error);
-            toast.error('Failed to mount directory');
+            if ((error as Error).name !== 'AbortError') {
+                console.error('Failed to mount directory:', error);
+                toast.error('Failed to mount directory');
+            }
         } finally {
             setIsMounting(false);
         }

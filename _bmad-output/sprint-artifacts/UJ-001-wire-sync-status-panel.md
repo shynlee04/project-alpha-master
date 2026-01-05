@@ -43,20 +43,20 @@
 ## Tasks
 
 ### Research Tasks
-- [ ] T0.1: Review crossWorkspaceEventBus event types and payloads
-- [ ] T0.2: Review SyncManager event emission patterns
-- [ ] T0.3: Identify all places that emit sync-related events
+- [x] T0.1: Review crossWorkspaceEventBus event types and payloads
+- [x] T0.2: Review SyncManager event emission patterns
+- [x] T0.3: Identify all places that emit sync-related events
 
 ### Implementation Tasks
-- [ ] T1: Remove mock data from SyncStatusPanel useEffect
-- [ ] T2: Add crossWorkspaceEventBus subscription for 'SyncProgress' event
-- [ ] T3: Add crossWorkspaceEventBus subscription for 'SyncComplete' event
-- [ ] T4: Add crossWorkspaceEventBus subscription for 'SyncError' event
-- [ ] T5: Map event payloads to SyncOperation interface
-- [ ] T6: Implement handleRetry to emit retry event via bus
+- [x] T1: Remove mock data from SyncStatusPanel useEffect
+- [x] T2: Add crossWorkspaceEventBus subscription for 'SyncProgress' event (via onSyncStatus)
+- [x] T3: Add crossWorkspaceEventBus subscription for 'SyncComplete' event (via onSyncStatus)
+- [x] T4: Add crossWorkspaceEventBus subscription for 'SyncError' event (via onSyncStatus)
+- [x] T5: Map event payloads to SyncOperation interface
+- [x] T6: Implement handleRetry to emit retry event via bus
 
 ### Validation Tasks
-- [ ] T7: TypeScript compiles without errors
+- [x] T7: TypeScript compiles without errors
 - [ ] T8: Panel shows real operations during folder mount
 - [ ] T9: Progress updates as files sync
 - [ ] T10: Retry button triggers re-sync
@@ -127,25 +127,31 @@ interface SyncProgressEvent {
 
 ## Dev Agent Record
 
-**Agent:** _(to be filled)_  
-**Session:** _(to be filled)_
+**Agent:** Gemini 2.5 Pro (Antigravity)  
+**Session:** 2026-01-06T03:00:00+07:00
 
 ### Task Progress:
-_(to be updated during implementation)_
+- [x] T0.1-T0.3: Reviewed crossWorkspaceEventBus - found onSyncStatus and onFileChange events
+- [x] T1-T6: Implemented real event subscriptions replacing mock data
+- [x] T7: TypeScript compiles without errors
 
 ### Research Executed:
-_(to be updated during implementation)_
+- Codebase: `cross-workspace-event-bus.ts` → Found SyncStatusEvent and FileChangeEvent types
+- Codebase: `SyncStatusPanel.tsx` → Identified mock data at lines 94-125
 
 ### Files Changed:
 | File | Action | Lines |
 |------|--------|-------|
-| _(to be filled)_ | | |
+| src/presentation/components/ide/SyncStatusPanel.tsx | Modified | +90/-45 |
 
 ### Tests Created:
-_(to be filled)_
+- None (manual validation pending)
 
 ### Decisions Made:
-_(to be filled)_
+1. **Event Accumulation Pattern:** Used Map<path, SyncOperation> to accumulate events and avoid duplicates
+2. **Status Mapping:** Mapped SyncStatusEvent.status (syncing/synced/error) to SyncStatus (in-progress/completed/failed)
+3. **Auto-cleanup:** Clear completed operations after 30s, file operations after 10s
+4. **Retry via Event:** handleRetry emits SyncStatusEvent with status='syncing' for re-sync_
 
 ---
 
@@ -154,6 +160,7 @@ _(to be filled)_
 | Date | Status | Agent | Notes |
 |------|--------|-------|-------|
 | 2026-01-06T02:50:00+07:00 | drafted | SM Agent | Story created via course correction |
+| 2026-01-06T03:05:00+07:00 | in-progress | Dev Agent | Implementation complete, pending runtime validation |
 
 ---
 

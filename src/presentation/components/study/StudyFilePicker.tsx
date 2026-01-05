@@ -65,6 +65,15 @@ export function StudyFilePicker({
     }, [open]);
 
     const handleMount = async () => {
+        // Check FSA support before attempting to mount
+        const isFSASupported = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+        if (!isFSASupported) {
+            toast.info('Folder mounting requires a desktop browser', {
+                description: 'Chrome, Edge, or Opera on desktop is required for study material import.',
+            });
+            return;
+        }
+
         try {
             setIsMounting(true);
             const handle = await window.showDirectoryPicker();
@@ -76,8 +85,10 @@ export function StudyFilePicker({
                 });
             }
         } catch (error) {
-            console.error('Failed to mount directory:', error);
-            toast.error('Failed to mount directory');
+            if ((error as Error).name !== 'AbortError') {
+                console.error('Failed to mount directory:', error);
+                toast.error('Failed to mount directory');
+            }
         } finally {
             setIsMounting(false);
         }

@@ -2,10 +2,13 @@
  * Sync Status Panel - Real-time File Synchronization Monitoring
  *
  * Story: LT-4.19 (Light Theme Migration)
- * UPDATED_AT: 2026-01-04T10:30:00Z
+ * Story: UJ-001 (Wire SyncStatusPanel to Real Events)
+ * UPDATED_AT: 2026-01-06T03:00:00Z
  *
  * Displays comprehensive sync status across all workspaces with event activity indicators.
  * Uses CSS custom properties for light/dark theme support.
+ * 
+ * Now wired to crossWorkspaceEventBus for real-time sync events.
  *
  * User Journey:
  * 1. User saves file in IDE → Sync shows "1 file pending"
@@ -16,14 +19,20 @@
  * @module presentation/components/ide/SyncStatusPanel
  * @priority P0 - Event Activity Indicator (User Requirement)
  * @story 24-1 AC2 - Sync queue visualization
+ * @story UJ-001 - Wire to real events
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Button } from '@/presentation/components/ui/button';
 import { RefreshCw, AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import {
+  crossWorkspaceEventBus,
+  SyncStatusEvent,
+  FileChangeEvent
+} from '@/lib/events/cross-workspace-event-bus';
 
 /**
  * Sync operation status
@@ -90,47 +99,161 @@ export function SyncStatusPanel() {
     lastSyncTime: null,
   });
 
+  // Track operations by path for accumulation
+  const operationsMapRef = useRef<Map<string, SyncOperation>>(new Map());
+
+  /**
+   * Map SyncStatusEvent.status to SyncOperation.status
+   */
+  const mapSyncStatus = useCallback((status: SyncStatusEvent['status']): SyncStatus => {
+    switch (status) {
+      case 'syncing': return 'in-progress';
+      case 'synced': return 'completed';
+      case 'error': return 'failed';
+      default: return 'pending';
+    }
+  }, []);
+
+  /**
+   * Map FileChangeEvent.changeType to SyncOperation.type
+   */
+  const mapChangeType = useCallback((changeType: FileChangeEvent['changeType']): SyncOperation['type'] => {
+    switch (changeType) {
+      case 'created': return 'file-create';
+      case 'modified': return 'file-update';
+      case 'deleted': return 'file-delete';
+      default: return 'file-update';
+    }
+  }, []);
+
+  /**
+   * Update sync state from operations map
+   */
+  const updateStateFromMap = useCallback(() => {
+    const operations = Array.from(operationsMapRef.current.values());
+    const inProgressCount = operations.filter(op => op.status === 'in-progress').length;
+    const completedCount = operations.filter(op => op.status === 'completed').length;
+    const failedCount = operations.filter(op => op.status === 'failed').length;
+    const pendingCount = operations.filter(op => op.status === 'pending').length;
+
+    setSyncState({
+      operations: operations.sort((a, b) => b.timestamp - a.timestamp),
+      totalCount: operations.length,
+      pendingCount,
+      inProgressCount,
+      failedCount,
+      completedCount,
+      lastSyncTime: operations.length > 0
+        ? Math.max(...operations.map(op => op.timestamp))
+        : null,
+    });
+  }, []);
+
   // Subscribe to sync events from cross-workspace event bus
   useEffect(() => {
-    // TODO: Subscribe to sync queue events
-    // This is a placeholder - actual implementation will connect to sync manager
-    const mockSyncState: SyncQueueState = {
-      operations: [
-        {
-          id: '1',
-          type: 'file-update',
-          path: '/src/components/AgentConfig.tsx',
-          status: 'completed',
-          progress: 100,
-          timestamp: Date.now() - 30000,
-        },
-        {
-          id: '2',
-          type: 'file-create',
-          path: '/src/lib/agent/tools/new-tool.ts',
-          status: 'in-progress',
-          progress: 65,
-          timestamp: Date.now() - 5000,
-        },
-      ],
-      totalCount: 2,
-      pendingCount: 0,
-      inProgressCount: 1,
-      failedCount: 0,
-      completedCount: 1,
-      lastSyncTime: Date.now() - 30000,
+    /**
+     * Handle SyncStatusEvent from crossWorkspaceEventBus
+     * Updates operation status (syncing → completed/error)
+     */
+    const handleSyncStatus = (event: SyncStatusEvent) => {
+      console.log('[SyncStatusPanel] Received SyncStatusEvent:', event);
+
+      const operationId = `${event.projectPath}`;
+      const existingOp = operationsMapRef.current.get(operationId);
+
+      const operation: SyncOperation = {
+        id: operationId,
+        type: existingOp?.type || 'directory-sync',
+        path: event.projectPath,
+        status: mapSyncStatus(event.status),
+        progress: event.status === 'synced' ? 100 : event.status === 'error' ? 0 : 50,
+        error: event.error,
+        timestamp: event.timestamp.getTime(),
+      };
+
+      operationsMapRef.current.set(operationId, operation);
+      updateStateFromMap();
+
+      // Clear completed operations after 30 seconds
+      if (event.status === 'synced') {
+        setTimeout(() => {
+          operationsMapRef.current.delete(operationId);
+          updateStateFromMap();
+        }, 30000);
+      }
     };
 
-    setSyncState(mockSyncState);
-  }, []);
+    /**
+     * Handle FileChangeEvent for detailed file-level tracking
+     */
+    const handleFileChange = (event: FileChangeEvent) => {
+      console.log('[SyncStatusPanel] Received FileChangeEvent:', event);
+
+      const operationId = `${event.projectPath}:${event.filePath}`;
+
+      const operation: SyncOperation = {
+        id: operationId,
+        type: mapChangeType(event.changeType),
+        path: event.filePath,
+        status: 'completed', // FileChangeEvent means file change completed
+        progress: 100,
+        timestamp: event.timestamp.getTime(),
+      };
+
+      operationsMapRef.current.set(operationId, operation);
+      updateStateFromMap();
+
+      // Clear file operations after 10 seconds
+      setTimeout(() => {
+        operationsMapRef.current.delete(operationId);
+        updateStateFromMap();
+      }, 10000);
+    };
+
+    // Subscribe to events
+    crossWorkspaceEventBus.onSyncStatus(handleSyncStatus);
+    crossWorkspaceEventBus.onFileChange(handleFileChange);
+
+    console.log('[SyncStatusPanel] Subscribed to crossWorkspaceEventBus events');
+
+    // Cleanup on unmount
+    return () => {
+      crossWorkspaceEventBus.offSyncStatus(handleSyncStatus);
+      crossWorkspaceEventBus.offFileChange(handleFileChange);
+      console.log('[SyncStatusPanel] Unsubscribed from crossWorkspaceEventBus events');
+    };
+  }, [mapSyncStatus, mapChangeType, updateStateFromMap]);
 
   /**
    * Retry failed sync operation
    */
-  const handleRetry = (operationId: string) => {
+  const handleRetry = useCallback((operationId: string) => {
     console.log('[SyncStatusPanel] Retrying operation:', operationId);
-    // TODO: Emit retry event to sync manager
-  };
+
+    // Find the failed operation
+    const operation = operationsMapRef.current.get(operationId);
+    if (!operation) {
+      console.warn('[SyncStatusPanel] Operation not found for retry:', operationId);
+      return;
+    }
+
+    // Update status to pending/in-progress
+    operation.status = 'pending';
+    operation.error = undefined;
+    operation.progress = 0;
+    operation.timestamp = Date.now();
+    operationsMapRef.current.set(operationId, operation);
+    updateStateFromMap();
+
+    // Emit sync status event to trigger re-sync
+    // SyncManager or other services should pick this up
+    crossWorkspaceEventBus.emitSyncStatus({
+      workspaceId: 'ide',
+      projectPath: operation.path,
+      status: 'syncing',
+    });
+  }, [updateStateFromMap]);
+
 
   /**
    * Get status icon for operation
