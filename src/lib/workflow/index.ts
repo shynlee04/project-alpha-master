@@ -87,3 +87,44 @@ export type {
     RoutingContext,
     RoutingFeedback,
 } from './agents';
+
+// Multi-Agent Debating System (E4-4)
+export {
+    DebateAgent,
+    DebateError,
+    createDebateAgent,
+    debateTopic,
+    debateTopicWithContext,
+    DEBATE_ERRORS,
+} from './agents/debate-agent';
+
+export type {
+    DebatePersona,
+    DebateArgument,
+    AgreementMatrix,
+    DebateSynthesis,
+    DebateResults,
+    DebateConfig,
+    DebateContext,
+} from './agents/debate-agent';
+
+// Workflow Builder (E4-5)
+export {
+    useWorkflowBuilderStore,
+} from './builder';
+
+export type {
+    Workflow as BuilderWorkflow,
+    WorkflowStep as BuilderWorkflowStep,
+    WorkflowTemplate,
+    WorkflowBuilderState,
+    PaletteItem,
+    StepConnection,
+} from './builder';
+
+export {
+    StepType as BuilderStepType,
+    STEP_PALETTE,
+    WORKFLOW_TEMPLATES,
+    STEP_VALIDATION_ERRORS,
+} from './builder';

@@ -798,18 +798,28 @@
 
 **Description**: Create visual UI for building custom workflows
 
+**Status**: ✅ DONE (2026-01-06)
+
 **Acceptance Criteria**:
-- [ ] Drag-and-drop step builder
-- [ ] Step types: Send Message, Route, Branch, Debates
-- [ ] Connect steps visually
-- [ ] Preview workflow
-- [ ] Save/load workflows
-- [ ] Share workflows
+- [x] Drag-and-drop step builder
+- [x] Step types: Send Message, Route, Branch, Debates, Expansion, Input, End
+- [x] Connect steps visually
+- [x] Preview workflow
+- [x] Save/load workflows (localStorage)
+- [ ] Share workflows (future enhancement)
 
 **Technical Notes**:
-- Component: `WorkflowBuilder.tsx`
-- Drag library: `@dnd-kit/core`
-- Save to Dexie or localStorage
+- Component: `WorkflowBuilder.tsx` (465 lines)
+- Drag library: `@dnd-kit/core` installed
+- Store: `workflow-builder-store.ts` (425 lines)
+- Types: `types.ts` (340 lines) - StepType enum, STEP_PALETTE, WORKFLOW_TEMPLATES
+- Save to localStorage
+
+**Implementation Details**:
+- Zustand store with createWorkflow, loadWorkflow, loadTemplate, updateWorkflow, addStep, updateStep, removeStep, selectStep, connectSteps, disconnectSteps, moveStep, setDragging, validateWorkflow, saveWorkflow, loadSavedWorkflow, deleteSavedWorkflow, togglePreview, reset
+- Step palette with 7 step types: SEND_MESSAGE, ROUTE, BRANCH, DEBATE, EXPANSION, INPUT, END
+- 5 workflow templates: quick-research, code-review, debate, expansion, custom
+- Modal variant: WorkflowBuilderModal
 
 **Test Strategy**:
 - Test drag-and-drop

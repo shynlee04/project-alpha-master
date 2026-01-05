@@ -62,3 +62,13 @@ export type {
     DebateTimelineProps,
     DebateTimelineLoadingProps,
 } from './DebateTimeline';
+
+// Workflow Builder (E4-5)
+export {
+    WorkflowBuilder,
+    WorkflowBuilderModal,
+} from './WorkflowBuilder';
+export type {
+    WorkflowBuilderProps,
+    WorkflowBuilderModalProps,
+} from './WorkflowBuilder';
