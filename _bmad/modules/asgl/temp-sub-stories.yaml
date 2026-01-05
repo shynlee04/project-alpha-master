@@ -1,0 +1,22 @@
+max_slice_lines: 176 # canvas-io-slice.ts exceeds 120 by 56
+
+    - id: "S-012-b"
+      title: "Split flashcard-store.ts (531 lines) into slices"
+      estimated_hours: "6-8"
+      status: "IN_PROGRESS"
+      file_path: "infrastructure/persistence/stores/flashcard-store.ts"
+
+    - id: "S-012-c"
+      title: "Split project-store.ts (519 lines) into slices"
+      estimated_hours: "6-8"
+      status: "PENDING"
+
+    - id: "S-012-d"
+      title: "Verify note-store.ts status (566 lines - EPIC-26-1)"
+      estimated_hours: "2-3"
+      status: "PENDING"
+
+    - id: "S-012-e"
+      title: "Handle file-sync-status and file-snapshot (in-progress migrations)"
+      estimated_hours: "4-6"
+      status: "PENDING"

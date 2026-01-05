@@ -103,20 +103,26 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
             if (isBuiltIn && provider) {
                 // BUILT-IN PROVIDER: Only save API key
                 if (apiKey) {
+                    // FIX-2026-01-05: Store credentials first and show immediate feedback
                     await credentialVault.storeCredentials(provider.id, apiKey);
-                    // FIX-2026-01-05: Update hasApiKey flag to true for visual feedback
+
+                    // Update hasApiKey flag immediately for visual feedback
                     updateProvider(provider.id, { hasApiKey: true });
 
-                    // CRITICAL: Trigger model loading after key is saved (Ralph Loop Cycle 4: emits event)
+                    // Show success toast IMMEDIATELY so user knows key is saved
+                    toast.success(`✓ ${provider.name} API key saved successfully`);
+
+                    // Now try to load models (non-blocking - key is already saved)
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
-                        toast.success(`${provider.name} API key saved - loading models...`);
+                        toast.success(`Models loaded for ${provider.name}`);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
-                        toast.error(`Failed to load models: ${errorMessage}`);
-                        throw error; // Re-throw to prevent dialog from closing
+                        // Show warning but DON'T throw - key is already saved, models can be retried
+                        toast.warning(`API key saved, but models couldn't load: ${errorMessage}. You can try refreshing.`);
+                        // Don't re-throw - allow dialog to close since key was saved
                     } finally {
                         setIsFetchingModels(false);
                     }

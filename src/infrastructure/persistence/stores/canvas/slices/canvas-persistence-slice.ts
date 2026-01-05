@@ -16,8 +16,6 @@
  * @see aggregation: canvas/index.ts (unified store)
  */
 
-import type { Node, Edge, Viewport } from '@xyflow/react';
-import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import { getSafeCanvasDb } from '../canvas-db';
 
 /**

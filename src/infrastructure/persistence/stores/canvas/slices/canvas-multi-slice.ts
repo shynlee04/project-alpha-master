@@ -103,8 +103,6 @@ export const createCanvasMultiSlice: StateCreator<
     }
 
     // Refresh canvas list if method exists
-    if (get().loadCanvasList) {
-      await get().loadCanvasList();
-    }
+    get().loadCanvasList?.();
   },
 });

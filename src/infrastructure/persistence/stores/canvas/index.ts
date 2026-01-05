@@ -19,13 +19,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Node, Edge, Viewport } from '@xyflow/react';
-import type {
-  CanvasStoreState,
-  CanvasRelationshipType,
-  CanvasMetadata,
-  CanvasExport,
-} from '@/lib/canvas/types';
-import type { LinkageProposal } from '@/lib/canvas/linkage-types';
+import type { CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
 
 // Import slice creators
 import {
@@ -49,26 +43,12 @@ import { createIndexedDBStorage } from './slices/canvas-persistence-slice';
 /**
  * Multi-canvas store state type
  */
-interface MultiCanvasState extends CanvasMultiSlice, CanvasIOSlice {
-  // useMultiCanvasStore only needs activeCanvasId and canvasList + CRUD/import/export
-  activeCanvasId: string | null;
-  canvasList: CanvasMetadata[];
-  setActiveCanvas: (canvasId: string) => Promise<void>;
-  createCanvas: (name?: string) => Promise<string>;
-  deleteCanvas: (canvasId: string) => Promise<void>;
-  renameCanvas: (canvasId: string, name: string) => Promise<void>;
-  loadCanvasList: () => Promise<void>;
-  exportCanvas: () => Promise<CanvasExport>;
-  importCanvas: (exportData: CanvasExport) => Promise<string>;
-}
+type MultiCanvasState = CanvasMultiSlice & CanvasIOSlice;
 
 /**
  * Combined canvas store state (for internal composition)
  */
-interface CombinedCanvasState
-  extends CanvasStateSlice,
-    CanvasLinkageSlice,
-    CanvasIOSlice {}
+type CombinedCanvasState = CanvasStateSlice & CanvasLinkageSlice & CanvasIOSlice;
 
 /**
  * Create useCanvasStore with IndexedDB persistence
@@ -96,42 +76,15 @@ export const useCanvasStore = create<CombinedCanvasState>()(
 /**
  * Create useMultiCanvasStore (layered on top of useCanvasStore)
  */
-export const useMultiCanvasStore = create<MultiCanvasState>()((set, get) => ({
-  activeCanvasId: null,
-  canvasList: [],
-  ...createCanvasMultiSlice(set as any, get as any),
-  createCanvas: async (name?: string) => {
-    const sliceIO = createCanvasIOSlice(set as any, get as any);
-    const result = await sliceIO.createCanvas(name);
-    set({ canvasList: get().canvasList });
-    return result;
-  },
-  deleteCanvas: async (canvasId: string) => {
-    const sliceIO = createCanvasIOSlice(set as any, get as any);
-    await sliceIO.deleteCanvas(canvasId);
-    set({ canvasList: get().canvasList });
-  },
-  renameCanvas: async (canvasId: string, name: string) => {
-    const sliceIO = createCanvasIOSlice(set as any, get as any);
-    await sliceIO.renameCanvas(canvasId, name);
-    set({ canvasList: get().canvasList });
-  },
-  loadCanvasList: async () => {
-    const sliceIO = createCanvasIOSlice(set as any, get as any);
-    await sliceIO.loadCanvasList();
-    set({ canvasList: get().canvasList || [] });
-  },
-  exportCanvas: async () => {
-    const sliceIO = createCanvasIOSlice(set as any, get as any);
-    return await sliceIO.exportCanvas();
-  },
-  importCanvas: async (exportData: CanvasExport) => {
-    const sliceIO = createCanvasIOSlice(set as any, get as any);
-    const result = await sliceIO.importCanvas(exportData);
-    set({ canvasList: get().canvasList });
-    return result;
-  },
-}));
+export const useMultiCanvasStore = create<MultiCanvasState>()((set, get) => {
+  const multiSlice = createCanvasMultiSlice(set as any, get);
+  const ioSlice = createCanvasIOSlice(set as any, get);
+
+  return {
+    ...multiSlice,
+    ...ioSlice,
+  };
+});
 
 /**
  * Persistence helper hook

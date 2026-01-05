@@ -4,7 +4,7 @@
 # SINGLE SOURCE OF TRUTH FOR GOVERNANCE: AGENTS.md
 
 version: "2.0.0"
-last_updated: "2026-01-05T20:20:00+07:00"
+last_updated: "2026-01-05T19:45:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION INFORMATION
@@ -43,16 +43,16 @@ current_phase:
   total_phases: 7
   
 current_story:
-  id: "S-012-b"
-  title: "Split flashcard-store.ts (531 lines) into slices"
-  type: "GOD_STORE_SPLIT"
+  id: "S-011"
+  title: "Accurate God Store Inventory (Validation Required)"
+  type: "VALIDATION"
   status: "IN_PROGRESS"
-
-  # Module routing (architecture-remediation → eliminate-god-stores)
+  
+  # Module routing (deep-scan to get accurate inventory)
   routed_to:
-    module: "architecture-remediation"
-    workflow: "eliminate-god-stores"
-    agent: "architect"
+    module: "deep-scan"
+    workflow: "targeted-scan"
+    agent: "deep-scan"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PROGRESS TRACKING
@@ -147,40 +147,37 @@ stories_queue:
     status: "IN_PROGRESS"
     hours: 30-40
     sub_stories:
-      sub_stories:
-        - id: "S-012-a"
-          title: "Split canvas-store.ts (623 lines) into 6 slices"
-          estimated_hours: "8-10"
-          status: "COMPLETE"
-          completed_at: "2026-01-05T20:15:00+07:00"
-          file_path: "infrastructure/persistence/stores/canvas-store.ts"
-          results:
-            god_stores_eliminated: 1
-            typescript_errors: 0
-            breaking_changes: 0
-            slices_created: 5
-            max_slice_lines: 176
-        
-        - id: "S-012-b"
-          title: "Split flashcard-store.ts (531 lines) into slices"
-          estimated_hours: "6-8"
-          status: "IN_PROGRESS"
-          file_path: "infrastructure/persistence/stores/flashcard-store.ts"
-        
-        - id: "S-012-c"
-          title: "Split project-store.ts (519 lines) into slices"
-          estimated_hours: "6-8"
-          status: "PENDING"
-        
-        - id: "S-012-d"
-          title: "Verify note-store.ts status (566 lines - EPIC-26-1)"
-          estimated_hours: "2-3"
-          status: "PENDING"
-        
-        - id: "S-012-e"
-          title: "Handle file-sync-status and file-snapshot (in-progress migrations)"
-          estimated_hours: "4-6"
-          status: "PENDING"
+- id: "S-012-a"
+    title: "Split canvas-store.ts (623 lines) into 6 slices"
+    estimated_hours: "8-10"
+    status: "COMPLETE"
+    completed_at: "2026-01-05T20:15:00+07:00"
+    file_path: "infrastructure/persistence/stores/canvas-store.ts"
+    results:
+      god_stores_eliminated: 1
+      typescript_errors: 0
+      breaking_changes: 0
+      slices_created: 5
+      max_slice_lines: 176 # canvas-io-slice.ts exceeds 120 by 56
+      max_slice_lines: 176 # canvas-io-slice.ts exceeds 120 by 56
+
+    - id: "S-012-b"
+      title: "Split flashcard-store.ts (531 lines) into slices"
+      estimated_hours: "6-8"
+      status: "IN_PROGRESS"
+      file_path: "infrastructure/persistence/stores/flashcard-store.ts"
+      - id: "S-012-c"
+        title: "Split project-store.ts (519 lines) into slices"
+        estimated_hours: "6-8"
+        status: "PENDING"
+      - id: "S-012-d"
+        title: "Verify note-store.ts status (566 lines - EPIC-26-1)"
+        estimated_hours: "2-3"
+        status: "PENDING"
+      - id: "S-012-e"
+        title: "Handle file-sync-status and file-snapshot (in-progress migrations)"
+        estimated_hours: "4-6"
+        status: "PENDING"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PENDING ITEMS
@@ -323,10 +320,10 @@ errors: []
 # ═══════════════════════════════════════════════════════════════════════════
 
 metrics:
-  session_duration_minutes: 145
-  modules_invoked: 1
+  session_duration_minutes: 0
+  modules_invoked: 0
   governance_updates: 0
-  artifacts_created: 4  # Added canvas-store-analysis-2026-01-05.md
+  artifacts_created: 3
   health_score_start: 46.4
-  health_score_current: 47.5  # +1.1% from S-012-a (canvas-store split)
+  health_score_current: 46.4
   health_score_target: 95.0

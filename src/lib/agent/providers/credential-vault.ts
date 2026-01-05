@@ -152,13 +152,30 @@ export class CredentialVault {
      * Initialize the vault (generate or load master key)
      *
      * FIX-2025-12-30: Added comprehensive validation and error handling
+     * FIX-2026-01-05: Added SSR guard to prevent initialization during server-side rendering
+     *                 This prevents vault key regeneration on Vercel SSR deployments
      */
     async initialize(): Promise<void> {
-        if (this.initialized && this.masterKey) {
+        // =====================================================================
+        // SSR GUARD - CRITICAL FOR VERCEL DEPLOYMENT
+        // =====================================================================
+        // During SSR, localStorage and IndexedDB are not available.
+        // If we try to initialize, we'll create a new vault with keys that
+        // get thrown away, and then the client will create ANOTHER vault.
+        // This causes credential loss and models not loading.
+        // =====================================================================
+        if (typeof window === 'undefined') {
+            console.log('[CredentialVault] SSR detected - skipping initialization');
             return;
         }
 
-        console.log('[CredentialVault] Initializing...');
+        // Check if already initialized with a valid master key
+        if (this.initialized && this.masterKey) {
+            console.log('[CredentialVault] Already initialized, skipping');
+            return;
+        }
+
+        console.log('[CredentialVault] Initializing (client-side)...');
 
         // Validate storage keys first
         const validation = this.validateStorageKeys();
@@ -171,6 +188,7 @@ export class CredentialVault {
             // Clear any stale data and create new vault
             await this.createNewVault();
             this.initialized = true;
+            console.log('[CredentialVault] New vault created and initialized');
             return;
         }
 
@@ -359,17 +377,32 @@ export class CredentialVault {
      *
      * @param providerId - Unique provider identifier
      * @param apiKey - Plain text API key to encrypt and store
+     * @throws Error if vault not initialized or storage fails
+     * 
+     * FIX-2026-01-05: Check storage result and throw on failure for proper UI feedback
      */
     async storeCredentials(providerId: string, apiKey: string): Promise<void> {
+        // SSR guard
+        if (typeof window === 'undefined') {
+            throw new Error('Cannot store credentials during SSR - operation requires browser environment');
+        }
+
         await this.initialize();
-        if (!this.masterKey) throw new Error('Vault not initialized');
+        if (!this.masterKey) {
+            throw new Error('Vault not initialized - please refresh the page and try again');
+        }
 
         // Encrypt the API key
         const encryptedData = await this.encryption.encryptApiKey(apiKey, this.masterKey);
 
-        // Store in IndexedDB
-        await this.storage.storeCredentials(providerId, encryptedData.encrypted, encryptedData.iv);
-        console.log('[CredentialVault] Stored credentials for:', providerId);
+        // Store in IndexedDB and check result
+        const result = await this.storage.storeCredentials(providerId, encryptedData.encrypted, encryptedData.iv);
+
+        if (!result.success) {
+            throw new Error(`Failed to store credentials for ${providerId} - IndexedDB may be unavailable`);
+        }
+
+        console.log('[CredentialVault] ✅ Stored credentials for:', providerId);
     }
 
     /**
@@ -377,8 +410,16 @@ export class CredentialVault {
      *
      * @param providerId - Unique provider identifier
      * @returns Decrypted API key or null if not found
+     * 
+     * FIX-2026-01-05: Added SSR guard to return null during server-side rendering
      */
     async getCredentials(providerId: string): Promise<string | null> {
+        // SSR guard - credentials are not available during server-side rendering
+        if (typeof window === 'undefined') {
+            console.log('[CredentialVault] SSR detected - credentials not available');
+            return null;
+        }
+
         console.log('[CredentialVault] getCredentials called for:', providerId);
 
         await this.initialize();
