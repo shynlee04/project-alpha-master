@@ -4,8 +4,7 @@
  */
 
 
-import type { ToolPermissionState, ToolTrustLevel, ToolCategory } from '../types';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { ToolPermissionState, ToolTrustLevel, ToolCategory, WorkspaceType } from '../types';
 import {
     DEFAULT_YOLO_DURATION_HOURS,
     getToolCategory,

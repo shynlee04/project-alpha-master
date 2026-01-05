@@ -858,6 +858,64 @@ stories:
     started_at: "2026-01-06T00:30:00Z"
     completed_at: "2026-01-06T01:00:00Z"
 
+  - id: "E2-8"
+    title: "Gemini Multimodal Integration"
+    epic: "E2"
+    points: 5
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P1"
+    dependencies: ["E2-7"]
+    blocks: []
+    acceptance_criteria:
+      - "Image to Base64 Conversion (fileToBase64, attachmentToImageData)"
+      - "Base64 extraction handles both data URL and raw base64"
+      - "MIME type preserved (image/jpeg, image/png, image/webp, image/gif)"
+      - "Multimodal Message Building (buildMultimodalMessage from message-builder.ts)"
+      - "Text + images combined in single message"
+      - "CoreMessage format with content array (text + image parts)"
+      - "Chat Integration (sendMessage with images parameter)"
+      - "Attachments converted before sending"
+      - "Send button enabled with just attachments (no text required)"
+      - "Memory cleanup (URL.revokeObjectURL after sending)"
+      - "i18n complete (EN + VI, 5 multimodal.* keys)"
+      - "TypeScript zero errors"
+    tech_notes:
+      - "Created image-attachments.ts (158 lines)"
+      - "FileReader API for base64 conversion (readAsDataURL)"
+      - "Data URL prefix extraction (split on comma)"
+      - "MIME type detection from file.type"
+      - "Updated use-agent-chat-with-tools.ts (sendMessage accepts images parameter)"
+      - "buildMultimodalMessage used when images provided"
+      - "Updated EnhancedChatInterface.tsx (handleSubmit converts attachments)"
+      - "Allow sending with just attachments (no text required)"
+      - "Send button disabled only when no text AND no attachments"
+      - "Extended MultimodalContent type to include image/gif"
+      - "Extended ImageContent interface to include image/gif"
+    artifacts_created:
+      - "src/lib/media/image-attachments.ts (158 lines, NEW)"
+      - "_bmad-output/story-contexts/E2-8-story-context-2026-01-06.md"
+    files_modified:
+      - "src/lib/agent/hooks/use-agent-chat-with-tools.ts (+15 lines, images parameter)"
+      - "src/lib/agent/multimodal/message-builder.ts (+2 lines, GIF support)"
+      - "src/lib/agent/memory/insight-extractor.ts (+2 lines, GIF in MultimodalContent)"
+      - "src/presentation/components/ide/EnhancedChatInterface.tsx (+50 lines, multimodal submission)"
+      - "src/i18n/en/chat.json (+5 lines, multimodal namespace)"
+      - "src/i18n/vi/chat.json (+5 lines, multimodal namespace)"
+    test_strategy:
+      - "Manual test: Attach image, send message with text, verify AI receives image"
+      - "Manual test: Attach multiple images, verify all sent to AI"
+      - "Manual test: Send with just image (no text), verify message sends"
+      - "Manual test: Verify URL.revokeObjectURL called after send"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass (multimodal.*, EN + VI)"
+      code_review: "pending"
+    created_at: "2026-01-06"
+    started_at: "2026-01-06T01:00:00Z"
+    completed_at: "2026-01-06T01:15:00Z"
+
 # Sprint 1 Metrics
 velocity:
   planned: 114

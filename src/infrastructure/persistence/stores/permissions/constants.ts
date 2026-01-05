@@ -3,8 +3,7 @@
  * @module infrastructure/persistence/stores/permissions/constants
  */
 
-import type { ToolCategory, ToolTrustLevel, CategoryApprovalState, YOLOMode } from './types';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { ToolCategory, ToolTrustLevel, CategoryApprovalState, YOLOMode, WorkspaceType } from './types';
 
 /**
  * Tool to category mapping

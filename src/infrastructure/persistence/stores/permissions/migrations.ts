@@ -3,8 +3,7 @@
  * @module infrastructure/persistence/stores/permissions/migrations
  */
 
-import type { ToolPermissionState, ToolTrustLevel } from './types';
-import { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { ToolPermissionState, ToolTrustLevel, WorkspaceType } from './types';
 import {
     DEFAULT_YOLO_MODE,
     createDefaultCategoryApprovals,

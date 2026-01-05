@@ -20,7 +20,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+import { createDexieStorage } from '../../dexie-storage';
 import type { ToolPermissionState } from './types';
 import {
   createDefaultTrustLevels,

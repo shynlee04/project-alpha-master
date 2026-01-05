@@ -3,8 +3,7 @@
  * @module infrastructure/persistence/stores/permissions/selectors
  */
 
-import type { ToolPermissionState, ToolTrustLevel } from './types';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { ToolPermissionState, ToolTrustLevel, WorkspaceType } from './types';
 
 /**
  * Check if a tool needs approval in a specific workspace

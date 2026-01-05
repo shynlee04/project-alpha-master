@@ -3,7 +3,8 @@
  * @module infrastructure/persistence/stores/permissions/types
  */
 
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { WorkspaceType } from '../workspace/workspace-types';
+export type { WorkspaceType };
 
 /**
  * Trust level for a tool - determines when user approval is required
