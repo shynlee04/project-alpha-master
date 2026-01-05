@@ -22,7 +22,11 @@ export * from './dexie-db-core-types';
 export * from './dexie-db-ai-types';
 export * from './dexie-db-session-types';
 export * from './dexie-db-knowledge-types';
+export * from './dexie-db-workflow-types';
 export * from './dexie-db-helpers';
+
+// Workflow Persistence (Epic E4-7)
+export * from './workflow-persistence';
 
 // RAG Store (types and helpers only - store moved to stores/)
 export * from './rag-store-helpers';

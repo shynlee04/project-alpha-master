@@ -867,19 +867,28 @@
 
 **Points**: 6
 
+**Status**: ✅ DONE (2026-01-06)
+
 **Description**: Save and load workflows from storage
 
 **Acceptance Criteria**:
-- [ ] Save to Dexie database
-- [ ] Load saved workflows
-- [ ] Delete workflows
+- [x] Save to Dexie database
+- [x] Load saved workflows
+- [x] Delete workflows
 - [ ] Sync across devices (future)
-- [ ] Import/export as JSON
-- [ ] Search workflows
+- [x] Import/export as JSON
+- [x] Search workflows
 
 **Technical Notes**:
 - Table: `workflows` in Dexie
-- Indexes: `name`, `createdAt`
+- Indexes: `name`, `createdAt`, `updatedAt`, `tags`
+
+**Implementation Files**:
+- `src/infrastructure/persistence/dexie-db-workflow-types.ts` - WorkflowRecord, WorkflowsTable
+- `src/infrastructure/persistence/dexie-db-class.ts` - Added workflows table
+- `src/infrastructure/persistence/dexie-db-migrations.ts` - Version 16 migration
+- `src/infrastructure/persistence/workflow-persistence.ts` - CRUD, search, import/export
+- `src/lib/workflow/builder/workflow-builder-store.ts` - Updated to use Dexie
 
 **Test Strategy**:
 - Test CRUD operations
@@ -891,42 +900,50 @@
 
 **Points**: 4
 
+**Status**: ✅ DONE (2026-01-06)
+
 **Description**: Create pre-built workflow templates
 
 **Acceptance Criteria**:
-- [ ] 5 preset templates included:
+- [x] 5 preset templates included:
   - Quick Research
   - Code Review
   - Note Summarization
   - Debate Topic
   - Brainstorming
-- [ ] One-click to use template
-- [ ] Editable after creation
-- [ ] Template descriptions
+- [x] One-click to use template
+- [x] Editable after creation
+- [x] Template descriptions
+
+**Implementation Files**:
+- `src/lib/workflow/builder/types.ts` - WORKFLOW_TEMPLATES array with 5 templates
+- `src/presentation/components/chat/WorkflowBuilder.tsx` - TemplateCard component with one-click loading
+- `src/i18n/en.json`, `src/i18n/vi.json` - i18n translations for workflow UI
 
 **Technical Notes**:
-- Location: `src/lib/workflow/templates/`
-- JSON format with metadata
+- Location: `src/lib/workflow/builder/types.ts`
+- Templates defined as TypeScript WorkflowTemplate array with metadata
 
 **Test Strategy**:
-- Test template loading
-- Test customization
+- Test template loading ✅
+- Test customization ✅
 
 ---
 
 ### Story E4-9: Workflow Execution Engine
 
 **Points**: 8
+**Status**: ✅ DONE (2026-01-06)
 
 **Description**: Implement engine to execute workflows
 
 **Acceptance Criteria**:
-- [ ] Execute steps sequentially
-- [ ] Handle branching logic
-- [ ] Manage state between steps
-- [ ] Show progress
-- [ ] Allow pause/resume
-- [ ] Handle errors gracefully
+- [x] Execute steps sequentially
+- [x] Handle branching logic
+- [x] Manage state between steps
+- [x] Show progress
+- [x] Allow pause/resume
+- [x] Handle errors gracefully
 
 **Technical Notes**:
 - Class: `WorkflowExecutor`
@@ -936,6 +953,10 @@
 **Test Strategy**:
 - Test execution flow
 - Test error handling
+
+**Implementation Files**:
+- `src/lib/workflow/executor/workflow-executor.ts` - WorkflowExecutor class with state machine, event emitter, pause/resume
+- `src/lib/workflow/executor/index.ts` - Barrel export
 
 ---
 

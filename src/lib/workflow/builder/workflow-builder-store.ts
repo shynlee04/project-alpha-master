@@ -135,6 +135,12 @@ export const useWorkflowBuilderStore = create<WorkflowBuilderStore>((set, get) =
     isValid: false,
     isPreview: false,
     executingStepId: undefined,
+    savedWorkflowsCache: [],
+
+    // Cache setter
+    setSavedWorkflowsCache: (workflows) => {
+        set({ savedWorkflowsCache: workflows });
+    },
 
     // Actions
     createWorkflow: () => {
@@ -370,35 +376,114 @@ export const useWorkflowBuilderStore = create<WorkflowBuilderStore>((set, get) =
         return isValid;
     },
 
-    saveWorkflow: () => {
+    /**
+     * Save current workflow to IndexedDB
+     * Updates the cache after successful save
+     */
+    saveWorkflow: async () => {
         const { workflow } = get();
         if (!workflow) return;
 
-        // Save to localStorage for persistence
-        const saved = get().getSavedWorkflows();
-        const existingIndex = saved.findIndex((w) => w.id === workflow.id);
+        await saveWorkflowToDb(workflow);
 
+        // Update cache
+        const cache = get().savedWorkflowsCache;
+        const existingIndex = cache.findIndex((w) => w.id === workflow.id);
+        const updatedCache = [...cache];
         if (existingIndex >= 0) {
-            saved[existingIndex] = workflow;
+            updatedCache[existingIndex] = workflow;
         } else {
-            saved.push(workflow);
+            updatedCache.push(workflow);
         }
-
-        localStorage.setItem('workflows', JSON.stringify(saved));
+        set({ savedWorkflowsCache: updatedCache });
     },
 
-    loadSavedWorkflow: (workflowId) => {
-        const saved = get().getSavedWorkflows();
-        const workflow = saved.find((w) => w.id === workflowId);
+    /**
+     * Load a workflow from IndexedDB by ID
+     */
+    loadSavedWorkflow: async (workflowId) => {
+        const workflow = await getWorkflow(workflowId);
         if (workflow) {
             get().loadWorkflow(workflow);
         }
     },
 
-    deleteSavedWorkflow: (workflowId) => {
-        const saved = get().getSavedWorkflows();
-        const filtered = saved.filter((w) => w.id !== workflowId);
-        localStorage.setItem('workflows', JSON.stringify(filtered));
+    /**
+     * Delete a workflow from IndexedDB
+     * Removes it from the cache as well
+     */
+    deleteSavedWorkflow: async (workflowId) => {
+        await deleteWorkflowFromDb(workflowId);
+
+        // Update cache
+        const filtered = get().savedWorkflowsCache.filter((w) => w.id !== workflowId);
+        set({ savedWorkflowsCache: filtered });
+    },
+
+    /**
+     * Duplicate a workflow (creates a copy with new ID)
+     * Returns the new workflow ID
+     */
+    duplicateSavedWorkflow: async (workflowId) => {
+        const newId = await duplicateWorkflow(workflowId);
+        if (newId) {
+            // Refresh cache to include the duplicated workflow
+            await get().refreshSavedWorkflows();
+        }
+        return newId;
+    },
+
+    /**
+     * Export workflows as JSON string
+     * Optionally filter by specific workflow IDs
+     */
+    exportWorkflowsToJson: async (workflowIds) => {
+        return exportWorkflows(workflowIds);
+    },
+
+    /**
+     * Import workflows from JSON string
+     * Returns import statistics
+     */
+    importWorkflowsFromJson: async (json, overwrite = false) => {
+        const result = await importWorkflows(json, { overwrite });
+
+        // Refresh cache after import
+        if (result.imported > 0) {
+            await get().refreshSavedWorkflows();
+        }
+
+        return result;
+    },
+
+    /**
+     * Search workflows by query or tags
+     * Returns matching workflows
+     */
+    searchWorkflows: async (filters) => {
+        return searchWorkflows(filters);
+    },
+
+    /**
+     * Refresh the saved workflows cache from IndexedDB
+     * Also runs localStorage migration on first call
+     */
+    refreshSavedWorkflows: async () => {
+        // Run migration on first refresh
+        if (!migrationRun && typeof window !== 'undefined') {
+            migrationRun = true;
+            try {
+                const migrated = await migrateFromLocalStorage();
+                if (migrated > 0) {
+                    console.log(`[WorkflowBuilder] Migrated ${migrated} workflows from localStorage to IndexedDB`);
+                }
+            } catch {
+                // Ignore migration errors
+            }
+        }
+
+        const workflows = await getAllWorkflows();
+        set({ savedWorkflowsCache: workflows });
     },
 
     togglePreview: () => {
@@ -444,9 +529,40 @@ export const useWorkflowBuilderStore = create<WorkflowBuilderStore>((set, get) =
 
     getTemplates: () => WORKFLOW_TEMPLATES,
 
+    /**
+     * Get saved workflows from cache
+     * Cache is populated by refreshSavedWorkflows()
+     */
     getSavedWorkflows: () => {
-        if (typeof window === 'undefined') return [];
-        const saved = localStorage.getItem('workflows');
-        return saved ? JSON.parse(saved) : [];
+        return get().savedWorkflowsCache;
     },
 }));
+
+// ============================================================================
+// Initialization - Load workflows on store creation
+// ============================================================================
+
+// Async initialization to load workflows from IndexedDB
+if (typeof window !== 'undefined') {
+    // Non-blocking async load
+    Promise.resolve().then(async () => {
+        try {
+            const workflows = await getAllWorkflows();
+            useWorkflowBuilderStore.getState().setSavedWorkflowsCache(workflows);
+
+            // Also run migration from localStorage if needed
+            if (!migrationRun) {
+                migrationRun = true;
+                const migrated = await migrateFromLocalStorage();
+                if (migrated > 0) {
+                    console.log(`[WorkflowBuilder] Migrated ${migrated} workflows from localStorage`);
+                    // Reload after migration
+                    const updated = await getAllWorkflows();
+                    useWorkflowBuilderStore.getState().setSavedWorkflowsCache(updated);
+                }
+            }
+        } catch {
+            // Silently fail during initialization
+        }
+    });
+}

@@ -8,7 +8,8 @@
  */
 
 import { getDb } from './dexie-db';
-import type { WorkflowRecord, Workflow } from '@/lib/workflow/builder/types';
+import type { WorkflowRecord } from './dexie-db-workflow-types';
+import type { Workflow } from '@/lib/workflow/builder/types';
 
 // ============================================================================
 // Types
@@ -103,9 +104,10 @@ export async function searchWorkflows(filters: WorkflowSearchFilters): Promise<W
     // Filter by tags if provided
     if (filters.tags && filters.tags.length > 0) {
         const allWorkflows = await query.toArray();
-        return allWorkflows.filter(workflow =>
-            filters.tags!.some(tag => workflow.tags.includes(tag))
-        );
+        return allWorkflows.filter(workflow => {
+            const tags = workflow.tags ?? [];
+            return filters.tags!.some(tag => tags.includes(tag));
+        });
     }
 
     // Filter by date range if provided
@@ -122,11 +124,12 @@ export async function searchWorkflows(filters: WorkflowSearchFilters): Promise<W
     if (filters.query) {
         const lowerQuery = filters.query.toLowerCase();
         const allWorkflows = await query.toArray();
-        return allWorkflows.filter(workflow =>
-            workflow.name.toLowerCase().includes(lowerQuery) ||
-            workflow.description?.toLowerCase().includes(lowerQuery) ||
-            workflow.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
-        );
+        return allWorkflows.filter(workflow => {
+            const tags = workflow.tags ?? [];
+            return workflow.name.toLowerCase().includes(lowerQuery) ||
+                workflow.description?.toLowerCase().includes(lowerQuery) ||
+                tags.some(tag => tag.toLowerCase().includes(lowerQuery));
+        });
     }
 
     // Apply limit if provided
@@ -151,13 +154,12 @@ export async function getWorkflowsByTag(tag: string): Promise<Workflow[]> {
  * Delete a workflow
  *
  * @param workflowId - The workflow ID to delete
- * @returns True if deleted, false if not found
  */
-export async function deleteWorkflow(workflowId: string): Promise<boolean> {
+export async function deleteWorkflow(workflowId: string): Promise<void> {
     const db = getDb();
-    if (!db) return false;
+    if (!db) return;
 
-    return db.workflows.delete(workflowId);
+    await db.workflows.delete(workflowId);
 }
 
 /**
@@ -311,13 +313,12 @@ export async function createFromTemplate(
  * Delete multiple workflows
  *
  * @param workflowIds - Array of workflow IDs to delete
- * @returns Number of workflows deleted
  */
-export async function bulkDeleteWorkflows(workflowIds: string[]): Promise<number> {
+export async function bulkDeleteWorkflows(workflowIds: string[]): Promise<void> {
     const db = getDb();
-    if (!db) return 0;
+    if (!db) return;
 
-    return db.workflows.bulkDelete(workflowIds);
+    await db.workflows.bulkDelete(workflowIds);
 }
 
 /**
@@ -357,12 +358,15 @@ export async function bulkAddTag(workflowIds: string[], tag: string): Promise<nu
     let updated = 0;
     for (const id of workflowIds) {
         const workflow = await db.workflows.get(id);
-        if (workflow && !workflow.tags.includes(tag)) {
-            const modified = await db.workflows.update(id, {
-                tags: [...workflow.tags, tag],
-                updatedAt: Date.now(),
-            });
-            if (modified) updated++;
+        if (workflow) {
+            const tags = workflow.tags ?? [];
+            if (!tags.includes(tag)) {
+                const modified = await db.workflows.update(id, {
+                    tags: [...tags, tag],
+                    updatedAt: Date.now(),
+                });
+                if (modified) updated++;
+            }
         }
     }
 
@@ -383,12 +387,15 @@ export async function bulkRemoveTag(workflowIds: string[], tag: string): Promise
     let updated = 0;
     for (const id of workflowIds) {
         const workflow = await db.workflows.get(id);
-        if (workflow && workflow.tags.includes(tag)) {
-            const modified = await db.workflows.update(id, {
-                tags: workflow.tags.filter(t => t !== tag),
-                updatedAt: Date.now(),
-            });
-            if (modified) updated++;
+        if (workflow) {
+            const tags = workflow.tags ?? [];
+            if (tags.includes(tag)) {
+                const modified = await db.workflows.update(id, {
+                    tags: tags.filter(t => t !== tag),
+                    updatedAt: Date.now(),
+                });
+                if (modified) updated++;
+            }
         }
     }
 
@@ -424,7 +431,8 @@ export async function getWorkflowStats(): Promise<{
     let recentlyUpdated = 0;
 
     for (const workflow of allWorkflows) {
-        for (const tag of workflow.tags) {
+        const tags = workflow.tags ?? [];
+        for (const tag of tags) {
             byTag[tag] = (byTag[tag] || 0) + 1;
         }
         if (workflow.createdAt > sevenDaysAgo) recentlyCreated++;

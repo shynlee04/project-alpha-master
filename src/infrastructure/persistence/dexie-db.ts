@@ -132,10 +132,6 @@ export type {
 // Workflow Builder Types (Epic E4-7)
 // ============================================================================
 
-import type {
-    WorkflowRecord,
-} from './dexie-db-workflow-types';
-
 export type {
     WorkflowRecord,
     WorkflowsTable,
