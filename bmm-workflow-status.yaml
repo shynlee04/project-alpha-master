@@ -1,13 +1,37 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2026-01-04T23:20:00+07:00
+# Updated: 2026-01-05T14:55:00+07:00
 
-# CURRENT WORKFLOW: Platform Unification & Knowledge Synthesis (Ralph Loop v3.0)
-current_workflow: "platform-unification-ux-integration-2026-01-03"
-current_story: "ARCH-01.1_FILESYNC_MIGRATION_COMPLETE" # Fileync migration to workspace-services/ complete
-phase: "implementing_ARCH_01_1" # God file splitting (4 files remaining >300 lines)
-last_updated: "2026-01-04T23:20:00+07:00"
+# ═══════════════════════════════════════════════════════════════════════════
+# ⚠️  CRITICAL HEALTH ASSESSMENT COMPLETED - P0 ISSUES IDENTIFIED
+# ═══════════════════════════════════════════════════════════════════════════
+# Assessment: _bmad-output/health-assessments/project-health-assessment-2026-01-05.md
+# Course Correction: _bmad-output/sprint-artifacts/course-correction-p0-2026-01-05.yaml
+# Status: AWAITING USER APPROVAL FOR COURSE CORRECTION
+# Health Score: 46.4% (down from claimed 82.5%)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# CRITICAL BLOCKING ISSUES:
+# P0-LLM-001: Models Not Loading After API Key Save (Gemini/OpenRouter)
+# P0-LLM-002: Credential Vault SSR/Hydration Issues
+# P0-UX-001: No Visual Feedback for API Key Status
+# P0-WS-001: Notes Workspace Not Loading Project Files
+# P0-WS-002: Cross-Workspace Configuration Inconsistency
+
+current_workflow: "course-correction-p0-2026-01-05"
+current_story: "HEALTH_ASSESSMENT_COMPLETE"
+phase: "COURSE_CORRECTION_PHASE"
+last_updated: "2026-01-05T14:55:00+07:00"
+health_score: 46.4
+
+# Previous workflow paused:
+paused_workflow:
+  id: "platform-unification-ux-integration-2026-01-03"
+  story: "ARCH-01.1_FILESYNC_MIGRATION_COMPLETE"
+  phase: "implementing_ARCH_01_1"
+  paused_at: "2026-01-05T14:55:00+07:00"
+  reason: "Critical P0 issues require immediate attention"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # COURSE CORRECTION - MAJOR SPRINT CHANGE

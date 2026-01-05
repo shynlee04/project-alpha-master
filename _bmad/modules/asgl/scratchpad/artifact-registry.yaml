@@ -1,0 +1,104 @@
+# Artifact Registry
+# Tracks all artifacts with lifecycle status and session references
+# Part of ASGL anti-poisoning mechanism
+
+version: "1.0.0"
+last_updated: "2026-01-05T15:20:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# LIFECYCLE STATES
+# ═══════════════════════════════════════════════════════════════════════════
+# 
+# DRAFT     - Being created
+# ACTIVE    - In use
+# SUSPECT   - Missing session reference (potential orphan)
+# REVIEW    - Needs human decision
+# ARCHIVED  - No longer active
+# DELETED   - Removed (soft delete)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════
+
+summary:
+  total_artifacts: 4
+  by_state:
+    DRAFT: 0
+    ACTIVE: 4
+    SUSPECT: 0
+    REVIEW: 0
+    ARCHIVED: 0
+    DELETED: 0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# REGISTRY
+# ═══════════════════════════════════════════════════════════════════════════
+
+artifacts:
+  - id: "ART-20260105-001"
+    path: "_bmad-output/health-assessments/project-health-assessment-2026-01-05.md"
+    type: "health-assessment"
+    session: "ASGL-20260105-152000"
+    state: "ACTIVE"
+    created_at: "2026-01-05T14:55:00+07:00"
+    last_updated: "2026-01-05T14:55:00+07:00"
+    
+    references:
+      - "_bmad-output/sprint-artifacts/course-correction-p0-2026-01-05.yaml"
+      - "bmm-workflow-status.yaml"
+      
+    referenced_by:
+      - "_bmad-output/sprint-artifacts/course-correction-p0-2026-01-05.yaml"
+      - "_bmad/modules/asgl/LOOP_STATE.yaml"
+      
+  - id: "ART-20260105-002"
+    path: "_bmad-output/sprint-artifacts/course-correction-p0-2026-01-05.yaml"
+    type: "sprint-plan"
+    session: "ASGL-20260105-152000"
+    state: "ACTIVE"
+    created_at: "2026-01-05T14:57:00+07:00"
+    last_updated: "2026-01-05T14:57:00+07:00"
+    
+    references:
+      - "_bmad-output/health-assessments/project-health-assessment-2026-01-05.md"
+      - "_bmad-output/sprint-artifacts/sprint-status.yaml"
+      
+    referenced_by:
+      - "_bmad/modules/asgl/LOOP_STATE.yaml"
+      - "bmm-workflow-status.yaml"
+      
+  - id: "ART-20260105-003"
+    path: "_bmad/modules/asgl/README.md"
+    type: "module-documentation"
+    session: "ASGL-20260105-152000"
+    state: "ACTIVE"
+    created_at: "2026-01-05T15:15:00+07:00"
+    last_updated: "2026-01-05T15:15:00+07:00"
+    
+    references:
+      - "_bmad/modules/architecture-remediation/README.md"
+      - "_bmad/modules/deep-scan/README.md"
+      - "_bmad-output/design-system-8bit-2025-12-25.md"
+      - "_bmad-output/ux-specification.md"
+      
+    referenced_by: []
+    
+  - id: "ART-20260105-004"
+    path: "_bmad/modules/asgl/MANIFEST.yaml"
+    type: "module-config"
+    session: "ASGL-20260105-152000"
+    state: "ACTIVE"
+    created_at: "2026-01-05T15:18:00+07:00"
+    last_updated: "2026-01-05T15:18:00+07:00"
+    
+    references:
+      - "_bmad/modules/asgl/README.md"
+      
+    referenced_by:
+      - "_bmad/modules/asgl/LOOP_STATE.yaml"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ARCHIVED ARTIFACTS
+# ═══════════════════════════════════════════════════════════════════════════
+
+archived: []

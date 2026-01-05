@@ -1,0 +1,73 @@
+# Pending Wires Registry
+# Tracks all unfired migrations, import updates, and facade requirements
+# Part of ASGL anti-forget mechanism
+
+version: "1.0.0"
+last_updated: "2026-01-05T15:20:00+07:00"
+session: "ASGL-20260105-152000"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════
+
+summary:
+  total_wires: 0
+  by_type:
+    IMPORT_UPDATE: 0
+    FACADE_CREATION: 0
+    CONSUMER_UPDATE: 0
+    TYPE_MIGRATION: 0
+    EVENT_WIRING: 0
+    STORE_BINDING: 0
+    ROUTE_LINKING: 0
+  by_priority:
+    P0: 0
+    P1: 0
+    P2: 0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PENDING WIRES
+# ═══════════════════════════════════════════════════════════════════════════
+
+wires: []
+  # Example wire entry:
+  # - id: "WIRE-001"
+  #   type: "IMPORT_UPDATE"
+  #   priority: "P0"
+  #   story_id: "CC-01"
+  #   created_at: "2026-01-05T15:20:00+07:00"
+  #   
+  #   source:
+  #     old_path: "@/lib/state/workspace-store"
+  #     new_path: "@/infrastructure/persistence/stores/workspace"
+  #   
+  #   consumers:
+  #     - file: "src/routes/ide.tsx"
+  #       line: 15
+  #       status: "PENDING"
+  #     - file: "src/routes/knowledge.tsx"
+  #       line: 22
+  #       status: "PENDING"
+  #   
+  #   facade_required: true
+  #   facade_location: "@/lib/state/workspace-store"
+  #   
+  #   validation:
+  #     command: "grep -r '@/lib/state/workspace-store' src | wc -l"
+  #     expected: "1"  # Only the facade
+  #   
+  #   resolved_at: null
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RESOLVED WIRES (HISTORY)
+# ═══════════════════════════════════════════════════════════════════════════
+
+resolved: []
+  # Completed wires move here for audit trail
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BLOCKED WIRES
+# ═══════════════════════════════════════════════════════════════════════════
+
+blocked: []
+  # Wires that cannot be resolved without external input

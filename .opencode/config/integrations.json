@@ -1,0 +1,214 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-05T16:00:00+07:00",
+  "description": "OpenCode integration configuration for BMAD modules",
+  
+  "governance": {
+    "single_source_of_truth": "AGENTS.md",
+    "pointer_documents": {
+      "CLAUDE.md": {
+        "role": "pointer_only",
+        "points_to": "AGENTS.md"
+      },
+      "opencode_config": {
+        "role": "reference_links",
+        "pattern": "Use {reference} for full content"
+      }
+    },
+    "update_frequency": {
+      "root_documents": {
+        "AGENTS.md": "every_3_stories",
+        "CLAUDE.md": "every_5_stories"
+      },
+      "child_documents": {
+        "trigger": "layer_files_changed > 5",
+        "locations": [
+          "src/infrastructure/",
+          "src/presentation/",
+          "src/lib/",
+          "_bmad-output/"
+        ]
+      }
+    }
+  },
+  
+  "modules": {
+    "asgl": {
+      "path": "_bmad/modules/asgl/",
+      "version": "2.0.0",
+      "purpose": "Autonomous loop orchestration",
+      "commands": [
+        "asgl-loop.md"
+      ],
+      "skills": [
+        "skill/asgl/SKILL.md",
+        "skill/asgl/MASTER_PROMPT.md"
+      ],
+      "triggers": [
+        "autonomous loop",
+        "execute course correction",
+        "run comprehensive remediation",
+        "self-governing"
+      ],
+      "routing": {
+        "deep-scan": "_bmad/modules/deep-scan/",
+        "architecture-remediation": "_bmad/modules/architecture-remediation/",
+        "bmad-core": "_bmad/bmm/"
+      }
+    },
+    
+    "deep-scan": {
+      "path": "_bmad/modules/deep-scan/",
+      "version": "1.0.0",
+      "purpose": "Comprehensive architectural diagnostics",
+      "workflows": [
+        "full-scan",
+        "targeted-scan",
+        "validation-scan"
+      ],
+      "scanners": [
+        "state-scanner",
+        "types-scanner",
+        "architecture-scanner",
+        "ux-scanner"
+      ]
+    },
+    
+    "architecture-remediation": {
+      "path": "_bmad/modules/architecture-remediation/",
+      "version": "1.0.0",
+      "purpose": "Systematic course correction and remediation",
+      "workflows": [
+        "eliminate-god-stores",
+        "normalize-components",
+        "state-consolidation-cycle",
+        "fix-typescript-errors",
+        "workspace-file-system-e2e"
+      ],
+      "agents": [
+        "store-refactorer",
+        "component-splitter",
+        "typescript-fixer",
+        "test-writer",
+        "workspace-architect",
+        "file-sync-specialist"
+      ]
+    },
+    
+    "bmad-core": {
+      "path": "_bmad/bmm/",
+      "version": "1.0.0",
+      "purpose": "Standard BMAD workflows",
+      "workflows": {
+        "4-implementation": [
+          "dev-story",
+          "code-review",
+          "correct-course",
+          "sprint-planning"
+        ]
+      },
+      "agents": [
+        "analyst",
+        "architect",
+        "dev",
+        "sm",
+        "pm",
+        "tea"
+      ]
+    }
+  },
+  
+  "platform_mapping": {
+    "claude_code": {
+      "config_dir": ".claude/",
+      "governance": "CLAUDE.md → AGENTS.md"
+    },
+    "opencode": {
+      "config_dir": ".opencode/",
+      "governance": "References to _bmad/ and _bmad-output/"
+    },
+    "bmad": {
+      "config_dir": "_bmad/",
+      "governance": "Uses AGENTS.md directly"
+    },
+    "gemini": {
+      "config_dir": ".gemini/",
+      "governance": "References AGENTS.md"
+    }
+  },
+  
+  "token_optimization": {
+    "strategy": "reference_links",
+    "benefits": [
+      "Single source of truth",
+      "Live updates without regeneration",
+      "80% token reduction vs duplication"
+    ],
+    "pattern": "Use {path} for full content",
+    "avoid": [
+      "Copying BMAD content into OpenCode files",
+      "Duplicating workflow definitions",
+      "Hardcoding paths that may change"
+    ]
+  },
+  
+  "workflow_routing": {
+    "decision_tree": [
+      {
+        "condition": "story.type == 'DIAGNOSTIC'",
+        "module": "deep-scan",
+        "workflow": "targeted-scan"
+      },
+      {
+        "condition": "story.type == 'GOD_STORE_SPLIT'",
+        "module": "architecture-remediation",
+        "workflow": "eliminate-god-stores"
+      },
+      {
+        "condition": "story.type == 'COMPONENT_SPLIT'",
+        "module": "architecture-remediation",
+        "workflow": "normalize-components"
+      },
+      {
+        "condition": "story.type == 'TYPESCRIPT_FIX'",
+        "module": "architecture-remediation",
+        "workflow": "fix-typescript-errors"
+      },
+      {
+        "condition": "story.type == 'IMPLEMENTATION'",
+        "module": "bmad-core",
+        "workflow": "dev-story"
+      }
+    ]
+  },
+  
+  "artifact_lifecycle": {
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUSPECT",
+      "STALE",
+      "ARCHIVED",
+      "DELETED"
+    ],
+    "registry": "_bmad/modules/asgl/scratchpad/artifact-registry.yaml",
+    "wire_tracking": "_bmad/modules/asgl/scratchpad/pending-wires.yaml"
+  },
+  
+  "sprint_artifacts": {
+    "course_correction": "_bmad-output/sprint-artifacts/course-correction-p0-2026-01-05.yaml",
+    "comprehensive_remediation": "_bmad-output/sprint-artifacts/comprehensive-remediation-sprint-2026-01-05.yaml",
+    "status": "_bmad-output/sprint-artifacts/sprint-status.yaml"
+  },
+  
+  "design_governance": {
+    "reference": "_bmad-output/design-system-8bit-2025-12-25.md",
+    "mandatory_checks": [
+      "no_glassmorphism",
+      "no_soft_shadows",
+      "css_variables",
+      "touch_targets",
+      "i18n_strings"
+    ]
+  }
+}

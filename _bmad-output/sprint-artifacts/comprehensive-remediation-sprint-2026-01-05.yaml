@@ -1,0 +1,859 @@
+---
+# Comprehensive Architecture Remediation Sprint
+# TARGET: 95% Project Health Score
+# Generated: 2026-01-05T15:50:00+07:00
+# Paired With: ASGL Module (Autonomous Self-Governing Loop Orchestrator)
+# Status: PROPOSED - AWAITING APPROVAL FOR AUTONOMOUS EXECUTION
+
+sprint:
+  id: "ARCH-95-2026-01-05"
+  name: "Comprehensive Architecture Remediation Sprint (Target: 95% Health)"
+  type: "full_remediation"
+  priority: "P0"
+  triggered_by: "project-health-assessment-2026-01-05.md"
+  status: "PROPOSED"
+  created_at: "2026-01-05T15:50:00+07:00"
+  
+  # ASGL Integration
+  asgl_paired: true
+  asgl_module: "_bmad/modules/asgl/"
+  execution_mode: "AUTONOMOUS"
+  
+  # Health Score Targets
+  current_health: 46.4
+  target_health: 95.0
+  gap: 48.6
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE CONSOLIDATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance:
+  single_source_of_truth: "AGENTS.md"
+  
+  platform_mapping:
+    claude_code:
+      config: ".claude/"
+      points_to: "AGENTS.md"
+      
+    opencode:
+      config: ".opencode/"
+      points_to: "AGENTS.md"
+      
+    bmad:
+      config: "_bmad/"
+      points_to: "AGENTS.md"
+      
+    gemini:
+      config: ".gemini/"
+      points_to: "AGENTS.md"
+      
+  claude_md_role: |
+    CLAUDE.md will be simplified to contain only:
+    1. Pointer to AGENTS.md as authoritative source
+    2. Claude-specific command syntax examples
+    3. Link table to AGENTS.md sections
+    
+  update_frequency:
+    agents_md: "Every 3 stories"
+    child_agents_md: "When layer changes >5 files"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COMPREHENSIVE ISSUE INVENTORY (Beyond Surface P0s)
+# ═══════════════════════════════════════════════════════════════════════════
+
+issues:
+  # ---------------------------------------------------------------------------
+  # TIER 1: CRITICAL BLOCKERS (P0) - Days 1-2
+  # ---------------------------------------------------------------------------
+  tier_1_blockers:
+    - id: "CRIT-001"
+      title: "LLM Models Not Loading After API Key Save"
+      priority: "P0"
+      severity: "CRITICAL"
+      category: "FUNCTIONALITY_BROKEN"
+      blocks:
+        - "All AI chat functionality"
+        - "Agent configuration completion"
+        - "E2E testing with real providers"
+      root_cause:
+        - "Model fetch flow fails silently in production"
+        - "Credential vault SSR/hydration issues"
+        - "localStorage access during SSR"
+      files_affected:
+        - "src/lib/agent/providers/model-registry.ts"
+        - "src/lib/agent/providers/credential-vault.ts"
+        - "src/presentation/components/agent/ProviderConfigDialog.tsx"
+      remediation_stories: ["S-001", "S-002"]
+      
+    - id: "CRIT-002"
+      title: "Notes Workspace Not Loading Project Files"
+      priority: "P0"
+      severity: "CRITICAL"
+      category: "FUNCTIONALITY_BROKEN"
+      blocks:
+        - "Notes workspace core use case"
+        - "Cross-workspace project context"
+      root_cause:
+        - "No file-to-note conversion exists"
+        - "note-file-sync.ts not wired to workspace init"
+        - "FSA reads files but Notes Dexie not populated"
+      remediation_stories: ["S-007", "S-008"]
+      
+    - id: "CRIT-003"
+      title: "Cross-Workspace State Inconsistency"
+      priority: "P0"
+      severity: "HIGH"
+      category: "DATA_INTEGRITY"
+      blocks:
+        - "Agent config persistence across workspaces"
+        - "Tool permissions inconsistent"
+      root_cause:
+        - "Multiple overlapping stores"
+        - "Event bus synchronization incomplete"
+        - "Hydration race conditions"
+      remediation_stories: ["S-009", "S-010"]
+
+  # ---------------------------------------------------------------------------
+  # TIER 2: ARCHITECTURAL DEBT (P1) - Days 3-7
+  # ---------------------------------------------------------------------------
+  tier_2_architecture:
+    - id: "ARCH-001"
+      title: "God Stores Exceeding 300 Lines"
+      priority: "P1"
+      severity: "HIGH"
+      category: "MAINTAINABILITY"
+      count: 69
+      worst_offenders:
+        - file: "src/lib/state/rag-store.ts"
+          lines: 1595
+          violation_ratio: "13.3x limit"
+        - file: "src/stores/conversation-threads-store.ts"
+          lines: 726
+          violation_ratio: "6.1x limit"
+        - file: "src/stores/conversation-store.ts"
+          lines: 626
+          violation_ratio: "5.2x limit"
+        - file: "src/stores/agents-store.ts"
+          lines: 430
+          violation_ratio: "3.6x limit"
+      target: "0 god stores (all ≤120 lines per slice)"
+      remediation_stories: ["S-011", "S-012", "S-013", "S-014"]
+      
+    - id: "ARCH-002"
+      title: "God Components Exceeding 300 Lines"
+      priority: "P1"
+      severity: "HIGH"
+      category: "MAINTAINABILITY"
+      count: 45
+      worst_offenders:
+        - file: "src/presentation/components/agent/AgentConfigDialog.tsx"
+          lines: 1089
+          violation_ratio: "3.6x limit"
+      target: "0 god components (all ≤300 lines)"
+      remediation_stories: ["S-015", "S-016"]
+      
+    - id: "ARCH-003"
+      title: "Store Duplication Across Locations"
+      priority: "P1"
+      severity: "HIGH"
+      category: "FRAGMENTATION"
+      duplicates:
+        - name: "workspace-store"
+          locations:
+            - "src/lib/state/workspace-store.ts"
+            - "src/infrastructure/persistence/stores/workspace/"
+        - name: "rag-store"
+          locations:
+            - "src/lib/state/rag-store.ts"
+            - "src/infrastructure/persistence/stores/rag/"
+        - name: "knowledge-store"
+          locations:
+            - "src/lib/state/knowledge-store.ts"
+            - "src/lib/state/knowledge/"
+      target: "Single canonical location per store"
+      remediation_stories: ["S-017", "S-018", "S-019"]
+      
+    - id: "ARCH-004"
+      title: "TypeScript Errors in Production Code"
+      priority: "P1"
+      severity: "MEDIUM"
+      category: "CODE_QUALITY"
+      count: 306
+      note: "Test file errors excluded (866)"
+      target: "0 production TS errors"
+      remediation_stories: ["S-020", "S-021"]
+      
+    - id: "ARCH-005"
+      title: "Circular Dependencies"
+      priority: "P1"
+      severity: "HIGH"
+      category: "ARCHITECTURE"
+      cycles:
+        - "agents-store.ts ↔ provider-store.ts"
+        - "conversation-store.ts ↔ conversation-threads-store.ts"
+        - "workspace-store.ts ↔ sync-manager.ts"
+        - "ide-store.ts ↔ layout-store.ts"
+      target: "0 circular dependencies"
+      remediation_stories: ["S-022"]
+
+  # ---------------------------------------------------------------------------
+  # TIER 3: INFRASTRUCTURE HARDENING (P1) - Days 8-10
+  # ---------------------------------------------------------------------------
+  tier_3_infrastructure:
+    - id: "INFRA-001"
+      title: "IndexedDB Quota Handling Missing"
+      priority: "P1"
+      severity: "CRITICAL"
+      category: "DATA_SAFETY"
+      risk: "Data loss when storage quota exceeded"
+      files_affected:
+        - "src/infrastructure/persistence/dexie-db.ts"
+        - "src/infrastructure/sync/adapters/idb-adapter-core.ts"
+      remediation_stories: ["S-023"]
+      
+    - id: "INFRA-002"
+      title: "Silent Failures in Error Handling"
+      priority: "P1"
+      severity: "HIGH"
+      category: "OBSERVABILITY"
+      count: 23
+      pattern: "console.error + return null"
+      risk: "User sees no feedback, bugs go undetected"
+      remediation_stories: ["S-024"]
+      
+    - id: "INFRA-003"
+      title: "Missing Error Boundaries"
+      priority: "P1"
+      severity: "MEDIUM"
+      category: "UX"
+      coverage: "~40% of critical paths"
+      target: "100% coverage for critical paths"
+      remediation_stories: ["S-025"]
+
+  # ---------------------------------------------------------------------------
+  # TIER 4: CODE QUALITY & TESTING (P2) - Days 11-14
+  # ---------------------------------------------------------------------------
+  tier_4_quality:
+    - id: "QUAL-001"
+      title: "Test Coverage Below Target"
+      priority: "P2"
+      severity: "MEDIUM"
+      category: "TESTING"
+      current: "16.6%"
+      target: "80%"
+      gap: "63.4%"
+      remediation_stories: ["S-026", "S-027", "S-028"]
+      
+    - id: "QUAL-002"
+      title: "Missing E2E Integration Tests"
+      priority: "P2"
+      severity: "MEDIUM"
+      category: "TESTING"
+      missing:
+        - "API key → model load → chat flow"
+        - "Folder open → notes sync flow"
+        - "Workspace switching persistence"
+      remediation_stories: ["S-029", "S-030"]
+      
+    - id: "QUAL-003"
+      title: "Design System Violations"
+      priority: "P2"
+      severity: "LOW"
+      category: "UX_CONSISTENCY"
+      violations:
+        - "Hardcoded colors"
+        - "Non-8-bit shadows"
+        - "Missing i18n strings"
+      remediation_stories: ["S-031"]
+
+  # ---------------------------------------------------------------------------
+  # TIER 5: DOCUMENTATION & GOVERNANCE (P2) - Days 14-15
+  # ---------------------------------------------------------------------------
+  tier_5_governance:
+    - id: "GOV-001"
+      title: "AGENTS.md and CLAUDE.md Out of Sync"
+      priority: "P2"
+      severity: "LOW"
+      category: "DOCUMENTATION"
+      issue: "Duplicate information, inconsistent updates"
+      solution: "Consolidate to AGENTS.md as single source"
+      remediation_stories: ["S-032"]
+      
+    - id: "GOV-002"
+      title: "Missing Child AGENTS.md Files"
+      priority: "P2"
+      severity: "LOW"
+      category: "DOCUMENTATION"
+      missing:
+        - "src/infrastructure/AGENTS.md"
+        - "src/presentation/AGENTS.md"
+        - "src/lib/AGENTS.md"
+      remediation_stories: ["S-033"]
+      
+    - id: "GOV-003"
+      title: "Orphan/Stale Artifacts in _bmad-output"
+      priority: "P2"
+      severity: "LOW"
+      category: "ARTIFACT_HYGIENE"
+      estimate: "50+ undocumented artifacts"
+      remediation_stories: ["S-034"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COMPREHENSIVE STORY BREAKDOWN
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  # ---------------------------------------------------------------------------
+  # PHASE 1: CRITICAL BLOCKERS (Days 1-2, ~15 hours)
+  # ---------------------------------------------------------------------------
+  phase_1:
+    name: "Critical Blockers Resolution"
+    days: [1, 2]
+    estimated_hours: 15
+    stories:
+      - id: "S-001"
+        title: "Debug and Fix Model Loading Flow"
+        issues: ["CRIT-001"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        acceptance_criteria:
+          - "Diagnostic logging added to model fetch"
+          - "Root cause identified"
+          - "Fix deployed to Vercel"
+          - "Models populate after key save"
+          
+      - id: "S-002"
+        title: "Fix Credential Vault SSR Compatibility"
+        issues: ["CRIT-001"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 3
+        acceptance_criteria:
+          - "typeof window check before localStorage"
+          - "isReady() gates all operations"
+          - "No hydration errors"
+          
+      - id: "S-003"
+        title: "Add API Key Status Visual Indicators"
+        issues: ["CRIT-001"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 2
+        acceptance_criteria:
+          - "ProviderStatusBadge shows key status"
+          - "Toast decoupled from model fetch"
+          
+      - id: "S-004"
+        title: "Consolidate Governance to AGENTS.md"
+        issues: ["GOV-001"]
+        type: "DOCUMENTATION"
+        route_to: "asgl → governance-update"
+        hours: 2
+        acceptance_criteria:
+          - "CLAUDE.md points to AGENTS.md"
+          - "All platforms configured to use AGENTS.md"
+          - "No duplicate information"
+          
+      - id: "S-005"
+        title: "Update AGENTS.md with Current State"
+        issues: ["GOV-001"]
+        type: "DOCUMENTATION"
+        route_to: "asgl → governance-update"
+        hours: 2
+        acceptance_criteria:
+          - "Epic 53 status updated"
+          - "Health assessment findings added"
+          - "Architecture decisions current"
+          
+      - id: "S-006"
+        title: "Verify Phase 1 Completion"
+        type: "VALIDATION"
+        route_to: "deep-scan → targeted-scan"
+        hours: 2
+        acceptance_criteria:
+          - "Models load on Vercel"
+          - "No SSR errors"
+          - "Governance docs updated"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 2: WORKSPACE INTEGRATION (Days 3-4, ~16 hours)
+  # ---------------------------------------------------------------------------
+  phase_2:
+    name: "Workspace Integration Fixes"
+    days: [3, 4]
+    estimated_hours: 16
+    stories:
+      - id: "S-007"
+        title: "Create Note-Folder Bridge"
+        issues: ["CRIT-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 6
+        acceptance_criteria:
+          - "note-folder-bridge.ts created"
+          - "Markdown files converted to Notes"
+          - "Bidirectional sync works"
+          
+      - id: "S-008"
+        title: "Wire Bridge to Workspace Init"
+        issues: ["CRIT-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        acceptance_criteria:
+          - "Opening folder populates Notes"
+          - "Notes workspace sidebar shows project files"
+          
+      - id: "S-009"
+        title: "Fix Agent Selection Persistence"
+        issues: ["CRIT-003"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        acceptance_criteria:
+          - "Agent persists across workspace switches"
+          - "Agent persists after refresh"
+          - "Per-workspace default agent support"
+          
+      - id: "S-010"
+        title: "Verify Phase 2 Completion"
+        type: "VALIDATION"
+        route_to: "deep-scan → targeted-scan"
+        hours: 2
+        acceptance_criteria:
+          - "Notes loads project files"
+          - "Agent selection persists"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 3: ARCHITECTURAL REMEDIATION (Days 5-8, ~40 hours)
+  # ---------------------------------------------------------------------------
+  phase_3:
+    name: "Architectural Remediation"
+    days: [5, 6, 7, 8]
+    estimated_hours: 40
+    stories:
+      - id: "S-011"
+        title: "Split rag-store.ts (1595 lines) into Slices"
+        issues: ["ARCH-001"]
+        type: "GOD_STORE_SPLIT"
+        route_to: "architecture-remediation → eliminate-god-stores"
+        hours: 12
+        target_slices:
+          - "rag-indexing-slice.ts (≤120)"
+          - "rag-retrieval-slice.ts (≤120)"
+          - "rag-search-slice.ts (≤120)"
+          - "rag-chunks-slice.ts (≤120)"
+          - "rag-embeddings-slice.ts (≤120)"
+        acceptance_criteria:
+          - "All slices ≤120 lines"
+          - "Single bounded store"
+          - "Facade for backwards compat"
+          
+      - id: "S-012"
+        title: "Split conversation-threads-store.ts (726 lines)"
+        issues: ["ARCH-001"]
+        type: "GOD_STORE_SPLIT"
+        route_to: "architecture-remediation → eliminate-god-stores"
+        hours: 8
+        acceptance_criteria:
+          - "All slices ≤120 lines"
+          - "Thread management separated from CRUD"
+          
+      - id: "S-013"
+        title: "Split conversation-store.ts (626 lines)"
+        issues: ["ARCH-001"]
+        type: "GOD_STORE_SPLIT"
+        route_to: "architecture-remediation → eliminate-god-stores"
+        hours: 6
+        acceptance_criteria:
+          - "All slices ≤120 lines"
+          - "Message handling separated"
+          
+      - id: "S-014"
+        title: "Split agents-store.ts (430 lines)"
+        issues: ["ARCH-001"]
+        type: "GOD_STORE_SPLIT"
+        route_to: "architecture-remediation → eliminate-god-stores"
+        hours: 6
+        acceptance_criteria:
+          - "All slices ≤120 lines"
+          - "Circular dependency with provider-store broken"
+          
+      - id: "S-015"
+        title: "Split AgentConfigDialog.tsx (1089 lines)"
+        issues: ["ARCH-002"]
+        type: "COMPONENT_SPLIT"
+        route_to: "architecture-remediation → normalize-components"
+        hours: 6
+        acceptance_criteria:
+          - "All components ≤300 lines"
+          - "Hooks extracted"
+          
+      - id: "S-016"
+        title: "Verify Phase 3 Completion"
+        type: "VALIDATION"
+        route_to: "deep-scan → full-scan"
+        hours: 2
+        acceptance_criteria:
+          - "God store count = 0"
+          - "God component count reduced >50%"
+          - "TypeScript check passes"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 4: CONSOLIDATION & CLEANUP (Days 9-10, ~20 hours)
+  # ---------------------------------------------------------------------------
+  phase_4:
+    name: "Store Consolidation & Cleanup"
+    days: [9, 10]
+    estimated_hours: 20
+    stories:
+      - id: "S-017"
+        title: "Consolidate workspace-store Duplicates"
+        issues: ["ARCH-003"]
+        type: "IMPLEMENTATION"
+        route_to: "architecture-remediation → state-consolidation-cycle"
+        hours: 6
+        acceptance_criteria:
+          - "Single canonical location"
+          - "Facade at old location"
+          - "All imports updated"
+          
+      - id: "S-018"
+        title: "Consolidate rag-store Duplicates"
+        issues: ["ARCH-003"]
+        type: "IMPLEMENTATION"
+        route_to: "architecture-remediation → state-consolidation-cycle"
+        hours: 6
+        acceptance_criteria:
+          - "Single canonical location"
+          - "No duplicate store files"
+          
+      - id: "S-019"
+        title: "Consolidate knowledge-store Duplicates"
+        issues: ["ARCH-003"]
+        type: "IMPLEMENTATION"
+        route_to: "architecture-remediation → state-consolidation-cycle"
+        hours: 4
+        acceptance_criteria:
+          - "Single store at infrastructure/persistence"
+          
+      - id: "S-020"
+        title: "Fix TypeScript Errors Batch 1 (150 errors)"
+        issues: ["ARCH-004"]
+        type: "TYPESCRIPT_FIX"
+        route_to: "architecture-remediation → fix-typescript-errors"
+        hours: 3
+        acceptance_criteria:
+          - "150 TS errors fixed"
+          - "No new errors introduced"
+          
+      - id: "S-021"
+        title: "Fix TypeScript Errors Batch 2 (156 errors)"
+        issues: ["ARCH-004"]
+        type: "TYPESCRIPT_FIX"
+        route_to: "architecture-remediation → fix-typescript-errors"
+        hours: 3
+        acceptance_criteria:
+          - "Remaining TS errors fixed"
+          - "Production code 0 errors"
+          
+  # ---------------------------------------------------------------------------
+  # PHASE 5: INFRASTRUCTURE HARDENING (Days 11-12, ~16 hours)
+  # ---------------------------------------------------------------------------
+  phase_5:
+    name: "Infrastructure Hardening"
+    days: [11, 12]
+    estimated_hours: 16
+    stories:
+      - id: "S-022"
+        title: "Break Circular Dependencies"
+        issues: ["ARCH-005"]
+        type: "IMPLEMENTATION"
+        route_to: "architecture-remediation → eliminate-god-stores"
+        hours: 4
+        acceptance_criteria:
+          - "agents-store ↔ provider-store broken"
+          - "No high-risk cycles remain"
+          
+      - id: "S-023"
+        title: "Implement IndexedDB Quota Handling"
+        issues: ["INFRA-001"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        acceptance_criteria:
+          - "Quota check before writes"
+          - "Eviction when full"
+          - "User notification on quota warning"
+          
+      - id: "S-024"
+        title: "Eliminate Silent Failures"
+        issues: ["INFRA-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        acceptance_criteria:
+          - "All 23 instances replaced with proper error handling"
+          - "User sees appropriate feedback"
+          
+      - id: "S-025"
+        title: "Add Error Boundaries to Critical Paths"
+        issues: ["INFRA-003"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 4
+        acceptance_criteria:
+          - "100% coverage on critical paths"
+          - "Graceful degradation"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 6: TESTING & VALIDATION (Days 13-14, ~20 hours)
+  # ---------------------------------------------------------------------------
+  phase_6:
+    name: "Testing & Validation"
+    days: [13, 14]
+    estimated_hours: 20
+    stories:
+      - id: "S-026"
+        title: "Write Unit Tests for Refactored Stores"
+        issues: ["QUAL-001"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 6
+        acceptance_criteria:
+          - "Each new slice has unit tests"
+          - "Coverage for new code >80%"
+          
+      - id: "S-027"
+        title: "Write Integration Tests for Core Flows"
+        issues: ["QUAL-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 6
+        acceptance_criteria:
+          - "API key → model load tested"
+          - "Workspace switching tested"
+          
+      - id: "S-028"
+        title: "Create E2E Test Suite"
+        issues: ["QUAL-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 6
+        acceptance_criteria:
+          - "Playwright setup complete"
+          - "Critical user journeys covered"
+          - "Runs in CI/CD"
+          
+      - id: "S-029"
+        title: "Production Smoke Test Suite"
+        issues: ["QUAL-002"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 2
+        acceptance_criteria:
+          - "Quick validation script"
+          - "Runs against Vercel deployment"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 7: GOVERNANCE & CLEANUP (Day 15, ~8 hours)
+  # ---------------------------------------------------------------------------
+  phase_7:
+    name: "Governance Finalization"
+    days: [15]
+    estimated_hours: 8
+    stories:
+      - id: "S-030"
+        title: "Fix Design System Violations"
+        issues: ["QUAL-003"]
+        type: "IMPLEMENTATION"
+        route_to: "bmad-core → dev-story"
+        hours: 3
+        acceptance_criteria:
+          - "No hardcoded colors"
+          - "8-bit shadows only"
+          - "All strings via t()"
+          
+      - id: "S-031"
+        title: "Create Child AGENTS.md Files"
+        issues: ["GOV-002"]
+        type: "DOCUMENTATION"
+        route_to: "asgl → governance-update"
+        hours: 2
+        acceptance_criteria:
+          - "src/infrastructure/AGENTS.md created"
+          - "src/presentation/AGENTS.md created"
+          
+      - id: "S-032"
+        title: "Archive Orphan Artifacts"
+        issues: ["GOV-003"]
+        type: "DOCUMENTATION"
+        route_to: "asgl → artifact-lifecycle"
+        hours: 2
+        acceptance_criteria:
+          - "Orphan artifacts identified"
+          - "Moved to archive"
+          - "Registry cleaned"
+          
+      - id: "S-033"
+        title: "Final Health Assessment"
+        type: "VALIDATION"
+        route_to: "deep-scan → full-scan"
+        hours: 1
+        acceptance_criteria:
+          - "Health score ≥95%"
+          - "All P0/P1 issues resolved"
+          - "Documentation current"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXECUTION SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution_summary:
+  total_stories: 33
+  total_hours: 135
+  total_days: 15
+  
+  by_phase:
+    - phase: 1
+      name: "Critical Blockers"
+      stories: 6
+      hours: 15
+      days: [1, 2]
+      
+    - phase: 2
+      name: "Workspace Integration"
+      stories: 4
+      hours: 16
+      days: [3, 4]
+      
+    - phase: 3
+      name: "Architectural Remediation"
+      stories: 6
+      hours: 40
+      days: [5, 6, 7, 8]
+      
+    - phase: 4
+      name: "Consolidation & Cleanup"
+      stories: 5
+      hours: 20
+      days: [9, 10]
+      
+    - phase: 5
+      name: "Infrastructure Hardening"
+      stories: 4
+      hours: 16
+      days: [11, 12]
+      
+    - phase: 6
+      name: "Testing & Validation"
+      stories: 4
+      hours: 20
+      days: [13, 14]
+      
+    - phase: 7
+      name: "Governance Finalization"
+      stories: 4
+      hours: 8
+      days: [15]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ASGL INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+asgl_integration:
+  module_path: "_bmad/modules/asgl/"
+  
+  routing_summary:
+    deep-scan:
+      stories: ["S-006", "S-010", "S-016", "S-033"]
+      purpose: "Validation and diagnostics"
+      
+    architecture-remediation:
+      stories: ["S-011", "S-012", "S-013", "S-014", "S-015", "S-017", "S-018", "S-019", "S-020", "S-021", "S-022"]
+      purpose: "Store/component refactoring"
+      
+    bmad-core:
+      stories: ["S-001", "S-002", "S-003", "S-007", "S-008", "S-009", "S-023", "S-024", "S-025", "S-026", "S-027", "S-028", "S-029", "S-030"]
+      purpose: "Standard implementation"
+      
+    asgl:
+      stories: ["S-004", "S-005", "S-031", "S-032"]
+      purpose: "Governance and documentation"
+      
+  governance_triggers:
+    - at_story: 3
+      action: "Update AGENTS.md"
+    - at_story: 6
+      action: "Update AGENTS.md"
+    - at_story: 9
+      action: "Update AGENTS.md"
+    # ... etc
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  health_score:
+    target: 95
+    minimum: 90
+    
+  critical_metrics:
+    - metric: "God stores (>300 lines)"
+      target: 0
+      current: 69
+    - metric: "God components (>300 lines)"
+      target: 0
+      current: 45
+    - metric: "TypeScript errors (production)"
+      target: 0
+      current: 306
+    - metric: "Circular dependencies"
+      target: 0
+      current: 4
+    - metric: "Test coverage"
+      target: "80%"
+      current: "16.6%"
+    - metric: "Silent failures"
+      target: 0
+      current: 23
+      
+  functionality:
+    - "LLM models load on Vercel"
+    - "Notes workspace loads project files"
+    - "Agent selection persists"
+    - "All E2E tests pass"
+    
+  governance:
+    - "AGENTS.md is single source of truth"
+    - "CLAUDE.md points to AGENTS.md"
+    - "Child AGENTS.md files exist"
+    - "No orphan artifacts"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# APPROVAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+approval:
+  required: true
+  status: "AWAITING_USER_APPROVAL"
+  message: |
+    COMPREHENSIVE ARCHITECTURE REMEDIATION SPRINT
+    =============================================
+    
+    This sprint will bring the project from 46.4% to 95% health over 15 days.
+    
+    Key Outcomes:
+    • 69 god stores → 0 (all ≤120 lines)
+    • 45 god components → 0 (all ≤300 lines)
+    • 306 TS errors → 0
+    • 16.6% test coverage → 80%
+    • AGENTS.md as single governance source
+    
+    Paired with ASGL module for autonomous execution.
+    
+    To approve: Reply with "APPROVED" or "Start remediation"
+    To modify: Specify changes needed
