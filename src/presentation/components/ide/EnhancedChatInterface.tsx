@@ -1,11 +1,24 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, ChevronDown, ChevronUp, Code } from 'lucide-react'
+import { Bot, User, Send, ChevronDown, ChevronUp, Code, Paperclip, Mic } from 'lucide-react'
 import { Button } from '@/presentation/components/ui/button'
+import { useDeviceType } from '@/hooks/useMediaQuery'
+import { toast } from 'sonner'
 
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
 import { useTranslation } from 'react-i18next'
+
+/**
+ * @fileoverview Enhanced Chat Interface with Mobile Optimization
+ * @module presentation/components/ide/EnhancedChatInterface
+ *
+ * E1-10: Mobile-optimized chat layout
+ * - Visual viewport API for keyboard avoidance (iOS Safari fix)
+ * - Smooth scrolling with -webkit-overflow-scrolling: touch
+ * - Touch targets ≥44x44px on mobile
+ * - Attachment and voice input button placeholders
+ */
 
 /**
  * EnhancedChatInterface - Premium agent chat with tool execution logs
@@ -60,10 +73,46 @@ export function EnhancedChatInterface({
     autoScroll = true, // E1-8: Default to true for backward compatibility
 }: EnhancedChatProps) {
     const { t } = useTranslation()
+    const { isMobile } = useDeviceType()
     const [input, setInput] = useState('')
+    const [keyboardHeight, setKeyboardHeight] = useState(0)
     const messagesEndRef = useRef<HTMLDivElement>(null)
+    const formRef = useRef<HTMLFormElement>(null)
 
-    // E1-8: Auto-scroll to bottom on new messages (only if autoScroll is enabled)
+    // E1-10: Visual viewport API for keyboard avoidance (iOS Safari fix)
+    // Prevents keyboard from hiding input on mobile devices
+    useEffect(() => {
+        if (!window.visualViewport) return
+
+        const handleViewportResize = () => {
+            const viewport = window.visualViewport
+            if (viewport) {
+                const windowHeight = window.innerHeight
+                const viewportHeight = viewport.height
+                // Keyboard is visible if viewport is smaller than window
+                const newKeyboardHeight = Math.max(0, windowHeight - viewportHeight)
+                setKeyboardHeight(newKeyboardHeight)
+            }
+        }
+
+        window.visualViewport.addEventListener('resize', handleViewportResize)
+        // Initial check
+        handleViewportResize()
+
+        return () => {
+            window.visualViewport?.removeEventListener('resize', handleViewportResize)
+        }
+    }, [])
+
+    // E1-10: Adjust form position when keyboard is visible
+    useEffect(() => {
+        if (keyboardHeight > 0 && formRef.current) {
+            // Scroll form into view when keyboard appears
+            formRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        }
+    }, [keyboardHeight])
+
+    // E1-10: Auto-scroll to bottom on new messages (only if autoScroll is enabled)
     useEffect(() => {
         if (autoScroll) {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -86,13 +135,34 @@ export function EnhancedChatInterface({
         }
     }
 
+    // E1-10: Handle attachment button click (placeholder for E2-4)
+    const handleAttachmentClick = useCallback(() => {
+        // TODO: E2-4 File Attachment UI
+        toast.info('File attachments coming soon in Epic E2', {
+            description: 'Voice input and file uploads will be available soon.'
+        })
+    }, [])
+
+    // E1-10: Handle voice input click (placeholder for E2-1)
+    const handleVoiceClick = useCallback(() => {
+        // TODO: E2-1 Web Speech API Integration
+        toast.info('Voice input coming soon in Epic E2', {
+            description: 'Speech-to-text will be available soon.'
+        })
+    }, [])
+
     return (
         <div className={cn("flex flex-col h-full bg-background", className)}>
-            {/* Messages area */}
+            {/* Messages area - E1-10: Smooth scrolling on mobile */}
             <div
                 ref={setScrollRef}
-                className="flex-1 overflow-auto p-4 space-y-4 scrollbar-thin"
+                className={cn(
+                    "flex-1 overflow-auto p-4 space-y-4 scrollbar-thin",
+                    // E1-10: Native smooth scrolling on iOS
+                    isMobile && "[-webkit-overflow-scrolling:touch]"
+                )}
                 onScroll={onScroll}
+                style={{ paddingBottom: isMobile ? keyboardHeight : undefined }}
             >
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -118,12 +188,54 @@ export function EnhancedChatInterface({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input area - auto-expanding textarea */}
+            {/* Input area - E1-10: Mobile-optimized with attachment/voice buttons */}
             <form
+                ref={formRef}
                 onSubmit={handleSubmit}
-                className="shrink-0 border-t border-border p-3 bg-secondary/30"
+                className={cn(
+                    "shrink-0 border-t border-border bg-secondary/30",
+                    // E1-10: Add extra padding when keyboard is visible
+                    isMobile && keyboardHeight > 0 && "pb-safe"
+                )}
             >
-                <div className="flex gap-2 items-end">
+                <div className={cn(
+                    "flex gap-2 items-end p-3",
+                    // E1-10: Stack buttons vertically on mobile for better touch targets
+                    isMobile ? "flex-wrap" : ""
+                )}>
+                    {/* E1-10: Attachment button (placeholder for E2-4) */}
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={handleAttachmentClick}
+                        className={cn(
+                            "shrink-0",
+                            // E1-10: Touch targets ≥44x44px on mobile
+                            isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-9 w-9"
+                        )}
+                        aria-label={t('chat.attach', 'Attach file')}
+                        title={t('chat.attach', 'Attach file (coming soon)')}
+                    >
+                        <Paperclip className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
+                    </Button>
+
+                    {/* E1-10: Voice input button (placeholder for E2-1) */}
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={handleVoiceClick}
+                        className={cn(
+                            "shrink-0",
+                            // E1-10: Touch targets ≥44x44px on mobile, prominent on mobile
+                            isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-9 w-9"
+                        )}
+                        aria-label={t('chat.voice', 'Voice input')}
+                        title={t('chat.voice', 'Voice input (coming soon)')}
+                    >
+                        <Mic className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
+                    </Button>
+
+                    {/* Text input */}
                     <textarea
                         value={input}
                         onChange={(e) => {
@@ -144,18 +256,29 @@ export function EnhancedChatInterface({
                             }
                         }}
                         placeholder={t('chat.placeholder', 'Type a message...')}
-                        className="flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none text-base md:text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto"
+                        className={cn(
+                            "flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto",
+                            // E1-10: Larger text on mobile for readability
+                            isMobile ? "text-base" : "text-base md:text-sm"
+                        )}
                         disabled={isTyping}
                         rows={1}
                     />
+
+                    {/* Send button - E1-10: Larger on mobile for touch targets */}
                     <Button
                         type="submit"
                         variant="primary"
                         iconOnly={true}
-                        className="h-10 w-10 shrink-0"
+                        className={cn(
+                            "shrink-0",
+                            // E1-10: Touch targets ≥44x44px on mobile
+                            isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-10 w-10"
+                        )}
                         disabled={!input.trim() || isTyping}
+                        aria-label={t('chat.send', 'Send message')}
                     >
-                        <Send className="w-4 h-4" />
+                        <Send className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
                     </Button>
                 </div>
             </form>

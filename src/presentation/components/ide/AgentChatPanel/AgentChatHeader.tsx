@@ -2,16 +2,49 @@
  * Agent Chat Header Component
  *
  * Displays the agent panel header with title, tools status,
- * prompt enhancement toggle, model indicator, and clear button.
+ * prompt enhancement toggle, model indicator, workspace switcher, and clear button.
  *
  * @layer Presentation
  * @component AgentChatHeader
+ * @governance E1-11: Workspace Switcher in Chat Header
  */
 
-import { Bot, Sparkles, Bug } from 'lucide-react';
+import { Bot, Sparkles, Bug, ChevronDown } from 'lucide-react';
 import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
+import { useTranslation } from 'react-i18next';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useProjectContext } from '@/lib/workspace/ProjectContext';
+import { cn } from '@/lib/utils';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+
+// E1-11: Workspace configuration for chat header switcher
+const WORKSPACE_CONFIG: Record<
+  WorkspaceType,
+  { icon: string; labelKey: string; color: string }
+> = {
+  ide: {
+    icon: '💻',
+    labelKey: 'hub.workspaceBinding.workspaces.ide',
+    color: 'text-blue-400',
+  },
+  notes: {
+    icon: '📝',
+    labelKey: 'hub.workspaceBinding.workspaces.notes',
+    color: 'text-green-400',
+  },
+  knowledge: {
+    icon: '📚',
+    labelKey: 'hub.workspaceBinding.workspaces.knowledge',
+    color: 'text-purple-400',
+  },
+  study: {
+    icon: '🎓',
+    labelKey: 'hub.workspaceBinding.workspaces.study',
+    color: 'text-amber-400',
+  },
+};
 
 interface AgentChatHeaderProps {
     modelId: string;
@@ -24,6 +57,8 @@ interface AgentChatHeaderProps {
 
 /**
  * Agent Chat Header Component
+ *
+ * E1-11: Added compact workspace switcher dropdown in header
  */
 export function AgentChatHeader({
     modelId,
@@ -33,8 +68,20 @@ export function AgentChatHeader({
     onClear,
     onCaptureDebugSession
 }: AgentChatHeaderProps) {
+    const { t } = useTranslation();
+    const { currentWorkspace, enabledWorkspaces, switchWorkspace } = useProjectContext();
+
     // Truncate model ID for display
     const displayModel = modelId.split('/').pop()?.substring(0, 20) || '';
+
+    // E1-11: Handle workspace switch with confirmation if needed
+    const handleWorkspaceSwitch = async (workspace: WorkspaceType) => {
+        console.log('[AgentChatHeader] Switching to workspace:', workspace);
+        switchWorkspace(workspace);
+    };
+
+    // E1-11: Get current workspace config
+    const currentWorkspaceConfig = WORKSPACE_CONFIG[currentWorkspace];
 
     return (
         <div className="h-10 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
@@ -53,9 +100,77 @@ export function AgentChatHeader({
                     />
                 )}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+                {/* E1-11: Workspace Switcher (compact for chat header) */}
+                {enabledWorkspaces.length > 1 && (
+                    <DropdownMenu.Root>
+                        <DropdownMenu.Trigger
+                            className={cn(
+                                'flex items-center gap-1 px-2 py-1 bg-muted/20 border border-border/60',
+                                'font-mono text-[10px] hover:bg-muted/30 hover:border-border/80 transition-colors',
+                                'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring/50',
+                                'data-[state=open]:bg-muted/30 data-[state=open]:border-border/80',
+                                'hidden sm:flex' // Hide on very small screens
+                            )}
+                            title={t('chat.switchWorkspace', 'Switch workspace')}
+                        >
+                            <span className={cn('text-sm', currentWorkspaceConfig.color)}>
+                                {currentWorkspaceConfig.icon}
+                            </span>
+                            <span className="text-foreground max-w-[50px] truncate">
+                                {t(currentWorkspaceConfig.labelKey, currentWorkspace.toUpperCase())}
+                            </span>
+                            <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                        </DropdownMenu.Trigger>
+
+                        <DropdownMenu.Portal>
+                            <DropdownMenu.Content
+                                className={cn(
+                                    'min-w-[140px] bg-background border-2 border-border shadow-pixel z-50',
+                                    'data-[state=open]:animate-in data-[state=closed]:animate-out',
+                                    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+                                    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95'
+                                )}
+                                side="bottom"
+                                align="end"
+                            >
+                                {enabledWorkspaces.map((workspace) => {
+                                    const config = WORKSPACE_CONFIG[workspace];
+                                    const isActive = workspace === currentWorkspace;
+
+                                    return (
+                                        <DropdownMenu.Item
+                                            key={workspace}
+                                            className={cn(
+                                                'flex items-center gap-2 px-3 py-1.5 font-mono text-xs',
+                                                'hover:bg-primary/10 focus:bg-primary/10 focus:outline-none',
+                                                'cursor-pointer transition-colors',
+                                                isActive && 'bg-primary/10'
+                                            )}
+                                            onClick={() => handleWorkspaceSwitch(workspace)}
+                                        >
+                                            <span className={cn('text-sm', config.color)}>
+                                                {config.icon}
+                                            </span>
+                                            <span className={cn(
+                                                'flex-1',
+                                                isActive ? 'text-foreground font-medium' : 'text-muted-foreground'
+                                            )}>
+                                                {t(config.labelKey, workspace.toUpperCase())}
+                                            </span>
+                                            {isActive && (
+                                                <span className="text-xs text-primary">✓</span>
+                                            )}
+                                        </DropdownMenu.Item>
+                                    );
+                                })}
+                            </DropdownMenu.Content>
+                        </DropdownMenu.Portal>
+                    </DropdownMenu.Root>
+                )}
+
                 {/* Prompt Enhancement Toggle */}
-                <div className="flex items-center gap-2 border-r border-border-dark pr-3">
+                <div className="flex items-center gap-2 border-l border-border-dark pl-3">
                     <Switch
                         id="prompt-enhance"
                         checked={isEnhancementEnabled}
@@ -68,23 +183,23 @@ export function AgentChatHeader({
                         title="Enhance prompts before sending"
                     >
                         <Sparkles className="w-3 h-3 text-yellow-500" />
-                        Enhance
+                        <span className="hidden md:inline">Enhance</span>
                     </Label>
                 </div>
 
                 {/* Model indicator */}
                 <TruncatedText
                     text={displayModel}
-                    className="text-[10px] text-muted-foreground font-mono max-w-[100px]"
+                    className="text-[10px] text-muted-foreground font-mono max-w-[60px] sm:max-w-[100px]"
                 />
                 {/* P2-6: Capture Debug Session button */}
                 <button
                     onClick={onCaptureDebugSession}
                     title="Capture Debug Session to Knowledge workspace"
-                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors px-2 py-1 flex items-center gap-1"
+                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors px-2 py-1 flex items-center gap-1 hidden sm:flex"
                 >
                     <Bug className="w-3 h-3" />
-                    Capture
+                    <span className="hidden lg:inline">Capture</span>
                 </button>
                 <button
                     onClick={onClear}
