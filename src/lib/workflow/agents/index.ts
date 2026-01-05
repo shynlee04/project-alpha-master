@@ -38,3 +38,24 @@ export type {
     RoutingContext,
     RoutingFeedback,
 } from './content-routing-agent';
+
+// Multi-Agent Debating System (E4-4)
+export {
+    DebateAgent,
+    DebateError,
+    createDebateAgent,
+    debateTopic,
+    debateTopicWithContext,
+} from './debate-agent';
+
+export type {
+    DebatePersona,
+    DebateArgument,
+    AgreementMatrix,
+    DebateSynthesis,
+    DebateResults,
+    DebateConfig,
+    DebateContext,
+} from './debate-agent';
+
+export { DEBATE_ERRORS } from './debate-agent';

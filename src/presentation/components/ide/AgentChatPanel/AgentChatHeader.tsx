@@ -15,35 +15,35 @@ import { Label } from '@/presentation/components/ui/label';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 import { useTranslation } from 'react-i18next';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useProjectContext } from '@/lib/workspace/ProjectContext';
+import { useProjectContextSafe } from '@/lib/workspace/ProjectContext';
 import { cn } from '@/lib/utils';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 // E1-11: Workspace configuration for chat header switcher
 const WORKSPACE_CONFIG: Record<
-  WorkspaceType,
-  { icon: string; labelKey: string; color: string }
+    WorkspaceType,
+    { icon: string; labelKey: string; color: string }
 > = {
-  ide: {
-    icon: '💻',
-    labelKey: 'hub.workspaceBinding.workspaces.ide',
-    color: 'text-blue-400',
-  },
-  notes: {
-    icon: '📝',
-    labelKey: 'hub.workspaceBinding.workspaces.notes',
-    color: 'text-green-400',
-  },
-  knowledge: {
-    icon: '📚',
-    labelKey: 'hub.workspaceBinding.workspaces.knowledge',
-    color: 'text-purple-400',
-  },
-  study: {
-    icon: '🎓',
-    labelKey: 'hub.workspaceBinding.workspaces.study',
-    color: 'text-amber-400',
-  },
+    ide: {
+        icon: '💻',
+        labelKey: 'hub.workspaceBinding.workspaces.ide',
+        color: 'text-blue-400',
+    },
+    notes: {
+        icon: '📝',
+        labelKey: 'hub.workspaceBinding.workspaces.notes',
+        color: 'text-green-400',
+    },
+    knowledge: {
+        icon: '📚',
+        labelKey: 'hub.workspaceBinding.workspaces.knowledge',
+        color: 'text-purple-400',
+    },
+    study: {
+        icon: '🎓',
+        labelKey: 'hub.workspaceBinding.workspaces.study',
+        color: 'text-amber-400',
+    },
 };
 
 interface AgentChatHeaderProps {
@@ -59,6 +59,7 @@ interface AgentChatHeaderProps {
  * Agent Chat Header Component
  *
  * E1-11: Added compact workspace switcher dropdown in header
+ * FIX-2026-01-05: Use useProjectContextSafe to prevent crash outside ProjectProvider
  */
 export function AgentChatHeader({
     modelId,
@@ -69,7 +70,12 @@ export function AgentChatHeader({
     onCaptureDebugSession
 }: AgentChatHeaderProps) {
     const { t } = useTranslation();
-    const { currentWorkspace, enabledWorkspaces, switchWorkspace } = useProjectContext();
+
+    // FIX-2026-01-05: Use safe version that returns null outside ProjectProvider
+    const projectContext = useProjectContextSafe();
+    const currentWorkspace = projectContext?.currentWorkspace ?? 'ide';
+    const enabledWorkspaces = projectContext?.enabledWorkspaces ?? [];
+    const switchWorkspace = projectContext?.switchWorkspace ?? (() => { });
 
     // Truncate model ID for display
     const displayModel = modelId.split('/').pop()?.substring(0, 20) || '';

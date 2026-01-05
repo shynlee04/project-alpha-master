@@ -13,12 +13,25 @@
  *
  * @file study.lazy.tsx
  * @created 2025-12-30T10:00:00Z
- * @updated 2025-12-31T12:05:00Z - Fixed duplicate route issue
+ * @updated 2026-01-05 - FIX: Wrap in ProjectProvider to prevent useProjectContext crash
  */
 
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { StudyPage } from '@/presentation/components/study/StudyPage';
+import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 
 export const Route = createLazyFileRoute('/study')({
-  component: StudyPage,
+  component: StudyWorkspace,
 });
+
+/**
+ * Study workspace wrapper with ProjectProvider
+ * FIX-2026-01-05: Without this, useProjectContext throws when used in child components
+ */
+function StudyWorkspace() {
+  return (
+    <ProjectProvider project={null} workspace="study">
+      <StudyPage />
+    </ProjectProvider>
+  );
+}

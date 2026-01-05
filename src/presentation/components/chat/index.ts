@@ -52,3 +52,13 @@ export type {
     RoutingDecisionProps,
     RoutingLoadingProps,
 } from './RoutingDecision';
+
+// Multi-Agent Debating (E4-4)
+export {
+    DebateTimeline,
+    DebateLoading,
+} from './DebateTimeline';
+export type {
+    DebateTimelineProps,
+    DebateTimelineLoadingProps,
+} from './DebateTimeline';

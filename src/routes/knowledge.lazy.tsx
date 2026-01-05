@@ -11,12 +11,25 @@
  *
  * @file knowledge.lazy.tsx
  * @created 2025-12-30T23:59:00Z
- * @updated 2025-12-31T12:05:00Z - Fixed duplicate route issue
+ * @updated 2026-01-05 - FIX: Wrap in ProjectProvider to prevent useProjectContext crash
  */
 
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { KnowledgePage } from '@/presentation/components/knowledge/KnowledgePage';
+import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 
 export const Route = createLazyFileRoute('/knowledge')({
-  component: KnowledgePage,
+  component: KnowledgeWorkspace,
 });
+
+/**
+ * Knowledge workspace wrapper with ProjectProvider
+ * FIX-2026-01-05: Without this, useProjectContext throws when used in child components
+ */
+function KnowledgeWorkspace() {
+  return (
+    <ProjectProvider project={null} workspace="knowledge">
+      <KnowledgePage />
+    </ProjectProvider>
+  );
+}
