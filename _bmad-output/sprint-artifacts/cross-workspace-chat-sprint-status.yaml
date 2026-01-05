@@ -264,13 +264,55 @@ stories:
     started_at: "2026-01-05T15:00:00Z"
     completed_at: "2026-01-05T16:00:00Z"
 
+  - id: "E1-7"
+    title: "Chat State Sharing Between Workspaces"
+    epic: "E1"
+    points: 12
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P0"
+    dependencies: ["E1-5", "E1-6"]
+    blocks: []
+    acceptance_criteria:
+      - "Same conversation visible in both workspaces"
+      - "New messages sync in real-time"
+      - "Thread hierarchy preserved"
+      - "Workspace context affects available tools only"
+      - "No state corruption on concurrent edits"
+    tech_notes:
+      - "Added ChatStateUpdateEvent to cross-workspace-event-bus.ts"
+      - "Created useChatStateSync hook (197 lines)"
+      - "Event types: message_added, message_updated, thread_created, conversation_updated"
+      - "Duplicate detection prevents infinite loops"
+      - "IndexedDB as source of truth for state refresh"
+    artifacts_created:
+      - "src/lib/events/use-chat-state-sync.ts (197 lines, NEW)"
+      - "_bmad-output/story-contexts/E1-7-story-context-2026-01-05.md"
+    files_modified:
+      - "src/lib/events/cross-workspace-event-bus.ts (+80 lines, chat state events)"
+      - "src/lib/events/index.ts (+14 lines, exports)"
+      - "src/infrastructure/events/cross-workspace-event-bus.ts (+1 line, facade)"
+      - "src/presentation/components/ide/AgentChatPanel.tsx (+35 lines, integration)"
+    test_strategy:
+      - "Manual test: Send message in IDE, verify appears in Notes"
+      - "Manual test: Send message in Notes, verify appears in IDE"
+      - "Integration test: Cross-workspace state sync"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T16:30:00Z"
+    completed_at: "2026-01-05T17:30:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 46
-  actual: 46
-  completed: 46
+  planned: 58
+  actual: 58
+  completed: 58
   remaining: 0
-  burndown: [46, 0]
+  burndown: [58, 0]
 
 # Sprint 1 Risks
 risks:
@@ -354,12 +396,12 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 50 # 6/12 stories = 50%
+    progress: 58 # 7/12 stories = 58%
     stories_total: 12
-    stories_completed: 6
+    stories_completed: 7
     stories_in_progress: 0
-    points_total: 89
-    points_completed: 46
+    points_total: 101
+    points_completed: 58
     points_in_progress: 0
   - id: "E2"
     name: "Multimodal Input System"
@@ -438,11 +480,11 @@ epics:
 project_summary:
   total_epics: 10
   total_stories: 73
-  total_points: 506
+  total_points: 518
   completed_epics: 0
-  completed_stories: 6
-  completed_points: 46
-  overall_progress: 8
+  completed_stories: 7
+  completed_points: 58
+  overall_progress: 11
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

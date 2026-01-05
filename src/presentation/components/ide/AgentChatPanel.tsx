@@ -6,7 +6,8 @@ import { eventBus as crossWorkspaceEventBus, DomainEventType } from '@/infrastru
 import type { DebugSessionData } from '@/infrastructure/events/event-bus';
 import { useChatEventBridge } from '@/lib/events/use-chat-event-bridge';
 import { useConversationPersistence } from '@/lib/events/use-conversation-persistence';
-import type { WorkspaceChangeEvent } from '@/lib/events';
+import { useChatStateSync } from '@/lib/events/use-chat-state-sync';
+import type { WorkspaceChangeEvent, ChatStateUpdateEvent } from '@/lib/events';
 
 import { useConversationStore as useThreadsStore, getConversationStoreState } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
@@ -188,6 +189,37 @@ export function AgentChatPanel({
         projectId,
     });
 
+    // E1-7: Chat state sync - emit updates to other workspaces, listen for updates
+    const { emitStateUpdate } = useChatStateSync({
+        workspaceId: workspaceType,
+        projectId,
+        conversationId: activeConversationId,
+        onStateUpdate: useCallback((update: ChatStateUpdateEvent) => {
+            console.log('[AgentChatPanel] Received state update from another workspace:', {
+                from: update.workspaceId,
+                updateType: update.updateType,
+                conversationId: update.conversationId,
+            });
+            // Refresh conversation to get latest state from IndexedDB
+            // The conversation store will emit its own events when updated
+            if (update.updateType === 'message_added' || update.updateType === 'message_updated') {
+                // Trigger conversation reload by calling persist
+                // This ensures the store re-hydrates from IndexedDB with latest data
+                const store = getConversationStoreState();
+                store.loadConversation?.(update.conversationId);
+            }
+        }, []),
+    });
+
+    // E1-7: Get emitStateUpdate for broadcasting state changes to other workspaces
+    const handleEmitStateUpdate = useCallback((
+        updateType: 'message_added' | 'message_updated' | 'thread_created' | 'conversation_updated',
+        data: { messageId?: string; threadId?: string; messageContent?: string }
+    ) => {
+        if (!activeConversationId) return;
+        emitStateUpdate(updateType, data);
+    }, [activeConversationId, emitStateUpdate]);
+
     // E1-6: Restore conversation when component mounts or workspace/project changes
     useEffect(() => {
         restoreConversation();
@@ -274,8 +306,13 @@ export function AgentChatPanel({
         // E1-5: Emit chat message sent event before sending
         emitMessageSent(messageToSend);
 
+        // E1-7: Emit state update to other workspaces before sending
+        handleEmitStateUpdate('message_added', {
+            messageContent: messageToSend.slice(0, 200) // Truncate for event payload
+        });
+
         sendMessage(messageToSend);
-    }, [sendMessage, isEnhancementEnabled, isEnhancingPrompt, allMessages, enhancePrompt, emitMessageSent]);
+    }, [sendMessage, isEnhancementEnabled, isEnhancingPrompt, allMessages, enhancePrompt, emitMessageSent, handleEmitStateUpdate]);
 
     // Handle tool approval
     const handleApprove = useCallback((approval: PendingApprovalInfo) => {
