@@ -184,13 +184,49 @@ stories:
     started_at: "2026-01-05T13:15:00Z"
     completed_at: "2026-01-05T13:30:00Z"
 
+  - id: "E1-5"
+    title: "Wire Up Cross-Workspace Event Bus"
+    epic: "E1"
+    points: 6
+    owner: "@bmad-bmm-dev"
+    status: "DONE"
+    priority: "P0"
+    dependencies: []
+    blocks: ["E1-6", "E1-7"]
+    acceptance_criteria:
+      - "Chat emits events on message send"
+      - "Chat listens for workspace changes"
+      - "Chat state syncs when switching workspaces"
+      - "No duplicate events or memory leaks"
+      - "Event types properly typed"
+    tech_notes:
+      - "Added ChatMessageSentEvent to cross-workspace-event-bus.ts"
+      - "Created useChatEventBridge hook for chat event management"
+      - "Wired up AgentChatPanel to emit CHAT_MESSAGE_SENT events"
+      - "Workspace change listener with automatic cleanup"
+    artifacts_created:
+      - "src/lib/events/cross-workspace-event-bus.ts (extended with chat events)"
+      - "src/lib/events/use-chat-event-bridge.ts (102 lines, NEW)"
+      - "_bmad-output/story-contexts/E1-5-story-context-2026-01-05.md"
+    test_strategy:
+      - "Unit test: Event emission and subscription"
+      - "Integration test: Cross-workspace sync"
+    validation:
+      typecheck: "pass"
+      test_coverage: "pending"
+      i18n_complete: "pass"
+      code_review: "pending"
+    created_at: "2026-01-05"
+    started_at: "2026-01-05T13:45:00Z"
+    completed_at: "2026-01-05T14:15:00Z"
+
 # Sprint 1 Metrics
 velocity:
-  planned: 32
-  actual: 32
-  completed: 32
+  planned: 38
+  actual: 38
+  completed: 38
   remaining: 0
-  burndown: [32, 0]
+  burndown: [38, 0]
 
 # Sprint 1 Risks
 risks:
@@ -274,12 +310,12 @@ epics:
   - id: "E1"
     name: "Cross-Workspace Chat Integration"
     status: "IN_PROGRESS"
-    progress: 33 # 4/12 stories = 33%
+    progress: 42 # 5/12 stories = 42%
     stories_total: 12
-    stories_completed: 4
+    stories_completed: 5
     stories_in_progress: 0
     points_total: 89
-    points_completed: 32
+    points_completed: 38
     points_in_progress: 0
   - id: "E2"
     name: "Multimodal Input System"
@@ -360,9 +396,9 @@ project_summary:
   total_stories: 73
   total_points: 506
   completed_epics: 0
-  completed_stories: 3
-  completed_points: 26
-  overall_progress: 4
+  completed_stories: 5
+  completed_points: 38
+  overall_progress: 7
   timeline:
     start: "2026-01-06"
     end: "2026-04-04"

@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { eventBus as crossWorkspaceEventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { DebugSessionData } from '@/infrastructure/events/event-bus';
+import { useChatEventBridge } from '@/lib/events/use-chat-event-bridge';
+import type { WorkspaceChangeEvent } from '@/lib/events';
 
 import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
@@ -153,6 +155,19 @@ export function AgentChatPanel({
     // Effect to sync completed messages from hook to store
     const { addMessage, activeConversationId } = useThreadsStore();
 
+    // E1-5: Chat event bridge - emit events when messages sent, listen for workspace changes
+    const { emitMessageSent } = useChatEventBridge({
+        workspaceId: workspaceType,
+        projectId,
+        agentId: activeAgentId || null,
+        conversationId: activeConversationId || null,
+        onWorkspaceChange: useCallback((event: WorkspaceChangeEvent) => {
+            console.log('[AgentChatPanel] Workspace changing:', event);
+            // Future: Save conversation state before workspace switch
+            // Future: Reload workspace-specific conversation on switch
+        }, []),
+    });
+
     useEffect(() => {
         if (!activeConversationId) return;
 
@@ -202,8 +217,11 @@ export function AgentChatPanel({
             }
         }
 
+        // E1-5: Emit chat message sent event before sending
+        emitMessageSent(messageToSend);
+
         sendMessage(messageToSend);
-    }, [sendMessage, isEnhancementEnabled, isEnhancingPrompt, allMessages, enhancePrompt]);
+    }, [sendMessage, isEnhancementEnabled, isEnhancingPrompt, allMessages, enhancePrompt, emitMessageSent]);
 
     // Handle tool approval
     const handleApprove = useCallback((approval: PendingApprovalInfo) => {

@@ -28,4 +28,5 @@ export type {
   WorkspaceChangeEvent,
   ProviderConfigChangeEvent,
   ModelsUpdatedEvent,
+  ChatMessageSentEvent,
 } from '@/lib/events/cross-workspace-event-bus';

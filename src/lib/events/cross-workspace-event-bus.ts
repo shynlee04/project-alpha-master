@@ -119,6 +119,31 @@ export interface ModelsUpdatedEvent {
     timestamp: Date
 }
 
+/**
+ * Chat message sent event
+ *
+ * Emitted when user sends a message in any workspace.
+ * Other workspaces can track activity, update unread counts, or sync state.
+ *
+ * @story E1-5 - Wire Up Cross-Workspace Event Bus
+ */
+export interface ChatMessageSentEvent {
+    /** Workspace where message was sent */
+    workspaceId: WorkspaceId
+    /** Project ID (if applicable) */
+    projectId: string | null
+    /** Agent ID used for chat */
+    agentId: string | null
+    /** Message content preview (truncated for logging) */
+    messagePreview: string
+    /** Full message length */
+    messageLength: number
+    /** Conversation ID (if in a conversation) */
+    conversationId: string | null
+    /** Timestamp */
+    timestamp: Date
+}
+
 // ============================================================================
 // Event Bus Class
 // ============================================================================
@@ -144,6 +169,7 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
         WORKSPACE_CHANGED: 'workspace:changed',
         PROVIDER_CONFIG_CHANGE: 'provider:config:change',
         MODELS_UPDATED: 'models:updated',
+        CHAT_MESSAGE_SENT: 'chat:message:sent',
     } as const;
 
     // ========================================================================
@@ -403,6 +429,59 @@ class CrossWorkspaceEventBus extends EventEmitter3 {
      */
     offModelsUpdated(listener: (event: ModelsUpdatedEvent) => void): void {
         this.off(CrossWorkspaceEventBus.EVENTS.MODELS_UPDATED, listener);
+    }
+
+    // ========================================================================
+    // Chat Message Events
+    // ========================================================================
+
+    /**
+     * Emit chat message sent event
+     *
+     * Called when user sends a message in any workspace.
+     * Other workspaces can track activity, update unread counts, or sync chat state.
+     *
+     * @story E1-5 - Wire Up Cross-Workspace Event Bus
+     */
+    emitChatMessageSent(event: Omit<ChatMessageSentEvent, 'timestamp'>): void {
+        const fullEvent: ChatMessageSentEvent = {
+            ...event,
+            timestamp: new Date(),
+        };
+
+        console.log('[CrossWorkspaceEventBus] Chat message sent:', {
+            workspaceId: fullEvent.workspaceId,
+            agentId: fullEvent.agentId,
+            messagePreview: fullEvent.messagePreview,
+            messageLength: fullEvent.messageLength,
+        });
+        this.emit(CrossWorkspaceEventBus.EVENTS.CHAT_MESSAGE_SENT, fullEvent);
+    }
+
+    /**
+     * Subscribe to chat message sent events
+     *
+     * Use this to track chat activity from other workspaces.
+     *
+     * @example
+     * ```ts
+     * crossWorkspaceEventBus.onChatMessageSent((event) => {
+     *     if (event.workspaceId !== currentWorkspace) {
+     *         // Message sent in another workspace
+     *         updateUnreadCount(event.conversationId)
+     *     }
+     * })
+     * ```
+     */
+    onChatMessageSent(listener: (event: ChatMessageSentEvent) => void): void {
+        this.on(CrossWorkspaceEventBus.EVENTS.CHAT_MESSAGE_SENT, listener);
+    }
+
+    /**
+     * Unsubscribe from chat message sent events
+     */
+    offChatMessageSent(listener: (event: ChatMessageSentEvent) => void): void {
+        this.off(CrossWorkspaceEventBus.EVENTS.CHAT_MESSAGE_SENT, listener);
     }
 
     // ========================================================================

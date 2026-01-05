@@ -34,9 +34,23 @@ export type {
   AgentConfigChangeEvent,
   SyncStatusEvent,
   ProjectStateChangeEvent,
+  WorkspaceChangeEvent,
+  ProviderConfigChangeEvent,
+  ModelsUpdatedEvent,
+  ChatMessageSentEvent,
 } from './cross-workspace-event-bus'
 
 export {
   useCrossWorkspaceAgentConfigEvents,
   useAllCrossWorkspaceEvents,
 } from './use-cross-workspace-events'
+
+// E1-5: Chat event bridge hook
+export {
+  useChatEventBridge,
+} from './use-chat-event-bridge'
+
+export type {
+  UseChatEventBridgeOptions,
+  UseChatEventBridgeResult,
+} from './use-chat-event-bridge'
