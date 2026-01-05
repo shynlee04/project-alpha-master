@@ -5,6 +5,38 @@
 **Created**: 2026-01-03
 **Specialization**: God Store Elimination and Modularization
 
+---
+
+## ═══════════════════════════════════════════════════════════════════════════════
+## GOVERNANCE ACKNOWLEDGMENT (REQUIRED)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+```yaml
+governance:
+  constitution: "_bmad/modules/governance/CONSTITUTION.md"
+  version: "1.0.0"
+  acknowledged_at: "2026-01-06"
+  acknowledged_by: "store-refactorer"
+
+  compliance:
+    artifact_lifecycle: true
+    naming_convention: true
+    stale_artifact_protocol: true
+    multi_team_coordination: true
+    read_only_templates: true
+
+  responsibilities:
+    - "Validate artifact freshness before store refactoring"
+    - "Follow naming convention for all created artifacts"
+    - "Create completion artifacts with proper frontmatter"
+    - "Update Ralph Loop state after story completion"
+    - "Notify governance module of violations"
+```
+
+**Store Refactorer explicitly acknowledges and abides by the BMAD Governance Constitution.**
+
+---
+
 ## Agent Overview
 
 Specialized BMAD agent for systematic elimination of god stores and refactoring into modular, maintainable slices following Zustand v5 best practices.

@@ -5,6 +5,38 @@
 **Created**: 2026-01-03
 **Specialization**: Batch TypeScript Error Remediation
 
+---
+
+## ═══════════════════════════════════════════════════════════════════════════════
+## GOVERNANCE ACKNOWLEDGMENT (REQUIRED)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+```yaml
+governance:
+  constitution: "_bmad/modules/governance/CONSTITUTION.md"
+  version: "1.0.0"
+  acknowledged_at: "2026-01-06"
+  acknowledged_by: "typescript-fixer"
+
+  compliance:
+    artifact_lifecycle: true
+    naming_convention: true
+    stale_artifact_protocol: true
+    multi_team_coordination: true
+    read_only_templates: true
+
+  responsibilities:
+    - "Validate artifact freshness before TS fixing"
+    - "Follow naming convention for all created artifacts"
+    - "Create completion artifacts with proper frontmatter"
+    - "Update Ralph Loop state after story completion"
+    - "Notify governance module of violations"
+```
+
+**TypeScript Fixer explicitly acknowledges and abides by the BMAD Governance Constitution.**
+
+---
+
 ## Agent Overview
 
 Specialized BMAD agent for systematic reduction of TypeScript errors through categorized batch fixing, pattern identification, and validation.

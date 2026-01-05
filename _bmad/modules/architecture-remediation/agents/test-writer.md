@@ -5,6 +5,38 @@
 **Created**: 2026-01-03
 **Specialization**: Test Coverage Improvement and Quality Assurance
 
+---
+
+## ═══════════════════════════════════════════════════════════════════════════════
+## GOVERNANCE ACKNOWLEDGMENT (REQUIRED)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+```yaml
+governance:
+  constitution: "_bmad/modules/governance/CONSTITUTION.md"
+  version: "1.0.0"
+  acknowledged_at: "2026-01-06"
+  acknowledged_by: "test-writer"
+
+  compliance:
+    artifact_lifecycle: true
+    naming_convention: true
+    stale_artifact_protocol: true
+    multi_team_coordination: true
+    read_only_templates: true
+
+  responsibilities:
+    - "Validate artifact freshness before test writing"
+    - "Follow naming convention for all created artifacts"
+    - "Create completion artifacts with proper frontmatter"
+    - "Update Ralph Loop state after story completion"
+    - "Notify governance module of violations"
+```
+
+**Test Writer explicitly acknowledges and abides by the BMAD Governance Constitution.**
+
+---
+
 ## Agent Overview
 
 Specialized BMAD agent for systematic improvement of test coverage from 16.6% to ≥80% through strategic test writing for critical paths, business logic, and integration boundaries.

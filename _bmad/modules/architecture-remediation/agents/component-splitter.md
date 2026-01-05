@@ -5,6 +5,38 @@
 **Created**: 2026-01-03
 **Specialization**: Component Size Normalization and Hook Extraction
 
+---
+
+## ═══════════════════════════════════════════════════════════════════════════════
+## GOVERNANCE ACKNOWLEDGMENT (REQUIRED)
+## ═══════════════════════════════════════════════════════════════════════════════
+
+```yaml
+governance:
+  constitution: "_bmad/modules/governance/CONSTITUTION.md"
+  version: "1.0.0"
+  acknowledged_at: "2026-01-06"
+  acknowledged_by: "component-splitter"
+
+  compliance:
+    artifact_lifecycle: true
+    naming_convention: true
+    stale_artifact_protocol: true
+    multi_team_coordination: true
+    read_only_templates: true
+
+  responsibilities:
+    - "Validate artifact freshness before component splitting"
+    - "Follow naming convention for all created artifacts"
+    - "Create completion artifacts with proper frontmatter"
+    - "Update Ralph Loop state after story completion"
+    - "Notify governance module of violations"
+```
+
+**Component Splitter explicitly acknowledges and abides by the BMAD Governance Constitution.**
+
+---
+
 ## Agent Overview
 
 Specialized BMAD agent for systematic reduction of oversized components (>300 lines) into focused, composable modules while maintaining 100% API compatibility and zero breaking changes.
