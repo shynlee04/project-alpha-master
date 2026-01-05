@@ -4,7 +4,7 @@
 # SINGLE SOURCE OF TRUTH FOR GOVERNANCE: AGENTS.md
 
 version: "2.0.0"
-last_updated: "2026-01-05T19:00:00+07:00"
+last_updated: "2026-01-05T19:45:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION INFORMATION
@@ -71,6 +71,7 @@ progress:
   
   # Governance trigger tracking
   stories_since_agents_md_update: 5  # S-002, S-003, S-007, S-010, S-011 completed
+  governance_update_required: true  # Trigger at 6 stories (next update due)
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PHASE OVERVIEW
@@ -131,38 +132,6 @@ phases:
 # ═══════════════════════════════════════════════════════════════════════════
 
 stories_queue:
-  - id: "S-007"
-    title: "Fix Notes Workspace Project File Loading"
-    type: "IMPLEMENTATION"
-    routed_to: "bmad-core → dev-story"
-    status: "COMPLETE"
-    hours: 4
-    completed_at: "2026-01-05T18:05:00+07:00"
-
-  - id: "S-008"
-    title: "Implement File-to-Note Conversion Strategy"
-    type: "IMPLEMENTATION"
-    routed_to: "bmad-core → dev-story"
-    status: "COMPLETE"
-    hours: 4
-    completed_at: "2026-01-05T18:05:00+07:00"
-
-  - id: "S-009"
-    title: "Fix Agent Selection Persistence"
-    type: "IMPLEMENTATION"
-    routed_to: "bmad-core → dev-story"
-    status: "COMPLETE"
-    hours: 4
-    completed_at: "2026-01-05T18:25:00+07:00"
-
-  - id: "S-010"
-    title: "Verify Phase 2 Completion"
-    type: "VALIDATION"
-    routed_to: "deep-scan → targeted-scan"
-    status: "COMPLETE"
-    hours: 2
-    completed_at: "2026-01-05T18:30:00+07:00"
-
   - id: "S-011"
     title: "Accurate God Store Inventory (Validation Required)"
     type: "VALIDATION"
@@ -172,11 +141,33 @@ stories_queue:
     completed_at: "2026-01-05T18:45:00+07:00"
 
   - id: "S-012"
-    title: "Split Tier 1 God Stores (>500 LOC)"
+    title: "Split Tier 1 God Stores (>500 LOC) - CORRECTED SCOPE"
     type: "GOD_STORE_SPLIT"
     routed_to: "architecture-remediation → eliminate-god-stores"
-    status: "NOT_STARTED"
-    hours: 50-60
+    status: "IN_PROGRESS"
+    hours: 30-40
+    sub_stories:
+      - id: "S-012-a"
+        title: "Split canvas-store.ts (623 lines) into 6 slices"
+        estimated_hours: "8-10"
+        status: "ANALYSIS_COMPLETE"
+        file_path: "infrastructure/persistence/stores/canvas-store.ts"
+      - id: "S-012-b"
+        title: "Split flashcard-store.ts (531 lines) into slices"
+        estimated_hours: "6-8"
+        status: "PENDING"
+      - id: "S-012-c"
+        title: "Split project-store.ts (519 lines) into slices"
+        estimated_hours: "6-8"
+        status: "PENDING"
+      - id: "S-012-d"
+        title: "Verify note-store.ts status (566 lines - EPIC-26-1)"
+        estimated_hours: "2-3"
+        status: "PENDING"
+      - id: "S-012-e"
+        title: "Handle file-sync-status and file-snapshot (in-progress migrations)"
+        estimated_hours: "4-6"
+        status: "PENDING"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PENDING ITEMS
@@ -278,7 +269,7 @@ artifacts_created:
 # ═══════════════════════════════════════════════════════════════════════════
 
 continuation:
-  next_action: "Execute S-012: Split Tier 1 God Stores (7 stores, ~4,000 lines)"
+  next_action: "Execute S-012-a: Split canvas-store.ts (623 lines → 6 slices)"
   blocked_by: null
   user_approval_needed: false
 
@@ -288,25 +279,27 @@ continuation:
     - Phase: 2 COMPLETE ✅ (Workspace Integration Fixes)
     - Phase: 3 IN_PROGRESS (Architectural Remediation)
     - ✅ S-011 COMPLETE: Accurate god store inventory generated
-    - CRITICAL FINDING: Health assessment data was 46% accurate (rag, conversation, agent stores already refactored)
-    - ACTUAL Tier 1 god stores identified (7 stores >500 lines):
-      1. quiz-store.ts (658 lines) - study/quiz
-      2. canvas-store.ts (623 lines) - canvas
-      3. note-store.ts (566 lines) - notes
-      4. file-sync-status-store.ts (554 lines) - workspace
-      5. flashcard-store.ts (531 lines) - flashcards
-      6. project-store.ts (519 lines) - workspace
-      7. file-snapshot-store.ts (509 lines) - filesystem
-    - Tier 2 god stores identified (3 stores >300 lines)
-    - Duplicate store locations identified (4 pairs)
+    - 🟡 S-012 IN PROGRESS: Splitting Tier 1 god stores (corrected scope)
     
-    Next: S-012 - Split Tier 1 god stores using architecture-remediation → eliminate-god-stores workflow
+    S-012 SUB-STORIES (CORRECTED SCOPE):
+    ✅ quiz-store.ts: ALREADY REFACTORED (658 → 64 lines in 7 files)
+    🔴 canvas-store.ts: READY TO SPLIT (623 lines → 6 slices, 8-10 hours)
+    🔴 flashcard-store.ts: PENDING (531 lines)
+    🔴 project-store.ts: PENDING (519 lines)
+    🟡 note-store.ts: PENDING (566 lines - has EPIC-26-1 governance, may be in-progress)
+    🟡 file-sync-status-store.ts: PENDING (554 lines - has "Zustand Migration" comment)
+    🟡 file-snapshot-store.ts: PENDING (509 lines - has Story WB-2 governance)
     
-    Reports generated:
-    - state-inventory-2026-01-05.md (full analysis)
-    - stale-health-assessment-data-2026-01-05.md (critical analysis)
+    Current Target: S-012-a
+    - Analysis COMPLETE: canvas-store-analysis-2026-01-05.md
+    - Architecture: 6 slices (80-120 lines each)
+    - Pattern: Follow successful quiz-store refactoring
     
-    To continue: Reply with "Proceed with S-012"
+    GOVERNANCE UPDATE DUE: At story 6 (currently at 5)
+    - Next update: After S-012-a completion
+    - Action: Update AGENTS.md with corrected god store inventory
+    
+    To continue: Reply with "Execute S-012-a"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERROR LOG
