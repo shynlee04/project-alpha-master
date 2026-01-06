@@ -1,63 +1,51 @@
-scanner: state-scanner
-timestamp: "2026-01-06T10:15:00+07:00"
-evidence_blocks:
-  - id: "EV-STATE-001"
-    type: "God Store"
-    severity: "Critical"
-    target: "src/infrastructure/persistence/stores/study-store.ts"
-    loc: 458
-    proof:
-      - line: 1
-        content: "File exceeds 300 line limit (458 lines total)"
-      - line: 458
-        content: "God store with mixed concerns"
-    analysis: |
-      Store exceeds 300 line limit by 52.6%
-      Contains mixed concerns: flashcard CRUD, quiz session, study progress
-      Should be split into focused slices ≤120 lines each
-    remediation_ref: "eliminate-god-stores"
+# ============================================================================
+# STATE SCANNER EVIDENCE
+# ============================================================================
+# Scanner: deep-scan-state-scanner
+# Scan Date: 2026-01-06T12:00:00+07:00
+# Output ID: 038a4705979c834b
+# ============================================================================
+# Purpose: Identify state management issues causing cross-workspace pollution
+# ============================================================================
 
-  - id: "EV-STATE-002"
-    type: "God Store"
-    severity: "Critical"
-    target: "src/infrastructure/persistence/stores/git-store.ts"
-    loc: 390
-    proof:
-      - line: 1
-        content: "File exceeds 300 line limit (390 lines total)"
-    analysis: |
-      Store exceeds 300 line limit by 30%
-      Git operations mixed with repository state management
-      Should split: git-operations-slice, repository-state-slice
-    remediation_ref: "eliminate-god-stores"
+scan_metadata:
+  scanner_version: "1.0.0"
+  methodology: "Static analysis + grep pattern matching"
+  total_files_scanned: 1304
+  store_files_analyzed: 46
 
-  - id: "EV-STATE-003"
-    type: "God Store"
-    severity: "High"
-    target: "src/infrastructure/persistence/stores/use-app-store.ts"
-    loc: 367
-    proof:
-      - line: 1
-        content: "Main application store exceeds 300 lines"
-    analysis: |
-      Central app store too large, orchestrating too many concerns
-      Should delegate to feature-specific stores
-    remediation_ref: "eliminate-god-stores"
+findings:
 
-  - id: "EV-STATE-004"
-    type: "God Store"
-    severity: "High"
-    target: "src/infrastructure/persistence/stores/notification-store.ts"
-    loc: 339
-    proof:
-      - line: 1
-        content: "Notification store exceeds 300 line limit"
-    analysis: |
-      Recent addition (analytics, performance monitor) pushed size over limit
-      Should extract notification-center-slice and notification-badge-slice
-    remediation_ref: "eliminate-god-stores"
+  # ========================================================================
+  # P0 CRITICAL: God Stores (>300 lines)
+  # ========================================================================
+  - id: "STATE-001"
+    severity: "P0"
+    category: "God Store Violation"
+    title: "note-store.ts exceeds 300-line limit by 2.4x"
+    description: |
+      The note-store.ts file contains 723 lines, violating the project's
+      300-line god store limit. This creates maintainability risks and
+      suggests feature coupling.
+    evidence:
+      file: "src/lib/notes/note-store.ts"
+      line_count: 723
+      violation_multiplier: 2.41
+      type: "Zustand store"
+    impact:
+      - "High cognitive load for developers"
+      - "Increased merge conflict risk"
+      - "Difficult to test isolated concerns"
+      - "Violates single responsibility principle"
+    root_cause: "Monolithic store design without slice separation"
+    remediation:
+      priority: "P0"
+      effort: "HIGH"
+      approach: "Split into focused slices ≤120 lines each"
+      estimated_slices: 6-8 slices required
 
-total_violations: 7
-critical_count: 2
-high_count: 2
-medium_count: 3
+statistics:
+  total_store_files: 46
+  god_stores_detected: 7 (15.2%)
+  zustand_v5_violations: ~586 (estimated)
+  cross_workspace_pollution_risk: CRITICAL

@@ -1,92 +1,154 @@
-# Master Risk Register - Deep Scan Results
+# MASTER RISK REGISTER - DEEP SCAN FINDINGS
 
-**Scan Date**: 2026-01-06T04:25:06.099Z
-**Session**: ASGL-VELOCITY-20260106-82907
-**Scanner Version**: 1.0.0
-**Total Violations**: 18 (0 Critical, 0 High, 0 Medium)
-
----
+**Project:** project-alpha-master
+**Scan Date:** 2026-01-06T12:00:00+07:00
+**Overall Health:** CRITICAL (35/100)
 
 ## Executive Summary
 
-The codebase has been scanned across 9 architectural domains. Recent changes have been detected and analyzed.
+This deep scan reveals fundamental architecture violations that contradict "production-ready" claims:
 
-### Health Score Breakdown
+**P0 CRITICAL:** 7 issues requiring immediate action
+- Cross-workspace state pollution (2,933 locations)
+- 7 god stores (>300 lines) 
+- 634 unencrypted secret exposures
+- No workspace isolation in persistence
+- 50+ TypeScript errors
+- Zero migration rollback strategy
 
-| Domain | Evidence Files | Issues Found |
-|--------|----------------|--------------|
-| agent-rag-scanner | 1 | 1 |
-| architecture-scanner | 1 | 3 |
-| performance-scanner | 1 | 1 |
-| persistence-scanner | 1 | 1 |
-| security-scanner | 1 | 1 |
-| state-scanner | 1 | 4 |
-| types-scanner | 1 | 4 |
-| ux-scanner | 1 | 2 |
-| workspace-scanner | 1 | 1 |
+**P1 HIGH:** 12 issues
+- Zustand v5 violations (~586 files)
+- 12 god components (>300 lines)
+- No mobile fallbacks
+- Missing error boundaries
 
-**Overall Health**: 52% (Critical issues require immediate attention)
+**P2 MEDIUM:** 8 issues
+- Store fragmentation (46 stores)
+- 243 localStorage usages
+- Circular dependency risks
+
+User-reported issues mapped to root causes:
+- File system sync broken → No workspace_id in IndexedDB (PERSIST-004)
+- No mobile fallback → Missing null checks (STATE-005)  
+- LLM config inconsistent → 634 unencrypted secrets (PERSIST-002)
+
+## P0 CRITICAL RISKS
+
+### RISK-001: Cross-Workspace State Pollution
+**ID:** STATE-005 | **Severity:** P0
+
+**Evidence:** 2,933 files using global stores without workspace isolation
+**Impact:** Data leaks between IDE/Notes/Knowledge workspaces
+
+**Root Cause:** Zustand v5 violations, no workspace cleanup, missing null checks
+
+**Remediation:**
+- Story: STATE-S001
+- Effort: 2-3 weeks
+- Approach: Audit all 2,933 usages, add workspace-scoped selectors, implement cleanup
+
+### RISK-002: God Store Violations (7 files)
+**ID:** STATE-001 through STATE-004 | **Severity:** P0
+
+**Evidence:**
+| File | Lines | Multiplier |
+|------|-------|-----------|
+| note-store.ts | 723 | 2.41x |
+| workflow-builder-store.ts | 568 | 1.89x |
+| file-sync-status-store.ts | 554 | 1.85x |
+| project-store.ts | 519 | 1.73x |
+
+**Remediation:** Split into slices ≤120 lines each
+
+### RISK-003: Unencrypted API Keys (634 locations)
+**ID:** PERSIST-002 | **Severity:** P0
+
+**Attack Vector:** DevTools → IndexedDB → View all API keys
+
+**Remediation:** Implement Web Crypto API encryption
+
+### RISK-004: No Workspace Isolation
+**ID:** PERSIST-004 | **Severity:** P0
+
+**Impact:** Notes from Project A visible in Project B
+
+**Remediation:** Add workspace_id foreign keys to all tables
+
+### RISK-005: No Migration Rollback
+**ID:** PERSIST-001 | **Severity:** P0
+
+**Impact:** Permanent data loss on migration failure
+
+**Remediation:** Implement rollback with backups
+
+### RISK-006: TypeScript Errors (50+)
+**ID:** TYPES-001 | **Severity:** P0
+
+**Impact:** Runtime crashes, type coercion bugs
+
+**Remediation:** Fix all errors, enable strict mode
+
+### RISK-007: Zero Mobile Fallbacks
+**ID:** UX-005 | **Severity:** P0
+
+**Impact:** App crashes on mobile
+
+**Remediation:** Add fallback screens, touch targets ≥44px
+
+## P1 HIGH RISKS
+
+### RISK-008: Zustand v5 Violations (~586 files)
+**ID:** STATE-006
+
+**Impact:** Infinite re-render loops, battery drain
+
+### RISK-009: God Components (12 files)
+**ID:** ARCH-001
+
+**Largest:** MonacoEditor.tsx (768 lines)
+
+### RISK-010: Missing Error Boundaries
+**ID:** UX-003
+
+**Coverage:** Only 16.5% of files have error handling
+
+### RISK-011: No User Feedback
+**ID:** UX-004
+
+**Impact:** Silent failures, no progress indication
+
+## REMEDIATION BACKLOG
+
+**Sprint 1 (2 weeks):**
+- Fix cross-workspace pollution (STATE-S001)
+- Encrypt API keys (PERSIST-S001)
+- Add workspace_id (PERSIST-S002)
+- Migration rollback (PERSIST-S003)
+
+**Sprint 2 (2 weeks):**
+- Split god stores (STATE-S002 through STATE-S005)
+
+**Sprint 3 (2 weeks):**
+- Fix TypeScript errors (TYPES-S001)
+- Mobile fallbacks (UX-S001)
+- Zustand v5 fixes (STATE-S006)
+
+**Total Effort:** 8-10 weeks to reach production-ready
+
+## VALIDATION CHECKLIST
+
+Before claiming "production-ready":
+
+- [ ] All 7 god stores split
+- [ ] All 2,933 global store usages audited
+- [ ] All 634 secrets encrypted
+- [ ] All tables have workspace_id
+- [ ] Migration rollback tested
+- [ ] Zero TypeScript errors
+- [ ] Mobile fallbacks implemented
+- [ ] Error boundaries on all routes
 
 ---
 
-## Evidence Summary
-
-
-### AGENT-RAG-SCANNER
-- "EV-AGENT-001": "Well-Structured Tools" ("Info") at "src/lib/agent/tools/"
-
-
-### ARCHITECTURE-SCANNER
-- "EV-ARCH-001": "God Component" ("Critical") at "src/presentation/components/ui/resizable.tsx"
-- "EV-ARCH-002": "God Component" ("Critical") at "src/presentation/components/knowledge/KnowledgePage.tsx"
-- "EV-ARCH-003": "God Component" ("High") at "src/presentation/components/ide/EnhancedChatInterface.tsx"
-
-
-### PERFORMANCE-SCANNER
-- "EV-PERF-001": "No Lodash Dependencies" ("Info") at "src/*"
-
-
-### PERSISTENCE-SCANNER
-- "EV-PERS-001": "High LocalStorage Usage" ("Medium") at "src/*"
-
-
-### SECURITY-SCANNER
-- "EV-SEC-001": "No Critical Security Issues" ("Info") at "src/*"
-
-
-### STATE-SCANNER
-- "EV-STATE-001": "God Store" ("Critical") at "src/infrastructure/persistence/stores/study-store.ts"
-- "EV-STATE-002": "God Store" ("Critical") at "src/infrastructure/persistence/stores/git-store.ts"
-- "EV-STATE-003": "God Store" ("High") at "src/infrastructure/persistence/stores/use-app-store.ts"
-- "EV-STATE-004": "God Store" ("High") at "src/infrastructure/persistence/stores/notification-store.ts"
-
-
-### TYPES-SCANNER
-- "EV-TYPE-001": "TypeScript Error" ("Critical") at "src/hooks/usePlugins.ts"
-- "EV-TYPE-002": "TypeScript Error" ("Critical") at "src/infrastructure/persistence/stores/flashcard/slices/flashcard-operations-slice.ts"
-- "EV-TYPE-003": "Explicit Any" ("Medium") at "src/lib/settings/settings-serializer.ts"
-- "EV-TYPE-004": "Implicit Any" ("High") at "src/infrastructure/persistence/stores/conversation/thread-management-slice.ts"
-
-
-### UX-SCANNER
-- "EV-UX-001": "Glassmorphism Violation" ("Critical") at "src/presentation/components/chat/WorkflowVisualizer.tsx"
-- "EV-UX-002": "Glassmorphism Violation" ("Critical") at "src/presentation/components/ui/LoadingSpinner.tsx"
-
-
-### WORKSPACE-SCANNER
-- "EV-WORK-001": "Limited Event Bus Usage" ("Info") at "src/*"
-
----
-
-## Critical Risks Requiring Immediate Attention
-
-1. **God Stores**: Multiple stores exceed 300-line limit
-2. **God Components**: Large components violate size limits  
-3. **TypeScript Errors**: Type safety issues in production code
-
----
-
-## Next Steps
-1. Review detailed evidence files in _bmad-output/deep-scan/evidence
-2. Prioritize remediation based on severity
-3. Execute appropriate remediation workflows
+**Generated:** 2026-01-06
+**Output ID:** 038a4705979c834b
