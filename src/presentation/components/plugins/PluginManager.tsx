@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Power, Trash2, Settings, Package } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { usePlugins } from '@/hooks/usePlugins';
+import { usePluginOperations } from '@/hooks/usePlugins';
 import type { PluginMetadata } from '@/lib/plugins/types';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -20,7 +20,7 @@ export function PluginManager() {
   const { t } = useTranslation();
   const { isMobile } = useMediaQuery();
 
-  const { plugins, isLoading, deactivatePlugin, activatePlugin, uninstallPlugin } = usePlugins();
+  const { plugins, isLoading, deactivatePlugin, activatePlugin, uninstallPlugin } = usePluginOperations();
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
   const handleToggleActivation = async (plugin: PluginMetadata) => {

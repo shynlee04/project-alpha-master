@@ -201,10 +201,7 @@ export class GitCredentialManager {
   /**
    * Fill credentials for Git operation
    */
-  fill(url: string): (username: string | undefined) => {
-    username: string;
-    password: string;
-  } | null {
+  fill(url: string): (() => { username: string; password: string }) | null {
     const creds = this.cache.get(url);
     if (!creds || creds.type !== 'https') {
       return null;

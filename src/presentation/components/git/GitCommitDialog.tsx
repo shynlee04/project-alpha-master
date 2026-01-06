@@ -11,7 +11,6 @@ import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   GitCommitHorizontal,
-  GitBranch,
   Plus,
   Trash2,
   FileText,
@@ -53,6 +52,10 @@ function FileStatusCard({ filepath, status, onStage, onUnstage }: FileStatusCard
         return 'text-[var(--warning)]';
       case 'untracked':
         return 'text-[var(--neutral-500)]';
+      case 'conflicted':
+        return 'text-[var(--destructive)]';
+      case 'deleted':
+        return 'text-[var(--destructive)]';
       default:
         return 'text-[var(--foreground)]';
     }
@@ -164,11 +167,10 @@ export function GitCommitDialog({
    */
   const handleStage = useCallback(
     async (filepath: string) => {
-      const { stageFiles } = useGitCommit(repoPath);
       await stageFiles([filepath]);
       await refreshStatus();
     },
-    [repoPath, refreshStatus]
+    [stageFiles, refreshStatus]
   );
 
   /**
@@ -176,11 +178,10 @@ export function GitCommitDialog({
    */
   const handleUnstage = useCallback(
     async (filepath: string) => {
-      const { unstageFiles } = useGitCommit(repoPath);
       await unstageFiles([filepath]);
       await refreshStatus();
     },
-    [repoPath, refreshStatus]
+    [unstageFiles, refreshStatus]
   );
 
   /**

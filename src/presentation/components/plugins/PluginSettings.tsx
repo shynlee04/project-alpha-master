@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Check, X, Trash2, RotateCcw } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { Switch } from '@/presentation/components/ui/switch';
-import { usePlugins } from '@/hooks/usePlugins';
+import { usePluginOperations } from '@/hooks/usePlugins';
 import type { PluginMetadata, PluginPermission } from '@/lib/plugins/types';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -25,7 +25,7 @@ export function PluginSettings({ plugin }: PluginSettingsProps) {
   const { t } = useTranslation();
   const { isMobile } = useMediaQuery();
 
-  const { grantPermission, revokePermission, clearPluginData } = usePlugins();
+  const { grantPermission, revokePermission, clearPluginData } = usePluginOperations();
   const [updatingPermission, setUpdatingPermission] = useState<string | null>(null);
 
   const handleTogglePermission = async (permission: PluginPermission) => {

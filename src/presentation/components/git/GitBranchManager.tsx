@@ -181,8 +181,6 @@ export function GitBranchManager({
   const [newBranchName, setNewBranchName] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [branchToDelete, setBranchToDelete] = useState<string | null>(null);
-  const [branchToMerge, setBranchToMerge] = useState<string | null>(null);
 
   // Load branches on mount
   useEffect(() => {

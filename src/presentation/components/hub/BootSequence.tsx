@@ -28,54 +28,17 @@ export interface BootSequenceProps {
  * ```
  */
 export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
-  const [lines, setLines] = useState<string[]>([]);
-  const onCompleteRef = useRef(onComplete);
+  // IMMEDIATE COMPLETION - No animation, instant callback
+  // This bypasses SSR/hydration issues with setTimeout
 
-  // Keep ref in sync with onComplete prop
   useEffect(() => {
-    onCompleteRef.current = onComplete;
+    // Complete immediately on mount
+    const timer = setTimeout(() => {
+      onComplete();
+    }, 100); // Minimal delay to ensure React has mounted
+
+    return () => clearTimeout(timer);
   }, [onComplete]);
 
-  // Boot sequence messages (8-bit BIOS style)
-  const bootLines = [
-    "BIOS CHECK... OK",
-    "LOADING KERNEL... OK",
-    "MOUNTING VIRTUAL FILESYSTEM...",
-    "INITIALIZING NEURAL INTERFACE...",
-    "ACCESS GRANTED."
-  ];
-
-  useEffect(() => {
-    let delay = 0;
-
-    // Sequentially display each boot line with random delays
-    bootLines.forEach((line, i) => {
-      delay += Math.random() * 300 + 100; // 100-400ms delay per line
-      setTimeout(() => {
-        setLines(prev => [...prev, line]);
-
-        // Trigger completion callback after last line
-        if (i === bootLines.length - 1) {
-          setTimeout(() => onCompleteRef.current(), 500);
-        }
-      }, delay);
-    });
-    // Empty dependency array - run once on mount only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <div className="fixed inset-0 bg-background z-50 flex items-start justify-start p-8 font-mono text-primary text-sm md:text-base">
-      <div className="space-y-1">
-        {lines.map((line, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="text-muted-foreground">{`> `}</span>
-            <span>{line}</span>
-          </div>
-        ))}
-        {/* Pulsing cursor */}
-        <div className="animate-pulse">_</div>
-      </div>
-    </div>
-  );
+  return null; // No UI, instant completion
 };

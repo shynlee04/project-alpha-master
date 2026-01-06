@@ -161,13 +161,11 @@ export function GitDiffViewer({
     getDiff,
     currentDiff,
     clearDiff,
-    showUntrackedFiles,
-    diffViewMode,
-    setDiffViewMode,
   } = useGitFiles(repoPath);
 
   const [currentFilepath, setCurrentFilepath] = useState(initialFilepath);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [diffViewMode, setDiffViewMode] = useState<'unified' | 'side-by-side'>('unified');
 
   const changedFiles = useMemo(() => {
     if (!status) return [];

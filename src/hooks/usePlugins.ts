@@ -31,7 +31,7 @@ import type {
   PluginPermission,
 } from '@/lib/plugins/types';
 
-export interface UsePluginsReturn {
+export interface UsePluginOperationsReturn {
   // State
   plugins: PluginMetadata[];
   isLoading: boolean;
@@ -57,7 +57,7 @@ export interface UsePluginsReturn {
   closeManager: () => void;
 }
 
-export function usePlugins(): UsePluginsReturn {
+export function usePluginOperations(): UsePluginOperationsReturn {
   // Store hooks
   const plugins = usePlugins();
   const addPlugin = useAddPlugin();
@@ -322,7 +322,7 @@ export function usePluginMarketplace(): UsePluginMarketplaceReturn {
   const setFilterSearch = useSetFilterSearch();
   const setIsLoadingMarketplace = useSetIsLoadingMarketplace();
   const setError = useSetPluginError();
-  const { installPlugin } = usePlugins();
+  const { installPlugin } = usePluginOperations();
 
   // Refresh marketplace (placeholder for future API)
   const refreshMarketplace = useCallback(async () => {

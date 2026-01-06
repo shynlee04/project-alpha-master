@@ -13,8 +13,8 @@
  * @governance ADR-024 Clean Architecture
  */
 
-import { StateCreator } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 /**
  * Terminal tab state
@@ -295,4 +295,12 @@ export const createTerminalStore: StateCreator<TerminalState> = (set, get) => ({
 /**
  * Terminal store with persistence
  */
-export const useTerminalStore = createTerminalStore;
+export const useTerminalStore = create<TerminalState>()(
+  persist(
+    createTerminalStore,
+    {
+      name: 'terminal-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);

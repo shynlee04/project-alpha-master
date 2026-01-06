@@ -15,7 +15,6 @@ import {
   Check,
   ArrowLeft,
   ArrowRight,
-  FileText,
 } from 'lucide-react';
 import { useGit } from '@/hooks/useGit';
 import { Button } from '@/presentation/components/ui/button';
@@ -36,7 +35,7 @@ import {
   SelectValue,
 } from '@/presentation/components/ui/select';
 import { Textarea } from '@/presentation/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { Label } from '@/presentation/components/ui/label';
 
 /**
  * Conflict hunk props
