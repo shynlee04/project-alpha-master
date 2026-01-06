@@ -106,7 +106,11 @@ export interface WebSocketClientEvents {
  */
 export class WebSocketClient {
   private ws: WebSocket | null = null;
-  private config: Required<WebSocketClientConfig>;
+  private config: WebSocketClientConfig & {
+    reconnectInterval: number;
+    maxReconnectAttempts: number;
+    connectionTimeout: number;
+  };
   private events: Partial<WebSocketClientEvents>;
   private reconnectAttempts = 0;
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
