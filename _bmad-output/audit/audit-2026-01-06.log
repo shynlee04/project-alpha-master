@@ -687,3 +687,478 @@
 [2026-01-06 20:48:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
 [2026-01-06 20:48:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
 [2026-01-06 20:48:54] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:22:43] [INFO] ==========================================
+[2026-01-06 22:22:44] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:22:44] [INFO] ==========================================
+[2026-01-06 22:22:44] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:22:44] [INFO] ==========================================
+[2026-01-06 22:22:44] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:22:44] [INFO] ==========================================
+[2026-01-06 22:22:44] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:22:45] [INFO] Active artifacts: 52
+[2026-01-06 22:22:45] [INFO] Stale artifacts: 0
+[2026-01-06 22:22:45] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:22:45] [INFO] Active artifacts: 52
+[2026-01-06 22:22:45] [INFO] Stale artifacts: 0
+[2026-01-06 22:22:46] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:22:46] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:22:46] [INFO] Total files checked: 28
+[2026-01-06 22:22:46] [INFO] Files missing governance: 1
+[2026-01-06 22:22:46] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:22:46] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:22:46] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:22:46] [INFO] Total files checked: 28
+[2026-01-06 22:22:46] [INFO] Files missing governance: 1
+[2026-01-06 22:22:46] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:22:46] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:22:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:22:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:23:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:23:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:23:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:23:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:23:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:23:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:23:19] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 22:23:19] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 22:23:25] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 22:23:25] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 22:23:31] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 22:23:31] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 22:23:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 22:23:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 22:23:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 22:23:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 22:31:40] [INFO] ==========================================
+[2026-01-06 22:31:40] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:31:40] [INFO] ==========================================
+[2026-01-06 22:31:40] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:31:40] [INFO] Active artifacts: 52
+[2026-01-06 22:31:40] [INFO] Stale artifacts: 0
+[2026-01-06 22:31:40] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:31:41] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:31:41] [INFO] Total files checked: 28
+[2026-01-06 22:31:41] [INFO] Files missing governance: 1
+[2026-01-06 22:31:41] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:31:41] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:31:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:31:43] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:31:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:31:46] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:31:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 22:31:49] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 22:31:50] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 22:31:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 22:31:52] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 22:31:54] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 22:31:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 22:31:56] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 22:31:57] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-008-handoff.md[0m
+[2026-01-06 22:31:59] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-041-handoff.md[0m
+[2026-01-06 22:32:00] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-023-handoff.md[0m
+[2026-01-06 22:32:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-014-handoff.md[0m
+[2026-01-06 22:32:02] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-032-handoff.md[0m
+[2026-01-06 22:32:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-019-handoff.md[0m
+[2026-01-06 22:32:04] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-029-handoff.md[0m
+[2026-01-06 22:32:06] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-002-handoff.md[0m
+[2026-01-06 22:32:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-035-handoff.md[0m
+[2026-01-06 22:32:08] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
+[2026-01-06 22:32:09] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
+[2026-01-06 22:32:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 22:32:12] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-038-handoff.md[0m
+[2026-01-06 22:32:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-043-handoff.md[0m
+[2026-01-06 22:32:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-004-handoff.md[0m
+[2026-01-06 22:32:15] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-016-handoff.md[0m
+[2026-01-06 22:32:16] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-021-handoff.md[0m
+[2026-01-06 22:32:17] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-030-handoff.md[0m
+[2026-01-06 22:32:19] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-handoff.md[0m
+[2026-01-06 22:32:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-009-handoff.md[0m
+[2026-01-06 22:32:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-040-handoff.md[0m
+[2026-01-06 22:32:23] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-022-handoff.md[0m
+[2026-01-06 22:32:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-015-handoff.md[0m
+[2026-01-06 22:32:26] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-033-handoff.md[0m
+[2026-01-06 22:32:27] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-018-handoff.md[0m
+[2026-01-06 22:32:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-036-handoff.md[0m
+[2026-01-06 22:32:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-001-handoff.md[0m
+[2026-01-06 22:32:31] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-027-handoff.md[0m
+[2026-01-06 22:32:33] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-042-handoff.md[0m
+[2026-01-06 22:32:34] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-017-handoff.md[0m
+[2026-01-06 22:32:35] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-020-handoff.md[0m
+[2026-01-06 22:32:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-031-handoff.md[0m
+[2026-01-06 22:32:38] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-028-handoff.md[0m
+[2026-01-06 22:32:39] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-003-handoff.md[0m
+[2026-01-06 22:37:54] [INFO] ==========================================
+[2026-01-06 22:37:54] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:37:54] [INFO] ==========================================
+[2026-01-06 22:37:54] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:37:54] [INFO] Active artifacts: 52
+[2026-01-06 22:37:54] [INFO] Stale artifacts: 0
+[2026-01-06 22:37:54] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:37:54] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:37:54] [INFO] Total files checked: 28
+[2026-01-06 22:37:54] [INFO] Files missing governance: 1
+[2026-01-06 22:37:54] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:37:54] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:37:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:37:57] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:37:58] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:37:59] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:38:00] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 22:38:02] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 22:38:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 22:38:04] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 22:38:05] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 22:38:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 22:38:08] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 22:38:09] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 22:38:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-008-handoff.md[0m
+[2026-01-06 22:38:11] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-041-handoff.md[0m
+[2026-01-06 22:38:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-023-handoff.md[0m
+[2026-01-06 22:38:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-014-handoff.md[0m
+[2026-01-06 22:38:15] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-032-handoff.md[0m
+[2026-01-06 22:38:16] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-019-handoff.md[0m
+[2026-01-06 22:38:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-029-handoff.md[0m
+[2026-01-06 22:38:19] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-002-handoff.md[0m
+[2026-01-06 22:38:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-035-handoff.md[0m
+[2026-01-06 22:38:21] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
+[2026-01-06 22:38:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
+[2026-01-06 22:38:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 22:38:25] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-038-handoff.md[0m
+[2026-01-06 22:38:26] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-043-handoff.md[0m
+[2026-01-06 22:38:28] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-004-handoff.md[0m
+[2026-01-06 22:38:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-016-handoff.md[0m
+[2026-01-06 22:38:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-021-handoff.md[0m
+[2026-01-06 22:38:32] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-030-handoff.md[0m
+[2026-01-06 22:38:33] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-handoff.md[0m
+[2026-01-06 22:38:34] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-009-handoff.md[0m
+[2026-01-06 22:38:36] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-040-handoff.md[0m
+[2026-01-06 22:38:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-022-handoff.md[0m
+[2026-01-06 22:38:38] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-015-handoff.md[0m
+[2026-01-06 22:38:40] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-033-handoff.md[0m
+[2026-01-06 22:38:41] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-018-handoff.md[0m
+[2026-01-06 22:38:43] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-036-handoff.md[0m
+[2026-01-06 22:38:44] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-001-handoff.md[0m
+[2026-01-06 22:38:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-027-handoff.md[0m
+[2026-01-06 22:38:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-042-handoff.md[0m
+[2026-01-06 22:38:48] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-017-handoff.md[0m
+[2026-01-06 22:38:49] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-020-handoff.md[0m
+[2026-01-06 22:38:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-031-handoff.md[0m
+[2026-01-06 22:38:52] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-028-handoff.md[0m
+[2026-01-06 22:38:53] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-003-handoff.md[0m
+[2026-01-06 22:47:15] [INFO] ==========================================
+[2026-01-06 22:47:15] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:47:15] [INFO] ==========================================
+[2026-01-06 22:47:15] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:47:16] [INFO] Active artifacts: 52
+[2026-01-06 22:47:16] [INFO] Stale artifacts: 0
+[2026-01-06 22:47:16] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:47:16] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:47:16] [INFO] Total files checked: 28
+[2026-01-06 22:47:16] [INFO] Files missing governance: 1
+[2026-01-06 22:47:16] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:47:16] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:47:17] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:47:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:47:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:47:21] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:47:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 22:47:23] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 22:47:25] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 22:47:26] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 22:47:27] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 22:47:28] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 22:47:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 22:47:31] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 22:47:32] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-008-handoff.md[0m
+[2026-01-06 22:47:34] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-041-handoff.md[0m
+[2026-01-06 22:47:35] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-023-handoff.md[0m
+[2026-01-06 22:47:36] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-014-handoff.md[0m
+[2026-01-06 22:47:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-032-handoff.md[0m
+[2026-01-06 22:47:39] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-019-handoff.md[0m
+[2026-01-06 22:47:40] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-029-handoff.md[0m
+[2026-01-06 22:47:41] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-002-handoff.md[0m
+[2026-01-06 22:47:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-035-handoff.md[0m
+[2026-01-06 22:47:44] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
+[2026-01-06 22:47:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
+[2026-01-06 22:47:46] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 22:47:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-038-handoff.md[0m
+[2026-01-06 22:47:49] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-043-handoff.md[0m
+[2026-01-06 22:47:50] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-004-handoff.md[0m
+[2026-01-06 22:47:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-016-handoff.md[0m
+[2026-01-06 22:47:52] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-021-handoff.md[0m
+[2026-01-06 22:47:53] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-030-handoff.md[0m
+[2026-01-06 22:47:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-handoff.md[0m
+[2026-01-06 22:47:56] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-009-handoff.md[0m
+[2026-01-06 22:47:57] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-040-handoff.md[0m
+[2026-01-06 22:47:59] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-022-handoff.md[0m
+[2026-01-06 22:48:00] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-015-handoff.md[0m
+[2026-01-06 22:48:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-033-handoff.md[0m
+[2026-01-06 22:48:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-018-handoff.md[0m
+[2026-01-06 22:48:04] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-036-handoff.md[0m
+[2026-01-06 22:48:05] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-001-handoff.md[0m
+[2026-01-06 22:48:06] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-027-handoff.md[0m
+[2026-01-06 22:48:08] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-042-handoff.md[0m
+[2026-01-06 22:48:09] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-017-handoff.md[0m
+[2026-01-06 22:48:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-020-handoff.md[0m
+[2026-01-06 22:48:12] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-031-handoff.md[0m
+[2026-01-06 22:48:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-028-handoff.md[0m
+[2026-01-06 22:48:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-003-handoff.md[0m
+[2026-01-06 22:49:58] [INFO] ==========================================
+[2026-01-06 22:49:58] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:49:58] [INFO] ==========================================
+[2026-01-06 22:49:58] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:49:59] [INFO] Active artifacts: 52
+[2026-01-06 22:49:59] [INFO] Stale artifacts: 0
+[2026-01-06 22:49:59] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:49:59] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:49:59] [INFO] Total files checked: 28
+[2026-01-06 22:49:59] [INFO] Files missing governance: 1
+[2026-01-06 22:49:59] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:49:59] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:50:00] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:50:02] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:50:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:50:04] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 22:50:06] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 22:50:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 22:50:09] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 22:50:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 22:50:11] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 22:50:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 22:50:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 22:50:15] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 22:50:17] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-008-handoff.md[0m
+[2026-01-06 22:50:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-041-handoff.md[0m
+[2026-01-06 22:50:19] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-023-handoff.md[0m
+[2026-01-06 22:50:21] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-014-handoff.md[0m
+[2026-01-06 22:50:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-032-handoff.md[0m
+[2026-01-06 22:50:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-019-handoff.md[0m
+[2026-01-06 22:50:25] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-029-handoff.md[0m
+[2026-01-06 22:50:26] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-002-handoff.md[0m
+[2026-01-06 22:50:28] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-035-handoff.md[0m
+[2026-01-06 22:50:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
+[2026-01-06 22:50:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
+[2026-01-06 22:50:32] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 22:50:33] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-038-handoff.md[0m
+[2026-01-06 22:50:35] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-043-handoff.md[0m
+[2026-01-06 22:50:36] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-004-handoff.md[0m
+[2026-01-06 22:50:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-016-handoff.md[0m
+[2026-01-06 22:50:39] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-021-handoff.md[0m
+[2026-01-06 22:50:40] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-030-handoff.md[0m
+[2026-01-06 22:50:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-handoff.md[0m
+[2026-01-06 22:50:43] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-009-handoff.md[0m
+[2026-01-06 22:50:44] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-040-handoff.md[0m
+[2026-01-06 22:50:46] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-022-handoff.md[0m
+[2026-01-06 22:50:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-015-handoff.md[0m
+[2026-01-06 22:50:49] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-033-handoff.md[0m
+[2026-01-06 22:50:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-018-handoff.md[0m
+[2026-01-06 22:50:52] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-036-handoff.md[0m
+[2026-01-06 22:50:54] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-001-handoff.md[0m
+[2026-01-06 22:50:56] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-027-handoff.md[0m
+[2026-01-06 22:50:58] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-042-handoff.md[0m
+[2026-01-06 22:51:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-017-handoff.md[0m
+[2026-01-06 22:51:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-020-handoff.md[0m
+[2026-01-06 22:51:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-031-handoff.md[0m
+[2026-01-06 22:51:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-028-handoff.md[0m
+[2026-01-06 22:51:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-003-handoff.md[0m
+[2026-01-06 22:52:12] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-034-handoff.md[0m
+[2026-01-06 22:52:39] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-completion-summary.md[0m
+[2026-01-06 22:52:42] [INFO] ==========================================
+[2026-01-06 22:52:42] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:52:42] [INFO] ==========================================
+[2026-01-06 22:52:42] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:52:42] [INFO] ==========================================
+[2026-01-06 22:52:42] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 22:52:42] [INFO] ==========================================
+[2026-01-06 22:52:42] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 22:52:46] [INFO] Active artifacts: 52
+[2026-01-06 22:52:46] [INFO] Stale artifacts: 0
+[2026-01-06 22:52:46] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:52:46] [INFO] Active artifacts: 52
+[2026-01-06 22:52:46] [INFO] Stale artifacts: 0
+[2026-01-06 22:52:47] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 22:52:47] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:52:48] [INFO] Total files checked: 28
+[2026-01-06 22:52:48] [INFO] Files missing governance: 1
+[2026-01-06 22:52:48] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:52:48] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:52:48] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 22:52:48] [INFO] Total files checked: 28
+[2026-01-06 22:52:48] [INFO] Files missing governance: 1
+[2026-01-06 22:52:48] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 22:52:48] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 22:53:00] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-001-completion-report.md[0m
+[2026-01-06 22:53:08] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:53:08] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 22:53:21] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-025-handoff.md[0m
+[2026-01-06 22:53:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:53:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 22:53:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-012-handoff.md[0m
+[2026-01-06 22:53:41] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:53:41] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 22:55:43] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-039-handoff.md[0m
+[2026-01-06 23:00:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/sprint-artifacts/ralph-loop-final-certification-182-2025-12-31.md[0m
+[2026-01-06 23:04:47] [INFO] ==========================================
+[2026-01-06 23:04:47] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:04:47] [INFO] ==========================================
+[2026-01-06 23:04:47] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:04:48] [INFO] Active artifacts: 52
+[2026-01-06 23:04:48] [INFO] Stale artifacts: 0
+[2026-01-06 23:04:48] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:04:48] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:04:48] [INFO] Total files checked: 28
+[2026-01-06 23:04:48] [INFO] Files missing governance: 1
+[2026-01-06 23:04:48] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:04:48] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:04:54] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 23:04:57] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 23:04:59] [INFO] ==========================================
+[2026-01-06 23:04:59] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:04:59] [INFO] ==========================================
+[2026-01-06 23:04:59] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:05:00] [INFO] Active artifacts: 52
+[2026-01-06 23:05:00] [INFO] Stale artifacts: 0
+[2026-01-06 23:05:00] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:05:00] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 23:05:00] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:05:00] [INFO] Total files checked: 28
+[2026-01-06 23:05:00] [INFO] Files missing governance: 1
+[2026-01-06 23:05:00] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:05:00] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:05:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 23:05:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 23:05:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 23:05:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 23:05:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 23:05:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 23:05:12] [INFO] ==========================================
+[2026-01-06 23:05:12] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:05:12] [INFO] ==========================================
+[2026-01-06 23:05:12] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:05:13] [INFO] Active artifacts: 52
+[2026-01-06 23:05:13] [INFO] Stale artifacts: 0
+[2026-01-06 23:05:13] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:05:13] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:05:13] [INFO] Total files checked: 28
+[2026-01-06 23:05:13] [INFO] Files missing governance: 1
+[2026-01-06 23:05:13] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:05:13] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:05:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 23:05:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 23:05:16] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 23:05:17] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 23:05:17] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 23:05:19] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 23:05:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 23:05:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 23:05:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 23:05:23] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 23:05:23] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 23:05:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 23:05:26] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 23:05:26] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 23:05:27] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 23:05:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 23:05:29] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 23:05:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 23:10:31] [INFO] ==========================================
+[2026-01-06 23:10:31] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:10:31] [INFO] ==========================================
+[2026-01-06 23:10:31] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:10:31] [INFO] ==========================================
+[2026-01-06 23:10:31] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:10:31] [INFO] ==========================================
+[2026-01-06 23:10:31] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:10:32] [INFO] Active artifacts: 52
+[2026-01-06 23:10:32] [INFO] Stale artifacts: 0
+[2026-01-06 23:10:32] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:10:32] [INFO] Active artifacts: 52
+[2026-01-06 23:10:32] [INFO] Stale artifacts: 0
+[2026-01-06 23:10:32] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:10:32] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:10:32] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:10:32] [INFO] Total files checked: 28
+[2026-01-06 23:10:32] [INFO] Total files checked: 28
+[2026-01-06 23:10:32] [INFO] Files missing governance: 1
+[2026-01-06 23:10:32] [INFO] Files missing governance: 1
+[2026-01-06 23:10:32] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:10:32] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:10:32] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:10:32] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:13:22] [INFO] ==========================================
+[2026-01-06 23:13:22] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:13:22] [INFO] ==========================================
+[2026-01-06 23:13:22] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:13:22] [INFO] Active artifacts: 52
+[2026-01-06 23:13:22] [INFO] Stale artifacts: 0
+[2026-01-06 23:13:22] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:13:23] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:13:23] [INFO] Total files checked: 28
+[2026-01-06 23:13:23] [INFO] Files missing governance: 1
+[2026-01-06 23:13:23] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:13:23] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:13:27] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 23:13:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 23:13:32] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 23:13:34] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 23:13:36] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 23:13:38] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 23:13:40] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 23:13:42] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 23:13:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 23:13:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 23:13:49] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 23:13:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 23:13:53] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-008-handoff.md[0m
+[2026-01-06 23:13:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-041-handoff.md[0m
+[2026-01-06 23:13:57] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-023-handoff.md[0m
+[2026-01-06 23:13:59] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-014-handoff.md[0m
+[2026-01-06 23:14:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-032-handoff.md[0m
+[2026-01-06 23:14:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-019-handoff.md[0m
+[2026-01-06 23:14:05] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-029-handoff.md[0m
+[2026-01-06 23:14:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-002-handoff.md[0m
+[2026-01-06 23:14:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-035-handoff.md[0m
+[2026-01-06 23:14:12] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
+[2026-01-06 23:14:14] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
+[2026-01-06 23:14:16] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 23:14:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-038-handoff.md[0m
+[2026-01-06 23:14:21] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-043-handoff.md[0m
+[2026-01-06 23:19:23] [INFO] ==========================================
+[2026-01-06 23:19:23] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 23:19:23] [INFO] ==========================================
+[2026-01-06 23:19:23] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 23:19:23] [INFO] Active artifacts: 52
+[2026-01-06 23:19:23] [INFO] Stale artifacts: 0
+[2026-01-06 23:19:23] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 23:19:24] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 23:19:24] [INFO] Total files checked: 28
+[2026-01-06 23:19:24] [INFO] Files missing governance: 1
+[2026-01-06 23:19:24] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 23:19:24] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 23:19:28] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 23:19:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 23:19:32] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 23:19:34] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 23:19:36] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 23:19:38] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 23:19:41] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 23:19:43] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-037-handoff.md[0m
+[2026-01-06 23:19:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-007-completion-report.md[0m
+[2026-01-06 23:19:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-003-handoff.md[0m
+[2026-01-06 23:19:49] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-011-handoff.md[0m
+[2026-01-06 23:19:51] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-026-handoff.md[0m
+[2026-01-06 23:19:53] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-008-handoff.md[0m
+[2026-01-06 23:19:55] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-041-handoff.md[0m
+[2026-01-06 23:19:57] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-023-handoff.md[0m
+[2026-01-06 23:19:59] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-014-handoff.md[0m
+[2026-01-06 23:20:01] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-032-handoff.md[0m
+[2026-01-06 23:20:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-019-handoff.md[0m
+[2026-01-06 23:20:05] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-029-handoff.md[0m
+[2026-01-06 23:20:07] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-002-handoff.md[0m
+[2026-01-06 23:20:09] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-035-handoff.md[0m
+[2026-01-06 23:20:11] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
+[2026-01-06 23:20:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
+[2026-01-06 23:20:16] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 23:20:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-038-handoff.md[0m
+[2026-01-06 23:20:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-043-handoff.md[0m
+[2026-01-06 23:20:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-004-handoff.md[0m

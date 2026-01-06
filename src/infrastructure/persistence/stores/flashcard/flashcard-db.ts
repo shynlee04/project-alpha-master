@@ -11,6 +11,7 @@ import Dexie from 'dexie';
  */
 export interface FlashcardRecord {
   id: string;
+  workspaceId: string;
   question: string;
   answer: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
@@ -22,6 +23,7 @@ export interface FlashcardRecord {
 
 export interface FlashcardSetRecord {
   id: string;
+  workspaceId: string;
   name: string;
   description?: string;
   cardIds: string[];

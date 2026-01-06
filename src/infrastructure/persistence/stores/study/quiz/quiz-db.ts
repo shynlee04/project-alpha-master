@@ -11,6 +11,7 @@ import type { QuizSettings } from '../../../../../lib/study/quiz-types';
  */
 export interface QuizRecord {
     id: string;
+    workspaceId: string;
     title: string;
     description?: string;
     questionIds: string[];
@@ -25,6 +26,7 @@ export interface QuizRecord {
  */
 export interface QuizQuestionRecord {
     id: string;
+    workspaceId: string;
     quizId: string;
     question: string;
     options: string[];
@@ -48,6 +50,21 @@ export class QuizDatabase extends Dexie {
         this.version(1).stores({
             quizzes: 'id, title, createdAt, topic, *sourceIds',
             quizQuestions: 'id, quizId, difficulty, topic, *sourceIds',
+        }).upgrade((tx) => {
+            // Migration to version 2: Add workspaceId
+            const defaultWorkspaceId = 'default';
+            return Promise.all([
+                tx.db.quizzes.toCollection().modify((quiz) => {
+                    (quiz as any).workspaceId = defaultWorkspaceId;
+                }),
+                tx.db.quizQuestions.toCollection().modify((q) => {
+                    (q as any).workspaceId = defaultWorkspaceId;
+                }),
+            ]);
+        });
+        this.version(2).stores({
+            quizzes: 'id, workspaceId, title, createdAt, topic, *sourceIds',
+            quizQuestions: 'id, workspaceId, quizId, difficulty, topic, *sourceIds',
         });
     }
 }
