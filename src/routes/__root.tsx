@@ -14,6 +14,7 @@ import { TooltipProvider } from '@/presentation/components/ui/tooltip'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 import { OfflineIndicator } from '@/presentation/components/offline/OfflineIndicator'
+import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
 
 import appCss from '../styles.css?url'
 
@@ -80,6 +81,8 @@ export const Route = createRootRoute({
                   <AppErrorBoundary>
                     {/* Offline Indicator */}
                     <OfflineIndicator />
+                    {/* Notification Permission Requester */}
+                    <NotificationPermissionRequester />
                     <Outlet />
                   </AppErrorBoundary>
                 </UnifiedWorkspaceProvider>

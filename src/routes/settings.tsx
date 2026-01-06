@@ -26,10 +26,11 @@ import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 import { SettingsExportDialog } from '@/presentation/components/settings/SettingsExportDialog';
 import { SettingsImportDialog } from '@/presentation/components/settings/SettingsImportDialog';
 import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
+import { AnalyticsDashboard } from '@/presentation/components/analytics';
 import { useAllProjects } from '@/infrastructure/persistence/stores/project';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
-import { Code2 } from 'lucide-react';
+import { Code2, BarChart3 } from 'lucide-react';
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -40,6 +41,7 @@ function SettingsPage() {
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(false);
 
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();
@@ -238,6 +240,47 @@ function SettingsPage() {
                     </div>
                 </section>
 
+                {/* Analytics Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Analytics & Metrics
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            View usage metrics, performance statistics, and activity data. All data is stored locally and never transmitted.
+                        </p>
+
+                        <Button
+                            onClick={() => setShowAnalytics(true)}
+                            variant="outline"
+                            className={cn(
+                                'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <BarChart3 />
+                            <span>View Analytics</span>
+                        </Button>
+
+                        <p className={cn(
+                            'text-xs text-muted-foreground mt-3',
+                            isMobile && 'text-[11px]'
+                        )}>
+                            Privacy-first: All analytics data is stored locally in your browser.
+                        </p>
+                    </div>
+                </section>
+
                 {/* Placeholder for other settings */}
                 <section className="mb-8">
                     <h2 className={cn(
@@ -318,6 +361,29 @@ function SettingsPage() {
                         // Snippets inserted via editor, not settings
                     }}
                 />
+
+                {/* Analytics Dashboard Dialog */}
+                {showAnalytics && (
+                    <div className="fixed inset-0 z-50 bg-background overflow-auto">
+                        <div className="min-h-full">
+                            <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
+                                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                                    <h2 className="text-xl font-bold font-mono text-foreground">
+                                        Analytics Dashboard
+                                    </h2>
+                                    <Button
+                                        onClick={() => setShowAnalytics(false)}
+                                        variant="outline"
+                                        className="rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+                                    >
+                                        Close
+                                    </Button>
+                                </div>
+                            </div>
+                            <AnalyticsDashboard />
+                        </div>
+                    </div>
+                )}
             </div>
         </MainLayout>
     );
