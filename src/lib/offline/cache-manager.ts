@@ -27,7 +27,8 @@ export class CacheManager {
 
   private async init(): Promise<void> {
     try {
-      this.swRegistration = await navigator.serviceWorker.getRegistration()
+      const registration = await navigator.serviceWorker.getRegistration()
+      this.swRegistration = registration ?? null
     } catch (error) {
       console.error('[CacheManager] Failed to get SW registration:', error)
     }

@@ -10,7 +10,8 @@ import {
   Settings,
   HardDrive,
   Notebook,
-  Info
+  Info,
+  Search
 } from 'lucide-react';
 
 import { db } from '@/infrastructure/persistence/dexie-db';
@@ -21,6 +22,7 @@ import { useProjectStore } from '@/infrastructure/persistence/stores/project/use
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
+import { Button } from '@/presentation/components/ui/button';
 
 // Hub subcomponents
 import { BootSequence } from './BootSequence';
@@ -32,6 +34,7 @@ import { SummaryCardsGrid } from './SummaryCardsGrid';
 import { ChartsGrid } from './ChartsGrid';
 import { useDashboardMetrics } from './useDashboardMetrics';
 import { ProjectCreationWizard } from '@/presentation/components/project/ProjectCreationWizard';
+import { AdvancedSearchDialog } from '@/presentation/components/search';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -56,6 +59,7 @@ export const HubHomePage: React.FC = () => {
   const [projectCreationWizardOpen, setProjectCreationWizardOpen] = useState(false);
   const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes' | 'knowledge' | 'study' | 'agents'>('ide');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
 
   // Data fetching
   const projects = useLiveQuery(() => db.projects.toArray());
@@ -334,6 +338,21 @@ export const HubHomePage: React.FC = () => {
       {/* Hero Section */}
       <HubHero />
 
+      {/* Quick Search Button */}
+      <div className="flex justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setAdvancedSearchOpen(true)}
+          leftIcon={<Search className="w-4 h-4" />}
+        >
+          {t('search.advancedSearch', 'Advanced Search')}
+          <kbd className="ml-2 px-1.5 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-none font-mono">
+            Cmd+Shift+F
+          </kbd>
+        </Button>
+      </div>
+
       {/* Summary Cards Grid */}
       <SummaryCardsGrid
         metrics={metrics}
@@ -379,6 +398,20 @@ export const HubHomePage: React.FC = () => {
         open={projectCreationWizardOpen}
         onOpenChange={setProjectCreationWizardOpen}
         onProjectCreated={handleProjectCreated}
+      />
+
+      {/* Advanced Search Dialog */}
+      <AdvancedSearchDialog
+        open={advancedSearchOpen}
+        onOpenChange={setAdvancedSearchOpen}
+        availableTags={[]} // TODO: Populate from actual tags
+        availableAuthors={[]} // TODO: Populate from actual authors
+        onSelectResult={(result) => {
+          // TODO: Handle result selection (open file, navigate to project, etc.)
+          toast.info('Search result selected', {
+            description: result.document.filename,
+          });
+        }}
       />
     </div>
   );

@@ -33,10 +33,10 @@ export interface SerializableProject {
   };
   exclusionPatterns?: string[];
   bindings: {
-    ide: boolean;
-    knowledge: boolean;
-    notes: boolean;
-    study: boolean;
+    ide?: boolean;
+    knowledge?: boolean;
+    notes?: boolean;
+    study?: boolean;
   };
   fileSnapshotEnabled?: boolean;
   description?: string;

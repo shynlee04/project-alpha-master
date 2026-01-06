@@ -618,4 +618,51 @@ export function registerMigrations(db: Dexie): void {
                 itemsCount: 0
             });
         });
+
+        // Schema version 18: Story S-031 - Code Snippets Manager
+        // Adds codeSnippets table for reusable code fragments
+        db.version(18).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            workflows: 'id, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+            ragState: 'id, updatedAt',
+            // NEW: Code snippets table for reusable code fragments (Story S-031)
+            codeSnippets: 'id, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+        }).upgrade(async () => {
+            logDexieMigration(18, 'story-s-031-snippets', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(18)) {
+                logDexieMigration(18, 'story-s-031-snippets', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            // No data migration needed - table is new
+            // Mark migration as applied
+            markMigrationApplied(18);
+
+            logDexieMigration(18, 'story-s-031-snippets', 'completed', {
+                tableName: 'codeSnippets',
+                itemsCount: 0
+            });
+        });
 }

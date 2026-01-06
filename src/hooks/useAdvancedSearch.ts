@@ -114,7 +114,7 @@ const STORAGE_KEY = 'advanced-search-saved';
 export function useAdvancedSearch(
   options: UseAdvancedSearchOptions = {}
 ): UseAdvancedSearchReturn {
-  const { debounceMs = 300, maxResults = 100, autoIndex = true } = options;
+  const { debounceMs = 300, maxResults = 100 } = options;
 
   // Search state
   const [query, setQueryState] = useState('');
@@ -130,13 +130,13 @@ export function useAdvancedSearch(
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
 
   // Refs
-  const debounceRef = useRef<NodeJS.Timeout>();
-  const searchAbortRef = useRef<AbortController>();
+  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const searchAbortRef = useRef<AbortController | undefined>(undefined);
 
   // Load saved searches from localStorage
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       if (stored) {
         const parsed = JSON.parse(stored);
         setSavedSearches(parsed.map((s: any) => ({
@@ -275,7 +275,9 @@ export function useAdvancedSearch(
       const updated = [savedSearch, ...prev];
       // Persist to localStorage
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
       } catch (err) {
         console.error('Failed to save searches:', err);
       }
@@ -298,7 +300,9 @@ export function useAdvancedSearch(
             : s
         );
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          }
         } catch (err) {
           console.error('Failed to update searches:', err);
         }
@@ -312,7 +316,9 @@ export function useAdvancedSearch(
     setSavedSearches(prev => {
       const updated = prev.filter(s => s.id !== id);
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
       } catch (err) {
         console.error('Failed to delete search:', err);
       }

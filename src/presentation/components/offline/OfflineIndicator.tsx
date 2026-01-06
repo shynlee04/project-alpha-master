@@ -183,9 +183,9 @@ export function CompactOfflineIndicator({
   className?: string
 }) {
   const { t } = useTranslation()
-  const { isOnline } = useOfflineStatus()
+  const { status } = useOfflineStatus()
 
-  if (isOnline) {
+  if (status === 'online') {
     return null
   }
 

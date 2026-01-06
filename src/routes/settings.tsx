@@ -17,12 +17,17 @@ import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog';
 import { ErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 import { SettingsIcon, PlusIcon } from '@/presentation/components/ui/icons';
+import { Download, Upload } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-// import type { Agent } from '@/mocks/agents';
 import { ProviderSettings } from '@/presentation/components/agent/ProviderSettings';
 import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
+import { SettingsExportDialog } from '@/presentation/components/settings/SettingsExportDialog';
+import { SettingsImportDialog } from '@/presentation/components/settings/SettingsImportDialog';
+import { useAllProjects } from '@/infrastructure/persistence/stores/project';
+import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -30,8 +35,19 @@ export const Route = createFileRoute('/settings')({
 
 function SettingsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();
+
+    // Get data for export/import
+    const projects = useAllProjects();
+    const activeProjectId = useLayoutStore(s => s.activeNavItem); // Using layout state as placeholder
+    const sidebarCollapsed = useLayoutStore(s => s.sidebarCollapsed);
+
+    // Get providers from app store
+    const providers = useAppStore(s => s.providers || []);
 
     const handleAgentSuccess = (agentId: string) => {
         // BF-01 FIX: Callback receives agentId instead of full agent
@@ -125,6 +141,58 @@ function SettingsPage() {
                     </div>
                 </section>
 
+                {/* Data Management Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Data Management
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Export your settings for backup or transfer to another device.
+                            Import settings from a file to restore your configuration.
+                        </p>
+
+                        <div className={cn(
+                            'flex gap-3',
+                            isMobile ? 'flex-col' : 'flex-row'
+                        )}>
+                            <Button
+                                onClick={() => setIsExportDialogOpen(true)}
+                                variant="outline"
+                                className={cn(
+                                    'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                    isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                                )}
+                            >
+                                <Download />
+                                <span>Export Settings</span>
+                            </Button>
+
+                            <Button
+                                onClick={() => setIsImportDialogOpen(true)}
+                                variant="outline"
+                                className={cn(
+                                    'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                    isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                                )}
+                            >
+                                <Upload />
+                                <span>Import Settings</span>
+                            </Button>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Placeholder for other settings */}
                 <section className="mb-8">
                     <h2 className={cn(
@@ -170,6 +238,31 @@ function SettingsPage() {
                         agentId={null} // BF-01 FIX: Create mode (no agent selected)
                     />
                 </ErrorBoundary>
+
+                {/* Export Dialog */}
+                <SettingsExportDialog
+                    open={isExportDialogOpen}
+                    onOpenChange={setIsExportDialogOpen}
+                    projects={projects}
+                    providers={providers}
+                    activeProjectId={null}
+                    preferences={{
+                        sidebarCollapsed,
+                        activeNavItem: activeProjectId,
+                    }}
+                />
+
+                {/* Import Dialog */}
+                <SettingsImportDialog
+                    open={isImportDialogOpen}
+                    onOpenChange={setIsImportDialogOpen}
+                    onImport={(data) => {
+                        console.log('[SettingsPage] Import data:', data);
+                        // TODO: Apply import to stores
+                    }}
+                    currentProjects={new Map(projects.map(p => [p.id, p]))}
+                    currentProviders={new Map(providers.map(p => [p.id, p]))}
+                />
             </div>
         </MainLayout>
     );

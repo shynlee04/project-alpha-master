@@ -6,10 +6,12 @@
  * - ProviderStore (models cache - single source of truth)
  * - Workspace bindings migration (P0 fix - enable all workspaces)
  * - Dexie stores hydration
+ * - Service Worker (offline support)
  *
  * CC-2025-12-29: Fix credential vault not being initialized on page load
  * CC-2025-12-29: Auto-fetch models for default provider on boot
  * CC-2026-01-06: Add workspace bindings migration (Phase 1A)
+ * CC-2026-01-06: Add service worker registration (S-026)
  *
  * @epic Sprint 30 - Agent Configuration Corrections
  * @governance EPIC-CP-1.4
@@ -19,6 +21,7 @@ import { useEffect, type ReactNode } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { migrateWorkspaceBindings } from '@/infrastructure/persistence/stores/project/migrate-bindings';
+import { registerServiceWorker } from '@/lib/offline/service-worker-registration';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -51,7 +54,28 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     });
                 }
 
-                // 3. Auto-fetch models for ALL providers with credentials
+                // 3. Register service worker for offline support
+                const swRegistration = await registerServiceWorker({
+                    onRegistered: () => {
+                        console.log('[AppInitializer] Service worker registered');
+                    },
+                    onUpdated: () => {
+                        console.log('[AppInitializer] Service worker update available');
+                        // Could show notification to user here
+                    },
+                    onUpdateFound: () => {
+                        console.log('[AppInitializer] Service worker update found');
+                    },
+                    onError: (error) => {
+                        console.error('[AppInitializer] Service worker registration failed:', error);
+                    },
+                });
+
+                if (swRegistration) {
+                    console.log('[AppInitializer] Offline mode enabled');
+                }
+
+                // 4. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection
                 const { providers } = useAppStore.getState();
 

@@ -13,6 +13,7 @@ import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
 import { TooltipProvider } from '@/presentation/components/ui/tooltip'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
+import { OfflineIndicator } from '@/presentation/components/offline/OfflineIndicator'
 
 import appCss from '../styles.css?url'
 
@@ -77,6 +78,8 @@ export const Route = createRootRoute({
               <AppInitializer>
                 <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
                   <AppErrorBoundary>
+                    {/* Offline Indicator */}
+                    <OfflineIndicator />
                     <Outlet />
                   </AppErrorBoundary>
                 </UnifiedWorkspaceProvider>

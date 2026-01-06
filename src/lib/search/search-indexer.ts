@@ -129,7 +129,7 @@ class SearchIndexerClass {
    * Add or update a document in the index
    */
   indexDocument(document: SearchDocument): void {
-    const { id, content, filename } = document;
+    const { id, content } = document;
 
     // Store document
     this.documents.set(id, document);

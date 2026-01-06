@@ -51,6 +51,10 @@ import type {
     WorkflowsTable,
 } from './dexie-db-workflow-types';
 
+import type {
+    CodeSnippetsTable,
+} from './dexie-db-snippet-types';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -147,6 +151,12 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     workflows!: WorkflowsTable;
+
+    // ========================================================================
+    // Story S-031: Code Snippets Manager Tables
+    // ========================================================================
+
+    codeSnippets!: CodeSnippetsTable;
 
     // ========================================================================
     // Constructor

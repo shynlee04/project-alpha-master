@@ -40,10 +40,10 @@ export class OfflineDetector {
 
       // Register callbacks if provided
       if (options.onOnline) {
-        this.on('online', options.onOnline)
+        this.on(options.onOnline)
       }
       if (options.onOffline) {
-        this.on('offline', options.onOffline)
+        this.on(options.onOffline)
       }
     }
   }

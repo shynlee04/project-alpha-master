@@ -138,6 +138,18 @@ export type {
 } from './dexie-db-workflow-types';
 
 // ============================================================================
+// Code Snippets Types (Story S-031)
+// ============================================================================
+
+export type {
+    CodeSnippetRecord,
+    CodeSnippetsTable,
+    SnippetPlaceholder,
+    InsertedSnippet,
+    SnippetTemplate,
+} from './dexie-db-snippet-types';
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 

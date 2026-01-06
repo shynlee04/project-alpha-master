@@ -17,7 +17,6 @@ import {
   createBackup,
   type SettingsExport,
   type ImportPreview,
-  type ConflictType,
 } from './settings-serializer';
 
 // ============================================================================
@@ -97,11 +96,7 @@ export function importSettings(
 ): ImportResult {
   try {
     const {
-      conflictResolution = 'prompt',
       createBackup: shouldCreateBackup = true,
-      importProjects = true,
-      importProviders = true,
-      importPreferences = true,
     } = options;
 
     // Parse JSON

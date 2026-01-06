@@ -29,3 +29,8 @@ export {
     useShortcutsAvailable,
     useAllShortcuts,
 } from './useKeyboardShortcuts';
+
+// Advanced search hook (S-027)
+export {
+    useAdvancedSearch,
+} from './useAdvancedSearch';
