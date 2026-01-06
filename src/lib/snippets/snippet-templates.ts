@@ -314,6 +314,7 @@ function templateToRecord(template: SnippetTemplate): CodeSnippetRecord {
     return {
         id: `builtin-${template.name.toLowerCase().replace(/\s+/g, '-')}`,
         ...template,
+        workspaceId: 'ide', // PERSIST-S002: Workspace isolation (snippets in ide workspace)
         createdAt: Date.now(),
         updatedAt: Date.now(),
         isBuiltIn: true,

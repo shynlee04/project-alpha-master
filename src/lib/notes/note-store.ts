@@ -230,6 +230,7 @@ export const useNoteStore = create<NoteStoreState>()(
                 const newNote: NoteRecord = {
                     id: noteId,
                     projectId: currentProjectId,
+                    workspaceId: 'notes', // PERSIST-S002: Workspace isolation (notes always go to notes workspace)
                     title: params?.title || 'Untitled',
                     emoji: params?.emoji,
                     blocks: (params?.blocks || DEFAULT_NOTE_BLOCKS) as unknown[],

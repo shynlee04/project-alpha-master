@@ -37,6 +37,7 @@ export function queueItemToSyncStatus(item: {
     return {
         id: item.id,
         path: item.path,
+        workspaceId: 'ide', // PERSIST-S002: Workspace isolation (sync status in ide workspace)
         syncStatus: statusMap[item.status],
         errorMessage: item.error,
         retryCount: item.status === 'failed' ? 1 : 0,
