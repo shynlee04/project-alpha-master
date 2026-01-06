@@ -12,6 +12,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 import { useAppStore } from '../use-app-store';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { Agent } from '@/core/entities/Agent';
@@ -171,10 +172,20 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
 
       emitAgentSelected: (agent: Agent, workspaceType: WorkspaceType) => {
         console.log('[AgentSelectionStore] Agent selected:', agent.name, 'for workspace:', workspaceType);
+
+        // Emit to domain event bus (legacy, for backward compatibility)
         eventBus.emit(DomainEventType.AGENT_SELECTED, {
           agentId: agent.id,
           agentName: agent.name,
           workspaceType,
+        });
+
+        // Emit to store events (for cross-store reactivity)
+        emitStoreEvent(STORE_EVENTS.AGENT_CONFIG_CHANGED, {
+          agentId: agent.id,
+          workspaceType,
+          configType: 'selection',
+          timestamp: Date.now(),
         });
       },
       emitAgentDeselected: (workspaceType: WorkspaceType) => {
@@ -185,10 +196,20 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(
       },
       emitDefaultAgentChanged: (agent: Agent, workspaceType: WorkspaceType) => {
         console.log('[AgentSelectionStore] Default agent changed:', agent.name, 'for workspace:', workspaceType);
+
+        // Emit to domain event bus (legacy, for backward compatibility)
         eventBus.emit(DomainEventType.DEFAULT_AGENT_CHANGED, {
           agentId: agent.id,
           agentName: agent.name,
           workspaceType,
+        });
+
+        // Emit to store events (for cross-store reactivity)
+        emitStoreEvent(STORE_EVENTS.AGENT_CONFIG_CHANGED, {
+          agentId: agent.id,
+          workspaceType,
+          configType: 'default',
+          timestamp: Date.now(),
         });
       },
       setHasHydrated: (hasHydrated: boolean) => {

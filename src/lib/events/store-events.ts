@@ -36,6 +36,7 @@ export const STORE_EVENTS = {
     AGENT_SELECTED: 'agent:selected',
     AGENT_UPDATED: 'agent:updated',
     AGENT_REMOVED: 'agent:removed',
+    AGENT_CONFIG_CHANGED: 'agent:config-changed',
 
     // Conversation events - for context management
     CONVERSATION_CREATED: 'conversation:created',
@@ -106,6 +107,13 @@ export interface AgentSelectedPayload {
 export interface AgentUpdatedPayload {
     agentId: string;
     changes: string[];
+    timestamp: number;
+}
+
+export interface AgentConfigChangedPayload {
+    agentId: string;
+    workspaceType: 'ide' | 'knowledge' | 'study' | 'notes';
+    configType: 'default' | 'selection' | 'permissions';
     timestamp: number;
 }
 

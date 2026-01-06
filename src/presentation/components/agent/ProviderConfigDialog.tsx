@@ -7,6 +7,7 @@ import { Button } from '@/presentation/components/ui/button';
 import { Input } from '@/presentation/components/ui/input';
 import { Label } from '@/presentation/components/ui/label';
 import { ModelLoadingSpinner } from '@/presentation/components/ui';
+import { ProviderStatusBadge, type ProviderStatus } from './ProviderStatusBadge';
 import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 import { toast } from 'sonner';
 import { Lock, Key, Globe, Server } from 'lucide-react';
@@ -61,6 +62,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
     const [isFetchingModels, setIsFetchingModels] = useState(false);
     const [fetchError, setFetchError] = useState<string | undefined>();
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [keyStatus, setKeyStatus] = useState<ProviderStatus>('missing');
+    const [isValidatingKey, setIsValidatingKey] = useState(false);
 
     useEffect(() => {
         if (open) {
@@ -70,6 +73,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 setDefaultModel(provider.defaultModel || '');
                 setApiKey(''); // Don't show existing key
                 setHeaders('');
+                // Set initial key status
+                setKeyStatus(provider.hasApiKey ? 'configured' : 'missing');
             } else {
                 // Adding new custom provider
                 setName('');
@@ -77,8 +82,10 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 setDefaultModel('');
                 setApiKey('');
                 setHeaders('');
+                setKeyStatus('missing');
             }
             setErrors({});
+            setFetchError(undefined);
         }
     }, [open, provider]);
 
@@ -99,6 +106,9 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
         setIsSubmitting(true);
         setFetchError(undefined);
+        setIsValidatingKey(true);
+        setKeyStatus('loading');
+
         try {
             if (isBuiltIn && provider) {
                 // BUILT-IN PROVIDER: Only save API key
@@ -108,6 +118,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                     // Update hasApiKey flag immediately for visual feedback
                     updateProvider(provider.id, { hasApiKey: true });
+                    setKeyStatus('configured');
+                    setIsValidatingKey(false);
 
                     // Show success toast IMMEDIATELY so user knows key is saved
                     toast.success(`✓ ${provider.name} API key saved successfully`);
@@ -116,10 +128,12 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
-                        toast.success(`Models loaded for ${provider.name}`);
+                        // Models loaded successfully - no additional toast needed
+                        // The badge already shows "configured" status
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
+                        setKeyStatus('error');
                         // Show warning but DON'T throw - key is already saved, models can be retried
                         toast.warning(`API key saved, but models couldn't load: ${errorMessage}. You can try refreshing.`);
                         // Don't re-throw - allow dialog to close since key was saved
@@ -127,6 +141,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                         setIsFetchingModels(false);
                     }
                 } else {
+                    setIsValidatingKey(false);
                     toast.info('No API key provided - existing key kept');
                 }
             } else if (isAddingCustom) {
@@ -154,20 +169,25 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
                     updateProvider(id, { hasApiKey: true });
+                    setKeyStatus('configured');
+                    setIsValidatingKey(false);
                     toast.success(`✓ API key saved for ${name}`);
 
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(id);
-                        toast.success(`Models loaded for ${name}`);
+                        // Models loaded - badge shows configured
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
+                        setKeyStatus('error');
                         toast.warning(`Provider added, but models couldn't load: ${errorMessage}`);
                         // Don't re-throw - provider and key are saved
                     } finally {
                         setIsFetchingModels(false);
                     }
+                } else {
+                    setIsValidatingKey(false);
                 }
             } else if (provider?.isCustom) {
                 // EDITING EXISTING CUSTOM PROVIDER
@@ -185,20 +205,25 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
                     updateProvider(provider.id, { hasApiKey: true });
+                    setKeyStatus('configured');
+                    setIsValidatingKey(false);
                     toast.success(`✓ API key updated for ${name}`);
 
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
-                        toast.success(`Models loaded for ${name}`);
+                        // Models loaded - badge shows configured
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
+                        setKeyStatus('error');
                         toast.warning(`Config saved, but models couldn't load: ${errorMessage}`);
                         // Don't re-throw
                     } finally {
                         setIsFetchingModels(false);
                     }
+                } else {
+                    setIsValidatingKey(false);
                 }
             }
 
@@ -206,6 +231,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
         } catch (error) {
             console.error('[ProviderConfigDialog] Failed to save provider:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            setKeyStatus('error');
+            setIsValidatingKey(false);
             toast.error(`Failed to save provider configuration: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
@@ -288,10 +315,13 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                     {/* API Key - always editable */}
                     <div className="grid gap-2">
-                        <Label htmlFor="apiKey" className="flex items-center gap-2">
-                            <Key className="h-4 w-4" />
-                            {t('providers.apiKey', 'API Key')}
-                        </Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="apiKey" className="flex items-center gap-2">
+                                <Key className="h-4 w-4" />
+                                {t('providers.apiKey', 'API Key')}
+                            </Label>
+                            <ProviderStatusBadge status={isValidatingKey ? 'loading' : keyStatus} />
+                        </div>
                         <Input
                             id="apiKey"
                             type="password"

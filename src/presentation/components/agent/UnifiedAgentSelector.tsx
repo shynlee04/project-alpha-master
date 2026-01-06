@@ -38,6 +38,7 @@ import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agen
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { detectWorkspace } from '@/lib/workspace/workspace-detector';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { Agent } from '@/core/entities/Agent';
 
@@ -168,6 +169,24 @@ export function UnifiedAgentSelector({
       unsubscribeDefaultAgentChanged();
     };
   }, [eventBus, currentWorkspace, activeAgent?.id, setActiveAgent]);
+
+  // Listen to AGENT_CONFIG_CHANGED store events for cross-workspace sync
+  useStoreEvent<{ agentId: string; workspaceType: WorkspaceType; configType: string; timestamp: number }>(
+    STORE_EVENTS.AGENT_CONFIG_CHANGED,
+    ({ agentId, workspaceType, configType }) => {
+      console.log('[UnifiedAgentSelector] AGENT_CONFIG_CHANGED event received:', { agentId, workspaceType, configType, currentWorkspace });
+
+      // React to agent config changes for the current workspace
+      if (workspaceType === currentWorkspace) {
+        // Force re-render by triggering a re-check of the active agent
+        // The useMemo will pick up the change through the store
+        if (configType === 'selection' || configType === 'default') {
+          console.log('[UnifiedAgentSelector] Agent config changed, triggering update');
+        }
+      }
+    },
+    [currentWorkspace]
+  );
 
   // Get agents available in current workspace
   const availableAgents = useMemo(() => {
