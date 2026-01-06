@@ -34,3 +34,10 @@ export {
 export {
     useAdvancedSearch,
 } from './useAdvancedSearch';
+
+// Editor tabs hook (S-030)
+export {
+    useEditorTabs,
+    useEditorTabShortcuts,
+    useDirtyTabs,
+} from './useEditorTabs';
