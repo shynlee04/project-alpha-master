@@ -10,6 +10,7 @@ import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRen
 import { FileAttachmentInput, type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { NoteReferencePicker, useNoteReferencePicker } from '@/presentation/components/chat/NoteReferencePicker'
 import { useTranslation } from 'react-i18next'
+import { StreamingIndicator } from '@/presentation/components/ui/StreamingIndicator'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
 import { convertImageAttachments } from '@/lib/media/image-attachments'
 import type { ImageContent } from '@/lib/agent/multimodal/message-builder'
@@ -565,17 +566,20 @@ function ToolExecutionLog({ executions }: { executions: ToolExecution[] }) {
 }
 
 function TypingIndicator() {
+    const { t } = useTranslation()
+
     return (
         <div className="flex gap-3">
             <div className="w-8 h-8 bg-primary/20 flex items-center justify-center rounded-none">
                 <Bot className="w-4 h-4 text-primary" />
             </div>
-            <div className="px-4 py-2 bg-secondary rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
-                <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
+            <div className="px-4 py-3 bg-secondary rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
+                <StreamingIndicator
+                    size="md"
+                    message={t('chat.thinking', 'Thinking...')}
+                    showTokenCount={false}
+                    showElapsedTime={false}
+                />
             </div>
         </div>
     )

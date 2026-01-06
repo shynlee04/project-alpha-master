@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { URLInputDialog, type URLAttachment } from '@/presentation/components/chat/URLInputDialog'
 import { ImagePreviewDialogWithState } from '@/presentation/components/chat/ImagePreviewDialog'
 import { processImage, isSupportedImageFile, getCompressionPercentage } from '@/lib/media/image-processor'
+import { LoadingSpinnerInline } from '@/presentation/components/ui/LoadingSpinner'
 
 /**
  * @fileoverview File attachment input for chat messages
@@ -99,6 +100,7 @@ export function FileAttachmentInput({
   const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isURLDialogOpen, setIsURLDialogOpen] = useState(false)
+  const [processingFileId, setProcessingFileId] = useState<string | null>(null)
 
   // E2-7: Image preview state
   const [imagePreview, setImagePreview] = useState<{
@@ -129,6 +131,10 @@ export function FileAttachmentInput({
       return
     }
 
+    // Generate unique ID for this file
+    const fileId = crypto.randomUUID()
+    setProcessingFileId(fileId)
+
     // Type detection
     const type = getFileType(file)
 
@@ -137,12 +143,13 @@ export function FileAttachmentInput({
       // Check if supported format
       if (!isSupportedImageFile(file)) {
         toast.error(t('image.unsupportedFormat', 'Unsupported image format'))
+        setProcessingFileId(null)
         e.target.value = ''
         return
       }
 
       try {
-        // Show processing indicator
+        // Show processing indicator with loading state
         toast.loading(t('image.processing', 'Processing...'), { id: 'image-processing' })
 
         // Process image (compress, strip EXIF)
@@ -188,8 +195,10 @@ export function FileAttachmentInput({
         }
 
         onAdd(attachment)
+        setProcessingFileId(null)
       } catch (error) {
         toast.dismiss('image-processing')
+        setProcessingFileId(null)
         toast.error(t('image.processingError', 'Failed to process image'))
         console.error('Image processing error:', error)
       }
@@ -281,18 +290,30 @@ export function FileAttachmentInput({
         variant="ghost"
         size="sm"
         onClick={handleFilePickerClick}
-        disabled={disabled}
+        disabled={disabled || processingFileId !== null}
         className={cn(
           "shrink-0",
           // Mobile: Touch targets ≥44x44px
           "h-9 w-9 min-h-[36px] min-w-[36px] md:h-9 md:w-9",
           // Larger on mobile
-          "sm:h-11 sm:w-11 sm:min-h-[44px] sm:min-w-[44px]"
+          "sm:h-11 sm:w-11 sm:min-h-[44px] sm:min-w-[44px]",
+          // Show processing state
+          processingFileId !== null && "animate-pulse"
         )}
-        aria-label={t('attachment.add', 'Attach file')}
-        title={t('attachment.add', 'Attach file')}
+        aria-label={processingFileId !== null
+          ? t('attachment.processing', 'Processing file...')
+          : t('attachment.add', 'Attach file')
+        }
+        title={processingFileId !== null
+          ? t('attachment.processing', 'Processing file...')
+          : t('attachment.add', 'Attach file')
+        }
       >
-        <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
+        {processingFileId !== null ? (
+          <LoadingSpinnerInline size="sm" />
+        ) : (
+          <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
+        )}
       </Button>
 
       {/* URL attachment button */}

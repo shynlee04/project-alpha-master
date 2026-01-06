@@ -6,7 +6,7 @@
  * Enhanced with logging, recovery, and mobile-optimized error display.
  */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, ErrorInfo, ReactNode } from 'react'
 import { ErrorFallback } from './ErrorFallback'
 import { captureException } from '@/lib/monitoring/sentry'
 

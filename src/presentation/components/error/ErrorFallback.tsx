@@ -6,7 +6,6 @@
  * Mobile-optimized with 8-bit design system.
  */
 
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from '@tanstack/react-router'
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react'
