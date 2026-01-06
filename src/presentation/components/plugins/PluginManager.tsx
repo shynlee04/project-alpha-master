@@ -19,7 +19,7 @@ import { BREAKPOINTS } from '@/hooks/useMediaQuery';
 
 export function PluginManager() {
   const { t } = useTranslation();
-  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
+  // const isMobile = useMediaQuery(BREAKPOINTS.mobile); // TODO: For responsive layout
 
   const { plugins, isLoading, deactivatePlugin, activatePlugin, uninstallPlugin } = usePluginOperations();
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);

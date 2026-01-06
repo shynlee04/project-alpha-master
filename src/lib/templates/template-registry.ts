@@ -675,6 +675,7 @@ python-dotenv==1.0.1`,
     ],
     scripts: {
       dev: 'flask run',
+      build: 'flask collectstatic',
       test: 'pytest',
     },
   },
@@ -947,6 +948,15 @@ const PERN_TEMPLATE: ProjectTemplate = {
       test: 'vitest',
     },
   },
+  customization: [
+    {
+      id: 'typescript',
+      label: 'TypeScript',
+      type: 'boolean',
+      default: true,
+      category: 'core',
+    },
+  ],
   meta: {
     popularity: 75,
     complexity: 4,
@@ -982,6 +992,15 @@ const JAMSTACK_TEMPLATE: ProjectTemplate = {
       test: 'vitest',
     },
   },
+  customization: [
+    {
+      id: 'typescript',
+      label: 'TypeScript',
+      type: 'boolean',
+      default: true,
+      category: 'core',
+    },
+  ],
   meta: {
     popularity: 70,
     complexity: 3,
@@ -1054,6 +1073,7 @@ const REACT_NATIVE_TEMPLATE: ProjectTemplate = {
       dev: 'expo start',
       android: 'expo run:android',
       ios: 'expo run:ios',
+      build: 'expo build',
       test: 'jest',
     },
   },

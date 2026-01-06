@@ -172,7 +172,7 @@ export function useChatHistory(): UseChatHistoryReturn {
 
     for (const [conversationId, messages] of Object.entries(conversationMessages)) {
       // Create a simple thread ID (in real implementation, this would come from thread store)
-      const threadId = conversationId;
+      // const threadId = conversationId; // TODO: For future thread implementation
       const conversationResults = searchMessages({
         conversationMessages: { [conversationId]: messages },
         ...searchFilters
