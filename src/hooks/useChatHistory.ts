@@ -14,6 +14,7 @@ import { useConversationStore } from '@/infrastructure/persistence/stores/conver
 import { generateTitleFromMessages } from '@/lib/chat/title-generator';
 import { type MessageSearchFilters, type MessageSearchResult } from '@/lib/chat/message-search';
 import type { ConversationMetadataWithId, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/types';
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 
 /**
  * Chat history hook return type
@@ -26,7 +27,7 @@ export interface UseChatHistoryReturn {
   activeConversationId: string | null;
 
   /** Create new conversation */
-  createConversation: (workspaceType: string, projectId: string | null, agentId: string) => string;
+  createConversation: (workspaceType: WorkspaceType, projectId: string | null, agentId: string) => string;
 
   /** Delete conversation */
   deleteConversation: (conversationId: string) => void;

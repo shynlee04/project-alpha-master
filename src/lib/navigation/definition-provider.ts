@@ -55,7 +55,7 @@ const fileSymbolCache = new Map<string, Symbol[]>();
  *   '/project/src/utils.ts': 'export function bar() {}',
  * }
  */
-let workspaceFiles: Map<string, string> = new Map();
+export let workspaceFiles: Map<string, string> = new Map();
 
 /**
  * Update workspace files cache
