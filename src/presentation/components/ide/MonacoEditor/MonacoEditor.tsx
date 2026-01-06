@@ -25,6 +25,10 @@ import { useTheme } from 'next-themes';
 import { codeAnalysisBridge } from '@/lib/ide/code-analysis-bridge';
 import { UserPresenceIndicator } from '@/presentation/components/collaboration/UserPresenceIndicator';
 import type { UserPresence } from '@/presentation/components/collaboration/UserPresenceIndicator';
+import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
+import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+import { DiffViewer } from '@/presentation/components/diff/DiffViewer';
+import type { DiffViewMode } from '@/presentation/components/diff/DiffViewer';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -48,6 +52,14 @@ export interface MonacoEditorProps {
     onScrollTopChange?: (path: string, scrollTop: number) => void;
     /** Users currently viewing the file (collaboration) */
     currentFileUsers?: UserPresence[];
+    /** S-029: Enable diff mode */
+    diffMode?: boolean;
+    /** S-029: Original content for comparison (in diff mode) */
+    originalContent?: string;
+    /** S-029: Diff view mode (unified, side-by-side, line-by-line) */
+    diffViewMode?: DiffViewMode;
+    /** S-029: Callback when diff mode is toggled */
+    onDiffModeToggle?: (enabled: boolean) => void;
 }
 
 /**
@@ -64,6 +76,10 @@ export function MonacoEditor({
     initialScrollTop,
     onScrollTopChange,
     currentFileUsers = [],
+    diffMode = false,
+    originalContent = '',
+    diffViewMode = 'unified',
+    onDiffModeToggle,
 }: MonacoEditorProps): React.JSX.Element {
     const { t } = useTranslation();
     const { resolvedTheme } = useTheme();
@@ -100,6 +116,9 @@ export function MonacoEditor({
             syncWarningShownRef.current = false;
         }
     }, [syncStatus]);
+
+    // S-031: Snippet manager state
+    const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
 
     // Cleanup debounce timeout on unmount
     useEffect(() => {
@@ -173,6 +192,12 @@ export function MonacoEditor({
                 onSave(currentPath, currentContent);
                 pendingChangesRef.current.delete(currentPath);
             }
+        });
+
+        // S-031: Add Cmd+Shift+S keybinding to open snippet manager
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyS, () => {
+            console.log('[MonacoEditor] Opening snippet manager');
+            setIsSnippetManagerOpen(true);
         });
 
         // P2-10 AC2: Add "Analyze in Knowledge" context menu action
@@ -294,6 +319,62 @@ export function MonacoEditor({
         );
     }
 
+    // S-029: Handle diff mode toggle with keyboard shortcut (Cmd+D)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+                e.preventDefault();
+                onDiffModeToggle?.(!diffMode);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [diffMode, onDiffModeToggle]);
+
+    // S-031: Handle snippet insertion
+    const handleSnippetInsert = useCallback((snippet: CodeSnippetRecord) => {
+        const editor = editorRef.current;
+        if (!editor) {
+            console.warn('[MonacoEditor] No editor instance for snippet insertion');
+            return;
+        }
+
+        // Process snippet for insertion
+        let processedCode = snippet.code.replace(/\$\{\d+:([^}]*)\}/g, '$1');
+        processedCode = processedCode.replace(/\$\{([^}]+)\}/g, '$1');
+
+        // Get current cursor position
+        const position = editor.getPosition();
+        if (!position) return;
+
+        // Calculate indentation
+        const model = editor.getModel();
+        const lineContent = model.getLineContent(position.lineNumber);
+        const indentation = lineContent.match(/^\s*/)?.[0] || '';
+
+        // Add indentation to each line
+        const indentedCode = processedCode
+            .split('\n')
+            .map((line, index) => (index === 0 ? line : indentation + line))
+            .join('\n');
+
+        // Insert snippet
+        editor.executeEdits('snippetInsertion', [
+            {
+                range: {
+                    startLineNumber: position.lineNumber,
+                    startColumn: position.column,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column,
+                },
+                text: indentedCode,
+            },
+        ]);
+
+        console.log('[MonacoEditor] Snippet inserted:', snippet.name);
+    }, []);
+
     return (
         <div className="h-full flex flex-col bg-background">
             <EditorTabBar
@@ -308,7 +389,38 @@ export function MonacoEditor({
                     <UserPresenceIndicator users={currentFileUsers} size="sm" />
                 </div>
             )}
-            <div className="flex-1 min-h-0 relative" ref={editorContainerRef}>
+
+            {/* S-029: Diff mode toggle button */}
+            {originalContent && (
+                <div className="px-2 py-1 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <span className="text-xs text-slate-600 dark:text-slate-400">
+                        {t('diff.diffMode', 'Diff Mode')}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() => onDiffModeToggle?.(!diffMode)}
+                        className="px-3 py-1 text-xs font-medium rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                        aria-label={t('diff.toggleDiffMode', 'Toggle diff mode (Cmd+D)')}
+                    >
+                        {diffMode ? t('diff.editMode', 'Edit Mode') : t('diff.diffMode', 'Diff Mode')}
+                    </button>
+                </div>
+            )}
+
+            {/* S-029: Show DiffViewer in diff mode, otherwise show regular editor */}
+            {diffMode && originalContent ? (
+                <div className="flex-1 min-h-0 overflow-auto">
+                    <DiffViewer
+                        oldContent={originalContent}
+                        newContent={activeFile.content}
+                        fileName={activeFile.path}
+                        language={language}
+                        defaultViewMode={diffViewMode}
+                        maxHeight="100%"
+                    />
+                </div>
+            ) : (
+                <div className="flex-1 min-h-0 relative" ref={editorContainerRef}>
                 <Editor
                     height="100%"
                     theme={editorTheme}
@@ -349,10 +461,18 @@ export function MonacoEditor({
                 {/* S-025: Live cursor overlay (desktop only) */}
                 {/* Note: Remote cursors would be rendered here via LiveCursor component */}
             </div>
+            )}
             {/* Story 13-3: Sync edit warning toast */}
             <SyncEditWarning
                 isVisible={showSyncWarning}
                 onDismiss={() => setShowSyncWarning(false)}
+            />
+
+            {/* S-031: Snippet Manager Dialog */}
+            <SnippetManager
+                open={isSnippetManagerOpen}
+                onOpenChange={setIsSnippetManagerOpen}
+                onSnippetSelect={handleSnippetInsert}
             />
         </div>
     );

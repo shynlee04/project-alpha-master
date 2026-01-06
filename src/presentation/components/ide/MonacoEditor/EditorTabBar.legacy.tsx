@@ -1,9 +1,6 @@
 /**
  * Editor Tab Bar component for managing multiple open files
  * @module components/ide/MonacoEditor/EditorTabBar
- *
- * @deprecated Use the new editor tab system from @/presentation/components/editor instead
- * This file is kept for backward compatibility during migration
  */
 
 import { X } from 'lucide-react';
@@ -31,7 +28,6 @@ export interface EditorTabBarProps {
 
 /**
  * Tab bar component for switching between open files
- * @deprecated Use EditorTabBar from @/presentation/components/editor instead
  */
 export function EditorTabBar({
     openFiles,

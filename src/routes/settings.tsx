@@ -25,9 +25,11 @@ import { ProviderSettings } from '@/presentation/components/agent/ProviderSettin
 import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 import { SettingsExportDialog } from '@/presentation/components/settings/SettingsExportDialog';
 import { SettingsImportDialog } from '@/presentation/components/settings/SettingsImportDialog';
+import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
 import { useAllProjects } from '@/infrastructure/persistence/stores/project';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { Code2 } from 'lucide-react';
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -37,6 +39,7 @@ function SettingsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+    const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
 
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();
@@ -193,6 +196,48 @@ function SettingsPage() {
                     </div>
                 </section>
 
+                {/* Code Snippets Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Code Snippets
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Manage your code snippets for quick insertion. Create, edit, and organize
+                            reusable code fragments with folder organization and tag-based filtering.
+                        </p>
+
+                        <Button
+                            onClick={() => setIsSnippetManagerOpen(true)}
+                            variant="primary"
+                            className={cn(
+                                'gap-2 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <Code2 />
+                            <span>Manage Snippets</span>
+                        </Button>
+
+                        <p className={cn(
+                            'text-xs text-muted-foreground mt-3',
+                            isMobile && 'text-[11px]'
+                        )}>
+                            Tip: Use <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Cmd+Shift+S</kbd> in the editor to open the snippet browser
+                        </p>
+                    </div>
+                </section>
+
                 {/* Placeholder for other settings */}
                 <section className="mb-8">
                     <h2 className={cn(
@@ -262,6 +307,16 @@ function SettingsPage() {
                     }}
                     currentProjects={new Map(projects.map(p => [p.id, p]))}
                     currentProviders={new Map(providers.map(p => [p.id, p]))}
+                />
+
+                {/* Snippet Manager Dialog */}
+                <SnippetManager
+                    open={isSnippetManagerOpen}
+                    onOpenChange={setIsSnippetManagerOpen}
+                    onSnippetSelect={(snippet) => {
+                        console.log('[SettingsPage] Snippet selected:', snippet);
+                        // Snippets inserted via editor, not settings
+                    }}
                 />
             </div>
         </MainLayout>

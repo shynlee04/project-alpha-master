@@ -132,11 +132,3 @@ export interface SnippetTemplate {
 // ============================================================================
 // Export Collections
 // ============================================================================
-
-export type {
-    CodeSnippetRecord,
-    CodeSnippetsTable,
-    SnippetPlaceholder,
-    InsertedSnippet,
-    SnippetTemplate,
-};

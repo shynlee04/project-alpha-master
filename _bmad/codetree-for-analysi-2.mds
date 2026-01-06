@@ -1,0 +1,1129 @@
+.
+├── bmb
+│   ├── agents
+│   │   ├── agent-builder.md
+│   │   ├── bmad-builder.md
+│   │   ├── module-builder.md
+│   │   └── workflow-builder.md
+│   ├── config.yaml
+│   ├── docs
+│   │   ├── agents
+│   │   │   ├── agent-compilation.md
+│   │   │   ├── agent-compilation.md.bak
+│   │   │   ├── agent-menu-patterns.md
+│   │   │   ├── agent-menu-patterns.md.bak
+│   │   │   ├── expert-agent-architecture.md
+│   │   │   ├── expert-agent-architecture.md.bak
+│   │   │   ├── index.md
+│   │   │   ├── index.md.bak
+│   │   │   ├── kb.csv
+│   │   │   ├── simple-agent-architecture.md
+│   │   │   ├── simple-agent-architecture.md.bak
+│   │   │   ├── understanding-agent-types.md
+│   │   │   └── understanding-agent-types.md.bak
+│   │   ├── index.md
+│   │   ├── README.md.bak
+│   │   └── workflows
+│   │       ├── architecture.md
+│   │       ├── architecture.md.bak
+│   │       ├── common-workflow-tools.csv
+│   │       ├── common-workflow-tools.csv.bak
+│   │       ├── csv-data-file-standards.md
+│   │       ├── csv-data-file-standards.md.bak
+│   │       ├── index.md
+│   │       ├── index.md.bak
+│   │       ├── intent-vs-prescriptive-spectrum.md
+│   │       ├── intent-vs-prescriptive-spectrum.md.bak
+│   │       ├── kb.csv
+│   │       ├── templates
+│   │       │   ├── step-01-init-continuable-template.md
+│   │       │   ├── step-01-init-continuable-template.md.bak
+│   │       │   ├── step-1b-template.md
+│   │       │   ├── step-1b-template.md.bak
+│   │       │   ├── step-file.md
+│   │       │   ├── step-file.md.bak
+│   │       │   ├── step-template.md
+│   │       │   ├── step-template.md.bak
+│   │       │   ├── workflow-template.md
+│   │       │   ├── workflow-template.md.bak
+│   │       │   ├── workflow.md
+│   │       │   └── workflow.md.bak
+│   │       ├── terms.md
+│   │       └── terms.md.bak
+│   ├── README.md
+│   ├── reference
+│   │   ├── agents
+│   │   │   ├── expert-examples
+│   │   │   │   └── journal-keeper
+│   │   │   │       └── README.md.bak
+│   │   │   ├── module-examples
+│   │   │   │   └── README.md.bak
+│   │   │   └── simple-examples
+│   │   │       ├── README.md
+│   │   │       └── README.md.bak
+│   │   ├── README.md
+│   │   ├── README.md.bak
+│   │   └── workflows
+│   │       └── meal-prep-nutrition
+│   │           ├── data
+│   │           │   ├── dietary-restrictions.csv
+│   │           │   ├── dietary-restrictions.csv.bak
+│   │           │   ├── macro-calculator.csv
+│   │           │   ├── macro-calculator.csv.bak
+│   │           │   ├── recipe-database.csv
+│   │           │   └── recipe-database.csv.bak
+│   │           ├── steps
+│   │           │   ├── step-01-init.md
+│   │           │   ├── step-01-init.md.bak
+│   │           │   ├── step-01b-continue.md
+│   │           │   ├── step-01b-continue.md.bak
+│   │           │   ├── step-02-profile.md
+│   │           │   ├── step-02-profile.md.bak
+│   │           │   ├── step-03-assessment.md
+│   │           │   ├── step-03-assessment.md.bak
+│   │           │   ├── step-04-strategy.md
+│   │           │   ├── step-04-strategy.md.bak
+│   │           │   ├── step-05-shopping.md
+│   │           │   ├── step-05-shopping.md.bak
+│   │           │   ├── step-06-prep-schedule.md
+│   │           │   └── step-06-prep-schedule.md.bak
+│   │           ├── templates
+│   │           │   ├── assessment-section.md
+│   │           │   ├── assessment-section.md.bak
+│   │           │   ├── nutrition-plan.md
+│   │           │   ├── nutrition-plan.md.bak
+│   │           │   ├── prep-schedule-section.md
+│   │           │   ├── prep-schedule-section.md.bak
+│   │           │   ├── profile-section.md
+│   │           │   ├── profile-section.md.bak
+│   │           │   ├── shopping-section.md
+│   │           │   ├── shopping-section.md.bak
+│   │           │   ├── strategy-section.md
+│   │           │   └── strategy-section.md.bak
+│   │           ├── workflow.md
+│   │           └── workflow.md.bak
+│   ├── workflows
+│   │   ├── create-agent
+│   │   │   ├── data
+│   │   │   │   ├── agent-validation-checklist.md
+│   │   │   │   ├── agent-validation-checklist.md.bak
+│   │   │   │   ├── brainstorm-context.md
+│   │   │   │   ├── brainstorm-context.md.bak
+│   │   │   │   ├── communication-presets.csv
+│   │   │   │   ├── communication-presets.csv.bak
+│   │   │   │   ├── info-and-installation-guide.md
+│   │   │   │   ├── info-and-installation-guide.md.bak
+│   │   │   │   ├── reference
+│   │   │   │   │   ├── agents
+│   │   │   │   │   │   ├── expert-examples
+│   │   │   │   │   │   │   └── journal-keeper
+│   │   │   │   │   │   │       ├── README.md
+│   │   │   │   │   │   │       └── README.md.bak
+│   │   │   │   │   │   ├── module-examples
+│   │   │   │   │   │   │   ├── README.md
+│   │   │   │   │   │   │   └── README.md.bak
+│   │   │   │   │   │   └── simple-examples
+│   │   │   │   │   │       ├── README.md
+│   │   │   │   │   │       └── README.md.bak
+│   │   │   │   │   ├── README.md
+│   │   │   │   │   ├── README.md.bak
+│   │   │   │   │   └── workflows
+│   │   │   │   │       └── meal-prep-nutrition
+│   │   │   │   │           ├── data
+│   │   │   │   │           │   ├── dietary-restrictions.csv
+│   │   │   │   │           │   ├── dietary-restrictions.csv.bak
+│   │   │   │   │           │   ├── macro-calculator.csv
+│   │   │   │   │           │   ├── macro-calculator.csv.bak
+│   │   │   │   │           │   ├── recipe-database.csv
+│   │   │   │   │           │   └── recipe-database.csv.bak
+│   │   │   │   │           ├── steps
+│   │   │   │   │           │   ├── step-01-init.md
+│   │   │   │   │           │   ├── step-01-init.md.bak
+│   │   │   │   │           │   ├── step-01b-continue.md
+│   │   │   │   │           │   ├── step-01b-continue.md.bak
+│   │   │   │   │           │   ├── step-02-profile.md
+│   │   │   │   │           │   ├── step-02-profile.md.bak
+│   │   │   │   │           │   ├── step-03-assessment.md
+│   │   │   │   │           │   ├── step-03-assessment.md.bak
+│   │   │   │   │           │   ├── step-04-strategy.md
+│   │   │   │   │           │   ├── step-04-strategy.md.bak
+│   │   │   │   │           │   ├── step-05-shopping.md
+│   │   │   │   │           │   ├── step-05-shopping.md.bak
+│   │   │   │   │           │   ├── step-06-prep-schedule.md
+│   │   │   │   │           │   └── step-06-prep-schedule.md.bak
+│   │   │   │   │           ├── templates
+│   │   │   │   │           │   ├── assessment-section.md
+│   │   │   │   │           │   ├── assessment-section.md.bak
+│   │   │   │   │           │   ├── nutrition-plan.md
+│   │   │   │   │           │   ├── nutrition-plan.md.bak
+│   │   │   │   │           │   ├── prep-schedule-section.md
+│   │   │   │   │           │   ├── prep-schedule-section.md.bak
+│   │   │   │   │           │   ├── profile-section.md
+│   │   │   │   │           │   ├── profile-section.md.bak
+│   │   │   │   │           │   ├── shopping-section.md
+│   │   │   │   │           │   ├── shopping-section.md.bak
+│   │   │   │   │           │   ├── strategy-section.md
+│   │   │   │   │           │   └── strategy-section.md.bak
+│   │   │   │   │           ├── workflow.md
+│   │   │   │   │           └── workflow.md.bak
+│   │   │   │   ├── validation-complete.md
+│   │   │   │   └── validation-complete.md.bak
+│   │   │   ├── steps
+│   │   │   │   ├── step-01-brainstorm.md
+│   │   │   │   ├── step-01-brainstorm.md.bak
+│   │   │   │   ├── step-02-discover.md
+│   │   │   │   ├── step-02-discover.md.bak
+│   │   │   │   ├── step-03-persona.md
+│   │   │   │   ├── step-03-persona.md.bak
+│   │   │   │   ├── step-04-commands.md
+│   │   │   │   ├── step-04-commands.md.bak
+│   │   │   │   ├── step-05-name.md
+│   │   │   │   ├── step-05-name.md.bak
+│   │   │   │   ├── step-06-build.md
+│   │   │   │   ├── step-06-build.md.bak
+│   │   │   │   ├── step-07-validate.md
+│   │   │   │   ├── step-07-validate.md.bak
+│   │   │   │   ├── step-08-celebrate.md
+│   │   │   │   └── step-08-celebrate.md.bak
+│   │   │   ├── templates
+│   │   │   │   ├── agent-plan.template.md
+│   │   │   │   ├── agent-plan.template.md.bak
+│   │   │   │   ├── expert-agent.template.md
+│   │   │   │   ├── expert-agent.template.md.bak
+│   │   │   │   ├── simple-agent.template.md
+│   │   │   │   └── simple-agent.template.md.bak
+│   │   │   ├── workflow.md
+│   │   │   └── workflow.md.bak
+│   │   ├── create-module
+│   │   │   ├── steps
+│   │   │   │   ├── step-01-init.md
+│   │   │   │   ├── step-01-init.md.bak
+│   │   │   │   ├── step-01b-continue.md
+│   │   │   │   ├── step-01b-continue.md.bak
+│   │   │   │   ├── step-02-concept.md
+│   │   │   │   ├── step-02-concept.md.bak
+│   │   │   │   ├── step-03-components.md
+│   │   │   │   ├── step-03-components.md.bak
+│   │   │   │   ├── step-04-structure.md
+│   │   │   │   ├── step-04-structure.md.bak
+│   │   │   │   ├── step-05-config.md
+│   │   │   │   ├── step-05-config.md.bak
+│   │   │   │   ├── step-06-agents.md
+│   │   │   │   ├── step-06-agents.md.bak
+│   │   │   │   ├── step-07-workflows.md
+│   │   │   │   ├── step-07-workflows.md.bak
+│   │   │   │   ├── step-08-installer.md
+│   │   │   │   ├── step-08-installer.md.bak
+│   │   │   │   ├── step-09-documentation.md
+│   │   │   │   ├── step-09-documentation.md.bak
+│   │   │   │   ├── step-10-roadmap.md
+│   │   │   │   ├── step-10-roadmap.md.bak
+│   │   │   │   ├── step-11-validate.md
+│   │   │   │   └── step-11-validate.md.bak
+│   │   │   ├── templates
+│   │   │   │   ├── agent.template.md
+│   │   │   │   ├── agent.template.md.bak
+│   │   │   │   ├── installer.template.js
+│   │   │   │   ├── installer.template.js.bak
+│   │   │   │   ├── module-plan.template.md
+│   │   │   │   ├── module-plan.template.md.bak
+│   │   │   │   ├── module.template.yaml
+│   │   │   │   ├── module.template.yaml.bak
+│   │   │   │   ├── workflow-plan-template.md
+│   │   │   │   └── workflow-plan-template.md.bak
+│   │   │   ├── validation.md
+│   │   │   ├── validation.md.bak
+│   │   │   ├── workflow.md
+│   │   │   └── workflow.md.bak
+│   │   ├── create-workflow
+│   │   │   ├── steps
+│   │   │   │   ├── step-01-init.md
+│   │   │   │   ├── step-01-init.md.bak
+│   │   │   │   ├── step-02-gather.md
+│   │   │   │   ├── step-02-gather.md.bak
+│   │   │   │   ├── step-03-tools-configuration.md
+│   │   │   │   ├── step-03-tools-configuration.md.bak
+│   │   │   │   ├── step-04-plan-review.md
+│   │   │   │   ├── step-04-plan-review.md.bak
+│   │   │   │   ├── step-05-output-format-design.md
+│   │   │   │   ├── step-05-output-format-design.md.bak
+│   │   │   │   ├── step-06-design.md
+│   │   │   │   ├── step-06-design.md.bak
+│   │   │   │   ├── step-07-build.md
+│   │   │   │   ├── step-07-build.md.bak
+│   │   │   │   ├── step-08-review.md
+│   │   │   │   ├── step-08-review.md.bak
+│   │   │   │   ├── step-09-complete.md
+│   │   │   │   └── step-09-complete.md.bak
+│   │   │   ├── workflow.md
+│   │   │   └── workflow.md.bak
+│   │   ├── edit-agent
+│   │   │   ├── steps
+│   │   │   │   ├── step-01-discover-intent.md
+│   │   │   │   ├── step-01-discover-intent.md.bak
+│   │   │   │   ├── step-02-analyze-agent.md
+│   │   │   │   ├── step-02-analyze-agent.md.bak
+│   │   │   │   ├── step-03-propose-changes.md
+│   │   │   │   ├── step-03-propose-changes.md.bak
+│   │   │   │   ├── step-04-apply-changes.md
+│   │   │   │   ├── step-04-apply-changes.md.bak
+│   │   │   │   ├── step-05-validate.md
+│   │   │   │   └── step-05-validate.md.bak
+│   │   │   ├── workflow.md
+│   │   │   └── workflow.md.bak
+│   │   ├── edit-workflow
+│   │   │   ├── steps
+│   │   │   │   ├── step-01-analyze.md
+│   │   │   │   ├── step-01-analyze.md.bak
+│   │   │   │   ├── step-02-discover.md
+│   │   │   │   ├── step-02-discover.md.bak
+│   │   │   │   ├── step-03-improve.md
+│   │   │   │   ├── step-03-improve.md.bak
+│   │   │   │   ├── step-04-validate.md
+│   │   │   │   ├── step-04-validate.md.bak
+│   │   │   │   ├── step-05-compliance-check.md
+│   │   │   │   └── step-05-compliance-check.md.bak
+│   │   │   ├── templates
+│   │   │   │   ├── completion-summary.md
+│   │   │   │   ├── completion-summary.md.bak
+│   │   │   │   ├── improvement-goals.md
+│   │   │   │   ├── improvement-goals.md.bak
+│   │   │   │   ├── improvement-log.md
+│   │   │   │   ├── improvement-log.md.bak
+│   │   │   │   ├── validation-results.md
+│   │   │   │   ├── validation-results.md.bak
+│   │   │   │   ├── workflow-analysis.md
+│   │   │   │   └── workflow-analysis.md.bak
+│   │   │   ├── workflow.md
+│   │   │   └── workflow.md.bak
+│   │   └── workflow-compliance-check
+│   │       ├── steps
+│   │       │   ├── step-01-validate-goal.md
+│   │       │   ├── step-01-validate-goal.md.bak
+│   │       │   ├── step-02-workflow-validation.md
+│   │       │   ├── step-02-workflow-validation.md.bak
+│   │       │   ├── step-03-step-validation.md
+│   │       │   ├── step-03-step-validation.md.bak
+│   │       │   ├── step-04-file-validation.md
+│   │       │   ├── step-04-file-validation.md.bak
+│   │       │   ├── step-05-intent-spectrum-validation.md
+│   │       │   ├── step-05-intent-spectrum-validation.md.bak
+│   │       │   ├── step-06-web-subprocess-validation.md
+│   │       │   ├── step-06-web-subprocess-validation.md.bak
+│   │       │   ├── step-07-holistic-analysis.md
+│   │       │   ├── step-07-holistic-analysis.md.bak
+│   │       │   ├── step-08-generate-report.md
+│   │       │   └── step-08-generate-report.md.bak
+│   │       ├── templates
+│   │       │   ├── compliance-report.md
+│   │       │   └── compliance-report.md.bak
+│   │       ├── workflow.md
+│   │       └── workflow.md.bak
+│   └── workflows-legacy
+│       ├── edit-module
+│       │   ├── checklist.md
+│       │   ├── checklist.md.bak
+│       │   ├── instructions.md
+│       │   ├── instructions.md.bak
+│       │   ├── README.md
+│       │   ├── README.md.bak
+│       │   ├── workflow.yaml
+│       │   └── workflow.yaml.bak
+│       └── module-brief
+│           ├── checklist.md
+│           ├── checklist.md.bak
+│           ├── instructions.md
+│           ├── instructions.md.bak
+│           ├── README.md
+│           ├── README.md.bak
+│           ├── template.md
+│           ├── template.md.bak
+│           ├── workflow.yaml
+│           └── workflow.yaml.bak
+├── bmm
+│   ├── agents
+│   │   ├── analyst.md
+│   │   ├── architect.md
+│   │   ├── dev.md
+│   │   ├── pm.md
+│   │   ├── quick-flow-solo-dev.md
+│   │   ├── sm.md
+│   │   ├── tea.md
+│   │   ├── tech-writer.md
+│   │   └── ux-designer.md
+│   ├── config.yaml
+│   ├── data
+│   │   ├── documentation-standards.md
+│   │   ├── documentation-standards.md.bak
+│   │   ├── project-context-template.md
+│   │   ├── project-context-template.md.bak
+│   │   ├── README.md
+│   │   └── README.md.bak
+│   ├── docs
+│   │   ├── agents-guide.md
+│   │   ├── agents-guide.md.bak
+│   │   ├── bmad-quick-flow.md
+│   │   ├── bmad-quick-flow.md.bak
+│   │   ├── brownfield-guide.md
+│   │   ├── brownfield-guide.md.bak
+│   │   ├── enterprise-agentic-development.md
+│   │   ├── enterprise-agentic-development.md.bak
+│   │   ├── faq.md
+│   │   ├── faq.md.bak
+│   │   ├── glossary.md
+│   │   ├── glossary.md.bak
+│   │   ├── images
+│   │   │   ├── README.md
+│   │   │   ├── README.md.bak
+│   │   │   ├── workflow-method-greenfield.excalidraw
+│   │   │   ├── workflow-method-greenfield.excalidraw.bak
+│   │   │   ├── workflow-method-greenfield.svg
+│   │   │   └── workflow-method-greenfield.svg.bak
+│   │   ├── index.md
+│   │   ├── party-mode.md
+│   │   ├── party-mode.md.bak
+│   │   ├── quick-flow-solo-dev.md
+│   │   ├── quick-flow-solo-dev.md.bak
+│   │   ├── quick-spec-flow.md
+│   │   ├── quick-spec-flow.md.bak
+│   │   ├── quick-start.md
+│   │   ├── quick-start.md.bak
+│   │   ├── README.md.bak
+│   │   ├── scale-adaptive-system.md
+│   │   ├── scale-adaptive-system.md.bak
+│   │   ├── troubleshooting.md
+│   │   ├── troubleshooting.md.bak
+│   │   ├── workflow-architecture-reference.md
+│   │   ├── workflow-architecture-reference.md.bak
+│   │   ├── workflow-document-project-reference.md
+│   │   ├── workflow-document-project-reference.md.bak
+│   │   ├── workflows-analysis.md
+│   │   ├── workflows-analysis.md.bak
+│   │   ├── workflows-implementation.md
+│   │   ├── workflows-implementation.md.bak
+│   │   ├── workflows-planning.md
+│   │   ├── workflows-planning.md.bak
+│   │   ├── workflows-solutioning.md
+│   │   └── workflows-solutioning.md.bak
+│   ├── README.md
+│   ├── README.md.bak
+│   ├── teams
+│   │   ├── default-party.csv
+│   │   ├── default-party.csv.bak
+│   │   ├── team-fullstack.yaml
+│   │   └── team-fullstack.yaml.bak
+│   └── workflows
+│       ├── 1-analysis
+│       │   ├── create-product-brief
+│       │   │   ├── product-brief.template.md
+│       │   │   ├── product-brief.template.md.bak
+│       │   │   ├── steps
+│       │   │   │   ├── step-01-init.md
+│       │   │   │   ├── step-01-init.md.bak
+│       │   │   │   ├── step-01b-continue.md
+│       │   │   │   ├── step-01b-continue.md.bak
+│       │   │   │   ├── step-02-vision.md
+│       │   │   │   ├── step-02-vision.md.bak
+│       │   │   │   ├── step-03-users.md
+│       │   │   │   ├── step-03-users.md.bak
+│       │   │   │   ├── step-04-metrics.md
+│       │   │   │   ├── step-04-metrics.md.bak
+│       │   │   │   ├── step-05-scope.md
+│       │   │   │   ├── step-05-scope.md.bak
+│       │   │   │   ├── step-06-complete.md
+│       │   │   │   └── step-06-complete.md.bak
+│       │   │   ├── workflow.md
+│       │   │   └── workflow.md.bak
+│       │   └── research
+│       │       ├── domain-steps
+│       │       │   ├── step-01-init.md
+│       │       │   ├── step-01-init.md.bak
+│       │       │   ├── step-02-domain-analysis.md
+│       │       │   ├── step-02-domain-analysis.md.bak
+│       │       │   ├── step-03-competitive-landscape.md
+│       │       │   ├── step-03-competitive-landscape.md.bak
+│       │       │   ├── step-04-regulatory-focus.md
+│       │       │   ├── step-04-regulatory-focus.md.bak
+│       │       │   ├── step-05-technical-trends.md
+│       │       │   ├── step-05-technical-trends.md.bak
+│       │       │   ├── step-06-research-synthesis.md
+│       │       │   └── step-06-research-synthesis.md.bak
+│       │       ├── market-steps
+│       │       │   ├── step-01-init.md
+│       │       │   ├── step-01-init.md.bak
+│       │       │   ├── step-02-customer-behavior.md
+│       │       │   ├── step-02-customer-behavior.md.bak
+│       │       │   ├── step-02-customer-insights.md
+│       │       │   ├── step-02-customer-insights.md.bak
+│       │       │   ├── step-03-customer-pain-points.md
+│       │       │   ├── step-03-customer-pain-points.md.bak
+│       │       │   ├── step-04-customer-decisions.md
+│       │       │   ├── step-04-customer-decisions.md.bak
+│       │       │   ├── step-05-competitive-analysis.md
+│       │       │   ├── step-05-competitive-analysis.md.bak
+│       │       │   ├── step-06-research-completion.md
+│       │       │   └── step-06-research-completion.md.bak
+│       │       ├── research.template.md
+│       │       ├── research.template.md.bak
+│       │       ├── technical-steps
+│       │       │   ├── step-01-init.md
+│       │       │   ├── step-01-init.md.bak
+│       │       │   ├── step-02-technical-overview.md
+│       │       │   ├── step-02-technical-overview.md.bak
+│       │       │   ├── step-03-integration-patterns.md
+│       │       │   ├── step-03-integration-patterns.md.bak
+│       │       │   ├── step-04-architectural-patterns.md
+│       │       │   ├── step-04-architectural-patterns.md.bak
+│       │       │   ├── step-05-implementation-research.md
+│       │       │   ├── step-05-implementation-research.md.bak
+│       │       │   ├── step-06-research-synthesis.md
+│       │       │   └── step-06-research-synthesis.md.bak
+│       │       ├── workflow.md
+│       │       └── workflow.md.bak
+│       ├── 2-plan-workflows
+│       │   ├── create-ux-design
+│       │   │   ├── steps
+│       │   │   │   ├── step-01-init.md
+│       │   │   │   ├── step-01-init.md.bak
+│       │   │   │   ├── step-01b-continue.md
+│       │   │   │   ├── step-01b-continue.md.bak
+│       │   │   │   ├── step-02-discovery.md
+│       │   │   │   ├── step-02-discovery.md.bak
+│       │   │   │   ├── step-03-core-experience.md
+│       │   │   │   ├── step-03-core-experience.md.bak
+│       │   │   │   ├── step-04-emotional-response.md
+│       │   │   │   ├── step-04-emotional-response.md.bak
+│       │   │   │   ├── step-05-inspiration.md
+│       │   │   │   ├── step-05-inspiration.md.bak
+│       │   │   │   ├── step-06-design-system.md
+│       │   │   │   ├── step-06-design-system.md.bak
+│       │   │   │   ├── step-07-defining-experience.md
+│       │   │   │   ├── step-07-defining-experience.md.bak
+│       │   │   │   ├── step-08-visual-foundation.md
+│       │   │   │   ├── step-08-visual-foundation.md.bak
+│       │   │   │   ├── step-09-design-directions.md
+│       │   │   │   ├── step-09-design-directions.md.bak
+│       │   │   │   ├── step-10-user-journeys.md
+│       │   │   │   ├── step-10-user-journeys.md.bak
+│       │   │   │   ├── step-11-component-strategy.md
+│       │   │   │   ├── step-11-component-strategy.md.bak
+│       │   │   │   ├── step-12-ux-patterns.md
+│       │   │   │   ├── step-12-ux-patterns.md.bak
+│       │   │   │   ├── step-13-responsive-accessibility.md
+│       │   │   │   ├── step-13-responsive-accessibility.md.bak
+│       │   │   │   ├── step-14-complete.md
+│       │   │   │   └── step-14-complete.md.bak
+│       │   │   ├── ux-design-template.md
+│       │   │   ├── ux-design-template.md.bak
+│       │   │   ├── workflow.md
+│       │   │   └── workflow.md.bak
+│       │   └── prd
+│       │       ├── domain-complexity.csv
+│       │       ├── domain-complexity.csv.bak
+│       │       ├── prd-template.md
+│       │       ├── prd-template.md.bak
+│       │       ├── project-types.csv
+│       │       ├── project-types.csv.bak
+│       │       ├── steps
+│       │       │   ├── step-01-init.md
+│       │       │   ├── step-01-init.md.bak
+│       │       │   ├── step-01b-continue.md
+│       │       │   ├── step-01b-continue.md.bak
+│       │       │   ├── step-02-discovery.md
+│       │       │   ├── step-02-discovery.md.bak
+│       │       │   ├── step-03-success.md
+│       │       │   ├── step-03-success.md.bak
+│       │       │   ├── step-04-journeys.md
+│       │       │   ├── step-04-journeys.md.bak
+│       │       │   ├── step-05-domain.md
+│       │       │   ├── step-05-domain.md.bak
+│       │       │   ├── step-06-innovation.md
+│       │       │   ├── step-06-innovation.md.bak
+│       │       │   ├── step-07-project-type.md
+│       │       │   ├── step-07-project-type.md.bak
+│       │       │   ├── step-08-scoping.md
+│       │       │   ├── step-08-scoping.md.bak
+│       │       │   ├── step-09-functional.md
+│       │       │   ├── step-09-functional.md.bak
+│       │       │   ├── step-10-nonfunctional.md
+│       │       │   ├── step-10-nonfunctional.md.bak
+│       │       │   ├── step-11-complete.md
+│       │       │   └── step-11-complete.md.bak
+│       │       ├── workflow.md
+│       │       └── workflow.md.bak
+│       ├── 3-solutioning
+│       │   ├── check-implementation-readiness
+│       │   │   ├── steps
+│       │   │   │   ├── step-01-document-discovery.md
+│       │   │   │   ├── step-01-document-discovery.md.bak
+│       │   │   │   ├── step-02-prd-analysis.md
+│       │   │   │   ├── step-02-prd-analysis.md.bak
+│       │   │   │   ├── step-03-epic-coverage-validation.md
+│       │   │   │   ├── step-03-epic-coverage-validation.md.bak
+│       │   │   │   ├── step-04-ux-alignment.md
+│       │   │   │   ├── step-04-ux-alignment.md.bak
+│       │   │   │   ├── step-05-epic-quality-review.md
+│       │   │   │   ├── step-05-epic-quality-review.md.bak
+│       │   │   │   ├── step-06-final-assessment.md
+│       │   │   │   └── step-06-final-assessment.md.bak
+│       │   │   ├── templates
+│       │   │   │   ├── readiness-report-template.md
+│       │   │   │   └── readiness-report-template.md.bak
+│       │   │   ├── workflow.md
+│       │   │   └── workflow.md.bak
+│       │   ├── create-architecture
+│       │   │   ├── architecture-decision-template.md
+│       │   │   ├── architecture-decision-template.md.bak
+│       │   │   ├── data
+│       │   │   │   ├── domain-complexity.csv
+│       │   │   │   ├── domain-complexity.csv.bak
+│       │   │   │   ├── project-types.csv
+│       │   │   │   └── project-types.csv.bak
+│       │   │   ├── steps
+│       │   │   │   ├── step-01-init.md
+│       │   │   │   ├── step-01-init.md.bak
+│       │   │   │   ├── step-01b-continue.md
+│       │   │   │   ├── step-01b-continue.md.bak
+│       │   │   │   ├── step-02-context.md
+│       │   │   │   ├── step-02-context.md.bak
+│       │   │   │   ├── step-03-starter.md
+│       │   │   │   ├── step-03-starter.md.bak
+│       │   │   │   ├── step-04-decisions.md
+│       │   │   │   ├── step-04-decisions.md.bak
+│       │   │   │   ├── step-05-patterns.md
+│       │   │   │   ├── step-05-patterns.md.bak
+│       │   │   │   ├── step-06-structure.md
+│       │   │   │   ├── step-06-structure.md.bak
+│       │   │   │   ├── step-07-validation.md
+│       │   │   │   ├── step-07-validation.md.bak
+│       │   │   │   ├── step-08-complete.md
+│       │   │   │   └── step-08-complete.md.bak
+│       │   │   ├── workflow.md
+│       │   │   └── workflow.md.bak
+│       │   └── create-epics-and-stories
+│       │       ├── steps
+│       │       │   ├── step-01-validate-prerequisites.md
+│       │       │   ├── step-01-validate-prerequisites.md.bak
+│       │       │   ├── step-02-design-epics.md
+│       │       │   ├── step-02-design-epics.md.bak
+│       │       │   ├── step-03-create-stories.md
+│       │       │   ├── step-03-create-stories.md.bak
+│       │       │   ├── step-04-final-validation.md
+│       │       │   └── step-04-final-validation.md.bak
+│       │       ├── templates
+│       │       │   ├── epics-template.md
+│       │       │   └── epics-template.md.bak
+│       │       ├── workflow.md
+│       │       └── workflow.md.bak
+│       ├── 4-implementation
+│       │   ├── architectural-consolidation
+│       │   │   ├── steps
+│       │   │   │   ├── step-01-init.md
+│       │   │   │   ├── step-02-provider-foundation.md
+│       │   │   │   ├── step-03-agent-vault.md
+│       │   │   │   ├── step-04-chat-unification.md
+│       │   │   │   └── step-05-phase0-validation.md
+│       │   │   └── workflow.yaml
+│       │   ├── code-review
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.xml
+│       │   │   ├── instructions.xml.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── correct-course
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── epic-54-foundation-stabilization.md
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── create-story
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.xml
+│       │   │   ├── instructions.xml.bak
+│       │   │   ├── template.md
+│       │   │   ├── template.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── dev-story
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.xml
+│       │   │   ├── instructions.xml.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── retrospective
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── sprint-planning
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── sprint-status-template.yaml
+│       │   │   ├── sprint-status-template.yaml.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   └── sprint-status
+│       │       ├── instructions.md
+│       │       ├── instructions.md.bak
+│       │       ├── workflow.yaml
+│       │       └── workflow.yaml.bak
+│       ├── bmad-quick-flow
+│       │   ├── create-tech-spec
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   └── quick-dev
+│       │       ├── checklist.md.bak
+│       │       ├── instructions.md.bak
+│       │       ├── steps
+│       │       │   ├── step-01-mode-detection.md
+│       │       │   ├── step-02-context-gathering.md
+│       │       │   ├── step-03-execute.md
+│       │       │   ├── step-04-self-check.md
+│       │       │   ├── step-05-adversarial-review.md
+│       │       │   └── step-06-resolve-findings.md
+│       │       ├── workflow.md
+│       │       └── workflow.yaml.bak
+│       ├── document-project
+│       │   ├── checklist.md
+│       │   ├── checklist.md.bak
+│       │   ├── documentation-requirements.csv
+│       │   ├── documentation-requirements.csv.bak
+│       │   ├── instructions.md
+│       │   ├── instructions.md.bak
+│       │   ├── templates
+│       │   │   ├── deep-dive-template.md
+│       │   │   ├── deep-dive-template.md.bak
+│       │   │   ├── index-template.md
+│       │   │   ├── index-template.md.bak
+│       │   │   ├── project-overview-template.md
+│       │   │   ├── project-overview-template.md.bak
+│       │   │   ├── project-scan-report-schema.json
+│       │   │   ├── project-scan-report-schema.json.bak
+│       │   │   ├── source-tree-template.md
+│       │   │   └── source-tree-template.md.bak
+│       │   ├── workflow.yaml
+│       │   ├── workflow.yaml.bak
+│       │   └── workflows
+│       │       ├── deep-dive-instructions.md
+│       │       ├── deep-dive-instructions.md.bak
+│       │       ├── deep-dive.yaml
+│       │       ├── deep-dive.yaml.bak
+│       │       ├── full-scan-instructions.md
+│       │       ├── full-scan-instructions.md.bak
+│       │       ├── full-scan.yaml
+│       │       └── full-scan.yaml.bak
+│       ├── excalidraw-diagrams
+│       │   ├── create-dataflow
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── create-diagram
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   ├── create-flowchart
+│       │   │   ├── checklist.md
+│       │   │   ├── checklist.md.bak
+│       │   │   ├── instructions.md
+│       │   │   ├── instructions.md.bak
+│       │   │   ├── workflow.yaml
+│       │   │   └── workflow.yaml.bak
+│       │   └── create-wireframe
+│       │       ├── checklist.md
+│       │       ├── checklist.md.bak
+│       │       ├── instructions.md
+│       │       ├── instructions.md.bak
+│       │       ├── workflow.yaml
+│       │       └── workflow.yaml.bak
+│       ├── generate-project-context
+│       │   ├── project-context-template.md
+│       │   ├── project-context-template.md.bak
+│       │   ├── steps
+│       │   │   ├── step-01-discover.md
+│       │   │   ├── step-01-discover.md.bak
+│       │   │   ├── step-02-generate.md
+│       │   │   ├── step-02-generate.md.bak
+│       │   │   ├── step-03-complete.md
+│       │   │   └── step-03-complete.md.bak
+│       │   ├── workflow.md
+│       │   └── workflow.md.bak
+│       └── workflow-status
+│           ├── init
+│           │   ├── instructions.md
+│           │   ├── instructions.md.bak
+│           │   ├── workflow.yaml
+│           │   └── workflow.yaml.bak
+│           ├── instructions.md
+│           ├── instructions.md.bak
+│           ├── paths
+│           │   ├── enterprise-brownfield.yaml
+│           │   ├── enterprise-brownfield.yaml.bak
+│           │   ├── enterprise-greenfield.yaml
+│           │   ├── enterprise-greenfield.yaml.bak
+│           │   ├── method-brownfield.yaml
+│           │   ├── method-brownfield.yaml.bak
+│           │   ├── method-greenfield.yaml
+│           │   └── method-greenfield.yaml.bak
+│           ├── project-levels.yaml
+│           ├── project-levels.yaml.bak
+│           ├── workflow-status-template.yaml
+│           ├── workflow-status-template.yaml.bak
+│           ├── workflow.yaml
+│           └── workflow.yaml.bak
+├── cis
+│   ├── agents
+│   │   ├── brainstorming-coach.md
+│   │   ├── creative-problem-solver.md
+│   │   ├── design-thinking-coach.md
+│   │   ├── innovation-strategist.md
+│   │   ├── presentation-master.md
+│   │   └── storyteller
+│   │       └── storyteller.md
+│   ├── config.yaml
+│   ├── docs
+│   │   └── index.md
+│   ├── readme.md.bak
+│   ├── teams
+│   │   ├── creative-squad.yaml
+│   │   ├── creative-squad.yaml.bak
+│   │   ├── default-party.csv
+│   │   └── default-party.csv.bak
+│   └── workflows
+│       ├── design-thinking
+│       │   ├── design-methods.csv
+│       │   ├── design-methods.csv.bak
+│       │   ├── instructions.md
+│       │   ├── instructions.md.bak
+│       │   ├── README.md
+│       │   ├── README.md.bak
+│       │   ├── template.md
+│       │   ├── template.md.bak
+│       │   ├── workflow.yaml
+│       │   └── workflow.yaml.bak
+│       ├── innovation-strategy
+│       │   ├── innovation-frameworks.csv
+│       │   ├── innovation-frameworks.csv.bak
+│       │   ├── instructions.md
+│       │   ├── instructions.md.bak
+│       │   ├── README.md
+│       │   ├── README.md.bak
+│       │   ├── template.md
+│       │   ├── template.md.bak
+│       │   ├── workflow.yaml
+│       │   └── workflow.yaml.bak
+│       ├── problem-solving
+│       │   ├── instructions.md
+│       │   ├── instructions.md.bak
+│       │   ├── README.md
+│       │   ├── README.md.bak
+│       │   ├── solving-methods.csv
+│       │   ├── solving-methods.csv.bak
+│       │   ├── template.md
+│       │   ├── template.md.bak
+│       │   ├── workflow.yaml
+│       │   └── workflow.yaml.bak
+│       ├── README.md
+│       ├── README.md.bak
+│       └── storytelling
+│           ├── instructions.md
+│           ├── instructions.md.bak
+│           ├── README.md
+│           ├── README.md.bak
+│           ├── story-types.csv
+│           ├── story-types.csv.bak
+│           ├── template.md
+│           ├── template.md.bak
+│           ├── workflow.yaml
+│           └── workflow.yaml.bak
+├── codetree-for-analysi-2.mds
+├── core
+│   ├── agents
+│   │   └── bmad-master.md
+│   ├── config.yaml
+│   ├── resources
+│   │   └── excalidraw
+│   │       ├── excalidraw-helpers.md
+│   │       ├── excalidraw-helpers.md.bak
+│   │       ├── library-loader.md
+│   │       ├── library-loader.md.bak
+│   │       ├── README.md
+│   │       ├── README.md.bak
+│   │       ├── validate-json-instructions.md
+│   │       └── validate-json-instructions.md.bak
+│   ├── tasks
+│   │   ├── advanced-elicitation-methods.csv
+│   │   ├── advanced-elicitation-methods.csv.bak
+│   │   ├── advanced-elicitation.xml
+│   │   ├── advanced-elicitation.xml.bak
+│   │   ├── index-docs.xml
+│   │   ├── index-docs.xml.bak
+│   │   ├── review-adversarial-general.xml
+│   │   ├── validate-workflow.xml
+│   │   ├── validate-workflow.xml.bak
+│   │   ├── workflow.xml
+│   │   ├── workflow.xml.bak
+│   │   └── workflow.yaml
+│   ├── tools
+│   │   ├── shard-doc.xml
+│   │   └── shard-doc.xml.bak
+│   └── workflows
+│       ├── brainstorming
+│       │   ├── brain-methods.csv
+│       │   ├── brain-methods.csv.bak
+│       │   ├── steps
+│       │   │   ├── step-01-session-setup.md
+│       │   │   ├── step-01-session-setup.md.bak
+│       │   │   ├── step-01b-continue.md
+│       │   │   ├── step-01b-continue.md.bak
+│       │   │   ├── step-02a-user-selected.md
+│       │   │   ├── step-02a-user-selected.md.bak
+│       │   │   ├── step-02b-ai-recommended.md
+│       │   │   ├── step-02b-ai-recommended.md.bak
+│       │   │   ├── step-02c-random-selection.md
+│       │   │   ├── step-02c-random-selection.md.bak
+│       │   │   ├── step-02d-progressive-flow.md
+│       │   │   ├── step-02d-progressive-flow.md.bak
+│       │   │   ├── step-03-technique-execution.md
+│       │   │   ├── step-03-technique-execution.md.bak
+│       │   │   ├── step-04-idea-organization.md
+│       │   │   └── step-04-idea-organization.md.bak
+│       │   ├── template.md
+│       │   ├── template.md.bak
+│       │   ├── workflow.md
+│       │   └── workflow.md.bak
+│       └── party-mode
+│           ├── steps
+│           │   ├── step-01-agent-loading.md
+│           │   ├── step-01-agent-loading.md.bak
+│           │   ├── step-02-discussion-orchestration.md
+│           │   ├── step-02-discussion-orchestration.md.bak
+│           │   ├── step-03-graceful-exit.md
+│           │   └── step-03-graceful-exit.md.bak
+│           ├── workflow.md
+│           └── workflow.md.bak
+├── custom
+│   ├── config.yaml
+│   └── src
+│       └── modules
+│           └── cham
+│               ├── agents
+│               │   ├── architecture-compliance.agent.yaml
+│               │   ├── architecture-fixer.agent.yaml
+│               │   ├── cartographer.agent.yaml
+│               │   ├── dependency-hygiene.agent.yaml
+│               │   ├── documenter.agent.yaml
+│               │   ├── final-validator.agent.yaml
+│               │   ├── master-orchestrator-sidecar
+│               │   │   ├── memories.md
+│               │   │   └── plans
+│               │   │       ├── template-cycle-prompts.md
+│               │   │       ├── template-execution-status.json
+│               │   │       └── template-master-plan.md
+│               │   ├── master-orchestrator.agent.yaml
+│               │   ├── pattern-analyzer.agent.yaml
+│               │   ├── performance.agent.yaml
+│               │   ├── security-data-flow.agent.yaml
+│               │   ├── state-management.agent.yaml
+│               │   ├── state-refactor.agent.yaml
+│               │   ├── synthesizer.agent.yaml
+│               │   ├── type-safety-fixer.agent.yaml
+│               │   ├── type-safety.agent.yaml
+│               │   └── ux-consistency.agent.yaml
+│               ├── control
+│               │   ├── config.yaml
+│               │   └── platform-configs
+│               │       ├── agent.yaml
+│               │       ├── claude.yaml
+│               │       ├── cursor.yaml
+│               │       ├── gemini.yaml
+│               │       ├── kilocode.yaml
+│               │       └── windsurf.yaml
+│               ├── docs
+│               │   ├── agent-specifications.md
+│               │   ├── architecture.md
+│               │   ├── master-orchestrator-guide.md
+│               │   ├── platform-guide.md
+│               │   └── usage-guide.md
+│               ├── module-plan-cham.md
+│               ├── README.md
+│               ├── status
+│               │   ├── 2025-12-09-v2
+│               │   │   ├── codebase-map.json
+│               │   │   ├── issue-reports
+│               │   │   │   └── architecture.json
+│               │   │   ├── patterns-detected.yaml
+│               │   │   ├── phase-discovery.json
+│               │   │   ├── phase-scanning.json
+│               │   │   ├── phase-synthesis.json
+│               │   │   ├── remediation-roadmap.md
+│               │   │   └── synthesis-report.md
+│               │   ├── 2025-12-10
+│               │   │   ├── diagnostic-request.md
+│               │   │   └── proposal-diagnostic-framework.md
+│               │   ├── 2025-12-12
+│               │   │   ├── phase-scanning.json
+│               │   │   └── phase-synthesis.json
+│               │   ├── 2025-12-13
+│               │   │   ├── codebase-map.json
+│               │   │   ├── issue-reports
+│               │   │   │   ├── architecture.json
+│               │   │   │   ├── dependencies.json
+│               │   │   │   ├── performance.json
+│               │   │   │   ├── security.json
+│               │   │   │   ├── state.json
+│               │   │   │   ├── type-safety.json
+│               │   │   │   └── ux.json
+│               │   │   ├── patterns-detected.yaml
+│               │   │   ├── phase-discovery.json
+│               │   │   ├── phase-scanning.json
+│               │   │   ├── phase-synthesis.json
+│               │   │   └── remediation-roadmap.md
+│               │   ├── 2025-12-13-audit
+│               │   │   ├── discovery-report.md
+│               │   │   ├── integration-analysis.md
+│               │   │   ├── remediation-roadmap.md
+│               │   │   ├── revised-epic-priorities.yaml
+│               │   │   └── synthesis-report.md
+│               │   └── audit-status.json
+│               └── workflows
+│                   ├── continuous-monitoring
+│                   │   └── workflow.md
+│                   ├── full-audit
+│                   │   ├── steps
+│                   │   │   ├── step-01-discovery.md
+│                   │   │   ├── step-02-scanning.md
+│                   │   │   ├── step-03-synthesis.md
+│                   │   │   ├── step-04-remediation.md
+│                   │   │   └── step-05-validation.md
+│                   │   └── workflow.md
+│                   ├── incremental-remediation
+│                   │   └── workflow.md
+│                   └── master-orchestration
+│                       ├── steps
+│                       │   ├── step-01-understand.md
+│                       │   ├── step-02-diagnose.md
+│                       │   ├── step-03-plan.md
+│                       │   ├── step-04-generate-prompts.md
+│                       │   └── step-05-execute.md
+│                       └── workflow.md
+├── modules
+│   ├── architecture-remediation
+│   │   ├── agents
+│   │   │   ├── component-splitter.md
+│   │   │   ├── file-sync-specialist.md
+│   │   │   ├── store-refactorer.md
+│   │   │   ├── typescript-fixer.md
+│   │   │   └── workspace-architect.md
+│   │   ├── artifacts
+│   │   │   ├── epic-tracking.md
+│   │   │   └── validation-gates.md
+│   │   ├── config
+│   │   │   ├── master-plan-foundation-stabilization.yaml
+│   │   │   ├── priorities.yaml
+│   │   │   └── thresholds.yaml
+│   │   ├── MODULE-CREATION-SUMMARY.md
+│   │   ├── README.md
+│   │   └── workflows
+│   │       ├── eliminate-god-stores.md
+│   │       ├── knowledge-sync-strategy.md
+│   │       ├── normalize-components.md
+│   │       ├── notes-sync-strategy.md
+│   │       ├── stabilization-sprint.md
+│   │       ├── state-consolidation-cycle.md
+│   │       └── workspace-file-system-e2e.md
+│   ├── asgl
+│   │   ├── ACTIVE_RUN_STATE.yaml
+│   │   ├── config
+│   │   │   ├── governance.yaml
+│   │   │   └── module-integration.yaml
+│   │   ├── LOOP_STATE.yaml
+│   │   ├── LOOP_STATE.yaml.backup
+│   │   ├── MANIFEST.yaml
+│   │   ├── MASTER_PROMPT.md
+│   │   ├── MASTER-INTEGRATION-LOOP-CONFIG.yaml
+│   │   ├── MASTER-INTEGRATION-LOOP-VELOCITY.yaml
+│   │   ├── README-TEMPLATE-ONLY.md
+│   │   ├── README.md
+│   │   ├── scratchpad
+│   │   │   ├── artifact-registry.yaml
+│   │   │   ├── pending-wires.yaml
+│   │   │   └── research-cache.yaml
+│   │   ├── temp-sub-stories.yaml
+│   │   ├── VELOCITY-EXECUTION-INTEGRATION.md
+│   │   └── workflows
+│   │       ├── governance-update.md
+│   │       └── main-loop.md
+│   ├── governance
+│   │   ├── agents
+│   │   │   ├── governance-agent.md
+│   │   │   ├── status-sync-agent.md
+│   │   │   └── validation-agent.md
+│   │   ├── config
+│   │   │   └── retention-policy.yaml
+│   │   ├── CONSTITUTION.md
+│   │   ├── hooks
+│   │   │   └── pre-execution-specification.md
+│   │   ├── MANIFEST.yaml
+│   │   ├── MODULE-CREATION-SUMMARY.md
+│   │   ├── policies
+│   │   │   └── artifact-lifecycle.md
+│   │   ├── protocols
+│   │   │   └── project-wide-enforcement.md
+│   │   ├── scratchpad
+│   │   │   └── artifact-registry.yaml
+│   │   ├── scripts
+│   │   │   ├── crontab-entry.txt
+│   │   │   ├── daily-audit.sh
+│   │   │   └── install-audit-cron.sh
+│   │   └── workflows
+│   │       ├── archive-cycle.md
+│   │       ├── artifact-cleanup-cycle.md
+│   │       ├── artifact-lifecycle.md
+│   │       ├── naming-enforcement.md
+│   │       ├── ralph-loop-coordination.md
+│   │       ├── stale-artifact-validation.md
+│   │       ├── status-synchronization.md
+│   │       └── template-enforcement.md
+│   └── quality
+│       ├── domains.yaml
+│       ├── exclusions.yaml
+│       ├── MANIFEST.yaml
+│       ├── priorities.yaml
+│       ├── scanners
+│       │   ├── agent-rag-scanner.md
+│       │   ├── architecture-scanner.md
+│       │   ├── evidence-synthesizer.md
+│       │   ├── performance-scanner.md
+│       │   ├── persistence-scanner.md
+│       │   ├── security-scanner.md
+│       │   ├── state-scanner.md
+│       │   ├── types-scanner.md
+│       │   ├── ux-scanner.md
+│       │   └── workspace-scanner.md
+│       ├── thresholds.yaml
+│       └── workflows
+│           ├── evidence-synthesis.md
+│           ├── full-scan.md
+│           ├── incremental-scan.md
+│           ├── targeted-scan.md
+│           └── validation-scan.md
+└── workflows
+    ├── implement-gemini-multimodal.md
+    └── systematic-refactoring-execution.md
+
+175 directories, 952 files

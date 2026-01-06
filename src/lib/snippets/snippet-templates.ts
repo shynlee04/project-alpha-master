@@ -23,15 +23,15 @@ const reactSnippets: SnippetTemplate[] = [
         language: 'typescript',
         code: `import React from 'react';
 
-interface ${1:ComponentName}Props {
-    ${2:prop1}: string;
-    ${3:prop2}?: number;
+interface \${1:ComponentName}Props {
+    \${2:prop1}: string;
+    \${3:prop2}?: number;
 }
 
-export function ${1:ComponentName}({ ${2:prop1}, ${3:prop2} }: ${1:ComponentName}Props) {
+export function \${1:ComponentName}({ \${2:prop1}, \${3:prop2} }: \${1:ComponentName}Props) {
     return (
-        <div className="${4:className}">
-            <h1>{${2:prop1}}</h1>
+        <div className="\${4:className}">
+            <h1>{\${2:prop1}}</h1>
         </div>
     );
 }`,
@@ -45,8 +45,8 @@ export function ${1:ComponentName}({ ${2:prop1}, ${3:prop2} }: ${1:ComponentName
         language: 'typescript',
         code: `import { useState, useEffect } from 'react';
 
-export function use${1:HookName}(${2:initialValue}: ${3:string}) {
-    const [value, setValue] = useState<${3:string}>(${2:initialValue});
+export function use\${1:HookName}(\${2:initialValue}: \${3:string}) {
+    const [value, setValue] = useState<\${3:string}>(\${2:initialValue});
 
     useEffect(() => {
         // Effect logic here
@@ -59,52 +59,18 @@ export function use${1:HookName}(${2:initialValue}: ${3:string}) {
         shortcut: 'hook',
     },
     {
-        name: 'React Context',
-        description: 'Context provider with custom hook',
-        language: 'typescript',
-        code: `import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-interface ${1:ContextName}ContextType {
-    ${2:state}: ${3:string};
-    ${4:setState}: (value: ${3:string}) => void;
-}
-
-const ${1:ContextName}Context = createContext<${1:ContextName}ContextType | undefined>(undefined);
-
-export function ${1:ContextName}Provider({ children }: { children: ReactNode }) {
-    const [${2:state}, ${4:setState}] = useState<${3:string}>('${5:initial}');
-
-    return (
-        <${1:ContextName}Context.Provider value={{ ${2:state}, ${4:setState} }}>
-            {children}
-        </${1:ContextName}Context.Provider>
-    );
-}
-
-export function use${1:ContextName}() {
-    const context = useContext(${1:ContextName}Context);
-    if (!context) {
-        throw new Error('use${1:ContextName} must be used within ${1:ContextName}Provider');
-    }
-    return context;
-}`,
-        tags: ['react', 'context', 'typescript'],
-        folder: 'react/context',
-        shortcut: 'ctx',
-    },
-    {
         name: 'React useEffect',
         description: 'useEffect hook with cleanup',
         language: 'typescript',
         code: `useEffect(() => {
     // Setup logic
-    const ${1:subscription} = ${2:subscribeToSomething}();
+    const \${1:subscription} = \${2:subscribeToSomething}();
 
     return () => {
         // Cleanup logic
-        ${1:subscription}?.unsubscribe();
+        \${1:subscription}?.unsubscribe();
     };
-}, [${3:dependencies}]);`,
+}, [\${3:dependencies}]);`,
         tags: ['react', 'hook', 'effect'],
         folder: 'react/hooks',
         shortcut: 'ueffect',
@@ -113,7 +79,7 @@ export function use${1:ContextName}() {
         name: 'React useState',
         description: 'useState hook with TypeScript type',
         language: 'typescript',
-        code: `const [${1:state}, ${2:setState}] = useState<${3:string}>('${4:initialValue}');`,
+        code: `const [\${1:state}, \${2:setState}] = useState<\${3:string}>('\${4:initialValue}');`,
         tags: ['react', 'hook', 'state'],
         folder: 'react/hooks',
         shortcut: 'ustate',
@@ -129,10 +95,10 @@ const typescriptSnippets: SnippetTemplate[] = [
         name: 'TypeScript Interface',
         description: 'Interface definition with optional properties',
         language: 'typescript',
-        code: `interface ${1:InterfaceName} {
-    ${2:property1}: ${3:string};
-    ${4:property2}?: ${5:number};
-    ${6:method}?: (${7:param}: ${8:string}) => ${9:void};
+        code: `interface \${1:InterfaceName} {
+    \${2:property1}: \${3:string};
+    \${4:property2}?: \${5:number};
+    \${6:method}?: (\${7:param}: \${8:string}) => \${9:void};
 }`,
         tags: ['typescript', 'interface'],
         folder: 'typescript/types',
@@ -142,7 +108,7 @@ const typescriptSnippets: SnippetTemplate[] = [
         name: 'TypeScript Type',
         description: 'Type alias with union types',
         language: 'typescript',
-        code: `type ${1:TypeName} = ${2:'value1' | 'value2' | 'value3'};`,
+        code: `type \${1:TypeName} = \${2:'value1' | 'value2' | 'value3'};`,
         tags: ['typescript', 'type'],
         folder: 'typescript/types',
         shortcut: 'type',
@@ -151,8 +117,8 @@ const typescriptSnippets: SnippetTemplate[] = [
         name: 'Generic Function',
         description: 'Generic function with constraints',
         language: 'typescript',
-        code: `function ${1:functionName}<T extends ${2:object}>(${3:param}: T): ${4:T} {
-    return ${3:param};
+        code: `function \${1:functionName}<T extends \${2:object}>(\${3:param}: T): \${4:T} {
+    return \${3:param};
 }`,
         tags: ['typescript', 'generic'],
         folder: 'typescript/functions',
@@ -162,12 +128,12 @@ const typescriptSnippets: SnippetTemplate[] = [
         name: 'Async Function',
         description: 'Async function with error handling',
         language: 'typescript',
-        code: `async function ${1:functionName}(${2:params}): Promise<${3:ReturnType}> {
+        code: `async function \${1:functionName}(\${2:params}): Promise<\${3:ReturnType}> {
     try {
-        const result = await ${4:asyncOperation}();
+        const result = await \${4:asyncOperation}();
         return result;
     } catch (error) {
-        console.error('Error in ${1:functionName}:', error);
+        console.error('Error in \${1:functionName}:', error);
         throw error;
     }
 }`,
@@ -186,9 +152,9 @@ const utilitySnippets: SnippetTemplate[] = [
         name: 'Debounce Function',
         description: 'Debounce utility for performance',
         language: 'typescript',
-        code: `function ${1:debounce}<T extends (...args: any[]) => any>(
+        code: `function \${1:debounce}<T extends (...args: any[]) => any>(
     func: T,
-    wait: ${2:number}
+    wait: \${2:number}
 ): (...args: Parameters<T>) => void {
     let timeout: NodeJS.Timeout | null = null;
 
@@ -212,9 +178,9 @@ const utilitySnippets: SnippetTemplate[] = [
         name: 'Throttle Function',
         description: 'Throttle utility for performance',
         language: 'typescript',
-        code: `function ${1:throttle}<T extends (...args: any[]) => any>(
+        code: `function \${1:throttle}<T extends (...args: any[]) => any>(
     func: T,
-    limit: ${2:number}
+    limit: \${2:number}
 ): (...args: Parameters<T>) => void {
     let inThrottle: boolean;
 
@@ -231,41 +197,11 @@ const utilitySnippets: SnippetTemplate[] = [
         shortcut: 'throttle',
     },
     {
-        name: 'Deep Clone',
-        description: 'Deep clone object',
-        language: 'typescript',
-        code: `function ${1:deepClone}<T>(obj: T): T {
-    if (obj === null || typeof obj !== 'object') {
-        return obj;
-    }
-
-    if (obj instanceof Date) {
-        return new Date(obj.getTime()) as T;
-    }
-
-    if (obj instanceof Array) {
-        return obj.map((item) => ${1:deepClone}(item)) as T;
-    }
-
-    const clonedObj = {} as T;
-    for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            clonedObj[key] = ${1:deepClone}(obj[key]);
-        }
-    }
-
-    return clonedObj;
-}`,
-        tags: ['utility', 'object'],
-        folder: 'utilities/object',
-        shortcut: 'clone',
-    },
-    {
         name: 'Format Date',
         description: 'Format date to locale string',
         language: 'typescript',
-        code: `function ${1:formatDate}(date: ${2:Date}, locale: ${3:string} = '${4:en-US}'): string {
-    return new Intl.DateTimeFormat(${3:locale}, {
+        code: `function \${1:formatDate}(date: \${2:Date}, locale: \${3:string} = '\${4:en-US}'): string {
+    return new Intl.DateTimeFormat(\${3:locale}, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -288,50 +224,21 @@ const testingSnippets: SnippetTemplate[] = [
         language: 'typescript',
         code: `import { describe, it, expect } from 'vitest';
 
-describe('${1:FeatureName}', () => {
-    it('${2:should do something}', () => {
+describe('\${1:FeatureName}', () => {
+    it('\${2:should do something}', () => {
         // Arrange
-        const ${3:input} = ${4:value};
+        const \${3:input} = \${4:value};
 
         // Act
-        const ${5:result} = ${6:functionUnderTest}(${3:input});
+        const \${5:result} = \${6:functionUnderTest}(\${3:input});
 
         // Assert
-        expect(${5:result}).toBe(${7:expected});
+        expect(\${5:result}).toBe(\${7:expected});
     });
 });`,
         tags: ['testing', 'vitest'],
         folder: 'testing/vitest',
         shortcut: 'test',
-    },
-    {
-        name: 'React Testing Library',
-        description: 'React component test',
-        language: 'typescript',
-        code: `import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { ${1:ComponentName} } from './${1:ComponentName}';
-
-describe('${1:ComponentName}', () => {
-    it('should render correctly', () => {
-        render(<${1:ComponentName} ${2:prop}="${3:value}" />);
-
-        expect(screen.getByText('${3:value}')).toBeInTheDocument();
-    });
-
-    it('should handle ${4:interaction}', async () => {
-        const ${5:user} = userEvent.setup();
-        render(<${1:ComponentName} />);
-
-        const ${6:button} = screen.getByRole('button', { name: '${7:Click me}' });
-        await ${5:user}.click(${6:button});
-
-        expect(screen.getByText('${8:Clicked}')).toBeInTheDocument();
-    });
-});`,
-        tags: ['testing', 'react', 'rtl'],
-        folder: 'testing/react',
-        shortcut: 'rt',
     },
 ];
 
@@ -344,9 +251,9 @@ const apiSnippets: SnippetTemplate[] = [
         name: 'Fetch with Error Handling',
         description: 'Fetch API with error handling',
         language: 'typescript',
-        code: `async function ${1:fetchData}<T>(${2:url}: string): Promise<T> {
+        code: `async function \${1:fetchData}<T>(\${2:url}: string): Promise<T> {
     try {
-        const response = await fetch(${2:url});
+        const response = await fetch(\${2:url});
 
         if (!response.ok) {
             throw new Error(\`HTTP error! status: \${response.status}\`);
@@ -363,29 +270,6 @@ const apiSnippets: SnippetTemplate[] = [
         folder: 'api/fetch',
         shortcut: 'fetch',
     },
-    {
-        name: 'Axios Request',
-        description: 'Axios GET request with error handling',
-        language: 'typescript',
-        code: `import axios from 'axios';
-
-async function ${1:getData}<T>(${2:url}: string): Promise<T> {
-    try {
-        const response = await axios.get<T>(${2:url});
-        return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('API Error:', error.response?.data);
-        } else {
-            console.error('Unexpected error:', error);
-        }
-        throw error;
-    }
-}`,
-        tags: ['api', 'axios'],
-        folder: 'api/axios',
-        shortcut: 'axios',
-    },
 ];
 
 // ============================================================================
@@ -399,11 +283,11 @@ const querySnippets: SnippetTemplate[] = [
         language: 'typescript',
         code: `import { useQuery } from '@tanstack/react-query';
 
-function ${1:ComponentName}() {
+function \${1:ComponentName}() {
     const { data, isLoading, error } = useQuery({
-        queryKey: ['${2:resource}'],
+        queryKey: ['\${2:resource}'],
         queryFn: async () => {
-            const response = await fetch('/api/${2:resource}');
+            const response = await fetch('/api/\${2:resource}');
             return response.json();
         },
     });
@@ -416,38 +300,6 @@ function ${1:ComponentName}() {
         tags: ['tanstack', 'query', 'react'],
         folder: 'tanstack/query',
         shortcut: 'useq',
-    },
-    {
-        name: 'Use Mutation',
-        description: 'TanStack Query mutation hook',
-        language: 'typescript',
-        code: `import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-function ${1:ComponentName}() {
-    const queryClient = useQueryClient();
-
-    const mutation = useMutation({
-        mutationFn: async (${2:data}: ${3:DataType}) => {
-            const response = await fetch('/api/${4:resource}', {
-                method: 'POST',
-                body: JSON.stringify(${2:data}),
-            });
-            return response.json();
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['${4:resource}'] });
-        },
-    });
-
-    return (
-        <button onClick={() => mutation.mutate(${5:data})}>
-            ${6:Create}
-        </button>
-    );
-}`,
-        tags: ['tanstack', 'mutation', 'react'],
-        folder: 'tanstack/query',
-        shortcut: 'usem',
     },
 ];
 

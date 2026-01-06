@@ -12,10 +12,21 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { v4 as uuidv4 } from 'uuid';
-import { dexieDB } from '@/infrastructure/persistence/dexie-db';
+import { crypto } from 'crypto';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import type { CodeSnippetRecord, InsertedSnippet, SnippetPlaceholder } from '@/infrastructure/persistence/dexie-db-snippet-types';
 import { BUILT_IN_SNIPPETS } from './snippet-templates';
+
+/**
+ * Generate UUID v4
+ */
+function uuidv4(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
+}
 
 // ============================================================================
 // Store State
@@ -205,7 +216,7 @@ export const useSnippetStore = create<SnippetStore>()(
 
                 try {
                     // Load user snippets from Dexie
-                    const userSnippets = await dexieDB.codeSnippets.toArray();
+                    const userSnippets = await db.codeSnippets.toArray();
 
                     // Combine with built-in snippets
                     const allSnippets = [...BUILT_IN_SNIPPETS, ...userSnippets];
@@ -231,12 +242,12 @@ export const useSnippetStore = create<SnippetStore>()(
                     const newSnippet: CodeSnippetRecord = {
                         id,
                         ...snippetData,
+                        isBuiltIn: false,
                         createdAt: now,
                         updatedAt: now,
-                        isBuiltIn: false,
                     };
 
-                    await dexieDB.codeSnippets.add(newSnippet);
+                    await db.codeSnippets.add(newSnippet);
 
                     set((state) => ({
                         snippets: [...state.snippets, newSnippet],
@@ -259,7 +270,7 @@ export const useSnippetStore = create<SnippetStore>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const snippet = await dexieDB.codeSnippets.get(id);
+                    const snippet = await db.codeSnippets.get(id);
 
                     if (!snippet) {
                         throw new Error(`Snippet not found: ${id}`);
@@ -269,13 +280,13 @@ export const useSnippetStore = create<SnippetStore>()(
                         throw new Error('Cannot modify built-in snippets');
                     }
 
-                    const updatedSnippet = {
+                    const updatedSnippet: CodeSnippetRecord = {
                         ...snippet,
                         ...updates,
                         updatedAt: Date.now(),
                     };
 
-                    await dexieDB.codeSnippets.put(updatedSnippet);
+                    await db.codeSnippets.put(updatedSnippet);
 
                     set((state) => ({
                         snippets: state.snippets.map((s) => (s.id === id ? updatedSnippet : s)),
@@ -296,7 +307,7 @@ export const useSnippetStore = create<SnippetStore>()(
                 set({ isLoading: true, error: null });
 
                 try {
-                    const snippet = await dexieDB.codeSnippets.get(id);
+                    const snippet = await db.codeSnippets.get(id);
 
                     if (!snippet) {
                         throw new Error(`Snippet not found: ${id}`);
@@ -306,7 +317,7 @@ export const useSnippetStore = create<SnippetStore>()(
                         throw new Error('Cannot delete built-in snippets');
                     }
 
-                    await dexieDB.codeSnippets.delete(id);
+                    await db.codeSnippets.delete(id);
 
                     set((state) => ({
                         snippets: state.snippets.filter((s) => s.id !== id),
@@ -355,8 +366,8 @@ export const useSnippetStore = create<SnippetStore>()(
             // Export snippets as JSON
             exportSnippets: async () => {
                 try {
-                    const userSnippets = (await dexieDB.codeSnippets.toArray()).filter(
-                        (s) => !s.isBuiltIn
+                    const userSnippets = (await db.codeSnippets.toArray()).filter(
+                        (s: CodeSnippetRecord) => !s.isBuiltIn
                     );
 
                     return JSON.stringify(userSnippets, null, 2);
@@ -391,7 +402,7 @@ export const useSnippetStore = create<SnippetStore>()(
                             isBuiltIn: false,
                         }));
 
-                    await dexieDB.codeSnippets.bulkAdd(validSnippets);
+                    await db.codeSnippets.bulkAdd(validSnippets);
 
                     set((state) => ({
                         snippets: [...state.snippets, ...validSnippets],
