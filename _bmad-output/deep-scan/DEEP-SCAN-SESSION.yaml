@@ -1,0 +1,159 @@
+# ============================================================================
+# DEEP SCAN SESSION
+# ============================================================================
+# Orchestrated by: deep-scan-orchestrator
+# Session ID: DEEPSCAN-20260106-120000
+# Target: project-alpha-master
+# ============================================================================
+# Purpose: Comprehensive architecture remediation scan for critical blockers
+# ============================================================================
+# Triggered By: User report of critical production blockers
+# Trigger Date: 2026-01-06T12:00:00+07:00
+# ============================================================================
+
+session:
+  id: "DEEPSCAN-20260106-120000"
+  status: "ACTIVE"
+  started_at: "2026-01-06T12:00:00+07:00"
+  last_updated: "2026-01-06T12:00:00+07:00"
+
+  orchestrator:
+    agent: "deep-scan-orchestrator"
+    module: "deep-scan"
+    platform: "claude-code"
+
+trigger:
+  user_report:
+    summary: "Critical blockers contradict 'production-ready' claims"
+    reported_issues:
+      - "File system sync broken across workspaces (IDE, Notes, Knowledge)"
+      - "No mobile fallback when project not mounted"
+      - "LLM provider configuration inconsistent across workspaces"
+      - "UI states don't persist properly"
+      - "Poor error handling (no fallbacks)"
+      - "Missing user feedback (toasts, badges, progress)"
+      - "Responsive design broken on mobile"
+
+    severity: "P0 - CRITICAL"
+
+scan_scope:
+  phases:
+    - name: "Phase 1: Inventory"
+      status: "PENDING"
+      scanners:
+        - "state-scanner"
+        - "types-scanner"
+        - "architecture-scanner"
+        - "persistence-scanner"
+        - "agent-rag-scanner"
+        - "ux-scanner"
+        - "workspace-scanner"
+        - "security-scanner"
+        - "performance-scanner"
+
+    - name: "Phase 2: Proofs"
+      status: "PENDING"
+      depends_on: "Phase 1: Inventory"
+
+    - name: "Phase 3: Synthesis"
+      status: "PENDING"
+      depends_on: "Phase 2: Proofs"
+
+artifacts:
+  phase_1_inventory:
+    output_dir: "_bmad-output/deep-scan/scans"
+    format: "JSON"
+    files: []
+
+  phase_2_proofs:
+    output_dir: "_bmad-output/deep-scan/evidence"
+    format: "YAML"
+    files: []
+
+  phase_3_synthesis:
+    output_dir: "_bmad-output/deep-scan/reports"
+    format: "Markdown"
+    files:
+      - "MASTER-RISK-REGISTER.md"
+      - "REMEDIATION-BACKLOG.yaml"
+      - "DEEP-SCAN-SUMMARY.md"
+
+validation_criteria:
+  - "Findings map to actual code locations (line numbers)"
+  - "Root causes identified, not symptoms"
+  - "Issues categorized by severity (P0, P1, P2)"
+  - "Evidence files include code snippets"
+  - "Risk register ordered by business impact"
+
+continuation:
+  next_phase: "Phase 1: Inventory"
+  next_action: "Launch all 9 scanners in parallel"
+  orchestration_mode: "parallel_execution"
+
+# ============================================================================
+# SCANNER REGISTRY
+# ============================================================================
+
+scanners:
+  state_scanner:
+    agent: "deep-scan-state-scanner"
+    config: "_bmad/modules/deep-scan/agents/state-scanner.md"
+    target: "Zustand stores for cross-workspace pollution"
+    priority: "P0"
+    status: "PENDING"
+
+  types_scanner:
+    agent: "deep-scan-types-scanner"
+    config: "_bmad/modules/deep-scan/agents/types-scanner.md"
+    target: "TypeScript errors and type safety violations"
+    priority: "P0"
+    status: "PENDING"
+
+  architecture_scanner:
+    agent: "deep-scan-architecture-scanner"
+    config: "_bmad/modules/deep-scan/agents/architecture-scanner.md"
+    target: "Layer violations, god components, circular deps"
+    priority: "P0"
+    status: "PENDING"
+
+  persistence_scanner:
+    agent: "deep-scan-persistence-scanner"
+    config: "_bmad/modules/deep-scan/agents/persistence-scanner.md"
+    target: "IndexedDB/Dexie patterns for data integrity"
+    priority: "P0"
+    status: "PENDING"
+
+  agent_rag_scanner:
+    agent: "deep-scan-agent-rag-scanner"
+    config: "_bmad/modules/deep-scan/agents/agent-rag-scanner.md"
+    target: "RAG indexing, retrieval, and vector store"
+    priority: "P1"
+    status: "PENDING"
+
+  ux_scanner:
+    agent: "deep-scan-ux-scanner"
+    config: "_bmad/modules/deep-scan/agents/ux-scanner.md"
+    target: "Hardcoded strings, i18n violations, responsive failures"
+    priority: "P0"
+    status: "PENDING"
+
+  workspace_scanner:
+    agent: "deep-scan-workspace-scanner"
+    config: "_bmad/modules/deep-scan/agents/workspace-scanner.md"
+    target: "Workspace isolation and state leakage"
+    priority: "P0"
+    status: "PENDING"
+
+  security_scanner:
+    agent: "deep-scan-security-scanner"
+    config: "_bmad/modules/deep-scan/agents/security-scanner.md"
+    target: "API key storage, secrets management"
+    priority: "P0"
+    status: "PENDING"
+
+  performance_scanner:
+    agent: "deep-scan-performance-scanner"
+    config: "_bmad/modules/deep-scan/agents/performance-scanner.md"
+    target: "Render waste, memory leaks, bundle size"
+    priority: "P1"
+    status: "PENDING"
