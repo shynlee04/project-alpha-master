@@ -16,8 +16,8 @@
  */
 
 import type { Agent } from '@/core/entities/Agent';
-import type { WorkspaceType, WorkspaceTransitionEvent } from '../state/workspace-types';
-import { useWorkspaceStore } from '../state/workspace-store';
+import type { WorkspaceType, WorkspaceTransitionEvent } from '@/infrastructure/persistence/stores/workspace/workspace-types';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { crossWorkspaceEventBus } from '../events/cross-workspace-event-bus';

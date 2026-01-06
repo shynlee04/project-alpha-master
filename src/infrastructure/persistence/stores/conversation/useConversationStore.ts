@@ -35,7 +35,7 @@ import { createThreadManagementSlice } from './thread-management-slice';
 import { createMessageCrudSlice } from './message-crud-slice';
 import { createConversationUtilsSlice } from './conversation-utils-slice';
 import { createConversationValidationSlice } from './conversation-validation-slice';
-import { createConversationEventsSlice } from './event-types';
+import { createConversationEventsSlice } from './conversation-events-slice';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 
 // Re-export types for consumers

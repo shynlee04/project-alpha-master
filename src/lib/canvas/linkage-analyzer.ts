@@ -109,7 +109,7 @@ export class LinkageAnalyzer {
     data: SourceNodeData
   ): Promise<NodeAnalysis> {
     // Import knowledge store to get source details
-    const { useKnowledgeStore } = await import('@/lib/state/knowledge/knowledge-store');
+    const { useKnowledgeStore } = await import('@/infrastructure/persistence/stores/knowledge');
     const store = useKnowledgeStore.getState();
     const source = store.sources.find((s) => s.id === data.sourceId);
 

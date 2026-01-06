@@ -11,18 +11,20 @@ import type { Node, Edge, Viewport } from '@xyflow/react';
 
 /**
  * Canvas state interface (subset of CombinedCanvasState)
+ * Made generic to accept any linkage proposal type
  */
-export interface CanvasState {
+export interface CanvasState<T = unknown> {
   nodes: Node[];
   edges: Edge[];
   viewport: Viewport;
-  linkageProposals: unknown[];
+  linkageProposals: T[];
 }
 
 /**
  * Canvas store state and actions interface
+ * Made generic to accept any linkage proposal type
  */
-export interface CanvasStoreApi {
-  getState: () => CanvasState;
-  setState: (partial: Partial<CanvasState>) => void;
+export interface CanvasStoreApi<T = unknown> {
+  getState: () => CanvasState<T>;
+  setState: (partial: Partial<CanvasState<T>>) => void;
 }

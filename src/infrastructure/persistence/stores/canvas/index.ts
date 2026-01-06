@@ -18,8 +18,6 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Node, Edge, Viewport } from '@xyflow/react';
-import type { CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
 
 // Import slice creators
 import {

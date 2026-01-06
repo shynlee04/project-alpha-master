@@ -23,7 +23,7 @@ import {
     DialogTitle,
 } from '@/presentation/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useSnippetStore, useFilteredSnippets, useSnippetFolders, useSnippetTags } from '@/lib/snippets/snippet-store';
+import { useSnippetStore, initializeSnippetStore, useFilteredSnippets, useSnippetFolders, useSnippetTags } from '@/lib/snippets/snippet-store';
 import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
 import { SnippetEditor } from './SnippetEditor';
 
@@ -57,7 +57,6 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
     const setSelectedFolder = useSnippetStore((s) => s.setSelectedFolder);
     const setSelectedTags = useSnippetStore((s) => s.setSelectedTags);
     const clearFilters = useSnippetStore((s) => s.clearFilters);
-    const loadSnippets = useSnippetStore((s) => s.loadSnippets);
 
     const snippets = useFilteredSnippets();
     const folders = useSnippetFolders();
@@ -69,9 +68,9 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
     // Load snippets on mount
     useEffect(() => {
         if (open) {
-            loadSnippets();
+            initializeSnippetStore();
         }
-    }, [open, loadSnippets]);
+    }, [open]);
 
     // Toggle folder expansion
     /* const _toggleFolder = (folder: string) => {

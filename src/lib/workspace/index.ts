@@ -46,7 +46,7 @@ export type {
 // Or from infrastructure: import { useIDEStore } from '@/infrastructure/persistence/stores/ide/useIDEStore'
 
 // Re-export TerminalTab type for backwards compatibility
-export type { TerminalTab } from '../state/ide-store';
+export type { TerminalTab } from '@/infrastructure/persistence/stores/ide';
 
 // Story 3-8: Workspace Context (MIGRATED - Story ARCH-01.3)
 // The old WorkspaceContext.tsx has been migrated to infrastructure/persistence/stores/workspace

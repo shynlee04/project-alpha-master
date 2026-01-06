@@ -1,519 +1,76 @@
 /**
- * Project Store - Unified persistence for project metadata.
+ * @fileoverview Project Store - Facade (Major Architecture Migration)
+ * @module lib/workspace/project-store
  *
- * Story 3-7: Implement Project Metadata Persistence
- * Story 5-1: Set Up IndexedDB Schema (unified DB)
- * Story 27-1c: Migrated to Dexie.js
+ * @deprecated This module has undergone a MAJOR ARCHITECTURE MIGRATION.
  *
- * This module provides CRUD operations for storing and retrieving project
- * metadata including FSA directory handles for permission restoration.
+ * **IMPORTANT ARCHITECTURAL CHANGE:**
  *
- * @governance EPIC-27-1c
+ * BEFORE (519 lines): Dexie CRUD service module with async functions
+ * - Functions: saveProject(), getProject(), listProjects(), etc.
+ * - Direct Dexie IndexedDB operations
+ * - No state management, just CRUD utilities
+ *
+ * AFTER (Zustand): Zustand store with 5 slices + Dexie persistence
+ * - Store: useProjectStore with slice composition
+ * - State management via Zustand
+ * - Dexie persistence via Zustand middleware
+ * - Reactive hooks for components
+ *
+ * **This is NOT just a god store split - it's a complete architectural migration.**
+ *
+ * Migration Guide:
+ *
+ * OLD (Dexie service):
+ * ```ts
+ * import { saveProject, getProject } from '@/lib/workspace/project-store';
+ * await saveProject(project);
+ * const project = await getProject(id);
+ * ```
+ *
+ * NEW (Zustand store):
+ * ```ts
+ * import { useProjectStore } from '@/lib/workspace/project-store/project-store-refactored';
+ * const { saveProject, getProject } = useProjectStore.getState();
+ * await saveProject(project);
+ * const project = getProject(id);
+ * ```
+ *
+ * **All backward-compatible functions are now facades that delegate to Zustand store.**
+ *
+ * @see _bmad-output/store-refactoring-summaries/project-store-refactoring-2026-01-07.md
+ * @see Epic CP-1: Project Consolidation (workspace-sprints/comprehensive-remediation-sprint-2026-01-05.yaml)
  */
-
-import {
-    getPersistenceDB,
-    _resetPersistenceDBForTesting,
-} from '../persistence';
-import { getPermissionState, type FsaPermissionState } from '../filesystem/permission-lifecycle';
-import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-/**
- * Layout configuration stored per project.
- * Optional - used for restoring IDE state.
- */
-export interface LayoutConfig {
-    panelSizes?: number[];
-    openFiles?: string[];
-    activeFile?: string | null;
-}
-
-/**
- * Core project metadata stored in IndexedDB.
- */
-export interface ProjectMetadata {
-    /** UUID v4 or generated ID */
-    id: string;
-    /** Display name (typically folder name) */
-    name: string;
-    /** Display path for UI (not actual path due to FSA security) */
-    folderPath: string;
-    /** FSA handle for directory access restoration */
-    fsaHandle: FileSystemDirectoryHandle;
-    /** Last time project was opened */
-    lastOpened: Date;
-    autoSync?: boolean;
-    /** Optional layout state for IDE restoration */
-    layoutState?: LayoutConfig;
-    /** Custom exclusion patterns for sync (glob syntax) */
-    exclusionPatterns?: string[];
-    /** Story 13-5: Last known permission state for faster dashboard load */
-    lastKnownPermissionState?: FsaPermissionState;
-    /** Story WB-1: Workspace binding configuration */
-    workspaceBindings?: WorkspaceBindings;
-    /** Story WB-1: File snapshot feature flag */
-    fileSnapshotEnabled?: boolean;
-    /** Soft delete flag (true = marked as deleted, recoverable for 30 days) */
-    deleted?: boolean;
-    /** Timestamp when project was soft deleted */
-    deletedAt?: Date;
-}
-
-/**
- * Project with permission state for dashboard display.
- */
-export interface ProjectWithPermission extends ProjectMetadata {
-    permissionState: FsaPermissionState;
-}
+export type { ProjectMetadata, ProjectWithPermission, LayoutConfig } from './project-store/types';
 
 // Re-export WorkspaceBindings for component imports
 export type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
 
 // ============================================================================
-// Legacy Migration (Story 5-1)
+// Backward Compatibility Facade (Delegates to Zustand Store)
 // ============================================================================
 
-const LEGACY_DB_NAME = 'via-gent-projects';
-const STORE_NAME = 'projects' as const;
+export {
+  saveProject,
+  getProject,
+  listProjects,
+  listActiveProjects,
+  listProjectsWithPermission,
+  deleteProject,
+  updateProjectLastOpened,
+  updateProjectBindings,
+  updateProjectMetadata,
+  checkProjectPermission,
+  clearAllProjects,
+  getProjectCount,
+  generateProjectId,
+  _resetDBForTesting,
+} from './project-store/project-store-refactored';
 
-let legacyMigrationAttempted = false;
-
-/**
- * Migrate from legacy 'via-gent-projects' DB to unified DB.
- * Uses native IndexedDB API since we no longer have idb dependency.
- */
-async function migrateLegacyProjectsIfNeeded(): Promise<void> {
-    if (legacyMigrationAttempted) return;
-    legacyMigrationAttempted = true;
-
-    const db = await getPersistenceDB();
-    if (!db) return;
-
-    try {
-        // Check if we have any projects in new DB
-        const existingCount = await db.count(STORE_NAME);
-        if (existingCount > 0) return;
-
-        // Try to open legacy database using native IndexedDB
-        const legacyProjects = await new Promise<ProjectMetadata[]>((resolve) => {
-            const request = indexedDB.open(LEGACY_DB_NAME);
-
-            request.onerror = () => resolve([]);
-            request.onsuccess = () => {
-                const legacyDb = request.result;
-
-                if (!legacyDb.objectStoreNames.contains('projects')) {
-                    legacyDb.close();
-                    resolve([]);
-                    return;
-                }
-
-                const tx = legacyDb.transaction('projects', 'readonly');
-                const store = tx.objectStore('projects');
-                const getAllRequest = store.getAll();
-
-                getAllRequest.onsuccess = () => {
-                    legacyDb.close();
-                    resolve(getAllRequest.result as ProjectMetadata[]);
-                };
-                getAllRequest.onerror = () => {
-                    legacyDb.close();
-                    resolve([]);
-                };
-            };
-        });
-
-        if (legacyProjects.length === 0) return;
-
-        // Migrate each project
-        for (const project of legacyProjects) {
-            await db.put(STORE_NAME, {
-                ...project,
-                lastOpened: new Date(project.lastOpened),
-                autoSync: project.autoSync ?? true,
-            });
-        }
-
-        console.log('[ProjectStore] Migrated legacy projects:', legacyProjects.length);
-    } catch (error) {
-        console.warn('[ProjectStore] Legacy migration failed:', error);
-    }
-}
-
-// ============================================================================
-// Database Connection
-// ============================================================================
-
-async function getDB() {
-    const db = await getPersistenceDB();
-    if (!db) return null;
-
-    await migrateLegacyProjectsIfNeeded();
-    return db;
-}
-
-/**
- * Reset the database connection.
- * For testing purposes only - closes existing connection and clears cache.
- * @internal
- */
-export async function _resetDBForTesting(): Promise<void> {
-    await _resetPersistenceDBForTesting();
-
-    if (typeof indexedDB !== 'undefined') {
-        try {
-            await new Promise<void>((resolve) => {
-                // Check if deleteDatabase method exists (may not in test environments)
-                if (typeof indexedDB.deleteDatabase === 'function') {
-                    const request = indexedDB.deleteDatabase(LEGACY_DB_NAME);
-                    request.onsuccess = () => resolve();
-                    request.onerror = () => resolve();
-                    request.onblocked = () => resolve();
-                } else {
-                    // Mock environment - just resolve
-                    resolve();
-                }
-            });
-        } catch (error) {
-            // Ignore errors in test environments
-            console.warn('[ProjectStore] Could not delete legacy database:', error);
-        }
-    }
-
-    legacyMigrationAttempted = false;
-}
-
-// ============================================================================
-// ID Generation
-// ============================================================================
-
-/**
- * Generate a unique project ID.
- * Uses crypto.randomUUID() with fallback for older browsers.
- */
-export function generateProjectId(): string {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        return crypto.randomUUID();
-    }
-    // Fallback: timestamp + random
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-}
-
-// ============================================================================
-// CRUD Operations
-// ============================================================================
-
-// Default values for new fields (Story WB-1)
-const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBindings = {
-    ide: true,
-    notes: false,
-    knowledge: false,
-    study: false,
-};
-const DEFAULT_FILE_SNAPSHOT_ENABLED = false;
-
-/**
- * Save or update project metadata in IndexedDB.
- *
- * @param project - Project metadata to save
- * @returns true if saved successfully, false otherwise
- */
-export async function saveProject(project: ProjectMetadata): Promise<boolean> {
-    const db = await getDB();
-    if (!db) return false;
-
-    try {
-        const projectToSave = {
-            ...project,
-            lastOpened: new Date(project.lastOpened),
-            autoSync: project.autoSync ?? true,
-            // Story WB-1: Apply defaults for new fields
-            workspaceBindings: project.workspaceBindings ?? DEFAULT_WORKSPACE_BINDINGS,
-            fileSnapshotEnabled: project.fileSnapshotEnabled ?? DEFAULT_FILE_SNAPSHOT_ENABLED,
-        };
-        await db.put(STORE_NAME, projectToSave);
-        console.log('[ProjectStore] Project saved:', project.id, project.name);
-        return true;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to save project:', error);
-        return false;
-    }
-}
-
-/**
- * Get project by ID.
- *
- * @param id - Project ID
- * @returns ProjectMetadata or null if not found
- */
-export async function getProject(id: string): Promise<ProjectMetadata | null> {
-    const db = await getDB();
-    if (!db) return null;
-
-    try {
-        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
-        // Cast to ProjectMetadata for backwards compatibility
-        // The actual data in IndexedDB may have additional fields from the Project type
-        return project ?? null;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to get project:', id, error);
-        return null;
-    }
-}
-
-/**
- * List all projects sorted by lastOpened descending.
- *
- * @returns Array of ProjectMetadata
- */
-export async function listProjects(): Promise<ProjectMetadata[]> {
-    const db = await getDB();
-    if (!db) return [];
-
-    try {
-        const projects = await db.getAll<ProjectMetadata>(STORE_NAME);
-        return projects.sort(
-            (a, b) => new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime()
-        );
-    } catch (error) {
-        console.error('[ProjectStore] Failed to list projects:', error);
-        return [];
-    }
-}
-
-/**
- * List only active (non-deleted) projects sorted by lastOpened descending.
- * Iteration 45: Added for Hub UI to hide soft-deleted projects from dashboard.
- *
- * @returns Array of active ProjectMetadata
- */
-export async function listActiveProjects(): Promise<ProjectMetadata[]> {
-    const allProjects = await listProjects();
-    return allProjects.filter(project => !project.deleted);
-}
-
-/**
- * List all projects with their current permission state.
- * Useful for dashboard display.
- *
- * @returns Array of ProjectWithPermission
- */
-export async function listProjectsWithPermission(): Promise<ProjectWithPermission[]> {
-    const projects = await listProjects();
-
-    const projectsWithPermission = await Promise.all(
-        projects.map(async (project) => {
-            try {
-                const permissionState = await getPermissionState(project.fsaHandle, 'readwrite');
-                return { ...project, permissionState };
-            } catch {
-                return { ...project, permissionState: 'denied' as FsaPermissionState };
-            }
-        })
-    );
-
-    return projectsWithPermission;
-}
-
-/**
- * Delete project by ID with soft delete option.
- *
- * Iteration 45: Enhanced to support soft delete (mark as deleted, recoverable)
- * vs hard delete (permanent removal from IndexedDB).
- *
- * @param id - Project ID
- * @param softDelete - If true, mark as deleted (default: true for safety)
- * @returns true if deleted successfully, false otherwise
- */
-export async function deleteProject(id: string, softDelete: boolean = true): Promise<boolean> {
-    const db = await getDB();
-    if (!db) return false;
-
-    try {
-        if (softDelete) {
-            // Soft delete: Mark project as deleted with timestamp
-            const project = await db.get<ProjectMetadata>(STORE_NAME, id);
-            if (!project) {
-                console.warn('[ProjectStore] Project not found for soft delete:', id);
-                return false;
-            }
-
-            project.deleted = true;
-            project.deletedAt = new Date();
-            await db.put(STORE_NAME, project);
-            console.log('[ProjectStore] Project soft deleted (recoverable for 30 days):', id);
-        } else {
-            // Hard delete: Permanently remove from IndexedDB
-            await db.delete(STORE_NAME, id);
-            console.log('[ProjectStore] Project permanently deleted:', id);
-        }
-        return true;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to delete project:', id, error);
-        return false;
-    }
-}
-
-/**
- * Update only the lastOpened timestamp for a project.
- * More efficient than full project save for frequent updates.
- *
- * @param id - Project ID
- * @returns true if updated successfully, false otherwise
- */
-export async function updateProjectLastOpened(id: string): Promise<boolean> {
-    const db = await getDB();
-    if (!db) return false;
-
-    try {
-        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
-        if (!project) {
-            console.warn('[ProjectStore] Project not found for update:', id);
-            return false;
-        }
-
-        project.lastOpened = new Date();
-        await db.put(STORE_NAME, project);
-        return true;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to update lastOpened:', id, error);
-        return false;
-    }
-}
-
-/**
- * Update workspace bindings for a project.
- * Story WB-4: Workspace Binding Dialog persistence.
- *
- * @param id - Project ID
- * @param bindings - Workspace bindings configuration
- * @returns true if updated successfully, false otherwise
- */
-export async function updateProjectBindings(
-    id: string,
-    bindings: WorkspaceBindings
-): Promise<boolean> {
-    const db = await getDB();
-    if (!db) return false;
-
-    try {
-        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
-        if (!project) {
-            console.warn('[ProjectStore] Project not found for update:', id);
-            return false;
-        }
-
-        project.workspaceBindings = bindings;
-        await db.put(STORE_NAME, project);
-        return true;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to update workspaceBindings:', id, error);
-        return false;
-    }
-}
-
-/**
- * Update project metadata (name, autoSync, exclusions).
- * Iteration 45: Added for ProjectMetadataDialog integration.
- *
- * @param id - Project ID
- * @param metadata - Partial metadata to update (name, autoSync, exclusionPatterns)
- * @returns true if updated successfully, false otherwise
- */
-export async function updateProjectMetadata(
-    id: string,
-    metadata: Partial<{
-        name: string;
-        autoSync: boolean;
-        exclusionPatterns: string[];
-    }>
-): Promise<boolean> {
-    const db = await getDB();
-    if (!db) return false;
-
-    try {
-        const project = await db.get<ProjectMetadata>(STORE_NAME, id);
-        if (!project) {
-            console.warn('[ProjectStore] Project not found for metadata update:', id);
-            return false;
-        }
-
-        // Update only provided fields
-        if (metadata.name !== undefined) {
-            project.name = metadata.name;
-        }
-        if (metadata.autoSync !== undefined) {
-            project.autoSync = metadata.autoSync;
-        }
-        if (metadata.exclusionPatterns !== undefined) {
-            project.exclusionPatterns = metadata.exclusionPatterns;
-        }
-
-        await db.put(STORE_NAME, project);
-        console.log('[ProjectStore] Project metadata updated:', id);
-        return true;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to update project metadata:', id, error);
-        return false;
-    }
-}
-
-/**
- * Check permission state for a stored project's handle.
- *
- * @param id - Project ID
- * @returns FsaPermissionState or 'denied' if project not found
- */
-export async function checkProjectPermission(id: string): Promise<FsaPermissionState> {
-    const project = await getProject(id);
-    if (!project || !project.fsaHandle) {
-        return 'denied';
-    }
-
-    return getPermissionState(project.fsaHandle, 'readwrite');
-}
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Clear all projects from IndexedDB.
- * Useful for testing and reset functionality.
- *
- * @returns true if cleared successfully
- */
-export async function clearAllProjects(): Promise<boolean> {
-    const db = await getDB();
-    if (!db) return false;
-
-    try {
-        await db.clear(STORE_NAME);
-        console.log('[ProjectStore] All projects cleared');
-        return true;
-    } catch (error) {
-        console.error('[ProjectStore] Failed to clear projects:', error);
-        return false;
-    }
-}
-
-/**
- * Get project count.
- *
- * @returns Number of stored projects
- */
-export async function getProjectCount(): Promise<number> {
-    const db = await getDB();
-    if (!db) return 0;
-
-    try {
-        return await db.count(STORE_NAME);
-    } catch (error) {
-        console.error('[ProjectStore] Failed to count projects:', error);
-        return 0;
-    }
-}
+// Export Zustand store for new code
+export { useProjectStore } from './project-store/project-store-refactored';

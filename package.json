@@ -23,7 +23,18 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "governance": "node .scripts/check-size-limits.js && node .scripts/check-import-paths.js",
     "governance:size": "node .scripts/check-size-limits.js",
-    "governance:imports": "node .scripts/check-import-paths.js"
+    "governance:imports": "node .scripts/check-import-paths.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ide": "playwright test ide-workspace.journey.spec.ts",
+    "test:e2e:notes": "playwright test notes-workspace.journey.spec.ts",
+    "test:e2e:knowledge": "playwright test knowledge-workspace.journey.spec.ts",
+    "test:e2e:study": "playwright test study-workspace.journey.spec.ts",
+    "test:e2e:cross-workspace": "playwright test cross-workspace-integration.journey.spec.ts",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:install": "playwright install --with-deps"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

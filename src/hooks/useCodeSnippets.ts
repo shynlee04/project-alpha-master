@@ -12,7 +12,7 @@
 
 import { useCallback, useEffect } from 'react';
 import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
-import { useSnippetStore, processSnippetForInsertion } from '@/lib/snippets/snippet-store';
+import { useSnippetStore, initializeSnippetStore, processSnippetForInsertion } from '@/lib/snippets/snippet-store';
 
 /**
  * Code snippets hook return type
@@ -59,7 +59,9 @@ export function useCodeSnippets(): UseCodeSnippetsReturn {
     const snippets = useSnippetStore((s) => s.snippets);
     const isLoading = useSnippetStore((s) => s.isLoading);
     const error = useSnippetStore((s) => s.error);
-    const loadSnippets = useSnippetStore((s) => s.loadSnippets);
+    const loadSnippets = useCallback(async () => {
+        await initializeSnippetStore();
+    }, []);
     const searchQuery = useSnippetStore((s) => s.searchQuery);
     const selectedFolder = useSnippetStore((s) => s.selectedFolder);
     const selectedTags = useSnippetStore((s) => s.selectedTags);
@@ -148,7 +150,7 @@ export function useCodeSnippets(): UseCodeSnippetsReturn {
                 // Add indentation to each line of the snippet
                 const indentedCode = code
                     .split('\n')
-                    .map((line, index) => (index === 0 ? line : indentation + line))
+                    .map((line: string, index: number) => (index === 0 ? line : indentation + line))
                     .join('\n');
 
                 // Execute edit operation
