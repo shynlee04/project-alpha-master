@@ -150,6 +150,26 @@ export type {
 } from './dexie-db-snippet-types';
 
 // ============================================================================
+// Plugin Types (Story S-037)
+// ============================================================================
+
+export type {
+    PluginRecord,
+    PluginSettingsRecord,
+    PluginMarketplaceRecord,
+    PluginStorageRecord,
+} from './dexie-db-plugin-types';
+
+export type {
+    PluginsTable,
+    PluginSettingsTable,
+    PluginMarketplaceTable,
+    PluginStorageTable,
+} from './dexie-db-plugin-types';
+
+export { generatePluginId, generateStorageId } from './dexie-db-plugin-types';
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 

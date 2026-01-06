@@ -665,4 +665,55 @@ export function registerMigrations(db: Dexie): void {
                 itemsCount: 0
             });
         });
+
+        // Schema version 19: Story S-037 - Plugin System
+        // Adds plugins, pluginSettings, pluginMarketplace, and pluginStorage tables
+        db.version(19).stores({
+            projects: 'id, lastOpened, name',
+            ideState: 'projectId, updatedAt',
+            conversations: 'id, projectId, updatedAt',
+            taskContexts: 'id, projectId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, toolName, status, [taskId+status]',
+            credentials: 'providerId, createdAt',
+            threads: 'id, projectId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, updatedAt',
+            agentConfigs: 'id, updatedAt',
+            conversationState: 'id, updatedAt',
+            syncStatus: 'id, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileMetadata: '[projectId+path], projectId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSyncStatus: 'id, updatedAt',
+            sources: 'id, projectId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, name, createdAt, [projectId+name]',
+            oramaIndexes: 'projectId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+            workflows: 'id, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+            ragState: 'id, updatedAt',
+            codeSnippets: 'id, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+            // NEW: Plugin system tables for extensibility (Story S-037)
+            plugins: 'id, source, state, installedAt, [source], [state], [installedAt]',
+            pluginSettings: 'pluginId, updatedAt',
+            pluginMarketplace: 'id, category, cachedAt, expiresAt, [category], [cachedAt]',
+            pluginStorage: 'id, pluginId, [pluginId]',
+        }).upgrade(async () => {
+            logDexieMigration(19, 'story-s-037-plugins', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(19)) {
+                logDexieMigration(19, 'story-s-037-plugins', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            // No data migration needed - tables are new
+            // Mark migration as applied
+            markMigrationApplied(19);
+
+            logDexieMigration(19, 'story-s-037-plugins', 'completed', {
+                tableName: 'plugins',
+                itemsCount: 0
+            });
+        });
 }

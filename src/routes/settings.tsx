@@ -27,10 +27,11 @@ import { SettingsExportDialog } from '@/presentation/components/settings/Setting
 import { SettingsImportDialog } from '@/presentation/components/settings/SettingsImportDialog';
 import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
 import { AnalyticsDashboard } from '@/presentation/components/analytics';
+import { PluginMarketplace } from '@/presentation/components/plugins';
 import { useAllProjects } from '@/infrastructure/persistence/stores/project';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
-import { Code2, BarChart3 } from 'lucide-react';
+import { Code2, BarChart3, Puzzle } from 'lucide-react';
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -42,6 +43,8 @@ function SettingsPage() {
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
     const [showAnalytics, setShowAnalytics] = useState(false);
+    const [showPluginMarketplace, setShowPluginMarketplace] = useState(false);
+    const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null);
 
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();
@@ -281,6 +284,45 @@ function SettingsPage() {
                     </div>
                 </section>
 
+                {/* Plugins Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Plugins
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Extend functionality with community plugins. Browse the marketplace, manage installed plugins, and configure permissions.
+                        </p>
+
+                        <div className={cn(
+                            'flex gap-3',
+                            isMobile ? 'flex-col' : 'flex-row'
+                        )}>
+                            <Button
+                                onClick={() => setShowPluginMarketplace(true)}
+                                variant="primary"
+                                className={cn(
+                                    'gap-2 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                    isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                                )}
+                            >
+                                <Puzzle />
+                                <span>Browse Marketplace</span>
+                            </Button>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Placeholder for other settings */}
                 <section className="mb-8">
                     <h2 className={cn(
@@ -382,6 +424,27 @@ function SettingsPage() {
                             </div>
                             <AnalyticsDashboard />
                         </div>
+                    </div>
+                )}
+
+                {/* Plugin Marketplace Dialog */}
+                {showPluginMarketplace && (
+                    <div className="fixed inset-0 z-50 bg-background overflow-auto">
+                        <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
+                            <div className="max-w-7xl mx-auto flex items-center justify-between">
+                                <h2 className="text-xl font-bold font-mono text-foreground">
+                                    Plugin Marketplace
+                                </h2>
+                                <Button
+                                    onClick={() => setShowPluginMarketplace(false)}
+                                    variant="outline"
+                                    className="rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+                                >
+                                    Close
+                                </Button>
+                            </div>
+                        </div>
+                        <PluginMarketplace />
                     </div>
                 )}
             </div>

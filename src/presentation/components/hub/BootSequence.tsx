@@ -3,7 +3,7 @@
  * @module presentation/components/hub/BootSequence
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export interface BootSequenceProps {
   /** Callback when boot animation completes */
@@ -29,6 +29,12 @@ export interface BootSequenceProps {
  */
 export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   const [lines, setLines] = useState<string[]>([]);
+  const onCompleteRef = useRef(onComplete);
+
+  // Keep ref in sync with onComplete prop
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   // Boot sequence messages (8-bit BIOS style)
   const bootLines = [
@@ -50,11 +56,13 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
 
         // Trigger completion callback after last line
         if (i === bootLines.length - 1) {
-          setTimeout(onComplete, 500);
+          setTimeout(() => onCompleteRef.current(), 500);
         }
       }, delay);
     });
-  }, [onComplete]);
+    // Empty dependency array - run once on mount only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-background z-50 flex items-start justify-start p-8 font-mono text-primary text-sm md:text-base">

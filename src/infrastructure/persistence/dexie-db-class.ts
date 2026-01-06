@@ -55,6 +55,13 @@ import type {
     CodeSnippetsTable,
 } from './dexie-db-snippet-types';
 
+import type {
+    PluginsTable,
+    PluginSettingsTable,
+    PluginMarketplaceTable,
+    PluginStorageTable,
+} from './dexie-db-plugin-types';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -157,6 +164,15 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     codeSnippets!: CodeSnippetsTable;
+
+    // ========================================================================
+    // Story S-037: Plugin System Tables
+    // ========================================================================
+
+    plugins!: PluginsTable;
+    pluginSettings!: PluginSettingsTable;
+    pluginMarketplace!: PluginMarketplaceTable;
+    pluginStorage!: PluginStorageTable;
 
     // ========================================================================
     // Constructor

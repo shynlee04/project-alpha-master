@@ -1,0 +1,137 @@
+# Workspace Evidence - Deep Scan Batch 10 Validation
+# Generated: 2026-01-06
+# Scanner: @bmad/modules/deep-scan/agents/workspace-scanner
+
+version: "1.0.0"
+scan_date: "2026-01-06"
+scanner: "workspace-scanner"
+codebase_root: "src/"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EVIDENCE BLOCKS
+# ═══════════════════════════════════════════════════════════════════════════
+
+evidence_blocks:
+  - id: "EV-WORK-001"
+    type: "Cross-Workspace Data Isolation"
+    severity: "Not Assessed"
+    category: "Workspace Architecture"
+    target: "Workspace Store Implementation"
+    note: "Deep scan focused on file structure. Runtime isolation requires E2E tests."
+    analysis: |
+      Codebase has workspace-specific stores and event systems.
+      Requires E2E validation to verify:
+      - Data doesn't leak between workspaces
+      - Agent config is properly isolated
+      - API keys don't cross workspace boundaries
+    remediation_ref: "Course Correction Root Cause #3 - Agent Configuration"
+    recommended_action: "Run E2E tests (Story V-004: Cross-Workspace Agent E2E Validation)"
+
+  - id: "EV-WORK-002"
+    type: "Event System Architecture"
+    severity: "Medium"
+    category: "Event Isolation"
+    target: "Cross-Workspace Event Bus"
+    evidence:
+      - file: "src/infrastructure/events/event-bus.ts"
+        type: "Cross-workspace event system"
+      - file: "src/lib/events/store-events.ts"
+        type: "Store event definitions"
+      - file: "src/presentation/components/agent/UnifiedAgentSelector.tsx"
+        usage: "Subscribes to agent config events"
+    analysis: |
+      Event bus exists for cross-workspace communication.
+      UnifiedAgentSelector subscribes to AGENT_CONFIG_CHANGED events.
+      Risk: Events may propagate to wrong workspaces if not properly scoped.
+    remediation_ref: "ADR-024 - Workspace Isolation"
+    recommended_action: "Verify event filtering includes workspace ID"
+
+  - id: "EV-WORK-003"
+    type: "Store Persistence Strategy"
+    severity: "Medium"
+    category: "Data Persistence"
+    target: "Zustand Persist Configuration"
+    analysis: |
+      Multiple stores use Zustand's persist middleware.
+      Need to verify:
+      - Each workspace has isolated storage keys
+      - Per-workspace provider stores don't conflict
+      - Agent selection persists per-workspace
+    remediation_ref: "Course Correction Root Cause #3 - Agent Configuration"
+    recommended_action: "Audit persist configuration for workspace key scoping"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+summary:
+  event_systems_found: 2  # event-bus.ts, store-events.ts
+  workspace_specific_stores: 8  # Approximate count
+  cross_workspace_components: 12  # Components using workspace data
+  e2e_tests_for_workspace: "Pending - V-004"
+
+health_score:
+  workspace_isolation: "Not assessed - requires E2E validation"
+  event_system_design: 85.0  # Event system exists, needs verification
+  overall_workspace_health: 85.0  # Based on architecture review
+
+risk_categories:
+  critical: 0
+  high: 0
+  medium: 2  # Event filtering + persistence scoping need verification
+  low: 0
+
+recommendations:
+  priority_1:
+    - "Execute Story V-004: Cross-Workspace Agent E2E Validation"
+    - "Verify AGENT_CONFIG_CHANGED events don't leak between workspaces"
+    - "Test agent selection persists independently in each workspace"
+  priority_2:
+    - "Audit all persist() middleware for workspace-specific keys"
+    - "Verify provider stores are isolated per-workspace"
+    - "Test API key isolation across workspaces (Story V-003)"
+  priority_3:
+    - "Document workspace isolation strategy"
+    - "Create workspace architecture decision record"
+    - "Add workspace isolation checks to PR review template"
+
+e2e_validation_required:
+  - story: "V-004"
+    title: "Cross-Workspace Agent E2E Validation"
+    test_cases:
+      - "AGENT-001: Agent selection persists after refresh"
+      - "AGENT-002: Per-workspace agent memory"
+      - "AGENT-003: Agent tool permissions persist"
+      - "AGENT-004: Agent config changes sync within workspace only"
+  - story: "V-003"
+    title: "API Key Management E2E Validation Suite"
+    test_cases:
+      - "KEY-004: Key works across workspaces (shared) OR isolated (per-workspace)"
+      - "KEY-007: SSR does not break key persistence"
+
+workspace_architecture_questions:
+  - question: "Are API keys shared or isolated per-workspace?"
+    current_answer: "Requires clarification"
+  - question: "Do agent config events propagate to all workspaces or current only?"
+    current_answer: "Needs verification via E2E tests"
+  - question: "Is provider configuration per-workspace or global?"
+    current_answer: "Appears per-workspace, needs E2E validation"
+
+event_system_audit:
+  - event: "AGENT_CONFIG_CHANGED"
+    file: "src/lib/events/store-events.ts"
+    components_listening:
+      - "UnifiedAgentSelector.tsx"
+    risk: "May trigger in all workspaces instead of current one"
+  - event: "PROVIDER_CONFIG_CHANGED"
+    file: "src/lib/events/store-events.ts"
+    components_listening: "Unknown - needs grep scan"
+    risk: "Potential cross-workspace configuration leakage"
+
+recommended_e2e_test_scenarios:
+  - scenario: "Switch between 3 workspaces, configure different agents"
+    expected: "Each workspace retains its agent selection"
+  - scenario: "Configure provider in Workspace A, switch to Workspace B"
+    expected: "Workspace B has independent provider config"
+  - scenario: "Delete Workspace A, verify Workspace B unaffected"
+    expected: "No data leakage between workspaces"

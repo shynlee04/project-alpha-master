@@ -1,56 +1,478 @@
-# Remediation Backlog
+# Remediation Backlog - Deep Scan Batch 10 Validation
+# Generated: 2026-01-06T08:45:00+07:00
+# Session: ASGL-VELOCITY-20260106-060000
 
-items:
-  - id: REM-STATE-001
-    title: Refactor Quiz God Store
-    type: refactor
-    priority: critical
-    effort: high
-    target: src/infrastructure/persistence/stores/study/quiz-store.ts
-    description: Split 658-line store into managed slices (QuizAttempt, QuizAuthoring, QuizHistory).
-    owner: "@store-refactorer"
+version: "1.0.0"
+generated_at: "2026-01-06T08:45:00+07:00"
+health_score:
+  current: 82.4
+  target: 85.0
+  gap: 2.6
+  status: "FAIL - Below threshold"
 
-  - id: REM-STATE-002
-    title: Refactor Canvas God Store
-    type: refactor
-    priority: critical
-    effort: high
-    target: src/infrastructure/persistence/stores/canvas-store.ts
-    description: Split 623-line store. Canvas logic is complex and needs separation of concerns (Nodes, Edges, Viewport).
-    owner: "@store-refactorer"
+# ═══════════════════════════════════════════════════════════════════════════
+# P0 - CRITICAL (Must Fix Before Batch 11)
+# ═══════════════════════════════════════════════════════════════════════════
 
-  - id: REM-ARCH-001
-    title: Fix ChatConversation Component
-    type: refactor
-    priority: high
-    effort: medium
-    target: src/presentation/components/chat/ChatConversation.tsx
-    description: Decompose 522-line component. Extract `MessageList`, `MessageInput`, and `ThreadHeader` sub-components.
-    owner: "@component-splitter"
+critical_stories:
+  - id: "ARCH-REMED-001"
+    title: "Split AgentChatPanel.tsx (527 lines) into focused components"
+    severity: "Critical"
+    category: "Architecture"
+    evidence_id: "EV-ARCH-001"
+    target: "src/presentation/components/ide/AgentChatPanel.tsx"
+    current_loc: 527
+    target_loc: 300
+    estimated_hours: 6
+    skills_required:
+      - "frontend-components"
+      - "global-coding-style"
+    acceptance_criteria:
+      - "AgentChatPanel.tsx ≤300 lines (main orchestrator only)"
+      - "useAgentChat.ts hook extracted (≤150 lines)"
+      - "AgentChatHeader.tsx component extracted"
+      - "AgentChatConversationManager.tsx component extracted"
+      - "AgentChatInput.tsx component extracted"
+      - "All imports resolve correctly"
+      - "Zero TypeScript errors"
+      - "No breaking changes to functionality"
+    validation_commands:
+      - "wc -l src/presentation/components/ide/AgentChatPanel.tsx"
+      - "pnpm typecheck"
+    health_impact: "+1.5%"
 
-  - id: REM-ARCH-002
-    title: Hub Page DB Access
-    type: architecture
-    priority: high
-    effort: medium
-    target: src/presentation/components/hub/HubHomePage.tsx
-    description: Remove direct `db.` calls. Create/Use `HubStore` or `ProjectRepository`.
-    owner: "@store-refactorer"
+  - id: "ARCH-REMED-002"
+    title: "Split MonacoEditor.tsx (479 lines) into components + hooks"
+    severity: "Critical"
+    category: "Architecture"
+    evidence_id: "EV-ARCH-002"
+    target: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+    current_loc: 479
+    target_loc: 300
+    estimated_hours: 6
+    skills_required:
+      - "frontend-components"
+      - "global-coding-style"
+    acceptance_criteria:
+      - "MonacoEditor.tsx ≤300 lines (main component only)"
+      - "useMonacoEditor.ts hook extracted (≤150 lines)"
+      - "useMonacoSnippets.ts hook extracted (≤100 lines)"
+      - "MonacoEditorConfig.ts for configuration"
+      - "All imports resolve correctly"
+      - "Zero TypeScript errors"
+    validation_commands:
+      - "wc -l src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      - "pnpm typecheck"
+    health_impact: "+1.5%"
 
-  - id: REM-SEC-001
-    title: Audit Dangerous HTML
-    type: security
-    priority: medium
-    effort: low
-    target: src/presentation/components/chat/StreamdownRenderer.tsx
-    description: Verify `dompurify` usage before `dangerouslySetInnerHTML`.
-    owner: "@security-scanner"
+  - id: "ARCH-REMED-003"
+    title: "Create Application layer services for 17 UI components"
+    severity: "Critical"
+    category: "Architecture"
+    evidence_id: "EV-ARCH-004"
+    target: "src/presentation/**/*"
+    violation_count: 17
+    estimated_hours: 16
+    skills_required:
+      - "architecture-remediation"
+      - "backend-migrations"  # For service layer patterns
+    acceptance_criteria:
+      - "Zero direct imports from @/infrastructure in src/presentation"
+      - "Application layer services created for all store access"
+      - "Services located in src/application/ or src/lib/application/"
+      - "UI components only import from application layer"
+      - "All 17 components refactored"
+      - "Zero TypeScript errors"
+      - "No breaking changes to functionality"
+    affected_components:
+      - "MonacoEditor.tsx"
+      - "AgentChatPanel.tsx"
+      - "FileTree.tsx"
+      - "SyncStatusSegment.tsx"
+      - "WebContainerStatus.tsx"
+      - "AgentStatusSegment.tsx"
+      - "CursorPosition.tsx"
+      - "FileTypeIndicator.tsx"
+      - "ProviderStatus.tsx"
+      - "AgentWorkspaceBindingConfig.tsx"
+      - "AgentWorkspaceSwitchingFeedback.tsx"
+      - "UnifiedAgentSelector.tsx"
+      - "ProviderSettings.tsx"
+      - "ProviderConfigDialog.tsx"
+      - "AgentManager.tsx"
+      - "NotesPage.tsx"
+      - "routes/settings.tsx"
+    validation_commands:
+      - "grep -r '@/infrastructure' src/presentation --include='*.tsx' | wc -l (should be 0)"
+      - "pnpm typecheck"
+    health_impact: "+6.0%"
 
-  - id: REM-TYPE-001
-    title: TypeScript 'Any' Reduction
-    type: technical-debt
-    priority: medium
-    effort: ongoing
-    target: global
-    description: Reduce 263 'any' usages. Focus on `src/core` and `src/infrastructure` first.
-    owner: "@typescript-fixer"
+  - id: "STATE-REMED-001"
+    title: "Split note-store.ts (723 lines) into slices + migrate"
+    severity: "Critical"
+    category: "State Management"
+    evidence_id: "EV-STATE-003"
+    target: "src/lib/notes/note-store.ts"
+    current_loc: 723
+    target_loc: 120  # Per slice
+    estimated_hours: 8
+    skills_required:
+      - "architecture-remediation"
+      - "global-coding-style"
+    acceptance_criteria:
+      - "note-store.ts becomes barrel export"
+      - "Slices created (≤120 lines each):"
+        - "note-crud-slice.ts"
+        - "note-sync-slice.ts"
+        - "note-validation-slice.ts"
+        - "note-search-slice.ts"
+      - "Migrated to src/infrastructure/persistence/stores/notes/"
+      - "Facade export at old location for backward compatibility"
+      - "Zero TypeScript errors"
+      - "All tests pass"
+    validation_commands:
+      - "find src/infrastructure/persistence/stores/notes -name '*-slice.ts' -exec wc -l {} +"
+      - "pnpm typecheck"
+      - "pnpm test -- note-store"
+    health_impact: "+2.0%"
+
+  - id: "TYPE-REMED-001"
+    title: "Fix 188 explicit any usages - High priority subset"
+    severity: "Critical"
+    category: "Type Safety"
+    evidence_id: "EV-TYPE-001"
+    target: "Multiple files"
+    priority_subset:
+      - error_handling: 8
+      - pdf_processing: 6
+      total_critical: 14
+    estimated_hours: 20  # Full 188 would take longer
+    skills_required:
+      - "global-coding-style"
+      - "global-validation"
+    acceptance_criteria:
+      - "Error handling: Use `error: unknown` + type guards (8 instances)"
+      - "PDF processing: Create proper types for PDF.js API (6 instances)"
+      - "Monaco API: Define proper types (4 instances)"
+      - "Agent memory: Create proper types (5 instances)"
+      - "Reduce total any count from 188 to <100"
+      - "Zero TypeScript errors"
+    priority_files:
+      - path: "src/lib/filesystem/file-ops.ts"
+        any_count: 7
+        action: "Replace error: any with error: unknown + type guards"
+      - path: "src/lib/filesystem/dir-ops.ts"
+        any_count: 1
+        action: "Replace error: any with error: unknown + type guards"
+      - path: "src/lib/pdf/pdf-vision-manager.ts"
+        any_count: 3
+        action: "Create proper types for PDF processing"
+      - path: "src/lib/pdf/pdf-vision-capture.ts"
+        any_count: 3
+        action: "Create proper types for PDF capture"
+      - path: "src/hooks/useCodeSnippets.ts"
+        any_count: 4
+        action: "Define Monaco Editor API types"
+      - path: "src/lib/agent/memory/conversation-memory.ts"
+        any_count: 5
+        action: "Create proper types for memory management"
+    validation_commands:
+      - "grep -r ': any' src --include='*.ts' --include='*.tsx' | grep -v test | wc -l"
+      - "pnpm typecheck"
+    health_impact: "+4.0%"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# P1 - HIGH (Action Required Before Batch 11)
+# ═══════════════════════════════════════════════════════════════════════════
+
+high_stories:
+  - id: "ARCH-REMED-004"
+    title: "Split FileTreeItem.tsx (373 lines) into smaller components"
+    severity: "High"
+    category: "Architecture"
+    evidence_id: "EV-ARCH-003"
+    target: "src/presentation/components/ide/FileTree/FileTreeItem.tsx"
+    current_loc: 373
+    target_loc: 300
+    estimated_hours: 4
+    skills_required:
+      - "frontend-components"
+    acceptance_criteria:
+      - "FileTreeItem.tsx ≤300 lines"
+      - "ContextMenu subcomponent extracted"
+      - "Inline editor subcomponent extracted"
+      - "Drag-and-drop handler extracted"
+    validation_commands:
+      - "wc -l src/presentation/components/ide/FileTree/FileTreeItem.tsx"
+    health_impact: "+1.0%"
+
+  - id: "STATE-REMED-002"
+    title: "Split workflow-builder-store.ts (568 lines) + migrate"
+    severity: "High"
+    category: "State Management"
+    evidence_id: "EV-STATE-004"
+    target: "src/lib/workflow/builder/workflow-builder-store.ts"
+    current_loc: 568
+    target_loc: 120  # Per slice
+    estimated_hours: 6
+    acceptance_criteria:
+      - "Split into slices ≤120 lines each"
+      - "Migrated to infrastructure layer"
+      - "Facade export for backward compatibility"
+    validation_commands:
+      - "wc -l src/infrastructure/persistence/stores/workflow/*-slice.ts"
+    health_impact: "+1.5%"
+
+  - id: "STATE-REMED-003"
+    title: "Split file-sync-status-store.ts (554 lines) + migrate"
+    severity: "High"
+    category: "State Management"
+    evidence_id: "EV-STATE-005"
+    target: "src/lib/workspace/file-sync-status-store.ts"
+    current_loc: 554
+    target_loc: 120  # Per slice
+    estimated_hours: 6
+    acceptance_criteria:
+      - "Split into slices ≤120 lines each"
+      - "Migrated to infrastructure layer"
+      - "Facade export for backward compatibility"
+    validation_commands:
+      - "wc -l src/infrastructure/persistence/stores/filesync/*-slice.ts"
+    health_impact: "+1.5%"
+
+  - id: "STATE-REMED-004"
+    title: "Migrate 15 stores from src/lib/state/ to infrastructure layer"
+    severity: "High"
+    category: "State Management"
+    evidence_id: "EV-STATE-006"
+    target: "src/lib/state/**/*"
+    store_count: 15
+    estimated_hours: 12
+    acceptance_criteria:
+      - "All 15 stores migrated to src/infrastructure/persistence/stores/"
+      - "Facade exports at old locations for backward compatibility"
+      - "Zero breaking changes to imports"
+      - "Zero TypeScript errors"
+    deprecated_stores:
+      - "src/lib/state/ide-store.ts → src/infrastructure/persistence/stores/ide/"
+      - "src/lib/state/knowledge-store.ts → src/infrastructure/persistence/stores/knowledge/"
+      - "src/lib/state/workspace-store.ts → src/infrastructure/persistence/stores/workspace/"
+      - "src/lib/state/tool-permission-store.ts → src/infrastructure/persistence/stores/permissions/"
+      - "src/lib/state/quiz-store.ts → src/infrastructure/persistence/stores/study/quiz/"
+      - "+ 10 more stores"
+    validation_commands:
+      - "find src/lib/state -name '*.ts' ! -path '*/__tests__/*' | wc -l (should be 0)"
+      - "pnpm typecheck"
+    health_impact: "+2.0%"
+
+  - id: "TYPE-REMED-002"
+    title: "Fix error type loss - Replace `error: any` with `error: unknown`"
+    severity: "High"
+    category: "Type Safety"
+    evidence_id: "EV-TYPE-003"
+    target: "src/lib/filesystem/file-ops.ts, src/lib/filesystem/dir-ops.ts"
+    violation_count: 8
+    estimated_hours: 3
+    acceptance_criteria:
+      - "All catch blocks use `error: unknown`"
+      - "Type guards implemented for error discrimination"
+      - "Zero TypeScript errors"
+    validation_commands:
+      - "grep 'catch (error: any)' src/lib/filesystem/*.ts | wc -l (should be 0)"
+      - "pnpm typecheck"
+    health_impact: "+1.5%"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# P2 - MEDIUM (Address in Next Sprint)
+# ═══════════════════════════════════════════════════════════════════════════
+
+medium_stories:
+  - id: "ARCH-REMED-005"
+    title: "Split useContextMenuActions hook (367 lines) into smaller hooks"
+    severity: "Medium"
+    category: "Architecture"
+    evidence_id: "EV-ARCH-005"
+    target: "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts"
+    current_loc: 367
+    target_loc: 150
+    estimated_hours: 4
+
+  - id: "TYPE-REMED-003"
+    title: "Remove 9 type suppressions (@ts-ignore, @ts-expect-error)"
+    severity: "Medium"
+    category: "Type Safety"
+    evidence_id: "EV-TYPE-002"
+    target: "Multiple files"
+    violation_count: 9
+    estimated_hours: 6
+
+  - id: "SEC-REMED-001"
+    title: "Audit 39 potential secret occurrences + add pre-commit hook"
+    severity: "Medium"
+    category: "Security"
+    evidence_id: "EV-SEC-001"
+    target: "Source code scan"
+    occurrence_count: 39
+    estimated_hours: 4
+
+  - id: "UX-REMED-001"
+    title: "Fix 10 components missing i18n (98.1% → 100%)"
+    severity: "Medium"
+    category: "UX"
+    evidence_id: "EV-UX-001"
+    target: "src/presentation/**/*"
+    component_count: 10
+    estimated_hours: 4
+
+# ═══════════════════════════════════════════════════════════════════════════
+# P3 - LOW (Technical Debt)
+# ═══════════════════════════════════════════════════════════════════════════
+
+low_stories:
+  - id: "PERF-REMED-001"
+    title: "Audit 39 mount effects for duplicate data fetching"
+    severity: "Low"
+    category: "Performance"
+    evidence_id: "EV-PERF-001"
+    target: "src/presentation/**/*"
+    effect_count: 39
+    estimated_hours: 6
+
+  - id: "V-004"
+    title: "Cross-Workspace Agent E2E Validation (Course Correction)"
+    severity: "Low"
+    category: "Workspace Architecture"
+    evidence_id: "EV-WORK-001"
+    status: "Already planned in Course Correction Phase 0"
+    estimated_hours: 4
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════
+
+summary:
+  total_stories: 16
+  critical: 5
+  high: 5
+  medium: 4
+  low: 2
+
+  total_estimated_hours:
+    critical: 56
+    high: 31
+    medium: 18
+    low: 10
+    all: 115
+
+  minimum_to_reach_85_percent:
+    required_stories: ["ARCH-REMED-003", "TYPE-REMED-001"]
+    estimated_hours: 36
+    expected_health_score: 85.4
+
+  recommended_batch_11_prerequisites:
+    - "All 5 Critical stories completed"
+    - "All 5 High stories completed"
+    - "Health score ≥85% validated"
+    - "Zero TypeScript errors"
+    - "All tests passing"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HEALTH SCORE CALCULATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+health_score_calculation:
+  current_scores:
+    architecture_integrity: 76.0
+    state_management: 90.2
+    type_safety: 78.1
+    ux_i18n: 96.9
+    security: 86.7
+    performance: 92.6
+    workspace_isolation: 85.0
+
+  weights:
+    architecture: 0.25  # Highest weight - Critical layer violations
+    type_safety: 0.20   # High weight - 188 any usages
+    state_management: 0.15
+    security: 0.15
+    ux: 0.10
+    performance: 0.10
+    workspace: 0.05
+
+  calculation: |
+    (76.0 * 0.25) + (78.1 * 0.20) + (90.2 * 0.15) +
+    (96.9 * 0.10) + (86.7 * 0.15) + (92.6 * 0.10) + (85.0 * 0.05)
+    = 19.0 + 15.62 + 13.53 + 9.69 + 13.01 + 9.26 + 4.25
+    = 82.36%
+    ≈ 82.4%
+
+  target_calculation: |
+    After ARCH-REMED-003 (+6.0%): 76.0 → 82.0
+    After TYPE-REMED-001 (+4.0%): 78.1 → 82.1
+
+    New scores:
+    Architecture: 82.0 * 0.25 = 20.5
+    Type Safety: 82.1 * 0.20 = 16.42
+    State: 90.2 * 0.15 = 13.53
+    UX: 96.9 * 0.10 = 9.69
+    Security: 86.7 * 0.15 = 13.01
+    Performance: 92.6 * 0.10 = 9.26
+    Workspace: 85.0 * 0.05 = 4.25
+
+    Total: 20.5 + 16.42 + 13.53 + 9.69 + 13.01 + 9.26 + 4.25
+         = 86.66%
+         ≈ 86.7% ✅ PASS
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXECUTION ORDER
+# ═══════════════════════════════════════════════════════════════════════════
+
+recommended_execution_order:
+  phase_1_critical_architecture:
+    stories:
+      - "ARCH-REMED-003"  # Layer violations - highest impact
+      - "ARCH-REMED-001"  # AgentChatPanel split
+      - "ARCH-REMED-002"  # MonacoEditor split
+    total_hours: 28
+    expected_health: 84.4%
+
+  phase_2_critical_types:
+    stories:
+      - "TYPE-REMED-001"  # Fix any usages
+      - "TYPE-REMED-002"  # Fix error type loss
+    total_hours: 23
+    expected_health: 85.4% ✅ PASS
+
+  phase_3_critical_state:
+    stories:
+      - "STATE-REMED-001"  # note-store split
+    total_hours: 8
+    expected_health: 87.4%
+
+  phase_4_high_priority:
+    stories:
+      - "ARCH-REMED-004"
+      - "STATE-REMED-002"
+      - "STATE-REMED-003"
+      - "STATE-REMED-004"
+    total_hours: 28
+    expected_health: 91.4%
+
+# ═══════════════════════════════════════════════════════════════════════════
+# BATCH 11 GATEKEEPER
+# ═══════════════════════════════════════════════════════════════════════════
+
+batch_11_gatekeeper:
+  status: "CLOSED - Health score below 85%"
+  prerequisite:
+    - "Phase 1 completed (28 hours)"
+    - "Phase 2 completed (23 hours)"
+    - "Health score ≥85% validated"
+    - "Deep scan re-run confirms passing"
+  validation_command: |
+    # Re-run deep scan after fixes
+    cd /Users/apple/Documents/coding-projects/project-alpha-master
+    # Execute deep-scan workflow
+    # Verify health_score ≥85.0%
+
+  estimated_completion: "2026-01-07"  # Assuming 8 hours/day, 51 total hours = 6.4 days

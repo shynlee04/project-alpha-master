@@ -1,0 +1,120 @@
+# Performance Evidence - Deep Scan Batch 10 Validation
+# Generated: 2026-01-06
+# Scanner: @bmad/modules/deep-scan/agents/performance-scanner
+
+version: "1.0.0"
+scan_date: "2026-01-06"
+scanner: "performance-scanner"
+codebase_root: "src/"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EVIDENCE BLOCKS
+# ═══════════════════════════════════════════════════════════════════════════
+
+evidence_blocks:
+  - id: "EV-PERF-001"
+    type: "Mount Effect Proliferation"
+    severity: "Medium"
+    category: "Render Performance"
+    target: "Presentation Components"
+    mount_effects_count: 39
+    scan_pattern: "useEffect.*\\[\\]"  # Empty dependency array
+    analysis: |
+      39 components have mount effects (useEffect with empty deps).
+      Mount effects run on every component mount, which is normal for initialization.
+      However, high count suggests potential for:
+      - Redundant data fetching
+      - Duplicate subscriptions
+      - Unnecessary re-renders
+    remediation_ref: "React Performance Best Practices"
+    recommended_action: "Audit for duplicate data fetching, consider React Query for caching"
+
+  - id: "EV-PERF-002"
+    type: "Bundle Size Analysis"
+    severity: "Not Assessed"
+    category: "Bundle Optimization"
+    target: "Production Build"
+    note: "Requires build analysis with tools like webpack-bundle-analyzer"
+    recommended_action: "Run pnpm build and analyze bundle for tree-shaking opportunities"
+
+  - id: "EV-PERF-003"
+    type: "Component Render Optimization"
+    severity: "Not Assessed"
+    category: "React Rendering"
+    target: "Large Components"
+    note: "Requires React DevTools Profiler to measure actual render times"
+    large_components_identified:
+      - "AgentChatPanel.tsx (527 lines) - High render complexity risk"
+      - "MonacoEditor.tsx (479 lines) - Editor initialization overhead"
+      - "FileTreeItem.tsx (373 lines) - Tree rendering performance"
+    recommended_action: "Profile render times, add React.memo where beneficial"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUMMARY METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+summary:
+  total_components_scanned: 526
+  mount_effects_found: 39
+  mount_effect_percentage: 7.4  # 39/526
+  large_components_identified: 3  # >300 lines
+
+health_score:
+  render_performance: 92.6  # 7.4% mount effects is reasonable
+  bundle_optimization: "Not assessed"
+  overall_performance_health: 92.6  # Based on available metrics
+
+risk_categories:
+  critical: 0
+  high: 0
+  medium: 1  # Mount effect proliferation needs audit
+  low: 0
+
+recommendations:
+  priority_1:
+    - "Audit 39 mount effects for duplicate data fetching"
+    - "Consider implementing React Query for centralized data fetching and caching"
+  priority_2:
+    - "Profile render times of 3 large components (>300 lines)"
+    - "Add React.memo to prevent unnecessary re-renders"
+    - "Use useMemo/useCallback for expensive computations"
+  priority_3:
+    - "Analyze bundle size with webpack-bundle-analyzer"
+    - "Implement code splitting for large routes"
+    - "Add lazy loading for heavy components (Monaco Editor, PDF viewer)"
+
+performance_optimization_opportunities:
+  - area: "Data Fetching"
+    opportunity: "Centralize with React Query"
+    benefit: "Deduplication, caching, background refetch"
+  - area: "Component Rendering"
+    opportunity: "Add React.memo to large components"
+    benefit: "Prevent unnecessary re-renders"
+  - area: "Code Splitting"
+    opportunity: "Lazy load Monaco Editor and PDF viewer"
+    benefit: "Reduce initial bundle size"
+  - area: "Image Optimization"
+    opportunity: "Use next/image or implement lazy loading"
+    benefit: "Faster image load times"
+
+monitoring_recommendations:
+  - tool: "React DevTools Profiler"
+    purpose: "Measure component render times"
+  - tool: "webpack-bundle-analyzer"
+    purpose: "Visualize bundle composition"
+  - tool: "Lighthouse CI"
+    purpose: "Track performance metrics over time"
+  - tool: "Chrome DevTools Performance"
+    purpose: "Identify runtime bottlenecks"
+
+baseline_metrics_to_track:
+  - metric: "Time to Interactive (TTI)"
+    target: "<3 seconds"
+  - metric: "First Contentful Paint (FCP)"
+    target: "<1.5 seconds"
+  - metric: "Largest Contentful Paint (LCP)"
+    target: "<2.5 seconds"
+  - metric: "Cumulative Layout Shift (CLS)"
+    target: "<0.1"
+  - metric: "First Input Delay (FID)"
+    target: "<100ms"
