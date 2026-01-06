@@ -8,7 +8,7 @@
 
 import { StateCreator } from 'zustand';
 import { db } from '@/infrastructure/persistence/dexie-db';
-import { fromRecord } from './project-crud-slice';
+import { fromRecord, toRecord } from './project-crud-slice'; // PERSIST-S002: Import both converters
 import type {
   WorkspaceType,
   WorkspaceBindings,
@@ -40,16 +40,8 @@ export const createProjectUtilsSlice: StateCreator<
     }));
 
     // Persist to Dexie
-    const record = {
-      id: updated.id,
-      name: updated.name,
-      path: updated.folderPath,
-      folderPath: updated.folderPath,
-      lastOpened: updated.lastOpened,
-      createdAt: updated.createdAt,
-      bindings: updated.bindings,
-      fileSnapshotEnabled: updated.fileSnapshotEnabled,
-    };
+    // PERSIST-S002: Use toRecord() to ensure workspaceId is included
+    const record = toRecord(updated);
 
     db.projects.put(record).catch((error) => {
       console.error('[ProjectStore] Failed to update lastOpened in Dexie:', error);

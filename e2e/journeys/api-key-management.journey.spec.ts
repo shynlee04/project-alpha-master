@@ -21,16 +21,53 @@ test.describe('API Key Management', () => {
         // Navigate to settings
         await page.goto('/settings');
 
-        // Look for API keys section
-        const apiKeysSection = page.locator('text=/API Keys|Providers|LLM Configuration/i');
+        // Look for API keys section - targeting the heading specifically to avoid ambiguity
+        const apiKeysSection = page.getByRole('heading', { name: 'Providers', exact: true });
         await expect(apiKeysSection).toBeVisible({ timeout: 10000 });
 
-        // TODO: Click on provider (e.g., Google Gemini)
-        // TODO: Enter API key
-        // TODO: Click Save
-        // TODO: Verify success toast
+        // Find the "Google Gemini" provider row and click the edit button
+        // We look for the row containing "Google Gemini" and then find the edit button within it
+        const geminiRow = page.locator('div', { hasText: 'Google Gemini' }).first();
+        await expect(geminiRow).toBeVisible();
+        
+        const editButton = geminiRow.getByLabel('Edit provider');
+        await editButton.click();
 
-        test.skip(true, 'Settings page selectors needed');
+        // Wait for dialog to open
+        const dialog = page.getByRole('dialog');
+        await expect(dialog).toBeVisible();
+        await expect(dialog.getByRole('heading', { name: 'Configure API Key' })).toBeVisible();
+
+        // Enter a mock API key
+        const apiKeyInput = dialog.getByLabel('API Key');
+        await apiKeyInput.fill('sk-test-mock-key-12345');
+
+        // Click Save
+        const saveButton = dialog.getByRole('button', { name: 'Save Key' });
+        await saveButton.click();
+
+        // Verify success toast for SAVING the key
+        // Note: We expect the key save to succeed, but the model fetch might fail (which is the bug we are investigating)
+        // or succeed if it's mocked. Since we are using a fake key against a real API (if not mocked), 
+        // we expect a warning about model loading failure.
+        
+        // Wait for ANY toast first
+        const toast = page.locator('[role="status"]'); // Sonner toast
+        await expect(toast).toBeVisible();
+        
+        // We expect the "saved" message
+        await expect(page.getByText(/API key saved/i)).toBeVisible();
+
+        // Investigation: Check if we see the "models couldn't load" warning
+        // This confirms the P0-LLM-001 issue where fetch fails but key is saved
+        // If the code is working "perfectly" it might show a warning for invalid key.
+        // If it's broken (silent fail), we might NOT see the warning? 
+        // Actually, the current code catches and toasts warning. 
+        // The issue P0-LLM-001 says "Models NOT loading".
+        
+        // Let's print the toast content to debug trace
+        const toastText = await toast.textContent();
+        console.log('Toast content:', toastText);
     });
 
     /**

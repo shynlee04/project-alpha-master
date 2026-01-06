@@ -25,12 +25,14 @@ function generateProjectId(): string {
 
 /**
  * Convert Zustand Project to Dexie ProjectRecord for persistence
+ * PERSIST-S002: Added workspaceId for cross-workspace isolation
  */
-export function toRecord(project: Project) {
+export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide') {
   return {
     id: project.id,
     name: project.name,
     path: project.folderPath,
+    workspaceId, // PERSIST-S002: Track which workspace this project record belongs to
     folderPath: project.folderPath,
     lastOpened: project.lastOpened,
     createdAt: project.createdAt,

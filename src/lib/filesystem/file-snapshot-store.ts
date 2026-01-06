@@ -105,13 +105,15 @@ export class FileSnapshotStore {
      * @param content - File content to cache
      * @param hash - SHA-256 hash for change detection
      * @param size - File size in bytes (for quota management)
+     * @param workspaceId - Workspace identifier (PERSIST-S002)
      */
     async saveSnapshot(
         projectId: string,
         path: string,
         content: string,
         hash: string,
-        size: number = content.length
+        size: number = content.length,
+        workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide' // PERSIST-S002: Workspace isolation
     ): Promise<void> {
         const now = Date.now();
         const expiresAt = now + this.cacheTTL;
@@ -121,6 +123,7 @@ export class FileSnapshotStore {
             // Save metadata (lightweight, always saved)
             await db.fileSnapshots.put({
                 projectId,
+                workspaceId, // PERSIST-S002: Track which workspace this snapshot belongs to
                 path,
                 hash,
                 size,
@@ -134,6 +137,7 @@ export class FileSnapshotStore {
             try {
                 await db.fileContentCache.put({
                     projectId,
+                    workspaceId, // PERSIST-S002: Track which workspace this cache belongs to
                     path,
                     content,
                 });
@@ -145,6 +149,7 @@ export class FileSnapshotStore {
                     // Retry once after eviction
                     await db.fileContentCache.put({
                         projectId,
+                        workspaceId, // PERSIST-S002: Track which workspace this cache belongs to
                         path,
                         content,
                     });
@@ -264,7 +269,8 @@ export class FileSnapshotStore {
             content: string;
             hash: string;
             size?: number;
-        }>
+        }>,
+        workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide' // PERSIST-S002: Workspace isolation
     ): Promise<SnapshotSaveResult> {
         const startTime = Date.now();
         const now = Date.now();
@@ -282,6 +288,7 @@ export class FileSnapshotStore {
                     // Save metadata
                     await db.fileSnapshots.put({
                         projectId,
+                        workspaceId, // PERSIST-S002: Track which workspace this snapshot belongs to
                         path,
                         hash,
                         size,
@@ -295,6 +302,7 @@ export class FileSnapshotStore {
                     // Save content
                     await db.fileContentCache.put({
                         projectId,
+                        workspaceId, // PERSIST-S002: Track which workspace this cache belongs to
                         path,
                         content,
                     });

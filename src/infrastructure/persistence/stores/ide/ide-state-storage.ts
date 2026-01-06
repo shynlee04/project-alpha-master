@@ -105,6 +105,7 @@ export function createIDEStateStorage(): StateStorage {
         // Create IDEStateRecord structure
         const record: IDEStateRecord = {
           projectId,
+          workspaceId: 'ide', // PERSIST-S002: IDE workspace state
           openFiles: state.openFiles ?? [],
           activeFile: state.activeFile ?? null,
           expandedPaths: Array.isArray(state.expandedPaths)

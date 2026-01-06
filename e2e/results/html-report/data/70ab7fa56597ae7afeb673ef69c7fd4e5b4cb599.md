@@ -1,0 +1,166 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - status [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e5]
+        - generic [ref=e13]: You're offline. Some features may be limited.
+      - generic [ref=e14]:
+        - generic [ref=e15]: Working with cached content
+        - button "Retry" [ref=e16]:
+          - generic [ref=e17]:
+            - img [ref=e18]
+            - generic [ref=e23]: Retry
+    - generic [ref=e24]: Some features may be limited while offline
+  - generic [ref=e25]:
+    - complementary [ref=e26]:
+      - generic [ref=e27]:
+        - img "Via-gent" [ref=e28]
+        - generic [ref=e29]: Via-gent
+      - navigation [ref=e30]:
+        - generic [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+          - generic [ref=e35]: Home
+        - generic [ref=e36] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e39]: Projects
+        - generic [ref=e40] [cursor=pointer]:
+          - img [ref=e41]
+          - generic [ref=e50]: Knowledge
+        - generic [ref=e51] [cursor=pointer]:
+          - img [ref=e52]
+          - generic [ref=e59]: Notes
+        - generic [ref=e60] [cursor=pointer]:
+          - img [ref=e61]
+          - generic [ref=e64]: Study
+        - generic [ref=e65] [cursor=pointer]:
+          - img [ref=e66]
+          - generic [ref=e73]: Agents
+        - generic [ref=e74] [cursor=pointer]:
+          - img [ref=e75]
+          - generic [ref=e78]: Settings
+      - button "Collapse" [ref=e81]:
+        - img [ref=e82]
+    - main [ref=e84]:
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - img "Settings" [ref=e88]
+          - heading "Settings" [level=1] [ref=e97]
+        - generic [ref=e98]:
+          - heading "Theme Preferences" [level=2] [ref=e99]
+          - generic [ref=e102]:
+            - heading "Theme" [level=3] [ref=e103]
+            - paragraph [ref=e104]: Choose between light, dark, or system theme
+        - generic [ref=e105]:
+          - heading "AI Agent Configuration" [level=2] [ref=e106]
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - heading "Providers" [level=2] [ref=e110]
+              - button "Add Provider" [ref=e111]:
+                - generic [ref=e112]:
+                  - img [ref=e113]
+                  - text: Add Provider
+            - generic [ref=e116]:
+              - generic [ref=e117]:
+                - generic [ref=e118]:
+                  - generic [ref=e119]:
+                    - generic [ref=e120]: OpenRouter
+                    - generic [ref=e121]:
+                      - img [ref=e122]
+                      - generic [ref=e126]: Missing Key
+                  - generic [ref=e127]: 0 models • Built-in
+                - generic [ref=e128]:
+                  - button "Edit provider" [ref=e129]:
+                    - img [ref=e131]
+                  - button "Delete provider" [ref=e133]:
+                    - img [ref=e135]
+              - generic [ref=e141]:
+                - generic [ref=e142]:
+                  - generic [ref=e143]:
+                    - generic [ref=e144]: Anthropic
+                    - generic [ref=e145]:
+                      - img [ref=e146]
+                      - generic [ref=e150]: Missing Key
+                  - generic [ref=e151]: 0 models • Built-in
+                - generic [ref=e152]:
+                  - button "Edit provider" [ref=e153]:
+                    - img [ref=e155]
+                  - button "Delete provider" [ref=e157]:
+                    - img [ref=e159]
+              - generic [ref=e165]:
+                - generic [ref=e166]:
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: OpenAI
+                    - generic [ref=e169]:
+                      - img [ref=e170]
+                      - generic [ref=e174]: Missing Key
+                  - generic [ref=e175]: 0 models • Built-in
+                - generic [ref=e176]:
+                  - button "Edit provider" [ref=e177]:
+                    - img [ref=e179]
+                  - button "Delete provider" [ref=e181]:
+                    - img [ref=e183]
+              - generic [ref=e189]:
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: Google Gemini
+                    - generic [ref=e193]:
+                      - img [ref=e194]
+                      - generic [ref=e198]: Missing Key
+                  - generic [ref=e199]: 0 models • Built-in
+                - generic [ref=e200]:
+                  - button "Edit provider" [ref=e201]:
+                    - img [ref=e203]
+                  - button "Delete provider" [ref=e205]:
+                    - img [ref=e207]
+          - generic [ref=e213]:
+            - paragraph [ref=e214]: Configure your AI agents, API keys, and model preferences.
+            - button "Configure Agent" [ref=e215]:
+              - generic [ref=e216]:
+                - img [ref=e217]
+                - generic [ref=e220]: Configure Agent
+        - generic [ref=e221]:
+          - heading "Data Management" [level=2] [ref=e222]
+          - generic [ref=e223]:
+            - paragraph [ref=e224]: Export your settings for backup or transfer to another device. Import settings from a file to restore your configuration.
+            - generic [ref=e225]:
+              - button "Export Settings" [ref=e226]:
+                - generic [ref=e227]:
+                  - img [ref=e228]
+                  - generic [ref=e232]: Export Settings
+              - button "Import Settings" [ref=e233]:
+                - generic [ref=e234]:
+                  - img [ref=e235]
+                  - generic [ref=e239]: Import Settings
+        - generic [ref=e240]:
+          - heading "Code Snippets" [level=2] [ref=e241]
+          - generic [ref=e242]:
+            - paragraph [ref=e243]: Manage your code snippets for quick insertion. Create, edit, and organize reusable code fragments with folder organization and tag-based filtering.
+            - button "Manage Snippets" [ref=e244]:
+              - generic [ref=e245]:
+                - img [ref=e246]
+                - generic [ref=e250]: Manage Snippets
+            - paragraph [ref=e251]: "Tip: Use Cmd+Shift+S in the editor to open the snippet browser"
+        - generic [ref=e252]:
+          - heading "Analytics & Metrics" [level=2] [ref=e253]
+          - generic [ref=e254]:
+            - paragraph [ref=e255]: View usage metrics, performance statistics, and activity data. All data is stored locally and never transmitted.
+            - button "View Analytics" [ref=e256]:
+              - generic [ref=e257]:
+                - img [ref=e258]
+                - generic [ref=e263]: View Analytics
+            - paragraph [ref=e264]: "Privacy-first: All analytics data is stored locally in your browser."
+        - generic [ref=e265]:
+          - heading "Plugins" [level=2] [ref=e266]
+          - generic [ref=e267]:
+            - paragraph [ref=e268]: Extend functionality with community plugins. Browse the marketplace, manage installed plugins, and configure permissions.
+            - button "Browse Marketplace" [ref=e270]:
+              - generic [ref=e271]:
+                - img [ref=e272]
+                - generic [ref=e274]: Browse Marketplace
+        - generic [ref=e275]:
+          - heading "Workspace Preferences" [level=2] [ref=e276]
+          - paragraph [ref=e278]: Additional workspace settings coming soon.
+```

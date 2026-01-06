@@ -1,0 +1,3193 @@
+{
+  "config": {
+    "configFile": "/Users/apple/Documents/coding-projects/project-alpha-master/playwright.config.ts",
+    "rootDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 8
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "e2e/results/html-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "e2e/results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "mobile-safari",
+        "name": "mobile-safari",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "tablet",
+        "name": "tablet",
+        "testDir": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 8,
+    "webServer": {
+      "command": "pnpm dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "api-key-management.journey.spec.ts",
+      "file": "api-key-management.journey.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "API Key Management",
+          "file": "api-key-management.journey.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "KEY-001: User can configure API key in settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 28226,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26",
+                        "location": {
+                          "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                          "column": 26,
+                          "line": 34
+                        },
+                        "snippet": "  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "column": 26,
+                            "line": 34
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n\n  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.037Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "column": 26,
+                        "line": 34
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d08383e959d528445f1d-52f175ad01166b5ba78c",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "KEY-002: Configured key persists after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 83,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "skipped",
+                      "duration": 480,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.058Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 83,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-f21abea38b2ab26f73b2",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "KEY-003: Models load after key configuration",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 101,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 5935,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.034Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 101,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-a8c449ee0d6637f75d17",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "KEY-004: Key works across workspaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 119,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 7108,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.034Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 119,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-4f91c957ac3b6ec23438",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 107,
+              "column": 5
+            },
+            {
+              "title": "KEY-005: Chat works with configured key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Requires API mock for CI",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 134,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "skipped",
+                      "duration": 5728,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.058Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Requires API mock for CI",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 134,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-cb610044447c05556941",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "title": "KEY-006: Invalid key shows clear error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 148,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "skipped",
+                      "duration": 27566,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.028Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 148,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-3f1194bf8fee1b5b8548",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 140,
+              "column": 5
+            },
+            {
+              "title": "KEY-007: SSR compatibility",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 160,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 442,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.043Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 160,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-6ccc535fdfb1b3330c89",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "KEY-001: User can configure API key in settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 30459,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26",
+                        "location": {
+                          "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                          "column": 26,
+                          "line": 34
+                        },
+                        "snippet": "  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "column": 26,
+                            "line": 34
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n\n  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:53.028Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-firefox/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "column": 26,
+                        "line": 34
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d08383e959d528445f1d-80daa82bd667c546e4f3",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "KEY-002: Configured key persists after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 83,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 4,
+                      "status": "skipped",
+                      "duration": 2664,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:57.905Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 83,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-18047a8b2f1425462f36",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "KEY-003: Models load after key configuration",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 101,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 6021,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:58.026Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 101,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-28e0b05ed921f4deef74",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "KEY-004: Key works across workspaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 119,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 8909,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:59.160Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 119,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-f75ac4fa108958df7526",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 107,
+              "column": 5
+            },
+            {
+              "title": "KEY-005: Chat works with configured key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Requires API mock for CI",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 134,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 7729,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:59.206Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Requires API mock for CI",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 134,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-d216d79e9c5b9113c065",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "title": "KEY-006: Invalid key shows clear error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 148,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 4,
+                      "status": "skipped",
+                      "duration": 21134,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:02.515Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 148,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-675e4ba2c563bcba23d6",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 140,
+              "column": 5
+            },
+            {
+              "title": "KEY-007: SSR compatibility",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 160,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 1006,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:09.036Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 160,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-462be796010edecfa5ee",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "KEY-001: User can configure API key in settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 6,
+                      "status": "failed",
+                      "duration": 5013,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26",
+                        "location": {
+                          "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                          "column": 26,
+                          "line": 34
+                        },
+                        "snippet": "  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "column": 26,
+                            "line": 34
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n\n  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:15.141Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-webkit/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-webkit/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "column": 26,
+                        "line": 34
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d08383e959d528445f1d-82ac8d3852330389f20b",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "KEY-002: Configured key persists after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 83,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 1376,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:17.294Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 83,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-e7a2658a82c7b1c7d44d",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "KEY-003: Models load after key configuration",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 101,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 7,
+                      "status": "skipped",
+                      "duration": 6223,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:22.987Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 101,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-36a312c7fb07461fd52c",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "KEY-004: Key works across workspaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 119,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 5,
+                      "status": "skipped",
+                      "duration": 22098,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:22.973Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 119,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-2df52bcf12f37031018b",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 107,
+              "column": 5
+            },
+            {
+              "title": "KEY-005: Chat works with configured key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Requires API mock for CI",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 134,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 11638,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:23.370Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Requires API mock for CI",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 134,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-608cd928d60d1717530c",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "title": "KEY-006: Invalid key shows clear error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 148,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 3899,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:19.347Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 148,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-3930749a41a0c79f7cf0",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 140,
+              "column": 5
+            },
+            {
+              "title": "KEY-007: SSR compatibility",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 160,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 1599,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:24.879Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 160,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-e941eefc535a50082eb6",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "KEY-001: User can configure API key in settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 26322,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Providers', exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Providers', exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Providers', exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Providers', exact: true })\u001b[22m\n\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:26:38",
+                        "location": {
+                          "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                          "column": 38,
+                          "line": 26
+                        },
+                        "snippet": "  24 |         // Look for API keys section - targeting the heading specifically to avoid ambiguity\n  25 |         const apiKeysSection = page.getByRole('heading', { name: 'Providers', exact: true });\n> 26 |         await expect(apiKeysSection).toBeVisible({ timeout: 10000 });\n     |                                      ^\n  27 |\n  28 |         // Find the \"Google Gemini\" provider row and click the edit button\n  29 |         // We look for the row containing \"Google Gemini\" and then find the edit button within it"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "column": 38,
+                            "line": 26
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Providers', exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Providers', exact: true })\u001b[22m\n\n\n  24 |         // Look for API keys section - targeting the heading specifically to avoid ambiguity\n  25 |         const apiKeysSection = page.getByRole('heading', { name: 'Providers', exact: true });\n> 26 |         await expect(apiKeysSection).toBeVisible({ timeout: 10000 });\n     |                                      ^\n  27 |\n  28 |         // Find the \"Google Gemini\" provider row and click the edit button\n  29 |         // We look for the row containing \"Google Gemini\" and then find the edit button within it\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:26:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:29.321Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-mobile-chrome/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-mobile-chrome/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "column": 38,
+                        "line": 26
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d08383e959d528445f1d-29cd85986732d2405b1d",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "KEY-002: Configured key persists after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 83,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 705,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:30.819Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 83,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-fdc4696c53c308033ef7",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "KEY-003: Models load after key configuration",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 101,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 1,
+                      "status": "skipped",
+                      "duration": 14357,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:30.761Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 101,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-6bc24f201c71698b18c6",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "KEY-004: Key works across workspaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 119,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 23,
+                      "parallelIndex": 7,
+                      "status": "skipped",
+                      "duration": 14279,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:33.748Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 119,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-6c9347ecc0d3c8530c07",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 107,
+              "column": 5
+            },
+            {
+              "title": "KEY-005: Chat works with configured key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Requires API mock for CI",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 134,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 13852,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:32.265Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Requires API mock for CI",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 134,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-9979582b385d5e223d25",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "title": "KEY-006: Invalid key shows clear error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 148,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 6876,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:39.085Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 148,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-49f94a43aaeee778cb71",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 140,
+              "column": 5
+            },
+            {
+              "title": "KEY-007: SSR compatibility",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 160,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 25,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 598,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:39.105Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 160,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-f8cefb440a039900dd4e",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "KEY-001: User can configure API key in settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 9060,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26",
+                        "location": {
+                          "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                          "column": 26,
+                          "line": 34
+                        },
+                        "snippet": "  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "column": 26,
+                            "line": 34
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n\n  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:51.956Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-mobile-safari/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-mobile-safari/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "column": 26,
+                        "line": 34
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d08383e959d528445f1d-4ebbb963ad55b2b9750e",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "KEY-002: Configured key persists after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 83,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 30,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 2528,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:58.186Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 83,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-d39e0917b90c1029c5c6",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "KEY-003: Models load after key configuration",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 101,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 31,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 7138,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:58.173Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 101,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-ae9249d3e9f4166d5363",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "KEY-004: Key works across workspaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 119,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 32,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 6590,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:00.576Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 119,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-70de786cf3d8501fba76",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 107,
+              "column": 5
+            },
+            {
+              "title": "KEY-005: Chat works with configured key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Requires API mock for CI",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 134,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 27,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 6422,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:52.277Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Requires API mock for CI",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 134,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-138111336533ac9ad1b3",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "title": "KEY-006: Invalid key shows clear error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 148,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 29,
+                      "parallelIndex": 7,
+                      "status": "skipped",
+                      "duration": 8126,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:56.743Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 148,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-d6a8043dd177224c37a6",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 140,
+              "column": 5
+            },
+            {
+              "title": "KEY-007: SSR compatibility",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 160,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 28,
+                      "parallelIndex": 1,
+                      "status": "skipped",
+                      "duration": 2300,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:56.081Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 160,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-3c637852ec11063c6d92",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "KEY-001: User can configure API key in settings",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 33,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 13208,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26",
+                        "location": {
+                          "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                          "column": 26,
+                          "line": 34
+                        },
+                        "snippet": "  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "column": 26,
+                            "line": 34
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider') resolved to 4 elements:\n    1) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).first()\n    2) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(1)\n    3) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(2)\n    4) <button aria-label=\"Edit provider\" data-tsd-source=\"/src/presentation/components/agent/ProviderSettings.tsx:146:29\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] text-[var(--foreground)] hover:bg-[var(--neutral-100)] …>…</button> aka getByRole('button', { name: 'Edit provider' }).nth(3)\n\nCall log:\n\u001b[2m  - waiting for locator('div').filter({ hasText: 'Google Gemini' }).first().getByLabel('Edit provider')\u001b[22m\n\n\n  32 |         \n  33 |         const editButton = geminiRow.getByLabel('Edit provider');\n> 34 |         await editButton.click();\n     |                          ^\n  35 |\n  36 |         // Wait for dialog to open\n  37 |         const dialog = page.getByRole('dialog');\n    at /Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts:34:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:11.343Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-tablet/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/results/test-artifacts/api-key-management.journey-0b765-nfigure-API-key-in-settings-tablet/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "column": 26,
+                        "line": 34
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d08383e959d528445f1d-861cd848319aed680ad4",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "KEY-002: Configured key persists after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 83,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 34,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 2084,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:12.052Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 83,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-68ed8eb97ccaad5a5e57",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "KEY-003: Models load after key configuration",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 101,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 35,
+                      "parallelIndex": 7,
+                      "status": "skipped",
+                      "duration": 8144,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:14.123Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 101,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-9e65b6b6dc368d03b878",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "KEY-004: Key works across workspaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 119,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 36,
+                      "parallelIndex": 1,
+                      "status": "skipped",
+                      "duration": 9246,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:14.158Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 119,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-adec7990fa3239a638a4",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 107,
+              "column": 5
+            },
+            {
+              "title": "KEY-005: Chat works with configured key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Requires API mock for CI",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 134,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 37,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 7776,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:14.440Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Requires API mock for CI",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 134,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-d533e6091dab9015421d",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "title": "KEY-006: Invalid key shows clear error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 148,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 38,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 9906,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:15.305Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 148,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-291893f363b78d4dd5fd",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 140,
+              "column": 5
+            },
+            {
+              "title": "KEY-007: SSR compatibility",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Depends on KEY-001",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 160,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 39,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 3102,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:15.694Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Depends on KEY-001",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 160,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-deb25ab06484a18e2ab5",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 154,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "API Key UI Indicators",
+          "file": "api-key-management.journey.spec.ts",
+          "line": 165,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Provider status badge shows configured state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 173,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "skipped",
+                      "duration": 27402,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.068Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 173,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-0b9d9449861e58811a47",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "Unconfigured provider shows setup prompt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Initial state testing needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 183,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 6476,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:51:50.991Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Initial state testing needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 183,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-39cb833459fc82d53d6e",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 176,
+              "column": 5
+            },
+            {
+              "title": "Provider status badge shows configured state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 173,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 13543,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:10.106Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 173,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-86e85e2772b1a733e2c8",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "Unconfigured provider shows setup prompt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Initial state testing needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 183,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 3476,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:10.656Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Initial state testing needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 183,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-4eb8735c4b2db6018368",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 176,
+              "column": 5
+            },
+            {
+              "title": "Provider status badge shows configured state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 173,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 2,
+                      "status": "skipped",
+                      "duration": 12693,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:23.294Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 173,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-be0c508da3b02b77102f",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "Unconfigured provider shows setup prompt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Initial state testing needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 183,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 16108,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:29.367Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Initial state testing needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 183,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-fca0678b076653e57691",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 176,
+              "column": 5
+            },
+            {
+              "title": "Provider status badge shows configured state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 173,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 25,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 6007,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:40.311Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 173,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-59a65804348d36884a3a",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "Unconfigured provider shows setup prompt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Initial state testing needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 183,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 1,
+                      "status": "skipped",
+                      "duration": 2899,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:45.944Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Initial state testing needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 183,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-c54dcfded92b17eaa66f",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 176,
+              "column": 5
+            },
+            {
+              "title": "Provider status badge shows configured state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 173,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 27,
+                      "parallelIndex": 3,
+                      "status": "skipped",
+                      "duration": 8803,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:52:59.868Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 173,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-be7e8fe2f72df804eb85",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "Unconfigured provider shows setup prompt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Initial state testing needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 183,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "mobile-safari",
+                  "projectName": "mobile-safari",
+                  "results": [
+                    {
+                      "workerIndex": 28,
+                      "parallelIndex": 1,
+                      "status": "skipped",
+                      "duration": 6256,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:00.160Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Initial state testing needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 183,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-24fc0ecd39e682c0682e",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 176,
+              "column": 5
+            },
+            {
+              "title": "Provider status badge shows configured state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Settings page selectors needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 173,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 40,
+                      "parallelIndex": 4,
+                      "status": "skipped",
+                      "duration": 9307,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:16.004Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Settings page selectors needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 173,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-a40929f05ee768c4734d",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "Unconfigured provider shows setup prompt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Initial state testing needed",
+                      "location": {
+                        "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                        "line": 183,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "tablet",
+                  "projectName": "tablet",
+                  "results": [
+                    {
+                      "workerIndex": 34,
+                      "parallelIndex": 6,
+                      "status": "skipped",
+                      "duration": 7927,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T12:53:15.796Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Initial state testing needed",
+                          "location": {
+                            "file": "/Users/apple/Documents/coding-projects/project-alpha-master/e2e/journeys/api-key-management.journey.spec.ts",
+                            "line": 183,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d08383e959d528445f1d-0be4304e32597c0d6d77",
+              "file": "api-key-management.journey.spec.ts",
+              "line": 176,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-01-06T12:51:37.530Z",
+    "duration": 110571.908,
+    "expected": 0,
+    "skipped": 48,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}
