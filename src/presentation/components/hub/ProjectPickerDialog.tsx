@@ -126,9 +126,11 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
 
   const projects = useMemo(() => {
     if (!allProjectsFromDexie) return [];
-    return allProjectsFromDexie.filter((project) =>
-      project.bindings?.[targetWorkspace] === 'true'
-    );
+    return allProjectsFromDexie.filter((project) => {
+      // Handle both legacy bindings (Record<string, string>) and typed bindings (WorkspaceBindings)
+      const binding = project.bindings?.[targetWorkspace];
+      return binding === true || binding === 'true';
+    });
   }, [allProjectsFromDexie, targetWorkspace]);
 
   const workspaceConfig = WORKSPACE_CONFIG[targetWorkspace];

@@ -50,7 +50,7 @@ function NotesEmptyState() {
 
   const allProjects = useMemo(() => Object.values(projects), [projects]);
   const notesProjects = useMemo(() =>
-    allProjects.filter((project) => project.bindings.notes === true),
+    allProjects.filter((project) => project.bindings?.notes === true),
     [allProjects]
   );
 

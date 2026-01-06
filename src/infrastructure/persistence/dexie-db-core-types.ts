@@ -18,6 +18,11 @@ import type { Table } from 'dexie';
 
 /**
  * Project metadata stored in IndexedDB
+ *
+ * NOTE: bindings property may contain either:
+ * - New format: WorkspaceBindings with boolean values (true/false)
+ * - Legacy format: Record<string, string> with string values ('true'/'false')
+ * Runtime code handles both formats for backwards compatibility
  */
 export interface ProjectRecord {
     id: string;
@@ -25,9 +30,8 @@ export interface ProjectRecord {
     path: string;
     lastOpened: Date;
     createdAt: Date;
-    bindings?: Record<string, string>;
+    bindings?: WorkspaceBindings | Record<string, string>;  // Union type for backwards compatibility
     folderPath?: string;
-    workspaceBindings?: WorkspaceBindings;
     fileSnapshotEnabled?: boolean;
 }
 

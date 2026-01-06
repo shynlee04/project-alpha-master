@@ -3,10 +3,11 @@
  * @module infrastructure/persistence/stores/project/project-crud-slice
  * @governance EPIC-CP-1.1
  *
- * Project lifecycle management operations.
+ * Project lifecycle management operations with Dexie persistence.
  */
 
 import { StateCreator } from 'zustand';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import type {
   Project,
   CreateProjectInput,
@@ -20,6 +21,40 @@ import type {
  */
 function generateProjectId(): string {
   return `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Convert Zustand Project to Dexie ProjectRecord for persistence
+ */
+export function toRecord(project: Project) {
+  return {
+    id: project.id,
+    name: project.name,
+    path: project.folderPath,
+    folderPath: project.folderPath,
+    lastOpened: project.lastOpened,
+    createdAt: project.createdAt,
+    bindings: project.bindings,
+    fileSnapshotEnabled: project.fileSnapshotEnabled,
+  };
+}
+
+/**
+ * Convert Dexie ProjectRecord to Zustand Project
+ */
+export function fromRecord(record: any): Project {
+  return {
+    id: record.id,
+    name: record.name,
+    folderPath: record.folderPath || record.path,
+    fsaHandle: null as any,  // Not stored in Dexie (requires user permission)
+    lastOpened: new Date(record.lastOpened),
+    createdAt: new Date(record.createdAt),
+    autoSync: true,  // Default value
+    bindings: record.bindings || {},
+    fileSnapshotEnabled: record.fileSnapshotEnabled,
+    tags: [],  // Default empty array
+  };
 }
 
 export const createProjectCrudSlice: StateCreator<
@@ -57,13 +92,16 @@ export const createProjectCrudSlice: StateCreator<
 
     console.log('[ProjectStore] Creating project:', projectId);
 
+    // Update Zustand store
     set((state) => ({
       projects: { ...state.projects, [projectId]: project },
       activeProjectId: projectId,
     }));
 
-    // Persist to Dexie
-    // TODO: Add Dexie persistence in Phase 0.1 finalization
+    // Persist to Dexie (async, non-blocking)
+    db.projects.put(toRecord(project)).catch((error) => {
+      console.error('[ProjectStore] Failed to persist project to Dexie:', error);
+    });
 
     return projectId;
   },
@@ -86,18 +124,22 @@ export const createProjectCrudSlice: StateCreator<
       createdAt: existing.createdAt,
     };
 
+    // Update Zustand store
     set((state) => ({
       projects: { ...state.projects, [projectId]: updated },
     }));
 
-    // Persist to Dexie
-    // TODO: Add Dexie persistence
+    // Persist to Dexie (async, non-blocking)
+    db.projects.put(toRecord(updated)).catch((error) => {
+      console.error('[ProjectStore] Failed to update project in Dexie:', error);
+    });
   },
 
   // Delete project
   deleteProject: (projectId: string) => {
     console.log('[ProjectStore] Deleting project:', projectId);
 
+    // Update Zustand store
     set((state) => {
       const { [projectId]: deleted, ...remaining } = state.projects;
       return {
@@ -106,8 +148,10 @@ export const createProjectCrudSlice: StateCreator<
       };
     });
 
-    // Delete from Dexie
-    // TODO: Add Dexie persistence
+    // Delete from Dexie (async, non-blocking)
+    db.projects.delete(projectId).catch((error) => {
+      console.error('[ProjectStore] Failed to delete project from Dexie:', error);
+    });
   },
 
   // Set active project

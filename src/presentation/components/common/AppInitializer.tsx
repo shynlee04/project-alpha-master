@@ -20,6 +20,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { migrateWorkspaceBindings } from '@/infrastructure/persistence/stores/project/migrate-bindings';
 import { registerServiceWorker } from '@/lib/offline/service-worker-registration';
 
@@ -33,6 +34,7 @@ interface AppInitializerProps {
  */
 export function AppInitializer({ children }: AppInitializerProps) {
     const fetchModels = useAppStore(s => s.fetchModels);
+    const hydrateProjects = useProjectStore(s => s.hydrateProjects);
 
     useEffect(() => {
         // Initialize all critical services on app boot
@@ -44,7 +46,12 @@ export function AppInitializer({ children }: AppInitializerProps) {
                 await credentialVault.initialize();
                 console.log('[AppInitializer] Credential vault ready');
 
-                // 2. Run workspace bindings migration (one-time, idempotent)
+                // 2. Hydrate projects from Dexie (CRITICAL: Must happen before workspace migration)
+                // This loads all persisted projects into the Zustand store cache
+                await hydrateProjects();
+                console.log('[AppInitializer] Projects hydrated from Dexie');
+
+                // 3. Run workspace bindings migration (one-time, idempotent)
                 // Fixes P0 blocker where projects had notes: false by default
                 const migrationResult = await migrateWorkspaceBindings();
                 if (migrationResult.executed) {
@@ -54,7 +61,7 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     });
                 }
 
-                // 3. Register service worker for offline support
+                // 4. Register service worker for offline support
                 const swRegistration = await registerServiceWorker({
                     onRegistered: () => {
                         console.log('[AppInitializer] Service worker registered');
@@ -75,7 +82,7 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     console.log('[AppInitializer] Offline mode enabled');
                 }
 
-                // 4. Auto-fetch models for ALL providers with credentials
+                // 5. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection
                 const { providers } = useAppStore.getState();
 
@@ -109,7 +116,7 @@ export function AppInitializer({ children }: AppInitializerProps) {
         };
 
         initServices();
-    }, [fetchModels]);
+    }, [fetchModels, hydrateProjects]);
 
     return <>{children}</>;
 }

@@ -7,6 +7,8 @@
  */
 
 import { StateCreator } from 'zustand';
+import { db } from '@/infrastructure/persistence/dexie-db';
+import { fromRecord } from './project-crud-slice';
 import type {
   WorkspaceType,
   WorkspaceBindings,
@@ -38,7 +40,51 @@ export const createProjectUtilsSlice: StateCreator<
     }));
 
     // Persist to Dexie
-    // TODO: Add Dexie persistence
+    const record = {
+      id: updated.id,
+      name: updated.name,
+      path: updated.folderPath,
+      folderPath: updated.folderPath,
+      lastOpened: updated.lastOpened,
+      createdAt: updated.createdAt,
+      bindings: updated.bindings,
+      fileSnapshotEnabled: updated.fileSnapshotEnabled,
+    };
+
+    db.projects.put(record).catch((error) => {
+      console.error('[ProjectStore] Failed to update lastOpened in Dexie:', error);
+    });
+  },
+
+  // Hydrate projects from Dexie into Zustand store
+  // Call this on app startup to load persisted projects
+  hydrateProjects: async () => {
+    console.log('[ProjectStore] Hydrating projects from Dexie...');
+
+    try {
+      const records = await db.projects.toArray();
+
+      const projects: Record<string, any> = {};
+      records.forEach((record) => {
+        const project = fromRecord(record);
+        projects[project.id] = project;
+      });
+
+      set((state) => ({
+        ...state,
+        projects,
+        _hasHydrated: true,
+      }));
+
+      console.log(`[ProjectStore] Hydrated ${Object.keys(projects).length} projects from Dexie`);
+    } catch (error) {
+      console.error('[ProjectStore] Failed to hydrate projects from Dexie:', error);
+      // Mark as hydrated even on error to prevent infinite retries
+      set((state) => ({
+        ...state,
+        _hasHydrated: true,
+      }));
+    }
   },
 
   // Get recent projects

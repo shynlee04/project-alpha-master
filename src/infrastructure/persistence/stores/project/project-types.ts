@@ -158,6 +158,7 @@ export interface ProjectBindingMethods {
  */
 export interface ProjectUtilsMethods {
   updateLastOpened: (projectId: string) => Promise<void>;
+  hydrateProjects: () => Promise<void>;
   getRecentProjects: (limit?: number) => Project[];
   searchProjects: (query: string) => Project[];
   getProjectsByWorkspace: (workspaceType: WorkspaceType) => Project[];
