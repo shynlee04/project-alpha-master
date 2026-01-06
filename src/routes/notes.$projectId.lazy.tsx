@@ -25,9 +25,14 @@ import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import { ErrorBoundary } from '@/presentation/components/error';
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
-  component: NotesWorkspace,
+  component: () => (
+    <ErrorBoundary>
+      <NotesWorkspace />
+    </ErrorBoundary>
+  ),
 });
 
 function NotesWorkspace() {

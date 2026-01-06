@@ -12,6 +12,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
+import { Route as TestErrorBoundaryRouteImport } from './routes/test-error-boundary'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as HubRouteImport } from './routes/hub'
@@ -54,6 +55,11 @@ const KnowledgeLazyRoute = KnowledgeLazyRouteImport.update({
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
   path: '/test-fs-adapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestErrorBoundaryRoute = TestErrorBoundaryRouteImport.update({
+  id: '/test-error-boundary',
+  path: '/test-error-boundary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/hub'
     | '/ide'
     | '/settings'
+    | '/test-error-boundary'
     | '/test-fs-adapter'
     | '/knowledge'
     | '/notes'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/hub'
     | '/ide'
     | '/settings'
+    | '/test-error-boundary'
     | '/test-fs-adapter'
     | '/knowledge'
     | '/notes'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/hub'
     | '/ide'
     | '/settings'
+    | '/test-error-boundary'
     | '/test-fs-adapter'
     | '/knowledge'
     | '/notes'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   HubRoute: typeof HubRoute
   IdeRoute: typeof IdeRouteWithChildren
   SettingsRoute: typeof SettingsRoute
+  TestErrorBoundaryRoute: typeof TestErrorBoundaryRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
   KnowledgeLazyRoute: typeof KnowledgeLazyRouteWithChildren
   NotesLazyRoute: typeof NotesLazyRouteWithChildren
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/test-fs-adapter'
       fullPath: '/test-fs-adapter'
       preLoaderRoute: typeof TestFsAdapterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-error-boundary': {
+      id: '/test-error-boundary'
+      path: '/test-error-boundary'
+      fullPath: '/test-error-boundary'
+      preLoaderRoute: typeof TestErrorBoundaryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -516,6 +536,7 @@ const rootRouteChildren: RootRouteChildren = {
   HubRoute: HubRoute,
   IdeRoute: IdeRouteWithChildren,
   SettingsRoute: SettingsRoute,
+  TestErrorBoundaryRoute: TestErrorBoundaryRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
   KnowledgeLazyRoute: KnowledgeLazyRouteWithChildren,
   NotesLazyRoute: NotesLazyRouteWithChildren,

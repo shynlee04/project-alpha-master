@@ -220,7 +220,7 @@ export function MobileIDELayout(): React.JSX.Element {
     });
 
     return (
-        <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+        <div className="h-dvh w-dvw bg-background text-foreground overflow-hidden flex flex-col">
             <MobileCapabilityBanner />
             {/* Permission overlay */}
             {permissionState === 'prompt' && (

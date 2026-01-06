@@ -19,7 +19,7 @@ export {
   useActiveProvider,
   useAvailableModels,
   useValidationErrors,
-} from '../use-app-store';
+} from '@/infrastructure/persistence/stores/use-app-store';
 
 // Re-export useActiveAgent from agent-selection-store (not use-app-store)
 // NOTE: useActiveAgent(agents) requires agents array parameter

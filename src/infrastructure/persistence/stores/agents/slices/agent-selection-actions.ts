@@ -7,11 +7,9 @@
  */
 
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { Agent } from '@/core/entities/Agent';
-import { useAppStore } from '../use-app-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { isAgentAvailableIn } from '@/domain/services/agent-workspace-utils';
 import type { AgentSelectionState } from './agent-selection-state';
-import type { StoreApi } from 'zustand';
 
 /**
  * Create agent selection actions slice

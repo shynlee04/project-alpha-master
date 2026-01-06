@@ -21,6 +21,7 @@ import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import { ErrorBoundary } from '@/presentation/components/error';
 
 // Lazy load IDELayout
 const IDELayout = lazy(() =>
@@ -42,7 +43,11 @@ export const Route = createFileRoute('/ide/$projectId')({
     } : 'NULL');
     return { project };
   },
-  component: IDEWorkspace,
+  component: () => (
+    <ErrorBoundary>
+      <IDEWorkspace />
+    </ErrorBoundary>
+  ),
 });
 
 function IDEWorkspace() {

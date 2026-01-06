@@ -23,10 +23,15 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, Plus, Loader2 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/infrastructure/persistence/dexie-db';
+import { ErrorBoundary } from '@/presentation/components/error';
 
 export const Route = createFileRoute('/ide')({
   ssr: false,
-  component: IDEEmptyState,
+  component: () => (
+    <ErrorBoundary>
+      <IDEEmptyState />
+    </ErrorBoundary>
+  ),
 });
 
 /**

@@ -8,6 +8,7 @@ import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '@/presentation/components/common/AppErrorBoundary'
 import { AppInitializer } from '@/presentation/components/common/AppInitializer'
 import { initSentry } from '../lib/monitoring/sentry'
+import { initGlobalErrorHandlers } from '@/lib/errorHandling/globalErrorHandlers'
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
 import { TooltipProvider } from '@/presentation/components/ui/tooltip'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
@@ -15,9 +16,10 @@ import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/wo
 
 import appCss from '../styles.css?url'
 
-// Initialize Sentry before React renders (client-only)
+// Initialize monitoring and error handlers before React renders (client-only)
 if (typeof window !== 'undefined') {
   initSentry()
+  initGlobalErrorHandlers()
 }
 
 export const Route = createRootRoute({

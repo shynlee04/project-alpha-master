@@ -8,20 +8,24 @@
 
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { Agent } from '@/core/entities/Agent';
-import { useAppStore } from '../use-app-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { isAgentAvailableIn, isAgentDefaultFor } from '@/domain/services/agent-workspace-utils';
 import type { AgentSelectionState } from './agent-selection-state';
 
 /**
  * Create agent selection query actions slice
+ * @param get - Zustand getState function
+ * @param set - Zustand setState function
  */
-export function createAgentSelectionQueries() {
+export function createAgentSelectionQueries(
+  get: () => AgentSelectionState,
+  set: (partial: Partial<AgentSelectionState>) => void
+) {
   return {
     /**
      * Get the currently active agent
      */
     getActiveAgent: (): Agent | null => {
-      const get = () => useAgentSelectionStore.getState();
       const { activeAgentId } = get();
       if (!activeAgentId) return null;
       return useAppStore.getState().getAgent(activeAgentId) || null;
@@ -32,28 +36,27 @@ export function createAgentSelectionQueries() {
      * Priority: workspace default > last selected > marked default > first available
      */
     getAgentForWorkspace: (workspaceType: WorkspaceType): Agent | null => {
-      const get = () => useAgentSelectionStore.getState();
       const agents = useAppStore.getState().agents;
-      const availableAgents = agents.filter(agent => isAgentAvailableIn(agent, workspaceType));
+      const availableAgents = agents.filter((agent: Agent) => isAgentAvailableIn(agent, workspaceType));
 
       if (availableAgents.length === 0) return null;
 
       // Rule 1: Prefer workspace-specific default
       const defaultAgentId = get().defaultAgentIds[workspaceType];
       if (defaultAgentId) {
-        const defaultAgent = availableAgents.find(a => a.id === defaultAgentId);
+        const defaultAgent = availableAgents.find((a: Agent) => a.id === defaultAgentId);
         if (defaultAgent) return defaultAgent;
       }
 
       // Rule 2: Fall back to last selected
       const lastSelectedId = get().lastSelectedAgentIds[workspaceType];
       if (lastSelectedId) {
-        const lastSelected = availableAgents.find(a => a.id === lastSelectedId);
+        const lastSelected = availableAgents.find((a: Agent) => a.id === lastSelectedId);
         if (lastSelected) return lastSelected;
       }
 
       // Rule 3 & 4: Use marked default or first available
-      const markedDefault = availableAgents.find(agent => isAgentDefaultFor(agent, workspaceType));
+      const markedDefault = availableAgents.find((agent: Agent) => isAgentDefaultFor(agent, workspaceType));
       return markedDefault || availableAgents[0] || null;
     },
 
@@ -61,10 +64,9 @@ export function createAgentSelectionQueries() {
      * Select the best agent for a workspace and set it as active
      */
     selectAgentForWorkspace: (workspaceType: WorkspaceType) => {
-      const get = () => useAgentSelectionStore.getState();
       const agent = get().getAgentForWorkspace(workspaceType);
       if (agent) {
-        get().set({ activeAgentId: agent.id });
+        set({ activeAgentId: agent.id });
         get().emitAgentSelected(agent, workspaceType);
       }
     },
@@ -73,13 +75,9 @@ export function createAgentSelectionQueries() {
      * Check if the current agent needs reselection for the given workspace
      */
     needsReselection: (workspaceType: WorkspaceType): boolean => {
-      const get = () => useAgentSelectionStore.getState();
       const activeAgent = get().getActiveAgent();
       if (!activeAgent) return true;
       return !isAgentAvailableIn(activeAgent, workspaceType);
     },
   };
 }
-
-// Import store for circular dependency resolution
-import { useAgentSelectionStore } from '../agent-selection-store';

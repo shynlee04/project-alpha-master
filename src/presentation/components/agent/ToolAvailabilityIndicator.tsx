@@ -82,8 +82,7 @@ export function ToolAvailabilityIndicator({
   showToolNames = true,
   className,
 }: ToolAvailabilityIndicatorProps) {
-  // Translation hook reserved for future i18n implementation
-  useTranslation();
+  const { t } = useTranslation();
 
   /**
    * Calculate tool availability for current workspace
@@ -171,7 +170,7 @@ export function ToolAvailabilityIndicator({
       <div className={cn('text-sm text-muted-foreground', className)}>
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-yellow-500" />
-          <span>No agent selected</span>
+          <span>{t('agent.toolAvailability.noAgentSelected')}</span>
         </div>
       </div>
     );
@@ -202,11 +201,11 @@ export function ToolAvailabilityIndicator({
           <TooltipContent side="bottom" className="max-w-xs">
             <div className="space-y-2">
               <p className="font-medium">
-                {summary.available} of {summary.total} tools available in {currentWorkspace} workspace
+                {t('agent.toolAvailability.toolsAvailable', { available: summary.available, total: summary.total, workspace: currentWorkspace })}
               </p>
               {summary.blocked > 0 && (
                 <p className="text-xs text-muted-foreground">
-                  {summary.blocked} tools are blocked due to workspace permissions
+                  {t('agent.toolAvailability.toolsBlocked', { count: summary.blocked })}
                 </p>
               )}
             </div>
@@ -223,7 +222,7 @@ export function ToolAvailabilityIndicator({
     <div className={cn('space-y-4', className)}>
       {/* Summary Header */}
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium">Tool Availability</h4>
+        <h4 className="text-sm font-medium">{t('agent.toolAvailability.title')}</h4>
         <Badge
           variant="outline"
           className={cn(
@@ -241,7 +240,7 @@ export function ToolAvailabilityIndicator({
       {available.length > 0 && (
         <div className="space-y-2">
           <div className="text-xs font-medium text-green-500 uppercase tracking-wide">
-            Available ({available.length})
+            {t('agent.toolAvailability.available')} ({available.length})
           </div>
           <div className="flex flex-wrap gap-2">
             {available.map((tool) => (
@@ -261,7 +260,7 @@ export function ToolAvailabilityIndicator({
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    <p>{tool.toolName} is available in {currentWorkspace} workspace</p>
+                    <p>{t('agent.toolAvailability.toolAvailable', { toolName: tool.toolName, workspace: currentWorkspace })}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -274,7 +273,7 @@ export function ToolAvailabilityIndicator({
       {blocked.length > 0 && (
         <div className="space-y-2">
           <div className="text-xs font-medium text-red-500 uppercase tracking-wide">
-            Blocked ({blocked.length})
+            {t('agent.toolAvailability.blocked')} ({blocked.length})
           </div>
           <div className="flex flex-wrap gap-2">
             {blocked.map((tool) => (
@@ -307,7 +306,7 @@ export function ToolAvailabilityIndicator({
       {/* Empty State */}
       {available.length === 0 && blocked.length === 0 && (
         <div className="text-sm text-muted-foreground italic">
-          No tools configured for this agent
+          {t('agent.toolAvailability.noTools')}
         </div>
       )}
     </div>

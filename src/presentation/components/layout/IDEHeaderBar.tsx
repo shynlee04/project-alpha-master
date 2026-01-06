@@ -91,12 +91,12 @@ export function IDEHeaderBar({
     };
 
     return (
-        <header className="h-10 bg-card border-b border-border flex items-center px-4 justify-between shrink-0">
+        <header className="h-12 md:h-10 bg-card border-b border-border flex items-center px-4 justify-between shrink-0">
             <div className="flex items-center gap-3">
                 {/* Home button with logo */}
                 <button
                     onClick={handleGoHome}
-                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                    className="min-h-[44px] flex items-center gap-2 hover:opacity-80 transition-opacity p-2"
                     title={t('sidebar.home')}
                     aria-label={t('sidebar.home')}
                 >
@@ -170,11 +170,11 @@ export function IDEHeaderBar({
                 {/* Chat toggle */}
                 <button
                     onClick={onToggleChat}
-                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    className="min-h-[44px] flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors p-2"
                     title={t('ide.toggleChatShortcut')}
                 >
                     <ChatIcon className="w-4 h-4" aria-label={isChatVisible ? t('ide.hideChat') : t('ide.showChat')} />
-                    {isChatVisible ? t('ide.hideChat') : t('ide.showChat')}
+                    <span className="hidden md:inline">{isChatVisible ? t('ide.hideChat') : t('ide.showChat')}</span>
                 </button>
 
                 {/* Theme Toggle */}
@@ -220,7 +220,7 @@ function FolderOpenedControls({
     return (
         <>
             <label
-                className={`flex items-center gap-2 text-xs transition-colors ${isDisabled
+                className={`flex items-center gap-2 text-xs transition-colors min-h-[44px] p-2 ${isDisabled
                     ? 'text-muted-foreground/50 cursor-not-allowed'
                     : 'text-muted-foreground hover:text-foreground cursor-pointer'
                     }`}
@@ -239,15 +239,15 @@ function FolderOpenedControls({
                 />
                 <span
                     className={
-                        `relative inline-flex h-4 w-7 items-center rounded-full transition-colors ` +
+                        `relative inline-flex h-5 w-9 items-center rounded-full transition-colors ` +
                         (autoSync ? 'bg-primary/40' : 'bg-muted')
                     }
                     aria-hidden="true"
                 >
                     <span
                         className={
-                            `inline-block h-3 w-3 transform rounded-full bg-foreground transition-transform ` +
-                            (autoSync ? 'translate-x-3.5' : 'translate-x-0.5')
+                            `inline-block h-4 w-4 transform rounded-full bg-foreground transition-transform ` +
+                            (autoSync ? 'translate-x-4' : 'translate-x-0.5')
                         }
                     />
                 </span>
@@ -262,19 +262,19 @@ function FolderOpenedControls({
                 type="button"
                 onClick={onSyncNow}
                 disabled={isDisabled}
-                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
+                className={`min-h-[44px] text-xs flex items-center gap-1 transition-colors p-2 ${isDisabled ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
                     }`}
                 title={t('ide.syncNow')}
             >
                 {isSyncing ? (
                     <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        {t('ide.syncNow')}
+                        <span className="hidden md:inline">{t('ide.syncNow')}</span>
                     </>
                 ) : (
                     <>
                         <RefreshIcon className="w-4 h-4" aria-label={t('ide.syncNow')} />
-                        {t('ide.syncNow')}
+                        <span className="hidden md:inline">{t('ide.syncNow')}</span>
                     </>
                 )}
             </button>
@@ -282,12 +282,12 @@ function FolderOpenedControls({
                 type="button"
                 onClick={onSwitchFolder}
                 disabled={isDisabled}
-                className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
+                className={`min-h-[44px] text-xs flex items-center gap-1 transition-colors p-2 ${isDisabled ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
                     }`}
                 title={t('ide.switchFolder')}
             >
                 <FolderOpen className="w-4 h-4" />
-                {t('ide.switchFolder')}
+                <span className="hidden md:inline">{t('ide.switchFolder')}</span>
             </button>
         </>
     );
@@ -312,12 +312,12 @@ function OpenFolderButton({
             type="button"
             onClick={onOpenFolder}
             disabled={isDisabled}
-            className={`text-xs flex items-center gap-1 transition-colors ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+            className={`min-h-[44px] text-xs flex items-center gap-1 transition-colors p-2 ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
                 }`}
             title={t('ide.openFolder')}
         >
             <FolderOpen className="w-4 h-4" aria-label={t('ide.openFolder')} />
-            {t('ide.openFolder')}
+            <span className="hidden md:inline">{t('ide.openFolder')}</span>
         </button>
     );
 }

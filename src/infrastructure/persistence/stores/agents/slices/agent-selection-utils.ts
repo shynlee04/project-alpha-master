@@ -6,28 +6,30 @@
  * Utility actions for hydration and state management.
  */
 
-import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { AgentSelectionState } from './agent-selection-state';
 
 /**
  * Create agent selection utility actions slice
+ * @param get - Zustand getState function (unused but kept for consistency)
+ * @param set - Zustand setState function
  */
-export function createAgentSelectionUtils() {
+export function createAgentSelectionUtils(
+  _get: () => AgentSelectionState,
+  set: (partial: Partial<AgentSelectionState>) => void
+) {
   return {
     /**
      * Set hydration flag
      */
     setHasHydrated: (hasHydrated: boolean) => {
-      const get = () => useAgentSelectionStore.getState();
-      get().set({ _hasHydrated: hasHydrated });
+      set({ _hasHydrated: hasHydrated });
     },
 
     /**
      * Reset agent selection state to defaults
      */
     reset: () => {
-      const get = () => useAgentSelectionStore.getState();
-      get().set({
+      set({
         activeAgentId: null,
         defaultAgentIds: { ide: null, knowledge: null, study: null, notes: null },
         lastSelectedAgentIds: { ide: null, knowledge: null, study: null, notes: null },
@@ -36,6 +38,3 @@ export function createAgentSelectionUtils() {
     },
   };
 }
-
-// Import store for circular dependency resolution
-import { useAgentSelectionStore } from '../agent-selection-store';

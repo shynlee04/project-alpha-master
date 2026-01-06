@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
@@ -49,6 +50,7 @@ export function StudyFilePicker({
     isReady = false,
     isSupported = true,
 }: StudyFilePickerProps) {
+    const { t } = useTranslation();
     const [isMounted, setIsMounted] = useState(false);
     const [isMounting, setIsMounting] = useState(false);
     const [isScanning, setIsScanning] = useState(false);
@@ -204,7 +206,7 @@ export function StudyFilePicker({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Study Materials Import</DialogTitle>
+                    <DialogTitle>{t('study.filePicker.title')}</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">

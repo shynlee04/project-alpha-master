@@ -78,7 +78,7 @@ export function PermissionOverlay({
                 </p>
                 <button
                     onClick={handleClick}
-                    className="px-6 py-2 bg-primary hover:brightness-110 text-primary-foreground rounded-lg font-medium transition-colors"
+                    className="min-h-[44px] px-6 py-3 bg-primary hover:brightness-110 text-primary-foreground rounded-lg font-medium transition-colors"
                 >
                     {hasExistingProject ? 'Restore Access' : 'Open Folder'}
                 </button>

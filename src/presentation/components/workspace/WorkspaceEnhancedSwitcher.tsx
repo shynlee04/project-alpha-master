@@ -168,7 +168,7 @@ export function WorkspaceEnhancedSwitcher({
   compact = false,
   className,
 }: WorkspaceEnhancedSwitcherProps) {
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
 
   /**
    * Calculate workspace availability metrics
@@ -272,25 +272,23 @@ export function WorkspaceEnhancedSwitcher({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Icon className="w-4 h-4" />
-                <span className="font-medium">{metadata.label} Workspace</span>
+                <span className="font-medium">{t(`${metadata.label.toLowerCase()}.workspace`, { workspace: metadata.label })}</span>
               </div>
 
               {!isAvailable && (
                 <p className="text-xs text-red-500">
-                  Agent not available in this workspace
+                  {t('workspace.switcher.agentNotAvailable')}
                 </p>
               )}
 
               {isAvailable && showToolCounts && (
                 <div className="space-y-1">
                   <p className="text-xs">
-                    <span className="font-medium">{metrics.available}</span> of{' '}
-                    <span className="font-medium">{metrics.total}</span> tools available
+                    {t('workspace.switcher.toolsAvailableCount', { available: metrics.available, total: metrics.total })}
                   </p>
                   {metrics.available < metrics.total && (
                     <p className="text-xs text-muted-foreground">
-                      {metrics.total - metrics.available} tools are disabled due to workspace
-                      permissions
+                      {t('workspace.switcher.toolsDisabledCount', { count: metrics.total - metrics.available })}
                     </p>
                   )}
                 </div>
@@ -309,11 +307,11 @@ export function WorkspaceEnhancedSwitcher({
       {/* Header */}
       {!compact && (
         <div className="px-2">
-          <h3 className="text-sm font-medium">Switch Workspace</h3>
+          <h3 className="text-sm font-medium">{t('workspace.switcher.switchWorkspace')}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
             {showToolCounts
-              ? 'Tool availability varies by workspace'
-              : 'Select a workspace to switch to'}
+              ? t('workspace.switcher.toolAvailabilityHint')
+              : t('workspace.switcher.selectWorkspaceHint')}
           </p>
         </div>
       )}
@@ -331,17 +329,17 @@ export function WorkspaceEnhancedSwitcher({
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
-              <span>Available</span>
+              <span>{t('workspace.switcher.legend.available')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <XCircle className="w-3.5 h-3.5 text-red-500" />
-              <span>Unavailable</span>
+              <span>{t('workspace.switcher.legend.unavailable')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Badge variant="outline" className="text-xs px-1.5 py-0">
                 3/4
               </Badge>
-              <span>Tool count</span>
+              <span>{t('workspace.switcher.legend.toolCount')}</span>
             </div>
           </div>
         </div>

@@ -184,7 +184,7 @@ export function IDELayout(): React.JSX.Element {
     return (
         <StatusAnnouncerProvider>
             <SidebarProvider defaultPanel="explorer" defaultCollapsed={isTablet}>
-                <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
+                <div className="h-dvh w-dvw bg-background text-foreground overflow-hidden flex flex-col">
                     <SkipLinks />
                     <MobileCapabilityBanner />
                     {permissionState === 'prompt' && <PermissionOverlay projectMetadata={layoutState.projectMetadata} onRestoreAccess={restoreAccess} />}
