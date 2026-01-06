@@ -12,7 +12,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, Star, Download, Filter } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { usePluginMarketplace, usePluginsStore } from '@/hooks/usePlugins';
+import { usePluginMarketplace } from '@/hooks/usePlugins';
+import { usePluginsStore } from '@/infrastructure/persistence/stores/plugins-store';
 import { cn } from '@/lib/utils';
 import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
 

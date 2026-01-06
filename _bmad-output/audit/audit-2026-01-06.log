@@ -573,3 +573,117 @@
 [2026-01-06 20:39:20] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-024-handoff.md[0m
 [2026-01-06 20:39:22] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/S-013-handoff.md[0m
 [2026-01-06 20:39:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-VELOCITY-20260106-060000/UJ-001-handoff.md[0m
+[2026-01-06 20:44:51] [INFO] ==========================================
+[2026-01-06 20:44:51] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:44:51] [INFO] ==========================================
+[2026-01-06 20:44:51] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:44:53] [INFO] Active artifacts: 52
+[2026-01-06 20:44:53] [INFO] Stale artifacts: 0
+[2026-01-06 20:44:53] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:44:54] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:44:54] [INFO] Total files checked: 28
+[2026-01-06 20:44:54] [INFO] Files missing governance: 1
+[2026-01-06 20:44:55] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:44:55] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:45:04] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:45:10] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:45:14] [INFO] ==========================================
+[2026-01-06 20:45:14] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:45:14] [INFO] ==========================================
+[2026-01-06 20:45:14] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:45:15] [INFO] Active artifacts: 52
+[2026-01-06 20:45:15] [INFO] Stale artifacts: 0
+[2026-01-06 20:45:15] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:45:16] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:45:16] [INFO] Total files checked: 28
+[2026-01-06 20:45:16] [INFO] Files missing governance: 1
+[2026-01-06 20:45:16] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:45:16] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:45:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:45:23] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:45:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 20:45:30] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:45:31] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 20:45:38] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:45:38] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/handoff-2026-01-06.md[0m
+[2026-01-06 20:45:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 20:45:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/CONTEXT-HANDOFF-HOOK-001.md[0m
+[2026-01-06 20:45:56] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-003-handoff.md[0m
+[2026-01-06 20:47:26] [INFO] ==========================================
+[2026-01-06 20:47:26] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:47:26] [INFO] ==========================================
+[2026-01-06 20:47:26] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:47:29] [INFO] Active artifacts: 52
+[2026-01-06 20:47:29] [INFO] Stale artifacts: 0
+[2026-01-06 20:47:29] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:47:30] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:47:31] [INFO] Total files checked: 28
+[2026-01-06 20:47:31] [INFO] Files missing governance: 1
+[2026-01-06 20:47:31] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:47:31] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:47:32] [INFO] ==========================================
+[2026-01-06 20:47:32] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:47:32] [INFO] ==========================================
+[2026-01-06 20:47:32] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:47:35] [INFO] Active artifacts: 52
+[2026-01-06 20:47:35] [INFO] Stale artifacts: 0
+[2026-01-06 20:47:35] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:47:36] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:47:36] [INFO] Total files checked: 28
+[2026-01-06 20:47:36] [INFO] Files missing governance: 1
+[2026-01-06 20:47:36] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:47:36] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:47:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:47:50] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:47:53] [INFO] ==========================================
+[2026-01-06 20:47:53] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:47:53] [INFO] ==========================================
+[2026-01-06 20:47:53] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:47:54] [INFO] ==========================================
+[2026-01-06 20:47:54] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:47:55] [INFO] ==========================================
+[2026-01-06 20:47:55] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:47:56] [INFO] Active artifacts: 52
+[2026-01-06 20:47:56] [INFO] Stale artifacts: 0
+[2026-01-06 20:47:56] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:47:57] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:47:57] [INFO] Active artifacts: 52
+[2026-01-06 20:47:57] [INFO] Total files checked: 28
+[2026-01-06 20:47:57] [INFO] Stale artifacts: 0
+[2026-01-06 20:47:57] [INFO] Files missing governance: 1
+[2026-01-06 20:47:57] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:47:58] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:47:58] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:47:58] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:47:59] [INFO] Total files checked: 28
+[2026-01-06 20:47:59] [INFO] Files missing governance: 1
+[2026-01-06 20:47:59] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:47:59] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:48:03] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:48:04] [INFO] ==========================================
+[2026-01-06 20:48:04] [INFO] DAILY GOVERNANCE AUDIT STARTED
+[2026-01-06 20:48:04] [INFO] ==========================================
+[2026-01-06 20:48:04] [INFO] === AUDIT 1: Artifact Freshness Check ===
+[2026-01-06 20:48:05] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:48:07] [INFO] Active artifacts: 52
+[2026-01-06 20:48:07] [INFO] Stale artifacts: 0
+[2026-01-06 20:48:07] [INFO] === AUDIT 2: Governance Frontmatter Validation ===
+[2026-01-06 20:48:08] [WARN] [1;33mMissing governance acknowledgment: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad/bmb/workflows/edit-agent/steps/step-02-analyze-agent.md[0m
+[2026-01-06 20:48:09] [INFO] Total files checked: 28
+[2026-01-06 20:48:09] [INFO] Files missing governance: 1
+[2026-01-06 20:48:09] [WARN] [1;33mFound 1 files without governance frontmatter[0m
+[2026-01-06 20:48:09] [INFO] === AUDIT 3: Orphan Artifact Detection ===
+[2026-01-06 20:48:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:48:13] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:48:18] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:48:21] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:48:24] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/E4/epic-e4-completion.md[0m
+[2026-01-06 20:48:27] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:48:27] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:48:35] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-005-handoff.md[0m
+[2026-01-06 20:48:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:48:37] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:48:45] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-004-handoff.md[0m
+[2026-01-06 20:48:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 20:48:47] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m
+[2026-01-06 20:48:54] [WARN] [1;33mOrphan artifact: /Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/handoffs/ASGL-20260105-155500/S-001-handoff.md[0m

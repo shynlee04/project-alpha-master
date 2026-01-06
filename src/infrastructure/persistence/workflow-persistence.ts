@@ -230,6 +230,7 @@ export async function importWorkflows(
     options: {
         overwrite?: boolean;
         preserveIds?: boolean;
+        workspaceId?: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     } = {}
 ): Promise<{
     imported: number;
