@@ -1281,5 +1281,22 @@
   "analytics.units.commands": "lệnh",
   "analytics.units.ms": "ms",
   "analytics.units.mb": "MB",
-  "analytics.units.percent": "%"
+  "analytics.units.percent": "%",
+  "fileWatcher.changes.created": "Tập tin {{path}} đã được tạo",
+  "fileWatcher.changes.modified": "Tập tin {{path}} đã được sửa đổi",
+  "fileWatcher.changes.deleted": "Tập tin {{path}} đã bị xóa",
+  "fileWatcher.changes.moved": "Tập tin {{path}} đã được di chuyển",
+  "fileWatcher.conflictDetected": "Phát hiện xung đột: Bạn có thay đổi chưa lưu",
+  "fileWatcher.dialog.title": "Tập tin Đã Thay Đổi Bên Ngoài",
+  "fileWatcher.dialog.description": "Tập tin này đã được sửa đổi bên ngoài. Bạn muốn làm gì?",
+  "fileWatcher.dialog.conflictDescription": "Tập tin này đã được sửa đổi cả bên ngoài và cục bộ. Bạn muốn tiếp tục như thế nào?",
+  "fileWatcher.dialog.changeType": "Loại Thay Đổi",
+  "fileWatcher.dialog.unsavedChangesWarning": "Bạn có thay đổi chưa lưu sẽ bị mất nếu bạn tải lại.",
+  "fileWatcher.dialog.reload": "Tải Lại",
+  "fileWatcher.dialog.overwrite": "Ghi Đè",
+  "fileWatcher.dialog.ignore": "Bỏ Qua",
+  "fileWatcher.view": "Xem",
+  "fileWatcher.enabled": "Đã Bật Giám Sát Tập Tin",
+  "fileWatcher.disabled": "Đã Tắt Giám Sát Tập Tin",
+  "fileWatcher.autoReload": "Tự Động Tải Lại Khi Thay Đổi Bên Ngoài"
 }

@@ -9,13 +9,12 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, X, Trash2, RotateCcw } from 'lucide-react';
+import { Check, X, Trash2 } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { Switch } from '@/presentation/components/ui/switch';
 import { usePluginOperations } from '@/hooks/usePlugins';
 import type { PluginMetadata, PluginPermission } from '@/lib/plugins/types';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
 
 interface PluginSettingsProps {
   plugin: PluginMetadata;
@@ -23,7 +22,7 @@ interface PluginSettingsProps {
 
 export function PluginSettings({ plugin }: PluginSettingsProps) {
   const { t } = useTranslation();
-  const { isMobile } = useMediaQuery();
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
   const { grantPermission, revokePermission, clearPluginData } = usePluginOperations();
   const [updatingPermission, setUpdatingPermission] = useState<string | null>(null);

@@ -14,6 +14,7 @@
  */
 
 import { create } from 'zustand';
+import type { StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 /**
@@ -146,7 +147,7 @@ const DEFAULT_SETTINGS: TerminalSettings = {
 /**
  * Create terminal store slice
  */
-export const createTerminalStore: StateCreator<TerminalState> = (set, get) => ({
+export const createTerminalStore: StateCreator<TerminalState, [], []> = (set, get) => ({
   // ==========================================================================
   // Initial State
   // ==========================================================================

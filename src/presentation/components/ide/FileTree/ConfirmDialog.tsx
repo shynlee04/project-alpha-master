@@ -47,7 +47,7 @@ export interface ConfirmDialogProps {
  */
 export function ConfirmDialog({
     open,
-    operation,
+    operation: _operation,
     itemName,
     isDirectory,
     onConfirm,

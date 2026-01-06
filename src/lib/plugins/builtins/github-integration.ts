@@ -16,8 +16,8 @@ const manifest = {
   author: 'Built-in',
   license: 'MIT',
   homepage: 'https://github.com',
-  permissions: ['network', 'storage'] as const,
-  extensionPoints: [] as const,
+  main: '',
+  permissions: ['network', 'storage'],
 };
 
 const plugin: PluginMain = {

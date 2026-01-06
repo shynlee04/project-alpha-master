@@ -27,6 +27,9 @@ export interface FlashcardCrudState {
  * Flashcard store state interface (includes Crud + Filter + Persistence)
  */
 export interface FlashcardStoreState extends FlashcardCrudState {
+  // Flashcard Sets
+  flashcardSets: import('@/lib/knowledge/types').FlashcardSet[];
+
   activeSetId: string | null;
   filterFlashcards: (filter: import('@/lib/knowledge/types').FlashcardFilter) => Flashcard[];
   loadFlashcards: () => Promise<void>;

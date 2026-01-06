@@ -17,8 +17,7 @@ const manifest = {
   license: 'MIT',
   icon: '',
   main: '',
-  permissions: [] as const,
-  extensionPoints: [] as const,
+  permissions: [],
 };
 
 // Theme definitions
@@ -91,7 +90,7 @@ const themes = [
 ];
 
 const plugin: PluginMain = {
-  activate: async (context: PluginContext) => {
+  activate: async (_context: PluginContext) => {
     console.log('[Retro Theme Pack] Activating with themes:', themes.length);
 
     // Register each theme

@@ -14,11 +14,11 @@ import { Search, Star, Download, Filter } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { usePluginMarketplace, usePluginsStore } from '@/hooks/usePlugins';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useMediaQuery, BREAKPOINTS } from '@/hooks/useMediaQuery';
 
 export function PluginMarketplace() {
   const { t } = useTranslation();
-  const { isMobile } = useMediaQuery();
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
   const {
     entries,
@@ -213,7 +213,7 @@ interface PluginCardProps {
 
 function PluginCard({ entry, isInstalled, isInstalling, onInstall }: PluginCardProps) {
   const { t } = useTranslation();
-  const { isMobile } = useMediaQuery();
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
   return (
     <div className="border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)] bg-secondary p-4">

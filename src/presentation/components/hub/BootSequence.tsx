@@ -3,7 +3,7 @@
  * @module presentation/components/hub/BootSequence
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 export interface BootSequenceProps {
   /** Callback when boot animation completes */

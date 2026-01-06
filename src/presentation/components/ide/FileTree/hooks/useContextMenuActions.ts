@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { TreeNode, ContextMenuState, ContextMenuAction } from '../types';
@@ -96,7 +96,7 @@ export function useContextMenuActions(
         loadRootDirectory,
         setExpandedPaths,
         setFocusedPath,
-        existingNames = [],
+        existingNames: _existingNames = [],
     } = options;
 
     // Dialog states

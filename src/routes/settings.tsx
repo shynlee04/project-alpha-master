@@ -44,7 +44,9 @@ function SettingsPage() {
     const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
     const [showAnalytics, setShowAnalytics] = useState(false);
     const [showPluginMarketplace, setShowPluginMarketplace] = useState(false);
-    const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null);
+    // const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null); // TODO: For future implementation
+    // const _selectedPluginId = selectedPluginId; // TODO: For future implementation
+    // const _setSelectedPluginId = setSelectedPluginId; // TODO: For future implementation
 
     // MRT-9: Mobile responsive detection
     const { isMobile } = useDeviceType();

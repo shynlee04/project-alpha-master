@@ -41,3 +41,8 @@ export {
     useEditorTabShortcuts,
     useDirtyTabs,
 } from './useEditorTabs';
+
+// Command palette hook (S-038)
+export {
+    useCommandPalette,
+} from './useCommandPalette';

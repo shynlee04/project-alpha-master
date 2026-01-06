@@ -48,7 +48,7 @@ export function EditorTab({
     isActive,
     onClick,
     onClose,
-    onTogglePin,
+    onTogglePin: _onTogglePin,
     onContextMenuAction,
 }: EditorTabProps) {
     const { t } = useTranslation();

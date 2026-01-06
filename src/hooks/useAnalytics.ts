@@ -10,7 +10,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useAnalyticsStore } from '@/infrastructure/persistence/stores/analytics-store';
-import type { TimeRange } from '@/infrastructure/persistence/stores/analytics-store';
+import type { TimeRange, AnalyticsState } from '@/infrastructure/persistence/stores/analytics-store';
 import type { DailyMetrics } from '@/lib/analytics/metrics-collector';
 import { getMetricsCollector } from '@/lib/analytics/metrics-collector';
 
@@ -24,7 +24,7 @@ export interface UseAnalyticsReturn {
 
   // Data
   dailyMetrics: DailyMetrics[];
-  performanceStats: ReturnType<typeof useAnalyticsStore>['performanceStats'];
+  performanceStats: AnalyticsState['performanceStats'];
   lastUpdated: number | null;
 
   // Actions

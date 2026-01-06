@@ -1,0 +1,15 @@
+{
+  "scanner": "performance-scanner",
+  "timestamp": "2026-01-06T10:00:00+07:00",
+  "summary": {
+    "lodash_imports": 0,
+    "memory_leaks": 0,
+    "bundle_size": "unknown"
+  },
+  "violations": {
+    "large_imports": 0,
+    "uncleaned_listeners": 0,
+    "context_trashing": 0,
+    "missing_memo": 0
+  }
+}

@@ -211,7 +211,7 @@ export function getNextRun(expression: string, fromDate: Date = new Date()): Dat
  */
 export function validateCronExpression(expression: string): CronValidationResult {
   try {
-    const parsed = parseCronExpression(expression)
+    parseCronExpression(expression) // Validate syntax
     const nextRun = getNextRun(expression)
 
     return {

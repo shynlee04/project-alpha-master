@@ -17,12 +17,12 @@
 import React, { useMemo } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Plus, Loader2 } from 'lucide-react';
+import { FolderOpen, Plus } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
-import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Types
@@ -122,12 +122,12 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
   // FIX-2026-01-06: Read from Dexie directly (same source as Hub)
   // This ensures consistency - Hub and ProjectPicker see the same data
   const allProjectsFromDexie = useLiveQuery(() => db.projects.toArray(), []);
-  const isLoading = allProjectsFromDexie === undefined;
+  // const _isLoading = allProjectsFromDexie === undefined; // TODO: For future implementation
 
   const projects = useMemo(() => {
     if (!allProjectsFromDexie) return [];
     return allProjectsFromDexie.filter((project) =>
-      project.bindings?.[targetWorkspace as keyof typeof project.bindings] === true
+      project.bindings?.[targetWorkspace] === 'true'
     );
   }, [allProjectsFromDexie, targetWorkspace]);
 
@@ -149,7 +149,7 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
   };
 
   // Handle project selection
-  const handleProjectSelect = (project: Project) => {
+  const handleProjectSelect = (project: ProjectRecord) => {
     // Update last opened timestamp
     useProjectStore.getState().updateLastOpened(project.id);
 

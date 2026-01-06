@@ -1,0 +1,15 @@
+{
+  "scanner": "persistence-scanner",
+  "timestamp": "2026-01-06T10:00:00+07:00",
+  "summary": {
+    "local_storage_usage": 335,
+    "session_storage_usage": 0,
+    "dexie_tables": 0,
+    "encrypted_storage": 0
+  },
+  "violations": {
+    "unencrypted_secrets": 0,
+    "schema_breaking_changes": 0,
+    "missing_indexes": 0
+  }
+}

@@ -8,7 +8,7 @@
  * @story S-037 - Plugin System for extensibility with marketplace
  */
 
-import type { PluginMetadata, PluginMarketplaceEntry, PluginManifest } from '@/lib/plugins/types';
+import type { PluginMarketplaceEntry, PluginManifest } from '@/lib/plugins/types';
 
 /**
  * Plugin registry record (stored in IndexedDB)

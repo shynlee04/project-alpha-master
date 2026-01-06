@@ -7,18 +7,19 @@
  * @story S-037 - Plugin System for extensibility with marketplace
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Power, Trash2, Settings, Package } from 'lucide-react';
+import { Power, Trash2, Package } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { usePluginOperations } from '@/hooks/usePlugins';
 import type { PluginMetadata } from '@/lib/plugins/types';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { BREAKPOINTS } from '@/hooks/useMediaQuery';
 
 export function PluginManager() {
   const { t } = useTranslation();
-  const { isMobile } = useMediaQuery();
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
   const { plugins, isLoading, deactivatePlugin, activatePlugin, uninstallPlugin } = usePluginOperations();
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
@@ -98,7 +99,7 @@ interface PluginListItemProps {
 
 function PluginListItem({ plugin, isProcessing, onToggleActivation, onUninstall }: PluginListItemProps) {
   const { t } = useTranslation();
-  const { isMobile } = useMediaQuery();
+  const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
   const isActivated = plugin.state === 'activated';
   const canActivate = plugin.state === 'installed' || plugin.state === 'loaded' || plugin.state === 'deactivated';

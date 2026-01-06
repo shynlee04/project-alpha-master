@@ -5,7 +5,6 @@
  */
 
 import { useTranslation } from 'react-i18next'
-import { CronPresets } from '@/lib/scheduler/cron-parser'
 
 interface SchedulePresetSelectorProps {
   value: string

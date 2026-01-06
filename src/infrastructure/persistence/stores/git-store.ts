@@ -15,7 +15,6 @@ import type {
   GitStatus,
   GitBranch,
   GitCommit,
-  GitFileStatus,
   GitDiff,
 } from '@/lib/git/git-client';
 
@@ -388,3 +387,4 @@ export const selectIsGitCommitting = (state: GitState & GitActions) => state.isC
 export const selectGitError = (state: GitState & GitActions) => state.error;
 export const selectShowUntrackedFiles = (state: GitState & GitActions) => state.showUntrackedFiles;
 export const selectDiffViewMode = (state: GitState & GitActions) => state.diffViewMode;
+export const selectInConflict = (state: GitState & GitActions) => state.inConflict;

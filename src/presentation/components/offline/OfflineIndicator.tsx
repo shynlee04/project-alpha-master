@@ -214,7 +214,7 @@ export function OfflineStatusDot({
 }: {
   className?: string
 }) {
-  const { isOnline, status } = useOfflineStatus()
+  const { status } = useOfflineStatus()
 
   const statusColors = {
     online: 'bg-green-500',

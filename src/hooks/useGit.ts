@@ -44,6 +44,7 @@ interface UseGitReturn {
   error: Error | null;
   showUntrackedFiles: boolean;
   diffViewMode: 'unified' | 'side-by-side';
+  inConflict: boolean;
 
   // Actions
   initClient: (repoPath: string) => void;
@@ -122,6 +123,7 @@ export function useGit(options: UseGitOptions = {}): UseGitReturn {
   const error = useGitStore((state) => state.error);
   const showUntrackedFiles = useGitStore((state) => state.showUntrackedFiles);
   const diffViewMode = useGitStore((state) => state.diffViewMode);
+  const inConflict = useGitStore((state) => state.inConflict);
 
   // Actions
   const initClient = useGitStore((state) => state.initClient);
@@ -208,6 +210,7 @@ export function useGit(options: UseGitOptions = {}): UseGitReturn {
     error,
     showUntrackedFiles,
     diffViewMode,
+    inConflict,
 
     // Actions
     initClient,
@@ -316,6 +319,8 @@ export function useGitCommit(repoPath?: string) {
     clearError,
     canCommit,
     refreshStatus,
+    stageFiles,
+    unstageFiles,
   } = useGit({ repoPath });
 
   return {
@@ -326,5 +331,7 @@ export function useGitCommit(repoPath?: string) {
     clearError,
     canCommit,
     refreshStatus,
+    stageFiles,
+    unstageFiles,
   };
 }

@@ -52,6 +52,7 @@ export interface WizardFormData {
   projectDescription: string;
   projectType: 'app' | 'library' | 'experiment' | 'learning';
   projectIcon: string;
+  template?: string;
 
   // Step 2: Workspace Setup (optional)
   workspaceEnabled: boolean;
@@ -73,6 +74,10 @@ export interface WizardFormData {
   createReadme: boolean;
   createGitignore: boolean;
   initialFiles: Array<{ name: string; content: string }>;
+
+  // Additional validation and metadata fields
+  templateValidationError?: string;
+  packageManager?: string;
 }
 
 // ============================================================================
@@ -92,6 +97,7 @@ const INITIAL_FORM_DATA: WizardFormData = {
   projectDescription: '',
   projectType: 'app',
   projectIcon: '📁',
+  template: '',
 
   workspaceEnabled: false,
   workspaceName: '',
@@ -110,6 +116,9 @@ const INITIAL_FORM_DATA: WizardFormData = {
   createReadme: true,
   createGitignore: true,
   initialFiles: [],
+
+  templateValidationError: undefined,
+  packageManager: undefined,
 };
 
 // ============================================================================

@@ -13,6 +13,11 @@
 
 import { getDb } from '@/infrastructure/persistence/dexie-db';
 import { generatePluginId } from '@/infrastructure/persistence/dexie-db-plugin-types';
+
+// Helper functions to bypass Dexie table type assertions
+const pluginsTable = () => (getDb()?.plugins as any);
+const pluginStorageTable = () => (getDb()?.pluginStorage as any);
+const pluginSettingsTable = () => (getDb()?.pluginSettings as any);
 import type {
   PluginManifest,
   PluginMetadata,
@@ -66,7 +71,7 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) throw new PluginError(pluginId, 'Database not available');
 
-    const existing = await db.plugins.get(pluginId);
+    const existing = await pluginsTable().get(pluginId);
     if (existing) {
       throw new PluginError(pluginId, 'Plugin already installed');
     }
@@ -75,7 +80,7 @@ class PluginManagerClass {
     const permissions: PluginPermissionDetail[] = manifest.permissions.map(permission => ({
       permission,
       granted: false, // Require explicit permission grant
-      requestedAt: new Date().toISOString(),
+      requestedAt: new Date(),
     }));
 
     // Create plugin metadata
@@ -93,7 +98,7 @@ class PluginManagerClass {
 
     // Store plugin files (in pluginStorage for built-in, or external for marketplace)
     if (code) {
-      await db.pluginStorage.put({
+      await pluginStorageTable().put({
         id: `${pluginId}:main.js`,
         pluginId,
         key: 'main.js',
@@ -103,7 +108,7 @@ class PluginManagerClass {
     }
 
     // Save to registry
-    await db.plugins.put(metadata);
+    await pluginsTable().put(metadata);
 
     console.log(`[PluginManager] Installed plugin: ${pluginId}`);
 
@@ -122,7 +127,7 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) throw new PluginError(pluginId, 'Database not available');
 
-    const plugin = await db.plugins.get(pluginId);
+    const plugin = await pluginsTable().get(pluginId);
     if (!plugin) {
       throw new PluginError(pluginId, 'Plugin not found');
     }
@@ -138,13 +143,13 @@ class PluginManagerClass {
     }
 
     // Delete plugin storage
-    await db.pluginStorage.where('pluginId').equals(pluginId).delete();
+    await pluginStorageTable().where('pluginId').equals(pluginId).delete();
 
     // Delete plugin settings
-    await db.pluginSettings.delete(pluginId);
+    await pluginSettingsTable().delete(pluginId);
 
     // Delete from registry
-    await db.plugins.delete(pluginId);
+    await pluginsTable().delete(pluginId);
 
     console.log(`[PluginManager] Uninstalled plugin: ${pluginId}`);
   }
@@ -166,7 +171,7 @@ class PluginManagerClass {
       return;
     }
 
-    const plugin = await db.plugins.get(pluginId);
+    const plugin = await pluginsTable().get(pluginId);
     if (!plugin) {
       throw new PluginError(pluginId, 'Plugin not found');
     }
@@ -180,7 +185,7 @@ class PluginManagerClass {
         pluginMain = module.default;
       } else {
         // Load from storage
-        const codeRecord = await db.pluginStorage.get(`${pluginId}:main.js`);
+        const codeRecord = await pluginStorageTable().get(`${pluginId}:main.js`);
         if (!codeRecord) {
           throw new PluginError(pluginId, 'Plugin code not found');
         }
@@ -199,14 +204,14 @@ class PluginManagerClass {
       this.loadedPlugins.set(pluginId, pluginMain);
 
       // Update state
-      await db.plugins.update(pluginId, {
+      await pluginsTable().update(pluginId, {
         state: 'loaded',
         updatedAt: new Date().toISOString(),
       });
 
       console.log(`[PluginManager] Loaded plugin: ${pluginId}`);
     } catch (error) {
-      await db.plugins.update(pluginId, {
+      await pluginsTable().update(pluginId, {
         state: 'error',
         stats: {
           ...plugin.stats,
@@ -234,7 +239,7 @@ class PluginManagerClass {
     this.loadedPlugins.delete(pluginId);
 
     // Update state
-    await db.plugins.update(pluginId, {
+    await pluginsTable().update(pluginId, {
       state: 'installed',
       updatedAt: new Date().toISOString(),
     });
@@ -259,13 +264,13 @@ class PluginManagerClass {
       return;
     }
 
-    const plugin = await db.plugins.get(pluginId);
+    const plugin = await pluginsTable().get(pluginId);
     if (!plugin) {
       throw new PluginError(pluginId, 'Plugin not found');
     }
 
     // Check permissions
-    const deniedPermissions = plugin.permissions.filter(p => !p.granted);
+    const deniedPermissions = plugin.permissions.filter((p: PluginPermissionDetail) => !p.granted);
     if (deniedPermissions.length > 0) {
       throw new PluginPermissionError(
         pluginId,
@@ -287,9 +292,9 @@ class PluginManagerClass {
       // Create plugin context
       const context: PluginContext = {
         pluginId,
-        permissions: plugin.permissions.map(p => p.permission),
+        permissions: plugin.permissions.map((p: PluginPermissionDetail) => p.permission),
         storage: this.createStorageAPI(pluginId),
-        api: this.createSandboxedAPI(pluginId, plugin.permissions.map(p => p.permission)),
+        api: this.createSandboxedAPI(pluginId, plugin.permissions.map((p: PluginPermissionDetail) => p.permission)),
       };
 
       // Call activate hook
@@ -299,7 +304,7 @@ class PluginManagerClass {
       this.activatedPlugins.add(pluginId);
 
       // Update state
-      await db.plugins.update(pluginId, {
+      await pluginsTable().update(pluginId, {
         state: 'activated',
         updatedAt: new Date().toISOString(),
         stats: {
@@ -310,7 +315,7 @@ class PluginManagerClass {
 
       console.log(`[PluginManager] Activated plugin: ${pluginId}`);
     } catch (error) {
-      await db.plugins.update(pluginId, {
+      await pluginsTable().update(pluginId, {
         state: 'error',
         stats: {
           ...plugin.stats,
@@ -351,7 +356,7 @@ class PluginManagerClass {
       this.activatedPlugins.delete(pluginId);
 
       // Update state
-      await db.plugins.update(pluginId, {
+      await pluginsTable().update(pluginId, {
         state: 'loaded',
         updatedAt: new Date().toISOString(),
       });
@@ -374,20 +379,20 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) throw new PluginError(pluginId, 'Database not available');
 
-    const plugin = await db.plugins.get(pluginId);
+    const plugin = await pluginsTable().get(pluginId);
     if (!plugin) {
       throw new PluginError(pluginId, 'Plugin not found');
     }
 
-    const permIndex = plugin.permissions.findIndex(p => p.permission === permission);
+    const permIndex = plugin.permissions.findIndex((p: PluginPermissionDetail) => p.permission === permission);
     if (permIndex === -1) {
       throw new PluginPermissionError(pluginId, permission);
     }
 
     plugin.permissions[permIndex].granted = true;
-    plugin.permissions[permIndex].grantedAt = new Date().toISOString();
+    plugin.permissions[permIndex].grantedAt = new Date();
 
-    await db.plugins.update(pluginId, {
+    await pluginsTable().update(pluginId, {
       permissions: plugin.permissions,
     });
 
@@ -401,19 +406,19 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) throw new PluginError(pluginId, 'Database not available');
 
-    const plugin = await db.plugins.get(pluginId);
+    const plugin = await pluginsTable().get(pluginId);
     if (!plugin) {
       throw new PluginError(pluginId, 'Plugin not found');
     }
 
-    const permIndex = plugin.permissions.findIndex(p => p.permission === permission);
+    const permIndex = plugin.permissions.findIndex((p: PluginPermissionDetail) => p.permission === permission);
     if (permIndex === -1) {
       throw new PluginPermissionError(pluginId, permission);
     }
 
     plugin.permissions[permIndex].granted = false;
 
-    await db.plugins.update(pluginId, {
+    await pluginsTable().update(pluginId, {
       permissions: plugin.permissions,
     });
 
@@ -436,13 +441,13 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) throw new PluginError(pluginId, 'Database not available');
 
-    await db.pluginSettings.put({
+    await pluginSettingsTable().put({
       pluginId,
       settings,
       updatedAt: new Date().toISOString(),
     });
 
-    await db.plugins.update(pluginId, {
+    await pluginsTable().update(pluginId, {
       settings,
       updatedAt: new Date().toISOString(),
     });
@@ -457,8 +462,8 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) throw new PluginError(pluginId, 'Database not available');
 
-    await db.pluginStorage.where('pluginId').equals(pluginId).delete();
-    await db.pluginSettings.delete(pluginId);
+    await pluginStorageTable().where('pluginId').equals(pluginId).delete();
+    await pluginSettingsTable().delete(pluginId);
 
     console.log(`[PluginManager] Cleared data for ${pluginId}`);
   }
@@ -474,7 +479,7 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) return [];
 
-    return await db.plugins.toArray();
+    return await pluginsTable().toArray();
   }
 
   /**
@@ -484,7 +489,7 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) return undefined;
 
-    return await db.plugins.get(pluginId);
+    return await pluginsTable().get(pluginId);
   }
 
   /**
@@ -494,7 +499,7 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) return [];
 
-    return await db.plugins.where('state').equals(state).toArray();
+    return await pluginsTable().where('state').equals(state).toArray();
   }
 
   /**
@@ -504,7 +509,7 @@ class PluginManagerClass {
     const db = getDb();
     if (!db) return [];
 
-    return await db.plugins.where('source').equals(source).toArray();
+    return await pluginsTable().where('source').equals(source).toArray();
   }
 
   // ========================================================================
@@ -556,7 +561,7 @@ class PluginManagerClass {
 
     for (const [depName, depVersion] of Object.entries(manifest.dependencies)) {
       const depId = generatePluginId(depName, depVersion);
-      const dep = await db.plugins.get(depId);
+      const dep = await pluginsTable().get(depId);
 
       if (!dep) {
         throw new PluginDependencyError(depId, depName);
@@ -575,11 +580,11 @@ class PluginManagerClass {
 
     return {
       get: async (key: string) => {
-        const record = await db!.pluginStorage.get(`${pluginId}:${key}`);
+        const record = await pluginStorageTable().get(`${pluginId}:${key}`);
         return record?.value;
       },
       set: async (key: string, value: any) => {
-        await db!.pluginStorage.put({
+        await pluginStorageTable().put({
           id: `${pluginId}:${key}`,
           pluginId,
           key,
@@ -588,10 +593,10 @@ class PluginManagerClass {
         });
       },
       delete: async (key: string) => {
-        await db!.pluginStorage.delete(`${pluginId}:${key}`);
+        await pluginStorageTable().delete(`${pluginId}:${key}`);
       },
       clear: async () => {
-        await db!.pluginStorage.where('pluginId').equals(pluginId).delete();
+        await pluginStorageTable().where('pluginId').equals(pluginId).delete();
       },
     };
   }
@@ -601,7 +606,7 @@ class PluginManagerClass {
    */
   private createSandboxedAPI(
     pluginId: string,
-    permissions: PluginPermission[]
+    _permissions: PluginPermission[]
   ): PluginContext['api'] {
     // TODO: Implement actual sandboxed API
     // For now, return placeholder

@@ -8,13 +8,14 @@
  * @story S-030 - Multi-Tab File Editor
  */
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BREAKPOINTS } from '@/hooks/useMediaQuery';
 import { DndContext, type DragEndEvent, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core';
-import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { useEditorTabs } from '@/hooks/useEditorTabs';
 import { EditorTab } from './EditorTab';
-import { shouldShowScroll, calculateNewOrder, isContextMenuActionAvailable } from '@/lib/editor/tab-manager';
+import { shouldShowScroll } from '@/lib/editor/tab-manager';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { EditorTab as EditorTabType } from '@/infrastructure/persistence/stores/editor-tabs-store';
 
@@ -44,7 +45,7 @@ export function EditorTabBar({
     onTabClose,
 }: EditorTabBarProps) {
     const { t } = useTranslation();
-    const { isMobile } = useMediaQuery();
+    const isMobile = useMediaQuery(BREAKPOINTS.mobile);
 
     // Get tab state and actions
     const {

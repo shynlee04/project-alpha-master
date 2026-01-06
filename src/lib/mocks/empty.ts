@@ -143,6 +143,7 @@ export const applyEdgeChanges = () => [];
 export const addEdge = () => [];
 export const NodeResizer = () => null; // Mock for removed v12 component (SSR compatibility)
 export const MarkerType = { Arrow: 'arrow', ArrowClosed: 'arrowclosed' };
+export const BackgroundVariant = { Dots: 'dots', Lines: 'lines' };
 
 // React Flow utility function mocks (SSR compatibility)
 export const getBezierPath = () => ['', '', ''];

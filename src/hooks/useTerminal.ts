@@ -9,12 +9,10 @@
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from 'next-themes';
 import { getTerminalEmulator, type TerminalSession, type CommandHistory } from '@/lib/terminal/terminal-emulator';
 import { useTerminalStore } from '@/infrastructure/persistence/stores/terminal-store';
 import { boot, isBooted } from '@/lib/webcontainer';
-import type { TerminalEmulatorOptions } from '@/lib/terminal/terminal-emulator';
 
 /**
  * Terminal hook options
@@ -93,9 +91,8 @@ export interface UseTerminalReturn {
  * ```
  */
 export function useTerminal(options: UseTerminalOptions): UseTerminalReturn {
-  const { container, cwd = '/', initialSyncCompleted = false, permissionState, sessionId: propSessionId } = options;
+  const { container, cwd = '/', initialSyncCompleted = false, sessionId: propSessionId } = options;
 
-  const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
   const emulator = getTerminalEmulator();
 
@@ -106,7 +103,6 @@ export function useTerminal(options: UseTerminalOptions): UseTerminalReturn {
   const closeTab = useTerminalStore((s) => s.closeTab);
   const setActiveTab = useTerminalStore((s) => s.setActiveTab);
   const renameTab = useTerminalStore((s) => s.renameTab);
-  const updateTabCwd = useTerminalStore((s) => s.updateTabCwd);
   const setShellStarted = useTerminalStore((s) => s.setShellStarted);
   const addCommandToHistory = useTerminalStore((s) => s.addCommandToHistory);
   const toggleTerminal = useTerminalStore((s) => s.toggleTerminal);
@@ -141,10 +137,10 @@ export function useTerminal(options: UseTerminalOptions): UseTerminalReturn {
         theme: (resolvedTheme as 'light' | 'dark') || 'dark',
         enableWebLinks: settings.enableWebLinks,
         scrollback: settings.scrollback,
-        onShellExit: (sessionId, exitCode) => {
+        onShellExit: (sessionId) => {
           setShellStarted(sessionId, false);
         },
-        onCommandExecuted: (sessionId, command, exitCode) => {
+        onCommandExecuted: (sessionId, command) => {
           addCommandToHistory(sessionId, command);
         },
       });

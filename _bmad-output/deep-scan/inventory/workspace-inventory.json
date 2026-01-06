@@ -1,0 +1,14 @@
+{
+  "scanner": "workspace-scanner",
+  "timestamp": "2026-01-06T10:00:00+07:00",
+  "summary": {
+    "cross_workspace_events": 2,
+    "workspace_types": 4,
+    "isolated_components": 0
+  },
+  "violations": {
+    "direct_coupling": 0,
+    "event_leaks": 0,
+    "state_leaks": 0
+  }
+}

@@ -74,7 +74,7 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
     }, [open, loadSnippets]);
 
     // Toggle folder expansion
-    const toggleFolder = (folder: string) => {
+    /* const _toggleFolder = (folder: string) => {
         setExpandedFolders((prev) => {
             const next = new Set(prev);
             if (next.has(folder)) {
@@ -84,7 +84,7 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
             }
             return next;
         });
-    };
+    }; */ // TODO: For future implementation
 
     // Clear filters when dialog closes
     const handleOpenChange = (newOpen: boolean) => {

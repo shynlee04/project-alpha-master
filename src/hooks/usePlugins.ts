@@ -10,12 +10,13 @@
 
 import { useCallback } from 'react';
 import { PluginManager } from '@/lib/plugins/plugin-manager';
+import { usePluginsStore } from '@/infrastructure/persistence/stores/plugins-store';
+import { manifest as githubManifest } from '@/lib/plugins/builtins/github-integration';
+import { manifest as retroThemeManifest } from '@/lib/plugins/builtins/retro-theme-pack';
 import {
-  usePlugins,
   useAddPlugin,
   useUpdatePlugin,
   useRemovePlugin,
-  useSetActivePlugin,
   useSetShowMarketplace,
   useSetShowManager,
   useSetIsLoadingPlugins,
@@ -59,7 +60,7 @@ export interface UsePluginOperationsReturn {
 
 export function usePluginOperations(): UsePluginOperationsReturn {
   // Store hooks
-  const plugins = usePlugins();
+  const plugins = usePluginsStore((s) => s.plugins);
   const addPlugin = useAddPlugin();
   const updatePlugin = useUpdatePlugin();
   const removePlugin = useRemovePlugin();
@@ -279,8 +280,8 @@ export function usePluginOperations(): UsePluginOperationsReturn {
 
   return {
     plugins,
-    isLoading: usePluginsStore((s) => s.isLoadingPlugins),
-    error: usePluginsStore((s) => s.error),
+    isLoading: usePluginsStore.getState().isLoadingPlugins,
+    error: usePluginsStore.getState().error,
 
     installPlugin,
     uninstallPlugin,
@@ -392,6 +393,7 @@ function getBuiltInMarketplaceEntries(): PluginMarketplaceEntry[] {
       downloadUrl: '',
       fileSize: 0,
       builtin: true,
+      manifest: githubManifest,
     },
     {
       id: 'theme-pack-retro',
@@ -408,18 +410,15 @@ function getBuiltInMarketplaceEntries(): PluginMarketplaceEntry[] {
       downloadUrl: '',
       fileSize: 0,
       builtin: true,
+      manifest: retroThemeManifest,
     },
   ];
 }
 
 // Helper to fetch plugin manifest (placeholder)
-async function fetchPluginManifest(pluginId: string): Promise<PluginManifest | null> {
+async function fetchPluginManifest(_pluginId: string): Promise<PluginManifest | null> {
   // TODO: Implement actual manifest fetching
   return null;
 }
 
-// Helper to access store state
-function usePluginsStore() {
-  const { usePluginsStore } = require('@/infrastructure/persistence/stores/plugins-store');
-  return usePluginsStore();
-}
+// Note: usePluginsStore is already imported at the top of this file

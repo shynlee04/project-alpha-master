@@ -86,8 +86,8 @@ export function useEditorTabs(): UseEditorTabsReturn {
     const storeUpdateScrollPosition = useEditorTabsStore((state) => state.updateScrollPosition);
 
     // Get current workspace for project-specific persistence
-    const { workspace } = useCurrentWorkspace();
-    const projectId = workspace?.id ?? 'default';
+    const currentWorkspace = useCurrentWorkspace();
+    const projectId = currentWorkspace ?? 'default';
 
     // Auto-save tabs on change
     useEffect(() => {

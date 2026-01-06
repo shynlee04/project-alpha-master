@@ -76,15 +76,10 @@ export const useCanvasStore = create<CombinedCanvasState>()(
 /**
  * Create useMultiCanvasStore (layered on top of useCanvasStore)
  */
-export const useMultiCanvasStore = create<MultiCanvasState>()((set, get) => {
-  const multiSlice = createCanvasMultiSlice(set as any, get);
-  const ioSlice = createCanvasIOSlice(set as any, get);
-
-  return {
-    ...multiSlice,
-    ...ioSlice,
-  };
-});
+export const useMultiCanvasStore = create<MultiCanvasState>((...args) => ({
+  ...createCanvasMultiSlice(...args),
+  ...createCanvasIOSlice(...args),
+}));
 
 /**
  * Persistence helper hook

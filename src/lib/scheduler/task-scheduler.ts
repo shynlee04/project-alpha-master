@@ -65,7 +65,7 @@ class TaskScheduler {
   private intervalId: number | null = null
   private worker: Worker | null = null
   private batteryLevel: number = 100
-  private lastActivityTime: number = Date.now()
+  // private lastActivityTime: number = Date.now() // TODO: For inactivity tracking
   private db: IDBDatabase | null = null
 
   constructor(config: Partial<SchedulerConfig> = {}) {
@@ -173,22 +173,22 @@ class TaskScheduler {
       })
     }
 
-    // Idle detection
+    // Idle detection - TODO: Complete implementation
     if (this.config.idleDetection) {
-      const events = ['mousedown', 'keydown', 'scroll', 'touchstart']
+      // const events = ['mousedown', 'keydown', 'scroll', 'touchstart']
 
-      const resetIdleTimer = () => {
-        this.lastActivityTime = Date.now()
-      }
+      // const resetIdleTimer = () => {
+      //   this.lastActivityTime = Date.now()
+      // }
 
-      events.forEach(event => {
-        window.addEventListener(event, resetIdleTimer)
-      })
+      // events.forEach(event => {
+      //   window.addEventListener(event, resetIdleTimer)
+      // })
 
       // Check idle state every minute
       setInterval(() => {
-        const inactiveTime = (Date.now() - this.lastActivityTime) / 1000
-        // Idle detection status is calculated on-demand
+        // const inactiveTime = (Date.now() - this.lastActivityTime) / 1000
+        // Idle detection status is calculated on-demand via getIdleStatus()
       }, 60000)
     }
   }

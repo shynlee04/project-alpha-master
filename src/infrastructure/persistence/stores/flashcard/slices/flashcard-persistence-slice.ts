@@ -8,7 +8,7 @@ import type { Flashcard, FlashcardSet } from '@/lib/knowledge/types';
 import type { StoreApi } from 'zustand';
 import type { FlashcardStoreState } from './flashcard-crud-slice';
 import { getSafeFlashcardDb } from '../flashcard-utils';
-import type { FlashcardRecord, FlashcardSetRecord } from '../flashcard-db';
+import type { FlashcardRecord } from '../flashcard-db';
 
 export interface FlashcardPersistenceState {
   loadFlashcards: () => Promise<void>;
@@ -96,8 +96,8 @@ export const createFlashcardPersistenceSlice = (
  * @returns Flashcard set persistence action
  */
 export const createFlashcardSetPersistenceSlice = (
-  set: StoreApi<FlashcardSetStoreState>['setState'],
-  get: StoreApi<FlashcardSetStoreState>['getState']
+  set: StoreApi<FlashcardStoreState>['setState'],
+  _get: StoreApi<FlashcardStoreState>['getState']
 ): FlashcardSetPersistenceState => ({
   /**
    * Load flashcard sets from IndexedDB

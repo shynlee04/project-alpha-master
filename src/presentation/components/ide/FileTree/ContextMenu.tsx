@@ -14,8 +14,6 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
-    FilePlus,
-    FolderPlus,
     Pencil,
     Trash2,
     Copy,
@@ -47,6 +45,7 @@ interface MenuItem {
     shortcut?: string;
     requiresDirectory?: boolean;
     advanced?: boolean; // Only shown when Option is held
+    type?: 'separator'; // Special type for menu separators
 }
 
 /**
@@ -271,7 +270,7 @@ export function ContextMenu({
                 top: `${position.y}px`,
             }}
         >
-            {filteredItems.map((item, index) => (
+            {filteredItems.map((item, _index) => (
                 <button
                     key={item.action}
                     role="menuitem"

@@ -71,7 +71,7 @@ class ExtensionRegistry {
 
   registerLanguage(extension: PluginExtension): void {
     if (extension.type !== 'language') return;
-    this.languages.set(extension.language.id, extension);
+    this.languages.set((extension as any).language.id, extension);
   }
 
   unregisterLanguage(languageId: string): void {
@@ -84,7 +84,7 @@ class ExtensionRegistry {
 
   getLanguageByExtension(ext: string): PluginExtension | undefined {
     return Array.from(this.languages.values()).find(
-      lang => lang.language.extensions.includes(ext)
+      lang => (lang as any).language.extensions.includes(ext)
     );
   }
 
@@ -131,7 +131,7 @@ class ExtensionRegistry {
 
   registerUIPanel(extension: PluginExtension): void {
     if (extension.type !== 'uiPanel') return;
-    this.uiPanels.set(extension.panel.id, extension);
+    this.uiPanels.set((extension as any).panel.id, extension);
   }
 
   unregisterUIPanel(panelId: string): void {
@@ -144,7 +144,7 @@ class ExtensionRegistry {
 
   getUIPanelsByPosition(position: 'sidebar' | 'bottom' | 'right'): PluginExtension[] {
     return Array.from(this.uiPanels.values()).filter(
-      panel => panel.panel.position === position
+      panel => (panel as any).panel.position === position
     );
   }
 
@@ -158,7 +158,7 @@ class ExtensionRegistry {
 
   registerStatusBarItem(extension: PluginExtension): void {
     if (extension.type !== 'statusBar') return;
-    this.statusBarItems.set(extension.item.id, extension);
+    this.statusBarItems.set((extension as any).item.id, extension);
   }
 
   unregisterStatusBarItem(itemId: string): void {
@@ -171,8 +171,8 @@ class ExtensionRegistry {
 
   getStatusBarItemsByPosition(position: 'left' | 'right'): PluginExtension[] {
     return Array.from(this.statusBarItems.values())
-      .filter(item => item.item.position === position)
-      .sort((a, b) => a.item.order - b.item.order);
+      .filter(item => (item as any).item.position === position)
+      .sort((a, b) => (a as any).item.order - (b as any).item.order);
   }
 
   getAllStatusBarItems(): PluginExtension[] {
@@ -185,7 +185,7 @@ class ExtensionRegistry {
 
   registerContextMenu(extension: PluginExtension): void {
     if (extension.type !== 'contextMenu') return;
-    const id = `${extension.pluginId}:${extension.menuItem.id}`;
+    const id = `${extension.pluginId}:${(extension as any).menuItem.id}`;
     this.contextMenus.set(id, extension);
   }
 
@@ -196,7 +196,7 @@ class ExtensionRegistry {
 
   getContextMenuItems(context: string): PluginExtension[] {
     return Array.from(this.contextMenus.values()).filter(
-      menu => menu.menuItem.context.includes(context)
+      menu => (menu as any).menuItem.context.includes(context)
     );
   }
 
@@ -211,7 +211,7 @@ class ExtensionRegistry {
   registerHook(extension: PluginExtension): void {
     if (extension.type !== 'hook') return;
 
-    const event = extension.hook.event;
+    const event = (extension as any).hook.event;
     if (!this.hooks.has(event)) {
       this.hooks.set(event, []);
     }
@@ -237,7 +237,7 @@ class ExtensionRegistry {
 
     for (const hook of hooks) {
       try {
-        await hook.hook.handler(...args);
+        await (hook as any).hook.handler(...args);
       } catch (error) {
         console.error(`[HookRegistry] Error executing hook for ${event}:`, error);
       }
@@ -282,28 +282,28 @@ class ExtensionRegistry {
 
     // UI panels
     for (const [id, panel] of this.uiPanels.entries()) {
-      if (panel.pluginId === pluginId) {
+      if ((panel as any).pluginId === pluginId) {
         this.uiPanels.delete(id);
       }
     }
 
     // Status bar items
     for (const [id, item] of this.statusBarItems.entries()) {
-      if (item.pluginId === pluginId) {
+      if ((item as any).pluginId === pluginId) {
         this.statusBarItems.delete(id);
       }
     }
 
     // Context menus
     for (const [id, menu] of this.contextMenus.entries()) {
-      if (menu.pluginId === pluginId) {
+      if ((menu as any).pluginId === pluginId) {
         this.contextMenus.delete(id);
       }
     }
 
     // Hooks
     for (const [event, hooks] of this.hooks.entries()) {
-      const filtered = hooks.filter(h => h.pluginId !== pluginId);
+      const filtered = hooks.filter(h => (h as any).pluginId !== pluginId);
       if (filtered.length === 0) {
         this.hooks.delete(event);
       } else {

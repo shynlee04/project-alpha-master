@@ -191,8 +191,8 @@ export function getTabByIndex(tabs: EditorTab[], index: number): EditorTab | nul
 /**
  * Get tabs that should be auto-closed (inactive for too long)
  */
-export function getInactiveTabs(tabs: EditorTab[], timeoutMs: number = INACTIVE_TAB_TIMEOUT): EditorTab[] {
-    const now = Date.now();
+export function getInactiveTabs(tabs: EditorTab[], _timeoutMs: number = INACTIVE_TAB_TIMEOUT): EditorTab[] {
+    // const now = Date.now(); // Future: Use for timestamp comparison
 
     return tabs.filter(tab => {
         // Skip pinned and dirty tabs

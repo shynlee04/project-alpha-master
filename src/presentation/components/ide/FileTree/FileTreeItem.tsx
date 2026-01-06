@@ -59,8 +59,8 @@ export function FileTreeItem({
         longPressTimerRef.current = setTimeout(() => {
             setIsLongPress(true);
             // Trigger context menu
-            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-            const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+            // const _clientX = 'touches' in e ? e.touches[0].clientX : e.clientX; // TODO: For future implementation
+            // const _clientY = 'touches' in e ? e.touches[0].clientY : e.clientY; // TODO: For future implementation
             onContextMenu(e as React.MouseEvent, node);
         }, 500);
     }, [isMobile, onContextMenu, node]);

@@ -9,8 +9,8 @@
  */
 
 import { create } from 'zustand';
+import type { StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { createDexieStorage } from '../dexie-storage';
 import type {
   PluginMetadata,
   PluginMarketplaceEntry,
@@ -94,18 +94,7 @@ export interface PluginsActions {
 
 export interface PluginsSlice extends PluginsState, PluginsActions {}
 
-const MAX_LINES = 120; // Enforce governance limit
-
-export const createPluginsSlice = (
-  set: (
-    partial:
-      | Partial<PluginsState>
-      | ((state: PluginsState) => Partial<PluginsState>)
-      | Pick<PluginsState, keyof PluginsState>,
-    replace?: boolean | undefined,
-  ) => void,
-  get: () => PluginsState
-): PluginsSlice => ({
+export const createPluginsSlice: StateCreator<PluginsSlice> = (set, get) => ({
   // ========================================================================
   // Initial State
   // ========================================================================
@@ -265,10 +254,10 @@ export const createPluginsSlice = (
 
 export const usePluginsStore = create<PluginsSlice>()(
   persist(
-    (...a) => createPluginsSlice(...a),
+    createPluginsSlice,
     {
       name: 'plugins-storage',
-      storage: createDexieStorage(),
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         // Persist only these fields
         plugins: state.plugins,

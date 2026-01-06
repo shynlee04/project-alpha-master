@@ -8,7 +8,7 @@
  * @story S-036 Terminal/Console Integration
  */
 
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { XTerminal } from '@/presentation/components/ide/XTerminal';
 import { useTerminalStore } from '@/infrastructure/persistence/stores/terminal-store';
@@ -51,13 +51,13 @@ export function TerminalPanel({
   permissionState = 'granted',
   className,
 }: TerminalPanelProps) {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
 
   // Store state
   const tabs = useTerminalStore((s) => s.tabs);
   const activeTabId = useTerminalStore((s) => s.activeTabId);
   const createTab = useTerminalStore((s) => s.createTab);
-  const closeTab = useTerminalStore((s) => s.closeTab);
+  // const closeTab: _closeTab = useTerminalStore((s) => s.closeTab); // TODO: For future implementation
   const setActiveTab = useTerminalStore((s) => s.setActiveTab);
 
   // Create initial tab if none exist

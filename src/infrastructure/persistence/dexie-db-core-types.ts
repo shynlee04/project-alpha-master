@@ -25,6 +25,10 @@ export interface ProjectRecord {
     path: string;
     lastOpened: Date;
     createdAt: Date;
+    bindings?: Record<string, string>;
+    folderPath?: string;
+    workspaceBindings?: WorkspaceBindings;
+    fileSnapshotEnabled?: boolean;
 }
 
 /**

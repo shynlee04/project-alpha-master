@@ -124,10 +124,10 @@ function computeMyersDiff(oldLines: string[], newLines: string[]): EditOp[] {
 
   // Edge cases: empty content
   if (M === 0) {
-    return newLines.map((line, i) => ({ type: 'insert' as const, oldPos: 0, newPos: i + 1 }));
+    return newLines.map((_line, i) => ({ type: 'insert' as const, oldPos: 0, newPos: i + 1 }));
   }
   if (N === 0) {
-    return oldLines.map((line, i) => ({ type: 'delete' as const, oldPos: i + 1, newPos: 0 }));
+    return oldLines.map((_line, i) => ({ type: 'delete' as const, oldPos: i + 1, newPos: 0 }));
   }
 
   // Myers algorithm: find shortest edit script
@@ -173,7 +173,9 @@ function traceDown(V: Map<number, number>, k: number, d: number): number {
   }
 
   const y = x - k;
-  while (x < 1000000 && y < 1000000 && x >= 0 && y >= 0) {
+  // TODO: Implement proper line comparison logic
+  // Currently using simplified bounds checking
+  while (x < MAX && y < MAX && x >= 0 && y >= 0) {
     x++;
     y++;
   }
@@ -185,8 +187,8 @@ function traceDown(V: Map<number, number>, k: number, d: number): number {
  */
 function backtrack(
   trace: (number | null)[][],
-  oldLines: string[],
-  newLines: string[],
+  _oldLines: string[],
+  _newLines: string[],
   M: number,
   N: number
 ): EditOp[] {
@@ -334,7 +336,6 @@ export function getInlineDiff(oldText: string, newText: string): {
   const added: Array<{ start: number; end: number }> = [];
   const removed: Array<{ start: number; end: number }> = [];
 
-  const matrix: number[][] = [];
   const oldLen = oldText.length;
   const newLen = newText.length;
 

@@ -1,0 +1,15 @@
+{
+  "scanner": "security-scanner",
+  "timestamp": "2026-01-06T10:00:00+07:00",
+  "summary": {
+    "hardcoded_secrets": 0,
+    "unsafe_html": 0,
+    "unsafe_logging": 0
+  },
+  "violations": {
+    "secrets_exposed": 0,
+    "xss_vectors": 0,
+    "path_traversal": 0,
+    "logging_sensitive": 0
+  }
+}

@@ -15,6 +15,7 @@ import {
   Check,
   ArrowLeft,
   ArrowRight,
+  FileText,
 } from 'lucide-react';
 import { useGit } from '@/hooks/useGit';
 import { Button } from '@/presentation/components/ui/button';
@@ -171,7 +172,7 @@ export function GitMergeConflictResolver({
 }: GitMergeConflictResolverProps) {
   const { t } = useTranslation();
   const {
-    status,
+    status: _status,
     conflictedFiles,
     resolveConflict,
     inConflict,
@@ -384,7 +385,7 @@ export function GitMergeConflictResolver({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {conflictedFiles.map((file, index) => (
+                  {conflictedFiles.map((file, _index) => (
                     <SelectItem key={file.path} value={file.path}>
                       <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4" />

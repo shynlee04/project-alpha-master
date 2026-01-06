@@ -15,7 +15,6 @@ import type { EditorTab } from '@/infrastructure/persistence/stores/editor-tabs-
 // ============================================================================
 
 const STORAGE_PREFIX = 'editor-tabs-';
-const PROJECT_KEY_SEPARATOR = '::';
 
 // ============================================================================
 // Types

@@ -78,7 +78,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
       },
 
       refreshData: async () => {
-        const { timeRange, customStartDate, customEndDate } = get();
+        const { timeRange, customStartDate } = get();
 
         // Calculate date range
         const endDate = new Date();

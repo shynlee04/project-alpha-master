@@ -77,7 +77,7 @@ export function DiffViewer({
   newContent,
   defaultViewMode = 'unified',
   fileName = '',
-  language = 'plaintext',
+  language: _language = 'plaintext',
   onViewModeChange,
   maxHeight = 600,
   showLineNumbers = true,

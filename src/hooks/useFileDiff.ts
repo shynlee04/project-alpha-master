@@ -8,7 +8,7 @@
  * @story S-029 File Comparison and Diff Viewer
  */
 
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { generateDiff, type DiffResult, ChangeType } from '@/lib/diff/diff-generator';
 
 /**

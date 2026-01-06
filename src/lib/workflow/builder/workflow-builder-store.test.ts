@@ -699,7 +699,7 @@ describe('useWorkflowBuilderStore', () => {
                 expect(state.workflow).toBeNull();
                 expect(state.selectedStepId).toBeNull();
                 expect(state.isDragging).toBe(false);
-                expect(state.draggedStepId).toBeNull);
+                expect(state.draggedStepId).toBeNull();
                 expect(state.errors).toEqual({});
                 expect(state.isValid).toBe(false);
                 expect(state.isPreview).toBe(false);

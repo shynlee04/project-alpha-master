@@ -238,7 +238,6 @@ export function GitBranchManager({
 
       try {
         await deleteBranch(branchName);
-        setBranchToDelete(null);
         await loadBranches();
       } catch (err) {
         // Error already handled by hook
@@ -262,7 +261,6 @@ export function GitBranchManager({
 
       try {
         await mergeBranch(branchName);
-        setBranchToMerge(null);
         await loadBranches();
       } catch (err) {
         // Error already handled by hook

@@ -8,7 +8,6 @@ import { create } from 'zustand';
 import {
   createFlashcardCrudSlice,
   type FlashcardStoreState,
-  type FlashcardCrudState,
 } from './slices/flashcard-crud-slice';
 import { createFlashcardFilterSlice } from './slices/flashcard-filter-slice';
 import { createFlashcardPersistenceSlice } from './slices/flashcard-persistence-slice';

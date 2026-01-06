@@ -11,7 +11,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-import { generateDiff, type DiffLine, ChangeType } from '@/lib/diff/diff-generator';
+import { generateDiff } from '@/lib/diff/diff-generator';
 import { LineDiff } from './LineDiff';
 
 /**

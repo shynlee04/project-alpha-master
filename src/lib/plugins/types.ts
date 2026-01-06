@@ -325,6 +325,9 @@ export interface PluginMarketplaceEntry {
 
   // Built-in flag
   builtin?: boolean;
+
+  // Embedded manifest (for built-in plugins or cached marketplace data)
+  manifest?: PluginManifest;
 }
 
 /**

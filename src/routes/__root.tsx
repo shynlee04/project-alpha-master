@@ -15,6 +15,8 @@ import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 import { OfflineIndicator } from '@/presentation/components/offline/OfflineIndicator'
 import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
+import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
+import { useCommandPalette } from '@/hooks/useCommandPalette'
 
 import appCss from '../styles.css?url'
 
@@ -67,34 +69,43 @@ export const Route = createRootRoute({
     scripts: [
     ],
   }),
-  component: () => (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <ThemeProvider>
-          <LocaleProvider>
-            <TooltipProvider>
-              <AppInitializer>
-                <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
-                  <AppErrorBoundary>
-                    {/* Offline Indicator */}
-                    <OfflineIndicator />
-                    {/* Notification Permission Requester */}
-                    <NotificationPermissionRequester />
-                    <Outlet />
-                  </AppErrorBoundary>
-                </UnifiedWorkspaceProvider>
-              </AppInitializer>
-            </TooltipProvider>
-          </LocaleProvider>
-        </ThemeProvider>
-        {/* Migration Status Overlay */}
-        <MigrationStatus />
-        <Scripts />
-      </body>
-    </html>
-  ),
+  component: () => {
+    const commandPalette = useCommandPalette();
+
+    return (
+      <html lang="en" suppressHydrationWarning>
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          <ThemeProvider>
+            <LocaleProvider>
+              <TooltipProvider>
+                <AppInitializer>
+                  <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
+                    <AppErrorBoundary>
+                      {/* Offline Indicator */}
+                      <OfflineIndicator />
+                      {/* Notification Permission Requester */}
+                      <NotificationPermissionRequester />
+                      <Outlet />
+                    </AppErrorBoundary>
+                  </UnifiedWorkspaceProvider>
+                </AppInitializer>
+              </TooltipProvider>
+            </LocaleProvider>
+          </ThemeProvider>
+          {/* Migration Status Overlay */}
+          <MigrationStatus />
+          {/* Command Palette */}
+          <CommandPalette
+            open={commandPalette.isOpen}
+            onOpenChange={commandPalette.setIsOpen}
+          />
+          <Scripts />
+        </body>
+      </html>
+    );
+  },
   notFoundComponent: () => <div>404 - Page Not Found</div>,
 })

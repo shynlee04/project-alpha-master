@@ -7,7 +7,7 @@
  * @story S-035 - Git Integration
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   GitCommitHorizontal,
@@ -151,6 +151,8 @@ export function GitCommitDialog({
     clearError,
     canCommit,
     refreshStatus,
+    stageFiles,
+    unstageFiles,
   } = useGitCommit(repoPath);
 
   const [message, setMessage] = useState('');
@@ -158,9 +160,9 @@ export function GitCommitDialog({
   const [signoff, setSignoff] = useState(false);
 
   // Refresh status on mount
-  useState(() => {
+  useEffect(() => {
     refreshStatus();
-  });
+  }, [refreshStatus]);
 
   /**
    * Stage file

@@ -7,9 +7,9 @@
  * @story S-036 Terminal/Console Integration
  */
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, X, DivideVertical, DivideHorizontal, Maximize2, Trash2 } from 'lucide-react';
+import { Plus, X, DivideVertical, DivideHorizontal, Maximize2 } from 'lucide-react';
 import { useTerminalStore } from '@/infrastructure/persistence/stores/terminal-store';
 import { TerminalPanel } from './TerminalPanel';
 import { cn } from '@/lib/utils';
@@ -56,7 +56,7 @@ export function TerminalTabs({
   permissionState = 'granted',
 }: TerminalTabsProps) {
   const { t } = useTranslation();
-  const containerRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  // const containerRefs = useRef<Map<string, HTMLDivElement>>(new Map()); // TODO: For future implementation
 
   // Store state
   const tabs = useTerminalStore((s) => s.tabs);
@@ -74,12 +74,12 @@ export function TerminalTabs({
   /**
    * Get container ref for tab
    */
-  const getContainerRef = (tabId: string) => {
+  /* const _getContainerRef = (tabId: string) => {
     if (!containerRefs.current.has(tabId)) {
       containerRefs.current.set(tabId, document.createElement('div'));
     }
     return containerRefs.current.get(tabId)!;
-  };
+  }; */ // TODO: For future implementation
 
   /**
    * Handle create new tab

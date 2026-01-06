@@ -20,7 +20,7 @@ import {
   useFilteredNotifications,
   useNotificationsByType,
 } from '@/infrastructure/persistence/stores/notification-store';
-import type { Notification, NotificationFilter, NotificationType } from '@/lib/notifications/types';
+import type { NotificationFilter, NotificationType } from '@/lib/notifications/types';
 
 /**
  * Main hook for notifications

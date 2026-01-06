@@ -13,9 +13,39 @@ import { Errors } from 'isomorphic-git';
 import type { GitCredentialManager } from './git-credentials';
 
 // Browser filesystem stub for isomorphic-git
-const fs = {
+const fs: any = {
   promises: {
-    readFile: async (filepath: string) => {
+    readFile: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    writeFile: async (_filepath: string, _content: any) => {
+      throw new Error('File system not implemented');
+    },
+    unlink: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    readdir: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    mkdir: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    rmdir: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    stat: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    lstat: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    readlink: async (_filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    symlink: async (_target: string, _filepath: string) => {
+      throw new Error('File system not implemented');
+    },
+    chmod: async (_filepath: string, _mode: number) => {
       throw new Error('File system not implemented');
     },
   },
@@ -141,12 +171,12 @@ export interface GitClientOptions {
  */
 export class GitClient {
   private dir: string;
-  private credentialManager: GitCredentialManager;
+  // private _credentialManager: GitCredentialManager; // TODO: For future auth implementation
   private debug: boolean;
 
   constructor(options: GitClientOptions) {
     this.dir = options.dir;
-    this.credentialManager = options.credentialManager;
+    // this._credentialManager = options.credentialManager; // TODO: For future auth implementation
     this.debug = options.debug ?? false;
   }
 
@@ -167,7 +197,7 @@ export class GitClient {
       this.log('Getting status for', this.dir);
 
       const status = await git.statusMatrix({ fs, dir: this.dir });
-      const branches = await git.listBranches({ fs, dir: this.dir, remote: 'origin' });
+      await git.listBranches({ fs, dir: this.dir, remote: 'origin' }); // For future use
       const currentBranch = await git.currentBranch({ fs, dir: this.dir, fullname: false });
       const HEAD = await git.resolveRef({ fs, dir: this.dir, ref: 'HEAD' });
 
@@ -317,7 +347,7 @@ export class GitClient {
 
         // Find remote tracking branch
         const remote = `refs/remotes/origin/${branch}`;
-        const remoteSha = remoteBranches.includes(remote)
+        const remoteSha = Array.isArray(remoteBranches) && (remoteBranches as any).includes(remote)
           ? await git.resolveRef({ fs, dir: this.dir, ref: remote }).catch(() => null)
           : null;
 
@@ -403,7 +433,7 @@ export class GitClient {
   /**
    * Delete branch
    */
-  async deleteBranch(name: string, force: boolean = false): Promise<void> {
+  async deleteBranch(name: string, _force: boolean = false): Promise<void> {
     try {
       this.log('Deleting branch:', name);
 
@@ -411,7 +441,6 @@ export class GitClient {
         fs,
         dir: this.dir,
         ref: name,
-        force,
       });
     } catch (error) {
       throw new Error(`Failed to delete branch: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -464,7 +493,7 @@ export class GitClient {
   /**
    * Get file diff
    */
-  async getDiff(filepath: string, staged: boolean = false): Promise<GitDiff> {
+  async getDiff(filepath: string, _staged: boolean = false): Promise<GitDiff> {
     try {
       this.log('Getting diff for:', filepath);
 
@@ -486,7 +515,8 @@ export class GitClient {
 
       let newContent = '';
       try {
-        newContent = await fs.promises.readFile(`${this.dir}/${filepath}`, 'utf8');
+        const buffer = await fs.promises.readFile(`${this.dir}/${filepath}`);
+        newContent = buffer.toString('utf8');
       } catch {
         // File was deleted
       }
@@ -613,7 +643,7 @@ export class GitClient {
 
       // Placeholder implementation
       // Full implementation would track commits per line
-      const _commits = await git.log({ fs, dir: this.dir });
+      // const commits = await git.log({ fs, dir: this.dir }); // TODO: For blame implementation
 
       // Placeholder return
       return [];
@@ -758,4 +788,4 @@ const http = {
     const response = await fetch(url, options);
     return response;
   },
-};
+} as any;

@@ -12,7 +12,6 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { crypto } from 'crypto';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import type { CodeSnippetRecord, InsertedSnippet, SnippetPlaceholder } from '@/infrastructure/persistence/dexie-db-snippet-types';
 import { BUILT_IN_SNIPPETS } from './snippet-templates';
@@ -200,7 +199,7 @@ type SnippetStore = SnippetStoreState & SnippetStoreActions;
 
 export const useSnippetStore = create<SnippetStore>()(
     persist(
-        (set, get) => ({
+        (set, _get) => ({
             // Initial State
             snippets: [],
             selectedSnippetId: null,

@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/presentation/components/ui/select';
-import { gitCredentialManager, type GitCredentials } from '@/lib/git/git-credentials';
+import { gitCredentialManager } from '@/lib/git/git-credentials';
 
 /**
  * Git user info form
@@ -200,7 +200,7 @@ export interface GitSettingsProps {
  * <GitSettings repoPath="/path/to/repo" />
  * ```
  */
-export function GitSettings({ repoPath }: GitSettingsProps) {
+export function GitSettings({ repoPath: _repoPath }: GitSettingsProps) {
   const { t } = useTranslation();
   const [defaultBranch, setDefaultBranch] = useState('main');
   const [autoRefresh, setAutoRefresh] = useState(false);

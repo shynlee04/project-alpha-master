@@ -1,155 +1,64 @@
-# TypeScript Evidence - Deep Scan Batch 10 Validation
-# Generated: 2026-01-06
-# Scanner: @bmad/modules/deep-scan/agents/types-scanner
-
-version: "1.0.0"
-scan_date: "2026-01-06"
-scanner: "types-scanner"
-codebase_root: "src/"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# EVIDENCE BLOCKS
-# ═══════════════════════════════════════════════════════════════════════════
-
+scanner: types-scanner
+timestamp: "2026-01-06T10:15:00+07:00"
 evidence_blocks:
   - id: "EV-TYPE-001"
-    type: "Explicit Any Usage"
+    type: "TypeScript Error"
     severity: "Critical"
-    category: "Type Safety"
-    target: "Multiple Files"
-    violation_count: 188
-    proof_samples:
-      - file: "src/router.tsx"
-        line: 1
-        content: "const deduplicatedChildren = children.filter((child: any) => {"
-        analysis: "Router logic loses type safety on child routes"
-      - file: "src/hooks/useCodeSnippets.ts"
-        line: 1
-        content: "editor: any,"
-        analysis: "Monaco editor API not properly typed"
-      - file: "src/lib/filesystem/file-ops.ts"
-        line: 1
-        content: "} catch (error: any) {"
-        analysis: "Error handling loses type information"
-      - file: "src/lib/scheduler/task-scheduler.ts"
-        line: 1
-        content: "(navigator as any).getBattery().then((battery: any) => {"
-        analysis: "Battery API accessed without proper types"
-      - file: "src/lib/pdf/pdf-vision-manager.ts"
-        line: 1
-        content: "private pdfDocument: any = null;"
-        analysis: "PDF document not typed, loses all type safety"
+    target: "src/hooks/usePlugins.ts"
+    loc: 62
+    proof:
+      - line: 62
+        content: "error TS2304: Cannot find name 'usePluginsStore'"
+      - line: 62
+        content: "error TS7006: Parameter 's' implicitly has an 'any' type"
     analysis: |
-      188 explicit `any` usages found in production code.
-      Viral pattern: one `any` infects entire call chains.
-      High-risk areas: error handling, third-party integrations, PDF processing.
-      Risk: Runtime errors bypass TypeScript checks, reduced IDE support.
-    remediation_ref: "Global Coding Style - No Any Policy"
-    impact_areas:
-      - "Error handling (8 instances)"
-      - "Third-party API integrations (12 instances)"
-      - "PDF processing (6 instances)"
-      - "Router logic (3 instances)"
-      - "Scheduler (4 instances)"
-      - "Agent memory (5 instances)"
+      Missing import causes cascading errors
+      Implicit any types bypass type safety
+      13 total TypeScript errors in this file
+    remediation_ref: "typescript-fixer"
 
   - id: "EV-TYPE-002"
-    type: "Type Suppressions"
-    severity: "High"
-    category: "Type Safety"
-    target: "Multiple Files"
-    violation_count: 9
-    proof_samples:
-      - file: "src/hooks/useAdvancedSearch.ts"
-        line: 1
-        content: "// @ts-ignore or @ts-expect-error usage"
-      - file: "src/lib/context/RAGQueryService.ts"
-        line: 1
-        content: "// Type suppression for timeout handling"
-      - file: "src/lib/agent/memory/conversation-memory.ts"
-        line: 1
-        content: "// Type suppression for ID filtering"
+    type: "TypeScript Error"
+    severity: "Critical"
+    target: "src/infrastructure/persistence/stores/flashcard/slices/flashcard-operations-slice.ts"
+    loc: 63
+    proof:
+      - line: 63
+        content: "Type 'FlashcardDifficulty' is not assignable to type '\"beginner\" | \"intermediate\" | \"advanced\"'"
     analysis: |
-      9 type suppressions (@ts-ignore, @ts-expect-error) found.
-      Each suppression masks potential type errors.
-      Risk: Suppressed errors may cause runtime crashes.
-    remediation_ref: "Global Coding Style - Type Suppression Policy"
-    recommended_action: "Fix underlying type errors instead of suppressing"
+      Type mismatch between difficulty enum and record type
+      Causes runtime errors in flashcard system
+    remediation_ref: "typescript-fixer"
 
   - id: "EV-TYPE-003"
-    type: "Error Type Loss"
-    severity: "High"
-    category: "Error Handling"
-    target: "Error Catch Blocks"
-    violation_count: 8
+    type: "Explicit Any"
+    severity: "Medium"
+    target: "src/lib/settings/settings-serializer.ts"
+    loc: 121
     proof:
-      - file: "src/lib/filesystem/file-ops.ts"
-        pattern: "} catch (error: any) {"
-        occurrences: 7
-      - file: "src/lib/filesystem/dir-ops.ts"
-        pattern: "} catch (error: any) {"
-        occurrences: 1
+      - line: 121
+        content: "currentValue: any;"
+      - line: 122
+        content: "importValue: any;"
     analysis: |
-      Systematic use of `error: any` in catch blocks.
-      Loses error type information, preventing error type discrimination.
-      Risk: Cannot distinguish between error types, poor error handling.
-    remediation_ref: "Global Error Handling - Structured Error Types"
-    recommended_action: "Use unknown type + type guards for error handling"
+      Settings serializer loses type information
+      Should use generics to preserve type safety
+    remediation_ref: "typescript-fixer"
 
-# ═══════════════════════════════════════════════════════════════════════════
-# SUMMARY METRICS
-# ═══════════════════════════════════════════════════════════════════════════
+  - id: "EV-TYPE-004"
+    type: "Implicit Any"
+    severity: "High"
+    target: "src/infrastructure/persistence/stores/conversation/thread-management-slice.ts"
+    loc: 109
+    proof:
+      - line: 109
+        content: "get().threads[id] as any"
+    analysis: |
+      Type assertion bypasses type checks
+      Could hide runtime errors
+    remediation_ref: "typescript-fixer"
 
-summary:
-  total_files_scanned: 450  # Approximate .ts/.tsx files
-  explicit_any_count: 188
-  type_suppressions: 9
-  error_type_loss: 8
-  type_errors_production: 0  # TypeScript check passes for production code
-  average_any_per_file: 0.42
-
-health_score:
-  type_safety: 58.2  # 188 any violations in 450 files
-  suppression_compliance: 98.0  # Only 9 suppressions
-  overall_type_health: 78.1  # Weighted average
-
-risk_categories:
-  critical: 1  # 188 explicit any usages
-  high: 2  # Type suppressions + error type loss
-  medium: 0
-  low: 0
-
-recommendations:
-  priority_1:
-    - "Replace `error: any` with `error: unknown` + type guards in catch blocks"
-    - "Create proper TypeScript types for PDF processing (pdf-vision-*.ts)"
-    - "Define proper types for Monaco Editor API usage"
-  priority_2:
-    - "Remove all 9 type suppressions, fix underlying type errors"
-    - "Create shared type definitions for third-party integrations"
-    - "Add --strictNullChecks and --noImplicitAny to tsconfig"
-  priority_3:
-    - "Audit and reduce 188 any usages to <50"
-    - "Create error type hierarchy for better error handling"
-    - "Add ESLint rule to ban explicit any (with exceptions for well-justified cases)"
-
-high_risk_files_for_any:
-  - path: "src/lib/filesystem/file-ops.ts"
-    any_count: 7
-    reason: "Core file system operations lose type safety"
-  - path: "src/lib/pdf/pdf-vision-manager.ts"
-    any_count: 3
-    reason: "PDF processing not typed, complex logic"
-  - path: "src/lib/agent/memory/conversation-memory.ts"
-    any_count: 4
-    reason: "Agent memory management loses type information"
-  - path: "src/hooks/useCodeSnippets.ts"
-    any_count: 4
-    reason: "Editor API not properly typed"
-
-migration_path:
-  step_1: "Fix error handling (8 instances) - use unknown + type guards"
-  step_2: "Create proper types for PDF (6 instances)"
-  step_3: "Define Monaco Editor types (4 instances)"
-  step_4: "Remove type suppressions (9 instances)"
-  step_5: "Audit remaining any usages (161 instances)"
+total_violations: 41
+critical_count: 2
+high_count: 1
+medium_count: 38

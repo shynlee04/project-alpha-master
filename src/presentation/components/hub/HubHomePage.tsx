@@ -224,7 +224,7 @@ export const HubHomePage: React.FC = () => {
       if (project) {
         const updated = {
           ...project,
-          bindings,
+          bindings: bindings as Record<string, string>,
           lastOpened: new Date(),
         };
         await db.projects.put(updated);
