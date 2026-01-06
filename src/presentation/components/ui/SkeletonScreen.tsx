@@ -204,7 +204,7 @@ export function SkeletonScreen({
   variant = 'text',
   count = 1,
   width,
-  height,
+  height: _height,
   animate = true,
   className,
   ariaLabel,

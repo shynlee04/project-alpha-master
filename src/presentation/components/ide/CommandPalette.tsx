@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Command } from 'cmdk';
 import { Search, Terminal, Settings, FileText, HelpCircle, Keyboard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { ShortcutDefinitions } from '@/lib/keyboard/shortcuts';
 
 /**
  * Command Palette Component
@@ -31,6 +33,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Register Cmd+K shortcut to open command palette
+  useKeyboardShortcuts([
+    ShortcutDefinitions.commandPalette(() => {
+      // Only open if not already open (parent handles state)
+      if (!isOpen) {
+        // This will be handled by parent component
+      }
+    }),
+  ]);
 
   // Define available commands
   const commands: CommandItem[] = [
@@ -133,10 +145,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        // Parent component handles opening
-      }
+      // Escape is now handled by global shortcut manager
       if (e.key === 'Escape') {
         onClose();
       }

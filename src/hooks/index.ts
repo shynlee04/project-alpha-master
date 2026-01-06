@@ -20,3 +20,12 @@ export {
     useRAGSourceProcessing,
     useCrossWorkspaceEvent,
 } from './use-cross-workspace-events';
+
+// Keyboard shortcuts hooks (S-021)
+export {
+    useKeyboardShortcuts,
+    useKeyboardShortcut,
+    useShortcutLabel,
+    useShortcutsAvailable,
+    useAllShortcuts,
+} from './useKeyboardShortcuts';

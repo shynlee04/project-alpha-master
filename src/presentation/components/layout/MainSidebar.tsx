@@ -31,6 +31,8 @@ import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useTheme } from 'next-themes';
 import { useLocalePreference } from '@/i18n/LocaleProvider';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { ShortcutDefinitions } from '@/lib/keyboard/shortcuts';
 
 const sidebarVariants = cva(
   'flex flex-col h-screen border-r-2 border-border bg-sidebar transition-all duration-300 ease-in-out',
@@ -142,6 +144,20 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
     const newLocale = locale === 'en' ? 'vi' : 'en';
     setLocale(newLocale);
   };
+
+  // Register keyboard shortcuts
+  useKeyboardShortcuts([
+    // Cmd/Ctrl+B: Toggle sidebar
+    ShortcutDefinitions.toggleSidebar(() => {
+      toggleSidebar();
+    }),
+
+    // Cmd/Ctrl+Shift+T: Toggle theme
+    ShortcutDefinitions.toggleTheme(() => {
+      const newTheme = isDark ? 'light' : 'dark';
+      setTheme(newTheme);
+    }),
+  ]);
 
   const navItems = [
     { id: 'home', label: t('sidebar.home'), icon: Home, path: '/' },

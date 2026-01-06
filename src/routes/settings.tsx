@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 // import type { Agent } from '@/mocks/agents';
 import { ProviderSettings } from '@/presentation/components/agent/ProviderSettings';
+import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -53,6 +54,39 @@ function SettingsPage() {
                         Settings
                     </h1>
                 </div>
+
+                {/* Theme Preference Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Theme Preferences
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className={cn(
+                                    'font-semibold text-foreground mb-1',
+                                    isMobile && 'text-base'
+                                )}>
+                                    Theme
+                                </h3>
+                                <p className={cn(
+                                    'text-muted-foreground text-sm',
+                                    isMobile && 'text-xs'
+                                )}>
+                                    Choose between light, dark, or system theme
+                                </p>
+                            </div>
+                            <ThemeToggle />
+                        </div>
+                    </div>
+                </section>
 
                 {/* Agent Configuration Section */}
                 <section className="mb-8">
