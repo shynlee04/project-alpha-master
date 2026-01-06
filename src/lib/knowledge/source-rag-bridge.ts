@@ -10,7 +10,7 @@
  */
 
 import type { ChunkingStrategy } from '../rag/types';
-import type { SourceRecord } from '../state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 import EventEmitter from 'eventemitter3';
 import { STORE_EVENTS } from '../events/store-events';

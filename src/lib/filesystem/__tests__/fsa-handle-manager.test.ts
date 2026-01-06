@@ -1,4 +1,4 @@
-import type { FSAHandleRecord } from '../../state/dexie-db';
+import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db';
 
 // Create mock functions
 const mockPut = vi.fn();

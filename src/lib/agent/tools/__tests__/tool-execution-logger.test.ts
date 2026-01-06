@@ -1,4 +1,4 @@
-import type { ToolExecutionLogRecord } from '../../state/dexie-db';
+import type { ToolExecutionLogRecord } from '@/infrastructure/persistence/dexie-db';
 
 // Mock the dexie-db module
 vi.mock('../../state/dexie-db', async () => {

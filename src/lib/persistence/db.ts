@@ -23,7 +23,7 @@
  * ```
  */
 
-import { db as dexieDb, resetDatabaseForTesting } from '../state/dexie-db';
+import { db as dexieDb, resetDatabaseForTesting } from '@/infrastructure/persistence/dexie-db';
 import type { ProjectMetadata } from '../workspace/project-types'; // Import from domain types to break circular dependency
 
 // ============================================================================

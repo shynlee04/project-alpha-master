@@ -10,7 +10,7 @@ import { boot, mount, getFileSystem, isBooted } from '../../webcontainer';
 import type { WorkspaceEventEmitter } from '../../events';
 import type { SyncConfig, SyncResult } from '../sync-types';
 import { countFilesToSync, buildFileSystemTree } from '../sync-operations';
-import type { FileMetadataRecord } from '../../state/dexie-db';
+import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
 import { fileMetadataCache } from '../../sync/file-metadata-cache';
 import { SyncError } from '../sync-types';
 

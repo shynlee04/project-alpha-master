@@ -1,4 +1,4 @@
-import type { FSAHandleRecord } from '../state/dexie-db';
+import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db';
 import {
   db,
   storeFSAHandle,
@@ -6,7 +6,7 @@ import {
   deleteFSAHandle,
   updateFSAHandlePermission,
   clearAllFSAHandles
-} from '../state/dexie-db';
+} from '@/infrastructure/persistence/dexie-db';
 
 /**
  * FSAHandleManager - Manages File System Access handle persistence.

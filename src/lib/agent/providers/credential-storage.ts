@@ -11,7 +11,7 @@
  * @story WB-PR-2.1 - Split credential-vault.ts into 3 modules
  */
 
-import { getDb, type CredentialRecord } from '../../state/dexie-db';
+import { getDb, type CredentialRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Result of credential storage operation

@@ -12,7 +12,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import type { WizardFormData } from '../ProjectCreationWizard';
+import type { WizardFormData } from '../wizard-types';
 
 // ============================================================================
 // Types

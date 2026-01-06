@@ -8,13 +8,13 @@
  * following the unified state management approach.
  */
 
-import type { FSAHandleRecord } from '../state/dexie-db';
+import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db';
 import {
   storeFSAHandle,
   getFSAHandle,
   updateFSAHandleStatus,
   deleteFSAHandle,
-} from '../state/dexie-db';
+} from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Get permission state label for display

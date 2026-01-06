@@ -15,8 +15,8 @@
  * @see Architectural Decision: epic-wb-story-2-adr-2026-01-01.md
  */
 
-import { db } from '../state/dexie-db';
-import type { FileSnapshotRecord } from '../state/dexie-db-types';
+import { db } from '@/infrastructure/persistence/dexie-db';
+import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-types';
 
 // ============================================================================
 // Configuration

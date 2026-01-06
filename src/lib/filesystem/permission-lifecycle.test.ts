@@ -19,7 +19,7 @@ import {
 } from './permission-lifecycle'
 
 // Import mocked functions for assertions
-import { storeFSAHandle, getFSAHandle, updateFSAHandleStatus, deleteFSAHandle } from '../state/dexie-db';
+import { storeFSAHandle, getFSAHandle, updateFSAHandleStatus, deleteFSAHandle } from '@/infrastructure/persistence/dexie-db';
 
 function createMockHandle(states: {
   query?: 'granted' | 'prompt' | 'denied'

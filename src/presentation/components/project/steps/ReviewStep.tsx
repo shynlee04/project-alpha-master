@@ -14,7 +14,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { WizardFormData } from '../ProjectCreationWizard';
+import type { WizardFormData } from '../wizard-types';
 
 // ============================================================================
 // Types

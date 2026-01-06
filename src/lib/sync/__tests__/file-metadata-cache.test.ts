@@ -1,4 +1,4 @@
-import type { FileMetadataRecord } from '../../state/dexie-db';
+import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
 
 // Create mock functions
 const mockPut = vi.fn();

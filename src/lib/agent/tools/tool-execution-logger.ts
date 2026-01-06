@@ -1,12 +1,12 @@
 import type { ToolExecutionContext } from './types';
-import type { ToolExecutionLogRecord } from '../../state/dexie-db';
+import type { ToolExecutionLogRecord } from '@/infrastructure/persistence/dexie-db';
 import {
   db,
   addToolExecutionLog,
   updateToolExecutionLog,
   getToolExecutionLogs,
   clearToolExecutionLogs
-} from '../../state/dexie-db';
+} from '@/infrastructure/persistence/dexie-db';
 
 /**
  * ToolExecutionLogger - Manages logging of tool executions for:
