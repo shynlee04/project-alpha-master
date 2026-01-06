@@ -45,7 +45,7 @@ export const createCollectionSlice: StateCreator<KnowledgeStoreState, [], [], Co
         try {
             const projectId = 'current-project-id';
             const now = Date.now();
-            await db.collections.add({ id: crypto.randomUUID(), projectId, name, sourceIds: [], createdAt: now, updatedAt: now });
+            await db.collections.add({ id: crypto.randomUUID(), projectId, workspaceId: 'knowledge', name, sourceIds: [], createdAt: now, updatedAt: now });
             const collections = await getCollectionsForProject(projectId);
             set({ collections, loading: false });
         } catch (error) {

@@ -58,11 +58,13 @@ export async function saveCollection(
  *
  * @param projectId - The project ID
  * @param name - The collection name
+ * @param workspaceId - The workspace ID (default: 'knowledge' for collections)
  * @returns The created collection ID
  */
 export async function createCollection(
     projectId: string,
-    name: string
+    name: string,
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'knowledge' // PERSIST-S002: Workspace isolation
 ): Promise<string> {
     const id = crypto.randomUUID();
     const now = Date.now();
@@ -70,6 +72,7 @@ export async function createCollection(
     await db.collections.add({
         id,
         projectId,
+        workspaceId, // PERSIST-S002: Workspace isolation
         name,
         sourceIds: [],
         createdAt: now,

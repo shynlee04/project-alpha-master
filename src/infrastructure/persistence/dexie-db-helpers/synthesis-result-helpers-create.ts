@@ -16,12 +16,14 @@ import { db } from '../dexie-db';
  * @param sourceId - The source ID being synthesized
  * @param projectId - The project ID
  * @param initialStatus - The initial synthesis status (default: 'pending')
+ * @param workspaceId - The workspace ID (default: 'knowledge' for synthesis results)
  * @returns The ID of the created synthesis result
  */
 export async function createSynthesisResult(
     sourceId: string,
     projectId: string,
-    initialStatus: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed' = 'pending'
+    initialStatus: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed' = 'pending',
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'knowledge' // PERSIST-S002: Workspace isolation
 ): Promise<string> {
     const id = crypto.randomUUID();
     const now = Date.now();
@@ -30,6 +32,7 @@ export async function createSynthesisResult(
         id,
         sourceId,
         projectId,
+        workspaceId, // PERSIST-S002: Workspace isolation
         status: initialStatus,
         frontmatter: undefined,
         createdAt: now,

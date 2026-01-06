@@ -299,6 +299,7 @@ export async function importImage(
         const record: SourceRecord = {
             id: sourceId,
             projectId: options.projectId,
+            workspaceId: 'knowledge', // PERSIST-S002: Workspace isolation
             type: 'text', // Image type not supported, using text as fallback
             title: file.name.replace(/\.[^/.]+$/, ''), // Remove extension
             content: extractedText || description || `Image: ${file.name}`,

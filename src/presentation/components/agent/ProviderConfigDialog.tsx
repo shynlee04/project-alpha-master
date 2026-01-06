@@ -113,36 +113,36 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
             if (isBuiltIn && provider) {
                 // BUILT-IN PROVIDER: Only save API key
                 if (apiKey) {
-                    // FIX-2026-01-05: Store credentials first and show immediate feedback
+                    // FIX-2026-01-05: Store credentials first
                     await credentialVault.storeCredentials(provider.id, apiKey);
 
                     // Update hasApiKey flag immediately for visual feedback
                     updateProvider(provider.id, { hasApiKey: true });
-                    setKeyStatus('configured');
-                    setIsValidatingKey(false);
-
-                    // Show success toast IMMEDIATELY so user knows key is saved
-                    toast.success(`✓ ${provider.name} API key saved successfully`);
-
-                    // Now try to load models (non-blocking - key is already saved)
+                    
+                    // Now try to load models (Validation)
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
-                        // Models loaded successfully - no additional toast needed
-                        // The badge already shows "configured" status
+                        
+                        // SUCCESS: Key valid and models loaded
+                        setKeyStatus('configured');
+                        toast.success(`✓ ${provider.name} configured and verified`);
+                        onOpenChange(false); // Only close on success
                     } catch (error) {
+                        // FAILURE: Key saved but verification failed
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
                         setKeyStatus('error');
-                        // Show warning but DON'T throw - key is already saved, models can be retried
-                        toast.warning(`API key saved, but models couldn't load: ${errorMessage}. You can try refreshing.`);
-                        // Don't re-throw - allow dialog to close since key was saved
+                        
+                        // Warn user and keep dialog open
+                        toast.error(`Key saved, but validation failed: ${errorMessage}`);
                     } finally {
                         setIsFetchingModels(false);
                     }
                 } else {
                     setIsValidatingKey(false);
                     toast.info('No API key provided - existing key kept');
+                    onOpenChange(false);
                 }
             } else if (isAddingCustom) {
                 // ADDING NEW CUSTOM PROVIDER
@@ -163,31 +163,29 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 addProvider(config);
 
-                // FIX-2026-01-05: Show success immediately, then try models
-                toast.success(`✓ Custom provider "${name}" added`);
-
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
                     updateProvider(id, { hasApiKey: true });
-                    setKeyStatus('configured');
-                    setIsValidatingKey(false);
-                    toast.success(`✓ API key saved for ${name}`);
-
+                    
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(id);
-                        // Models loaded - badge shows configured
+                        setKeyStatus('configured');
+                        toast.success(`✓ Custom provider "${name}" configured and verified`);
+                        onOpenChange(false);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
                         setKeyStatus('error');
-                        toast.warning(`Provider added, but models couldn't load: ${errorMessage}`);
-                        // Don't re-throw - provider and key are saved
+                        toast.error(`Provider added, but validation failed: ${errorMessage}`);
+                        // Keep dialog open
                     } finally {
                         setIsFetchingModels(false);
                     }
                 } else {
                     setIsValidatingKey(false);
+                    toast.success(`✓ Custom provider "${name}" added`);
+                    onOpenChange(false);
                 }
             } else if (provider?.isCustom) {
                 // EDITING EXISTING CUSTOM PROVIDER
@@ -199,43 +197,39 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                 updateProvider(provider.id, config);
 
-                // FIX-2026-01-05: Show success immediately
-                toast.success(`✓ Provider "${name}" updated`);
-
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
                     updateProvider(provider.id, { hasApiKey: true });
-                    setKeyStatus('configured');
-                    setIsValidatingKey(false);
-                    toast.success(`✓ API key updated for ${name}`);
-
+                    
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
-                        // Models loaded - badge shows configured
+                        setKeyStatus('configured');
+                        toast.success(`✓ Provider "${name}" updated and verified`);
+                        onOpenChange(false);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
                         setKeyStatus('error');
-                        toast.warning(`Config saved, but models couldn't load: ${errorMessage}`);
-                        // Don't re-throw
+                        toast.error(`Provider updated, but validation failed: ${errorMessage}`);
+                        // Keep dialog open
                     } finally {
                         setIsFetchingModels(false);
                     }
                 } else {
                     setIsValidatingKey(false);
+                    toast.success(`✓ Provider "${name}" updated`);
+                    onOpenChange(false);
                 }
             }
-
-            onOpenChange(false);
         } catch (error) {
             console.error('[ProviderConfigDialog] Failed to save provider:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             setKeyStatus('error');
-            setIsValidatingKey(false);
             toast.error(`Failed to save provider configuration: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
+            setIsValidatingKey(false);
         }
     };
 

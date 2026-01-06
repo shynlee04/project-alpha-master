@@ -127,6 +127,7 @@ export const useConversationStore = create<ConversationStoreState>()(
                         metadata: {
                             id: conversation.id,
                             projectId: conversation.projectId,
+                            workspaceId: conversation.workspaceType || 'ide', // PERSIST-S002: Workspace isolation
                             workspaceType: conversation.workspaceType,
                             title: conversation.title || 'New Conversation',
                             preview: '', // Preview not available in ConversationMetadataWithId

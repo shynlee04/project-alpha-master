@@ -93,6 +93,7 @@ export class ProjectKnowledgeSync {
                     const source: SourceRecord = {
                         id: `doc-${filePath}`,
                         projectId: config.projectId,
+                        workspaceId: 'knowledge', // PERSIST-S002: Workspace isolation
                         type: 'text',
                         title: this.extractTitle(filePath),
                         content,

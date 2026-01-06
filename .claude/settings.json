@@ -1,4 +1,43 @@
 {
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/daily-governance-audit.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/pre-execution.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/context-bridge.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/ralph-loop.sh"
+          }
+        ]
+      }
+    ]
+  },
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "455e3428c7bf43a9b5bbc43d4ab3c6b3.uoS5Ta4qnNocQfs9",
     "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",

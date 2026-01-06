@@ -278,7 +278,11 @@ export async function importWorkflows(
                       updatedAt: Date.now(),
                   };
 
-            await db.workflows.put(workflowToSave);
+            await db.workflows.put({
+                ...workflowToSave,
+                workspaceId: options.workspaceId || 'ide', // PERSIST-S002: Workspace isolation
+                updatedAt: Date.now(),
+            });
             results.imported++;
         } catch (error) {
             results.errors.push(`Failed to import workflow "${workflow.name}": ${error}`);
@@ -509,6 +513,7 @@ export async function migrateFromLocalStorage(localStorageKey = 'workflows'): Pr
             try {
                 await db.workflows.put({
                     ...workflow,
+                    workspaceId: 'ide', // PERSIST-S002: Workspace isolation (default to ide for migrated workflows)
                     updatedAt: Date.now(),
                 });
                 migrated++;

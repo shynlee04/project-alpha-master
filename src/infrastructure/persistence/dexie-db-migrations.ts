@@ -793,7 +793,7 @@ export function registerMigrations(db: Dexie): void {
                                      'sessionSnapshots', 'fileSnapshots', 'fileContentCache', 'sources', 'collections',
                                      'synthesisResults', 'oramaIndexes', 'embedding_models', 'notes', 'workflows',
                                      'codeSnippets', 'plugins', 'pluginSettings', 'pluginMarketplace', 'pluginStorage']) {
-                const table = db[tableKey];
+                const table = (db as any)[tableKey];
                 try {
                     const count = await table.count();
                     const records = await table.toArray();
@@ -811,7 +811,7 @@ export function registerMigrations(db: Dexie): void {
                     logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', {
                         tableName: tableKey,
                         itemsCount: count,
-                        updatedRecords: updatedCount
+                        error: updatedCount > 0 ? undefined : `${updatedCount} records updated`
                     });
                 } catch (error: unknown) {
                     console.error(`[Migration v20] Failed to update table ${tableKey}:`, error);
@@ -822,7 +822,7 @@ export function registerMigrations(db: Dexie): void {
 
             logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', {
                 itemsCount: totalUpdated,
-                message: `All tables now have workspaceId for cross-workspace isolation`
+                error: totalUpdated > 0 ? undefined : `All tables now have workspaceId for cross-workspace isolation`
             });
         });
 }
