@@ -204,8 +204,8 @@ export class CredentialVault {
                 const vaultPassword = await this.getOrCreateVaultPassword();
                 this.encryptionKey = await this.encryption.deriveKeyFromPassword(vaultPassword, storedSalt);
 
-                // Decrypt master key
-                this.masterKey = await this.encryption.decryptMasterKey(
+                // Unwrap master key using AES-KW (P0 FIX: no more exportKey error)
+                this.masterKey = await this.encryption.unwrapMasterKey(
                     storedEncryptedKey,
                     this.encryptionKey
                 );
@@ -251,9 +251,9 @@ export class CredentialVault {
         // Generate master key
         this.masterKey = await this.encryption.generateMasterKey();
 
-        // Encrypt and store master key
-        const encryptedKey = await this.encryption.encryptMasterKey(this.masterKey, this.encryptionKey);
-        this.storeEncryptedKey(encryptedKey);
+        // Wrap and store master key using AES-KW (P0 FIX: no more exportKey error)
+        const wrappedKey = await this.encryption.wrapMasterKey(this.masterKey, this.encryptionKey);
+        this.storeEncryptedKey(wrappedKey);
 
         // Store version
         this.setLocalStorageItem(KEY_VERSION_STORAGE, '3');

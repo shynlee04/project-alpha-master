@@ -534,12 +534,58 @@ stories:
         type: "IMPLEMENTATION"
         route_to: "bmad-core → dev-story"
         hours: 3
-        status: "backlog"
+        status: "done"
+        completed_at: "2026-01-06T04:15:00+07:00"
         acceptance_criteria:
           - "Returning to project prompts for permission"
           - "Clear UI explains why permission needed"
           - "Remember for session option works"
           - "Graceful handling of denied permission"
+
+  # ---------------------------------------------------------------------------
+  # PHASE 0.6: ARCHITECTURE REDESIGN (OPTION B) (Day 1, ~8 hours)
+  # Added: 2026-01-06T04:15:00+07:00 via User Request
+  # ---------------------------------------------------------------------------
+  phase_0_6:
+    name: "Architecture Redesign (Option B)"
+    days: [1]
+    estimated_hours: 8
+    priority: "P0 - CRITICAL ARCHITECTURE"
+    stories:
+      - id: "ARCH-REDESIGN-1"
+        title: "Strict Route Parameterization"
+        issues: ["ARCH-006"]
+        type: "ARCHITECTURE"
+        route_to: "architecture-remediation → workspace-architect"
+        hours: 4
+        status: "backlog"
+        acceptance_criteria:
+          - "ALL workspace routes require $projectId parameter"
+          - "Routes without $projectId redirect to picker"
+          - "URL structure reflects project context"
+        
+      - id: "ARCH-REDESIGN-2"
+        title: "Unified Note Systems"
+        issues: ["ARCH-007"]
+        type: "ARCHITECTURE"
+        route_to: "architecture-remediation → file-sync-specialist"
+        hours: 4
+        status: "backlog"
+        acceptance_criteria:
+          - "Dexie + FSA → single source of truth"
+          - "No split brain between notes and filesystem"
+          - "Notes save directly to filesystem (UJ-003)"
+          
+      - id: "ARCH-REDESIGN-3"
+        title: "Project Hierarchy Support"
+        issues: ["ARCH-008"]
+        type: "ARCHITECTURE"
+        route_to: "architecture-remediation → workspace-architect"
+        hours: 4
+        status: "backlog"
+        acceptance_criteria:
+          - "Support for nested projects/folders"
+          - "Project metadata reflects hierarchy"
 
   # ---------------------------------------------------------------------------
   # PHASE 1: CRITICAL BLOCKERS (Days 2-3, ~15 hours)

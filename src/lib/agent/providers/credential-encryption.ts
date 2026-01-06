@@ -133,32 +133,75 @@ export class CredentialEncryption {
     }
 
     /**
-     * Encrypt a master key with a derived encryption key
+     * Wrap a master key using AES-KW (Key Wrapping)
      *
-     * The master key is encrypted using the PBKDF2-derived encryption key.
-     * This allows the master key to be securely stored and later decrypted
-     * with the same password-derived key.
+     * P0 FIX: Uses AES-KW key wrapping instead of export+encrypt to maintain
+     * security while allowing the non-extractable master key to be persisted.
      *
-     * @param masterKey - Master key to encrypt
-     * @param encryptionKey - PBKDF2-derived encryption key
-     * @returns Base64-encoded encrypted master key with IV prepended
+     * AES-KW is designed specifically for wrapping keys without extracting them.
+     * The masterKey remains non-extractable (secure) while being wrapped for storage.
+     *
+     * @param masterKey - Non-extractable master key to wrap
+     * @param wrappingKey - PBKDF2-derived wrapping key
+     * @returns Base64-encoded wrapped master key
+     */
+    async wrapMasterKey(masterKey: CryptoKey, wrappingKey: CryptoKey): Promise<string> {
+        try {
+            // Use AES-KW (Key Wrapping) algorithm
+            const wrapped = await crypto.subtle.wrapKey(
+                'raw', // Export format (internal to wrapKey, not exposed)
+                masterKey, // Non-extractable master key
+                wrappingKey, // AES-KW key
+                { name: 'AES-KW' } // Key wrapping algorithm
+            );
+
+            return arrayBufferToBase64(wrapped);
+        } catch (error) {
+            console.error('[CredentialEncryption] Failed to wrap master key:', error);
+            throw new Error('Failed to wrap master key for storage');
+        }
+    }
+
+    /**
+     * Unwrap a master key using AES-KW (Key Wrapping)
+     *
+     * @param wrappedKey - Base64-encoded wrapped master key
+     * @param wrappingKey - PBKDF2-derived wrapping key
+     * @returns Decrypted master CryptoKey (non-extractable)
+     * @throws Error if unwrapping fails
+     */
+    async unwrapMasterKey(wrappedKey: string, wrappingKey: CryptoKey): Promise<CryptoKey> {
+        try {
+            const wrapped = base64ToArrayBuffer(wrappedKey);
+
+            return crypto.subtle.unwrapKey(
+                'raw', // Import format
+                wrapped, // Wrapped key data
+                wrappingKey, // AES-KW key
+                { name: 'AES-KW' }, // Unwrap algorithm
+                { name: ENCRYPTION_ALGORITHM, length: KEY_LENGTH }, // Target key algorithm
+                false, // Keep master key non-extractable (SECURE)
+                ['encrypt', 'decrypt'] // Key usages
+            );
+        } catch (error) {
+            console.error('[CredentialEncryption] Failed to unwrap master key:', error);
+            throw new Error('Failed to unwrap master key - incorrect password or corrupted data');
+        }
+    }
+
+    /**
+     * @deprecated Use wrapMasterKey() instead. This method kept for backwards compatibility
+     * but will be removed in future versions.
+     *
+     * Encrypt a master key with a derived encryption key (OLD METHOD - BROKEN)
+     *
+     * This method attempted to export a non-extractable key, which is impossible.
+     * Use wrapMasterKey() instead, which uses AES-KW key wrapping.
      */
     async encryptMasterKey(masterKey: CryptoKey, encryptionKey: CryptoKey): Promise<string> {
-        const iv = this.generateIV();
-        const keyData = await crypto.subtle.exportKey('raw', masterKey);
-
-        const encrypted = await crypto.subtle.encrypt(
-            { name: ENCRYPTION_ALGORITHM, iv: iv.buffer as BufferSource },
-            encryptionKey,
-            keyData
-        );
-
-        // Combine IV and encrypted data for storage
-        const combined = new Uint8Array(iv.length + encrypted.byteLength);
-        combined.set(iv, 0);
-        combined.set(new Uint8Array(encrypted), iv.length);
-
-        return arrayBufferToBase64(combined.buffer);
+        console.warn('[CredentialEncryption] encryptMasterKey() is deprecated, use wrapMasterKey() instead');
+        // Delegate to new method
+        return this.wrapMasterKey(masterKey, encryptionKey);
     }
 
     /**
@@ -168,25 +211,12 @@ export class CredentialEncryption {
      * @param encryptionKey - PBKDF2-derived encryption key
      * @returns Decrypted master CryptoKey
      * @throws Error if decryption fails
+     * @deprecated Use unwrapMasterKey() instead for new code
      */
     async decryptMasterKey(encrypted: string, encryptionKey: CryptoKey): Promise<CryptoKey> {
-        const combined = new Uint8Array(base64ToArrayBuffer(encrypted));
-        const iv = combined.slice(0, IV_LENGTH);
-        const data = combined.slice(IV_LENGTH);
-
-        const decrypted = await crypto.subtle.decrypt(
-            { name: ENCRYPTION_ALGORITHM, iv: iv.buffer as BufferSource },
-            encryptionKey,
-            data.buffer as BufferSource
-        );
-
-        return crypto.subtle.importKey(
-            'raw',
-            decrypted,
-            { name: ENCRYPTION_ALGORITHM, length: KEY_LENGTH },
-            true,
-            ['encrypt', 'decrypt']
-        );
+        console.warn('[CredentialEncryption] decryptMasterKey() is deprecated, use unwrapMasterKey() instead');
+        // Delegate to new method
+        return this.unwrapMasterKey(encrypted, encryptionKey);
     }
 
     /**

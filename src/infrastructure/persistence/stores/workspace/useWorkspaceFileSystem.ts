@@ -89,7 +89,8 @@ export function useWorkspaceFileSystem({
   // File system state
   const [projectMetadata, setProjectMetadata] = useState<ProjectMetadata | null>(null);
   const [directoryHandle, setDirectoryHandle] = useState<FileSystemDirectoryHandle | null>(null);
-  const [permissionState, setPermissionState] = useState<FsaPermissionState>('prompt');
+  // Initial state 'unknown' prevents flash of "No Folder Selected" overlay before project load
+  const [permissionState, setPermissionState] = useState<FsaPermissionState>('unknown');
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [syncProgress, setSyncProgress] = useState<SyncProgress | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
@@ -116,7 +117,18 @@ export function useWorkspaceFileSystem({
           console.log('[WorkspaceProvider] Hydrated project:', project.name);
           setProjectMetadata(project as ProjectMetadata);
           setDirectoryHandle(project.fsaHandle);
-          setPermissionState('prompt');
+
+          // FIX-2026-01-06: Check actual permission state instead of always setting 'prompt'
+          // This prevents the "No Folder Selected" overlay from showing incorrectly
+          if (project.fsaHandle) {
+            const actualState = await getPermissionState(project.fsaHandle, 'readwrite');
+            console.log('[WorkspaceProvider] Actual permission state:', actualState);
+            setPermissionState(actualState);
+          } else {
+            // No handle means we need to prompt for folder selection
+            setPermissionState('prompt');
+          }
+
           if (project.autoSync !== undefined) {
             setAutoSyncState(project.autoSync);
           }

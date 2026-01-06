@@ -222,10 +222,14 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
   // ---------------------------------------------------------------------
 
   /** All enabled workspaces for this project */
-  const enabledWorkspaces = React.useMemo(
-    () => getEnabledWorkspaces(project?.bindings || {}),
-    [project?.bindings]
-  );
+  // FIX-2026-01-06: Handle both 'bindings' and 'workspaceBindings' property names
+  // ProjectMetadata uses 'workspaceBindings', Project uses 'bindings'
+  const enabledWorkspaces = React.useMemo(() => {
+    // Try both property names for backwards compatibility
+    const bindings = (project as any)?.bindings || (project as any)?.workspaceBindings || {};
+    console.log('[ProjectProvider] Calculating enabled workspaces from:', { bindings, projectId: project?.id });
+    return getEnabledWorkspaces(bindings);
+  }, [project]);
 
   // ---------------------------------------------------------------------
   // Effects: Persist/Restore Last Workspace

@@ -18,6 +18,7 @@
 
 // import { type StateStorage } from 'zustand/middleware';
 import { getDb, db, type PersistedStateRecord } from './dexie-db';
+import type { ViaGentDatabase } from './dexie-db-class';
 import type { Table } from 'dexie';
 
 /**
@@ -111,11 +112,36 @@ async function evictOldestEntries(
  * ```
  */
 export function createDexieStorage(tableName: keyof typeof db): { getItem: (name: string) => Promise<string | null>, setItem: (name: string, value: string) => Promise<void>, removeItem: (name: string) => Promise<void> } {
+    // Initialization guard: ensure database is fully opened before table access
+    let dbInitPromise: Promise<ViaGentDatabase | null> | null = null;
+
+    const ensureDatabaseOpen = async (): Promise<ViaGentDatabase | null> => {
+        if (!dbInitPromise) {
+            dbInitPromise = (async () => {
+                const database = getDb();
+                if (!database) return null;
+
+                // CRITICAL: Wait for database.open() to complete before accessing tables
+                // Without this, table properties (database[tableName]) are undefined
+                try {
+                    await database.open();
+                    return database;
+                } catch (error) {
+                    console.error('[DexieStorage] Failed to open database:', error);
+                    return null;
+                }
+            })();
+        }
+
+        return dbInitPromise;
+    };
+
     return {
         getItem: async (name: string): Promise<string | null> => {
             try {
-                const database = getDb();
+                const database = await ensureDatabaseOpen();
                 if (!database) return null;
+
                 const table = database[tableName] as Table<PersistedStateRecord, string>;
                 const record = await table.get(name);
                 return record ? JSON.stringify(record.state) : null;
@@ -126,8 +152,9 @@ export function createDexieStorage(tableName: keyof typeof db): { getItem: (name
         },
 
         setItem: async (name: string, value: string): Promise<void> => {
-            const database = getDb();
+            const database = await ensureDatabaseOpen();
             if (!database) return;
+
             const table = database[tableName] as Table<PersistedStateRecord, string>;
 
             // Dexie/IndexedDB needs the raw object, not stringified JSON for the 'state' field
@@ -196,8 +223,9 @@ export function createDexieStorage(tableName: keyof typeof db): { getItem: (name
 
         removeItem: async (name: string): Promise<void> => {
             try {
-                const database = getDb();
+                const database = await ensureDatabaseOpen();
                 if (!database) return;
+
                 const table = database[tableName] as Table<PersistedStateRecord, string>;
                 await table.delete(name);
             } catch (error) {

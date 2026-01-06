@@ -18,7 +18,7 @@
  */
 
 import { useEffect, useMemo } from 'react';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, Outlet } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Plus, Loader2 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -52,9 +52,20 @@ function IDEEmptyState() {
   const hasAnyProjects = allProjects.length > 0;
   const isLoading = allProjects === undefined;
 
+  // FIX-2026-01-06: Check if we're rendering a child route (/ide/$projectId)
+  // If so, don't redirect - let the child route handle the project
+  const isOnChildRoute = window.location.pathname !== '/ide';
+
   useEffect(() => {
+    // Don't redirect if we're on a child route like /ide/$projectId
+    if (isOnChildRoute) {
+      console.log('[IDERoute] On child route, skipping redirect');
+      return;
+    }
+
     // If IDE-enabled projects exist, redirect to hub with project picker
     if (!isLoading && hasIdeProjects) {
+      console.log('[IDERoute] IDE projects exist, redirecting to hub');
       navigate({
         to: '/hub',
         search: {
@@ -62,7 +73,12 @@ function IDEEmptyState() {
         },
       });
     }
-  }, [hasIdeProjects, isLoading, navigate]);
+  }, [hasIdeProjects, isLoading, navigate, isOnChildRoute]);
+
+  // FIX-2026-01-06: If on child route, render Outlet to show child component (IDE workspace)
+  if (isOnChildRoute) {
+    return <Outlet />;
+  }
 
   // Show loading state while Dexie query runs
   if (isLoading) {

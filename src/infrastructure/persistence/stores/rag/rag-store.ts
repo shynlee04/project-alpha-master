@@ -49,9 +49,8 @@ export const useRAGStore = create<RAGStoreState>()(
       name: 'rag-state',
 
       // Use Dexie storage adapter for IndexedDB persistence
-      // TODO: Add 'ragState' table to ViaGentDatabase schema (dexie-db-class.ts)
-      // For now, using type assertion to bypass schema check
-      storage: createJSONStorage(() => createDexieStorage('ragState' as keyof typeof import('../../dexie-db').db)),
+      // P0 FIX: ragState table now exists in ViaGentDatabase schema (v17 migration)
+      storage: createJSONStorage(() => createDexieStorage('ragState')),
 
       // Persist essential state (exclude temporary data)
       partialize: (state) => ({

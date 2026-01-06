@@ -33,7 +33,13 @@ export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,
   // Loader: Fetch project metadata for ProjectProvider
   loader: async ({ params }) => {
+    console.log('[IDERoute.loader] Loading project:', params.projectId);
     const project = await getProject(params.projectId);
+    console.log('[IDERoute.loader] Project result:', project ? {
+      id: project.id,
+      name: project.name,
+      bindings: (project as any).workspaceBindings || (project as any).bindings,
+    } : 'NULL');
     return { project };
   },
   component: IDEWorkspace,
