@@ -25,3 +25,7 @@ repomix-*.xml
 _bmad-output/*.xml
 _bmad-output/repomix-packs/
 
+
+# API Keys - NEVER commit these
+_bmad/modules/integration-testing/config/api-keys-prod.yaml
+_bmad/modules/integration-testing/config/api-keys-*.yaml
