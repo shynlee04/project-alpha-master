@@ -1,10 +1,36 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { TreeNode, ContextMenuState, ContextMenuAction } from '../types';
 import { getAncestorPaths } from '../utils';
+import {
+    duplicateFile,
+    downloadFile,
+    copyPathToClipboard,
+    revealInFileManager,
+} from '@/lib/filesystem/file-ops';
+
+/**
+ * Dialog state for file operations
+ */
+interface DialogState {
+    open: boolean;
+    operation: 'rename' | 'duplicate' | null;
+    currentName: string;
+}
+
+/**
+ * Confirm dialog state for delete operations
+ */
+interface ConfirmDialogState {
+    open: boolean;
+    itemName: string;
+    isDirectory: boolean;
+}
 
 /**
  * Options for the useContextMenuActions hook.
+ * S-024: Enhanced with dialog states and toast notifications
  */
 export interface UseContextMenuActionsOptions {
     /** Current context menu state */
@@ -23,10 +49,13 @@ export interface UseContextMenuActionsOptions {
     setExpandedPaths: React.Dispatch<React.SetStateAction<Set<string>>>;
     /** Set focused path for auto-selection */
     setFocusedPath: React.Dispatch<React.SetStateAction<string | undefined>>;
+    /** Existing file names for duplicate checking */
+    existingNames?: string[];
 }
 
 /**
  * Return type for the useContextMenuActions hook.
+ * S-024: Enhanced with dialog states
  */
 export interface UseContextMenuActionsResult {
     /** Handle context menu event */
@@ -35,13 +64,26 @@ export interface UseContextMenuActionsResult {
     closeContextMenu: () => void;
     /** Handle context menu action */
     handleContextMenuAction: (action: ContextMenuAction) => Promise<void>;
+    /** File operation dialog state */
+    operationDialog: DialogState;
+    /** Close operation dialog */
+    closeOperationDialog: () => void;
+    /** Handle operation confirm */
+    handleOperationConfirm: (newName: string) => Promise<void>;
+    /** Confirm dialog state */
+    confirmDialog: ConfirmDialogState;
+    /** Close confirm dialog */
+    closeConfirmDialog: () => void;
+    /** Handle delete confirm */
+    handleDeleteConfirm: () => Promise<void>;
 }
 
 /**
  * Hook for context menu actions.
- * 
+ * S-024: Enhanced with dialogs, toasts, and all new file operations
+ *
  * @param options - Hook options
- * @returns Context menu handlers
+ * @returns Context menu handlers with dialog states
  */
 export function useContextMenuActions(
     options: UseContextMenuActionsOptions
@@ -54,7 +96,21 @@ export function useContextMenuActions(
         loadRootDirectory,
         setExpandedPaths,
         setFocusedPath,
+        existingNames = [],
     } = options;
+
+    // Dialog states
+    const [operationDialog, setOperationDialog] = useState<DialogState>({
+        open: false,
+        operation: null,
+        currentName: '',
+    });
+
+    const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState>({
+        open: false,
+        itemName: '',
+        isDirectory: false,
+    });
 
     /**
      * Handle context menu event.
@@ -80,7 +136,96 @@ export function useContextMenuActions(
     }, [setContextMenu]);
 
     /**
+     * Close operation dialog.
+     */
+    const closeOperationDialog = useCallback(() => {
+        setOperationDialog({ open: false, operation: null, currentName: '' });
+    }, []);
+
+    /**
+     * Close confirm dialog.
+     */
+    const closeConfirmDialog = useCallback(() => {
+        setConfirmDialog({ open: false, itemName: '', isDirectory: false });
+    }, []);
+
+    /**
+     * Handle operation confirm (rename/duplicate).
+     */
+    const handleOperationConfirm = useCallback(
+        async (newName: string) => {
+            const targetNode = contextMenu.targetNode;
+            if (!targetNode || !directoryHandle || !operationDialog.operation) return;
+
+            const adapter = getAdapter();
+            adapter.setDirectoryHandle(directoryHandle);
+
+            try {
+                const parentPath = targetNode.path.includes('/')
+                    ? targetNode.path.substring(0, targetNode.path.lastIndexOf('/'))
+                    : '';
+                const newPath = parentPath ? `${parentPath}/${newName}` : newName;
+
+                if (operationDialog.operation === 'rename') {
+                    await adapter.rename(targetNode.path, newPath);
+                    toast.success(`Renamed to "${newName}"`);
+                } else if (operationDialog.operation === 'duplicate') {
+                    await duplicateFile(directoryHandle, targetNode.path, newPath);
+                    // Expand parent for visibility
+                    if (parentPath) {
+                        setExpandedPaths((prev) => {
+                            const next = new Set(prev);
+                            next.add(parentPath);
+                            getAncestorPaths(parentPath).forEach((p) => next.add(p));
+                            return next;
+                        });
+                    }
+                    toast.success(`Duplicated as "${newName}"`);
+                }
+
+                closeOperationDialog();
+                await loadRootDirectory();
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+                toast.error(`Operation failed: ${errorMessage}`);
+            }
+        },
+        [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, setExpandedPaths, operationDialog.operation, closeOperationDialog],
+    );
+
+    /**
+     * Handle delete confirm.
+     */
+    const handleDeleteConfirm = useCallback(
+        async () => {
+            const targetNode = contextMenu.targetNode;
+            if (!targetNode || !directoryHandle) return;
+
+            const adapter = getAdapter();
+            adapter.setDirectoryHandle(directoryHandle);
+
+            try {
+                if (targetNode.type === 'directory') {
+                    await adapter.deleteDirectory(targetNode.path);
+                    toast.success(`Deleted folder "${targetNode.name}"`);
+                } else {
+                    await adapter.deleteFile(targetNode.path);
+                    toast.success(`Deleted file "${targetNode.name}"`);
+                }
+
+                closeConfirmDialog();
+                await loadRootDirectory();
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+                toast.error(`Delete failed: ${errorMessage}`);
+            }
+        },
+        [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, closeConfirmDialog],
+    );
+
+    /**
      * Handle context menu action.
+     * S-024: Enhanced with all new file operations
      */
     const handleContextMenuAction = useCallback(
         async (action: ContextMenuAction) => {
@@ -101,25 +246,21 @@ export function useContextMenuActions(
                                     : name;
                             await adapter.createFile(newPath, '');
 
-                            // Expand parent paths for visibility
                             const parentPath = targetNode.type === 'directory'
                                 ? targetNode.path
                                 : undefined;
                             if (parentPath) {
                                 setExpandedPaths((prev) => {
                                     const next = new Set(prev);
-                                    // Add parent and all ancestors
                                     next.add(parentPath);
                                     getAncestorPaths(parentPath).forEach((p) => next.add(p));
                                     return next;
                                 });
                             }
 
-                            // Auto-select the new file after tree reload
                             setFocusedPath(newPath);
-
-                            // Reload tree (will restore expanded state)
                             await loadRootDirectory();
+                            toast.success(`Created file "${name}"`);
                         }
                         break;
                     }
@@ -132,57 +273,81 @@ export function useContextMenuActions(
                                     : name;
                             await adapter.createDirectory(newPath);
 
-                            // Expand parent paths for visibility
                             const parentPath = targetNode.type === 'directory'
                                 ? targetNode.path
                                 : undefined;
                             if (parentPath) {
                                 setExpandedPaths((prev) => {
                                     const next = new Set(prev);
-                                    // Add parent and all ancestors
                                     next.add(parentPath);
                                     getAncestorPaths(parentPath).forEach((p) => next.add(p));
                                     return next;
                                 });
                             }
 
-                            // Reload tree (will restore expanded state)
                             await loadRootDirectory();
+                            toast.success(`Created folder "${name}"`);
                         }
                         break;
                     }
                     case 'rename': {
-                        const newName = prompt('Enter new name:', targetNode.name);
-                        if (newName && newName !== targetNode.name) {
-                            const parentPath = targetNode.path.includes('/')
-                                ? targetNode.path.substring(0, targetNode.path.lastIndexOf('/'))
-                                : '';
-                            const newPath = parentPath ? `${parentPath}/${newName}` : newName;
-                            await adapter.rename(targetNode.path, newPath);
-                            loadRootDirectory();
-                        }
+                        setOperationDialog({
+                            open: true,
+                            operation: 'rename',
+                            currentName: targetNode.name,
+                        });
+                        break;
+                    }
+                    case 'duplicate': {
+                        setOperationDialog({
+                            open: true,
+                            operation: 'duplicate',
+                            currentName: targetNode.name,
+                        });
                         break;
                     }
                     case 'delete': {
-                        const confirmed = confirm(
-                            `Are you sure you want to delete "${targetNode.name}"?`,
-                        );
-                        if (confirmed) {
-                            if (targetNode.type === 'directory') {
-                                await adapter.deleteDirectory(targetNode.path);
-                            } else {
-                                await adapter.deleteFile(targetNode.path);
-                            }
-                            loadRootDirectory();
-                        }
+                        setConfirmDialog({
+                            open: true,
+                            itemName: targetNode.name,
+                            isDirectory: targetNode.type === 'directory',
+                        });
+                        break;
+                    }
+                    case 'download': {
+                        await downloadFile(directoryHandle, targetNode.path);
+                        toast.success(`Downloaded "${targetNode.name}"`);
+                        break;
+                    }
+                    case 'copy-path': {
+                        await copyPathToClipboard(targetNode.path, false);
+                        toast.success('Copied path to clipboard');
+                        break;
+                    }
+                    case 'copy-absolute-path': {
+                        await copyPathToClipboard(targetNode.path, true);
+                        toast.success('Copied absolute path to clipboard');
+                        break;
+                    }
+                    case 'reveal-in-finder': {
+                        await revealInFileManager(targetNode.path);
+                        toast.info('File path copied (reveal not available in browser)');
+                        break;
+                    }
+                    case 'duplicate-with-references': {
+                        // Placeholder for advanced duplicate with reference updates
+                        toast.info('Duplicate with references - coming soon');
+                        break;
+                    }
+                    case 'run-script': {
+                        // Placeholder for script execution
+                        toast.info('Run script - coming soon');
                         break;
                     }
                 }
             } catch (err) {
-                console.error('Context menu action error:', err);
-                alert(
-                    `Failed to ${action}: ${err instanceof Error ? err.message : 'Unknown error'}`,
-                );
+                const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+                toast.error(`Failed to ${action}: ${errorMessage}`);
             }
         },
         [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, setExpandedPaths, setFocusedPath],
@@ -192,5 +357,11 @@ export function useContextMenuActions(
         handleContextMenu,
         closeContextMenu,
         handleContextMenuAction,
+        operationDialog,
+        closeOperationDialog,
+        handleOperationConfirm,
+        confirmDialog,
+        closeConfirmDialog,
+        handleDeleteConfirm,
     };
 }

@@ -148,7 +148,7 @@ export function useKeyboardShortcut(
  * // Returns "Cmd+K" on Mac, "Ctrl+K" on Windows/Linux
  * ```
  */
-export function useShortcutLabel(shortcut: Partial<KeyboardShortcut>): string {
+export function useShortcutLabel(shortcut: Partial<Omit<KeyboardShortcut, 'id' | 'description' | 'category' | 'handler'>> & { key: string }): string {
   // Import formatShortcut dynamically to avoid circular dependency
   const { formatShortcut } = require('@/lib/keyboard/KeyboardShortcutManager');
 
@@ -157,6 +157,7 @@ export function useShortcutLabel(shortcut: Partial<KeyboardShortcut>): string {
     id: 'temp',
     description: '',
     category: 'global',
+    handler: () => {}, // Dummy handler for formatting
     ...shortcut,
   };
 

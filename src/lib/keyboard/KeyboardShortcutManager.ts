@@ -90,13 +90,6 @@ class KeyboardShortcutManagerClass {
   }
 
   /**
-   * Detach global keyboard event listener
-   */
-  private detachGlobalListener(): void {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  /**
    * Check if keyboard shortcuts are enabled
    */
   get enabled(): boolean {
@@ -115,21 +108,6 @@ class KeyboardShortcutManagerClass {
    */
   get touchDevice(): boolean {
     return this.isTouchDevice;
-  }
-
-  /**
-   * Generate unique key for shortcut combination
-   */
-  private getShortcutKey(event: KeyboardEvent): string {
-    const parts: string[] = [];
-
-    if (event.metaKey || event.ctrlKey) parts.push('meta');
-    if (event.shiftKey) parts.push('shift');
-    if (event.altKey) parts.push('alt');
-
-    parts.push(event.key.toLowerCase());
-
-    return parts.join('+');
   }
 
   /**

@@ -23,6 +23,9 @@ import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { useTheme } from 'next-themes';
 import { codeAnalysisBridge } from '@/lib/ide/code-analysis-bridge';
+import { UserPresenceIndicator } from '@/presentation/components/collaboration/UserPresenceIndicator';
+import type { UserPresence } from '@/presentation/components/collaboration/UserPresenceIndicator';
+import { LiveCursor } from '@/presentation/components/collaboration/LiveCursor';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;
@@ -44,6 +47,8 @@ export interface MonacoEditorProps {
     initialScrollTop?: number;
     /** Callback when editor scroll position changes */
     onScrollTopChange?: (path: string, scrollTop: number) => void;
+    /** Users currently viewing the file (collaboration) */
+    currentFileUsers?: UserPresence[];
 }
 
 /**
@@ -59,6 +64,7 @@ export function MonacoEditor({
     onContentChange,
     initialScrollTop,
     onScrollTopChange,
+    currentFileUsers = [],
 }: MonacoEditorProps): React.JSX.Element {
     const { t } = useTranslation();
     const { resolvedTheme } = useTheme();
@@ -74,6 +80,7 @@ export function MonacoEditor({
     const activeFilePathRef = useRef<string | null>(activeFilePath);
     const onScrollTopChangeRef = useRef<MonacoEditorProps['onScrollTopChange']>(onScrollTopChange);
     const scrollListenerDisposeRef = useRef<{ dispose: () => void } | null>(null);
+    const editorContainerRef = useRef<HTMLDivElement>(null);
 
     // Track view states (scroll, cursor) per file for restoration
     const viewStatesRef = useRef<Map<string, editor.ICodeEditorViewState>>(new Map());
@@ -296,7 +303,13 @@ export function MonacoEditor({
                 onTabClick={handleTabClick}
                 onTabClose={handleTabClose}
             />
-            <div className="flex-1 min-h-0">
+            {/* S-025: User presence indicator in tab bar */}
+            {currentFileUsers.length > 0 && (
+                <div className="absolute top-2 right-2 z-10">
+                    <UserPresenceIndicator users={currentFileUsers} size="sm" />
+                </div>
+            )}
+            <div className="flex-1 min-h-0 relative" ref={editorContainerRef}>
                 <Editor
                     height="100%"
                     theme={editorTheme}
@@ -334,6 +347,8 @@ export function MonacoEditor({
                         guides: { bracketPairs: true, indentation: true },
                     }}
                 />
+                {/* S-025: Live cursor overlay (desktop only) */}
+                {/* Note: Remote cursors would be rendered here via LiveCursor component */}
             </div>
             {/* Story 13-3: Sync edit warning toast */}
             <SyncEditWarning

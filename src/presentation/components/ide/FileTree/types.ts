@@ -60,8 +60,20 @@ export interface FileTreeItemProps {
 
 /**
  * Context menu action types
+ * S-024: Enhanced with additional file operations
  */
-export type ContextMenuAction = 'new-file' | 'new-folder' | 'rename' | 'delete';
+export type ContextMenuAction =
+    | 'new-file'
+    | 'new-folder'
+    | 'rename'
+    | 'duplicate'
+    | 'delete'
+    | 'download'
+    | 'copy-path'
+    | 'copy-absolute-path'
+    | 'reveal-in-finder'
+    | 'duplicate-with-references'
+    | 'run-script';
 
 /**
  * Context menu state

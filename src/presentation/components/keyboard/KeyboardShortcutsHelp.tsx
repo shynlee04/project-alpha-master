@@ -18,11 +18,9 @@ import {
   DialogTitle,
 } from '@/presentation/components/ui/dialog';
 import { Button } from '@/presentation/components/ui/button';
-import { ScrollArea } from '@/presentation/components/ui/scroll-area';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/presentation/components/ui/tabs';
 import { X, Keyboard, Navigation, Edit, Eye, Wrench, HelpCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { KeyboardShortcutManager, formatShortcut } from '@/lib/keyboard/KeyboardShortcutManager';
 import type { KeyboardShortcut } from '@/lib/keyboard/KeyboardShortcutManager';
 
@@ -161,9 +159,9 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
             </div>
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={onClose}
-              className="h-8 w-8"
+              className="h-8 w-8 p-0"
               aria-label={t('common.close')}
             >
               <X className="h-4 w-4" />
@@ -183,7 +181,7 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
             </div>
           )}
 
-          <ScrollArea className="h-[500px] pr-4">
+          <div className="h-[500px] overflow-y-auto pr-4">
             <Tabs defaultValue="all" className="w-full">
               <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-4">
                 <TabsTrigger value="all" className="text-xs">
@@ -227,7 +225,7 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
                 );
               })}
             </Tabs>
-          </ScrollArea>
+          </div>
         </div>
 
         <div className="flex justify-between items-center mt-4 pt-4 border-t border-border">
