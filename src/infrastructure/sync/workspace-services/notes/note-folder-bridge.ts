@@ -16,7 +16,9 @@
 
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { NoteSyncStore } from './notes-file-sync-core';
+import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import { importFileAsNote } from './note-crud-operations';
+import { noteToMarkdown } from './note-markdown-writer';
 import {
     showErrorToast,
     showSuccessToast,
@@ -40,6 +42,17 @@ export interface ImportResult {
  * Progress callback for import operations
  */
 export type ImportProgressCallback = (current: number, total: number, currentFile: string) => void;
+
+/**
+ * Save result with detailed error tracking
+ */
+export interface SaveResult {
+    success: boolean;
+    noteId: string;
+    filePath: string;
+    duration: number;
+    error?: string;
+}
 
 export class NoteFolderBridge {
     constructor(
@@ -210,6 +223,79 @@ export class NoteFolderBridge {
     private isMarkdownFile(filename: string): boolean {
         const ext = filename.toLowerCase().split('.').pop();
         return ext === 'md' || ext === 'markdown';
+    }
+
+    /**
+     * Save a single note to its markdown file.
+     *
+     * UJ-003: Export note to filesystem for persistence.
+     * Generates file path from note metadata and writes markdown content.
+     *
+     * @param note - Note record to save
+     * @param targetDirectory - Directory to save note in (defaults to root)
+     * @returns Save result with success/failure details
+     */
+    async saveNoteToFile(
+        note: NoteRecord,
+        targetDirectory: string = ''
+    ): Promise<SaveResult> {
+        const startTime = Date.now();
+
+        try {
+            // Generate file path from note metadata
+            const filePath = this.generateNoteFilePath(note, targetDirectory);
+
+            // Convert note to markdown format
+            const markdown = noteToMarkdown(note);
+
+            // Write to filesystem
+            await this.localAdapter.writeFile(filePath, markdown);
+
+            const duration = Date.now() - startTime;
+
+            console.log(`[NoteFolderBridge] Saved note ${note.id} to ${filePath} in ${duration}ms`);
+
+            return {
+                success: true,
+                noteId: note.id,
+                filePath,
+                duration,
+            };
+        } catch (error) {
+            const duration = Date.now() - startTime;
+            const errorMessage = error instanceof Error ? error.message : String(error);
+
+            console.error(`[NoteFolderBridge] Failed to save note ${note.id}:`, error);
+
+            return {
+                success: false,
+                noteId: note.id,
+                filePath: '',
+                duration,
+                error: errorMessage,
+            };
+        }
+    }
+
+    /**
+     * Generate file path from note metadata.
+     *
+     * Creates filesystem path from note title and ID.
+     * Sanitizes title to create valid filename.
+     *
+     * @param note - Note record to generate path for
+     * @param targetDirectory - Base directory for notes
+     * @returns Relative file path for the note
+     */
+    private generateNoteFilePath(note: NoteRecord, targetDirectory: string): string {
+        const title = (note.title || 'untitled')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+        const id = note.id.slice(0, 8);
+        const filename = `${title}-${id}.md`;
+
+        return targetDirectory ? `${targetDirectory}/${filename}` : filename;
     }
 }
 

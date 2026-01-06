@@ -29,6 +29,63 @@ import {
     emitNoteMoved,
     emitNoteFavoriteChanged,
 } from './note-event-emitter';
+import { NoteFolderBridge } from '@/infrastructure/sync/workspace-services/notes/note-folder-bridge';
+
+// ============================================================================
+// Debounce Timer Management
+// ============================================================================
+
+/**
+ * Active debounce timers for auto-save
+ * Maps noteId -> timer ID
+ */
+const debounceTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+/**
+ * Clear debounce timer for a note
+ */
+function clearDebounceTimer(noteId: string): void {
+    const timer = debounceTimers.get(noteId);
+    if (timer) {
+        clearTimeout(timer);
+        debounceTimers.delete(noteId);
+    }
+}
+
+/**
+ * Set debounce timer for auto-save
+ */
+function setDebounceTimer(noteId: string, callback: () => void, delay: number): void {
+    clearDebounceTimer(noteId);
+    const timer = setTimeout(callback, delay);
+    debounceTimers.set(noteId, timer);
+}
+
+// ============================================================================
+// File Save Handler Registry
+// ============================================================================
+
+/**
+ * Registered file save handlers for different projects
+ * Maps projectId -> NoteFolderBridge instance
+ */
+const fileSaveHandlers = new Map<string, NoteFolderBridge>();
+
+/**
+ * Register file save handler for a project
+ */
+export function registerFileSaveHandler(projectId: string, handler: NoteFolderBridge): void {
+    fileSaveHandlers.set(projectId, handler);
+    console.log(`[NoteStore] Registered file save handler for project ${projectId}`);
+}
+
+/**
+ * Unregister file save handler for a project
+ */
+export function unregisterFileSaveHandler(projectId: string): void {
+    fileSaveHandlers.delete(projectId);
+    console.log(`[NoteStore] Unregistered file save handler for project ${projectId}`);
+}
 
 // ============================================================================
 // Store State Interface
@@ -52,6 +109,9 @@ interface NoteStoreState {
 
     /** Save status for auto-save indicator */
     saveStatus: NoteSaveStatus;
+
+    /** Dirty state tracking (has unsaved changes) */
+    dirtyNoteIds: Set<string>;
 
     /** Loading state */
     loading: boolean;
@@ -94,6 +154,12 @@ interface NoteStoreState {
     /** Get favorite notes */
     getFavoriteNotes: () => NoteRecord[];
 
+    /** Check if note has unsaved changes */
+    isNoteDirty: (noteId: string) => boolean;
+
+    /** Manually save note to file */
+    saveNoteToFile: (noteId: string) => Promise<void>;
+
     /** Reset store */
     reset: () => void;
 }
@@ -112,6 +178,7 @@ export const useNoteStore = create<NoteStoreState>()(
             activeNoteId: null,
             currentProjectId: null,
             saveStatus: 'idle',
+            dirtyNoteIds: new Set(),
             loading: false,
             error: null,
             _hasHydrated: false,
@@ -235,7 +302,7 @@ export const useNoteStore = create<NoteStoreState>()(
             },
 
             updateNote: async (params: UpdateNoteParams) => {
-                const { notes } = get();
+                const { notes, currentProjectId } = get();
                 const note = notes.get(params.id);
 
                 if (!note) {
@@ -266,14 +333,22 @@ export const useNoteStore = create<NoteStoreState>()(
 
                     await db.notes.update(params.id, updates);
 
-                    // Update local state
+                    // Update local state and mark as dirty
                     set((state) => {
                         const newMap = new Map(state.notes);
                         newMap.set(params.id, updatedNote);
+                        const dirtyIds = new Set(state.dirtyNoteIds);
+
+                        // Mark as dirty if content changed
+                        if (contentChanged) {
+                            dirtyIds.add(params.id);
+                        }
+
                         return {
                             notes: newMap,
                             notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
                             saveStatus: 'saved',
+                            dirtyNoteIds: dirtyIds,
                         };
                     });
 
@@ -288,6 +363,34 @@ export const useNoteStore = create<NoteStoreState>()(
                     setTimeout(() => {
                         set({ saveStatus: 'idle' });
                     }, 2000);
+
+                    // UJ-003: Trigger debounced auto-save to file
+                    if (contentChanged && currentProjectId) {
+                        const handler = fileSaveHandlers.get(currentProjectId);
+                        if (handler) {
+                            // Clear existing timer and set new one
+                            setDebounceTimer(params.id, async () => {
+                                try {
+                                    const result = await handler.saveNoteToFile(updatedNote, '');
+                                    if (result.success) {
+                                        // Remove from dirty set on successful save
+                                        set(state => {
+                                            const dirtyIds = new Set(state.dirtyNoteIds);
+                                            dirtyIds.delete(params.id);
+                                            return { dirtyNoteIds: dirtyIds };
+                                        });
+                                        console.log(`[NoteStore] Auto-saved note ${params.id} to file`);
+                                    } else {
+                                        console.error(`[NoteStore] Auto-save failed for note ${params.id}:`, result.error);
+                                    }
+                                } catch (error) {
+                                    console.error(`[NoteStore] Auto-save error for note ${params.id}:`, error);
+                                }
+                            }, 2000); // 2s debounce
+                        } else {
+                            console.log(`[NoteStore] No file save handler registered for project ${currentProjectId}`);
+                        }
+                    }
 
                     // Trigger indexing if content or title changed
                     if (contentChanged) {
@@ -476,7 +579,60 @@ export const useNoteStore = create<NoteStoreState>()(
                 return notesArray.filter(n => n.isFavorite);
             },
 
+            isNoteDirty: (noteId: string) => {
+                const { dirtyNoteIds } = get();
+                return dirtyNoteIds.has(noteId);
+            },
+
+            saveNoteToFile: async (noteId: string) => {
+                const { notes, currentProjectId, dirtyNoteIds } = get();
+                const note = notes.get(noteId);
+
+                if (!note) {
+                    console.error(`[NoteStore] Cannot save note ${noteId}: not found`);
+                    return;
+                }
+
+                if (!currentProjectId) {
+                    console.error(`[NoteStore] Cannot save note ${noteId}: no project selected`);
+                    return;
+                }
+
+                const handler = fileSaveHandlers.get(currentProjectId);
+                if (!handler) {
+                    console.error(`[NoteStore] No file save handler registered for project ${currentProjectId}`);
+                    return;
+                }
+
+                try {
+                    // Clear any pending debounce timer
+                    clearDebounceTimer(noteId);
+
+                    // Save to file
+                    const result = await handler.saveNoteToFile(note, '');
+
+                    if (result.success) {
+                        // Remove from dirty set on successful save
+                        const dirtyIds = new Set(dirtyNoteIds);
+                        dirtyIds.delete(noteId);
+                        set({ dirtyNoteIds: dirtyIds });
+
+                        console.log(`[NoteStore] Manually saved note ${noteId} to file`);
+                    } else {
+                        console.error(`[NoteStore] Manual save failed for note ${noteId}:`, result.error);
+                        throw new Error(result.error || 'Save failed');
+                    }
+                } catch (error) {
+                    console.error(`[NoteStore] Manual save error for note ${noteId}:`, error);
+                    throw error;
+                }
+            },
+
             reset: () => {
+                // Clear all debounce timers
+                debounceTimers.forEach(timer => clearTimeout(timer));
+                debounceTimers.clear();
+
                 set({
                     notes: new Map(),
                     notesArray: [],
@@ -484,6 +640,7 @@ export const useNoteStore = create<NoteStoreState>()(
                     activeNoteId: null,
                     currentProjectId: null,
                     saveStatus: 'idle',
+                    dirtyNoteIds: new Set(),
                     loading: false,
                     error: null,
                 });

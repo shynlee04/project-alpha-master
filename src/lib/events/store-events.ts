@@ -46,6 +46,7 @@ export const STORE_EVENTS = {
     // File events - for sync coordination
     FILE_SYNCED: 'file:synced',
     FILE_CONFLICT: 'file:conflict',
+    FILE_SAVED: 'file:saved',
 
     // Source events - for Knowledge workspace
     SOURCE_IMPORTED: 'source:imported',
@@ -132,6 +133,13 @@ export interface SourceIndexFailedPayload {
     sourceId: string;
     error: string;
     indexedAt: number;
+}
+
+export interface FileSavedPayload {
+    filePath: string;
+    workspaceType: 'ide' | 'knowledge' | 'study' | 'notes';
+    projectId: string;
+    timestamp: number;
 }
 
 // =============================================================================

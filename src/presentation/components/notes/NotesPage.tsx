@@ -43,6 +43,9 @@ import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
 import { toast } from 'sonner';
 // Use ProjectContext for projectId instead of IDE store
 import { useProjectContext } from '@/lib/workspace/ProjectContext';
+// UJ-004: Cross-workspace reactivity - subscribe to FILE_SAVED events
+import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
+import type { FileSavedPayload } from '@/lib/events/store-events';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -190,6 +193,28 @@ export function NotesPage() {
             unsubscribe();
         };
     }, [eventBus, createNote, setActiveNote]);
+
+    // UJ-004: Listen to FILE_SAVED events for cross-workspace reactivity
+    // When IDE files are saved, refresh notes if they're markdown files
+    useStoreEvent<FileSavedPayload>(
+        STORE_EVENTS.FILE_SAVED,
+        (payload) => {
+            // Only react to IDE file saves, not notes saves (avoid infinite loop)
+            if (payload.workspaceType === 'ide') {
+                console.log('[NotesPage] FILE_SAVED event received from IDE:', payload);
+
+                // Check if the saved file is a markdown file that might be a note
+                if (payload.filePath.endsWith('.md') || payload.filePath.endsWith('.markdown')) {
+                    console.log('[NotesPage] Markdown file saved in IDE, refreshing notes list');
+                    // Refresh notes list to pick up changes from IDE
+                    if (projectId) {
+                        loadNotes(projectId);
+                    }
+                }
+            }
+        },
+        [projectId, loadNotes]
+    );
 
     const handleCreateNote = async () => {
         try {

@@ -13,6 +13,8 @@
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import type { FileSyncService, SyncResult } from '@/lib/filesync/file-sync-service';
 import { SyncError } from '@/lib/filesystem/sync-types';
+import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
+import type { FileSavedPayload } from '@/lib/events/store-events';
 
 /**
  * Note file sync options
@@ -88,10 +90,19 @@ const DEFAULT_OPTIONS: NoteFileSyncOptions = {
 export class NoteFileSyncService {
     private fileSyncService: FileSyncService;
     private options: NoteFileSyncOptions;
+    private projectId: string;
 
-    constructor(fileSyncService: FileSyncService, options?: NoteFileSyncOptions) {
+    constructor(fileSyncService: FileSyncService, options?: NoteFileSyncOptions, projectId?: string) {
         this.fileSyncService = fileSyncService;
         this.options = { ...DEFAULT_OPTIONS, ...options };
+        this.projectId = projectId || 'default';
+    }
+
+    /**
+     * Update project ID for event emission
+     */
+    setProjectId(projectId: string): void {
+        this.projectId = projectId;
     }
 
     /**
@@ -113,6 +124,16 @@ export class NoteFileSyncService {
         const filePath = customPath || this.generateFilePath(note);
 
         await this.fileSyncService.writeFile(filePath, markdown);
+
+        // Emit FILE_SAVED event for cross-workspace reactivity (UJ-004)
+        const payload: FileSavedPayload = {
+            filePath,
+            workspaceType: 'notes',
+            projectId: this.projectId,
+            timestamp: Date.now(),
+        };
+        emitStoreEvent<FileSavedPayload>(STORE_EVENTS.FILE_SAVED, payload);
+
         return filePath;
     }
 

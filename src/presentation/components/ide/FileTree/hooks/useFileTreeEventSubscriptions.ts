@@ -22,6 +22,9 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import type { WorkspaceEventEmitter } from '@/lib/events';
+// UJ-004: Cross-workspace reactivity - subscribe to FILE_SAVED events
+import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
+import type { FileSavedPayload } from '@/lib/events/store-events';
 
 /** Debounce time in milliseconds for batching rapid events */
 const DEBOUNCE_MS = 300;
@@ -128,4 +131,19 @@ export function useFileTreeEventSubscriptions(
             eventBus.off('directory:deleted', handleDirectoryEvent as any);
         };
     }, [eventBus, triggerRefresh]);
+
+    // UJ-004: Subscribe to FILE_SAVED events for cross-workspace reactivity
+    // When notes are saved, refresh IDE file tree to show changes
+    useStoreEvent<FileSavedPayload>(
+        STORE_EVENTS.FILE_SAVED,
+        (payload) => {
+            // Only react to notes saves, not IDE saves (avoid infinite loop)
+            if (payload.workspaceType === 'notes') {
+                console.log('[FileTree] FILE_SAVED event received from Notes:', payload);
+                // Refresh file tree to pick up changes from notes
+                triggerRefresh();
+            }
+        },
+        []
+    );
 }

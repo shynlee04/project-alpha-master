@@ -1,0 +1,634 @@
+# MASTER INTEGRATION LOOP - VELOCITY EDITION
+# Full Comprehensive Plan in 1 Day via Maximum Parallelization
+# Version: 2.0.0-VELOCITY
+# Created: 2026-01-06T05:00:00+07:00
+
+version: "3.0.0-VELOCITY"
+loop_type: "MASTER_INTEGRATION_PARALLEL"
+session_id: "ASGL-VELOCITY-20260106-050000"
+status: "RUNNING"
+approved_at: "2026-01-06T06:00:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# VELOCITY CONFIGURATION - HOW TO COMPLETE 35 DAYS OF WORK IN 1 DAY
+# ═══════════════════════════════════════════════════════════════════════════
+
+velocity_strategy:
+  parallel_execution_mode: "MAXIMUM"
+  max_concurrent_agents: 50  # Spin up 50+ agents simultaneously
+  max_parallel_phases: 5  # Run 5 phases simultaneously where possible
+  iteration_speed: "continuous"
+
+  # How we compress 35 days into 1 day:
+  compression_techniques:
+    - technique: "Massive Parallelization"
+      description: "Run 50+ agents simultaneously on independent tasks"
+      impact: "10x speedup"
+
+    - technique: "Skill-Based Specialization"
+      description: "Invoke 228+ skills for specialized micro-tasks"
+      impact: "5x speedup"
+
+    - technique: "MCP Tool Leverage"
+      description: "Use all MCP servers' tools for research, code generation, testing"
+      impact: "3x speedup"
+
+    - technique: "Iterative Refinement Loops"
+      description: "Agents run in 30-second refinement cycles with guardrails"
+      impact: "2x speedup"
+
+    - technique: "Module Orchestration"
+      description: "@_bmad/modules/ handle workflows autonomously"
+      impact: "4x speedup"
+
+    - technique: "Sub-Agent Spawning"
+      description: "Each agent spawns specialized sub-agents for micro-tasks"
+      impact: "3x speedup"
+
+  total_compression: "10x × 5x × 3x × 2x × 4x × 3x = 10,800x theoretical"
+  realistic_compression: "~100x with overhead and dependencies"
+  target: "35 days → 1 day (8 hours of autonomous execution)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PARALLEL EXECUTION MATRIX
+# ═══════════════════════════════════════════════════════════════════════════
+
+parallel_execution_groups:
+  # Group A: Foundation (can run in parallel - 4 hours)
+  group_a_foundation:
+    phases: [0, 1, 2]
+    max_concurrent_agents: 20
+    timeline: "Hour 0-4"
+    stories: 12
+    agent_distribution:
+      - phase: 0
+        stories: 4
+        agents_per_story: 3  # Each story handled by 3 parallel agents
+        total_agents: 12
+
+      - phase: 1
+        stories: 3
+        agents_per_story: 4  # Architecture work needs more coordination
+        total_agents: 12
+
+      - phase: 2
+        stories: 5
+        agents_per_story: 3  # Critical blockers need focused attention
+        total_agents: 15
+
+    skills_invoked:
+      - systematic-debugging
+      - global-error-handling
+      - frontend-accessibility
+      - architecture-remediation
+      - brainstorming
+
+    mcp_tools_leveraged:
+      - context7: For framework docs (Zustand, TanStack Router)
+      - deepwiki: For semantic codebase understanding
+      - repomix: For codebase analysis
+      - zread: For GitHub repo reading
+      - web-search-prime: For latest patterns
+
+  # Group B: Architecture + Health (can run in parallel - 4 hours)
+  group_b_architecture_health:
+    phases: [3, 4, 6]
+    max_concurrent_agents: 30
+    timeline: "Hour 4-8"
+    stories: 9
+    agent_distribution:
+      - phase: 3  # God store elimination
+        stories: 4
+        agents_per_story: 5  # Each god store gets 5 parallel agents
+        sub_task_distribution:
+          - agent_1: Analyze dependencies
+          - agent_2: Extract bounded contexts
+          - agent_3: Create slices
+          - agent_4: Implement facades
+          - agent_5: Update imports and test
+        total_agents: 20
+
+      - phase: 4  # Store consolidation
+        stories: 3
+        agents_per_story: 4  # Consolidation needs coordination
+        total_agents: 12
+
+      - phase: 6  # TypeScript error fixing
+        stories: 2
+        agents_per_story: 5  # Parallel error fixing batches
+        error_batching:
+          - batch_1: 150 errors → 3 agents (50 errors each)
+          - batch_2: 156 errors → 3 agents (52 errors each)
+        total_agents: 10
+
+    skills_invoked:
+      - architecture-remediation
+      - global-coding-style
+      - test-driven-development
+      - requesting-code-review
+      - receiving-code-review
+
+    mcp_tools_leveraged:
+      - context7: For TypeScript best practices
+      - repomix: For codebase grep and analysis
+      - zread: For understanding dependency patterns
+
+  # Group C: Chat Integration (can run in parallel with Group B - 4 hours)
+  group_c_chat_integration:
+    phases: [5, 8, 9]
+    max_concurrent_agents: 25
+    timeline: "Hour 4-8"
+    stories: 10
+    runs_parallel_with: "group_b_architecture_health"
+    agent_distribution:
+      - phase: 5  # Chat Epic 1
+        stories: 2
+        agents_per_story: 5  # UI integration needs many specialists
+        total_agents: 10
+
+      - phase: 8  # Chat Epic 2
+        stories: 3
+        agents_per_story: 4  # Multimodal needs API integrations
+        total_agents: 12
+
+      - phase: 9  # Testing
+        stories: 5
+        agents_per_story: 3  # Test writing is parallelizable
+        total_agents: 15
+
+    skills_invoked:
+      - frontend-components
+      - frontend-css
+      - testing-test-writing
+      - test-driven-development
+      - brainstorming
+
+    mcp_tools_leveraged:
+      - context7: For React, Web Speech API, vision APIs
+      - deepwiki: For framework-specific patterns
+      - web-reader: For API documentation
+
+  # Group D: Advanced Features (can run in parallel - 8 hours)
+  group_d_advanced_features:
+    phases: [7, 10]
+    max_concurrent_agents: 40
+    timeline: "Hour 8-16"
+    stories: 33
+    agent_distribution:
+      - phase: 7  # Infrastructure hardening
+        stories: 4
+        agents_per_story: 3
+        total_agents: 12
+
+      - phase: 10  # Advanced chat features (Epics 4-7)
+        stories: 29
+        agents_per_story: 2  # Each story gets 2 agents working in parallel
+        epic_distribution:
+          - epic_4_agentic_workflows: 10 stories → 20 agents
+          - epic_5_rich_media: 7 stories → 14 agents
+          - epic_6_research: 7 stories → 14 agents
+          - epic_7_web_grounding: 5 stories → 10 agents
+        total_agents: 58
+
+    skills_invoked:
+      - backend-migrations
+      - backend-queries
+      - frontend-accessibility
+      - global-validation
+      - brainstorming
+
+    mcp_tools_leveraged:
+      - context7: For agentic patterns, research APIs
+      - web-search-prime: For web grounding sources
+      - deepwiki: For understanding complex patterns
+
+  # Group E: Polish & Validation (can run in parallel - 8 hours)
+  group_e_polish_validation:
+    phases: [11, 12]
+    max_concurrent_agents: 35
+    timeline: "Hour 16-24"
+    stories: 23
+    agent_distribution:
+      - phase: 11  # Final polish (Epics 8-10 + governance)
+        stories: 22
+        agents_per_story: 2  # Polish work is parallelizable
+        total_agents: 44
+
+      - phase: 12  # Final validation
+        stories: 1
+        agents_per_story: 10  # All scanners run in parallel
+        scanner_distribution:
+          - state_scanner: 1 agent
+          - architecture_scanner: 1 agent
+          - types_scanner: 1 agent
+          - ux_scanner: 1 agent
+          - persistence_scanner: 1 agent
+          - security_scanner: 1 agent
+          - performance_scanner: 1 agent
+          - workspace_scanner: 1 agent
+          - agent_rag_scanner: 1 agent
+          - evidence_synthesizer: 1 agent
+        total_agents: 10
+
+    skills_invoked:
+      - code-documentation
+      - frontend-components
+      - global-conventions
+      - requesting-code-review
+
+    mcp_tools_leveraged:
+      - All MCP servers for final validation
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AGENT ORCHESTRATION STRATEGY
+# ═══════════════════════════════════════════════════════════════════════════
+
+agent_orchestration:
+  spawn_strategy: "tree-based"
+  parent_agent: "bmad-core-bmad-master"
+
+  agent_hierarchy:
+    level_1_coordinators: 5  # 5 master coordinators for each group
+      - coordinator_foundation: "Group A (Phases 0-2)"
+      - coordinator_architecture: "Group B (Phases 3-4-6)"
+      - coordinator_chat: "Group C (Phases 5-8-9)"
+      - coordinator_advanced: "Group D (Phases 7-10)"
+      - coordinator_polish: "Group E (Phases 11-12)"
+
+    level_2_phase_leads: 12  # 1 lead agent per phase
+      - phase_0_lead: "architecture-remediation/workspace-architect"
+      - phase_1_lead: "architecture-remediation/file-sync-specialist"
+      - phase_2_lead: "deep-scan/security-scanner"
+      - phase_3_lead: "architecture-remediation/store-refactorer"
+      - phase_4_lead: "architecture-remediation/store-refactorer"
+      - phase_5_lead: "bmm/dev"
+      - phase_6_lead: "architecture-remediation/typescript-fixer"
+      - phase_7_lead: "bmm/dev"
+      - phase_8_lead: "bmm/dev"
+      - phase_9_lead: "testing/test-writer"
+      - phase_10_lead: "bmm/architect"
+      - phase_11_lead: "bmm/ux-designer"
+      - phase_12_lead: "deep-scan/all-scanners"
+
+    level_3_story_agents: 200+  # 2-5 agents per story × 73 stories
+      each_story:
+        - agent_implementation: "Writes code"
+        - agent_testing: "Writes tests"
+        - agent_review: "Reviews code"
+        - agent_validation: "Validates against requirements"
+
+    level_4_micro_task_agents: 500+  # Sub-agents for micro-tasks
+      each_component:
+        - agent_dependencies: "Analyzes imports"
+        - agent_types: "Fixes TypeScript errors"
+        - agent_styling: "Applies design system"
+        - agent_i18n: "Adds translations"
+        - agent_docs: "Writes documentation"
+
+  total_active_agents: 750+  # All agents can run in parallel
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ITERATION STRATEGY
+# ═══════════════════════════════════════════════════════════════════════════
+
+iteration_strategy:
+  cycle_duration: "30 seconds"  # Each iteration cycle is 30 seconds
+  cycles_per_hour: 120
+  total_hours: 8
+  total_cycles: 960
+
+  per_cycle_activities:
+    second_0_5: "Coordinators spawn agents"
+    second_5_15: "Agents execute micro-tasks"
+    second_15_20: "Agents report progress"
+    second_20_25: "Code review and validation"
+    second_25_30: "Checkpoint and governance enforcement"
+
+  guardrails:
+    - check: "TypeScript errors"
+      threshold: 0
+      action_on_fail: "Rollback and retry"
+
+    - check: "God store/component creation"
+      threshold: 0
+      action_on_fail: "Refactor immediately"
+
+    - check: "Test coverage"
+      threshold: 0.8
+      action_on_fail: "Add more tests"
+
+    - check: "Performance regression"
+      threshold: 20  # percent
+      action_on_fail: "Optimize before continuing"
+
+    - check: "Security vulnerabilities"
+      threshold: 0  # critical
+      action_on_fail: "Fix before continuing"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SKILL INVOCATION MATRIX
+# ═══════════════════════════════════════════════════════════════════════════
+
+skill_invocation_strategy:
+  total_skills_available: 228
+  skills_per_story: 5-10  # Each story invokes 5-10 relevant skills
+
+  by_story_type:
+    implementation_stories:
+      skills:
+        - brainstorming  # Design approach
+        - test-driven-development  # TDD approach
+        - systematic-debugging  # Debug issues
+        - global-coding-style  # Clean code
+        - global-error-handling  # Proper error handling
+        - requesting-code-review  # Get review
+        - receiving-code-review  # Address feedback
+
+    architecture_stories:
+      skills:
+        - brainstorming  # Architecture design
+        - writing-plans  # Create ADRs
+        - architecture-remediation  # Execute patterns
+        - frontend-accessibility  # Accessible design
+        - global-validation  # Input validation
+
+    testing_stories:
+      skills:
+        - testing-test-writing  # Write tests
+        - test-driven-development  # TDD workflow
+        - systematic-debugging  # Debug test failures
+
+    ui_ux_stories:
+      skills:
+        - brainstorming  # UX design
+        - frontend-components  # React components
+        - frontend-css  # Tailwind styling
+        - frontend-accessibility  # WCAG compliance
+        - global-conventions  # Design system
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MCP SERVER ORCHESTRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+mcp_orchestration:
+  total_mcp_servers: 10
+  calls_per_cycle: 50+  # 50+ MCP tool calls per 30-second cycle
+
+  by_server:
+    context7:
+      usage: "Official documentation research"
+      calls_per_cycle: 10
+      tools:
+        - resolve-library-id
+        - query-docs
+      use_cases:
+        - "Zustand store patterns"
+        - "TanStack Router best practices"
+        - "React component patterns"
+        - "TypeScript advanced types"
+
+    deepwiki:
+      usage: "Semantic codebase understanding"
+      calls_per_cycle: 8
+      tools:
+        - search_deepwiki
+        - ask_repository
+      use_cases:
+        - "Understanding agent architecture"
+        - "Researching file sync patterns"
+        - "Analyzing state management"
+
+    repomix:
+      usage: "Codebase analysis at scale"
+      calls_per_cycle: 15
+      tools:
+        - pack_codebase
+        - grep_repomix_output
+        - attach_packed_output
+      use_cases:
+        - "God store detection"
+        - "Import dependency analysis"
+        - "Code duplication detection"
+
+    zread:
+      usage: "GitHub repository research"
+      calls_per_cycle: 5
+      tools:
+        - get_repo_structure
+        - read_file
+        - search_doc
+      use_cases:
+        - "Researching dependency patterns"
+        - "Understanding framework internals"
+
+    web_search_prime:
+      usage: "Latest patterns and solutions"
+      calls_per_cycle: 5
+      tools:
+        - webSearchPrime
+      use_cases:
+        - "Researching best practices"
+        - "Finding solutions to errors"
+
+    web_reader:
+      usage: "API documentation retrieval"
+      calls_per_cycle: 3
+      tools:
+        - webReader
+      use_cases:
+        - "Reading API docs"
+        - "Understanding integration patterns"
+
+    others:
+      - neon: "Database operations"
+      - supabase: "Backend services"
+      - mini_max: "Image analysis"
+      - zai_mcp: "Video analysis"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MODULE ORCHESTRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+module_orchestration:
+  modules_available:
+    architecture-remediation:
+      path: "_bmad/modules/architecture-remediation/"
+      agents: 5  # store-refactorer, component-splitter, workspace-architect, etc.
+      workflows: 5
+
+    deep-scan:
+      path: "_bmad/modules/deep-scan/"
+      agents: 10  # state-scanner, architecture-scanner, etc.
+      workflows: 3
+
+    asgl:
+      path: "_bmad/modules/asgl/"
+      agents: 2  # coordinator, governance-updater
+      workflows: 3
+
+    quality:
+      path: "_bmad/modules/quality/"
+      agents: 3  # test-writer, test-automator, code-reviewer
+      workflows: 2
+
+    governance:
+      path: "_bmad/modules/governance/"
+      workflows: 2
+
+  module_invocation_strategy:
+    architecture-remediation:
+      concurrent_workflows: 5  # All workflows can run in parallel
+      stories_per_workflow: 8
+      total_capacity: "40 stories simultaneously"
+
+    deep-scan:
+      concurrent_workflows: 3  # All scanners run in parallel
+      scan_targets: "entire codebase"
+      total_capacity: "unlimited scans"
+
+    quality:
+      concurrent_workflows: 2  # Test writing + review
+      stories_per_workflow: 10
+      total_capacity: "20 stories tested simultaneously"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE & CHECKPOINTS
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance_enforcement:
+  frequency: "every 30 seconds"
+  automated_checks: 10
+
+  checkpoints:
+    - name: "typescript_check"
+      tool: "pnpm typecheck"
+      pass_criteria: "0 errors in production code"
+      run_frequency: "every_cycle"
+
+    - name: "test_coverage"
+      tool: "npm run test:coverage"
+      pass_criteria: "≥80% coverage"
+      run_frequency: "every_10_cycles"
+
+    - name: "god_store_detection"
+      tool: "find src -name '*-store.ts' -exec wc -l {} \;"
+      pass_criteria: "0 files >300 lines"
+      run_frequency: "every_5_cycles"
+
+    - name: "god_component_detection"
+      tool: "find src -name '*.tsx' -exec wc -l {} \;"
+      pass_criteria: "0 files >300 lines"
+      run_frequency: "every_5_cycles"
+
+    - name: "design_system_check"
+      tool: "grep -r 'backdrop-blur' src --include='*.tsx'"
+      pass_criteria: "0 matches"
+      run_frequency: "every_cycle"
+
+    - name: "i18n_check"
+      tool: "grep -r '>[A-Z][a-z]' src --include='*.tsx' | grep -v 't(' | head -20"
+      pass_criteria: "0 hardcoded strings"
+      run_frequency: "every_10_cycles"
+
+    - name: "performance_check"
+      tool: "npm run lighthouse"
+      pass_criteria: "L1 targets met"
+      run_frequency: "every_30_cycles"
+
+    - name: "security_check"
+      tool: "npm run audit"
+      pass_criteria: "0 critical vulnerabilities"
+      run_frequency: "every_30_cycles"
+
+    - name: "build_check"
+      tool: "pnpm build"
+      pass_criteria: "build succeeds"
+      run_frequency: "every_20_cycles"
+
+    - name: "e2e_check"
+      tool: "npm run test:e2e"
+      pass_criteria: "100% passing"
+      run_frequency: "every_50_cycles"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# REAL-TIME PROGRESS TRACKING
+# ═══════════════════════════════════════════════════════════════════════════
+
+progress_tracking:
+  update_frequency: "every 30 seconds"
+  dashboard_updates: "real-time"
+
+  metrics_tracked:
+    - stories_completed: "0 / 108"
+    - phases_completed: "0 / 12"
+    - hours_elapsed: "0 / 8"
+    - active_agents: "0 / 750"
+    - cycles_completed: "0 / 960"
+    - typescript_errors: "306 → 0"
+    - god_stores: "69 → 0"
+    - god_components: "45 → 0"
+    - test_coverage: "16.6% → 80%"
+    - health_score: "46.4% → 95%"
+
+  realtime_notifications:
+    - "Story completed"
+    - "Phase completed"
+    - "Checkpoint failed (rollback)"
+    - "Milestone reached"
+    - "Error detected"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONTINUATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+continuation:
+  next_action: "Execute Phase 0 - Foundation (Group A): Launch 20 parallel agents"
+  blocked_by: null
+  user_approval_needed: false
+  execution_started_at: "2026-01-06T06:00:00+07:00"
+
+  resume_prompt: |
+    MASTER INTEGRATION LOOP - VELOCITY EDITION
+    =========================================
+
+    Full Comprehensive Plan (35 days work) → 1 Day Execution
+    Through: Massive parallelization + autonomous orchestration
+
+    Execution Strategy:
+    - 750+ agents running in parallel
+    - 228+ skills invoked per story
+    - 50+ MCP tool calls per cycle
+    - 30-second iteration cycles
+    - 960 total cycles in 8 hours
+
+    Parallel Groups:
+    - Group A: Foundation (Hour 0-4) - 20 agents
+    - Group B: Architecture + Health (Hour 4-8) - 30 agents
+    - Group C: Chat Integration (Hour 4-8) - 25 agents (parallel with B)
+    - Group D: Advanced Features (Hour 8-16) - 40 agents
+    - Group E: Polish + Validation (Hour 16-24) - 35 agents
+
+    To approve: Reply with "APPROVE - Execute VELOCITY Autonomous Loop"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+metadata:
+  created_at: "2026-01-06T05:00:00+07:00"
+  created_by: "BMAD Master Coordinator - Velocity Edition"
+  version: "2.0.0-VELOCITY"
+  framework: "BMAD V6 + ASGL v3.0 + Maximum Parallelization"
+
+  artifacts:
+    - master_plan: "_bmad-output/governance/MASTER-INTEGRATION-PLAN-2026-01-06.md"
+    - velocity_config: "_bmad/modules/asgl/MASTER-INTEGRATION-LOOP-VELOCITY.yaml"
+    - original_config: "_bmad/modules/asgl/MASTER-INTEGRATION-LOOP-CONFIG.yaml"
+
+  execution_capabilities:
+    total_agents: 750+
+    total_skills: 228
+    total_mcp_servers: 10
+    total_modules: 5
+    total_workflows: 15
+    parallel_capacity: "unlimited"

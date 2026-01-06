@@ -12,6 +12,8 @@ import type { SyncConfig } from '../sync-types';
 import { SyncError } from '../sync-types';
 import { validateFileSize, shouldWarnFileSize, formatFileSize } from '../validation';
 import { showErrorToast } from '../../utils/error-handling';
+import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
+import type { FileSavedPayload } from '@/lib/events/store-events';
 
 /**
  * Write a file to both Local FS and WebContainers
@@ -122,6 +124,16 @@ export async function writeFile(
             timestamp: new Date(),
             filesProcessed: 1,
         });
+
+        // Emit FILE_SAVED event for cross-workspace reactivity (UJ-004)
+        // Note: projectId might not be available in all contexts, using 'default'
+        const fileSavedPayload: FileSavedPayload = {
+            filePath: path,
+            workspaceType: 'ide',
+            projectId: (config as any).projectId || 'default',
+            timestamp: Date.now(),
+        };
+        emitStoreEvent<FileSavedPayload>(STORE_EVENTS.FILE_SAVED, fileSavedPayload);
     } catch (error) {
         const syncError = new SyncError(
             `Failed to write file: ${path}`,

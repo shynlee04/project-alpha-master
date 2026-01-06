@@ -24,6 +24,9 @@ import '@blocknote/core/fonts/inter.css';
 import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils'; // Keep existing imports
+import { Save } from 'lucide-react';
+import { Button } from '@/presentation/components/ui/button';
+import { toast } from 'sonner';
 
 import { getCustomSlashMenuItems } from './AISlashCommand';
 import { NoteStudyMenu } from './NoteStudyMenu';
@@ -96,6 +99,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const note = notes.get(noteId);
     const saveStatus = useNoteSaveStatus();
     const isIndexing = useIsNoteIndexing(noteId);
+    const isNoteDirty = useNoteStore((state) => state.isNoteDirty(noteId));
+    const saveNoteToFile = useNoteStore((state) => state.saveNoteToFile);
 
     // Get initial content from note
     const initialContent = useMemo(() => {
@@ -130,8 +135,33 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         debouncedSave(blocks);
     }, [editor, debouncedSave, readOnly]);
 
+    // Handle manual save to file
+    const handleManualSave = useCallback(async () => {
+        try {
+            await saveNoteToFile(noteId);
+            toast.success(t('notes.savedToFile', 'Saved to file'));
+        } catch (error) {
+            console.error('[NoteEditor] Manual save failed:', error);
+            toast.error(
+                t('notes.saveToFileFailed', 'Failed to save to file'),
+                {
+                    description: error instanceof Error ? error.message : 'Unknown error',
+                }
+            );
+        }
+    }, [noteId, saveNoteToFile, t]);
+
     // Render save status indicator
     const renderSaveStatus = () => {
+        // Show dirty indicator if note has unsaved changes
+        if (isNoteDirty) {
+            return (
+                <span className="note-editor__status note-editor__status--dirty">
+                    {t('notes.unsaved', 'Unsaved changes')}
+                </span>
+            );
+        }
+
         switch (saveStatus) {
             case 'saving':
                 return (
@@ -189,6 +219,20 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 <div className="note-editor__status-spacer" />
                 <div className="flex items-center gap-2">
                     <NoteStudyMenu noteId={noteId} />
+                    {/* UJ-003: Manual save button with >=44px touch target */}
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleManualSave}
+                        disabled={!isNoteDirty}
+                        className="h-11 px-3" // 44px min height for mobile
+                        title={t('notes.saveToFile', 'Save to file')}
+                    >
+                        <Save size={16} className="mr-1" />
+                        <span className="hidden sm:inline">
+                            {t('notes.save', 'Save')}
+                        </span>
+                    </Button>
                     {renderSaveStatus()}
                 </div>
             </div>
