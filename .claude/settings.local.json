@@ -15,8 +15,22 @@
       "Bash(pnpm typecheck:*)",
       "Bash(wc:*)",
       "Bash(chmod:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(bash .claude/hooks/*)"
     ]
   },
-  "outputStyle": "critical-code-reviewer"
+  "outputStyle": "critical-code-reviewer",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/context-bridge.sh"
+          }
+        ]
+      }
+    ]
+  }
 }

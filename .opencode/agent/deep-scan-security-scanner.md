@@ -1,8 +1,21 @@
 ---
 name: deep-scan-security-scanner
-description: Specialized scanner for security diagnostics. Use when:\n\n- Detecting secret leaks (API keys, tokens)\n- Finding XSS vulnerabilities\n- Identifying unsafe file operations\n- Auditing input validation gaps\n\nAuto-activation triggers:\n- "secret leak", "api key exposed", "xss"\n- "security vulnerability", "unsafe file op"\n- "input validation", "csrf protection"\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/security-scanner.md
+description: |
+  Specialized scanner for security diagnostics. Use when:
+
+  - Detecting secret leaks (API keys, tokens)
+  - Finding XSS vulnerabilities
+  - Identifying unsafe file operations
+  - Auditing input validation gaps
+
+  Auto-activation triggers:
+  - "secret leak", "api key exposed", "xss"
+  - "security vulnerability", "unsafe file op"
+  - "input validation", "csrf protection"
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/security-scanner.md
 model: sonnet
-color: red
+color: "#FF0000"
 ---
 
 # Security Scanner Agent

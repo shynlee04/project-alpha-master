@@ -37,6 +37,7 @@ export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cance
 export interface TaskContextRecord {
     id: string;
     projectId: string;
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     agentId: string;           // Which agent is executing
     status: TaskStatus;
     description: string;       // Human-readable task description
@@ -56,6 +57,7 @@ export interface TaskContextRecord {
 export interface ToolExecutionRecord {
     id: string;
     taskId: string;            // Reference to TaskContext
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     toolName: string;          // e.g., 'file_read', 'execute_command'
     input: unknown;            // Tool input parameters
     output?: unknown;          // Tool output (null if pending)
@@ -73,6 +75,7 @@ export interface ToolExecutionRecord {
  */
 export interface CredentialRecord {
     providerId: string;         // Primary key (e.g., 'openrouter', 'openai')
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     encrypted: string;          // Base64-encoded encrypted API key
     iv: string;                 // Base64-encoded initialization vector
     createdAt: Date;
@@ -122,6 +125,7 @@ export interface ThreadMessageRecord {
 export interface ConversationThreadRecord {
     id: string;                 // Primary key
     projectId: string;          // Index for project-scoped queries
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     title: string;
     preview: string;            // First 100 chars of last message
     messages: ThreadMessageRecord[];

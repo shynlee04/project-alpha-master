@@ -1,8 +1,21 @@
 ---
 name: deep-scan-architecture-scanner
-description: Specialized scanner for architecture diagnostics. Use when:\n\n- Detecting layer violations\n- Finding god components\n- Identifying feature coupling\n- Auditing clean architecture compliance\n\nAuto-activation triggers:\n- "layer violation", "god component", "architecture"\n- "feature coupling", "clean architecture"\n- 4-layer architecture validation\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/architecture-scanner.md
+description: |
+  Specialized scanner for architecture diagnostics. Use when:
+
+  - Detecting layer violations
+  - Finding god components
+  - Identifying feature coupling
+  - Auditing clean architecture compliance
+
+  Auto-activation triggers:
+  - "layer violation", "god component", "architecture"
+  - "feature coupling", "clean architecture"
+  - 4-layer architecture validation
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/architecture-scanner.md
 model: sonnet
-color: green
+color: "#008000"
 ---
 
 # Architecture Scanner Agent

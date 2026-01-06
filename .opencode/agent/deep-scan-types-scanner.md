@@ -1,8 +1,21 @@
 ---
 name: deep-scan-types-scanner
-description: Specialized scanner for TypeScript diagnostics. Use when:\n\n- Detecting `any` type usage\n- Finding type suppressions (ts-ignore, ts-expect-error)\n- Identifying interface duplication\n- Auditing type safety compliance\n\nAuto-activation triggers:\n- "typescript error", "any type", "ts-ignore"\n- "type safety", "interface duplication"\n- TS error count analysis\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/types-scanner.md
+description: |
+  Specialized scanner for TypeScript diagnostics. Use when:
+
+  - Detecting `any` type usage
+  - Finding type suppressions (ts-ignore, ts-expect-error)
+  - Identifying interface duplication
+  - Auditing type safety compliance
+
+  Auto-activation triggers:
+  - "typescript error", "any type", "ts-ignore"
+  - "type safety", "interface duplication"
+  - TS error count analysis
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/types-scanner.md
 model: sonnet
-color: blue
+color: "#0000FF"
 ---
 
 # Types Scanner Agent

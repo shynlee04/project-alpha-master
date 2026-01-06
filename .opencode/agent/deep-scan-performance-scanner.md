@@ -1,8 +1,21 @@
 ---
 name: deep-scan-performance-scanner
-description: Specialized scanner for performance diagnostics. Use when:\n\n- Detecting bundle bloat\n- Finding render waste\n- Identifying memory leaks\n- Auditing lazy loading gaps\n\nAuto-activation triggers:\n- "bundle size", "performance issue", "render waste"\n- "memory leak", "lazy loading"\n- "slow component", "re-render"\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/performance-scanner.md
+description: |
+  Specialized scanner for performance diagnostics. Use when:
+
+  - Detecting bundle bloat
+  - Finding render waste
+  - Identifying memory leaks
+  - Auditing lazy loading gaps
+
+  Auto-activation triggers:
+  - "bundle size", "performance issue", "render waste"
+  - "memory leak", "lazy loading"
+  - "slow component", "re-render"
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/performance-scanner.md
 model: sonnet
-color: violet
+color: "#EE82EE"
 ---
 
 # Performance Scanner Agent

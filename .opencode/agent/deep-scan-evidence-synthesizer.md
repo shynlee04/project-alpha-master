@@ -1,8 +1,21 @@
 ---
 name: deep-scan-evidence-synthesizer
-description: Aggregates and prioritizes findings from all scanners. Use when:\n\n- Consolidating scan results\n- Generating Risk Register\n- Prioritizing remediation items\n- Detecting duplicate findings\n\nAuto-activation triggers:\n- "aggregate findings", "prioritize risks"\n- "risk register", "remediation backlog"\n- "duplicate detection", "evidence synthesis"\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/evidence-synthesizer.md
+description: |
+  Aggregates and prioritizes findings from all scanners. Use when:
+
+  - Consolidating scan results
+  - Generating Risk Register
+  - Prioritizing remediation items
+  - Detecting duplicate findings
+
+  Auto-activation triggers:
+  - "aggregate findings", "prioritize risks"
+  - "risk register", "remediation backlog"
+  - "duplicate detection", "evidence synthesis"
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/evidence-synthesizer.md
 model: sonnet
-color: magenta
+color: "#FF00FF"
 ---
 
 # Evidence Synthesizer Agent

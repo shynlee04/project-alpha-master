@@ -1,8 +1,21 @@
 ---
 name: deep-scan-ux-scanner
-description: Specialized scanner for UX & accessibility diagnostics. Use when:\n\n- Detecting i18n violations (hardcoded strings)\n- Finding accessibility issues\n- Identifying responsive design failures\n- Auditing mobile UX gaps\n\nAuto-activation triggers:\n- "hardcoded string", "i18n violation", "a11y"\n- "accessibility", "responsive issue", "mobile ux"\n- "aria violation", "touch target"\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/ux-scanner.md
+description: |
+  Specialized scanner for UX & accessibility diagnostics. Use when:
+
+  - Detecting i18n violations (hardcoded strings)
+  - Finding accessibility issues
+  - Identifying responsive design failures
+  - Auditing mobile UX gaps
+
+  Auto-activation triggers:
+  - "hardcoded string", "i18n violation", "a11y"
+  - "accessibility", "responsive issue", "mobile ux"
+  - "aria violation", "touch target"
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/ux-scanner.md
 model: sonnet
-color: cyan
+color: "#00FFFF"
 ---
 
 # UX Scanner Agent

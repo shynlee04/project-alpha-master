@@ -1,8 +1,21 @@
 ---
 name: deep-scan-agent-rag-scanner
-description: Specialized scanner for AI Agent & RAG diagnostics. Use when:\n\n- Detecting tool permission bypasses\n- Finding prompt injection risks\n- Identifying RAG pipeline issues\n- Auditing agent tool safety\n\nAuto-activation triggers:\n- "tool permission", "agent security", "rag pipeline"\n- "prompt injection", "agent tool"\n- "citation safety", "context window"\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/agent-rag-scanner.md
+description: |
+  Specialized scanner for AI Agent & RAG diagnostics. Use when:
+
+  - Detecting tool permission bypasses
+  - Finding prompt injection risks
+  - Identifying RAG pipeline issues
+  - Auditing agent tool safety
+
+  Auto-activation triggers:
+  - "tool permission", "agent security", "rag pipeline"
+  - "prompt injection", "agent tool"
+  - "citation safety", "context window"
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/agent-rag-scanner.md
 model: sonnet
-color: pink
+color: "#FFC0CB"
 ---
 
 # Agent/RAG Scanner Agent

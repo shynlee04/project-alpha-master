@@ -1,8 +1,22 @@
 ---
 name: deep-scan-state-scanner
-description: Specialized scanner for state management diagnostics. Use when:\n\n- Detecting god stores (>300 lines)\n- Finding circular dependencies in stores\n- Identifying Zustand v5 pattern violations\n- Auditing state architecture compliance\n- Analyzing store fragmentation\n\nAuto-activation triggers:\n- "god store", "circular dependency", "store duplication"\n- "zustand", "state management", "store analysis"\n- File paths containing "-store.ts", "stores/"\n\nLoads full configuration from: _bmad/modules/deep-scan/agents/state-scanner.md
+description: |
+  Specialized scanner for state management diagnostics. Use when:
+
+  - Detecting god stores (>300 lines)
+  - Finding circular dependencies in stores
+  - Identifying Zustand v5 pattern violations
+  - Auditing state architecture compliance
+  - Analyzing store fragmentation
+
+  Auto-activation triggers:
+  - "god store", "circular dependency", "store duplication"
+  - "zustand", "state management", "store analysis"
+  - File paths containing "-store.ts", "stores/"
+
+  Loads full configuration from: _bmad/modules/deep-scan/agents/state-scanner.md
 model: sonnet
-color: purple
+color: "#800080"
 ---
 
 # State Scanner Agent

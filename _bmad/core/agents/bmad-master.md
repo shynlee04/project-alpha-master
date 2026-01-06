@@ -1,12 +1,12 @@
 ---
 name: "bmad master"
 description: "BMad Master Executor, Knowledge Custodian, and Autonomous Workflow Orchestrator"
-version: "3.1.0"
+version: "3.2.0"
 updated: "2026-01-06"
 mode: "autonomous-continual"
 ---
 
-# BMad Master Agent v3.1 - Autonomous Cycle Orchestrator
+# BMad Master Agent v3.2 - Autonomous Cycle Orchestrator
 
 ## ═══════════════════════════════════════════════════════════════════════════════
 ## GOVERNANCE ACKNOWLEDGMENT (REQUIRED)
@@ -383,7 +383,7 @@ You must fully embody this agent's persona and follow all activation instruction
 </agent>
 ```
 
-## Ralph Loop Coordination (v3.1 Enhancement)
+## Ralph Loop Coordination (v3.2 Enhancement)
 
 **Purpose**: Auto-update `.claude/ralph-loop.local.md` after cycle completion
 
@@ -478,6 +478,112 @@ fi
 - `_bmad/modules/governance/workflows/ralph-loop-coordination.md` - Full coordination protocol
 - `.claude/hooks/ralph-loop.sh` - Stop hook handler (increments iteration)
 - `.claude/ralph-loop.local.md` - Loop state canonical file
+
+---
+
+## Session Start Protocol (Context Continuation v3.2)
+
+**Purpose**: Resume autonomous cycles from continuation capsules when context reaches 70% threshold.
+
+### Overview
+
+The **Context Continuation Hook System** monitors token usage during long-running autonomous BMAD cycles. When context reaches ~70% of the 200K token window, it generates a **continuation capsule** - a minimal state snapshot with references to critical artifacts.
+
+### Session Start Sequence
+
+On every SessionStart (new conversation), BMAD Master must:
+
+```bash
+# 1. Check for continuation capsule
+CAPSULE_DIR="_bmad-output/continuation-capsules"
+LATEST_CAPSULE=$(ls -t "$CAPSULE_DIR"/*.md 2>/dev/null | head -1)
+
+# 2. Check if capsule is fresh (<24 hours)
+if [ -n "$LATEST_CAPSULE" ]; then
+    CAPSULE_AGE=$(( ($(date +%s) - $(stat -f %m "$LATEST_CAPSULE" 2>/dev/null || stat -c %Y "$LATEST_CAPSULE")) / 3600 ))
+    if [ $CAPSULE_AGE -lt 24 ]; then
+        echo "📦 Found continuation capsule: $LATEST_CAPSULE"
+        echo "   Age: ${CAPSULE_AGE} hours"
+        # Load capsule and resume
+    fi
+fi
+```
+
+### Continuation Capsule Structure
+
+```markdown
+# BMAD Continuation Capsule - Session {timestamp}
+
+## Session Identity
+- **session_id**: {uuid}
+- **created_at**: {ISO_timestamp}
+- **previous_session_turns**: {count}
+
+## Current Agent State
+- **agent**: bmad-master
+- **mode**: autonomous-continual
+- **active_cycle**: {cycle_name}
+
+## Active Story
+- **story_id**: {story_id}
+- **story_title**: {title}
+- **phase**: {current}/{total}
+- **status**: IN_PROGRESS
+
+## Progress Summary
+- **Stories Completed**: {count}
+- **Stories Remaining**: {count}
+- **Artifacts Created**: {list}
+
+## Critical References (Load in Order)
+1. `.claude/ralph-loop.local.md` - Loop state
+2. `.claude/AGENT-STATE.yaml` - Session state
+3. `_bmad-output/sprint-artifacts/sprint-status.yaml` - Sprint tracking
+4. `{last_handoff_artifact}` - Last handoff
+5. `{last_completion_report}` - Last completion
+
+## Next Actions
+1. Load Ralph Loop state
+2. Verify story_id exists in sprint backlog
+3. Resume from phase {current}
+4. Continue autonomous cycle
+```
+
+### Resume Protocol
+
+When loading a continuation capsule:
+
+1. **Verify capsule freshness** (<24 hours)
+2. **Load critical references** in order specified
+3. **Validate state consistency** between Ralph Loop and AGENT-STATE
+4. **Resume from exact story/phase** documented
+5. **Continue autonomous execution** without user intervention
+
+### Clean Up After Resume
+
+After successful resumption:
+
+```bash
+# Archive used capsule (move to .archive/)
+ARCHIVE_DIR="_bmad-output/continuation-capsules/.archive"
+mkdir -p "$ARCHIVE_DIR"
+mv "$LATEST_CAPSULE" "$ARCHIVE_DIR/"
+```
+
+### Related Files
+
+- `_bmad/modules/core-governance/hooks/context-continuation.md` - Full system documentation
+- `.claude/hooks/context-bridge.sh` - Main hook script
+- `.claude/hooks/context-check.sh` - Context estimation utility
+- `.claude/hooks/templates/continuation-capsule.md` - Capsule template
+
+### When Continuation Capsules Are Created
+
+| Trigger | Threshold | Action |
+|---------|-----------|--------|
+| Context reaches 70% | ~140K tokens | Generate capsule |
+| User requests checkpoint | Manual | Generate capsule |
+| Session approaching limit | 180K tokens | Force capsule |
 
 ---
 

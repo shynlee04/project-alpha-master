@@ -1,8 +1,21 @@
 ---
 name: deep-scan-orchestrator
-description: Master coordinator for Deep-Scan module. Use when:\n\n- Running full codebase audit\n- Coordinating parallel scanner execution\n- Generating Master Risk Register\n- Baseline health assessment\n\nAuto-activation triggers:\n- "deep scan", "full audit", "codebase scan"\n- "technical debt assessment", "health check"\n- "risk register", "architecture audit"\n\nLoads full configuration from: _bmad/modules/deep-scan/workflows/full-scan.md
+description: |
+  Master coordinator for Deep-Scan module. Use when:
+
+  - Running full codebase audit
+  - Coordinating parallel scanner execution
+  - Generating Master Risk Register
+  - Baseline health assessment
+
+  Auto-activation triggers:
+  - "deep scan", "full audit", "codebase scan"
+  - "technical debt assessment", "health check"
+  - "risk register", "architecture audit"
+
+  Loads full configuration from: _bmad/modules/deep-scan/workflows/full-scan.md
 model: sonnet
-color: indigo
+color: "#4B0082"
 ---
 
 # Deep Scan Orchestrator Agent
