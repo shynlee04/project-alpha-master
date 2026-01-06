@@ -8,7 +8,7 @@
  * @story S-033 - Notification System with Toast/Badge
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bell,
@@ -19,7 +19,6 @@ import {
   Filter,
   ChevronDown,
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useNotificationStore } from '@/infrastructure/persistence/stores/notification-store';
 import type { Notification, NotificationType, NotificationAction } from '@/lib/notifications/types';
@@ -65,8 +64,6 @@ function formatRelativeTime(timestamp: number): string {
  * Get notification icon based on type
  */
 function getNotificationIcon(type: Notification['type']) {
-  const iconClass = 'size-4 flex-shrink-0';
-
   switch (type) {
     case 'success':
       return '✓';
@@ -273,11 +270,6 @@ export function NotificationCenter({ open = false, onClose, position = 'right' }
   // Handle mark all as read
   const handleMarkAllAsRead = () => {
     markAllAsRead();
-  };
-
-  // Handle clear all
-  const handleClearAll = () => {
-    clearAll();
   };
 
   // Handle clear filtered

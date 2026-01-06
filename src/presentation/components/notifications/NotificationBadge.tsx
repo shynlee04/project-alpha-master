@@ -9,7 +9,6 @@
  * @story S-033 - Notification System with Toast/Badge
  */
 
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';

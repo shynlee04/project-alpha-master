@@ -69,11 +69,10 @@ export const useAnalyticsStore = create<AnalyticsState>()(
         await get().refreshData();
       },
 
-      setCustomDateRange: async (start: Date, end: Date) => {
+      setCustomDateRange: async (start: Date, _end: Date) => {
         set({
           timeRange: 'custom',
           customStartDate: start,
-          customEndDate: end,
         });
         await get().refreshData();
       },

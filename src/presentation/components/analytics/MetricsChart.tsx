@@ -39,7 +39,7 @@ export function LineChart({ data, className, height = 200 }: ChartProps) {
       const x = (i / (data.length - 1)) * (width - maxLabelWidth - 20) + maxLabelWidth + 10;
       const y = height - (d.value / maxValue) * (height - 40) - 20;
       return `${x},${y}`;
-    });
+    }).join(' ');
 
     return { width, points, maxLabelWidth };
   }, [data, height]);
@@ -188,7 +188,7 @@ export function BarChart({ data, className, height = 200 }: ChartProps) {
  * Pie Chart - Shows distribution
  */
 export function PieChart({ data, className }: ChartProps) {
-  const { segments, total } = useMemo(() => {
+  const { segments } = useMemo(() => {
     const total = data.reduce((sum, d) => sum + d.value, 0) || 1;
     let currentAngle = 0;
 

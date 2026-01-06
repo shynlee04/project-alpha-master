@@ -12,7 +12,6 @@
 import type {
   Notification,
   NotificationManagerConfig,
-  NotificationAction,
   NotificationType,
 } from './types';
 import { useNotificationStore } from '@/infrastructure/persistence/stores/notification-store';
@@ -301,7 +300,8 @@ class NotificationManagerClass {
     }
 
     try {
-      navigator.vibrate(this.config.vibrationPattern);
+      const pattern = this.config.vibrationPattern || [200, 100, 200];
+      navigator.vibrate(pattern);
     } catch (error) {
       console.warn('[NotificationManager] Vibration failed:', error);
     }

@@ -16,7 +16,6 @@ import type {
   NotificationStoreActions,
   NotificationFilter,
   NotificationType,
-  NotificationPriority,
 } from '@/lib/notifications/types';
 
 /**
@@ -85,9 +84,10 @@ export const useNotificationStore = create<NotificationState>()(
 
             if (existingIndex !== -1) {
               // Update existing grouped notification
+              const existing = updated[existingIndex];
               updated[existingIndex] = {
-                ...updated[existingIndex],
-                groupCount: (updated[existingIndex].groupCount || 1) + 1,
+                ...existing,
+                groupCount: (existing.groupCount || 1) + 1,
                 createdAt: Date.now(),
                 message: notification.message,
               };
@@ -157,7 +157,7 @@ export const useNotificationStore = create<NotificationState>()(
       /**
        * Group similar notifications
        */
-      groupNotifications: (groupKey) => {
+      groupNotifications: (_groupKey) => {
         // This is handled automatically in addNotification
         // This method can be used to manually trigger grouping
         console.warn('[NotificationStore] Manual grouping not implemented, use addNotification with groupKey');
@@ -336,4 +336,4 @@ export const useFilteredNotifications = (filter: NotificationFilter) =>
  * Get notifications by type
  */
 export const useNotificationsByType = (type: NotificationType | NotificationType[]) =>
-  useNotificationStore((state) => state.getByType(type));
+  useNotificationStore((state) => state.getByType(type as NotificationType));

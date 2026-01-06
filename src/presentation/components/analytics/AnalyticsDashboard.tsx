@@ -21,7 +21,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAnalytics, TimeRange } from '@/hooks/useAnalytics';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import type { TimeRange } from '@/infrastructure/persistence/stores/analytics-store';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { Button } from '@/presentation/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -72,10 +73,10 @@ export function AnalyticsDashboard() {
       };
     }
 
-    const totalSessions = dailyMetrics.reduce((sum, d) => sum + d.sessions, 0);
-    const totalDuration = dailyMetrics.reduce((sum, d) => sum + d.totalDuration, 0);
-    const totalFilesEdited = dailyMetrics.reduce((sum, d) => sum + d.filesEdited, 0);
-    const totalCommands = dailyMetrics.reduce((sum, d) => sum + d.commandsRun, 0);
+    const totalSessions = dailyMetrics.reduce((sum: number, d: any) => sum + d.sessions, 0);
+    const totalDuration = dailyMetrics.reduce((sum: number, d: any) => sum + d.totalDuration, 0);
+    const totalFilesEdited = dailyMetrics.reduce((sum: number, d: any) => sum + d.filesEdited, 0);
+    const totalCommands = dailyMetrics.reduce((sum: number, d: any) => sum + d.commandsRun, 0);
 
     return {
       totalSessions,
@@ -89,14 +90,14 @@ export function AnalyticsDashboard() {
 
   // Prepare chart data
   const filesEditedData = useMemo(() => {
-    return dailyMetrics.slice(-14).map((d) => ({
+    return dailyMetrics.slice(-14).map((d: any) => ({
       label: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       value: d.filesEdited,
     }));
   }, [dailyMetrics]);
 
   const sessionDurationData = useMemo(() => {
-    return dailyMetrics.slice(-14).map((d) => ({
+    return dailyMetrics.slice(-14).map((d: any) => ({
       label: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       value: Math.round(d.totalDuration / 1000 / 60), // Convert to minutes
     }));
@@ -105,8 +106,8 @@ export function AnalyticsDashboard() {
   const featureUsageData = useMemo(() => {
     const featureMap = new Map<string, number>();
 
-    dailyMetrics.forEach((d) => {
-      Object.entries(d.featuresUsed).forEach(([feature, count]) => {
+    dailyMetrics.forEach((d: any) => {
+      Object.entries(d.featuresUsed || {}).forEach(([feature, count]: [string, any]) => {
         featureMap.set(feature, (featureMap.get(feature) || 0) + count);
       });
     });
@@ -121,7 +122,7 @@ export function AnalyticsDashboard() {
   const heatmapData = useMemo(() => {
     const map = new Map<string, number>();
 
-    dailyMetrics.forEach((d) => {
+    dailyMetrics.forEach((d: any) => {
       map.set(d.date, d.filesEdited + d.commandsRun + d.agentInteractions);
     });
 

@@ -68,7 +68,10 @@ class MetricsCollector {
    */
   async initialize(): Promise<void> {
     // Ensure analytics table exists
-    if (!await db.table('analytics').exists()) {
+    const tables = await db.tables();
+    const analyticsTableExists = tables.some(t => t.name === 'analytics');
+
+    if (!analyticsTableExists) {
       await db.version(1).stores({
         analytics: '++id, timestamp, type',
       });

@@ -49,7 +49,6 @@ export interface NavigationMetric {
 }
 
 class PerformanceMonitor {
-  private navigationStart: number = 0;
   private cacheHits: number = 0;
   private cacheMisses: number = 0;
   private resourceMetrics: Map<string, ResourceMetric> = new Map();
@@ -92,13 +91,13 @@ class PerformanceMonitor {
         const perfData = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
 
         if (perfData) {
-          const loadTime = perfData.loadEventEnd - perfData.navigationStart;
+          const loadTime = perfData.loadEventEnd - perfData.fetchStart;
 
           getMetricsCollector().trackEvent('feature_used', {
             feature: 'app_load',
             details: {
               loadTime,
-              domContentLoaded: perfData.domContentLoadedEventEnd - perfData.navigationStart,
+              domContentLoaded: perfData.domContentLoadedEventEnd - perfData.fetchStart,
               firstPaint: this.getFirstPaint(),
               firstContentfulPaint: this.getFirstContentfulPaint(),
             },
@@ -248,14 +247,14 @@ class PerformanceMonitor {
   /**
    * Record cache hit
    */
-  recordCacheHit(key: string): void {
+  recordCacheHit(_key: string): void {
     this.cacheHits++;
   }
 
   /**
    * Record cache miss
    */
-  recordCacheMiss(key: string): void {
+  recordCacheMiss(_key: string): void {
     this.cacheMisses++;
   }
 

@@ -5,18 +5,18 @@
  * minute hour day-of-month month day-of-week
  *
  * Special characters:
- * - *: Any value
- * - ,: Value list separator (e.g., 1,3,5)
- * - -: Range (e.g., 1-5)
- * - /: Step (e.g., */5 = every 5)
+ * - Asterisk (*): Any value
+ * - Comma (,): Value list separator (e.g., 1,3,5)
+ * - Hyphen (-): Range (e.g., 1-5)
+ * - Slash (/): Step (e.g., slash-5 = every 5)
  *
  * Example schedules:
  * - "0 * * * *" - Every hour
- * - "*/30 * * * *" - Every 30 minutes
+ * - "slash-30 * * * *" - Every 30 minutes
  * - "0 0 * * *" - Daily at midnight
  * - "0 9 * * 1-5" - Weekdays at 9 AM
  * - "0 0 1 * *" - First day of month
- * - "*/15 9-17 * * 1-5" - Every 15 min, 9 AM-5 PM, weekdays
+ * - "slash-15 9-17 * * 1-5" - Every 15 min, 9 AM-5 PM, weekdays
  */
 
 export interface ParsedCronExpression {
@@ -230,39 +230,28 @@ export function validateCronExpression(expression: string): CronValidationResult
  * Get a human-readable description of a cron expression
  */
 export function describeCronExpression(expression: string): string {
-  const parsed = parseCronExpression(expression)
+  try {
+    const parsed = parseCronExpression(expression)
 
-  const describeField = (field: CronField, unit: string): string => {
-    switch (field.type) {
-      case 'any':
-        return `every ${unit}`
-      case 'exact':
-        return `at ${field.values?.[0]} ${unit}`
-      case 'range':
-        return `from ${field.values?.[0]} to ${field.values?.[field.values.length - 1]} ${unit}`
-      case 'list':
-        return `at ${field.values?.join(', ')} ${unit}`
-      case 'step':
-        return `every ${field.step} ${unit}`
+    // Build a simplified description
+    if (parsed.minute.type === 'any' && parsed.hour.type === 'any') {
+      return 'Every minute'
     }
-  }
 
-  // Build a simplified description
-  if (parsed.minute.type === 'any' && parsed.hour.type === 'any') {
-    return 'Every minute'
-  }
+    if (parsed.minute.type === 'step' && parsed.hour.type === 'any') {
+      return `Every ${parsed.minute.step} minutes`
+    }
 
-  if (parsed.minute.type === 'step' && parsed.hour.type === 'any') {
-    return `Every ${parsed.minute.step} minutes`
-  }
+    if (parsed.minute.type === 'exact' && parsed.hour.type === 'exact') {
+      const hour = parsed.hour.values?.[0] ?? 0
+      const minute = parsed.minute.values?.[0] ?? 0
+      return `At ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+    }
 
-  if (parsed.minute.type === 'exact' && parsed.hour.type === 'exact') {
-    const hour = parsed.hour.values?.[0] ?? 0
-    const minute = parsed.minute.values?.[0] ?? 0
-    return `At ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+    return 'Custom schedule'
+  } catch {
+    return 'Invalid schedule'
   }
-
-  return 'Custom schedule'
 }
 
 /**

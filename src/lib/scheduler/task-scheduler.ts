@@ -65,7 +65,6 @@ class TaskScheduler {
   private intervalId: number | null = null
   private worker: Worker | null = null
   private batteryLevel: number = 100
-  private isIdle: boolean = false
   private lastActivityTime: number = Date.now()
   private db: IDBDatabase | null = null
 
@@ -180,7 +179,6 @@ class TaskScheduler {
 
       const resetIdleTimer = () => {
         this.lastActivityTime = Date.now()
-        this.isIdle = false
       }
 
       events.forEach(event => {
@@ -190,7 +188,7 @@ class TaskScheduler {
       // Check idle state every minute
       setInterval(() => {
         const inactiveTime = (Date.now() - this.lastActivityTime) / 1000
-        this.isIdle = inactiveTime >= this.idleThreshold
+        // Idle detection status is calculated on-demand
       }, 60000)
     }
   }

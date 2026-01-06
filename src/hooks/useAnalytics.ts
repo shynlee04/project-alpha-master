@@ -9,7 +9,9 @@
  */
 
 import { useEffect, useCallback } from 'react';
-import { useAnalyticsStore, TimeRange } from '@/infrastructure/persistence/stores/analytics-store';
+import { useAnalyticsStore } from '@/infrastructure/persistence/stores/analytics-store';
+import type { TimeRange } from '@/infrastructure/persistence/stores/analytics-store';
+import type { DailyMetrics } from '@/lib/analytics/metrics-collector';
 import { getMetricsCollector } from '@/lib/analytics/metrics-collector';
 
 export interface UseAnalyticsReturn {
@@ -21,7 +23,7 @@ export interface UseAnalyticsReturn {
   setCustomDateRange: (start: Date, end: Date) => Promise<void>;
 
   // Data
-  dailyMetrics: ReturnType<typeof useAnalyticsStore>['dailyMetrics'];
+  dailyMetrics: DailyMetrics[];
   performanceStats: ReturnType<typeof useAnalyticsStore>['performanceStats'];
   lastUpdated: number | null;
 

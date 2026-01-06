@@ -8,7 +8,7 @@
  * @story S-033 - Notification System with Toast/Badge
  */
 
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotificationManager } from '@/lib/notifications/notification-manager';
 
