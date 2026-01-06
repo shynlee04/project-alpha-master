@@ -73,6 +73,7 @@ export class KnowledgeFileSyncServiceCore implements FileSyncService {
         const source: SourceRecord = {
             id: `${this.projectId}-${path}`,
             projectId: this.projectId,
+            workspaceId: 'knowledge', // PERSIST-S002: Workspace isolation (knowledge workspace)
             type: 'text',
             title: this.extractTitle(path),
             content,

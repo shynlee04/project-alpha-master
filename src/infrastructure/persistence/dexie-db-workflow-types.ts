@@ -22,6 +22,8 @@ import type { Workflow } from '@/lib/workflow/builder/types';
 export interface WorkflowRecord extends Workflow {
     /** Primary key - unique identifier */
     id: string;
+    /** PERSIST-S002: Workspace isolation */
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
     /** Timestamp when workflow was last modified */
     updatedAt: number;
 }

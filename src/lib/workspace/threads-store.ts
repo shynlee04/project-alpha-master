@@ -28,6 +28,7 @@ function toRecord(thread: ConversationThread): ConversationThreadRecord {
     return {
         id: thread.id,
         projectId: thread.projectId,
+        workspaceId: thread.workspaceId || 'ide', // PERSIST-S002: Workspace isolation
         title: thread.title,
         preview: thread.preview,
         messages: thread.messages.map(m => ({

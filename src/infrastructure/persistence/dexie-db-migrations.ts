@@ -767,7 +767,6 @@ export function registerMigrations(db: Dexie): void {
 
             // Other tables with workspaceId
             workflows: 'id, workspaceId, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
-            ragState: 'id, workspaceId, updatedAt',
             codeSnippets: 'id, workspaceId, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
 
             // Plugin tables with workspaceId
@@ -785,10 +784,16 @@ export function registerMigrations(db: Dexie): void {
             }
 
             let totalUpdated = 0;
-            const tables = tx.tables;
+            const db = tx.db;
 
             // Update ALL existing records to have workspaceId = 'ide' (default workspace)
-            for (const table of tables) {
+            for (const tableKey of ['projects', 'ideState', 'conversations', 'taskContexts', 'toolExecutions',
+                                     'credentials', 'threads', 'providerConfigs', 'agentConfigs', 'conversationState',
+                                     'syncStatus', 'fileSyncStatus', 'fileMetadata', 'toolExecutionLogs', 'fsaHandles',
+                                     'sessionSnapshots', 'fileSnapshots', 'fileContentCache', 'sources', 'collections',
+                                     'synthesisResults', 'oramaIndexes', 'embedding_models', 'notes', 'workflows',
+                                     'codeSnippets', 'plugins', 'pluginSettings', 'pluginMarketplace', 'pluginStorage']) {
+                const table = db[tableKey];
                 try {
                     const count = await table.count();
                     const records = await table.toArray();
@@ -804,19 +809,19 @@ export function registerMigrations(db: Dexie): void {
 
                     totalUpdated += updatedCount;
                     logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', {
-                        tableName: table.name,
-                        totalRecords: count,
+                        tableName: tableKey,
+                        itemsCount: count,
                         updatedRecords: updatedCount
                     });
                 } catch (error: unknown) {
-                    console.error(`[Migration v20] Failed to update table ${table.name}:`, error);
+                    console.error(`[Migration v20] Failed to update table ${tableKey}:`, error);
                 }
             }
 
             markMigrationApplied(20);
 
             logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', {
-                totalRecordsUpdated: totalUpdated,
+                itemsCount: totalUpdated,
                 message: `All tables now have workspaceId for cross-workspace isolation`
             });
         });

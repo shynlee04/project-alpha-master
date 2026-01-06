@@ -74,6 +74,7 @@ export async function persistToDexie(conversation: ConversationState): Promise<v
     const thread: ConversationThreadRecord = {
       id: conversation.metadata.id,
       projectId: conversation.metadata.projectId || 'default',
+      workspaceId: conversation.metadata.workspaceId || 'ide', // PERSIST-S002: Workspace isolation
       title: conversation.metadata.title,
       preview: conversation.metadata.preview || '',
       messages: conversation.messages,

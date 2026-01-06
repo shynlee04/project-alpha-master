@@ -104,6 +104,7 @@ export class NoteFolderBridge {
             const newNote: NoteRecord = {
                 id,
                 projectId,
+                workspaceId: 'notes', // PERSIST-S002: Workspace isolation (notes always go to notes workspace)
                 title,
                 blocks,
                 isFavorite: false,

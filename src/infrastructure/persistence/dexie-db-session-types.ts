@@ -40,6 +40,7 @@ export interface PersistedStateRecord {
 export interface SyncStatusRecord {
     id: string;                 // Primary key (generated from path)
     path: string;               // File path (indexed)
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     syncStatus: 'pending' | 'syncing' | 'synced' | 'error' | 'conflict'; // (indexed)
     localVersion?: number;
     remoteVersion?: number;
@@ -71,6 +72,7 @@ export function generateSyncStatusId(filePath: string): string {
 export interface FileMetadataRecord {
     path: string;               // Primary key - relative file path
     projectId: string;          // Foreign key to project
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     lastModified: number;       // Unix timestamp of last modification
     size: number;               // File size in bytes
     hash?: string;              // Optional SHA-256 hash for content verification
@@ -97,6 +99,7 @@ export interface ToolExecutionLogRecord {
     id: string;                 // Primary key (UUID)
     conversationId: string;     // Foreign key to conversation thread
     messageId: string;          // Foreign key to the message containing tool call
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     toolName: string;           // e.g., 'readFile', 'writeFile', 'runCommand'
     args: unknown;              // Tool input parameters (JSON serialized)
     result?: {
@@ -120,6 +123,7 @@ export interface ToolExecutionLogRecord {
  */
 export interface FSAHandleRecord {
     projectId: string;          // Primary key - foreign key to project
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     handleData: unknown;        // Serialized FileSystemDirectoryHandle
     directoryPath: string;      // Original directory path for display
     grantedAt: number;          // When permission was granted
@@ -139,6 +143,7 @@ export interface FSAHandleRecord {
 export interface SessionSnapshotRecord {
     id: string;                 // Primary key (projectId:timestamp)
     projectId: string;          // Foreign key to project
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     snapshot: {
         openFiles: string[];    // List of open file paths
         activeFile: string | null;

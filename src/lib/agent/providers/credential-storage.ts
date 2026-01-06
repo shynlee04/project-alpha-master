@@ -49,12 +49,14 @@ export class CredentialStorage {
      * @param providerId - Unique provider identifier
      * @param encrypted - Base64-encoded encrypted data
      * @param iv - Base64-encoded initialization vector
+     * @param workspaceId - Current workspace (default 'ide')
      * @returns Storage operation result
      */
     async storeCredentials(
         providerId: string,
         encrypted: string,
-        iv: string
+        iv: string,
+        workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'
     ): Promise<StorageResult> {
         if (!this.isAvailable()) {
             console.warn('[CredentialStorage] Not available during SSR');
@@ -68,6 +70,7 @@ export class CredentialStorage {
 
         const credential: CredentialRecord = {
             providerId,
+            workspaceId, // PERSIST-S002: Workspace isolation
             encrypted,
             iv,
             createdAt: new Date(),

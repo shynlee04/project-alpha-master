@@ -67,10 +67,12 @@ export async function saveDirectoryHandleReference(
   handle: FileSystemDirectoryHandle,
   projectId: string,
   directoryPath: string,
+  workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide' // PERSIST-S002: Workspace isolation
 ): Promise<boolean> {
   try {
     const record: Omit<FSAHandleRecord, 'createdAt' | 'updatedAt'> = {
       projectId,
+      workspaceId, // PERSIST-S002: Workspace isolation
       handleData: serializeHandle(handle),
       directoryPath,
       grantedAt: Date.now(),

@@ -43,14 +43,19 @@ export interface WorkflowSearchFilters {
  * Save a workflow (insert or update)
  *
  * @param workflow - The workflow to save
+ * @param workspaceId - Current workspace (default 'ide')
  * @returns The workflow ID
  */
-export async function saveWorkflow(workflow: Workflow): Promise<string> {
+export async function saveWorkflow(
+    workflow: Workflow,
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'
+): Promise<string> {
     const db = getDb();
     if (!db) throw new Error('[WorkflowPersistence] Database not available');
 
     const record: WorkflowRecord = {
         ...workflow,
+        workspaceId, // PERSIST-S002: Workspace isolation
         updatedAt: Date.now(),
     };
 

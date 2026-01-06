@@ -20,10 +20,12 @@ export class FSAHandleManager {
    */
   async persistHandle(
     handle: FileSystemDirectoryHandle,
-    projectId: string
+    projectId: string,
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide' // PERSIST-S002: Workspace isolation
   ): Promise<void> {
     const record: FSAHandleRecord = {
       projectId,
+      workspaceId, // PERSIST-S002: Workspace isolation
       handleData: handle as any, // Serialize handle for storage
       directoryPath: handle.name || '',
       permissionStatus: 'granted',

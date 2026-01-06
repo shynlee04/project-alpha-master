@@ -64,6 +64,7 @@ export async function importPDF(
         const record: SourceRecord = {
             id: sourceId,
             projectId: options.projectId,
+            workspaceId: 'knowledge', // PERSIST-S002: Workspace isolation (knowledge workspace)
             type: 'pdf',
             title,
             content: result.text,
@@ -132,6 +133,7 @@ export async function importURL(
         const record: SourceRecord = {
             id: sourceId,
             projectId: options.projectId,
+            workspaceId: 'knowledge', // PERSIST-S002: Workspace isolation
             type: 'url',
             title: result.title,
             content: result.content,
@@ -198,6 +200,7 @@ export async function importText(
         const record: SourceRecord = {
             id: sourceId,
             projectId: options.projectId,
+            workspaceId: 'knowledge', // PERSIST-S002: Workspace isolation
             type: 'text',
             title: finalTitle,
             content: text,

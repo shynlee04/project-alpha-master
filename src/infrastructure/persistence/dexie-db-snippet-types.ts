@@ -33,6 +33,9 @@ export interface CodeSnippetRecord {
     /** Primary key */
     id: string;
 
+    /** PERSIST-S002: Workspace isolation */
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
+
     /** Snippet name (unique within folder) */
     name: string;
 

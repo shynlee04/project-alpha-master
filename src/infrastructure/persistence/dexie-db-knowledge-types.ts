@@ -27,6 +27,7 @@ import type { Table } from 'dexie';
 export interface SourceRecord {
     id: string;                 // Primary key (UUID)
     projectId: string;          // Foreign key to project
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     type: 'pdf' | 'url' | 'text';
     title: string;
     content: string;            // Extracted text content
@@ -70,6 +71,7 @@ export interface SourceMetadata {
 export interface CollectionRecord {
     id: string;                 // Primary key (UUID)
     projectId: string;          // Foreign key to project
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     name: string;               // Collection name
     sourceIds: string[];        // Sources in this collection
     createdAt: number;
@@ -90,6 +92,7 @@ export interface SynthesisResultRecord {
     id: string;
     sourceId: string;
     projectId: string;
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     status: 'idle' | 'pending' | 'synthesizing' | 'completed' | 'failed';
     synthesisResult?: string;
     errorMessage?: string;
@@ -176,6 +179,9 @@ export interface NoteRecord {
 
     /** Foreign key to project */
     projectId: string;
+
+    /** PERSIST-S002: Workspace isolation */
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
 
     /** Note title (extracted from first heading or user-defined) */
     title: string;

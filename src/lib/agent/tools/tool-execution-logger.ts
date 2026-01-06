@@ -22,7 +22,8 @@ export class ToolExecutionLogger {
   async logExecution(
     context: ToolExecutionContext,
     toolName: string,
-    args: Record<string, unknown>
+    args: Record<string, unknown>,
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide' // PERSIST-S002: Workspace isolation
   ): Promise<string> {
     const logId = crypto.randomUUID();
 
@@ -30,6 +31,7 @@ export class ToolExecutionLogger {
       id: logId,
       conversationId: (context as any).conversationId || 'unknown',
       messageId: (context as any).messageId || 'unknown',
+      workspaceId, // PERSIST-S002: Workspace isolation
       toolName,
       args,
       status: 'pending',

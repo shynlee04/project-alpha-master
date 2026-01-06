@@ -18,6 +18,7 @@ import type { SyncStatusRecord } from './dexie-db-session-types';
 
 /**
  * Convert SyncQueueItem to SyncStatusRecord
+ * @param workspaceId - Current workspace (default 'ide' for backward compatibility)
  */
 export function queueItemToSyncStatus(item: {
     id: string;
@@ -26,7 +27,7 @@ export function queueItemToSyncStatus(item: {
     status: 'pending' | 'active' | 'completed' | 'failed';
     error?: string;
     createdAt: Date;
-}): SyncStatusRecord {
+}, workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'): SyncStatusRecord {
     const statusMap: Record<string, SyncStatusRecord['syncStatus']> = {
         pending: 'pending',
         active: 'syncing',
@@ -37,6 +38,7 @@ export function queueItemToSyncStatus(item: {
     return {
         id: item.id,
         path: item.path,
+        workspaceId, // PERSIST-S002: Workspace isolation
         syncStatus: statusMap[item.status],
         errorMessage: item.error,
         retryCount: item.status === 'failed' ? 1 : 0,
