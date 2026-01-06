@@ -15,7 +15,7 @@ import {
   hasOramaIndex,
   getAllIndexesMetadata,
 } from '../indexeddb-storage';
-import { db } from '@/lib/state/dexie-db';
+import { db } from '@/infrastructure/persistence/dexie-db';
 
 describe('Story 7-1: Orama IndexedDB Storage', () => {
   const testProjectId = 'test-project-storage';

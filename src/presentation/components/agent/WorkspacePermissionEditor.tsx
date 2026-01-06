@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from '@/presentation/components/ui/select';
 import { cn } from '@/lib/utils';
-import { useToolPermissionStore, type ToolTrustLevel } from '@/lib/state/tool-permission-store';
+import { useToolPermissionStore, type ToolTrustLevel } from '@/infrastructure/persistence/stores/permissions/tool-permission-store';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import { FilePermissionRow } from './WorkspacePermissions/FilePermissionRow';
 import type { WorkspaceFilePermission } from './WorkspacePermissions/types';

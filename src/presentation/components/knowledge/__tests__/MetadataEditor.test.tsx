@@ -5,8 +5,8 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MetadataEditor } from '../MetadataEditor';
-import type { SourceRecord } from '@/lib/state/dexie-db';
-import type { SourceMetadataFields } from '@/lib/state/knowledge/knowledge-store';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+import type { SourceMetadataFields } from '@/infrastructure/persistence/stores/knowledge';
 
 // Mock sonner toast
 vi.mock('sonner', () => ({

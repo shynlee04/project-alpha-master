@@ -8,7 +8,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { useIDEStore } from '@/lib/state';
+import { useIDEStore } from '@/infrastructure/persistence/stores';
 import type { OpenFile } from '@/presentation/components/ide/MonacoEditor/EditorTabBar';
 
 interface UseIDELayoutFileStateResult {

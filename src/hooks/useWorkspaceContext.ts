@@ -23,7 +23,7 @@
  * ```
  */
 
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { detectWorkspace, isInWorkspace, getWorkspacePath } from '@/lib/workspace/workspace-detector';
 import type { WorkspaceId } from '@/lib/events/cross-workspace-event-bus';
 

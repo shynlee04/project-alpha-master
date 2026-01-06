@@ -23,7 +23,7 @@ import { Badge } from '@/presentation/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/presentation/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
-import type { WorkspaceType } from '@/lib/state/workspace-types';
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 
 /**
  * Tool availability status

@@ -7,7 +7,7 @@
  * @layer Presentation
  */
 
-import type { WorkspaceType } from '@/lib/state/workspace-types'
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types'
 
 /**
  * Workspace metadata for display

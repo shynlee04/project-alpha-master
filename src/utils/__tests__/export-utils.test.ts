@@ -5,7 +5,7 @@
  */
 
 import { exportText, sanitizeFilename } from '../export-utils';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * @vitest-environment jsdom

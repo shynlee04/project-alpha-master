@@ -16,7 +16,7 @@
 import * as React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import type { WorkspaceId } from '@/lib/state/dexie-db-types';
+import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
 
 // ============================================================================
 // Constants

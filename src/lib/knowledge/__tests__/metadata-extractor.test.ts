@@ -4,7 +4,7 @@
  */
 
 import { MetadataExtractor } from '../metadata-extractor';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 // Mock credential vault
 vi.mock('@/lib/agent/providers/credential-vault', () => ({

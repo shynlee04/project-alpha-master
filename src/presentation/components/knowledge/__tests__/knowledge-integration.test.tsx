@@ -6,7 +6,7 @@
  * Integration tests for knowledge store actions and state management.
  */
 
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { sanitizeFilename } from '@/utils/export-utils';
 
 /**

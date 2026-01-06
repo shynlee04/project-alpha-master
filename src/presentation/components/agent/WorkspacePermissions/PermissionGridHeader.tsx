@@ -13,7 +13,7 @@
  * - Accessible (semantic structure)
  */
 
-import type { WorkspaceType } from '@/lib/state/workspace-types'
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types'
 import type { WorkspaceLabels, WorkspaceDescriptions } from './types'
 
 export interface PermissionGridHeaderProps {

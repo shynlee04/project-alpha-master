@@ -13,13 +13,13 @@ import { BookOpen, Brain, Trophy, Sparkles } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/presentation/components/ui/tabs';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useFlashcardStore } from '@/infrastructure/persistence/stores/flashcard-store';
-import { useQuizStore } from '@/lib/state/quiz-store';
+import { useQuizStore } from '@/infrastructure/persistence/stores/study/quiz-store';
 import { useStudyStore } from '@/infrastructure/persistence/stores/study-store';
 import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
 import { StudyFilePicker } from './StudyFilePicker';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
 import { FolderOpen } from 'lucide-react';

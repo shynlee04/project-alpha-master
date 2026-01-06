@@ -6,7 +6,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { SourceContextMenu } from '../SourceContextMenu';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 describe('SourceContextMenu (Story 6-3)', () => {
     const mockSource: SourceRecord = {

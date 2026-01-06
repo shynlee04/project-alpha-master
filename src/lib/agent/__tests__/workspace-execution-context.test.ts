@@ -9,7 +9,7 @@
  */
 
 import { getWorkspaceExecutionContext } from '../workspace-execution-context';
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import type { Agent } from '@/core/entities/Agent';
 

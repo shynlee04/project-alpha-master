@@ -6,8 +6,8 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CollectionManager } from '../CollectionManager';
-import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
-import type { Collection } from '@/lib/state/dexie-db';
+import { useKnowledgeStore } from '@/infrastructure/persistence/stores/knowledge';
+import type { Collection } from '@/infrastructure/persistence/dexie-db';
 
 // Mock knowledge store
 vi.mock('@/lib/state/knowledge-store', () => ({

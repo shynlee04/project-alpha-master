@@ -15,7 +15,7 @@
 
 import { useMemo, useCallback } from 'react'
 import type { Agent } from '@/core/entities/Agent'
-import type { WorkspaceType } from '@/lib/state/workspace-types'
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types'
 import type { ToolPermission, PermissionChecker, PermissionToggleHandler } from '../types'
 
 export interface UseWorkspacePermissionsParams {

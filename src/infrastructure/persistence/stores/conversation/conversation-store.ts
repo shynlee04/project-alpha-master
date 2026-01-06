@@ -26,4 +26,4 @@ export type {
 } from './types';
 
 export type { ValidationResult } from './conversation-validation-slice';
-export type { ConversationEvent, ConversationEventType } from './conversation-events-slice';
+export type { ConversationEvent, ConversationEventType } from './event-types';

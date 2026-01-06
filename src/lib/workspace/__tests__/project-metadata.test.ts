@@ -16,7 +16,7 @@
  * - "Cannot find name 'DEFAULT_WORKSPACE_BINDINGS'"
  */
 
-import { db } from '@/lib/state/dexie-db';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import type { ProjectMetadata } from '../project-store';
 import {
     saveProject,

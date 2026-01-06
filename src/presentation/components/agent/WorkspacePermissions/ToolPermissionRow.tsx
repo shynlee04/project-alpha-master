@@ -14,7 +14,7 @@
  */
 
 import { cn } from '@/lib/utils'
-import type { WorkspaceType } from '@/lib/state/workspace-types'
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types'
 import type { ToolPermission, PermissionChecker, PermissionToggleHandler } from './types'
 import { PermissionSwitch } from './PermissionSwitch'
 

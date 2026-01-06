@@ -35,7 +35,7 @@ import {
 import { Progress } from '@/presentation/components/ui/progress';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { RAGProgressPayload, RAGIndexingCancelData, RAGIndexingRetryData } from '@/infrastructure/events/event-bus';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 
 /**
  * Indexing stage

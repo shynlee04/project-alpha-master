@@ -199,7 +199,7 @@ export {
  *
  * @example
  * ```tsx
- * import { getDb } from '@/lib/state';
+ * import { getDb } from '@/infrastructure/persistence/stores';
  *
  * // CRUD operations
  * const db = getDb();

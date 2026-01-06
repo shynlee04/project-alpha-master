@@ -102,7 +102,7 @@ export interface ThreadHierarchyNode {
  * These types are erased by TypeScript and don't exist at runtime.
  */
 import type { ConversationMetadata, WorkspaceType } from '@/core/entities/Conversation';
-import type { ConversationEvent, ConversationEventType } from './conversation-events-slice';
+import type { ConversationEvent, ConversationEventType } from './event-types';
 
 // Define slice-specific types inline using utility types to avoid circular imports
 // Each slice will provide the actual implementation

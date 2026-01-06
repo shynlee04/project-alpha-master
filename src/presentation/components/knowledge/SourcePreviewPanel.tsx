@@ -11,14 +11,14 @@
 import { useEffect, useState } from 'react';
 import { Edit, X, Grid3x3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
+import { useKnowledgeStore } from '@/infrastructure/persistence/stores/knowledge';
 // NOTE: useRAGStore import removed - getChunksForSource not implemented yet
 // import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import type { ChunkMetadata } from '@/lib/rag/types';
 import { PDFIcon, URLIcon, TextIcon } from '@/presentation/components/ui/icons';
 import { MetadataDisplay } from './MetadataDisplay';
 import { MetadataEditor } from './MetadataEditor';
-import type { SourceMetadataFields } from '@/lib/state/knowledge/knowledge-store';
+import type { SourceMetadataFields } from '@/infrastructure/persistence/stores/knowledge';
 
 interface SourcePreviewPanelProps {
     projectId: string;

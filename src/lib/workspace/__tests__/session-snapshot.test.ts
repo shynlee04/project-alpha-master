@@ -3,7 +3,7 @@
  * @governance EPIC-24-5
  */
 
-import { db, type SessionSnapshotRecord } from '@/lib/state/dexie-db';
+import { db, type SessionSnapshotRecord } from '@/infrastructure/persistence/dexie-db';
 import {
     SessionSnapshotManager,
     sessionSnapshotManager,

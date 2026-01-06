@@ -7,7 +7,7 @@
  * @hook useIDELayoutState
  */
 
-import { useIDEStore } from '@/lib/state';
+import { useIDEStore } from '@/infrastructure/persistence/stores';
 import { useToast } from '../../ui/Toast';
 import { useIDELayoutFileState } from './useIDELayoutFileState';
 import { useIDELayoutWorkspaceState } from './useIDELayoutWorkspaceState';

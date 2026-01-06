@@ -38,7 +38,7 @@ import {
 } from '@/presentation/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
-import type { WorkspaceType } from '@/lib/state/workspace-types';
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 
 /**
  * Workspace metadata

@@ -17,7 +17,7 @@ import {
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings, CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
-import type { ProjectRecord } from '@/lib/state/dexie-db-types';
+import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';

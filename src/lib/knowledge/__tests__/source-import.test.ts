@@ -7,7 +7,7 @@
 import { PDFParser } from '../pdf-parser';
 import { URLFetcher } from '../url-fetcher';
 import { SourceImportPipeline } from '../source-import';
-import { db } from '@/lib/state/dexie-db';
+import { db } from '@/infrastructure/persistence/dexie-db';
 
 // Mock PDF.js
 vi.mock('pdfjs-dist', () => ({

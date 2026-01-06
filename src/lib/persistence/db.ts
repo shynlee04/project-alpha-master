@@ -18,7 +18,7 @@
  * const project = await db.get('projects', id);  // ✅ Works
  * 
  * // NEW code should use Dexie directly:
- * import { db } from '@/lib/state';
+ * import { db } from '@/infrastructure/persistence/stores';
  * await db.projects.put(project);
  * ```
  */

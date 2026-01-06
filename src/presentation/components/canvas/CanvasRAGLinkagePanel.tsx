@@ -13,7 +13,7 @@ import { useCanvasStore } from '@/infrastructure/persistence/stores/canvas-store
 import { createRAGLinkageAnalyzer } from '@/lib/canvas/rag-linkage-analyzer';
 import { createLinkageAIEnhancer } from '@/lib/canvas/linkage-ai-enhancer';
 import type { LinkageProposal } from '@/lib/canvas/linkage-types';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { Button } from '@/presentation/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
 

@@ -41,9 +41,11 @@ import {
 import { createIndexedDBStorage } from './slices/canvas-persistence-slice';
 
 /**
- * Multi-canvas store state type
+ * Multi-canvas store state type (with wrapped setActiveCanvas)
  */
-type MultiCanvasState = CanvasMultiSlice & CanvasIOSlice;
+type MultiCanvasState = Omit<CanvasMultiSlice, 'setActiveCanvas'> & CanvasIOSlice & {
+  setActiveCanvas: (canvasId: string) => Promise<void>;
+};
 
 /**
  * Combined canvas store state (for internal composition)
@@ -75,11 +77,25 @@ export const useCanvasStore = create<CombinedCanvasState>()(
 
 /**
  * Create useMultiCanvasStore (layered on top of useCanvasStore)
+ *
+ * Wraps setActiveCanvas to inject canvasStore, breaking circular dependency.
  */
-export const useMultiCanvasStore = create<MultiCanvasState>((...args) => ({
-  ...createCanvasMultiSlice(...args),
-  ...createCanvasIOSlice(...args),
-}));
+export const useMultiCanvasStore = create<MultiCanvasState>((set, get, api) => {
+  const multiSlice = createCanvasMultiSlice(set, get, api);
+  const ioSlice = createCanvasIOSlice(set, get, api);
+
+  return {
+    ...multiSlice,
+    ...ioSlice,
+    // Wrap setActiveCanvas to inject canvasStore automatically
+    setActiveCanvas: (canvasId: string) => {
+      return multiSlice.setActiveCanvas(canvasId, {
+        getState: useCanvasStore.getState,
+        setState: useCanvasStore.setState,
+      });
+    },
+  };
+});
 
 /**
  * Persistence helper hook

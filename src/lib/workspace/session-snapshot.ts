@@ -25,7 +25,7 @@
  */
 
 import { db, type SessionSnapshotRecord } from '@/infrastructure/persistence/dexie-db';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 
 // ============================================================================
 // Types

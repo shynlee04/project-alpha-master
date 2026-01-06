@@ -15,7 +15,7 @@ import { Button } from '../ui/button';
 import { PixelBadge } from '../ui/pixel-badge';
 import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import { useCanvasStore } from '@/infrastructure/persistence/stores';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { createRAGLinkageAnalyzer } from '@/lib/canvas/rag-linkage-analyzer';
 import { createLinkageAIEnhancer } from '@/lib/canvas/linkage-ai-enhancer';
 import { Sparkles, Loader2 } from 'lucide-react';

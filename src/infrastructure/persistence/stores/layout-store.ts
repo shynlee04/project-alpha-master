@@ -11,7 +11,7 @@
  * 
  * @example
  * ```tsx
- * import { useLayoutStore } from '@/lib/state';
+ * import { useLayoutStore } from '@/infrastructure/persistence/stores';
  * 
  * function Component() {
  *   const sidebarCollapsed = useLayoutStore(s => s.sidebarCollapsed);

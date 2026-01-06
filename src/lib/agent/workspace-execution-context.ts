@@ -15,10 +15,10 @@
  * - Graceful degradation (handles missing state)
  */
 
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import type { Agent } from '@/core/entities/Agent';
-import type { WorkspaceType } from '@/lib/state/workspace-types';
+import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 
 /**
  * Workspace execution context

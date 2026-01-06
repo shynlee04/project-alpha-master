@@ -5,7 +5,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { MetadataDisplay } from '../MetadataDisplay';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 
 describe('MetadataDisplay (Story 6.4)', () => {
     const mockSourceWithMetadata: SourceRecord = {

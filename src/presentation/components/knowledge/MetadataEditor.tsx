@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
 import { Check, X, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
-import type { SourceMetadataFields } from '@/lib/state/knowledge/knowledge-store';
+import type { SourceMetadataFields } from '@/infrastructure/persistence/stores/knowledge';
 import { useTranslation } from 'react-i18next';
 
 export interface MetadataEditorProps {

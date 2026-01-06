@@ -42,7 +42,7 @@ export type {
 
 // Story 5-4: IDE State Store (DEPRECATED - Story 51-12)
 // The old ide-state-store.ts was deleted as it was a deprecated backward compatibility layer
-// Use Zustand store instead: import { useIDEStore } from '@/lib/state/ide-store'
+// Use Zustand store instead: import { useIDEStore } from '@/infrastructure/persistence/stores/ide'
 // Or from infrastructure: import { useIDEStore } from '@/infrastructure/persistence/stores/ide/useIDEStore'
 
 // Re-export TerminalTab type for backwards compatibility

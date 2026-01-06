@@ -1,27 +1,9 @@
 import { StateCreator } from 'zustand';
 import type { CombinedConversationState, ConversationMetadataWithId, ThreadWithId, MessageWithId } from './types';
+import type { ConversationEvent, ConversationEventType, EventListener } from './event-types';
 
-// Event types
-export type ConversationEventType =
-  | 'conversation:created'
-  | 'conversation:updated'
-  | 'conversation:deleted'
-  | 'thread:created'
-  | 'thread:updated'
-  | 'thread:deleted'
-  | 'message:added'
-  | 'message:updated'
-  | 'message:deleted';
-
-export interface ConversationEvent {
-  type: ConversationEventType;
-  entityId: string;
-  timestamp: number;
-  data?: unknown;
-}
-
-// Event listener type
-export type EventListener = (event: ConversationEvent) => void;
+// Re-export event types for backwards compatibility
+export type { ConversationEvent, ConversationEventType, EventListener } from './event-types';
 
 // Slice state (subset of CombinedConversationState)
 type ConversationEventsSliceState = {

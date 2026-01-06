@@ -16,7 +16,7 @@
  */
 
 import React, { useState, useMemo, lazy, Suspense } from 'react';
-import { useIDEStore } from '@/lib/state';
+import { useIDEStore } from '@/infrastructure/persistence/stores';
 /**
  * @workspace ide-only
  *

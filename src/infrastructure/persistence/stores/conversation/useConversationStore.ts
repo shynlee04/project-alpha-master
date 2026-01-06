@@ -35,7 +35,7 @@ import { createThreadManagementSlice } from './thread-management-slice';
 import { createMessageCrudSlice } from './message-crud-slice';
 import { createConversationUtilsSlice } from './conversation-utils-slice';
 import { createConversationValidationSlice } from './conversation-validation-slice';
-import { createConversationEventsSlice } from './conversation-events-slice';
+import { createConversationEventsSlice } from './event-types';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 
 // Re-export types for consumers
@@ -47,7 +47,7 @@ export type {
     ContextWindowConfig,
 } from './types';
 export type { ValidationResult } from './conversation-validation-slice';
-export type { ConversationEvent, ConversationEventType } from './conversation-events-slice';
+export type { ConversationEvent, ConversationEventType } from './event-types';
 
 /**
  * Combined Conversation Store

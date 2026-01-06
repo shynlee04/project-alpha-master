@@ -79,7 +79,7 @@ export {
   createIsExpandedSelector,
   type IDEState,
   type TerminalTab,
-} from '@/lib/state/ide-store';
+} from '@/infrastructure/persistence/stores/ide';
 
 export {
   useConversationStore,
@@ -97,7 +97,7 @@ export {
   useQuizStore,
   initializeQuizStore,
   type QuizState
-} from '@/lib/state/quiz-store';
+} from '@/infrastructure/persistence/stores/study/quiz-store';
 
 export {
   useFlashcardStore,

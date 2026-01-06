@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
-import { useWorkspaceStore } from '@/lib/state/workspace-store';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**

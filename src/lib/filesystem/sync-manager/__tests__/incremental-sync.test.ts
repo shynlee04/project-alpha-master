@@ -9,7 +9,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { FileMetadataCache } from '@/lib/sync/file-metadata-cache';
-import type { FileMetadataRecord } from '@/lib/state/dexie-db';
+import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
 
 // In-memory storage for mock database
 const mockMetadataStore = new Map<string, FileMetadataRecord>();

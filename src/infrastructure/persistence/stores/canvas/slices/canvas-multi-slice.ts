@@ -19,13 +19,14 @@
 
 import type { StateCreator } from 'zustand';
 import { getSafeCanvasDb } from '../canvas-db';
+import type { CanvasStoreApi } from '../canvas-types';
 
 /**
  * Multi-canvas management slice interface
  */
 export interface CanvasMultiSlice {
   activeCanvasId: string | null;
-  setActiveCanvas: (canvasId: string) => Promise<void>;
+  setActiveCanvas: (canvasId: string, canvasStore: CanvasStoreApi) => Promise<void>;
 }
 
 /**
@@ -39,14 +40,13 @@ export const createCanvasMultiSlice: StateCreator<
 > = (set, get) => ({
   activeCanvasId: null,
 
-  setActiveCanvas: async (canvasId: string) => {
+  setActiveCanvas: async (canvasId: string, canvasStore: CanvasStoreApi) => {
     const db = getSafeCanvasDb();
     if (!db) return;
 
-    // Import useCanvasStore dynamically to avoid circular dependency
-    const { useCanvasStore } = await import('../index');
-    const getCanvasState = useCanvasStore.getState;
-    const setCanvasState = useCanvasStore.setState;
+    // Use injected canvasStore to avoid circular dependency
+    const getCanvasState = canvasStore.getState;
+    const setCanvasState = canvasStore.setState;
 
     // Save current canvas state before switching
     const currentState = getCanvasState();

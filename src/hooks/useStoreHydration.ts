@@ -8,7 +8,7 @@
  * @example
  * ```tsx
  * import { useStoreHydration } from '@/hooks/useStoreHydration';
- * import { useIDEStore } from '@/lib/state/ide-store';
+ * import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
  *
  * function MyComponent() {
  *   const openFiles = useIDEStore(s => s.openFiles);

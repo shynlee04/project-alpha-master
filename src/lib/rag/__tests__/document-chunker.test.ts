@@ -10,7 +10,7 @@
  */
 
 import { DocumentChunker } from '../document-chunker';
-import type { SourceRecord } from '@/lib/state/dexie-db';
+import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
 import { DEFAULT_CHUNKING_OPTIONS } from '../types';
 
 describe('DocumentChunker', () => {

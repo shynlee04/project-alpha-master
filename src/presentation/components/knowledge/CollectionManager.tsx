@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusIcon } from '@/presentation/components/ui/icons';
 import { CreateCollectionDialog } from './CreateCollectionDialog';
-import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
+import { useKnowledgeStore } from '@/infrastructure/persistence/stores/knowledge';
 import type { Collection } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 

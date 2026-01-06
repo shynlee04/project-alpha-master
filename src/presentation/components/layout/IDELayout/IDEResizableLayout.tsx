@@ -16,7 +16,7 @@ import {
 import { IDEEditorPreviewGroup } from './IDEEditorPreviewGroup';
 import { IDETerminalPanel } from './IDETerminalPanel';
 import { IDEChatPanel } from './IDEChatPanel';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import type { IDEResizableLayoutProps } from './types';
 
 /**

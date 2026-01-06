@@ -19,13 +19,13 @@
  * const { handlePanelLayoutChange } = useIdeStatePersistence({ projectId });
  * 
  * // Preferred new usage
- * import { useIDEStore } from '@/lib/state';
+ * import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
  * const setPanelLayout = useIDEStore(s => s.setPanelLayout);
  * ```
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { useIDEStore, type TerminalTab } from '@/lib/state';
+import { useIDEStore, type TerminalTab } from '@/infrastructure/persistence/stores/ide';
 
 // ============================================================================
 // Types (maintained for backward compatibility)

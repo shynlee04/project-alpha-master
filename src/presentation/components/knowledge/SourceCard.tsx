@@ -16,7 +16,7 @@ import { SourceMetadataDialog } from './SourceMetadataDialog';
 import { exportText, exportPDF } from '@/utils/export-utils';
 import { toast } from 'sonner';
 import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
-import { useKnowledgeStore } from '@/lib/state/knowledge/knowledge-store';
+import { useKnowledgeStore } from '@/infrastructure/persistence/stores/knowledge';
 import { useTranslation } from 'react-i18next';
 
 interface SourceCardProps {

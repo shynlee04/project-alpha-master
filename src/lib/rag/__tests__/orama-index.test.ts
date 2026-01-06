@@ -26,7 +26,7 @@ import {
   cleanupOrphanedIndexes,
 } from '../orama-index';
 import type { DocumentSchema } from '../types';
-import { db } from '@/lib/state/dexie-db';
+import { db } from '@/infrastructure/persistence/dexie-db';
 
 // Helper to generate unique project IDs for test isolation
 function getProjectId(testName: string): string {

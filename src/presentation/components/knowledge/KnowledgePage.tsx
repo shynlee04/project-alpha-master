@@ -21,7 +21,7 @@ const Canvas = lazy(() => {
 });
 import { SourceImportDialog } from '@/presentation/components/knowledge/SourceImportDialog';
 import { RAGPanelContainer, IndexingProgressPanel } from '@/presentation/components/rag';
-import { useIDEStore } from '@/lib/state/ide-store';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { useNoteStore } from '@/lib/notes/note-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
