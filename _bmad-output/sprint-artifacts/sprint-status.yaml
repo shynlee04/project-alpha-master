@@ -114,7 +114,13 @@ god_stores:
       status: "NEW GOD FILE (created during consolidation)"
     - file: "study-store.ts"
       lines: 458
-      status: "NEEDS SPLITTING"
+      status: "✅ SPLIT (2026-01-07) - 4 slices + facade"
+      artifacts:
+        - "study-database-slice.ts: 236 lines (DB class, persistence)"
+        - "study-session-slice.ts: 129 lines (CRUD operations)"
+        - "study-navigation-slice.ts: 146 lines (rating, navigation)"
+        - "study-stats-slice.ts: 56 lines (streak tracking)"
+        - "study-store-refactored.ts: 132 lines (combined store)"
     - file: "unified-workspace-context.ts"
       lines: 367
       status: "NEEDS SPLITTING"
@@ -577,6 +583,98 @@ daily_status:
       - "Update ARCH-01.1 epic status to DONE"
       - "Create completion report artifact"
       - "Proceed to next epic (ARCH-01.2 or ARCH-01.3)"
+
+  - date: "2026-01-07"
+    summary: |
+      GOD STORE ELIMINATION PROGRESS: Large stores refactored ✅
+
+      ✅ study-store.ts REFACTORING COMPLETE (458 → 4 slices + facade)
+      - study-database-slice.ts: 236 lines (StudyDatabase class, persistence)
+      - study-session-slice.ts: 129 lines (CRUD operations, SRS data)
+      - study-navigation-slice.ts: 146 lines (rating, navigation, due cards)
+      - study-stats-slice.ts: 56 lines (streak tracking, totals)
+      - study-store-refactored.ts: 132 lines (combined store)
+      - Original converted to facade: 458 → re-exports only
+
+      📊 Large Store Elimination Status:
+      ✅ file-sync-status-store.ts (554 lines) → 5 slices + facade
+      ✅ workflow-builder-store.ts (568 lines) → 6 slices + facade
+      ✅ project-store.ts (519 lines) → Zustand with 5 slices
+      ✅ file-snapshot-store.ts (517 lines) → 4 slices + facade
+      ✅ snippet-store.ts (482 lines) → 4 slices + facade
+      ✅ quiz-store.ts → Fixed with workspaceId injection
+      ✅ study-store.ts (458 lines) → 4 slices + facade
+
+      Progress Metrics:
+      - God stores >500 lines eliminated: 7 complete
+      - God stores 300-500 lines remaining: 9
+      - TypeScript validation: 0 study-related errors ✅
+      - Facade pattern: 100% backward compatibility ✅
+      - December 2025 Zustand patterns: Applied ✅
+    completed:
+      - "study-store.ts refactoring (458 → 4 slices + facade)"
+      - "TypeScript validation: 0 study-related errors"
+      - "Cross-slice state access pattern implemented"
+      - "Facade exports for backward compatibility"
+    blockers: []
+    next_actions:
+      - "Split remaining 9 god stores (300-500 lines)"
+      - "Update health assessment metrics"
+      - "Continue with god store elimination epic"
+
+  - date: "2026-01-07 (Skeptical PM Scan - Iteration 2)"
+    summary: |
+      🚨 CRITICAL API KEY FLOW GAPS DISCOVERED
+
+      Runtime verification of user journeys reveals API keys stored in vault
+      are NOT being retrieved/passed to critical services.
+
+      ✅ CORRECT: IDE Workspace Agent Chat
+      - AgentChatPanel.tsx uses useAgentChatAPIKeyManager hook
+      - Hook calls: credentialVault.initialize() → credentialVault.getCredentials()
+      - API key passed to useAgentChatWithTools → /api/chat endpoint
+      - Evidence: src/presentation/components/ide/AgentChatPanel/AgentChatAPIKeyManager.tsx:43-44
+
+      ❌ BROKEN: Notes Workspace Agent Chat
+      - NoteSidebarChat.tsx:83 passes apiKey: undefined
+      - FALSE COMMENT: "Credential-vault handles API key lookup"
+      - Reality: useAgentChatWithTools does NO internal vault lookup
+      - Impact: All agent chat messages fail with 401 Unauthorized
+      - Evidence: src/presentation/components/notes/NoteSidebarChat.tsx:83
+
+      ❌ BROKEN: Embedding Service (ALL Workspaces)
+      - 4 locations call createEmbeddingService() WITHOUT API key:
+        * KnowledgePage.tsx:351
+        * incremental-indexing-service.ts:247, 368
+        * hybrid-retriever.ts:473
+      - Result: selectEmbeddingProvider() sees hasApiKey=false
+      - Falls back to 'none' or 'local' even when user saved Gemini API key
+      - Impact: RAG search returns no results for new documents
+      - Evidence: src/lib/rag/embedding-service.ts:272-273 (cloud throws if !apiKey)
+
+      User Journey Impact:
+      - J1 (Add key → Use RAG): FAIL - Key saved but embeddings fail (no key passed)
+      - J2 (Agent chat IDE): PASS - useAgentChatAPIKeyManager retrieves key
+      - J3 (Agent chat Notes): FAIL - Sends message WITHOUT API key → 401 error
+      - J4 (Returning user): FAIL - Key in vault but never retrieved
+
+      Root Causes:
+      1. Missing API key retrieval pattern in NoteSidebarChat
+      2. No API key retrieval pattern in embedding service creation
+      3. False documentation claiming "hook handles lookup internally"
+    completed:
+      - "Runtime verification: Traced credentialVault.getCredentials() usage"
+      - "Deep trace: Found 4 embedding service calls without API key"
+      - "Component verification: Checked useAgentChatWithTools usage"
+      - "Evidence gathering: Verified correct/incorrect patterns"
+    blockers:
+      - "P0-LLM-001: Models Not Loading After API Key Save (CONFIRMED - API key flow gaps)"
+      - "P0-WK-001: Workspace Integration Broken (CONFIRMED - Notes doesn't retrieve key)"
+    next_actions:
+      - "Fix NoteSidebarChat.tsx to use useAgentChatAPIKeyManager pattern"
+      - "Fix embedding service creation to retrieve API key from vault"
+      - "Add Gherkin tests for API key flow acceptance criteria"
+      - "Re-verify all user journeys after fixes"
 
 # Links
 artifacts:

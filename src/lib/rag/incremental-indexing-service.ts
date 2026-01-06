@@ -13,6 +13,8 @@
 import type { DocumentSchema, ChunkMetadata } from './types';
 import { createEmbeddingService } from './embedding-service';
 import type { IndexingTask } from './sync-subscription-service';
+// P0-LLM-001: Import credential vault to retrieve API key for embeddings
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 /**
  * Diff result for comparing content changes
@@ -244,7 +246,10 @@ export class IncrementalIndexingService {
     });
 
     // Get embedding service and embed chunks
-    const embeddingService = await createEmbeddingService();
+    // P0-LLM-001: Retrieve API key from credential vault for cloud embeddings
+    await credentialVault.initialize();
+    const geminiApiKey = await credentialVault.getCredentials('gemini');
+    const embeddingService = await createEmbeddingService(geminiApiKey ?? undefined);
     const embeddings: number[][] = [];
     const batchSize = this.config.embedding.batchSize;
 
@@ -365,7 +370,10 @@ export class IncrementalIndexingService {
     });
 
     // Get embedding service and embed new chunks
-    const embeddingService = await createEmbeddingService();
+    // P0-LLM-001: Retrieve API key from credential vault for cloud embeddings
+    await credentialVault.initialize();
+    const geminiApiKey = await credentialVault.getCredentials('gemini');
+    const embeddingService = await createEmbeddingService(geminiApiKey ?? undefined);
     const embeddings: number[][] = [];
     const batchSize = this.config.embedding.batchSize;
 

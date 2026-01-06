@@ -13,6 +13,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import { useWorkspaceContext } from '@/hooks/useWorkspaceContext';
 import { Button } from '@/presentation/components/ui/button';
 import { Input } from '@/presentation/components/ui/input';
 import { Textarea } from '@/presentation/components/ui/textarea';
@@ -117,6 +118,7 @@ const COMMON_FOLDERS = [
 export function SnippetEditor({ open, onOpenChange, snippet }: SnippetEditorProps) {
     const { t } = useTranslation();
     const { isMobile } = useDeviceType();
+    const { currentWorkspace } = useWorkspaceContext();
 
     const createSnippet = useSnippetStore((s) => s.createSnippet);
     const updateSnippet = useSnippetStore((s) => s.updateSnippet);
@@ -198,6 +200,7 @@ export function SnippetEditor({ open, onOpenChange, snippet }: SnippetEditorProp
                 .filter((tag) => tag.length > 0);
 
             const snippetData = {
+                workspaceId: currentWorkspace,
                 name: formData.name.trim(),
                 description: formData.description.trim() || undefined,
                 language: formData.language.trim(),

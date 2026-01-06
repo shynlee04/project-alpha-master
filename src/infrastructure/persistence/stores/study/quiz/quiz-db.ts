@@ -50,16 +50,25 @@ export class QuizDatabase extends Dexie {
         this.version(1).stores({
             quizzes: 'id, title, createdAt, topic, *sourceIds',
             quizQuestions: 'id, quizId, difficulty, topic, *sourceIds',
-        }).upgrade((tx) => {
+        }).upgrade(async (tx) => {
             // Migration to version 2: Add workspaceId
             const defaultWorkspaceId = 'default';
-            return Promise.all([
-                tx.db.quizzes.toCollection().modify((quiz) => {
-                    (quiz as any).workspaceId = defaultWorkspaceId;
-                }),
-                tx.db.quizQuestions.toCollection().modify((q) => {
-                    (q as any).workspaceId = defaultWorkspaceId;
-                }),
+            const quizzes = await tx.table('quizzes').toArray() as (QuizRecord & { workspaceId?: string })[];
+            const quizQuestions = await tx.table('quizQuestions').toArray() as (QuizQuestionRecord & { workspaceId?: string })[];
+
+            await Promise.all([
+                ...quizzes.map((quiz) =>
+                    tx.table('quizzes').put({
+                        ...quiz,
+                        workspaceId: quiz.workspaceId || defaultWorkspaceId,
+                    })
+                ),
+                ...quizQuestions.map((q) =>
+                    tx.table('quizQuestions').put({
+                        ...q,
+                        workspaceId: q.workspaceId || defaultWorkspaceId,
+                    })
+                ),
             ]);
         });
         this.version(2).stores({

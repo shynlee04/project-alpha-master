@@ -6,6 +6,7 @@
 import type { QuizState } from '../types';
 import { getQuizDB } from '../quiz-db';
 import type { Quiz } from '../../../../../../lib/study/quiz-types';
+import { useWorkspaceStore } from '../../../workspace';
 
 export type QuizManagementSlice = Pick<QuizState, 'createQuiz' | 'updateQuiz' | 'deleteQuiz'>;
 
@@ -20,6 +21,9 @@ export const createQuizManagementSlice = (
             const now = Date.now();
             const id = `quiz-${now}-${Math.random().toString(36).substring(2, 9)}`;
 
+            // Get current workspace
+            const workspaceId = useWorkspaceStore.getState().currentWorkspace;
+
             const quiz: Quiz = {
                 ...quizData,
                 id,
@@ -32,6 +36,7 @@ export const createQuizManagementSlice = (
             await db.transaction('rw', db.quizzes, db.quizQuestions, async () => {
                 await db.quizzes.put({
                     id: quiz.id,
+                    workspaceId,
                     title: quiz.title,
                     description: quiz.description,
                     questionIds,
@@ -44,6 +49,7 @@ export const createQuizManagementSlice = (
                 for (const question of quiz.questions) {
                     await db.quizQuestions.put({
                         id: question.id,
+                        workspaceId,
                         quizId: quiz.id,
                         question: question.question,
                         options: question.options,
@@ -97,9 +103,10 @@ export const createQuizManagementSlice = (
             await db.transaction('rw', db.quizzes, db.quizQuestions, async () => {
                 await db.quizzes.put({
                     id: quiz.id,
+                    workspaceId: quiz.workspaceId,
                     title: updatedQuiz.title ?? quiz.title,
                     description: updatedQuiz.description ?? quiz.description,
-                    questionIds: quiz.questionIds, // Preserved unless manually updated via updateQuestion logic?
+                    questionIds: quiz.questionIds,
                     sourceIds: updatedQuiz.sourceIds ?? quiz.sourceIds,
                     settings: updatedQuiz.settings ?? quiz.settings,
                     createdAt: quiz.createdAt,

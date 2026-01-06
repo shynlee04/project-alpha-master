@@ -38,6 +38,8 @@ import { createEmbeddingService, type EmbeddingService } from '@/lib/rag/embeddi
 import { createIndex } from '@/lib/rag/orama-index';
 import { getOramaIndexAdapter } from '@/lib/rag/orama-index-adapter';
 import { storeEvents } from '@/lib/events/store-events';
+// P0-LLM-001: API key retrieval for embedding service
+import { useAPIKeyRetrieval } from './hooks/useAPIKeyRetrieval';
 
 // UC1: Synthesis Components
 import { SynthesisDialog } from '@/presentation/components/knowledge/SynthesisDialog';
@@ -74,6 +76,10 @@ export function KnowledgePage() {
     useAllCrossWorkspaceEvents();
     // Also subscribe to workspace changed events for agent filtering
     useWorkspaceChangedEvents();
+
+    // P0-LLM-001: Retrieve API key for embedding service
+    // This ensures cloud embeddings work when user has saved their Gemini API key
+    const { apiKey: embeddingApiKey, hasKey: hasEmbeddingKey, isLoading: isEmbeddingKeyLoading } = useAPIKeyRetrieval({ providerId: 'gemini' });
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -347,8 +353,9 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
     useEffect(() => {
         const initRAG = async () => {
             try {
-                // Initialize embedding service
-                const service = await createEmbeddingService();
+                // P0-LLM-001: Initialize embedding service with API key from credential vault
+                // This ensures cloud embeddings work when user has saved their Gemini API key
+                const service = await createEmbeddingService(embeddingApiKey ?? undefined);
                 setEmbeddingService(service);
 
                 // Initialize search index
@@ -375,7 +382,7 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
         if (!embeddingService) {
             initRAG();
         }
-    }, [embeddingService, projectId]);
+    }, [embeddingService, projectId, embeddingApiKey]); // P0-LLM-001: Re-init when API key changes
 
     // KSI Module: Source → RAG Bridge
     useEffect(() => {

@@ -42,91 +42,113 @@ session:
   iteration: 0
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT STORY (from parent delegation)
+# CURRENT STORY (Sprint Reprioritization - P0 Crisis)
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_story:
-  id: "V-001"
-  title: "Create E2E Validation Suite Framework"
-  type: "INFRASTRUCTURE"
+  id: "P0-LLM-002"
+  title: "Fix Notes Workspace Agent Chat"
+  type: "BUG_FIX"
   status: "IN_PROGRESS"
   priority: "P0"
-  estimated_hours: 4
+  estimated_hours: "0.5"
 
-  # Routing (from parent)
+  # Sprint context
+  sprint: "CRITICAL-PATH-CORRECTION-2026-01-07"
+  epic: "EPIC-1: API Key Flow Crisis"
+  trigger: "Skeptical PM Scan - User Journey 20% Pass Rate"
+
+  # Routing (new)
   routed_to:
-    module: "quality"
-    workflow: "validation-scan"
-    agent: "test-writer"
+    module: "architecture-remediation"
+    workflow: "fix-critical-bug"
+    agent: "dev"
 
   # Acceptance criteria
   acceptance_criteria:
-    - "Playwright installed and configured"
-    - "Test structure mirrors user journeys"
-    - "Each test can run independently"
+    - "NoteSidebarChat.tsx passes valid API key from useAgentChatAPIKeyManager"
+    - "Remove FALSE comment about credential-vault handling"
+    - "Notes workspace agent chat returns actual LLM responses"
+    - "User journey J3 (Notes AI Chat) passes"
 
   # Progress tracking
   progress:
     steps_completed: 0
-    steps_total: 5
-    current_step: "Install and configure Playwright"
+    steps_total: 3
+    current_step: "Fix NoteSidebarChat.tsx to retrieve and pass API key"
+    started_at: "2026-01-07T09:00:00+07:00"
+
+# Previous story completed
+previous_story:
+  id: "P0-LLM-001"
+  title: "Fix Embedding Service API Key Injection"
+  status: "COMPLETED"
+  completed_at: "2026-01-07T08:00:00+07:00"
+  steps_completed: 5
 
 # ═══════════════════════════════════════════════════════════════════════════
-# IMMEDIATE QUEUE (next 3 stories)
+# IMMEDIATE QUEUE (next 3 stories - EPIC 1 P0 Crisis)
 # ═══════════════════════════════════════════════════════════════════════════
 
 immediate_queue:
-  - id: "V-001"
-    title: "Create E2E Validation Suite Framework"
+  - id: "P0-LLM-001"
+    title: "Fix Embedding Service API Key Injection"
+    status: "COMPLETED"
+    priority: "P0-BLOCKER"
+    estimated_hours: "3-4"
+
+  - id: "P0-LLM-002"
+    title: "Fix Notes Workspace Agent Chat"
     status: "IN_PROGRESS"
     priority: "P0"
+    estimated_hours: "0.5"
+    depends_on: []
 
-  - id: "V-002"
-    title: "File Sync E2E Validation Suite"
+  - id: "P0-LLM-003"
+    title: "Add API Key Validation Endpoint"
     status: "PENDING"
     priority: "P0"
-    depends_on: ["V-001"]
-
-  - id: "V-003"
-    title: "API Key Management E2E Validation Suite"
-    status: "PENDING"
-    priority: "P0"
-    depends_on: ["V-001"]
+    estimated_hours: "2-3"
+    depends_on: []
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT ACTION
+# CURRENT ACTION (P0-LLM-002: Fix Notes Workspace Agent Chat)
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_action:
   step: 1
-  description: "Install Playwright and configure test infrastructure"
-  command: "pnpm add -D @playwright/test"
-  files_to_create:
-    - "playwright.config.ts"
-    - "tests/e2e/.gitkeep"
-    - "tests/e2e/helpers/test-setup.ts"
+  description: "Fix NoteSidebarChat.tsx API key injection"
+  command: "Remove FALSE comment, import useAgentChatAPIKeyManager, pass valid apiKey"
+
+  files_to_modify:
+    - "src/presentation/components/notes/NoteSidebarChat.tsx"
 
   validation:
-    - "Playwright installs successfully"
-    - "Config file validates"
-    - "Can run npx playwright test --help"
+    - "Import useAgentChatAPIKeyManager from AgentChatPanel"
+    - "Wrap useAgentChatWithTools with API key manager"
+    - "Remove FALSE comment about credential-vault handling"
+    - "TypeScript compilation passes"
+    - "Notes agent chat returns actual responses (not placeholders)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ARTIFACTS TRACKING
 # ═══════════════════════════════════════════════════════════════════════════
 
 artifacts:
-  created_this_session: []
+  created_this_session:
+    - "_bmad-output/sprint-artifacts/critical-path-correction-sprint-2026-01-07.yaml"
+    - "_bmad-output/sprint-artifacts/api-key-flow-verification-report-2026-01-07.md"
+    - "_bmad-output/sprint-artifacts/user-journey-failure-matrix-verified-2026-01-07.md"
 
   to_create:
-    - path: "playwright.config.ts"
-      purpose: "Playwright configuration for E2E tests"
+    - path: "src/presentation/components/knowledge/hooks/useAPIKeyRetrieval.ts"
+      purpose: "Reusable hook for API key retrieval from credential vault"
 
-    - path: "tests/e2e/file-sync.spec.ts"
-      purpose: "File sync E2E test cases"
+    - path: "src/presentation/components/knowledge/hooks/index.ts"
+      purpose: "Barrel export for knowledge hooks"
 
-    - path: "tests/e2e/api-key.spec.ts"
-      purpose: "API key management E2E tests"
+    - path: "src/lib/rag/embedding-service-key-manager.ts"
+      purpose: "Centralized API key management for embedding service"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERROR TRACKING
@@ -141,14 +163,18 @@ errors:
 # ═══════════════════════════════════════════════════════════════════════════
 
 continuation:
-  next_action: "Execute current_action.step 1: Install Playwright"
+  next_action: "Execute P0-LLM-001 Step 1: Create useAPIKeyRetrieval hook"
   auto_execute: true
   report_on_completion: "parent"
 
   resume_prompt: |
-    CHILD LEVEL: Operational execution for V-001
-    Current: Installing Playwright and configuring test infrastructure
-    Parent: CC-PHASE-0 (Verification Infrastructure)
-    Story: V-001 - Create E2E Validation Suite Framework
+    CHILD LEVEL: Operational execution for P0-LLM-001
+    Current: Creating useAPIKeyRetrieval hook pattern
+    Parent: Critical Path Correction Sprint
+    Epic: EPIC-1 - API Key Flow Crisis (P0-BLOCKER)
+    Story: P0-LLM-001 - Fix Embedding Service API Key Injection
 
-    Continue with: pnpm add -D @playwright/test
+    User Journey Impact: J1, J3, J4, J6 FAIL (20% pass rate)
+    Evidence: api-key-flow-verification-report-2026-01-07.md
+
+    Continue with: Create useAPIKeyRetrieval hook based on useAgentChatAPIKeyManager pattern

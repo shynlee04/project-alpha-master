@@ -27,8 +27,13 @@ export const createQuestionManagementSlice = (
             };
 
             await db.transaction('rw', db.quizzes, db.quizQuestions, async () => {
+                // Get workspaceId from the quiz to associate the question with the same workspace
+                const quiz = await db.quizzes.get(quizId);
+                const workspaceId = quiz?.workspaceId || 'ide'; // Default to 'ide' if not found
+
                 await db.quizQuestions.put({
                     id: question.id,
+                    workspaceId,
                     quizId,
                     question: question.question,
                     options: question.options,
@@ -41,7 +46,6 @@ export const createQuestionManagementSlice = (
                 });
 
                 // Update quiz's question count
-                const quiz = await db.quizzes.get(quizId);
                 if (quiz) {
                     const questionIds = [...quiz.questionIds, question.id];
                     await db.quizzes.update(quizId, { questionIds, updatedAt: now });

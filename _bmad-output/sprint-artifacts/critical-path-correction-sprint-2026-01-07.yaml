@@ -1,0 +1,417 @@
+# ============================================================================
+# CRITICAL PATH CORRECTION SPRINT
+# ============================================================================
+# Purpose: Achieve 100% health score through verified user journey fixes
+# Status: ACTIVE (Autonomous Execution)
+# Target: 100% user journey pass rate, 95% health score
+# Duration: 5-7 days estimated
+# ============================================================================
+
+version: "1.0.0"
+sprint_id: "CRITICAL-PATH-CORRECTION-2026-01-07"
+started_at: "2026-01-07T00:00:00+07:00"
+mode: "AUTONOMOUS"
+team: "Team A"
+
+# ============================================================================
+# SPRINT CONTEXT
+# ============================================================================
+
+context:
+  trigger: "Skeptical PM Scan - Iteration 2 Complete"
+  current_health_score: 46.4
+  target_health_score: 95
+  user_journey_pass_rate: 20% (2/10)
+  critical_blockers: 5 P0, 4 P1
+
+  evidence:
+    - "API Key Flow Verification Report: api-key-flow-verification-report-2026-01-07.md"
+    - "User Journey Failure Matrix: user-journey-failure-matrix-verified-2026-01-07.md"
+    - "Architect Stability Audit: architect-stability-audit-2026-01-07.md"
+    - "Dev Integration Tests: dev-integration-tests-2026-01-07.md"
+
+# ============================================================================
+# EPIC 1: API KEY FLOW CRISIS (P0 - CRITICAL)
+# ============================================================================
+# Priority: BLOCKER - Must complete before any other work
+# User Journey Impact: J1, J3, J4, J6, J8, J10 FAIL
+# Estimated: 8-12 hours
+
+epic_1_api_key_crisis:
+  id: "EPIC-1"
+  title: "API Key Flow Crisis - Fix All User Journey Blockers"
+  priority: "P0-BLOCKER"
+  status: "READY"
+  estimated_hours: 12
+
+  stories:
+
+    - id: "P0-LLM-001"
+      title: "Fix Embedding Service API Key Injection"
+      priority: "P0"
+      estimated_hours: "3-4"
+      status: "READY"
+
+      description: |
+        4 locations call createEmbeddingService() WITHOUT API key:
+        - KnowledgePage.tsx:351
+        - incremental-indexing-service.ts:247
+        - incremental-indexing-service.ts:368
+        - hybrid-retriever.ts:473
+
+        Impact: Even with saved API key, embeddings fall back to 'none' and RAG fails
+
+      acceptance_criteria:
+        - "All 4 embedding service calls retrieve API key from credentialVault"
+        - "selectEmbeddingProvider() sees hasApiKey=true when key exists"
+        - "RAG search returns results for newly indexed documents"
+        - "User journey J1 (Add key → Use RAG) passes"
+
+      files_to_modify:
+        - "src/presentation/components/knowledge/KnowledgePage.tsx"
+        - "src/lib/rag/incremental-indexing-service.ts"
+        - "src/lib/rag/hybrid-retriever.ts"
+
+      implementation_plan:
+        - step: 1
+          action: "Create useAPIKeyRetrieval hook pattern"
+          effort: "1 hour"
+        - step: 2
+          action: "Update KnowledgePage.tsx to use hook"
+          effort: "30 min"
+        - step: 3
+          action: "Update incremental-indexing-service.ts (2 locations)"
+          effort: "1 hour"
+        - step: 4
+          action: "Update hybrid-retriever.ts"
+          effort: "30 min"
+        - step: 5
+          action: "Test: Verify cloud embeddings work with saved key"
+          effort: "1 hour"
+
+    - id: "P0-LLM-002"
+      title: "Fix Notes Workspace Agent Chat"
+      priority: "P0"
+      estimated_hours: "0.5"
+      status: "READY"
+
+      description: |
+        NoteSidebarChat.tsx:83 passes apiKey: undefined with FALSE comment:
+        "Credential-vault handles API key lookup"
+
+        Reality: useAgentChatWithTools does NO internal vault lookup
+        Impact: All agent chat in Notes fails with 401 Unauthorized
+
+      acceptance_criteria:
+        - "NoteSidebarChat uses useAgentChatAPIKeyManager pattern"
+        - "API key retrieved from credentialVault before chat"
+        - "Agent chat in Notes workspace works with saved key"
+        - "User journey J3 (Agent chat Notes) passes"
+
+      files_to_modify:
+        - "src/presentation/components/notes/NoteSidebarChat.tsx"
+
+      implementation_plan:
+        - step: 1
+          action: "Import useAgentChatAPIKeyManager from AgentChatPanel"
+          effort: "10 min"
+        - step: 2
+          action: "Wrap useAgentChatWithTools with API key manager"
+          effort: "10 min"
+        - step: 3
+          action: "Remove FALSE comment, verify apiKey is passed"
+          effort: "10 min"
+
+    - id: "P0-LLM-003"
+      title: "Add API Key Validation Endpoint"
+      priority: "P0"
+      estimated_hours: "2-3"
+      status: "READY"
+
+      description: |
+        User adds key but never gets confirmation it works until RAG fails silently
+        Need: /api/provider/test endpoint that validates key and returns feedback
+
+      acceptance_criteria:
+        - "POST /api/provider/test endpoint created"
+        - "Endpoint calls provider with test prompt"
+        - "Returns { valid: boolean, error?: string, model?: string }"
+        - "UI shows 'Connected' or specific error message"
+        - "User journey J1 validation step passes"
+
+      files_to_create:
+        - "src/routes/api/provider/test/+server.ts"
+
+      implementation_plan:
+        - step: 1
+          action: "Create TanStack Route API endpoint"
+          effort: "30 min"
+        - step: 2
+          action: "Implement provider testConnection() call"
+          effort: "1 hour"
+        - step: 3
+          action: "Add error handling and response formatting"
+          effort: "30 min"
+        - step: 4
+          action: "Update ProviderConfigDialog to call test endpoint"
+          effort: "30 min"
+        - step: 5
+          action: "Test with valid and invalid keys"
+          effort: "30 min"
+
+    - id: "P0-LLM-004"
+      title: "Implement RAG Chat Real Responses"
+      priority: "P0"
+      estimated_hours: "2-3"
+      status: "READY"
+
+      description: |
+        rag-chat.ts:129-132 returns placeholder instead of actual API call
+        Impact: User gets fake "placeholder" response instead of real AI response
+
+      acceptance_criteria:
+        - "rag-chat.ts calls /api/chat endpoint with context"
+        - "Response includes AI-generated content (not placeholder)"
+        - "Citations array is non-empty for grounded responses"
+        - "Error handling shows clear messages when LLM fails"
+
+      files_to_modify:
+        - "src/lib/rag/rag-chat.ts"
+
+      implementation_plan:
+        - step: 1
+          action: "Import chat API client from @/routes/api/chat"
+          effort: "30 min"
+        - step: 2
+          action: "Replace placeholder with actual /api/chat call"
+          effort: "1-2 hours"
+        - step: 3
+          action: "Add error handling with user-friendly messages"
+          effort: "30 min"
+        - step: 4
+          action: "Test: Verify real responses with citations"
+          effort: "30 min"
+
+    - id: "P0-LLM-005"
+      title: "Add Indexing Progress Tracking"
+      priority: "P0"
+      estimated_hours: "2-3"
+      status: "READY"
+
+      description: |
+        No progress indication during RAG indexing
+        User doesn't know if indexing works or failed
+
+      acceptance_criteria:
+        - "Add indexingProgress state to rag-types.ts"
+        - "KnowledgePage shows progress bar during indexing"
+        - "Progress persists when navigating workspaces"
+        - "User journey J1 indexing step passes"
+
+      files_to_modify:
+        - "src/infrastructure/persistence/stores/rag/rag-types.ts"
+        - "src/presentation/components/knowledge/KnowledgePage.tsx"
+        - "src/lib/rag/index.ts"
+
+      implementation_plan:
+        - step: 1
+          action: "Define IndexingProgress state in rag-types.ts"
+          effort: "30 min"
+        - step: 2
+          action: "Emit progress events from indexing services"
+          effort: "1 hour"
+        - step: 3
+          action: "Wire progress state to KnowledgePage UI"
+          effort: "1 hour"
+        - step: 4
+          action: "Test progress with 5+ large documents"
+          effort: "30 min"
+
+# ============================================================================
+# EPIC 2: GOD STORE ELIMINATION (PHASE 2)
+# ============================================================================
+# Priority: P1 - Architectural debt
+# Estimated: 18-24 hours
+
+epic_2_god_stores:
+  id: "EPIC-2"
+  title: "God Store Elimination - Phase 2"
+  priority: "P1"
+  status: "READY"
+  estimated_hours: 24
+  depends_on: ["EPIC-1"]
+
+  stores_to_split:
+
+    - store: "rag-store.ts"
+      current_lines: 1595
+      target_slices: 12
+      slice_size_limit: 120
+      estimated_hours: "6-8"
+
+    - store: "conversation-threads-store.ts"
+      current_lines: 726
+      target_slices: 6
+      slice_size_limit: 120
+      estimated_hours: "3-4"
+
+    - store: "conversation-store.ts"
+      current_lines: 626
+      target_slices: 6
+      slice_size_limit: 120
+      estimated_hours: "3-4"
+
+    - store: "knowledge-store.ts"
+      current_lines: 512
+      target_slices: 5
+      slice_size_limit: 120
+      estimated_hours: "2-3"
+
+    - additional_stores: 5
+      total_lines: 1800
+      target_slices: 15
+      estimated_hours: "4-5"
+
+# ============================================================================
+# EPIC 3: CROSS-WORKSPACE INTEGRATION
+# ============================================================================
+# Priority: P1 - User experience gaps
+# Estimated: 14-18 hours
+
+epic_3_workspace_integration:
+  id: "EPIC-3"
+  title: "Cross-Workspace Integration"
+  priority: "P1"
+  status: "READY"
+  estimated_hours: 18
+  depends_on: ["EPIC-1"]
+
+  stories:
+
+    - id: "P1-WK-001"
+      title: "Unify Agent Selection Across Workspaces"
+      priority: "P1"
+      estimated_hours: "3-4"
+
+    - id: "P1-WK-002"
+      title: "Cross-Workspace File Event Broadcasting"
+      priority: "P1"
+      estimated_hours: "3-4"
+
+    - id: "P1-WK-003"
+      title: "Session Restore on App Load"
+      priority: "P1"
+      estimated_hours: "2-3"
+
+    - id: "P1-WK-004"
+      title: "Workspace Switch State Preservation"
+      priority: "P1"
+      estimated_hours: "2-3"
+
+# ============================================================================
+# EPIC 4: E2E VALIDATION INFRASTRUCTURE
+# ============================================================================
+# Priority: P0 - Validation of all fixes
+# Estimated: 8-10 hours
+
+epic_4_e2e_validation:
+  id: "EPIC-4"
+  title: "E2E Validation Infrastructure"
+  priority: "P0"
+  status: "READY"
+  estimated_hours: 10
+  can_run_parallel: true
+
+  stories:
+
+    - id: "V-001"
+      title: "Create E2E Validation Suite Framework"
+      priority: "P0"
+      estimated_hours: 4
+      status: "READY"
+      acceptance_criteria:
+        - "Playwright installed and configured"
+        - "Test structure mirrors user journeys"
+        - "Each test can run independently"
+
+    - id: "V-002"
+      title: "File Sync E2E Validation Suite"
+      priority: "P0"
+      estimated_hours: 2
+      depends_on: ["V-001"]
+
+    - id: "V-003"
+      title: "API Key Management E2E Validation Suite"
+      priority: "P0"
+      estimated_hours: 2
+      depends_on: ["V-001"]
+
+    - id: "V-004"
+      title: "Agent Execution E2E Validation Suite"
+      priority: "P0"
+      estimated_hours: "2-3"
+      depends_on: ["V-001"]
+
+# ============================================================================
+# EXECUTION ORDER
+# ============================================================================
+
+execution_order:
+  - phase: 1
+    days: [1, 2]
+    epic: "EPIC-1"
+    reason: "P0 BLOCKER - All user journeys failing"
+
+  - phase: 2
+    days: [3]
+    epic: "EPIC-4"
+    reason: "Validation infrastructure (can run parallel)"
+
+  - phase: 3
+    days: [3, 4, 5]
+    epic: "EPIC-2"
+    reason: "Architectural debt (after P0 fixes)"
+
+  - phase: 4
+    days: [5, 6, 7]
+    epic: "EPIC-3"
+    reason: "Cross-workspace integration (after foundation stable)"
+
+# ============================================================================
+# SUCCESS METRICS
+# ============================================================================
+
+success_metrics:
+  user_journey_pass_rate:
+    current: 20%
+    target: 100%
+
+  health_score:
+    current: 46.4
+    target: 95
+
+  p0_blockers:
+    current: 5
+    target: 0
+
+  god_stores:
+    current: 9
+    target: 0
+
+  typescript_errors:
+    current: 1253
+    target: 0
+
+# ============================================================================
+# ARTIFACTS
+# ============================================================================
+
+artifacts:
+  verification_report: "_bmad-output/sprint-artifacts/api-key-flow-verification-report-2026-01-07.md"
+  user_journey_matrix: "_bmad-output/sprint-artifacts/user-journey-failure-matrix-verified-2026-01-07.md"
+  architect_audit: "_bmad-output/validation/architect-stability-audit-2026-01-07.md"
+  dev_tests: "_bmad-output/validation/dev-integration-tests-2026-01-07.md"
+
+# ============================================================================
+# END OF SPRINT PLAN
+# ============================================================================

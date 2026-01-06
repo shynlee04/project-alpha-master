@@ -18,6 +18,8 @@ import type { Orama } from '@orama/orama';
 import { search as oramaSearch } from '@orama/orama';
 import { loadIndex } from './orama-index';
 import type { OramaSchema, DocumentSchema } from './types';
+// P0-LLM-001: Import credential vault to retrieve API key for embeddings
+import { credentialVault } from '@/lib/agent/providers/credential-vault';
 
 // ============================================================================
 // Types
@@ -470,7 +472,10 @@ export async function hybridSearchWithEmbedding(
   // and SSR issues
   try {
     const embeddingModule = await import('./embedding-service');
-    const embeddingService = await embeddingModule.createEmbeddingService();
+    // P0-LLM-001: Retrieve API key from credential vault for cloud embeddings
+    await credentialVault.initialize();
+    const geminiApiKey = await credentialVault.getCredentials('gemini');
+    const embeddingService = await embeddingModule.createEmbeddingService(geminiApiKey ?? undefined);
 
     // Generate embedding for query
     const result = await embeddingService.embed(query);
