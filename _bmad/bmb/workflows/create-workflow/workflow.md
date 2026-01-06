@@ -2,19 +2,6 @@
 name: create-workflow
 description: Create structured standalone workflows using markdown-based step architecture
 web_bundle: true
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMB-002"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Create Workflow
@@ -55,6 +42,7 @@ This uses **step-file architecture** for disciplined execution:
 - 🎯 **ALWAYS** follow the exact instructions in the step file
 - ⏸️ **ALWAYS** halt at menus and wait for user input
 - 📋 **NEVER** create mental todo lists from future steps
+- ✅ YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`
 
 ---
 

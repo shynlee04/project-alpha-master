@@ -13,6 +13,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
 import { credentialVault } from '@/lib/agent/providers'
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus'
 import type { Agent, AgentToolBinding } from '@/core/entities/Agent'
 
 /**
@@ -134,10 +135,33 @@ export function useAgentFormState(agentId: string | null) {
     const [activeTab, setActiveTab] = useState<'basic' | 'workspace' | 'advanced'>('basic')
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    // FIX-2026-01-07: Force update counter for when models are refreshed externally
+    const [modelsUpdateCounter, setModelsUpdateCounter] = useState(0)
+
     // Initialize credentialVault on mount
     useEffect(() => {
         credentialVault.initialize().catch(console.error)
     }, [])
+
+    // FIX-2026-01-07: Subscribe to ProviderModelsFetched event to force re-render
+    // When models are loaded in ProviderConfigDialog after API key save,
+    // this hook needs to know to update the models list
+    useEffect(() => {
+        const handleModelsFetched = (event: { providerId: string; modelCount: number }) => {
+            console.log('[useAgentFormState] ProviderModelsFetched event received:', event)
+            // If models were fetched for the current provider, force a re-render
+            if (event.providerId === providerId) {
+                console.log('[useAgentFormState] Models updated for current provider, forcing re-render')
+                setModelsUpdateCounter(prev => prev + 1)
+            }
+        }
+
+        crossWorkspaceEventBus.on('ProviderModelsFetched', handleModelsFetched)
+
+        return () => {
+            crossWorkspaceEventBus.off('ProviderModelsFetched', handleModelsFetched)
+        }
+    }, [providerId])
 
     // Sync local state when agent changes (e.g., switching between agents)
     useEffect(() => {
@@ -172,7 +196,8 @@ export function useAgentFormState(agentId: string | null) {
     // Get models for current provider - use useMemo to stabilize array reference
     // CRITICAL: Only watch availableModels[providerId], NOT the entire availableModels object
     // Otherwise, loading models for ANY provider triggers re-render for ALL agents
-    const models = useMemo(() => availableModels[providerId] || [], [availableModels[providerId], providerId])
+    // FIX-2026-01-07: Added modelsUpdateCounter to dependency array to force re-render when models are fetched externally
+    const models = useMemo(() => availableModels[providerId] || [], [availableModels[providerId], providerId, modelsUpdateCounter])
     const isLoadingModels = useMemo(() => storeLoadingModels[providerId] || false, [storeLoadingModels[providerId], providerId])
 
     return {

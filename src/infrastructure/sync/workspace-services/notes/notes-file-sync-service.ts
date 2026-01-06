@@ -241,6 +241,24 @@ export class NotesFileSyncService implements FileSyncService {
             this.state.syncInProgress = false;
         }
     }
+
+    /**
+     * Import directory content as notes
+     *
+     * Public method to trigger (re-)import of files from mounted directory.
+     * Can be called after service initialization to refresh notes from filesystem.
+     *
+     * @param rootPath - Root path to scan (empty string for full scan)
+     * @param onProgress - Optional progress callback
+     * @returns Import result with success/failure details
+     */
+    async importDirectory(
+        rootPath?: string,
+        onProgress?: (current: number, total: number, currentFile: string) => void
+    ) {
+        const bridge = new NoteFolderBridge(this.localAdapter, this.noteStore);
+        return bridge.importDirectory(rootPath || '', onProgress);
+    }
 }
 
 /**

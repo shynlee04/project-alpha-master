@@ -2,6 +2,19 @@
 name: create-product-brief
 description: Create comprehensive product briefs through collaborative step-by-step discovery as creative Business Analyst working with the user as peers.
 web_bundle: true
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "WF-BMM-002"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+expires_at: "2099-12-31T23:59:59+07:00"
+status: "ACTIVE"
+team: "shared"
+parent_id: "governance-foundation-001"
+related_artifacts: []
 ---
 
 # Product Brief Workflow
@@ -49,10 +62,10 @@ This uses **step-file architecture** for disciplined execution:
 
 ### 1. Configuration Loading
 
-Load and read full config from {project-root}/\_bmad/bmm/config.yaml and resolve:
+Load and read full config from {project-root}/_bmad/bmm/config.yaml and resolve:
 
-- `project_name`, `output_folder`, `user_name`, `communication_language`, `document_output_language`, `user_skill_level`
+- `project_name`, `output_folder`, `planning_artifacts`, `user_name`, `communication_language`, `document_output_language`, `user_skill_level`
 
 ### 2. First Step EXECUTION
 
-Load, read the full file and then execute `{project-root}/_bmad/bmm/workflows/1-analysis/product-brief/steps/step-01-init.md` to begin the workflow.
+Load, read the full file and then execute `{project-root}/_bmad/bmm/workflows/1-analysis/create-product-brief/steps/step-01-init.md` to begin the workflow.

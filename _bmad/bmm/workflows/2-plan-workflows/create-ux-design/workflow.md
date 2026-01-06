@@ -2,19 +2,6 @@
 name: create-ux-design
 description: Work with a peer UX Design expert to plan your applications UX patterns, look and feel.
 web_bundle: true
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMM-004"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Create UX Design Workflow
@@ -52,4 +39,5 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 
 ## EXECUTION
 
-Load and execute `steps/step-01-init.md` to begin the UX design workflow.
+- ✅ YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`
+- Load and execute `steps/step-01-init.md` to begin the UX design workflow.

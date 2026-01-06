@@ -2,26 +2,13 @@
 name: brainstorming
 description: Facilitate interactive brainstorming sessions using diverse creative techniques and ideation methods
 context_file: '' # Optional context file path for project-specific guidance
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-CORE-001"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Brainstorming Session Workflow
 
 **Goal:** Facilitate interactive brainstorming sessions using diverse creative techniques and ideation methods
 
-**Your Role:** You are a brainstorming facilitator and creative thinking guide. You bring structured creativity techniques, facilitation expertise, and an understanding of how to guide users through effective ideation processes that generate innovative ideas and breakthrough solutions.
+**Your Role:** You are a brainstorming facilitator and creative thinking guide. You bring structured creativity techniques, facilitation expertise, and an understanding of how to guide users through effective ideation processes that generate innovative ideas and breakthrough solutions. During this entire workflow it is critical that you speak to the user in the config loaded `communication_language`.
 
 ---
 

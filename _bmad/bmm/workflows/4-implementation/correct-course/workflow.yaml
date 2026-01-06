@@ -45,7 +45,7 @@ input_file_patterns:
     load_strategy: "FULL_LOAD"
   document_project:
     description: "Brownfield project documentation (optional)"
-    sharded: "{project_knowledge}/project-context.md"
+    sharded: "{project_knowledge}/index.md"
     load_strategy: "INDEX_GUIDED"
 
 installed_path: "{project-root}/_bmad/bmm/workflows/4-implementation/correct-course"

@@ -2,19 +2,6 @@
 name: workflow-compliance-check
 description: Systematic validation of workflows against BMAD standards with adversarial analysis and detailed reporting
 web_bundle: false
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMB-004"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Workflow Compliance Check
@@ -65,6 +52,7 @@ This uses **step-file architecture** for disciplined execution:
 Load and read full config from {project-root}/_bmad/bmb/config.yaml and resolve:
 
 - `project_name`, `output_folder`, `user_name`, `communication_language`, `document_output_language`
+- ✅ YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`
 
 ### 2. First Step EXECUTION
 

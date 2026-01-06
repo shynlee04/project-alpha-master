@@ -1,6 +1,23 @@
 ---
 name: Global Coding Style
 description: Write clean, maintainable code with consistent naming conventions, meaningful identifiers, small focused functions, proper formatting, and adherence to DRY principles. Use this skill when writing code in any programming language (TypeScript, JavaScript, Python, Ruby, Go, etc.); when naming variables, functions, classes, and files; when formatting code with consistent indentation and line breaks; when refactoring code to follow DRY principles and avoid duplication; when writing small, focused functions with single responsibilities; when removing dead code, commented-out blocks, and unused imports; when choosing between backward compatibility and clean implementations; when structuring code for readability and testability; when applying automated formatting with Prettier, ESLint, Black, RuboCop, or similar tools; or when establishing and maintaining coding standards across the project.
+version: 3.0.0
+# =============================================================================
+# HIERARCHICAL TAXONOMY (BMAD Skills Manifest v3.0)
+# =============================================================================
+category: global
+parent: null
+children: []
+priority: 10
+agents: [all]
+triggers:
+  - naming conventions
+  - code formatting
+  - DRY principles
+  - code style
+  - clean code
+  - refactoring
+  - code structure
 ---
 
 # Global Coding Style

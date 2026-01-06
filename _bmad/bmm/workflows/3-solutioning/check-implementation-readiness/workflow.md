@@ -2,19 +2,6 @@
 name: check-implementation-readiness
 description: 'Critical validation workflow that assesses PRD, Architecture, and Epics & Stories for completeness and alignment before implementation. Uses adversarial review approach to find gaps and issues.'
 web_bundle: false
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMM-006"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Implementation Readiness
@@ -61,6 +48,7 @@ related_artifacts: []
 Load and read full config from {project-root}/_bmad/bmm/config.yaml and resolve:
 
 - `project_name`, `output_folder`, `planning_artifacts`, `user_name`, `communication_language`, `document_output_language`
+- ✅ YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`
 
 ### 2. First Step EXECUTION
 

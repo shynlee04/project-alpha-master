@@ -35,6 +35,8 @@ import {
 } from './hooks';
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
+// WB-8.3: Cross-workspace event subscriptions for state synchronization
+import { useAllCrossWorkspaceEvents } from '@/lib/events/use-cross-workspace-events';
 
 // Import sub-components
 import {
@@ -149,6 +151,10 @@ export function IDELayout(): React.JSX.Element {
         activeFilePath: activeFilePath ?? null,
         setOpenFiles,
     });
+
+    // WB-8.3: Subscribe to all cross-workspace events for state synchronization
+    // Ensures IDE workspace reacts to changes from Notes, Knowledge, Study workspaces
+    useAllCrossWorkspaceEvents();
 
     // State restoration hook
     useIDEStateRestoration({

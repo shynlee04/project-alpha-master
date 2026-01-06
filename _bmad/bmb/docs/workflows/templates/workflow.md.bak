@@ -2,6 +2,19 @@
 name: { { workflowDisplayName } }
 description: { { workflowDescription } }
 web_bundle: { { webBundleFlag } }
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "{{workflowId}}"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "{{createdAt}}"
+expires_at: "{{expiresAt}}"
+status: "ACTIVE"
+team: "{{team}}"
+parent_id: "{{parentId}}"
+related_artifacts: []
 ---
 
 # {{workflowDisplayName}}
@@ -49,7 +62,7 @@ This uses **step-file architecture** for disciplined execution:
 
 ### 1. Configuration Loading
 
-Load and read full config from {project-root}/\_bmad/{{targetModule}}/config.yaml and resolve:
+Load and read full config from {project-root}/_bmad/{{targetModule}}/config.yaml and resolve:
 
 - `project_name`, `output_folder`, `user_name`, `communication_language`, `document_output_language`
 

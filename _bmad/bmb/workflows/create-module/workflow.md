@@ -3,19 +3,6 @@ name: create-module
 description: 'Interactive workflow to build complete BMAD modules with agents, workflows, and installation infrastructure'
 web_bundle: true
 installed_path: '{project-root}/_bmad/bmb/workflows/create-module'
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMB-001"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Create Module Workflow
@@ -62,6 +49,7 @@ related_artifacts: []
 Load and read full config from {project-root}/_bmad/bmb/config.yaml and resolve:
 
 - `project_name`, `output_folder`, `user_name`, `communication_language`, `document_output_language`, `bmb_creations_output_folder`
+- ✅ YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`
 
 ### 2. First Step EXECUTION
 

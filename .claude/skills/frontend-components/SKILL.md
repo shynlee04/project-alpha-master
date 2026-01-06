@@ -1,6 +1,26 @@
 ---
 name: Frontend Components
 description: Build reusable, composable UI components with clear interfaces, proper state management, and single-responsibility design principles. Use this skill when creating React components, Vue components, Svelte components, or any UI framework components; when designing component APIs with props and sensible defaults; when implementing component composition patterns; when managing component state (local vs. lifted state); when writing component documentation and usage examples; when ensuring components are reusable across different contexts; when following single responsibility and encapsulation principles; when creating UI libraries or design systems; when optimizing component performance with proper rendering patterns; when building complex UIs by combining smaller components; or when structuring component architecture for scalability and maintainability.
+version: 3.0.0
+# =============================================================================
+# HIERARCHICAL TAXONOMY (BMAD Skills Manifest v3.0)
+# =============================================================================
+category: frontend
+parent: null
+children: []
+priority: 30
+agents:
+  - bmad-dev
+  - ux-designer
+  - frontend-specialist
+triggers:
+  - component creation
+  - React component
+  - Vue component
+  - UI component
+  - component composition
+  - state management
+  - props interface
 ---
 
 # Frontend Components

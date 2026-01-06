@@ -26,6 +26,8 @@ import { FolderOpen } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 // P0-3: File Sync Service Initialization
 import { useFileSyncService } from '@/lib/filesync/hooks';
+// WB-8.3: Cross-workspace event subscriptions for state synchronization
+import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 
 export function StudyPage() {
     const { t } = useTranslation();
@@ -53,6 +55,12 @@ export function StudyPage() {
         projectId,
         workspaceType: 'study',
     });
+
+    // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // Ensures Study workspace reacts to changes from IDE, Notes, Knowledge workspaces
+    useAllCrossWorkspaceEvents();
+    // Also subscribe to workspace changed events for agent filtering
+    useWorkspaceChangedEvents();
 
     // Count items
     const flashcardCount = flashcards.filter((f) => f.projectId === projectId).length;

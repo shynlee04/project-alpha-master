@@ -1,0 +1,315 @@
+# BMAD Module Routing Configuration
+# Version: 1.0.0
+# Purpose: Define how BMAD master routes to all modules
+# Note: This routing is now integrated into _bmad/core/agents/bmad-master.md
+
+version: "1.0.0"
+updated: "2026-01-07"
+integrated_into: "_bmad/core/agents/bmad-master.md"
+
+# Module Tiers
+# Tier 1: Core (always active)
+# Tier 2: Permanent (maintained)
+# Tier 3: Archival (available but not actively developed)
+
+modules:
+  # ============================================
+  # TIER 1: CORE LOOP ORCHESTRATION
+  # ============================================
+  core_orchestrator:
+    tier: 1
+    path: "_bmad/core/agents/bmad-master.md"
+    purpose: "Central coordinator for all autonomous development"
+    status: "ACTIVE"
+    
+  asgl:
+    tier: 1
+    path: "_bmad/modules/asgl/"
+    purpose: "Autonomous Self-Governing Loop Orchestrator"
+    status: "ACTIVE"
+    invoked_by: "bmad-master"
+
+  # ============================================
+  # TIER 2: PERMANENT MODULES
+  # ============================================
+  core_governance:
+    tier: 2
+    path: "_bmad/modules/core-governance/"
+    purpose: "Constitution enforcement, platform routing, state management"
+    status: "ACTIVE"
+    
+  governance:
+    tier: 2
+    path: "_bmad/modules/governance/"
+    purpose: "Artifact lifecycle, naming conventions, status sync"
+    status: "ACTIVE"
+    
+  sprint_execution:
+    tier: 2
+    path: "_bmad/modules/sprint-execution/"
+    purpose: "Sprint planning, story development, PM rigor"
+    status: "ACTIVE"
+
+  # ============================================
+  # TIER 2: BUSINESS MODEL MANAGEMENT (BMM)
+  # ============================================
+  bmm:
+    tier: 2
+    path: "_bmad/bmm/"
+    purpose: "Business Model Management - implementation agents"
+    agents:
+      analyst: "Requirements analysis, story breakdown"
+      architect: "System design, ADRs, technical specs"
+      dev: "Feature implementation, coding"
+      pm: "Backlog management, sprint planning"
+      sm: "Story creation, sprint tracking"
+      tea: "Test strategy, automation, QA"
+      tech_writer: "Documentation, API refs, guides"
+      ux_designer: "UI/UX design, wireframes"
+      quick_flow_solo_dev: "Fast-track bug fixes"
+    status: "ACTIVE"
+
+  # ============================================
+  # TIER 2: CREATIVE/INNOVATION
+  # ============================================
+  cis:
+    tier: 2
+    path: "_bmad/cis/"
+    purpose: "Creative/Innovation Strategies"
+    agents:
+      - brainstorming-coach
+      - creative-problem-solver
+      - design-thinking-coach
+      - innovation-strategist
+    status: "ACTIVE"
+
+  # ============================================
+  # TIER 2: CORE WORKFLOWS
+  # ============================================
+  core_workflows:
+    tier: 2
+    path: "_bmad/core/"
+    workflows:
+      - brainstorming
+      - party-mode
+    status: "ACTIVE"
+
+  # ============================================
+  # TIER 3: ARCHIVAL (Available but not actively developed)
+  # ============================================
+  architecture_refactoring:
+    tier: 3
+    path: "_bmad/modules/architecture-refactoring/"
+    purpose: "Deep scanning, god store elimination"
+    status: "ARCHIVAL"
+    note: "Functions migrated to architecture-remediation and quality modules"
+    
+  architecture_remediation:
+    tier: 3
+    path: "_bmad/modules/architecture-remediation/"
+    purpose: "Component splitting, TypeScript fixes"
+    status: "ARCHIVAL"
+    note: "Consolidated into quality module workflows"
+    
+  integration_testing:
+    tier: 3
+    path: "_bmad/modules/integration-testing/"
+    purpose: "Real-world testing with Playwright"
+    status: "ARCHIVAL"
+    note: "Real-world validator available, but module archived"
+    
+  quality:
+    tier: 2
+    path: "_bmad/modules/quality/"
+    purpose: "Scanning, validation gates, code review"
+    scanners:
+      - state-scanner
+      - architecture-scanner
+    status: "ACTIVE"
+
+# ============================================
+# STORY ROUTING MATRIX
+# ============================================
+# Maps story types to modules and workflows
+
+routing:
+  # ============================================
+  # ANALYSIS & DISCOVERY
+  # ============================================
+  analysis:
+    - story_type: "product_analysis"
+      module: "bmm"
+      agent: "analyst"
+      workflow: "analyze-requirements"
+      
+    - story_type: "domain_analysis"
+      module: "quality"
+      scanner: "domain-scanner"
+      
+    - story_type: "competitive_analysis"
+      module: "bmm"
+      agent: "analyst"
+      workflow: "competitive-research"
+
+  # ============================================
+  # ARCHITECTURE & DESIGN
+  # ============================================
+  architecture:
+    - story_type: "system_design"
+      module: "bmm"
+      agent: "architect"
+      workflow: "create-architecture"
+      
+    - story_type: "technical_spec"
+      module: "bmm"
+      agent: "architect"
+      workflow: "create-tech-spec"
+      
+    - story_type: "ux_design"
+      module: "bmm"
+      agent: "ux-designer"
+      workflow: "create-ux-design"
+
+  # ============================================
+  # DIAGNOSTICS & SCANNING
+  # ============================================
+  diagnostics:
+    - story_type: "health_assessment"
+      module: "quality"
+      scanner: "full-scan"
+      
+    - story_type: "state_scan"
+      module: "quality"
+      scanner: "state-scanner"
+      
+    - story_type: "architecture_scan"
+      module: "quality"
+      scanner: "architecture-scanner"
+
+  # ============================================
+  # REMEDIATION & FIXES
+  # ============================================
+  remediation:
+    - story_type: "god_store_split"
+      module: "architecture-remediation"
+      workflow: "eliminate-god-stores"
+      fallback: "quality"
+      
+    - story_type: "component_split"
+      module: "architecture-remediation"
+      workflow: "normalize-components"
+      
+    - story_type: "typescript_fix"
+      module: "architecture-remediation"
+      workflow: "fix-typescript-errors"
+      
+    - story_type: "workspace_filesystem_e2e"
+      module: "architecture-remediation"
+      workflow: "workspace-file-system-e2e"
+
+  # ============================================
+  # IMPLEMENTATION
+  # ============================================
+  implementation:
+    - story_type: "feature_development"
+      module: "bmm"
+      agent: "dev"
+      workflow: "dev-story"
+      
+    - story_type: "bug_fix"
+      module: "bmm"
+      agent: "quick-flow-solo-dev"
+      workflow: "quick-fix"
+
+  # ============================================
+  # TESTING & VALIDATION
+  # ============================================
+  testing:
+    - story_type: "e2e_test"
+      module: "integration-testing"
+      agent: "real-world-validator"
+      
+    - story_type: "code_review"
+      module: "bmm"
+      agent: "dev"
+      workflow: "code-review"
+
+  # ============================================
+  # DOCUMENTATION
+  # ============================================
+  documentation:
+    - story_type: "api_docs"
+      module: "bmm"
+      agent: "tech-writer"
+      workflow: "create-api-docs"
+      
+    - story_type: "user_guide"
+      module: "bmm"
+      agent: "tech-writer"
+      workflow: "create-user-guide"
+
+  # ============================================
+  # PRODUCT MANAGEMENT
+  # ============================================
+  product_management:
+    - story_type: "sprint_planning"
+      module: "sprint-execution"
+      agent: "product-manager-rigorous"
+      workflow: "sprint-planning"
+      
+    - story_type: "story_creation"
+      module: "bmm"
+      agent: "sm"
+      workflow: "create-story"
+
+  # ============================================
+  # CREATIVE & INNOVATION
+  # ============================================
+  innovation:
+    - story_type: "brainstorming"
+      module: "core"
+      workflow: "brainstorming"
+      
+    - story_type: "multi_agent_discussion"
+      module: "core"
+      workflow: "party-mode"
+      
+    - story_type: "innovation_strategy"
+      module: "cis"
+      agent: "innovation-strategist"
+
+# ============================================
+# AGENT MAPPING
+# ============================================
+# All agents available for routing
+
+agents:
+  # BMM Agents
+  - "@bmad-bmm-analyst"
+  - "@bmad-bmm-architect"
+  - "@bmad-bmm-dev"
+  - "@bmad-bmm-pm"
+  - "@bmad-bmm-sm"
+  - "@bmad-bmm-tea"
+  - "@bmad-bmm-tech-writer"
+  - "@bmad-bmm-ux-designer"
+  - "@bmad-bmm-quick-flow-solo-dev"
+
+  # CIS Agents
+  - "@bmad-cis-brainstorming-coach"
+  - "@bmad-cis-creative-problem-solver"
+  - "@bmad-cis-design-thinking-coach"
+  - "@bmad-cis-innovation-strategist"
+
+  # Quality Agents
+  - "@quality-state-scanner"
+  - "@quality-architecture-scanner"
+
+  # Architecture Remediation Agents
+  - "@architecture-remediation-store-refactorer"
+  - "@architecture-remediation-component-splitter"
+  - "@architecture-remediation-typescript-fixer"
+
+  # Core Orchestrator
+  - "@bmad-core-bmad-master"
+  - "@bmad-core-orchestrator"

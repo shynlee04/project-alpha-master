@@ -1,19 +1,6 @@
 ---
 name: quick-dev
 description: 'Flexible development - execute tech-specs OR direct instructions with optional planning.'
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMM-009"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # Quick Dev Workflow
@@ -41,8 +28,9 @@ This uses **step-file architecture** for focused execution:
 Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 
 - `user_name`, `communication_language`, `user_skill_level`
-- `output_folder`, `sprint_artifacts`
+- `output_folder`, `planning_artifacts`,  `implementation_artifacts`
 - `date` as system-generated current datetime
+- ✅ YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`
 
 ### Paths
 
@@ -55,7 +43,7 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 - `create_tech_spec_workflow` = `{project-root}/_bmad/bmm/workflows/bmad-quick-flow/create-tech-spec/workflow.yaml`
 - `workflow_init` = `{project-root}/_bmad/bmm/workflows/workflow-status/init/workflow.yaml`
 - `party_mode_exec` = `{project-root}/_bmad/core/workflows/party-mode/workflow.md`
-- `advanced_elicitation` = `{project-root}/_bmad/core/tasks/advanced-elicitation.xml`
+- `advanced_elicitation` = `{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml`
 
 ---
 

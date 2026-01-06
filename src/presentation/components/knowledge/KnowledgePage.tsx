@@ -28,6 +28,8 @@ import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent/AgentManager';
+// WB-8.3: Cross-workspace event subscriptions for state synchronization
+import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 
 // KSI Module: Source → RAG Bridge
 import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';
@@ -66,6 +68,12 @@ export function KnowledgePage() {
     // P2-4: Panel collapse state (persisted in IDE store)
     const sourceLibraryCollapsed = useIDEStore((s) => s.panelCollapsed['knowledge-sources'] ?? false);
     const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
+
+    // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // Ensures Knowledge workspace reacts to changes from IDE, Notes, Study workspaces
+    useAllCrossWorkspaceEvents();
+    // Also subscribe to workspace changed events for agent filtering
+    useWorkspaceChangedEvents();
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {

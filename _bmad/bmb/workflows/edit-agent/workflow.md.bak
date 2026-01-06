@@ -2,6 +2,19 @@
 name: edit-agent
 description: Edit existing BMAD agents while following all best practices and conventions
 web_bundle: false
+
+# ============================================================
+# GOVERNANCE FRONTMATTER (REQUIRED)
+# ============================================================
+workflow_id: "WF-BMB-006"
+workflow_type: "workflow"
+governance_version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+expires_at: "2099-12-31T23:59:59+07:00"
+status: "ACTIVE"
+team: "shared"
+parent_id: "governance-foundation-001"
+related_artifacts: []
 ---
 
 # Edit Agent Workflow
@@ -49,7 +62,7 @@ This uses **step-file architecture** for disciplined execution:
 
 ### 1. Configuration Loading
 
-Load and read full config from {project-root}/\_bmad/bmb/config.yaml and resolve:
+Load and read full config from {project-root}/_bmad/bmb/config.yaml and resolve:
 
 - `project_name`, `output_folder`, `user_name`, `communication_language`, `document_output_language`
 

@@ -46,6 +46,8 @@ import { useProjectContext } from '@/lib/workspace/ProjectContext';
 // UJ-004: Cross-workspace reactivity - subscribe to FILE_SAVED events
 import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 import type { FileSavedPayload } from '@/lib/events/store-events';
+// WB-8.3: Cross-workspace event subscriptions for state synchronization
+import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 
 export function NotesPage() {
     const { t } = useTranslation();
@@ -73,6 +75,12 @@ export function NotesPage() {
     // E1-1: Chat panel collapse state (persisted in IDE store)
     const notesChatCollapsed = useIDEStore((s) => s.panelCollapsed['notes-chat'] ?? false);
     const notesChatVisible = useIDEStore((s) => s.chatVisible ?? true);
+
+    // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // Ensures Notes workspace reacts to changes from IDE, Knowledge, Study workspaces
+    useAllCrossWorkspaceEvents();
+    // Also subscribe to workspace changed events for agent filtering
+    useWorkspaceChangedEvents();
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -115,12 +123,51 @@ export function NotesPage() {
         },
     });
 
+    // S-007: File loading state for auto-import
+    const [isImportingFiles, setIsImportingFiles] = useState(false);
+    const [importProgress, setImportProgress] = useState({ current: 0, total: 0, currentFile: '' });
 
     useEffect(() => {
         if (projectId && currentProjectId !== projectId) {
             loadNotes(projectId);
         }
     }, [projectId, currentProjectId, loadNotes]);
+
+    // S-007: Auto-import project files when file sync service becomes ready
+    useEffect(() => {
+        if (isNotesSyncReady && notesSyncService && !isImportingFiles) {
+            const autoImportFiles = async () => {
+                setIsImportingFiles(true);
+                setImportProgress({ current: 0, total: 0, currentFile: '' });
+
+                try {
+                    console.log('[NotesPage] Auto-importing project files...');
+
+                    // Trigger import via the folder bridge
+                    // NotesFileSyncService now exposes importDirectory as public method
+                    const result = await notesSyncService.importDirectory(
+                        '', // Root directory
+                        (current: number, total: number, currentFile: string) => {
+                            setImportProgress({ current, total, currentFile });
+                        }
+                    );
+
+                    console.log('[NotesPage] Auto-import complete:', result);
+
+                    // Reload notes after import
+                    if (projectId) {
+                        await loadNotes(projectId);
+                    }
+                } catch (error) {
+                    console.error('[NotesPage] Auto-import failed:', error);
+                } finally {
+                    setIsImportingFiles(false);
+                }
+            };
+
+            autoImportFiles();
+        }
+    }, [isNotesSyncReady, notesSyncService, projectId, loadNotes]);
 
     // Sync mobile view with active note
     useEffect(() => {
@@ -294,6 +341,57 @@ export function NotesPage() {
     if (isMobile) {
         return (
             <MainLayout>
+                {/* S-007: Import Progress Overlay */}
+                {isImportingFiles && (
+                    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                        <div className="bg-card border border-border rounded-lg p-6 max-w-sm w-full mx-4 shadow-lg">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+                                <h3 className="font-semibold">Importing Notes</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Loading project files...
+                            </p>
+                            {importProgress.total > 0 && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-muted-foreground">
+                                        <span>{importProgress.current} / {importProgress.total}</span>
+                                        <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
+                                    </div>
+                                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                                        <div
+                                            className="bg-primary h-full transition-all duration-300"
+                                            style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground truncate">
+                                        {importProgress.currentFile}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* S-007: Mobile fallback for file sync */}
+                {!isNotesSyncSupported && (
+                    <div className="bg-muted/50 border-b border-border p-3">
+                        <div className="flex items-start gap-2">
+                            <div className="text-yellow-600 dark:text-yellow-500 mt-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium">Desktop-only feature</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    File sync requires a desktop browser (Chrome, Edge, Opera). You can create notes manually on mobile.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex flex-col h-full overflow-y-auto">
                     {mobileView === 'list' ? (
                         <NoteSidebar
@@ -394,6 +492,38 @@ export function NotesPage() {
     // E1-1: Added chat panel (30% default, collapsible)
     return (
         <MainLayout>
+            {/* S-007: Import Progress Overlay */}
+            {isImportingFiles && (
+                <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+                            <h3 className="font-semibold">Importing Notes</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Loading project files into Notes workspace...
+                        </p>
+                        {importProgress.total > 0 && (
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>{importProgress.current} / {importProgress.total} files</span>
+                                    <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
+                                </div>
+                                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                                    <div
+                                        className="bg-primary h-full transition-all duration-300"
+                                        style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground truncate">
+                                    {importProgress.currentFile}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
             <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
                 {/* Note Sidebar - 20% (min 15%, max 30%) - P2-2: Collapsible */}
                 <ResizablePanel

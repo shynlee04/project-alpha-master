@@ -3,19 +3,6 @@ name: create-prd
 description: Creates a comprehensive PRD through collaborative step-by-step discovery between two product managers working as peers.
 main_config: '{project-root}/_bmad/bmm/config.yaml'
 web_bundle: true
-
-# ============================================================
-# GOVERNANCE FRONTMATTER (REQUIRED)
-# ============================================================
-workflow_id: "WF-BMM-005"
-workflow_type: "workflow"
-governance_version: "1.0.0"
-created_at: "2026-01-06T00:00:00+07:00"
-expires_at: "2099-12-31T23:59:59+07:00"
-status: "ACTIVE"
-team: "shared"
-parent_id: "governance-foundation-001"
-related_artifacts: []
 ---
 
 # PRD Workflow
@@ -71,4 +58,6 @@ Load and read full config from {main_config} and resolve:
 
 ### 2. First Step EXECUTION
 
+
+YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the config `{communication_language}`.
 Load, read the full file and then execute `steps/step-01-init.md` to begin the workflow.
