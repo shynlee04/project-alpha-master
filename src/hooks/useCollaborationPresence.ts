@@ -10,13 +10,7 @@
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import type {
-  WebSocketClient,
-  WebSocketClientConfig,
-  PresenceData,
-  CursorData,
-  TypingData,
-} from '@/lib/collaboration/websocket-client';
+import type { WebSocketClient } from '@/lib/collaboration/websocket-client';
 import { createWebSocketClient } from '@/lib/collaboration/websocket-client';
 import {
   createPresenceManager,
@@ -131,6 +125,9 @@ export function useCollaborationPresence(
       {
         onCursorUpdate: (cursors) => {
           setRemoteCursors(Array.from(cursors.values()));
+        },
+        onCursorRemove: () => {
+          // Cursor removal is handled by the cursor tracker internally
         },
       }
     );

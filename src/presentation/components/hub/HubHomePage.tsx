@@ -31,6 +31,7 @@ import { ProjectPickerDialog } from './ProjectPickerDialog';
 import { SummaryCardsGrid } from './SummaryCardsGrid';
 import { ChartsGrid } from './ChartsGrid';
 import { useDashboardMetrics } from './useDashboardMetrics';
+import { ProjectCreationWizard } from '@/presentation/components/project/ProjectCreationWizard';
 
 export const HubHomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -52,6 +53,7 @@ export const HubHomePage: React.FC = () => {
   const [showContent, setShowContent] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [projectPickerOpen, setProjectPickerOpen] = useState(false);
+  const [projectCreationWizardOpen, setProjectCreationWizardOpen] = useState(false);
   const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes' | 'knowledge' | 'study' | 'agents'>('ide');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
@@ -115,6 +117,22 @@ export const HubHomePage: React.FC = () => {
   };
 
   // -- Handlers --
+
+  const handleOpenProjectCreationWizard = () => {
+    setProjectCreationWizardOpen(true);
+  };
+
+  const handleProjectCreated = (projectId: string) => {
+    toast.success(t('hub.projectCreated', 'Project created successfully'), {
+      description: t('hub.projectCreatedDesc', 'Your project is ready to use'),
+      duration: 3000,
+    });
+    // Navigate to IDE with the new project
+    navigate({
+      to: '/ide/$projectId',
+      params: { projectId }
+    });
+  };
 
   const handleNewProject = async () => {
     try {
@@ -227,11 +245,11 @@ export const HubHomePage: React.FC = () => {
     {
       id: 'new-project',
       size: 'medium',
-      title: t('hub.menu.workspace', 'WORKSPACE_MOUNT'),
+      title: t('hub.menu.createProject', 'CREATE_PROJECT'),
       description: t('hub.newProjectDesc', 'Initialize a new workspace entry'),
       icon: <Plus className="h-8 w-8" />,
       topic: 'Workspace',
-      onClick: handleNewProject,
+      onClick: handleOpenProjectCreationWizard,
       className: 'bg-primary/5 border-primary/20 hover:border-primary/50',
     },
     {
@@ -354,6 +372,13 @@ export const HubHomePage: React.FC = () => {
         open={projectPickerOpen}
         onOpenChange={setProjectPickerOpen}
         targetWorkspace={projectPickerWorkspace}
+      />
+
+      {/* Project Creation Wizard */}
+      <ProjectCreationWizard
+        open={projectCreationWizardOpen}
+        onOpenChange={setProjectCreationWizardOpen}
+        onProjectCreated={handleProjectCreated}
       />
     </div>
   );

@@ -1349,5 +1349,20 @@
   "wizard.summary.workspaceConfig": "Workspace Configuration",
   "wizard.summary.agentConfig": "Agent Configuration",
   "wizard.summary.fileSetup": "Initial Files",
-  "wizard.review.readyToCreate": "Ready to create your project! Click 'Create Project' to continue."
+  "wizard.review.readyToCreate": "Ready to create your project! Click 'Create Project' to continue.",
+  "collaboration.viewingThisFile": "Viewing this file",
+  "collaboration.status.online": "Online",
+  "collaboration.status.idle": "Idle",
+  "collaboration.status.offline": "Offline",
+  "collaboration.moreUsers": "+{{count}} more",
+  "collaboration.activity.justNow": "Just now",
+  "collaboration.activity.minutesAgo": "{{count}}m ago",
+  "collaboration.activity.hoursAgo": "{{count}}h ago",
+  "collaboration.typing": "{{userName}} is typing...",
+  "collaboration.userJoined": "{{userName}} joined",
+  "collaboration.userLeft": "{{userName}} left",
+  "collaboration.connecting": "Connecting to collaboration...",
+  "collaboration.connected": "Collaboration active",
+  "collaboration.disconnected": "Collaboration disconnected",
+  "collaboration.reconnecting": "Reconnecting..."
 }

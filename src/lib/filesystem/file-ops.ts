@@ -184,7 +184,10 @@ export async function duplicateFile(
         const originalContent = await readFile(root, path);
         const content = originalContent.encoding === 'utf-8'
             ? originalContent.content
-            : new TextDecoder().decode(originalContent.data);
+            : await (async () => {
+                const binaryResult = await readFile(root, path, { encoding: 'binary' }) as FileReadBinaryResult;
+                return new TextDecoder().decode(binaryResult.data);
+            })();
 
         // Generate new name if not provided
         let finalName = newName;
@@ -294,7 +297,8 @@ export async function revealInFileManager(
         // For now, we'll use a show API command if available
         // This is a placeholder for the actual implementation
 
-        if (window.showDirectoryPicker) {
+        // Note: window.showDirectoryPicker is a function, check if it exists
+        if (typeof window.showDirectoryPicker === 'function') {
             // Try to use File System Access API
             // This would need to be implemented with proper permissions
             console.info('Reveal in file manager:', path);

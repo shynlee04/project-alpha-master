@@ -1210,5 +1210,20 @@
   "chat.workflow.type": "Loại",
   "chat.workflow.description": "Mô Tả",
   "chat.workflow.validationErrors": "Lỗi Xác Thực",
-  "chat.workflow.previewMode": "Chế Độ Xem Trước - Nhấn Chạy để thực thi"
+  "chat.workflow.previewMode": "Chế Độ Xem Trước - Nhấn Chạy để thực thi",
+  "collaboration.viewingThisFile": "Đang xem tập tin này",
+  "collaboration.status.online": "Trực tuyến",
+  "collaboration.status.idle": "Nghỉ",
+  "collaboration.status.offline": "Ngoại tuyến",
+  "collaboration.moreUsers": "+{{count}} khác",
+  "collaboration.activity.justNow": "Vừa xong",
+  "collaboration.activity.minutesAgo": "{{count}}p trước",
+  "collaboration.activity.hoursAgo": "{{count}}g trước",
+  "collaboration.typing": "{{userName}} đang nhập...",
+  "collaboration.userJoined": "{{userName}} đã tham gia",
+  "collaboration.userLeft": "{{userName}} đã rời đi",
+  "collaboration.connecting": "Đang kết nối cộng tác...",
+  "collaboration.connected": "Cộng tác hoạt động",
+  "collaboration.disconnected": "Cộng tác ngắt kết nối",
+  "collaboration.reconnecting": "Đang kết nối lại..."
 }

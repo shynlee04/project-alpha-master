@@ -49,11 +49,11 @@ const RemoteCursorComponent: React.FC<RemoteCursorComponentProps> = ({
     const updatePosition = () => {
       try {
         const monacoEditor = editorElement.querySelector('.monaco-editor');
-        if (!monacoEditor) return;
+        if (!monacoEditor || !cursor.renderedPosition) return;
 
         // Get line height from Monaco
         const lineHeight = parseInt(
-          monacoEditor.getComputedStyle?.(monacoEditor)?.lineHeight || '21px',
+          window.getComputedStyle(monacoEditor).lineHeight || '21px',
           10
         );
 
@@ -83,7 +83,7 @@ const RemoteCursorComponent: React.FC<RemoteCursorComponentProps> = ({
   }, [cursor, editorElement, isMobile]);
 
   // Don't render on mobile
-  if (isMobile || !position) {
+  if (isMobile || !position || !editorElement) {
     return null;
   }
 

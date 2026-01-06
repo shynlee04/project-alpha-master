@@ -262,5 +262,10 @@ export function createCursorTracker(
   config?: CursorTrackerConfig,
   events?: CursorTrackerEvents
 ): CursorTracker {
-  return new CursorTracker(config, events || {});
+  const defaultEvents: CursorTrackerEvents = {
+    onCursorUpdate: () => {},
+    onCursorRemove: () => {},
+  };
+
+  return new CursorTracker(config, { ...defaultEvents, ...events });
 }

@@ -79,7 +79,7 @@ export interface WebSocketClientConfig {
   projectId: string;
   userId: string; // Anonymized
   userName: string;
-  userAvatar?: string;
+  userAvatar?: string | undefined;
   reconnectInterval?: number;
   maxReconnectAttempts?: number;
   connectionTimeout?: number;

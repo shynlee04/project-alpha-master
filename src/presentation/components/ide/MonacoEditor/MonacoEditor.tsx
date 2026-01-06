@@ -25,7 +25,6 @@ import { useTheme } from 'next-themes';
 import { codeAnalysisBridge } from '@/lib/ide/code-analysis-bridge';
 import { UserPresenceIndicator } from '@/presentation/components/collaboration/UserPresenceIndicator';
 import type { UserPresence } from '@/presentation/components/collaboration/UserPresenceIndicator';
-import { LiveCursor } from '@/presentation/components/collaboration/LiveCursor';
 
 /** Auto-save debounce delay in milliseconds */
 const AUTO_SAVE_DELAY_MS = 2000;

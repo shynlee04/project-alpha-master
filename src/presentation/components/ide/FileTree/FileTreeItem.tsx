@@ -1,12 +1,13 @@
 /**
  * @fileoverview FileTreeItem Component
+ * S-024: Enhanced with mobile long-press for context menu
  * Renders a single item in the file tree (file or folder)
- * 
+ *
  * @epic Epic-MRT Mobile Responsive Transformation
  * @story MRT-4 FileTree Mobile Adaptation
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { ChevronRight, ChevronDown, Loader2, Check, Clock, AlertTriangle } from 'lucide-react';
 import { FileIcon } from './icons';
 import type { FileTreeItemProps } from './types';
@@ -47,7 +48,37 @@ export function FileTreeItem({
     const isPending = !isDirectory && fileSyncStatus?.state === 'pending';
     const isSynced = !isDirectory && fileSyncStatus?.state === 'synced';
 
+    // S-024: Mobile long-press support
+    const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const [isLongPress, setIsLongPress] = useState(false);
+
+    const startLongPress = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+        if (!isMobile) return;
+
+        setIsLongPress(false);
+        longPressTimerRef.current = setTimeout(() => {
+            setIsLongPress(true);
+            // Trigger context menu
+            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+            onContextMenu(e as React.MouseEvent, node);
+        }, 500);
+    }, [isMobile, onContextMenu, node]);
+
+    const clearLongPress = useCallback(() => {
+        if (longPressTimerRef.current) {
+            clearTimeout(longPressTimerRef.current);
+            longPressTimerRef.current = null;
+        }
+    }, []);
+
     const handleClick = (e: React.MouseEvent) => {
+        // Don't trigger click if it was a long press
+        if (isLongPress) {
+            setIsLongPress(false);
+            return;
+        }
+
         e.stopPropagation();
         if (isDirectory) {
             onToggle(node);
@@ -88,6 +119,27 @@ export function FileTreeItem({
         onContextMenu(e, node);
     };
 
+    // S-024: Mobile touch handlers
+    const handleTouchStart = (e: React.TouchEvent) => {
+        startLongPress(e);
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        clearLongPress();
+        if (!isLongPress) {
+            // Trigger click as normal
+            const mouseEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+            });
+            (e.target as Element).dispatchEvent(mouseEvent);
+        }
+    };
+
+    const handleTouchMove = () => {
+        clearLongPress();
+    };
+
     return (
         <div
             role="treeitem"
@@ -100,6 +152,10 @@ export function FileTreeItem({
             onClick={handleClick}
             onContextMenu={handleContextMenuEvent}
             onKeyDown={handleKeyDown}
+            // S-024: Mobile long-press handlers
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
         >
             <div
                 className={cn(

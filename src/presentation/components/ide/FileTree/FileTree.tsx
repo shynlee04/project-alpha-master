@@ -31,6 +31,8 @@ import { useTranslation } from 'react-i18next';
 import { FileTreeItemList } from './FileTreeItem';
 import { ContextMenu } from './ContextMenu';
 import { SyncStatusIndicator } from '../SyncStatusIndicator';
+import { FileOperationDialog } from './FileOperationDialog';
+import { ConfirmDialog } from './ConfirmDialog';
 
 // Hooks
 import {
@@ -172,12 +174,19 @@ export function FileTree({
 
   // ============================================================================
   // Context Menu
+  // S-024: Enhanced with dialogs and toast notifications
   // ============================================================================
 
   const {
     handleContextMenu,
     closeContextMenu,
     handleContextMenuAction,
+    operationDialog,
+    closeOperationDialog,
+    handleOperationConfirm,
+    confirmDialog,
+    closeConfirmDialog,
+    handleDeleteConfirm,
   } = useContextMenuActions({
     contextMenu,
     setContextMenu,
@@ -187,6 +196,7 @@ export function FileTree({
     loadRootDirectory,
     setExpandedPaths,
     setFocusedPath,
+    existingNames: rootNodes.map(n => n.name), // Simple check for top-level
   });
 
   // ============================================================================
@@ -309,6 +319,28 @@ export function FileTree({
         targetNode={contextMenu.targetNode}
         onAction={handleContextMenuAction}
         onClose={closeContextMenu}
+      />
+
+      {/* S-024: File Operation Dialog (Rename/Duplicate) */}
+      {contextMenu.targetNode && (
+        <FileOperationDialog
+          open={operationDialog.open}
+          operation={operationDialog.operation || 'rename'}
+          currentName={operationDialog.currentName}
+          onConfirm={handleOperationConfirm}
+          onClose={closeOperationDialog}
+          existingNames={rootNodes.map(n => n.name)}
+        />
+      )}
+
+      {/* S-024: Confirm Dialog (Delete) */}
+      <ConfirmDialog
+        open={confirmDialog.open}
+        operation={confirmDialog.isDirectory ? 'delete-folder' : 'delete'}
+        itemName={confirmDialog.itemName}
+        isDirectory={confirmDialog.isDirectory}
+        onConfirm={handleDeleteConfirm}
+        onClose={closeConfirmDialog}
       />
     </div>
   );
