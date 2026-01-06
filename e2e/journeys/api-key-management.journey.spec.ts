@@ -26,11 +26,13 @@ test.describe('API Key Management', () => {
         await expect(apiKeysSection).toBeVisible({ timeout: 10000 });
 
         // Find the "Google Gemini" provider row and click the edit button
-        // We look for the row containing "Google Gemini" and then find the edit button within it
-        const geminiRow = page.locator('div', { hasText: 'Google Gemini' }).first();
-        await expect(geminiRow).toBeVisible();
+        // We use a more specific locator strategy to find the exact row
+        // 1. Find the text "Google Gemini"
+        // 2. Find the closest container that also has an "Edit provider" button
+        const providerRow = page.locator('div.border > div').filter({ hasText: 'Google Gemini' });
+        await expect(providerRow).toBeVisible();
         
-        const editButton = geminiRow.getByLabel('Edit provider');
+        const editButton = providerRow.getByLabel('Edit provider');
         await editButton.click();
 
         // Wait for dialog to open

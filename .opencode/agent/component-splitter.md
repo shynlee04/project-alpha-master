@@ -1,6 +1,67 @@
 ---
 name: component-splitter
-description: Use this agent when:\n\n<example>\nContext: User is working on a large React component that violates the project's 120-line limit (e.g., AgentConfigDialog.tsx at 1,089 lines).\n\nuser: "This AgentConfigDialog component is way too large at 1,089 lines. It's nearly 10x our 120-line limit."\n\nassistant: "I'll use the Task tool to launch the component-splitter agent to analyze and split this god component into smaller, focused modules."\n\n<commentary>\nThe component-splitter agent should be invoked when:\n- Components exceed the 120-line limit (defined in CLAUDE.md)\n- God components are identified during Ralph Loop cycles\n- Components have >3 functions or >5 dependencies\n- Nesting levels exceed 3\n- Single Responsibility Principle is violated\n\nThe agent will:\n1. Analyze component structure and dependencies\n2. Identify logical boundaries for splitting\n3. Extract custom hooks, sub-components, and utilities\n4. Maintain zero breaking changes with facade patterns\n5. Ensure all new modules are ≤120 lines\n</commentary>\n</example>\n\n<example>\nContext: User is refactoring god stores as part of Epic CC-1 (Conversation Consolidation).\n\nuser: "The conversation-store.ts is 626 lines. I need to split it into 6 slices for the refactoring."\n\nassistant: "I'll launch the component-splitter agent to help break down this god store into focused slices following Zustand best practices."\n\n<commentary>\nThe component-splitter agent specializes in:\n- Zustand store slice extraction (120 lines per slice)\n- Preserving backwards compatibility with facades\n- Avoiding circular dependencies between slices\n- Applying Zustand v5 individual selector patterns\n- Creating barrel exports for clean imports\n</commentary>\n</example>\n\n<example>\nContext: BMAD-core-master agent is orchestrating Ralph Loop Cycle 18 Phase 0 stabilization.\n\nassistant: "Analysis shows AgentConfigDialog.tsx (1,089 lines) requires immediate refactoring. Launching component-splitter agent to extract hooks and reduce to <300 lines per TS-001 requirements."\n\n<commentary>\nAuto-activation triggers for component-splitter:\n- P0/P1 god components identified in Ralph Loop analysis\n- Components >300 lines (3x 120-line limit)\n- Epic stories requiring component/store refactoring\n- TypeScript error remediation requiring code restructuring\n\nThe agent coordinates with:\n- code-reviewer: Validate split maintains functionality\n- test-generator: Ensure test coverage ≥80% for new modules\n- typescript-fixer: Resolve any type errors introduced during split\n</commentary>\n</example>
+description: |
+  Use this agent when:
+
+  <example>
+  Context: User is working on a large React component that violates the project's 120-line limit (e.g., AgentConfigDialog.tsx at 1,089 lines).
+
+  user: "This AgentConfigDialog component is way too large at 1,089 lines. It's nearly 10x our 120-line limit."
+
+  assistant: "I'll use the Task tool to launch the component-splitter agent to analyze and split this god component into smaller, focused modules."
+
+  <commentary>
+  The component-splitter agent should be invoked when:
+  - Components exceed the 120-line limit (defined in CLAUDE.md)
+  - God components are identified during Ralph Loop cycles
+  - Components have >3 functions or >5 dependencies
+  - Nesting levels exceed 3
+  - Single Responsibility Principle is violated
+
+  The agent will:
+  1. Analyze component structure and dependencies
+  2. Identify logical boundaries for splitting
+  3. Extract custom hooks, sub-components, and utilities
+  4. Maintain zero breaking changes with facade patterns
+  5. Ensure all new modules are ≤120 lines
+  </commentary>
+  </example>
+
+  <example>
+  Context: User is refactoring god stores as part of Epic CC-1 (Conversation Consolidation).
+
+  user: "The conversation-store.ts is 626 lines. I need to split it into 6 slices for the refactoring."
+
+  assistant: "I'll launch the component-splitter agent to help break down this god store into focused slices following Zustand best practices."
+
+  <commentary>
+  The component-splitter agent specializes in:
+  - Zustand store slice extraction (120 lines per slice)
+  - Preserving backwards compatibility with facades
+  - Avoiding circular dependencies between slices
+  - Applying Zustand v5 individual selector patterns
+  - Creating barrel exports for clean imports
+  </commentary>
+  </example>
+
+  <example>
+  Context: BMAD-core-master agent is orchestrating Ralph Loop Cycle 18 Phase 0 stabilization.
+
+  assistant: "Analysis shows AgentConfigDialog.tsx (1,089 lines) requires immediate refactoring. Launching component-splitter agent to extract hooks and reduce to <300 lines per TS-001 requirements."
+
+  <commentary>
+  Auto-activation triggers for component-splitter:
+  - P0/P1 god components identified in Ralph Loop analysis
+  - Components >300 lines (3x 120-line limit)
+  - Epic stories requiring component/store refactoring
+  - TypeScript error remediation requiring code restructuring
+
+  The agent coordinates with:
+  - code-reviewer: Validate split maintains functionality
+  - test-generator: Ensure test coverage ≥80% for new modules
+  - typescript-fixer: Resolve any type errors introduced during split
+  </commentary>
+  </example>
 model: sonnet
 ---
 

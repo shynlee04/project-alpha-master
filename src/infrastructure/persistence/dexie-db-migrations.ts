@@ -716,4 +716,108 @@ export function registerMigrations(db: Dexie): void {
                 itemsCount: 0
             });
         });
+
+        // ========================================================================
+        // PERSIST-S002: Workspace Isolation Migration (Version 20)
+        // ========================================================================
+        // CRITICAL FIX: Add workspaceId to ALL tables for cross-workspace data isolation
+        // User issue: "File system sync broken across workspaces"
+        // Root cause: No workspaceId in IndexedDB tables → data leaks between workspaces
+        // Solution: Add workspaceId column with default 'ide' for existing records
+
+        db.version(20).stores({
+            // Core tables with workspaceId
+            projects: 'id, workspaceId, lastOpened, name',
+            ideState: 'projectId, workspaceId, updatedAt',
+            conversations: 'id, projectId, workspaceId, updatedAt',
+
+            // AI tables with workspaceId
+            taskContexts: 'id, projectId, workspaceId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, workspaceId, toolName, status, [taskId+status]',
+            credentials: 'providerId, workspaceId, createdAt',
+            threads: 'id, projectId, workspaceId, updatedAt, [projectId+updatedAt]',
+
+            // State tables with workspaceId
+            providerConfigs: 'id, workspaceId, updatedAt',
+            agentConfigs: 'id, workspaceId, updatedAt',
+            conversationState: 'id, workspaceId, updatedAt',
+            ragState: 'id, workspaceId, updatedAt',
+
+            // Sync tables with workspaceId
+            syncStatus: 'id, workspaceId, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileSyncStatus: 'id, workspaceId, updatedAt',
+
+            // File tables with workspaceId
+            fileMetadata: '[projectId+workspaceId+path], projectId, workspaceId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, workspaceId, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, workspaceId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, workspaceId, createdAt, expiresAt, [projectId+createdAt]',
+
+            // File snapshot tables with workspaceId
+            fileSnapshots: 'projectId, workspaceId, path, [projectId+workspaceId+path]',
+            fileContentCache: '[projectId+workspaceId+path]',
+
+            // Knowledge tables with workspaceId
+            sources: 'id, projectId, workspaceId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, workspaceId, name, createdAt, [projectId+name]',
+            synthesisResults: 'id, workspaceId, createdAt',
+            oramaIndexes: 'projectId, workspaceId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, workspaceId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, workspaceId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+
+            // Other tables with workspaceId
+            workflows: 'id, workspaceId, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+            ragState: 'id, workspaceId, updatedAt',
+            codeSnippets: 'id, workspaceId, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+
+            // Plugin tables with workspaceId
+            plugins: 'id, workspaceId, source, state, installedAt, [source], [state], [installedAt]',
+            pluginSettings: 'pluginId, workspaceId, updatedAt',
+            pluginMarketplace: 'id, workspaceId, category, cachedAt, expiresAt, [category], [cachedAt]',
+            pluginStorage: 'id, pluginId, workspaceId, [pluginId]',
+        }).upgrade(async (tx) => {
+            logDexieMigration(20, 'persist-s-002-workspace-isolation', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(20)) {
+                logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            let totalUpdated = 0;
+            const tables = tx.tables;
+
+            // Update ALL existing records to have workspaceId = 'ide' (default workspace)
+            for (const table of tables) {
+                try {
+                    const count = await table.count();
+                    const records = await table.toArray();
+
+                    let updatedCount = 0;
+                    for (const record of records) {
+                        // Only update if workspaceId doesn't exist
+                        if (!record.workspaceId) {
+                            await table.update(record as any, { workspaceId: 'ide' });
+                            updatedCount++;
+                        }
+                    }
+
+                    totalUpdated += updatedCount;
+                    logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', {
+                        tableName: table.name,
+                        totalRecords: count,
+                        updatedRecords: updatedCount
+                    });
+                } catch (error: unknown) {
+                    console.error(`[Migration v20] Failed to update table ${table.name}:`, error);
+                }
+            }
+
+            markMigrationApplied(20);
+
+            logDexieMigration(20, 'persist-s-002-workspace-isolation', 'completed', {
+                totalRecordsUpdated: totalUpdated,
+                message: `All tables now have workspaceId for cross-workspace isolation`
+            });
+        });
 }
